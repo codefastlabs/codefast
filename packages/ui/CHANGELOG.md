@@ -1,5 +1,19 @@
 # @codefast/ui
 
+## 1.0.1-canary.3
+
+### Patch Changes
+
+- [`6995bee`](https://github.com/codefastlabs/codefast/commit/6995bee4991257294cc6d520af6989e237392775) Thanks [@thevuong](https://github.com/thevuong)! - chore(tailwind-variants): downgrade version to `0.3.7-canary.2`
+
+- Updated dependencies [[`6995bee`](https://github.com/codefastlabs/codefast/commit/6995bee4991257294cc6d520af6989e237392775)]:
+  - @codefast/tailwind-variants@1.0.1-canary.3
+  - @codefast-ui/checkbox-group@0.3.7-canary.3
+  - @codefast/hooks@1.0.1-canary.3
+  - @codefast-ui/input@0.3.7-canary.3
+  - @codefast-ui/input-number@0.3.7-canary.3
+  - @codefast-ui/progress-circle@0.3.7-canary.3
+
 ## 1.0.1-canary.2
 
 ### Patch Changes

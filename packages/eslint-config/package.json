@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "1.0.1-canary.2",
+  "version": "1.0.1-canary.3",
   "description": "Shared ESLint configuration for the monorepo",
   "keywords": [
     "eslint",

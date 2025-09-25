@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/progress-circle",
-  "version": "0.3.7-canary.2",
+  "version": "0.3.7-canary.3",
   "description": "Accessible circular progress component built with React and Radix UI",
   "keywords": [
     "progress",

@@ -1,6 +1,6 @@
 {
   "name": "@codefast/image-loader",
-  "version": "1.0.1-canary.2",
+  "version": "1.0.1-canary.3",
   "description": "Flexible image loader for Next.js supporting multiple CDN providers",
   "keywords": [
     "next",
