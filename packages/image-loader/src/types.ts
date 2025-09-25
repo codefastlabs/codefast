@@ -1,43 +1,34 @@
 import type { ImageLoaderProps } from "next/image";
 
 /**
- * Base interface for all image loaders
- * Following the Interface Segregation Principle (ISP)
+ * Simple function type for image loaders
+ * Each loader is just a function that takes config and returns transformed URL
  */
-export interface ImageLoader {
-  /**
-   * Transforms the image URL according to the loader's CDN specifications
-   * @param config - Image transformation configuration
-   * @returns Transformed image URL
-   */
-  load: (config: ImageLoaderProps) => string;
+export type ImageLoaderFunction = (config: ImageLoaderProps) => string;
 
-  /**
-   * Checks if this loader can handle the given source URL
-   * @param src - Source URL to check
-   * @returns True if this loader can handle the URL
-   */
-  canHandle: (source: string) => boolean;
-
-  /**
-   * Gets the name/identifier of this loader
-   * @returns Loader name
-   */
-  getName: () => string;
+/**
+ * Loader definition with matching logic
+ */
+export interface LoaderDefinition {
+  /** Function to check if this loader can handle the URL */
+  canHandle: (src: string) => boolean;
+  /** Function to transform the image URL */
+  load: ImageLoaderFunction;
+  /** Unique name for the loader */
+  name: string;
 }
 
 /**
- * Configuration options for image loader factory
+ * Configuration for creating image loader
  */
-export interface ImageLoaderFactoryConfig {
+export interface ImageLoaderConfig {
+  /** Custom loaders to register */
+  customLoaders?: ImageLoaderFunction[];
   /** Default quality to use when not specified */
   defaultQuality?: number;
-  /** Custom domain mappings for loaders */
-  domainMappings?: Record<string, string>;
 }
 
 /**
- * Supported CDN providers
- * These are the CDN providers that have actual loader implementations
+ * Re-export Next.js ImageLoaderProps for convenience
  */
-export type CDNProvider = "aws-cloudfront" | "cloudinary" | "imgix" | "supabase" | "unsplash";
+export type { ImageLoaderProps } from "next/image";
