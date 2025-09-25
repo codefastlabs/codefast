@@ -2,7 +2,7 @@ import type { ImageLoaderProps } from "next/image";
 
 import queryString from "query-string";
 
-import { createImageLoader, extractDomain } from "@codefast/image-loader";
+import { allLoaders, createImageLoaderSystem } from "@codefast/image-loader";
 
 /**
  * Custom loader for GitHub raw content
@@ -47,18 +47,17 @@ const localDevLoader = (config: ImageLoaderProps): string => {
  * Image loader for the doc app
  * Pre-configured with all default CDN loaders plus custom loaders
  *
- * This demonstrates the simplicity of the functional approach:
- * 1. Start with default loaders for common CDNs
+ * This demonstrates the enhanced system with performance optimizations:
+ * 1. Start with all available loaders for common CDNs
  * 2. Add custom loaders for specific needs
- * 3. Simple configuration without complex factory patterns
+ * 3. Enable caching and performance optimizations
+ * 4. Simple configuration with advanced features
  */
-const documentImageLoader = createImageLoader({
+const documentImageLoaderSystem = createImageLoaderSystem({
   customLoaders: [
     // Custom loader for GitHub raw content
     (config): string => {
-      const domain = extractDomain(config.src);
-
-      if (domain.endsWith("raw.githubusercontent.com")) {
+      if (config.src.includes("raw.githubusercontent.com")) {
         return githubRawLoader(config);
       }
 
@@ -78,8 +77,16 @@ const documentImageLoader = createImageLoader({
       throw new Error("Not a local development URL");
     },
   ],
+  debug: process.env.NODE_ENV === "development",
   defaultQuality: 80,
+  enableCaching: true,
+  maxCacheSize: 1000,
 });
+
+// Register all available loaders
+documentImageLoaderSystem.registerBuiltInLoaders(allLoaders);
+
+const documentImageLoader = documentImageLoaderSystem.createLoader();
 
 /**
  * Next.js compatible image loader function
