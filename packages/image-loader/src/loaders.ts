@@ -4,7 +4,21 @@ import queryString from "query-string";
 
 import type { ImageLoaderFunction, LoaderDefinition } from "./types";
 
-import { extractDomain, normalizeConfig, validateConfig } from "./utils";
+import { LoaderDefinitionBuilder } from "./core/loader-builder";
+// Import extended loaders
+import {
+  cloudflareLoader,
+  contentfulLoader,
+  fastlyLoader,
+  gumletLoader,
+  imageEngineLoader,
+  imageKitLoader,
+  pixelBinLoader,
+  sanityLoader,
+  sirvLoader,
+  thumborLoader,
+} from "./loaders/extended-loaders";
+import { normalizeConfig, validateConfig } from "./utils";
 
 /**
  * Cloudinary image loader
@@ -148,31 +162,106 @@ export const supabaseLoader: ImageLoaderFunction = (config: ImageLoaderProps): s
 /**
  * Built-in loader definitions
  * Registry of all default loaders with their matching logic
+ * Uses optimized builder pattern for better performance
  */
 export const builtInLoaders: LoaderDefinition[] = [
-  {
-    canHandle: (src: string) => extractDomain(src).endsWith(".cloudinary.com"),
-    load: cloudinaryLoader,
-    name: "cloudinary",
-  },
-  {
-    canHandle: (src: string) => extractDomain(src) === "images.unsplash.com",
-    load: unsplashLoader,
-    name: "unsplash",
-  },
-  {
-    canHandle: (src: string) => extractDomain(src).endsWith(".imgix.net"),
-    load: imgixLoader,
-    name: "imgix",
-  },
-  {
-    canHandle: (src: string) => extractDomain(src).endsWith(".cloudfront.net"),
-    load: awsCloudFrontLoader,
-    name: "aws-cloudfront",
-  },
-  {
-    canHandle: (src: string) => extractDomain(src).endsWith(".supabase.co"),
-    load: supabaseLoader,
-    name: "supabase",
-  },
+  LoaderDefinitionBuilder.forSubdomain("cloudinary", "cloudinary.com", cloudinaryLoader),
+  LoaderDefinitionBuilder.forDomain("unsplash", "images.unsplash.com", unsplashLoader),
+  LoaderDefinitionBuilder.forSubdomain("imgix", "imgix.net", imgixLoader),
+  LoaderDefinitionBuilder.forSubdomain("aws-cloudfront", "cloudfront.net", awsCloudFrontLoader),
+  LoaderDefinitionBuilder.forSubdomain("supabase", "supabase.co", supabaseLoader),
 ];
+
+/**
+ * Extended loader definitions
+ * Additional loaders for more CDN providers
+ */
+export const extendedLoaders: LoaderDefinition[] = [
+  LoaderDefinitionBuilder.withCustomMatcher(
+    "cloudflare",
+    (src: string) => {
+      try {
+        const url = new URL(src);
+
+        return url.hostname.includes("cloudflare") || src.includes("/cdn-cgi/image/");
+      } catch {
+        return false;
+      }
+    },
+    cloudflareLoader
+  ),
+  LoaderDefinitionBuilder.forSubdomain("contentful", "ctfassets.net", contentfulLoader),
+  LoaderDefinitionBuilder.withCustomMatcher(
+    "fastly",
+    (src: string) => {
+      try {
+        const url = new URL(src);
+
+        return url.hostname.includes("fastly") || src.includes("fastly");
+      } catch {
+        return false;
+      }
+    },
+    fastlyLoader
+  ),
+  LoaderDefinitionBuilder.withCustomMatcher(
+    "gumlet",
+    (src: string) => {
+      try {
+        const url = new URL(src);
+
+        return url.hostname.includes("gumlet") || src.includes("gumlet");
+      } catch {
+        return false;
+      }
+    },
+    gumletLoader
+  ),
+  LoaderDefinitionBuilder.withCustomMatcher(
+    "imageengine",
+    (src: string) => {
+      try {
+        const url = new URL(src);
+
+        return url.hostname.includes("imageengine") || src.includes("imgeng");
+      } catch {
+        return false;
+      }
+    },
+    imageEngineLoader
+  ),
+  LoaderDefinitionBuilder.forSubdomain("pixelbin", "pixelbin.io", pixelBinLoader),
+  LoaderDefinitionBuilder.forSubdomain("sanity", "sanity.io", sanityLoader),
+  LoaderDefinitionBuilder.withCustomMatcher(
+    "sirv",
+    (src: string) => {
+      try {
+        const url = new URL(src);
+
+        return url.hostname.includes("sirv") || src.includes("sirv");
+      } catch {
+        return false;
+      }
+    },
+    sirvLoader
+  ),
+  LoaderDefinitionBuilder.withCustomMatcher(
+    "thumbor",
+    (src: string) => {
+      try {
+        const url = new URL(src);
+
+        return url.hostname.includes("thumbor") || src.includes("thumbor");
+      } catch {
+        return false;
+      }
+    },
+    thumborLoader
+  ),
+  LoaderDefinitionBuilder.forSubdomain("imagekit", "imagekit.io", imageKitLoader),
+];
+
+/**
+ * All available loaders (built-in + extended)
+ */
+export const allLoaders: LoaderDefinition[] = [...builtInLoaders, ...extendedLoaders];

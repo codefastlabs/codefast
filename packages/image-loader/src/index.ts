@@ -1,88 +1,47 @@
-import type { ImageLoaderProps } from "next/image";
-
-import type { ImageLoaderConfig, ImageLoaderFunction } from "./types";
-
-import { builtInLoaders } from "./loaders";
+/**
+ * Main exports from the image loader package
+ *
+ * This file serves as the main entry point and only contains exports.
+ * All function implementations are in separate files for better organization.
+ */
 
 /**
- * Creates an image loader function with built-in and custom loaders
- * 
- * @param config - Configuration options for the image loader
- * @returns Next.js compatible image loader function
- * 
- * @example
- * ```typescript
- * // Simple usage with default loaders
- * const loader = createImageLoader();
- * 
- * // With custom configuration
- * const loader = createImageLoader({
- *   defaultQuality: 80,
- *   customLoaders: [myCustomLoader]
- * });
- * ```
+ * Factory functions for creating image loader systems
  */
-export function createImageLoader(config: ImageLoaderConfig = {}): ImageLoaderFunction {
-  const { customLoaders = [], defaultQuality = 75 } = config;
-  
-  return (params: ImageLoaderProps): string => {
-    const { src } = params;
-    
-    // Try built-in loaders first
-    for (const loaderDefinition of builtInLoaders) {
-      if (loaderDefinition.canHandle(src)) {
-        try {
-          return loaderDefinition.load({
-            ...params,
-            quality: params.quality ?? defaultQuality,
-          });
-        } catch (error) {
-          console.warn(`Loader ${loaderDefinition.name} failed for ${src}:`, error);
-          // Continue to next loader
-        }
-      }
-    }
-    
-    // Try custom loaders
-    for (const customLoader of customLoaders) {
-      try {
-        return customLoader({
-          ...params,
-          quality: params.quality ?? defaultQuality,
-        });
-      } catch (error) {
-        console.warn(`Custom loader failed for ${src}:`, error);
-        // Continue to next loader
-      }
-    }
-    
-    // Fallback: return original URL if no loader can handle it
-    console.warn(`No loader found for URL: ${src}. Returning original URL.`);
-
-    return src;
-  };
-}
-
-/**
- * Default image loader instance
- * Pre-configured with all built-in loaders
- */
-export const defaultImageLoader = createImageLoader();
+export { createImageLoaderSystem, defaultImageLoaderSystem } from "./factory";
 
 /**
  * Export individual loaders for advanced usage
  */
 export {
+  allLoaders,
   awsCloudFrontLoader,
   builtInLoaders,
   cloudinaryLoader,
+  extendedLoaders,
   imgixLoader,
   supabaseLoader,
   unsplashLoader,
 } from "./loaders";
 
 /**
- * Export utility functions
+ * Export extended loaders for additional CDN providers
+ */
+export {
+  cloudflareLoader,
+  contentfulLoader,
+  fastlyLoader,
+  gumletLoader,
+  imageEngineLoader,
+  imageKitLoader,
+  pixelBinLoader,
+  sanityLoader,
+  sirvLoader,
+  thumborLoader,
+} from "./loaders/extended-loaders";
+
+/**
+ * Export utility functions for URL manipulation and validation
  */
 export {
   ensureProtocol,
@@ -92,17 +51,18 @@ export {
 } from "./utils";
 
 /**
- * Export types
+ * Export core classes for advanced usage and customization
  */
-export type {
-  ImageLoaderConfig,
-  ImageLoaderFunction,
-  ImageLoaderProps,
-  LoaderDefinition,
-} from "./types";
+export { ImageLoaderSystem } from "./core/image-loader-system";
+export { LoaderDefinitionBuilder } from "./core/loader-builder";
+export { LoaderRegistry } from "./core/loader-registry";
 
 /**
- * Default export for Next.js configuration
- * This can be used directly in next.config.js
+ * Export TypeScript type definitions
  */
-export default defaultImageLoader;
+export type {
+  ImageLoaderFunction,
+  ImageLoaderProps,
+  ImageLoaderSystemConfig,
+  LoaderDefinition,
+} from "./types";

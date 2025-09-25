@@ -1,6 +1,7 @@
 import type { ImageLoaderProps } from "next/image";
 
-import { createImageLoader, defaultImageLoader } from "..";
+import { createImageLoaderSystem, defaultImageLoaderSystem } from "../factory";
+import { builtInLoaders } from "../loaders";
 
 const customLoader = (config: ImageLoaderProps): string => {
   if (config.src.includes("custom.com")) {
@@ -14,16 +15,20 @@ const faultyLoader = (): string => {
   throw new Error("Loader error");
 };
 
-describe("Image Loader", () => {
-  describe("createImageLoader", () => {
-    it("should create a loader function", () => {
-      const loader = createImageLoader();
+describe("Image Loader System", () => {
+  describe("createImageLoaderSystem", () => {
+    it("should create a loader system", () => {
+      const system = createImageLoaderSystem();
 
-      expect(typeof loader).toBe("function");
+      expect(typeof system.createLoader).toBe("function");
     });
 
     it("should handle Cloudinary URLs", () => {
-      const loader = createImageLoader();
+      const system = createImageLoaderSystem();
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         quality: 75,
         src: "https://res.cloudinary.com/demo/image/upload/v1234567890/sample.jpg",
@@ -39,7 +44,11 @@ describe("Image Loader", () => {
     });
 
     it("should handle Unsplash URLs", () => {
-      const loader = createImageLoader();
+      const system = createImageLoaderSystem();
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         quality: 80,
         src: "https://images.unsplash.com/photo-1234567890",
@@ -55,7 +64,11 @@ describe("Image Loader", () => {
     });
 
     it("should handle Imgix URLs", () => {
-      const loader = createImageLoader();
+      const system = createImageLoaderSystem();
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         quality: 85,
         src: "https://example.imgix.net/image.jpg",
@@ -70,7 +83,11 @@ describe("Image Loader", () => {
     });
 
     it("should handle AWS CloudFront URLs", () => {
-      const loader = createImageLoader();
+      const system = createImageLoaderSystem();
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         quality: 90,
         src: "https://d1234567890.cloudfront.net/image.jpg",
@@ -85,7 +102,11 @@ describe("Image Loader", () => {
     });
 
     it("should handle Supabase URLs", () => {
-      const loader = createImageLoader();
+      const system = createImageLoaderSystem();
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         quality: 70,
         src: "https://xyz.supabase.co/storage/v1/object/public/bucket/image.jpg",
@@ -100,7 +121,11 @@ describe("Image Loader", () => {
     });
 
     it("should fallback to original URL for unknown domains", () => {
-      const loader = createImageLoader();
+      const system = createImageLoaderSystem();
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         quality: 60,
         src: "https://example.com/image.jpg",
@@ -113,7 +138,11 @@ describe("Image Loader", () => {
     });
 
     it("should use default quality when not specified", () => {
-      const loader = createImageLoader({ defaultQuality: 85 });
+      const system = createImageLoaderSystem({ defaultQuality: 85 });
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
+      
       const config = {
         src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
         width: 800,
@@ -125,9 +154,12 @@ describe("Image Loader", () => {
     });
 
     it("should handle custom loaders", () => {
-      const loader = createImageLoader({
+      const system = createImageLoaderSystem({
         customLoaders: [customLoader],
       });
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
 
       const config = {
         quality: 75,
@@ -141,9 +173,12 @@ describe("Image Loader", () => {
     });
 
     it("should handle errors in loaders gracefully", () => {
-      const loader = createImageLoader({
+      const system = createImageLoaderSystem({
         customLoaders: [faultyLoader],
       });
+
+      system.registerBuiltInLoaders(builtInLoaders);
+      const loader = system.createLoader();
 
       const config = {
         quality: 60,
@@ -157,19 +192,21 @@ describe("Image Loader", () => {
     });
   });
 
-  describe("defaultImageLoader", () => {
-    it("should be a function", () => {
-      expect(typeof defaultImageLoader).toBe("function");
+  describe("defaultImageLoaderSystem", () => {
+    it("should be a system instance", () => {
+      expect(typeof defaultImageLoaderSystem.createLoader).toBe("function");
     });
 
     it("should work with Cloudinary URLs", () => {
+      const loader = defaultImageLoaderSystem.createLoader();
+      
       const config = {
         quality: 75,
         src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
         width: 800,
       };
 
-      const result = defaultImageLoader(config);
+      const result = loader(config);
 
       expect(result).toContain("w_800");
       expect(result).toContain("q_75");
