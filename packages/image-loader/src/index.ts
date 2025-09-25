@@ -8,7 +8,7 @@
 /**
  * Factory functions for creating image loader systems
  */
-export { createImageLoaderSystem, defaultImageLoaderSystem } from "./factory";
+export { createImageLoaderSystem, defaultImageLoaderSystem } from "@/factory";
 
 /**
  * Export individual loaders for advanced usage
@@ -22,7 +22,7 @@ export {
   imgixLoader,
   supabaseLoader,
   unsplashLoader,
-} from "./loaders";
+} from "@/loaders";
 
 /**
  * Export extended loaders for additional CDN providers
@@ -38,24 +38,19 @@ export {
   sanityLoader,
   sirvLoader,
   thumborLoader,
-} from "./loaders/extended-loaders";
+} from "@/loaders/extended-loaders";
 
 /**
  * Export utility functions for URL manipulation and validation
  */
-export {
-  ensureProtocol,
-  extractDomain,
-  normalizeConfig,
-  validateConfig,
-} from "./utils";
+export { ensureProtocol, extractDomain, normalizeConfig, validateConfig } from "@/utils";
 
 /**
  * Export core classes for advanced usage and customization
  */
-export { ImageLoaderSystem } from "./core/image-loader-system";
-export { LoaderDefinitionBuilder } from "./core/loader-builder";
-export { LoaderRegistry } from "./core/loader-registry";
+export { ImageLoaderSystem } from "@/core/image-loader-system";
+export { LoaderDefinitionBuilder } from "@/core/loader-builder";
+export { LoaderRegistry } from "@/core/loader-registry";
 
 /**
  * Export TypeScript type definitions
@@ -65,4 +60,4 @@ export type {
   ImageLoaderProps,
   ImageLoaderSystemConfig,
   LoaderDefinition,
-} from "./types";
+} from "@/types";
