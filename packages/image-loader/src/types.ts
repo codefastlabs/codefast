@@ -19,13 +19,31 @@ export interface LoaderDefinition {
 }
 
 /**
- * Configuration for creating image loader
+ * Configuration for creating image loader (legacy interface for backward compatibility)
  */
 export interface ImageLoaderConfig {
   /** Custom loaders to register */
   customLoaders?: ImageLoaderFunction[];
   /** Default quality to use when not specified */
   defaultQuality?: number;
+}
+
+/**
+ * Enhanced configuration for the new image loader system
+ */
+export interface ImageLoaderSystemConfig {
+  /** Custom loaders to register */
+  customLoaders?: ImageLoaderFunction[];
+  /** Enable debug logging */
+  debug?: boolean;
+  /** Default quality to use when not specified */
+  defaultQuality?: number;
+  /** Enable/disable caching */
+  enableCaching?: boolean;
+  /** Loader priority order (higher number = higher priority) */
+  loaderPriorities?: Record<string, number>;
+  /** Maximum cache size for performance optimization */
+  maxCacheSize?: number;
 }
 
 /**
