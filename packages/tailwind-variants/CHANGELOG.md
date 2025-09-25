@@ -1,6 +1,6 @@
 # @codefast/tailwind-variants
 
-## 1.0.1-canary.2
+## 0.3.7-canary.2
 
 ### Patch Changes
 
