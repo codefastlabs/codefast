@@ -1,6 +1,6 @@
 {
   "name": "@codefast/ui",
-  "version": "1.0.1-canary.2",
+  "version": "1.0.1-canary.3",
   "description": "Core UI components library built with React and Tailwind CSS",
   "keywords": [
     "ui",
