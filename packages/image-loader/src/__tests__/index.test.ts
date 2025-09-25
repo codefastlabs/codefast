@@ -1,171 +1,178 @@
-import * as ImageLoaderModule from "@/index";
+import type { ImageLoaderProps } from "next/image";
 
-describe("index exports", () => {
-  describe("type exports", () => {
-    it("should export CDNProvider type", () => {
-      // Test that CDNProvider type is available (compile-time check)
-      const provider: ImageLoaderModule.CDNProvider = "cloudinary";
+import { createImageLoader, defaultImageLoader } from "..";
 
-      expect(provider).toBe("cloudinary");
+const customLoader = (config: ImageLoaderProps): string => {
+  if (config.src.includes("custom.com")) {
+    return `${config.src}?w=${config.width}&q=${config.quality ?? 75}`;
+  }
+
+  throw new Error("Not a custom URL");
+};
+
+const faultyLoader = (): string => {
+  throw new Error("Loader error");
+};
+
+describe("Image Loader", () => {
+  describe("createImageLoader", () => {
+    it("should create a loader function", () => {
+      const loader = createImageLoader();
+
+      expect(typeof loader).toBe("function");
     });
 
-    it("should export ImageLoader interface", () => {
-      // Test that ImageLoader interface is available (compile-time check)
-      const mockLoader: ImageLoaderModule.ImageLoader = {
-        canHandle: jest.fn(),
-        getName: jest.fn(),
-        load: jest.fn(),
+    it("should handle Cloudinary URLs", () => {
+      const loader = createImageLoader();
+      const config = {
+        quality: 75,
+        src: "https://res.cloudinary.com/demo/image/upload/v1234567890/sample.jpg",
+        width: 800,
       };
 
-      expect(mockLoader).toBeDefined();
-      expect(typeof mockLoader.load).toBe("function");
-      expect(typeof mockLoader.canHandle).toBe("function");
-      expect(typeof mockLoader.getName).toBe("function");
+      const result = loader(config);
+
+      expect(result).toContain("w_800");
+      expect(result).toContain("q_75");
+      expect(result).toContain("f_auto");
+      expect(result).toContain("c_fill");
     });
 
-    it("should export ImageLoaderFactoryConfig interface", () => {
-      // Test that ImageLoaderFactoryConfig interface is available (compile-time check)
-      const config: ImageLoaderModule.ImageLoaderFactoryConfig = {
-        defaultQuality: 80,
-        domainMappings: { "example.com": "cdn.example.com" },
+    it("should handle Unsplash URLs", () => {
+      const loader = createImageLoader();
+      const config = {
+        quality: 80,
+        src: "https://images.unsplash.com/photo-1234567890",
+        width: 600,
       };
 
-      expect(config.defaultQuality).toBe(80);
-      expect(config.domainMappings).toEqual({ "example.com": "cdn.example.com" });
+      const result = loader(config);
+
+      expect(result).toContain("w=600");
+      expect(result).toContain("q=80");
+      expect(result).toContain("fm=auto");
+      expect(result).toContain("fit=crop");
+    });
+
+    it("should handle Imgix URLs", () => {
+      const loader = createImageLoader();
+      const config = {
+        quality: 85,
+        src: "https://example.imgix.net/image.jpg",
+        width: 400,
+      };
+
+      const result = loader(config);
+
+      expect(result).toContain("w=400");
+      expect(result).toContain("q=85");
+      expect(result).toContain("auto=format");
+    });
+
+    it("should handle AWS CloudFront URLs", () => {
+      const loader = createImageLoader();
+      const config = {
+        quality: 90,
+        src: "https://d1234567890.cloudfront.net/image.jpg",
+        width: 300,
+      };
+
+      const result = loader(config);
+
+      expect(result).toContain("w=300");
+      expect(result).toContain("q=90");
+      expect(result).toContain("f=auto");
+    });
+
+    it("should handle Supabase URLs", () => {
+      const loader = createImageLoader();
+      const config = {
+        quality: 70,
+        src: "https://xyz.supabase.co/storage/v1/object/public/bucket/image.jpg",
+        width: 500,
+      };
+
+      const result = loader(config);
+
+      expect(result).toContain("width=500");
+      expect(result).toContain("quality=70");
+      expect(result).toContain("format=auto");
+    });
+
+    it("should fallback to original URL for unknown domains", () => {
+      const loader = createImageLoader();
+      const config = {
+        quality: 60,
+        src: "https://example.com/image.jpg",
+        width: 200,
+      };
+
+      const result = loader(config);
+
+      expect(result).toBe(config.src);
+    });
+
+    it("should use default quality when not specified", () => {
+      const loader = createImageLoader({ defaultQuality: 85 });
+      const config = {
+        src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+        width: 800,
+      };
+
+      const result = loader(config);
+
+      expect(result).toContain("q_85");
+    });
+
+    it("should handle custom loaders", () => {
+      const loader = createImageLoader({
+        customLoaders: [customLoader],
+      });
+
+      const config = {
+        quality: 75,
+        src: "https://custom.com/image.jpg",
+        width: 400,
+      };
+
+      const result = loader(config);
+
+      expect(result).toBe("https://custom.com/image.jpg?w=400&q=75");
+    });
+
+    it("should handle errors in loaders gracefully", () => {
+      const loader = createImageLoader({
+        customLoaders: [faultyLoader],
+      });
+
+      const config = {
+        quality: 60,
+        src: "https://example.com/image.jpg",
+        width: 200,
+      };
+
+      const result = loader(config);
+
+      expect(result).toBe(config.src);
     });
   });
 
-  describe("class exports", () => {
-    it("should export BaseImageLoader", () => {
-      expect(ImageLoaderModule.BaseImageLoader).toBeDefined();
-      expect(typeof ImageLoaderModule.BaseImageLoader).toBe("function");
+  describe("defaultImageLoader", () => {
+    it("should be a function", () => {
+      expect(typeof defaultImageLoader).toBe("function");
     });
 
-    it("should export ImageLoaderFactory", () => {
-      expect(ImageLoaderModule.ImageLoaderFactory).toBeDefined();
-      expect(typeof ImageLoaderModule.ImageLoaderFactory).toBe("function");
-
-      const factory = new ImageLoaderModule.ImageLoaderFactory();
-
-      expect(factory).toBeInstanceOf(ImageLoaderModule.ImageLoaderFactory);
-    });
-
-    it("should export defaultImageLoaderFactory", () => {
-      expect(ImageLoaderModule.defaultImageLoaderFactory).toBeDefined();
-      expect(ImageLoaderModule.defaultImageLoaderFactory).toBeInstanceOf(
-        ImageLoaderModule.ImageLoaderFactory,
-      );
-    });
-  });
-
-  describe("loader exports", () => {
-    it("should export AWSCloudFrontLoader", () => {
-      expect(ImageLoaderModule.AWSCloudFrontLoader).toBeDefined();
-      expect(typeof ImageLoaderModule.AWSCloudFrontLoader).toBe("function");
-
-      const loader = new ImageLoaderModule.AWSCloudFrontLoader();
-
-      expect(loader).toBeInstanceOf(ImageLoaderModule.AWSCloudFrontLoader);
-      expect(loader.getName()).toBe("aws-cloudfront");
-    });
-
-    it("should export CloudinaryLoader", () => {
-      expect(ImageLoaderModule.CloudinaryLoader).toBeDefined();
-      expect(typeof ImageLoaderModule.CloudinaryLoader).toBe("function");
-
-      const loader = new ImageLoaderModule.CloudinaryLoader();
-
-      expect(loader).toBeInstanceOf(ImageLoaderModule.CloudinaryLoader);
-      expect(loader.getName()).toBe("cloudinary");
-    });
-
-    it("should export ImgixLoader", () => {
-      expect(ImageLoaderModule.ImgixLoader).toBeDefined();
-      expect(typeof ImageLoaderModule.ImgixLoader).toBe("function");
-
-      const loader = new ImageLoaderModule.ImgixLoader();
-
-      expect(loader).toBeInstanceOf(ImageLoaderModule.ImgixLoader);
-      expect(loader.getName()).toBe("imgix");
-    });
-
-    it("should export SupabaseLoader", () => {
-      expect(ImageLoaderModule.SupabaseLoader).toBeDefined();
-      expect(typeof ImageLoaderModule.SupabaseLoader).toBe("function");
-
-      const loader = new ImageLoaderModule.SupabaseLoader();
-
-      expect(loader).toBeInstanceOf(ImageLoaderModule.SupabaseLoader);
-      expect(loader.getName()).toBe("supabase");
-    });
-
-    it("should export UnsplashLoader", () => {
-      expect(ImageLoaderModule.UnsplashLoader).toBeDefined();
-      expect(typeof ImageLoaderModule.UnsplashLoader).toBe("function");
-
-      const loader = new ImageLoaderModule.UnsplashLoader();
-
-      expect(loader).toBeInstanceOf(ImageLoaderModule.UnsplashLoader);
-      expect(loader.getName()).toBe("unsplash");
-    });
-  });
-
-  describe("utility function exports", () => {
-    it("should export createDefaultImageLoaderFactory", () => {
-      expect(ImageLoaderModule.createDefaultImageLoaderFactory).toBeDefined();
-      expect(typeof ImageLoaderModule.createDefaultImageLoaderFactory).toBe("function");
-
-      const factory = ImageLoaderModule.createDefaultImageLoaderFactory();
-
-      expect(factory).toBeInstanceOf(ImageLoaderModule.ImageLoaderFactory);
-    });
-
-    it("should export registerDefaultLoaders", () => {
-      expect(ImageLoaderModule.registerDefaultLoaders).toBeDefined();
-      expect(typeof ImageLoaderModule.registerDefaultLoaders).toBe("function");
-
-      const factory = new ImageLoaderModule.ImageLoaderFactory();
-
-      expect(() => {
-        ImageLoaderModule.registerDefaultLoaders(factory);
-      }).not.toThrow();
-    });
-  });
-
-  describe("integration test", () => {
-    it("should allow creating a working image loader setup", () => {
-      // Test that all exports work together
-      const factory = ImageLoaderModule.createDefaultImageLoaderFactory();
-
-      // Test loading images from different CDNs
-      const cloudinaryUrl = factory.load({
+    it("should work with Cloudinary URLs", () => {
+      const config = {
         quality: 75,
         src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
         width: 800,
-      });
+      };
 
-      expect(cloudinaryUrl).toContain("w_800");
-      expect(cloudinaryUrl).toContain("q_75");
+      const result = defaultImageLoader(config);
 
-      const unsplashUrl = factory.load({
-        quality: 90,
-        src: "https://images.unsplash.com/photo-123",
-        width: 600,
-      });
-
-      expect(unsplashUrl).toContain("w=600");
-      expect(unsplashUrl).toContain("q=90");
-    });
-
-    it("should allow manual loader registration", () => {
-      const factory = new ImageLoaderModule.ImageLoaderFactory();
-      const cloudinaryLoader = new ImageLoaderModule.CloudinaryLoader();
-
-      factory.registerLoader(cloudinaryLoader);
-
-      const loader = factory.findLoader("https://res.cloudinary.com/demo/image/upload/sample.jpg");
-
-      expect(loader).toBe(cloudinaryLoader);
+      expect(result).toContain("w_800");
+      expect(result).toContain("q_75");
     });
   });
 });

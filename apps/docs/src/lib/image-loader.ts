@@ -2,87 +2,84 @@ import type { ImageLoaderProps } from "next/image";
 
 import queryString from "query-string";
 
-import { BaseImageLoader, createDefaultImageLoaderFactory } from "@codefast/image-loader";
+import { createImageLoader, extractDomain } from "@codefast/image-loader";
 
 /**
- * Custom loader example for GitHub raw content
- * Demonstrates how easy it is to extend the image loader system
+ * Custom loader for GitHub raw content
+ * Demonstrates how easy it is to extend the functional image loader system
  */
-class GitHubRawLoader extends BaseImageLoader {
-  private static readonly DOMAIN_PATTERN = /raw\.githubusercontent\.com$/;
-  private static readonly NAME = "github-raw";
+const githubRawLoader = (config: ImageLoaderProps): string => {
+  const { src, width } = config;
 
-  public getName(): string {
-    return GitHubRawLoader.NAME;
+  try {
+    // For GitHub raw content, we can add query parameters for caching
+    const queryParams = {
+      cache: "max-age=31536000", // 1-year cache
+      w: width.toString(),
+    };
+
+    return queryString.stringifyUrl({ query: queryParams, url: src });
+  } catch (error) {
+    console.warn(`Failed to transform GitHub raw URL: ${src}`, error);
+
+    return src;
   }
-
-  public canHandle(source: string): boolean {
-    const domain = this.extractDomain(source);
-
-    return GitHubRawLoader.DOMAIN_PATTERN.test(domain);
-  }
-
-  protected transformUrl(config: ImageLoaderProps): string {
-    const { src, width } = config;
-
-    try {
-      // For GitHub raw content, we can add query parameters for caching
-      const queryParams = {
-        cache: "max-age=31536000", // 1-year cache
-        w: width.toString(),
-      };
-
-      return queryString.stringifyUrl({ query: queryParams, url: src });
-    } catch (error) {
-      console.warn(`Failed to transform GitHub raw URL: ${src}`, error);
-
-      return src;
-    }
-  }
-}
+};
 
 /**
  * Custom loader for local development images
  * Shows how to handle local/development scenarios
  */
-class LocalDevLoader extends BaseImageLoader {
-  private static readonly NAME = "local-dev";
+const localDevLoader = (config: ImageLoaderProps): string => {
+  const { quality, src, width } = config;
 
-  public getName(): string {
-    return LocalDevLoader.NAME;
-  }
+  // For local development, add query parameters for debugging
+  const queryParams = {
+    dev: "true",
+    q: quality?.toString() ?? "auto",
+    w: width.toString(),
+  };
 
-  public canHandle(source: string): boolean {
-    return source.startsWith("/") || source.startsWith("./") || source.includes("localhost");
-  }
-
-  protected transformUrl(config: ImageLoaderProps): string {
-    const { quality, src, width } = config;
-
-    // For local development, add query parameters for debugging
-    const queryParams = {
-      dev: "true",
-      q: quality?.toString() ?? "auto",
-      w: width.toString(),
-    };
-
-    return queryString.stringifyUrl({ query: queryParams, url: src });
-  }
-}
+  return queryString.stringifyUrl({ query: queryParams, url: src });
+};
 
 /**
- * Image loader factory instance for the doc app
+ * Image loader for the doc app
  * Pre-configured with all default CDN loaders plus custom loaders
  *
- * This demonstrates the extensibility of the image loader system:
+ * This demonstrates the simplicity of the functional approach:
  * 1. Start with default loaders for common CDNs
  * 2. Add custom loaders for specific needs
- * 3. Configure domain mappings if needed
+ * 3. Simple configuration without complex factory patterns
  */
-const imageLoaderFactory = createDefaultImageLoaderFactory();
+const documentImageLoader = createImageLoader({
+  customLoaders: [
+    // Custom loader for GitHub raw content
+    (config): string => {
+      const domain = extractDomain(config.src);
 
-// Register custom loaders - demonstrates easy extensibility
-imageLoaderFactory.registerLoaders([new GitHubRawLoader(), new LocalDevLoader()]);
+      if (domain.endsWith("raw.githubusercontent.com")) {
+        return githubRawLoader(config);
+      }
+
+      throw new Error("Not a GitHub raw URL");
+    },
+
+    // Custom loader for local development
+    (config): string => {
+      if (
+        config.src.startsWith("/") ||
+        config.src.startsWith("./") ||
+        config.src.includes("localhost")
+      ) {
+        return localDevLoader(config);
+      }
+
+      throw new Error("Not a local development URL");
+    },
+  ],
+  defaultQuality: 80,
+});
 
 /**
  * Next.js compatible image loader function
@@ -90,15 +87,15 @@ imageLoaderFactory.registerLoaders([new GitHubRawLoader(), new LocalDevLoader()]
  *
  * Features:
  * - Automatic CDN detection and optimization
- * - Performance caching for repeated requests
+ * - Custom loaders for GitHub and local development
  * - Fallback to the original URL if no loader matches
- * - Easy extensibility with custom loaders
+ * - Simple functional approach without complex abstractions
  *
  * @param params - Image loader parameters from Next.js
  * @returns Transformed image URL optimized for the detected CDN
  */
 export function imageLoader(params: ImageLoaderProps): string {
-  return imageLoaderFactory.load(params);
+  return documentImageLoader(params);
 }
 
 // Export the main loader function as default for convenience
