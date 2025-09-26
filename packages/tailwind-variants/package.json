@@ -1,6 +1,6 @@
 {
   "name": "@codefast/tailwind-variants",
-  "version": "0.3.7-canary.4",
+  "version": "0.3.7",
   "description": "Tailwind CSS variants utilities with enhanced functionality and advanced type safety",
   "keywords": [
     "tailwind",
