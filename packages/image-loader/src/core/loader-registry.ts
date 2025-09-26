@@ -44,7 +44,7 @@ export class LoaderRegistry {
       return this.loaders.get(cachedLoader) ?? null;
     }
 
-    // Find matching loader
+    // Find a matching loader
     for (const [, definition] of this.loaders) {
       if (definition.canHandle(src)) {
         // Cache the result
