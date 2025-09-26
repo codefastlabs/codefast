@@ -1,6 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-import type { LoaderConfig, LoaderFunction } from "./types";
+import type { LoaderConfig, LoaderFunction } from "@/core/types";
 
 /**
  * Core image loader with registry pattern and configuration-driven approach
@@ -31,7 +31,7 @@ export class ImageLoader {
     const { src } = params;
 
     try {
-      // Find matching loader using matcher functions
+      // Find a matching loader using matcher functions
       for (const { loader, matcher } of this.loaders) {
         if (matcher(src)) {
           return loader(params);

@@ -1,6 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-import { createCustomImageLoader } from "@codefast/image-loader";
+import { createCustomImageLoader, defaultLoaderConfigs } from "@codefast/image-loader";
 
 /**
  * Custom loader for GitHub raw content
@@ -64,6 +64,7 @@ export const imageLoader: (params: ImageLoaderProps) => string = createCustomIma
         src.startsWith("/") || src.startsWith("./") || src.includes("localhost"),
       name: "local-dev",
     },
+    ...defaultLoaderConfigs,
   ],
 });
 
