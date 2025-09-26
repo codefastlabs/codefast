@@ -1,5 +1,15 @@
 # @codefast-ui/input
 
+## 0.3.8-canary.1
+
+### Patch Changes
+
+- [`a5d483b`](https://github.com/codefastlabs/codefast/commit/a5d483b6232088b6d74e6146e0d1510843241ad0) Thanks [@thevuong](https://github.com/thevuong)! - refactor(jest-setup): extract custom matcher declarations to dedicated file
+
+- [`9de2f17`](https://github.com/codefastlabs/codefast/commit/9de2f173fcac4ffe2dc919b98029321468a25b4b) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update styles version and dependencies for animations and typography
+
+- [`1163fa8`](https://github.com/codefastlabs/codefast/commit/1163fa802d29abb68a53eb403295ef1a27cdc7d9) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): add support for multiple configuration presets in exports
+
 ## 0.3.8-canary.0
 
 ### Patch Changes
