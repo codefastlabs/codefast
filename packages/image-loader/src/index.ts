@@ -6,6 +6,7 @@ import { createImageLoader } from "@/core/image-loader";
 import { defaultLoaderConfigs } from "@/core/loader-registry";
 
 export { defaultLoaderConfigs } from "@/core/loader-registry";
+export { isDomainMatch, isLocalPath, isPathMatch } from "@/utils/url-matcher";
 
 /**
  * Default image loader instance

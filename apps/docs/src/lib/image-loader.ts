@@ -1,6 +1,11 @@
 import type { ImageLoaderProps } from "next/image";
 
-import { createCustomImageLoader, defaultLoaderConfigs } from "@codefast/image-loader";
+import {
+  createCustomImageLoader,
+  defaultLoaderConfigs,
+  isDomainMatch,
+  isLocalPath,
+} from "@codefast/image-loader";
 
 /**
  * Custom loader for GitHub raw content
@@ -55,13 +60,12 @@ export const imageLoader: (params: ImageLoaderProps) => string = createCustomIma
   loaders: [
     {
       loader: githubRawLoader,
-      matcher: (src): boolean => src.includes("raw.githubusercontent.com"),
+      matcher: (src): boolean => isDomainMatch(src, "raw.githubusercontent.com"),
       name: "github-raw",
     },
     {
       loader: localDevLoader,
-      matcher: (src): boolean =>
-        src.startsWith("/") || src.startsWith("./") || src.includes("localhost"),
+      matcher: (src): boolean => isLocalPath(src),
       name: "local-dev",
     },
     ...defaultLoaderConfigs,
