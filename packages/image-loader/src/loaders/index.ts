@@ -1,10 +1,11 @@
 /**
  * Image loaders for various CDN providers
  *
- * Each loader is a simple function that transforms image URLs
- * for specific CDN providers based on Next.js documentation.
+ * These loaders are used internally by the defaultLoaderConfigs
+ * and are not exported individually to reduce bundle size.
  */
 
+// Internal exports for use in loader-registry.ts
 export { cloudflareLoader } from "@/loaders/cloudflare";
 export { cloudfrontLoader } from "@/loaders/cloudfront";
 export { cloudinaryLoader } from "@/loaders/cloudinary";
