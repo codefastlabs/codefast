@@ -1,7 +1,4 @@
-import {
-  ensureProtocol,
-  extractDomain,
-} from "../utils";
+import { ensureProtocol, extractDomain } from "@/utils";
 
 describe("Utility Functions", () => {
   describe("extractDomain", () => {

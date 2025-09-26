@@ -1,7 +1,7 @@
 import type { ImageLoaderProps } from "next/image";
 
-import { createImageLoaderSystem, defaultImageLoaderSystem } from "../factory";
-import { builtInLoaders } from "../loaders";
+import { createImageLoaderSystem, defaultImageLoaderSystem } from "@/factory";
+import { builtInLoaders } from "@/loaders";
 
 const customLoader = (config: ImageLoaderProps): string => {
   if (config.src.includes("custom.com")) {
@@ -28,7 +28,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         quality: 75,
         src: "https://res.cloudinary.com/demo/image/upload/v1234567890/sample.jpg",
@@ -48,7 +48,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         quality: 80,
         src: "https://images.unsplash.com/photo-1234567890",
@@ -68,7 +68,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         quality: 85,
         src: "https://example.imgix.net/image.jpg",
@@ -87,7 +87,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         quality: 90,
         src: "https://d1234567890.cloudfront.net/image.jpg",
@@ -106,7 +106,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         quality: 70,
         src: "https://xyz.supabase.co/storage/v1/object/public/bucket/image.jpg",
@@ -125,7 +125,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         quality: 60,
         src: "https://example.com/image.jpg",
@@ -142,7 +142,7 @@ describe("Image Loader System", () => {
 
       system.registerBuiltInLoaders(builtInLoaders);
       const loader = system.createLoader();
-      
+
       const config = {
         src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
         width: 800,
@@ -199,7 +199,7 @@ describe("Image Loader System", () => {
 
     it("should work with Cloudinary URLs", () => {
       const loader = defaultImageLoaderSystem.createLoader();
-      
+
       const config = {
         quality: 75,
         src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
