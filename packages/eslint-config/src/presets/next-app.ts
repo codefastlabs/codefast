@@ -10,7 +10,7 @@ export const nextAppPreset: Linter.Config[] = composeConfig(
   [
     // Ignore Next.js generated files
     {
-      ignores: ["next-env.d.ts", ".next/**/*", "out/**/*", "build/**/*", "dist/**/*"],
+      ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"],
     },
   ],
   reactAppPresetCore,
