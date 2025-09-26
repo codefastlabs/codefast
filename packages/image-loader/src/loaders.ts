@@ -17,15 +17,14 @@ import {
   sirvLoader,
   thumborLoader,
 } from "@/loaders/extended-loaders";
-import { normalizeConfig, validateConfig } from "@/utils";
+// Note: validateConfig and normalizeConfig removed - Next.js handles validation
 
 /**
  * Cloudinary image loader
  * Handles images from *.cloudinary.com domains
  */
 export const cloudinaryLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -65,8 +64,7 @@ export const cloudinaryLoader: ImageLoaderFunction = (config: ImageLoaderProps):
  * Handles images from images.unsplash.com
  */
 export const unsplashLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const params = {
@@ -89,8 +87,7 @@ export const unsplashLoader: ImageLoaderFunction = (config: ImageLoaderProps): s
  * Handles images from *.imgix.net domains
  */
 export const imgixLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const params = {
@@ -112,8 +109,7 @@ export const imgixLoader: ImageLoaderFunction = (config: ImageLoaderProps): stri
  * Handles images from *.cloudfront.net domains
  */
 export const awsCloudFrontLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const params = {
@@ -135,8 +131,7 @@ export const awsCloudFrontLoader: ImageLoaderFunction = (config: ImageLoaderProp
  * Handles images from *.supabase.co domains
  */
 export const supabaseLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const params = {

@@ -1,5 +1,12 @@
 /**
  * Utility functions for image loading
+ * 
+ * These utilities focus on CDN-specific operations that are not handled by Next.js:
+ * - URL protocol normalization for CDN URLs
+ * - Domain extraction for loader matching
+ * 
+ * Note: Configuration validation is handled by Next.js built-in type checking
+ * and runtime validation, so we don't duplicate that functionality here.
  */
 
 /**
@@ -33,40 +40,4 @@ export function ensureProtocol(url: string, defaultProtocol = "https"): string {
   }
   
   return url;
-}
-
-/**
- * Validates image loader configuration
- * @param config - Image loader configuration
- * @throws Error if configuration is invalid
- */
-export function validateConfig(config: { src: string; width?: number; quality?: number }): void {
-  if (!config.src) {
-    throw new Error("Image source URL is required");
-  }
-  
-  if (config.width !== undefined && config.width <= 0) {
-    throw new Error("Image width must be a positive number");
-  }
-  
-  if (config.quality !== undefined && (config.quality < 1 || config.quality > 100)) {
-    throw new Error("Image quality must be between 1 and 100");
-  }
-}
-
-/**
- * Normalizes configuration with defaults
- * @param config - Image loader configuration
- * @param defaultQuality - Default quality to use
- * @returns Normalized configuration
- */
-export function normalizeConfig(
-  config: { src: string; width?: number; quality?: number },
-  defaultQuality = 75
-): { src: string; width: number; quality: number } {
-  return {
-    quality: config.quality ?? defaultQuality,
-    src: config.src,
-    width: config.width ?? 800,
-  };
 }
