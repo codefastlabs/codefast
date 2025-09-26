@@ -28,12 +28,3 @@ export interface ImageLoaderOptions {
   /** Custom loaders to register */
   loaders?: LoaderConfig[];
 }
-
-/**
- * Loader registry entry
- */
-export interface LoaderRegistryEntry {
-  loader: LoaderFunction;
-  matcher: (src: string) => boolean;
-  name: string;
-}

@@ -1,9 +1,9 @@
 import type { ImageLoaderProps } from "next/image";
 
-import type { LoaderConfig, LoaderFunction } from "./core/types";
+import type { LoaderConfig, LoaderFunction } from "@/core/types";
 
-import { createImageLoader } from "./core/image-loader";
-import { defaultLoaderConfigs } from "./core/loader-registry";
+import { createImageLoader } from "@/core/image-loader";
+import { defaultLoaderConfigs } from "@/core/loader-registry";
 
 // Export individual loaders for advanced usage
 export {
@@ -22,12 +22,12 @@ export {
   supabaseLoader,
   thumborLoader,
   unsplashLoader,
-} from "./loaders";
+} from "@/loaders";
 
-export { createImageLoader, ImageLoader } from "./core/image-loader";
-export { createLoaderRegistry, defaultLoaderConfigs } from "./core/loader-registry";
+export { createImageLoader, ImageLoader } from "@/core/image-loader";
+export { createLoaderRegistry, defaultLoaderConfigs } from "@/core/loader-registry";
 // Export core types and utilities
-export type { ImageLoaderOptions, LoaderConfig, LoaderFunction } from "./core/types";
+export type { ImageLoaderOptions, LoaderConfig, LoaderFunction } from "@/core/types";
 
 /**
  * Default image loader instance
