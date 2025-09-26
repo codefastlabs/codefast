@@ -74,46 +74,41 @@ export const defaultLoaderConfigs: LoaderConfig[] = [
     name: "cdn.sanity.io",
   },
   {
-    loader: cloudflareLoader,
-    matcher: (src) => src.includes("cloudflare") || src.includes("/cdn-cgi/image/"),
-    name: "cloudflare",
-    // No domain: complex matcher requires fallback to linear search
-  },
-  {
-    loader: fastlyLoader,
-    matcher: (src) => src.includes("fastly"),
-    name: "fastly",
-    // No domain: generic matcher requires fallback to linear search
-  },
-  {
-    loader: gumletLoader,
-    matcher: (src) => src.includes("gumlet"),
-    name: "gumlet",
-    // No domain: generic matcher requires fallback to linear search
-  },
-  {
-    loader: imageengineLoader,
-    matcher: (src) => src.includes("imageengine") || src.includes("imgeng"),
-    name: "imageengine",
-    // No domain: complex matcher requires fallback to linear search
-  },
-  {
     domain: "pixelbin.io",
     loader: pixelbinLoader,
     matcher: (src) => src.includes("pixelbin.io"),
     name: "pixelbin.io",
   },
+
+  {
+    loader: cloudflareLoader,
+    matcher: (src) => src.includes("cloudflare") || src.includes("/cdn-cgi/image/"),
+    name: "cloudflare",
+  },
+  {
+    loader: fastlyLoader,
+    matcher: (src) => src.includes("fastly"),
+    name: "fastly",
+  },
+  {
+    loader: gumletLoader,
+    matcher: (src) => src.includes("gumlet"),
+    name: "gumlet",
+  },
+  {
+    loader: imageengineLoader,
+    matcher: (src) => src.includes("imageengine") || src.includes("imgeng"),
+    name: "imageengine",
+  },
   {
     loader: sirvLoader,
     matcher: (src) => src.includes("sirv"),
     name: "sirv",
-    // No domain: generic matcher requires fallback to linear search
   },
   {
     loader: thumborLoader,
     matcher: (src) => src.includes("thumbor"),
     name: "thumbor",
-    // No domain: generic matcher requires fallback to linear search
   },
 ];
 
