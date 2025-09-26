@@ -17,7 +17,7 @@ export class ImageLoaderSystem {
     this.config = {
       customLoaders: [],
       debug: false,
-      defaultQuality: 75,
+      defaultQuality: 80,
       enableCaching: true,
       loaderPriorities: {},
       maxCacheSize: 1000,
