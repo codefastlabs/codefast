@@ -1,11 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "allowJs": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

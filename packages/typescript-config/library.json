@@ -1,10 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "declaration": true,
-    "lib": ["ESNext"],
-    "sourceMap": true,
-    "stripInternal": true
+    "lib": ["ESNext"]
   },
   "display": "Library development configuration",
   "extends": "./base.json"
