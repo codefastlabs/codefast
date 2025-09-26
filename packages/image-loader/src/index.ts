@@ -1,99 +1,9 @@
 import type { ImageLoaderProps } from "next/image";
 
-import {
-  cloudflareLoader,
-  cloudfrontLoader,
-  cloudinaryLoader,
-  contentfulLoader,
-  fastlyLoader,
-  gumletLoader,
-  imageengineLoader,
-  imagekitLoader,
-  imgixLoader,
-  pixelbinLoader,
-  sanityLoader,
-  sirvLoader,
-  supabaseLoader,
-  thumborLoader,
-  unsplashLoader,
-} from "./loaders";
+import type { LoaderConfig, LoaderFunction } from "./core/types";
 
-/**
- * Simple image loader for Next.js
- *
- * This is a functional, KISS-compliant implementation that leverages Next.js built-in capabilities.
- * No complex abstractions, no unnecessary caching, no over-engineering.
- *
- * @param params - Image loader parameters from Next.js
- * @returns Transformed image URL optimized for the detected CDN
- */
-export function imageLoader(params: ImageLoaderProps): string {
-  const { src } = params;
-
-  // Simple domain-based routing - no complex registry needed
-  if (src.includes("cloudinary.com")) {
-    return cloudinaryLoader(params);
-  }
-
-  if (src.includes("imgix.net")) {
-    return imgixLoader(params);
-  }
-
-  if (src.includes("images.unsplash.com")) {
-    return unsplashLoader(params);
-  }
-
-  if (src.includes("cloudfront.net")) {
-    return cloudfrontLoader(params);
-  }
-
-  if (src.includes("supabase.co")) {
-    return supabaseLoader(params);
-  }
-
-  if (src.includes("ctfassets.net")) {
-    return contentfulLoader(params);
-  }
-
-  if (src.includes("imagekit.io")) {
-    return imagekitLoader(params);
-  }
-
-  if (src.includes("cdn.sanity.io")) {
-    return sanityLoader(params);
-  }
-
-  if (src.includes("cloudflare") || src.includes("/cdn-cgi/image/")) {
-    return cloudflareLoader(params);
-  }
-
-  if (src.includes("fastly")) {
-    return fastlyLoader(params);
-  }
-
-  if (src.includes("gumlet")) {
-    return gumletLoader(params);
-  }
-
-  if (src.includes("imageengine") || src.includes("imgeng")) {
-    return imageengineLoader(params);
-  }
-
-  if (src.includes("pixelbin.io")) {
-    return pixelbinLoader(params);
-  }
-
-  if (src.includes("sirv")) {
-    return sirvLoader(params);
-  }
-
-  if (src.includes("thumbor")) {
-    return thumborLoader(params);
-  }
-
-  // Fallback to original URL - Next.js will handle optimization
-  return src;
-}
+import { createImageLoader } from "./core/image-loader";
+import { defaultLoaderConfigs } from "./core/loader-registry";
 
 // Export individual loaders for advanced usage
 export {
@@ -114,5 +24,72 @@ export {
   unsplashLoader,
 } from "./loaders";
 
-// Export as default for convenience
-export default imageLoader;
+export { createImageLoader, ImageLoader } from "./core/image-loader";
+export { createLoaderRegistry, defaultLoaderConfigs } from "./core/loader-registry";
+// Export core types and utilities
+export type { ImageLoaderOptions, LoaderConfig, LoaderFunction } from "./core/types";
+
+/**
+ * Default image loader instance
+ *
+ * Pre-configured with all built-in CDN loaders for optimal performance
+ */
+const defaultImageLoader = createImageLoader(defaultLoaderConfigs);
+
+/**
+ * Main image loader function
+ *
+ * This is the primary entry point for the image loader package.
+ * It uses a registry pattern with O(1) lookup performance and
+ * configuration-driven approach for maximum flexibility.
+ *
+ * @param params - Image loader parameters from Next.js
+ * @returns Transformed image URL optimized for the detected CDN
+ *
+ * @example
+ * ```typescript
+ * import { imageLoader } from '@codefast/image-loader';
+ *
+ * // Basic usage
+ * const transformedUrl = imageLoader({
+ *   src: 'https://res.cloudinary.com/demo/image/upload/sample.jpg',
+ *   width: 800,
+ *   quality: 80
+ * });
+ * ```
+ */
+export function imageLoader(params: ImageLoaderProps): string {
+  return defaultImageLoader.transform(params);
+}
+
+/**
+ * Create a custom image loader with specific configuration
+ *
+ * @param config - Loader configuration options
+ * @returns Custom image loader function
+ *
+ * @example
+ * ```typescript
+ * import { createCustomImageLoader } from '@codefast/image-loader';
+ *
+ * // Custom loader with only specific CDNs
+ * const customLoader = createCustomImageLoader({
+ *   loaders: [
+ *     {
+ *       name: 'cloudinary',
+ *       matcher: (src) => src.includes('cloudinary.com'),
+ *       loader: cloudinaryLoader
+ *     }
+ *   ],
+ *   fallbackLoader: (params) => params.src
+ * });
+ * ```
+ */
+export function createCustomImageLoader(config: {
+  loaders?: LoaderConfig[];
+  fallbackLoader?: LoaderFunction;
+}): (params: ImageLoaderProps) => string {
+  const loader = createImageLoader(config.loaders, config.fallbackLoader);
+
+  return (params: ImageLoaderProps) => loader.transform(params);
+}
