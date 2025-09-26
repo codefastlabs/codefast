@@ -8,9 +8,7 @@ import { allLoaders, createImageLoaderSystem } from "@codefast/image-loader";
  * Custom loader for GitHub raw content
  * Demonstrates how easy it is to extend the functional image loader system
  */
-const githubRawLoader = (config: ImageLoaderProps): string => {
-  const { src, width } = config;
-
+const githubRawLoader = ({ src, width }: ImageLoaderProps): string => {
   try {
     // For GitHub raw content, we can add query parameters for caching
     const queryParams = {
@@ -30,9 +28,7 @@ const githubRawLoader = (config: ImageLoaderProps): string => {
  * Custom loader for local development images
  * Shows how to handle local/development scenarios
  */
-const localDevLoader = (config: ImageLoaderProps): string => {
-  const { quality, src, width } = config;
-
+const localDevLoader = ({ quality, src, width }: ImageLoaderProps): string => {
   // For local development, add query parameters for debugging
   const queryParams = {
     dev: "true",
@@ -53,7 +49,7 @@ const localDevLoader = (config: ImageLoaderProps): string => {
  * 3. Enable caching and performance optimizations
  * 4. Simple configuration with advanced features
  */
-const documentImageLoaderSystem = createImageLoaderSystem({
+const system = createImageLoaderSystem({
   customLoaders: [
     // Custom loader for GitHub raw content
     (config): string => {
@@ -84,9 +80,9 @@ const documentImageLoaderSystem = createImageLoaderSystem({
 });
 
 // Register all available loaders
-documentImageLoaderSystem.registerBuiltInLoaders(allLoaders);
+system.registerBuiltInLoaders(allLoaders);
 
-const documentImageLoader = documentImageLoaderSystem.createLoader();
+const loader = system.createLoader();
 
 /**
  * Next.js compatible image loader function
@@ -102,7 +98,7 @@ const documentImageLoader = documentImageLoaderSystem.createLoader();
  * @returns Transformed image URL optimized for the detected CDN
  */
 export function imageLoader(params: ImageLoaderProps): string {
-  return documentImageLoader(params);
+  return loader(params);
 }
 
 // Export the main loader function as default for convenience
