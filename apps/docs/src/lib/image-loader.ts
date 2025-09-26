@@ -1,101 +1,68 @@
 import type { ImageLoaderProps } from "next/image";
 
-import queryString from "query-string";
-
-import { allLoaders, createImageLoaderSystem } from "@codefast/image-loader";
+import { imageLoader as baseImageLoader } from "@codefast/image-loader";
 
 /**
  * Custom loader for GitHub raw content
- * Demonstrates how easy it is to extend the functional image loader system
+ * Demonstrates how easy it is to extend the simple image loader
  */
-const githubRawLoader = ({ src, width }: ImageLoaderProps): string => {
+function githubRawLoader({ src, width }: ImageLoaderProps): string {
   try {
-    // For GitHub raw content, we can add query parameters for caching
-    const queryParams = {
-      cache: "max-age=31536000", // 1-year cache
-      w: width.toString(),
-    };
+    const url = new URL(src);
 
-    return queryString.stringifyUrl({ query: queryParams, url: src });
-  } catch (error) {
-    console.warn(`Failed to transform GitHub raw URL: ${src}`, error);
+    url.searchParams.set("cache", "max-age=31536000"); // 1-year cache
+    url.searchParams.set("w", width.toString());
 
+    return url.toString();
+  } catch {
     return src;
   }
-};
+}
 
 /**
  * Custom loader for local development images
  * Shows how to handle local/development scenarios
  */
-const localDevLoader = ({ quality, src, width }: ImageLoaderProps): string => {
-  // For local development, add query parameters for debugging
-  const queryParams = {
-    dev: "true",
-    q: quality?.toString() ?? "auto",
-    w: width.toString(),
-  };
+function localDevLoader({ quality, src, width }: ImageLoaderProps): string {
+  try {
+    const url = new URL(src);
 
-  return queryString.stringifyUrl({ query: queryParams, url: src });
-};
+    url.searchParams.set("dev", "true");
+    url.searchParams.set("q", quality?.toString() ?? "auto");
+    url.searchParams.set("w", width.toString());
 
-/**
- * Image loader for the doc app
- * Pre-configured with all default CDN loaders plus custom loaders
- *
- * This demonstrates the enhanced system with performance optimizations:
- * 1. Start with all available loaders for common CDNs
- * 2. Add custom loaders for specific needs
- * 3. Enable caching and performance optimizations
- * 4. Simple configuration with advanced features
- */
-const system = createImageLoaderSystem({
-  customLoaders: [
-    // Custom loader for GitHub raw content
-    (config): string => {
-      if (config.src.includes("raw.githubusercontent.com")) {
-        return githubRawLoader(config);
-      }
-
-      throw new Error("Not a GitHub raw URL");
-    },
-
-    // Custom loader for local development
-    (config): string => {
-      if (
-        config.src.startsWith("/") ||
-        config.src.startsWith("./") ||
-        config.src.includes("localhost")
-      ) {
-        return localDevLoader(config);
-      }
-
-      throw new Error("Not a local development URL");
-    },
-  ],
-});
-
-// Register all available loaders
-system.registerBuiltInLoaders(allLoaders);
-
-const loader = system.createLoader();
+    return url.toString();
+  } catch {
+    return src;
+  }
+}
 
 /**
- * Next.js compatible image loader function
- * This function is used by the Next.js Image component to transform image URLs
+ * Enhanced image loader for the doc app
  *
- * Features:
- * - Automatic CDN detection and optimization
- * - Custom loaders for GitHub and local development
- * - Fallback to the original URL if no loader matches
- * - Simple functional approach without complex abstractions
+ * This demonstrates the simple, functional approach:
+ * 1. Use the base loader for common CDNs
+ * 2. Add custom logic for specific needs
+ * 3. Keep it simple and maintainable
  *
  * @param params - Image loader parameters from Next.js
  * @returns Transformed image URL optimized for the detected CDN
  */
 export function imageLoader(params: ImageLoaderProps): string {
-  return loader(params);
+  const { src } = params;
+
+  // Custom loaders for specific needs
+  if (src.includes("raw.githubusercontent.com")) {
+    return githubRawLoader(params);
+  }
+
+  if (src.startsWith("/") || src.startsWith("./") || src.includes("localhost")) {
+    return localDevLoader(params);
+  }
+
+  // Use the base loader for all other URLs
+  return baseImageLoader(params);
 }
 
-// Export the main loader function as default for convenience
+// Export as default for convenience
 export default imageLoader;
