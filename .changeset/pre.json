@@ -15,5 +15,9 @@
     "@codefast/typescript-config": "0.3.7",
     "@codefast/ui": "0.3.7"
   },
-  "changesets": []
+  "changesets": [
+    "fine-pianos-bake",
+    "fuzzy-carpets-travel",
+    "weak-badgers-brush"
+  ]
 }
