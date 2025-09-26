@@ -112,17 +112,3 @@ export const defaultLoaderConfigs: LoaderConfig[] = [
   },
 ];
 
-/**
- * Create a loader registry from configurations
- */
-export function createLoaderRegistry(
-  configs: LoaderConfig[] = defaultLoaderConfigs,
-): Map<string, LoaderConfig> {
-  const registry = new Map<string, LoaderConfig>();
-
-  for (const config of configs) {
-    registry.set(config.name, config);
-  }
-
-  return registry;
-}

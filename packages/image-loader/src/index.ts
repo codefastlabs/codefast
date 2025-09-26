@@ -5,29 +5,7 @@ import type { LoaderConfig, LoaderFunction } from "@/core/types";
 import { createImageLoader } from "@/core/image-loader";
 import { defaultLoaderConfigs } from "@/core/loader-registry";
 
-// Export individual loaders for advanced usage
-export {
-  cloudflareLoader,
-  cloudfrontLoader,
-  cloudinaryLoader,
-  contentfulLoader,
-  fastlyLoader,
-  gumletLoader,
-  imageengineLoader,
-  imagekitLoader,
-  imgixLoader,
-  pixelbinLoader,
-  sanityLoader,
-  sirvLoader,
-  supabaseLoader,
-  thumborLoader,
-  unsplashLoader,
-} from "@/loaders";
-
-export { createImageLoader, ImageLoader } from "@/core/image-loader";
-export { createLoaderRegistry, defaultLoaderConfigs } from "@/core/loader-registry";
-// Export core types and utilities
-export type { ImageLoaderOptions, LoaderConfig, LoaderFunction } from "@/core/types";
+export { defaultLoaderConfigs } from "@/core/loader-registry";
 
 /**
  * Default image loader instance
