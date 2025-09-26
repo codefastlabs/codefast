@@ -19,17 +19,7 @@ export interface LoaderDefinition {
 }
 
 /**
- * Configuration for creating image loader (legacy interface for backward compatibility)
- */
-export interface ImageLoaderConfig {
-  /** Custom loaders to register */
-  customLoaders?: ImageLoaderFunction[];
-  /** Default quality to use when not specified */
-  defaultQuality?: number;
-}
-
-/**
- * Enhanced configuration for the new image loader system
+ * Enhanced configuration for the image loader system
  */
 export interface ImageLoaderSystemConfig {
   /** Custom loaders to register */
@@ -45,8 +35,3 @@ export interface ImageLoaderSystemConfig {
   /** Maximum cache size for performance optimization */
   maxCacheSize?: number;
 }
-
-/**
- * Re-export Next.js ImageLoaderProps for convenience
- */
-export type { ImageLoaderProps } from "next/image";
