@@ -4,7 +4,7 @@ import {
   imgixLoader,
   supabaseLoader,
   unsplashLoader,
-} from "../loaders";
+} from "@/loaders";
 
 describe("Individual Loaders", () => {
   describe("cloudinaryLoader", () => {
