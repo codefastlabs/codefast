@@ -4,7 +4,6 @@
     "allowJs": true,
     "incremental": true,
     "jsx": "preserve",
-    "moduleResolution": "bundler",
     "noEmit": true,
     "plugins": [
       {
