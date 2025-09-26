@@ -27,11 +27,29 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "require": "./dist/index.cjs",
-        "default": "./dist/index.js"
-      }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./base": {
+      "import": "./dist/presets/base.js",
+      "require": "./dist/presets/base.cjs",
+      "types": "./dist/presets/base.d.ts"
+    },
+    "./library": {
+      "import": "./dist/presets/library.js",
+      "require": "./dist/presets/library.cjs",
+      "types": "./dist/presets/library.d.ts"
+    },
+    "./react-app": {
+      "import": "./dist/presets/react-app.js",
+      "require": "./dist/presets/react-app.cjs",
+      "types": "./dist/presets/react-app.d.ts"
+    },
+    "./next-app": {
+      "import": "./dist/presets/next-app.js",
+      "require": "./dist/presets/next-app.cjs",
+      "types": "./dist/presets/next-app.d.ts"
     }
   },
   "main": "./dist/index.cjs",
