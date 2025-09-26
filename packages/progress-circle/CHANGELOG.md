@@ -1,5 +1,11 @@
 # @codefast-ui/progress-circle
 
+## 0.3.7-canary.4
+
+### Patch Changes
+
+- [`d35a1b7`](https://github.com/codefastlabs/codefast/commit/d35a1b76ad65d12a0ebb69dd141b2c38d98973d0) Thanks [@thevuong](https://github.com/thevuong)! - chore: bump package versions for dependency updates
+
 ## 0.3.7-canary.3
 
 ### Patch Changes
