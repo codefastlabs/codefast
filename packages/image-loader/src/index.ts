@@ -17,28 +17,22 @@ export {
   allLoaders,
   awsCloudFrontLoader,
   builtInLoaders,
-  cloudinaryLoader,
-  extendedLoaders,
-  imgixLoader,
-  supabaseLoader,
-  unsplashLoader,
-} from "@/loaders";
-
-/**
- * Export extended loaders for additional CDN providers
- */
-export {
   cloudflareLoader,
+  cloudinaryLoader,
   contentfulLoader,
+  extendedLoaders,
   fastlyLoader,
   gumletLoader,
   imageEngineLoader,
   imageKitLoader,
+  imgixLoader,
   pixelBinLoader,
   sanityLoader,
   sirvLoader,
+  supabaseLoader,
   thumborLoader,
-} from "@/loaders/extended-loaders";
+  unsplashLoader,
+} from "@/loaders";
 
 /**
  * Export utility functions for URL manipulation
@@ -57,7 +51,6 @@ export { LoaderRegistry } from "@/core/loader-registry";
  */
 export type {
   ImageLoaderFunction,
-  ImageLoaderProps,
   ImageLoaderSystemConfig,
   LoaderDefinition,
 } from "@/types";

@@ -16,7 +16,7 @@ import {
   sanityLoader,
   sirvLoader,
   thumborLoader,
-} from "@/loaders/extended-loaders";
+} from "@/loaders/extended";
 // Note: validateConfig and normalizeConfig removed - Next.js handles validation
 
 /**

@@ -1,7 +1,7 @@
 import type { ImageLoaderSystemConfig } from "@/types";
 
 import { ImageLoaderSystem } from "@/core/image-loader-system";
-import { builtInLoaders } from "@/loaders";
+import { builtInLoaders } from "@/loaders/built-in";
 
 /**
  * Creates an enhanced image loader system with performance optimizations
