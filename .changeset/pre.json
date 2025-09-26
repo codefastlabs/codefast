@@ -1,0 +1,19 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "@app/docs": "0.0.1",
+    "@codefast/benchmark-tailwind-variants": "0.0.1",
+    "@codefast-ui/checkbox-group": "0.3.7",
+    "@codefast/eslint-config": "0.3.7",
+    "@codefast/hooks": "0.3.7",
+    "@codefast/image-loader": "0.3.7",
+    "@codefast-ui/input": "0.3.7",
+    "@codefast-ui/input-number": "0.3.7",
+    "@codefast-ui/progress-circle": "0.3.7",
+    "@codefast/tailwind-variants": "0.3.7",
+    "@codefast/typescript-config": "0.3.7",
+    "@codefast/ui": "0.3.7"
+  },
+  "changesets": []
+}
