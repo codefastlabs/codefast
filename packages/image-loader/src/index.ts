@@ -33,8 +33,9 @@ export type { ImageLoaderOptions, LoaderConfig, LoaderFunction } from "@/core/ty
  * Default image loader instance
  *
  * Pre-configured with all built-in CDN loaders for optimal performance
+ * Uses domain-based registry for O(1) lookup and result caching
  */
-const defaultImageLoader = createImageLoader(defaultLoaderConfigs);
+const defaultImageLoader = createImageLoader(defaultLoaderConfigs, undefined, 1000);
 
 /**
  * Main image loader function
@@ -88,8 +89,9 @@ export function imageLoader(params: ImageLoaderProps): string {
 export function createCustomImageLoader(config: {
   loaders?: LoaderConfig[];
   fallbackLoader?: LoaderFunction;
+  maxCacheSize?: number;
 }): (params: ImageLoaderProps) => string {
-  const loader = createImageLoader(config.loaders, config.fallbackLoader);
+  const loader = createImageLoader(config.loaders, config.fallbackLoader, config.maxCacheSize);
 
   return (params: ImageLoaderProps) => loader.transform(params);
 }
