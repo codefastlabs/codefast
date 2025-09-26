@@ -26,6 +26,111 @@ export class ImageLoader {
   }
 
   /**
+   * Register a new loader
+   */
+  registerLoader(name: string, matcher: (src: string) => boolean, loader: LoaderFunction): void {
+    const config: LoaderConfig = { loader, matcher, name };
+    const domain = this.extractDomainFromMatcher(config);
+
+    if (domain) {
+      this.domainRegistry.set(domain, loader);
+    } else {
+      this.fallbackLoaders.push(config);
+    }
+  }
+
+  /**
+   * Transform image URL using optimized registry lookup
+   */
+  transform(params: ImageLoaderProps): string {
+    const { quality, src, width } = params;
+    const cacheKey = `${src}:${width}:${quality ?? "undefined"}`;
+
+    return this.getCachedResult(cacheKey, () => {
+      try {
+        // First, try domain-based lookup for performance
+        const hostname = this.extractDomainFromUrl(src);
+
+        if (hostname) {
+          // Try the exact match first
+          let loader = this.domainRegistry.get(hostname);
+
+          // If no exact match, try subdomain matching
+          if (!loader) {
+            for (const [domain, domainLoader] of this.domainRegistry) {
+              if (hostname.endsWith(`.${domain}`) || hostname === domain) {
+                loader = domainLoader;
+                break;
+              }
+            }
+          }
+
+          if (loader) {
+            return loader(params);
+          }
+        }
+
+        // Then try fallback loaders (preserves order for multiple matches)
+        for (const { loader, matcher } of this.fallbackLoaders) {
+          if (matcher(src)) {
+            return loader(params);
+          }
+        }
+
+        // Fallback to custom loader if provided
+        if (this.fallbackLoader) {
+          return this.fallbackLoader(params);
+        }
+
+        // Return original URL
+        return src;
+      } catch {
+        // Invalid URL, return original
+        return src;
+      }
+    });
+  }
+
+  /**
+   * Get all registered loader names
+   */
+  getRegisteredLoaders(): string[] {
+    const domainLoaders = [...this.domainRegistry.keys()];
+    const fallbackLoaderNames = this.fallbackLoaders.map(({ name }) => name);
+
+    return [...domainLoaders, ...fallbackLoaderNames];
+  }
+
+  /**
+   * Check if a loader is registered
+   */
+  hasLoader(name: string): boolean {
+    // Check domain registry keys (domain names)
+    if (this.domainRegistry.has(name)) return true;
+
+    // Check fallback loaders
+    return this.fallbackLoaders.some(({ name: loaderName }) => loaderName === name);
+  }
+
+  /**
+   * Get cache statistics for debugging
+   */
+  getCacheStats(): { urlCacheSize: number; resultCacheSize: number } {
+    return {
+      resultCacheSize: this.resultCache.size,
+      urlCacheSize: this.urlCache.size,
+    };
+  }
+
+  /**
+   * Clear caches (useful for testing or memory management)
+   */
+  clearCaches(): void {
+    this.urlCache.clear();
+    this.resultCache.clear();
+  }
+
+  /**
    * Initialize the domain-based registry for O(1) lookup
    */
   private initializeRegistry(config: LoaderConfig[]): void {
@@ -46,7 +151,7 @@ export class ImageLoader {
    * Extract domain from matcher function for optimization
    */
   private extractDomainFromMatcher(config: LoaderConfig): null | string {
-    // If domain is explicitly provided, use it
+    // If a domain is explicitly provided, use it
     if (config.domain) {
       return config.domain;
     }
@@ -134,111 +239,6 @@ export class ImageLoader {
     this.resultCache.set(key, result);
 
     return result;
-  }
-
-  /**
-   * Register a new loader
-   */
-  registerLoader(name: string, matcher: (src: string) => boolean, loader: LoaderFunction): void {
-    const config: LoaderConfig = { loader, matcher, name };
-    const domain = this.extractDomainFromMatcher(config);
-
-    if (domain) {
-      this.domainRegistry.set(domain, loader);
-    } else {
-      this.fallbackLoaders.push(config);
-    }
-  }
-
-  /**
-   * Transform image URL using optimized registry lookup
-   */
-  transform(params: ImageLoaderProps): string {
-    const { quality, src, width } = params;
-    const cacheKey = `${src}:${width}:${quality ?? "undefined"}`;
-
-    return this.getCachedResult(cacheKey, () => {
-      try {
-        // First, try domain-based lookup for performance
-        const hostname = this.extractDomainFromUrl(src);
-
-        if (hostname) {
-          // Try exact match first
-          let loader = this.domainRegistry.get(hostname);
-
-          // If no exact match, try subdomain matching
-          if (!loader) {
-            for (const [domain, domainLoader] of this.domainRegistry) {
-              if (hostname.endsWith(`.${domain}`) || hostname === domain) {
-                loader = domainLoader;
-                break;
-              }
-            }
-          }
-
-          if (loader) {
-            return loader(params);
-          }
-        }
-
-        // Then try fallback loaders (preserves order for multiple matches)
-        for (const { loader, matcher } of this.fallbackLoaders) {
-          if (matcher(src)) {
-            return loader(params);
-          }
-        }
-
-        // Fallback to custom loader if provided
-        if (this.fallbackLoader) {
-          return this.fallbackLoader(params);
-        }
-
-        // Return original URL
-        return src;
-      } catch {
-        // Invalid URL, return original
-        return src;
-      }
-    });
-  }
-
-  /**
-   * Get all registered loader names
-   */
-  getRegisteredLoaders(): string[] {
-    const domainLoaders = [...this.domainRegistry.keys()];
-    const fallbackLoaderNames = this.fallbackLoaders.map(({ name }) => name);
-
-    return [...domainLoaders, ...fallbackLoaderNames];
-  }
-
-  /**
-   * Check if a loader is registered
-   */
-  hasLoader(name: string): boolean {
-    // Check domain registry keys (domain names)
-    if (this.domainRegistry.has(name)) return true;
-
-    // Check fallback loaders
-    return this.fallbackLoaders.some(({ name: loaderName }) => loaderName === name);
-  }
-
-  /**
-   * Get cache statistics for debugging
-   */
-  getCacheStats(): { urlCacheSize: number; resultCacheSize: number } {
-    return {
-      resultCacheSize: this.resultCache.size,
-      urlCacheSize: this.urlCache.size,
-    };
-  }
-
-  /**
-   * Clear caches (useful for testing or memory management)
-   */
-  clearCaches(): void {
-    this.urlCache.clear();
-    this.resultCache.clear();
   }
 }
 
