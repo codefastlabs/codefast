@@ -1,26 +1,8 @@
 import type { ImageLoaderProps } from "next/image";
 
-import type { ImageLoaderFunction, LoaderDefinition } from "@/types";
+import type { ImageLoaderFunction, ImageLoaderSystemConfig, LoaderDefinition } from "@/types";
 
 import { LoaderRegistry } from "@/core/loader-registry";
-
-/**
- * Configuration for the image loader system
- */
-export interface ImageLoaderSystemConfig {
-  /** Custom loaders to register */
-  customLoaders?: ImageLoaderFunction[];
-  /** Enable debug logging */
-  debug?: boolean;
-  /** Default quality to use when not specified */
-  defaultQuality?: number;
-  /** Enable/disable caching */
-  enableCaching?: boolean;
-  /** Loader priority order (higher number = higher priority) */
-  loaderPriorities?: Record<string, number>;
-  /** Maximum cache size for performance optimization */
-  maxCacheSize?: number;
-}
 
 /**
  * Enhanced image loader system with performance optimizations
