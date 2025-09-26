@@ -16,8 +16,11 @@
     "@codefast/ui": "0.3.7"
   },
   "changesets": [
+    "fair-adults-accept",
     "fine-pianos-bake",
     "fuzzy-carpets-travel",
+    "spicy-peas-dream",
+    "tasty-hoops-brake",
     "weak-badgers-brush"
   ]
 }
