@@ -5,18 +5,18 @@
  * for specific CDN providers based on Next.js documentation.
  */
 
-export { cloudflareLoader } from "./cloudflare";
-export { cloudfrontLoader } from "./cloudfront";
-export { cloudinaryLoader } from "./cloudinary";
-export { contentfulLoader } from "./contentful";
-export { fastlyLoader } from "./fastly";
-export { gumletLoader } from "./gumlet";
-export { imageengineLoader } from "./imageengine";
-export { imagekitLoader } from "./imagekit";
-export { imgixLoader } from "./imgix";
-export { pixelbinLoader } from "./pixelbin";
-export { sanityLoader } from "./sanity";
-export { sirvLoader } from "./sirv";
-export { supabaseLoader } from "./supabase";
-export { thumborLoader } from "./thumbor";
-export { unsplashLoader } from "./unsplash";
+export { cloudflareLoader } from "@/loaders/cloudflare";
+export { cloudfrontLoader } from "@/loaders/cloudfront";
+export { cloudinaryLoader } from "@/loaders/cloudinary";
+export { contentfulLoader } from "@/loaders/contentful";
+export { fastlyLoader } from "@/loaders/fastly";
+export { gumletLoader } from "@/loaders/gumlet";
+export { imageengineLoader } from "@/loaders/imageengine";
+export { imagekitLoader } from "@/loaders/imagekit";
+export { imgixLoader } from "@/loaders/imgix";
+export { pixelbinLoader } from "@/loaders/pixelbin";
+export { sanityLoader } from "@/loaders/sanity";
+export { sirvLoader } from "@/loaders/sirv";
+export { supabaseLoader } from "@/loaders/supabase";
+export { thumborLoader } from "@/loaders/thumbor";
+export { unsplashLoader } from "@/loaders/unsplash";

@@ -1,4 +1,4 @@
-import type { LoaderConfig } from "./types";
+import type { LoaderConfig } from "@/core/types";
 
 import {
   cloudflareLoader,
@@ -16,7 +16,7 @@ import {
   supabaseLoader,
   thumborLoader,
   unsplashLoader,
-} from "../loaders";
+} from "@/loaders";
 
 /**
  * Default loader configurations
@@ -115,20 +115,4 @@ export function createLoaderRegistry(
   }
 
   return registry;
-}
-
-/**
- * Find matching loader for a given URL
- */
-export function findMatchingLoader(
-  src: string,
-  registry: Map<string, LoaderConfig>,
-): LoaderConfig | null {
-  for (const [, config] of registry) {
-    if (config.matcher(src)) {
-      return config;
-    }
-  }
-
-  return null;
 }
