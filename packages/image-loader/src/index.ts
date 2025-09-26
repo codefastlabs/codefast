@@ -41,9 +41,9 @@ export {
 } from "@/loaders/extended-loaders";
 
 /**
- * Export utility functions for URL manipulation and validation
+ * Export utility functions for URL manipulation
  */
-export { ensureProtocol, extractDomain, normalizeConfig, validateConfig } from "@/utils";
+export { ensureProtocol, extractDomain } from "@/utils";
 
 /**
  * Export core classes for advanced usage and customization

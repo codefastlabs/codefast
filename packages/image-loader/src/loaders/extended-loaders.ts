@@ -2,7 +2,7 @@ import type { ImageLoaderProps } from "next/image";
 
 import type { ImageLoaderFunction } from "@/types";
 
-import { normalizeConfig, validateConfig } from "@/utils";
+// Note: validateConfig and normalizeConfig removed - Next.js handles validation
 
 /**
  * Cloudflare image loader
@@ -14,8 +14,7 @@ import { normalizeConfig, validateConfig } from "@/utils";
  * ```
  */
 export const cloudflareLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -42,8 +41,7 @@ export const cloudflareLoader: ImageLoaderFunction = (config: ImageLoaderProps):
  * ```
  */
 export const contentfulLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -70,8 +68,7 @@ export const contentfulLoader: ImageLoaderFunction = (config: ImageLoaderProps):
  * ```
  */
 export const fastlyLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -98,8 +95,7 @@ export const fastlyLoader: ImageLoaderFunction = (config: ImageLoaderProps): str
  * ```
  */
 export const gumletLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -126,8 +122,7 @@ export const gumletLoader: ImageLoaderFunction = (config: ImageLoaderProps): str
  * ```
  */
 export const imageEngineLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const compression = 100 - quality;
@@ -156,8 +151,7 @@ export const imageEngineLoader: ImageLoaderFunction = (config: ImageLoaderProps)
  * ```
  */
 export const pixelBinLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -187,8 +181,7 @@ export const pixelBinLoader: ImageLoaderFunction = (config: ImageLoaderProps): s
  * ```
  */
 export const sanityLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -217,8 +210,7 @@ export const sanityLoader: ImageLoaderFunction = (config: ImageLoaderProps): str
  * ```
  */
 export const sirvLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 85, src, width } = normalizeConfig(config);
+  const { quality = 85, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -246,8 +238,7 @@ export const sirvLoader: ImageLoaderFunction = (config: ImageLoaderProps): strin
  * ```
  */
 export const thumborLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 75, src, width } = normalizeConfig(config);
+  const { quality = 75, src, width = 800 } = config;
 
   try {
     const url = new URL(src);
@@ -274,8 +265,7 @@ export const thumborLoader: ImageLoaderFunction = (config: ImageLoaderProps): st
  * ```
  */
 export const imageKitLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
-  validateConfig(config);
-  const { quality = 80, src, width } = normalizeConfig(config);
+  const { quality = 80, src, width = 800 } = config;
 
   try {
     const params = [`w-${width}`, `q-${quality}`];
