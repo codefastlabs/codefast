@@ -1,7 +1,7 @@
 {
   "name": "@codefast/image-loader",
   "version": "1.0.1-canary.3",
-  "description": "Flexible image loader for Next.js supporting multiple CDN providers",
+  "description": "Simple, functional image loader for Next.js supporting multiple CDN providers",
   "keywords": [
     "next",
     "image-loader",
@@ -9,7 +9,7 @@
     "image-optimization",
     "typescript",
     "monorepo",
-    "solid-principles"
+    "kiss-principle"
   ],
   "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/image-loader#readme",
   "bugs": {
@@ -51,9 +51,7 @@
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch"
   },
-  "dependencies": {
-    "query-string": "^9.3.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
