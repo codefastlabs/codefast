@@ -73,10 +73,6 @@ const system = createImageLoaderSystem({
       throw new Error("Not a local development URL");
     },
   ],
-  debug: process.env.NODE_ENV === "development",
-  defaultQuality: 80,
-  enableCaching: true,
-  maxCacheSize: 1000,
 });
 
 // Register all available loaders
