@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/checkbox-group",
-  "version": "0.3.8-canary.0",
+  "version": "0.3.8-canary.1",
   "description": "Accessible checkbox group component built with React and Radix UI",
   "keywords": [
     "checkbox",
