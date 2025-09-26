@@ -1,5 +1,15 @@
 # @codefast-ui/input
 
+## 0.3.8-canary.0
+
+### Patch Changes
+
+- [`30ae5af`](https://github.com/codefastlabs/codefast/commit/30ae5af9b720a42f1debb2bb595b778bd64a43a5) Thanks [@thevuong](https://github.com/thevuong)! - feat(image-loader): add secure URL matching utilities and integrate with loaders
+
+- [`c4404a3`](https://github.com/codefastlabs/codefast/commit/c4404a33ea694eacb0469772cdc834809d13aabc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): simplify `ignores` patterns in `next-app` preset
+
+- [`1ff5e63`](https://github.com/codefastlabs/codefast/commit/1ff5e63747205c248d326ba4b38a3b1caff91335) Thanks [@thevuong](https://github.com/thevuong)! - refactor(typescript-config): update TypeScript configurations for consistency and maintainability
+
 ## 0.3.7
 
 ### Patch Changes
