@@ -1,5 +1,13 @@
 # @codefast/eslint-config
 
+## 0.3.8-canary.2
+
+### Patch Changes
+
+- [`ac55f56`](https://github.com/codefastlabs/codefast/commit/ac55f569207dfd79f270f7ed6a0a1d0c6c5cee5e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): replace `@variant dark` with `.dark` in globals.css
+
+- [`6d4b17e`](https://github.com/codefastlabs/codefast/commit/6d4b17e577bda3b5d5a6c74dea28d6968b527751) Thanks [@thevuong](https://github.com/thevuong)! - feat(styles): add usage examples for CSS variables to enhance documentation
+
 ## 0.3.8-canary.1
 
 ### Patch Changes
