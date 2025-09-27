@@ -13,10 +13,6 @@
 | - @tailwindcss/typography plugin
 | - tw-animate-css for animations
 |
-| Author: CodeFast Labs
-| Version: 0.3.8-canary.0
-| Last Modified: 2025-09-26
-|
 */
 
 @import "tw-animate-css";
@@ -156,6 +152,13 @@
   | Fundamental colors used throughout the interface for basic elements
   | like inputs, borders, rings, backgrounds, and foreground text.
   |
+  | Usage Examples:
+  | - --color-input: Input fields, form controls, text areas
+  | - --color-border: Component borders, dividers, separators
+  | - --color-ring: Focus rings, outline states, accessibility indicators
+  | - --color-background: Main page background, modal overlays
+  | - --color-foreground: Primary text color, main content
+  |
   */
   --color-input: var(--input);
   --color-border: var(--border);
@@ -171,6 +174,10 @@
   | Colors used for primary actions and interactive elements like buttons,
   | links, and other prominent UI components that require user attention.
   |
+  | Usage Examples:
+  | - --color-primary: Primary buttons, main CTAs, active states
+  | - --color-primary-foreground: Text on primary backgrounds, button labels
+  |
   */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
@@ -182,6 +189,10 @@
   |
   | Colors used for secondary actions and less prominent interactive elements
   | that complement the primary action colors in the interface hierarchy.
+  |
+  | Usage Examples:
+  | - --color-secondary: Secondary buttons, toggle states, hover backgrounds
+  | - --color-secondary-foreground: Text on secondary backgrounds, muted content
   |
   */
   --color-secondary: var(--secondary);
@@ -195,6 +206,9 @@
   | Colors used to communicate different states and status messages,
   | including destructive actions, warnings, and success states.
   |
+  | Usage Examples:
+  | - --color-destructive: Delete buttons, error states, danger actions
+  |
   */
   --color-destructive: var(--destructive);
 
@@ -205,6 +219,10 @@
   |
   | Colors used for highlighting and accent elements that need to stand out
   | from the primary interface without being as prominent as primary colors.
+  |
+  | Usage Examples:
+  | - --color-accent: Hover states, selected items, sidebar highlights
+  | - --color-accent-foreground: Text on accent backgrounds, highlighted content
   |
   */
   --color-accent: var(--accent);
@@ -218,6 +236,10 @@
   | Colors used for muted text, disabled elements, and subtle interface
   | components that should have reduced visual prominence.
   |
+  | Usage Examples:
+  | - --color-muted: Disabled backgrounds, subtle UI elements
+  | - --color-muted-foreground: Placeholder text, secondary information, descriptions
+  |
   */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -229,6 +251,11 @@
   |
   | Specialized colors for popover components including backgrounds,
   | foregrounds, and overlay effects for floating UI elements.
+  |
+  | Usage Examples:
+  | - --color-popover: Popover backgrounds, dropdown menus, tooltips
+  | - --color-popover-foreground: Text in popovers, menu items
+  | - --color-popover-overlay: Backdrop overlays, modal backgrounds
   |
   */
   --color-popover: var(--popover);
@@ -243,6 +270,10 @@
   | Colors specifically designed for card components and similar
   | container elements that group related content.
   |
+  | Usage Examples:
+  | - --color-card: Card backgrounds, content containers, panels
+  | - --color-card-foreground: Text in cards, card content
+  |
   */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -254,6 +285,16 @@
   |
   | Comprehensive color system for sidebar navigation components including
   | backgrounds, foregrounds, accents, borders, and focus states.
+  |
+  | Usage Examples:
+  | - --color-sidebar: Sidebar background, navigation panel
+  | - --color-sidebar-foreground: Sidebar text, navigation labels
+  | - --color-sidebar-primary: Active sidebar items, primary navigation
+  | - --color-sidebar-primary-foreground: Text on active sidebar items
+  | - --color-sidebar-accent: Hover states, selected sidebar items
+  | - --color-sidebar-accent-foreground: Text on hovered/selected items
+  | - --color-sidebar-border: Sidebar dividers, section separators
+  | - --color-sidebar-ring: Focus rings for sidebar navigation
   |
   */
   --color-sidebar: var(--sidebar);
@@ -272,6 +313,13 @@
   |
   | Color palette specifically designed for charts, graphs, and data
   | visualization components to ensure proper contrast and accessibility.
+  |
+  | Usage Examples:
+  | - --color-chart-1: First data series, primary chart color
+  | - --color-chart-2: Second data series, secondary chart color
+  | - --color-chart-3: Third data series, tertiary chart color
+  | - --color-chart-4: Fourth data series, quaternary chart color
+  | - --color-chart-5: Fifth data series, additional chart color
   |
   */
   --color-chart-1: var(--chart-1);
@@ -300,6 +348,9 @@
   |
   | Carefully crafted cubic-bezier timing functions that provide natural,
   | smooth animations for UI transitions and micro-interactions.
+  |
+  | Usage Examples:
+  | - --ease-ui: General UI animations, transitions, hover effects
   |
   */
   --ease-ui: cubic-bezier(0.32, 0.72, 0, 1);
