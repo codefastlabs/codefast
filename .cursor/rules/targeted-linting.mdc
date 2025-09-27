@@ -25,7 +25,7 @@ The project uses:
 - **Turbo** for orchestrating lint tasks across the monorepo (`turbo lint`)
 - **ESLint** with custom configurations in each package
 - **lint-staged** for pre-commit linting on changed files
-- **Individual package scripts**: `"lint": "TIMING=1 eslint . --max-warnings 0"`
+- **Individual package scripts**: `"lint": "TIMING=1 eslint --max-warnings 0"`
 
 ### Targeted Linting Rules
 

@@ -95,8 +95,8 @@ Required fields for all packages:
     "dev": "rslib build --watch",
     "clean": "rm -rf dist",
     "check-types": "tsc --noEmit",
-    "lint": "TIMING=1 eslint . --max-warnings 0",
-    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
+    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
     "test": "jest",
     "test:coverage": "jest --coverage"
   }

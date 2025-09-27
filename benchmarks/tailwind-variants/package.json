@@ -26,8 +26,8 @@
   "type": "module",
   "scripts": {
     "bench": "node src/index.js",
-    "lint": "TIMING=1 eslint . --max-warnings 0",
-    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix ."
+    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
