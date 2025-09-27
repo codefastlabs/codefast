@@ -2,7 +2,7 @@
 
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 /* -----------------------------------------------------------------------------

@@ -5,7 +5,7 @@ import type { ComponentProps, JSX, MouseEventHandler } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { Button } from "@/components/button/button";
 import { inputVariants } from "@/components/input/input.variants";

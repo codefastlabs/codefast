@@ -5,7 +5,7 @@ import type { ComponentProps, JSX } from "react";
 import { GripVerticalIcon } from "lucide-react";
 import * as ResizablePrimitive from "react-resizable-panels";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------
  * Component: ResizablePanelGroup

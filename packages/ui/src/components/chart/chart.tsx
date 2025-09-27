@@ -8,7 +8,7 @@ import * as RechartsPrimitive from "recharts";
 
 import type { Scope } from "@radix-ui/react-context";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------

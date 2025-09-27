@@ -4,10 +4,10 @@ import type { ComponentProps, JSX } from "react";
 
 import { XIcon } from "lucide-react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { buttonVariants } from "@/components/button/button.variants";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 /* -----------------------------------------------------------------------------

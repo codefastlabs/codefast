@@ -1,5 +1,5 @@
 import { buttonVariants } from "@/components/button/button.variants";
-import { tv } from "@/lib/utils";
+import { tv } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------
  * Style: NavigationMenuTrigger

@@ -3,8 +3,8 @@ import type { ComponentProps, JSX } from "react";
 import { CheckIcon } from "lucide-react";
 
 import { Label } from "@/components/label/label";
-import { cn } from "@/lib/utils";
 import * as CheckboxGroupPrimitive from "@codefast-ui/checkbox-group";
+import { cn } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCards

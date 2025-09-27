@@ -2,11 +2,11 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 import type { Scope } from "@radix-ui/react-context";
 
 import { scrollAreaScrollbarVariants } from "@/components/scroll-area/scroll-area-scrollbar.variants";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { createContextScope } from "@radix-ui/react-context";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 

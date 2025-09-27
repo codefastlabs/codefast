@@ -5,7 +5,7 @@ import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } fro
 import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { Button } from "@/components/button/button";
 import { Input } from "@/components/input/input";
@@ -25,8 +25,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/tooltip/tooltip";
-import { cn } from "@/lib/utils";
 import { useIsMobile } from "@codefast/hooks";
+import { cn } from "@codefast/tailwind-variants";
 import { createContext } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 

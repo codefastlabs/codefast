@@ -2,13 +2,13 @@ import type { ComponentProps, JSX } from "react";
 
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { buttonVariants } from "@/components/button/button.variants";
 import { inputVariants } from "@/components/input/input.variants";
 import { Spinner } from "@/components/spinner/spinner";
-import { cn } from "@/lib/utils";
 import * as InputNumberPrimitive from "@codefast-ui/input-number";
+import { cn } from "@codefast/tailwind-variants";
 
 const { input, root } = inputVariants();
 

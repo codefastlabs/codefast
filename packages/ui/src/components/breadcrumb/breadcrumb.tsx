@@ -4,7 +4,7 @@ import type { ComponentProps, JSX, ReactNode } from "react";
 
 import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------

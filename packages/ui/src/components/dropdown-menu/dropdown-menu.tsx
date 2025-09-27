@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 
 /* -----------------------------------------------------------------------------

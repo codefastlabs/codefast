@@ -10,7 +10,7 @@ import type { Scope } from "@radix-ui/react-context";
 import type * as LabelPrimitive from "@radix-ui/react-label";
 
 import { Label } from "@/components/label/label";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { createContextScope } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 

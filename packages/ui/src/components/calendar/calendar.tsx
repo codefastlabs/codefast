@@ -14,7 +14,7 @@ import {
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
 
 import { buttonVariants } from "@/components/button/button.variants";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron

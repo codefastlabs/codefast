@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from "react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { inputVariants } from "@/components/input/input.variants";
 import { Spinner } from "@/components/spinner/spinner";
