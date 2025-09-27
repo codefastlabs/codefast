@@ -147,7 +147,7 @@
    * - Modified chart colors optimized for dark backgrounds
    * - Enhanced border and accent colors for visibility
    */
-  @variant dark {
+  .dark {
     /* Form Element Colors - Dark Mode */
     --input: var(--color-neutral-700);
     --border: --alpha(var(--color-neutral-700) / 50%);
