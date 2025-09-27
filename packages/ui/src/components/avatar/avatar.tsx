@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 /* -----------------------------------------------------------------------------

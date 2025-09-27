@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { useMemo } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 
 /* -----------------------------------------------------------------------------

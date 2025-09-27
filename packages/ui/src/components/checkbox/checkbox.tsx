@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { CheckIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 
 /* -----------------------------------------------------------------------------

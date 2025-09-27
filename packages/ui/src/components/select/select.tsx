@@ -4,10 +4,10 @@ import type { ComponentProps, JSX } from "react";
 
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { buttonVariants } from "@/components/button/button.variants";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import * as SelectPrimitive from "@radix-ui/react-select";
 
 /* -----------------------------------------------------------------------------

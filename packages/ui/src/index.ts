@@ -685,5 +685,5 @@ export type {
   TooltipTriggerProps,
 } from "@/components/tooltip";
 
-export { cn, tv } from "@/lib/utils";
-export type { VariantProps } from "@/lib/utils";
+export { cn, tv } from "@codefast/tailwind-variants";
+export type { VariantProps } from "@codefast/tailwind-variants";

@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { badgeVariants } from "@/components/badge/badge.variants";
 import { Slot } from "@radix-ui/react-slot";

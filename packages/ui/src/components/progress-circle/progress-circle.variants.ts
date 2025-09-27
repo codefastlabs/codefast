@@ -1,4 +1,4 @@
-import { tv } from "@/lib/utils";
+import { tv } from "@codefast/tailwind-variants";
 
 /* -------------------------------------------------------------------------------------------------
  * Variant: ProgressCircle

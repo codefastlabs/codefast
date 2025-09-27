@@ -4,7 +4,7 @@ import type { ComponentProps, CSSProperties, JSX } from "react";
 
 import { useCallback, useMemo } from "react";
 
-import type { VariantProps } from "@/lib/utils";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { progressCircleVariants } from "@/components/progress-circle/progress-circle.variants";
 import * as ProgressCirclePrimitive from "@codefast-ui/progress-circle";

@@ -6,7 +6,7 @@ import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/dialog/dialog";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 /* -----------------------------------------------------------------------------

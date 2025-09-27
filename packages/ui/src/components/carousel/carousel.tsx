@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Scope } from "@radix-ui/react-context";
 
 import { Button } from "@/components/button/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@codefast/tailwind-variants";
 import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
