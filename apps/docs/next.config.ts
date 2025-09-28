@@ -20,28 +20,6 @@ const nextConfig: NextConfig = {
   images: {
     loader: "custom",
     loaderFile: "./src/lib/image-loader.ts",
-    remotePatterns: [
-      {
-        hostname: "images.unsplash.com",
-        protocol: "https",
-      },
-      {
-        hostname: "*.cloudinary.com",
-        protocol: "https",
-      },
-      {
-        hostname: "*.imgix.net",
-        protocol: "https",
-      },
-      {
-        hostname: "*.cloudfront.net",
-        protocol: "https",
-      },
-      {
-        hostname: "*.supabase.co",
-        protocol: "https",
-      },
-    ],
   },
   outputFileTracingIncludes: {
     "/blocks/*": ["./src/registry/**/*"],
