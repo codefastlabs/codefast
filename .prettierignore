@@ -5,7 +5,6 @@ node_modules/
 
 # Build outputs
 .next/
-out/
 build/
 dist/
 .swc/
@@ -13,7 +12,6 @@ tsconfig.tsbuildinfo
 
 # Cache directories
 .turbo/
-.eslintcache
 
 # Environment files
 .env
@@ -26,6 +24,7 @@ tsconfig.tsbuildinfo
 # Testing
 coverage/
 .nyc_output/
+*.lcov
 
 # Logs
 npm-debug.log*
@@ -40,18 +39,11 @@ pids
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
 # Dependency directories
 jspm_packages/
 
 # Optional npm cache directory
 .npm
-
-# Optional eslint cache
-.eslintcache
 
 # Optional REPL history
 .node_repl_history
@@ -63,7 +55,6 @@ jspm_packages/
 .yarn-integrity
 
 # parcel-bundler cache (https://parceljs.org/)
-.cache
 .parcel-cache
 
 # Storybook build outputs
@@ -101,12 +92,8 @@ Thumbs.db
 
 # Lock files (usually shouldn't be formatted)
 pnpm-lock.yaml
-yarn.lock
-package-lock.json
 
 # Generated files
-CHANGELOG.md
-*.d.ts.map
 
 # Documentation build
 docs/.next/
@@ -119,4 +106,3 @@ benchmarks/output/
 
 # Markdown files - exclude from Prettier formatting
 *.md
-*.mdx
