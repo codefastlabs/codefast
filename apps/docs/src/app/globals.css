@@ -1,71 +1,71 @@
-/**
- * Global Styles for CodeFast Documentation
- *
- * This file contains the global CSS styles for the CodeFast documentation application.
- * It includes TailwindCSS configuration, theme variables, and custom styling for both
- * light and dark modes.
- */
+/*
+| Global Styles for CodeFast Documentation
+|
+| This file contains the global CSS styles for the CodeFast documentation application.
+| It includes TailwindCSS configuration, theme variables, and custom styling for both
+| light and dark modes.
+*/
 
-/**
- * Core Dependencies
- *
- * Import TailwindCSS base styles and utilities, along with the CodeFast UI
- * component library styles. These imports provide the foundation for all
- * styling throughout the documentation application.
- */
+/*
+| Core Dependencies
+|
+| Import TailwindCSS base styles and utilities, along with the CodeFast UI
+| component library styles. These imports provide the foundation for all
+| styling throughout the documentation application.
+*/
 @import "tailwindcss";
 
 @import "@codefast/ui/styles.css";
 
-/**
- * Component Source Configuration
- *
- * Define the source path for CodeFast UI components to enable proper
- * style resolution and component discovery within the documentation.
- */
+/*
+| Component Source Configuration
+|
+| Define the source path for CodeFast UI components to enable proper
+| style resolution and component discovery within the documentation.
+*/
 @source '../../node_modules/@codefast/ui/src';
 
-/**
- * Dark Mode Variant Configuration
- *
- * Configure the dark mode variant selector to work with both class-based
- * and descendant-based dark mode implementations. This ensures consistent
- * dark mode behavior across all components.
- */
+/*
+| Dark Mode Variant Configuration
+|
+| Configure the dark mode variant selector to work with both class-based
+| and descendant-based dark mode implementations. This ensures consistent
+| dark mode behavior across all components.
+*/
 @custom-variant dark (&:where(.dark, .dark *));
 
-/**
- * Theme Configuration
- *
- * Define custom theme extensions including additional breakpoints
- * that are specific to the documentation layout requirements.
- */
+/*
+| Theme Configuration
+|
+| Define custom theme extensions including additional breakpoints
+| that are specific to the documentation layout requirements.
+*/
 @theme {
   --breakpoint-3xl: 112rem;
 }
 
-/**
- * Base Layer Styles
- *
- * Define the foundational CSS custom properties and base styles for the
- * documentation application. This layer contains theme variables that
- * control the visual appearance across all components.
- */
+/*
+| Base Layer Styles
+|
+| Define the foundational CSS custom properties and base styles for the
+| documentation application. This layer contains theme variables that
+| control the visual appearance across all components.
+*/
 @layer base {
-  /**
-   * Light Theme Variables (Default)
-   *
-   * CSS custom properties for the default light theme. These variables
-   * define colors, typography, and component styling that will be used
-   * throughout the application when no dark mode is active.
-   *
-   * Variable Categories:
-   * - Typography: Font family definitions
-   * - Form Elements: Input, border, and focus ring colors
-   * - Layout: Background and foreground colors
-   * - Semantic Colors: Primary, secondary, destructive, accent, muted
-   * - Component Colors: Popover, card, sidebar styling
-   * - Data Visualization: Chart color palette
+  /*
+  | Light Theme Variables (Default)
+  |
+  | CSS custom properties for the default light theme. These variables
+  | define colors, typography, and component styling that will be used
+  | throughout the application when no dark mode is active.
+  |
+  | Variable Categories:
+  | - Typography: Font family definitions
+  | - Form Elements: Input, border, and focus ring colors
+  | - Layout: Background and foreground colors
+  | - Semantic Colors: Primary, secondary, destructive, accent, muted
+  | - Component Colors: Popover, card, sidebar styling
+  | - Data Visualization: Chart color palette
    */
   :root {
     /* Typography Variables */
@@ -132,20 +132,20 @@
     --chart-5: var(--color-amber-500);
   }
 
-  /**
-   * Dark Theme Variables (Dark Mode Override)
-   *
-   * CSS custom properties that override the default light theme when
-   * dark mode is active. These variables provide appropriate contrast
-   * and visual hierarchy for dark backgrounds while maintaining
-   * accessibility and readability standards.
-   *
-   * Key Changes from Light Theme:
-   * - Inverted background/foreground relationships
-   * - Darker primary colors for better contrast
-   * - Adjusted opacity values for overlays
-   * - Modified chart colors optimized for dark backgrounds
-   * - Enhanced border and accent colors for visibility
+  /*
+  | Dark Theme Variables (Dark Mode Override)
+  |
+  | CSS custom properties that override the default light theme when
+  | dark mode is active. These variables provide appropriate contrast
+  | and visual hierarchy for dark backgrounds while maintaining
+  | accessibility and readability standards.
+  |
+  | Key Changes from Light Theme:
+  | - Inverted background/foreground relationships
+  | - Darker primary colors for better contrast
+  | - Adjusted opacity values for overlays
+  | - Modified chart colors optimized for dark backgrounds
+  | - Enhanced border and accent colors for visibility
    */
   .dark {
     /* Form Element Colors - Dark Mode */
