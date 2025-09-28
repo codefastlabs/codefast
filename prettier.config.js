@@ -5,18 +5,18 @@
  */
 export default {
   // Core formatting options - Modern best practices
+  arrowParens: "always",
+  bracketSameLine: false,
+  bracketSpacing: true,
+  endOfLine: "lf",
+  jsxSingleQuote: false,
   printWidth: 100,
-  tabWidth: 2,
-  useTabs: false,
+  quoteProps: "as-needed",
   semi: true,
   singleQuote: false,
-  quoteProps: "as-needed",
-  jsxSingleQuote: false,
+  tabWidth: 2,
   trailingComma: "all",
-  bracketSpacing: true,
-  bracketSameLine: false,
-  arrowParens: "always",
-  endOfLine: "lf",
+  useTabs: false,
 
   // Modern formatting options
   experimentalTernaries: false,
