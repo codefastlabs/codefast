@@ -10,14 +10,11 @@
 |
 | Dependencies:
 | - TailwindCSS 4.x
-| - @tailwindcss/typography plugin
 | - tw-animate-css for animations
 |
 */
 
 @import "tw-animate-css";
-
-@plugin "@tailwindcss/typography";
 
 /*
 |--------------------------------------------------------------------------
