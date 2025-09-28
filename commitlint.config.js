@@ -6,6 +6,9 @@ const MAX_BODY_LINE_LENGTH = 1000;
 const config = {
   extends: ["@commitlint/config-conventional"],
   rules: {
+    "body-max-line-length": [ERROR_LEVEL, "always", MAX_BODY_LINE_LENGTH],
+    "header-max-length": [ERROR_LEVEL, "always", MAX_HEADER_LENGTH],
+    "subject-case": [ERROR_LEVEL, "never", ["pascal-case", "upper-case"]],
     "type-enum": [
       ERROR_LEVEL,
       "always",
@@ -23,9 +26,6 @@ const config = {
         "test",
       ],
     ],
-    "subject-case": [ERROR_LEVEL, "never", ["pascal-case", "upper-case"]],
-    "header-max-length": [ERROR_LEVEL, "always", MAX_HEADER_LENGTH],
-    "body-max-line-length": [ERROR_LEVEL, "always", MAX_BODY_LINE_LENGTH],
   },
 };
 
