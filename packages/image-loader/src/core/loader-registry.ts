@@ -112,4 +112,3 @@ export const defaultLoaderConfigs: LoaderConfig[] = [
     name: "thumbor",
   },
 ];
-

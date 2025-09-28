@@ -3,7 +3,7 @@
 import type { ComponentProps, JSX } from "react";
 
 import { getComponentName } from "@/lib/utils";
-import { cn } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
 
 export function ComponentWrapper({
   children,

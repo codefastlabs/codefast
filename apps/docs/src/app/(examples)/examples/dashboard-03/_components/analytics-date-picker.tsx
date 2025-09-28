@@ -7,11 +7,11 @@ import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useId, useState } from "react";
 
+import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
   Calendar,
   CalendarRangeLabel,
-  cn,
   Popover,
   PopoverContent,
   PopoverTrigger,

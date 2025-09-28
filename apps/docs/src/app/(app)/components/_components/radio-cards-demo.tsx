@@ -1,6 +1,7 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn, RadioCards, RadioCardsItem } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { RadioCards, RadioCardsItem } from "@codefast/ui";
 
 export function RadioCardsDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (

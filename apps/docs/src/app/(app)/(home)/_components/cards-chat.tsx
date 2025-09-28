@@ -5,6 +5,7 @@ import type { JSX } from "react";
 import { Check, Plus, Send } from "lucide-react";
 import { useId, useState } from "react";
 
+import { cn } from "@codefast/tailwind-variants";
 import {
   Avatar,
   AvatarFallback,
@@ -14,7 +15,6 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  cn,
   Command,
   CommandEmpty,
   CommandGroup,

@@ -1,6 +1,6 @@
 import { Geist, JetBrains_Mono as JetBrainsMono } from "next/font/google";
 
-import { cn } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
 
 const fontGeistSans = Geist({
   subsets: ["latin-ext"],

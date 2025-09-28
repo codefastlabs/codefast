@@ -6,7 +6,8 @@ import { Bar, BarChart, Line, LineChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
 
-import { Card, CardContent, CardHeader, CardTitle, ChartContainer, cn } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { Card, CardContent, CardHeader, CardTitle, ChartContainer } from "@codefast/ui";
 
 const data = [
   {

@@ -3,7 +3,8 @@ import type { ComponentProps, JSX } from "react";
 import Link from "next/link";
 import { useId } from "react";
 
-import { Button, cn, Input, Label, Separator, SeparatorItem } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { Button, Input, Label, Separator, SeparatorItem } from "@codefast/ui";
 
 export function LoginForm({ className, ...props }: ComponentProps<"form">): JSX.Element {
   const id = useId();

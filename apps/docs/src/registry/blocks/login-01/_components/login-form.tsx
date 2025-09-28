@@ -3,6 +3,7 @@ import type { ComponentProps, JSX } from "react";
 import Link from "next/link";
 import { useId } from "react";
 
+import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
   Card,
@@ -10,7 +11,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  cn,
   Input,
   Label,
 } from "@codefast/ui";

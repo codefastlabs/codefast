@@ -7,9 +7,9 @@ import { useCallback, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
-  cn,
   Drawer,
   DrawerBody,
   DrawerClose,
