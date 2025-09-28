@@ -69,8 +69,17 @@
    */
   :root {
     /* Typography Variables */
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-jetbrains-mono);
+    --font-sans: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
+    --font-mono: var(
+      --font-jetbrains-mono,
+      ui-monospace,
+      "Cascadia Code",
+      "Source Code Pro",
+      Menlo,
+      Consolas,
+      "DejaVu Sans Mono",
+      monospace
+    );
 
     /* Form Element Colors */
     --input: var(--color-neutral-200);
