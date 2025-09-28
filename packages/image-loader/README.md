@@ -284,7 +284,6 @@ import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = createDefaultImageLoaderFactory();
 
-/** @type {import("next").NextConfig} */
 const nextConfig = {
   images: {
     loader: "custom",
