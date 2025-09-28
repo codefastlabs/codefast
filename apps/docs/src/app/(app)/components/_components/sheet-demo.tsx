@@ -4,9 +4,9 @@ import { ChevronUpIcon, CircleIcon } from "lucide-react";
 import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
-  cn,
   Input,
   Label,
   Sheet,

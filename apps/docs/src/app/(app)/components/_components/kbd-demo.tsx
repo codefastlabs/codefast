@@ -1,6 +1,7 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn, Kbd } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { Kbd } from "@codefast/ui";
 
 export function KbdDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (

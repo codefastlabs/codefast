@@ -3,7 +3,8 @@ import type { ComponentProps, JSX } from "react";
 import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-import { CheckboxGroup, CheckboxGroupItem, cn, Label } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { CheckboxGroup, CheckboxGroupItem, Label } from "@codefast/ui";
 
 interface Plan {
   /** Mô tả ngắn về tính năng của gói dịch vụ */

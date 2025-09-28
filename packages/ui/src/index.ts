@@ -684,6 +684,3 @@ export type {
   TooltipProviderProps,
   TooltipTriggerProps,
 } from "@/components/tooltip";
-
-export { cn, tv } from "@codefast/tailwind-variants";
-export type { VariantProps } from "@codefast/tailwind-variants";

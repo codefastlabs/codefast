@@ -3,6 +3,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { useId } from "react";
 
+import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
   Card,
@@ -13,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
   Checkbox,
-  cn,
   Input,
   Label,
   Select,

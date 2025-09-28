@@ -10,8 +10,8 @@ import type { NavItemProps } from "@/components/nav-main";
 import { registryComponentGroups } from "@/app/(app)/components/registry-components";
 import { NavMain } from "@/components/nav-main";
 import { registryBlockGroups } from "@/registry/registry-blocks";
+import { cn } from "@codefast/tailwind-variants";
 import {
-  cn,
   ScrollArea,
   Sidebar,
   SidebarContent,

@@ -1,6 +1,7 @@
 import type { ComponentProps, JSX } from "react";
 
-import { CheckboxCards, CheckboxCardsItem, cn } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { CheckboxCards, CheckboxCardsItem } from "@codefast/ui";
 
 export function CheckboxCardsDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (

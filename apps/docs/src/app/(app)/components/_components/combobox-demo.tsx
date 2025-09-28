@@ -6,12 +6,12 @@ import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "
 import { useMemo, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+import { cn } from "@codefast/tailwind-variants";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
-  cn,
   Command,
   CommandEmpty,
   CommandGroup,

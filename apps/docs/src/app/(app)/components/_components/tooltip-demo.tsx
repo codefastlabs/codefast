@@ -3,7 +3,8 @@ import type { JSX } from "react";
 import { ChevronUpIcon, CircleIcon, InfoIcon } from "lucide-react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-import { Button, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui";
+import { cn } from "@codefast/tailwind-variants";
+import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui";
 
 const SIDES = ["top", "right", "bottom", "left"] as const;
 

@@ -9,12 +9,12 @@ import { useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { useIsMobile } from "@codefast/hooks";
+import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
   Calendar,
   CalendarLabel,
   CalendarRangeLabel,
-  cn,
   Popover,
   PopoverContent,
   PopoverTrigger,
