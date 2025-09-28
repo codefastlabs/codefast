@@ -10,7 +10,6 @@ const ERROR_LEVEL = 2;
 const MAX_HEADER_LENGTH = 72; // GitHub standard: 50 chars ideal, 72 chars max
 const MAX_BODY_LINE_LENGTH = 250; // Terminal-friendly line length
 
-/** @type {import("@commitlint/types").UserConfig} */
 const config = {
   extends: ["@commitlint/config-conventional"],
 
