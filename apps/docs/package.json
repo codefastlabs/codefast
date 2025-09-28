@@ -4,19 +4,30 @@
   "private": true,
   "scripts": {
     "build": "next build --turbopack",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf .next",
     "dev": "next dev --turbopack",
+    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
     "start": "next start"
   },
   "dependencies": {
-    "next": "15.5.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "@codefast/hooks": "workspace:*",
+    "@codefast/image-loader": "workspace:*",
+    "@codefast/tailwind-variants": "workspace:*",
+    "@codefast/ui": "workspace:*",
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "eslint": "^9.36.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

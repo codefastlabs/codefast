@@ -53,16 +53,34 @@ importers:
 
   apps/docs:
     dependencies:
+      '@codefast/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@codefast/image-loader':
+        specifier: workspace:*
+        version: link:../../packages/image-loader
+      '@codefast/tailwind-variants':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-variants
+      '@codefast/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
-        specifier: 15.5.4
+        specifier: ^15.5.4
         version: 15.5.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
-        specifier: 19.1.0
+        specifier: ^19.1.0
         version: 19.1.0
       react-dom:
-        specifier: 19.1.0
+        specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
     devDependencies:
+      '@codefast/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.13
@@ -75,6 +93,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.1.9(@types/react@19.1.14)
+      eslint:
+        specifier: ^9.36.0
+        version: 9.36.0(jiti@2.6.0)
       tailwindcss:
         specifier: ^4
         version: 4.1.13
@@ -7461,7 +7482,7 @@ snapshots:
   '@eslint/eslintrc@3.3.1':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.1
+      debug: 4.4.3
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2

@@ -61,6 +61,9 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/.changeset" />
+      <excludeFolder url="file://$MODULE_DIR$/.cursor" />
+      <excludeFolder url="file://$MODULE_DIR$/.github" />
       <excludeFolder url="file://$MODULE_DIR$/benchmarks/tailwind-variants/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/coverage" />
     </content>
