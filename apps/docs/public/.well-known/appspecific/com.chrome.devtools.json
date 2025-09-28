@@ -1,8 +1,0 @@
-{
-  "version": "1.0",
-  "name": "CodeFast Docs",
-  "description": "Documentation for CodeFast",
-  "capabilities": {
-    "debugging": true
-  }
-}
