@@ -174,7 +174,7 @@ codefast/                  # Root monorepo
 │           ├── progress-circle.tsx
 │           └── index.ts
 ├── apps/                  # Applications
-│   └── docs/              # Documentation site (@codefast/docs)
+│   └── docs/              # Documentation site (@apps/docs)
 │       ├── src/
 │       │   ├── app/           # Next.js app directory
 │       │   ├── components/    # Documentation components

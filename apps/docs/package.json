@@ -1,5 +1,5 @@
 {
-  "name": "@codefast/docs",
+  "name": "@apps/docs",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -18,15 +18,15 @@
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",
     "next": "^15.5.4",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.15",
     "@types/react-dom": "^19",
     "eslint": "^9.36.0",
     "tailwindcss": "^4",
