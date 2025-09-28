@@ -199,6 +199,7 @@ const errorUnicornRules: Linter.RulesRecord = {
         ctx: false,
         dev: false,
         dist: false,
+        docs: false,
         env: false,
         lib: false,
         params: false,
