@@ -13,8 +13,7 @@ const nextConfig: NextConfig = {
       "@codefast/hooks",
       "@codefast/image-loader",
       "@codefast/ui",
-      "@codefast/eslint-config",
-      "@codefast/typescript-config",
+      "@codefast/tailwind-variants",
     ],
   },
   images: {
