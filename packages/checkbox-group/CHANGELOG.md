@@ -1,5 +1,25 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.8-canary.2
+
+### Patch Changes
+
+- [`1cf6c06`](https://github.com/codefastlabs/codefast/commit/1cf6c06046d25579e0e36f013bf108d7011139d8) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update imports to use `@codefast/tailwind-variants` for utility functions and types
+
+- [`1b9ab0e`](https://github.com/codefastlabs/codefast/commit/1b9ab0e5af2f02473d572a0443501216cc3fa880) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update imports to use `@codefast/tailwind-variants`
+
+- [`ac55f56`](https://github.com/codefastlabs/codefast/commit/ac55f569207dfd79f270f7ed6a0a1d0c6c5cee5e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): replace `@variant dark` with `.dark` in globals.css
+
+- [`c322adb`](https://github.com/codefastlabs/codefast/commit/c322adbb6953fd3bf17376d2ac3064747604113f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(configs): adjust PostCSS plugins and remove unused deps
+
+- [`6d4b17e`](https://github.com/codefastlabs/codefast/commit/6d4b17e577bda3b5d5a6c74dea28d6968b527751) Thanks [@thevuong](https://github.com/thevuong)! - feat(styles): add usage examples for CSS variables to enhance documentation
+
+- [`da3d5d1`](https://github.com/codefastlabs/codefast/commit/da3d5d114ada0c48ffcb79d993c8e9a07f420c70) Thanks [@thevuong](https://github.com/thevuong)! - refactor(deps): update Jest and SWC dependencies
+
+- [`f40943c`](https://github.com/codefastlabs/codefast/commit/f40943c85ff0daf8ae3a48deb3e2c848b0a54976) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): remove `@tailwindcss/typography` for simplicity
+
+- [`dbe05a0`](https://github.com/codefastlabs/codefast/commit/dbe05a0246a7e2a582f6c7255d3a458002295f29) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): update comment formatting in global and theme CSS files
+
 ## 0.3.8-canary.1
 
 ### Patch Changes
