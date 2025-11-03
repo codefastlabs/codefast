@@ -1,7 +1,7 @@
 import type { Linter } from "eslint";
 
 import pluginReact from "eslint-plugin-react";
-import * as pluginReactHooks from "eslint-plugin-react-hooks";
+import pluginReactHooks from "eslint-plugin-react-hooks";
 
 /**
  * Rules that are disabled (set to "off") for React plugin
@@ -71,13 +71,15 @@ const errorReactRules: Linter.RulesRecord = {
 export const reactRules: Linter.Config[] = [
   {
     files: ["**/*.{jsx,tsx}"],
+    ...pluginReactHooks.configs.flat.recommended,
+  },
+  {
+    files: ["**/*.{jsx,tsx}"],
     plugins: {
       react: pluginReact,
-      "react-hooks": pluginReactHooks,
     },
     rules: {
       ...pluginReact.configs.flat.recommended.rules,
-      ...pluginReactHooks.configs.recommended.rules,
 
       // Apply all disabled rules
       ...disabledReactRules,
