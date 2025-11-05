@@ -54,12 +54,12 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.17.0",
-    "@swc/core": "^1.14.0",
+    "@rslib/core": "^0.17.1",
+    "@swc/core": "^1.15.0",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.0",
-    "eslint": "9.38.0",
+    "eslint": "^9.39.1",
     "jest": "^30.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
