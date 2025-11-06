@@ -7,7 +7,7 @@
 
 // Configuration constants
 const ERROR_LEVEL = 2;
-const MAX_HEADER_LENGTH = 80;
+const MAX_HEADER_LENGTH = 120;
 const MAX_BODY_LINE_LENGTH = 250;
 
 const config = {

@@ -65,7 +65,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rsbuild/plugin-react": "^1.4.1",
+    "@rsbuild/plugin-react": "^1.4.2",
     "@rslib/core": "^0.17.1",
     "@swc/core": "^1.15.0",
     "@swc/jest": "^0.2.39",
