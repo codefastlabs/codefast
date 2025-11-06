@@ -4,7 +4,7 @@ import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { inputVariants } from "@/components/input/input.variants";
 import { Spinner } from "@/components/spinner/spinner";
-import * as InputPrimitive from "@codefast-ui/input";
+import * as InputPrimitive from "@/primitives/input";
 
 /* -----------------------------------------------------------------------------
  * Variant: Input
