@@ -117,7 +117,10 @@ function Carousel({
       return;
     }
 
-    onSelect(api);
+    // Defer onSelect to avoid synchronous setState in effect
+    queueMicrotask(() => {
+      onSelect(api);
+    });
     api.on("reInit", onSelect);
     api.on("select", onSelect);
 
@@ -246,7 +249,7 @@ function CarouselPrevious({
       className={cn(
         "absolute size-8 shadow-none",
         orientation === "horizontal"
-          ? "-left-12 top-1/2 -translate-y-1/2"
+          ? "top-1/2 -left-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
@@ -289,7 +292,7 @@ function CarouselNext({
       className={cn(
         "absolute size-8 shadow-none",
         orientation === "horizontal"
-          ? "-right-12 top-1/2 -translate-y-1/2"
+          ? "top-1/2 -right-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
