@@ -63,7 +63,10 @@ export function NavActions(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    setIsOpen(true);
+    // Defer setState to avoid synchronous setState in effect
+    queueMicrotask(() => {
+      setIsOpen(true);
+    });
   }, []);
 
   return (

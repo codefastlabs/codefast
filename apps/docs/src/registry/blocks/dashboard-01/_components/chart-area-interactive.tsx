@@ -144,7 +144,10 @@ export function ChartAreaInteractive(): JSX.Element {
 
   useEffect(() => {
     if (isMobile) {
-      setTimeRange("7d");
+      // Defer setState to avoid synchronous setState in effect
+      queueMicrotask(() => {
+        setTimeRange("7d");
+      });
     }
   }, [isMobile]);
 
@@ -171,12 +174,12 @@ export function ChartAreaInteractive(): JSX.Element {
       <CardHeader>
         <CardTitle>Total Visitors</CardTitle>
         <CardDescription>
-          <span className="@[540px]/card:block hidden">Total for the last 3 months</span>
+          <span className="hidden @[540px]/card:block">Total for the last 3 months</span>
           <span className="@[540px]/card:hidden">Last 3 months</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
-            className="@[767px]/card:flex hidden *:data-[slot=toggle-group-item]:!px-4"
+            className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
             type="single"
             value={timeRange}
             variant="outline"
@@ -189,7 +192,7 @@ export function ChartAreaInteractive(): JSX.Element {
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
               aria-label="Select a value"
-              className="**:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden flex w-40"
+              className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
               size="sm"
             >
               <SelectValue placeholder="Last 3 months" />
