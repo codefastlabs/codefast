@@ -514,12 +514,13 @@ function InputNumberField({
    *
    * @returns A composed event handler function for the onKeyDown event
    */
-  const combinedKeyDownHandler = useCallback(
-    () =>
+  const combinedKeyDownHandler = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    (event) => {
       composeEventHandlers(
         onKeyDown,
         chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
-      ),
+      )(event);
+    },
     [onKeyDown, handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
   );
 
@@ -598,7 +599,7 @@ function InputNumberField({
       readOnly={readOnly}
       step={step}
       onBlur={composeEventHandlers(onBlur, handleBlur)}
-      onKeyDown={combinedKeyDownHandler()}
+      onKeyDown={combinedKeyDownHandler}
       {...inputScope}
       {...props}
     />
