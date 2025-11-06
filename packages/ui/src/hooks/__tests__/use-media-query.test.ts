@@ -1,4 +1,4 @@
-import { useMediaQuery } from "@/use-media-query";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { act, renderHook } from "@testing-library/react";
 
 type ChangeHandler = (event: MediaQueryListEvent) => void;

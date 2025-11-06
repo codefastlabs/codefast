@@ -1,4 +1,4 @@
-import { useCopyToClipboard } from "@/use-copy-to-clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { act, renderHook } from "@testing-library/react";
 
 describe("useCopyToClipboard", () => {

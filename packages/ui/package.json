@@ -55,7 +55,6 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@codefast/hooks": "workspace:*",
     "@codefast/tailwind-variants": "workspace:*",
     "@radix-ui/primitive": "^1.1.3",
     "@radix-ui/react-accordion": "^1.2.12",

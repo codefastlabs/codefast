@@ -16,7 +16,6 @@ import type {
   VisibilityState,
 } from "@tanstack/react-table";
 
-import { useIsMobile } from "@codefast/hooks";
 import {
   Badge,
   Button,
@@ -57,6 +56,7 @@ import {
   TabsList,
   TabsTrigger,
   toast,
+  useIsMobile,
 } from "@codefast/ui";
 import {
   closestCenter,

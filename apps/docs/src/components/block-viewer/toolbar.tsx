@@ -13,7 +13,6 @@ import Link from "next/link";
 import type { BlockViewMode } from "@/components/block-viewer/provider";
 
 import { useBlockViewer } from "@/components/block-viewer/provider";
-import { useCopyToClipboard } from "@codefast/hooks";
 import {
   Button,
   buttonVariants,
@@ -23,6 +22,7 @@ import {
   TabsTrigger,
   ToggleGroup,
   ToggleGroupItem,
+  useCopyToClipboard,
 } from "@codefast/ui";
 
 const hasCli = false;

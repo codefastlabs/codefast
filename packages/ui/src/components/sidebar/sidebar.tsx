@@ -25,7 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/tooltip/tooltip";
-import { useIsMobile } from "@codefast/hooks";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { cn } from "@codefast/tailwind-variants";
 import { createContext } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
