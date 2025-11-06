@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.3.8-canary.3
+
+### Patch Changes
+
+- [`bf65c06`](https://github.com/codefastlabs/codefast/commit/bf65c06d104797263d3c8d9240a29154f6419c92) Thanks [@thevuong](https://github.com/thevuong)! - refactor(deps): upgrade various dependencies across packages
+
+- Updated dependencies [[`bf65c06`](https://github.com/codefastlabs/codefast/commit/bf65c06d104797263d3c8d9240a29154f6419c92)]:
+  - @codefast-ui/input@0.3.8-canary.3
+
 ## 0.3.8-canary.2
 
 ### Patch Changes
