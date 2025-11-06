@@ -33,7 +33,10 @@ export function NavSecondary({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    // Defer setState to avoid synchronous setState in effect
+    queueMicrotask(() => {
+      setMounted(true);
+    });
   }, []);
 
   return (
