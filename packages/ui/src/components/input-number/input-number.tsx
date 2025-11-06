@@ -7,7 +7,7 @@ import type { VariantProps } from "@codefast/tailwind-variants";
 import { buttonVariants } from "@/components/button/button.variants";
 import { inputVariants } from "@/components/input/input.variants";
 import { Spinner } from "@/components/spinner/spinner";
-import * as InputNumberPrimitive from "@codefast-ui/input-number";
+import * as InputNumberPrimitive from "@/primitives/input-number";
 import { cn } from "@codefast/tailwind-variants";
 
 const { input, root } = inputVariants();
@@ -75,7 +75,7 @@ function InputNumber({
       <div
         className={cn(
           "divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 group-focus-within:border-l-ring group-focus-within:divide-ring group-has-aria-invalid:border-l-destructive group-has-aria-invalid:divide-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 order-last ml-auto grid h-full shrink-0 divide-y border-l transition",
-          "*:[button]:focus-visible:ring-0 *:[button]:focus-visible:bg-ring/50 group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/40",
+          "*:[button]:focus-visible:bg-ring/50 group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/40 *:[button]:focus-visible:ring-0",
         )}
         data-slot="input-number-buttons"
       >
