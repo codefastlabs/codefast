@@ -1,4 +1,4 @@
-import { useMutationObserver } from "@/use-mutation-observer";
+import { useMutationObserver } from "@/hooks/use-mutation-observer";
 import { renderHook } from "@testing-library/react";
 
 describe("useMutationObserver", () => {

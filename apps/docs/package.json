@@ -12,7 +12,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@codefast/hooks": "workspace:*",
     "@codefast/image-loader": "workspace:*",
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",

@@ -1,4 +1,4 @@
-import { ELLIPSIS, usePagination } from "@/use-pagination";
+import { ELLIPSIS, usePagination } from "@/hooks/use-pagination";
 import { renderHook } from "@testing-library/react";
 
 describe("usePagination", () => {

@@ -1,9 +1,9 @@
-import { useIsMobile } from "@/use-is-mobile";
-import { useMediaQuery } from "@/use-media-query";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { renderHook } from "@testing-library/react";
 
 // Mock hook useMediaQuery
-jest.mock("@/use-media-query", () => ({
+jest.mock("@/hooks/use-media-query", () => ({
   useMediaQuery: jest.fn(),
 }));
 

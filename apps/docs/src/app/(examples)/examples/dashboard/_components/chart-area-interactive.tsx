@@ -7,7 +7,6 @@ import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
 
-import { useIsMobile } from "@codefast/hooks";
 import {
   Card,
   CardAction,
@@ -25,6 +24,7 @@ import {
   SelectValue,
   ToggleGroup,
   ToggleGroupItem,
+  useIsMobile,
 } from "@codefast/ui";
 
 const chartData = [

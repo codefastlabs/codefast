@@ -1,4 +1,6 @@
-import { useMediaQuery } from "@/use-media-query";
+"use client";
+
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 /**
  * The breakpoint width in pixels that separates mobile from non-mobile devices.

@@ -1,4 +1,4 @@
-import { useAnimatedValue } from "@/use-animated-value";
+import { useAnimatedValue } from "@/hooks/use-animated-value";
 import { act, renderHook } from "@testing-library/react";
 
 describe("useAnimatedValue", () => {

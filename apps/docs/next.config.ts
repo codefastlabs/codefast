@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
     browserDebugInfoInTerminal: true,
 
     optimizePackageImports: [
-      "@codefast/hooks",
       "@codefast/image-loader",
       "@codefast/ui",
       "@codefast/tailwind-variants",

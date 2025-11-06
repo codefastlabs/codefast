@@ -8,7 +8,6 @@ import { CalendarIcon } from "lucide-react";
 import { useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-import { useIsMobile } from "@codefast/hooks";
 import { cn } from "@codefast/tailwind-variants";
 import {
   Button,
@@ -18,6 +17,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  useIsMobile,
 } from "@codefast/ui";
 
 export function DatePickerDemo(): JSX.Element {
