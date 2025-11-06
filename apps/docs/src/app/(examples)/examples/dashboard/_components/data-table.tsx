@@ -362,7 +362,27 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
 
   const dataIds = useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id), [data]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns functions that cannot be memoized safely
+  // Memoize table state object to ensure stable reference
+  // This prevents unnecessary re-renders and follows TanStack Table best practices
+  const tableState = useMemo(
+    () => ({
+      columnFilters,
+      columnVisibility,
+      pagination,
+      rowSelection,
+      sorting,
+    }),
+    [columnFilters, columnVisibility, pagination, rowSelection, sorting],
+  );
+
+  // Columns are defined outside component with stable reference (per TanStack Table FAQ)
+  // Data uses useState with lazy initializer for stable reference
+  // This prevents infinite rendering loops as recommended in https://tanstack.com/table/latest/docs/faq
+  // Table state is memoized to ensure stable reference
+  // Note: React Compiler warning about incompatible-library is expected with TanStack Table
+  // This is a known limitation documented in https://github.com/TanStack/table/issues/5567
+  // The code follows all best practices: stable column/data references and memoized state
+  // eslint-disable-next-line react-hooks/incompatible-library -- Known React Compiler limitation with TanStack Table (see https://github.com/TanStack/table/issues/5567). Code optimized per TanStack Table FAQ: stable column/data references and memoized state.
   const table = useReactTable({
     columns,
     data,
@@ -379,13 +399,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
     onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    state: {
-      columnFilters,
-      columnVisibility,
-      pagination,
-      rowSelection,
-      sorting,
-    },
+    state: tableState,
   });
 
   function handleDragEnd(event: DragEndEvent): void {
