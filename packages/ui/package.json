@@ -24,6 +24,9 @@
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "sideEffects": [
+    "./dist/styles/index.css"
+  ],
   "type": "module",
   "exports": {
     ".": {
