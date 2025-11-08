@@ -6,7 +6,7 @@ import { Drawer as DrawerPrimitive } from "vaul";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { buttonVariants } from "@/components/button.variants";
+import { buttonVariants } from "@/components/button";
 import { cn } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------

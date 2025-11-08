@@ -4,9 +4,31 @@ import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { separatorVariants } from "@/components/separator.variants";
-import { cn } from "@codefast/tailwind-variants";
+import { cn, tv } from "@codefast/tailwind-variants";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
+
+/* -----------------------------------------------------------------------------
+ * Variant: Separator
+ * -------------------------------------------------------------------------- */
+
+const separatorVariants = tv({
+  base: "bg-border relative flex shrink-0 items-center",
+  defaultVariants: {
+    align: "center",
+    orientation: "horizontal",
+  },
+  variants: {
+    align: {
+      center: "justify-center",
+      end: "justify-end",
+      start: "justify-start",
+    },
+    orientation: {
+      horizontal: "h-px w-full",
+      vertical: "h-full w-px flex-col",
+    },
+  },
+});
 
 /* -----------------------------------------------------------------------------
  * Component: Separator
@@ -54,6 +76,6 @@ function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { separatorVariants } from "@/components/separator.variants";
+export { separatorVariants };
 export { Separator, SeparatorItem };
 export type { SeparatorItemProps, SeparatorProps };

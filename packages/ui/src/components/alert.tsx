@@ -2,8 +2,25 @@ import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { alertVariants } from "@/components/alert.variants";
-import { cn } from "@codefast/tailwind-variants";
+import { cn, tv } from "@codefast/tailwind-variants";
+
+/* -----------------------------------------------------------------------------
+ * Variant: Alert
+ * -------------------------------------------------------------------------- */
+
+const alertVariants = tv({
+  base: "bg-card relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-xl border px-4 py-3 text-sm has-[>svg]:grid-cols-[--spacing(4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      default: "text-card-foreground",
+      destructive:
+        "text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+    },
+  },
+});
 
 /* -----------------------------------------------------------------------------
  * Component: Alert
@@ -63,6 +80,6 @@ function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.E
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { alertVariants } from "@/components/alert.variants";
+export { alertVariants };
 export { Alert, AlertDescription, AlertTitle };
 export type { AlertDescriptionProps, AlertProps, AlertTitleProps };

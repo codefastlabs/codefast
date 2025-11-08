@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps, JSX } from "react";
 
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
@@ -10,7 +12,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
+  navigationMenuTriggerVariants,
 } from "@codefast/ui";
 
 const components: { description: string; href: string; title: string }[] = [
@@ -52,7 +54,7 @@ const components: { description: string; href: string; title: string }[] = [
 
 export function NavigationMenuDemo(): JSX.Element {
   return (
-    <div className="@xl:flex hidden w-full flex-col items-center justify-center gap-6">
+    <div className="hidden w-full flex-col items-center justify-center gap-6 @xl:flex">
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem value="getting-started">
@@ -62,10 +64,10 @@ export function NavigationMenuDemo(): JSX.Element {
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <Link
-                      className="from-muted/50 to-muted dark:from-accent/50 dark:to-accent bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
+                      className="from-muted/50 to-muted dark:from-accent/50 dark:to-accent flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
                       href="/apps/docs/public"
                     >
-                      <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
+                      <div className="mt-4 mb-2 text-lg font-medium">@codefast/ui</div>
                       <p className="text-muted-foreground text-sm leading-tight">
                         Beautifully designed components built with Tailwind CSS.
                       </p>
@@ -97,7 +99,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem value="forms">
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <NavigationMenuLink asChild className={navigationMenuTriggerVariants()}>
               <Link href="/apps/docs/public">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -106,7 +108,7 @@ export function NavigationMenuDemo(): JSX.Element {
       <NavigationMenu viewport={false}>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <NavigationMenuLink asChild className={navigationMenuTriggerVariants()}>
               <Link href="/apps/docs/public">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -200,7 +202,7 @@ function ListItem({
     <li {...props}>
       <NavigationMenuLink asChild>
         <Link href={href}>
-          <div className="text-sm font-medium leading-none">{title}</div>
+          <div className="text-sm leading-none font-medium">{title}</div>
           <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
         </Link>
       </NavigationMenuLink>

@@ -423,7 +423,7 @@ export {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
+  navigationMenuTriggerVariants,
 } from "@/components/navigation-menu";
 export type {
   NavigationMenuContentProps,
