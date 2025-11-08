@@ -1,5 +1,23 @@
 # @codefast/typescript-config
 
+## 0.3.8-canary.4
+
+### Patch Changes
+
+- [`ec076da`](https://github.com/codefastlabs/codefast/commit/ec076da4d889b6ed03c16ef685405855900683cd) Thanks [@thevuong](https://github.com/thevuong)! - chore(package): add sideEffects field to package.json for better tree-shaking
+
+- [`f22d0a4`](https://github.com/codefastlabs/codefast/commit/f22d0a4cd16f5a7d8e7979292ff016e5bb42f029) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): rename component variant files to use `.tsx` extension for consistency
+
+- [`05d78a4`](https://github.com/codefastlabs/codefast/commit/05d78a4be23ea0f4acd39208ddbb22c817c89714) Thanks [@thevuong](https://github.com/thevuong)! - test(ui): add comprehensive unit tests for various hooks
+
+- [`cacf996`](https://github.com/codefastlabs/codefast/commit/cacf99660c812b5e5fafa5fd3beeab776b9683d7) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): introduce new CheckboxGroup, InputNumber, and ProgressCircle components with comprehensive tests
+
+- [`45507b5`](https://github.com/codefastlabs/codefast/commit/45507b55c52516b69e63d67dd1c4a090aea87ef3) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): restructure CSS files and remove deprecated styles
+
+- [`71a49ff`](https://github.com/codefastlabs/codefast/commit/71a49ff554e6c73b855c10aa0a6e7e74ce8c1f23) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove deprecated component exports and streamline imports
+
+- [`7fe14d9`](https://github.com/codefastlabs/codefast/commit/7fe14d9b6189384211e3d6da507943127f6b8de2) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove variant files and inline logic into core components
+
 ## 0.3.8-canary.3
 
 ### Patch Changes
