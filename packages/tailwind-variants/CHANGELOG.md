@@ -1,5 +1,57 @@
 # @codefast/tailwind-variants
 
+## 0.3.8
+
+### Patch Changes
+
+- [`1cf6c06`](https://github.com/codefastlabs/codefast/commit/1cf6c06046d25579e0e36f013bf108d7011139d8) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update imports to use `@codefast/tailwind-variants` for utility functions and types
+
+- [`ec076da`](https://github.com/codefastlabs/codefast/commit/ec076da4d889b6ed03c16ef685405855900683cd) Thanks [@thevuong](https://github.com/thevuong)! - chore(package): add sideEffects field to package.json for better tree-shaking
+
+- [`bf65c06`](https://github.com/codefastlabs/codefast/commit/bf65c06d104797263d3c8d9240a29154f6419c92) Thanks [@thevuong](https://github.com/thevuong)! - refactor(deps): upgrade various dependencies across packages
+
+- [`1b9ab0e`](https://github.com/codefastlabs/codefast/commit/1b9ab0e5af2f02473d572a0443501216cc3fa880) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update imports to use `@codefast/tailwind-variants`
+
+- [`f22d0a4`](https://github.com/codefastlabs/codefast/commit/f22d0a4cd16f5a7d8e7979292ff016e5bb42f029) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): rename component variant files to use `.tsx` extension for consistency
+
+- [`05d78a4`](https://github.com/codefastlabs/codefast/commit/05d78a4be23ea0f4acd39208ddbb22c817c89714) Thanks [@thevuong](https://github.com/thevuong)! - test(ui): add comprehensive unit tests for various hooks
+
+- [`cacf996`](https://github.com/codefastlabs/codefast/commit/cacf99660c812b5e5fafa5fd3beeab776b9683d7) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): introduce new CheckboxGroup, InputNumber, and ProgressCircle components with comprehensive tests
+
+- [`a5d483b`](https://github.com/codefastlabs/codefast/commit/a5d483b6232088b6d74e6146e0d1510843241ad0) Thanks [@thevuong](https://github.com/thevuong)! - refactor(jest-setup): extract custom matcher declarations to dedicated file
+
+- [`30ae5af`](https://github.com/codefastlabs/codefast/commit/30ae5af9b720a42f1debb2bb595b778bd64a43a5) Thanks [@thevuong](https://github.com/thevuong)! - feat(image-loader): add secure URL matching utilities and integrate with loaders
+
+- [`45507b5`](https://github.com/codefastlabs/codefast/commit/45507b55c52516b69e63d67dd1c4a090aea87ef3) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): restructure CSS files and remove deprecated styles
+
+- [`c4404a3`](https://github.com/codefastlabs/codefast/commit/c4404a33ea694eacb0469772cdc834809d13aabc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): simplify `ignores` patterns in `next-app` preset
+
+- [`71a49ff`](https://github.com/codefastlabs/codefast/commit/71a49ff554e6c73b855c10aa0a6e7e74ce8c1f23) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove deprecated component exports and streamline imports
+
+- [`ac55f56`](https://github.com/codefastlabs/codefast/commit/ac55f569207dfd79f270f7ed6a0a1d0c6c5cee5e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): replace `@variant dark` with `.dark` in globals.css
+
+- [`7fe14d9`](https://github.com/codefastlabs/codefast/commit/7fe14d9b6189384211e3d6da507943127f6b8de2) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove variant files and inline logic into core components
+
+- [`f48e0fb`](https://github.com/codefastlabs/codefast/commit/f48e0fb7a47c5e5d5218505a23d348c90c961b1b) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove @codefast/hooks dependency and integrate hooks directly into @codefast/ui
+
+- [`98fadf6`](https://github.com/codefastlabs/codefast/commit/98fadf6702c1f47515569d8bb6c38bfa75bbf5bd) Thanks [@thevuong](https://github.com/thevuong)! - refactor(checkbox-group, input, input-number, progress-circle): migrate components to primitives and remove deprecated files
+
+- [`c322adb`](https://github.com/codefastlabs/codefast/commit/c322adbb6953fd3bf17376d2ac3064747604113f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(configs): adjust PostCSS plugins and remove unused deps
+
+- [`6d4b17e`](https://github.com/codefastlabs/codefast/commit/6d4b17e577bda3b5d5a6c74dea28d6968b527751) Thanks [@thevuong](https://github.com/thevuong)! - feat(styles): add usage examples for CSS variables to enhance documentation
+
+- [`da3d5d1`](https://github.com/codefastlabs/codefast/commit/da3d5d114ada0c48ffcb79d993c8e9a07f420c70) Thanks [@thevuong](https://github.com/thevuong)! - refactor(deps): update Jest and SWC dependencies
+
+- [`f40943c`](https://github.com/codefastlabs/codefast/commit/f40943c85ff0daf8ae3a48deb3e2c848b0a54976) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): remove `@tailwindcss/typography` for simplicity
+
+- [`dbe05a0`](https://github.com/codefastlabs/codefast/commit/dbe05a0246a7e2a582f6c7255d3a458002295f29) Thanks [@thevuong](https://github.com/thevuong)! - refactor(styles): update comment formatting in global and theme CSS files
+
+- [`9de2f17`](https://github.com/codefastlabs/codefast/commit/9de2f173fcac4ffe2dc919b98029321468a25b4b) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update styles version and dependencies for animations and typography
+
+- [`1163fa8`](https://github.com/codefastlabs/codefast/commit/1163fa802d29abb68a53eb403295ef1a27cdc7d9) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): add support for multiple configuration presets in exports
+
+- [`1ff5e63`](https://github.com/codefastlabs/codefast/commit/1ff5e63747205c248d326ba4b38a3b1caff91335) Thanks [@thevuong](https://github.com/thevuong)! - refactor(typescript-config): update TypeScript configurations for consistency and maintainability
+
 ## 0.3.8-canary.4
 
 ### Patch Changes
