@@ -24,9 +24,7 @@
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
-  "sideEffects": [
-    "./dist/styles/index.css"
-  ],
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -34,7 +32,23 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./styles.css": "./dist/styles/index.css"
+    "./components/*": {
+      "import": "./dist/components/*.js",
+      "require": "./dist/components/*.cjs",
+      "types": "./dist/components/*.d.ts"
+    },
+    "./hooks/*": {
+      "import": "./dist/hooks/*.js",
+      "require": "./dist/hooks/*.cjs",
+      "types": "./dist/hooks/*.d.ts"
+    },
+    "./primitives/*": {
+      "import": "./dist/primitives/*.js",
+      "require": "./dist/primitives/*.cjs",
+      "types": "./dist/primitives/*.d.ts"
+    },
+    "./style.css": "./dist/style.css",
+    "./css/*": "./dist/css/*"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
