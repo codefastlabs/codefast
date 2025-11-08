@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "@app/docs": "0.0.1",
+    "@codefast/benchmark-tailwind-variants": "0.0.1",
+    "@codefast/eslint-config": "0.3.8",
+    "@codefast/image-loader": "0.3.8",
+    "@codefast/tailwind-variants": "0.3.8",
+    "@codefast/typescript-config": "0.3.8",
+    "@codefast/ui": "0.3.8"
+  },
+  "changesets": []
+}
