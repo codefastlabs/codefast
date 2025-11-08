@@ -11,6 +11,15 @@ export default defineConfig({
       bundle: false,
       dts: true,
       format: "esm",
+      output: {
+        copy: [
+          {
+            context: path.resolve(__dirname, "src", "css"),
+            from: "**/*",
+            to: "css",
+          },
+        ],
+      },
     },
     {
       bundle: false,
@@ -20,13 +29,6 @@ export default defineConfig({
   ],
   output: {
     cleanDistPath: !isWatchMode,
-    copy: [
-      {
-        context: path.resolve(__dirname, "src", "css"),
-        from: "**/*",
-        to: "css",
-      },
-    ],
     minify: !isWatchMode,
     target: "web",
   },
