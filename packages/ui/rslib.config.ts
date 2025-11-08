@@ -22,8 +22,9 @@ export default defineConfig({
     cleanDistPath: !isWatchMode,
     copy: [
       {
-        from: path.resolve(__dirname, "src", "styles", "index.css"),
-        to: path.resolve(__dirname, "dist", "styles", "index.css"),
+        context: path.resolve(__dirname, "src", "css"),
+        from: "**/*",
+        to: "css",
       },
     ],
     minify: !isWatchMode,
