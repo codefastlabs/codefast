@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
 
-import { buttonVariants } from "@/components/button.variants";
+import { buttonVariants } from "@/components/button";
 import { cn } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------

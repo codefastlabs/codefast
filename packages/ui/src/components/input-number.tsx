@@ -6,8 +6,8 @@ import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { buttonVariants } from "@/components/button.variants";
-import { inputVariants } from "@/components/input.variants";
+import { buttonVariants } from "@/components/button";
+import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
 import * as InputNumberPrimitive from "@/primitives/input-number";
 import { cn } from "@codefast/tailwind-variants";

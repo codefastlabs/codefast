@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps, JSX } from "react";
 
 import { CheckIcon } from "lucide-react";

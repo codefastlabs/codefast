@@ -8,7 +8,7 @@ import { useCallback, useState } from "react";
 import type { VariantProps } from "@codefast/tailwind-variants";
 
 import { Button } from "@/components/button";
-import { inputVariants } from "@/components/input.variants";
+import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
 import * as InputPrimitive from "@/primitives/input";
 

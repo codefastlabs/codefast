@@ -6,7 +6,7 @@ import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "l
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { buttonVariants } from "@/components/button.variants";
+import { buttonVariants } from "@/components/button";
 import { cn } from "@codefast/tailwind-variants";
 import * as SelectPrimitive from "@radix-ui/react-select";
 

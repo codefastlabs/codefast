@@ -5,7 +5,7 @@ import type { ComponentProps, JSX, ReactNode } from "react";
 import type { VariantProps } from "@codefast/tailwind-variants";
 import type { Scope } from "@radix-ui/react-context";
 
-import { toggleVariants } from "@/components/toggle.variants";
+import { toggleVariants } from "@/components/toggle";
 import { cn } from "@codefast/tailwind-variants";
 import { createContextScope } from "@radix-ui/react-context";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";

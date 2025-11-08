@@ -6,7 +6,7 @@ import { XIcon } from "lucide-react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { buttonVariants } from "@/components/button.variants";
+import { buttonVariants } from "@/components/button";
 import { cn } from "@codefast/tailwind-variants";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 

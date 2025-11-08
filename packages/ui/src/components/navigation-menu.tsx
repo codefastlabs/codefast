@@ -4,9 +4,21 @@ import type { ComponentProps, JSX } from "react";
 
 import { ChevronDownIcon } from "lucide-react";
 
-import { navigationMenuTriggerStyle } from "@/components/navigation-menu-trigger.style";
-import { cn } from "@codefast/tailwind-variants";
+import { buttonVariants } from "@/components/button";
+import { cn, tv } from "@codefast/tailwind-variants";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
+
+/* -----------------------------------------------------------------------------
+ * Style: NavigationMenuTrigger
+ * -------------------------------------------------------------------------- */
+
+const navigationMenuTriggerVariants = tv({
+  base: buttonVariants({
+    className:
+      "data-[state=open]:bg-secondary/50 data-[state=open]:text-secondary-foreground group/navigation-menu-trigger focus-visible:bg-secondary dark:hover:not-disabled:bg-secondary",
+    variant: "ghost",
+  }),
+});
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenu
@@ -90,7 +102,7 @@ function NavigationMenuTrigger({
 }: NavigationMenuTriggerProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Trigger
-      className={navigationMenuTriggerStyle({ className })}
+      className={navigationMenuTriggerVariants({ className })}
       data-slot="navigation-menu-trigger"
       {...props}
     >
@@ -190,7 +202,7 @@ function NavigationMenuIndicator({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { navigationMenuTriggerStyle } from "@/components/navigation-menu-trigger.style";
+export { navigationMenuTriggerVariants };
 export {
   NavigationMenu,
   NavigationMenuContent,

@@ -117,11 +117,9 @@ codefast/                  # Root monorepo
 ├── packages/             # All packages
 │   ├── ui/               # Main UI components library (@codefast/ui)
 │   │   └── src/
-│   │       ├── components/    # Component folders with variants
-│   │       │   ├── button/
-│   │       │   │   ├── button.tsx
-│   │       │   │   ├── button.variants.ts
-│   │       │   │   └── index.ts
+│   │       ├── components/    # Component files with co-located variants
+│   │       │   ├── button.tsx
+│   │       │   ├── alert.tsx
 │   │       │   └── ...
 │   │       └── index.ts       # Barrel exports
 │   ├── hooks/            # React hooks (@codefast/hooks)
@@ -248,26 +246,30 @@ import type { ComponentProps, JSX, ReactNode } from "react";
 import type { VariantProps } from "@codefast/tailwind-variants";
 
 // 3. Relative imports (using @ alias)
-import { buttonVariants } from "@/components/button/button.variants";
-import { Spinner } from "@/components/spinner/spinner";
+import { buttonVariants } from "@/components/button";
+import { Spinner } from "@/components/spinner";
 ```
 
 ### File Naming and Structure
 
-- **Components**: Organized in folders with `component-name.tsx`, `component-name.variants.ts`, and `index.ts`
+- **Components**: Organized in folders with `component-name.tsx` (variants co-located) and `index.ts`
 - **Hooks**: `use-hook-name.ts` with co-located tests
 - **Tests**: `use-hook-name.test.ts` or `component-name.test.tsx`
-- **Variants**: `component-name.variants.ts` using `@codefast/tailwind-variants`
+- **Variants**: Defined with `tv` inside the component file using `@codefast/tailwind-variants`
 
 ### Component Structure Example
 
 ```tsx
-// packages/ui/src/components/button/button.tsx
+// packages/ui/src/components/button.tsx
 import type { ComponentProps, JSX, ReactNode } from "react";
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { buttonVariants } from "@/components/button/button.variants";
-import { Spinner } from "@/components/spinner/spinner";
+import { Spinner } from "@/components/spinner";
+import { tv } from "@codefast/tailwind-variants";
+
+const buttonVariants = tv({
+  // variant definition
+});
 
 interface ButtonProps
   extends Omit<ComponentProps<"button">, "prefix">,
