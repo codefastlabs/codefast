@@ -79,6 +79,16 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "button",
     title: "Button",
   },
+  "button-group": {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/button-group-demo").then(
+        (module_) => module_.ButtonGroupDemo,
+      ),
+    ),
+    description: "Button Group",
+    slug: "button-group",
+    title: "Button Group",
+  },
   calendar: {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/calendar-demo").then(
@@ -619,6 +629,7 @@ export const registryComponentGroups: RegistryGroup[] = [
     components: [
       registryComponents.form,
       registryComponents.button,
+      registryComponents["button-group"],
       registryComponents.input,
       registryComponents["input-date"],
       registryComponents["input-number"],
@@ -651,6 +662,7 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.alert,
       registryComponents.avatar,
       registryComponents.badge,
+      registryComponents.empty,
       registryComponents.progress,
       registryComponents["progress-circle"],
       registryComponents.sonner,
