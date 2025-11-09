@@ -406,6 +406,33 @@ export type { InputSearchProps } from "@/components/input-search";
 export { Kbd, KbdGroup } from "@/components/kbd";
 export type { KbdGroupProps, KbdProps } from "@/components/kbd";
 
+export {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemFooter,
+  ItemGroup,
+  ItemHeader,
+  ItemMedia,
+  itemMediaVariants,
+  ItemSeparator,
+  ItemTitle,
+  itemVariants,
+} from "@/components/item";
+export type {
+  ItemActionsProps,
+  ItemContentProps,
+  ItemDescriptionProps,
+  ItemFooterProps,
+  ItemGroupProps,
+  ItemHeaderProps,
+  ItemMediaProps,
+  ItemProps,
+  ItemSeparatorProps,
+  ItemTitleProps,
+} from "@/components/item";
+
 export { Label } from "@/components/label";
 export type { LabelProps } from "@/components/label";
 

@@ -329,6 +329,14 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "input-time",
     title: "Input Time",
   },
+  item: {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/item-demo").then((module_) => module_.ItemDemo),
+    ),
+    description: "Item",
+    slug: "item",
+    title: "Item",
+  },
   kbd: {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/kbd-demo").then((module_) => module_.KbdDemo),
@@ -591,6 +599,7 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.carousel,
       registryComponents.collapsible,
       registryComponents["aspect-ratio"],
+      registryComponents.item,
       registryComponents.resizable,
       registryComponents["scroll-area"],
       registryComponents.separator,
