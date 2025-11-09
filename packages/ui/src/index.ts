@@ -50,6 +50,18 @@ export type { AvatarFallbackProps, AvatarImageProps, AvatarProps } from "@/compo
 export { Badge, badgeVariants } from "@/components/badge";
 export type { BadgeProps } from "@/components/badge";
 
+export {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+  buttonGroupVariants,
+} from "@/components/button-group";
+export type {
+  ButtonGroupProps,
+  ButtonGroupSeparatorProps,
+  ButtonGroupTextProps,
+} from "@/components/button-group";
+
 export { Blockquote } from "@/components/blockquote";
 export type { BlockquoteProps } from "@/components/blockquote";
 
