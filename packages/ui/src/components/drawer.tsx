@@ -56,7 +56,7 @@ function DrawerContent({
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Overlay
-        className={cn("bg-popover-overlay fixed inset-0 z-50", classNames?.overlay)}
+        className={cn("fixed inset-0 z-50 bg-black/50", classNames?.overlay)}
         data-slot="drawer-overlay"
       />
       <DrawerPrimitive.Content

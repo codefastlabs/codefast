@@ -50,7 +50,7 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          "bg-popover-overlay data-[state=open]:fade-in-0 data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=closed]:animate-out ease-ui fixed inset-0 z-50",
+          "data-[state=open]:fade-in-0 data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=closed]:animate-out ease-ui fixed inset-0 z-50 bg-black/50",
           classNames?.overlay,
         )}
         data-slot="alert-dialog-overlay"
