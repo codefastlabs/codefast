@@ -255,12 +255,12 @@ function CarouselPrevious({
       )}
       data-slot="carousel-previous"
       disabled={!canScrollPrev}
-      prefix={<ArrowLeftIcon />}
       size={size}
       variant={variant}
       onClick={scrollPrev}
       {...props}
     >
+      <ArrowLeftIcon />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -298,12 +298,12 @@ function CarouselNext({
       )}
       data-slot="carousel-next"
       disabled={!canScrollNext}
-      prefix={<ArrowRightIcon />}
       size={size}
       variant={variant}
       onClick={scrollNext}
       {...props}
     >
+      <ArrowRightIcon />
       <span className="sr-only">Next slide</span>
     </Button>
   );
