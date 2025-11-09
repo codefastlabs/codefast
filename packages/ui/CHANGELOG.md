@@ -1,5 +1,20 @@
 # @codefast/ui
 
+## 0.3.9-canary.1
+
+### Patch Changes
+
+- [`c0e717f`](https://github.com/codefastlabs/codefast/commit/c0e717f15f1bfbb316174dc3ef050757a4b54041) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `Empty` component and integrate in registry components
+
+- [`035b71a`](https://github.com/codefastlabs/codefast/commit/035b71a1a589a67ac668f1320a6985bd9271b248) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): add new size variants `icon-sm` and `icon-lg` to Button component
+
+- [`970a122`](https://github.com/codefastlabs/codefast/commit/970a1220fc37908bc19138770f195461652e59f7) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `ButtonGroup` component and integrate into docs
+
+- [`f88b73d`](https://github.com/codefastlabs/codefast/commit/f88b73dfc6f9d817ae83c26f20ef8f1d5b11a8c7) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `Item` component and integrate into docs
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.3.9-canary.1
+
 ## 0.3.9-canary.0
 
 ### Patch Changes
