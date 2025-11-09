@@ -491,6 +491,13 @@ export type {
   NavigationMenuTriggerProps,
 } from "@/components/navigation-menu";
 
+export { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@/components/native-select";
+export type {
+  NativeSelectOptGroupProps,
+  NativeSelectOptionProps,
+  NativeSelectProps,
+} from "@/components/native-select";
+
 export {
   Pagination,
   PaginationContent,
