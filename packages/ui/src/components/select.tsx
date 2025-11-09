@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
@@ -65,7 +65,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
     >
       {children}
       <SelectPrimitive.Icon asChild className="size-4 shrink-0 opacity-50">
-        <ChevronsUpDownIcon />
+        <ChevronDownIcon />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );

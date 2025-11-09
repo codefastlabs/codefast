@@ -363,6 +363,16 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "menubar",
     title: "Menubar",
   },
+  "native-select": {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/native-select-demo").then(
+        (module_) => module_.NativeSelectDemo,
+      ),
+    ),
+    description: "Native Select",
+    slug: "native-select",
+    title: "Native Select",
+  },
   "navigation-menu": {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/navigation-menu-demo").then(
@@ -659,6 +669,7 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents["toggle-group"],
       registryComponents.textarea,
       registryComponents.combobox,
+      registryComponents["native-select"],
       registryComponents.select,
       registryComponents.label,
       registryComponents.slider,
