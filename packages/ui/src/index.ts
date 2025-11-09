@@ -307,6 +307,24 @@ export { Em } from "@/components/em";
 export type { EmProps } from "@/components/em";
 
 export {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  emptyMediaVariants,
+  EmptyTitle,
+} from "@/components/empty";
+export type {
+  EmptyContentProps,
+  EmptyDescriptionProps,
+  EmptyHeaderProps,
+  EmptyMediaProps,
+  EmptyProps,
+  EmptyTitleProps,
+} from "@/components/empty";
+
+export {
   createFormFieldScope,
   Form,
   FormControl,
