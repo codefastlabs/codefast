@@ -1,5 +1,22 @@
 # @codefast/ui
 
+## 0.3.9-canary.0
+
+### Patch Changes
+
+- [`261c54b`](https://github.com/codefastlabs/codefast/commit/261c54be4eb37bd23868e058951b11c25f4e0072) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): add `KbdGroup` component and enhance `Kbd` functionality
+
+- [`c8a296c`](https://github.com/codefastlabs/codefast/commit/c8a296c72a7d427ab0596e5ac124bbc4f6dedbaa) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): add oklch-based CSS files for color themes
+
+- [`1751374`](https://github.com/codefastlabs/codefast/commit/175137498b3a5144909a2f80e003d070ca5bf937) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update Button component to support asChild prop and simplify props structure
+
+- [`4de46d0`](https://github.com/codefastlabs/codefast/commit/4de46d090cce30b3f65ed6203e566378c08d253c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace `bg-popover-overlay` with `bg-black/50` and remove unused CSS variables
+
+- [`bc4be51`](https://github.com/codefastlabs/codefast/commit/bc4be514f3df7de51ea49c5bd08a8b5bb92b0049) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace CSS custom properties with oklch color values in neutral.css
+
+- Updated dependencies [[`1751374`](https://github.com/codefastlabs/codefast/commit/175137498b3a5144909a2f80e003d070ca5bf937)]:
+  - @codefast/tailwind-variants@0.3.9-canary.0
+
 ## 0.3.8
 
 ### Patch Changes
