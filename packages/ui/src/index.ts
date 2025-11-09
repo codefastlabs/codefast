@@ -373,8 +373,8 @@ export type { InputPasswordProps } from "@/components/input-password";
 export { InputSearch } from "@/components/input-search";
 export type { InputSearchProps } from "@/components/input-search";
 
-export { Kbd } from "@/components/kbd";
-export type { KbdProps } from "@/components/kbd";
+export { Kbd, KbdGroup } from "@/components/kbd";
+export type { KbdGroupProps, KbdProps } from "@/components/kbd";
 
 export { Label } from "@/components/label";
 export type { LabelProps } from "@/components/label";
