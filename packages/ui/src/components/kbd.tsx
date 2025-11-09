@@ -1,28 +1,35 @@
-"use client";
-
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@codefast/tailwind-variants";
-import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Kbd
  * -------------------------------------------------------------------------- */
 
-interface KbdProps extends ComponentProps<"kbd"> {
-  asChild?: boolean;
-}
+type KbdProps = ComponentProps<"kbd">;
 
-function Kbd({ asChild, className, ...props }: KbdProps): JSX.Element {
-  const Component = asChild ? Slot : "kbd";
-
+function Kbd({ className, ...props }: KbdProps): JSX.Element {
   return (
-    <Component
+    <kbd
       className={cn(
-        "bg-muted text-muted-foreground inline-flex h-5 items-center gap-1 rounded-sm border px-1.5 font-mono text-xs font-medium select-none",
+        "bg-muted text-muted-foreground pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-sm px-1 font-sans text-xs font-medium select-none",
+        "[&_svg:not([class*='size-'])]:size-3",
+        "[[data-slot=tooltip-content]_&]:bg-background/20 [[data-slot=tooltip-content]_&]:text-background dark:[[data-slot=tooltip-content]_&]:bg-background/10",
         className,
       )}
       data-slot="kbd"
+      {...props}
+    />
+  );
+}
+
+type KbdGroupProps = ComponentProps<"kbd">;
+
+function KbdGroup({ className, ...props }: KbdGroupProps): JSX.Element {
+  return (
+    <kbd
+      className={cn("inline-flex items-center gap-1", className)}
+      data-slot="kbd-group"
       {...props}
     />
   );
@@ -32,5 +39,5 @@ function Kbd({ asChild, className, ...props }: KbdProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Kbd };
-export type { KbdProps };
+export { Kbd, KbdGroup };
+export type { KbdGroupProps, KbdProps };
