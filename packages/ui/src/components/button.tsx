@@ -1,9 +1,9 @@
-import type { ComponentProps, JSX, ReactNode } from "react";
+import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { Spinner } from "@/components/spinner";
 import { tv } from "@codefast/tailwind-variants";
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Variant: Button
@@ -49,41 +49,45 @@ const buttonVariants = tv({
  * Component: Button
  * -------------------------------------------------------------------------- */
 
-interface ButtonProps
-  extends Omit<ComponentProps<"button">, "prefix">,
-    VariantProps<typeof buttonVariants> {
-  loaderPosition?: "prefix" | "suffix";
-  loading?: boolean;
-  prefix?: ReactNode;
-  spinner?: ReactNode;
-  suffix?: ReactNode;
-}
+type ButtonProps = ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    type?: ComponentProps<"button">["type"];
+  };
 
 function Button({
+  asChild = false,
   children,
   className,
-  disabled,
-  loaderPosition = "prefix",
-  loading,
-  prefix,
   size,
-  spinner,
-  suffix,
+  type = "button",
   variant,
   ...props
 }: ButtonProps): JSX.Element {
+  const Comp = asChild ? Slot : "button";
+
+  if (asChild) {
+    return (
+      <Comp
+        className={buttonVariants({ className, size, variant })}
+        data-slot="button"
+        data-variant={variant}
+        {...props}
+      >
+        {children}
+      </Comp>
+    );
+  }
+
   return (
     <button
       className={buttonVariants({ className, size, variant })}
       data-slot="button"
       data-variant={variant}
-      disabled={loading ?? disabled}
-      type="button"
+      type={type}
       {...props}
     >
-      {loading && loaderPosition === "prefix" ? (spinner ?? <Spinner key="prefix" />) : prefix}
       {children}
-      {loading && loaderPosition === "suffix" ? (spinner ?? <Spinner key="suffix" />) : suffix}
     </button>
   );
 }

@@ -79,12 +79,13 @@ function InputSearch({
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
           size="icon"
-          suffix={<XIcon />}
           variant="ghost"
           onClick={() => {
             setValue("");
           }}
-        />
+        >
+          <XIcon />
+        </Button>
       ) : null}
     </InputPrimitive.Root>
   );

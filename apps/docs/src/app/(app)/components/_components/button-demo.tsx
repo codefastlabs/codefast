@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import { ArrowRightIcon, SendIcon } from "lucide-react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-import { Button } from "@codefast/ui";
+import { Button, Spinner } from "@codefast/ui";
 
 export function ButtonDemo(): JSX.Element {
   return (
@@ -28,13 +28,16 @@ export function ButtonDemo(): JSX.Element {
         <Button size="sm" variant="link">
           Link
         </Button>
-        <Button prefix={<SendIcon />} size="sm" variant="outline">
+        <Button size="sm" variant="outline">
+          <SendIcon />
           Send
         </Button>
-        <Button size="sm" suffix={<ArrowRightIcon />} variant="outline">
+        <Button size="sm" variant="outline">
           Learn More
+          <ArrowRightIcon />
         </Button>
-        <Button disabled loading size="sm" variant="outline">
+        <Button disabled size="sm" variant="outline">
+          <Spinner className="size-4" />
           Please wait
         </Button>
       </div>
@@ -48,13 +51,16 @@ export function ButtonDemo(): JSX.Element {
         <Button variant="destructive">Destructive</Button>
         <Button variant="secondary">Secondary</Button>
         <Button variant="link">Link</Button>
-        <Button prefix={<SendIcon />} variant="outline">
+        <Button variant="outline">
+          <SendIcon />
           Send
         </Button>
-        <Button suffix={<ArrowRightIcon />} variant="outline">
+        <Button variant="outline">
           Learn More
+          <ArrowRightIcon />
         </Button>
-        <Button disabled loading variant="outline">
+        <Button disabled variant="outline">
+          <Spinner className="size-4" />
           Please wait
         </Button>
       </div>
@@ -78,13 +84,16 @@ export function ButtonDemo(): JSX.Element {
         <Button size="lg" variant="link">
           Link
         </Button>
-        <Button prefix={<SendIcon />} size="lg" variant="outline">
+        <Button size="lg" variant="outline">
+          <SendIcon />
           Send
         </Button>
-        <Button size="lg" suffix={<ArrowRightIcon />} variant="outline">
+        <Button size="lg" variant="outline">
           Learn More
+          <ArrowRightIcon />
         </Button>
-        <Button disabled loading size="lg" variant="outline">
+        <Button disabled size="lg" variant="outline">
+          <Spinner className="size-4" />
           Please wait
         </Button>
       </div>

@@ -68,11 +68,12 @@ function InputPassword({
         className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
         data-slot="input-password-toggle"
         disabled={disabled}
-        prefix={type === "password" ? <EyeOffIcon /> : <EyeIcon />}
         size="icon"
         variant="ghost"
         onClick={togglePasswordVisibility}
-      />
+      >
+        {type === "password" ? <EyeOffIcon /> : <EyeIcon />}
+      </Button>
     </InputPrimitive.Root>
   );
 }

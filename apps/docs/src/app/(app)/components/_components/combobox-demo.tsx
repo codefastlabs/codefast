@@ -112,12 +112,12 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
         <Button
           aria-expanded={open}
           className="w-full justify-between md:max-w-[200px]"
-          suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
             : "Select framework..."}
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -171,7 +171,6 @@ function UserCombobox({
         <Button
           aria-expanded={open}
           className="w-full justify-between px-3 md:max-w-[200px]"
-          suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
           {selectedUser ? (
@@ -185,6 +184,7 @@ function UserCombobox({
           ) : (
             "Select user..."
           )}
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -251,11 +251,7 @@ function TimezoneCombobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          className="h-12 w-full justify-between px-3 md:max-w-[200px]"
-          suffix={<ChevronDownIcon className="text-muted-foreground" />}
-          variant="outline"
-        >
+        <Button className="h-12 w-full justify-between px-3 md:max-w-[200px]" variant="outline">
           {selectedTimezone ? (
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-muted-foreground text-xs font-normal">
@@ -266,6 +262,7 @@ function TimezoneCombobox({
           ) : (
             "Select timezone"
           )}
+          <ChevronDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="p-0">
@@ -316,17 +313,13 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          aria-expanded={open}
-          className="w-fit max-w-full justify-between"
-          suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
-          variant="outline"
-        >
+        <Button aria-expanded={open} className="w-fit max-w-full justify-between" variant="outline">
           <span className="truncate">
             {selectedFrameworks.length > 0
               ? selectedFrameworks.map((framework) => framework.label).join(", ")
               : "Select frameworks (multi-select)..."}
           </span>
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[300px] p-0">
@@ -348,7 +341,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
                   }}
                 >
                   <div
-                    className="border-input data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100 pointer-events-none size-4 shrink-0 select-none rounded-[4px] border transition-all"
+                    className="border-input data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground pointer-events-none size-4 shrink-0 rounded-[4px] border transition-all select-none *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
                     data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
                   >
                     <CheckIcon className="size-3.5 text-current" />
