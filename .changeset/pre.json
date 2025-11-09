@@ -10,5 +10,11 @@
     "@codefast/typescript-config": "0.3.8",
     "@codefast/ui": "0.3.8"
   },
-  "changesets": []
+  "changesets": [
+    "cuddly-cycles-joke",
+    "happy-moles-know",
+    "sixty-grapes-run",
+    "slimy-women-clap",
+    "thick-foxes-listen"
+  ]
 }

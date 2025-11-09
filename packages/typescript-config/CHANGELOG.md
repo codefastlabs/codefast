@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.3.9-canary.0
+
+### Patch Changes
+
+- [`1751374`](https://github.com/codefastlabs/codefast/commit/175137498b3a5144909a2f80e003d070ca5bf937) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update Button component to support asChild prop and simplify props structure
+
 ## 0.3.8
 
 ### Patch Changes
