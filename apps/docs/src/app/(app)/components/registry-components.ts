@@ -225,6 +225,14 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "dropdown-menu",
     title: "Dropdown Menu",
   },
+  empty: {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/empty-demo").then((module_) => module_.EmptyDemo),
+    ),
+    description: "Empty",
+    slug: "empty",
+    title: "Empty",
+  },
   form: {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/form-demo").then((module_) => module_.FormDemo),
