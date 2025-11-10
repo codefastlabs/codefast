@@ -32,25 +32,36 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./base": {
-      "import": "./dist/presets/base.js",
-      "require": "./dist/presets/base.cjs",
-      "types": "./dist/presets/base.d.ts"
+    "./package.json": "./package.json",
+    "./core/*": {
+      "import": "./dist/core/*.js",
+      "require": "./dist/core/*.cjs",
+      "types": "./dist/core/*.d.ts"
     },
-    "./library": {
-      "import": "./dist/presets/library.js",
-      "require": "./dist/presets/library.cjs",
-      "types": "./dist/presets/library.d.ts"
+    "./environments/*": {
+      "import": "./dist/environments/*.js",
+      "require": "./dist/environments/*.cjs",
+      "types": "./dist/environments/*.d.ts"
     },
-    "./react": {
-      "import": "./dist/presets/react.js",
-      "require": "./dist/presets/react.cjs",
-      "types": "./dist/presets/react.d.ts"
+    "./languages/*": {
+      "import": "./dist/languages/*.js",
+      "require": "./dist/languages/*.cjs",
+      "types": "./dist/languages/*.d.ts"
     },
-    "./next": {
-      "import": "./dist/presets/next.js",
-      "require": "./dist/presets/next.cjs",
-      "types": "./dist/presets/next.d.ts"
+    "./plugins/*": {
+      "import": "./dist/plugins/*.js",
+      "require": "./dist/plugins/*.cjs",
+      "types": "./dist/plugins/*.d.ts"
+    },
+    "./presets/*": {
+      "import": "./dist/presets/*.js",
+      "require": "./dist/presets/*.cjs",
+      "types": "./dist/presets/*.d.ts"
+    },
+    "./shared/*": {
+      "import": "./dist/shared/*.js",
+      "require": "./dist/shared/*.cjs",
+      "types": "./dist/shared/*.d.ts"
     }
   },
   "main": "./dist/index.cjs",
