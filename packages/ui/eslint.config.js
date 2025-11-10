@@ -1,1 +1,6 @@
-export { reactPreset as default } from "@codefast/eslint-config/presets/react";
+import { reactPreset } from "@codefast/eslint-config/presets/react";
+import { composeConfig } from "@codefast/eslint-config/shared/composer";
+
+export default composeConfig(reactPreset, {
+  rules: {},
+});
