@@ -44,5 +44,6 @@ export const browserEnvironment: Linter.Config[] = [
         ...globals.es2021,
       },
     },
+    name: "@codefast/eslint-config/environment/browser",
   },
 ];

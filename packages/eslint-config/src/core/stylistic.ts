@@ -124,6 +124,7 @@ const errorStylisticRules: Linter.RulesRecord = {
 export const stylisticRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
+    name: "@codefast/eslint-config/core/stylistic",
     plugins: {
       "@stylistic": stylistic,
     },

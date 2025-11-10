@@ -18,6 +18,7 @@ const warningTsdocRules: Linter.RulesRecord = {
 export const tsdocRules: Linter.Config[] = [
   {
     files: ["**/*.{ts,tsx}"],
+    name: "@codefast/eslint-config/plugins/tsdoc",
     plugins: {
       tsdoc: pluginTsdoc,
     },

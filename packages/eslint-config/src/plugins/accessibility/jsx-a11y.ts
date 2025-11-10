@@ -286,6 +286,7 @@ const errorJsxA11yRules: Linter.RulesRecord = {
 export const jsxA11yRules: Linter.Config[] = [
   {
     files: ["**/*.{jsx,tsx}"],
+    name: "@codefast/eslint-config/plugins/jsx-a11y",
     plugins: {
       "jsx-a11y": pluginJsxA11y,
     },

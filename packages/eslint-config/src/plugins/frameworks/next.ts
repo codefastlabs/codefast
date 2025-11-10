@@ -18,6 +18,7 @@ const disabledNextRules: Linter.RulesRecord = {
 export const nextRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    name: "@codefast/eslint-config/plugins/next",
     plugins: {
       "@next/next": pluginNext,
     },

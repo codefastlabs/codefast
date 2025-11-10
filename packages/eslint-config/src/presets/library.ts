@@ -8,6 +8,7 @@ import { composeConfig } from "@/shared/composer";
 const libraryStrictRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
+    name: "@codefast/eslint-config/presets/library/strict",
     rules: {
       // Apply TypeScript warning rules
       ...warningTypescriptRules,

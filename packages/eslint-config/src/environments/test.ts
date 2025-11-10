@@ -10,5 +10,6 @@ export const testEnvironment: Linter.Config[] = [
         ...globals.jest,
       },
     },
+    name: "@codefast/eslint-config/environment/test",
   },
 ];
