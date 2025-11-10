@@ -1,1 +1,1 @@
-export { reactAppPreset as default } from "@codefast/eslint-config";
+export { reactPreset as default } from "@codefast/eslint-config";

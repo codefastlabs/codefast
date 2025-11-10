@@ -47,9 +47,9 @@ export default [...basePreset];
 For React applications:
 
 ```typescript
-import { reactAppPreset } from "@codefast/eslint-config";
+import { reactPreset } from "@codefast/eslint-config";
 
-export default [...reactAppPreset];
+export default [...reactPreset];
 ```
 
 ## Usage
@@ -75,10 +75,10 @@ export default [
 For React applications with comprehensive rules:
 
 ```typescript
-import { reactAppPreset } from "@codefast/eslint-config";
+import { reactPreset } from "@codefast/eslint-config";
 
 export default [
-  ...reactAppPreset,
+  ...reactPreset,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     settings: {
@@ -95,10 +95,10 @@ export default [
 For Next.js applications with framework-specific rules:
 
 ```typescript
-import { nextAppPreset } from "@codefast/eslint-config";
+import { nextPreset } from "@codefast/eslint-config";
 
 export default [
-  ...nextAppPreset,
+  ...nextPreset,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     settings: {
@@ -157,12 +157,12 @@ export default composeConfig([
 
 ### Available Presets
 
-| Preset           | Description                          | Use Case                        |
-| ---------------- | ------------------------------------ | ------------------------------- |
-| `basePreset`     | Core JavaScript/TypeScript rules     | Basic projects, utilities       |
-| `reactAppPreset` | React application with accessibility | React SPAs, component libraries |
-| `nextAppPreset`  | Next.js with SSR/SSG optimizations   | Next.js applications            |
-| `libraryPreset`  | Library-focused rules                | NPM packages, shared libraries  |
+| Preset          | Description                          | Use Case                        |
+| --------------- | ------------------------------------ | ------------------------------- |
+| `basePreset`    | Core JavaScript/TypeScript rules     | Basic projects, utilities       |
+| `reactPreset`   | React application with accessibility | React SPAs, component libraries |
+| `nextPreset`    | Next.js with SSR/SSG optimizations   | Next.js applications            |
+| `libraryPreset` | Library-focused rules                | NPM packages, shared libraries  |
 
 ### Rule Categories
 
@@ -201,12 +201,12 @@ Includes:
 - Code style formatting
 - Perfectionist sorting
 
-### `reactAppPreset`
+### `reactPreset`
 
 Complete configuration for React applications.
 
 ```typescript
-const reactAppPreset: ESLint.Config[];
+const reactPreset: ESLint.Config[];
 ```
 
 Includes:
@@ -217,12 +217,12 @@ Includes:
 - React Hooks rules
 - Browser environment
 
-### `nextAppPreset`
+### `nextPreset`
 
 Optimized configuration for Next.js applications.
 
 ```typescript
-const nextAppPreset: ESLint.Config[];
+const nextPreset: ESLint.Config[];
 ```
 
 Includes:

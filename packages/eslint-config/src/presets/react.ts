@@ -17,7 +17,7 @@ import { prettierRules } from "@/plugins/tooling/prettier";
 import { tsdocRules } from "@/plugins/tooling/tsdoc";
 import { composeConfig } from "@/shared/composer";
 
-export const reactAppPresetCore: Linter.Config[] = composeConfig(
+export const reactPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
   stylisticRules,
 
@@ -38,4 +38,4 @@ export const reactAppPresetCore: Linter.Config[] = composeConfig(
   testEnvironment,
 );
 
-export const reactAppPreset: Linter.Config[] = composeConfig(reactAppPresetCore, prettierRules);
+export const reactPreset: Linter.Config[] = composeConfig(reactPresetCore, prettierRules);
