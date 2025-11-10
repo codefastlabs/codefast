@@ -39,7 +39,7 @@ pnpm add -D eslint
 ## Quick Start
 
 ```typescript
-import { basePreset } from "@codefast/eslint-config";
+import { basePreset } from "@codefast/eslint-config/presets/base";
 
 export default [...basePreset];
 ```
@@ -47,7 +47,7 @@ export default [...basePreset];
 For React applications:
 
 ```typescript
-import { reactPreset } from "@codefast/eslint-config";
+import { reactPreset } from "@codefast/eslint-config/presets/react";
 
 export default [...reactPreset];
 ```
@@ -59,7 +59,7 @@ export default [...reactPreset];
 For basic JavaScript/TypeScript projects:
 
 ```typescript
-import { basePreset } from "@codefast/eslint-config";
+import { basePreset } from "@codefast/eslint-config/presets/base";
 
 export default [
   ...basePreset,
@@ -75,7 +75,7 @@ export default [
 For React applications with comprehensive rules:
 
 ```typescript
-import { reactPreset } from "@codefast/eslint-config";
+import { reactPreset } from "@codefast/eslint-config/presets/react";
 
 export default [
   ...reactPreset,
@@ -95,7 +95,7 @@ export default [
 For Next.js applications with framework-specific rules:
 
 ```typescript
-import { nextPreset } from "@codefast/eslint-config";
+import { nextPreset } from "@codefast/eslint-config/presets/next";
 
 export default [
   ...nextPreset,
@@ -115,7 +115,7 @@ export default [
 For library packages with optimized rules:
 
 ```typescript
-import { libraryPreset } from "@codefast/eslint-config";
+import { libraryPreset } from "@codefast/eslint-config/presets/library";
 
 export default [
   ...libraryPreset,
@@ -131,13 +131,11 @@ export default [
 For advanced customization, you can compose your own configuration:
 
 ```typescript
-import {
-  baseJavaScriptRules,
-  typescriptRules,
-  reactRules,
-  importRules,
-  composeConfig,
-} from "@codefast/eslint-config";
+import { baseJavaScriptRules } from "@codefast/eslint-config/core/javascript";
+import { typescriptRules } from "@codefast/eslint-config/core/typescript";
+import { reactRules } from "@codefast/eslint-config/plugins/frameworks/react";
+import { importRules } from "@codefast/eslint-config/core/import";
+import { composeConfig } from "@codefast/eslint-config/shared/composer";
 
 export default composeConfig([
   baseJavaScriptRules,
