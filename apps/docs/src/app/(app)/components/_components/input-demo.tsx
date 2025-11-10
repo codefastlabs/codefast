@@ -1,7 +1,5 @@
 import type { JSX } from "react";
 
-import { MailIcon } from "lucide-react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Input } from "@codefast/ui";
 
@@ -51,19 +49,7 @@ export function InputDemo(): JSX.Element {
         <Input placeholder="Week" type="week" />
       </div>
       <div className="">
-        <Input loading placeholder="Loading..." />
-      </div>
-      <div className="">
         <Input disabled placeholder="Disabled" />
-      </div>
-      <div className="">
-        <Input readOnly defaultValue="Read Only" placeholder="Read Only" />
-      </div>
-      <div className="">
-        <Input placeholder="Email" prefix={<MailIcon />} type="email" />
-      </div>
-      <div className="">
-        <Input placeholder="Email" suffix={<MailIcon />} type="email" />
       </div>
     </GridWrapper>
   );

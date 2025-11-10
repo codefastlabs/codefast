@@ -337,6 +337,32 @@ export type {
 } from "@/components/empty";
 
 export {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+  fieldVariants,
+} from "@/components/field";
+export type {
+  FieldContentProps,
+  FieldDescriptionProps,
+  FieldErrorProps,
+  FieldGroupProps,
+  FieldLabelProps,
+  FieldLegendProps,
+  FieldProps,
+  FieldSeparatorProps,
+  FieldSetProps,
+  FieldTitleProps,
+} from "@/components/field";
+
+export {
   createFormFieldScope,
   Form,
   FormControl,
@@ -377,6 +403,26 @@ export type { InlineProps } from "@/components/inline";
 
 export { Input, inputVariants } from "@/components/input";
 export type { InputProps } from "@/components/input";
+
+export {
+  InputGroup,
+  InputGroupAddon,
+  inputGroupAddonVariants,
+  InputGroupButton,
+  inputGroupButtonVariants,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+  inputGroupVariants,
+} from "@/components/input-group";
+export type {
+  InputGroupAddonProps,
+  InputGroupButtonProps,
+  InputGroupInputProps,
+  InputGroupProps,
+  InputGroupTextareaProps,
+  InputGroupTextProps,
+} from "@/components/input-group";
 
 export { InputNumber } from "@/components/input-number";
 export type { InputNumberProps } from "@/components/input-number";
