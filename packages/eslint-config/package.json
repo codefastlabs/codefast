@@ -42,15 +42,15 @@
       "require": "./dist/presets/library.cjs",
       "types": "./dist/presets/library.d.ts"
     },
-    "./react-app": {
-      "import": "./dist/presets/react-app.js",
-      "require": "./dist/presets/react-app.cjs",
-      "types": "./dist/presets/react-app.d.ts"
+    "./react": {
+      "import": "./dist/presets/react.js",
+      "require": "./dist/presets/react.cjs",
+      "types": "./dist/presets/react.d.ts"
     },
-    "./next-app": {
-      "import": "./dist/presets/next-app.js",
-      "require": "./dist/presets/next-app.cjs",
-      "types": "./dist/presets/next-app.d.ts"
+    "./next": {
+      "import": "./dist/presets/next.js",
+      "require": "./dist/presets/next.cjs",
+      "types": "./dist/presets/next.d.ts"
     }
   },
   "main": "./dist/index.cjs",

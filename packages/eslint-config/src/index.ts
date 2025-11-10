@@ -20,6 +20,6 @@ export { tsdocRules } from "@/plugins/tooling/tsdoc";
 export { turboRules } from "@/plugins/tooling/turbo";
 export { basePreset } from "@/presets/base";
 export { libraryPreset } from "@/presets/library";
-export { nextAppPreset } from "@/presets/next-app";
-export { reactAppPreset, reactAppPresetCore } from "@/presets/react-app";
+export { nextPreset } from "@/presets/next";
+export { reactPreset, reactPresetCore } from "@/presets/react";
 export { composeConfig } from "@/shared/composer";
