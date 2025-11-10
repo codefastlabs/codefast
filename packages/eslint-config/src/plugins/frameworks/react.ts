@@ -70,11 +70,13 @@ const errorReactRules: Linter.RulesRecord = {
 
 export const reactRules: Linter.Config[] = [
   {
-    files: ["**/*.{jsx,tsx}"],
     ...pluginReactHooks.configs.flat.recommended,
+    files: ["**/*.{jsx,tsx}"],
+    name: "@codefast/eslint-config/plugins/react-hooks",
   },
   {
     files: ["**/*.{jsx,tsx}"],
+    name: "@codefast/eslint-config/plugins/react",
     plugins: {
       react: pluginReact,
     },

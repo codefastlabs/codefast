@@ -187,10 +187,15 @@ export const errorTypescriptRules: Linter.RulesRecord = {
  * @param config - A single configuration object from typescript-eslint ConfigArray
  * @returns A Linter.Config object with file patterns applied if needed
  */
-const mapConfigWithFiles = (config: ConfigArray[number]): Linter.Config =>
+const mapConfigWithFiles = (
+  config: ConfigArray[number],
+  group: "strict" | "stylistic",
+  index: number,
+): Linter.Config =>
   ({
     ...(!config.files && config.rules && { files: ["**/*.{ts,tsx}"] }),
     ...config,
+    name: config.name ?? `@codefast/eslint-config/core/typescript/${group}-${index + 1}`,
   }) as Linter.Config;
 
 /**
@@ -217,9 +222,13 @@ const mapConfigWithFiles = (config: ConfigArray[number]): Linter.Config =>
  * ```
  */
 export const typescriptRules: Linter.Config[] = [
-  ...tsEslintConfigs.strictTypeChecked.map((config) => mapConfigWithFiles(config)),
+  ...tsEslintConfigs.strictTypeChecked.map((config, index) =>
+    mapConfigWithFiles(config, "strict", index),
+  ),
 
-  ...tsEslintConfigs.stylisticTypeChecked.map((config) => mapConfigWithFiles(config)),
+  ...tsEslintConfigs.stylisticTypeChecked.map((config, index) =>
+    mapConfigWithFiles(config, "stylistic", index),
+  ),
 
   {
     files: ["**/*.{ts,tsx}"],
@@ -229,6 +238,7 @@ export const typescriptRules: Linter.Config[] = [
         tsconfigRootDir: process.cwd(),
       },
     },
+    name: "@codefast/eslint-config/core/typescript/custom-rules",
     rules: {
       // Apply all warning rules
       ...warningTypescriptRules,

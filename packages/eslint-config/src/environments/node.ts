@@ -10,5 +10,6 @@ export const nodeEnvironment: Linter.Config[] = [
         ...globals.node,
       },
     },
+    name: "@codefast/eslint-config/environment/node",
   },
 ];

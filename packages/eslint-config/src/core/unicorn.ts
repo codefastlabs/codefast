@@ -239,6 +239,7 @@ const errorUnicornRules: Linter.RulesRecord = {
 export const unicornRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
+    name: "@codefast/eslint-config/core/unicorn",
     plugins: {
       unicorn: pluginUnicorn,
     },

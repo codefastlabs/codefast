@@ -1,6 +1,6 @@
 import type { ESLint, Linter } from "eslint";
 
-import pluginImport from "eslint-plugin-import-x";
+import { importX } from "eslint-plugin-import-x";
 
 /**
  * Rules that are set to "warn" for import-x plugin
@@ -253,12 +253,17 @@ const errorImportRules: Linter.RulesRecord = {
 export const importRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+    },
+    name: "@codefast/eslint-config/core/import",
     plugins: {
-      "import-x": pluginImport as unknown as ESLint.Plugin,
+      "import-x": importX as unknown as ESLint.Plugin,
     },
     rules: {
-      ...pluginImport.configs["flat/recommended"].rules,
-      ...pluginImport.configs["flat/typescript"].rules,
+      ...importX.flatConfigs.recommended.rules,
+      ...importX.flatConfigs.typescript.rules,
 
       // Apply all disabled rules
       ...disabledImportRules,

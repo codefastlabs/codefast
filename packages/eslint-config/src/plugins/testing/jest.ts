@@ -236,6 +236,7 @@ const errorJestRules: Linter.RulesRecord = {
 export const jestRules: Linter.Config[] = [
   {
     files: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
+    name: "@codefast/eslint-config/plugins/jest",
     plugins: {
       jest: pluginJest,
     },

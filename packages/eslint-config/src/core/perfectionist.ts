@@ -137,6 +137,7 @@ const errorPerfectionistRules: Linter.RulesRecord = {
 export const perfectionistRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
+    name: "@codefast/eslint-config/core/perfectionist",
     plugins: {
       perfectionist: pluginPerfectionist,
     },
