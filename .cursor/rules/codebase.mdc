@@ -1,0 +1,425 @@
+---
+description: Comprehensive rules and guidelines for the CodeFast monorepo project
+globs: "**/*"
+alwaysApply: true
+---
+
+# CodeFast Codebase Rules
+
+## Project Overview
+
+CodeFast is a monorepo containing a library of UI components built with TypeScript, React, and TailwindCSS. The project uses Turborepo for build orchestration and pnpm for package management.
+
+## Monorepo Structure
+
+This is a **pnpm workspace monorepo** managed by **Turborepo**. The structure follows:
+
+- `apps/` - Applications (e.g., `docs` - Next.js documentation site)
+- `packages/` - Shared packages:
+  - `@codefast/ui` - Core UI components library
+  - `@codefast/eslint-config` - Shared ESLint configuration
+  - `@codefast/tailwind-variants` - Tailwind variants utility
+  - `@codefast/image-loader` - Image loading utilities
+  - `@codefast/typescript-config` - Shared TypeScript configurations
+- `benchmarks/` - Performance benchmarks
+
+## Package Manager
+
+- **Always use `pnpm`** - never use npm or yarn
+- Package manager version: `pnpm@10.20.0` (enforced via `packageManager` field)
+- Use workspace protocol (`workspace:*`) for internal dependencies
+- Node.js version: `>=20.0.0` (preferred: Node.js 22)
+
+## Tech Stack
+
+### Core Technologies
+- **React**: ^19.0 (latest stable)
+- **TypeScript**: ^5.9.3
+- **TailwindCSS**: ^4.1.17 (Tailwind v4)
+- **Radix UI**: ^1.x - All UI primitives are built on Radix UI
+- **Next.js**: ^16.0.1 (for docs app)
+
+### Build Tools
+- **Turborepo**: Build orchestration and caching
+- **rslib**: Build tool for packages (replaces tsup/esbuild)
+- **SWC**: Compiler and Jest transformer
+- **PostCSS**: CSS processing with TailwindCSS
+
+### Testing & Quality
+- **Jest**: Testing framework with SWC transformer
+- **Testing Library**: React Testing Library for component tests
+- **ESLint**: Code linting with custom config (`@codefast/eslint-config`)
+- **Prettier**: Code formatting with TailwindCSS plugin
+- **TypeScript**: Strict type checking
+
+## Code Style & Conventions
+
+### TypeScript
+- Use strict TypeScript configuration from `@codefast/typescript-config`
+- Prefer type inference where possible
+- Use interfaces for component props
+- Export types alongside components
+
+### React Components
+- Use **function components** with TypeScript
+- Components should be exported as named exports
+- Use `forwardRef` when ref forwarding is needed
+- Prefer composition over configuration
+- Use Radix UI primitives as base components
+
+### Styling
+- Use **TailwindCSS** utility classes for styling
+- Use `@codefast/tailwind-variants` (`tv` function) for variant-based styling
+- CSS files are in `src/css/` directory for packages
+- Use CSS variables for theming
+- Follow TailwindCSS v4 conventions
+
+### File Naming
+- Components: `kebab-case.tsx` (e.g., `button.tsx`, `card.tsx`)
+- Utilities: `kebab-case.ts` (e.g., `utils.ts`, `cn.ts`)
+- Types: `kebab-case.ts` or inline in component files
+- Config files: `kebab-case.config.*` (e.g., `eslint.config.js`)
+
+### Imports
+- Use absolute imports when possible
+- Group imports: external → internal → relative
+- Use workspace protocol for internal packages: `@codefast/ui`, `@codefast/eslint-config`, etc.
+
+## Package Structure
+
+### UI Package (`@codefast/ui`)
+- **Location**: `packages/ui/`
+- **Exports**: 
+  - Main: `@codefast/ui`
+  - Components: `@codefast/ui/components/*`
+  - Hooks: `@codefast/ui/hooks/*`
+  - Primitives: `@codefast/ui/primitives/*`
+  - Styles: `@codefast/ui/style.css` and `@codefast/ui/css/*`
+- **Structure**:
+  - `src/components/` - React components
+  - `src/hooks/` - Custom React hooks
+  - `src/primitives/` - Low-level primitives
+  - `src/css/` - CSS files
+  - `dist/` - Build output (do not commit)
+
+### ESLint Config (`@codefast/eslint-config`)
+- **Location**: `packages/eslint-config/`
+- Provides shared ESLint configuration for all packages
+- Uses flat config format (ESLint 9+)
+- Includes presets: base, react, next, library
+
+### TypeScript Config (`@codefast/typescript-config`)
+- **Location**: `packages/typescript-config/`
+- Provides base, react, next, library configurations
+- Extend in `tsconfig.json` using `extends`
+
+## Build & Development
+
+### Common Commands
+- `pnpm dev` - Start all dev servers
+- `pnpm dev:docs` - Start docs app only
+- `pnpm build` - Build all packages
+- `pnpm build:packages` - Build packages only
+- `pnpm lint` - Lint all packages
+- `pnpm lint:fix` - Fix linting issues
+- `pnpm test` - Run all tests
+- `pnpm test:watch` - Watch mode tests
+- `pnpm test:coverage` - Generate coverage reports
+- `pnpm format` - Format code with Prettier
+- `pnpm check-types` - Type check without building
+
+### Turborepo Tasks
+- Tasks are defined in `turbo.json`
+- Tasks support caching and dependencies
+- Use `--filter` to target specific packages: `turbo run build --filter=@codefast/ui`
+
+### Package Scripts
+Each package should have:
+- `build` - Build the package
+- `dev` - Watch mode build
+- `lint` - Lint code
+- `lint:fix` - Fix linting
+- `test` - Run tests
+- `check-types` - Type check
+- `clean` - Remove build artifacts
+
+## Package Development Workflow
+
+### Pre-Commit Checklist
+
+**MANDATORY**: Before committing code, ensure all checks pass:
+
+1. **Build** - Verify the package builds successfully:
+   ```bash
+   # Build specific package
+   pnpm --filter @codefast/ui build
+   
+   # Or build all packages
+   pnpm build:packages
+   ```
+
+2. **Lint** - Ensure code follows linting rules:
+   ```bash
+   # Lint specific package
+   pnpm --filter @codefast/ui lint
+   
+   # Lint only changed files (RECOMMENDED during development)
+   pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/path/to/changed/file.ts
+   
+   # Or lint specific files/directories
+   pnpm --filter @codefast/ui exec eslint --max-warnings 0 "src/**/*.{ts,tsx}"
+   ```
+
+3. **Type Check** - Verify TypeScript types are correct:
+   ```bash
+   # Type check specific package
+   pnpm --filter @codefast/ui check-types
+   
+   # Or type check all packages
+   pnpm check-types
+   ```
+
+4. **Test** - Run tests and ensure they pass:
+   ```bash
+   # Test specific package
+   pnpm --filter @codefast/ui test
+   
+   # Or test all packages
+   pnpm test
+   ```
+
+### ESLint Best Practices
+
+**During Development**:
+- **Prefer linting only changed files** instead of running full package lint:
+  ```bash
+  # Lint specific file(s)
+  pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/button.tsx
+  
+  # Lint multiple files
+  pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/button.tsx src/components/card.tsx
+  
+  # Lint directory
+  pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/
+  ```
+
+**Before Committing**:
+- Run full package lint to catch any cross-file issues:
+  ```bash
+  pnpm --filter @codefast/ui lint
+  ```
+
+**Auto-fix Issues**:
+- Use `lint:fix` to automatically fix fixable issues:
+  ```bash
+  # Fix linting issues in specific package
+  pnpm --filter @codefast/ui lint:fix
+  ```
+
+### Development Workflow Example
+
+```bash
+# 1. Make code changes
+# 2. Lint changed files
+pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/new-component.tsx
+
+# 3. Fix any linting issues
+pnpm --filter @codefast/ui lint:fix
+
+# 4. Type check
+pnpm --filter @codefast/ui check-types
+
+# 5. Build to verify compilation
+pnpm --filter @codefast/ui build
+
+# 6. Run tests
+pnpm --filter @codefast/ui test
+
+# 7. Before committing, run full package lint
+pnpm --filter @codefast/ui lint
+```
+
+### Zero Tolerance Policy
+
+- **Build errors**: Must be fixed before committing
+- **Linting errors/warnings**: Zero warnings policy - all must be resolved
+- **Type errors**: All TypeScript errors must be fixed
+- **Test failures**: All tests must pass
+
+### Quick Verification Commands
+
+For a specific package:
+```bash
+# Run all checks for a package
+pnpm --filter @codefast/ui build && \
+pnpm --filter @codefast/ui lint && \
+pnpm --filter @codefast/ui check-types && \
+pnpm --filter @codefast/ui test
+```
+
+## Testing
+
+- Write tests in `*.test.ts` or `*.test.tsx` files
+- Use Jest with SWC transformer
+- Use React Testing Library for component tests
+- Test files should be co-located with source or in `__tests__` directories
+- Aim for good test coverage
+
+## Git & Versioning
+
+- Use **Conventional Commits** format (enforced by commitlint)
+- Use **Changesets** for version management (`pnpm release`)
+- Pre-commit hooks run lint-staged (configured via `simple-git-hooks`)
+- Never commit `dist/`, `node_modules/`, or `.next/` directories
+
+## Component Development Guidelines
+
+### Creating New Components
+1. Create component file in appropriate package (`packages/ui/src/components/`)
+2. Export from package index (`packages/ui/src/index.ts`)
+3. Add to appropriate registry if needed (for docs app)
+4. Write tests
+5. Add to documentation
+
+### Component Patterns
+- Use **function declarations** (not arrow functions) with explicit `JSX.Element` return type
+- Use **`type`** for props (prefer over `interface` unless extending is needed)
+- Use Radix UI primitives as base components
+- Implement proper accessibility (ARIA attributes)
+- Support theming via CSS variables
+- Use `tv` from `@codefast/tailwind-variants` for variant-based styling
+- Use `VariantProps<typeof variants>` for variant prop types
+- Support `asChild` prop with Radix UI `Slot` for composition patterns
+- Add `data-slot` attributes for styling hooks and component identification
+- Export variants, component, and types separately in an "Exports" section
+- Support `className` prop for customization
+- Use `cn` utility from `@codefast/tailwind-variants` for className merging
+- Use section comments with `/* ----------------------------------------------------------------------------- */` to organize code
+- Add `"use client"` directive only when component uses client-side hooks or interactivity
+
+### Example Component Structure
+```tsx
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@codefast/tailwind-variants";
+
+import { cn, tv } from "@codefast/tailwind-variants";
+import { Slot } from "@radix-ui/react-slot";
+
+/* -----------------------------------------------------------------------------
+ * Variant: Button
+ * -------------------------------------------------------------------------- */
+
+const buttonVariants = tv({
+  base: "inline-flex items-center justify-center rounded-lg text-sm font-medium transition",
+  defaultVariants: {
+    size: "md",
+    variant: "default",
+  },
+  variants: {
+    size: {
+      sm: "h-8 px-3",
+      md: "h-9 px-4",
+      lg: "h-10 px-6",
+    },
+    variant: {
+      default: "bg-primary text-primary-foreground hover:bg-primary/80",
+      outline: "border border-input hover:bg-secondary",
+    },
+  },
+});
+
+/* -----------------------------------------------------------------------------
+ * Component: Button
+ * -------------------------------------------------------------------------- */
+
+type ButtonProps = ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    type?: ComponentProps<"button">["type"];
+  };
+
+function Button({
+  asChild = false,
+  className,
+  size,
+  type = "button",
+  variant,
+  ...props
+}: ButtonProps): JSX.Element {
+  const Comp = asChild ? Slot : "button";
+
+  if (asChild) {
+    return (
+      <Comp
+        className={buttonVariants({ className, size, variant })}
+        data-slot="button"
+        data-variant={variant}
+        {...props}
+      />
+    );
+  }
+
+  return (
+    <button
+      className={buttonVariants({ className, size, variant })}
+      data-slot="button"
+      data-variant={variant}
+      type={type}
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
+ * Exports
+ * -------------------------------------------------------------------------- */
+
+export { buttonVariants };
+export { Button };
+export type { ButtonProps };
+```
+
+**Key patterns:**
+- Use `function` declarations (not arrow functions or `forwardRef` unless ref forwarding is needed)
+- Use `type` for props (prefer over `interface` unless extending is needed)
+- Return type is `JSX.Element`
+- Use section comments with `/* ----------------------------------------------------------------------------- */`
+- Import `cn` and `tv` from `@codefast/tailwind-variants`
+- Use `VariantProps<typeof variants>` for variant types
+- Support `asChild` prop with Radix UI `Slot` for composition
+- Add `data-slot` attributes for styling hooks
+- Export variants, component, and types separately
+- Use `"use client"` directive only when needed (client-side hooks/interactivity)
+
+## Documentation
+
+- Each package has a `README.md` with usage examples
+- Docs app (`apps/docs`) showcases all components
+- Use JSDoc comments for public APIs
+- Keep CHANGELOG.md updated (via Changesets)
+
+## Important Notes
+
+- **Never use npm or yarn** - always use pnpm
+- **Always run `pnpm install`** after pulling changes
+- **Check types before committing** - use `pnpm check-types`
+- **Follow ESLint rules** - zero warnings policy
+- **Use workspace dependencies** - `workspace:*` for internal packages
+- **Build outputs are gitignored** - don't commit `dist/` or `.next/`
+- **Use Turborepo filters** - target specific packages when possible
+
+## CI/CD
+
+- GitHub Actions workflows in `.github/workflows/`
+- Custom setup action: `.github/actions/setup-environment/`
+- Uses Turborepo remote caching
+- Runs on Node.js 22
+- Tests, linting, and type checking run on PRs
+
+## Performance
+
+- Keep bundle sizes small
+- Use code splitting where appropriate
+- Optimize images using `@codefast/image-loader`
+- Benchmark performance changes in `benchmarks/` directory
