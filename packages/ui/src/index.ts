@@ -62,12 +62,6 @@ export type {
   ButtonGroupTextProps,
 } from "@/components/button-group";
 
-export { Blockquote } from "@/components/blockquote";
-export type { BlockquoteProps } from "@/components/blockquote";
-
-export { Box } from "@/components/box";
-export type { BoxProps } from "@/components/box";
-
 export {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -161,9 +155,6 @@ export type { CheckboxCardsItemProps, CheckboxCardsProps } from "@/components/ch
 export { CheckboxGroup, CheckboxGroupItem } from "@/components/checkbox-group";
 export type { CheckboxGroupItemProps, CheckboxGroupProps } from "@/components/checkbox-group";
 
-export { Code } from "@/components/code";
-export type { CodeProps } from "@/components/code";
-
 export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/collapsible";
 export type {
   CollapsibleContentProps,
@@ -195,9 +186,6 @@ export type {
   CommandSeparatorProps,
   CommandShortcutProps,
 } from "@/components/command";
-
-export { Container } from "@/components/container";
-export type { ContainerProps } from "@/components/container";
 
 export {
   ContextMenu,
@@ -315,9 +303,6 @@ export type {
   DropdownMenuTriggerProps,
 } from "@/components/dropdown-menu";
 
-export { Em } from "@/components/em";
-export type { EmProps } from "@/components/em";
-
 export {
   Empty,
   EmptyContent,
@@ -382,9 +367,6 @@ export type {
   FormProps,
 } from "@/components/form";
 
-export { Heading } from "@/components/heading";
-export type { HeadingProps } from "@/components/heading";
-
 export {
   HoverCard,
   HoverCardArrow,
@@ -397,9 +379,6 @@ export type {
   HoverCardProps,
   HoverCardTriggerProps,
 } from "@/components/hover-card";
-
-export { Inline } from "@/components/inline";
-export type { InlineProps } from "@/components/inline";
 
 export { Input } from "@/components/input";
 export type { InputProps } from "@/components/input";
@@ -578,17 +557,11 @@ export type {
   PopoverTriggerProps,
 } from "@/components/popover";
 
-export { Pre } from "@/components/pre";
-export type { PreProps } from "@/components/pre";
-
 export { Progress } from "@/components/progress";
 export type { ProgressProps } from "@/components/progress";
 
 export { ProgressCircle, progressCircleVariants } from "@/components/progress-circle";
 export type { ProgressCircleProps } from "@/components/progress-circle";
-
-export { Quote } from "@/components/quote";
-export type { QuoteProps } from "@/components/quote";
 
 export { Radio } from "@/components/radio";
 export type { RadioProps } from "@/components/radio";
@@ -612,9 +585,6 @@ export {
   scrollAreaScrollbarVariants,
 } from "@/components/scroll-area";
 export type { ScrollAreaProps, ScrollAreaScrollbarProps } from "@/components/scroll-area";
-
-export { Section } from "@/components/section";
-export type { SectionProps } from "@/components/section";
 
 export {
   Select,
@@ -733,9 +703,6 @@ export type { ToasterProps } from "@/components/sonner";
 export { Spinner } from "@/components/spinner";
 export type { SpinnerProps } from "@/components/spinner";
 
-export { Strong } from "@/components/strong";
-export type { StrongProps } from "@/components/strong";
-
 export { Switch } from "@/components/switch";
 export type { SwitchProps } from "@/components/switch";
 
@@ -767,9 +734,6 @@ export type {
   TabsProps,
   TabsTriggerProps,
 } from "@/components/tabs";
-
-export { Text } from "@/components/text";
-export type { TextProps } from "@/components/text";
 
 export { Textarea } from "@/components/textarea";
 export type { TextareaProps } from "@/components/textarea";
