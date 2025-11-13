@@ -141,7 +141,7 @@ const CHART_TOOLTIP_CONTENT_NAME = "ChartTooltipContent";
 type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> = Omit<
   MakeOptional<
     ExtractProps<ComponentProps<typeof RechartsPrimitive.Tooltip<TValue, TName>>["content"]>,
-    "accessibilityLayer" | "active" | "coordinate" | "payload"
+    "accessibilityLayer" | "active" | "activeIndex" | "coordinate" | "payload"
   >,
   "payload"
 > & {

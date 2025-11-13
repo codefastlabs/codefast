@@ -1,6 +1,6 @@
 "use client";
 
-import type { JSX, ReactNode } from "react";
+import type { JSX } from "react";
 import type { LabelContentType, Props as LabelProps } from "recharts/types/component/Label";
 import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 import type { ActiveShape } from "recharts/types/util/types";
@@ -105,7 +105,7 @@ export function ChartPieInteractive(): JSX.Element {
                 <SelectItem key={key} className="rounded-lg [&_span]:flex" value={key}>
                   <div className="flex items-center gap-2 text-xs">
                     <span
-                      className="rounded-xs flex h-3 w-3 shrink-0"
+                      className="flex h-3 w-3 shrink-0 rounded-xs"
                       style={{
                         backgroundColor: `var(--color-${key})`,
                       }}
@@ -158,7 +158,7 @@ const activeShape: ActiveShape<PieSectorDataItem> = ({
 );
 
 const content: (activeIndex: number) => LabelContentType = (activeIndex) =>
-  function Content(props: LabelProps): ReactNode {
+  function Content(props: LabelProps): JSX.Element | null {
     const { viewBox } = props;
 
     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
