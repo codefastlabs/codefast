@@ -4,27 +4,23 @@ import type { ComponentProps, JSX } from "react";
 
 import { SearchIcon, XIcon } from "lucide-react";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
-
-import { Button } from "@/components/button";
-import { inputVariants } from "@/components/input";
-import { Spinner } from "@/components/spinner";
-import * as InputPrimitive from "@/primitives/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/input-group";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
  * -------------------------------------------------------------------------- */
 
-const { input, root } = inputVariants();
-
 interface InputSearchProps
-  extends ComponentProps<typeof InputPrimitive.Root>,
-    Omit<
-      ComponentProps<typeof InputPrimitive.Field>,
-      "defaultValue" | "onChange" | "prefix" | "type" | "value"
-    >,
-    VariantProps<typeof inputVariants> {
+  extends Omit<
+    ComponentProps<typeof InputGroupInput>,
+    "defaultValue" | "onChange" | "type" | "value"
+  > {
   defaultValue?: string;
   onChange?: (value?: string) => void;
   value?: string;
@@ -34,13 +30,8 @@ function InputSearch({
   className,
   defaultValue,
   disabled,
-  loaderPosition,
-  loading,
   onChange,
-  prefix,
   readOnly,
-  spinner,
-  suffix,
   value: valueProperty,
   ...props
 }: InputSearchProps): JSX.Element {
@@ -51,20 +42,18 @@ function InputSearch({
   });
 
   return (
-    <InputPrimitive.Root
-      className={root({ className: [!suffix && "pr-1.5", className] })}
+    <InputGroup
+      className={className}
+      data-disabled={disabled ? "true" : undefined}
       data-slot="input-search"
-      disabled={disabled}
-      loaderPosition={loaderPosition}
-      loading={loading}
-      prefix={prefix ?? <SearchIcon key="prefix" />}
-      readOnly={readOnly}
-      spinner={spinner ?? <Spinner key="spinner" />}
-      suffix={suffix}
     >
-      <InputPrimitive.Field
-        className={input()}
+      <InputGroupAddon align="inline-start">
+        <SearchIcon />
+      </InputGroupAddon>
+      <InputGroupInput
         data-slot="input-search-item"
+        disabled={disabled}
+        readOnly={readOnly}
         type="search"
         value={value ?? ""}
         onChange={(event) => {
@@ -73,21 +62,21 @@ function InputSearch({
         {...props}
       />
       {value ? (
-        <Button
+        <InputGroupButton
           aria-label="Clear search"
-          className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
+          className="focus-visible:not-disabled:bg-input rounded-full focus-visible:ring-0"
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
-          size="icon"
+          size="icon-sm"
           variant="ghost"
           onClick={() => {
             setValue("");
           }}
         >
           <XIcon />
-        </Button>
+        </InputGroupButton>
       ) : null}
-    </InputPrimitive.Root>
+    </InputGroup>
   );
 }
 
