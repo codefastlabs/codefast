@@ -1,6 +1,6 @@
 "use client";
 
-import type { JSX, ReactNode } from "react";
+import type { JSX } from "react";
 import type { LabelContentType, Props as LabelProps } from "recharts/types/component/Label";
 import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 import type { ActiveShape } from "recharts/types/util/types";
@@ -158,7 +158,7 @@ const activeShape: ActiveShape<PieSectorDataItem> = ({
 );
 
 const content: (activeIndex: number) => LabelContentType = (activeIndex) =>
-  function Content(props: LabelProps): ReactNode {
+  function Content(props: LabelProps): JSX.Element | null {
     const { viewBox } = props;
 
     if (viewBox && "cx" in viewBox && "cy" in viewBox) {

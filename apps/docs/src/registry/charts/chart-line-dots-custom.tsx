@@ -74,7 +74,7 @@ export function ChartLineDotsCustom(): JSX.Element {
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Line
               dataKey="desktop"
-              dot={dot}
+              dot={dot as ComponentProps<typeof Line>["dot"]}
               stroke="var(--color-desktop)"
               strokeWidth={2}
               type="natural"
@@ -83,7 +83,7 @@ export function ChartLineDotsCustom(): JSX.Element {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
+        <div className="flex gap-2 leading-none font-medium">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">
@@ -94,13 +94,13 @@ export function ChartLineDotsCustom(): JSX.Element {
   );
 }
 
-const dot: ComponentProps<typeof Line>["dot"] = ({
+const dot = ({
   cx = 0,
   cy = 0,
   payload,
 }: DotProps & {
   payload: DataItem;
-}) => {
+}): JSX.Element => {
   const r = 24;
 
   return (

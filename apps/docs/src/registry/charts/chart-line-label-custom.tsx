@@ -1,6 +1,6 @@
 "use client";
 
-import type { JSX, ReactNode } from "react";
+import type { JSX } from "react";
 
 import { TrendingUpIcon } from "lucide-react";
 import { CartesianGrid, LabelList, Line, LineChart } from "recharts";
@@ -93,12 +93,12 @@ export function ChartLineLabelCustom(): JSX.Element {
                 className="fill-foreground"
                 dataKey="browser"
                 fontSize={12}
-                formatter={(value): ReactNode => {
+                formatter={(value) => {
                   if (typeof value === "string" && value in chartConfig) {
                     return chartConfig[value as keyof typeof chartConfig].label;
                   }
 
-                  return value;
+                  return String(value);
                 }}
                 offset={12}
                 position="top"
@@ -108,7 +108,7 @@ export function ChartLineLabelCustom(): JSX.Element {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
+        <div className="flex gap-2 leading-none font-medium">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">

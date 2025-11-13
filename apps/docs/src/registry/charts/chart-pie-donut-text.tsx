@@ -1,6 +1,6 @@
 "use client";
 
-import type { JSX, ReactNode } from "react";
+import type { JSX } from "react";
 import type { Props } from "recharts/types/component/Label";
 
 import { TrendingUpIcon } from "lucide-react";
@@ -79,7 +79,7 @@ export function ChartPieDonutText(): JSX.Element {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
+        <div className="flex items-center gap-2 leading-none font-medium">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">
@@ -90,7 +90,7 @@ export function ChartPieDonutText(): JSX.Element {
   );
 }
 
-function Content({ viewBox }: Props): ReactNode {
+function Content({ viewBox }: Props): JSX.Element | null {
   const totalVisitors = useMemo(() => {
     return chartData.reduce((accumulator, current) => accumulator + current.visitors, 0);
   }, []);
