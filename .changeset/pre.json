@@ -11,14 +11,20 @@
     "@codefast/ui": "0.3.8"
   },
   "changesets": [
+    "breezy-items-like",
     "cuddly-cycles-joke",
     "every-glasses-yawn",
     "happy-moles-know",
     "hot-eggs-write",
+    "quiet-planets-sort",
     "ready-mails-learn",
+    "red-lemons-do",
+    "ripe-donuts-brush",
     "sixty-grapes-run",
     "slimy-women-clap",
     "stupid-sheep-cough",
-    "thick-foxes-listen"
+    "thick-foxes-listen",
+    "violet-monkeys-matter",
+    "wicked-forks-ring"
   ]
 }

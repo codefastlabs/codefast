@@ -1,5 +1,13 @@
 # @codefast/image-loader
 
+## 0.3.9-canary.2
+
+### Patch Changes
+
+- [`237b576`](https://github.com/codefastlabs/codefast/commit/237b576f8e12c528cfec40aefe2d0a68c0b01ac4) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): bump package versions across workspaces
+
+- [`888a904`](https://github.com/codefastlabs/codefast/commit/888a9047e4ad2e79e5945fad09d5ffa8baef0a45) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): reorganize presets and imports
+
 ## 0.3.9-canary.1
 
 ## 0.3.9-canary.0

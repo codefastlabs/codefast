@@ -1,5 +1,22 @@
 # @codefast/ui
 
+## 0.3.9-canary.2
+
+### Patch Changes
+
+- [`cbc4092`](https://github.com/codefastlabs/codefast/commit/cbc4092c53c8a8c67685eaec87be95f580b24b88) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): rename presets for consistency
+
+- [`436e1d9`](https://github.com/codefastlabs/codefast/commit/436e1d941654beec192a9da9c6daefef6c4f6666) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `InputGroup` and `Field` components and integrate into registry
+
+- [`237b576`](https://github.com/codefastlabs/codefast/commit/237b576f8e12c528cfec40aefe2d0a68c0b01ac4) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): bump package versions across workspaces
+
+- [`888a904`](https://github.com/codefastlabs/codefast/commit/888a9047e4ad2e79e5945fad09d5ffa8baef0a45) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): reorganize presets and imports
+
+- [`308eb18`](https://github.com/codefastlabs/codefast/commit/308eb18cc58934e2c0dfc92657e4bad9cac5699d) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `NativeSelect` component and integrate into docs
+
+- Updated dependencies [[`237b576`](https://github.com/codefastlabs/codefast/commit/237b576f8e12c528cfec40aefe2d0a68c0b01ac4), [`888a904`](https://github.com/codefastlabs/codefast/commit/888a9047e4ad2e79e5945fad09d5ffa8baef0a45)]:
+  - @codefast/tailwind-variants@0.3.9-canary.2
+
 ## 0.3.9-canary.1
 
 ### Patch Changes
