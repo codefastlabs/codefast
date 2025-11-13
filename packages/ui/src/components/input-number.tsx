@@ -4,9 +4,6 @@ import type { ComponentProps, JSX } from "react";
 
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-import type { inputVariants } from "@/components/input";
-import type { VariantProps } from "@codefast/tailwind-variants";
-
 import { buttonVariants } from "@/components/button";
 import { Spinner } from "@/components/spinner";
 import * as InputNumberPrimitive from "@/primitives/input-number";
@@ -18,8 +15,7 @@ import { cn } from "@codefast/tailwind-variants";
 
 interface InputNumberProps
   extends ComponentProps<typeof InputNumberPrimitive.Field>,
-    ComponentProps<typeof InputNumberPrimitive.Root>,
-    VariantProps<typeof inputVariants> {}
+    ComponentProps<typeof InputNumberPrimitive.Root> {}
 
 function InputNumber({
   ariaDecrementLabel,
