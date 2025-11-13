@@ -5,37 +5,18 @@ import type { ComponentProps, JSX, MouseEventHandler } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
-
-import { Button } from "@/components/button";
-import { inputVariants } from "@/components/input";
-import { Spinner } from "@/components/spinner";
-import * as InputPrimitive from "@/primitives/input";
-
-/* -----------------------------------------------------------------------------
- * Variant: InputPassword
- * -------------------------------------------------------------------------- */
-
-const { input, root } = inputVariants();
+import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputPassword
  * -------------------------------------------------------------------------- */
 
-interface InputPasswordProps
-  extends ComponentProps<typeof InputPrimitive.Root>,
-    Omit<ComponentProps<typeof InputPrimitive.Field>, "prefix" | "type">,
-    VariantProps<typeof inputVariants> {}
+type InputPasswordProps = Omit<ComponentProps<typeof InputGroupInput>, "type">;
 
 function InputPassword({
   className,
   disabled,
-  loaderPosition,
-  loading,
-  prefix,
   readOnly,
-  spinner,
-  suffix,
   ...props
 }: InputPasswordProps): JSX.Element {
   const [type, setType] = useState<"password" | "text">("password");
@@ -45,36 +26,32 @@ function InputPassword({
   }, []);
 
   return (
-    <InputPrimitive.Root
-      className={root({ className: [!suffix && "pr-1.5", className] })}
+    <InputGroup
+      className={className}
+      data-disabled={disabled ? "true" : undefined}
       data-slot="input-password"
-      disabled={disabled}
-      loaderPosition={loaderPosition}
-      loading={loading}
-      prefix={prefix}
-      readOnly={readOnly}
-      spinner={spinner ?? <Spinner key="spinner" />}
-      suffix={suffix}
     >
-      <InputPrimitive.Field
+      <InputGroupInput
         autoCapitalize="none"
-        className={input()}
         data-slot="input-password-item"
+        disabled={disabled}
+        readOnly={readOnly}
         type={type}
         {...props}
       />
-      <Button
+      <InputGroupButton
         aria-label={type === "password" ? "Show password" : "Hide password"}
-        className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
+        className="focus-visible:not-disabled:bg-input rounded-full focus-visible:ring-0"
         data-slot="input-password-toggle"
         disabled={disabled}
-        size="icon"
+        size="icon-sm"
+        type="button"
         variant="ghost"
         onClick={togglePasswordVisibility}
       >
         {type === "password" ? <EyeOffIcon /> : <EyeIcon />}
-      </Button>
-    </InputPrimitive.Root>
+      </InputGroupButton>
+    </InputGroup>
   );
 }
 
