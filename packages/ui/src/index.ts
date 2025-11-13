@@ -401,7 +401,7 @@ export type {
 export { Inline } from "@/components/inline";
 export type { InlineProps } from "@/components/inline";
 
-export { Input, inputVariants } from "@/components/input";
+export { Input } from "@/components/input";
 export type { InputProps } from "@/components/input";
 
 export {
