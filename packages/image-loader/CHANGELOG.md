@@ -1,5 +1,7 @@
 # @codefast/image-loader
 
+## 0.3.9-canary.3
+
 ## 0.3.9-canary.2
 
 ### Patch Changes
