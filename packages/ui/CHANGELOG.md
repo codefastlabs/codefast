@@ -1,5 +1,20 @@
 # @codefast/ui
 
+## 0.3.9-canary.3
+
+### Patch Changes
+
+- [`dab8f27`](https://github.com/codefastlabs/codefast/commit/dab8f27d3d9bafcc547c310d33dbaeb364246b25) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove `inputVariants` from `Input` and `InputNumber` components
+
+- [`c2d5bc1`](https://github.com/codefastlabs/codefast/commit/c2d5bc11cc28069c8d6a5120f19a033cb31d3c3a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): replace `InputSearch` implementation with `InputGroup`
+
+- [`4899386`](https://github.com/codefastlabs/codefast/commit/489938610509f94e9bafc09b46ecfc7318655261) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove unused components and exports from `ui` package
+
+- [`135b519`](https://github.com/codefastlabs/codefast/commit/135b5198dc0c26a1b885b2d2a84dfa078f2683f7) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): replace `InputPassword` implementation with `InputGroup`
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.3.9-canary.3
+
 ## 0.3.9-canary.2
 
 ### Patch Changes
