@@ -1,59 +1,54 @@
 #!/usr/bin/env tsx
 
 /**
- * Thuật toán tự động generate exports trong package.json từ thư mục dist
+ * Automatically generate package.json exports from the dist directory.
  *
- * Usage:
+ * This script scans the dist directory recursively, identifies valid module files,
+ * and generates the appropriate export paths for both ESM and CommonJS formats.
+ *
+ * @usage
  *   tsx scripts/generate-exports.ts [package-path]
  *
- * Examples:
+ * @examples
  *   tsx scripts/generate-exports.ts packages/image-loader
  *   tsx scripts/generate-exports.ts packages/ui
  *   tsx scripts/generate-exports.ts  (uses current directory)
  *
- * ALGORITHM:
- * ==========
+ * ## Algorithm Overview
  *
- * 1. SCAN THỨ MỤC DIST
- *    - Đọc cấu trúc thư mục dist/ (recursively)
- *    - Lọc các file có extension: .js, .cjs, .d.ts
- *    - Bỏ qua các file không phải là entry points
+ * ### 1. Scan Dist Directory
+ *    Recursively reads the dist/ directory structure and filters files with
+ *    valid extensions (.js, .cjs, .d.ts), excluding non-entry point files.
  *
- * 2. PHÂN LOẠI FILES
- *    - Nhóm files theo base name (bỏ extension)
- *    - Mỗi module cần có 3 files: .js, .cjs, .d.ts
- *    - Ví dụ: index.js, index.cjs, index.d.ts → module "index"
+ * ### 2. Group Files by Module
+ *    Groups files by their base name (without extension). Each module should
+ *    have three files: .js, .cjs, and .d.ts. For example, index.js, index.cjs,
+ *    and index.d.ts form the "index" module.
  *
- * 3. TẠO EXPORT PATHS
- *    - Root entry (index): "." → "./dist/index.*"
- *    - Subpath entries: "./{relative-path}" → "./dist/{relative-path}.*"
- *    - Loại bỏ "dist/" prefix trong export path
- *    - Convert file path thành export path:
- *      * dist/index.* → "."
- *      * dist/loaders/cloudinary.* → "./loaders/cloudinary"
- *      * dist/core/types.* → "./core/types"
+ * ### 3. Create Export Paths
+ *    Converts file paths to export paths by removing the "dist/" prefix:
+ *    - dist/index.* → "."
+ *    - dist/loaders/cloudinary.* → "./loaders/cloudinary"
+ *    - dist/core/types.* → "./core/types"
  *
- * 4. VALIDATE MODULES
- *    - Chỉ tạo export nếu module có đủ 3 files (.js, .cjs, .d.ts)
- *    - Hoặc ít nhất có .js và .d.ts (cho ESM-only)
- *    - Bỏ qua các file không đủ điều kiện
+ * ### 4. Validate Modules
+ *    Only creates exports for modules that have at least .js and .d.ts files.
+ *    The .cjs file is optional but recommended for CommonJS support.
  *
- * 5. GENERATE EXPORTS OBJECT
- *    - Tạo object với structure:
- *      {
- *        "{export-path}": {
- *          "types": "./dist/{path}.d.ts",
- *          "import": "./dist/{path}.js",
- *          "require": "./dist/{path}.cjs"
- *        }
+ * ### 5. Generate Exports Object
+ *    Creates an exports object with the following structure:
+ *    {
+ *      "{export-path}": {
+ *        "types": "./dist/{path}.d.ts",
+ *        "import": "./dist/{path}.js",
+ *        "require": "./dist/{path}.cjs"
  *      }
- *    - Sắp xếp exports theo thứ tự alphabet
- *    - Luôn thêm "./package.json" export
+ *    }
+ *    Exports are sorted alphabetically and "./package.json" is always included.
  *
- * 6. UPDATE PACKAGE.JSON
- *    - Đọc package.json hiện tại
- *    - Merge exports mới vào (giữ nguyên các fields khác)
- *    - Write lại file với formatting đẹp
+ * ### 6. Update package.json
+ *    Reads the current package.json, merges the new exports (preserving other
+ *    fields), and writes the file back with proper formatting.
  */
 
 import { readdir, readFile, writeFile, access } from "node:fs/promises";
@@ -66,28 +61,41 @@ const CONFIG_FILE_JS = "generate-exports.config.js";
 const CONFIG_FILE_JSON = "generate-exports.config.json";
 
 /**
- * CSS export configuration
+ * Configuration options for CSS file exports.
  */
 interface CSSExportConfig {
-  /** Enable automatic CSS exports (default: true - auto-detect) */
+  /** Whether to enable automatic CSS exports. Defaults to true (auto-detect). */
   enabled?: boolean;
-  /** Force export individual files even if directory only contains CSS (default: false - auto-detect) */
+  /**
+   * Force export individual files even if directory only contains CSS files.
+   * Defaults to false (auto-detect).
+   */
   forceExportFiles?: boolean;
-  /** Custom export mappings: { exportPath: distPath } */
+  /** Custom export path mappings in the format: { exportPath: distPath } */
   customExports?: Record<string, string>;
 }
 
 /**
- * Configuration interface
+ * Main configuration interface for the export generation script.
  */
 export interface GenerateExportsConfig {
+  /** List of package paths to skip during processing. */
   skipPackages?: string[];
+  /**
+   * Path transformation rules for specific packages.
+   * Allows removing prefixes from export paths.
+   */
   pathTransformations?: Record<string, { removePrefix?: string }>;
+  /**
+   * CSS export configuration per package.
+   * Can be a boolean (enable/disable) or a detailed CSSExportConfig object.
+   */
   cssExports?: Record<string, CSSExportConfig | boolean>;
 }
 
 /**
- * Module file structure
+ * Represents the file structure of a module.
+ * Each module may have JavaScript, CommonJS, and TypeScript declaration files.
  */
 interface ModuleFiles {
   js: string | null;
@@ -96,7 +104,7 @@ interface ModuleFiles {
 }
 
 /**
- * Module information
+ * Represents a complete module with its path and associated files.
  */
 interface Module {
   path: string;
@@ -104,7 +112,8 @@ interface Module {
 }
 
 /**
- * Export entry structure
+ * Represents an export entry in package.json.
+ * Defines the paths for types, ESM imports, and CommonJS requires.
  */
 interface ExportEntry {
   types: string;
@@ -113,7 +122,8 @@ interface ExportEntry {
 }
 
 /**
- * Package.json structure
+ * Structure of package.json file.
+ * Extends the base structure to include exports field.
  */
 interface PackageJson {
   name?: string;
@@ -122,7 +132,11 @@ interface PackageJson {
 }
 
 /**
- * Scan thư mục recursively để tìm tất cả files
+ * Recursively scan a directory to find all files.
+ *
+ * @param dir - The directory to scan
+ * @param baseDir - The base directory for calculating relative paths. Defaults to dir.
+ * @returns An array of relative file paths from the base directory
  */
 async function scanDirectory(dir: string, baseDir: string = dir): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -144,7 +158,13 @@ async function scanDirectory(dir: string, baseDir: string = dir): Promise<string
 }
 
 /**
- * Phân loại files theo module name (bỏ extension)
+ * Group files by their module name (without extension).
+ *
+ * Files are grouped by their base name, so index.js, index.cjs, and index.d.ts
+ * are all considered part of the same "index" module.
+ *
+ * @param files - Array of file paths to group
+ * @returns A map of module paths to Module objects
  */
 function groupFilesByModule(files: string[]): Map<string, Module> {
   const modules = new Map<string, Module>();
@@ -159,7 +179,7 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
       modulePath = file.slice(0, -5); // Remove ".d.ts"
     } else {
       ext = extname(file);
-      // Chỉ xử lý các file có extension hợp lệ
+      // Only process files with valid extensions
       if (![".js", ".cjs"].includes(ext)) {
         continue;
       }
@@ -168,7 +188,7 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
 
     const name = basename(modulePath);
 
-    // Bỏ qua nếu là file trong thư mục con không có tên file
+    // Skip if file is in a subdirectory without a filename
     if (!name) {
       continue;
     }
@@ -201,18 +221,29 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
 }
 
 /**
- * Validate module có đủ files cần thiết
+ * Validate that a module has the required files.
+ *
+ * A module is considered valid if it has at least .js and .d.ts files.
+ * The .cjs file is optional but recommended for CommonJS support.
+ *
+ * @param module - The module to validate
+ * @returns True if the module is valid, false otherwise
  */
 function isValidModule(module: Module): boolean {
   const { files } = module;
 
-  // Phải có ít nhất .js và .d.ts
-  // .cjs là optional nhưng nên có để support CommonJS
+  // Must have at least .js and .d.ts files
+  // .cjs is optional but recommended for CommonJS support
   return files.js !== null && files.dts !== null;
 }
 
 /**
- * Convert dist path thành export path
+ * Convert a dist path to an export path.
+ *
+ * The root index file becomes ".", while other paths are prefixed with "./".
+ *
+ * @param distPath - The path within the dist directory
+ * @returns The export path for package.json
  */
 function toExportPath(distPath: string): string {
   // dist/index → "."
@@ -225,7 +256,11 @@ function toExportPath(distPath: string): string {
 }
 
 /**
- * Tạo export object cho một module
+ * Create an export entry object for a module.
+ *
+ * @param module - The module to create an export entry for
+ * @param pathTransform - Optional function to transform the export path
+ * @returns An object containing the export path and entry definition
  */
 function createExportEntry(
   module: Module,
@@ -257,8 +292,13 @@ function createExportEntry(
 }
 
 /**
- * Load configuration file
- * Supports both .js and .json files, with .js taking priority
+ * Load configuration file from the root directory.
+ *
+ * Supports both .js and .json configuration files, with .js taking priority.
+ * If neither file exists, returns an empty configuration object.
+ *
+ * @param rootDir - The root directory to search for configuration files
+ * @returns The loaded configuration object
  */
 async function loadConfig(rootDir: string): Promise<GenerateExportsConfig> {
   const configPathJs = resolve(rootDir, CONFIG_FILE_JS);
@@ -284,7 +324,11 @@ async function loadConfig(rootDir: string): Promise<GenerateExportsConfig> {
 }
 
 /**
- * Create path transformation function from config
+ * Create a path transformation function from configuration.
+ *
+ * @param config - The path transformations configuration
+ * @param packagePath - The package path to get transformation for
+ * @returns A transformation function if configured, undefined otherwise
  */
 function createPathTransform(
   config: GenerateExportsConfig["pathTransformations"],
@@ -313,8 +357,11 @@ function createPathTransform(
 }
 
 /**
- * Scan CSS files recursively in dist directory
- * Returns array of relative paths from dist/ (e.g., "css/amber.css", "style.css")
+ * Recursively scan for CSS files in the dist directory.
+ *
+ * @param distDir - The dist directory to scan
+ * @param baseDir - The base directory for calculating relative paths. Defaults to distDir.
+ * @returns An array of relative paths from dist/ (e.g., "css/amber.css", "style.css")
  */
 async function scanCSSFiles(distDir: string, baseDir: string = distDir): Promise<string[]> {
   const files: string[] = [];
@@ -343,7 +390,13 @@ async function scanCSSFiles(distDir: string, baseDir: string = distDir): Promise
 }
 
 /**
- * Check if a directory contains only CSS files
+ * Check if a directory contains only CSS files.
+ *
+ * An empty directory is considered CSS-only and will use a wildcard export.
+ *
+ * @param distDir - The base dist directory
+ * @param dirPath - The directory path to check (relative to distDir)
+ * @returns True if the directory contains only CSS files or is empty
  */
 async function isDirectoryCSSOnly(distDir: string, dirPath: string): Promise<boolean> {
   const fullPath = resolve(distDir, dirPath);
@@ -375,7 +428,15 @@ async function isDirectoryCSSOnly(distDir: string, dirPath: string): Promise<boo
 }
 
 /**
- * Generate CSS exports based on auto-detected CSS files
+ * Generate CSS exports based on auto-detected CSS files.
+ *
+ * Automatically detects CSS files in the dist directory and generates appropriate
+ * export paths. Supports wildcard exports for CSS-only directories and individual
+ * file exports when needed.
+ *
+ * @param distDir - The dist directory to scan for CSS files
+ * @param cssConfig - CSS export configuration (boolean or detailed config object)
+ * @returns A record of export paths to CSS file paths
  */
 async function generateCSSExports(
   distDir: string,
@@ -465,14 +526,23 @@ async function generateCSSExports(
 }
 
 /**
- * Generate exports từ thư mục dist
+ * Generate exports from the dist directory.
+ *
+ * This is the main function that orchestrates the entire export generation process:
+ * scanning files, grouping by module, validating, creating export entries, and
+ * optionally generating CSS exports.
+ *
+ * @param distDir - The dist directory to scan
+ * @param pathTransform - Optional function to transform export paths
+ * @param cssConfig - Optional CSS export configuration
+ * @returns A record of export paths to export entries or CSS file paths
  */
 async function generateExports(
   distDir: string,
   pathTransform?: (exportPath: string) => string,
   cssConfig?: CSSExportConfig | boolean
 ): Promise<Record<string, ExportEntry | string>> {
-  // 1. Scan thư mục dist
+  // 1. Scan the dist directory
   const files = await scanDirectory(distDir);
 
   if (files.length === 0) {
@@ -480,7 +550,7 @@ async function generateExports(
     return { "./package.json": "./package.json" };
   }
 
-  // 2. Phân loại files theo module
+  // 2. Group files by module
   const modules = groupFilesByModule(files);
 
   if (modules.size === 0) {
@@ -488,7 +558,7 @@ async function generateExports(
     return { "./package.json": "./package.json" };
   }
 
-  // 3. Filter và validate modules
+  // 3. Filter and validate modules
   const validModules = Array.from(modules.values()).filter(isValidModule);
 
   if (validModules.length === 0) {
@@ -496,7 +566,7 @@ async function generateExports(
     return { "./package.json": "./package.json" };
   }
 
-  // 4. Tạo exports object
+  // 4. Create exports object
   const exports: Record<string, ExportEntry> = {};
 
   for (const module of validModules) {
@@ -504,15 +574,18 @@ async function generateExports(
     exports[exportPath] = entry;
   }
 
-  // 5. Sắp xếp exports theo nhóm thư mục
+  // 5. Sort exports by directory groups
   const sortedExports: Record<string, ExportEntry | string> = {};
   
   /**
-   * Extract directory group from export path for sorting
-   * Returns: [group, subpath, sortOrder] where:
-   * - group: directory name or special group
-   * - subpath: remaining path after group
-   * - sortOrder: numeric order for consistent grouping
+   * Extract directory group from export path for sorting purposes.
+   *
+   * @param path - The export path to analyze
+   * @param pathTransform - Optional path transformation function
+   * @returns A tuple containing [group, subpath, sortOrder] where:
+   *          - group: directory name or special group identifier
+   *          - subpath: remaining path after the group
+   *          - sortOrder: numeric order for consistent grouping
    */
   function getExportGroup(path: string, pathTransform?: (p: string) => string): [string, string, number] {
     if (path === ".") {
@@ -562,11 +635,17 @@ async function generateExports(
   }
   
   /**
-   * Sort comparator for export paths
-   * Groups exports by directory and sorts alphabetically within each group
+   * Sort comparator for export paths.
+   *
+   * Groups exports by directory and sorts alphabetically within each group.
+   * The root entry "." always comes first.
+   *
+   * @param a - First export path to compare
+   * @param b - Second export path to compare
+   * @returns Comparison result for sorting
    */
   function sortExports(a: string, b: string): number {
-    // "." luôn đứng đầu
+    // "." always comes first
     if (a === ".") return -1;
     if (b === ".") return 1;
     
@@ -623,14 +702,21 @@ async function generateExports(
     finalSortedExports[key] = sortedExports[key];
   }
 
-  // 7. Luôn thêm package.json export ở cuối
+  // 7. Always add package.json export at the end
   finalSortedExports["./package.json"] = "./package.json";
 
   return finalSortedExports;
 }
 
 /**
- * Update package.json với exports mới
+ * Update package.json with new exports.
+ *
+ * Reads the existing package.json, merges the new exports (preserving other fields),
+ * and writes the file back with proper formatting.
+ *
+ * @param packageJsonPath - Path to the package.json file
+ * @param newExports - The new exports to merge into package.json
+ * @returns The updated package.json object
  */
 async function updatePackageJson(
   packageJsonPath: string,
@@ -639,10 +725,10 @@ async function updatePackageJson(
   const content = await readFile(packageJsonPath, "utf-8");
   const packageJson = JSON.parse(content) as PackageJson;
 
-  // Merge exports mới
+  // Merge new exports
   packageJson.exports = newExports;
 
-  // Write lại với formatting
+  // Write back with formatting
   const updated = JSON.stringify(packageJson, null, 2);
   await writeFile(packageJsonPath, updated + "\n", "utf-8");
 
@@ -650,7 +736,14 @@ async function updatePackageJson(
 }
 
 /**
- * Process a single package
+ * Process a single package to generate and update its exports.
+ *
+ * Validates the package structure, applies configuration, generates exports,
+ * and updates the package.json file.
+ *
+ * @param packageDir - The directory of the package to process
+ * @param rootDir - The root directory of the workspace
+ * @param config - The configuration object
  */
 async function processPackage(
   packageDir: string,
@@ -722,7 +815,16 @@ async function processPackage(
 }
 
 /**
- * Find all packages with dist/ directory
+ * Find all packages with a dist/ directory.
+ *
+ * Scans the packages directory and returns all packages that have both
+ * a package.json file and a dist/ directory, excluding packages configured
+ * to be skipped.
+ *
+ * @param packagesDir - The directory containing packages
+ * @param rootDir - The root directory of the workspace
+ * @param config - The configuration object
+ * @returns An array of package directory paths
  */
 async function findAllPackages(
   packagesDir: string,
@@ -768,7 +870,10 @@ async function findAllPackages(
 }
 
 /**
- * Main function
+ * Main entry point for the export generation script.
+ *
+ * Handles command-line arguments, loads configuration, and processes
+ * either a single package or all packages in the workspace.
  */
 async function main(): Promise<void> {
   // Get workspace root (parent of scripts directory)
