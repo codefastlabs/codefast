@@ -1,5 +1,19 @@
 # @codefast/eslint-config
 
+## 0.3.9
+
+### Patch Changes
+
+- [`cbc4092`](https://github.com/codefastlabs/codefast/commit/cbc4092c53c8a8c67685eaec87be95f580b24b88) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): rename presets for consistency
+
+- [`237b576`](https://github.com/codefastlabs/codefast/commit/237b576f8e12c528cfec40aefe2d0a68c0b01ac4) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): bump package versions across workspaces
+
+- [`888a904`](https://github.com/codefastlabs/codefast/commit/888a9047e4ad2e79e5945fad09d5ffa8baef0a45) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): reorganize presets and imports
+
+- [`1751374`](https://github.com/codefastlabs/codefast/commit/175137498b3a5144909a2f80e003d070ca5bf937) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update Button component to support asChild prop and simplify props structure
+
+- [`bdb965c`](https://github.com/codefastlabs/codefast/commit/bdb965c104a7268e1ebd7b0ca46cd6c3a9b1a38e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): add unique names to rule configurations
+
 ## 0.3.9-canary.3
 
 ## 0.3.9-canary.2
