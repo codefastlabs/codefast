@@ -1,5 +1,48 @@
 # @codefast/ui
 
+## 0.3.9
+
+### Patch Changes
+
+- [`cbc4092`](https://github.com/codefastlabs/codefast/commit/cbc4092c53c8a8c67685eaec87be95f580b24b88) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): rename presets for consistency
+
+- [`dab8f27`](https://github.com/codefastlabs/codefast/commit/dab8f27d3d9bafcc547c310d33dbaeb364246b25) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove `inputVariants` from `Input` and `InputNumber` components
+
+- [`261c54b`](https://github.com/codefastlabs/codefast/commit/261c54be4eb37bd23868e058951b11c25f4e0072) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): add `KbdGroup` component and enhance `Kbd` functionality
+
+- [`c0e717f`](https://github.com/codefastlabs/codefast/commit/c0e717f15f1bfbb316174dc3ef050757a4b54041) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `Empty` component and integrate in registry components
+
+- [`c2d5bc1`](https://github.com/codefastlabs/codefast/commit/c2d5bc11cc28069c8d6a5120f19a033cb31d3c3a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): replace `InputSearch` implementation with `InputGroup`
+
+- [`c8a296c`](https://github.com/codefastlabs/codefast/commit/c8a296c72a7d427ab0596e5ac124bbc4f6dedbaa) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): add oklch-based CSS files for color themes
+
+- [`035b71a`](https://github.com/codefastlabs/codefast/commit/035b71a1a589a67ac668f1320a6985bd9271b248) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): add new size variants `icon-sm` and `icon-lg` to Button component
+
+- [`4899386`](https://github.com/codefastlabs/codefast/commit/489938610509f94e9bafc09b46ecfc7318655261) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove unused components and exports from `ui` package
+
+- [`436e1d9`](https://github.com/codefastlabs/codefast/commit/436e1d941654beec192a9da9c6daefef6c4f6666) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `InputGroup` and `Field` components and integrate into registry
+
+- [`970a122`](https://github.com/codefastlabs/codefast/commit/970a1220fc37908bc19138770f195461652e59f7) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `ButtonGroup` component and integrate into docs
+
+- [`237b576`](https://github.com/codefastlabs/codefast/commit/237b576f8e12c528cfec40aefe2d0a68c0b01ac4) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): bump package versions across workspaces
+
+- [`888a904`](https://github.com/codefastlabs/codefast/commit/888a9047e4ad2e79e5945fad09d5ffa8baef0a45) Thanks [@thevuong](https://github.com/thevuong)! - refactor(eslint-config): reorganize presets and imports
+
+- [`1751374`](https://github.com/codefastlabs/codefast/commit/175137498b3a5144909a2f80e003d070ca5bf937) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update Button component to support asChild prop and simplify props structure
+
+- [`4de46d0`](https://github.com/codefastlabs/codefast/commit/4de46d090cce30b3f65ed6203e566378c08d253c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace `bg-popover-overlay` with `bg-black/50` and remove unused CSS variables
+
+- [`f88b73d`](https://github.com/codefastlabs/codefast/commit/f88b73dfc6f9d817ae83c26f20ef8f1d5b11a8c7) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `Item` component and integrate into docs
+
+- [`bc4be51`](https://github.com/codefastlabs/codefast/commit/bc4be514f3df7de51ea49c5bd08a8b5bb92b0049) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace CSS custom properties with oklch color values in neutral.css
+
+- [`135b519`](https://github.com/codefastlabs/codefast/commit/135b5198dc0c26a1b885b2d2a84dfa078f2683f7) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): replace `InputPassword` implementation with `InputGroup`
+
+- [`308eb18`](https://github.com/codefastlabs/codefast/commit/308eb18cc58934e2c0dfc92657e4bad9cac5699d) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui, docs): add `NativeSelect` component and integrate into docs
+
+- Updated dependencies [[`237b576`](https://github.com/codefastlabs/codefast/commit/237b576f8e12c528cfec40aefe2d0a68c0b01ac4), [`888a904`](https://github.com/codefastlabs/codefast/commit/888a9047e4ad2e79e5945fad09d5ffa8baef0a45), [`1751374`](https://github.com/codefastlabs/codefast/commit/175137498b3a5144909a2f80e003d070ca5bf937)]:
+  - @codefast/tailwind-variants@0.3.9
+
 ## 0.3.9-canary.3
 
 ### Patch Changes
