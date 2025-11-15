@@ -25,10 +25,111 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    }
+      "require": "./dist/index.cjs"
+    },
+    "./core/image-loader": {
+      "types": "./dist/core/image-loader.d.ts",
+      "import": "./dist/core/image-loader.js",
+      "require": "./dist/core/image-loader.cjs"
+    },
+    "./core/loader-registry": {
+      "types": "./dist/core/loader-registry.d.ts",
+      "import": "./dist/core/loader-registry.js",
+      "require": "./dist/core/loader-registry.cjs"
+    },
+    "./core/types": {
+      "types": "./dist/core/types.d.ts",
+      "import": "./dist/core/types.js",
+      "require": "./dist/core/types.cjs"
+    },
+    "./loaders/cloudflare": {
+      "types": "./dist/loaders/cloudflare.d.ts",
+      "import": "./dist/loaders/cloudflare.js",
+      "require": "./dist/loaders/cloudflare.cjs"
+    },
+    "./loaders/cloudfront": {
+      "types": "./dist/loaders/cloudfront.d.ts",
+      "import": "./dist/loaders/cloudfront.js",
+      "require": "./dist/loaders/cloudfront.cjs"
+    },
+    "./loaders/cloudinary": {
+      "types": "./dist/loaders/cloudinary.d.ts",
+      "import": "./dist/loaders/cloudinary.js",
+      "require": "./dist/loaders/cloudinary.cjs"
+    },
+    "./loaders/contentful": {
+      "types": "./dist/loaders/contentful.d.ts",
+      "import": "./dist/loaders/contentful.js",
+      "require": "./dist/loaders/contentful.cjs"
+    },
+    "./loaders/fastly": {
+      "types": "./dist/loaders/fastly.d.ts",
+      "import": "./dist/loaders/fastly.js",
+      "require": "./dist/loaders/fastly.cjs"
+    },
+    "./loaders/gumlet": {
+      "types": "./dist/loaders/gumlet.d.ts",
+      "import": "./dist/loaders/gumlet.js",
+      "require": "./dist/loaders/gumlet.cjs"
+    },
+    "./loaders/imageengine": {
+      "types": "./dist/loaders/imageengine.d.ts",
+      "import": "./dist/loaders/imageengine.js",
+      "require": "./dist/loaders/imageengine.cjs"
+    },
+    "./loaders/imagekit": {
+      "types": "./dist/loaders/imagekit.d.ts",
+      "import": "./dist/loaders/imagekit.js",
+      "require": "./dist/loaders/imagekit.cjs"
+    },
+    "./loaders/imgix": {
+      "types": "./dist/loaders/imgix.d.ts",
+      "import": "./dist/loaders/imgix.js",
+      "require": "./dist/loaders/imgix.cjs"
+    },
+    "./loaders/index": {
+      "types": "./dist/loaders/index.d.ts",
+      "import": "./dist/loaders/index.js",
+      "require": "./dist/loaders/index.cjs"
+    },
+    "./loaders/pixelbin": {
+      "types": "./dist/loaders/pixelbin.d.ts",
+      "import": "./dist/loaders/pixelbin.js",
+      "require": "./dist/loaders/pixelbin.cjs"
+    },
+    "./loaders/sanity": {
+      "types": "./dist/loaders/sanity.d.ts",
+      "import": "./dist/loaders/sanity.js",
+      "require": "./dist/loaders/sanity.cjs"
+    },
+    "./loaders/sirv": {
+      "types": "./dist/loaders/sirv.d.ts",
+      "import": "./dist/loaders/sirv.js",
+      "require": "./dist/loaders/sirv.cjs"
+    },
+    "./loaders/supabase": {
+      "types": "./dist/loaders/supabase.d.ts",
+      "import": "./dist/loaders/supabase.js",
+      "require": "./dist/loaders/supabase.cjs"
+    },
+    "./loaders/thumbor": {
+      "types": "./dist/loaders/thumbor.d.ts",
+      "import": "./dist/loaders/thumbor.js",
+      "require": "./dist/loaders/thumbor.cjs"
+    },
+    "./loaders/unsplash": {
+      "types": "./dist/loaders/unsplash.d.ts",
+      "import": "./dist/loaders/unsplash.js",
+      "require": "./dist/loaders/unsplash.cjs"
+    },
+    "./utils/url-matcher": {
+      "types": "./dist/utils/url-matcher.d.ts",
+      "import": "./dist/utils/url-matcher.js",
+      "require": "./dist/utils/url-matcher.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

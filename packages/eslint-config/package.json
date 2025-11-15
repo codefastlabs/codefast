@@ -28,41 +28,136 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
-    "./package.json": "./package.json",
-    "./core/*": {
-      "import": "./dist/core/*.js",
-      "require": "./dist/core/*.cjs",
-      "types": "./dist/core/*.d.ts"
+    "./core/import": {
+      "types": "./dist/core/import.d.ts",
+      "import": "./dist/core/import.js",
+      "require": "./dist/core/import.cjs"
     },
-    "./environments/*": {
-      "import": "./dist/environments/*.js",
-      "require": "./dist/environments/*.cjs",
-      "types": "./dist/environments/*.d.ts"
+    "./core/javascript": {
+      "types": "./dist/core/javascript.d.ts",
+      "import": "./dist/core/javascript.js",
+      "require": "./dist/core/javascript.cjs"
     },
-    "./languages/*": {
-      "import": "./dist/languages/*.js",
-      "require": "./dist/languages/*.cjs",
-      "types": "./dist/languages/*.d.ts"
+    "./core/perfectionist": {
+      "types": "./dist/core/perfectionist.d.ts",
+      "import": "./dist/core/perfectionist.js",
+      "require": "./dist/core/perfectionist.cjs"
     },
-    "./plugins/*": {
-      "import": "./dist/plugins/*.js",
-      "require": "./dist/plugins/*.cjs",
-      "types": "./dist/plugins/*.d.ts"
+    "./core/stylistic": {
+      "types": "./dist/core/stylistic.d.ts",
+      "import": "./dist/core/stylistic.js",
+      "require": "./dist/core/stylistic.cjs"
     },
-    "./presets/*": {
-      "import": "./dist/presets/*.js",
-      "require": "./dist/presets/*.cjs",
-      "types": "./dist/presets/*.d.ts"
+    "./core/typescript": {
+      "types": "./dist/core/typescript.d.ts",
+      "import": "./dist/core/typescript.js",
+      "require": "./dist/core/typescript.cjs"
     },
-    "./shared/*": {
-      "import": "./dist/shared/*.js",
-      "require": "./dist/shared/*.cjs",
-      "types": "./dist/shared/*.d.ts"
-    }
+    "./core/unicorn": {
+      "types": "./dist/core/unicorn.d.ts",
+      "import": "./dist/core/unicorn.js",
+      "require": "./dist/core/unicorn.cjs"
+    },
+    "./environments/browser": {
+      "types": "./dist/environments/browser.d.ts",
+      "import": "./dist/environments/browser.js",
+      "require": "./dist/environments/browser.cjs"
+    },
+    "./environments/node": {
+      "types": "./dist/environments/node.d.ts",
+      "import": "./dist/environments/node.js",
+      "require": "./dist/environments/node.cjs"
+    },
+    "./environments/test": {
+      "types": "./dist/environments/test.d.ts",
+      "import": "./dist/environments/test.js",
+      "require": "./dist/environments/test.cjs"
+    },
+    "./languages/css": {
+      "types": "./dist/languages/css.d.ts",
+      "import": "./dist/languages/css.js",
+      "require": "./dist/languages/css.cjs"
+    },
+    "./languages/json": {
+      "types": "./dist/languages/json.d.ts",
+      "import": "./dist/languages/json.js",
+      "require": "./dist/languages/json.cjs"
+    },
+    "./languages/markdown": {
+      "types": "./dist/languages/markdown.d.ts",
+      "import": "./dist/languages/markdown.js",
+      "require": "./dist/languages/markdown.cjs"
+    },
+    "./plugins/accessibility/jsx-a11y": {
+      "types": "./dist/plugins/accessibility/jsx-a11y.d.ts",
+      "import": "./dist/plugins/accessibility/jsx-a11y.js",
+      "require": "./dist/plugins/accessibility/jsx-a11y.cjs"
+    },
+    "./plugins/frameworks/next": {
+      "types": "./dist/plugins/frameworks/next.d.ts",
+      "import": "./dist/plugins/frameworks/next.js",
+      "require": "./dist/plugins/frameworks/next.cjs"
+    },
+    "./plugins/frameworks/react": {
+      "types": "./dist/plugins/frameworks/react.d.ts",
+      "import": "./dist/plugins/frameworks/react.js",
+      "require": "./dist/plugins/frameworks/react.cjs"
+    },
+    "./plugins/testing/jest": {
+      "types": "./dist/plugins/testing/jest.d.ts",
+      "import": "./dist/plugins/testing/jest.js",
+      "require": "./dist/plugins/testing/jest.cjs"
+    },
+    "./plugins/tooling/only-warn": {
+      "types": "./dist/plugins/tooling/only-warn.d.ts",
+      "import": "./dist/plugins/tooling/only-warn.js",
+      "require": "./dist/plugins/tooling/only-warn.cjs"
+    },
+    "./plugins/tooling/prettier": {
+      "types": "./dist/plugins/tooling/prettier.d.ts",
+      "import": "./dist/plugins/tooling/prettier.js",
+      "require": "./dist/plugins/tooling/prettier.cjs"
+    },
+    "./plugins/tooling/tsdoc": {
+      "types": "./dist/plugins/tooling/tsdoc.d.ts",
+      "import": "./dist/plugins/tooling/tsdoc.js",
+      "require": "./dist/plugins/tooling/tsdoc.cjs"
+    },
+    "./plugins/tooling/turbo": {
+      "types": "./dist/plugins/tooling/turbo.d.ts",
+      "import": "./dist/plugins/tooling/turbo.js",
+      "require": "./dist/plugins/tooling/turbo.cjs"
+    },
+    "./presets/base": {
+      "types": "./dist/presets/base.d.ts",
+      "import": "./dist/presets/base.js",
+      "require": "./dist/presets/base.cjs"
+    },
+    "./presets/library": {
+      "types": "./dist/presets/library.d.ts",
+      "import": "./dist/presets/library.js",
+      "require": "./dist/presets/library.cjs"
+    },
+    "./presets/next": {
+      "types": "./dist/presets/next.d.ts",
+      "import": "./dist/presets/next.js",
+      "require": "./dist/presets/next.cjs"
+    },
+    "./presets/react": {
+      "types": "./dist/presets/react.d.ts",
+      "import": "./dist/presets/react.js",
+      "require": "./dist/presets/react.cjs"
+    },
+    "./shared/composer": {
+      "types": "./dist/shared/composer.d.ts",
+      "import": "./dist/shared/composer.js",
+      "require": "./dist/shared/composer.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
