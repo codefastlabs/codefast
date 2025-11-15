@@ -61,6 +61,12 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/next/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/start/.output" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/start/.tanstack" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/start/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/benchmarks/tailwind-variants/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/coverage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

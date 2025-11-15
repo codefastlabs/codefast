@@ -15,7 +15,7 @@
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
-    "@tanstack/react-devtools": "^0.7.0",
+    "@tanstack/react-devtools": "^0.8.1",
     "@tanstack/react-query": "^5.66.5",
     "@tanstack/react-query-devtools": "^5.84.2",
     "@tanstack/react-router": "^1.132.0",
@@ -23,7 +23,7 @@
     "@tanstack/react-router-ssr-query": "^1.131.7",
     "@tanstack/react-start": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
-    "lucide-react": "^0.544.0",
+    "lucide-react": "^0.553.0",
     "nitro": "latest",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -35,7 +35,7 @@
     "@tanstack/eslint-config": "^0.3.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
@@ -44,7 +44,7 @@
     "prettier": "^3.5.3",
     "typescript": "^5.7.2",
     "vite": "^7.1.7",
-    "vitest": "^3.0.5",
+    "vitest": "^4.0.9",
     "web-vitals": "^5.1.0"
   }
 }
