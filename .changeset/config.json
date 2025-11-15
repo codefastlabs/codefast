@@ -12,5 +12,5 @@
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@app/docs", "@codefast/benchmark-tailwind-variants"]
+  "ignore": ["@apps/start", "@apps/next", "@codefast/benchmark-tailwind-variants"]
 }
