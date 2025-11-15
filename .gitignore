@@ -3,10 +3,18 @@
 # dependencies
 node_modules
 .pnp
-.pnp.js
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
 # local env files
+.env
+.env.*
 .env.*.local
+*.local
 
 # testing
 coverage
@@ -17,22 +25,35 @@ coverage
 # vercel
 .vercel
 
-# build Outputs
+# build outputs
 .next/
 out/
 build
 dist
+dist-ssr
 .swc/
 tsconfig.tsbuildinfo
+*.tsbuildinfo
+next-env.d.ts
+
+# framework-specific build outputs
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
 # misc
 .DS_Store
 *.pem
+count.txt
+todos.json
 
 # storybook
 storybook-static
