@@ -1,14 +1,16 @@
 {
-  "name": "next",
+  "name": "@apps/next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "next dev",
+    "lint": "eslint",
+    "start": "next start"
   },
   "dependencies": {
+    "@codefast/tailwind-variants": "workspace:*",
+    "@codefast/ui": "workspace:*",
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"

@@ -9,6 +9,7 @@
       <w>offcanvas</w>
       <w>packagejson</w>
       <w>rslib</w>
+      <w>tanstack</w>
       <w>tsdoc</w>
       <w>turbopack</w>
     </words>
