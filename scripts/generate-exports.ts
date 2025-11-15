@@ -62,6 +62,15 @@ import { fileURLToPath } from "node:url";
 
 const DIST_DIR = "dist";
 const PACKAGE_JSON = "package.json";
+const CONFIG_FILE = "generate-exports.config.json";
+
+/**
+ * Configuration interface
+ */
+interface GenerateExportsConfig {
+  skipPackages?: string[];
+  pathTransformations?: Record<string, { removePrefix?: string }>;
+}
 
 /**
  * Module file structure
@@ -204,9 +213,18 @@ function toExportPath(distPath: string): string {
 /**
  * Tạo export object cho một module
  */
-function createExportEntry(module: Module): { exportPath: string; entry: ExportEntry } {
+function createExportEntry(
+  module: Module,
+  pathTransform?: (exportPath: string) => string
+): { exportPath: string; entry: ExportEntry } {
   const { path, files } = module;
-  const exportPath = toExportPath(path);
+  let exportPath = toExportPath(path);
+  
+  // Apply path transformation if provided
+  if (pathTransform) {
+    exportPath = pathTransform(exportPath);
+  }
+  
   const distPath = `./dist/${path}`;
 
   const entry: ExportEntry = {
@@ -225,9 +243,57 @@ function createExportEntry(module: Module): { exportPath: string; entry: ExportE
 }
 
 /**
+ * Load configuration file
+ */
+async function loadConfig(rootDir: string): Promise<GenerateExportsConfig> {
+  const configPath = resolve(rootDir, CONFIG_FILE);
+  
+  try {
+    await access(configPath);
+    const content = await readFile(configPath, "utf-8");
+    return JSON.parse(content) as GenerateExportsConfig;
+  } catch {
+    // Return default config if file doesn't exist
+    return {};
+  }
+}
+
+/**
+ * Create path transformation function from config
+ */
+function createPathTransform(
+  config: GenerateExportsConfig["pathTransformations"],
+  packagePath: string
+): ((exportPath: string) => string) | undefined {
+  const transform = config?.[packagePath];
+  if (!transform) {
+    return undefined;
+  }
+  
+  if (transform.removePrefix) {
+    return (exportPath: string) => {
+      if (exportPath.startsWith(transform.removePrefix!)) {
+        const result = exportPath.slice(transform.removePrefix!.length);
+        // Ensure result starts with "./" (except for root entry ".")
+        if (result && result !== "." && !result.startsWith("./")) {
+          return `./${result}`;
+        }
+        return result;
+      }
+      return exportPath;
+    };
+  }
+  
+  return undefined;
+}
+
+/**
  * Generate exports từ thư mục dist
  */
-async function generateExports(distDir: string): Promise<Record<string, ExportEntry | string>> {
+async function generateExports(
+  distDir: string,
+  pathTransform?: (exportPath: string) => string
+): Promise<Record<string, ExportEntry | string>> {
   // 1. Scan thư mục dist
   const files = await scanDirectory(distDir);
   
@@ -256,7 +322,7 @@ async function generateExports(distDir: string): Promise<Record<string, ExportEn
   const exports: Record<string, ExportEntry> = {};
   
   for (const module of validModules) {
-    const { exportPath, entry } = createExportEntry(module);
+    const { exportPath, entry } = createExportEntry(module, pathTransform);
     exports[exportPath] = entry;
   }
   
@@ -302,9 +368,22 @@ async function updatePackageJson(
 /**
  * Process a single package
  */
-async function processPackage(packageDir: string): Promise<void> {
+async function processPackage(
+  packageDir: string,
+  rootDir: string,
+  config: GenerateExportsConfig
+): Promise<void> {
   const distDir = resolve(packageDir, DIST_DIR);
   const packageJsonPath = resolve(packageDir, PACKAGE_JSON);
+  
+  // Get relative path from root for config matching
+  const relativePath = relative(rootDir, packageDir).replace(/\\/g, "/");
+  
+  // Check if package should be skipped
+  if (config.skipPackages?.includes(relativePath)) {
+    console.log(`⏭️  Skipping ${basename(packageDir)} (configured to skip)`);
+    return;
+  }
   
   // Validate paths
   try {
@@ -320,11 +399,17 @@ async function processPackage(packageDir: string): Promise<void> {
     const packageJson = JSON.parse(packageJsonContent) as PackageJson;
     const packageName = packageJson.name || basename(packageDir);
     
+    // Get path transformation for this package
+    const pathTransform = createPathTransform(config.pathTransformations, relativePath);
+    
     console.log(`\n📦 Processing package: ${packageName}`);
     console.log(`📁 Package directory: ${packageDir}`);
+    if (pathTransform) {
+      console.log("🔧 Using custom path transformation");
+    }
     console.log("🔍 Scanning dist directory...");
     
-    const exports = await generateExports(distDir);
+    const exports = await generateExports(distDir, pathTransform);
     
     console.log(`✅ Found ${Object.keys(exports).length} export entries`);
     console.log("📝 Updating package.json...");
@@ -345,7 +430,11 @@ async function processPackage(packageDir: string): Promise<void> {
 /**
  * Find all packages with dist/ directory
  */
-async function findAllPackages(packagesDir: string): Promise<string[]> {
+async function findAllPackages(
+  packagesDir: string,
+  rootDir: string,
+  config: GenerateExportsConfig
+): Promise<string[]> {
   const packages: string[] = [];
   
   try {
@@ -357,6 +446,13 @@ async function findAllPackages(packagesDir: string): Promise<string[]> {
       }
       
       const packagePath = resolve(packagesDir, entry.name);
+      const relativePath = relative(rootDir, packagePath).replace(/\\/g, "/");
+      
+      // Skip packages in config
+      if (config.skipPackages?.includes(relativePath)) {
+        continue;
+      }
+      
       const distPath = resolve(packagePath, DIST_DIR);
       const packageJsonPath = resolve(packagePath, PACKAGE_JSON);
       
@@ -389,16 +485,19 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
   
   try {
+    // Load configuration
+    const config = await loadConfig(rootDir);
+    
     if (args.length > 0) {
       // Process single package
       const packageDir = resolve(rootDir, args[0]);
-      await processPackage(packageDir);
+      await processPackage(packageDir, rootDir, config);
     } else {
       // Process all packages
       const packagesDir = resolve(rootDir, "packages");
       console.log("🔍 Scanning for packages with dist/ directory...");
       
-      const packages = await findAllPackages(packagesDir);
+      const packages = await findAllPackages(packagesDir, rootDir, config);
       
       if (packages.length === 0) {
         console.warn("⚠️  No packages with dist/ directory found");
@@ -415,7 +514,7 @@ async function main(): Promise<void> {
       
       for (const packageDir of packages) {
         try {
-          await processPackage(packageDir);
+          await processPackage(packageDir, rootDir, config);
           successCount++;
         } catch {
           errorCount++;

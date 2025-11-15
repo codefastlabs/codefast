@@ -28,6 +28,28 @@ tsx scripts/generate-exports.ts packages/image-loader  # Package cụ thể
 - Khi không truyền argument, script sẽ tự động tìm và xử lý tất cả packages có thư mục `dist/`
 - Chỉ packages có cả `package.json` và `dist/` mới được xử lý
 
+### Configuration
+
+Tạo file `generate-exports.config.json` ở root để cấu hình:
+
+```json
+{
+  "skipPackages": [
+    "packages/tailwind-variants"
+  ],
+  "pathTransformations": {
+    "packages/ui": {
+      "removePrefix": "./components/"
+    }
+  }
+}
+```
+
+**Tính năng:**
+- `skipPackages`: Loại bỏ packages không cần generate exports (relative paths từ workspace root)
+- `pathTransformations`: Transform export paths cho packages cụ thể
+  - `removePrefix`: Bỏ prefix khỏi export path (ví dụ: `"./components/accordion"` → `"./accordion"`)
+
 ### Thuật toán
 
 Script tự động:
