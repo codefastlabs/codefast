@@ -1,371 +1,202 @@
 ---
-description: Comprehensive rules and guidelines for the CodeFast monorepo project
-globs: "**/*"
+description: Comprehensive guidelines for new developers to quickly onboard the CodeFast project - a UI components library built with React 19, TypeScript, and Tailwind CSS 4
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json", "**/*.mjs", "**/*.cjs"]
 alwaysApply: true
 ---
 
-# CodeFast Codebase Rules
+# CodeFast - Project Onboarding Guide for New Developers
 
-## Project Overview
+## 📋 Project Overview
 
-CodeFast is a monorepo containing a library of UI components built with TypeScript, React, and TailwindCSS. The project uses Turborepo for build orchestration and pnpm for package management.
+CodeFast is a UI components library built with **TypeScript**, **React 19**, and **Tailwind CSS 4**. All components are designed based on **Radix UI** standards to ensure performance, scalability, and ease of customization.
 
-## Monorepo Structure
+### Project Objectives
+- **Reusability**: Provide versatile UI components that can be used across multiple projects
+- **Flexible Customization**: Utilize **Tailwind Variants** to easily override or extend default styles
+- **High Performance**: Optimized to improve loading speed and minimize unnecessary resources
+- **Clear Codebase**: Modern structure that is easy to read and maintain
 
-This is a **pnpm workspace monorepo** managed by **Turborepo**. The structure follows:
+## 🏗️ Monorepo Structure
 
-- `apps/` - Applications (e.g., `docs` - Next.js documentation site)
-- `packages/` - Shared packages:
-  - `@codefast/ui` - Core UI components library
-  - `@codefast/eslint-config` - Shared ESLint configuration
-  - `@codefast/tailwind-variants` - Tailwind variants utility
-  - `@codefast/image-loader` - Image loading utilities
-  - `@codefast/typescript-config` - Shared TypeScript configurations
-- `benchmarks/` - Performance benchmarks
+The project uses **pnpm workspaces** and **Turbo** to manage the monorepo:
 
-## Package Manager
+```
+codefast/
+├── apps/                    # Demo and test applications
+│   ├── next/               # Next.js 16 app (React 19)
+│   └── start/              # TanStack Start app (Vite + React Router)
+├── packages/               # Main packages
+│   ├── ui/                 # UI components library (main package)
+│   ├── tailwind-variants/  # Tailwind CSS variants utilities
+│   ├── eslint-config/      # Shared ESLint configuration
+│   ├── typescript-config/  # Shared TypeScript configuration
+│   └── image-loader/       # Image loading utilities
+└── benchmarks/             # Performance benchmarks
+```
 
-- **Always use `pnpm`** - never use npm or yarn
-- Package manager version: `pnpm@10.20.0` (enforced via `packageManager` field)
-- Use workspace protocol (`workspace:*`) for internal dependencies
-- Node.js version: `>=20.0.0` (preferred: Node.js 22)
+### Main Package: `@codefast/ui`
+- **Location**: `packages/ui/`
+- **Description**: Main UI components library
+- **Exports**: Components, hooks, primitives
+- **Dependencies**: Radix UI, Tailwind CSS, React Hook Form, Zod
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Core Technologies
-- **React**: ^19.0 (latest stable)
-- **TypeScript**: ^5.9.3
-- **TailwindCSS**: ^4.1.17 (Tailwind v4)
-- **Radix UI**: ^1.x - All UI primitives are built on Radix UI
-- **Next.js**: ^16.0.1 (for docs app)
+- **React**: 19.2.0 (with React Compiler)
+- **TypeScript**: 5.9.3
+- **Next.js**: 16.0.3 (for app/next)
+- **TanStack Start**: 1.132.0 (for app/start)
+- **Tailwind CSS**: 4.x
+- **Radix UI**: 1.x (primitives)
 
 ### Build Tools
-- **Turborepo**: Build orchestration and caching
-- **rslib**: Build tool for packages (replaces tsup/esbuild)
-- **SWC**: Compiler and Jest transformer
-- **PostCSS**: CSS processing with TailwindCSS
+- **pnpm**: 10.20.0 (package manager)
+- **Turbo**: 2.6.1 (build system)
+- **rslib**: 0.17.2 (library bundler)
+- **Vite**: 7.1.7 (for app/start)
 
-### Testing & Quality
-- **Jest**: Testing framework with SWC transformer
-- **Testing Library**: React Testing Library for component tests
-- **ESLint**: Code linting with custom config (`@codefast/eslint-config`)
-- **Prettier**: Code formatting with TailwindCSS plugin
-- **TypeScript**: Strict type checking
+### Development Tools
+- **ESLint**: 9.39.1 (with custom config)
+- **Prettier**: 3.6.2 (with Tailwind plugin)
+- **Jest**: 30.2.0 (testing)
+- **Vitest**: 4.0.9 (for app/start)
 
-## Code Style & Conventions
+## 📚 Using Context7 for Documentation
+
+When working with external libraries, use Context7 to access up-to-date documentation:
+
+- **React**: Use `/websites/react_dev` or `/reactjs/react.dev` for React 19 documentation
+- **Next.js**: Use `/vercel/next.js` or `/websites/nextjs` for Next.js 16 documentation
+- **Tailwind CSS**: Use `/websites/tailwindcss` for Tailwind CSS 4 documentation
+- **Radix UI**: Use `/radix-ui/primitives` or `/websites/radix-ui` for Radix UI primitives
+
+Always consult Context7 documentation when:
+- Implementing new features with these libraries
+- Encountering API changes or deprecations
+- Need examples and best practices
+- Understanding breaking changes between versions
+
+## 📦 Dependency Management
+
+### Workspace Protocol
+The project uses `workspace:*` to link internal packages:
+```json
+{
+  "dependencies": {
+    "@codefast/ui": "workspace:*",
+    "@codefast/tailwind-variants": "workspace:*"
+  }
+}
+```
+
+### Installing Dependencies
+```bash
+# Install all dependencies
+pnpm install
+
+# Install dependency for a specific package
+pnpm --filter @codefast/ui add <package-name>
+```
+
+## 🚀 Development Workflow
+
+### Starting the Project
+```bash
+# Run all apps and packages in dev mode
+pnpm dev
+
+# Run a specific app only
+pnpm --filter @apps/next dev
+pnpm --filter @apps/start dev
+
+# Build all packages
+pnpm build:packages
+
+# Build a specific package
+pnpm --filter @codefast/ui build
+```
+
+### Important Scripts
+```bash
+# Development
+pnpm dev              # Run dev mode for all
+pnpm build            # Build all
+pnpm lint             # Lint all
+pnpm lint:fix         # Fix linting errors
+pnpm format           # Format code with Prettier
+pnpm test             # Run tests
+pnpm test:watch       # Run tests in watch mode
+
+# Dependencies
+pnpm deps:install     # Install dependencies
+pnpm deps:outdated    # Check outdated packages
+pnpm deps:upgrade     # Upgrade packages interactively
+
+# Cleanup
+pnpm clean            # Remove build outputs
+pnpm clean:cache      # Clean cache and prune store
+pnpm clean:modules    # Remove node_modules
+```
+
+## 📝 Code Conventions
 
 ### TypeScript
-- Use strict TypeScript configuration from `@codefast/typescript-config`
-- Prefer type inference where possible
-- Use interfaces for component props
-- Export types alongside components
+- Use **strict mode** in TypeScript
+- Export types separately from components
+- Prefer `type` over `interface` when possible
+- Component props should extend HTML attributes when appropriate
 
-### React Components
-- Use **function components** with TypeScript
-- Components should be exported as named exports
-- Use `forwardRef` when ref forwarding is needed
-- Prefer composition over configuration
-- Use Radix UI primitives as base components
+### Component Structure
+Each component in `packages/ui/src/components/` follows this structure:
 
-### Styling
-- Use **TailwindCSS** utility classes for styling
-- Use `@codefast/tailwind-variants` (`tv` function) for variant-based styling
-- CSS files are in `src/css/` directory for packages
-- Use CSS variables for theming
-- Follow TailwindCSS v4 conventions
-
-### File Naming
-- Components: `kebab-case.tsx` (e.g., `button.tsx`, `card.tsx`)
-- Utilities: `kebab-case.ts` (e.g., `utils.ts`, `cn.ts`)
-- Types: `kebab-case.ts` or inline in component files
-- Config files: `kebab-case.config.*` (e.g., `eslint.config.js`)
-
-### Imports
-- Use absolute imports when possible
-- Group imports: external → internal → relative
-- Use workspace protocol for internal packages: `@codefast/ui`, `@codefast/eslint-config`, etc.
-
-## Package Structure
-
-### UI Package (`@codefast/ui`)
-- **Location**: `packages/ui/`
-- **Exports**: 
-  - Main: `@codefast/ui`
-  - Components: `@codefast/ui/components/*`
-  - Hooks: `@codefast/ui/hooks/*`
-  - Primitives: `@codefast/ui/primitives/*`
-  - Styles: `@codefast/ui/style.css` and `@codefast/ui/css/*`
-- **Structure**:
-  - `src/components/` - React components
-  - `src/hooks/` - Custom React hooks
-  - `src/primitives/` - Low-level primitives
-  - `src/css/` - CSS files
-  - `dist/` - Build output (do not commit)
-
-### ESLint Config (`@codefast/eslint-config`)
-- **Location**: `packages/eslint-config/`
-- Provides shared ESLint configuration for all packages
-- Uses flat config format (ESLint 9+)
-- Includes presets: base, react, next, library
-
-### TypeScript Config (`@codefast/typescript-config`)
-- **Location**: `packages/typescript-config/`
-- Provides base, react, next, library configurations
-- Extend in `tsconfig.json` using `extends`
-
-## Build & Development
-
-### Common Commands
-- `pnpm dev` - Start all dev servers
-- `pnpm dev:docs` - Start docs app only
-- `pnpm build` - Build all packages
-- `pnpm build:packages` - Build packages only
-- `pnpm lint` - Lint all packages
-- `pnpm lint:fix` - Fix linting issues
-- `pnpm test` - Run all tests
-- `pnpm test:watch` - Watch mode tests
-- `pnpm test:coverage` - Generate coverage reports
-- `pnpm format` - Format code with Prettier
-- `pnpm check-types` - Type check without building
-
-### Turborepo Tasks
-- Tasks are defined in `turbo.json`
-- Tasks support caching and dependencies
-- Use `--filter` to target specific packages: `turbo run build --filter=@codefast/ui`
-
-### Package Scripts
-Each package should have:
-- `build` - Build the package
-- `dev` - Watch mode build
-- `lint` - Lint code
-- `lint:fix` - Fix linting
-- `test` - Run tests
-- `check-types` - Type check
-- `clean` - Remove build artifacts
-
-## Package Development Workflow
-
-### Pre-Commit Checklist
-
-**MANDATORY**: Before committing code, ensure all checks pass:
-
-1. **Build** - Verify the package builds successfully:
-   ```bash
-   # Build specific package
-   pnpm --filter @codefast/ui build
-   
-   # Or build all packages
-   pnpm build:packages
-   ```
-
-2. **Lint** - Ensure code follows linting rules:
-   ```bash
-   # Lint specific package
-   pnpm --filter @codefast/ui lint
-   
-   # Lint only changed files (RECOMMENDED during development)
-   pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/path/to/changed/file.ts
-   
-   # Or lint specific files/directories
-   pnpm --filter @codefast/ui exec eslint --max-warnings 0 "src/**/*.{ts,tsx}"
-   ```
-
-3. **Type Check** - Verify TypeScript types are correct:
-   ```bash
-   # Type check specific package
-   pnpm --filter @codefast/ui check-types
-   
-   # Or type check all packages
-   pnpm check-types
-   ```
-
-4. **Test** - Run tests and ensure they pass:
-   ```bash
-   # Test specific package
-   pnpm --filter @codefast/ui test
-   
-   # Or test all packages
-   pnpm test
-   ```
-
-### ESLint Best Practices
-
-**During Development**:
-- **Prefer linting only changed files** instead of running full package lint:
-  ```bash
-  # Lint specific file(s)
-  pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/button.tsx
-  
-  # Lint multiple files
-  pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/button.tsx src/components/card.tsx
-  
-  # Lint directory
-  pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/
-  ```
-
-**Before Committing**:
-- Run full package lint to catch any cross-file issues:
-  ```bash
-  pnpm --filter @codefast/ui lint
-  ```
-
-**Auto-fix Issues**:
-- Use `lint:fix` to automatically fix fixable issues:
-  ```bash
-  # Fix linting issues in specific package
-  pnpm --filter @codefast/ui lint:fix
-  ```
-
-### Development Workflow Example
-
-```bash
-# 1. Make code changes
-# 2. Lint changed files
-pnpm --filter @codefast/ui exec eslint --max-warnings 0 src/components/new-component.tsx
-
-# 3. Fix any linting issues
-pnpm --filter @codefast/ui lint:fix
-
-# 4. Type check
-pnpm --filter @codefast/ui check-types
-
-# 5. Build to verify compilation
-pnpm --filter @codefast/ui build
-
-# 6. Run tests
-pnpm --filter @codefast/ui test
-
-# 7. Before committing, run full package lint
-pnpm --filter @codefast/ui lint
-```
-
-### Zero Tolerance Policy
-
-- **Build errors**: Must be fixed before committing
-- **Linting errors/warnings**: Zero warnings policy - all must be resolved
-- **Type errors**: All TypeScript errors must be fixed
-- **Test failures**: All tests must pass
-
-### Quick Verification Commands
-
-For a specific package:
-```bash
-# Run all checks for a package
-pnpm --filter @codefast/ui build && \
-pnpm --filter @codefast/ui lint && \
-pnpm --filter @codefast/ui check-types && \
-pnpm --filter @codefast/ui test
-```
-
-## Testing
-
-- Write tests in `*.test.ts` or `*.test.tsx` files
-- Use Jest with SWC transformer
-- Use React Testing Library for component tests
-- Test files should be co-located with source or in `__tests__` directories
-- Aim for good test coverage
-
-## Git & Versioning
-
-- Use **Conventional Commits** format (enforced by commitlint)
-- Use **Changesets** for version management (`pnpm release`)
-- Pre-commit hooks run lint-staged (configured via `simple-git-hooks`)
-- Never commit `dist/`, `node_modules/`, or `.next/` directories
-
-## Component Development Guidelines
-
-### Creating New Components
-1. Create component file in appropriate package (`packages/ui/src/components/`)
-2. Export from package index (`packages/ui/src/index.ts`)
-3. Add to appropriate registry if needed (for docs app)
-4. Write tests
-5. Add to documentation
-
-### Component Patterns
-- Use **function declarations** (not arrow functions) with explicit `JSX.Element` return type
-- Use **`type`** for props (prefer over `interface` unless extending is needed)
-- Use Radix UI primitives as base components
-- Implement proper accessibility (ARIA attributes)
-- Support theming via CSS variables
-- Use `tv` from `@codefast/tailwind-variants` for variant-based styling
-- Use `VariantProps<typeof variants>` for variant prop types
-- Support `asChild` prop with Radix UI `Slot` for composition patterns
-- Add `data-slot` attributes for styling hooks and component identification
-- Export variants, component, and types separately in an "Exports" section
-- Support `className` prop for customization
-- Use `cn` utility from `@codefast/tailwind-variants` for className merging
-- Use section comments with `/* ----------------------------------------------------------------------------- */` to organize code
-- Add `"use client"` directive only when component uses client-side hooks or interactivity
-
-### Example Component Structure
+**For components with variants:**
 ```tsx
 import type { ComponentProps, JSX } from "react";
-
 import type { VariantProps } from "@codefast/tailwind-variants";
 
-import { cn, tv } from "@codefast/tailwind-variants";
-import { Slot } from "@radix-ui/react-slot";
+import { tv } from "@codefast/tailwind-variants";
 
 /* -----------------------------------------------------------------------------
- * Variant: Button
+ * Variant: ComponentName
  * -------------------------------------------------------------------------- */
 
-const buttonVariants = tv({
-  base: "inline-flex items-center justify-center rounded-lg text-sm font-medium transition",
+const componentVariants = tv({
+  base: "base-classes-here",
+  variants: {
+    size: {
+      sm: "small-classes",
+      md: "medium-classes",
+      lg: "large-classes",
+    },
+    variant: {
+      default: "default-classes",
+      outline: "outline-classes",
+    },
+  },
   defaultVariants: {
     size: "md",
     variant: "default",
   },
-  variants: {
-    size: {
-      sm: "h-8 px-3",
-      md: "h-9 px-4",
-      lg: "h-10 px-6",
-    },
-    variant: {
-      default: "bg-primary text-primary-foreground hover:bg-primary/80",
-      outline: "border border-input hover:bg-secondary",
-    },
-  },
 });
 
 /* -----------------------------------------------------------------------------
- * Component: Button
+ * Component: ComponentName
  * -------------------------------------------------------------------------- */
 
-type ButtonProps = ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-    type?: ComponentProps<"button">["type"];
-  };
+type ComponentNameProps = ComponentProps<"div"> &
+  VariantProps<typeof componentVariants>;
 
-function Button({
-  asChild = false,
+function ComponentName({
   className,
   size,
-  type = "button",
   variant,
   ...props
-}: ButtonProps): JSX.Element {
-  const Comp = asChild ? Slot : "button";
-
-  if (asChild) {
-    return (
-      <Comp
-        className={buttonVariants({ className, size, variant })}
-        data-slot="button"
-        data-variant={variant}
-        {...props}
-      />
-    );
-  }
-
+}: ComponentNameProps): JSX.Element {
   return (
-    <button
-      className={buttonVariants({ className, size, variant })}
-      data-slot="button"
-      data-variant={variant}
-      type={type}
+    <div
+      className={componentVariants({ className, size, variant })}
+      data-slot="component-name"
       {...props}
     />
   );
@@ -375,51 +206,242 @@ function Button({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { buttonVariants };
-export { Button };
-export type { ButtonProps };
+export { componentVariants };
+export { ComponentName };
+export type { ComponentNameProps };
 ```
 
-**Key patterns:**
-- Use `function` declarations (not arrow functions or `forwardRef` unless ref forwarding is needed)
-- Use `type` for props (prefer over `interface` unless extending is needed)
-- Return type is `JSX.Element`
-- Use section comments with `/* ----------------------------------------------------------------------------- */`
-- Import `cn` and `tv` from `@codefast/tailwind-variants`
-- Use `VariantProps<typeof variants>` for variant types
-- Support `asChild` prop with Radix UI `Slot` for composition
-- Add `data-slot` attributes for styling hooks
-- Export variants, component, and types separately
-- Use `"use client"` directive only when needed (client-side hooks/interactivity)
+**For simple components without variants:**
+```tsx
+import type { ComponentProps, JSX } from "react";
 
-## Documentation
+import { cn } from "@codefast/tailwind-variants";
 
-- Each package has a `README.md` with usage examples
-- Docs app (`apps/docs`) showcases all components
-- Use JSDoc comments for public APIs
-- Keep CHANGELOG.md updated (via Changesets)
+/* -----------------------------------------------------------------------------
+ * Component: SimpleComponent
+ * -------------------------------------------------------------------------- */
 
-## Important Notes
+type SimpleComponentProps = ComponentProps<"div">;
 
-- **Never use npm or yarn** - always use pnpm
-- **Always run `pnpm install`** after pulling changes
-- **Check types before committing** - use `pnpm check-types`
-- **Follow ESLint rules** - zero warnings policy
-- **Use workspace dependencies** - `workspace:*` for internal packages
-- **Build outputs are gitignored** - don't commit `dist/` or `.next/`
-- **Use Turborepo filters** - target specific packages when possible
+function SimpleComponent({
+  className,
+  ...props
+}: SimpleComponentProps): JSX.Element {
+  return (
+    <div
+      className={cn("base-classes-here", className)}
+      data-slot="simple-component"
+      {...props}
+    />
+  );
+}
 
-## CI/CD
+/* -----------------------------------------------------------------------------
+ * Exports
+ * -------------------------------------------------------------------------- */
 
-- GitHub Actions workflows in `.github/workflows/`
-- Custom setup action: `.github/actions/setup-environment/`
-- Uses Turborepo remote caching
-- Runs on Node.js 22
-- Tests, linting, and type checking run on PRs
+export { SimpleComponent };
+export type { SimpleComponentProps };
+```
 
-## Performance
+### Styling with Tailwind Variants
+- Use `@codefast/tailwind-variants` to create variants
+- Pattern: `tv({ base, variants, defaultVariants })`
+- Always export variants so they can be overridden externally
+- Use `className` prop to merge additional classes
 
-- Keep bundle sizes small
-- Use code splitting where appropriate
-- Optimize images using `@codefast/image-loader`
-- Benchmark performance changes in `benchmarks/` directory
+### File Naming
+- Components: `kebab-case.tsx` (e.g., `button.tsx`, `input-group.tsx`)
+- Hooks: `use-kebab-case.ts` (e.g., `use-is-mobile.ts`)
+- Types: Export in the same file as the component
+
+### Export Pattern
+- Export components and types from `src/index.ts`
+- Use path aliases: `@/components/*`, `@/hooks/*`
+- Export variants if necessary
+
+## 🧪 Testing
+
+### Test Structure
+- Tests are located in `tests/` directory
+- Use Jest with `@testing-library/react`
+- Test files: `*.test.ts` or `*.test.tsx`
+
+### Running Tests
+```bash
+# Run all tests
+pnpm test
+
+# Watch mode
+pnpm test:watch
+
+# Coverage
+pnpm test:coverage
+```
+
+## 🎨 Styling Guidelines
+
+### Tailwind CSS 4
+- Use Tailwind CSS 4 with PostCSS
+- Custom utilities in `packages/ui/src/css/`
+- Use CSS variables for theming
+
+### Component Styling
+- Base styles in `base` of `tv()`
+- Variants for different states
+- Default variants for default values
+- Support dark mode with `dark:` prefix
+
+### Responsive Design
+- Mobile-first approach
+- Use hooks: `useIsMobile`, `useMediaQuery`
+- Breakpoints follow Tailwind defaults
+
+## 📚 Package: @codefast/ui
+
+### Component Categories
+1. **Form Components**: Input, Select, Checkbox, Radio, Form, etc.
+2. **Layout Components**: Card, Separator, AspectRatio, etc.
+3. **Overlay Components**: Dialog, Popover, Tooltip, Sheet, etc.
+4. **Navigation**: Breadcrumb, Pagination, NavigationMenu, etc.
+5. **Feedback**: Alert, Toast (Sonner), Progress, Spinner, etc.
+6. **Data Display**: Table, Chart, Avatar, Badge, etc.
+
+### Available Hooks
+- `useAnimatedValue` - Animation utilities
+- `useCopyToClipboard` - Clipboard functionality
+- `useIsMobile` - Mobile detection
+- `useMediaQuery` - Media query hook
+- `useMutationObserver` - DOM mutation observer
+- `usePagination` - Pagination logic
+
+### Primitives
+- Radix UI primitives are wrapped and exported from `primitives/`
+- Use when custom implementation is needed
+
+## 🔧 Configuration Files
+
+### ESLint
+- Root: `packages/eslint-config/`
+- Apps can override with their own config
+- Uses `@tanstack/eslint-config` for app/start
+
+### TypeScript
+- Base config: `packages/typescript-config/base.json`
+- React config: `packages/typescript-config/react.json`
+- Next.js config: `packages/typescript-config/next.json`
+
+### Prettier
+- Config: `prettier.config.js` at root
+- Plugins: `prettier-plugin-tailwindcss`, `prettier-plugin-packagejson`
+- Format on save is recommended
+
+### Commit Messages
+- Use **Conventional Commits**
+- Format: `type(scope): subject`
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- Enforced by `commitlint`
+
+## 🐛 Debugging
+
+### Common Issues
+
+1. **Build errors**: Run `pnpm build:packages` before dev
+2. **Type errors**: Run `pnpm check-types` to check
+3. **Lint errors**: Run `pnpm lint:fix` to auto-fix
+4. **Dependency issues**: Run `pnpm deps:reinstall` to reinstall
+
+### Development Tips
+- Use `pnpm --filter` to run commands for specific packages
+- Turbo cache helps build faster
+- Watch mode automatically rebuilds on changes
+
+## 📖 Reference Documentation
+
+### External Documentation
+- [Radix UI](https://www.radix-ui.com/primitives) - UI Primitives
+- [Tailwind CSS](https://tailwindcss.com/docs) - Utility-first CSS
+- [React 19](https://react.dev) - React documentation
+- [Next.js 16](https://nextjs.org/docs) - Next.js documentation
+- [TanStack Start](https://tanstack.com/start) - Full-stack framework
+
+### Internal Documentation
+- README.md in each package
+- CHANGELOG.md for version history
+- RFC.md in `packages/tailwind-variants/` for design decisions
+
+## 🎯 Best Practices
+
+### When Adding a New Component
+1. Create file in `packages/ui/src/components/`
+2. Use `tv()` to define variants
+3. Export component and types from `src/index.ts`
+4. Write tests in `tests/`
+5. Update documentation if needed
+
+### When Modifying a Component
+1. Maintain backward compatibility when possible
+2. Update types if props change
+3. Run tests to ensure nothing breaks
+4. Update CHANGELOG.md if it's a breaking change
+
+### When Working with Monorepo
+1. Always build packages before testing in apps
+2. Use `workspace:*` for internal dependencies
+3. Run `pnpm check-types` before committing
+4. Ensure linting and formatting pass
+
+## 🚨 Important Notes
+
+- **Node version**: >= 20.0.0 (check with `node --version`)
+- **pnpm version**: 10.20.0 (check with `pnpm --version`)
+- **React 19**: Some patterns may differ from React 18
+- **Tailwind CSS 4**: Has some breaking changes from v3
+- **TypeScript strict**: All packages use strict mode
+
+## 💡 Quick Start Checklist
+
+For new developers:
+
+1. ✅ Clone repository
+2. ✅ Install Node.js >= 20 and pnpm 10.20.0
+3. ✅ Run `pnpm install`
+4. ✅ Run `pnpm build:packages` to build all packages
+5. ✅ Run `pnpm dev` to start dev servers
+6. ✅ Open `http://localhost:3000` (Next.js) or `http://localhost:3001` (Start)
+7. ✅ Read README.md of the package you're working on
+8. ✅ Check examples in `apps/` to understand component usage
+
+## 🔗 Useful Commands Reference
+
+```bash
+# Package management
+pnpm install                    # Install all dependencies
+pnpm --filter <package> add <pkg>  # Add dependency to specific package
+
+# Development
+pnpm dev                        # Start all dev servers
+pnpm --filter @apps/next dev    # Start specific app
+pnpm --filter @codefast/ui dev  # Watch mode for package
+
+# Building
+pnpm build                      # Build everything
+pnpm build:packages             # Build only packages
+pnpm --filter @codefast/ui build  # Build specific package
+
+# Quality checks
+pnpm lint                       # Lint all
+pnpm lint:fix                   # Fix linting
+pnpm format                     # Format code
+pnpm check-types                # Type check
+pnpm test                       # Run tests
+
+# Cleanup
+pnpm clean                      # Clean build outputs
+pnpm clean:cache                # Clean cache
+pnpm clean:modules              # Remove node_modules
+```
+
+---
+
+**Note**: This file was created to help new developers quickly onboard the project. If you have questions, please refer to the documentation or ask the team lead.
