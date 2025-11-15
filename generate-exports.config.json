@@ -1,0 +1,11 @@
+{
+  "skipPackages": [
+    "packages/tailwind-variants"
+  ],
+  "pathTransformations": {
+    "packages/ui": {
+      "removePrefix": "./components/"
+    }
+  }
+}
+
