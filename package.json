@@ -23,6 +23,7 @@
     "dev:docs": "pnpm clean:next && turbo run dev --concurrency 20 --filter=@app/docs...",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "generate:exports": "tsx scripts/generate-exports.ts",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "precommit": "lint-staged",
@@ -51,7 +52,8 @@
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
-    "turbo": "^2.6.1"
+    "turbo": "^2.6.1",
+    "@types/node": "^24.10.1"
   },
   "packageManager": "pnpm@10.20.0",
   "engines": {
