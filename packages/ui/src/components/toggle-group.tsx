@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps, JSX, ReactNode } from "react";
+import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 import type { Scope } from "@radix-ui/react-context";
@@ -68,19 +68,12 @@ function ToggleGroup({
 
 const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 
-type ToggleGroupItemProps = ScopedProps<
-  Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, "prefix"> & {
-    prefix?: ReactNode;
-    suffix?: ReactNode;
-  }
->;
+type ToggleGroupItemProps = ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Item>>;
 
 function ToggleGroupItem({
   __scopeToggleGroup,
   children,
   className,
-  prefix,
-  suffix,
   ...props
 }: ToggleGroupItemProps): JSX.Element {
   const { size, variant } = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
@@ -101,9 +94,7 @@ function ToggleGroupItem({
       {...toggleGroupScope}
       {...props}
     >
-      {prefix}
       {children}
-      {suffix}
     </ToggleGroupPrimitive.Item>
   );
 }

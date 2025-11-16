@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps, JSX, ReactNode } from "react";
+import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
 
@@ -38,30 +38,17 @@ const toggleVariants = tv({
  * -------------------------------------------------------------------------- */
 
 interface ToggleProps
-  extends Omit<ComponentProps<typeof TogglePrimitive.Root>, "prefix">,
-    VariantProps<typeof toggleVariants> {
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-}
+  extends ComponentProps<typeof TogglePrimitive.Root>,
+    VariantProps<typeof toggleVariants> {}
 
-function Toggle({
-  children,
-  className,
-  prefix,
-  size,
-  suffix,
-  variant,
-  ...props
-}: ToggleProps): JSX.Element {
+function Toggle({ children, className, size, variant, ...props }: ToggleProps): JSX.Element {
   return (
     <TogglePrimitive.Root
       className={toggleVariants({ className, size, variant })}
       data-slot="toggle"
       {...props}
     >
-      {prefix}
       {children}
-      {suffix}
     </TogglePrimitive.Root>
   );
 }
