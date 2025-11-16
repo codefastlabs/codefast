@@ -56,6 +56,9 @@ importers:
 
   apps/next:
     dependencies:
+      '@codefast/image-loader':
+        specifier: workspace:*
+        version: link:../../packages/image-loader
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../../packages/tailwind-variants

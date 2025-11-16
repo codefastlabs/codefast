@@ -12,6 +12,7 @@
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",
+    "@codefast/image-loader": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-form": "^1.25.0",

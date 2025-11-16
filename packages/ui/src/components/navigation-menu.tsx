@@ -1,5 +1,3 @@
-"use client";
-
 import type { ComponentProps, JSX } from "react";
 
 import { ChevronDownIcon } from "lucide-react";
