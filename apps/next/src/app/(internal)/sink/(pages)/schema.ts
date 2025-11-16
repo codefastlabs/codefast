@@ -21,8 +21,8 @@ export const addons = [
 export const exampleFormSchema = z.object({
   name: z
     .string({
-      required_error: "Name is required",
-      invalid_type_error: "Name must be a string",
+      error: (issue) =>
+        issue.input === undefined ? "Name is required" : "Name must be a string",
     })
     .min(2, "Name must be at least 2 characters")
     .max(50, "Name must be less than 50 characters")
@@ -30,15 +30,15 @@ export const exampleFormSchema = z.object({
       message: "Name must not contain numbers",
     }),
 
-  email: z
-    .string({
-      required_error: "Email is required",
-    })
-    .email("Please enter a valid email address"),
+  email: z.email({
+    error: (issue) =>
+      issue.input === undefined ? "Email is required" : "Please enter a valid email address",
+  }),
 
   plan: z
     .string({
-      required_error: "Please select a subscription plan",
+      error: (issue) =>
+        issue.input === undefined ? "Please select a subscription plan" : undefined,
     })
     .min(1, "Please select a subscription plan")
     .refine((value) => value === "basic" || value === "pro", {
@@ -47,7 +47,8 @@ export const exampleFormSchema = z.object({
 
   billingPeriod: z
     .string({
-      required_error: "Please select a billing period",
+      error: (issue) =>
+        issue.input === undefined ? "Please select a billing period" : undefined,
     })
     .min(1, "Please select a billing period"),
 
@@ -58,7 +59,8 @@ export const exampleFormSchema = z.object({
 
   teamSize: z.number().min(1).max(10),
   emailNotifications: z.boolean({
-    required_error: "Please choose email notification preference",
+    error: (issue) =>
+      issue.input === undefined ? "Please choose email notification preference" : undefined,
   }),
   comments: z
     .string()
@@ -66,8 +68,8 @@ export const exampleFormSchema = z.object({
     .max(240, "Comments must not exceed 240 characters"),
   startDate: z
     .date({
-      required_error: "Please select a start date",
-      invalid_type_error: "Invalid date format",
+      error: (issue) =>
+        issue.input === undefined ? "Please select a start date" : "Invalid date format",
     })
     .min(new Date(), "Start date cannot be in the past")
     .refine(
@@ -82,16 +84,16 @@ export const exampleFormSchema = z.object({
     ),
   theme: z
     .string({
-      required_error: "Please select a theme",
+      error: (issue) => (issue.input === undefined ? "Please select a theme" : undefined),
     })
     .min(1, "Please select a theme"),
   password: z
     .string({
-      required_error: "Password is required",
+      error: (issue) => (issue.input === undefined ? "Password is required" : undefined),
     })
     .min(8, "Password must be at least 8 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      { error: "Password must contain at least one uppercase letter, one lowercase letter, and one number" }
     ),
 })
