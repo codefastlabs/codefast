@@ -4,7 +4,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import z from "zod";
+import { z } from "zod";
 
 import { Button } from "@codefast/ui/button";
 import { Calendar } from "@codefast/ui/calendar";
