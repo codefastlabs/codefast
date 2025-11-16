@@ -12,34 +12,32 @@ import * as TogglePrimitive from "@radix-ui/react-toggle";
  * -------------------------------------------------------------------------- */
 
 const toggleVariants = tv({
-  base: "focus-visible:ring-ring/50 focus-visible:ring-3 outline-hidden hover:not-disabled:not-data-[state=on]:bg-secondary data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
-  defaultVariants: {
-    size: "md",
-    variant: "default",
-  },
+  base: "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap",
   variants: {
     size: {
-      sm: "h-8 min-w-8 px-1.5", // 32px
-
-      md: "h-9 min-w-9 px-2", // 36px
-
-      lg: "h-10 min-w-10 px-2.5", // 40px
+      default: "h-9 px-2 min-w-9",
+      lg: "h-10 px-2.5 min-w-10",
+      sm: "h-8 px-1.5 min-w-8",
     },
     variant: {
-      default: "hover:not-disabled:not-data-[state=on]:text-muted-foreground bg-transparent",
+      default: "bg-transparent",
       outline:
-        "border-input shadow-xs focus-visible:border-ring hover:not-disabled:not-data-[state=on]:text-secondary-foreground border",
+        "border border-input bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
     },
   },
+  defaultVariants: {
+    size: "default",
+    variant: "default",
+  },
 });
+
+type ToggleVariants = VariantProps<typeof toggleVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
-interface ToggleProps
-  extends ComponentProps<typeof TogglePrimitive.Root>,
-    VariantProps<typeof toggleVariants> {}
+interface ToggleProps extends ComponentProps<typeof TogglePrimitive.Root>, ToggleVariants {}
 
 function Toggle({ children, className, size, variant, ...props }: ToggleProps): JSX.Element {
   return (
@@ -57,6 +55,5 @@ function Toggle({ children, className, size, variant, ...props }: ToggleProps): 
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { toggleVariants };
-export { Toggle };
-export type { ToggleProps };
+export { Toggle, toggleVariants };
+export type { ToggleProps, ToggleVariants };
