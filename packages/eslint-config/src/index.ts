@@ -22,4 +22,4 @@ export { basePreset } from "@/presets/base";
 export { libraryPreset } from "@/presets/library";
 export { nextPreset } from "@/presets/next";
 export { reactPreset, reactPresetCore } from "@/presets/react";
-export { composeConfig } from "@/shared/composer";
+export { composeConfig } from "@/utils/compose-config";

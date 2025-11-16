@@ -62,6 +62,11 @@
       "import": "./dist/core/unicorn.js",
       "require": "./dist/core/unicorn.cjs"
     },
+    "./utils/compose-config": {
+      "types": "./dist/utils/compose-config.d.ts",
+      "import": "./dist/utils/compose-config.js",
+      "require": "./dist/utils/compose-config.cjs"
+    },
     "./environments/browser": {
       "types": "./dist/environments/browser.d.ts",
       "import": "./dist/environments/browser.js",
@@ -151,11 +156,6 @@
       "types": "./dist/presets/react.d.ts",
       "import": "./dist/presets/react.js",
       "require": "./dist/presets/react.cjs"
-    },
-    "./shared/composer": {
-      "types": "./dist/shared/composer.d.ts",
-      "import": "./dist/shared/composer.js",
-      "require": "./dist/shared/composer.cjs"
     },
     "./package.json": "./package.json"
   },

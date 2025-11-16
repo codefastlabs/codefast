@@ -11,7 +11,7 @@ import { testEnvironment } from "@/environments/test";
 import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
 import { tsdocRules } from "@/plugins/tooling/tsdoc";
-import { composeConfig } from "@/shared/composer";
+import { composeConfig } from "@/utils/compose-config";
 
 export const basePreset: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
