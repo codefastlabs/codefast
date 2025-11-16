@@ -15,7 +15,7 @@ import { reactRules } from "@/plugins/frameworks/react";
 import { jestRules } from "@/plugins/testing/jest";
 import { prettierRules } from "@/plugins/tooling/prettier";
 import { tsdocRules } from "@/plugins/tooling/tsdoc";
-import { composeConfig } from "@/shared/composer";
+import { composeConfig } from "@/utils/compose-config";
 
 export const reactPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,

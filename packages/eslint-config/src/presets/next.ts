@@ -4,7 +4,7 @@ import { nodeEnvironment } from "@/environments/node";
 import { nextRules } from "@/plugins/frameworks/next";
 import { prettierRules } from "@/plugins/tooling/prettier";
 import { reactPresetCore } from "@/presets/react";
-import { composeConfig } from "@/shared/composer";
+import { composeConfig } from "@/utils/compose-config";
 
 export const nextPreset: Linter.Config[] = composeConfig(
   [
