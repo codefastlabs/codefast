@@ -10,6 +10,7 @@ export { cloudflareLoader } from "@/loaders/cloudflare";
 export { cloudfrontLoader } from "@/loaders/cloudfront";
 export { cloudinaryLoader } from "@/loaders/cloudinary";
 export { contentfulLoader } from "@/loaders/contentful";
+export { defaultLoader } from "@/loaders/default";
 export { fastlyLoader } from "@/loaders/fastly";
 export { gumletLoader } from "@/loaders/gumlet";
 export { imageengineLoader } from "@/loaders/imageengine";
