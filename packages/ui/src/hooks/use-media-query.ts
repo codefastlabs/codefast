@@ -3,16 +3,25 @@
 import { useEffect, useState } from "react";
 
 /**
- * Event handler type for media query list change events.
- * @param event - The media query list event containing match status.
+ * Event handler for MediaQueryList changes.
+ *
+ * @param event - Media query change event providing the updated match status.
  */
 type MediaQueryChangeHandler = (event: MediaQueryListEvent) => void;
 
 /**
- * Custom hook to listen to CSS media query.
+ * Subscribe to a CSS media query and receive its match state.
  *
- * @param query - Media query string.
- * @returns Whether the media query matches or not.
+ * Evaluates the query immediately (when supported) and updates on changes
+ * via an event listener.
+ *
+ * @param query - A valid media query string (e.g., "(max-width: 768px)").
+ * @returns true when the media query currently matches; otherwise false.
+ *
+ * @example
+ * ```tsx
+ * const isNarrow = useMediaQuery("(max-width: 768px)");
+ * ```
  */
 export function useMediaQuery(query: string): boolean {
   /**
@@ -35,15 +44,12 @@ export function useMediaQuery(query: string): boolean {
     }
 
     /**
-     * MediaQueryList object that can be used to determine if the document
-     * matches the media query string.
+     * MediaQueryList to evaluate and observe the provided query.
      */
     const mediaQueryList = globalThis.matchMedia(query);
 
     /**
-     * Updates state when the media query status changes.
-     *
-     * @param event - The media query list event containing the updated match status.
+     * Update state when the media query status changes.
      */
     const onChange: MediaQueryChangeHandler = (event): void => {
       setMatches(event.matches);
@@ -52,8 +58,7 @@ export function useMediaQuery(query: string): boolean {
     mediaQueryList.addEventListener("change", onChange);
 
     /**
-     * Cleanup function that removes the event listener when the component unmounts
-     * or when the query changes.
+     * Remove the event listener on unmount or when the query changes.
      */
     return (): void => {
       mediaQueryList.removeEventListener("change", onChange);

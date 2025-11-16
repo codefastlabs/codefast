@@ -3,21 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Hook to create a smoothly animated value when changes occur
+ * Produce a smoothly animated numeric value in response to changes.
  *
- * @param targetValue - The target value the animation should reach when complete
- * @param duration - The animation duration in milliseconds
- * @param animate - Enables the animation effect. If false, the value updates immediately
+ * Applies a time-based easing (easeOutQuad) between the current and target values
+ * over the specified duration. When disabled, the value updates immediately.
  *
- * @returns The rounded value currently being displayed during animation
+ * @param targetValue - Target number to animate toward; null resolves to 0.
+ * @param duration - Animation duration in milliseconds.
+ * @param animate - When false, bypasses animation and sets the value directly.
+ * @returns The current (rounded) animated value.
  *
  * @example
  * ```tsx
- * // Use the hook to create an animated value
- * const animatedValue = useAnimatedValue(75, 1000, true);
- *
- * // Display the animated value
- * return <div>{animatedValue}%</div>;
+ * const value = useAnimatedValue(75, 1000, true);
+ * return <div>{value}%</div>;
  * ```
  */
 export function useAnimatedValue(
@@ -25,17 +24,13 @@ export function useAnimatedValue(
   duration: number,
   animate?: boolean,
 ): number {
-  // Use the default value of 0 when targetValue is null
+  // Default to 0 when targetValue is null
   const actualTargetValue = targetValue ?? 0;
 
-  /**
-   * The current value being displayed during the animation
-   */
+  // Current animated output
   const [animatedValue, setAnimatedValue] = useState(actualTargetValue);
 
-  /**
-   * Reference to the latest animated value to prevent closure issues in animations
-   */
+  // Prevent stale closures inside RAF loop
   const animatedValueRef = useRef(actualTargetValue);
 
   useEffect(() => {
@@ -49,19 +44,13 @@ export function useAnimatedValue(
       return;
     }
 
-    /**
-     * The starting value for the animation
-     */
+    // Starting value
     const currentValue = animatedValueRef.current;
 
-    /**
-     * The total change in value that will occur during animation
-     */
+    // Total delta across the animation
     const valueRange = actualTargetValue - currentValue;
 
-    /**
-     * Timestamp when the animation started
-     */
+    // Start timestamp
     const startTime = performance.now();
 
     if (duration <= 0 || valueRange === 0) {
@@ -70,38 +59,24 @@ export function useAnimatedValue(
       return;
     }
 
-    /**
-     * ID for the animation frame to enable cancellation in cleanup
-     */
+    // requestAnimationFrame id for cleanup
     let animationFrame: number;
 
-    /**
-     * Updates the animated value based on elapsed time
-     *
-     * @param currentTime - The current timestamp provided by requestAnimationFrame
-     */
+    // RAF step
     const animateValue = (currentTime: number): void => {
-      /**
-       * Time elapsed since animation started in milliseconds
-       */
+      // Elapsed milliseconds
       const elapsedTime = currentTime - startTime;
 
       if (elapsedTime >= duration) {
         setAnimatedValue(actualTargetValue);
       } else {
-        /**
-         * Linear animation progress from 0 to 1
-         */
+        // Linear progress (0..1)
         const progress = elapsedTime / duration;
 
-        /**
-         * Eased animation progress using easeOutQuad formula
-         */
+        // easeOutQuad easing
         const easeProgress = 1 - (1 - progress) * (1 - progress);
 
-        /**
-         * Calculated value for the current animation frame
-         */
+        // Interpolated value
         const nextValue = currentValue + valueRange * easeProgress;
 
         setAnimatedValue(nextValue);
