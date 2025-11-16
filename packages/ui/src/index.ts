@@ -739,7 +739,7 @@ export { Textarea } from "@/components/textarea";
 export type { TextareaProps } from "@/components/textarea";
 
 export { Toggle, toggleVariants } from "@/components/toggle";
-export type { ToggleProps } from "@/components/toggle";
+export type { ToggleProps, ToggleVariants } from "@/components/toggle";
 
 export { ToggleGroup, ToggleGroupItem } from "@/components/toggle-group";
 export type { ToggleGroupItemProps, ToggleGroupProps } from "@/components/toggle-group";

@@ -1,8 +1,8 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, CSSProperties, JSX } from "react";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { ToggleVariants } from "@/components/toggle";
 import type { Scope } from "@radix-ui/react-context";
 
 import { toggleVariants } from "@/components/toggle";
@@ -23,36 +23,44 @@ const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [create
 
 const useToggleGroupScope = createToggleGroupScope();
 
-const [ToggleGroupProvider, useToggleGroupContext] =
-  createToggleGroupContext<VariantProps<typeof toggleVariants>>(TOGGLE_GROUP_NAME);
+const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
+  ToggleVariants & {
+    spacing?: number;
+  }
+>(TOGGLE_GROUP_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroup
  * -------------------------------------------------------------------------- */
 
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> &
-  VariantProps<typeof toggleVariants>;
+  ToggleVariants & {
+    spacing?: number;
+  };
 
 function ToggleGroup({
   __scopeToggleGroup,
   children,
   className,
   size,
+  spacing = 0,
   variant,
   ...props
 }: ScopedProps<ToggleGroupProps>): JSX.Element {
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
-    <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
+    <ToggleGroupProvider scope={__scopeToggleGroup} size={size} spacing={spacing} variant={variant}>
       <ToggleGroupPrimitive.Root
         className={cn(
-          "group/toggle-group flex w-fit items-center -space-x-px rounded-md",
+          "group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-lg data-[spacing=default]:data-[variant=outline]:shadow-xs",
           className,
         )}
         data-size={size}
         data-slot="toggle-group"
+        data-spacing={spacing}
         data-variant={variant}
+        style={{ "--gap": spacing } as CSSProperties}
         {...toggleGroupScope}
         {...props}
       >
@@ -76,20 +84,26 @@ function ToggleGroupItem({
   className,
   ...props
 }: ToggleGroupItemProps): JSX.Element {
-  const { size, variant } = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
+  const { size, spacing, variant } = useToggleGroupContext(
+    TOGGLE_GROUP_ITEM_NAME,
+    __scopeToggleGroup,
+  );
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
     <ToggleGroupPrimitive.Item
-      className={toggleVariants({
-        className: [
-          "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10",
+      className={cn(
+        toggleVariants({
           className,
-        ],
-        size,
-        variant,
-      })}
+          size,
+          variant,
+        }),
+        "w-auto min-w-0 shrink-0 px-3 focus:z-10 focus-visible:z-10",
+        "data-[spacing=0]:rounded-none data-[spacing=0]:shadow-none data-[spacing=0]:first:rounded-l-lg data-[spacing=0]:last:rounded-r-lg data-[spacing=0]:data-[variant=outline]:border-l-0 data-[spacing=0]:data-[variant=outline]:first:border-l",
+      )}
+      data-size={size}
       data-slot="toggle-group-item"
+      data-spacing={spacing}
       data-variant={variant}
       {...toggleGroupScope}
       {...props}
