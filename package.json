@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "build:docs": "turbo run build --filter=@app/docs...",
     "build:packages": "turbo run build --filter=@codefast*/*...",
     "check-types": "turbo run check-types",
     "clean": "turbo clean",
@@ -19,8 +18,7 @@
     "deps:outdated": "pnpm outdated --recursive",
     "deps:reinstall": "pnpm clean && pnpm deps:install && pnpm build:packages",
     "deps:upgrade": "pnpm up --latest --interactive --recursive",
-    "dev": "pnpm clean:next && turbo run dev --concurrency 20",
-    "dev:docs": "pnpm clean:next && turbo run dev --concurrency 20 --filter=@app/docs...",
+    "dev": "turbo run dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate:exports": "tsx scripts/generate-exports.ts",
@@ -32,7 +30,6 @@
     "release:canary:enter": "changeset pre enter canary",
     "release:canary:exit": "changeset pre exit",
     "start": "turbo run start",
-    "start:docs": "turbo run start --filter=@app/docs...",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
@@ -44,6 +41,7 @@
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/types": "^20.0.0",
+    "@types/node": "^24.10.1",
     "eslint": "^9.39.1",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
@@ -52,10 +50,9 @@
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
-    "turbo": "^2.6.1",
-    "@types/node": "^24.10.1"
+    "turbo": "^2.6.1"
   },
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.22.0",
   "engines": {
     "node": ">=20.0.0"
   }
