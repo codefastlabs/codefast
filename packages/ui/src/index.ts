@@ -84,12 +84,7 @@ export type {
 export { Button, buttonVariants } from "@/components/button";
 export type { ButtonProps } from "@/components/button";
 
-export { Calendar, CalendarLabel, CalendarRangeLabel } from "@/components/calendar";
-export type {
-  CalendarLabelProps,
-  CalendarProps,
-  CalendarRangeLabelProps,
-} from "@/components/calendar";
+export { Calendar, CalendarDayButton } from "@/components/calendar";
 
 export {
   Card,

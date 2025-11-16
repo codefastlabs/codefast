@@ -1,140 +1,126 @@
 "use client";
 
-import type { ComponentProps, JSX, ReactNode } from "react";
-import type { CustomComponents, DateRange } from "react-day-picker";
+import type { ComponentProps, JSX } from "react";
+import type { Chevron, DayButton, Root, WeekNumber } from "react-day-picker";
 
-import { format } from "date-fns";
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  DotIcon,
-} from "lucide-react";
-import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { DayPicker, getDefaultClassNames } from "react-day-picker";
 
-import { buttonVariants } from "@/components/button";
+import { Button, buttonVariants } from "@/components/button";
 import { cn } from "@codefast/tailwind-variants";
-
-/* -----------------------------------------------------------------------------
- * Component: Chevron
- * -------------------------------------------------------------------------- */
-
-function Chevron({
-  className,
-  orientation,
-  ...props
-}: ComponentProps<CustomComponents["Chevron"]>): JSX.Element {
-  switch (orientation) {
-    case "up": {
-      return <ChevronUpIcon className={cn("size-4", className)} {...props} />;
-    }
-
-    case "down": {
-      return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
-    }
-
-    case "left": {
-      return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
-    }
-
-    case "right": {
-      return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
-    }
-
-    case undefined: {
-      throw new Error("Not implemented yet: undefined case");
-    }
-
-    default: {
-      return <DotIcon className={cn("size-4", className)} {...props} />;
-    }
-  }
-}
 
 /* -----------------------------------------------------------------------------
  * Component: Calendar
  * -------------------------------------------------------------------------- */
 
-type CalendarProps = ComponentProps<typeof DayPicker>;
+type CalendarProps = ComponentProps<typeof DayPicker> & {
+  buttonVariant?: ComponentProps<typeof Button>["variant"];
+};
 
-function Calendar({ classNames, showOutsideDays = true, ...props }: CalendarProps): JSX.Element {
-  const isInteractive = props.mode !== undefined || props.onDayClick !== undefined;
+function Calendar({
+  buttonVariant = "ghost",
+  captionLayout = "label",
+  className,
+  classNames,
+  components,
+  formatters,
+  showOutsideDays = true,
+  ...props
+}: CalendarProps): JSX.Element {
+  const defaultClassNames = getDefaultClassNames();
 
   return (
     <DayPicker
+      captionLayout={captionLayout}
+      className={cn(
+        "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+        "rtl:**:[.rdp-button_next>svg]:rotate-180",
+        "rtl:**:[.rdp-button_previous>svg]:rotate-180",
+        className,
+      )}
       classNames={{
-        [UI.CaptionLabel]: cn(
-          "flex items-center gap-2 [&>svg]:opacity-50",
-          classNames?.[UI.CaptionLabel],
+        button_next: cn(
+          buttonVariants({ variant: buttonVariant }),
+          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none",
+          defaultClassNames.button_next,
         ),
-        [UI.Chevron]: cn(classNames?.[UI.Chevron]),
-        [UI.Day]: cn(
-          "grid place-items-center text-center text-sm",
-          isInteractive ? "min-w-8.5 has-focus-visible:z-20 group" : "min-w-8.5 h-8",
-          classNames?.[UI.Day],
+        button_previous: cn(
+          buttonVariants({ variant: buttonVariant }),
+          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none",
+          defaultClassNames.button_previous,
         ),
-        [UI.DayButton]: cn(
-          "group-[.is-outside]:text-muted-foreground hover:not-disabled:not-group-aria-selected:bg-secondary hover:not-disabled:not-group-aria-selected:text-secondary-foreground group-data-today:not-group-aria-selected:bg-secondary group-data-today:not-group-aria-selected:text-secondary-foreground group-aria-selected:not-group-[.is-range-middle]:bg-primary group-aria-selected:not-group-[.is-range-middle]:text-primary-foreground outline-hidden focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:ring-primary/20 dark:group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:ring-primary/40 group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:border-primary size-8 rounded-lg border border-transparent disabled:opacity-50",
-          classNames?.[UI.DayButton],
+        caption_label: cn(
+          "select-none font-medium",
+          captionLayout === "label"
+            ? "text-sm"
+            : "rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5",
+          defaultClassNames.caption_label,
         ),
-        [UI.Dropdown]: cn("absolute opacity-0", classNames?.[UI.Dropdown]),
-        [UI.DropdownRoot]: cn("relative", classNames?.[UI.DropdownRoot]),
-        [UI.Dropdowns]: cn("flex gap-4", classNames?.[UI.Dropdowns]),
-        [UI.Footer]: cn(classNames?.[UI.Footer]),
-        [UI.Month]: cn("flex flex-col gap-4", classNames?.[UI.Month]),
-        [UI.MonthCaption]: cn("py-1 text-sm font-medium", classNames?.[UI.MonthCaption]),
-        [UI.MonthGrid]: cn(classNames?.[UI.MonthGrid]),
-        [UI.Months]: cn("relative flex gap-4", classNames?.[UI.Months]),
-        [UI.MonthsDropdown]: cn(classNames?.[UI.MonthsDropdown]),
-        [UI.Nav]: cn("absolute end-0 flex gap-2", classNames?.[UI.Nav]),
-        [UI.NextMonthButton]: buttonVariants({
-          className: ["size-7", classNames?.[UI.NextMonthButton]],
-          size: "icon",
-          variant: "ghost",
-        }),
-        [UI.PreviousMonthButton]: buttonVariants({
-          className: ["size-7", classNames?.[UI.PreviousMonthButton]],
-          size: "icon",
-          variant: "ghost",
-        }),
-        [UI.Root]: cn("p-3", classNames?.[UI.Root]),
-        [UI.Week]: cn("mt-2 flex justify-between", classNames?.[UI.Week]),
-        [UI.Weekday]: cn(
-          "text-muted-foreground min-w-8.5 text-xs font-medium",
-          classNames?.[UI.Weekday],
+        day: cn(
+          "relative w-full h-full p-0 text-center [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
+          props.showWeekNumber
+            ? "[&:nth-child(2)[data-selected=true]_button]:rounded-l-md"
+            : "[&:first-child[data-selected=true]_button]:rounded-l-md",
+          defaultClassNames.day,
         ),
-        [UI.Weekdays]: cn("flex w-full justify-between", classNames?.[UI.Weekdays]),
-        [UI.WeekNumber]: cn(
-          "text-muted-foreground min-w-8.5 grid h-8 place-items-center text-xs font-normal [&+*]:rounded-l-lg",
-          classNames?.[UI.WeekNumber],
+        disabled: cn("text-muted-foreground opacity-50", defaultClassNames.disabled),
+        dropdown: cn("absolute bg-popover inset-0 opacity-0", defaultClassNames.dropdown),
+        dropdown_root: cn(
+          "relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md",
+          defaultClassNames.dropdown_root,
         ),
-        [UI.WeekNumberHeader]: cn("min-w-8.5", classNames?.[UI.WeekNumberHeader]),
-        [UI.Weeks]: cn(classNames?.[UI.Weeks]),
-        [UI.YearsDropdown]: cn(classNames?.[UI.YearsDropdown]),
-
-        [SelectionState.range_end]: cn(
-          "to-secondary is-range-end rounded-r-lg bg-gradient-to-l first:rounded-l-lg",
-          classNames?.[SelectionState.range_end],
+        dropdowns: cn(
+          "w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-1.5",
+          defaultClassNames.dropdowns,
         ),
-        [SelectionState.range_middle]: cn(
-          "is-range-middle bg-secondary text-secondary-foreground first:rounded-l-lg last:rounded-r-lg",
-          classNames?.[SelectionState.range_middle],
+        hidden: cn("invisible", defaultClassNames.hidden),
+        month: cn("flex flex-col w-full gap-4", defaultClassNames.month),
+        month_caption: cn(
+          "flex items-center justify-center h-(--cell-size) w-full px-(--cell-size)",
+          defaultClassNames.month_caption,
         ),
-        [SelectionState.range_start]: cn(
-          "to-secondary is-range-start rounded-l-lg bg-gradient-to-r last:rounded-r-lg",
-          classNames?.[SelectionState.range_start],
+        months: cn("flex gap-4 flex-col md:flex-row relative", defaultClassNames.months),
+        nav: cn(
+          "flex items-center gap-1 w-full absolute top-0 inset-x-0 justify-between",
+          defaultClassNames.nav,
         ),
-        [SelectionState.selected]: cn("is-selected", classNames?.[SelectionState.selected]),
-
-        [DayFlag.disabled]: cn("is-disabled", classNames?.[DayFlag.disabled]),
-        [DayFlag.focused]: cn("is-focused", classNames?.[DayFlag.focused]),
-        [DayFlag.hidden]: cn("is-hidden size-8", classNames?.[DayFlag.hidden]),
-        [DayFlag.outside]: cn("is-outside", classNames?.[DayFlag.outside]),
-        [DayFlag.today]: cn("is-today", classNames?.[DayFlag.today]),
+        outside: cn(
+          "text-muted-foreground aria-selected:text-muted-foreground",
+          defaultClassNames.outside,
+        ),
+        range_end: cn("rounded-r-md bg-accent", defaultClassNames.range_end),
+        range_middle: cn("rounded-none", defaultClassNames.range_middle),
+        range_start: cn("rounded-l-md bg-accent", defaultClassNames.range_start),
+        root: cn("w-fit", defaultClassNames.root),
+        table: "w-full border-collapse",
+        today: cn(
+          "bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none",
+          defaultClassNames.today,
+        ),
+        week: cn("flex w-full mt-2", defaultClassNames.week),
+        week_number: cn(
+          "text-[0.8rem] select-none text-muted-foreground",
+          defaultClassNames.week_number,
+        ),
+        week_number_header: cn("select-none w-(--cell-size)", defaultClassNames.week_number_header),
+        weekday: cn(
+          "text-muted-foreground rounded-md flex-1 font-normal text-[0.8rem] select-none",
+          defaultClassNames.weekday,
+        ),
+        weekdays: cn("flex", defaultClassNames.weekdays),
+        ...classNames,
       }}
       components={{
-        Chevron,
+        Chevron: CalendarChevron,
+        DayButton: CalendarDayButton,
+        Root: CalendarRoot,
+        WeekNumber: CalendarWeekNumber,
+        ...components,
+      }}
+      formatters={{
+        formatMonthDropdown: (date) => date.toLocaleString("default", { month: "short" }),
+        ...formatters,
       }}
       showOutsideDays={showOutsideDays}
       {...props}
@@ -143,64 +129,98 @@ function Calendar({ classNames, showOutsideDays = true, ...props }: CalendarProp
 }
 
 /* -----------------------------------------------------------------------------
- * Component: CalendarRangeLabel
+ * Component: CalendarChevron (internal)
  * -------------------------------------------------------------------------- */
 
-interface CalendarRangeLabelProps {
-  date: DateRange | undefined;
-  formatStr?: string;
-  placeholder?: string;
+function CalendarChevron({
+  className,
+  orientation,
+  ...props
+}: ComponentProps<typeof Chevron>): JSX.Element {
+  if (orientation === "left") {
+    return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
+  }
+
+  if (orientation === "right") {
+    return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
+  }
+
+  return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
 }
 
-function CalendarRangeLabel({
-  date,
-  formatStr: formatString = "LLL dd, y",
-  placeholder = "Pick a date",
-}: CalendarRangeLabelProps): ReactNode {
-  if (!date?.from) {
-    return <span className="truncate">{placeholder}</span>;
-  }
+/* -----------------------------------------------------------------------------
+ * Component: CalendarRoot (internal)
+ * -------------------------------------------------------------------------- */
 
-  const formattedFromDate = format(date.from, formatString);
+function CalendarRoot({ className, rootRef, ...props }: ComponentProps<typeof Root>): JSX.Element {
+  return <div ref={rootRef} className={cn(className)} data-slot="calendar" {...props} />;
+}
 
-  if (!date.to) {
-    return <span className="truncate">{formattedFromDate}</span>;
-  }
+/* -----------------------------------------------------------------------------
+ * Component: CalendarWeekNumber (internal)
+ * -------------------------------------------------------------------------- */
 
-  const formattedToDate = format(date.to, formatString);
-
+function CalendarWeekNumber({
+  children,
+  ...props
+}: ComponentProps<typeof WeekNumber>): JSX.Element {
   return (
-    <span className="truncate">
-      {formattedFromDate} - {formattedToDate}
-    </span>
+    <td {...props}>
+      <div className="flex size-(--cell-size) items-center justify-center text-center">
+        {children}
+      </div>
+    </td>
   );
 }
 
 /* -----------------------------------------------------------------------------
- * Component: CalendarLabel
+ * Component: CalendarDayButton
  * -------------------------------------------------------------------------- */
 
-interface CalendarLabelProps {
-  date: Date | undefined;
-  formatStr?: string;
-  placeholder?: string;
-}
+type CalendarDayButtonProps = ComponentProps<typeof DayButton>;
 
-function CalendarLabel({
-  date,
-  formatStr: formatString = "PPP",
-  placeholder = "Pick a date",
-}: CalendarLabelProps): ReactNode {
-  if (!date) {
-    return <span className="truncate">{placeholder}</span>;
-  }
+function CalendarDayButton({
+  className,
+  day,
+  modifiers,
+  ...props
+}: CalendarDayButtonProps): JSX.Element {
+  const defaultClassNames = getDefaultClassNames();
 
-  return <span className="truncate">{format(date, formatString)}</span>;
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (modifiers.focused) ref.current?.focus();
+  }, [modifiers.focused]);
+
+  return (
+    <Button
+      ref={ref}
+      className={cn(
+        "data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 dark:hover:text-accent-foreground flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70",
+        defaultClassNames.day,
+        className,
+      )}
+      data-day={day.date.toLocaleDateString()}
+      data-range-end={modifiers.range_end}
+      data-range-middle={modifiers.range_middle}
+      data-range-start={modifiers.range_start}
+      data-selected-single={
+        modifiers.selected &&
+        !modifiers.range_start &&
+        !modifiers.range_end &&
+        !modifiers.range_middle
+      }
+      size="icon"
+      variant="ghost"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Calendar, CalendarLabel, CalendarRangeLabel };
-export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps };
+export { Calendar, CalendarDayButton };
+export type { CalendarDayButtonProps, CalendarProps };
