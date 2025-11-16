@@ -11,7 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@codefast/ui/card";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@codefast/ui/chart";
+import type { ChartConfig } from "@codefast/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@codefast/ui/chart";
 
 export const description = "A mixed bar chart";
 
@@ -72,11 +73,13 @@ export function ChartBarMixed() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => chartConfig[value as keyof typeof chartConfig]?.label}
+              tickFormatter={(value: string) =>
+                chartConfig[value as keyof typeof chartConfig]?.label
+              }
             />
             <XAxis dataKey="visitors" type="number" hide />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Bar dataKey="visitors" layout="vertical" radius={5} />
+            <Bar dataKey="visitors" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
