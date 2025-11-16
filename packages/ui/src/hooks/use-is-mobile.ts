@@ -3,20 +3,23 @@
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 /**
- * The breakpoint width in pixels that separates mobile from non-mobile devices.
- * Screens with width \< MOBILE_BREAKPOINT are considered mobile.
- */
-const MOBILE_BREAKPOINT = 768;
-
-/**
- * Custom hook that determines if the current viewport is mobile-sized.
+ * Determine whether the current viewport should be treated as mobile.
  *
- * This hook uses the useMediaQuery hook to check if the screen width is less than
- * the defined mobile breakpoint (768px).
+ * Uses {@link useMediaQuery} to evaluate a max-width media query derived from the
+ * provided breakpoint. By default, widths below 768px are considered mobile.
  *
- * @returns A boolean indicating whether the current viewport is mobile-sized.
- * True if the screen width is less than 768px, false otherwise.
+ * @param mobileBreakpoint - Pixel width used as the mobile breakpoint. Values strictly
+ * less than this breakpoint are treated as mobile. Defaults to 768.
+ * @returns true when the viewport width is less than the given breakpoint; otherwise false.
+ *
+ * @example
+ * ```tsx
+ * const isMobile = useIsMobile();
+ * if (isMobile) {
+ *   // Render compact layout
+ * }
+ * ```
  */
-export function useIsMobile(): boolean {
-  return useMediaQuery(`(max-width: ${(MOBILE_BREAKPOINT - 1).toString()}px)`);
+export function useIsMobile(mobileBreakpoint = 768): boolean {
+  return useMediaQuery(`(max-width: ${(mobileBreakpoint - 1).toString()}px)`);
 }

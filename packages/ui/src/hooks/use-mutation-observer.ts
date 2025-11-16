@@ -5,8 +5,7 @@ import type { RefObject } from "react";
 import { useEffect } from "react";
 
 /**
- * Default options for the MutationObserver.
- * Configures the observer to watch for all types of mutations.
+ * Default options for MutationObserver observing common mutation types.
  */
 const defaultOptions: MutationObserverInit = {
   attributes: true,
@@ -16,19 +15,15 @@ const defaultOptions: MutationObserverInit = {
 };
 
 /**
- * Attaches a MutationObserver to a given HTMLElement and invokes a callback
- * function when mutations occur in the observed elements.
+ * Observe DOM mutations on a referenced element and invoke a callback.
  *
- * @param ref - The mutable reference to the HTMLElement to be observed for mutations
- * @param callback - The function to be called when mutations are detected
- * @param options - Configuration options for the MutationObserver, defaults to watching all changes
+ * Attaches a MutationObserver to the provided element reference with the given
+ * options and calls the callback whenever mutations occur.
+ *
+ * @param ref - Ref to the target HTMLElement to observe.
+ * @param callback - Mutation callback invoked with observed records.
+ * @param options - Observer configuration. Defaults watch attributes, characterData, childList, subtree.
  * @returns void
- *
- * @remarks
- * This function is a React hook that attaches a MutationObserver to a given
- * HTMLElement. The MutationObserver listens for mutations in the observed
- * element and its descendants and invokes the provided callback function
- * when mutations occur.
  *
  * @see [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
  */
@@ -38,27 +33,18 @@ export function useMutationObserver(
   options: MutationObserverInit = defaultOptions,
 ): void {
   useEffect(() => {
-    /**
-     * If the reference is null, we can't attach an observer
-     */
+    // Abort if ref is not attached
     if (!ref.current) {
       return;
     }
 
-    /**
-     * Create a new MutationObserver with the provided callback
-     */
+    // Create observer
     const observer = new MutationObserver(callback);
 
-    /**
-     * Start observing the target element with the specified options
-     */
+    // Observe with provided options
     observer.observe(ref.current, options);
 
-    /**
-     * Cleanup function to disconnect the observer when the component unmounts
-     * or when dependencies change
-     */
+    // Cleanup on unmount or when deps change
     return (): void => {
       observer.disconnect();
     };
