@@ -16,6 +16,7 @@
     "react-dom": "19.2.0"
   },
   "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.10.1",
     "@types/react": "^19",
