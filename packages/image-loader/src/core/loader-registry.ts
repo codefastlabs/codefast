@@ -1,4 +1,4 @@
-import type { LoaderConfig } from "@/core/types";
+import type { LoaderConfig } from "@/types";
 
 import { cloudflareLoader } from "@/loaders/cloudflare";
 import { cloudfrontLoader } from "@/loaders/cloudfront";
