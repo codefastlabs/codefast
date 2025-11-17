@@ -1,16 +1,19 @@
 import type { ImageLoaderProps } from "next/image";
 
+import { urlCache } from "@/utils/url-cache";
+
 export function sirvLoader({ quality = 85, src, width }: ImageLoaderProps): string {
-  try {
-    const url = new URL(src);
-    const params = url.searchParams;
+  const url = urlCache.getClone(src);
 
-    params.set("format", params.getAll("format").join(",") || "optimal");
-    params.set("w", params.get("w") ?? width.toString());
-    params.set("q", quality.toString());
-
-    return url.toString();
-  } catch {
+  if (!url) {
     return src;
   }
+
+  const params = url.searchParams;
+
+  params.set("format", params.getAll("format").join(",") || "optimal");
+  params.set("w", params.get("w") ?? width.toString());
+  params.set("q", quality.toString());
+
+  return url.toString();
 }
