@@ -3,10 +3,10 @@ import type { ImageLoaderProps } from "next/image";
 import type { LoaderConfig, LoaderFunction } from "@/core/types";
 
 import { createImageLoader } from "@/core/image-loader";
-import { defaultLoaderConfigs } from "@/core/loader-registry";
+import { builtInLoaderConfigs } from "@/core/loader-registry";
 import { defaultLoader } from "@/loaders/default";
 
-export { defaultLoaderConfigs } from "@/core/loader-registry";
+export { builtInLoaderConfigs } from "@/core/loader-registry";
 export { isDomainMatch, isLocalPath, isPathMatch } from "@/utils/url-matcher";
 
 /**
@@ -15,7 +15,7 @@ export { isDomainMatch, isLocalPath, isPathMatch } from "@/utils/url-matcher";
  * Pre-configured with all built-in CDN loaders for optimal performance
  * Uses domain-based registry for O(1) lookup and result caching
  */
-const defaultImageLoader = createImageLoader(defaultLoaderConfigs, defaultLoader, 1000);
+const defaultImageLoader = createImageLoader(builtInLoaderConfigs, defaultLoader, 1000);
 
 /**
  * Main image loader function
