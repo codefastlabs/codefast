@@ -1,8 +1,9 @@
 import type { ImageLoaderProps } from "next/image";
 
+import { DEFAULT_IMAGE_QUALITY } from "@/constants";
 import { urlCache } from "@/utils/url-cache";
 
-export function imgixLoader({ quality = 75, src, width }: ImageLoaderProps): string {
+export function imgixLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: ImageLoaderProps): string {
   const url = urlCache.getClone(src);
 
   if (!url) {
