@@ -53,38 +53,3 @@ export function isPathMatch(url: string, substring: string): boolean {
   }
 }
 
-/**
- * Safely checks if a URL is a local/relative path
- * Prevents domain spoofing by checking for relative paths and localhost
- *
- * @param url - The URL to check
- * @returns True if the URL is a local or relative path
- *
- * @example
- * ```text
- * isLocalPath("/images/photo.jpg") // true
- * isLocalPath("https://localhost:3000/image.jpg") // true
- * isLocalPath("https://evil.com/image.jpg") // false
- * ```
- */
-export function isLocalPath(url: string): boolean {
-  try {
-    // Check for relative paths
-    if (url.startsWith("/") || url.startsWith("./") || url.startsWith("../")) {
-      return true;
-    }
-
-    // Check for localhost domains
-    const urlObject = new URL(url);
-
-    return (
-      urlObject.hostname === "localhost" ||
-      urlObject.hostname === "127.0.0.1" ||
-      urlObject.hostname.endsWith(".localhost") ||
-      urlObject.hostname.endsWith(".local")
-    );
-  } catch {
-    // If URL parsing fails, treat as a relative path
-    return url.startsWith("/") || url.startsWith("./") || url.startsWith("../");
-  }
-}
