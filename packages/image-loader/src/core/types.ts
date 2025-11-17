@@ -25,24 +25,8 @@ export interface LoaderConfig {
 export interface ImageLoaderOptions {
   /** Enable debug logging */
   debug?: boolean;
-  /** Enable caching for better performance */
-  enableCache?: boolean;
   /** Fallback loader for unmatched URLs */
   fallbackLoader?: LoaderFunction;
   /** Custom loaders to register */
   loaders?: LoaderConfig[];
-  /** Maximum cache size (default: 1000) */
-  maxCacheSize?: number;
-}
-
-/**
- * Cache entry for URL parsing and transformation results
- */
-export interface CacheEntry {
-  /** Transformed result */
-  result?: string;
-  /** Timestamp for LRU eviction */
-  timestamp: number;
-  /** Parsed URL object */
-  url?: URL;
 }
