@@ -1,16 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-/**
- * Imgix URL transformation
- * Handles *.imgix.net domains
- *
- * @example
- * ```text
- * https://example.imgix.net/image.jpg
- * → https://example.imgix.net/image.jpg?auto=format&q=80&w=800
- * ```
- */
-export function imgixLoader({ quality = 80, src, width }: ImageLoaderProps): string {
+export function imgixLoader({ quality = 75, src, width }: ImageLoaderProps): string {
   try {
     const url = new URL(src);
 

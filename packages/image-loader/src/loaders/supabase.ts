@@ -1,16 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-/**
- * Supabase URL transformation
- * Handles *.supabase.co domains
- *
- * @example
- * ```text
- * https://xyz.supabase.co/storage/v1/object/public/bucket/image.jpg
- * → https://xyz.supabase.co/storage/v1/object/public/bucket/image.jpg?format=auto&quality=80&width=800
- * ```
- */
-export function supabaseLoader({ quality = 80, src, width }: ImageLoaderProps): string {
+export function supabaseLoader({ quality = 75, src, width }: ImageLoaderProps): string {
   try {
     const url = new URL(src);
 

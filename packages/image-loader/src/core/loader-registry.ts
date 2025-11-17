@@ -17,12 +17,6 @@ import { thumborLoader } from "@/loaders/thumbor";
 import { unsplashLoader } from "@/loaders/unsplash";
 import { isDomainMatch, isPathMatch } from "@/utils/url-matcher";
 
-/**
- * Built-in loader configurations with domain optimization
- *
- * Each loader has a name, matcher function, loader function, and domain
- * Domain field enables O(1) lookup optimization for better performance
- */
 export const builtInLoaderConfigs: LoaderConfig[] = [
   {
     domain: "cloudinary.com",
