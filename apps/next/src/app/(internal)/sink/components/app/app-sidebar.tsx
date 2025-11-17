@@ -15,8 +15,8 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-import { NavUser } from "@/app/(internal)/sink/components/nav-user";
-import { TeamSwitcher } from "@/app/(internal)/sink/components/team-switcher";
+import { NavUser } from "@/app/(internal)/sink/components/app/nav-user";
+import { TeamSwitcher } from "@/app/(internal)/sink/components/app/team-switcher";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
 import { Label } from "@codefast/ui/label";
