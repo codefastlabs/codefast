@@ -3019,7 +3019,7 @@ export function ProfileSettingsForm() {
               <FieldLabel>Profile Photo</FieldLabel>
               <div className="flex items-center space-x-4">
                 <Avatar className="size-12">
-                  <AvatarImage src="/abstract-profile.png" />
+                  <AvatarImage src="/avatars/01.png" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <Button variant="outline" type="button">
