@@ -1,22 +1,20 @@
 import type { LoaderConfig } from "@/core/types";
 
-import {
-  cloudflareLoader,
-  cloudfrontLoader,
-  cloudinaryLoader,
-  contentfulLoader,
-  fastlyLoader,
-  gumletLoader,
-  imageengineLoader,
-  imagekitLoader,
-  imgixLoader,
-  pixelbinLoader,
-  sanityLoader,
-  sirvLoader,
-  supabaseLoader,
-  thumborLoader,
-  unsplashLoader,
-} from "@/loaders";
+import { cloudflareLoader } from "@/loaders/cloudflare";
+import { cloudfrontLoader } from "@/loaders/cloudfront";
+import { cloudinaryLoader } from "@/loaders/cloudinary";
+import { contentfulLoader } from "@/loaders/contentful";
+import { fastlyLoader } from "@/loaders/fastly";
+import { gumletLoader } from "@/loaders/gumlet";
+import { imageengineLoader } from "@/loaders/imageengine";
+import { imagekitLoader } from "@/loaders/imagekit";
+import { imgixLoader } from "@/loaders/imgix";
+import { pixelbinLoader } from "@/loaders/pixelbin";
+import { sanityLoader } from "@/loaders/sanity";
+import { sirvLoader } from "@/loaders/sirv";
+import { supabaseLoader } from "@/loaders/supabase";
+import { thumborLoader } from "@/loaders/thumbor";
+import { unsplashLoader } from "@/loaders/unsplash";
 import { isDomainMatch, isPathMatch } from "@/utils/url-matcher";
 
 /**

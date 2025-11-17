@@ -4,7 +4,7 @@ import type { LoaderConfig, LoaderFunction } from "@/core/types";
 
 import { createImageLoader } from "@/core/image-loader";
 import { defaultLoaderConfigs } from "@/core/loader-registry";
-import { defaultLoader } from "@/loaders";
+import { defaultLoader } from "@/loaders/default";
 
 export { defaultLoaderConfigs } from "@/core/loader-registry";
 export { isDomainMatch, isLocalPath, isPathMatch } from "@/utils/url-matcher";
