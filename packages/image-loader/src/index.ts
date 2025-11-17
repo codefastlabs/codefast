@@ -13,9 +13,9 @@ export { isDomainMatch, isLocalPath, isPathMatch } from "@/utils/url-matcher";
  * Default image loader instance
  *
  * Pre-configured with all built-in CDN loaders for optimal performance
- * Uses domain-based registry for O(1) lookup and result caching
+ * Uses domain-based registry for O(1) lookup performance
  */
-const defaultImageLoader = createImageLoader(builtInLoaderConfigs, defaultLoader, 1000);
+const defaultImageLoader = createImageLoader(builtInLoaderConfigs, defaultLoader);
 
 /**
  * Main image loader function
@@ -69,12 +69,10 @@ export function imageLoader(params: ImageLoaderProps): string {
 export function createCustomImageLoader(config: {
   loaders?: LoaderConfig[];
   fallbackLoader?: LoaderFunction;
-  maxCacheSize?: number;
 }): (params: ImageLoaderProps) => string {
   const loader = createImageLoader(
     config.loaders,
     config.fallbackLoader ?? defaultLoader,
-    config.maxCacheSize,
   );
 
   return (params: ImageLoaderProps) => loader.transform(params);
