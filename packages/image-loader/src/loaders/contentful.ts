@@ -1,16 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-/**
- * Contentful URL transformation
- * Handles *.ctfassets.net domains
- *
- * @example
- * ```text
- * https://images.ctfassets.net/space/image.jpg
- * → https://images.ctfassets.net/space/image.jpg?fm=webp&w=800&q=80
- * ```
- */
-export function contentfulLoader({ quality = 80, src, width }: ImageLoaderProps): string {
+export function contentfulLoader({ quality = 75, src, width }: ImageLoaderProps): string {
   try {
     const url = new URL(src);
 

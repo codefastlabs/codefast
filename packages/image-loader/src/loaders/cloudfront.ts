@@ -1,16 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-/**
- * AWS CloudFront URL transformation
- * Handles *.cloudfront.net domains
- *
- * @example
- * ```text
- * https://d1234567890.cloudfront.net/image.jpg
- * → https://d1234567890.cloudfront.net/image.jpg?f=auto&q=80&w=800
- * ```
- */
-export function cloudfrontLoader({ quality = 80, src, width }: ImageLoaderProps): string {
+export function cloudfrontLoader({ quality = 75, src, width }: ImageLoaderProps): string {
   try {
     const url = new URL(src);
 
