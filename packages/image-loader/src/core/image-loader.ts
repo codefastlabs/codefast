@@ -21,20 +21,6 @@ export class ImageLoader {
   }
 
   /**
-   * Register a new loader
-   */
-  registerLoader(name: string, matcher: (src: string) => boolean, loader: LoaderFunction): void {
-    const config: LoaderConfig = { loader, matcher, name };
-    const domain = this.extractDomainFromMatcher(config);
-
-    if (domain) {
-      this.domainRegistry.set(domain, loader);
-    } else {
-      this.fallbackLoaders.push(config);
-    }
-  }
-
-  /**
    * Transform image URL using optimized registry lookup
    */
   transform(params: ImageLoaderProps): string {
@@ -81,27 +67,6 @@ export class ImageLoader {
       // Invalid URL, return original
       return src;
     }
-  }
-
-  /**
-   * Get all registered loader names
-   */
-  getRegisteredLoaders(): string[] {
-    const domainLoaders = [...this.domainRegistry.keys()];
-    const fallbackLoaderNames = this.fallbackLoaders.map(({ name }) => name);
-
-    return [...domainLoaders, ...fallbackLoaderNames];
-  }
-
-  /**
-   * Check if a loader is registered
-   */
-  hasLoader(name: string): boolean {
-    // Check domain registry keys (domain names)
-    if (this.domainRegistry.has(name)) return true;
-
-    // Check fallback loaders
-    return this.fallbackLoaders.some(({ name: loaderName }) => loaderName === name);
   }
 
   /**

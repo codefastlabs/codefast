@@ -18,15 +18,3 @@ export interface LoaderConfig {
   /** Unique name for the loader */
   name: string;
 }
-
-/**
- * Image loader configuration options
- */
-export interface ImageLoaderOptions {
-  /** Enable debug logging */
-  debug?: boolean;
-  /** Fallback loader for unmatched URLs */
-  fallbackLoader?: LoaderFunction;
-  /** Custom loaders to register */
-  loaders?: LoaderConfig[];
-}
