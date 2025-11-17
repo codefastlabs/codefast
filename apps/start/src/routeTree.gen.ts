@@ -11,14 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
-import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
-import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
-import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
-import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
-import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
-import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
-import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start/server-funcs'
+import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start/api-request'
+import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api/tq-todos'
+import { Route as DemoApiNamesRouteImport } from './routes/demo/api/names'
+import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start/ssr/index'
+import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start/ssr/spa-mode'
+import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start/ssr/full-ssr'
+import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start/ssr/data-only'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
