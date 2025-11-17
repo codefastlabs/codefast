@@ -124,6 +124,11 @@
       "import": "./dist/loaders/unsplash.js",
       "require": "./dist/loaders/unsplash.cjs"
     },
+    "./utils/url-cache": {
+      "types": "./dist/utils/url-cache.d.ts",
+      "import": "./dist/utils/url-cache.js",
+      "require": "./dist/utils/url-cache.cjs"
+    },
     "./utils/url-matcher": {
       "types": "./dist/utils/url-matcher.d.ts",
       "import": "./dist/utils/url-matcher.js",

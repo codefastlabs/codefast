@@ -1,16 +1,18 @@
 import type { ImageLoaderProps } from "next/image";
 
+import { urlCache } from "@/utils/url-cache";
+
 export function unsplashLoader({ quality = 75, src, width }: ImageLoaderProps): string {
-  try {
-    const url = new URL(src);
+  const url = urlCache.getClone(src);
 
-    url.searchParams.set("fit", "crop");
-    url.searchParams.set("fm", "auto");
-    url.searchParams.set("q", quality.toString());
-    url.searchParams.set("w", width.toString());
-
-    return url.toString();
-  } catch {
+  if (!url) {
     return src;
   }
+
+  url.searchParams.set("fit", "crop");
+  url.searchParams.set("fm", "auto");
+  url.searchParams.set("q", quality.toString());
+  url.searchParams.set("w", width.toString());
+
+  return url.toString();
 }

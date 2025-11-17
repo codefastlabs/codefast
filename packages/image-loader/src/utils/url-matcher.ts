@@ -1,20 +1,22 @@
-export function isDomainMatch(url: string, domain: string): boolean {
-  try {
-    const urlObject = new URL(url);
+import { urlCache } from "./url-cache";
 
-    return urlObject.hostname === domain || urlObject.hostname.endsWith(`.${domain}`);
-  } catch {
+export function isDomainMatch(url: string, domain: string): boolean {
+  const urlObject = urlCache.get(url);
+
+  if (!urlObject) {
     return false;
   }
+
+  return urlObject.hostname === domain || urlObject.hostname.endsWith(`.${domain}`);
 }
 
 export function isPathMatch(url: string, substring: string): boolean {
-  try {
-    const urlObject = new URL(url);
+  const urlObject = urlCache.get(url);
 
-    return urlObject.pathname.includes(substring);
-  } catch {
+  if (!urlObject) {
     return false;
   }
+
+  return urlObject.pathname.includes(substring);
 }
 
