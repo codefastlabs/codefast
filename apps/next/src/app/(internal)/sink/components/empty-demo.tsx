@@ -104,7 +104,7 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <div className="bg-muted flex min-h-[800px] items-center justify-center rounded-lg p-20">
+      <div className="bg-muted flex min-h-[800px] items-center justify-center rounded-xl p-20">
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
@@ -133,7 +133,7 @@ export function EmptyDemo() {
           </CardContent>
         </Card>
       </div>
-      <div className="bg-muted flex min-h-[800px] items-center justify-center rounded-lg p-20">
+      <div className="bg-muted flex min-h-[800px] items-center justify-center rounded-xl p-20">
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
@@ -206,8 +206,8 @@ export function EmptyDemo() {
             <PopoverTrigger asChild>
               <Button variant="outline">Open Popover</Button>
             </PopoverTrigger>
-            <PopoverContent className="rounded-2xl p-2">
-              <Empty className="rounded-sm p-6">
+            <PopoverContent className="rounded-3xl p-2">
+              <Empty className="rounded p-6">
                 <EmptyHeader>
                   <EmptyTitle>Nothing to see here</EmptyTitle>
                   <EmptyDescription>

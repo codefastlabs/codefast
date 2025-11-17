@@ -247,7 +247,7 @@ export function ButtonGroupDemo() {
                   <IconChevronDown />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="rounded-xl p-0 text-sm">
+              <PopoverContent align="end" className="rounded-2xl p-0 text-sm">
                 <div className="px-4 py-3">
                   <div className="text-sm font-medium">Agent Tasks</div>
                 </div>
@@ -295,12 +295,12 @@ export function ButtonGroupDemo() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <InputGroupButton>
-                        <span className="size-4 rounded-xs bg-blue-600" />
+                        <span className="size-4 rounded-sm bg-blue-600" />
                       </InputGroupButton>
                     </PopoverTrigger>
                     <PopoverContent
                       align="start"
-                      className="max-w-48 rounded-lg p-2"
+                      className="max-w-48 rounded-xl p-2"
                       alignOffset={-8}
                       sideOffset={8}
                     >
@@ -321,7 +321,7 @@ export function ButtonGroupDemo() {
                         ].map((color) => (
                           <div
                             key={color}
-                            className="size-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
+                            className="size-6 cursor-pointer rounded transition-transform hover:scale-110"
                             style={{ backgroundColor: color }}
                           />
                         ))}

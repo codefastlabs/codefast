@@ -38,7 +38,7 @@ function CalendarSingle() {
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="rounded-lg border shadow-sm"
+        className="rounded-xl border shadow-sm"
         captionLayout="dropdown"
       />
     </div>
@@ -49,7 +49,7 @@ function CalendarMultiple() {
   return (
     <div className="flex flex-col gap-3">
       <div className="px-2 text-center text-sm">Multiple Selection</div>
-      <Calendar mode="multiple" className="rounded-lg border shadow-sm" />
+      <Calendar mode="multiple" className="rounded-xl border shadow-sm" />
     </div>
   );
 }
@@ -70,7 +70,7 @@ function CalendarRange() {
         onSelect={setDateRange}
         numberOfMonths={2}
         disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-        className="rounded-lg border shadow-sm"
+        className="rounded-xl border shadow-sm"
       />
     </div>
   );
@@ -93,7 +93,7 @@ function CalendarRangeMultipleMonths() {
         numberOfMonths={3}
         locale={es}
         fixedWeeks
-        className="rounded-lg border shadow-sm"
+        className="rounded-xl border shadow-sm"
       />
     </div>
   );
@@ -123,7 +123,7 @@ function CalendarBookedDates() {
         modifiersClassNames={{
           booked: "[&>button]:line-through opacity-100",
         }}
-        className="rounded-lg border shadow-sm"
+        className="rounded-xl border shadow-sm"
       />
     </div>
   );
@@ -190,7 +190,7 @@ function CalendarCustomDays() {
         onSelect={setRange}
         numberOfMonths={1}
         captionLayout="dropdown"
-        className="rounded-lg border shadow-sm [--cell-size:--spacing(12)]"
+        className="rounded-xl border shadow-sm [--cell-size:--spacing(12)]"
         formatters={{
           formatMonthDropdown: (date) => {
             return date.toLocaleString("default", { month: "long" });

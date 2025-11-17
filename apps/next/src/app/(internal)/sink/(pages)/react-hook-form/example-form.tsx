@@ -418,7 +418,7 @@ export function ExampleForm() {
             <DialogTitle>Submitted Values</DialogTitle>
             <DialogDescription>Here are the values you submitted.</DialogDescription>
           </DialogHeader>
-          <pre className="overflow-x-auto rounded-md bg-black p-4 font-mono text-sm text-white">
+          <pre className="overflow-x-auto rounded-lg bg-black p-4 font-mono text-sm text-white">
             <code>{JSON.stringify(values, null, 2)}</code>
           </pre>
         </DialogContent>
