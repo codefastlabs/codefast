@@ -7,7 +7,7 @@ import { builtInLoaderConfigs } from "@/core/loader-registry";
 import { defaultLoader } from "@/loaders/default";
 
 export { builtInLoaderConfigs } from "@/core/loader-registry";
-export { isDomainMatch, isLocalPath, isPathMatch } from "@/utils/url-matcher";
+export { isDomainMatch, isPathMatch } from "@/utils/url-matcher";
 
 /**
  * Default image loader instance

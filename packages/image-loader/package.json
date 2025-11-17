@@ -64,6 +64,11 @@
       "import": "./dist/loaders/contentful.js",
       "require": "./dist/loaders/contentful.cjs"
     },
+    "./loaders/default": {
+      "types": "./dist/loaders/default.d.ts",
+      "import": "./dist/loaders/default.js",
+      "require": "./dist/loaders/default.cjs"
+    },
     "./loaders/fastly": {
       "types": "./dist/loaders/fastly.d.ts",
       "import": "./dist/loaders/fastly.js",
@@ -88,11 +93,6 @@
       "types": "./dist/loaders/imgix.d.ts",
       "import": "./dist/loaders/imgix.js",
       "require": "./dist/loaders/imgix.cjs"
-    },
-    "./loaders/index": {
-      "types": "./dist/loaders/index.d.ts",
-      "import": "./dist/loaders/index.js",
-      "require": "./dist/loaders/index.cjs"
     },
     "./loaders/pixelbin": {
       "types": "./dist/loaders/pixelbin.d.ts",
