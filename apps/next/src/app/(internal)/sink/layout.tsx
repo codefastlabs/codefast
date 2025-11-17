@@ -4,9 +4,9 @@ import { cn } from "@codefast/tailwind-variants";
 import { ModeSwitcher } from "@/components/mode-switcher";
 import { Separator } from "@codefast/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui/sidebar";
-import { AppBreadcrumbs } from "@/app/(internal)/sink/components/app-breadcrumbs";
-import { AppSidebar } from "@/app/(internal)/sink/components/app-sidebar";
-import { ThemeSelector } from "@/app/(internal)/sink/components/theme-selector";
+import { AppBreadcrumbs } from "@/app/(internal)/sink/components/app/app-breadcrumbs";
+import { AppSidebar } from "@/app/(internal)/sink/components/app/app-sidebar";
+import { ThemeSelector } from "@/app/(internal)/sink/components/app/theme-selector";
 
 const inter = Inter({
   subsets: ["latin"],
