@@ -1,8 +1,9 @@
 import type { ImageLoaderProps } from "next/image";
 
+import { DEFAULT_IMAGE_QUALITY } from "@/constants";
 import { urlCache } from "@/utils/url-cache";
 
-export function imageengineLoader({ quality = 75, src, width }: ImageLoaderProps): string {
+export function imageengineLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: ImageLoaderProps): string {
   const compression = 100 - quality;
   const params = [`w_${width}`, `cmpr_${compression}`];
   const imgengParameter = `/${params.join("/")}`;
