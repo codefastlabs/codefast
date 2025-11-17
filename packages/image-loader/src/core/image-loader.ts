@@ -1,6 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
 
-import type { LoaderConfig, LoaderFunction } from "@/core/types";
+import type { LoaderConfig, LoaderFunction } from "@/types";
 
 /**
  * Fast image loader for Next.js

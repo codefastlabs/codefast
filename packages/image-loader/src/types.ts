@@ -18,3 +18,4 @@ export interface LoaderConfig {
   /** Unique name for the loader */
   name: string;
 }
+

@@ -29,6 +29,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./core/default-loader": {
+      "types": "./dist/core/default-loader.d.ts",
+      "import": "./dist/core/default-loader.js",
+      "require": "./dist/core/default-loader.cjs"
+    },
     "./core/image-loader": {
       "types": "./dist/core/image-loader.d.ts",
       "import": "./dist/core/image-loader.js",
@@ -38,11 +43,6 @@
       "types": "./dist/core/loader-registry.d.ts",
       "import": "./dist/core/loader-registry.js",
       "require": "./dist/core/loader-registry.cjs"
-    },
-    "./core/types": {
-      "types": "./dist/core/types.d.ts",
-      "import": "./dist/core/types.js",
-      "require": "./dist/core/types.cjs"
     },
     "./loaders/cloudflare": {
       "types": "./dist/loaders/cloudflare.d.ts",
@@ -128,6 +128,11 @@
       "types": "./dist/utils/url-matcher.d.ts",
       "import": "./dist/utils/url-matcher.js",
       "require": "./dist/utils/url-matcher.cjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
     },
     "./package.json": "./package.json"
   },
