@@ -99,7 +99,7 @@ export function FormDemo() {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast("You submitted the following values:", {
       description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+        <pre className="mt-2 w-[320px] rounded-lg bg-neutral-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
@@ -208,7 +208,7 @@ export function FormDemo() {
           control={form.control}
           name="mobile"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start gap-3 rounded-md border p-4 shadow-xs">
+            <FormItem className="flex flex-row items-start gap-3 rounded-lg border p-4 shadow-xs">
               <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
@@ -311,7 +311,7 @@ export function FormDemo() {
               control={form.control}
               name="marketing_emails"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start justify-between rounded-lg border p-4 shadow-xs">
+                <FormItem className="flex flex-row items-start justify-between rounded-xl border p-4 shadow-xs">
                   <div className="flex flex-col gap-0.5">
                     <FormLabel className="leading-normal">Marketing emails</FormLabel>
                     <FormDescription className="leading-snug">
@@ -328,7 +328,7 @@ export function FormDemo() {
               control={form.control}
               name="security_emails"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start justify-between rounded-lg border p-4 shadow-xs">
+                <FormItem className="flex flex-row items-start justify-between rounded-xl border p-4 shadow-xs">
                   <div className="flex flex-col gap-0.5 opacity-60">
                     <FormLabel className="leading-normal">Security emails</FormLabel>
                     <FormDescription className="leading-snug">

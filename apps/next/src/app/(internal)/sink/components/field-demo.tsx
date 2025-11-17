@@ -872,7 +872,7 @@ function ShippingMethods() {
         </CardContent>
       </Card>
       <form>
-        <FieldGroup className="bg-background gap-6 rounded-lg border p-6">
+        <FieldGroup className="bg-background gap-6 rounded-xl border p-6">
           <FieldSet>
             <FieldLegend>GPU Type</FieldLegend>
             <FieldDescription>Select the GPU type for your cluster.</FieldDescription>
@@ -2363,12 +2363,12 @@ export function FormOTPDemo() {
             <FieldDescription>Enter the security code to continue.</FieldDescription>
             <InputOTP id="otp-custom-hip" maxLength={6}>
               <InputOTPGroup className="gap-2">
-                <InputOTPSlot index={0} className="rounded-md border" />
-                <InputOTPSlot index={1} className="rounded-md border" />
-                <InputOTPSlot index={2} className="rounded-md border" />
-                <InputOTPSlot index={3} className="rounded-md border" />
-                <InputOTPSlot index={4} className="rounded-md border" />
-                <InputOTPSlot index={5} className="rounded-md border" />
+                <InputOTPSlot index={0} className="rounded-lg border" />
+                <InputOTPSlot index={1} className="rounded-lg border" />
+                <InputOTPSlot index={2} className="rounded-lg border" />
+                <InputOTPSlot index={3} className="rounded-lg border" />
+                <InputOTPSlot index={4} className="rounded-lg border" />
+                <InputOTPSlot index={5} className="rounded-lg border" />
               </InputOTPGroup>
             </InputOTP>
           </Field>

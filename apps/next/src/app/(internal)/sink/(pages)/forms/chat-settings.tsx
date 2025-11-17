@@ -140,7 +140,7 @@ export function ChatSettings() {
           <TabsTrigger value="personalization">Personalization</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
-        <div className="rounded-lg border p-6 [&_[data-slot=select-trigger]]:min-w-[125px]">
+        <div className="rounded-xl border p-6 [&_[data-slot=select-trigger]]:min-w-[125px]">
           <TabsContent value="general">
             <FieldSet>
               <FieldGroup>

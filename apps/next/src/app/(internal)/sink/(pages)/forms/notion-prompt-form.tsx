@@ -298,7 +298,7 @@ export function NotionPromptForm() {
                       {model.badge && (
                         <Badge
                           variant="secondary"
-                          className="h-5 rounded-sm bg-blue-100 px-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-100"
+                          className="h-5 rounded bg-blue-100 px-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-100"
                         >
                           {model.badge}
                         </Badge>

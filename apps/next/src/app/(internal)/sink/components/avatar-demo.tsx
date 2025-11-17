@@ -14,7 +14,7 @@ export function AvatarDemo() {
         <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
-      <Avatar className="rounded-lg">
+      <Avatar className="rounded-xl">
         <AvatarImage src="https://github.com/evilrabbit.png" alt="@evilrabbit" />
         <AvatarFallback>ER</AvatarFallback>
       </Avatar>

@@ -333,7 +333,7 @@ export function ExampleForm() {
             <DialogTitle>Subscription Created!</DialogTitle>
             <DialogDescription>Here are the details of your subscription.</DialogDescription>
           </DialogHeader>
-          <pre className="overflow-x-auto rounded-md bg-black p-4 font-mono text-sm text-white">
+          <pre className="overflow-x-auto rounded-lg bg-black p-4 font-mono text-sm text-white">
             <code>{JSON.stringify(formState.values, null, 2)}</code>
           </pre>
         </DialogContent>

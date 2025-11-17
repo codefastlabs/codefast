@@ -18,7 +18,7 @@ const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length
 function ScrollAreaVertical() {
   return (
     <div className="flex flex-col gap-6">
-      <ScrollArea className="h-72 w-48 rounded-md border">
+      <ScrollArea className="h-72 w-48 rounded-lg border">
         <div className="p-4">
           <h4 className="mb-4 text-sm leading-none font-medium">Tags</h4>
           {tags.map((tag) => (
@@ -50,11 +50,11 @@ export const works = [
 
 function ScrollAreaHorizontalDemo() {
   return (
-    <ScrollArea className="w-full max-w-96 rounded-md border p-4">
+    <ScrollArea className="w-full max-w-96 rounded-lg border p-4">
       <div className="flex gap-4">
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
-            <div className="overflow-hidden rounded-md">
+            <div className="overflow-hidden rounded-lg">
               <Image
                 src={artwork.art}
                 alt={`Photo by ${artwork.artist}`}
