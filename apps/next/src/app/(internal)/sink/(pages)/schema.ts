@@ -28,11 +28,9 @@ export const exampleFormSchema = z.object({
     .refine((value) => !/\d/.test(value), {
       message: 'Name must not contain numbers',
     }),
-
   email: z.email({
     error: (issue) => (issue.input === undefined ? 'Email is required' : 'Please enter a valid email address'),
   }),
-
   plan: z
     .string({
       error: (issue) => (issue.input === undefined ? 'Please select a subscription plan' : undefined),
@@ -41,15 +39,12 @@ export const exampleFormSchema = z.object({
     .refine((value) => value === 'basic' || value === 'pro', {
       message: 'Invalid plan selection. Please choose Basic or Pro',
     }),
-
   billingPeriod: z
     .string({
       error: (issue) => (issue.input === undefined ? 'Please select a billing period' : undefined),
     })
     .min(1, 'Please select a billing period'),
-
   addons: z.array(z.string()).min(1, 'Please select at least one add-on').max(3, 'You can select up to 3 add-ons'),
-
   teamSize: z.number().min(1).max(10),
   emailNotifications: z.boolean({
     error: (issue) => (issue.input === undefined ? 'Please choose email notification preference' : undefined),

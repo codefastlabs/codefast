@@ -17,6 +17,8 @@
     "@codefast/ui": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.8.1",
+    "@tanstack/react-form": "^1.25.0",
+    "@tanstack/react-form-devtools": "^0.2.1",
     "@tanstack/react-query": "^5.90.10",
     "@tanstack/react-query-devtools": "^5.84.2",
     "@tanstack/react-router": "^1.136.8",
@@ -29,7 +31,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.0.6",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
