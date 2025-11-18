@@ -1,18 +1,14 @@
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-} from '@tanstack/react-router'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-import type { ReactNode } from 'react'
-import type { QueryClient } from '@tanstack/react-query'
-import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
-import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools'
-import appCss from '@/styles.css?url'
-import Header from '@/components/header'
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import type { ReactNode } from 'react';
+import type { QueryClient } from '@tanstack/react-query';
+import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
+import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
+import appCss from '@/styles.css?url';
+import Header from '@/components/header';
 
 interface MyRouterContext {
-  queryClient: QueryClient
+  queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
@@ -37,10 +33,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
 
-  shellComponent: RootDocument,
-})
+  shellComponent: RootShellComponent,
+});
 
-function RootDocument({ children }: { children: ReactNode }) {
+function RootShellComponent({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head>
@@ -58,5 +54,5 @@ function RootDocument({ children }: { children: ReactNode }) {
         <Scripts />
       </body>
     </html>
-  )
+  );
 }

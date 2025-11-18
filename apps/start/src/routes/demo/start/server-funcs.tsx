@@ -1,21 +1,19 @@
-import fs from 'node:fs'
-import { useCallback, useState } from 'react'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { createMiddleware, createServerFn } from '@tanstack/react-start'
+import fs from 'node:fs';
+import { useCallback, useState } from 'react';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { createMiddleware, createServerFn } from '@tanstack/react-start';
 
 type Todo = {
-  id: number
-  name: string
-}
+  id: number;
+  name: string;
+};
 
-const loggingMiddleware = createMiddleware().server(
-  async ({ next, request }) => {
-    console.log(`[${request.method}]`, request.url)
-    return next()
-  },
-)
+const loggingMiddleware = createMiddleware().server(async ({ next, request }) => {
+  console.log(`[${request.method}]`, request.url);
+  return next();
+});
 
-const TODOS_FILE = 'todos.json'
+const TODOS_FILE = 'todos.json';
 
 async function readTodos(): Promise<Array<Todo>> {
   return JSON.parse(
@@ -29,57 +27,57 @@ async function readTodos(): Promise<Array<Todo>> {
         2,
       ),
     ),
-  ) as Array<Todo>
+  ) as Array<Todo>;
 }
 
 const getTodos = createServerFn({
   method: 'GET',
 })
   .middleware([loggingMiddleware])
-  .handler(async () => await readTodos())
+  .handler(async () => await readTodos());
 
 const addTodo = createServerFn({ method: 'POST' })
   .middleware([loggingMiddleware])
   .inputValidator((d: string) => d)
   .handler(async ({ data }) => {
-    const todos = await readTodos()
-    todos.push({ id: todos.length + 1, name: data })
-    await fs.promises.writeFile(TODOS_FILE, JSON.stringify(todos, null, 2))
-    return todos
-  })
+    const todos = await readTodos();
+    todos.push({ id: todos.length + 1, name: data });
+    await fs.promises.writeFile(TODOS_FILE, JSON.stringify(todos, null, 2));
+    return todos;
+  });
 
 export const Route = createFileRoute('/demo/start/server-funcs')({
   component: Home,
   loader: async () => await getTodos(),
-})
+});
 
 function Home() {
-  const router = useRouter()
-  const todos = Route.useLoaderData()
+  const router = useRouter();
+  const todos = Route.useLoaderData();
 
-  const [todo, setTodo] = useState('')
+  const [todo, setTodo] = useState('');
 
   const submitTodo = useCallback(async () => {
-    await addTodo({ data: todo })
-    setTodo('')
-    await router.invalidate()
-  }, [router, todo])
+    await addTodo({ data: todo });
+    setTodo('');
+    await router.invalidate();
+  }, [router, todo]);
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-800 to-black p-4 text-white"
+      className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-800 to-black p-4 text-white"
       style={{
         backgroundImage:
           'radial-gradient(50% 50% at 20% 60%, #23272a 0%, #18181b 50%, #000000 100%)',
       }}
     >
-      <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-        <h1 className="text-2xl mb-4">Start Server Functions - Todo Example</h1>
+      <div className="w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md">
+        <h1 className="mb-4 text-2xl">Start Server Functions - Todo Example</h1>
         <ul className="mb-4 space-y-2">
-          {todos.map((t) => (
+          {todos.map(t => (
             <li
               key={t.id}
-              className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
+              className="rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm"
             >
               <span className="text-lg text-white">{t.name}</span>
             </li>
@@ -89,24 +87,24 @@ function Home() {
           <input
             type="text"
             value={todo}
-            onChange={(e) => setTodo(e.target.value)}
-            onKeyDown={(e) => {
+            onChange={e => setTodo(e.target.value)}
+            onKeyDown={e => {
               if (e.key === 'Enter') {
-                submitTodo()
+                submitTodo();
               }
             }}
             placeholder="Enter a new todo..."
-            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 backdrop-blur-sm focus:border-transparent focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
           <button
             disabled={todo.trim().length === 0}
             onClick={submitTodo}
-            className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors"
+            className="rounded-lg bg-blue-500 px-4 py-3 font-bold text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-500/50"
           >
             Add todo
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
