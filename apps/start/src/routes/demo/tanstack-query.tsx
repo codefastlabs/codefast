@@ -1,36 +1,64 @@
 import { useCallback, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
-
-export const Route = createFileRoute('/demo/tanstack-query')({
-  component: TanStackQueryDemo,
-})
+import {
+  queryOptions,
+  useMutation,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 
 type Todo = {
   id: number
   name: string
 }
 
-function TanStackQueryDemo() {
-  const { data, refetch } = useQuery<Array<Todo>>({
+export function todosQueryOptions() {
+  return queryOptions({
     queryKey: ['todos'],
-    queryFn: () => fetch('/demo/api/tq-todos').then((res) => res.json()),
-    initialData: [],
+    queryFn: async (): Promise<Array<Todo>> => {
+      const response = await fetch('/demo/api/tq-todos')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch todos')
+      }
+
+      return response.json()
+    },
   })
+}
+
+export const Route = createFileRoute('/demo/tanstack-query')({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(todosQueryOptions())
+  },
+  component: TanStackQueryDemo,
+})
+
+function TanStackQueryDemo() {
+  const { data, refetch } = useSuspenseQuery(todosQueryOptions())
 
   const { mutate: addTodo } = useMutation({
-    mutationFn: (todo: string) =>
-      fetch('/demo/api/tq-todos', {
+    mutationFn: async (todo: string): Promise<Todo> => {
+      const response = await fetch('/demo/api/tq-todos', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(todo),
-      }).then((res) => res.json()),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to add todo')
+      }
+
+      return response.json()
+    },
     onSuccess: () => refetch(),
   })
 
   const [todo, setTodo] = useState('')
 
-  const submitTodo = useCallback(async () => {
-    await addTodo(todo)
+  const submitTodo = useCallback(() => {
+    addTodo(todo)
     setTodo('')
   }, [addTodo, todo])
 
@@ -45,7 +73,7 @@ function TanStackQueryDemo() {
       <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
         <h1 className="text-2xl mb-4">TanStack Query Todos list</h1>
         <ul className="mb-4 space-y-2">
-          {data?.map((t) => (
+          {data.map((t) => (
             <li
               key={t.id}
               className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
@@ -58,9 +86,9 @@ function TanStackQueryDemo() {
           <input
             type="text"
             value={todo}
-            onChange={(e) => setTodo(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+            onChange={(event) => setTodo(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
                 submitTodo()
               }
             }}
