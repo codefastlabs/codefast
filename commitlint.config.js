@@ -8,7 +8,7 @@
 // Configuration constants
 const ERROR_LEVEL = 2;
 const MAX_HEADER_LENGTH = 150;
-const MAX_BODY_LINE_LENGTH = 450;
+const MAX_BODY_LINE_LENGTH = 550;
 
 const config = {
   extends: ['@commitlint/config-conventional'],
