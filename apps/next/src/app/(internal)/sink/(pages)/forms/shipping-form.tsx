@@ -1,5 +1,5 @@
-import { Badge } from "@codefast/ui/badge";
-import { Checkbox } from "@codefast/ui/checkbox";
+import { Badge } from '@codefast/ui/badge';
+import { Checkbox } from '@codefast/ui/checkbox';
 import {
   Field,
   FieldContent,
@@ -9,18 +9,16 @@ import {
   FieldLegend,
   FieldSet,
   FieldTitle,
-} from "@codefast/ui/field";
-import { Input } from "@codefast/ui/input";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { Textarea } from "@codefast/ui/textarea";
+} from '@codefast/ui/field';
+import { Input } from '@codefast/ui/input';
+import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
+import { Textarea } from '@codefast/ui/textarea';
 
 export function ShippingForm() {
   return (
     <FieldSet>
       <FieldLegend>Shipping Details</FieldLegend>
-      <FieldDescription>
-        Please provide your shipping details so we can deliver your order.
-      </FieldDescription>
+      <FieldDescription>Please provide your shipping details so we can deliver your order.</FieldDescription>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="street-address">Street Address</FieldLabel>
@@ -37,7 +35,7 @@ export function ShippingForm() {
             <Field orientation="horizontal">
               <RadioGroupItem value="standard" id="shipping-method-1" />
               <FieldLabel htmlFor="shipping-method-1" className="font-normal">
-                Standard{" "}
+                Standard{' '}
                 <Badge className="rounded-full py-px" variant="outline">
                   Free
                 </Badge>
@@ -65,9 +63,7 @@ export function ShippingForm() {
                 <Checkbox value="gift-wrapping" id="gift-wrapping" aria-label="Gift Wrapping" />
                 <FieldContent>
                   <FieldTitle>Gift Wrapping</FieldTitle>
-                  <FieldDescription>
-                    Add elegant gift wrapping with a personalized message.
-                  </FieldDescription>
+                  <FieldDescription>Add elegant gift wrapping with a personalized message.</FieldDescription>
                 </FieldContent>
               </Field>
             </FieldLabel>
@@ -76,9 +72,7 @@ export function ShippingForm() {
                 <Checkbox value="insurance" id="insurance" aria-label="Package Insurance" />
                 <FieldContent>
                   <FieldTitle>Package Insurance</FieldTitle>
-                  <FieldDescription>
-                    Protect your shipment with comprehensive insurance coverage.
-                  </FieldDescription>
+                  <FieldDescription>Protect your shipment with comprehensive insurance coverage.</FieldDescription>
                 </FieldContent>
               </Field>
             </FieldLabel>
@@ -91,9 +85,7 @@ export function ShippingForm() {
                 />
                 <FieldContent>
                   <FieldTitle>Signature Confirmation</FieldTitle>
-                  <FieldDescription>
-                    Require recipient signature upon delivery for added security.
-                  </FieldDescription>
+                  <FieldDescription>Require recipient signature upon delivery for added security.</FieldDescription>
                 </FieldContent>
               </Field>
             </FieldLabel>

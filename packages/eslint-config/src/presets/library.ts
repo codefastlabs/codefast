@@ -1,27 +1,23 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import { warningTypescriptRules } from "@/core/typescript";
-import { prettierRules } from "@/plugins/tooling/prettier";
-import { basePreset } from "@/presets/base";
-import { composeConfig } from "@/utils/compose-config";
+import { warningTypescriptRules } from '@/core/typescript';
+import { prettierRules } from '@/plugins/tooling/prettier';
+import { basePreset } from '@/presets/base';
+import { composeConfig } from '@/utils/compose-config';
 
 const libraryStrictRules: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts}"],
-    name: "@codefast/eslint-config/presets/library/strict",
+    files: ['**/*.{js,mjs,cjs,ts}'],
+    name: '@codefast/eslint-config/presets/library/strict',
     rules: {
       // Apply TypeScript warning rules
       ...warningTypescriptRules,
 
-      "@typescript-eslint/no-explicit-any": "error",
-      "no-var": "error",
-      "prefer-const": "error",
+      '@typescript-eslint/no-explicit-any': 'error',
+      'no-var': 'error',
+      'prefer-const': 'error',
     },
   },
 ];
 
-export const libraryPreset: Linter.Config[] = composeConfig(
-  basePreset,
-  libraryStrictRules,
-  prettierRules,
-);
+export const libraryPreset: Linter.Config[] = composeConfig(basePreset, libraryStrictRules, prettierRules);

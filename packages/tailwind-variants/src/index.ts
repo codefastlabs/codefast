@@ -12,7 +12,7 @@
  * These functions allow you to create variant-based styling functions
  * for your components with full TypeScript support.
  */
-export { createTV, tv } from "@/core/tv";
+export { createTV, tv } from '@/core/tv';
 
 /**
  * Export utility functions for class name manipulation.
@@ -20,7 +20,7 @@ export { createTV, tv } from "@/core/tv";
  * These utilities help with merging and combining CSS classes
  * in a consistent and type-safe way.
  */
-export { cn, cx } from "@/utilities/utils";
+export { cn, cx } from '@/utilities/utils';
 
 /**
  * Export TypeScript type definitions.
@@ -52,4 +52,4 @@ export type {
   TailwindVariantsReturnType,
   VariantFunctionType,
   VariantProps,
-} from "@/types/types";
+} from '@/types/types';

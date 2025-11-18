@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { AspectRatio } from "@codefast/ui/aspect-ratio";
+import { AspectRatio } from '@codefast/ui/aspect-ratio';
 
 export function AspectRatioDemo() {
   return (

@@ -1,6 +1,6 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import pluginPerfectionist from "eslint-plugin-perfectionist";
+import pluginPerfectionist from 'eslint-plugin-perfectionist';
 
 /**
  * Rules that are set to "error" for perfectionist plugin
@@ -13,13 +13,13 @@ const errorPerfectionistRules: Linter.RulesRecord = {
    * This rule ensures that all export statements are arranged in ascending alphabetical order,
    * making it easier to locate specific exports in a file.
    */
-  "perfectionist/sort-exports": [
-    "error",
+  'perfectionist/sort-exports': [
+    'error',
     {
       ignoreCase: true,
-      order: "asc",
+      order: 'asc',
       partitionByNewLine: true,
-      type: "alphabetical",
+      type: 'alphabetical',
     },
   ],
 
@@ -29,37 +29,37 @@ const errorPerfectionistRules: Linter.RulesRecord = {
    * and sorts them alphabetically within each group, improving code readability and maintenance.
    * It takes precedence over the import/order rule.
    */
-  "perfectionist/sort-imports": [
-    "error",
+  'perfectionist/sort-imports': [
+    'error',
     {
       groups: [
-        "side-effect",
-        "type",
-        ["builtin", "external"],
-        "internal-type",
-        "internal",
-        ["parent-type", "sibling-type", "index-type"],
-        ["parent", "sibling", "index"],
-        "object",
-        "unknown",
+        'side-effect',
+        'type',
+        ['builtin', 'external'],
+        'internal-type',
+        'internal',
+        ['parent-type', 'sibling-type', 'index-type'],
+        ['parent', 'sibling', 'index'],
+        'object',
+        'unknown',
       ],
       ignoreCase: true,
-      internalPattern: ["@/*", "~/*"],
-      newlinesBetween: "always",
-      order: "asc",
-      type: "alphabetical",
+      internalPattern: ['@/*', '~/*'],
+      newlinesBetween: 'always',
+      order: 'asc',
+      type: 'alphabetical',
     },
   ],
 
   /**
    * Sorts named import members alphabetically, matching WebStorm's "Sort import members".
    */
-  "perfectionist/sort-named-imports": [
-    "error",
+  'perfectionist/sort-named-imports': [
+    'error',
     {
       ignoreCase: true,
-      order: "asc",
-      type: "alphabetical",
+      order: 'asc',
+      type: 'alphabetical',
     },
   ],
 
@@ -69,13 +69,13 @@ const errorPerfectionistRules: Linter.RulesRecord = {
    * to scan and find specific properties, especially in large interface definitions.
    * Particularly useful for TypeScript exports that define data structures.
    */
-  "perfectionist/sort-interfaces": [
-    "error",
+  'perfectionist/sort-interfaces': [
+    'error',
     {
       ignoreCase: true,
-      order: "asc",
+      order: 'asc',
       partitionByNewLine: true,
-      type: "alphabetical",
+      type: 'alphabetical',
     },
   ],
 
@@ -85,13 +85,13 @@ const errorPerfectionistRules: Linter.RulesRecord = {
    * making it easier to scan export lists and find specific exported members.
    * Especially helpful in files with many named exports.
    */
-  "perfectionist/sort-named-exports": [
-    "error",
+  'perfectionist/sort-named-exports': [
+    'error',
     {
       ignoreCase: true,
-      order: "asc",
+      order: 'asc',
       partitionByNewLine: true,
-      type: "alphabetical",
+      type: 'alphabetical',
     },
   ],
 
@@ -101,19 +101,19 @@ const errorPerfectionistRules: Linter.RulesRecord = {
    * making objects easier to read and properties easier to locate, especially in
    * configuration objects and export definitions.
    */
-  "perfectionist/sort-objects": [
-    "error",
+  'perfectionist/sort-objects': [
+    'error',
     {
-      type: "unsorted",
+      type: 'unsorted',
       useConfigurationIf: {
-        callingFunctionNamePattern: "^(cn|cx|clsx|tv|cva|classNames)$",
+        callingFunctionNamePattern: '^(cn|cx|clsx|tv|cva|classNames)$',
       },
     },
     {
       ignoreCase: true,
-      order: "asc",
+      order: 'asc',
       partitionByNewLine: true,
-      type: "alphabetical",
+      type: 'alphabetical',
     },
   ],
 
@@ -123,21 +123,21 @@ const errorPerfectionistRules: Linter.RulesRecord = {
    * making it easier to read and maintain type definitions, and helping to prevent
    * accidental duplication of union members.
    */
-  "perfectionist/sort-union-types": [
-    "error",
+  'perfectionist/sort-union-types': [
+    'error',
     {
       ignoreCase: true,
-      order: "asc",
+      order: 'asc',
       partitionByNewLine: true,
-      type: "alphabetical",
+      type: 'alphabetical',
     },
   ],
 };
 
 export const perfectionistRules: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts,tsx}"],
-    name: "@codefast/eslint-config/core/perfectionist",
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    name: '@codefast/eslint-config/core/perfectionist',
     plugins: {
       perfectionist: pluginPerfectionist,
     },

@@ -1,7 +1,7 @@
-import { useAnimatedValue } from "@/hooks/use-animated-value";
-import { act, renderHook } from "@testing-library/react";
+import { useAnimatedValue } from '@/hooks/use-animated-value';
+import { act, renderHook } from '@testing-library/react';
 
-describe("useAnimatedValue", () => {
+describe('useAnimatedValue', () => {
   let originalRequestAnimationFrame: typeof globalThis.requestAnimationFrame;
   let originalCancelAnimationFrame: typeof globalThis.cancelAnimationFrame;
   let originalPerformanceNow: typeof performance.now;
@@ -53,13 +53,13 @@ describe("useAnimatedValue", () => {
     jest.useRealTimers();
   });
 
-  test("returns the target value immediately when animate is false", () => {
+  test('returns the target value immediately when animate is false', () => {
     const { result } = renderHook(() => useAnimatedValue(100, 1000, false));
 
     expect(result.current).toBe(100);
   });
 
-  test("returns the target value immediately when duration <= 0", () => {
+  test('returns the target value immediately when duration <= 0', () => {
     const { result } = renderHook(() => useAnimatedValue(100, 0, true));
 
     expect(result.current).toBe(100);
@@ -69,13 +69,13 @@ describe("useAnimatedValue", () => {
     expect(negativeResult.current).toBe(100);
   });
 
-  test("returns the target value immediately when there is no value change", () => {
+  test('returns the target value immediately when there is no value change', () => {
     const { result } = renderHook(() => useAnimatedValue(100, 1000, true));
 
     expect(result.current).toBe(100);
   });
 
-  test("animates the value over time", () => {
+  test('animates the value over time', () => {
     // Start with a value of 0 and animate to 100
     const { rerender, result } = renderHook(
       ({ animate, duration, targetValue }) => useAnimatedValue(targetValue, duration, animate),
@@ -130,7 +130,7 @@ describe("useAnimatedValue", () => {
     expect(result.current).toBe(100);
   });
 
-  test("calls cancelAnimationFrame when unmounted", () => {
+  test('calls cancelAnimationFrame when unmounted', () => {
     const { rerender, unmount } = renderHook(
       ({ animate, duration, targetValue }) => useAnimatedValue(targetValue, duration, animate),
       { initialProps: { animate: true, duration: 1000, targetValue: 0 } },
@@ -143,7 +143,7 @@ describe("useAnimatedValue", () => {
     expect(cancelAnimationFrameMock).toHaveBeenCalledWith(1);
   });
 
-  test("stops animation when animate changes from true to false", () => {
+  test('stops animation when animate changes from true to false', () => {
     const { rerender, result } = renderHook(
       ({ animate, duration, targetValue }) => useAnimatedValue(targetValue, duration, animate),
       { initialProps: { animate: true, duration: 1000, targetValue: 0 } },
@@ -173,7 +173,7 @@ describe("useAnimatedValue", () => {
     expect(cancelAnimationFrameMock).toHaveBeenCalledWith(1);
   });
 
-  test("changes the target value during animation", () => {
+  test('changes the target value during animation', () => {
     const { rerender, result } = renderHook(
       ({ animate, duration, targetValue }) => useAnimatedValue(targetValue, duration, animate),
       { initialProps: { animate: true, duration: 1000, targetValue: 0 } },
@@ -225,7 +225,7 @@ describe("useAnimatedValue", () => {
     expect(result.current).toBe(200);
   });
 
-  test("changes duration during animation", () => {
+  test('changes duration during animation', () => {
     const { rerender, result } = renderHook(
       ({ animate, duration, targetValue }) => useAnimatedValue(targetValue, duration, animate),
       { initialProps: { animate: true, duration: 1000, targetValue: 0 } },

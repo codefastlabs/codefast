@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { VariantProps } from '@codefast/tailwind-variants';
 
-import { cn, tv } from "@codefast/tailwind-variants";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { cn, tv } from '@codefast/tailwind-variants';
+import * as SeparatorPrimitive from '@radix-ui/react-separator';
 
 /* -----------------------------------------------------------------------------
  * Variant: Separator
  * -------------------------------------------------------------------------- */
 
 const separatorVariants = tv({
-  base: "bg-border relative flex shrink-0 items-center",
+  base: 'bg-border relative flex shrink-0 items-center',
   defaultVariants: {
-    align: "center",
-    orientation: "horizontal",
+    align: 'center',
+    orientation: 'horizontal',
   },
   variants: {
     align: {
-      center: "justify-center",
-      end: "justify-end",
-      start: "justify-start",
+      center: 'justify-center',
+      end: 'justify-end',
+      start: 'justify-start',
     },
     orientation: {
-      horizontal: "h-px w-full",
-      vertical: "h-full w-px flex-col",
+      horizontal: 'h-px w-full',
+      vertical: 'h-full w-px flex-col',
     },
   },
 });
@@ -36,15 +36,9 @@ const separatorVariants = tv({
 
 interface SeparatorProps
   extends ComponentProps<typeof SeparatorPrimitive.Root>,
-    Omit<VariantProps<typeof separatorVariants>, "orientation"> {}
+    Omit<VariantProps<typeof separatorVariants>, 'orientation'> {}
 
-function Separator({
-  align,
-  className,
-  decorative = true,
-  orientation,
-  ...props
-}: SeparatorProps): JSX.Element {
+function Separator({ align, className, decorative = true, orientation, ...props }: SeparatorProps): JSX.Element {
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}
@@ -60,12 +54,12 @@ function Separator({
  * Component: SeparatorItem
  * -------------------------------------------------------------------------- */
 
-type SeparatorItemProps = ComponentProps<"div">;
+type SeparatorItemProps = ComponentProps<'div'>;
 
 function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
   return (
     <div
-      className={cn("bg-background text-muted-foreground absolute mx-2 px-2 text-sm", className)}
+      className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
       data-slot="separator-item"
       {...props}
     />

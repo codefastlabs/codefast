@@ -1,4 +1,4 @@
-import { Separator } from "@codefast/ui/separator";
+import { Separator } from '@codefast/ui/separator';
 
 export function SeparatorDemo() {
   return (

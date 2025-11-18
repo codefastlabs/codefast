@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type { RefObject } from "react";
+import type { RefObject } from 'react';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 /**
  * Default options for MutationObserver observing common mutation types.

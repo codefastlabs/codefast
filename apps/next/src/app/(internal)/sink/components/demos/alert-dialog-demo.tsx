@@ -8,8 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@codefast/ui/alert-dialog";
-import { Button } from "@codefast/ui/button";
+} from '@codefast/ui/alert-dialog';
+import { Button } from '@codefast/ui/button';
 
 export function AlertDialogDemo() {
   return (
@@ -21,8 +21,8 @@ export function AlertDialogDemo() {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your account and remove your
-            data from our servers.
+            This action cannot be undone. This will permanently delete your account and remove your data from our
+            servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

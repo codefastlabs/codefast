@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Checkbox } from "@codefast/ui/checkbox";
-import { Label } from "@codefast/ui/label";
+import { Checkbox } from '@codefast/ui/checkbox';
+import { Label } from '@codefast/ui/label';
 
 export function CheckboxDemo() {
   return (
@@ -31,9 +31,7 @@ export function CheckboxDemo() {
         />
         <div className="grid gap-1.5 font-normal">
           <p className="text-sm leading-none font-medium">Enable notifications</p>
-          <p className="text-muted-foreground text-sm">
-            You can enable or disable notifications at any time.
-          </p>
+          <p className="text-muted-foreground text-sm">You can enable or disable notifications at any time.</p>
         </div>
       </Label>
     </div>

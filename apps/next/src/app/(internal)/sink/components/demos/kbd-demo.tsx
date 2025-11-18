@@ -1,11 +1,11 @@
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
-import { CommandIcon, WavesIcon } from "lucide-react";
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import { CommandIcon, WavesIcon } from 'lucide-react';
 
-import { Button } from "@codefast/ui/button";
-import { ButtonGroup } from "@codefast/ui/button-group";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
-import { Kbd, KbdGroup } from "@codefast/ui/kbd";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
+import { Button } from '@codefast/ui/button';
+import { ButtonGroup } from '@codefast/ui/button-group';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
+import { Kbd, KbdGroup } from '@codefast/ui/kbd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
 export function KbdDemo() {
   return (
@@ -78,7 +78,7 @@ export function KbdDemo() {
           </TooltipTrigger>
           <TooltipContent>
             <div className="flex items-center gap-2">
-              Print Document{" "}
+              Print Document{' '}
               <KbdGroup>
                 <Kbd>Ctrl</Kbd>
                 <Kbd>P</Kbd>

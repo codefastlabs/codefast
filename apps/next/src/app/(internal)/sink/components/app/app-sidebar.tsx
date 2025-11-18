@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import * as React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   AudioWaveform,
   BookOpen,
@@ -13,13 +13,13 @@ import {
   SearchIcon,
   Settings2,
   SquareTerminal,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { NavUser } from "@/app/(internal)/sink/components/app/nav-user";
-import { TeamSwitcher } from "@/app/(internal)/sink/components/app/team-switcher";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
-import { Label } from "@codefast/ui/label";
+import { NavUser } from '@/app/(internal)/sink/components/app/nav-user';
+import { TeamSwitcher } from '@/app/(internal)/sink/components/app/team-switcher';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui/collapsible';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
+import { Label } from '@codefast/ui/label';
 import {
   Sidebar,
   SidebarContent,
@@ -35,122 +35,122 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@codefast/ui/sidebar";
-import { componentRegistry } from "@/app/(internal)/sink/component-registry";
+} from '@codefast/ui/sidebar';
+import { componentRegistry } from '@/app/(internal)/sink/component-registry';
 
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: 'shadcn',
+    email: 'm@example.com',
+    avatar: '/avatars/shadcn.jpg',
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: 'Acme Inc',
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: 'Enterprise',
     },
     {
-      name: "Acme Corp.",
+      name: 'Acme Corp.',
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: 'Startup',
     },
     {
-      name: "Evil Corp.",
+      name: 'Evil Corp.',
       logo: Command,
-      plan: "Free",
+      plan: 'Free',
     },
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
+      title: 'Playground',
+      url: '#',
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: 'History',
+          url: '#',
         },
         {
-          title: "Starred",
-          url: "#",
+          title: 'Starred',
+          url: '#',
         },
         {
-          title: "Settings",
-          url: "#",
+          title: 'Settings',
+          url: '#',
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
+      title: 'Models',
+      url: '#',
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: 'Genesis',
+          url: '#',
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: 'Explorer',
+          url: '#',
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: 'Quantum',
+          url: '#',
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
+      title: 'Documentation',
+      url: '#',
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: 'Introduction',
+          url: '#',
         },
         {
-          title: "Get Started",
-          url: "#",
+          title: 'Get Started',
+          url: '#',
         },
         {
-          title: "Tutorials",
-          url: "#",
+          title: 'Tutorials',
+          url: '#',
         },
         {
-          title: "Changelog",
-          url: "#",
+          title: 'Changelog',
+          url: '#',
         },
       ],
     },
     {
-      title: "Settings",
-      url: "#",
+      title: 'Settings',
+      url: '#',
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "#",
+          title: 'General',
+          url: '#',
         },
         {
-          title: "Team",
-          url: "#",
+          title: 'Team',
+          url: '#',
         },
         {
-          title: "Billing",
-          url: "#",
+          title: 'Billing',
+          url: '#',
         },
         {
-          title: "Limits",
-          url: "#",
+          title: 'Limits',
+          url: '#',
         },
       ],
     },
   ],
   components: Object.values(componentRegistry)
-    .filter((item) => item.type === "registry:ui")
+    .filter((item) => item.type === 'registry:ui')
     .sort((a, b) => a.name.localeCompare(b.name)),
 };
 
@@ -186,12 +186,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarMenu>
             {data.navMain.map((item) => (
-              <Collapsible
-                key={item.title}
-                asChild
-                defaultOpen={item.isActive}
-                className="group/collapsible"
-              >
+              <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title}>
@@ -220,30 +215,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarMenu>
-            {["registry:ui", "registry:page", "registry:block"].map((type) => {
-              const typeComponents = Object.entries(componentRegistry).filter(
-                ([, item]) => item.type === type,
-              );
+            {['registry:ui', 'registry:page', 'registry:block'].map((type) => {
+              const typeComponents = Object.entries(componentRegistry).filter(([, item]) => item.type === type);
               if (typeComponents.length === 0) {
                 return null;
               }
 
               return (
-                <Collapsible
-                  key={type}
-                  asChild
-                  defaultOpen={pathname.includes("/sink/")}
-                  className="group/collapsible"
-                >
+                <Collapsible key={type} asChild defaultOpen={pathname.includes('/sink/')} className="group/collapsible">
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton>
                         <span>
-                          {type === "registry:ui"
-                            ? "Components"
-                            : type === "registry:page"
-                              ? "Pages"
-                              : "Blocks"}
+                          {type === 'registry:ui' ? 'Components' : type === 'registry:page' ? 'Pages' : 'Blocks'}
                         </span>
                         <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                       </SidebarMenuButton>
@@ -255,9 +239,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             <SidebarMenuSubButton asChild isActive={pathname === item.href}>
                               <Link href={item.href}>
                                 <span>{item.name}</span>
-                                {item.label && (
-                                  <span className="flex size-2 rounded-full bg-blue-500" />
-                                )}
+                                {item.label && <span className="flex size-2 rounded-full bg-blue-500" />}
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

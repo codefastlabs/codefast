@@ -7,17 +7,17 @@ import type {
   MouseEventHandler,
   PointerEventHandler,
   RefObject,
-} from "react";
+} from 'react';
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import type { Scope } from "@radix-ui/react-context";
+import type { Scope } from '@radix-ui/react-context';
 
-import * as InputPrimitive from "@/primitives/input";
-import { createInputScope } from "@/primitives/input";
-import { composeEventHandlers } from "@radix-ui/primitive";
-import { createContextScope } from "@radix-ui/react-context";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import * as InputPrimitive from '@/primitives/input';
+import { createInputScope } from '@/primitives/input';
+import { composeEventHandlers } from '@radix-ui/primitive';
+import { createContextScope } from '@radix-ui/react-context';
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 
 /* -----------------------------------------------------------------------------
  * Context: InputNumber
@@ -26,7 +26,7 @@ import { useControllableState } from "@radix-ui/react-use-controllable-state";
 /**
  * The name of the InputNumber component constant.
  */
-const NUMBER_INPUT_NAME = "InputNumber";
+const NUMBER_INPUT_NAME = 'InputNumber';
 
 /**
  * Props that include an optional scope for the InputNumber component.
@@ -36,9 +36,7 @@ type ScopedProps<P> = P & {
   __scopeInputNumber?: Scope;
 };
 
-const [createInputNumberContext, createInputNumberScope] = createContextScope(NUMBER_INPUT_NAME, [
-  createInputScope,
-]);
+const [createInputNumberContext, createInputNumberScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
 /**
@@ -154,7 +152,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
     ariaDecrementLabel,
     ariaIncrementLabel,
     defaultValue,
-    formatOptions = { minimumFractionDigits: 0, style: "decimal" },
+    formatOptions = { minimumFractionDigits: 0, style: 'decimal' },
     id,
     locale,
     max,
@@ -179,10 +177,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   });
 
   /** Separators used for number formatting based on locale */
-  const { decimalSeparator, thousandSeparator } = useMemo(
-    () => getNumberFormatSeparators(locale),
-    [locale],
-  );
+  const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   /**
    * Formats a number value into a string representation
@@ -192,7 +187,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   const formatValue = useCallback(
     (inputValue?: number): string => {
       if (inputValue === undefined || Number.isNaN(inputValue)) {
-        return "";
+        return '';
       }
 
       return new Intl.NumberFormat(locale, formatOptions).format(inputValue);
@@ -207,28 +202,24 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
    */
   const parseValue = useCallback(
     (inputValue: number | readonly string[] | string | undefined): number => {
-      if (typeof inputValue === "number") {
+      if (typeof inputValue === 'number') {
         return clamp(inputValue, min, max);
       }
 
-      if (typeof inputValue !== "string") {
+      if (typeof inputValue !== 'string') {
         return Number.NaN;
       }
 
-      const cleanedValue = inputValue.trim().replaceAll(/[^\d.,\-()]/g, "");
+      const cleanedValue = inputValue.trim().replaceAll(/[^\d.,\-()]/g, '');
 
-      if (cleanedValue === "") {
+      if (cleanedValue === '') {
         return Number.NaN;
       }
 
-      const normalizedValue = normalizeInputValue(
-        cleanedValue,
-        thousandSeparator,
-        decimalSeparator,
-      );
+      const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
       let parsedValue = Number.parseFloat(normalizedValue);
 
-      if (formatOptions.style === "percent") {
+      if (formatOptions.style === 'percent') {
         parsedValue /= 100;
       }
 
@@ -320,23 +311,14 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
 /**
  * The name of the InputNumberField component constant.
  */
-const NUMBER_INPUT_FIELD_NAME = "InputNumberField";
+const NUMBER_INPUT_FIELD_NAME = 'InputNumberField';
 
 /**
  * Defines the props for the `InputNumberField` component.
  */
 type InputNumberFieldProps = Omit<
   ComponentProps<typeof InputPrimitive.Field>,
-  | "defaultValue"
-  | "disabled"
-  | "id"
-  | "max"
-  | "min"
-  | "onChange"
-  | "prefix"
-  | "readOnly"
-  | "step"
-  | "value"
+  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
 >;
 
 function InputNumberField({
@@ -393,25 +375,25 @@ function InputNumberField({
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       switch (event.key) {
-        case "ArrowUp": {
+        case 'ArrowUp': {
           onIncrement();
           event.preventDefault();
           break;
         }
 
-        case "PageUp": {
+        case 'PageUp': {
           onIncrementToMax();
           event.preventDefault();
           break;
         }
 
-        case "ArrowDown": {
+        case 'ArrowDown': {
           onDecrement();
           event.preventDefault();
           break;
         }
 
-        case "PageDown": {
+        case 'PageDown': {
           onDecrementToMin();
           event.preventDefault();
           break;
@@ -432,39 +414,39 @@ function InputNumberField({
    */
   const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
     switch (event.key) {
-      case "ArrowUp":
+      case 'ArrowUp':
 
-      case "ArrowDown":
+      case 'ArrowDown':
 
-      case "ArrowLeft":
+      case 'ArrowLeft':
 
-      case "ArrowRight":
+      case 'ArrowRight':
 
-      case "PageUp":
+      case 'PageUp':
 
-      case "PageDown":
+      case 'PageDown':
 
-      case "Tab":
+      case 'Tab':
 
-      case "Escape":
+      case 'Escape':
 
-      case "Enter":
+      case 'Enter':
 
-      case "Backspace":
+      case 'Backspace':
 
-      case "Delete":
+      case 'Delete':
 
-      case "Home":
+      case 'Home':
 
-      case "End":
+      case 'End':
 
-      case ".":
+      case '.':
 
-      case ",":
+      case ',':
 
-      case "-":
+      case '-':
 
-      case "%": {
+      case '%': {
         return;
       }
 
@@ -487,7 +469,7 @@ function InputNumberField({
     (event) => {
       const inputElement = inputRef.current;
 
-      if (event.key !== "Enter" || !inputElement) {
+      if (event.key !== 'Enter' || !inputElement) {
         return;
       }
 
@@ -516,10 +498,7 @@ function InputNumberField({
    */
   const combinedKeyDownHandler = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
-      composeEventHandlers(
-        onKeyDown,
-        chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
-      )(event);
+      composeEventHandlers(onKeyDown, chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter))(event);
     },
     [onKeyDown, handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
   );
@@ -546,10 +525,10 @@ function InputNumberField({
 
     const inputElement = inputRef.current;
 
-    inputElement?.addEventListener("wheel", handleWheel);
+    inputElement?.addEventListener('wheel', handleWheel);
 
     return (): void => {
-      inputElement?.removeEventListener("wheel", handleWheel);
+      inputElement?.removeEventListener('wheel', handleWheel);
     };
   }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
@@ -580,10 +559,10 @@ function InputNumberField({
 
     const form = inputElement.form;
 
-    form?.addEventListener("reset", handleReset);
+    form?.addEventListener('reset', handleReset);
 
     return (): void => {
-      form?.removeEventListener("reset", handleReset);
+      form?.removeEventListener('reset', handleReset);
     };
   }, [defaultValue, inputRef, onChange, parseValue]);
 
@@ -613,18 +592,18 @@ function InputNumberField({
 /**
  * The name of the NumberStepperButton component constant.
  */
-const NUMBER_STEPPER_BUTTON_NAME = "NumberStepperButton";
+const NUMBER_STEPPER_BUTTON_NAME = 'NumberStepperButton';
 
 /**
  * Props for the NumberStepperButton component.
  */
-interface NumberStepperButtonProps extends ComponentProps<"button"> {
+interface NumberStepperButtonProps extends ComponentProps<'button'> {
   /**
    * The operation to perform when the button is pressed.
    * - `'increment'`: Increases the value.
    * - `'decrement'`: Decreases the value.
    */
-  operation: "decrement" | "increment";
+  operation: 'decrement' | 'increment';
 }
 
 function NumberStepperButton({
@@ -633,17 +612,8 @@ function NumberStepperButton({
   ...props
 }: ScopedProps<NumberStepperButtonProps>): JSX.Element {
   // Destructures relevant context values for the button functionality.
-  const {
-    ariaDecrementLabel,
-    ariaIncrementLabel,
-    disabled,
-    id,
-    max,
-    min,
-    onDecrement,
-    onIncrement,
-    value,
-  } = useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
+  const { ariaDecrementLabel, ariaIncrementLabel, disabled, id, max, min, onDecrement, onIncrement, value } =
+    useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
 
   const isDisabled = useMemo(() => {
     const atMin = min !== undefined && value !== undefined && value <= min;
@@ -692,7 +662,7 @@ function NumberStepperButton({
    * (`increment` or `decrement`).
    */
   const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(() => {
-    const action = operation === "increment" ? onIncrement : onDecrement;
+    const action = operation === 'increment' ? onIncrement : onDecrement;
 
     startActionInterval(action);
   }, [onDecrement, onIncrement, operation, startActionInterval]);
@@ -714,10 +684,10 @@ function NumberStepperButton({
    */
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLButtonElement>>(
     (event) => {
-      if (event.key === "Enter" || event.key === " ") {
+      if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
 
-        const action = operation === "increment" ? onIncrement : onDecrement;
+        const action = operation === 'increment' ? onIncrement : onDecrement;
 
         action();
       }
@@ -728,7 +698,7 @@ function NumberStepperButton({
   return (
     <button
       aria-controls={id}
-      aria-label={operation === "increment" ? ariaIncrementLabel : ariaDecrementLabel}
+      aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
       aria-live="polite"
       disabled={isDisabled}
       type="button"
@@ -747,10 +717,7 @@ function NumberStepperButton({
  * Component: InputNumberIncrementButton
  * -------------------------------------------------------------------------- */
 
-type InputNumberIncrementButtonProps = Omit<
-  ComponentProps<typeof NumberStepperButton>,
-  "operation"
->;
+type InputNumberIncrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, 'operation'>;
 
 function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="increment" {...props} />;
@@ -760,10 +727,7 @@ function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX
  * Component: InputNumberDecrementButton
  * -------------------------------------------------------------------------- */
 
-type InputNumberDecrementButtonProps = Omit<
-  ComponentProps<typeof NumberStepperButton>,
-  "operation"
->;
+type InputNumberDecrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, 'operation'>;
 
 function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="decrement" {...props} />;
@@ -806,15 +770,15 @@ interface NumberFormatSeparators {
 function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
   const numberFormat = new Intl.NumberFormat(locale);
   const parts = numberFormat.formatToParts(12_345.6);
-  let thousandSeparator = "";
-  let decimalSeparator = "";
+  let thousandSeparator = '';
+  let decimalSeparator = '';
 
   for (const part of parts) {
-    if (part.type === "group") {
+    if (part.type === 'group') {
       thousandSeparator = part.value;
     }
 
-    if (part.type === "decimal") {
+    if (part.type === 'decimal') {
       decimalSeparator = part.value;
     }
 
@@ -835,15 +799,11 @@ function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
  * @param decimalSeparator - The decimal separator to convert to standard dot notation
  * @returns Normalized string value ready for numeric conversion
  */
-function normalizeInputValue(
-  value: string,
-  thousandSeparator: string,
-  decimalSeparator: string,
-): string {
+function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
-    .replaceAll(new RegExp(`\\${thousandSeparator}`, "g"), "")
-    .replace(new RegExp(`\\${decimalSeparator}`), ".")
-    .replaceAll(/[()]/g, "-");
+    .replaceAll(new RegExp(`\\${thousandSeparator}`, 'g'), '')
+    .replace(new RegExp(`\\${decimalSeparator}`), '.')
+    .replaceAll(/[()]/g, '-');
 }
 
 /**
@@ -863,7 +823,7 @@ function isModifierKey(event: KeyboardEvent<HTMLInputElement>): boolean {
  * @returns True if the key is a function key
  */
 function isFunctionKey(key: string): boolean {
-  return key.startsWith("F") && key.length > 1;
+  return key.startsWith('F') && key.length > 1;
 }
 
 /**
@@ -884,11 +844,7 @@ function isNumberKey(key: string): boolean {
  * @param max - The maximum allowed value (defaults to Infinity)
  * @returns The clamped value
  */
-function clamp(
-  value: number,
-  min = Number.NEGATIVE_INFINITY,
-  max = Number.POSITIVE_INFINITY,
-): number {
+function clamp(value: number, min = Number.NEGATIVE_INFINITY, max = Number.POSITIVE_INFINITY): number {
   return Math.min(Math.max(value, min), max);
 }
 

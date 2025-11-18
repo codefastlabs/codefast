@@ -7,6 +7,6 @@
  */
 
 // Learn more: https://github.com/testing-library/jest-dom
-import "@testing-library/jest-dom";
+import '@testing-library/jest-dom';
 // Learn more: https://github.com/NickColley/jest-axe
-import "jest-axe/extend-expect";
+import 'jest-axe/extend-expect';

@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { addDays } from "date-fns";
-import { Clock2Icon } from "lucide-react";
-import { type DateRange } from "react-day-picker";
-import { es } from "react-day-picker/locale";
+import * as React from 'react';
+import { addDays } from 'date-fns';
+import { Clock2Icon } from 'lucide-react';
+import { type DateRange } from 'react-day-picker';
+import { es } from 'react-day-picker/locale';
 
-import { Button } from "@codefast/ui/button";
-import { Calendar, CalendarDayButton } from "@codefast/ui/calendar";
-import { Card, CardContent, CardFooter } from "@codefast/ui/card";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
+import { Button } from '@codefast/ui/button';
+import { Calendar, CalendarDayButton } from '@codefast/ui/calendar';
+import { Card, CardContent, CardFooter } from '@codefast/ui/card';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
 
 export function CalendarDemo() {
   return (
@@ -69,7 +69,7 @@ function CalendarRange() {
         selected={dateRange}
         onSelect={setDateRange}
         numberOfMonths={2}
-        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
         className="rounded-xl border shadow-sm"
       />
     </div>
@@ -100,9 +100,7 @@ function CalendarRangeMultipleMonths() {
 }
 
 function CalendarBookedDates() {
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date(new Date().getFullYear(), 1, 3),
-  );
+  const [date, setDate] = React.useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 3));
   const bookedDates = Array.from(
     { length: 15 },
     (_, i) => new Date(new Date().getFullYear(), new Date().getMonth(), 12 + i),
@@ -121,7 +119,7 @@ function CalendarBookedDates() {
           booked: bookedDates,
         }}
         modifiersClassNames={{
-          booked: "[&>button]:line-through opacity-100",
+          booked: '[&>button]:line-through opacity-100',
         }}
         className="rounded-xl border shadow-sm"
       />
@@ -193,7 +191,7 @@ function CalendarCustomDays() {
         className="rounded-xl border shadow-sm [--cell-size:--spacing(12)]"
         formatters={{
           formatMonthDropdown: (date) => {
-            return date.toLocaleString("default", { month: "long" });
+            return date.toLocaleString('default', { month: 'long' });
           },
         }}
         components={{
@@ -203,7 +201,7 @@ function CalendarCustomDays() {
             return (
               <CalendarDayButton day={day} modifiers={modifiers} {...props}>
                 {children}
-                {!modifiers.outside && <span>{isWeekend ? "$120" : "$100"}</span>}
+                {!modifiers.outside && <span>{isWeekend ? '$120' : '$100'}</span>}
               </CalendarDayButton>
             );
           },
@@ -214,9 +212,7 @@ function CalendarCustomDays() {
 }
 
 function CalendarWithPresets() {
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date(new Date().getFullYear(), 1, 12),
-  );
+  const [date, setDate] = React.useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 12));
   const [currentMonth, setCurrentMonth] = React.useState<Date>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   );
@@ -238,11 +234,11 @@ function CalendarWithPresets() {
         </CardContent>
         <CardFooter className="flex flex-wrap gap-2 border-t px-4 pt-4">
           {[
-            { label: "Today", value: 0 },
-            { label: "Tomorrow", value: 1 },
-            { label: "In 3 days", value: 3 },
-            { label: "In a week", value: 7 },
-            { label: "In 2 weeks", value: 14 },
+            { label: 'Today', value: 0 },
+            { label: 'Tomorrow', value: 1 },
+            { label: 'In 3 days', value: 3 },
+            { label: 'In a week', value: 7 },
+            { label: 'In 2 weeks', value: 14 },
           ].map((preset) => (
             <Button
               key={preset.value}

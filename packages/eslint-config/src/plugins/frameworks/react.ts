@@ -1,7 +1,7 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import pluginReact from "eslint-plugin-react";
-import pluginReactHooks from "eslint-plugin-react-hooks";
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 
 /**
  * Rules that are disabled (set to "off") for React plugin
@@ -13,13 +13,13 @@ export const disabledReactRules: Linter.RulesRecord = {
    * Disable prop-types validation
    * is Not needed when using TypeScript for type checking
    */
-  "react/prop-types": "off",
+  'react/prop-types': 'off',
 
   /**
    * Disable requirement for React to be in scope
    * is Not needed in React 17+ with the new JSX transform
    */
-  "react/react-in-jsx-scope": "off",
+  'react/react-in-jsx-scope': 'off',
 };
 
 /**
@@ -32,12 +32,12 @@ const errorReactRules: Linter.RulesRecord = {
    * Enforces consistent sorting of JSX props
    * Configured for better readability and consistency
    */
-  "react/jsx-sort-props": [
-    "error",
+  'react/jsx-sort-props': [
+    'error',
     {
       callbacksLast: true,
       ignoreCase: true,
-      multiline: "ignore",
+      multiline: 'ignore',
       noSortAlphabetically: false,
       reservedFirst: true,
       shorthandFirst: true,
@@ -49,10 +49,10 @@ const errorReactRules: Linter.RulesRecord = {
    * Prevents usage of unknown DOM properties
    * Configured to ignore specific properties that are commonly used
    */
-  "react/no-unknown-property": [
-    "error",
+  'react/no-unknown-property': [
+    'error',
     {
-      ignore: ["cmdk-input-wrapper"],
+      ignore: ['cmdk-input-wrapper'],
     },
   ],
 
@@ -60,8 +60,8 @@ const errorReactRules: Linter.RulesRecord = {
    * Prevents unstable nested components that can cause performance issues
    * Configured to disallow components as props to prevent re-rendering issues
    */
-  "react/no-unstable-nested-components": [
-    "error",
+  'react/no-unstable-nested-components': [
+    'error',
     {
       allowAsProps: false,
     },
@@ -71,12 +71,12 @@ const errorReactRules: Linter.RulesRecord = {
 export const reactRules: Linter.Config[] = [
   {
     ...pluginReactHooks.configs.flat.recommended,
-    files: ["**/*.{jsx,tsx}"],
-    name: "@codefast/eslint-config/plugins/react-hooks",
+    files: ['**/*.{jsx,tsx}'],
+    name: '@codefast/eslint-config/plugins/react-hooks',
   },
   {
-    files: ["**/*.{jsx,tsx}"],
-    name: "@codefast/eslint-config/plugins/react",
+    files: ['**/*.{jsx,tsx}'],
+    name: '@codefast/eslint-config/plugins/react',
     plugins: {
       react: pluginReact,
     },
@@ -91,7 +91,7 @@ export const reactRules: Linter.Config[] = [
     },
     settings: {
       react: {
-        version: "detect",
+        version: 'detect',
       },
     },
   },

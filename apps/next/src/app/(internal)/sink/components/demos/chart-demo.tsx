@@ -1,7 +1,7 @@
-import { ChartAreaDemo } from "@/app/(internal)/sink/components/demos/chart-area-demo";
-import { ChartBarDemo } from "@/app/(internal)/sink/components/demos/chart-bar-demo";
-import { ChartBarMixedDemo } from "@/app/(internal)/sink/components/demos/chart-bar-mixed-demo";
-import { ChartLineDemo } from "@/app/(internal)/sink/components/demos/chart-line-demo";
+import { ChartAreaDemo } from '@/app/(internal)/sink/components/demos/chart-area-demo';
+import { ChartBarDemo } from '@/app/(internal)/sink/components/demos/chart-bar-demo';
+import { ChartBarMixedDemo } from '@/app/(internal)/sink/components/demos/chart-bar-mixed-demo';
+import { ChartLineDemo } from '@/app/(internal)/sink/components/demos/chart-line-demo';
 
 export function ChartDemo() {
   return (

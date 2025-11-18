@@ -1,7 +1,7 @@
-import { Button } from "@codefast/ui/button";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { Button } from '@codefast/ui/button';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 
 export function PopoverDemo() {
   return (

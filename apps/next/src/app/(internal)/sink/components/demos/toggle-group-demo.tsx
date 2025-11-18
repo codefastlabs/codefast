@@ -1,13 +1,6 @@
-import {
-  BoldIcon,
-  BookmarkIcon,
-  HeartIcon,
-  ItalicIcon,
-  StarIcon,
-  UnderlineIcon,
-} from "lucide-react";
+import { BoldIcon, BookmarkIcon, HeartIcon, ItalicIcon, StarIcon, UnderlineIcon } from 'lucide-react';
 
-import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
 
 export function ToggleGroupDemo() {
   return (
@@ -23,12 +16,7 @@ export function ToggleGroupDemo() {
           <UnderlineIcon />
         </ToggleGroupItem>
       </ToggleGroup>
-      <ToggleGroup
-        variant="outline"
-        type="single"
-        defaultValue="all"
-        className="*:data-[slot=toggle-group-item]:w-20"
-      >
+      <ToggleGroup variant="outline" type="single" defaultValue="all" className="*:data-[slot=toggle-group-item]:w-20">
         <ToggleGroupItem value="all" aria-label="Toggle all">
           All
         </ToggleGroupItem>

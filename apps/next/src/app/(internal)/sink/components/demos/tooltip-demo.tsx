@@ -1,7 +1,7 @@
-import { InfoIcon } from "lucide-react";
+import { InfoIcon } from 'lucide-react';
 
-import { Button } from "@codefast/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
+import { Button } from '@codefast/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
 export function TooltipDemo() {
   return (
@@ -15,14 +15,14 @@ export function TooltipDemo() {
         </TooltipContent>
       </Tooltip>
       <div className="flex gap-2">
-        {["top", "right", "bottom", "left"].map((side) => (
+        {['top', 'right', 'bottom', 'left'].map((side) => (
           <Tooltip key={side}>
             <TooltipTrigger asChild>
               <Button variant="outline" className="capitalize">
                 {side}
               </Button>
             </TooltipTrigger>
-            <TooltipContent side={side as "top" | "right" | "bottom" | "left"}>
+            <TooltipContent side={side as 'top' | 'right' | 'bottom' | 'left'}>
               <p>Add to library</p>
             </TooltipContent>
           </Tooltip>
@@ -36,8 +36,7 @@ export function TooltipDemo() {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          To learn more about how this works, check out the docs. If you have any questions, please
-          reach out to us.
+          To learn more about how this works, check out the docs. If you have any questions, please reach out to us.
         </TooltipContent>
       </Tooltip>
     </div>

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 /**
  * Determine whether the current viewport should be treated as mobile.

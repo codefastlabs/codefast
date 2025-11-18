@@ -1,26 +1,13 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import Form from "next/form";
-import { z } from "zod";
+import * as React from 'react';
+import Form from 'next/form';
+import { z } from 'zod';
 
-import { Button } from "@codefast/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@codefast/ui/card";
-import { Checkbox } from "@codefast/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@codefast/ui/dialog";
+import { Button } from '@codefast/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
+import { Checkbox } from '@codefast/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@codefast/ui/dialog';
 import {
   Field,
   FieldContent,
@@ -32,15 +19,15 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from "@codefast/ui/field";
-import { Input } from "@codefast/ui/input";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { Spinner } from "@codefast/ui/spinner";
-import { Switch } from "@codefast/ui/switch";
-import { Textarea } from "@codefast/ui/textarea";
-import { addons, exampleFormSchema } from "@/app/(internal)/sink/(pages)/schema";
-import { subscriptionAction } from "@/app/(internal)/sink/(pages)/next-form/actions";
+} from '@codefast/ui/field';
+import { Input } from '@codefast/ui/input';
+import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
+import { Spinner } from '@codefast/ui/spinner';
+import { Switch } from '@codefast/ui/switch';
+import { Textarea } from '@codefast/ui/textarea';
+import { addons, exampleFormSchema } from '@/app/(internal)/sink/(pages)/schema';
+import { subscriptionAction } from '@/app/(internal)/sink/(pages)/next-form/actions';
 
 export type FormState = {
   values: z.infer<typeof exampleFormSchema>;
@@ -52,26 +39,23 @@ export function ExampleForm() {
   const formId = React.useId();
   const [formKey, setFormKey] = React.useState(formId);
   const [showResults, setShowResults] = React.useState(false);
-  const [formState, formAction, pending] = React.useActionState<FormState, FormData>(
-    subscriptionAction,
-    {
-      values: {
-        name: "",
-        email: "",
-        plan: "basic",
-        billingPeriod: "",
-        addons: ["analytics"],
-        teamSize: 1,
-        emailNotifications: false,
-        comments: "",
-        startDate: new Date(),
-        theme: "system",
-        password: "",
-      },
-      errors: null,
-      success: false,
+  const [formState, formAction, pending] = React.useActionState<FormState, FormData>(subscriptionAction, {
+    values: {
+      name: '',
+      email: '',
+      plan: 'basic',
+      billingPeriod: '',
+      addons: ['analytics'],
+      teamSize: 1,
+      emailNotifications: false,
+      comments: '',
+      startDate: new Date(),
+      theme: 'system',
+      password: '',
     },
-  );
+    errors: null,
+    success: false,
+  });
 
   React.useEffect(() => {
     if (formState.success) {
@@ -84,9 +68,7 @@ export function ExampleForm() {
       <Card className="w-full max-w-sm">
         <CardHeader className="border-b">
           <CardTitle>Subscription Form</CardTitle>
-          <CardDescription>
-            Create your subscription using server actions and useActionState.
-          </CardDescription>
+          <CardDescription>Create your subscription using server actions and useActionState.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form action={formAction} id="subscription-form" key={formKey}>
@@ -167,16 +149,12 @@ export function ExampleForm() {
                   </SelectContent>
                 </Select>
                 <FieldDescription>Choose how often you want to be billed.</FieldDescription>
-                {formState.errors?.billingPeriod && (
-                  <FieldError>{formState.errors.billingPeriod[0]}</FieldError>
-                )}
+                {formState.errors?.billingPeriod && <FieldError>{formState.errors.billingPeriod[0]}</FieldError>}
               </Field>
               <FieldSeparator />
               <FieldSet data-invalid={!!formState.errors?.addons?.length}>
                 <FieldLegend>Add-ons</FieldLegend>
-                <FieldDescription>
-                  Select additional features you&apos;d like to include.
-                </FieldDescription>
+                <FieldDescription>Select additional features you&apos;d like to include.</FieldDescription>
                 <FieldGroup data-slot="checkbox-group">
                   {addons.map((addon) => (
                     <Field key={addon.id} orientation="horizontal">
@@ -210,12 +188,8 @@ export function ExampleForm() {
                   disabled={pending}
                   aria-invalid={!!formState.errors?.teamSize?.length}
                 />
-                <FieldDescription>
-                  How many people will be using the subscription? (1-50)
-                </FieldDescription>
-                {formState.errors?.teamSize && (
-                  <FieldError>{formState.errors.teamSize[0]}</FieldError>
-                )}
+                <FieldDescription>How many people will be using the subscription? (1-50)</FieldDescription>
+                {formState.errors?.teamSize && <FieldError>{formState.errors.teamSize[0]}</FieldError>}
               </Field>
               <FieldSeparator />
               <Field orientation="horizontal">
@@ -238,14 +212,12 @@ export function ExampleForm() {
                   id="startDate"
                   name="startDate"
                   type="date"
-                  defaultValue={formState.values.startDate.toISOString().split("T")[0]}
+                  defaultValue={formState.values.startDate.toISOString().split('T')[0]}
                   disabled={pending}
                   aria-invalid={!!formState.errors?.startDate?.length}
                 />
                 <FieldDescription>Choose when your subscription should start</FieldDescription>
-                {formState.errors?.startDate && (
-                  <FieldError>{formState.errors.startDate[0]}</FieldError>
-                )}
+                {formState.errors?.startDate && <FieldError>{formState.errors.startDate[0]}</FieldError>}
               </Field>
               <FieldSeparator />
               <Field data-invalid={!!formState.errors?.theme?.length}>
@@ -280,12 +252,8 @@ export function ExampleForm() {
                   disabled={pending}
                   aria-invalid={!!formState.errors?.password?.length}
                 />
-                <FieldDescription>
-                  Must contain uppercase, lowercase, number, and be 8+ characters
-                </FieldDescription>
-                {formState.errors?.password && (
-                  <FieldError>{formState.errors.password[0]}</FieldError>
-                )}
+                <FieldDescription>Must contain uppercase, lowercase, number, and be 8+ characters</FieldDescription>
+                {formState.errors?.password && <FieldError>{formState.errors.password[0]}</FieldError>}
               </Field>
               <FieldSeparator />
               <Field data-invalid={!!formState.errors?.comments?.length}>
@@ -299,12 +267,8 @@ export function ExampleForm() {
                   disabled={pending}
                   aria-invalid={!!formState.errors?.comments?.length}
                 />
-                <FieldDescription>
-                  Share any additional requirements or feedback (10-240 characters)
-                </FieldDescription>
-                {formState.errors?.comments && (
-                  <FieldError>{formState.errors.comments[0]}</FieldError>
-                )}
+                <FieldDescription>Share any additional requirements or feedback (10-240 characters)</FieldDescription>
+                {formState.errors?.comments && <FieldError>{formState.errors.comments[0]}</FieldError>}
               </Field>
             </FieldGroup>
           </Form>

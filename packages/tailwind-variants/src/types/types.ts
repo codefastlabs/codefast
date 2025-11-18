@@ -6,8 +6,8 @@
  * and class value handling throughout the package.
  */
 
-import type { ClassValue } from "clsx";
-import type { ConfigExtension } from "tailwind-merge";
+import type { ClassValue } from 'clsx';
+import type { ConfigExtension } from 'tailwind-merge';
 
 /**
  * Convert string boolean values to actual boolean types.
@@ -15,11 +15,7 @@ import type { ConfigExtension } from "tailwind-merge";
  * This utility type converts string representations of booleans ("true", "false")
  * to actual boolean types, while preserving existing boolean types.
  */
-export type StringToBooleanType<T> = T extends "false" | "true"
-  ? boolean
-  : T extends boolean
-    ? T
-    : T;
+export type StringToBooleanType<T> = T extends 'false' | 'true' ? boolean : T extends boolean ? T : T;
 
 /**
  * Check if a variant group supports boolean values.
@@ -27,9 +23,9 @@ export type StringToBooleanType<T> = T extends "false" | "true"
  * This utility type determines whether a variant group has boolean keys
  * ("true" or "false"), indicating it supports boolean variant values.
  */
-export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" extends keyof T
+export type BooleanVariantChecker<T extends Record<string, unknown>> = 'true' extends keyof T
   ? true
-  : "false" extends keyof T
+  : 'false' extends keyof T
     ? true
     : false;
 
@@ -44,7 +40,7 @@ export type VariantProps<Component> =
   Component extends VariantFunctionType<infer T>
     ? T extends Record<string, never>
       ? object
-      : Omit<ConfigurationVariants<T>, "class" | "className">
+      : Omit<ConfigurationVariants<T>, 'class' | 'className'>
     : never;
 
 /**
@@ -96,10 +92,7 @@ export type SlotProperties<S extends SlotConfigurationSchema> = {
  */
 export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
   readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
-    ?
-        | boolean
-        | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[]
-        | StringToBooleanType<keyof T[Variant]>
+    ? boolean | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[] | StringToBooleanType<keyof T[Variant]>
     : readonly StringToBooleanType<keyof T[Variant]>[] | StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue;
@@ -112,15 +105,9 @@ export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
  * This type extends compound variants to support slot-based class definitions,
  * allowing different classes to be applied to different slots.
  */
-export type CompoundVariantWithSlotsType<
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
-> = Partial<{
+export type CompoundVariantWithSlotsType<T extends ConfigurationSchema, S extends SlotConfigurationSchema> = Partial<{
   readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
-    ?
-        | boolean
-        | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[]
-        | StringToBooleanType<keyof T[Variant]>
+    ? boolean | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[] | StringToBooleanType<keyof T[Variant]>
     : readonly StringToBooleanType<keyof T[Variant]>[] | StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue | SlotProperties<S>;
@@ -169,10 +156,7 @@ export interface Configuration<T extends ConfigurationSchema> {
  * This interface extends the base configuration to include slot definitions
  * and slot-specific compound variants.
  */
-export interface ConfigurationWithSlots<
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
-> {
+export interface ConfigurationWithSlots<T extends ConfigurationSchema, S extends SlotConfigurationSchema> {
   readonly base?: ClassValue;
   readonly compoundSlots?: readonly CompoundSlotType<T, S>[];
   readonly compoundVariants?: readonly CompoundVariantWithSlotsType<T, S>[];
@@ -198,9 +182,7 @@ export interface TailwindVariantsConfiguration {
  * This type defines the signature of functions that generate CSS classes
  * for individual component slots.
  */
-export type SlotFunctionType<T extends ConfigurationSchema> = (
-  props?: SlotFunctionProperties<T>,
-) => string | undefined;
+export type SlotFunctionType<T extends ConfigurationSchema> = (props?: SlotFunctionProperties<T>) => string | undefined;
 
 /**
  * Properties that can be passed to slot functions.
@@ -306,10 +288,8 @@ export interface TailwindVariantsFactoryResult {
  * This utility type merges two configuration schemas into a single type,
  * combining all variant groups from both schemas.
  */
-export type MergedSchemas<
-  TBase extends ConfigurationSchema,
-  TExtension extends ConfigurationSchema,
-> = TBase & TExtension;
+export type MergedSchemas<TBase extends ConfigurationSchema, TExtension extends ConfigurationSchema> = TBase &
+  TExtension;
 
 /**
  * Type for merged slot configuration schemas.
@@ -354,4 +334,4 @@ export interface ExtendedConfiguration<
  *
  * This type represents any value that can be converted to a CSS class string.
  */
-export type { ClassValue } from "clsx";
+export type { ClassValue } from 'clsx';

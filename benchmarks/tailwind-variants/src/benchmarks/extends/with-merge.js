@@ -4,11 +4,11 @@
  * Benchmarks configuration extension functionality with tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
-import { Bench } from "tinybench";
+import { tv as originalTV } from 'tailwind-variants';
+import { Bench } from 'tinybench';
 
-import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "./data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from './data.js';
+import { tv as codefastTV } from '@codefast/tailwind-variants';
 
 const originalTVBase = originalTV(extendsBaseVariants);
 const codefastTVBase = codefastTV(extendsBaseVariants);
@@ -20,7 +20,7 @@ const codefastTVExtends = codefastTV({ ...extendsExtensionVariants, extend: code
 /**
  * Create extends benchmark with tailwind-merge
  */
-export function createExtendsWithMergeBenchmark(name = "Extends (With Tailwind Merge)") {
+export function createExtendsWithMergeBenchmark(name = 'Extends (With Tailwind Merge)') {
   const bench = new Bench({
     name,
     iterations: 1000,
@@ -30,12 +30,12 @@ export function createExtendsWithMergeBenchmark(name = "Extends (With Tailwind M
   });
 
   bench
-    .add("tailwind-variants", () => {
+    .add('tailwind-variants', () => {
       for (const props of extendsTestProps) {
         originalTVExtends(props);
       }
     })
-    .add("@codefast/tailwind-variants", () => {
+    .add('@codefast/tailwind-variants', () => {
       for (const props of extendsTestProps) {
         codefastTVExtends(props);
       }

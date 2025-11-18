@@ -1,1 +1,1 @@
-export { imageLoader as default } from "@codefast/image-loader";
+export { imageLoader as default } from '@codefast/image-loader';

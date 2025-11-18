@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
 export interface UsePaginationProps {
   /** Current active page number. */
@@ -17,7 +17,7 @@ export interface UsePaginationProps {
 }
 
 /** Ellipsis marker used to collapse ranges in pagination output. */
-export const ELLIPSIS = "•••";
+export const ELLIPSIS = '•••';
 
 /**
  * Generate a numeric range from start to end inclusive.

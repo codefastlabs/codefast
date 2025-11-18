@@ -1,6 +1,6 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import pluginJest from "eslint-plugin-jest";
+import pluginJest from 'eslint-plugin-jest';
 
 /**
  * Rules that are set to "warn" for Jest plugin
@@ -12,19 +12,19 @@ const warningJestRules: Linter.RulesRecord = {
    * Reports commented-out test cases
    * Should be warned about but not fail the build
    */
-  "jest/no-commented-out-tests": "warn",
+  'jest/no-commented-out-tests': 'warn',
 
   /**
    * Reports disabled test cases (skipped with .skip or x prefix)
    * Should be warned about but not fail the build
    */
-  "jest/no-disabled-tests": "warn",
+  'jest/no-disabled-tests': 'warn',
 
   /**
    * Reports large snapshots that might be hard to review
    * Configured to warn when snapshots exceed 300 lines
    */
-  "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
+  'jest/no-large-snapshots': ['warn', { maxSize: 300 }],
 };
 
 /**
@@ -37,16 +37,16 @@ const errorJestRules: Linter.RulesRecord = {
    * Enforces consistent usage of test or it
    * Configured to prefer "test" function over "it"
    */
-  "jest/consistent-test-it": ["error", { fn: "test" }],
+  'jest/consistent-test-it': ['error', { fn: 'test' }],
 
   /**
    * Enforces that tests must contain at least one expect statement
    * Configured to recognize both expect and request.**.expect patterns
    */
-  "jest/expect-expect": [
-    "error",
+  'jest/expect-expect': [
+    'error',
     {
-      assertFunctionNames: ["expect", "request.**.expect"],
+      assertFunctionNames: ['expect', 'request.**.expect'],
     },
   ],
 
@@ -54,189 +54,189 @@ const errorJestRules: Linter.RulesRecord = {
    * Enforces a maximum depth for nested describe blocks
    * Configured to allow up to 5 levels of nesting
    */
-  "jest/max-nested-describe": ["error", { max: 5 }],
+  'jest/max-nested-describe': ['error', { max: 5 }],
 
   /**
    * Disallows alias methods (toThrowError over toThrow)
    */
-  "jest/no-alias-methods": "error",
+  'jest/no-alias-methods': 'error',
 
   /**
    * Disallows expect statements in conditional blocks
    */
-  "jest/no-conditional-expect": "error",
+  'jest/no-conditional-expect': 'error',
 
   /**
    * Disallows deprecated Jest functions
    */
-  "jest/no-deprecated-functions": "error",
+  'jest/no-deprecated-functions': 'error',
 
   /**
    * Disallows done callback in Jest tests
    */
-  "jest/no-done-callback": "error",
+  'jest/no-done-callback': 'error',
 
   /**
    * Disallows duplicate hooks in Jest tests
    */
-  "jest/no-duplicate-hooks": "error",
+  'jest/no-duplicate-hooks': 'error',
 
   /**
    * Disallows export from test files
    */
-  "jest/no-export": "error",
+  'jest/no-export': 'error',
 
   /**
    * Disallows focused tests (.only)
    */
-  "jest/no-focused-tests": "error",
+  'jest/no-focused-tests': 'error',
 
   /**
    * Disallows identical test titles
    */
-  "jest/no-identical-title": "error",
+  'jest/no-identical-title': 'error',
 
   /**
    * Disallows string interpolation in snapshots
    */
-  "jest/no-interpolation-in-snapshots": "error",
+  'jest/no-interpolation-in-snapshots': 'error',
 
   /**
    * Disallows Jasmine globals
    */
-  "jest/no-jasmine-globals": "error",
+  'jest/no-jasmine-globals': 'error',
 
   /**
    * Disallows importing from __mocks__ directory
    */
-  "jest/no-mocks-import": "error",
+  'jest/no-mocks-import': 'error',
 
   /**
    * Disallows standalone expect statements outside of test blocks
    */
-  "jest/no-standalone-expect": "error",
+  'jest/no-standalone-expect': 'error',
 
   /**
    * Disallows using test prefixes
    */
-  "jest/no-test-prefixes": "error",
+  'jest/no-test-prefixes': 'error',
 
   /**
    * Disallows return statements in test functions
    */
-  "jest/no-test-return-statement": "error",
+  'jest/no-test-return-statement': 'error',
 
   /**
    * Prefers using toHaveBeenCalledWith over toHaveBeenCalled
    */
-  "jest/prefer-called-with": "error",
+  'jest/prefer-called-with': 'error',
 
   /**
    * Prefers using comparison matchers
    */
-  "jest/prefer-comparison-matcher": "error",
+  'jest/prefer-comparison-matcher': 'error',
 
   /**
    * Prefers using equality matchers
    */
-  "jest/prefer-equality-matcher": "error",
+  'jest/prefer-equality-matcher': 'error',
 
   /**
    * Prefers using expect.resolves over expect(await ...)
    */
-  "jest/prefer-expect-resolves": "error",
+  'jest/prefer-expect-resolves': 'error',
 
   /**
    * Prefers having hooks at the top of describe blocks
    */
-  "jest/prefer-hooks-on-top": "error",
+  'jest/prefer-hooks-on-top': 'error',
 
   /**
    * Prefers lowercase test titles
    * Configured to ignore describe blocks
    */
-  "jest/prefer-lowercase-title": ["error", { ignore: ["describe"] }],
+  'jest/prefer-lowercase-title': ['error', { ignore: ['describe'] }],
 
   /**
    * Prefers using mock promise shorthand
    */
-  "jest/prefer-mock-promise-shorthand": "error",
+  'jest/prefer-mock-promise-shorthand': 'error',
 
   /**
    * Prefers using snapshot hints
    */
-  "jest/prefer-snapshot-hint": "error",
+  'jest/prefer-snapshot-hint': 'error',
 
   /**
    * Prefers using jest.spyOn over manual mocking
    */
-  "jest/prefer-spy-on": "error",
+  'jest/prefer-spy-on': 'error',
 
   /**
    * Prefers using toStrictEqual over toEqual
    */
-  "jest/prefer-strict-equal": "error",
+  'jest/prefer-strict-equal': 'error',
 
   /**
    * Prefers using toBe for primitive values
    */
-  "jest/prefer-to-be": "error",
+  'jest/prefer-to-be': 'error',
 
   /**
    * Prefers using toContain for array/string inclusion checks
    */
-  "jest/prefer-to-contain": "error",
+  'jest/prefer-to-contain': 'error',
 
   /**
    * Prefers using toHaveLength for length checks
    */
-  "jest/prefer-to-have-length": "error",
+  'jest/prefer-to-have-length': 'error',
 
   /**
    * Prefers using test.todo for placeholder tests
    */
-  "jest/prefer-todo": "error",
+  'jest/prefer-todo': 'error',
 
   /**
    * Requires a hook to be used
    */
-  "jest/require-hook": "error",
+  'jest/require-hook': 'error',
 
   /**
    * Requires error messages when using toThrow matchers
    */
-  "jest/require-to-throw-message": "error",
+  'jest/require-to-throw-message': 'error',
 
   /**
    * Requires tests to be inside a top-level describe block
    */
-  "jest/require-top-level-describe": "error",
+  'jest/require-top-level-describe': 'error',
 
   /**
    * Enforces valid describe callback
    */
-  "jest/valid-describe-callback": "error",
+  'jest/valid-describe-callback': 'error',
 
   /**
    * Enforces valid expect usage
    */
-  "jest/valid-expect": "error",
+  'jest/valid-expect': 'error',
 
   /**
    * Enforces valid expect in promise chains
    */
-  "jest/valid-expect-in-promise": "error",
+  'jest/valid-expect-in-promise': 'error',
 
   /**
    * Enforces valid test titles
    */
-  "jest/valid-title": "error",
+  'jest/valid-title': 'error',
 };
 
 export const jestRules: Linter.Config[] = [
   {
-    files: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
-    name: "@codefast/eslint-config/plugins/jest",
+    files: ['**/__tests__/**/*.?([mc])[jt]s?(x)', '**/?(*.)+(spec|test).?([mc])[jt]s?(x)'],
+    name: '@codefast/eslint-config/plugins/jest',
     plugins: {
       jest: pluginJest,
     },

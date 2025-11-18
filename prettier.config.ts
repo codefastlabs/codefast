@@ -1,0 +1,55 @@
+import type { Config } from 'prettier';
+
+/* -----
+ * Prettier Configuration
+ * ----- */
+
+const config: Config = {
+  /* -----
+   * General Formatting
+   * ----- */
+  printWidth: 120,
+  tabWidth: 2,
+  useTabs: false,
+  semi: true,
+  endOfLine: 'lf',
+
+  /* -----
+   * Quotes and Strings
+   * ----- */
+  singleQuote: true,
+  jsxSingleQuote: false,
+  quoteProps: 'as-needed',
+
+  /* -----
+   * Whitespace and Indentation
+   * ----- */
+  bracketSpacing: true,
+  bracketSameLine: false,
+  arrowParens: 'always',
+  trailingComma: 'all',
+
+  /* -----
+   * Line Wrapping and Prose
+   * ----- */
+  proseWrap: 'preserve',
+  singleAttributePerLine: false,
+
+  /* -----
+   * JSX/HTML Specific
+   * ----- */
+  htmlWhitespaceSensitivity: 'css',
+  embeddedLanguageFormatting: 'auto',
+
+  /* -----
+   * Experimental Features
+   * ----- */
+  experimentalTernaries: false,
+
+  /* -----
+   * Plugins
+   * ----- */
+  plugins: ['prettier-plugin-packagejson', 'prettier-plugin-tailwindcss'],
+};
+
+export default config;

@@ -4,72 +4,72 @@
 version: 2
 updates:
   # Configure updates for pnpm packages in the root directory
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 10
-    versioning-strategy: "auto"
+    versioning-strategy: 'auto'
     labels:
-      - "dependencies"
+      - 'dependencies'
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore(dev)"
-      include: "scope"
+      prefix: 'chore'
+      prefix-development: 'chore(dev)'
+      include: 'scope'
     ignore:
       # Ignore major updates for these core packages
-      - dependency-name: "next"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-dom"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: 'next'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-major']
     groups:
       # Group React-related updates together
       react:
         patterns:
-          - "react*"
-          - "@types/react*"
+          - 'react*'
+          - '@types/react*'
       # Group TypeScript-related updates together
       typescript:
         patterns:
-          - "typescript"
-          - "@types/*"
+          - 'typescript'
+          - '@types/*'
       # Group testing libraries together
       testing:
         patterns:
-          - "jest"
-          - "@testing-library/*"
-          - "@swc/jest"
-          - "@swc/core"
-          - "@jest/*"
+          - 'jest'
+          - '@testing-library/*'
+          - '@swc/jest'
+          - '@swc/core'
+          - '@jest/*'
 
   # Configuration for app/docs (using a Zod stable version)
-  - package-ecosystem: "npm"
-    directory: "/app/docs"
+  - package-ecosystem: 'npm'
+    directory: '/app/docs'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     labels:
-      - "dependencies"
-      - "docs"
+      - 'dependencies'
+      - 'docs'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
     # Only stable version updates are allowed for Zod.
     ignore:
-      - dependency-name: "zod"
-        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: 'zod'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor', 'version-update:semver-patch']
 
   # Configure updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
     commit-message:
-      prefix: "ci"
-      include: "scope"
+      prefix: 'ci'
+      include: 'scope'

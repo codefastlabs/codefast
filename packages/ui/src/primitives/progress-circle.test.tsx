@@ -1,4 +1,4 @@
-import { axe } from "jest-axe";
+import { axe } from 'jest-axe';
 
 import {
   ProgressCircle,
@@ -7,11 +7,11 @@ import {
   ProgressCircleSVG,
   ProgressCircleTrack,
   ProgressCircleValue,
-} from "@/primitives/progress-circle";
-import { render, screen } from "@testing-library/react";
+} from '@/primitives/progress-circle';
+import { render, screen } from '@testing-library/react';
 
-describe("ProgressCircle", () => {
-  test("renders correctly with default props", () => {
+describe('ProgressCircle', () => {
+  test('renders correctly with default props', () => {
     render(
       <ProgressCircleProvider max={100} value={50}>
         <ProgressCircle>
@@ -24,11 +24,11 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
-    expect(screen.getByText("50%")).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
-  test("passes accessibility tests", async () => {
+  test('passes accessibility tests', async () => {
     const { container } = render(
       <ProgressCircleProvider max={100} value={50}>
         <ProgressCircle>
@@ -46,7 +46,7 @@ describe("ProgressCircle", () => {
     expect(results).toHaveNoViolations();
   });
 
-  test("updates when value changes", () => {
+  test('updates when value changes', () => {
     const { rerender } = render(
       <ProgressCircleProvider max={100} value={25}>
         <ProgressCircle>
@@ -59,7 +59,7 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(screen.getByText('25%')).toBeInTheDocument();
 
     rerender(
       <ProgressCircleProvider max={100} value={75}>
@@ -73,10 +73,10 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("75%")).toBeInTheDocument();
+    expect(screen.getByText('75%')).toBeInTheDocument();
   });
 
-  test("calculates percentage correctly with custom max value", () => {
+  test('calculates percentage correctly with custom max value', () => {
     render(
       <ProgressCircleProvider max={10} value={5}>
         <ProgressCircle>
@@ -89,10 +89,10 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("50%")).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
-  test("supports custom value formatting", () => {
+  test('supports custom value formatting', () => {
     render(
       <ProgressCircleProvider max={100} value={42}>
         <ProgressCircle>
@@ -100,17 +100,15 @@ describe("ProgressCircle", () => {
             <ProgressCircleTrack />
             <ProgressCircleIndicator />
           </ProgressCircleSVG>
-          <ProgressCircleValue>
-            {({ valueText }) => <div>Hoàn thành: {valueText}</div>}
-          </ProgressCircleValue>
+          <ProgressCircleValue>{({ valueText }) => <div>Hoàn thành: {valueText}</div>}</ProgressCircleValue>
         </ProgressCircle>
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("Hoàn thành: 42%")).toBeInTheDocument();
+    expect(screen.getByText('Hoàn thành: 42%')).toBeInTheDocument();
   });
 
-  test("renders with custom size", () => {
+  test('renders with custom size', () => {
     render(
       <ProgressCircleProvider max={100} size={200} value={50}>
         <ProgressCircle>
@@ -123,13 +121,13 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    const progressCircle = screen.getByRole("progressbar");
+    const progressCircle = screen.getByRole('progressbar');
 
-    expect(progressCircle).toHaveAttribute("width", "200");
-    expect(progressCircle).toHaveAttribute("height", "200");
+    expect(progressCircle).toHaveAttribute('width', '200');
+    expect(progressCircle).toHaveAttribute('height', '200');
   });
 
-  test("handles indeterminate state", () => {
+  test('handles indeterminate state', () => {
     render(
       <ProgressCircleProvider max={100} value={null}>
         <ProgressCircle>
@@ -141,14 +139,14 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    const progressbar = screen.getByRole("progressbar");
+    const progressbar = screen.getByRole('progressbar');
 
-    expect(progressbar).toHaveAttribute("aria-valuemin", "0");
-    expect(progressbar).toHaveAttribute("aria-valuemax", "100");
-    expect(progressbar).not.toHaveAttribute("aria-valuenow");
+    expect(progressbar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressbar).toHaveAttribute('aria-valuemax', '100');
+    expect(progressbar).not.toHaveAttribute('aria-valuenow');
   });
 
-  test("renders correctly with zero value", () => {
+  test('renders correctly with zero value', () => {
     render(
       <ProgressCircleProvider max={100} value={0}>
         <ProgressCircle>
@@ -161,10 +159,10 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("0%")).toBeInTheDocument();
+    expect(screen.getByText('0%')).toBeInTheDocument();
   });
 
-  test("renders correctly when value equals max", () => {
+  test('renders correctly when value equals max', () => {
     render(
       <ProgressCircleProvider max={100} value={100}>
         <ProgressCircle>
@@ -177,10 +175,10 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("100%")).toBeInTheDocument();
+    expect(screen.getByText('100%')).toBeInTheDocument();
   });
 
-  test("accepts custom styling", () => {
+  test('accepts custom styling', () => {
     render(
       <ProgressCircleProvider max={100} value={50}>
         <ProgressCircle>
@@ -193,14 +191,14 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("50%")).toHaveClass("text-lg", "font-bold");
+    expect(screen.getByText('50%')).toHaveClass('text-lg', 'font-bold');
   });
 
-  test("applies correct threshold styles", () => {
+  test('applies correct threshold styles', () => {
     const thresholds = [
-      { background: "pink", color: "red", value: 30 },
-      { background: "lightyellow", color: "yellow", value: 70 },
-      { background: "lightgreen", color: "green", value: 100 },
+      { background: 'pink', color: 'red', value: 30 },
+      { background: 'lightyellow', color: 'yellow', value: 70 },
+      { background: 'lightgreen', color: 'green', value: 100 },
     ];
 
     render(
@@ -215,12 +213,12 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    const indicator = screen.getByTestId("progress-indicator");
+    const indicator = screen.getByTestId('progress-indicator');
 
-    expect(indicator).toHaveAttribute("stroke", "green");
+    expect(indicator).toHaveAttribute('stroke', 'green');
   });
 
-  test("renders with custom stroke width", () => {
+  test('renders with custom stroke width', () => {
     render(
       <ProgressCircleProvider max={100} strokeWidth={8} value={50}>
         <ProgressCircle>
@@ -233,14 +231,14 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    const track = screen.getByTestId("progress-track");
-    const indicator = screen.getByTestId("progress-indicator");
+    const track = screen.getByTestId('progress-track');
+    const indicator = screen.getByTestId('progress-indicator');
 
-    expect(track).toHaveAttribute("stroke-width", "8");
-    expect(indicator).toHaveAttribute("stroke-width", "8");
+    expect(track).toHaveAttribute('stroke-width', '8');
+    expect(indicator).toHaveAttribute('stroke-width', '8');
   });
 
-  test("handles value equal to max properly", () => {
+  test('handles value equal to max properly', () => {
     render(
       <ProgressCircleProvider max={100} value={100}>
         <ProgressCircle>
@@ -253,7 +251,7 @@ describe("ProgressCircle", () => {
       </ProgressCircleProvider>,
     );
 
-    expect(screen.getByText("100%")).toBeInTheDocument();
-    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "100");
+    expect(screen.getByText('100%')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
   });
 });

@@ -13,9 +13,9 @@ import type {
   ConfigurationSchema,
   ConfigurationVariants,
   SlotConfigurationSchema,
-} from "@/types/types";
+} from '@/types/types';
 
-import { isBooleanValueType } from "@/utilities/utils";
+import { isBooleanValueType } from '@/utilities/utils';
 
 /**
  * Apply compound variant classes based on variant conditions.
@@ -49,7 +49,7 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
     // Check each variant condition
     for (const compoundKey of compoundKeys) {
       // Skip class properties
-      if (compoundKey === "className" || compoundKey === "class") {
+      if (compoundKey === 'className' || compoundKey === 'class') {
         continue;
       }
 
@@ -108,10 +108,7 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
  * @param defaultVariantProps - Default variant properties from configuration
  * @returns Object mapping slot names to arrays of CSS classes
  */
-export const applyCompoundSlotClasses = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const applyCompoundSlotClasses = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   compoundSlotDefinitions: readonly CompoundSlotType<T, S>[] | undefined,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
@@ -131,7 +128,7 @@ export const applyCompoundSlotClasses = <
 
     // Filter out class and slot properties
     const compoundEntries = Object.entries(compoundSlot).filter(
-      ([key]) => key !== "className" && key !== "class" && key !== "slots",
+      ([key]) => key !== 'className' && key !== 'class' && key !== 'slots',
     );
 
     // Check each variant condition

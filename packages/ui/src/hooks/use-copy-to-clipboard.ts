@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 /**
  * Provide clipboard copy capability with a transient copied state.
@@ -19,10 +19,7 @@ import { useState } from "react";
  * <button onClick={() => copyToClipboard("Hello")}>{isCopied ? "Copied" : "Copy"}</button>
  * ```
  */
-export function useCopyToClipboard({
-  onCopy,
-  timeout = 2000,
-}: { onCopy?: () => void; timeout?: number } = {}): {
+export function useCopyToClipboard({ onCopy, timeout = 2000 }: { onCopy?: () => void; timeout?: number } = {}): {
   copyToClipboard: (value: string) => Promise<void>;
   isCopied: boolean;
 } {
@@ -30,7 +27,7 @@ export function useCopyToClipboard({
 
   const copyToClipboard = async (value: string): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (typeof globalThis === "undefined" || !navigator.clipboard.writeText) {
+    if (typeof globalThis === 'undefined' || !navigator.clipboard.writeText) {
       return;
     }
 

@@ -4,29 +4,23 @@
  * Benchmarks configuration extension functionality without tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
-import { Bench } from "tinybench";
+import { tv as originalTV } from 'tailwind-variants';
+import { Bench } from 'tinybench';
 
-import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "./data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from './data.js';
+import { tv as codefastTV } from '@codefast/tailwind-variants';
 
 const originalTVBase = originalTV(extendsBaseVariants, { twMerge: false });
 const codefastTVBase = codefastTV(extendsBaseVariants, { twMerge: false });
 
 // Initialize benchmark functions
-const originalTVExtends = originalTV(
-  { ...extendsExtensionVariants, extend: originalTVBase },
-  { twMerge: false },
-);
-const codefastTVExtends = codefastTV(
-  { ...extendsExtensionVariants, extend: codefastTVBase },
-  { twMerge: false },
-);
+const originalTVExtends = originalTV({ ...extendsExtensionVariants, extend: originalTVBase }, { twMerge: false });
+const codefastTVExtends = codefastTV({ ...extendsExtensionVariants, extend: codefastTVBase }, { twMerge: false });
 
 /**
  * Create extends benchmark without tailwind-merge
  */
-export function createExtendsWithoutMergeBenchmark(name = "Extends") {
+export function createExtendsWithoutMergeBenchmark(name = 'Extends') {
   const bench = new Bench({
     name,
     iterations: 1000,
@@ -36,12 +30,12 @@ export function createExtendsWithoutMergeBenchmark(name = "Extends") {
   });
 
   bench
-    .add("tailwind-variants", () => {
+    .add('tailwind-variants', () => {
       for (const props of extendsTestProps) {
         originalTVExtends(props);
       }
     })
-    .add("@codefast/tailwind-variants", () => {
+    .add('@codefast/tailwind-variants', () => {
       for (const props of extendsTestProps) {
         codefastTVExtends(props);
       }

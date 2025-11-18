@@ -1,7 +1,7 @@
-import type { ImageLoaderProps } from "next/image";
+import type { ImageLoaderProps } from 'next/image';
 
-import { DEFAULT_IMAGE_QUALITY } from "@/constants";
-import { urlCache } from "@/utils/url-cache";
+import { DEFAULT_IMAGE_QUALITY } from '@/constants';
+import { urlCache } from '@/utils/url-cache';
 
 export function thumborLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: ImageLoaderProps): string {
   const url = urlCache.getClone(src);
@@ -11,7 +11,7 @@ export function thumborLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: I
   }
 
   const params = [`${width}x0`, `filters:quality(${quality})`];
-  const transformedPath = `/${params.join("/")}${url.pathname}`;
+  const transformedPath = `/${params.join('/')}${url.pathname}`;
 
   url.pathname = transformedPath;
 

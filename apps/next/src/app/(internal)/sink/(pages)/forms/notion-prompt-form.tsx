@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 import {
   IconApps,
   IconArrowUp,
@@ -14,18 +14,11 @@ import {
   IconPlus,
   IconWorld,
   IconX,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { Badge } from "@codefast/ui/badge";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@codefast/ui/command";
+import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { Badge } from '@codefast/ui/badge';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,109 +31,104 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
-import { Field, FieldLabel } from "@codefast/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupTextarea,
-} from "@codefast/ui/input-group";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
-import { Switch } from "@codefast/ui/switch";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
+} from '@codefast/ui/dropdown-menu';
+import { Field, FieldLabel } from '@codefast/ui/field';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@codefast/ui/input-group';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { Switch } from '@codefast/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
 const SAMPLE_DATA = {
   mentionable: [
     {
-      type: "page",
-      title: "Meeting Notes",
-      image: "📝",
+      type: 'page',
+      title: 'Meeting Notes',
+      image: '📝',
     },
     {
-      type: "page",
-      title: "Project Dashboard",
-      image: "📊",
+      type: 'page',
+      title: 'Project Dashboard',
+      image: '📊',
     },
     {
-      type: "page",
-      title: "Ideas & Brainstorming",
-      image: "💡",
+      type: 'page',
+      title: 'Ideas & Brainstorming',
+      image: '💡',
     },
     {
-      type: "page",
-      title: "Calendar & Events",
-      image: "📅",
+      type: 'page',
+      title: 'Calendar & Events',
+      image: '📅',
     },
     {
-      type: "page",
-      title: "Documentation",
-      image: "📚",
+      type: 'page',
+      title: 'Documentation',
+      image: '📚',
     },
     {
-      type: "page",
-      title: "Goals & Objectives",
-      image: "🎯",
+      type: 'page',
+      title: 'Goals & Objectives',
+      image: '🎯',
     },
     {
-      type: "page",
-      title: "Budget Planning",
-      image: "💰",
+      type: 'page',
+      title: 'Budget Planning',
+      image: '💰',
     },
     {
-      type: "page",
-      title: "Team Directory",
-      image: "👥",
+      type: 'page',
+      title: 'Team Directory',
+      image: '👥',
     },
     {
-      type: "page",
-      title: "Technical Specs",
-      image: "🔧",
+      type: 'page',
+      title: 'Technical Specs',
+      image: '🔧',
     },
     {
-      type: "page",
-      title: "Analytics Report",
-      image: "📈",
+      type: 'page',
+      title: 'Analytics Report',
+      image: '📈',
     },
     {
-      type: "user",
-      title: "shadcn",
-      image: "https://github.com/shadcn.png",
-      workspace: "Workspace",
+      type: 'user',
+      title: 'shadcn',
+      image: 'https://github.com/shadcn.png',
+      workspace: 'Workspace',
     },
     {
-      type: "user",
-      title: "maxleiter",
-      image: "https://github.com/maxleiter.png",
-      workspace: "Cursor",
+      type: 'user',
+      title: 'maxleiter',
+      image: 'https://github.com/maxleiter.png',
+      workspace: 'Cursor',
     },
     {
-      type: "user",
-      title: "evilrabbit",
-      image: "https://github.com/evilrabbit.png",
-      workspace: "Vercel",
+      type: 'user',
+      title: 'evilrabbit',
+      image: 'https://github.com/evilrabbit.png',
+      workspace: 'Vercel',
     },
   ],
   models: [
     {
-      name: "Auto",
+      name: 'Auto',
       icon: IconBrandZeit,
     },
     {
-      name: "Claude Sonnet 4",
+      name: 'Claude Sonnet 4',
       icon: IconBrandAbstract,
-      badge: "Beta",
+      badge: 'Beta',
     },
     {
-      name: "GPT-5",
+      name: 'GPT-5',
       icon: IconBrandOpenai,
-      badge: "Beta",
+      badge: 'Beta',
     },
   ],
 };
 
 function MentionableIcon({ item }: { item: (typeof SAMPLE_DATA.mentionable)[0] }) {
-  return item.type === "page" ? (
+  return item.type === 'page' ? (
     <span className="flex size-4 items-center justify-center">{item.image}</span>
   ) : (
     <Avatar className="size-4">
@@ -154,9 +142,7 @@ export function NotionPromptForm() {
   const [mentions, setMentions] = useState<string[]>([]);
   const [mentionPopoverOpen, setMentionPopoverOpen] = useState(false);
   const [modelPopoverOpen, setModelPopoverOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<(typeof SAMPLE_DATA.models)[0]>(
-    SAMPLE_DATA.models[0],
-  );
+  const [selectedModel, setSelectedModel] = useState<(typeof SAMPLE_DATA.models)[0]>(SAMPLE_DATA.models[0]);
   const [scopeMenuOpen, setScopeMenuOpen] = useState(false);
 
   const grouped = useMemo(() => {
@@ -193,10 +179,10 @@ export function NotionPromptForm() {
                   <PopoverTrigger asChild>
                     <InputGroupButton
                       variant="outline"
-                      size={!hasMentions ? "sm" : "icon-sm"}
+                      size={!hasMentions ? 'sm' : 'icon-sm'}
                       className="rounded-full transition-transform"
                     >
-                      <IconAt /> {!hasMentions && "Add context"}
+                      <IconAt /> {!hasMentions && 'Add context'}
                     </InputGroupButton>
                   </PopoverTrigger>
                 </TooltipTrigger>
@@ -208,7 +194,7 @@ export function NotionPromptForm() {
                   <CommandList>
                     <CommandEmpty>No pages found</CommandEmpty>
                     {Object.entries(grouped).map(([type, items]) => (
-                      <CommandGroup key={type} heading={type === "page" ? "Pages" : "Users"}>
+                      <CommandGroup key={type} heading={type === 'page' ? 'Pages' : 'Users'}>
                         {items.map((item) => (
                           <CommandItem
                             key={item.title}
@@ -268,9 +254,7 @@ export function NotionPromptForm() {
                 <TooltipTrigger asChild>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton size="sm" className="rounded-full">
-                      {selectedModel.icon && selectedModel.name !== "Auto" && (
-                        <selectedModel.icon />
-                      )}
+                      {selectedModel.icon && selectedModel.name !== 'Auto' && <selectedModel.icon />}
                       {selectedModel.name}
                     </InputGroupButton>
                   </DropdownMenuTrigger>
@@ -318,8 +302,7 @@ export function NotionPromptForm() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild onSelect={(e) => e.preventDefault()}>
                     <label htmlFor="web-search">
-                      <IconWorld /> Web Search{" "}
-                      <Switch id="web-search" className="ml-auto" defaultChecked />
+                      <IconWorld /> Web Search <Switch id="web-search" className="ml-auto" defaultChecked />
                     </label>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -349,22 +332,21 @@ export function NotionPromptForm() {
                           <CommandEmpty>No knowledge found</CommandEmpty>
                           <CommandGroup>
                             {SAMPLE_DATA.mentionable
-                              .filter((item) => item.type === "user")
+                              .filter((item) => item.type === 'user')
                               .map((user) => (
                                 <CommandItem
                                   key={user.title}
                                   value={user.title}
                                   onSelect={() => {
                                     // Handle user selection here
-                                    console.log("Selected user:", user.title);
+                                    console.log('Selected user:', user.title);
                                   }}
                                 >
                                   <Avatar className="size-4">
                                     <AvatarImage src={user.image} />
                                     <AvatarFallback>{user.title[0]}</AvatarFallback>
                                   </Avatar>
-                                  {user.title}{" "}
-                                  <span className="text-muted-foreground">- {user.workspace}</span>
+                                  {user.title} <span className="text-muted-foreground">- {user.workspace}</span>
                                 </CommandItem>
                               ))}
                           </CommandGroup>
@@ -387,12 +369,7 @@ export function NotionPromptForm() {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <InputGroupButton
-              aria-label="Send"
-              className="ml-auto rounded-full"
-              variant="default"
-              size="icon-sm"
-            >
+            <InputGroupButton aria-label="Send" className="ml-auto rounded-full" variant="default" size="icon-sm">
               <IconArrowUp />
             </InputGroupButton>
           </InputGroupAddon>

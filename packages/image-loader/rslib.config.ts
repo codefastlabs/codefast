@@ -1,32 +1,32 @@
-import { defineConfig } from "@rslib/core";
+import { defineConfig } from '@rslib/core';
 
-const isWatchMode = process.argv.includes("--watch");
+const isWatchMode = process.argv.includes('--watch');
 
 export default defineConfig({
   lib: [
     {
       bundle: false,
       dts: true,
-      format: "esm",
+      format: 'esm',
     },
     {
       bundle: false,
       dts: false,
-      format: "cjs",
+      format: 'cjs',
     },
   ],
   output: {
     cleanDistPath: !isWatchMode,
     minify: !isWatchMode,
-    target: "node",
+    target: 'node',
   },
   performance: {
     printFileSize: !isWatchMode,
   },
   source: {
     entry: {
-      index: ["src/**/*.{ts,tsx}", "!src/**/*.{test,spec,e2e,story,stories}.{ts,tsx}"],
+      index: ['src/**/*.{ts,tsx}', '!src/**/*.{test,spec,e2e,story,stories}.{ts,tsx}'],
     },
-    tsconfigPath: "tsconfig.build.json",
+    tsconfigPath: 'tsconfig.build.json',
   },
 });

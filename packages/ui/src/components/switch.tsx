@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { cn } from "@codefast/tailwind-variants";
-import * as SwitchPrimitives from "@radix-ui/react-switch";
+import { cn } from '@codefast/tailwind-variants';
+import * as SwitchPrimitives from '@radix-ui/react-switch';
 
 /* -----------------------------------------------------------------------------
  * Component: Switch
@@ -15,7 +15,7 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
-        "data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80 data-[state=checked]:bg-primary data-[state=checked]:focus-visible:ring-primary/20 dark:data-[state=checked]:focus-visible:ring-primary/40 focus-visible:not-data-[state=checked]:border-ring/60 focus-visible:ring-ring/50 peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent p-0.75 shadow-xs outline-hidden transition-all focus-visible:ring-3 disabled:opacity-50",
+        'data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80 data-[state=checked]:bg-primary data-[state=checked]:focus-visible:ring-primary/20 dark:data-[state=checked]:focus-visible:ring-primary/40 focus-visible:not-data-[state=checked]:border-ring/60 focus-visible:ring-ring/50 peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent p-0.75 shadow-xs outline-hidden transition-all focus-visible:ring-3 disabled:opacity-50',
         className,
       )}
       data-slot="switch"

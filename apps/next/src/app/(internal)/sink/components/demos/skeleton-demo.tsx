@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@codefast/ui/card";
-import { Skeleton } from "@codefast/ui/skeleton";
+import { Card, CardContent, CardHeader } from '@codefast/ui/card';
+import { Skeleton } from '@codefast/ui/skeleton';
 
 export function SkeletonDemo() {
   return (

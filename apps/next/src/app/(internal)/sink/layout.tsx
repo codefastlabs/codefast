@@ -1,44 +1,38 @@
-import { Figtree, Inter, Noto_Sans, Nunito_Sans } from "next/font/google";
+import { Figtree, Inter, Noto_Sans, Nunito_Sans } from 'next/font/google';
 
-import { cn } from "@codefast/tailwind-variants";
-import { ModeSwitcher } from "@/components/mode-switcher";
-import { Separator } from "@codefast/ui/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui/sidebar";
-import { AppBreadcrumbs } from "@/app/(internal)/sink/components/app/app-breadcrumbs";
-import { AppSidebar } from "@/app/(internal)/sink/components/app/app-sidebar";
-import { ThemeSelector } from "@/app/(internal)/sink/components/app/theme-selector";
+import { cn } from '@codefast/tailwind-variants';
+import { ModeSwitcher } from '@/components/mode-switcher';
+import { Separator } from '@codefast/ui/separator';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui/sidebar';
+import { AppBreadcrumbs } from '@/app/(internal)/sink/components/app/app-breadcrumbs';
+import { AppSidebar } from '@/app/(internal)/sink/components/app/app-sidebar';
+import { ThemeSelector } from '@/app/(internal)/sink/components/app/theme-selector';
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+  subsets: ['latin'],
+  variable: '--font-inter',
 });
 
 const notoSans = Noto_Sans({
-  subsets: ["latin"],
-  variable: "--font-noto-sans",
+  subsets: ['latin'],
+  variable: '--font-noto-sans',
 });
 
 const nunitoSans = Nunito_Sans({
-  subsets: ["latin"],
-  variable: "--font-nunito-sans",
+  subsets: ['latin'],
+  variable: '--font-nunito-sans',
 });
 
 const figtree = Figtree({
-  subsets: ["latin"],
-  variable: "--font-figtree",
+  subsets: ['latin'],
+  variable: '--font-figtree',
 });
 
 export default async function SinkLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider
       defaultOpen={true}
-      className={cn(
-        "theme-container",
-        inter.variable,
-        notoSans.variable,
-        nunitoSans.variable,
-        figtree.variable,
-      )}
+      className={cn('theme-container', inter.variable, notoSans.variable, nunitoSans.variable, figtree.variable)}
     >
       <AppSidebar />
       <SidebarInset>

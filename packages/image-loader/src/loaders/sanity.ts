@@ -1,7 +1,7 @@
-import type { ImageLoaderProps } from "next/image";
+import type { ImageLoaderProps } from 'next/image';
 
-import { DEFAULT_IMAGE_QUALITY } from "@/constants";
-import { urlCache } from "@/utils/url-cache";
+import { DEFAULT_IMAGE_QUALITY } from '@/constants';
+import { urlCache } from '@/utils/url-cache';
 
 export function sanityLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: ImageLoaderProps): string {
   const url = urlCache.getClone(src);
@@ -10,10 +10,10 @@ export function sanityLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: Im
     return src;
   }
 
-  url.searchParams.set("auto", "format");
-  url.searchParams.set("fit", "max");
-  url.searchParams.set("w", width.toString());
-  url.searchParams.set("q", quality.toString());
+  url.searchParams.set('auto', 'format');
+  url.searchParams.set('fit', 'max');
+  url.searchParams.set('w', width.toString());
+  url.searchParams.set('q', quality.toString());
 
   return url.toString();
 }

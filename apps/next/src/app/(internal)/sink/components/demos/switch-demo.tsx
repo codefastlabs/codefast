@@ -1,5 +1,5 @@
-import { Label } from "@codefast/ui/label";
-import { Switch } from "@codefast/ui/switch";
+import { Label } from '@codefast/ui/label';
+import { Switch } from '@codefast/ui/switch';
 
 export function SwitchDemo() {
   return (

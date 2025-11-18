@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
+import { useParams } from 'next/navigation';
 
 import {
   Breadcrumb,
@@ -9,7 +9,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@codefast/ui/breadcrumb";
+} from '@codefast/ui/breadcrumb';
 
 export function AppBreadcrumbs() {
   const params = useParams();

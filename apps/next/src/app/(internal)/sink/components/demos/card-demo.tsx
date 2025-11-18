@@ -1,19 +1,12 @@
-import Image from "next/image";
-import { BathIcon, BedIcon, LandPlotIcon } from "lucide-react";
+import Image from 'next/image';
+import { BathIcon, BedIcon, LandPlotIcon } from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { Badge } from "@codefast/ui/badge";
-import { Button } from "@codefast/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@codefast/ui/card";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { Badge } from '@codefast/ui/badge';
+import { Button } from '@codefast/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
 
 export function CardDemo() {
   return (
@@ -33,10 +26,7 @@ export function CardDemo() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
+                  <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
                     Forgot your password?
                   </a>
                 </div>
@@ -53,7 +43,7 @@ export function CardDemo() {
             Login with Google
           </Button>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <a href="#" className="underline underline-offset-4">
               Sign up
             </a>

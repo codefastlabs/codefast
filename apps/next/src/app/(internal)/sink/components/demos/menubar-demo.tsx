@@ -1,4 +1,4 @@
-import { HelpCircleIcon, SettingsIcon, Trash2Icon } from "lucide-react";
+import { HelpCircleIcon, SettingsIcon, Trash2Icon } from 'lucide-react';
 
 import {
   Menubar,
@@ -15,7 +15,7 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "@codefast/ui/menubar";
+} from '@codefast/ui/menubar';
 
 export function MenubarDemo() {
   return (
