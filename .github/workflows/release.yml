@@ -6,9 +6,9 @@ on:
       - main
       - canary
     paths:
-      - ".github/workflows/release.yml"
-      - "packages/**"
-      - ".changeset/**"
+      - '.github/workflows/release.yml'
+      - 'packages/**'
+      - '.changeset/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -83,8 +83,8 @@ jobs:
         with:
           version: npx changeset version
           publish: npx changeset publish
-          commit: "chore: update versions for release"
-          title: "chore: release new version"
+          commit: 'chore: update versions for release'
+          title: 'chore: release new version'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,5 +1,5 @@
-import { Button } from "@codefast/ui/button";
-import { Checkbox } from "@codefast/ui/checkbox";
+import { Button } from '@codefast/ui/button';
+import { Checkbox } from '@codefast/ui/checkbox';
 import {
   Field,
   FieldContent,
@@ -9,17 +9,12 @@ import {
   FieldLegend,
   FieldSet,
   FieldTitle,
-} from "@codefast/ui/field";
-import { Input } from "@codefast/ui/input";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@codefast/ui/input-group";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { Textarea } from "@codefast/ui/textarea";
+} from '@codefast/ui/field';
+import { Input } from '@codefast/ui/input';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@codefast/ui/input-group';
+import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
+import { Textarea } from '@codefast/ui/textarea';
 
 export function ShipRegistrationForm() {
   return (
@@ -67,7 +62,7 @@ export function ShipRegistrationForm() {
           <FieldSet>
             <FieldLegend>2. Complete your attendee information</FieldLegend>
             <FieldDescription>
-              By entering your information, you acknowledge that you have read and agree to the{" "}
+              By entering your information, you acknowledge that you have read and agree to the{' '}
               <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
             </FieldDescription>
             <FieldGroup className="grid grid-cols-2 gap-x-4">
@@ -105,9 +100,7 @@ export function ShipRegistrationForm() {
                 </Select>
               </Field>
               <Field className="col-span-2">
-                <FieldLabel htmlFor="topics">
-                  What AI-related topics are you most curious about?
-                </FieldLabel>
+                <FieldLabel htmlFor="topics">What AI-related topics are you most curious about?</FieldLabel>
                 <Textarea
                   id="topics"
                   placeholder="Agents, Security, Improving UX/Personalization, etc."
@@ -115,9 +108,7 @@ export function ShipRegistrationForm() {
                 />
               </Field>
               <Field className="col-span-2">
-                <FieldLabel htmlFor="workloads">
-                  What types of AI workloads are you tackling right now?
-                </FieldLabel>
+                <FieldLabel htmlFor="workloads">What types of AI workloads are you tackling right now?</FieldLabel>
                 <Textarea id="workloads" className="min-h-[100px]" />
               </Field>
             </FieldGroup>
@@ -152,7 +143,7 @@ export function ShipRegistrationForm() {
           <Field>
             <Button type="submit">Purchase Ticket</Button>
             <FieldDescription>
-              By clicking Purchase Ticket, you agree to the <a href="#">Terms of Service</a> and{" "}
+              By clicking Purchase Ticket, you agree to the <a href="#">Terms of Service</a> and{' '}
               <a href="#">Privacy Policy</a>.
             </FieldDescription>
           </Field>

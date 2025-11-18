@@ -9,12 +9,6 @@ export function getContext() {
   };
 }
 
-export function Provider({
-  children,
-  queryClient,
-}: {
-  children: ReactNode;
-  queryClient: QueryClient;
-}) {
+export function Provider({ children, queryClient }: { children: ReactNode; queryClient: QueryClient }) {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

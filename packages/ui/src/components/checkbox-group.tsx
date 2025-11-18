@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { CheckIcon } from "lucide-react";
+import { CheckIcon } from 'lucide-react';
 
-import * as CheckboxGroupPrimitive from "@/primitives/checkbox-group";
-import { cn } from "@codefast/tailwind-variants";
+import * as CheckboxGroupPrimitive from '@/primitives/checkbox-group';
+import { cn } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroup
@@ -14,13 +14,7 @@ import { cn } from "@codefast/tailwind-variants";
 type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
 function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
-  return (
-    <CheckboxGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
-      data-slot="checkbox-group"
-      {...props}
-    />
-  );
+  return <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} data-slot="checkbox-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -33,7 +27,7 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
   return (
     <CheckboxGroupPrimitive.Item
       className={cn(
-        "border-input text-primary-foreground hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:aria-checked:ring-primary/20 dark:focus-visible:aria-checked:ring-primary/40 aria-checked:border-primary aria-checked:bg-primary aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-checked:aria-invalid:bg-destructive hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 dark:bg-input/30 peer flex size-4 shrink-0 items-center justify-center rounded-sm border shadow-xs outline-hidden transition focus-visible:ring-3 disabled:opacity-50",
+        'border-input text-primary-foreground hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:aria-checked:ring-primary/20 dark:focus-visible:aria-checked:ring-primary/40 aria-checked:border-primary aria-checked:bg-primary aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-checked:aria-invalid:bg-destructive hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 dark:bg-input/30 peer flex size-4 shrink-0 items-center justify-center rounded-sm border shadow-xs outline-hidden transition focus-visible:ring-3 disabled:opacity-50',
         className,
       )}
       data-slot="checkbox-group-item"

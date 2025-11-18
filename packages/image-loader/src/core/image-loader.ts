@@ -1,6 +1,6 @@
-import type { ImageLoaderProps } from "next/image";
+import type { ImageLoaderProps } from 'next/image';
 
-import type { LoaderConfig, LoaderFunction } from "@/types";
+import type { LoaderConfig, LoaderFunction } from '@/types';
 
 export class ImageLoader {
   private readonly loaders: LoaderConfig[] = [];
@@ -32,9 +32,6 @@ export class ImageLoader {
   }
 }
 
-export function createImageLoader(
-  config: LoaderConfig[] = [],
-  fallbackLoader?: LoaderFunction,
-): ImageLoader {
+export function createImageLoader(config: LoaderConfig[] = [], fallbackLoader?: LoaderFunction): ImageLoader {
   return new ImageLoader(config, fallbackLoader);
 }

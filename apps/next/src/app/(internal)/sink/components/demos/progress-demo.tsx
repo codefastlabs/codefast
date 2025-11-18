@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 
-import { Progress } from "@codefast/ui/progress";
+import { Progress } from '@codefast/ui/progress';
 
 export function ProgressDemo() {
   const [progress, setProgress] = React.useState(13);

@@ -1,7 +1,7 @@
-import { Checkbox } from "@codefast/ui/checkbox";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { Textarea } from "@codefast/ui/textarea";
+import { Checkbox } from '@codefast/ui/checkbox';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { Textarea } from '@codefast/ui/textarea';
 
 export function LabelDemo() {
   return (

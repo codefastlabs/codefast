@@ -6,10 +6,10 @@
  * foundation for CSS class processing throughout the package.
  */
 
-import type { ConfigExtension } from "tailwind-merge";
+import type { ConfigExtension } from 'tailwind-merge';
 
-import { clsx } from "clsx";
-import { extendTailwindMerge, twMerge } from "tailwind-merge";
+import { clsx } from 'clsx';
+import { extendTailwindMerge, twMerge } from 'tailwind-merge';
 
 import type {
   ClassValue,
@@ -18,7 +18,7 @@ import type {
   ConfigurationWithSlots,
   ExtendedConfiguration,
   SlotConfigurationSchema,
-} from "@/types/types";
+} from '@/types/types';
 
 /**
  * Combine CSS classes using clsx.
@@ -30,14 +30,14 @@ import type {
  * @returns Combined CSS class string
  */
 export const cx = (...classes: ClassValue[]): string => {
-  if (classes.length === 0) return "";
+  if (classes.length === 0) return '';
 
   if (classes.length === 1) {
     const single = classes[0];
 
-    if (typeof single === "string") return single;
+    if (typeof single === 'string') return single;
 
-    if (!single) return "";
+    if (!single) return '';
   }
 
   return clsx(classes);
@@ -53,14 +53,14 @@ export const cx = (...classes: ClassValue[]): string => {
  * @returns Merged CSS class string
  */
 export const cn = (...classes: ClassValue[]): string => {
-  if (classes.length === 0) return "";
+  if (classes.length === 0) return '';
 
   if (classes.length === 1) {
     const single = classes[0];
 
-    if (typeof single === "string") return twMerge(single);
+    if (typeof single === 'string') return twMerge(single);
 
-    if (!single) return "";
+    if (!single) return '';
   }
 
   return twMerge(clsx(classes));
@@ -91,7 +91,7 @@ export const createTailwindMergeService = (
  * @returns True if the value is a slot object
  */
 export const isSlotObjectType = (value: ClassValue): value is Record<string, ClassValue> => {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
 
 /**
@@ -105,8 +105,8 @@ export const isSlotObjectType = (value: ClassValue): value is Record<string, Cla
  */
 export const isBooleanVariantType = <T extends Record<string, unknown>>(
   variantGroup: T,
-): variantGroup is T & (Record<"false", unknown> | Record<"true", unknown>) => {
-  return "true" in variantGroup || "false" in variantGroup;
+): variantGroup is T & (Record<'false', unknown> | Record<'true', unknown>) => {
+  return 'true' in variantGroup || 'false' in variantGroup;
 };
 
 /**
@@ -119,7 +119,7 @@ export const isBooleanVariantType = <T extends Record<string, unknown>>(
  * @returns True if the value is a boolean
  */
 export const isBooleanValueType = (value: unknown): value is boolean => {
-  return typeof value === "boolean";
+  return typeof value === 'boolean';
 };
 
 /**
@@ -131,13 +131,10 @@ export const isBooleanValueType = (value: unknown): value is boolean => {
  * @param configuration - The configuration to check
  * @returns True if the configuration has slots
  */
-export const hasSlotConfiguration = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const hasSlotConfiguration = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   configuration: Configuration<T> | ConfigurationWithSlots<T, S>,
 ): configuration is ConfigurationWithSlots<T, S> => {
-  return "slots" in configuration && configuration.slots !== undefined;
+  return 'slots' in configuration && configuration.slots !== undefined;
 };
 
 /**
@@ -150,14 +147,11 @@ export const hasSlotConfiguration = <
  * @param configuration - The configuration to check
  * @returns True if the configuration has extensions
  */
-export const hasExtensionConfiguration = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const hasExtensionConfiguration = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   configuration:
     | Configuration<T>
     | ConfigurationWithSlots<T, S>
     | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
 ): configuration is ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S> => {
-  return "extend" in configuration && configuration.extend !== undefined;
+  return 'extend' in configuration && configuration.extend !== undefined;
 };

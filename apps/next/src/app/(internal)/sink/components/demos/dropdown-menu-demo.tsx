@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -15,10 +15,10 @@ import {
   SparklesIcon,
   TrashIcon,
   UserIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { Button } from "@codefast/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { Button } from '@codefast/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -34,7 +34,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
+} from '@codefast/ui/dropdown-menu';
 
 export function DropdownMenuDemo() {
   return (
@@ -135,11 +135,7 @@ function DropdownMenuCheckboxes() {
           <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             Status Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={showActivityBar}
-            onCheckedChange={setShowActivityBar}
-            disabled
-          >
+          <DropdownMenuCheckboxItem checked={showActivityBar} onCheckedChange={setShowActivityBar} disabled>
             Activity Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
@@ -158,7 +154,7 @@ function DropdownMenuCheckboxes() {
 }
 
 function DropdownMenuRadioGroupDemo() {
-  const [position, setPosition] = React.useState("bottom");
+  const [position, setPosition] = React.useState('bottom');
 
   return (
     <DropdownMenu>
@@ -197,10 +193,7 @@ function DropdownMenuWithAvatar() {
           <ChevronsUpDownIcon className="text-muted-foreground ml-auto" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
-        align="start"
-      >
+      <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56" align="start">
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
@@ -256,10 +249,7 @@ function DropdownMenuAvatarOnly() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
-        align="start"
-      >
+      <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56" align="start">
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>

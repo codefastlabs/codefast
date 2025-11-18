@@ -1,376 +1,362 @@
-import { tv } from "@/index";
+import { tv } from '@/index';
 
-describe("Tailwind Variants (TV) - Compound Slots", () => {
-  test("should work with compound slots -- without variants", () => {
+describe('Tailwind Variants (TV) - Compound Slots', () => {
+  test('should work with compound slots -- without variants', () => {
     const pagination = tv({
       compoundSlots: [
         {
-          className: ["flex", "flex-wrap", "truncate"],
-          slots: ["item", "prev", "next"],
+          className: ['flex', 'flex-wrap', 'truncate'],
+          slots: ['item', 'prev', 'next'],
         },
       ],
       slots: {
-        base: "flex flex-wrap relative gap-1 max-w-fit",
-        cursor: ["absolute", "flex", "overflow-visible"],
-        item: "px-2 py-1 rounded",
-        next: "px-2 py-1 rounded",
-        prev: "px-2 py-1 rounded",
+        base: 'flex flex-wrap relative gap-1 max-w-fit',
+        cursor: ['absolute', 'flex', 'overflow-visible'],
+        item: 'px-2 py-1 rounded',
+        next: 'px-2 py-1 rounded',
+        prev: 'px-2 py-1 rounded',
       },
     });
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClassName(["px-2", "py-1", "rounded", "flex", "flex-wrap", "truncate"]);
-    expect(prev()).toHaveClassName(["px-2", "py-1", "rounded", "flex", "flex-wrap", "truncate"]);
-    expect(next()).toHaveClassName(["px-2", "py-1", "rounded", "flex", "flex-wrap", "truncate"]);
-    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
+    expect(base()).toHaveClassName(['flex', 'flex-wrap', 'relative', 'gap-1', 'max-w-fit']);
+    expect(item()).toHaveClassName(['px-2', 'py-1', 'rounded', 'flex', 'flex-wrap', 'truncate']);
+    expect(prev()).toHaveClassName(['px-2', 'py-1', 'rounded', 'flex', 'flex-wrap', 'truncate']);
+    expect(next()).toHaveClassName(['px-2', 'py-1', 'rounded', 'flex', 'flex-wrap', 'truncate']);
+    expect(cursor()).toHaveClassName(['absolute', 'flex', 'overflow-visible']);
   });
 
-  test("should work with compound slots -- with a single variant -- defaultVariants", () => {
+  test('should work with compound slots -- with a single variant -- defaultVariants', () => {
     const pagination = tv({
       compoundSlots: [
         {
-          className: ["flex", "flex-wrap", "truncate"],
-          slots: ["item", "prev", "next"],
+          className: ['flex', 'flex-wrap', 'truncate'],
+          slots: ['item', 'prev', 'next'],
         },
         {
-          className: "w-7 h-7 text-xs",
-          size: "xs",
-          slots: ["item", "prev", "next"],
+          className: 'w-7 h-7 text-xs',
+          size: 'xs',
+          slots: ['item', 'prev', 'next'],
         },
       ],
       defaultVariants: {
-        size: "xs",
+        size: 'xs',
       },
       slots: {
-        base: "flex flex-wrap relative gap-1 max-w-fit",
-        cursor: ["absolute", "flex", "overflow-visible"],
-        item: "px-2 py-1 rounded",
-        next: "px-2 py-1 rounded",
-        prev: "px-2 py-1 rounded",
+        base: 'flex flex-wrap relative gap-1 max-w-fit',
+        cursor: ['absolute', 'flex', 'overflow-visible'],
+        item: 'px-2 py-1 rounded',
+        next: 'px-2 py-1 rounded',
+        prev: 'px-2 py-1 rounded',
       },
       variants: {
         size: {
-          lg: "text-lg",
-          md: "text-md",
-          sm: "text-sm",
-          xl: "text-xl",
-          xs: "text-xs",
+          lg: 'text-lg',
+          md: 'text-md',
+          sm: 'text-sm',
+          xl: 'text-xl',
+          xs: 'text-xs',
         },
       },
     });
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClassName([
-      "flex",
-      "flex-wrap",
-      "relative",
-      "gap-1",
-      "max-w-fit",
-      "text-xs",
-    ]);
+    expect(base()).toHaveClassName(['flex', 'flex-wrap', 'relative', 'gap-1', 'max-w-fit', 'text-xs']);
     expect(item()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(prev()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(next()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
-    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
+    expect(cursor()).toHaveClassName(['absolute', 'flex', 'overflow-visible']);
   });
 
-  test("should work with compound slots -- with a single variant -- prop variant", () => {
+  test('should work with compound slots -- with a single variant -- prop variant', () => {
     const pagination = tv({
       compoundSlots: [
         {
-          className: ["flex", "flex-wrap", "truncate"],
-          slots: ["item", "prev", "next"],
+          className: ['flex', 'flex-wrap', 'truncate'],
+          slots: ['item', 'prev', 'next'],
         },
         {
-          className: "w-7 h-7 text-xs",
-          size: "xs",
-          slots: ["item", "prev", "next"],
+          className: 'w-7 h-7 text-xs',
+          size: 'xs',
+          slots: ['item', 'prev', 'next'],
         },
       ],
       defaultVariants: {
-        size: "sm",
+        size: 'sm',
       },
       slots: {
-        base: "flex flex-wrap relative gap-1 max-w-fit",
-        cursor: ["absolute", "flex", "overflow-visible"],
-        item: "px-2 py-1 rounded",
-        next: "px-2 py-1 rounded",
-        prev: "px-2 py-1 rounded",
+        base: 'flex flex-wrap relative gap-1 max-w-fit',
+        cursor: ['absolute', 'flex', 'overflow-visible'],
+        item: 'px-2 py-1 rounded',
+        next: 'px-2 py-1 rounded',
+        prev: 'px-2 py-1 rounded',
       },
       variants: {
         size: {
-          lg: "text-lg",
-          md: "text-md",
-          sm: "text-sm",
-          xl: "text-xl",
-          xs: "text-xs",
+          lg: 'text-lg',
+          md: 'text-md',
+          sm: 'text-sm',
+          xl: 'text-xl',
+          xs: 'text-xs',
         },
       },
     });
     const { base, cursor, item, next, prev } = pagination({
-      size: "xs",
+      size: 'xs',
     });
 
-    expect(base()).toHaveClassName([
-      "flex",
-      "flex-wrap",
-      "relative",
-      "gap-1",
-      "max-w-fit",
-      "text-xs",
-    ]);
+    expect(base()).toHaveClassName(['flex', 'flex-wrap', 'relative', 'gap-1', 'max-w-fit', 'text-xs']);
     expect(item()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(prev()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(next()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
-    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
+    expect(cursor()).toHaveClassName(['absolute', 'flex', 'overflow-visible']);
   });
 
-  test("should work with compound slots -- with multiple variants -- defaultVariants", () => {
+  test('should work with compound slots -- with multiple variants -- defaultVariants', () => {
     const pagination = tv({
       compoundSlots: [
         {
-          className: ["flex", "flex-wrap", "truncate"],
-          slots: ["item", "prev", "next"],
+          className: ['flex', 'flex-wrap', 'truncate'],
+          slots: ['item', 'prev', 'next'],
         },
         {
-          className: "w-7 h-7 text-xs",
-          color: "primary",
+          className: 'w-7 h-7 text-xs',
+          color: 'primary',
           isBig: true,
-          size: "xs",
-          slots: ["item", "prev", "next"],
+          size: 'xs',
+          slots: ['item', 'prev', 'next'],
         },
       ],
       defaultVariants: {
-        color: "primary",
+        color: 'primary',
         isBig: true,
-        size: "xs",
+        size: 'xs',
       },
       slots: {
-        base: "flex flex-wrap relative gap-1 max-w-fit",
-        cursor: ["absolute", "flex", "overflow-visible"],
-        item: "px-2 py-1 rounded",
-        next: "px-2 py-1 rounded",
-        prev: "px-2 py-1 rounded",
+        base: 'flex flex-wrap relative gap-1 max-w-fit',
+        cursor: ['absolute', 'flex', 'overflow-visible'],
+        item: 'px-2 py-1 rounded',
+        next: 'px-2 py-1 rounded',
+        prev: 'px-2 py-1 rounded',
       },
       variants: {
         color: {
-          primary: "text-blue-500",
-          secondary: "text-gray-500",
+          primary: 'text-blue-500',
+          secondary: 'text-gray-500',
         },
         isBig: {
-          true: "font-bold",
+          true: 'font-bold',
         },
         size: {
-          lg: "text-lg",
-          md: "text-md",
-          sm: "text-sm",
-          xl: "text-xl",
-          xs: "text-xs",
+          lg: 'text-lg',
+          md: 'text-md',
+          sm: 'text-sm',
+          xl: 'text-xl',
+          xs: 'text-xs',
         },
       },
     });
     const { base, cursor, item, next, prev } = pagination();
 
     expect(base()).toHaveClassName([
-      "flex",
-      "flex-wrap",
-      "relative",
-      "gap-1",
-      "max-w-fit",
-      "text-blue-500",
-      "font-bold",
-      "text-xs",
+      'flex',
+      'flex-wrap',
+      'relative',
+      'gap-1',
+      'max-w-fit',
+      'text-blue-500',
+      'font-bold',
+      'text-xs',
     ]);
     expect(item()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(prev()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(next()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
-    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
+    expect(cursor()).toHaveClassName(['absolute', 'flex', 'overflow-visible']);
   });
 
-  test("should work with compound slots -- with multiple variants -- prop variants", () => {
+  test('should work with compound slots -- with multiple variants -- prop variants', () => {
     const pagination = tv({
       compoundSlots: [
         {
-          className: ["flex", "flex-wrap", "truncate"],
-          slots: ["item", "prev", "next"],
+          className: ['flex', 'flex-wrap', 'truncate'],
+          slots: ['item', 'prev', 'next'],
         },
         {
-          className: "w-7 h-7 text-xs",
-          color: "primary",
+          className: 'w-7 h-7 text-xs',
+          color: 'primary',
           isBig: true,
-          size: "xs",
-          slots: ["item", "prev", "next"],
+          size: 'xs',
+          slots: ['item', 'prev', 'next'],
         },
       ],
       defaultVariants: {
-        color: "secondary",
+        color: 'secondary',
         isBig: false,
-        size: "sm",
+        size: 'sm',
       },
       slots: {
-        base: "flex flex-wrap relative gap-1 max-w-fit",
-        cursor: ["absolute", "flex", "overflow-visible"],
-        item: "px-2 py-1 rounded",
-        next: "px-2 py-1 rounded",
-        prev: "px-2 py-1 rounded",
+        base: 'flex flex-wrap relative gap-1 max-w-fit',
+        cursor: ['absolute', 'flex', 'overflow-visible'],
+        item: 'px-2 py-1 rounded',
+        next: 'px-2 py-1 rounded',
+        prev: 'px-2 py-1 rounded',
       },
       variants: {
         color: {
-          primary: "text-blue-500",
-          secondary: "text-gray-500",
+          primary: 'text-blue-500',
+          secondary: 'text-gray-500',
         },
         isBig: {
-          true: "font-bold",
+          true: 'font-bold',
         },
         size: {
-          lg: "text-lg",
-          md: "text-md",
-          sm: "text-sm",
-          xl: "text-xl",
-          xs: "text-xs",
+          lg: 'text-lg',
+          md: 'text-md',
+          sm: 'text-sm',
+          xl: 'text-xl',
+          xs: 'text-xs',
         },
       },
     });
     const { base, cursor, item, next, prev } = pagination({
-      color: "primary",
+      color: 'primary',
       isBig: true,
-      size: "xs",
+      size: 'xs',
     });
 
     expect(base()).toHaveClassName([
-      "flex",
-      "flex-wrap",
-      "relative",
-      "gap-1",
-      "max-w-fit",
-      "text-blue-500",
-      "font-bold",
-      "text-xs",
+      'flex',
+      'flex-wrap',
+      'relative',
+      'gap-1',
+      'max-w-fit',
+      'text-blue-500',
+      'font-bold',
+      'text-xs',
     ]);
     expect(item()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(prev()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
     expect(next()).toHaveClassName([
-      "px-2",
-      "py-1",
-      "rounded",
-      "flex",
-      "flex-wrap",
-      "truncate",
-      "w-7",
-      "h-7",
-      "text-xs",
+      'px-2',
+      'py-1',
+      'rounded',
+      'flex',
+      'flex-wrap',
+      'truncate',
+      'w-7',
+      'h-7',
+      'text-xs',
     ]);
-    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
+    expect(cursor()).toHaveClassName(['absolute', 'flex', 'overflow-visible']);
   });
 });

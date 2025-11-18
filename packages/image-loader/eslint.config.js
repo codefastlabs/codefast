@@ -1,1 +1,1 @@
-export { libraryPreset as default } from "@codefast/eslint-config/presets/library";
+export { libraryPreset as default } from '@codefast/eslint-config/presets/library';

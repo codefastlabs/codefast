@@ -94,6 +94,7 @@ Thumbs.db
 pnpm-lock.yaml
 
 # Generated files
+routeTree.gen.ts
 
 # Documentation build
 docs/.next/
@@ -103,6 +104,17 @@ docs/build/
 # Benchmarks output
 benchmarks/results/
 benchmarks/output/
+
+# TanStack Start specific
+.output/
+.cache/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+public/build/
+server/build/
+api/
 
 # Markdown files - exclude from Prettier formatting
 *.md

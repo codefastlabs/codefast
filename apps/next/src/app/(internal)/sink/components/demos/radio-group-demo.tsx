@@ -1,18 +1,18 @@
-import { Label } from "@codefast/ui/label";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Label } from '@codefast/ui/label';
+import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 
 const plans = [
   {
-    id: "starter",
-    name: "Starter Plan",
-    description: "Perfect for small businesses getting started with our platform",
-    price: "$10",
+    id: 'starter',
+    name: 'Starter Plan',
+    description: 'Perfect for small businesses getting started with our platform',
+    price: '$10',
   },
   {
-    id: "pro",
-    name: "Pro Plan",
-    description: "Advanced features for growing businesses with higher demands",
-    price: "$20",
+    id: 'pro',
+    name: 'Pro Plan',
+    description: 'Advanced features for growing businesses with higher demands',
+    price: '$20',
   },
 ] as const;
 

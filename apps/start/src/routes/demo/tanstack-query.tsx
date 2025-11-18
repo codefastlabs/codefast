@@ -62,18 +62,14 @@ function TanStackQueryDemo() {
     <div
       className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-900 via-red-800 to-black p-4 text-white"
       style={{
-        backgroundImage:
-          'radial-gradient(50% 50% at 80% 20%, #3B021F 0%, #7B1028 60%, #1A000A 100%)',
+        backgroundImage: 'radial-gradient(50% 50% at 80% 20%, #3B021F 0%, #7B1028 60%, #1A000A 100%)',
       }}
     >
       <div className="w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md">
         <h1 className="mb-4 text-2xl">TanStack Query Todos list</h1>
         <ul className="mb-4 space-y-2">
-          {data.map(t => (
-            <li
-              key={t.id}
-              className="rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm"
-            >
+          {data.map((t) => (
+            <li key={t.id} className="rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm">
               <span className="text-lg text-white">{t.name}</span>
             </li>
           ))}
@@ -82,8 +78,8 @@ function TanStackQueryDemo() {
           <input
             type="text"
             value={todo}
-            onChange={event => setTodo(event.target.value)}
-            onKeyDown={event => {
+            onChange={(event) => setTodo(event.target.value)}
+            onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 submitTodo();
               }

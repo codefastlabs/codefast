@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from 'react';
 
-import { useId, useMemo } from "react";
+import { useId, useMemo } from 'react';
 
-import type { Scope } from "@radix-ui/react-context";
+import type { Scope } from '@radix-ui/react-context';
 
-import { createContextScope } from "@radix-ui/react-context";
+import { createContextScope } from '@radix-ui/react-context';
 
 /* -----------------------------------------------------------------------------
  * Context: ProgressCircleProvider
  * --------------------------------------------------------------------------- */
 
-const PROGRESS_CIRCLE_PROVIDER_NAME = "ProgressCircleProvider";
+const PROGRESS_CIRCLE_PROVIDER_NAME = 'ProgressCircleProvider';
 
 type ScopedProps<P> = P & { __scopeProgressCircle?: Scope };
 
@@ -111,9 +111,7 @@ interface ProgressCircleContextValue {
   valueText: string;
 }
 
-const [createProgressCircleContext, createProgressCircleScope] = createContextScope(
-  PROGRESS_CIRCLE_PROVIDER_NAME,
-);
+const [createProgressCircleContext, createProgressCircleScope] = createContextScope(PROGRESS_CIRCLE_PROVIDER_NAME);
 
 const [ProgressCircleContextProvider, useProgressCircleContext] =
   createProgressCircleContext<ProgressCircleContextValue>(PROGRESS_CIRCLE_PROVIDER_NAME);
@@ -214,19 +212,13 @@ function ProgressCircleProvider({
   const isIndeterminate = value === null || value === undefined;
   const clampedValue = isIndeterminate ? undefined : clamp(validMin, validMax, value);
   const range = validMax - validMin;
-  const percentage =
-    clampedValue !== undefined && range > 0 ? ((clampedValue - validMin) / range) * 100 : 0;
+  const percentage = clampedValue !== undefined && range > 0 ? ((clampedValue - validMin) / range) * 100 : 0;
   const valueText =
-    clampedValue !== undefined && formatValue
-      ? formatValue(clampedValue)
-      : `${Math.round(percentage).toString()}%`;
+    clampedValue !== undefined && formatValue ? formatValue(clampedValue) : `${Math.round(percentage).toString()}%`;
 
   // Sort thresholds by value
   const sortedThresholds = useMemo(
-    () =>
-      thresholds && thresholds.length > 0
-        ? [...thresholds].toSorted((a, b) => a.value - b.value)
-        : [],
+    () => (thresholds && thresholds.length > 0 ? [...thresholds].toSorted((a, b) => a.value - b.value) : []),
     [thresholds],
   );
 
@@ -279,17 +271,14 @@ function ProgressCircleProvider({
  * Component: ProgressCircle
  * --------------------------------------------------------------------------- */
 
-type ProgressCircleProps = ComponentProps<"div">;
+type ProgressCircleProps = ComponentProps<'div'>;
 
 /**
  * Root component for the progress circle
  *
  * Serves as a wrapper for other progress circle components.
  */
-function ProgressCircle({
-  __scopeProgressCircle,
-  ...props
-}: ScopedProps<ProgressCircleProps>): ReactNode {
+function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleProps>): ReactNode {
   return <div {...props} />;
 }
 
@@ -297,19 +286,16 @@ function ProgressCircle({
  * Component: ProgressCircleSVG
  * --------------------------------------------------------------------------- */
 
-const PROGRESS_CIRCLE_SVG_NAME = "ProgressCircleSVG";
+const PROGRESS_CIRCLE_SVG_NAME = 'ProgressCircleSVG';
 
-type ProgressCircleSVGProps = ComponentProps<"svg">;
+type ProgressCircleSVGProps = ComponentProps<'svg'>;
 
 /**
  * SVG container for the progress circle
  *
  * Renders the SVG with accessibility attributes and supports indeterminate state.
  */
-function ProgressCircleSVG({
-  __scopeProgressCircle,
-  ...props
-}: ScopedProps<ProgressCircleSVGProps>): ReactNode {
+function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleSVGProps>): ReactNode {
   const { clampedValue, id, max, min, size, valueText } = useProgressCircleContext(
     PROGRESS_CIRCLE_SVG_NAME,
     __scopeProgressCircle,
@@ -336,19 +322,16 @@ function ProgressCircleSVG({
  * Component: ProgressCircleTrack
  * --------------------------------------------------------------------------- */
 
-const PROGRESS_CIRCLE_TRACK_NAME = "ProgressCircleTrack";
+const PROGRESS_CIRCLE_TRACK_NAME = 'ProgressCircleTrack';
 
-type ProgressCircleTrackProps = ComponentProps<"circle">;
+type ProgressCircleTrackProps = ComponentProps<'circle'>;
 
 /**
  * Background circle for the progress indicator
  *
  * Renders the static track of the progress circle.
  */
-function ProgressCircleTrack({
-  __scopeProgressCircle,
-  ...props
-}: ScopedProps<ProgressCircleTrackProps>): ReactNode {
+function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleTrackProps>): ReactNode {
   const { center, radius, strokeWidth, threshold } = useProgressCircleContext(
     PROGRESS_CIRCLE_TRACK_NAME,
     __scopeProgressCircle,
@@ -360,7 +343,7 @@ function ProgressCircleTrack({
       cy={center}
       fill="transparent"
       r={radius}
-      stroke={threshold?.background ?? "currentColor"}
+      stroke={threshold?.background ?? 'currentColor'}
       strokeWidth={strokeWidth}
       {...props}
     />
@@ -371,9 +354,9 @@ function ProgressCircleTrack({
  * Component: ProgressCircleIndicator
  * --------------------------------------------------------------------------- */
 
-const PROGRESS_CIRCLE_INDICATOR_NAME = "ProgressCircleIndicator";
+const PROGRESS_CIRCLE_INDICATOR_NAME = 'ProgressCircleIndicator';
 
-type ProgressCircleIndicatorProps = ComponentProps<"circle">;
+type ProgressCircleIndicatorProps = ComponentProps<'circle'>;
 
 /**
  * Foreground circle showing progress
@@ -384,15 +367,8 @@ function ProgressCircleIndicator({
   __scopeProgressCircle,
   ...props
 }: ScopedProps<ProgressCircleIndicatorProps>): ReactNode {
-  const {
-    center,
-    circumference,
-    radius,
-    rotationTransform,
-    strokeDashoffset,
-    strokeWidth,
-    threshold,
-  } = useProgressCircleContext(PROGRESS_CIRCLE_INDICATOR_NAME, __scopeProgressCircle);
+  const { center, circumference, radius, rotationTransform, strokeDashoffset, strokeWidth, threshold } =
+    useProgressCircleContext(PROGRESS_CIRCLE_INDICATOR_NAME, __scopeProgressCircle);
 
   return (
     <circle
@@ -400,7 +376,7 @@ function ProgressCircleIndicator({
       cy={center}
       fill="transparent"
       r={radius}
-      stroke={threshold?.color ?? "currentColor"}
+      stroke={threshold?.color ?? 'currentColor'}
       strokeDasharray={circumference}
       strokeDashoffset={strokeDashoffset}
       strokeLinecap="round"
@@ -415,9 +391,9 @@ function ProgressCircleIndicator({
  * Component: ProgressCircleValue
  * --------------------------------------------------------------------------- */
 
-const PROGRESS_CIRCLE_VALUE_NAME = "ProgressCircleValue";
+const PROGRESS_CIRCLE_VALUE_NAME = 'ProgressCircleValue';
 
-interface ProgressCircleValueProps extends Omit<ComponentProps<"div">, "children"> {
+interface ProgressCircleValueProps extends Omit<ComponentProps<'div'>, 'children'> {
   children?: ((context: { value: number | undefined; valueText: string }) => ReactNode) | ReactNode;
 }
 
@@ -431,12 +407,9 @@ function ProgressCircleValue({
   children,
   ...props
 }: ScopedProps<ProgressCircleValueProps>): ReactNode {
-  const { clampedValue, valueText } = useProgressCircleContext(
-    PROGRESS_CIRCLE_VALUE_NAME,
-    __scopeProgressCircle,
-  );
+  const { clampedValue, valueText } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
 
-  if (typeof children === "function") {
+  if (typeof children === 'function') {
     return children({ value: clampedValue, valueText });
   }
 

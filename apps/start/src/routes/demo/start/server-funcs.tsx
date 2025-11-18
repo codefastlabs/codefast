@@ -67,18 +67,14 @@ function Home() {
     <div
       className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-800 to-black p-4 text-white"
       style={{
-        backgroundImage:
-          'radial-gradient(50% 50% at 20% 60%, #23272a 0%, #18181b 50%, #000000 100%)',
+        backgroundImage: 'radial-gradient(50% 50% at 20% 60%, #23272a 0%, #18181b 50%, #000000 100%)',
       }}
     >
       <div className="w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md">
         <h1 className="mb-4 text-2xl">Start Server Functions - Todo Example</h1>
         <ul className="mb-4 space-y-2">
-          {todos.map(t => (
-            <li
-              key={t.id}
-              className="rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm"
-            >
+          {todos.map((t) => (
+            <li key={t.id} className="rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm">
               <span className="text-lg text-white">{t.name}</span>
             </li>
           ))}
@@ -87,8 +83,8 @@ function Home() {
           <input
             type="text"
             value={todo}
-            onChange={e => setTodo(e.target.value)}
-            onKeyDown={e => {
+            onChange={(e) => setTodo(e.target.value)}
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 submitTodo();
               }

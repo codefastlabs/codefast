@@ -1,4 +1,4 @@
-import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@codefast/ui/native-select";
+import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from '@codefast/ui/native-select';
 import {
   Select,
   SelectContent,
@@ -7,7 +7,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@codefast/ui/select";
+} from '@codefast/ui/select';
 
 export function NativeSelectDemo() {
   return (

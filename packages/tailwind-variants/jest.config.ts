@@ -1,60 +1,60 @@
-import type { Config } from "jest";
+import type { Config } from 'jest';
 
 const config: Config = {
   /**
    * Indicates which provider should be used to instrument code for coverage
    */
-  coverageProvider: "v8",
+  coverageProvider: 'v8',
 
   /**
    * A list of file extensions to treat as ESM
    */
-  extensionsToTreatAsEsm: [".ts", ".tsx"],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 
   /**
    * Configuration for module name mapping used in module resolution.
    */
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
-    "^~/(.*)$": "<rootDir>/tests/$1",
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^~/(.*)$': '<rootDir>/tests/$1',
   },
 
   /**
    * A list of paths to modules that run some code to configure or set up the testing framework before each test
    */
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   /**
    * The test environment that will be used for testing
    */
-  testEnvironment: "node",
+  testEnvironment: 'node',
 
   /**
    * The glob patterns Jest uses to detect test files
    */
   testMatch: [
-    "<rootDir>/tests/unit/**/*.?([mc])[jt]s?(x)",
-    "<rootDir>/tests/types/**/*.?([mc])[jt]s?(x)",
-    "**/*.(spec|test).?([mc])[jt]s?(x)",
+    '<rootDir>/tests/unit/**/*.?([mc])[jt]s?(x)',
+    '<rootDir>/tests/types/**/*.?([mc])[jt]s?(x)',
+    '**/*.(spec|test).?([mc])[jt]s?(x)',
   ],
 
   /**
    * The glob patterns Jest uses to ignore test files
    */
-  testPathIgnorePatterns: ["<rootDir>/dist/"],
+  testPathIgnorePatterns: ['<rootDir>/dist/'],
 
   /**
    * Configuration for transforming source files before testing
    * Uses `@swc/jest` to quickly transform JavaScript/TypeScript files
    */
   transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
       {
         jsc: {
           parser: {
             decorators: true,
-            syntax: "typescript",
+            syntax: 'typescript',
           },
           transform: {
             decoratorMetadata: true,
@@ -69,7 +69,7 @@ const config: Config = {
    * Specifies which files should be ignored during transformation
    * Prevents Jest from transforming files in the node_modules directory
    */
-  transformIgnorePatterns: ["/node_modules/", "\\.pnp\\.[^\\\/]+$"],
+  transformIgnorePatterns: ['/node_modules/', '\\.pnp\\.[^\\\/]+$'],
 
   /**
    * Allow Jest to pass when no test files are found
@@ -85,7 +85,7 @@ const config: Config = {
    * Defines patterns for files that should be ignored during watch mode
    * Prevents unnecessary recompilation of dist directory contents
    */
-  watchPathIgnorePatterns: ["<rootDir>/dist/"],
+  watchPathIgnorePatterns: ['<rootDir>/dist/'],
 };
 
 export default config;

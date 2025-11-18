@@ -1,13 +1,7 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { Card, CardContent } from "@codefast/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@codefast/ui/carousel";
+import { Card, CardContent } from '@codefast/ui/card';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@codefast/ui/carousel';
 
 export function CarouselDemo() {
   return (
@@ -32,7 +26,7 @@ export function CarouselDemo() {
       <Carousel
         className="max-w-sm *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
         opts={{
-          align: "start",
+          align: 'start',
         }}
       >
         <CarouselContent>

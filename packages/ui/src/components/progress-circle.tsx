@@ -1,44 +1,44 @@
-"use client";
+'use client';
 
-import type { ComponentProps, CSSProperties, JSX } from "react";
+import type { ComponentProps, CSSProperties, JSX } from 'react';
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from 'react';
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { VariantProps } from '@codefast/tailwind-variants';
 
-import { useAnimatedValue } from "@/hooks/use-animated-value";
-import * as ProgressCirclePrimitive from "@/primitives/progress-circle";
-import { tv } from "@codefast/tailwind-variants";
+import { useAnimatedValue } from '@/hooks/use-animated-value';
+import * as ProgressCirclePrimitive from '@/primitives/progress-circle';
+import { tv } from '@codefast/tailwind-variants';
 
 /* -------------------------------------------------------------------------------------------------
  * Variant: ProgressCircle
  * ----------------------------------------------------------------------------------------------- */
 
 const progressCircleVariants = tv({
-  defaultVariants: { size: "md", thickness: "regular", variant: "default" },
+  defaultVariants: { size: 'md', thickness: 'regular', variant: 'default' },
   slots: {
-    indicator: "origin-center",
-    label: "absolute inset-0 flex items-center justify-center text-xs font-medium",
-    root: "relative inline-flex items-center justify-center",
-    svg: "size-full",
-    track: "origin-center",
+    indicator: 'origin-center',
+    label: 'absolute inset-0 flex items-center justify-center text-xs font-medium',
+    root: 'relative inline-flex items-center justify-center',
+    svg: 'size-full',
+    track: 'origin-center',
   },
   variants: {
     size: {
-      sm: { label: "text-[10px]" },
+      sm: { label: 'text-[10px]' },
 
-      md: { label: "text-xs" },
+      md: { label: 'text-xs' },
 
-      lg: { label: "text-sm" },
+      lg: { label: 'text-sm' },
 
-      xl: { label: "text-base" },
+      xl: { label: 'text-base' },
 
-      "2xl": { label: "text-lg" },
+      '2xl': { label: 'text-lg' },
     },
     thickness: { regular: {}, thick: {}, thin: {} },
     variant: {
-      default: { indicator: "text-primary", track: "text-primary/20" },
-      destructive: { indicator: "text-destructive", track: "text-destructive/20" },
+      default: { indicator: 'text-primary', track: 'text-primary/20' },
+      destructive: { indicator: 'text-destructive', track: 'text-destructive/20' },
     },
   },
 });
@@ -48,7 +48,7 @@ const progressCircleVariants = tv({
  * ----------------------------------------------------------------------------------------------- */
 
 interface ProgressCircleProps
-  extends Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size">,
+  extends Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, 'children' | 'size'>,
     VariantProps<typeof progressCircleVariants> {
   /**
    * Enables animation effect when value changes
@@ -124,9 +124,9 @@ function ProgressCircle({
   size,
   sizeInPixels,
   strokeWidth,
-  thickness = "regular",
+  thickness = 'regular',
   value = 0,
-  variant = "default",
+  variant = 'default',
   ...props
 }: ProgressCircleProps): JSX.Element {
   const displayValue = useAnimatedValue(value, animationDuration, animate);
@@ -138,10 +138,7 @@ function ProgressCircle({
     [strokeWidth, thickness, actualSize],
   );
 
-  const slots = useMemo(
-    () => progressCircleVariants({ size, thickness, variant }),
-    [variant, size, thickness],
-  );
+  const slots = useMemo(() => progressCircleVariants({ size, thickness, variant }), [variant, size, thickness]);
 
   const shouldShowLabel = showValue || Boolean(customLabel);
 
@@ -154,25 +151,16 @@ function ProgressCircle({
   }, [customLabel, displayValue]);
 
   return (
-    <ProgressCirclePrimitive.Provider
-      size={actualSize}
-      strokeWidth={actualThickness}
-      value={value}
-      {...props}
-    >
-      <ProgressCirclePrimitive.Root
-        className={slots.root({ className: [className, classNames?.root] })}
-      >
+    <ProgressCirclePrimitive.Provider size={actualSize} strokeWidth={actualThickness} value={value} {...props}>
+      <ProgressCirclePrimitive.Root className={slots.root({ className: [className, classNames?.root] })}>
         <ProgressCirclePrimitive.SVG className={slots.svg({ className: classNames?.svg })}>
-          <ProgressCirclePrimitive.Track
-            className={slots.track({ className: classNames?.track })}
-          />
+          <ProgressCirclePrimitive.Track className={slots.track({ className: classNames?.track })} />
           <ProgressCirclePrimitive.Indicator
             className={slots.indicator({ className: classNames?.indicator })}
             style={
               {
                 transitionDuration: `${animationDuration.toString()}ms`,
-                transitionProperty: "stroke-dashoffset",
+                transitionProperty: 'stroke-dashoffset',
               } as CSSProperties
             }
           />
@@ -187,7 +175,7 @@ function ProgressCircle({
   );
 }
 
-ProgressCircle.displayName = "ProgressCircle";
+ProgressCircle.displayName = 'ProgressCircle';
 
 /* -----------------------------------------------------------------------------
  * Helpers
@@ -196,9 +184,9 @@ ProgressCircle.displayName = "ProgressCircle";
 /**
  * Maps size variants to actual pixel sizes
  */
-const getActualSize = (size?: VariantProps<typeof progressCircleVariants>["size"]): number => {
+const getActualSize = (size?: VariantProps<typeof progressCircleVariants>['size']): number => {
   const sizeMap: Record<NonNullable<typeof size>, number> = {
-    "2xl": 128,
+    '2xl': 128,
     lg: 64,
     md: 48,
     sm: 32,
@@ -211,10 +199,7 @@ const getActualSize = (size?: VariantProps<typeof progressCircleVariants>["size"
 /**
  * Calculates stroke width based on thickness variant and circle size
  */
-const getStrokeWidth = (
-  thickness: VariantProps<typeof progressCircleVariants>["thickness"],
-  size: number,
-): number => {
+const getStrokeWidth = (thickness: VariantProps<typeof progressCircleVariants>['thickness'], size: number): number => {
   const thicknessMap: Record<NonNullable<typeof thickness>, number> = {
     regular: Math.max(3, size * 0.05),
     thick: Math.max(4, size * 0.075),

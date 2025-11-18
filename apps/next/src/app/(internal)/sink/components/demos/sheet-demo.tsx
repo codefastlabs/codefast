@@ -1,6 +1,6 @@
-import { Button } from "@codefast/ui/button";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
+import { Button } from '@codefast/ui/button';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
 import {
   Sheet,
   SheetClose,
@@ -10,9 +10,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@codefast/ui/sheet";
+} from '@codefast/ui/sheet';
 
-const SHEET_SIDES = ["top", "right", "bottom", "left"] as const;
+const SHEET_SIDES = ['top', 'right', 'bottom', 'left'] as const;
 
 export function SheetDemo() {
   return (
@@ -24,9 +24,7 @@ export function SheetDemo() {
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
-            <SheetDescription>
-              Make changes to your profile here. Click save when you&apos;re done.
-            </SheetDescription>
+            <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
           </SheetHeader>
           <div className="grid flex-1 auto-rows-min gap-6 px-4">
             <div className="grid gap-3">
@@ -65,11 +63,10 @@ export function SheetDemo() {
                 <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
                 {Array.from({ length: 10 }).map((_, index) => (
                   <p key={index} className="mb-4 leading-normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
                     culpa qui officia deserunt mollit anim id est laborum.
                   </p>
                 ))}

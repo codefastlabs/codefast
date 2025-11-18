@@ -1,9 +1,9 @@
-import { AppearanceSettings } from "@/app/(internal)/sink/(pages)/forms/appearance-settings"
-import { ChatSettings } from "@/app/(internal)/sink/(pages)/forms/chat-settings"
-import { DisplaySettings } from "@/app/(internal)/sink/(pages)/forms/display-settings"
-import { NotionPromptForm } from "@/app/(internal)/sink/(pages)/forms/notion-prompt-form"
-import { ShipRegistrationForm } from "@/app/(internal)/sink/(pages)/forms/ship-registration-form"
-import { ShippingForm } from "@/app/(internal)/sink/(pages)/forms/shipping-form"
+import { AppearanceSettings } from '@/app/(internal)/sink/(pages)/forms/appearance-settings';
+import { ChatSettings } from '@/app/(internal)/sink/(pages)/forms/chat-settings';
+import { DisplaySettings } from '@/app/(internal)/sink/(pages)/forms/display-settings';
+import { NotionPromptForm } from '@/app/(internal)/sink/(pages)/forms/notion-prompt-form';
+import { ShipRegistrationForm } from '@/app/(internal)/sink/(pages)/forms/ship-registration-form';
+import { ShippingForm } from '@/app/(internal)/sink/(pages)/forms/shipping-form';
 
 export default function FormsPage() {
   return (
@@ -27,5 +27,5 @@ export default function FormsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

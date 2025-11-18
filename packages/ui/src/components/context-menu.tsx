@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
 
-import { cn } from "@codefast/tailwind-variants";
-import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
+import { cn } from '@codefast/tailwind-variants';
+import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenu
@@ -61,17 +61,11 @@ function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.El
  * Component: ContextMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-interface ContextMenuSubTriggerProps
-  extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
+interface ContextMenuSubTriggerProps extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
-function ContextMenuSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: ContextMenuSubTriggerProps): JSX.Element {
+function ContextMenuSubTrigger({ children, className, inset, ...props }: ContextMenuSubTriggerProps): JSX.Element {
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
@@ -99,7 +93,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentPro
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.SubContent
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 ease-ui z-50 min-w-32 rounded-lg border p-1 shadow-lg",
+          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 ease-ui z-50 min-w-32 rounded-lg border p-1 shadow-lg',
           className,
         )}
         data-slot="context-menu-sub-content"
@@ -120,7 +114,7 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 ease-ui z-50 min-w-32 rounded-lg border p-1 shadow-lg",
+          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 ease-ui z-50 min-w-32 rounded-lg border p-1 shadow-lg',
           className,
         )}
         data-slot="context-menu-content"
@@ -136,15 +130,10 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
 
 interface ContextMenuItemProps extends ComponentProps<typeof ContextMenuPrimitive.Item> {
   inset?: boolean;
-  variant?: "default" | "destructive";
+  variant?: 'default' | 'destructive';
 }
 
-function ContextMenuItem({
-  className,
-  inset,
-  variant,
-  ...props
-}: ContextMenuItemProps): JSX.Element {
+function ContextMenuItem({ className, inset, variant, ...props }: ContextMenuItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Item
       className={cn(
@@ -197,11 +186,7 @@ function ContextMenuCheckboxItem({
 
 type ContextMenuRadioItemProps = ComponentProps<typeof ContextMenuPrimitive.RadioItem>;
 
-function ContextMenuRadioItem({
-  children,
-  className,
-  ...props
-}: ContextMenuRadioItemProps): JSX.Element {
+function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadioItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
@@ -232,10 +217,7 @@ interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimiti
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
-      className={cn(
-        "flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold data-inset:pl-8",
-        className,
-      )}
+      className={cn('flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold data-inset:pl-8', className)}
       data-inset={inset}
       data-slot="context-menu-label"
       {...props}
@@ -252,7 +234,7 @@ type ContextMenuSeparatorProps = ComponentProps<typeof ContextMenuPrimitive.Sepa
 function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Separator
-      className={cn("bg-border mx-2 my-1 h-px", className)}
+      className={cn('bg-border mx-2 my-1 h-px', className)}
       data-slot="context-menu-separator"
       {...props}
     />
@@ -263,13 +245,13 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
  * Component: ContextMenuShortcut
  * -------------------------------------------------------------------------- */
 
-type ContextMenuShortcutProps = ComponentProps<"span">;
+type ContextMenuShortcutProps = ComponentProps<'span'>;
 
 function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): JSX.Element {
   return (
     <span
       className={cn(
-        "text-muted-foreground group-data-[variant=destructive]/context-menu-item:text-destructive/80 ml-auto text-xs tracking-widest",
+        'text-muted-foreground group-data-[variant=destructive]/context-menu-item:text-destructive/80 ml-auto text-xs tracking-widest',
         className,
       )}
       data-slot="context-menu-shortcut"
@@ -286,11 +268,7 @@ type ContextMenuArrowProps = ComponentProps<typeof ContextMenuPrimitive.Arrow>;
 
 function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.Element {
   return (
-    <ContextMenuPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="context-menu-arrow"
-      {...props}
-    />
+    <ContextMenuPrimitive.Arrow className={cn('fill-popover', className)} data-slot="context-menu-arrow" {...props} />
   );
 }
 

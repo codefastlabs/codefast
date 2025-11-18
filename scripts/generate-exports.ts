@@ -51,14 +51,14 @@
  *    fields), and writes the file back with proper formatting.
  */
 
-import { readdir, readFile, writeFile, access } from "node:fs/promises";
-import { join, relative, dirname, basename, extname, resolve, normalize } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readdir, readFile, writeFile, access } from 'node:fs/promises';
+import { join, relative, dirname, basename, extname, resolve, normalize } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIST_DIR = "dist";
-const PACKAGE_JSON = "package.json";
-const CONFIG_FILE_JS = "generate-exports.config.js";
-const CONFIG_FILE_JSON = "generate-exports.config.json";
+const DIST_DIR = 'dist';
+const PACKAGE_JSON = 'package.json';
+const CONFIG_FILE_JS = 'generate-exports.config.js';
+const CONFIG_FILE_JSON = 'generate-exports.config.json';
 
 /**
  * Configuration options for CSS file exports.
@@ -149,7 +149,7 @@ async function scanDirectory(dir: string, baseDir: string = dir): Promise<string
       const subFiles = await scanDirectory(fullPath, baseDir);
       files.push(...subFiles);
     } else if (entry.isFile()) {
-      const relativePath = normalize(relative(baseDir, fullPath)).replace(/\\/g, "/");
+      const relativePath = normalize(relative(baseDir, fullPath)).replace(/\\/g, '/');
       files.push(relativePath);
     }
   }
@@ -174,13 +174,13 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
     let ext: string;
     let modulePath: string;
 
-    if (file.endsWith(".d.ts")) {
-      ext = ".d.ts";
+    if (file.endsWith('.d.ts')) {
+      ext = '.d.ts';
       modulePath = file.slice(0, -5); // Remove ".d.ts"
     } else {
       ext = extname(file);
       // Only process files with valid extensions
-      if (![".js", ".cjs"].includes(ext)) {
+      if (!['.js', '.cjs'].includes(ext)) {
         continue;
       }
       modulePath = file.slice(0, -ext.length); // Remove extension
@@ -208,11 +208,11 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
 
     const module = modules.get(key)!;
 
-    if (ext === ".js") {
+    if (ext === '.js') {
       module.files.js = file;
-    } else if (ext === ".cjs") {
+    } else if (ext === '.cjs') {
       module.files.cjs = file;
-    } else if (ext === ".d.ts") {
+    } else if (ext === '.d.ts') {
       module.files.dts = file;
     }
   }
@@ -247,8 +247,8 @@ function isValidModule(module: Module): boolean {
  */
 function toExportPath(distPath: string): string {
   // dist/index → "."
-  if (distPath === "index") {
-    return ".";
+  if (distPath === 'index') {
+    return '.';
   }
 
   // dist/loaders/cloudinary → "./loaders/cloudinary"
@@ -264,7 +264,7 @@ function toExportPath(distPath: string): string {
  */
 function createExportEntry(
   module: Module,
-  pathTransform?: (exportPath: string) => string
+  pathTransform?: (exportPath: string) => string,
 ): { exportPath: string; entry: ExportEntry } {
   const { path, files } = module;
   let exportPath = toExportPath(path);
@@ -314,7 +314,7 @@ async function loadConfig(rootDir: string): Promise<GenerateExportsConfig> {
     // If .js doesn't exist, try .json
     try {
       await access(configPathJson);
-      const content = await readFile(configPathJson, "utf-8");
+      const content = await readFile(configPathJson, 'utf-8');
       return JSON.parse(content) as GenerateExportsConfig;
     } catch {
       // Return default config if neither file exists
@@ -331,8 +331,8 @@ async function loadConfig(rootDir: string): Promise<GenerateExportsConfig> {
  * @returns A transformation function if configured, undefined otherwise
  */
 function createPathTransform(
-  config: GenerateExportsConfig["pathTransformations"],
-  packagePath: string
+  config: GenerateExportsConfig['pathTransformations'],
+  packagePath: string,
 ): ((exportPath: string) => string) | undefined {
   const transform = config?.[packagePath];
   if (!transform) {
@@ -344,7 +344,7 @@ function createPathTransform(
       if (exportPath.startsWith(transform.removePrefix!)) {
         const result = exportPath.slice(transform.removePrefix!.length);
         // Ensure result starts with "./" (except for root entry ".")
-        if (result && result !== "." && !result.startsWith("./")) {
+        if (result && result !== '.' && !result.startsWith('./')) {
           return `./${result}`;
         }
         return result;
@@ -376,9 +376,9 @@ async function scanCSSFiles(distDir: string, baseDir: string = distDir): Promise
         // Recursively scan subdirectories
         const subFiles = await scanCSSFiles(fullPath, baseDir);
         files.push(...subFiles);
-      } else if (entry.isFile() && entry.name.endsWith(".css")) {
+      } else if (entry.isFile() && entry.name.endsWith('.css')) {
         // Get relative path from baseDir (dist/)
-        const relativePath = normalize(relative(baseDir, fullPath)).replace(/\\/g, "/");
+        const relativePath = normalize(relative(baseDir, fullPath)).replace(/\\/g, '/');
         files.push(relativePath);
       }
     }
@@ -400,27 +400,27 @@ async function scanCSSFiles(distDir: string, baseDir: string = distDir): Promise
  */
 async function isDirectoryCSSOnly(distDir: string, dirPath: string): Promise<boolean> {
   const fullPath = resolve(distDir, dirPath);
-  
+
   try {
     const entries = await readdir(fullPath, { withFileTypes: true });
-    
+
     // If directory is empty, consider it CSS-only (will use wildcard)
     if (entries.length === 0) {
       return true;
     }
-    
+
     // Check if all files in directory are CSS files
     for (const entry of entries) {
       if (entry.isDirectory()) {
         // If there's a subdirectory, it's not CSS-only
         return false;
       }
-      if (entry.isFile() && !entry.name.endsWith(".css")) {
+      if (entry.isFile() && !entry.name.endsWith('.css')) {
         // If there's a non-CSS file, it's not CSS-only
         return false;
       }
     }
-    
+
     return true;
   } catch {
     return false;
@@ -440,12 +440,12 @@ async function isDirectoryCSSOnly(distDir: string, dirPath: string): Promise<boo
  */
 async function generateCSSExports(
   distDir: string,
-  cssConfig: CSSExportConfig | boolean | undefined
+  cssConfig: CSSExportConfig | boolean | undefined,
 ): Promise<Record<string, string>> {
   const cssExports: Record<string, string> = {};
 
   // If config is boolean, use it as enabled flag
-  if (typeof cssConfig === "boolean") {
+  if (typeof cssConfig === 'boolean') {
     if (!cssConfig) {
       return cssExports;
     }
@@ -474,7 +474,7 @@ async function generateCSSExports(
 
   for (const file of cssFiles) {
     const dir = dirname(file);
-    if (dir === ".") {
+    if (dir === '.') {
       // Root CSS files (e.g., "style.css")
       rootCSS.push(file);
     } else {
@@ -540,30 +540,30 @@ async function generateCSSExports(
 async function generateExports(
   distDir: string,
   pathTransform?: (exportPath: string) => string,
-  cssConfig?: CSSExportConfig | boolean
+  cssConfig?: CSSExportConfig | boolean,
 ): Promise<Record<string, ExportEntry | string>> {
   // 1. Scan the dist directory
   const files = await scanDirectory(distDir);
 
   if (files.length === 0) {
-    console.warn("⚠️  No files found in dist directory");
-    return { "./package.json": "./package.json" };
+    console.warn('⚠️  No files found in dist directory');
+    return { './package.json': './package.json' };
   }
 
   // 2. Group files by module
   const modules = groupFilesByModule(files);
 
   if (modules.size === 0) {
-    console.warn("⚠️  No valid modules found (need .js and .d.ts files)");
-    return { "./package.json": "./package.json" };
+    console.warn('⚠️  No valid modules found (need .js and .d.ts files)');
+    return { './package.json': './package.json' };
   }
 
   // 3. Filter and validate modules
   const validModules = Array.from(modules.values()).filter(isValidModule);
 
   if (validModules.length === 0) {
-    console.warn("⚠️  No valid modules after validation");
-    return { "./package.json": "./package.json" };
+    console.warn('⚠️  No valid modules after validation');
+    return { './package.json': './package.json' };
   }
 
   // 4. Create exports object
@@ -576,7 +576,7 @@ async function generateExports(
 
   // 5. Sort exports by directory groups
   const sortedExports: Record<string, ExportEntry | string> = {};
-  
+
   /**
    * Extract directory group from export path for sorting purposes.
    *
@@ -588,52 +588,52 @@ async function generateExports(
    *          - sortOrder: numeric order for consistent grouping
    */
   function getExportGroup(path: string, pathTransform?: (p: string) => string): [string, string, number] {
-    if (path === ".") {
-      return [".", "", 0];
+    if (path === '.') {
+      return ['.', '', 0];
     }
-    
+
     // Remove leading "./"
-    const cleanPath = path.startsWith("./") ? path.slice(2) : path;
-    
+    const cleanPath = path.startsWith('./') ? path.slice(2) : path;
+
     // Check if it's a wildcard pattern
-    if (cleanPath.endsWith("/*")) {
+    if (cleanPath.endsWith('/*')) {
       const dir = cleanPath.slice(0, -2);
       // CSS exports come after JS exports
-      const order = dir === "css" ? 900 : 100;
-      return [dir, "", order];
+      const order = dir === 'css' ? 900 : 100;
+      return [dir, '', order];
     }
-    
+
     // Extract first directory level
-    const parts = cleanPath.split("/");
+    const parts = cleanPath.split('/');
     if (parts.length === 1) {
       // Root level file - could be transformed component or actual root file
       // If pathTransform exists, check if it removes "./components/" prefix
       // In that case, these are components and should be grouped together
       const isTransformedComponent = pathTransform !== undefined;
       const order = isTransformedComponent ? 100 : 800; // Components: 100, other root files: 800
-      const group = isTransformedComponent ? "components" : "";
+      const group = isTransformedComponent ? 'components' : '';
       return [group, parts[0], order];
     }
-    
+
     const group = parts[0];
-    const subpath = parts.slice(1).join("/");
-    
+    const subpath = parts.slice(1).join('/');
+
     // Define sort order for known groups
     const groupOrder: Record<string, number> = {
-      "components": 100,
-      "hooks": 200,
-      "primitives": 300,
-      "core": 400,
-      "loaders": 500,
-      "utils": 600,
-      "css": 900,
+      components: 100,
+      hooks: 200,
+      primitives: 300,
+      core: 400,
+      loaders: 500,
+      utils: 600,
+      css: 900,
     };
-    
+
     const order = groupOrder[group] || 700; // Unknown groups come after known ones
-    
+
     return [group, subpath, order];
   }
-  
+
   /**
    * Sort comparator for export paths.
    *
@@ -646,29 +646,29 @@ async function generateExports(
    */
   function sortExports(a: string, b: string): number {
     // "." always comes first
-    if (a === ".") return -1;
-    if (b === ".") return 1;
-    
+    if (a === '.') return -1;
+    if (b === '.') return 1;
+
     const [groupA, subpathA, orderA] = getExportGroup(a, pathTransform);
     const [groupB, subpathB, orderB] = getExportGroup(b, pathTransform);
-    
+
     // Sort by order first (groups)
     if (orderA !== orderB) {
       return orderA - orderB;
     }
-    
+
     // Same order, sort by group name
     if (groupA !== groupB) {
       // Empty group (root files) comes after directories
-      if (groupA === "") return 1;
-      if (groupB === "") return -1;
+      if (groupA === '') return 1;
+      if (groupB === '') return -1;
       return groupA.localeCompare(groupB);
     }
-    
+
     // Same group, sort by subpath
     return subpathA.localeCompare(subpathB);
   }
-  
+
   const exportKeys = Object.keys(exports).sort(sortExports);
 
   for (const key of exportKeys) {
@@ -683,19 +683,19 @@ async function generateExports(
   } else {
     // Auto-detect: scan for all CSS files and generate exports
     const cssFiles = await scanCSSFiles(distDir);
-    
+
     if (cssFiles.length > 0) {
       // Auto-add CSS exports with defaults
       cssExportsToAdd = await generateCSSExports(distDir, { enabled: true });
     }
   }
-  
+
   // Merge CSS exports and re-sort
   Object.assign(sortedExports, cssExportsToAdd);
-  
+
   // Re-sort after adding CSS exports to maintain group order
   const allKeys = Object.keys(sortedExports).sort(sortExports);
-  
+
   // Rebuild sorted exports
   const finalSortedExports: Record<string, ExportEntry | string> = {};
   for (const key of allKeys) {
@@ -703,7 +703,7 @@ async function generateExports(
   }
 
   // 7. Always add package.json export at the end
-  finalSortedExports["./package.json"] = "./package.json";
+  finalSortedExports['./package.json'] = './package.json';
 
   return finalSortedExports;
 }
@@ -720,9 +720,9 @@ async function generateExports(
  */
 async function updatePackageJson(
   packageJsonPath: string,
-  newExports: Record<string, ExportEntry | string>
+  newExports: Record<string, ExportEntry | string>,
 ): Promise<PackageJson> {
-  const content = await readFile(packageJsonPath, "utf-8");
+  const content = await readFile(packageJsonPath, 'utf-8');
   const packageJson = JSON.parse(content) as PackageJson;
 
   // Merge new exports
@@ -730,7 +730,7 @@ async function updatePackageJson(
 
   // Write back with formatting
   const updated = JSON.stringify(packageJson, null, 2);
-  await writeFile(packageJsonPath, updated + "\n", "utf-8");
+  await writeFile(packageJsonPath, updated + '\n', 'utf-8');
 
   return packageJson;
 }
@@ -745,16 +745,12 @@ async function updatePackageJson(
  * @param rootDir - The root directory of the workspace
  * @param config - The configuration object
  */
-async function processPackage(
-  packageDir: string,
-  rootDir: string,
-  config: GenerateExportsConfig
-): Promise<void> {
+async function processPackage(packageDir: string, rootDir: string, config: GenerateExportsConfig): Promise<void> {
   const distDir = resolve(packageDir, DIST_DIR);
   const packageJsonPath = resolve(packageDir, PACKAGE_JSON);
 
   // Get relative path from root for config matching
-  const relativePath = relative(rootDir, packageDir).replace(/\\/g, "/");
+  const relativePath = relative(rootDir, packageDir).replace(/\\/g, '/');
 
   // Check if package should be skipped
   if (config.skipPackages?.includes(relativePath)) {
@@ -772,7 +768,7 @@ async function processPackage(
   }
 
   try {
-    const packageJsonContent = await readFile(packageJsonPath, "utf-8");
+    const packageJsonContent = await readFile(packageJsonPath, 'utf-8');
     const packageJson = JSON.parse(packageJsonContent) as PackageJson;
     const packageName = packageJson.name || basename(packageDir);
 
@@ -785,25 +781,25 @@ async function processPackage(
     console.log(`\n📦 Processing package: ${packageName}`);
     console.log(`📁 Package directory: ${packageDir}`);
     if (pathTransform) {
-      console.log("🔧 Using custom path transformation");
+      console.log('🔧 Using custom path transformation');
     }
     if (cssConfig !== undefined) {
       if (cssConfig === false) {
-        console.log("🚫 CSS exports disabled");
+        console.log('🚫 CSS exports disabled');
       } else {
-        console.log("🎨 CSS exports configured");
+        console.log('🎨 CSS exports configured');
       }
     }
-    console.log("🔍 Scanning dist directory...");
+    console.log('🔍 Scanning dist directory...');
 
     const exports = await generateExports(distDir, pathTransform, cssConfig);
 
     console.log(`✅ Found ${Object.keys(exports).length} export entries`);
-    console.log("📝 Updating package.json...");
+    console.log('📝 Updating package.json...');
 
     await updatePackageJson(packageJsonPath, exports);
 
-    console.log("✨ Done! package.json exports updated.");
+    console.log('✨ Done! package.json exports updated.');
   } catch (error) {
     const err = error as Error;
     console.error(`❌ Error processing ${packageDir}:`, err.message);
@@ -826,11 +822,7 @@ async function processPackage(
  * @param config - The configuration object
  * @returns An array of package directory paths
  */
-async function findAllPackages(
-  packagesDir: string,
-  rootDir: string,
-  config: GenerateExportsConfig
-): Promise<string[]> {
+async function findAllPackages(packagesDir: string, rootDir: string, config: GenerateExportsConfig): Promise<string[]> {
   const packages: string[] = [];
 
   try {
@@ -842,7 +834,7 @@ async function findAllPackages(
       }
 
       const packagePath = resolve(packagesDir, entry.name);
-      const relativePath = relative(rootDir, packagePath).replace(/\\/g, "/");
+      const relativePath = relative(rootDir, packagePath).replace(/\\/g, '/');
 
       // Skip packages in config
       if (config.skipPackages?.includes(relativePath)) {
@@ -879,7 +871,7 @@ async function main(): Promise<void> {
   // Get workspace root (parent of scripts directory)
   const scriptPath = fileURLToPath(import.meta.url);
   const scriptsDir = dirname(scriptPath);
-  const rootDir = resolve(scriptsDir, "..");
+  const rootDir = resolve(scriptsDir, '..');
 
   const args = process.argv.slice(2);
 
@@ -893,13 +885,13 @@ async function main(): Promise<void> {
       await processPackage(packageDir, rootDir, config);
     } else {
       // Process all packages
-      const packagesDir = resolve(rootDir, "packages");
-      console.log("🔍 Scanning for packages with dist/ directory...");
+      const packagesDir = resolve(rootDir, 'packages');
+      console.log('🔍 Scanning for packages with dist/ directory...');
 
       const packages = await findAllPackages(packagesDir, rootDir, config);
 
       if (packages.length === 0) {
-        console.warn("⚠️  No packages with dist/ directory found");
+        console.warn('⚠️  No packages with dist/ directory found');
         return;
       }
 
@@ -928,7 +920,7 @@ async function main(): Promise<void> {
     }
   } catch (error) {
     const err = error as Error;
-    console.error("❌ Error:", err.message);
+    console.error('❌ Error:', err.message);
     if (err.stack) {
       console.error(err.stack);
     }
@@ -938,4 +930,3 @@ async function main(): Promise<void> {
 
 // Run script
 await main();
-

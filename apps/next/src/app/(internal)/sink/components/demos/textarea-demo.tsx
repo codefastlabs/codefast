@@ -1,5 +1,5 @@
-import { Label } from "@codefast/ui/label";
-import { Textarea } from "@codefast/ui/textarea";
+import { Label } from '@codefast/ui/label';
+import { Textarea } from '@codefast/ui/textarea';
 
 export function TextareaDemo() {
   return (
@@ -13,9 +13,7 @@ export function TextareaDemo() {
       <div className="grid gap-3">
         <Label htmlFor="textarea-demo-message-2">With label and description</Label>
         <Textarea id="textarea-demo-message-2" placeholder="Type your message here." rows={6} />
-        <div className="text-muted-foreground text-sm">
-          Type your message and press enter to send.
-        </div>
+        <div className="text-muted-foreground text-sm">Type your message and press enter to send.</div>
       </div>
       <div className="grid gap-3">
         <Label htmlFor="textarea-demo-disabled">Disabled</Label>

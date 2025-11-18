@@ -6,7 +6,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@codefast/ui/pagination";
+} from '@codefast/ui/pagination';
 
 export function PaginationDemo() {
   return (

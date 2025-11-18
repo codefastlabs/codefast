@@ -1,41 +1,41 @@
-name: "Setup Node.js and pnpm Environment"
-description: "Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds"
-author: "thevuong"
+name: 'Setup Node.js and pnpm Environment'
+description: 'Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds'
+author: 'thevuong'
 
 inputs:
   node-version:
-    description: "Node.js version to use"
-    default: "22"
+    description: 'Node.js version to use'
+    default: '22'
     required: false
 
   package-manager-version:
-    description: "Version of pnpm to install"
+    description: 'Version of pnpm to install'
     required: false
 
   install-dependencies:
-    description: "Whether to install dependencies"
-    default: "true"
+    description: 'Whether to install dependencies'
+    default: 'true'
     required: false
 
   install-options:
-    description: "Additional options for pnpm install"
-    default: "--prefer-offline --frozen-lockfile"
+    description: 'Additional options for pnpm install'
+    default: '--prefer-offline --frozen-lockfile'
     required: false
 
   enable-remote-cache:
-    description: "Whether to enable Turborepo remote caching"
-    default: "true"
+    description: 'Whether to enable Turborepo remote caching'
+    default: 'true'
     required: false
 
 outputs:
   turbo-cache-hit:
-    description: "Whether Turborepo cache was hit"
+    description: 'Whether Turborepo cache was hit'
     value: ${{ steps.turbo-cache.outputs.cache-hit }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
-    - name: "Setup Turborepo Cache"
+    - name: 'Setup Turborepo Cache'
       id: turbo-cache
       uses: actions/cache@v4
       with:
@@ -46,21 +46,21 @@ runs:
           ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
           ${{ runner.os }}-turbo-
 
-    - name: "Set Up pnpm Package Manager"
+    - name: 'Set Up pnpm Package Manager'
       id: pnpm-setup
       uses: pnpm/action-setup@v4
       with:
         version: ${{ inputs.package-manager-version }}
         run_install: false
 
-    - name: "Set Up Node.js Environment"
+    - name: 'Set Up Node.js Environment'
       id: node-setup
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: "pnpm"
+        cache: 'pnpm'
 
-    - name: "Install Project Dependencies (pnpm)"
+    - name: 'Install Project Dependencies (pnpm)'
       id: pnpm-install
       shell: bash
       if: ${{ inputs.install-dependencies == 'true' }}
@@ -68,7 +68,7 @@ runs:
       env:
         SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
 
-    - name: "Verify Turborepo Remote Caching Setup"
+    - name: 'Verify Turborepo Remote Caching Setup'
       id: turbo-remote-cache
       shell: bash
       if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' && env.TURBO_TEAM != '' }}

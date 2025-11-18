@@ -4,10 +4,7 @@ import type { ReactNode } from 'react';
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary';
 import { NotFound } from '@/components/not-found';
 import { routeTree } from '@/routeTree.gen';
-import {
-  Provider as TanstackQueryProvider,
-  getContext,
-} from '@/integrations/tanstack-query/root-provider';
+import { Provider as TanstackQueryProvider, getContext } from '@/integrations/tanstack-query/root-provider';
 
 export const getRouter = () => {
   const { queryClient } = getContext();
@@ -18,9 +15,9 @@ export const getRouter = () => {
     defaultPreload: 'intent',
     defaultErrorComponent: DefaultCatchBoundary,
     defaultNotFoundComponent: () => <NotFound />,
-    Wrap: ({ children }: { children: ReactNode }) => {
-      return <TanstackQueryProvider queryClient={queryClient}>{children}</TanstackQueryProvider>;
-    },
+    Wrap: ({ children }: { children: ReactNode }) => (
+      <TanstackQueryProvider queryClient={queryClient}>{children}</TanstackQueryProvider>
+    ),
   });
 
   setupRouterSsrQueryIntegration({

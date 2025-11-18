@@ -1,6 +1,6 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import globals from "globals";
+import globals from 'globals';
 
 /**
  * Browser environment configuration for ESLint.
@@ -29,7 +29,7 @@ export const browserEnvironment: Linter.Config[] = [
      * File patterns that this configuration applies to.
      * Includes all JavaScript and TypeScript files with various extensions.
      */
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: {
       globals: {
         /**
@@ -44,6 +44,6 @@ export const browserEnvironment: Linter.Config[] = [
         ...globals.es2021,
       },
     },
-    name: "@codefast/eslint-config/environment/browser",
+    name: '@codefast/eslint-config/environment/browser',
   },
 ];

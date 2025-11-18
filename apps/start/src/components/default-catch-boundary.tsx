@@ -5,7 +5,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter();
   const isRoot = useMatch({
     strict: false,
-    select: state => state.id === rootRouteId,
+    select: (state) => state.id === rootRouteId,
   });
 
   console.error(error);
@@ -33,7 +33,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           <Link
             to="/"
             className={`rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               window.history.back();
             }}

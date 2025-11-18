@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { cn } from "@codefast/tailwind-variants";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { cn } from '@codefast/tailwind-variants';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 
 /* -----------------------------------------------------------------------------
  * Component: Tabs
@@ -25,7 +25,7 @@ function TabsList({ className, ...props }: TabsListProps): JSX.Element {
   return (
     <TabsPrimitive.List
       className={cn(
-        "bg-muted text-muted-foreground inline-flex items-center justify-center gap-1 rounded-xl px-1 py-1",
+        'bg-muted text-muted-foreground inline-flex items-center justify-center gap-1 rounded-xl px-1 py-1',
         className,
       )}
       data-slot="tabs-list"
@@ -63,7 +63,7 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
-        "outline-ring ring-ring/50 mt-2 rounded-xl focus-visible:ring-4 focus-visible:outline-1",
+        'outline-ring ring-ring/50 mt-2 rounded-xl focus-visible:ring-4 focus-visible:outline-1',
         className,
       )}
       data-slot="tabs-content"

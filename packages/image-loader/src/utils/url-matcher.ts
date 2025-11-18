@@ -1,4 +1,4 @@
-import { urlCache } from "./url-cache";
+import { urlCache } from './url-cache';
 
 export function isDomainMatch(url: string, domain: string): boolean {
   const urlObject = urlCache.get(url);
@@ -19,4 +19,3 @@ export function isPathMatch(url: string, substring: string): boolean {
 
   return urlObject.pathname.includes(substring);
 }
-

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * Produce a smoothly animated numeric value in response to changes.
@@ -19,11 +19,7 @@ import { useEffect, useRef, useState } from "react";
  * return <div>{value}%</div>;
  * ```
  */
-export function useAnimatedValue(
-  targetValue: null | number,
-  duration: number,
-  animate?: boolean,
-): number {
+export function useAnimatedValue(targetValue: null | number, duration: number, animate?: boolean): number {
   // Default to 0 when targetValue is null
   const actualTargetValue = targetValue ?? 0;
 

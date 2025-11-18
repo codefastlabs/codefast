@@ -1,24 +1,17 @@
-import type {
-  ComponentProps,
-  JSX,
-  PointerEventHandler,
-  PropsWithChildren,
-  ReactNode,
-  RefObject,
-} from "react";
+import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from 'react';
 
-import { useRef } from "react";
+import { useRef } from 'react';
 
-import type { Scope } from "@radix-ui/react-context";
+import type { Scope } from '@radix-ui/react-context';
 
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { createContextScope } from "@radix-ui/react-context";
+import { useComposedRefs } from '@radix-ui/react-compose-refs';
+import { createContextScope } from '@radix-ui/react-context';
 
 /* -----------------------------------------------------------------------------
  * Component: Input
  * -------------------------------------------------------------------------- */
 
-const INPUT_NAME = "Input";
+const INPUT_NAME = 'Input';
 
 /**
  * Type for adding scope to component props
@@ -91,7 +84,7 @@ interface InputBehaviorProps {
   /**
    * Position of the loading spinner - either before or after the input
    */
-  loaderPosition?: "prefix" | "suffix";
+  loaderPosition?: 'prefix' | 'suffix';
 
   /**
    * Whether the input is in the loading state
@@ -114,7 +107,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
     __scopeInput,
     children,
     disabled,
-    loaderPosition = "prefix",
+    loaderPosition = 'prefix',
     loading,
     prefix,
     readOnly,
@@ -139,7 +132,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
 
     // Skip handling when clicking directly on input, links, buttons, or other interactive elements
     // This prevents interference with native input/link/button behavior
-    if (target.tagName.toLowerCase() === "input" || target.closest("input, a, button")) {
+    if (target.tagName.toLowerCase() === 'input' || target.closest('input, a, button')) {
       event.stopPropagation();
 
       return;
@@ -163,7 +156,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
     // Only attempt to focus the input if it's not already focused
     requestAnimationFrame(() => {
       // Special handling for file inputs - trigger the file selection dialog
-      if (inputElement.type === "file") {
+      if (inputElement.type === 'file') {
         inputElement.click();
 
         return;
@@ -178,12 +171,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   };
 
   return (
-    <InputContextProvider
-      disabled={disabled}
-      inputRef={inputRef}
-      readOnly={readOnly}
-      scope={__scopeInput}
-    >
+    <InputContextProvider disabled={disabled} inputRef={inputRef} readOnly={readOnly} scope={__scopeInput}>
       <div
         data-disabled={disabled}
         data-readonly={readOnly}
@@ -191,9 +179,9 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
         onPointerDown={handlePointerDown}
         {...props}
       >
-        {loading && loaderPosition === "prefix" ? spinner : prefix}
+        {loading && loaderPosition === 'prefix' ? spinner : prefix}
         {children}
-        {loading && loaderPosition === "suffix" ? spinner : suffix}
+        {loading && loaderPosition === 'suffix' ? spinner : suffix}
       </div>
     </InputContextProvider>
   );
@@ -203,12 +191,12 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
  * Component: InputField
  * -------------------------------------------------------------------------- */
 
-const INPUT_FIELD_NAME = "InputField";
+const INPUT_FIELD_NAME = 'InputField';
 
 /**
  * Props for the InputField component
  */
-type InputFieldProps = ComponentProps<"input">;
+type InputFieldProps = ComponentProps<'input'>;
 
 function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): JSX.Element {
   /**
@@ -221,9 +209,7 @@ function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): J
    */
   const composedInputRef = useComposedRefs(inputRef);
 
-  return (
-    <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />
-  );
+  return <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

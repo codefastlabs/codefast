@@ -1,4 +1,4 @@
-import { Input } from "@codefast/ui/input";
+import { Input } from '@codefast/ui/input';
 
 export function InputDemo() {
   return (

@@ -14,9 +14,9 @@ import type {
   SlotConfigurationSchema,
   SlotFunctionProperties,
   SlotFunctionType,
-} from "@/types/types";
+} from '@/types/types';
 
-import { cx, isBooleanVariantType, isSlotObjectType } from "@/utilities/utils";
+import { cx, isBooleanVariantType, isSlotObjectType } from '@/utilities/utils';
 
 /**
  * Resolve CSS classes for a specific slot.
@@ -34,10 +34,7 @@ import { cx, isBooleanVariantType, isSlotObjectType } from "@/utilities/utils";
  * @param compoundSlotClasses - Pre-computed compound slot classes
  * @returns Array of resolved CSS classes for the slot
  */
-export const resolveSlotClasses = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const resolveSlotClasses = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   targetSlotKey: keyof S,
   baseSlotClasses: ClassValue,
   variantGroups: T | undefined,
@@ -71,7 +68,7 @@ export const resolveSlotClasses = <
 
         resolvedValue = String(defaultValue);
       } else if (isBooleanVariantType(variantGroup)) {
-        resolvedValue = "false";
+        resolvedValue = 'false';
       }
 
       // Apply variant classes if resolved
@@ -86,7 +83,7 @@ export const resolveSlotClasses = <
             if (slotVariantClass !== undefined) {
               resolvedClasses.push(slotVariantClass);
             }
-          } else if (targetSlotKey === "base") {
+          } else if (targetSlotKey === 'base') {
             // Handle base slot with non-object variant classes
             resolvedClasses.push(variantConfiguration);
           }
@@ -105,7 +102,7 @@ export const resolveSlotClasses = <
       // Check each compound variant condition
       for (const compoundKey of compoundKeys) {
         // Skip class properties
-        if (compoundKey === "className" || compoundKey === "class") {
+        if (compoundKey === 'className' || compoundKey === 'class') {
           continue;
         }
 
@@ -126,7 +123,7 @@ export const resolveSlotClasses = <
           if (slotClass !== undefined) {
             resolvedClasses.push(slotClass);
           }
-        } else if (targetSlotKey === "base") {
+        } else if (targetSlotKey === 'base') {
           // Handle base slot with non-object compound variant classes
           resolvedClasses.push(compoundClassName);
         }
@@ -158,10 +155,7 @@ export const resolveSlotClasses = <
  * @param tailwindMergeService - The Tailwind merge service function
  * @returns Object containing slot functions for each slot
  */
-export const createSlotFunctionFactory = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const createSlotFunctionFactory = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   mergedSlotDefinitions: S,
   mergedBaseClasses: ClassValue | undefined,
   mergedVariantGroups: T,
@@ -176,12 +170,10 @@ export const createSlotFunctionFactory = <
   const slotFunctions = {} as Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> };
 
   // Create the base slot function
-  slotFunctions.base = (
-    slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
-  ): string | undefined => {
+  slotFunctions.base = (slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>): string | undefined => {
     const baseSlotClass = mergedSlotDefinitions.base ?? mergedBaseClasses;
     const baseClasses = resolveSlotClasses(
-      "base",
+      'base',
       baseSlotClass,
       mergedVariantGroups,
       { ...variantProps, ...slotProps },
@@ -204,7 +196,7 @@ export const createSlotFunctionFactory = <
   const slotKeys = Object.keys(mergedSlotDefinitions) as (keyof S)[];
 
   for (const slotKey of slotKeys) {
-    if (slotKey !== "base") {
+    if (slotKey !== 'base') {
       (slotFunctions as Record<keyof S, SlotFunctionType<T>>)[slotKey] = (
         slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
       ): string | undefined => {
