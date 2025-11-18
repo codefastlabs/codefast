@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import type { JSX, ReactNode } from 'react';
 
-export function getContext() {
+export function getContext(): { queryClient: QueryClient } {
   const queryClient = new QueryClient();
 
   return {
@@ -9,6 +9,6 @@ export function getContext() {
   };
 }
 
-export function Provider({ children, queryClient }: { children: ReactNode; queryClient: QueryClient }) {
+export function Provider({ children, queryClient }: { children: ReactNode; queryClient: QueryClient }): JSX.Element {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
