@@ -135,6 +135,11 @@
       "import": "./dist/utils/url-matcher.js",
       "require": "./dist/utils/url-matcher.cjs"
     },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js",
+      "require": "./dist/constants.cjs"
+    },
     "./types": {
       "types": "./dist/types.d.ts",
       "import": "./dist/types.js",
