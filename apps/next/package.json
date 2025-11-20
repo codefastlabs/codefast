@@ -6,7 +6,8 @@
     "build": "next build",
     "check-types": "tsc --noEmit",
     "dev": "next dev",
-    "lint": "eslint",
+    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
     "start": "next start"
   },
   "dependencies": {

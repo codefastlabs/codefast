@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 
 const formSchema = z.object({
@@ -25,8 +25,9 @@ function TanStackFormDemo() {
       age: 0,
       bio: '',
     },
+    validationLogic: revalidateLogic(),
     validators: {
-      onChange: formSchema,
+      onDynamic: formSchema,
     },
     onSubmit: async ({ value }) => {
       // Simulate API call
@@ -54,9 +55,8 @@ function TanStackFormDemo() {
         }}
         className="space-y-6"
       >
-        <form.Field
-          name="firstName"
-          children={(field) => (
+        <form.Field name="firstName">
+          {(field) => (
             <div className="space-y-2">
               <label htmlFor={field.name} className="block text-sm font-medium">
                 First Name *
@@ -79,11 +79,10 @@ function TanStackFormDemo() {
               )}
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Field
-          name="lastName"
-          children={(field) => (
+        <form.Field name="lastName">
+          {(field) => (
             <div className="space-y-2">
               <label htmlFor={field.name} className="block text-sm font-medium">
                 Last Name *
@@ -106,11 +105,10 @@ function TanStackFormDemo() {
               )}
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Field
-          name="email"
-          children={(field) => (
+        <form.Field name="email">
+          {(field) => (
             <div className="space-y-2">
               <label htmlFor={field.name} className="block text-sm font-medium">
                 Email *
@@ -134,11 +132,10 @@ function TanStackFormDemo() {
               )}
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Field
-          name="age"
-          children={(field) => (
+        <form.Field name="age">
+          {(field) => (
             <div className="space-y-2">
               <label htmlFor={field.name} className="block text-sm font-medium">
                 Age *
@@ -162,11 +159,10 @@ function TanStackFormDemo() {
               )}
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Field
-          name="bio"
-          children={(field) => (
+        <form.Field name="bio">
+          {(field) => (
             <div className="space-y-2">
               <label htmlFor={field.name} className="block text-sm font-medium">
                 Bio (Optional)
@@ -183,11 +179,10 @@ function TanStackFormDemo() {
               />
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
+        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
             <button
               type="submit"
               disabled={!canSubmit || isSubmitting}
@@ -196,7 +191,7 @@ function TanStackFormDemo() {
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>
           )}
-        />
+        </form.Subscribe>
       </form>
 
       <div className="mt-8 rounded-md bg-gray-100 p-4 dark:bg-gray-800">

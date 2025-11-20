@@ -10,7 +10,7 @@ type Todo = {
 export function todosQueryOptions() {
   return queryOptions({
     queryKey: ['todos'],
-    queryFn: async (): Promise<Array<Todo>> => {
+    queryFn: async (): Promise<Todo[]> => {
       const response = await fetch('/demo/api/tq-todos');
 
       if (!response.ok) {
