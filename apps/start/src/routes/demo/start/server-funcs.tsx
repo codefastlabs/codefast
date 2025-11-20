@@ -15,7 +15,7 @@ const loggingMiddleware = createMiddleware().server(async ({ next, request }) =>
 
 const TODOS_FILE = 'todos.json';
 
-async function readTodos(): Promise<Array<Todo>> {
+async function readTodos(): Promise<Todo[]> {
   return JSON.parse(
     await fs.promises.readFile(TODOS_FILE, 'utf-8').catch(() =>
       JSON.stringify(
@@ -27,7 +27,7 @@ async function readTodos(): Promise<Array<Todo>> {
         2,
       ),
     ),
-  ) as Array<Todo>;
+  ) as Todo[];
 }
 
 const getTodos = createServerFn({
