@@ -22,11 +22,11 @@
     "@tanstack/react-form-devtools": "^0.2.1",
     "@tanstack/react-query": "^5.90.10",
     "@tanstack/react-query-devtools": "^5.84.2",
-    "@tanstack/react-router": "^1.139.0",
-    "@tanstack/react-router-devtools": "^1.139.0",
-    "@tanstack/react-router-ssr-query": "^1.139.0",
-    "@tanstack/react-start": "^1.139.0",
-    "@tanstack/router-plugin": "^1.139.0",
+    "@tanstack/react-router": "^1.139.1",
+    "@tanstack/react-router-devtools": "^1.139.1",
+    "@tanstack/react-router-ssr-query": "^1.139.1",
+    "@tanstack/react-start": "^1.139.2",
+    "@tanstack/router-plugin": "^1.139.1",
     "lucide-react": "^0.554.0",
     "nitro": "^3.0.1-alpha.1",
     "react": "^19.2.0",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@tanstack/devtools-vite": "^0.3.11",
-    "@tanstack/eslint-config": "^0.3.0",
+    "@tanstack/eslint-config": "^0.3.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^24.10.1",
@@ -55,7 +55,7 @@
     "prettier": "^3.5.3",
     "typescript": "^5.7.2",
     "vite": "^7.2.4",
-    "vitest": "^4.0.12",
+    "vitest": "^4.0.13",
     "web-vitals": "^5.1.0"
   }
 }
