@@ -16,11 +16,7 @@ export const getRouter = () => {
     defaultPreload: 'intent',
     defaultErrorComponent: DefaultCatchBoundary,
     defaultNotFoundComponent: () => <NotFound />,
-    Wrap: ({ children }: { children: ReactNode }) => (
-      <TanstackQueryProvider queryClient={queryClient}>
-        <ThemeProvider>{children}</ThemeProvider>
-      </TanstackQueryProvider>
-    ),
+    Wrap: WrapComponent,
   });
 
   setupRouterSsrQueryIntegration({
@@ -30,3 +26,17 @@ export const getRouter = () => {
 
   return router;
 };
+
+type WrapComponentProps = {
+  children: ReactNode;
+};
+
+function WrapComponent({ children }: WrapComponentProps) {
+  const { queryClient } = getContext();
+
+  return (
+    <TanstackQueryProvider queryClient={queryClient}>
+      <ThemeProvider>{children}</ThemeProvider>
+    </TanstackQueryProvider>
+  );
+}
