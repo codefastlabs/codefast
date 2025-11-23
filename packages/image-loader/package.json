@@ -30,15 +30,15 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./core/default-loader": {
-      "types": "./dist/core/default-loader.d.ts",
-      "import": "./dist/core/default-loader.js",
-      "require": "./dist/core/default-loader.cjs"
-    },
     "./core/image-loader": {
       "types": "./dist/core/image-loader.d.ts",
       "import": "./dist/core/image-loader.js",
       "require": "./dist/core/image-loader.cjs"
+    },
+    "./core/image-loader-factory": {
+      "types": "./dist/core/image-loader-factory.d.ts",
+      "import": "./dist/core/image-loader-factory.js",
+      "require": "./dist/core/image-loader-factory.cjs"
     },
     "./core/loader-registry": {
       "types": "./dist/core/loader-registry.d.ts",
