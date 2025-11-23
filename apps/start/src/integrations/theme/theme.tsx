@@ -67,6 +67,13 @@ export function Theme({
     }
   });
 
+  const handleStorageChange = useEffectEvent((storageEvent: StorageEvent) => {
+    if (storageEvent.key === storageKey && storageEvent.newValue) {
+      const newTheme = storageEvent.newValue as Theme;
+      setThemeState(newTheme);
+    }
+  });
+
   useEffect(() => {
     if (!hydrated) {
       return;
@@ -95,19 +102,16 @@ export function Theme({
     if (resolved) {
       applyThemeToDOM(resolved);
     }
-  }, [theme, systemTheme, hydrated, enableSystem]);
+  }, [theme, systemTheme, hydrated, enableSystem, attribute, enableColorScheme, disableTransitionOnChange]);
 
   useEffect(() => {
     if (!hydrated) {
       return;
     }
 
-    const resolved = theme === 'system' && enableSystem ? systemTheme : theme === 'system' ? 'light' : theme;
-
-    if (resolved) {
-      applyThemeToDOM(resolved);
-    }
-  }, [attribute, enableColorScheme, disableTransitionOnChange, hydrated, theme, enableSystem, systemTheme]);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [hydrated]);
 
   const setTheme = useCallback(
     (newTheme: Theme) => {

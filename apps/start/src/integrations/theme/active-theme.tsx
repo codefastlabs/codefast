@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useEffectEvent, useState } from 'react';
 import type { ReactNode } from 'react';
 
 const DEFAULT_THEME = 'default';
@@ -18,16 +18,20 @@ type ActiveThemeProviderProps = {
 export function ActiveThemeProvider({ children, initialTheme }: ActiveThemeProviderProps) {
   const [activeTheme, setActiveTheme] = useState<string>(() => initialTheme || DEFAULT_THEME);
 
-  useEffect(() => {
+  const applyActiveTheme = useEffectEvent((theme: string) => {
     Array.from(document.body.classList)
       .filter((className) => className.startsWith('theme-'))
       .forEach((className) => {
         document.body.classList.remove(className);
       });
-    document.body.classList.add(`theme-${activeTheme}`);
-    if (activeTheme.endsWith('-scaled')) {
+    document.body.classList.add(`theme-${theme}`);
+    if (theme.endsWith('-scaled')) {
       document.body.classList.add('theme-scaled');
     }
+  });
+
+  useEffect(() => {
+    applyActiveTheme(activeTheme);
   }, [activeTheme]);
 
   return <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>{children}</ThemeContext.Provider>;
