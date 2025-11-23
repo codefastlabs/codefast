@@ -41,6 +41,11 @@
     "test:watch": {
       "cache": false,
       "persistent": true
+    },
+    "bench": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "src/**/*.js", "src/**/*.ts"]
     }
   }
 }
