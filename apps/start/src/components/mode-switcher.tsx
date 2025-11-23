@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
-import { useTheme } from 'next-themes';
 
 import { Button } from '@codefast/ui/button';
 import { useMetaColor } from '@/hooks/use-meta-color';
+import { useTheme } from '@/integrations/theme/provider';
 
 export function ModeSwitcher() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -13,6 +13,9 @@ export function ModeSwitcher() {
   }, [metaColor, setMetaColor]);
 
   const toggleTheme = useCallback(() => {
+    if (resolvedTheme === undefined) {
+      return;
+    }
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   }, [resolvedTheme, setTheme]);
 
