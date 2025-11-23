@@ -1,6 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Route as RouteIcon, Server, Shield, Sparkles, Waves, Zap } from 'lucide-react';
 
+import { Card, CardContent, CardDescription, CardTitle } from '@codefast/ui/card';
+import { Button } from '@codefast/ui/button';
+
 export const Route = createFileRoute('/')({
   component: App,
 });
@@ -62,14 +65,11 @@ function App() {
             functions, streaming, and type safety.
           </p>
           <div className="flex flex-col items-center gap-4">
-            <a
-              href="https://tanstack.com/start"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-cyan-500 px-8 py-3 font-semibold text-white shadow-lg shadow-cyan-500/50 transition-colors hover:bg-cyan-600"
-            >
-              Documentation
-            </a>
+            <Button asChild size="lg" className="bg-cyan-500 shadow-lg shadow-cyan-500/50 hover:bg-cyan-600">
+              <a href="https://tanstack.com/start" target="_blank" rel="noopener noreferrer">
+                Documentation
+              </a>
+            </Button>
             <p className="mt-2 text-sm text-gray-400">
               Begin your TanStack Start journey by editing{' '}
               <code className="rounded bg-slate-700 px-2 py-1 text-cyan-400">/src/routes/index.tsx</code>
@@ -81,14 +81,16 @@ function App() {
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
-            <div
+            <Card
               key={index}
-              className="rounded-xl border border-slate-700 bg-slate-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
+              className="border-slate-700 bg-slate-800/50 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
             >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="mb-3 text-xl font-semibold text-white">{feature.title}</h3>
-              <p className="leading-relaxed text-gray-400">{feature.description}</p>
-            </div>
+              <CardContent>
+                <div className="mb-4">{feature.icon}</div>
+                <CardTitle className="mb-3 text-xl text-white">{feature.title}</CardTitle>
+                <CardDescription className="leading-relaxed text-gray-400">{feature.description}</CardDescription>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
