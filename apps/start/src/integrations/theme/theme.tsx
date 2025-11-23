@@ -29,7 +29,6 @@ export function Theme({
   const hydrated = useHydrated();
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(undefined);
-  const [mounted, setMounted] = useState(false);
 
   const handleSystemThemeChange = useEffectEvent((e: MediaQueryListEvent) => {
     setSystemTheme(e.matches ? 'dark' : 'light');
@@ -61,7 +60,6 @@ export function Theme({
     const stored = getStoredTheme(storageKey);
     const initialTheme = stored || defaultTheme;
     setThemeState(initialTheme);
-    setMounted(true);
 
     if (enableSystem) {
       const initialSystemTheme = getSystemTheme();
@@ -88,7 +86,7 @@ export function Theme({
   }, [hydrated, enableSystem]);
 
   useEffect(() => {
-    if (!mounted || !hydrated) {
+    if (!hydrated) {
       return;
     }
 
@@ -97,10 +95,10 @@ export function Theme({
     if (resolved) {
       applyThemeToDOM(resolved);
     }
-  }, [theme, systemTheme, mounted, hydrated, enableSystem]);
+  }, [theme, systemTheme, hydrated, enableSystem]);
 
   useEffect(() => {
-    if (!mounted || !hydrated) {
+    if (!hydrated) {
       return;
     }
 
@@ -109,7 +107,7 @@ export function Theme({
     if (resolved) {
       applyThemeToDOM(resolved);
     }
-  }, [attribute, enableColorScheme, disableTransitionOnChange, mounted, hydrated, theme, enableSystem, systemTheme]);
+  }, [attribute, enableColorScheme, disableTransitionOnChange, hydrated, theme, enableSystem, systemTheme]);
 
   const setTheme = useCallback(
     (newTheme: Theme) => {
@@ -124,14 +122,14 @@ export function Theme({
   );
 
   const resolvedTheme = useMemo(() => {
-    if (!mounted || !hydrated) {
+    if (!hydrated) {
       return undefined;
     }
     if (theme === 'system' && enableSystem) {
       return systemTheme;
     }
     return theme === 'system' ? 'light' : theme;
-  }, [theme, systemTheme, mounted, hydrated, enableSystem]);
+  }, [theme, systemTheme, hydrated, enableSystem]);
 
   const themes: Theme[] = enableSystem ? ['light', 'dark', 'system'] : ['light', 'dark'];
 
