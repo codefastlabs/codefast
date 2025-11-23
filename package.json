@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "bench": "turbo run bench",
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@codefast*/*...",
     "check-types": "turbo run check-types",
