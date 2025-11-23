@@ -7,16 +7,50 @@ import { ThemeContext } from '@/integrations/theme/context';
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from '@/integrations/theme/constants';
 import { applyTheme, getStoredTheme, getSystemTheme, setStoredTheme } from '@/integrations/theme/utils';
 
+/**
+ * Props for the Theme component.
+ */
 export type ThemeProps = {
+  /** Child components that will have access to the theme context. */
   children: ReactNode;
+  /** The HTML attribute to apply the theme to ('class' or 'data-theme'). Defaults to 'class'. */
   attribute?: string;
+  /** The default theme to use when no stored preference exists. Defaults to 'system'. */
   defaultTheme?: Theme;
+  /** Whether to enable system theme detection. Defaults to true. */
   enableSystem?: boolean;
+  /** Whether to disable CSS transitions when changing themes to prevent flash. Defaults to false. */
   disableTransitionOnChange?: boolean;
+  /** Whether to set the CSS color-scheme property. Defaults to true. */
   enableColorScheme?: boolean;
+  /** The localStorage key to store the theme preference. Defaults to 'theme'. */
   storageKey?: string;
 };
 
+/**
+ * Theme provider component that manages theme state and applies it to the DOM.
+ *
+ * This component handles:
+ * - Reading and persisting theme preferences from localStorage
+ * - Detecting and responding to system theme changes
+ * - Applying the theme to the document root element
+ * - Synchronizing theme changes across browser tabs via storage events
+ * - Providing theme state and control methods via context
+ *
+ * The component only initializes and applies themes after hydration to prevent
+ * hydration mismatches between server and client.
+ *
+ * @param props - The theme configuration props.
+ *
+ * @returns A ThemeContext.Provider wrapping the children with theme state.
+ *
+ * @example
+ * ```tsx
+ * <Theme defaultTheme="dark" enableSystem={true}>
+ *   <App />
+ * </Theme>
+ * ```
+ */
 export function Theme({
   children,
   attribute = 'class',
