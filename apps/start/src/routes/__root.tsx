@@ -37,7 +37,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootShellComponent,
 });
 
-function RootShellComponent({ children }: { children: ReactNode }) {
+type RootShellComponentProps = {
+  children: ReactNode;
+};
+
+function RootShellComponent({ children }: RootShellComponentProps) {
   return (
     <html lang="en" className="dark">
       <head>

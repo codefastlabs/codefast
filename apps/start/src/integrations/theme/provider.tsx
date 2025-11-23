@@ -1,13 +1,22 @@
 'use client';
 
-import { ThemeProvider } from './theme-provider';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ActiveThemeProvider } from './active-theme';
-import type { JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 
-export function Provider({ children }: { children: ReactNode }): JSX.Element {
+type ProviderProps = ComponentProps<typeof NextThemesProvider>;
+
+export function Provider({ children, ...props }: ProviderProps): JSX.Element {
   return (
-    <ThemeProvider>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      enableColorScheme
+      {...props}
+    >
       <ActiveThemeProvider>{children}</ActiveThemeProvider>
-    </ThemeProvider>
+    </NextThemesProvider>
   );
 }
