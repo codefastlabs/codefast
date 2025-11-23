@@ -1,5 +1,6 @@
 'use client';
 
+import type { ComponentProps } from 'react';
 import { cn } from '@codefast/tailwind-variants';
 import { useThemeConfig } from '@/components/active-theme';
 import { Label } from '@codefast/ui/label';
@@ -101,7 +102,7 @@ const THEMES = {
   ],
 };
 
-export function ThemeSelector({ className }: React.ComponentProps<'div'>) {
+export function ThemeSelector({ className }: ComponentProps<'div'>) {
   const { activeTheme, setActiveTheme } = useThemeConfig();
 
   return (

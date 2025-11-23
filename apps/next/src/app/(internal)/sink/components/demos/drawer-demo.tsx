@@ -1,6 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import type { CSSProperties } from 'react';
+import { useCallback, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 
@@ -69,9 +70,9 @@ export function DrawerDemo() {
 }
 
 function DrawerBottom() {
-  const [goal, setGoal] = React.useState(350);
+  const [goal, setGoal] = useState(350);
 
-  const onClick = React.useCallback((adjustment: number) => {
+  const onClick = useCallback((adjustment: number) => {
     setGoal((prevGoal) => Math.max(200, Math.min(400, prevGoal + adjustment)));
   }, []);
 
@@ -122,7 +123,7 @@ function DrawerBottom() {
                       {
                         fill: 'var(--primary)',
                         opacity: 0.9,
-                      } as React.CSSProperties
+                      } as CSSProperties
                     }
                   />
                 </BarChart>

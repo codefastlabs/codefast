@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Fragment } from 'react';
 import Image from 'next/image';
 import { IconChevronRight, IconDownload } from '@tabler/icons-react';
 import { PlusIcon, TicketIcon } from 'lucide-react';
@@ -221,7 +221,7 @@ export function ItemDemo() {
         <div className="flex max-w-sm flex-col gap-6">
           <ItemGroup>
             {people.map((person, index) => (
-              <React.Fragment key={person.username}>
+              <Fragment key={person.username}>
                 <Item>
                   <ItemMedia>
                     <Avatar>
@@ -240,7 +240,7 @@ export function ItemDemo() {
                   </ItemActions>
                 </Item>
                 {index !== people.length - 1 && <ItemSeparator />}
-              </React.Fragment>
+              </Fragment>
             ))}
           </ItemGroup>
           <Item variant="outline">
@@ -325,7 +325,7 @@ export function ItemDemo() {
         <div className="flex max-w-lg flex-col gap-6">
           <ItemGroup>
             {issues.map((issue) => (
-              <React.Fragment key={issue.number}>
+              <Fragment key={issue.number}>
                 <Item asChild className="rounded-none">
                   <a href="#">
                     <ItemContent>
@@ -336,7 +336,7 @@ export function ItemDemo() {
                   </a>
                 </Item>
                 <ItemSeparator />
-              </React.Fragment>
+              </Fragment>
             ))}
           </ItemGroup>
         </div>

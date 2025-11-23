@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import Link from 'next/link';
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from 'lucide-react';
 
@@ -185,7 +185,7 @@ export function NavigationMenuDemo() {
   );
 }
 
-function ListItem({ title, children, href, ...props }: React.ComponentPropsWithoutRef<'li'> & { href: string }) {
+function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<'li'> & { href: string }) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 
 import { Label } from '@codefast/ui/label';
 import { Slider } from '@codefast/ui/slider';
@@ -21,7 +21,7 @@ export function SliderDemo() {
 }
 
 function SliderControlled() {
-  const [value, setValue] = React.useState([0.3, 0.7]);
+  const [value, setValue] = useState([0.3, 0.7]);
 
   return (
     <div className="grid w-full gap-3">

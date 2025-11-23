@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { format } from 'date-fns';
 
@@ -55,8 +55,8 @@ export function ExampleForm() {
       setOpen(true);
     },
   });
-  const [values, setValues] = React.useState<typeof form.state.values>();
-  const [open, setOpen] = React.useState(false);
+  const [values, setValues] = useState<typeof form.state.values>();
+  const [open, setOpen] = useState(false);
 
   return (
     <>

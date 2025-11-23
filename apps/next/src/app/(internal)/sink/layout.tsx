@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Figtree, Inter, Noto_Sans, Nunito_Sans } from 'next/font/google';
 
 import { cn } from '@codefast/tailwind-variants';
@@ -28,7 +29,7 @@ const figtree = Figtree({
   variable: '--font-figtree',
 });
 
-export default async function SinkLayout({ children }: { children: React.ReactNode }) {
+export default async function SinkLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider
       defaultOpen={true}

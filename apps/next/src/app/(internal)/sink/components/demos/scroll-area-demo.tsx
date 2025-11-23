@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Fragment } from 'react';
 import Image from 'next/image';
 
 import { ScrollArea, ScrollAreaScrollbar } from '@codefast/ui/scroll-area';
@@ -22,10 +22,10 @@ function ScrollAreaVertical() {
         <div className="p-4">
           <h4 className="mb-4 text-sm leading-none font-medium">Tags</h4>
           {tags.map((tag) => (
-            <React.Fragment key={tag}>
+            <Fragment key={tag}>
               <div className="text-sm">{tag}</div>
               <Separator className="my-2" />
-            </React.Fragment>
+            </Fragment>
           ))}
         </div>
       </ScrollArea>
