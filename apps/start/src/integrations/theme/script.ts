@@ -36,7 +36,8 @@ export function getThemeScript(
     } else if (currentTheme === 'system') {
       resolvedTheme = 'light';
     } else {
-      resolvedTheme = currentTheme === 'light' || currentTheme === 'dark' ? currentTheme : 'light';
+      // Use theme as-is (supports custom theme strings)
+      resolvedTheme = currentTheme;
     }
 
     if (resolvedTheme) {
@@ -45,12 +46,14 @@ export function getThemeScript(
       // Apply theme to DOM element
       if (attribute === 'class') {
         root.classList.remove('light', 'dark');
+        // Add theme as class (works for 'light', 'dark', and custom themes)
         root.classList.add(resolvedTheme);
       } else {
         root.setAttribute(attribute, resolvedTheme);
       }
 
-      if (enableColorScheme) {
+      // Only set colorScheme for 'light' or 'dark'
+      if (enableColorScheme && (resolvedTheme === 'light' || resolvedTheme === 'dark')) {
         root.style.colorScheme = resolvedTheme;
       }
     }
