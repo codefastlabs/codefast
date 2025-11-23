@@ -146,12 +146,12 @@ export function Theme({
       return;
     }
 
-    // If forcedTheme is set, use it directly (highest priority)
+    // If forcedTheme is set, use it directly (the highest priority)
     if (forcedTheme) {
       // Resolve forcedTheme if it's 'system'
       const resolvedForcedTheme: Theme =
         forcedTheme === 'system' && enableSystem
-          ? systemTheme ?? 'light'
+          ? (systemTheme ?? 'light')
           : forcedTheme === 'system'
             ? 'light'
             : forcedTheme;
@@ -164,7 +164,16 @@ export function Theme({
       theme === 'system' && enableSystem ? (systemTheme ?? 'light') : theme === 'system' ? 'light' : theme;
 
     applyThemeToDOM(resolved);
-  }, [theme, systemTheme, hydrated, enableSystem, attribute, enableColorScheme, disableTransitionOnChange, forcedTheme]);
+  }, [
+    theme,
+    systemTheme,
+    hydrated,
+    enableSystem,
+    attribute,
+    enableColorScheme,
+    disableTransitionOnChange,
+    forcedTheme,
+  ]);
 
   useEffect(() => {
     if (!hydrated) {
@@ -196,7 +205,7 @@ export function Theme({
     if (!hydrated) {
       return undefined;
     }
-    // If forcedTheme is set, resolve it (highest priority)
+    // If forcedTheme is set, resolve it (the highest priority)
     if (forcedTheme) {
       if (forcedTheme === 'system' && enableSystem) {
         return systemTheme ?? undefined;
