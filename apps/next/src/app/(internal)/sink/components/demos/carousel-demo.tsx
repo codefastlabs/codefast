@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { Card, CardContent } from '@codefast/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@codefast/ui/carousel';
 

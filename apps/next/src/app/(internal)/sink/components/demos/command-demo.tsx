@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
 
 import {
@@ -15,18 +15,18 @@ import {
 } from '@codefast/ui/command';
 
 export function CommandDemo() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
+  const onKeyDown = useEffectEvent((e: KeyboardEvent) => {
+    if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      setOpen((open) => !open);
+    }
+  });
 
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   }, []);
 
   return (

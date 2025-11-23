@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@codefast/ui/button';
@@ -94,7 +94,7 @@ toast.promise(promise, {
 ];
 
 export function SonnerDemo() {
-  const [activeType, setActiveType] = React.useState(allTypes[0]);
+  const [activeType, setActiveType] = useState(allTypes[0]);
   return (
     <div className="flex flex-wrap gap-4">
       <Button onClick={() => toast('My first toast')} variant="outline">

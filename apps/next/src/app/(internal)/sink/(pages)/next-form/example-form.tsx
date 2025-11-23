@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useActionState, useEffect, useEffectEvent, useId, useState } from 'react';
 import Form from 'next/form';
 import { z } from 'zod';
 
@@ -36,10 +36,10 @@ export type FormState = {
 };
 
 export function ExampleForm() {
-  const formId = React.useId();
-  const [formKey, setFormKey] = React.useState(formId);
-  const [showResults, setShowResults] = React.useState(false);
-  const [formState, formAction, pending] = React.useActionState<FormState, FormData>(subscriptionAction, {
+  const formId = useId();
+  const [formKey, setFormKey] = useState(formId);
+  const [showResults, setShowResults] = useState(false);
+  const [formState, formAction, pending] = useActionState<FormState, FormData>(subscriptionAction, {
     values: {
       name: '',
       email: '',
@@ -57,9 +57,13 @@ export function ExampleForm() {
     success: false,
   });
 
-  React.useEffect(() => {
+  const onSuccess = useEffectEvent(() => {
+    setShowResults(true);
+  });
+
+  useEffect(() => {
     if (formState.success) {
-      setShowResults(true);
+      onSuccess();
     }
   }, [formState.success]);
 

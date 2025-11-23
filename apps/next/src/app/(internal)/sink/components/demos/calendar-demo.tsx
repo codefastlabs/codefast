@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 import { addDays } from 'date-fns';
 import { Clock2Icon } from 'lucide-react';
 import { type DateRange } from 'react-day-picker';
@@ -28,7 +28,7 @@ export function CalendarDemo() {
 }
 
 function CalendarSingle() {
-  const [date, setDate] = React.useState<Date | undefined>(
+  const [date, setDate] = useState<Date | undefined>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 12),
   );
   return (
@@ -55,7 +55,7 @@ function CalendarMultiple() {
 }
 
 function CalendarRange() {
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 0, 12),
     to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
   });
@@ -77,7 +77,7 @@ function CalendarRange() {
 }
 
 function CalendarRangeMultipleMonths() {
-  const [range, setRange] = React.useState<DateRange | undefined>({
+  const [range, setRange] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 3, 12),
     to: addDays(new Date(new Date().getFullYear(), 3, 12), 60),
   });
@@ -100,7 +100,7 @@ function CalendarRangeMultipleMonths() {
 }
 
 function CalendarBookedDates() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 3));
+  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 3));
   const bookedDates = Array.from(
     { length: 15 },
     (_, i) => new Date(new Date().getFullYear(), new Date().getMonth(), 12 + i),
@@ -128,7 +128,7 @@ function CalendarBookedDates() {
 }
 
 function CalendarWithTime() {
-  const [date, setDate] = React.useState<Date | undefined>(
+  const [date, setDate] = useState<Date | undefined>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 12),
   );
 
@@ -173,7 +173,7 @@ function CalendarWithTime() {
 }
 
 function CalendarCustomDays() {
-  const [range, setRange] = React.useState<DateRange | undefined>({
+  const [range, setRange] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 11, 8),
     to: addDays(new Date(new Date().getFullYear(), 11, 8), 10),
   });
@@ -212,8 +212,8 @@ function CalendarCustomDays() {
 }
 
 function CalendarWithPresets() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 12));
-  const [currentMonth, setCurrentMonth] = React.useState<Date>(
+  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 12));
+  const [currentMonth, setCurrentMonth] = useState<Date>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   );
 

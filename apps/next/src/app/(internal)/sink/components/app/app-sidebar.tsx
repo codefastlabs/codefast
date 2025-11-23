@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -154,7 +154,7 @@ const data = {
     .sort((a, b) => a.name.localeCompare(b.name)),
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   return (
     <Sidebar side="left" collapsible="icon" {...props}>

@@ -1,14 +1,15 @@
 'use client';
 
+import type { ComponentPropsWithoutRef, ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
 import { cn } from '@codefast/tailwind-variants';
-import * as React from 'react';
 
 export function ComponentWrapper({
   className,
   name,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<'div'> & { name: string }) {
+}: ComponentPropsWithoutRef<'div'> & { name: string }) {
   return (
     <ComponentErrorBoundary name={name}>
       <div
@@ -26,11 +27,11 @@ export function ComponentWrapper({
   );
 }
 
-class ComponentErrorBoundary extends React.Component<
-  { children: React.ReactNode; name: string },
+class ComponentErrorBoundary extends Component<
+  { children: ReactNode; name: string },
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode; name: string }) {
+  constructor(props: { children: ReactNode; name: string }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -39,7 +40,7 @@ class ComponentErrorBoundary extends React.Component<
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error(`Error in component ${this.props.name}:`, error, errorInfo);
   }
 

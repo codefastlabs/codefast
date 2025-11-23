@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 import { addDays, format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
@@ -30,7 +30,7 @@ export function DatePickerDemo() {
 }
 
 function DatePickerSimple() {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date>();
 
   return (
     <Popover>
@@ -51,7 +51,7 @@ function DatePickerSimple() {
 }
 
 function DatePickerWithRange() {
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 0, 20),
     to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),
   });
@@ -86,8 +86,8 @@ function DatePickerWithRange() {
 }
 
 function DataPickerWithDropdowns() {
-  const [date, setDate] = React.useState<Date>();
-  const [open, setOpen] = React.useState(false);
+  const [date, setDate] = useState<Date>();
+  const [open, setOpen] = useState(false);
   const isMobile = useIsMobile(450);
 
   if (isMobile) {

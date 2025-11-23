@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useMemo, useState } from 'react';
 import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
 
 import { cn } from '@codefast/tailwind-variants';
@@ -109,8 +109,8 @@ export function ComboboxDemo() {
 }
 
 function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('');
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -153,10 +153,10 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
 }
 
 function UserCombobox({ users, selectedUserId }: { users: User[]; selectedUserId: string }) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(selectedUserId);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(selectedUserId);
 
-  const selectedUser = React.useMemo(() => users.find((user) => user.id === value), [value, users]);
+  const selectedUser = useMemo(() => users.find((user) => user.id === value), [value, users]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -226,15 +226,15 @@ function TimezoneCombobox({
   timezones: Timezone[];
   selectedTimezone: Timezone['timezones'][number];
 }) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(selectedTimezone.value);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(selectedTimezone.value);
 
-  const selectedGroup = React.useMemo(
+  const selectedGroup = useMemo(
     () => timezones.find((group) => group.timezones.find((tz) => tz.value === value)),
     [value, timezones],
   );
 
-  const selectedTimezoneLabel = React.useMemo(
+  const selectedTimezoneLabel = useMemo(
     () => selectedGroup?.timezones.find((tz) => tz.value === value)?.label,
     [value, selectedGroup],
   );
@@ -294,8 +294,8 @@ function TimezoneCombobox({
 }
 
 function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }) {
-  const [open, setOpen] = React.useState(false);
-  const [selectedFrameworks, setSelectedFrameworks] = React.useState<Framework[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Framework[]>([]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
