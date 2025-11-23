@@ -4,4 +4,3 @@ export default {
   name: 'Tanstack Form',
   render: <FormDevtoolsPanel />,
 };
-
