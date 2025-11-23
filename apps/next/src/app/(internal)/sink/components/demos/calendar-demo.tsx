@@ -28,9 +28,7 @@ export function CalendarDemo() {
 }
 
 function CalendarSingle() {
-  const [date, setDate] = useState<Date | undefined>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 12),
-  );
+  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
   return (
     <div className="flex flex-col gap-3">
       <div className="px-2 text-center text-sm">Single Selection</div>
@@ -128,9 +126,7 @@ function CalendarBookedDates() {
 }
 
 function CalendarWithTime() {
-  const [date, setDate] = useState<Date | undefined>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 12),
-  );
+  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
 
   return (
     <div className="flex flex-col gap-3">
@@ -213,9 +209,7 @@ function CalendarCustomDays() {
 
 function CalendarWithPresets() {
   const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 12));
-  const [currentMonth, setCurrentMonth] = useState<Date>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-  );
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
   return (
     <div className="flex max-w-[300px] flex-col gap-3">

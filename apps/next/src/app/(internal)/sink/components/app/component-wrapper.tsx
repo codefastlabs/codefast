@@ -27,10 +27,7 @@ export function ComponentWrapper({
   );
 }
 
-class ComponentErrorBoundary extends Component<
-  { children: ReactNode; name: string },
-  { hasError: boolean }
-> {
+class ComponentErrorBoundary extends Component<{ children: ReactNode; name: string }, { hasError: boolean }> {
   constructor(props: { children: ReactNode; name: string }) {
     super(props);
     this.state = { hasError: false };
