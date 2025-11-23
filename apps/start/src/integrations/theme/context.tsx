@@ -1,12 +1,12 @@
 import { createContext } from 'react';
-import type { Theme } from '@/integrations/theme/types';
+import type { SystemTheme, Theme } from '@/integrations/theme/types';
 
 export type ThemeContextType = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: 'light' | 'dark' | undefined;
+  resolvedTheme: Theme | undefined;
   themes: Theme[];
-  systemTheme: 'light' | 'dark' | undefined;
+  systemTheme: SystemTheme | undefined;
 };
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

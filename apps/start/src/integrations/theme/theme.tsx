@@ -2,7 +2,7 @@ import { useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react
 import { useHydrated } from '@tanstack/react-router';
 import type { ThemeContextType } from '@/integrations/theme/context';
 import type { JSX, ReactNode } from 'react';
-import type { Theme } from '@/integrations/theme/types';
+import type { SystemTheme, Theme } from '@/integrations/theme/types';
 import { ThemeContext } from '@/integrations/theme/context';
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from '@/integrations/theme/constants';
 import { applyTheme, getStoredTheme, getSystemTheme, setStoredTheme } from '@/integrations/theme/utils';
@@ -28,13 +28,13 @@ export function Theme({
 }: ThemeProps): JSX.Element {
   const hydrated = useHydrated();
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(undefined);
+  const [systemTheme, setSystemTheme] = useState<SystemTheme | undefined>(undefined);
 
   const handleSystemThemeChange = useEffectEvent((e: MediaQueryListEvent) => {
     setSystemTheme(e.matches ? 'dark' : 'light');
   });
 
-  const applyThemeToDOM = useEffectEvent((resolvedTheme: 'light' | 'dark') => {
+  const applyThemeToDOM = useEffectEvent((resolvedTheme: Theme) => {
     if (disableTransitionOnChange) {
       const css = document.createElement('style');
       css.appendChild(
@@ -69,7 +69,7 @@ export function Theme({
 
   const handleStorageChange = useEffectEvent((storageEvent: StorageEvent) => {
     if (storageEvent.key === storageKey && storageEvent.newValue) {
-      const newTheme = storageEvent.newValue as Theme;
+      const newTheme = storageEvent.newValue;
       setThemeState(newTheme);
     }
   });
@@ -97,11 +97,11 @@ export function Theme({
       return;
     }
 
-    const resolved = theme === 'system' && enableSystem ? systemTheme : theme === 'system' ? 'light' : theme;
+    // Resolve theme: 'system' -> systemTheme or 'light', otherwise use theme as-is (including custom strings)
+    const resolved: Theme =
+      theme === 'system' && enableSystem ? (systemTheme ?? 'light') : theme === 'system' ? 'light' : theme;
 
-    if (resolved) {
-      applyThemeToDOM(resolved);
-    }
+    applyThemeToDOM(resolved);
   }, [theme, systemTheme, hydrated, enableSystem, attribute, enableColorScheme, disableTransitionOnChange]);
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export function Theme({
       return undefined;
     }
     if (theme === 'system' && enableSystem) {
-      return systemTheme;
+      return systemTheme ?? undefined;
     }
     return theme === 'system' ? 'light' : theme;
   }, [theme, systemTheme, hydrated, enableSystem]);
