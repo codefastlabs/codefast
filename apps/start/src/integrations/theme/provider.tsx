@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import { useHydrated } from '@tanstack/react-router';
+import { createClientOnlyFn } from '@tanstack/react-start';
 import { ActiveThemeProvider } from './active-theme';
 import type { JSX, ReactNode } from 'react';
 
@@ -28,39 +29,44 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = 'theme';
 const DEFAULT_THEME: Theme = 'system';
 
-function getSystemTheme(): 'light' | 'dark' {
-  if (typeof window === 'undefined') {
-    return 'light';
-  }
+const getSystemTheme = createClientOnlyFn((): 'light' | 'dark' => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
+});
 
-function getStoredTheme(storageKey: string): Theme | null {
-  if (typeof window === 'undefined') {
-    return null;
-  }
+const getStoredTheme = createClientOnlyFn((storageKey: string): Theme | null => {
   try {
-    return (localStorage.getItem(storageKey) as Theme) || null;
+    const value = localStorage.getItem(storageKey);
+    return value ? (value as Theme) : null;
   } catch {
     return null;
   }
-}
+});
 
-function applyTheme(theme: 'light' | 'dark', attribute: string, enableColorScheme: boolean) {
-  const root = document.documentElement;
-  root.classList.remove('light', 'dark');
-  root.classList.add(theme);
-
-  if (attribute !== 'class') {
-    root.setAttribute(attribute, theme);
+const setStoredTheme = createClientOnlyFn((storageKey: string, theme: Theme): void => {
+  try {
+    localStorage.setItem(storageKey, theme);
+  } catch {
+    // noop
   }
+});
 
-  if (enableColorScheme) {
-    root.style.colorScheme = theme;
-  }
-}
+const applyTheme = createClientOnlyFn(
+  (theme: 'light' | 'dark', attribute: string, enableColorScheme: boolean): void => {
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
 
-export function Provider({
+    if (attribute !== 'class') {
+      root.setAttribute(attribute, theme);
+    }
+
+    if (enableColorScheme) {
+      root.style.colorScheme = theme;
+    }
+  },
+);
+
+function Theme({
   children,
   attribute = 'class',
   defaultTheme = DEFAULT_THEME,
@@ -70,48 +76,66 @@ export function Provider({
   enableColorScheme = true,
 }: ThemeProviderProps): JSX.Element {
   const hydrated = useHydrated();
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (!hydrated) {
-      return defaultTheme;
-    }
-    return getStoredTheme(storageKey) || defaultTheme;
-  });
-
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(() => {
-    if (!hydrated) {
-      return undefined;
-    }
-    return getSystemTheme();
-  });
-
+  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
 
-  // Initialize theme on mount
+  const handleSystemThemeChange = useEffectEvent((e: MediaQueryListEvent) => {
+    setSystemTheme(e.matches ? 'dark' : 'light');
+  });
+
+  const applyThemeToDOM = useEffectEvent((resolvedTheme: 'light' | 'dark') => {
+    if (disableTransitionOnChange) {
+      const css = document.createElement('style');
+      css.appendChild(
+        document.createTextNode(
+          '*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}',
+        ),
+      );
+      document.head.appendChild(css);
+
+      applyTheme(resolvedTheme, attribute, enableColorScheme);
+
+      (() => window.getComputedStyle(document.body))();
+
+      setTimeout(() => {
+        document.head.removeChild(css);
+      }, 1);
+    } else {
+      applyTheme(resolvedTheme, attribute, enableColorScheme);
+    }
+  });
+
+  const initializeTheme = useEffectEvent(() => {
+    const stored = getStoredTheme(storageKey);
+    const initialTheme = stored || defaultTheme;
+    setThemeState(initialTheme);
+    setMounted(true);
+
+    if (enableSystem) {
+      const initialSystemTheme = getSystemTheme();
+      setSystemTheme(initialSystemTheme);
+    }
+  });
+
   useEffect(() => {
     if (!hydrated) {
       return;
     }
 
-    setMounted(true);
-    const stored = getStoredTheme(storageKey);
-    const initialTheme = stored || defaultTheme;
-    setThemeState(initialTheme);
-
-    // Set up system theme listener
-    if (enableSystem) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      setSystemTheme(getSystemTheme());
-
-      const handleChange = (e: MediaQueryListEvent) => {
-        setSystemTheme(e.matches ? 'dark' : 'light');
-      };
-
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
+    initializeTheme();
   }, [hydrated, storageKey, defaultTheme, enableSystem]);
 
-  // Apply theme changes
+  useEffect(() => {
+    if (!hydrated || !enableSystem) {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+  }, [hydrated, enableSystem]);
+
   useEffect(() => {
     if (!mounted || !hydrated) {
       return;
@@ -119,30 +143,22 @@ export function Provider({
 
     const resolved = theme === 'system' && enableSystem ? systemTheme : theme === 'system' ? 'light' : theme;
 
-    if (resolved && (resolved === 'light' || resolved === 'dark')) {
-      if (disableTransitionOnChange) {
-        const css = document.createElement('style');
-        css.appendChild(
-          document.createTextNode(
-            '*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}',
-          ),
-        );
-        document.head.appendChild(css);
-
-        applyTheme(resolved, attribute, enableColorScheme);
-
-        // Force reflow
-        (() => window.getComputedStyle(document.body))();
-
-        // Wait for next tick before removing
-        setTimeout(() => {
-          document.head.removeChild(css);
-        }, 1);
-      } else {
-        applyTheme(resolved, attribute, enableColorScheme);
-      }
+    if (resolved) {
+      applyThemeToDOM(resolved);
     }
-  }, [theme, systemTheme, mounted, hydrated, attribute, enableColorScheme, disableTransitionOnChange, enableSystem]);
+  }, [theme, systemTheme, mounted, hydrated, enableSystem]);
+
+  useEffect(() => {
+    if (!mounted || !hydrated) {
+      return;
+    }
+
+    const resolved = theme === 'system' && enableSystem ? systemTheme : theme === 'system' ? 'light' : theme;
+
+    if (resolved) {
+      applyThemeToDOM(resolved);
+    }
+  }, [attribute, enableColorScheme, disableTransitionOnChange, mounted, hydrated, theme, enableSystem, systemTheme]);
 
   const setTheme = useCallback(
     (newTheme: Theme) => {
@@ -151,11 +167,7 @@ export function Provider({
       }
 
       setThemeState(newTheme);
-      try {
-        localStorage.setItem(storageKey, newTheme);
-      } catch {
-        // Ignore localStorage errors
-      }
+      setStoredTheme(storageKey, newTheme);
     },
     [hydrated, storageKey],
   );
@@ -180,10 +192,14 @@ export function Provider({
     systemTheme,
   };
 
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+export function Provider({ children, ...props }: ThemeProviderProps): JSX.Element {
   return (
-    <ThemeContext.Provider value={value}>
+    <Theme {...props}>
       <ActiveThemeProvider>{children}</ActiveThemeProvider>
-    </ThemeContext.Provider>
+    </Theme>
   );
 }
 
