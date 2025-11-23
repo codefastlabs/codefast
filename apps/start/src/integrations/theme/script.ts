@@ -11,6 +11,7 @@
  * @param defaultTheme - The fallback theme if no stored preference exists. Defaults to 'system'.
  * @param enableSystem - Whether to resolve 'system' theme from OS preference. Defaults to true.
  * @param enableColorScheme - Whether to set the CSS color-scheme property. Defaults to true.
+ * @param forcedTheme - Force a specific theme to be applied, overriding user preferences. Defaults to undefined.
  *
  * @returns A string containing the inline JavaScript code to be injected into the <head>.
  *
@@ -27,10 +28,12 @@ export function getThemeScript(
   defaultTheme: string = 'system',
   enableSystem: boolean = true,
   enableColorScheme: boolean = true,
+  forcedTheme?: string,
 ): string {
   const storageKeyEscaped = JSON.stringify(storageKey);
   const attributeEscaped = JSON.stringify(attribute);
   const defaultThemeEscaped = JSON.stringify(defaultTheme);
+  const forcedThemeEscaped = forcedTheme !== undefined ? JSON.stringify(forcedTheme) : 'null';
 
   return `(function() {
   try {
@@ -39,14 +42,20 @@ export function getThemeScript(
     var defaultTheme = ${defaultThemeEscaped};
     var enableSystem = ${enableSystem};
     var enableColorScheme = ${enableColorScheme};
+    var forcedTheme = ${forcedThemeEscaped};
 
-    var theme = null;
-    try {
-      theme = localStorage.getItem(storageKey);
-    } catch (e) {}
-
-    // Use stored theme or fallback to default theme
-    var currentTheme = theme || defaultTheme;
+    // If forcedTheme is set, use it directly (highest priority)
+    var currentTheme = null;
+    if (forcedTheme) {
+      currentTheme = forcedTheme;
+    } else {
+      var theme = null;
+      try {
+        theme = localStorage.getItem(storageKey);
+      } catch (e) {}
+      // Use stored theme or fallback to default theme
+      currentTheme = theme || defaultTheme;
+    }
 
     // Resolve theme based on system preference or explicit value
     var resolvedTheme = null;

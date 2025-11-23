@@ -25,6 +25,8 @@ export type ThemeProps = {
   enableColorScheme?: boolean;
   /** The localStorage key to store the theme preference. Defaults to 'theme'. */
   storageKey?: string;
+  /** Force a specific theme to be applied, overriding user preferences and stored settings. */
+  forcedTheme?: Theme;
 };
 
 /**
@@ -36,6 +38,7 @@ export type ThemeProps = {
  * - Applying the theme to the document root element
  * - Synchronizing theme changes across browser tabs via storage events
  * - Providing theme state and control methods via context
+ * - Forcing a specific theme when forcedTheme prop is provided
  *
  * The component only initializes and applies themes after hydration to prevent
  * hydration mismatches between server and client.
@@ -50,6 +53,13 @@ export type ThemeProps = {
  *   <App />
  * </Theme>
  * ```
+ *
+ * @example
+ * ```tsx
+ * <Theme forcedTheme="dark">
+ *   <App />
+ * </Theme>
+ * ```
  */
 export function Theme({
   children,
@@ -59,6 +69,7 @@ export function Theme({
   disableTransitionOnChange = false,
   storageKey = THEME_STORAGE_KEY,
   enableColorScheme = true,
+  forcedTheme,
 }: ThemeProps): JSX.Element {
   const hydrated = useHydrated();
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
@@ -102,6 +113,10 @@ export function Theme({
   });
 
   const handleStorageChange = useEffectEvent((storageEvent: StorageEvent) => {
+    // Don't respond to storage changes when forcedTheme is set
+    if (forcedTheme) {
+      return;
+    }
     if (storageEvent.key === storageKey && storageEvent.newValue) {
       const newTheme = storageEvent.newValue;
       setThemeState(newTheme);
@@ -131,12 +146,25 @@ export function Theme({
       return;
     }
 
+    // If forcedTheme is set, use it directly (highest priority)
+    if (forcedTheme) {
+      // Resolve forcedTheme if it's 'system'
+      const resolvedForcedTheme: Theme =
+        forcedTheme === 'system' && enableSystem
+          ? systemTheme ?? 'light'
+          : forcedTheme === 'system'
+            ? 'light'
+            : forcedTheme;
+      applyThemeToDOM(resolvedForcedTheme);
+      return;
+    }
+
     // Resolve theme: 'system' -> systemTheme or 'light', otherwise use theme as-is (including custom strings)
     const resolved: Theme =
       theme === 'system' && enableSystem ? (systemTheme ?? 'light') : theme === 'system' ? 'light' : theme;
 
     applyThemeToDOM(resolved);
-  }, [theme, systemTheme, hydrated, enableSystem, attribute, enableColorScheme, disableTransitionOnChange]);
+  }, [theme, systemTheme, hydrated, enableSystem, attribute, enableColorScheme, disableTransitionOnChange, forcedTheme]);
 
   useEffect(() => {
     if (!hydrated) {
@@ -145,7 +173,7 @@ export function Theme({
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [hydrated]);
+  }, [hydrated, forcedTheme]);
 
   const setTheme = useCallback(
     (newTheme: Theme) => {
@@ -153,21 +181,34 @@ export function Theme({
         return;
       }
 
+      // Don't allow theme changes when forcedTheme is set
+      if (forcedTheme) {
+        return;
+      }
+
       setThemeState(newTheme);
       setStoredTheme(storageKey, newTheme);
     },
-    [hydrated, storageKey],
+    [hydrated, storageKey, forcedTheme],
   );
 
   const resolvedTheme = useMemo(() => {
     if (!hydrated) {
       return undefined;
     }
+    // If forcedTheme is set, resolve it (highest priority)
+    if (forcedTheme) {
+      if (forcedTheme === 'system' && enableSystem) {
+        return systemTheme ?? undefined;
+      }
+      return forcedTheme === 'system' ? 'light' : forcedTheme;
+    }
+    // Otherwise, resolve the normal theme
     if (theme === 'system' && enableSystem) {
       return systemTheme ?? undefined;
     }
     return theme === 'system' ? 'light' : theme;
-  }, [theme, systemTheme, hydrated, enableSystem]);
+  }, [theme, systemTheme, hydrated, enableSystem, forcedTheme]);
 
   const themes: Theme[] = enableSystem ? ['light', 'dark', 'system'] : ['light', 'dark'];
 
