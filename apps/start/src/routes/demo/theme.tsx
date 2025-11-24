@@ -116,10 +116,86 @@ function ThemeDemo() {
                 <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
                 <span>Hỗ trợ CSS color-scheme property</span>
               </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <span className="font-semibold">disableTransitionOnChange: Đã bật</span>
+              </li>
             </ul>
           </CardContent>
         </Card>
       </div>
+
+      {/* disableTransitionOnChange Demo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Info className="h-5 w-5" />
+            disableTransitionOnChange Demo
+          </CardTitle>
+          <CardDescription>
+            Tính năng này tạm thời vô hiệu hóa tất cả CSS transitions khi chuyển đổi theme để tránh hiệu ứng nhấp nháy
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>Tính năng đã được bật</AlertTitle>
+            <AlertDescription>
+              Tính năng <code className="rounded bg-muted px-1 py-0.5 text-xs">disableTransitionOnChange</code> đã được
+              bật trong <code className="rounded bg-muted px-1 py-0.5 text-xs">__root.tsx</code>. Khi bạn chuyển đổi
+              theme, tất cả CSS transitions sẽ tạm thời bị vô hiệu hóa để đảm bảo chuyển đổi mượt mà, không có hiệu
+              ứng nhấp nháy.
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold">Các phần tử có transition (sẽ bị vô hiệu hóa khi đổi theme):</h3>
+            <div className="grid gap-4 md:grid-cols-3">
+              {/* Card with transition */}
+              <Card className="transition-all duration-500 hover:scale-105 hover:shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-sm">Card với transition</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs text-muted-foreground">
+                    Card này có transition cho scale và shadow. Khi đổi theme, transition sẽ tạm thời bị vô hiệu hóa.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Button with transition */}
+              <div className="flex items-center justify-center rounded-lg border bg-card p-4 transition-all duration-500 hover:bg-accent">
+                <Button className="transition-all duration-500 hover:scale-110">
+                  Button với transition
+                </Button>
+              </div>
+
+              {/* Badge with transition */}
+              <div className="flex items-center justify-center gap-2 rounded-lg border bg-card p-4 transition-all duration-500 hover:border-primary">
+                <Badge className="transition-all duration-500 hover:scale-110">Badge với transition</Badge>
+              </div>
+            </div>
+
+            <div className="rounded-lg border bg-linear-to-r from-primary/10 to-secondary/10 p-6 transition-all duration-700">
+              <h4 className="mb-2 text-sm font-semibold">Gradient box với transition dài</h4>
+              <p className="text-xs text-muted-foreground">
+                Box này có transition 700ms. Khi bạn chuyển đổi theme, transition này sẽ bị vô hiệu hóa tạm thời để đảm
+                bảo chuyển đổi theme mượt mà.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold">Hướng dẫn test:</h4>
+              <ol className="list-inside list-decimal space-y-1 text-sm text-muted-foreground">
+                <li>Nhấn vào nút theme switcher ở trên để chuyển đổi theme</li>
+                <li>Quan sát các phần tử trên - chúng sẽ thay đổi màu sắc ngay lập tức, không có animation</li>
+                <li>Sau khi theme đã được áp dụng, transitions sẽ được bật lại</li>
+                <li>Hover vào các phần tử để thấy transitions hoạt động bình thường</li>
+              </ol>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Component Showcase */}
       <Card>
