@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { Button } from '@codefast/ui/button';
 import { useMetaColor } from '@/hooks/use-meta-color';
-import { useTheme } from '@/integrations/theme/hook';
+import { useTheme } from '@/integrations/theme/use-theme';
 
 export function ModeSwitcher() {
   const { theme, setTheme } = useTheme();
