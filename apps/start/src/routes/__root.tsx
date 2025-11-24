@@ -5,7 +5,6 @@ import type { QueryClient } from '@tanstack/react-query';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
-import { getThemeScript } from '@/integrations/theme/theme';
 import appCss from '@/styles.css?url';
 import Header from '@/components/header';
 import { Provider as ThemeProvider } from '@/integrations/theme/provider';
@@ -44,13 +43,10 @@ type RootShellComponentProps = {
 };
 
 function RootShellComponent({ children }: RootShellComponentProps) {
-  const themeScript = getThemeScript();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         <Header />

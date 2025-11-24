@@ -292,6 +292,56 @@ export type ThemeProps = {
 };
 
 /**
+ * Props for the ThemeScript component.
+ *
+ * These props match the Theme component props used for script generation,
+ * allowing the script to be configured consistently with the Theme component.
+ */
+export type ThemeScriptProps = {
+  /** The HTML attribute to apply the theme to ('class' or 'data-theme'). Defaults to 'class'. */
+  attribute?: string;
+  /** The default theme to use when no stored preference exists. Defaults to 'system'. */
+  defaultTheme?: Theme;
+  /** Whether to enable system theme detection. Defaults to true. */
+  enableSystem?: boolean;
+  /** Whether to set the CSS color-scheme property. Defaults to true. */
+  enableColorScheme?: boolean;
+  /** The localStorage key to store the theme preference. Defaults to 'theme'. */
+  storageKey?: string;
+  /** Force a specific theme to be applied, overriding user preferences and stored settings. */
+  forcedTheme?: Theme;
+};
+
+/**
+ * Internal component that injects the theme initialization script to prevent flash of unstyled content (FOUC).
+ *
+ * This component injects a script tag into the document head that runs synchronously,
+ * ensuring the correct theme is applied immediately when the page loads.
+ *
+ * The script reads the theme from localStorage and applies it to the document root element,
+ * preventing any flash of the wrong theme before React takes over.
+ *
+ * This component is used internally by the Theme component and rendered within ThemeContext.Provider.
+ * The script is injected into the head via useEffect when the component mounts.
+ *
+ * @param props - Theme script configuration props (same options as Theme component).
+ *
+ * @returns null (script is injected into head, not rendered as JSX).
+ */
+function ThemeScript({
+  attribute = DEFAULT_THEME_ATTRIBUTE,
+  defaultTheme = DEFAULT_THEME,
+  enableSystem = DEFAULT_ENABLE_SYSTEM,
+  enableColorScheme = DEFAULT_ENABLE_COLOR_SCHEME,
+  storageKey = THEME_STORAGE_KEY,
+  forcedTheme,
+}: ThemeScriptProps) {
+  const themeScript = getThemeScript(storageKey, attribute, defaultTheme, enableSystem, enableColorScheme, forcedTheme);
+
+  return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
+}
+
+/**
  * Theme provider component that manages theme state and applies it to the DOM.
  *
  * This component handles:
@@ -491,7 +541,19 @@ export function Theme({
     systemTheme,
   };
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <ThemeScript
+        attribute={attribute}
+        defaultTheme={defaultTheme}
+        enableSystem={enableSystem}
+        enableColorScheme={enableColorScheme}
+        storageKey={storageKey}
+        forcedTheme={forcedTheme}
+      />
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 /**
