@@ -8,6 +8,7 @@ import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import { getThemeScript } from '@/integrations/theme/theme';
 import appCss from '@/styles.css?url';
 import Header from '@/components/header';
+import { Provider as ThemeProvider } from '@/integrations/theme/provider';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -53,7 +54,7 @@ function RootShellComponent({ children }: RootShellComponentProps) {
       </head>
       <body>
         <Header />
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
