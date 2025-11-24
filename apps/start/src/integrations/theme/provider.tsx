@@ -48,6 +48,53 @@ export type ThemeContextType = {
 export const ThemeContext = createContext<ThemeContextType | null>(null);
 
 /**
+ * Temporarily disables all CSS transitions to prevent visual glitches
+ * during theme changes.
+ *
+ * This function injects a style element that disables all transitions,
+ * then removes it after the theme change is complete. This provides a
+ * smoother theme switching experience by preventing animated transitions
+ * from interfering with the theme change.
+ *
+ * @param nonce - Optional nonce value for CSP compliance. If provided,
+ *                it will be added as an attribute to the style element.
+ *
+ * @returns A cleanup function that re-enables transitions after a short delay.
+ *
+ * @example
+ * ```tsx
+ * const enable = disableAnimation();
+ * // Perform theme change
+ * enable(); // Re-enables transitions after theme change
+ * ```
+ */
+function disableAnimation(nonce?: string): () => void {
+  const css = document.createElement('style');
+
+  if (nonce) {
+    css.setAttribute('nonce', nonce);
+  }
+
+  css.appendChild(
+    document.createTextNode(
+      `*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}`,
+    ),
+  );
+
+  document.head.appendChild(css);
+
+  return () => {
+    // Force restyle
+    void window.getComputedStyle(document.body);
+
+    // Wait for the next tick before removing
+    setTimeout(() => {
+      document.head.removeChild(css);
+    }, 1);
+  };
+}
+
+/**
  * Props for the ThemeProvider component.
  */
 type ThemeProps = {
@@ -66,6 +113,23 @@ type ThemeProps = {
    * default theme. It is used to initialize the client-side state.
    */
   theme: Theme;
+  /**
+   * Whether to disable CSS transitions when the theme changes.
+   *
+   * When set to `true`, all CSS transitions will be temporarily disabled
+   * during theme changes to prevent visual glitches. This is useful for
+   * providing a smoother theme switching experience.
+   *
+   * Defaults to `false`.
+   */
+  disableTransitionOnChange?: boolean;
+  /**
+   * Nonce value for Content Security Policy (CSP) compliance.
+   *
+   * If your application uses CSP, provide a nonce value here. This will
+   * be used when injecting the transition-disabling styles.
+   */
+  nonce?: string;
 };
 
 /**
@@ -87,6 +151,8 @@ type ThemeProps = {
  * @param props - The theme provider props containing:
  *   - `children`: Child components that will have access to the theme context.
  *   - `theme`: The initial theme value, usually obtained from the server-side route loader.
+ *   - `disableTransitionOnChange`: Optional flag to disable CSS transitions during theme changes.
+ *   - `nonce`: Optional nonce value for CSP compliance.
  *
  * @returns A ThemeContext.Provider wrapping the children with theme state and setter function.
  *
@@ -99,7 +165,7 @@ type ThemeProps = {
  *   return (
  *     <html className={theme}>
  *       <body>
- *         <ThemeProvider theme={theme}>
+ *         <ThemeProvider theme={theme} disableTransitionOnChange>
  *           {children}
  *         </ThemeProvider>
  *       </body>
@@ -119,7 +185,12 @@ type ThemeProps = {
  * }
  * ```
  */
-export function ThemeProvider({ children, theme: initialTheme }: ThemeProps): JSX.Element {
+export function ThemeProvider({
+  children,
+  theme: initialTheme,
+  disableTransitionOnChange = false,
+  nonce,
+}: ThemeProps): JSX.Element {
   const router = useRouter();
   const [theme, setThemeState] = useState<Theme>(initialTheme);
 
@@ -131,12 +202,18 @@ export function ThemeProvider({ children, theme: initialTheme }: ThemeProps): JS
    * completes, it invalidates the router to ensure the new theme is applied
    * consistently across the application.
    *
+   * If `disableTransitionOnChange` is enabled, CSS transitions will be
+   * temporarily disabled during the theme change to prevent visual glitches.
+   *
    * @param value - The new theme value to apply.
    */
   function setTheme(value: Theme) {
+    const enable = disableTransitionOnChange ? disableAnimation(nonce) : null;
+
     setThemeState(value);
     setThemeServerFn({ data: value }).then(() => {
       void router.invalidate();
+      enable?.();
     });
   }
 
