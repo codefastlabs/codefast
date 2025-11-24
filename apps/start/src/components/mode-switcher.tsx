@@ -5,7 +5,7 @@ import { useMetaColor } from '@/hooks/use-meta-color';
 import { useTheme } from '@/integrations/theme/theme';
 
 export function ModeSwitcher() {
-  const { setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { setMetaColor, metaColor } = useMetaColor();
 
   useEffect(() => {
@@ -13,11 +13,8 @@ export function ModeSwitcher() {
   }, [metaColor, setMetaColor]);
 
   const toggleTheme = useCallback(() => {
-    if (resolvedTheme === undefined) {
-      return;
-    }
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  }, [resolvedTheme, setTheme]);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  }, [theme, setTheme]);
 
   return (
     <Button

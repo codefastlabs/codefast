@@ -8,33 +8,22 @@ import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import appCss from '@/styles.css?url';
 import Header from '@/components/header';
 import { Provider as ThemeProvider } from '@/integrations/theme/provider';
+import { getThemeServerFn } from '@/integrations/theme/server';
 
 interface MyRouterContext {
   queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  loader: () => getThemeServerFn(),
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'TanStack Start Starter' },
     ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
   }),
-
   shellComponent: RootShellComponent,
 });
 
@@ -43,14 +32,16 @@ type RootShellComponentProps = {
 };
 
 function RootShellComponent({ children }: RootShellComponentProps) {
+  const theme = Route.useLoaderData();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html className={theme} lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
         <Header />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
