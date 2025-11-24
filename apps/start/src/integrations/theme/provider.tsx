@@ -1,37 +1,33 @@
-import type { JSX, ReactNode } from 'react';
-import type { Theme as ThemeType } from '@/integrations/theme/server';
-import { ActiveThemeProvider } from '@/integrations/theme/active-theme';
-import { Theme } from '@/integrations/theme/theme';
+import { useRouter } from '@tanstack/react-router';
+import { createContext, useState } from 'react';
+import { setThemeServerFn } from './server';
+import type { ReactNode } from 'react';
+import type { Theme } from './server';
 
-/**
- * Combined theme provider that wraps both Theme and ActiveThemeProvider.
- *
- * This component provides a convenient way to set up both the color theme
- * system (light/dark) and the active theme system (for custom theme variants)
- * in a single provider.
- *
- * @param props - Theme provider props.
- * @param props.children - Child components that will have access to both theme contexts.
- * @param props.theme - The initial theme from server (from cookie).
- *
- * @returns A provider tree with both Theme and ActiveThemeProvider.
- *
- * @example
- * ```tsx
- * <Provider theme="dark">
- *   <App />
- * </Provider>
- * ```
- */
-type ProviderProps = {
-  children: ReactNode;
-  theme: ThemeType;
+export type ThemeContextType = {
+  theme: Theme;
+  setTheme: (value: Theme) => void;
 };
 
-export function Provider({ children, theme }: ProviderProps): JSX.Element {
-  return (
-    <Theme theme={theme}>
-      <ActiveThemeProvider>{children}</ActiveThemeProvider>
-    </Theme>
-  );
+export const ThemeContext = createContext<ThemeContextType | null>(null);
+
+type ThemeProps = {
+  children: ReactNode;
+  theme: Theme;
+};
+
+export function ThemeProvider({ children, theme: initialTheme }: ThemeProps) {
+  const router = useRouter();
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
+
+  function setTheme(value: Theme) {
+    setThemeState(value);
+    setThemeServerFn({ data: value }).then(() => {
+      void router.invalidate();
+    });
+  }
+
+  const value: ThemeContextType = { theme, setTheme };
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

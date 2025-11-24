@@ -2,12 +2,13 @@ import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/reac
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import type { ReactNode } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
+import { ActiveThemeProvider } from '@/components/active-theme';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import appCss from '@/styles.css?url';
 import Header from '@/components/header';
-import { Provider as ThemeProvider } from '@/integrations/theme/provider';
+import { ThemeProvider } from '@/integrations/theme/provider';
 import { getThemeServerFn } from '@/integrations/theme/server';
 
 interface MyRouterContext {
@@ -41,7 +42,9 @@ function RootShellComponent({ children }: RootShellComponentProps) {
       </head>
       <body>
         <Header />
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>
+          <ActiveThemeProvider>{children}</ActiveThemeProvider>
+        </ThemeProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
