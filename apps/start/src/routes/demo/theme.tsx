@@ -1,28 +1,29 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { CheckCircle2, Info, Monitor, Moon, Palette, Sun } from 'lucide-react';
+import { CheckCircle2, Info, Moon, Palette, Sun } from 'lucide-react';
 
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Badge } from '@codefast/ui/badge';
 import { Separator } from '@codefast/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
+import type { Theme } from '@/integrations/theme/server';
 import { useTheme } from '@/integrations/theme/theme';
 
 export const Route = createFileRoute('/demo/theme')({
   component: ThemeDemo,
 });
 
+const themes: Theme[] = ['light', 'dark'];
+
 function ThemeDemo() {
-  const { theme, setTheme, resolvedTheme, systemTheme, themes } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="container mx-auto max-w-6xl space-y-8 p-8">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-4xl font-bold tracking-tight">Theme Demo</h1>
-        <p className="text-muted-foreground">
-          Demo tính năng theme switching với hỗ trợ light mode, dark mode và system preference.
-        </p>
+        <p className="text-muted-foreground">Demo tính năng theme switching với hỗ trợ light mode và dark mode.</p>
       </div>
 
       {/* Theme Switcher Section */}
@@ -38,7 +39,7 @@ function ThemeDemo() {
           <div className="flex flex-wrap gap-3">
             {themes.map((themeOption) => {
               const isActive = theme === themeOption;
-              const Icon = themeOption === 'light' ? Sun : themeOption === 'dark' ? Moon : Monitor;
+              const Icon = themeOption === 'light' ? Sun : Moon;
 
               return (
                 <Button
@@ -75,24 +76,6 @@ function ThemeDemo() {
               </div>
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm font-medium">Resolved Theme:</span>
-                <Badge variant="secondary" className="capitalize">
-                  {resolvedTheme || 'Loading...'}
-                </Badge>
-              </div>
-              {systemTheme && (
-                <>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground text-sm font-medium">System Theme:</span>
-                    <Badge variant="outline" className="capitalize">
-                      {systemTheme}
-                    </Badge>
-                  </div>
-                </>
-              )}
-              <Separator />
-              <div className="flex items-center justify-between">
                 <span className="text-muted-foreground text-sm font-medium">Available Themes:</span>
                 <div className="flex gap-1">
                   {themes.map((t) => (
@@ -119,11 +102,7 @@ function ThemeDemo() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
-                <span>Tự động theo dõi system preference</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
-                <span>Lưu preference vào localStorage</span>
+                <span>Lưu preference vào cookie</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
@@ -236,7 +215,7 @@ function ThemeDemo() {
         <AlertDescription>
           Theme system sử dụng React Context để quản lý state và tự động áp dụng theme class vào document root. Khi bạn
           chuyển đổi theme, tất cả các component sử dụng Tailwind CSS classes với dark mode variants sẽ tự động cập
-          nhật. Theme preference được lưu vào localStorage để giữ nguyên khi reload trang.
+          nhật. Theme preference được lưu vào cookie để giữ nguyên khi reload trang và hỗ trợ SSR.
         </AlertDescription>
       </Alert>
     </div>
