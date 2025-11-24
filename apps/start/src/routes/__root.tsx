@@ -42,7 +42,7 @@ function RootShellComponent({ children }: RootShellComponentProps) {
       </head>
       <body>
         <Header />
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme} disableTransitionOnChange>
           <ActiveThemeProvider>{children}</ActiveThemeProvider>
         </ThemeProvider>
         <TanStackDevtools
