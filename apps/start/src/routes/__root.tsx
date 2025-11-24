@@ -5,7 +5,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
-import { getThemeScript } from '@/integrations/theme/provider';
+import { getThemeScript } from '@/integrations/theme/theme';
 import appCss from '@/styles.css?url';
 import Header from '@/components/header';
 
