@@ -58,6 +58,24 @@ export const THEME_STORAGE_KEY = 'theme';
 export const DEFAULT_THEME: Theme = 'system';
 
 /**
+ * Default value for the HTML attribute to apply the theme to.
+ * Defaults to 'class'.
+ */
+export const DEFAULT_THEME_ATTRIBUTE = 'class';
+
+/**
+ * Default value for enabling system theme detection.
+ * Defaults to true.
+ */
+export const DEFAULT_ENABLE_SYSTEM = true;
+
+/**
+ * Default value for enabling CSS color-scheme property.
+ * Defaults to true.
+ */
+export const DEFAULT_ENABLE_COLOR_SCHEME = true;
+
+/**
  * Get the current system theme preference from the user's OS.
  *
  * This function queries the browser's media query API to detect whether
@@ -186,11 +204,11 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(undefine
  * ```
  */
 export function getThemeScript(
-  storageKey: string = 'theme',
-  attribute: string = 'class',
-  defaultTheme: string = 'system',
-  enableSystem: boolean = true,
-  enableColorScheme: boolean = true,
+  storageKey: string = THEME_STORAGE_KEY,
+  attribute: string = DEFAULT_THEME_ATTRIBUTE,
+  defaultTheme: string = DEFAULT_THEME,
+  enableSystem: boolean = DEFAULT_ENABLE_SYSTEM,
+  enableColorScheme: boolean = DEFAULT_ENABLE_COLOR_SCHEME,
   forcedTheme?: string,
 ): string {
   const storageKeyEscaped = JSON.stringify(storageKey);
@@ -308,12 +326,12 @@ export type ThemeProps = {
  */
 export function Theme({
   children,
-  attribute = 'class',
+  attribute = DEFAULT_THEME_ATTRIBUTE,
   defaultTheme = DEFAULT_THEME,
-  enableSystem = true,
+  enableSystem = DEFAULT_ENABLE_SYSTEM,
   disableTransitionOnChange = false,
   storageKey = THEME_STORAGE_KEY,
-  enableColorScheme = true,
+  enableColorScheme = DEFAULT_ENABLE_COLOR_SCHEME,
   forcedTheme,
 }: ThemeProps): JSX.Element {
   const hydrated = useHydrated();
