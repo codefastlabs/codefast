@@ -48,9 +48,9 @@ type ActiveThemeProviderProps = {
  * The active theme is applied to the body element, allowing for custom theme
  * variants that work alongside the color theme system.
  *
- * @param props - The active theme provider props.
- * @param props.children - Child components that will have access to the active theme context.
- * @param props.initialTheme - The initial active theme to apply. Defaults to 'default'.
+ * @param props - The active theme provider props containing:
+ *   - `children`: Child components that will have access to the active theme context.
+ *   - `initialTheme`: The initial active theme to apply. Defaults to 'default'.
  *
  * @returns A ThemeContext.Provider wrapping the children with active theme state.
  *
@@ -91,7 +91,7 @@ export function ActiveThemeProvider({ children, initialTheme }: ActiveThemeProvi
  *
  * @returns The active theme context value containing activeTheme and setActiveTheme.
  *
- * @throws {Error} If called outside of an ActiveThemeProvider component.
+ * @throws Error If called outside of an ActiveThemeProvider component.
  *
  * @example
  * ```tsx
@@ -115,4 +115,3 @@ export function useThemeConfig() {
   }
   return context;
 }
-

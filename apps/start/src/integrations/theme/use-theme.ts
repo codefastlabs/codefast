@@ -15,11 +15,11 @@ import type { ThemeContextType } from 'src/integrations/theme/provider';
  * outside of a provider), it throws a descriptive error to help developers
  * identify the issue.
  *
- * @returns {ThemeContextType} An object containing:
+ * @returns An object containing:
  *   - `theme`: The current active theme ('light' or 'dark')
  *   - `setTheme`: A function to update the theme and persist it to the server
  *
- * @throws {Error} If the hook is called outside of a ThemeProvider component.
+ * @throws Error If the hook is called outside of a ThemeProvider component.
  *                 The error message will indicate that useTheme must be used
  *                 within a ThemeProvider.
  *

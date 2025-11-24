@@ -44,8 +44,8 @@ export const DEFAULT_THEME: Theme = 'dark';
  * The function is executed on the server side during route loading, ensuring
  * the correct theme is applied before the page is rendered.
  *
- * @returns {Theme} The current theme preference from cookies, or the default
- *                  theme if no preference is found.
+ * @returns The current theme preference from cookies, or the default
+ *          theme if no preference is found.
  *
  * @example
  * ```tsx
@@ -78,14 +78,12 @@ export const getThemeServerFn = createServerFn().handler(() => {
  * a re-render with the new theme applied. This ensures server-side rendering
  * consistency with the client-side state.
  *
- * @param {object} options - The options object containing the theme data.
- * @param {Theme} options.data - The theme value to persist. Must be either
- *                               'light' or 'dark'.
+ * @param options - The options object containing:
+ *   - `data`: The theme value to persist. Must be either 'light' or 'dark'.
  *
- * @returns {Promise<void>} A promise that resolves when the cookie has been
- *                          set successfully.
+ * @returns A promise that resolves when the cookie has been set successfully.
  *
- * @throws {ZodError} If the provided theme value is not 'light' or 'dark'.
+ * @throws ZodError If the provided theme value is not 'light' or 'dark'.
  *
  * @example
  * ```tsx
