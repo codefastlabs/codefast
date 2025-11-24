@@ -3,6 +3,7 @@ import prettierConfig from 'eslint-config-prettier';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
+import tsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 
 export default [
@@ -50,6 +51,15 @@ export default [
     rules: {
       '@typescript-eslint/array-type': ['error', { default: 'array' }],
       'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    plugins: {
+      tsdoc: tsdoc,
+    },
+    rules: {
+      'tsdoc/syntax': 'warn',
     },
   },
   prettierConfig,

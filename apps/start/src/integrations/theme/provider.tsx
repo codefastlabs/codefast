@@ -29,8 +29,8 @@ export type ThemeContextType = {
    * completes, it invalidates the router to trigger a re-render with the new
    * theme applied.
    *
-   * @param {Theme} value - The new theme value to apply. Must be either
-   *                        'light' or 'dark'.
+   * @param value - The new theme value to apply. Must be either
+   *                'light' or 'dark'.
    */
   setTheme: (value: Theme) => void;
 };
@@ -84,14 +84,11 @@ type ThemeProps = {
  * allowing CSS to respond to theme changes through selectors like `.dark` or
  * `.light`.
  *
- * @param {ThemeProps} props - The theme provider props.
- * @param {ReactNode} props.children - Child components that will have access
- *                                      to the theme context.
- * @param {Theme} props.theme - The initial theme value, usually obtained from
- *                              the server-side route loader.
+ * @param props - The theme provider props containing:
+ *   - `children`: Child components that will have access to the theme context.
+ *   - `theme`: The initial theme value, usually obtained from the server-side route loader.
  *
- * @returns {JSX.Element} A ThemeContext.Provider wrapping the children with
- *                        theme state and setter function.
+ * @returns A ThemeContext.Provider wrapping the children with theme state and setter function.
  *
  * @example
  * ```tsx
@@ -134,7 +131,7 @@ export function ThemeProvider({ children, theme: initialTheme }: ThemeProps): JS
    * completes, it invalidates the router to ensure the new theme is applied
    * consistently across the application.
    *
-   * @param {Theme} value - The new theme value to apply.
+   * @param value - The new theme value to apply.
    */
   function setTheme(value: Theme) {
     setThemeState(value);
