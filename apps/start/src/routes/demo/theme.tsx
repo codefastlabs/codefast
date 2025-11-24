@@ -7,7 +7,7 @@ import { Badge } from '@codefast/ui/badge';
 import { Separator } from '@codefast/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
 import type { Theme } from '@/integrations/theme/server';
-import { useTheme } from '@/integrations/theme/hook';
+import { useTheme } from '@/integrations/theme/use-theme';
 
 export const Route = createFileRoute('/demo/theme')({
   component: ThemeDemo,
