@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DemoThemeRouteImport } from './routes/demo/theme'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTanstackFormRouteImport } from './routes/demo/tanstack-form'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start/server-funcs'
@@ -24,6 +25,11 @@ import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start/ss
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoThemeRoute = DemoThemeRouteImport.update({
+  id: '/demo/theme',
+  path: '/demo/theme',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo/tanstack-form': typeof DemoTanstackFormRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/demo/theme': typeof DemoThemeRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo/tanstack-form': typeof DemoTanstackFormRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/demo/theme': typeof DemoThemeRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/demo/tanstack-form': typeof DemoTanstackFormRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/demo/theme': typeof DemoThemeRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/demo/tanstack-form'
     | '/demo/tanstack-query'
+    | '/demo/theme'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/start/api-request'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/demo/tanstack-form'
     | '/demo/tanstack-query'
+    | '/demo/theme'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/start/api-request'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/demo/tanstack-form'
     | '/demo/tanstack-query'
+    | '/demo/theme'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/start/api-request'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoTanstackFormRoute: typeof DemoTanstackFormRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  DemoThemeRoute: typeof DemoThemeRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/theme': {
+      id: '/demo/theme'
+      path: '/demo/theme'
+      fullPath: '/demo/theme'
+      preLoaderRoute: typeof DemoThemeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -259,6 +279,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoTanstackFormRoute: DemoTanstackFormRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  DemoThemeRoute: DemoThemeRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,

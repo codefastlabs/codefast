@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, FileText, Home, Menu, Network, SquareFunction, StickyNote, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Home, Menu, Network, Palette, SquareFunction, StickyNote, X } from 'lucide-react';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -169,6 +169,18 @@ export default function Header() {
           >
             <FileText size={20} />
             <span className="font-medium">TanStack Form</span>
+          </Link>
+
+          <Link
+            to="/demo/theme"
+            onClick={() => setIsOpen(false)}
+            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
+            activeProps={{
+              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <Palette size={20} />
+            <span className="font-medium">Theme Demo</span>
           </Link>
 
           {/* Demo Links End */}
