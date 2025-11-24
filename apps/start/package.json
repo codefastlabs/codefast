@@ -10,7 +10,7 @@
     "format": "prettier --write . ",
     "lint": "TIMING=1 eslint --max-warnings 0",
     "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
-    "serve": "vite preview",
+    "serve": "vite preview --port 3001",
     "test": "vitest run"
   },
   "dependencies": {
