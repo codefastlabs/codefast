@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useTheme } from '@/integrations/theme/use-theme';
+import { useTheme } from '@/integrations/theme/provider';
 
 export const META_THEME_COLORS = {
   light: '#ffffff',
