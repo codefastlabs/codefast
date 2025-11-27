@@ -29,7 +29,7 @@ const figtree = Figtree({
   variable: '--font-figtree',
 });
 
-export default async function SinkLayout({ children }: { children: ReactNode }) {
+export default function SinkLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider
       defaultOpen={true}
