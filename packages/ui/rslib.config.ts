@@ -29,7 +29,16 @@ export default defineConfig({
   ],
   output: {
     cleanDistPath: !isWatchMode,
-    minify: !isWatchMode,
+    minify: {
+      jsOptions: {
+        minimizerOptions: {
+          compress: {
+            directives: false,
+          },
+          minify: !isWatchMode,
+        },
+      },
+    },
     target: 'web',
   },
   performance: {
