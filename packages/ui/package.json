@@ -24,7 +24,9 @@
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/css/**/*.css"
+  ],
   "type": "module",
   "exports": {
     ".": {
