@@ -94,7 +94,7 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <div className="bg-muted flex min-h-[800px] items-center justify-center rounded-xl p-20">
+      <div className="bg-muted flex min-h-200 items-center justify-center rounded-xl p-20">
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
@@ -122,7 +122,7 @@ export function EmptyDemo() {
           </CardContent>
         </Card>
       </div>
-      <div className="bg-muted flex min-h-[800px] items-center justify-center rounded-xl p-20">
+      <div className="bg-muted flex min-h-200 items-center justify-center rounded-xl p-20">
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">

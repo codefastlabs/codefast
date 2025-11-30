@@ -29,7 +29,7 @@ function DialogWithForm() {
         <DialogTrigger asChild>
           <Button variant="outline">Edit Profile</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
@@ -62,12 +62,12 @@ function DialogScrollableContent() {
       <DialogTrigger asChild>
         <Button variant="outline">Scrollable Content</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Scrollable Content</DialogTitle>
           <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
+        <div className="-mx-6 max-h-125 overflow-y-auto px-6 text-sm">
           <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             <p key={index} className="mb-4 leading-normal">
@@ -95,7 +95,7 @@ function DialogWithStickyFooter() {
           <DialogTitle>Scrollable Content</DialogTitle>
           <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
+        <div className="-mx-6 max-h-125 overflow-y-auto px-6 text-sm">
           <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             <p key={index} className="mb-4 leading-normal">

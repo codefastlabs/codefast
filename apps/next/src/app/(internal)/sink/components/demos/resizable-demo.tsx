@@ -3,9 +3,9 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/
 export function ResizableDemo() {
   return (
     <div className="flex w-full flex-col gap-6">
-      <ResizablePanelGroup direction="horizontal" className="max-w-md rounded-xl border md:min-w-[450px]">
+      <ResizablePanelGroup direction="horizontal" className="max-w-md rounded-xl border md:min-w-112.5">
         <ResizablePanel defaultSize={50}>
-          <div className="flex h-[200px] items-center justify-center p-6">
+          <div className="flex h-50 items-center justify-center p-6">
             <span className="font-semibold">One</span>
           </div>
         </ResizablePanel>
@@ -26,7 +26,7 @@ export function ResizableDemo() {
           </ResizablePanelGroup>
         </ResizablePanel>
       </ResizablePanelGroup>
-      <ResizablePanelGroup direction="horizontal" className="min-h-[200px] max-w-md rounded-xl border md:min-w-[450px]">
+      <ResizablePanelGroup direction="horizontal" className="min-h-50 max-w-md rounded-xl border md:min-w-112.5">
         <ResizablePanel defaultSize={25}>
           <div className="flex h-full items-center justify-center p-6">
             <span className="font-semibold">Sidebar</span>
@@ -39,7 +39,7 @@ export function ResizableDemo() {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
-      <ResizablePanelGroup direction="vertical" className="min-h-[200px] max-w-md rounded-xl border md:min-w-[450px]">
+      <ResizablePanelGroup direction="vertical" className="min-h-50 max-w-md rounded-xl border md:min-w-112.5">
         <ResizablePanel defaultSize={25}>
           <div className="flex h-full items-center justify-center p-6">
             <span className="font-semibold">Header</span>

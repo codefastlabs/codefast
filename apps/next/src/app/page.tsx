@@ -39,7 +39,7 @@ export default function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-4 sm:flex-row">
-          <Button asChild variant="default" size="lg" className="w-full md:w-[158px]">
+          <Button asChild variant="default" size="lg" className="w-full md:w-39.5">
             <a
               href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
               target="_blank"
@@ -49,7 +49,7 @@ export default function Home() {
               Deploy Now
             </a>
           </Button>
-          <Button asChild variant="outline" size="lg" className="w-full md:w-[158px]">
+          <Button asChild variant="outline" size="lg" className="w-full md:w-39.5">
             <Link href="/sink">Documentation</Link>
           </Button>
         </div>

@@ -104,12 +104,12 @@ export function ShipRegistrationForm() {
                 <Textarea
                   id="topics"
                   placeholder="Agents, Security, Improving UX/Personalization, etc."
-                  className="min-h-[100px]"
+                  className="min-h-25"
                 />
               </Field>
               <Field className="col-span-2">
                 <FieldLabel htmlFor="workloads">What types of AI workloads are you tackling right now?</FieldLabel>
-                <Textarea id="workloads" className="min-h-[100px]" />
+                <Textarea id="workloads" className="min-h-25" />
               </Field>
             </FieldGroup>
           </FieldSet>

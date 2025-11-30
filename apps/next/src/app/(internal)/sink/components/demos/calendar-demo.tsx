@@ -212,7 +212,7 @@ function CalendarWithPresets() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
   return (
-    <div className="flex max-w-[300px] flex-col gap-3">
+    <div className="flex max-w-75 flex-col gap-3">
       <div className="px-2 text-center text-sm">With Presets</div>
       <Card className="w-fit py-4">
         <CardContent className="px-4">

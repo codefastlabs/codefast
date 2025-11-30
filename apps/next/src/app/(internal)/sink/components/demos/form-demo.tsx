@@ -88,7 +88,7 @@ export function FormDemo() {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast('You submitted the following values:', {
       description: (
-        <pre className="mt-2 w-[320px] rounded-lg bg-neutral-950 p-4">
+        <pre className="mt-2 w-80 rounded-lg bg-neutral-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
@@ -251,7 +251,7 @@ export function FormDemo() {
                   <FormControl>
                     <Button
                       variant={'outline'}
-                      className={cn('w-[240px] pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}
+                      className={cn('w-60 pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}
                     >
                       {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />

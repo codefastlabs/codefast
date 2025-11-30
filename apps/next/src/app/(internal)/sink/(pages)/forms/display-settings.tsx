@@ -45,7 +45,7 @@ export function DisplaySettings() {
             <FieldTitle>Brightness</FieldTitle>
             <FieldDescription>Adjust the display brightness level.</FieldDescription>
           </FieldContent>
-          <div className="flex min-w-[150px] items-center gap-2">
+          <div className="flex min-w-37.5 items-center gap-2">
             <SunDimIcon className="size-4 shrink-0" />
             <Slider id="brightness" defaultValue={[75]} max={100} step={1} aria-label="Brightness" />
             <SunIcon className="size-4 shrink-0" />
@@ -74,7 +74,7 @@ export function DisplaySettings() {
             <FieldDescription>Select the display refresh rate.</FieldDescription>
           </FieldContent>
           <Select>
-            <SelectTrigger id="refresh-rate" className="ml-auto min-w-[200px]">
+            <SelectTrigger id="refresh-rate" className="ml-auto min-w-50">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent align="end">

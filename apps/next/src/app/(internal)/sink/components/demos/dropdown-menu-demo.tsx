@@ -181,7 +181,7 @@ function DropdownMenuWithAvatar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-12 justify-start px-2 md:max-w-[200px]">
+        <Button variant="outline" className="h-12 justify-start px-2 md:max-w-50">
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" alt="Shadcn" />
             <AvatarFallback className="rounded-xl">CN</AvatarFallback>

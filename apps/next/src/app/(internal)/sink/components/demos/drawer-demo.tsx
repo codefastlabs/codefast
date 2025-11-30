@@ -101,7 +101,7 @@ function DrawerBottom() {
               </Button>
               <div className="flex-1 text-center">
                 <div className="text-7xl font-bold tracking-tighter">{goal}</div>
-                <div className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</div>
+                <div className="text-muted-foreground text-xs uppercase">Calories/day</div>
               </div>
               <Button
                 variant="outline"
@@ -114,7 +114,7 @@ function DrawerBottom() {
                 <span className="sr-only">Increase</span>
               </Button>
             </div>
-            <div className="mt-3 h-[120px]">
+            <div className="mt-3 h-30">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data}>
                   <Bar
