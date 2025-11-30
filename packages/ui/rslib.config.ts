@@ -33,6 +33,7 @@ export default defineConfig({
     target: 'web',
   },
   performance: {
+    buildCache: isWatchMode,
     printFileSize: !isWatchMode,
   },
   plugins: [pluginReact()],
