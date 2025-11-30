@@ -128,7 +128,7 @@ export function ChatSettings() {
           <TabsTrigger value="personalization">Personalization</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
-        <div className="rounded-xl border p-6 [&_[data-slot=select-trigger]]:min-w-[125px]">
+        <div className="rounded-xl border p-6 [&_[data-slot=select-trigger]]:min-w-31.25">
           <TabsContent value="general">
             <FieldSet>
               <FieldGroup>
@@ -267,7 +267,7 @@ export function ChatSettings() {
               <Field orientation="responsive">
                 <FieldLabel htmlFor="nickname">Nickname</FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="nickname" placeholder="Broski" className="@md/field-group:max-w-[200px]" />
+                  <InputGroupInput id="nickname" placeholder="Broski" className="@md/field-group:max-w-50" />
                   <InputGroupAddon align="inline-end">
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -293,7 +293,7 @@ export function ChatSettings() {
                 <Textarea
                   id="about"
                   placeholder="I'm a software engineer..."
-                  className="min-h-[120px] @md/field-group:min-w-full @2xl/field-group:min-w-[300px]"
+                  className="min-h-30 @md/field-group:min-w-full @2xl/field-group:min-w-75"
                 />
               </Field>
               <FieldSeparator />

@@ -14,7 +14,7 @@ export function SelectDemo() {
   return (
     <div className="flex flex-wrap items-start gap-4">
       <Select>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-45">
           <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
@@ -31,7 +31,7 @@ export function SelectDemo() {
         </SelectContent>
       </Select>
       <Select>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-45">
           <SelectValue placeholder="Large List" />
         </SelectTrigger>
         <SelectContent>
@@ -43,7 +43,7 @@ export function SelectDemo() {
         </SelectContent>
       </Select>
       <Select disabled>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-45">
           <SelectValue placeholder="Disabled" />
         </SelectTrigger>
         <SelectContent>
@@ -57,7 +57,7 @@ export function SelectDemo() {
         </SelectContent>
       </Select>
       <Select>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-45">
           <SelectValue
             placeholder={
               <>

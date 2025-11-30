@@ -37,7 +37,7 @@ function DatePickerSimple() {
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
-          className={cn('min-w-[200px] justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+          className={cn('min-w-50 justify-start px-2 font-normal', !date && 'text-muted-foreground')}
         >
           <CalendarIcon className="text-muted-foreground" />
           {date ? format(date, 'PPP') : <span>Pick a date</span>}
@@ -96,7 +96,7 @@ function DataPickerWithDropdowns() {
         <DrawerTrigger asChild>
           <Button
             variant="outline"
-            className={cn('min-w-[200px] justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+            className={cn('min-w-50 justify-start px-2 font-normal', !date && 'text-muted-foreground')}
           >
             {date ? format(date, 'PPP') : <span>Pick a date</span>}
             <CalendarIcon className="text-muted-foreground ml-auto" />
@@ -125,7 +125,7 @@ function DataPickerWithDropdowns() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={cn('min-w-[200px] justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+          className={cn('min-w-50 justify-start px-2 font-normal', !date && 'text-muted-foreground')}
         >
           {date ? format(date, 'PPP') : <span>Pick a date</span>}
           <CalendarIcon className="text-muted-foreground ml-auto" />

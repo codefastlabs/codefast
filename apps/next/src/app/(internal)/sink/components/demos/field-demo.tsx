@@ -49,7 +49,7 @@ import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
 export function FieldDemo() {
   return (
     <div className="@container w-full">
-      <div className="bg-muted grid gap-4 p-4 @3xl:grid-cols-2 @5xl:grid-cols-3 @[120rem]:grid-cols-4 @[140rem]:grid-cols-5">
+      <div className="bg-muted grid gap-4 p-4 @3xl:grid-cols-2 @5xl:grid-cols-3 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5">
         <div className="flex flex-col gap-6">
           <BasicFields />
           <PrivacySettings />
@@ -591,7 +591,7 @@ function HearAboutUs() {
             <FieldSet>
               <FieldLegend>How did you hear about us?</FieldLegend>
               <FieldDescription>Select the option that best describes how you heard about us.</FieldDescription>
-              <FieldGroup className="flex flex-row flex-wrap gap-2 [--radius:9999rem] **:data-[slot=checkbox]:rounded-full **:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2 *:data-[slot=field-label]:w-fit">
+              <FieldGroup className="flex flex-row flex-wrap gap-2 [--radius:9999px] **:data-[slot=checkbox]:rounded-full **:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2 *:data-[slot=field-label]:w-fit">
                 <FieldLabel htmlFor="social-media-b2s">
                   <Field orientation="horizontal">
                     <Checkbox
@@ -1193,7 +1193,7 @@ function ContactForm() {
               <Textarea
                 id="contact-3k2-message-k3i"
                 placeholder="Tell us how we can help you..."
-                className="min-h-[100px]"
+                className="min-h-25"
                 required
               />
               <FieldDescription>
@@ -1272,7 +1272,7 @@ function FeedbackForm() {
               <Textarea
                 id="feedback-8m4-message-ym5"
                 placeholder="Please share your thoughts, suggestions, or report any issues..."
-                className="min-h-[120px]"
+                className="min-h-30"
                 required
               />
               <FieldDescription>Please share your thoughts, suggestions, or report any issues...</FieldDescription>
@@ -1356,7 +1356,7 @@ export function JobApplicationForm() {
               <Textarea
                 id="job-5p7-coverLetter-h91"
                 placeholder="Tell us why you're interested in this position..."
-                className="min-h-[120px]"
+                className="min-h-30"
                 required
               />
             </Field>
@@ -1575,13 +1575,13 @@ export function FormTextareaDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="textarea-3b5-comments-16o">Comments</FieldLabel>
-            <Textarea id="textarea-3b5-comments-16o" placeholder="Share your thoughts..." className="min-h-[100px]" />
+            <Textarea id="textarea-3b5-comments-16o" placeholder="Share your thoughts..." className="min-h-25" />
             <FieldDescription>Maximum 500 characters allowed.</FieldDescription>
           </Field>
           <Field>
             <FieldLabel htmlFor="textarea-3b5-bio">Bio</FieldLabel>
             <FieldDescription>Tell us about yourself in a few sentences.</FieldDescription>
-            <Textarea id="textarea-3b5-bio" placeholder="I am a..." className="min-h-[120px]" />
+            <Textarea id="textarea-3b5-bio" placeholder="I am a..." className="min-h-30" />
           </Field>
         </FieldGroup>
       </CardContent>
@@ -2617,7 +2617,7 @@ export function FormFieldSetDemo() {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="comments-sxl">Comments</FieldLabel>
-                <Textarea id="comments-sxl" placeholder="Any additional information..." className="min-h-[100px]" />
+                <Textarea id="comments-sxl" placeholder="Any additional information..." className="min-h-25" />
               </Field>
               <Field orientation="horizontal">
                 <Checkbox id="agree-terms-04d" />
@@ -2686,7 +2686,7 @@ export function FormFieldSeparatorDemo() {
           <FieldSeparator />
           <Field>
             <FieldLabel htmlFor="final-section-mk8">Final Section</FieldLabel>
-            <Textarea id="final-section-mk8" placeholder="Any additional comments..." className="min-h-[80px]" />
+            <Textarea id="final-section-mk8" placeholder="Any additional comments..." className="min-h-20" />
           </Field>
           <FieldSeparator>Or choose a different path</FieldSeparator>
           <RadioGroup defaultValue="option1">
@@ -2878,7 +2878,7 @@ export function ProfileSettingsForm() {
             </Field>
             <Field>
               <FieldLabel htmlFor="bio-jlq">Bio</FieldLabel>
-              <Textarea id="bio-jlq" placeholder="Tell us about yourself..." className="min-h-[80px]" />
+              <Textarea id="bio-jlq" placeholder="Tell us about yourself..." className="min-h-20" />
             </Field>
 
             <FieldSet>
@@ -3039,7 +3039,7 @@ export function SurveyForm() {
               <Textarea
                 id="improvements-u5u"
                 placeholder="Share your suggestions for improvements..."
-                className="min-h-[80px]"
+                className="min-h-20"
               />
             </Field>
             <Field>
@@ -3164,7 +3164,7 @@ export function ComplexFormDemo() {
                   <Textarea
                     id="coverLetter-6re"
                     placeholder="Tell us why you're a great fit for this position..."
-                    className="min-h-[120px]"
+                    className="min-h-30"
                   />
                   <FieldDescription>Briefly describe your interest and qualifications (500 words max)</FieldDescription>
                 </Field>
@@ -3313,7 +3313,7 @@ export function ComplexFormInvalidDemo() {
                   <Textarea
                     id="coverLetter-invalid-6n9"
                     placeholder="Tell us why you're a great fit for this position..."
-                    className="min-h-[120px]"
+                    className="min-h-30"
                     aria-invalid
                   />
                   <FieldDescription>Briefly describe your interest and qualifications (500 words max)</FieldDescription>

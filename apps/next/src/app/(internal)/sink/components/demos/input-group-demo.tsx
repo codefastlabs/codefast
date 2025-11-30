@@ -422,7 +422,7 @@ export function InputGroupDemo() {
             <InputGroupTextarea
               id="textarea-code-32"
               placeholder="console.log('Hello, world!');"
-              className="min-h-[300px] py-3"
+              className="min-h-75 py-3"
             />
             <InputGroupAddon align="block-start" className="border-b">
               <InputGroupText className="font-mono font-medium">
