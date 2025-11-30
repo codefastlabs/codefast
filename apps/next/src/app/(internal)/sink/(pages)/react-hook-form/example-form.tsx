@@ -185,11 +185,12 @@ export function ExampleForm() {
                               id={addon.id}
                               name={field.name}
                               aria-invalid={isInvalid}
-                              checked={field.value.includes(addon.id)}
+                              checked={field.value?.includes(addon.id) ?? false}
                               onCheckedChange={(checked) => {
+                                const currentValue = field.value ?? [];
                                 const newValue = checked
-                                  ? [...field.value, addon.id]
-                                  : field.value.filter((value) => value !== addon.id);
+                                  ? [...currentValue, addon.id]
+                                  : currentValue.filter((value) => value !== addon.id);
                                 field.onChange(newValue);
                                 field.onBlur();
                               }}
@@ -219,8 +220,8 @@ export function ExampleForm() {
                       <Slider
                         id={field.name}
                         name={field.name}
-                        value={[field.value]}
-                        onValueChange={field.onChange}
+                        value={[field.value ?? 1]}
+                        onValueChange={(value) => field.onChange(value[0])}
                         min={1}
                         max={50}
                         step={1}
