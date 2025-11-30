@@ -211,8 +211,8 @@ export function ThemeProvider({
     const enable = disableTransitionOnChange ? disableAnimation(nonce) : null;
 
     setThemeState(value);
-    setThemeServerFn({ data: value }).then(() => {
-      void router.invalidate();
+    setThemeServerFn({ data: value }).then(async () => {
+      await router.invalidate();
       enable?.();
     });
   }
