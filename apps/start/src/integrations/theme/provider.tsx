@@ -85,7 +85,7 @@ function disableAnimation(nonce?: string): () => void {
 
   return () => {
     // Force restyle
-    void window.getComputedStyle(document.body);
+    (() => window.getComputedStyle(document.body))();
 
     // Wait for the next tick before removing
     setTimeout(() => {
