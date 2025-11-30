@@ -21,6 +21,7 @@ export default defineConfig({
     target: 'node',
   },
   performance: {
+    buildCache: isWatchMode,
     printFileSize: !isWatchMode,
   },
   source: {
