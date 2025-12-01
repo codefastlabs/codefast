@@ -103,9 +103,7 @@ export const isSlotObjectType = (value: ClassValue): value is Record<string, Cla
  * @param variantGroup - The variant group to check
  * @returns True if the variant group supports boolean values
  */
-export const isBooleanVariantType = <T extends Record<string, unknown>>(
-  variantGroup: T,
-): variantGroup is T & (Record<'false', unknown> | Record<'true', unknown>) => {
+export const isBooleanVariantType = <T extends Record<string, unknown>>(variantGroup: T): variantGroup is T => {
   return 'true' in variantGroup || 'false' in variantGroup;
 };
 

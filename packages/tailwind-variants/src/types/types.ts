@@ -198,9 +198,6 @@ export type SlotFunctionProperties<T extends ConfigurationSchema> =
       }
     : {
         readonly [K in keyof ConfigurationVariants<T>]?: ConfigurationVariants<T>[K];
-      } & {
-        className?: ClassValue;
-        class?: ClassValue;
       };
 
 /**

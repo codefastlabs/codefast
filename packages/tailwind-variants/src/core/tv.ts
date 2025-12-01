@@ -52,12 +52,12 @@ import {
  * @returns The resolved CSS class string or undefined
  */
 const handleRegularVariantResolution = <T extends ConfigurationSchema>(
-  mergedBaseClasses: ClassValue | undefined,
+  mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
   mergedDefaultVariantProps: ConfigurationVariants<T>,
   mergedCompoundVariantGroups: readonly CompoundVariantType<T>[] | undefined,
   variantProps: ConfigurationVariants<T>,
-  customClassName: ClassValue | undefined,
+  customClassName: ClassValue,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
 ): string | undefined => {
@@ -247,7 +247,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
 
   // Create the main variant resolver function
   const variantResolverFunction = (
-    variantProps: ConfigurationVariants<T> & { class?: ClassValue; className?: ClassValue } = {},
+    variantProps: ConfigurationVariants<T> = {},
   ): S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S> => {
     // Extract class properties and variant props
     const classProperty = variantProps.class;

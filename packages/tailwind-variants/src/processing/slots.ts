@@ -157,7 +157,7 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
  */
 export const createSlotFunctionFactory = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   mergedSlotDefinitions: S,
-  mergedBaseClasses: ClassValue | undefined,
+  mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
   mergedDefaultVariantProps: ConfigurationVariants<T>,
   mergedCompoundVariantGroups: readonly CompoundVariantWithSlotsType<T, S>[] | undefined,
