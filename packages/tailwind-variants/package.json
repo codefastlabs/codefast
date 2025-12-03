@@ -29,9 +29,9 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -62,7 +62,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.18.2",
+    "@rslib/core": "^0.18.3",
     "@swc/core": "^1.15.3",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30.0.0",
