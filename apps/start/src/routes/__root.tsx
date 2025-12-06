@@ -41,7 +41,6 @@ function RootShellComponent({ children }: RootShellComponentProps) {
         <HeadContent />
       </head>
       <body>
-        <Header />
         <ThemeProvider theme={theme} disableTransitionOnChange>
           <ActiveThemeProvider>{children}</ActiveThemeProvider>
         </ThemeProvider>
