@@ -1,3 +1,11 @@
 @import 'tailwindcss';
 @import '@codefast/ui/css/preset.css';
 @import '@codefast/ui/css/neutral.css';
+
+/* Font variables for Kitchen Sink theming */
+@theme inline {
+  --font-inter: 'Inter Variable', sans-serif;
+  --font-noto-sans: 'Noto Sans Variable', sans-serif;
+  --font-nunito-sans: 'Nunito Sans Variable', sans-serif;
+  --font-figtree: 'Figtree Variable', sans-serif;
+}
