@@ -8,28 +8,27 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import type { getRouter } from './router.tsx';
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as AppRouteImport } from './routes/_app';
-import { Route as AppDemoApiNamesRouteImport } from './routes/_app/demo/api/names';
-import { Route as AppDemoApiTqTodosRouteImport } from './routes/_app/demo/api/tq-todos';
-import { Route as AppDemoStartApiRequestRouteImport } from './routes/_app/demo/start/api-request';
-import { Route as AppDemoStartServerFuncsRouteImport } from './routes/_app/demo/start/server-funcs';
-import { Route as AppDemoStartSsrDataOnlyRouteImport } from './routes/_app/demo/start/ssr/data-only';
-import { Route as AppDemoStartSsrFullSsrRouteImport } from './routes/_app/demo/start/ssr/full-ssr';
-import { Route as AppDemoStartSsrIndexRouteImport } from './routes/_app/demo/start/ssr/index';
-import { Route as AppDemoStartSsrSpaModeRouteImport } from './routes/_app/demo/start/ssr/spa-mode';
-import { Route as AppDemoTanstackFormRouteImport } from './routes/_app/demo/tanstack-form';
-import { Route as AppDemoTanstackQueryRouteImport } from './routes/_app/demo/tanstack-query';
-import { Route as AppDemoThemeRouteImport } from './routes/_app/demo/theme';
-import { Route as AppIndexRouteImport } from './routes/_app/index';
-import { Route as SinkRouteImport } from './routes/sink';
-import { Route as SinkNameRouteImport } from './routes/sink/$name';
-import { Route as SinkFormsRouteImport } from './routes/sink/forms';
-import { Route as SinkIndexRouteImport } from './routes/sink/index';
-import { Route as SinkReactHookFormIndexRouteImport } from './routes/sink/react-hook-form/index';
-import { Route as SinkStartFormIndexRouteImport } from './routes/sink/start-form/index';
-import { Route as SinkTanstackFormIndexRouteImport } from './routes/sink/tanstack-form/index';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as SinkRouteImport } from './routes/sink'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as SinkIndexRouteImport } from './routes/sink/index'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as SinkFormsRouteImport } from './routes/sink/forms'
+import { Route as SinkNameRouteImport } from './routes/sink/$name'
+import { Route as SinkTanstackFormIndexRouteImport } from './routes/sink/tanstack-form/index'
+import { Route as SinkStartFormIndexRouteImport } from './routes/sink/start-form/index'
+import { Route as SinkReactHookFormIndexRouteImport } from './routes/sink/react-hook-form/index'
+import { Route as AppDemoThemeRouteImport } from './routes/_app/demo/theme'
+import { Route as AppDemoTanstackQueryRouteImport } from './routes/_app/demo/tanstack-query'
+import { Route as AppDemoTanstackFormRouteImport } from './routes/_app/demo/tanstack-form'
+import { Route as AppDemoStartServerFuncsRouteImport } from './routes/_app/demo/start/server-funcs'
+import { Route as AppDemoStartApiRequestRouteImport } from './routes/_app/demo/start/api-request'
+import { Route as AppDemoApiTqTodosRouteImport } from './routes/_app/demo/api/tq-todos'
+import { Route as AppDemoApiNamesRouteImport } from './routes/_app/demo/api/names'
+import { Route as AppDemoStartSsrIndexRouteImport } from './routes/_app/demo/start/ssr/index'
+import { Route as AppDemoStartSsrSpaModeRouteImport } from './routes/_app/demo/start/ssr/spa-mode'
+import { Route as AppDemoStartSsrFullSsrRouteImport } from './routes/_app/demo/start/ssr/full-ssr'
+import { Route as AppDemoStartSsrDataOnlyRouteImport } from './routes/_app/demo/start/ssr/data-only'
 
 const SinkRoute = SinkRouteImport.update({
   id: '/sink',
@@ -471,6 +470,8 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
