@@ -1,0 +1,530 @@
+# CodeFast - Global AI Rules
+
+## Project Overview
+
+CodeFast is a monorepo UI components library built with:
+- **React 19** with TypeScript
+- **Tailwind CSS 4** with custom variants system
+- **Radix UI** primitives for accessibility
+- **pnpm workspaces** for package management
+- **Turbo** for build orchestration
+
+## Monorepo Structure
+
+```
+codefast/
+├── apps/                    # Demo applications
+│   ├── next/               # Next.js 16 app
+│   └── start/              # TanStack Start app
+├── packages/               # Core packages
+│   ├── ui/                 # Main UI components library
+│   ├── tailwind-variants/  # Tailwind variants utilities
+│   ├── eslint-config/      # Shared ESLint config
+│   ├── typescript-config/  # Shared TypeScript config
+│   └── image-loader/       # Image loading utilities
+└── benchmarks/             # Performance benchmarks
+```
+
+## Component Development Rules
+
+### Component Structure
+
+All components in `packages/ui/src/components/` MUST follow this structure:
+
+1. **Imports Section**
+   - React types first: `import type { ComponentProps, JSX } from 'react';`
+   - Variant types if needed: `import type { VariantProps } from '@codefast/tailwind-variants';`
+   - Utilities: `import { tv, cn } from '@codefast/tailwind-variants';`
+   - Radix UI primitives if needed
+   - Other dependencies
+
+2. **Variant Definition** (if component has variants)
+   ```tsx
+   /* -----------------------------------------------------------------------------
+    * Variant: ComponentName
+    * -------------------------------------------------------------------------- */
+   
+   const componentVariants = tv({
+     base: "base-classes",
+     variants: {
+       size: { sm: "...", md: "...", lg: "..." },
+       variant: { default: "...", outline: "..." },
+     },
+     defaultVariants: {
+       size: "md",
+       variant: "default",
+     },
+   });
+   ```
+
+3. **Component Definition**
+   ```tsx
+   /* -----------------------------------------------------------------------------
+    * Component: ComponentName
+    * -------------------------------------------------------------------------- */
+   
+   type ComponentNameProps = ComponentProps<'div'> &
+     VariantProps<typeof componentVariants>;
+   
+   function ComponentName({
+     className,
+     size,
+     variant,
+     ...props
+   }: ComponentNameProps): JSX.Element {
+     return (
+       <div
+         className={componentVariants({ className, size, variant })}
+         data-slot="component-name"
+         {...props}
+       />
+     );
+   }
+   ```
+
+4. **Exports Section**
+   ```tsx
+   /* -----------------------------------------------------------------------------
+    * Exports
+    * -------------------------------------------------------------------------- */
+   
+   export { componentVariants };
+   export { ComponentName };
+   export type { ComponentNameProps };
+   ```
+
+### Component Rules
+
+- **Always use `JSX.Element` as return type** (not `React.ReactElement` or `React.FC`)
+- **Always include `data-slot` attribute** for component identification
+- **Always spread `...props`** to allow HTML attributes
+- **Always use `ComponentProps<'element'>`** for base props typing
+- **Always export variants** if component uses `tv()` for external customization
+- **Always export types** separately for better tree-shaking
+
+### File Naming
+
+- Components: `kebab-case.tsx` (e.g., `button.tsx`, `card.tsx`, `input-group.tsx`)
+- Hooks: `use-kebab-case.ts` (e.g., `use-is-mobile.ts`, `use-media-query.ts`)
+- Types: Export in same file as component
+- Utilities: `kebab-case.ts`
+
+## TypeScript Rules
+
+### Type Definitions
+
+- **Prefer `type` over `interface`** when possible
+- **Use `ComponentProps<'element'>`** for HTML element props
+- **Extend with `VariantProps<typeof variants>`** for variant props
+- **Always use explicit return types** (`: JSX.Element`)
+- **Use `as const`** for literal types when needed
+
+### Type Patterns
+
+```tsx
+// ✅ Good: Using ComponentProps
+type ButtonProps = ComponentProps<'button'> & {
+  variant?: 'primary' | 'secondary';
+};
+
+// ✅ Good: With VariantProps
+type ButtonProps = ComponentProps<'button'> &
+  VariantProps<typeof buttonVariants>;
+
+// ❌ Bad: Don't use React.FC
+const Button: React.FC<ButtonProps> = () => { ... };
+
+// ✅ Good: Function declaration with explicit return type
+function Button(props: ButtonProps): JSX.Element { ... }
+```
+
+## Styling Rules
+
+### Tailwind Variants (`@codefast/tailwind-variants`)
+
+- **Use `tv()`** for components with variants
+- **Use `cn()`** for simple className merging
+- **Always define `base`** classes in variants
+- **Always set `defaultVariants`** for better DX
+- **Group related variants** logically (size, variant, color, etc.)
+
+### Variant Structure
+
+```tsx
+const variants = tv({
+  base: "base-classes-here",
+  variants: {
+    size: {
+      sm: "h-8 px-3",
+      md: "h-9 px-4",
+      lg: "h-10 px-6",
+    },
+    variant: {
+      default: "bg-primary text-primary-foreground",
+      outline: "border border-input",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+    variant: "default",
+  },
+});
+```
+
+### Tailwind CSS Classes
+
+- **Use Tailwind utility classes** exclusively
+- **Support dark mode** with `dark:` prefix
+- **Use semantic color tokens** (e.g., `bg-primary`, `text-foreground`)
+- **Follow mobile-first** responsive design
+- **Use `focus-visible:`** for focus states (not `focus:`)
+
+### Class Naming Patterns
+
+- **Spacing**: Use consistent spacing scale (1, 2, 3, 4, 6, 8, etc.)
+- **Sizes**: Follow size scale (sm, md, lg, xl)
+- **States**: Use `hover:`, `active:`, `disabled:`, `aria-*:` modifiers
+- **Transitions**: Always include `transition` for interactive elements
+
+## Import/Export Rules
+
+### Import Order
+
+1. React types (`import type { ... } from 'react'`)
+2. Third-party types (`import type { ... } from '@codefast/tailwind-variants'`)
+3. Third-party runtime imports (`import { tv, cn } from ...`)
+4. Radix UI imports
+5. Internal utilities
+6. Relative imports (if any)
+
+### Export Patterns
+
+- **Named exports** for components and utilities
+- **Type exports** with `export type { ... }`
+- **Re-export variants** if they should be customizable
+- **Barrel exports** in `src/index.ts`
+
+```tsx
+// ✅ Good: Separate type export
+export { Button };
+export type { ButtonProps };
+
+// ✅ Good: Export variants for customization
+export { buttonVariants };
+export { Button };
+export type { ButtonProps };
+```
+
+## Code Formatting
+
+### Prettier Configuration
+
+- **Print width**: 120 characters
+- **Tab width**: 2 spaces
+- **Single quotes** for strings
+- **Double quotes** for JSX attributes (`jsxSingleQuote: false`)
+- **Trailing commas**: `all`
+- **Semicolons**: Required
+- **Arrow parens**: `always`
+
+### Code Style
+
+```tsx
+// ✅ Good: Proper spacing and formatting
+function Button({
+  className,
+  size,
+  variant,
+  ...props
+}: ButtonProps): JSX.Element {
+  return (
+    <button
+      className={buttonVariants({ className, size, variant })}
+      data-slot="button"
+      {...props}
+    />
+  );
+}
+
+// ❌ Bad: Inconsistent spacing
+function Button({className,size,variant,...props}:ButtonProps){
+  return <button className={buttonVariants({className,size,variant})} {...props}/>;
+}
+```
+
+## Accessibility Rules
+
+### ARIA Attributes
+
+- **Always include proper ARIA labels** for interactive elements
+- **Use semantic HTML** elements when possible
+- **Support keyboard navigation** (Tab, Enter, Space, Arrow keys)
+- **Include `aria-*` attributes** for state management
+- **Use `aria-invalid`** for form validation states
+
+### Focus Management
+
+- **Visible focus indicators** with `focus-visible:ring-*`
+- **Logical tab order** for interactive elements
+- **Focus trapping** in modals and dialogs
+- **Skip links** for main content navigation
+
+### Screen Reader Support
+
+- **Descriptive labels** for all form inputs
+- **ARIA descriptions** for complex components
+- **Live regions** for dynamic content updates
+- **Role attributes** when semantic HTML isn't sufficient
+
+## Radix UI Integration
+
+### Primitive Usage
+
+- **Use Radix UI primitives** as base for complex components
+- **Wrap primitives** with our styling system
+- **Maintain accessibility** features from Radix UI
+- **Export primitives** from `packages/ui/src/primitives/` if needed
+
+### Common Patterns
+
+```tsx
+// ✅ Good: Using Radix UI Slot for composition
+import { Slot } from '@radix-ui/react-slot';
+
+function Button({ asChild, ...props }: ButtonProps) {
+  const Comp = asChild ? Slot : 'button';
+  return <Comp {...props} />;
+}
+```
+
+## Testing Rules
+
+### Test Structure
+
+- **Tests in `tests/` directory** (not alongside components)
+- **Use Jest** with `@testing-library/react`
+- **Test accessibility** with `@testing-library/jest-dom`
+- **Test user interactions** not implementation details
+
+### Test Patterns
+
+```tsx
+// ✅ Good: Testing user behavior
+test('button calls onClick when clicked', () => {
+  const handleClick = jest.fn();
+  render(<Button onClick={handleClick}>Click me</Button>);
+  fireEvent.click(screen.getByRole('button'));
+  expect(handleClick).toHaveBeenCalledTimes(1);
+});
+```
+
+## Performance Rules
+
+### Component Optimization
+
+- **Avoid unnecessary re-renders** with proper memoization
+- **Use `React.memo`** for expensive components
+- **Lazy load** heavy components when possible
+- **Optimize bundle size** with tree-shaking
+
+### Bundle Size
+
+- **Import only what's needed** (no barrel imports from large libraries)
+- **Use dynamic imports** for code splitting
+- **Avoid large dependencies** in core components
+- **Check bundle size** impact before adding dependencies
+
+## Package Management
+
+### Workspace Protocol
+
+- **Use `workspace:*`** for internal package dependencies
+- **Pin exact versions** for external dependencies
+- **Use `pnpm`** commands (not npm or yarn)
+- **Filter commands** with `--filter` flag
+
+### Adding Dependencies
+
+```bash
+# ✅ Good: Add to specific package
+pnpm --filter @codefast/ui add <package-name>
+
+# ✅ Good: Add dev dependency
+pnpm --filter @codefast/ui add -D <package-name>
+
+# ❌ Bad: Don't add at root unless shared
+pnpm add <package-name>
+```
+
+## Git & Commit Rules
+
+### Commit Messages
+
+- **Use Conventional Commits** format
+- **Format**: `type(scope): subject`
+- **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- **Scope**: Package name (e.g., `ui`, `tailwind-variants`)
+
+### Examples
+
+```
+feat(ui): add Button component with variants
+fix(ui): correct Card spacing issue
+docs(ui): update Button usage examples
+refactor(tailwind-variants): optimize variant merging
+```
+
+## Common Patterns
+
+### Conditional Rendering
+
+```tsx
+// ✅ Good: Using ternary for simple conditions
+{isOpen ? <DialogContent /> : null}
+
+// ✅ Good: Using && for boolean conditions
+{isLoading && <Spinner />}
+
+// ✅ Good: Early returns for complex conditions
+if (!isValid) return null;
+```
+
+### Event Handlers
+
+```tsx
+// ✅ Good: Inline handlers for simple cases
+<Button onClick={() => setOpen(true)}>Open</Button>
+
+// ✅ Good: Named handlers for complex logic
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  // ... complex logic
+};
+<Form onSubmit={handleSubmit} />
+```
+
+### Props Destructuring
+
+```tsx
+// ✅ Good: Destructure props with defaults
+function Button({
+  className,
+  size = 'md',
+  variant = 'default',
+  ...props
+}: ButtonProps) { ... }
+
+// ❌ Bad: Don't mutate props
+function Button(props: ButtonProps) {
+  props.size = props.size || 'md'; // ❌ Never mutate props
+}
+```
+
+## Error Handling
+
+### Component Errors
+
+- **Use Error Boundaries** for component error handling
+- **Provide fallback UI** for error states
+- **Log errors** appropriately (not to console in production)
+- **Handle async errors** with try/catch
+
+### Type Safety
+
+- **Use TypeScript strict mode** always
+- **Avoid `any` type** - use `unknown` if needed
+- **Use type guards** for runtime type checking
+- **Validate props** with Zod if needed
+
+## Documentation
+
+### Code Comments
+
+- **Use section comments** for component structure
+- **Document complex logic** with inline comments
+- **Use JSDoc** for public APIs
+- **Keep comments up-to-date** with code changes
+
+### Example Structure
+
+```tsx
+/* -----------------------------------------------------------------------------
+ * Variant: Button
+ * -------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Component: Button
+ * -------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Exports
+ * -------------------------------------------------------------------------- */
+```
+
+## When Creating New Components
+
+1. ✅ Create component file in `packages/ui/src/components/`
+2. ✅ Follow component structure pattern
+3. ✅ Define variants with `tv()` if needed
+4. ✅ Export component and types from `src/index.ts`
+5. ✅ Add `data-slot` attribute
+6. ✅ Write tests in `tests/` directory
+7. ✅ Update documentation if needed
+8. ✅ Ensure accessibility compliance
+9. ✅ Check bundle size impact
+10. ✅ Run linting and type checking
+
+## When Modifying Existing Components
+
+1. ✅ Maintain backward compatibility
+2. ✅ Update types if props change
+3. ✅ Update tests to cover changes
+4. ✅ Update CHANGELOG.md for breaking changes
+5. ✅ Run full test suite
+6. ✅ Check all apps still work
+7. ✅ Update documentation
+
+## Monorepo Best Practices
+
+1. ✅ **Build packages first**: `pnpm build:packages` before dev
+2. ✅ **Use workspace protocol**: `workspace:*` for internal deps
+3. ✅ **Filter commands**: Use `--filter` for package-specific commands
+4. ✅ **Check types**: Run `pnpm check-types` before committing
+5. ✅ **Run linting**: `pnpm lint:fix` to auto-fix issues
+6. ✅ **Format code**: `pnpm format` before committing
+
+## Quick Reference
+
+### Common Commands
+
+```bash
+# Development
+pnpm dev                          # Start all dev servers
+pnpm --filter @codefast/ui dev    # Watch mode for UI package
+pnpm build:packages                # Build all packages
+
+# Quality
+pnpm lint                         # Lint all packages
+pnpm lint:fix                     # Fix linting errors
+pnpm format                       # Format code
+pnpm check-types                  # Type check all packages
+pnpm test                         # Run tests
+
+# Dependencies
+pnpm install                      # Install all dependencies
+pnpm --filter @codefast/ui add <pkg>  # Add dependency
+pnpm deps:outdated                # Check outdated packages
+```
+
+### File Paths
+
+- Components: `packages/ui/src/components/`
+- Hooks: `packages/ui/src/hooks/`
+- Primitives: `packages/ui/src/primitives/`
+- Styles: `packages/ui/src/css/`
+- Tests: `packages/ui/tests/`
+- Exports: `packages/ui/src/index.ts`
+
+---
+
+**Remember**: These rules ensure consistency, maintainability, and quality across the CodeFast monorepo. When in doubt, refer to existing components as examples.
