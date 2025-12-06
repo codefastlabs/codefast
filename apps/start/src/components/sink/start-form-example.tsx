@@ -1,6 +1,3 @@
-import { useActionState, useEffect, useEffectEvent, useId, useState } from 'react';
-import { z } from 'zod';
-
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Checkbox } from '@codefast/ui/checkbox';
@@ -23,9 +20,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Spinner } from '@codefast/ui/spinner';
 import { Switch } from '@codefast/ui/switch';
 import { Textarea } from '@codefast/ui/textarea';
-import type {FormState} from '@/components/sink/server-fn';
-import { addons, exampleFormSchema } from '@/components/sink/schema';
-import {  subscriptionAction } from '@/components/sink/server-fn';
+import { useActionState, useEffect, useEffectEvent, useId, useState } from 'react';
+import type { FormState } from '@/components/sink/server-fn';
+import { subscriptionAction } from '@/components/sink/server-fn';
+import { addons } from '@/components/sink/schema';
 
 export function ExampleForm() {
   const formId = useId();
@@ -306,4 +304,3 @@ export function ExampleForm() {
     </>
   );
 }
-

@@ -1,6 +1,5 @@
-import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from 'lucide-react';
-
 import { Badge } from '@codefast/ui/badge';
+import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from 'lucide-react';
 
 export function BadgeDemo() {
   return (

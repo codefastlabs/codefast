@@ -1,7 +1,6 @@
-import { InfoIcon } from 'lucide-react';
-
 import { Button } from '@codefast/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+import { InfoIcon } from 'lucide-react';
 
 export function TooltipDemo() {
   return (

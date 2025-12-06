@@ -1,5 +1,3 @@
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import {
   DropdownMenu,
@@ -11,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@codefast/ui/sidebar';
+import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
 
 export function NavUser({
   user,
@@ -94,4 +93,3 @@ export function NavUser({
     </SidebarMenu>
   );
 }
-

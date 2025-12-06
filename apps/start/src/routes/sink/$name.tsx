@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
 import { Skeleton } from '@codefast/ui/skeleton';
+import { createFileRoute } from '@tanstack/react-router';
+import { Suspense } from 'react';
 import { componentRegistry } from '@/components/sink/component-registry';
 
 export const Route = createFileRoute('/sink/$name')({
@@ -41,4 +41,3 @@ function ComponentPage() {
     </div>
   );
 }
-

@@ -1,6 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { Button } from '@codefast/ui/button';
+import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@codefast/ui/button-group';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@codefast/ui/dropdown-menu';
+import { Field, FieldGroup } from '@codefast/ui/field';
+import { Input } from '@codefast/ui/input';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@codefast/ui/input-group';
+import { Label } from '@codefast/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
+import { Separator } from '@codefast/ui/separator';
+import { Textarea } from '@codefast/ui/textarea';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import {
   IconArrowRight,
   IconBrandGithubCopilot,
@@ -32,26 +50,7 @@ import {
   UserRoundXIcon,
   VolumeOffIcon,
 } from 'lucide-react';
-
-import { Button } from '@codefast/ui/button';
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@codefast/ui/button-group';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
-import { Field, FieldGroup } from '@codefast/ui/field';
-import { Input } from '@codefast/ui/input';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@codefast/ui/input-group';
-import { Label } from '@codefast/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Separator } from '@codefast/ui/separator';
-import { Textarea } from '@codefast/ui/textarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+import { useState } from 'react';
 
 export function ButtonGroupDemo() {
   const [currency, setCurrency] = useState('$');

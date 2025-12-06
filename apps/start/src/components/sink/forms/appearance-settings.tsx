@@ -1,5 +1,3 @@
-import { CheckIcon } from 'lucide-react';
-
 import {
   Field,
   FieldContent,
@@ -15,6 +13,7 @@ import { Label } from '@codefast/ui/label';
 import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Switch } from '@codefast/ui/switch';
+import { CheckIcon } from 'lucide-react';
 
 const modes = [
   {

@@ -1,16 +1,3 @@
-import { Link, useRouterState } from '@tanstack/react-router';
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  ChevronRightIcon,
-  Command,
-  GalleryVerticalEnd,
-  SearchIcon,
-  Settings2,
-  SquareTerminal,
-} from 'lucide-react';
-
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui/collapsible';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
 import { Label } from '@codefast/ui/label';
@@ -30,10 +17,22 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@codefast/ui/sidebar';
+import { Link, useRouterState } from '@tanstack/react-router';
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  ChevronRightIcon,
+  Command,
+  GalleryVerticalEnd,
+  SearchIcon,
+  Settings2,
+  SquareTerminal,
+} from 'lucide-react';
 import type { ComponentProps } from 'react';
+import { componentRegistry } from '@/components/sink/component-registry';
 import { TeamSwitcher } from '@/components/sink/app/team-switcher';
 import { NavUser } from '@/components/sink/app/nav-user';
-import { componentRegistry } from '@/components/sink/component-registry';
 
 // This is sample data.
 const data = {
@@ -263,4 +262,3 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-

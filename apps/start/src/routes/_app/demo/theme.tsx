@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { CheckCircle2, Info, Moon, Palette, Sun } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
+import { Badge } from '@codefast/ui/badge';
 
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Badge } from '@codefast/ui/badge';
 import { Separator } from '@codefast/ui/separator';
-import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
+import { createFileRoute } from '@tanstack/react-router';
+import { CheckCircle2, Info, Moon, Palette, Sun } from 'lucide-react';
 import type { Theme } from '@/integrations/theme/server';
 import { useTheme } from '@/integrations/theme/use-theme';
 
@@ -141,10 +141,10 @@ function ThemeDemo() {
             <Info className="h-4 w-4" />
             <AlertTitle>Tính năng đã được bật</AlertTitle>
             <AlertDescription>
-              Tính năng <code className="rounded bg-muted px-1 py-0.5 text-xs">disableTransitionOnChange</code> đã được
-              bật trong <code className="rounded bg-muted px-1 py-0.5 text-xs">__root.tsx</code>. Khi bạn chuyển đổi
-              theme, tất cả CSS transitions sẽ tạm thời bị vô hiệu hóa để đảm bảo chuyển đổi mượt mà, không có hiệu
-              ứng nhấp nháy.
+              Tính năng <code className="bg-muted rounded px-1 py-0.5 text-xs">disableTransitionOnChange</code> đã được
+              bật trong <code className="bg-muted rounded px-1 py-0.5 text-xs">__root.tsx</code>. Khi bạn chuyển đổi
+              theme, tất cả CSS transitions sẽ tạm thời bị vô hiệu hóa để đảm bảo chuyển đổi mượt mà, không có hiệu ứng
+              nhấp nháy.
             </AlertDescription>
           </Alert>
 
@@ -157,28 +157,26 @@ function ThemeDemo() {
                   <CardTitle className="text-sm">Card với transition</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Card này có transition cho scale và shadow. Khi đổi theme, transition sẽ tạm thời bị vô hiệu hóa.
                   </p>
                 </CardContent>
               </Card>
 
               {/* Button with transition */}
-              <div className="flex items-center justify-center rounded-lg border bg-card p-4 transition-all duration-500 hover:bg-accent">
-                <Button className="transition-all duration-500 hover:scale-110">
-                  Button với transition
-                </Button>
+              <div className="bg-card hover:bg-accent flex items-center justify-center rounded-lg border p-4 transition-all duration-500">
+                <Button className="transition-all duration-500 hover:scale-110">Button với transition</Button>
               </div>
 
               {/* Badge with transition */}
-              <div className="flex items-center justify-center gap-2 rounded-lg border bg-card p-4 transition-all duration-500 hover:border-primary">
+              <div className="bg-card hover:border-primary flex items-center justify-center gap-2 rounded-lg border p-4 transition-all duration-500">
                 <Badge className="transition-all duration-500 hover:scale-110">Badge với transition</Badge>
               </div>
             </div>
 
-            <div className="rounded-lg border bg-linear-to-r from-primary/10 to-secondary/10 p-6 transition-all duration-700">
+            <div className="from-primary/10 to-secondary/10 rounded-lg border bg-linear-to-r p-6 transition-all duration-700">
               <h4 className="mb-2 text-sm font-semibold">Gradient box với transition dài</h4>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Box này có transition 700ms. Khi bạn chuyển đổi theme, transition này sẽ bị vô hiệu hóa tạm thời để đảm
                 bảo chuyển đổi theme mượt mà.
               </p>
@@ -186,7 +184,7 @@ function ThemeDemo() {
 
             <div className="space-y-2">
               <h4 className="text-sm font-semibold">Hướng dẫn test:</h4>
-              <ol className="list-inside list-decimal space-y-1 text-sm text-muted-foreground">
+              <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
                 <li>Nhấn vào nút theme switcher ở trên để chuyển đổi theme</li>
                 <li>Quan sát các phần tử trên - chúng sẽ thay đổi màu sắc ngay lập tức, không có animation</li>
                 <li>Sau khi theme đã được áp dụng, transitions sẽ được bật lại</li>

@@ -1,5 +1,3 @@
-import { SunDimIcon, SunIcon } from 'lucide-react';
-
 import { Checkbox } from '@codefast/ui/checkbox';
 import {
   Field,
@@ -15,6 +13,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Slider } from '@codefast/ui/slider';
 import { Switch } from '@codefast/ui/switch';
+import { SunDimIcon, SunIcon } from 'lucide-react';
 
 export function DisplaySettings() {
   return (

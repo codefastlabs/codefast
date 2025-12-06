@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@codefast/ui/input-otp';
 import { Label } from '@codefast/ui/label';
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { useState } from 'react';
 
 export function InputOTPDemo() {
   return (

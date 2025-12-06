@@ -1,3 +1,5 @@
+import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
+import { Button } from '@codefast/ui/button';
 import {
   AlertCircleIcon,
   BookmarkCheckIcon,
@@ -6,9 +8,6 @@ import {
   PopcornIcon,
   ShieldAlertIcon,
 } from 'lucide-react';
-
-import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
-import { Button } from '@codefast/ui/button';
 
 export function AlertDemo() {
   return (

@@ -1,9 +1,5 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { Minus, Plus } from 'lucide-react';
-import { Bar, BarChart, ResponsiveContainer } from 'recharts';
-
 import { Button } from '@codefast/ui/button';
 import {
   Drawer,
@@ -15,6 +11,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
+import { Minus, Plus } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 import type { CSSProperties } from 'react';
 
 const data = [

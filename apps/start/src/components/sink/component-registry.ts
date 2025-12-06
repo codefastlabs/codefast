@@ -1,5 +1,5 @@
-import {  lazy } from 'react';
-import type {ComponentType} from 'react';
+import { lazy } from 'react';
+import type { ComponentType } from 'react';
 
 type ComponentConfig = {
   name: string;
@@ -283,9 +283,7 @@ export const componentRegistry: Record<string, ComponentConfig | undefined> = {
   },
   resizable: {
     name: 'Resizable',
-    component: lazy(() =>
-      import('@/components/sink/demos/resizable-demo').then((m) => ({ default: m.ResizableDemo })),
-    ),
+    component: lazy(() => import('@/components/sink/demos/resizable-demo').then((m) => ({ default: m.ResizableDemo }))),
     type: 'registry:ui',
     href: '/sink/resizable',
   },
@@ -305,9 +303,7 @@ export const componentRegistry: Record<string, ComponentConfig | undefined> = {
   },
   separator: {
     name: 'Separator',
-    component: lazy(() =>
-      import('@/components/sink/demos/separator-demo').then((m) => ({ default: m.SeparatorDemo })),
-    ),
+    component: lazy(() => import('@/components/sink/demos/separator-demo').then((m) => ({ default: m.SeparatorDemo }))),
     type: 'registry:ui',
     href: '/sink/separator',
   },

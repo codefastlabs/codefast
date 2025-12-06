@@ -1,15 +1,14 @@
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackDevtools } from '@tanstack/react-devtools';
-import type { ReactNode } from 'react';
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
 import { ActiveThemeProvider } from '@/components/active-theme';
+import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
-import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
-import appCss from '@/styles.css?url';
-import Header from '@/components/header';
 import { ThemeProvider } from '@/integrations/theme/provider';
 import { getThemeServerFn } from '@/integrations/theme/server';
+import appCss from '@/styles.css?url';
 
 interface MyRouterContext {
   queryClient: QueryClient;

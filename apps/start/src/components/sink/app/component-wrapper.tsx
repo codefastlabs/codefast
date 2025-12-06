@@ -1,5 +1,5 @@
-import { Component } from 'react';
 import { cn } from '@codefast/tailwind-variants';
+import { Component } from 'react';
 import type { ComponentPropsWithoutRef, ErrorInfo, ReactNode } from 'react';
 
 export function ComponentWrapper({
@@ -52,4 +52,3 @@ function getComponentName(name: string) {
   // convert kebab-case to title case
   return name.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
-

@@ -1,6 +1,5 @@
-import { ArrowRightIcon, Loader2Icon, SendIcon } from 'lucide-react';
-
 import { Button } from '@codefast/ui/button';
+import { ArrowRightIcon, Loader2Icon, SendIcon } from 'lucide-react';
 
 export function ButtonDemo() {
   return (

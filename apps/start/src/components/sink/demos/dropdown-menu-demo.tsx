@@ -1,22 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  BadgeCheckIcon,
-  BellIcon,
-  ChevronsUpDownIcon,
-  CreditCardIcon,
-  LogOut,
-  LogOutIcon,
-  MoreHorizontalIcon,
-  PencilIcon,
-  Settings2Icon,
-  ShareIcon,
-  SparklesIcon,
-  TrashIcon,
-  UserIcon,
-} from 'lucide-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Button } from '@codefast/ui/button';
 import {
@@ -35,6 +18,22 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
+import {
+  BadgeCheckIcon,
+  BellIcon,
+  ChevronsUpDownIcon,
+  CreditCardIcon,
+  LogOut,
+  LogOutIcon,
+  MoreHorizontalIcon,
+  PencilIcon,
+  Settings2Icon,
+  ShareIcon,
+  SparklesIcon,
+  TrashIcon,
+  UserIcon,
+} from 'lucide-react';
+import { useState } from 'react';
 
 export function DropdownMenuDemo() {
   return (

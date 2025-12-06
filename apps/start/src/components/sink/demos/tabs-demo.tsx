@@ -1,10 +1,9 @@
-import { AppWindowIcon, CodeIcon } from 'lucide-react';
-
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
+import { AppWindowIcon, CodeIcon } from 'lucide-react';
 
 export function TabsDemo() {
   return (

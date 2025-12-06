@@ -1,8 +1,5 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Button } from '@codefast/ui/button';
@@ -16,6 +13,8 @@ import {
   CommandSeparator,
 } from '@codefast/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 const frameworks = [
   {
@@ -115,12 +114,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between md:max-w-50"
-        >
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between md:max-w-50">
           {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
           <ChevronsUpDown className="text-muted-foreground" />
         </Button>

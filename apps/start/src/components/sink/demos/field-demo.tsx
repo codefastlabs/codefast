@@ -1,19 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  IconCircle,
-  IconCircleCheckFilled,
-  IconInfoCircle,
-  IconMinus,
-  IconPlus,
-  IconUsers,
-  IconWorld,
-} from '@tabler/icons-react';
-import { addDays, format } from 'date-fns';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { CalendarIcon, ClockIcon, DownloadIcon, FileTextIcon, FolderIcon, MonitorIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Badge } from '@codefast/ui/badge';
@@ -44,12 +30,25 @@ import { Slider } from '@codefast/ui/slider';
 import { Switch } from '@codefast/ui/switch';
 import { Textarea } from '@codefast/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
+import {
+  IconCircle,
+  IconCircleCheckFilled,
+  IconInfoCircle,
+  IconMinus,
+  IconPlus,
+  IconUsers,
+  IconWorld,
+} from '@tabler/icons-react';
+import { addDays, format } from 'date-fns';
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { CalendarIcon, ClockIcon, DownloadIcon, FileTextIcon, FolderIcon, MonitorIcon } from 'lucide-react';
+import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
 export function FieldDemo() {
   return (
     <div className="@container w-full">
-      <div className="bg-muted grid gap-4 p-4 @3xl:grid-cols-2 @5xl:grid-cols-3 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5">
+      <div className="bg-muted grid gap-4 p-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <div className="flex flex-col gap-6">
           <BasicFields />
           <PrivacySettings />

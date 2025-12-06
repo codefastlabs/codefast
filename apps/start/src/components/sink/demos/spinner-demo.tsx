@@ -1,11 +1,10 @@
-import { ArrowRightIcon } from 'lucide-react';
-
 import { Badge } from '@codefast/ui/badge';
 import { Button } from '@codefast/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@codefast/ui/empty';
 import { Field, FieldLabel } from '@codefast/ui/field';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
 import { Spinner } from '@codefast/ui/spinner';
+import { ArrowRightIcon } from 'lucide-react';
 
 export function SpinnerDemo() {
   return (

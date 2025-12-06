@@ -1,11 +1,10 @@
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
-import { CommandIcon, WavesIcon } from 'lucide-react';
-
 import { Button } from '@codefast/ui/button';
 import { ButtonGroup } from '@codefast/ui/button-group';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
 import { Kbd, KbdGroup } from '@codefast/ui/kbd';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import { CommandIcon, WavesIcon } from 'lucide-react';
 
 export function KbdDemo() {
   return (
