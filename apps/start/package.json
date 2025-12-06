@@ -6,11 +6,11 @@
     "build": "vite build",
     "check": "prettier --write . && eslint --fix",
     "check-types": "tsc --noEmit",
-    "dev": "vite dev --port 3001",
+    "dev": "vite dev",
     "format": "prettier --write . ",
     "lint": "TIMING=1 eslint --max-warnings 0",
     "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
-    "serve": "vite preview --port 3001",
+    "start": "vite preview",
     "test": "vitest run"
   },
   "dependencies": {
@@ -64,7 +64,7 @@
     "jsdom": "^27.2.0",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",
-    "vite": "^7.2.6",
+    "vite": "8.0.0-beta.0",
     "vitest": "^4.0.15",
     "web-vitals": "^5.1.0"
   }
