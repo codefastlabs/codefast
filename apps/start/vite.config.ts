@@ -9,6 +9,10 @@ import { nitro } from 'nitro/vite';
 const config = defineConfig({
   server: {
     open: true,
+    port: 3001,
+  },
+  preview: {
+    port: 3001,
   },
   plugins: [
     devtools(),
