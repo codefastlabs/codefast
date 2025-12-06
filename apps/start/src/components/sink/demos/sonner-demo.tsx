@@ -1,9 +1,8 @@
 'use client';
 
+import { Button } from '@codefast/ui/button';
 import { useState } from 'react';
 import { toast } from 'sonner';
-
-import { Button } from '@codefast/ui/button';
 
 const promiseCode = '`${data.name} toast has been added`';
 

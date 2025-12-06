@@ -1,7 +1,6 @@
-import { Fragment } from 'react';
-
 import { ScrollArea, ScrollAreaScrollbar } from '@codefast/ui/scroll-area';
 import { Separator } from '@codefast/ui/separator';
+import { Fragment } from 'react';
 
 export function ScrollAreaDemo() {
   return (

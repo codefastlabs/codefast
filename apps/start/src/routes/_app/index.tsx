@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Route as RouteIcon, Server, Shield, Sparkles, Waves, Zap } from 'lucide-react';
+import { Button } from '@codefast/ui/button';
 
 import { Card, CardContent, CardDescription, CardTitle } from '@codefast/ui/card';
-import { Button } from '@codefast/ui/button';
+import { createFileRoute } from '@tanstack/react-router';
+import { Route as RouteIcon, Server, Shield, Sparkles, Waves, Zap } from 'lucide-react';
 
 export const Route = createFileRoute('/_app/')({
   component: App,
@@ -97,4 +97,3 @@ function App() {
     </div>
   );
 }
-

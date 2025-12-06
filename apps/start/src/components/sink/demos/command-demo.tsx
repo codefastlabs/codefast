@@ -1,8 +1,5 @@
 'use client';
 
-import { useEffect, useEffectEvent, useState } from 'react';
-import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
-
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,6 +10,8 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@codefast/ui/command';
+import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 export function CommandDemo() {
   const [open, setOpen] = useState(false);
@@ -33,7 +32,7 @@ export function CommandDemo() {
     <>
       <p className="text-muted-foreground text-sm">
         Press{' '}
-        <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-2.5 font-medium opacity-100 select-none">
+        <kbd className="bg-muted text-muted-foreground text-2.5 pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono font-medium opacity-100 select-none">
           <span className="text-xs">⌘</span>J
         </kbd>
       </p>

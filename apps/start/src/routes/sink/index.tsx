@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
 import { Skeleton } from '@codefast/ui/skeleton';
+import { createFileRoute } from '@tanstack/react-router';
+import { Suspense } from 'react';
 import { componentRegistry } from '@/components/sink/component-registry';
 import { ComponentWrapper } from '@/components/sink/app/component-wrapper';
 
@@ -36,4 +36,3 @@ function SinkPage() {
     </div>
   );
 }
-

@@ -1,11 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { addDays, format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
-import { useIsMobile } from '@codefast/ui/hooks/use-is-mobile';
 import { Button } from '@codefast/ui/button';
 import { Calendar } from '@codefast/ui/calendar';
 import {
@@ -16,7 +11,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
+import { useIsMobile } from '@codefast/ui/hooks/use-is-mobile';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { addDays, format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
 export function DatePickerDemo() {

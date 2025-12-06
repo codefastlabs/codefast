@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Label } from '@codefast/ui/label';
 import { Slider } from '@codefast/ui/slider';
+import { useState } from 'react';
 
 export function SliderDemo() {
   return (

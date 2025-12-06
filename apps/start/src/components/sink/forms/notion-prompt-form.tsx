@@ -1,21 +1,5 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import {
-  IconApps,
-  IconArrowUp,
-  IconAt,
-  IconBook,
-  IconBrandAbstract,
-  IconBrandOpenai,
-  IconBrandZeit,
-  IconCircleDashedPlus,
-  IconPaperclip,
-  IconPlus,
-  IconWorld,
-  IconX,
-} from '@tabler/icons-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Badge } from '@codefast/ui/badge';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
@@ -37,6 +21,21 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } fro
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Switch } from '@codefast/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+import {
+  IconApps,
+  IconArrowUp,
+  IconAt,
+  IconBook,
+  IconBrandAbstract,
+  IconBrandOpenai,
+  IconBrandZeit,
+  IconCircleDashedPlus,
+  IconPaperclip,
+  IconPlus,
+  IconWorld,
+  IconX,
+} from '@tabler/icons-react';
+import { useMemo, useState } from 'react';
 
 const SAMPLE_DATA = {
   mentionable: [

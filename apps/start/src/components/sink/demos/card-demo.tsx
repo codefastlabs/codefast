@@ -1,11 +1,10 @@
-import { BathIcon, BedIcon, LandPlotIcon } from 'lucide-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Badge } from '@codefast/ui/badge';
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
+import { BathIcon, BedIcon, LandPlotIcon } from 'lucide-react';
 
 export function CardDemo() {
   return (

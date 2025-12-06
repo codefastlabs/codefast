@@ -1,7 +1,18 @@
 import { Link } from '@tanstack/react-router';
+import {
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  Home,
+  Menu,
+  Network,
+  Palette,
+  SquareFunction,
+  StickyNote,
+  X,
+} from 'lucide-react';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, FileText, Home, Menu, Network, Palette, SquareFunction, StickyNote, X } from 'lucide-react';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);

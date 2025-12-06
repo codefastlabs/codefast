@@ -1,6 +1,3 @@
-import { IconArrowUpRight, IconFolderCode } from '@tabler/icons-react';
-import { PlusIcon, SearchIcon } from 'lucide-react';
-
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent } from '@codefast/ui/card';
 import {
@@ -15,6 +12,8 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
 import { Kbd } from '@codefast/ui/kbd';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { IconArrowUpRight, IconFolderCode } from '@tabler/icons-react';
+import { PlusIcon, SearchIcon } from 'lucide-react';
 
 export function EmptyDemo() {
   return (

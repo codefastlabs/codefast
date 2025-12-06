@@ -1,16 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { addDays } from 'date-fns';
-import { Clock2Icon } from 'lucide-react';
-import { es } from 'react-day-picker/locale';
-
 import { Button } from '@codefast/ui/button';
 import { Calendar, CalendarDayButton } from '@codefast/ui/calendar';
 import { Card, CardContent, CardFooter } from '@codefast/ui/card';
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
-import type {DateRange} from 'react-day-picker';
+import { addDays } from 'date-fns';
+import { Clock2Icon } from 'lucide-react';
+import { useState } from 'react';
+import { es } from 'react-day-picker/locale';
+import type { DateRange } from 'react-day-picker';
 
 export function CalendarDemo() {
   return (

@@ -1,9 +1,4 @@
- 
 /* eslint-disable react/no-children-prop */
-
-import { useState } from 'react';
-import { useForm } from '@tanstack/react-form';
-import { format } from 'date-fns';
 
 import { Button } from '@codefast/ui/button';
 import { Calendar } from '@codefast/ui/calendar';
@@ -30,6 +25,9 @@ import { Slider } from '@codefast/ui/slider';
 import { Switch } from '@codefast/ui/switch';
 import { Textarea } from '@codefast/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
+import { useForm } from '@tanstack/react-form';
+import { format } from 'date-fns';
+import { useState } from 'react';
 import { addons, exampleFormSchema } from '@/components/sink/schema';
 
 export function ExampleForm() {

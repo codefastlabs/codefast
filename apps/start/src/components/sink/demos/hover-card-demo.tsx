@@ -1,8 +1,7 @@
-import { CalendarIcon } from 'lucide-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Button } from '@codefast/ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
+import { CalendarIcon } from 'lucide-react';
 
 export function HoverCardDemo() {
   return (

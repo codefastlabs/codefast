@@ -1,5 +1,3 @@
-import { Link, useParams } from '@tanstack/react-router';
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,6 +6,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@codefast/ui/breadcrumb';
+import { Link, useParams } from '@tanstack/react-router';
 
 export function AppBreadcrumbs() {
   const params = useParams({ strict: false });
@@ -41,4 +40,3 @@ export function AppBreadcrumbs() {
     </Breadcrumb>
   );
 }
-

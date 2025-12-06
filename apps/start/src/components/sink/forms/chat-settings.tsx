@@ -1,8 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { CircleIcon, InfoIcon } from 'lucide-react';
-
 import { Button } from '@codefast/ui/button';
 import { Checkbox } from '@codefast/ui/checkbox';
 import {
@@ -22,6 +19,8 @@ import { Switch } from '@codefast/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
 import { Textarea } from '@codefast/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+import { CircleIcon, InfoIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const spokenLanguages = [
   { label: 'English', value: 'en' },

@@ -57,4 +57,3 @@ export const subscriptionAction = createServerFn({ method: 'POST' })
       success: true,
     };
   });
-

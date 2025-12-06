@@ -1,7 +1,3 @@
-import { Fragment } from 'react';
-import { IconChevronRight, IconDownload } from '@tabler/icons-react';
-import { PlusIcon, TicketIcon } from 'lucide-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Button } from '@codefast/ui/button';
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from '@codefast/ui/field';
@@ -19,6 +15,9 @@ import {
 } from '@codefast/ui/item';
 import { Progress } from '@codefast/ui/progress';
 import { Spinner } from '@codefast/ui/spinner';
+import { IconChevronRight, IconDownload } from '@tabler/icons-react';
+import { PlusIcon, TicketIcon } from 'lucide-react';
+import { Fragment } from 'react';
 
 const people = [
   {

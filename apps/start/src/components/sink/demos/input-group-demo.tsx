@@ -1,6 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { Button } from '@codefast/ui/button';
+import { ButtonGroup, ButtonGroupText } from '@codefast/ui/button-group';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@codefast/ui/dropdown-menu';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@codefast/ui/field';
+import { Input } from '@codefast/ui/input';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+} from '@codefast/ui/input-group';
+import { Kbd, KbdGroup } from '@codefast/ui/kbd';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { Spinner } from '@codefast/ui/spinner';
+import { Textarea } from '@codefast/ui/textarea';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import {
   IconBrandJavascript,
   IconCheck,
@@ -25,26 +42,8 @@ import {
   FlipVerticalIcon,
   SearchIcon,
 } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-
-import { Button } from '@codefast/ui/button';
-import { ButtonGroup, ButtonGroupText } from '@codefast/ui/button-group';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@codefast/ui/dropdown-menu';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@codefast/ui/field';
-import { Input } from '@codefast/ui/input';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-  InputGroupText,
-  InputGroupTextarea,
-} from '@codefast/ui/input-group';
-import { Kbd, KbdGroup } from '@codefast/ui/kbd';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { Spinner } from '@codefast/ui/spinner';
-import { Textarea } from '@codefast/ui/textarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
 export function InputGroupDemo() {
   const [country, setCountry] = useState('+1');

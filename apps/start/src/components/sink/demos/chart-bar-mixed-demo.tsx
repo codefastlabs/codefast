@@ -1,10 +1,9 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@codefast/ui/chart';
+import { TrendingUp } from 'lucide-react';
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import type { ChartConfig } from '@codefast/ui/chart';
 
 export const description = 'A mixed bar chart';

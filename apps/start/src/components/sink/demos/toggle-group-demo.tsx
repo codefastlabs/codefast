@@ -1,6 +1,5 @@
-import { BoldIcon, BookmarkIcon, HeartIcon, ItalicIcon, StarIcon, UnderlineIcon } from 'lucide-react';
-
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
+import { BoldIcon, BookmarkIcon, HeartIcon, ItalicIcon, StarIcon, UnderlineIcon } from 'lucide-react';
 
 export function ToggleGroupDemo() {
   return (

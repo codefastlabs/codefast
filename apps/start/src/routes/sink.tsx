@@ -1,15 +1,15 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router';
-import { cn } from '@codefast/tailwind-variants';
-import { Separator } from '@codefast/ui/separator';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui/sidebar';
-import { AppBreadcrumbs } from '@/components/sink/app/app-breadcrumbs';
-import { AppSidebar } from '@/components/sink/app/app-sidebar';
-import { ThemeSelector } from '@/components/sink/app/theme-selector';
 import { ModeSwitcher } from '@/components/mode-switcher';
 
 import '@fontsource-variable/inter';
 import '@fontsource-variable/noto-sans';
 import '@fontsource-variable/nunito-sans';
+import { AppBreadcrumbs } from '@/components/sink/app/app-breadcrumbs';
+import { AppSidebar } from '@/components/sink/app/app-sidebar';
+import { ThemeSelector } from '@/components/sink/app/theme-selector';
+import { cn } from '@codefast/tailwind-variants';
+import { Separator } from '@codefast/ui/separator';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui/sidebar';
+import { Outlet, createFileRoute } from '@tanstack/react-router';
 import '@fontsource-variable/figtree';
 
 export const Route = createFileRoute('/sink')({
