@@ -30,6 +30,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./core/factory": {
+      "types": "./dist/core/factory.d.ts",
+      "import": "./dist/core/factory.js",
+      "require": "./dist/core/factory.cjs"
+    },
     "./core/image-loader": {
       "types": "./dist/core/image-loader.d.ts",
       "import": "./dist/core/image-loader.js",
@@ -39,6 +44,11 @@
       "types": "./dist/core/image-loader-factory.d.ts",
       "import": "./dist/core/image-loader-factory.js",
       "require": "./dist/core/image-loader-factory.cjs"
+    },
+    "./core/loader": {
+      "types": "./dist/core/loader.d.ts",
+      "import": "./dist/core/loader.js",
+      "require": "./dist/core/loader.cjs"
     },
     "./core/loader-registry": {
       "types": "./dist/core/loader-registry.d.ts",
@@ -109,6 +119,11 @@
       "types": "./dist/loaders/sirv.d.ts",
       "import": "./dist/loaders/sirv.js",
       "require": "./dist/loaders/sirv.cjs"
+    },
+    "./loaders/static": {
+      "types": "./dist/loaders/static.d.ts",
+      "import": "./dist/loaders/static.js",
+      "require": "./dist/loaders/static.cjs"
     },
     "./loaders/supabase": {
       "types": "./dist/loaders/supabase.d.ts",
