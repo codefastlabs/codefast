@@ -12,12 +12,15 @@ import { imgixLoader } from '@/loaders/imgix';
 import { pixelbinLoader } from '@/loaders/pixelbin';
 import { sanityLoader } from '@/loaders/sanity';
 import { sirvLoader } from '@/loaders/sirv';
+import { staticLoader } from '@/loaders/static';
 import { supabaseLoader } from '@/loaders/supabase';
 import { thumborLoader } from '@/loaders/thumbor';
 import { unsplashLoader } from '@/loaders/unsplash';
 import { isDomainMatch, isPathMatch } from '@/utils/url-matcher';
 
 export const builtInLoaderConfigs: LoaderConfig[] = [
+  // Static loader should be checked first for local/relative paths
+  { loader: staticLoader, matcher: (src) => src.startsWith('/') },
   { loader: cloudinaryLoader, matcher: (src) => isDomainMatch(src, 'cloudinary.com') },
   { loader: imgixLoader, matcher: (src) => isDomainMatch(src, 'imgix.net') },
   { loader: unsplashLoader, matcher: (src) => isDomainMatch(src, 'images.unsplash.com') },
