@@ -253,6 +253,7 @@ export function ExampleForm() {
                   type="password"
                   defaultValue={formState.values.password}
                   placeholder="Enter your password"
+                  autoComplete="new-password"
                   disabled={pending}
                   aria-invalid={!!formState.errors?.password?.length}
                 />
