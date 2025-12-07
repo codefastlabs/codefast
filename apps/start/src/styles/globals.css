@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+
 @import '@codefast/ui/css/preset.css';
 @import '@codefast/ui/css/neutral.css';
 
@@ -7,9 +8,17 @@
 @import '@fontsource-variable/nunito-sans';
 @import '@fontsource-variable/figtree';
 
+@import './themes.css';
+
+@custom-variant fixed (&:is(.layout-fixed *));
+
 @theme inline {
   --font-inter: 'Inter Variable', sans-serif;
   --font-noto-sans: 'Noto Sans Variable', sans-serif;
   --font-nunito-sans: 'Nunito Sans Variable', sans-serif;
   --font-figtree: 'Figtree Variable', sans-serif;
+}
+
+@utility theme-container {
+  @apply font-sans;
 }
