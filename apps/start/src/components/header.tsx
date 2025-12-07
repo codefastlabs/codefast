@@ -3,6 +3,7 @@ import { cn } from '@codefast/tailwind-variants';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
+  CodeIcon,
   FileTextIcon,
   HomeIcon,
   MenuIcon,
@@ -32,6 +33,7 @@ interface NavGroup {
 
 const NAV_ITEMS: (NavItem | NavGroup)[] = [
   { to: '/', label: 'Home', icon: HomeIcon },
+  { to: '/sink', label: 'Sink', icon: CodeIcon },
   { to: '/demo/start/server-funcs', label: 'Start - Server Functions', icon: SquareFunctionIcon },
   { to: '/demo/start/api-request', label: 'Start - API Request', icon: NetworkIcon },
   {
