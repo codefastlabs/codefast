@@ -94,6 +94,14 @@ const THEMES = {
       value: 'rounded-large',
     },
     {
+      name: 'Extra',
+      value: 'rounded-extra',
+    },
+    {
+      name: 'XL',
+      value: 'rounded-xl',
+    },
+    {
       name: 'Full',
       value: 'rounded-full',
     },
