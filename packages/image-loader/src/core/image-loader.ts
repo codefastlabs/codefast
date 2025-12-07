@@ -45,10 +45,7 @@ export class ImageLoader {
 /**
  * Factory function to create a new ImageLoader instance.
  */
-export function createImageLoader(
-  config: LoaderConfig[] = [],
-  fallbackLoader?: LoaderFunction,
-): ImageLoader {
+export function createImageLoader(config: LoaderConfig[] = [], fallbackLoader?: LoaderFunction): ImageLoader {
   return new ImageLoader(config, fallbackLoader);
 }
 
@@ -68,12 +65,17 @@ export function imageLoader(params: ImageLoaderProps): string {
 
 /**
  * Create a custom image loader with user-defined loaders and optional fallback.
+ * Automatically merges built-in loaders with custom loaders.
+ * Custom loaders are added after built-in loaders, allowing them to override built-in behavior if needed.
  */
 export function createCustomImageLoader(config: {
   loaders?: LoaderConfig[];
   fallbackLoader?: LoaderFunction;
 }): (params: ImageLoaderProps) => string {
-  const loader = createImageLoader(config.loaders, config.fallbackLoader);
+  // Merge built-in loaders with custom loaders are appended, so they can override built-in loaders if matchers overlap
+  const mergedLoaders: LoaderConfig[] = [...builtInLoaderConfigs, ...(config.loaders ?? [])];
+
+  const loader = createImageLoader(mergedLoaders, config.fallbackLoader);
 
   return (params: ImageLoaderProps) => loader.transform(params);
 }
