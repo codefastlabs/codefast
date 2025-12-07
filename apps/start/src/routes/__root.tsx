@@ -8,7 +8,7 @@ import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
 import { ThemeProvider } from '@/integrations/theme/provider';
 import { getThemeServerFn } from '@/integrations/theme/server';
-import appCss from '@/styles.css?url';
+import appCss from '@/styles/globals.css?url';
 
 interface MyRouterContext {
   queryClient: QueryClient;
