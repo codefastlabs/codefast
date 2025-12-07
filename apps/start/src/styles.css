@@ -2,7 +2,11 @@
 @import '@codefast/ui/css/preset.css';
 @import '@codefast/ui/css/neutral.css';
 
-/* Font variables for Kitchen Sink theming */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/noto-sans';
+@import '@fontsource-variable/nunito-sans';
+@import '@fontsource-variable/figtree';
+
 @theme inline {
   --font-inter: 'Inter Variable', sans-serif;
   --font-noto-sans: 'Noto Sans Variable', sans-serif;

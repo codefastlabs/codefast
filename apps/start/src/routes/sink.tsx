@@ -1,16 +1,11 @@
-import { ModeSwitcher } from '@/components/mode-switcher';
-
-import '@fontsource-variable/inter';
-import '@fontsource-variable/noto-sans';
-import '@fontsource-variable/nunito-sans';
-import { AppBreadcrumbs } from '@/components/sink/app/app-breadcrumbs';
-import { AppSidebar } from '@/components/sink/app/app-sidebar';
-import { ThemeSelector } from '@/components/sink/app/theme-selector';
 import { cn } from '@codefast/tailwind-variants';
 import { Separator } from '@codefast/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui/sidebar';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import '@fontsource-variable/figtree';
+import { ModeSwitcher } from '@/components/mode-switcher';
+import { AppBreadcrumbs } from '@/components/sink/app/app-breadcrumbs';
+import { AppSidebar } from '@/components/sink/app/app-sidebar';
+import { ThemeSelector } from '@/components/sink/app/theme-selector';
 
 export const Route = createFileRoute('/sink')({
   component: SinkLayout,
@@ -18,17 +13,7 @@ export const Route = createFileRoute('/sink')({
 
 function SinkLayout() {
   return (
-    <SidebarProvider
-      defaultOpen={true}
-      className={cn(
-        'theme-container',
-        'font-inter',
-        '[--font-inter:Inter_Variable]',
-        '[--font-noto-sans:Noto_Sans_Variable]',
-        '[--font-nunito-sans:Nunito_Sans_Variable]',
-        '[--font-figtree:Figtree_Variable]',
-      )}
-    >
+    <SidebarProvider defaultOpen={true} className={cn('theme-container')}>
       <AppSidebar />
       <SidebarInset>
         <header className="bg-background sticky top-0 z-10 flex h-14 items-center border-b p-4">
