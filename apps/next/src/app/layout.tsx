@@ -1,22 +1,10 @@
-import './globals.css';
+import '@/styles/globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-
+import { fontVariables } from '@/lib/fonts';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { cn } from '@codefast/tailwind-variants';
 import { ActiveThemeProvider } from '@/components/active-theme';
 import { Toaster } from '@codefast/ui/sonner';
-
-const geistSans = Geist({
-  variable: '--font-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-mono',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -29,8 +17,8 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(geistSans.variable, geistMono.variable, 'antialiased')}>
-      <body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={fontVariables}>
         <ThemeProvider>
           <ActiveThemeProvider>
             {children}
