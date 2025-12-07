@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { cn } from '@codefast/tailwind-variants';
 import {
   ChevronDown,
   ChevronRight,
@@ -11,12 +12,119 @@ import {
   StickyNote,
   X,
 } from 'lucide-react';
-
 import { useState } from 'react';
+import type { ComponentProps } from 'react';
+import type { LucideIcon } from 'lucide-react';
+
+interface NavItem {
+  to: ComponentProps<typeof Link>['to'];
+  label: string;
+  icon: LucideIcon;
+}
+
+interface NavGroup {
+  to: ComponentProps<typeof Link>['to'];
+  label: string;
+  icon: LucideIcon;
+  key: string;
+  children: NavItem[];
+}
+
+const NAV_ITEMS: (NavItem | NavGroup)[] = [
+  { to: '/', label: 'Home', icon: Home },
+  { to: '/demo/start/server-funcs', label: 'Start - Server Functions', icon: SquareFunction },
+  { to: '/demo/start/api-request', label: 'Start - API Request', icon: Network },
+  {
+    to: '/demo/start/ssr',
+    label: 'Start - SSR Demos',
+    icon: StickyNote,
+    key: 'StartSSRDemo',
+    children: [
+      { to: '/demo/start/ssr/spa-mode', label: 'SPA Mode', icon: StickyNote },
+      { to: '/demo/start/ssr/full-ssr', label: 'Full SSR', icon: StickyNote },
+      { to: '/demo/start/ssr/data-only', label: 'Data Only', icon: StickyNote },
+    ],
+  },
+  { to: '/demo/tanstack-query', label: 'TanStack Query', icon: Network },
+  { to: '/demo/tanstack-form', label: 'TanStack Form', icon: FileText },
+  { to: '/demo/theme', label: 'Theme Demo', icon: Palette },
+];
+
+interface NavLinkProps {
+  to: ComponentProps<typeof Link>['to'];
+  label: string;
+  icon: LucideIcon;
+  onNavigate: ComponentProps<typeof Link>['onClick'];
+}
+
+function NavLink({ to, label, icon: Icon, onNavigate }: NavLinkProps) {
+  return (
+    <Link
+      to={to}
+      onClick={onNavigate}
+      className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
+      activeProps={{
+        className: "'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'",
+      }}
+    >
+      <Icon size={20} />
+      <span className="font-medium">{label}</span>
+    </Link>
+  );
+}
+
+interface NavGroupProps {
+  group: NavGroup;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onNavigate: () => void;
+}
+
+function NavGroupItem({ group, isExpanded, onToggle, onNavigate }: NavGroupProps) {
+  const { to, label, icon: Icon, children } = group;
+
+  return (
+    <>
+      <div className="flex flex-row justify-between">
+        <Link
+          to={to}
+          onClick={onNavigate}
+          className="mb-2 flex flex-1 items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
+          activeProps={{
+            className:
+              "flex-1 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'",
+          }}
+        >
+          <Icon size={20} />
+          <span className="font-medium">{label}</span>
+        </Link>
+        <button
+          onClick={onToggle}
+          className="rounded-lg p-2 transition-colors hover:bg-gray-800"
+          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+        >
+          {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+        </button>
+      </div>
+      {isExpanded && (
+        <div className="ml-4 flex flex-col">
+          {children.map((child) => (
+            <NavLink key={child.to} to={child.to} label={child.label} icon={child.icon} onNavigate={onNavigate} />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [groupedExpanded, setGroupedExpanded] = useState<Record<string, boolean>>({});
+
+  const handleClose = () => setIsOpen(false);
+  const toggleGroup = (key: string) => {
+    setGroupedExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   return (
     <>
@@ -36,14 +144,15 @@ export default function Header() {
       </header>
 
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col bg-gray-900 text-white shadow-2xl transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={cn(
+          'fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col bg-gray-900 text-white shadow-2xl transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
+        )}
       >
         <div className="flex items-center justify-between border-b border-gray-700 p-4">
           <h2 className="text-xl font-bold">Navigation</h2>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             className="rounded-lg p-2 transition-colors hover:bg-gray-800"
             aria-label="Close menu"
           >
@@ -52,149 +161,20 @@ export default function Header() {
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4">
-          <Link
-            to="/"
-            onClick={() => setIsOpen(false)}
-            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-            activeProps={{
-              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Home size={20} />
-            <span className="font-medium">Home</span>
-          </Link>
-
-          {/* Demo Links Start */}
-
-          <Link
-            to="/demo/start/server-funcs"
-            onClick={() => setIsOpen(false)}
-            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-            activeProps={{
-              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <SquareFunction size={20} />
-            <span className="font-medium">Start - Server Functions</span>
-          </Link>
-
-          <Link
-            to="/demo/start/api-request"
-            onClick={() => setIsOpen(false)}
-            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-            activeProps={{
-              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Network size={20} />
-            <span className="font-medium">Start - API Request</span>
-          </Link>
-
-          <div className="flex flex-row justify-between">
-            <Link
-              to="/demo/start/ssr"
-              onClick={() => setIsOpen(false)}
-              className="mb-2 flex flex-1 items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-              activeProps={{
-                className:
-                  'flex-1 flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-              }}
-            >
-              <StickyNote size={20} />
-              <span className="font-medium">Start - SSR Demos</span>
-            </Link>
-            <button
-              className="rounded-lg p-2 transition-colors hover:bg-gray-800"
-              onClick={() =>
-                setGroupedExpanded((prev) => ({
-                  ...prev,
-                  StartSSRDemo: !prev.StartSSRDemo,
-                }))
-              }
-            >
-              {groupedExpanded.StartSSRDemo ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-            </button>
-          </div>
-          {groupedExpanded.StartSSRDemo && (
-            <div className="ml-4 flex flex-col">
-              <Link
-                to="/demo/start/ssr/spa-mode"
-                onClick={() => setIsOpen(false)}
-                className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-                activeProps={{
-                  className:
-                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-                }}
-              >
-                <StickyNote size={20} />
-                <span className="font-medium">SPA Mode</span>
-              </Link>
-
-              <Link
-                to="/demo/start/ssr/full-ssr"
-                onClick={() => setIsOpen(false)}
-                className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-                activeProps={{
-                  className:
-                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-                }}
-              >
-                <StickyNote size={20} />
-                <span className="font-medium">Full SSR</span>
-              </Link>
-
-              <Link
-                to="/demo/start/ssr/data-only"
-                onClick={() => setIsOpen(false)}
-                className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-                activeProps={{
-                  className:
-                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-                }}
-              >
-                <StickyNote size={20} />
-                <span className="font-medium">Data Only</span>
-              </Link>
-            </div>
-          )}
-
-          <Link
-            to="/demo/tanstack-query"
-            onClick={() => setIsOpen(false)}
-            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-            activeProps={{
-              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Network size={20} />
-            <span className="font-medium">TanStack Query</span>
-          </Link>
-
-          <Link
-            to="/demo/tanstack-form"
-            onClick={() => setIsOpen(false)}
-            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-            activeProps={{
-              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <FileText size={20} />
-            <span className="font-medium">TanStack Form</span>
-          </Link>
-
-          <Link
-            to="/demo/theme"
-            onClick={() => setIsOpen(false)}
-            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
-            activeProps={{
-              className: 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Palette size={20} />
-            <span className="font-medium">Theme Demo</span>
-          </Link>
-
-          {/* Demo Links End */}
+          {NAV_ITEMS.map((item) => {
+            if ('children' in item) {
+              return (
+                <NavGroupItem
+                  key={item.key}
+                  group={item}
+                  isExpanded={groupedExpanded[item.key] ?? false}
+                  onToggle={() => toggleGroup(item.key)}
+                  onNavigate={handleClose}
+                />
+              );
+            }
+            return <NavLink key={item.to} to={item.to} label={item.label} icon={item.icon} onNavigate={handleClose} />;
+          })}
         </nav>
       </aside>
     </>
