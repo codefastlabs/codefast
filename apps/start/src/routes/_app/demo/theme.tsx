@@ -5,7 +5,7 @@ import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Separator } from '@codefast/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
-import { CheckCircle2, Info, Moon, Palette, Sun } from 'lucide-react';
+import { CheckCircle2Icon, InfoIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
 import type { Theme } from '@/integrations/theme/server';
 import { useTheme } from '@/integrations/theme/use-theme';
 
@@ -30,7 +30,7 @@ function ThemeDemo() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5" />
+            <PaletteIcon className="h-5 w-5" />
             Theme Switcher
           </CardTitle>
           <CardDescription>Chuyển đổi giữa các theme khác nhau</CardDescription>
@@ -39,7 +39,7 @@ function ThemeDemo() {
           <div className="flex flex-wrap gap-3">
             {themes.map((themeOption) => {
               const isActive = theme === themeOption;
-              const Icon = themeOption === 'light' ? Sun : Moon;
+              const Icon = themeOption === 'light' ? SunIcon : MoonIcon;
 
               return (
                 <Button
@@ -51,7 +51,7 @@ function ThemeDemo() {
                 >
                   <Icon className="h-4 w-4" />
                   <span className="capitalize">{themeOption}</span>
-                  {isActive && <CheckCircle2 className="h-4 w-4" />}
+                  {isActive && <CheckCircle2Icon className="h-4 w-4" />}
                 </Button>
               );
             })}
@@ -97,27 +97,27 @@ function ThemeDemo() {
           <CardContent>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
                 <span>Hỗ trợ light mode và dark mode</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
                 <span>Lưu preference vào cookie</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
                 <span>Đồng bộ theme giữa các tabs</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
                 <span>Không có flash khi load trang (FOUC prevention)</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
                 <span>Hỗ trợ CSS color-scheme property</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
                 <span className="font-semibold">disableTransitionOnChange: Đã bật</span>
               </li>
             </ul>
@@ -129,7 +129,7 @@ function ThemeDemo() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Info className="h-5 w-5" />
+            <InfoIcon className="h-5 w-5" />
             disableTransitionOnChange Demo
           </CardTitle>
           <CardDescription>
@@ -138,7 +138,7 @@ function ThemeDemo() {
         </CardHeader>
         <CardContent className="space-y-6">
           <Alert>
-            <Info className="h-4 w-4" />
+            <InfoIcon className="h-4 w-4" />
             <AlertTitle>Tính năng đã được bật</AlertTitle>
             <AlertDescription>
               Tính năng <code className="bg-muted rounded px-1 py-0.5 text-xs">disableTransitionOnChange</code> đã được
@@ -235,7 +235,7 @@ function ThemeDemo() {
             <h3 className="text-sm font-semibold">Alerts</h3>
             <div className="space-y-2">
               <Alert>
-                <Info className="h-4 w-4" />
+                <InfoIcon className="h-4 w-4" />
                 <AlertTitle>Info Alert</AlertTitle>
                 <AlertDescription>
                   Đây là một alert mẫu để demo theme. Component này sẽ tự động thay đổi màu sắc theo theme hiện tại.
@@ -284,7 +284,7 @@ function ThemeDemo() {
 
       {/* Theme Explanation */}
       <Alert>
-        <Info className="h-4 w-4" />
+        <InfoIcon className="h-4 w-4" />
         <AlertTitle>How it works</AlertTitle>
         <AlertDescription>
           Theme system sử dụng React Context để quản lý state và tự động áp dụng theme class vào document root. Khi bạn

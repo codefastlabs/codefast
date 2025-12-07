@@ -13,7 +13,7 @@ import {
   CommandSeparator,
 } from '@codefast/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const frameworks = [
@@ -116,7 +116,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
       <PopoverTrigger asChild>
         <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between md:max-w-50">
           {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
-          <ChevronsUpDown className="text-muted-foreground" />
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -172,7 +172,7 @@ function UserCombobox({ users, selectedUserId }: { users: User[]; selectedUserId
           ) : (
             'Select user...'
           )}
-          <ChevronsUpDown className="text-muted-foreground" />
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -298,7 +298,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }) {
           {selectedFrameworks.length > 0
             ? selectedFrameworks.map((framework) => framework.label).join(', ')
             : 'Select frameworks (multi-select)...'}
-          <ChevronsUpDown className="text-muted-foreground" />
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-75 p-0" align="start">

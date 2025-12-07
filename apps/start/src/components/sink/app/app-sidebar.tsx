@@ -19,15 +19,15 @@ import {
 } from '@codefast/ui/sidebar';
 import { Link, useRouterState } from '@tanstack/react-router';
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
+  AudioWaveformIcon,
+  BookOpenIcon,
+  BotIcon,
   ChevronRightIcon,
-  Command,
-  GalleryVerticalEnd,
+  CommandIcon,
+  GalleryVerticalEndIcon,
   SearchIcon,
-  Settings2,
-  SquareTerminal,
+  Settings2Icon,
+  SquareTerminalIcon,
 } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { componentRegistry } from '@/components/sink/component-registry';
@@ -44,17 +44,17 @@ const data = {
   teams: [
     {
       name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
+      logo: GalleryVerticalEndIcon,
       plan: 'Enterprise',
     },
     {
       name: 'Acme Corp.',
-      logo: AudioWaveform,
+      logo: AudioWaveformIcon,
       plan: 'Startup',
     },
     {
       name: 'Evil Corp.',
-      logo: Command,
+      logo: CommandIcon,
       plan: 'Free',
     },
   ],
@@ -62,7 +62,7 @@ const data = {
     {
       title: 'Playground',
       url: '#',
-      icon: SquareTerminal,
+      icon: SquareTerminalIcon,
       isActive: true,
       items: [
         {
@@ -82,7 +82,7 @@ const data = {
     {
       title: 'Models',
       url: '#',
-      icon: Bot,
+      icon: BotIcon,
       items: [
         {
           title: 'Genesis',
@@ -101,7 +101,7 @@ const data = {
     {
       title: 'Documentation',
       url: '#',
-      icon: BookOpen,
+      icon: BookOpenIcon,
       items: [
         {
           title: 'Introduction',
@@ -124,7 +124,7 @@ const data = {
     {
       title: 'Settings',
       url: '#',
-      icon: Settings2,
+      icon: Settings2Icon,
       items: [
         {
           title: 'General',

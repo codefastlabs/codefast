@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from 'react';
 import { useCallback, useState } from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { MinusIcon, PlusIcon } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 
 import { Button } from '@codefast/ui/button';
@@ -96,7 +96,7 @@ function DrawerBottom() {
                 onClick={() => onClick(-10)}
                 disabled={goal <= 200}
               >
-                <Minus />
+                <MinusIcon />
                 <span className="sr-only">Decrease</span>
               </Button>
               <div className="flex-1 text-center">
@@ -110,7 +110,7 @@ function DrawerBottom() {
                 onClick={() => onClick(10)}
                 disabled={goal >= 400}
               >
-                <Plus />
+                <PlusIcon />
                 <span className="sr-only">Increase</span>
               </Button>
             </div>

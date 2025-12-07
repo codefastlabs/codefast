@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronsUpDownIcon } from 'lucide-react';
 
 import { Button } from '@codefast/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui/collapsible';
@@ -15,7 +15,7 @@ export function CollapsibleDemo() {
         <h4 className="line-clamp-1 text-sm font-semibold">@peduarte starred 3 repositories</h4>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm">
-            <ChevronsUpDown className="h-4 w-4" />
+            <ChevronsUpDownIcon className="h-4 w-4" />
             <span className="sr-only">Toggle</span>
           </Button>
         </CollapsibleTrigger>

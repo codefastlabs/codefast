@@ -23,7 +23,6 @@ import {
   BellIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
-  LogOut,
   LogOutIcon,
   MoreHorizontalIcon,
   PencilIcon,
@@ -229,7 +228,7 @@ function DropdownMenuWithAvatar() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <LogOut />
+          <LogOutIcon />
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -285,7 +284,7 @@ function DropdownMenuAvatarOnly() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <LogOut />
+          <LogOutIcon />
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
