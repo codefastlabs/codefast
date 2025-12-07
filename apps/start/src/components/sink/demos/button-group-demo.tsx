@@ -88,15 +88,15 @@ export function ButtonGroupDemo() {
         </ButtonGroup>
         <ButtonGroup>
           <ButtonGroupText asChild>
-            <Label htmlFor="input">
+            <Label htmlFor="gpu-size-input">
               <IconCloudCode /> GPU Size
             </Label>
           </ButtonGroupText>
-          <Input id="input" placeholder="Type something here..." />
+          <Input id="gpu-size-input" placeholder="Type something here..." />
         </ButtonGroup>
         <ButtonGroup>
           <ButtonGroupText>Prefix</ButtonGroupText>
-          <Input id="input" placeholder="Type something here..." />
+          <Input id="prefix-input" placeholder="Type something here..." />
           <ButtonGroupText>Suffix</ButtonGroupText>
         </ButtonGroup>
         <div className="flex gap-4">

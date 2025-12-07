@@ -931,12 +931,12 @@ function SignupForm() {
             </Field>
             <Field>
               <FieldLabel htmlFor="signup-password-rh7">Password</FieldLabel>
-              <Input id="signup-password-rh7" type="password" required />
+              <Input id="signup-password-rh7" type="password" autoComplete="new-password" required />
               <FieldDescription>Must be at least 8 characters long.</FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="signup-confirm-password-ha8">Confirm Password</FieldLabel>
-              <Input id="signup-confirm-password-ha8" type="password" required />
+              <Input id="signup-confirm-password-ha8" type="password" autoComplete="new-password" required />
               <FieldDescription>Please confirm your password.</FieldDescription>
             </Field>
             <FieldGroup>
@@ -980,7 +980,7 @@ function LoginForm() {
             </Field>
             <Field>
               <FieldLabel htmlFor="login-7x9-password-5l8">Password</FieldLabel>
-              <Input id="login-7x9-password-5l8" type="password" required />
+              <Input id="login-7x9-password-5l8" type="password" autoComplete="current-password" required />
               <FieldDescription>
                 <a href="#" className="text-sm underline underline-offset-4">
                   Forgot your password?
@@ -2055,7 +2055,7 @@ export function FormInputTypesDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="password-input-63z">Password</FieldLabel>
-            <Input id="password-input-63z" type="password" placeholder="Enter password" />
+            <Input id="password-input-63z" type="password" placeholder="Enter password" autoComplete="current-password" />
             <FieldDescription>Password field with hidden text.</FieldDescription>
           </Field>
           <Field>

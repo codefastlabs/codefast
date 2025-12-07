@@ -30,7 +30,7 @@ export function CardDemo() {
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" autoComplete="current-password" required />
               </div>
             </div>
           </form>

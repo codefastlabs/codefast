@@ -321,6 +321,7 @@ export function ExampleForm() {
                         type="password"
                         placeholder="Enter your password"
                         id={field.name}
+                        autoComplete="new-password"
                         aria-invalid={isInvalid}
                       />
                       <FieldDescription>

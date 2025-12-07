@@ -339,6 +339,7 @@ export function ExampleForm() {
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
                         placeholder="Enter your password"
+                        autoComplete="new-password"
                         aria-invalid={isInvalid}
                       />
                       <FieldDescription>

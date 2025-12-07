@@ -5,7 +5,7 @@ export function InputDemo() {
     <div className="flex flex-col flex-wrap gap-4 md:flex-row">
       <Input type="email" placeholder="Email" />
       <Input type="text" placeholder="Error" aria-invalid="true" />
-      <Input type="password" placeholder="Password" />
+      <Input type="password" placeholder="Password" autoComplete="current-password" />
       <Input type="number" placeholder="Number" />
       <Input type="file" placeholder="File" />
       <Input type="tel" placeholder="Tel" />
