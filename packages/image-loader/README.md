@@ -108,7 +108,7 @@ const optimizedUrl = imageLoader({
 
 ### `createCustomImageLoader`
 
-Create a custom loader with your own configuration.
+Create a custom loader with your own configuration. Built-in loaders are automatically included, so you only need to specify your custom loaders.
 
 ```typescript
 import { createCustomImageLoader } from '@codefast/image-loader';
@@ -124,6 +124,8 @@ const customLoader = createCustomImageLoader({
   fallbackLoader: (params) => params.src, // Optional
 });
 ```
+
+**Note:** Custom loaders are added after built-in loaders, allowing them to override built-in behavior if matchers overlap.
 
 ### `createImageLoader`
 

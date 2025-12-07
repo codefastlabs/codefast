@@ -19,7 +19,6 @@ import { unsplashLoader } from '@/loaders/unsplash';
 import { isDomainMatch, isPathMatch } from '@/utils/url-matcher';
 
 export const builtInLoaderConfigs: LoaderConfig[] = [
-  // Static loader should be checked first for local/relative paths
   { loader: staticLoader, matcher: (src) => src.startsWith('/') },
   { loader: cloudinaryLoader, matcher: (src) => isDomainMatch(src, 'cloudinary.com') },
   { loader: imgixLoader, matcher: (src) => isDomainMatch(src, 'imgix.net') },
