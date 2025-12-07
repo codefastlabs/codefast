@@ -32,6 +32,9 @@ export class ImageLoader {
   }
 }
 
-export function createImageLoader(config: LoaderConfig[] = [], fallbackLoader?: LoaderFunction): ImageLoader {
+export function createImageLoader(
+  config: LoaderConfig[] = [],
+  fallbackLoader?: LoaderFunction,
+): ImageLoader {
   return new ImageLoader(config, fallbackLoader);
 }
