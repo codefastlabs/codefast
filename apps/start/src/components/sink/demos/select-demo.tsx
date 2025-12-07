@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@codefast/ui/select';
-import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashed } from 'lucide-react';
+import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from 'lucide-react';
 
 export function SelectDemo() {
   return (
@@ -60,7 +60,7 @@ export function SelectDemo() {
           <SelectValue
             placeholder={
               <>
-                <CircleDashed className="text-muted-foreground" />
+                <CircleDashedIcon className="text-muted-foreground" />
                 With Icon
               </>
             }

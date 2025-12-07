@@ -1,16 +1,16 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '@codefast/tailwind-variants';
 import {
-  ChevronDown,
-  ChevronRight,
-  FileText,
-  Home,
-  Menu,
-  Network,
-  Palette,
-  SquareFunction,
-  StickyNote,
-  X,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  FileTextIcon,
+  HomeIcon,
+  MenuIcon,
+  NetworkIcon,
+  PaletteIcon,
+  SquareFunctionIcon,
+  StickyNoteIcon,
+  XIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { ComponentProps } from 'react';
@@ -31,23 +31,23 @@ interface NavGroup {
 }
 
 const NAV_ITEMS: (NavItem | NavGroup)[] = [
-  { to: '/', label: 'Home', icon: Home },
-  { to: '/demo/start/server-funcs', label: 'Start - Server Functions', icon: SquareFunction },
-  { to: '/demo/start/api-request', label: 'Start - API Request', icon: Network },
+  { to: '/', label: 'Home', icon: HomeIcon },
+  { to: '/demo/start/server-funcs', label: 'Start - Server Functions', icon: SquareFunctionIcon },
+  { to: '/demo/start/api-request', label: 'Start - API Request', icon: NetworkIcon },
   {
     to: '/demo/start/ssr',
     label: 'Start - SSR Demos',
-    icon: StickyNote,
+    icon: StickyNoteIcon,
     key: 'StartSSRDemo',
     children: [
-      { to: '/demo/start/ssr/spa-mode', label: 'SPA Mode', icon: StickyNote },
-      { to: '/demo/start/ssr/full-ssr', label: 'Full SSR', icon: StickyNote },
-      { to: '/demo/start/ssr/data-only', label: 'Data Only', icon: StickyNote },
+      { to: '/demo/start/ssr/spa-mode', label: 'SPA Mode', icon: StickyNoteIcon },
+      { to: '/demo/start/ssr/full-ssr', label: 'Full SSR', icon: StickyNoteIcon },
+      { to: '/demo/start/ssr/data-only', label: 'Data Only', icon: StickyNoteIcon },
     ],
   },
-  { to: '/demo/tanstack-query', label: 'TanStack Query', icon: Network },
-  { to: '/demo/tanstack-form', label: 'TanStack Form', icon: FileText },
-  { to: '/demo/theme', label: 'Theme Demo', icon: Palette },
+  { to: '/demo/tanstack-query', label: 'TanStack Query', icon: NetworkIcon },
+  { to: '/demo/tanstack-form', label: 'TanStack Form', icon: FileTextIcon },
+  { to: '/demo/theme', label: 'Theme Demo', icon: PaletteIcon },
 ];
 
 interface NavLinkProps {
@@ -103,7 +103,7 @@ function NavGroupItem({ group, isExpanded, onToggle, onNavigate }: NavGroupProps
           className="rounded-lg p-2 transition-colors hover:bg-gray-800"
           aria-label={isExpanded ? 'Collapse' : 'Expand'}
         >
-          {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+          {isExpanded ? <ChevronDownIcon size={20} /> : <ChevronRightIcon size={20} />}
         </button>
       </div>
       {isExpanded && (
@@ -134,7 +134,7 @@ export default function Header() {
           className="rounded-lg p-2 transition-colors hover:bg-gray-700"
           aria-label="Open menu"
         >
-          <Menu size={24} />
+          <MenuIcon size={24} />
         </button>
         <h1 className="ml-4 text-xl font-semibold">
           <Link to="/">
@@ -156,7 +156,7 @@ export default function Header() {
             className="rounded-lg p-2 transition-colors hover:bg-gray-800"
             aria-label="Close menu"
           >
-            <X size={24} />
+            <XIcon size={24} />
           </button>
         </div>
 

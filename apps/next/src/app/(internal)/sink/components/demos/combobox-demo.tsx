@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from 'lucide-react';
 
 import { cn } from '@codefast/tailwind-variants';
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
@@ -122,7 +122,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
           className="w-full justify-between md:max-w-50"
         >
           {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
-          <ChevronsUpDown className="text-muted-foreground" />
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -178,7 +178,7 @@ function UserCombobox({ users, selectedUserId }: { users: User[]; selectedUserId
           ) : (
             'Select user...'
           )}
-          <ChevronsUpDown className="text-muted-foreground" />
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -304,7 +304,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }) {
           {selectedFrameworks.length > 0
             ? selectedFrameworks.map((framework) => framework.label).join(', ')
             : 'Select frameworks (multi-select)...'}
-          <ChevronsUpDown className="text-muted-foreground" />
+          <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-75 p-0" align="start">

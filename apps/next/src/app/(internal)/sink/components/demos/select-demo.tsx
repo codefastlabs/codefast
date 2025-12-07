@@ -1,4 +1,4 @@
-import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashed } from 'lucide-react';
+import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from 'lucide-react';
 
 import {
   Select,
@@ -61,7 +61,7 @@ export function SelectDemo() {
           <SelectValue
             placeholder={
               <>
-                <CircleDashed className="text-muted-foreground" />
+                <CircleDashedIcon className="text-muted-foreground" />
                 With Icon
               </>
             }
