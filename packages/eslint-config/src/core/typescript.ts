@@ -242,7 +242,6 @@ export const typescriptRules: Linter.Config[] = [
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: process.cwd(),
       },
     },
     name: '@codefast/eslint-config/core/typescript/custom-rules',
