@@ -4,6 +4,21 @@ import type { ConfigArray } from 'typescript-eslint';
 import { configs as tsEslintConfigs } from 'typescript-eslint';
 
 /**
+ * Rules that are disabled (set to "off") for TypeScript plugin
+ * These rules are grouped together for better organization and maintainability
+ * These rules are disabled because TypeScript-specific alternatives are used instead
+ */
+const disabledTypescriptRules: Linter.RulesRecord = {
+  /**
+   * Disable base no-unused-vars rule for TypeScript files.
+   * We use `@typescript-eslint/no-unused-vars` instead, which has better TypeScript support,
+   * including proper handling of type-only imports and TypeScript-specific patterns.
+   * This prevents conflicts and duplicate warnings.
+   */
+  'no-unused-vars': 'off',
+};
+
+/**
  * Rules that are set to "warn" for TypeScript plugin
  * These rules are grouped together for better organization and maintainability
  * These rules highlight issues that should be addressed but don't break functionality
@@ -232,6 +247,9 @@ export const typescriptRules: Linter.Config[] = [
     },
     name: '@codefast/eslint-config/core/typescript/custom-rules',
     rules: {
+      // Apply all disabled rules first to override any base rules
+      ...disabledTypescriptRules,
+
       // Apply all warning rules
       ...warningTypescriptRules,
 
