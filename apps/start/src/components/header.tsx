@@ -144,8 +144,8 @@ export default function Header() {
             <Image
               src="/tanstack-word-logo-white.svg"
               alt="TanStack Logo"
-              width={200}
-              height={40}
+              width={400}
+              height={80}
               layout="constrained"
               className="h-10"
             />

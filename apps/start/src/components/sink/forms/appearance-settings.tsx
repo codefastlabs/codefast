@@ -71,8 +71,8 @@ export function AppearanceSettings() {
                 <Image
                   src={mode.image}
                   alt={mode.name}
-                  width={160}
-                  height={90}
+                  width={320}
+                  height={180}
                   layout="constrained"
                   className="hidden aspect-video w-full object-cover @min-[448px]/field-group:block dark:brightness-[0.2] dark:grayscale"
                 />

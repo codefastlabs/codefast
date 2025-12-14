@@ -92,8 +92,8 @@ export function CardDemo() {
             src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
             alt="Photo by Drew Beamer"
             className="aspect-video object-cover"
-            width={500}
-            height={500}
+            width={768}
+            height={432}
           />
         </CardContent>
         <CardFooter className="flex items-center gap-2">

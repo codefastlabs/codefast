@@ -8,8 +8,8 @@ export function AspectRatioDemo() {
         <Image
           src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
           alt="Photo by Drew Beamer"
-          width={800}
-          height={450}
+          width={768}
+          height={432}
           layout="constrained"
           className="absolute inset-0 h-full w-full rounded-xl object-cover dark:brightness-[0.2] dark:grayscale"
         />
@@ -18,8 +18,8 @@ export function AspectRatioDemo() {
         <Image
           src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
           alt="Photo by Drew Beamer"
-          width={800}
-          height={800}
+          width={768}
+          height={768}
           layout="constrained"
           className="absolute inset-0 h-full w-full rounded-xl object-cover dark:brightness-[0.2] dark:grayscale"
         />
