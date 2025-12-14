@@ -52,7 +52,7 @@ function App() {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
         <div className="relative mx-auto max-w-5xl">
           <div className="mb-6 flex items-center justify-center gap-6">
-            <Image src="/tanstack-circle-logo.png" alt="TanStack Logo" width={128} height={128} layout="constrained" className="h-24 w-24 md:h-32 md:w-32" />
+            <Image src="/tanstack-circle-logo.png" alt="TanStack Logo" width={256} height={256} layout="constrained" className="h-24 w-24 md:h-32 md:w-32" />
             <h1 className="text-6xl font-black [letter-spacing:-0.08em] text-white md:text-7xl">
               <span className="text-gray-300">TANSTACK</span>{' '}
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">START</span>

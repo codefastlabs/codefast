@@ -298,8 +298,8 @@ export function ItemDemo() {
                     <Image
                       src={`https://avatar.vercel.sh/${song.title}`}
                       alt={song.title}
-                      width={32}
-                      height={32}
+                      width={64}
+                      height={64}
                       className="grayscale"
                     />
                   </ItemMedia>
