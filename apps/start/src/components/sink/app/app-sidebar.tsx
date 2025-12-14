@@ -37,9 +37,9 @@ import { NavUser } from '@/components/sink/app/nav-user';
 // This is sample data.
 const data = {
   user: {
-    name: 'shadcn',
+    name: 'codefast',
     email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    avatar: '/avatars/codefast.webp',
   },
   teams: [
     {

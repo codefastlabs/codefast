@@ -61,7 +61,7 @@ export function NavigationMenuDemo() {
                       className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-lg bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
                       to="/"
                     >
-                      <div className="mt-4 mb-2 text-lg font-medium">shadcn/ui</div>
+                      <div className="mt-4 mb-2 text-lg font-medium">@codefast/ui</div>
                       <p className="text-muted-foreground text-sm leading-tight">
                         Beautifully designed components built with Tailwind CSS.
                       </p>

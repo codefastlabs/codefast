@@ -183,12 +183,12 @@ function DropdownMenuWithAvatar() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="h-12 justify-start px-2 md:max-w-50">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="Shadcn" />
-            <AvatarFallback className="rounded-xl">CN</AvatarFallback>
+            <AvatarImage src="https://github.com/codefastlabs.png" alt="CodeFast" />
+            <AvatarFallback className="rounded-xl">CF</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">shadcn</span>
-            <span className="text-muted-foreground truncate text-xs">shadcn@example.com</span>
+            <span className="truncate font-semibold">codefast</span>
+            <span className="text-muted-foreground truncate text-xs">m@example.com</span>
           </div>
           <ChevronsUpDownIcon className="text-muted-foreground ml-auto" />
         </Button>
@@ -197,12 +197,12 @@ function DropdownMenuWithAvatar() {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="Shadcn" />
-              <AvatarFallback className="rounded-xl">CN</AvatarFallback>
+              <AvatarImage src="https://github.com/codefastlabs.png" alt="CodeFast" />
+              <AvatarFallback className="rounded-xl">CF</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">shadcn</span>
-              <span className="text-muted-foreground truncate text-xs">shadcn@example.com</span>
+              <span className="truncate font-semibold">codefast</span>
+              <span className="text-muted-foreground truncate text-xs">m@example.com</span>
             </div>
           </div>
         </DropdownMenuLabel>
