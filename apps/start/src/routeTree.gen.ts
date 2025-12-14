@@ -9,111 +9,115 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SinkRouteImport } from './routes/sink'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as SinkRouteRouteImport } from './routes/sink/route'
 import { Route as SinkIndexRouteImport } from './routes/sink/index'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as SinkFormsRouteImport } from './routes/sink/forms'
 import { Route as SinkNameRouteImport } from './routes/sink/$name'
 import { Route as SinkTanstackFormIndexRouteImport } from './routes/sink/tanstack-form/index'
 import { Route as SinkStartFormIndexRouteImport } from './routes/sink/start-form/index'
 import { Route as SinkReactHookFormIndexRouteImport } from './routes/sink/react-hook-form/index'
-import { Route as AppDemoThemeRouteImport } from './routes/_app/demo/theme'
-import { Route as AppDemoTanstackQueryRouteImport } from './routes/_app/demo/tanstack-query'
-import { Route as AppDemoTanstackFormRouteImport } from './routes/_app/demo/tanstack-form'
-import { Route as AppDemoStartServerFuncsRouteImport } from './routes/_app/demo/start/server-funcs'
-import { Route as AppDemoStartApiRequestRouteImport } from './routes/_app/demo/start/api-request'
-import { Route as AppDemoApiTqTodosRouteImport } from './routes/_app/demo/api/tq-todos'
-import { Route as AppDemoApiNamesRouteImport } from './routes/_app/demo/api/names'
+import { Route as SinkFormsIndexRouteImport } from './routes/sink/forms/index'
+import { Route as ApiDemoTqTodosRouteImport } from './routes/api/demo/tq-todos'
+import { Route as ApiDemoNamesRouteImport } from './routes/api/demo/names'
+import { Route as AppDemoThemeIndexRouteImport } from './routes/_app/demo/theme/index'
+import { Route as AppDemoTanstackQueryIndexRouteImport } from './routes/_app/demo/tanstack-query/index'
+import { Route as AppDemoTanstackFormIndexRouteImport } from './routes/_app/demo/tanstack-form/index'
 import { Route as AppDemoStartSsrIndexRouteImport } from './routes/_app/demo/start/ssr/index'
+import { Route as AppDemoStartServerFuncsIndexRouteImport } from './routes/_app/demo/start/server-funcs/index'
+import { Route as AppDemoStartApiRequestIndexRouteImport } from './routes/_app/demo/start/api-request/index'
 import { Route as AppDemoStartSsrSpaModeRouteImport } from './routes/_app/demo/start/ssr/spa-mode'
 import { Route as AppDemoStartSsrFullSsrRouteImport } from './routes/_app/demo/start/ssr/full-ssr'
 import { Route as AppDemoStartSsrDataOnlyRouteImport } from './routes/_app/demo/start/ssr/data-only'
 
-const SinkRoute = SinkRouteImport.update({
-  id: '/sink',
-  path: '/sink',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SinkRouteRoute = SinkRouteRouteImport.update({
+  id: '/sink',
+  path: '/sink',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SinkIndexRoute = SinkIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => SinkRoute,
+  getParentRoute: () => SinkRouteRoute,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const SinkFormsRoute = SinkFormsRouteImport.update({
-  id: '/forms',
-  path: '/forms',
-  getParentRoute: () => SinkRoute,
-} as any)
 const SinkNameRoute = SinkNameRouteImport.update({
   id: '/$name',
   path: '/$name',
-  getParentRoute: () => SinkRoute,
+  getParentRoute: () => SinkRouteRoute,
 } as any)
 const SinkTanstackFormIndexRoute = SinkTanstackFormIndexRouteImport.update({
   id: '/tanstack-form/',
   path: '/tanstack-form/',
-  getParentRoute: () => SinkRoute,
+  getParentRoute: () => SinkRouteRoute,
 } as any)
 const SinkStartFormIndexRoute = SinkStartFormIndexRouteImport.update({
   id: '/start-form/',
   path: '/start-form/',
-  getParentRoute: () => SinkRoute,
+  getParentRoute: () => SinkRouteRoute,
 } as any)
 const SinkReactHookFormIndexRoute = SinkReactHookFormIndexRouteImport.update({
   id: '/react-hook-form/',
   path: '/react-hook-form/',
-  getParentRoute: () => SinkRoute,
+  getParentRoute: () => SinkRouteRoute,
 } as any)
-const AppDemoThemeRoute = AppDemoThemeRouteImport.update({
-  id: '/demo/theme',
-  path: '/demo/theme',
+const SinkFormsIndexRoute = SinkFormsIndexRouteImport.update({
+  id: '/forms/',
+  path: '/forms/',
+  getParentRoute: () => SinkRouteRoute,
+} as any)
+const ApiDemoTqTodosRoute = ApiDemoTqTodosRouteImport.update({
+  id: '/api/demo/tq-todos',
+  path: '/api/demo/tq-todos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDemoNamesRoute = ApiDemoNamesRouteImport.update({
+  id: '/api/demo/names',
+  path: '/api/demo/names',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppDemoThemeIndexRoute = AppDemoThemeIndexRouteImport.update({
+  id: '/demo/theme/',
+  path: '/demo/theme/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppDemoTanstackQueryRoute = AppDemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDemoTanstackFormRoute = AppDemoTanstackFormRouteImport.update({
-  id: '/demo/tanstack-form',
-  path: '/demo/tanstack-form',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDemoStartServerFuncsRoute = AppDemoStartServerFuncsRouteImport.update({
-  id: '/demo/start/server-funcs',
-  path: '/demo/start/server-funcs',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDemoStartApiRequestRoute = AppDemoStartApiRequestRouteImport.update({
-  id: '/demo/start/api-request',
-  path: '/demo/start/api-request',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDemoApiTqTodosRoute = AppDemoApiTqTodosRouteImport.update({
-  id: '/demo/api/tq-todos',
-  path: '/demo/api/tq-todos',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDemoApiNamesRoute = AppDemoApiNamesRouteImport.update({
-  id: '/demo/api/names',
-  path: '/demo/api/names',
-  getParentRoute: () => AppRoute,
-} as any)
+const AppDemoTanstackQueryIndexRoute =
+  AppDemoTanstackQueryIndexRouteImport.update({
+    id: '/demo/tanstack-query/',
+    path: '/demo/tanstack-query/',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppDemoTanstackFormIndexRoute =
+  AppDemoTanstackFormIndexRouteImport.update({
+    id: '/demo/tanstack-form/',
+    path: '/demo/tanstack-form/',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppDemoStartSsrIndexRoute = AppDemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDemoStartServerFuncsIndexRoute =
+  AppDemoStartServerFuncsIndexRouteImport.update({
+    id: '/demo/start/server-funcs/',
+    path: '/demo/start/server-funcs/',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppDemoStartApiRequestIndexRoute =
+  AppDemoStartApiRequestIndexRouteImport.update({
+    id: '/demo/start/api-request/',
+    path: '/demo/start/api-request/',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppDemoStartSsrSpaModeRoute = AppDemoStartSsrSpaModeRouteImport.update({
   id: '/demo/start/ssr/spa-mode',
   path: '/demo/start/ssr/spa-mode',
@@ -131,67 +135,67 @@ const AppDemoStartSsrDataOnlyRoute = AppDemoStartSsrDataOnlyRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/sink': typeof SinkRouteWithChildren
+  '/sink': typeof SinkRouteRouteWithChildren
   '/sink/$name': typeof SinkNameRoute
-  '/sink/forms': typeof SinkFormsRoute
   '/': typeof AppIndexRoute
   '/sink/': typeof SinkIndexRoute
-  '/demo/tanstack-form': typeof AppDemoTanstackFormRoute
-  '/demo/tanstack-query': typeof AppDemoTanstackQueryRoute
-  '/demo/theme': typeof AppDemoThemeRoute
+  '/api/demo/names': typeof ApiDemoNamesRoute
+  '/api/demo/tq-todos': typeof ApiDemoTqTodosRoute
+  '/sink/forms': typeof SinkFormsIndexRoute
   '/sink/react-hook-form': typeof SinkReactHookFormIndexRoute
   '/sink/start-form': typeof SinkStartFormIndexRoute
   '/sink/tanstack-form': typeof SinkTanstackFormIndexRoute
-  '/demo/api/names': typeof AppDemoApiNamesRoute
-  '/demo/api/tq-todos': typeof AppDemoApiTqTodosRoute
-  '/demo/start/api-request': typeof AppDemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof AppDemoStartServerFuncsRoute
+  '/demo/tanstack-form': typeof AppDemoTanstackFormIndexRoute
+  '/demo/tanstack-query': typeof AppDemoTanstackQueryIndexRoute
+  '/demo/theme': typeof AppDemoThemeIndexRoute
   '/demo/start/ssr/data-only': typeof AppDemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof AppDemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof AppDemoStartSsrSpaModeRoute
+  '/demo/start/api-request': typeof AppDemoStartApiRequestIndexRoute
+  '/demo/start/server-funcs': typeof AppDemoStartServerFuncsIndexRoute
   '/demo/start/ssr': typeof AppDemoStartSsrIndexRoute
 }
 export interface FileRoutesByTo {
   '/sink/$name': typeof SinkNameRoute
-  '/sink/forms': typeof SinkFormsRoute
   '/': typeof AppIndexRoute
   '/sink': typeof SinkIndexRoute
-  '/demo/tanstack-form': typeof AppDemoTanstackFormRoute
-  '/demo/tanstack-query': typeof AppDemoTanstackQueryRoute
-  '/demo/theme': typeof AppDemoThemeRoute
+  '/api/demo/names': typeof ApiDemoNamesRoute
+  '/api/demo/tq-todos': typeof ApiDemoTqTodosRoute
+  '/sink/forms': typeof SinkFormsIndexRoute
   '/sink/react-hook-form': typeof SinkReactHookFormIndexRoute
   '/sink/start-form': typeof SinkStartFormIndexRoute
   '/sink/tanstack-form': typeof SinkTanstackFormIndexRoute
-  '/demo/api/names': typeof AppDemoApiNamesRoute
-  '/demo/api/tq-todos': typeof AppDemoApiTqTodosRoute
-  '/demo/start/api-request': typeof AppDemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof AppDemoStartServerFuncsRoute
+  '/demo/tanstack-form': typeof AppDemoTanstackFormIndexRoute
+  '/demo/tanstack-query': typeof AppDemoTanstackQueryIndexRoute
+  '/demo/theme': typeof AppDemoThemeIndexRoute
   '/demo/start/ssr/data-only': typeof AppDemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof AppDemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof AppDemoStartSsrSpaModeRoute
+  '/demo/start/api-request': typeof AppDemoStartApiRequestIndexRoute
+  '/demo/start/server-funcs': typeof AppDemoStartServerFuncsIndexRoute
   '/demo/start/ssr': typeof AppDemoStartSsrIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/sink': typeof SinkRouteRouteWithChildren
   '/_app': typeof AppRouteWithChildren
-  '/sink': typeof SinkRouteWithChildren
   '/sink/$name': typeof SinkNameRoute
-  '/sink/forms': typeof SinkFormsRoute
   '/_app/': typeof AppIndexRoute
   '/sink/': typeof SinkIndexRoute
-  '/_app/demo/tanstack-form': typeof AppDemoTanstackFormRoute
-  '/_app/demo/tanstack-query': typeof AppDemoTanstackQueryRoute
-  '/_app/demo/theme': typeof AppDemoThemeRoute
+  '/api/demo/names': typeof ApiDemoNamesRoute
+  '/api/demo/tq-todos': typeof ApiDemoTqTodosRoute
+  '/sink/forms/': typeof SinkFormsIndexRoute
   '/sink/react-hook-form/': typeof SinkReactHookFormIndexRoute
   '/sink/start-form/': typeof SinkStartFormIndexRoute
   '/sink/tanstack-form/': typeof SinkTanstackFormIndexRoute
-  '/_app/demo/api/names': typeof AppDemoApiNamesRoute
-  '/_app/demo/api/tq-todos': typeof AppDemoApiTqTodosRoute
-  '/_app/demo/start/api-request': typeof AppDemoStartApiRequestRoute
-  '/_app/demo/start/server-funcs': typeof AppDemoStartServerFuncsRoute
+  '/_app/demo/tanstack-form/': typeof AppDemoTanstackFormIndexRoute
+  '/_app/demo/tanstack-query/': typeof AppDemoTanstackQueryIndexRoute
+  '/_app/demo/theme/': typeof AppDemoThemeIndexRoute
   '/_app/demo/start/ssr/data-only': typeof AppDemoStartSsrDataOnlyRoute
   '/_app/demo/start/ssr/full-ssr': typeof AppDemoStartSsrFullSsrRoute
   '/_app/demo/start/ssr/spa-mode': typeof AppDemoStartSsrSpaModeRoute
+  '/_app/demo/start/api-request/': typeof AppDemoStartApiRequestIndexRoute
+  '/_app/demo/start/server-funcs/': typeof AppDemoStartServerFuncsIndexRoute
   '/_app/demo/start/ssr/': typeof AppDemoStartSsrIndexRoute
 }
 export interface FileRouteTypes {
@@ -199,81 +203,76 @@ export interface FileRouteTypes {
   fullPaths:
     | '/sink'
     | '/sink/$name'
-    | '/sink/forms'
     | '/'
     | '/sink/'
-    | '/demo/tanstack-form'
-    | '/demo/tanstack-query'
-    | '/demo/theme'
+    | '/api/demo/names'
+    | '/api/demo/tq-todos'
+    | '/sink/forms'
     | '/sink/react-hook-form'
     | '/sink/start-form'
     | '/sink/tanstack-form'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
+    | '/demo/tanstack-form'
+    | '/demo/tanstack-query'
+    | '/demo/theme'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/demo/start/api-request'
+    | '/demo/start/server-funcs'
     | '/demo/start/ssr'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/sink/$name'
-    | '/sink/forms'
     | '/'
     | '/sink'
-    | '/demo/tanstack-form'
-    | '/demo/tanstack-query'
-    | '/demo/theme'
+    | '/api/demo/names'
+    | '/api/demo/tq-todos'
+    | '/sink/forms'
     | '/sink/react-hook-form'
     | '/sink/start-form'
     | '/sink/tanstack-form'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
+    | '/demo/tanstack-form'
+    | '/demo/tanstack-query'
+    | '/demo/theme'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/demo/start/api-request'
+    | '/demo/start/server-funcs'
     | '/demo/start/ssr'
   id:
     | '__root__'
-    | '/_app'
     | '/sink'
+    | '/_app'
     | '/sink/$name'
-    | '/sink/forms'
     | '/_app/'
     | '/sink/'
-    | '/_app/demo/tanstack-form'
-    | '/_app/demo/tanstack-query'
-    | '/_app/demo/theme'
+    | '/api/demo/names'
+    | '/api/demo/tq-todos'
+    | '/sink/forms/'
     | '/sink/react-hook-form/'
     | '/sink/start-form/'
     | '/sink/tanstack-form/'
-    | '/_app/demo/api/names'
-    | '/_app/demo/api/tq-todos'
-    | '/_app/demo/start/api-request'
-    | '/_app/demo/start/server-funcs'
+    | '/_app/demo/tanstack-form/'
+    | '/_app/demo/tanstack-query/'
+    | '/_app/demo/theme/'
     | '/_app/demo/start/ssr/data-only'
     | '/_app/demo/start/ssr/full-ssr'
     | '/_app/demo/start/ssr/spa-mode'
+    | '/_app/demo/start/api-request/'
+    | '/_app/demo/start/server-funcs/'
     | '/_app/demo/start/ssr/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  SinkRouteRoute: typeof SinkRouteRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
-  SinkRoute: typeof SinkRouteWithChildren
+  ApiDemoNamesRoute: typeof ApiDemoNamesRoute
+  ApiDemoTqTodosRoute: typeof ApiDemoTqTodosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sink': {
-      id: '/sink'
-      path: '/sink'
-      fullPath: '/sink'
-      preLoaderRoute: typeof SinkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -281,12 +280,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sink': {
+      id: '/sink'
+      path: '/sink'
+      fullPath: '/sink'
+      preLoaderRoute: typeof SinkRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sink/': {
       id: '/sink/'
       path: '/'
       fullPath: '/sink/'
       preLoaderRoute: typeof SinkIndexRouteImport
-      parentRoute: typeof SinkRoute
+      parentRoute: typeof SinkRouteRoute
     }
     '/_app/': {
       id: '/_app/'
@@ -295,88 +301,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/sink/forms': {
-      id: '/sink/forms'
-      path: '/forms'
-      fullPath: '/sink/forms'
-      preLoaderRoute: typeof SinkFormsRouteImport
-      parentRoute: typeof SinkRoute
-    }
     '/sink/$name': {
       id: '/sink/$name'
       path: '/$name'
       fullPath: '/sink/$name'
       preLoaderRoute: typeof SinkNameRouteImport
-      parentRoute: typeof SinkRoute
+      parentRoute: typeof SinkRouteRoute
     }
     '/sink/tanstack-form/': {
       id: '/sink/tanstack-form/'
       path: '/tanstack-form'
       fullPath: '/sink/tanstack-form'
       preLoaderRoute: typeof SinkTanstackFormIndexRouteImport
-      parentRoute: typeof SinkRoute
+      parentRoute: typeof SinkRouteRoute
     }
     '/sink/start-form/': {
       id: '/sink/start-form/'
       path: '/start-form'
       fullPath: '/sink/start-form'
       preLoaderRoute: typeof SinkStartFormIndexRouteImport
-      parentRoute: typeof SinkRoute
+      parentRoute: typeof SinkRouteRoute
     }
     '/sink/react-hook-form/': {
       id: '/sink/react-hook-form/'
       path: '/react-hook-form'
       fullPath: '/sink/react-hook-form'
       preLoaderRoute: typeof SinkReactHookFormIndexRouteImport
-      parentRoute: typeof SinkRoute
+      parentRoute: typeof SinkRouteRoute
     }
-    '/_app/demo/theme': {
-      id: '/_app/demo/theme'
+    '/sink/forms/': {
+      id: '/sink/forms/'
+      path: '/forms'
+      fullPath: '/sink/forms'
+      preLoaderRoute: typeof SinkFormsIndexRouteImport
+      parentRoute: typeof SinkRouteRoute
+    }
+    '/api/demo/tq-todos': {
+      id: '/api/demo/tq-todos'
+      path: '/api/demo/tq-todos'
+      fullPath: '/api/demo/tq-todos'
+      preLoaderRoute: typeof ApiDemoTqTodosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/demo/names': {
+      id: '/api/demo/names'
+      path: '/api/demo/names'
+      fullPath: '/api/demo/names'
+      preLoaderRoute: typeof ApiDemoNamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/demo/theme/': {
+      id: '/_app/demo/theme/'
       path: '/demo/theme'
       fullPath: '/demo/theme'
-      preLoaderRoute: typeof AppDemoThemeRouteImport
+      preLoaderRoute: typeof AppDemoThemeIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/demo/tanstack-query': {
-      id: '/_app/demo/tanstack-query'
+    '/_app/demo/tanstack-query/': {
+      id: '/_app/demo/tanstack-query/'
       path: '/demo/tanstack-query'
       fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof AppDemoTanstackQueryRouteImport
+      preLoaderRoute: typeof AppDemoTanstackQueryIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/demo/tanstack-form': {
-      id: '/_app/demo/tanstack-form'
+    '/_app/demo/tanstack-form/': {
+      id: '/_app/demo/tanstack-form/'
       path: '/demo/tanstack-form'
       fullPath: '/demo/tanstack-form'
-      preLoaderRoute: typeof AppDemoTanstackFormRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/demo/start/server-funcs': {
-      id: '/_app/demo/start/server-funcs'
-      path: '/demo/start/server-funcs'
-      fullPath: '/demo/start/server-funcs'
-      preLoaderRoute: typeof AppDemoStartServerFuncsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/demo/start/api-request': {
-      id: '/_app/demo/start/api-request'
-      path: '/demo/start/api-request'
-      fullPath: '/demo/start/api-request'
-      preLoaderRoute: typeof AppDemoStartApiRequestRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/demo/api/tq-todos': {
-      id: '/_app/demo/api/tq-todos'
-      path: '/demo/api/tq-todos'
-      fullPath: '/demo/api/tq-todos'
-      preLoaderRoute: typeof AppDemoApiTqTodosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/demo/api/names': {
-      id: '/_app/demo/api/names'
-      path: '/demo/api/names'
-      fullPath: '/demo/api/names'
-      preLoaderRoute: typeof AppDemoApiNamesRouteImport
+      preLoaderRoute: typeof AppDemoTanstackFormIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/demo/start/ssr/': {
@@ -384,6 +376,20 @@ declare module '@tanstack/react-router' {
       path: '/demo/start/ssr'
       fullPath: '/demo/start/ssr'
       preLoaderRoute: typeof AppDemoStartSsrIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/demo/start/server-funcs/': {
+      id: '/_app/demo/start/server-funcs/'
+      path: '/demo/start/server-funcs'
+      fullPath: '/demo/start/server-funcs'
+      preLoaderRoute: typeof AppDemoStartServerFuncsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/demo/start/api-request/': {
+      id: '/_app/demo/start/api-request/'
+      path: '/demo/start/api-request'
+      fullPath: '/demo/start/api-request'
+      preLoaderRoute: typeof AppDemoStartApiRequestIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/demo/start/ssr/spa-mode': {
@@ -410,61 +416,61 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AppRouteChildren {
-  AppIndexRoute: typeof AppIndexRoute
-  AppDemoTanstackFormRoute: typeof AppDemoTanstackFormRoute
-  AppDemoTanstackQueryRoute: typeof AppDemoTanstackQueryRoute
-  AppDemoThemeRoute: typeof AppDemoThemeRoute
-  AppDemoApiNamesRoute: typeof AppDemoApiNamesRoute
-  AppDemoApiTqTodosRoute: typeof AppDemoApiTqTodosRoute
-  AppDemoStartApiRequestRoute: typeof AppDemoStartApiRequestRoute
-  AppDemoStartServerFuncsRoute: typeof AppDemoStartServerFuncsRoute
-  AppDemoStartSsrDataOnlyRoute: typeof AppDemoStartSsrDataOnlyRoute
-  AppDemoStartSsrFullSsrRoute: typeof AppDemoStartSsrFullSsrRoute
-  AppDemoStartSsrSpaModeRoute: typeof AppDemoStartSsrSpaModeRoute
-  AppDemoStartSsrIndexRoute: typeof AppDemoStartSsrIndexRoute
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppIndexRoute: AppIndexRoute,
-  AppDemoTanstackFormRoute: AppDemoTanstackFormRoute,
-  AppDemoTanstackQueryRoute: AppDemoTanstackQueryRoute,
-  AppDemoThemeRoute: AppDemoThemeRoute,
-  AppDemoApiNamesRoute: AppDemoApiNamesRoute,
-  AppDemoApiTqTodosRoute: AppDemoApiTqTodosRoute,
-  AppDemoStartApiRequestRoute: AppDemoStartApiRequestRoute,
-  AppDemoStartServerFuncsRoute: AppDemoStartServerFuncsRoute,
-  AppDemoStartSsrDataOnlyRoute: AppDemoStartSsrDataOnlyRoute,
-  AppDemoStartSsrFullSsrRoute: AppDemoStartSsrFullSsrRoute,
-  AppDemoStartSsrSpaModeRoute: AppDemoStartSsrSpaModeRoute,
-  AppDemoStartSsrIndexRoute: AppDemoStartSsrIndexRoute,
-}
-
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
-
-interface SinkRouteChildren {
+interface SinkRouteRouteChildren {
   SinkNameRoute: typeof SinkNameRoute
-  SinkFormsRoute: typeof SinkFormsRoute
   SinkIndexRoute: typeof SinkIndexRoute
+  SinkFormsIndexRoute: typeof SinkFormsIndexRoute
   SinkReactHookFormIndexRoute: typeof SinkReactHookFormIndexRoute
   SinkStartFormIndexRoute: typeof SinkStartFormIndexRoute
   SinkTanstackFormIndexRoute: typeof SinkTanstackFormIndexRoute
 }
 
-const SinkRouteChildren: SinkRouteChildren = {
+const SinkRouteRouteChildren: SinkRouteRouteChildren = {
   SinkNameRoute: SinkNameRoute,
-  SinkFormsRoute: SinkFormsRoute,
   SinkIndexRoute: SinkIndexRoute,
+  SinkFormsIndexRoute: SinkFormsIndexRoute,
   SinkReactHookFormIndexRoute: SinkReactHookFormIndexRoute,
   SinkStartFormIndexRoute: SinkStartFormIndexRoute,
   SinkTanstackFormIndexRoute: SinkTanstackFormIndexRoute,
 }
 
-const SinkRouteWithChildren = SinkRoute._addFileChildren(SinkRouteChildren)
+const SinkRouteRouteWithChildren = SinkRouteRoute._addFileChildren(
+  SinkRouteRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute
+  AppDemoTanstackFormIndexRoute: typeof AppDemoTanstackFormIndexRoute
+  AppDemoTanstackQueryIndexRoute: typeof AppDemoTanstackQueryIndexRoute
+  AppDemoThemeIndexRoute: typeof AppDemoThemeIndexRoute
+  AppDemoStartSsrDataOnlyRoute: typeof AppDemoStartSsrDataOnlyRoute
+  AppDemoStartSsrFullSsrRoute: typeof AppDemoStartSsrFullSsrRoute
+  AppDemoStartSsrSpaModeRoute: typeof AppDemoStartSsrSpaModeRoute
+  AppDemoStartApiRequestIndexRoute: typeof AppDemoStartApiRequestIndexRoute
+  AppDemoStartServerFuncsIndexRoute: typeof AppDemoStartServerFuncsIndexRoute
+  AppDemoStartSsrIndexRoute: typeof AppDemoStartSsrIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+  AppDemoTanstackFormIndexRoute: AppDemoTanstackFormIndexRoute,
+  AppDemoTanstackQueryIndexRoute: AppDemoTanstackQueryIndexRoute,
+  AppDemoThemeIndexRoute: AppDemoThemeIndexRoute,
+  AppDemoStartSsrDataOnlyRoute: AppDemoStartSsrDataOnlyRoute,
+  AppDemoStartSsrFullSsrRoute: AppDemoStartSsrFullSsrRoute,
+  AppDemoStartSsrSpaModeRoute: AppDemoStartSsrSpaModeRoute,
+  AppDemoStartApiRequestIndexRoute: AppDemoStartApiRequestIndexRoute,
+  AppDemoStartServerFuncsIndexRoute: AppDemoStartServerFuncsIndexRoute,
+  AppDemoStartSsrIndexRoute: AppDemoStartSsrIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  SinkRouteRoute: SinkRouteRouteWithChildren,
   AppRoute: AppRouteWithChildren,
-  SinkRoute: SinkRouteWithChildren,
+  ApiDemoNamesRoute: ApiDemoNamesRoute,
+  ApiDemoTqTodosRoute: ApiDemoTqTodosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 
 function getNames() {
-  return fetch('/demo/api/names').then((res) => res.json() as Promise<string[]>);
+  return fetch('/api/demo/names').then((res) => res.json() as Promise<string[]>);
 }
 
-export const Route = createFileRoute('/_app/demo/start/api-request')({
+export const Route = createFileRoute('/_app/demo/start/api-request/')({
   component: Home,
 });
 
@@ -37,3 +37,4 @@ function Home() {
     </div>
   );
 }
+

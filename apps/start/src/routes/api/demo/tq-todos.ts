@@ -15,7 +15,7 @@ const todos = [
   },
 ];
 
-export const Route = createFileRoute('/_app/demo/api/tq-todos')({
+export const Route = createFileRoute('/api/demo/tq-todos')({
   server: {
     handlers: {
       GET: () => {
@@ -33,3 +33,4 @@ export const Route = createFileRoute('/_app/demo/api/tq-todos')({
     },
   },
 });
+

@@ -11,7 +11,7 @@ export function todosQueryOptions() {
   return queryOptions({
     queryKey: ['todos'],
     queryFn: async (): Promise<Todo[]> => {
-      const response = await fetch('/demo/api/tq-todos');
+      const response = await fetch('/api/demo/tq-todos');
 
       if (!response.ok) {
         throw new Error('Failed to fetch todos');
@@ -22,7 +22,7 @@ export function todosQueryOptions() {
   });
 }
 
-export const Route = createFileRoute('/_app/demo/tanstack-query')({
+export const Route = createFileRoute('/_app/demo/tanstack-query/')({
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(todosQueryOptions());
   },
@@ -34,7 +34,7 @@ function TanStackQueryDemo() {
 
   const { mutate: addTodo } = useMutation({
     mutationFn: async (todo: string): Promise<Todo> => {
-      const response = await fetch('/demo/api/tq-todos', {
+      const response = await fetch('/api/demo/tq-todos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,3 +99,4 @@ function TanStackQueryDemo() {
     </div>
   );
 }
+
