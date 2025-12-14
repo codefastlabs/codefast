@@ -119,7 +119,7 @@ describe('Tailwind Variants (TV) - Integration Tests', () => {
         content:
           'left-0 top-0 w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto',
         indicator:
-          'top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in',
+          'top-full z-1 flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in',
         item: '',
         link: 'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
         list: 'group flex flex-1 list-none items-center justify-center space-x-1',
@@ -171,7 +171,7 @@ describe('Tailwind Variants (TV) - Integration Tests', () => {
     });
 
     const alertVariants = createThemeTV({
-      base: 'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
+      base: 'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:-translate-y-0.75 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
       defaultVariants: {
         variant: 'default',
       },
@@ -207,13 +207,13 @@ describe('Tailwind Variants (TV) - Integration Tests', () => {
     });
 
     const textareaVariants = tv({
-      base: 'min-h-[80px] resize-none',
+      base: 'min-h-20 resize-none',
       extend: baseInputVariants,
       variants: {
         size: {
           default: 'py-2',
-          lg: 'py-3 min-h-[100px]',
-          sm: 'py-1 min-h-[60px]',
+          lg: 'py-3 min-h-25',
+          sm: 'py-1 min-h-15',
         },
       },
     });
@@ -235,7 +235,7 @@ describe('Tailwind Variants (TV) - Integration Tests', () => {
     const select = selectVariants({ size: 'lg' });
 
     expect(input).toContain('h-8');
-    expect(textarea).toContain('min-h-[60px]');
+    expect(textarea).toContain('min-h-15');
     expect(textarea).toContain('border-input');
     expect(select).toContain('pr-10');
     expect(select).toContain('cursor-default');
