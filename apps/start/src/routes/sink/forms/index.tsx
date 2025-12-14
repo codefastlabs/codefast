@@ -6,7 +6,7 @@ import { NotionPromptForm } from '@/components/sink/forms/notion-prompt-form';
 import { ShipRegistrationForm } from '@/components/sink/forms/ship-registration-form';
 import { ShippingForm } from '@/components/sink/forms/shipping-form';
 
-export const Route = createFileRoute('/sink/forms')({
+export const Route = createFileRoute('/sink/forms/')({
   component: FormsPage,
 });
 
@@ -34,3 +34,4 @@ function FormsPage() {
     </div>
   );
 }
+

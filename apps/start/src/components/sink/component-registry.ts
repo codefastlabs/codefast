@@ -64,7 +64,7 @@ type ComponentConfig = {
   label?: string;
 };
 
-export const componentRegistry: Record<string, ComponentConfig | undefined> = {
+export const componentRegistry: Record<string, ComponentConfig> = {
   accordion: {
     name: 'Accordion',
     component: AccordionDemo,

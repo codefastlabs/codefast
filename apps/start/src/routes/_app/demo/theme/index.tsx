@@ -9,7 +9,7 @@ import { CheckCircle2Icon, InfoIcon, MoonIcon, PaletteIcon, SunIcon } from 'luci
 import type { Theme } from '@/integrations/theme/server';
 import { useTheme } from '@/integrations/theme/use-theme';
 
-export const Route = createFileRoute('/_app/demo/theme')({
+export const Route = createFileRoute('/_app/demo/theme/')({
   component: ThemeDemo,
 });
 
@@ -295,3 +295,4 @@ function ThemeDemo() {
     </div>
   );
 }
+

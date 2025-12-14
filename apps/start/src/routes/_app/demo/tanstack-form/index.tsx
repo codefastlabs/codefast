@@ -12,7 +12,7 @@ const formSchema = z.object({
   bio: z.string(),
 });
 
-export const Route = createFileRoute('/_app/demo/tanstack-form')({
+export const Route = createFileRoute('/_app/demo/tanstack-form/')({
   component: TanStackFormDemo,
 });
 
@@ -201,3 +201,4 @@ function TanStackFormDemo() {
     </div>
   );
 }
+

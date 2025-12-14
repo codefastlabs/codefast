@@ -16,15 +16,13 @@ function SinkPage() {
   return (
     <div className="@container grid flex-1 gap-4 p-4">
       {Object.entries(componentRegistry)
-        .filter(
-          (entry): entry is [string, NonNullable<(typeof componentRegistry)[string]>] =>
-            entry[1] != null && entry[1].type === 'registry:ui',
-        )
+        .filter(([, component]) => {
+          return component.type === 'registry:ui';
+        })
         .map(([key, component]) => {
           const Component = component.component;
-
           return (
-            <ComponentWrapper key={key} name={key} className={component.className ?? ''}>
+            <ComponentWrapper key={key} name={key} className={component.className || ''}>
               <Component />
             </ComponentWrapper>
           );

@@ -46,7 +46,7 @@ const addTodo = createServerFn({ method: 'POST' })
     return todos;
   });
 
-export const Route = createFileRoute('/_app/demo/start/server-funcs')({
+export const Route = createFileRoute('/_app/demo/start/server-funcs/')({
   component: Home,
   loader: async () => await getTodos(),
 });
@@ -104,3 +104,4 @@ function Home() {
     </div>
   );
 }
+
