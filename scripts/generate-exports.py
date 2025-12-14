@@ -52,18 +52,21 @@ Examples:
 """
 
 import json
-import os
 import sys
+import subprocess
+import traceback
 from pathlib import Path
 from typing import Dict, List, Optional, Callable, Union, Any, Tuple
-import importlib.util
-import subprocess
 
 
+# Constants
 DIST_DIR = 'dist'
 PACKAGE_JSON = 'package.json'
 CONFIG_FILE_JS = 'generate-exports.config.js'
 CONFIG_FILE_JSON = 'generate-exports.config.json'
+VALID_JS_EXTENSIONS = {'.js', '.cjs'}
+DTS_EXTENSION = '.d.ts'
+PACKAGE_JSON_EXPORT = './package.json'
 
 
 class ModuleFiles:
@@ -81,7 +84,12 @@ class Module:
         self.files = ModuleFiles()
 
 
-def scan_directory(dir_path: Path, base_dir: Path = None) -> List[str]:
+def normalize_path(path: Path) -> str:
+    """Normalize a path to use forward slashes."""
+    return str(path).replace('\\', '/')
+
+
+def scan_directory(dir_path: Path, base_dir: Optional[Path] = None) -> List[str]:
     """
     Recursively scan a directory to find all files.
     
@@ -100,12 +108,10 @@ def scan_directory(dir_path: Path, base_dir: Path = None) -> List[str]:
     try:
         for entry in dir_path.iterdir():
             if entry.is_dir():
-                sub_files = scan_directory(entry, base_dir)
-                files.extend(sub_files)
+                files.extend(scan_directory(entry, base_dir))
             elif entry.is_file():
                 relative_path = entry.relative_to(base_dir)
-                # Normalize path separators to forward slashes
-                files.append(str(relative_path).replace('\\', '/'))
+                files.append(normalize_path(relative_path))
     except (PermissionError, OSError):
         pass
     
@@ -129,34 +135,29 @@ def group_files_by_module(files: List[str]) -> Dict[str, Module]:
     
     for file in files:
         # Handle .d.ts first (special case - double extension)
-        if file.endswith('.d.ts'):
-            ext = '.d.ts'
-            module_path = file[:-5]  # Remove ".d.ts"
+        if file.endswith(DTS_EXTENSION):
+            ext = DTS_EXTENSION
+            module_path = file[:-len(DTS_EXTENSION)]
         else:
             ext = Path(file).suffix
-            # Only process files with valid extensions
-            if ext not in ['.js', '.cjs']:
+            if ext not in VALID_JS_EXTENSIONS:
                 continue
-            module_path = file[:-len(ext)]  # Remove extension
-        
-        name = Path(module_path).name
+            module_path = file[:-len(ext)]
         
         # Skip if file is in a subdirectory without a filename
-        if not name:
+        if not Path(module_path).name:
             continue
         
-        key = module_path
+        if module_path not in modules:
+            modules[module_path] = Module(module_path)
         
-        if key not in modules:
-            modules[key] = Module(module_path)
-        
-        module = modules[key]
+        module = modules[module_path]
         
         if ext == '.js':
             module.files.js = file
         elif ext == '.cjs':
             module.files.cjs = file
-        elif ext == '.d.ts':
+        elif ext == DTS_EXTENSION:
             module.files.dts = file
     
     return modules
@@ -257,7 +258,6 @@ def load_config(root_dir: Path) -> Dict[str, Any]:
     # Try to load .js config first (has priority)
     if config_path_js.exists():
         try:
-            # Use Node.js to evaluate the config file
             result = subprocess.run(
                 ['node', '-e', f'''
                     const config = require("{config_path_js.resolve()}");
@@ -269,17 +269,8 @@ def load_config(root_dir: Path) -> Dict[str, Any]:
             )
             return json.loads(result.stdout)
         except (subprocess.CalledProcessError, FileNotFoundError, json.JSONDecodeError):
-            # If Node.js fails, try to parse as JSON (might be a .js file with JSON content)
-            try:
-                with open(config_path_js, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    # Try to extract JSON from module.exports or export default
-                    # This is a simple heuristic - may not work for all cases
-                    if 'module.exports' in content or 'export default' in content:
-                        print('⚠️  Warning: Could not evaluate .js config file. Node.js may not be available.')
-                        print('   Falling back to .json config if available.')
-            except Exception:
-                pass
+            print('⚠️  Warning: Could not evaluate .js config file. Node.js may not be available.')
+            print('   Falling back to .json config if available.')
     
     # If .js doesn't exist or failed, try .json
     if config_path_json.exists():
@@ -289,7 +280,6 @@ def load_config(root_dir: Path) -> Dict[str, Any]:
         except json.JSONDecodeError as e:
             print(f'⚠️  Warning: Could not parse {CONFIG_FILE_JSON}: {e}')
     
-    # Return default config if neither file exists
     return {}
 
 
@@ -310,29 +300,28 @@ def create_path_transform(
     if not config:
         return None
     
-    path_transformations = config.get('pathTransformations', {})
-    transform = path_transformations.get(package_path)
-    
+    transform = config.get('pathTransformations', {}).get(package_path)
     if not transform:
         return None
     
     remove_prefix = transform.get('removePrefix')
-    if remove_prefix:
-        def path_transform(export_path: str) -> str:
-            if export_path.startswith(remove_prefix):
-                result = export_path[len(remove_prefix):]
-                # Ensure result starts with "./" (except for root entry ".")
-                if result and result != '.' and not result.startswith('./'):
-                    return f'./{result}'
-                return result
+    if not remove_prefix:
+        return None
+    
+    def path_transform(export_path: str) -> str:
+        if not export_path.startswith(remove_prefix):
             return export_path
         
-        return path_transform
+        result = export_path[len(remove_prefix):]
+        # Ensure result starts with "./" (except for root entry ".")
+        if result and result != '.' and not result.startswith('./'):
+            return f'./{result}'
+        return result
     
-    return None
+    return path_transform
 
 
-def scan_css_files(dist_dir: Path, base_dir: Path = None) -> List[str]:
+def scan_css_files(dist_dir: Path, base_dir: Optional[Path] = None) -> List[str]:
     """
     Recursively scan for CSS files in the dist directory.
     
@@ -351,13 +340,10 @@ def scan_css_files(dist_dir: Path, base_dir: Path = None) -> List[str]:
     try:
         for entry in dist_dir.iterdir():
             if entry.is_dir():
-                # Recursively scan subdirectories
-                sub_files = scan_css_files(entry, base_dir)
-                files.extend(sub_files)
+                files.extend(scan_css_files(entry, base_dir))
             elif entry.is_file() and entry.name.endswith('.css'):
-                # Get relative path from baseDir (dist/)
                 relative_path = entry.relative_to(base_dir)
-                files.append(str(relative_path).replace('\\', '/'))
+                files.append(normalize_path(relative_path))
     except (PermissionError, OSError):
         pass
     
@@ -382,20 +368,15 @@ def is_directory_css_only(dist_dir: Path, dir_path: str) -> bool:
     try:
         entries = list(full_path.iterdir())
         
-        # If directory is empty, consider it CSS-only (will use wildcard)
-        if len(entries) == 0:
+        # Empty directory is considered CSS-only
+        if not entries:
             return True
         
-        # Check if all files in directory are CSS files
-        for entry in entries:
-            if entry.is_dir():
-                # If there's a subdirectory, it's not CSS-only
-                return False
-            if entry.is_file() and not entry.name.endswith('.css'):
-                # If there's a non-CSS file, it's not CSS-only
-                return False
-        
-        return True
+        # Check if all entries are CSS files
+        return all(
+            entry.is_file() and entry.name.endswith('.css')
+            for entry in entries
+        )
     except (PermissionError, OSError):
         return False
 
@@ -418,27 +399,23 @@ def generate_css_exports(
     Returns:
         A dictionary of export paths to CSS file paths
     """
-    css_exports: Dict[str, str] = {}
-    
-    # If config is boolean, use it as enabled flag
+    # Normalize config to dict format
     if isinstance(css_config, bool):
         if not css_config:
-            return css_exports
+            return {}
         css_config = {'enabled': True}
     
     if not css_config or css_config.get('enabled') is False:
-        return css_exports
+        return {}
     
     # Auto-detect all CSS files recursively
     css_files = scan_css_files(dist_dir)
+    if not css_files:
+        return {}
     
-    if len(css_files) == 0:
-        return css_exports
-    
-    # Add custom exports first (highest priority)
+    css_exports: Dict[str, str] = {}
     custom_exports = css_config.get('customExports', {})
-    if custom_exports:
-        css_exports.update(custom_exports)
+    css_exports.update(custom_exports)
     
     # Group CSS files by directory
     css_by_dir: Dict[str, List[str]] = {}
@@ -447,12 +424,9 @@ def generate_css_exports(
     for file in css_files:
         dir_name = str(Path(file).parent)
         if dir_name == '.':
-            # Root CSS files (e.g., "style.css")
             root_css.append(file)
         else:
-            if dir_name not in css_by_dir:
-                css_by_dir[dir_name] = []
-            css_by_dir[dir_name].append(file)
+            css_by_dir.setdefault(dir_name, []).append(file)
     
     # Export root CSS files individually
     for file in root_css:
@@ -461,29 +435,38 @@ def generate_css_exports(
             css_exports[export_path] = f'./dist/{file}'
     
     # Process directories
+    force_files = css_config.get('forceExportFiles', False)
     for dir_name, files in css_by_dir.items():
-        if len(files) == 0:
+        if not files:
             continue
         
-        # Check if directory contains only CSS files
         is_css_only = is_directory_css_only(dist_dir, dir_name)
-        force_files = css_config.get('forceExportFiles', False)
         
         if is_css_only and not force_files:
-            # Directory only contains CSS files → use wildcard
+            # Use wildcard for CSS-only directories
             wildcard_export = f'./{dir_name}/*'
-            wildcard_path = f'./dist/{dir_name}/*'
-            
             if wildcard_export not in custom_exports:
-                css_exports[wildcard_export] = wildcard_path
+                css_exports[wildcard_export] = f'./dist/{dir_name}/*'
         else:
-            # Directory has mixed files or forceExportFiles is true → export individual files
+            # Export individual files
             for file in files:
                 export_path = f'./{file}'
                 if export_path not in custom_exports:
                     css_exports[export_path] = f'./dist/{file}'
     
     return css_exports
+
+
+# Sort order for known export groups
+GROUP_ORDER: Dict[str, int] = {
+    'components': 100,
+    'hooks': 200,
+    'primitives': 300,
+    'core': 400,
+    'loaders': 500,
+    'utils': 600,
+    'css': 900,
+}
 
 
 def get_export_group(
@@ -512,7 +495,6 @@ def get_export_group(
     # Check if it's a wildcard pattern
     if clean_path.endswith('/*'):
         dir_name = clean_path[:-2]
-        # CSS exports come after JS exports
         order = 900 if dir_name == 'css' else 100
         return (dir_name, '', order)
     
@@ -520,75 +502,16 @@ def get_export_group(
     parts = clean_path.split('/')
     if len(parts) == 1:
         # Root level file - could be transformed component or actual root file
-        # If pathTransform exists, check if it removes "./components/" prefix
-        # In that case, these are components and should be grouped together
         is_transformed_component = path_transform is not None
-        order = 100 if is_transformed_component else 800  # Components: 100, other root files: 800
+        order = 100 if is_transformed_component else 800
         group = 'components' if is_transformed_component else ''
         return (group, parts[0], order)
     
     group = parts[0]
     subpath = '/'.join(parts[1:])
-    
-    # Define sort order for known groups
-    group_order: Dict[str, int] = {
-        'components': 100,
-        'hooks': 200,
-        'primitives': 300,
-        'core': 400,
-        'loaders': 500,
-        'utils': 600,
-        'css': 900,
-    }
-    
-    order = group_order.get(group, 700)  # Unknown groups come after known ones
+    order = GROUP_ORDER.get(group, 700)  # Unknown groups come after known ones
     
     return (group, subpath, order)
-
-
-def sort_exports(
-    a: str,
-    b: str,
-    path_transform: Optional[Callable[[str], str]] = None
-) -> int:
-    """
-    Sort comparator for export paths.
-    
-    Groups exports by directory and sorts alphabetically within each group.
-    The root entry "." always comes first.
-    
-    Args:
-        a: First export path to compare
-        b: Second export path to compare
-        path_transform: Optional path transformation function
-    
-    Returns:
-        Comparison result for sorting
-    """
-    # "." always comes first
-    if a == '.':
-        return -1
-    if b == '.':
-        return 1
-    
-    group_a, subpath_a, order_a = get_export_group(a, path_transform)
-    group_b, subpath_b, order_b = get_export_group(b, path_transform)
-    
-    # Sort by order first (groups)
-    if order_a != order_b:
-        return order_a - order_b
-    
-    # Same order, sort by group name
-    if group_a != group_b:
-        # Empty group (root files) comes after directories
-        if group_a == '':
-            return 1
-        if group_b == '':
-            return -1
-        return -1 if group_a < group_b else 1
-    
-    # Same group, sort by subpath
-    return -1 if subpath_a < subpath_b else 1
 
 
 def generate_exports(
@@ -611,75 +534,73 @@ def generate_exports(
     Returns:
         A dictionary of export paths to export entries or CSS file paths
     """
-    # 1. Scan the dist directory
+    # Scan and group files by module
     files = scan_directory(dist_dir)
-    
-    if len(files) == 0:
+    if not files:
         print('⚠️  No files found in dist directory')
-        return {'./package.json': './package.json'}
+        return {PACKAGE_JSON_EXPORT: PACKAGE_JSON_EXPORT}
     
-    # 2. Group files by module
     modules = group_files_by_module(files)
-    
-    if len(modules) == 0:
+    if not modules:
         print('⚠️  No valid modules found (need .js and .d.ts files)')
-        return {'./package.json': './package.json'}
+        return {PACKAGE_JSON_EXPORT: PACKAGE_JSON_EXPORT}
     
-    # 3. Filter and validate modules
+    # Filter and validate modules
     valid_modules = [m for m in modules.values() if is_valid_module(m)]
-    
-    if len(valid_modules) == 0:
+    if not valid_modules:
         print('⚠️  No valid modules after validation')
-        return {'./package.json': './package.json'}
+        return {PACKAGE_JSON_EXPORT: PACKAGE_JSON_EXPORT}
     
-    # 4. Create exports object
+    # Create exports object
     exports: Dict[str, Dict[str, str]] = {}
-    
     for module in valid_modules:
         export_path, entry = create_export_entry(module, path_transform)
         exports[export_path] = entry
     
-    # 5. Sort exports by directory groups
-    sorted_exports: Dict[str, Union[Dict[str, str], str]] = {}
-    
-    # Create a key function for sorting
+    # Sort exports by directory groups
     def sort_key(path: str) -> Tuple[int, str, str]:
         group, subpath, order = get_export_group(path, path_transform)
         return (order, group, subpath)
     
-    export_keys = sorted(exports.keys(), key=lambda x: sort_key(x))
+    sorted_exports: Dict[str, Union[Dict[str, str], str]] = {
+        key: exports[key] for key in sorted(exports.keys(), key=sort_key)
+    }
     
-    for key in export_keys:
-        sorted_exports[key] = exports[key]
-    
-    # 6. Auto-detect and generate CSS exports
-    css_exports_to_add: Dict[str, str] = {}
+    # Generate CSS exports
     if css_config is not None:
-        # Use provided config
-        css_exports_to_add = generate_css_exports(dist_dir, css_config)
+        css_exports = generate_css_exports(dist_dir, css_config)
     else:
-        # Auto-detect: scan for all CSS files and generate exports
+        # Auto-detect CSS files
         css_files = scan_css_files(dist_dir)
-        
-        if len(css_files) > 0:
-            # Auto-add CSS exports with defaults
-            css_exports_to_add = generate_css_exports(dist_dir, {'enabled': True})
+        css_exports = generate_css_exports(dist_dir, {'enabled': True}) if css_files else {}
     
-    # Merge CSS exports and re-sort
-    sorted_exports.update(css_exports_to_add)
+    # Merge and re-sort with CSS exports
+    sorted_exports.update(css_exports)
+    all_keys = sorted(sorted_exports.keys(), key=sort_key)
+    final_exports = {key: sorted_exports[key] for key in all_keys}
     
-    # Re-sort after adding CSS exports to maintain group order
-    all_keys = sorted(sorted_exports.keys(), key=lambda x: sort_key(x))
+    # Always add package.json export at the end
+    final_exports[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT
     
-    # Rebuild sorted exports
-    final_sorted_exports: Dict[str, Union[Dict[str, str], str]] = {}
-    for key in all_keys:
-        final_sorted_exports[key] = sorted_exports[key]
+    return final_exports
+
+
+def get_relative_path(package_dir: Path, root_dir: Path) -> str:
+    """
+    Get relative path from root directory, normalized with forward slashes.
     
-    # 7. Always add package.json export at the end
-    final_sorted_exports['./package.json'] = './package.json'
+    Args:
+        package_dir: The package directory
+        root_dir: The root directory
     
-    return final_sorted_exports
+    Returns:
+        Normalized relative path string
+    """
+    try:
+        return normalize_path(package_dir.relative_to(root_dir))
+    except ValueError:
+        # If paths are on different drives (Windows), use absolute path
+        return str(package_dir)
 
 
 def update_package_json(
@@ -702,10 +623,8 @@ def update_package_json(
     with open(package_json_path, 'r', encoding='utf-8') as f:
         package_json = json.load(f)
     
-    # Merge new exports
     package_json['exports'] = new_exports
     
-    # Write back with formatting
     with open(package_json_path, 'w', encoding='utf-8') as f:
         json.dump(package_json, f, indent=2, ensure_ascii=False)
         f.write('\n')
@@ -733,15 +652,10 @@ def process_package(
     package_json_path = package_dir / PACKAGE_JSON
     
     # Get relative path from root for config matching
-    try:
-        relative_path = str(package_dir.relative_to(root_dir)).replace('\\', '/')
-    except ValueError:
-        # If paths are on different drives (Windows), use absolute path
-        relative_path = str(package_dir)
+    relative_path = get_relative_path(package_dir, root_dir)
     
     # Check if package should be skipped
-    skip_packages = config.get('skipPackages', [])
-    if relative_path in skip_packages:
+    if relative_path in config.get('skipPackages', []):
         print(f'⏭️  Skipping {package_dir.name} (configured to skip)')
         return
     
@@ -755,11 +669,7 @@ def process_package(
             package_json = json.load(f)
         
         package_name = package_json.get('name', package_dir.name)
-        
-        # Get path transformation for this package
         path_transform = create_path_transform(config, relative_path)
-        
-        # Get CSS export config for this package
         css_exports_config = config.get('cssExports', {})
         css_config = css_exports_config.get(relative_path) if css_exports_config else None
         
@@ -768,10 +678,7 @@ def process_package(
         if path_transform:
             print('🔧 Using custom path transformation')
         if css_config is not None:
-            if css_config is False:
-                print('🚫 CSS exports disabled')
-            else:
-                print('🎨 CSS exports configured')
+            print('🚫 CSS exports disabled' if css_config is False else '🎨 CSS exports configured')
         print('🔍 Scanning dist directory...')
         
         exports = generate_exports(dist_dir, path_transform, css_config)
@@ -784,7 +691,6 @@ def process_package(
         print('✨ Done! package.json exports updated.')
     except Exception as error:
         print(f'❌ Error processing {package_dir}: {error}')
-        import traceback
         traceback.print_exc()
         raise
 
@@ -817,19 +723,13 @@ def find_all_packages(
             if not entry.is_dir():
                 continue
             
-            try:
-                relative_path = str(entry.relative_to(root_dir)).replace('\\', '/')
-            except ValueError:
-                relative_path = str(entry)
-            
-            # Skip packages in config
+            relative_path = get_relative_path(entry, root_dir)
             if relative_path in skip_packages:
                 continue
             
             dist_path = entry / DIST_DIR
             package_json_path = entry / PACKAGE_JSON
             
-            # Check if package has both package.json and dist/
             if package_json_path.exists() and dist_path.exists():
                 packages.append(entry)
     except (PermissionError, OSError) as error:
@@ -840,21 +740,16 @@ def find_all_packages(
 
 def main() -> None:
     """Main entry point for the export generation script."""
-    # Get workspace root (parent of scripts directory)
     script_path = Path(__file__).resolve()
-    scripts_dir = script_path.parent
-    root_dir = scripts_dir.parent
-    
+    root_dir = script_path.parent.parent
     args = sys.argv[1:]
     
     try:
-        # Load configuration
         config = load_config(root_dir)
         
-        if len(args) > 0:
+        if args:
             # Process single package
-            package_dir = root_dir / args[0]
-            process_package(package_dir, root_dir, config)
+            process_package(root_dir / args[0], root_dir, config)
         else:
             # Process all packages
             packages_dir = root_dir / 'packages'
@@ -862,7 +757,7 @@ def main() -> None:
             
             packages = find_all_packages(packages_dir, root_dir, config)
             
-            if len(packages) == 0:
+            if not packages:
                 print('⚠️  No packages with dist/ directory found')
                 return
             
@@ -886,7 +781,6 @@ def main() -> None:
                 print(f'  ❌ Errors: {error_count}')
     except Exception as error:
         print(f'❌ Error: {error}')
-        import traceback
         traceback.print_exc()
         sys.exit(1)
 
