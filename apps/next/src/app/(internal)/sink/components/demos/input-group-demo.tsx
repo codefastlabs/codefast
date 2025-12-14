@@ -368,7 +368,7 @@ export function InputGroupDemo() {
         <Field>
           <FieldLabel htmlFor="input-username-26">Username</FieldLabel>
           <InputGroup>
-            <InputGroupInput id="input-username-26" defaultValue="shadcn" />
+            <InputGroupInput id="input-username-26" defaultValue="codefast" />
             <InputGroupAddon align="inline-end">
               <div className="flex size-4 items-center justify-center rounded-full bg-green-500 dark:bg-green-800">
                 <IconCheck className="size-3 text-white" />
@@ -409,7 +409,7 @@ export function InputGroupDemo() {
           <FieldLabel htmlFor="input-group-29">Loading</FieldLabel>
           <FieldDescription>This is a description of the input group.</FieldDescription>
           <InputGroup>
-            <InputGroupInput id="input-group-29" disabled defaultValue="shadcn" />
+            <InputGroupInput id="input-group-29" disabled defaultValue="codefast" />
             <InputGroupAddon align="inline-end">
               <Spinner />
             </InputGroupAddon>

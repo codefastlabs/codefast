@@ -1102,7 +1102,7 @@ function FinderPreferencesForm() {
                   </SelectItem>
                   <SelectItem value="home">
                     <FolderIcon />
-                    shadcn
+                    codefast
                   </SelectItem>
                   <SelectItem value="desktop">
                     <MonitorIcon /> Desktop
