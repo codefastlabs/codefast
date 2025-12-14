@@ -25,7 +25,7 @@ const progressCircleVariants = tv({
   },
   variants: {
     size: {
-      sm: { label: 'text-[10px]' },
+      sm: { label: 'text-[0.625rem]' },
 
       md: { label: 'text-xs' },
 
@@ -48,7 +48,8 @@ const progressCircleVariants = tv({
  * ----------------------------------------------------------------------------------------------- */
 
 interface ProgressCircleProps
-  extends Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, 'children' | 'size'>,
+  extends
+    Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, 'children' | 'size'>,
     VariantProps<typeof progressCircleVariants> {
   /**
    * Enables animation effect when value changes
