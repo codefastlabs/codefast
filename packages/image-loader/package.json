@@ -30,25 +30,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./core/factory": {
-      "types": "./dist/core/factory.d.ts",
-      "import": "./dist/core/factory.js",
-      "require": "./dist/core/factory.cjs"
-    },
     "./core/image-loader": {
       "types": "./dist/core/image-loader.d.ts",
       "import": "./dist/core/image-loader.js",
       "require": "./dist/core/image-loader.cjs"
-    },
-    "./core/image-loader-factory": {
-      "types": "./dist/core/image-loader-factory.d.ts",
-      "import": "./dist/core/image-loader-factory.js",
-      "require": "./dist/core/image-loader-factory.cjs"
-    },
-    "./core/loader": {
-      "types": "./dist/core/loader.d.ts",
-      "import": "./dist/core/loader.js",
-      "require": "./dist/core/loader.cjs"
     },
     "./core/loader-registry": {
       "types": "./dist/core/loader-registry.d.ts",
@@ -74,11 +59,6 @@
       "types": "./dist/loaders/contentful.d.ts",
       "import": "./dist/loaders/contentful.js",
       "require": "./dist/loaders/contentful.cjs"
-    },
-    "./loaders/default": {
-      "types": "./dist/loaders/default.d.ts",
-      "import": "./dist/loaders/default.js",
-      "require": "./dist/loaders/default.cjs"
     },
     "./loaders/fastly": {
       "types": "./dist/loaders/fastly.d.ts",
