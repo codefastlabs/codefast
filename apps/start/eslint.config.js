@@ -48,18 +48,19 @@ export default [
   },
   {
     files: ['**/*.{ts,tsx}'],
-    rules: {
-      '@typescript-eslint/array-type': ['error', { default: 'array' }],
-      'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
-    },
-  },
-  {
-    files: ['**/*.{ts,tsx}'],
     plugins: {
       tsdoc: tsdoc,
     },
     rules: {
       'tsdoc/syntax': 'warn',
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/array-type': ['error', { default: 'array' }],
+      'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
+      'jsx-a11y/anchor-is-valid': 'off',
     },
   },
   prettierConfig,

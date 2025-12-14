@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Switch } from '@codefast/ui/switch';
 import { CheckIcon } from 'lucide-react';
+import { Image } from '@unpic/react';
 
 const modes = [
   {
@@ -67,11 +68,12 @@ export function AppearanceSettings() {
           >
             {modes.map((mode) => (
               <FieldLabel htmlFor={mode.value} className="gap-0 overflow-hidden" key={mode.value}>
-                <img
+                <Image
                   src={mode.image}
                   alt={mode.name}
                   width={160}
                   height={90}
+                  layout="constrained"
                   className="hidden aspect-video w-full object-cover @min-[448px]/field-group:block dark:brightness-[0.2] dark:grayscale"
                 />
                 <Field
