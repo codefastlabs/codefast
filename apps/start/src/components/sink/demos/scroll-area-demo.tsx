@@ -1,6 +1,7 @@
 import { ScrollArea, ScrollAreaScrollbar } from '@codefast/ui/scroll-area';
 import { Separator } from '@codefast/ui/separator';
 import { Fragment } from 'react';
+import { Image } from '@unpic/react';
 
 export function ScrollAreaDemo() {
   return (
@@ -53,12 +54,13 @@ function ScrollAreaHorizontalDemo() {
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
             <div className="overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={artwork.art}
                 alt={`Photo by ${artwork.artist}`}
-                className="aspect-[3/4] h-fit w-fit object-cover"
                 width={300}
                 height={400}
+                layout="constrained"
+                className="aspect-[3/4] h-fit w-fit object-cover"
               />
             </div>
             <figcaption className="text-muted-foreground pt-2 text-xs">

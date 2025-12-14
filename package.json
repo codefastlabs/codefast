@@ -14,7 +14,7 @@
     "deploy:preview": "vercel deploy --archive=tgz",
     "deps:reinstall": "pnpm clean && pnpm install && pnpm build:packages",
     "deps:upgrade": "pnpm up --latest --recursive --interactive",
-    "dev": "pnpm clean:next && turbo run dev",
+    "dev": "turbo run dev",
     "format": "prettier --write .",
     "generate:exports": "tsx scripts/generate-exports.ts",
     "lint": "turbo lint",

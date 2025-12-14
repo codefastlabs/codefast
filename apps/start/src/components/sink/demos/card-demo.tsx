@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { BathIcon, BedIcon, LandPlotIcon } from 'lucide-react';
+import { Image } from '@unpic/react';
 
 export function CardDemo() {
   return (
@@ -86,12 +87,13 @@ export function CardDemo() {
           <CardDescription>This is a card with an image.</CardDescription>
         </CardHeader>
         <CardContent className="px-0">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
             alt="Photo by Drew Beamer"
+            width={800}
+            height={450}
+            layout="constrained"
             className="aspect-video object-cover"
-            width={500}
-            height={500}
           />
         </CardContent>
         <CardFooter className="flex items-center gap-2">
