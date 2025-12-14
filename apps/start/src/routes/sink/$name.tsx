@@ -1,6 +1,4 @@
-import { Skeleton } from '@codefast/ui/skeleton';
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense } from 'react';
 import { componentRegistry } from '@/components/sink/component-registry';
 
 export const Route = createFileRoute('/sink/$name')({
@@ -35,9 +33,7 @@ function ComponentPage() {
 
   return (
     <div className="p-6">
-      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-        <Component />
-      </Suspense>
+      <Component />
     </div>
   );
 }

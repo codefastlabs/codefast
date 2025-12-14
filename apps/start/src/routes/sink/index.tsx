@@ -1,8 +1,6 @@
-import { Skeleton } from '@codefast/ui/skeleton';
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense } from 'react';
-import { componentRegistry } from '@/components/sink/component-registry';
 import { ComponentWrapper } from '@/components/sink/app/component-wrapper';
+import { componentRegistry } from '@/components/sink/component-registry';
 
 export const Route = createFileRoute('/sink/')({
   component: SinkPage,
@@ -27,9 +25,7 @@ function SinkPage() {
 
           return (
             <ComponentWrapper key={key} name={key} className={component.className ?? ''}>
-              <Suspense fallback={<Skeleton className="h-20 w-full" />}>
-                <Component />
-              </Suspense>
+              <Component />
             </ComponentWrapper>
           );
         })}
