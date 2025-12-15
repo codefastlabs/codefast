@@ -16,8 +16,8 @@
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
-    "@tabler/icons-react": "^3.35.0",
-    "@tanstack/react-form": "^1.27.3",
+    "@tabler/icons-react": "^3.36.0",
+    "@tanstack/react-form": "^1.27.4",
     "date-fns": "^4.1.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.561.0",
@@ -27,9 +27,9 @@
     "react-day-picker": "^9.12.0",
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.68.0",
-    "recharts": "^3.5.1",
+    "recharts": "^3.6.0",
     "sonner": "^2.0.7",
-    "zod": "^4.1.13"
+    "zod": "^4.2.0"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
