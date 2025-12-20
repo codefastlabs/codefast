@@ -116,7 +116,7 @@ export function SonnerDemo() {
       {allTypes.map((type) => (
         <Button
           variant="ghost"
-          data-active={activeType.name === type.name}
+          data-active={activeType?.name === type.name}
           onClick={() => {
             type.action();
             setActiveType(type);
