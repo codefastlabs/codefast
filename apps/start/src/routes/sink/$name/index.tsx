@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { componentRegistry } from '@/components/sink/component-registry';
 
-export const Route = createFileRoute('/sink/$name')({
+export const Route = createFileRoute('/sink/$name/')({
   component: ComponentPage,
   head: ({ params }) => {
     const component = componentRegistry[params.name];

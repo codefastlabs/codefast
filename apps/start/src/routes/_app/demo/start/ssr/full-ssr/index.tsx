@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { getPunkSongs } from '@/data/demo.punk-songs';
 
-export const Route = createFileRoute('/_app/demo/start/ssr/full-ssr')({
+export const Route = createFileRoute('/_app/demo/start/ssr/full-ssr/')({
   component: RouteComponent,
   loader: async () => await getPunkSongs(),
 });
