@@ -4,9 +4,9 @@ import { setThemeServerFn } from './server';
 import type { JSX, ReactNode } from 'react';
 import type { Theme } from './server';
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Types
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 export type ThemeContextType = {
   readonly theme: Theme;
@@ -15,15 +15,15 @@ export type ThemeContextType = {
 
 type ThemeContextValue = ThemeContextType | null;
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Context
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 export const ThemeContext = createContext<ThemeContextValue>(null);
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Utilities
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 /**
  * Disables CSS transitions temporarily to prevent animation during theme changes.
@@ -69,9 +69,9 @@ function disableAnimation(nonce?: string): () => void {
   };
 }
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Props
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 type ThemeProviderProps = {
   children: ReactNode;
@@ -80,9 +80,9 @@ type ThemeProviderProps = {
   nonce?: string;
 };
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Component: ThemeProvider
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 /**
  * Provider component for managing theme state.

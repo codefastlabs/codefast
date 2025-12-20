@@ -2,9 +2,9 @@ import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Types & Constants
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 const themeValidator = z.union([z.literal('light'), z.literal('dark')]);
 
@@ -14,9 +14,9 @@ const storageKey = '_preferred-theme';
 
 export const DEFAULT_THEME: Theme = 'dark';
 
-/* -----
+/* -----------------------------------------------------------------------------
  * Server Functions
- * ----- */
+ * -------------------------------------------------------------------------- */
 
 /**
  * Get the current theme from cookies or return the default theme.
