@@ -16,7 +16,7 @@
     "deps:upgrade": "pnpm up --latest --recursive --interactive",
     "dev": "turbo run dev",
     "format": "prettier --write .",
-    "generate:exports": "tsx scripts/generate-exports.ts",
+    "generate:exports": "scripts/generate-exports.py",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "precommit": "lint-staged",
@@ -36,7 +36,7 @@
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
     "@commitlint/types": "^20.2.0",
-    "@types/node": "^25.0.2",
+    "@types/node": "^25.0.3",
     "eslint": "^9.39.2",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
@@ -45,7 +45,7 @@
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "turbo": "^2.6.3"
+    "turbo": "^2.7.0"
   },
   "packageManager": "pnpm@10.25.0",
   "engines": {
