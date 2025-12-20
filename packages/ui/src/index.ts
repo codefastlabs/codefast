@@ -525,8 +525,8 @@ export type { RadioCardsItemProps, RadioCardsProps } from '@/components/radio-ca
 export { RadioGroup, RadioGroupItem } from '@/components/radio-group';
 export type { RadioGroupItemProps, RadioGroupProps } from '@/components/radio-group';
 
-export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/resizable';
-export type { ResizableHandleProps, ResizablePanelGroupProps, ResizablePanelProps } from '@/components/resizable';
+export { ResizableGroup, ResizablePanel, ResizableSeparator } from '@/components/resizable';
+export type { ResizableGroupProps, ResizablePanelProps, ResizableSeparatorProps } from '@/components/resizable';
 
 export { ScrollArea, ScrollAreaScrollbar, scrollAreaScrollbarVariants } from '@/components/scroll-area';
 export type { ScrollAreaProps, ScrollAreaScrollbarProps } from '@/components/scroll-area';
