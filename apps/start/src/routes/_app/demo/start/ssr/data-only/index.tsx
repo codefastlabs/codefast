@@ -1,18 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
 import { getPunkSongs } from '@/data/demo.punk-songs';
 
-export const Route = createFileRoute('/_app/demo/start/ssr/spa-mode')({
-  ssr: false,
+export const Route = createFileRoute('/_app/demo/start/ssr/data-only/')({
+  ssr: 'data-only',
   component: RouteComponent,
+  loader: async () => await getPunkSongs(),
 });
 
 function RouteComponent() {
-  const [punkSongs, setPunkSongs] = useState<Awaited<ReturnType<typeof getPunkSongs>>>();
-
-  useEffect(() => {
-    getPunkSongs().then(setPunkSongs);
-  }, []);
+  const punkSongs = Route.useLoaderData();
 
   return (
     <div
@@ -22,9 +18,9 @@ function RouteComponent() {
       }}
     >
       <div className="w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md">
-        <h1 className="mb-6 text-3xl font-bold text-green-400">SPA Mode - Punk Songs</h1>
+        <h1 className="mb-6 text-3xl font-bold text-pink-400">Data Only SSR - Punk Songs</h1>
         <ul className="space-y-3">
-          {punkSongs?.map((song) => (
+          {punkSongs.map((song) => (
             <li key={song.id} className="rounded-lg border border-white/20 bg-white/10 p-4 shadow-md backdrop-blur-sm">
               <span className="text-lg font-medium text-white">{song.name}</span>
               <span className="text-white/60"> - {song.artist}</span>
