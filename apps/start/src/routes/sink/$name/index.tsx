@@ -6,7 +6,7 @@ export const Route = createFileRoute('/sink/$name/')({
   head: ({ params }) => {
     const component = componentRegistry[params.name];
 
-    if (!component) {
+    if (!component || component.type !== 'registry:ui') {
       return {
         meta: [{ title: 'Component Not Found' }],
       };
@@ -25,7 +25,7 @@ function ComponentPage() {
   const { name } = Route.useParams();
   const component = componentRegistry[name];
 
-  if (!component) {
+  if (!component || component.type !== 'registry:ui') {
     return <div className="p-6 text-center">Component not found</div>;
   }
 
