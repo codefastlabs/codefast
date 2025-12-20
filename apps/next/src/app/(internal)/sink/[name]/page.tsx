@@ -7,9 +7,11 @@ export const dynamic = 'force-static';
 export const revalidate = false;
 
 export async function generateStaticParams() {
-  return Object.keys(componentRegistry).map((name) => ({
-    name,
-  }));
+  return Object.values(componentRegistry)
+    .filter((component) => component.type === 'registry:ui')
+    .map((component) => ({
+      name: component.name.toLowerCase().replace(/ /g, '-'),
+    }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ name: string }> }): Promise<Metadata> {
