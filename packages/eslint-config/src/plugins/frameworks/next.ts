@@ -1,7 +1,8 @@
 import type { Linter } from 'eslint';
 
-import { disabledReactRules } from '@/plugins/frameworks/react';
 import pluginNext from '@next/eslint-plugin-next';
+
+import { disabledReactRules } from '@/plugins/frameworks/react';
 
 /**
  * Rules that are disabled (set to "off") for Next.js plugin
