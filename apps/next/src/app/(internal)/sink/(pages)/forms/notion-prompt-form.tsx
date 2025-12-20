@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { type ElementType, useMemo, useState } from 'react';
 import {
   IconApps,
   IconArrowUp,
@@ -38,7 +38,25 @@ import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Switch } from '@codefast/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
-const SAMPLE_DATA = {
+interface MentionableItem {
+  type: string;
+  title: string;
+  image: string;
+  workspace?: string;
+}
+
+interface ModelItem {
+  name: string;
+  icon?: ElementType;
+  badge?: string;
+}
+
+interface SampleData {
+  mentionable: MentionableItem[];
+  models: ModelItem[];
+}
+
+const SAMPLE_DATA: SampleData = {
   mentionable: [
     {
       type: 'page',
@@ -127,7 +145,7 @@ const SAMPLE_DATA = {
   ],
 };
 
-function MentionableIcon({ item }: { item: (typeof SAMPLE_DATA.mentionable)[0] }) {
+function MentionableIcon({ item }: { item: MentionableItem }) {
   return item.type === 'page' ? (
     <span className="flex size-4 items-center justify-center">{item.image}</span>
   ) : (
@@ -142,7 +160,7 @@ export function NotionPromptForm() {
   const [mentions, setMentions] = useState<string[]>([]);
   const [mentionPopoverOpen, setMentionPopoverOpen] = useState(false);
   const [modelPopoverOpen, setModelPopoverOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<(typeof SAMPLE_DATA.models)[0]>(SAMPLE_DATA.models[0]);
+  const [selectedModel, setSelectedModel] = useState<ModelItem>(SAMPLE_DATA.models[0]);
   const [scopeMenuOpen, setScopeMenuOpen] = useState(false);
 
   const grouped = useMemo(() => {
@@ -158,7 +176,7 @@ export function NotionPromptForm() {
         }
         return acc;
       },
-      {} as Record<string, typeof SAMPLE_DATA.mentionable>,
+      {} as Record<string, MentionableItem[]>,
     );
   }, [mentions]);
 
