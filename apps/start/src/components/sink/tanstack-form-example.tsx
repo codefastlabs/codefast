@@ -239,7 +239,7 @@ export function ExampleForm() {
                         id={field.name}
                         name={field.name}
                         value={[field.state.value]}
-                        onValueChange={(value) => field.handleChange(value[0])}
+                        onValueChange={(value) => field.handleChange(value[0] ?? 1)}
                         min={1}
                         max={50}
                         step={10}
