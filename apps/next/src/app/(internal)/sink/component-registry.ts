@@ -433,5 +433,3 @@ export const componentRegistry: Record<string, ComponentConfig> = {
     href: '/sink/react-hook-form',
   },
 };
-
-export type ComponentKey = keyof typeof componentRegistry;

@@ -430,4 +430,4 @@ export const componentRegistry: Record<string, ComponentConfig> = {
   },
 };
 
-export type ComponentKey = keyof typeof componentRegistry;
+
