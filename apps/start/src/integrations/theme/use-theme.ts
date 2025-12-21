@@ -1,6 +1,6 @@
 import { use } from 'react';
-import { ThemeContext } from 'src/integrations/theme/provider';
-import type { ThemeContextType } from 'src/integrations/theme/provider';
+import type { ThemeContextType } from '@/integrations/theme/provider';
+import { ThemeContext } from '@/integrations/theme/provider';
 
 /* -----------------------------------------------------------------------------
  * Hook: useTheme

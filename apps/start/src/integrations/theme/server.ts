@@ -1,18 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
-import { z } from 'zod';
-
-/* -----------------------------------------------------------------------------
- * Types & Constants
- * -------------------------------------------------------------------------- */
-
-const themeValidator = z.union([z.literal('light'), z.literal('dark'), z.literal('system')]);
-
-export type Theme = z.infer<typeof themeValidator>;
-
-const storageKey = 'ui-theme';
-
-export const DEFAULT_THEME: Theme = 'system';
+import type { Theme } from '@/integrations/theme/types';
+import { DEFAULT_THEME, THEME_STORAGE_KEY, themeSchema } from '@/integrations/theme/types';
 
 /* -----------------------------------------------------------------------------
  * Server Functions
@@ -26,10 +15,10 @@ export const DEFAULT_THEME: Theme = 'system';
  * @returns The current theme preference stored in cookies, or DEFAULT_THEME if not set or invalid.
  */
 export const getThemeServerFn = createServerFn().handler((): Theme => {
-  const cookieTheme = getCookie(storageKey);
+  const cookieTheme = getCookie(THEME_STORAGE_KEY);
 
   // Validate cookie value using Zod to ensure type safety
-  const validationResult = themeValidator.safeParse(cookieTheme);
+  const validationResult = themeSchema.safeParse(cookieTheme);
 
   if (validationResult.success) {
     return validationResult.data;
@@ -49,9 +38,9 @@ export const getThemeServerFn = createServerFn().handler((): Theme => {
  * @throws Error If the theme value is invalid
  */
 export const setThemeServerFn = createServerFn({ method: 'POST' })
-  .inputValidator(themeValidator)
+  .inputValidator(themeSchema)
   .handler(({ data }: { data: Theme }): void => {
-    setCookie(storageKey, data, {
+    setCookie(THEME_STORAGE_KEY, data, {
       // Set cookie to expire in 1 year
       maxAge: 60 * 60 * 24 * 365,
       // Make cookie available to all paths

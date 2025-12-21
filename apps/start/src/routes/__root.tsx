@@ -6,8 +6,7 @@ import { ActiveThemeProvider } from '@/components/active-theme';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
-import { ThemeProvider, ThemeScript } from '@/integrations/theme/provider';
-import { getThemeServerFn } from '@/integrations/theme/server';
+import { ThemeProvider, ThemeScript, getThemeServerFn } from '@/integrations/theme';
 import appCss from '@/styles/globals.css?url';
 
 interface MyRouterContext {

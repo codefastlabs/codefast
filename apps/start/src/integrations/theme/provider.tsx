@@ -1,8 +1,8 @@
 import { useRouter } from '@tanstack/react-router';
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { setThemeServerFn } from './server';
 import type { JSX, ReactNode } from 'react';
-import type { Theme } from './server';
+import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
+import { setThemeServerFn } from '@/integrations/theme/server';
 
 /* -----------------------------------------------------------------------------
  * Types
@@ -10,7 +10,7 @@ import type { Theme } from './server';
 
 export type ThemeContextType = {
   readonly theme: Theme;
-  readonly resolvedTheme: 'light' | 'dark';
+  readonly resolvedTheme: ResolvedTheme;
   readonly setTheme: (value: Theme) => Promise<void>;
 };
 
@@ -73,7 +73,7 @@ function disableAnimation(nonce?: string): () => void {
 /**
  * Helper to get the resolved theme (light/dark) from a Theme value.
  */
-function getSystemTheme(): 'light' | 'dark' {
+function getSystemTheme(): ResolvedTheme {
   if (typeof window === 'undefined') return 'light'; // Default for SSR if strictly needed, though usage should be careful
   return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
 }
@@ -107,7 +107,7 @@ export function ThemeProvider({
 
   // Calculate verified theme for initial state if possible, otherwise default to light/dark based on initialTheme
   // Note: During SSR, we can't know 'system' preference, so we rely on client hydration to fix it if it's 'system'
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => {
     if (initialTheme === 'system') {
       // If server sent 'system', we might default to one or the other until hydration
       // However, if we access window here (lazy init), we might get it right on client
@@ -120,7 +120,7 @@ export function ThemeProvider({
   });
 
   // Apply theme to DOM
-  const applyTheme = useCallback((targetTheme: Theme, resolved: 'light' | 'dark') => {
+  const applyTheme = useCallback((targetTheme: Theme, resolved: ResolvedTheme) => {
     const root = window.document.documentElement;
 
     root.classList.remove('light', 'dark');
