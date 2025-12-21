@@ -1,5 +1,5 @@
 import { useRouter } from '@tanstack/react-router';
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import type { JSX, ReactNode } from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import { setThemeServerFn } from '@/integrations/theme/server';
@@ -78,6 +78,17 @@ function getSystemTheme(): ResolvedTheme {
   return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
 }
 
+/**
+ * Apply the resolved theme to the DOM.
+ */
+function applyTheme(resolved: ResolvedTheme): void {
+  const root = window.document.documentElement;
+
+  root.classList.remove('light', 'dark');
+  root.classList.add(resolved);
+  root.style.colorScheme = resolved;
+}
+
 /* -----------------------------------------------------------------------------
  * Props
  * -------------------------------------------------------------------------- */
@@ -119,38 +130,30 @@ export function ThemeProvider({
     return initialTheme;
   });
 
-  // Apply theme to DOM
-  const applyTheme = useCallback((targetTheme: Theme, resolved: ResolvedTheme) => {
-    const root = window.document.documentElement;
+  // Handler for system theme changes - using useEffectEvent to read latest theme without re-subscribing
+  const onSystemThemeChange = useEffectEvent(() => {
+    if (theme === 'system') {
+      const newResolved = getSystemTheme();
+      setResolvedTheme(newResolved);
+      applyTheme(newResolved);
+    }
+  });
 
-    root.classList.remove('light', 'dark');
-    root.classList.add(resolved);
-    root.style.colorScheme = resolved;
-  }, []);
-
-  // Effect to handle system theme changes
+  // Effect to handle system theme changes - only runs once on mount
   useEffect(() => {
     const mediaQuery = window.matchMedia(MEDIA);
 
-    const handleChange = () => {
-      if (theme === 'system') {
-        const newResolved = getSystemTheme();
-        setResolvedTheme(newResolved);
-        applyTheme('system', newResolved);
-      }
-    };
+    mediaQuery.addEventListener('change', onSystemThemeChange);
 
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, applyTheme]);
+    return () => mediaQuery.removeEventListener('change', onSystemThemeChange);
+  }, []);
 
   // Effect to apply theme when it changes
   useEffect(() => {
     const newResolved = theme === 'system' ? getSystemTheme() : theme;
     setResolvedTheme(newResolved);
-    applyTheme(theme, newResolved);
-  }, [theme, applyTheme]);
+    applyTheme(newResolved);
+  }, [theme]);
 
   const setTheme = useCallback(
     async (value: Theme): Promise<void> => {
@@ -164,7 +167,7 @@ export function ThemeProvider({
       // Calculate resolved immediately for UI feedback
       const newResolved = value === 'system' ? getSystemTheme() : value;
       setResolvedTheme(newResolved);
-      applyTheme(value, newResolved);
+      applyTheme(newResolved);
 
       try {
         await setThemeServerFn({ data: value });
@@ -175,14 +178,14 @@ export function ThemeProvider({
         // Recalculate original resolved
         const originalResolved = theme === 'system' ? getSystemTheme() : theme;
         setResolvedTheme(originalResolved);
-        applyTheme(theme, originalResolved);
+        applyTheme(originalResolved);
 
         console.error('Failed to set theme:', error);
       } finally {
         enable?.();
       }
     },
-    [theme, disableTransitionOnChange, nonce, router, applyTheme],
+    [theme, disableTransitionOnChange, nonce, router],
   );
 
   const value = useMemo<ThemeContextType>(

@@ -13,7 +13,7 @@ import { ThemeContext } from '@/integrations/theme/provider';
  * context reading and better integration with Suspense boundaries.
  *
  * @returns The theme context value containing `theme` and `setTheme`
- * @throws {Error} If called outside of a ThemeProvider
+ * @throws Error - If called outside of a ThemeProvider
  *
  * @example
  * ```tsx
