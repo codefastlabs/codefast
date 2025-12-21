@@ -6,7 +6,7 @@ import { ActiveThemeProvider } from '@/components/active-theme';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
-import { ThemeProvider } from '@/integrations/theme/provider';
+import { ThemeProvider, ThemeScript } from '@/integrations/theme/provider';
 import { getThemeServerFn } from '@/integrations/theme/server';
 import appCss from '@/styles/globals.css?url';
 
@@ -35,9 +35,10 @@ function RootShellComponent({ children }: RootShellComponentProps) {
   const theme = Route.useLoaderData();
 
   return (
-    <html className={theme} lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <ThemeScript theme={theme} />
       </head>
       <body>
         <ThemeProvider theme={theme} disableTransitionOnChange>
