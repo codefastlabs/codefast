@@ -122,7 +122,7 @@ export function ButtonGroupDemo() {
                   <ChevronDownIcon />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="[--radius:theme(spacing.4)]">
+              <DropdownMenuContent align="end" className="[--radius:--spacing(4)]">
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <VolumeOffIcon />
@@ -159,7 +159,7 @@ export function ButtonGroupDemo() {
               </DropdownMenuContent>
             </DropdownMenu>
           </ButtonGroup>
-          <ButtonGroup className="[--radius:theme(spacing.3.5)]">
+          <ButtonGroup className="[--radius:--spacing(3.5)]">
             <Button variant="secondary">Actions</Button>
             <ButtonGroupSeparator />
             <DropdownMenu>
@@ -168,7 +168,7 @@ export function ButtonGroupDemo() {
                   <MoreHorizontalIcon />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="[--radius:theme(spacing.3.5)]">
+              <DropdownMenuContent align="end" className="[--radius:--spacing(3.5)]">
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <IconCircleCheck />
@@ -206,7 +206,7 @@ export function ButtonGroupDemo() {
         </Field>
       </div>
       <div className="flex max-w-xs flex-col gap-6">
-        <ButtonGroup className="[--spacing:theme(spacing.1)]">
+        <ButtonGroup className="[--spacing:--spacing(1)]">
           <Button variant="outline">
             <FlipHorizontalIcon />
           </Button>
@@ -223,7 +223,7 @@ export function ButtonGroupDemo() {
             </InputGroupAddon>
           </InputGroup>
         </ButtonGroup>
-        <div className="flex gap-2 [--radius:theme(spacing.4)] [--ring:var(--color-blue-300)] [--spacing:theme(spacing.1)] **:[.shadow-xs]:shadow-none">
+        <div className="flex gap-2 [--radius:--spacing(4)] [--ring:var(--color-blue-300)] [--spacing:--spacing(1)] **:[.shadow-xs]:shadow-none">
           <InputGroup>
             <InputGroupInput placeholder="Type to search..." />
             <InputGroupAddon align="inline-start" className="text-muted-foreground">
@@ -258,7 +258,7 @@ export function ButtonGroupDemo() {
             </Popover>
           </ButtonGroup>
         </div>
-        <FieldGroup className="grid grid-cols-2 gap-4 [--spacing:theme(spacing.1)]">
+        <FieldGroup className="grid grid-cols-2 gap-4 [--spacing:--spacing(1)]">
           <Field>
             <Label htmlFor="width">Width</Label>
             <ButtonGroup>
@@ -389,7 +389,7 @@ export function ButtonGroupDemo() {
             <ArrowRightIcon />
           </Button>
         </ButtonGroup>
-        <ButtonGroup className="[--radius:theme(spacing.3.5)] [--spacing:theme(spacing.1)]">
+        <ButtonGroup className="[--radius:--spacing(3.5)] [--spacing:--spacing(1)]">
           <ButtonGroup>
             <Button variant="outline">1</Button>
             <Button variant="outline">2</Button>

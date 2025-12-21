@@ -183,7 +183,7 @@ export function NotionPromptForm() {
   const hasMentions = mentions.length > 0;
 
   return (
-    <form className="[--radius:theme(spacing.5)]">
+    <form className="[--radius:--spacing(5)]">
       <Field>
         <FieldLabel htmlFor="notion-prompt" className="sr-only">
           Prompt
@@ -206,7 +206,7 @@ export function NotionPromptForm() {
                 </TooltipTrigger>
                 <TooltipContent>Mention a person, page, or date</TooltipContent>
               </Tooltip>
-              <PopoverContent className="p-0 [--radius:theme(spacing.5)]" align="start">
+              <PopoverContent className="p-0 [--radius:--spacing(5)]" align="start">
                 <Command>
                   <CommandInput placeholder="Search pages..." />
                   <CommandList>
@@ -279,7 +279,7 @@ export function NotionPromptForm() {
                 </TooltipTrigger>
                 <TooltipContent>Select AI model</TooltipContent>
               </Tooltip>
-              <DropdownMenuContent side="top" align="start" className="[--radius:theme(spacing.5)]">
+              <DropdownMenuContent side="top" align="start" className="[--radius:--spacing(5)]">
                 <DropdownMenuGroup className="w-72">
                   <DropdownMenuLabel className="text-muted-foreground text-xs">
                     Get answers about your workspace
@@ -316,7 +316,7 @@ export function NotionPromptForm() {
                   <IconWorld /> All Sources
                 </InputGroupButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" align="start" className="[--radius:theme(spacing.5)]">
+              <DropdownMenuContent side="top" align="start" className="[--radius:--spacing(5)]">
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild onSelect={(e) => e.preventDefault()}>
                     <label htmlFor="web-search">
@@ -343,7 +343,7 @@ export function NotionPromptForm() {
                       </Avatar>
                       codefast
                     </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className="w-72 p-0 [--radius:theme(spacing.5)]">
+                    <DropdownMenuSubContent className="w-72 p-0 [--radius:--spacing(5)]">
                       <Command>
                         <CommandInput placeholder="Find or use knowledge in..." autoFocus />
                         <CommandList>
