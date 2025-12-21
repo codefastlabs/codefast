@@ -56,7 +56,7 @@ export const buttonVariants = {
       destructive:
         'bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80 focus:bg-destructive/90',
       ghost: 'hover:bg-accent hover:text-accent-foreground active:bg-accent/80 focus:bg-accent',
-      gradient: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600',
+      gradient: 'bg-linear-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600',
       info: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus:bg-blue-700',
       link: 'text-primary underline-offset-4 hover:underline active:text-primary/80 focus:text-primary/90',
       outline:

@@ -60,7 +60,7 @@ function TanStackQueryDemo() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-900 via-red-800 to-black p-4 text-white"
+      className="flex min-h-screen items-center justify-center bg-linear-to-br from-red-900 via-red-800 to-black p-4 text-white"
       style={{
         backgroundImage: 'radial-gradient(50% 50% at 80% 20%, #3B021F 0%, #7B1028 60%, #1A000A 100%)',
       }}

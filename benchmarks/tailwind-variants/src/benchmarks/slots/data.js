@@ -19,7 +19,7 @@ export const slotsVariants = {
     content: 'p-6 pt-0 space-y-4',
     description: 'text-sm text-muted-foreground leading-relaxed',
     footer: 'flex items-center justify-between p-6 pt-0 border-t border-border/50 bg-muted/20',
-    header: 'flex flex-col space-y-1.5 p-6 border-b border-border/50 bg-gradient-to-r from-background to-muted/10',
+    header: 'flex flex-col space-y-1.5 p-6 border-b border-border/50 bg-linear-to-r from-background to-muted/10',
     icon: 'h-5 w-5 shrink-0',
     image: 'w-full h-48 object-cover',
     title: 'text-2xl font-semibold leading-none tracking-tight flex items-center gap-2',
@@ -148,7 +148,7 @@ export const slotsVariants = {
       destructive: {
         badge: 'bg-destructive text-destructive-foreground',
         base: 'border-destructive bg-destructive/5',
-        header: 'text-destructive bg-gradient-to-r from-destructive/10 to-destructive/5',
+        header: 'text-destructive bg-linear-to-r from-destructive/10 to-destructive/5',
         title: 'text-destructive',
       },
       glass: {
@@ -157,30 +157,30 @@ export const slotsVariants = {
         header: 'backdrop-blur-sm bg-white/10',
       },
       gradient: {
-        badge: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
-        base: 'border-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20',
-        header: 'text-white bg-gradient-to-r from-purple-600 to-pink-600',
+        badge: 'bg-linear-to-r from-purple-500 to-pink-500 text-white',
+        base: 'border-0 bg-linear-to-br from-purple-500/20 to-pink-500/20',
+        header: 'text-white bg-linear-to-r from-purple-600 to-pink-600',
         title: 'text-white',
       },
       info: {
         badge: 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100',
         base: 'border-blue-500 bg-blue-50 dark:bg-blue-950/20',
         header:
-          'text-blue-700 dark:text-blue-300 bg-gradient-to-r from-blue-100/50 to-blue-50 dark:from-blue-900/50 dark:to-blue-950/20',
+          'text-blue-700 dark:text-blue-300 bg-linear-to-r from-blue-100/50 to-blue-50 dark:from-blue-900/50 dark:to-blue-950/20',
         title: 'text-blue-700 dark:text-blue-300',
       },
       success: {
         badge: 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100',
         base: 'border-green-500 bg-green-50 dark:bg-green-950/20',
         header:
-          'text-green-700 dark:text-green-300 bg-gradient-to-r from-green-100/50 to-green-50 dark:from-green-900/50 dark:to-green-950/20',
+          'text-green-700 dark:text-green-300 bg-linear-to-r from-green-100/50 to-green-50 dark:from-green-900/50 dark:to-green-950/20',
         title: 'text-green-700 dark:text-green-300',
       },
       warning: {
         badge: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100',
         base: 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20',
         header:
-          'text-yellow-700 dark:text-yellow-300 bg-gradient-to-r from-yellow-100/50 to-yellow-50 dark:from-yellow-900/50 dark:to-yellow-950/20',
+          'text-yellow-700 dark:text-yellow-300 bg-linear-to-r from-yellow-100/50 to-yellow-50 dark:from-yellow-900/50 dark:to-yellow-950/20',
         title: 'text-yellow-700 dark:text-yellow-300',
       },
     },
