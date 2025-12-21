@@ -6,14 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@code
 import { Separator } from '@codefast/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
 import { CheckCircle2Icon, InfoIcon, LaptopIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
-import type { Theme } from '@/integrations/theme/server';
-import { useTheme } from '@/integrations/theme/use-theme';
+import { themes, useTheme } from '@/integrations/theme';
 
 export const Route = createFileRoute('/_app/demo/theme/')({
   component: ThemeDemo,
 });
-
-const themes: Theme[] = ['light', 'dark', 'system'];
 
 function ThemeDemo() {
   const { theme, resolvedTheme, setTheme } = useTheme();
