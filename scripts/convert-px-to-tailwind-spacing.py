@@ -639,6 +639,26 @@ def find_spacing_classes(content: str) -> list[Match]:
 
     matches.append((match.start(), match.end(), full_match, new_class))
 
+
+  return matches
+
+
+def find_theme_spacing_classes(content: str) -> list[Match]:
+  """Find and convert theme(spacing.X) to --spacing(X).
+  
+  Example: [--radius:theme(spacing.5)] → [--radius:--spacing(5)]
+  """
+  matches = []
+  
+  # Pattern: theme(spacing.X) where X is a number/decimal/key
+  # We look for it typically inside arbitrary values or specific positions
+  for match in re.finditer(r'theme\(spacing\.([^)]+)\)', content):
+    full_match = match.group(0)
+    spacing_key = match.group(1)
+    
+    new_value = f'--spacing({spacing_key})'
+    matches.append((match.start(), match.end(), full_match, new_value))
+    
   return matches
 
 
@@ -667,6 +687,7 @@ FINDERS = [
   find_typography_classes,
   find_font_size_rem_classes,
   find_leading_rem_classes,
+  find_theme_spacing_classes,
 ]
 
 
