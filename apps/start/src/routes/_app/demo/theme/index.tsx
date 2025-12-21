@@ -5,7 +5,7 @@ import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Separator } from '@codefast/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
-import { CheckCircle2Icon, InfoIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
+import { CheckCircle2Icon, InfoIcon, LaptopIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
 import type { Theme } from '@/integrations/theme/server';
 import { useTheme } from '@/integrations/theme/use-theme';
 
@@ -13,17 +13,17 @@ export const Route = createFileRoute('/_app/demo/theme/')({
   component: ThemeDemo,
 });
 
-const themes: Theme[] = ['light', 'dark'];
+const themes: Theme[] = ['light', 'dark', 'system'];
 
 function ThemeDemo() {
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
   return (
     <div className="container mx-auto max-w-6xl space-y-8 p-8">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-4xl font-bold tracking-tight">Theme Demo</h1>
-        <p className="text-muted-foreground">Demo tính năng theme switching với hỗ trợ light mode và dark mode.</p>
+        <p className="text-muted-foreground">Demo tính năng theme switching với hỗ trợ light, dark và system mode.</p>
       </div>
 
       {/* Theme Switcher Section */}
@@ -39,7 +39,11 @@ function ThemeDemo() {
           <div className="flex flex-wrap gap-3">
             {themes.map((themeOption) => {
               const isActive = theme === themeOption;
-              const Icon = themeOption === 'light' ? SunIcon : MoonIcon;
+              let Icon;
+
+              if (themeOption === 'light') Icon = SunIcon;
+              else if (themeOption === 'dark') Icon = MoonIcon;
+              else Icon = LaptopIcon;
 
               return (
                 <Button
@@ -74,6 +78,12 @@ function ThemeDemo() {
                   {theme}
                 </Badge>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground text-sm font-medium">resolvedTheme:</span>
+                <Badge variant={resolvedTheme === 'dark' ? 'secondary' : 'outline'} className="capitalize">
+                  {resolvedTheme}
+                </Badge>
+              </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground text-sm font-medium">Available Themes:</span>
@@ -98,11 +108,15 @@ function ThemeDemo() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
                 <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
-                <span>Hỗ trợ light mode và dark mode</span>
+                <span>Hỗ trợ Light, Dark và System mode</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
-                <span>Lưu preference vào cookie</span>
+                <span>Resolved Theme Calculation</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
+                <span>Lưu preference vào cookie (HttpOnly)</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
@@ -110,7 +124,7 @@ function ThemeDemo() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />
-                <span>Không có flash khi load trang (FOUC prevention)</span>
+                <span>Không có flash khi load trang (FOUC prevention via Script)</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2Icon className="mt-0.5 h-4 w-4 text-green-500" />

@@ -6,13 +6,13 @@ import { z } from 'zod';
  * Types & Constants
  * -------------------------------------------------------------------------- */
 
-const themeValidator = z.union([z.literal('light'), z.literal('dark')]);
+const themeValidator = z.union([z.literal('light'), z.literal('dark'), z.literal('system')]);
 
 export type Theme = z.infer<typeof themeValidator>;
 
-const storageKey = '_preferred-theme';
+const storageKey = 'ui-theme';
 
-export const DEFAULT_THEME: Theme = 'dark';
+export const DEFAULT_THEME: Theme = 'system';
 
 /* -----------------------------------------------------------------------------
  * Server Functions
