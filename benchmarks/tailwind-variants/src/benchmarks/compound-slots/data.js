@@ -62,7 +62,7 @@ export const compoundSlotsVariants = {
       slots: ['item', 'prev', 'next'],
     },
     {
-      className: 'bg-gradient-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
+      className: 'bg-linear-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
       color: 'gradient',
       slots: ['item', 'prev', 'next'],
     },
@@ -118,9 +118,9 @@ export const compoundSlotsVariants = {
         prev: 'text-red-600 hover:text-red-700 hover:bg-red-50 active:bg-red-100',
       },
       gradient: {
-        item: 'bg-gradient-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
-        next: 'bg-gradient-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
-        prev: 'bg-gradient-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
+        item: 'bg-linear-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
+        next: 'bg-linear-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
+        prev: 'bg-linear-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600',
       },
       info: {
         item: 'text-purple-600 hover:text-purple-700 hover:bg-purple-50 active:bg-purple-100',

@@ -661,6 +661,38 @@ def find_theme_spacing_classes(content: str) -> list[Match]:
     
   return matches
 
+def find_gradient_classes(content: str) -> list[Match]:
+  """Find and convert bg-gradient-* to bg-linear-*.
+  
+  Tailwind v4 renamed bg-gradient to bg-linear.
+  """
+  matches = []
+  
+  # bg-gradient-to-r -> bg-linear-to-r
+  for match in re.finditer(r'bg-gradient-([a-z0-9-]+)', content):
+    full_match = match.group(0)
+    suffix = match.group(1)
+    
+    new_class = f'bg-linear-{suffix}'
+    matches.append((match.start(), match.end(), full_match, new_class))
+    
+  return matches
+
+
+def find_overflow_classes(content: str) -> list[Match]:
+  """Find and convert overflow-ellipsis to text-ellipsis.
+  
+  Tailwind v4 removed overflow-ellipsis in favor of text-ellipsis.
+  """
+  matches = []
+  
+  # overflow-ellipsis -> text-ellipsis
+  for match in re.finditer(r'overflow-ellipsis', content):
+    full_match = match.group(0)
+    matches.append((match.start(), match.end(), full_match, 'text-ellipsis'))
+    
+  return matches
+
 
 # =============================================================================
 # Main Processing
@@ -688,6 +720,8 @@ FINDERS = [
   find_font_size_rem_classes,
   find_leading_rem_classes,
   find_theme_spacing_classes,
+  find_gradient_classes,
+  find_overflow_classes,
 ]
 
 

@@ -74,7 +74,7 @@ export function AlertDemo() {
       </Alert>
       <Alert>
         <CheckCircle2Icon />
-        <AlertTitle className="max-w-[calc(100%---spacing(16))] overflow-ellipsis">
+        <AlertTitle className="max-w-[calc(100%---spacing(16))] text-ellipsis">
           The selected emails have been marked as spam.
         </AlertTitle>
         <Button size="sm" variant="outline" className="absolute top-2.5 right-3 h-6 shadow-none">
