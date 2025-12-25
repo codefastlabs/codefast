@@ -1,4 +1,6 @@
+import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { Skeleton } from '@codefast/ui/skeleton';
 import { componentRegistry } from '@/components/sink/component-registry';
 
 export const Route = createFileRoute('/sink/$name/')({
@@ -23,17 +25,19 @@ export const Route = createFileRoute('/sink/$name/')({
 
 function ComponentPage() {
   const { name } = Route.useParams();
-  const component = componentRegistry[name];
+  const config = componentRegistry[name];
 
-  if (!component || component.type !== 'registry:ui') {
+  if (!config || config.type !== 'registry:ui') {
     return <div className="p-6 text-center">Component not found</div>;
   }
 
-  const Component = component.component;
+  const Component = config.component;
 
   return (
     <div className="p-6">
-      <Component />
+      <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+        <Component />
+      </Suspense>
     </div>
   );
 }

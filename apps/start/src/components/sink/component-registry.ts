@@ -1,61 +1,7 @@
+import { lazy } from 'react';
 import type { ComponentType } from 'react';
-import { AccordionDemo } from '@/components/sink/demos/accordion-demo';
-import { AlertDemo } from '@/components/sink/demos/alert-demo';
-import { AlertDialogDemo } from '@/components/sink/demos/alert-dialog-demo';
-import { AspectRatioDemo } from '@/components/sink/demos/aspect-ratio-demo';
-import { AvatarDemo } from '@/components/sink/demos/avatar-demo';
-import { BadgeDemo } from '@/components/sink/demos/badge-demo';
-import { BreadcrumbDemo } from '@/components/sink/demos/breadcrumb-demo';
-import { ButtonDemo } from '@/components/sink/demos/button-demo';
-import { ButtonGroupDemo } from '@/components/sink/demos/button-group-demo';
-import { CalendarDemo } from '@/components/sink/demos/calendar-demo';
-import { CardDemo } from '@/components/sink/demos/card-demo';
-import { CarouselDemo } from '@/components/sink/demos/carousel-demo';
-import { ChartDemo } from '@/components/sink/demos/chart-demo';
-import { CheckboxDemo } from '@/components/sink/demos/checkbox-demo';
-import { CollapsibleDemo } from '@/components/sink/demos/collapsible-demo';
-import { ComboboxDemo } from '@/components/sink/demos/combobox-demo';
-import { CommandDemo } from '@/components/sink/demos/command-demo';
-import { ContextMenuDemo } from '@/components/sink/demos/context-menu-demo';
-import { DatePickerDemo } from '@/components/sink/demos/date-picker-demo';
-import { DialogDemo } from '@/components/sink/demos/dialog-demo';
-import { DrawerDemo } from '@/components/sink/demos/drawer-demo';
-import { DropdownMenuDemo } from '@/components/sink/demos/dropdown-menu-demo';
-import { EmptyDemo } from '@/components/sink/demos/empty-demo';
-import { FieldDemo } from '@/components/sink/demos/field-demo';
-import { FormDemo } from '@/components/sink/demos/form-demo';
-import { HoverCardDemo } from '@/components/sink/demos/hover-card-demo';
-import { InputDemo } from '@/components/sink/demos/input-demo';
-import { InputGroupDemo } from '@/components/sink/demos/input-group-demo';
-import { InputOTPDemo } from '@/components/sink/demos/input-otp-demo';
-import { ItemDemo } from '@/components/sink/demos/item-demo';
-import { KbdDemo } from '@/components/sink/demos/kbd-demo';
-import { LabelDemo } from '@/components/sink/demos/label-demo';
-import { MenubarDemo } from '@/components/sink/demos/menubar-demo';
-import { NativeSelectDemo } from '@/components/sink/demos/native-select-demo';
-import { NavigationMenuDemo } from '@/components/sink/demos/navigation-menu-demo';
-import { PaginationDemo } from '@/components/sink/demos/pagination-demo';
-import { PopoverDemo } from '@/components/sink/demos/popover-demo';
-import { ProgressDemo } from '@/components/sink/demos/progress-demo';
-import { RadioGroupDemo } from '@/components/sink/demos/radio-group-demo';
-import { ResizableDemo } from '@/components/sink/demos/resizable-demo';
-import { ScrollAreaDemo } from '@/components/sink/demos/scroll-area-demo';
-import { SelectDemo } from '@/components/sink/demos/select-demo';
-import { SeparatorDemo } from '@/components/sink/demos/separator-demo';
-import { SheetDemo } from '@/components/sink/demos/sheet-demo';
-import { SkeletonDemo } from '@/components/sink/demos/skeleton-demo';
-import { SliderDemo } from '@/components/sink/demos/slider-demo';
-import { SonnerDemo } from '@/components/sink/demos/sonner-demo';
-import { SpinnerDemo } from '@/components/sink/demos/spinner-demo';
-import { SwitchDemo } from '@/components/sink/demos/switch-demo';
-import { TableDemo } from '@/components/sink/demos/table-demo';
-import { TabsDemo } from '@/components/sink/demos/tabs-demo';
-import { TextareaDemo } from '@/components/sink/demos/textarea-demo';
-import { ToggleDemo } from '@/components/sink/demos/toggle-demo';
-import { ToggleGroupDemo } from '@/components/sink/demos/toggle-group-demo';
-import { TooltipDemo } from '@/components/sink/demos/tooltip-demo';
 
-type ComponentConfig = {
+export type ComponentConfig = {
   name: string;
   component: ComponentType;
   className?: string;
@@ -64,370 +10,402 @@ type ComponentConfig = {
   label?: string;
 };
 
+const EmptyComponent = () => null;
+
 export const componentRegistry: Record<string, ComponentConfig> = {
   accordion: {
     name: 'Accordion',
-    component: AccordionDemo,
+    component: lazy(() => import('@/components/sink/demos/accordion-demo').then((m) => ({ default: m.AccordionDemo }))),
     type: 'registry:ui',
     href: '/sink/accordion',
   },
   alert: {
     name: 'Alert',
-    component: AlertDemo,
+    component: lazy(() => import('@/components/sink/demos/alert-demo').then((m) => ({ default: m.AlertDemo }))),
     type: 'registry:ui',
     href: '/sink/alert',
   },
   'alert-dialog': {
     name: 'Alert Dialog',
-    component: AlertDialogDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/alert-dialog-demo').then((m) => ({ default: m.AlertDialogDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/alert-dialog',
   },
   'aspect-ratio': {
     name: 'Aspect Ratio',
-    component: AspectRatioDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/aspect-ratio-demo').then((m) => ({ default: m.AspectRatioDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/aspect-ratio',
   },
   avatar: {
     name: 'Avatar',
-    component: AvatarDemo,
+    component: lazy(() => import('@/components/sink/demos/avatar-demo').then((m) => ({ default: m.AvatarDemo }))),
     type: 'registry:ui',
     href: '/sink/avatar',
   },
   badge: {
     name: 'Badge',
-    component: BadgeDemo,
+    component: lazy(() => import('@/components/sink/demos/badge-demo').then((m) => ({ default: m.BadgeDemo }))),
     type: 'registry:ui',
     href: '/sink/badge',
   },
   breadcrumb: {
     name: 'Breadcrumb',
-    component: BreadcrumbDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/breadcrumb-demo').then((m) => ({ default: m.BreadcrumbDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/breadcrumb',
   },
   button: {
     name: 'Button',
-    component: ButtonDemo,
+    component: lazy(() => import('@/components/sink/demos/button-demo').then((m) => ({ default: m.ButtonDemo }))),
     type: 'registry:ui',
     href: '/sink/button',
   },
   'button-group': {
     name: 'Button Group',
-    component: ButtonGroupDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/button-group-demo').then((m) => ({ default: m.ButtonGroupDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/button-group',
     label: 'New',
   },
   calendar: {
     name: 'Calendar',
-    component: CalendarDemo,
+    component: lazy(() => import('@/components/sink/demos/calendar-demo').then((m) => ({ default: m.CalendarDemo }))),
     type: 'registry:ui',
     href: '/sink/calendar',
   },
   card: {
     name: 'Card',
-    component: CardDemo,
+    component: lazy(() => import('@/components/sink/demos/card-demo').then((m) => ({ default: m.CardDemo }))),
     type: 'registry:ui',
     href: '/sink/card',
   },
   carousel: {
     name: 'Carousel',
-    component: CarouselDemo,
+    component: lazy(() => import('@/components/sink/demos/carousel-demo').then((m) => ({ default: m.CarouselDemo }))),
     type: 'registry:ui',
     href: '/sink/carousel',
   },
   chart: {
     name: 'Chart',
-    component: ChartDemo,
+    component: lazy(() => import('@/components/sink/demos/chart-demo').then((m) => ({ default: m.ChartDemo }))),
     className: 'w-full',
     type: 'registry:ui',
     href: '/sink/chart',
   },
   checkbox: {
     name: 'Checkbox',
-    component: CheckboxDemo,
+    component: lazy(() => import('@/components/sink/demos/checkbox-demo').then((m) => ({ default: m.CheckboxDemo }))),
     type: 'registry:ui',
     href: '/sink/checkbox',
   },
   collapsible: {
     name: 'Collapsible',
-    component: CollapsibleDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/collapsible-demo').then((m) => ({ default: m.CollapsibleDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/collapsible',
   },
   combobox: {
     name: 'Combobox',
-    component: ComboboxDemo,
+    component: lazy(() => import('@/components/sink/demos/combobox-demo').then((m) => ({ default: m.ComboboxDemo }))),
     type: 'registry:ui',
     href: '/sink/combobox',
   },
   command: {
     name: 'Command',
-    component: CommandDemo,
+    component: lazy(() => import('@/components/sink/demos/command-demo').then((m) => ({ default: m.CommandDemo }))),
     type: 'registry:ui',
     href: '/sink/command',
   },
   'context-menu': {
     name: 'Context Menu',
-    component: ContextMenuDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/context-menu-demo').then((m) => ({ default: m.ContextMenuDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/context-menu',
   },
   'date-picker': {
     name: 'Date Picker',
-    component: DatePickerDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/date-picker-demo').then((m) => ({ default: m.DatePickerDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/date-picker',
   },
   dialog: {
     name: 'Dialog',
-    component: DialogDemo,
+    component: lazy(() => import('@/components/sink/demos/dialog-demo').then((m) => ({ default: m.DialogDemo }))),
     type: 'registry:ui',
     href: '/sink/dialog',
   },
   drawer: {
     name: 'Drawer',
-    component: DrawerDemo,
+    component: lazy(() => import('@/components/sink/demos/drawer-demo').then((m) => ({ default: m.DrawerDemo }))),
     type: 'registry:ui',
     href: '/sink/drawer',
   },
   'dropdown-menu': {
     name: 'Dropdown Menu',
-    component: DropdownMenuDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/dropdown-menu-demo').then((m) => ({ default: m.DropdownMenuDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/dropdown-menu',
   },
   empty: {
     name: 'Empty',
-    component: EmptyDemo,
+    component: lazy(() => import('@/components/sink/demos/empty-demo').then((m) => ({ default: m.EmptyDemo }))),
     type: 'registry:ui',
     href: '/sink/empty',
     label: 'New',
   },
   field: {
     name: 'Field',
-    component: FieldDemo,
+    component: lazy(() => import('@/components/sink/demos/field-demo').then((m) => ({ default: m.FieldDemo }))),
     type: 'registry:ui',
     href: '/sink/field',
     label: 'New',
   },
   form: {
     name: 'Form',
-    component: FormDemo,
+    component: lazy(() => import('@/components/sink/demos/form-demo').then((m) => ({ default: m.FormDemo }))),
     type: 'registry:ui',
     href: '/sink/form',
   },
   'hover-card': {
     name: 'Hover Card',
-    component: HoverCardDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/hover-card-demo').then((m) => ({ default: m.HoverCardDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/hover-card',
   },
   input: {
     name: 'Input',
-    component: InputDemo,
+    component: lazy(() => import('@/components/sink/demos/input-demo').then((m) => ({ default: m.InputDemo }))),
     type: 'registry:ui',
     href: '/sink/input',
   },
   'input-group': {
     name: 'Input Group',
-    component: InputGroupDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/input-group-demo').then((m) => ({ default: m.InputGroupDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/input-group',
     label: 'New',
   },
   'input-otp': {
     name: 'Input OTP',
-    component: InputOTPDemo,
+    component: lazy(() => import('@/components/sink/demos/input-otp-demo').then((m) => ({ default: m.InputOTPDemo }))),
     type: 'registry:ui',
     href: '/sink/input-otp',
   },
   item: {
     name: 'Item',
-    component: ItemDemo,
+    component: lazy(() => import('@/components/sink/demos/item-demo').then((m) => ({ default: m.ItemDemo }))),
     type: 'registry:ui',
     href: '/sink/item',
     label: 'New',
   },
   kbd: {
     name: 'Kbd',
-    component: KbdDemo,
+    component: lazy(() => import('@/components/sink/demos/kbd-demo').then((m) => ({ default: m.KbdDemo }))),
     type: 'registry:ui',
     href: '/sink/kbd',
     label: 'New',
   },
   label: {
     name: 'Label',
-    component: LabelDemo,
+    component: lazy(() => import('@/components/sink/demos/label-demo').then((m) => ({ default: m.LabelDemo }))),
     type: 'registry:ui',
     href: '/sink/label',
   },
   menubar: {
     name: 'Menubar',
-    component: MenubarDemo,
+    component: lazy(() => import('@/components/sink/demos/menubar-demo').then((m) => ({ default: m.MenubarDemo }))),
     type: 'registry:ui',
     href: '/sink/menubar',
   },
   'navigation-menu': {
     name: 'Navigation Menu',
-    component: NavigationMenuDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/navigation-menu-demo').then((m) => ({ default: m.NavigationMenuDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/navigation-menu',
   },
   'native-select': {
     name: 'Native Select',
-    component: NativeSelectDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/native-select-demo').then((m) => ({ default: m.NativeSelectDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/native-select',
     label: 'New',
   },
   pagination: {
     name: 'Pagination',
-    component: PaginationDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/pagination-demo').then((m) => ({ default: m.PaginationDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/pagination',
   },
   popover: {
     name: 'Popover',
-    component: PopoverDemo,
+    component: lazy(() => import('@/components/sink/demos/popover-demo').then((m) => ({ default: m.PopoverDemo }))),
     type: 'registry:ui',
     href: '/sink/popover',
   },
   progress: {
     name: 'Progress',
-    component: ProgressDemo,
+    component: lazy(() => import('@/components/sink/demos/progress-demo').then((m) => ({ default: m.ProgressDemo }))),
     type: 'registry:ui',
     href: '/sink/progress',
   },
   'radio-group': {
     name: 'Radio Group',
-    component: RadioGroupDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/radio-group-demo').then((m) => ({ default: m.RadioGroupDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/radio-group',
   },
   resizable: {
     name: 'Resizable',
-    component: ResizableDemo,
+    component: lazy(() => import('@/components/sink/demos/resizable-demo').then((m) => ({ default: m.ResizableDemo }))),
     type: 'registry:ui',
     href: '/sink/resizable',
   },
   'scroll-area': {
     name: 'Scroll Area',
-    component: ScrollAreaDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/scroll-area-demo').then((m) => ({ default: m.ScrollAreaDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/scroll-area',
   },
   select: {
     name: 'Select',
-    component: SelectDemo,
+    component: lazy(() => import('@/components/sink/demos/select-demo').then((m) => ({ default: m.SelectDemo }))),
     type: 'registry:ui',
     href: '/sink/select',
   },
   separator: {
     name: 'Separator',
-    component: SeparatorDemo,
+    component: lazy(() => import('@/components/sink/demos/separator-demo').then((m) => ({ default: m.SeparatorDemo }))),
     type: 'registry:ui',
     href: '/sink/separator',
   },
   sheet: {
     name: 'Sheet',
-    component: SheetDemo,
+    component: lazy(() => import('@/components/sink/demos/sheet-demo').then((m) => ({ default: m.SheetDemo }))),
     type: 'registry:ui',
     href: '/sink/sheet',
   },
   skeleton: {
     name: 'Skeleton',
-    component: SkeletonDemo,
+    component: lazy(() => import('@/components/sink/demos/skeleton-demo').then((m) => ({ default: m.SkeletonDemo }))),
     type: 'registry:ui',
     href: '/sink/skeleton',
   },
   slider: {
     name: 'Slider',
-    component: SliderDemo,
+    component: lazy(() => import('@/components/sink/demos/slider-demo').then((m) => ({ default: m.SliderDemo }))),
     type: 'registry:ui',
     href: '/sink/slider',
   },
   sonner: {
     name: 'Sonner',
-    component: SonnerDemo,
+    component: lazy(() => import('@/components/sink/demos/sonner-demo').then((m) => ({ default: m.SonnerDemo }))),
     type: 'registry:ui',
     href: '/sink/sonner',
   },
   spinner: {
     name: 'Spinner',
-    component: SpinnerDemo,
+    component: lazy(() => import('@/components/sink/demos/spinner-demo').then((m) => ({ default: m.SpinnerDemo }))),
     type: 'registry:ui',
     href: '/sink/spinner',
     label: 'New',
   },
   switch: {
     name: 'Switch',
-    component: SwitchDemo,
+    component: lazy(() => import('@/components/sink/demos/switch-demo').then((m) => ({ default: m.SwitchDemo }))),
     type: 'registry:ui',
     href: '/sink/switch',
   },
   table: {
     name: 'Table',
-    component: TableDemo,
+    component: lazy(() => import('@/components/sink/demos/table-demo').then((m) => ({ default: m.TableDemo }))),
     type: 'registry:ui',
     href: '/sink/table',
   },
   tabs: {
     name: 'Tabs',
-    component: TabsDemo,
+    component: lazy(() => import('@/components/sink/demos/tabs-demo').then((m) => ({ default: m.TabsDemo }))),
     type: 'registry:ui',
     href: '/sink/tabs',
   },
   textarea: {
     name: 'Textarea',
-    component: TextareaDemo,
+    component: lazy(() => import('@/components/sink/demos/textarea-demo').then((m) => ({ default: m.TextareaDemo }))),
     type: 'registry:ui',
     href: '/sink/textarea',
   },
   toggle: {
     name: 'Toggle',
-    component: ToggleDemo,
+    component: lazy(() => import('@/components/sink/demos/toggle-demo').then((m) => ({ default: m.ToggleDemo }))),
     type: 'registry:ui',
     href: '/sink/toggle',
   },
   'toggle-group': {
     name: 'Toggle Group',
-    component: ToggleGroupDemo,
+    component: lazy(() =>
+      import('@/components/sink/demos/toggle-group-demo').then((m) => ({ default: m.ToggleGroupDemo })),
+    ),
     type: 'registry:ui',
     href: '/sink/toggle-group',
   },
   tooltip: {
     name: 'Tooltip',
-    component: TooltipDemo,
+    component: lazy(() => import('@/components/sink/demos/tooltip-demo').then((m) => ({ default: m.TooltipDemo }))),
     type: 'registry:ui',
     href: '/sink/tooltip',
   },
   blocks: {
     name: 'Forms',
-    component: () => null,
+    component: EmptyComponent,
     type: 'registry:page',
     href: '/sink/forms',
   },
   'start-form': {
     name: 'TanStack Start Form',
-    component: () => null,
+    component: EmptyComponent,
     type: 'registry:page',
     href: '/sink/start-form',
   },
   'tanstack-form': {
     name: 'Tanstack Form',
-    component: () => null,
+    component: EmptyComponent,
     type: 'registry:page',
     href: '/sink/tanstack-form',
   },
   'react-hook-form': {
     name: 'React Hook Form',
-    component: () => null,
+    component: EmptyComponent,
     type: 'registry:page',
     href: '/sink/react-hook-form',
   },
 };
-
-
