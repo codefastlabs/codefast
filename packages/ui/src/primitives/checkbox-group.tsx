@@ -1,8 +1,5 @@
-import type { ComponentProps, JSX } from 'react';
-
-import { useCallback } from 'react';
-
 import type { Scope } from '@radix-ui/react-context';
+import type { ComponentProps, JSX } from 'react';
 
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { createCheckboxScope } from '@radix-ui/react-checkbox';
@@ -11,6 +8,7 @@ import { useDirection } from '@radix-ui/react-direction';
 import * as RovingFocusGroup from '@radix-ui/react-roving-focus';
 import { createRovingFocusGroupScope } from '@radix-ui/react-roving-focus';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useCallback } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Context: CheckboxGroup
@@ -177,7 +175,7 @@ function CheckboxGroup({
    */
   const handleItemCheck = useCallback(
     (itemValue: string) => {
-      setValue((previousValue = []) => [...previousValue, itemValue]);
+      setValue((previousValue) => [...(previousValue ?? []), itemValue]);
     },
     [setValue],
   );
@@ -188,14 +186,16 @@ function CheckboxGroup({
    */
   const handleItemUncheck = useCallback(
     (itemValue: string) => {
-      setValue((previousValue = []) => {
+      setValue((previousValue) => {
+        const currentValue = previousValue ?? [];
+
         // If this is the last selected item and required=true, prevent unchecking
-        if (required && previousValue.length === 1 && previousValue[0] === itemValue) {
-          return previousValue; // Keep the current state
+        if (required && currentValue.length === 1 && currentValue[0] === itemValue) {
+          return currentValue; // Keep the current state
         }
 
         // Otherwise, proceed with unchecking
-        return previousValue.filter((inputValue) => inputValue !== itemValue);
+        return currentValue.filter((inputValue) => inputValue !== itemValue);
       });
     },
     [setValue, required],
@@ -226,11 +226,10 @@ const ITEM_NAME = 'CheckboxGroupItem';
 /**
  * Props for the CheckboxGroupItem component
  */
-interface CheckboxGroupItemProps
-  extends Omit<
-    ComponentProps<typeof CheckboxPrimitive.Root>,
-    'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'
-  > {
+interface CheckboxGroupItemProps extends Omit<
+  ComponentProps<typeof CheckboxPrimitive.Root>,
+  'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'
+> {
   /**
    * Value of the checkbox item, used to identify the item within the group
    */
