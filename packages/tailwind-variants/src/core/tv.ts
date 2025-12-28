@@ -49,6 +49,7 @@ import {
  * @param customClassName - Additional custom CSS classes
  * @param shouldMergeClasses - Whether to merge conflicting classes
  * @param tailwindMergeService - The Tailwind merge service function
+ * @param cachedVariantKeys - Pre-computed variant keys for performance optimization
  * @returns The resolved CSS class string or undefined
  */
 const handleRegularVariantResolution = <T extends ConfigurationSchema>(
@@ -60,6 +61,7 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
   customClassName: ClassValue,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
+  cachedVariantKeys: (keyof T)[],
 ): string | undefined => {
   // Initialize the resolved classes array
   const resolvedClasses: ClassValue[] = [];
@@ -69,10 +71,8 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
     resolvedClasses.push(mergedBaseClasses);
   }
 
-  // Process each variant group
-  const variantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
-
-  for (const variantKey of variantKeys) {
+  // Process each variant group using cached keys
+  for (const variantKey of cachedVariantKeys) {
     const variantGroup = mergedVariantGroups[variantKey];
     const variantValue = variantProps[variantKey];
 
@@ -243,7 +243,13 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
   const mergedDefaultVariantProps = mergedConfiguration.defaultVariants ?? ({} as ConfigurationVariants<T>);
   const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
 
-  // Configuration properties are ready for processing
+  // Pre-compute variant keys to avoid Object.keys() on every invocation
+  const cachedVariantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
+
+  // Validate compound variants configuration once at creation time
+  if (mergedConfiguration.compoundVariants && !Array.isArray(mergedConfiguration.compoundVariants)) {
+    throw new Error('compoundVariants must be an array');
+  }
 
   // Create the main variant resolver function
   const variantResolverFunction = (
@@ -253,11 +259,6 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
     const classProperty = variantProps.class;
     const className = variantProps.className;
     const resolvedVariantProps = variantProps;
-
-    // Validate compound variants configuration
-    if (mergedConfiguration.compoundVariants && !Array.isArray(mergedConfiguration.compoundVariants)) {
-      throw new Error('compoundVariants must be an array');
-    }
 
     // Handle slot-based components
     if (mergedSlotDefinitions) {
@@ -291,6 +292,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         className ?? classProperty,
         shouldMergeClasses,
         tailwindMergeService,
+        cachedVariantKeys as (keyof ConfigurationSchema)[],
       ) as unknown as S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S>;
     }
   };
