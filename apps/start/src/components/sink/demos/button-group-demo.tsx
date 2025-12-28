@@ -55,7 +55,7 @@ import { useState } from 'react';
 export function ButtonGroupDemo() {
   const [currency, setCurrency] = useState('$');
   return (
-    <div className="flex gap-12">
+    <div className="flex flex-wrap gap-12">
       <div className="flex max-w-sm flex-col gap-6">
         <ButtonGroup>
           <Button>Button</Button>
@@ -118,11 +118,11 @@ export function ButtonGroupDemo() {
             <Button variant="outline">Follow</Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="!pl-2">
+                <Button variant="outline" className="pl-2!">
                   <ChevronDownIcon />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="[--radius:--spacing(4)]">
+              <DropdownMenuContent align="end" className="[--radius:0.95rem]">
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <VolumeOffIcon />
@@ -159,7 +159,7 @@ export function ButtonGroupDemo() {
               </DropdownMenuContent>
             </DropdownMenu>
           </ButtonGroup>
-          <ButtonGroup className="[--radius:--spacing(3.5)]">
+          <ButtonGroup className="[--radius:0.9rem]">
             <Button variant="secondary">Actions</Button>
             <ButtonGroupSeparator />
             <DropdownMenu>
@@ -168,7 +168,7 @@ export function ButtonGroupDemo() {
                   <MoreHorizontalIcon />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="[--radius:--spacing(3.5)]">
+              <DropdownMenuContent align="end" className="[--radius:0.9rem]">
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <IconCircleCheck />
@@ -206,7 +206,7 @@ export function ButtonGroupDemo() {
         </Field>
       </div>
       <div className="flex max-w-xs flex-col gap-6">
-        <ButtonGroup className="[--spacing:--spacing(1)]">
+        <ButtonGroup className="[--spacing:0.2rem]">
           <Button variant="outline">
             <FlipHorizontalIcon />
           </Button>
@@ -223,7 +223,7 @@ export function ButtonGroupDemo() {
             </InputGroupAddon>
           </InputGroup>
         </ButtonGroup>
-        <div className="flex gap-2 [--radius:--spacing(4)] [--ring:var(--color-blue-300)] [--spacing:--spacing(1)] **:[.shadow-xs]:shadow-none">
+        <div className="flex gap-2 [--radius:0.95rem] [--ring:var(--color-blue-300)] [--spacing:0.22rem] **:[.shadow-xs]:shadow-none">
           <InputGroup>
             <InputGroupInput placeholder="Type to search..." />
             <InputGroupAddon align="inline-start" className="text-muted-foreground">
@@ -258,7 +258,7 @@ export function ButtonGroupDemo() {
             </Popover>
           </ButtonGroup>
         </div>
-        <FieldGroup className="grid grid-cols-2 gap-4 [--spacing:--spacing(1)]">
+        <FieldGroup className="grid grid-cols-2 gap-4 [--spacing:0.22rem]">
           <Field>
             <Label htmlFor="width">Width</Label>
             <ButtonGroup>
@@ -389,7 +389,7 @@ export function ButtonGroupDemo() {
             <ArrowRightIcon />
           </Button>
         </ButtonGroup>
-        <ButtonGroup className="[--radius:--spacing(3.5)] [--spacing:--spacing(1)]">
+        <ButtonGroup className="[--radius:0.9rem] [--spacing:0.22rem]">
           <ButtonGroup>
             <Button variant="outline">1</Button>
             <Button variant="outline">2</Button>
