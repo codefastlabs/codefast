@@ -1,12 +1,10 @@
 'use client';
 
+import type { Scope } from '@radix-ui/react-context';
 import type { ComponentProps, ReactNode } from 'react';
 
-import { useId, useMemo } from 'react';
-
-import type { Scope } from '@radix-ui/react-context';
-
 import { createContextScope } from '@radix-ui/react-context';
+import { useId, useMemo } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Context: ProgressCircleProvider

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import { useId } from 'react';
 
@@ -9,8 +11,6 @@ import {
   InputNumberField,
   InputNumberIncrementButton,
 } from '@/primitives/input-number';
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 describe('input-number', () => {
   describe('InputNumber', () => {

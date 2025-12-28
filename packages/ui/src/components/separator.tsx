@@ -1,8 +1,7 @@
 'use client';
 
-import type { ComponentProps, JSX } from 'react';
-
 import type { VariantProps } from '@codefast/tailwind-variants';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn, tv } from '@codefast/tailwind-variants';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
@@ -35,8 +34,7 @@ const separatorVariants = tv({
  * -------------------------------------------------------------------------- */
 
 interface SeparatorProps
-  extends ComponentProps<typeof SeparatorPrimitive.Root>,
-    Omit<VariantProps<typeof separatorVariants>, 'orientation'> {}
+  extends ComponentProps<typeof SeparatorPrimitive.Root>, Omit<VariantProps<typeof separatorVariants>, 'orientation'> {}
 
 function Separator({ align, className, decorative = true, orientation, ...props }: SeparatorProps): JSX.Element {
   return (

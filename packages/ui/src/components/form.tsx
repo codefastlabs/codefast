@@ -1,18 +1,17 @@
 'use client';
 
+import type { Scope } from '@radix-ui/react-context';
+import type * as LabelPrimitive from '@radix-ui/react-label';
 import type { ComponentProps, JSX, ReactNode } from 'react';
 import type { ControllerProps, FieldError, FieldPath, FieldValues } from 'react-hook-form';
 
-import { useId } from 'react';
-import { Controller, FormProvider, useFormContext, useFormState } from 'react-hook-form';
-
-import type { Scope } from '@radix-ui/react-context';
-import type * as LabelPrimitive from '@radix-ui/react-label';
-
-import { Label } from '@/components/label';
 import { cn } from '@codefast/tailwind-variants';
 import { createContextScope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
+import { useId } from 'react';
+import { Controller, FormProvider, useFormContext, useFormState } from 'react-hook-form';
+
+import { Label } from '@/components/label';
 
 /* -----------------------------------------------------------------------------
  * Component: Form

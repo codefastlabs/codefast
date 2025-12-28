@@ -2,11 +2,10 @@
 
 import type { ComponentProps, JSX } from 'react';
 
+import { cn } from '@codefast/tailwind-variants';
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { MinusIcon } from 'lucide-react';
 import { use } from 'react';
-
-import { cn } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp

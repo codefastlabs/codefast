@@ -1,6 +1,5 @@
-import type { ComponentProps, JSX } from 'react';
-
 import type { VariantProps } from '@codefast/tailwind-variants';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn, tv } from '@codefast/tailwind-variants';
 

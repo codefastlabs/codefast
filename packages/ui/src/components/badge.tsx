@@ -1,8 +1,7 @@
 'use client';
 
-import type { ComponentProps, JSX } from 'react';
-
 import type { VariantProps } from '@codefast/tailwind-variants';
+import type { ComponentProps, JSX } from 'react';
 
 import { tv } from '@codefast/tailwind-variants';
 import { Slot } from '@radix-ui/react-slot';

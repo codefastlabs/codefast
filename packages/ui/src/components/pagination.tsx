@@ -1,11 +1,10 @@
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX } from 'react';
 
+import { cn } from '@codefast/tailwind-variants';
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 
-import type { VariantProps } from '@codefast/tailwind-variants';
-
 import { buttonVariants } from '@/components/button';
-import { cn } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

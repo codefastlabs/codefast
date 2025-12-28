@@ -1,14 +1,13 @@
 'use client';
 
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX } from 'react';
 
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-
-import type { VariantProps } from '@codefast/tailwind-variants';
-
-import { buttonVariants } from '@/components/button';
 import { cn } from '@codefast/tailwind-variants';
 import * as SelectPrimitive from '@radix-ui/react-select';
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+
+import { buttonVariants } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Select

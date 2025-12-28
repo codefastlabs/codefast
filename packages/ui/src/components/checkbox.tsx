@@ -2,10 +2,9 @@
 
 import type { ComponentProps, JSX } from 'react';
 
-import { CheckIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import { CheckIcon } from 'lucide-react';
 
 /* -----------------------------------------------------------------------------
  * Component: Checkbox

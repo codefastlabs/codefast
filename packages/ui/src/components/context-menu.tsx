@@ -2,10 +2,9 @@
 
 import type { ComponentProps, JSX } from 'react';
 
-import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
+import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenu
