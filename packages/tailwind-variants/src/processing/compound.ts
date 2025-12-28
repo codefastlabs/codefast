@@ -34,10 +34,6 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
 ): ClassValue[] => {
-  // Check if we have default or variant props to avoid unnecessary object operations
-  const hasDefaultProps = Object.keys(defaultVariantProps).length > 0;
-  const hasVariantProps = Object.keys(variantProps).length > 0;
-
   const resolvedClasses: ClassValue[] = [];
 
   // Process each compound variant
@@ -53,16 +49,8 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
         continue;
       }
 
-      // Get property value
-      let propertyValue: unknown;
-
-      if (hasVariantProps && variantProps[compoundKey] !== undefined) {
-        propertyValue = variantProps[compoundKey];
-      } else if (hasDefaultProps && defaultVariantProps[compoundKey] !== undefined) {
-        propertyValue = defaultVariantProps[compoundKey];
-      } else {
-        propertyValue = undefined;
-      }
+      // Get property value - inline lookup instead of pre-computed checks
+      const propertyValue = variantProps[compoundKey] ?? defaultVariantProps[compoundKey];
 
       const compoundValue = compoundVariant[compoundKey];
 
@@ -126,13 +114,13 @@ export const applyCompoundSlotClasses = <T extends ConfigurationSchema, S extend
   for (const compoundSlot of compoundSlotDefinitions) {
     let isMatching = true;
 
-    // Filter out class and slot properties
-    const compoundEntries = Object.entries(compoundSlot).filter(
-      ([key]) => key !== 'className' && key !== 'class' && key !== 'slots',
-    );
+    // Inline filter to avoid intermediate array allocation
+    for (const [compoundKey, compoundValue] of Object.entries(compoundSlot)) {
+      // Skip class and slot properties
+      if (compoundKey === 'className' || compoundKey === 'class' || compoundKey === 'slots') {
+        continue;
+      }
 
-    // Check each variant condition
-    for (const [compoundKey, compoundValue] of compoundEntries) {
       const propertyValue = mergedProps[compoundKey];
 
       // Handle boolean variant values
