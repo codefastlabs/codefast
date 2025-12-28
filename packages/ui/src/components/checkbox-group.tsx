@@ -2,10 +2,10 @@
 
 import type { ComponentProps, JSX } from 'react';
 
+import { cn } from '@codefast/tailwind-variants';
 import { CheckIcon } from 'lucide-react';
 
 import * as CheckboxGroupPrimitive from '@/primitives/checkbox-group';
-import { cn } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroup

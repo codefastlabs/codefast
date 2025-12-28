@@ -1,10 +1,10 @@
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX } from 'react';
 
-import type { VariantProps } from '@codefast/tailwind-variants';
-
-import { Separator } from '@/components/separator';
 import { cn, tv } from '@codefast/tailwind-variants';
 import { Slot } from '@radix-ui/react-slot';
+
+import { Separator } from '@/components/separator';
 
 /* -----------------------------------------------------------------------------
  * Variants: Item

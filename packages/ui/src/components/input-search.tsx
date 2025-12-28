@@ -2,17 +2,19 @@
 
 import type { ComponentProps, JSX } from 'react';
 
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { SearchIcon, XIcon } from 'lucide-react';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/input-group';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
  * -------------------------------------------------------------------------- */
 
-interface InputSearchProps
-  extends Omit<ComponentProps<typeof InputGroupInput>, 'defaultValue' | 'onChange' | 'type' | 'value'> {
+interface InputSearchProps extends Omit<
+  ComponentProps<typeof InputGroupInput>,
+  'defaultValue' | 'onChange' | 'type' | 'value'
+> {
   defaultValue?: string;
   onChange?: (value?: string) => void;
   value?: string;

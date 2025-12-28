@@ -2,10 +2,9 @@
 
 import type { ComponentProps, JSX, ReactNode } from 'react';
 
-import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
 import { Slot } from '@radix-ui/react-slot';
+import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb

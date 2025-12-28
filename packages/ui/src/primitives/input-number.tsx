@@ -1,3 +1,4 @@
+import type { Scope } from '@radix-ui/react-context';
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -9,15 +10,13 @@ import type {
   RefObject,
 } from 'react';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-
-import type { Scope } from '@radix-ui/react-context';
-
-import * as InputPrimitive from '@/primitives/input';
-import { createInputScope } from '@/primitives/input';
 import { composeEventHandlers } from '@radix-ui/primitive';
 import { createContextScope } from '@radix-ui/react-context';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+
+import * as InputPrimitive from '@/primitives/input';
+import { createInputScope } from '@/primitives/input';
 
 /* -----------------------------------------------------------------------------
  * Context: InputNumber

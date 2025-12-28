@@ -1,15 +1,16 @@
 'use client';
 
+import type { Scope } from '@radix-ui/react-context';
 import type { ComponentProps, CSSProperties, JSX } from 'react';
 
-import type { ToggleVariants } from '@/components/toggle';
-import type { Scope } from '@radix-ui/react-context';
-
-import { toggleVariants } from '@/components/toggle';
 import { cn } from '@codefast/tailwind-variants';
 import { createContextScope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
+
+import type { ToggleVariants } from '@/components/toggle';
+
+import { toggleVariants } from '@/components/toggle';
 
 /* -----------------------------------------------------------------------------
  * Context: ToggleGroup

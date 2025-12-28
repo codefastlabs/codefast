@@ -2,11 +2,10 @@
 
 import type { ComponentProps, JSX } from 'react';
 
-import { ChevronDownIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { Slot } from '@radix-ui/react-slot';
+import { ChevronDownIcon } from 'lucide-react';
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion

@@ -1,9 +1,8 @@
 'use client';
 
-import type { ComponentProps, JSX } from 'react';
-
 import type { VariantProps } from '@codefast/tailwind-variants';
 import type { Scope } from '@radix-ui/react-context';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn, tv } from '@codefast/tailwind-variants';
 import { createContextScope } from '@radix-ui/react-context';

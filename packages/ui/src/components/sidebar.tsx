@@ -1,11 +1,13 @@
 'use client';
 
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from 'react';
 
+import { cn, tv } from '@codefast/tailwind-variants';
+import { createContext } from '@radix-ui/react-context';
+import { Slot } from '@radix-ui/react-slot';
 import { PanelLeftIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-
-import type { VariantProps } from '@codefast/tailwind-variants';
 
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
@@ -14,9 +16,6 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Skeleton } from '@/components/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/tooltip';
 import { useIsMobile } from '@/hooks/use-is-mobile';
-import { cn, tv } from '@codefast/tailwind-variants';
-import { createContext } from '@radix-ui/react-context';
-import { Slot } from '@radix-ui/react-slot';
 
 /* -----------------------------------------------------------------------------
  * Variant: SidebarMenuButton

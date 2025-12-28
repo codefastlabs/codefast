@@ -1,8 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
 
-import { ChevronDownIcon } from 'lucide-react';
-
 import { cn } from '@codefast/tailwind-variants';
+import { ChevronDownIcon } from 'lucide-react';
 
 /* -----------------------------------------------------------------------------
  * Component: NativeSelect

@@ -1,3 +1,4 @@
+import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 
 import {
@@ -8,7 +9,6 @@ import {
   ProgressCircleTrack,
   ProgressCircleValue,
 } from '@/primitives/progress-circle';
-import { render, screen } from '@testing-library/react';
 
 describe('ProgressCircle', () => {
   test('renders correctly with default props', () => {

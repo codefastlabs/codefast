@@ -1,7 +1,6 @@
-import path from 'node:path';
-
 import { pluginReact } from '@rsbuild/plugin-react';
 import { defineConfig } from '@rslib/core';
+import path from 'node:path';
 
 // Determine if we're running in watch mode to adjust build behavior accordingly.
 const isWatchMode = process.argv.includes('--watch');

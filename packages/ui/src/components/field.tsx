@@ -1,14 +1,13 @@
 'use client';
 
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX, ReactNode } from 'react';
 
+import { cn, tv } from '@codefast/tailwind-variants';
 import { useMemo } from 'react';
-
-import type { VariantProps } from '@codefast/tailwind-variants';
 
 import { Label } from '@/components/label';
 import { Separator } from '@/components/separator';
-import { cn, tv } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Variants: Field

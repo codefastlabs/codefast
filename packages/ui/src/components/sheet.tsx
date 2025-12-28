@@ -1,14 +1,13 @@
 'use client';
 
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX } from 'react';
 
-import { XIcon } from 'lucide-react';
-
-import type { VariantProps } from '@codefast/tailwind-variants';
-
-import { buttonVariants } from '@/components/button';
 import { cn, tv } from '@codefast/tailwind-variants';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
+import { XIcon } from 'lucide-react';
+
+import { buttonVariants } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent
@@ -60,8 +59,7 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 interface SheetContentProps
-  extends ComponentProps<typeof SheetPrimitive.Content>,
-    VariantProps<typeof sheetContentVariants> {
+  extends ComponentProps<typeof SheetPrimitive.Content>, VariantProps<typeof sheetContentVariants> {
   classNames?: {
     close?: string;
     content?: string;

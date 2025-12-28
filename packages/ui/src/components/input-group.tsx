@@ -1,16 +1,17 @@
 'use client';
 
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX } from 'react';
+
+import { cn, tv } from '@codefast/tailwind-variants';
 
 import type { ButtonProps } from '@/components/button';
 import type { InputProps } from '@/components/input';
 import type { TextareaProps } from '@/components/textarea';
-import type { VariantProps } from '@codefast/tailwind-variants';
 
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { Textarea } from '@/components/textarea';
-import { cn, tv } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Variants: InputGroup

@@ -1,13 +1,12 @@
 'use client';
 
+import type { VariantProps } from '@codefast/tailwind-variants';
 import type { ComponentProps, JSX } from 'react';
 
+import { cn } from '@codefast/tailwind-variants';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
-import type { VariantProps } from '@codefast/tailwind-variants';
-
 import { buttonVariants } from '@/components/button';
-import { cn } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer

@@ -1,5 +1,6 @@
-import { useMutationObserver } from '@/hooks/use-mutation-observer';
 import { renderHook } from '@testing-library/react';
+
+import { useMutationObserver } from '@/hooks/use-mutation-observer';
 
 describe('useMutationObserver', () => {
   test('should attach a MutationObserver and call the callback on mutations', () => {
