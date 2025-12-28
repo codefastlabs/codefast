@@ -19,7 +19,7 @@ export function CommandDemo() {
   const onKeyDown = useEffectEvent((e: KeyboardEvent) => {
     if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
-      setOpen((open) => !open);
+      setOpen((isOpen) => !isOpen);
     }
   });
 

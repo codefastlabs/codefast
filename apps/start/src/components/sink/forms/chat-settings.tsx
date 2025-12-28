@@ -211,9 +211,9 @@ export function ChatSettings() {
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent align="end" position="item-aligned">
-                      {voices.map((voice) => (
-                        <SelectItem key={voice.value} value={voice.value}>
-                          {voice.label}
+                      {voices.map((voiceOption) => (
+                        <SelectItem key={voiceOption.value} value={voiceOption.value}>
+                          {voiceOption.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -316,11 +316,11 @@ export function ChatSettings() {
                     {personalities.find((p) => p.value === personality)?.label}
                   </SelectTrigger>
                   <SelectContent align="end">
-                    {personalities.map((personality) => (
-                      <SelectItem key={personality.value} value={personality.value}>
+                    {personalities.map((personalityOption) => (
+                      <SelectItem key={personalityOption.value} value={personalityOption.value}>
                         <FieldContent className="gap-0.5">
-                          <FieldLabel>{personality.label}</FieldLabel>
-                          <FieldDescription className="text-xs">{personality.description}</FieldDescription>
+                          <FieldLabel>{personalityOption.label}</FieldLabel>
+                          <FieldDescription className="text-xs">{personalityOption.description}</FieldDescription>
                         </FieldContent>
                       </SelectItem>
                     ))}

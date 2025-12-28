@@ -236,7 +236,7 @@ export function NotionPromptForm() {
             </Popover>
             <div className="no-scrollbar -m-1.5 flex gap-1 overflow-y-auto p-1.5">
               {mentions.map((mention) => {
-                const item = SAMPLE_DATA.mentionable.find((item) => item.title === mention);
+                const item = SAMPLE_DATA.mentionable.find((mentionable) => mentionable.title === mention);
 
                 if (!item) {
                   return null;
