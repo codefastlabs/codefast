@@ -55,8 +55,32 @@ const config = defineConfig({
    * Order can matter for some plugins.
    */
   plugins: [
-    /** TanStack DevTools for debugging queries, router, and forms. */
-    devtools(),
+    /**
+     * TanStack DevTools for debugging queries, router, and forms.
+     *
+     * @see [TanStack DevTools](https://tanstack.com/devtools/latest)
+     */
+    devtools({
+      /**
+       * Custom editor configuration for opening files from DevTools.
+       * Configured to open files in WebStorm at the specified line and column.
+       */
+      editor: {
+        name: 'WebStorm',
+        /**
+         * Opens a file in WebStorm at the specified location.
+         *
+         * @param path - Absolute path to the file
+         * @param lineNumber - Line number to navigate to (defaults to 1)
+         * @param columnNumber - Column number to navigate to (defaults to 1)
+         */
+        open: async (path, lineNumber = '1', columnNumber = '1') => {
+          const { exec } = await import('node:child_process');
+
+          exec(`webstorm --line ${lineNumber} --column ${columnNumber} "${path.replaceAll('$', '\\$')}"`);
+        },
+      },
+    }),
 
     /** Resolves TypeScript path aliases from tsconfig.json. */
     tsConfigPaths(),
