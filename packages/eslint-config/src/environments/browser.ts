@@ -20,8 +20,8 @@ import globals from 'globals';
  * console.log('Browser environment active');
  * ```
  *
- * @see {@link https://eslint.org/docs/latest/use/configure/language-options#specifying-globals | ESLint Globals Documentation}
- * @see {@link https://github.com/sindresorhus/globals | Globals Package}
+ * @see [ESLint Globals Documentation](https://eslint.org/docs/latest/use/configure/language-options#specifying-globals)
+ * @see [Globals Package](https://github.com/sindresorhus/globals)
  */
 export const browserEnvironment: Linter.Config[] = [
   {
