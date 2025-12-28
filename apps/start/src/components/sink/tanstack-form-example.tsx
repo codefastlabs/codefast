@@ -48,7 +48,7 @@ export function ExampleForm() {
     validators: {
       onChange: exampleFormSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       setValues(value);
       setOpen(true);
     },

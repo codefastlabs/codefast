@@ -107,7 +107,7 @@ export function ComboboxDemo() {
   );
 }
 
-function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
+function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
 
@@ -115,7 +115,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between md:max-w-50">
-          {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
+          {value ? frameworkList.find((framework) => framework.value === value)?.label : 'Select framework...'}
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
@@ -125,7 +125,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {frameworkList.map((framework) => (
                 <CommandItem
                   key={framework.value}
                   value={framework.value}
@@ -146,11 +146,11 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
   );
 }
 
-function UserCombobox({ users, selectedUserId }: { users: User[]; selectedUserId: string }) {
+function UserCombobox({ users: userList, selectedUserId }: { users: User[]; selectedUserId: string }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(selectedUserId);
 
-  const selectedUser = useMemo(() => users.find((user) => user.id === value), [value, users]);
+  const selectedUser = useMemo(() => userList.find((user) => user.id === value), [value, userList]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -181,7 +181,7 @@ function UserCombobox({ users, selectedUserId }: { users: User[]; selectedUserId
           <CommandList>
             <CommandEmpty>No user found.</CommandEmpty>
             <CommandGroup>
-              {users.map((user) => (
+              {userList.map((user) => (
                 <CommandItem
                   key={user.id}
                   value={user.id}
@@ -214,7 +214,7 @@ function UserCombobox({ users, selectedUserId }: { users: User[]; selectedUserId
 }
 
 function TimezoneCombobox({
-  timezones,
+  timezones: timezoneList,
   selectedTimezone,
 }: {
   timezones: Timezone[];
@@ -224,8 +224,8 @@ function TimezoneCombobox({
   const [value, setValue] = useState(selectedTimezone.value);
 
   const selectedGroup = useMemo(
-    () => timezones.find((group) => group.timezones.find((tz) => tz.value === value)),
-    [value, timezones],
+    () => timezoneList.find((group) => group.timezones.find((tz) => tz.value === value)),
+    [value, timezoneList],
   );
 
   const selectedTimezoneLabel = useMemo(
@@ -253,7 +253,7 @@ function TimezoneCombobox({
           <CommandInput placeholder="Search timezone..." />
           <CommandList className="scroll-pb-12">
             <CommandEmpty>No timezone found.</CommandEmpty>
-            {timezones.map((region) => (
+            {timezoneList.map((region) => (
               <CommandGroup key={region.label} heading={region.label}>
                 {region.timezones.map((timezone) => (
                   <CommandItem
@@ -287,7 +287,7 @@ function TimezoneCombobox({
   );
 }
 
-function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }) {
+function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
   const [open, setOpen] = useState(false);
   const [selectedFrameworks, setSelectedFrameworks] = useState<Framework[]>([]);
 
@@ -307,7 +307,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }) {
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {frameworkList.map((framework) => (
                 <CommandItem
                   key={framework.value}
                   value={framework.value}

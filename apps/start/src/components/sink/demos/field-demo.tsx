@@ -2330,7 +2330,7 @@ export function FormDatePickerDemo() {
                   mode="single"
                   selected={appointmentDate}
                   onSelect={setAppointmentDate}
-                  disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
+                  disabled={(selectedDate) => selectedDate < new Date() || selectedDate.getDay() === 0 || selectedDate.getDay() === 6}
                 />
               </PopoverContent>
             </Popover>
