@@ -9,6 +9,7 @@ import { addDays } from 'date-fns';
 import { Clock2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { es } from 'react-day-picker/locale';
+import type { CalendarDayButtonProps } from '@codefast/ui/calendar';
 import type { DateRange } from 'react-day-picker';
 
 export function CalendarDemo() {
@@ -190,7 +191,7 @@ function CalendarCustomDays() {
           },
         }}
         components={{
-          DayButton: ({ children, modifiers, day, ...props }) => {
+          DayButton: ({ children, modifiers, day, ...props }: CalendarDayButtonProps) => {
             const isWeekend = day.date.getDay() === 0 || day.date.getDay() === 6;
 
             return (
