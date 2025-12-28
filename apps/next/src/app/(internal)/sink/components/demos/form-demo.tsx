@@ -46,7 +46,7 @@ const items = [
   },
 ] as const;
 
-const FormSchema = z.object({
+const formSchema = z.object({
   username: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
@@ -76,16 +76,18 @@ const FormSchema = z.object({
   security_emails: z.boolean(),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export function FormDemo() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       username: '',
       items: ['recents', 'home'],
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: FormValues) {
     toast('You submitted the following values:', {
       description: (
         <pre className="mt-2 w-80 rounded-lg bg-neutral-950 p-4">
