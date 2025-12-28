@@ -20,7 +20,7 @@ import type { DateRange } from 'react-day-picker';
 
 export function DatePickerDemo() {
   return (
-    <div className="flex flex-col items-start gap-4 md:flex-row">
+    <div className="flex flex-col flex-wrap items-start gap-4 md:flex-row">
       <DatePickerSimple />
       <DataPickerWithDropdowns />
       <DatePickerWithRange />
