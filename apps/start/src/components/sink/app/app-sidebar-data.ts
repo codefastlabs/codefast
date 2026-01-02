@@ -1,4 +1,12 @@
-import { AudioWaveformIcon, BookOpenIcon, BotIcon, CommandIcon, GalleryVerticalEndIcon, Settings2Icon, SquareTerminalIcon } from 'lucide-react';
+import {
+  AudioWaveformIcon,
+  BookOpenIcon,
+  BotIcon,
+  CommandIcon,
+  GalleryVerticalEndIcon,
+  Settings2Icon,
+  SquareTerminalIcon,
+} from 'lucide-react';
 import type { AppSidebarData } from '@/components/sink/app/app-sidebar-types';
 
 /* -------------------------------------------------------------------------------------------------
@@ -6,113 +14,113 @@ import type { AppSidebarData } from '@/components/sink/app/app-sidebar-types';
  * -------------------------------------------------------------------------------------------------*/
 
 export const appSidebarData: AppSidebarData = {
-    user: {
-        name: 'codefast',
-        email: 'm@example.com',
-        avatar: '/avatars/codefast.webp',
+  user: {
+    name: 'codefast',
+    email: 'm@example.com',
+    avatar: '/avatars/codefast.webp',
+  },
+  teams: [
+    {
+      name: 'Acme Inc',
+      logo: GalleryVerticalEndIcon,
+      plan: 'Enterprise',
     },
-    teams: [
+    {
+      name: 'Acme Corp.',
+      logo: AudioWaveformIcon,
+      plan: 'Startup',
+    },
+    {
+      name: 'Evil Corp.',
+      logo: CommandIcon,
+      plan: 'Free',
+    },
+  ],
+  navMain: [
+    {
+      title: 'Playground',
+      url: '#',
+      icon: SquareTerminalIcon,
+      isActive: true,
+      items: [
         {
-            name: 'Acme Inc',
-            logo: GalleryVerticalEndIcon,
-            plan: 'Enterprise',
+          title: 'History',
+          url: '#',
         },
         {
-            name: 'Acme Corp.',
-            logo: AudioWaveformIcon,
-            plan: 'Startup',
+          title: 'Starred',
+          url: '#',
         },
         {
-            name: 'Evil Corp.',
-            logo: CommandIcon,
-            plan: 'Free',
+          title: 'Settings',
+          url: '#',
         },
-    ],
-    navMain: [
+      ],
+    },
+    {
+      title: 'Models',
+      url: '#',
+      icon: BotIcon,
+      items: [
         {
-            title: 'Playground',
-            url: '#',
-            icon: SquareTerminalIcon,
-            isActive: true,
-            items: [
-                {
-                    title: 'History',
-                    url: '#',
-                },
-                {
-                    title: 'Starred',
-                    url: '#',
-                },
-                {
-                    title: 'Settings',
-                    url: '#',
-                },
-            ],
+          title: 'Genesis',
+          url: '#',
         },
         {
-            title: 'Models',
-            url: '#',
-            icon: BotIcon,
-            items: [
-                {
-                    title: 'Genesis',
-                    url: '#',
-                },
-                {
-                    title: 'Explorer',
-                    url: '#',
-                },
-                {
-                    title: 'Quantum',
-                    url: '#',
-                },
-            ],
+          title: 'Explorer',
+          url: '#',
         },
         {
-            title: 'Documentation',
-            url: '#',
-            icon: BookOpenIcon,
-            items: [
-                {
-                    title: 'Introduction',
-                    url: '#',
-                },
-                {
-                    title: 'Get Started',
-                    url: '#',
-                },
-                {
-                    title: 'Tutorials',
-                    url: '#',
-                },
-                {
-                    title: 'Changelog',
-                    url: '#',
-                },
-            ],
+          title: 'Quantum',
+          url: '#',
+        },
+      ],
+    },
+    {
+      title: 'Documentation',
+      url: '#',
+      icon: BookOpenIcon,
+      items: [
+        {
+          title: 'Introduction',
+          url: '#',
         },
         {
-            title: 'Settings',
-            url: '#',
-            icon: Settings2Icon,
-            items: [
-                {
-                    title: 'General',
-                    url: '#',
-                },
-                {
-                    title: 'Team',
-                    url: '#',
-                },
-                {
-                    title: 'Billing',
-                    url: '#',
-                },
-                {
-                    title: 'Limits',
-                    url: '#',
-                },
-            ],
+          title: 'Get Started',
+          url: '#',
         },
-    ],
+        {
+          title: 'Tutorials',
+          url: '#',
+        },
+        {
+          title: 'Changelog',
+          url: '#',
+        },
+      ],
+    },
+    {
+      title: 'Settings',
+      url: '#',
+      icon: Settings2Icon,
+      items: [
+        {
+          title: 'General',
+          url: '#',
+        },
+        {
+          title: 'Team',
+          url: '#',
+        },
+        {
+          title: 'Billing',
+          url: '#',
+        },
+        {
+          title: 'Limits',
+          url: '#',
+        },
+      ],
+    },
+  ],
 };

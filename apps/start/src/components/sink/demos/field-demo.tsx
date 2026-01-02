@@ -2054,7 +2054,12 @@ export function FormInputTypesDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="password-input-63z">Password</FieldLabel>
-            <Input id="password-input-63z" type="password" placeholder="Enter password" autoComplete="current-password" />
+            <Input
+              id="password-input-63z"
+              type="password"
+              placeholder="Enter password"
+              autoComplete="current-password"
+            />
             <FieldDescription>Password field with hidden text.</FieldDescription>
           </Field>
           <Field>
@@ -2330,7 +2335,9 @@ export function FormDatePickerDemo() {
                   mode="single"
                   selected={appointmentDate}
                   onSelect={setAppointmentDate}
-                  disabled={(selectedDate) => selectedDate < new Date() || selectedDate.getDay() === 0 || selectedDate.getDay() === 6}
+                  disabled={(selectedDate) =>
+                    selectedDate < new Date() || selectedDate.getDay() === 0 || selectedDate.getDay() === 6
+                  }
                 />
               </PopoverContent>
             </Popover>

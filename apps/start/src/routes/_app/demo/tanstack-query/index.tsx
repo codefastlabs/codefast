@@ -99,4 +99,3 @@ function TanStackQueryDemo() {
     </div>
   );
 }
-

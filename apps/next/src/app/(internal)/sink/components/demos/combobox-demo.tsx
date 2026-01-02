@@ -115,12 +115,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between md:max-w-50"
-        >
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between md:max-w-50">
           {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
