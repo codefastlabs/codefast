@@ -19,4 +19,3 @@ export function staticLoader({ quality = DEFAULT_IMAGE_QUALITY, src, width }: Im
 
   return url.toString();
 }
-

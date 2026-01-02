@@ -25,9 +25,12 @@ const nextConfig: NextConfig = {
   compress: true,
   // Reduce JavaScript bundle size
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? {
+            exclude: ['error', 'warn'],
+          }
+        : false,
   },
   // Enable static page generation optimizations
   poweredByHeader: false,

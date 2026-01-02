@@ -31,14 +31,10 @@ export const exampleFormSchema = z.object({
   email: z.email({
     error: (issue) => (issue.input === undefined ? 'Email is required' : 'Please enter a valid email address'),
   }),
-  plan: z
-    .string({
-      error: (issue) => (issue.input === undefined ? 'Please select a subscription plan' : undefined),
-    })
-    .min(1, 'Please select a subscription plan')
-    .refine((value) => value === 'basic' || value === 'pro', {
-      message: 'Invalid plan selection. Please choose Basic or Pro',
-    }),
+  plan: z.enum(['basic', 'pro'], {
+    error: (issue) =>
+      issue.input === undefined ? 'Please select a subscription plan' : 'Invalid plan selection. Please choose Basic or Pro',
+  }),
   billingPeriod: z
     .string({
       error: (issue) => (issue.input === undefined ? 'Please select a billing period' : undefined),

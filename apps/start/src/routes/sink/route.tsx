@@ -30,4 +30,3 @@ function SinkLayout() {
     </SidebarProvider>
   );
 }
-

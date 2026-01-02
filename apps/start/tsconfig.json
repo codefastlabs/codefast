@@ -1,21 +1,12 @@
 {
   /* Files to include */
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     /* Language & Environment */
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2022"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "jsx": "react-jsx",
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -33,9 +24,7 @@
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   }
 }

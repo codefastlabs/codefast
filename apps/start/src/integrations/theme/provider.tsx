@@ -34,12 +34,12 @@ const MEDIA = '(prefers-color-scheme: dark)';
  */
 function disableAnimation(nonce?: string): () => void {
   // Check if we're in the browser
-  if (typeof window === 'undefined') return () => { };
+  if (typeof window === 'undefined') return () => {};
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (prefersReducedMotion) {
-    return () => { };
+    return () => {};
   }
 
   const css = document.createElement('style');

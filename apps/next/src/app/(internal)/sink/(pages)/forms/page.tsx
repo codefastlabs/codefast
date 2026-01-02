@@ -8,7 +8,7 @@ import { ShippingForm } from '@/app/(internal)/sink/(pages)/forms/shipping-form'
 export default function FormsPage() {
   return (
     <div className="@container flex flex-1 flex-col gap-12 p-4">
-      <div className="grid flex-1 gap-12 @3xl:grid-cols-2 @5xl:grid-cols-3 @[1920px]:grid-cols-4 [&>div]:max-w-lg">
+      <div className="grid flex-1 gap-12 @[1920px]:grid-cols-4 @3xl:grid-cols-2 @5xl:grid-cols-3 [&>div]:max-w-lg">
         <div className="flex flex-col gap-12">
           <NotionPromptForm />
           <ChatSettings />

@@ -26,4 +26,3 @@ export { useTheme } from '@/integrations/theme/use-theme';
 
 // Server Functions
 export { getThemeServerFn, setThemeServerFn } from '@/integrations/theme/server';
-

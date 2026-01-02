@@ -49,7 +49,7 @@ import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
 export function FieldDemo() {
   return (
     <div className="@container w-full">
-      <div className="bg-muted grid gap-4 p-4 @3xl:grid-cols-2 @5xl:grid-cols-3 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5">
+      <div className="bg-muted grid gap-4 p-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <div className="flex flex-col gap-6">
           <BasicFields />
           <PrivacySettings />
@@ -2055,7 +2055,12 @@ export function FormInputTypesDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="password-input-63z">Password</FieldLabel>
-            <Input id="password-input-63z" type="password" placeholder="Enter password" autoComplete="current-password" />
+            <Input
+              id="password-input-63z"
+              type="password"
+              placeholder="Enter password"
+              autoComplete="current-password"
+            />
             <FieldDescription>Password field with hidden text.</FieldDescription>
           </Field>
           <Field>

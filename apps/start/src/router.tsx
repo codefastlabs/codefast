@@ -3,7 +3,7 @@ import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query
 import type { ReactNode } from 'react';
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary';
 import { NotFound } from '@/components/not-found';
-import { Provider as TanstackQueryProvider, getContext } from '@/integrations/tanstack-query/provider';
+import { QueryClientProvider, getContext } from '@/integrations/tanstack-query/provider';
 import { routeTree } from '@/routeTree.gen';
 
 export const getRouter = () => {
@@ -26,12 +26,12 @@ export const getRouter = () => {
   return router;
 };
 
-type WrapComponentProps = {
+interface WrapComponentProps {
   children: ReactNode;
-};
+}
 
 function WrapComponent({ children }: WrapComponentProps) {
   const { queryClient } = getContext();
 
-  return <TanstackQueryProvider queryClient={queryClient}>{children}</TanstackQueryProvider>;
+  return <QueryClientProvider queryClient={queryClient}>{children}</QueryClientProvider>;
 }
