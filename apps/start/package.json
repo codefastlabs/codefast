@@ -17,7 +17,7 @@
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
-    "@tabler/icons-react": "^3.36.0",
+    "@tabler/icons-react": "^3.36.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "^0.9.0",
     "@tanstack/react-form": "^1.27.7",

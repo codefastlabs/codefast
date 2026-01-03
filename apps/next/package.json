@@ -17,7 +17,7 @@
     "@codefast/tailwind-variants": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
-    "@tabler/icons-react": "^3.36.0",
+    "@tabler/icons-react": "^3.36.1",
     "@tanstack/react-form": "^1.27.7",
     "date-fns": "^4.1.0",
     "input-otp": "^1.4.2",
