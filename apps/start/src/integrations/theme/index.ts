@@ -15,7 +15,13 @@
 
 // Types & Constants
 export type { Theme, ResolvedTheme } from '@/integrations/theme/types';
-export { themes, themeSchema, DEFAULT_THEME, THEME_STORAGE_KEY } from '@/integrations/theme/types';
+export {
+  DEFAULT_RESOLVED_THEME,
+  DEFAULT_THEME,
+  themes,
+  themeSchema,
+  THEME_STORAGE_KEY,
+} from '@/integrations/theme/types';
 
 // Provider & Context
 export { ThemeProvider, ThemeContext } from '@/integrations/theme/provider';

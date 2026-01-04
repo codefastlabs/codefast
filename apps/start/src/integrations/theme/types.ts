@@ -40,6 +40,12 @@ export const themes = themeSchema.options;
 export const DEFAULT_THEME: Theme = 'system';
 
 /**
+ * Default resolved theme used for server-side rendering when 'system' cannot be determined.
+ * @public
+ */
+export const DEFAULT_RESOLVED_THEME: ResolvedTheme = 'dark';
+
+/**
  * Cookie storage key for persisting theme preference.
  * @public
  */

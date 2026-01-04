@@ -1,5 +1,5 @@
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
-import { MEDIA } from '@/integrations/theme/types';
+import { DEFAULT_RESOLVED_THEME, MEDIA } from '@/integrations/theme/types';
 
 /* -----------------------------------------------------------------------------
  * Utilities
@@ -9,7 +9,10 @@ import { MEDIA } from '@/integrations/theme/types';
  * Get the system theme based on user's OS preference.
  */
 export function getSystemTheme(): ResolvedTheme {
-  if (typeof window === 'undefined') return 'light';
+  if (typeof window === 'undefined') {
+    return DEFAULT_RESOLVED_THEME;
+  }
+
   return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
 }
 
