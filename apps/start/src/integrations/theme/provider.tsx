@@ -9,11 +9,11 @@ import { MEDIA, applyTheme, disableAnimation, getSystemTheme } from '@/integrati
  * Types
  * -------------------------------------------------------------------------- */
 
-export type ThemeContextType = {
+export interface ThemeContextType {
   readonly theme: Theme;
   readonly resolvedTheme: ResolvedTheme;
   readonly setTheme: (value: Theme) => Promise<void>;
-};
+}
 
 type ThemeContextValue = ThemeContextType | null;
 
@@ -27,12 +27,12 @@ export const ThemeContext = createContext<ThemeContextValue>(null);
  * Props
  * -------------------------------------------------------------------------- */
 
-type ThemeProviderProps = {
+interface ThemeProviderProps {
   children: ReactNode;
   theme: Theme;
   disableTransitionOnChange?: boolean;
   nonce?: string;
-};
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ThemeProvider
@@ -122,14 +122,7 @@ export function ThemeProvider({
     [theme, disableTransitionOnChange, nonce, router],
   );
 
-  const value = useMemo<ThemeContextType>(
-    () => ({
-      theme,
-      resolvedTheme,
-      setTheme,
-    }),
-    [theme, resolvedTheme, setTheme],
-  );
+  const value = useMemo<ThemeContextType>(() => ({ theme, resolvedTheme, setTheme }), [theme, resolvedTheme, setTheme]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
