@@ -185,17 +185,28 @@ def to_export_path(dist_path: str) -> str:
     """
     Convert a dist path to an export path.
     
-    The root index file becomes ".", while other paths are prefixed with "./".
+    The root index file becomes ".", subpath index files become the directory path,
+    and other paths are prefixed with "./".
     
     Args:
         dist_path: The path within the dist directory
     
     Returns:
         The export path for package.json
+    
+    Examples:
+        - dist/index → "."
+        - dist/core/index → "./core"
+        - dist/adapters/tanstack-start/index → "./adapters/tanstack-start"
+        - dist/loaders/cloudinary → "./loaders/cloudinary"
     """
     # dist/index → "."
     if dist_path == 'index':
         return '.'
+    
+    # dist/abc/index → "./abc" (subpath index files become directory exports)
+    if dist_path.endswith('/index'):
+        return f'./{dist_path[:-6]}'  # Remove trailing "/index"
     
     # dist/loaders/cloudinary → "./loaders/cloudinary"
     return f'./{dist_path}'
@@ -465,6 +476,8 @@ GROUP_ORDER: Dict[str, int] = {
     'core': 400,
     'loaders': 500,
     'utils': 600,
+    'adapters': 700,
+    'script': 750,
     'css': 900,
 }
 
@@ -472,7 +485,7 @@ GROUP_ORDER: Dict[str, int] = {
 def get_export_group(
     path: str,
     path_transform: Optional[Callable[[str], str]] = None
-) -> Tuple[str, str, int]:
+) -> Tuple[str, str, int, int]:
     """
     Extract directory group from export path for sorting purposes.
     
@@ -481,13 +494,14 @@ def get_export_group(
         path_transform: Optional path transformation function
     
     Returns:
-        A tuple containing (group, subpath, sortOrder) where:
+        A tuple containing (group, subpath, sortOrder, isIndex) where:
         - group: directory name or special group identifier
         - subpath: remaining path after the group
         - sortOrder: numeric order for consistent grouping
+        - isIndex: 0 for subpath exports (index), 1 for individual files
     """
     if path == '.':
-        return ('.', '', 0)
+        return ('.', '', 0, 0)
     
     # Remove leading "./"
     clean_path = path[2:] if path.startswith('./') else path
@@ -496,22 +510,34 @@ def get_export_group(
     if clean_path.endswith('/*'):
         dir_name = clean_path[:-2]
         order = 900 if dir_name == 'css' else 100
-        return (dir_name, '', order)
+        return (dir_name, '', order, 0)
     
     # Extract first directory level
     parts = clean_path.split('/')
-    if len(parts) == 1:
-        # Root level file - could be transformed component or actual root file
-        is_transformed_component = path_transform is not None
-        order = 100 if is_transformed_component else 800
-        group = 'components' if is_transformed_component else ''
-        return (group, parts[0], order)
     
+    if len(parts) == 1:
+        # Single part path: could be a subpath export (./core) or root-level file (./constants)
+        name = parts[0]
+        
+        # Check if this is a known group (subpath export like ./core, ./utils, ./script)
+        if name in GROUP_ORDER:
+            order = GROUP_ORDER[name]
+            # This is a subpath export, e.g., ./core -> group="core", is_index=0
+            return (name, '', order, 0)
+        
+        # Check for transformed components first
+        if path_transform is not None:
+            return ('components', name, 100, 1)
+        
+        # Root level file like ./constants, ./types
+        return ('', name, 800, 1)
+    
+    # Multi-part path: ./core/context, ./adapters/tanstack-start, etc.
     group = parts[0]
     subpath = '/'.join(parts[1:])
     order = GROUP_ORDER.get(group, 700)  # Unknown groups come after known ones
     
-    return (group, subpath, order)
+    return (group, subpath, order, 1)
 
 
 def generate_exports(
@@ -558,9 +584,9 @@ def generate_exports(
         exports[export_path] = entry
     
     # Sort exports by directory groups
-    def sort_key(path: str) -> Tuple[int, str, str]:
-        group, subpath, order = get_export_group(path, path_transform)
-        return (order, group, subpath)
+    def sort_key(path: str) -> Tuple[int, str, int, str]:
+        group, subpath, order, is_index = get_export_group(path, path_transform)
+        return (order, group, is_index, subpath)
     
     sorted_exports: Dict[str, Union[Dict[str, str], str]] = {
         key: exports[key] for key in sorted(exports.keys(), key=sort_key)
