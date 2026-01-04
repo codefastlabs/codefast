@@ -29,6 +29,7 @@ export function CalendarDemo() {
 
 function CalendarSingle() {
   const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
+
   return (
     <div className="flex flex-col gap-3">
       <div className="px-2 text-center text-sm">Single Selection</div>
@@ -241,6 +242,7 @@ function CalendarWithPresets() {
               className="flex-1"
               onClick={() => {
                 const newDate = addDays(new Date(), preset.value);
+
                 setDate(newDate);
                 setCurrentMonth(new Date(newDate.getFullYear(), newDate.getMonth(), 1));
               }}

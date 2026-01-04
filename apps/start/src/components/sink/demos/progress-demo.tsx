@@ -8,6 +8,7 @@ export function ProgressDemo() {
 
   useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 500);
+
     return () => clearTimeout(timer);
   }, []);
 

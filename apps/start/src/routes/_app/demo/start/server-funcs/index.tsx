@@ -10,6 +10,7 @@ type Todo = {
 
 const loggingMiddleware = createMiddleware().server(async ({ next, request }) => {
   console.log(`[${request.method}]`, request.url);
+
   return next();
 });
 
@@ -41,8 +42,10 @@ const addTodo = createServerFn({ method: 'POST' })
   .inputValidator((d: string) => d)
   .handler(async ({ data }) => {
     const todos = await readTodos();
+
     todos.push({ id: todos.length + 1, name: data });
     await fs.promises.writeFile(TODOS_FILE, JSON.stringify(todos, null, 2));
+
     return todos;
   });
 

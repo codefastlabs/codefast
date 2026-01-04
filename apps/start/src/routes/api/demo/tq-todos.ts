@@ -27,7 +27,9 @@ export const Route = createFileRoute('/api/demo/tq-todos')({
           id: todos.length + 1,
           name,
         };
+
         todos.push(todo);
+
         return Response.json(todo);
       },
     },

@@ -174,8 +174,10 @@ export function NotionPromptForm() {
           if (!acc[item.type]) {
             acc[item.type] = [];
           }
+
           (acc[item.type] ??= []).push(item);
         }
+
         return acc;
       },
       {} as Record<string, MentionableItem[]>,

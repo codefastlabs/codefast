@@ -94,6 +94,7 @@ toast.promise(promise, {
 
 export function SonnerDemo() {
   const [activeType, setActiveType] = useState(allTypes[0]);
+
   return (
     <div className="flex flex-wrap gap-4">
       <Button onClick={() => toast('My first toast')} variant="outline">
