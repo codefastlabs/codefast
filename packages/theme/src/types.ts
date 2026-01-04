@@ -5,31 +5,43 @@ import { z } from 'zod';
  * -------------------------------------------------------------------------- */
 
 /**
- * Zod schema for validating theme values.
- * Single source of truth for all theme-related types.
+ * Zod schema for theme validation.
+ *
+ * Acts as the single source of truth for all theme-related types.
+ * Valid values: 'light', 'dark', 'system'.
  */
 export const themeSchema = z.enum(['light', 'dark', 'system']);
 
 /**
- * Theme type derived from the Zod schema.
- * Represents the user's theme preference.
+ * User's theme preference.
+ *
+ * - `'light'` - Force light mode
+ * - `'dark'` - Force dark mode
+ * - `'system'` - Follow OS preference
  */
 export type Theme = z.infer<typeof themeSchema>;
 
 /**
- * Resolved theme type - the actual theme applied to the UI.
- * 'system' is resolved to either 'light' or 'dark' based on user's OS preference.
+ * Actual theme applied to the UI after resolving 'system'.
+ *
+ * When theme is 'system', this reflects the OS preference (light/dark).
  */
 export type ResolvedTheme = Exclude<Theme, 'system'>;
 
 /**
- * Array of all available themes, derived from the Zod schema.
- * Use this for rendering theme options in UI components.
+ * Array of all available theme options: `['light', 'dark', 'system']`.
+ *
+ * Useful for rendering theme selectors in UI components.
  */
 export const themes = themeSchema.options;
 
 /**
- * Theme context type for React context consumers.
+ * Shape of the theme context value provided by {@link ThemeProvider}.
+ *
+ * @property theme - Current theme preference
+ * @property resolvedTheme - Actual theme applied (system resolved to light/dark)
+ * @property setTheme - Async function to update theme (triggers optimistic update)
+ * @property isPending - True while theme change is being persisted
  */
 export interface ThemeContextType {
   theme: Theme;

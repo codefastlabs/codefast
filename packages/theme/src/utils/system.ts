@@ -6,7 +6,12 @@ import { DEFAULT_RESOLVED_THEME, MEDIA } from '@/constants';
  * -------------------------------------------------------------------------- */
 
 /**
- * Get the system theme based on user's OS preference.
+ * Detect the user's OS theme preference.
+ *
+ * Uses `matchMedia()` to query the `prefers-color-scheme` media feature.
+ * Returns {@link DEFAULT_RESOLVED_THEME} during SSR since `window` is unavailable.
+ *
+ * @returns 'light' or 'dark' based on OS preference
  */
 export function getSystemTheme(): ResolvedTheme {
   if (typeof window === 'undefined') {
@@ -17,7 +22,14 @@ export function getSystemTheme(): ResolvedTheme {
 }
 
 /**
- * Resolve theme to light/dark value.
+ * Resolve theme preference to actual light/dark value.
+ *
+ * - 'light' → 'light'
+ * - 'dark' → 'dark'
+ * - 'system' → result of {@link getSystemTheme}
+ *
+ * @param theme - User's theme preference
+ * @returns The resolved theme to apply
  */
 export function resolveTheme(theme: Theme): ResolvedTheme {
   return theme === 'system' ? getSystemTheme() : theme;

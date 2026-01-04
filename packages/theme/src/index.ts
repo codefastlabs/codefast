@@ -1,17 +1,12 @@
 /**
- * @codefast/theme
+ * @module @codefast/theme
  *
- * Theme management with React 19 features - optimistic updates, cross-tab sync, and SSR support.
+ * React 19 theme management library with SSR support, cross-tab synchronization,
+ * and optimistic UI updates. Supports light, dark, and system theme preferences.
  *
- * @example
- * ```tsx
- * // In __root.tsx (TanStack Start)
- * import { ThemeProvider, ThemeScript, resolveTheme } from '@codefast/theme';
- * import { getThemeServerFn, setThemeServerFn } from '@codefast/theme/tanstack-start';
- *
- * // In components
- * import { useTheme, themes, type Theme } from '@codefast/theme';
- * ```
+ * @see {@link ThemeProvider} - Main provider component
+ * @see {@link useTheme} - Hook for consuming theme context
+ * @see {@link ThemeScript} - FOUC prevention script
  */
 
 // Types & Schema

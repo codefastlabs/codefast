@@ -5,16 +5,37 @@ import type { Theme } from '@/types';
  * -------------------------------------------------------------------------- */
 
 interface ThemeScriptProps {
+  /**
+   * Initial theme from server (e.g., from cookie via loader).
+   */
   theme: Theme;
 }
 
 /* -----------------------------------------------------------------------------
- * Component: ThemeScript
+ * Component
  * -------------------------------------------------------------------------- */
 
 /**
- * Script to prevent FOUC (Flash of Unstyled Content) by setting the theme class immediately.
- * This must be placed in the <head> of the document.
+ * Inline script that prevents Flash of Unstyled Content (FOUC).
+ *
+ * **Why this is needed:**
+ * React hydration occurs after the browser has already painted the page.
+ * Without this script, users would briefly see the wrong theme before
+ * React takes over and applies the correct one.
+ *
+ * **How it works:**
+ * This script runs synchronously in the `<head>` before first paint:
+ * 1. Resolves 'system' to 'light' or 'dark' using `matchMedia()`
+ * 2. Adds the theme class to `<html>` immediately
+ * 3. Sets `color-scheme` for native form controls and scrollbars
+ *
+ * @example
+ * ```tsx
+ * // In __root.tsx (TanStack Start)
+ * <head>
+ *   <ThemeScript theme={theme} />
+ * </head>
+ * ```
  */
 export function ThemeScript({ theme }: ThemeScriptProps) {
   const themeScript = `

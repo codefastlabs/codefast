@@ -1,39 +1,44 @@
 import type { ResolvedTheme, Theme } from '@/types';
 
 /* -----------------------------------------------------------------------------
- * Constants (Public)
+ * Public Constants
  * -------------------------------------------------------------------------- */
 
 /**
- * Default theme used when no preference is set.
- * @public
+ * Default theme when no user preference exists.
+ *
+ * Set to 'system' to respect OS preference by default.
  */
 export const DEFAULT_THEME: Theme = 'system';
 
 /**
- * Default resolved theme used for server-side rendering when 'system' cannot be determined.
- * @public
+ * Fallback theme for SSR when system preference cannot be detected.
+ *
+ * Used during server-side rendering since `window.matchMedia()` is unavailable.
  */
 export const DEFAULT_RESOLVED_THEME: ResolvedTheme = 'dark';
 
 /**
- * Cookie storage key for persisting theme preference.
- * @public
+ * Cookie key for persisting user's theme preference.
+ *
+ * The cookie is httpOnly for security (only server can read it).
  */
 export const THEME_STORAGE_KEY = 'ui-theme';
 
 /* -----------------------------------------------------------------------------
- * Constants (Internal)
+ * Internal Constants
  * -------------------------------------------------------------------------- */
 
 /**
- * Media query for detecting dark mode preference.
+ * CSS media query for detecting dark mode preference.
  * @internal
  */
 export const MEDIA = '(prefers-color-scheme: dark)';
 
 /**
  * BroadcastChannel name for cross-tab theme synchronization.
+ *
+ * Enables instant theme updates across all open browser tabs.
  * @internal
  */
 export const THEME_CHANNEL = 'theme-sync';

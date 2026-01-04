@@ -15,9 +15,18 @@ import { ThemeContext } from '@/core/context';
 import { applyTheme, disableAnimation, getSystemTheme } from '@/utils';
 
 /* -----------------------------------------------------------------------------
- * System Theme Subscription (for useSyncExternalStore)
+ * System Theme Subscription
+ *
+ * These functions power `useSyncExternalStore` for reactive system theme detection.
+ * This pattern ensures SSR safety and efficient re-renders on OS preference changes.
  * -------------------------------------------------------------------------- */
 
+/**
+ * Subscribe to OS theme preference changes.
+ *
+ * @param callback - Function to call when system theme changes
+ * @returns Cleanup function to remove the listener
+ */
 function subscribeToSystemTheme(callback: () => void): () => void {
   const mediaQuery = window.matchMedia(MEDIA);
 
@@ -26,10 +35,16 @@ function subscribeToSystemTheme(callback: () => void): () => void {
   return () => mediaQuery.removeEventListener('change', callback);
 }
 
+/**
+ * Get current system theme on the client.
+ */
 function getSystemThemeSnapshot(): ResolvedTheme {
   return getSystemTheme();
 }
 
+/**
+ * Server snapshot returns default theme since `matchMedia` is unavailable during SSR.
+ */
 function getServerSnapshot(): ResolvedTheme {
   return DEFAULT_RESOLVED_THEME;
 }
@@ -40,24 +55,51 @@ function getServerSnapshot(): ResolvedTheme {
 
 interface ThemeProviderProps {
   children: ReactNode;
+  /**
+   * Initial theme from server (typically from cookie via loader).
+   */
   theme: Theme;
   /**
-   * Callback to persist theme changes.
-   * For TanStack Start, use setThemeServerFn from `@codefast/theme/tanstack-start`.
-   * For Next.js, implement your own server action.
+   * Async function to persist theme changes to server/storage.
+   *
+   * For TanStack Start: use `setThemeServerFn` from `@codefast/theme/tanstack-start`
+   * For Next.js: implement a server action
    */
   persistTheme?: (value: Theme) => Promise<void>;
+  /**
+   * When true, temporarily disables CSS transitions during theme changes.
+   * Prevents jarring color animations when switching themes.
+   * @default false
+   */
   disableTransitionOnChange?: boolean;
+  /**
+   * CSP nonce for inline styles when `disableTransitionOnChange` is enabled.
+   */
   nonce?: string;
 }
 
 /* -----------------------------------------------------------------------------
- * Component: ThemeProvider
+ * Component
  * -------------------------------------------------------------------------- */
 
 /**
- * Provider component for managing theme state with system preference support.
- * Uses React 19's useOptimistic for immediate UI feedback during theme changes.
+ * Provider component for theme state management.
+ *
+ * **React 19 Features Used:**
+ * - `useOptimistic` - Immediate UI feedback while persisting theme
+ * - `useSyncExternalStore` - SSR-safe subscription to OS theme preference
+ * - `useEffectEvent` - Stable callback for cross-tab sync without effect re-runs
+ *
+ * @example
+ * ```tsx
+ * // In your root layout
+ * <ThemeProvider
+ *   theme={theme}
+ *   persistTheme={(value) => setThemeServerFn({ data: value })}
+ * >
+ *   {children}
+ * </ThemeProvider>
+ * ```
  */
 export function ThemeProvider({
   children,
@@ -66,31 +108,31 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   nonce,
 }: ThemeProviderProps): JSX.Element {
-  // Actual persisted theme state (synced with server/cookie)
+  // Actual persisted theme (source of truth after server confirms)
   const [theme, setThemeState] = useState<Theme>(initialTheme);
 
-  // Optimistic theme - shows pending value immediately while async operation is in flight
-  // Automatically reverts to `theme` when the transition completes (success or failure)
+  // Optimistic theme - immediately reflects user's intent while async operation runs
+  // Automatically reverts to `theme` if the transition fails
   const [optimisticTheme, setOptimisticTheme] = useOptimistic(theme);
 
-  // Track if we're in the middle of a theme change
+  // True when there's a pending theme change (optimistic !== actual)
   const isPending = optimisticTheme !== theme;
 
-  // Subscribe to system theme changes using useSyncExternalStore (SSR-safe)
+  // Subscribe to OS preference changes (SSR-safe via useSyncExternalStore)
   const systemTheme = useSyncExternalStore(subscribeToSystemTheme, getSystemThemeSnapshot, getServerSnapshot);
 
-  // Derive resolvedTheme from optimisticTheme - no separate state needed
+  // Compute the actual theme to apply: resolve 'system' to light/dark
   const resolvedTheme = useMemo<ResolvedTheme>(
     () => (optimisticTheme === 'system' ? systemTheme : optimisticTheme),
     [optimisticTheme, systemTheme],
   );
 
-  // Apply theme to DOM when resolved theme changes
+  // Apply theme class and color-scheme to <html> when resolved theme changes
   useEffect(() => {
     applyTheme(resolvedTheme);
   }, [resolvedTheme]);
 
-  // Handler for cross-tab theme sync - using useEffectEvent to avoid re-subscribing
+  // Stable handler for cross-tab sync - useEffectEvent prevents effect re-subscription
   const onCrossTabSync = useEffectEvent((newTheme: Theme) => {
     if (newTheme === theme) return;
 
@@ -99,7 +141,7 @@ export function ThemeProvider({
     });
   });
 
-  // Effect to handle cross-tab theme sync via BroadcastChannel
+  // Listen for theme changes from other tabs via BroadcastChannel
   useEffect(() => {
     const channel = new BroadcastChannel(THEME_CHANNEL);
 
@@ -114,33 +156,33 @@ export function ThemeProvider({
     async (value: Theme): Promise<void> => {
       if (value === theme) return;
 
+      // Optionally disable animations during theme switch
       const enable = disableTransitionOnChange ? disableAnimation(nonce) : null;
 
-      // Use startTransition to wrap the optimistic update and async operation
-      // This ensures React knows they're part of the same transition
+      // Wrap in startTransition for proper concurrent mode handling
       startTransition(async () => {
-        // Immediately show the new theme (optimistic update)
+        // Show new theme immediately (optimistic update)
         setOptimisticTheme(value);
 
         try {
-          // Persist theme if callback provided
+          // Persist to server/storage
           if (persistTheme) {
             await persistTheme(value);
           }
 
-          // Server confirmed - update the actual state
+          // Server confirmed - commit to actual state
           setThemeState(value);
 
-          // Notify other tabs about theme change
+          // Notify other tabs
           const channel = new BroadcastChannel(THEME_CHANNEL);
 
           channel.postMessage(value);
           channel.close();
         } catch (error) {
-          // On error, React automatically reverts optimisticTheme to match theme
-          // because the transition ends and optimisticTheme falls back to theme
+          // On failure, useOptimistic automatically reverts to `theme`
           console.error('Failed to set theme:', error);
         } finally {
+          // Re-enable animations
           enable?.();
         }
       });
@@ -148,7 +190,7 @@ export function ThemeProvider({
     [theme, disableTransitionOnChange, nonce, setOptimisticTheme, persistTheme],
   );
 
-  // Use optimisticTheme for context so consumers see immediate updates
+  // Expose optimistic theme so consumers see immediate updates
   const value = useMemo<ThemeContextType>(
     () => ({ theme: optimisticTheme, resolvedTheme, setTheme, isPending }),
     [optimisticTheme, resolvedTheme, setTheme, isPending],
