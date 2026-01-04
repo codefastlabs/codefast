@@ -33,7 +33,9 @@ export const exampleFormSchema = z.object({
   }),
   plan: z.enum(['basic', 'pro'], {
     error: (issue) =>
-      issue.input === undefined ? 'Please select a subscription plan' : 'Invalid plan selection. Please choose Basic or Pro',
+      issue.input === undefined
+        ? 'Please select a subscription plan'
+        : 'Invalid plan selection. Please choose Basic or Pro',
   }),
   billingPeriod: z
     .string({

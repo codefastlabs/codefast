@@ -1,8 +1,9 @@
 import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import type { JSX, ReactNode } from 'react';
+import { MEDIA, THEME_CHANNEL } from '@/integrations/theme/types';
 import { setThemeServerFn } from '@/integrations/theme/server';
-import { MEDIA, applyTheme, disableAnimation, getSystemTheme } from '@/integrations/theme/utils';
+import { applyTheme, disableAnimation, getSystemTheme, resolveTheme } from '@/integrations/theme/utils';
 
 /* -----------------------------------------------------------------------------
  * Types
@@ -82,7 +83,7 @@ export function ThemeProvider({
 
   // Effect to apply theme when it changes
   useEffect(() => {
-    const newResolved = theme === 'system' ? getSystemTheme() : theme;
+    const newResolved = resolveTheme(theme);
     setResolvedTheme(newResolved);
     applyTheme(newResolved);
   }, [theme]);
@@ -91,14 +92,14 @@ export function ThemeProvider({
   const onCrossTabSync = useEffectEvent((newTheme: Theme) => {
     if (newTheme === theme) return;
     setThemeState(newTheme);
-    const resolved = newTheme === 'system' ? getSystemTheme() : newTheme;
+    const resolved = resolveTheme(newTheme);
     setResolvedTheme(resolved);
     applyTheme(resolved);
   });
 
   // Effect to handle cross-tab theme sync via BroadcastChannel
   useEffect(() => {
-    const channel = new BroadcastChannel('theme-sync');
+    const channel = new BroadcastChannel(THEME_CHANNEL);
 
     channel.onmessage = (event) => {
       onCrossTabSync(event.data as Theme);
@@ -117,7 +118,7 @@ export function ThemeProvider({
       setThemeState(value);
 
       // Calculate resolved immediately for UI feedback
-      const newResolved = value === 'system' ? getSystemTheme() : value;
+      const newResolved = resolveTheme(value);
       setResolvedTheme(newResolved);
       applyTheme(newResolved);
 
@@ -125,14 +126,14 @@ export function ThemeProvider({
         await setThemeServerFn({ data: value });
 
         // Notify other tabs about theme change
-        const channel = new BroadcastChannel('theme-sync');
+        const channel = new BroadcastChannel(THEME_CHANNEL);
         channel.postMessage(value);
         channel.close();
       } catch (error) {
         // Revert
         setThemeState(theme);
         // Recalculate original resolved
-        const originalResolved = theme === 'system' ? getSystemTheme() : theme;
+        const originalResolved = resolveTheme(theme);
         setResolvedTheme(originalResolved);
         applyTheme(originalResolved);
 
