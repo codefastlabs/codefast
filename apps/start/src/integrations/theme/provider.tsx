@@ -1,9 +1,9 @@
 import { useRouter } from '@tanstack/react-router';
 import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
-import type { JSX, ReactNode } from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
+import type { JSX, ReactNode } from 'react';
 import { setThemeServerFn } from '@/integrations/theme/server';
-import { applyTheme, disableAnimation, getSystemTheme, MEDIA, resolveTheme } from '@/integrations/theme/utils';
+import { MEDIA, applyTheme, disableAnimation, getSystemTheme } from '@/integrations/theme/utils';
 
 /* -----------------------------------------------------------------------------
  * Types
