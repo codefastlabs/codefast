@@ -5,7 +5,7 @@ import type { PropsWithChildren } from 'react';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
-import { ThemeProvider, ThemeScript, getThemeServerFn } from '@/integrations/theme';
+import { ThemeProvider, ThemeScript, getThemeServerFn, resolveTheme } from '@/integrations/theme';
 import appCss from '@/styles/globals.css?url';
 
 interface RootRouterContext {
@@ -13,7 +13,12 @@ interface RootRouterContext {
 }
 
 export const Route = createRootRouteWithContext<RootRouterContext>()({
-  loader: () => getThemeServerFn(),
+  loader: async () => {
+    const theme = await getThemeServerFn();
+    const resolvedTheme = resolveTheme(theme);
+
+    return { theme, resolvedTheme };
+  },
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -26,10 +31,10 @@ export const Route = createRootRouteWithContext<RootRouterContext>()({
 });
 
 function RootShellComponent({ children }: PropsWithChildren) {
-  const theme = Route.useLoaderData();
+  const { theme, resolvedTheme } = Route.useLoaderData();
 
   return (
-    <html lang="en">
+    <html className={resolvedTheme} lang="en" style={{ colorScheme: resolvedTheme }} suppressHydrationWarning>
       <head>
         <HeadContent />
         <ThemeScript theme={theme} />

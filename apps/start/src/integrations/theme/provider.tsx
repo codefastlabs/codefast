@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import type { JSX, ReactNode } from 'react';
-import { MEDIA, THEME_CHANNEL } from '@/integrations/theme/types';
+import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from '@/integrations/theme/types';
 import { setThemeServerFn } from '@/integrations/theme/server';
 import { applyTheme, disableAnimation, getSystemTheme, resolveTheme } from '@/integrations/theme/utils';
 
@@ -51,17 +51,12 @@ export function ThemeProvider({
 
   // Calculate verified theme for initial state if possible, otherwise default to light/dark based on initialTheme
   // Note: During SSR, we can't know 'system' preference, so we rely on client hydration to fix it if it's 'system'
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => {
-    if (initialTheme === 'system') {
-      // If server sent 'system', we might default to one or the other until hydration
-      // However, if we access window here (lazy init), we might get it right on client
-      if (typeof window !== 'undefined') {
-        return getSystemTheme();
-      }
-      return 'dark'; // Fallback for server-rendering 'system' if not handled by script
-    }
-    return initialTheme;
-  });
+  /*
+   * Initialize resolvedTheme.
+   * We use a lazy initializer to correctly handle 'system' theme on the client
+   * while falling back to default on the server.
+   */
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolveTheme(initialTheme));
 
   // Handler for system theme changes - using useEffectEvent to read latest theme without re-subscribing
   const onSystemThemeChange = useEffectEvent(() => {
