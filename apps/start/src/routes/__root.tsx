@@ -16,9 +16,8 @@ interface RootRouterContext {
 export const Route = createRootRouteWithContext<RootRouterContext>()({
   loader: async () => {
     const theme = await getThemeServerFn();
-    const resolvedTheme = resolveTheme(theme);
 
-    return { theme, resolvedTheme };
+    return { theme };
   },
   head: () => ({
     meta: [
@@ -34,7 +33,8 @@ export const Route = createRootRouteWithContext<RootRouterContext>()({
 const persistTheme = createPersistTheme();
 
 function RootShellComponent({ children }: PropsWithChildren) {
-  const { theme, resolvedTheme } = Route.useLoaderData();
+  const { theme } = Route.useLoaderData();
+  const resolvedTheme = resolveTheme(theme);
 
   return (
     <html className={resolvedTheme} lang="en" style={{ colorScheme: resolvedTheme }} suppressHydrationWarning>
@@ -43,17 +43,11 @@ function RootShellComponent({ children }: PropsWithChildren) {
         <ThemeScript theme={theme} />
       </head>
       <body>
-        <ThemeProvider
-          theme={theme}
-          persistTheme={persistTheme}
-          disableTransitionOnChange
-        >
+        <ThemeProvider theme={theme} persistTheme={persistTheme} disableTransitionOnChange>
           {children}
         </ThemeProvider>
         <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
+          config={{ position: 'bottom-right' }}
           plugins={[TanStackRouterDevtools, TanStackQueryDevtools, TanStackFormDevtools]}
         />
         <Scripts />

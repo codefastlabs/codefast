@@ -38,21 +38,8 @@ interface ThemeScriptProps {
  * ```
  */
 export function ThemeScript({ theme }: ThemeScriptProps) {
-  const themeScript = `
-    (function() {
-      try {
-        var theme = '${theme}';
-        var resolvedTheme = theme;
-
-        if (theme === 'system') {
-          resolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-
-        document.documentElement.classList.add(resolvedTheme);
-        document.documentElement.style.colorScheme = resolvedTheme;
-      } catch (e) {}
-    })()
-  `;
+  // Minified FOUC prevention script
+  const themeScript = `(function(){try{var theme="${theme}",resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(error){}})()`;
 
   return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
 }
