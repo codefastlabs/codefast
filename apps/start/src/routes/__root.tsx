@@ -34,7 +34,7 @@ function RootShellComponent({ children }: RootShellComponentProps) {
   const theme = Route.useLoaderData();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={theme} style={{ colorScheme: theme }}>
       <head>
         <HeadContent />
         <ThemeScript theme={theme} />
