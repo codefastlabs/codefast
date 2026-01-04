@@ -1,10 +1,5 @@
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
-
-/* -----------------------------------------------------------------------------
- * Constants
- * -------------------------------------------------------------------------- */
-
-export const MEDIA = '(prefers-color-scheme: dark)';
+import { MEDIA } from '@/integrations/theme/types';
 
 /* -----------------------------------------------------------------------------
  * Utilities

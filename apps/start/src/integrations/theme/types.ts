@@ -23,21 +23,40 @@ export type Theme = z.infer<typeof themeSchema>;
 export type ResolvedTheme = Exclude<Theme, 'system'>;
 
 /* -----------------------------------------------------------------------------
- * Constants
+ * Constants (Public)
  * -------------------------------------------------------------------------- */
 
 /**
  * Array of all available themes, derived from the Zod schema.
  * Use this for rendering theme options in UI components.
+ * @public
  */
 export const themes = themeSchema.options;
 
 /**
  * Default theme used when no preference is set.
+ * @public
  */
 export const DEFAULT_THEME: Theme = 'system';
 
 /**
  * Cookie storage key for persisting theme preference.
+ * @public
  */
 export const THEME_STORAGE_KEY = 'ui-theme';
+
+/* -----------------------------------------------------------------------------
+ * Constants (Internal)
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Media query for detecting dark mode preference.
+ * @internal
+ */
+export const MEDIA = '(prefers-color-scheme: dark)';
+
+/**
+ * BroadcastChannel name for cross-tab theme synchronization.
+ * @internal
+ */
+export const THEME_CHANNEL = 'theme-sync';
