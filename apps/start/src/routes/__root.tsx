@@ -2,7 +2,6 @@ import { TanStackDevtools } from '@tanstack/react-devtools';
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { ActiveThemeProvider } from '@/components/active-theme';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
@@ -41,7 +40,7 @@ function RootShellComponent({ children }: RootShellComponentProps) {
       </head>
       <body>
         <ThemeProvider theme={theme} disableTransitionOnChange>
-          <ActiveThemeProvider>{children}</ActiveThemeProvider>
+          {children}
         </ThemeProvider>
         <TanStackDevtools
           config={{
