@@ -4,9 +4,9 @@ import type { Theme } from '@/integrations/theme/types';
  * Props
  * -------------------------------------------------------------------------- */
 
-type ThemeScriptProps = {
+interface ThemeScriptProps {
   theme: Theme;
-};
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ThemeScript
