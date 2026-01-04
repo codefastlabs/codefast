@@ -6,19 +6,26 @@ import { DEFAULT_THEME, THEME_STORAGE_KEY } from '@/constants';
 
 /* -----------------------------------------------------------------------------
  * Server Functions
+ *
+ * These functions run on the server and handle cookie-based theme persistence.
+ * Cookies are httpOnly for security - the client cannot read them directly.
  * -------------------------------------------------------------------------- */
 
 /**
- * Get the current theme from cookies or return the default theme.
+ * Read the user's theme preference from cookies.
  *
- * Uses Zod validator to ensure type safety of the cookie value.
+ * Validates the cookie value using Zod schema for type safety.
+ * Returns {@link DEFAULT_THEME} if cookie is missing or invalid.
  *
- * @returns The current theme preference stored in cookies, or DEFAULT_THEME if not set or invalid.
+ * @returns User's stored theme preference or default
+ *
+ * @example
+ * ```tsx
+ * const theme = await getThemeServerFn();
+ * ```
  */
 export const getThemeServerFn = createServerFn().handler((): Theme => {
   const cookieTheme = getCookie(THEME_STORAGE_KEY);
-
-  // Validate cookie value using Zod to ensure type safety
   const validationResult = themeSchema.safeParse(cookieTheme);
 
   if (validationResult.success) {
@@ -29,36 +36,45 @@ export const getThemeServerFn = createServerFn().handler((): Theme => {
 });
 
 /**
- * Set the theme preference in cookies.
+ * Persist theme preference to an HTTP-only cookie.
  *
- * Cookie is set with httpOnly=true to ensure only the server can read it,
- * preventing access from client-side JavaScript. Theme is passed to the
- * client through the server loader, so there's no need to read directly from the cookie.
+ * **Security:**
+ * - `httpOnly: true` - Cookie cannot be accessed from JavaScript (XSS protection)
+ * - `secure: true` in production - Cookie only sent over HTTPS
+ * - `sameSite: 'lax'` - Prevents CSRF while allowing navigation
  *
- * @param data - The theme to set ('light' or 'dark')
- * @throws Error If the theme value is invalid
+ * **Cookie Settings:**
+ * - `maxAge: 1 year` - Preference persists across sessions
+ * - `path: '/'` - Available to all routes
+ *
+ * @param data - Theme to persist ('light', 'dark', or 'system')
+ *
+ * @see {@link https://tanstack.com/start/latest/docs/framework/react/server-functions TanStack Start Server Functions}
  */
 export const setThemeServerFn = createServerFn({ method: 'POST' })
   .inputValidator(themeSchema)
   .handler(({ data }: { data: Theme }): void => {
     setCookie(THEME_STORAGE_KEY, data, {
-      // Set cookie to expire in 1 year
-      maxAge: 60 * 60 * 24 * 365,
-      // Make cookie available to all paths
+      maxAge: 60 * 60 * 24 * 365, // 1 year
       path: '/',
-      // Use SameSite=Lax for better security while allowing navigation
       sameSite: 'lax',
-      // Cookie can only be read by the server, not accessible from JavaScript
-      // This provides better security and prevents XSS attacks
       httpOnly: true,
-      // Only send cookie over HTTPS in production for security
       secure: process.env.NODE_ENV === 'production',
     });
   });
 
 /**
- * Create a persist theme function for ThemeProvider.
- * This wraps setThemeServerFn to match the expected signature.
+ * Create a `persistTheme` function for {@link ThemeProvider}.
+ *
+ * Convenience wrapper that adapts `setThemeServerFn` to the signature
+ * expected by ThemeProvider's `persistTheme` prop.
+ *
+ * @returns Async function compatible with ThemeProvider's persistTheme prop
+ *
+ * @example
+ * ```tsx
+ * <ThemeProvider persistTheme={(value) => setThemeServerFn({ data: value })}>
+ * ```
  */
 export function createPersistTheme(): (value: Theme) => Promise<void> {
   return async (value: Theme): Promise<void> => {

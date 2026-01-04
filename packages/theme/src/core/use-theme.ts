@@ -3,26 +3,30 @@ import type { ThemeContextType } from '@/types';
 import { ThemeContext } from '@/core/context';
 
 /* -----------------------------------------------------------------------------
- * Hook: useTheme
+ * Hook
  * -------------------------------------------------------------------------- */
 
 /**
- * Hook to access the theme context.
+ * Hook to access theme context.
  *
- * Uses React 19's `use` API to read context, which allows for conditional
- * context reading and better integration with Suspense boundaries.
+ * Uses React 19's `use()` API for context consumption, enabling:
+ * - Conditional context reading
+ * - Better Suspense boundary integration
  *
- * @returns The theme context value containing `theme` and `setTheme`
- * @throws Error - If called outside of a ThemeProvider
+ * @returns Theme context with `theme`, `resolvedTheme`, `setTheme`, and `isPending`
+ * @throws {Error} When called outside of {@link ThemeProvider}
  *
  * @example
  * ```tsx
  * function ThemeToggle() {
- *   const { theme, setTheme } = useTheme();
+ *   const { theme, setTheme, isPending } = useTheme();
  *
  *   return (
- *     <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
- *       Current theme: {theme}
+ *     <button
+ *       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+ *       disabled={isPending}
+ *     >
+ *       {theme}
  *     </button>
  *   );
  * }

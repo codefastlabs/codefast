@@ -5,7 +5,13 @@ import type { ResolvedTheme } from '@/types';
  * -------------------------------------------------------------------------- */
 
 /**
- * Apply the resolved theme to the DOM.
+ * Apply theme to the DOM by updating `<html>` element.
+ *
+ * Updates both:
+ * - CSS class (for Tailwind's `dark:` variants)
+ * - `color-scheme` style (for native form controls and scrollbars)
+ *
+ * @param resolved - The resolved theme to apply ('light' or 'dark')
  */
 export function applyTheme(resolved: ResolvedTheme): void {
   const root = window.document.documentElement;
@@ -16,18 +22,32 @@ export function applyTheme(resolved: ResolvedTheme): void {
 }
 
 /**
- * Disables CSS transitions temporarily to prevent animation during theme changes.
- * Respects user's prefers-reduced-motion preference.
+ * Temporarily disable all CSS transitions during theme changes.
+ *
+ * Prevents jarring color animations when switching between light/dark themes.
+ * Respects user's `prefers-reduced-motion` preference (does nothing if enabled).
+ *
+ * @param nonce - Optional CSP nonce for the injected style element
+ * @returns Cleanup function to re-enable transitions. Call after theme is applied.
+ *
+ * @example
+ * ```tsx
+ * const enableTransitions = disableAnimation();
+ * applyTheme('dark');
+ * enableTransitions(); // Re-enables CSS transitions
+ * ```
  */
 export function disableAnimation(nonce?: string): () => void {
-  if (typeof window === 'undefined') return () => {};
+  if (typeof window === 'undefined') return () => { };
 
+  // Respect user's motion preferences
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (prefersReducedMotion) {
-    return () => {};
+    return () => { };
   }
 
+  // Inject style to disable all transitions
   const css = document.createElement('style');
 
   if (nonce) {
@@ -43,9 +63,10 @@ export function disableAnimation(nonce?: string): () => void {
   document.head.appendChild(css);
 
   return () => {
-    // Force a reflow
+    // Force reflow to ensure styles are applied before removing
     (() => window.getComputedStyle(document.body))();
 
+    // Use double RAF to ensure paint happens before removing style
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (css.parentNode) {
