@@ -3,6 +3,7 @@ import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useStat
 import type { JSX, ReactNode } from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import { setThemeServerFn } from '@/integrations/theme/server';
+import { applyTheme, disableAnimation, getSystemTheme, MEDIA, resolveTheme } from '@/integrations/theme/utils';
 
 /* -----------------------------------------------------------------------------
  * Types
@@ -21,73 +22,6 @@ type ThemeContextValue = ThemeContextType | null;
  * -------------------------------------------------------------------------- */
 
 export const ThemeContext = createContext<ThemeContextValue>(null);
-
-/* -----------------------------------------------------------------------------
- * Utilities
- * -------------------------------------------------------------------------- */
-
-const MEDIA = '(prefers-color-scheme: dark)';
-
-/**
- * Disables CSS transitions temporarily to prevent animation during theme changes.
- * Respects user's prefers-reduced-motion preference.
- */
-function disableAnimation(nonce?: string): () => void {
-  // Check if we're in the browser
-  if (typeof window === 'undefined') return () => {};
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) {
-    return () => {};
-  }
-
-  const css = document.createElement('style');
-
-  if (nonce) {
-    css.setAttribute('nonce', nonce);
-  }
-
-  css.appendChild(
-    document.createTextNode(
-      `*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}`,
-    ),
-  );
-
-  document.head.appendChild(css);
-
-  return () => {
-    // Force a reflow
-    (() => window.getComputedStyle(document.body))();
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (css.parentNode) {
-          document.head.removeChild(css);
-        }
-      });
-    });
-  };
-}
-
-/**
- * Helper to get the resolved theme (light/dark) from a Theme value.
- */
-function getSystemTheme(): ResolvedTheme {
-  if (typeof window === 'undefined') return 'light'; // Default for SSR if strictly needed, though usage should be careful
-  return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
-}
-
-/**
- * Apply the resolved theme to the DOM.
- */
-function applyTheme(resolved: ResolvedTheme): void {
-  const root = window.document.documentElement;
-
-  root.classList.remove('light', 'dark');
-  root.classList.add(resolved);
-  root.style.colorScheme = resolved;
-}
 
 /* -----------------------------------------------------------------------------
  * Props
@@ -198,36 +132,4 @@ export function ThemeProvider({
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: ThemeScript
- * -------------------------------------------------------------------------- */
-
-type ThemeScriptProps = {
-  theme: Theme;
-};
-
-/**
- * Script to prevent FOUC (Flash of Unstyled Content) by setting the theme class immediately.
- * This must be placed in the <head> of the document.
- */
-export function ThemeScript({ theme }: ThemeScriptProps) {
-  const themeScript = `
-    (function() {
-      try {
-        var theme = '${theme}';
-        var resolvedTheme = theme;
-        
-        if (theme === 'system') {
-          resolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        
-        document.documentElement.classList.add(resolvedTheme);
-        document.documentElement.style.colorScheme = resolvedTheme;
-      } catch (e) {}
-    })()
-  `;
-
-  return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
 }

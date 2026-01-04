@@ -17,12 +17,18 @@
 export type { Theme, ResolvedTheme } from '@/integrations/theme/types';
 export { themes, themeSchema, DEFAULT_THEME, THEME_STORAGE_KEY } from '@/integrations/theme/types';
 
-// Provider & Script
-export { ThemeProvider, ThemeScript, ThemeContext } from '@/integrations/theme/provider';
+// Provider & Context
+export { ThemeProvider, ThemeContext } from '@/integrations/theme/provider';
 export type { ThemeContextType } from '@/integrations/theme/provider';
+
+// Script (FOUC prevention)
+export { ThemeScript } from '@/integrations/theme/script';
 
 // Hook
 export { useTheme } from '@/integrations/theme/use-theme';
 
 // Server Functions
 export { getThemeServerFn, setThemeServerFn } from '@/integrations/theme/server';
+
+// Utilities (optional, for advanced usage)
+export { applyTheme, getSystemTheme, resolveTheme, disableAnimation } from '@/integrations/theme/utils';
