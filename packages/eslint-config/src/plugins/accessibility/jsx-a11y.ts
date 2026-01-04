@@ -291,7 +291,7 @@ export const jsxA11yRules: Linter.Config[] = [
       'jsx-a11y': pluginJsxA11y,
     },
     rules: {
-      ...pluginJsxA11y.configs.recommended.rules,
+      ...pluginJsxA11y.flatConfigs.recommended.rules,
 
       // Apply all disabled rules
       ...disabledJsxA11yRules,
