@@ -33,7 +33,7 @@ function RootShellComponent({ children }: RootShellComponentProps) {
   const theme = Route.useLoaderData();
 
   return (
-    <html lang="en" className={theme} style={{ colorScheme: theme }}>
+    <html lang="en" className={theme === 'system' ? undefined : theme} style={{ colorScheme: theme === 'system' ? undefined : theme }}>
       <head>
         <HeadContent />
         <ThemeScript theme={theme} />

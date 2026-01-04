@@ -1,4 +1,3 @@
-import { useRouter } from '@tanstack/react-router';
 import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import type { JSX, ReactNode } from 'react';
@@ -47,7 +46,6 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   nonce,
 }: ThemeProviderProps): JSX.Element {
-  const router = useRouter();
   const [theme, setThemeState] = useState<Theme>(initialTheme);
 
   // Calculate verified theme for initial state if possible, otherwise default to light/dark based on initialTheme
@@ -89,6 +87,26 @@ export function ThemeProvider({
     applyTheme(newResolved);
   }, [theme]);
 
+  // Handler for cross-tab theme sync - using useEffectEvent to avoid re-subscribing
+  const onCrossTabSync = useEffectEvent((newTheme: Theme) => {
+    if (newTheme === theme) return;
+    setThemeState(newTheme);
+    const resolved = newTheme === 'system' ? getSystemTheme() : newTheme;
+    setResolvedTheme(resolved);
+    applyTheme(resolved);
+  });
+
+  // Effect to handle cross-tab theme sync via BroadcastChannel
+  useEffect(() => {
+    const channel = new BroadcastChannel('theme-sync');
+
+    channel.onmessage = (event) => {
+      onCrossTabSync(event.data as Theme);
+    };
+
+    return () => channel.close();
+  }, []);
+
   const setTheme = useCallback(
     async (value: Theme): Promise<void> => {
       if (value === theme) return;
@@ -105,7 +123,11 @@ export function ThemeProvider({
 
       try {
         await setThemeServerFn({ data: value });
-        await router.invalidate();
+
+        // Notify other tabs about theme change
+        const channel = new BroadcastChannel('theme-sync');
+        channel.postMessage(value);
+        channel.close();
       } catch (error) {
         // Revert
         setThemeState(theme);
@@ -119,7 +141,7 @@ export function ThemeProvider({
         enable?.();
       }
     },
-    [theme, disableTransitionOnChange, nonce, router],
+    [theme, disableTransitionOnChange, nonce],
   );
 
   const value = useMemo<ThemeContextType>(() => ({ theme, resolvedTheme, setTheme }), [theme, resolvedTheme, setTheme]);
