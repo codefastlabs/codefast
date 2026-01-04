@@ -71,6 +71,7 @@ export function ActiveThemeProvider({ children, initialTheme }: ActiveThemeProvi
         document.body.classList.remove(className);
       });
     document.body.classList.add(`theme-${theme}`);
+
     if (theme.endsWith('-scaled')) {
       document.body.classList.add('theme-scaled');
     }
@@ -110,8 +111,10 @@ export function ActiveThemeProvider({ children, initialTheme }: ActiveThemeProvi
  */
 export function useThemeConfig() {
   const context = useContext(ThemeContext);
+
   if (context === undefined) {
     throw new Error('useThemeConfig must be used within an ActiveThemeProvider');
   }
+
   return context;
 }

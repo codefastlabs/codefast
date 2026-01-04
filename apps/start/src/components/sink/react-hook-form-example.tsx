@@ -71,6 +71,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Name</FieldLabel>
@@ -86,6 +87,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Email</FieldLabel>
@@ -102,6 +104,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <FieldSet data-invalid={isInvalid}>
                       <FieldLegend>Subscription Plan</FieldLegend>
@@ -142,6 +145,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Billing Period</FieldLabel>
@@ -171,6 +175,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <FieldSet data-invalid={isInvalid}>
                       <FieldLegend>Add-ons</FieldLegend>
@@ -188,6 +193,7 @@ export function ExampleForm() {
                                 const newValue = checked
                                   ? [...currentValue, addon.id]
                                   : currentValue.filter((value) => value !== addon.id);
+
                                 field.onChange(newValue);
                                 field.onBlur();
                               }}
@@ -210,6 +216,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldTitle>Team Size</FieldTitle>
@@ -235,6 +242,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -259,6 +267,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Start Date</FieldLabel>
@@ -284,6 +293,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldTitle>Theme Preference</FieldTitle>
@@ -310,6 +320,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Password</FieldLabel>
@@ -335,6 +346,7 @@ export function ExampleForm() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   const isInvalid = fieldState.invalid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Additional Comments</FieldLabel>

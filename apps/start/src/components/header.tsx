@@ -183,6 +183,7 @@ export default function Header() {
                 />
               );
             }
+
             return <NavLink key={item.to} to={item.to} label={item.label} icon={item.icon} onNavigate={handleClose} />;
           })}
         </nav>

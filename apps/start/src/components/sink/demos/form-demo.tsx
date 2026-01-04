@@ -224,6 +224,7 @@ export function FormDemo() {
                               checked={field.value?.includes(item.id)}
                               onCheckedChange={(checked) => {
                                 const currentValue = field.value ?? [];
+
                                 return checked
                                   ? field.onChange([...currentValue, item.id])
                                   : field.onChange(currentValue.filter((value) => value !== item.id));

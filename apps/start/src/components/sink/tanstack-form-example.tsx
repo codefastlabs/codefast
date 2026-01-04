@@ -77,6 +77,7 @@ export function ExampleForm() {
                 name="name"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Name</FieldLabel>
@@ -99,6 +100,7 @@ export function ExampleForm() {
                 name="email"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Email</FieldLabel>
@@ -123,6 +125,7 @@ export function ExampleForm() {
                 name="plan"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <FieldSet data-invalid={isInvalid}>
                       <FieldLegend>Subscription Plan</FieldLegend>
@@ -162,6 +165,7 @@ export function ExampleForm() {
                 name="billingPeriod"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Billing Period</FieldLabel>
@@ -191,6 +195,7 @@ export function ExampleForm() {
                 mode="array"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <FieldSet data-invalid={isInvalid}>
                       <FieldLegend>Add-ons</FieldLegend>
@@ -208,6 +213,7 @@ export function ExampleForm() {
                                   field.pushValue(addon.id);
                                 } else {
                                   const index = field.state.value.indexOf(addon.id);
+
                                   if (index > -1) {
                                     field.removeValue(index);
                                   }
@@ -231,6 +237,7 @@ export function ExampleForm() {
                 name="teamSize"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldTitle>Team Size</FieldTitle>
@@ -254,6 +261,7 @@ export function ExampleForm() {
                 name="emailNotifications"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -276,6 +284,7 @@ export function ExampleForm() {
                 name="startDate"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Start Date</FieldLabel>
@@ -300,6 +309,7 @@ export function ExampleForm() {
                 name="theme"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldTitle>Theme Preference</FieldTitle>
@@ -326,6 +336,7 @@ export function ExampleForm() {
                 name="password"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Password</FieldLabel>
@@ -353,6 +364,7 @@ export function ExampleForm() {
                 name="comments"
                 children={(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Additional Comments</FieldLabel>

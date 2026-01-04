@@ -54,6 +54,7 @@ import { useState } from 'react';
 
 export function ButtonGroupDemo() {
   const [currency, setCurrency] = useState('$');
+
   return (
     <div className="flex flex-wrap gap-12">
       <div className="flex max-w-sm flex-col gap-6">
