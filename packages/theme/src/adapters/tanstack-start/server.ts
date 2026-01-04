@@ -1,7 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
-import type { Theme } from '@/integrations/theme/types';
-import { DEFAULT_THEME, THEME_STORAGE_KEY, themeSchema } from '@/integrations/theme/types';
+import type { Theme } from '@/types';
+import { themeSchema } from '@/types';
+import { DEFAULT_THEME, THEME_STORAGE_KEY } from '@/constants';
 
 /* -----------------------------------------------------------------------------
  * Server Functions
@@ -54,3 +55,13 @@ export const setThemeServerFn = createServerFn({ method: 'POST' })
       secure: process.env.NODE_ENV === 'production',
     });
   });
+
+/**
+ * Create a persist theme function for ThemeProvider.
+ * This wraps setThemeServerFn to match the expected signature.
+ */
+export function createPersistTheme(): (value: Theme) => Promise<void> {
+  return async (value: Theme): Promise<void> => {
+    await setThemeServerFn({ data: value });
+  };
+}

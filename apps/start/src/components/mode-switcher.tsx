@@ -1,6 +1,6 @@
 import { Button } from '@codefast/ui/button';
 import { useCallback } from 'react';
-import { useTheme } from '@/integrations/theme/use-theme';
+import { useTheme } from '@codefast/theme';
 
 export function ModeSwitcher() {
   const { theme, setTheme } = useTheme();

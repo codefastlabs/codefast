@@ -1,5 +1,4 @@
 import {
-  createContext,
   startTransition,
   useCallback,
   useEffect,
@@ -9,30 +8,11 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react';
-import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import type { JSX, ReactNode } from 'react';
-import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from '@/integrations/theme/types';
-import { setThemeServerFn } from '@/integrations/theme/server';
-import { applyTheme, disableAnimation, getSystemTheme } from '@/integrations/theme/utils';
-
-/* -----------------------------------------------------------------------------
- * Types
- * -------------------------------------------------------------------------- */
-
-export interface ThemeContextType {
-  readonly theme: Theme;
-  readonly resolvedTheme: ResolvedTheme;
-  readonly setTheme: (value: Theme) => Promise<void>;
-  readonly isPending: boolean;
-}
-
-type ThemeContextValue = ThemeContextType | null;
-
-/* -----------------------------------------------------------------------------
- * Context
- * -------------------------------------------------------------------------- */
-
-export const ThemeContext = createContext<ThemeContextValue>(null);
+import type { ResolvedTheme, Theme, ThemeContextType } from '@/types';
+import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from '@/constants';
+import { ThemeContext } from '@/core/context';
+import { applyTheme, disableAnimation, getSystemTheme } from '@/utils';
 
 /* -----------------------------------------------------------------------------
  * System Theme Subscription (for useSyncExternalStore)
@@ -61,6 +41,12 @@ function getServerSnapshot(): ResolvedTheme {
 interface ThemeProviderProps {
   children: ReactNode;
   theme: Theme;
+  /**
+   * Callback to persist theme changes.
+   * For TanStack Start, use setThemeServerFn from `@codefast/theme/tanstack-start`.
+   * For Next.js, implement your own server action.
+   */
+  persistTheme?: (value: Theme) => Promise<void>;
   disableTransitionOnChange?: boolean;
   nonce?: string;
 }
@@ -76,6 +62,7 @@ interface ThemeProviderProps {
 export function ThemeProvider({
   children,
   theme: initialTheme,
+  persistTheme,
   disableTransitionOnChange = false,
   nonce,
 }: ThemeProviderProps): JSX.Element {
@@ -90,11 +77,7 @@ export function ThemeProvider({
   const isPending = optimisticTheme !== theme;
 
   // Subscribe to system theme changes using useSyncExternalStore (SSR-safe)
-  const systemTheme = useSyncExternalStore(
-    subscribeToSystemTheme,
-    getSystemThemeSnapshot,
-    getServerSnapshot,
-  );
+  const systemTheme = useSyncExternalStore(subscribeToSystemTheme, getSystemThemeSnapshot, getServerSnapshot);
 
   // Derive resolvedTheme from optimisticTheme - no separate state needed
   const resolvedTheme = useMemo<ResolvedTheme>(
@@ -140,7 +123,10 @@ export function ThemeProvider({
         setOptimisticTheme(value);
 
         try {
-          await setThemeServerFn({ data: value });
+          // Persist theme if callback provided
+          if (persistTheme) {
+            await persistTheme(value);
+          }
 
           // Server confirmed - update the actual state
           setThemeState(value);
@@ -159,7 +145,7 @@ export function ThemeProvider({
         }
       });
     },
-    [theme, disableTransitionOnChange, nonce, setOptimisticTheme],
+    [theme, disableTransitionOnChange, nonce, setOptimisticTheme, persistTheme],
   );
 
   // Use optimisticTheme for context so consumers see immediate updates

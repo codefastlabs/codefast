@@ -1,20 +1,8 @@
-import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
-import { DEFAULT_RESOLVED_THEME, MEDIA } from '@/integrations/theme/types';
+import type { ResolvedTheme } from '@/types';
 
 /* -----------------------------------------------------------------------------
- * Utilities
+ * DOM Utilities
  * -------------------------------------------------------------------------- */
-
-/**
- * Get the system theme based on user's OS preference.
- */
-export function getSystemTheme(): ResolvedTheme {
-  if (typeof window === 'undefined') {
-    return DEFAULT_RESOLVED_THEME;
-  }
-
-  return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
-}
 
 /**
  * Apply the resolved theme to the DOM.
@@ -25,13 +13,6 @@ export function applyTheme(resolved: ResolvedTheme): void {
   root.classList.remove('light', 'dark');
   root.classList.add(resolved);
   root.style.colorScheme = resolved;
-}
-
-/**
- * Resolve theme to light/dark value.
- */
-export function resolveTheme(theme: Theme): ResolvedTheme {
-  return theme === 'system' ? getSystemTheme() : theme;
 }
 
 /**

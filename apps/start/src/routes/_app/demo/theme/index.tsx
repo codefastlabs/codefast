@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@code
 import { Separator } from '@codefast/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
 import { CheckCircle2Icon, InfoIcon, LaptopIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
-import { themes, useTheme } from '@/integrations/theme';
+import { themes, useTheme } from '@codefast/theme';
 
 export const Route = createFileRoute('/_app/demo/theme/')({
   component: ThemeDemo,

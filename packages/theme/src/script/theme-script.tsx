@@ -1,4 +1,4 @@
-import type { Theme } from '@/integrations/theme/types';
+import type { Theme } from '@/types';
 
 /* -----------------------------------------------------------------------------
  * Props
