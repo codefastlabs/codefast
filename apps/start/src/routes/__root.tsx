@@ -8,11 +8,11 @@ import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
 import { ThemeProvider, ThemeScript, getThemeServerFn } from '@/integrations/theme';
 import appCss from '@/styles/globals.css?url';
 
-interface MyRouterContext {
+interface RootRouterContext {
   queryClient: QueryClient;
 }
 
-export const Route = createRootRouteWithContext<MyRouterContext>()({
+export const Route = createRootRouteWithContext<RootRouterContext>()({
   loader: () => getThemeServerFn(),
   head: () => ({
     meta: [
@@ -33,7 +33,7 @@ function RootShellComponent({ children }: RootShellComponentProps) {
   const theme = Route.useLoaderData();
 
   return (
-    <html lang="en" className={theme === 'system' ? undefined : theme} style={{ colorScheme: theme === 'system' ? undefined : theme }}>
+    <html lang="en">
       <head>
         <HeadContent />
         <ThemeScript theme={theme} />
