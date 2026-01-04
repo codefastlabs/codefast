@@ -1,9 +1,19 @@
-import { createContext, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
+import {
+  createContext,
+  startTransition,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useOptimistic,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import type { ResolvedTheme, Theme } from '@/integrations/theme/types';
 import type { JSX, ReactNode } from 'react';
 import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from '@/integrations/theme/types';
 import { setThemeServerFn } from '@/integrations/theme/server';
-import { applyTheme, disableAnimation, getSystemTheme, resolveTheme } from '@/integrations/theme/utils';
+import { applyTheme, disableAnimation, getSystemTheme } from '@/integrations/theme/utils';
 
 /* -----------------------------------------------------------------------------
  * Types
@@ -13,6 +23,7 @@ export interface ThemeContextType {
   readonly theme: Theme;
   readonly resolvedTheme: ResolvedTheme;
   readonly setTheme: (value: Theme) => Promise<void>;
+  readonly isPending: boolean;
 }
 
 type ThemeContextValue = ThemeContextType | null;
@@ -22,6 +33,26 @@ type ThemeContextValue = ThemeContextType | null;
  * -------------------------------------------------------------------------- */
 
 export const ThemeContext = createContext<ThemeContextValue>(null);
+
+/* -----------------------------------------------------------------------------
+ * System Theme Subscription (for useSyncExternalStore)
+ * -------------------------------------------------------------------------- */
+
+function subscribeToSystemTheme(callback: () => void): () => void {
+  const mediaQuery = window.matchMedia(MEDIA);
+
+  mediaQuery.addEventListener('change', callback);
+
+  return () => mediaQuery.removeEventListener('change', callback);
+}
+
+function getSystemThemeSnapshot(): ResolvedTheme {
+  return getSystemTheme();
+}
+
+function getServerSnapshot(): ResolvedTheme {
+  return DEFAULT_RESOLVED_THEME;
+}
 
 /* -----------------------------------------------------------------------------
  * Props
@@ -40,6 +71,7 @@ interface ThemeProviderProps {
 
 /**
  * Provider component for managing theme state with system preference support.
+ * Uses React 19's useOptimistic for immediate UI feedback during theme changes.
  */
 export function ThemeProvider({
   children,
@@ -47,49 +79,41 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   nonce,
 }: ThemeProviderProps): JSX.Element {
+  // Actual persisted theme state (synced with server/cookie)
   const [theme, setThemeState] = useState<Theme>(initialTheme);
 
-  // Calculate verified theme for initial state if possible, otherwise default to light/dark based on initialTheme
-  // Note: During SSR, we can't know 'system' preference, so we rely on client hydration to fix it if it's 'system'
-  /*
-   * Initialize resolvedTheme.
-   * We use a lazy initializer to correctly handle 'system' theme on the client
-   * while falling back to default on the server.
-   */
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolveTheme(initialTheme));
+  // Optimistic theme - shows pending value immediately while async operation is in flight
+  // Automatically reverts to `theme` when the transition completes (success or failure)
+  const [optimisticTheme, setOptimisticTheme] = useOptimistic(theme);
 
-  // Handler for system theme changes - using useEffectEvent to read latest theme without re-subscribing
-  const onSystemThemeChange = useEffectEvent(() => {
-    if (theme === 'system') {
-      const newResolved = getSystemTheme();
-      setResolvedTheme(newResolved);
-      applyTheme(newResolved);
-    }
-  });
+  // Track if we're in the middle of a theme change
+  const isPending = optimisticTheme !== theme;
 
-  // Effect to handle system theme changes - only runs once on mount
+  // Subscribe to system theme changes using useSyncExternalStore (SSR-safe)
+  const systemTheme = useSyncExternalStore(
+    subscribeToSystemTheme,
+    getSystemThemeSnapshot,
+    getServerSnapshot,
+  );
+
+  // Derive resolvedTheme from optimisticTheme - no separate state needed
+  const resolvedTheme = useMemo<ResolvedTheme>(
+    () => (optimisticTheme === 'system' ? systemTheme : optimisticTheme),
+    [optimisticTheme, systemTheme],
+  );
+
+  // Apply theme to DOM when resolved theme changes
   useEffect(() => {
-    const mediaQuery = window.matchMedia(MEDIA);
-
-    mediaQuery.addEventListener('change', onSystemThemeChange);
-
-    return () => mediaQuery.removeEventListener('change', onSystemThemeChange);
-  }, []);
-
-  // Effect to apply theme when it changes
-  useEffect(() => {
-    const newResolved = resolveTheme(theme);
-    setResolvedTheme(newResolved);
-    applyTheme(newResolved);
-  }, [theme]);
+    applyTheme(resolvedTheme);
+  }, [resolvedTheme]);
 
   // Handler for cross-tab theme sync - using useEffectEvent to avoid re-subscribing
   const onCrossTabSync = useEffectEvent((newTheme: Theme) => {
     if (newTheme === theme) return;
-    setThemeState(newTheme);
-    const resolved = resolveTheme(newTheme);
-    setResolvedTheme(resolved);
-    applyTheme(resolved);
+
+    startTransition(() => {
+      setThemeState(newTheme);
+    });
   });
 
   // Effect to handle cross-tab theme sync via BroadcastChannel
@@ -109,38 +133,40 @@ export function ThemeProvider({
 
       const enable = disableTransitionOnChange ? disableAnimation(nonce) : null;
 
-      // Optimistically update
-      setThemeState(value);
+      // Use startTransition to wrap the optimistic update and async operation
+      // This ensures React knows they're part of the same transition
+      startTransition(async () => {
+        // Immediately show the new theme (optimistic update)
+        setOptimisticTheme(value);
 
-      // Calculate resolved immediately for UI feedback
-      const newResolved = resolveTheme(value);
-      setResolvedTheme(newResolved);
-      applyTheme(newResolved);
+        try {
+          await setThemeServerFn({ data: value });
 
-      try {
-        await setThemeServerFn({ data: value });
+          // Server confirmed - update the actual state
+          setThemeState(value);
 
-        // Notify other tabs about theme change
-        const channel = new BroadcastChannel(THEME_CHANNEL);
-        channel.postMessage(value);
-        channel.close();
-      } catch (error) {
-        // Revert
-        setThemeState(theme);
-        // Recalculate original resolved
-        const originalResolved = resolveTheme(theme);
-        setResolvedTheme(originalResolved);
-        applyTheme(originalResolved);
+          // Notify other tabs about theme change
+          const channel = new BroadcastChannel(THEME_CHANNEL);
 
-        console.error('Failed to set theme:', error);
-      } finally {
-        enable?.();
-      }
+          channel.postMessage(value);
+          channel.close();
+        } catch (error) {
+          // On error, React automatically reverts optimisticTheme to match theme
+          // because the transition ends and optimisticTheme falls back to theme
+          console.error('Failed to set theme:', error);
+        } finally {
+          enable?.();
+        }
+      });
     },
-    [theme, disableTransitionOnChange, nonce],
+    [theme, disableTransitionOnChange, nonce, setOptimisticTheme],
   );
 
-  const value = useMemo<ThemeContextType>(() => ({ theme, resolvedTheme, setTheme }), [theme, resolvedTheme, setTheme]);
+  // Use optimisticTheme for context so consumers see immediate updates
+  const value = useMemo<ThemeContextType>(
+    () => ({ theme: optimisticTheme, resolvedTheme, setTheme, isPending }),
+    [optimisticTheme, resolvedTheme, setTheme, isPending],
+  );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return <ThemeContext value={value}>{children}</ThemeContext>;
 }
