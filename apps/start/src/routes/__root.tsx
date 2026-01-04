@@ -1,6 +1,6 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
-import { getThemeServerFn, setThemeServerFn } from '@codefast/theme/adapters/tanstack-start';
+import { createPersistTheme, getThemeServerFn } from '@codefast/theme/adapters/tanstack-start';
 import { ThemeProvider, ThemeScript, resolveTheme } from '@codefast/theme';
 import type { QueryClient } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
@@ -31,6 +31,8 @@ export const Route = createRootRouteWithContext<RootRouterContext>()({
   shellComponent: RootShellComponent,
 });
 
+const persistTheme = createPersistTheme();
+
 function RootShellComponent({ children }: PropsWithChildren) {
   const { theme, resolvedTheme } = Route.useLoaderData();
 
@@ -43,7 +45,7 @@ function RootShellComponent({ children }: PropsWithChildren) {
       <body>
         <ThemeProvider
           theme={theme}
-          persistTheme={(value) => setThemeServerFn({ data: value })}
+          persistTheme={persistTheme}
           disableTransitionOnChange
         >
           {children}
