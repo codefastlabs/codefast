@@ -1,9 +1,10 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
 import type { PropsWithChildren } from 'react';
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary';
 import { NotFound } from '@/components/not-found';
-import { QueryClientProvider, getQueryClient } from '@/integrations/tanstack-query/provider';
+import { getQueryClient } from '@/integrations/tanstack-query/provider';
 import { routeTree } from '@/routeTree.gen';
 
 export const getRouter = () => {
@@ -26,5 +27,5 @@ export const getRouter = () => {
 function WrapComponent({ children }: PropsWithChildren) {
   const { queryClient } = getQueryClient();
 
-  return <QueryClientProvider queryClient={queryClient}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

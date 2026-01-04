@@ -1,11 +1,12 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import { getThemeServerFn, setThemeServerFn } from '@codefast/theme/adapters/tanstack-start';
+import { ThemeProvider, ThemeScript, resolveTheme } from '@codefast/theme';
 import type { QueryClient } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import TanStackFormDevtools from '@/integrations/tanstack-form/devtools';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import TanStackRouterDevtools from '@/integrations/tanstack-router/devtools';
-import { ThemeProvider, ThemeScript, getThemeServerFn, resolveTheme } from '@/integrations/theme';
 import appCss from '@/styles/globals.css?url';
 
 interface RootRouterContext {
@@ -40,7 +41,11 @@ function RootShellComponent({ children }: PropsWithChildren) {
         <ThemeScript theme={theme} />
       </head>
       <body>
-        <ThemeProvider theme={theme} disableTransitionOnChange>
+        <ThemeProvider
+          theme={theme}
+          persistTheme={(value) => setThemeServerFn({ data: value })}
+          disableTransitionOnChange
+        >
           {children}
         </ThemeProvider>
         <TanStackDevtools
