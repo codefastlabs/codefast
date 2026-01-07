@@ -8,7 +8,13 @@ import type { ChartConfig } from '@codefast/ui/chart';
 
 export const description = 'A mixed bar chart';
 
-const chartData = [
+interface ChartDataItem {
+  browser: string;
+  visitors: number;
+  fill: string;
+}
+
+const chartData: ChartDataItem[] = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
   { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
@@ -16,7 +22,14 @@ const chartData = [
   { browser: 'other', visitors: 90, fill: 'var(--color-other)' },
 ];
 
-const chartConfig = {
+interface ChartConfigItem {
+  label: string;
+  color?: string;
+}
+
+type ChartConfigMap = Record<string, ChartConfigItem>;
+
+const chartConfig: ChartConfigMap = {
   visitors: {
     label: 'Visitors',
   },
@@ -65,7 +78,7 @@ export function ChartBarMixedDemo() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value: string) => chartConfig[value as keyof typeof chartConfig]?.label}
+              tickFormatter={(value: string) => chartConfig[value]?.label ?? value}
             />
             <XAxis dataKey="visitors" type="number" hide />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
