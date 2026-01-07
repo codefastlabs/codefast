@@ -19,7 +19,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@codefast/ui/switch';
 import { Textarea } from '@codefast/ui/textarea';
 
-const items = [
+interface SidebarItem {
+  id: string;
+  label: string;
+}
+
+const items: SidebarItem[] = [
   {
     id: 'recents',
     label: 'Recents',
@@ -44,7 +49,7 @@ const items = [
     id: 'documents',
     label: 'Documents',
   },
-] as const;
+];
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -66,12 +71,17 @@ const formSchema = z.object({
     error: (issue) => (issue.input === undefined ? 'You need to select a notification type.' : undefined),
   }),
   mobile: z.boolean().default(false).optional(),
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one item.',
-  }),
-  dob: z.date({
-    error: (issue) => (issue.input === undefined ? 'A date of birth is required.' : undefined),
-  }),
+  items: z
+    .array(z.string())
+    .optional()
+    .refine((value) => value?.some((item) => item), {
+      message: 'You have to select at least one item.',
+    }),
+  dob: z
+    .date({
+      error: (issue) => (issue.input === undefined ? 'A date of birth is required.' : undefined),
+    })
+    .optional(),
   marketing_emails: z.boolean().default(false).optional(),
   security_emails: z.boolean(),
 });

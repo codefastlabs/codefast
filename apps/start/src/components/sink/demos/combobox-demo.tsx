@@ -213,15 +213,20 @@ function UserCombobox({ users: userList, selectedUserId }: { users: User[]; sele
   );
 }
 
+interface TimezoneItem {
+  value: string;
+  label: string;
+}
+
 function TimezoneCombobox({
   timezones: timezoneList,
   selectedTimezone,
 }: {
   timezones: Timezone[];
-  selectedTimezone: Timezone['timezones'][number];
+  selectedTimezone?: TimezoneItem;
 }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(selectedTimezone.value);
+  const [value, setValue] = useState(selectedTimezone?.value ?? '');
 
   const selectedGroup = useMemo(
     () => timezoneList.find((group) => group.timezones.find((tz) => tz.value === value)),
