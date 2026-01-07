@@ -21,7 +21,13 @@ import {
 import { Progress } from '@codefast/ui/progress';
 import { Spinner } from '@codefast/ui/spinner';
 
-const people = [
+interface PersonItem {
+  username: string;
+  avatar: string;
+  message: string;
+}
+
+const people: PersonItem[] = [
   {
     username: 'codefast',
     avatar: 'https://github.com/codefastlabs.png',
@@ -44,7 +50,14 @@ const people = [
   },
 ];
 
-const music = [
+interface MusicItem {
+  title: string;
+  artist: string;
+  album: string;
+  duration: string;
+}
+
+const music: MusicItem[] = [
   {
     title: 'Midnight City Lights',
     artist: 'Neon Dreams',
@@ -95,7 +108,14 @@ const music = [
   },
 ];
 
-const issues = [
+interface IssueItem {
+  number: number;
+  date: string;
+  title: string;
+  description: string;
+}
+
+const issues: IssueItem[] = [
   {
     number: 1247,
     date: 'March 15, 2024',
