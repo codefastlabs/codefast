@@ -9,7 +9,14 @@ import {
   TableRow,
 } from '@codefast/ui/table';
 
-const invoices = [
+interface Invoice {
+  invoice: string;
+  paymentStatus: string;
+  totalAmount: string;
+  paymentMethod: string;
+}
+
+const invoices: Invoice[] = [
   {
     invoice: 'INV001',
     paymentStatus: 'Paid',

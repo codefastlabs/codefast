@@ -11,7 +11,13 @@ import { Link } from '@tanstack/react-router';
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from 'lucide-react';
 import type { ComponentPropsWithoutRef } from 'react';
 
-const components: { title: string; href: string; description: string }[] = [
+interface ComponentItem {
+  title: string;
+  href: string;
+  description: string;
+}
+
+const components: ComponentItem[] = [
   {
     title: 'Alert Dialog',
     href: '/docs/primitives/alert-dialog',

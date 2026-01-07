@@ -8,7 +8,13 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 
 export const description = 'A multiple bar chart';
 
-const chartData = [
+interface ChartDataItem {
+  month: string;
+  desktop: number;
+  mobile: number;
+}
+
+const chartData: ChartDataItem[] = [
   { month: 'January', desktop: 186, mobile: 80 },
   { month: 'February', desktop: 305, mobile: 200 },
   { month: 'March', desktop: 237, mobile: 120 },
