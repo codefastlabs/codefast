@@ -17,7 +17,11 @@ import {
   DrawerTrigger,
 } from '@codefast/ui/drawer';
 
-const data = [
+interface GoalItem {
+  goal: number;
+}
+
+const data: GoalItem[] = [
   {
     goal: 400,
   },

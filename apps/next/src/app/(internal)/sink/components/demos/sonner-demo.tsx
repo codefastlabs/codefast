@@ -7,7 +7,13 @@ import { Button } from '@codefast/ui/button';
 
 const promiseCode = '`${data.name} toast has been added`';
 
-const allTypes = [
+interface ToastDemoItem {
+  name: string;
+  snippet?: string;
+  action: () => void;
+}
+
+const allTypes: ToastDemoItem[] = [
   {
     name: 'Default',
     snippet: `toast('Event has been created')`,

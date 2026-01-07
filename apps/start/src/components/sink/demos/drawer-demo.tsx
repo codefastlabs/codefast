@@ -16,7 +16,11 @@ import { useCallback, useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 import type { CSSProperties } from 'react';
 
-const data = [
+interface GoalItem {
+  goal: number;
+}
+
+const data: GoalItem[] = [
   {
     goal: 400,
   },

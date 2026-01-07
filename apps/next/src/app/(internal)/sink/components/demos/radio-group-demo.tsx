@@ -1,7 +1,14 @@
 import { Label } from '@codefast/ui/label';
 import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 
-const plans = [
+interface PlanItem {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+}
+
+const plans: PlanItem[] = [
   {
     id: 'starter',
     name: 'Starter Plan',
@@ -14,7 +21,7 @@ const plans = [
     description: 'Advanced features for growing businesses with higher demands',
     price: '$20',
   },
-] as const;
+];
 
 export function RadioGroupDemo() {
   return (
