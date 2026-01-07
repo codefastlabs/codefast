@@ -8,7 +8,12 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 
 export const description = 'A simple area chart';
 
-const chartData = [
+interface ChartDataItem {
+  month: string;
+  desktop: number;
+}
+
+const chartData: ChartDataItem[] = [
   { month: 'January', desktop: 186 },
   { month: 'February', desktop: 305 },
   { month: 'March', desktop: 237 },

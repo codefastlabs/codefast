@@ -12,7 +12,13 @@ import {
   navigationMenuTriggerVariants,
 } from '@codefast/ui/navigation-menu';
 
-const components: { title: string; href: string; description: string }[] = [
+interface ComponentItem {
+  title: string;
+  href: string;
+  description: string;
+}
+
+const components: ComponentItem[] = [
   {
     title: 'Alert Dialog',
     href: '/docs/primitives/alert-dialog',
