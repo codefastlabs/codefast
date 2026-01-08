@@ -219,13 +219,7 @@ interface TimezoneItem {
   label: string;
 }
 
-function TimezoneCombobox({
-  timezones,
-  selectedTimezone,
-}: {
-  timezones: Timezone[];
-  selectedTimezone?: TimezoneItem;
-}) {
+function TimezoneCombobox({ timezones, selectedTimezone }: { timezones: Timezone[]; selectedTimezone?: TimezoneItem }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(selectedTimezone?.value ?? '');
 

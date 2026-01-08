@@ -37,8 +37,8 @@ const setupMockMatchMedia = (
     removeListener: mockRemoveListener,
   };
 
-  // Ensure matchMedia exists on globalThis for the test environment
-  Object.defineProperty(globalThis, 'matchMedia', {
+  // Ensure matchMedia exists on window for the test environment
+  Object.defineProperty(window, 'matchMedia', {
     value: jest.fn().mockImplementation(() => mockMediaQueryList),
     writable: true,
   });
@@ -53,7 +53,7 @@ describe('useMediaQuery', () => {
     const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
 
     expect(result.current).toBe(true);
-    expect(globalThis.matchMedia).toHaveBeenCalledWith('(min-width: 600px)');
+    expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 600px)');
     expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
   });
 
@@ -63,7 +63,7 @@ describe('useMediaQuery', () => {
     const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
 
     expect(result.current).toBe(false);
-    expect(globalThis.matchMedia).toHaveBeenCalledWith('(min-width: 600px)');
+    expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 600px)');
   });
 
   test('should update when media query changes', () => {
@@ -106,6 +106,6 @@ describe('useMediaQuery', () => {
 
     rerender('(min-width: 800px)');
     expect(mockRemoveEventListener).toHaveBeenCalledWith('change', expect.any(Function));
-    expect(globalThis.matchMedia).toHaveBeenCalledWith('(min-width: 800px)');
+    expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 800px)');
   });
 });

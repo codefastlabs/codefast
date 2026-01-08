@@ -3,8 +3,8 @@ import { act, renderHook } from '@testing-library/react';
 import { useAnimatedValue } from '@/hooks/use-animated-value';
 
 describe('useAnimatedValue', () => {
-  let originalRequestAnimationFrame: typeof globalThis.requestAnimationFrame;
-  let originalCancelAnimationFrame: typeof globalThis.cancelAnimationFrame;
+  let originalRequestAnimationFrame: typeof window.requestAnimationFrame;
+  let originalCancelAnimationFrame: typeof window.cancelAnimationFrame;
   let originalPerformanceNow: typeof performance.now;
 
   // Improve mocks to ensure proper functionality
@@ -30,13 +30,13 @@ describe('useAnimatedValue', () => {
     performanceNowMock = jest.fn(() => currentTime);
 
     // Store original functions
-    originalRequestAnimationFrame = globalThis.requestAnimationFrame;
-    originalCancelAnimationFrame = globalThis.cancelAnimationFrame;
+    originalRequestAnimationFrame = window.requestAnimationFrame;
+    originalCancelAnimationFrame = window.cancelAnimationFrame;
     originalPerformanceNow = performance.now.bind(performance);
 
     // Assign mock functions
-    globalThis.requestAnimationFrame = requestAnimationFrameMock;
-    globalThis.cancelAnimationFrame = cancelAnimationFrameMock;
+    window.requestAnimationFrame = requestAnimationFrameMock;
+    window.cancelAnimationFrame = cancelAnimationFrameMock;
     performance.now = performanceNowMock;
 
     // Reset mocks and time
@@ -47,8 +47,8 @@ describe('useAnimatedValue', () => {
 
   afterEach(() => {
     // Restore original functions
-    globalThis.requestAnimationFrame = originalRequestAnimationFrame;
-    globalThis.cancelAnimationFrame = originalCancelAnimationFrame;
+    window.requestAnimationFrame = originalRequestAnimationFrame;
+    window.cancelAnimationFrame = originalCancelAnimationFrame;
     performance.now = originalPerformanceNow;
 
     jest.useRealTimers();
