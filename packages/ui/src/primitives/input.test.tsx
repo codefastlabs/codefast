@@ -110,7 +110,7 @@ describe('input', () => {
       const clickSpy = jest.spyOn(fileInput, 'click');
 
       const rafSpy = jest
-        .spyOn(globalThis, 'requestAnimationFrame')
+        .spyOn(window, 'requestAnimationFrame')
         .mockImplementation((callback) => setTimeout(callback, 0));
 
       await user.click(container);
@@ -368,7 +368,7 @@ describe('input', () => {
 
       const container = screen.getByRole('presentation');
 
-      const rafSpy = jest.spyOn(globalThis, 'requestAnimationFrame');
+      const rafSpy = jest.spyOn(window, 'requestAnimationFrame');
 
       await user.click(container);
 

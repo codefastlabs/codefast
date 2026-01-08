@@ -40,6 +40,14 @@ const disabledUnicornRules: Linter.RulesRecord = {
   'unicorn/prefer-module': 'off',
 
   /**
+   * Prefer globalThis over window, self, and global.
+   *
+   * Disabled because we prefer explicit window usage in browser/React contexts
+   * for semantic clarity.
+   */
+  'unicorn/prefer-global-this': 'off',
+
+  /**
    * Prefer top-level await over immediately invoked async function expressions.
    *
    * Disabled because top-level await is not supported in all environments
@@ -196,11 +204,18 @@ const errorUnicornRules: Linter.RulesRecord = {
       checkFilenames: false,
       replacements: {
         args: false,
+        conf: false,
         ctx: false,
+        curr: false,
+        db: false,
         dev: false,
         dist: false,
         env: false,
+        err: false,
+        fn: false,
+        img: false,
         lib: false,
+        nav: false,
         params: false,
         pkg: false,
         prod: false,

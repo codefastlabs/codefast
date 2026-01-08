@@ -30,8 +30,8 @@ export function useMediaQuery(query: string): boolean {
    */
   const [matches, setMatches] = useState<boolean>(() => {
     // Ensure initial state matches current media query status
-    if (typeof globalThis !== 'undefined' && typeof globalThis.matchMedia === 'function') {
-      return globalThis.matchMedia(query).matches;
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      return window.matchMedia(query).matches;
     }
 
     return false;
@@ -39,14 +39,14 @@ export function useMediaQuery(query: string): boolean {
 
   useEffect(() => {
     // Only run in a browser environment where matchMedia is available
-    if (typeof globalThis === 'undefined') {
+    if (typeof window === 'undefined') {
       return;
     }
 
     /**
      * MediaQueryList to evaluate and observe the provided query.
      */
-    const mediaQueryList = globalThis.matchMedia(query);
+    const mediaQueryList = window.matchMedia(query);
 
     /**
      * Update state when the media query status changes.

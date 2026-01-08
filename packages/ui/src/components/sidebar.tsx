@@ -128,10 +128,10 @@ function SidebarProvider({
       }
     };
 
-    globalThis.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
     return (): void => {
-      globalThis.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [toggleSidebar]);
 

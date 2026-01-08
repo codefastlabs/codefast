@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 
 describe('useCopyToClipboard', () => {
-  const originalClipboard = globalThis.navigator.clipboard;
+  const originalClipboard = window.navigator.clipboard;
   let mockWriteText: jest.Mock;
 
   beforeEach(() => {
