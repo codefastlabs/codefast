@@ -80,6 +80,8 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+import time
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
@@ -87,9 +89,72 @@ from typing import Callable
 # Type Aliases
 # =============================================================================
 
-# (start, end, old_class, new_class)
-Match = tuple[int, int, str, str]
+# (start, end, old_class, new_class, category)
+Match = tuple[int, int, str, str, str]
 FinderFunc = Callable[[str], list[Match]]
+
+
+# =============================================================================
+# ANSI Colors
+# =============================================================================
+
+class Colors:
+    """ANSI color codes for terminal output."""
+
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+
+    # Colors
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    MAGENTA = '\033[35m'
+    CYAN = '\033[36m'
+    GRAY = '\033[90m'
+
+    # Bright colors
+    BRIGHT_GREEN = '\033[92m'
+    BRIGHT_YELLOW = '\033[93m'
+    BRIGHT_CYAN = '\033[96m'
+
+    @classmethod
+    def disable(cls) -> None:
+        """Disable all colors (for non-TTY output)."""
+        for attr in dir(cls):
+            if attr.isupper() and not attr.startswith('_'):
+                setattr(cls, attr, '')
+
+
+# Disable colors if not a TTY
+if not sys.stdout.isatty():
+    Colors.disable()
+
+
+# =============================================================================
+# Category Constants
+# =============================================================================
+
+CAT_SPACING = 'Spacing'
+CAT_SIZE = 'Size'
+CAT_ROUNDED = 'Border Radius'
+CAT_BORDER = 'Border Width'
+CAT_DIVIDE = 'Divide'
+CAT_RING = 'Ring'
+CAT_OUTLINE = 'Outline'
+CAT_STROKE = 'Stroke'
+CAT_UNDERLINE = 'Underline'
+CAT_DURATION = 'Duration/Delay'
+CAT_OPACITY = 'Opacity'
+CAT_FILTER = 'Filter'
+CAT_BLUR = 'Blur'
+CAT_TRANSFORM = 'Transform'
+CAT_UNITLESS = 'Unitless'
+CAT_TYPOGRAPHY = 'Typography'
+CAT_THEME = 'Theme'
+CAT_GRADIENT = 'Gradient'
+CAT_OVERFLOW = 'Overflow'
+
 
 # =============================================================================
 # Constants
@@ -188,6 +253,25 @@ FILE_EXTENSIONS = ('.ts', '.tsx', '.js', '.jsx', '.css')
 
 
 # =============================================================================
+# Statistics Tracking
+# =============================================================================
+
+@dataclass
+class Stats:
+    """Track migration statistics."""
+
+    files_processed: int = 0
+    files_modified: int = 0
+    total_conversions: int = 0
+    conversions_by_category: dict[str, int] = field(default_factory=dict)
+    file_details: list[tuple[Path, list[Match]]] = field(default_factory=list)
+
+    def add_category(self, category: str, count: int = 1) -> None:
+        """Add conversions for a category."""
+        self.conversions_by_category[category] = self.conversions_by_category.get(category, 0) + count
+
+
+# =============================================================================
 # Conversion Helpers
 # =============================================================================
 
@@ -219,24 +303,14 @@ def px_to_rem(px_value: float) -> str:
 
 
 def px_to_rounded(px_value: float) -> tuple[str | None, bool]:
-    """Convert pixel value to Tailwind rounded class suffix or rem value.
-
-    Returns (value, is_arbitrary):
-    - For standard values: returns class suffix ('xs', 'sm', etc.) and False
-    - For non-standard values: returns rem value and True
-    """
+    """Convert pixel value to Tailwind rounded class suffix or rem value."""
     if px_value == int(px_value) and int(px_value) in ROUNDED_MAPPING_PX:
         return ROUNDED_MAPPING_PX[int(px_value)], False
     return px_to_rem(px_value), True
 
 
 def rem_to_rounded(rem_value: float) -> tuple[str | None, bool]:
-    """Convert rem value to Tailwind rounded class suffix.
-
-    Returns (value, is_arbitrary):
-    - For standard rem values: returns class suffix and False
-    - For non-standard values: returns None and True (keep original)
-    """
+    """Convert rem value to Tailwind rounded class suffix."""
     for standard_rem, class_name in ROUNDED_MAPPING_REM.items():
         if abs(rem_value - standard_rem) < 0.001:
             return class_name, False
@@ -271,6 +345,7 @@ def find_simple_px_classes(
     content: str,
     pattern: str,
     build_class: Callable[[float], str | None],
+    category: str,
 ) -> list[Match]:
     """Generic finder for simple pixel-to-number conversions."""
     matches = []
@@ -279,11 +354,11 @@ def find_simple_px_classes(
         if px_value >= 0:
             new_class = build_class(px_value)
             if new_class:
-                matches.append((match.start(), match.end(), match.group(0), new_class))
+                matches.append((match.start(), match.end(), match.group(0), new_class, category))
     return matches
 
 
-def find_percent_classes(content: str, utilities: tuple[str, ...]) -> list[Match]:
+def find_percent_classes(content: str, utilities: tuple[str, ...], category: str) -> list[Match]:
     """Find utility classes with percentage or decimal values."""
     matches = []
 
@@ -291,12 +366,12 @@ def find_percent_classes(content: str, utilities: tuple[str, ...]) -> list[Match
         # Pattern for percentage: utility-[125%] → utility-125
         for match in re.finditer(rf'{re.escape(utility)}-\[(\d+)%]', content):
             percent = int(match.group(1))
-            matches.append((match.start(), match.end(), match.group(0), f'{utility}-{percent}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{utility}-{percent}', category))
 
         # Pattern for decimal: utility-[.5] → utility-50
         for match in re.finditer(rf'{re.escape(utility)}-\[\.(\d+)]', content):
             percent = decimal_to_percent(match.group(1))
-            matches.append((match.start(), match.end(), match.group(0), f'{utility}-{percent}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{utility}-{percent}', category))
 
     return matches
 
@@ -324,7 +399,7 @@ def find_rounded_classes(content: str) -> list[Match]:
             new_class = f'rounded-{direction}-[{rounded_value}]' if direction else f'rounded-[{rounded_value}]'
         else:
             new_class = f'rounded-{direction}-{rounded_value}' if direction else f'rounded-{rounded_value}'
-        matches.append((match.start(), match.end(), full_match, new_class))
+        matches.append((match.start(), match.end(), full_match, new_class, CAT_ROUNDED))
 
     # Rem values: rounded-[0.5rem], rounded-t-[0.5rem]
     for match in re.finditer(r'rounded(?:-([a-z]+))?-\[([\d.]+)rem]', content):
@@ -338,7 +413,7 @@ def find_rounded_classes(content: str) -> list[Match]:
             continue
 
         new_class = f'rounded-{direction}-{rounded_value}' if direction else f'rounded-{rounded_value}'
-        matches.append((match.start(), match.end(), full_match, new_class))
+        matches.append((match.start(), match.end(), full_match, new_class, CAT_ROUNDED))
 
     return matches
 
@@ -354,7 +429,7 @@ def find_border_classes(content: str) -> list[Match]:
             continue
 
         border_suffix = px_to_border(px_value)
-        matches.append((match.start(), match.end(), full_match, build_border_class(direction, border_suffix)))
+        matches.append((match.start(), match.end(), full_match, build_border_class(direction, border_suffix), CAT_BORDER))
 
     return matches
 
@@ -376,7 +451,7 @@ def find_border_shorthand_classes(content: str) -> list[Match]:
         ]
 
         if border_classes:
-            matches.append((match.start(), match.end(), match.group(0), ' '.join(border_classes)))
+            matches.append((match.start(), match.end(), match.group(0), ' '.join(border_classes), CAT_BORDER))
 
     return matches
 
@@ -400,7 +475,7 @@ def find_ring_classes(content: str) -> list[Match]:
     for match in re.finditer(r'([^:"\'\s]+:)?ring-\[([\d.]+)px]', content):
         modifier, px_value = match.group(1) or '', float(match.group(2))
         if px_value >= 0:
-            matches.append((match.start(), match.end(), match.group(0), f'{modifier}ring-{format_number(px_value)}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{modifier}ring-{format_number(px_value)}', CAT_RING))
 
     return matches
 
@@ -412,7 +487,7 @@ def find_divide_classes(content: str) -> list[Match]:
     for match in re.finditer(r'divide-([xy])-\[([\d.]+)px]', content):
         direction, px_value = match.group(1), float(match.group(2))
         if px_value >= 0:
-            matches.append((match.start(), match.end(), match.group(0), f'divide-{direction}-{format_number(px_value)}'))
+            matches.append((match.start(), match.end(), match.group(0), f'divide-{direction}-{format_number(px_value)}', CAT_DIVIDE))
 
     return matches
 
@@ -429,7 +504,7 @@ def find_outline_classes(content: str) -> list[Match]:
         for match in re.finditer(pattern, content):
             modifier, px_value = match.group(1) or '', float(match.group(2))
             if px_value >= 0:
-                matches.append((match.start(), match.end(), match.group(0), f'{modifier}{prefix}-{format_number(px_value)}'))
+                matches.append((match.start(), match.end(), match.group(0), f'{modifier}{prefix}-{format_number(px_value)}', CAT_OUTLINE))
 
     return matches
 
@@ -440,6 +515,7 @@ def find_stroke_classes(content: str) -> list[Match]:
         content,
         r'stroke-\[([\d.]+)px]',
         lambda px: f'stroke-{format_number(px)}',
+        CAT_STROKE,
     )
 
 
@@ -449,6 +525,7 @@ def find_underline_offset_classes(content: str) -> list[Match]:
         content,
         r'underline-offset-\[([\d.]+)px]',
         lambda px: f'underline-offset-{format_number(px)}',
+        CAT_UNDERLINE,
     )
 
 
@@ -459,7 +536,7 @@ def find_duration_delay_classes(content: str) -> list[Match]:
     for prefix in ('duration', 'delay'):
         for match in re.finditer(rf'{prefix}-\[(\d+)ms]', content):
             ms_value = int(match.group(1))
-            matches.append((match.start(), match.end(), match.group(0), f'{prefix}-{ms_value}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{prefix}-{ms_value}', CAT_DURATION))
 
     return matches
 
@@ -471,24 +548,24 @@ def find_opacity_classes(content: str) -> list[Match]:
     # Decimal format: opacity-[0.75] → opacity-75
     for match in re.finditer(r'opacity-\[0?\.(\d+)]', content):
         percent = decimal_to_percent(match.group(1))
-        matches.append((match.start(), match.end(), match.group(0), f'opacity-{percent}'))
+        matches.append((match.start(), match.end(), match.group(0), f'opacity-{percent}', CAT_OPACITY))
 
     # Percentage format: opacity-[75%] → opacity-75
     for match in re.finditer(r'opacity-\[(\d+)%]', content):
         percent = int(match.group(1))
-        matches.append((match.start(), match.end(), match.group(0), f'opacity-{percent}'))
+        matches.append((match.start(), match.end(), match.group(0), f'opacity-{percent}', CAT_OPACITY))
 
     return matches
 
 
 def find_filter_classes(content: str) -> list[Match]:
     """Find filter utility classes with percentage values."""
-    return find_percent_classes(content, FILTER_UTILITIES)
+    return find_percent_classes(content, FILTER_UTILITIES, CAT_FILTER)
 
 
 def find_backdrop_filter_classes(content: str) -> list[Match]:
     """Find backdrop filter utility classes with percentage values."""
-    return find_percent_classes(content, BACKDROP_FILTER_UTILITIES)
+    return find_percent_classes(content, BACKDROP_FILTER_UTILITIES, CAT_FILTER)
 
 
 def find_blur_classes(content: str) -> list[Match]:
@@ -499,50 +576,35 @@ def find_blur_classes(content: str) -> list[Match]:
         for match in re.finditer(rf'{prefix}-\[(\d+)px]', content):
             px_value = int(match.group(1))
             if px_value in BLUR_MAPPING_PX:
-                matches.append((match.start(), match.end(), match.group(0), f'{prefix}-{BLUR_MAPPING_PX[px_value]}'))
+                matches.append((match.start(), match.end(), match.group(0), f'{prefix}-{BLUR_MAPPING_PX[px_value]}', CAT_BLUR))
 
     return matches
 
 
 def find_transform_classes(content: str) -> list[Match]:
-    """Find transform utility classes with arbitrary values.
-
-    Supports negative values both as prefix AND inside brackets:
-    - scale-y-[-100%] → -scale-y-100
-    - -scale-x-[75%] → -scale-x-75
-    - rotate-[-45deg] → -rotate-45
-    - skew-x-[-12deg] → -skew-x-12
-    """
+    """Find transform utility classes with arbitrary values."""
     matches = []
 
-    # Pattern format: (neg_prefix)(utility)-[(neg_value)(number)(unit)]
-    # Using XOR logic: if prefix XOR value is negative, result is negative
-    # IMPORTANT: Order matters! More specific patterns must come BEFORE less specific ones
-    # Each pattern uses negative lookbehinds to avoid partial matches
     transform_patterns = (
         (r'(-?)(scale(?:-[xy])?)-\[(-?)(\d+)%]', '%'),
         (r'(-?)(skew(?:-[xy])?)-\[(-?)(\d+)deg]', 'deg'),
-        # backdrop-hue-rotate MUST come before hue-rotate
         (r'(-?)(backdrop-hue-rotate)-\[(-?)(\d+)deg]', 'deg'),
-        # hue-rotate uses lookbehind to avoid matching 'backdrop-hue-rotate'
         (r'(?<!backdrop-)(?<!backdrop)(-?)(hue-rotate)-\[(-?)(\d+)deg]', 'deg'),
-        # rotate uses lookbehind to avoid matching 'hue-rotate'
         (r'(?<!hue-)(?<!hue)(-?)(rotate)-\[(-?)(\d+)deg]', 'deg'),
     )
 
     for pattern, _ in transform_patterns:
         for match in re.finditer(pattern, content):
-            neg_prefix = match.group(1)   # '-' or ''
-            utility = match.group(2)      # 'scale', 'scale-x', 'rotate', etc.
-            neg_value = match.group(3)    # '-' or ''
+            neg_prefix = match.group(1)
+            utility = match.group(2)
+            neg_value = match.group(3)
             value = int(match.group(4))
 
-            # XOR logic: negative if prefix XOR value is negative
             is_negative = bool(neg_prefix) != bool(neg_value)
             prefix = '-' if is_negative else ''
 
             new_class = f'{prefix}{utility}-{value}'
-            matches.append((match.start(), match.end(), match.group(0), new_class))
+            matches.append((match.start(), match.end(), match.group(0), new_class, CAT_TRANSFORM))
 
     return matches
 
@@ -551,17 +613,15 @@ def find_unitless_classes(content: str) -> list[Match]:
     """Find unitless utility classes: z-[50] → z-50, grid-cols-[12] → grid-cols-12."""
     matches = []
 
-    # Utilities that support negative values
     for utility in ('z', 'order'):
         for match in re.finditer(rf'(-?{utility})-\[(\d+)]', content):
             prefix, value = match.group(1), int(match.group(2))
-            matches.append((match.start(), match.end(), match.group(0), f'{prefix}-{value}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{prefix}-{value}', CAT_UNITLESS))
 
-    # Utilities that don't support negative values
     for utility in ('columns', 'line-clamp', 'grow', 'shrink', 'grid-cols', 'grid-rows', 'col-span', 'row-span'):
         for match in re.finditer(rf'{utility}-\[(\d+)]', content):
             value = int(match.group(1))
-            matches.append((match.start(), match.end(), match.group(0), f'{utility}-{value}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{utility}-{value}', CAT_UNITLESS))
 
     return matches
 
@@ -570,7 +630,6 @@ def find_leading_rem_classes(content: str) -> list[Match]:
     """Find leading- classes with rem or unitless values."""
     matches = []
 
-    # leading-[1.125rem] → leading-4.5
     for match in re.finditer(r'leading-\[(-?[\d.]+)rem]', content):
         rem_value = float(match.group(1))
         px_value = rem_value * 16
@@ -579,9 +638,8 @@ def find_leading_rem_classes(content: str) -> list[Match]:
         tailwind_value = px_to_tailwind(abs(px_value), allow_decimal=True)
         if tailwind_value:
             prefix = '-' if is_negative else ''
-            matches.append((match.start(), match.end(), match.group(0), f'{prefix}leading-{tailwind_value}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{prefix}leading-{tailwind_value}', CAT_TYPOGRAPHY))
 
-    # leading-[16] (unitless)
     for match in re.finditer(r'leading-\[(-?\d+(?:\.\d+)?)]', content):
         px_value = float(match.group(1))
         is_negative = px_value < 0
@@ -589,7 +647,7 @@ def find_leading_rem_classes(content: str) -> list[Match]:
         tailwind_value = px_to_tailwind(abs(px_value), allow_decimal=True)
         if tailwind_value:
             prefix = '-' if is_negative else ''
-            matches.append((match.start(), match.end(), match.group(0), f'{prefix}leading-{tailwind_value}'))
+            matches.append((match.start(), match.end(), match.group(0), f'{prefix}leading-{tailwind_value}', CAT_TYPOGRAPHY))
 
     return matches
 
@@ -598,13 +656,11 @@ def find_typography_classes(content: str) -> list[Match]:
     """Find typography classes (tracking-, text-) with arbitrary pixel values."""
     matches = []
 
-    # tracking-[0.07px] → tracking-[0.004375rem]
     for match in re.finditer(r'tracking-\[(-?[\d.]+)px]', content):
         px_value = float(match.group(1))
         rem_value = ('-' + px_to_rem(abs(px_value))) if px_value < 0 else px_to_rem(px_value)
-        matches.append((match.start(), match.end(), match.group(0), f'tracking-[{rem_value}]'))
+        matches.append((match.start(), match.end(), match.group(0), f'tracking-[{rem_value}]', CAT_TYPOGRAPHY))
 
-    # text-[14px] → text-sm (or text-[0.875rem] for non-standard)
     for match in re.finditer(r'text-\[(\d+(?:\.\d+)?)px]', content):
         px_value = float(match.group(1))
         px_value_int = round(px_value)
@@ -613,7 +669,7 @@ def find_typography_classes(content: str) -> list[Match]:
             new_class = f'text-{FONT_SIZE_MAPPING_PX[px_value_int]}'
         else:
             new_class = f'text-[{px_to_rem(px_value)}]'
-        matches.append((match.start(), match.end(), match.group(0), new_class))
+        matches.append((match.start(), match.end(), match.group(0), new_class, CAT_TYPOGRAPHY))
 
     return matches
 
@@ -626,18 +682,18 @@ def find_font_size_rem_classes(content: str) -> list[Match]:
         rem_value = float(match.group(1))
         for standard_rem, font_class in FONT_SIZE_MAPPING_REM.items():
             if abs(rem_value - standard_rem) < 0.001:
-                matches.append((match.start(), match.end(), match.group(0), f'text-{font_class}'))
+                matches.append((match.start(), match.end(), match.group(0), f'text-{font_class}', CAT_TYPOGRAPHY))
                 break
 
     return matches
 
 
-# Precompiled spacing pattern for performance (built once at module load)
+# Precompiled spacing pattern for performance
 _SPACING_UTILITIES_PATTERN = '|'.join(
     re.escape(util) for util in sorted(ALL_UTILITIES, key=len, reverse=True)
 )
 _SPACING_REGEX = re.compile(
-    rf'(?:^|(?<![-(\w]))({_SPACING_UTILITIES_PATTERN})\[(-?[\d.]+)px]'
+    rf'(?:^|(?<![-(\\w]))({_SPACING_UTILITIES_PATTERN})\[(-?[\d.]+)px]'
 )
 
 
@@ -660,56 +716,46 @@ def find_spacing_classes(content: str) -> list[Match]:
         else:
             new_class = f'{utility}{tailwind_value}'
 
-        matches.append((match.start(), match.end(), full_match, new_class))
+        # Determine category based on utility
+        category = CAT_SIZE if utility.rstrip('-') in {'size', 'w', 'h', 'max-w', 'max-h', 'min-w', 'min-h'} else CAT_SPACING
+        matches.append((match.start(), match.end(), full_match, new_class, category))
 
     return matches
 
 
 def find_theme_spacing_classes(content: str) -> list[Match]:
-    """Find and convert theme(spacing.X) to --spacing(X).
-
-    Example: [--radius:theme(spacing.5)] → [--radius:--spacing(5)]
-    """
+    """Find and convert theme(spacing.X) to --spacing(X)."""
     matches = []
 
-    # Pattern: theme(spacing.X) where X is a number/decimal/key
     for match in re.finditer(r'theme\(spacing\.([^)]+)\)', content):
         full_match = match.group(0)
         spacing_key = match.group(1)
         new_value = f'--spacing({spacing_key})'
-        matches.append((match.start(), match.end(), full_match, new_value))
+        matches.append((match.start(), match.end(), full_match, new_value, CAT_THEME))
 
     return matches
 
 
 def find_gradient_classes(content: str) -> list[Match]:
-    """Find and convert bg-gradient-* to bg-linear-*.
-
-    Tailwind v4 renamed bg-gradient to bg-linear.
-    """
+    """Find and convert bg-gradient-* to bg-linear-*."""
     matches = []
 
-    # bg-gradient-to-r -> bg-linear-to-r
     for match in re.finditer(r'bg-gradient-([a-z0-9-]+)', content):
         full_match = match.group(0)
         suffix = match.group(1)
         new_class = f'bg-linear-{suffix}'
-        matches.append((match.start(), match.end(), full_match, new_class))
+        matches.append((match.start(), match.end(), full_match, new_class, CAT_GRADIENT))
 
     return matches
 
 
 def find_overflow_classes(content: str) -> list[Match]:
-    """Find and convert overflow-ellipsis to text-ellipsis.
-
-    Tailwind v4 removed overflow-ellipsis in favor of text-ellipsis.
-    """
+    """Find and convert overflow-ellipsis to text-ellipsis."""
     matches = []
 
-    # overflow-ellipsis -> text-ellipsis
     for match in re.finditer(r'overflow-ellipsis', content):
         full_match = match.group(0)
-        matches.append((match.start(), match.end(), full_match, 'text-ellipsis'))
+        matches.append((match.start(), match.end(), full_match, 'text-ellipsis', CAT_OVERFLOW))
 
     return matches
 
@@ -718,7 +764,6 @@ def find_overflow_classes(content: str) -> list[Match]:
 # Main Processing
 # =============================================================================
 
-# All finder functions to run
 FINDERS: tuple[FinderFunc, ...] = (
     find_spacing_classes,
     find_rounded_classes,
@@ -750,40 +795,38 @@ def _filter_overlapping_matches(matches: list[Match]) -> list[Match]:
     if not matches:
         return []
 
-    # Sort by start position, then by length (longer first)
     matches.sort(key=lambda x: (x[0], -(x[1] - x[0])))
 
     filtered: list[Match] = []
     for match in matches:
-        # If no overlap with the last accepted match, add it
         if not filtered or match[0] >= filtered[-1][1]:
             filtered.append(match)
 
     return filtered
 
 
-def migrate_to_v4(content: str) -> tuple[str, int]:
-    """Migrate Tailwind v3 syntax to v4."""
+def migrate_to_v4(content: str) -> tuple[str, int, list[Match]]:
+    """Migrate Tailwind v3 syntax to v4. Returns (new_content, count, matches)."""
     all_matches: list[Match] = []
     for finder in FINDERS:
         all_matches.extend(finder(content))
 
     if not all_matches:
-        return content, 0
+        return content, 0, []
 
-    # Filter overlapping matches to avoid corruption
     all_matches = _filter_overlapping_matches(all_matches)
-
-    # Sort by position (reverse order) for safe replacement
     all_matches.sort(key=lambda x: x[0], reverse=True)
 
     replacements = 0
-    for start, end, old_class, new_class in all_matches:
+    applied_matches: list[Match] = []
+
+    for start, end, old_class, new_class, category in all_matches:
         if content[start:end] == old_class:
             content = content[:start] + new_class + content[end:]
             replacements += 1
+            applied_matches.append((start, end, old_class, new_class, category))
 
-    return content, replacements
+    return content, replacements, applied_matches
 
 
 def process_file(
@@ -791,22 +834,22 @@ def process_file(
     *,
     dry_run: bool = False,
     strict: bool = False,
-) -> tuple[bool, int]:
-    """Process a single file. Returns (was_modified, number_of_replacements)."""
+) -> tuple[bool, int, list[Match]]:
+    """Process a single file. Returns (was_modified, count, matches)."""
     try:
         content = file_path.read_text(encoding='utf-8')
-        new_content, replacements = migrate_to_v4(content)
+        new_content, replacements, matches = migrate_to_v4(content)
 
         if new_content != content:
             if not dry_run:
                 file_path.write_text(new_content, encoding='utf-8')
-            return True, replacements
-        return False, 0
+            return True, replacements, matches
+        return False, 0, []
     except Exception as e:
         if strict:
             raise
-        print(f'Error processing {file_path}: {e}')
-        return False, 0
+        print(f'{Colors.YELLOW}⚠ Error processing {file_path}: {e}{Colors.RESET}')
+        return False, 0, []
 
 
 def find_files_to_process(root_dir: Path) -> list[Path]:
@@ -823,6 +866,84 @@ def find_files_to_process(root_dir: Path) -> list[Path]:
     return files
 
 
+# =============================================================================
+# Output Formatting
+# =============================================================================
+
+def print_header(project_root: Path, dry_run: bool) -> None:
+    """Print the header banner."""
+    mode_str = f' {Colors.YELLOW}(DRY RUN){Colors.RESET}' if dry_run else ''
+    print(f'\n{Colors.BOLD}{Colors.CYAN}🔄 Migrating Tailwind v3 → v4{Colors.RESET}{mode_str}')
+    print(f'{Colors.DIM}   {project_root}{Colors.RESET}')
+    print(f'{Colors.DIM}{"═" * 60}{Colors.RESET}\n')
+
+
+def print_file_result(
+    file_path: Path,
+    project_root: Path,
+    matches: list[Match],
+    dry_run: bool,
+    verbose: bool,
+    index: int,
+    total: int,
+) -> None:
+    """Print the result for a single file."""
+    rel_path = file_path.relative_to(project_root)
+    progress = f'{Colors.DIM}[{index}/{total}]{Colors.RESET}'
+
+    if matches:
+        action_color = Colors.YELLOW if dry_run else Colors.BRIGHT_GREEN
+        action_icon = '○' if dry_run else '✓'
+        print(f'{progress} {action_color}{action_icon}{Colors.RESET} {Colors.BOLD}{rel_path}{Colors.RESET}')
+
+        if verbose or len(matches) <= 8:
+            for i, (_, _, old_class, new_class, _) in enumerate(matches):
+                is_last = i == len(matches) - 1
+                prefix = '└─' if is_last else '├─'
+                print(f'  {Colors.DIM}{prefix}{Colors.RESET} {Colors.GRAY}{old_class}{Colors.RESET} → {Colors.GREEN}{new_class}{Colors.RESET}')
+        else:
+            # Show first 3 and last 2 with ellipsis
+            for i in range(3):
+                _, _, old_class, new_class, _ = matches[i]
+                print(f'  {Colors.DIM}├─{Colors.RESET} {Colors.GRAY}{old_class}{Colors.RESET} → {Colors.GREEN}{new_class}{Colors.RESET}')
+            print(f'  {Colors.DIM}│  ... {len(matches) - 5} more ...{Colors.RESET}')
+            for i in range(-2, 0):
+                _, _, old_class, new_class, _ = matches[i]
+                is_last = i == -1
+                prefix = '└─' if is_last else '├─'
+                print(f'  {Colors.DIM}{prefix}{Colors.RESET} {Colors.GRAY}{old_class}{Colors.RESET} → {Colors.GREEN}{new_class}{Colors.RESET}')
+
+        print(f'  {Colors.BRIGHT_CYAN}{len(matches)} conversion{"s" if len(matches) > 1 else ""}{Colors.RESET}\n')
+
+
+def print_summary(stats: Stats, elapsed: float, dry_run: bool) -> None:
+    """Print the final summary."""
+    print(f'{Colors.DIM}{"═" * 60}{Colors.RESET}')
+    print(f'{Colors.BOLD}📊 Summary{Colors.RESET} {Colors.DIM}(completed in {elapsed:.2f}s){Colors.RESET}\n')
+
+    verb = 'would be modified' if dry_run else 'modified'
+    print(f'  {Colors.BOLD}Files:{Colors.RESET} {stats.files_modified} {verb} / {stats.files_processed} total')
+    print(f'  {Colors.BOLD}Conversions:{Colors.RESET} {stats.total_conversions} total')
+
+    if stats.conversions_by_category:
+        print()
+        sorted_categories = sorted(
+            stats.conversions_by_category.items(),
+            key=lambda x: x[1],
+            reverse=True,
+        )
+        for i, (category, count) in enumerate(sorted_categories):
+            is_last = i == len(sorted_categories) - 1
+            prefix = '└─' if is_last else '├─'
+            print(f'  {Colors.DIM}{prefix}{Colors.RESET} {category}: {Colors.CYAN}{count}{Colors.RESET}')
+
+    print(f'\n{Colors.DIM}{"═" * 60}{Colors.RESET}\n')
+
+
+# =============================================================================
+# CLI
+# =============================================================================
+
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
@@ -833,7 +954,8 @@ Examples:
   %(prog)s                      # Run in current project
   %(prog)s /path/to/project     # Run in specified directory
   %(prog)s --dry-run            # Preview changes without writing
-  %(prog)s --verbose            # Show all processed files
+  %(prog)s --verbose            # Show all conversion details
+  %(prog)s --no-color           # Disable colored output
 """,
     )
     parser.add_argument(
@@ -857,7 +979,12 @@ Examples:
         '--verbose',
         '-v',
         action='store_true',
-        help='Show all processed files, not just modified ones',
+        help='Show all conversion details for each file',
+    )
+    parser.add_argument(
+        '--no-color',
+        action='store_true',
+        help='Disable colored output',
     )
     return parser.parse_args()
 
@@ -865,6 +992,9 @@ Examples:
 def main() -> None:
     """Main function."""
     args = parse_args()
+
+    if args.no_color:
+        Colors.disable()
 
     # Determine project root
     if args.path:
@@ -874,43 +1004,48 @@ def main() -> None:
         project_root = script_dir.parent
 
     if not project_root.is_dir():
-        print(f'Error: {project_root} is not a valid directory', file=sys.stderr)
+        print(f'{Colors.YELLOW}Error: {project_root} is not a valid directory{Colors.RESET}', file=sys.stderr)
         sys.exit(1)
 
-    mode_str = ' (DRY RUN)' if args.dry_run else ''
-    print(f'Migrating Tailwind v3 to v4 in: {project_root}{mode_str}')
-    print('=' * 60)
+    start_time = time.time()
+    print_header(project_root, args.dry_run)
 
     files = find_files_to_process(project_root)
-    print(f'Found {len(files)} files to process\n')
+    print(f'{Colors.DIM}Found {len(files)} files to process{Colors.RESET}\n')
 
-    total_replacements = 0
-    modified_files = []
+    stats = Stats()
+    stats.files_processed = len(files)
 
     try:
-        for file_path in files:
-            was_modified, replacements = process_file(
+        for i, file_path in enumerate(files, 1):
+            was_modified, count, matches = process_file(
                 file_path,
                 dry_run=args.dry_run,
                 strict=args.strict,
             )
             if was_modified:
-                modified_files.append(file_path)
-                total_replacements += replacements
-                action = 'would modify' if args.dry_run else '✓'
-                print(f'{action} {file_path.relative_to(project_root)}: {replacements} conversions')
-            elif args.verbose:
-                print(f'  {file_path.relative_to(project_root)}: no changes')
+                stats.files_modified += 1
+                stats.total_conversions += count
+
+                for _, _, _, _, category in matches:
+                    stats.add_category(category)
+
+                print_file_result(
+                    file_path,
+                    project_root,
+                    matches,
+                    args.dry_run,
+                    args.verbose,
+                    i,
+                    len(files),
+                )
+
     except Exception as e:
-        print(f'\nFatal error: {e}', file=sys.stderr)
+        print(f'\n{Colors.YELLOW}Fatal error: {e}{Colors.RESET}', file=sys.stderr)
         sys.exit(1)
 
-    print('\n' + '=' * 60)
-    print('Summary:')
-    verb = 'would be modified' if args.dry_run else 'modified'
-    print(f'  Files {verb}: {len(modified_files)}')
-    print(f'  Total conversions: {total_replacements}')
-    print('=' * 60)
+    elapsed = time.time() - start_time
+    print_summary(stats, elapsed, args.dry_run)
 
 
 if __name__ == '__main__':
