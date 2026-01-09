@@ -1,3 +1,5 @@
+import type { JSX, ReactNode } from 'react';
+
 import {
   startTransition,
   useCallback,
@@ -8,8 +10,9 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react';
-import type { JSX, ReactNode } from 'react';
+
 import type { ResolvedTheme, Theme, ThemeContextType } from '@/types';
+
 import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from '@/constants';
 import { ThemeContext } from '@/core/context';
 import { applyTheme, disableAnimation, getSystemTheme } from '@/utils';
@@ -32,7 +35,7 @@ function subscribeToSystemTheme(callback: () => void): () => void {
 
   mediaQuery.addEventListener('change', callback);
 
-  return () => mediaQuery.removeEventListener('change', callback);
+  return () => { mediaQuery.removeEventListener('change', callback); };
 }
 
 /**
@@ -56,9 +59,15 @@ function getServerSnapshot(): ResolvedTheme {
 interface ThemeProviderProps {
   children: ReactNode;
   /**
-   * Initial theme from server (typically from cookie via loader).
+   * When true, temporarily disables CSS transitions during theme changes.
+   * Prevents jarring color animations when switching themes.
+   * Default: false
    */
-  theme: Theme;
+  disableTransitionOnChange?: boolean;
+  /**
+   * CSP nonce for inline styles when `disableTransitionOnChange` is enabled.
+   */
+  nonce?: string;
   /**
    * Async function to persist theme changes to server/storage.
    *
@@ -67,15 +76,9 @@ interface ThemeProviderProps {
    */
   persistTheme?: (value: Theme) => Promise<void>;
   /**
-   * When true, temporarily disables CSS transitions during theme changes.
-   * Prevents jarring color animations when switching themes.
-   * @default false
+   * Initial theme from server (typically from cookie via loader).
    */
-  disableTransitionOnChange?: boolean;
-  /**
-   * CSP nonce for inline styles when `disableTransitionOnChange` is enabled.
-   */
-  nonce?: string;
+  theme: Theme;
 }
 
 /* -----------------------------------------------------------------------------
@@ -103,10 +106,10 @@ interface ThemeProviderProps {
  */
 export function ThemeProvider({
   children,
-  theme: initialTheme,
-  persistTheme,
   disableTransitionOnChange = false,
   nonce,
+  persistTheme,
+  theme: initialTheme,
 }: ThemeProviderProps): JSX.Element {
   // Actual persisted theme (source of truth after server confirms)
   const [theme, setThemeState] = useState<Theme>(initialTheme);
@@ -132,8 +135,10 @@ export function ThemeProvider({
     applyTheme(resolvedTheme);
   }, [resolvedTheme]);
 
-  // Stable handler for cross-tab sync - useEffectEvent prevents effect re-subscription
-  const onCrossTabSync = useEffectEvent((newTheme: Theme) => {
+  // Handle cross-tab theme sync via BroadcastChannel
+  const handleCrossTabMessage = useEffectEvent((event: MessageEvent) => {
+    const newTheme = event.data as Theme;
+
     if (newTheme === theme) return;
 
     startTransition(() => {
@@ -141,19 +146,21 @@ export function ThemeProvider({
     });
   });
 
-  // Listen for theme changes from other tabs via BroadcastChannel
   useEffect(() => {
     const channel = new BroadcastChannel(THEME_CHANNEL);
 
-    channel.onmessage = (event) => {
-      onCrossTabSync(event.data as Theme);
-    };
+    channel.addEventListener('message', handleCrossTabMessage);
 
-    return () => channel.close();
+    return (): void => {
+      channel.removeEventListener('message', handleCrossTabMessage);
+      channel.close();
+    };
   }, []);
 
   const setTheme = useCallback(
     async (value: Theme): Promise<void> => {
+      await Promise.resolve();
+
       if (value === theme) return;
 
       // Optionally disable animations during theme switch
@@ -192,7 +199,7 @@ export function ThemeProvider({
 
   // Expose optimistic theme so consumers see immediate updates
   const value = useMemo<ThemeContextType>(
-    () => ({ theme: optimisticTheme, resolvedTheme, setTheme, isPending }),
+    () => ({ isPending, resolvedTheme, setTheme, theme: optimisticTheme }),
     [optimisticTheme, resolvedTheme, setTheme, isPending],
   );
 

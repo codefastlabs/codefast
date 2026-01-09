@@ -1,4 +1,5 @@
 import type { ResolvedTheme, Theme } from '@/types';
+
 import { DEFAULT_RESOLVED_THEME, MEDIA } from '@/constants';
 
 /* -----------------------------------------------------------------------------

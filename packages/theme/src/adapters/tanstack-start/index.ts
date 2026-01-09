@@ -1,6 +1,4 @@
 /**
- * @module @codefast/theme/tanstack-start
- *
  * TanStack Start adapter for theme persistence via HTTP-only cookies.
  *
  * @example
@@ -39,4 +37,4 @@
  * ```
  */
 
-export { getThemeServerFn, setThemeServerFn, createPersistTheme } from '@/adapters/tanstack-start/server';
+export { createPersistTheme, getThemeServerFn, setThemeServerFn } from '@/adapters/tanstack-start/server';

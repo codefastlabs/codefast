@@ -1,5 +1,7 @@
 import { use } from 'react';
+
 import type { ThemeContextType } from '@/types';
+
 import { ThemeContext } from '@/core/context';
 
 /* -----------------------------------------------------------------------------
@@ -14,7 +16,7 @@ import { ThemeContext } from '@/core/context';
  * - Better Suspense boundary integration
  *
  * @returns Theme context with `theme`, `resolvedTheme`, `setTheme`, and `isPending`
- * @throws {Error} When called outside of {@link ThemeProvider}
+ * @throws Error if called outside of ThemeProvider
  *
  * @example
  * ```tsx

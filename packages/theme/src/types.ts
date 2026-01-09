@@ -36,16 +36,16 @@ export type ResolvedTheme = Exclude<Theme, 'system'>;
 export const themes = themeSchema.options;
 
 /**
- * Shape of the theme context value provided by {@link ThemeProvider}.
+ * Shape of the theme context value provided by ThemeProvider.
  *
- * @property theme - Current theme preference
- * @property resolvedTheme - Actual theme applied (system resolved to light/dark)
- * @property setTheme - Async function to update theme (triggers optimistic update)
- * @property isPending - True while theme change is being persisted
+ * - `theme` - Current theme preference
+ * - `resolvedTheme` - Actual theme applied (system resolved to light/dark)
+ * - `setTheme` - Async function to update theme (triggers optimistic update)
+ * - `isPending` - True while theme change is being persisted
  */
 export interface ThemeContextType {
-  theme: Theme;
+  isPending: boolean;
   resolvedTheme: ResolvedTheme;
   setTheme: (value: Theme) => Promise<void>;
-  isPending: boolean;
+  theme: Theme;
 }
