@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import type { Theme } from '@/types';
 
 /* -----------------------------------------------------------------------------
@@ -37,7 +39,7 @@ interface ThemeScriptProps {
  * </head>
  * ```
  */
-export function ThemeScript({ theme }: ThemeScriptProps) {
+export function ThemeScript({ theme }: ThemeScriptProps): JSX.Element {
   // Minified FOUC prevention script
   const themeScript = `(function(){try{var theme="${theme}",resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(error){}})()`;
 

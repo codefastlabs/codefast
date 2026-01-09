@@ -38,13 +38,18 @@ export function applyTheme(resolved: ResolvedTheme): void {
  * ```
  */
 export function disableAnimation(nonce?: string): () => void {
-  if (typeof window === 'undefined') return () => {};
+  if (typeof window === 'undefined')
+    return () => {
+      /* noop */
+    };
 
   // Respect user's motion preferences
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (prefersReducedMotion) {
-    return () => {};
+    return () => {
+      /* noop */
+    };
   }
 
   // Inject style to disable all transitions
@@ -54,23 +59,23 @@ export function disableAnimation(nonce?: string): () => void {
     css.setAttribute('nonce', nonce);
   }
 
-  css.appendChild(
+  css.append(
     document.createTextNode(
       `*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}`,
     ),
   );
 
-  document.head.appendChild(css);
+  document.head.append(css);
 
   return () => {
     // Force reflow to ensure styles are applied before removing
-    (() => window.getComputedStyle(document.body))();
+    ((): CSSStyleDeclaration => window.getComputedStyle(document.body))();
 
     // Use double RAF to ensure paint happens before removing style
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (css.parentNode) {
-          document.head.removeChild(css);
+          css.remove();
         }
       });
     });

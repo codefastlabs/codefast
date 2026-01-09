@@ -1,11 +1,12 @@
 import { createContext } from 'react';
+
 import type { ThemeContextType } from '@/types';
 
 /* -----------------------------------------------------------------------------
  * Context
  * -------------------------------------------------------------------------- */
 
-type ThemeContextValue = ThemeContextType | null;
+type ThemeContextValue = null | ThemeContextType;
 
 /**
  * React context for theme state management.

@@ -1,8 +1,10 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
+
 import type { Theme } from '@/types';
-import { themeSchema } from '@/types';
+
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from '@/constants';
+import { themeSchema } from '@/types';
 
 /* -----------------------------------------------------------------------------
  * Server Functions
@@ -49,16 +51,16 @@ export const getThemeServerFn = createServerFn().handler((): Theme => {
  *
  * @param data - Theme to persist ('light', 'dark', or 'system')
  *
- * @see {@link https://tanstack.com/start/latest/docs/framework/react/server-functions TanStack Start Server Functions}
+ * @see [TanStack Start Server Functions](https://tanstack.com/start/latest/docs/framework/react/server-functions)
  */
 export const setThemeServerFn = createServerFn({ method: 'POST' })
   .inputValidator(themeSchema)
   .handler(({ data }: { data: Theme }): void => {
     setCookie(THEME_STORAGE_KEY, data, {
+      httpOnly: true,
       maxAge: 60 * 60 * 24 * 365, // 1 year
       path: '/',
       sameSite: 'lax',
-      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
     });
   });
@@ -76,8 +78,10 @@ export const setThemeServerFn = createServerFn({ method: 'POST' })
  * <ThemeProvider persistTheme={(value) => setThemeServerFn({ data: value })}>
  * ```
  */
+const persistThemeHandler = async (value: Theme): Promise<void> => {
+  await setThemeServerFn({ data: value });
+};
+
 export function createPersistTheme(): (value: Theme) => Promise<void> {
-  return async (value: Theme): Promise<void> => {
-    await setThemeServerFn({ data: value });
-  };
+  return persistThemeHandler;
 }
