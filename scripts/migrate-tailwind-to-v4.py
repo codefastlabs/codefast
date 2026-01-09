@@ -77,7 +77,9 @@ Supported:
 
 from __future__ import annotations
 
+import argparse
 import re
+import sys
 from pathlib import Path
 from typing import Callable
 
@@ -182,7 +184,7 @@ BACKDROP_FILTER_UTILITIES = tuple(f'backdrop-{u}' for u in FILTER_UTILITIES) + (
 EXCLUDE_DIRS = frozenset({'node_modules', '.next', 'dist', 'build', '.git', '.turbo', '.output'})
 
 # File extensions to process
-FILE_EXTENSIONS = ('.ts', '.tsx', '.js', '.jsx')
+FILE_EXTENSIONS = ('.ts', '.tsx', '.js', '.jsx', '.css')
 
 
 # =============================================================================
@@ -193,7 +195,8 @@ def format_number(value: float) -> str:
     """Format a number for Tailwind class (remove trailing zeros)."""
     if value == int(value):
         return str(int(value))
-    return f'{value:.10f}'.rstrip('0').rstrip('.')
+    # Use :g format which automatically removes trailing zeros
+    return f'{value:g}'
 
 
 def px_to_tailwind(px_value: float, *, allow_decimal: bool = False) -> str | None:
@@ -629,16 +632,20 @@ def find_font_size_rem_classes(content: str) -> list[Match]:
     return matches
 
 
+# Precompiled spacing pattern for performance (built once at module load)
+_SPACING_UTILITIES_PATTERN = '|'.join(
+    re.escape(util) for util in sorted(ALL_UTILITIES, key=len, reverse=True)
+)
+_SPACING_REGEX = re.compile(
+    rf'(?:^|(?<![-(\w]))({_SPACING_UTILITIES_PATTERN})\[(-?[\d.]+)px]'
+)
+
+
 def find_spacing_classes(content: str) -> list[Match]:
     """Find all spacing classes with arbitrary pixel values."""
     matches = []
 
-    # Sort by length (longest first) to match longer utilities first
-    sorted_utilities = sorted(ALL_UTILITIES, key=len, reverse=True)
-    utilities_pattern = '|'.join(re.escape(util) for util in sorted_utilities)
-    pattern = rf'(?:^|(?<![-\w]))({utilities_pattern})\[(-?[\d.]+)px]'
-
-    for match in re.finditer(pattern, content):
+    for match in _SPACING_REGEX.finditer(content):
         full_match, utility, px_value = match.group(0), match.group(1), float(match.group(2))
 
         is_negative_value = px_value < 0
@@ -738,6 +745,23 @@ FINDERS: tuple[FinderFunc, ...] = (
 )
 
 
+def _filter_overlapping_matches(matches: list[Match]) -> list[Match]:
+    """Filter out overlapping matches, keeping the first (longest) match."""
+    if not matches:
+        return []
+
+    # Sort by start position, then by length (longer first)
+    matches.sort(key=lambda x: (x[0], -(x[1] - x[0])))
+
+    filtered: list[Match] = []
+    for match in matches:
+        # If no overlap with the last accepted match, add it
+        if not filtered or match[0] >= filtered[-1][1]:
+            filtered.append(match)
+
+    return filtered
+
+
 def migrate_to_v4(content: str) -> tuple[str, int]:
     """Migrate Tailwind v3 syntax to v4."""
     all_matches: list[Match] = []
@@ -746,6 +770,9 @@ def migrate_to_v4(content: str) -> tuple[str, int]:
 
     if not all_matches:
         return content, 0
+
+    # Filter overlapping matches to avoid corruption
+    all_matches = _filter_overlapping_matches(all_matches)
 
     # Sort by position (reverse order) for safe replacement
     all_matches.sort(key=lambda x: x[0], reverse=True)
@@ -759,17 +786,25 @@ def migrate_to_v4(content: str) -> tuple[str, int]:
     return content, replacements
 
 
-def process_file(file_path: Path) -> tuple[bool, int]:
+def process_file(
+    file_path: Path,
+    *,
+    dry_run: bool = False,
+    strict: bool = False,
+) -> tuple[bool, int]:
     """Process a single file. Returns (was_modified, number_of_replacements)."""
     try:
         content = file_path.read_text(encoding='utf-8')
         new_content, replacements = migrate_to_v4(content)
 
         if new_content != content:
-            file_path.write_text(new_content, encoding='utf-8')
+            if not dry_run:
+                file_path.write_text(new_content, encoding='utf-8')
             return True, replacements
         return False, 0
     except Exception as e:
+        if strict:
+            raise
         print(f'Error processing {file_path}: {e}')
         return False, 0
 
@@ -788,12 +823,62 @@ def find_files_to_process(root_dir: Path) -> list[Path]:
     return files
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Migrate Tailwind CSS v3 to v4 syntax.',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                      # Run in current project
+  %(prog)s /path/to/project     # Run in specified directory
+  %(prog)s --dry-run            # Preview changes without writing
+  %(prog)s --verbose            # Show all processed files
+""",
+    )
+    parser.add_argument(
+        'path',
+        nargs='?',
+        type=Path,
+        default=None,
+        help='Project root directory (default: parent of script directory)',
+    )
+    parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Preview changes without writing to files',
+    )
+    parser.add_argument(
+        '--strict',
+        action='store_true',
+        help='Exit on first error instead of continuing',
+    )
+    parser.add_argument(
+        '--verbose',
+        '-v',
+        action='store_true',
+        help='Show all processed files, not just modified ones',
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
     """Main function."""
-    script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    args = parse_args()
 
-    print(f'Migrating Tailwind v3 to v4 in: {project_root}')
+    # Determine project root
+    if args.path:
+        project_root = args.path.resolve()
+    else:
+        script_dir = Path(__file__).parent
+        project_root = script_dir.parent
+
+    if not project_root.is_dir():
+        print(f'Error: {project_root} is not a valid directory', file=sys.stderr)
+        sys.exit(1)
+
+    mode_str = ' (DRY RUN)' if args.dry_run else ''
+    print(f'Migrating Tailwind v3 to v4 in: {project_root}{mode_str}')
     print('=' * 60)
 
     files = find_files_to_process(project_root)
@@ -802,16 +887,28 @@ def main() -> None:
     total_replacements = 0
     modified_files = []
 
-    for file_path in files:
-        was_modified, replacements = process_file(file_path)
-        if was_modified:
-            modified_files.append(file_path)
-            total_replacements += replacements
-            print(f'✓ {file_path.relative_to(project_root)}: {replacements} conversions')
+    try:
+        for file_path in files:
+            was_modified, replacements = process_file(
+                file_path,
+                dry_run=args.dry_run,
+                strict=args.strict,
+            )
+            if was_modified:
+                modified_files.append(file_path)
+                total_replacements += replacements
+                action = 'would modify' if args.dry_run else '✓'
+                print(f'{action} {file_path.relative_to(project_root)}: {replacements} conversions')
+            elif args.verbose:
+                print(f'  {file_path.relative_to(project_root)}: no changes')
+    except Exception as e:
+        print(f'\nFatal error: {e}', file=sys.stderr)
+        sys.exit(1)
 
     print('\n' + '=' * 60)
     print('Summary:')
-    print(f'  Files modified: {len(modified_files)}')
+    verb = 'would be modified' if args.dry_run else 'modified'
+    print(f'  Files {verb}: {len(modified_files)}')
     print(f'  Total conversions: {total_replacements}')
     print('=' * 60)
 
