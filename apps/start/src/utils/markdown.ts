@@ -6,9 +6,10 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeStringify from 'rehype-stringify';
-import { codeToHtml } from 'shiki';
+import rehypeShiki from '@shikijs/rehype';
 import { visit } from 'unist-util-visit';
 import { toString } from 'hast-util-to-string';
+import type { Element as HastElement, Root as HastRoot } from 'hast';
 
 export type MarkdownHeading = {
   id: string;
@@ -17,53 +18,51 @@ export type MarkdownHeading = {
 };
 
 export type MarkdownResult = {
-  markup: string;
+  html: string;
   headings: MarkdownHeading[];
 };
 
+/**
+ * Renders markdown to HTML with syntax highlighting.
+ * Designed to be called at build-time in content-collections transform.
+ */
 export async function renderMarkdown(content: string): Promise<MarkdownResult> {
   const headings: MarkdownHeading[] = [];
 
   const result = await unified()
-    .use(remarkParse) // Parse markdown
-    .use(remarkGfm) // Support GitHub Flavored Markdown
-    .use(remarkRehype, { allowDangerousHtml: true }) // Convert to HTML AST
-    .use(rehypeRaw) // Process raw HTML in markdown
-    .use(rehypeSlug) // Add IDs to headings
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
+    .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, {
       behavior: 'wrap',
       properties: { className: ['anchor'] },
     })
-    .use(() => (tree) => {
-      // Extract headings for table of contents
-      visit(tree, 'element', (node: any) => {
-        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(node.tagName)) {
+    .use(() => (tree: HastRoot) => {
+      visit(tree, 'element', (node: HastElement) => {
+        const tagName = node.tagName;
+
+        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
           headings.push({
-            id: node.properties?.id || '',
+            id: node.properties.id?.toString() ?? '',
             text: toString(node),
-            level: parseInt(node.tagName.charAt(1), 10),
+            level: Number.parseInt(tagName.charAt(1), 10),
           });
         }
       });
     })
-    .use(rehypeStringify) // Serialize to HTML string
+    .use(rehypeShiki, {
+      themes: {
+        light: 'github-light',
+        dark: 'tokyo-night',
+      },
+    })
+    .use(rehypeStringify)
     .process(content);
 
   return {
-    markup: String(result),
+    html: String(result),
     headings,
   };
-}
-
-/**
- * Highlights code using Shiki with light/dark theme support.
- */
-export async function highlightCode(code: string, language: string): Promise<string> {
-  return codeToHtml(code, {
-    lang: language,
-    themes: {
-      light: 'github-light',
-      dark: 'tokyo-night',
-    },
-  });
 }

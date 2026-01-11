@@ -1,9 +1,11 @@
 import { defineCollection, defineConfig } from '@content-collections/core';
 import { z } from 'zod';
+import { renderMarkdown } from '@/utils/markdown';
 
 /**
  * Docs collection for documentation pages.
  * Uses frontmatter parser to extract metadata and content.
+ * Markdown is rendered to HTML at build-time with syntax highlighting.
  */
 const docs = defineCollection({
   name: 'docs',
@@ -11,21 +13,30 @@ const docs = defineCollection({
   include: '**/*.md',
   parser: 'frontmatter',
   schema: z.object({
-    title: z.string(),
     content: z.string(),
     description: z.string().optional(),
-    order: z.number().default(999),
     headerImage: z.string().optional(),
+    order: z.number().default(999),
+    title: z.string(),
   }),
-  transform: (document) => {
+  transform: async (document) => {
     // Extract header image from content if not provided in frontmatter
-    const headerImageMatch = document.content.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+    const headerImageMatch = document.content.match(/!\[([^\]]*)]\(([^)]+)\)/);
     const extractedHeaderImage = headerImageMatch ? headerImageMatch[2] : undefined;
 
+    // Render markdown to HTML at build-time
+    const { html, headings } = await renderMarkdown(document.content);
+
     return {
-      ...document,
-      slug: document._meta.path,
+      _meta: document._meta,
+      content: document.content,
+      description: document.description,
       headerImage: document.headerImage ?? extractedHeaderImage,
+      headings,
+      html,
+      order: document.order,
+      slug: document._meta.path,
+      title: document.title,
     };
   },
 });
@@ -33,20 +44,3 @@ const docs = defineCollection({
 export default defineConfig({
   collections: [docs],
 });
-
-/**
- * Exported type for use in components.
- * Represents a single documentation page with all transformed properties.
- */
-export type Doc = z.infer<typeof docs.schema> & {
-  slug: string;
-  headerImage?: string;
-  _meta: {
-    path: string;
-    fileName: string;
-    directory: string;
-    filePath: string;
-    extension: string;
-  };
-  content: string;
-};

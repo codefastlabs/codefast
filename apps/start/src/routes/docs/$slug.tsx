@@ -21,10 +21,7 @@ function DocPage(): JSX.Element {
 
   return (
     <div className="prose dark:prose-invert max-w-none">
-      <h1>{doc.title}</h1>
-      {doc.description && <p className="lead">{doc.description}</p>}
-      <hr />
-      <Markdown content={doc.content} className="prose" />
+      <Markdown html={doc.html} />
     </div>
   );
 }
