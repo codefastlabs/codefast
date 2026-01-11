@@ -122,8 +122,8 @@
     "@codefast/typescript-config": "workspace:*",
     "@rsbuild/plugin-react": "^1.4.2",
     "@rslib/core": "^0.19.1",
-    "@tanstack/react-start": "^1.145.10",
-    "@types/node": "^25.0.3",
+    "@tanstack/react-start": "^1.147.3",
+    "@types/node": "^25.0.6",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3"
   },
