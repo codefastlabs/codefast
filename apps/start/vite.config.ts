@@ -21,7 +21,7 @@ const config = defineConfig({
     /** Automatically open the app in browser on server start. */
     open: true,
     /** Port for the development server. */
-    port: 3001,
+    port: 3000,
   },
 
   /**
@@ -30,7 +30,7 @@ const config = defineConfig({
    */
   preview: {
     /** Port for the preview server. */
-    port: 3001,
+    port: 3000,
   },
 
   /**
