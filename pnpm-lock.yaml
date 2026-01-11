@@ -107,18 +107,12 @@ importers:
       '@tanstack/react-start':
         specifier: ^1.149.0
         version: 1.149.0(@rsbuild/core@1.7.2)(crossws@0.4.1(srvx@0.9.8))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@8.0.0-beta.7(@types/node@25.0.6)(esbuild@0.25.12)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2))
-      '@tanstack/router-plugin':
-        specifier: ^1.149.0
-        version: 1.149.0(@rsbuild/core@1.7.2)(@tanstack/react-router@1.147.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(vite@8.0.0-beta.7(@types/node@25.0.6)(esbuild@0.25.12)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2))
       '@unpic/react':
         specifier: ^1.0.2
         version: 1.0.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      gray-matter:
-        specifier: ^4.0.3
-        version: 4.0.3
       hast-util-to-string:
         specifier: ^3.0.1
         version: 3.0.1
@@ -170,9 +164,6 @@ importers:
       remark-rehype:
         specifier: ^11.1.2
         version: 11.1.2
-      shiki:
-        specifier: ^3.21.0
-        version: 3.21.0
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
