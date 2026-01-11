@@ -28,11 +28,13 @@ export const reactPresetCore: Linter.Config[] = composeConfig(
 
   reactRules,
   jsxA11yRules,
-  jestRules,
 
   unicornRules,
   importRules,
   perfectionistRules,
+
+  // Jest must come AFTER other configs so its test-file overrides take precedence
+  jestRules,
 
   browserEnvironment,
   testEnvironment,

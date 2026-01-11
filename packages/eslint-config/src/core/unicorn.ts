@@ -48,6 +48,15 @@ const disabledUnicornRules: Linter.RulesRecord = {
   'unicorn/prefer-global-this': 'off',
 
   /**
+   * Prefer String.raw when escaping backslashes.
+   *
+   * Disabled because String.raw is uncommon in the React/TypeScript ecosystem,
+   * can reduce readability for developers unfamiliar with it, and traditional
+   * escape sequences are more widely understood.
+   */
+  'unicorn/prefer-string-raw': 'off',
+
+  /**
    * Prefer top-level await over immediately invoked async function expressions.
    *
    * Disabled because top-level await is not supported in all environments

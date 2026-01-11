@@ -233,6 +233,55 @@ const errorJestRules: Linter.RulesRecord = {
   'jest/valid-title': 'error',
 };
 
+/**
+ * Rules that are disabled or relaxed for test files
+ * These rules are commonly triggered by testing patterns but are not issues in test context
+ */
+const testFileOverrides: Linter.RulesRecord = {
+  /**
+   * Allow empty functions for mock implementations
+   * Testing often requires: `jest.fn()`, `mockImplementation(() => {})`, etc.
+   */
+  '@typescript-eslint/no-empty-function': 'off',
+
+  /**
+   * Allow functions defined inside tests/describe blocks
+   * Test helper functions and wrapper components are commonly defined inline
+   */
+  'unicorn/consistent-function-scoping': 'off',
+
+  /**
+   * Allow test components without display names
+   * Inline test components like TestConsumer don't need display names
+   */
+  'react/display-name': 'off',
+
+  /**
+   * Allow console mocking in tests
+   * Testing often requires: jest.spyOn(console, 'error').mockImplementation()
+   */
+  'no-console': 'off',
+
+  /**
+   * Allow stringifying values in tests for assertions
+   * Testing often uses String(value) for simple assertions
+   */
+  '@typescript-eslint/no-base-to-string': 'off',
+
+  /**
+   * Relax explicit return type requirement for test helpers
+   * Test wrapper functions and components often have inferred types
+   */
+  '@typescript-eslint/explicit-function-return-type': 'off',
+
+  /**
+   * Allow useless undefined in test files
+   * Jest mock functions like mockResolvedValue() require explicit undefined argument
+   * for TypeScript but ESLint considers it useless
+   */
+  'unicorn/no-useless-undefined': 'off',
+};
+
 export const jestRules: Linter.Config[] = [
   {
     files: ['**/__tests__/**/*.?([mc])[jt]s?(x)', '**/?(*.)+(spec|test).?([mc])[jt]s?(x)'],
@@ -248,6 +297,9 @@ export const jestRules: Linter.Config[] = [
 
       // Apply all error rules
       ...errorJestRules,
+
+      // Apply test-specific overrides (relaxed rules)
+      ...testFileOverrides,
     },
   },
 ];
