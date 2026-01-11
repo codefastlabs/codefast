@@ -6,6 +6,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeStringify from 'rehype-stringify';
+import { codeToHtml } from 'shiki';
 import { visit } from 'unist-util-visit';
 import { toString } from 'hast-util-to-string';
 
@@ -58,8 +59,6 @@ export async function renderMarkdown(content: string): Promise<MarkdownResult> {
  * Highlights code using Shiki with light/dark theme support.
  */
 export async function highlightCode(code: string, language: string): Promise<string> {
-  const { codeToHtml } = await import('shiki');
-
   return codeToHtml(code, {
     lang: language,
     themes: {
