@@ -21,7 +21,9 @@ describe('useTheme Hook', () => {
   describe('without ThemeProvider', () => {
     test('should throw error when used outside of ThemeProvider', () => {
       // Suppress console.error for this test since we expect an error
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+        /* noop */
+      });
 
       expect(() => {
         renderHook(() => useTheme());
@@ -32,7 +34,6 @@ describe('useTheme Hook', () => {
   });
 
   describe('with ThemeProvider', () => {
-
     test('should return theme from context', () => {
       const mockValue: ThemeContextType = {
         isPending: false,

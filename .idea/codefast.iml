@@ -72,6 +72,9 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/start/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/benchmarks/tailwind-variants/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/start/.content-collections" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/theme/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/theme/coverage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
