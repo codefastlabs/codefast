@@ -35,7 +35,9 @@ function subscribeToSystemTheme(callback: () => void): () => void {
 
   mediaQuery.addEventListener('change', callback);
 
-  return () => { mediaQuery.removeEventListener('change', callback); };
+  return () => {
+    mediaQuery.removeEventListener('change', callback);
+  };
 }
 
 /**
