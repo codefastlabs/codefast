@@ -5,6 +5,7 @@ import viteReact from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
+import contentCollections from '@content-collections/vite';
 
 /**
  * Vite configuration for TanStack Start application.
@@ -87,6 +88,9 @@ const config = defineConfig({
 
     /** Tailwind CSS v4 integration. */
     tailwindcss(),
+
+    /** Content Collections plugin for Markdown/MDX. */
+    contentCollections(),
 
     /** TanStack Start framework plugin for file-based routing and SSR. */
     tanstackStart(),

@@ -9,10 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as SinkRouteRouteImport } from './routes/sink/route'
 import { Route as SinkIndexRouteImport } from './routes/sink/index'
+import { Route as DocsIndexRouteImport } from './routes/docs/index'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as DocsSlugRouteImport } from './routes/docs/$slug'
 import { Route as SinkTanstackFormIndexRouteImport } from './routes/sink/tanstack-form/index'
 import { Route as SinkStartFormIndexRouteImport } from './routes/sink/start-form/index'
 import { Route as SinkReactHookFormIndexRouteImport } from './routes/sink/react-hook-form/index'
@@ -30,6 +33,11 @@ import { Route as AppDemoStartSsrSpaModeIndexRouteImport } from './routes/_app/d
 import { Route as AppDemoStartSsrFullSsrIndexRouteImport } from './routes/_app/demo/start/ssr/full-ssr/index'
 import { Route as AppDemoStartSsrDataOnlyIndexRouteImport } from './routes/_app/demo/start/ssr/data-only/index'
 
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -44,10 +52,20 @@ const SinkIndexRoute = SinkIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SinkRouteRoute,
 } as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRoute,
+} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const DocsSlugRoute = DocsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DocsRoute,
 } as any)
 const SinkTanstackFormIndexRoute = SinkTanstackFormIndexRouteImport.update({
   id: '/tanstack-form/',
@@ -139,7 +157,10 @@ const AppDemoStartSsrDataOnlyIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/sink': typeof SinkRouteRouteWithChildren
+  '/docs': typeof DocsRouteWithChildren
+  '/docs/$slug': typeof DocsSlugRoute
   '/': typeof AppIndexRoute
+  '/docs/': typeof DocsIndexRoute
   '/sink/': typeof SinkIndexRoute
   '/api/demo/names': typeof ApiDemoNamesRoute
   '/api/demo/tq-todos': typeof ApiDemoTqTodosRoute
@@ -159,7 +180,9 @@ export interface FileRoutesByFullPath {
   '/demo/start/ssr/spa-mode': typeof AppDemoStartSsrSpaModeIndexRoute
 }
 export interface FileRoutesByTo {
+  '/docs/$slug': typeof DocsSlugRoute
   '/': typeof AppIndexRoute
+  '/docs': typeof DocsIndexRoute
   '/sink': typeof SinkIndexRoute
   '/api/demo/names': typeof ApiDemoNamesRoute
   '/api/demo/tq-todos': typeof ApiDemoTqTodosRoute
@@ -182,7 +205,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/sink': typeof SinkRouteRouteWithChildren
   '/_app': typeof AppRouteWithChildren
+  '/docs': typeof DocsRouteWithChildren
+  '/docs/$slug': typeof DocsSlugRoute
   '/_app/': typeof AppIndexRoute
+  '/docs/': typeof DocsIndexRoute
   '/sink/': typeof SinkIndexRoute
   '/api/demo/names': typeof ApiDemoNamesRoute
   '/api/demo/tq-todos': typeof ApiDemoTqTodosRoute
@@ -205,7 +231,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/sink'
+    | '/docs'
+    | '/docs/$slug'
     | '/'
+    | '/docs/'
     | '/sink/'
     | '/api/demo/names'
     | '/api/demo/tq-todos'
@@ -225,7 +254,9 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/spa-mode'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/docs/$slug'
     | '/'
+    | '/docs'
     | '/sink'
     | '/api/demo/names'
     | '/api/demo/tq-todos'
@@ -247,7 +278,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/sink'
     | '/_app'
+    | '/docs'
+    | '/docs/$slug'
     | '/_app/'
+    | '/docs/'
     | '/sink/'
     | '/api/demo/names'
     | '/api/demo/tq-todos'
@@ -270,12 +304,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   SinkRouteRoute: typeof SinkRouteRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
+  DocsRoute: typeof DocsRouteWithChildren
   ApiDemoNamesRoute: typeof ApiDemoNamesRoute
   ApiDemoTqTodosRoute: typeof ApiDemoTqTodosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -297,12 +339,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SinkIndexRouteImport
       parentRoute: typeof SinkRouteRoute
     }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/docs/$slug': {
+      id: '/docs/$slug'
+      path: '/$slug'
+      fullPath: '/docs/$slug'
+      preLoaderRoute: typeof DocsSlugRouteImport
+      parentRoute: typeof DocsRoute
     }
     '/sink/tanstack-form/': {
       id: '/sink/tanstack-form/'
@@ -469,9 +525,22 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface DocsRouteChildren {
+  DocsSlugRoute: typeof DocsSlugRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+}
+
+const DocsRouteChildren: DocsRouteChildren = {
+  DocsSlugRoute: DocsSlugRoute,
+  DocsIndexRoute: DocsIndexRoute,
+}
+
+const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   SinkRouteRoute: SinkRouteRouteWithChildren,
   AppRoute: AppRouteWithChildren,
+  DocsRoute: DocsRouteWithChildren,
   ApiDemoNamesRoute: ApiDemoNamesRoute,
   ApiDemoTqTodosRoute: ApiDemoTqTodosRoute,
 }
