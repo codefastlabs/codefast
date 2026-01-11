@@ -1,47 +1,70 @@
 import { useEffect, useState } from 'react';
 import parse, { Element, domToReact } from 'html-react-parser';
 import { Link } from '@tanstack/react-router';
-import { toString as hastToString } from 'hast-util-to-string';
-import { Image } from '@unpic/react';
-import type { HTMLReactParserOptions } from 'html-react-parser';
+import type { DOMNode, HTMLReactParserOptions } from 'html-react-parser';
+import type { ReactNode } from 'react';
 import type { MarkdownResult } from '@/utils/markdown';
 import { renderMarkdown } from '@/utils/markdown';
 import { CodeBlock } from '@/components/code-block';
 
-type MarkdownProps = {
-  content: string;
-  className?: string;
-};
+interface TextNode {
+  type: 'text';
+  data?: string;
+}
+
+interface ParentNode {
+  type: string;
+  children?: DOMNode[];
+}
+
+type ExtractableNode = TextNode | ParentNode;
+
+/**
+ * Determines if a node is a text node.
+ */
+function isTextNode(node: ExtractableNode): node is TextNode {
+  return node.type === 'text';
+}
+
+/**
+ * Determines if a node has children.
+ */
+function isParentNode(node: ExtractableNode): node is ParentNode {
+  return 'children' in node && Array.isArray(node.children);
+}
+
+/**
+ * Recursively extracts text content from a DOM node.
+ */
+function extractText(node: ExtractableNode): string {
+  if (isTextNode(node)) {
+    return node.data ?? '';
+  }
+
+  if (isParentNode(node) && node.children) {
+    return node.children.map((child) => extractText(child as ExtractableNode)).join('');
+  }
+
+  return '';
+}
 
 /**
  * Gets text content from a DOM element.
  */
 function getText(element: Element): string {
-  try {
-    return hastToString(element as any);
-  } catch {
-    // Fallback: extract text from children
-    const extractText = (node: any): string => {
-      if (node.type === 'text') {
-        return node.data || '';
-      }
-
-      if (node.children) {
-        return node.children.map(extractText).join('');
-      }
-
-      return '';
-    };
-
-    return extractText(element);
-  }
+  return extractText(element as ExtractableNode);
 }
 
-export function Markdown({ content, className }: MarkdownProps) {
+interface MarkdownProps {
+  content: string;
+  className?: string;
+}
+
+export function Markdown({ content, className }: MarkdownProps): ReactNode {
   const [result, setResult] = useState<MarkdownResult | null>(null);
 
   useEffect(() => {
-    renderMarkdown(content).then(setResult);
+    void renderMarkdown(content).then(setResult);
   }, [content]);
 
   if (!result) {
@@ -50,37 +73,49 @@ export function Markdown({ content, className }: MarkdownProps) {
 
   const options: HTMLReactParserOptions = {
     replace: (domNode) => {
-      if (domNode instanceof Element) {
-        // Handle code blocks with syntax highlighting
-        if (domNode.name === 'pre') {
-          const codeElement = domNode.children.find(
-            (child): child is Element => child instanceof Element && child.name === 'code',
-          );
+      if (!(domNode instanceof Element)) {
+        return;
+      }
 
-          if (codeElement) {
-            const codeClassName = codeElement.attribs.class || '';
-            const language = codeClassName.replace('language-', '') || 'text';
-            const code = getText(codeElement);
+      // Handle code blocks with syntax highlighting
+      if (domNode.name === 'pre') {
+        const codeElement = domNode.children.find(
+          (child): child is Element => child instanceof Element && child.name === 'code',
+        );
 
-            return <CodeBlock code={code} language={language} />;
-          }
-        }
+        if (codeElement) {
+          const codeClassName = codeElement.attribs.class ?? '';
+          const language = codeClassName.replace('language-', '') || 'text';
+          const code = getText(codeElement);
 
-        // Handle links
-        if (domNode.name === 'a') {
-          const href = domNode.attribs.href;
-
-          if (href?.startsWith('/')) {
-            // Internal link - use router's Link component
-            return <Link to={href}>{domToReact(domNode.children as any, options)}</Link>;
-          }
-        }
-
-        // Handle images
-        if (domNode.name === 'img') {
-          return <Image loading="lazy" className="rounded-lg shadow-md" {...domNode.attribs} />;
+          return <CodeBlock code={code} language={language} />;
         }
       }
+
+      // Handle links
+      if (domNode.name === 'a') {
+        const { href } = domNode.attribs;
+
+        if (href?.startsWith('/')) {
+          // Internal link - use router's Link component
+          return (
+            <Link to={href}>
+              {domToReact(domNode.children as unknown as Parameters<typeof domToReact>[0], options)}
+            </Link>
+          );
+        }
+      }
+
+      // Handle images - use native img since we don't have width/height data
+      if (domNode.name === 'img') {
+        const { src, alt } = domNode.attribs;
+
+        if (src) {
+          return <img alt={alt ?? ''} className="rounded-lg shadow-md" loading="lazy" src={src} />;
+        }
+      }
+
+      return;
     },
   };
 
