@@ -3,7 +3,6 @@ import type { Linter } from 'eslint';
 import { warningTypescriptRules } from '@/core/typescript';
 import { prettierRules } from '@/plugins/tooling/prettier';
 import { basePreset } from '@/presets/base';
-import { composeConfig } from '@/utils/compose-config';
 
 const libraryStrictRules: Linter.Config[] = [
   {
@@ -20,4 +19,4 @@ const libraryStrictRules: Linter.Config[] = [
   },
 ];
 
-export const libraryPreset: Linter.Config[] = composeConfig(basePreset, libraryStrictRules, prettierRules);
+export const libraryPreset: Linter.Config[] = [...basePreset, ...libraryStrictRules, ...prettierRules];

@@ -15,29 +15,28 @@ import { reactRules } from '@/plugins/frameworks/react';
 import { jestRules } from '@/plugins/testing/jest';
 import { prettierRules } from '@/plugins/tooling/prettier';
 import { tsdocRules } from '@/plugins/tooling/tsdoc';
-import { composeConfig } from '@/utils/compose-config';
 
-export const reactPresetCore: Linter.Config[] = composeConfig(
-  baseJavaScriptRules,
-  stylisticRules,
+export const reactPresetCore: Linter.Config[] = [
+  ...baseJavaScriptRules,
+  ...stylisticRules,
 
-  typescriptRules,
-  tsdocRules,
-  jsonRules,
-  markdownRules,
+  ...typescriptRules,
+  ...tsdocRules,
+  ...jsonRules,
+  ...markdownRules,
 
-  reactRules,
-  jsxA11yRules,
+  ...reactRules,
+  ...jsxA11yRules,
 
-  unicornRules,
-  importRules,
-  perfectionistRules,
+  ...unicornRules,
+  ...importRules,
+  ...perfectionistRules,
 
   // Jest must come AFTER other configs so its test-file overrides take precedence
-  jestRules,
+  ...jestRules,
 
-  browserEnvironment,
-  testEnvironment,
-);
+  ...browserEnvironment,
+  ...testEnvironment,
+];
 
-export const reactPreset: Linter.Config[] = composeConfig(reactPresetCore, prettierRules);
+export const reactPreset: Linter.Config[] = [...reactPresetCore, ...prettierRules];
