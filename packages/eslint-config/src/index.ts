@@ -22,4 +22,7 @@ export { basePreset } from '@/presets/base';
 export { libraryPreset } from '@/presets/library';
 export { nextPreset } from '@/presets/next';
 export { reactPreset, reactPresetCore } from '@/presets/react';
+
+// Deprecated: kept for backward compatibility, will be removed in next major version
+// eslint-disable-next-line @typescript-eslint/no-deprecated -- Intentionally exporting deprecated function for backward compatibility
 export { composeConfig } from '@/utils/compose-config';
