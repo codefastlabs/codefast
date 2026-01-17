@@ -24,11 +24,7 @@ export function Markdown({ html, className }: MarkdownProps): JSX.Element {
         const { href } = domNode.attribs;
 
         if (href?.startsWith('/')) {
-          return (
-            <Link to={href}>
-              {domToReact(domNode.children as DOMNode[], options)}
-            </Link>
-          );
+          return <Link to={href}>{domToReact(domNode.children as DOMNode[], options)}</Link>;
         }
       }
 
