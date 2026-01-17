@@ -25,21 +25,51 @@ import type {
  *
  * This function provides a simple interface for combining CSS classes
  * using the clsx library, which handles conditional classes and arrays.
+ * Optimized with fast paths for common cases.
  *
  * @param classes - CSS classes to combine
  * @returns Combined CSS class string
  */
 export const cx = (...classes: ClassValue[]): string => {
-  if (classes.length === 0) return '';
+  const length = classes.length;
 
-  if (classes.length === 1) {
+  if (length === 0) return '';
+
+  if (length === 1) {
     const single = classes[0];
 
     if (typeof single === 'string') return single;
 
     if (!single) return '';
+
+    return clsx(single);
   }
 
+  // Fast path: check if all items are simple strings or falsy
+  // This avoids clsx overhead for the common case
+  let allSimple = true;
+  let result = '';
+
+  for (let index = 0; index < length; index++) {
+    const cls = classes[index];
+
+    if (typeof cls === 'string') {
+      if (cls) {
+        result = result ? result + ' ' + cls : cls;
+      }
+    } else if (cls) {
+      // Complex value found (array, object), fall back to clsx
+      allSimple = false;
+      break;
+    }
+    // falsy values are skipped
+  }
+
+  if (allSimple) {
+    return result;
+  }
+
+  // Fallback to clsx for complex cases
   return clsx(classes);
 };
 
@@ -48,19 +78,45 @@ export const cx = (...classes: ClassValue[]): string => {
  *
  * This function combines CSS classes and then merges them using
  * tailwind-merge to resolve conflicts and remove duplicates.
+ * Optimized with fast paths for common cases.
  *
  * @param classes - CSS classes to combine and merge
  * @returns Merged CSS class string
  */
 export const cn = (...classes: ClassValue[]): string => {
-  if (classes.length === 0) return '';
+  const length = classes.length;
 
-  if (classes.length === 1) {
+  if (length === 0) return '';
+
+  if (length === 1) {
     const single = classes[0];
 
     if (typeof single === 'string') return twMerge(single);
 
     if (!single) return '';
+
+    return twMerge(clsx(single));
+  }
+
+  // Fast path: check if all items are simple strings or falsy
+  let allSimple = true;
+  let result = '';
+
+  for (let index = 0; index < length; index++) {
+    const cls = classes[index];
+
+    if (typeof cls === 'string') {
+      if (cls) {
+        result = result ? result + ' ' + cls : cls;
+      }
+    } else if (cls) {
+      allSimple = false;
+      break;
+    }
+  }
+
+  if (allSimple) {
+    return twMerge(result);
   }
 
   return twMerge(clsx(classes));

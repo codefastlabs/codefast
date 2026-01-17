@@ -27,13 +27,7 @@ import type {
 import { mergeConfigurationSchemas } from '@/core/config';
 import { applyCompoundSlotClasses, applyCompoundVariantClasses } from '@/processing/compound';
 import { createSlotFunctionFactory } from '@/processing/slots';
-import {
-  createTailwindMergeService,
-  cx,
-  hasExtensionConfiguration,
-  hasSlotConfiguration,
-  isBooleanVariantType,
-} from '@/utilities/utils';
+import { createTailwindMergeService, cx, hasExtensionConfiguration, hasSlotConfiguration } from '@/utilities/utils';
 
 /**
  * Handle regular variant resolution for components without slots.
@@ -62,17 +56,21 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
   cachedVariantKeys: (keyof T)[],
+  precomputedDefaults: Record<string, string>,
 ): string | undefined => {
-  // Initialize the resolved classes array
-  const resolvedClasses: ClassValue[] = [];
+  // Pre-allocate array with estimated size for better performance
+  const estimatedSize = cachedVariantKeys.length + (mergedCompoundVariantGroups?.length ?? 0) + 2;
+  const resolvedClasses: ClassValue[] = new Array(estimatedSize);
+  let classIndex = 0;
 
   // Add base classes if they exist
   if (mergedBaseClasses) {
-    resolvedClasses.push(mergedBaseClasses);
+    resolvedClasses[classIndex++] = mergedBaseClasses;
   }
 
   // Process each variant group using cached keys
-  for (const variantKey of cachedVariantKeys) {
+  for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
+    const variantKey = cachedVariantKeys[index];
     const variantGroup = mergedVariantGroups[variantKey];
     const variantValue = variantProps[variantKey];
 
@@ -80,23 +78,21 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
 
     // Resolve the variant value based on priority:
     // 1. Explicit variant props
-    // 2. Default variant props
-    // 3. Boolean variant defaults
+    // 2. Pre-computed default (includes boolean variant defaults)
     if (variantValue === undefined) {
-      const defaultValue = mergedDefaultVariantProps[variantKey];
-
-      if (defaultValue !== undefined) {
-        resolvedValue = typeof defaultValue === 'string' ? defaultValue : String(defaultValue);
-      } else if (isBooleanVariantType(variantGroup)) {
-        resolvedValue = 'false';
-      }
+      resolvedValue = precomputedDefaults[variantKey as string];
     } else {
-      resolvedValue = typeof variantValue === 'string' ? variantValue : String(variantValue);
+      // Fast path for boolean values - avoid String() call
+      resolvedValue = variantValue === true ? 'true' : variantValue === false ? 'false' : (variantValue as string);
     }
 
     // Add the resolved variant class if it exists
-    if (resolvedValue !== undefined && resolvedValue in variantGroup) {
-      resolvedClasses.push(variantGroup[resolvedValue]);
+    if (resolvedValue !== undefined) {
+      const variantClass = variantGroup[resolvedValue];
+
+      if (variantClass) {
+        resolvedClasses[classIndex++] = variantClass;
+      }
     }
   }
 
@@ -108,16 +104,22 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
       mergedDefaultVariantProps,
     );
 
-    resolvedClasses.push(...compoundVariantClasses);
+    // Use for loop instead of spread for better performance
+    for (let index = 0, length = compoundVariantClasses.length; index < length; index++) {
+      resolvedClasses[classIndex++] = compoundVariantClasses[index];
+    }
   }
 
   // Add custom classes if provided
   if (customClassName) {
-    resolvedClasses.push(customClassName);
+    resolvedClasses[classIndex++] = customClassName;
   }
 
   // Return early if no classes to process
-  if (resolvedClasses.length === 0) return;
+  if (classIndex === 0) return;
+
+  // Trim array to actual size
+  resolvedClasses.length = classIndex;
 
   // Combine all classes into a single string
   const classString = cx(...resolvedClasses);
@@ -246,6 +248,25 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
   // Pre-compute variant keys to avoid Object.keys() on every invocation
   const cachedVariantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
 
+  // Pre-compute default variant values including boolean defaults
+  // This moves work from the hot path to initialization time
+  const precomputedDefaults: Record<string, string> = {};
+
+  for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
+    const key = cachedVariantKeys[index];
+    const keyString = key as string;
+    const defaultValue = (mergedDefaultVariantProps as Record<string, unknown>)[keyString];
+    const variantGroup = (mergedVariantGroups as Record<string, Record<string, unknown>>)[keyString];
+
+    if (defaultValue !== undefined) {
+      precomputedDefaults[keyString] =
+        defaultValue === true ? 'true' : defaultValue === false ? 'false' : (defaultValue as string);
+    } else if ('true' in variantGroup || 'false' in variantGroup) {
+      // Boolean variant default
+      precomputedDefaults[keyString] = 'false';
+    }
+  }
+
   // Validate compound variants configuration once at creation time
   if (mergedConfiguration.compoundVariants && !Array.isArray(mergedConfiguration.compoundVariants)) {
     throw new Error('compoundVariants must be an array');
@@ -293,6 +314,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         shouldMergeClasses,
         tailwindMergeService,
         cachedVariantKeys as (keyof ConfigurationSchema)[],
+        precomputedDefaults,
       ) as unknown as S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S>;
     }
   };
