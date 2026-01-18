@@ -8,7 +8,53 @@ Type-safe variant API for Tailwind CSS with enhanced functionality and advanced 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9%2B-blue.svg)](https://www.typescriptlang.org/)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/@codefast/tailwind-variants)](https://bundlephobia.com/package/@codefast/tailwind-variants)
 
-## Installation
+## Why `@codefast/tailwind-variants`?
+
+This library is a **high-performance, drop-in replacement** for [tailwind-variants](https://github.com/nextui-org/tailwind-variants) with the same API but significantly better performance.
+
+### Performance Comparison
+
+Benchmarked on Apple M-series chip. Results show operations per second (higher is better):
+
+| Benchmark                   | @codefast/tailwind-variants | tailwind-variants | class-variance-authority |     Speedup     |
+| --------------------------- | :-------------------------: | :---------------: | :----------------------: | :-------------: |
+| **Simple Variants**         |       477.8K ops/s 🥇       |    71.6K ops/s    |       356.1K ops/s       | **6.7x faster** |
+| **Simple + Merge**          |       280.7K ops/s 🥇       |    66.3K ops/s    |       225.4K ops/s       | **4.2x faster** |
+| **Complex Variants**        |       301.1K ops/s 🥇       |    48.8K ops/s    |            -             | **6.2x faster** |
+| **Slots**                   |       53.7K ops/s 🥇        |    10.9K ops/s    |            -             | **4.9x faster** |
+| **Compound Slots**          |       31.3K ops/s 🥇        |    6.9K ops/s     |            -             | **4.5x faster** |
+| **Extreme (240+ variants)** |       10.6K ops/s 🥇        |    2.6K ops/s     |            -             | **4.1x faster** |
+
+> **Note:** CVA doesn't support slots, compound slots, or extends - it's only included in simple variant benchmarks.
+
+### Feature Comparison
+
+| Feature            | @codefast/tailwind-variants | tailwind-variants |    CVA    |
+| ------------------ | :-------------------------: | :---------------: | :-------: |
+| Basic Variants     |             ✅              |        ✅         |    ✅     |
+| Boolean Variants   |             ✅              |        ✅         |    ✅     |
+| Compound Variants  |             ✅              |        ✅         |    ✅     |
+| Default Variants   |             ✅              |        ✅         |    ✅     |
+| **Slots**          |             ✅              |        ✅         |    ❌     |
+| **Compound Slots** |             ✅              |        ✅         |    ❌     |
+| **Extends**        |             ✅              |        ✅         |    ❌     |
+| Tailwind Merge     |         ✅ Built-in         |    ✅ Built-in    | ❌ Manual |
+| TypeScript         |           ✅ Full           |      ✅ Full      |  ✅ Full  |
+| **Performance**    |         ⚡ Fastest          |    🐢 Slowest     | 🏃 Medium |
+| Bundle Size        |            ~3KB             |       ~4KB        |   ~1KB    |
+
+### Migration from `tailwind-variants`
+
+Migrating is as simple as changing your import:
+
+```diff
+- import { tv } from "tailwind-variants";
++ import { tv } from "@codefast/tailwind-variants";
+```
+
+**That's it!** The API is 100% compatible. All your existing code will work without any changes.
+
+---
 
 Install the package via pnpm (recommended):
 
@@ -46,25 +92,25 @@ The library uses these runtime dependencies:
 ## Quick Start
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const button = tv({
-  base: "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+  base: 'inline-flex items-center justify-center rounded-md font-medium transition-colors',
   variants: {
     variant: {
-      default: "bg-primary text-primary-foreground hover:bg-primary/90",
-      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-      outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
     },
     size: {
-      sm: "h-9 px-3 text-sm",
-      md: "h-10 px-4",
-      lg: "h-11 px-8",
+      sm: 'h-9 px-3 text-sm',
+      md: 'h-10 px-4',
+      lg: 'h-11 px-8',
     },
   },
   defaultVariants: {
-    variant: "default",
-    size: "md",
+    variant: 'default',
+    size: 'md',
   },
 });
 
@@ -72,7 +118,7 @@ const button = tv({
 console.log(button());
 // Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4"
 
-console.log(button({ variant: "destructive", size: "lg" }));
+console.log(button({ variant: 'destructive', size: 'lg' }));
 // Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 px-8"
 ```
 
@@ -108,25 +154,25 @@ The library provides a comprehensive set of features for variant-based styling:
 Create variant functions with different styling options:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const button = tv({
-  base: "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+  base: 'inline-flex items-center justify-center rounded-md font-medium transition-colors',
   variants: {
     variant: {
-      default: "bg-primary text-primary-foreground hover:bg-primary/90",
-      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-      outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
     },
     size: {
-      sm: "h-9 px-3 text-sm",
-      md: "h-10 px-4",
-      lg: "h-11 px-8",
+      sm: 'h-9 px-3 text-sm',
+      md: 'h-10 px-4',
+      lg: 'h-11 px-8',
     },
   },
   defaultVariants: {
-    variant: "default",
-    size: "md",
+    variant: 'default',
+    size: 'md',
   },
 });
 
@@ -134,14 +180,14 @@ const button = tv({
 console.log(button());
 // Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4"
 
-console.log(button({ variant: "destructive", size: "lg" }));
+console.log(button({ variant: 'destructive', size: 'lg' }));
 // Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 px-8"
 
-console.log(button({ variant: "outline", size: "sm" }));
+console.log(button({ variant: 'outline', size: 'sm' }));
 // Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 text-sm"
 
 // Add custom classes
-console.log(button({ className: "w-full" }));
+console.log(button({ className: 'w-full' }));
 // Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 w-full"
 ```
 
@@ -150,21 +196,21 @@ console.log(button({ className: "w-full" }));
 Slots enable styling for components with multiple parts:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const card = tv({
   slots: {
-    base: "rounded-lg border bg-card text-card-foreground shadow-sm",
-    header: "flex flex-col space-y-1.5 p-6",
-    content: "p-6 pt-0",
-    footer: "flex items-center p-6 pt-0",
+    base: 'rounded-lg border bg-card text-card-foreground shadow-sm',
+    header: 'flex flex-col space-y-1.5 p-6',
+    content: 'p-6 pt-0',
+    footer: 'flex items-center p-6 pt-0',
   },
   variants: {
     variant: {
-      default: "",
+      default: '',
       destructive: {
-        base: "border-destructive",
-        header: "text-destructive",
+        base: 'border-destructive',
+        header: 'text-destructive',
       },
     },
   },
@@ -185,7 +231,7 @@ console.log(cardStyles.footer());
 // Output: "flex items-center p-6 pt-0"
 
 // With variant
-const destructiveCard = card({ variant: "destructive" });
+const destructiveCard = card({ variant: 'destructive' });
 console.log(destructiveCard.base());
 // Output: "rounded-lg border bg-card text-card-foreground shadow-sm border-destructive"
 
@@ -198,41 +244,41 @@ console.log(destructiveCard.header());
 Apply styles when multiple variant conditions are met:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const alert = tv({
-  base: "relative w-full rounded-lg border px-4 py-3",
+  base: 'relative w-full rounded-lg border px-4 py-3',
   variants: {
     variant: {
-      default: "bg-background text-foreground",
-      destructive: "border-destructive/50 text-destructive",
+      default: 'bg-background text-foreground',
+      destructive: 'border-destructive/50 text-destructive',
     },
     size: {
-      sm: "text-sm",
-      md: "text-base",
+      sm: 'text-sm',
+      md: 'text-base',
     },
   },
   compoundVariants: [
     {
-      variant: "destructive",
-      size: "md",
-      className: "font-semibold", // Only applies when variant=destructive AND size=md
+      variant: 'destructive',
+      size: 'md',
+      className: 'font-semibold', // Only applies when variant=destructive AND size=md
     },
   ],
   defaultVariants: {
-    variant: "default",
-    size: "md",
+    variant: 'default',
+    size: 'md',
   },
 });
 
 // Usage examples
-console.log(alert({ size: "sm" }));
+console.log(alert({ size: 'sm' }));
 // Output: "relative w-full rounded-lg border px-4 py-3 bg-background text-foreground text-sm"
 
-console.log(alert({ variant: "destructive", size: "md" }));
+console.log(alert({ variant: 'destructive', size: 'md' }));
 // Output: "relative w-full rounded-lg border px-4 py-3 border-destructive/50 text-destructive text-base font-semibold"
 
-console.log(alert({ variant: "destructive", size: "sm" }));
+console.log(alert({ variant: 'destructive', size: 'sm' }));
 // Output: "relative w-full rounded-lg border px-4 py-3 border-destructive/50 text-destructive text-sm"
 ```
 
@@ -241,18 +287,18 @@ console.log(alert({ variant: "destructive", size: "sm" }));
 Support for boolean-based variant conditions:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const toggle = tv({
-  base: "inline-flex items-center justify-center rounded-md text-sm font-medium",
+  base: 'inline-flex items-center justify-center rounded-md text-sm font-medium',
   variants: {
     pressed: {
-      true: "bg-accent text-accent-foreground",
-      false: "bg-transparent",
+      true: 'bg-accent text-accent-foreground',
+      false: 'bg-transparent',
     },
     disabled: {
-      true: "opacity-50 pointer-events-none",
-      false: "",
+      true: 'opacity-50 pointer-events-none',
+      false: '',
     },
   },
   defaultVariants: {
@@ -280,35 +326,35 @@ console.log(toggle({ pressed: true, disabled: true }));
 Extend existing configurations for reusability:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 // Base button configuration
 const baseButton = tv({
-  base: "inline-flex items-center justify-center rounded-md font-medium",
+  base: 'inline-flex items-center justify-center rounded-md font-medium',
   variants: {
     size: {
-      sm: "h-9 px-3 text-sm",
-      md: "h-10 px-4",
+      sm: 'h-9 px-3 text-sm',
+      md: 'h-10 px-4',
     },
   },
   defaultVariants: {
-    size: "md",
+    size: 'md',
   },
 });
 
 // Extended icon button
 const iconButton = tv({
   extend: baseButton,
-  base: "aspect-square", // Additional base classes
+  base: 'aspect-square', // Additional base classes
   variants: {
     variant: {
       // New variant options
-      ghost: "hover:bg-accent hover:text-accent-foreground",
-      outline: "border border-input",
+      ghost: 'hover:bg-accent hover:text-accent-foreground',
+      outline: 'border border-input',
     },
   },
   defaultVariants: {
-    variant: "ghost",
+    variant: 'ghost',
   },
 });
 
@@ -319,7 +365,7 @@ console.log(baseButton());
 console.log(iconButton());
 // Output: "inline-flex items-center justify-center rounded-md font-medium aspect-square h-10 px-4 hover:bg-accent hover:text-accent-foreground"
 
-console.log(iconButton({ variant: "outline", size: "sm" }));
+console.log(iconButton({ variant: 'outline', size: 'sm' }));
 // Output: "inline-flex items-center justify-center rounded-md font-medium aspect-square h-9 px-3 text-sm border border-input"
 ```
 
@@ -330,41 +376,41 @@ console.log(iconButton({ variant: "outline", size: "sm" }));
 Apply styles to specific slots based on variant conditions:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const dialog = tv({
   slots: {
-    overlay: "fixed inset-0 bg-background/80 backdrop-blur-sm",
-    content: "fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2",
-    header: "flex flex-col space-y-1.5 text-center sm:text-left",
-    footer: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+    overlay: 'fixed inset-0 bg-background/80 backdrop-blur-sm',
+    content: 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2',
+    header: 'flex flex-col space-y-1.5 text-center sm:text-left',
+    footer: 'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
   },
   variants: {
     size: {
-      sm: "",
-      lg: "",
+      sm: '',
+      lg: '',
     },
   },
   compoundSlots: [
     {
-      size: "sm",
-      slots: ["content"],
-      className: "max-w-md",
+      size: 'sm',
+      slots: ['content'],
+      className: 'max-w-md',
     },
     {
-      size: "lg",
-      slots: ["content"],
-      className: "max-w-2xl",
+      size: 'lg',
+      slots: ['content'],
+      className: 'max-w-2xl',
     },
   ],
 });
 
 // Usage
-const smallDialog = dialog({ size: "sm" });
+const smallDialog = dialog({ size: 'sm' });
 console.log(smallDialog.content());
 // Output: "fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-md"
 
-const largeDialog = dialog({ size: "lg" });
+const largeDialog = dialog({ size: 'lg' });
 console.log(largeDialog.content());
 // Output: "fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-2xl"
 ```
@@ -374,7 +420,7 @@ console.log(largeDialog.content());
 Create a factory with global configuration settings:
 
 ```typescript
-import { createTV } from "@codefast/tailwind-variants";
+import { createTV } from '@codefast/tailwind-variants';
 
 // Create factory with global configuration
 const { tv, cn } = createTV({
@@ -383,7 +429,7 @@ const { tv, cn } = createTV({
     extend: {
       classGroups: {
         // Custom class groups for better conflict resolution
-        "font-size": ["text-custom-sm", "text-custom-lg"],
+        'font-size': ['text-custom-sm', 'text-custom-lg'],
       },
     },
   },
@@ -391,17 +437,17 @@ const { tv, cn } = createTV({
 
 // Use tv with global configuration
 const button = tv({
-  base: "px-4 py-2 rounded",
+  base: 'px-4 py-2 rounded',
   variants: {
     variant: {
-      primary: "bg-blue-500 text-white",
-      secondary: "bg-gray-500 text-white",
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white',
     },
   },
 });
 
 // Use cn utility with global configuration
-const classes = cn("px-4 py-2", "px-6 py-3"); // Tailwind merge resolves conflicts
+const classes = cn('px-4 py-2', 'px-6 py-3'); // Tailwind merge resolves conflicts
 console.log(classes);
 // Output: "px-6 py-3" (px-6 overrides px-4, py-3 overrides py-2)
 ```
@@ -411,13 +457,13 @@ console.log(classes);
 Support for nested array structures in class definitions:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const component = tv({
-  base: ["base-class-1", ["base-class-2", ["base-class-3", "base-class-4"]]], // Automatically flattened
+  base: ['base-class-1', ['base-class-2', ['base-class-3', 'base-class-4']]], // Automatically flattened
   variants: {
     variant: {
-      primary: ["text-blue-500", ["bg-blue-50", ["hover:bg-blue-100", "focus:ring-blue-200"]]],
+      primary: ['text-blue-500', ['bg-blue-50', ['hover:bg-blue-100', 'focus:ring-blue-200']]],
     },
   },
 });
@@ -530,27 +576,27 @@ const MyButton: React.FC<MyButtonProps> = ({
 Slots provide full type safety for multi-part components:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const card = tv({
   slots: {
-    base: "rounded-lg border",
-    header: "p-4 border-b",
-    content: "p-4",
+    base: 'rounded-lg border',
+    header: 'p-4 border-b',
+    content: 'p-4',
   },
   variants: {
     variant: {
-      default: "",
+      default: '',
       elevated: {
-        base: "shadow-lg",
-        header: "bg-muted",
+        base: 'shadow-lg',
+        header: 'bg-muted',
       },
     },
   },
 });
 
 // Type inference for slots
-const styles = card({ variant: "elevated" });
+const styles = card({ variant: 'elevated' });
 // styles.base() - available
 // styles.header() - available
 // styles.content() - available
@@ -562,15 +608,15 @@ const styles = card({ variant: "elevated" });
 Customize Tailwind merge behavior and other settings:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const component = tv(
   {
-    base: "px-4 py-2",
+    base: 'px-4 py-2',
     variants: {
       size: {
-        sm: "px-2 py-1",
-        lg: "px-6 py-3",
+        sm: 'px-2 py-1',
+        lg: 'px-6 py-3',
       },
     },
   },
@@ -580,7 +626,7 @@ const component = tv(
       extend: {
         classGroups: {
           // Custom class groups for better conflict resolution
-          "font-size": ["text-custom-sm", "text-custom-lg"],
+          'font-size': ['text-custom-sm', 'text-custom-lg'],
         },
       },
     },
@@ -593,14 +639,14 @@ const component = tv(
 In some cases, you may want to disable Tailwind merge:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const component = tv(
   {
-    base: "px-4 py-2",
+    base: 'px-4 py-2',
     variants: {
       size: {
-        sm: "px-2 py-1", // Will not merge with base classes
+        sm: 'px-2 py-1', // Will not merge with base classes
       },
     },
   },
@@ -609,7 +655,7 @@ const component = tv(
   },
 );
 
-console.log(component({ size: "sm" }));
+console.log(component({ size: 'sm' }));
 // Output: "px-4 py-2 px-2 py-1" (both px classes will be kept)
 ```
 
@@ -620,25 +666,22 @@ console.log(component({ size: "sm" }));
 Combine and merge CSS classes with conflict resolution:
 
 ```typescript
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from '@codefast/tailwind-variants';
 
 // Basic usage
-const classes = cn("px-4 py-2", "bg-blue-500", "text-white");
+const classes = cn('px-4 py-2', 'bg-blue-500', 'text-white');
 console.log(classes);
 // Output: "px-4 py-2 bg-blue-500 text-white"
 
 // With conflicting classes (tailwind-merge resolves conflicts)
-const conflicting = cn("px-4 py-2", "px-6 py-3");
+const conflicting = cn('px-4 py-2', 'px-6 py-3');
 console.log(conflicting);
 // Output: "px-6 py-3" (later classes override earlier ones)
 
 // With conditional classes
-const conditional = cn(
-  "base-class",
-  true && "condition-true-class",
-  false && "condition-false-class",
-  { "object-condition": true },
-);
+const conditional = cn('base-class', true && 'condition-true-class', false && 'condition-false-class', {
+  'object-condition': true,
+});
 console.log(conditional);
 // Output: "base-class condition-true-class object-condition"
 ```
@@ -648,9 +691,9 @@ console.log(conditional);
 Combine CSS classes without conflict resolution:
 
 ```typescript
-import { cx } from "@codefast/tailwind-variants";
+import { cx } from '@codefast/tailwind-variants';
 
-const classes = cx("px-4 py-2", "px-6 py-3");
+const classes = cx('px-4 py-2', 'px-6 py-3');
 console.log(classes);
 // Output: "px-4 py-2 px-6 py-3" (no conflict resolution)
 ```
@@ -724,7 +767,7 @@ Create theme systems with global configuration:
 
 ```typescript
 // theme/variants.ts
-import { createTV } from "@codefast/tailwind-variants";
+import { createTV } from '@codefast/tailwind-variants';
 
 // Global theme configuration
 const { tv: themeTV, cn: themeCN } = createTV({
@@ -733,7 +776,7 @@ const { tv: themeTV, cn: themeCN } = createTV({
     extend: {
       classGroups: {
         // Theme-specific class groups
-        "theme-color": ["theme-primary", "theme-secondary", "theme-accent"],
+        'theme-color': ['theme-primary', 'theme-secondary', 'theme-accent'],
       },
     },
   },
@@ -743,18 +786,18 @@ const { tv: themeTV, cn: themeCN } = createTV({
 export { themeTV as tv, themeCN as cn };
 
 // components/themed-button.ts
-import { tv } from "../theme/variants";
+import { tv } from '../theme/variants';
 
 export const themedButton = tv({
-  base: "inline-flex items-center justify-center rounded-md font-medium",
+  base: 'inline-flex items-center justify-center rounded-md font-medium',
   variants: {
     theme: {
-      light: "bg-white text-black border border-gray-200",
-      dark: "bg-gray-900 text-white border border-gray-700",
+      light: 'bg-white text-black border border-gray-200',
+      dark: 'bg-gray-900 text-white border border-gray-700',
     },
     variant: {
-      primary: "theme-primary", // Handled by custom class group
-      secondary: "theme-secondary",
+      primary: 'theme-primary', // Handled by custom class group
+      secondary: 'theme-secondary',
     },
   },
 });
@@ -765,31 +808,31 @@ export const themedButton = tv({
 Use with responsive classes for mobile-first design:
 
 ```typescript
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const responsiveCard = tv({
-  base: "rounded-lg border bg-card text-card-foreground shadow-sm",
+  base: 'rounded-lg border bg-card text-card-foreground shadow-sm',
   variants: {
     size: {
-      sm: "p-4 sm:p-6",
-      md: "p-6 sm:p-8 lg:p-10",
-      lg: "p-8 sm:p-10 lg:p-12 xl:p-16",
+      sm: 'p-4 sm:p-6',
+      md: 'p-6 sm:p-8 lg:p-10',
+      lg: 'p-8 sm:p-10 lg:p-12 xl:p-16',
     },
     layout: {
-      stack: "flex flex-col space-y-4",
-      grid: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4",
+      stack: 'flex flex-col space-y-4',
+      grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4',
     },
   },
   compoundVariants: [
     {
-      size: "lg",
-      layout: "grid",
-      className: "lg:grid-cols-4 xl:grid-cols-5",
+      size: 'lg',
+      layout: 'grid',
+      className: 'lg:grid-cols-4 xl:grid-cols-5',
     },
   ],
   defaultVariants: {
-    size: "md",
-    layout: "stack",
+    size: 'md',
+    layout: 'stack',
   },
 });
 ```
@@ -865,26 +908,26 @@ Migrating from other variant libraries:
 
 ```typescript
 // Before (cva)
-import { cva } from "class-variance-authority";
+import { cva } from 'class-variance-authority';
 
-const button = cva("px-4 py-2 rounded", {
+const button = cva('px-4 py-2 rounded', {
   variants: {
     variant: {
-      primary: "bg-blue-500 text-white",
-      secondary: "bg-gray-500 text-white",
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white',
     },
   },
 });
 
 // After (@codefast/tailwind-variants)
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from '@codefast/tailwind-variants';
 
 const button = tv({
-  base: "px-4 py-2 rounded",
+  base: 'px-4 py-2 rounded',
   variants: {
     variant: {
-      primary: "bg-blue-500 text-white",
-      secondary: "bg-gray-500 text-white",
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white',
     },
   },
 });

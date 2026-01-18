@@ -26,3 +26,9 @@ export { createExtendsWithoutMergeBenchmark } from './extends/without-merge.js';
 // Global factory benchmarks
 export { createCreateTVWithMergeBenchmark } from './create-tv/with-merge.js';
 export { createCreateTVWithoutMergeBenchmark } from './create-tv/without-merge.js';
+
+// Extreme stress test benchmarks
+export { createExtremeSlotsWithMergeBenchmark } from './extreme/slots-with-merge.js';
+export { createExtremeSlotsWithoutMergeBenchmark } from './extreme/slots-without-merge.js';
+export { createExtremeWithMergeBenchmark } from './extreme/with-merge.js';
+export { createExtremeWithoutMergeBenchmark } from './extreme/without-merge.js';
