@@ -16,6 +16,10 @@ import {
   createCreateTVWithoutMergeBenchmark,
   createExtendsWithMergeBenchmark,
   createExtendsWithoutMergeBenchmark,
+  createExtremeSlotsWithMergeBenchmark,
+  createExtremeSlotsWithoutMergeBenchmark,
+  createExtremeWithMergeBenchmark,
+  createExtremeWithoutMergeBenchmark,
   createSimpleWithMergeBenchmark,
   createSimpleWithoutMergeBenchmark,
   createSlotsWithMergeBenchmark,
@@ -47,8 +51,14 @@ async function main() {
     const createTVWithoutMergeBench = createCreateTVWithoutMergeBenchmark();
     const createTVWithMergeBench = createCreateTVWithMergeBenchmark();
 
+    // Extreme stress test benchmarks
+    const extremeWithoutMergeBench = createExtremeWithoutMergeBenchmark();
+    const extremeWithMergeBench = createExtremeWithMergeBenchmark();
+    const extremeSlotsWithoutMergeBench = createExtremeSlotsWithoutMergeBenchmark();
+    const extremeSlotsWithMergeBench = createExtremeSlotsWithMergeBenchmark();
+
     // Define benchmark suites with progress tracking
-    const totalSuites = 12;
+    const totalSuites = 16;
     let currentSuite = 0;
 
     const runBenchmark = async (benchmark) => {
@@ -74,6 +84,13 @@ async function main() {
     await runBenchmark(extendsWithMergeBench);
     await runBenchmark(createTVWithoutMergeBench);
     await runBenchmark(createTVWithMergeBench);
+
+    // Run extreme stress tests
+    console.log('🔥 Running EXTREME stress tests...\n');
+    await runBenchmark(extremeWithoutMergeBench);
+    await runBenchmark(extremeWithMergeBench);
+    await runBenchmark(extremeSlotsWithoutMergeBench);
+    await runBenchmark(extremeSlotsWithMergeBench);
 
     console.log('Benchmark completed!\n');
     console.log('✓ Benchmark completed successfully!');
