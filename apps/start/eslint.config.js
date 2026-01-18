@@ -1,3 +1,4 @@
+import { defineConfig } from 'eslint/config';
 import { tanstackConfig } from '@tanstack/eslint-config';
 import prettierConfig from 'eslint-config-prettier';
 import react from 'eslint-plugin-react';
@@ -6,9 +7,11 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import tsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 
-export default [
+export default defineConfig([
   {
+    name: '@apps/start/ignores',
     ignores: [
+      '**/.content-collections/**',
       '**/.output/**',
       '**/build/**',
       '**/dist/**',
@@ -18,21 +21,43 @@ export default [
       'eslint.config.js',
     ],
   },
-  ...tanstackConfig,
   {
+    name: '@apps/start/tanstack',
     files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
-    ...react.configs.flat.recommended,
-    languageOptions: { ...react.configs.flat.recommended.languageOptions, globals: { ...globals.browser } },
+    extends: [tanstackConfig],
+  },
+  {
+    name: '@apps/start/react',
+    files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
+    extends: [react.configs.flat.recommended, react.configs.flat['jsx-runtime']],
+    languageOptions: {
+      ...react.configs.flat.recommended.languageOptions,
+      globals: { ...globals.browser },
+    },
     settings: { react: { version: 'detect' } },
   },
-  { files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'], ...react.configs.flat['jsx-runtime'] },
-  { files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'], ...reactHooks.configs.flat.recommended },
-  { files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'], ...jsxA11y.flatConfigs.recommended },
-  { files: ['**/*.{ts,tsx}'], plugins: { tsdoc: tsdoc }, rules: { 'tsdoc/syntax': 'warn' } },
   {
+    name: '@apps/start/react-hooks',
+    files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
+    extends: [reactHooks.configs.flat.recommended],
+  },
+  {
+    name: '@apps/start/jsx-a11y',
+    files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
+    extends: [jsxA11y.flatConfigs.recommended],
+  },
+  {
+    name: '@apps/start/tsdoc',
+    files: ['**/*.{ts,tsx}'],
+    plugins: { tsdoc },
+    rules: { 'tsdoc/syntax': 'warn' },
+  },
+  {
+    name: '@apps/start/custom-rules',
     files: ['**/*.{ts,tsx}'],
     rules: {
       '@typescript-eslint/array-type': ['error', { default: 'array' }],
+      '@typescript-eslint/no-unnecessary-condition': 'off',
       curly: ['error', 'all'],
       'jsx-a11y/anchor-is-valid': 'off',
       'object-shorthand': 'warn',
@@ -58,5 +83,8 @@ export default [
       'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
     },
   },
-  prettierConfig,
-];
+  {
+    name: '@apps/start/prettier',
+    extends: [prettierConfig],
+  },
+]);

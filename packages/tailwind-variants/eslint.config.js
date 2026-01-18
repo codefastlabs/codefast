@@ -25,6 +25,7 @@ import { libraryPreset } from '@codefast/eslint-config/presets/library';
  */
 export default defineConfig([
   {
+    name: '@codefast/tailwind-variants',
     extends: [libraryPreset],
     files: ['src/**/*.ts'],
     rules: {
