@@ -1,8 +1,13 @@
 import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 
-export default [
-  js.configs.recommended,
+export default defineConfig([
   {
+    name: 'benchmarks/tailwind-variants/recommended',
+    extends: [js.configs.recommended],
+  },
+  {
+    name: 'benchmarks/tailwind-variants/custom-rules',
     languageOptions: {
       ecmaVersion: 2024,
       sourceType: 'module',
@@ -19,4 +24,4 @@ export default [
       'no-var': 'error',
     },
   },
-];
+]);

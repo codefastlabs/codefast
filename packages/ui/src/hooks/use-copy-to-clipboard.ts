@@ -26,7 +26,6 @@ export function useCopyToClipboard({ onCopy, timeout = 2000 }: { onCopy?: () => 
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async (value: string): Promise<void> => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (typeof window === 'undefined' || !navigator.clipboard.writeText) {
       return;
     }
