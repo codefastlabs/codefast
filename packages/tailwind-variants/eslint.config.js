@@ -1,3 +1,4 @@
+import { defineConfig } from 'eslint/config';
 import { libraryPreset } from '@codefast/eslint-config/presets/library';
 
 /**
@@ -22,9 +23,9 @@ import { libraryPreset } from '@codefast/eslint-config/presets/library';
  * - With Array.from(): 177K ops/s
  * - With new Array(): 489K ops/s (+176% improvement)
  */
-export default [
-  ...libraryPreset,
+export default defineConfig([
   {
+    extends: [libraryPreset],
     files: ['src/**/*.ts'],
     rules: {
       // Performance: new Array(n) is 2.5x faster than Array.from({length: n})
@@ -37,4 +38,4 @@ export default [
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },
-];
+]);
