@@ -25,9 +25,12 @@ import { cx, isSlotObjectType } from '@/utilities/utils';
  * CSS classes for a specific slot, including base classes, variant classes,
  * compound variant classes, and compound slot classes.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param targetSlotKey - The slot key to resolve classes for
  * @param baseSlotClasses - Base CSS classes for the slot
  * @param variantGroups - Variant group configurations
+ * @param slotProps - The slot properties passed to the component
  * @param variantProps - Variant properties passed to the component
  * @param defaultVariantProps - Default variant properties from configuration
  * @param compoundVariantGroups - Compound variant configurations with slots
@@ -176,6 +179,8 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
  * for each slot in a component. It handles base slots and named slots,
  * processing variants, compound variants, and compound slots.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param mergedSlotDefinitions - The merged slot definitions
  * @param mergedBaseClasses - Base CSS classes for the component
  * @param mergedVariantGroups - Merged variant group configurations

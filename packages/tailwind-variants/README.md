@@ -56,6 +56,8 @@ Migrating is as simple as changing your import:
 
 ---
 
+## Installation
+
 Install the package via pnpm (recommended):
 
 ```bash
