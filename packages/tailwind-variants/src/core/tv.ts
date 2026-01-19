@@ -35,6 +35,7 @@ import { createTailwindMergeService, cx, hasExtensionConfiguration, hasSlotConfi
  * This function processes variant configurations and resolves the appropriate
  * CSS classes based on the provided variant props and default values.
  *
+ * @typeParam T - The configuration schema type
  * @param mergedBaseClasses - The base CSS classes to apply
  * @param mergedVariantGroups - The variant group configurations
  * @param mergedDefaultVariantProps - Default variant property values
@@ -44,6 +45,7 @@ import { createTailwindMergeService, cx, hasExtensionConfiguration, hasSlotConfi
  * @param shouldMergeClasses - Whether to merge conflicting classes
  * @param tailwindMergeService - The Tailwind merge service function
  * @param cachedVariantKeys - Pre-computed variant keys for performance optimization
+ * @param precomputedDefaults - Pre-computed default variant values
  * @returns The resolved CSS class string or undefined
  */
 const handleRegularVariantResolution = <T extends ConfigurationSchema>(
@@ -135,6 +137,7 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
  * that don't use slots. It provides type-safe variant handling with
  * support for compound variants and configuration merging.
  *
+ * @typeParam T - The configuration schema type
  * @param config - The variant configuration object
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function for the component
@@ -150,6 +153,7 @@ export function tv<T extends ConfigurationSchema>(
  * This overload creates a variant function for components that use slots
  * but don't have regular variants. It provides type-safe slot handling.
  *
+ * @typeParam S - The slot configuration schema type
  * @param config - The slot configuration object
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function with slot support
@@ -165,6 +169,8 @@ export function tv<S extends SlotConfigurationSchema>(
  * This overload creates a variant function for components that have both
  * regular variants and slots. It provides full type safety for both systems.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param config - The configuration object with variants and slots
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function with full variant and slot support
@@ -181,6 +187,10 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
  * configuration with additional variants and slots. It merges the
  * base and extension configurations automatically.
  *
+ * @typeParam TBase - The base configuration schema type
+ * @typeParam TExtension - The extension configuration schema type
+ * @typeParam SBase - The base slot configuration schema type
+ * @typeParam SExtension - The extension slot configuration schema type
  * @param config - The extended configuration object
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function with merged configurations
@@ -202,6 +212,8 @@ export function tv<
  * It processes the configuration, merges extended configurations if needed,
  * and returns a fully configured variant function.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param configuration - The variant configuration
  * @param tvConfiguration - Tailwind Variants configuration options
  * @returns A configured variant function
@@ -351,6 +363,7 @@ export function createTV(globalConfiguration: TailwindVariantsConfiguration = {}
   /**
    * Factory function for creating regular variant functions.
    *
+   * @typeParam T - The configuration schema type
    * @param configuration - The variant configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function for regular components
@@ -363,6 +376,7 @@ export function createTV(globalConfiguration: TailwindVariantsConfiguration = {}
   /**
    * Factory function for creating slot-based variant functions.
    *
+   * @typeParam S - The slot configuration schema type
    * @param configuration - The slot configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function for slot-based components
@@ -375,6 +389,8 @@ export function createTV(globalConfiguration: TailwindVariantsConfiguration = {}
   /**
    * Factory function for creating variant functions with both variants and slots.
    *
+   * @typeParam T - The configuration schema type
+   * @typeParam S - The slot configuration schema type
    * @param configuration - The configuration with variants and slots
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function with full support
@@ -387,6 +403,10 @@ export function createTV(globalConfiguration: TailwindVariantsConfiguration = {}
   /**
    * Factory function for creating extended variant functions.
    *
+   * @typeParam TBase - The base configuration schema type
+   * @typeParam TExtension - The extension configuration schema type
+   * @typeParam SBase - The base slot configuration schema type
+   * @typeParam SExtension - The extension slot configuration schema type
    * @param configuration - The extended configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function with merged configurations
@@ -407,6 +427,8 @@ export function createTV(globalConfiguration: TailwindVariantsConfiguration = {}
    * This function merges global and local configurations and creates
    * the appropriate variant function using the main `tv` function.
    *
+   * @typeParam T - The configuration schema type
+   * @typeParam S - The slot configuration schema type
    * @param configuration - The variant configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A configured variant function
