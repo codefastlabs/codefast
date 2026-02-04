@@ -26,7 +26,7 @@ export function useCopyToClipboard({ onCopy, timeout = 2000 }: { onCopy?: () => 
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async (value: string): Promise<void> => {
-    if (typeof window === 'undefined' || !navigator.clipboard.writeText) {
+    if (typeof window === 'undefined' || !('clipboard' in navigator)) {
       return;
     }
 
