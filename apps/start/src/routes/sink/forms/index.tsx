@@ -8,6 +8,28 @@ import { ShippingForm } from '@/components/sink/forms/shipping-form';
 
 export const Route = createFileRoute('/sink/forms/')({
   component: FormsPage,
+  head: () => ({
+    meta: [
+      { title: 'Forms — Components — @codefast/ui' },
+      {
+        name: 'description',
+        content:
+          'Form component examples and patterns built with @codefast/ui. Includes shipping forms, chat settings, appearance settings, and more.',
+      },
+      { property: 'og:title', content: 'Forms — Components — @codefast/ui' },
+      {
+        property: 'og:description',
+        content:
+          'Form component examples and patterns built with @codefast/ui. Includes shipping forms, chat settings, appearance settings, and more.',
+      },
+      { name: 'twitter:title', content: 'Forms — Components — @codefast/ui' },
+      {
+        name: 'twitter:description',
+        content:
+          'Form component examples and patterns built with @codefast/ui. Includes shipping forms, chat settings, appearance settings, and more.',
+      },
+    ],
+  }),
 });
 
 function FormsPage() {
