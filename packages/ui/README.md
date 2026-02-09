@@ -1,16 +1,46 @@
-# UI Components Library
+# @codefast/ui
 
 Core UI components library built with React, Tailwind CSS, and Radix UI for creating modern, accessible, and customizable user interfaces with a comprehensive design system.
 
 [![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
-[![NPM Version](https://img.shields.io/npm/v/@codefast/ui.svg)](https://www.npmjs.com/package/@codefast/ui)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-10%2B-blue.svg)](https://pnpm.io/)
+[![npm version](https://img.shields.io/npm/v/@codefast/ui.svg)](https://www.npmjs.com/package/@codefast/ui)
+[![npm downloads](https://img.shields.io/npm/dm/@codefast/ui.svg)](https://www.npmjs.com/package/@codefast/ui)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@codefast/ui)](https://bundlephobia.com/package/@codefast/ui)
+[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Components](#components)
+  - [Layout](#layout)
+  - [Form](#form)
+  - [Navigation](#navigation)
+  - [Overlay](#overlay)
+  - [Data Display](#data-display)
+- [Usage Examples](#usage-examples)
+- [Theming and Customization](#theming-and-customization)
+- [API Reference](#api-reference)
+- [Accessibility](#accessibility)
+- [Browser Compatibility](#browser-compatibility)
+- [Contributing](#contributing)
+- [License](#license)
+- [Changelog](#changelog)
+
+## Overview
+
+`@codefast/ui` provides **60+ accessible components** for building production-grade user interfaces. Every component is built on [Radix UI](https://radix-ui.com/) primitives, styled with [Tailwind CSS 4](https://tailwindcss.com/), and fully typed with TypeScript.
+
+**Key features:**
+
+- **60+ Components** -- Layout, form, navigation, overlay, and data display categories.
+- **Accessible by Default** -- WAI-ARIA compliant with keyboard navigation and screen reader support.
+- **Fully Typed** -- Complete TypeScript definitions for all components and props.
+- **Customizable** -- Extend styles with Tailwind CSS utility classes or Tailwind Variants.
+- **Tree-shakeable** -- Import only the components you use.
 
 ## Installation
-
-Install the component library via pnpm (recommended):
 
 ```bash
 pnpm add @codefast/ui
@@ -22,32 +52,31 @@ Or using npm:
 npm install @codefast/ui
 ```
 
-**Peer Dependencies**:
-
-Make sure you have installed the peer dependencies:
+**Peer dependencies:**
 
 ```bash
 pnpm add react react-dom
 pnpm add -D @types/react @types/react-dom
 ```
 
-**Styling**:
+**Styling:**
 
-Import the CSS styles in your application:
+Import the CSS styles in your application entry point:
 
 ```tsx
 import '@codefast/ui/css/style.css';
 ```
 
-**Requirements**:
+**Requirements:**
 
-- Node.js version 20.0.0 or higher
-- React version 19.0.0 or higher
-- TypeScript version 5.9.2 or higher (recommended)
+- Node.js >= 20.0.0
+- React >= 19.0.0
+- TypeScript >= 5.9.2 (recommended)
 
 ## Quick Start
 
 ```tsx
+import '@codefast/ui/css/style.css';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@codefast/ui';
 
 function App() {
@@ -65,57 +94,63 @@ function App() {
 }
 ```
 
-## Usage
+## Components
 
-### Components Overview
+### Layout
 
-The library provides a comprehensive set of components organized into categories:
+| Component   | Description                                                 |
+| ----------- | ----------------------------------------------------------- |
+| Card        | Content container with header, content, and footer sections |
+| Separator   | Visual divider between content sections                     |
+| AspectRatio | Maintain consistent aspect ratios for media content         |
 
-#### Layout Components
+### Form
 
-- **Card**: Content containers with header, content, and footer sections
-- **Separator**: Visual dividers between content sections
-- **AspectRatio**: Maintain consistent aspect ratios for content
+| Component  | Description                                         |
+| ---------- | --------------------------------------------------- |
+| Button     | Interactive button with multiple variants and sizes |
+| Input      | Text input with validation support                  |
+| Checkbox   | Individual checkbox and checkbox groups             |
+| RadioGroup | Radio button group for single selection             |
+| Select     | Dropdown selection component                        |
+| Switch     | Toggle switch for boolean values                    |
+| Slider     | Range input slider                                  |
+| Label      | Form label with accessibility features              |
 
-#### Form Components
+### Navigation
 
-- **Button**: Interactive buttons with various styles and sizes
-- **Input**: Text input fields with validation support
-- **Checkbox**: Individual checkboxes and checkbox groups
-- **RadioGroup**: Radio button groups for single selection
-- **Select**: Dropdown selection components
-- **Switch**: Toggle switches for boolean values
-- **Slider**: Range input sliders
-- **Label**: Form labels with accessibility features
+| Component      | Description                            |
+| -------------- | -------------------------------------- |
+| Breadcrumb     | Navigation breadcrumb trail            |
+| NavigationMenu | Complex navigation menus with submenus |
+| Menubar        | Application menu bar                   |
+| Tabs           | Tabbed interface with content panels   |
 
-#### Navigation Components
+### Overlay
 
-- **Breadcrumb**: Navigation breadcrumbs
-- **NavigationMenu**: Complex navigation menus
-- **Menubar**: Application menu bars
-- **Tabs**: Tabbed interfaces
+| Component   | Description                          |
+| ----------- | ------------------------------------ |
+| Dialog      | Modal dialog and popup               |
+| AlertDialog | Confirmation and alert dialog        |
+| Popover     | Contextual popover                   |
+| Tooltip     | Informational tooltip                |
+| HoverCard   | Rich hover card with preview content |
 
-#### Overlay Components
+### Data Display
 
-- **Dialog**: Modal dialogs and popups
-- **AlertDialog**: Confirmation and alert dialogs
-- **Popover**: Contextual popovers
-- **Tooltip**: Informational tooltips
-- **HoverCard**: Rich hover cards with content
+| Component | Description                      |
+| --------- | -------------------------------- |
+| Avatar    | User profile image with fallback |
+| Badge     | Status indicator and label       |
+| Alert     | System message and notification  |
+| Progress  | Progress indicator               |
+| Accordion | Expandable content sections      |
+| Calendar  | Date selection calendar          |
+| Carousel  | Content carousel and slider      |
 
-#### Data Display Components
+## Usage Examples
 
-- **Avatar**: User profile images and fallbacks
-- **Badge**: Status indicators and labels
-- **Alert**: System messages and notifications
-- **Progress**: Progress indicators
-- **Accordion**: Expandable content sections
-- **Calendar**: Date selection calendars
-- **Carousel**: Content carousels and sliders
-
-### Basic Component Usage
-
-#### Using Form Components
+### Form Components
 
 ```tsx
 import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from '@codefast/ui';
@@ -147,7 +182,7 @@ function ContactForm() {
 }
 ```
 
-#### Using Navigation Components
+### Navigation Components
 
 ```tsx
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui';
@@ -170,7 +205,7 @@ function TabExample() {
 }
 ```
 
-#### Using Overlay Components
+### Overlay Components
 
 ```tsx
 import {
@@ -201,21 +236,23 @@ function DialogExample() {
 }
 ```
 
-### Theming and Customization
+## Theming and Customization
 
-The library uses Tailwind CSS for styling and supports theme customization:
+The library integrates with `@codefast/theme` for theme management:
 
 ```tsx
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@codefast/theme';
 
 function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider theme="system">
       <div className="bg-background text-foreground min-h-screen">{/* Your app content */}</div>
     </ThemeProvider>
   );
 }
 ```
+
+All components use CSS custom properties for theming, so you can customize colors, spacing, and other design tokens through your Tailwind CSS configuration.
 
 ## API Reference
 
@@ -226,93 +263,71 @@ Most components accept these common props:
 | Prop        | Type              | Default     | Description            |
 | ----------- | ----------------- | ----------- | ---------------------- |
 | `className` | `string`          | `undefined` | Additional CSS classes |
-| `children`  | `React.ReactNode` | `undefined` | Child components       |
-
-### Component Categories
-
-#### Layout Components
-
-- **Card**: `CardProps` - Content container with sections
-- **Separator**: `SeparatorProps` - Visual divider element
-- **AspectRatio**: `AspectRatioProps` - Aspect ratio container
-
-#### Form Components
-
-- **Button**: `ButtonProps` - Interactive button with variants
-- **Input**: `InputProps` - Text input with validation
-- **Label**: `LabelProps` - Form label with accessibility
-- **Checkbox**: `CheckboxProps` - Boolean input control
-- **RadioGroup**: `RadioGroupProps` - Single selection group
-- **Select**: `SelectProps` - Dropdown selection
-- **Switch**: `SwitchProps` - Boolean toggle control
-- **Slider**: `SliderProps` - Range input control
-
-#### Navigation Components
-
-- **Tabs**: `TabsProps` - Tabbed interface container
-- **NavigationMenu**: `NavigationMenuProps` - Complex navigation
-- **Breadcrumb**: `BreadcrumbProps` - Navigation breadcrumbs
-- **Menubar**: `MenubarProps` - Application menu bar
-
-#### Overlay Components
-
-- **Dialog**: `DialogProps` - Modal dialog container
-- **AlertDialog**: `AlertDialogProps` - Confirmation dialog
-- **Popover**: `PopoverProps` - Contextual overlay
-- **Tooltip**: `TooltipProps` - Informational overlay
-- **HoverCard**: `HoverCardProps` - Rich content overlay
+| `children`  | `React.ReactNode` | `undefined` | Child elements         |
 
 ### TypeScript Support
 
-All components are fully typed with TypeScript. Import types alongside components:
+All components export their prop types for use in custom wrappers:
 
 ```tsx
 import type { ButtonProps, CardProps, InputProps } from '@codefast/ui';
 
-// Usage with exported prop types
 function MyCustomButton(props: ButtonProps) {
   return <Button {...props} />;
 }
 ```
 
-### Accessibility Features
+### Component Prop Types
 
-All components follow WAI-ARIA guidelines and provide:
+**Layout:** `CardProps`, `SeparatorProps`, `AspectRatioProps`
 
-- **Keyboard Navigation**: Full keyboard support for all interactive elements
-- **Screen Reader Support**: Proper ARIA labels and descriptions
-- **Focus Management**: Logical focus order and visual indicators
-- **High Contrast**: Support for high contrast themes
-- **Reduced Motion**: Respects user's motion preferences
+**Form:** `ButtonProps`, `InputProps`, `LabelProps`, `CheckboxProps`, `RadioGroupProps`, `SelectProps`, `SwitchProps`, `SliderProps`
 
-#### Keyboard Navigation
+**Navigation:** `TabsProps`, `NavigationMenuProps`, `BreadcrumbProps`, `MenubarProps`
 
-Common keyboard shortcuts across components:
+**Overlay:** `DialogProps`, `AlertDialogProps`, `PopoverProps`, `TooltipProps`, `HoverCardProps`
 
-- **Tab/Shift+Tab**: Navigate between focusable elements
-- **Enter/Space**: Activate buttons and controls
-- **Arrow Keys**: Navigate within component groups
-- **Escape**: Close overlays and cancel actions
-- **Home/End**: Navigate to first/last items in lists
+## Accessibility
+
+All components follow [WAI-ARIA](https://www.w3.org/WAI/ARIA/apg/) guidelines and provide:
+
+- **Keyboard Navigation** -- Full keyboard support for all interactive elements.
+- **Screen Reader Support** -- Proper ARIA labels and descriptions.
+- **Focus Management** -- Logical focus order and visible focus indicators.
+- **High Contrast** -- Support for high contrast themes.
+- **Reduced Motion** -- Respects the `prefers-reduced-motion` media query.
+
+### Keyboard Shortcuts
+
+| Key                 | Action                                |
+| ------------------- | ------------------------------------- |
+| `Tab` / `Shift+Tab` | Navigate between focusable elements   |
+| `Enter` / `Space`   | Activate buttons and controls         |
+| `Arrow Keys`        | Navigate within component groups      |
+| `Escape`            | Close overlays and cancel actions     |
+| `Home` / `End`      | Navigate to first/last items in lists |
+
+## Browser Compatibility
+
+`@codefast/ui` supports all modern browsers:
+
+| Browser | Version         |
+| ------- | --------------- |
+| Chrome  | Last 2 versions |
+| Firefox | Last 2 versions |
+| Safari  | Last 2 versions |
+| Edge    | Last 2 versions |
+
+> Internet Explorer is not supported.
 
 ## Contributing
 
-We welcome all contributions! To get started with development:
+We welcome contributions! Please see the [contributing guide](../../README.md#contributing) in the root of this repository for detailed instructions.
 
-### Environment Setup
-
-1. Fork this repository
-2. Clone to your machine: `git clone <your-fork-url>`
-3. Install dependencies: `pnpm install`
-4. Create a new branch: `git checkout -b feature/feature-name`
-
-### Development Workflow
+For package-specific development:
 
 ```bash
-# Build all packages
-pnpm build:packages
-
-# Development mode for UI components
+# Development mode
 pnpm dev --filter=@codefast/ui
 
 # Run tests
@@ -320,40 +335,19 @@ pnpm test --filter=@codefast/ui
 
 # Run tests with coverage
 pnpm test:coverage --filter=@codefast/ui
-
-# Lint and format
-pnpm lint:fix
-pnpm format
 ```
 
 ### Adding New Components
 
-1. Create component files in `src/components/[component-name]/`
-2. Export component and types from `src/index.ts`
-3. Add comprehensive tests
-4. Update documentation
-5. Submit a pull request
+1. Create component files in `src/components/[component-name]/`.
+2. Export the component and types from the package entry point.
+3. Add comprehensive tests.
+4. Update documentation.
+5. Submit a pull request.
 
 ## License
 
 Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
-
-## Contact
-
-- npm: [@codefast/ui](https://www.npmjs.com/package/@codefast/ui)
-- GitHub: [codefastlabs/codefast](https://github.com/codefastlabs/codefast)
-- Issues: [GitHub Issues](https://github.com/codefastlabs/codefast/issues)
-- Documentation: [Component Docs](https://codefast.dev/docs/components)
-
-## Acknowledgments
-
-This library is built on top of excellent open-source projects:
-
-- **[Radix UI](https://radix-ui.com/)** - Accessible component primitives
-- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[Lucide React](https://lucide.dev/)** - Icon library
-- **[React Hook Form](https://react-hook-form.com/)** - Form validation
-- **[Next Themes](https://github.com/pacocoursey/next-themes)** - Theme management
 
 ## Changelog
 
