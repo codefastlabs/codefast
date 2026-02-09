@@ -18,7 +18,7 @@ import {
   SidebarRail,
 } from '@codefast/ui/sidebar';
 import { Link, useRouterState } from '@tanstack/react-router';
-import { ChevronRightIcon, SearchIcon } from 'lucide-react';
+import { ChevronRightIcon, HomeIcon, SearchIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import type { ComponentProps, JSX, ReactNode } from 'react';
 import type { NavItem } from '@/components/sink/app/app-sidebar-types';
@@ -59,6 +59,28 @@ function SearchForm(): JSX.Element {
           </InputGroup>
         </form>
       </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}
+
+/* -------------------------------------------------------------------------------------------------
+ * Component: NavHomeSection
+ * -------------------------------------------------------------------------------------------------*/
+
+function NavHomeSection(): JSX.Element {
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Home">
+            <Link to="/">
+              <HomeIcon />
+              <span>Home</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
     </SidebarGroup>
   );
 }
@@ -135,6 +157,7 @@ function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel>Components</SidebarGroupLabel>
       <SidebarMenu>
         {registrySections.map(({ type, components }) => (
           <Collapsible key={type} asChild defaultOpen={isSinkActive} className="group/collapsible">
@@ -181,6 +204,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>): ReactNode {
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
+        <NavHomeSection />
         <NavMainSection items={appSidebarData.navMain} />
         <ComponentsSection pathname={pathname} />
       </SidebarContent>
