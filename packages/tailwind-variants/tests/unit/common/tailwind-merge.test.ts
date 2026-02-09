@@ -1,38 +1,38 @@
-import { tv } from "@/index";
-import { COMMON_UNITS, twMergeConfig } from "~/fixtures/tailwind-merge-config";
+import { tv } from '@/index';
+import { COMMON_UNITS, twMergeConfig } from '~/fixtures/tailwind-merge-config';
 
-describe("Tailwind Variants (TV) - Tailwind Merge", () => {
-  test("should merge the tailwind classes correctly", () => {
+describe('Tailwind Variants (TV) - Tailwind Merge', () => {
+  test('should merge the tailwind classes correctly', () => {
     const styles = tv({
-      base: "text-base text-yellow-400",
+      base: 'text-base text-yellow-400',
       variants: {
         color: {
-          blue: "text-blue-500",
-          red: "text-red-500",
+          blue: 'text-blue-500',
+          red: 'text-red-500',
         },
       },
     });
 
     const result = styles({
-      color: "red",
+      color: 'red',
     });
 
-    expect(result).toHaveClassName(["text-base", "text-red-500"]);
+    expect(result).toHaveClassName(['text-base', 'text-red-500']);
   });
 
-  test("should support custom config", () => {
+  test('should support custom config', () => {
     const styles = tv(
       {
-        base: "text-small text-yellow-400 w-unit",
+        base: 'text-small text-yellow-400 w-unit',
         variants: {
           color: {
-            blue: "text-blue-500",
-            red: "text-red-500",
+            blue: 'text-blue-500',
+            red: 'text-red-500',
           },
           size: {
-            large: "text-large w-unit-6",
-            medium: "text-medium w-unit-4",
-            small: "text-small w-unit-2",
+            large: 'text-large w-unit-6',
+            medium: 'text-medium w-unit-4',
+            small: 'text-small w-unit-2',
           },
         },
       },
@@ -42,26 +42,26 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
     );
 
     const result = styles({
-      color: "blue",
-      size: "medium",
+      color: 'blue',
+      size: 'medium',
     });
 
-    expect(result).toHaveClassName(["text-medium", "text-blue-500", "w-unit-4"]);
+    expect(result).toHaveClassName(['text-medium', 'text-blue-500', 'w-unit-4']);
   });
 
-  test("should support custom config with inline config object", () => {
+  test('should support custom config with inline config object', () => {
     const styles = tv(
       {
-        base: "text-small text-yellow-400 w-unit",
+        base: 'text-small text-yellow-400 w-unit',
         variants: {
           color: {
-            blue: "text-blue-500",
-            red: "text-red-500",
+            blue: 'text-blue-500',
+            red: 'text-red-500',
           },
           size: {
-            large: "text-large w-unit-6",
-            medium: "text-medium w-unit-4",
-            small: "text-small w-unit-2",
+            large: 'text-large w-unit-6',
+            medium: 'text-medium w-unit-4',
+            small: 'text-small w-unit-2',
           },
         },
       },
@@ -69,11 +69,11 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
         twMergeConfig: {
           extend: {
             classGroups: {
-              "bg-image": ["bg-stripe-gradient"],
-              "font-size": [{ text: ["tiny", ...COMMON_UNITS] }],
-              "min-w": [
+              'bg-image': ['bg-stripe-gradient'],
+              'font-size': [{ text: ['tiny', ...COMMON_UNITS] }],
+              'min-w': [
                 {
-                  "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+                  'min-w': ['unit', 'unit-2', 'unit-4', 'unit-6'],
                 },
               ],
               shadow: [{ shadow: COMMON_UNITS }],
@@ -81,8 +81,8 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
             theme: {
               borderRadius: COMMON_UNITS,
               borderWidth: COMMON_UNITS,
-              opacity: ["disabled"],
-              spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+              opacity: ['disabled'],
+              spacing: ['divider', 'unit', 'unit-2', 'unit-4', 'unit-6'],
             },
           },
         },
@@ -90,10 +90,10 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
     );
 
     const result = styles({
-      color: "blue",
-      size: "medium",
+      color: 'blue',
+      size: 'medium',
     });
 
-    expect(result).toHaveClassName(["text-medium", "text-blue-500", "w-unit-4"]);
+    expect(result).toHaveClassName(['text-medium', 'text-blue-500', 'w-unit-4']);
   });
 });

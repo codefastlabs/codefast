@@ -1,6 +1,6 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import pluginTsdoc from "eslint-plugin-tsdoc";
+import pluginTsdoc from 'eslint-plugin-tsdoc';
 
 /**
  * Rules that are set to "warn" for TSDoc plugin
@@ -12,13 +12,13 @@ const warningTsdocRules: Linter.RulesRecord = {
    * Validates TSDoc syntax in TypeScript comments
    * Set to "warn" to encourage proper documentation without blocking development
    */
-  "tsdoc/syntax": "warn",
+  'tsdoc/syntax': 'warn',
 };
 
 export const tsdocRules: Linter.Config[] = [
   {
-    files: ["**/*.{ts,tsx}"],
-    name: "@codefast/eslint-config/plugins/tsdoc",
+    files: ['**/*.{ts,tsx}'],
+    name: '@codefast/eslint-config/plugins/tsdoc',
     plugins: {
       tsdoc: pluginTsdoc,
     },

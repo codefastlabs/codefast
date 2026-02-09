@@ -1,6 +1,4 @@
-import { reactPreset } from "@codefast/eslint-config/presets/react";
-import { composeConfig } from "@codefast/eslint-config/shared/composer";
+import { reactPreset } from '@codefast/eslint-config/presets/react';
+import { defineConfig } from 'eslint/config';
 
-export default composeConfig(reactPreset, {
-  rules: {},
-});
+export default defineConfig([{ extends: [reactPreset], name: '@codefast/ui' }]);

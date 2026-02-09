@@ -1,7 +1,22 @@
-import type { Linter } from "eslint";
-import type { ConfigArray } from "typescript-eslint";
+import type { Linter } from 'eslint';
+import type { ConfigArray } from 'typescript-eslint';
 
-import { configs as tsEslintConfigs } from "typescript-eslint";
+import { configs as tsEslintConfigs } from 'typescript-eslint';
+
+/**
+ * Rules that are disabled (set to "off") for TypeScript plugin
+ * These rules are grouped together for better organization and maintainability
+ * These rules are disabled because TypeScript-specific alternatives are used instead
+ */
+const disabledTypescriptRules: Linter.RulesRecord = {
+  /**
+   * Disable base no-unused-vars rule for TypeScript files.
+   * We use `@typescript-eslint/no-unused-vars` instead, which has better TypeScript support,
+   * including proper handling of type-only imports and TypeScript-specific patterns.
+   * This prevents conflicts and duplicate warnings.
+   */
+  'no-unused-vars': 'off',
+};
 
 /**
  * Rules that are set to "warn" for TypeScript plugin
@@ -14,17 +29,17 @@ export const warningTypescriptRules: Linter.RulesRecord = {
    * Helps improve code readability and catches potential type issues early.
    * Set to "warn" to encourage good practices without blocking development.
    */
-  "@typescript-eslint/explicit-function-return-type": "warn",
+  '@typescript-eslint/explicit-function-return-type': 'warn',
 
   /**
    * Disallows unused variables, parameters, and imports.
    * Helps keep code clean by removing dead code and unused imports.
    * Allows parameters starting with underscore to be unused (common pattern for ignored parameters).
    */
-  "@typescript-eslint/no-unused-vars": [
-    "warn",
+  '@typescript-eslint/no-unused-vars': [
+    'warn',
     {
-      argsIgnorePattern: "^_",
+      argsIgnorePattern: '^_',
     },
   ],
 };
@@ -40,8 +55,8 @@ export const errorTypescriptRules: Linter.RulesRecord = {
    * Specifically, configured to allow promises in JSX attributes (like onClick handlers)
    * while still catching dangerous promise misuse elsewhere.
    */
-  "@typescript-eslint/no-misused-promises": [
-    "error",
+  '@typescript-eslint/no-misused-promises': [
+    'error',
     {
       checksVoidReturn: {
         attributes: false,
@@ -53,50 +68,50 @@ export const errorTypescriptRules: Linter.RulesRecord = {
    * Requires functions that return promises to be marked as async.
    * Ensures consistent async function declarations and helps with error handling.
    */
-  "@typescript-eslint/promise-function-async": "error",
+  '@typescript-eslint/promise-function-async': 'error',
 
   /**
    * Requires readonly modifiers for class properties that are never reassigned.
    * Helps prevent accidental mutations and makes code intent clearer.
    */
-  "@typescript-eslint/prefer-readonly": "error",
+  '@typescript-eslint/prefer-readonly': 'error',
 
   /**
    * Prefers `@ts-expect-error` over `@ts-ignore` comments.
    * `@ts-expect-error` will cause an error if the expected error doesn't occur,
    * making it safer than `@ts-ignore` which silently ignores all errors.
    */
-  "@typescript-eslint/prefer-ts-expect-error": "error",
+  '@typescript-eslint/prefer-ts-expect-error': 'error',
 
   /**
    * Requires a compare function when calling Array.prototype.sort().
    * Prevents unexpected sorting behavior with numbers and ensures consistent results.
    */
-  "@typescript-eslint/require-array-sort-compare": "error",
+  '@typescript-eslint/require-array-sort-compare': 'error',
 
   /**
    * Ensures switch statements are exhaustive when used with union types.
    * Helps catch missing cases when new values are added to union types.
    */
-  "@typescript-eslint/switch-exhaustiveness-check": "error",
+  '@typescript-eslint/switch-exhaustiveness-check': 'error',
 
   /**
    * Enforces consistent usage of type exports.
    * Ensures that type-only exports use the 'type' keyword for clarity and bundler optimization.
    */
-  "@typescript-eslint/consistent-type-exports": "error",
+  '@typescript-eslint/consistent-type-exports': 'error',
 
   /**
    * Enforces consistent usage of type imports.
    * Configured to prefer separate type imports (import type \{ ... \}) over inline type imports.
    * This improves bundler tree-shaking and makes type-only imports explicit.
    */
-  "@typescript-eslint/consistent-type-imports": [
-    "error",
+  '@typescript-eslint/consistent-type-imports': [
+    'error',
     {
       disallowTypeAnnotations: true,
-      fixStyle: "separate-type-imports",
-      prefer: "type-imports",
+      fixStyle: 'separate-type-imports',
+      prefer: 'type-imports',
     },
   ],
 
@@ -104,25 +119,25 @@ export const errorTypescriptRules: Linter.RulesRecord = {
    * Prevents importing types with side effects.
    * Ensures type imports don't accidentally execute code or cause side effects.
    */
-  "@typescript-eslint/no-import-type-side-effects": "error",
+  '@typescript-eslint/no-import-type-side-effects': 'error',
 
   /**
    * Enforces using property signature style for methods in interfaces and type literals.
    * Prefers 'method(): void' over 'method: () =\> void' for better readability and consistency.
    */
-  "@typescript-eslint/method-signature-style": ["error", "property"],
+  '@typescript-eslint/method-signature-style': ['error', 'property'],
 
   /**
    * Disallows unnecessary namespace or enum qualifiers.
    * Removes redundant qualifiers when the context already provides the necessary scope.
    */
-  "@typescript-eslint/no-unnecessary-qualifier": "error",
+  '@typescript-eslint/no-unnecessary-qualifier': 'error',
 
   /**
    * Disallows empty exports that don't change anything in a module.
    * Removes useless 'export \{\}' statements that serve no purpose.
    */
-  "@typescript-eslint/no-useless-empty-export": "error",
+  '@typescript-eslint/no-useless-empty-export': 'error',
 
   /**
    * Restricts the types allowed in template literal expressions.
@@ -131,8 +146,8 @@ export const errorTypescriptRules: Linter.RulesRecord = {
    * Configured to allow boolean and number types while disallowing potentially
    * problematic types like any, nullish values, and regular expressions.
    */
-  "@typescript-eslint/restrict-template-expressions": [
-    "error",
+  '@typescript-eslint/restrict-template-expressions': [
+    'error',
     {
       allowAny: false,
       allowBoolean: true,
@@ -153,19 +168,19 @@ export const errorTypescriptRules: Linter.RulesRecord = {
    * The interface rule prevents Hungarian notation (IInterface) and overly generic names
    * like 'Interface', 'Props', or 'State' to encourage more descriptive naming.
    */
-  "@typescript-eslint/naming-convention": [
-    "error",
+  '@typescript-eslint/naming-convention': [
+    'error',
     {
       custom: {
         match: false,
-        regex: "^I[A-Z]|^(Interface|Props|State)$",
+        regex: '^I[A-Z]|^(Interface|Props|State)$',
       },
-      format: ["PascalCase"],
-      selector: "interface",
+      format: ['PascalCase'],
+      selector: 'interface',
     },
     {
-      format: ["PascalCase"],
-      selector: ["typeAlias", "typeParameter", "enum", "enumMember"],
+      format: ['PascalCase'],
+      selector: ['typeAlias', 'typeParameter', 'enum', 'enumMember'],
     },
   ],
 
@@ -174,7 +189,7 @@ export const errorTypescriptRules: Linter.RulesRecord = {
    * This rule is turned off to allow more flexible use of type parameters
    * in generic functions and types without strict necessity checks.
    */
-  "@typescript-eslint/no-unnecessary-type-parameters": "off",
+  '@typescript-eslint/no-unnecessary-type-parameters': 'off',
 };
 
 /**
@@ -187,13 +202,9 @@ export const errorTypescriptRules: Linter.RulesRecord = {
  * @param config - A single configuration object from typescript-eslint ConfigArray
  * @returns A Linter.Config object with file patterns applied if needed
  */
-const mapConfigWithFiles = (
-  config: ConfigArray[number],
-  group: "strict" | "stylistic",
-  index: number,
-): Linter.Config =>
+const mapConfigWithFiles = (config: ConfigArray[number], group: 'strict' | 'stylistic', index: number): Linter.Config =>
   ({
-    ...(!config.files && config.rules && { files: ["**/*.{ts,tsx}"] }),
+    ...(!config.files && config.rules && { files: ['**/*.{ts,tsx}'] }),
     ...config,
     name: config.name ?? `@codefast/eslint-config/core/typescript/${group}-${index + 1}`,
   }) as Linter.Config;
@@ -222,24 +233,22 @@ const mapConfigWithFiles = (
  * ```
  */
 export const typescriptRules: Linter.Config[] = [
-  ...tsEslintConfigs.strictTypeChecked.map((config, index) =>
-    mapConfigWithFiles(config, "strict", index),
-  ),
+  ...tsEslintConfigs.strictTypeChecked.map((config, index) => mapConfigWithFiles(config, 'strict', index)),
 
-  ...tsEslintConfigs.stylisticTypeChecked.map((config, index) =>
-    mapConfigWithFiles(config, "stylistic", index),
-  ),
+  ...tsEslintConfigs.stylisticTypeChecked.map((config, index) => mapConfigWithFiles(config, 'stylistic', index)),
 
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: process.cwd(),
       },
     },
-    name: "@codefast/eslint-config/core/typescript/custom-rules",
+    name: '@codefast/eslint-config/core/typescript/custom-rules',
     rules: {
+      // Apply all disabled rules first to override any base rules
+      ...disabledTypescriptRules,
+
       // Apply all warning rules
       ...warningTypescriptRules,
 

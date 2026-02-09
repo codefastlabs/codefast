@@ -6,10 +6,10 @@
  * foundation for CSS class processing throughout the package.
  */
 
-import type { ConfigExtension } from "tailwind-merge";
+import type { ConfigExtension } from 'tailwind-merge';
 
-import { clsx } from "clsx";
-import { extendTailwindMerge, twMerge } from "tailwind-merge";
+import { clsx } from 'clsx';
+import { extendTailwindMerge, twMerge } from 'tailwind-merge';
 
 import type {
   ClassValue,
@@ -18,28 +18,58 @@ import type {
   ConfigurationWithSlots,
   ExtendedConfiguration,
   SlotConfigurationSchema,
-} from "@/types/types";
+} from '@/types/types';
 
 /**
  * Combine CSS classes using clsx.
  *
  * This function provides a simple interface for combining CSS classes
  * using the clsx library, which handles conditional classes and arrays.
+ * Optimized with fast paths for common cases.
  *
  * @param classes - CSS classes to combine
  * @returns Combined CSS class string
  */
 export const cx = (...classes: ClassValue[]): string => {
-  if (classes.length === 0) return "";
+  const length = classes.length;
 
-  if (classes.length === 1) {
+  if (length === 0) return '';
+
+  if (length === 1) {
     const single = classes[0];
 
-    if (typeof single === "string") return single;
+    if (typeof single === 'string') return single;
 
-    if (!single) return "";
+    if (!single) return '';
+
+    return clsx(single);
   }
 
+  // Fast path: check if all items are simple strings or falsy
+  // This avoids clsx overhead for the common case
+  let allSimple = true;
+  let result = '';
+
+  for (let index = 0; index < length; index++) {
+    const cls = classes[index];
+
+    if (typeof cls === 'string') {
+      if (cls) {
+        result = result ? result + ' ' + cls : cls;
+      }
+    } else if (cls) {
+      // Complex value found (array, object), fall back to clsx
+      allSimple = false;
+      break;
+    }
+    // falsy values are skipped
+  }
+
+  if (allSimple) {
+    return result;
+  }
+
+  // Fallback to clsx for complex cases
   return clsx(classes);
 };
 
@@ -48,19 +78,45 @@ export const cx = (...classes: ClassValue[]): string => {
  *
  * This function combines CSS classes and then merges them using
  * tailwind-merge to resolve conflicts and remove duplicates.
+ * Optimized with fast paths for common cases.
  *
  * @param classes - CSS classes to combine and merge
  * @returns Merged CSS class string
  */
 export const cn = (...classes: ClassValue[]): string => {
-  if (classes.length === 0) return "";
+  const length = classes.length;
 
-  if (classes.length === 1) {
+  if (length === 0) return '';
+
+  if (length === 1) {
     const single = classes[0];
 
-    if (typeof single === "string") return twMerge(single);
+    if (typeof single === 'string') return twMerge(single);
 
-    if (!single) return "";
+    if (!single) return '';
+
+    return twMerge(clsx(single));
+  }
+
+  // Fast path: check if all items are simple strings or falsy
+  let allSimple = true;
+  let result = '';
+
+  for (let index = 0; index < length; index++) {
+    const cls = classes[index];
+
+    if (typeof cls === 'string') {
+      if (cls) {
+        result = result ? result + ' ' + cls : cls;
+      }
+    } else if (cls) {
+      allSimple = false;
+      break;
+    }
+  }
+
+  if (allSimple) {
+    return twMerge(result);
   }
 
   return twMerge(clsx(classes));
@@ -91,7 +147,7 @@ export const createTailwindMergeService = (
  * @returns True if the value is a slot object
  */
 export const isSlotObjectType = (value: ClassValue): value is Record<string, ClassValue> => {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
 
 /**
@@ -103,10 +159,8 @@ export const isSlotObjectType = (value: ClassValue): value is Record<string, Cla
  * @param variantGroup - The variant group to check
  * @returns True if the variant group supports boolean values
  */
-export const isBooleanVariantType = <T extends Record<string, unknown>>(
-  variantGroup: T,
-): variantGroup is T & (Record<"false", unknown> | Record<"true", unknown>) => {
-  return "true" in variantGroup || "false" in variantGroup;
+export const isBooleanVariantType = <T extends Record<string, unknown>>(variantGroup: T): variantGroup is T => {
+  return 'true' in variantGroup || 'false' in variantGroup;
 };
 
 /**
@@ -119,7 +173,7 @@ export const isBooleanVariantType = <T extends Record<string, unknown>>(
  * @returns True if the value is a boolean
  */
 export const isBooleanValueType = (value: unknown): value is boolean => {
-  return typeof value === "boolean";
+  return typeof value === 'boolean';
 };
 
 /**
@@ -131,13 +185,10 @@ export const isBooleanValueType = (value: unknown): value is boolean => {
  * @param configuration - The configuration to check
  * @returns True if the configuration has slots
  */
-export const hasSlotConfiguration = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const hasSlotConfiguration = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   configuration: Configuration<T> | ConfigurationWithSlots<T, S>,
 ): configuration is ConfigurationWithSlots<T, S> => {
-  return "slots" in configuration && configuration.slots !== undefined;
+  return 'slots' in configuration && configuration.slots !== undefined;
 };
 
 /**
@@ -150,14 +201,11 @@ export const hasSlotConfiguration = <
  * @param configuration - The configuration to check
  * @returns True if the configuration has extensions
  */
-export const hasExtensionConfiguration = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const hasExtensionConfiguration = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   configuration:
     | Configuration<T>
     | ConfigurationWithSlots<T, S>
     | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
 ): configuration is ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S> => {
-  return "extend" in configuration && configuration.extend !== undefined;
+  return 'extend' in configuration && configuration.extend !== undefined;
 };

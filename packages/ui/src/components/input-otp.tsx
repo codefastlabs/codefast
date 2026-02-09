@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { OTPInput, OTPInputContext } from "input-otp";
-import { MinusIcon } from "lucide-react";
-import { use } from "react";
-
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from '@codefast/tailwind-variants';
+import { OTPInput, OTPInputContext } from 'input-otp';
+import { MinusIcon } from 'lucide-react';
+import { use } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp
@@ -19,7 +18,7 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
     <OTPInput
       aria-label="One-time password"
       className={cn(className)}
-      containerClassName={cn("flex items-center gap-2 has-disabled:opacity-50", containerClassName)}
+      containerClassName={cn('flex items-center gap-2 has-disabled:opacity-50', containerClassName)}
       data-slot="input-otp"
       {...props}
     />
@@ -30,12 +29,12 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
  * Component: InputOTPGroup
  * -------------------------------------------------------------------------- */
 
-type InputOTPGroupProps = ComponentProps<"div">;
+type InputOTPGroupProps = ComponentProps<'div'>;
 
 function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
   return (
     <div
-      className={cn("flex items-center -space-x-px", className)}
+      className={cn('flex items-center -space-x-px', className)}
       data-slot="input-otp-group"
       role="group"
       {...props}
@@ -47,7 +46,7 @@ function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element
  * Component: InputOTPSlot
  * -------------------------------------------------------------------------- */
 
-interface InputOTPSlotProps extends ComponentProps<"div"> {
+interface InputOTPSlotProps extends ComponentProps<'div'> {
   index: number;
 }
 
@@ -58,7 +57,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
   return (
     <div
       className={cn(
-        "border-input data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 relative flex size-9 items-center justify-center border text-sm outline-hidden transition-all not-has-disabled:shadow-xs first:rounded-l-lg last:rounded-r-lg data-[active=true]:z-10 data-[active=true]:ring-3",
+        'border-input data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 relative flex size-9 items-center justify-center border text-sm outline-hidden transition-all not-has-disabled:shadow-xs first:rounded-l-lg last:rounded-r-lg data-[active=true]:z-10 data-[active=true]:ring-3',
         className,
       )}
       data-active={isActive}
@@ -79,7 +78,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
  * Component: InputOTPSeparator
  * -------------------------------------------------------------------------- */
 
-type InputOTPSeparatorProps = ComponentProps<"div">;
+type InputOTPSeparatorProps = ComponentProps<'div'>;
 
 function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
   return (
@@ -93,6 +92,6 @@ function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+export { REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot };
 export type { InputOTPGroupProps, InputOTPProps, InputOTPSeparatorProps, InputOTPSlotProps };

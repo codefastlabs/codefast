@@ -13,9 +13,7 @@ import type {
   ConfigurationSchema,
   ConfigurationVariants,
   SlotConfigurationSchema,
-} from "@/types/types";
-
-import { isBooleanValueType } from "@/utilities/utils";
+} from '@/types/types';
 
 /**
  * Apply compound variant classes based on variant conditions.
@@ -24,6 +22,7 @@ import { isBooleanValueType } from "@/utilities/utils";
  * all specified variant conditions are met. It merges by default and provides
  * variant props to determine which compound variants should be applied.
  *
+ * @typeParam T - The configuration schema type
  * @param compoundVariantGroups - Array of compound variant definitions
  * @param variantProps - Variant properties passed to the component
  * @param defaultVariantProps - Default variant properties from configuration
@@ -34,40 +33,38 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
 ): ClassValue[] => {
-  // Check if we have default or variant props to avoid unnecessary object operations
-  const hasDefaultProps = Object.keys(defaultVariantProps).length > 0;
-  const hasVariantProps = Object.keys(variantProps).length > 0;
+  const groupLength = compoundVariantGroups.length;
 
+  // Early return for empty or no compound variants
+  if (groupLength === 0) return [];
+
+  // Pre-allocate with reasonable estimate
   const resolvedClasses: ClassValue[] = [];
 
   // Process each compound variant
-  for (const compoundVariant of compoundVariantGroups) {
+  for (let index = 0; index < groupLength; index++) {
+    const compoundVariant = compoundVariantGroups[index];
     let isMatching = true;
 
-    const compoundKeys = Object.keys(compoundVariant) as (keyof typeof compoundVariant)[];
+    const compoundKeys = Object.keys(compoundVariant);
 
     // Check each variant condition
-    for (const compoundKey of compoundKeys) {
+    for (let keyIndex = 0, keyLength = compoundKeys.length; keyIndex < keyLength; keyIndex++) {
+      const compoundKey = compoundKeys[keyIndex] as keyof typeof compoundVariant;
+
       // Skip class properties
-      if (compoundKey === "className" || compoundKey === "class") {
+      if (compoundKey === 'className' || compoundKey === 'class') {
         continue;
       }
 
-      // Get property value
-      let propertyValue: unknown;
-
-      if (hasVariantProps && variantProps[compoundKey] !== undefined) {
-        propertyValue = variantProps[compoundKey];
-      } else if (hasDefaultProps && defaultVariantProps[compoundKey] !== undefined) {
-        propertyValue = defaultVariantProps[compoundKey];
-      } else {
-        propertyValue = undefined;
-      }
+      // Get property value - use nullish coalescing (faster than ternary)
+      const propertyInput = variantProps[compoundKey];
+      const propertyValue = propertyInput ?? defaultVariantProps[compoundKey];
 
       const compoundValue = compoundVariant[compoundKey];
 
-      // Handle boolean variant values
-      if (isBooleanValueType(compoundValue)) {
+      // Inline boolean check - avoid function call overhead
+      if (typeof compoundValue === 'boolean') {
         const resolvedValue = propertyValue ?? false;
 
         if (resolvedValue !== compoundValue) {
@@ -89,7 +86,9 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
 
     // Add classes if all conditions are met
     if (isMatching) {
-      resolvedClasses.push(compoundVariant.className ?? compoundVariant.class);
+      const cls = compoundVariant.className;
+
+      resolvedClasses.push(cls === undefined ? compoundVariant.class : cls);
     }
   }
 
@@ -103,44 +102,54 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
  * specific slots when all specified variant conditions are met.
  * It returns a mapping of slot names to their applied classes.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param compoundSlotDefinitions - Array of compound slot definitions
  * @param variantProps - Variant properties passed to the component
  * @param defaultVariantProps - Default variant properties from configuration
  * @returns Object mapping slot names to arrays of CSS classes
  */
-export const applyCompoundSlotClasses = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const applyCompoundSlotClasses = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
   compoundSlotDefinitions: readonly CompoundSlotType<T, S>[] | undefined,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
 ): Partial<Record<keyof S, ClassValue[]>> => {
   // Return an empty object if no compound slot definitions
-  if (!compoundSlotDefinitions?.length) {
+  if (!compoundSlotDefinitions || compoundSlotDefinitions.length === 0) {
     return {} as Partial<Record<keyof S, ClassValue[]>>;
   }
 
-  // Merge default and provided variant props
-  const mergedProps = { ...defaultVariantProps, ...variantProps };
   const resolvedSlotClasses = {} as Partial<Record<keyof S, ClassValue[]>>;
 
   // Process each compound slot definition
-  for (const compoundSlot of compoundSlotDefinitions) {
+  const definitionLength = compoundSlotDefinitions.length;
+
+  for (let index = 0; index < definitionLength; index++) {
+    const compoundSlot = compoundSlotDefinitions[index];
     let isMatching = true;
 
-    // Filter out class and slot properties
-    const compoundEntries = Object.entries(compoundSlot).filter(
-      ([key]) => key !== "className" && key !== "class" && key !== "slots",
-    );
+    const keys = Object.keys(compoundSlot);
+    const keyLength = keys.length;
 
     // Check each variant condition
-    for (const [compoundKey, compoundValue] of compoundEntries) {
-      const propertyValue = mergedProps[compoundKey];
+    for (let keyIndex = 0; keyIndex < keyLength; keyIndex++) {
+      const compoundKey = keys[keyIndex];
 
-      // Handle boolean variant values
-      if (isBooleanValueType(compoundValue)) {
-        const resolvedValue = propertyValue ?? false;
+      // Skip class and slot properties
+      if (compoundKey === 'className' || compoundKey === 'class' || compoundKey === 'slots') {
+        continue;
+      }
+
+      // Lookup without object spread - check variantProps first, then defaultVariantProps
+      const propsValue = (variantProps as Record<string, unknown>)[compoundKey];
+      const propertyValue =
+        propsValue === undefined ? (defaultVariantProps as Record<string, unknown>)[compoundKey] : propsValue;
+
+      const compoundValue = (compoundSlot as Record<string, unknown>)[compoundKey];
+
+      // Inline boolean check - avoid function call overhead
+      if (typeof compoundValue === 'boolean') {
+        const resolvedValue = propertyValue === undefined ? false : propertyValue;
 
         if (resolvedValue !== compoundValue) {
           isMatching = false;
@@ -161,8 +170,19 @@ export const applyCompoundSlotClasses = <
 
     // Apply classes to specified slots if all conditions are met
     if (isMatching) {
-      for (const slotKey of compoundSlot.slots) {
-        (resolvedSlotClasses[slotKey] ??= []).push(compoundSlot.className ?? compoundSlot.class);
+      const slots = compoundSlot.slots;
+      const slotLength = slots.length;
+      const cls = compoundSlot.className === undefined ? compoundSlot.class : compoundSlot.className;
+
+      for (let slotIndex = 0; slotIndex < slotLength; slotIndex++) {
+        const slotKey = slots[slotIndex];
+        const existing = resolvedSlotClasses[slotKey];
+
+        if (existing) {
+          existing.push(cls);
+        } else {
+          resolvedSlotClasses[slotKey] = [cls];
+        }
       }
     }
   }

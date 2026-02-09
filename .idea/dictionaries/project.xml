@@ -1,6 +1,8 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>Rehype</w>
+      <w>Shiki</w>
       <w>codefast</w>
       <w>codefastlabs</w>
       <w>commitlint</w>
@@ -8,7 +10,11 @@
       <w>githubusercontent</w>
       <w>offcanvas</w>
       <w>packagejson</w>
+      <w>rehype</w>
       <w>rslib</w>
+      <w>shiki</w>
+      <w>sonner</w>
+      <w>tanstack</w>
       <w>tsdoc</w>
       <w>turbopack</w>
     </words>

@@ -1,26 +1,20 @@
-"use client";
+'use client';
 
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { SearchIcon, XIcon } from "lucide-react";
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { SearchIcon, XIcon } from 'lucide-react';
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/input-group";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/input-group';
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
  * -------------------------------------------------------------------------- */
 
-interface InputSearchProps
-  extends Omit<
-    ComponentProps<typeof InputGroupInput>,
-    "defaultValue" | "onChange" | "type" | "value"
-  > {
+interface InputSearchProps extends Omit<
+  ComponentProps<typeof InputGroupInput>,
+  'defaultValue' | 'onChange' | 'type' | 'value'
+> {
   defaultValue?: string;
   onChange?: (value?: string) => void;
   value?: string;
@@ -42,11 +36,7 @@ function InputSearch({
   });
 
   return (
-    <InputGroup
-      className={className}
-      data-disabled={disabled ? "true" : undefined}
-      data-slot="input-search"
-    >
+    <InputGroup className={className} data-disabled={disabled ? 'true' : undefined} data-slot="input-search">
       <InputGroupAddon align="inline-start">
         <SearchIcon />
       </InputGroupAddon>
@@ -55,7 +45,7 @@ function InputSearch({
         disabled={disabled}
         readOnly={readOnly}
         type="search"
-        value={value ?? ""}
+        value={value ?? ''}
         onChange={(event) => {
           setValue(event.target.value);
         }}
@@ -70,7 +60,7 @@ function InputSearch({
           size="icon-sm"
           variant="ghost"
           onClick={() => {
-            setValue("");
+            setValue('');
           }}
         >
           <XIcon />
