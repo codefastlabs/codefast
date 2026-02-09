@@ -1,18 +1,18 @@
-import type { ComponentProps, JSX } from "react";
+import type { ComponentProps, JSX } from 'react';
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from '@codefast/tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Card
  * -------------------------------------------------------------------------- */
 
-type CardProps = ComponentProps<"div">;
+type CardProps = ComponentProps<'div'>;
 
 function Card({ className, ...props }: CardProps): JSX.Element {
   return (
     <div
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 overflow-auto rounded-xl border py-6 shadow-sm",
+        'bg-card text-card-foreground flex flex-col gap-6 overflow-auto rounded-xl border py-6 shadow-sm',
         className,
       )}
       data-slot="card"
@@ -25,13 +25,13 @@ function Card({ className, ...props }: CardProps): JSX.Element {
  * Component: CardHeader
  * -------------------------------------------------------------------------- */
 
-type CardHeaderProps = ComponentProps<"div">;
+type CardHeaderProps = ComponentProps<'div'>;
 
 function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
   return (
     <div
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-[data-slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-[data-slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
         className,
       )}
       data-slot="card-header"
@@ -44,11 +44,11 @@ function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
  * Component: CardTitle
  * -------------------------------------------------------------------------- */
 
-type CardTitleProps = ComponentProps<"div">;
+type CardTitleProps = ComponentProps<'div'>;
 
 function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Element {
   return (
-    <div className={cn("leading-none font-semibold", className)} data-slot="card-title" {...props}>
+    <div className={cn('leading-none font-semibold', className)} data-slot="card-title" {...props}>
       {children}
     </div>
   );
@@ -58,41 +58,31 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
  * Component: CardDescription
  * -------------------------------------------------------------------------- */
 
-type CardDescriptionProps = ComponentProps<"div">;
+type CardDescriptionProps = ComponentProps<'div'>;
 
 function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Element {
-  return (
-    <div
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="card-description"
-      {...props}
-    />
-  );
+  return <div className={cn('text-muted-foreground text-sm', className)} data-slot="card-description" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: CardContent
  * -------------------------------------------------------------------------- */
 
-type CardContentProps = ComponentProps<"div">;
+type CardContentProps = ComponentProps<'div'>;
 
 function CardContent({ className, ...props }: CardContentProps): JSX.Element {
-  return <div className={cn("px-6", className)} data-slot="card-content" {...props} />;
+  return <div className={cn('px-6', className)} data-slot="card-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: CardFooter
  * -------------------------------------------------------------------------- */
 
-type CardFooterProps = ComponentProps<"div">;
+type CardFooterProps = ComponentProps<'div'>;
 
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return (
-    <div
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-      data-slot="card-footer"
-      {...props}
-    />
+    <div className={cn('flex items-center px-6 [.border-t]:pt-6', className)} data-slot="card-footer" {...props} />
   );
 }
 
@@ -100,12 +90,12 @@ function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
  * Component: CardAction
  * -------------------------------------------------------------------------- */
 
-type CardActionProps = ComponentProps<"div">;
+type CardActionProps = ComponentProps<'div'>;
 
 function CardAction({ className, ...props }: CardActionProps): JSX.Element {
   return (
     <div
-      className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+      className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)}
       data-slot="card-action"
       {...props}
     />

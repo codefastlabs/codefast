@@ -4,11 +4,11 @@
  * Benchmarks compound slots functionality without tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
-import { Bench } from "tinybench";
+import { tv as originalTV } from 'tailwind-variants';
+import { Bench } from 'tinybench';
 
-import { compoundSlotsTestProps, compoundSlotsVariants } from "./data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { compoundSlotsTestProps, compoundSlotsVariants } from './data.js';
+import { tv as codefastTV } from '@codefast/tailwind-variants';
 
 // Initialize benchmark functions
 const originalTVCompoundSlots = originalTV(compoundSlotsVariants, { twMerge: false });
@@ -17,7 +17,7 @@ const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants, { twMerge: fal
 /**
  * Create compound slots benchmark without tailwind-merge
  */
-export function createCompoundSlotsWithoutMergeBenchmark(name = "Compound Slots") {
+export function createCompoundSlotsWithoutMergeBenchmark(name = 'Compound Slots') {
   const bench = new Bench({
     name,
     iterations: 1000,
@@ -27,7 +27,7 @@ export function createCompoundSlotsWithoutMergeBenchmark(name = "Compound Slots"
   });
 
   bench
-    .add("tailwind-variants", () => {
+    .add('tailwind-variants', () => {
       for (const props of compoundSlotsTestProps) {
         const { base, cursor, item, next, prev } = originalTVCompoundSlots(props);
 
@@ -38,7 +38,7 @@ export function createCompoundSlotsWithoutMergeBenchmark(name = "Compound Slots"
         cursor();
       }
     })
-    .add("@codefast/tailwind-variants", () => {
+    .add('@codefast/tailwind-variants', () => {
       for (const props of compoundSlotsTestProps) {
         const { base, cursor, item, next, prev } = codefastTVCompoundSlots(props);
 

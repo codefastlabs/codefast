@@ -135,7 +135,7 @@ import { baseJavaScriptRules } from "@codefast/eslint-config/core/javascript";
 import { typescriptRules } from "@codefast/eslint-config/core/typescript";
 import { reactRules } from "@codefast/eslint-config/plugins/frameworks/react";
 import { importRules } from "@codefast/eslint-config/core/import";
-import { composeConfig } from "@codefast/eslint-config/shared/composer";
+import { composeConfig } from "@codefast/eslint-config/utils/compose-config";
 
 export default composeConfig([
   baseJavaScriptRules,

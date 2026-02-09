@@ -2,9 +2,9 @@
  * Defines stylistic rules for the codebase to ensure consistent code formatting.
  * These rules enforce consistent spacing, line breaks, and code structure.
  */
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
-import stylistic from "@stylistic/eslint-plugin";
+import stylistic from '@stylistic/eslint-plugin';
 
 /**
  * Rules that are set to "error" for stylistic plugin
@@ -16,22 +16,22 @@ const errorStylisticRules: Linter.RulesRecord = {
    * Requires or disallows blank lines between statements.
    * Helps improve code readability by enforcing consistent spacing between different code blocks.
    */
-  "@stylistic/padding-line-between-statements": [
-    "error",
+  '@stylistic/padding-line-between-statements': [
+    'error',
 
     /**
      * Enforces blank lines between variable declarations and other statements.
      * This improves readability by visually separating variable declarations from the rest of the code.
      */
     {
-      blankLine: "always",
-      next: "*",
-      prev: ["const", "let", "var"],
+      blankLine: 'always',
+      next: '*',
+      prev: ['const', 'let', 'var'],
     },
     {
-      blankLine: "any",
-      next: ["const", "let", "var"],
-      prev: ["const", "let", "var"],
+      blankLine: 'any',
+      next: ['const', 'let', 'var'],
+      prev: ['const', 'let', 'var'],
     },
 
     /**
@@ -39,9 +39,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * Directives (like 'use strict') should be visually separated from the rest of the code.
      */
     {
-      blankLine: "always",
-      next: "*",
-      prev: "directive",
+      blankLine: 'always',
+      next: '*',
+      prev: 'directive',
     },
 
     /**
@@ -49,9 +49,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * Consecutive directives can be grouped together without mandatory blank lines.
      */
     {
-      blankLine: "any",
-      next: "directive",
-      prev: "directive",
+      blankLine: 'any',
+      next: 'directive',
+      prev: 'directive',
     },
 
     /**
@@ -59,9 +59,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * This improves readability by clearly separating different switch cases.
      */
     {
-      blankLine: "always",
-      next: "*",
-      prev: ["case", "default"],
+      blankLine: 'always',
+      next: '*',
+      prev: ['case', 'default'],
     },
 
     /**
@@ -70,9 +70,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * making it easier to identify where functions exit.
      */
     {
-      blankLine: "always",
-      next: "return",
-      prev: "*",
+      blankLine: 'always',
+      next: 'return',
+      prev: '*',
     },
 
     /**
@@ -81,9 +81,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * to improve readability by visually separating different code sections.
      */
     {
-      blankLine: "always",
-      next: "*",
-      prev: ["if", "for", "while", "do", "try", "with"],
+      blankLine: 'always',
+      next: '*',
+      prev: ['if', 'for', 'while', 'do', 'try', 'with'],
     },
 
     /**
@@ -92,9 +92,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * to improve readability by visually separating different code sections.
      */
     {
-      blankLine: "always",
-      next: "*",
-      prev: ["function", "class"],
+      blankLine: 'always',
+      next: '*',
+      prev: ['function', 'class'],
     },
 
     /**
@@ -103,9 +103,9 @@ const errorStylisticRules: Linter.RulesRecord = {
      * to improve readability by visually separating different code sections.
      */
     {
-      blankLine: "always",
-      next: ["if", "for", "while", "do", "try", "with"],
-      prev: "*",
+      blankLine: 'always',
+      next: ['if', 'for', 'while', 'do', 'try', 'with'],
+      prev: '*',
     },
 
     /**
@@ -114,19 +114,19 @@ const errorStylisticRules: Linter.RulesRecord = {
      * to improve readability by visually separating different code sections.
      */
     {
-      blankLine: "always",
-      next: ["function", "class"],
-      prev: "*",
+      blankLine: 'always',
+      next: ['function', 'class'],
+      prev: '*',
     },
   ],
 };
 
 export const stylisticRules: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts,tsx}"],
-    name: "@codefast/eslint-config/core/stylistic",
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    name: '@codefast/eslint-config/core/stylistic',
     plugins: {
-      "@stylistic": stylistic,
+      '@stylistic': stylistic,
     },
     rules: {
       ...stylistic.configs.recommended.rules,

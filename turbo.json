@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", ".output/**"]
     },
     "check-types": {
       "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
@@ -41,6 +41,11 @@
     "test:watch": {
       "cache": false,
       "persistent": true
+    },
+    "bench": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "src/**/*.js", "src/**/*.ts"]
     }
   }
 }

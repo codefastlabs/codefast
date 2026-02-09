@@ -33,11 +33,11 @@
     "@codefast/tailwind-variants": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "tailwind-merge": "^3.4.0",
-    "tailwind-variants": "^3.1.1",
-    "tinybench": "^5.1.0"
+    "tailwind-variants": "^3.2.2",
+    "tinybench": "^6.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "eslint": "^9.39.1"
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2"
   }
 }

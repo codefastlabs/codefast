@@ -1,0 +1,164 @@
+{
+  "name": "@codefast/theme",
+  "version": "0.1.0",
+  "description": "Theme management with React 19 features - optimistic updates, cross-tab sync, and SSR support",
+  "keywords": [
+    "theme",
+    "dark-mode",
+    "light-mode",
+    "react",
+    "react-19",
+    "ssr",
+    "typescript"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/theme#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/theme"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.cjs"
+    },
+    "./core/context": {
+      "types": "./dist/core/context.d.ts",
+      "import": "./dist/core/context.js",
+      "require": "./dist/core/context.cjs"
+    },
+    "./core/provider": {
+      "types": "./dist/core/provider.d.ts",
+      "import": "./dist/core/provider.js",
+      "require": "./dist/core/provider.cjs"
+    },
+    "./core/use-theme": {
+      "types": "./dist/core/use-theme.d.ts",
+      "import": "./dist/core/use-theme.js",
+      "require": "./dist/core/use-theme.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs"
+    },
+    "./utils/dom": {
+      "types": "./dist/utils/dom.d.ts",
+      "import": "./dist/utils/dom.js",
+      "require": "./dist/utils/dom.cjs"
+    },
+    "./utils/system": {
+      "types": "./dist/utils/system.d.ts",
+      "import": "./dist/utils/system.js",
+      "require": "./dist/utils/system.cjs"
+    },
+    "./adapters/tanstack-start": {
+      "types": "./dist/adapters/tanstack-start/index.d.ts",
+      "import": "./dist/adapters/tanstack-start/index.js",
+      "require": "./dist/adapters/tanstack-start/index.cjs"
+    },
+    "./adapters/tanstack-start/server": {
+      "types": "./dist/adapters/tanstack-start/server.d.ts",
+      "import": "./dist/adapters/tanstack-start/server.js",
+      "require": "./dist/adapters/tanstack-start/server.cjs"
+    },
+    "./script": {
+      "types": "./dist/script/index.d.ts",
+      "import": "./dist/script/index.js",
+      "require": "./dist/script/index.cjs"
+    },
+    "./script/theme-script": {
+      "types": "./dist/script/theme-script.d.ts",
+      "import": "./dist/script/theme-script.js",
+      "require": "./dist/script/theme-script.cjs"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js",
+      "require": "./dist/constants.cjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "dev": "rslib build --watch",
+    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:coverage:ci": "jest --coverage --ci",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@rsbuild/plugin-react": "^1.4.5",
+    "@rslib/core": "^0.19.4",
+    "@swc/core": "^1.15.11",
+    "@swc/jest": "^0.2.39",
+    "@tanstack/react-start": "^1.158.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.2.0",
+    "eslint": "^9.39.2",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@tanstack/react-start": "^1.0",
+    "@types/react": "^19.0",
+    "@types/react-dom": "^19.0",
+    "react": "^19.0",
+    "react-dom": "^19.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-start": {
+      "optional": true
+    },
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

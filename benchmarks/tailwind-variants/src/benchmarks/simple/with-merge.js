@@ -4,13 +4,13 @@
  * Benchmarks simple variant functionality with tailwind-merge
  */
 
-import { cva } from "class-variance-authority";
-import { twMerge } from "tailwind-merge";
-import { tv as originalTV } from "tailwind-variants";
-import { Bench } from "tinybench";
+import { cva } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
+import { tv as originalTV } from 'tailwind-variants';
+import { Bench } from 'tinybench';
 
-import { buttonVariants, simpleTestProps } from "./data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { buttonVariants, simpleTestProps } from './data.js';
+import { tv as codefastTV } from '@codefast/tailwind-variants';
 
 // Initialize benchmark functions
 const originalTVSimple = originalTV(buttonVariants);
@@ -23,7 +23,7 @@ const cvaSimple = cva(buttonVariants.base, {
 /**
  * Create simple variants benchmark with tailwind-merge
  */
-export function createSimpleWithMergeBenchmark(name = "Simple Variants (With Tailwind Merge)") {
+export function createSimpleWithMergeBenchmark(name = 'Simple Variants (With Tailwind Merge)') {
   const bench = new Bench({
     name,
     iterations: 1000,
@@ -33,17 +33,17 @@ export function createSimpleWithMergeBenchmark(name = "Simple Variants (With Tai
   });
 
   bench
-    .add("tailwind-variants", () => {
+    .add('tailwind-variants', () => {
       for (const props of simpleTestProps) {
         originalTVSimple(props);
       }
     })
-    .add("class-variance-authority", () => {
+    .add('class-variance-authority', () => {
       for (const props of simpleTestProps) {
         twMerge(cvaSimple(props));
       }
     })
-    .add("@codefast/tailwind-variants", () => {
+    .add('@codefast/tailwind-variants', () => {
       for (const props of simpleTestProps) {
         codefastTVSimple(props);
       }

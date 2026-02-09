@@ -7,22 +7,22 @@
 
 // ANSI color codes for terminal output
 const colors = {
-  reset: "\x1b[0m",
-  bright: "\x1b[1m",
-  dim: "\x1b[2m",
-  red: "\x1b[31m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
-  blue: "\x1b[34m",
-  magenta: "\x1b[35m",
-  cyan: "\x1b[36m",
-  white: "\x1b[37m",
-  bgRed: "\x1b[41m",
-  bgGreen: "\x1b[42m",
-  bgYellow: "\x1b[43m",
-  bgBlue: "\x1b[44m",
-  bgMagenta: "\x1b[45m",
-  bgCyan: "\x1b[46m",
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  bgRed: '\x1b[41m',
+  bgGreen: '\x1b[42m',
+  bgYellow: '\x1b[43m',
+  bgBlue: '\x1b[44m',
+  bgMagenta: '\x1b[45m',
+  bgCyan: '\x1b[46m',
 };
 
 // Constants for consistent formatting
@@ -30,12 +30,12 @@ const BOX_WIDTH = 62;
 // Inner content width accounts for one leading space and one trailing space
 const INNER_WIDTH = BOX_WIDTH - 2;
 const BOX_CHARS = {
-  topLeft: "┌",
-  topRight: "┐",
-  bottomLeft: "└",
-  bottomRight: "┘",
-  horizontal: "─",
-  vertical: "│",
+  topLeft: '┌',
+  topRight: '┐',
+  bottomLeft: '└',
+  bottomRight: '┘',
+  horizontal: '─',
+  vertical: '│',
 };
 const PERFORMANCE_THRESHOLDS = {
   excellent: 0.9,
@@ -77,9 +77,7 @@ export function generatePerformanceSummary(bench) {
  */
 function analyzePerformance(results, tasks) {
   // Sort results by operations per second (descending - fastest first)
-  const sortedResults = [...results].toSorted(
-    (a, b) => (b.throughput.mean || 0) - (a.throughput.mean || 0),
-  );
+  const sortedResults = [...results].toSorted((a, b) => (b.throughput.mean || 0) - (a.throughput.mean || 0));
 
   const fastest = sortedResults[0] ?? null;
   const slowest = sortedResults.at(-1) ?? null;
@@ -89,15 +87,13 @@ function analyzePerformance(results, tasks) {
 
   const performanceRanking = sortedResults.map((result, index) => {
     const resultIndex = results.indexOf(result);
-    const taskName = tasks[resultIndex]?.name ?? "Unknown";
+    const taskName = tasks[resultIndex]?.name ?? 'Unknown';
 
     return {
       ...result,
       name: taskName,
       rank: index + 1,
-      relativePerformance: fastest.throughput.mean
-        ? (result.throughput.mean || 0) / fastest.throughput.mean
-        : 0,
+      relativePerformance: fastest.throughput.mean ? (result.throughput.mean || 0) / fastest.throughput.mean : 0,
     };
   });
 
@@ -130,23 +126,19 @@ function createHorizontalLine(char = BOX_CHARS.horizontal, width = BOX_WIDTH) {
  */
 function displaySection(title, borderColor, contentLines = []) {
   console.log(`\n${borderColor}${colors.bright}${title}${colors.reset}`);
-  console.log(
-    `${borderColor}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`,
-  );
+  console.log(`${borderColor}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`);
 
   contentLines.forEach((line) => {
     const visibleLineLength = getVisibleLength(line);
     const paddingNeeded = Math.max(0, INNER_WIDTH - visibleLineLength);
-    const paddedLine = line + " ".repeat(paddingNeeded);
+    const paddedLine = line + ' '.repeat(paddingNeeded);
 
     console.log(
       `${borderColor}${BOX_CHARS.vertical}${colors.reset} ${paddedLine}${colors.reset} ${borderColor}${BOX_CHARS.vertical}${colors.reset}`,
     );
   });
 
-  console.log(
-    `${borderColor}${BOX_CHARS.bottomLeft}${createHorizontalLine()}${BOX_CHARS.bottomRight}${colors.reset}`,
-  );
+  console.log(`${borderColor}${BOX_CHARS.bottomLeft}${createHorizontalLine()}${BOX_CHARS.bottomRight}${colors.reset}`);
 }
 
 /**
@@ -163,15 +155,15 @@ function displayFastestPerformer(analysis) {
   if (!analysis.fastest) return;
 
   const fastestRanking = analysis.performanceRanking.find((r) => r.rank === 1);
-  const name = fastestRanking?.name ?? "Unknown";
+  const name = fastestRanking?.name ?? 'Unknown';
   const opsPerSec = formatNumber(analysis.fastest.throughput.mean || 0);
   const avgTime = formatTime((analysis.fastest.period || 0) * 1_000_000_000);
 
-  const nameLine = createBulletLine(colors.yellow, "", name, colors.yellow);
-  const opsLine = createBulletLine(colors.yellow, "", `${opsPerSec} ops/sec`, colors.green);
-  const timeLine = createBulletLine(colors.yellow, "", `${avgTime} avg time`, colors.cyan);
+  const nameLine = createBulletLine(colors.yellow, '', name, colors.yellow);
+  const opsLine = createBulletLine(colors.yellow, '', `${opsPerSec} ops/sec`, colors.green);
+  const timeLine = createBulletLine(colors.yellow, '', `${avgTime} avg time`, colors.cyan);
 
-  displaySection("🏆 Fastest Performer", colors.yellow, [nameLine, opsLine, timeLine]);
+  displaySection('🏆 Fastest Performer', colors.yellow, [nameLine, opsLine, timeLine]);
 }
 
 /**
@@ -179,17 +171,13 @@ function displayFastestPerformer(analysis) {
  */
 function displayPerformanceRanking(analysis) {
   console.log(`\n${colors.blue}${colors.bright}🏁 Performance Ranking${colors.reset}`);
-  console.log(
-    `${colors.blue}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`,
-  );
+  console.log(`${colors.blue}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`);
 
   for (const [index, result] of analysis.performanceRanking.entries()) {
     displayRankingEntry(result, index, analysis.performanceRanking.length);
   }
 
-  console.log(
-    `${colors.blue}${BOX_CHARS.bottomLeft}${createHorizontalLine()}${BOX_CHARS.bottomRight}${colors.reset}`,
-  );
+  console.log(`${colors.blue}${BOX_CHARS.bottomLeft}${createHorizontalLine()}${BOX_CHARS.bottomRight}${colors.reset}`);
 }
 
 /**
@@ -210,9 +198,9 @@ function displayRankingEntry(result, index, totalLength) {
   const statsLineVisibleLength = getVisibleLength(statsLine);
   const barLineVisibleLength = getVisibleLength(barLine);
 
-  const paddedNameLine = nameLine + " ".repeat(Math.max(0, INNER_WIDTH - nameLineVisibleLength));
-  const paddedStatsLine = statsLine + " ".repeat(Math.max(0, INNER_WIDTH - statsLineVisibleLength));
-  const paddedBarLine = barLine + " ".repeat(Math.max(0, INNER_WIDTH - barLineVisibleLength));
+  const paddedNameLine = nameLine + ' '.repeat(Math.max(0, INNER_WIDTH - nameLineVisibleLength));
+  const paddedStatsLine = statsLine + ' '.repeat(Math.max(0, INNER_WIDTH - statsLineVisibleLength));
+  const paddedBarLine = barLine + ' '.repeat(Math.max(0, INNER_WIDTH - barLineVisibleLength));
 
   console.log(
     `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${paddedNameLine}${colors.reset} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
@@ -226,7 +214,7 @@ function displayRankingEntry(result, index, totalLength) {
 
   if (index < totalLength - 1) {
     console.log(
-      `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${" ".repeat(INNER_WIDTH)} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
+      `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${' '.repeat(INNER_WIDTH)} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
     );
   }
 }
@@ -290,7 +278,7 @@ function getPerformanceColor(performance) {
 function getVisibleLength(text) {
   // Remove ANSI color codes to get actual visible length
   // eslint-disable-next-line no-control-regex
-  return text.replace(/\x1b\[[0-9;]*m/g, "").length;
+  return text.replace(/\x1b\[[0-9;]*m/g, '').length;
 }
 
 /**
@@ -302,8 +290,8 @@ function generatePerformanceBar(performance) {
   const emptyLength = barLength - filledLength;
 
   // Use different characters for better visual appeal
-  const filledChar = "█";
-  const emptyChar = "░";
+  const filledChar = '█';
+  const emptyChar = '░';
 
   const bar = filledChar.repeat(filledLength) + emptyChar.repeat(emptyLength);
 

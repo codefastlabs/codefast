@@ -4,13 +4,13 @@
  * Benchmarks complex variant functionality with tailwind-merge
  */
 
-import { cva } from "class-variance-authority";
-import { twMerge } from "tailwind-merge";
-import { tv as originalTV } from "tailwind-variants";
-import { Bench } from "tinybench";
+import { cva } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
+import { tv as originalTV } from 'tailwind-variants';
+import { Bench } from 'tinybench';
 
-import { complexTestProps, complexVariants } from "./data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { complexTestProps, complexVariants } from './data.js';
+import { tv as codefastTV } from '@codefast/tailwind-variants';
 
 // Initialize benchmark functions
 const originalTVComplex = originalTV(complexVariants);
@@ -24,7 +24,7 @@ const cvaComplex = cva(complexVariants.base, {
 /**
  * Create complex variants benchmark with tailwind-merge
  */
-export function createComplexWithMergeBenchmark(name = "Complex Variants (With Tailwind Merge)") {
+export function createComplexWithMergeBenchmark(name = 'Complex Variants (With Tailwind Merge)') {
   const bench = new Bench({
     name,
     iterations: 1000,
@@ -34,17 +34,17 @@ export function createComplexWithMergeBenchmark(name = "Complex Variants (With T
   });
 
   bench
-    .add("tailwind-variants", () => {
+    .add('tailwind-variants', () => {
       for (const props of complexTestProps) {
         originalTVComplex(props);
       }
     })
-    .add("class-variance-authority", () => {
+    .add('class-variance-authority', () => {
       for (const props of complexTestProps) {
         twMerge(cvaComplex(props));
       }
     })
-    .add("@codefast/tailwind-variants", () => {
+    .add('@codefast/tailwind-variants', () => {
       for (const props of complexTestProps) {
         codefastTVComplex(props);
       }

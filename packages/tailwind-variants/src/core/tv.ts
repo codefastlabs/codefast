@@ -22,18 +22,12 @@ import type {
   TailwindVariantsFactoryResult,
   TailwindVariantsReturnType,
   VariantFunctionType,
-} from "@/types/types";
+} from '@/types/types';
 
-import { mergeConfigurationSchemas } from "@/core/config";
-import { applyCompoundSlotClasses, applyCompoundVariantClasses } from "@/processing/compound";
-import { createSlotFunctionFactory } from "@/processing/slots";
-import {
-  createTailwindMergeService,
-  cx,
-  hasExtensionConfiguration,
-  hasSlotConfiguration,
-  isBooleanVariantType,
-} from "@/utilities/utils";
+import { mergeConfigurationSchemas } from '@/core/config';
+import { applyCompoundSlotClasses, applyCompoundVariantClasses } from '@/processing/compound';
+import { createSlotFunctionFactory } from '@/processing/slots';
+import { createTailwindMergeService, cx, hasExtensionConfiguration, hasSlotConfiguration } from '@/utilities/utils';
 
 /**
  * Handle regular variant resolution for components without slots.
@@ -41,6 +35,7 @@ import {
  * This function processes variant configurations and resolves the appropriate
  * CSS classes based on the provided variant props and default values.
  *
+ * @typeParam T - The configuration schema type
  * @param mergedBaseClasses - The base CSS classes to apply
  * @param mergedVariantGroups - The variant group configurations
  * @param mergedDefaultVariantProps - Default variant property values
@@ -49,30 +44,35 @@ import {
  * @param customClassName - Additional custom CSS classes
  * @param shouldMergeClasses - Whether to merge conflicting classes
  * @param tailwindMergeService - The Tailwind merge service function
+ * @param cachedVariantKeys - Pre-computed variant keys for performance optimization
+ * @param precomputedDefaults - Pre-computed default variant values
  * @returns The resolved CSS class string or undefined
  */
 const handleRegularVariantResolution = <T extends ConfigurationSchema>(
-  mergedBaseClasses: ClassValue | undefined,
+  mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
   mergedDefaultVariantProps: ConfigurationVariants<T>,
   mergedCompoundVariantGroups: readonly CompoundVariantType<T>[] | undefined,
   variantProps: ConfigurationVariants<T>,
-  customClassName: ClassValue | undefined,
+  customClassName: ClassValue,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
+  cachedVariantKeys: (keyof T)[],
+  precomputedDefaults: Record<string, string>,
 ): string | undefined => {
-  // Initialize the resolved classes array
-  const resolvedClasses: ClassValue[] = [];
+  // Pre-allocate array with estimated size for better performance
+  const estimatedSize = cachedVariantKeys.length + (mergedCompoundVariantGroups?.length ?? 0) + 2;
+  const resolvedClasses: ClassValue[] = new Array(estimatedSize);
+  let classIndex = 0;
 
   // Add base classes if they exist
   if (mergedBaseClasses) {
-    resolvedClasses.push(mergedBaseClasses);
+    resolvedClasses[classIndex++] = mergedBaseClasses;
   }
 
-  // Process each variant group
-  const variantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
-
-  for (const variantKey of variantKeys) {
+  // Process each variant group using cached keys
+  for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
+    const variantKey = cachedVariantKeys[index];
     const variantGroup = mergedVariantGroups[variantKey];
     const variantValue = variantProps[variantKey];
 
@@ -80,23 +80,21 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
 
     // Resolve the variant value based on priority:
     // 1. Explicit variant props
-    // 2. Default variant props
-    // 3. Boolean variant defaults
+    // 2. Pre-computed default (includes boolean variant defaults)
     if (variantValue === undefined) {
-      const defaultValue = mergedDefaultVariantProps[variantKey];
-
-      if (defaultValue !== undefined) {
-        resolvedValue = typeof defaultValue === "string" ? defaultValue : String(defaultValue);
-      } else if (isBooleanVariantType(variantGroup)) {
-        resolvedValue = "false";
-      }
+      resolvedValue = precomputedDefaults[variantKey as string];
     } else {
-      resolvedValue = typeof variantValue === "string" ? variantValue : String(variantValue);
+      // Fast path for boolean values - avoid String() call
+      resolvedValue = variantValue === true ? 'true' : variantValue === false ? 'false' : (variantValue as string);
     }
 
     // Add the resolved variant class if it exists
-    if (resolvedValue !== undefined && resolvedValue in variantGroup) {
-      resolvedClasses.push(variantGroup[resolvedValue]);
+    if (resolvedValue !== undefined) {
+      const variantClass = variantGroup[resolvedValue];
+
+      if (variantClass) {
+        resolvedClasses[classIndex++] = variantClass;
+      }
     }
   }
 
@@ -108,16 +106,22 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
       mergedDefaultVariantProps,
     );
 
-    resolvedClasses.push(...compoundVariantClasses);
+    // Use for loop instead of spread for better performance
+    for (let index = 0, length = compoundVariantClasses.length; index < length; index++) {
+      resolvedClasses[classIndex++] = compoundVariantClasses[index];
+    }
   }
 
   // Add custom classes if provided
   if (customClassName) {
-    resolvedClasses.push(customClassName);
+    resolvedClasses[classIndex++] = customClassName;
   }
 
   // Return early if no classes to process
-  if (resolvedClasses.length === 0) return;
+  if (classIndex === 0) return;
+
+  // Trim array to actual size
+  resolvedClasses.length = classIndex;
 
   // Combine all classes into a single string
   const classString = cx(...resolvedClasses);
@@ -133,6 +137,7 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
  * that don't use slots. It provides type-safe variant handling with
  * support for compound variants and configuration merging.
  *
+ * @typeParam T - The configuration schema type
  * @param config - The variant configuration object
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function for the component
@@ -148,6 +153,7 @@ export function tv<T extends ConfigurationSchema>(
  * This overload creates a variant function for components that use slots
  * but don't have regular variants. It provides type-safe slot handling.
  *
+ * @typeParam S - The slot configuration schema type
  * @param config - The slot configuration object
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function with slot support
@@ -163,6 +169,8 @@ export function tv<S extends SlotConfigurationSchema>(
  * This overload creates a variant function for components that have both
  * regular variants and slots. It provides full type safety for both systems.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param config - The configuration object with variants and slots
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function with full variant and slot support
@@ -179,6 +187,10 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
  * configuration with additional variants and slots. It merges the
  * base and extension configurations automatically.
  *
+ * @typeParam TBase - The base configuration schema type
+ * @typeParam TExtension - The extension configuration schema type
+ * @typeParam SBase - The base slot configuration schema type
+ * @typeParam SExtension - The extension slot configuration schema type
  * @param config - The extended configuration object
  * @param tvConfig - Optional Tailwind Variants configuration
  * @returns A variant function with merged configurations
@@ -200,6 +212,8 @@ export function tv<
  * It processes the configuration, merges extended configurations if needed,
  * and returns a fully configured variant function.
  *
+ * @typeParam T - The configuration schema type
+ * @typeParam S - The slot configuration schema type
  * @param configuration - The variant configuration
  * @param tvConfiguration - Tailwind Variants configuration options
  * @returns A configured variant function
@@ -238,32 +252,46 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
 
   // Extract merged configuration properties
   const mergedBaseClasses = mergedConfiguration.base;
-  const mergedSlotDefinitions = hasSlotConfiguration(mergedConfiguration)
-    ? mergedConfiguration.slots
-    : undefined;
+  const mergedSlotDefinitions = hasSlotConfiguration(mergedConfiguration) ? mergedConfiguration.slots : undefined;
   const mergedVariantGroups = mergedConfiguration.variants ?? ({} as T);
-  const mergedDefaultVariantProps =
-    mergedConfiguration.defaultVariants ?? ({} as ConfigurationVariants<T>);
+  const mergedDefaultVariantProps = mergedConfiguration.defaultVariants ?? ({} as ConfigurationVariants<T>);
   const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
 
-  // Configuration properties are ready for processing
+  // Pre-compute variant keys to avoid Object.keys() on every invocation
+  const cachedVariantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
+
+  // Pre-compute default variant values including boolean defaults
+  // This moves work from the hot path to initialization time
+  const precomputedDefaults: Record<string, string> = {};
+
+  for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
+    const key = cachedVariantKeys[index];
+    const keyString = key as string;
+    const defaultValue = (mergedDefaultVariantProps as Record<string, unknown>)[keyString];
+    const variantGroup = (mergedVariantGroups as Record<string, Record<string, unknown>>)[keyString];
+
+    if (defaultValue !== undefined) {
+      precomputedDefaults[keyString] =
+        defaultValue === true ? 'true' : defaultValue === false ? 'false' : (defaultValue as string);
+    } else if ('true' in variantGroup || 'false' in variantGroup) {
+      // Boolean variant default
+      precomputedDefaults[keyString] = 'false';
+    }
+  }
+
+  // Validate compound variants configuration once at creation time
+  if (mergedConfiguration.compoundVariants && !Array.isArray(mergedConfiguration.compoundVariants)) {
+    throw new Error('compoundVariants must be an array');
+  }
 
   // Create the main variant resolver function
   const variantResolverFunction = (
-    variantProps: ConfigurationVariants<T> & { class?: ClassValue; className?: ClassValue } = {},
+    variantProps: ConfigurationVariants<T> = {},
   ): S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S> => {
     // Extract class properties and variant props
     const classProperty = variantProps.class;
     const className = variantProps.className;
     const resolvedVariantProps = variantProps;
-
-    // Validate compound variants configuration
-    if (
-      mergedConfiguration.compoundVariants &&
-      !Array.isArray(mergedConfiguration.compoundVariants)
-    ) {
-      throw new Error("compoundVariants must be an array");
-    }
 
     // Handle slot-based components
     if (mergedSlotDefinitions) {
@@ -285,25 +313,21 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         resolvedVariantProps as ConfigurationVariants<ConfigurationSchema>,
         shouldMergeClasses,
         tailwindMergeService,
-      ) as unknown as S extends Record<string, never>
-        ? string | undefined
-        : TailwindVariantsReturnType<T, S>;
+      ) as unknown as S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S>;
     } else {
       // Handle regular components without slots
       return handleRegularVariantResolution(
         mergedBaseClasses,
         mergedVariantGroups,
         mergedDefaultVariantProps as ConfigurationVariants<ConfigurationSchema>,
-        mergedCompoundVariantGroups as
-          | readonly CompoundVariantType<ConfigurationSchema>[]
-          | undefined,
+        mergedCompoundVariantGroups as readonly CompoundVariantType<ConfigurationSchema>[] | undefined,
         resolvedVariantProps as ConfigurationVariants<ConfigurationSchema>,
         className ?? classProperty,
         shouldMergeClasses,
         tailwindMergeService,
-      ) as unknown as S extends Record<string, never>
-        ? string | undefined
-        : TailwindVariantsReturnType<T, S>;
+        cachedVariantKeys as (keyof ConfigurationSchema)[],
+        precomputedDefaults,
+      ) as unknown as S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S>;
     }
   };
 
@@ -311,7 +335,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
   const configuredVariantResolver = variantResolverFunction as VariantFunctionType<T, S>;
 
   // Attach the configuration to the function for introspection
-  Object.defineProperty(configuredVariantResolver, "config", {
+  Object.defineProperty(configuredVariantResolver, 'config', {
     configurable: false,
     enumerable: false,
     value: mergedConfiguration,
@@ -331,9 +355,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
  * @param globalConfiguration - The global configuration to apply
  * @returns A factory object with `tv` and `cn` functions
  */
-export function createTV(
-  globalConfiguration: TailwindVariantsConfiguration = {},
-): TailwindVariantsFactoryResult {
+export function createTV(globalConfiguration: TailwindVariantsConfiguration = {}): TailwindVariantsFactoryResult {
   // Extract global configuration
   const { twMerge: shouldMergeClasses = true, twMergeConfig } = globalConfiguration;
   const tailwindMergeService = createTailwindMergeService(twMergeConfig);
@@ -341,6 +363,7 @@ export function createTV(
   /**
    * Factory function for creating regular variant functions.
    *
+   * @typeParam T - The configuration schema type
    * @param configuration - The variant configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function for regular components
@@ -353,6 +376,7 @@ export function createTV(
   /**
    * Factory function for creating slot-based variant functions.
    *
+   * @typeParam S - The slot configuration schema type
    * @param configuration - The slot configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function for slot-based components
@@ -365,6 +389,8 @@ export function createTV(
   /**
    * Factory function for creating variant functions with both variants and slots.
    *
+   * @typeParam T - The configuration schema type
+   * @typeParam S - The slot configuration schema type
    * @param configuration - The configuration with variants and slots
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function with full support
@@ -377,6 +403,10 @@ export function createTV(
   /**
    * Factory function for creating extended variant functions.
    *
+   * @typeParam TBase - The base configuration schema type
+   * @typeParam TExtension - The extension configuration schema type
+   * @typeParam SBase - The base slot configuration schema type
+   * @typeParam SExtension - The extension slot configuration schema type
    * @param configuration - The extended configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function with merged configurations
@@ -397,6 +427,8 @@ export function createTV(
    * This function merges global and local configurations and creates
    * the appropriate variant function using the main `tv` function.
    *
+   * @typeParam T - The configuration schema type
+   * @typeParam S - The slot configuration schema type
    * @param configuration - The variant configuration
    * @param localConfiguration - Optional local configuration override
    * @returns A configured variant function
