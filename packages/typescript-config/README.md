@@ -113,31 +113,26 @@ For Next.js applications:
 
 - **Strict Type Checking**: Enables all strict options
 - **Modern JavaScript**: Targets ESNext with full ESNext lib support
-- **Module Resolution**: Node-style resolution with ESNext modules
-- **Developer Experience**: Force consistent casing, no unused variables/parameters
+- **Bundler Module Resolution**: Optimized for modern bundlers
+- **JavaScript Support**: Allows `.js` files alongside TypeScript
 - **JSON Support**: Resolve JSON modules
 - **Isolated Modules**: Transpile each file separately
+- **No Emit**: Lets the bundler handle output (sets `noEmit: true`)
 
 ### Library Configuration Features
 
-- **Declaration Generation**: Automatically generates `.d.ts` files
-- **Source Maps**: Generate source maps for debugging
-- **Strip Internal**: Remove internal declarations from output
-- **ESNext Only**: Does not include DOM libs
+- **ESNext Only**: Overrides lib to `["ESNext"]` only (no DOM libs)
+- **Inherits Base**: All other settings inherited from base configuration
 
 ### React Configuration Features
 
 - **Modern JSX Transform**: Uses `react-jsx` transform
-- **React Import Source**: Automatically import React when needed
-- **DOM Support**: Full DOM and DOM.Iterable libs
+- **DOM Support**: Full DOM and DOM.Iterable libs (inherited from base)
 
 ### Next.js Configuration Features
 
-- **JavaScript Support**: Allow `.js` files
 - **Incremental Compilation**: Faster subsequent builds
 - **JSX Preserve**: Let Next.js handle JSX transform
-- **Bundler Resolution**: Optimized for bundler
-- **No Emit**: Next.js handles compilation
 - **Next.js Plugin**: TypeScript plugin support
 
 ## API Reference
@@ -148,75 +143,62 @@ For Next.js applications:
 
 Base configuration with essential compiler options:
 
-```typescript
-interface BaseConfig {
-  compilerOptions: {
-    allowSyntheticDefaultImports: true;
-    declaration: true;
-    esModuleInterop: true;
-    forceConsistentCasingInFileNames: true;
-    isolatedModules: true;
-    lib: ["DOM", "DOM.Iterable", "ESNext"];
-    module: "ESNext";
-    moduleDetection: "force";
-    moduleResolution: "node";
-    noEmitOnError: true;
-    noFallthroughCasesInSwitch: true;
-    noImplicitOverride: true;
-    noImplicitReturns: true;
-    noUnusedLocals: true;
-    noUnusedParameters: true;
-    resolveJsonModule: true;
-    skipLibCheck: true;
-    strict: true;
-    target: "ESNext";
-    useDefineForClassFields: true;
-  };
+```json
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext"
+  }
 }
 ```
 
 #### `library.json`
 
-Library-specific configuration extending base:
+Library-specific configuration extending base (overrides lib to ESNext only):
 
-```typescript
-interface LibraryConfig extends BaseConfig {
-  compilerOptions: BaseConfig["compilerOptions"] & {
-    declaration: true;
-    lib: ["ESNext"];
-    sourceMap: true;
-    stripInternal: true;
-  };
+```json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["ESNext"]
+  }
 }
 ```
 
 #### `react.json`
 
-React-specific configuration:
+React-specific configuration (adds JSX support):
 
-```typescript
-interface ReactConfig extends BaseConfig {
-  compilerOptions: BaseConfig["compilerOptions"] & {
-    jsx: "react-jsx";
-    jsxImportSource: "react";
-  };
+```json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  }
 }
 ```
 
 #### `next.json`
 
-Next.js-specific configuration:
+Next.js-specific configuration (incremental builds, JSX preserve, Next.js plugin):
 
-```typescript
-interface NextConfig extends BaseConfig {
-  compilerOptions: BaseConfig["compilerOptions"] & {
-    allowJs: true;
-    incremental: true;
-    jsx: "preserve";
-    moduleResolution: "bundler";
-    noEmit: true;
-    plugins: [{ name: "next" }];
-  };
+```json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "incremental": true,
+    "jsx": "preserve",
+    "plugins": [{ "name": "next" }]
+  }
 }
 ```
 
