@@ -12,7 +12,6 @@
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/docs/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/docs/storybook-static" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/.turbo" />
@@ -67,12 +66,11 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/next/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/start/.output" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/start/.tanstack" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/start/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.output" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.tanstack" />
       <excludeFolder url="file://$MODULE_DIR$/benchmarks/tailwind-variants/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/start/.content-collections" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.content-collections" />
       <excludeFolder url="file://$MODULE_DIR$/packages/theme/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/theme/coverage" />
     </content>
