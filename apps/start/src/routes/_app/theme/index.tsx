@@ -8,7 +8,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { CheckCircle2Icon, InfoIcon, LaptopIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
 import { themes, useTheme } from '@codefast/theme';
 
-export const Route = createFileRoute('/_app/demo/theme/')({
+export const Route = createFileRoute('/_app/theme/')({
   component: ThemeDemo,
 });
 
