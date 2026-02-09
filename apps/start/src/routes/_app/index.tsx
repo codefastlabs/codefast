@@ -28,6 +28,28 @@ import { useState } from 'react';
 
 export const Route = createFileRoute('/_app/')({
   component: HomePage,
+  head: () => ({
+    meta: [
+      { title: '@codefast/ui — Modern React Component Library' },
+      {
+        name: 'description',
+        content:
+          'A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.',
+      },
+      { property: 'og:title', content: '@codefast/ui — Modern React Component Library' },
+      {
+        property: 'og:description',
+        content:
+          'A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.',
+      },
+      { name: 'twitter:title', content: '@codefast/ui — Modern React Component Library' },
+      {
+        name: 'twitter:description',
+        content:
+          'A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.',
+      },
+    ],
+  }),
 });
 
 function CopyButton({ text }: { text: string }) {

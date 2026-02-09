@@ -23,7 +23,33 @@ export const Route = createRootRouteWithContext<RootRouterContext>()({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'TanStack Start Starter' },
+      { title: '@codefast/ui — Modern React Component Library' },
+      {
+        name: 'description',
+        content:
+          'A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.',
+      },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: '@codefast/ui' },
+      {
+        property: 'og:title',
+        content: '@codefast/ui — Modern React Component Library',
+      },
+      {
+        property: 'og:description',
+        content:
+          'A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.',
+      },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      {
+        name: 'twitter:title',
+        content: '@codefast/ui — Modern React Component Library',
+      },
+      {
+        name: 'twitter:description',
+        content:
+          'A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.',
+      },
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
   }),

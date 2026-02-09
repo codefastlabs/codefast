@@ -10,14 +10,27 @@ export const Route = createFileRoute('/sink/$name/')({
 
     if (!component || component.type !== 'registry:ui') {
       return {
-        meta: [{ title: 'Component Not Found' }],
+        meta: [{ title: 'Component Not Found — @codefast/ui' }],
       };
     }
 
     return {
       meta: [
-        { title: `${component.name} - Kitchen Sink` },
-        { name: 'description', content: `Demo page for ${component.name} component` },
+        { title: `${component.name} — Components — @codefast/ui` },
+        {
+          name: 'description',
+          content: `Interactive demo of the ${component.name} component from @codefast/ui. Built with Radix UI and Tailwind CSS.`,
+        },
+        { property: 'og:title', content: `${component.name} — Components — @codefast/ui` },
+        {
+          property: 'og:description',
+          content: `Interactive demo of the ${component.name} component from @codefast/ui. Built with Radix UI and Tailwind CSS.`,
+        },
+        { name: 'twitter:title', content: `${component.name} — Components — @codefast/ui` },
+        {
+          name: 'twitter:description',
+          content: `Interactive demo of the ${component.name} component from @codefast/ui. Built with Radix UI and Tailwind CSS.`,
+        },
       ],
     };
   },

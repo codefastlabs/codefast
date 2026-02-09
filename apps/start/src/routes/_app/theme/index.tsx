@@ -10,6 +10,28 @@ import { themes, useTheme } from '@codefast/theme';
 
 export const Route = createFileRoute('/_app/theme/')({
   component: ThemeDemo,
+  head: () => ({
+    meta: [
+      { title: 'Themes — @codefast/ui' },
+      {
+        name: 'description',
+        content:
+          'Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.',
+      },
+      { property: 'og:title', content: 'Themes — @codefast/ui' },
+      {
+        property: 'og:description',
+        content:
+          'Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.',
+      },
+      { name: 'twitter:title', content: 'Themes — @codefast/ui' },
+      {
+        name: 'twitter:description',
+        content:
+          'Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.',
+      },
+    ],
+  }),
 });
 
 function ThemeDemo() {

@@ -8,8 +8,24 @@ export const Route = createFileRoute('/sink/')({
   component: SinkPage,
   head: () => ({
     meta: [
-      { title: 'Kitchen Sink' },
-      { name: 'description', content: 'A page with all components for testing purposes.' },
+      { title: 'Components — @codefast/ui' },
+      {
+        name: 'description',
+        content:
+          'Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.',
+      },
+      { property: 'og:title', content: 'Components — @codefast/ui' },
+      {
+        property: 'og:description',
+        content:
+          'Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.',
+      },
+      { name: 'twitter:title', content: 'Components — @codefast/ui' },
+      {
+        name: 'twitter:description',
+        content:
+          'Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.',
+      },
     ],
   }),
 });
