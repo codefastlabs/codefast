@@ -36,7 +36,7 @@ pnpm add -D @types/react @types/react-dom
 Import the CSS styles in your application:
 
 ```tsx
-import "@codefast/ui/styles.css";
+import '@codefast/ui/css/style.css';
 ```
 
 **Requirements**:
@@ -48,7 +48,7 @@ import "@codefast/ui/styles.css";
 ## Quick Start
 
 ```tsx
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@codefast/ui';
 
 function App() {
   return (
@@ -57,9 +57,7 @@ function App() {
         <CardTitle>Welcome to CodeFast UI</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="mb-4">
-          A comprehensive UI components library built with React and Tailwind CSS.
-        </p>
+        <p className="mb-4">A comprehensive UI components library built with React and Tailwind CSS.</p>
         <Button>Get Started</Button>
       </CardContent>
     </Card>
@@ -75,7 +73,6 @@ The library provides a comprehensive set of components organized into categories
 
 #### Layout Components
 
-- **Box**: Flexible container component
 - **Card**: Content containers with header, content, and footer sections
 - **Separator**: Visual dividers between content sections
 - **AspectRatio**: Maintain consistent aspect ratios for content
@@ -121,11 +118,11 @@ The library provides a comprehensive set of components organized into categories
 #### Using Form Components
 
 ```tsx
-import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
-import { useState } from "react";
+import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from '@codefast/ui';
+import { useState } from 'react';
 
 function ContactForm() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
 
   return (
     <Card className="w-96">
@@ -153,7 +150,7 @@ function ContactForm() {
 #### Using Navigation Components
 
 ```tsx
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui';
 
 function TabExample() {
   return (
@@ -184,7 +181,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Button,
-} from "@codefast/ui";
+} from '@codefast/ui';
 
 function DialogExample() {
   return (
@@ -195,9 +192,7 @@ function DialogExample() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
+          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">{/* Form content */}</div>
       </DialogContent>
@@ -211,7 +206,7 @@ function DialogExample() {
 The library uses Tailwind CSS for styling and supports theme customization:
 
 ```tsx
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from 'next-themes';
 
 function App() {
   return (
@@ -237,7 +232,6 @@ Most components accept these common props:
 
 #### Layout Components
 
-- **Box**: `BoxProps` - Flexible container with layout utilities
 - **Card**: `CardProps` - Content container with sections
 - **Separator**: `SeparatorProps` - Visual divider element
 - **AspectRatio**: `AspectRatioProps` - Aspect ratio container
@@ -273,14 +267,9 @@ Most components accept these common props:
 All components are fully typed with TypeScript. Import types alongside components:
 
 ```tsx
-import type { ButtonProps, CardProps, InputProps, ComponentProps } from "@codefast/ui";
+import type { ButtonProps, CardProps, InputProps } from '@codefast/ui';
 
-// Component props are fully typed using ComponentProps
-function MyButton(props: ComponentProps<typeof Button>) {
-  return <Button {...props} />;
-}
-
-// Alternative using ButtonProps
+// Usage with exported prop types
 function MyCustomButton(props: ButtonProps) {
   return <Button {...props} />;
 }
