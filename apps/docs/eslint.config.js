@@ -9,7 +9,7 @@ import globals from 'globals';
 
 export default defineConfig([
   {
-    name: '@apps/start/ignores',
+    name: '@apps/docs/ignores',
     ignores: [
       '**/.content-collections/**',
       '**/.output/**',
@@ -22,12 +22,12 @@ export default defineConfig([
     ],
   },
   {
-    name: '@apps/start/tanstack',
+    name: '@apps/docs/tanstack',
     files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
     extends: [tanstackConfig],
   },
   {
-    name: '@apps/start/react',
+    name: '@apps/docs/react',
     files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
     extends: [react.configs.flat.recommended, react.configs.flat['jsx-runtime']],
     languageOptions: {
@@ -37,23 +37,23 @@ export default defineConfig([
     settings: { react: { version: 'detect' } },
   },
   {
-    name: '@apps/start/react-hooks',
+    name: '@apps/docs/react-hooks',
     files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
     extends: [reactHooks.configs.flat.recommended],
   },
   {
-    name: '@apps/start/jsx-a11y',
+    name: '@apps/docs/jsx-a11y',
     files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
     extends: [jsxA11y.flatConfigs.recommended],
   },
   {
-    name: '@apps/start/tsdoc',
+    name: '@apps/docs/tsdoc',
     files: ['**/*.{ts,tsx}'],
     plugins: { tsdoc },
     rules: { 'tsdoc/syntax': 'warn' },
   },
   {
-    name: '@apps/start/custom-rules',
+    name: '@apps/docs/custom-rules',
     files: ['**/*.{ts,tsx}'],
     rules: {
       '@typescript-eslint/array-type': ['error', { default: 'array' }],
@@ -84,7 +84,7 @@ export default defineConfig([
     },
   },
   {
-    name: '@apps/start/prettier',
+    name: '@apps/docs/prettier',
     extends: [prettierConfig],
   },
 ]);
