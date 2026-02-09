@@ -64,10 +64,10 @@ export default function Header() {
             <Image
               src="/tanstack-word-logo-white.svg"
               alt="TanStack Logo"
-              width={400}
-              height={80}
               layout="constrained"
+              aspectRatio={3178 / 660}
               className="h-10"
+              height={40}
             />
           </Link>
         </h1>
