@@ -1,12 +1,44 @@
-# TypeScript Config
+# @codefast/typescript-config
 
-Shared TypeScript configuration presets for the CodeFast monorepo, providing standardized TypeScript settings for different project types including React applications, Next.js projects, libraries, and base configurations.
+Shared TypeScript configuration presets providing standardized compiler settings for different project types including base projects, libraries, React applications, and Next.js.
 
-![NPM Version](https://img.shields.io/npm/v/@codefast/typescript-config.svg)
+[![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
+[![npm version](https://img.shields.io/npm/v/@codefast/typescript-config.svg)](https://www.npmjs.com/package/@codefast/typescript-config)
+[![npm downloads](https://img.shields.io/npm/dm/@codefast/typescript-config.svg)](https://www.npmjs.com/package/@codefast/typescript-config)
+[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+  - [Base Configuration](#base-configuration)
+  - [Library Configuration](#library-configuration)
+  - [React Configuration](#react-configuration)
+  - [Next.js Configuration](#nextjs-configuration)
+- [Configurations](#configurations)
+- [API Reference](#api-reference)
+- [Compatibility](#compatibility)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Changelog](#changelog)
+
+## Overview
+
+`@codefast/typescript-config` provides opinionated, strict TypeScript presets that can be extended in any project. Each preset is tuned for a specific project type, so you get the right compiler options without manual configuration.
+
+**Key features:**
+
+- **Strict Type Checking** -- Enables all strict options for maximum type safety.
+- **Modern JavaScript** -- Targets ESNext with full ESNext lib support.
+- **Bundler Module Resolution** -- Optimized for modern bundlers (Vite, Turbopack, esbuild).
+- **JavaScript Support** -- Allows `.js` files alongside TypeScript.
+- **JSON Support** -- Resolves JSON modules natively.
+- **Isolated Modules** -- Transpile each file separately for faster builds.
 
 ## Installation
-
-Install the package via pnpm (recommended):
 
 ```bash
 pnpm add -D @codefast/typescript-config
@@ -18,14 +50,14 @@ Or using npm:
 npm install --save-dev @codefast/typescript-config
 ```
 
-**Requirements**:
+**Requirements:**
 
-- Node.js version 20.0.0 or higher
-- TypeScript version 5.0.0 or higher
+- Node.js >= 20.0.0
+- TypeScript >= 5.0.0
 
 ## Quick Start
 
-Create a `tsconfig.json` file in your project and extend from the appropriate configuration:
+Create a `tsconfig.json` in your project root and extend from the appropriate preset:
 
 ```json
 {
@@ -37,7 +69,7 @@ Create a `tsconfig.json` file in your project and extend from the appropriate co
 
 ### Base Configuration
 
-Basic configuration for all TypeScript projects:
+For general TypeScript projects:
 
 ```json
 {
@@ -52,7 +84,7 @@ Basic configuration for all TypeScript projects:
 
 ### Library Configuration
 
-For developing libraries and packages:
+For NPM packages and shared libraries (no DOM libs):
 
 ```json
 {
@@ -100,48 +132,60 @@ For Next.js applications:
 
 ## Configurations
 
-### Available Configurations
+### Available Presets
 
-| Configuration | Description | Use Case |
-|---------------|-------------|----------|
-| `base.json` | Basic configuration with strict settings | Base for all projects |
-| `library.json` | Extends base, adds library-specific options | NPM packages, shared libraries |
-| `react.json` | Extends base, adds React JSX support | React components and apps |
-| `next.json` | Extends base, optimized for Next.js | Next.js applications |
+| Configuration | Extends | Description | Use Case |
+| --- | --- | --- | --- |
+| `base.json` | -- | Strict base configuration with ESNext target | All TypeScript projects |
+| `library.json` | `base.json` | ESNext-only libs (no DOM) | NPM packages, shared libraries |
+| `react.json` | `base.json` | Adds `react-jsx` transform | React components and apps |
+| `next.json` | `base.json` | Incremental builds, JSX preserve, Next.js plugin | Next.js applications |
 
-### Base Configuration Features
+### Base Configuration Details
 
-- **Strict Type Checking**: Enables all strict options
-- **Modern JavaScript**: Targets ESNext with full ESNext lib support
-- **Bundler Module Resolution**: Optimized for modern bundlers
-- **JavaScript Support**: Allows `.js` files alongside TypeScript
-- **JSON Support**: Resolve JSON modules
-- **Isolated Modules**: Transpile each file separately
-- **No Emit**: Lets the bundler handle output (sets `noEmit: true`)
+| Option | Value | Purpose |
+| --- | --- | --- |
+| `strict` | `true` | Enables all strict type-checking options |
+| `target` | `ESNext` | Latest JavaScript features |
+| `module` | `ESNext` | ESM module system |
+| `moduleResolution` | `bundler` | Optimized for modern bundlers |
+| `lib` | `DOM, DOM.Iterable, ESNext` | Browser and ESNext APIs |
+| `isolatedModules` | `true` | File-level transpilation |
+| `noEmit` | `true` | Lets the bundler handle output |
+| `allowJs` | `true` | JavaScript file support |
+| `resolveJsonModule` | `true` | JSON import support |
+| `esModuleInterop` | `true` | CommonJS/ESM interop |
+| `skipLibCheck` | `true` | Skip type checking of declaration files |
 
-### Library Configuration Features
+### Library Configuration Details
 
-- **ESNext Only**: Overrides lib to `["ESNext"]` only (no DOM libs)
-- **Inherits Base**: All other settings inherited from base configuration
+Extends `base.json` with:
 
-### React Configuration Features
+| Option | Value | Purpose |
+| --- | --- | --- |
+| `lib` | `ESNext` | No DOM libs -- library code should not depend on browser APIs |
 
-- **Modern JSX Transform**: Uses `react-jsx` transform
-- **DOM Support**: Full DOM and DOM.Iterable libs (inherited from base)
+### React Configuration Details
 
-### Next.js Configuration Features
+Extends `base.json` with:
 
-- **Incremental Compilation**: Faster subsequent builds
-- **JSX Preserve**: Let Next.js handle JSX transform
-- **Next.js Plugin**: TypeScript plugin support
+| Option | Value | Purpose |
+| --- | --- | --- |
+| `jsx` | `react-jsx` | Modern JSX transform (no `import React` needed) |
+
+### Next.js Configuration Details
+
+Extends `base.json` with:
+
+| Option | Value | Purpose |
+| --- | --- | --- |
+| `incremental` | `true` | Faster subsequent builds |
+| `jsx` | `preserve` | Let Next.js handle JSX transformation |
+| `plugins` | `[{ "name": "next" }]` | Next.js TypeScript plugin |
 
 ## API Reference
 
-### Configuration Files
-
-#### `base.json`
-
-Base configuration with essential compiler options:
+### base.json
 
 ```json
 {
@@ -161,9 +205,7 @@ Base configuration with essential compiler options:
 }
 ```
 
-#### `library.json`
-
-Library-specific configuration extending base (overrides lib to ESNext only):
+### library.json
 
 ```json
 {
@@ -174,9 +216,7 @@ Library-specific configuration extending base (overrides lib to ESNext only):
 }
 ```
 
-#### `react.json`
-
-React-specific configuration (adds JSX support):
+### react.json
 
 ```json
 {
@@ -187,9 +227,7 @@ React-specific configuration (adds JSX support):
 }
 ```
 
-#### `next.json`
-
-Next.js-specific configuration (incremental builds, JSX preserve, Next.js plugin):
+### next.json
 
 ```json
 {
@@ -202,52 +240,85 @@ Next.js-specific configuration (incremental builds, JSX preserve, Next.js plugin
 }
 ```
 
+## Compatibility
+
+| Technology | Minimum Version | Notes |
+| --- | --- | --- |
+| TypeScript | 5.0.0 | Required |
+| Node.js | 20.0.0 | Required |
+| React | 18.0.0+ | When using `react.json` |
+| Next.js | 14.0.0+ | When using `next.json` |
+| Vite | 5.0.0+ | Works with bundler module resolution |
+| Turbopack | Any | Works with bundler module resolution |
+| esbuild | 0.19+ | Works with bundler module resolution |
+
+## Troubleshooting
+
+### Cannot find module or type declarations
+
+When extending from `@codefast/typescript-config`, make sure the package is installed as a dev dependency and your `tsconfig.json` is at the project root:
+
+```bash
+pnpm add -D @codefast/typescript-config
+```
+
+### Conflicting `lib` settings
+
+If you need DOM types in a library project, override the `lib` option in your local `tsconfig.json`:
+
+```json
+{
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+  }
+}
+```
+
+### Path aliases not resolving
+
+When using path aliases, add them to both `tsconfig.json` and your bundler configuration:
+
+```json
+{
+  "extends": "@codefast/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+### Incremental build issues with Next.js
+
+If you encounter stale type errors, delete the `.tsbuildinfo` file and rebuild:
+
+```bash
+rm -f tsconfig.tsbuildinfo
+pnpm build
+```
+
 ## Contributing
 
-We welcome all contributions! To start developing:
+We welcome contributions! Please see the [contributing guide](../../README.md#contributing) in the root of this repository for detailed instructions.
 
-### Environment Setup
-
-1. Fork this repository.
-2. Clone to your machine: `git clone <your-fork-url>`
-3. Install dependencies: `pnpm install`
-4. Create a new branch: `git checkout -b feature/feature-name`
-
-### Development Workflow
+For package-specific development:
 
 ```bash
 # Build all packages
 pnpm build:packages
-
-# Development mode for typescript-config
-pnpm dev --filter=@codefast/typescript-config
-
-# Run tests
-pnpm test --filter=@codefast/typescript-config
 
 # Lint and format
 pnpm lint:fix
 pnpm format
 ```
 
-5. Commit and submit pull request.
-
 ## License
 
-Distributed under the MIT License. See [LICENSE](../../LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
 
-## Contact
+## Changelog
 
-- npm: [@codefast/typescript-config](https://www.npmjs.com/package/@codefast/typescript-config)
-- GitHub: [codefastlabs/codefast](https://github.com/codefastlabs/codefast)
-- Issues: [GitHub Issues](https://github.com/codefastlabs/codefast/issues)
-- Documentation: [TypeScript Config Docs](https://github.com/codefastlabs/codefast/tree/main/packages/typescript-config)
-
-## Compatibility
-
-This package is compatible with:
-
-- **TypeScript**: 5.0.0+
-- **Node.js**: 20.0.0+
-- **React**: 18.0.0+ (when using react.json)
-- **Next.js**: 14.0.0+ (when using next.json)
+See [CHANGELOG.md](./CHANGELOG.md) for a complete list of changes and version history.

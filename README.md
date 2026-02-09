@@ -1,5 +1,9 @@
 <h1 align="center">CodeFast</h1>
 
+<p align="center">
+  A production-ready monorepo for building modern web applications with accessible UI components, high-performance styling utilities, and shared development tooling.
+</p>
+
 <!-- Build & Deploy -->
 <p align="center">
   <a href="https://github.com/codefastlabs/codefast/actions/workflows/release.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main" alt="Release"></a>
@@ -33,9 +37,55 @@
 
 ---
 
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Architecture](#architecture)
+- [Packages](#packages)
+- [Getting Started](#getting-started)
+  - [Use in Your Project](#use-in-your-project)
+  - [Develop Locally](#develop-locally)
+- [Scripts](#scripts)
+- [Technologies](#technologies)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Code of Conduct](#code-of-conduct)
+- [Support](#support)
+- [License](#license)
+
 ## Introduction
 
 CodeFast is a **monorepo** containing a production-ready UI component library and supporting tools for building modern web applications. The core package, `@codefast/ui`, provides **60+ accessible components** built on **Radix UI** primitives, styled with **Tailwind CSS 4**, and fully typed with **TypeScript**.
+
+**Key highlights:**
+
+- **Reusability** -- Versatile UI components that work across multiple projects.
+- **Flexible Customization** -- Override or extend default styles with Tailwind Variants.
+- **High Performance** -- Optimized for fast loading and minimal bundle size.
+- **Clear Codebase** -- Modern, readable, and easy-to-maintain structure.
+
+## Architecture
+
+```mermaid
+graph TD
+  subgraph apps [Apps]
+    Docs["@apps/docs<br/>Documentation site"]
+  end
+
+  subgraph packages [Packages]
+    UI["@codefast/ui<br/>60+ UI components"]
+    TV["@codefast/tailwind-variants<br/>Variant styling API"]
+    Theme["@codefast/theme<br/>Theme management"]
+    ESLint["@codefast/eslint-config<br/>ESLint presets"]
+    TSConfig["@codefast/typescript-config<br/>TypeScript presets"]
+  end
+
+  Docs --> UI
+  Docs --> Theme
+  UI --> TV
+  UI -.->|dev dependency| ESLint
+  UI -.->|dev dependency| TSConfig
+```
 
 ## Packages
 
@@ -53,15 +103,18 @@ CodeFast is a **monorepo** containing a production-ready UI component library an
 
 ## Getting Started
 
-Install the UI component library in your project:
+### Use in Your Project
+
+Install the UI component library:
 
 ```bash
 pnpm add @codefast/ui
 ```
 
-Then import and use components:
+Import the required CSS and start using components:
 
 ```tsx
+import '@codefast/ui/css/style.css';
 import { Button } from '@codefast/ui';
 
 export default function App() {
@@ -69,37 +122,46 @@ export default function App() {
 }
 ```
 
-## Objectives
+> See the individual [package READMEs](#packages) for detailed installation and usage instructions.
 
-- **Reusability** -- Versatile UI components that work across multiple projects.
-- **Flexible Customization** -- Override or extend default styles with Tailwind Variants.
-- **High Performance** -- Optimized for fast loading and minimal bundle size.
-- **Clear Codebase** -- Modern, readable, and easy-to-maintain structure.
+### Develop Locally
 
-## Local Development
-
-### Prerequisites
+#### Prerequisites
 
 - **Node.js** >= 20.0.0
 - **pnpm** 10.25.0
 
-### Setup
+#### Setup
 
 ```bash
 # Clone the repository
 git clone https://github.com/codefastlabs/codefast.git
 cd codefast
 
-# Install dependencies and build packages
-pnpm install && pnpm build:packages
+# Install dependencies
+pnpm install
+
+# Build all packages (required before running apps)
+pnpm build:packages
 ```
 
-### Scripts
+#### Start development
+
+```bash
+# Start all apps and packages in dev mode
+pnpm dev
+
+# Or start a specific package
+pnpm dev --filter=@codefast/ui
+```
+
+## Scripts
 
 | Command | Description |
 | --- | --- |
 | `pnpm dev` | Start all apps and packages in development mode |
 | `pnpm build` | Build all apps and packages |
+| `pnpm build:packages` | Build only packages (excludes apps) |
 | `pnpm test` | Run tests across the monorepo |
 | `pnpm test:coverage` | Run tests with coverage reports |
 | `pnpm lint` | Lint all packages |
@@ -108,28 +170,59 @@ pnpm install && pnpm build:packages
 | `pnpm check-types` | Run TypeScript type checking |
 | `pnpm clean` | Clean build artifacts, cache, and node_modules |
 
-## Technologies Used
+## Technologies
 
-- **React 19** -- Component framework with hooks, server components, and optimistic updates.
-- **TypeScript 5** -- Static type checking for safer, more maintainable code.
-- **Tailwind CSS 4** -- Utility-first CSS framework for rapid UI development.
-- **Radix UI** -- Unstyled, accessible primitives for building UI components.
-- **TanStack Start** -- Full-stack React framework powering the documentation site.
-- **Turbo** -- High-performance monorepo build system with caching.
-- **pnpm** -- Fast, disk space efficient package manager.
-- **Changesets** -- Versioning and changelog management for monorepo packages.
-- **Zod** -- TypeScript-first schema validation.
+| Technology | Purpose |
+| --- | --- |
+| [React 19](https://react.dev) | Component framework with hooks, server components, and optimistic updates |
+| [TypeScript 5](https://www.typescriptlang.org) | Static type checking for safer, more maintainable code |
+| [Tailwind CSS 4](https://tailwindcss.com) | Utility-first CSS framework for rapid UI development |
+| [Radix UI](https://www.radix-ui.com) | Unstyled, accessible primitives for building UI components |
+| [TanStack Start](https://tanstack.com/start) | Full-stack React framework powering the documentation site |
+| [Turbo](https://turbo.build) | High-performance monorepo build system with caching |
+| [pnpm](https://pnpm.io) | Fast, disk space efficient package manager |
+| [Changesets](https://github.com/changesets/changesets) | Versioning and changelog management for monorepo packages |
+| [Zod](https://zod.dev) | TypeScript-first schema validation |
 
 ## Contributing
 
 Contributions are welcome! Here's how to get started:
 
 1. [Fork](https://github.com/codefastlabs/codefast/fork) the repository.
-2. Create your feature branch: `git checkout -b feat/my-feature`.
-3. Commit your changes following [Conventional Commits](https://www.conventionalcommits.org/).
-4. Push to your branch and open a [Pull Request](https://github.com/codefastlabs/codefast/pulls).
+2. Clone your fork locally:
+   ```bash
+   git clone https://github.com/<your-username>/codefast.git
+   ```
+3. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+4. Create a feature branch:
+   ```bash
+   git checkout -b feat/my-feature
+   ```
+5. Make your changes and add tests where applicable.
+6. Commit your changes following [Conventional Commits](https://www.conventionalcommits.org/):
+   ```bash
+   git commit -m "feat: add new component"
+   ```
+7. Push to your branch and open a [Pull Request](https://github.com/codefastlabs/codefast/pulls).
 
 Please check the [open issues](https://github.com/codefastlabs/codefast/issues) for ideas on where to contribute.
+
+## Security
+
+If you discover a security vulnerability, please report it responsibly. **Do not open a public issue.** Instead, email the maintainers or use [GitHub's private vulnerability reporting](https://github.com/codefastlabs/codefast/security/advisories/new).
+
+## Code of Conduct
+
+This project follows the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). By participating, you are expected to uphold this code. Please report unacceptable behavior via [GitHub Issues](https://github.com/codefastlabs/codefast/issues).
+
+## Support
+
+- **Bug Reports**: [Open an issue](https://github.com/codefastlabs/codefast/issues/new?template=bug_report.md)
+- **Feature Requests**: [Open an issue](https://github.com/codefastlabs/codefast/issues/new?template=feature_request.md)
+- **Discussions**: [GitHub Discussions](https://github.com/codefastlabs/codefast/discussions)
 
 ## License
 

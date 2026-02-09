@@ -1,14 +1,36 @@
-# Tailwind Variants
+# @codefast/tailwind-variants
 
 Type-safe variant API for Tailwind CSS with enhanced functionality and advanced TypeScript support for building flexible component styling systems.
 
 [![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
-[![NPM Version](https://img.shields.io/npm/v/@codefast/tailwind-variants.svg)](https://www.npmjs.com/package/@codefast/tailwind-variants)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9%2B-blue.svg)](https://www.typescriptlang.org/)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@codefast/tailwind-variants)](https://bundlephobia.com/package/@codefast/tailwind-variants)
+[![npm version](https://img.shields.io/npm/v/@codefast/tailwind-variants.svg)](https://www.npmjs.com/package/@codefast/tailwind-variants)
+[![npm downloads](https://img.shields.io/npm/dm/@codefast/tailwind-variants.svg)](https://www.npmjs.com/package/@codefast/tailwind-variants)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@codefast/tailwind-variants)](https://bundlephobia.com/package/@codefast/tailwind-variants)
+[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Why `@codefast/tailwind-variants`?
+## Table of Contents
+
+- [Why @codefast/tailwind-variants?](#why-codefasttailwind-variants)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+  - [Slots](#slots---multi-part-components)
+  - [Compound Variants](#compound-variants)
+  - [Boolean Variants](#boolean-variants)
+  - [Configuration Extension](#configuration-extension)
+  - [Compound Slots](#compound-slots)
+  - [Global Configuration](#global-configuration-with-createtv)
+- [Utility Functions](#utility-functions)
+- [API Reference](#api-reference)
+- [TypeScript Integration](#typescript-integration)
+- [Performance](#performance)
+- [Migration Guide](#migration-guide)
+- [Best Practices](#best-practices)
+- [Contributing](#contributing)
+- [License](#license)
+- [Changelog](#changelog)
+
+## Why @codefast/tailwind-variants?
 
 This library is a **high-performance, drop-in replacement** for [tailwind-variants](https://github.com/nextui-org/tailwind-variants) with the same API but significantly better performance.
 
@@ -18,32 +40,32 @@ Benchmarked on Apple M-series chip. Results show operations per second (higher i
 
 | Benchmark                   | @codefast/tailwind-variants | tailwind-variants | class-variance-authority |     Speedup     |
 | --------------------------- | :-------------------------: | :---------------: | :----------------------: | :-------------: |
-| **Simple Variants**         |       477.8K ops/s 🥇       |    71.6K ops/s    |       356.1K ops/s       | **6.7x faster** |
-| **Simple + Merge**          |       280.7K ops/s 🥇       |    66.3K ops/s    |       225.4K ops/s       | **4.2x faster** |
-| **Complex Variants**        |       301.1K ops/s 🥇       |    48.8K ops/s    |            -             | **6.2x faster** |
-| **Slots**                   |       53.7K ops/s 🥇        |    10.9K ops/s    |            -             | **4.9x faster** |
-| **Compound Slots**          |       31.3K ops/s 🥇        |    6.9K ops/s     |            -             | **4.5x faster** |
-| **Extreme (240+ variants)** |       10.6K ops/s 🥇        |    2.6K ops/s     |            -             | **4.1x faster** |
+| **Simple Variants**         |        477.8K ops/s         |    71.6K ops/s    |       356.1K ops/s       | **6.7x faster** |
+| **Simple + Merge**          |        280.7K ops/s         |    66.3K ops/s    |       225.4K ops/s       | **4.2x faster** |
+| **Complex Variants**        |        301.1K ops/s         |    48.8K ops/s    |            -             | **6.2x faster** |
+| **Slots**                   |         53.7K ops/s         |    10.9K ops/s    |            -             | **4.9x faster** |
+| **Compound Slots**          |         31.3K ops/s         |    6.9K ops/s     |            -             | **4.5x faster** |
+| **Extreme (240+ variants)** |         10.6K ops/s         |    2.6K ops/s     |            -             | **4.1x faster** |
 
-> **Note:** CVA doesn't support slots, compound slots, or extends - it's only included in simple variant benchmarks.
+> **Note:** CVA does not support slots, compound slots, or extends -- it is only included in simple variant benchmarks.
 
 ### Feature Comparison
 
-| Feature            | @codefast/tailwind-variants | tailwind-variants |    CVA    |
-| ------------------ | :-------------------------: | :---------------: | :-------: |
-| Basic Variants     |             ✅              |        ✅         |    ✅     |
-| Boolean Variants   |             ✅              |        ✅         |    ✅     |
-| Compound Variants  |             ✅              |        ✅         |    ✅     |
-| Default Variants   |             ✅              |        ✅         |    ✅     |
-| **Slots**          |             ✅              |        ✅         |    ❌     |
-| **Compound Slots** |             ✅              |        ✅         |    ❌     |
-| **Extends**        |             ✅              |        ✅         |    ❌     |
-| Tailwind Merge     |         ✅ Built-in         |    ✅ Built-in    | ❌ Manual |
-| TypeScript         |           ✅ Full           |      ✅ Full      |  ✅ Full  |
-| **Performance**    |         ⚡ Fastest          |    🐢 Slowest     | 🏃 Medium |
-| Bundle Size        |            ~3KB             |       ~4KB        |   ~1KB    |
+| Feature            | @codefast/tailwind-variants | tailwind-variants |  CVA   |
+| ------------------ | :-------------------------: | :---------------: | :----: |
+| Basic Variants     |             Yes             |        Yes        |  Yes   |
+| Boolean Variants   |             Yes             |        Yes        |  Yes   |
+| Compound Variants  |             Yes             |        Yes        |  Yes   |
+| Default Variants   |             Yes             |        Yes        |  Yes   |
+| **Slots**          |             Yes             |        Yes        |   No   |
+| **Compound Slots** |             Yes             |        Yes        |   No   |
+| **Extends**        |             Yes             |        Yes        |   No   |
+| Tailwind Merge     |          Built-in           |     Built-in      | Manual |
+| TypeScript         |            Full             |       Full        |  Full  |
+| **Performance**    |           Fastest           |      Slowest      | Medium |
+| Bundle Size        |            ~3KB             |       ~4KB        |  ~1KB  |
 
-### Migration from `tailwind-variants`
+### Migration from tailwind-variants
 
 Migrating is as simple as changing your import:
 
@@ -52,13 +74,11 @@ Migrating is as simple as changing your import:
 + import { tv } from "@codefast/tailwind-variants";
 ```
 
-**That's it!** The API is 100% compatible. All your existing code will work without any changes.
+The API is 100% compatible. All existing code works without any changes.
 
 ---
 
 ## Installation
-
-Install the package via pnpm (recommended):
 
 ```bash
 pnpm add @codefast/tailwind-variants
@@ -70,26 +90,22 @@ Or using npm:
 npm install @codefast/tailwind-variants
 ```
 
-**Peer Dependencies**:
-
-The library works with Tailwind CSS (optional but recommended):
+**Optional peer dependency:**
 
 ```bash
 pnpm add tailwindcss
 ```
 
-**Dependencies**:
+**Runtime dependencies** (installed automatically):
 
-The library uses these runtime dependencies:
+- `clsx` -- Utility for constructing className strings conditionally
+- `tailwind-merge` -- Utility for merging Tailwind CSS classes and resolving conflicts
 
-- `clsx`: Utility for constructing className strings conditionally
-- `tailwind-merge`: Utility for merging Tailwind CSS classes and resolving conflicts
+**Requirements:**
 
-**Requirements**:
-
-- Node.js version 20.0.0 or higher
-- TypeScript version 5.9.2 or higher (recommended)
-- Tailwind CSS version 4.0.0 or higher (optional)
+- Node.js >= 20.0.0
+- TypeScript >= 5.9.2 (recommended)
+- Tailwind CSS >= 4.0.0 (optional)
 
 ## Quick Start
 
@@ -116,86 +132,21 @@ const button = tv({
   },
 });
 
-// Usage
-console.log(button());
-// Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4"
+button();
+// => "inline-flex items-center ... bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4"
 
-console.log(button({ variant: 'destructive', size: 'lg' }));
-// Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 px-8"
+button({ variant: 'destructive', size: 'lg' });
+// => "inline-flex items-center ... bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 px-8"
+
+button({ variant: 'outline', size: 'sm', className: 'w-full' });
+// => "inline-flex items-center ... border border-input ... h-9 px-3 text-sm w-full"
 ```
 
 ## Usage
 
-### Core Features
+### Slots -- Multi-part Components
 
-The library provides a comprehensive set of features for variant-based styling:
-
-#### Variant System
-
-- **Basic Variants**: Define component variations with different styling options
-- **Boolean Variants**: Support for boolean-based variant conditions
-- **Default Variants**: Set default values for variant properties
-- **Nested Arrays**: Support for nested array structures in class definitions
-
-#### Advanced Features
-
-- **Slots**: Multi-part component styling with individual slot control
-- **Compound Variants**: Apply styles when multiple variant conditions are met
-- **Compound Slots**: Apply styles to specific slots based on variant conditions
-- **Configuration Extension**: Extend and override existing variant configurations
-
-#### Developer Experience
-
-- **Type Safety**: Full TypeScript support with intelligent type inference
-- **Tailwind Merge**: Built-in conflict resolution for Tailwind CSS classes
-- **Performance**: Optimized for minimal runtime overhead
-- **Flexibility**: Support for custom class merging and configuration
-
-### Basic Variants
-
-Create variant functions with different styling options:
-
-```typescript
-import { tv } from '@codefast/tailwind-variants';
-
-const button = tv({
-  base: 'inline-flex items-center justify-center rounded-md font-medium transition-colors',
-  variants: {
-    variant: {
-      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-      outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-    },
-    size: {
-      sm: 'h-9 px-3 text-sm',
-      md: 'h-10 px-4',
-      lg: 'h-11 px-8',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-    size: 'md',
-  },
-});
-
-// Usage examples
-console.log(button());
-// Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4"
-
-console.log(button({ variant: 'destructive', size: 'lg' }));
-// Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 px-8"
-
-console.log(button({ variant: 'outline', size: 'sm' }));
-// Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 text-sm"
-
-// Add custom classes
-console.log(button({ className: 'w-full' }));
-// Output: "inline-flex items-center justify-center rounded-md font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 w-full"
-```
-
-### Slots - Multi-part Components
-
-Slots enable styling for components with multiple parts:
+Slots enable styling for components with multiple distinct parts:
 
 ```typescript
 import { tv } from '@codefast/tailwind-variants';
@@ -218,32 +169,20 @@ const card = tv({
   },
 });
 
-// Usage
 const cardStyles = card();
-console.log(cardStyles.base());
-// Output: "rounded-lg border bg-card text-card-foreground shadow-sm"
+cardStyles.base(); // => "rounded-lg border bg-card text-card-foreground shadow-sm"
+cardStyles.header(); // => "flex flex-col space-y-1.5 p-6"
+cardStyles.content(); // => "p-6 pt-0"
+cardStyles.footer(); // => "flex items-center p-6 pt-0"
 
-console.log(cardStyles.header());
-// Output: "flex flex-col space-y-1.5 p-6"
-
-console.log(cardStyles.content());
-// Output: "p-6 pt-0"
-
-console.log(cardStyles.footer());
-// Output: "flex items-center p-6 pt-0"
-
-// With variant
 const destructiveCard = card({ variant: 'destructive' });
-console.log(destructiveCard.base());
-// Output: "rounded-lg border bg-card text-card-foreground shadow-sm border-destructive"
-
-console.log(destructiveCard.header());
-// Output: "flex flex-col space-y-1.5 p-6 text-destructive"
+destructiveCard.base(); // => "... border-destructive"
+destructiveCard.header(); // => "... text-destructive"
 ```
 
 ### Compound Variants
 
-Apply styles when multiple variant conditions are met:
+Apply styles when multiple variant conditions are met simultaneously:
 
 ```typescript
 import { tv } from '@codefast/tailwind-variants';
@@ -264,7 +203,7 @@ const alert = tv({
     {
       variant: 'destructive',
       size: 'md',
-      className: 'font-semibold', // Only applies when variant=destructive AND size=md
+      className: 'font-semibold', // Only when variant=destructive AND size=md
     },
   ],
   defaultVariants: {
@@ -273,20 +212,16 @@ const alert = tv({
   },
 });
 
-// Usage examples
-console.log(alert({ size: 'sm' }));
-// Output: "relative w-full rounded-lg border px-4 py-3 bg-background text-foreground text-sm"
+alert({ variant: 'destructive', size: 'md' });
+// => "... border-destructive/50 text-destructive text-base font-semibold"
 
-console.log(alert({ variant: 'destructive', size: 'md' }));
-// Output: "relative w-full rounded-lg border px-4 py-3 border-destructive/50 text-destructive text-base font-semibold"
-
-console.log(alert({ variant: 'destructive', size: 'sm' }));
-// Output: "relative w-full rounded-lg border px-4 py-3 border-destructive/50 text-destructive text-sm"
+alert({ variant: 'destructive', size: 'sm' });
+// => "... border-destructive/50 text-destructive text-sm"  (no font-semibold)
 ```
 
 ### Boolean Variants
 
-Support for boolean-based variant conditions:
+Use `true`/`false` keys for boolean-based variant conditions:
 
 ```typescript
 import { tv } from '@codefast/tailwind-variants';
@@ -309,28 +244,17 @@ const toggle = tv({
   },
 });
 
-// Usage with boolean values
-console.log(toggle());
-// Output: "inline-flex items-center justify-center rounded-md text-sm font-medium bg-transparent"
-
-console.log(toggle({ pressed: true }));
-// Output: "inline-flex items-center justify-center rounded-md text-sm font-medium bg-accent text-accent-foreground"
-
-console.log(toggle({ disabled: true }));
-// Output: "inline-flex items-center justify-center rounded-md text-sm font-medium bg-transparent opacity-50 pointer-events-none"
-
-console.log(toggle({ pressed: true, disabled: true }));
-// Output: "inline-flex items-center justify-center rounded-md text-sm font-medium bg-accent text-accent-foreground opacity-50 pointer-events-none"
+toggle({ pressed: true }); // => "... bg-accent text-accent-foreground"
+toggle({ pressed: true, disabled: true }); // => "... bg-accent text-accent-foreground opacity-50 pointer-events-none"
 ```
 
 ### Configuration Extension
 
-Extend existing configurations for reusability:
+Extend existing variant configurations to build specialized components:
 
 ```typescript
 import { tv } from '@codefast/tailwind-variants';
 
-// Base button configuration
 const baseButton = tv({
   base: 'inline-flex items-center justify-center rounded-md font-medium',
   variants: {
@@ -339,39 +263,27 @@ const baseButton = tv({
       md: 'h-10 px-4',
     },
   },
-  defaultVariants: {
-    size: 'md',
-  },
+  defaultVariants: { size: 'md' },
 });
 
-// Extended icon button
 const iconButton = tv({
   extend: baseButton,
-  base: 'aspect-square', // Additional base classes
+  base: 'aspect-square',
   variants: {
     variant: {
-      // New variant options
       ghost: 'hover:bg-accent hover:text-accent-foreground',
       outline: 'border border-input',
     },
   },
-  defaultVariants: {
-    variant: 'ghost',
-  },
+  defaultVariants: { variant: 'ghost' },
 });
 
-// Usage
-console.log(baseButton());
-// Output: "inline-flex items-center justify-center rounded-md font-medium h-10 px-4"
+iconButton();
+// => "inline-flex items-center ... aspect-square h-10 px-4 hover:bg-accent hover:text-accent-foreground"
 
-console.log(iconButton());
-// Output: "inline-flex items-center justify-center rounded-md font-medium aspect-square h-10 px-4 hover:bg-accent hover:text-accent-foreground"
-
-console.log(iconButton({ variant: 'outline', size: 'sm' }));
-// Output: "inline-flex items-center justify-center rounded-md font-medium aspect-square h-9 px-3 text-sm border border-input"
+iconButton({ variant: 'outline', size: 'sm' });
+// => "inline-flex items-center ... aspect-square h-9 px-3 text-sm border border-input"
 ```
-
-## Advanced Features
 
 ### Compound Slots
 
@@ -383,92 +295,69 @@ import { tv } from '@codefast/tailwind-variants';
 const dialog = tv({
   slots: {
     overlay: 'fixed inset-0 bg-background/80 backdrop-blur-sm',
-    content: 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2',
+    content: 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
     header: 'flex flex-col space-y-1.5 text-center sm:text-left',
     footer: 'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
   },
   variants: {
-    size: {
-      sm: '',
-      lg: '',
-    },
+    size: { sm: '', lg: '' },
   },
   compoundSlots: [
-    {
-      size: 'sm',
-      slots: ['content'],
-      className: 'max-w-md',
-    },
-    {
-      size: 'lg',
-      slots: ['content'],
-      className: 'max-w-2xl',
-    },
+    { size: 'sm', slots: ['content'], className: 'max-w-md' },
+    { size: 'lg', slots: ['content'], className: 'max-w-2xl' },
   ],
 });
 
-// Usage
-const smallDialog = dialog({ size: 'sm' });
-console.log(smallDialog.content());
-// Output: "fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-md"
-
-const largeDialog = dialog({ size: 'lg' });
-console.log(largeDialog.content());
-// Output: "fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-2xl"
+dialog({ size: 'sm' }).content(); // => "... max-w-md"
+dialog({ size: 'lg' }).content(); // => "... max-w-2xl"
 ```
 
 ### Global Configuration with createTV
 
-Create a factory with global configuration settings:
+Create a factory with global configuration applied to all variant instances:
 
 ```typescript
 import { createTV } from '@codefast/tailwind-variants';
 
-// Create factory with global configuration
 const { tv, cn } = createTV({
   twMerge: true,
   twMergeConfig: {
     extend: {
       classGroups: {
-        // Custom class groups for better conflict resolution
         'font-size': ['text-custom-sm', 'text-custom-lg'],
       },
     },
   },
 });
 
-// Use tv with global configuration
-const button = tv({
-  base: 'px-4 py-2 rounded',
-  variants: {
-    variant: {
-      primary: 'bg-blue-500 text-white',
-      secondary: 'bg-gray-500 text-white',
-    },
-  },
-});
-
-// Use cn utility with global configuration
-const classes = cn('px-4 py-2', 'px-6 py-3'); // Tailwind merge resolves conflicts
-console.log(classes);
-// Output: "px-6 py-3" (px-6 overrides px-4, py-3 overrides py-2)
+// tv() and cn() now use the global config automatically
 ```
 
-### Nested Arrays Support
+## Utility Functions
 
-Support for nested array structures in class definitions:
+### cn(...classes)
+
+Combines and merges CSS classes using `tailwind-merge` for conflict resolution:
 
 ```typescript
-import { tv } from '@codefast/tailwind-variants';
+import { cn } from '@codefast/tailwind-variants';
 
-const component = tv({
-  base: ['base-class-1', ['base-class-2', ['base-class-3', 'base-class-4']]], // Automatically flattened
-  variants: {
-    variant: {
-      primary: ['text-blue-500', ['bg-blue-50', ['hover:bg-blue-100', 'focus:ring-blue-200']]],
-    },
-  },
-});
+cn('px-4 py-2', 'px-6 py-3');
+// => "px-6 py-3" (later classes override)
+
+cn('base-class', true && 'conditional', false && 'skipped');
+// => "base-class conditional"
+```
+
+### cx(...classes)
+
+Combines CSS classes using `clsx` without Tailwind-aware conflict resolution:
+
+```typescript
+import { cx } from '@codefast/tailwind-variants';
+
+cx('px-4 py-2', 'px-6 py-3');
+// => "px-4 py-2 px-6 py-3" (no conflict resolution)
 ```
 
 ## API Reference
@@ -477,490 +366,183 @@ const component = tv({
 
 Creates a variant function from configuration.
 
-**Parameters**:
+| Parameter | Type        | Description                                                                                                                     |
+| --------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `config`  | `TVConfig`  | Configuration object defining `base`, `variants`, `slots`, `compoundVariants`, `compoundSlots`, `defaultVariants`, and `extend` |
+| `options` | `TVOptions` | Optional settings: `twMerge` (boolean), `twMergeConfig` (object)                                                                |
 
-- `config`: Configuration object defining variants, slots, and styling
-- `options?`: Optional Tailwind Variants configuration for customization
-
-**Returns**: Configured variant function
+**Returns:** A callable variant function. When slots are defined, returns an object of slot functions.
 
 ### createTV(globalConfig?)
 
 Creates a factory with global configuration settings.
 
-**Parameters**:
+| Parameter      | Type        | Description                                        |
+| -------------- | ----------- | -------------------------------------------------- |
+| `globalConfig` | `TVOptions` | Global configuration applied to all `tv` instances |
 
-- `globalConfig?`: Global Tailwind Variants configuration applied to all instances
-
-**Returns**: Object containing `tv` and `cn` functions with global settings
+**Returns:** `{ tv, cn }` -- Functions with global settings applied.
 
 ### cn(...classes)
 
-Combines and merges CSS classes using tailwind-merge for conflict resolution.
+| Parameter    | Type           | Description                      |
+| ------------ | -------------- | -------------------------------- |
+| `...classes` | `ClassValue[]` | CSS classes to combine and merge |
 
-**Parameters**:
-
-- `...classes`: CSS classes to combine and merge
-
-**Returns**: Merged class string with conflicts resolved
+**Returns:** `string` -- Merged class string with Tailwind conflicts resolved.
 
 ### cx(...classes)
 
-Combines CSS classes using clsx without conflict resolution.
+| Parameter    | Type           | Description            |
+| ------------ | -------------- | ---------------------- |
+| `...classes` | `ClassValue[]` | CSS classes to combine |
 
-**Parameters**:
+**Returns:** `string` -- Combined class string without conflict resolution.
 
-- `...classes`: CSS classes to combine
+### VariantProps\<T\>
 
-**Returns**: Combined class string without merging
-
-### VariantProps<T>
-
-Extracts variant props type from a variant function for TypeScript integration.
-
-**Type Parameter**:
-
-- `T`: Variant function type
-
-**Returns**: Props type object for component integration
-
-### TypeScript Integration
-
-The library provides comprehensive TypeScript support:
+TypeScript utility type that extracts variant props from a variant function:
 
 ```typescript
-import { tv, type VariantProps } from "@codefast/tailwind-variants";
+import { tv, type VariantProps } from '@codefast/tailwind-variants';
 
 const button = tv({
-  base: "px-4 py-2 rounded",
-  variants: {
-    variant: {
-      primary: "bg-blue-500 text-white",
-      secondary: "bg-gray-500 text-white",
-    },
-    size: {
-      sm: "text-sm",
-      lg: "text-lg",
-    },
-  },
+  /* ... */
 });
-
-// Extract props type
-type ButtonProps = VariantProps<typeof button>;
-// Type: { variant?: "primary" | "secondary"; size?: "sm" | "lg"; className?: string; }
-
-// Usage in React components
-interface MyButtonProps extends ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
-const MyButton: React.FC<MyButtonProps> = ({
-  variant,
-  size,
-  className,
-  children,
-  onClick
-}) => {
-  return (
-    <button
-      className={button({ variant, size, className })}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
+type ButtonVariants = VariantProps<typeof button>;
 ```
 
-### Slots Type Safety
+## TypeScript Integration
 
-Slots provide full type safety for multi-part components:
-
-```typescript
-import { tv } from '@codefast/tailwind-variants';
-
-const card = tv({
-  slots: {
-    base: 'rounded-lg border',
-    header: 'p-4 border-b',
-    content: 'p-4',
-  },
-  variants: {
-    variant: {
-      default: '',
-      elevated: {
-        base: 'shadow-lg',
-        header: 'bg-muted',
-      },
-    },
-  },
-});
-
-// Type inference for slots
-const styles = card({ variant: 'elevated' });
-// styles.base() - available
-// styles.header() - available
-// styles.content() - available
-// styles.nonExistent() - TypeScript error!
-```
-
-### Configuration Options
-
-Customize Tailwind merge behavior and other settings:
+### Extracting Props
 
 ```typescript
-import { tv } from '@codefast/tailwind-variants';
-
-const component = tv(
-  {
-    base: 'px-4 py-2',
-    variants: {
-      size: {
-        sm: 'px-2 py-1',
-        lg: 'px-6 py-3',
-      },
-    },
-  },
-  {
-    twMerge: true, // Enable/disable tailwind merge (default: true)
-    twMergeConfig: {
-      extend: {
-        classGroups: {
-          // Custom class groups for better conflict resolution
-          'font-size': ['text-custom-sm', 'text-custom-lg'],
-        },
-      },
-    },
-  },
-);
-```
-
-### Disable Tailwind Merge
-
-In some cases, you may want to disable Tailwind merge:
-
-```typescript
-import { tv } from '@codefast/tailwind-variants';
-
-const component = tv(
-  {
-    base: 'px-4 py-2',
-    variants: {
-      size: {
-        sm: 'px-2 py-1', // Will not merge with base classes
-      },
-    },
-  },
-  {
-    twMerge: false, // Disable tailwind merge
-  },
-);
-
-console.log(component({ size: 'sm' }));
-// Output: "px-4 py-2 px-2 py-1" (both px classes will be kept)
-```
-
-## Utility Functions
-
-### cn Function
-
-Combine and merge CSS classes with conflict resolution:
-
-```typescript
-import { cn } from '@codefast/tailwind-variants';
-
-// Basic usage
-const classes = cn('px-4 py-2', 'bg-blue-500', 'text-white');
-console.log(classes);
-// Output: "px-4 py-2 bg-blue-500 text-white"
-
-// With conflicting classes (tailwind-merge resolves conflicts)
-const conflicting = cn('px-4 py-2', 'px-6 py-3');
-console.log(conflicting);
-// Output: "px-6 py-3" (later classes override earlier ones)
-
-// With conditional classes
-const conditional = cn('base-class', true && 'condition-true-class', false && 'condition-false-class', {
-  'object-condition': true,
-});
-console.log(conditional);
-// Output: "base-class condition-true-class object-condition"
-```
-
-### cx Function
-
-Combine CSS classes without conflict resolution:
-
-```typescript
-import { cx } from '@codefast/tailwind-variants';
-
-const classes = cx('px-4 py-2', 'px-6 py-3');
-console.log(classes);
-// Output: "px-4 py-2 px-6 py-3" (no conflict resolution)
-```
-
-## Best Practices
-
-### Component Library Pattern
-
-Create consistent component libraries:
-
-```typescript
-// components/button.ts
-import { tv, type VariantProps } from "@codefast/tailwind-variants";
-
-export const buttonVariants = tv({
-  base: "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
-  variants: {
-    variant: {
-      default: "bg-primary text-primary-foreground hover:bg-primary/90",
-      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-      outline: "border border-input hover:bg-accent hover:text-accent-foreground",
-      secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      ghost: "hover:bg-accent hover:text-accent-foreground",
-      link: "underline-offset-4 hover:underline text-primary",
-    },
-    size: {
-      default: "h-10 py-2 px-4",
-      sm: "h-9 px-3 rounded-md",
-      lg: "h-11 px-8 rounded-md",
-      icon: "h-10 w-10",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-    size: "default",
-  },
-});
-
-export type ButtonProps = VariantProps<typeof buttonVariants>;
-
-// components/Button.tsx (React component)
-import React from "react";
-import { buttonVariants, type ButtonProps } from "./button";
-
-interface ButtonComponentProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    ButtonProps {
-  asChild?: boolean;
-}
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonComponentProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    return (
-      <button
-        className={buttonVariants({ variant, size, className })}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-
-Button.displayName = "Button";
-
-export { Button };
-```
-
-### Theme System Pattern
-
-Create theme systems with global configuration:
-
-```typescript
-// theme/variants.ts
-import { createTV } from '@codefast/tailwind-variants';
-
-// Global theme configuration
-const { tv: themeTV, cn: themeCN } = createTV({
-  twMerge: true,
-  twMergeConfig: {
-    extend: {
-      classGroups: {
-        // Theme-specific class groups
-        'theme-color': ['theme-primary', 'theme-secondary', 'theme-accent'],
-      },
-    },
-  },
-});
-
-// Export themed utilities
-export { themeTV as tv, themeCN as cn };
-
-// components/themed-button.ts
-import { tv } from '../theme/variants';
-
-export const themedButton = tv({
-  base: 'inline-flex items-center justify-center rounded-md font-medium',
-  variants: {
-    theme: {
-      light: 'bg-white text-black border border-gray-200',
-      dark: 'bg-gray-900 text-white border border-gray-700',
-    },
-    variant: {
-      primary: 'theme-primary', // Handled by custom class group
-      secondary: 'theme-secondary',
-    },
-  },
-});
-```
-
-### Responsive Design Pattern
-
-Use with responsive classes for mobile-first design:
-
-```typescript
-import { tv } from '@codefast/tailwind-variants';
-
-const responsiveCard = tv({
-  base: 'rounded-lg border bg-card text-card-foreground shadow-sm',
-  variants: {
-    size: {
-      sm: 'p-4 sm:p-6',
-      md: 'p-6 sm:p-8 lg:p-10',
-      lg: 'p-8 sm:p-10 lg:p-12 xl:p-16',
-    },
-    layout: {
-      stack: 'flex flex-col space-y-4',
-      grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4',
-    },
-  },
-  compoundVariants: [
-    {
-      size: 'lg',
-      layout: 'grid',
-      className: 'lg:grid-cols-4 xl:grid-cols-5',
-    },
-  ],
-  defaultVariants: {
-    size: 'md',
-    layout: 'stack',
-  },
-});
-```
-
-### Performance Optimization
-
-Optimize for performance:
-
-```typescript
-// ✓ Good: Define variants outside component
-const buttonVariants = tv({
-  base: "px-4 py-2 rounded",
-  variants: {
-    variant: {
-      primary: "bg-blue-500 text-white",
-      secondary: "bg-gray-500 text-white",
-    },
-  },
-});
-
-const Button = ({ variant, className, ...props }) => {
-  return (
-    <button
-      className={buttonVariants({ variant, className })}
-      {...props}
-    />
-  );
-};
-
-// ✗ Bad: Define variants inside component (recreated on every render)
-const Button = ({ variant, className, ...props }) => {
-  const buttonVariants = tv({
-    base: "px-4 py-2 rounded",
-    variants: {
-      variant: {
-        primary: "bg-blue-500 text-white",
-        secondary: "bg-gray-500 text-white",
-      },
-    },
-  });
-
-  return (
-    <button
-      className={buttonVariants({ variant, className })}
-      {...props}
-    />
-  );
-};
-```
-
-## Performance Considerations
-
-### Bundle Size
-
-The library is optimized for minimal bundle impact:
-
-- Tree-shakeable exports for unused functionality
-- Minimal runtime dependencies
-- Efficient class processing algorithms
-
-### Runtime Performance
-
-- Lazy evaluation of variant resolution
-- Efficient class merging algorithms
-- Minimal memory footprint
-- Cached tailwind-merge instances for reuse
-
-## Migration Guide
-
-### From class-variance-authority (cva)
-
-Migrating from other variant libraries:
-
-```typescript
-// Before (cva)
-import { cva } from 'class-variance-authority';
-
-const button = cva('px-4 py-2 rounded', {
-  variants: {
-    variant: {
-      primary: 'bg-blue-500 text-white',
-      secondary: 'bg-gray-500 text-white',
-    },
-  },
-});
-
-// After (@codefast/tailwind-variants)
-import { tv } from '@codefast/tailwind-variants';
+import { tv, type VariantProps } from '@codefast/tailwind-variants';
 
 const button = tv({
   base: 'px-4 py-2 rounded',
   variants: {
-    variant: {
-      primary: 'bg-blue-500 text-white',
-      secondary: 'bg-gray-500 text-white',
-    },
+    variant: { primary: 'bg-blue-500 text-white', secondary: 'bg-gray-500 text-white' },
+    size: { sm: 'text-sm', lg: 'text-lg' },
   },
+});
+
+type ButtonProps = VariantProps<typeof button>;
+// { variant?: "primary" | "secondary"; size?: "sm" | "lg"; className?: string }
+```
+
+### Slots Type Safety
+
+Slot functions are fully typed. Accessing a non-existent slot produces a TypeScript error:
+
+```typescript
+const card = tv({
+  slots: { base: 'rounded-lg border', header: 'p-4', content: 'p-4' },
+  variants: {
+    variant: { elevated: { base: 'shadow-lg', header: 'bg-muted' } },
+  },
+});
+
+const styles = card({ variant: 'elevated' });
+styles.base(); // OK
+styles.header(); // OK
+styles.content(); // OK
+// styles.footer(); // TypeScript error -- slot does not exist
+```
+
+### Configuration Options
+
+```typescript
+const component = tv(
+  { base: 'px-4 py-2', variants: { size: { sm: 'px-2 py-1', lg: 'px-6 py-3' } } },
+  {
+    twMerge: true,       // Enable Tailwind class conflict resolution (default: true)
+    twMergeConfig: { ... }, // Custom tailwind-merge configuration
+  },
+);
+```
+
+Set `twMerge: false` to disable Tailwind-aware merging when you need to preserve duplicate utility classes.
+
+## Performance
+
+### Bundle Size
+
+- Tree-shakeable exports
+- Minimal runtime dependencies (`clsx` + `tailwind-merge`)
+- ~3KB minified + gzipped
+
+### Runtime Performance
+
+- Cached `tailwind-merge` instances for reuse
+- Efficient class merging algorithms
+- Lazy evaluation of variant resolution
+- Minimal memory footprint
+
+### Optimization Tip
+
+Always define variant configurations outside of component render functions:
+
+```typescript
+// Good -- created once
+const buttonVariants = tv({ base: 'px-4 py-2 rounded', variants: { /* ... */ } });
+
+function Button({ variant, className, ...props }) {
+  return <button className={buttonVariants({ variant, className })} {...props} />;
+}
+```
+
+## Migration Guide
+
+### From tailwind-variants
+
+Change the import path. No other changes needed:
+
+```diff
+- import { tv } from "tailwind-variants";
++ import { tv } from "@codefast/tailwind-variants";
+```
+
+### From class-variance-authority (CVA)
+
+```typescript
+// Before (CVA)
+import { cva } from 'class-variance-authority';
+const button = cva('px-4 py-2 rounded', {
+  variants: { variant: { primary: 'bg-blue-500 text-white' } },
+});
+
+// After
+import { tv } from '@codefast/tailwind-variants';
+const button = tv({
+  base: 'px-4 py-2 rounded',
+  variants: { variant: { primary: 'bg-blue-500 text-white' } },
 });
 ```
 
-### Key Differences
+**Key differences from CVA:**
 
-1. **API Structure**: Uses `base` property instead of first string parameter
-2. **Slots Support**: Native support for multi-part components
-3. **Extended Configuration**: Built-in support for configuration extension
-4. **Enhanced TypeScript**: Improved type inference and safety
-5. **Tailwind Merge**: Built-in conflict resolution
+1. Uses `base` property instead of first string parameter.
+2. Native slots and compound slots support.
+3. Built-in configuration extension via `extend`.
+4. Built-in Tailwind class conflict resolution.
+
+## Best Practices
+
+1. **Define variants outside components** -- Avoids recreating the configuration on every render.
+2. **Use `defaultVariants`** -- Ensures components always have a sensible default appearance.
+3. **Leverage slots for multi-part components** -- Keeps styling co-located and type-safe.
+4. **Use `extend` for component hierarchies** -- Create base configurations and extend them for specialized variants.
+5. **Use `cn` for one-off class overrides** -- The `className` prop on variant functions already uses Tailwind merge.
 
 ## Contributing
 
-We welcome all contributions! To get started with development:
+We welcome contributions! Please see the [contributing guide](../../README.md#contributing) in the root of this repository for detailed instructions.
 
-### Environment Setup
-
-1. Fork this repository
-2. Clone to your machine: `git clone <your-fork-url>`
-3. Install dependencies: `pnpm install`
-4. Create a new branch: `git checkout -b feature/feature-name`
-
-### Development Workflow
+For package-specific development:
 
 ```bash
-# Build all packages
-pnpm build:packages
-
-# Development mode for tailwind-variants
+# Development mode with watch
 pnpm dev --filter=@codefast/tailwind-variants
 
 # Run tests
@@ -968,38 +550,11 @@ pnpm test --filter=@codefast/tailwind-variants
 
 # Run tests with coverage
 pnpm test:coverage --filter=@codefast/tailwind-variants
-
-# Lint and format
-pnpm lint:fix
-pnpm format
 ```
-
-### Adding New Features
-
-1. Implement feature in `src/` directory
-2. Add comprehensive tests in `tests/` directory
-3. Update TypeScript types as needed
-4. Update documentation
-5. Submit a pull request
 
 ## License
 
 Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
-
-## Contact
-
-- npm: [@codefast/tailwind-variants](https://www.npmjs.com/package/@codefast/tailwind-variants)
-- GitHub: [codefastlabs/codefast](https://github.com/codefastlabs/codefast)
-- Issues: [GitHub Issues](https://github.com/codefastlabs/codefast/issues)
-- Documentation: [Component Docs](https://codefast.dev/docs/components)
-
-## Acknowledgments
-
-This library is built on top of excellent open-source projects:
-
-- **[clsx](https://github.com/lukeed/clsx)** - Utility for constructing className strings
-- **[tailwind-merge](https://github.com/dcastil/tailwind-merge)** - Utility for merging Tailwind CSS classes
-- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 
 ## Changelog
 
