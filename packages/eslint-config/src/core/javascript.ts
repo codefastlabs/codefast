@@ -190,7 +190,7 @@ const errorJavaScriptRules: Linter.RulesRecord = {
 
 export const baseJavaScriptRules: Linter.Config[] = [
   {
-    ignores: ['**/dist/**', '**/build/**', '**/node_modules/**', '**/coverage/**'],
+    ignores: ['**/dist/**', '**/build/**', '**/node_modules/**', '**/coverage/**', '**/.cursor/**', '**/.agent/**'],
     name: '@codefast/eslint-config/core/javascript/ignores',
   },
   {
