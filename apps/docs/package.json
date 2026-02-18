@@ -5,14 +5,14 @@
   "scripts": {
     "build": "vite build",
     "check": "prettier --write . && eslint --fix",
-    "check-types": "tsc --noEmit",
     "dev": "vite dev",
     "format": "prettier --write . ",
     "lint": "TIMING=1 eslint --max-warnings 0",
     "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix",
     "preview": "vite preview",
     "start": "node .output/server/index.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
