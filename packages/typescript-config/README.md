@@ -52,7 +52,7 @@ npm install --save-dev @codefast/typescript-config
 
 **Requirements:**
 
-- Node.js >= 20.0.0
+- Node.js >= 24.0.0 (LTS)
 - TypeScript >= 5.0.0
 
 ## Quick Start
@@ -245,7 +245,7 @@ Extends `base.json` with:
 | Technology | Minimum Version | Notes |
 | --- | --- | --- |
 | TypeScript | 5.0.0 | Required |
-| Node.js | 20.0.0 | Required |
+| Node.js | 24.0.0 | Required |
 | React | 18.0.0+ | When using `react.json` |
 | Next.js | 14.0.0+ | When using `next.json` |
 | Vite | 5.0.0+ | Works with bundler module resolution |

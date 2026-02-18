@@ -67,7 +67,7 @@ pnpm add @tanstack/react-start
 
 **Requirements:**
 
-- Node.js >= 20.0.0
+- Node.js >= 24.0.0 (LTS)
 - React >= 19.0.0
 - TypeScript >= 5.9.2 (recommended)
 

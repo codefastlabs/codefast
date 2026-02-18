@@ -62,7 +62,7 @@ pnpm add -D @types/react @types/react-dom
 
 **Requirements:**
 
-- Node.js >= 20.0.0
+- Node.js >= 24.0.0 (LTS)
 - React >= 19.0.0
 - TypeScript >= 5.9.2 (recommended)
 - Tailwind CSS 4.x (for styling)
