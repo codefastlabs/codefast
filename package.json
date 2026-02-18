@@ -6,15 +6,17 @@
     "bench": "turbo run bench",
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@codefast*/*...",
-    "check-types": "turbo run check-types",
     "clean": "turbo clean && pnpm clean:cache && pnpm clean:modules",
     "clean:cache": "pnpm store prune",
     "clean:modules": "pnpm -r exec rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml",
+    "deps:check": "pnpm outdated",
     "deps:install": "pnpm install && pnpm build:packages",
     "deps:reinstall": "pnpm clean && pnpm install && pnpm build:packages",
+    "deps:update": "pnpm up --latest --recursive && pnpm deps:install",
     "deps:upgrade": "pnpm up --latest --recursive --interactive && pnpm deps:install",
     "dev": "turbo run dev",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "generate:exports": "scripts/generate-exports.py",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
@@ -27,7 +29,8 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
-    "test:watch": "turbo run test:watch"
+    "test:watch": "turbo run test:watch",
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",

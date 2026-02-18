@@ -6,7 +6,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", ".output/**"]
     },
-    "check-types": {
+    "typecheck": {
       "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
     },
     "clean": {

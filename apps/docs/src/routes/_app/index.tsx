@@ -118,8 +118,7 @@ const FEATURES = [
   {
     icon: ComponentIcon,
     title: '62 Components',
-    description:
-      'A comprehensive set of accessible, composable UI component modules — plus 6 hooks and 4 primitives.',
+    description: 'A comprehensive set of accessible, composable UI component modules — plus 6 hooks and 4 primitives.',
   },
   {
     icon: PaletteIcon,

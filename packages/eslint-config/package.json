@@ -168,7 +168,6 @@
   ],
   "scripts": {
     "build": "rslib build",
-    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "dev": "rslib build --watch",
     "lint": "TIMING=1 eslint --max-warnings 0",
@@ -176,7 +175,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eslint/css": "^0.14.1",
