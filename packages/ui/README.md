@@ -13,6 +13,7 @@ Core UI components library built with React, Tailwind CSS, and Radix UI for crea
 - [Overview](#overview)
 - [Installation](#installation)
 - [Styling Integration](#styling-integration)
+  - [SSR with Nitro (TanStack Start)](#ssr-with-nitro-tanstack-start)
 - [Quick Start](#quick-start)
 - [Components](#components)
   - [Layout](#layout)
@@ -150,7 +151,7 @@ import '@codefast/ui/css/style.css';
 @import '@codefast/ui/css/preset.css';
 ```
 
-**TanStack Start / Vinxi:**
+**TanStack Start:**
 
 ```css
 /* src/styles.css */
@@ -159,14 +160,36 @@ import '@codefast/ui/css/style.css';
 @import '@codefast/ui/css/preset.css';
 ```
 
+#### SSR with Nitro (TanStack Start)
+
+When deploying with [Nitro](https://v3.nitro.build/) (Vercel, self-host Node.js, etc.), add this to your `vite.config.ts` to avoid a Rolldown CJS→ESM interop error with `tslib` (used by Radix UI):
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      // Workaround: Rolldown mishandles tslib CJS; force ESM to avoid SSR 500.
+      tslib: 'tslib/tslib.es6.mjs',
+    },
+  },
+  // ... other config
+});
+```
+
+**Symptom without this:** `TypeError: Cannot destructure property '__extends' of '__toESM(...).default' as it is undefined` when serving SSR pages.
+
 ### Troubleshooting
 
-| Issue                    | Solution                                                                 |
-| ------------------------ | ------------------------------------------------------------------------ |
-| Components look unstyled | Ensure CSS imports run before any component renders (entry point first). |
-| Duplicate Tailwind CSS   | Use Option 1 (theme + preset only), **not** `style.css`.                 |
-| Dark mode not working    | Add `class="dark"` to `<html>` when dark mode is active.                 |
-| Build: CSS not found     | Verify path: `@codefast/ui/css/[theme].css` (e.g. `slate.css`).          |
+| Issue                                              | Solution                                                                                                                          |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Components look unstyled                           | Ensure CSS imports run before any component renders (entry point first).                                                          |
+| Duplicate Tailwind CSS                             | Use Option 1 (theme + preset only), **not** `style.css`.                                                                          |
+| Dark mode not working                              | Add `class="dark"` to `<html>` when dark mode is active.                                                                          |
+| Build: CSS not found                               | Verify path: `@codefast/ui/css/[theme].css` (e.g. `slate.css`).                                                                   |
+| SSR 500: `Cannot destructure property '__extends'` | Add `resolve.alias: { tslib: 'tslib/tslib.es6.mjs' }` in `vite.config.ts` (see [SSR with Nitro](#ssr-with-nitro-tanstack-start)). |
 
 ### Customizing Theme
 
