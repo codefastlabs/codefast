@@ -24,8 +24,9 @@ import { libraryPreset } from '@codefast/eslint-config/presets/library';
  * - With new Array(): 489K ops/s (+176% improvement)
  */
 export default defineConfig([
+  // Source files: library preset + performance overrides
   {
-    name: '@codefast/tailwind-variants',
+    name: '@codefast/tailwind-variants/src',
     extends: [libraryPreset],
     files: ['src/**/*.ts'],
     rules: {
@@ -38,5 +39,11 @@ export default defineConfig([
       // Runtime safety checks may appear "unnecessary" to TypeScript but are needed
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
+  },
+  // Test files: library preset (includes Jest rules from base)
+  {
+    name: '@codefast/tailwind-variants/tests',
+    extends: [libraryPreset],
+    files: ['tests/**/*.ts'],
   },
 ]);

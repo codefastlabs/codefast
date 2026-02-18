@@ -128,7 +128,7 @@ export default function App() {
 
 #### Prerequisites
 
-- **Node.js** >= 20.0.0
+- **Node.js** >= 24.0.0 (LTS)
 - **pnpm** 10.25.0
 
 #### Setup

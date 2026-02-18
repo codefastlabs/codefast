@@ -36,7 +36,7 @@ This library is a **high-performance, drop-in replacement** for [tailwind-varian
 
 ### Performance Comparison
 
-Benchmarked on Apple M-series chip. Results show operations per second (higher is better):
+Benchmarked on Apple M-series chip. Results show operations per second (higher is better). Run `pnpm --filter @codefast/benchmark-tailwind-variants bench` to get results on your machine.
 
 | Benchmark                   | @codefast/tailwind-variants | tailwind-variants | class-variance-authority |     Speedup     |
 | --------------------------- | :-------------------------: | :---------------: | :----------------------: | :-------------: |
@@ -47,7 +47,7 @@ Benchmarked on Apple M-series chip. Results show operations per second (higher i
 | **Compound Slots**          |         31.3K ops/s         |    6.9K ops/s     |            -             | **4.5x faster** |
 | **Extreme (240+ variants)** |         10.6K ops/s         |    2.6K ops/s     |            -             | **4.1x faster** |
 
-> **Note:** CVA does not support slots, compound slots, or extends -- it is only included in simple variant benchmarks.
+> **Note:** CVA does not support slots, compound slots, or extends -- it is only included in simple variant benchmarks. Benchmark results may vary by hardware and environment.
 
 ### Feature Comparison
 
@@ -63,7 +63,7 @@ Benchmarked on Apple M-series chip. Results show operations per second (higher i
 | Tailwind Merge     |          Built-in           |     Built-in      | Manual |
 | TypeScript         |            Full             |       Full        |  Full  |
 | **Performance**    |           Fastest           |      Slowest      | Medium |
-| Bundle Size        |            ~3KB             |       ~4KB        |  ~1KB  |
+| Bundle Size        |            ~5KB             |       ~4KB        |  ~1KB  |
 
 ### Migration from tailwind-variants
 
@@ -103,7 +103,7 @@ pnpm add tailwindcss
 
 **Requirements:**
 
-- Node.js >= 20.0.0
+- Node.js >= 24.0.0 (LTS)
 - TypeScript >= 5.9.2 (recommended)
 - Tailwind CSS >= 4.0.0 (optional)
 
@@ -470,7 +470,7 @@ Set `twMerge: false` to disable Tailwind-aware merging when you need to preserve
 
 - Tree-shakeable exports
 - Minimal runtime dependencies (`clsx` + `tailwind-merge`)
-- ~3KB minified + gzipped
+- ~5KB minified + gzipped
 
 ### Runtime Performance
 

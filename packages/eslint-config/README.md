@@ -60,7 +60,7 @@ pnpm add -D eslint
 
 **Requirements:**
 
-- Node.js >= 20.0.0
+- Node.js >= 24.0.0 (LTS)
 - ESLint >= 9.0.0
 - TypeScript >= 5.0.0 (for TypeScript projects)
 
