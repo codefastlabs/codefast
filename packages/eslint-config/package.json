@@ -184,7 +184,7 @@
     "@eslint/json": "^1.0.1",
     "@eslint/markdown": "^7.5.1",
     "@next/eslint-plugin-next": "^16.1.6",
-    "@stylistic/eslint-plugin": "^5.8.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
