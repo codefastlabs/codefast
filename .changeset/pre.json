@@ -8,5 +8,12 @@
     "@codefast/typescript-config": "0.3.10",
     "@codefast/ui": "0.3.10"
   },
-  "changesets": []
+  "changesets": [
+    "giant-shirts-rhyme",
+    "jolly-impalas-smoke",
+    "large-stars-bow",
+    "mighty-frogs-peel",
+    "smart-flowers-feel",
+    "yummy-drinks-laugh"
+  ]
 }
