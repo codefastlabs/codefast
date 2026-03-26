@@ -137,7 +137,7 @@
     "@types/node": "^25.5.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "@tanstack/react-start": "^1.0",
