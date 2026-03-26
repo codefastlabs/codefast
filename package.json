@@ -38,7 +38,7 @@
     "@changesets/cli": "^2.29.8",
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
-    "@commitlint/types": "^20.4.0",
+    "@commitlint/types": "^20.5.0",
     "@types/node": "^25.3.0",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
