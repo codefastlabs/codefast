@@ -16,15 +16,14 @@ import {
   LayoutDashboardIcon,
   MessageSquareIcon,
   MonitorIcon,
-  MoonIcon,
   MousePointerClickIcon,
   PackageIcon,
   PaletteIcon,
   SparklesIcon,
-  SunIcon,
   ZapIcon,
 } from "lucide-react";
 import { useState } from "react";
+import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/_app/")({
   component: HomePage,
@@ -34,19 +33,19 @@ export const Route = createFileRoute("/_app/")({
       {
         name: "description",
         content:
-          "A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.",
+          "Playground and docs for @codefast/ui: interactive components, theme and appearance tools, and install snippets. Radix UI, Tailwind CSS v4, 62 modules, TypeScript.",
       },
       { property: "og:title", content: "@codefast/ui — Modern React Component Library" },
       {
         property: "og:description",
         content:
-          "A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.",
+          "Playground and docs for @codefast/ui: interactive components, theme and appearance tools, and install snippets. Radix UI, Tailwind CSS v4, 62 modules, TypeScript.",
       },
       { name: "twitter:title", content: "@codefast/ui — Modern React Component Library" },
       {
         name: "twitter:description",
         content:
-          "A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.",
+          "Playground and docs for @codefast/ui: interactive components, theme and appearance tools, and install snippets. Radix UI, Tailwind CSS v4, 62 modules, TypeScript.",
       },
     ],
   }),
@@ -65,53 +64,82 @@ function CopyButton({ text }: { text: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="text-muted-foreground transition-colors hover:text-foreground"
+      className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       aria-label="Copy to clipboard"
     >
-      {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
+      {copied ? (
+        <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+      ) : (
+        <CopyIcon className="size-4" />
+      )}
     </button>
+  );
+}
+
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+  titleId,
+}: {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  titleId?: string;
+}): ReactNode {
+  return (
+    <div className="mx-auto mb-12 max-w-2xl text-center">
+      {eyebrow ? (
+        <p className="mb-3 text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h2
+        id={titleId}
+        className="mb-3 text-3xl font-bold tracking-tight text-foreground md:text-4xl"
+      >
+        {title}
+      </h2>
+      <p className="text-lg leading-relaxed text-pretty text-muted-foreground">{description}</p>
+    </div>
   );
 }
 
 const COMPONENT_CATEGORIES = [
   {
     icon: FormInputIcon,
-    title: "Form Controls",
-    description:
-      "Input, InputNumber, InputPassword, InputSearch, InputOTP, InputGroup, Textarea, Select, NativeSelect, Checkbox, CheckboxGroup, CheckboxCards, Radio, RadioGroup, RadioCards, Switch, Slider, Calendar, Label, Field, Form.",
+    title: "Form controls",
+    description: "Inputs, selects, validation, calendars, and form composition helpers.",
     count: 21,
   },
   {
     icon: LayoutDashboardIcon,
     title: "Layout",
-    description:
-      "Sidebar, NavigationMenu, Breadcrumb, Separator, Resizable, ScrollArea, AspectRatio, Collapsible.",
+    description: "Sidebars, navigation, scroll areas, split panes, and structure primitives.",
     count: 8,
   },
   {
     icon: MousePointerClickIcon,
     title: "Actions",
-    description: "Button, ButtonGroup, Toggle, ToggleGroup with multiple variants and sizes.",
+    description: "Buttons, groups, and toggles with multiple variants and sizes.",
     count: 4,
   },
   {
     icon: MessageSquareIcon,
     title: "Overlays",
-    description:
-      "Dialog, AlertDialog, Drawer, Sheet, Popover, Tooltip, DropdownMenu, ContextMenu, HoverCard, Menubar, Command.",
+    description: "Dialogs, sheets, menus, popovers, tooltips, and command palettes.",
     count: 11,
   },
   {
     icon: MonitorIcon,
-    title: "Data Display",
-    description:
-      "Table, Card, Badge, Avatar, Tabs, Accordion, Chart, Carousel, Pagination, Item, Kbd.",
+    title: "Data display",
+    description: "Tables, cards, charts, tabs, lists, and media-oriented components.",
     count: 11,
   },
   {
     icon: SparklesIcon,
     title: "Feedback",
-    description: "Alert, Progress, ProgressCircle, Spinner, Skeleton, Sonner (toast), Empty.",
+    description: "Alerts, progress, loading states, toasts, and empty states.",
     count: 7,
   },
 ];
@@ -157,142 +185,226 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b px-6 py-24 md:py-32">
-        <div className="absolute inset-0 bg-primary/5" />
-        <div className="absolute top-0 left-1/2 h-125 w-200 -translate-x-1/2 rounded-full bg-linear-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-3xl" />
+      <section className="relative overflow-hidden border-b border-border/80">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.45)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.45)_1px,transparent_1px)] mask-[radial-gradient(ellipse_85%_70%_at_50%_-5%,#000_45%,transparent_100%)] bg-size-[3.5rem_3.5rem] dark:bg-[linear-gradient(to_right,hsl(var(--border)/0.25)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.25)_1px,transparent_1px)]"
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0 bg-linear-to-b from-primary/6 via-transparent to-transparent"
+          aria-hidden
+        />
+        <div
+          className="absolute top-0 left-1/2 h-112 w-[min(100%,56rem)] -translate-x-1/2 rounded-[100%] bg-linear-to-br from-primary/15 via-violet-500/10 to-transparent blur-3xl dark:from-primary/20"
+          aria-hidden
+        />
 
-        <div className="relative mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-6 gap-1.5 px-3 py-1 text-sm">
-            <PackageIcon className="size-3.5" />
-            v0.3.9 — Open Source
+        <div className="relative mx-auto max-w-4xl px-4 pt-20 pb-16 text-center sm:px-6 md:pt-28 md:pb-24">
+          <Badge
+            variant="secondary"
+            className="mb-6 gap-1.5 border border-border/60 bg-background/80 px-3 py-1.5 text-sm shadow-sm backdrop-blur-sm"
+          >
+            <PackageIcon className="size-3.5" aria-hidden />
+            v0.3.9 — Open source
           </Badge>
 
           <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-foreground md:text-7xl">
-            <span className="bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
+            <span className="bg-linear-to-r from-primary via-violet-600 to-fuchsia-600 bg-clip-text text-transparent dark:from-primary dark:via-violet-400 dark:to-fuchsia-400">
               @codefast/ui
             </span>
           </h1>
 
-          <p className="mx-auto mb-4 max-w-2xl text-xl leading-relaxed text-muted-foreground md:text-2xl">
-            A modern, accessible, and beautifully crafted React component library built with Radix
-            UI and Tailwind CSS.
+          <p className="mx-auto mb-4 max-w-2xl text-xl leading-relaxed text-pretty text-muted-foreground md:text-2xl">
+            This site is the living playground for{" "}
+            <span className="font-medium text-foreground">@codefast/ui</span>—browse interactive
+            components, preview light and dark mode, and copy install snippets for your own app.
           </p>
 
-          <p className="mx-auto mb-10 max-w-xl text-base text-muted-foreground/80">
-            62 component modules. 6 custom hooks. 22 color themes. Dark mode. Full TypeScript
-            support. Designed for the modern web.
+          <p className="mx-auto mb-10 max-w-xl text-base text-pretty text-muted-foreground/90">
+            Radix primitives, Tailwind CSS v4, tree-shakeable exports, and full TypeScript. Package
+            docs focus on what you can ship, not noise.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" className="gap-2">
+            <Button asChild size="lg" className="h-12 min-w-44 gap-2 shadow-md">
               <Link to="/sink">
-                Explore Components
-                <ArrowRightIcon className="size-4" />
+                Explore components
+                <ArrowRightIcon className="size-4" aria-hidden />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="gap-2">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="h-12 min-w-44 gap-2 border-border/80 bg-background/50 backdrop-blur-sm"
+            >
               <Link to="/theme">
-                <PaletteIcon className="size-4" />
-                Browse Themes
+                <PaletteIcon className="size-4" aria-hidden />
+                Appearance
               </Link>
             </Button>
           </div>
+
+          <dl className="mx-auto mt-14 grid max-w-xl grid-cols-3 gap-2 rounded-2xl border border-border/60 bg-card/40 px-4 py-5 text-center shadow-sm backdrop-blur-sm md:gap-4 md:px-6">
+            <div className="border-r border-border/50 pr-2 md:pr-4">
+              <dt className="sr-only">Component modules</dt>
+              <dd className="text-2xl font-bold text-foreground tabular-nums md:text-3xl">62</dd>
+              <dt className="mt-1 text-[0.65rem] font-medium text-muted-foreground uppercase md:text-xs">
+                Components
+              </dt>
+            </div>
+            <div className="border-r border-border/50 pr-2 md:pr-4">
+              <dt className="sr-only">Color themes</dt>
+              <dd className="text-2xl font-bold text-foreground tabular-nums md:text-3xl">22</dd>
+              <dt className="mt-1 text-[0.65rem] font-medium text-muted-foreground uppercase md:text-xs">
+                Themes
+              </dt>
+            </div>
+            <div>
+              <dt className="sr-only">Custom hooks</dt>
+              <dd className="text-2xl font-bold text-foreground tabular-nums md:text-3xl">6</dd>
+              <dt className="mt-1 text-[0.65rem] font-medium text-muted-foreground uppercase md:text-xs">
+                Hooks
+              </dt>
+            </div>
+          </dl>
         </div>
       </section>
 
       {/* Install */}
-      <section className="mx-auto max-w-4xl px-6 py-16 md:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-foreground">
-            Get Started in Seconds
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Install the package and start building beautiful interfaces.
-          </p>
-        </div>
+      <section
+        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        aria-labelledby="install-heading"
+      >
+        <SectionHeading
+          eyebrow="Quick start"
+          title="Use the package in your project"
+          description="Three steps: add the dependency, import the CSS preset and a palette, then import components by path."
+          titleId="install-heading"
+        />
 
-        <div className="mx-auto max-w-xl space-y-4">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">1. Install the package</p>
-            <div className="flex items-center justify-between rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
-              <code>pnpm add @codefast/ui</code>
-              <CopyButton text="pnpm add @codefast/ui" />
-            </div>
-          </div>
+        <div className="mx-auto max-w-2xl space-y-5">
+          <Card className="overflow-hidden border-border/80 shadow-sm transition-shadow hover:shadow-md">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                1
+              </span>
+              <div>
+                <CardTitle className="text-lg">Install the package</CardTitle>
+                <CardDescription>Works with pnpm, npm, or yarn.</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm">
+                <code className="min-w-0 truncate text-foreground">pnpm add @codefast/ui</code>
+                <CopyButton text="pnpm add @codefast/ui" />
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">2. Import the styles</p>
-            <div className="space-y-1 rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
-              <div className="text-muted-foreground">{"/* globals.css */"}</div>
+          <Card className="overflow-hidden border-border/80 shadow-sm transition-shadow hover:shadow-md">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                2
+              </span>
               <div>
-                <span className="text-blue-600 dark:text-blue-400">@import</span>{" "}
-                <span className="text-green-600 dark:text-green-400">
-                  &apos;@codefast/ui/css/preset.css&apos;
-                </span>
-                ;
+                <CardTitle className="text-lg">Import the styles</CardTitle>
+                <CardDescription>Add preset and a color theme in your global CSS.</CardDescription>
               </div>
-              <div>
-                <span className="text-blue-600 dark:text-blue-400">@import</span>{" "}
-                <span className="text-green-600 dark:text-green-400">
-                  &apos;@codefast/ui/css/neutral.css&apos;
-                </span>
-                ;
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-1 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm leading-relaxed">
+                <div className="text-muted-foreground">{"/* globals.css */"}</div>
+                <div>
+                  <span className="text-blue-600 dark:text-blue-400">@import</span>{" "}
+                  <span className="text-green-600 dark:text-green-400">
+                    &apos;@codefast/ui/css/preset.css&apos;
+                  </span>
+                  ;
+                </div>
+                <div>
+                  <span className="text-blue-600 dark:text-blue-400">@import</span>{" "}
+                  <span className="text-green-600 dark:text-green-400">
+                    &apos;@codefast/ui/css/neutral.css&apos;
+                  </span>
+                  ;
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">3. Use the components</p>
-            <div className="space-y-1 rounded-lg border bg-muted/50 px-4 py-3 font-mono text-sm">
+          <Card className="overflow-hidden border-border/80 shadow-sm transition-shadow hover:shadow-md">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                3
+              </span>
               <div>
-                <span className="text-blue-600 dark:text-blue-400">import</span>
-                {" { Button } "}
-                <span className="text-blue-600 dark:text-blue-400">from</span>{" "}
-                <span className="text-green-600 dark:text-green-400">
-                  &apos;@codefast/ui/button&apos;
-                </span>
-                ;
+                <CardTitle className="text-lg">Use the components</CardTitle>
+                <CardDescription>Tree-shakeable entry points per component.</CardDescription>
               </div>
-              <div className="mt-2">
-                <span className="text-purple-600 dark:text-purple-400">{"<"}</span>
-                <span className="text-blue-600 dark:text-blue-400">Button</span>
-                <span className="text-purple-600 dark:text-purple-400">{">"}</span>
-                Click me
-                <span className="text-purple-600 dark:text-purple-400">{"</"}</span>
-                <span className="text-blue-600 dark:text-blue-400">Button</span>
-                <span className="text-purple-600 dark:text-purple-400">{">"}</span>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-1 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm leading-relaxed">
+                <div>
+                  <span className="text-blue-600 dark:text-blue-400">import</span>
+                  {" { Button } "}
+                  <span className="text-blue-600 dark:text-blue-400">from</span>{" "}
+                  <span className="text-green-600 dark:text-green-400">
+                    &apos;@codefast/ui/button&apos;
+                  </span>
+                  ;
+                </div>
+                <div className="mt-2">
+                  <span className="text-purple-600 dark:text-purple-400">{"<"}</span>
+                  <span className="text-blue-600 dark:text-blue-400">Button</span>
+                  <span className="text-purple-600 dark:text-purple-400">{">"}</span>
+                  Click me
+                  <span className="text-purple-600 dark:text-purple-400">{"</"}</span>
+                  <span className="text-blue-600 dark:text-blue-400">Button</span>
+                  <span className="text-purple-600 dark:text-purple-400">{">"}</span>
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      <Separator />
+      <Separator className="opacity-60" />
 
       {/* Features */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-foreground">
-            Why @codefast/ui?
+      <section
+        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        aria-labelledby="features-heading"
+      >
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <p className="mb-3 text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+            Library
+          </p>
+          <h2
+            className="mb-3 text-3xl font-bold tracking-tight text-foreground md:text-4xl"
+            id="features-heading"
+          >
+            What @codefast/ui includes
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Everything you need to build polished, production-ready applications.
+          <p className="text-lg leading-relaxed text-pretty text-muted-foreground">
+            Opinionated defaults on top of open primitives—suitable for internal tools and
+            customer-facing products alike.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
             <Card
               key={feature.title}
-              className="border bg-card/50 transition-colors hover:border-blue-500/30"
+              className="group border-border/80 bg-card/60 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md"
             >
-              <CardHeader>
-                <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                  <feature.icon className="size-5 text-primary" />
+              <CardHeader className="pb-2">
+                <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15 transition-colors group-hover:bg-primary/15">
+                  <feature.icon className="size-5 text-primary" aria-hidden />
                 </div>
                 <CardTitle className="text-lg">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <CardDescription className="text-sm leading-relaxed">
                   {feature.description}
                 </CardDescription>
@@ -302,34 +414,38 @@ function HomePage() {
         </div>
       </section>
 
-      <Separator />
+      <Separator className="opacity-60" />
 
       {/* Component Categories */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-foreground">
-            Component Library
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            A rich set of components organized into intuitive categories.
-          </p>
-        </div>
+      <section
+        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        aria-labelledby="library-heading"
+      >
+        <SectionHeading
+          eyebrow="Components"
+          title="Browse by category"
+          description="Demos are grouped by role on the Components page. Start from a category or jump straight in—every module has a live example."
+          titleId="library-heading"
+        />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {COMPONENT_CATEGORIES.map((category) => (
             <Card
               key={category.title}
-              className="group cursor-default border bg-card/50 transition-all hover:border-purple-500/30 hover:shadow-md"
+              className="group border-border/80 bg-card/50 transition-all duration-200 hover:border-violet-500/30 hover:shadow-md dark:hover:border-violet-400/25"
             >
               <CardContent className="flex items-start gap-4 p-5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 transition-colors group-hover:bg-purple-500/20">
-                  <category.icon className="size-5 text-purple-600 dark:text-purple-400" />
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 transition-colors group-hover:bg-violet-500/18">
+                  <category.icon
+                    className="size-5 text-violet-600 dark:text-violet-400"
+                    aria-hidden
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="mb-1 flex items-center gap-2">
+                  <div className="mb-1.5 flex flex-wrap items-center gap-2">
                     <h3 className="text-sm font-semibold text-foreground">{category.title}</h3>
-                    <Badge variant="secondary" className="text-xs">
-                      {category.count}
+                    <Badge variant="secondary" className="text-xs font-normal">
+                      {category.count} modules
                     </Badge>
                   </div>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -341,113 +457,64 @@ function HomePage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center">
-          <Button asChild variant="outline" size="lg" className="gap-2">
+        <div className="mt-12 text-center">
+          <Button asChild variant="outline" size="lg" className="h-12 gap-2">
             <Link to="/sink">
-              <CodeIcon className="size-4" />
-              View All Components
+              <CodeIcon className="size-4" aria-hidden />
+              Open components
             </Link>
           </Button>
         </div>
       </section>
 
-      <Separator />
+      <Separator className="opacity-60" />
 
-      {/* Theme Showcase */}
-      <section className="mx-auto max-w-4xl px-6 py-16 md:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-foreground">
-            Theming Made Simple
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            22 built-in color themes with light and dark mode. Switch themes with a single CSS
-            import.
-          </p>
-        </div>
+      {/* Theme CTA */}
+      <section
+        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        aria-labelledby="themes-heading"
+      >
+        <SectionHeading
+          eyebrow="Appearance"
+          title="Light, dark, and accent palettes"
+          description="Use this site’s theme page to switch color mode. For brand colors, import one of 22 palette CSS files from the package—the components section includes a theme picker wired to those imports."
+          titleId="themes-heading"
+        />
 
-        <div className="flex flex-wrap justify-center gap-2">
-          {[
-            { name: "Neutral", color: "bg-neutral-500" },
-            { name: "Slate", color: "bg-slate-500" },
-            { name: "Zinc", color: "bg-zinc-500" },
-            { name: "Stone", color: "bg-stone-500" },
-            { name: "Gray", color: "bg-gray-500" },
-            { name: "Red", color: "bg-red-500" },
-            { name: "Orange", color: "bg-orange-500" },
-            { name: "Amber", color: "bg-amber-500" },
-            { name: "Yellow", color: "bg-yellow-500" },
-            { name: "Lime", color: "bg-lime-500" },
-            { name: "Green", color: "bg-green-500" },
-            { name: "Emerald", color: "bg-emerald-500" },
-            { name: "Teal", color: "bg-teal-500" },
-            { name: "Cyan", color: "bg-cyan-500" },
-            { name: "Sky", color: "bg-sky-500" },
-            { name: "Blue", color: "bg-blue-500" },
-            { name: "Indigo", color: "bg-indigo-500" },
-            { name: "Violet", color: "bg-violet-500" },
-            { name: "Purple", color: "bg-purple-500" },
-            { name: "Fuchsia", color: "bg-fuchsia-500" },
-            { name: "Pink", color: "bg-pink-500" },
-            { name: "Rose", color: "bg-rose-500" },
-          ].map((theme) => (
-            <div
-              key={theme.name}
-              className="flex items-center gap-2 rounded-full border bg-muted/50 px-3 py-1.5 text-sm"
-            >
-              <span className={`size-3 rounded-full ${theme.color}`} />
-              <span className="text-muted-foreground">{theme.name}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 flex items-center justify-center gap-6">
-          <div className="flex items-center gap-2">
-            <SunIcon className="size-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Light</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MoonIcon className="size-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Dark</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MonitorIcon className="size-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">System</span>
-          </div>
-        </div>
-
-        <div className="mt-8 text-center">
-          <Button asChild variant="outline" size="lg" className="gap-2">
+        <div className="text-center">
+          <Button asChild variant="outline" size="lg" className="h-12 gap-2">
             <Link to="/theme">
-              <PaletteIcon className="size-4" />
-              Explore Themes
+              <PaletteIcon className="size-4" aria-hidden />
+              Theme &amp; appearance
             </Link>
           </Button>
         </div>
       </section>
 
-      <Separator />
+      <Separator className="opacity-60" />
 
       {/* Tech Stack */}
-      <section className="mx-auto max-w-4xl px-6 py-16 md:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-foreground">
-            Built On Modern Foundations
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Standing on the shoulders of best-in-class libraries.
-          </p>
-        </div>
+      <section
+        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        aria-labelledby="stack-heading"
+      >
+        <SectionHeading
+          eyebrow="Stack"
+          title="Built on familiar tools"
+          description="React, Radix, Tailwind, and TypeScript—no bespoke runtime beyond what you already adopt."
+          titleId="stack-heading"
+        />
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {[
-            { name: "React 19", description: "UI Framework" },
+            { name: "React 19", description: "UI framework" },
             { name: "Radix UI", description: "Primitives" },
             { name: "Tailwind v4", description: "Styling" },
-            { name: "TypeScript", description: "Type Safety" },
+            { name: "TypeScript", description: "Type safety" },
           ].map((tech) => (
             <div
               key={tech.name}
-              className="flex flex-col items-center rounded-xl border bg-muted/30 p-6 text-center transition-colors hover:bg-muted/50"
+              className="flex flex-col items-center rounded-2xl border border-border/80 bg-muted/25 px-4 py-6 text-center transition-colors hover:bg-muted/45 md:py-8"
             >
               <span className="mb-1 text-sm font-semibold text-foreground">{tech.name}</span>
               <span className="text-xs text-muted-foreground">{tech.description}</span>
@@ -457,41 +524,47 @@ function HomePage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="border-t px-6 py-16 md:py-20">
+      <section className="border-t border-border/80 bg-linear-to-b from-muted/30 to-background px-4 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-3 text-2xl font-bold tracking-tight text-foreground">
-            Ready to Build?
+          <h2 className="mb-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            Next step
           </h2>
-          <p className="mb-8 text-muted-foreground">
-            Explore the component library, pick a theme, and start crafting your next project.
+          <p className="mb-10 text-pretty text-muted-foreground">
+            Browse components for interactive examples, or adjust appearance on the theme page
+            before you wire palettes into your codebase.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" className="gap-2">
+            <Button asChild size="lg" className="h-12 min-w-48 gap-2 shadow-md">
               <Link to="/sink">
-                <CodeIcon className="size-4" />
-                Component Showcase
+                <CodeIcon className="size-4" aria-hidden />
+                All components
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="lg" className="gap-2">
+            <Button
+              asChild
+              variant="ghost"
+              size="lg"
+              className="h-12 gap-2 text-muted-foreground hover:text-foreground"
+            >
               <a
                 href="https://github.com/codefastlabs/codefast"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 GitHub
-                <ArrowRightIcon className="size-4" />
+                <ArrowRightIcon className="size-4" aria-hidden />
               </a>
             </Button>
           </div>
 
-          <p className="mt-12 text-sm text-muted-foreground/60">
+          <p className="mt-14 text-sm text-muted-foreground/70">
             Made with care by{" "}
             <a
               href="https://github.com/codefastlabs"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className="font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               codefastlabs
             </a>
