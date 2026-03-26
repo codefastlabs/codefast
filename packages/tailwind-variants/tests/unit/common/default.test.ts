@@ -119,7 +119,7 @@ describe("Tailwind Variants (TV) - Default (Common)", () => {
       base: "text-3xl text-xl font-bold text-blue-200 text-blue-400",
     });
 
-    const expectedResult = ["font-bold", "text-xl", "text-blue-200"];
+    const expectedResult = ["font-bold", "text-blue-400", "text-xl"];
 
     expect(h1()).toHaveClassName(expectedResult);
   });
