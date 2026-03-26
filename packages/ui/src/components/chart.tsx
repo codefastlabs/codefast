@@ -3,6 +3,7 @@
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { TooltipContentProps, TooltipProps } from "recharts";
 
 import { cn } from "@codefast/tailwind-variants";
 import { createContextScope } from "@radix-ui/react-context";
@@ -124,9 +125,7 @@ function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
  * Component: ChartTooltip
  * -------------------------------------------------------------------------- */
 
-type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = ComponentProps<
-  typeof RechartsPrimitive.Tooltip<TValue, TName>
->;
+type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName>;
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
@@ -138,7 +137,7 @@ const CHART_TOOLTIP_CONTENT_NAME = "ChartTooltipContent";
 
 type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> = Omit<
   MakeOptional<
-    ExtractProps<ComponentProps<typeof RechartsPrimitive.Tooltip<TValue, TName>>["content"]>,
+    TooltipContentProps<TValue, TName>,
     "accessibilityLayer" | "active" | "activeIndex" | "coordinate" | "payload"
   >,
   "payload"
