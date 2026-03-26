@@ -3,7 +3,6 @@
   "tag": "canary",
   "initialVersions": {
     "@codefast/benchmark-tailwind-variants": "0.0.1",
-    "@codefast/eslint-config": "0.3.10",
     "@codefast/tailwind-variants": "0.3.10",
     "@codefast/theme": "0.3.10",
     "@codefast/typescript-config": "0.3.10",
