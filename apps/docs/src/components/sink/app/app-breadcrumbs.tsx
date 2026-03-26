@@ -17,7 +17,7 @@ export function AppBreadcrumbs() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbPage>Kitchen Sink</BreadcrumbPage>
+            <BreadcrumbPage>Components</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -29,7 +29,7 @@ export function AppBreadcrumbs() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to="/sink">Kitchen Sink</Link>
+            <Link to="/sink">Components</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator className="hidden sm:flex" />
