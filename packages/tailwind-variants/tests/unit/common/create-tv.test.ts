@@ -15,6 +15,6 @@ describe("createTV", () => {
       { twMerge: true },
     );
 
-    expect(h1()).toHaveClassName("font-bold text-xl text-blue-200");
+    expect(h1()).toHaveClassName("font-bold text-blue-400 text-xl");
   });
 });

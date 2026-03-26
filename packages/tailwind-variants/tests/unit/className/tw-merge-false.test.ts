@@ -11,7 +11,7 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    expect(button()).toBe("px-4 px-2 py-2 py-4 bg-blue-500 bg-red-500");
+    expect(button()).toBe("bg-blue-500 bg-red-500 px-2 px-4 py-2 py-4");
   });
 
   test("should not resolve conflicts in variants when twMerge is false", () => {
@@ -34,9 +34,9 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    expect(button({ size: "sm" })).toBe("font-medium text-sm text-xs px-2 px-3");
+    expect(button({ size: "sm" })).toBe("font-medium px-2 px-3 text-sm text-xs");
     expect(button({ color: "primary", size: "md" })).toBe(
-      "font-medium bg-blue-500 bg-blue-600 text-white text-gray-100 text-base text-md px-4 px-5",
+      "font-medium bg-blue-500 bg-blue-600 text-gray-100 text-white text-md px-4 px-5 text-base",
     );
   });
 
@@ -90,7 +90,7 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
 
     expect(slots.base()).toBe("rounded-lg rounded-xl p-4 p-6");
     expect(slots.header()).toBe("text-lg text-xl font-bold font-semibold");
-    expect(slots.body()).toBe("text-gray-600 text-gray-700 mt-2 mt-4");
+    expect(slots.body()).toBe("mt-2 mt-4 text-gray-600 text-gray-700");
   });
 
   test("should work with non-tailwind classes when twMerge is false", () => {
