@@ -125,7 +125,10 @@ function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
  * Component: ChartTooltip
  * -------------------------------------------------------------------------- */
 
-type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName>;
+type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = TooltipProps<
+  TValue,
+  TName
+>;
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
