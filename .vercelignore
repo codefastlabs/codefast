@@ -1,65 +1,73 @@
 #-------------------------------------------------------------------------------
+# Vercel upload — pnpm workspaces + Turborepo. App: apps/docs (Vite, TanStack
+# Start, nitro/vite, @content-collections/vite). Packages: Rslib → dist/.
+# Do not ignore .git (Turbo + install hooks need a real repository on the builder).
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
 # Dependencies and package managers
 #-------------------------------------------------------------------------------
 
-# Node dependencies
 node_modules
 .pnpm-store
-.yarn
 
 #-------------------------------------------------------------------------------
-# Development and environment
+# Environment
 #-------------------------------------------------------------------------------
 
-# Environment variables (except examples)
-.env*
+.env
+.env.*
+.env.*.local
+*.local
 !.env.example
 
-# Build artifacts
-.next
-build
+#-------------------------------------------------------------------------------
+# Build outputs and tool caches (this stack only)
+#-------------------------------------------------------------------------------
+
 dist
-.git
-.github
+.swc
+.output
+.tanstack
+.content-collections
+vite.config.*.timestamp-*
+
+#-------------------------------------------------------------------------------
+# Monorepo tooling
+#-------------------------------------------------------------------------------
+
 .turbo
 .changeset
-.eslintcache
-
-# Debug logs
-npm-debug.log*
-yarn-debug.log*
 
 #-------------------------------------------------------------------------------
 # Testing
 #-------------------------------------------------------------------------------
 
-# Test coverage reports and config snapshots
 coverage
-*.test.*
-*.e2e.*
 
 #-------------------------------------------------------------------------------
-# Editor and IDE configuration
+# Logs and debug
 #-------------------------------------------------------------------------------
 
-# IDE project files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+#-------------------------------------------------------------------------------
+# Editor, OS, local scratch
+#-------------------------------------------------------------------------------
+
 .idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
-#-------------------------------------------------------------------------------
-# Operating system files
-#-------------------------------------------------------------------------------
-
-# System metadata files
 .DS_Store
 Thumbs.db
+*.pem
+count.txt
+todos.json
+.exports-analysis
 
 #-------------------------------------------------------------------------------
-# Deployment
+# Local Vercel CLI
 #-------------------------------------------------------------------------------
 
-# Vercel deployment configuration
 .vercel

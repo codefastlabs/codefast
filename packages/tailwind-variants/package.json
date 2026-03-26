@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.20.1",
+    "@rslib/core": "^0.19.1",
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30.0.0",
