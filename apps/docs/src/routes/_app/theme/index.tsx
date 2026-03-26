@@ -1,11 +1,18 @@
-import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
-import { Badge } from '@codefast/ui/badge';
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Separator } from '@codefast/ui/separator';
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { CheckCircle2Icon, InfoIcon, LaptopIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
-import { themes, useTheme } from '@codefast/theme';
+import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
+import { Badge } from "@codefast/ui/badge";
+import { Button } from "@codefast/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
+import { Separator } from "@codefast/ui/separator";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  CheckCircle2Icon,
+  InfoIcon,
+  LaptopIcon,
+  MoonIcon,
+  PaletteIcon,
+  SunIcon,
+} from "lucide-react";
+import { themes, useTheme } from "@codefast/theme";
 
 export const Route = createFileRoute("/_app/theme/")({
   component: ThemePage,
