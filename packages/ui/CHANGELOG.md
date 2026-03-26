@@ -1,5 +1,24 @@
 # @codefast/ui
 
+## 0.3.11-canary.0
+
+### Patch Changes
+
+- [`bec9cfa`](https://github.com/codefastlabs/codefast/commit/bec9cfab879d59c877db130eb2c2522b1453bc8f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(theme): reorganize imports for improved readability
+
+- [`135c6be`](https://github.com/codefastlabs/codefast/commit/135c6bed9d1bc1e96bad3173adab1bf32d74322f) Thanks [@thevuong](https://github.com/thevuong)! - chore: update linting and formatting scripts in package.json
+
+- [`610cf7a`](https://github.com/codefastlabs/codefast/commit/610cf7a7f9b6e5b37be21e7675ea363ef1020639) Thanks [@thevuong](https://github.com/thevuong)! - fix(hooks): handle missing `navigator.clipboard.writeText` gracefully
+
+- [`b1d23c2`](https://github.com/codefastlabs/codefast/commit/b1d23c27dffff6686193e3cbb3f848970e253493) Thanks [@thevuong](https://github.com/thevuong)! - refactor(chart): update ChartTooltip types for improved compatibility
+
+- [`3e90474`](https://github.com/codefastlabs/codefast/commit/3e90474fbbb9f8ac626c5949bfdbac2eaf1cb3e8) Thanks [@thevuong](https://github.com/thevuong)! - chore: update project configuration and dependencies
+
+- [`5c09d4c`](https://github.com/codefastlabs/codefast/commit/5c09d4ce2df564dc7ac6727b00cfa668164a1af4) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): rename `check-types` to `typecheck` and update usage
+
+- Updated dependencies [[`135c6be`](https://github.com/codefastlabs/codefast/commit/135c6bed9d1bc1e96bad3173adab1bf32d74322f), [`610cf7a`](https://github.com/codefastlabs/codefast/commit/610cf7a7f9b6e5b37be21e7675ea363ef1020639), [`3e90474`](https://github.com/codefastlabs/codefast/commit/3e90474fbbb9f8ac626c5949bfdbac2eaf1cb3e8), [`5c09d4c`](https://github.com/codefastlabs/codefast/commit/5c09d4ce2df564dc7ac6727b00cfa668164a1af4)]:
+  - @codefast/tailwind-variants@0.3.11-canary.0
+
 ## 0.3.10
 
 ### Patch Changes
