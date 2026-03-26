@@ -1,5 +1,5 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent } from '@codefast/ui/card';
+import { Button } from "@codefast/ui/button";
+import { Card, CardContent } from "@codefast/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -7,13 +7,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@codefast/ui/dialog';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@codefast/ui/empty';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
-import { Kbd } from '@codefast/ui/kbd';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { IconArrowUpRight, IconFolderCode } from '@tabler/icons-react';
-import { PlusIcon, SearchIcon } from 'lucide-react';
+} from "@codefast/ui/dialog";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@codefast/ui/empty";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
+import { Kbd } from "@codefast/ui/kbd";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { IconArrowUpRight, IconFolderCode } from "@tabler/icons-react";
+import { PlusIcon, SearchIcon } from "lucide-react";
 
 export function EmptyDemo() {
   return (
@@ -42,10 +49,12 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <Empty className="bg-muted min-h-[80svh]">
+      <Empty className="min-h-[80svh] bg-muted">
         <EmptyHeader>
           <EmptyTitle>No results found</EmptyTitle>
-          <EmptyDescription>No results found for your search. Try adjusting your search terms.</EmptyDescription>
+          <EmptyDescription>
+            No results found for your search. Try adjusting your search terms.
+          </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <Button>Try again</Button>
@@ -60,7 +69,8 @@ export function EmptyDemo() {
         <EmptyHeader>
           <EmptyTitle>404 - Not Found</EmptyTitle>
           <EmptyDescription>
-            The page you&apos;re looking for doesn&apos;t exist. Try searching for what you need below.
+            The page you&apos;re looking for doesn&apos;t exist. Try searching for what you need
+            below.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -82,8 +92,8 @@ export function EmptyDemo() {
         <EmptyHeader>
           <EmptyTitle>Nothing to see here</EmptyTitle>
           <EmptyDescription>
-            No posts have been created yet. Get started by <a href="#">creating your first post</a> to share with the
-            community.
+            No posts have been created yet. Get started by <a href="#">creating your first post</a>{" "}
+            to share with the community.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -93,14 +103,15 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <div className="bg-muted flex min-h-200 items-center justify-center rounded-xl p-20">
+      <div className="flex min-h-200 items-center justify-center rounded-xl bg-muted p-20">
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
               <EmptyHeader>
                 <EmptyTitle>404 - Not Found</EmptyTitle>
                 <EmptyDescription>
-                  The page you&apos;re looking for doesn&apos;t exist. Try searching for what you need below.
+                  The page you&apos;re looking for doesn&apos;t exist. Try searching for what you
+                  need below.
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
@@ -121,7 +132,7 @@ export function EmptyDemo() {
           </CardContent>
         </Card>
       </div>
-      <div className="bg-muted flex min-h-200 items-center justify-center rounded-xl p-20">
+      <div className="flex min-h-200 items-center justify-center rounded-xl bg-muted p-20">
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
@@ -131,7 +142,8 @@ export function EmptyDemo() {
                 </EmptyMedia>
                 <EmptyTitle>No projects yet</EmptyTitle>
                 <EmptyDescription>
-                  You haven&apos;t created any projects yet. Get started by creating your first project.
+                  You haven&apos;t created any projects yet. Get started by creating your first
+                  project.
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
@@ -169,7 +181,8 @@ export function EmptyDemo() {
                   </EmptyMedia>
                   <EmptyTitle>No projects yet</EmptyTitle>
                   <EmptyDescription>
-                    You haven&apos;t created any projects yet. Get started by creating your first project.
+                    You haven&apos;t created any projects yet. Get started by creating your first
+                    project.
                   </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>
@@ -197,7 +210,8 @@ export function EmptyDemo() {
                 <EmptyHeader>
                   <EmptyTitle>Nothing to see here</EmptyTitle>
                   <EmptyDescription>
-                    No posts have been created yet. <a href="#">Create your first post</a> to share with the community.
+                    No posts have been created yet. <a href="#">Create your first post</a> to share
+                    with the community.
                   </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>

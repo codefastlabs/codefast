@@ -1,5 +1,5 @@
-import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
-import { Button } from '@codefast/ui/button';
+import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
+import { Button } from "@codefast/ui/button";
 import {
   AlertCircleIcon,
   BookmarkCheckIcon,
@@ -7,7 +7,7 @@ import {
   GiftIcon,
   PopcornIcon,
   ShieldAlertIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
 export function AlertDemo() {
   return (
@@ -31,28 +31,29 @@ export function AlertDemo() {
       <Alert>
         <ShieldAlertIcon />
         <AlertTitle>
-          This is a very long alert title that demonstrates how the component handles extended text content and
-          potentially wraps across multiple lines
+          This is a very long alert title that demonstrates how the component handles extended text
+          content and potentially wraps across multiple lines
         </AlertTitle>
       </Alert>
       <Alert>
         <GiftIcon />
         <AlertDescription>
-          This is a very long alert description that demonstrates how the component handles extended text content and
-          potentially wraps across multiple lines
+          This is a very long alert description that demonstrates how the component handles extended
+          text content and potentially wraps across multiple lines
         </AlertDescription>
       </Alert>
       <Alert>
         <AlertCircleIcon />
         <AlertTitle>
-          This is an extremely long alert title that spans multiple lines to demonstrate how the component handles very
-          lengthy headings while maintaining readability and proper text wrapping behavior
+          This is an extremely long alert title that spans multiple lines to demonstrate how the
+          component handles very lengthy headings while maintaining readability and proper text
+          wrapping behavior
         </AlertTitle>
         <AlertDescription>
-          This is an equally long description that contains detailed information about the alert. It shows how the
-          component can accommodate extensive content while preserving proper spacing, alignment, and readability across
-          different screen sizes and viewport widths. This helps ensure the user experience remains consistent
-          regardless of the content length.
+          This is an equally long description that contains detailed information about the alert. It
+          shows how the component can accommodate extensive content while preserving proper spacing,
+          alignment, and readability across different screen sizes and viewport widths. This helps
+          ensure the user experience remains consistent regardless of the content length.
         </AlertDescription>
       </Alert>
       <Alert variant="destructive">

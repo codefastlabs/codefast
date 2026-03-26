@@ -24,18 +24,18 @@ import {
   createSimpleWithoutMergeBenchmark,
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
-} from './benchmarks/index.js';
-import { generatePerformanceSummary } from './utils/index.js';
+} from "./benchmarks/index.js";
+import { generatePerformanceSummary } from "./utils/index.js";
 
 /**
  * Main function to run all benchmarks
  */
 async function main() {
   try {
-    console.log('🚀 Starting Tailwind Variants Performance Benchmark');
-    console.log('═══════════════════════════════════════════════════\n');
+    console.log("🚀 Starting Tailwind Variants Performance Benchmark");
+    console.log("═══════════════════════════════════════════════════\n");
 
-    console.log('Starting Tailwind Variants Performance Benchmark...\n');
+    console.log("Starting Tailwind Variants Performance Benchmark...\n");
 
     // Create all benchmark scenarios
     const simpleWithoutMergeBench = createSimpleWithoutMergeBenchmark();
@@ -63,12 +63,12 @@ async function main() {
 
     const runBenchmark = async (benchmark) => {
       currentSuite++;
-      const benchmarkName = benchmark.name || 'Unknown Benchmark';
+      const benchmarkName = benchmark.name || "Unknown Benchmark";
       console.log(`▶ [${currentSuite}/${totalSuites}] Running "${benchmarkName}" benchmark...`);
       await benchmark.run();
       console.table(benchmark.table());
       generatePerformanceSummary(benchmark);
-      console.log('\n\n');
+      console.log("\n\n");
     };
 
     // Run all benchmarks with progress logging and immediate results
@@ -86,22 +86,22 @@ async function main() {
     await runBenchmark(createTVWithMergeBench);
 
     // Run extreme stress tests
-    console.log('🔥 Running EXTREME stress tests...\n');
+    console.log("🔥 Running EXTREME stress tests...\n");
     await runBenchmark(extremeWithoutMergeBench);
     await runBenchmark(extremeWithMergeBench);
     await runBenchmark(extremeSlotsWithoutMergeBench);
     await runBenchmark(extremeSlotsWithMergeBench);
 
-    console.log('Benchmark completed!\n');
-    console.log('✓ Benchmark completed successfully!');
+    console.log("Benchmark completed!\n");
+    console.log("✓ Benchmark completed successfully!");
     process.exit(0);
   } catch (error) {
-    console.error('✗ Benchmark failed:', error);
+    console.error("✗ Benchmark failed:", error);
     process.exit(1);
   }
 }
 
 main().catch((error) => {
-  console.error('Fatal error:', error);
+  console.error("Fatal error:", error);
   process.exit(1);
 });

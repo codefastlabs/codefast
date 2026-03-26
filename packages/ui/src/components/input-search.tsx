@@ -1,11 +1,16 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { SearchIcon, XIcon } from 'lucide-react';
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { SearchIcon, XIcon } from "lucide-react";
 
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/input-group';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
@@ -13,7 +18,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 
 interface InputSearchProps extends Omit<
   ComponentProps<typeof InputGroupInput>,
-  'defaultValue' | 'onChange' | 'type' | 'value'
+  "defaultValue" | "onChange" | "type" | "value"
 > {
   defaultValue?: string;
   onChange?: (value?: string) => void;
@@ -36,7 +41,11 @@ function InputSearch({
   });
 
   return (
-    <InputGroup className={className} data-disabled={disabled ? 'true' : undefined} data-slot="input-search">
+    <InputGroup
+      className={className}
+      data-disabled={disabled ? "true" : undefined}
+      data-slot="input-search"
+    >
       <InputGroupAddon align="inline-start">
         <SearchIcon />
       </InputGroupAddon>
@@ -45,7 +54,7 @@ function InputSearch({
         disabled={disabled}
         readOnly={readOnly}
         type="search"
-        value={value ?? ''}
+        value={value ?? ""}
         onChange={(event) => {
           setValue(event.target.value);
         }}
@@ -54,13 +63,13 @@ function InputSearch({
       {value ? (
         <InputGroupButton
           aria-label="Clear search"
-          className="focus-visible:not-disabled:bg-input rounded-full focus-visible:ring-0"
+          className="rounded-full focus-visible:ring-0 focus-visible:not-disabled:bg-input"
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
           size="icon-sm"
           variant="ghost"
           onClick={() => {
-            setValue('');
+            setValue("");
           }}
         >
           <XIcon />

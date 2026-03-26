@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@codefast/ui/input-otp';
-import { Label } from '@codefast/ui/label';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { useState } from 'react';
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
+import { Label } from "@codefast/ui/label";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useState } from "react";
 
 export function InputOTPDemo() {
   return (
@@ -56,7 +56,7 @@ function InputOTPPattern() {
 }
 
 function InputOTPWithSeparator() {
-  const [value, setValue] = useState('123456');
+  const [value, setValue] = useState("123456");
 
   return (
     <div className="grid gap-2">

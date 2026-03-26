@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /* -----------------------------------------------------------------------------
  * Schema & Types
@@ -10,7 +10,7 @@ import { z } from 'zod';
  * Acts as the single source of truth for all theme-related types.
  * Valid values: 'light', 'dark', 'system'.
  */
-export const themeSchema = z.enum(['light', 'dark', 'system']);
+export const themeSchema = z.enum(["light", "dark", "system"]);
 
 /**
  * User's theme preference.
@@ -26,7 +26,7 @@ export type Theme = z.infer<typeof themeSchema>;
  *
  * When theme is 'system', this reflects the OS preference (light/dark).
  */
-export type ResolvedTheme = Exclude<Theme, 'system'>;
+export type ResolvedTheme = Exclude<Theme, "system">;
 
 /**
  * Array of all available theme options: `['light', 'dark', 'system']`.

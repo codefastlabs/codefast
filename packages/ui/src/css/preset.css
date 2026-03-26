@@ -1,6 +1,6 @@
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
-@source '../**/*.js';
+@source "../**/*.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -85,7 +85,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
+    @apply rounded-full bg-border;
   }
 
   * {
@@ -111,7 +111,7 @@
       margin: 0;
     }
 
-    &[type='number'] {
+    &[type="number"] {
       -moz-appearance: textfield;
     }
   }

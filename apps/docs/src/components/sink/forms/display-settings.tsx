@@ -1,4 +1,4 @@
-import { Checkbox } from '@codefast/ui/checkbox';
+import { Checkbox } from "@codefast/ui/checkbox";
 import {
   Field,
   FieldContent,
@@ -9,17 +9,19 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from '@codefast/ui/field';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Slider } from '@codefast/ui/slider';
-import { Switch } from '@codefast/ui/switch';
-import { SunDimIcon, SunIcon } from 'lucide-react';
+} from "@codefast/ui/field";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Slider } from "@codefast/ui/slider";
+import { Switch } from "@codefast/ui/switch";
+import { SunDimIcon, SunIcon } from "lucide-react";
 
 export function DisplaySettings() {
   return (
     <FieldSet>
       <FieldLegend>Display</FieldLegend>
-      <FieldDescription>Configure display settings, brightness, refresh rate, and more.</FieldDescription>
+      <FieldDescription>
+        Configure display settings, brightness, refresh rate, and more.
+      </FieldDescription>
       <FieldGroup>
         <Field orientation="responsive">
           <FieldContent>
@@ -46,7 +48,13 @@ export function DisplaySettings() {
           </FieldContent>
           <div className="flex min-w-37.5 items-center gap-2">
             <SunDimIcon className="size-4 shrink-0" />
-            <Slider id="brightness" defaultValue={[75]} max={100} step={1} aria-label="Brightness" />
+            <Slider
+              id="brightness"
+              defaultValue={[75]}
+              max={100}
+              step={1}
+              aria-label="Brightness"
+            />
             <SunIcon className="size-4 shrink-0" />
           </div>
         </Field>
@@ -54,7 +62,9 @@ export function DisplaySettings() {
         <Field orientation="horizontal">
           <FieldContent>
             <FieldLabel htmlFor="auto-brightness">Automatically Adjust Brightness</FieldLabel>
-            <FieldDescription>Automatically adjust brightness based on ambient light.</FieldDescription>
+            <FieldDescription>
+              Automatically adjust brightness based on ambient light.
+            </FieldDescription>
           </FieldContent>
           <Checkbox id="auto-brightness" defaultChecked />
         </Field>
@@ -62,7 +72,9 @@ export function DisplaySettings() {
         <Field orientation="horizontal">
           <FieldContent>
             <FieldLabel htmlFor="true-tone">True Tone</FieldLabel>
-            <FieldDescription>Automatically adjust colors to match ambient lighting.</FieldDescription>
+            <FieldDescription>
+              Automatically adjust colors to match ambient lighting.
+            </FieldDescription>
           </FieldContent>
           <Switch id="true-tone" />
         </Field>

@@ -4,11 +4,11 @@
  * Stress test slots with 12 slots and 15 compound slots - with tailwind-merge
  */
 
-import { tv as originalTV } from 'tailwind-variants';
-import { Bench } from 'tinybench';
+import { tv as originalTV } from "tailwind-variants";
+import { Bench } from "tinybench";
 
-import { extremeSlotsTestProps, extremeSlotsVariants } from './data.js';
-import { tv as codefastTV } from '@codefast/tailwind-variants';
+import { extremeSlotsTestProps, extremeSlotsVariants } from "./data.js";
+import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions
 const originalTVExtremeSlots = originalTV(extremeSlotsVariants);
@@ -17,7 +17,9 @@ const codefastTVExtremeSlots = codefastTV(extremeSlotsVariants);
 /**
  * Create extreme slots benchmark with tailwind-merge
  */
-export function createExtremeSlotsWithMergeBenchmark(name = 'Extreme Slots With Merge (12 slots, 15 compound slots)') {
+export function createExtremeSlotsWithMergeBenchmark(
+  name = "Extreme Slots With Merge (12 slots, 15 compound slots)",
+) {
   const bench = new Bench({
     name,
     iterations: 1000,
@@ -27,7 +29,7 @@ export function createExtremeSlotsWithMergeBenchmark(name = 'Extreme Slots With 
   });
 
   bench
-    .add('tailwind-variants', () => {
+    .add("tailwind-variants", () => {
       for (const props of extremeSlotsTestProps) {
         const slots = originalTVExtremeSlots(props);
         // Access all slots to ensure full computation
@@ -45,7 +47,7 @@ export function createExtremeSlotsWithMergeBenchmark(name = 'Extreme Slots With 
         slots.badge();
       }
     })
-    .add('@codefast/tailwind-variants', () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of extremeSlotsTestProps) {
         const slots = codefastTVExtremeSlots(props);
         // Access all slots to ensure full computation

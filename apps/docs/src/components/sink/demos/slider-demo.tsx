@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Label } from '@codefast/ui/label';
-import { Slider } from '@codefast/ui/slider';
-import { useState } from 'react';
+import { Label } from "@codefast/ui/label";
+import { Slider } from "@codefast/ui/slider";
+import { useState } from "react";
 
 export function SliderDemo() {
   return (
@@ -26,9 +26,16 @@ function SliderControlled() {
     <div className="grid w-full gap-3">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor="slider-demo-temperature">Temperature</Label>
-        <span className="text-muted-foreground text-sm">{value.join(', ')}</span>
+        <span className="text-sm text-muted-foreground">{value.join(", ")}</span>
       </div>
-      <Slider id="slider-demo-temperature" value={value} onValueChange={setValue} min={0} max={1} step={0.1} />
+      <Slider
+        id="slider-demo-temperature"
+        value={value}
+        onValueChange={setValue}
+        min={0}
+        max={1}
+        step={0.1}
+      />
     </div>
   );
 }

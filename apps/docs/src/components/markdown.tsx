@@ -1,7 +1,7 @@
-import parse, { Element, domToReact } from 'html-react-parser';
-import { Link } from '@tanstack/react-router';
-import type { DOMNode, HTMLReactParserOptions } from 'html-react-parser';
-import type { JSX } from 'react';
+import parse, { Element, domToReact } from "html-react-parser";
+import { Link } from "@tanstack/react-router";
+import type { DOMNode, HTMLReactParserOptions } from "html-react-parser";
+import type { JSX } from "react";
 
 interface MarkdownProps {
   html: string;
@@ -20,20 +20,20 @@ export function Markdown({ html, className }: MarkdownProps): JSX.Element {
       }
 
       // Handle internal links with router's Link component
-      if (domNode.name === 'a') {
+      if (domNode.name === "a") {
         const { href } = domNode.attribs;
 
-        if (href?.startsWith('/')) {
+        if (href?.startsWith("/")) {
           return <Link to={href}>{domToReact(domNode.children as DOMNode[], options)}</Link>;
         }
       }
 
       // Handle images with lazy loading
-      if (domNode.name === 'img') {
+      if (domNode.name === "img") {
         const { src, alt } = domNode.attribs;
 
         if (src) {
-          return <img alt={alt ?? ''} className="rounded-lg shadow-md" loading="lazy" src={src} />;
+          return <img alt={alt ?? ""} className="rounded-lg shadow-md" loading="lazy" src={src} />;
         }
       }
 

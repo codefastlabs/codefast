@@ -1,68 +1,68 @@
-'use client';
+"use client";
 
-import type { VariantProps } from '@codefast/tailwind-variants';
-import type { Scope } from '@radix-ui/react-context';
-import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from "@codefast/tailwind-variants";
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from '@codefast/tailwind-variants';
-import { createContextScope } from '@radix-ui/react-context';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+import { cn, tv } from "@codefast/tailwind-variants";
+import { createContextScope } from "@radix-ui/react-context";
+import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 
 /* -----------------------------------------------------------------------------
  * Variant: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
 const scrollAreaScrollbarVariants = tv({
-  base: 'flex touch-none select-none p-px transition-colors',
+  base: "flex touch-none p-px transition-colors select-none",
   compoundVariants: [
     {
-      className: 'w-1.5',
-      orientation: 'vertical',
-      size: 'sm',
+      className: "w-1.5",
+      orientation: "vertical",
+      size: "sm",
     },
     {
-      className: 'w-2',
-      orientation: 'vertical',
-      size: 'md',
+      className: "w-2",
+      orientation: "vertical",
+      size: "md",
     },
     {
-      className: 'w-2.5',
-      orientation: 'vertical',
-      size: 'lg',
+      className: "w-2.5",
+      orientation: "vertical",
+      size: "lg",
     },
     {
-      className: 'h-1.5',
-      orientation: 'horizontal',
-      size: 'sm',
+      className: "h-1.5",
+      orientation: "horizontal",
+      size: "sm",
     },
     {
-      className: 'h-2',
-      orientation: 'horizontal',
-      size: 'md',
+      className: "h-2",
+      orientation: "horizontal",
+      size: "md",
     },
     {
-      className: 'h-2.5',
-      orientation: 'horizontal',
-      size: 'lg',
+      className: "h-2.5",
+      orientation: "horizontal",
+      size: "lg",
     },
   ],
   defaultVariants: {
-    orientation: 'vertical',
-    size: 'md',
+    orientation: "vertical",
+    size: "md",
   },
   variants: {
     orientation: {
-      horizontal: 'w-full flex-col border-t border-t-transparent',
-      vertical: 'h-full flex-row border-l border-l-transparent',
+      horizontal: "w-full flex-col border-t border-t-transparent",
+      vertical: "h-full flex-row border-l border-l-transparent",
     },
     size: {
-      none: '',
+      none: "",
 
-      sm: '',
+      sm: "",
 
-      md: '',
+      md: "",
 
-      lg: '',
+      lg: "",
     },
   },
 });
@@ -71,13 +71,13 @@ const scrollAreaScrollbarVariants = tv({
  * Context: ScrollArea
  * -------------------------------------------------------------------------- */
 
-const SCROLL_AREA_NAME = 'ScrollArea';
+const SCROLL_AREA_NAME = "ScrollArea";
 
 type ScopedProps<P> = P & { __scopeScrollArea?: Scope };
 
 const [createScrollAreaContext] = createContextScope(SCROLL_AREA_NAME);
 
-type ScrollAreaContextValue = Pick<VariantProps<typeof scrollAreaScrollbarVariants>, 'size'>;
+type ScrollAreaContextValue = Pick<VariantProps<typeof scrollAreaScrollbarVariants>, "size">;
 
 const [ScrollAreaContextProvider, useScrollAreaContext] =
   createScrollAreaContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
@@ -86,14 +86,26 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
  * Component: ScrollArea
  * -------------------------------------------------------------------------- */
 
-type ScrollAreaProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>;
+type ScrollAreaProps = ScopedProps<
+  ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue
+>;
 
-function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: ScrollAreaProps): JSX.Element {
+function ScrollArea({
+  __scopeScrollArea,
+  children,
+  className,
+  size,
+  ...props
+}: ScrollAreaProps): JSX.Element {
   return (
     <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root className={cn('relative', className)} data-slot="scroll-area" {...props}>
+      <ScrollAreaPrimitive.Root
+        className={cn("relative", className)}
+        data-slot="scroll-area"
+        {...props}
+      >
         <ScrollAreaPrimitive.Viewport
-          className="outline-ring ring-ring/50 size-full rounded-[inherit] transition focus-visible:ring-4 focus-visible:outline-1"
+          className="size-full rounded-[inherit] ring-ring/50 outline-ring transition focus-visible:ring-4 focus-visible:outline-1"
           data-slot="scroll-area-viewport"
         >
           {children}
@@ -127,7 +139,7 @@ function ScrollAreaScrollbar({
       orientation={orientation}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb className="bg-border relative flex-1 rounded-full" />
+      <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
     </ScrollAreaPrimitive.Scrollbar>
   );
 }

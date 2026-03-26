@@ -6,10 +6,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerVariants,
-} from '@codefast/ui/navigation-menu';
-import { Link } from '@tanstack/react-router';
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from 'lucide-react';
-import type { ComponentPropsWithoutRef } from 'react';
+} from "@codefast/ui/navigation-menu";
+import { Link } from "@tanstack/react-router";
+import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
+import type { ComponentPropsWithoutRef } from "react";
 
 interface ComponentItem {
   title: string;
@@ -19,36 +19,38 @@ interface ComponentItem {
 
 const components: ComponentItem[] = [
   {
-    title: 'Alert Dialog',
-    href: '/docs/primitives/alert-dialog',
-    description: 'A modal dialog that interrupts the user with important content and expects a response.',
-  },
-  {
-    title: 'Hover Card',
-    href: '/docs/primitives/hover-card',
-    description: 'For sighted users to preview content available behind a link.',
-  },
-  {
-    title: 'Progress',
-    href: '/docs/primitives/progress',
+    title: "Alert Dialog",
+    href: "/docs/primitives/alert-dialog",
     description:
-      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+      "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
-    title: 'Scroll-area',
-    href: '/docs/primitives/scroll-area',
-    description: 'Visually or semantically separates content.',
+    title: "Hover Card",
+    href: "/docs/primitives/hover-card",
+    description: "For sighted users to preview content available behind a link.",
   },
   {
-    title: 'Tabs',
-    href: '/docs/primitives/tabs',
-    description: 'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
-  },
-  {
-    title: 'Tooltip',
-    href: '/docs/primitives/tooltip',
+    title: "Progress",
+    href: "/docs/primitives/progress",
     description:
-      'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+  },
+  {
+    title: "Scroll-area",
+    href: "/docs/primitives/scroll-area",
+    description: "Visually or semantically separates content.",
+  },
+  {
+    title: "Tabs",
+    href: "/docs/primitives/tabs",
+    description:
+      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  },
+  {
+    title: "Tooltip",
+    href: "/docs/primitives/tooltip",
+    description:
+      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ];
 
@@ -64,11 +66,11 @@ export function NavigationMenuDemo() {
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <Link
-                      className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-lg bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
+                      className="flex h-full w-full flex-col justify-end rounded-lg bg-linear-to-b from-muted/50 to-muted p-6 no-underline outline-hidden select-none focus:shadow-md"
                       to="/"
                     >
                       <div className="mt-4 mb-2 text-lg font-medium">@codefast/ui</div>
-                      <p className="text-muted-foreground text-sm leading-tight">
+                      <p className="text-sm leading-tight text-muted-foreground">
                         Beautifully designed components built with Tailwind CSS.
                       </p>
                     </Link>
@@ -120,7 +122,9 @@ export function NavigationMenuDemo() {
                   <NavigationMenuLink asChild>
                     <a href="#">
                       <div className="font-medium">Components</div>
-                      <div className="text-muted-foreground">Browse all components in the library.</div>
+                      <div className="text-muted-foreground">
+                        Browse all components in the library.
+                      </div>
                     </a>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
@@ -190,13 +194,18 @@ export function NavigationMenuDemo() {
   );
 }
 
-function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<'li'> & { href: string }) {
+function ListItem({
+  title,
+  children,
+  href,
+  ...props
+}: ComponentPropsWithoutRef<"li"> & { href: string }) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>
         <a href={href}>
           <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
         </a>
       </NavigationMenuLink>
     </li>

@@ -13,7 +13,7 @@ import type {
   ConfigurationSchema,
   ConfigurationVariants,
   SlotConfigurationSchema,
-} from '@/types/types';
+} from "@/types/types";
 
 /**
  * Apply compound variant classes based on variant conditions.
@@ -53,7 +53,7 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
       const compoundKey = compoundKeys[keyIndex] as keyof typeof compoundVariant;
 
       // Skip class properties
-      if (compoundKey === 'className' || compoundKey === 'class') {
+      if (compoundKey === "className" || compoundKey === "class") {
         continue;
       }
 
@@ -64,7 +64,7 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
       const compoundValue = compoundVariant[compoundKey];
 
       // Inline boolean check - avoid function call overhead
-      if (typeof compoundValue === 'boolean') {
+      if (typeof compoundValue === "boolean") {
         const resolvedValue = propertyValue ?? false;
 
         if (resolvedValue !== compoundValue) {
@@ -109,7 +109,10 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
  * @param defaultVariantProps - Default variant properties from configuration
  * @returns Object mapping slot names to arrays of CSS classes
  */
-export const applyCompoundSlotClasses = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
+export const applyCompoundSlotClasses = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
   compoundSlotDefinitions: readonly CompoundSlotType<T, S>[] | undefined,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
@@ -136,19 +139,21 @@ export const applyCompoundSlotClasses = <T extends ConfigurationSchema, S extend
       const compoundKey = keys[keyIndex];
 
       // Skip class and slot properties
-      if (compoundKey === 'className' || compoundKey === 'class' || compoundKey === 'slots') {
+      if (compoundKey === "className" || compoundKey === "class" || compoundKey === "slots") {
         continue;
       }
 
       // Lookup without object spread - check variantProps first, then defaultVariantProps
       const propsValue = (variantProps as Record<string, unknown>)[compoundKey];
       const propertyValue =
-        propsValue === undefined ? (defaultVariantProps as Record<string, unknown>)[compoundKey] : propsValue;
+        propsValue === undefined
+          ? (defaultVariantProps as Record<string, unknown>)[compoundKey]
+          : propsValue;
 
       const compoundValue = (compoundSlot as Record<string, unknown>)[compoundKey];
 
       // Inline boolean check - avoid function call overhead
-      if (typeof compoundValue === 'boolean') {
+      if (typeof compoundValue === "boolean") {
         const resolvedValue = propertyValue === undefined ? false : propertyValue;
 
         if (resolvedValue !== compoundValue) {
@@ -172,7 +177,8 @@ export const applyCompoundSlotClasses = <T extends ConfigurationSchema, S extend
     if (isMatching) {
       const slots = compoundSlot.slots;
       const slotLength = slots.length;
-      const cls = compoundSlot.className === undefined ? compoundSlot.class : compoundSlot.className;
+      const cls =
+        compoundSlot.className === undefined ? compoundSlot.class : compoundSlot.className;
 
       for (let slotIndex = 0; slotIndex < slotLength; slotIndex++) {
         const slotKey = slots[slotIndex];

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * Event handler for MediaQueryList changes.
@@ -30,7 +30,7 @@ export function useMediaQuery(query: string): boolean {
    */
   const [matches, setMatches] = useState<boolean>(() => {
     // Ensure initial state matches current media query status
-    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
       return window.matchMedia(query).matches;
     }
 
@@ -39,7 +39,7 @@ export function useMediaQuery(query: string): boolean {
 
   useEffect(() => {
     // Only run in a browser environment where matchMedia is available
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -55,13 +55,13 @@ export function useMediaQuery(query: string): boolean {
       setMatches(event.matches);
     };
 
-    mediaQueryList.addEventListener('change', onChange);
+    mediaQueryList.addEventListener("change", onChange);
 
     /**
      * Remove the event listener on unmount or when the query changes.
      */
     return (): void => {
-      mediaQueryList.removeEventListener('change', onChange);
+      mediaQueryList.removeEventListener("change", onChange);
     };
   }, [query]);
 

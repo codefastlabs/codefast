@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import type { Theme } from '@/types';
+import type { Theme } from "@/types";
 
 /* -----------------------------------------------------------------------------
  * Props

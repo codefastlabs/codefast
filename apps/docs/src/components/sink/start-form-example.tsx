@@ -1,7 +1,20 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Checkbox } from '@codefast/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@codefast/ui/dialog';
+import { Button } from "@codefast/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui/card";
+import { Checkbox } from "@codefast/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@codefast/ui/dialog";
 import {
   Field,
   FieldContent,
@@ -13,17 +26,17 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from '@codefast/ui/field';
-import { Input } from '@codefast/ui/input';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Spinner } from '@codefast/ui/spinner';
-import { Switch } from '@codefast/ui/switch';
-import { Textarea } from '@codefast/ui/textarea';
-import { useActionState, useEffect, useEffectEvent, useId, useState } from 'react';
-import type { FormState } from '@/components/sink/server-fn';
-import { subscriptionAction } from '@/components/sink/server-fn';
-import { addons } from '@/components/sink/schema';
+} from "@codefast/ui/field";
+import { Input } from "@codefast/ui/input";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Spinner } from "@codefast/ui/spinner";
+import { Switch } from "@codefast/ui/switch";
+import { Textarea } from "@codefast/ui/textarea";
+import { useActionState, useEffect, useEffectEvent, useId, useState } from "react";
+import type { FormState } from "@/components/sink/server-fn";
+import { subscriptionAction } from "@/components/sink/server-fn";
+import { addons } from "@/components/sink/schema";
 
 export function ExampleForm() {
   const formId = useId();
@@ -35,17 +48,17 @@ export function ExampleForm() {
     },
     {
       values: {
-        name: '',
-        email: '',
-        plan: 'basic',
-        billingPeriod: '',
-        addons: ['analytics'],
+        name: "",
+        email: "",
+        plan: "basic",
+        billingPeriod: "",
+        addons: ["analytics"],
         teamSize: 1,
         emailNotifications: false,
-        comments: '',
+        comments: "",
         startDate: new Date(),
-        theme: 'system',
-        password: '',
+        theme: "system",
+        password: "",
       },
       errors: null,
       success: false,
@@ -67,7 +80,9 @@ export function ExampleForm() {
       <Card className="w-full max-w-sm">
         <CardHeader className="border-b">
           <CardTitle>Subscription Form</CardTitle>
-          <CardDescription>Create your subscription using server functions and useActionState.</CardDescription>
+          <CardDescription>
+            Create your subscription using server functions and useActionState.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={formAction} id="subscription-form" key={formKey}>
@@ -148,12 +163,16 @@ export function ExampleForm() {
                   </SelectContent>
                 </Select>
                 <FieldDescription>Choose how often you want to be billed.</FieldDescription>
-                {formState.errors?.billingPeriod && <FieldError>{formState.errors.billingPeriod[0]}</FieldError>}
+                {formState.errors?.billingPeriod && (
+                  <FieldError>{formState.errors.billingPeriod[0]}</FieldError>
+                )}
               </Field>
               <FieldSeparator />
               <FieldSet data-invalid={!!formState.errors?.addons?.length}>
                 <FieldLegend>Add-ons</FieldLegend>
-                <FieldDescription>Select additional features you&apos;d like to include.</FieldDescription>
+                <FieldDescription>
+                  Select additional features you&apos;d like to include.
+                </FieldDescription>
                 <FieldGroup data-slot="checkbox-group">
                   {addons.map((addon) => (
                     <Field key={addon.id} orientation="horizontal">
@@ -187,8 +206,12 @@ export function ExampleForm() {
                   disabled={pending}
                   aria-invalid={!!formState.errors?.teamSize?.length}
                 />
-                <FieldDescription>How many people will be using the subscription? (1-50)</FieldDescription>
-                {formState.errors?.teamSize && <FieldError>{formState.errors.teamSize[0]}</FieldError>}
+                <FieldDescription>
+                  How many people will be using the subscription? (1-50)
+                </FieldDescription>
+                {formState.errors?.teamSize && (
+                  <FieldError>{formState.errors.teamSize[0]}</FieldError>
+                )}
               </Field>
               <FieldSeparator />
               <Field orientation="horizontal">
@@ -211,12 +234,14 @@ export function ExampleForm() {
                   id="startDate"
                   name="startDate"
                   type="date"
-                  defaultValue={formState.values.startDate.toISOString().split('T')[0]}
+                  defaultValue={formState.values.startDate.toISOString().split("T")[0]}
                   disabled={pending}
                   aria-invalid={!!formState.errors?.startDate?.length}
                 />
                 <FieldDescription>Choose when your subscription should start</FieldDescription>
-                {formState.errors?.startDate && <FieldError>{formState.errors.startDate[0]}</FieldError>}
+                {formState.errors?.startDate && (
+                  <FieldError>{formState.errors.startDate[0]}</FieldError>
+                )}
               </Field>
               <FieldSeparator />
               <Field data-invalid={!!formState.errors?.theme?.length}>
@@ -252,8 +277,12 @@ export function ExampleForm() {
                   disabled={pending}
                   aria-invalid={!!formState.errors?.password?.length}
                 />
-                <FieldDescription>Must contain uppercase, lowercase, number, and be 8+ characters</FieldDescription>
-                {formState.errors?.password && <FieldError>{formState.errors.password[0]}</FieldError>}
+                <FieldDescription>
+                  Must contain uppercase, lowercase, number, and be 8+ characters
+                </FieldDescription>
+                {formState.errors?.password && (
+                  <FieldError>{formState.errors.password[0]}</FieldError>
+                )}
               </Field>
               <FieldSeparator />
               <Field data-invalid={!!formState.errors?.comments?.length}>
@@ -267,8 +296,12 @@ export function ExampleForm() {
                   disabled={pending}
                   aria-invalid={!!formState.errors?.comments?.length}
                 />
-                <FieldDescription>Share any additional requirements or feedback (10-240 characters)</FieldDescription>
-                {formState.errors?.comments && <FieldError>{formState.errors.comments[0]}</FieldError>}
+                <FieldDescription>
+                  Share any additional requirements or feedback (10-240 characters)
+                </FieldDescription>
+                {formState.errors?.comments && (
+                  <FieldError>{formState.errors.comments[0]}</FieldError>
+                )}
               </Field>
             </FieldGroup>
           </form>

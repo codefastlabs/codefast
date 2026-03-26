@@ -5,12 +5,12 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@codefast/ui/breadcrumb';
-import { Link, useParams } from '@tanstack/react-router';
+} from "@codefast/ui/breadcrumb";
+import { Link, useParams } from "@tanstack/react-router";
 
 export function AppBreadcrumbs() {
   const params = useParams({ strict: false });
-  const name = 'name' in params ? params.name : undefined;
+  const name = "name" in params ? params.name : undefined;
 
   if (!name) {
     return (

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Progress } from '@codefast/ui/progress';
-import { useEffect, useState } from 'react';
+import { Progress } from "@codefast/ui/progress";
+import { useEffect, useState } from "react";
 
 export function ProgressDemo() {
   const [progress, setProgress] = useState(13);

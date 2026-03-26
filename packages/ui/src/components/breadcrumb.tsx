@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { cn } from '@codefast/tailwind-variants';
-import { Slot } from '@radix-ui/react-slot';
-import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
+import { cn } from "@codefast/tailwind-variants";
+import { Slot } from "@radix-ui/react-slot";
+import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbProps extends ComponentProps<'nav'> {
+interface BreadcrumbProps extends ComponentProps<"nav"> {
   separator?: ReactNode;
 }
 
@@ -22,13 +22,13 @@ function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
  * Component: BreadcrumbList
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbListProps = ComponentProps<'ol'>;
+type BreadcrumbListProps = ComponentProps<"ol">;
 
 function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Element {
   return (
     <ol
       className={cn(
-        'text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2',
+        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2",
         className,
       )}
       data-slot="breadcrumb-list"
@@ -41,26 +41,32 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
  * Component: BreadcrumbItem
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbItemProps = ComponentProps<'li'>;
+type BreadcrumbItemProps = ComponentProps<"li">;
 
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
-  return <li className={cn('inline-flex items-center gap-1.5', className)} data-slot="breadcrumb-item" {...props} />;
+  return (
+    <li
+      className={cn("inline-flex items-center gap-1.5", className)}
+      data-slot="breadcrumb-item"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbLink
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbLinkProps extends ComponentProps<'a'> {
+interface BreadcrumbLinkProps extends ComponentProps<"a"> {
   asChild?: boolean;
 }
 
 function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): JSX.Element {
-  const Component = asChild ? Slot : 'a';
+  const Component = asChild ? Slot : "a";
 
   return (
     <Component
-      className={cn('hover:text-foreground transition-colors', className)}
+      className={cn("transition-colors hover:text-foreground", className)}
       data-slot="breadcrumb-link"
       {...props}
     />
@@ -71,17 +77,15 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
  * Component: BreadcrumbPage
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbPageProps = ComponentProps<'span'>;
+type BreadcrumbPageProps = ComponentProps<"span">;
 
 function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Element {
   return (
     <span
       aria-current="page"
       aria-disabled="true"
-      className={cn('text-foreground font-normal', className)}
+      className={cn("font-normal text-foreground", className)}
       data-slot="breadcrumb-page"
-      role="link"
-      tabIndex={0}
       {...props}
     />
   );
@@ -91,7 +95,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
  * Component: BreadcrumbSeparator
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbSeparatorProps = ComponentProps<'li'>;
+type BreadcrumbSeparatorProps = ComponentProps<"li">;
 
 function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
@@ -105,13 +109,13 @@ function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): 
  * Component: BreadcrumbEllipsis
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbEllipsisProps = ComponentProps<'span'>;
+type BreadcrumbEllipsisProps = ComponentProps<"span">;
 
 function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): JSX.Element {
   return (
     <span
       aria-hidden="true"
-      className={cn('flex size-4 items-center justify-center', className)}
+      className={cn("flex size-4 items-center justify-center", className)}
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       {...props}

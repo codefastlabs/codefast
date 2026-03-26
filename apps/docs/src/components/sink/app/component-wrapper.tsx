@@ -1,19 +1,19 @@
-import { cn } from '@codefast/tailwind-variants';
-import { Component } from 'react';
-import type { ComponentPropsWithoutRef, ErrorInfo, ReactNode } from 'react';
+import { cn } from "@codefast/tailwind-variants";
+import { Component } from "react";
+import type { ComponentPropsWithoutRef, ErrorInfo, ReactNode } from "react";
 
 export function ComponentWrapper({
   className,
   name,
   children,
   ...props
-}: ComponentPropsWithoutRef<'div'> & { name: string }) {
+}: ComponentPropsWithoutRef<"div"> & { name: string }) {
   return (
     <ComponentErrorBoundary name={name}>
       <div
         id={name}
         data-name={name.toLowerCase()}
-        className={cn('flex w-full scroll-mt-16 flex-col rounded-xl border', className)}
+        className={cn("flex w-full scroll-mt-16 flex-col rounded-xl border", className)}
         {...props}
       >
         <div className="border-b px-4 py-3">
@@ -25,7 +25,10 @@ export function ComponentWrapper({
   );
 }
 
-class ComponentErrorBoundary extends Component<{ children: ReactNode; name: string }, { hasError: boolean }> {
+class ComponentErrorBoundary extends Component<
+  { children: ReactNode; name: string },
+  { hasError: boolean }
+> {
   constructor(props: { children: ReactNode; name: string }) {
     super(props);
     this.state = { hasError: false };
@@ -41,7 +44,9 @@ class ComponentErrorBoundary extends Component<{ children: ReactNode; name: stri
 
   render() {
     if (this.state.hasError) {
-      return <div className="p-4 text-red-500">Something went wrong in component: {this.props.name}</div>;
+      return (
+        <div className="p-4 text-red-500">Something went wrong in component: {this.props.name}</div>
+      );
     }
 
     return this.props.children;
@@ -50,5 +55,5 @@ class ComponentErrorBoundary extends Component<{ children: ReactNode; name: stri
 
 function getComponentName(name: string) {
   // convert kebab-case to title case
-  return name.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+  return name.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }

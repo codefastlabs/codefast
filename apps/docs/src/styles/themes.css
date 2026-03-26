@@ -66,12 +66,12 @@
     box-shadow: none;
   }
 
-  [data-slot='toggle-group'],
-  [data-slot='toggle-group-item'],
-  [data-slot='checkbox'],
-  [data-slot='radio'],
-  [data-slot='switch'],
-  [data-slot='switch-thumb'] {
+  [data-slot="toggle-group"],
+  [data-slot="toggle-group-item"],
+  [data-slot="checkbox"],
+  [data-slot="radio"],
+  [data-slot="switch"],
+  [data-slot="switch-thumb"] {
     @apply !rounded-none !shadow-none;
   }
 }
@@ -102,12 +102,12 @@
     }
   }
 
-  [data-slot='select-trigger'],
-  [data-slot='toggle-group-item'] {
+  [data-slot="select-trigger"],
+  [data-slot="toggle-group-item"] {
     --spacing: 0.2rem;
   }
 
-  [data-slot='card'] {
+  [data-slot="card"] {
     border-radius: var(--radius);
     padding-block: calc(var(--spacing) * 4);
     gap: calc(var(--spacing) * 2);

@@ -1,6 +1,6 @@
-import { createServerFn } from '@tanstack/react-start';
-import type { z } from 'zod';
-import { exampleFormSchema } from '@/components/sink/schema';
+import { createServerFn } from "@tanstack/react-start";
+import type { z } from "zod";
+import { exampleFormSchema } from "@/components/sink/schema";
 
 export type FormState = {
   values: z.infer<typeof exampleFormSchema>;
@@ -8,24 +8,26 @@ export type FormState = {
   success: boolean;
 };
 
-export const subscriptionAction = createServerFn({ method: 'POST' })
+export const subscriptionAction = createServerFn({ method: "POST" })
   .inputValidator((formData: FormData) => formData)
   .handler(async ({ data: formData }): Promise<FormState> => {
     // Simulate server processing
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const values = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      plan: formData.get('plan') as 'basic' | 'pro',
-      billingPeriod: formData.get('billingPeriod') as string,
-      addons: formData.getAll('addons') as string[],
-      teamSize: parseInt(formData.get('teamSize') as string) || 1,
-      emailNotifications: formData.get('emailNotifications') === 'on',
-      startDate: formData.get('startDate') ? new Date(formData.get('startDate') as string) : new Date(),
-      theme: formData.get('theme') as string,
-      password: formData.get('password') as string,
-      comments: formData.get('comments') as string,
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      plan: formData.get("plan") as "basic" | "pro",
+      billingPeriod: formData.get("billingPeriod") as string,
+      addons: formData.getAll("addons") as string[],
+      teamSize: parseInt(formData.get("teamSize") as string) || 1,
+      emailNotifications: formData.get("emailNotifications") === "on",
+      startDate: formData.get("startDate")
+        ? new Date(formData.get("startDate") as string)
+        : new Date(),
+      theme: formData.get("theme") as string,
+      password: formData.get("password") as string,
+      comments: formData.get("comments") as string,
     };
 
     const result = exampleFormSchema.safeParse(values);
@@ -41,12 +43,12 @@ export const subscriptionAction = createServerFn({ method: 'POST' })
     }
 
     // Simulate some business logic validation
-    if (result.data.email.includes('invalid')) {
+    if (result.data.email.includes("invalid")) {
       return {
         values,
         success: false,
         errors: {
-          email: ['This email domain is not supported'],
+          email: ["This email domain is not supported"],
         },
       };
     }

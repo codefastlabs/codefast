@@ -1,34 +1,41 @@
-import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
-import { Badge } from '@codefast/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
+import { Badge } from "@codefast/ui/badge";
 
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Separator } from '@codefast/ui/separator';
-import { createFileRoute } from '@tanstack/react-router';
-import { CheckCircle2Icon, InfoIcon, LaptopIcon, MoonIcon, PaletteIcon, SunIcon } from 'lucide-react';
-import { themes, useTheme } from '@codefast/theme';
+import { Button } from "@codefast/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
+import { Separator } from "@codefast/ui/separator";
+import { createFileRoute } from "@tanstack/react-router";
+import {
+  CheckCircle2Icon,
+  InfoIcon,
+  LaptopIcon,
+  MoonIcon,
+  PaletteIcon,
+  SunIcon,
+} from "lucide-react";
+import { themes, useTheme } from "@codefast/theme";
 
-export const Route = createFileRoute('/_app/theme/')({
+export const Route = createFileRoute("/_app/theme/")({
   component: ThemeDemo,
   head: () => ({
     meta: [
-      { title: 'Themes — @codefast/ui' },
+      { title: "Themes — @codefast/ui" },
       {
-        name: 'description',
+        name: "description",
         content:
-          'Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.',
+          "Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.",
       },
-      { property: 'og:title', content: 'Themes — @codefast/ui' },
+      { property: "og:title", content: "Themes — @codefast/ui" },
       {
-        property: 'og:description',
+        property: "og:description",
         content:
-          'Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.',
+          "Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.",
       },
-      { name: 'twitter:title', content: 'Themes — @codefast/ui' },
+      { name: "twitter:title", content: "Themes — @codefast/ui" },
       {
-        name: 'twitter:description',
+        name: "twitter:description",
         content:
-          'Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.',
+          "Explore 22 built-in color themes with light, dark, and system mode support. Customize your @codefast/ui components with a single CSS import.",
       },
     ],
   }),
@@ -42,7 +49,9 @@ function ThemeDemo() {
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-4xl font-bold tracking-tight">Theme Demo</h1>
-        <p className="text-muted-foreground">Demo tính năng theme switching với hỗ trợ light, dark và system mode.</p>
+        <p className="text-muted-foreground">
+          Demo tính năng theme switching với hỗ trợ light, dark và system mode.
+        </p>
       </div>
 
       {/* Theme Switcher Section */}
@@ -60,14 +69,14 @@ function ThemeDemo() {
               const isActive = theme === themeOption;
               let Icon;
 
-              if (themeOption === 'light') Icon = SunIcon;
-              else if (themeOption === 'dark') Icon = MoonIcon;
+              if (themeOption === "light") Icon = SunIcon;
+              else if (themeOption === "dark") Icon = MoonIcon;
               else Icon = LaptopIcon;
 
               return (
                 <Button
                   key={themeOption}
-                  variant={isActive ? 'default' : 'outline'}
+                  variant={isActive ? "default" : "outline"}
                   size="lg"
                   onClick={() => setTheme(themeOption)}
                   className="flex items-center gap-2"
@@ -92,20 +101,23 @@ function ThemeDemo() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm font-medium">Selected Theme:</span>
+                <span className="text-sm font-medium text-muted-foreground">Selected Theme:</span>
                 <Badge variant="outline" className="capitalize">
                   {theme}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm font-medium">resolvedTheme:</span>
-                <Badge variant={resolvedTheme === 'dark' ? 'secondary' : 'outline'} className="capitalize">
+                <span className="text-sm font-medium text-muted-foreground">resolvedTheme:</span>
+                <Badge
+                  variant={resolvedTheme === "dark" ? "secondary" : "outline"}
+                  className="capitalize"
+                >
                   {resolvedTheme}
                 </Badge>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm font-medium">Available Themes:</span>
+                <span className="text-sm font-medium text-muted-foreground">Available Themes:</span>
                 <div className="flex gap-1">
                   {themes.map((t) => (
                     <Badge key={t} variant="outline" className="text-xs capitalize">
@@ -166,7 +178,8 @@ function ThemeDemo() {
             disableTransitionOnChange Demo
           </CardTitle>
           <CardDescription>
-            Tính năng này tạm thời vô hiệu hóa tất cả CSS transitions khi chuyển đổi theme để tránh hiệu ứng nhấp nháy
+            Tính năng này tạm thời vô hiệu hóa tất cả CSS transitions khi chuyển đổi theme để tránh
+            hiệu ứng nhấp nháy
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -174,15 +187,21 @@ function ThemeDemo() {
             <InfoIcon className="h-4 w-4" />
             <AlertTitle>Tính năng đã được bật</AlertTitle>
             <AlertDescription>
-              Tính năng <code className="bg-muted rounded px-1 py-0.5 text-xs">disableTransitionOnChange</code> đã được
-              bật trong <code className="bg-muted rounded px-1 py-0.5 text-xs">__root.tsx</code>. Khi bạn chuyển đổi
-              theme, tất cả CSS transitions sẽ tạm thời bị vô hiệu hóa để đảm bảo chuyển đổi mượt mà, không có hiệu ứng
-              nhấp nháy.
+              Tính năng{" "}
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                disableTransitionOnChange
+              </code>{" "}
+              đã được bật trong{" "}
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">__root.tsx</code>. Khi bạn
+              chuyển đổi theme, tất cả CSS transitions sẽ tạm thời bị vô hiệu hóa để đảm bảo chuyển
+              đổi mượt mà, không có hiệu ứng nhấp nháy.
             </AlertDescription>
           </Alert>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold">Các phần tử có transition (sẽ bị vô hiệu hóa khi đổi theme):</h3>
+            <h3 className="text-sm font-semibold">
+              Các phần tử có transition (sẽ bị vô hiệu hóa khi đổi theme):
+            </h3>
             <div className="grid gap-4 md:grid-cols-3">
               {/* Card with transition */}
               <Card className="transition-all duration-500 hover:scale-105 hover:shadow-lg">
@@ -190,36 +209,44 @@ function ThemeDemo() {
                   <CardTitle className="text-sm">Card với transition</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground text-xs">
-                    Card này có transition cho scale và shadow. Khi đổi theme, transition sẽ tạm thời bị vô hiệu hóa.
+                  <p className="text-xs text-muted-foreground">
+                    Card này có transition cho scale và shadow. Khi đổi theme, transition sẽ tạm
+                    thời bị vô hiệu hóa.
                   </p>
                 </CardContent>
               </Card>
 
               {/* Button with transition */}
-              <div className="bg-card hover:bg-accent flex items-center justify-center rounded-lg border p-4 transition-all duration-500">
-                <Button className="transition-all duration-500 hover:scale-110">Button với transition</Button>
+              <div className="flex items-center justify-center rounded-lg border bg-card p-4 transition-all duration-500 hover:bg-accent">
+                <Button className="transition-all duration-500 hover:scale-110">
+                  Button với transition
+                </Button>
               </div>
 
               {/* Badge with transition */}
-              <div className="bg-card hover:border-primary flex items-center justify-center gap-2 rounded-lg border p-4 transition-all duration-500">
-                <Badge className="transition-all duration-500 hover:scale-110">Badge với transition</Badge>
+              <div className="flex items-center justify-center gap-2 rounded-lg border bg-card p-4 transition-all duration-500 hover:border-primary">
+                <Badge className="transition-all duration-500 hover:scale-110">
+                  Badge với transition
+                </Badge>
               </div>
             </div>
 
-            <div className="from-primary/10 to-secondary/10 rounded-lg border bg-linear-to-r p-6 transition-all duration-700">
+            <div className="rounded-lg border bg-linear-to-r from-primary/10 to-secondary/10 p-6 transition-all duration-700">
               <h4 className="mb-2 text-sm font-semibold">Gradient box với transition dài</h4>
-              <p className="text-muted-foreground text-xs">
-                Box này có transition 700ms. Khi bạn chuyển đổi theme, transition này sẽ bị vô hiệu hóa tạm thời để đảm
-                bảo chuyển đổi theme mượt mà.
+              <p className="text-xs text-muted-foreground">
+                Box này có transition 700ms. Khi bạn chuyển đổi theme, transition này sẽ bị vô hiệu
+                hóa tạm thời để đảm bảo chuyển đổi theme mượt mà.
               </p>
             </div>
 
             <div className="space-y-2">
               <h4 className="text-sm font-semibold">Hướng dẫn test:</h4>
-              <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
+              <ol className="list-inside list-decimal space-y-1 text-sm text-muted-foreground">
                 <li>Nhấn vào nút theme switcher ở trên để chuyển đổi theme</li>
-                <li>Quan sát các phần tử trên - chúng sẽ thay đổi màu sắc ngay lập tức, không có animation</li>
+                <li>
+                  Quan sát các phần tử trên - chúng sẽ thay đổi màu sắc ngay lập tức, không có
+                  animation
+                </li>
                 <li>Sau khi theme đã được áp dụng, transitions sẽ được bật lại</li>
                 <li>Hover vào các phần tử để thấy transitions hoạt động bình thường</li>
               </ol>
@@ -271,7 +298,8 @@ function ThemeDemo() {
                 <InfoIcon className="h-4 w-4" />
                 <AlertTitle>Info Alert</AlertTitle>
                 <AlertDescription>
-                  Đây là một alert mẫu để demo theme. Component này sẽ tự động thay đổi màu sắc theo theme hiện tại.
+                  Đây là một alert mẫu để demo theme. Component này sẽ tự động thay đổi màu sắc theo
+                  theme hiện tại.
                 </AlertDescription>
               </Alert>
             </div>
@@ -320,9 +348,10 @@ function ThemeDemo() {
         <InfoIcon className="h-4 w-4" />
         <AlertTitle>How it works</AlertTitle>
         <AlertDescription>
-          Theme system sử dụng React Context để quản lý state và tự động áp dụng theme class vào document root. Khi bạn
-          chuyển đổi theme, tất cả các component sử dụng Tailwind CSS classes với dark mode variants sẽ tự động cập
-          nhật. Theme preference được lưu vào cookie để giữ nguyên khi reload trang và hỗ trợ SSR.
+          Theme system sử dụng React Context để quản lý state và tự động áp dụng theme class vào
+          document root. Khi bạn chuyển đổi theme, tất cả các component sử dụng Tailwind CSS classes
+          với dark mode variants sẽ tự động cập nhật. Theme preference được lưu vào cookie để giữ
+          nguyên khi reload trang và hỗ trợ SSR.
         </AlertDescription>
       </Alert>
     </div>

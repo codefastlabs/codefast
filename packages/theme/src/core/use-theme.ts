@@ -1,8 +1,8 @@
-import { use } from 'react';
+import { use } from "react";
 
-import type { ThemeContextType } from '@/types';
+import type { ThemeContextType } from "@/types";
 
-import { ThemeContext } from '@/core/context';
+import { ThemeContext } from "@/core/context";
 
 /* -----------------------------------------------------------------------------
  * Hook
@@ -38,7 +38,7 @@ export function useTheme(): ThemeContextType {
   const value = use(ThemeContext);
 
   if (!value) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
 
   return value;

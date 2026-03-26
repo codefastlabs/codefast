@@ -12,8 +12,8 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from '@codefast/ui/context-menu';
-import { Code2Icon, PlusIcon, TrashIcon } from 'lucide-react';
+} from "@codefast/ui/context-menu";
+import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
 
 export function ContextMenuDemo() {
   return (

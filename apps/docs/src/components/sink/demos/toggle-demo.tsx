@@ -1,5 +1,5 @@
-import { Toggle } from '@codefast/ui/toggle';
-import { BoldIcon, BookmarkIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
+import { Toggle } from "@codefast/ui/toggle";
+import { BoldIcon, BookmarkIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
 
 export function ToggleDemo() {
   return (

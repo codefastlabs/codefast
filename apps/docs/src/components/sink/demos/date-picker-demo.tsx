@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { cn } from '@codefast/tailwind-variants';
-import { Button } from '@codefast/ui/button';
-import { Calendar } from '@codefast/ui/calendar';
+import { cn } from "@codefast/tailwind-variants";
+import { Button } from "@codefast/ui/button";
+import { Calendar } from "@codefast/ui/calendar";
 import {
   Drawer,
   DrawerContent,
@@ -10,13 +10,13 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@codefast/ui/drawer';
-import { useIsMobile } from '@codefast/ui/hooks/use-is-mobile';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { addDays, format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { useState } from 'react';
-import type { DateRange } from 'react-day-picker';
+} from "@codefast/ui/drawer";
+import { useIsMobile } from "@codefast/ui/hooks/use-is-mobile";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { addDays, format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import type { DateRange } from "react-day-picker";
 
 export function DatePickerDemo() {
   return (
@@ -36,10 +36,13 @@ function DatePickerSimple() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={cn('min-w-50 justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+          className={cn(
+            "min-w-50 justify-start px-2 font-normal",
+            !date && "text-muted-foreground",
+          )}
         >
           <CalendarIcon className="text-muted-foreground" />
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -61,16 +64,16 @@ function DatePickerWithRange() {
         <Button
           id="date"
           variant="outline"
-          className={cn('w-fit justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+          className={cn("w-fit justify-start px-2 font-normal", !date && "text-muted-foreground")}
         >
           <CalendarIcon className="text-muted-foreground" />
           {date?.from ? (
             date.to ? (
               <>
-                {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
+                {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
               </>
             ) : (
-              format(date.from, 'LLL dd, y')
+              format(date.from, "LLL dd, y")
             )
           ) : (
             <span>Pick a date</span>
@@ -78,7 +81,13 @@ function DatePickerWithRange() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar mode="range" defaultMonth={date?.from} selected={date} onSelect={setDate} numberOfMonths={2} />
+        <Calendar
+          mode="range"
+          defaultMonth={date?.from}
+          selected={date}
+          onSelect={setDate}
+          numberOfMonths={2}
+        />
       </PopoverContent>
     </Popover>
   );
@@ -95,10 +104,13 @@ function DataPickerWithDropdowns() {
         <DrawerTrigger asChild>
           <Button
             variant="outline"
-            className={cn('min-w-50 justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+            className={cn(
+              "min-w-50 justify-start px-2 font-normal",
+              !date && "text-muted-foreground",
+            )}
           >
-            {date ? format(date, 'PPP') : <span>Pick a date</span>}
-            <CalendarIcon className="text-muted-foreground ml-auto" />
+            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            <CalendarIcon className="ml-auto text-muted-foreground" />
           </Button>
         </DrawerTrigger>
         <DrawerContent>
@@ -124,10 +136,13 @@ function DataPickerWithDropdowns() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={cn('min-w-50 justify-start px-2 font-normal', !date && 'text-muted-foreground')}
+          className={cn(
+            "min-w-50 justify-start px-2 font-normal",
+            !date && "text-muted-foreground",
+          )}
         >
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
-          <CalendarIcon className="text-muted-foreground ml-auto" />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          <CalendarIcon className="ml-auto text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

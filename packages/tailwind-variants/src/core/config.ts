@@ -14,9 +14,14 @@ import type {
   ConfigurationWithSlots,
   ExtendedConfiguration,
   SlotConfigurationSchema,
-} from '@/types/types';
+} from "@/types/types";
 
-import { cx, hasExtensionConfiguration, hasSlotConfiguration, isSlotObjectType } from '@/utilities/utils';
+import {
+  cx,
+  hasExtensionConfiguration,
+  hasSlotConfiguration,
+  isSlotObjectType,
+} from "@/utilities/utils";
 
 /**
  * Merge two variant groups.
@@ -74,8 +79,15 @@ export const mergeConfigurationSchemas = (
   extensionConfiguration:
     | Configuration<ConfigurationSchema>
     | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>
-    | ExtendedConfiguration<ConfigurationSchema, ConfigurationSchema, SlotConfigurationSchema, SlotConfigurationSchema>,
-): Configuration<ConfigurationSchema> | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> => {
+    | ExtendedConfiguration<
+        ConfigurationSchema,
+        ConfigurationSchema,
+        SlotConfigurationSchema,
+        SlotConfigurationSchema
+      >,
+):
+  | Configuration<ConfigurationSchema>
+  | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> => {
   // Resolve recursive extensions in the base configuration
   const resolvedBaseConfiguration =
     hasExtensionConfiguration(baseConfiguration) && baseConfiguration.extend
@@ -110,7 +122,9 @@ export const mergeConfigurationSchemas = (
   const resolvedSlotDefinitions = hasSlotConfiguration(resolvedBaseConfiguration)
     ? resolvedBaseConfiguration.slots
     : {};
-  const extensionSlotDefinitions = hasSlotConfiguration(extensionConfiguration) ? extensionConfiguration.slots : {};
+  const extensionSlotDefinitions = hasSlotConfiguration(extensionConfiguration)
+    ? extensionConfiguration.slots
+    : {};
   const mergedSlotDefinitions = { ...resolvedSlotDefinitions, ...extensionSlotDefinitions };
 
   // Determine if the result should have slot configuration
@@ -119,8 +133,12 @@ export const mergeConfigurationSchemas = (
   // Handle slot-based configuration merging
   if (hasSlotConfigurationResult) {
     // Extract compound slot definitions from base configuration
-    const baseCompoundSlotDefinitions: readonly CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>[] =
-      hasSlotConfiguration(resolvedBaseConfiguration) && Array.isArray(resolvedBaseConfiguration.compoundSlots)
+    const baseCompoundSlotDefinitions: readonly CompoundSlotType<
+      ConfigurationSchema,
+      SlotConfigurationSchema
+    >[] =
+      hasSlotConfiguration(resolvedBaseConfiguration) &&
+      Array.isArray(resolvedBaseConfiguration.compoundSlots)
         ? (resolvedBaseConfiguration.compoundSlots as readonly CompoundSlotType<
             ConfigurationSchema,
             SlotConfigurationSchema
@@ -128,8 +146,12 @@ export const mergeConfigurationSchemas = (
         : [];
 
     // Extract compound slot definitions from the extension configuration
-    const extensionCompoundSlotDefinitions: readonly CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>[] =
-      hasSlotConfiguration(extensionConfiguration) && Array.isArray(extensionConfiguration.compoundSlots)
+    const extensionCompoundSlotDefinitions: readonly CompoundSlotType<
+      ConfigurationSchema,
+      SlotConfigurationSchema
+    >[] =
+      hasSlotConfiguration(extensionConfiguration) &&
+      Array.isArray(extensionConfiguration.compoundSlots)
         ? (extensionConfiguration.compoundSlots as readonly CompoundSlotType<
             ConfigurationSchema,
             SlotConfigurationSchema

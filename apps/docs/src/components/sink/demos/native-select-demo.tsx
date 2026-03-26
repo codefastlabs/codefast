@@ -1,4 +1,4 @@
-import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from '@codefast/ui/native-select';
+import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@codefast/ui/native-select";
 import {
   Select,
   SelectContent,
@@ -7,13 +7,13 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui/select';
+} from "@codefast/ui/select";
 
 export function NativeSelectDemo() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <div className="text-muted-foreground text-sm font-medium">Basic Select</div>
+        <div className="text-sm font-medium text-muted-foreground">Basic Select</div>
         <div className="flex flex-col gap-4">
           <NativeSelect>
             <NativeSelectOption value="">Select a fruit</NativeSelectOption>
@@ -42,7 +42,7 @@ export function NativeSelectDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <div className="text-muted-foreground text-sm font-medium">With Groups</div>
+        <div className="text-sm font-medium text-muted-foreground">With Groups</div>
         <div className="flex flex-col gap-4">
           <NativeSelect>
             <NativeSelectOption value="">Select a food</NativeSelectOption>
@@ -79,7 +79,7 @@ export function NativeSelectDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <div className="text-muted-foreground text-sm font-medium">Disabled State</div>
+        <div className="text-sm font-medium text-muted-foreground">Disabled State</div>
         <div className="flex flex-col gap-4">
           <NativeSelect disabled>
             <NativeSelectOption value="">Disabled</NativeSelectOption>
@@ -98,7 +98,7 @@ export function NativeSelectDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <div className="text-muted-foreground text-sm font-medium">Error State</div>
+        <div className="text-sm font-medium text-muted-foreground">Error State</div>
         <div className="flex flex-col gap-4">
           <NativeSelect aria-invalid="true">
             <NativeSelectOption value="">Error state</NativeSelectOption>

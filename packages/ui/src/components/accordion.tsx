@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn } from '@codefast/tailwind-variants';
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { Slot } from '@radix-ui/react-slot';
-import { ChevronDownIcon } from 'lucide-react';
+import { cn } from "@codefast/tailwind-variants";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { Slot } from "@radix-ui/react-slot";
+import { ChevronDownIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion
@@ -26,7 +26,7 @@ type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
 function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element {
   return (
     <AccordionPrimitive.Item
-      className={cn('border-b last:border-b-0', className)}
+      className={cn("border-b last:border-b-0", className)}
       data-slot="accordion-item"
       {...props}
     />
@@ -49,7 +49,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
     <Component
       aria-hidden
       className={cn(
-        'text-muted-foreground size-4 shrink-0 translate-y-0.5 transition-transform duration-200',
+        "size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200",
         className,
       )}
       data-slot="accordion-icon"
@@ -69,7 +69,7 @@ function AccordionTrigger({ children, className, ...props }: AccordionTriggerPro
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
         className={cn(
-          'focus-visible:ring-ring/50 group/accordion-trigger flex grow items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium outline-hidden hover:not-disabled:underline focus-visible:ring-3 disabled:opacity-50 [&[data-state=open]>svg]:rotate-180',
+          "group/accordion-trigger flex grow items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium outline-hidden hover:not-disabled:underline focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
           className,
         )}
         data-slot="accordion-trigger"
@@ -90,11 +90,11 @@ type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
 function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
   return (
     <AccordionPrimitive.Content
-      className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden"
+      className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down"
       data-slot="accordion-content"
       {...props}
     >
-      <div className={cn('pt-0 pb-4 text-sm', className)}>{children}</div>
+      <div className={cn("pt-0 pb-4 text-sm", className)}>{children}</div>
     </AccordionPrimitive.Content>
   );
 }
@@ -104,4 +104,10 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
  * -------------------------------------------------------------------------- */
 
 export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger };
-export type { AccordionContentProps, AccordionIconProps, AccordionItemProps, AccordionProps, AccordionTriggerProps };
+export type {
+  AccordionContentProps,
+  AccordionIconProps,
+  AccordionItemProps,
+  AccordionProps,
+  AccordionTriggerProps,
+};

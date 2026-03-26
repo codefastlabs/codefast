@@ -1,21 +1,21 @@
-import type React from 'react';
+import type React from "react";
 
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-import { ThemeProvider } from '@/core/provider';
-import { useTheme } from '@/core/use-theme';
+import { ThemeProvider } from "@/core/provider";
+import { useTheme } from "@/core/use-theme";
 
-describe('ThemeProvider', () => {
+describe("ThemeProvider", () => {
   const originalMatchMedia = window.matchMedia;
 
   beforeEach(() => {
     // Reset document state
-    document.documentElement.className = '';
-    document.documentElement.style.colorScheme = '';
+    document.documentElement.className = "";
+    document.documentElement.style.colorScheme = "";
 
     // Default matchMedia mock (light mode)
-    Object.defineProperty(window, 'matchMedia', {
+    Object.defineProperty(window, "matchMedia", {
       value: jest.fn().mockImplementation((query: string) => ({
         addEventListener: jest.fn(),
         addListener: jest.fn(),
@@ -31,24 +31,24 @@ describe('ThemeProvider', () => {
   });
 
   afterEach(() => {
-    Object.defineProperty(window, 'matchMedia', {
+    Object.defineProperty(window, "matchMedia", {
       value: originalMatchMedia,
       writable: true,
     });
   });
 
-  describe('rendering', () => {
-    test('should render children', () => {
+  describe("rendering", () => {
+    test("should render children", () => {
       render(
         <ThemeProvider theme="light">
           <div data-testid="child">Child Content</div>
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('child')).toHaveTextContent('Child Content');
+      expect(screen.getByTestId("child")).toHaveTextContent("Child Content");
     });
 
-    test('should render multiple children', () => {
+    test("should render multiple children", () => {
       render(
         <ThemeProvider theme="dark">
           <div data-testid="child1">Child 1</div>
@@ -56,13 +56,13 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('child1')).toBeInTheDocument();
-      expect(screen.getByTestId('child2')).toBeInTheDocument();
+      expect(screen.getByTestId("child1")).toBeInTheDocument();
+      expect(screen.getByTestId("child2")).toBeInTheDocument();
     });
   });
 
-  describe('theme context', () => {
-    test('should provide initial theme via context', () => {
+  describe("theme context", () => {
+    test("should provide initial theme via context", () => {
       const TestConsumer = (): React.ReactElement => {
         const { theme } = useTheme();
 
@@ -75,10 +75,10 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('theme')).toHaveTextContent('dark');
+      expect(screen.getByTestId("theme")).toHaveTextContent("dark");
     });
 
-    test('should provide resolved theme for explicit themes', () => {
+    test("should provide resolved theme for explicit themes", () => {
       const TestConsumer = (): React.ReactElement => {
         const { resolvedTheme } = useTheme();
 
@@ -91,17 +91,17 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('resolved')).toHaveTextContent('light');
+      expect(screen.getByTestId("resolved")).toHaveTextContent("light");
     });
 
     test('should resolve "system" theme to OS preference (light)', () => {
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         value: jest.fn().mockImplementation(() => ({
           addEventListener: jest.fn(),
           addListener: jest.fn(),
           dispatchEvent: jest.fn(),
           matches: false, // light mode
-          media: '',
+          media: "",
           onchange: null,
           removeEventListener: jest.fn(),
           removeListener: jest.fn(),
@@ -126,17 +126,17 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('theme')).toHaveTextContent('system');
-      expect(screen.getByTestId('resolved')).toHaveTextContent('light');
+      expect(screen.getByTestId("theme")).toHaveTextContent("system");
+      expect(screen.getByTestId("resolved")).toHaveTextContent("light");
     });
 
     test('should resolve "system" theme to OS preference (dark)', () => {
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         value: jest.fn().mockImplementation((query: string) => ({
           addEventListener: jest.fn(),
           addListener: jest.fn(),
           dispatchEvent: jest.fn(),
-          matches: query === '(prefers-color-scheme: dark)',
+          matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
           removeEventListener: jest.fn(),
@@ -157,10 +157,10 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('resolved')).toHaveTextContent('dark');
+      expect(screen.getByTestId("resolved")).toHaveTextContent("dark");
     });
 
-    test('should provide isPending as false initially', () => {
+    test("should provide isPending as false initially", () => {
       const TestConsumer = (): React.ReactElement => {
         const { isPending } = useTheme();
 
@@ -173,10 +173,10 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('pending')).toHaveTextContent('false');
+      expect(screen.getByTestId("pending")).toHaveTextContent("false");
     });
 
-    test('should provide setTheme function', () => {
+    test("should provide setTheme function", () => {
       const TestConsumer = (): React.ReactElement => {
         const { setTheme } = useTheme();
 
@@ -189,12 +189,12 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('hasSetTheme')).toHaveTextContent('function');
+      expect(screen.getByTestId("hasSetTheme")).toHaveTextContent("function");
     });
   });
 
-  describe('DOM updates', () => {
-    test('should apply theme class to html element on mount', async () => {
+  describe("DOM updates", () => {
+    test("should apply theme class to html element on mount", async () => {
       render(
         <ThemeProvider theme="dark">
           <div>Content</div>
@@ -202,11 +202,11 @@ describe('ThemeProvider', () => {
       );
 
       await waitFor(() => {
-        expect(document.documentElement.classList.contains('dark')).toBe(true);
+        expect(document.documentElement.classList.contains("dark")).toBe(true);
       });
     });
 
-    test('should set colorScheme style on html element', async () => {
+    test("should set colorScheme style on html element", async () => {
       render(
         <ThemeProvider theme="light">
           <div>Content</div>
@@ -214,13 +214,13 @@ describe('ThemeProvider', () => {
       );
 
       await waitFor(() => {
-        expect(document.documentElement.style.colorScheme).toBe('light');
+        expect(document.documentElement.style.colorScheme).toBe("light");
       });
     });
   });
 
-  describe('setTheme', () => {
-    test('should call persistTheme when provided', async () => {
+  describe("setTheme", () => {
+    test("should call persistTheme when provided", async () => {
       const user = userEvent.setup();
       const mockPersistTheme = jest.fn().mockResolvedValue(undefined);
 
@@ -228,7 +228,7 @@ describe('ThemeProvider', () => {
         const { setTheme } = useTheme();
 
         return (
-          <button data-testid="toggle" onClick={async () => setTheme('dark')}>
+          <button data-testid="toggle" onClick={async () => setTheme("dark")}>
             Toggle
           </button>
         );
@@ -240,14 +240,14 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      await user.click(screen.getByTestId('toggle'));
+      await user.click(screen.getByTestId("toggle"));
 
       await waitFor(() => {
-        expect(mockPersistTheme).toHaveBeenCalledWith('dark');
+        expect(mockPersistTheme).toHaveBeenCalledWith("dark");
       });
     });
 
-    test('should not call persistTheme when setting same theme', async () => {
+    test("should not call persistTheme when setting same theme", async () => {
       const user = userEvent.setup();
       const mockPersistTheme = jest.fn().mockResolvedValue(undefined);
 
@@ -267,7 +267,7 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
 
-      await user.click(screen.getByTestId('toggle'));
+      await user.click(screen.getByTestId("toggle"));
 
       // Wait a bit and verify persistTheme was not called
       await act(async () => {

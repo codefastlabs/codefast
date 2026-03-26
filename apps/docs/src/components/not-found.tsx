@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 type NotFoundProps = {
   children?: ReactNode;
@@ -18,7 +18,10 @@ export function NotFound({ children }: NotFoundProps) {
         >
           Go back
         </button>
-        <Link to="/" className="rounded-sm bg-cyan-600 px-2 py-1 text-sm font-black text-white uppercase">
+        <Link
+          to="/"
+          className="rounded-sm bg-cyan-600 px-2 py-1 text-sm font-black text-white uppercase"
+        >
           Start Over
         </Link>
       </p>
