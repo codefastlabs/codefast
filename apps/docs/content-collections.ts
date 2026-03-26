@@ -1,6 +1,6 @@
-import { defineCollection, defineConfig } from '@content-collections/core';
-import { z } from 'zod';
-import { renderMarkdown } from '@/utils/markdown';
+import { defineCollection, defineConfig } from "@content-collections/core";
+import { z } from "zod";
+import { renderMarkdown } from "@/utils/markdown";
 
 /**
  * Docs collection for documentation pages.
@@ -8,10 +8,10 @@ import { renderMarkdown } from '@/utils/markdown';
  * Markdown is rendered to HTML at build-time with syntax highlighting.
  */
 const docs = defineCollection({
-  name: 'docs',
-  directory: './src/content/docs',
-  include: '**/*.md',
-  parser: 'frontmatter',
+  name: "docs",
+  directory: "./src/content/docs",
+  include: "**/*.md",
+  parser: "frontmatter",
   schema: z.object({
     content: z.string(),
     description: z.string().optional(),

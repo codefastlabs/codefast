@@ -3,32 +3,26 @@
   "version": "0.3.10",
   "description": "Shared TypeScript configuration for the monorepo",
   "keywords": [
-    "typescript",
-    "tsconfig",
+    "browser",
     "configuration",
+    "library",
     "monorepo",
-    "react",
     "next",
     "node",
-    "browser",
-    "library"
+    "react",
+    "tsconfig",
+    "typescript"
   ],
   "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/typescript-config#readme",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codefastlabs/codefast.git",
     "directory": "packages/typescript-config"
-  },
-  "license": "MIT",
-  "author": "Vuong Phan <mr.thevuong@gmail.com>",
-  "exports": {
-    "./base.json": "./base.json",
-    "./library.json": "./library.json",
-    "./next.json": "./next.json",
-    "./react.json": "./react.json"
   },
   "files": [
     "*.json",
@@ -36,6 +30,12 @@
     "README.md",
     "LICENSE"
   ],
+  "exports": {
+    "./base.json": "./base.json",
+    "./library.json": "./library.json",
+    "./next.json": "./next.json",
+    "./react.json": "./react.json"
+  },
   "publishConfig": {
     "access": "public"
   }

@@ -1,13 +1,32 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "tasks": {
+    "//#lint": {
+      "inputs": ["$TURBO_DEFAULT$", ".oxlintrc.json", ".editorconfig", ".gitignore"],
+      "outputs": []
+    },
+    "//#lint:fix": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", ".oxlintrc.json", ".editorconfig", ".gitignore"],
+      "outputs": []
+    },
+    "//#format": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", ".oxfmtrc.json", ".editorconfig", ".gitignore"],
+      "outputs": []
+    },
+    "//#format:check": {
+      "inputs": ["$TURBO_DEFAULT$", ".oxfmtrc.json", ".editorconfig", ".gitignore"],
+      "outputs": []
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", ".output/**"]
+      "outputs": ["dist/**", ".output/**"]
     },
     "typecheck": {
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"]
     },
     "clean": {
       "cache": false
@@ -16,26 +35,18 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
-      "outputs": []
-    },
-    "lint:fix": {
-      "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
-      "cache": false
-    },
     "start": {
       "cache": false
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", "jest.config.*"]
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"]
     },
     "test:coverage": {
-      "inputs": ["$TURBO_DEFAULT$", "jest.config.*"],
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
       "outputs": ["coverage/**"]
     },
     "test:coverage:ci": {
-      "inputs": ["$TURBO_DEFAULT$", "jest.config.*"],
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {

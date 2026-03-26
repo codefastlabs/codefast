@@ -76,29 +76,26 @@ graph TD
     UI["@codefast/ui<br/>60+ UI components"]
     TV["@codefast/tailwind-variants<br/>Variant styling API"]
     Theme["@codefast/theme<br/>Theme management"]
-    ESLint["@codefast/eslint-config<br/>ESLint presets"]
     TSConfig["@codefast/typescript-config<br/>TypeScript presets"]
   end
 
   Docs --> UI
   Docs --> Theme
   UI --> TV
-  UI -.->|dev dependency| ESLint
   UI -.->|dev dependency| TSConfig
 ```
 
 ## Packages
 
-| Package | Description |
-| --- | --- |
-| [`@codefast/ui`](packages/ui) | 60+ accessible UI components built on Radix UI primitives |
-| [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant API for Tailwind CSS (4-7x faster than tailwind-variants) |
-| [`@codefast/theme`](packages/theme) | Theme management with React 19 features (optimistic updates, cross-tab sync) |
-| [`@codefast/eslint-config`](packages/eslint-config) | Shared ESLint 9 configuration with presets for React, Next.js, and libraries |
-| [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets |
+| Package                                                     | Description                                                                  |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [`@codefast/ui`](packages/ui)                               | 60+ accessible UI components built on Radix UI primitives                    |
+| [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant API for Tailwind CSS (4-7x faster than tailwind-variants)  |
+| [`@codefast/theme`](packages/theme)                         | Theme management with React 19 features (optimistic updates, cross-tab sync) |
+| [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                      |
 
-| App | Description |
-| --- | --- |
+| App                       | Description                                                |
+| ------------------------- | ---------------------------------------------------------- |
 | [`@apps/docs`](apps/docs) | Documentation and component showcase site (TanStack Start) |
 
 ## Getting Started
@@ -114,8 +111,8 @@ pnpm add @codefast/ui
 Import the required CSS and start using components:
 
 ```tsx
-import '@codefast/ui/css/style.css';
-import { Button } from '@codefast/ui';
+import "@codefast/ui/css/style.css";
+import { Button } from "@codefast/ui";
 
 export default function App() {
   return <Button variant="outline">Click me</Button>;
@@ -157,36 +154,37 @@ pnpm dev --filter=@codefast/ui
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start all apps and packages in development mode |
-| `pnpm build` | Build all apps and packages |
-| `pnpm build:packages` | Build only packages (excludes apps) |
-| `pnpm test` | Run tests across the monorepo |
-| `pnpm test:coverage` | Run tests with coverage reports |
-| `pnpm lint` | Lint all packages |
-| `pnpm lint:fix` | Lint and auto-fix all packages |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check code formatting without modifying |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm clean` | Clean build artifacts, cache, and node_modules |
-| `pnpm deps:check` | Check for outdated dependencies |
-| `pnpm deps:update` | Update all dependencies to latest |
-| `pnpm deps:upgrade` | Interactively update dependencies to latest |
+| Command               | Description                                                                |
+| --------------------- | -------------------------------------------------------------------------- |
+| `pnpm dev`            | Start all apps and packages in development mode                            |
+| `pnpm build`          | Build all apps and packages                                                |
+| `pnpm build:packages` | Build only packages (excludes apps)                                        |
+| `pnpm test`           | Run tests across the monorepo                                              |
+| `pnpm test:coverage`  | Run tests with coverage reports                                            |
+| `pnpm lint`           | Run [Oxlint](https://oxc.rs) (with type-aware rules via `oxlint-tsgolint`) |
+| `pnpm lint:fix`       | Oxlint with `--fix`                                                        |
+| `pnpm format`         | Format with [Oxfmt](https://oxc.rs)                                        |
+| `pnpm format:check`   | Check formatting (CI)                                                      |
+| `pnpm typecheck`      | Run TypeScript type checking                                               |
+| `pnpm clean`          | Clean build artifacts, cache, and node_modules                             |
+| `pnpm deps:check`     | Check for outdated dependencies                                            |
+| `pnpm deps:update`    | Update all dependencies to latest                                          |
+| `pnpm deps:upgrade`   | Interactively update dependencies to latest                                |
 
 ## Technologies
 
-| Technology | Purpose |
-| --- | --- |
-| [React 19](https://react.dev) | Component framework with hooks, server components, and optimistic updates |
-| [TypeScript 5](https://www.typescriptlang.org) | Static type checking for safer, more maintainable code |
-| [Tailwind CSS 4](https://tailwindcss.com) | Utility-first CSS framework for rapid UI development |
-| [Radix UI](https://www.radix-ui.com) | Unstyled, accessible primitives for building UI components |
-| [TanStack Start](https://tanstack.com/start) | Full-stack React framework powering the documentation site |
-| [Turbo](https://turbo.build) | High-performance monorepo build system with caching |
-| [pnpm](https://pnpm.io) | Fast, disk space efficient package manager |
-| [Changesets](https://github.com/changesets/changesets) | Versioning and changelog management for monorepo packages |
-| [Zod](https://zod.dev) | TypeScript-first schema validation |
+| Technology                                               | Purpose                                                                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [React 19](https://react.dev)                            | Component framework with hooks, server components, and optimistic updates                                |
+| [TypeScript 5](https://www.typescriptlang.org)           | Static type checking for safer, more maintainable code                                                   |
+| [Tailwind CSS 4](https://tailwindcss.com)                | Utility-first CSS framework for rapid UI development                                                     |
+| [Radix UI](https://www.radix-ui.com)                     | Unstyled, accessible primitives for building UI components                                               |
+| [TanStack Start](https://tanstack.com/start)             | Full-stack React framework powering the documentation site                                               |
+| [Turbo](https://turbo.build)                             | High-performance monorepo build system with caching                                                      |
+| [pnpm](https://pnpm.io)                                  | Fast, disk space efficient package manager                                                               |
+| [Oxc](https://oxc.rs) (Oxlint, Oxfmt, `oxlint-tsgolint`) | Fast lint and format; type-aware rules per [Oxc docs](https://oxc.rs/docs/guide/usage/linter/type-aware) |
+| [Changesets](https://github.com/changesets/changesets)   | Versioning and changelog management for monorepo packages                                                |
+| [Zod](https://zod.dev)                                   | TypeScript-first schema validation                                                                       |
 
 ## Contributing
 
@@ -205,7 +203,7 @@ Contributions are welcome! Here's how to get started:
    ```bash
    git checkout -b feat/my-feature
    ```
-5. Make your changes and add tests where applicable.
+5. Make your changes and add tests where applicable. Before committing, run `pnpm build:packages` (needed for type-aware Oxlint), then `pnpm lint`, `pnpm format:check`, and `pnpm test` from the repo root.
 6. Commit your changes following [Conventional Commits](https://www.conventionalcommits.org/):
    ```bash
    git commit -m "feat: add new component"

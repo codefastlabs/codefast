@@ -74,7 +74,7 @@ pnpm add @tanstack/react-start
 ## Quick Start
 
 ```tsx
-import { ThemeProvider, useTheme } from '@codefast/theme';
+import { ThemeProvider, useTheme } from "@codefast/theme";
 
 function App() {
   return (
@@ -88,7 +88,7 @@ function Page() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
       Current theme: {theme}
     </button>
   );
@@ -103,8 +103,8 @@ The built-in TanStack Start adapter handles server-side theme persistence via co
 
 ```tsx
 // routes/__root.tsx
-import { ThemeProvider, ThemeScript, resolveTheme } from '@codefast/theme';
-import { getThemeServerFn, setThemeServerFn } from '@codefast/theme/tanstack-start';
+import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
+import { getThemeServerFn, setThemeServerFn } from "@codefast/theme/tanstack-start";
 
 export const Route = createRootRoute({
   loader: async () => {
@@ -113,9 +113,7 @@ export const Route = createRootRoute({
   },
   component: RootComponent,
   head: ({ loaderData }) => ({
-    scripts: [
-      { tag: ThemeScript, props: { theme: loaderData?.theme ?? 'system' } },
-    ],
+    scripts: [{ tag: ThemeScript, props: { theme: loaderData?.theme ?? "system" } }],
   }),
 });
 
@@ -123,10 +121,7 @@ function RootComponent() {
   const { theme } = Route.useLoaderData();
 
   return (
-    <ThemeProvider
-      theme={theme}
-      persistTheme={(value) => setThemeServerFn({ data: value })}
-    >
+    <ThemeProvider theme={theme} persistTheme={(value) => setThemeServerFn({ data: value })}>
       <Outlet />
     </ThemeProvider>
   );
@@ -138,16 +133,16 @@ function RootComponent() {
 For client-side React applications without a server framework, persist the theme to `localStorage`:
 
 ```tsx
-import { ThemeProvider } from '@codefast/theme';
+import { ThemeProvider } from "@codefast/theme";
 
 function App() {
-  const savedTheme = localStorage.getItem('theme') ?? 'system';
+  const savedTheme = localStorage.getItem("theme") ?? "system";
 
   return (
     <ThemeProvider
       theme={savedTheme}
       persistTheme={async (value) => {
-        localStorage.setItem('theme', value);
+        localStorage.setItem("theme", value);
       }}
     >
       <YourApp />
@@ -161,17 +156,13 @@ function App() {
 Build a theme switcher using the `useTheme` hook and the `themes` constant:
 
 ```tsx
-import { useTheme, themes } from '@codefast/theme';
+import { useTheme, themes } from "@codefast/theme";
 
 function ThemeToggle() {
   const { theme, setTheme, isPending } = useTheme();
 
   return (
-    <select
-      value={theme}
-      onChange={(e) => setTheme(e.target.value)}
-      disabled={isPending}
-    >
+    <select value={theme} onChange={(e) => setTheme(e.target.value)} disabled={isPending}>
       {themes.map((t) => (
         <option key={t} value={t}>
           {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -187,10 +178,10 @@ function ThemeToggle() {
 When server-rendering your application, include `ThemeScript` in the `<head>` to prevent a flash of unstyled content. The script runs synchronously before the page paints, applying the correct theme class to the `<html>` element.
 
 ```tsx
-import { ThemeScript } from '@codefast/theme';
+import { ThemeScript } from "@codefast/theme";
 
 // In your HTML head (framework-specific)
-<ThemeScript theme="system" />
+<ThemeScript theme="system" />;
 ```
 
 For Content Security Policy (CSP) environments, pass a `nonce` to both `ThemeScript` and `ThemeProvider`:
@@ -211,7 +202,9 @@ Root provider component that manages theme state and context.
 ```tsx
 <ThemeProvider
   theme="system"
-  persistTheme={async (value) => { /* save theme */ }}
+  persistTheme={async (value) => {
+    /* save theme */
+  }}
   disableTransitionOnChange={false}
   nonce="abc123"
 >
@@ -219,13 +212,13 @@ Root provider component that manages theme state and context.
 </ThemeProvider>
 ```
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `theme` | `Theme` | -- | Initial theme value (`'light'`, `'dark'`, or `'system'`) |
-| `persistTheme` | `(value: Theme) => Promise<void>` | -- | Callback invoked when the user changes the theme |
-| `disableTransitionOnChange` | `boolean` | `false` | Disable CSS transitions during theme changes to avoid visual flicker |
-| `nonce` | `string` | -- | CSP nonce for inline `<style>` elements |
-| `children` | `React.ReactNode` | -- | Application content |
+| Prop                        | Type                              | Default | Description                                                          |
+| --------------------------- | --------------------------------- | ------- | -------------------------------------------------------------------- |
+| `theme`                     | `Theme`                           | --      | Initial theme value (`'light'`, `'dark'`, or `'system'`)             |
+| `persistTheme`              | `(value: Theme) => Promise<void>` | --      | Callback invoked when the user changes the theme                     |
+| `disableTransitionOnChange` | `boolean`                         | `false` | Disable CSS transitions during theme changes to avoid visual flicker |
+| `nonce`                     | `string`                          | --      | CSP nonce for inline `<style>` elements                              |
+| `children`                  | `React.ReactNode`                 | --      | Application content                                                  |
 
 ### useTheme
 
@@ -235,12 +228,12 @@ Hook that returns the current theme state and a setter function.
 const { theme, resolvedTheme, setTheme, isPending } = useTheme();
 ```
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `theme` | `Theme` | Current theme preference (`'light'`, `'dark'`, or `'system'`) |
-| `resolvedTheme` | `ResolvedTheme` | Resolved theme after evaluating system preference (`'light'` or `'dark'`) |
-| `setTheme` | `(value: Theme) => Promise<void>` | Function to update the theme |
-| `isPending` | `boolean` | `true` while an optimistic theme update is in progress |
+| Property        | Type                              | Description                                                               |
+| --------------- | --------------------------------- | ------------------------------------------------------------------------- |
+| `theme`         | `Theme`                           | Current theme preference (`'light'`, `'dark'`, or `'system'`)             |
+| `resolvedTheme` | `ResolvedTheme`                   | Resolved theme after evaluating system preference (`'light'` or `'dark'`) |
+| `setTheme`      | `(value: Theme) => Promise<void>` | Function to update the theme                                              |
+| `isPending`     | `boolean`                         | `true` while an optimistic theme update is in progress                    |
 
 ### ThemeScript
 
@@ -250,19 +243,19 @@ Inline script component for SSR that prevents FOUC by applying the theme before 
 <ThemeScript theme="system" nonce="optional-csp-nonce" />
 ```
 
-| Prop | Type | Description |
-| --- | --- | --- |
-| `theme` | `Theme` | The theme to apply on initial load |
-| `nonce` | `string` | Optional CSP nonce |
+| Prop    | Type     | Description                        |
+| ------- | -------- | ---------------------------------- |
+| `theme` | `Theme`  | The theme to apply on initial load |
+| `nonce` | `string` | Optional CSP nonce                 |
 
 ### resolveTheme
 
 Utility function that resolves a theme value to either `'light'` or `'dark'`.
 
 ```typescript
-import { resolveTheme } from '@codefast/theme';
+import { resolveTheme } from "@codefast/theme";
 
-const resolved = resolveTheme('system'); // 'light' or 'dark' based on OS preference
+const resolved = resolveTheme("system"); // 'light' or 'dark' based on OS preference
 ```
 
 ### themes
@@ -270,7 +263,7 @@ const resolved = resolveTheme('system'); // 'light' or 'dark' based on OS prefer
 A constant array containing all available theme values.
 
 ```typescript
-import { themes } from '@codefast/theme';
+import { themes } from "@codefast/theme";
 
 console.log(themes); // ['light', 'dark', 'system']
 ```

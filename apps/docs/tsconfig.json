@@ -21,8 +21,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
-    /* Path Mapping */
-    "baseUrl": ".",
+    /* Path Mapping (no baseUrl: required for oxlint-tsgolint / TS 7 compat) */
     "paths": {
       "@/*": ["./src/*"],
       "content-collections": ["./.content-collections/generated"]

@@ -1,4 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+#
+# Stack: pnpm workspaces + Turborepo. App: apps/docs (TanStack Start, Vite, Nitro).
+# Libraries: Rslib builds → dist/.
 
 # dependencies
 node_modules
@@ -34,15 +37,17 @@ dist-ssr
 .swc/
 tsconfig.tsbuildinfo
 *.tsbuildinfo
-next-env.d.ts
 
-# framework-specific build outputs
+# TanStack Start / Nitro / Vite SSR (apps/docs)
 .nitro
 .tanstack
 .wrangler
 .output
 .vinxi
 .content-collections
+
+# Vite (config reload temp files, some versions)
+vite.config.*.timestamp-*
 
 # debug
 npm-debug.log*
@@ -56,12 +61,12 @@ yarn-error.log*
 count.txt
 todos.json
 
+# IDEs — JetBrains machine/user state (share via docs or .editorconfig instead)
+.idea/
+
 # storybook
 storybook-static
 build-storybook.log
-
-# eslint
-.eslintcache
 
 # codecov
 codecov

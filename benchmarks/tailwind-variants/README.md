@@ -223,9 +223,7 @@ const buttonVariants = {
 
 ### Development Dependencies
 
-- `tsx` - TypeScript execution engine
-- `@codefast/eslint-config` - Project ESLint configuration
-- `@codefast/typescript-config` - Project TypeScript configuration
+None (benchmarks run with plain Node).
 
 ## Project Structure
 
@@ -269,7 +267,6 @@ benchmarks/tailwind-variants/
 
 This benchmark follows project quality standards:
 
-- ✓ **Zero ESLint warnings** - `pnpm lint` passes completely
 - ✓ **TypeScript strict mode** - Full type safety
 - ✓ **Consistent execution** - Reproducible benchmark results
 - ✓ **Comprehensive testing** - Multiple scenarios and configurations
@@ -290,6 +287,4 @@ To modify or extend the benchmark:
 1. Add new test scenarios in `src/benchmarks/`
 2. Update test data in `src/data/`
 3. Run `pnpm bench` to verify changes
-4. Ensure `pnpm lint` passes with zero warnings
-
-The benchmark is designed to be easily extensible for testing additional libraries or scenarios.
+   The benchmark is designed to be easily extensible for testing additional libraries or scenarios.

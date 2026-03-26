@@ -8,7 +8,7 @@
  */
 
 // Learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 /* -----------------------------------------------------------------------------
  * Mock: window.matchMedia
@@ -39,10 +39,10 @@ const createMockMediaQueryList = (matches: boolean, media: string): MockMediaQue
   removeListener: jest.fn(),
 });
 
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   value: jest.fn().mockImplementation((query: string) => {
     // Default: dark mode not preferred
-    const matches = query === '(prefers-color-scheme: dark)' ? false : false;
+    const matches = query === "(prefers-color-scheme: dark)" ? false : false;
 
     return createMockMediaQueryList(matches, query);
   }),
@@ -70,7 +70,7 @@ class MockBroadcastChannel {
   removeEventListener = jest.fn();
 }
 
-Object.defineProperty(window, 'BroadcastChannel', {
+Object.defineProperty(window, "BroadcastChannel", {
   value: MockBroadcastChannel,
   writable: true,
 });
@@ -81,7 +81,7 @@ Object.defineProperty(window, 'BroadcastChannel', {
  * Required for testing disableAnimation() cleanup function.
  * -------------------------------------------------------------------------- */
 
-Object.defineProperty(window, 'requestAnimationFrame', {
+Object.defineProperty(window, "requestAnimationFrame", {
   value: (callback: FrameRequestCallback): number => {
     return setTimeout(() => {
       callback(performance.now());
