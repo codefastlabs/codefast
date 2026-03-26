@@ -15,12 +15,13 @@
     "deps:update": "pnpm up --latest --recursive && pnpm deps:install",
     "deps:upgrade": "pnpm up --latest --recursive --interactive && pnpm deps:install",
     "dev": "turbo run dev",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint . --deny-warnings",
+    "lint:fix": "oxlint --fix . --deny-warnings",
+    "quality": "turbo run lint format:check",
+    "quality:fix": "turbo run lint:fix && turbo run format",
     "generate:exports": "scripts/generate-exports.py",
-    "lint": "turbo lint",
-    "lint:fix": "turbo lint:fix",
-    "precommit": "lint-staged",
     "prepare": "simple-git-hooks",
     "release": "changeset",
     "release:canary:enter": "changeset pre enter canary",
@@ -35,24 +36,22 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
-    "@commitlint/cli": "^20.4.1",
-    "@commitlint/config-conventional": "^20.4.1",
+    "@commitlint/cli": "^20.4.2",
+    "@commitlint/config-conventional": "^20.4.2",
     "@commitlint/types": "^20.4.0",
-    "@types/node": "^25.2.3",
-    "eslint": "^9.39.2",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.8.1",
-    "prettier-plugin-packagejson": "^3.0.0",
-    "prettier-plugin-tailwindcss": "^0.7.2",
+    "@types/node": "^25.3.0",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.17.4",
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "turbo": "^2.8.9"
+    "turbo": "^2.8.10"
   },
-  "packageManager": "pnpm@10.25.0",
   "engines": {
     "node": ">=24.0.0"
   },
+  "packageManager": "pnpm@10.25.0",
   "pnpm": {
     "overrides": {
       "vite": "^8.0.0-beta.12"

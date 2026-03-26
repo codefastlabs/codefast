@@ -85,11 +85,11 @@ Now that you've installed the necessary dependencies, update your project config
 
 ```ts
 // vite.config.ts
-import { defineConfig } from 'vite'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   server: {
@@ -100,15 +100,15 @@ export default defineConfig({
     // Enables Vite to resolve imports using path aliases.
     tsconfigPaths(),
     tanstackStart({
-      srcDirectory: 'src', // This is the default
+      srcDirectory: "src", // This is the default
       router: {
         // Specifies the directory TanStack Router uses for your routes.
-        routesDirectory: 'app', // Defaults to "routes", relative to srcDirectory
+        routesDirectory: "app", // Defaults to "routes", relative to srcDirectory
       },
     }),
     viteReact(),
   ],
-})
+});
 ```
 
 By default, `routesDirectory` is set to `routes`. To maintain consistency with Next.js App Router conventions, you can set it to `app` instead.
@@ -225,16 +225,16 @@ Before you can run the development server, you need to create a file that will d
 - `src/router.tsx`
 
 ```tsx
-import { createRouter } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
+import { createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
   const router = createRouter({
     routeTree,
     scrollRestoration: true,
-  })
+  });
 
-  return router
+  return router;
 }
 ```
 
@@ -318,8 +318,8 @@ Next.js uses the `next/image` component for optimized images. In TanStack Start,
 and almost a drop-in replacement.
 
 ```tsx
-import Image from 'next/image' // [!code --]
-import { Image } from '@unpic/react' // [!code ++]
+import Image from "next/image"; // [!code --]
+import { Image } from "@unpic/react"; // [!code ++]
 function Component() {
   return (
     <Image
@@ -330,7 +330,7 @@ function Component() {
       width={600} // [!code ++]
       height={400} // [!code ++]
     />
-  )
+  );
 }
 ```
 
@@ -390,14 +390,14 @@ npm i -D @fontsource-variable/dm-sans @fontsource-variable/jetbrains-mono
 Add the following to `src/app/globals.css`:
 
 ```css
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import '@fontsource-variable/dm-sans'; /* [!code ++] */
-@import '@fontsource-variable/jetbrains-mono'; /* [!code ++] */
+@import "@fontsource-variable/dm-sans"; /* [!code ++] */
+@import "@fontsource-variable/jetbrains-mono"; /* [!code ++] */
 
 @theme inline {
-  --font-sans: 'DM Sans Variable', sans-serif; /* [!code ++] */
-  --font-mono: 'JetBrains Mono Variable', monospace; /* [!code ++] */
+  --font-sans: "DM Sans Variable", sans-serif; /* [!code ++] */
+  --font-mono: "JetBrains Mono Variable", monospace; /* [!code ++] */
   /* ... */
 }
 

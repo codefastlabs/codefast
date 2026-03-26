@@ -14,6 +14,7 @@ Khi chạy lệnh `vite preview`, bạn thấy 2 port được tạo ra:
 Đây là **hành vi bình thường** của TanStack Start với Nitro. Khi chạy `vite preview`, hệ thống khởi động **2 server**:
 
 ### 1. Vite Preview Server (Port 3001)
+
 - **Port**: 3001 (được cấu hình trong `vite.config.ts`)
 - **Vai trò**: Server chính để truy cập ứng dụng
 - **Chức năng**:
@@ -22,6 +23,7 @@ Khi chạy lệnh `vite preview`, bạn thấy 2 port được tạo ra:
   - Xử lý client-side routing
 
 ### 2. Nitro Server (Port 51437 - Ngẫu nhiên)
+
 - **Port**: 51437 (port ngẫu nhiên, tự động chọn)
 - **Vai trò**: Server SSR (Server-Side Rendering) thực sự
 - **Chức năng**:
@@ -46,10 +48,12 @@ SSR Processing
 ## Tại sao có 2 port?
 
 TanStack Start sử dụng kiến trúc:
+
 - **Vite Preview Server**: Xử lý static assets và client-side code
 - **Nitro Server**: Xử lý SSR và server-side logic
 
 Điều này cho phép:
+
 - Tối ưu hóa performance (static assets được serve trực tiếp)
 - Tách biệt concerns (client vs server)
 - Hỗ trợ SSR tốt hơn
@@ -59,6 +63,7 @@ TanStack Start sử dụng kiến trúc:
 ### Option 1: Chấp nhận hành vi này (Khuyến nghị)
 
 Đây là cách TanStack Start được thiết kế để hoạt động. Chỉ cần:
+
 - Truy cập ứng dụng qua port **3001**
 - Bỏ qua port 51437 (port nội bộ)
 
@@ -90,8 +95,8 @@ Cấu hình port cho Nitro server:
 Nếu bạn muốn cố định port của Nitro server (thay vì ngẫu nhiên), có thể cấu hình trong `vite.config.ts`:
 
 ```typescript
-import { defineConfig } from 'vite';
-import { nitro } from 'nitro/vite';
+import { defineConfig } from "vite";
+import { nitro } from "nitro/vite";
 
 const config = defineConfig({
   // ... other config
@@ -124,6 +129,7 @@ Port 3001 là port **duy nhất bạn cần quan tâm**.
 ## Khuyến nghị
 
 **Sử dụng cách hiện tại** (2 port):
+
 - ✅ Đây là cách TanStack Start được thiết kế
 - ✅ Tối ưu hóa performance
 - ✅ Hỗ trợ SSR tốt
@@ -144,4 +150,3 @@ Port 3001 là port **duy nhất bạn cần quan tâm**.
 - ✅ **Port 51437**: Port nội bộ của Nitro server (tự động, ngẫu nhiên)
 - ✅ Đây là hành vi bình thường và đúng như thiết kế
 - ✅ Không cần thay đổi gì, chỉ cần truy cập port 3001
-

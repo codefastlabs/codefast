@@ -79,11 +79,11 @@ If your project already has Tailwind CSS 4.x configured (e.g. Vite, Next.js, Tan
 **1. In your main CSS file** (e.g. `src/styles.css` or `src/index.css`):
 
 ```css
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* @codefast/ui – theme variables & preset (must come after tailwindcss) */
-@import '@codefast/ui/css/slate.css';
-@import '@codefast/ui/css/preset.css';
+@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/preset.css";
 ```
 
 **2. Select a theme.** Available themes (replace `slate` with any below):
@@ -117,7 +117,7 @@ If your project already has Tailwind CSS 4.x configured (e.g. Vite, Next.js, Tan
 
 ```tsx
 // Example: toggle dark mode
-document.documentElement.classList.toggle('dark', isDark);
+document.documentElement.classList.toggle("dark", isDark);
 ```
 
 ### Option 2: Standalone (No Existing Tailwind)
@@ -126,7 +126,7 @@ If your project does **not** use Tailwind yet, import the full stylesheet (inclu
 
 ```tsx
 // In your app entry (e.g. main.tsx, _app.tsx)
-import '@codefast/ui/css/style.css';
+import "@codefast/ui/css/style.css";
 ```
 
 > **Note:** This bundles Tailwind CSS. Ensure your build tool (Vite, webpack, etc.) can process CSS `@import`. You may need `@tailwindcss/vite` or `@tailwindcss/postcss` in devDependencies.
@@ -137,27 +137,27 @@ import '@codefast/ui/css/style.css';
 
 ```css
 /* src/styles.css */
-@import 'tailwindcss';
-@import '@codefast/ui/css/slate.css';
-@import '@codefast/ui/css/preset.css';
+@import "tailwindcss";
+@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/preset.css";
 ```
 
 **Next.js (App Router):**
 
 ```css
 /* app/globals.css */
-@import 'tailwindcss';
-@import '@codefast/ui/css/slate.css';
-@import '@codefast/ui/css/preset.css';
+@import "tailwindcss";
+@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/preset.css";
 ```
 
 **TanStack Start:**
 
 ```css
 /* src/styles.css */
-@import 'tailwindcss';
-@import '@codefast/ui/css/slate.css';
-@import '@codefast/ui/css/preset.css';
+@import "tailwindcss";
+@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/preset.css";
 ```
 
 #### SSR with Nitro (TanStack Start)
@@ -166,13 +166,13 @@ When deploying with [Nitro](https://v3.nitro.build/) (Vercel, self-host Node.js,
 
 ```ts
 // vite.config.ts
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
 export default defineConfig({
   resolve: {
     alias: {
       // Workaround: Rolldown mishandles tslib CJS; force ESM to avoid SSR 500.
-      tslib: 'tslib/tslib.es6.mjs',
+      tslib: "tslib/tslib.es6.mjs",
     },
   },
   // ... other config
@@ -196,8 +196,8 @@ export default defineConfig({
 Override CSS variables in your own CSS after imports:
 
 ```css
-@import '@codefast/ui/css/slate.css';
-@import '@codefast/ui/css/preset.css';
+@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/preset.css";
 
 :root {
   --radius: 0.5rem; /* Increase border radius */
@@ -210,7 +210,7 @@ Override CSS variables in your own CSS after imports:
 After integrating styles (see [Styling Integration](#styling-integration)), import and use components:
 
 ```tsx
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@codefast/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
 
 function App() {
   return (
@@ -219,7 +219,9 @@ function App() {
         <CardTitle>Welcome to CodeFast UI</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="mb-4">A comprehensive UI components library built with React and Tailwind CSS.</p>
+        <p className="mb-4">
+          A comprehensive UI components library built with React and Tailwind CSS.
+        </p>
         <Button>Get Started</Button>
       </CardContent>
     </Card>
@@ -286,11 +288,11 @@ function App() {
 ### Form Components
 
 ```tsx
-import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from '@codefast/ui';
-import { useState } from 'react';
+import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
+import { useState } from "react";
 
 function ContactForm() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   return (
     <Card className="w-96">
@@ -318,7 +320,7 @@ function ContactForm() {
 ### Navigation Components
 
 ```tsx
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui";
 
 function TabExample() {
   return (
@@ -349,7 +351,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Button,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
 function DialogExample() {
   return (
@@ -360,7 +362,9 @@ function DialogExample() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you're done.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">{/* Form content */}</div>
       </DialogContent>
@@ -393,7 +397,7 @@ Most components accept these common props:
 All components export their prop types for use in custom wrappers:
 
 ```tsx
-import type { ButtonProps, CardProps, InputProps } from '@codefast/ui';
+import type { ButtonProps, CardProps, InputProps } from "@codefast/ui";
 
 function MyCustomButton(props: ButtonProps) {
   return <Button {...props} />;

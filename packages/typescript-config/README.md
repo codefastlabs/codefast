@@ -120,12 +120,7 @@ For Next.js applications:
 ```json
 {
   "extends": "@codefast/typescript-config/next.json",
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
 ```
@@ -134,54 +129,54 @@ For Next.js applications:
 
 ### Available Presets
 
-| Configuration | Extends | Description | Use Case |
-| --- | --- | --- | --- |
-| `base.json` | -- | Strict base configuration with ESNext target | All TypeScript projects |
-| `library.json` | `base.json` | ESNext-only libs (no DOM) | NPM packages, shared libraries |
-| `react.json` | `base.json` | Adds `react-jsx` transform | React components and apps |
-| `next.json` | `base.json` | Incremental builds, JSX preserve, Next.js plugin | Next.js applications |
+| Configuration  | Extends     | Description                                      | Use Case                       |
+| -------------- | ----------- | ------------------------------------------------ | ------------------------------ |
+| `base.json`    | --          | Strict base configuration with ESNext target     | All TypeScript projects        |
+| `library.json` | `base.json` | ESNext-only libs (no DOM)                        | NPM packages, shared libraries |
+| `react.json`   | `base.json` | Adds `react-jsx` transform                       | React components and apps      |
+| `next.json`    | `base.json` | Incremental builds, JSX preserve, Next.js plugin | Next.js applications           |
 
 ### Base Configuration Details
 
-| Option | Value | Purpose |
-| --- | --- | --- |
-| `strict` | `true` | Enables all strict type-checking options |
-| `target` | `ESNext` | Latest JavaScript features |
-| `module` | `ESNext` | ESM module system |
-| `moduleResolution` | `bundler` | Optimized for modern bundlers |
-| `lib` | `DOM, DOM.Iterable, ESNext` | Browser and ESNext APIs |
-| `isolatedModules` | `true` | File-level transpilation |
-| `noEmit` | `true` | Lets the bundler handle output |
-| `allowJs` | `true` | JavaScript file support |
-| `resolveJsonModule` | `true` | JSON import support |
-| `esModuleInterop` | `true` | CommonJS/ESM interop |
-| `skipLibCheck` | `true` | Skip type checking of declaration files |
+| Option              | Value                       | Purpose                                  |
+| ------------------- | --------------------------- | ---------------------------------------- |
+| `strict`            | `true`                      | Enables all strict type-checking options |
+| `target`            | `ESNext`                    | Latest JavaScript features               |
+| `module`            | `ESNext`                    | ESM module system                        |
+| `moduleResolution`  | `bundler`                   | Optimized for modern bundlers            |
+| `lib`               | `DOM, DOM.Iterable, ESNext` | Browser and ESNext APIs                  |
+| `isolatedModules`   | `true`                      | File-level transpilation                 |
+| `noEmit`            | `true`                      | Lets the bundler handle output           |
+| `allowJs`           | `true`                      | JavaScript file support                  |
+| `resolveJsonModule` | `true`                      | JSON import support                      |
+| `esModuleInterop`   | `true`                      | CommonJS/ESM interop                     |
+| `skipLibCheck`      | `true`                      | Skip type checking of declaration files  |
 
 ### Library Configuration Details
 
 Extends `base.json` with:
 
-| Option | Value | Purpose |
-| --- | --- | --- |
-| `lib` | `ESNext` | No DOM libs -- library code should not depend on browser APIs |
+| Option | Value    | Purpose                                                       |
+| ------ | -------- | ------------------------------------------------------------- |
+| `lib`  | `ESNext` | No DOM libs -- library code should not depend on browser APIs |
 
 ### React Configuration Details
 
 Extends `base.json` with:
 
-| Option | Value | Purpose |
-| --- | --- | --- |
-| `jsx` | `react-jsx` | Modern JSX transform (no `import React` needed) |
+| Option | Value       | Purpose                                         |
+| ------ | ----------- | ----------------------------------------------- |
+| `jsx`  | `react-jsx` | Modern JSX transform (no `import React` needed) |
 
 ### Next.js Configuration Details
 
 Extends `base.json` with:
 
-| Option | Value | Purpose |
-| --- | --- | --- |
-| `incremental` | `true` | Faster subsequent builds |
-| `jsx` | `preserve` | Let Next.js handle JSX transformation |
-| `plugins` | `[{ "name": "next" }]` | Next.js TypeScript plugin |
+| Option        | Value                  | Purpose                               |
+| ------------- | ---------------------- | ------------------------------------- |
+| `incremental` | `true`                 | Faster subsequent builds              |
+| `jsx`         | `preserve`             | Let Next.js handle JSX transformation |
+| `plugins`     | `[{ "name": "next" }]` | Next.js TypeScript plugin             |
 
 ## API Reference
 
@@ -242,15 +237,15 @@ Extends `base.json` with:
 
 ## Compatibility
 
-| Technology | Minimum Version | Notes |
-| --- | --- | --- |
-| TypeScript | 5.0.0 | Required |
-| Node.js | 24.0.0 | Required |
-| React | 18.0.0+ | When using `react.json` |
-| Next.js | 14.0.0+ | When using `next.json` |
-| Vite | 5.0.0+ | Works with bundler module resolution |
-| Turbopack | Any | Works with bundler module resolution |
-| esbuild | 0.19+ | Works with bundler module resolution |
+| Technology | Minimum Version | Notes                                |
+| ---------- | --------------- | ------------------------------------ |
+| TypeScript | 5.0.0           | Required                             |
+| Node.js    | 24.0.0          | Required                             |
+| React      | 18.0.0+         | When using `react.json`              |
+| Next.js    | 14.0.0+         | When using `next.json`               |
+| Vite       | 5.0.0+          | Works with bundler module resolution |
+| Turbopack  | Any             | Works with bundler module resolution |
+| esbuild    | 0.19+           | Works with bundler module resolution |
 
 ## Troubleshooting
 
@@ -310,8 +305,8 @@ For package-specific development:
 # Build all packages
 pnpm build:packages
 
-# Lint and format
-pnpm lint:fix
+# Lint and format (from repo root)
+pnpm lint
 pnpm format
 ```
 

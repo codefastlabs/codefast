@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite';
-import { devtools } from '@tanstack/devtools-vite';
-import { tanstackStart } from '@tanstack/react-start/plugin/vite';
-import viteReact from '@vitejs/plugin-react';
-import tsConfigPaths from 'vite-tsconfig-paths';
-import tailwindcss from '@tailwindcss/vite';
-import { nitro } from 'nitro/vite';
-import contentCollections from '@content-collections/vite';
+import { defineConfig } from "vite";
+import { devtools } from "@tanstack/devtools-vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import tsConfigPaths from "vite-tsconfig-paths";
+import tailwindcss from "@tailwindcss/vite";
+import { nitro } from "nitro/vite";
+import contentCollections from "@content-collections/vite";
 
 /**
  * Vite configuration for TanStack Start application.
@@ -48,7 +48,7 @@ const config = defineConfig({
      *
      * @see [ssr.noExternal](https://vite.dev/config/ssr-options.html#ssr-noexternal)
      */
-    noExternal: ['@tabler/icons-react', 'recharts', 'decimal.js-light'],
+    noExternal: ["@tabler/icons-react", "recharts", "decimal.js-light"],
   },
 
   /**
@@ -67,7 +67,7 @@ const config = defineConfig({
        * Configured to open files in WebStorm at the specified line and column.
        */
       editor: {
-        name: 'WebStorm',
+        name: "WebStorm",
         /**
          * Opens a file in WebStorm at the specified location.
          *
@@ -75,10 +75,12 @@ const config = defineConfig({
          * @param lineNumber - Line number to navigate to (defaults to 1)
          * @param columnNumber - Column number to navigate to (defaults to 1)
          */
-        open: async (path, lineNumber = '1', columnNumber = '1') => {
-          const { exec } = await import('node:child_process');
+        open: async (path, lineNumber = "1", columnNumber = "1") => {
+          const { exec } = await import("node:child_process");
 
-          exec(`webstorm --line ${lineNumber} --column ${columnNumber} "${path.replaceAll('$', '\\$')}"`);
+          exec(
+            `webstorm --line ${lineNumber} --column ${columnNumber} "${path.replaceAll("$", "\\$")}"`,
+          );
         },
       },
     }),
@@ -104,7 +106,7 @@ const config = defineConfig({
      */
     viteReact({
       babel: {
-        plugins: ['babel-plugin-react-compiler'],
+        plugins: ["babel-plugin-react-compiler"],
       },
     }),
   ],

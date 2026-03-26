@@ -1,7 +1,7 @@
-import { defineConfig } from '@rslib/core';
+import { defineConfig } from "@rslib/core";
 
 // Determine if we're running in watch mode to adjust build behavior accordingly.
-const isWatchMode = process.argv.includes('--watch');
+const isWatchMode = process.argv.includes("--watch");
 
 export default defineConfig({
   lib: [
@@ -9,13 +9,13 @@ export default defineConfig({
       // Don't bundle dependencies - let the consuming application handle bundling.
       bundle: false,
       dts: true,
-      format: 'esm',
+      format: "esm",
     },
     {
       // CommonJS format for Node.js compatibility.
       bundle: false,
       dts: false,
-      format: 'cjs',
+      format: "cjs",
     },
   ],
   output: {
@@ -23,7 +23,7 @@ export default defineConfig({
     cleanDistPath: !isWatchMode,
     // Don't minify at the library level since Next.js/TanStack Start will minify during app build.
     // Rslib defaults for esm/cjs only perform dead code elimination and unused code elimination.
-    target: 'web',
+    target: "web",
   },
   performance: {
     // Enable build cache in watch mode to speed up incremental builds.
@@ -34,8 +34,8 @@ export default defineConfig({
   source: {
     entry: {
       // Include all TypeScript/TSX files except test and story files.
-      index: ['src/**/*.{ts,tsx}', '!src/**/*.{test,spec,e2e,story,stories}.{ts,tsx}'],
+      index: ["src/**/*.{ts,tsx}", "!src/**/*.{test,spec,e2e,story,stories}.{ts,tsx}"],
     },
-    tsconfigPath: 'tsconfig.build.json',
+    tsconfigPath: "tsconfig.build.json",
   },
 });
