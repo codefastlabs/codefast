@@ -1,81 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="WEB_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="Python" name="Python facet">
-      <configuration sdkName="Python 3.14 (codefast)" />
-    </facet>
-  </component>
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/temp" />
-      <excludeFolder url="file://$MODULE_DIR$/tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ui/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ui/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/storybook/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-config/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-config/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/style-guide/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/eslint-config/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/.vscode" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/block/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/.vercel" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/eslint-config/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/style-guide/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ui/.exports-analysis" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/cli/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/checkbox-group/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/input-number/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/input/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/progress-circle/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/checkbox-group/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/input-number/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/input/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/progress-circle/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ui/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/eslint-config/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/next/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.output" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.tanstack" />
-      <excludeFolder url="file://$MODULE_DIR$/benchmarks/tailwind-variants/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/docs/.content-collections" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/theme/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/theme/coverage" />
-    </content>
+    <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Python 3.14 (codefast) interpreter library" level="application" />
   </component>
 </module>

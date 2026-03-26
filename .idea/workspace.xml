@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="76cd644f-cf0e-4286-bd96-17beb93c6642" name="Changes" comment="chore: remove deprecated TanStack router and start skills&#10;&#10;- Deleted the `tanstack-router`, `tanstack-start`, and `tanstack-start-best-practices` skills along with their associated files, including documentation and configuration.&#10;- This cleanup helps streamline the project by removing outdated and unused components.">
+      <change afterPath="$PROJECT_DIR$/.oxfmtrc.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.oxlintrc.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/extensions.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.changeset/large-stars-bow.md" beforeDir="false" afterPath="$PROJECT_DIR$/.changeset/large-stars-bow.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.changeset/pre.json" beforeDir="false" afterPath="$PROJECT_DIR$/.changeset/pre.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.changeset/yummy-drinks-laugh.md" beforeDir="false" afterPath="$PROJECT_DIR$/.changeset/yummy-drinks-laugh.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/actions/setup-environment/action.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/actions/setup-environment/action.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/dependabot.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/dependabot.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/release.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/release.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.prettierignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SECURITY.md" beforeDir="false" afterPath="$PROJECT_DIR$/SECURITY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/.cta.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/.cta.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/content-collections.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/content-collections.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/docs/development/preview-server.md" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/docs/development/preview-server.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/docs/guides/migrate-from-nextjs.md" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/docs/guides/migrate-from-nextjs.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/active-theme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/active-theme.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/default-catch-boundary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/default-catch-boundary.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/markdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/markdown.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/mode-switcher.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/mode-switcher.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/not-found.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/not-found.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-breadcrumbs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-breadcrumbs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-sidebar-data.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-sidebar-data.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-sidebar-types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-sidebar-types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/app-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/component-wrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/component-wrapper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/nav-user.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/nav-user.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/team-switcher.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/team-switcher.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/app/theme-selector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/app/theme-selector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/component-registry.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/component-registry.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/accordion-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/accordion-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/alert-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/alert-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/alert-dialog-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/alert-dialog-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/aspect-ratio-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/aspect-ratio-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/avatar-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/avatar-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/badge-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/badge-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/breadcrumb-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/breadcrumb-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/button-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/button-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/button-group-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/button-group-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/calendar-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/calendar-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/card-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/card-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/carousel-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/carousel-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-area-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-area-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-bar-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-bar-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-bar-mixed-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-bar-mixed-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-line-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/chart-line-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/checkbox-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/checkbox-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/collapsible-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/collapsible-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/combobox-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/combobox-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/command-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/command-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/context-menu-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/context-menu-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/date-picker-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/date-picker-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/dialog-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/dialog-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/drawer-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/drawer-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/dropdown-menu-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/dropdown-menu-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/empty-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/empty-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/field-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/field-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/form-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/form-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/hover-card-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/hover-card-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/input-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/input-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/input-group-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/input-group-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/input-otp-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/input-otp-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/item-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/item-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/kbd-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/kbd-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/label-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/label-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/menubar-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/menubar-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/native-select-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/native-select-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/navigation-menu-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/navigation-menu-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/pagination-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/pagination-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/popover-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/popover-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/progress-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/progress-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/radio-group-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/radio-group-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/resizable-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/resizable-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/scroll-area-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/scroll-area-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/select-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/select-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/separator-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/separator-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/sheet-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/sheet-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/skeleton-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/skeleton-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/slider-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/slider-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/sonner-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/sonner-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/spinner-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/spinner-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/switch-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/switch-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/table-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/table-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/tabs-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/tabs-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/textarea-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/textarea-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/toggle-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/toggle-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/toggle-group-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/toggle-group-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/tooltip-demo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/demos/tooltip-demo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/appearance-settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/appearance-settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/chat-settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/chat-settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/display-settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/display-settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/notion-prompt-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/notion-prompt-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/ship-registration-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/ship-registration-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/shipping-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/forms/shipping-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/react-hook-form-example.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/react-hook-form-example.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/schema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/schema.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/server-fn.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/server-fn.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/start-form-example.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/start-form-example.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/components/sink/tanstack-form-example.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/components/sink/tanstack-form-example.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/content/docs/button.md" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/content/docs/button.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/data/demo.punk-songs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/data/demo.punk-songs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/hooks/use-meta-color.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/hooks/use-meta-color.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-form/devtools.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-form/devtools.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-query/devtools.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-query/devtools.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-query/provider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-query/provider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-router/devtools.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/integrations/tanstack-router/devtools.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routeTree.gen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routeTree.gen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/router.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/router.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/__root.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/__root.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/_app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/_app.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/_app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/_app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/_app/theme/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/_app/theme/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/$name/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/$name/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/forms/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/forms/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/react-hook-form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/react-hook-form/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/route.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/route.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/start-form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/start-form/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/routes/sink/tanstack-form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/routes/sink/tanstack-form/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/styles/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/styles/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/styles/themes.css" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/styles/themes.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/src/utils/markdown.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/src/utils/markdown.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/vitest.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/vitest.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/lint-staged.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/complex/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/complex/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/complex/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/complex/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/complex/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/complex/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/compound-slots/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/compound-slots/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/compound-slots/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/compound-slots/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/compound-slots/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/compound-slots/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/create-tv/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/create-tv/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/create-tv/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/create-tv/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/create-tv/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/create-tv/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extends/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extends/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extends/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extends/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extends/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extends/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/slots-with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/slots-with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/slots-without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/slots-without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/extreme/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/simple/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/simple/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/simple/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/simple/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/simple/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/simple/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/slots/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/slots/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/slots/with-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/slots/with-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/slots/without-merge.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/benchmarks/slots/without-merge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/utils/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/utils/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/utils/performance-summary.js" beforeDir="false" afterPath="$PROJECT_DIR$/benchmarks/tailwind-variants/src/utils/performance-summary.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commitlint.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/commitlint.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate-exports.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/generate-exports.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/CHANGELOG.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/jest.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/lint-staged.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/rslib.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/core/import.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/core/javascript.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/core/perfectionist.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/core/stylistic.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/core/typescript.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/core/unicorn.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/environments/browser.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/environments/node.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/environments/test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/languages/css.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/languages/json.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/languages/markdown.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/accessibility/jsx-a11y.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/frameworks/next.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/frameworks/react.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/testing/jest.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/tooling/only-warn.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/tooling/prettier.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/tooling/tsdoc.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/plugins/tooling/turbo.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/presets/base.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/presets/library.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/presets/next.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/presets/react.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/types.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/src/utils/compose-config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/tsconfig.build.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/eslint-config/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/jest.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/jest.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/jest.setup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/jest.setup.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/lint-staged.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/rslib.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/rslib.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/core/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/core/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/core/tv.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/core/tv.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/processing/compound.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/processing/compound.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/processing/slots.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/processing/slots.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/types/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/types/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/src/utilities/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/src/utilities/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/fixtures/tailwind-merge-config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/fixtures/tailwind-merge-config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/types/class/type-inference.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/types/class/type-inference.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/types/className/type-inference.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/types/className/type-inference.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/compound-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/compound-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/compound-slots.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/compound-slots.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/config-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/config-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/default.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/default.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/extends.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/extends.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/integration.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/integration.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/slots-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/slots-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/slots.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/slots.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/tw-merge-false.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/class/tw-merge-false.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/compound-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/compound-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/compound-slots.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/compound-slots.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/config-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/config-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/default.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/default.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/extends.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/extends.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/integration.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/integration.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/slots-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/slots-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/slots.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/slots.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/tw-merge-false.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/className/tw-merge-false.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/cn-function.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/cn-function.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/create-tv.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/create-tv.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/default.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/default.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/readme-examples.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/readme-examples.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/tailwind-merge.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/tailwind-merge.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/utils-edge-cases.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/tailwind-variants/tests/unit/common/utils-edge-cases.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/jest.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/jest.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/jest.setup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/jest.setup.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/rslib.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/rslib.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/adapters/tanstack-start/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/adapters/tanstack-start/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/adapters/tanstack-start/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/adapters/tanstack-start/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/context.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/context.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/context.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/context.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/provider.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/provider.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/provider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/provider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/use-theme.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/use-theme.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/core/use-theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/core/use-theme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/script/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/script/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/script/theme-script.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/script/theme-script.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/script/theme-script.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/script/theme-script.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/types.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/types.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/utils/dom.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/utils/dom.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/utils/dom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/utils/dom.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/utils/system.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/utils/system.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/theme/src/utils/system.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/theme/src/utils/system.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/typescript-config/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/typescript-config/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/typescript-config/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/typescript-config/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/jest.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/jest.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/jest.setup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/jest.setup.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/lint-staged.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/postcss.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/postcss.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/rslib.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/rslib.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/accordion.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/accordion.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/alert-dialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/alert-dialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/alert.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/alert.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/aspect-ratio.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/aspect-ratio.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/avatar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/avatar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/badge.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/badge.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/breadcrumb.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/breadcrumb.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/button-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/button-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/calendar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/calendar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/carousel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/carousel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/chart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/chart.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/checkbox-cards.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/checkbox-cards.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/checkbox-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/checkbox-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/checkbox.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/checkbox.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/collapsible.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/collapsible.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/command.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/command.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/context-menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/context-menu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/dialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/dialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/drawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/drawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/dropdown-menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/dropdown-menu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/empty.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/empty.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/field.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/field.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/hover-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/hover-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/input-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/input-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/input-number.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/input-number.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/input-otp.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/input-otp.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/input-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/input-password.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/input-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/input-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/item.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/kbd.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/kbd.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/label.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/label.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/menubar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/menubar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/native-select.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/native-select.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/navigation-menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/navigation-menu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/pagination.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/popover.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/popover.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/progress-circle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/progress-circle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/progress.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/progress.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/radio-cards.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/radio-cards.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/radio-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/radio-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/radio.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/radio.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/resizable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/resizable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/scroll-area.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/scroll-area.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/select.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/select.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/separator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/separator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/sheet.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/sheet.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/skeleton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/skeleton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/slider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/slider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/sonner.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/sonner.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/spinner.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/spinner.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/switch.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/switch.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/tabs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/tabs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/textarea.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/textarea.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/toggle-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/toggle-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/toggle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/toggle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/components/tooltip.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/components/tooltip.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/css/preset.css" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/css/preset.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-animated-value.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-animated-value.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-animated-value.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-animated-value.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-copy-to-clipboard.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-copy-to-clipboard.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-copy-to-clipboard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-copy-to-clipboard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-is-mobile.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-is-mobile.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-is-mobile.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-is-mobile.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-media-query.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-media-query.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-media-query.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-media-query.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-mutation-observer.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-mutation-observer.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-mutation-observer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-mutation-observer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-pagination.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-pagination.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/hooks/use-pagination.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/hooks/use-pagination.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/checkbox-group.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/checkbox-group.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/checkbox-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/checkbox-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/input-number.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/input-number.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/input-number.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/input-number.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/input.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/input.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/progress-circle.test.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/progress-circle.test.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/src/primitives/progress-circle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/primitives/progress-circle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-workspace.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-workspace.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prettier.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-git-hooks.js" beforeDir="false" afterPath="$PROJECT_DIR$/simple-git-hooks.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/turbo.json" beforeDir="false" afterPath="$PROJECT_DIR$/turbo.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="13926" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;thevuong&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:codefixlabs/codefast.git&quot;,
+    &quot;accountId&quot;: &quot;cec31456-58b3-4eb4-bec0-ed8f8f624a9d&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="3BU6LIADBhf6xHsU49O0N0hCvjU" />
+  <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="false" id="Update" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+    <option name="sortByType" value="true" />
+    <option name="sortKey" value="BY_TYPE" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "javascript.nodejs.core.library.configured.version": "24.14.0",
+    "javascript.nodejs.core.library.typings.version": "24.12.0",
+    "javascript.preferred.runtime.type.id": "node",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "pnpm",
+    "prettierjs.PrettierConfiguration.Package": "/Users/vuongphan/Projects/codefastlabs/codefast/node_modules/prettier",
+    "rearrange.code.on.save": "true",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "ts.external.directory.path": "/Users/vuongphan/Projects/codefastlabs/codefast/packages/theme/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-WS-261.22158.274" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="76cd644f-cf0e-4286-bd96-17beb93c6642" name="Changes" comment="" />
+      <created>1709099155139</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1709099155139</updated>
+      <workItem from="1709099156162" duration="33000" />
+      <workItem from="1712713418514" duration="245000" />
+      <workItem from="1712713770529" duration="614000" />
+      <workItem from="1728480671836" duration="50000" />
+      <workItem from="1774531244948" duration="3876000" />
+    </task>
+    <task id="LOCAL-00001" summary="chore: remove deprecated TanStack router and start skills&#10;&#10;- Deleted the `tanstack-router`, `tanstack-start`, and `tanstack-start-best-practices` skills along with their associated files, including documentation and configuration.&#10;- This cleanup helps streamline the project by removing outdated and unused components.">
+      <option name="closed" value="true" />
+      <created>1774531909260</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1774531909260</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="chore: remove deprecated TanStack router and start skills&#10;&#10;- Deleted the `tanstack-router`, `tanstack-start`, and `tanstack-start-best-practices` skills along with their associated files, including documentation and configuration.&#10;- This cleanup helps streamline the project by removing outdated and unused components." />
+    <option name="LAST_COMMIT_MESSAGE" value="chore: remove deprecated TanStack router and start skills&#10;&#10;- Deleted the `tanstack-router`, `tanstack-start`, and `tanstack-start-best-practices` skills along with their associated files, including documentation and configuration.&#10;- This cleanup helps streamline the project by removing outdated and unused components." />
+  </component>
+</project>
