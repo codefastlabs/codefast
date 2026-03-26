@@ -1,8 +1,21 @@
-import { Button } from '@codefast/ui/button';
-import { Calendar } from '@codefast/ui/calendar';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Checkbox } from '@codefast/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@codefast/ui/dialog';
+import { Button } from "@codefast/ui/button";
+import { Calendar } from "@codefast/ui/calendar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui/card";
+import { Checkbox } from "@codefast/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@codefast/ui/dialog";
 import {
   Field,
   FieldContent,
@@ -14,40 +27,40 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from '@codefast/ui/field';
-import { Input } from '@codefast/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Slider } from '@codefast/ui/slider';
-import { Switch } from '@codefast/ui/switch';
-import { Textarea } from '@codefast/ui/textarea';
-import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { addons, exampleFormSchema } from '@/components/sink/schema';
+} from "@codefast/ui/field";
+import { Input } from "@codefast/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Slider } from "@codefast/ui/slider";
+import { Switch } from "@codefast/ui/switch";
+import { Textarea } from "@codefast/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import type { z } from "zod";
+import { addons, exampleFormSchema } from "@/components/sink/schema";
 
 export function ExampleForm() {
   const [values, setValues] = useState<z.infer<typeof exampleFormSchema>>();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof exampleFormSchema>>({
     resolver: zodResolver(exampleFormSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      name: '',
-      email: '',
-      plan: 'basic' as const,
-      billingPeriod: '',
-      addons: ['analytics'],
+      name: "",
+      email: "",
+      plan: "basic" as const,
+      billingPeriod: "",
+      addons: ["analytics"],
       emailNotifications: false,
       teamSize: 1,
-      comments: '',
+      comments: "",
       startDate: new Date(),
-      theme: 'system',
-      password: '',
+      theme: "system",
+      password: "",
     },
   });
 
@@ -75,7 +88,12 @@ export function ExampleForm() {
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                      <Input {...field} id={field.name} aria-invalid={isInvalid} autoComplete="off" />
+                      <Input
+                        {...field}
+                        id={field.name}
+                        aria-invalid={isInvalid}
+                        autoComplete="off"
+                      />
                       <FieldDescription>Enter your name</FieldDescription>
                       {isInvalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
@@ -91,7 +109,13 @@ export function ExampleForm() {
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                      <Input {...field} type="email" id={field.name} aria-invalid={isInvalid} autoComplete="off" />
+                      <Input
+                        {...field}
+                        type="email"
+                        id={field.name}
+                        aria-invalid={isInvalid}
+                        autoComplete="off"
+                      />
                       <FieldDescription>Enter your email address</FieldDescription>
                       {isInvalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
@@ -128,7 +152,9 @@ export function ExampleForm() {
                           <Field orientation="horizontal">
                             <FieldContent>
                               <FieldTitle>Pro</FieldTitle>
-                              <FieldDescription>For businesses with higher demands</FieldDescription>
+                              <FieldDescription>
+                                For businesses with higher demands
+                              </FieldDescription>
                             </FieldContent>
                             <RadioGroupItem value="pro" id="pro" aria-invalid={isInvalid} />
                           </Field>
@@ -179,7 +205,9 @@ export function ExampleForm() {
                   return (
                     <FieldSet data-invalid={isInvalid}>
                       <FieldLegend>Add-ons</FieldLegend>
-                      <FieldDescription>Select additional features you&apos;d like to include.</FieldDescription>
+                      <FieldDescription>
+                        Select additional features you&apos;d like to include.
+                      </FieldDescription>
                       <FieldGroup data-slot="checkbox-group">
                         {addons.map((addon) => (
                           <Field key={addon.id} orientation="horizontal">
@@ -220,7 +248,9 @@ export function ExampleForm() {
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldTitle>Team Size</FieldTitle>
-                      <FieldDescription>How many people will be using the subscription?</FieldDescription>
+                      <FieldDescription>
+                        How many people will be using the subscription?
+                      </FieldDescription>
                       <Slider
                         id={field.name}
                         name={field.name}
@@ -247,7 +277,9 @@ export function ExampleForm() {
                     <Field orientation="horizontal">
                       <FieldContent>
                         <FieldLabel htmlFor={field.name}>Email Notifications</FieldLabel>
-                        <FieldDescription>Receive email updates about your subscription</FieldDescription>
+                        <FieldDescription>
+                          Receive email updates about your subscription
+                        </FieldDescription>
                       </FieldContent>
                       <Switch
                         id={field.name}
@@ -273,15 +305,27 @@ export function ExampleForm() {
                       <FieldLabel htmlFor={field.name}>Start Date</FieldLabel>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button id={field.name} variant="outline" className="justify-start" aria-invalid={isInvalid}>
-                            {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                          <Button
+                            id={field.name}
+                            variant="outline"
+                            className="justify-start"
+                            aria-invalid={isInvalid}
+                          >
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar required mode="single" selected={field.value} onSelect={field.onChange} />
+                          <Calendar
+                            required
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
                         </PopoverContent>
                       </Popover>
-                      <FieldDescription>Choose when your subscription should start</FieldDescription>
+                      <FieldDescription>
+                        Choose when your subscription should start
+                      </FieldDescription>
                       {isInvalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
                   );

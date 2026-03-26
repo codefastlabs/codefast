@@ -8,48 +8,48 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from '@codefast/ui/field';
-import { Label } from '@codefast/ui/label';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Switch } from '@codefast/ui/switch';
-import { CheckIcon } from 'lucide-react';
-import { Image } from '@unpic/react';
+} from "@codefast/ui/field";
+import { Label } from "@codefast/ui/label";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Switch } from "@codefast/ui/switch";
+import { CheckIcon } from "lucide-react";
+import { Image } from "@unpic/react";
 
 const modes = [
   {
-    name: 'Light',
-    value: 'light',
-    image: '/placeholder.svg',
+    name: "Light",
+    value: "light",
+    image: "/placeholder.svg",
   },
   {
-    name: 'Dark',
-    value: 'dark',
-    image: '/placeholder.svg',
+    name: "Dark",
+    value: "dark",
+    image: "/placeholder.svg",
   },
   {
-    name: 'System',
-    value: 'system',
-    image: '/placeholder.svg',
+    name: "System",
+    value: "system",
+    image: "/placeholder.svg",
   },
 ];
 
 const accents = [
   {
-    name: 'Blue',
-    value: '#007AFF',
+    name: "Blue",
+    value: "#007AFF",
   },
   {
-    name: 'Purple',
-    value: '#6A4695',
+    name: "Purple",
+    value: "#6A4695",
   },
   {
-    name: 'Red',
-    value: '#FF3B30',
+    name: "Red",
+    value: "#FF3B30",
   },
   {
-    name: 'Orange',
-    value: '#FF9500',
+    name: "Orange",
+    value: "#FF9500",
   },
 ];
 
@@ -78,7 +78,7 @@ export function AppearanceSettings() {
                 />
                 <Field
                   orientation="horizontal"
-                  className="@min-[448px]/field-group:border-t-input @min-[448px]/field-group:border-t"
+                  className="@min-[448px]/field-group:border-t @min-[448px]/field-group:border-t-input"
                 >
                   <FieldTitle>{mode.name}</FieldTitle>
                   <RadioGroupItem id={mode.value} value={mode.value} />
@@ -135,7 +135,9 @@ export function AppearanceSettings() {
         <Field orientation="horizontal">
           <FieldContent>
             <FieldLabel htmlFor="tinting">Wallpaper Tinting</FieldLabel>
-            <FieldDescription>Allow the wallpaper to be tinted with the accent color.</FieldDescription>
+            <FieldDescription>
+              Allow the wallpaper to be tinted with the accent color.
+            </FieldDescription>
           </FieldContent>
           <Switch id="tinting" defaultChecked />
         </Field>

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 
 export function AvatarDemo() {
   return (
@@ -18,7 +18,7 @@ export function AvatarDemo() {
         <AvatarImage src="https://github.com/evilrabbit.png" alt="@evilrabbit" />
         <AvatarFallback>ER</AvatarFallback>
       </Avatar>
-      <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+      <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
         <Avatar>
           <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
           <AvatarFallback>CN</AvatarFallback>
@@ -32,7 +32,7 @@ export function AvatarDemo() {
           <AvatarFallback>ER</AvatarFallback>
         </Avatar>
       </div>
-      <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:size-12 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+      <div className="flex -space-x-2 *:data-[slot=avatar]:size-12 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
         <Avatar>
           <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
           <AvatarFallback>CN</AvatarFallback>
@@ -46,7 +46,7 @@ export function AvatarDemo() {
           <AvatarFallback>ER</AvatarFallback>
         </Avatar>
       </div>
-      <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 hover:space-x-1 *:data-[slot=avatar]:size-12 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale *:data-[slot=avatar]:transition-all *:data-[slot=avatar]:duration-300 *:data-[slot=avatar]:ease-in-out">
+      <div className="flex -space-x-2 hover:space-x-1 *:data-[slot=avatar]:size-12 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale *:data-[slot=avatar]:transition-all *:data-[slot=avatar]:duration-300 *:data-[slot=avatar]:ease-in-out">
         <Avatar>
           <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
           <AvatarFallback>CN</AvatarFallback>

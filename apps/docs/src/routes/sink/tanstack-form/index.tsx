@@ -1,27 +1,27 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { ExampleForm } from '@/components/sink/tanstack-form-example';
+import { createFileRoute } from "@tanstack/react-router";
+import { ExampleForm } from "@/components/sink/tanstack-form-example";
 
-export const Route = createFileRoute('/sink/tanstack-form/')({
+export const Route = createFileRoute("/sink/tanstack-form/")({
   component: TanstackFormPage,
   head: () => ({
     meta: [
-      { title: 'TanStack Form — Components — @codefast/ui' },
+      { title: "TanStack Form — Components — @codefast/ui" },
       {
-        name: 'description',
+        name: "description",
         content:
-          'Integration example of @codefast/ui form components with TanStack Form for type-safe form management.',
+          "Integration example of @codefast/ui form components with TanStack Form for type-safe form management.",
       },
-      { property: 'og:title', content: 'TanStack Form — Components — @codefast/ui' },
+      { property: "og:title", content: "TanStack Form — Components — @codefast/ui" },
       {
-        property: 'og:description',
+        property: "og:description",
         content:
-          'Integration example of @codefast/ui form components with TanStack Form for type-safe form management.',
+          "Integration example of @codefast/ui form components with TanStack Form for type-safe form management.",
       },
-      { name: 'twitter:title', content: 'TanStack Form — Components — @codefast/ui' },
+      { name: "twitter:title", content: "TanStack Form — Components — @codefast/ui" },
       {
-        name: 'twitter:description',
+        name: "twitter:description",
         content:
-          'Integration example of @codefast/ui form components with TanStack Form for type-safe form management.',
+          "Integration example of @codefast/ui form components with TanStack Form for type-safe form management.",
       },
     ],
   }),

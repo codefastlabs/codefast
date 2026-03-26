@@ -1,9 +1,16 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
-import { Label } from '@codefast/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
-import { AppWindowIcon, CodeIcon } from 'lucide-react';
+import { Button } from "@codefast/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui/card";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+import { AppWindowIcon, CodeIcon } from "lucide-react";
 
 export function TabsDemo() {
   return (
@@ -17,7 +24,9 @@ export function TabsDemo() {
           <Card>
             <CardHeader>
               <CardTitle>Account</CardTitle>
-              <CardDescription>Make changes to your account here. Click save when you&apos;re done.</CardDescription>
+              <CardDescription>
+                Make changes to your account here. Click save when you&apos;re done.
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
               <div className="grid gap-3">
@@ -38,7 +47,9 @@ export function TabsDemo() {
           <Card>
             <CardHeader>
               <CardTitle>Password</CardTitle>
-              <CardDescription>Change your password here. After saving, you&apos;ll be logged out.</CardDescription>
+              <CardDescription>
+                Change your password here. After saving, you&apos;ll be logged out.
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
               <form className="grid gap-6">

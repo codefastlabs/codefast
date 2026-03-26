@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@codefast/ui/button';
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@codefast/ui/button-group';
+import { Button } from "@codefast/ui/button";
+import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "@codefast/ui/button-group";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,16 +9,21 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
-import { Field, FieldGroup } from '@codefast/ui/field';
-import { Input } from '@codefast/ui/input';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@codefast/ui/input-group';
-import { Label } from '@codefast/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Separator } from '@codefast/ui/separator';
-import { Textarea } from '@codefast/ui/textarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+} from "@codefast/ui/dropdown-menu";
+import { Field, FieldGroup } from "@codefast/ui/field";
+import { Input } from "@codefast/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@codefast/ui/input-group";
+import { Label } from "@codefast/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Separator } from "@codefast/ui/separator";
+import { Textarea } from "@codefast/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
 import {
   IconArrowRight,
   IconBrandGithubCopilot,
@@ -30,7 +35,7 @@ import {
   IconPin,
   IconPlus,
   IconUserCircle,
-} from '@tabler/icons-react';
+} from "@tabler/icons-react";
 import {
   AlertTriangleIcon,
   ArrowLeftIcon,
@@ -49,11 +54,11 @@ import {
   TrashIcon,
   UserRoundXIcon,
   VolumeOffIcon,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "lucide-react";
+import { useState } from "react";
 
 export function ButtonGroupDemo() {
-  const [currency, setCurrency] = useState('$');
+  const [currency, setCurrency] = useState("$");
 
   return (
     <div className="flex flex-wrap gap-12">
@@ -248,11 +253,14 @@ export function ButtonGroupDemo() {
                 </div>
                 <Separator />
                 <div className="p-4 *:[p:not(:last-child)]:mb-2">
-                  <Textarea placeholder="Describe your task in natural language." className="mb-4 resize-none" />
+                  <Textarea
+                    placeholder="Describe your task in natural language."
+                    className="mb-4 resize-none"
+                  />
                   <p className="font-medium">Start a new task with Copilot</p>
                   <p className="text-muted-foreground">
-                    Describe your task in natural language. Copilot will work in the background and open a pull request
-                    for your review.
+                    Describe your task in natural language. Copilot will work in the background and
+                    open a pull request for your review.
                   </p>
                 </div>
               </PopoverContent>
@@ -290,21 +298,26 @@ export function ButtonGroupDemo() {
                         <span className="size-4 rounded-sm bg-blue-600" />
                       </InputGroupButton>
                     </PopoverTrigger>
-                    <PopoverContent align="start" className="max-w-48 rounded-xl p-2" alignOffset={-8} sideOffset={8}>
+                    <PopoverContent
+                      align="start"
+                      className="max-w-48 rounded-xl p-2"
+                      alignOffset={-8}
+                      sideOffset={8}
+                    >
                       <div className="flex flex-wrap gap-1.5">
                         {[
-                          '#EA4335', // Red
-                          '#FBBC04', // Yellow
-                          '#34A853', // Green
-                          '#4285F4', // Blue
-                          '#9333EA', // Purple
-                          '#EC4899', // Pink
-                          '#10B981', // Emerald
-                          '#F97316', // Orange
-                          '#6366F1', // Indigo
-                          '#14B8A6', // Teal
-                          '#8B5CF6', // Violet
-                          '#F59E0B', // Amber
+                          "#EA4335", // Red
+                          "#FBBC04", // Yellow
+                          "#34A853", // Green
+                          "#4285F4", // Blue
+                          "#9333EA", // Purple
+                          "#EC4899", // Pink
+                          "#10B981", // Emerald
+                          "#F97316", // Orange
+                          "#6366F1", // Indigo
+                          "#14B8A6", // Teal
+                          "#8B5CF6", // Violet
+                          "#F59E0B", // Amber
                         ].map((color) => (
                           <div
                             key={color}
@@ -327,7 +340,11 @@ export function ButtonGroupDemo() {
           <Button variant="outline">
             <IconHeart /> Like
           </Button>
-          <Button variant="outline" asChild className="text-muted-foreground pointer-events-none px-2">
+          <Button
+            variant="outline"
+            asChild
+            className="pointer-events-none px-2 text-muted-foreground"
+          >
             <span>1.2K</span>
           </Button>
         </ButtonGroup>
@@ -503,7 +520,7 @@ export function ButtonGroupDemo() {
 }
 
 function ExportButtonGroup() {
-  const [exportType, setExportType] = useState('pdf');
+  const [exportType, setExportType] = useState("pdf");
 
   return (
     <ButtonGroup>

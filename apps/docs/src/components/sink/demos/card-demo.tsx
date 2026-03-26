@@ -1,11 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
-import { Badge } from '@codefast/ui/badge';
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
-import { Label } from '@codefast/ui/label';
-import { BathIcon, BedIcon, LandPlotIcon } from 'lucide-react';
-import { Image } from '@unpic/react';
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
+import { Badge } from "@codefast/ui/badge";
+import { Button } from "@codefast/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui/card";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+import { BathIcon, BedIcon, LandPlotIcon } from "lucide-react";
+import { Image } from "@unpic/react";
 
 export function CardDemo() {
   return (
@@ -25,7 +32,10 @@ export function CardDemo() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
+                  <a
+                    href="#"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
                     Forgot your password?
                   </a>
                 </div>
@@ -42,7 +52,7 @@ export function CardDemo() {
             Login with Google
           </Button>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <a href="#" className="underline underline-offset-4">
               Sign up
             </a>
@@ -65,7 +75,7 @@ export function CardDemo() {
           </ol>
         </CardContent>
         <CardFooter>
-          <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+          <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
             <Avatar>
               <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
               <AvatarFallback>CF</AvatarFallback>

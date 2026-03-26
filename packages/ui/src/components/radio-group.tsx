@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn } from '@codefast/tailwind-variants';
-import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import { cn } from "@codefast/tailwind-variants";
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 
 /* -----------------------------------------------------------------------------
  * Component: RadioGroup
@@ -12,7 +12,13 @@ import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 
 function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
-  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} data-slot="radio-group" {...props} />;
+  return (
+    <RadioGroupPrimitive.Root
+      className={cn("grid gap-2", className)}
+      data-slot="radio-group"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -25,13 +31,16 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        'border-input hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:aria-checked:ring-primary/20 dark:focus-visible:aria-checked:ring-primary/40 aria-checked:border-primary aria-checked:bg-primary aria-checked:aria-invalid:bg-destructive aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 dark:bg-input/30 peer inline-flex size-4 shrink-0 items-center justify-center rounded-full border shadow-xs outline-hidden transition focus-visible:ring-3 disabled:opacity-50',
+        "peer inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-input shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 aria-checked:border-primary aria-checked:bg-primary focus-visible:aria-checked:ring-primary/20 aria-invalid:border-destructive aria-invalid:ring-destructive/20 hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 aria-checked:aria-invalid:bg-destructive dark:bg-input/30 dark:focus-visible:aria-checked:ring-primary/40 dark:aria-invalid:ring-destructive/40",
         className,
       )}
       data-slot="radio-group-item"
       {...props}
     >
-      <RadioGroupPrimitive.Indicator className="bg-background size-1 rounded-full" data-slot="radio-group-indicator" />
+      <RadioGroupPrimitive.Indicator
+        className="size-1 rounded-full bg-background"
+        data-slot="radio-group-indicator"
+      />
     </RadioGroupPrimitive.Item>
   );
 }

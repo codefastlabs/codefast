@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
-import { Button } from '@codefast/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
+import { Button } from "@codefast/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -17,7 +17,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
+} from "@codefast/ui/dropdown-menu";
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -31,8 +31,8 @@ import {
   SparklesIcon,
   TrashIcon,
   UserIcon,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "lucide-react";
+import { useState } from "react";
 
 export function DropdownMenuDemo() {
   return (
@@ -133,7 +133,11 @@ function DropdownMenuCheckboxes() {
           <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             Status Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem checked={showActivityBar} onCheckedChange={setShowActivityBar} disabled>
+          <DropdownMenuCheckboxItem
+            checked={showActivityBar}
+            onCheckedChange={setShowActivityBar}
+            disabled
+          >
             Activity Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
@@ -152,7 +156,7 @@ function DropdownMenuCheckboxes() {
 }
 
 function DropdownMenuRadioGroupDemo() {
-  const [position, setPosition] = useState('bottom');
+  const [position, setPosition] = useState("bottom");
 
   return (
     <DropdownMenu>
@@ -186,12 +190,15 @@ function DropdownMenuWithAvatar() {
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">codefast</span>
-            <span className="text-muted-foreground truncate text-xs">m@example.com</span>
+            <span className="truncate text-xs text-muted-foreground">m@example.com</span>
           </div>
-          <ChevronsUpDownIcon className="text-muted-foreground ml-auto" />
+          <ChevronsUpDownIcon className="ml-auto text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56" align="start">
+      <DropdownMenuContent
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
+        align="start"
+      >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
@@ -200,7 +207,7 @@ function DropdownMenuWithAvatar() {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">codefast</span>
-              <span className="text-muted-foreground truncate text-xs">m@example.com</span>
+              <span className="truncate text-xs text-muted-foreground">m@example.com</span>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -247,7 +254,10 @@ function DropdownMenuAvatarOnly() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56" align="start">
+      <DropdownMenuContent
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
+        align="start"
+      >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
@@ -256,7 +266,7 @@ function DropdownMenuAvatarOnly() {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">maxleiter</span>
-              <span className="text-muted-foreground truncate text-xs">maxleiter@example.com</span>
+              <span className="truncate text-xs text-muted-foreground">maxleiter@example.com</span>
             </div>
           </div>
         </DropdownMenuLabel>

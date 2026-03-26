@@ -1,27 +1,27 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { ExampleForm } from '@/components/sink/react-hook-form-example';
+import { createFileRoute } from "@tanstack/react-router";
+import { ExampleForm } from "@/components/sink/react-hook-form-example";
 
-export const Route = createFileRoute('/sink/react-hook-form/')({
+export const Route = createFileRoute("/sink/react-hook-form/")({
   component: ReactHookFormPage,
   head: () => ({
     meta: [
-      { title: 'React Hook Form — Components — @codefast/ui' },
+      { title: "React Hook Form — Components — @codefast/ui" },
       {
-        name: 'description',
+        name: "description",
         content:
-          'Integration example of @codefast/ui form components with React Hook Form for validation and state management.',
+          "Integration example of @codefast/ui form components with React Hook Form for validation and state management.",
       },
-      { property: 'og:title', content: 'React Hook Form — Components — @codefast/ui' },
+      { property: "og:title", content: "React Hook Form — Components — @codefast/ui" },
       {
-        property: 'og:description',
+        property: "og:description",
         content:
-          'Integration example of @codefast/ui form components with React Hook Form for validation and state management.',
+          "Integration example of @codefast/ui form components with React Hook Form for validation and state management.",
       },
-      { name: 'twitter:title', content: 'React Hook Form — Components — @codefast/ui' },
+      { name: "twitter:title", content: "React Hook Form — Components — @codefast/ui" },
       {
-        name: 'twitter:description',
+        name: "twitter:description",
         content:
-          'Integration example of @codefast/ui form components with React Hook Form for validation and state management.',
+          "Integration example of @codefast/ui form components with React Hook Form for validation and state management.",
       },
     ],
   }),

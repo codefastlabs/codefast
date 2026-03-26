@@ -1,12 +1,12 @@
-import { Button } from '@codefast/ui/button';
-import { useCallback } from 'react';
-import { useTheme } from '@codefast/theme';
+import { Button } from "@codefast/ui/button";
+import { useCallback } from "react";
+import { useTheme } from "@codefast/theme";
 
 export function ModeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
-    void setTheme(theme === 'dark' ? 'light' : 'dark');
+    void setTheme(theme === "dark" ? "light" : "dark");
   }, [theme, setTheme]);
 
   return (

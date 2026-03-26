@@ -1,5 +1,5 @@
-import { Label } from '@codefast/ui/label';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
+import { Label } from "@codefast/ui/label";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
 
 interface PlanItem {
   id: string;
@@ -10,16 +10,16 @@ interface PlanItem {
 
 const plans: PlanItem[] = [
   {
-    id: 'starter',
-    name: 'Starter Plan',
-    description: 'Perfect for small businesses getting started with our platform',
-    price: '$10',
+    id: "starter",
+    name: "Starter Plan",
+    description: "Perfect for small businesses getting started with our platform",
+    price: "$10",
   },
   {
-    id: 'pro',
-    name: 'Pro Plan',
-    description: 'Advanced features for growing businesses with higher demands',
-    price: '$20',
+    id: "pro",
+    name: "Pro Plan",
+    description: "Advanced features for growing businesses with higher demands",
+    price: "$20",
   },
 ];
 
@@ -43,7 +43,7 @@ export function RadioGroupDemo() {
       <RadioGroup defaultValue="starter" className="max-w-sm">
         {plans.map((plan) => (
           <Label
-            className="hover:bg-accent/50 flex items-start gap-3 rounded-xl border p-4 has-[[data-state=checked]]:border-green-600 has-[[data-state=checked]]:bg-green-50 dark:has-[[data-state=checked]]:border-green-900 dark:has-[[data-state=checked]]:bg-green-950"
+            className="flex items-start gap-3 rounded-xl border p-4 hover:bg-accent/50 has-[[data-state=checked]]:border-green-600 has-[[data-state=checked]]:bg-green-50 dark:has-[[data-state=checked]]:border-green-900 dark:has-[[data-state=checked]]:bg-green-950"
             key={plan.id}
           >
             <RadioGroupItem
@@ -53,7 +53,7 @@ export function RadioGroupDemo() {
             />
             <div className="grid gap-1 font-normal">
               <div className="font-medium">{plan.name}</div>
-              <div className="text-muted-foreground leading-snug">{plan.description}</div>
+              <div className="leading-snug text-muted-foreground">{plan.description}</div>
             </div>
           </Label>
         ))}

@@ -1,20 +1,22 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn } from '@codefast/tailwind-variants';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { cn } from "@codefast/tailwind-variants";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-import { buttonVariants } from '@/components/button';
-import { Spinner } from '@/components/spinner';
-import * as InputNumberPrimitive from '@/primitives/input-number';
+import { buttonVariants } from "@/components/button";
+import { Spinner } from "@/components/spinner";
+import * as InputNumberPrimitive from "@/primitives/input-number";
 
 /* -----------------------------------------------------------------------------
  * Component: InputNumber
  * -------------------------------------------------------------------------- */
 
 interface InputNumberProps
-  extends ComponentProps<typeof InputNumberPrimitive.Field>, ComponentProps<typeof InputNumberPrimitive.Root> {}
+  extends
+    ComponentProps<typeof InputNumberPrimitive.Field>,
+    ComponentProps<typeof InputNumberPrimitive.Root> {}
 
 function InputNumber({
   ariaDecrementLabel,
@@ -42,7 +44,7 @@ function InputNumber({
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
       className={cn(
-        "group border-input hover:not-has-disabled:not-focus-within:border-ring/60 focus-within:border-ring focus-within:ring-ring/50 [&>svg]:text-muted-foreground has-aria-invalid:border-destructive hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60 focus-within:has-aria-invalid:ring-destructive/20 dark:focus-within:has-aria-invalid:ring-destructive/40 dark:bg-input/30 peer flex h-9 w-full grow items-center gap-3 rounded-lg border px-3 pr-0 text-base transition not-has-disabled:shadow-xs focus-within:ring-3 has-disabled:opacity-50 md:text-sm [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group peer flex h-9 w-full grow items-center gap-3 rounded-lg border border-input px-3 pr-0 text-base transition not-has-disabled:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 hover:not-has-disabled:not-focus-within:border-ring/60 has-disabled:opacity-50 has-aria-invalid:border-destructive focus-within:has-aria-invalid:ring-destructive/20 hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60 md:text-sm dark:bg-input/30 dark:focus-within:has-aria-invalid:ring-destructive/40 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg]:text-muted-foreground",
         className,
       )}
       data-slot="input-number"
@@ -66,22 +68,23 @@ function InputNumber({
         autoCapitalize="none"
         autoComplete="off"
         autoCorrect="off"
-        className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-3 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+        className="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:ring-destructive/40"
         spellCheck="false"
         {...props}
       />
       <div
         className={cn(
-          'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 group-focus-within:border-l-ring group-focus-within:divide-ring group-has-aria-invalid:border-l-destructive group-has-aria-invalid:divide-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
-          '*:[button]:focus-visible:bg-ring/50 group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/40 *:[button]:focus-visible:ring-0',
+          "group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 order-last ml-auto grid h-full shrink-0 divide-y divide-input border-l border-l-input transition group-focus-within:divide-ring group-focus-within:border-l-ring group-has-aria-invalid:divide-destructive group-has-aria-invalid:border-l-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60",
+          "*:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0 group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/40",
         )}
         data-slot="input-number-buttons"
       >
         <InputNumberPrimitive.IncrementButton
           aria-label="Increment"
           className={buttonVariants({
-            className: 'text-muted-foreground h-auto rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]',
-            variant: 'ghost',
+            className:
+              "text-muted-foreground h-auto rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]",
+            variant: "ghost",
           })}
           data-slot="input-number-increment-button"
         >
@@ -90,8 +93,9 @@ function InputNumber({
         <InputNumberPrimitive.DecrementButton
           aria-label="Decrement"
           className={buttonVariants({
-            className: 'text-muted-foreground h-auto rounded-none rounded-br-[calc(var(--radius-lg)-1px)]',
-            variant: 'ghost',
+            className:
+              "text-muted-foreground h-auto rounded-none rounded-br-[calc(var(--radius-lg)-1px)]",
+            variant: "ghost",
           })}
           data-slot="input-number-decrement-button"
         >

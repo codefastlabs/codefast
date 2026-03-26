@@ -1,6 +1,6 @@
-import type { ResolvedTheme, Theme } from '@/types';
+import type { ResolvedTheme, Theme } from "@/types";
 
-import { DEFAULT_RESOLVED_THEME, MEDIA } from '@/constants';
+import { DEFAULT_RESOLVED_THEME, MEDIA } from "@/constants";
 
 /* -----------------------------------------------------------------------------
  * System Theme Detection
@@ -15,11 +15,11 @@ import { DEFAULT_RESOLVED_THEME, MEDIA } from '@/constants';
  * @returns 'light' or 'dark' based on OS preference
  */
 export function getSystemTheme(): ResolvedTheme {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return DEFAULT_RESOLVED_THEME;
   }
 
-  return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
+  return window.matchMedia(MEDIA).matches ? "dark" : "light";
 }
 
 /**
@@ -33,5 +33,5 @@ export function getSystemTheme(): ResolvedTheme {
  * @returns The resolved theme to apply
  */
 export function resolveTheme(theme: Theme): ResolvedTheme {
-  return theme === 'system' ? getSystemTheme() : theme;
+  return theme === "system" ? getSystemTheme() : theme;
 }

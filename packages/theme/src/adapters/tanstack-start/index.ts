@@ -37,4 +37,8 @@
  * ```
  */
 
-export { createPersistTheme, getThemeServerFn, setThemeServerFn } from '@/adapters/tanstack-start/server';
+export {
+  createPersistTheme,
+  getThemeServerFn,
+  setThemeServerFn,
+} from "@/adapters/tanstack-start/server";

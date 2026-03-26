@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { cn } from '@codefast/tailwind-variants';
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
-import { Button } from '@codefast/ui/button';
+import { cn } from "@codefast/tailwind-variants";
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
+import { Button } from "@codefast/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -11,31 +11,31 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@codefast/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+} from "@codefast/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 
 const frameworks = [
   {
-    value: 'next.js',
-    label: 'Next.js',
+    value: "next.js",
+    label: "Next.js",
   },
   {
-    value: 'sveltekit',
-    label: 'SvelteKit',
+    value: "sveltekit",
+    label: "SvelteKit",
   },
   {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
+    value: "nuxt.js",
+    label: "Nuxt.js",
   },
   {
-    value: 'remix',
-    label: 'Remix',
+    value: "remix",
+    label: "Remix",
   },
   {
-    value: 'astro',
-    label: 'Astro',
+    value: "astro",
+    label: "Astro",
   },
 ];
 
@@ -43,16 +43,16 @@ type Framework = (typeof frameworks)[number];
 
 const users = [
   {
-    id: '1',
-    username: 'codefast',
+    id: "1",
+    username: "codefast",
   },
   {
-    id: '2',
-    username: 'maxleiter',
+    id: "2",
+    username: "maxleiter",
   },
   {
-    id: '3',
-    username: 'evilrabbit',
+    id: "3",
+    username: "evilrabbit",
   },
 ] as const;
 
@@ -60,36 +60,36 @@ type User = (typeof users)[number];
 
 const timezones = [
   {
-    label: 'Americas',
+    label: "Americas",
     timezones: [
-      { value: 'America/New_York', label: '(GMT-5) New York' },
-      { value: 'America/Los_Angeles', label: '(GMT-8) Los Angeles' },
-      { value: 'America/Chicago', label: '(GMT-6) Chicago' },
-      { value: 'America/Toronto', label: '(GMT-5) Toronto' },
-      { value: 'America/Vancouver', label: '(GMT-8) Vancouver' },
-      { value: 'America/Sao_Paulo', label: '(GMT-3) São Paulo' },
+      { value: "America/New_York", label: "(GMT-5) New York" },
+      { value: "America/Los_Angeles", label: "(GMT-8) Los Angeles" },
+      { value: "America/Chicago", label: "(GMT-6) Chicago" },
+      { value: "America/Toronto", label: "(GMT-5) Toronto" },
+      { value: "America/Vancouver", label: "(GMT-8) Vancouver" },
+      { value: "America/Sao_Paulo", label: "(GMT-3) São Paulo" },
     ],
   },
   {
-    label: 'Europe',
+    label: "Europe",
     timezones: [
-      { value: 'Europe/London', label: '(GMT+0) London' },
-      { value: 'Europe/Paris', label: '(GMT+1) Paris' },
-      { value: 'Europe/Berlin', label: '(GMT+1) Berlin' },
-      { value: 'Europe/Rome', label: '(GMT+1) Rome' },
-      { value: 'Europe/Madrid', label: '(GMT+1) Madrid' },
-      { value: 'Europe/Amsterdam', label: '(GMT+1) Amsterdam' },
+      { value: "Europe/London", label: "(GMT+0) London" },
+      { value: "Europe/Paris", label: "(GMT+1) Paris" },
+      { value: "Europe/Berlin", label: "(GMT+1) Berlin" },
+      { value: "Europe/Rome", label: "(GMT+1) Rome" },
+      { value: "Europe/Madrid", label: "(GMT+1) Madrid" },
+      { value: "Europe/Amsterdam", label: "(GMT+1) Amsterdam" },
     ],
   },
   {
-    label: 'Asia/Pacific',
+    label: "Asia/Pacific",
     timezones: [
-      { value: 'Asia/Tokyo', label: '(GMT+9) Tokyo' },
-      { value: 'Asia/Shanghai', label: '(GMT+8) Shanghai' },
-      { value: 'Asia/Singapore', label: '(GMT+8) Singapore' },
-      { value: 'Asia/Dubai', label: '(GMT+4) Dubai' },
-      { value: 'Australia/Sydney', label: '(GMT+11) Sydney' },
-      { value: 'Asia/Seoul', label: '(GMT+9) Seoul' },
+      { value: "Asia/Tokyo", label: "(GMT+9) Tokyo" },
+      { value: "Asia/Shanghai", label: "(GMT+8) Shanghai" },
+      { value: "Asia/Singapore", label: "(GMT+8) Singapore" },
+      { value: "Asia/Dubai", label: "(GMT+4) Dubai" },
+      { value: "Australia/Sydney", label: "(GMT+11) Sydney" },
+      { value: "Asia/Seoul", label: "(GMT+9) Seoul" },
     ],
   },
 ] as const;
@@ -109,13 +109,20 @@ export function ComboboxDemo() {
 
 function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between md:max-w-50">
-          {value ? frameworkList.find((framework) => framework.value === value)?.label : 'Select framework...'}
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between md:max-w-50"
+        >
+          {value
+            ? frameworkList.find((framework) => framework.value === value)?.label
+            : "Select framework..."}
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
@@ -130,12 +137,17 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
+                    setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
                   {framework.label}
-                  <CheckIcon className={cn('ml-auto', value === framework.value ? 'opacity-100' : 'opacity-0')} />
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto",
+                      value === framework.value ? "opacity-100" : "opacity-0",
+                    )}
+                  />
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -146,7 +158,13 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
   );
 }
 
-function UserCombobox({ users: userList, selectedUserId }: { users: User[]; selectedUserId: string }) {
+function UserCombobox({
+  users: userList,
+  selectedUserId,
+}: {
+  users: User[];
+  selectedUserId: string;
+}) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(selectedUserId);
 
@@ -170,7 +188,7 @@ function UserCombobox({ users: userList, selectedUserId }: { users: User[]; sele
               {selectedUser.username}
             </div>
           ) : (
-            'Select user...'
+            "Select user..."
           )}
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
@@ -186,7 +204,7 @@ function UserCombobox({ users: userList, selectedUserId }: { users: User[]; sele
                   key={user.id}
                   value={user.id}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
+                    setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
@@ -195,7 +213,9 @@ function UserCombobox({ users: userList, selectedUserId }: { users: User[]; sele
                     <AvatarFallback>{user.username[0]}</AvatarFallback>
                   </Avatar>
                   {user.username}
-                  <CheckIcon className={cn('ml-auto', value === user.id ? 'opacity-100' : 'opacity-0')} />
+                  <CheckIcon
+                    className={cn("ml-auto", value === user.id ? "opacity-100" : "opacity-0")}
+                  />
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -226,7 +246,7 @@ function TimezoneCombobox({
   selectedTimezone?: TimezoneItem;
 }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(selectedTimezone?.value ?? '');
+  const [value, setValue] = useState(selectedTimezone?.value ?? "");
 
   const selectedGroup = useMemo(
     () => timezoneList.find((group) => group.timezones.find((tz) => tz.value === value)),
@@ -244,11 +264,13 @@ function TimezoneCombobox({
         <Button variant="outline" className="h-12 w-full justify-between px-2.5 md:max-w-50">
           {selectedTimezone ? (
             <div className="flex flex-col items-start gap-0.5">
-              <span className="text-muted-foreground text-xs font-normal">{selectedGroup?.label}</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                {selectedGroup?.label}
+              </span>
               <span>{selectedTimezoneLabel}</span>
             </div>
           ) : (
-            'Select timezone'
+            "Select timezone"
           )}
           <ChevronDownIcon className="text-muted-foreground" />
         </Button>
@@ -265,7 +287,7 @@ function TimezoneCombobox({
                     key={timezone.value}
                     value={timezone.value}
                     onSelect={(currentValue) => {
-                      setValue(currentValue as Timezone['timezones'][number]['value']);
+                      setValue(currentValue as Timezone["timezones"][number]["value"]);
                       setOpen(false);
                     }}
                   >
@@ -279,7 +301,7 @@ function TimezoneCombobox({
               </CommandGroup>
             ))}
             <CommandSeparator className="sticky bottom-10" />
-            <CommandGroup className="bg-popover sticky bottom-0">
+            <CommandGroup className="sticky bottom-0 bg-popover">
               <CommandItem>
                 <PlusCircleIcon />
                 Create timezone
@@ -299,10 +321,15 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-fit min-w-70 justify-between">
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-fit min-w-70 justify-between"
+        >
           {selectedFrameworks.length > 0
-            ? selectedFrameworks.map((framework) => framework.label).join(', ')
-            : 'Select frameworks (multi-select)...'}
+            ? selectedFrameworks.map((framework) => framework.label).join(", ")
+            : "Select frameworks (multi-select)..."}
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
@@ -325,7 +352,7 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
                   }}
                 >
                   <div
-                    className="border-input data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground pointer-events-none size-4 shrink-0 rounded border transition-all select-none *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
+                    className="pointer-events-none size-4 shrink-0 rounded border border-input transition-all select-none data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
                     data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
                   >
                     <CheckIcon className="size-3.5 text-current" />

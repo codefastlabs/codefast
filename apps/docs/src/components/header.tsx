@@ -1,21 +1,21 @@
-import { Link } from '@tanstack/react-router';
-import { cn } from '@codefast/tailwind-variants';
-import { CodeIcon, HomeIcon, MenuIcon, PaletteIcon, XIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Image } from '@unpic/react';
-import type { ComponentProps } from 'react';
-import type { LucideIcon } from 'lucide-react';
+import { Link } from "@tanstack/react-router";
+import { cn } from "@codefast/tailwind-variants";
+import { CodeIcon, HomeIcon, MenuIcon, PaletteIcon, XIcon } from "lucide-react";
+import { useState } from "react";
+import { Image } from "@unpic/react";
+import type { ComponentProps } from "react";
+import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
-  to: ComponentProps<typeof Link>['to'];
+  to: ComponentProps<typeof Link>["to"];
   label: string;
   icon: LucideIcon;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/', label: 'Home', icon: HomeIcon },
-  { to: '/theme', label: 'Theme', icon: PaletteIcon },
-  { to: '/sink', label: 'Sink', icon: CodeIcon },
+  { to: "/", label: "Home", icon: HomeIcon },
+  { to: "/theme", label: "Theme", icon: PaletteIcon },
+  { to: "/sink", label: "Sink", icon: CodeIcon },
 ];
 
 function NavLink({
@@ -24,7 +24,7 @@ function NavLink({
   icon: Icon,
   onNavigate,
 }: {
-  to: ComponentProps<typeof Link>['to'];
+  to: ComponentProps<typeof Link>["to"];
   label: string;
   icon: LucideIcon;
   onNavigate: () => void;
@@ -35,7 +35,8 @@ function NavLink({
       onClick={onNavigate}
       className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
       activeProps={{
-        className: "'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'",
+        className:
+          "'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'",
       }}
     >
       <Icon size={20} />
@@ -75,8 +76,8 @@ export default function Header() {
 
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col bg-gray-900 text-white shadow-2xl transition-transform duration-300 ease-in-out',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
+          "fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col bg-gray-900 text-white shadow-2xl transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex items-center justify-between border-b border-gray-700 p-4">
@@ -92,7 +93,13 @@ export default function Header() {
 
         <nav className="flex-1 overflow-y-auto p-4">
           {NAV_ITEMS.map((item) => (
-            <NavLink key={item.to} to={item.to} label={item.label} icon={item.icon} onNavigate={handleClose} />
+            <NavLink
+              key={item.to}
+              to={item.to}
+              label={item.label}
+              icon={item.icon}
+              onNavigate={handleClose}
+            />
           ))}
         </nav>
       </aside>

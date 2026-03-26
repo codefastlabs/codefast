@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn } from '@codefast/tailwind-variants';
-import { GripVerticalIcon } from 'lucide-react';
-import * as ResizablePrimitive from 'react-resizable-panels';
+import { cn } from "@codefast/tailwind-variants";
+import { GripVerticalIcon } from "lucide-react";
+import * as ResizablePrimitive from "react-resizable-panels";
 
 /* -----------------------------------------------------------------------------
  * Component: ResizableGroup
@@ -14,7 +14,11 @@ type ResizableGroupProps = ComponentProps<typeof ResizablePrimitive.Group>;
 
 function ResizableGroup({ className, ...props }: ResizableGroupProps): JSX.Element {
   return (
-    <ResizablePrimitive.Group className={cn('flex size-full', className)} data-slot="resizable-group" {...props} />
+    <ResizablePrimitive.Group
+      className={cn("flex size-full", className)}
+      data-slot="resizable-group"
+      {...props}
+    />
   );
 }
 
@@ -36,20 +40,24 @@ interface ResizableSeparatorProps extends ComponentProps<typeof ResizablePrimiti
   withHandle?: boolean;
 }
 
-function ResizableSeparator({ className, withHandle, ...props }: ResizableSeparatorProps): JSX.Element {
+function ResizableSeparator({
+  className,
+  withHandle,
+  ...props
+}: ResizableSeparatorProps): JSX.Element {
   return (
     <ResizablePrimitive.Separator
       className={cn(
-        'bg-border focus-visible:bg-ring focus-visible:ring-ring/50 flex items-center justify-center outline-hidden focus-visible:ring-3',
-        'aria-[orientation=vertical]:w-px',
-        'aria-[orientation=horizontal]:h-px',
+        "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+        "aria-[orientation=vertical]:w-px",
+        "aria-[orientation=horizontal]:h-px",
         className,
       )}
       data-slot="resizable-separator"
       {...props}
     >
       {withHandle ? (
-        <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-sm border">
+        <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
           <GripVerticalIcon className="size-2.5" />
         </div>
       ) : null}

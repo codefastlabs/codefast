@@ -1,4 +1,4 @@
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode } from "react";
 
 import {
   startTransition,
@@ -9,13 +9,13 @@ import {
   useOptimistic,
   useState,
   useSyncExternalStore,
-} from 'react';
+} from "react";
 
-import type { ResolvedTheme, Theme, ThemeContextType } from '@/types';
+import type { ResolvedTheme, Theme, ThemeContextType } from "@/types";
 
-import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from '@/constants';
-import { ThemeContext } from '@/core/context';
-import { applyTheme, disableAnimation, getSystemTheme } from '@/utils';
+import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from "@/constants";
+import { ThemeContext } from "@/core/context";
+import { applyTheme, disableAnimation, getSystemTheme } from "@/utils";
 
 /* -----------------------------------------------------------------------------
  * System Theme Subscription
@@ -33,10 +33,10 @@ import { applyTheme, disableAnimation, getSystemTheme } from '@/utils';
 function subscribeToSystemTheme(callback: () => void): () => void {
   const mediaQuery = window.matchMedia(MEDIA);
 
-  mediaQuery.addEventListener('change', callback);
+  mediaQuery.addEventListener("change", callback);
 
   return () => {
-    mediaQuery.removeEventListener('change', callback);
+    mediaQuery.removeEventListener("change", callback);
   };
 }
 
@@ -124,11 +124,15 @@ export function ThemeProvider({
   const isPending = optimisticTheme !== theme;
 
   // Subscribe to OS preference changes (SSR-safe via useSyncExternalStore)
-  const systemTheme = useSyncExternalStore(subscribeToSystemTheme, getSystemThemeSnapshot, getServerSnapshot);
+  const systemTheme = useSyncExternalStore(
+    subscribeToSystemTheme,
+    getSystemThemeSnapshot,
+    getServerSnapshot,
+  );
 
   // Compute the actual theme to apply: resolve 'system' to light/dark
   const resolvedTheme = useMemo<ResolvedTheme>(
-    () => (optimisticTheme === 'system' ? systemTheme : optimisticTheme),
+    () => (optimisticTheme === "system" ? systemTheme : optimisticTheme),
     [optimisticTheme, systemTheme],
   );
 
@@ -151,10 +155,10 @@ export function ThemeProvider({
   useEffect(() => {
     const channel = new BroadcastChannel(THEME_CHANNEL);
 
-    channel.addEventListener('message', handleCrossTabMessage);
+    channel.addEventListener("message", handleCrossTabMessage);
 
     return (): void => {
-      channel.removeEventListener('message', handleCrossTabMessage);
+      channel.removeEventListener("message", handleCrossTabMessage);
       channel.close();
     };
   }, []);
@@ -189,7 +193,7 @@ export function ThemeProvider({
           channel.close();
         } catch (error) {
           // On failure, useOptimistic automatically reverts to `theme`
-          console.error('Failed to set theme:', error);
+          console.error("Failed to set theme:", error);
         } finally {
           // Re-enable animations
           enable?.();

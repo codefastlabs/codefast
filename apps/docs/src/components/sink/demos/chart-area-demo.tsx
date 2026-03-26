@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@codefast/ui/chart';
-import { TrendingUpIcon } from 'lucide-react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
-import type { ChartConfig } from '@codefast/ui/chart';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@codefast/ui/chart";
+import { TrendingUpIcon } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import type { ChartConfig } from "@codefast/ui/chart";
 
-export const description = 'A simple area chart';
+export const description = "A simple area chart";
 
 interface ChartDataItem {
   month: string;
@@ -14,18 +21,18 @@ interface ChartDataItem {
 }
 
 const chartData: ChartDataItem[] = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { month: "January", desktop: 186 },
+  { month: "February", desktop: 305 },
+  { month: "March", desktop: 237 },
+  { month: "April", desktop: 73 },
+  { month: "May", desktop: 209 },
+  { month: "June", desktop: 214 },
 ];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
-    color: 'var(--chart-1)',
+    label: "Desktop",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
@@ -71,7 +78,9 @@ export function ChartAreaDemo() {
             <div className="flex items-center gap-2 leading-none font-medium">
               Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
             </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
+            <div className="flex items-center gap-2 leading-none text-muted-foreground">
+              January - June 2024
+            </div>
           </div>
         </div>
       </CardFooter>

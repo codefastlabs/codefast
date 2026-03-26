@@ -1,5 +1,5 @@
-import { cn } from '@codefast/tailwind-variants';
-import { Label } from '@codefast/ui/label';
+import { cn } from "@codefast/tailwind-variants";
+import { Label } from "@codefast/ui/label";
 import {
   Select,
   SelectContent,
@@ -9,110 +9,110 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui/select';
-import type { ComponentProps } from 'react';
-import { useThemeConfig } from '@/components/active-theme';
+} from "@codefast/ui/select";
+import type { ComponentProps } from "react";
+import { useThemeConfig } from "@/components/active-theme";
 
 const THEMES = {
   sizes: [
     {
-      name: 'Default',
-      value: 'default',
+      name: "Default",
+      value: "default",
     },
     {
-      name: 'Scaled',
-      value: 'scaled',
+      name: "Scaled",
+      value: "scaled",
     },
     {
-      name: 'Mono',
-      value: 'mono',
+      name: "Mono",
+      value: "mono",
     },
   ],
   colors: [
     {
-      name: 'Blue',
-      value: 'blue',
+      name: "Blue",
+      value: "blue",
     },
     {
-      name: 'Green',
-      value: 'green',
+      name: "Green",
+      value: "green",
     },
     {
-      name: 'Amber',
-      value: 'amber',
+      name: "Amber",
+      value: "amber",
     },
     {
-      name: 'Rose',
-      value: 'rose',
+      name: "Rose",
+      value: "rose",
     },
     {
-      name: 'Purple',
-      value: 'purple',
+      name: "Purple",
+      value: "purple",
     },
     {
-      name: 'Orange',
-      value: 'orange',
+      name: "Orange",
+      value: "orange",
     },
     {
-      name: 'Teal',
-      value: 'teal',
+      name: "Teal",
+      value: "teal",
     },
   ],
   fonts: [
     {
-      name: 'Inter',
-      value: 'inter',
+      name: "Inter",
+      value: "inter",
     },
     {
-      name: 'Noto Sans',
-      value: 'noto-sans',
+      name: "Noto Sans",
+      value: "noto-sans",
     },
     {
-      name: 'Nunito Sans',
-      value: 'nunito-sans',
+      name: "Nunito Sans",
+      value: "nunito-sans",
     },
     {
-      name: 'Figtree',
-      value: 'figtree',
+      name: "Figtree",
+      value: "figtree",
     },
   ],
   radius: [
     {
-      name: 'None',
-      value: 'rounded-none',
+      name: "None",
+      value: "rounded-none",
     },
     {
-      name: 'Small',
-      value: 'rounded-small',
+      name: "Small",
+      value: "rounded-small",
     },
     {
-      name: 'Medium',
-      value: 'rounded-medium',
+      name: "Medium",
+      value: "rounded-medium",
     },
     {
-      name: 'Large',
-      value: 'rounded-large',
+      name: "Large",
+      value: "rounded-large",
     },
     {
-      name: 'Extra',
-      value: 'rounded-extra',
+      name: "Extra",
+      value: "rounded-extra",
     },
     {
-      name: 'XL',
-      value: 'rounded-xl',
+      name: "XL",
+      value: "rounded-xl",
     },
     {
-      name: 'Full',
-      value: 'rounded-full',
+      name: "Full",
+      value: "rounded-full",
     },
   ],
 };
 
-export function ThemeSelector({ className }: ComponentProps<'div'>) {
+export function ThemeSelector({ className }: ComponentProps<"div">) {
   const { activeTheme, setActiveTheme } = useThemeConfig();
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <Label htmlFor="theme-selector" className="sr-only">
         Theme
       </Label>
@@ -120,7 +120,7 @@ export function ThemeSelector({ className }: ComponentProps<'div'>) {
         <SelectTrigger
           id="theme-selector"
           size="sm"
-          className="bg-secondary text-secondary-foreground border-secondary justify-start shadow-none *:data-[slot=select-value]:w-16"
+          className="justify-start border-secondary bg-secondary text-secondary-foreground shadow-none *:data-[slot=select-value]:w-16"
         >
           <SelectValue placeholder="Select" />
         </SelectTrigger>
@@ -133,7 +133,11 @@ export function ThemeSelector({ className }: ComponentProps<'div'>) {
                   <SelectGroup>
                     <SelectLabel>{key.charAt(0).toUpperCase() + key.slice(1)}</SelectLabel>
                     {themes.map((theme) => (
-                      <SelectItem key={theme.name} value={theme.value} className="data-[state=checked]:opacity-50">
+                      <SelectItem
+                        key={theme.name}
+                        value={theme.value}
+                        className="data-[state=checked]:opacity-50"
+                      >
                         {theme.name}
                       </SelectItem>
                     ))}

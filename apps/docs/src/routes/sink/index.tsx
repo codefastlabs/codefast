@@ -1,30 +1,30 @@
-import { Suspense, useMemo } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
-import { Skeleton } from '@codefast/ui/skeleton';
-import { ComponentWrapper } from '@/components/sink/app/component-wrapper';
-import { componentRegistry } from '@/components/sink/component-registry';
+import { Suspense, useMemo } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Skeleton } from "@codefast/ui/skeleton";
+import { ComponentWrapper } from "@/components/sink/app/component-wrapper";
+import { componentRegistry } from "@/components/sink/component-registry";
 
-export const Route = createFileRoute('/sink/')({
+export const Route = createFileRoute("/sink/")({
   component: SinkPage,
   head: () => ({
     meta: [
-      { title: 'Components — @codefast/ui' },
+      { title: "Components — @codefast/ui" },
       {
-        name: 'description',
+        name: "description",
         content:
-          'Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.',
+          "Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.",
       },
-      { property: 'og:title', content: 'Components — @codefast/ui' },
+      { property: "og:title", content: "Components — @codefast/ui" },
       {
-        property: 'og:description',
+        property: "og:description",
         content:
-          'Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.',
+          "Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.",
       },
-      { name: 'twitter:title', content: 'Components — @codefast/ui' },
+      { name: "twitter:title", content: "Components — @codefast/ui" },
       {
-        name: 'twitter:description',
+        name: "twitter:description",
         content:
-          'Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.',
+          "Browse and interact with all 62 components in the @codefast/ui library. Accessible, composable, and beautifully crafted with Radix UI and Tailwind CSS.",
       },
     ],
   }),
@@ -40,7 +40,7 @@ function LazyComponentItem({
   const Component = config.component;
 
   return (
-    <ComponentWrapper name={componentKey} className={config.className ?? ''}>
+    <ComponentWrapper name={componentKey} className={config.className ?? ""}>
       <Suspense fallback={<Skeleton className="h-32 w-full" />}>
         <Component />
       </Suspense>
@@ -52,7 +52,7 @@ function SinkPage() {
   const uiComponents = useMemo(
     () =>
       Object.entries(componentRegistry).filter(([, component]) => {
-        return component.type === 'registry:ui';
+        return component.type === "registry:ui";
       }),
     [],
   );

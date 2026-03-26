@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Button } from '@codefast/ui/button';
+import { Button } from "@codefast/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -10,11 +10,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@codefast/ui/drawer';
-import { MinusIcon, PlusIcon } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import { Bar, BarChart, ResponsiveContainer } from 'recharts';
-import type { CSSProperties } from 'react';
+} from "@codefast/ui/drawer";
+import { MinusIcon, PlusIcon } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Bar, BarChart, ResponsiveContainer } from "recharts";
+import type { CSSProperties } from "react";
 
 interface GoalItem {
   goal: number;
@@ -104,7 +104,7 @@ function DrawerBottom() {
               </Button>
               <div className="flex-1 text-center">
                 <div className="text-7xl font-bold tracking-tighter">{goal}</div>
-                <div className="text-muted-foreground text-xs uppercase">Calories/day</div>
+                <div className="text-xs text-muted-foreground uppercase">Calories/day</div>
               </div>
               <Button
                 variant="outline"
@@ -124,7 +124,7 @@ function DrawerBottom() {
                     dataKey="goal"
                     style={
                       {
-                        fill: 'var(--primary)',
+                        fill: "var(--primary)",
                         opacity: 0.9,
                       } as CSSProperties
                     }
@@ -160,10 +160,11 @@ function DrawerScrollableContent() {
           <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             <p key={index} className="mb-4 leading-normal">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
               mollit anim id est laborum.
             </p>
           ))}
@@ -179,7 +180,7 @@ function DrawerScrollableContent() {
   );
 }
 
-const directions = ['top', 'right', 'bottom', 'left'] as const;
+const directions = ["top", "right", "bottom", "left"] as const;
 
 function DrawerDirections() {
   return (
@@ -199,10 +200,11 @@ function DrawerDirections() {
             <div className="overflow-y-auto px-4 text-sm">
               {Array.from({ length: 10 }).map((_, index) => (
                 <p key={index} className="mb-4 leading-normal">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                  aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                  irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                  pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
                   officia deserunt mollit anim id est laborum.
                 </p>
               ))}

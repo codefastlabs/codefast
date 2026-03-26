@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { Button } from '@codefast/ui/button';
-import { Calendar, CalendarDayButton } from '@codefast/ui/calendar';
-import { Card, CardContent, CardFooter } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
-import { Label } from '@codefast/ui/label';
-import { addDays } from 'date-fns';
-import { Clock2Icon } from 'lucide-react';
-import { useState } from 'react';
-import { es } from 'react-day-picker/locale';
-import type { CalendarDayButtonProps } from '@codefast/ui/calendar';
-import type { DateRange } from 'react-day-picker';
+import { Button } from "@codefast/ui/button";
+import { Calendar, CalendarDayButton } from "@codefast/ui/calendar";
+import { Card, CardContent, CardFooter } from "@codefast/ui/card";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+import { addDays } from "date-fns";
+import { Clock2Icon } from "lucide-react";
+import { useState } from "react";
+import { es } from "react-day-picker/locale";
+import type { CalendarDayButtonProps } from "@codefast/ui/calendar";
+import type { DateRange } from "react-day-picker";
 
 export function CalendarDemo() {
   return (
-    <div className="bg-muted flex flex-1 flex-col flex-wrap justify-center gap-8 p-10 lg:flex-row">
+    <div className="flex flex-1 flex-col flex-wrap justify-center gap-8 bg-muted p-10 lg:flex-row">
       <CalendarSingle />
       <CalendarMultiple />
       <CalendarRange />
@@ -28,7 +28,9 @@ export function CalendarDemo() {
 }
 
 function CalendarSingle() {
-  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
+  const [date, setDate] = useState<Date | undefined>(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 12),
+  );
 
   return (
     <div className="flex flex-col gap-3">
@@ -68,7 +70,7 @@ function CalendarRange() {
         selected={dateRange}
         onSelect={setDateRange}
         numberOfMonths={2}
-        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
         className="rounded-xl border shadow-sm"
       />
     </div>
@@ -118,7 +120,7 @@ function CalendarBookedDates() {
           booked: bookedDates,
         }}
         modifiersClassNames={{
-          booked: '[&>button]:line-through opacity-100',
+          booked: "[&>button]:line-through opacity-100",
         }}
         className="rounded-xl border shadow-sm"
       />
@@ -127,7 +129,9 @@ function CalendarBookedDates() {
 }
 
 function CalendarWithTime() {
-  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
+  const [date, setDate] = useState<Date | undefined>(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 12),
+  );
 
   return (
     <div className="flex flex-col gap-3">
@@ -140,7 +144,7 @@ function CalendarWithTime() {
           <div className="flex w-full flex-col gap-2">
             <Label htmlFor="time-from">Start Time</Label>
             <div className="relative flex w-full items-center gap-2">
-              <Clock2Icon className="text-muted-foreground pointer-events-none absolute left-2.5 size-4 select-none" />
+              <Clock2Icon className="pointer-events-none absolute left-2.5 size-4 text-muted-foreground select-none" />
               <Input
                 id="time-from"
                 type="time"
@@ -153,7 +157,7 @@ function CalendarWithTime() {
           <div className="flex w-full flex-col gap-2">
             <Label htmlFor="time-to">End Time</Label>
             <div className="relative flex w-full items-center gap-2">
-              <Clock2Icon className="text-muted-foreground pointer-events-none absolute left-2.5 size-4 select-none" />
+              <Clock2Icon className="pointer-events-none absolute left-2.5 size-4 text-muted-foreground select-none" />
               <Input
                 id="time-to"
                 type="time"
@@ -188,7 +192,7 @@ function CalendarCustomDays() {
         className="rounded-xl border shadow-sm [--cell-size:--spacing(12)]"
         formatters={{
           formatMonthDropdown: (date) => {
-            return date.toLocaleString('default', { month: 'long' });
+            return date.toLocaleString("default", { month: "long" });
           },
         }}
         components={{
@@ -198,7 +202,7 @@ function CalendarCustomDays() {
             return (
               <CalendarDayButton day={day} modifiers={modifiers} {...props}>
                 {children}
-                {!modifiers.outside && <span>{isWeekend ? '$120' : '$100'}</span>}
+                {!modifiers.outside && <span>{isWeekend ? "$120" : "$100"}</span>}
               </CalendarDayButton>
             );
           },
@@ -210,7 +214,9 @@ function CalendarCustomDays() {
 
 function CalendarWithPresets() {
   const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 12));
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  const [currentMonth, setCurrentMonth] = useState<Date>(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  );
 
   return (
     <div className="flex max-w-75 flex-col gap-3">
@@ -229,11 +235,11 @@ function CalendarWithPresets() {
         </CardContent>
         <CardFooter className="flex flex-wrap gap-2 border-t px-4 pt-4">
           {[
-            { label: 'Today', value: 0 },
-            { label: 'Tomorrow', value: 1 },
-            { label: 'In 3 days', value: 3 },
-            { label: 'In a week', value: 7 },
-            { label: 'In 2 weeks', value: 14 },
+            { label: "Today", value: 0 },
+            { label: "Tomorrow", value: 1 },
+            { label: "In 3 days", value: 3 },
+            { label: "In a week", value: 7 },
+            { label: "In 2 weeks", value: 14 },
           ].map((preset) => (
             <Button
               key={preset.value}

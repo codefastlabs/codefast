@@ -1,35 +1,37 @@
-import type React from 'react';
+import type React from "react";
 
-import { render, screen } from '@testing-library/react';
+import { render, screen } from "@testing-library/react";
 
-import { ThemeContext } from '@/core/context';
+import { ThemeContext } from "@/core/context";
 
-describe('ThemeContext', () => {
-  test('should be a valid React context', () => {
+describe("ThemeContext", () => {
+  test("should be a valid React context", () => {
     expect(ThemeContext).toBeDefined();
     expect(ThemeContext.Provider).toBeDefined();
   });
 
-  test('should have null as default value', () => {
+  test("should have null as default value", () => {
     // Render a component that consumes the context without a provider
     // Using React 19's use() would throw, so we test via Provider
     const TestConsumer = (): React.ReactElement => {
       return (
-        <ThemeContext.Consumer>{(value) => <span data-testid="value">{String(value)}</span>}</ThemeContext.Consumer>
+        <ThemeContext.Consumer>
+          {(value) => <span data-testid="value">{value === null ? "null" : "unexpected"}</span>}
+        </ThemeContext.Consumer>
       );
     };
 
     render(<TestConsumer />);
 
-    expect(screen.getByTestId('value')).toHaveTextContent('null');
+    expect(screen.getByTestId("value")).toHaveTextContent("null");
   });
 
-  test('should provide value through Provider', () => {
+  test("should provide value through Provider", () => {
     const mockValue = {
       isPending: false,
-      resolvedTheme: 'dark' as const,
+      resolvedTheme: "dark" as const,
       setTheme: jest.fn(),
-      theme: 'dark' as const,
+      theme: "dark" as const,
     };
 
     const TestConsumer = (): React.ReactElement => {
@@ -52,8 +54,8 @@ describe('ThemeContext', () => {
       </ThemeContext>,
     );
 
-    expect(screen.getByTestId('theme')).toHaveTextContent('dark');
-    expect(screen.getByTestId('resolved')).toHaveTextContent('dark');
-    expect(screen.getByTestId('pending')).toHaveTextContent('false');
+    expect(screen.getByTestId("theme")).toHaveTextContent("dark");
+    expect(screen.getByTestId("resolved")).toHaveTextContent("dark");
+    expect(screen.getByTestId("pending")).toHaveTextContent("false");
   });
 });

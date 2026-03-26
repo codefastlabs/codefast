@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn } from '@codefast/tailwind-variants';
-import * as TabsPrimitive from '@radix-ui/react-tabs';
+import { cn } from "@codefast/tailwind-variants";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 /* -----------------------------------------------------------------------------
  * Component: Tabs
@@ -12,7 +12,13 @@ import * as TabsPrimitive from '@radix-ui/react-tabs';
 type TabsProps = ComponentProps<typeof TabsPrimitive.Root>;
 
 function Tabs({ className, ...props }: TabsProps): JSX.Element {
-  return <TabsPrimitive.Root className={cn('flex flex-col gap-2', className)} data-slot="tabs" {...props} />;
+  return (
+    <TabsPrimitive.Root
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="tabs"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -25,7 +31,7 @@ function TabsList({ className, ...props }: TabsListProps): JSX.Element {
   return (
     <TabsPrimitive.List
       className={cn(
-        'bg-muted text-muted-foreground inline-flex w-fit items-center justify-center gap-1 rounded-xl px-1 py-1',
+        "inline-flex w-fit items-center justify-center gap-1 rounded-xl bg-muted px-1 py-1 text-muted-foreground",
         className,
       )}
       data-slot="tabs-list"
@@ -44,7 +50,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "data-[state=active]:bg-background dark:data-[state=active]:bg-input/50 text-muted-foreground focus-visible:ring-ring/50 dark:outline-ring data-[state=active]:text-foreground hover:not-disabled:text-foreground inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium whitespace-nowrap transition not-dark:outline-hidden focus-visible:ring-3 disabled:opacity-50 data-[state=active]:shadow-sm dark:-outline-offset-1 dark:data-[state=active]:outline-1 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition not-dark:outline-hidden hover:not-disabled:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:-outline-offset-1 dark:outline-ring dark:data-[state=active]:bg-input/50 dark:data-[state=active]:outline-1 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="tabs-trigger"
@@ -63,7 +69,7 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
-        'outline-ring ring-ring/50 mt-2 rounded-xl focus-visible:ring-4 focus-visible:outline-1',
+        "mt-2 rounded-xl ring-ring/50 outline-ring focus-visible:ring-4 focus-visible:outline-1",
         className,
       )}
       data-slot="tabs-content"

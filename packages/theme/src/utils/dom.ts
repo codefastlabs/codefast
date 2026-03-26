@@ -1,4 +1,4 @@
-import type { ResolvedTheme } from '@/types';
+import type { ResolvedTheme } from "@/types";
 
 /* -----------------------------------------------------------------------------
  * DOM Utilities
@@ -16,7 +16,7 @@ import type { ResolvedTheme } from '@/types';
 export function applyTheme(resolved: ResolvedTheme): void {
   const root = window.document.documentElement;
 
-  root.classList.remove('light', 'dark', 'system');
+  root.classList.remove("light", "dark", "system");
   root.classList.add(resolved);
   root.style.colorScheme = resolved;
 }
@@ -38,13 +38,13 @@ export function applyTheme(resolved: ResolvedTheme): void {
  * ```
  */
 export function disableAnimation(nonce?: string): () => void {
-  if (typeof window === 'undefined')
+  if (typeof window === "undefined")
     return () => {
       /* noop */
     };
 
   // Respect user's motion preferences
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (prefersReducedMotion) {
     return () => {
@@ -53,10 +53,10 @@ export function disableAnimation(nonce?: string): () => void {
   }
 
   // Inject style to disable all transitions
-  const css = document.createElement('style');
+  const css = document.createElement("style");
 
   if (nonce) {
-    css.setAttribute('nonce', nonce);
+    css.setAttribute("nonce", nonce);
   }
 
   css.append(

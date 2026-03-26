@@ -1,6 +1,6 @@
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui/collapsible';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
-import { Label } from '@codefast/ui/label';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
+import { Label } from "@codefast/ui/label";
 import {
   Sidebar,
   SidebarContent,
@@ -16,23 +16,27 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from '@codefast/ui/sidebar';
-import { Link, useRouterState } from '@tanstack/react-router';
-import { ChevronRightIcon, HomeIcon, SearchIcon } from 'lucide-react';
-import { useMemo } from 'react';
-import type { ComponentProps, JSX, ReactNode } from 'react';
-import type { NavItem } from '@/components/sink/app/app-sidebar-types';
-import type { RegistryType } from '@/components/sink/component-registry';
-import { REGISTRY_TYPES, REGISTRY_TYPE_LABELS, componentsByType } from '@/components/sink/component-registry';
-import { TeamSwitcher } from '@/components/sink/app/team-switcher';
-import { NavUser } from '@/components/sink/app/nav-user';
-import { appSidebarData } from '@/components/sink/app/app-sidebar-data';
+} from "@codefast/ui/sidebar";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { ChevronRightIcon, HomeIcon, SearchIcon } from "lucide-react";
+import { useMemo } from "react";
+import type { ComponentProps, JSX, ReactNode } from "react";
+import type { NavItem } from "@/components/sink/app/app-sidebar-types";
+import type { RegistryType } from "@/components/sink/component-registry";
+import {
+  REGISTRY_TYPES,
+  REGISTRY_TYPE_LABELS,
+  componentsByType,
+} from "@/components/sink/component-registry";
+import { TeamSwitcher } from "@/components/sink/app/team-switcher";
+import { NavUser } from "@/components/sink/app/nav-user";
+import { appSidebarData } from "@/components/sink/app/app-sidebar-data";
 
 /* -------------------------------------------------------------------------------------------------
  * Constants
  * -------------------------------------------------------------------------------------------------*/
 
-const SINK_PATH_PREFIX = '/sink/';
+const SINK_PATH_PREFIX = "/sink/";
 
 /* -------------------------------------------------------------------------------------------------
  * Component: SearchForm
@@ -46,7 +50,7 @@ function SearchForm(): JSX.Element {
           <Label htmlFor="search" className="sr-only">
             Search
           </Label>
-          <InputGroup className="bg-background h-8 shadow-none">
+          <InputGroup className="h-8 bg-background shadow-none">
             <InputGroupInput
               id="search"
               placeholder="Search the docs..."
@@ -99,7 +103,12 @@ function NavMainSection({ items }: NavMainSectionProps): JSX.Element {
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+          <Collapsible
+            key={item.title}
+            asChild
+            defaultOpen={item.isActive}
+            className="group/collapsible"
+          >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
@@ -139,8 +148,10 @@ interface ComponentsSectionProps {
 
 function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
   const registrySections = useMemo(() => {
-    const sections: { type: RegistryType; components: [string, { name: string; href: string; label?: string }][] }[] =
-      [];
+    const sections: {
+      type: RegistryType;
+      components: [string, { name: string; href: string; label?: string }][];
+    }[] = [];
 
     for (const type of REGISTRY_TYPES) {
       const components = componentsByType[type];
@@ -175,7 +186,9 @@ function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
                       <SidebarMenuSubButton asChild isActive={pathname === item.href}>
                         <Link to={item.href}>
                           <span>{item.name}</span>
-                          {item.label ? <span className="flex size-2 rounded-full bg-blue-500" /> : null}
+                          {item.label ? (
+                            <span className="flex size-2 rounded-full bg-blue-500" />
+                          ) : null}
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>

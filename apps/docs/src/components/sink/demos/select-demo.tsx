@@ -6,8 +6,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui/select';
-import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from 'lucide-react';
+} from "@codefast/ui/select";
+import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "lucide-react";
 
 export function SelectDemo() {
   return (

@@ -1,10 +1,10 @@
-import { createContext, useContext, useEffect, useEffectEvent, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useEffectEvent, useState } from "react";
+import type { ReactNode } from "react";
 
 /**
  * The default active theme name when no initial theme is provided.
  */
-const DEFAULT_THEME = 'default';
+const DEFAULT_THEME = "default";
 
 /**
  * The active theme context value type.
@@ -66,14 +66,14 @@ export function ActiveThemeProvider({ children, initialTheme }: ActiveThemeProvi
 
   const applyActiveTheme = useEffectEvent((theme: string) => {
     Array.from(document.body.classList)
-      .filter((className) => className.startsWith('theme-'))
+      .filter((className) => className.startsWith("theme-"))
       .forEach((className) => {
         document.body.classList.remove(className);
       });
     document.body.classList.add(`theme-${theme}`);
 
-    if (theme.endsWith('-scaled')) {
-      document.body.classList.add('theme-scaled');
+    if (theme.endsWith("-scaled")) {
+      document.body.classList.add("theme-scaled");
     }
   });
 
@@ -81,7 +81,11 @@ export function ActiveThemeProvider({ children, initialTheme }: ActiveThemeProvi
     applyActiveTheme(activeTheme);
   }, [activeTheme]);
 
-  return <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 /**
@@ -113,7 +117,7 @@ export function useThemeConfig() {
   const context = useContext(ThemeContext);
 
   if (context === undefined) {
-    throw new Error('useThemeConfig must be used within an ActiveThemeProvider');
+    throw new Error("useThemeConfig must be used within an ActiveThemeProvider");
   }
 
   return context;

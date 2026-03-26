@@ -14,9 +14,9 @@ import type {
   SlotConfigurationSchema,
   SlotFunctionProperties,
   SlotFunctionType,
-} from '@/types/types';
+} from "@/types/types";
 
-import { cx, isSlotObjectType } from '@/utilities/utils';
+import { cx, isSlotObjectType } from "@/utilities/utils";
 
 /**
  * Resolve CSS classes for a specific slot.
@@ -37,7 +37,10 @@ import { cx, isSlotObjectType } from '@/utilities/utils';
  * @param compoundSlotClasses - Pre-computed compound slot classes
  * @returns Array of resolved CSS classes for the slot
  */
-export const resolveSlotClasses = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
+export const resolveSlotClasses = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
   targetSlotKey: keyof S,
   baseSlotClasses: ClassValue,
   variantGroups: T | undefined,
@@ -48,7 +51,8 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
   compoundSlotClasses: ClassValue[],
 ): ClassValue[] => {
   // Pre-allocate with estimated size
-  const estimatedSize = (variantGroups ? Object.keys(variantGroups).length : 0) + compoundSlotClasses.length + 5;
+  const estimatedSize =
+    (variantGroups ? Object.keys(variantGroups).length : 0) + compoundSlotClasses.length + 5;
   const resolvedClasses: ClassValue[] = new Array(estimatedSize);
   let classIndex = 0;
 
@@ -63,7 +67,9 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
 
     for (let index = 0, length = variantKeys.length; index < length; index++) {
       const variantKey = variantKeys[index];
-      const variantGroup = (variantGroups as Record<string, Record<string, ClassValue>>)[variantKey];
+      const variantGroup = (variantGroups as Record<string, Record<string, ClassValue>>)[
+        variantKey
+      ];
 
       // Priority: slotProps > variantProps > defaultVariantProps (no object spread needed)
       const slotValue = (slotProps as Record<string, unknown>)[variantKey];
@@ -80,10 +86,15 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
 
       // Resolve variant value with priority
       if (variantValue !== undefined) {
-        resolvedValue = variantValue === true ? 'true' : variantValue === false ? 'false' : (variantValue as string);
-      } else if ('true' in variantGroup || 'false' in variantGroup) {
+        resolvedValue =
+          variantValue === true
+            ? "true"
+            : variantValue === false
+              ? "false"
+              : (variantValue as string);
+      } else if ("true" in variantGroup || "false" in variantGroup) {
         // Boolean variant default
-        resolvedValue = 'false';
+        resolvedValue = "false";
       }
 
       // Apply variant classes if resolved
@@ -98,7 +109,7 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
             if (slotVariantClass !== undefined) {
               resolvedClasses[classIndex++] = slotVariantClass;
             }
-          } else if (targetSlotKey === 'base') {
+          } else if (targetSlotKey === "base") {
             // Handle base slot with non-object variant classes
             resolvedClasses[classIndex++] = variantConfiguration;
           }
@@ -120,7 +131,7 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
         const compoundKey = compoundKeys[keyIndex];
 
         // Skip class properties
-        if (compoundKey === 'className' || compoundKey === 'class') {
+        if (compoundKey === "className" || compoundKey === "class") {
           continue;
         }
 
@@ -144,7 +155,9 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
       // Apply compound variant classes if all conditions are met
       if (isMatching) {
         const compoundClassName =
-          compoundVariant.className === undefined ? compoundVariant.class : compoundVariant.className;
+          compoundVariant.className === undefined
+            ? compoundVariant.class
+            : compoundVariant.className;
 
         if (isSlotObjectType(compoundClassName)) {
           // Handle slot-specific compound variant classes
@@ -153,7 +166,7 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
           if (slotClass !== undefined) {
             resolvedClasses[classIndex++] = slotClass;
           }
-        } else if (targetSlotKey === 'base') {
+        } else if (targetSlotKey === "base") {
           // Handle base slot with non-object compound variant classes
           resolvedClasses[classIndex++] = compoundClassName;
         }
@@ -192,7 +205,10 @@ export const resolveSlotClasses = <T extends ConfigurationSchema, S extends Slot
  * @param tailwindMergeService - The Tailwind merge service function
  * @returns Object containing slot functions for each slot
  */
-export const createSlotFunctionFactory = <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
+export const createSlotFunctionFactory = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
   mergedSlotDefinitions: S,
   mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
@@ -210,12 +226,15 @@ export const createSlotFunctionFactory = <T extends ConfigurationSchema, S exten
   const baseCompoundSlotClasses = compoundSlotClasses.base ?? [];
 
   // Create the base slot function
-  slotFunctions.base = (slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>): string | undefined => {
-    const baseSlotClass = mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
+  slotFunctions.base = (
+    slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
+  ): string | undefined => {
+    const baseSlotClass =
+      mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
 
     // Pass variantProps and slotProps separately to avoid object spread
     const baseClasses = resolveSlotClasses(
-      'base',
+      "base",
       baseSlotClass,
       mergedVariantGroups,
       slotProps as ConfigurationVariants<T>,
@@ -263,7 +282,7 @@ export const createSlotFunctionFactory = <T extends ConfigurationSchema, S exten
   for (let index = 0, length = slotKeys.length; index < length; index++) {
     const slotKey = slotKeys[index] as keyof S;
 
-    if (slotKey !== 'base') {
+    if (slotKey !== "base") {
       // Pre-cache slot-specific values
       const slotDefinition = mergedSlotDefinitions[slotKey];
       const slotCompoundClasses = compoundSlotClasses[slotKey] ?? [];
@@ -301,7 +320,11 @@ export const createSlotFunctionFactory = <T extends ConfigurationSchema, S exten
         const allClasses: ClassValue[] = new Array(totalLength);
         let classIndex = 0;
 
-        for (let slotIndex = 0, slotLength = slotClasses.length; slotIndex < slotLength; slotIndex++) {
+        for (
+          let slotIndex = 0, slotLength = slotClasses.length;
+          slotIndex < slotLength;
+          slotIndex++
+        ) {
           allClasses[classIndex++] = slotClasses[slotIndex];
         }
 

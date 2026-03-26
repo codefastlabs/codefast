@@ -1,15 +1,15 @@
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
-import remarkRehype from 'remark-rehype';
-import rehypeRaw from 'rehype-raw';
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeStringify from 'rehype-stringify';
-import rehypeShiki from '@shikijs/rehype';
-import { visit } from 'unist-util-visit';
-import { toString } from 'hast-util-to-string';
-import type { Element as HastElement, Root as HastRoot } from 'hast';
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
+import remarkRehype from "remark-rehype";
+import rehypeRaw from "rehype-raw";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeStringify from "rehype-stringify";
+import rehypeShiki from "@shikijs/rehype";
+import { visit } from "unist-util-visit";
+import { toString } from "hast-util-to-string";
+import type { Element as HastElement, Root as HastRoot } from "hast";
 
 export type MarkdownHeading = {
   id: string;
@@ -36,16 +36,16 @@ export async function renderMarkdown(content: string): Promise<MarkdownResult> {
     .use(rehypeRaw)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, {
-      behavior: 'wrap',
-      properties: { className: ['anchor'] },
+      behavior: "wrap",
+      properties: { className: ["anchor"] },
     })
     .use(() => (tree: HastRoot) => {
-      visit(tree, 'element', (node: HastElement) => {
+      visit(tree, "element", (node: HastElement) => {
         const tagName = node.tagName;
 
-        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
+        if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(tagName)) {
           headings.push({
-            id: node.properties.id?.toString() ?? '',
+            id: node.properties.id?.toString() ?? "",
             text: toString(node),
             level: Number.parseInt(tagName.charAt(1), 10),
           });
@@ -54,8 +54,8 @@ export async function renderMarkdown(content: string): Promise<MarkdownResult> {
     })
     .use(rehypeShiki, {
       themes: {
-        light: 'github-light',
-        dark: 'tokyo-night',
+        light: "github-light",
+        dark: "tokyo-night",
       },
     })
     .use(rehypeStringify)

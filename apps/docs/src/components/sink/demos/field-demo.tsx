@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { cn } from '@codefast/tailwind-variants';
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
-import { Badge } from '@codefast/ui/badge';
-import { Button } from '@codefast/ui/button';
-import { ButtonGroup } from '@codefast/ui/button-group';
-import { Calendar } from '@codefast/ui/calendar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Checkbox } from '@codefast/ui/checkbox';
+import { cn } from "@codefast/tailwind-variants";
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
+import { Badge } from "@codefast/ui/badge";
+import { Button } from "@codefast/ui/button";
+import { ButtonGroup } from "@codefast/ui/button-group";
+import { Calendar } from "@codefast/ui/calendar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
+import { Checkbox } from "@codefast/ui/checkbox";
 import {
   Field,
   FieldContent,
@@ -18,18 +18,18 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from '@codefast/ui/field';
-import { Input } from '@codefast/ui/input';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@codefast/ui/input-group';
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@codefast/ui/input-otp';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Separator } from '@codefast/ui/separator';
-import { Slider } from '@codefast/ui/slider';
-import { Switch } from '@codefast/ui/switch';
-import { Textarea } from '@codefast/ui/textarea';
-import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
+} from "@codefast/ui/field";
+import { Input } from "@codefast/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Separator } from "@codefast/ui/separator";
+import { Slider } from "@codefast/ui/slider";
+import { Switch } from "@codefast/ui/switch";
+import { Textarea } from "@codefast/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import {
   IconCircle,
   IconCircleCheckFilled,
@@ -38,17 +38,24 @@ import {
   IconPlus,
   IconUsers,
   IconWorld,
-} from '@tabler/icons-react';
-import { addDays, format } from 'date-fns';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { CalendarIcon, ClockIcon, DownloadIcon, FileTextIcon, FolderIcon, MonitorIcon } from 'lucide-react';
-import { useState } from 'react';
-import type { DateRange } from 'react-day-picker';
+} from "@tabler/icons-react";
+import { addDays, format } from "date-fns";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import {
+  CalendarIcon,
+  ClockIcon,
+  DownloadIcon,
+  FileTextIcon,
+  FolderIcon,
+  MonitorIcon,
+} from "lucide-react";
+import { useState } from "react";
+import type { DateRange } from "react-day-picker";
 
 export function FieldDemo() {
   return (
     <div className="@container w-full">
-      <div className="bg-muted grid gap-4 p-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5 @3xl:grid-cols-2 @5xl:grid-cols-3">
+      <div className="grid gap-4 bg-muted p-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <div className="flex flex-col gap-6">
           <BasicFields />
           <PrivacySettings />
@@ -107,28 +114,36 @@ function BasicFields() {
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name-x8k">Name</FieldLabel>
-              <FieldDescription>Enter your name so it is long enough to test the layout.</FieldDescription>
+              <FieldDescription>
+                Enter your name so it is long enough to test the layout.
+              </FieldDescription>
               <Input id="name-x8k" type="text" />
             </Field>
             <Field>
               <FieldLabel htmlFor="message-x8k">Message</FieldLabel>
-              <FieldDescription>Enter your message so it is long enough to test the layout.</FieldDescription>
+              <FieldDescription>
+                Enter your message so it is long enough to test the layout.
+              </FieldDescription>
               <Textarea id="message-x8k" placeholder="Enter your message" />
             </Field>
             <Field>
               <FieldLabel htmlFor="message-x28k">Message</FieldLabel>
               <Textarea id="message-x28k" placeholder="Enter your message" />
-              <FieldDescription>Enter your message so it is long enough to test the layout.</FieldDescription>
+              <FieldDescription>
+                Enter your message so it is long enough to test the layout.
+              </FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="name-2-p9m">
-                Name{' '}
+                Name{" "}
                 <Badge variant="secondary" className="ml-auto">
                   Recommended
                 </Badge>
               </FieldLabel>
               <Input id="name-2-p9m" type="text" />
-              <FieldDescription>Enter your name so it is long enough to test the layout.</FieldDescription>
+              <FieldDescription>
+                Enter your name so it is long enough to test the layout.
+              </FieldDescription>
             </Field>
             <FieldSeparator />
             <Field orientation="horizontal">
@@ -161,8 +176,8 @@ function BasicFields() {
               <Checkbox id="enable-touch-id-88v" />
               <FieldContent>
                 <FieldLabel htmlFor="enable-touch-id-88v">
-                  Enable Touch ID and Face ID to make it even faster to unlock your device. This is a long label to test
-                  the layout.
+                  Enable Touch ID and Face ID to make it even faster to unlock your device. This is
+                  a long label to test the layout.
                 </FieldLabel>
                 <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
               </FieldContent>
@@ -172,7 +187,9 @@ function BasicFields() {
                 <Checkbox id="enable-touch-id-m8x" />
                 <FieldContent>
                   <FieldTitle>Enable Touch ID</FieldTitle>
-                  <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
+                  <FieldDescription>
+                    Enable Touch ID to quickly unlock your device.
+                  </FieldDescription>
                 </FieldContent>
               </Field>
             </FieldLabel>
@@ -181,10 +198,12 @@ function BasicFields() {
                 <Checkbox id="enable-touch-id-18v" />
                 <FieldContent>
                   <FieldTitle>
-                    Enable Touch ID and Face ID to make it even faster to unlock your device. This is a long label to
-                    test the layout.
+                    Enable Touch ID and Face ID to make it even faster to unlock your device. This
+                    is a long label to test the layout.
                   </FieldTitle>
-                  <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
+                  <FieldDescription>
+                    Enable Touch ID to quickly unlock your device.
+                  </FieldDescription>
                 </FieldContent>
               </Field>
             </FieldLabel>
@@ -193,17 +212,21 @@ function BasicFields() {
                 <RadioGroupItem value="enable-touch-id-m10v" id="enable-touch-id-m10v" />
                 <FieldContent>
                   <FieldLabel htmlFor="enable-touch-id-m10v">Enable Touch ID</FieldLabel>
-                  <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
+                  <FieldDescription>
+                    Enable Touch ID to quickly unlock your device.
+                  </FieldDescription>
                 </FieldContent>
               </Field>
               <Field orientation="horizontal">
                 <RadioGroupItem value="enable-touch-id-m10v" id="enable-touch-id-m10v" />
                 <FieldContent>
                   <FieldLabel htmlFor="enable-touch-id-m10v">
-                    Enable Touch ID and Face ID to make it even faster to unlock your device. This is a long label to
-                    test the layout.
+                    Enable Touch ID and Face ID to make it even faster to unlock your device. This
+                    is a long label to test the layout.
                   </FieldLabel>
-                  <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
+                  <FieldDescription>
+                    Enable Touch ID to quickly unlock your device.
+                  </FieldDescription>
                 </FieldContent>
               </Field>
             </RadioGroup>
@@ -213,7 +236,9 @@ function BasicFields() {
                   <RadioGroupItem value="enable-touch-id-m2222v" id="enable-touch-id-m2222v" />
                   <FieldContent>
                     <FieldTitle>Enable Touch ID</FieldTitle>
-                    <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
+                    <FieldDescription>
+                      Enable Touch ID to quickly unlock your device.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </FieldLabel>
@@ -222,10 +247,12 @@ function BasicFields() {
                   <RadioGroupItem value="enable-touch-id-m10xx" id="enable-touch-id-m10xx" />
                   <FieldContent>
                     <FieldTitle>
-                      Enable Touch ID and Face ID to make it even faster to unlock your device. This is a long label to
-                      test the layout.
+                      Enable Touch ID and Face ID to make it even faster to unlock your device. This
+                      is a long label to test the layout.
                     </FieldTitle>
-                    <FieldDescription>Enable Touch ID to quickly unlock your device.</FieldDescription>
+                    <FieldDescription>
+                      Enable Touch ID to quickly unlock your device.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </FieldLabel>
@@ -252,7 +279,9 @@ function BasicFields() {
             <FieldSeparator />
             <FieldSet>
               <FieldLegend variant="label">Search Results Search Results</FieldLegend>
-              <FieldDescription>Only selected categories will appear in search results.</FieldDescription>
+              <FieldDescription>
+                Only selected categories will appear in search results.
+              </FieldDescription>
               <FieldGroup className="gap-3">
                 <Field orientation="horizontal">
                   <Checkbox id="search-results-application-r8s" />
@@ -367,7 +396,9 @@ function SubscriptionPlan() {
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle>Increase Contrast</FieldTitle>
-                    <FieldDescription>Increase the contrast of the UI to make it easier to read.</FieldDescription>
+                    <FieldDescription>
+                      Increase the contrast of the UI to make it easier to read.
+                    </FieldDescription>
                   </FieldContent>
                   <Switch id="increase-contrast-b8h" />
                 </Field>
@@ -376,7 +407,9 @@ function SubscriptionPlan() {
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle>Reduce Transparency</FieldTitle>
-                    <FieldDescription>Reduce the transparency of the UI to make it easier to read.</FieldDescription>
+                    <FieldDescription>
+                      Reduce the transparency of the UI to make it easier to read.
+                    </FieldDescription>
                   </FieldContent>
                   <Switch id="reduce-transparency-v5l" />
                 </Field>
@@ -385,7 +418,9 @@ function SubscriptionPlan() {
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle>Reduce Motion</FieldTitle>
-                    <FieldDescription>Reduce motion of the UI to make it easier to read.</FieldDescription>
+                    <FieldDescription>
+                      Reduce motion of the UI to make it easier to read.
+                    </FieldDescription>
                   </FieldContent>
                   <Switch id="reduce-motion-n2j" />
                 </Field>
@@ -394,7 +429,9 @@ function SubscriptionPlan() {
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle>Enable Dark Mode</FieldTitle>
-                    <FieldDescription>Enable dark mode to make the UI easier to read.</FieldDescription>
+                    <FieldDescription>
+                      Enable dark mode to make the UI easier to read.
+                    </FieldDescription>
                   </FieldContent>
                   <Switch id="enable-dark-mode-w6q" />
                 </Field>
@@ -456,8 +493,8 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-f8k" className="sr-only" />
-                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="fill-primary hidden size-5 group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="followers-s7m">
@@ -467,8 +504,8 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers" id="followers-s7m" className="sr-only" />
-                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="fill-primary hidden size-5 group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="custom-q3r">
@@ -478,8 +515,8 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom" id="custom-q3r" className="sr-only" />
-                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="fill-primary hidden size-5 group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
           </RadioGroup>
@@ -534,7 +571,7 @@ function PrivacySettings() {
           <RadioGroup>
             <FieldLabel htmlFor="everyone-3-k4p">
               <Field orientation="horizontal">
-                <div className="bg-muted group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground group-has-data-[state=checked]/field:border-primary flex size-8 shrink-0 items-center justify-center rounded-full border transition-all duration-100">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-[state=checked]/field:border-primary group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground">
                   <IconWorld className="size-4" />
                 </div>
                 <FieldContent>
@@ -542,13 +579,13 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-3-k4p" className="sr-only" />
-                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="fill-primary hidden size-5 group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="followers-3-m7j">
               <Field orientation="horizontal">
-                <div className="bg-muted group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground group-has-data-[state=checked]/field:border-primary flex size-8 shrink-0 items-center justify-center rounded-full border transition-all duration-100">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-[state=checked]/field:border-primary group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground">
                   <IconUsers className="size-4" />
                 </div>
                 <FieldContent>
@@ -556,13 +593,13 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers-3" id="followers-3-m7j" className="sr-only" />
-                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="fill-primary hidden size-5 group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="custom-3-r9w">
               <Field orientation="horizontal">
-                <div className="bg-muted group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground group-has-data-[state=checked]/field:border-primary flex size-8 shrink-0 items-center justify-center rounded-full border transition-all duration-100">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-[state=checked]/field:border-primary group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground">
                   <IconPlus className="size-4" />
                 </div>
                 <FieldContent>
@@ -570,8 +607,8 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom-3" id="custom-3-r9w" className="sr-only" />
-                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="fill-primary hidden size-5 group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
           </RadioGroup>
@@ -589,7 +626,9 @@ function HearAboutUs() {
           <FieldGroup>
             <FieldSet>
               <FieldLegend>How did you hear about us?</FieldLegend>
-              <FieldDescription>Select the option that best describes how you heard about us.</FieldDescription>
+              <FieldDescription>
+                Select the option that best describes how you heard about us.
+              </FieldDescription>
               <FieldGroup className="flex flex-row flex-wrap gap-2 [--radius:9999px] **:data-[slot=checkbox]:rounded-full **:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2 *:data-[slot=field-label]:w-fit">
                 <FieldLabel htmlFor="social-media-b2s">
                   <Field orientation="horizontal">
@@ -684,7 +723,9 @@ function ClusterConfig() {
                     <RadioGroupItem value="kubernetes" id="kubernetes-r2h" />
                     <FieldContent>
                       <FieldTitle>Kubernetes</FieldTitle>
-                      <FieldDescription>Run GPU workloads on a K8s configured cluster.</FieldDescription>
+                      <FieldDescription>
+                        Run GPU workloads on a K8s configured cluster.
+                      </FieldDescription>
                     </FieldContent>
                   </Field>
                 </FieldLabel>
@@ -693,7 +734,9 @@ function ClusterConfig() {
                     <RadioGroupItem value="vm" id="vm-z4k" />
                     <FieldContent>
                       <FieldTitle>Virtual Machine</FieldTitle>
-                      <FieldDescription>Access a VM configured cluster via SSH to run GPU workloads.</FieldDescription>
+                      <FieldDescription>
+                        Access a VM configured cluster via SSH to run GPU workloads.
+                      </FieldDescription>
                     </FieldContent>
                   </Field>
                 </FieldLabel>
@@ -702,7 +745,8 @@ function ClusterConfig() {
             <Field>
               <FieldLabel htmlFor="number-of-gpus-f6l">Number of GPUs</FieldLabel>
               <FieldDescription>
-                Buy a single node with 8 GPUs or many interconnected nodes. You can add more GPUs later.
+                Buy a single node with 8 GPUs or many interconnected nodes. You can add more GPUs
+                later.
               </FieldDescription>
               <ButtonGroup>
                 <Input />
@@ -722,7 +766,9 @@ function ClusterConfig() {
                     <RadioGroupItem value="today" id="today-n7t" />
                     <FieldContent>
                       <FieldTitle>Start cluster now</FieldTitle>
-                      <FieldDescription>Your cluster will be ready to use immediately.</FieldDescription>
+                      <FieldDescription>
+                        Your cluster will be ready to use immediately.
+                      </FieldDescription>
                     </FieldContent>
                   </Field>
                 </FieldLabel>
@@ -731,7 +777,9 @@ function ClusterConfig() {
                     <RadioGroupItem value="scheduled" id="scheduled-u5j" />
                     <FieldContent>
                       <FieldTitle>Schedule a start date and time</FieldTitle>
-                      <FieldDescription>Set a start date and time for your cluster.</FieldDescription>
+                      <FieldDescription>
+                        Set a start date and time for your cluster.
+                      </FieldDescription>
                     </FieldContent>
                   </Field>
                 </FieldLabel>
@@ -823,7 +871,7 @@ function ShippingMethods() {
         </CardContent>
       </Card>
       <form>
-        <FieldGroup className="bg-background gap-6 rounded-xl border p-6">
+        <FieldGroup className="gap-6 rounded-xl border bg-background p-6">
           <FieldSet>
             <FieldLegend>GPU Type</FieldLegend>
             <FieldDescription>Select the GPU type for your cluster.</FieldDescription>
@@ -858,7 +906,9 @@ function ShippingMethods() {
                   <RadioGroupItem value="kubernetes" id="kubernetes-dtv" />
                   <FieldContent>
                     <FieldTitle>Kubernetes</FieldTitle>
-                    <FieldDescription>Run GPU workloads on a K8s configured cluster.</FieldDescription>
+                    <FieldDescription>
+                      Run GPU workloads on a K8s configured cluster.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </FieldLabel>
@@ -867,7 +917,9 @@ function ShippingMethods() {
                   <RadioGroupItem value="vm" id="vm-8rk" />
                   <FieldContent>
                     <FieldTitle>Virtual Machine</FieldTitle>
-                    <FieldDescription>Access a VM configured cluster via SSH to run GPU workloads.</FieldDescription>
+                    <FieldDescription>
+                      Access a VM configured cluster via SSH to run GPU workloads.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </FieldLabel>
@@ -883,7 +935,9 @@ function ShippingMethods() {
                   <RadioGroupItem value="today" id="today-pmd" />
                   <FieldContent>
                     <FieldTitle>Start cluster now</FieldTitle>
-                    <FieldDescription>Your cluster will be ready to use immediately.</FieldDescription>
+                    <FieldDescription>
+                      Your cluster will be ready to use immediately.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </FieldLabel>
@@ -930,12 +984,22 @@ function SignupForm() {
             </Field>
             <Field>
               <FieldLabel htmlFor="signup-password-rh7">Password</FieldLabel>
-              <Input id="signup-password-rh7" type="password" autoComplete="new-password" required />
+              <Input
+                id="signup-password-rh7"
+                type="password"
+                autoComplete="new-password"
+                required
+              />
               <FieldDescription>Must be at least 8 characters long.</FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="signup-confirm-password-ha8">Confirm Password</FieldLabel>
-              <Input id="signup-confirm-password-ha8" type="password" autoComplete="new-password" required />
+              <Input
+                id="signup-confirm-password-ha8"
+                type="password"
+                autoComplete="new-password"
+                required
+              />
               <FieldDescription>Please confirm your password.</FieldDescription>
             </Field>
             <FieldGroup>
@@ -949,7 +1013,7 @@ function SignupForm() {
               </Field>
               <Field>
                 <p className="text-center text-sm">
-                  Already have an account?{' '}
+                  Already have an account?{" "}
                   <a href="#" className="underline underline-offset-4">
                     Sign in
                   </a>
@@ -979,7 +1043,12 @@ function LoginForm() {
             </Field>
             <Field>
               <FieldLabel htmlFor="login-7x9-password-5l8">Password</FieldLabel>
-              <Input id="login-7x9-password-5l8" type="password" autoComplete="current-password" required />
+              <Input
+                id="login-7x9-password-5l8"
+                type="password"
+                autoComplete="current-password"
+                required
+              />
               <FieldDescription>
                 <a href="#" className="text-sm underline underline-offset-4">
                   Forgot your password?
@@ -1038,7 +1107,7 @@ function LoginForm() {
 
             <Field>
               <p className="text-center text-sm">
-                Don&apos;t have an account?{' '}
+                Don&apos;t have an account?{" "}
                 <a href="#" className="font-medium underline underline-offset-4">
                   Create an account
                 </a>
@@ -1126,10 +1195,12 @@ function FinderPreferencesForm() {
             <Field orientation="horizontal">
               <Checkbox id="finder-pref-9k2-sync-folders-nep" defaultChecked />
               <FieldContent>
-                <FieldLabel htmlFor="finder-pref-9k2-sync-folders-nep">Sync Desktop & Documents folders</FieldLabel>
+                <FieldLabel htmlFor="finder-pref-9k2-sync-folders-nep">
+                  Sync Desktop & Documents folders
+                </FieldLabel>
                 <FieldDescription>
-                  Your Desktop & Documents folders are being synced with iCloud Drive. You can access them from other
-                  devices.
+                  Your Desktop & Documents folders are being synced with iCloud Drive. You can
+                  access them from other devices.
                 </FieldDescription>
               </FieldContent>
             </Field>
@@ -1168,7 +1239,12 @@ function ContactForm() {
             </div>
             <Field>
               <FieldLabel htmlFor="contact-3k2-email-acn">Email</FieldLabel>
-              <Input id="contact-3k2-email-acn" type="email" placeholder="john@example.com" required />
+              <Input
+                id="contact-3k2-email-acn"
+                type="email"
+                placeholder="john@example.com"
+                required
+              />
               <FieldDescription>
                 We&apos;ll use this to contact you. We will not share your email with anyone else.
               </FieldDescription>
@@ -1229,8 +1305,17 @@ function FeedbackForm() {
               <Input id="feedback-8m4-email-kkm" type="email" placeholder="your@email.com" />
             </Field>
             <Field>
-              <FieldLabel htmlFor="feedback-8m4-rating-gw9">How would you rate your experience?</FieldLabel>
-              <Slider value={rating} onValueChange={setRating} max={10} min={1} step={1} id="feedback-8m4-rating-gw9" />
+              <FieldLabel htmlFor="feedback-8m4-rating-gw9">
+                How would you rate your experience?
+              </FieldLabel>
+              <Slider
+                value={rating}
+                onValueChange={setRating}
+                max={10}
+                min={1}
+                step={1}
+                id="feedback-8m4-rating-gw9"
+              />
               <FieldDescription>
                 Poor (1) / <span className="font-medium">Rating: {rating[0]}</span> / Excellent (10)
               </FieldDescription>
@@ -1274,7 +1359,9 @@ function FeedbackForm() {
                 className="min-h-30"
                 required
               />
-              <FieldDescription>Please share your thoughts, suggestions, or report any issues...</FieldDescription>
+              <FieldDescription>
+                Please share your thoughts, suggestions, or report any issues...
+              </FieldDescription>
             </Field>
             <Field orientation="horizontal">
               <Button variant="outline">Cancel</Button>
@@ -1348,7 +1435,9 @@ export function JobApplicationForm() {
             <Field>
               <FieldLabel htmlFor="job-5p7-portfolio-u1j">Portfolio/LinkedIn URL</FieldLabel>
               <Input id="job-5p7-portfolio-u1j" type="url" placeholder="https://..." />
-              <FieldDescription>Optional: Share your portfolio or professional profile.</FieldDescription>
+              <FieldDescription>
+                Optional: Share your portfolio or professional profile.
+              </FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="job-5p7-coverLetter-h91">Cover Letter</FieldLabel>
@@ -1362,11 +1451,15 @@ export function JobApplicationForm() {
             <Field>
               <FieldLabel htmlFor="job-5p7-resume-ejb">Resume</FieldLabel>
               <Input id="job-5p7-resume-ejb" type="file" accept=".pdf,.doc,.docx" />
-              <FieldDescription>Upload your resume in PDF, DOC, or DOCX format (max 5MB).</FieldDescription>
+              <FieldDescription>
+                Upload your resume in PDF, DOC, or DOCX format (max 5MB).
+              </FieldDescription>
             </Field>
             <Field orientation="horizontal">
               <Checkbox id="job-5p7-terms-slt" required />
-              <FieldLabel htmlFor="job-5p7-terms-slt">I authorize the company to contact me.</FieldLabel>
+              <FieldLabel htmlFor="job-5p7-terms-slt">
+                I authorize the company to contact me.
+              </FieldLabel>
             </Field>
 
             <Button type="submit">Submit Application</Button>
@@ -1393,8 +1486,15 @@ export function NewsletterForm() {
             </Field>
             <Field>
               <FieldLabel htmlFor="newsletter-2q8-email-wfn">Email</FieldLabel>
-              <Input id="newsletter-2q8-email-wfn" type="email" placeholder="your@email.com" required />
-              <FieldDescription>We&apos;ll send our newsletter to this email address.</FieldDescription>
+              <Input
+                id="newsletter-2q8-email-wfn"
+                type="email"
+                placeholder="your@email.com"
+                required
+              />
+              <FieldDescription>
+                We&apos;ll send our newsletter to this email address.
+              </FieldDescription>
             </Field>
             <FieldSet>
               <FieldLegend>Interests (Select all that apply)</FieldLegend>
@@ -1427,7 +1527,9 @@ export function NewsletterForm() {
             </FieldSet>
             <Field orientation="horizontal">
               <Checkbox id="newsletter-2q8-privacy-26q" required />
-              <FieldLabel htmlFor="newsletter-2q8-privacy-26q">I agree to receive marketing emails.</FieldLabel>
+              <FieldLabel htmlFor="newsletter-2q8-privacy-26q">
+                I agree to receive marketing emails.
+              </FieldLabel>
             </Field>
 
             <Button type="submit">Subscribe to Newsletter</Button>
@@ -1450,7 +1552,11 @@ export function PaymentForm() {
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="payment-9n3-cardNumber-wre">Card Number</FieldLabel>
-              <Input id="payment-9n3-cardNumber-wre" placeholder="1234 5678 9012 3456" maxLength={19} />
+              <Input
+                id="payment-9n3-cardNumber-wre"
+                placeholder="1234 5678 9012 3456"
+                maxLength={19}
+              />
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
@@ -1574,7 +1680,11 @@ export function FormTextareaDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="textarea-3b5-comments-16o">Comments</FieldLabel>
-            <Textarea id="textarea-3b5-comments-16o" placeholder="Share your thoughts..." className="min-h-25" />
+            <Textarea
+              id="textarea-3b5-comments-16o"
+              placeholder="Share your thoughts..."
+              className="min-h-25"
+            />
             <FieldDescription>Maximum 500 characters allowed.</FieldDescription>
           </Field>
           <Field>
@@ -1787,7 +1897,9 @@ export function FormCheckboxDemo() {
             <Checkbox id="newsletter-sw8" />
             <FieldContent>
               <FieldLabel htmlFor="newsletter-sw8">Subscribe to newsletter</FieldLabel>
-              <FieldDescription>Receive weekly updates about new features and promotions.</FieldDescription>
+              <FieldDescription>
+                Receive weekly updates about new features and promotions.
+              </FieldDescription>
             </FieldContent>
           </Field>
           <FieldSet>
@@ -1880,7 +1992,13 @@ export function FormSliderDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="brightness-zke">Screen Brightness</FieldLabel>
-            <Slider id="brightness-zke" value={brightness} onValueChange={setBrightness} max={100} step={5} />
+            <Slider
+              id="brightness-zke"
+              value={brightness}
+              onValueChange={setBrightness}
+              max={100}
+              step={5}
+            />
             <FieldDescription>Current brightness: {brightness[0]}%</FieldDescription>
           </Field>
           <Field>
@@ -1916,15 +2034,28 @@ export function FormSwitchDemo() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldLabel htmlFor="notifications-rfq">Push Notifications</FieldLabel>
-              <FieldDescription>Receive notifications about updates and new features.</FieldDescription>
+              <FieldDescription>
+                Receive notifications about updates and new features.
+              </FieldDescription>
             </FieldContent>
-            <Switch id="notifications-rfq" checked={notifications} onCheckedChange={setNotifications} />
+            <Switch
+              id="notifications-rfq"
+              checked={notifications}
+              onCheckedChange={setNotifications}
+            />
           </Field>
           <Field orientation="horizontal">
-            <Switch id="marketing-7o6" checked={marketing} onCheckedChange={setMarketing} className="mt-0.5" />
+            <Switch
+              id="marketing-7o6"
+              checked={marketing}
+              onCheckedChange={setMarketing}
+              className="mt-0.5"
+            />
             <FieldContent>
               <FieldLabel htmlFor="marketing-7o6">Marketing Emails</FieldLabel>
-              <FieldDescription>Receive emails about new products, features, and more.</FieldDescription>
+              <FieldDescription>
+                Receive emails about new products, features, and more.
+              </FieldDescription>
             </FieldContent>
           </Field>
           <Field orientation="horizontal">
@@ -2011,7 +2142,9 @@ export function FormToggleGroupDemo() {
           </Field>
           <Field>
             <FieldLabel>Subscription Plan</FieldLabel>
-            <FieldDescription>Select the subscription plan that you want to subscribe to.</FieldDescription>
+            <FieldDescription>
+              Select the subscription plan that you want to subscribe to.
+            </FieldDescription>
             <ToggleGroup type="single" variant="outline" className="flex-wrap">
               <ToggleGroupItem value="basic">Basic</ToggleGroupItem>
               <ToggleGroupItem value="pro">Pro</ToggleGroupItem>
@@ -2079,7 +2212,14 @@ export function FormInputTypesDemo() {
           </Field>
           <Field>
             <FieldLabel htmlFor="number-input-u7u">Number</FieldLabel>
-            <Input id="number-input-u7u" type="number" placeholder="42" min="0" max="100" step="1" />
+            <Input
+              id="number-input-u7u"
+              type="number"
+              placeholder="42"
+              min="0"
+              max="100"
+              step="1"
+            />
             <FieldDescription>Numeric input (0-100).</FieldDescription>
           </Field>
         </FieldGroup>
@@ -2139,8 +2279,8 @@ export function FormSpecialInputTypesDemo() {
 }
 
 export function FormOTPDemo() {
-  const [value, setValue] = useState('');
-  const [pinValue, setPinValue] = useState('');
+  const [value, setValue] = useState("");
+  const [pinValue, setPinValue] = useState("");
 
   return (
     <Card>
@@ -2283,10 +2423,13 @@ export function FormDatePickerDemo() {
                   id="basic-date-6st"
                   variant="outline"
                   aria-invalid={true}
-                  className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !date && "text-muted-foreground",
+                  )}
                 >
                   <CalendarIcon />
-                  {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -2301,17 +2444,22 @@ export function FormDatePickerDemo() {
                 <Button
                   id="birth-date-0fq"
                   variant="outline"
-                  className={cn('w-full justify-start text-left font-normal', !birthDate && 'text-muted-foreground')}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !birthDate && "text-muted-foreground",
+                  )}
                 >
                   <CalendarIcon />
-                  {birthDate ? format(birthDate, 'PPP') : <span>Select your birth date</span>}
+                  {birthDate ? format(birthDate, "PPP") : <span>Select your birth date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar mode="single" selected={birthDate} onSelect={setBirthDate} />
               </PopoverContent>
             </Popover>
-            <FieldDescription>We use this to calculate your age and provide age-appropriate content.</FieldDescription>
+            <FieldDescription>
+              We use this to calculate your age and provide age-appropriate content.
+            </FieldDescription>
           </Field>
           <Field>
             <FieldLabel htmlFor="appointment-f44">Appointment Date</FieldLabel>
@@ -2322,12 +2470,16 @@ export function FormDatePickerDemo() {
                   id="appointment-f44"
                   variant="outline"
                   className={cn(
-                    'w-full justify-start text-left font-normal',
-                    !appointmentDate && 'text-muted-foreground',
+                    "w-full justify-start text-left font-normal",
+                    !appointmentDate && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon />
-                  {appointmentDate ? format(appointmentDate, 'PPP') : <span>Schedule appointment</span>}
+                  {appointmentDate ? (
+                    format(appointmentDate, "PPP")
+                  ) : (
+                    <span>Schedule appointment</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -2336,7 +2488,9 @@ export function FormDatePickerDemo() {
                   selected={appointmentDate}
                   onSelect={setAppointmentDate}
                   disabled={(selectedDate) =>
-                    selectedDate < new Date() || selectedDate.getDay() === 0 || selectedDate.getDay() === 6
+                    selectedDate < new Date() ||
+                    selectedDate.getDay() === 0 ||
+                    selectedDate.getDay() === 6
                   }
                 />
               </PopoverContent>
@@ -2349,16 +2503,19 @@ export function FormDatePickerDemo() {
                 <Button
                   id="date-range-7yr"
                   variant="outline"
-                  className={cn('w-full justify-start text-left font-normal', !dateRange && 'text-muted-foreground')}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !dateRange && "text-muted-foreground",
+                  )}
                 >
                   <CalendarIcon />
                   {dateRange?.from ? (
                     dateRange.to ? (
                       <>
-                        {format(dateRange.from, 'LLL dd, y')} - {format(dateRange.to, 'LLL dd, y')}
+                        {format(dateRange.from, "LLL dd, y")} - {format(dateRange.to, "LLL dd, y")}
                       </>
                     ) : (
-                      format(dateRange.from, 'LLL dd, y')
+                      format(dateRange.from, "LLL dd, y")
                     )
                   ) : (
                     <span>Pick a date range</span>
@@ -2385,18 +2542,19 @@ export function FormDatePickerDemo() {
                   id="vacation-w9w"
                   variant="outline"
                   className={cn(
-                    'w-full justify-start text-left font-normal',
-                    !vacationDates && 'text-muted-foreground',
+                    "w-full justify-start text-left font-normal",
+                    !vacationDates && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon />
                   {vacationDates?.from ? (
                     vacationDates.to ? (
                       <>
-                        {format(vacationDates.from, 'LLL dd, y')} - {format(vacationDates.to, 'LLL dd, y')}
+                        {format(vacationDates.from, "LLL dd, y")} -{" "}
+                        {format(vacationDates.to, "LLL dd, y")}
                       </>
                     ) : (
-                      format(vacationDates.from, 'LLL dd, y')
+                      format(vacationDates.from, "LLL dd, y")
                     )
                   ) : (
                     <span>Select vacation dates</span>
@@ -2441,7 +2599,9 @@ export function FormDatePickerDemo() {
                 </div>
               </PopoverContent>
             </Popover>
-            <FieldDescription>Choose your vacation period. Quick presets available.</FieldDescription>
+            <FieldDescription>
+              Choose your vacation period. Quick presets available.
+            </FieldDescription>
           </Field>
           <Field>
             <FieldLabel htmlFor="disabled-date-1vz" className="opacity-50">
@@ -2488,7 +2648,9 @@ export function FormFieldSetDemo() {
           </FieldSet>
           <FieldSet>
             <FieldLegend>FieldSet with Description</FieldLegend>
-            <FieldDescription>This fieldset includes a description to provide context.</FieldDescription>
+            <FieldDescription>
+              This fieldset includes a description to provide context.
+            </FieldDescription>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="address-street-atj">Street Address</FieldLabel>
@@ -2508,11 +2670,15 @@ export function FormFieldSetDemo() {
           </FieldSet>
           <FieldSet>
             <FieldLegend>Communication Preferences</FieldLegend>
-            <FieldDescription>Choose how you&apos;d like us to keep in touch with you.</FieldDescription>
+            <FieldDescription>
+              Choose how you&apos;d like us to keep in touch with you.
+            </FieldDescription>
             <FieldGroup>
               <FieldSet>
                 <FieldLegend className="text-sm">Preferred Contact Method</FieldLegend>
-                <FieldDescription>Choose how you&apos;d like us to keep in touch with you.</FieldDescription>
+                <FieldDescription>
+                  Choose how you&apos;d like us to keep in touch with you.
+                </FieldDescription>
                 <RadioGroup defaultValue="email">
                   <Field orientation="horizontal">
                     <RadioGroupItem value="email" id="contact-email-hxb" />
@@ -2536,7 +2702,9 @@ export function FormFieldSetDemo() {
               </FieldSet>
               <FieldSet>
                 <FieldLegend className="text-sm">Notification Types</FieldLegend>
-                <FieldDescription>Choose which notifications you&apos;d like to receive.</FieldDescription>
+                <FieldDescription>
+                  Choose which notifications you&apos;d like to receive.
+                </FieldDescription>
                 <FieldGroup className="gap-3">
                   <Field orientation="horizontal">
                     <Checkbox id="updates-2sv" defaultChecked />
@@ -2566,7 +2734,9 @@ export function FormFieldSetDemo() {
               <Field orientation="horizontal">
                 <FieldContent>
                   <FieldLabel htmlFor="two-factor-kei">Two-Factor Authentication</FieldLabel>
-                  <FieldDescription>Add an extra layer of security to your account.</FieldDescription>
+                  <FieldDescription>
+                    Add an extra layer of security to your account.
+                  </FieldDescription>
                 </FieldContent>
                 <Switch id="two-factor-kei" />
               </Field>
@@ -2589,7 +2759,9 @@ export function FormFieldSetDemo() {
 
           <FieldSet>
             <FieldLegend>Emergency Contact</FieldLegend>
-            <FieldDescription>Provide emergency contact information for safety purposes.</FieldDescription>
+            <FieldDescription>
+              Provide emergency contact information for safety purposes.
+            </FieldDescription>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="emergency-name-id4">Contact Name</FieldLabel>
@@ -2623,7 +2795,11 @@ export function FormFieldSetDemo() {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="comments-sxl">Comments</FieldLabel>
-                <Textarea id="comments-sxl" placeholder="Any additional information..." className="min-h-25" />
+                <Textarea
+                  id="comments-sxl"
+                  placeholder="Any additional information..."
+                  className="min-h-25"
+                />
               </Field>
               <Field orientation="horizontal">
                 <Checkbox id="agree-terms-04d" />
@@ -2692,7 +2868,11 @@ export function FormFieldSeparatorDemo() {
           <FieldSeparator />
           <Field>
             <FieldLabel htmlFor="final-section-mk8">Final Section</FieldLabel>
-            <Textarea id="final-section-mk8" placeholder="Any additional comments..." className="min-h-20" />
+            <Textarea
+              id="final-section-mk8"
+              placeholder="Any additional comments..."
+              className="min-h-20"
+            />
           </Field>
           <FieldSeparator>Or choose a different path</FieldSeparator>
           <RadioGroup defaultValue="option1">
@@ -2714,7 +2894,9 @@ export function FormFieldSeparatorDemo() {
             <Field orientation="horizontal">
               <Switch id="separator-7e9-notifications-5r4" />
               <FieldContent>
-                <FieldLabel htmlFor="separator-7e9-notifications-5r4">Enable Notifications</FieldLabel>
+                <FieldLabel htmlFor="separator-7e9-notifications-5r4">
+                  Enable Notifications
+                </FieldLabel>
                 <FieldDescription>Receive updates about your account activity.</FieldDescription>
               </FieldContent>
             </Field>
@@ -2746,8 +2928,12 @@ export function FormFieldGroupOutlineDemo() {
         <FieldGroup>
           <Field orientation="horizontal">
             <FieldContent>
-              <FieldLabel htmlFor="outline-demo-8h3-email-notif-vk0">Email Notifications</FieldLabel>
-              <FieldDescription>Receive updates via email about your account activity</FieldDescription>
+              <FieldLabel htmlFor="outline-demo-8h3-email-notif-vk0">
+                Email Notifications
+              </FieldLabel>
+              <FieldDescription>
+                Receive updates via email about your account activity
+              </FieldDescription>
             </FieldContent>
             <Switch id="outline-demo-8h3-email-notif-vk0" defaultChecked />
           </Field>
@@ -2828,8 +3014,8 @@ export function FormFieldGroupOutlineDemo() {
             <FieldContent>
               <FieldLabel htmlFor="outline-demo-8h3-share-data-088">Share Usage Data</FieldLabel>
               <FieldDescription>
-                Help improve our services by sharing anonymous usage data. This data helps us understand how our product
-                is used and how we can improve it.
+                Help improve our services by sharing anonymous usage data. This data helps us
+                understand how our product is used and how we can improve it.
               </FieldDescription>
             </FieldContent>
             <Switch id="outline-demo-8h3-share-data-088" />
@@ -2895,8 +3081,8 @@ export function ProfileSettingsForm() {
                   <FieldContent>
                     <FieldLabel htmlFor="emailNotifications-xfj">Email notifications</FieldLabel>
                     <FieldDescription>
-                      Receive emails about new products, features, and more. If you don&apos;t want to receive these
-                      emails, you can turn them off.
+                      Receive emails about new products, features, and more. If you don&apos;t want
+                      to receive these emails, you can turn them off.
                     </FieldDescription>
                   </FieldContent>
                   <Switch id="emailNotifications-xfj" defaultChecked className="ml-auto" />
@@ -3041,7 +3227,9 @@ export function SurveyForm() {
               </RadioGroup>
             </Field>
             <Field>
-              <FieldLabel htmlFor="improvements-u5u">What improvements would you like to see?</FieldLabel>
+              <FieldLabel htmlFor="improvements-u5u">
+                What improvements would you like to see?
+              </FieldLabel>
               <Textarea
                 id="improvements-u5u"
                 placeholder="Share your suggestions for improvements..."
@@ -3049,7 +3237,9 @@ export function SurveyForm() {
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="recommend-aym">Would you recommend our product to others?</FieldLabel>
+              <FieldLabel htmlFor="recommend-aym">
+                Would you recommend our product to others?
+              </FieldLabel>
               <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Select recommendation level" />
@@ -3101,7 +3291,12 @@ export function ComplexFormDemo() {
 
                 <Field>
                   <FieldLabel htmlFor="complex-6d8-email-yq8">Email Address</FieldLabel>
-                  <Input id="complex-6d8-email-yq8" type="email" placeholder="john.doe@example.com" required />
+                  <Input
+                    id="complex-6d8-email-yq8"
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    required
+                  />
                   <FieldDescription>We&apos;ll use this for all communications.</FieldDescription>
                 </Field>
                 <Field>
@@ -3162,7 +3357,9 @@ export function ComplexFormDemo() {
                 <Field>
                   <FieldLabel htmlFor="portfolio-6km">Portfolio URL</FieldLabel>
                   <Input id="portfolio-6km" type="url" placeholder="https://yourportfolio.com" />
-                  <FieldDescription>Optional: Share your portfolio or GitHub profile</FieldDescription>
+                  <FieldDescription>
+                    Optional: Share your portfolio or GitHub profile
+                  </FieldDescription>
                 </Field>
 
                 <Field>
@@ -3172,7 +3369,9 @@ export function ComplexFormDemo() {
                     placeholder="Tell us why you're a great fit for this position..."
                     className="min-h-30"
                   />
-                  <FieldDescription>Briefly describe your interest and qualifications (500 words max)</FieldDescription>
+                  <FieldDescription>
+                    Briefly describe your interest and qualifications (500 words max)
+                  </FieldDescription>
                 </Field>
 
                 <Field>
@@ -3227,7 +3426,9 @@ export function ComplexFormDemo() {
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldLabel htmlFor="notifications-rfq">Email Notifications</FieldLabel>
-                    <FieldDescription>Receive updates about your application status</FieldDescription>
+                    <FieldDescription>
+                      Receive updates about your application status
+                    </FieldDescription>
                   </FieldContent>
                   <Switch id="notifications-rfq" defaultChecked />
                 </Field>
@@ -3261,7 +3462,7 @@ export function ComplexFormDemo() {
 export function ComplexFormInvalidDemo() {
   const [startDate, setStartDate] = useState<Date>();
   const [experience, setExperience] = useState([3]);
-  const [workType, setWorkType] = useState('hybrid');
+  const [workType, setWorkType] = useState("hybrid");
 
   return (
     <Card className="w-full max-w-3xl">
@@ -3284,13 +3485,24 @@ export function ComplexFormInvalidDemo() {
                 </div>
                 <Field data-invalid>
                   <FieldLabel htmlFor="email-invalid-8tl">Email Address</FieldLabel>
-                  <Input id="email-invalid-8tl" type="email" placeholder="john.doe@example.com" required aria-invalid />
+                  <Input
+                    id="email-invalid-8tl"
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    required
+                    aria-invalid
+                  />
                   <FieldDescription>We&apos;ll use this for all communications.</FieldDescription>
                 </Field>
                 <div className="grid grid-cols-2 gap-4">
                   <Field data-invalid>
                     <FieldLabel htmlFor="phone-invalid-2r4">Phone Number</FieldLabel>
-                    <Input id="phone-invalid-2r4" type="tel" placeholder="+1 (555) 123-4567" aria-invalid />
+                    <Input
+                      id="phone-invalid-2r4"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      aria-invalid
+                    />
                   </Field>
                   <Field data-invalid>
                     <FieldLabel htmlFor="birthdate-invalid-49m">Date of Birth</FieldLabel>
@@ -3300,16 +3512,21 @@ export function ComplexFormInvalidDemo() {
                           id="birthdate-invalid-49m"
                           variant="outline"
                           className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !startDate && 'text-muted-foreground',
+                            "w-full justify-start text-left font-normal",
+                            !startDate && "text-muted-foreground",
                           )}
                         >
                           <CalendarIcon />
-                          {startDate ? format(startDate, 'PPP') : <span>Pick a date</span>}
+                          {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} aria-invalid />
+                        <Calendar
+                          mode="single"
+                          selected={startDate}
+                          onSelect={setStartDate}
+                          aria-invalid
+                        />
                       </PopoverContent>
                     </Popover>
                   </Field>
@@ -3322,11 +3539,18 @@ export function ComplexFormInvalidDemo() {
                     className="min-h-30"
                     aria-invalid
                   />
-                  <FieldDescription>Briefly describe your interest and qualifications (500 words max)</FieldDescription>
+                  <FieldDescription>
+                    Briefly describe your interest and qualifications (500 words max)
+                  </FieldDescription>
                 </Field>
                 <Field data-invalid>
                   <FieldLabel htmlFor="resume-invalid-b6z">Upload Resume</FieldLabel>
-                  <Input id="resume-invalid-b6z" type="file" accept=".pdf,.doc,.docx" aria-invalid />
+                  <Input
+                    id="resume-invalid-b6z"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    aria-invalid
+                  />
                   <FieldDescription>PDF or Word document (max 5MB)</FieldDescription>
                 </Field>
               </FieldGroup>
@@ -3362,7 +3586,7 @@ export function ComplexFormInvalidDemo() {
                     step={1}
                   />
                   <FieldDescription>
-                    {experience[0]} {experience[0] === 1 ? 'year' : 'years'} of experience
+                    {experience[0]} {experience[0] === 1 ? "year" : "years"} of experience
                   </FieldDescription>
                 </Field>
                 <Field data-invalid>
@@ -3428,7 +3652,9 @@ export function ComplexFormInvalidDemo() {
               <FieldLegend>Verification</FieldLegend>
               <FieldGroup>
                 <Field data-invalid>
-                  <FieldLabel htmlFor="verification-invalid-zyx">Enter Verification Code</FieldLabel>
+                  <FieldLabel htmlFor="verification-invalid-zyx">
+                    Enter Verification Code
+                  </FieldLabel>
                   <FieldDescription>Enter the 6-digit code sent to your email</FieldDescription>
                   <InputOTP id="verification-invalid-zyx" maxLength={6}>
                     <InputOTPGroup>
@@ -3447,9 +3673,16 @@ export function ComplexFormInvalidDemo() {
                 <Field data-invalid orientation="horizontal">
                   <FieldContent>
                     <FieldLabel htmlFor="notifications-invalid-73q">Email Notifications</FieldLabel>
-                    <FieldDescription>Receive updates about your application status</FieldDescription>
+                    <FieldDescription>
+                      Receive updates about your application status
+                    </FieldDescription>
                   </FieldContent>
-                  <Switch id="notifications-invalid-73q" defaultChecked className="ml-auto" aria-invalid />
+                  <Switch
+                    id="notifications-invalid-73q"
+                    defaultChecked
+                    className="ml-auto"
+                    aria-invalid
+                  />
                 </Field>
                 <FieldGroup>
                   <Field data-invalid orientation="horizontal">
@@ -3483,13 +3716,17 @@ export function FormOrientationDemo() {
     <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Field Orientation Examples</CardTitle>
-        <CardDescription>Demonstrating vertical, horizontal, and responsive orientations</CardDescription>
+        <CardDescription>
+          Demonstrating vertical, horizontal, and responsive orientations
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <FieldGroup>
           <FieldSet>
             <FieldLegend>Vertical Orientation (Default)</FieldLegend>
-            <FieldDescription>Label appears above the input - best for mobile and narrow layouts</FieldDescription>
+            <FieldDescription>
+              Label appears above the input - best for mobile and narrow layouts
+            </FieldDescription>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="vertical-name">Full Name</FieldLabel>
@@ -3571,7 +3808,9 @@ export function FormOrientationDemo() {
 
           <FieldSet>
             <FieldLegend>Responsive Orientation</FieldLegend>
-            <FieldDescription>Vertical on mobile, horizontal on desktop - the best of both worlds</FieldDescription>
+            <FieldDescription>
+              Vertical on mobile, horizontal on desktop - the best of both worlds
+            </FieldDescription>
             <FieldGroup>
               <Field orientation="responsive">
                 <FieldContent>
@@ -3637,7 +3876,9 @@ function CheckoutForm() {
           <FieldGroup>
             <FieldSet>
               <FieldLegend>Shipping Information</FieldLegend>
-              <FieldDescription>Enter your shipping address where we&apos;ll deliver your order</FieldDescription>
+              <FieldDescription>
+                Enter your shipping address where we&apos;ll deliver your order
+              </FieldDescription>
               <FieldGroup>
                 <div className="grid grid-cols-2 gap-4">
                   <Field>
@@ -3651,7 +3892,12 @@ function CheckoutForm() {
                 </div>
                 <Field>
                   <FieldLabel htmlFor="checkout-7j9-email-t33">Email</FieldLabel>
-                  <Input id="checkout-7j9-email-t33" type="email" placeholder="john.doe@example.com" required />
+                  <Input
+                    id="checkout-7j9-email-t33"
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    required
+                  />
                   <FieldDescription>We&apos;ll send your receipt to this email</FieldDescription>
                 </Field>
                 <Field>
@@ -3659,7 +3905,9 @@ function CheckoutForm() {
                   <Input id="checkout-7j9-address-zgo" placeholder="123 Main Street" required />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="checkout-7j9-address2-d4t">Apartment, suite, etc. (optional)</FieldLabel>
+                  <FieldLabel htmlFor="checkout-7j9-address2-d4t">
+                    Apartment, suite, etc. (optional)
+                  </FieldLabel>
                   <Input id="checkout-7j9-address2-d4t" placeholder="Apartment 4B" />
                 </Field>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -3704,7 +3952,12 @@ function CheckoutForm() {
                   </Field>
                   <Field className="col-span-3">
                     <FieldLabel htmlFor="checkout-7j9-phone-g63">Phone Number</FieldLabel>
-                    <Input id="checkout-7j9-phone-g63" type="tel" placeholder="(555) 123-4567" required />
+                    <Input
+                      id="checkout-7j9-phone-g63"
+                      type="tel"
+                      placeholder="(555) 123-4567"
+                      required
+                    />
                   </Field>
                 </div>
               </FieldGroup>
@@ -3720,7 +3973,11 @@ function CheckoutForm() {
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="checkout-7j9-card-number-uw1">Card Number</FieldLabel>
-                  <Input id="checkout-7j9-card-number-uw1" placeholder="1234 5678 9012 3456" required />
+                  <Input
+                    id="checkout-7j9-card-number-uw1"
+                    placeholder="1234 5678 9012 3456"
+                    required
+                  />
                   <FieldDescription>Enter your 16-digit card number</FieldDescription>
                 </Field>
                 <div className="grid grid-cols-3 gap-4">
@@ -3772,7 +4029,9 @@ function CheckoutForm() {
             <FieldSeparator />
             <FieldSet>
               <FieldLegend>Billing Address</FieldLegend>
-              <FieldDescription>The billing address associated with your payment method</FieldDescription>
+              <FieldDescription>
+                The billing address associated with your payment method
+              </FieldDescription>
               <FieldGroup>
                 <Field orientation="horizontal">
                   <Checkbox id="checkout-7j9-same-as-shipping-wgm" defaultChecked />
