@@ -41,7 +41,7 @@ jobs:
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
       - name: 🧪 Format, Lint, Test, and Typecheck
-        run: pnpm quality && npx turbo test:coverage:ci typecheck --filter="./packages/**"
+        run: pnpm check && npx turbo test:coverage:ci typecheck --filter="./packages/**"
         env:
           NODE_ENV: production
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
