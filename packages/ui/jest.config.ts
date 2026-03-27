@@ -30,11 +30,9 @@ const config: Config = {
 
   /**
    * The glob patterns Jest uses to detect test files
+   * (Jest defaults: any file under __tests__, or *.{spec,test}.{js,ts,...} elsewhere)
    */
-  testMatch: [
-    "**/__tests__/**/?(*.)+(spec|test).?([mc])[jt]s?(x)",
-    "**/*.(spec|test).?([mc])[jt]s?(x)",
-  ],
+  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
 
   /**
    * The glob patterns Jest uses to ignore test files
@@ -59,12 +57,6 @@ const config: Config = {
       },
     ],
   },
-
-  /**
-   * Specifies which files should be ignored during transformation
-   * Prevents Jest from transforming files in the node_modules directory
-   */
-  transformIgnorePatterns: ["/node_modules/", "\\.pnp\\.[^\\\/]+$"],
 
   /**
    * Allow Jest to pass when no test files are found
