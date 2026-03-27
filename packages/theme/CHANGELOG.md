@@ -1,5 +1,15 @@
 # @codefast/theme
 
+## 0.3.11-canary.1
+
+### Patch Changes
+
+- [`dd5130a`](https://github.com/codefastlabs/codefast/commit/dd5130adb5649dca6773614ffda262cdde732d8f) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): downgrade @rslib/core to 0.19.1 in package.json and pnpm-lock.yaml
+
+- [`42758ab`](https://github.com/codefastlabs/codefast/commit/42758ab9d8f548ea9f4a806a7dbb7ed295fe2390) Thanks [@thevuong](https://github.com/thevuong)! - chore: update package configurations and TypeScript settings
+
+- [`d2abc63`](https://github.com/codefastlabs/codefast/commit/d2abc636245526ec402811d8585d93684865dde6) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update package versions and configurations
+
 ## 0.3.11-canary.0
 
 ### Patch Changes
