@@ -1,4 +1,4 @@
-name: 🚀 Package Release Pipeline
+name: Package release
 
 on:
   push:
@@ -15,71 +15,75 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+  contents: read
 
 jobs:
   verify-code:
-    name: 🔍 Code Quality & Testing
+    name: Verify packages
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - name: ⚙️ Setup CI Environment
+      - name: Setup environment
         uses: ./.github/actions/setup-environment
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: 🔨 Build Packages
+      - name: Build packages
         run: npx turbo build --filter="./packages/**"
         env:
           NODE_ENV: production
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: 🧪 Format, Lint, Test, and Typecheck
+      - name: Lint, format, test, typecheck
         run: pnpm check && npx turbo test:coverage:ci typecheck --filter="./packages/**"
         env:
           NODE_ENV: production
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: 📊 Upload Test Coverage Reports
-        uses: codecov/codecov-action@v5
+      - name: Upload coverage
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: codefastlabs/codefast
           fail_ci_if_error: false
 
   release:
-    name: 📦 Package Publishing
+    name: Publish packages
     runs-on: ubuntu-latest
     needs:
       - verify-code
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
-      - name: ⚙️ Setup CI Environment
+      - name: Setup environment
         uses: ./.github/actions/setup-environment
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: 🔨 Build Packages
+      - name: Build packages
         run: npx turbo build --filter="./packages/**"
         env:
           NODE_ENV: production
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: 🚀 Publish Releases
-        uses: changesets/action@v1
+      - name: Version and publish
+        uses: changesets/action@v1.7.0
         with:
           version: npx changeset version
           publish: npx changeset publish
