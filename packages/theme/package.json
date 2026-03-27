@@ -110,7 +110,7 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@rsbuild/plugin-react": "^1.4.6",
-    "@rslib/core": "^0.20.1",
+    "@rslib/core": "0.19.1",
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
     "@tanstack/react-start": "^1.167.12",
