@@ -30,79 +30,64 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./core": {
       "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js",
-      "require": "./dist/core/index.cjs"
+      "import": "./dist/core/index.js"
     },
     "./core/context": {
       "types": "./dist/core/context.d.ts",
-      "import": "./dist/core/context.js",
-      "require": "./dist/core/context.cjs"
+      "import": "./dist/core/context.js"
     },
     "./core/provider": {
       "types": "./dist/core/provider.d.ts",
-      "import": "./dist/core/provider.js",
-      "require": "./dist/core/provider.cjs"
+      "import": "./dist/core/provider.js"
     },
     "./core/use-theme": {
       "types": "./dist/core/use-theme.d.ts",
-      "import": "./dist/core/use-theme.js",
-      "require": "./dist/core/use-theme.cjs"
+      "import": "./dist/core/use-theme.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.cjs"
+      "import": "./dist/utils/index.js"
     },
     "./utils/dom": {
       "types": "./dist/utils/dom.d.ts",
-      "import": "./dist/utils/dom.js",
-      "require": "./dist/utils/dom.cjs"
+      "import": "./dist/utils/dom.js"
     },
     "./utils/system": {
       "types": "./dist/utils/system.d.ts",
-      "import": "./dist/utils/system.js",
-      "require": "./dist/utils/system.cjs"
+      "import": "./dist/utils/system.js"
     },
     "./adapters/tanstack-start": {
       "types": "./dist/adapters/tanstack-start/index.d.ts",
-      "import": "./dist/adapters/tanstack-start/index.js",
-      "require": "./dist/adapters/tanstack-start/index.cjs"
+      "import": "./dist/adapters/tanstack-start/index.js"
     },
     "./adapters/tanstack-start/server": {
       "types": "./dist/adapters/tanstack-start/server.d.ts",
-      "import": "./dist/adapters/tanstack-start/server.js",
-      "require": "./dist/adapters/tanstack-start/server.cjs"
+      "import": "./dist/adapters/tanstack-start/server.js"
     },
     "./script": {
       "types": "./dist/script/index.d.ts",
-      "import": "./dist/script/index.js",
-      "require": "./dist/script/index.cjs"
+      "import": "./dist/script/index.js"
     },
     "./script/theme-script": {
       "types": "./dist/script/theme-script.d.ts",
-      "import": "./dist/script/theme-script.js",
-      "require": "./dist/script/theme-script.cjs"
+      "import": "./dist/script/theme-script.js"
     },
     "./constants": {
       "types": "./dist/constants.d.ts",
-      "import": "./dist/constants.js",
-      "require": "./dist/constants.cjs"
+      "import": "./dist/constants.js"
     },
     "./types": {
       "types": "./dist/types.d.ts",
-      "import": "./dist/types.js",
-      "require": "./dist/types.cjs"
+      "import": "./dist/types.js"
     },
     "./package.json": "./package.json"
   },

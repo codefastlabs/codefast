@@ -11,12 +11,6 @@ export default defineConfig({
       dts: true,
       format: "esm",
     },
-    {
-      // CommonJS format for Node.js compatibility.
-      bundle: false,
-      dts: false,
-      format: "cjs",
-    },
   ],
   output: {
     // Clean the dist directory before build but skip during watch mode for faster rebuilds.
