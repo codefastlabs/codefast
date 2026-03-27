@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
-import tsConfigPaths from "vite-tsconfig-paths";
+import babel from "@rolldown/plugin-babel";
+import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import contentCollections from "@content-collections/vite";
@@ -14,6 +14,14 @@ import contentCollections from "@content-collections/vite";
  * @see [TanStack Start Documentation](https://tanstack.com/start/latest)
  */
 const config = defineConfig({
+  resolve: {
+    /** Native tsconfig paths (Vite 8+); replaces vite-tsconfig-paths plugin. */
+    tsconfigPaths: true,
+  },
+  build: {
+    /** Faster builds and less log noise vs. computing gzip for every chunk. */
+    reportCompressedSize: false,
+  },
   /**
    * Nitro (production server) options merged by the `nitro` Vite plugin.
    * Pre-compress public assets so responses can be served with Content-Encoding.
@@ -86,9 +94,6 @@ const config = defineConfig({
       },
     }),
 
-    /** Resolves TypeScript path aliases from tsconfig.json. */
-    tsConfigPaths(),
-
     /** Tailwind CSS v4 integration. */
     tailwindcss(),
 
@@ -102,13 +107,12 @@ const config = defineConfig({
     nitro(),
 
     /**
-     * React plugin with Babel configuration.
-     * Includes React Compiler for automatic memoization.
+     * React plugin + Rolldown Babel with React Compiler preset
+     * (@vitejs/plugin-react v6: use reactCompilerPreset instead of `babel` option).
      */
-    viteReact({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
+    viteReact(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
   ],
 });

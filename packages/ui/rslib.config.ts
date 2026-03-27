@@ -40,8 +40,8 @@ export default defineConfig({
   performance: {
     // Enable build cache in watch mode to speed up incremental builds.
     buildCache: isWatchMode,
-    // Print file sizes after build, but skip during watch mode to reduce noise.
-    printFileSize: !isWatchMode,
+    // Skip per-file size table by default (hundreds of entries); set RSLIB_STATS=1 for the full table.
+    printFileSize: !isWatchMode && process.env.RSLIB_STATS === "1",
   },
   plugins: [pluginReact()],
   source: {

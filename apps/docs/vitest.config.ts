@@ -2,19 +2,17 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { defineConfig } from "vitest/config";
-import viteReact from "@vitejs/plugin-react";
-import tsConfigPaths from "vite-tsconfig-paths";
+import babel from "@rolldown/plugin-babel";
+import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [
     devtools(),
-    tsConfigPaths(),
     tailwindcss(),
     tanstackStart(),
-    viteReact({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
+    viteReact(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
   ],
   test: {
@@ -27,6 +25,7 @@ export default defineConfig({
     passWithNoTests: true,
   },
   resolve: {
+    tsconfigPaths: true,
     // Ensure proper ESM resolution
     conditions: ["import", "module", "browser", "default"],
   },

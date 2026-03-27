@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./tests/*"]
-    }
+    },
+    "types": ["jest", "node"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
