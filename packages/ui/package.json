@@ -396,7 +396,6 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "tsdown": "^0.21.6",
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4.2.2",
@@ -413,6 +412,7 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
     "ts-node": "^10.9.2",
+    "tsdown": "^0.21.6",
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
