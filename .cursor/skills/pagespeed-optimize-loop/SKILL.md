@@ -78,10 +78,10 @@ Re-audit after changes; do not assume gains without a new JSON report.
 
 ## Additional resources
 
-| Resource                                                                 | Purpose                                                |
-| ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| [reference.md](reference.md)                                             | PSI API, JSON paths, quotas, localhost vs public URL   |
-| [examples.md](examples.md)                                               | Commands, monorepo flow, report layout                 |
-| [scripts/clear-pagespeed-reports.sh](scripts/clear-pagespeed-reports.sh) | Reset `.cursor/pagespeed-reports` before a new session |
-| [scripts/remove-pagespeed-reports.sh](scripts/remove-pagespeed-reports.sh) | Delete `.cursor/pagespeed-reports` after the session |
-| [scripts/run-lighthouse.sh](scripts/run-lighthouse.sh)                   | Mobile + desktop JSON under `round-NN`                 |
+| Resource                                                                   | Purpose                                                |
+| -------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [reference.md](reference.md)                                               | PSI API, JSON paths, quotas, localhost vs public URL   |
+| [examples.md](examples.md)                                                 | Commands, monorepo flow, report layout                 |
+| [scripts/clear-pagespeed-reports.sh](scripts/clear-pagespeed-reports.sh)   | Reset `.cursor/pagespeed-reports` before a new session |
+| [scripts/remove-pagespeed-reports.sh](scripts/remove-pagespeed-reports.sh) | Delete `.cursor/pagespeed-reports` after the session   |
+| [scripts/run-lighthouse.sh](scripts/run-lighthouse.sh)                     | Mobile + desktop JSON under `round-NN`                 |

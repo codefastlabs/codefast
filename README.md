@@ -154,24 +154,24 @@ pnpm dev --filter=@codefast/ui
 
 ## Scripts
 
-| Command               | Description                                                                |
-| --------------------- | -------------------------------------------------------------------------- |
-| `pnpm dev`            | Start all apps and packages in development mode                            |
-| `pnpm build`          | Build all apps and packages                                                |
-| `pnpm build:packages` | Build only packages (excludes apps)                                        |
-| `pnpm test`           | Run tests across the monorepo                                              |
-| `pnpm test:coverage`  | Run tests with coverage reports                                            |
-| `pnpm lint`           | Run [Oxlint](https://oxc.rs) (with type-aware rules via `oxlint-tsgolint`) |
-| `pnpm lint:fix`       | Oxlint with `--fix`                                                        |
-| `pnpm format`         | Format with [Oxfmt](https://oxc.rs)                                        |
-| `pnpm format:check`   | Check formatting (CI)                                                      |
-| `pnpm check`          | Lint + format check (common CI / pre-push static gate)                     |
-| `pnpm check:fix`      | Lint with `--fix` + format write                                           |
-| `pnpm typecheck`      | Run TypeScript type checking                                               |
-| `pnpm clean`          | Clean build artifacts, cache, and node_modules                             |
-| `pnpm deps:outdated`  | List outdated dependencies (`pnpm outdated`)                               |
-| `pnpm deps:update`    | Update all dependencies to latest (non-interactive)                        |
-| `pnpm deps:update:interactive` | Interactively update dependencies to latest                         |
+| Command                        | Description                                                                |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `pnpm dev`                     | Start all apps and packages in development mode                            |
+| `pnpm build`                   | Build all apps and packages                                                |
+| `pnpm build:packages`          | Build only packages (excludes apps)                                        |
+| `pnpm test`                    | Run tests across the monorepo                                              |
+| `pnpm test:coverage`           | Run tests with coverage reports                                            |
+| `pnpm lint`                    | Run [Oxlint](https://oxc.rs) (with type-aware rules via `oxlint-tsgolint`) |
+| `pnpm lint:fix`                | Oxlint with `--fix`                                                        |
+| `pnpm format`                  | Format with [Oxfmt](https://oxc.rs)                                        |
+| `pnpm format:check`            | Check formatting (CI)                                                      |
+| `pnpm check`                   | Lint + format check (common CI / pre-push static gate)                     |
+| `pnpm check:fix`               | Lint with `--fix` + format write                                           |
+| `pnpm typecheck`               | Run TypeScript type checking                                               |
+| `pnpm clean`                   | Clean build artifacts, cache, and node_modules                             |
+| `pnpm deps:outdated`           | List outdated dependencies (`pnpm outdated`)                               |
+| `pnpm deps:update`             | Update all dependencies to latest (non-interactive)                        |
+| `pnpm deps:update:interactive` | Interactively update dependencies to latest                                |
 
 ## Technologies
 
