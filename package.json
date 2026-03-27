@@ -60,5 +60,24 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "h3": "^2.0.1-rc.20",
+      "h3-v2": "npm:h3@^2.0.1-rc.20",
+      "typescript": "^6.0.2"
+    },
+    "packageExtensions": {
+      "@content-collections/core@*": {
+        "peerDependencies": {
+          "typescript": ">=5.0.2 <7.0.0"
+        }
+      }
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@content-collections/vite>vite": "^8.0.0"
+      }
+    }
+  }
 }
