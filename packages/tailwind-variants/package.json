@@ -45,9 +45,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rslib build",
+    "build": "tsdown",
     "clean": "rm -rf dist",
-    "dev": "rslib build --watch",
+    "dev": "tsdown --watch --no-clean",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
@@ -60,7 +60,6 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "0.19.1",
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30.0.0",
@@ -69,6 +68,7 @@
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "ts-node": "^10.9.2",
+    "tsdown": "^0.21.6",
     "typescript": "^6.0.2"
   }
 }

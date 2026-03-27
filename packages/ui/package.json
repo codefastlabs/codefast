@@ -336,9 +336,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rslib build",
+    "build": "tsdown",
     "clean": "rm -rf dist",
-    "dev": "rslib build --watch",
+    "dev": "tsdown --watch --no-clean",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
@@ -396,8 +396,6 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@rsbuild/plugin-react": "^1.4.6",
-    "@rslib/core": "0.19.1",
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4.2.2",
@@ -414,6 +412,7 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
     "ts-node": "^10.9.2",
+    "tsdown": "^0.21.6",
     "typescript": "^6.0.2"
   },
   "peerDependencies": {

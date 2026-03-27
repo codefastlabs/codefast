@@ -6,110 +6,44 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import contentCollections from "@content-collections/vite";
+import { exec } from "node:child_process";
+import { createRequire } from 'node:module';
 
-/**
- * Vite configuration for TanStack Start application.
- *
- * @see [Vite Configuration](https://vite.dev/config/)
- * @see [TanStack Start Documentation](https://tanstack.com/start/latest)
- */
+const require = createRequire(import.meta.url);
+
+const openInWebStorm = async (
+  path: string,
+  lineNumber: string | undefined,
+  columnNumber?: string,
+) => {
+  const safePath = path.replaceAll("$", String.raw`\$`);
+  exec(`webstorm --line ${lineNumber ?? 1} --column ${columnNumber ?? 1} "${safePath}"`);
+};
+
 const config = defineConfig({
   resolve: {
-    /** Native tsconfig paths (Vite 8+); replaces vite-tsconfig-paths plugin. */
     tsconfigPaths: true,
+    alias: {
+      tslib: require.resolve("tslib/tslib.es6.mjs"),
+    },
   },
-  build: {
-    /** Faster builds and less log noise vs. computing gzip for every chunk. */
-    reportCompressedSize: false,
-  },
-  /**
-   * Nitro (production server) options merged by the `nitro` Vite plugin.
-   * Pre-compress public assets so responses can be served with Content-Encoding.
-   */
   nitro: {
     compressPublicAssets: {
       gzip: true,
       brotli: true,
     },
   },
-  /**
-   * Development server options.
-   * @see [Server Options](https://vite.dev/config/server-options.html)
-   */
-  server: {
-    /** Automatically open the app in browser on server start. */
-    open: true,
-    /** Port for the development server. */
-    port: 3000,
-  },
-
-  /**
-   * SSR (Server-Side Rendering) options.
-   * @see [SSR Options](https://vite.dev/config/ssr-options.html)
-   */
-  ssr: {
-    /**
-     * Force these dependencies to be bundled into the SSR build
-     * instead of being externalized.
-     *
-     * Required because these packages have CJS/ESM compatibility issues
-     * that cause module resolution errors when left as external dependencies.
-     *
-     * @see [ssr.noExternal](https://vite.dev/config/ssr-options.html#ssr-noexternal)
-     */
-    noExternal: ["@tabler/icons-react", "recharts", "decimal.js-light"],
-  },
-
-  /**
-   * Vite plugins configuration.
-   * Order can matter for some plugins.
-   */
   plugins: [
-    /**
-     * TanStack DevTools for debugging queries, router, and forms.
-     *
-     * @see [TanStack DevTools](https://tanstack.com/devtools/latest)
-     */
     devtools({
-      /**
-       * Custom editor configuration for opening files from DevTools.
-       * Configured to open files in WebStorm at the specified line and column.
-       */
       editor: {
         name: "WebStorm",
-        /**
-         * Opens a file in WebStorm at the specified location.
-         *
-         * @param path - Absolute path to the file
-         * @param lineNumber - Line number to navigate to (defaults to 1)
-         * @param columnNumber - Column number to navigate to (defaults to 1)
-         */
-        open: async (path, lineNumber = "1", columnNumber = "1") => {
-          const { exec } = await import("node:child_process");
-
-          exec(
-            `webstorm --line ${lineNumber} --column ${columnNumber} "${path.replaceAll("$", "\\$")}"`,
-          );
-        },
+        open: openInWebStorm,
       },
     }),
-
-    /** Tailwind CSS v4 integration. */
     tailwindcss(),
-
-    /** Content Collections plugin for Markdown/MDX. */
     contentCollections(),
-
-    /** TanStack Start framework plugin for file-based routing and SSR. */
     tanstackStart(),
-
-    /** Nitro server engine for production deployment. */
     nitro(),
-
-    /**
-     * React plugin + Rolldown Babel with React Compiler preset
-     * (@vitejs/plugin-react v6: use reactCompilerPreset instead of `babel` option).
-     */
     viteReact(),
     babel({
       presets: [reactCompilerPreset()],
