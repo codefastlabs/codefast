@@ -15,11 +15,11 @@
     "deps:update": "pnpm up --latest --recursive",
     "deps:update:interactive": "pnpm up --latest --recursive --interactive",
     "dev": "turbo run dev",
-    "format": "oxfmt .",
-    "format:check": "oxfmt --check .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "generate:exports": "scripts/generate-exports.py",
-    "lint": "oxlint . --deny-warnings",
-    "lint:fix": "oxlint --fix . --deny-warnings",
+    "lint": "oxlint --deny-warnings",
+    "lint:fix": "oxlint --fix --deny-warnings",
     "prepare": "simple-git-hooks",
     "check": "pnpm run lint && pnpm run format:check",
     "check:fix": "pnpm run lint:fix && pnpm run format",
@@ -54,8 +54,7 @@
       "pnpm exec oxfmt",
       "pnpm exec oxlint --fix --deny-warnings"
     ],
-    "*.{json,jsonc}": "pnpm exec oxfmt",
-    "*.css": "pnpm exec oxfmt"
+    "*.{md,json,jsonc,css}": "pnpm exec oxfmt"
   },
   "engines": {
     "node": ">=24.0.0"

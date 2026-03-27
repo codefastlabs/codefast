@@ -12,7 +12,7 @@
 | **Root**          | `.cursor/pagespeed-reports/` (from repository root)                                                                  |
 | **Per round**     | `round-01/`, `round-02/`, … each with `lighthouse-mobile.json` and `lighthouse-desktop.json`                         |
 | **Session start** | Clear the root directory (see [examples.md](examples.md)) so previous runs are not confused with the current session |
-| **Session end**   | Remove the root directory (see [examples.md](examples.md)) so Lighthouse JSON is not left in the workspace          |
+| **Session end**   | Remove the root directory (see [examples.md](examples.md)) so Lighthouse JSON is not left in the workspace           |
 
 ## PageSpeed Insights API
 
