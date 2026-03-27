@@ -109,7 +109,6 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "tsdown": "^0.21.6",
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
     "@tanstack/react-start": "^1.167.12",
@@ -121,6 +120,7 @@
     "@types/node": "^25.5.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "tsdown": "^0.21.6",
     "typescript": "^6.0.2"
   },
   "peerDependencies": {

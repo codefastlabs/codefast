@@ -34,10 +34,7 @@ const config: Config = {
    * - Under tests/: only *.{spec,test}.* (excludes e.g. tests/fixtures/*.ts)
    * - Colocated tests next to src/ use Jest’s usual *.{spec,test}.* pattern
    */
-  testMatch: [
-    "<rootDir>/tests/**/*.(spec|test).[jt]s?(x)",
-    "**/?(*.)+(spec|test).[jt]s?(x)",
-  ],
+  testMatch: ["<rootDir>/tests/**/*.(spec|test).[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
 
   /**
    * The glob patterns Jest uses to ignore test files

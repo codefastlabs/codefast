@@ -32,10 +32,7 @@ const config: Config = {
    * The glob patterns Jest uses to detect test files
    * (Jest defaults: any file under __tests__, or *.{spec,test}.{js,ts,...} elsewhere)
    */
-  testMatch: [
-    "**/__tests__/**/*.[jt]s?(x)",
-    "**/?(*.)+(spec|test).[jt]s?(x)",
-  ],
+  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
 
   /**
    * The glob patterns Jest uses to ignore test files
