@@ -20,7 +20,11 @@ const openInWebStorm = async (
   exec(`webstorm --line ${lineNumber ?? 1} --column ${columnNumber ?? 1} "${safePath}"`);
 };
 
-const config = defineConfig({
+const config = defineConfig(({ command }) => ({
+  logLevel: command === "build" ? "warn" : "info",
+  build: {
+    reportCompressedSize: false,
+  },
   resolve: {
     tsconfigPaths: true,
     alias: {
@@ -49,6 +53,6 @@ const config = defineConfig({
       presets: [reactCompilerPreset()],
     }),
   ],
-});
+}));
 
 export default config;
