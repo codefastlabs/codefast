@@ -6,7 +6,7 @@
       "@/*": ["./src/*"],
       "~/*": ["./tests/*"]
     },
-    "types": ["jest", "node"]
+    "types": ["node", "jest"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
