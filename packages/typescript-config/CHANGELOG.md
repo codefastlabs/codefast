@@ -1,5 +1,7 @@
 # @codefast/typescript-config
 
+## 0.3.11-canary.1
+
 ## 0.3.11-canary.0
 
 ### Patch Changes
