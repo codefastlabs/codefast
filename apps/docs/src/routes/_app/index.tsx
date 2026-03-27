@@ -68,7 +68,7 @@ function CopyButton({ text }: { text: string }) {
       aria-label="Copy to clipboard"
     >
       {copied ? (
-        <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+        <CheckIcon className="size-4 text-green-800 dark:text-green-400" />
       ) : (
         <CopyIcon className="size-4" />
       )}
@@ -208,8 +208,8 @@ function HomePage() {
             v0.3.9 — Open source
           </Badge>
 
-          <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-foreground md:text-7xl">
-            <span className="bg-linear-to-r from-primary via-violet-600 to-fuchsia-600 bg-clip-text text-transparent dark:from-primary dark:via-violet-400 dark:to-fuchsia-400">
+          <h1 className="mb-6 text-5xl font-extrabold tracking-tight md:text-7xl">
+            <span className="text-foreground dark:bg-linear-to-r dark:from-primary dark:via-violet-400 dark:to-fuchsia-400 dark:bg-clip-text dark:text-transparent">
               @codefast/ui
             </span>
           </h1>
@@ -220,7 +220,7 @@ function HomePage() {
             components, preview light and dark mode, and copy install snippets for your own app.
           </p>
 
-          <p className="mx-auto mb-10 max-w-xl text-base text-pretty text-muted-foreground/90">
+          <p className="mx-auto mb-10 max-w-xl text-base text-pretty text-muted-foreground">
             Radix primitives, Tailwind CSS v4, tree-shakeable exports, and full TypeScript. Package
             docs focus on what you can ship, not noise.
           </p>
@@ -316,15 +316,15 @@ function HomePage() {
               <div className="space-y-1 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm leading-relaxed">
                 <div className="text-muted-foreground">{"/* globals.css */"}</div>
                 <div>
-                  <span className="text-blue-600 dark:text-blue-400">@import</span>{" "}
-                  <span className="text-green-600 dark:text-green-400">
+                  <span className="text-blue-800 dark:text-blue-400">@import</span>{" "}
+                  <span className="text-green-800 dark:text-green-400">
                     &apos;@codefast/ui/css/preset.css&apos;
                   </span>
                   ;
                 </div>
                 <div>
-                  <span className="text-blue-600 dark:text-blue-400">@import</span>{" "}
-                  <span className="text-green-600 dark:text-green-400">
+                  <span className="text-blue-800 dark:text-blue-400">@import</span>{" "}
+                  <span className="text-green-800 dark:text-green-400">
                     &apos;@codefast/ui/css/neutral.css&apos;
                   </span>
                   ;
@@ -346,22 +346,22 @@ function HomePage() {
             <CardContent className="pt-0">
               <div className="space-y-1 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm leading-relaxed">
                 <div>
-                  <span className="text-blue-600 dark:text-blue-400">import</span>
+                  <span className="text-blue-800 dark:text-blue-400">import</span>
                   {" { Button } "}
-                  <span className="text-blue-600 dark:text-blue-400">from</span>{" "}
-                  <span className="text-green-600 dark:text-green-400">
+                  <span className="text-blue-800 dark:text-blue-400">from</span>{" "}
+                  <span className="text-green-800 dark:text-green-400">
                     &apos;@codefast/ui/button&apos;
                   </span>
                   ;
                 </div>
                 <div className="mt-2">
-                  <span className="text-purple-600 dark:text-purple-400">{"<"}</span>
-                  <span className="text-blue-600 dark:text-blue-400">Button</span>
-                  <span className="text-purple-600 dark:text-purple-400">{">"}</span>
+                  <span className="text-purple-800 dark:text-purple-400">{"<"}</span>
+                  <span className="text-blue-800 dark:text-blue-400">Button</span>
+                  <span className="text-purple-800 dark:text-purple-400">{">"}</span>
                   Click me
-                  <span className="text-purple-600 dark:text-purple-400">{"</"}</span>
-                  <span className="text-blue-600 dark:text-blue-400">Button</span>
-                  <span className="text-purple-600 dark:text-purple-400">{">"}</span>
+                  <span className="text-purple-800 dark:text-purple-400">{"</"}</span>
+                  <span className="text-blue-800 dark:text-blue-400">Button</span>
+                  <span className="text-purple-800 dark:text-purple-400">{">"}</span>
                 </div>
               </div>
             </CardContent>
@@ -437,7 +437,7 @@ function HomePage() {
               <CardContent className="flex items-start gap-4 p-5">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 transition-colors group-hover:bg-violet-500/18">
                   <category.icon
-                    className="size-5 text-violet-600 dark:text-violet-400"
+                    className="size-5 text-violet-800 dark:text-violet-400"
                     aria-hidden
                   />
                 </div>
@@ -558,13 +558,13 @@ function HomePage() {
             </Button>
           </div>
 
-          <p className="mt-14 text-sm text-muted-foreground/70">
+          <p className="mt-14 text-sm text-muted-foreground">
             Made with care by{" "}
             <a
               href="https://github.com/codefastlabs"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="font-medium text-foreground underline-offset-4 transition-colors hover:underline"
             >
               codefastlabs
             </a>
