@@ -51,7 +51,10 @@ export const Route = createRootRouteWithContext<RootRouterContext>()({
           "A modern, accessible, and beautifully crafted React component library built with Radix UI and Tailwind CSS. 62 components, 22 themes, dark mode, and full TypeScript support.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "preload", href: appCss, as: "style" },
+      { rel: "stylesheet", href: appCss },
+    ],
   }),
   shellComponent: RootShellComponent,
 });
@@ -77,10 +80,12 @@ function RootShellComponent({ children }: PropsWithChildren) {
         <ThemeProvider theme={theme} persistTheme={persistTheme} disableTransitionOnChange>
           {children}
         </ThemeProvider>
-        <TanStackDevtools
-          config={{ position: "bottom-right" }}
-          plugins={[TanStackRouterDevtools, TanStackQueryDevtools, TanStackFormDevtools]}
-        />
+        {import.meta.env.DEV ? (
+          <TanStackDevtools
+            config={{ position: "bottom-right" }}
+            plugins={[TanStackRouterDevtools, TanStackQueryDevtools, TanStackFormDevtools]}
+          />
+        ) : null}
         <Scripts />
       </body>
     </html>

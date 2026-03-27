@@ -5,7 +5,6 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
-    "preview": "vite preview",
     "start": "node .output/server/index.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
