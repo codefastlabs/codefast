@@ -37,6 +37,27 @@ Optional custom root (defaults to `.cursor/pagespeed-reports`):
 ./.cursor/skills/pagespeed-optimize-loop/scripts/clear-pagespeed-reports.sh path/to/custom-reports-root
 ```
 
+## Session end: remove reports
+
+Do this **when the Pagespeed/Lighthouse work is done** (after you have noted scores in chat or elsewhere) so JSON artifacts are not left in the repo:
+
+```bash
+chmod +x .cursor/skills/pagespeed-optimize-loop/scripts/remove-pagespeed-reports.sh
+./.cursor/skills/pagespeed-optimize-loop/scripts/remove-pagespeed-reports.sh
+```
+
+Equivalent (no empty folder remains):
+
+```bash
+rm -rf .cursor/pagespeed-reports
+```
+
+Custom root (must match what you used for audits):
+
+```bash
+./.cursor/skills/pagespeed-optimize-loop/scripts/remove-pagespeed-reports.sh path/to/custom-reports-root
+```
+
 ## After each code change: run Lighthouse for a round
 
 Increment the **round number** (`1`, `2`, `3`, …) for each **build → audit** cycle.
@@ -80,7 +101,9 @@ npx --yes lighthouse http://127.0.0.1:4173/ \
   --chrome-flags="--headless --no-sandbox"
 ```
 
-**Scores**: `categories.performance.score` is **0–1**; multiply by **100** for display. Skill target: **100** on **both** mobile and desktop.
+**Scores**: each `categories.<name>.score` is **0–1**; multiply by **100** for display. Defaults: **Performance ≥ 90** on **both** mobile and desktop (user may set **85** relaxed or **95–100** stretch); **accessibility**, **best-practices**, and **seo** each **100** on **both** when those categories are part of the run.
+
+To audit **all** default categories in one pass, repeat the commands above with `--only-categories=performance,accessibility,best-practices,seo` instead of `performance` only.
 
 ## PageSpeed Insights API (public URL)
 

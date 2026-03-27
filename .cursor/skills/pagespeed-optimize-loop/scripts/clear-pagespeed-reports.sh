@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Remove and recreate the PageSpeed/Lighthouse report directory before a new skill session.
+# After work is done, use remove-pagespeed-reports.sh instead so the folder is not left behind.
 # Run from the repository root (or pass an absolute path).
 #
 # Usage: clear-pagespeed-reports.sh [reports-root]
