@@ -165,11 +165,13 @@ pnpm dev --filter=@codefast/ui
 | `pnpm lint:fix`       | Oxlint with `--fix`                                                        |
 | `pnpm format`         | Format with [Oxfmt](https://oxc.rs)                                        |
 | `pnpm format:check`   | Check formatting (CI)                                                      |
+| `pnpm check`          | Lint + format check (common CI / pre-push static gate)                     |
+| `pnpm check:fix`      | Lint with `--fix` + format write                                           |
 | `pnpm typecheck`      | Run TypeScript type checking                                               |
 | `pnpm clean`          | Clean build artifacts, cache, and node_modules                             |
-| `pnpm deps:check`     | Check for outdated dependencies                                            |
-| `pnpm deps:update`    | Update all dependencies to latest                                          |
-| `pnpm deps:upgrade`   | Interactively update dependencies to latest                                |
+| `pnpm deps:outdated`  | List outdated dependencies (`pnpm outdated`)                               |
+| `pnpm deps:update`    | Update all dependencies to latest (non-interactive)                        |
+| `pnpm deps:update:interactive` | Interactively update dependencies to latest                         |
 
 ## Technologies
 
