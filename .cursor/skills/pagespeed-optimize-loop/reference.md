@@ -2,7 +2,7 @@
 
 ## Lighthouse JSON (CLI output)
 
-- **Category scores**: `categories.performance.score` (and `accessibility`, `best-practices`, `seo` if not filtered). Values are **0–1**; multiply by **100** for a 0–100 score. This skill targets **100** on **mobile and desktop**.
+- **Category scores**: `categories.performance`, `categories.accessibility`, `categories["best-practices"]`, `categories.seo` (omit any category filtered out of the run). Values are **0–1**; multiply by **100** for display. Defaults for this skill: **Performance ≥ 90** on **mobile and desktop**; **accessibility**, **best practices**, and **SEO** each **100** on **both** (when audited).
 - **Audits**: `audits.<id>.score` — `null` or below **1** usually means opportunity or failure; use `title`, `description`, and `details` for next steps.
 
 ## Round-based reports (this repo)
@@ -12,6 +12,7 @@
 | **Root**          | `.cursor/pagespeed-reports/` (from repository root)                                                                  |
 | **Per round**     | `round-01/`, `round-02/`, … each with `lighthouse-mobile.json` and `lighthouse-desktop.json`                         |
 | **Session start** | Clear the root directory (see [examples.md](examples.md)) so previous runs are not confused with the current session |
+| **Session end**   | Remove the root directory (see [examples.md](examples.md)) so Lighthouse JSON is not left in the workspace          |
 
 ## PageSpeed Insights API
 

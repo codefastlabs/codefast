@@ -154,6 +154,7 @@ export default function Header() {
             to="/"
             className="flex min-w-0 items-center gap-2.5 rounded-lg ring-offset-background transition-opacity outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
+            <span className="sr-only sm:hidden">@codefast/ui documentation home</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
               <PackageIcon className="size-4.5" aria-hidden />
             </span>
