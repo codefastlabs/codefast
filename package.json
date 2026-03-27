@@ -12,8 +12,8 @@
     "deps:check": "pnpm outdated",
     "deps:install": "pnpm install && pnpm build:packages",
     "deps:reinstall": "pnpm clean && pnpm install && pnpm build:packages",
-    "deps:update": "pnpm up --latest --recursive && pnpm deps:install",
-    "deps:upgrade": "pnpm up --latest --recursive --interactive && pnpm deps:install",
+    "deps:update": "pnpm up --latest --recursive",
+    "deps:upgrade": "pnpm up --latest --recursive --interactive",
     "dev": "turbo run dev",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
@@ -34,27 +34,22 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.2",
-    "@changesets/cli": "^2.29.8",
-    "@commitlint/cli": "^20.4.2",
-    "@commitlint/config-conventional": "^20.4.2",
-    "@commitlint/types": "^20.4.0",
-    "@types/node": "^25.3.0",
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/types": "^20.5.0",
+    "@types/node": "^25.5.0",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
     "oxlint-tsgolint": "^0.17.4",
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "turbo": "^2.8.10"
+    "turbo": "^2.8.20"
   },
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@10.25.0",
-  "pnpm": {
-    "overrides": {
-      "vite": "^8.0.0-beta.12"
-    }
-  }
+  "packageManager": "pnpm@10.33.0"
 }

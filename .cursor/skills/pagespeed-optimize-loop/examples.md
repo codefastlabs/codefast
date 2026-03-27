@@ -4,11 +4,11 @@ Run shell snippets from the **repository root** unless noted otherwise.
 
 ## Report layout
 
-| Path | Contents |
-|------|----------|
-| `.cursor/pagespeed-reports/` | Root for all JSON reports |
-| `.cursor/pagespeed-reports/round-01/` | First optimization round |
-| `.cursor/pagespeed-reports/round-02/` | Second round, and so on |
+| Path                                  | Contents                  |
+| ------------------------------------- | ------------------------- |
+| `.cursor/pagespeed-reports/`          | Root for all JSON reports |
+| `.cursor/pagespeed-reports/round-01/` | First optimization round  |
+| `.cursor/pagespeed-reports/round-02/` | Second round, and so on   |
 
 Each round folder should contain:
 
