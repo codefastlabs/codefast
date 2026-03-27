@@ -15,6 +15,16 @@ import contentCollections from "@content-collections/vite";
  */
 const config = defineConfig({
   /**
+   * Nitro (production server) options merged by the `nitro` Vite plugin.
+   * Pre-compress public assets so responses can be served with Content-Encoding.
+   */
+  nitro: {
+    compressPublicAssets: {
+      gzip: true,
+      brotli: true,
+    },
+  },
+  /**
    * Development server options.
    * @see [Server Options](https://vite.dev/config/server-options.html)
    */
@@ -22,15 +32,6 @@ const config = defineConfig({
     /** Automatically open the app in browser on server start. */
     open: true,
     /** Port for the development server. */
-    port: 3000,
-  },
-
-  /**
-   * Preview server options (used by `vite preview` command).
-   * @see [Preview Options](https://vite.dev/config/preview-options.html)
-   */
-  preview: {
-    /** Port for the preview server. */
     port: 3000,
   },
 
