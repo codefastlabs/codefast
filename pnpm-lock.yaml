@@ -4,6 +4,13 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  h3: ^2.0.1-rc.20
+  h3-v2: npm:h3@^2.0.1-rc.20
+  typescript: ^6.0.2
+
+packageExtensionsChecksum: sha256-K5M23aYWuzh26CJl8ihpD6ucPhwAsEUgsOlgz+gs278=
+
 importers:
 
   .:
@@ -933,7 +940,7 @@ packages:
   '@content-collections/core@0.14.3':
     resolution: {integrity: sha512-nbgfRswxudlKDBEO2AXVGGfsFMlenV2iVjNDddQGWD0qk3lBDkTRJy0AqdBvBOccB8/cj95nJyXEVocRRNyUcA==}
     peerDependencies:
-      typescript: ^5.0.2
+      typescript: ^6.0.2
 
   '@content-collections/integrations@0.5.0':
     resolution: {integrity: sha512-1en7r518sct0Y8CQ5IsuuBN4uAmtNLaWuxmseW43OxeXyj43Uu2aPBfbopjL4b5xH8WZBdDrrPmikgOl42U46A==}
@@ -3893,13 +3900,13 @@ packages:
     peerDependencies:
       '@types/node': '*'
       cosmiconfig: '>=9'
-      typescript: '>=5'
+      typescript: ^6.0.2
 
   cosmiconfig@9.0.1:
     resolution: {integrity: sha512-hr4ihw+DBqcvrsEDioRO31Z17x71pUYoNe/4h6Z0wB72p7MU7/9gH8Q3s12NFhHPfYBBOV3qyfUxmr/Yn3shnQ==}
     engines: {node: '>=14'}
     peerDependencies:
-      typescript: '>=4.9.5'
+      typescript: ^6.0.2
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -4404,16 +4411,6 @@ packages:
   gray-matter@4.0.3:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
-
-  h3@2.0.1-rc.16:
-    resolution: {integrity: sha512-h+pjvyujdo9way8qj6FUbhaQcHlR8FEq65EhTX9ViT5pK8aLj68uFl4hBkF+hsTJAH+H1END2Yv6hTIsabGfag==}
-    engines: {node: '>=20.11.1'}
-    hasBin: true
-    peerDependencies:
-      crossws: ^0.4.1
-    peerDependenciesMeta:
-      crossws:
-        optional: true
 
   h3@2.0.1-rc.20:
     resolution: {integrity: sha512-28ljodXuUp0fZovdiSRq4G9OgrxCztrJe5VdYzXAB7ueRvI7pIUqLU14Xi3XqdYJ/khXjfpUOOD2EQa6CmBgsg==}
@@ -5677,7 +5674,7 @@ packages:
       '@ts-macro/tsc': ^0.3.6
       '@typescript/native-preview': '>=7.0.0-dev.20260325.1'
       rolldown: ^1.0.0-rc.12
-      typescript: ^5.0.0 || ^6.0.0
+      typescript: ^6.0.2
       vue-tsc: ~3.2.0
     peerDependenciesMeta:
       '@ts-macro/tsc':
@@ -6021,7 +6018,7 @@ packages:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
       '@types/node': '*'
-      typescript: '>=2.7'
+      typescript: ^6.0.2
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -6038,7 +6035,7 @@ packages:
       '@tsdown/exe': 0.21.6
       '@vitejs/devtools': '*'
       publint: ^0.3.0
-      typescript: ^5.0.0 || ^6.0.0
+      typescript: ^6.0.2
       unplugin-unused: ^0.5.0
     peerDependenciesMeta:
       '@arethetypeswrong/core':
@@ -9110,7 +9107,7 @@ snapshots:
       '@tanstack/router-core': 1.168.6
       '@tanstack/start-client-core': 1.167.6
       '@tanstack/start-storage-context': 1.166.20
-      h3-v2: h3@2.0.1-rc.16(crossws@0.4.4(srvx@0.11.13))
+      h3-v2: h3@2.0.1-rc.20(crossws@0.4.4(srvx@0.11.13))
       seroval: 1.5.1
     transitivePeerDependencies:
       - crossws
@@ -10265,13 +10262,6 @@ snapshots:
       kind-of: 6.0.3
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
-
-  h3@2.0.1-rc.16(crossws@0.4.4(srvx@0.11.13)):
-    dependencies:
-      rou3: 0.8.1
-      srvx: 0.11.13
-    optionalDependencies:
-      crossws: 0.4.4(srvx@0.11.13)
 
   h3@2.0.1-rc.20(crossws@0.4.4(srvx@0.11.13)):
     dependencies:
