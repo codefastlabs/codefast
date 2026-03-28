@@ -22,7 +22,11 @@ function SinkLayout() {
             <SidebarTrigger />
             <Separator orientation="vertical" className="mr-4 ml-2 h-4!" />
             <AppBreadcrumbs />
-            <div className="ml-auto flex items-center gap-2">
+            <div
+              id="sink-accent-palette"
+              className="ml-auto flex scroll-mt-14 items-center gap-2"
+              aria-label="Appearance and accent palette"
+            >
               <ModeSwitcher />
               <ThemeSelector />
             </div>

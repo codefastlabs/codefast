@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { Calendar } from "@codefast/ui/calendar";

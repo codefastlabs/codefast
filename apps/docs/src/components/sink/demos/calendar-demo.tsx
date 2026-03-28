@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@codefast/ui/button";
 import { Calendar, CalendarDayButton } from "@codefast/ui/calendar";
 import { Card, CardContent, CardFooter } from "@codefast/ui/card";
