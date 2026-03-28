@@ -1,0 +1,41 @@
+# Turbo: `build` / `typecheck` / tests that import workspace packages need `^build` (see turbo.json).
+# Lint/format at repo root runs first (no build). Then one `turbo run` so the task graph orders build → test/typecheck.
+
+name: Reusable verify packages
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-packages:
+    name: Verify packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NODE_ENV: production
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Lint and format (root)
+        run: pnpm check
+
+      - name: Build, test, and typecheck packages
+        run: npx turbo run build test:coverage:ci typecheck --filter="./packages/**"
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: codefastlabs/codefast
+          fail_ci_if_error: false

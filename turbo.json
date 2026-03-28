@@ -22,13 +22,16 @@
       "cache": false
     },
     "test": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"]
     },
     "test:coverage": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
       "outputs": ["coverage/**"]
     },
     "test:coverage:ci": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
       "outputs": ["coverage/**"]
     },
