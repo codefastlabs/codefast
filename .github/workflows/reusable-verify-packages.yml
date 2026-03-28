@@ -1,5 +1,5 @@
-# Turbo: `build` / `typecheck` / tests that import workspace packages need `^build` (see turbo.json).
-# Lint/format at repo root runs first (no build). Then one `turbo run` so the task graph orders build → test/typecheck.
+# Step order: type-aware oxlint (.oxlintrc.json) requires built `dist` typings for workspace `package.json` exports.
+# Sequence — build packages, repository lint/format (`pnpm check`), then package test and typecheck.
 
 name: Reusable verify packages
 
@@ -27,11 +27,14 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
+      - name: Build packages
+        run: npx turbo build --filter="./packages/**"
+
       - name: Lint and format (root)
         run: pnpm check
 
-      - name: Build, test, and typecheck packages
-        run: npx turbo run build test:coverage:ci typecheck --filter="./packages/**"
+      - name: Test and typecheck packages
+        run: npx turbo run test:coverage:ci typecheck --filter="./packages/**"
 
       - name: Upload coverage
         uses: codecov/codecov-action@v6
