@@ -16,34 +16,5 @@ permissions:
 jobs:
   verify:
     name: Verify
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-        env:
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
-      - name: Build packages
-        run: npx turbo build --filter="./packages/**"
-        env:
-          NODE_ENV: production
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
-      - name: Lint, format, test, typecheck
-        run: pnpm check && npx turbo test:coverage:ci typecheck --filter="./packages/**"
-        env:
-          NODE_ENV: production
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v6
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: codefastlabs/codefast
-          fail_ci_if_error: false
+    uses: ./.github/workflows/reusable-verify-packages.yml
+    secrets: inherit

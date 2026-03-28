@@ -4,8 +4,8 @@ author: "codefastlabs"
 
 inputs:
   node-version:
-    description: "Node.js version to use (default: latest LTS)"
-    default: "lts/*"
+    description: "Node.js version to use (align with root package.json engines)"
+    default: "24"
     required: false
 
   package-manager-version:
