@@ -24,6 +24,9 @@ const config = defineConfig(({ command }) => ({
   },
   resolve: {
     tsconfigPaths: true,
+    alias: {
+      tslib: "tslib/tslib.es6.mjs",
+    },
   },
   nitro: {
     compressPublicAssets: {
