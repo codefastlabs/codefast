@@ -7,9 +7,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import contentCollections from "@content-collections/vite";
 import { exec } from "node:child_process";
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
 
 const openInWebStorm = async (
   path: string,
@@ -27,9 +24,6 @@ const config = defineConfig(({ command }) => ({
   },
   resolve: {
     tsconfigPaths: true,
-    alias: {
-      tslib: require.resolve("tslib/tslib.es6.mjs"),
-    },
   },
   nitro: {
     compressPublicAssets: {
