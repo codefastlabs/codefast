@@ -47,7 +47,7 @@
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "turbo": "^2.8.20"
+    "turbo": "^2.8.21"
   },
   "lint-staged": {
     "*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}": [

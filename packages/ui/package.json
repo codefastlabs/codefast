@@ -412,7 +412,7 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
     "ts-node": "^10.9.2",
-    "tsdown": "^0.21.6",
+    "tsdown": "^0.21.7",
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
