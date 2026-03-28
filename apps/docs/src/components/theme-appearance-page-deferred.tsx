@@ -152,13 +152,20 @@ function TanStackThemeSetupCollapsible() {
                 <CardDescription className="text-pretty">
                   Cookie-backed light, dark, and system for TanStack Start: SSR reads the
                   preference,{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs">{"<html>"}</code>{" "}
+                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    {"<html>"}
+                  </code>{" "}
                   matches the first paint, and any route can use{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs">useTheme()</code>.
+                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    useTheme()
+                  </code>
+                  .
                 </CardDescription>
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   Open the panel below for install, ordered steps, copy-paste{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.65rem]">__root.tsx</code>
+                  <code className="rounded bg-muted px-1 font-mono text-[0.65rem] text-foreground">
+                    __root.tsx
+                  </code>
                   , and a toggle example.
                 </p>
               </div>
@@ -201,7 +208,9 @@ function TanStackThemeSetupCollapsible() {
                       •
                     </span>
                     <span>
-                      <code className="rounded bg-muted px-1 font-mono text-xs">ThemeScript</code>{" "}
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        ThemeScript
+                      </code>{" "}
                       aligns the first paint with the cookie before React hydrates.
                     </span>
                   </li>
@@ -210,10 +219,14 @@ function TanStackThemeSetupCollapsible() {
                       •
                     </span>
                     <span>
-                      <code className="rounded bg-muted px-1 font-mono text-xs">useTheme()</code>{" "}
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        useTheme()
+                      </code>{" "}
                       exposes{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs">setTheme</code>,
-                      stored value, and OS-resolved mode for UI.
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        setTheme
+                      </code>
+                      , stored value, and OS-resolved mode for UI.
                     </span>
                   </li>
                 </ul>
@@ -231,7 +244,7 @@ function TanStackThemeSetupCollapsible() {
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
                   npm / yarn equivalent works. You still need global CSS from{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.65rem]">
+                  <code className="rounded bg-muted px-1 font-mono text-[0.65rem] text-foreground">
                     @codefast/ui
                   </code>{" "}
                   (preset + palette) as in the home page install snippet.
@@ -243,57 +256,82 @@ function TanStackThemeSetupCollapsible() {
                 <ol className="mt-3 list-decimal space-y-3 pl-5 text-sm text-muted-foreground marker:font-semibold marker:text-foreground">
                   <li>
                     <span className="font-medium text-foreground">Root route loader</span> — Call{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       getThemeServerFn()
                     </code>{" "}
                     and return{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">theme</code> so the
-                    value is available during SSR and on the client after navigation.
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      theme
+                    </code>{" "}
+                    so the value is available during SSR and on the client after navigation.
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Shell component</span> — Use{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">shellComponent</code>{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      shellComponent
+                    </code>{" "}
                     (not the default route component) to render the full document: apply{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       className=&#123;resolveTheme(theme)&#125;
                     </code>{" "}
                     and{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       style=&#123;&#123; colorScheme: resolveTheme(theme) &#125;&#125;
                     </code>{" "}
-                    on <code className="rounded bg-muted px-1 font-mono text-xs">{"<html>"}</code>.
+                    on{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      {"<html>"}
+                    </code>
+                    .
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Head</span> — Render{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">HeadContent</code> for
-                    the framework, then{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      HeadContent
+                    </code>{" "}
+                    for the framework, then{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       ThemeScript theme=&#123;theme&#125;
                     </code>
                     .
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Body</span> — Wrap the app with{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">ThemeProvider</code>{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      ThemeProvider
+                    </code>{" "}
                     using the loader&apos;s{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">theme</code> and{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      theme
+                    </code>{" "}
+                    and{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       persistTheme=&#123;createPersistTheme()&#125;
                     </code>{" "}
                     (or{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       (v) =&gt; setThemeServerFn(&#123; data: v &#125;)
                     </code>
                     ). Include{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">Scripts</code> after
-                    children.
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      Scripts
+                    </code>{" "}
+                    after children.
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Toggles</span> — Import{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">useTheme</code> from{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">@codefast/theme</code>{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      useTheme
+                    </code>{" "}
+                    from{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      @codefast/theme
+                    </code>{" "}
                     in any client component and call{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">setTheme</code>.
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      setTheme
+                    </code>
+                    .
                   </li>
                 </ol>
               </div>
@@ -308,14 +346,19 @@ function TanStackThemeSetupCollapsible() {
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Persistence details</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  <code className="rounded bg-muted px-1 font-mono text-xs">
+                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                     createPersistTheme()
                   </code>{" "}
                   calls the adapter&apos;s POST server function, which sets an HTTP-only cookie (see{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs">setThemeServerFn</code>{" "}
+                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    setThemeServerFn
+                  </code>{" "}
                   in the package). The browser cannot read that cookie from JS; only the server
                   reads it on the next request via{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs">getThemeServerFn</code>.
+                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    getThemeServerFn
+                  </code>
+                  .
                 </p>
               </div>
 
@@ -342,12 +385,21 @@ function TanStackThemeSetupCollapsible() {
                     </span>
                     <span>
                       If the page flashes the wrong mode once, confirm{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs">ThemeScript</code>{" "}
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        ThemeScript
+                      </code>{" "}
                       is in{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs">{"<head>"}</code>{" "}
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        {"<head>"}
+                      </code>{" "}
                       and the shell applies{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs">resolveTheme</code>{" "}
-                      on <code className="rounded bg-muted px-1 font-mono text-xs">{"<html>"}</code>
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        resolveTheme
+                      </code>{" "}
+                      on{" "}
+                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                        {"<html>"}
+                      </code>
                       .
                     </span>
                   </li>
@@ -448,9 +500,14 @@ export function ThemeAppearancePageDeferred({
               </CardTitle>
               <CardDescription>
                 Light, dark, or system (follow the OS). Updates the document{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs">class</code> so Tailwind{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs">dark:</code> variants line
-                up.
+                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  class
+                </code>{" "}
+                so Tailwind{" "}
+                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  dark:
+                </code>{" "}
+                variants line up.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -574,7 +631,7 @@ export function ThemeAppearancePageDeferred({
                 </CardTitle>
                 <CardDescription className="text-pretty">
                   Stored preference + resolved light/dark. Handled by{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem]">
+                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
                     @codefast/theme
                   </code>{" "}
                   (cookie, SSR script, tab sync).
@@ -591,9 +648,14 @@ export function ThemeAppearancePageDeferred({
                 </CardTitle>
                 <CardDescription className="text-pretty">
                   Accent CSS (e.g.{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem]">neutral.css</code>
-                  , <code className="rounded bg-muted px-1 font-mono text-[0.7rem]">blue.css</code>)
-                  ships with the UI kit. Orthogonal to light/dark/system from @codefast/theme.
+                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
+                    neutral.css
+                  </code>
+                  ,{" "}
+                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
+                    blue.css
+                  </code>
+                  ) ships with the UI kit. Orthogonal to light/dark/system from @codefast/theme.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -650,8 +712,10 @@ export function ThemeAppearancePageDeferred({
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Tab sync and sensible{" "}
-            <code className="rounded bg-muted px-1 font-mono text-xs">color-scheme</code> on the
-            document.
+            <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+              color-scheme
+            </code>{" "}
+            on the document.
           </p>
         </div>
         <div className="flex gap-3 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm ring-1 ring-border/25">
@@ -660,11 +724,14 @@ export function ThemeAppearancePageDeferred({
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
-            <code className="rounded bg-muted px-1 font-mono text-xs">
+            <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
               disableTransitionOnChange
             </code>{" "}
-            on <code className="rounded bg-muted px-1 font-mono text-xs">ThemeProvider</code> to
-            avoid long cross-fades when swapping modes.
+            on{" "}
+            <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+              ThemeProvider
+            </code>{" "}
+            to avoid long cross-fades when swapping modes.
           </p>
         </div>
       </div>
@@ -685,7 +752,7 @@ export function ThemeAppearancePageDeferred({
             <Alert className="border-primary/20 bg-primary/5">
               <InfoIcon className="size-4 text-primary" aria-hidden />
               <AlertTitle>Expected behavior</AlertTitle>
-              <AlertDescription className="block text-pretty">
+              <AlertDescription className="block text-pretty text-foreground">
                 While the document appearance changes, transition suppression avoids blending
                 through unintended intermediate colors. Hover and focus transitions on UI components
                 are unchanged.
@@ -735,11 +802,15 @@ export function ThemeAppearancePageDeferred({
             <div>
               <p className="font-semibold text-foreground">How it fits together</p>
               <p className="mt-1 max-w-2xl text-sm text-pretty text-muted-foreground">
-                <code className="rounded bg-muted px-1 font-mono text-xs">@codefast/theme</code>{" "}
+                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  @codefast/theme
+                </code>{" "}
                 keeps the preference and document class. Tailwind and the UI preset supply{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs">dark:</code> and CSS
-                variables. Accent palettes come from a stylesheet import—see the home page install
-                snippet.
+                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  dark:
+                </code>{" "}
+                and CSS variables. Accent palettes come from a stylesheet import—see the home page
+                install snippet.
               </p>
             </div>
           </div>

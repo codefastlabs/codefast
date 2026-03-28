@@ -337,7 +337,10 @@ export function ThemeLibraryPreview(): JSX.Element {
                 <AlertTitle>Checks passed</AlertTitle>
                 <AlertDescription className="block text-pretty">
                   Theme tokens validated against the preset; no contrast regressions on{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs">muted-foreground</code>.
+                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    muted-foreground
+                  </code>
+                  .
                 </AlertDescription>
               </Alert>
               <Alert variant="destructive">
@@ -354,8 +357,10 @@ export function ThemeLibraryPreview(): JSX.Element {
               <AlertTitle>Neutral callout</AlertTitle>
               <AlertDescription className="block text-pretty">
                 Default alerts use{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs">card</code> and border
-                tokens so they track appearance mode without extra wiring.
+                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  card
+                </code>{" "}
+                and border tokens so they track appearance mode without extra wiring.
               </AlertDescription>
             </Alert>
           </TabsContent>
@@ -440,9 +445,14 @@ export function ThemeLibraryPreview(): JSX.Element {
                 <CardContent>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Borders, dashed or solid, pick up{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">border</code> and{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs">muted</code> so
-                    previews stay honest in both themes.
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      border
+                    </code>{" "}
+                    and{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      muted
+                    </code>{" "}
+                    so previews stay honest in both themes.
                   </p>
                 </CardContent>
               </Card>
