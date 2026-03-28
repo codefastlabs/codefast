@@ -78,11 +78,11 @@ export function ThemeAppearancePage(): JSX.Element {
                 </span>
               </h1>
               <p className="max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground md:text-xl">
-                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em]">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground">
                   @codefast/theme
                 </code>{" "}
                 persists light, dark, or system, aligns the first paint with SSR, and exposes{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em]">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground">
                   useTheme()
                 </code>{" "}
                 everywhere in your app. Wire TanStack Start with the integration panel further down.
