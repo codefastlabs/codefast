@@ -43,7 +43,7 @@
     "lint-staged": "^16.4.0",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
-    "oxlint-tsgolint": "^0.17.4",
+    "oxlint-tsgolint": "^0.18.1",
     "simple-git-hooks": "^2.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
