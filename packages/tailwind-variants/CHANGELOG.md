@@ -1,5 +1,11 @@
 # @codefast/tailwind-variants
 
+## 0.3.11-canary.2
+
+### Patch Changes
+
+- [`92d1ed7`](https://github.com/codefastlabs/codefast/commit/92d1ed7650b19f91824cfb38ec238857a3d95876) Thanks [@thevuong](https://github.com/thevuong)! - build: replace rslib with tsdown in library packages
+
 ## 0.3.11-canary.1
 
 ### Patch Changes
