@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@codefast/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";

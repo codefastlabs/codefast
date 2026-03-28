@@ -1,3 +1,4 @@
+import { HomeBentoShowcase } from "@/components/home-showcase";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
@@ -215,14 +216,13 @@ function HomePage() {
           </h1>
 
           <p className="mx-auto mb-4 max-w-2xl text-xl leading-relaxed text-pretty text-muted-foreground md:text-2xl">
-            This site is the living playground for{" "}
-            <span className="font-medium text-foreground">@codefast/ui</span>—browse interactive
-            components, preview light and dark mode, and copy install snippets for your own app.
+            Production-ready React components with Radix primitives, Tailwind CSS v4, and
+            tree-shakeable imports—explore a live bento below, then dive into every module.
           </p>
 
           <p className="mx-auto mb-10 max-w-xl text-base text-pretty text-muted-foreground">
-            Radix primitives, Tailwind CSS v4, tree-shakeable exports, and full TypeScript. Package
-            docs focus on what you can ship, not noise.
+            Tweak light, dark, or system mode on the theme page, copy install snippets, and ship
+            accessible UI without reinventing patterns.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -269,6 +269,20 @@ function HomePage() {
             </div>
           </dl>
         </div>
+      </section>
+
+      {/* Bento + live demo */}
+      <section
+        className="border-b border-border/60 bg-linear-to-b from-muted/15 to-background px-4 py-16 sm:px-6 md:py-24"
+        aria-labelledby="showcase-heading"
+      >
+        <SectionHeading
+          eyebrow="Interactive"
+          title="A bento built from the library"
+          description="Every control in this grid is a real import from @codefast/ui—the same paths you use in your app. Try tabs, fields, and actions; tokens follow your active appearance."
+          titleId="showcase-heading"
+        />
+        <HomeBentoShowcase />
       </section>
 
       {/* Install */}

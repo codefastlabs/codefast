@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@codefast/ui/button";
 import { ButtonGroup, ButtonGroupText } from "@codefast/ui/button-group";
 import {

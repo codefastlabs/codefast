@@ -1,5 +1,3 @@
-"use client";
-
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
 import { Label } from "@codefast/ui/label";
 import { REGEXP_ONLY_DIGITS } from "input-otp";

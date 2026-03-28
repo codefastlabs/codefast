@@ -1,5 +1,3 @@
-"use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Button } from "@codefast/ui/button";
 import {

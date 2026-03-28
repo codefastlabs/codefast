@@ -1,5 +1,3 @@
-"use client";
-
 import { Label } from "@codefast/ui/label";
 import { Slider } from "@codefast/ui/slider";
 import { useState } from "react";

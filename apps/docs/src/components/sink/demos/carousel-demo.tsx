@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent } from "@codefast/ui/card";
 import {
   Carousel,

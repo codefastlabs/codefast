@@ -1,5 +1,3 @@
-"use client";
-
 import { Progress } from "@codefast/ui/progress";
 import { useEffect, useState } from "react";
 

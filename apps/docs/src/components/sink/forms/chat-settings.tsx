@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@codefast/ui/button";
 import { Checkbox } from "@codefast/ui/checkbox";
 import {
