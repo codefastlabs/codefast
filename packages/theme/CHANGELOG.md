@@ -1,5 +1,11 @@
 # @codefast/theme
 
+## 0.3.12
+
+### Patch Changes
+
+- [`59b0ce9`](https://github.com/codefastlabs/codefast/commit/59b0ce932cec3c07356acaf4c7cb52b3f538096b) Thanks [@thevuong](https://github.com/thevuong)! - chore: enhance theme handling and update scripts
+
 ## 0.3.11
 
 ### Patch Changes

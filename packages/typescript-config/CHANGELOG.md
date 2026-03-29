@@ -1,5 +1,7 @@
 # @codefast/typescript-config
 
+## 0.3.12
+
 ## 0.3.11
 
 ### Patch Changes
