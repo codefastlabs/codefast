@@ -28,8 +28,9 @@ interface ThemeScriptProps {
  * **How it works:**
  * This script runs synchronously in the `<head>` before first paint:
  * 1. Resolves 'system' to 'light' or 'dark' using `matchMedia()`
- * 2. Adds the theme class to `<html>` immediately
- * 3. Sets `color-scheme` for native form controls and scrollbars
+ * 2. Removes prior `light` / `dark` / `system` classes on `<html>` (SSR may
+ *    have applied the wrong resolved class for `system`, e.g. default `dark`)
+ * 3. Adds the resolved theme class and sets `color-scheme` for native controls
  *
  * @example
  * ```tsx
@@ -41,7 +42,7 @@ interface ThemeScriptProps {
  */
 export function ThemeScript({ theme }: ThemeScriptProps): JSX.Element {
   // Minified FOUC prevention script
-  const themeScript = `(function(){try{var theme="${theme}",resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(error){}})()`;
+  const themeScript = `(function(){try{var theme="${theme}",resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),document.documentElement.classList.remove("light","dark","system"),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(error){}})()`;
 
   return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
 }
