@@ -64,6 +64,15 @@ describe("ThemeScript", () => {
       expect(script?.innerHTML).toContain("classList");
     });
 
+    test("should remove prior theme classes before add (SSR system vs client OS)", () => {
+      const { container } = render(<ThemeScript theme="system" />);
+
+      const script = container.querySelector("script");
+
+      expect(script?.innerHTML).toContain('classList.remove("light","dark","system")');
+      expect(script?.innerHTML).toContain("classList.add(resolvedTheme)");
+    });
+
     test("should contain colorScheme assignment", () => {
       const { container } = render(<ThemeScript theme="dark" />);
 
