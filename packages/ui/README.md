@@ -162,42 +162,54 @@ import "@codefast/ui/css/style.css";
 
 #### SSR with Nitro (TanStack Start)
 
-When deploying with [Nitro](https://v3.nitro.build/) (Vercel, self-host Node.js, etc.) and **Vite 8** (Rolldown-backed build), add this to your `vite.config.ts` if you hit a `tslib` interop issue on the server.
+Use this when you ship with **[Nitro](https://v3.nitro.build/)** (e.g. Vercel, Node) and **Vite 8** (Rolldown) via **TanStack Start**.
 
-**What actually goes wrong (root cause):** Rolldown wraps the **CommonJS** build of `tslib` (`tslib.js`) in an ESM helper (`__toESM`). That file sets `exports.__esModule = true`. The generated SSR code then does `const { __extends, … } = __toESM(…).default`, but for `__esModule` CJS modules the interop object does **not** put the helpers on `.default`, so `.default` is `undefined` and destructuring throws.
+**If you see** a server `TypeError` about `__extends` and `__toESM(...).default` (sometimes minified as `__toESM$1`), often during SSR or route loaders, configure `vite.config.ts` as below.
 
-**Why you see it with Radix-based UIs:** Overlays (Dialog, Sheet, Menu, etc.) depend on scroll/focus utilities. For example [`react-remove-scroll-bar`](https://www.npmjs.com/package/react-remove-scroll-bar) (in the same ecosystem as Radix’s scroll locking) publishes **es5** files that call `require("tslib")`. That is the kind of import that ends up in the broken interop path—not “Radix” shipping `tslib` directly. (This was verified by inspecting Nitro SSR chunks under `.output/server/_ssr/`, where Radix focus code and an inlined `tslib` CJS block appear in the same graph.)
+##### Recommended: `nitro.exportConditions`
 
-**Fix:** Alias `tslib` to its **ESM** entry (`tslib.es6.mjs`) so the bundler does not apply the bad CJS interop wrapper.
+Prefer ESM entry points from dependencies (`import` / `module` in `package.json` `exports`). That avoids pulling CommonJS builds that `require("tslib")`, which can trip Rolldown’s CJS→ESM interop. Nitro still merges in `production` / `development`, `node`, and related conditions.
 
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      // Workaround: force tslib’s ESM build so SSR does not read a bad interop default.
-      tslib: "tslib/tslib.es6.mjs",
-    },
+  nitro: {
+    exportConditions: ["import", "module", "default"],
   },
-  // ... other config
+  // plugins: [ tanstackStart(), nitro(), … ]
 });
 ```
 
-**Symptom without this:** server logs show a `TypeError` such as  
-`Cannot destructure property '__extends' of '__toESM(...).default' as it is undefined`  
-(the helper name may be minified, e.g. `__toESM$1`), often when a route loader or SSR chunk imports code that uses `tslib`.
+##### Fallback: `resolve.alias`
+
+If the error persists, point `tslib` at its ESM file:
+
+```ts
+export default defineConfig({
+  resolve: {
+    alias: { tslib: "tslib/tslib.es6.mjs" },
+  },
+});
+```
+
+##### Why it happens (short)
+
+- **Bundler:** Rolldown may wrap `tslib`’s CJS build and read helpers from `.default` in a way that breaks when the module is marked `__esModule`.
+- **Dependencies:** Overlay-related packages (Dialog, Sheet, Menu, …) often pull in utilities such as [`react-remove-scroll-bar`](https://www.npmjs.com/package/react-remove-scroll-bar). Their legacy CJS output can use `require("tslib")` even when your app source is ESM.
+
+> **Note:** Don’t use `nitro.alias` for the bare specifier `tslib`. In Nitro v3 that option is for unenv-style path overrides, not npm package names, and can produce broken paths.
 
 ### Troubleshooting
 
-| Issue                                                    | Solution                                                                                                                          |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Components look unstyled                                 | Ensure CSS imports run before any component renders (entry point first).                                                          |
-| Duplicate Tailwind CSS                                   | Use Option 1 (theme + preset only), **not** `style.css`.                                                                          |
-| Dark mode not working                                    | Add `class="dark"` to `<html>` when dark mode is active.                                                                          |
-| Build: CSS not found                                     | Verify path: `@codefast/ui/css/[theme].css` (e.g. `slate.css`).                                                                   |
-| SSR / loaders: `Cannot destructure property '__extends'` | Add `resolve.alias: { tslib: 'tslib/tslib.es6.mjs' }` in `vite.config.ts` (see [SSR with Nitro](#ssr-with-nitro-tanstack-start)). |
+| Issue                                                    | Solution                                                                                                                                                  |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Components look unstyled                                 | Ensure CSS imports run before any component renders (entry point first).                                                                                  |
+| Duplicate Tailwind CSS                                   | Use Option 1 (theme + preset only), **not** `style.css`.                                                                                                  |
+| Dark mode not working                                    | Add `class="dark"` to `<html>` when dark mode is active.                                                                                                  |
+| Build: CSS not found                                     | Verify path: `@codefast/ui/css/[theme].css` (e.g. `slate.css`).                                                                                           |
+| SSR / loaders: `Cannot destructure property '__extends'` | Set `nitro.exportConditions: ['import', 'module', 'default']`, or add `resolve.alias` for `tslib` (see [SSR with Nitro](#ssr-with-nitro-tanstack-start)). |
 
 ### Customizing Theme
 

@@ -24,15 +24,17 @@ const config = defineConfig(({ command }) => ({
   },
   resolve: {
     tsconfigPaths: true,
-    alias: {
-      tslib: "tslib/tslib.es6.mjs",
-    },
   },
   nitro: {
     compressPublicAssets: {
       gzip: true,
       brotli: true,
     },
+    // Prefer `import` / `module` in package `exports` during SSR so dependencies resolve to ESM builds
+    // (avoids CJS `require("tslib")` + Rolldown `__toESM` interop issues). Nitro merges these with
+    // production/development, `node`, etc. Do not use `nitro.alias` for bare specifiers like `tslib`—it is
+    // wired through unenv and breaks resolution (e.g. duplicated path segments).
+    exportConditions: ["import", "module", "default"],
   },
   plugins: [
     devtools({
