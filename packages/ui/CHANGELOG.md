@@ -1,5 +1,32 @@
 # @codefast/ui
 
+## 0.3.11
+
+### Patch Changes
+
+- [`dd5130a`](https://github.com/codefastlabs/codefast/commit/dd5130adb5649dca6773614ffda262cdde732d8f) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): downgrade @rslib/core to 0.19.1 in package.json and pnpm-lock.yaml
+
+- [`bec9cfa`](https://github.com/codefastlabs/codefast/commit/bec9cfab879d59c877db130eb2c2522b1453bc8f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(theme): reorganize imports for improved readability
+
+- [`135c6be`](https://github.com/codefastlabs/codefast/commit/135c6bed9d1bc1e96bad3173adab1bf32d74322f) Thanks [@thevuong](https://github.com/thevuong)! - chore: update linting and formatting scripts in package.json
+
+- [`610cf7a`](https://github.com/codefastlabs/codefast/commit/610cf7a7f9b6e5b37be21e7675ea363ef1020639) Thanks [@thevuong](https://github.com/thevuong)! - fix(hooks): handle missing `navigator.clipboard.writeText` gracefully
+
+- [`42758ab`](https://github.com/codefastlabs/codefast/commit/42758ab9d8f548ea9f4a806a7dbb7ed295fe2390) Thanks [@thevuong](https://github.com/thevuong)! - chore: update package configurations and TypeScript settings
+
+- [`b1d23c2`](https://github.com/codefastlabs/codefast/commit/b1d23c27dffff6686193e3cbb3f848970e253493) Thanks [@thevuong](https://github.com/thevuong)! - refactor(chart): update ChartTooltip types for improved compatibility
+
+- [`d2abc63`](https://github.com/codefastlabs/codefast/commit/d2abc636245526ec402811d8585d93684865dde6) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update package versions and configurations
+
+- [`3e90474`](https://github.com/codefastlabs/codefast/commit/3e90474fbbb9f8ac626c5949bfdbac2eaf1cb3e8) Thanks [@thevuong](https://github.com/thevuong)! - chore: update project configuration and dependencies
+
+- [`92d1ed7`](https://github.com/codefastlabs/codefast/commit/92d1ed7650b19f91824cfb38ec238857a3d95876) Thanks [@thevuong](https://github.com/thevuong)! - build: replace rslib with tsdown in library packages
+
+- [`5c09d4c`](https://github.com/codefastlabs/codefast/commit/5c09d4ce2df564dc7ac6727b00cfa668164a1af4) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): rename `check-types` to `typecheck` and update usage
+
+- Updated dependencies [[`dd5130a`](https://github.com/codefastlabs/codefast/commit/dd5130adb5649dca6773614ffda262cdde732d8f), [`135c6be`](https://github.com/codefastlabs/codefast/commit/135c6bed9d1bc1e96bad3173adab1bf32d74322f), [`610cf7a`](https://github.com/codefastlabs/codefast/commit/610cf7a7f9b6e5b37be21e7675ea363ef1020639), [`42758ab`](https://github.com/codefastlabs/codefast/commit/42758ab9d8f548ea9f4a806a7dbb7ed295fe2390), [`d2abc63`](https://github.com/codefastlabs/codefast/commit/d2abc636245526ec402811d8585d93684865dde6), [`49df885`](https://github.com/codefastlabs/codefast/commit/49df8854d51bad598381be68b6e41096e7da814c), [`3e90474`](https://github.com/codefastlabs/codefast/commit/3e90474fbbb9f8ac626c5949bfdbac2eaf1cb3e8), [`92d1ed7`](https://github.com/codefastlabs/codefast/commit/92d1ed7650b19f91824cfb38ec238857a3d95876), [`5c09d4c`](https://github.com/codefastlabs/codefast/commit/5c09d4ce2df564dc7ac6727b00cfa668164a1af4)]:
+  - @codefast/tailwind-variants@0.3.11
+
 ## 0.3.11-canary.2
 
 ### Patch Changes
