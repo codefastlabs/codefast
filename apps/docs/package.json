@@ -25,7 +25,7 @@
     "@tanstack/react-router": "^1.168.7",
     "@tanstack/react-router-devtools": "^1.166.11",
     "@tanstack/react-router-ssr-query": "^1.166.10",
-    "@tanstack/react-start": "^1.167.12",
+    "@tanstack/react-start": "^1.167.13",
     "@unpic/react": "^1.0.2",
     "date-fns": "^4.1.0",
     "hast-util-to-string": "^3.0.1",
