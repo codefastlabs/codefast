@@ -1,28 +1,21 @@
 export const TANSTACK_ROOT_SNIPPET = `// src/routes/__root.tsx — TanStack Start + @codefast/theme
 import type { PropsWithChildren } from "react";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
-import { createPersistTheme, getThemeServerFn } from "@codefast/theme/adapters/tanstack-start";
+import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@codefast/theme/start";
 import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
 
 // Use your real router context type instead of \`YourRouterContext\`.
 export const Route = createRootRouteWithContext<YourRouterContext>()({
-  loader: async () => ({ theme: await getThemeServerFn() }),
+  loader: async () => getRootThemeServerFn(),
   shellComponent: RootShellComponent,
 });
 
-const persistTheme = createPersistTheme();
-
 function RootShellComponent({ children }: PropsWithChildren) {
-  const { theme } = Route.useLoaderData();
-  const resolvedTheme = resolveTheme(theme);
+  const { theme, ssrSystemTheme } = Route.useLoaderData();
+  const resolvedTheme = resolveTheme(theme, ssrSystemTheme);
 
   return (
-    <html
-      className={resolvedTheme}
-      lang="en"
-      style={{ colorScheme: resolvedTheme }}
-      suppressHydrationWarning
-    >
+    <html className={resolvedTheme} lang="en" style={{ colorScheme: resolvedTheme }} suppressHydrationWarning>
       <head>
         <HeadContent />
         <ThemeScript theme={theme} />
@@ -30,8 +23,9 @@ function RootShellComponent({ children }: PropsWithChildren) {
       <body>
         <ThemeProvider
           theme={theme}
-          persistTheme={persistTheme}
-          disableTransitionOnChange
+          ssrSystemTheme={ssrSystemTheme}
+          persistTheme={persistThemeCookie}
+          syncThemeFromServer={getThemeServerFn}
         >
           {children}
         </ThemeProvider>

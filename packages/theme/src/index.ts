@@ -1,12 +1,12 @@
 /**
  * \@codefast/theme
  *
- * React 19 theme management library with SSR support, cross-tab synchronization,
- * and optimistic UI updates. Supports light, dark, and system theme preferences.
+ * React 19 theme management: SSR-friendly `system` resolution, cross-tab sync, optimistic updates.
  *
- * @see {@link ThemeProvider} - Main provider component
- * @see {@link useTheme} - Hook for consuming theme context
- * @see {@link ThemeScript} - FOUC prevention script
+ * - **Root** (this module): `ThemeProvider`, `useTheme`, `ThemeScript`, `resolveTheme`, types, defaults.
+ * - **`@codefast/theme/start`**: TanStack Start server functions + `persistThemeCookie`.
+ * - **`@codefast/theme/utils`**: `getSystemTheme`, `applyTheme`, `disableAnimation`.
+ * - **`@codefast/theme/core`**: `ThemeContext` for rare custom wiring.
  */
 
 // Types & Schema
@@ -14,13 +14,13 @@ export type { ResolvedTheme, Theme, ThemeContextType } from "@/types";
 export { themes, themeSchema } from "@/types";
 
 // Constants
-export { DEFAULT_RESOLVED_THEME, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/constants";
+export { DEFAULT_RESOLVED_THEME, DEFAULT_THEME } from "@/constants";
 
-// Core (Provider, Context, Hook)
-export { ThemeContext, ThemeProvider, useTheme } from "@/core";
+// Core (Provider, Hook — use `@codefast/theme/core` for `ThemeContext`)
+export { ThemeProvider, useTheme } from "@/core";
 
 // Script (FOUC prevention)
 export { ThemeScript } from "@/script";
 
-// Utilities
-export { applyTheme, disableAnimation, getSystemTheme, resolveTheme } from "@/utils";
+// Utilities: DOM + `getSystemTheme` live under `@codefast/theme/utils`
+export { resolveTheme } from "@/utils/system";

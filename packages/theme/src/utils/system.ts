@@ -27,11 +27,24 @@ export function getSystemTheme(): ResolvedTheme {
  *
  * - 'light' → 'light'
  * - 'dark' → 'dark'
- * - 'system' → result of {@link getSystemTheme}
+ * - 'system' → on the client, result of {@link getSystemTheme}; on the server,
+ *   `ssrSystemTheme` when provided, otherwise {@link DEFAULT_RESOLVED_THEME}
  *
- * @param theme - User's theme preference
- * @returns The resolved theme to apply
+ * @param theme - User's theme preference (`light`, `dark`, or `system`)
+ * @param ssrSystemTheme - When `theme` is `system` and this runs during SSR (no `window`),
+ *   uses this as the resolved appearance—typically from Client Hints
+ *   (`Sec-CH-Prefers-Color-Scheme`) so `<html class>` matches the real OS preference.
+ *   Ignored for non-`system` themes and on the client (where {@link getSystemTheme} wins).
+ * @returns The resolved theme to apply (`light` or `dark`)
  */
-export function resolveTheme(theme: Theme): ResolvedTheme {
-  return theme === "system" ? getSystemTheme() : theme;
+export function resolveTheme(theme: Theme, ssrSystemTheme?: ResolvedTheme): ResolvedTheme {
+  if (theme !== "system") {
+    return theme;
+  }
+
+  if (typeof window === "undefined") {
+    return ssrSystemTheme ?? DEFAULT_RESOLVED_THEME;
+  }
+
+  return getSystemTheme();
 }

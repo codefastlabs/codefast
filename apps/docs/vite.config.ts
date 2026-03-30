@@ -26,6 +26,16 @@ const config = defineConfig(({ command }) => ({
     tsconfigPaths: true,
   },
   nitro: {
+    routeRules: {
+      "/**": {
+        headers: {
+          "Accept-CH": "Sec-CH-Prefers-Color-Scheme",
+          // Cookie drives ThemeScript + loader; without Cookie in Vary, a duplicated tab can
+          // replay cached HTML from before the last theme change while the cookie is already updated.
+          Vary: "Sec-CH-Prefers-Color-Scheme, Cookie",
+        },
+      },
+    },
     compressPublicAssets: {
       gzip: true,
       brotli: true,

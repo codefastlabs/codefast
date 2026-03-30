@@ -39,7 +39,19 @@ Theme management for React 19 applications with optimistic updates, cross-tab sy
 - **Cross-tab Sync** -- Theme changes propagate instantly across all open browser tabs.
 - **Optimistic Updates** -- Immediate UI feedback during asynchronous theme persistence.
 - **SSR Ready** -- Inline script prevents flash of unstyled content (FOUC) on server-rendered pages.
-- **Framework Adapters** -- Built-in TanStack Start adapter with an extensible architecture for other frameworks.
+- **TanStack Start** -- `@codefast/theme/start` bundles cookie persistence and loader helpers.
+
+## Public entry points
+
+| Import                      | Contents                                                                                                                                 |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `@codefast/theme`           | `ThemeProvider`, `useTheme`, `ThemeScript`, `resolveTheme`, types, `themes`, defaults                                                    |
+| `@codefast/theme/start`     | `getRootThemeServerFn`, `getThemeServerFn`, `getSsrSystemThemeServerFn`, `setThemeServerFn`, `persistThemeCookie`, `RootThemeLoaderData` |
+| `@codefast/theme/utils`     | `getSystemTheme`, `applyTheme`, `disableAnimation`, `resolveTheme`                                                                       |
+| `@codefast/theme/core`      | `ThemeContext`, `ThemeProvider`, `useTheme`                                                                                              |
+| `@codefast/theme/script`    | `ThemeScript`                                                                                                                            |
+| `@codefast/theme/constants` | `DEFAULT_THEME`, `DEFAULT_RESOLVED_THEME`, `THEME_STORAGE_KEY`, …                                                                        |
+| `@codefast/theme/types`     | `themeSchema`, types                                                                                                                     |
 
 ## Installation
 
@@ -99,34 +111,46 @@ function Page() {
 
 ### TanStack Start
 
-The built-in TanStack Start adapter handles server-side theme persistence via cookies.
+Server persistence and loader data live in `@codefast/theme/start`. Your shell keeps full control of `<html>` / `<head>` / `<body>`.
 
 ```tsx
-// routes/__root.tsx
+// routes/__root.tsx (pattern; adjust to your router setup)
+import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@codefast/theme/start";
 import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
-import { getThemeServerFn, setThemeServerFn } from "@codefast/theme/tanstack-start";
 
-export const Route = createRootRoute({
-  loader: async () => {
-    const theme = await getThemeServerFn();
-    return { theme };
-  },
-  component: RootComponent,
-  head: ({ loaderData }) => ({
-    scripts: [{ tag: ThemeScript, props: { theme: loaderData?.theme ?? "system" } }],
-  }),
+export const Route = createRootRouteWithContext<YourContext>()({
+  loader: async () => getRootThemeServerFn(),
+  shellComponent: RootShell,
 });
 
-function RootComponent() {
-  const { theme } = Route.useLoaderData();
+function RootShell({ children }: { children: React.ReactNode }) {
+  const { theme, ssrSystemTheme } = Route.useLoaderData();
+  const resolved = resolveTheme(theme, ssrSystemTheme);
 
   return (
-    <ThemeProvider theme={theme} persistTheme={(value) => setThemeServerFn({ data: value })}>
-      <Outlet />
-    </ThemeProvider>
+    <html className={resolved} lang="en" style={{ colorScheme: resolved }} suppressHydrationWarning>
+      <head>
+        <HeadContent />
+        <ThemeScript theme={theme} />
+      </head>
+      <body>
+        <ThemeProvider
+          theme={theme}
+          ssrSystemTheme={ssrSystemTheme}
+          persistTheme={persistThemeCookie}
+          syncThemeFromServer={getThemeServerFn}
+        >
+          {children}
+        </ThemeProvider>
+        <Scripts />
+      </body>
+    </html>
   );
 }
 ```
+
+Send `Accept-CH: Sec-CH-Prefers-Color-Scheme` and include both that header and `Cookie` in response `Vary` so cached HTML is not reused with the wrong theme. `syncThemeFromServer` covers remaining stale-document edge cases (e.g. duplicate tab).
 
 ### Generic React (Client-Side)
 
@@ -212,13 +236,15 @@ Root provider component that manages theme state and context.
 </ThemeProvider>
 ```
 
-| Prop                        | Type                              | Default | Description                                                          |
-| --------------------------- | --------------------------------- | ------- | -------------------------------------------------------------------- |
-| `theme`                     | `Theme`                           | --      | Initial theme value (`'light'`, `'dark'`, or `'system'`)             |
-| `persistTheme`              | `(value: Theme) => Promise<void>` | --      | Callback invoked when the user changes the theme                     |
-| `disableTransitionOnChange` | `boolean`                         | `false` | Disable CSS transitions during theme changes to avoid visual flicker |
-| `nonce`                     | `string`                          | --      | CSP nonce for inline `<style>` elements                              |
-| `children`                  | `React.ReactNode`                 | --      | Application content                                                  |
+| Prop                        | Type                              | Default | Description                                                                                                                                      |
+| --------------------------- | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `theme`                     | `Theme`                           | --      | Initial theme value (`'light'`, `'dark'`, or `'system'`)                                                                                         |
+| `ssrSystemTheme`            | `ResolvedTheme`                   | --      | Optional `light`/`dark` from SSR (e.g. Client Hints) so `system` hydrates without flipping                                                       |
+| `syncThemeFromServer`       | `() => Promise<Theme>`            | --      | Once after mount, re-read cookie/source of truth (fixes stale cached HTML on duplicate tab). Use `getThemeServerFn` from `@codefast/theme/start` |
+| `persistTheme`              | `(value: Theme) => Promise<void>` | --      | Callback invoked when the user changes the theme                                                                                                 |
+| `disableTransitionOnChange` | `boolean`                         | `false` | Disable CSS transitions during theme changes to avoid visual flicker                                                                             |
+| `nonce`                     | `string`                          | --      | CSP nonce for inline `<style>` elements                                                                                                          |
+| `children`                  | `React.ReactNode`                 | --      | Application content                                                                                                                              |
 
 ### useTheme
 
@@ -255,7 +281,8 @@ Utility function that resolves a theme value to either `'light'` or `'dark'`.
 ```typescript
 import { resolveTheme } from "@codefast/theme";
 
-const resolved = resolveTheme("system"); // 'light' or 'dark' based on OS preference
+const resolved = resolveTheme("system"); // client: OS via matchMedia
+const ssr = resolveTheme("system", "light"); // server: pass Client-Hint–backed value
 ```
 
 ### themes

@@ -7,6 +7,7 @@ import {
   useEffectEvent,
   useMemo,
   useOptimistic,
+  useRef,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -47,13 +48,6 @@ function getSystemThemeSnapshot(): ResolvedTheme {
   return getSystemTheme();
 }
 
-/**
- * Server snapshot returns default theme since `matchMedia` is unavailable during SSR.
- */
-function getServerSnapshot(): ResolvedTheme {
-  return DEFAULT_RESOLVED_THEME;
-}
-
 /* -----------------------------------------------------------------------------
  * Props
  * -------------------------------------------------------------------------- */
@@ -73,7 +67,7 @@ interface ThemeProviderProps {
   /**
    * Async function to persist theme changes to server/storage.
    *
-   * For TanStack Start: use `setThemeServerFn` from `@codefast/theme/tanstack-start`
+   * For TanStack Start: use `setThemeServerFn` from `@codefast/theme/start`
    * For Next.js: implement a server action
    */
   persistTheme?: (value: Theme) => Promise<void>;
@@ -81,6 +75,22 @@ interface ThemeProviderProps {
    * Initial theme from server (typically from cookie via loader).
    */
   theme: Theme;
+  /**
+   * OS light/dark guess from the SSR request (e.g. `Sec-CH-Prefers-Color-Scheme`).
+   *
+   * When the stored preference is `system`, {@link useSyncExternalStore} uses this for
+   * `getServerSnapshot` so the first client snapshot matches `matchMedia` and avoids a
+   * dark → light flip after hydration.
+   */
+  ssrSystemTheme?: ResolvedTheme;
+  /**
+   * After mount, re-read the canonical theme from the server (e.g. httpOnly cookie).
+   *
+   * Fixes **stale HTML / disk cache** on “Duplicate tab” or back-forward cache where the
+   * document was saved with an old `ThemeScript` / loader value while the cookie was already updated
+   * in another tab. Use a stable reference (e.g. `getThemeServerFn` from `@codefast/theme/start`).
+   */
+  syncThemeFromServer?: () => Promise<Theme>;
 }
 
 /* -----------------------------------------------------------------------------
@@ -94,6 +104,19 @@ interface ThemeProviderProps {
  * - `useOptimistic` - Immediate UI feedback while persisting theme
  * - `useSyncExternalStore` - SSR-safe subscription to OS theme preference
  * - `useEffectEvent` - Stable callback for cross-tab sync without effect re-runs
+ *
+ * @param props - Component props
+ * @param props.children - React tree to provide context for
+ * @param props.theme - Initial preference from the server (cookie, loader, etc.)
+ * @param props.ssrSystemTheme - Best-effort `light` or `dark` from the SSR request
+ * (e.g. `Sec-CH-Prefers-Color-Scheme`). When preference is `system`, this value is used as
+ * `useSyncExternalStore`'s server snapshot so the first client snapshot matches `matchMedia`
+ * and avoids a post-hydration flip. Omit if unavailable; falls back to {@link DEFAULT_RESOLVED_THEME}.
+ * @param props.syncThemeFromServer - Optional one-shot RPC after mount to align with the cookie when SSR/HTML was stale.
+ * @param props.persistTheme - Optional async handler to persist preference (cookie, server action, …)
+ * @param props.disableTransitionOnChange - Temporarily disable CSS transitions on theme change
+ * @param props.nonce - CSP nonce for inline transition-blocking styles when `disableTransitionOnChange` is set
+ * @returns Provider element wrapping `children`
  *
  * @example
  * ```tsx
@@ -111,6 +134,8 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   nonce,
   persistTheme,
+  ssrSystemTheme,
+  syncThemeFromServer,
   theme: initialTheme,
 }: ThemeProviderProps): JSX.Element {
   // Actual persisted theme (source of truth after server confirms)
@@ -122,6 +147,44 @@ export function ThemeProvider({
 
   // True when there's a pending theme change (optimistic !== actual)
   const isPending = optimisticTheme !== theme;
+
+  const syncThemeFromServerRef = useRef(syncThemeFromServer);
+
+  syncThemeFromServerRef.current = syncThemeFromServer;
+
+  useEffect(() => {
+    const sync = syncThemeFromServerRef.current;
+
+    if (!sync) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async () => {
+      try {
+        const serverTheme = await sync();
+
+        if (cancelled) {
+          return;
+        }
+
+        startTransition(() => {
+          setThemeState((prev) => (prev === serverTheme ? prev : serverTheme));
+        });
+      } catch {
+        /* keep SSR / loader state */
+      }
+    })();
+
+    return (): void => {
+      cancelled = true;
+    };
+  }, []);
+
+  const getServerSnapshot = useCallback((): ResolvedTheme => {
+    return ssrSystemTheme ?? DEFAULT_RESOLVED_THEME;
+  }, [ssrSystemTheme]);
 
   // Subscribe to OS preference changes (SSR-safe via useSyncExternalStore)
   const systemTheme = useSyncExternalStore(

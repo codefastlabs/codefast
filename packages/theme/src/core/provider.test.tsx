@@ -277,4 +277,30 @@ describe("ThemeProvider", () => {
       expect(mockPersistTheme).not.toHaveBeenCalled();
     });
   });
+
+  describe("syncThemeFromServer", () => {
+    test("reconciles state when server returns a different theme after mount", async () => {
+      const sync = jest.fn().mockResolvedValue("dark");
+
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        <ThemeProvider syncThemeFromServer={sync} theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+
+      await waitFor(() => {
+        expect(screen.getByTestId("theme-label")).toHaveTextContent("dark");
+      });
+
+      expect(sync).toHaveBeenCalledTimes(1);
+    });
+  });
 });
