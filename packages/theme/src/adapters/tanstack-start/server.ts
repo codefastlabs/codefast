@@ -1,10 +1,55 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getCookie, setCookie } from "@tanstack/react-start/server";
+import { getCookie, getRequestHeader, setCookie } from "@tanstack/react-start/server";
 
-import type { Theme } from "@/types";
-
-import { DEFAULT_THEME, THEME_STORAGE_KEY } from "@/constants";
+import type { ResolvedTheme, Theme } from "@/types";
 import { themeSchema } from "@/types";
+
+import { DEFAULT_RESOLVED_THEME, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/constants";
+
+/* -----------------------------------------------------------------------------
+ * Request helpers (one round-trip when composed)
+ * -------------------------------------------------------------------------- */
+
+function readThemeFromCookie(): Theme {
+  const cookieTheme = getCookie(THEME_STORAGE_KEY);
+  const validationResult = themeSchema.safeParse(cookieTheme);
+
+  if (validationResult.success) {
+    return validationResult.data;
+  }
+
+  return DEFAULT_THEME;
+}
+
+function readSsrSystemThemeFromHeaders(): ResolvedTheme {
+  const hint =
+    getRequestHeader("Sec-CH-Prefers-Color-Scheme") ?? getRequestHeader("Prefers-Color-Scheme");
+
+  if (hint === "dark") {
+    return "dark";
+  }
+
+  if (hint === "light") {
+    return "light";
+  }
+
+  return DEFAULT_RESOLVED_THEME;
+}
+
+/**
+ * Data shape returned from {@link getRootThemeServerFn} for the root route loader.
+ */
+export interface RootThemeLoaderData {
+  /**
+   * Resolved `light` or `dark` from the incoming request when detectable
+   * (e.g. `Sec-CH-Prefers-Color-Scheme`). Pass to `ThemeProvider` as `ssrSystemTheme` and to
+   * `resolveTheme(theme, ssrSystemTheme)` on `<html>`. When the hint is absent, matches
+   * {@link DEFAULT_RESOLVED_THEME}.
+   */
+  ssrSystemTheme: ResolvedTheme;
+  /** User preference from the httpOnly cookie: `light`, `dark`, or `system`. */
+  theme: Theme;
+}
 
 /* -----------------------------------------------------------------------------
  * Server Functions
@@ -12,6 +57,18 @@ import { themeSchema } from "@/types";
  * These functions run on the server and handle cookie-based theme persistence.
  * Cookies are httpOnly for security - the client cannot read them directly.
  * -------------------------------------------------------------------------- */
+
+/**
+ * Everything needed for the root shell in **one** server call (fewer loader awaits).
+ *
+ * In your shell: `resolveTheme(theme, ssrSystemTheme)` on `<html>`, plus `ThemeScript` and `ThemeProvider`.
+ */
+export const getRootThemeServerFn = createServerFn().handler(
+  (): RootThemeLoaderData => ({
+    theme: readThemeFromCookie(),
+    ssrSystemTheme: readSsrSystemThemeFromHeaders(),
+  }),
+);
 
 /**
  * Read the user's theme preference from cookies.
@@ -26,16 +83,19 @@ import { themeSchema } from "@/types";
  * const theme = await getThemeServerFn();
  * ```
  */
-export const getThemeServerFn = createServerFn().handler((): Theme => {
-  const cookieTheme = getCookie(THEME_STORAGE_KEY);
-  const validationResult = themeSchema.safeParse(cookieTheme);
+export const getThemeServerFn = createServerFn().handler((): Theme => readThemeFromCookie());
 
-  if (validationResult.success) {
-    return validationResult.data;
-  }
-
-  return DEFAULT_THEME;
-});
+/**
+ * Resolved OS theme for SSR / hydration, from Client Hints when the browser sends them.
+ *
+ * Mirrors client `matchMedia("(prefers-color-scheme: dark)")` when hints are present.
+ * Prefer {@link getRootThemeServerFn} for root loaders.
+ *
+ * Send `Accept-CH: Sec-CH-Prefers-Color-Scheme` (and `Vary`) so navigations include the hint.
+ */
+export const getSsrSystemThemeServerFn = createServerFn().handler(
+  (): ResolvedTheme => readSsrSystemThemeFromHeaders(),
+);
 
 /**
  * Persist theme preference to an HTTP-only cookie.
@@ -66,22 +126,9 @@ export const setThemeServerFn = createServerFn({ method: "POST" })
   });
 
 /**
- * Create a `persistTheme` function for {@link ThemeProvider}.
- *
- * Convenience wrapper that adapts `setThemeServerFn` to the signature
- * expected by ThemeProvider's `persistTheme` prop.
- *
- * @returns Async function compatible with ThemeProvider's persistTheme prop
- *
- * @example
- * ```tsx
- * <ThemeProvider persistTheme={(value) => setThemeServerFn({ data: value })}>
- * ```
+ * Default {@link ThemeProvider} `persistTheme` for the Start adapter: writes the httpOnly
+ * theme cookie via {@link setThemeServerFn}.
  */
-const persistThemeHandler = async (value: Theme): Promise<void> => {
+export async function persistThemeCookie(value: Theme): Promise<void> {
   await setThemeServerFn({ data: value });
-};
-
-export function createPersistTheme(): (value: Theme) => Promise<void> {
-  return persistThemeHandler;
 }

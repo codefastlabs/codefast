@@ -306,9 +306,14 @@ function TanStackThemeSetupCollapsible() {
                     </code>{" "}
                     and{" "}
                     <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
-                      persistTheme=&#123;createPersistTheme()&#125;
+                      persistTheme=&#123;persistThemeCookie&#125;
+                    </code>
+                    ,{" "}
+                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      syncThemeFromServer=&#123;getThemeServerFn&#125;
                     </code>{" "}
-                    (or{" "}
+                    (avoids stale theme when duplicating a tab after another tab changed the
+                    cookie), or{" "}
                     <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                       (v) =&gt; setThemeServerFn(&#123; data: v &#125;)
                     </code>
@@ -347,9 +352,10 @@ function TanStackThemeSetupCollapsible() {
                 <h3 className="text-sm font-semibold text-foreground">Persistence details</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
-                    createPersistTheme()
+                    persistThemeCookie
                   </code>{" "}
-                  calls the adapter&apos;s POST server function, which sets an HTTP-only cookie (see{" "}
+                  calls the Start adapter&apos;s POST server function, which sets an HTTP-only
+                  cookie (see{" "}
                   <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
                     setThemeServerFn
                   </code>{" "}

@@ -19,9 +19,9 @@ export const DEFAULT_THEME: Theme = "system";
 export const DEFAULT_RESOLVED_THEME: ResolvedTheme = "dark";
 
 /**
- * Cookie key for persisting user's theme preference.
+ * Cookie name for the httpOnly theme preference (`@codefast/theme/start`).
  *
- * The cookie is httpOnly for security (only server can read it).
+ * Re-exported only from `@codefast/theme/constants` so custom middleware matches the adapter.
  */
 export const THEME_STORAGE_KEY = "ui-theme";
 
