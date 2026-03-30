@@ -15,7 +15,7 @@
     "@codefast/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@shikijs/rehype": "^4.0.2",
-    "@tabler/icons-react": "^3.41.0",
+    "@tabler/icons-react": "^3.41.1",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-devtools": "^0.10.0",
     "@tanstack/react-form": "^1.28.5",
