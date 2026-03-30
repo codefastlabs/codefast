@@ -80,12 +80,10 @@ function RootShellComponent({ children }: PropsWithChildren) {
         <ThemeProvider theme={theme} persistTheme={persistTheme} disableTransitionOnChange>
           {children}
         </ThemeProvider>
-        {import.meta.env.DEV ? (
-          <TanStackDevtools
-            config={{ position: "bottom-right" }}
-            plugins={[TanStackRouterDevtools, TanStackQueryDevtools, TanStackFormDevtools]}
-          />
-        ) : null}
+        <TanStackDevtools
+          config={{ position: "bottom-right" }}
+          plugins={[TanStackRouterDevtools, TanStackQueryDevtools, TanStackFormDevtools]}
+        />
         <Scripts />
       </body>
     </html>

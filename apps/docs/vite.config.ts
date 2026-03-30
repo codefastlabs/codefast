@@ -37,20 +37,13 @@ const config = defineConfig(({ command }) => ({
     exportConditions: ["import", "module", "default"],
   },
   plugins: [
-    devtools({
-      editor: {
-        name: "WebStorm",
-        open: openInWebStorm,
-      },
-    }),
+    devtools({ editor: { name: "WebStorm", open: openInWebStorm } }),
     tailwindcss(),
     contentCollections(),
     tanstackStart(),
     nitro(),
     viteReact(),
-    babel({
-      presets: [reactCompilerPreset()],
-    }),
+    babel({ presets: [reactCompilerPreset()] }),
   ],
 }));
 
