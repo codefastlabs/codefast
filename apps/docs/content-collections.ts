@@ -1,6 +1,6 @@
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { z } from "zod";
-import { renderMarkdown } from "@/utils/markdown";
+import { renderMarkdown } from "#utils/markdown";
 
 /**
  * Docs collection for documentation pages.

@@ -3,8 +3,17 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#*": "./src/*",
-    "#content-collections": "./.content-collections/generated/index.ts"
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ],
+    "#content-collections": [
+      "./.content-collections/generated/index.ts",
+      "./.content-collections/generated/index.d.ts"
+    ]
   },
   "scripts": {
     "build": "vite build",

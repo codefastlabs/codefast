@@ -41,7 +41,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
-import { addons, exampleFormSchema } from "@/components/sink/schema";
+import { addons, exampleFormSchema } from "#components/sink/schema";
 
 export function ExampleForm() {
   const [values, setValues] = useState<z.infer<typeof exampleFormSchema>>();

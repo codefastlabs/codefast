@@ -4,13 +4,13 @@ import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
 import { Separator } from "@codefast/ui/separator";
-import { ShikiThemeCodeBlock } from "@/components/shiki-theme-code-block";
+import { ShikiThemeCodeBlock } from "#components/shiki-theme-code-block";
 import {
   PNPM_INSTALL,
   TANSTACK_ROOT_SNIPPET,
   USE_THEME_TOGGLE_SNIPPET,
-} from "@/components/theme-appearance-constants";
-import { CopySnippetButton } from "@/components/theme-appearance-shared";
+} from "#components/theme-appearance-constants";
+import { CopySnippetButton } from "#components/theme-appearance-shared";
 import { cn } from "@codefast/tailwind-variants";
 import { themes, type ResolvedTheme, type Theme } from "@codefast/theme";
 import { Link } from "@tanstack/react-router";
@@ -30,7 +30,7 @@ import type { JSX } from "react";
 import { lazy, Suspense } from "react";
 
 const ThemeLibraryPreview = lazy(() =>
-  import("@/components/theme-library-preview").then((m) => ({ default: m.ThemeLibraryPreview })),
+  import("#components/theme-library-preview").then((m) => ({ default: m.ThemeLibraryPreview })),
 );
 
 function ThemeCodeBlock({

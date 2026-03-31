@@ -4,10 +4,10 @@ import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@cod
 import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
 import type { QueryClient } from "@tanstack/react-query";
 import type { PropsWithChildren } from "react";
-import TanStackFormDevtools from "@/integrations/tanstack-form/devtools";
-import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools";
-import TanStackRouterDevtools from "@/integrations/tanstack-router/devtools";
-import appCss from "@/styles/globals.css?url";
+import TanStackFormDevtools from "#integrations/tanstack-form/devtools";
+import TanStackQueryDevtools from "#integrations/tanstack-query/devtools";
+import TanStackRouterDevtools from "#integrations/tanstack-router/devtools";
+import appCss from "#styles/globals.css?url";
 
 interface RootRouterContext {
   queryClient: QueryClient;

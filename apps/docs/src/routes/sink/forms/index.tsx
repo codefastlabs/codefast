@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AppearanceSettings } from "@/components/sink/forms/appearance-settings";
-import { ChatSettings } from "@/components/sink/forms/chat-settings";
-import { DisplaySettings } from "@/components/sink/forms/display-settings";
-import { NotionPromptForm } from "@/components/sink/forms/notion-prompt-form";
-import { ShipRegistrationForm } from "@/components/sink/forms/ship-registration-form";
-import { ShippingForm } from "@/components/sink/forms/shipping-form";
+import { AppearanceSettings } from "#components/sink/forms/appearance-settings";
+import { ChatSettings } from "#components/sink/forms/chat-settings";
+import { DisplaySettings } from "#components/sink/forms/display-settings";
+import { NotionPromptForm } from "#components/sink/forms/notion-prompt-form";
+import { ShipRegistrationForm } from "#components/sink/forms/ship-registration-form";
+import { ShippingForm } from "#components/sink/forms/shipping-form";
 
 export const Route = createFileRoute("/sink/forms/")({
   component: FormsPage,
