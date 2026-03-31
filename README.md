@@ -167,7 +167,7 @@ pnpm dev --filter=@codefast/ui
 | `pnpm format:check`            | Check formatting (CI)                                                      |
 | `pnpm check`                   | Lint + format check (common CI / pre-push static gate)                     |
 | `pnpm check:fix`               | Lint with `--fix` + format write                                           |
-| `pnpm typecheck`               | Run TypeScript type checking                                               |
+| `pnpm check-types`             | Run TypeScript type checking                                               |
 | `pnpm clean`                   | Clean build artifacts, cache, and node_modules                             |
 | `pnpm deps:outdated`           | List outdated dependencies (`pnpm outdated`)                               |
 | `pnpm deps:update`             | Update all dependencies to latest (non-interactive)                        |

@@ -7,7 +7,7 @@
       "outputs": ["dist/**", ".output/**", ".vercel/output/**"],
       "outputLogs": "new-only"
     },
-    "typecheck": {
+    "check-types": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"]
     },

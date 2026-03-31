@@ -2,12 +2,16 @@
   "name": "@apps/docs",
   "private": true,
   "type": "module",
+  "imports": {
+    "#*": "./src/*",
+    "#content-collections": "./.content-collections/generated/index.ts"
+  },
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
     "start": "node .output/server/index.mjs",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
