@@ -1,8 +1,8 @@
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Separator } from "@codefast/ui/separator";
-import { PNPM_INSTALL } from "@/components/theme-appearance-constants";
-import { CopySnippetButton } from "@/components/theme-appearance-shared";
+import { PNPM_INSTALL } from "#components/theme-appearance-constants";
+import { CopySnippetButton } from "#components/theme-appearance-shared";
 import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon, CodeIcon, SparklesIcon } from "lucide-react";
 import type { JSX } from "react";
@@ -10,7 +10,7 @@ import { lazy, Suspense } from "react";
 import { useTheme } from "@codefast/theme";
 
 const ThemeAppearancePageDeferred = lazy(() =>
-  import("@/components/theme-appearance-page-deferred").then((m) => ({
+  import("#components/theme-appearance-page-deferred").then((m) => ({
     default: m.ThemeAppearancePageDeferred,
   })),
 );

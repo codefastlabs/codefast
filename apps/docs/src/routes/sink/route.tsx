@@ -2,11 +2,11 @@ import { cn } from "@codefast/tailwind-variants";
 import { Separator } from "@codefast/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui/sidebar";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { ActiveThemeProvider } from "@/components/active-theme";
-import { ModeSwitcher } from "@/components/mode-switcher";
-import { AppBreadcrumbs } from "@/components/sink/app/app-breadcrumbs";
-import { AppSidebar } from "@/components/sink/app/app-sidebar";
-import { ThemeSelector } from "@/components/sink/app/theme-selector";
+import { ActiveThemeProvider } from "#components/active-theme";
+import { ModeSwitcher } from "#components/mode-switcher";
+import { AppBreadcrumbs } from "#components/sink/app/app-breadcrumbs";
+import { AppSidebar } from "#components/sink/app/app-sidebar";
+import { ThemeSelector } from "#components/sink/app/theme-selector";
 
 export const Route = createFileRoute("/sink")({
   component: SinkLayout,

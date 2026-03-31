@@ -21,16 +21,16 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRightIcon, HomeIcon, SearchIcon } from "lucide-react";
 import { useMemo } from "react";
 import type { ComponentProps, JSX, ReactNode } from "react";
-import type { NavItem } from "@/components/sink/app/app-sidebar-types";
-import type { RegistryType } from "@/components/sink/component-registry";
+import type { NavItem } from "#components/sink/app/app-sidebar-types";
+import type { RegistryType } from "#components/sink/component-registry";
 import {
   REGISTRY_TYPES,
   REGISTRY_TYPE_LABELS,
   componentsByType,
-} from "@/components/sink/component-registry";
-import { TeamSwitcher } from "@/components/sink/app/team-switcher";
-import { NavUser } from "@/components/sink/app/nav-user";
-import { appSidebarData } from "@/components/sink/app/app-sidebar-data";
+} from "#components/sink/component-registry";
+import { TeamSwitcher } from "#components/sink/app/team-switcher";
+import { NavUser } from "#components/sink/app/nav-user";
+import { appSidebarData } from "#components/sink/app/app-sidebar-data";
 
 /* -------------------------------------------------------------------------------------------------
  * Constants
