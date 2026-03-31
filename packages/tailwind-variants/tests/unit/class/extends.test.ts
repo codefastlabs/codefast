@@ -1,4 +1,4 @@
-import { tv } from "@/index";
+import { tv } from "#index";
 
 describe("Tailwind Variants (TV) - Extends", () => {
   test("should include the extended classes", () => {

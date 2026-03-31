@@ -1,4 +1,4 @@
-import { tv } from "@/index";
+import { tv } from "#index";
 
 describe("Tailwind Variants (TV) - Default (Common)", () => {
   test("should work with nested arrays", () => {

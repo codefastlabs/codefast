@@ -2,10 +2,6 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./tests/*"]
-    },
     "types": ["node", "jest"]
   },
   "include": ["**/*.ts", "**/*.tsx"],

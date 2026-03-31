@@ -1,4 +1,4 @@
-import { createTV, tv } from "@/index";
+import { createTV, tv } from "#index";
 
 describe("Tailwind Variants (TV) - Integration Tests", () => {
   test("should work with realistic button component patterns", () => {

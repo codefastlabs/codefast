@@ -1,4 +1,4 @@
-import { tv } from "@/index";
+import { tv } from "#index";
 
 describe("Tailwind Variants (TV) - Default (Class)", () => {
   test("should work with compoundVariants using class", () => {

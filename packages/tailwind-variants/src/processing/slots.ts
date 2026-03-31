@@ -14,9 +14,9 @@ import type {
   SlotConfigurationSchema,
   SlotFunctionProperties,
   SlotFunctionType,
-} from "@/types/types";
+} from "#types/types";
 
-import { cx, isSlotObjectType } from "@/utilities/utils";
+import { cx, isSlotObjectType } from "#utilities/utils";
 
 /**
  * Resolve CSS classes for a specific slot.
