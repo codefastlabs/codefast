@@ -270,18 +270,15 @@ If you need DOM types in a library project, override the `lib` option in your lo
 }
 ```
 
-### Path aliases not resolving
+### Internal aliases not resolving
 
-When using path aliases, add them to both `tsconfig.json` and your bundler configuration:
+Prefer Node subpath imports via `package.json#imports` for internal aliases:
 
 ```json
 {
-  "extends": "@codefast/typescript-config/base.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+  "type": "module",
+  "imports": {
+    "#*": ["./src/*", "./src/*.ts", "./src/*.tsx"]
   }
 }
 ```
