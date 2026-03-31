@@ -15,8 +15,8 @@ const config: Config = {
    * Configuration for module name mapping used in module resolution.
    */
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
-    "^~/(.*)$": "<rootDir>/tests/$1",
+    "^#test/(.*)$": "<rootDir>/tests/$1",
+    "^#(.*)$": "<rootDir>/src/$1",
   },
 
   /**
