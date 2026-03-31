@@ -8,5 +8,15 @@
     "@codefast/typescript-config": "0.3.11",
     "@codefast/ui": "0.3.11"
   },
-  "changesets": []
+  "changesets": [
+    "eleven-tips-repair",
+    "funny-tires-throw",
+    "grumpy-rules-retire",
+    "loose-cameras-double",
+    "perky-kiwis-lose",
+    "soft-moose-tie",
+    "thirty-ants-battle",
+    "true-lions-vanish",
+    "whole-games-shout"
+  ]
 }

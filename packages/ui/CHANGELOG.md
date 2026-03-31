@@ -1,5 +1,20 @@
 # @codefast/ui
 
+## 0.3.12-canary.0
+
+### Patch Changes
+
+- [`b3dfccb`](https://github.com/codefastlabs/codefast/commit/b3dfccbccff8961ca75a4671ae39e7616a7fa59c) Thanks [@thevuong](https://github.com/thevuong)! - refactor: switch package build scripts from tsdown to TypeScript build configs, align UI CSS exports to source CSS paths, and remove obsolete migration tooling
+
+- [`cb53569`](https://github.com/codefastlabs/codefast/commit/cb5356985d4f349dd12a32f9de85cc7d13e8cc74) Thanks [@thevuong](https://github.com/thevuong)! - refactor: migrate package dependencies to catalog references
+
+- [`82b37c0`](https://github.com/codefastlabs/codefast/commit/82b37c02ad0086114082cc02be54a60d0c4478a6) Thanks [@thevuong](https://github.com/thevuong)! - refactor: rename typecheck scripts to check-types for consistency
+
+- [`3f647bc`](https://github.com/codefastlabs/codefast/commit/3f647bce65e4c12d3349f06a5a3a80acf13b03de) Thanks [@thevuong](https://github.com/thevuong)! - refactor: align remaining alias references to subpath imports
+
+- Updated dependencies [[`b3dfccb`](https://github.com/codefastlabs/codefast/commit/b3dfccbccff8961ca75a4671ae39e7616a7fa59c), [`cb53569`](https://github.com/codefastlabs/codefast/commit/cb5356985d4f349dd12a32f9de85cc7d13e8cc74), [`e032524`](https://github.com/codefastlabs/codefast/commit/e032524a496132bb3ff6377a7348a7771c1d97dd), [`82b37c0`](https://github.com/codefastlabs/codefast/commit/82b37c02ad0086114082cc02be54a60d0c4478a6), [`3f647bc`](https://github.com/codefastlabs/codefast/commit/3f647bce65e4c12d3349f06a5a3a80acf13b03de)]:
+  - @codefast/tailwind-variants@0.3.12-canary.0
+
 ## 0.3.11
 
 ### Patch Changes
