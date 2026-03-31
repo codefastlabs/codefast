@@ -1,2 +1,2 @@
-export { applyTheme, disableAnimation } from "@/utils/dom";
-export { getSystemTheme, resolveTheme } from "@/utils/system";
+export { applyTheme, disableAnimation } from "#utils/dom";
+export { getSystemTheme, resolveTheme } from "#utils/system";

@@ -3,8 +3,8 @@ import type React from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ThemeProvider } from "@/core/provider";
-import { useTheme } from "@/core/use-theme";
+import { ThemeProvider } from "#core/provider";
+import { useTheme } from "#core/use-theme";
 
 describe("ThemeProvider", () => {
   const originalMatchMedia = window.matchMedia;

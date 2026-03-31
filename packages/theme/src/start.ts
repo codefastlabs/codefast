@@ -51,4 +51,4 @@ export {
   persistThemeCookie,
   setThemeServerFn,
   type RootThemeLoaderData,
-} from "@/adapters/tanstack-start/server";
+} from "#adapters/tanstack-start/server";

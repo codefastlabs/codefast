@@ -1,4 +1,4 @@
-import { applyTheme, disableAnimation } from "@/utils/dom";
+import { applyTheme, disableAnimation } from "#utils/dom";
 
 describe("DOM Utilities", () => {
   describe("applyTheme", () => {

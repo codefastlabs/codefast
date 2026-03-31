@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 
 import { render, renderHook, screen } from "@testing-library/react";
 
-import type { ThemeContextType } from "@/types";
+import type { ThemeContextType } from "#types";
 
-import { ThemeContext } from "@/core/context";
-import { useTheme } from "@/core/use-theme";
+import { ThemeContext } from "#core/context";
+import { useTheme } from "#core/use-theme";
 
 /**
  * Helper to create a wrapper component for renderHook
