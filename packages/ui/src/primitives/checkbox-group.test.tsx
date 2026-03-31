@@ -7,7 +7,7 @@ import {
   CheckboxGroup,
   CheckboxGroupIndicator,
   CheckboxGroupItem,
-} from "@/primitives/checkbox-group";
+} from "#primitives/checkbox-group";
 
 describe("checkbox-group", () => {
   describe("CheckboxGroup component", () => {

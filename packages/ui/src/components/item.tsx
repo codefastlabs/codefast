@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn, tv } from "@codefast/tailwind-variants";
 import { Slot } from "@radix-ui/react-slot";
 
-import { Separator } from "@/components/separator";
+import { Separator } from "#components/separator";
 
 /* -----------------------------------------------------------------------------
  * Variants: Item

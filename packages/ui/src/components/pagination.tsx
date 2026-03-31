@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "@codefast/tailwind-variants";
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "#components/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

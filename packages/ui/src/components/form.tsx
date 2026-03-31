@@ -11,7 +11,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { useId } from "react";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
-import { Label } from "@/components/label";
+import { Label } from "#components/label";
 
 /* -----------------------------------------------------------------------------
  * Component: Form

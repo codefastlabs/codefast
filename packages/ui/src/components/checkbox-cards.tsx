@@ -5,8 +5,8 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "@codefast/tailwind-variants";
 import { CheckIcon } from "lucide-react";
 
-import { Label } from "@/components/label";
-import * as CheckboxGroupPrimitive from "@/primitives/checkbox-group";
+import { Label } from "#components/label";
+import * as CheckboxGroupPrimitive from "#primitives/checkbox-group";
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCards

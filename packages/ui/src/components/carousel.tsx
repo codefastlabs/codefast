@@ -10,7 +10,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button } from "@/components/button";
+import { Button } from "#components/button";
 
 /* -----------------------------------------------------------------------------
  * Context: Carousel
