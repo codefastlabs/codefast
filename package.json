@@ -49,13 +49,6 @@
     "tsx": "catalog:",
     "turbo": "catalog:"
   },
-  "lint-staged": {
-    "*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}": [
-      "pnpm exec oxfmt",
-      "pnpm exec oxlint --fix --deny-warnings"
-    ],
-    "*.{md,json,jsonc,css}": "pnpm exec oxfmt"
-  },
   "engines": {
     "node": ">=24.0.0"
   },
