@@ -206,6 +206,8 @@ Contributions are welcome! Here's how to get started:
    git checkout -b feat/my-feature
    ```
 5. Make your changes and add tests where applicable. Before committing, run `pnpm build:packages` (needed for type-aware Oxlint), then `pnpm lint`, `pnpm format:check`, and `pnpm test` from the repo root.
+   - For internal imports in apps/packages, use Node subpath imports via `package.json#imports` (for example `#components/button`).
+   - Avoid `compilerOptions.paths` in `tsconfig` for internal aliases; reserve TS path mapping only for external compatibility requirements.
 6. Commit your changes following [Conventional Commits](https://www.conventionalcommits.org/):
    ```bash
    git commit -m "feat: add new component"

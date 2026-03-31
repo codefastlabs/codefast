@@ -34,20 +34,20 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.30.0",
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
-    "@commitlint/types": "^20.5.0",
-    "@types/node": "^25.5.0",
-    "lint-staged": "^16.4.0",
-    "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0",
-    "oxlint-tsgolint": "^0.18.1",
-    "simple-git-hooks": "^2.13.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.21.0",
-    "turbo": "^2.8.21"
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/types": "catalog:",
+    "@types/node": "catalog:",
+    "lint-staged": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "simple-git-hooks": "catalog:",
+    "ts-node": "catalog:",
+    "tsx": "catalog:",
+    "turbo": "catalog:"
   },
   "lint-staged": {
     "*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}": [
