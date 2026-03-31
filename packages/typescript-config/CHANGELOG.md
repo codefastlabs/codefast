@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.3.12-canary.0
+
+### Patch Changes
+
+- [`3f647bc`](https://github.com/codefastlabs/codefast/commit/3f647bce65e4c12d3349f06a5a3a80acf13b03de) Thanks [@thevuong](https://github.com/thevuong)! - refactor: align remaining alias references to subpath imports
+
 ## 0.3.11
 
 ### Patch Changes
