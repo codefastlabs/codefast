@@ -6,7 +6,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "@codefast/tailwind-variants";
 import { Drawer as DrawerPrimitive } from "vaul";
 
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "#components/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer

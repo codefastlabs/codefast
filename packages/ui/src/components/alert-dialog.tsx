@@ -6,7 +6,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "@codefast/tailwind-variants";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "#components/button";
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog

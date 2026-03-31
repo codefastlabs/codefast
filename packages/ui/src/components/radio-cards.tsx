@@ -5,7 +5,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "@codefast/tailwind-variants";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 
-import { Label } from "@/components/label";
+import { Label } from "#components/label";
 
 /* -----------------------------------------------------------------------------
  * Component: RadioCards

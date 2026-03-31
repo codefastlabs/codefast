@@ -6,8 +6,8 @@ import type { ComponentProps, JSX, ReactNode } from "react";
 import { cn, tv } from "@codefast/tailwind-variants";
 import { useMemo } from "react";
 
-import { Label } from "@/components/label";
-import { Separator } from "@/components/separator";
+import { Label } from "#components/label";
+import { Separator } from "#components/separator";
 
 /* -----------------------------------------------------------------------------
  * Variants: Field

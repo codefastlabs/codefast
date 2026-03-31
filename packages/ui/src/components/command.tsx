@@ -7,7 +7,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "#components/dialog";
 
 /* -----------------------------------------------------------------------------
  * Component: Command

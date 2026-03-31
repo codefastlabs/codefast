@@ -6,8 +6,8 @@ import type { ComponentProps, CSSProperties, JSX } from "react";
 import { tv } from "@codefast/tailwind-variants";
 import { useCallback, useMemo } from "react";
 
-import { useAnimatedValue } from "@/hooks/use-animated-value";
-import * as ProgressCirclePrimitive from "@/primitives/progress-circle";
+import { useAnimatedValue } from "#hooks/use-animated-value";
+import * as ProgressCirclePrimitive from "#primitives/progress-circle";
 
 /* -------------------------------------------------------------------------------------------------
  * Variant: ProgressCircle

@@ -9,13 +9,13 @@ import { Slot } from "@radix-ui/react-slot";
 import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button } from "@/components/button";
-import { Input } from "@/components/input";
-import { Separator } from "@/components/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet";
-import { Skeleton } from "@/components/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
-import { useIsMobile } from "@/hooks/use-is-mobile";
+import { Button } from "#components/button";
+import { Input } from "#components/input";
+import { Separator } from "#components/separator";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "#components/sheet";
+import { Skeleton } from "#components/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#components/tooltip";
+import { useIsMobile } from "#hooks/use-is-mobile";
 
 /* -----------------------------------------------------------------------------
  * Variant: SidebarMenuButton

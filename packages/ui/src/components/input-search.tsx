@@ -10,7 +10,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@/components/input-group";
+} from "#components/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch

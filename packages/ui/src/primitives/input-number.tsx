@@ -15,8 +15,8 @@ import { createContextScope } from "@radix-ui/react-context";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import * as InputPrimitive from "@/primitives/input";
-import { createInputScope } from "@/primitives/input";
+import * as InputPrimitive from "#primitives/input";
+import { createInputScope } from "#primitives/input";
 
 /* -----------------------------------------------------------------------------
  * Context: InputNumber
