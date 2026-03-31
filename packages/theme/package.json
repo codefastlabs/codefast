@@ -32,6 +32,9 @@
   "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "imports": {
+    "#*": "./src/*"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -102,7 +105,7 @@
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch",
-    "typecheck": "tsc --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "zod": "^4.3.6"

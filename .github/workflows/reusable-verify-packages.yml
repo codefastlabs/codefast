@@ -1,5 +1,5 @@
 # Step order: type-aware oxlint (.oxlintrc.json) requires built `dist` typings for workspace `package.json` exports.
-# Sequence — build packages, repository lint/format (`pnpm check`), then package test and typecheck.
+# Sequence — build packages, repository lint/format (`pnpm check`), then package test and check-types.
 
 name: Reusable verify packages
 
@@ -33,8 +33,8 @@ jobs:
       - name: Lint and format (root)
         run: pnpm check
 
-      - name: Test and typecheck packages
-        run: npx turbo run test:coverage:ci typecheck --filter="./packages/**"
+      - name: Test and check-types packages
+        run: npx turbo run test:coverage:ci check-types --filter="./packages/**"
 
       - name: Upload coverage
         uses: codecov/codecov-action@v6

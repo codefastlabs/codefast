@@ -35,6 +35,10 @@
   "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "imports": {
+    "#*": "./src/*",
+    "#test/*": "./tests/*"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -52,7 +56,7 @@
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch",
-    "typecheck": "tsc --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "clsx": "^2.1.1",
