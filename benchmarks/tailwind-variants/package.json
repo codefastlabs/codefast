@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
-    "class-variance-authority": "^0.7.1",
-    "tailwind-merge": "^3.5.0",
-    "tailwind-variants": "^3.2.2",
-    "tinybench": "^6.0.0"
+    "class-variance-authority": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tailwind-variants": "catalog:",
+    "tinybench": "catalog:"
   }
 }
