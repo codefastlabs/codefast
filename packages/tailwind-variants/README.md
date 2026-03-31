@@ -552,6 +552,8 @@ pnpm test --filter=@codefast/tailwind-variants
 pnpm test:coverage --filter=@codefast/tailwind-variants
 ```
 
+Package build/dev scripts use TypeScript directly via `tsc -p tsconfig.build.json` (watch mode for `pnpm dev --filter=@codefast/tailwind-variants`).
+
 ## License
 
 Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.

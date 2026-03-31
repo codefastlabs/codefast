@@ -312,6 +312,8 @@ pnpm test --filter=@codefast/theme
 pnpm test:coverage --filter=@codefast/theme
 ```
 
+Package build/dev scripts use TypeScript directly via `tsc -p tsconfig.build.json` (watch mode for `pnpm dev --filter=@codefast/theme`).
+
 ## License
 
 Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
