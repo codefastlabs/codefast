@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequestHeader, setCookie } from "@tanstack/react-start/server";
 
-import type { ResolvedTheme, Theme } from "@/types";
-import { themeSchema } from "@/types";
+import type { ResolvedTheme, Theme } from "#types";
+import { themeSchema } from "#types";
 
-import { DEFAULT_RESOLVED_THEME, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/constants";
+import { DEFAULT_RESOLVED_THEME, DEFAULT_THEME, THEME_STORAGE_KEY } from "#constants";
 
 /* -----------------------------------------------------------------------------
  * Request helpers (one round-trip when composed)

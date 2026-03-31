@@ -2,9 +2,6 @@
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
     "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "types": ["node", "jest"]
   },
   "include": ["**/*.ts", "**/*.tsx"],

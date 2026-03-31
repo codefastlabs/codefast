@@ -1,8 +1,8 @@
 import { use } from "react";
 
-import type { ThemeContextType } from "@/types";
+import type { ThemeContextType } from "#types";
 
-import { ThemeContext } from "@/core/context";
+import { ThemeContext } from "#core/context";
 
 /* -----------------------------------------------------------------------------
  * Hook

@@ -1,5 +1,5 @@
-import { DEFAULT_RESOLVED_THEME } from "@/constants";
-import { getSystemTheme, resolveTheme } from "@/utils/system";
+import { DEFAULT_RESOLVED_THEME } from "#constants";
+import { getSystemTheme, resolveTheme } from "#utils/system";
 
 describe("System Theme Detection", () => {
   const originalMatchMedia = window.matchMedia;

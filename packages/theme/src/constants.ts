@@ -1,4 +1,4 @@
-import type { ResolvedTheme, Theme } from "@/types";
+import type { ResolvedTheme, Theme } from "#types";
 
 /* -----------------------------------------------------------------------------
  * Public Constants

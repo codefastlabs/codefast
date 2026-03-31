@@ -1,4 +1,4 @@
-import { themes, themeSchema } from "@/types";
+import { themes, themeSchema } from "#types";
 
 describe("Theme Schema Validation", () => {
   describe("themeSchema", () => {

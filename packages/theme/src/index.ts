@@ -10,17 +10,17 @@
  */
 
 // Types & Schema
-export type { ResolvedTheme, Theme, ThemeContextType } from "@/types";
-export { themes, themeSchema } from "@/types";
+export type { ResolvedTheme, Theme, ThemeContextType } from "#types";
+export { themes, themeSchema } from "#types";
 
 // Constants
-export { DEFAULT_RESOLVED_THEME, DEFAULT_THEME } from "@/constants";
+export { DEFAULT_RESOLVED_THEME, DEFAULT_THEME } from "#constants";
 
 // Core (Provider, Hook — use `@codefast/theme/core` for `ThemeContext`)
-export { ThemeProvider, useTheme } from "@/core";
+export { ThemeProvider, useTheme } from "#core";
 
 // Script (FOUC prevention)
-export { ThemeScript } from "@/script";
+export { ThemeScript } from "#script";
 
 // Utilities: DOM + `getSystemTheme` live under `@codefast/theme/utils`
-export { resolveTheme } from "@/utils/system";
+export { resolveTheme } from "#utils/system";

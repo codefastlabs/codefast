@@ -2,7 +2,7 @@ import type React from "react";
 
 import { render, screen } from "@testing-library/react";
 
-import { ThemeContext } from "@/core/context";
+import { ThemeContext } from "#core/context";
 
 describe("ThemeContext", () => {
   test("should be a valid React context", () => {
