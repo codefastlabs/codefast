@@ -37,11 +37,9 @@
   "types": "./dist/index.d.ts",
   "imports": {
     "#*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
+      "./dist/*",
+      "./dist/*.js",
+      "./dist/*/index.js"
     ],
     "#test/*": [
       "./tests/*",
@@ -61,14 +59,14 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "dev": "tsdown --watch --no-clean",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch",
-    "check-types": "tsc --noEmit"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "clsx": "catalog:",
@@ -84,7 +82,6 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "ts-node": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "^6.0.2"
   }
 }

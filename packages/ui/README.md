@@ -484,6 +484,10 @@ pnpm test --filter=@codefast/ui
 pnpm test:coverage --filter=@codefast/ui
 ```
 
+Package build/dev scripts use TypeScript directly via `tsc -p tsconfig.build.json` (watch mode for `pnpm dev --filter=@codefast/ui`).
+
+CSS entry exports under `@codefast/ui/css/*` are sourced from `src/css/*`.
+
 ### Adding New Components
 
 1. Create component files in `src/components/[component-name]/`.

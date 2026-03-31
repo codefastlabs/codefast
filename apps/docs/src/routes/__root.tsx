@@ -1,7 +1,7 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@codefast/theme/start";
-import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
+import { resolveTheme, ThemeProvider, ThemeScript } from "@codefast/theme";
 import type { QueryClient } from "@tanstack/react-query";
 import type { PropsWithChildren } from "react";
 import TanStackFormDevtools from "#integrations/tanstack-form/devtools";
@@ -48,7 +48,7 @@ export const Route = createRootRouteWithContext<RootRouterContext>()({
       },
     ],
     links: [
-      { rel: "preload", href: appCss, as: "style" },
+      ...(import.meta.env.PROD ? [{ rel: "preload", href: appCss, as: "style" as const }] : []),
       { rel: "stylesheet", href: appCss },
     ],
   }),

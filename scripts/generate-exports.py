@@ -112,6 +112,7 @@ class PackageStats:
     path: Path
     js_modules: int = 0
     css_exports: int = 0
+    custom_exports: int = 0
     total_exports: int = 0
     has_transform: bool = False
     css_config_status: str = ''  # 'disabled', 'configured', ''
@@ -412,6 +413,23 @@ def generate_css_exports(
     return css_exports
 
 
+def merge_custom_exports(
+    exports: dict[str, dict[str, str] | str],
+    custom_exports: dict[str, dict[str, str] | str] | None,
+) -> dict[str, dict[str, str] | str]:
+    """Merge custom exports into generated exports."""
+    if not custom_exports:
+        return exports
+
+    merged = dict(exports)
+    for key, value in custom_exports.items():
+        if key == PACKAGE_JSON_EXPORT:
+            continue
+        merged[key] = value
+
+    return merged
+
+
 GROUP_ORDER: dict[str, int] = {
     'components': 100,
     'hooks': 200,
@@ -461,7 +479,8 @@ def get_export_group(
 def generate_exports(
     dist_dir: Path,
     path_transform: Callable[[str], str] | None = None,
-    css_config: dict | bool | None = None
+    css_config: dict | bool | None = None,
+    custom_exports: dict[str, dict[str, str] | str] | None = None,
 ) -> tuple[dict[str, dict[str, str] | str], int, int]:
     """Generate exports from the dist directory. Returns (exports, js_count, css_count)."""
     files = scan_directory(dist_dir)
@@ -500,7 +519,11 @@ def generate_exports(
     css_count = len(css_exports)
 
     sorted_exports.update(css_exports)
-    all_keys = sorted(sorted_exports.keys(), key=sort_key)
+    sorted_exports = merge_custom_exports(sorted_exports, custom_exports)
+    all_keys = sorted(
+        (key for key in sorted_exports.keys() if key != PACKAGE_JSON_EXPORT),
+        key=sort_key
+    )
     final_exports = {key: sorted_exports[key] for key in all_keys}
     final_exports[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT
 
@@ -574,15 +597,29 @@ def process_package(
         css_exports_config = config.get('cssExports', {})
         css_config = css_exports_config.get(relative_path) if css_exports_config else None
 
+        custom_exports_config = config.get('customExports', {})
+        custom_exports = (
+            custom_exports_config.get(relative_path, {})
+            if isinstance(custom_exports_config, dict) else {}
+        )
+        if not isinstance(custom_exports, dict):
+            custom_exports = {}
+
         if css_config is False:
             pkg_stats.css_config_status = 'disabled'
         elif css_config is not None:
             pkg_stats.css_config_status = 'configured'
 
-        exports, js_count, css_count = generate_exports(dist_dir, path_transform, css_config)
+        exports, js_count, css_count = generate_exports(
+            dist_dir,
+            path_transform,
+            css_config,
+            custom_exports,
+        )
 
         pkg_stats.js_modules = js_count
         pkg_stats.css_exports = css_count
+        pkg_stats.custom_exports = len(custom_exports)
         pkg_stats.total_exports = len(exports)
 
         update_package_json(package_json_path, exports)
@@ -610,6 +647,8 @@ def process_package(
             breakdown_parts.append(f'{Colors.GREEN}{js_count} modules{Colors.RESET}')
         if css_count > 0:
             breakdown_parts.append(f'{Colors.MAGENTA}{css_count} CSS{Colors.RESET}')
+        if pkg_stats.custom_exports > 0:
+            breakdown_parts.append(f'{Colors.YELLOW}{pkg_stats.custom_exports} custom{Colors.RESET}')
 
         if breakdown_parts:
             print(f'  {Colors.DIM}└─{Colors.RESET} {" + ".join(breakdown_parts)} = {Colors.BRIGHT_CYAN}{len(exports)} exports{Colors.RESET}')

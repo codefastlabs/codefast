@@ -13,6 +13,13 @@ const config = {
       removePrefix: "./components/",
     },
   },
+
+  // Custom exports that should be preserved/overridden per package
+  customExports: {
+    "packages/ui": {
+      "./css/*": "./src/css/*",
+    },
+  },
 };
 
 export default config;

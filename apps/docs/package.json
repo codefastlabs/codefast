@@ -9,18 +9,14 @@
       "./src/*.tsx",
       "./src/*/index.ts",
       "./src/*/index.tsx"
-    ],
-    "#content-collections": [
-      "./.content-collections/generated/index.ts",
-      "./.content-collections/generated/index.d.ts"
     ]
   },
   "scripts": {
     "build": "vite build",
+    "check-types": "tsc --noEmit",
     "dev": "vite dev",
     "start": "node .output/server/index.mjs",
-    "test": "vitest run",
-    "check-types": "tsc --noEmit"
+    "test": "vitest run"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
@@ -83,7 +79,7 @@
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "jsdom": "catalog:",
-    "typescript": "catalog:",
+    "typescript": "^6.0.2",
     "vite": "catalog:",
     "vitest": "catalog:",
     "web-vitals": "catalog:"
