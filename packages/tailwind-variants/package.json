@@ -59,10 +59,10 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "check-types": "tsc --noEmit",
+    "build": "rm -rf dist && tsgo -p tsconfig.build.json",
+    "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
-    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "dev": "tsgo -p tsconfig.build.json --watch --preserveWatchOutput",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
@@ -78,6 +78,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "expect-type": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
