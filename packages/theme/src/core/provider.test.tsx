@@ -228,7 +228,12 @@ describe("ThemeProvider", () => {
         const { setTheme } = useTheme();
 
         return (
-          <button data-testid="toggle" onClick={async () => setTheme("dark")}>
+          <button
+            data-testid="toggle"
+            onClick={() => {
+              void setTheme("dark");
+            }}
+          >
             Toggle
           </button>
         );
@@ -255,7 +260,12 @@ describe("ThemeProvider", () => {
         const { setTheme, theme } = useTheme();
 
         return (
-          <button data-testid="toggle" onClick={async () => setTheme(theme)}>
+          <button
+            data-testid="toggle"
+            onClick={() => {
+              void setTheme(theme);
+            }}
+          >
             Toggle
           </button>
         );

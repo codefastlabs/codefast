@@ -117,7 +117,12 @@ export function FormDemo() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid w-full max-w-sm gap-6">
+      <form
+        onSubmit={(e) => {
+          void form.handleSubmit(onSubmit)(e);
+        }}
+        className="grid w-full max-w-sm gap-6"
+      >
         <FormField
           control={form.control}
           name="username"
