@@ -31,6 +31,7 @@ import { Textarea } from "@codefast/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
 import { CircleIcon, InfoIcon } from "lucide-react";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 const spokenLanguages = [
   { label: "English", value: "en" },
@@ -254,7 +255,7 @@ export function ChatSettings() {
                 <FieldLabel>Tasks</FieldLabel>
                 <FieldDescription>
                   Get notified when tasks you&apos;ve created have updates.{" "}
-                  <a href="#">Manage tasks</a>
+                  <Link to="/">Manage tasks</Link>
                 </FieldDescription>
                 <FieldGroup data-slot="checkbox-group">
                   <Field orientation="horizontal">

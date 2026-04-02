@@ -21,6 +21,7 @@ import { Kbd } from "@codefast/ui/kbd";
 import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { IconArrowUpRight, IconFolderCode } from "@tabler/icons-react";
 import { PlusIcon, SearchIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export function EmptyDemo() {
   return (
@@ -38,14 +39,14 @@ export function EmptyDemo() {
         <EmptyContent>
           <div className="flex gap-2">
             <Button asChild>
-              <a href="#">Create project</a>
+              <Link to="/">Create project</Link>
             </Button>
             <Button variant="outline">Import project</Button>
           </div>
           <Button variant="link" asChild className="text-muted-foreground">
-            <a href="#">
+            <Link to="/">
               Learn more <IconArrowUpRight />
-            </a>
+            </Link>
           </Button>
         </EmptyContent>
       </Empty>
@@ -59,9 +60,9 @@ export function EmptyDemo() {
         <EmptyContent>
           <Button>Try again</Button>
           <Button variant="link" asChild className="text-muted-foreground">
-            <a href="#">
+            <Link to="/">
               Learn more <IconArrowUpRight />
-            </a>
+            </Link>
           </Button>
         </EmptyContent>
       </Empty>
@@ -84,7 +85,7 @@ export function EmptyDemo() {
             </InputGroupAddon>
           </InputGroup>
           <EmptyDescription>
-            Need help? <a href="#">Contact support</a>
+            Need help? <Link to="/">Contact support</Link>
           </EmptyDescription>
         </EmptyContent>
       </Empty>
@@ -92,8 +93,8 @@ export function EmptyDemo() {
         <EmptyHeader>
           <EmptyTitle>Nothing to see here</EmptyTitle>
           <EmptyDescription>
-            No posts have been created yet. Get started by <a href="#">creating your first post</a>{" "}
-            to share with the community.
+            No posts have been created yet. Get started by{" "}
+            <Link to="/">creating your first post</Link> to share with the community.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -125,7 +126,7 @@ export function EmptyDemo() {
                   </InputGroupAddon>
                 </InputGroup>
                 <EmptyDescription>
-                  Need help? <a href="#">Contact support</a>
+                  Need help? <Link to="/">Contact support</Link>
                 </EmptyDescription>
               </EmptyContent>
             </Empty>
@@ -149,14 +150,14 @@ export function EmptyDemo() {
               <EmptyContent>
                 <div className="flex gap-2">
                   <Button asChild>
-                    <a href="#">Create project</a>
+                    <Link to="/">Create project</Link>
                   </Button>
                   <Button variant="outline">Import project</Button>
                 </div>
                 <Button variant="link" asChild className="text-muted-foreground">
-                  <a href="#">
+                  <Link to="/">
                     Learn more <IconArrowUpRight />
-                  </a>
+                  </Link>
                 </Button>
               </EmptyContent>
             </Empty>
@@ -188,14 +189,14 @@ export function EmptyDemo() {
                 <EmptyContent>
                   <div className="flex gap-2">
                     <Button asChild>
-                      <a href="#">Create project</a>
+                      <Link to="/">Create project</Link>
                     </Button>
                     <Button variant="outline">Import project</Button>
                   </div>
                   <Button variant="link" asChild className="text-muted-foreground">
-                    <a href="#">
+                    <Link to="/">
                       Learn more <IconArrowUpRight />
-                    </a>
+                    </Link>
                   </Button>
                 </EmptyContent>
               </Empty>
@@ -210,8 +211,8 @@ export function EmptyDemo() {
                 <EmptyHeader>
                   <EmptyTitle>Nothing to see here</EmptyTitle>
                   <EmptyDescription>
-                    No posts have been created yet. <a href="#">Create your first post</a> to share
-                    with the community.
+                    No posts have been created yet. <Link to="/">Create your first post</Link> to
+                    share with the community.
                   </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>

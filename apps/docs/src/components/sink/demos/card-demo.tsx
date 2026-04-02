@@ -13,6 +13,7 @@ import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
 import { BathIcon, BedIcon, LandPlotIcon } from "lucide-react";
 import { Image } from "@unpic/react";
+import { Link } from "@tanstack/react-router";
 
 export function CardDemo() {
   return (
@@ -32,12 +33,12 @@ export function CardDemo() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
+                  <Link
+                    to="/"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <Input id="password" type="password" autoComplete="current-password" required />
               </div>
@@ -53,9 +54,9 @@ export function CardDemo() {
           </Button>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <a href="#" className="underline underline-offset-4">
+            <Link to="/" className="underline underline-offset-4">
               Sign up
-            </a>
+            </Link>
           </div>
         </CardFooter>
       </Card>

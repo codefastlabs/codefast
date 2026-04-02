@@ -20,6 +20,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { Textarea } from "@codefast/ui/textarea";
+import { Link } from "@tanstack/react-router";
 
 export function ShipRegistrationForm() {
   return (
@@ -27,7 +28,7 @@ export function ShipRegistrationForm() {
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold tracking-tight">Join us in SF or online on October 23</h1>
         <FieldDescription>
-          Already signed up? <a href="#">Log in</a>
+          Already signed up? <Link to="/">Log in</Link>
         </FieldDescription>
       </div>
       <form>
@@ -68,7 +69,7 @@ export function ShipRegistrationForm() {
             <FieldLegend>2. Complete your attendee information</FieldLegend>
             <FieldDescription>
               By entering your information, you acknowledge that you have read and agree to the{" "}
-              <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+              <Link to="/">Terms of Service</Link> and <Link to="/">Privacy Policy</Link>.
             </FieldDescription>
             <FieldGroup className="grid grid-cols-2 gap-x-4">
               <Field>
@@ -152,8 +153,8 @@ export function ShipRegistrationForm() {
           <Field>
             <Button type="submit">Purchase Ticket</Button>
             <FieldDescription>
-              By clicking Purchase Ticket, you agree to the <a href="#">Terms of Service</a> and{" "}
-              <a href="#">Privacy Policy</a>.
+              By clicking Purchase Ticket, you agree to the <Link to="/">Terms of Service</Link> and{" "}
+              <Link to="/">Privacy Policy</Link>.
             </FieldDescription>
           </Field>
         </FieldGroup>

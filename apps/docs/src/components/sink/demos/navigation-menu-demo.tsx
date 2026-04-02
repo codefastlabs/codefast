@@ -102,7 +102,7 @@ export function NavigationMenuDemo() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerVariants()}>
-              <a href="#">Documentation</a>
+              <Link to="/">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -111,7 +111,7 @@ export function NavigationMenuDemo() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerVariants()}>
-              <a href="#">Documentation</a>
+              <Link to="/">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -120,24 +120,24 @@ export function NavigationMenuDemo() {
               <ul className="grid w-75 gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <a href="#">
+                    <Link to="/">
                       <div className="font-medium">Components</div>
                       <div className="text-muted-foreground">
                         Browse all components in the library.
                       </div>
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <a href="#">
+                    <Link to="/">
                       <div className="font-medium">Documentation</div>
                       <div className="text-muted-foreground">Learn how to use the library.</div>
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <a href="#">
+                    <Link to="/">
                       <div className="font-medium">Blog</div>
                       <div className="text-muted-foreground">Read our latest blog posts.</div>
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -149,13 +149,13 @@ export function NavigationMenuDemo() {
               <ul className="grid w-50 gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <a href="#">Components</a>
+                    <Link to="/">Components</Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <a href="#">Documentation</a>
+                    <Link to="/">Documentation</Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <a href="#">Blocks</a>
+                    <Link to="/">Blocks</Link>
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -167,22 +167,22 @@ export function NavigationMenuDemo() {
               <ul className="grid w-50 gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <a href="#" className="flex-row items-center gap-2">
+                    <Link to="/" className="flex-row items-center gap-2">
                       <CircleHelpIcon />
                       Backlog
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <a href="#" className="flex-row items-center gap-2">
+                    <Link to="/" className="flex-row items-center gap-2">
                       <CircleIcon />
                       To Do
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <a href="#" className="flex-row items-center gap-2">
+                    <Link to="/" className="flex-row items-center gap-2">
                       <CircleCheckIcon />
                       Done
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -203,10 +203,10 @@ function ListItem({
   return (
     <li {...props}>
       <NavigationMenuLink asChild>
-        <a href={href}>
+        <Link to={href}>
           <div className="text-sm leading-none font-medium">{title}</div>
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
-        </a>
+        </Link>
       </NavigationMenuLink>
     </li>
   );

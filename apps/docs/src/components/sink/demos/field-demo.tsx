@@ -49,6 +49,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
+import { Link } from "@tanstack/react-router";
 
 export function FieldDemo() {
   return (
@@ -683,7 +684,7 @@ function ClusterConfig() {
       <CardHeader>
         <CardTitle>Buy your cluster</CardTitle>
         <CardDescription>
-          Need a custom setup? <a href="#">Contact us</a>.
+          Need a custom setup? <Link to="/">Contact us</Link>.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -1012,9 +1013,9 @@ function SignupForm() {
               <Field>
                 <p className="text-center text-sm">
                   Already have an account?{" "}
-                  <a href="#" className="underline underline-offset-4">
+                  <Link to="/" className="underline underline-offset-4">
                     Sign in
-                  </a>
+                  </Link>
                 </p>
               </Field>
             </FieldGroup>
@@ -1048,9 +1049,9 @@ function LoginForm() {
                 required
               />
               <FieldDescription>
-                <a href="#" className="text-sm underline underline-offset-4">
+                <Link to="/" className="text-sm underline underline-offset-4">
                   Forgot your password?
-                </a>
+                </Link>
               </FieldDescription>
             </Field>
             <Field orientation="horizontal">
@@ -1106,9 +1107,9 @@ function LoginForm() {
             <Field>
               <p className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <a href="#" className="font-medium underline underline-offset-4">
+                <Link to="/" className="font-medium underline underline-offset-4">
                   Create an account
-                </a>
+                </Link>
               </p>
             </Field>
           </FieldGroup>

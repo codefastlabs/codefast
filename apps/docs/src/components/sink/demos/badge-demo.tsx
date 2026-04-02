@@ -1,5 +1,6 @@
 import { Badge } from "@codefast/ui/badge";
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export function BadgeDemo() {
   return (
@@ -30,24 +31,24 @@ export function BadgeDemo() {
       </div>
       <div className="flex w-full flex-wrap gap-2">
         <Badge asChild>
-          <a href="#">
+          <Link to="/">
             Link <ArrowRightIcon />
-          </a>
+          </Link>
         </Badge>
         <Badge asChild variant="secondary">
-          <a href="#">
+          <Link to="/">
             Link <ArrowRightIcon />
-          </a>
+          </Link>
         </Badge>
         <Badge asChild variant="destructive">
-          <a href="#">
+          <Link to="/">
             Link <ArrowRightIcon />
-          </a>
+          </Link>
         </Badge>
         <Badge asChild variant="outline">
-          <a href="#">
+          <Link to="/">
             Link <ArrowRightIcon />
-          </a>
+          </Link>
         </Badge>
       </div>
     </div>

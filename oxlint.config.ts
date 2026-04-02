@@ -1,29 +1,9 @@
 import { defineConfig } from "oxlint";
 
 export default defineConfig({
-  plugins: ["import", "react", "jest", "vitest", "jsx-a11y", "typescript"],
-  options: {
-    typeAware: true,
-  },
-  settings: {
-    react: {
-      version: "19.2",
-    },
-  },
   env: {
     builtin: true,
   },
-  overrides: [
-    {
-      files: ["apps/docs/src/components/sink/**/*.{ts,tsx}"],
-      rules: {
-        "jsx-a11y/anchor-is-valid": "off",
-        "jsx-a11y/role-has-required-aria-props": "off",
-        "jsx-a11y/prefer-tag-over-role": "off",
-        "react/no-children-prop": "off",
-      },
-    },
-  ],
   ignorePatterns: [
     "**/node_modules/**",
     "**/pnpm-lock.yaml",
@@ -38,4 +18,44 @@ export default defineConfig({
     "**/*.tsbuildinfo",
     "apps/docs/src/routeTree.gen.ts",
   ],
+  options: {
+    typeAware: true,
+  },
+  overrides: [
+    {
+      files: ["benchmarks/**/*.{js,ts,tsx}"],
+      rules: {
+        "no-console": "off",
+      },
+    },
+    {
+      files: [
+        "apps/docs/src/components/default-catch-boundary.tsx",
+        "apps/docs/src/components/sink/app/component-wrapper.tsx",
+        "apps/docs/src/components/sink/forms/notion-prompt-form.tsx",
+        "packages/ui/src/hooks/use-copy-to-clipboard.ts",
+        "packages/theme/src/core/provider.tsx",
+      ],
+      rules: {
+        "no-console": "off",
+      },
+    },
+  ],
+  plugins: ["import", "react", "jest", "vitest", "jsx-a11y", "typescript"],
+  rules: {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "no-console": "error",
+    "no-debugger": "error",
+  },
+  settings: {
+    react: {
+      version: "19.2",
+    },
+  },
 });

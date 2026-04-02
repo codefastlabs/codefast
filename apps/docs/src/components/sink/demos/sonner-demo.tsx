@@ -52,7 +52,7 @@ const allTypes: ToastDemoItem[] = [
       toast.message("Event has been created", {
         action: {
           label: "Undo",
-          onClick: () => console.log("Undo"),
+          onClick: () => toast("Action undone"),
         },
       }),
   },
@@ -62,7 +62,7 @@ const allTypes: ToastDemoItem[] = [
       toast.message("Event has been created", {
         cancel: {
           label: "Cancel",
-          onClick: () => console.log("Cancel"),
+          onClick: () => toast("Action cancelled"),
         },
       }),
   },
@@ -111,13 +111,16 @@ export function SonnerDemo() {
             description: "Sunday, December 03, 2023 at 9:00 AM",
             action: {
               label: "Undo",
-              onClick: () => console.log("Undo"),
+              onClick: () => {
+                toast("Action undone");
+              },
             },
           })
         }
       >
         Show Toast
       </Button>
+
       {allTypes.map((type) => (
         <Button
           variant="ghost"
