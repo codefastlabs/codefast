@@ -1,4 +1,4 @@
-# Step order: type-aware oxlint (.oxlintrc.json) requires built `dist` typings for workspace `package.json` exports.
+# Step order: type-aware oxlint (oxlint.config.ts) requires built `dist` typings for workspace `package.json` exports.
 # Sequence — build packages, repository lint/format (`pnpm check`), then package test and check-types.
 
 name: Reusable verify packages

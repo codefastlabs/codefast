@@ -1,0 +1,34 @@
+import { defineConfig } from "oxfmt";
+
+export default defineConfig({
+  endOfLine: "lf",
+  insertFinalNewline: true,
+  printWidth: 100,
+  proseWrap: "preserve",
+  sortTailwindcss: {
+    stylesheet: "apps/docs/src/styles/globals.css",
+    functions: ["cn", "cva", "tv"],
+  },
+  overrides: [
+    {
+      files: ["**/*.{json,jsonc}"],
+      options: {
+        printWidth: 120,
+      },
+    },
+  ],
+  ignorePatterns: [
+    "**/node_modules/**",
+    "**/pnpm-lock.yaml",
+    "**/*.snap",
+    "**/coverage/**",
+    "**/.turbo/**",
+    "**/dist/**",
+    "**/.output/**",
+    "**/.nitro/**",
+    "**/.tanstack/**",
+    "**/.content-collections/**",
+    "**/*.tsbuildinfo",
+    "apps/docs/src/routeTree.gen.ts",
+  ],
+});
