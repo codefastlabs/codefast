@@ -13,7 +13,9 @@ export function CopySnippetButton({ text }: { text: string }) {
   return (
     <button
       type="button"
-      onClick={handleCopy}
+      onClick={() => {
+        void handleCopy();
+      }}
       className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       aria-label="Copy code to clipboard"
     >

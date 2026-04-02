@@ -532,7 +532,9 @@ export function ThemeAppearancePageDeferred({
                       key={themeOption}
                       variant={isActive ? "default" : "ghost"}
                       size="lg"
-                      onClick={() => setTheme(themeOption)}
+                      onClick={() => {
+                        void setTheme(themeOption);
+                      }}
                       className={`h-12 w-full justify-center gap-2 sm:h-11 sm:rounded-xl ${isActive ? "shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       <Icon className="size-4 shrink-0" aria-hidden />

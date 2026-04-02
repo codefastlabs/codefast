@@ -77,7 +77,12 @@ export function ExampleForm() {
           <CardDescription>This form uses React Hook Form with Zod validation.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form id="subscription-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            id="subscription-form"
+            onSubmit={(e) => {
+              void form.handleSubmit(onSubmit)(e);
+            }}
+          >
             <FieldGroup>
               <Controller
                 name="name"
