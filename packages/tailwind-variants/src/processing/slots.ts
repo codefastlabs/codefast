@@ -121,7 +121,7 @@ export const resolveSlotClasses = <
   // Process compound variants with slots if they exist
   if (compoundVariantGroups && compoundVariantGroups.length > 0) {
     for (let index = 0, length = compoundVariantGroups.length; index < length; index++) {
-      const compoundVariant = compoundVariantGroups[index];
+      const compoundVariant: CompoundVariantWithSlotsType<T, S> = compoundVariantGroups[index];
       let isMatching = true;
 
       const compoundKeys = Object.keys(compoundVariant);
