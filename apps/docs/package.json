@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "check-types": "tsc --noEmit",
+    "check-types": "tsgo --noEmit",
     "dev": "vite dev",
     "start": "node .output/server/index.mjs",
     "test": "vitest run"
@@ -76,6 +76,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "jsdom": "catalog:",
