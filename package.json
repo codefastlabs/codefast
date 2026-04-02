@@ -6,9 +6,9 @@
     "bench": "turbo run bench",
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@codefast*/*...",
-    "check": "pnpm run lint && pnpm run format:check",
+    "check": "turbo run quality",
     "check-types": "turbo run check-types",
-    "check:fix": "pnpm run lint:fix && pnpm run format",
+    "check:fix": "turbo run quality:fix",
     "clean": "turbo clean",
     "clean:cache": "pnpm store prune",
     "clean:modules": "pnpm -r exec rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml",
@@ -52,5 +52,16 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "core-js",
+      "esbuild",
+      "sharp",
+      "simple-git-hooks",
+      "unrs-resolver"
+    ]
+  }
 }

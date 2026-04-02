@@ -1,6 +1,28 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "tasks": {
+    "//#format": {},
+    "//#format:fix": {
+      "dependsOn": ["//#lint:fix"],
+      "cache": false
+    },
+    "//#lint": {
+      "dependsOn": ["^build"]
+    },
+    "//#lint:fix": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "//#quality": {
+      "dependsOn": ["//#lint", "//#format"]
+    },
+    "//#quality:fix": {
+      "dependsOn": ["//#lint:fix", "//#format:fix"]
+    },
+    "bench": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
@@ -38,10 +60,6 @@
     "test:watch": {
       "cache": false,
       "persistent": true
-    },
-    "bench": {
-      "dependsOn": ["^build"],
-      "cache": false
     }
   }
 }
