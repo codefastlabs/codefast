@@ -40,6 +40,7 @@
     "@commitlint/config-conventional": "catalog:",
     "@commitlint/types": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "lint-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
