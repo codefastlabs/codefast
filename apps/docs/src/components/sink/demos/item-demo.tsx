@@ -18,6 +18,7 @@ import { Spinner } from "@codefast/ui/spinner";
 import { IconChevronRight, IconDownload } from "@tabler/icons-react";
 import { PlusIcon, TicketIcon } from "lucide-react";
 import { Fragment } from "react";
+import { Link } from "@tanstack/react-router";
 
 interface PersonItem {
   username: string;
@@ -313,7 +314,7 @@ export function ItemDemo() {
           <ItemGroup className="gap-4">
             {music.map((song) => (
               <Item key={song.title} variant="outline" asChild role="listitem">
-                <a href="#">
+                <Link to="/">
                   <ItemMedia variant="image">
                     <img
                       src={`https://avatar.vercel.sh/${song.title}`}
@@ -342,7 +343,7 @@ export function ItemDemo() {
                       <IconDownload />
                     </Button>
                   </ItemActions>
-                </a>
+                </Link>
               </Item>
             ))}
           </ItemGroup>
@@ -352,13 +353,13 @@ export function ItemDemo() {
             {issues.map((issue) => (
               <Fragment key={issue.number}>
                 <Item asChild className="rounded-none">
-                  <a href="#">
+                  <Link to="/">
                     <ItemContent>
                       <ItemTitle className="line-clamp-1">{issue.title}</ItemTitle>
                       <ItemDescription>{issue.description}</ItemDescription>
                     </ItemContent>
                     <ItemContent className="self-start">#{issue.number}</ItemContent>
-                  </a>
+                  </Link>
                 </Item>
                 <ItemSeparator />
               </Fragment>

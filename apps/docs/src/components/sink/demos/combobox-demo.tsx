@@ -12,7 +12,7 @@ import {
 } from "@codefast/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 const frameworks = [
   {
@@ -108,6 +108,7 @@ export function ComboboxDemo() {
 function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const listId = useId();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -116,6 +117,7 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-controls={listId}
           className="w-full justify-between md:max-w-50"
         >
           {value
@@ -127,7 +129,7 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
           <CommandInput placeholder="Search framework..." />
-          <CommandList>
+          <CommandList id={listId}>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {frameworkList.map((framework) => (
@@ -165,6 +167,7 @@ function UserCombobox({
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(selectedUserId);
+  const listId = useId();
 
   const selectedUser = useMemo(() => userList.find((user) => user.id === value), [value, userList]);
 
@@ -175,6 +178,7 @@ function UserCombobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-controls={listId}
           className="w-full justify-between px-2 md:max-w-50"
         >
           {selectedUser ? (
@@ -194,7 +198,7 @@ function UserCombobox({
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
           <CommandInput placeholder="Search user..." />
-          <CommandList>
+          <CommandList id={listId}>
             <CommandEmpty>No user found.</CommandEmpty>
             <CommandGroup>
               {userList.map((user) => (
@@ -315,6 +319,7 @@ function TimezoneCombobox({
 function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
   const [open, setOpen] = useState(false);
   const [selectedFrameworks, setSelectedFrameworks] = useState<Framework[]>([]);
+  const listId = useId();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -323,6 +328,7 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-controls={listId}
           className="w-fit min-w-70 justify-between"
         >
           {selectedFrameworks.length > 0
@@ -334,7 +340,7 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
       <PopoverContent className="w-75 p-0" align="start">
         <Command>
           <CommandInput placeholder="Search framework..." />
-          <CommandList>
+          <CommandList id={listId}>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {frameworkList.map((framework) => (

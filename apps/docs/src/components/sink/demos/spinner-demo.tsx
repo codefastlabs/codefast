@@ -12,6 +12,7 @@ import { Field, FieldLabel } from "@codefast/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
 import { Spinner } from "@codefast/ui/spinner";
 import { ArrowRightIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export function SpinnerDemo() {
   return (
@@ -84,14 +85,14 @@ export function SpinnerDemo() {
         <EmptyContent>
           <div className="flex gap-2">
             <Button asChild>
-              <a href="#">Create project</a>
+              <Link to="/">Create project</Link>
             </Button>
             <Button variant="outline">Import project</Button>
           </div>
           <Button variant="link" asChild className="text-muted-foreground">
-            <a href="#">
+            <Link to="/">
               Learn more <ArrowRightIcon />
-            </a>
+            </Link>
           </Button>
         </EmptyContent>
       </Empty>
