@@ -19,14 +19,14 @@ import { Textarea } from "#components/textarea";
 
 const inputGroupVariants = tv({
   base: cn(
-    "group/input-group relative flex w-full items-center rounded-lg border border-input shadow-xs transition-[color,box-shadow] outline-none dark:bg-input/30",
+    "group/input-group relative flex w-full items-center rounded-lg border border-field-border bg-field shadow-xs transition-[color,box-shadow] outline-none",
     "h-9 min-w-0 has-[>textarea]:h-auto",
     "has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-2",
     "has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-2",
     "has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>[data-slot=input-group-control]]:pb-3",
     "has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>[data-slot=input-group-control]]:pt-3",
-    "has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50",
-    "has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
+    "has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring-focus",
+    "has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-ring-error",
   ),
 });
 
@@ -179,7 +179,7 @@ function InputGroupInput({ className, ...props }: InputGroupInputProps): JSX.Ele
   return (
     <Input
       className={cn(
-        "flex-1 rounded-none border-0 bg-transparent px-3 py-1 shadow-none focus-visible:ring-0 dark:bg-transparent",
+        "flex-1 rounded-none border-0 bg-transparent px-3 py-1 shadow-none focus-visible:ring-0",
         className,
       )}
       data-slot="input-group-control"
@@ -198,7 +198,7 @@ function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): J
   return (
     <Textarea
       className={cn(
-        "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
+        "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0",
         className,
       )}
       data-slot="input-group-control"

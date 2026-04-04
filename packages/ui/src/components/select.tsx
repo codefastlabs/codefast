@@ -1,9 +1,8 @@
 "use client";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
-import type { ComponentProps, JSX } from "react";
-
 import { cn } from "@codefast/tailwind-variants";
+import type { ComponentProps, JSX } from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
@@ -52,7 +51,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
     <SelectPrimitive.Trigger
       className={buttonVariants({
         className: [
-          "[&_svg:not([class*='text-'])]:text-muted-foreground focus:ring-ring/50 focus:border-ring w-fit justify-between px-3 font-normal focus:ring-3 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate",
+          "[&_svg:not([class*='text-'])]:text-muted-foreground focus:ring-ring-focus focus:border-ring w-fit justify-between px-3 font-normal focus:ring-3 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate",
           className,
         ],
         size,

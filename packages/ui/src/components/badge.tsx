@@ -1,9 +1,8 @@
 "use client";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
-import type { ComponentProps, JSX } from "react";
-
 import { tv } from "@codefast/tailwind-variants";
+import type { ComponentProps, JSX } from "react";
 import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
@@ -11,20 +10,20 @@ import { Slot } from "@radix-ui/react-slot";
  * -------------------------------------------------------------------------- */
 
 const badgeVariants = tv({
-  base: "inline-flex w-fit shrink-0 items-center justify-center gap-2 rounded-md border px-1.5 py-0.5 text-xs font-medium whitespace-nowrap outline-hidden transition focus-visible:ring-3 focus-visible:ring-ring/50 [&>svg]:size-3 [&>svg]:shrink-0",
+  base: "inline-flex w-fit shrink-0 items-center justify-center gap-2 rounded-md border px-1.5 py-0.5 text-xs font-medium whitespace-nowrap outline-hidden transition focus-visible:ring-3 focus-visible:ring-ring-focus [&>svg]:size-3 [&>svg]:shrink-0",
   defaultVariants: {
     variant: "default",
   },
   variants: {
     variant: {
       default:
-        "border-transparent bg-primary text-primary-foreground focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 [a&]:hover:bg-primary/80",
+        "border-transparent bg-primary text-primary-foreground focus-visible:ring-ring-focus [a&]:hover:bg-primary-hover",
       destructive:
-        "border-transparent bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
+        "border-transparent bg-destructive text-destructive-foreground focus-visible:ring-ring-error [a&]:hover:bg-destructive-hover",
       outline:
-        "border-input bg-background focus-visible:border-ring [a&]:hover:border-ring/60 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        "border-field-border bg-background text-foreground focus-visible:border-ring [a&]:hover:border-ring/60 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       secondary:
-        "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/80",
+        "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary-hover",
     },
   },
 });

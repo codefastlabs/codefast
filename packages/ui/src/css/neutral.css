@@ -1,21 +1,41 @@
 :root {
-  --input: oklch(0.922 0 0); /* --color-neutral-200 */
+  --field: transparent;
+  --field-hover: oklch(0.97 0 0 / 50%);
+  --field-border: oklch(0.922 0 0); /* --color-neutral-200 */
+  --field-border-hover: oklch(0.708 0 0 / 60%);
+
   --border: oklch(0.922 0 0); /* --color-neutral-200 */
 
   --ring: oklch(0.708 0 0); /* --color-neutral-400 */
+  --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
+  --ring-subtle: color-mix(in oklch, var(--ring), transparent 80%);
+  --ring-error: color-mix(in oklch, var(--destructive), transparent 80%);
 
   --background: oklch(1 0 0); /* --color-neutral-50 */
   --foreground: oklch(0.145 0 0); /* --color-neutral-950 */
 
   --primary: oklch(0.205 0 0); /* --color-neutral-900 */
+  --primary-hover: oklch(0.269 0 0); /* --color-neutral-800 */
+  --primary-active: oklch(0.145 0 0); /* --color-neutral-950 */
+  --primary-focus-ring: color-mix(in oklch, var(--primary), transparent 60%);
+  --primary-subtle: oklch(0.205 0 0 / 5%);
   --primary-foreground: oklch(0.985 0 0); /* --color-neutral-50 */
 
   --secondary: oklch(0.97 0 0); /* --color-neutral-100 */
+  --secondary-hover: oklch(0.922 0 0); /* --color-neutral-200 */
+  --secondary-active: oklch(0.871 0 0); /* --color-neutral-300 */
   --secondary-foreground: oklch(0.205 0 0); /* --color-neutral-900 */
 
+  --tabs-active-bg: var(--background);
+
   --destructive: oklch(0.577 0.245 27.325); /* --color-red-600 */
+  --destructive-hover: oklch(0.488 0.211 26.437); /* --color-red-700 */
+  --destructive-active: oklch(0.424 0.187 25.638); /* --color-red-800 */
+  --destructive-focus: oklch(0.577 0.245 27.325 / 10%);
+  --destructive-foreground: oklch(1 0 0);
 
   --accent: oklch(0.97 0 0); /* --color-neutral-100 */
+  --accent-hover: oklch(0.922 0 0);
   --accent-foreground: oklch(0.205 0 0); /* --color-neutral-900 */
 
   --muted: oklch(0.97 0 0); /* --color-neutral-100 */
@@ -47,23 +67,43 @@
 }
 
 .dark {
-  --input: oklch(1 0 0 / 15%); /* --color-white */
+  --field: oklch(1 0 0 / 15%);
+  --field-hover: oklch(1 0 0 / 25%);
+  --field-border: oklch(1 0 0 / 15%); /* --color-white */
+  --field-border-hover: oklch(0.556 0 0 / 70%);
+
   --border: oklch(1 0 0 / 10%); /* --color-white */
 
   --ring: oklch(0.556 0 0); /* --color-neutral-500 */
+  --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
+  --ring-subtle: color-mix(in oklch, var(--ring), transparent 80%);
+  --ring-error: color-mix(in oklch, var(--destructive), transparent 60%);
 
   --background: oklch(0.145 0 0); /* --color-neutral-950 */
   --foreground: oklch(0.985 0 0); /* --color-neutral-50 */
 
   --primary: oklch(0.922 0 0); /* --color-neutral-200 */
+  --primary-hover: oklch(0.985 0 0); /* --color-neutral-50 */
+  --primary-active: oklch(0.871 0 0); /* --color-neutral-300 */
+  --primary-focus-ring: color-mix(in oklch, var(--primary), transparent 60%);
+  --primary-subtle: oklch(0.922 0 0 / 15%);
   --primary-foreground: oklch(0.205 0 0); /* --color-neutral-900 */
 
   --secondary: oklch(0.269 0 0); /* --color-neutral-800 */
+  --secondary-hover: oklch(0.371 0 0); /* --color-neutral-700 */
+  --secondary-active: oklch(0.205 0 0); /* --color-neutral-900 */
   --secondary-foreground: oklch(0.985 0 0); /* --color-neutral-50 */
 
+  --tabs-active-bg: oklch(1 0 0 / 10%);
+
   --destructive: oklch(0.704 0.191 22.216); /* --color-red-400 */
+  --destructive-hover: oklch(0.785 0.154 21.037); /* --color-red-300 */
+  --destructive-active: oklch(0.623 0.204 22.881); /* --color-red-500 */
+  --destructive-focus: oklch(0.704 0.191 22.216 / 20%);
+  --destructive-foreground: oklch(0 0 0);
 
   --accent: oklch(0.371 0 0); /* --color-neutral-700 */
+  --accent-hover: oklch(0.488 0 0);
   --accent-foreground: oklch(0.985 0 0); /* --color-neutral-50 */
 
   --muted: oklch(0.269 0 0); /* --color-neutral-800 */

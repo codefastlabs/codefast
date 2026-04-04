@@ -1,11 +1,10 @@
 "use client";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
-import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, JSX } from "react";
-
 import { cn, tv } from "@codefast/tailwind-variants";
+import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
+import type { ComponentProps, JSX } from "react";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 
 /* -----------------------------------------------------------------------------
@@ -105,7 +104,7 @@ function ScrollArea({
         {...props}
       >
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] ring-ring/50 outline-ring transition focus-visible:ring-4 focus-visible:outline-1"
+          className="size-full rounded-[inherit] ring-ring-focus outline-ring transition focus-visible:ring-4 focus-visible:outline-1"
           data-slot="scroll-area-viewport"
         >
           {children}

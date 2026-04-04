@@ -48,7 +48,7 @@ function ResizableSeparator({
   return (
     <ResizablePrimitive.Separator
       className={cn(
-        "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+        "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring-focus",
         "aria-[orientation=vertical]:w-px",
         "aria-[orientation=horizontal]:h-px",
         className,

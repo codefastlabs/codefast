@@ -1,7 +1,6 @@
 import type { VariantProps } from "@codefast/tailwind-variants";
-import type { ComponentProps, JSX } from "react";
-
 import { cn, tv } from "@codefast/tailwind-variants";
+import type { ComponentProps, JSX } from "react";
 import { Slot } from "@radix-ui/react-slot";
 
 import { Separator } from "#components/separator";
@@ -14,7 +13,7 @@ const itemVariants = tv({
   base: cn(
     "group/item flex flex-wrap items-center rounded-lg border border-transparent text-sm outline-hidden transition-colors duration-100",
     "[a]:transition-colors [a]:hover:bg-accent/50",
-    "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+    "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus",
   ),
   defaultVariants: {
     size: "default",

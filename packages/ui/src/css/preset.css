@@ -9,23 +9,38 @@
 }
 
 @theme inline {
-  --color-input: var(--input);
+  --color-field: var(--field);
+  --color-field-hover: var(--field-hover);
+  --color-field-border: var(--field-border);
+  --color-field-border-hover: var(--field-border-hover);
+
   --color-border: var(--border);
 
   --color-ring: var(--ring);
+  --color-ring-focus: var(--ring-focus);
+  --color-ring-subtle: var(--ring-subtle);
+  --color-ring-error: var(--ring-error);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
   --color-primary-foreground: var(--primary-foreground);
 
   --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-active: var(--secondary-active);
   --color-secondary-foreground: var(--secondary-foreground);
 
   --color-destructive: var(--destructive);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-active: var(--destructive-active);
+  --color-destructive-foreground: var(--destructive-foreground);
 
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
 
   --color-muted: var(--muted);

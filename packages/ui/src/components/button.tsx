@@ -36,16 +36,16 @@ const buttonVariants = tv({
     },
     variant: {
       default:
-        "bg-primary text-primary-foreground hover:not-disabled:bg-primary/80 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40",
+        "bg-primary text-primary-foreground hover:not-disabled:bg-primary-hover focus-visible:ring-ring-focus active:not-disabled:bg-primary-active",
       destructive:
-        "bg-destructive text-white hover:not-disabled:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        "bg-destructive text-destructive-foreground hover:not-disabled:bg-destructive-hover focus-visible:ring-ring-error active:not-disabled:bg-destructive-active",
       ghost:
-        "hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:ring-ring/50 dark:hover:not-disabled:bg-secondary/50",
-      link: "text-primary underline-offset-4 hover:not-disabled:underline focus-visible:ring-ring/50",
+        "hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active",
+      link: "text-primary underline-offset-4 hover:not-disabled:underline focus-visible:ring-ring-focus",
       outline:
-        "border border-input shadow-xs hover:not-disabled:border-ring/60 hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive focus-within:aria-invalid:ring-destructive/20 hover:not-disabled:aria-invalid:border-destructive/60 dark:bg-input/30 dark:hover:not-disabled:bg-input/50 dark:aria-invalid:border-destructive/70 dark:focus-within:aria-invalid:ring-destructive/40",
+        "border border-field-border shadow-xs hover:not-disabled:border-field-border-hover hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground focus-visible:border-ring focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active aria-invalid:border-destructive focus-within:aria-invalid:ring-ring-error hover:not-disabled:aria-invalid:border-destructive/60",
       secondary:
-        "bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary/80 focus-visible:ring-ring/50",
+        "bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary-hover focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active",
     },
   },
 });
