@@ -1,5 +1,9 @@
 :root {
-  --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
+  --field: transparent;
+  --field-hover: oklch(0.92 0.004 286.32 / 50%); /* --color-zinc-200 / 50% */
+  --field-border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
+  --field-border-hover: oklch(0.705 0.015 286.067 / 60%); /* --color-zinc-400 / 60% */
+
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
 
   --ring: oklch(0.75 0.21 322); /* --color-fuchsia-400 */
@@ -47,8 +51,12 @@
 }
 
 .dark {
-  --input: oklch(1 0 0 / 15%); /* --color-white */
-  --border: oklch(1 0 0 / 10%); /* --color-white */
+  --field: oklch(1 0 0 / 15%); /* --color-white / 15% */
+  --field-hover: oklch(1 0 0 / 25%); /* --color-white / 25% */
+  --field-border: oklch(1 0 0 / 15%); /* --color-white / 15% */
+  --field-border-hover: oklch(0.442 0.017 285.786 / 70%); /* --color-zinc-600 / 70% */
+
+  --border: oklch(1 0 0 / 10%); /* --color-white / 10% */
 
   --ring: oklch(0.4 0.16 326); /* --color-fuchsia-900 */
 
@@ -84,7 +92,7 @@
   --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
-  --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
+  --sidebar-border: oklch(1 0 0 / 10%); /* --color-white / 10% */
   --sidebar-ring: oklch(0.4 0.16 326); /* --color-fuchsia-900 */
 
   --chart-1: oklch(0.83 0.13 321); /* --color-fuchsia-300 */
