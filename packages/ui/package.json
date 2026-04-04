@@ -421,7 +421,7 @@
     "postcss": "catalog:",
     "tailwindcss": "catalog:",
     "ts-node": "catalog:",
-    "typescript": "^6.0.2"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@types/react": "^19.0",
