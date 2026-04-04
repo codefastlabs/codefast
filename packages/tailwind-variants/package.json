@@ -83,6 +83,6 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "ts-node": "catalog:",
-    "typescript": "^6.0.2"
+    "typescript": "catalog:"
   }
 }
