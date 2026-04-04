@@ -1,6 +1,11 @@
 ---
 name: pagespeed-optimize-loop
-description: Production build, serve, Lighthouse or PageSpeed audits, fix issues iteratively. Performance default ≥90 mobile/desktop; accessibility, best practices, and SEO default 100/100 on both. Clears .cursor/pagespeed-reports at session start; removes reports after session end; writes JSON per round under round-NN. Use for Core Web Vitals, Lighthouse/PageSpeed tuning, or iterative speed and quality work (any language).
+description: >
+  Use when auditing, measuring, or iteratively improving Lighthouse / PageSpeed scores
+  (Core Web Vitals, performance, accessibility, best practices, SEO). Triggers on:
+  "improve page speed", "run Lighthouse", "PageSpeed score", "Core Web Vitals", or
+  any iterative build → measure → fix workflow targeting Lighthouse categories.
+  Do NOT trigger for general build or CI failures unrelated to performance.
 ---
 
 # PageSpeed / Lighthouse optimization loop
@@ -31,17 +36,40 @@ Details: [reference.md](reference.md).
 
 - **Performance** (default): **≥ 90** on **mobile** and **desktop** (`categories.performance.score` × 100). **Relaxed** only if the user asks: **≥ 85**. **Stretch** only if the user asks: **≥ 95** or **100**.
 - **Accessibility**, **best practices**, **SEO**: **100/100** on **mobile** and **desktop** (`categories.<id>.score` × 100). Treat any score below 100 as incomplete for that category.
-- Lab scores vary run-to-run (**± a few points**). **Performance**: if you are **1 point** below its threshold, **re-run once** before large refactors. **Other categories**: if you land at **99**, **re-run once** before invasive changes (same idea as the old “100-only” loop).
+- Lab scores vary run-to-run (**± a few points**):
+  - **Performance**: if you are **1 point** below threshold, **re-run once** before large refactors.
+  - **Other categories**: if you land at **99**, **re-run once** before invasive changes.
+  - **Score unstable (>3 point swing between consecutive runs)**: stop. Check for stale Chrome instances or server load, restart the server fresh, then re-run before drawing conclusions.
 
 ## One-time setup
+
+### Pre-flight checks
+
+Before running any audit, verify the following:
+
+```bash
+# 1. Chrome or Chromium available (required by Lighthouse)
+google-chrome --version 2>/dev/null || chromium --version 2>/dev/null || \
+  chromium-browser --version 2>/dev/null || \
+  echo "WARNING: Chrome not found — install it or Lighthouse will fail"
+
+# 2. Node available
+node --version   # Lighthouse requires Node >=18
+```
 
 Pick target path (e.g. `/`), **Performance threshold** (default **≥ 90** mobile + desktop unless the user specifies otherwise), confirm **a11y / best-practices / SEO = 100** unless the user overrides, **iteration cap** (e.g. **8–15**), and document **build** + production **`start`** for the app — see [examples.md](examples.md) for this monorepo.
 
 ## Each round
 
 1. Production **build**
-2. **Serve** on a fixed host/port; wait until the URL returns **HTTP 200**
-3. Run **mobile** and **desktop** Lighthouse — use **`--only-categories=performance`** while tuning speed; use **`performance,accessibility,best-practices,seo`** (or separate runs per category) when validating the **full** default bar before stopping
+2. **Serve** on a fixed host/port; wait until the URL returns **HTTP 200** before running Lighthouse:
+   ```bash
+   until curl -sf "$BASE_URL" > /dev/null; do sleep 1; done
+   # or: npx wait-on "$BASE_URL"
+   ```
+3. Run **mobile** and **desktop** Lighthouse:
+   - Use **`--only-categories=performance`** while tuning speed in intermediate rounds
+   - Use **`performance,accessibility,best-practices,seo`** for final validation before stopping (pass as 4th argument to `run-lighthouse.sh`)
 4. **Save** JSON under the correct **`round-NN`**
 5. Record scores and failing audits; apply fixes using the mapping below
 6. **Rebuild** and repeat
@@ -49,7 +77,7 @@ Pick target path (e.g. `/`), **Performance threshold** (default **≥ 90** mobil
 ## When to stop
 
 - **Success**: on **both** mobile and desktop, **Performance** meets the **session threshold** (default **≥ 90**) **and** **accessibility**, **best practices**, and **SEO** are **100** (when those categories are in scope for the run).
-- **Cap reached**: report best scores, remaining audits, and last `round-NN` paths; suggest whether lowering only the **Performance** threshold or scoping URLs is appropriate — **do not** lower the **100** bar for a11y / best-practices / SEO unless the user explicitly allows it.
+- **Cap reached**: report best scores, remaining audits, and last `round-NN` paths. You may suggest **lowering the Performance threshold** only if appropriate — **never** propose lowering the a11y / best-practices / SEO bar unless the user explicitly asks.
 
 ## After the session (cleanup)
 
@@ -72,10 +100,6 @@ Prioritize **LCP, CLS, INP** and main-thread cost before minor polish.
 
 Re-audit after changes; do not assume gains without a new JSON report.
 
-## Project notes (this repo)
-
-**pnpm** + **turbo**. Docs app **`@apps/docs`**: `vite build`, then Nitro **`pnpm start`** (`node .output/server/index.mjs`). For audits use **`PORT=4173`** and base URL **`http://127.0.0.1:4173/`**. Commands: [examples.md](examples.md).
-
 ## Additional resources
 
 | Resource                                                                   | Purpose                                                |
@@ -85,3 +109,13 @@ Re-audit after changes; do not assume gains without a new JSON report.
 | [scripts/clear-pagespeed-reports.sh](scripts/clear-pagespeed-reports.sh)   | Reset `.cursor/pagespeed-reports` before a new session |
 | [scripts/remove-pagespeed-reports.sh](scripts/remove-pagespeed-reports.sh) | Delete `.cursor/pagespeed-reports` after the session   |
 | [scripts/run-lighthouse.sh](scripts/run-lighthouse.sh)                     | Mobile + desktop JSON under `round-NN`                 |
+
+---
+
+## Project-specific overrides (edit per target app)
+
+> ⚠️ This section is specific to one app in the monorepo. Update these values when auditing a different app.
+
+**Stack**: pnpm + turbo. Target app: **`@apps/docs`** — `vite build`, then Nitro `pnpm start` (`node .output/server/index.mjs`).
+For audits use **`PORT=4173`** and base URL **`http://127.0.0.1:4173/`**.
+Commands: [examples.md](examples.md).
