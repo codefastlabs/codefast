@@ -22,7 +22,7 @@
   --primary: oklch(20.5% 0 0); /* --color-neutral-900 */
   --primary-hover: color-mix(in oklch, var(--primary), white 10%); /* var(--primary) + white 10% */
   --primary-active: color-mix(in oklch, var(--primary), black 10%); /* var(--primary) + black 10% */
-  --primary-subtle: color-mix(in oklch, var(--primary), transparent 95%); /* var(--primary) / 5% */
+  --primary-checked: color-mix(in oklch, var(--primary), transparent 95%); /* var(--primary) / 5% */
   --primary-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
 
   --secondary: oklch(97% 0 0); /* --color-neutral-100 */
@@ -109,7 +109,11 @@
   --primary: oklch(92.2% 0 0); /* --color-neutral-200 */
   --primary-hover: color-mix(in oklch, var(--primary), white 10%); /* var(--primary) + white 10% */
   --primary-active: color-mix(in oklch, var(--primary), black 10%); /* var(--primary) + black 10% */
-  --primary-subtle: color-mix(in oklch, var(--primary), transparent 85%); /* var(--primary) / 15% */
+  --primary-checked: color-mix(
+    in oklch,
+    var(--primary),
+    transparent 85%
+  ); /* var(--primary) / 15% */
   --primary-foreground: oklch(20.5% 0 0); /* --color-neutral-900 */
 
   --secondary: oklch(26.9% 0 0); /* --color-neutral-800 */

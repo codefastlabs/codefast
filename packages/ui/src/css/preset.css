@@ -100,7 +100,7 @@
  *
  * Extended semantic colors — Checked controls use `ring-ring-primary` (slider,
  * checkbox-group, radio-group); destructive menu rows use `bg-destructive-focus`;
- * checked field cards use `bg-primary-subtle`; selected controls on `bg-muted`
+ * checked field cards use `bg-primary-checked`; selected controls on `bg-muted`
  * use `bg-muted-selected` (e.g. tabs.tsx).
  * Each maps through `@theme inline` to a palette `--*` variable.
  *
@@ -109,12 +109,12 @@
  *
  * | Concern            | Representative utilities |
  * |--------------------|---------------------------|
- * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover` |
+ * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover`, `bg-primary-checked` (checked card) |
  * | Default border     | `border-border`, `divide-field-border`, `bg-border` (scrollbar thumb) |
  * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
  * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
  * | Page canvas        | `bg-background`, `text-foreground` |
- * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `bg-primary-subtle`, `text-primary-foreground` |
+ * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `text-primary-foreground` |
  * | Secondary          | `bg-secondary`, `text-secondary-foreground`, `hover:bg-secondary-hover`, `active:bg-secondary-active` |
  * | Destructive        | `bg-destructive`, `hover:bg-destructive-hover`, `active:bg-destructive-active`, `bg-destructive-focus`, `text-destructive-foreground` |
  * | Accent / muted     | `bg-accent`, `text-accent-foreground`, `bg-muted`, `text-muted-foreground`, `bg-muted-selected` |
@@ -204,8 +204,8 @@
  *                            (separate from --ring-focus). Utility: `ring-ring-primary`.
  *                            Avoid naming palette vars with a final segment that
  *                            duplicates a Tailwind color prefix (`bg`, `ring`, …).
- *   --primary-subtle     — very-low-opacity primary tint for checked card
- *                            backgrounds (field.tsx). Utility: `bg-primary-subtle`.
+ *   --primary-checked     — very-low-opacity primary tint for checked card
+ *                            backgrounds (field.tsx). Utility: `bg-primary-checked`.
  *   --destructive-focus  — low-opacity destructive tint for focused destructive
  *                            menu items. Utility: `bg-destructive-focus`.
  *   --muted-selected     — selected fill on a muted substrate (Fluent-style subtle
@@ -217,7 +217,7 @@
  *   2. Map `--color-my-token: var(--my-token)` here if components need `bg-*` /
  *      `text-*` / `border-*` utilities; skip if only used via arbitrary `var()`.
  *   3. Follow the state-suffix chain: rest → hover → active → (palette-derived
- *      extensions such as ring-primary / primary-subtle) → foreground → any
+ *      extensions such as ring-primary / primary-checked) → foreground → any
  *      remaining role-specific tokens (e.g. muted-selected). Match order in palette
  *      files (`blue.css`, …) when adding keys here.
  *   4. Avoid one-off values inside components; always trace back to a palette var.
@@ -298,7 +298,7 @@
    * Primary actions — brand CTA
    *
    * Order mirrors palette files: base fill, hover/active, then ring-primary /
-   * primary-subtle (checked controls / cards), then primary-foreground. Drives:
+   * primary-checked (checked controls / cards), then primary-foreground. Drives:
    * button (default variant), badge (default), switch
    * (checked bg), checked radio/checkbox fill and border, calendar range
    * endpoints, slider thumb, tooltip surface (bg-primary / text-primary-foreground),
@@ -310,7 +310,7 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);
-  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-checked: var(--primary-checked);
   --color-primary-foreground: var(--primary-foreground);
 
   /*

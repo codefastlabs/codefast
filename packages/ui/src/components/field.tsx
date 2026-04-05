@@ -140,7 +140,7 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
       className={cn(
         "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border *:data-[slot=field]:p-4",
-        "has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary-subtle",
+        "has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary-checked",
         className,
       )}
       data-slot="field-label"
