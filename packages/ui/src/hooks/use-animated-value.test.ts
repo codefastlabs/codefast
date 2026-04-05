@@ -111,13 +111,14 @@ describe("useAnimatedValue", () => {
       }
     });
 
-    // With easeOutQuad, the value at the midpoint will be > 50% of the total value
+    // With easeInOutCubic, the value at the midpoint will be ~50% of the total value
+    // (the inflection point of the S-curve)
     // Should be greater than 0 but less than 100
     expect(result.current).toBeGreaterThan(0);
     expect(result.current).toBeLessThan(100);
 
-    // More specific check with easeOutQuad at 50% duration typically results in about 75% progress
-    expect(result.current).toBeCloseTo(75, -1); // Allow for a large margin of error
+    // More specific check with easeInOutCubic at 50% duration results in about 50% progress
+    expect(result.current).toBeCloseTo(50, -1); // Allow for a large margin of error
 
     // Simulate the final animation frame (1000 ms)
     act(() => {
@@ -254,7 +255,7 @@ describe("useAnimatedValue", () => {
       }
     });
 
-    // With easeOutQuad at 75% of the duration, the value will be close to the target
+    // With easeInOutCubic at 75% of the duration, the value will be close to the target
     expect(result.current).toBeGreaterThan(75);
     expect(result.current).toBeLessThan(100);
 

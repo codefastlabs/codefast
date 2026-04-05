@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Produce a smoothly animated numeric value in response to changes.
  *
- * Applies a time-based easing (easeOutQuad) between the current and target values
+ * Applies a time-based easing (easeInOutCubic) between the current and target values
  * over the specified duration. When disabled, the value updates immediately.
  *
  * @param targetValue - Target number to animate toward; null resolves to 0.
@@ -73,8 +73,9 @@ export function useAnimatedValue(
         // Linear progress (0..1)
         const progress = elapsedTime / duration;
 
-        // easeOutQuad easing
-        const easeProgress = 1 - (1 - progress) * (1 - progress);
+        // easeInOutCubic — anticipation at start, follow-through at end (S-curve)
+        const easeProgress =
+          progress < 0.5 ? 4 * progress * progress * progress : 1 - (-2 * progress + 2) ** 3 / 2;
 
         // Interpolated value
         const nextValue = currentValue + valueRange * easeProgress;

@@ -14,7 +14,7 @@ import { buttonVariants } from "#components/button";
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-ui data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=open]:animate-in data-[state=open]:animation-duration-500",
+  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-emphasis data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=open]:animate-in data-[state=open]:animation-duration-500",
   defaultVariants: {
     side: "right",
   },
@@ -78,7 +78,7 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-ui data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=open]:fade-in-0",
+          "fixed inset-0 z-50 bg-black/50 ease-emphasis data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=open]:fade-in-0",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"

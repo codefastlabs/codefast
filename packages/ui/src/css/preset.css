@@ -24,7 +24,7 @@
  *   (`ring-ring-focus/50`). Using `inline` keeps a single assignment chain: palette
  *   → preset → utilities.
  * - `@theme` (non-inline) — Adds theme values that do **not** need to proxy an
- *   external variable; here, `--ease-ui` is defined once for motion consistency.
+ *   external variable; here five `--ease-*` tokens are defined for motion consistency.
  * - `@source` — Tells the compiler which files to scan for class names. The UI
  *   package ships **compiled** JS under `dist/`; scanning `dist` ensures every
  *   utility referenced in published components exists in CSS when an app imports
@@ -76,8 +76,8 @@
  *
  * Floating UI — dropdown-menu, context-menu, menubar, select content, popover,
  * hover-card, navigation-menu, tooltip, dialog and sheet backdrops use
- * `bg-popover`, `text-popover-foreground`, `border`, and `ease-ui` together with
- * `tw-animate-css` enter or exit utilities.
+ * `bg-popover`, `text-popover-foreground`, `border`, and `ease-spring` / `ease-emphasis`
+ * together with `tw-animate-css` enter or exit utilities.
  *
  * Cards and alerts — card.tsx and alert variants use `bg-card`, `text-card-foreground`,
  * and destructive text where needed. Breadcrumb and many list rows lean on
@@ -123,7 +123,7 @@
  * | Popover / card     | `bg-popover`, `text-popover-foreground`, `bg-card`, `text-card-foreground` |
  * | Sidebar            | `bg-sidebar`, `text-sidebar-foreground`, `sidebar-accent*`, `sidebar-border`, `ring-sidebar-ring` |
  * | Chart series       | `chart-1` … `chart-5` (and `fill-*` / `stroke-*` when exposed) |
- * | Motion             | `ease-ui` on overlays and sheet or dialog transitions |
+ * | Motion             | `ease-emphasis` on overlays, `ease-spring` on floating UI, `ease-standard` on structural, `ease-exit` on dismiss |
  */
 
 @import "tw-animate-css";
@@ -283,16 +283,28 @@
 }
 
 /*
- * Shared motion curve for UI transitions.
+ * Multi-tier motion curves for UI transitions.
  *
- * Cubic bezier (0.32, 0.72, 0, 1): quick ease-out with light overshoot. Used as
- * `ease-ui` on dialog, alert-dialog, sheet, drawer, popover, hover-card, dropdown,
- * context and navigation menus, menubar, select, and tooltip content together with
- * `tw-animate-css` enter or exit utilities. Prefer this token over raw
- * `cubic-bezier()` in class strings so motion stays consistent.
+ * Five semantically named easing tokens, each targeting a different interaction
+ * category so motion feels intentional and human across the full component set.
+ *
+ * | Token            | Curve                              | Ideal duration | Use case                                                |
+ * |------------------|------------------------------------|----------------|---------------------------------------------------------|
+ * | `ease-micro`     | cubic-bezier(0.25, 0.1, 0.25, 1)  | 100–150 ms     | Hover, focus, color and opacity micro-interactions      |
+ * | `ease-standard`  | cubic-bezier(0.2, 0, 0, 1)        | 200–300 ms     | Accordion, switch, sidebar — clear ease-in then settle  |
+ * | `ease-emphasis`  | cubic-bezier(0.22, 1, 0.36, 1)    | 300–500 ms     | Dialog, alert-dialog, sheet — dramatic open/close       |
+ * | `ease-spring`    | cubic-bezier(0.34, 1.56, 0.64, 1) | 200–300 ms     | Popover, tooltip, dropdown, menu — lively overshoot     |
+ * | `ease-exit`      | cubic-bezier(0.4, 0, 1, 1)        | 150–200 ms     | Quick, decisive dismiss for any closing overlay         |
+ *
+ * Prefer these tokens over raw `cubic-bezier()` in class strings so motion
+ * stays consistent, auditable, and safe to tune globally.
  */
 @theme {
-  --ease-ui: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-micro: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasis: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @layer base {
