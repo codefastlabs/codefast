@@ -63,7 +63,7 @@ function InputSearch({
       {value ? (
         <InputGroupButton
           aria-label="Clear search"
-          className="focus-visible:not-disabled:bg-input rounded-full focus-visible:ring-0"
+          className="rounded-full focus-visible:ring-0 focus-visible:not-disabled:bg-field"
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
           size="icon-sm"

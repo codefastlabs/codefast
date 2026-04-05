@@ -42,7 +42,7 @@ function Slider({
       {...props}
     >
       <SliderPrimitive.Track
-        className="bg-input relative w-full grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1"
+        className="relative w-full grow overflow-hidden rounded-full bg-field-border data-[orientation=horizontal]:h-1 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1"
         data-slot="slider-track"
       >
         <SliderPrimitive.Range
