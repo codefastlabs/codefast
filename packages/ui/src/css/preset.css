@@ -1,14 +1,209 @@
+/*
+ * preset.css — Tailwind CSS v4 preset for @codefast/ui.
+ *
+ * Purpose
+ * -------
+ *
+ * This stylesheet is the contract between **semantic CSS variables** (defined per
+ * brand palette in files such as `stone.css`, `blue.css`, …) and **Tailwind
+ * utilities** used across `packages/ui/src/components`. Components never hard-code
+ * hex/HSL; they reference tokens like `bg-primary` or `border-field-border`, which
+ * keeps enterprise apps consistent, auditable, and safe to re-theme (light/dark,
+ * multi-tenant branding) without touching component source.
+ *
+ * Tailwind at-rules cited below (`@theme`, `@source`, `@custom-variant`, …) are
+ * normal CSS/Tailwind syntax, not documentation metadata tags.
+ *
+ * Tailwind v4 mechanics used here
+ * -------------------------------
+ *
+ * - `@theme inline` — Registers theme keys that **resolve through** `var(--…)`
+ *   references. Palette files assign `--primary`, `--field`, etc. on `:root` /
+ *   `.dark`; this block exposes them as `--color-*` so Tailwind can emit
+ *   `bg-primary`, `text-foreground`, `ring-ring-focus`, and opacity modifiers
+ *   (`ring-ring-focus/50`). Using `inline` keeps a single assignment chain: palette
+ *   → preset → utilities.
+ * - `@theme` (non-inline) — Adds theme values that do **not** need to proxy an
+ *   external variable; here, `--ease-ui` is defined once for motion consistency.
+ * - `@source` — Tells the compiler which files to scan for class names. The UI
+ *   package ships **compiled** JS under `dist/`; scanning `dist` ensures every
+ *   utility referenced in published components exists in CSS when an app imports
+ *   this preset, even if the app does not import those components’ TSX sources.
+ * - `@custom-variant dark` — Class-based dark mode: any selector under `.dark`
+ *   (or `.dark *`) matches `dark:` utilities, which pairs with palette files that
+ *   override the same `--*` variables inside `.dark { … }`.
+ *
+ * Dependencies
+ * ------------
+ *
+ * - `tw-animate-css` — Supplies animation utilities and keyframes aligned with
+ *   Radix-style `data-[state=*]` patterns (`animate-in`, `fade-in-0`, slide/zoom
+ *   variants, etc.) used by overlays, menus, dialogs, and sheets in this library.
+ *
+ * How to extend safely (enterprise / design systems)
+ * ----------------------------------------------------
+ *
+ * 1. **New color token** — Add the raw `--my-token` in every palette file (light
+ *    and `.dark`), then map `--color-my-token: var(--my-token)` inside
+ *    `@theme inline`. Document the token in your design system; avoid skipping
+ *    dark variants.
+ * 2. **New radius step** — Prefer deriving from `--radius` like existing
+ *    `--radius-*` keys so `rounded-*` stays proportional when products change
+ *    corner radius globally.
+ * 3. **Consumer apps** — Import this preset **and** one palette; do not redefine
+ *    `--color-*` keys unless you intentionally override Tailwind’s generated theme.
+ *
+ * Usage in `src/components` (reviewed against the library source)
+ * ---------------------------------------------------------------
+ *
+ * Repeated interaction pattern — Most focusable controls combine `border-ring`,
+ * `ring-3`, and `ring-ring-focus` (inputs, button, toggle, item, calendar cells,
+ * OTP slots, select trigger, menus where applicable). Invalid state pairs
+ * `border-destructive` with `ring-ring-error`, often with `/60` opacity on hover
+ * for adjacent borders (see input-number stepper rail, textarea).
+ *
+ * Field chrome — `bg-field`, `border-field-border`, `hover:bg-field-hover`, and
+ * `border-field-border-hover` appear on text fields (input, textarea, native
+ * select, input-group shell, OTP), outline toggle, checkbox and radio surfaces,
+ * calendar month dropdown trigger, and input-number wrapper; many of those also
+ * use `shadow-xs`.
+ *
+ * Actions — button and badge drive `primary`, `secondary`, `destructive` (with
+ * `-hover`, `-active`, `-foreground`); outline button stays on field borders plus
+ * `secondary-hover`. Switch uses `bg-primary` when checked and `bg-field` when
+ * off. Calendar range UI uses `bg-primary` and `text-primary-foreground` for
+ * endpoints and `bg-accent` for the middle span.
+ *
+ * Floating UI — dropdown-menu, context-menu, menubar, select content, popover,
+ * hover-card, navigation-menu, tooltip, dialog and sheet backdrops use
+ * `bg-popover`, `text-popover-foreground`, `border`, and `ease-ui` together with
+ * `tw-animate-css` enter or exit utilities.
+ *
+ * Cards and alerts — card.tsx and alert variants use `bg-card`, `text-card-foreground`,
+ * and destructive text where needed. Breadcrumb and many list rows lean on
+ * `text-muted-foreground` with `hover:text-foreground`.
+ *
+ * Application shell — sidebar.tsx consumes the full `sidebar`, `sidebar-foreground`,
+ * `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, and
+ * `sidebar-ring` set for menus, groups, separators, and focus rings.
+ *
+ * Tabs and outlines — tabs.tsx uses `ring-ring-subtle`, `outline-ring`, and
+ * `ring-ring-focus` on the list and panel; scroll-area.tsx mirrors outline and
+ * ring focus styling for keyboard users.
+ *
+ * Charts — chart.tsx styles Recharts with `stroke-border`, `fill-muted`,
+ * `text-muted-foreground`, and tooltip surfaces using `bg-background` and
+ * `border-border`. The `chart-1` … `chart-5` theme keys below are for categorical
+ * colors when you map series to those tokens; ChartStyle also injects per-chart
+ * `--color-{key}` variables from consumer config, which may point at the same
+ * palette values.
+ *
+ * Palette-only class names (not listed in `@theme inline` below) — Several
+ * components use utilities backed by variables defined in palette files only, for
+ * example `ring-primary-focus-ring` (checkbox-group, radio-group, slider),
+ * `bg-destructive-focus` (destructive menu items), and `bg-tabs-active-bg`
+ * (tabs). If those classes do not compile in your app, add matching
+ * `--color-*` aliases in `@theme inline` next to the other mappings, the same way
+ * field and primary colors are wired.
+ *
+ * Token map (quick reference, matches this file’s `@theme inline`)
+ * -----------------------------------------------------------------
+ *
+ * | Concern            | Representative utilities |
+ * |--------------------|---------------------------|
+ * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover` |
+ * | Default border     | `border-border`, `divide-field-border`, `bg-border` (scrollbar thumb) |
+ * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error` |
+ * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
+ * | Page canvas        | `bg-background`, `text-foreground` |
+ * | Primary CTA        | `bg-primary`, `text-primary-foreground`, `hover:bg-primary-hover`, `active:bg-primary-active` |
+ * | Secondary          | `bg-secondary`, `text-secondary-foreground`, `hover:bg-secondary-hover`, `active:bg-secondary-active` |
+ * | Destructive        | `bg-destructive`, `text-destructive-foreground`, `hover:bg-destructive-hover`, `active:bg-destructive-active` |
+ * | Accent / muted     | `bg-accent`, `text-accent-foreground`, `bg-muted`, `text-muted-foreground` |
+ * | Popover / card     | `bg-popover`, `text-popover-foreground`, `bg-card`, `text-card-foreground` |
+ * | Sidebar            | `bg-sidebar`, `text-sidebar-foreground`, `sidebar-accent*`, `sidebar-border`, `ring-sidebar-ring` |
+ * | Chart series       | `chart-1` … `chart-5` (and `fill-*` / `stroke-*` when exposed) |
+ * | Motion             | `ease-ui` on overlays and sheet or dialog transitions |
+ */
+
 @import "tw-animate-css";
 
+/*
+ * Class extraction scope for the distributed package.
+ *
+ * CSS note: block comments end at the first "star slash" pair. Globs such as
+ * "**" followed by "/*.js" embed that pair and must not appear verbatim here.
+ *
+ * Tailwind only emits CSS for utilities whose class strings appear in scanned
+ * sources. Components emit compiled JS under dist/ (recursive); the @source path
+ * on the next line must stay in sync so library-only classes (e.g. long cn()
+ * strings in button variants) are not dropped when a consumer app does not import
+ * those modules from source. If you change the package output layout, update that
+ * glob.
+ */
 @source "../../dist/**/*.js";
 
+/*
+ * Dark mode variant (class strategy).
+ *
+ * `&:where(.dark, .dark *)` matches the element when it or any ancestor has
+ * `.dark`, mirroring how palette files scope dark overrides. This avoids
+ * `prefers-color-scheme` coupling so product teams can control mode via app state
+ * (user setting, tenant flag, etc.).
+ */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Global corner-radius scale anchor.
+ *
+ * Drives the themed `rounded-xs` … `rounded-4xl` utilities below. Components mix
+ * those with fixed steps: badges use `rounded-md`, most inputs and groups use
+ * `rounded-lg` or `rounded-md`, cards and empty states often use `rounded-xl`,
+ * switches and slider thumbs use `rounded-full`. input-group and input-number
+ * sometimes use arbitrary `calc(var(--radius)±Npx)` or `calc(var(--radius-xl)-1px)`
+ * so nested controls align with outer shells—changing `--radius` keeps those
+ * proportions aligned. Smaller theme radii use `max(0px, …)` so subtracting from a
+ * tiny base never goes negative.
+ */
 :root {
   --radius: 0.375rem;
 }
 
+/*
+ * Semantic color and radius bridge: palette `var(--token)` → Tailwind theme.
+ *
+ * Naming: each `--color-*` key becomes `bg-*`, `text-*`, `border-*`, `ring-*`,
+ * `fill-*`, `stroke-*`, outline colors, and gradient stops (`from-*`, `to-*`).
+ * Left-hand names are the stable API; right-hand variables must exist in the
+ * imported palette (`stone.css`, `blue.css`, …).
+ *
+ * How this maps to components (same intent as the file-level inventory):
+ * - **field** — Control chrome for input, textarea, native-select, input-group,
+ *   input-otp, input-number wrapper, toggle outline variant, checkbox and radio
+ *   targets, switch track when unchecked, calendar dropdown trigger.
+ * - **border** — Default hairline (`@layer base` sets global `border-color` here);
+ *   also used in chart grid or tooltip frames and resizable handles.
+ * - **ring** — Shared focus language: `ring-focus` and `ring` for rings and
+ *   outlines, `ring-subtle` for inactive tab outlines, `ring-error` with
+ *   destructive borders; `bg-ring-focus` and `bg-ring-error` tint nested buttons
+ *   (input-number).
+ * - **background / foreground** — Document defaults, selection text in fields,
+ *   OTP caret, chart labels.
+ * - **primary / secondary / destructive** — Buttons, badges, switch checked,
+ *   checked radio or checkbox fill, calendar range endpoints, destructive menu
+ *   labels.
+ * - **accent / muted** — Menu and menubar row hover, toggle pressed state,
+ *   calendar range middle, skeleton and chart fills, secondary copy.
+ * - **popover / card** — All Radix surfaces that float above the page plus card
+ *   and alert shells.
+ * - **sidebar** — sidebar.tsx only; keeps navigation visually separate from main
+ *   `background`.
+ * - **chart-1 … chart-5** — Reserved categorical colors for data viz; chart.tsx
+ *   may instead emit scoped `--color-{series}` from app config.
+ * - **radius-xs … radius-4xl** — Feeds `rounded-*` for the whole component set.
+ */
 @theme inline {
+  /* Form control surfaces */
   --color-field: var(--field);
   --color-field-hover: var(--field-hover);
   --color-field-border: var(--field-border);
@@ -16,29 +211,35 @@
 
   --color-border: var(--border);
 
+  /* Focus rings and semantic ring colors */
   --color-ring: var(--ring);
   --color-ring-focus: var(--ring-focus);
   --color-ring-subtle: var(--ring-subtle);
   --color-ring-error: var(--ring-error);
 
+  /* Page canvas */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
+  /* Primary actions */
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);
   --color-primary-foreground: var(--primary-foreground);
 
+  /* Secondary actions */
   --color-secondary: var(--secondary);
   --color-secondary-hover: var(--secondary-hover);
   --color-secondary-active: var(--secondary-active);
   --color-secondary-foreground: var(--secondary-foreground);
 
+  /* Danger / irreversible actions */
   --color-destructive: var(--destructive);
   --color-destructive-hover: var(--destructive-hover);
   --color-destructive-active: var(--destructive-active);
   --color-destructive-foreground: var(--destructive-foreground);
 
+  /* Highlights and selection */
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
@@ -46,12 +247,14 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
+  /* Floating layers */
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
+  /* Application shell — navigation rail / sidebar */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -61,12 +264,14 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Data viz series */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
+  /* Proportional corner radii (see :root --radius) */
   --radius-xs: max(0px, calc(var(--radius) - 4px));
   --radius-sm: max(0px, calc(var(--radius) - 2px));
   --radius-md: var(--radius);
@@ -77,11 +282,32 @@
   --radius-4xl: calc(var(--radius) + 10px);
 }
 
+/*
+ * Shared motion curve for UI transitions.
+ *
+ * Cubic bezier (0.32, 0.72, 0, 1): quick ease-out with light overshoot. Used as
+ * `ease-ui` on dialog, alert-dialog, sheet, drawer, popover, hover-card, dropdown,
+ * context and navigation menus, menubar, select, and tooltip content together with
+ * `tw-animate-css` enter or exit utilities. Prefer this token over raw
+ * `cubic-bezier()` in class strings so motion stays consistent.
+ */
 @theme {
   --ease-ui: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @layer base {
+  /*
+   * Global border and default outline tint.
+   *
+   * Setting `border-color` on all elements avoids “black hairlines” when borders
+   * are only toggled for width/style in components; the default always matches
+   * `--color-border`.
+   *
+   * `outline-color` uses `color-mix` in OKLab so semi-transparent outlines track
+   * perceptual luminance of `--color-ring`; comment shows the equivalent alpha
+   * mental model (`ring` at 20%). Focus-visible rings in components still override
+   * with explicit `ring-*` utilities where needed.
+   */
   *,
   ::after,
   ::before,
@@ -95,6 +321,13 @@
     ); /* var(--color-ring) / 20% */
   }
 
+  /*
+   * Scrollbars (WebKit + Firefox).
+   *
+   * Thin, token-colored thumbs keep long data tables and sidebars visually aligned
+   * with borders without stealing width from dense enterprise layouts. Track stays
+   * transparent so page `background` shows through.
+   */
   ::-webkit-scrollbar {
     @apply size-2;
   }
@@ -112,12 +345,29 @@
     scrollbar-color: var(--color-border) transparent;
   }
 
+  /*
+   * Document surface defaults.
+   *
+   * Ensures unstyled areas outside component trees still respect semantic
+   * `background` and `foreground` from the active palette—important for SSR shells,
+   * error boundaries, and full-page layouts that mirror `bg-background` /
+   * `text-foreground`.
+   */
   html,
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
 
+  /*
+   * Input normalization.
+   *
+   * - Search: removes WebKit’s inner clear button and decoration so height,
+   *   padding, and focus rings match other text fields.
+   * - Number: hides spin buttons on WebKit and Gecko so `input[type=number]`
+   *   can be styled like a plain text control (steppers use custom UI where
+   *   required, e.g. input-number).
+   */
   input {
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {
