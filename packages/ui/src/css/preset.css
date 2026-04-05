@@ -170,91 +170,220 @@
 }
 
 /*
+ * Token naming formula (Fluent UI–inspired, adapted for Tailwind v4)
+ * ------------------------------------------------------------------
+ *
+ * Tokens follow a compound key pattern: `{role}[-qualifier][-state]`.
+ * Every segment is optional unless needed to distinguish a variant.
+ *
+ *   {role}                   — the semantic surface or intent (primary, field,
+ *                              destructive, ring, border, background, …)
+ *   {role}-foreground        — content (text / icon) rendered ON that surface.
+ *                              Always paired with a {role} background.
+ *   {role}-hover             — fill or border when a pointer enters the target.
+ *   {role}-active            — fill or border when pressed / active.
+ *
+ * Border sub-pattern (surfaces with distinct chrome):
+ *
+ *   --border                 — global structural hairline (page grid, dividers,
+ *                              chart frames, resizable handles, scroll thumbs).
+ *                              Used as the default `border-color` in @layer base.
+ *   --{role}-border          — role-specific border at rest (field-border).
+ *   --{role}-border-hover    — role-specific border on hover (field-border-hover).
+ *
+ * Ring sub-pattern (keyboard-focus language):
+ *
+ *   --ring                   — base ring color anchor (defines the visible hue).
+ *   --ring-focus             — keyboard focus ring (50 % alpha of --ring; used
+ *                              with ring-3 on all focusable controls).
+ *   --ring-subtle            — low-emphasis outline (20 % alpha; inactive tabs).
+ *   --ring-error             — destructive / validation ring (derived from
+ *                              --destructive; paired with border-destructive).
+ *
+ * Extended palette-only tokens (defined in palette files, not bridged here
+ * because they are too role-specific to need a generic Tailwind utility):
+ *
+ *   --primary-focus-ring     — ring color for checked radio/checkbox/slider thumb
+ *                              (bg-primary surface, separate from --ring-focus).
+ *   --primary-subtle         — very-low-opacity primary tint for checked card
+ *                              backgrounds (field.tsx checked state).
+ *   --destructive-focus      — low-opacity destructive tint for focused
+ *                              destructive menu items (dropdown-menu, context-menu,
+ *                              menubar).
+ *   --tabs-active-bg         — active tab pill fill (tabs.tsx data-[state=active]);
+ *                              distinct from --accent so tabs stay visually
+ *                              separate from generic selection rows.
+ *
+ * Rules for adding new tokens:
+ *   1. Define the raw `--my-token` in every palette file (light + .dark).
+ *   2. Map `--color-my-token: var(--my-token)` here if components need `bg-*` /
+ *      `text-*` / `border-*` utilities; skip if only used via arbitrary `var()`.
+ *   3. Follow the state-suffix chain: rest → hover → active → foreground.
+ *   4. Avoid one-off values inside components; always trace back to a palette var.
+ *
  * Semantic color and radius bridge: palette `var(--token)` → Tailwind theme.
  *
- * Naming: each `--color-*` key becomes `bg-*`, `text-*`, `border-*`, `ring-*`,
- * `fill-*`, `stroke-*`, outline colors, and gradient stops (`from-*`, `to-*`).
- * Left-hand names are the stable API; right-hand variables must exist in the
- * imported palette (`stone.css`, `blue.css`, …).
- *
- * How this maps to components (same intent as the file-level inventory):
- * - **field** — Control chrome for input, textarea, native-select, input-group,
- *   input-otp, input-number wrapper, toggle outline variant, checkbox and radio
- *   targets, switch track when unchecked, calendar dropdown trigger.
- * - **border** — Default hairline (`@layer base` sets global `border-color` here);
- *   also used in chart grid or tooltip frames and resizable handles.
- * - **ring** — Shared focus language: `ring-focus` and `ring` for rings and
- *   outlines, `ring-subtle` for inactive tab outlines, `ring-error` with
- *   destructive borders; `bg-ring-focus` and `bg-ring-error` tint nested buttons
- *   (input-number).
- * - **background / foreground** — Document defaults, selection text in fields,
- *   OTP caret, chart labels.
- * - **primary / secondary / destructive** — Buttons, badges, switch checked,
- *   checked radio or checkbox fill, calendar range endpoints, destructive menu
- *   labels.
- * - **accent / muted** — Menu and menubar row hover, toggle pressed state,
- *   calendar range middle, skeleton and chart fills, secondary copy.
- * - **popover / card** — All Radix surfaces that float above the page plus card
- *   and alert shells.
- * - **sidebar** — sidebar.tsx only; keeps navigation visually separate from main
- *   `background`.
- * - **chart-1 … chart-5** — Reserved categorical colors for data viz; chart.tsx
- *   may instead emit scoped `--color-{series}` from app config.
- * - **radius-xs … radius-4xl** — Feeds `rounded-*` for the whole component set.
+ * Each `--color-*` key below becomes `bg-*`, `text-*`, `border-*`, `ring-*`,
+ * `fill-*`, `stroke-*`, `outline-*`, and gradient-stop (`from-*`, `to-*`)
+ * utilities. Left-hand names are the stable public API; right-hand variables
+ * must exist in the imported palette (`stone.css`, `blue.css`, …).
  */
 @theme inline {
-  /* Form control surfaces */
+  /*
+   * Form control surfaces (field chrome)
+   *
+   * Pattern: bg-field / border-field-border → -hover variants on pointer enter.
+   * Used by: input, textarea, native-select, input-group shell, input-otp slots,
+   * input-number outer wrapper, checkbox and radio targets, radio-cards/
+   * checkbox-cards panels, toggle (outline variant), switch track (unchecked),
+   * slider track (bg-field-border reused as a subtle track fill), and
+   * calendar month dropdown trigger. Most also apply shadow-xs.
+   *
+   * Note — `bg-field-border` has a secondary role on slider.tsx: the track
+   * (non-thumb portion) uses it as a low-key fill instead of a border.
+   */
   --color-field: var(--field);
   --color-field-hover: var(--field-hover);
   --color-field-border: var(--field-border);
   --color-field-border-hover: var(--field-border-hover);
 
+  /*
+   * Global structural border
+   *
+   * Default `border-color` (set in @layer base below). Appears as: separators
+   * in dropdown-menu, context-menu, select, menubar; resizable drag handles;
+   * scroll-area thumb (bg-border); chart grid lines and tooltip frames
+   * (stroke-border); sidebar internal divider (bg-sidebar-border overrides for
+   * the nav rail). Also used as `bg-border` on resizable.tsx handle pill.
+   */
   --color-border: var(--border);
 
-  /* Focus rings and semantic ring colors */
+  /*
+   * Focus rings — shared keyboard-focus language
+   *
+   * All four tokens are used together with Tailwind's `ring-3` / `ring-4` to
+   * build a consistent two-layer focus signal:
+   *   • border-ring         — replaces field-border on focus (the sharp edge).
+   *   • ring-ring-focus     — outer glow ring (50 % alpha); standard control.
+   *   • ring-ring-subtle    — 20 % alpha ring; tabs.tsx inactive panel outline.
+   *   • ring-ring-error     — destructive-derived ring for aria-invalid fields.
+   *
+   * `bg-ring` / `bg-ring-focus` / `bg-ring-error` — resizable.tsx handle and
+   * input-number stepper buttons use bg-ring variants as fill tints, not rings.
+   */
   --color-ring: var(--ring);
   --color-ring-focus: var(--ring-focus);
   --color-ring-subtle: var(--ring-subtle);
   --color-ring-error: var(--ring-error);
 
-  /* Page canvas */
+  /*
+   * Page canvas
+   *
+   * Set on html/body in @layer base below so unstyled shells, SSR boundaries,
+   * and error pages respect the active palette. `bg-foreground` is used for the
+   * animated OTP caret (input-otp.tsx). `text-background` / `bg-background/20`
+   * appear in kbd.tsx when nested inside a tooltip surface.
+   * `selection:bg-primary selection:text-primary-foreground` on inputs and
+   * native-select uses primary, not background, for branded text selection.
+   */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Primary actions */
+  /*
+   * Primary actions — brand CTA
+   *
+   * Drives: button (default variant), badge (default), switch (checked bg),
+   * checked radio/checkbox fill and border, calendar range endpoints, slider
+   * thumb, tooltip surface (bg-primary / text-primary-foreground), and
+   * progress-circle indicator (text-primary for stroke color).
+   * `selection:bg-primary` used for branded text selection in text fields.
+   * `text-primary` appears as link hover color in field descriptions and
+   * item/empty body copy (item.tsx, empty.tsx, field.tsx).
+   */
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);
   --color-primary-foreground: var(--primary-foreground);
 
-  /* Secondary actions */
+  /*
+   * Secondary actions — ghost / outline surfaces
+   *
+   * Drives: button (secondary variant), badge (secondary), toggle base hover
+   * (hover:bg-secondary-hover), navigation-menu trigger open+hover state
+   * (data-[state=open]:bg-secondary-hover), radio-cards panel hover
+   * (hover:bg-secondary-hover). Not used as a foreground-less fill; always
+   * paired with secondary-foreground.
+   */
   --color-secondary: var(--secondary);
   --color-secondary-hover: var(--secondary-hover);
   --color-secondary-active: var(--secondary-active);
   --color-secondary-foreground: var(--secondary-foreground);
 
-  /* Danger / irreversible actions */
+  /*
+   * Destructive — danger / irreversible actions
+   *
+   * Drives: button (destructive variant), badge (destructive), aria-invalid
+   * field borders and rings, destructive menu item text and hover fill.
+   * `border-l-destructive` / `divide-destructive` on input-number stepper rail
+   * in invalid state. Note: `bg-destructive-focus` (10 % alpha, palette-only)
+   * is used for focused destructive menu rows and is NOT bridged here—see
+   * palette-only tokens note in the formula block above.
+   */
   --color-destructive: var(--destructive);
   --color-destructive-hover: var(--destructive-hover);
   --color-destructive-active: var(--destructive-active);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  /* Highlights and selection */
+  /*
+   * Accent — hover highlight and pressed state for non-CTA rows
+   *
+   * Drives: menu / menubar / context-menu row hover (focus:bg-accent), toggle
+   * pressed state (data-[state=on]:bg-accent), calendar range mid-span. Also
+   * used as a generic row highlight. Has `-hover` for layered hover darkening
+   * and `-foreground` for content on accent surfaces. No `-active` token exists
+   * because accent surfaces are not used for pressed momentary actions.
+   */
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
 
+  /*
+   * Muted — de-emphasized text and skeleton fills
+   *
+   * `text-muted-foreground` — placeholder text, icon tint on menu items and
+   * svgs, shortcut labels, secondary copy (breadcrumb separator, chart labels).
+   * `bg-muted` — skeleton loaders, chart series fill fallback.
+   * `fill-muted` / `fill-muted-foreground` — chart.tsx SVG fills.
+   * No `-hover` or `-active` variant; muted is not an interactive surface.
+   */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
-  /* Floating layers */
+  /*
+   * Floating layers — surfaces above the document plane
+   *
+   * `popover` — dropdown-menu, context-menu, menubar content, select content,
+   * popover, hover-card, navigation-menu, command palette, tooltip (uses primary
+   * instead). Arrow SVGs on floating panels use `fill-popover` to match their
+   * parent surface (popover.tsx, hover-card.tsx, context-menu.tsx,
+   * dropdown-menu.tsx, menubar.tsx).
+   * `card` — card.tsx panel and alert.tsx shells; also alert-dialog content.
+   */
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  /* Application shell — navigation rail / sidebar */
+  /*
+   * Application shell — navigation rail / sidebar
+   *
+   * All six tokens are consumed exclusively by sidebar.tsx. Keeping them
+   * namespaced under `sidebar-` prevents accidental bleed into page-level
+   * utilities: sidebar-accent mirrors accent for nav row hover, sidebar-border
+   * replaces the structural --border inside the rail, and sidebar-ring drives
+   * keyboard focus on nav items.
+   */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -264,14 +393,29 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Data viz series */
+  /*
+   * Data viz series — categorical chart colors
+   *
+   * Five slots for Recharts / chart.tsx series. Components access these via
+   * `fill-chart-N` / `stroke-chart-N` or through per-chart `--color-{key}`
+   * variables injected by ChartStyle from consumer config (which may alias
+   * the same palette values). Not used in any non-chart component.
+   */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* Proportional corner radii (see :root --radius) */
+  /*
+   * Proportional corner-radius scale (relative to :root --radius)
+   *
+   * Components fix to specific steps: badges → rounded-md, most inputs and
+   * groups → rounded-lg/md, cards and empty states → rounded-xl, switches
+   * and slider thumbs → rounded-full. input-group and input-number use
+   * `calc(var(--radius-xl) - 1px)` for nested alignment. `max(0px, …)` guards
+   * xs/sm so tiny base values never produce a negative result.
+   */
   --radius-xs: max(0px, calc(var(--radius) - 4px));
   --radius-sm: max(0px, calc(var(--radius) - 2px));
   --radius-md: var(--radius);
