@@ -121,7 +121,8 @@
  * | Popover / card     | `bg-popover`, `text-popover-foreground`, `bg-card`, `text-card-foreground` |
  * | Sidebar            | `bg-sidebar`, `text-sidebar-foreground`, `sidebar-accent*`, `sidebar-border`, `ring-sidebar-ring` |
  * | Chart series       | `chart-1` … `chart-5` (and `fill-*` / `stroke-*` when exposed) |
- * | Motion             | `ease-emphasis` on overlays, `ease-spring` on floating UI, `ease-standard` on structural, `ease-exit` on dismiss |
+ * | Corner radius      | `rounded-xs` … `rounded-4xl` from `--radius` scale in `@theme inline` |
+ * | Motion             | `ease-micro`, `ease-standard`, `ease-emphasis`, `ease-spring`, `ease-exit` (non-inline `@theme`) |
  */
 
 @import "tw-animate-css";
@@ -171,59 +172,117 @@
  * Token naming formula (Fluent UI–inspired, adapted for Tailwind v4)
  * ------------------------------------------------------------------
  *
- * Tokens follow a compound key pattern: `{role}[-qualifier][-state]`.
- * Every segment is optional unless needed to distinguish a variant.
+ * This section is the full contract for **semantic names** and **palette layout**.
+ * It mirrors everything color-related in `@theme inline` below, plus radius and
+ * easing. Fluent UI proper defines many more dimensions (type ramp, density,
+ * elevation tables); this library keeps a **pragmatic subset** aligned with the
+ * Radix/shadcn-style components we ship.
  *
- *   {role}                   — the semantic surface or intent (primary, field,
- *                              destructive, ring, border, background, …)
- *   {role}-foreground        — content (text / icon) rendered ON that surface.
- *                              Always paired with a {role} background.
- *   {role}-hover             — fill or border when a pointer enters the target.
- *   {role}-active            — fill or border when pressed / active.
+ * ── 1. Compound key (default shape)
  *
- * Border sub-pattern (surfaces with distinct chrome):
+ *   `{role}[-qualifier][-state]` — each segment only when it disambiguates.
  *
- *   --border                 — global structural hairline (page grid, dividers,
- *                              chart frames, resizable handles, scroll thumbs).
- *                              Used as the default `border-color` in @layer base.
- *   --{role}-border          — role-specific border at rest (field-border).
- *   --{role}-border-hover    — role-specific border on hover (field-border-hover).
+ *   {role}              — semantic intent: primary, secondary, destructive, field,
+ *                         accent, muted, sidebar, card, popover, chart-N, …
+ *   {role}-foreground   — text/icon **on** that role’s solid or tinted surface.
+ *                         Add it whenever default `foreground` would fail contrast.
+ *   {role}-hover        — pointer hover on **solid** fills or role borders.
+ *   {role}-active       — pressed / active on **solid** fills or role borders.
  *
- * Ring sub-pattern (keyboard-focus language):
+ * ── 2. Solid interaction stacks (rest → hover → active → foreground)
  *
- *   --ring                   — base ring color anchor (defines the visible hue).
- *   --ring-focus             — keyboard focus ring (50 % alpha of --ring; used
- *                              with ring-3 on all focusable controls).
- *   --ring-subtle            — low-emphasis outline (20 % alpha; inactive tabs).
- *   --ring-error             — destructive / validation ring (derived from
- *                              --destructive; paired with border-destructive).
+ *   Primary, secondary, destructive each follow that order in palette files, then
+ *   any **checked / alpha** extensions that still key off the same hue (e.g.
+ *   `--primary-checked` is **not** a third pointer step; it is a low-opacity
+ *   fill for checked field cards). Chart tokens (`--chart-1` … `--chart-5`) are
+ *   **categorical strokes/fills only** — no hover/active/foreground siblings.
  *
- * Extended tokens (palette + `@theme inline` bridge):
+ * ── 3. Alpha / tint family (always `color-mix(in oklch, …)` off an anchor)
  *
- *   --ring-primary       — ring on checked radio/checkbox / slider thumb focus
- *                            (separate from --ring-focus). Utility: `ring-ring-primary`.
- *                            Avoid naming palette vars with a final segment that
- *                            duplicates a Tailwind color prefix (`bg`, `ring`, …).
- *   --primary-checked     — very-low-opacity primary tint for checked card
- *                            backgrounds (field.tsx). Utility: `bg-primary-checked`.
- *   --destructive-focus  — low-opacity destructive tint for focused destructive
- *                            menu items. Utility: `bg-destructive-focus`.
- *   --muted-selected     — selected fill on a muted substrate (Fluent-style subtle
- *                            selection; tabs.tsx trigger when active). Utility:
- *                            `bg-muted-selected`.
+ *   Distinct from §2: used for focus rings, validation, selection washes, and
+ *   checked emphasis — **not** the same as `-hover` / `-active` on solid buttons.
  *
- * Rules for adding new tokens:
- *   1. Define the raw `--my-token` in every palette file (light + .dark).
- *   2. Map `--color-my-token: var(--my-token)` here if components need `bg-*` /
- *      `text-*` / `border-*` utilities; skip if only used via arbitrary `var()`.
- *   3. Follow the state-suffix chain: rest → hover → active → (palette-derived
- *      extensions such as ring-primary / primary-checked) → foreground → any
- *      remaining role-specific tokens (e.g. muted-selected). Match order in palette
- *      files (`blue.css`, …) when adding keys here.
- *   4. Avoid one-off values inside components; always trace back to a palette var.
- *   5. Palette derivations (hover/active tints, ring/primary/destructive alphas):
- *      use `color-mix(in oklch, …)` next to `oklch(...)` anchors—one perceptual
- *      space end-to-end; do not mix in other color spaces for the same pipeline.
+ *   --ring-focus, --ring-subtle, --ring-error — derived from `--ring` or
+ *                         `--destructive` (see comments on each in `@theme inline`).
+ *   --ring-primary        — checked primary control ring (`ring-ring-primary`).
+ *   --primary-checked     — checked primary **surface** tint (`bg-primary-checked`).
+ *   --destructive-focus   — destructive row/menu focus tint (`bg-destructive-focus`).
+ *
+ * ── 4. Global vs role-specific borders
+ *
+ *   --border              — default hairline: dividers, charts, scroll thumbs,
+ *                         resizable handles; also `border-color` in `@layer base`.
+ *   --{role}-border       — e.g. `--field-border` + `--field-border-hover` for
+ *                         control chrome that must not use the global border alone.
+ *
+ * ── 5. Ring vocabulary + “ring as fill” exception
+ *
+ *   --ring                — hue anchor for focus and outline utilities.
+ *   --ring-focus          — standard focus-visible ring (paired with `ring-3`).
+ *   --ring-subtle         — low-emphasis outline (e.g. inactive tabs).
+ *   --ring-error          — invalid / destructive field ring.
+ *   --ring-primary        — checked control ring (checkbox, radio, slider thumb).
+ *
+ *   Exception: some components use **`bg-ring`, `bg-ring-focus`, `bg-ring-error`**
+ *   as **fill** (input-number steppers, resizable handle) — same tokens, different
+ *   utility; document when adding similar UI so the token is not mistaken for
+ *   outline-only.
+ *
+ * ── 6. Layer pairs (surface + foreground)
+ *
+ *   Page: `--background` / `--foreground`.
+ *   Floating: `--popover` / `--popover-foreground`; `--card` / `--card-foreground`.
+ *   Accent rows: `--accent` / `--accent-foreground` (+ `--accent-hover`).
+ *   Muted: `--muted` / `--muted-foreground` (+ `--muted-selected` for “pill on
+ *   muted rail”, e.g. tabs).
+ *   Sidebar (namespaced shell): `--sidebar`, `--sidebar-foreground`,
+ *   `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`,
+ *   `--sidebar-accent-foreground`, `--sidebar-border`, `--sidebar-ring`.
+ *
+ * ── 7. Field namespace (form chrome)
+ *
+ *   `--field`, `--field-hover`, `--field-border`, `--field-border-hover` — surfaces
+ *   and borders for inputs and related controls; may double as a **track fill**
+ *   (`bg-field-border` on slider). Keep the four together when editing palettes.
+ *
+ * ── 8. Data visualization
+ *
+ *   `--chart-1` … `--chart-5` — categorical series colors only; consumers may
+ *   override per chart via injected `--color-{key}`. No required foreground token.
+ *
+ * ── 9. Radius (structural, not a color role)
+ *
+ *   `:root { --radius }` anchors `--radius-xs` … `--radius-4xl` inside
+ *   `@theme inline`. Prefer scaling from `--radius` rather than hard-coded px
+ *   when adding new rounded utilities.
+ *
+ * ── 10. Motion (second `@theme` block, non-inline)
+ *
+ *   `--ease-micro`, `--ease-standard`, `--ease-emphasis`, `--ease-spring`,
+ *   `--ease-exit` — semantic durations/cases are documented next to that block.
+ *
+ * ── Naming collisions (palette authors)
+ *
+ *   Avoid a **final** segment that matches a Tailwind color utility prefix used as
+ *   the first part of a class (`bg`, `text`, `ring`, …) in ways that confuse
+ *   readers — e.g. do not end a custom token name with a lone `-ring` if it is
+ *   not the ring system above.
+ *
+ * Rules for adding or changing tokens
+ * -----------------------------------
+ *   1. Add `--my-token` in **every** palette file (`:root` and `.dark`).
+ *   2. Map `--color-my-token: var(--my-token)` in `@theme inline` if components need
+ *      `bg-*` / `text-*` / `border-*` / `ring-*` / `fill-*` / `stroke-*` / `outline-*`.
+ *   3. Prefer **reusing** an existing family (§2–§8) before inventing a parallel name.
+ *   4. Solid CTA / button paths use **hover + active + foreground**; washes and
+ *      rings use **alpha** tokens (§3) — do not label an alpha wash as `-hover`.
+ *   5. Keep **palette key order** aligned across files for diff-friendly reviews:
+ *      field* → border → ring* → background/foreground → primary* → secondary* →
+ *      destructive* → accent* → muted* (+ muted-selected) → popover* → card* →
+ *      sidebar* → chart-*.
+ *   6. No raw hex in components; trace every color to a palette variable.
+ *   7. Derivations: `color-mix(in oklch, …)` only, next to `oklch(...)` anchors
+ *      (one perceptual pipeline end-to-end).
  *
  * Semantic color and radius bridge: palette `var(--token)` → Tailwind theme.
  *
