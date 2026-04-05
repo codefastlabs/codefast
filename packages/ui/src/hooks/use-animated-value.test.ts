@@ -247,10 +247,10 @@ describe("useAnimatedValue", () => {
     // Change duration to 2000 ms during animation
     rerender({ animate: true, duration: 2000, targetValue: 100 });
 
-    // Continue animation with the new duration
+    // Continue animation with the new duration (startTime is performance.now() at rerender, i.e. 500 ms)
     act(() => {
       if (animationFrameCallback) {
-        currentTime = 1500; // 75% of the new duration (1500/2000)
+        currentTime = 2000; // elapsed 1500 ms → 75% of the new 2000 ms duration
         animationFrameCallback(currentTime);
       }
     });
