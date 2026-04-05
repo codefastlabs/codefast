@@ -218,6 +218,9 @@
  *      remaining role-specific tokens (e.g. tabs-active). Match order in palette
  *      files (`blue.css`, …) when adding keys here.
  *   4. Avoid one-off values inside components; always trace back to a palette var.
+ *   5. Palette derivations (hover/active tints, ring/primary/destructive alphas):
+ *      use `color-mix(in oklch, …)` next to `oklch(...)` anchors—one perceptual
+ *      space end-to-end; do not mix in other color spaces for the same pipeline.
  *
  * Semantic color and radius bridge: palette `var(--token)` → Tailwind theme.
  *
@@ -474,8 +477,8 @@
    * are only toggled for width/style in components; the default always matches
    * `--color-border`.
    *
-   * `outline-color` uses `color-mix` in OKLab so semi-transparent outlines track
-   * perceptual luminance of `--color-ring`; comment shows the equivalent alpha
+   * `outline-color` uses `color-mix` in OKLCH so semi-transparent outlines track
+   * perceptual lightness/chroma of `--color-ring`; comment shows the equivalent alpha
    * mental model (`ring` at 20%). Focus-visible rings in components still override
    * with explicit `ring-*` utilities where needed.
    */
@@ -486,7 +489,7 @@
   ::file-selector-button {
     border-color: var(--color-border);
     outline-color: color-mix(
-      in oklab,
+      in oklch,
       var(--color-ring) 20%,
       transparent
     ); /* var(--color-ring) / 20% */

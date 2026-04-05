@@ -20,19 +20,19 @@
   --foreground: oklch(14.1% 0.005 285.823); /* --color-zinc-950 */
 
   --primary: oklch(51.8% 0.253 323.949); /* --color-fuchsia-700 */
-  --primary-hover: color-mix(in oklab, var(--primary), white 10%); /* var(--primary) + white 10% */
-  --primary-active: color-mix(in oklab, var(--primary), black 10%); /* var(--primary) + black 10% */
+  --primary-hover: color-mix(in oklch, var(--primary), white 10%); /* var(--primary) + white 10% */
+  --primary-active: color-mix(in oklch, var(--primary), black 10%); /* var(--primary) + black 10% */
   --primary-subtle: color-mix(in oklch, var(--primary), transparent 95%); /* var(--primary) / 5% */
   --primary-foreground: oklch(97.7% 0.017 320.058); /* --color-fuchsia-50 */
 
   --secondary: oklch(96.7% 0.001 286.375); /* --color-zinc-100 */
   --secondary-hover: color-mix(
-    in oklab,
+    in oklch,
     var(--secondary),
     black 5%
   ); /* var(--secondary) + black 5% */
   --secondary-active: color-mix(
-    in oklab,
+    in oklch,
     var(--secondary),
     black 10%
   ); /* var(--secondary) + black 10% */
@@ -40,12 +40,12 @@
 
   --destructive: oklch(57.7% 0.245 27.325); /* --color-red-600 */
   --destructive-hover: color-mix(
-    in oklab,
+    in oklch,
     var(--destructive),
     white 10%
   ); /* var(--destructive) + white 10% */
   --destructive-active: color-mix(
-    in oklab,
+    in oklch,
     var(--destructive),
     black 10%
   ); /* var(--destructive) + black 10% */
@@ -57,7 +57,7 @@
   --destructive-foreground: oklch(100% 0 0); /* --color-white */
 
   --accent: oklch(96.7% 0.001 286.375); /* --color-zinc-100 */
-  --accent-hover: color-mix(in oklab, var(--accent), black 5%); /* var(--accent) + black 5% */
+  --accent-hover: color-mix(in oklch, var(--accent), black 5%); /* var(--accent) + black 5% */
   --accent-foreground: oklch(21% 0.006 285.885); /* --color-zinc-900 */
 
   --muted: oklch(96.7% 0.001 286.375); /* --color-zinc-100 */
@@ -108,19 +108,19 @@
   --foreground: oklch(98.5% 0 0); /* --color-zinc-50 */
 
   --primary: oklch(74% 0.238 322.16); /* --color-fuchsia-400 */
-  --primary-hover: color-mix(in oklab, var(--primary), white 10%); /* var(--primary) + white 10% */
-  --primary-active: color-mix(in oklab, var(--primary), black 10%); /* var(--primary) + black 10% */
+  --primary-hover: color-mix(in oklch, var(--primary), white 10%); /* var(--primary) + white 10% */
+  --primary-active: color-mix(in oklch, var(--primary), black 10%); /* var(--primary) + black 10% */
   --primary-subtle: color-mix(in oklch, var(--primary), transparent 85%); /* var(--primary) / 15% */
   --primary-foreground: oklch(29.3% 0.136 325.661); /* --color-fuchsia-950 */
 
   --secondary: oklch(27.4% 0.006 286.033); /* --color-zinc-800 */
   --secondary-hover: color-mix(
-    in oklab,
+    in oklch,
     var(--secondary),
     white 5%
   ); /* var(--secondary) + white 5% */
   --secondary-active: color-mix(
-    in oklab,
+    in oklch,
     var(--secondary),
     black 5%
   ); /* var(--secondary) + black 5% */
@@ -128,12 +128,12 @@
 
   --destructive: oklch(70.4% 0.191 22.216); /* --color-red-400 */
   --destructive-hover: color-mix(
-    in oklab,
+    in oklch,
     var(--destructive),
     white 10%
   ); /* var(--destructive) + white 10% */
   --destructive-active: color-mix(
-    in oklab,
+    in oklch,
     var(--destructive),
     black 10%
   ); /* var(--destructive) + black 10% */
@@ -145,7 +145,7 @@
   --destructive-foreground: oklch(0% 0 0); /* --color-black */
 
   --accent: oklch(27.4% 0.006 286.033); /* --color-zinc-800 */
-  --accent-hover: color-mix(in oklab, var(--accent), white 5%); /* var(--accent) + white 5% */
+  --accent-hover: color-mix(in oklch, var(--accent), white 5%); /* var(--accent) + white 5% */
   --accent-foreground: oklch(98.5% 0 0); /* --color-zinc-50 */
 
   --muted: oklch(27.4% 0.006 286.033); /* --color-zinc-800 */
