@@ -31,7 +31,7 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        "focus-visible:aria-checked:ring-primary-focus-ring inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-field-border bg-field shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-field-border-hover focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus disabled:opacity-50 aria-checked:border-primary aria-checked:bg-primary aria-invalid:border-destructive aria-invalid:ring-ring-error hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 aria-checked:aria-invalid:bg-destructive",
+        "inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-field-border bg-field shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-field-border-hover focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus disabled:opacity-50 aria-checked:border-primary aria-checked:bg-primary focus-visible:aria-checked:ring-ring-primary aria-invalid:border-destructive aria-invalid:ring-ring-error hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 aria-checked:aria-invalid:bg-destructive",
         className,
       )}
       data-slot="radio-group-item"

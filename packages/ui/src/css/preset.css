@@ -98,13 +98,10 @@
  * `--color-{key}` variables from consumer config, which may point at the same
  * palette values.
  *
- * Palette-only class names (not listed in `@theme inline` below) — Several
- * components use utilities backed by variables defined in palette files only, for
- * example `ring-primary-focus-ring` (checkbox-group, radio-group, slider),
- * `bg-destructive-focus` (destructive menu items), and `bg-tabs-active-bg`
- * (tabs). If those classes do not compile in your app, add matching
- * `--color-*` aliases in `@theme inline` next to the other mappings, the same way
- * field and primary colors are wired.
+ * Extended semantic colors — Checked controls use `ring-ring-primary` (slider,
+ * checkbox-group, radio-group); destructive menu rows use `bg-destructive-focus`;
+ * checked field cards use `bg-primary-subtle`; active tabs use `bg-tabs-active`.
+ * Each maps through `@theme inline` to a palette `--*` variable.
  *
  * Token map (quick reference, matches this file’s `@theme inline`)
  * -----------------------------------------------------------------
@@ -113,12 +110,12 @@
  * |--------------------|---------------------------|
  * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover` |
  * | Default border     | `border-border`, `divide-field-border`, `bg-border` (scrollbar thumb) |
- * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error` |
+ * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
  * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
  * | Page canvas        | `bg-background`, `text-foreground` |
- * | Primary CTA        | `bg-primary`, `text-primary-foreground`, `hover:bg-primary-hover`, `active:bg-primary-active` |
+ * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `bg-primary-subtle`, `text-primary-foreground`, `bg-tabs-active` |
  * | Secondary          | `bg-secondary`, `text-secondary-foreground`, `hover:bg-secondary-hover`, `active:bg-secondary-active` |
- * | Destructive        | `bg-destructive`, `text-destructive-foreground`, `hover:bg-destructive-hover`, `active:bg-destructive-active` |
+ * | Destructive        | `bg-destructive`, `hover:bg-destructive-hover`, `active:bg-destructive-active`, `bg-destructive-focus`, `text-destructive-foreground` |
  * | Accent / muted     | `bg-accent`, `text-accent-foreground`, `bg-muted`, `text-muted-foreground` |
  * | Popover / card     | `bg-popover`, `text-popover-foreground`, `bg-card`, `text-card-foreground` |
  * | Sidebar            | `bg-sidebar`, `text-sidebar-foreground`, `sidebar-accent*`, `sidebar-border`, `ring-sidebar-ring` |
@@ -200,25 +197,26 @@
  *   --ring-error             — destructive / validation ring (derived from
  *                              --destructive; paired with border-destructive).
  *
- * Extended palette-only tokens (defined in palette files, not bridged here
- * because they are too role-specific to need a generic Tailwind utility):
+ * Extended tokens (palette + `@theme inline` bridge):
  *
- *   --primary-focus-ring     — ring color for checked radio/checkbox/slider thumb
- *                              (bg-primary surface, separate from --ring-focus).
- *   --primary-subtle         — very-low-opacity primary tint for checked card
- *                              backgrounds (field.tsx checked state).
- *   --destructive-focus      — low-opacity destructive tint for focused
- *                              destructive menu items (dropdown-menu, context-menu,
- *                              menubar).
- *   --tabs-active-bg         — active tab pill fill (tabs.tsx data-[state=active]);
- *                              distinct from --accent so tabs stay visually
- *                              separate from generic selection rows.
+ *   --ring-primary       — ring on checked radio/checkbox / slider thumb focus
+ *                            (separate from --ring-focus). Utility: `ring-ring-primary`.
+ *                            Avoid naming palette vars with a final segment that
+ *                            duplicates a Tailwind color prefix (`bg`, `ring`, …).
+ *   --primary-subtle     — very-low-opacity primary tint for checked card
+ *                            backgrounds (field.tsx). Utility: `bg-primary-subtle`.
+ *   --destructive-focus  — low-opacity destructive tint for focused destructive
+ *                            menu items. Utility: `bg-destructive-focus`.
+ *   --tabs-active        — active tab pill fill (tabs.tsx). Utility: `bg-tabs-active`.
  *
  * Rules for adding new tokens:
  *   1. Define the raw `--my-token` in every palette file (light + .dark).
  *   2. Map `--color-my-token: var(--my-token)` here if components need `bg-*` /
  *      `text-*` / `border-*` utilities; skip if only used via arbitrary `var()`.
- *   3. Follow the state-suffix chain: rest → hover → active → foreground.
+ *   3. Follow the state-suffix chain: rest → hover → active → (palette-derived
+ *      extensions such as ring-primary / primary-subtle) → foreground → any
+ *      remaining role-specific tokens (e.g. tabs-active). Match order in palette
+ *      files (`blue.css`, …) when adding keys here.
  *   4. Avoid one-off values inside components; always trace back to a palette var.
  *
  * Semantic color and radius bridge: palette `var(--token)` → Tailwind theme.
@@ -275,6 +273,7 @@
   --color-ring-focus: var(--ring-focus);
   --color-ring-subtle: var(--ring-subtle);
   --color-ring-error: var(--ring-error);
+  --color-ring-primary: var(--ring-primary);
 
   /*
    * Page canvas
@@ -292,10 +291,12 @@
   /*
    * Primary actions — brand CTA
    *
-   * Drives: button (default variant), badge (default), switch (checked bg),
-   * checked radio/checkbox fill and border, calendar range endpoints, slider
-   * thumb, tooltip surface (bg-primary / text-primary-foreground), and
-   * progress-circle indicator (text-primary for stroke color).
+   * Order mirrors palette files: base fill, hover/active, then ring-primary /
+   * primary-subtle (checked controls / cards), then primary-foreground, then
+   * tabs-active. Drives: button (default variant), badge (default), switch
+   * (checked bg), checked radio/checkbox fill and border, calendar range
+   * endpoints, slider thumb, tooltip surface (bg-primary / text-primary-foreground),
+   * and progress-circle indicator (text-primary for stroke color).
    * `selection:bg-primary` used for branded text selection in text fields.
    * `text-primary` appears as link hover color in field descriptions and
    * item/empty body copy (item.tsx, empty.tsx, field.tsx).
@@ -303,6 +304,7 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);
+  --color-primary-subtle: var(--primary-subtle);
   --color-primary-foreground: var(--primary-foreground);
 
   /*
@@ -322,16 +324,17 @@
   /*
    * Destructive — danger / irreversible actions
    *
-   * Drives: button (destructive variant), badge (destructive), aria-invalid
-   * field borders and rings, destructive menu item text and hover fill.
-   * `border-l-destructive` / `divide-destructive` on input-number stepper rail
-   * in invalid state. Note: `bg-destructive-focus` (10 % alpha, palette-only)
-   * is used for focused destructive menu rows and is NOT bridged here—see
-   * palette-only tokens note in the formula block above.
+   * Order mirrors palette files: base, hover, active, destructive-focus (tint),
+   * then foreground. Drives: button (destructive variant), badge (destructive),
+   * aria-invalid field borders and rings, destructive menu item text and hover
+   * fill. `border-l-destructive` / `divide-destructive` on input-number stepper
+   * rail in invalid state. `bg-destructive-focus` tints focused destructive menu
+   * rows.
    */
   --color-destructive: var(--destructive);
   --color-destructive-hover: var(--destructive-hover);
   --color-destructive-active: var(--destructive-active);
+  --color-destructive-focus: var(--destructive-focus);
   --color-destructive-foreground: var(--destructive-foreground);
 
   /*
@@ -386,10 +389,13 @@
    */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
+
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
@@ -406,6 +412,15 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  /*
+   * Component extensions — role-specific interaction overrides
+   *
+   * Drives specific components where a semantic surface (like primary or
+   * background) needs a specialized variant. `bg-tabs-active` provides the
+   * active pill fill for tabs.tsx.
+   */
+  --color-tabs-active: var(--tabs-active);
 
   /*
    * Proportional corner-radius scale (relative to :root --radius)
