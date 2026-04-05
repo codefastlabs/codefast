@@ -1,9 +1,8 @@
 "use client";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
-import type { ComponentProps, JSX } from "react";
-
 import { cn, tv } from "@codefast/tailwind-variants";
+import type { ComponentProps, JSX } from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
 
@@ -131,7 +130,9 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
 type SheetBodyProps = ComponentProps<"div">;
 
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
-  return <main className={cn("px-6 py-2", className)} data-slot="sheet-body" {...props} />;
+  return (
+    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="sheet-body" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------

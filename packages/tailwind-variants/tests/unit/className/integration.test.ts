@@ -17,10 +17,10 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
         },
         variant: {
           default: "bg-primary text-primary-foreground hover:bg-primary/90",
-          destructive: "text-destructive-foreground bg-destructive hover:bg-destructive/90",
+          destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
           ghost: "hover:bg-accent hover:text-accent-foreground",
           link: "text-primary underline-offset-4 hover:underline",
-          outline: "border border-input hover:bg-accent hover:text-accent-foreground",
+          outline: "border-input border hover:bg-accent hover:text-accent-foreground",
           secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         },
       },
@@ -194,7 +194,7 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
 
   test("should work with complex form components with extends", () => {
     const baseInputVariants = tv({
-      base: "flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      base: "border-input flex w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
       defaultVariants: {
         size: "default",
       },

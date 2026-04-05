@@ -492,7 +492,7 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-f8k" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
                 <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
@@ -503,7 +503,7 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers" id="followers-s7m" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
                 <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
@@ -514,7 +514,7 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom" id="custom-q3r" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
                 <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
@@ -578,7 +578,7 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-3-k4p" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
                 <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
@@ -592,7 +592,7 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers-3" id="followers-3-m7j" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
                 <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>
@@ -606,7 +606,7 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom-3" id="custom-3-r9w" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
+                <IconCircle className="stroke-input size-5 stroke-1 group-has-data-[state=checked]/field:hidden" />
                 <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
               </Field>
             </FieldLabel>

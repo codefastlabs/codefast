@@ -1,6 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -36,7 +37,7 @@ function DialogWithForm() {
               Make changes to your profile here. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4">
+          <DialogBody className="grid gap-4">
             <div className="grid gap-3">
               <Label htmlFor="name-1">Name</Label>
               <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
@@ -45,7 +46,7 @@ function DialogWithForm() {
               <Label htmlFor="username-1">Username</Label>
               <Input id="username-1" name="username" defaultValue="@peduarte" />
             </div>
-          </div>
+          </DialogBody>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
@@ -69,7 +70,7 @@ function DialogScrollableContent() {
           <DialogTitle>Scrollable Content</DialogTitle>
           <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-125 overflow-y-auto px-6 text-sm">
+        <DialogBody className="max-h-125 text-sm">
           <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             <p key={index} className="mb-4 leading-normal">
@@ -81,7 +82,7 @@ function DialogScrollableContent() {
               mollit anim id est laborum.
             </p>
           ))}
-        </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );
@@ -98,7 +99,7 @@ function DialogWithStickyFooter() {
           <DialogTitle>Scrollable Content</DialogTitle>
           <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-125 overflow-y-auto px-6 text-sm">
+        <DialogBody className="max-h-125 text-sm">
           <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             <p key={index} className="mb-4 leading-normal">
@@ -110,7 +111,7 @@ function DialogWithStickyFooter() {
               mollit anim id est laborum.
             </p>
           ))}
-        </div>
+        </DialogBody>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Close</Button>

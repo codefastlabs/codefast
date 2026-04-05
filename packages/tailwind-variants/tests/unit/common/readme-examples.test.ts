@@ -17,8 +17,8 @@ describe("README code examples", () => {
         },
         variant: {
           default: "bg-primary text-primary-foreground hover:bg-primary/90",
-          destructive: "text-destructive-foreground bg-destructive hover:bg-destructive/90",
-          outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          outline: "border-input border bg-background hover:bg-accent hover:text-accent-foreground",
         },
       },
       defaultVariants: {

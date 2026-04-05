@@ -21,10 +21,10 @@ describe("Real-World Type Inference Tests", () => {
         },
         variant: {
           default: "bg-primary text-primary-foreground hover:bg-primary/90",
-          destructive: "text-destructive-foreground bg-destructive hover:bg-destructive/90",
+          destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
           ghost: "hover:bg-accent hover:text-accent-foreground",
           link: "text-primary underline-offset-4 hover:underline",
-          outline: "border border-input hover:bg-accent hover:text-accent-foreground",
+          outline: "border-input border hover:bg-accent hover:text-accent-foreground",
           secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         },
       },
@@ -106,7 +106,7 @@ describe("Real-World Type Inference Tests", () => {
 
   test("should infer types for toggle component with boolean variants in real usage", () => {
     const toggleVariants = tv({
-      base: "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+      base: "data-[state=unchecked]:bg-input relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary",
       defaultVariants: {
         disabled: false,
         size: "default",
@@ -135,7 +135,7 @@ describe("Real-World Type Inference Tests", () => {
 
   test("should infer types for form components with extends in real usage", () => {
     const baseInputVariants = tv({
-      base: "flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      base: "border-input flex w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
       defaultVariants: {
         size: "default",
       },
@@ -277,9 +277,9 @@ describe("Real-World Type Inference Tests", () => {
             prev: "hover:bg-accent hover:text-accent-foreground",
           },
           outline: {
-            item: "border border-input hover:bg-accent hover:text-accent-foreground",
-            next: "border border-input hover:bg-accent hover:text-accent-foreground",
-            prev: "border border-input hover:bg-accent hover:text-accent-foreground",
+            item: "border-input border hover:bg-accent hover:text-accent-foreground",
+            next: "border-input border hover:bg-accent hover:text-accent-foreground",
+            prev: "border-input border hover:bg-accent hover:text-accent-foreground",
           },
         },
       },
