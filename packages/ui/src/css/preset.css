@@ -100,7 +100,8 @@
  *
  * Extended semantic colors — Checked controls use `ring-ring-primary` (slider,
  * checkbox-group, radio-group); destructive menu rows use `bg-destructive-focus`;
- * checked field cards use `bg-primary-subtle`; active tabs use `bg-tabs-active`.
+ * checked field cards use `bg-primary-subtle`; selected controls on `bg-muted`
+ * use `bg-muted-selected` (e.g. tabs.tsx).
  * Each maps through `@theme inline` to a palette `--*` variable.
  *
  * Token map (quick reference, matches this file’s `@theme inline`)
@@ -113,10 +114,10 @@
  * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
  * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
  * | Page canvas        | `bg-background`, `text-foreground` |
- * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `bg-primary-subtle`, `text-primary-foreground`, `bg-tabs-active` |
+ * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `bg-primary-subtle`, `text-primary-foreground` |
  * | Secondary          | `bg-secondary`, `text-secondary-foreground`, `hover:bg-secondary-hover`, `active:bg-secondary-active` |
  * | Destructive        | `bg-destructive`, `hover:bg-destructive-hover`, `active:bg-destructive-active`, `bg-destructive-focus`, `text-destructive-foreground` |
- * | Accent / muted     | `bg-accent`, `text-accent-foreground`, `bg-muted`, `text-muted-foreground` |
+ * | Accent / muted     | `bg-accent`, `text-accent-foreground`, `bg-muted`, `text-muted-foreground`, `bg-muted-selected` |
  * | Popover / card     | `bg-popover`, `text-popover-foreground`, `bg-card`, `text-card-foreground` |
  * | Sidebar            | `bg-sidebar`, `text-sidebar-foreground`, `sidebar-accent*`, `sidebar-border`, `ring-sidebar-ring` |
  * | Chart series       | `chart-1` … `chart-5` (and `fill-*` / `stroke-*` when exposed) |
@@ -207,7 +208,9 @@
  *                            backgrounds (field.tsx). Utility: `bg-primary-subtle`.
  *   --destructive-focus  — low-opacity destructive tint for focused destructive
  *                            menu items. Utility: `bg-destructive-focus`.
- *   --tabs-active        — active tab pill fill (tabs.tsx). Utility: `bg-tabs-active`.
+ *   --muted-selected     — selected fill on a muted substrate (Fluent-style subtle
+ *                            selection; tabs.tsx trigger when active). Utility:
+ *                            `bg-muted-selected`.
  *
  * Rules for adding new tokens:
  *   1. Define the raw `--my-token` in every palette file (light + .dark).
@@ -215,7 +218,7 @@
  *      `text-*` / `border-*` utilities; skip if only used via arbitrary `var()`.
  *   3. Follow the state-suffix chain: rest → hover → active → (palette-derived
  *      extensions such as ring-primary / primary-subtle) → foreground → any
- *      remaining role-specific tokens (e.g. tabs-active). Match order in palette
+ *      remaining role-specific tokens (e.g. muted-selected). Match order in palette
  *      files (`blue.css`, …) when adding keys here.
  *   4. Avoid one-off values inside components; always trace back to a palette var.
  *   5. Palette derivations (hover/active tints, ring/primary/destructive alphas):
@@ -295,8 +298,8 @@
    * Primary actions — brand CTA
    *
    * Order mirrors palette files: base fill, hover/active, then ring-primary /
-   * primary-subtle (checked controls / cards), then primary-foreground, then
-   * tabs-active. Drives: button (default variant), badge (default), switch
+   * primary-subtle (checked controls / cards), then primary-foreground. Drives:
+   * button (default variant), badge (default), switch
    * (checked bg), checked radio/checkbox fill and border, calendar range
    * endpoints, slider thumb, tooltip surface (bg-primary / text-primary-foreground),
    * and progress-circle indicator (text-primary for stroke color).
@@ -358,12 +361,15 @@
    *
    * `text-muted-foreground` — placeholder text, icon tint on menu items and
    * svgs, shortcut labels, secondary copy (breadcrumb separator, chart labels).
-   * `bg-muted` — skeleton loaders, chart series fill fallback.
+   * `bg-muted` — skeleton loaders, chart series fill fallback, tabs list rail
+   * (tabs.tsx).
+   * `bg-muted-selected` — selected control on top of `bg-muted` (active tab pill).
    * `fill-muted` / `fill-muted-foreground` — chart.tsx SVG fills.
-   * No `-hover` or `-active` variant; muted is not an interactive surface.
+   * No `-hover` or `-active` on the base muted fill; row hovers use `accent`.
    */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-muted-selected: var(--muted-selected);
 
   /*
    * Floating layers — surfaces above the document plane
@@ -415,15 +421,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
-  /*
-   * Component extensions — role-specific interaction overrides
-   *
-   * Drives specific components where a semantic surface (like primary or
-   * background) needs a specialized variant. `bg-tabs-active` provides the
-   * active pill fill for tabs.tsx.
-   */
-  --color-tabs-active: var(--tabs-active);
 
   /*
    * Proportional corner-radius scale (relative to :root --radius)
