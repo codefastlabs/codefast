@@ -66,6 +66,7 @@
 
   --popover: oklch(98.4% 0.003 247.858); /* --color-slate-50 */
   --popover-foreground: oklch(12.9% 0.042 264.695); /* --color-slate-950 */
+
   --card: oklch(98.4% 0.003 247.858); /* --color-slate-50 */
   --card-foreground: oklch(12.9% 0.042 264.695); /* --color-slate-950 */
 
@@ -157,6 +158,7 @@
 
   --popover: oklch(20.8% 0.042 265.755); /* --color-slate-900 */
   --popover-foreground: oklch(98.4% 0.003 247.858); /* --color-slate-50 */
+
   --card: oklch(20.8% 0.042 265.755); /* --color-slate-900 */
   --card-foreground: oklch(98.4% 0.003 247.858); /* --color-slate-50 */
 
