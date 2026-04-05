@@ -51,7 +51,7 @@ catalog:
   "@radix-ui/react-visually-hidden": ^1.2.4
   "@rolldown/plugin-babel": ^0.2.2
   "@shikijs/rehype": ^4.0.2
-  "@swc/core": ^1.15.21
+  "@swc/core": ^1.15.24
   "@swc/jest": ^0.2.39
   "@tabler/icons-react": ^3.41.1
   "@tailwindcss/postcss": ^4.2.2
@@ -76,7 +76,7 @@ catalog:
   "@types/node": ^25.5.2
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260403.1
+  "@typescript/native-preview": 7.0.0-dev.20260405.1
   "@unpic/react": ^1.0.2
   "@vitejs/plugin-react": ^6.0.1
   babel-plugin-react-compiler: ^1.0.0
