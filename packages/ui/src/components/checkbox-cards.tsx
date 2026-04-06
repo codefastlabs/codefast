@@ -35,7 +35,7 @@ function CheckboxCardsItem({
   return (
     <Label
       className={cn(
-        "flex items-start gap-3 rounded-lg border border-field-border p-3 transition hover:not-has-disabled:not-has-aria-checked:bg-secondary-hover has-focus-visible:border-ring has-disabled:opacity-50 has-aria-checked:border-primary has-aria-checked:bg-primary/10",
+        "flex items-start gap-3 rounded-lg border border-field-border p-3 transition hover:not-has-disabled:not-has-aria-checked:bg-secondary-hover has-focus-visible:border-ring has-focus-visible:ring-3 has-focus-visible:ring-ring-focus has-disabled:opacity-50 has-aria-checked:border-primary has-aria-checked:bg-primary/10",
         className,
       )}
       data-slot="checkbox-card"

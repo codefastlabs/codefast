@@ -655,13 +655,13 @@ export function ThemeAppearancePageDeferred({
                   Brand colors (@codefast/ui)
                 </CardTitle>
                 <CardDescription className="text-pretty">
-                  Accent CSS (e.g.{" "}
+                  Accent CSS (
                   <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
                     neutral.css
-                  </code>
-                  ,{" "}
+                  </code>{" "}
+                  +{" "}
                   <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
-                    blue.css
+                    preset.css
                   </code>
                   ) ships with the UI kit. Orthogonal to light/dark/system from @codefast/theme.
                 </CardDescription>

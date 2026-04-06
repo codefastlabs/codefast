@@ -493,7 +493,7 @@ function HomePage() {
         <SectionHeading
           eyebrow="Appearance"
           title="Light, dark, and accent palettes"
-          description="Use this site’s theme page to switch color mode. For brand colors, import one of 22 palette CSS files from the package—the components section includes a theme picker wired to those imports."
+          description="Use this site’s theme page to switch color mode. Brand semantics come from @codefast/ui (neutral.css + preset); the components section includes accent classes layered on top."
           titleId="themes-heading"
         />
 

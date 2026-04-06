@@ -202,8 +202,8 @@ export function HomeBentoShowcase() {
             </div>
             <CardTitle className="text-base">Theme-ready tokens</CardTitle>
             <CardDescription className="text-pretty">
-              Switch appearance modes on the theme page. Swap accent palettes by importing a
-              different CSS file—no component rewrites.
+              Switch appearance modes on the theme page. Tune brand colors by overriding CSS
+              variables after the UI imports—no component rewrites.
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">

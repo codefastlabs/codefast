@@ -74,7 +74,7 @@ function InputNumber({
       />
       <div
         className={cn(
-          "group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 order-last ml-auto grid h-full shrink-0 divide-y divide-field-border border-l border-l-field-border transition group-focus-within:divide-ring group-focus-within:border-l-ring group-has-aria-invalid:divide-destructive group-has-aria-invalid:border-l-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60",
+          "order-last ml-auto grid h-full shrink-0 divide-y divide-field-border border-l border-l-field-border transition group-focus-within:divide-ring group-focus-within:border-l-ring group-hover:not-group-focus-within:not-has-disabled:divide-ring/60 group-hover:not-group-focus-within:not-has-disabled:border-l-ring/60 group-has-aria-invalid:divide-destructive group-has-aria-invalid:border-l-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60",
           "*:[button]:focus-visible:bg-ring-focus *:[button]:focus-visible:ring-0 group-has-aria-invalid:*:[button]:focus-visible:bg-ring-error",
         )}
         data-slot="input-number-buttons"

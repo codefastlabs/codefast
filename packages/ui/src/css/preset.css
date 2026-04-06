@@ -5,7 +5,7 @@
  * -------
  *
  * This stylesheet is the contract between **semantic CSS variables** (defined per
- * brand palette in files such as `stone.css`, `blue.css`, …) and **Tailwind
+ * brand palette in `neutral.css` or your own `:root` / `.dark` overrides) and **Tailwind
  * utilities** used across `packages/ui/src/components`. Components never hard-code
  * hex/HSL; they reference tokens like `bg-primary` or `border-field-border`, which
  * keeps enterprise apps consistent, auditable, and safe to re-theme (light/dark,
@@ -43,14 +43,15 @@
  * How to extend safely (enterprise / design systems)
  * ----------------------------------------------------
  *
- * 1. **New color token** — Add the raw `--my-token` in every palette file (light
- *    and `.dark`), then map `--color-my-token: var(--my-token)` inside
- *    `@theme inline`. Document the token in your design system; avoid skipping
- *    dark variants.
+ * 1. **New color token** — Add the raw `--my-token` in your palette stylesheet
+ *    (`:root` and `.dark`, e.g. `neutral.css` or a fork), then map
+ *    `--color-my-token: var(--my-token)` inside `@theme inline`. Document the token
+ *    in your design system; avoid skipping dark variants.
  * 2. **New radius step** — Prefer deriving from `--radius` like existing
  *    `--radius-*` keys so `rounded-*` stays proportional when products change
  *    corner radius globally.
- * 3. **Consumer apps** — Import this preset **and** one palette; do not redefine
+ * 3. **Consumer apps** — Import this preset **and** a palette (default:
+ *    `neutral.css`); do not redefine
  *    `--color-*` keys unless you intentionally override Tailwind’s generated theme.
  *
  * Usage in `src/components` (reviewed against the library source)
@@ -87,9 +88,8 @@
  * `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, and
  * `sidebar-ring` set for menus, groups, separators, and focus rings.
  *
- * Tabs and outlines — tabs.tsx uses `outline-ring-selected` on the active
- * trigger (with `bg-muted-selected`), `outline-ring` on the panel, and
- * `ring-ring-focus` for focus-visible; scroll-area.tsx mirrors outline and
+ * Tabs and outlines — tabs.tsx uses `ring-ring-subtle`, `outline-ring`, and
+ * `ring-ring-focus` on the list and panel; scroll-area.tsx mirrors outline and
  * ring focus styling for keyboard users.
  *
  * Charts — chart.tsx styles Recharts with `stroke-border`, `fill-muted`,
@@ -112,7 +112,7 @@
  * |--------------------|---------------------------|
  * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover`, `bg-primary-checked` (checked card) |
  * | Default border     | `border-border`, `divide-field-border`, `bg-border` (scrollbar thumb) |
- * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-selected`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
+ * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
  * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
  * | Page canvas        | `bg-background`, `text-foreground` |
  * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `text-primary-foreground` |
@@ -203,7 +203,7 @@
  *   Distinct from §2: used for focus rings, validation, selection washes, and
  *   checked emphasis — **not** the same as `-hover` / `-active` on solid buttons.
  *
- *   --ring-focus, --ring-selected, --ring-error — derived from `--ring` or
+ *   --ring-focus, --ring-subtle, --ring-error — derived from `--ring` or
  *                         `--destructive` (see comments on each in `@theme inline`).
  *   --ring-primary        — checked primary control ring (`ring-ring-primary`).
  *   --primary-checked     — checked primary **surface** tint (`bg-primary-checked`).
@@ -220,8 +220,7 @@
  *
  *   --ring                — hue anchor for focus and outline utilities.
  *   --ring-focus          — standard focus-visible ring (paired with `ring-3`).
- *   --ring-selected         — low-emphasis outline for selected controls on
- *                         muted surfaces (e.g. active tab with `bg-muted-selected`).
+ *   --ring-subtle         — low-emphasis outline (e.g. inactive tabs).
  *   --ring-error          — invalid / destructive field ring.
  *   --ring-primary        — checked control ring (checkbox, radio, slider thumb).
  *
@@ -272,7 +271,7 @@
  *
  * Rules for adding or changing tokens
  * -----------------------------------
- *   1. Add `--my-token` in **every** palette file (`:root` and `.dark`).
+ *   1. Add `--my-token` in your palette stylesheet (`:root` and `.dark`).
  *   2. Map `--color-my-token: var(--my-token)` in `@theme inline` if components need
  *      `bg-*` / `text-*` / `border-*` / `ring-*` / `fill-*` / `stroke-*` / `outline-*`.
  *   3. Prefer **reusing** an existing family (§2–§8) before inventing a parallel name.
@@ -291,7 +290,7 @@
  * Each `--color-*` key below becomes `bg-*`, `text-*`, `border-*`, `ring-*`,
  * `fill-*`, `stroke-*`, `outline-*`, and gradient-stop (`from-*`, `to-*`)
  * utilities. Left-hand names are the stable public API; right-hand variables
- * must exist in the imported palette (`stone.css`, `blue.css`, …).
+ * must exist in the imported palette (e.g. `neutral.css` or equivalent).
  */
 @theme inline {
   /*
@@ -309,7 +308,6 @@
    */
   --color-field: var(--field);
   --color-field-hover: var(--field-hover);
-
   --color-field-border: var(--field-border);
   --color-field-border-hover: var(--field-border-hover);
 
@@ -331,7 +329,7 @@
    * build a consistent two-layer focus signal:
    *   • border-ring         — replaces field-border on focus (the sharp edge).
    *   • ring-ring-focus     — outer glow ring (50 % alpha); standard control.
-   *   • ring-ring-selected    — ~20 % alpha; pairs with `bg-muted-selected` (active tabs).
+   *   • ring-ring-subtle    — 20 % alpha ring; tabs.tsx inactive panel outline.
    *   • ring-ring-error     — destructive-derived ring for aria-invalid fields.
    *
    * `bg-ring` / `bg-ring-focus` / `bg-ring-error` — resizable.tsx handle and
@@ -339,7 +337,7 @@
    */
   --color-ring: var(--ring);
   --color-ring-focus: var(--ring-focus);
-  --color-ring-selected: var(--ring-selected);
+  --color-ring-subtle: var(--ring-subtle);
   --color-ring-error: var(--ring-error);
   --color-ring-primary: var(--ring-primary);
 
@@ -430,8 +428,8 @@
    * No `-hover` or `-active` on the base muted fill; row hovers use `accent`.
    */
   --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
   --color-muted-selected: var(--muted-selected);
+  --color-muted-foreground: var(--muted-foreground);
 
   /*
    * Floating layers — surfaces above the document plane

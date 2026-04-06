@@ -82,36 +82,11 @@ If your project already has Tailwind CSS 4.x configured (e.g. Vite, Next.js, Tan
 @import "tailwindcss";
 
 /* @codefast/ui – theme variables & preset (must come after tailwindcss) */
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/neutral.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
-**2. Select a theme.** Available themes (replace `slate` with any below):
-
-| Theme   | Import Path                    |
-| ------- | ------------------------------ |
-| slate   | `@codefast/ui/css/slate.css`   |
-| gray    | `@codefast/ui/css/gray.css`    |
-| zinc    | `@codefast/ui/css/zinc.css`    |
-| neutral | `@codefast/ui/css/neutral.css` |
-| stone   | `@codefast/ui/css/stone.css`   |
-| red     | `@codefast/ui/css/red.css`     |
-| orange  | `@codefast/ui/css/orange.css`  |
-| amber   | `@codefast/ui/css/amber.css`   |
-| yellow  | `@codefast/ui/css/yellow.css`  |
-| lime    | `@codefast/ui/css/lime.css`    |
-| green   | `@codefast/ui/css/green.css`   |
-| emerald | `@codefast/ui/css/emerald.css` |
-| teal    | `@codefast/ui/css/teal.css`    |
-| cyan    | `@codefast/ui/css/cyan.css`    |
-| sky     | `@codefast/ui/css/sky.css`     |
-| blue    | `@codefast/ui/css/blue.css`    |
-| indigo  | `@codefast/ui/css/indigo.css`  |
-| violet  | `@codefast/ui/css/violet.css`  |
-| purple  | `@codefast/ui/css/purple.css`  |
-| fuchsia | `@codefast/ui/css/fuchsia.css` |
-| pink    | `@codefast/ui/css/pink.css`    |
-| rose    | `@codefast/ui/css/rose.css`    |
+**2. Brand colors.** The package ships one default semantic palette (`neutral.css`). Override CSS variables after those imports if you need a different brand (see [Customizing Theme](#customizing-theme)).
 
 **3. Dark mode.** All themes include light/dark variants. Add the `.dark` class to `<html>` or `<body>` to enable dark mode:
 
@@ -138,7 +113,7 @@ import "@codefast/ui/css/style.css";
 ```css
 /* src/styles.css */
 @import "tailwindcss";
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/neutral.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
@@ -147,7 +122,7 @@ import "@codefast/ui/css/style.css";
 ```css
 /* app/globals.css */
 @import "tailwindcss";
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/neutral.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
@@ -156,7 +131,7 @@ import "@codefast/ui/css/style.css";
 ```css
 /* src/styles.css */
 @import "tailwindcss";
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/neutral.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
@@ -208,7 +183,7 @@ export default defineConfig({
 | Components look unstyled                                 | Ensure CSS imports run before any component renders (entry point first).                                                                                  |
 | Duplicate Tailwind CSS                                   | Use Option 1 (theme + preset only), **not** `style.css`.                                                                                                  |
 | Dark mode not working                                    | Add `class="dark"` to `<html>` when dark mode is active.                                                                                                  |
-| Build: CSS not found                                     | Verify path: `@codefast/ui/css/[theme].css` (e.g. `slate.css`).                                                                                           |
+| Build: CSS not found                                     | Verify paths: `@codefast/ui/css/neutral.css` and `@codefast/ui/css/preset.css`.                                                                           |
 | SSR / loaders: `Cannot destructure property '__extends'` | Set `nitro.exportConditions: ['import', 'module', 'default']`, or add `resolve.alias` for `tslib` (see [SSR with Nitro](#ssr-with-nitro-tanstack-start)). |
 
 ### Customizing Theme
@@ -216,7 +191,7 @@ export default defineConfig({
 Override CSS variables in your own CSS after imports:
 
 ```css
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/neutral.css";
 @import "@codefast/ui/css/preset.css";
 
 :root {
@@ -397,8 +372,8 @@ function DialogExample() {
 
 All components use CSS custom properties (`--primary`, `--background`, `--radius`, etc.). You can:
 
-1. **Switch themes** — Import a different theme file (e.g. `zinc.css` instead of `slate.css`).
-2. **Override variables** — Define your own values in `:root` or `.dark` after imports (see [Customizing Theme](#customizing-theme)).
+1. **Override variables** — Define your own values in `:root` or `.dark` after `neutral.css` / `preset.css` (see [Customizing Theme](#customizing-theme)).
+2. **Dark class** — Keep using `.dark` on the root for dark mode; mirror the same token names as in `neutral.css` under `.dark` when you customize.
 3. **Use a theme provider** — For system/light/dark switching, add/remove `dark` class on `<html>`; many apps use `next-themes` or similar for persistence.
 
 ## API Reference

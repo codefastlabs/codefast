@@ -51,7 +51,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
     <SelectPrimitive.Trigger
       className={buttonVariants({
         className: [
-          "[&_svg:not([class*='text-'])]:text-muted-foreground focus:ring-ring-focus focus:border-ring w-fit justify-between px-3 font-normal focus:ring-3 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate",
+          "[&_svg:not([class*='text-'])]:text-muted-foreground w-fit justify-between px-3 font-normal *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate",
           className,
         ],
         size,

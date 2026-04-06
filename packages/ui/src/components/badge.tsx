@@ -21,7 +21,7 @@ const badgeVariants = tv({
       destructive:
         "border-transparent bg-destructive text-destructive-foreground focus-visible:ring-ring-error [a&]:hover:bg-destructive-hover",
       outline:
-        "border-field-border bg-background text-foreground focus-visible:border-ring [a&]:hover:border-ring/60 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        "border-field-border bg-background text-foreground focus-visible:border-ring [a&]:hover:border-field-border-hover [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       secondary:
         "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary-hover",
     },

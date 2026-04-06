@@ -67,7 +67,7 @@ function Calendar({
         disabled: cn("text-muted-foreground opacity-50", defaultClassNames.disabled),
         dropdown: cn("absolute inset-0 bg-popover opacity-0", defaultClassNames.dropdown),
         dropdown_root: cn(
-          "relative rounded-md border border-field-border shadow-xs has-focus:border-ring has-focus:ring-3 has-focus:ring-ring-focus",
+          "relative rounded-md border border-field-border shadow-xs has-focus-visible:border-ring has-focus-visible:ring-3 has-focus-visible:ring-ring-focus",
           defaultClassNames.dropdown_root,
         ),
         dropdowns: cn(
