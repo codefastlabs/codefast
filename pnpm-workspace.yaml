@@ -129,7 +129,7 @@ catalog:
   unified: ^11.0.5
   unist-util-visit: ^5.1.0
   vaul: ^1.1.2
-  vite: ^8.0.4
+  vite: ^8.0.5
   vitest: ^4.1.2
   web-vitals: ^5.2.0
   zod: ^4.3.6
