@@ -14,7 +14,7 @@ type AvatarProps = ComponentProps<typeof AvatarPrimitive.Root>;
 function Avatar({ className, ...props }: AvatarProps): JSX.Element {
   return (
     <AvatarPrimitive.Root
-      className={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", className)}
+      className={cn("relative flex size-8 shrink-0 overflow-hidden", "rounded-full", className)}
       data-slot="avatar"
       {...props}
     />
@@ -30,7 +30,7 @@ type AvatarImageProps = ComponentProps<typeof AvatarPrimitive.Image>;
 function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
   return (
     <AvatarPrimitive.Image
-      className={cn("aspect-square size-full", className)}
+      className={cn("aspect-square", "size-full", className)}
       data-slot="avatar-image"
       {...props}
     />
@@ -46,7 +46,11 @@ type AvatarFallbackProps = ComponentProps<typeof AvatarPrimitive.Fallback>;
 function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Element {
   return (
     <AvatarPrimitive.Fallback
-      className={cn("flex size-full items-center justify-center rounded-full bg-muted", className)}
+      className={cn(
+        "flex size-full items-center justify-center",
+        "rounded-full bg-muted",
+        className,
+      )}
       data-slot="avatar-fallback"
       {...props}
     />

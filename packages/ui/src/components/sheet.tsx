@@ -13,7 +13,11 @@ import { buttonVariants } from "#components/button";
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-emphasis data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=open]:animate-in data-[state=open]:animation-duration-500",
+  base: [
+    "fixed z-50 flex flex-col overflow-auto",
+    "bg-background shadow-lg",
+    "ease-emphasis data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=open]:animate-in data-[state=open]:animation-duration-500",
+  ],
   defaultVariants: {
     side: "right",
   },
@@ -77,7 +81,10 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-emphasis data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=open]:fade-in-0",
+          "fixed inset-0 z-50",
+          "bg-black/50",
+          "ease-emphasis",
+          "data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=open]:fade-in-0",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"
@@ -90,7 +97,7 @@ function SheetContent({
         {children}
         <SheetPrimitive.Close
           className={buttonVariants({
-            className: ["absolute top-4 right-4 size-7", classNames?.close],
+            className: ["absolute top-4 right-4", "size-7", classNames?.close],
             size: "icon",
             variant: "ghost",
           })}
@@ -114,7 +121,10 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center sm:text-left",
+        "flex shrink-0 flex-col",
+        "gap-1.5",
+        "px-6 pt-6 pb-4",
+        "text-center sm:text-left",
         className,
       )}
       data-slot="sheet-header"
@@ -131,7 +141,11 @@ type SheetBodyProps = ComponentProps<"div">;
 
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
   return (
-    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="sheet-body" {...props} />
+    <main
+      className={cn("overflow-auto", "px-6 py-2", className)}
+      data-slot="sheet-body"
+      {...props}
+    />
   );
 }
 
@@ -145,7 +159,9 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse sm:flex-row sm:justify-end",
+        "gap-2",
+        "px-6 pt-4 pb-6",
         className,
       )}
       data-slot="sheet-footer"
@@ -163,7 +179,7 @@ type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   return (
     <SheetPrimitive.Title
-      className={cn("text-lg font-semibold text-foreground", className)}
+      className={cn("text-lg font-semibold", "text-foreground", className)}
       data-slot="sheet-title"
       {...props}
     />
@@ -179,7 +195,7 @@ type SheetDescriptionProps = ComponentProps<typeof SheetPrimitive.Description>;
 function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.Element {
   return (
     <SheetPrimitive.Description
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm", "text-muted-foreground", className)}
       data-slot="sheet-description"
       {...props}
     />

@@ -11,7 +11,7 @@ type SkeletonProps = ComponentProps<"div">;
 function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
   return (
     <div
-      className={cn("animate-pulse rounded-lg bg-muted", className)}
+      className={cn("animate-pulse", "rounded-lg bg-muted", className)}
       data-slot="skeleton"
       {...props}
     />

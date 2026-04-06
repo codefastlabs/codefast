@@ -52,14 +52,21 @@ function DialogContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-emphasis data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+          "fixed inset-0 z-50",
+          "bg-black/50",
+          "ease-emphasis",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
           classNames?.overlay,
         )}
         data-slot="dialog-overlay"
       />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto ease-emphasis data-[state=closed]:animate-out data-[state=open]:animate-in max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom sm:grid-rows-[1fr_auto_3fr] sm:p-4 sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95",
+          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4",
+          "ease-emphasis",
+          "data-[state=closed]:animate-out data-[state=open]:animate-in",
+          "max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom",
+          "sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95",
           classNames?.wrapper,
         )}
         data-slot="dialog-content-wrapper"
@@ -67,7 +74,8 @@ function DialogContent({
       >
         <div
           className={cn(
-            "relative row-start-2 flex w-full flex-col rounded-t-2xl border bg-popover text-popover-foreground shadow-lg sm:max-w-lg sm:rounded-2xl",
+            "relative row-start-2 flex w-full flex-col sm:max-w-lg",
+            "rounded-t-2xl border bg-popover text-popover-foreground shadow-lg sm:rounded-2xl",
             classNames?.content,
             className,
           )}
@@ -76,7 +84,7 @@ function DialogContent({
           {children}
           <DialogPrimitive.Close
             className={buttonVariants({
-              className: ["absolute top-2.5 right-2.5 size-7", classNames?.close],
+              className: ["absolute top-2.5 right-2.5", "size-7", classNames?.close],
               size: "icon",
               variant: "ghost",
             })}
@@ -101,7 +109,10 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-2 text-center sm:text-left",
+        "flex shrink-0 flex-col",
+        "gap-1.5",
+        "px-6 pt-6 pb-2",
+        "text-center sm:text-left",
         className,
       )}
       data-slot="dialog-header"
@@ -118,7 +129,11 @@ type DialogBodyProps = ComponentProps<"div">;
 
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
-    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="dialog-body" {...props} />
+    <main
+      className={cn("overflow-auto", "px-6 py-2", className)}
+      data-slot="dialog-body"
+      {...props}
+    />
   );
 }
 
@@ -132,7 +147,9 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-2 pb-6 sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse sm:flex-row sm:justify-end",
+        "gap-2",
+        "px-6 pt-2 pb-6",
         className,
       )}
       data-slot="dialog-footer"
@@ -150,7 +167,7 @@ type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
     <DialogPrimitive.Title
-      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
+      className={cn("text-lg leading-none font-semibold", "tracking-tight", className)}
       data-slot="dialog-title"
       {...props}
     />
@@ -166,7 +183,7 @@ type DialogDescriptionProps = ComponentProps<typeof DialogPrimitive.Description>
 function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX.Element {
   return (
     <DialogPrimitive.Description
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm", "text-muted-foreground", className)}
       data-slot="dialog-description"
       {...props}
     />

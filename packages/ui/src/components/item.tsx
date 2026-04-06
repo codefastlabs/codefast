@@ -10,11 +10,12 @@ import { Separator } from "#components/separator";
  * -------------------------------------------------------------------------- */
 
 const itemVariants = tv({
-  base: cn(
-    "group/item flex flex-wrap items-center rounded-lg border border-transparent text-sm outline-hidden transition-colors duration-100",
+  base: [
+    "group/item flex flex-wrap items-center rounded-lg border border-transparent text-sm",
+    "outline-hidden transition-colors duration-100",
     "[a]:transition-colors [a]:hover:bg-accent/50",
     "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus",
-  ),
+  ],
   defaultVariants: {
     size: "default",
     variant: "default",
@@ -33,18 +34,21 @@ const itemVariants = tv({
 });
 
 const itemMediaVariants = tv({
-  base: cn(
+  base: [
     "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:self-start",
     "group-has-[[data-slot=item-description]]/item:translate-y-0.5 [&_svg]:pointer-events-none",
-  ),
+  ],
   defaultVariants: {
     variant: "default",
   },
   variants: {
     variant: {
       default: "bg-transparent",
-      icon: "size-8 shrink-0 rounded-md border bg-muted [&_svg:not([class*='size-'])]:size-4",
-      image: "size-10 shrink-0 overflow-hidden rounded-md [&_img]:size-full [&_img]:object-cover",
+      icon: ["size-8 shrink-0 rounded-md border bg-muted", "[&_svg:not([class*='size-'])]:size-4"],
+      image: [
+        "size-10 shrink-0 overflow-hidden rounded-md",
+        "[&_img]:size-full [&_img]:object-cover",
+      ],
     },
   },
 });
@@ -58,7 +62,7 @@ type ItemGroupProps = ComponentProps<"div">;
 function ItemGroup({ className, ...props }: ItemGroupProps): JSX.Element {
   return (
     <div
-      className={cn("group/item-group flex flex-col", className)}
+      className={cn("group/item-group", "flex flex-col", className)}
       data-slot="item-group"
       role="list"
       {...props}
@@ -138,7 +142,12 @@ type ItemContentProps = ComponentProps<"div">;
 function ItemContent({ className, ...props }: ItemContentProps): JSX.Element {
   return (
     <div
-      className={cn("flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none", className)}
+      className={cn(
+        "flex flex-1 flex-col",
+        "gap-1",
+        "[&+[data-slot=item-content]]:flex-none",
+        className,
+      )}
       data-slot="item-content"
       {...props}
     />
@@ -154,7 +163,7 @@ type ItemTitleProps = ComponentProps<"div">;
 function ItemTitle({ className, ...props }: ItemTitleProps): JSX.Element {
   return (
     <div
-      className={cn("flex w-fit items-center gap-2 text-sm leading-snug font-medium", className)}
+      className={cn("flex w-fit items-center gap-2", "text-sm leading-snug font-medium", className)}
       data-slot="item-title"
       {...props}
     />
@@ -189,7 +198,11 @@ type ItemActionsProps = ComponentProps<"div">;
 
 function ItemActions({ className, ...props }: ItemActionsProps): JSX.Element {
   return (
-    <div className={cn("flex items-center gap-2", className)} data-slot="item-actions" {...props} />
+    <div
+      className={cn("flex items-center", "gap-2", className)}
+      data-slot="item-actions"
+      {...props}
+    />
   );
 }
 
@@ -202,7 +215,7 @@ type ItemHeaderProps = ComponentProps<"div">;
 function ItemHeader({ className, ...props }: ItemHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex basis-full items-center justify-between gap-2", className)}
+      className={cn("flex basis-full items-center justify-between", "gap-2", className)}
       data-slot="item-header"
       {...props}
     />
@@ -218,7 +231,7 @@ type ItemFooterProps = ComponentProps<"div">;
 function ItemFooter({ className, ...props }: ItemFooterProps): JSX.Element {
   return (
     <div
-      className={cn("flex basis-full items-center justify-between gap-2", className)}
+      className={cn("flex basis-full items-center justify-between", "gap-2", className)}
       data-slot="item-footer"
       {...props}
     />

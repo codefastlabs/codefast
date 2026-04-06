@@ -75,7 +75,13 @@ function DropdownMenuSubTrigger({
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
-        "flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
+        "flex items-center gap-x-2",
+        "cursor-default select-none",
+        "rounded-sm px-2 py-1.5",
+        "text-sm",
+        "outline-hidden",
+        "focus:bg-accent focus:text-accent-foreground",
+        "data-inset:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
         className,
       )}
       data-inset={inset}
@@ -99,7 +105,11 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
     <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal">
       <DropdownMenuPrimitive.SubContent
         className={cn(
-          "z-50 min-w-32 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg ease-spring data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
+          "z-50 min-w-32 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden",
+          "rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg",
+          "ease-spring",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2",
+          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
           className,
         )}
         data-slot="dropdown-menu-sub-content"
@@ -124,7 +134,11 @@ function DropdownMenuContent({
     <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal">
       <DropdownMenuPrimitive.Content
         className={cn(
-          "z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-32 origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg ease-spring data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
+          "z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-32 origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto",
+          "rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg",
+          "ease-spring",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2",
+          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
           className,
         )}
         data-slot="dropdown-menu-content"
@@ -153,7 +167,16 @@ function DropdownMenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "group/dropdown-menu-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 data-inset:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-focus [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "group/dropdown-menu-item relative flex items-center gap-x-2",
+        "cursor-default select-none",
+        "rounded-sm px-2 py-1.5",
+        "text-sm",
+        "outline-hidden",
+        "focus:bg-accent focus:text-accent-foreground",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-focus data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "data-inset:pl-8",
+        "aria-disabled:opacity-50",
         className,
       )}
       data-inset={inset}
@@ -180,7 +203,14 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "group/dropdown-menu-item relative flex cursor-default items-center gap-x-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/dropdown-menu-item relative flex items-center gap-x-2",
+        "cursor-default select-none",
+        "rounded-sm py-1.5 pr-2 pl-8",
+        "text-sm",
+        "outline-hidden",
+        "focus:bg-accent focus:text-accent-foreground",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "aria-disabled:opacity-50",
         className,
       )}
       data-slot="dropdown-menu-checkbox-item"
@@ -210,7 +240,14 @@ function DropdownMenuRadioItem({
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
-        "group/dropdown-menu-item relative flex cursor-default items-center gap-x-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/dropdown-menu-item relative flex items-center gap-x-2",
+        "cursor-default select-none",
+        "rounded-sm py-1.5 pr-2 pl-8",
+        "text-sm",
+        "outline-hidden",
+        "focus:bg-accent focus:text-accent-foreground",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "aria-disabled:opacity-50",
         className,
       )}
       data-slot="dropdown-menu-radio-item"
@@ -238,7 +275,10 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
   return (
     <DropdownMenuPrimitive.Label
       className={cn(
-        "flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold data-inset:pl-8",
+        "flex items-center gap-x-2",
+        "px-2 py-1.5",
+        "text-sm font-semibold",
+        "data-inset:pl-8",
         className,
       )}
       data-inset={inset}
@@ -257,7 +297,7 @@ type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuPrimitive.Se
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Separator
-      className={cn("mx-2 my-1 h-px bg-border", className)}
+      className={cn("mx-2 my-1", "h-px bg-border", className)}
       data-slot="dropdown-menu-separator"
       {...props}
     />
@@ -274,7 +314,9 @@ function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground group-data-[variant=destructive]/dropdown-menu-item:text-destructive/80",
+        "ml-auto",
+        "text-xs tracking-widest text-muted-foreground",
+        "group-data-[variant=destructive]/dropdown-menu-item:text-destructive/80",
         className,
       )}
       data-slot="dropdown-menu-shortcut"

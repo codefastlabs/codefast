@@ -54,7 +54,8 @@ function ToggleGroup({
     <ToggleGroupProvider scope={__scopeToggleGroup} size={size} spacing={spacing} variant={variant}>
       <ToggleGroupPrimitive.Root
         className={cn(
-          "group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-lg data-[spacing=default]:data-[variant=outline]:shadow-xs",
+          "group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))]",
+          "rounded-lg data-[spacing=default]:data-[variant=outline]:shadow-xs",
           className,
         )}
         data-size={size}
@@ -99,8 +100,10 @@ function ToggleGroupItem({
           size,
           variant,
         }),
-        "w-auto min-w-0 shrink-0 px-3 focus:z-10 focus-visible:z-10",
-        "data-[spacing=0]:rounded-none data-[spacing=0]:shadow-none data-[spacing=0]:first:rounded-l-lg data-[spacing=0]:last:rounded-r-lg data-[spacing=0]:data-[variant=outline]:border-l-0 data-[spacing=0]:data-[variant=outline]:first:border-l",
+        "w-auto min-w-0 shrink-0 px-3",
+        "focus:z-10 focus-visible:z-10",
+        "data-[spacing=0]:rounded-none data-[spacing=0]:shadow-none data-[spacing=0]:first:rounded-l-lg data-[spacing=0]:last:rounded-r-lg",
+        "data-[spacing=0]:data-[variant=outline]:border-l-0 data-[spacing=0]:data-[variant=outline]:first:border-l",
       )}
       data-size={size}
       data-slot="toggle-group-item"

@@ -18,7 +18,11 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
     <OTPInput
       aria-label="One-time password"
       className={cn(className)}
-      containerClassName={cn("flex items-center gap-2 has-disabled:opacity-50", containerClassName)}
+      containerClassName={cn(
+        "flex items-center gap-2",
+        "has-disabled:opacity-50",
+        containerClassName,
+      )}
       data-slot="input-otp"
       {...props}
     />
@@ -57,7 +61,12 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
   return (
     <div
       className={cn(
-        "relative flex size-9 items-center justify-center border border-field-border bg-field text-sm outline-hidden transition-all not-has-disabled:shadow-xs first:rounded-l-lg last:rounded-r-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-3 data-[active=true]:ring-ring-focus data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-ring-destructive",
+        "relative flex size-9 items-center justify-center",
+        "border border-field-border bg-field first:rounded-l-lg last:rounded-r-lg",
+        "text-sm",
+        "outline-hidden transition-all not-has-disabled:shadow-xs",
+        "aria-invalid:border-destructive",
+        "data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-3 data-[active=true]:ring-ring-focus data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-ring-destructive",
         className,
       )}
       data-active={isActive}
@@ -66,8 +75,16 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
     >
       {char}
       {hasFakeCaret ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-4 w-px animate-caret-blink bg-foreground animation-duration-1000" />
+        <div
+          className={cn("pointer-events-none absolute inset-0", "flex items-center justify-center")}
+        >
+          <div
+            className={cn(
+              "h-4 w-px",
+              "animate-caret-blink animation-duration-1000",
+              "bg-foreground",
+            )}
+          />
         </div>
       ) : null}
     </div>

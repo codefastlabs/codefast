@@ -16,7 +16,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
   return (
     <nav
       aria-label="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
+      className={cn("mx-auto", "flex w-full justify-center", className)}
       data-slot="pagination"
       {...props}
     />
@@ -32,7 +32,7 @@ type PaginationContentProps = ComponentProps<"ul">;
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
   return (
     <ul
-      className={cn("flex flex-row items-center gap-1", className)}
+      className={cn("flex flex-row items-center", "gap-1", className)}
       data-slot="pagination-content"
       {...props}
     />
@@ -128,7 +128,7 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
   return (
     <span
       aria-hidden
-      className={cn("flex size-10 items-center justify-center", className)}
+      className={cn("flex size-10", "items-center justify-center", className)}
       data-slot="pagination-ellipsis"
       {...props}
     >

@@ -11,7 +11,7 @@ import * as SeparatorPrimitive from "@radix-ui/react-separator";
  * -------------------------------------------------------------------------- */
 
 const separatorVariants = tv({
-  base: "relative flex shrink-0 items-center bg-border",
+  base: ["relative flex shrink-0 items-center", "bg-border"],
   defaultVariants: {
     align: "center",
     orientation: "horizontal",
@@ -65,7 +65,12 @@ type SeparatorItemProps = ComponentProps<"div">;
 function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
   return (
     <div
-      className={cn("absolute mx-2 bg-background px-2 text-sm text-muted-foreground", className)}
+      className={cn(
+        "absolute mx-2",
+        "bg-background px-2",
+        "text-sm text-muted-foreground",
+        className,
+      )}
       data-slot="separator-item"
       {...props}
     />

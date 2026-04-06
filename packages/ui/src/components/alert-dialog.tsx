@@ -50,14 +50,19 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-emphasis data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+          "fixed inset-0 z-50",
+          "bg-black/50",
+          "ease-emphasis",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
           classNames?.overlay,
         )}
         data-slot="alert-dialog-overlay"
       />
       <AlertDialogPrimitive.Content
         className={cn(
-          "fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 ease-emphasis data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:grid-rows-[1fr_auto_3fr] sm:p-4",
+          "fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4",
+          "ease-emphasis",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           classNames?.wrapper,
         )}
         data-slot="alert-dialog-content-wrapper"
@@ -65,7 +70,8 @@ function AlertDialogContent({
       >
         <div
           className={cn(
-            "relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border bg-popover text-popover-foreground shadow-lg",
+            "relative row-start-2 flex w-full max-w-lg flex-col",
+            "rounded-2xl border bg-popover text-popover-foreground shadow-lg",
             classNames?.content,
             className,
           )}
@@ -88,7 +94,10 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center sm:text-left",
+        "flex shrink-0 flex-col",
+        "gap-1.5",
+        "px-6 pt-6 pb-4",
+        "text-center sm:text-left",
         className,
       )}
       data-slot="alert-dialog-header"
@@ -106,7 +115,7 @@ type AlertDialogBodyProps = ComponentProps<"div">;
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
   return (
     <main
-      className={cn("overflow-auto px-6 py-2", className)}
+      className={cn("overflow-auto", "px-6 py-2", className)}
       data-slot="alert-dialog-body"
       {...props}
     />
@@ -123,7 +132,9 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse sm:flex-row sm:justify-end",
+        "gap-2",
+        "px-6 pt-4 pb-6",
         className,
       )}
       data-slot="alert-dialog-footer"
@@ -141,7 +152,7 @@ type AlertDialogTitleProps = ComponentProps<typeof AlertDialogPrimitive.Title>;
 function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Title
-      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
+      className={cn("text-lg leading-none font-semibold", "tracking-tight", className)}
       data-slot="alert-dialog-title"
       {...props}
     />
@@ -157,7 +168,7 @@ type AlertDialogDescriptionProps = ComponentProps<typeof AlertDialogPrimitive.De
 function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Description
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm", "text-muted-foreground", className)}
       data-slot="alert-dialog-description"
       {...props}
     />

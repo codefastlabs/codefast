@@ -44,7 +44,16 @@ function InputNumber({
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
       className={cn(
-        "group peer flex h-9 w-full grow items-center gap-3 rounded-lg border border-field-border bg-field px-3 pr-0 text-base transition not-has-disabled:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring-focus hover:not-has-disabled:not-focus-within:border-field-border-hover has-disabled:opacity-50 has-aria-invalid:border-destructive focus-within:has-aria-invalid:ring-ring-destructive hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60 md:text-sm [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg]:text-muted-foreground",
+        "group peer flex h-9 w-full grow items-center gap-3",
+        "rounded-lg border border-field-border bg-field",
+        "px-3 pr-0",
+        "text-base md:text-sm",
+        "transition not-has-disabled:shadow-xs",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg]:text-muted-foreground",
+        "hover:not-has-disabled:not-focus-within:border-field-border-hover",
+        "focus-within:border-ring focus-within:ring-3 focus-within:ring-ring-focus",
+        "has-disabled:opacity-50",
+        "has-aria-invalid:border-destructive focus-within:has-aria-invalid:ring-ring-destructive hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60",
         className,
       )}
       data-slot="input-number"
@@ -68,13 +77,29 @@ function InputNumber({
         autoCapitalize="none"
         autoComplete="off"
         autoCorrect="off"
-        className="h-9 w-full min-w-0 rounded-md border border-field-border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-ring-destructive md:text-sm"
+        className={cn(
+          "h-9 w-full min-w-0",
+          "rounded-md border border-field-border bg-transparent shadow-xs",
+          "px-3 py-1",
+          "text-base md:text-sm",
+          "transition-[color,box-shadow] outline-none",
+          "selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground",
+          "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus",
+          "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+          "aria-invalid:border-destructive aria-invalid:ring-ring-destructive",
+        )}
         spellCheck="false"
         {...props}
       />
       <div
         className={cn(
-          "order-last ml-auto grid h-full shrink-0 divide-y divide-field-border border-l border-l-field-border transition group-focus-within:divide-ring group-focus-within:border-l-ring group-hover:not-group-focus-within:not-has-disabled:divide-ring/60 group-hover:not-group-focus-within:not-has-disabled:border-l-ring/60 group-has-aria-invalid:divide-destructive group-has-aria-invalid:border-l-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60",
+          "order-last ml-auto grid h-full shrink-0",
+          "divide-y divide-field-border border-l border-l-field-border",
+          "transition",
+          "group-focus-within:divide-ring group-focus-within:border-l-ring",
+          "group-hover:not-group-focus-within:not-has-disabled:divide-ring/60 group-hover:not-group-focus-within:not-has-disabled:border-l-ring/60",
+          "group-has-aria-invalid:divide-destructive group-has-aria-invalid:border-l-destructive",
+          "group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60",
           "*:[button]:focus-visible:bg-ring-focus *:[button]:focus-visible:ring-0 group-has-aria-invalid:*:[button]:focus-visible:bg-ring-destructive",
         )}
         data-slot="input-number-buttons"

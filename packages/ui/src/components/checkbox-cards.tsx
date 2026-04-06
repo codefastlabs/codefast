@@ -35,14 +35,25 @@ function CheckboxCardsItem({
   return (
     <Label
       className={cn(
-        "flex items-start gap-3 rounded-lg border border-field-border p-3 transition hover:not-has-disabled:not-has-aria-checked:bg-secondary-hover has-focus-visible:border-ring has-focus-visible:ring-3 has-focus-visible:ring-ring-focus has-disabled:opacity-50 has-aria-checked:border-primary has-aria-checked:bg-primary/10",
+        "flex items-start gap-3",
+        "rounded-lg border border-field-border p-3",
+        "transition",
+        "hover:not-has-disabled:not-has-aria-checked:bg-secondary-hover",
+        "has-focus-visible:border-ring has-focus-visible:ring-3 has-focus-visible:ring-ring-focus",
+        "has-disabled:opacity-50",
+        "has-aria-checked:border-primary has-aria-checked:bg-primary/10",
         className,
       )}
       data-slot="checkbox-card"
     >
       <CheckboxGroupPrimitive.Item
         className={cn(
-          "peer flex size-4 shrink-0 rounded-sm border border-field-border bg-field text-primary-foreground shadow-xs outline-hidden transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus aria-checked:border-primary aria-checked:bg-primary focus-visible:aria-checked:ring-ring-focus",
+          "peer flex size-4 shrink-0",
+          "rounded-sm border border-field-border bg-field shadow-xs",
+          "text-primary-foreground",
+          "outline-hidden transition",
+          "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus",
+          "aria-checked:border-primary aria-checked:bg-primary focus-visible:aria-checked:ring-ring-focus",
           checkboxClassName,
         )}
         data-slot="checkbox-card-item"

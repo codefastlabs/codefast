@@ -122,7 +122,7 @@ function FormItem({
 
   return (
     <FormItemContextProvider id={id} scope={__scopeFormField}>
-      <div className={cn("grid gap-2", className)} data-slot="form-item" {...props} />
+      <div className={cn("grid", "gap-2", className)} data-slot="form-item" {...props} />
     </FormItemContextProvider>
   );
 }
@@ -188,7 +188,7 @@ function FormDescription({
 
   return (
     <p
-      className={cn("text-xs text-muted-foreground", className)}
+      className={cn("text-xs", "text-muted-foreground", className)}
       data-slot="form-description"
       id={formDescriptionId}
       {...props}

@@ -28,7 +28,9 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
   return (
     <ol
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2",
+        "flex flex-wrap items-center",
+        "gap-1.5 sm:gap-2",
+        "text-sm break-words text-muted-foreground",
         className,
       )}
       data-slot="breadcrumb-list"
@@ -46,7 +48,7 @@ type BreadcrumbItemProps = ComponentProps<"li">;
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
   return (
     <li
-      className={cn("inline-flex items-center gap-1.5", className)}
+      className={cn("inline-flex items-center", "gap-1.5", className)}
       data-slot="breadcrumb-item"
       {...props}
     />
@@ -66,7 +68,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
 
   return (
     <Component
-      className={cn("transition-colors hover:text-foreground", className)}
+      className={cn("transition-colors", "hover:text-foreground", className)}
       data-slot="breadcrumb-link"
       {...props}
     />
@@ -84,7 +86,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
     <span
       aria-current="page"
       aria-disabled="true"
-      className={cn("font-normal text-foreground", className)}
+      className={cn("font-normal", "text-foreground", className)}
       data-slot="breadcrumb-page"
       {...props}
     />
@@ -115,7 +117,7 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
   return (
     <span
       aria-hidden="true"
-      className={cn("flex size-4 items-center justify-center", className)}
+      className={cn("flex size-4", "items-center justify-center", className)}
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       {...props}
