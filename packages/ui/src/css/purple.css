@@ -8,7 +8,7 @@
 
   --ring: oklch(71.4% 0.203 305.504); /* --color-purple-400 */
   --ring-focus: color-mix(in oklch, var(--ring), transparent 50%); /* var(--ring) / 50% */
-  --ring-subtle: color-mix(in oklch, var(--ring), transparent 80%); /* var(--ring) / 20% */
+  --ring-selected: color-mix(in oklch, var(--ring), transparent 80%); /* var(--ring) / 20% */
   --ring-error: color-mix(
     in oklch,
     oklch(63.7% 0.237 25.331),
@@ -96,7 +96,7 @@
 
   --ring: oklch(38.1% 0.176 304.987); /* --color-purple-900 */
   --ring-focus: color-mix(in oklch, var(--ring), transparent 50%); /* var(--ring) / 50% */
-  --ring-subtle: color-mix(in oklch, var(--ring), transparent 85%); /* var(--ring) / 15% */
+  --ring-selected: color-mix(in oklch, var(--ring), transparent 85%); /* var(--ring) / 15% */
   --ring-error: color-mix(
     in oklch,
     oklch(70.4% 0.191 22.216),

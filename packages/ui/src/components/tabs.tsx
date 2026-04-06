@@ -50,7 +50,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition outline-none hover:not-disabled:text-foreground focus-visible:ring-3 focus-visible:ring-ring-focus disabled:opacity-50 data-[state=active]:bg-muted-selected data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:outline-1 data-[state=active]:outline-ring-subtle [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition outline-none hover:not-disabled:text-foreground focus-visible:ring-3 focus-visible:ring-ring-focus disabled:opacity-50 data-[state=active]:bg-muted-selected data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:outline-1 data-[state=active]:outline-ring-selected [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="tabs-trigger"

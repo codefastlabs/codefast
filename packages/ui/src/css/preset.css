@@ -87,8 +87,9 @@
  * `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, and
  * `sidebar-ring` set for menus, groups, separators, and focus rings.
  *
- * Tabs and outlines — tabs.tsx uses `ring-ring-subtle`, `outline-ring`, and
- * `ring-ring-focus` on the list and panel; scroll-area.tsx mirrors outline and
+ * Tabs and outlines — tabs.tsx uses `outline-ring-selected` on the active
+ * trigger (with `bg-muted-selected`), `outline-ring` on the panel, and
+ * `ring-ring-focus` for focus-visible; scroll-area.tsx mirrors outline and
  * ring focus styling for keyboard users.
  *
  * Charts — chart.tsx styles Recharts with `stroke-border`, `fill-muted`,
@@ -111,7 +112,7 @@
  * |--------------------|---------------------------|
  * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover`, `bg-primary-checked` (checked card) |
  * | Default border     | `border-border`, `divide-field-border`, `bg-border` (scrollbar thumb) |
- * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
+ * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-selected`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
  * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
  * | Page canvas        | `bg-background`, `text-foreground` |
  * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `text-primary-foreground` |
@@ -202,7 +203,7 @@
  *   Distinct from §2: used for focus rings, validation, selection washes, and
  *   checked emphasis — **not** the same as `-hover` / `-active` on solid buttons.
  *
- *   --ring-focus, --ring-subtle, --ring-error — derived from `--ring` or
+ *   --ring-focus, --ring-selected, --ring-error — derived from `--ring` or
  *                         `--destructive` (see comments on each in `@theme inline`).
  *   --ring-primary        — checked primary control ring (`ring-ring-primary`).
  *   --primary-checked     — checked primary **surface** tint (`bg-primary-checked`).
@@ -219,7 +220,8 @@
  *
  *   --ring                — hue anchor for focus and outline utilities.
  *   --ring-focus          — standard focus-visible ring (paired with `ring-3`).
- *   --ring-subtle         — low-emphasis outline (e.g. inactive tabs).
+ *   --ring-selected         — low-emphasis outline for selected controls on
+ *                         muted surfaces (e.g. active tab with `bg-muted-selected`).
  *   --ring-error          — invalid / destructive field ring.
  *   --ring-primary        — checked control ring (checkbox, radio, slider thumb).
  *
@@ -307,6 +309,7 @@
    */
   --color-field: var(--field);
   --color-field-hover: var(--field-hover);
+
   --color-field-border: var(--field-border);
   --color-field-border-hover: var(--field-border-hover);
 
@@ -328,7 +331,7 @@
    * build a consistent two-layer focus signal:
    *   • border-ring         — replaces field-border on focus (the sharp edge).
    *   • ring-ring-focus     — outer glow ring (50 % alpha); standard control.
-   *   • ring-ring-subtle    — 20 % alpha ring; tabs.tsx inactive panel outline.
+   *   • ring-ring-selected    — ~20 % alpha; pairs with `bg-muted-selected` (active tabs).
    *   • ring-ring-error     — destructive-derived ring for aria-invalid fields.
    *
    * `bg-ring` / `bg-ring-focus` / `bg-ring-error` — resizable.tsx handle and
@@ -336,7 +339,7 @@
    */
   --color-ring: var(--ring);
   --color-ring-focus: var(--ring-focus);
-  --color-ring-subtle: var(--ring-subtle);
+  --color-ring-selected: var(--ring-selected);
   --color-ring-error: var(--ring-error);
   --color-ring-primary: var(--ring-primary);
 
