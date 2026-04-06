@@ -49,11 +49,15 @@
 
   --sidebar: var(--color-neutral-50);
   --sidebar-foreground: var(--color-neutral-950);
+
   --sidebar-primary: var(--color-neutral-900);
   --sidebar-primary-foreground: var(--color-neutral-50);
+
   --sidebar-accent: var(--color-neutral-100);
   --sidebar-accent-foreground: var(--color-neutral-900);
+
   --sidebar-border: var(--color-neutral-200);
+
   --sidebar-ring: var(--color-neutral-400);
 
   --chart-1: var(--color-orange-600);
@@ -64,12 +68,13 @@
 }
 
 .dark {
-  --field: color-mix(in oklch, var(--color-white), transparent 15%);
-  --field-hover: color-mix(in oklch, var(--color-white), transparent 25%);
-  --field-border: color-mix(in oklch, var(--color-white), transparent 15%);
-  --field-border-hover: color-mix(in oklch, var(--color-neutral-600), transparent 70%);
+  --field: color-mix(in oklch, var(--color-white), transparent 95%);
+  --field-hover: color-mix(in oklch, var(--color-white), transparent 95%);
 
-  --border: color-mix(in oklch, var(--color-white), transparent 10%);
+  --field-border: color-mix(in oklch, var(--color-white), transparent 80%);
+  --field-border-hover: color-mix(in oklch, var(--color-white), transparent 70%);
+
+  --border: color-mix(in oklch, var(--color-white), transparent 80%);
 
   --ring: var(--color-neutral-500);
   --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
@@ -120,7 +125,7 @@
   --sidebar-accent: var(--color-neutral-800);
   --sidebar-accent-foreground: var(--color-neutral-50);
 
-  --sidebar-border: color-mix(in oklch, var(--color-white), transparent 10%);
+  --sidebar-border: color-mix(in oklch, var(--color-white), transparent 90%);
 
   --sidebar-ring: var(--color-neutral-500);
 
