@@ -308,6 +308,7 @@
    */
   --color-field: var(--field);
   --color-field-hover: var(--field-hover);
+
   --color-field-border: var(--field-border);
   --color-field-border-hover: var(--field-border-hover);
 
@@ -337,7 +338,7 @@
    */
   --color-ring: var(--ring);
   --color-ring-focus: var(--ring-focus);
-  --color-ring-subtle: var(--ring-subtle);
+  --color-ring-selected: var(--ring-selected);
   --color-ring-error: var(--ring-error);
   --color-ring-primary: var(--ring-primary);
 

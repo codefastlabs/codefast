@@ -1,183 +1,132 @@
 :root {
   --field: transparent;
-  --field-hover: oklch(97% 0 0 / 50%); /* --color-neutral-100 / 50% */
-  --field-border: oklch(92.2% 0 0); /* --color-neutral-200 */
-  --field-border-hover: oklch(70.8% 0 0 / 60%); /* --color-neutral-400 / 60% */
+  --field-hover: color-mix(in oklch, var(--color-neutral-100), transparent 50%);
 
-  --border: oklch(92.2% 0 0); /* --color-neutral-200 */
+  --field-border: var(--color-neutral-200);
+  --field-border-hover: color-mix(in oklch, var(--color-neutral-400), transparent 60%);
 
-  --ring: oklch(70.8% 0 0); /* --color-neutral-400 */
-  --ring-focus: color-mix(in oklch, var(--ring), transparent 50%); /* var(--ring) / 50% */
-  --ring-selected: color-mix(in oklch, var(--ring), transparent 80%); /* var(--ring) / 20% */
-  --ring-error: color-mix(
-    in oklch,
-    oklch(63.7% 0.237 25.331),
-    transparent 80%
-  ); /* --color-red-500 / 20% */
-  --ring-primary: color-mix(in oklch, var(--primary), transparent 80%); /* var(--primary) / 20% */
+  --border: var(--color-neutral-200);
 
-  --background: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --foreground: oklch(14.5% 0 0); /* --color-neutral-950 */
+  --ring: var(--color-neutral-400);
+  --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
+  --ring-selected: color-mix(in oklch, var(--ring), transparent 80%);
+  --ring-error: color-mix(in oklch, var(--color-red-500), transparent 80%);
+  --ring-primary: color-mix(in oklch, var(--primary), transparent 80%);
 
-  --primary: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --primary-hover: color-mix(in oklch, var(--primary), white 10%); /* var(--primary) + white 10% */
-  --primary-active: color-mix(in oklch, var(--primary), black 10%); /* var(--primary) + black 10% */
-  --primary-checked: color-mix(in oklch, var(--primary), transparent 95%); /* var(--primary) / 5% */
-  --primary-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
+  --background: var(--color-neutral-50);
+  --foreground: var(--color-neutral-950);
 
-  --secondary: oklch(97% 0 0); /* --color-neutral-100 */
-  --secondary-hover: color-mix(
-    in oklch,
-    var(--secondary),
-    black 5%
-  ); /* var(--secondary) + black 5% */
-  --secondary-active: color-mix(
-    in oklch,
-    var(--secondary),
-    black 10%
-  ); /* var(--secondary) + black 10% */
-  --secondary-foreground: oklch(20.5% 0 0); /* --color-neutral-900 */
+  --primary: var(--color-neutral-900);
+  --primary-hover: color-mix(in oklch, var(--primary), white 10%);
+  --primary-active: color-mix(in oklch, var(--primary), black 10%);
+  --primary-checked: color-mix(in oklch, var(--primary), transparent 95%);
+  --primary-foreground: var(--color-neutral-50);
 
-  --destructive: oklch(57.7% 0.245 27.325); /* --color-red-600 */
-  --destructive-hover: color-mix(
-    in oklch,
-    var(--destructive),
-    white 10%
-  ); /* var(--destructive) + white 10% */
-  --destructive-active: color-mix(
-    in oklch,
-    var(--destructive),
-    black 10%
-  ); /* var(--destructive) + black 10% */
-  --destructive-focus: color-mix(
-    in oklch,
-    var(--destructive),
-    transparent 90%
-  ); /* --color-red-600 / 10% */
-  --destructive-foreground: oklch(100% 0 0); /* --color-white */
+  --secondary: var(--color-neutral-100);
+  --secondary-hover: color-mix(in oklch, var(--secondary), black 5%);
+  --secondary-active: color-mix(in oklch, var(--secondary), black 10%);
+  --secondary-foreground: var(--color-neutral-900);
 
-  --accent: oklch(97% 0 0); /* --color-neutral-100 */
-  --accent-hover: color-mix(in oklch, var(--accent), black 5%); /* var(--accent) + black 5% */
-  --accent-foreground: oklch(20.5% 0 0); /* --color-neutral-900 */
+  --destructive: var(--color-red-600);
+  --destructive-hover: color-mix(in oklch, var(--destructive), white 10%);
+  --destructive-active: color-mix(in oklch, var(--destructive), black 10%);
+  --destructive-focus: color-mix(in oklch, var(--destructive), transparent 90%);
+  --destructive-foreground: var(--color-white);
 
-  --muted: oklch(97% 0 0); /* --color-neutral-100 */
-  --muted-foreground: oklch(55.6% 0 0); /* --color-neutral-500 */
+  --accent: var(--color-neutral-100);
+  --accent-hover: color-mix(in oklch, var(--accent), black 5%);
+  --accent-foreground: var(--color-neutral-900);
+
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-500);
   --muted-selected: var(--background);
 
-  --popover: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --popover-foreground: oklch(14.5% 0 0); /* --color-neutral-950 */
+  --popover: var(--color-neutral-50);
+  --popover-foreground: var(--color-neutral-950);
 
-  --card: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --card-foreground: oklch(14.5% 0 0); /* --color-neutral-950 */
+  --card: var(--color-neutral-50);
+  --card-foreground: var(--color-neutral-950);
 
-  --sidebar: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --sidebar-foreground: oklch(14.5% 0 0); /* --color-neutral-950 */
-  --sidebar-primary: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --sidebar-primary-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --sidebar-accent: oklch(97% 0 0); /* --color-neutral-100 */
-  --sidebar-accent-foreground: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --sidebar-border: oklch(92.2% 0 0); /* --color-neutral-200 */
-  --sidebar-ring: oklch(70.8% 0 0); /* --color-neutral-400 */
+  --sidebar: var(--color-neutral-50);
+  --sidebar-foreground: var(--color-neutral-950);
+  --sidebar-primary: var(--color-neutral-900);
+  --sidebar-primary-foreground: var(--color-neutral-50);
+  --sidebar-accent: var(--color-neutral-100);
+  --sidebar-accent-foreground: var(--color-neutral-900);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--color-neutral-400);
 
-  --chart-1: oklch(64.6% 0.222 41.116); /* --color-orange-600 */
-  --chart-2: oklch(60% 0.118 184.704); /* --color-teal-600 */
-  --chart-3: oklch(39.8% 0.07 227.392); /* --color-cyan-900 */
-  --chart-4: oklch(82.8% 0.189 84.429); /* --color-amber-400 */
-  --chart-5: oklch(76.9% 0.188 70.08); /* --color-amber-500 */
+  --chart-1: var(--color-orange-600);
+  --chart-2: var(--color-teal-600);
+  --chart-3: var(--color-cyan-900);
+  --chart-4: var(--color-amber-400);
+  --chart-5: var(--color-amber-500);
 }
 
 .dark {
-  --field: oklch(100% 0 0 / 15%); /* --color-white / 15% */
-  --field-hover: oklch(100% 0 0 / 25%); /* --color-white / 25% */
-  --field-border: oklch(100% 0 0 / 15%); /* --color-white / 15% */
-  --field-border-hover: oklch(43.9% 0 0 / 70%); /* --color-neutral-600 / 70% */
+  --field: color-mix(in oklch, var(--color-white), transparent 15%);
+  --field-hover: color-mix(in oklch, var(--color-white), transparent 25%);
+  --field-border: color-mix(in oklch, var(--color-white), transparent 15%);
+  --field-border-hover: color-mix(in oklch, var(--color-neutral-600), transparent 70%);
 
-  --border: oklch(100% 0 0 / 10%); /* --color-white / 10% */
+  --border: color-mix(in oklch, var(--color-white), transparent 10%);
 
-  --ring: oklch(55.6% 0 0); /* --color-neutral-500 */
-  --ring-focus: color-mix(in oklch, var(--ring), transparent 50%); /* var(--ring) / 50% */
-  --ring-selected: color-mix(in oklch, var(--ring), transparent 80%); /* var(--ring) / 20% */
-  --ring-error: color-mix(
-    in oklch,
-    oklch(70.4% 0.191 22.216),
-    transparent 60%
-  ); /* --color-red-400 / 40% */
-  --ring-primary: color-mix(in oklch, var(--primary), transparent 60%); /* var(--primary) / 40% */
+  --ring: var(--color-neutral-500);
+  --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
+  --ring-selected: color-mix(in oklch, var(--ring), transparent 80%);
+  --ring-error: color-mix(in oklch, var(--color-red-400), transparent 60%);
+  --ring-primary: color-mix(in oklch, var(--primary), transparent 60%);
 
-  --background: oklch(14.5% 0 0); /* --color-neutral-950 */
-  --foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
+  --background: var(--color-neutral-950);
+  --foreground: var(--color-neutral-50);
 
-  --primary: oklch(92.2% 0 0); /* --color-neutral-200 */
-  --primary-hover: color-mix(in oklch, var(--primary), white 10%); /* var(--primary) + white 10% */
-  --primary-active: color-mix(in oklch, var(--primary), black 10%); /* var(--primary) + black 10% */
-  --primary-checked: color-mix(
-    in oklch,
-    var(--primary),
-    transparent 85%
-  ); /* var(--primary) / 15% */
-  --primary-foreground: oklch(20.5% 0 0); /* --color-neutral-900 */
+  --primary: var(--color-neutral-200);
+  --primary-hover: color-mix(in oklch, var(--primary), white 10%);
+  --primary-active: color-mix(in oklch, var(--primary), black 10%);
+  --primary-checked: color-mix(in oklch, var(--primary), transparent 85%);
+  --primary-foreground: var(--color-neutral-900);
 
-  --secondary: oklch(26.9% 0 0); /* --color-neutral-800 */
-  --secondary-hover: color-mix(
-    in oklch,
-    var(--secondary),
-    white 5%
-  ); /* var(--secondary) + white 5% */
-  --secondary-active: color-mix(
-    in oklch,
-    var(--secondary),
-    black 5%
-  ); /* var(--secondary) + black 5% */
-  --secondary-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
+  --secondary: var(--color-neutral-800);
+  --secondary-hover: color-mix(in oklch, var(--secondary), white 5%);
+  --secondary-active: color-mix(in oklch, var(--secondary), black 5%);
+  --secondary-foreground: var(--color-neutral-50);
 
-  --destructive: oklch(70.4% 0.191 22.216); /* --color-red-400 */
-  --destructive-hover: color-mix(
-    in oklch,
-    var(--destructive),
-    white 10%
-  ); /* var(--destructive) + white 10% */
-  --destructive-active: color-mix(
-    in oklch,
-    var(--destructive),
-    black 10%
-  ); /* var(--destructive) + black 10% */
-  --destructive-focus: color-mix(
-    in oklch,
-    var(--destructive),
-    transparent 80%
-  ); /* --color-red-400 / 20% */
-  --destructive-foreground: oklch(0% 0 0); /* --color-black */
+  --destructive: var(--color-red-400);
+  --destructive-hover: color-mix(in oklch, var(--destructive), white 10%);
+  --destructive-active: color-mix(in oklch, var(--destructive), black 10%);
+  --destructive-focus: color-mix(in oklch, var(--destructive), transparent 80%);
+  --destructive-foreground: var(--color-black);
 
-  --accent: oklch(26.9% 0 0); /* --color-neutral-800 */
-  --accent-hover: color-mix(in oklch, var(--accent), white 5%); /* var(--accent) + white 5% */
-  --accent-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
+  --accent: var(--color-neutral-800);
+  --accent-hover: color-mix(in oklch, var(--accent), white 5%);
+  --accent-foreground: var(--color-neutral-50);
 
-  --muted: oklch(26.9% 0 0); /* --color-neutral-800 */
-  --muted-foreground: oklch(70.8% 0 0); /* --color-neutral-400 */
-  --muted-selected: color-mix(
-    in oklch,
-    var(--foreground),
-    transparent 90%
-  ); /* var(--foreground) / 10% */
+  --muted: var(--color-neutral-800);
+  --muted-foreground: var(--color-neutral-400);
+  --muted-selected: color-mix(in oklch, var(--foreground), transparent 90%);
 
-  --popover: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --popover-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
+  --popover: var(--color-neutral-900);
+  --popover-foreground: var(--color-neutral-50);
 
-  --card: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --card-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
+  --card: var(--color-neutral-900);
+  --card-foreground: var(--color-neutral-50);
 
-  --sidebar: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --sidebar-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --sidebar-primary: oklch(92.2% 0 0); /* --color-neutral-200 */
-  --sidebar-primary-foreground: oklch(20.5% 0 0); /* --color-neutral-900 */
-  --sidebar-accent: oklch(26.9% 0 0); /* --color-neutral-800 */
-  --sidebar-accent-foreground: oklch(98.5% 0 0); /* --color-neutral-50 */
-  --sidebar-border: oklch(100% 0 0 / 10%); /* --color-white / 10% */
-  --sidebar-ring: oklch(55.6% 0 0); /* --color-neutral-500 */
+  --sidebar: var(--color-neutral-900);
+  --sidebar-foreground: var(--color-neutral-50);
 
-  --chart-1: oklch(48.8% 0.243 264.376); /* --color-blue-700 */
-  --chart-2: oklch(69.6% 0.17 162.48); /* --color-emerald-500 */
-  --chart-3: oklch(76.9% 0.188 70.08); /* --color-amber-500 */
-  --chart-4: oklch(62.7% 0.265 303.9); /* --color-purple-500 */
-  --chart-5: oklch(64.5% 0.246 16.439); /* --color-rose-500 */
+  --sidebar-primary: var(--color-neutral-200);
+  --sidebar-primary-foreground: var(--color-neutral-900);
+
+  --sidebar-accent: var(--color-neutral-800);
+  --sidebar-accent-foreground: var(--color-neutral-50);
+
+  --sidebar-border: color-mix(in oklch, var(--color-white), transparent 10%);
+
+  --sidebar-ring: var(--color-neutral-500);
+
+  --chart-1: var(--color-blue-700);
+  --chart-2: var(--color-emerald-500);
+  --chart-3: var(--color-amber-500);
+  --chart-4: var(--color-purple-500);
+  --chart-5: var(--color-rose-500);
 }
