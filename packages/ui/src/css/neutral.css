@@ -10,7 +10,7 @@
   --ring: var(--color-neutral-400);
   --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
   --ring-selected: color-mix(in oklch, var(--ring), transparent 80%);
-  --ring-error: color-mix(in oklch, var(--color-red-500), transparent 80%);
+  --ring-destructive: color-mix(in oklch, var(--destructive), transparent 80%);
   --ring-primary: color-mix(in oklch, var(--primary), transparent 80%);
 
   --background: var(--color-neutral-50);
@@ -74,7 +74,7 @@
   --ring: var(--color-neutral-500);
   --ring-focus: color-mix(in oklch, var(--ring), transparent 50%);
   --ring-selected: color-mix(in oklch, var(--ring), transparent 80%);
-  --ring-error: color-mix(in oklch, var(--color-red-400), transparent 60%);
+  --ring-destructive: color-mix(in oklch, var(--color-red-400), transparent 60%);
   --ring-primary: color-mix(in oklch, var(--primary), transparent 60%);
 
   --background: var(--color-neutral-950);

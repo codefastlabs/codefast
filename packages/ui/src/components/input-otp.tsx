@@ -57,7 +57,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
   return (
     <div
       className={cn(
-        "relative flex size-9 items-center justify-center border border-field-border bg-field text-sm outline-hidden transition-all not-has-disabled:shadow-xs first:rounded-l-lg last:rounded-r-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-3 data-[active=true]:ring-ring-focus data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-ring-error",
+        "relative flex size-9 items-center justify-center border border-field-border bg-field text-sm outline-hidden transition-all not-has-disabled:shadow-xs first:rounded-l-lg last:rounded-r-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-3 data-[active=true]:ring-ring-focus data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-ring-destructive",
         className,
       )}
       data-active={isActive}

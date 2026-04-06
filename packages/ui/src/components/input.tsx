@@ -16,7 +16,7 @@ function Input({ className, type, ...props }: InputProps): JSX.Element {
       className={cn(
         "h-9 w-full min-w-0 rounded-lg border border-field-border bg-field px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground hover:not-disabled:bg-field-hover hover:not-disabled:not-focus-visible:border-field-border-hover disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring-focus",
-        "aria-invalid:border-destructive aria-invalid:ring-ring-error",
+        "aria-invalid:border-destructive aria-invalid:ring-ring-destructive",
         className,
       )}
       data-slot="input"

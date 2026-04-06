@@ -38,12 +38,12 @@ const buttonVariants = tv({
       default:
         "bg-primary text-primary-foreground hover:not-disabled:bg-primary-hover focus-visible:ring-ring-focus active:not-disabled:bg-primary-active",
       destructive:
-        "bg-destructive text-destructive-foreground hover:not-disabled:bg-destructive-hover focus-visible:ring-ring-error active:not-disabled:bg-destructive-active",
+        "bg-destructive text-destructive-foreground hover:not-disabled:bg-destructive-hover focus-visible:ring-ring-destructive active:not-disabled:bg-destructive-active",
       ghost:
         "hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active",
       link: "text-primary underline-offset-4 hover:not-disabled:underline focus-visible:ring-ring-focus",
       outline:
-        "border border-field-border shadow-xs hover:not-disabled:border-field-border-hover hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground focus-visible:border-ring focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active aria-invalid:border-destructive focus-within:aria-invalid:ring-ring-error hover:not-disabled:aria-invalid:border-destructive/60",
+        "border border-field-border shadow-xs hover:not-disabled:border-field-border-hover hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground focus-visible:border-ring focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active aria-invalid:border-destructive focus-within:aria-invalid:ring-ring-destructive hover:not-disabled:aria-invalid:border-destructive/60",
       secondary:
         "bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary-hover focus-visible:ring-ring-focus active:not-disabled:bg-secondary-active",
     },

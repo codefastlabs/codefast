@@ -60,7 +60,7 @@
  * Repeated interaction pattern — Most focusable controls combine `border-ring`,
  * `ring-3`, and `ring-ring-focus` (inputs, button, toggle, item, calendar cells,
  * OTP slots, select trigger, menus where applicable). Invalid state pairs
- * `border-destructive` with `ring-ring-error`, often with `/60` opacity on hover
+ * `border-destructive` with `ring-ring-destructive`, often with `/60` opacity on hover
  * for adjacent borders (see input-number stepper rail, textarea).
  *
  * Field chrome — `bg-field`, `border-field-border`, `hover:bg-field-hover`, and
@@ -112,8 +112,8 @@
  * |--------------------|---------------------------|
  * | Field surfaces     | `bg-field`, `border-field-border`, `hover:bg-field-hover`, `border-field-border-hover`, `bg-primary-checked` (checked card) |
  * | Default border     | `border-border`, `divide-field-border`, `bg-border` (scrollbar thumb) |
- * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-error`, `ring-ring-primary` (checked primary surface) |
- * | Ring as fill       | `bg-ring-focus`, `bg-ring-error` (input-number stepper buttons) |
+ * | Focus ring         | `border-ring`, `ring-ring`, `ring-ring-focus`, `ring-ring-subtle`, `ring-ring-destructive`, `ring-ring-primary` (checked primary surface) |
+ * | Ring as fill       | `bg-ring-focus`, `bg-ring-destructive` (input-number stepper buttons) |
  * | Page canvas        | `bg-background`, `text-foreground` |
  * | Primary CTA        | `bg-primary`, `hover:bg-primary-hover`, `active:bg-primary-active`, `ring-ring-primary`, `text-primary-foreground` |
  * | Secondary          | `bg-secondary`, `text-secondary-foreground`, `hover:bg-secondary-hover`, `active:bg-secondary-active` |
@@ -203,7 +203,7 @@
  *   Distinct from §2: used for focus rings, validation, selection washes, and
  *   checked emphasis — **not** the same as `-hover` / `-active` on solid buttons.
  *
- *   --ring-focus, --ring-subtle, --ring-error — derived from `--ring` or
+ *   --ring-focus, --ring-subtle, --ring-destructive — derived from `--ring` or
  *                         `--destructive` (see comments on each in `@theme inline`).
  *   --ring-primary        — checked primary control ring (`ring-ring-primary`).
  *   --primary-checked     — checked primary **surface** tint (`bg-primary-checked`).
@@ -221,10 +221,10 @@
  *   --ring                — hue anchor for focus and outline utilities.
  *   --ring-focus          — standard focus-visible ring (paired with `ring-3`).
  *   --ring-subtle         — low-emphasis outline (e.g. inactive tabs).
- *   --ring-error          — invalid / destructive field ring.
+ *   --ring-destructive          — invalid / destructive field ring.
  *   --ring-primary        — checked control ring (checkbox, radio, slider thumb).
  *
- *   Exception: some components use **`bg-ring`, `bg-ring-focus`, `bg-ring-error`**
+ *   Exception: some components use **`bg-ring`, `bg-ring-focus`, `bg-ring-destructive`**
  *   as **fill** (input-number steppers, resizable handle) — same tokens, different
  *   utility; document when adding similar UI so the token is not mistaken for
  *   outline-only.
@@ -331,15 +331,15 @@
    *   • border-ring         — replaces field-border on focus (the sharp edge).
    *   • ring-ring-focus     — outer glow ring (50 % alpha); standard control.
    *   • ring-ring-subtle    — 20 % alpha ring; tabs.tsx inactive panel outline.
-   *   • ring-ring-error     — destructive-derived ring for aria-invalid fields.
+   *   • ring-ring-destructive     — destructive-derived ring for aria-invalid fields.
    *
-   * `bg-ring` / `bg-ring-focus` / `bg-ring-error` — resizable.tsx handle and
+   * `bg-ring` / `bg-ring-focus` / `bg-ring-destructive` — resizable.tsx handle and
    * input-number stepper buttons use bg-ring variants as fill tints, not rings.
    */
   --color-ring: var(--ring);
   --color-ring-focus: var(--ring-focus);
   --color-ring-selected: var(--ring-selected);
-  --color-ring-error: var(--ring-error);
+  --color-ring-destructive: var(--ring-destructive);
   --color-ring-primary: var(--ring-primary);
 
   /*
