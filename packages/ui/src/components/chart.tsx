@@ -5,7 +5,7 @@ import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } fro
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import type { TooltipContentProps, TooltipProps } from "recharts";
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from "#utils/tv";
 import { createContextScope } from "@radix-ui/react-context";
 import { useId, useMemo } from "react";
 import * as RechartsPrimitive from "recharts";

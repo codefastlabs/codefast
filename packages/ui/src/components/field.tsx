@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import { cn, tv } from "#utils/tv";
+import type { VariantProps } from "#utils/tv";
 import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { cn, tv } from "@codefast/tailwind-variants";
 import { useMemo } from "react";
 
 import { Label } from "#components/label";

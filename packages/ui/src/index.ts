@@ -766,3 +766,6 @@ export { useMutationObserver } from "#hooks/use-mutation-observer";
 
 export { ELLIPSIS, usePagination } from "#hooks/use-pagination";
 export type { UsePaginationProps } from "#hooks/use-pagination";
+
+export { cn, tv } from "#utils/tv";
+export type { VariantProps } from "#utils/tv";
