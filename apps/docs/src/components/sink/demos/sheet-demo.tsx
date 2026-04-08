@@ -3,6 +3,7 @@ import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
 import {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -28,7 +29,7 @@ export function SheetDemo() {
               Make changes to your profile here. Click save when you&apos;re done.
             </SheetDescription>
           </SheetHeader>
-          <div className="grid flex-1 auto-rows-min gap-6 px-4">
+          <SheetBody className="grid flex-1 auto-rows-min gap-6">
             <div className="grid gap-3">
               <Label htmlFor="sheet-demo-name">Name</Label>
               <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
@@ -37,7 +38,7 @@ export function SheetDemo() {
               <Label htmlFor="sheet-demo-username">Username</Label>
               <Input id="sheet-demo-username" defaultValue="@peduarte" />
             </div>
-          </div>
+          </SheetBody>
           <SheetFooter>
             <Button type="submit">Save changes</Button>
             <SheetClose asChild>
@@ -61,7 +62,7 @@ export function SheetDemo() {
                   Make changes to your profile here. Click save when you&apos;re done.
                 </SheetDescription>
               </SheetHeader>
-              <div className="overflow-y-auto px-4 text-sm">
+              <SheetBody className="text-sm">
                 <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
                 {Array.from({ length: 10 }).map((_, index) => (
                   <p key={index} className="mb-4 leading-normal">
@@ -73,7 +74,7 @@ export function SheetDemo() {
                     culpa qui officia deserunt mollit anim id est laborum.
                   </p>
                 ))}
-              </div>
+              </SheetBody>
               <SheetFooter>
                 <Button type="submit">Save changes</Button>
                 <SheetClose asChild>
