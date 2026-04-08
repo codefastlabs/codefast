@@ -103,7 +103,7 @@ type DrawerBodyProps = ComponentProps<"div">;
 
 function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
   return (
-    <main className={cn("overflow-auto px-4 py-2", className)} data-slot="drawer-body" {...props} />
+    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="drawer-body" {...props} />
   );
 }
 

@@ -131,7 +131,9 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
 type SheetBodyProps = ComponentProps<"div">;
 
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
-  return <main className={cn("px-6 py-2", className)} data-slot="sheet-body" {...props} />;
+  return (
+    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="sheet-body" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------
