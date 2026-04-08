@@ -1,0 +1,22 @@
+---
+description: When fixing third-party library issues, ground the fix in upstream docs/source—not local workarounds.
+alwaysApply: true
+---
+
+# Fixes grounded in upstream truth
+
+When fixing a bug, warning, or integration issue involving a third-party library (or spec):
+
+1. **Establish what the library actually guarantees** — Read official documentation, **changelog / release notes**, and **source or published types** in the version you depend on (`package.json` + installed `node_modules`). Prefer the maintainer's repo and docs over blog posts, old Stack Overflow answers, or UI-kit snippets that may wrap or diverge from the library.
+
+2. **Understand cause and scope** — Identify the intended API, deprecations, and breaking changes for your pinned version before changing code. A symptom in one file may be wrong usage copied from elsewhere or a version mismatch across the repo.
+
+   > In a monorepo with catalog-based version pinning (e.g., pnpm catalog), verify that the installed version in `node_modules` matches the catalog entry — hoisting or peer resolution can silently install a different version than what `package.json` references.
+
+3. **Avoid narrow workarounds** — Do not apply a patch at a single callsite if it contradicts upstream behavior, hides a misuse, or papers over a dependency upgrade path. Prefer a fix aligned with official guidance (correct usage, supported configuration, or a deliberate upgrade with changelog review).
+
+   If the fix must be made before upstream clarity is available, scope the workaround explicitly (e.g., a `TODO` comment referencing the upstream issue URL) and treat it as tech debt, not a permanent solution.
+
+4. **Validate in context** — After the change, run the relevant app or tests. Search the workspace for other callsites importing the same API (e.g., via `grep` or workspace symbol search) to check whether the fix needs to be applied consistently, or whether existing usages reveal the correct pattern.
+
+If official sources are unclear, inspect the installed package implementation or open upstream issues/discussions — still **ground the decision in evidence**, not guesswork.

@@ -70,7 +70,6 @@ type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
     <div
-      cmdk-input-wrapper
       className={cn("flex items-center gap-2", "border-b", "px-3")}
       data-slot="command-input-wrapper"
     >
