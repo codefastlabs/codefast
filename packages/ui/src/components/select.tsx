@@ -1,9 +1,8 @@
 "use client";
 
 import type { VariantProps } from "@codefast/tailwind-variants";
-import type { ComponentProps, JSX } from "react";
-
 import { cn } from "@codefast/tailwind-variants";
+import type { ComponentProps, JSX } from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
@@ -136,7 +135,7 @@ function SelectContent({
           className={cn(
             "p-1",
             position === "popper" &&
-              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1",
+              "h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1",
           )}
         >
           {children}
