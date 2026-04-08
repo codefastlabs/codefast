@@ -129,14 +129,14 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --radius-xs: max(0px, calc(var(--radius) * 1 / 4));
-  --radius-sm: max(0px, calc(var(--radius) * 5 / 8));
+  --radius-xs: calc(var(--radius) * 0.25);
+  --radius-sm: calc(var(--radius) * 0.625);
   --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) * 11 / 8);
-  --radius-xl: calc(var(--radius) * 7 / 4);
-  --radius-2xl: calc(var(--radius) * 17 / 8);
-  --radius-3xl: calc(var(--radius) * 5 / 2);
-  --radius-4xl: calc(var(--radius) * 23 / 8);
+  --radius-lg: calc(var(--radius) * 1.375);
+  --radius-xl: calc(var(--radius) * 1.75);
+  --radius-2xl: calc(var(--radius) * 2.125);
+  --radius-3xl: calc(var(--radius) * 2.5);
+  --radius-4xl: calc(var(--radius) * 2.875);
 }
 
 @theme {
