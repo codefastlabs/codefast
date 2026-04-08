@@ -4,17 +4,17 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@custom-variant data-horizontal (&:where([data-orientation="horizontal"]) *);
+@custom-variant data-horizontal (&:where([data-orientation="horizontal"]));
 
-@custom-variant data-vertical (&:where([data-orientation="vertical"]) *);
+@custom-variant data-vertical (&:where([data-orientation="vertical"]));
 
-@custom-variant data-side-top (&:where([data-side="top"]) *);
+@custom-variant data-side-top (&:where([data-side="top"]));
 
-@custom-variant data-side-right (&:where([data-side="right"]) *);
+@custom-variant data-side-right (&:where([data-side="right"]));
 
-@custom-variant data-side-bottom (&:where([data-side="bottom"]) *);
+@custom-variant data-side-bottom (&:where([data-side="bottom"]));
 
-@custom-variant data-side-left (&:where([data-side="left"]) *);
+@custom-variant data-side-left (&:where([data-side="left"]));
 
 @custom-variant data-open {
   &:where([data-state="open"]),

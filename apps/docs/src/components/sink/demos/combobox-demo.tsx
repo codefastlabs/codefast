@@ -295,7 +295,7 @@ function TimezoneCombobox({
                   >
                     {timezone.label}
                     <CheckIcon
-                      className="ml-auto opacity-0 data-[selected=true]:opacity-100"
+                      className="ml-auto opacity-0 data-selected:opacity-100"
                       data-selected={value === timezone.value}
                     />
                   </CommandItem>
@@ -356,7 +356,7 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
                   }}
                 >
                   <div
-                    className="pointer-events-none size-4 shrink-0 rounded border border-input transition-all select-none data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100"
+                    className="pointer-events-none size-4 shrink-0 rounded border border-input transition-all select-none data-selected:border-primary data-selected:bg-primary data-selected:text-primary-foreground *:[svg]:opacity-0 data-selected:*:[svg]:opacity-100"
                     data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
                   >
                     <CheckIcon className="size-3.5 text-current" />
