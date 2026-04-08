@@ -90,7 +90,7 @@ type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
 function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
   return (
     <AccordionPrimitive.Content
-      className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down"
+      className="overflow-hidden data-open:animate-collapsible-down data-closed:animate-collapsible-up"
       data-slot="accordion-content"
       {...props}
     >

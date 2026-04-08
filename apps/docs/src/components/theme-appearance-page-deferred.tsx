@@ -178,12 +178,10 @@ function TanStackThemeSetupCollapsible() {
                 className="w-full shrink-0 gap-2 shadow-sm sm:w-auto"
                 aria-controls="tanstack-setup-panel"
               >
-                <span className="group-data-[state=open]/collapsible:hidden">Show setup guide</span>
-                <span className="hidden group-data-[state=open]/collapsible:inline">
-                  Hide setup guide
-                </span>
+                <span className="group-data-open/collapsible:hidden">Show setup guide</span>
+                <span className="hidden group-data-open/collapsible:inline">Hide setup guide</span>
                 <ChevronDownIcon
-                  className="size-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180"
+                  className="size-4 shrink-0 transition-transform duration-200 group-data-open/collapsible:rotate-180"
                   aria-hidden
                 />
               </Button>

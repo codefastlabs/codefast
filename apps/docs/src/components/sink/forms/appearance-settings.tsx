@@ -108,7 +108,7 @@ export function AppearanceSettings() {
                     aria-label={accent.name}
                     className="peer sr-only"
                   />
-                  <CheckIcon className="hidden size-4 stroke-white peer-data-[state=checked]:block" />
+                  <CheckIcon className="hidden size-4 stroke-white peer-data-checked:block" />
                 </Label>
               ))}
             </RadioGroup>

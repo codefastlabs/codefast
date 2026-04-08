@@ -52,14 +52,14 @@ function DialogContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-ui data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+          "fixed inset-0 z-50 bg-black/50 ease-ui data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="dialog-overlay"
       />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto ease-ui data-[state=closed]:animate-out data-[state=open]:animate-in max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom sm:grid-rows-[1fr_auto_3fr] sm:p-4 sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95",
+          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto ease-ui sm:grid-rows-[1fr_auto_3fr] sm:p-4 data-open:animate-in max-sm:data-open:animation-duration-500 max-sm:data-open:slide-in-from-bottom sm:data-open:fade-in-0 sm:data-open:zoom-in-95 data-closed:animate-out max-sm:data-closed:animation-duration-500 max-sm:data-closed:slide-out-to-bottom sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
           classNames?.wrapper,
         )}
         data-slot="dialog-content-wrapper"

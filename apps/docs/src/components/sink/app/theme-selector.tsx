@@ -136,7 +136,7 @@ export function ThemeSelector({ className }: ComponentProps<"div">) {
                       <SelectItem
                         key={theme.name}
                         value={theme.value}
-                        className="data-[state=checked]:opacity-50"
+                        className="data-checked:opacity-50"
                       >
                         {theme.name}
                       </SelectItem>

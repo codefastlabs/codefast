@@ -89,10 +89,7 @@ function ButtonGroupSeparator({
 }: ButtonGroupSeparatorProps): JSX.Element {
   return (
     <Separator
-      className={cn(
-        "relative !m-0 self-stretch bg-input data-[orientation=vertical]:h-auto",
-        className,
-      )}
+      className={cn("relative !m-0 self-stretch bg-input data-vertical:h-auto", className)}
       data-slot="button-group-separator"
       orientation={orientation}
       {...props}

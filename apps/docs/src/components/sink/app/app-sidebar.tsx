@@ -114,7 +114,7 @@ function NavMainSection({ items }: NavMainSectionProps): JSX.Element {
                 <SidebarMenuButton tooltip={item.title}>
                   <item.icon />
                   <span>{item.title}</span>
-                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -176,7 +176,7 @@ function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
                   <span>{REGISTRY_TYPE_LABELS[type]}</span>
-                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>

@@ -49,7 +49,7 @@ export function RadioGroupDemo() {
             <RadioGroupItem
               value={plan.id}
               id={plan.name}
-              className="shadow-none data-[state=checked]:border-green-600 data-[state=checked]:bg-green-600 *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white"
+              className="shadow-none data-checked:border-green-600 data-checked:bg-green-600 *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white"
             />
             <div className="grid gap-1 font-normal">
               <div className="font-medium">{plan.name}</div>
