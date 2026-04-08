@@ -14,18 +14,18 @@ import { buttonVariants } from "#components/button";
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-ui data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=open]:animate-in data-[state=open]:animation-duration-500",
+  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-ui data-open:animate-in data-open:animation-duration-500 data-closed:animate-out data-closed:animation-duration-500",
   defaultVariants: {
     side: "right",
   },
   variants: {
     side: {
       bottom:
-        "inset-x-0 bottom-0 max-h-[80vh] border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-      left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+        "inset-x-0 bottom-0 max-h-[80vh] border-t data-open:slide-in-from-bottom data-closed:slide-out-to-bottom",
+      left: "inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm data-open:slide-in-from-left data-closed:slide-out-to-left",
       right:
-        "inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
-      top: "inset-x-0 top-0 max-h-[80vh] border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+        "inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm data-open:slide-in-from-right data-closed:slide-out-to-right",
+      top: "inset-x-0 top-0 max-h-[80vh] border-b data-open:slide-in-from-top data-closed:slide-out-to-top",
     },
   },
 });
@@ -78,7 +78,7 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-ui data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=open]:fade-in-0",
+          "fixed inset-0 z-50 bg-black/50 ease-ui data-open:animate-in data-open:animation-duration-500 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-500 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"

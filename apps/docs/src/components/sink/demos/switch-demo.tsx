@@ -11,7 +11,7 @@ export function SwitchDemo() {
       <div className="flex items-center gap-2">
         <Switch
           id="switch-demo-bluetooth"
-          className="data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-600"
+          className="data-checked:bg-blue-500 dark:data-checked:bg-blue-600"
           defaultChecked
         />
         <Label htmlFor="switch-demo-bluetooth">Bluetooth</Label>
@@ -25,7 +25,7 @@ export function SwitchDemo() {
         </div>
         <Switch
           id="switch-demo-focus-mode"
-          className="data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-600"
+          className="data-checked:bg-blue-500 dark:data-checked:bg-blue-600"
         />
       </Label>
     </div>

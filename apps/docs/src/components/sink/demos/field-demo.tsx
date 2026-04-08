@@ -492,8 +492,8 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-f8k" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="followers-s7m">
@@ -503,8 +503,8 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers" id="followers-s7m" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="custom-q3r">
@@ -514,8 +514,8 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom" id="custom-q3r" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
               </Field>
             </FieldLabel>
           </RadioGroup>
@@ -570,7 +570,7 @@ function PrivacySettings() {
           <RadioGroup>
             <FieldLabel htmlFor="everyone-3-k4p">
               <Field orientation="horizontal">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-[state=checked]/field:border-primary group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground">
                   <IconWorld className="size-4" />
                 </div>
                 <FieldContent>
@@ -578,13 +578,13 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-3-k4p" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="followers-3-m7j">
               <Field orientation="horizontal">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-[state=checked]/field:border-primary group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground">
                   <IconUsers className="size-4" />
                 </div>
                 <FieldContent>
@@ -592,13 +592,13 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers-3" id="followers-3-m7j" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="custom-3-r9w">
               <Field orientation="horizontal">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-[state=checked]/field:border-primary group-has-data-[state=checked]/field:bg-primary group-has-data-[state=checked]/field:text-primary-foreground">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground">
                   <IconPlus className="size-4" />
                 </div>
                 <FieldContent>
@@ -606,8 +606,8 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom-3" id="custom-3-r9w" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-[state=checked]/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-[state=checked]/field:block" />
+                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
+                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
               </Field>
             </FieldLabel>
           </RadioGroup>
@@ -634,7 +634,7 @@ function HearAboutUs() {
                     <Checkbox
                       value="social-media"
                       id="social-media-b2s"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-[state=checked]/field-label:ml-0 group-has-data-[state=checked]/field-label:translate-x-0"
+                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
                     />
                     <FieldTitle>Social Media</FieldTitle>
                   </Field>
@@ -644,7 +644,7 @@ function HearAboutUs() {
                     <Checkbox
                       value="search-engine"
                       id="search-engine-f6h"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-[state=checked]/field-label:ml-0 group-has-data-[state=checked]/field-label:translate-x-0"
+                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
                     />
                     <FieldTitle>Search Engine</FieldTitle>
                   </Field>
@@ -654,7 +654,7 @@ function HearAboutUs() {
                     <Checkbox
                       value="referral"
                       id="referral-l3n"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-[state=checked]/field-label:ml-0 group-has-data-[state=checked]/field-label:translate-x-0"
+                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
                     />
                     <FieldTitle>Referral</FieldTitle>
                   </Field>
@@ -664,7 +664,7 @@ function HearAboutUs() {
                     <Checkbox
                       value="other"
                       id="other-u5c"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-[state=checked]/field-label:ml-0 group-has-data-[state=checked]/field-label:translate-x-0"
+                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
                     />
                     <FieldTitle>Other (Please specify)</FieldTitle>
                   </Field>
@@ -829,7 +829,7 @@ function ShippingMethods() {
                   </FieldContent>
                   <Badge
                     variant="secondary"
-                    className="group-has-data-[state=checked]/field-label:bg-primary group-has-data-[state=checked]/field-label:text-primary-foreground"
+                    className="group-has-data-checked/field-label:bg-primary group-has-data-checked/field-label:text-primary-foreground"
                   >
                     Free
                   </Badge>
@@ -844,7 +844,7 @@ function ShippingMethods() {
                   </FieldContent>
                   <Badge
                     variant="secondary"
-                    className="group-has-data-[state=checked]/field-label:bg-primary group-has-data-[state=checked]/field-label:text-primary-foreground"
+                    className="group-has-data-checked/field-label:bg-primary group-has-data-checked/field-label:text-primary-foreground"
                   >
                     $10.00
                   </Badge>
@@ -859,7 +859,7 @@ function ShippingMethods() {
                   </FieldContent>
                   <Badge
                     variant="secondary"
-                    className="group-has-data-[state=checked]/field-label:bg-primary group-has-data-[state=checked]/field-label:text-primary-foreground"
+                    className="group-has-data-checked/field-label:bg-primary group-has-data-checked/field-label:text-primary-foreground"
                   >
                     $15.00
                   </Badge>
