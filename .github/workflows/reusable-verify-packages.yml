@@ -1,5 +1,5 @@
-# Step order: type-aware oxlint (oxlint.config.ts) requires built `dist` typings for workspace `package.json` exports.
-# Sequence — build packages, repository lint/format (`pnpm check`), then package test and check-types.
+# Step order: type-aware oxlint needs built `dist` typings for workspace `package.json` exports.
+# Sequence — build packages, then lint + format check + check-types, then tests with coverage.
 
 name: Reusable verify packages
 
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify-packages:
-    name: Verify packages
+    name: Workspace Package Verification
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -19,24 +19,24 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v6
         with:
           persist-credentials: false
 
-      - name: Setup environment
+      - name: Configure Build Environment
         uses: ./.github/actions/setup-environment
 
-      - name: Build packages
+      - name: Build Workspace Packages
         run: npx turbo build --filter="./packages/**"
 
-      - name: Lint and format (root)
-        run: pnpm check
+      - name: Validate Code Quality and Type Safety
+        run: npx turbo run lint format:check check-types --filter="./packages/**"
 
-      - name: Test and check-types packages
-        run: npx turbo run test:coverage:ci check-types --filter="./packages/**"
+      - name: Execute Automated Tests with Coverage
+        run: npx turbo run test:coverage:ci --filter="./packages/**"
 
-      - name: Upload coverage
+      - name: Publish Coverage Results to Codecov
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

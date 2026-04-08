@@ -20,7 +20,7 @@ description: >
 **Repo facts**
 
 - **Catalog mode**: `strict` — every `catalog:` reference in any `package.json` must resolve to an entry in `pnpm-workspace.yaml`. Ad-hoc version strings in child packages where `catalog:` is expected will break resolution.
-- **Quality gate**: `pnpm check` (lint + types + format via turbo `quality` pipeline).
+- **Quality gate**: `pnpm check` — runs `turbo run lint format:check check-types` (no bundled `quality` task; lint, format check, and types are separate Turbo tasks).
 - **Runtime**: Node `>=24`. pnpm version pinned in root `packageManager` field.
 
 > **Pre-flight check**: Before running any step, verify:
@@ -84,18 +84,12 @@ Inspect changes to these files — in this order:
 
 ### 6. Verify — all three must pass
 
-Run in this order (matches turbo task graph):
+Run in this order (matches `.github/workflows/reusable-verify-packages.yml`: build before `pnpm check` so type-aware oxlint sees built package typings):
 
 ```bash
-pnpm check   # lint + types + format
-pnpm build   # must succeed before tests are meaningful
+pnpm build   # packages/apps — needed before lint/types gate in this repo
+pnpm check   # lint + format check + check-types (via turbo)
 pnpm test
-```
-
-Or let turbo handle ordering:
-
-```bash
-pnpm turbo run check build test
 ```
 
 Do not mark the upgrade done until all three pass cleanly.

@@ -1,23 +1,13 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "tasks": {
-    "//#format": {},
-    "//#format:fix": {
-      "dependsOn": ["//#lint:fix"],
+    "//#format": {
       "cache": false
     },
-    "//#lint": {
-      "dependsOn": ["^build"]
-    },
+    "//#format:check": {},
+    "//#lint": {},
     "//#lint:fix": {
-      "dependsOn": ["^build"],
       "cache": false
-    },
-    "//#quality": {
-      "dependsOn": ["//#lint", "//#format"]
-    },
-    "//#quality:fix": {
-      "dependsOn": ["//#lint:fix", "//#format:fix"]
     },
     "bench": {
       "dependsOn": ["^build"],
