@@ -1,5 +1,14 @@
 # @codefast/ui
 
+## 0.3.12-canary.1
+
+### Patch Changes
+
+- [`fa52eff`](https://github.com/codefastlabs/codefast/commit/fa52eff477ee0756e098800b65b4e3bfadeb9e09) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): introduce `field` and `field-border` tokens for consistent theme styling
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.3.12-canary.1
+
 ## 0.3.12-canary.0
 
 ### Patch Changes
