@@ -95,7 +95,7 @@ function Calendar({
         root: cn("w-fit", defaultClassNames.root),
         table: "w-full border-collapse",
         today: cn(
-          "rounded-md bg-accent text-accent-foreground data-[selected=true]:rounded-none",
+          "rounded-md bg-accent text-accent-foreground data-selected:rounded-none",
           defaultClassNames.today,
         ),
         week: cn("mt-2 flex w-full", defaultClassNames.week),
