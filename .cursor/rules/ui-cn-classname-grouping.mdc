@@ -1,0 +1,199 @@
+---
+description: Enforce grouped Tailwind class arguments in cn() and tv() calls — one string per logical concern
+alwaysApply: true
+---
+
+# Tailwind class grouping (`cn` / `tv`)
+
+Whenever you add or edit **Tailwind** classes in this repo — via **`cn()`** (imported from `@codefast/ui/utils` or `#utils/tv`, see `packages/ui/src/utils/tv.ts`) or **`tailwind-variants` (`tv`)** — **group by concern**: use several string arguments (or arrays of strings per variant in `tv`), **one group per logical role**. Do not merge unrelated tokens into one unreadable string, except for a single `tv` base line that defines one well-scoped slot.
+
+**Canonical reference:** `packages/ui/src/components/` (`input.tsx`, `textarea.tsx`, `field.tsx`, `chart.tsx`). Match that style in apps, packages, and docs. When in doubt, copy the nearest sibling component's grouping pattern first; fall back to `packages/ui/src/components/` only if no sibling exists.
+
+---
+
+## Argument order in `cn()` (adjust to local patterns)
+
+1. **Sizing / layout constraints** — `w-full min-w-0`, `h-9`, `min-h-16`; also `aspect-*` when it drives the box's dimensions
+2. **Layout** — `flex`, `grid`, alignment (`items-center`, `justify-*`), `gap-*`
+3. **Surfaces** — border, `rounded-*`, background, shadow
+4. **Spacing** — `p-*`, `px-*`, `py-*`, `m-*`
+5. **Typography** — `text-*`, `font-*`, `leading-*`, `tracking-*`
+6. **Motion / outline** — `transition-*`, `outline-*`
+7. **Interactive / state** — `hover:`, `focus-visible:`, `disabled:`, `aria-invalid:`, `data-[...]:`
+8. **Heavy selectors** — long `[&_…]` / third-party `[&_.…]` chunks → prefer **dedicated line(s)**
+9. **`className` last** — always, so callers can override
+
+---
+
+## Array usage in `cn()`
+
+`cn()` accepts any `ClassValue` — string, object, array, nested — matching the `clsx` API. Use arrays in these cases:
+
+**1. Long logical group — classes phục vụ cùng một concern nhưng quá dài để đọc trên một string.**
+Mỗi item trong array vẫn tuân theo group order; array chỉ là cách tách dòng cho dễ đọc:
+
+```tsx
+className={cn(
+  "w-full min-w-0",
+  "flex items-center gap-2",
+  "rounded-md border bg-card",
+  "px-4 py-2",
+  "text-sm font-medium",
+  "transition-colors",
+  [
+    "hover:bg-accent",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+    "aria-invalid:border-destructive aria-invalid:ring-destructive",
+  ],
+  className,
+)}
+```
+
+Hay với third-party / heavy selectors:
+
+```tsx
+className={cn(
+  "relative w-full",
+  "flex flex-col gap-4",
+  "rounded-lg border bg-card p-6",
+  [
+    "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground",
+    "[&_.recharts-cartesian-grid_line]:stroke-border",
+    "[&_.recharts-tooltip-cursor]:fill-muted/50",
+    "[&_.recharts-tooltip-content]:bg-card",
+  ],
+  className,
+)}
+```
+
+**2. Conditional group — nhiều class xuất hiện cùng nhau theo một điều kiện:**
+
+```tsx
+className={cn(
+  "rounded-md border bg-card",
+  "px-4 py-2",
+  isActive && [
+    "bg-accent text-accent-foreground",
+    "ring-2 ring-ring",
+  ],
+  className,
+)}
+```
+
+**3. Lookup table / expression — class được tính từ map hoặc helper:**
+
+```tsx
+const sizeMap = {
+  sm: ["h-8 px-3", "text-xs"],
+  md: ["h-9 px-4", "text-sm"],
+  lg: ["h-10 px-6", "text-base"],
+}
+
+className={cn(
+  "inline-flex items-center",
+  sizeMap[size],
+  className,
+)}
+```
+
+**Không dùng array khi** class luôn có mặt, không đến từ expression, và đủ ngắn để đọc trên một string — dùng string argument thường:
+
+```tsx
+// ❌
+cn(["w-full min-w-0"], ["flex items-center"])
+
+// ✅
+cn("w-full min-w-0", "flex items-center")
+```
+
+---
+
+## Object syntax
+
+Chỉ dùng khi toggle một class theo boolean — không dùng thay cho `&&`:
+
+```tsx
+className={cn(
+  "w-full",
+  { "opacity-50": isDisabled },
+  className,
+)}
+```
+
+---
+
+## Do / don't
+
+- **Do** copy the nearest component's grouping pattern first.
+- **Do** dùng array để tách một logical group dài — mỗi item trong array vẫn giữ group-by-concern.
+- **Do** give flex/grid shrink fixes (`min-w-0`, `w-full`) their own argument — don't bury them in a string that's mostly typography.
+- **Don't** mix unrelated concerns vào cùng một string hoặc array.
+- **Don't** dùng array chỉ để tránh viết thêm argument khi string đã đủ ngắn.
+- **Don't** put `className` anywhere except last in `cn(...)`.
+
+---
+
+## Minimal `cn()` example
+
+```tsx
+className={cn(
+  "w-full min-w-0",
+  "flex items-center gap-2",
+  "rounded-md border bg-card",
+  "px-4 py-2",
+  "text-sm font-medium",
+  "transition-colors",
+  [
+    "hover:bg-accent",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+  ],
+  className,
+)}
+```
+
+---
+
+## `tv()` — same group-by-concern rule
+
+Use **arrays of grouped strings** for `base`, `slots`, và `variants` whenever it improves scanability. Mỗi variant value tuân theo cùng argument order như `cn()`.
+
+```tsx
+const button = tv({
+  base: [
+    "inline-flex items-center justify-center",
+    "rounded-md border",
+    "px-4 py-2",
+    "text-sm font-medium",
+    "transition-colors outline-none",
+    [
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+      "disabled:pointer-events-none disabled:opacity-50",
+    ],
+  ],
+  variants: {
+    intent: {
+      primary: [
+        "border-transparent bg-primary text-primary-foreground",
+        "hover:bg-primary/90",
+      ],
+      ghost: [
+        "border-transparent bg-transparent",
+        "hover:bg-accent hover:text-accent-foreground",
+      ],
+    },
+    size: {
+      sm: ["h-8 px-3", "text-xs"],
+      md: ["h-9 px-4", "text-sm"],
+      lg: ["h-10 px-6", "text-base"],
+    },
+  },
+  defaultVariants: {
+    intent: "primary",
+    size: "md",
+  },
+})
+```
+
+For components with **slots** (`slots: { root, label, … }`), apply the same group order per slot string.
