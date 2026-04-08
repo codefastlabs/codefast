@@ -1,0 +1,262 @@
+---
+description: Group Tailwind classes in cn()/tv() by human-scannable concern — pragmatic bundles OK; className last; no mechanical splitting
+alwaysApply: true
+---
+
+# Tailwind class grouping (`cn` / `tv`)
+
+Whenever you add or edit **Tailwind** classes in this repo — via **`cn()`** (imported from
+`@codefast/ui/utils` within apps, or `#utils/tv` within the `ui` package) or
+**`tailwind-variants` (`tv`)** — **group by concern**: one string argument (or one array item)
+per logical role.
+
+> **`oxlint` / `oxfmt` handles token order inside each string automatically.**
+> This rule is only about the boundaries between arguments — not the order of tokens within one.
+
+---
+
+## Concern groups
+
+"Group by concern" means: classes that answer the same question about the component belong in
+the same string argument. When reading each argument, the reader should immediately understand
+what that slot does — without parsing individual tokens.
+
+| Question | Example classes |
+|---|---|
+| How big is this component? | `w-full min-w-0 h-9` |
+| How is this component laid out? | `flex items-center gap-2` |
+| What does this component look like at idle? | `rounded-md border bg-card` |
+| How much spacing does this component have? | `px-4 py-2` |
+| How is the text styled? | `text-sm font-medium` |
+| How does this component respond to interaction? | `hover:bg-accent disabled:opacity-50` |
+| How does this component override third-party styles? | `[&_.recharts-...]:fill-*` |
+
+**Splitting rule:** if two classes answer different questions → separate arguments. If they
+answer the same question → same argument.
+
+**Boundary cases:** some classes sit at the boundary of two concerns (e.g. `rounded-md` is
+both a surface and a shape token). Prefer whichever concern is **more meaningful in that
+component's context** — strict cross-file consistency is not required, as long as each argument
+still reads as a coherent unit.
+
+---
+
+## Goal — scannability, not more commas
+
+The point of grouping is **how fast a human finds the right blob to edit** and **correct class
+merge order** — not splitting every token into its own argument. If two chunks are almost always
+tuned together mentally (e.g. default outline + default transition on a field), **one string is
+fine**. Split when it genuinely answers a **different** question for readers or when a sibling
+file already establishes a different grouping for the same pattern.
+
+**Avoid mechanical splitting:** do not separate arguments just to mirror a checklist (e.g.
+`outline-none` vs `transition-[color,box-shadow]` everywhere) unless the nearest canonical
+component or local readability benefits.
+
+---
+
+## Pragmatic bundles (usually one argument)
+
+These combinations are **one concern** in practice — keep them in a **single** string unless a
+reference component in this repo splits them for a clear local reason:
+
+- **Interaction baseline (controls, fields):** `outline-hidden` / `outline-none` together with
+  `transition*` (and `select-none` on `button`-like controls). Same mental edit: “default focus
+  outline + motion.”
+- **Motion timing:** `transition` with `duration-*`, `ease-*`, or `animation-*` modifiers that only
+  describe that transition.
+- **Typography on the same text block:** size/weight/leading/tracking together (e.g.
+  `text-sm font-medium`, `text-center text-balance`) when they describe one typographic unit.
+
+---
+
+## `tv()` output + `cn()` — preserve caller override
+
+When composing **`tv()` / `*Variants()` with `cn()`**, the **caller's `className` must be the last
+argument to `cn(...)`**. Do **not** pass `className` into `tv({ className })` and then append
+more variant strings after it in the same `cn()` — later arguments can override the caller's
+classes via merge. Correct shape:
+
+```tsx
+className={cn(toggleVariants({ size, variant }), "extra-only-if-needed", className)}
+```
+
+---
+
+## Canonical reference
+
+`packages/ui/src/components/` (`input.tsx`, `textarea.tsx`, `field.tsx`, `chart.tsx`). Match
+that style in apps, packages, and docs. When in doubt, copy the nearest sibling component's
+grouping pattern first.
+
+---
+
+## Minimal `cn()` example
+
+```tsx
+className={cn(
+  "w-full min-w-0",
+  "flex items-center gap-2",
+  "rounded-md border bg-card",
+  "px-4 py-2",
+  "text-sm font-medium",
+  "transition-colors outline-none",
+  [
+    "hover:bg-accent",
+    "focus-visible:ring-2 focus-visible:ring-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+  ],
+  className,
+)}
+```
+
+---
+
+## Array usage in `cn()`
+
+Use arrays in these three cases — not otherwise.
+
+**1. Long interactive/state group** — multiple state modifiers sharing the same concern, too
+long to read on a single string:
+
+```tsx
+className={cn(
+  "rounded-md border bg-card",
+  "px-4 py-2",
+  "transition-colors outline-none",
+  [
+    "hover:bg-accent",
+    "focus-visible:ring-2 focus-visible:ring-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+    "aria-invalid:border-destructive aria-invalid:ring-destructive",
+  ],
+  className,
+)}
+```
+
+**2. Conditional group** — multiple classes that appear together under one condition:
+
+```tsx
+className={cn(
+  "rounded-md border bg-card",
+  "px-4 py-2",
+  isActive && [
+    "bg-accent text-accent-foreground",
+    "ring-2 ring-ring",
+  ],
+  className,
+)}
+```
+
+**3. Lookup table / expression** — classes derived from a map or helper:
+
+```tsx
+const sizeMap = {
+  sm: ["h-8 px-3", "text-xs"],
+  md: ["h-9 px-4", "text-sm"],
+  lg: ["h-10 px-6", "text-base"],
+}
+
+className={cn(
+  "inline-flex items-center",
+  sizeMap[size],
+  className,
+)}
+```
+
+**Do not use arrays** when classes are always present, not derived from an expression, and
+short enough to read on one string:
+
+```tsx
+// ❌
+cn(["w-full min-w-0"], ["flex items-center"])
+
+// ✅
+cn("w-full min-w-0", "flex items-center")
+```
+
+---
+
+## Object syntax
+
+Use only to toggle a single class by boolean — do not use instead of `&&`:
+
+```tsx
+// ✅ — single token toggle
+className={cn("w-full", { "opacity-50": isDisabled }, className)}
+
+// ❌ — toggling a group; use && instead
+className={cn("w-full", { "bg-accent text-accent-foreground ring-2 ring-ring": isActive }, className)}
+
+// ✅ — use && for groups
+className={cn("w-full", isActive && ["bg-accent text-accent-foreground", "ring-2 ring-ring"], className)}
+```
+
+---
+
+## `className` — always last
+
+`className` must always be the last argument in `cn(...)` so callers can override.
+
+Props like `classNames?.content` or library `defaultClassNames.*` are **not** the caller
+`className`; keep the **prop `className` last** among arguments you control. If a slot API must
+win over the root `className`, document that explicitly in the component — do not rely on
+accidental merge order.
+
+---
+
+## `tv()` — same concern-group rule
+
+Apply the same principle to `base`, `slots`, and `variants`. Each string in a `tv()` array is
+still one concern group.
+
+```tsx
+const button = tv({
+  base: [
+    "inline-flex items-center justify-center",
+    "rounded-md border",
+    "px-4 py-2",
+    "text-sm font-medium",
+    "transition-colors outline-none",
+    [
+      "focus-visible:ring-2 focus-visible:ring-ring",
+      "disabled:pointer-events-none disabled:opacity-50",
+    ],
+  ],
+  variants: {
+    intent: {
+      primary: [
+        "border-transparent bg-primary text-primary-foreground",
+        "hover:bg-primary/90",
+      ],
+      ghost: [
+        "border-transparent bg-transparent",
+        "hover:bg-accent hover:text-accent-foreground",
+      ],
+    },
+    size: {
+      sm: ["h-8 px-3", "text-xs"],
+      md: ["h-9 px-4", "text-sm"],
+      lg: ["h-10 px-6", "text-base"],
+    },
+  },
+  defaultVariants: {
+    intent: "primary",
+    size: "md",
+  },
+})
+```
+
+---
+
+## Do / don't
+
+- **Do** copy the nearest component's grouping pattern first.
+- **Do** use arrays to break up a long logical group — each item in the array is still one concern.
+- **Do** merge outline + default `transition*` on inputs/buttons into one string unless splitting
+  helps that specific file.
+- **Don't** mix unrelated concerns into the same string or array.
+- **Don't** use arrays just to avoid writing another argument when the string is already short.
+- **Don't** put `className` anywhere except last in `cn(...)`.
+- **Don't** split arguments solely for symmetry across the codebase when it adds noise and no
+  readability win.
