@@ -7,7 +7,11 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "./data.js";
+import {
+  extendsBaseVariants,
+  extendsExtensionVariants,
+  extendsTestProps,
+} from "#benchmarks/extends/data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 const originalTVBase = originalTV(extendsBaseVariants, { twMerge: false });

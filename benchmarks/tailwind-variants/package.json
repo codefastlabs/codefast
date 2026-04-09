@@ -24,8 +24,15 @@
     "directory": "benchmarks/tailwind-variants"
   },
   "type": "module",
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.js",
+      "./src/*/index.js"
+    ]
+  },
   "scripts": {
-    "bench": "node src/index.js"
+    "bench": "tsx src/index.js"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",

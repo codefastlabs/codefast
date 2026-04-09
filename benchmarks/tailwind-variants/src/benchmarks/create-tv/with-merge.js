@@ -7,7 +7,7 @@
 import { createTV as originalCreateTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { buttonVariants, simpleTestProps } from "./data.js";
+import { buttonVariants, simpleTestProps } from "#benchmarks/create-tv/data.js";
 import { createTV as codefastCreateTV } from "@codefast/tailwind-variants";
 
 // Initialize global factories

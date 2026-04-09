@@ -7,7 +7,7 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { slotsTestProps, slotsVariants } from "./data.js";
+import { slotsTestProps, slotsVariants } from "#benchmarks/slots/data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions

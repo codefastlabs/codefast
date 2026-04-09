@@ -24,8 +24,8 @@ import {
   createSimpleWithoutMergeBenchmark,
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
-} from "./benchmarks/index.js";
-import { generatePerformanceSummary } from "./utils/index.js";
+} from "#benchmarks/index.js";
+import { generatePerformanceSummary } from "#utils/index.js";
 
 /**
  * Main function to run all benchmarks
