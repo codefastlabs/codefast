@@ -7,7 +7,7 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { extremeSlotsTestProps, extremeSlotsVariants } from "./data.js";
+import { extremeSlotsTestProps, extremeSlotsVariants } from "#benchmarks/extreme/data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions
