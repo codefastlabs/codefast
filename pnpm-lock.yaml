@@ -447,6 +447,9 @@ importers:
       turbo:
         specifier: 'catalog:'
         version: 2.9.5
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   apps/docs:
     dependencies:

@@ -28,6 +28,8 @@
     "release:canary:enter": "changeset pre enter canary",
     "release:canary:exit": "changeset pre exit",
     "start": "turbo run start",
+    "tailwind:cn-analyze": "tsx scripts/group-tailwind-cn.ts analyze",
+    "tailwind:cn-apply": "tsx scripts/group-tailwind-cn.ts apply",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
@@ -48,7 +50,8 @@
     "simple-git-hooks": "catalog:",
     "ts-node": "catalog:",
     "tsx": "catalog:",
-    "turbo": "catalog:"
+    "turbo": "catalog:",
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=24.0.0"
