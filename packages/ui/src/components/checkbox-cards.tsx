@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from "#utils/tv";
 import { CheckIcon } from "lucide-react";
 
 import { Label } from "#components/label";

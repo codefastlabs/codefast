@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { VariantProps } from "#utils/tv";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 
-import { cn, tv } from "@codefast/tailwind-variants";
+import { cn, tv } from "#utils/tv";
 import { createContext } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 import { PanelLeftIcon } from "lucide-react";

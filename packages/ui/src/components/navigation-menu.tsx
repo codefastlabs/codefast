@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "@codefast/tailwind-variants";
+import { cn, tv } from "#utils/tv";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { ChevronDownIcon } from "lucide-react";
 

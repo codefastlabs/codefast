@@ -5,7 +5,7 @@ import type * as LabelPrimitive from "@radix-ui/react-label";
 import type { ComponentProps, JSX, ReactNode } from "react";
 import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from "#utils/tv";
 import { createContextScope } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 import { useId } from "react";

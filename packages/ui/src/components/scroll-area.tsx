@@ -1,10 +1,10 @@
 "use client";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { VariantProps } from "#utils/tv";
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "@codefast/tailwind-variants";
+import { cn, tv } from "#utils/tv";
 import { createContextScope } from "@radix-ui/react-context";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 

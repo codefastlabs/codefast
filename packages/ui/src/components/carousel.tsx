@@ -4,7 +4,7 @@ import type { Scope } from "@radix-ui/react-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from "#utils/tv";
 import { createContextScope } from "@radix-ui/react-context";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";

@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { VariantProps } from "#utils/tv";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from "#utils/tv";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 import { buttonVariants } from "#components/button";
