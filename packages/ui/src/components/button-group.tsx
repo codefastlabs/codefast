@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "@codefast/tailwind-variants";
+import type { VariantProps } from "#utils/tv";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "@codefast/tailwind-variants";
+import { cn, tv } from "#utils/tv";
 import { Slot } from "@radix-ui/react-slot";
 
 import { Separator } from "#components/separator";

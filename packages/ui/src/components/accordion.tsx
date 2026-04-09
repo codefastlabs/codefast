@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "@codefast/tailwind-variants";
+import { cn } from "#utils/tv";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronDownIcon } from "lucide-react";
