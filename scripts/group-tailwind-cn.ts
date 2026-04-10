@@ -9,10 +9,10 @@
  * không tách bằng apply (tránh `[ [`).
  *
  * Hỗ trợ Tailwind CSS v4 đầy đủ:
- *   - Container queries (@min-* / @max-* / @sm / @md …)
+ *   - Container queries (@min-* / @max-* / @sm / @md / @3xl / @max-3xs …)
  *   - Logical properties (ps/pe/ms/me/start/end)
- *   - not-* modifier
- *   - Utilities mới: inset-shadow, field-sizing, mask-*, wrap-*, etc.
+ *   - not-* modifier; has-*; in-[…]; * / **; nth-* (kể cả số); media (pointer-*, contrast-* …)
+ *   - Utilities mới: inset-shadow, field-sizing, mask-*, wrap-*, text-shadow-*, scheme-*, …
  *   - Arbitrary variants [&...] mọi dạng
  *
  * Usage:
@@ -135,8 +135,10 @@ function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
 //       @min-[600px]: @max-[900px]: (arbitrary container query)
 //       named container: @sidebar/md: etc.
 // ---------------------------------------------------------------------------
+// Named @container sizes include leading digits (@3xl, @2xs, @max-3xs, …) — the first
+// segment after `@` must not be restricted to [a-z] only.
 const RESPONSIVE_PREFIX =
-  /^(?:@(?:min|max)-\[[^\]]+\]:|@(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl):)/;
+  /^(?:@(?:min|max)-\[[^\]]+\]:|@(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl):)/;
 
 // ---------------------------------------------------------------------------
 // State variant prefixes — hoisted to module scope (not recreated per call).
@@ -212,6 +214,37 @@ const STATE_PREFIXES = new Set([
   "popover-open", // v4
 ]);
 
+/**
+ * Variant stems not covered by a single entry in STATE_PREFIXES (compound `has-*`,
+ * numbered `nth-*`, media features, v4 `in-[…]`, child selectors `*` / `**`, …).
+ * When these are missed, `isStateToken` is false and the variant is stripped — the
+ * utility is then bucketed as if it were unconditional, which breaks preview grouping.
+ */
+function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
+  if (prefix === "*" || prefix === "**") return true;
+  if (prefix === "inert") return true;
+  if (prefix.startsWith("has-")) return true;
+  if (prefix.startsWith("in-[")) return true;
+  // nth-3, nth-last-5, nth-of-type-4, nth-last-of-type-6, nth-[2n+1_of_li], …
+  if (
+    /^nth(?:-last)?(?:-of-type)?(?:-\d+|-\[)/.test(prefix) ||
+    /^nth-of-type-\d+$/.test(prefix) ||
+    /^nth-last-of-type-\d+$/.test(prefix)
+  ) {
+    return true;
+  }
+  if (
+    /^(?:user-valid|user-invalid|contrast-more|contrast-less|forced-colors|inverted-colors)$/.test(
+      prefix,
+    )
+  ) {
+    return true;
+  }
+  if (/^(?:any-)?pointer-(?:fine|coarse|none)$/.test(prefix)) return true;
+  if (/^(?:portrait|landscape|noscript)$/.test(prefix)) return true;
+  return false;
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -281,6 +314,8 @@ function isStateToken(token: string): boolean {
   if (/^(group|peer)-/.test(prefix)) return true;
   // not-disabled:, not-focus:, …
   if (/^not-/.test(prefix)) return true;
+
+  if (isCompoundOrMediaVariantPrefix(prefix)) return true;
 
   return false;
 }
@@ -370,7 +405,9 @@ function classifyToken(token: string): Bucket {
     /^(?:antialiased|subpixel-antialiased|italic|not-italic|overline|line-through|underline|no-underline|uppercase|lowercase|capitalize|normal-case|truncate|text-wrap|text-balance|text-pretty)$/.test(
       t,
     ) ||
-    /^text-wrap-/.test(t)
+    /^text-wrap-/.test(t) ||
+    /^text-shadow(?:-|$)/.test(t) ||
+    /^scheme-/.test(t)
   ) {
     return "typography";
   }
@@ -689,9 +726,10 @@ export function formatCnArguments(
 
 export function formatCnCall(groups: string[], options?: { trailingClassName?: boolean }): string {
   const lines: string[] = ["cn("];
+  const commaOnEachStringLine = groups.length > 1 || Boolean(options?.trailingClassName);
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i];
-    const comma = i < groups.length - 1 || options?.trailingClassName ? "," : "";
+    const comma = commaOnEachStringLine ? "," : "";
     lines.push(`  "${escapeTsStringLiteralContent(g)}"${comma}`);
   }
   if (options?.trailingClassName) {
@@ -705,7 +743,7 @@ export function formatArray(groups: string[]): string {
   const lines: string[] = ["["];
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i];
-    const comma = i < groups.length - 1 ? "," : "";
+    const comma = i < groups.length - 1 || groups.length > 1 ? "," : "";
     lines.push(`  "${escapeTsStringLiteralContent(g)}"${comma}`);
   }
   lines.push("]");
@@ -823,6 +861,15 @@ function isCnOrTvIdentifier(
   return knownBindings.has(expr.text);
 }
 
+export type ForEachStringLiteralInClassExpressionOptions = {
+  /**
+   * When `false`, do not visit literals inside `cond ? "a" : "b"`. Used when
+   * building the cn/tv **apply** pool so mutually exclusive branch classes are
+   * never merged into one static string (while `analyze` still uses the default).
+   */
+  descendIntoConditional?: boolean;
+};
+
 /**
  * Collect string / no-substitution template literals used as Tailwind class blobs
  * inside a `cn(...)` argument: direct literals, ternary branches, parenthesized
@@ -834,6 +881,7 @@ export function forEachStringLiteralInClassExpression(
   expr: ts.Expression,
   sink: (node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral) => void,
   depth = 0,
+  options?: ForEachStringLiteralInClassExpressionOptions,
 ): void {
   if (depth > MAX_CLASS_EXPR_DEPTH) return;
 
@@ -843,36 +891,39 @@ export function forEachStringLiteralInClassExpression(
   }
 
   if (ts.isParenthesizedExpression(expr)) {
-    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1);
+    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1, options);
     return;
   }
 
   if (ts.isAsExpression(expr) || ts.isSatisfiesExpression(expr)) {
-    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1);
+    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1, options);
     return;
   }
 
   if (ts.isNonNullExpression(expr)) {
-    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1);
+    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1, options);
     return;
   }
 
   if (ts.isConditionalExpression(expr)) {
-    forEachStringLiteralInClassExpression(expr.whenTrue, sink, depth + 1);
-    forEachStringLiteralInClassExpression(expr.whenFalse, sink, depth + 1);
+    if (options?.descendIntoConditional === false) {
+      return;
+    }
+    forEachStringLiteralInClassExpression(expr.whenTrue, sink, depth + 1, options);
+    forEachStringLiteralInClassExpression(expr.whenFalse, sink, depth + 1, options);
     return;
   }
 
   if (ts.isBinaryExpression(expr) && expr.operatorToken.kind === ts.SyntaxKind.PlusToken) {
-    forEachStringLiteralInClassExpression(expr.left, sink, depth + 1);
-    forEachStringLiteralInClassExpression(expr.right, sink, depth + 1);
+    forEachStringLiteralInClassExpression(expr.left, sink, depth + 1, options);
+    forEachStringLiteralInClassExpression(expr.right, sink, depth + 1, options);
     return;
   }
 
   if (ts.isArrayLiteralExpression(expr)) {
     for (const el of expr.elements) {
       if (ts.isSpreadElement(el)) continue;
-      forEachStringLiteralInClassExpression(el, sink, depth + 1);
+      forEachStringLiteralInClassExpression(el, sink, depth + 1, options);
     }
   }
 }
@@ -882,6 +933,71 @@ function isUnsafeLiteralForCnStyleApplySplit(
   node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral,
 ): boolean {
   return ts.isArrayLiteralExpression(node.parent);
+}
+
+/** Options for walking cn args when merging literals for apply-time grouping only. */
+const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOptions = {
+  descendIntoConditional: false,
+};
+
+/**
+ * Literals that may be merged into one pool for `suggestCnGroups` / apply — excludes
+ * strings that only appear under a ternary, so branch-exclusive classes are not
+ * flattened together.
+ */
+function collectUnconditionalTailwindLiteralsFromCnArguments(
+  args: ts.NodeArray<ts.Expression>,
+): Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> {
+  const staticLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+  for (const arg of args) {
+    if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
+      if (!isUnsafeLiteralForCnStyleApplySplit(arg)) {
+        staticLits.push(arg);
+      }
+    } else {
+      forEachStringLiteralInClassExpression(
+        arg,
+        (lit) => {
+          if (!isUnsafeLiteralForCnStyleApplySplit(lit)) {
+            staticLits.push(lit);
+          }
+        },
+        0,
+        CN_APPLY_LITERAL_WALK_OPTS,
+      );
+    }
+  }
+  return staticLits;
+}
+
+/**
+ * Test helper: parse `cn(<argsSnippet>);` and return the merged unconditional literal
+ * text (same pool as apply grouping). Throws if the statement is not a `cn(...)` call.
+ */
+export function mergeCnUnconditionalLiteralPoolForTest(argsSnippet: string): string {
+  const sourceText = `cn(${argsSnippet});`;
+  const sf = ts.createSourceFile(
+    "mergeCnUnconditionalLiteralPoolForTest.ts",
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  const stmt = sf.statements[0];
+  if (!ts.isExpressionStatement(stmt)) {
+    throw new Error("expected expression statement");
+  }
+  const call = stmt.expression;
+  if (
+    !ts.isCallExpression(call) ||
+    !ts.isIdentifier(call.expression) ||
+    call.expression.text !== "cn"
+  ) {
+    throw new Error("expected cn(...) call");
+  }
+  return collectUnconditionalTailwindLiteralsFromCnArguments(call.arguments)
+    .map((n) => n.text)
+    .join(" ");
 }
 
 function propertyAssignmentNameText(prop: ts.PropertyAssignment): string | undefined {
@@ -935,7 +1051,7 @@ export function unwrapCnInsideTvCallReplacement(
   for (let i = 0; i < args.length; i++) {
     const a = args[i]!;
     const piece = sourceText.slice(a.getStart(sf), a.getEnd());
-    const comma = i < args.length - 1 ? "," : "";
+    const comma = i < args.length - 1 || args.length > 1 ? "," : "";
     lines.push(`${innerIndent}${piece}${comma}`);
   }
   lines.push(`${baseIndent}]`);
@@ -1385,25 +1501,9 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
         }
         seenNodePos.add(callPos);
 
-        const staticLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
-        for (const arg of node.arguments) {
-          // Only collect args that are a direct string literal (no ternary, no
-          // array nesting) so we can safely replace the whole call at once.
-          if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
-            if (!isUnsafeLiteralForCnStyleApplySplit(arg)) {
-              staticLits.push(arg);
-            }
-          }
-          // Also descend into ternaries / arrays to collect nested literals for
-          // the slot pool (read-only — these won't be individually replaced).
-          else {
-            forEachStringLiteralInClassExpression(arg, (lit) => {
-              if (!isUnsafeLiteralForCnStyleApplySplit(lit)) {
-                staticLits.push(lit);
-              }
-            });
-          }
-        }
+        // Pool = unconditional literals only; ternary branch strings stay dynamic
+        // so we never merge e.g. items-end + items-center into one static group.
+        const staticLits = collectUnconditionalTailwindLiteralsFromCnArguments(node.arguments);
 
         const totalTokens = staticLits.reduce((s, n) => s + tokenizeClassString(n.text).length, 0);
         if (staticLits.length > 0 && totalTokens >= APPLY_MIN_TOKENS) {
@@ -1467,9 +1567,14 @@ function collectTvSlots(
           // cn(...) inside an array slot — collect its string args into the
           // same pool; the cn call itself will be handled by the unwrap pass.
           for (const arg of el.arguments) {
-            forEachStringLiteralInClassExpression(arg, (lit) => {
-              if (!isUnsafeLiteralForCnStyleApplySplit(lit)) staticLits.push(lit);
-            });
+            forEachStringLiteralInClassExpression(
+              arg,
+              (lit) => {
+                if (!isUnsafeLiteralForCnStyleApplySplit(lit)) staticLits.push(lit);
+              },
+              0,
+              CN_APPLY_LITERAL_WALK_OPTS,
+            );
           }
         } else if (ts.isObjectLiteralExpression(el)) {
           // compoundVariants element — descend for className/class props.
@@ -1497,9 +1602,14 @@ function collectTvSlots(
             ) {
               const cnLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
               for (const arg of innerInit.arguments) {
-                forEachStringLiteralInClassExpression(arg, (lit) => {
-                  if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
-                });
+                forEachStringLiteralInClassExpression(
+                  arg,
+                  (lit) => {
+                    if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
+                  },
+                  0,
+                  CN_APPLY_LITERAL_WALK_OPTS,
+                );
               }
               emitTvSlot(cnLits, sf, innerInit, results, seenNodePos);
             }
@@ -1519,9 +1629,14 @@ function collectTvSlots(
     ) {
       const cnLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
       for (const arg of init.arguments) {
-        forEachStringLiteralInClassExpression(arg, (lit) => {
-          if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
-        });
+        forEachStringLiteralInClassExpression(
+          arg,
+          (lit) => {
+            if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
+          },
+          0,
+          CN_APPLY_LITERAL_WALK_OPTS,
+        );
       }
       emitTvSlot(cnLits, sf, init, results, seenNodePos);
     }
@@ -1606,8 +1721,12 @@ function formatCnCallReplacement(
     allArgs.push(`${argIndent}className`);
   }
 
-  // Trailing comma on every arg except the last.
-  const argLines = allArgs.map((a, i) => (i < allArgs.length - 1 ? `${a},` : a));
+  // Multiline calls: trailing comma after every argument (matches oxfmt / Prettier).
+  const argLines = allArgs.map((a, i) => (i < allArgs.length - 1 ? `${a},` : `${a}`));
+  if (allArgs.length > 1) {
+    const li = allArgs.length - 1;
+    argLines[li] = `${allArgs[li]},`;
+  }
   return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
 
@@ -1623,7 +1742,10 @@ export function formatJsxCnAttributeValue(
 ): string {
   const baseIndent = indentOfLineContaining(source, valueNodeStart);
   const argIndent = `${baseIndent}  `;
-  const inner = formatCnArguments(groups, { indent: argIndent, commaAfterLastGroup: false });
+  const inner = formatCnArguments(groups, {
+    indent: argIndent,
+    commaAfterLastGroup: groups.length > 1,
+  });
   return `{cn(\n${inner}\n${baseIndent})}`;
 }
 
@@ -1769,6 +1891,85 @@ function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupTarget[]
   return [...cnPart, ...collectLongJsxClassNameTargets(sf)];
 }
 
+type PlannedGroupEdit = {
+  start: number;
+  end: number;
+  replacement: string;
+  jsxCn: boolean;
+  lineSf: ts.SourceFile;
+  reportNode: ts.Node;
+  label: string;
+};
+
+/**
+ * Compute replacement range for a grouping target, or `undefined` when
+ * `suggestCnGroups` yields a single group (no split).
+ */
+function planGroupEditForTarget(
+  t: GroupTarget,
+  textAfterUnwrap: string,
+  withClassName: boolean,
+): PlannedGroupEdit | undefined {
+  if (t.kind === "jsxClassName") {
+    const groups = suggestCnGroups(t.lit.text);
+    if (groups.length <= 1) return undefined;
+    const start = t.valueNode.getStart(t.sf);
+    const end = t.valueNode.getEnd();
+    const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
+    return {
+      start,
+      end,
+      replacement,
+      jsxCn: true,
+      lineSf: t.sf,
+      reportNode: t.lit,
+      label: "JSX className",
+    };
+  }
+
+  const pool = slotClassString(t.item);
+  const groups = suggestCnGroups(pool);
+  if (groups.length <= 1) return undefined;
+
+  if (!t.item.cnCall) {
+    const firstNode = t.item.node;
+    const parentArray =
+      t.item.nodes.length > 1 && ts.isArrayLiteralExpression(firstNode.parent)
+        ? firstNode.parent
+        : null;
+    const start = parentArray ? parentArray.getStart(t.item.sf) : firstNode.getStart(t.item.sf);
+    const end = parentArray ? parentArray.getEnd() : firstNode.getEnd();
+    const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
+    const replacement = formatArray(groups)
+      .split("\n")
+      .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
+      .join("\n");
+    return {
+      start,
+      end,
+      replacement,
+      jsxCn: false,
+      lineSf: t.item.sf,
+      reportNode: firstNode,
+      label: t.item.isTvContext ? "tv" : "cn",
+    };
+  }
+
+  const call = t.item.cnCall;
+  const start = call.getStart(t.item.sf);
+  const end = call.getEnd();
+  const replacement = formatCnCallReplacement(t.item, textAfterUnwrap, withClassName);
+  return {
+    start,
+    end,
+    replacement,
+    jsxCn: false,
+    lineSf: t.item.sf,
+    reportNode: t.item.node,
+    label: t.item.isTvContext ? "tv" : "cn",
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Core: group a single source file in-place or dry-run
 // ---------------------------------------------------------------------------
@@ -1795,13 +1996,16 @@ function groupFile(
   const knownBindings = buildKnownCnTvBindings(sf);
   const cnInTvCalls = listAllCnCallsInsideTvInSourceFile(sf, knownBindings);
 
-  const unwrapEdits = cnInTvCalls
-    .map((call) => {
+  type UnwrapPlan = { start: number; end: number; replacement: string; call: ts.CallExpression };
+  const unwrapPlans = cnInTvCalls
+    .map((call): UnwrapPlan | undefined => {
       const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
       if (replacement === undefined) return undefined;
-      return { start: call.getStart(sf), end: call.getEnd(), replacement };
+      return { start: call.getStart(sf), end: call.getEnd(), replacement, call };
     })
-    .filter((e): e is { start: number; end: number; replacement: string } => e !== undefined);
+    .filter((e): e is UnwrapPlan => e !== undefined);
+
+  const unwrapEdits = unwrapPlans.filter((e) => sourceText.slice(e.start, e.end) !== e.replacement);
 
   const textAfterUnwrap =
     unwrapEdits.length > 0 ? applyEditsDescending(sourceText, unwrapEdits) : sourceText;
@@ -1815,115 +2019,82 @@ function groupFile(
   );
 
   const groupTargets = collectGroupTargets(sfGrouped, filePath);
-  const cnInTvSkipped = cnInTvCalls.length - unwrapEdits.length;
-  const totalFound = unwrapEdits.length + groupTargets.length;
+  const cnInTvNoReplacement = cnInTvCalls.length - unwrapPlans.length;
+
+  const sortedTargets = [...groupTargets].sort(
+    (a, b) => targetReplaceStart(b) - targetReplaceStart(a),
+  );
+  const plannedGroupEdits: PlannedGroupEdit[] = [];
+  for (const t of sortedTargets) {
+    const plan = planGroupEditForTarget(t, textAfterUnwrap, options.withClassName);
+    if (plan === undefined) continue;
+    if (textAfterUnwrap.slice(plan.start, plan.end) === plan.replacement) continue;
+    plannedGroupEdits.push(plan);
+  }
+
+  const totalFound = unwrapEdits.length + plannedGroupEdits.length;
 
   if (cnInTvCalls.length === 0 && groupTargets.length === 0) {
     return { filePath, totalFound: 0, changed: 0 };
   }
 
   if (!options.write) {
-    let header = `\n── ${filePath} (${totalFound} vị trí`;
-    if (cnInTvSkipped > 0) {
-      header += `; thêm ${cnInTvSkipped} cn() trong tv không đổi (0 đối số)`;
+    let unwrapArgErrorLines = 0;
+    for (const call of cnInTvCalls) {
+      if (unwrapCnInsideTvCallReplacement(call, sourceText, sf) === undefined) {
+        unwrapArgErrorLines++;
+      }
+    }
+
+    if (totalFound === 0 && unwrapArgErrorLines === 0) {
+      return { filePath, totalFound: 0, changed: 0 };
+    }
+
+    let header = `\n── ${filePath} (${totalFound + unwrapArgErrorLines} vị trí`;
+    if (cnInTvNoReplacement > 0) {
+      header += `; thêm ${cnInTvNoReplacement} cn() trong tv không đổi (0 đối số)`;
     }
     header += `) ──`;
     out(header);
+
     for (const call of cnInTvCalls) {
       const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
       if (replacement === undefined) {
         out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn]: cn(...) không có đối số — bỏ qua`);
         continue;
       }
+      const start = call.getStart(sf);
+      const end = call.getEnd();
+      if (sourceText.slice(start, end) === replacement) continue;
       out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn → chuỗi/mảng]:`);
       out(`  ${replacement.split("\n").join("\n  ")}`);
     }
-    if (unwrapEdits.length > 0 && groupTargets.length > 0) {
+    if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
       out(
-        "  (Số dòng [cn/tv] và [JSX className] dưới đây theo nội dung sau bước unwrap cn trong tv.)",
+        "  (Các dòng [cn] / [tv] / [JSX className] bên dưới theo nội dung sau bước unwrap cn trong tv.)",
       );
     }
-    for (const t of groupTargets) {
-      const lineSf = t.kind === "cnArg" ? t.item.sf : t.sf;
-      const label = t.kind === "cnArg" ? "cn/tv" : "JSX className";
-      let replacement: string;
-      if (t.kind === "cnArg") {
-        const pool = slotClassString(t.item);
-        const groups = suggestCnGroups(pool);
-        if (groups.length <= 1) continue;
-        if (!t.item.cnCall) {
-          // tv array slot — emit indented array
-          const firstNode = t.item.node;
-          const baseIndent = indentOfLineContaining(textAfterUnwrap, firstNode.getStart(lineSf));
-          replacement = formatArray(groups)
-            .split("\n")
-            .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
-            .join("\n");
-        } else {
-          replacement = formatCnCallReplacement(t.item, textAfterUnwrap, options.withClassName);
-        }
-      } else {
-        const groups = suggestCnGroups(t.lit.text);
-        if (groups.length <= 1) continue;
-        replacement = formatJsxCnAttributeValue(
-          groups,
-          textAfterUnwrap,
-          t.valueNode.getStart(t.sf),
-        );
-      }
-      const reportNode = t.kind === "cnArg" ? t.item.node : t.lit;
-      out(`  Dòng ${lineOf(lineSf, reportNode)} [${label}]:`);
-      out(`  ${replacement.split("\n").join("\n  ")}`);
+    for (const plan of plannedGroupEdits) {
+      out(`  Dòng ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
+      out(`  ${plan.replacement.split("\n").join("\n  ")}`);
     }
-    return { filePath, totalFound, changed: 0 };
+    return {
+      filePath,
+      totalFound: totalFound + unwrapArgErrorLines,
+      changed: 0,
+    };
   }
 
   // Pre-check whether `cn` is already in scope using the original parse (before
   // any edits), avoiding a second full parse inside ensureCnImport when unchanged.
   const originallyHasCnImport = sourceFileImportsCn(sf);
 
-  // Grouping edits use offsets in `textAfterUnwrap` (after cn→string/array unwrap).
-  type Edit = { start: number; end: number; replacement: string; jsxCn: boolean };
-  const sorted = [...groupTargets].sort((a, b) => targetReplaceStart(b) - targetReplaceStart(a));
-  const groupEdits: Edit[] = [];
-
-  for (const t of sorted) {
-    if (t.kind === "cnArg") {
-      const pool = slotClassString(t.item);
-      const groups = suggestCnGroups(pool);
-      if (groups.length <= 1) continue;
-
-      if (!t.item.cnCall) {
-        // tv array slot — if all nodes belong to the same array literal, replace
-        // the whole array. Otherwise fall back to replacing the first node only.
-        const firstNode = t.item.node;
-        const parentArray =
-          t.item.nodes.length > 1 && ts.isArrayLiteralExpression(firstNode.parent)
-            ? firstNode.parent
-            : null;
-        const start = parentArray ? parentArray.getStart(t.item.sf) : firstNode.getStart(t.item.sf);
-        const end = parentArray ? parentArray.getEnd() : firstNode.getEnd();
-        const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
-        const replacement = formatArray(groups)
-          .split("\n")
-          .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
-          .join("\n");
-        groupEdits.push({ start, end, replacement, jsxCn: false });
-      } else {
-        const start = t.item.cnCall.getStart(t.item.sf);
-        const end = t.item.cnCall.getEnd();
-        const replacement = formatCnCallReplacement(t.item, textAfterUnwrap, options.withClassName);
-        groupEdits.push({ start, end, replacement, jsxCn: false });
-      }
-    } else {
-      const groups = suggestCnGroups(t.lit.text);
-      if (groups.length <= 1) continue;
-      const start = t.valueNode.getStart(t.sf);
-      const end = t.valueNode.getEnd();
-      const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
-      groupEdits.push({ start, end, replacement, jsxCn: true });
-    }
-  }
+  const groupEdits = plannedGroupEdits.map((p) => ({
+    start: p.start,
+    end: p.end,
+    replacement: p.replacement,
+    jsxCn: p.jsxCn,
+  }));
 
   const touchedJsxCn = groupEdits.some((e) => e.jsxCn);
   let newText =
@@ -1938,7 +2109,7 @@ function groupFile(
     fs.writeFileSync(filePath, newText, "utf8");
   }
 
-  return { filePath, totalFound, changed };
+  return { filePath, totalFound: changed, changed };
 }
 
 // ---------------------------------------------------------------------------
@@ -1958,7 +2129,7 @@ const HELP = [
   "      Liệt kê: chuỗi dài, cn lồng trong tv (nên đổi sang chuỗi/mảng), v.v. Mặc định: packages/ui/src/components",
   "",
   "  preview [dir|file] [--with-classname]",
-  "      In ra phân nhóm gợi ý, không sửa file (cùng logic với apply).",
+  "      Dry-run: in gợi ý thay thế từng vị trí, không ghi file. Chạy trước apply để xem trước.",
   "",
   "  apply [dir|file] [--with-classname]",
   "      Áp dụng: (1) cn(...) trong tv({...}) → một chuỗi nếu 1 đối số, mảng nếu ≥2; (2) tách nhóm class dài trong cn/tv/JSX; JSX thêm import cn nếu thiếu.",
