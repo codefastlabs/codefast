@@ -1320,50 +1320,100 @@ function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
 // AST: collect all long cn/tv string nodes in a source file
 // ---------------------------------------------------------------------------
 
+/**
+ * A StringNode represents a single "grouping slot" — the full set of static
+ * string literals that belong to one logical class surface:
+ *
+ *   cn("a b", "c d", expr)  → one slot: nodes=["a b","c d"], cnCall=<node>
+ *   tv({ base: ["a","b"] }) → one slot per array: nodes=["a","b"], isTvContext=true
+ *   tv({ base: "a b c" })   → one slot: nodes=["a b c"], isTvContext=true
+ *
+ * Grouping is performed over the *merged* token pool of all nodes in the slot,
+ * so `suggestCnGroups` sees the full picture rather than individual fragments.
+ */
 type StringNode = {
-  node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+  /** All static string literals belonging to this slot, in source order. */
+  nodes: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral>;
   sf: ts.SourceFile;
   /** String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`. */
   isTvContext: boolean;
-  /** When set, literal is an argument of this `cn(...)`; emit `formatCnArguments` (no nested `cn`). */
+  /** When set, the entire cn(...) call is replaced at once. */
   cnCall?: ts.CallExpression;
+  // Convenience accessor kept for callers that need a single representative node
+  // (e.g. for line-number reporting). Always the first node in the slot.
+  get node(): ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
 };
+
+function makeStringNode(
+  nodes: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral>,
+  sf: ts.SourceFile,
+  isTvContext: boolean,
+  cnCall?: ts.CallExpression,
+): StringNode {
+  return {
+    nodes,
+    sf,
+    isTvContext,
+    cnCall,
+    get node() {
+      return this.nodes[0]!;
+    },
+  };
+}
+
+/** Merged class string for the whole slot — used as input to suggestCnGroups. */
+function slotClassString(item: StringNode): string {
+  return item.nodes.map((n) => n.text).join(" ");
+}
 
 function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
   const results: StringNode[] = [];
+  // Deduplicate: track node positions already emitted to avoid visiting the
+  // same AST node twice (happens with conditional rendering branches in
+  // carousel.tsx, sidebar.tsx, field.tsx etc.).
+  const seenNodePos = new Set<number>();
   const knownBindings = buildKnownCnTvBindings(sf);
 
   const visit = (node: ts.Node): void => {
     if (ts.isCallExpression(node)) {
       if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
+        // ── cn(...) slot: collect ALL simple static string args into one slot ──
+        const callPos = node.getStart(sf);
+        if (seenNodePos.has(callPos)) {
+          ts.forEachChild(node, visit);
+          return;
+        }
+        seenNodePos.add(callPos);
+
+        const staticLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
         for (const arg of node.arguments) {
-          forEachStringLiteralInClassExpression(arg, (lit) => {
-            if (isUnsafeLiteralForCnStyleApplySplit(lit)) return;
-            if (tokenizeClassString(lit.text).length >= APPLY_MIN_TOKENS) {
-              results.push({ node: lit, sf, isTvContext: false, cnCall: node });
+          // Only collect args that are a direct string literal (no ternary, no
+          // array nesting) so we can safely replace the whole call at once.
+          if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
+            if (!isUnsafeLiteralForCnStyleApplySplit(arg)) {
+              staticLits.push(arg);
             }
-          });
+          }
+          // Also descend into ternaries / arrays to collect nested literals for
+          // the slot pool (read-only — these won't be individually replaced).
+          else {
+            forEachStringLiteralInClassExpression(arg, (lit) => {
+              if (!isUnsafeLiteralForCnStyleApplySplit(lit)) {
+                staticLits.push(lit);
+              }
+            });
+          }
+        }
+
+        const totalTokens = staticLits.reduce((s, n) => s + tokenizeClassString(n.text).length, 0);
+        if (staticLits.length > 0 && totalTokens >= APPLY_MIN_TOKENS) {
+          results.push(makeStringNode(staticLits, sf, false, node));
         }
       } else if (isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
         const arg0 = node.arguments[0];
         if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-          traverseTvObject(
-            sf,
-            arg0,
-            (strNode, innerSf, nestedCn) => {
-              if (isUnsafeLiteralForCnStyleApplySplit(strNode)) return;
-              if (tokenizeClassString(strNode.text).length >= APPLY_MIN_TOKENS) {
-                results.push({
-                  node: strNode,
-                  sf: innerSf,
-                  isTvContext: true,
-                  cnCall: nestedCn,
-                });
-              }
-            },
-            0,
-            knownBindings,
-          );
+          // ── tv({}) slots: group by property value (each value = one slot) ──
+          collectTvSlots(sf, arg0, knownBindings, results, seenNodePos);
         }
       }
     }
@@ -1375,18 +1425,144 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
 }
 
 /**
- * Build a full `cn(\n  "g1",\n  "g2",\n  ...remainingArgs\n)` replacement for
- * an entire `cn(...)` call expression. Replaces the whole call — not just the
- * one string arg being split — so opening/closing parens, newlines, and all
- * existing args are formatted correctly as a unit.
+ * Walk a tv() object and emit one StringNode slot per logical class surface:
+ *   - A string property value  →  slot with one node
+ *   - An array property value  →  slot with all string elements merged
+ *   - A cn(...) call value     →  slot with all string args merged (cnCall set)
  *
- * Every string literal arg is re-evaluated with suggestCnGroups so that a call
- * like `cn("a b c", "d e f", className)` expands ALL splittable args in one
- * pass rather than requiring a separate edit per arg.
+ * Recursive for nested objects (variants → { sm: { ... } }).
+ */
+function collectTvSlots(
+  sf: ts.SourceFile,
+  obj: ts.ObjectLiteralExpression,
+  knownBindings: Set<string>,
+  results: StringNode[],
+  seenNodePos: Set<number>,
+  depth = 0,
+): void {
+  if (depth > MAX_OBJECT_DEPTH) return;
+
+  for (const prop of obj.properties) {
+    if (!ts.isPropertyAssignment(prop)) continue;
+    const init = prop.initializer;
+
+    if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
+      // Single string value — one slot.
+      emitTvSlot([init as ts.StringLiteral], sf, undefined, results, seenNodePos);
+    } else if (ts.isArrayLiteralExpression(init)) {
+      // Array value — all string elements form one merged slot.
+      const arrayPos = init.getStart(sf);
+      if (seenNodePos.has(arrayPos)) continue;
+      seenNodePos.add(arrayPos);
+
+      const staticLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+      for (const el of init.elements) {
+        if (ts.isSpreadElement(el)) continue;
+        if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
+          staticLits.push(el as ts.StringLiteral);
+        } else if (
+          ts.isCallExpression(el) &&
+          isCnOrTvIdentifier(el.expression, "cn", knownBindings)
+        ) {
+          // cn(...) inside an array slot — collect its string args into the
+          // same pool; the cn call itself will be handled by the unwrap pass.
+          for (const arg of el.arguments) {
+            forEachStringLiteralInClassExpression(arg, (lit) => {
+              if (!isUnsafeLiteralForCnStyleApplySplit(lit)) staticLits.push(lit);
+            });
+          }
+        } else if (ts.isObjectLiteralExpression(el)) {
+          // compoundVariants element — descend for className/class props.
+          for (const inner of el.properties) {
+            if (!ts.isPropertyAssignment(inner)) continue;
+            const propName = propertyAssignmentNameText(inner);
+            if (propName !== "className" && propName !== "class") continue;
+            const innerInit = inner.initializer;
+            if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
+              emitTvSlot([innerInit as ts.StringLiteral], sf, undefined, results, seenNodePos);
+            } else if (ts.isArrayLiteralExpression(innerInit)) {
+              const innerLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+              for (const innerEl of innerInit.elements) {
+                if (
+                  !ts.isSpreadElement(innerEl) &&
+                  (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl))
+                ) {
+                  innerLits.push(innerEl as ts.StringLiteral);
+                }
+              }
+              emitTvSlot(innerLits, sf, undefined, results, seenNodePos);
+            } else if (
+              ts.isCallExpression(innerInit) &&
+              isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
+            ) {
+              const cnLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+              for (const arg of innerInit.arguments) {
+                forEachStringLiteralInClassExpression(arg, (lit) => {
+                  if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
+                });
+              }
+              emitTvSlot(cnLits, sf, innerInit, results, seenNodePos);
+            }
+          }
+        }
+      }
+      // Emit the merged array slot (strings only — cn() calls inside are handled
+      // by the unwrap pass separately).
+      if (staticLits.length > 0) {
+        emitTvSlot(staticLits, sf, undefined, results, seenNodePos);
+      }
+    } else if (ts.isObjectLiteralExpression(init)) {
+      collectTvSlots(sf, init, knownBindings, results, seenNodePos, depth + 1);
+    } else if (
+      ts.isCallExpression(init) &&
+      isCnOrTvIdentifier(init.expression, "cn", knownBindings)
+    ) {
+      const cnLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+      for (const arg of init.arguments) {
+        forEachStringLiteralInClassExpression(arg, (lit) => {
+          if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
+        });
+      }
+      emitTvSlot(cnLits, sf, init, results, seenNodePos);
+    }
+  }
+}
+
+function emitTvSlot(
+  lits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral>,
+  sf: ts.SourceFile,
+  cnCall: ts.CallExpression | undefined,
+  results: StringNode[],
+  seenNodePos: Set<number>,
+): void {
+  if (lits.length === 0) return;
+  // Deduplicate by first node position.
+  const firstPos = lits[0]!.getStart(sf);
+  if (seenNodePos.has(firstPos)) return;
+  seenNodePos.add(firstPos);
+
+  const totalTokens = lits.reduce((s, n) => s + tokenizeClassString(n.text).length, 0);
+  if (totalTokens < APPLY_MIN_TOKENS) return;
+  results.push(makeStringNode(lits, sf, true, cnCall));
+}
+
+/**
+ * Build a full `cn(\n  "g1",\n  "g2",\n  ...remainingArgs\n)` replacement for
+ * an entire `cn(...)` call expression.
+ *
+ * Key behaviour: ALL simple static string args are merged into a single token
+ * pool before calling suggestCnGroups(), so the grouper sees the full class
+ * surface rather than each arg in isolation. Dynamic args (identifiers,
+ * ternaries, etc.) are preserved verbatim and appended after the groups.
+ *
+ * Example:
+ *   cn("flex rounded-lg", "text-sm", "hover:bg-accent", className)
+ *   → pool = "flex rounded-lg text-sm hover:bg-accent"
+ *   → suggestCnGroups(pool) = ["flex rounded-lg", "text-sm", "hover:bg-accent"]
+ *   → cn(\n  "flex rounded-lg",\n  "text-sm",\n  "hover:bg-accent",\n  className\n)
  */
 function formatCnCallReplacement(
   item: StringNode,
-  _groups: string[],
   sourceText: string,
   withClassName: boolean,
 ): string {
@@ -1395,26 +1571,35 @@ function formatCnCallReplacement(
   const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
   const argIndent = `${baseIndent}  `;
 
+  // Separate args into static string literals and everything else (dynamic).
+  const dynamicArgTexts: string[] = [];
+  for (const arg of call.arguments) {
+    const isSimpleStatic =
+      (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) &&
+      !isUnsafeLiteralForCnStyleApplySplit(arg);
+    if (!isSimpleStatic) {
+      dynamicArgTexts.push(sourceText.slice(arg.getStart(sf), arg.getEnd()));
+    }
+  }
+
+  // Group the merged pool of all static tokens.
+  const pool = slotClassString(item);
+  const groups = pool.trim() ? suggestCnGroups(pool) : [];
+
   const allArgs: string[] = [];
 
-  for (const arg of call.arguments) {
-    // Collect string literals directly under this arg (handles ternaries etc.)
-    const lits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
-    forEachStringLiteralInClassExpression(arg, (lit) => lits.push(lit));
-
-    if (lits.length === 1 && lits[0] === arg) {
-      // Simple string literal arg — try to split it.
-      const g = suggestCnGroups(lits[0].text);
-      if (g.length > 1) {
-        for (const group of g) {
-          allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(group)}"`);
-        }
-        continue;
-      }
+  if (groups.length > 1) {
+    for (const group of groups) {
+      allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(group)}"`);
     }
-    // Complex arg (conditional, identifier, expression) or unsplittable literal
-    // — preserve verbatim.
-    allArgs.push(`${argIndent}${sourceText.slice(arg.getStart(sf), arg.getEnd())}`);
+  } else if (groups.length === 1) {
+    // Pool didn't split — emit a single merged string (still cleaner than the
+    // original fragmented args).
+    allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(groups[0]!)}"`);
+  }
+
+  for (const dyn of dynamicArgTexts) {
+    allArgs.push(`${argIndent}${dyn}`);
   }
 
   if (withClassName) {
@@ -1659,31 +1844,35 @@ function groupFile(
       );
     }
     for (const t of groupTargets) {
-      const lit = t.kind === "cnArg" ? t.item.node : t.lit;
       const lineSf = t.kind === "cnArg" ? t.item.sf : t.sf;
-      const groups = suggestCnGroups(lit.text);
-      if (groups.length <= 1) continue;
       const label = t.kind === "cnArg" ? "cn/tv" : "JSX className";
       let replacement: string;
       if (t.kind === "cnArg") {
+        const pool = slotClassString(t.item);
+        const groups = suggestCnGroups(pool);
+        if (groups.length <= 1) continue;
         if (!t.item.cnCall) {
-          replacement = formatArray(groups);
+          // tv array slot — emit indented array
+          const firstNode = t.item.node;
+          const baseIndent = indentOfLineContaining(textAfterUnwrap, firstNode.getStart(lineSf));
+          replacement = formatArray(groups)
+            .split("\n")
+            .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
+            .join("\n");
         } else {
-          replacement = formatCnCallReplacement(
-            t.item,
-            groups,
-            textAfterUnwrap,
-            options.withClassName,
-          );
+          replacement = formatCnCallReplacement(t.item, textAfterUnwrap, options.withClassName);
         }
       } else {
+        const groups = suggestCnGroups(t.lit.text);
+        if (groups.length <= 1) continue;
         replacement = formatJsxCnAttributeValue(
           groups,
           textAfterUnwrap,
           t.valueNode.getStart(t.sf),
         );
       }
-      out(`  Dòng ${lineOf(lineSf, lit)} [${label}]:`);
+      const reportNode = t.kind === "cnArg" ? t.item.node : t.lit;
+      out(`  Dòng ${lineOf(lineSf, reportNode)} [${label}]:`);
       out(`  ${replacement.split("\n").join("\n  ")}`);
     }
     return { filePath, totalFound, changed: 0 };
@@ -1697,17 +1886,23 @@ function groupFile(
   type Edit = { start: number; end: number; replacement: string; jsxCn: boolean };
   const sorted = [...groupTargets].sort((a, b) => targetReplaceStart(b) - targetReplaceStart(a));
   const groupEdits: Edit[] = [];
-  const seenCnCalls = new Set<ts.CallExpression>();
 
   for (const t of sorted) {
-    const lit = t.kind === "cnArg" ? t.item.node : t.lit;
-    const groups = suggestCnGroups(lit.text);
-    if (groups.length <= 1) continue;
-
     if (t.kind === "cnArg") {
+      const pool = slotClassString(t.item);
+      const groups = suggestCnGroups(pool);
+      if (groups.length <= 1) continue;
+
       if (!t.item.cnCall) {
-        const start = t.item.node.getStart(t.item.sf);
-        const end = t.item.node.getEnd();
+        // tv array slot — if all nodes belong to the same array literal, replace
+        // the whole array. Otherwise fall back to replacing the first node only.
+        const firstNode = t.item.node;
+        const parentArray =
+          t.item.nodes.length > 1 && ts.isArrayLiteralExpression(firstNode.parent)
+            ? firstNode.parent
+            : null;
+        const start = parentArray ? parentArray.getStart(t.item.sf) : firstNode.getStart(t.item.sf);
+        const end = parentArray ? parentArray.getEnd() : firstNode.getEnd();
         const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
         const replacement = formatArray(groups)
           .split("\n")
@@ -1715,19 +1910,14 @@ function groupFile(
           .join("\n");
         groupEdits.push({ start, end, replacement, jsxCn: false });
       } else {
-        if (seenCnCalls.has(t.item.cnCall)) continue;
-        seenCnCalls.add(t.item.cnCall);
         const start = t.item.cnCall.getStart(t.item.sf);
         const end = t.item.cnCall.getEnd();
-        const replacement = formatCnCallReplacement(
-          t.item,
-          groups,
-          textAfterUnwrap,
-          options.withClassName,
-        );
+        const replacement = formatCnCallReplacement(t.item, textAfterUnwrap, options.withClassName);
         groupEdits.push({ start, end, replacement, jsxCn: false });
       }
     } else {
+      const groups = suggestCnGroups(t.lit.text);
+      if (groups.length <= 1) continue;
       const start = t.valueNode.getStart(t.sf);
       const end = t.valueNode.getEnd();
       const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
