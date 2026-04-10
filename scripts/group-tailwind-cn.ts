@@ -36,9 +36,10 @@ const LONG_STRING_TOKEN_THRESHOLD = 18;
 // collapsed into an unrelated bucket (e.g. typography) by the merger.
 const MIN_GROUP_TOKENS = 2;
 
-// Dynamic MAX_GROUPS is clamped to [BASE, CAP].
+// Dynamic MAX_GROUPS is clamped to [BASE, CAP]. Generous cap avoids capGroups
+// merging unrelated concerns when pass 1 already produced many variant groups.
 const MAX_GROUPS_BASE = 4;
-const MAX_GROUPS_CAP = 8;
+const MAX_GROUPS_CAP = 24;
 
 // Maximum number of findings printed per category in the analyze report.
 const MAX_REPORT_LINES = 40;
@@ -91,16 +92,20 @@ const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
   // behavior" group in component classes. Keeping them compatible avoids
   // singleton-merging one of them into an unrelated typography/surface group.
   new Set<Bucket>(["motion", "interaction"]),
-  // outline-hidden often appears immediately after border/ring/shadow tokens
-  // (the "visual shell" of a component). Allowing surface+interaction
-  // compatibility lets a lone outline-hidden attach to a nearby surface group
-  // instead of being pulled into typography by the positional fallback.
-  new Set<Bucket>(["surface", "interaction"]),
+  // Do not pair surface + interaction in pass 1 — that merges unrelated tokens
+  // (e.g. rounded-sm with cursor-default). Outline/outline-hidden still joins
+  // motion via mergeSingletons + motion↔interaction compatibility.
 ];
 
 function bucketsCompatible(a: Bucket, b: Bucket): boolean {
   if (a === b) return true;
   return COMPATIBLE_BUCKET_SETS.some((s) => s.has(a) && s.has(b));
+}
+
+/** Like bucketsCompatible, but never merge two distinct state variant blobs. */
+function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
+  if (a === "state" && b === "state") return false;
+  return bucketsCompatible(a, b);
 }
 
 // ---------------------------------------------------------------------------
@@ -219,29 +224,46 @@ function stripVariants(token: string): string {
   return t;
 }
 
+/** Outermost variant segment: first `:` at bracket depth 0 → text before it. */
+function firstLeadingVariantPrefix(token: string): string | undefined {
+  let depth = 0;
+  for (let i = 0; i < token.length; i++) {
+    if (token[i] === "[") depth++;
+    else if (token[i] === "]") depth--;
+    else if (token[i] === ":" && depth === 0) {
+      return token.slice(0, i);
+    }
+  }
+  return undefined;
+}
+
 // ---------------------------------------------------------------------------
 // isStateToken — all variant prefixes that should go in "state" bucket
 // ---------------------------------------------------------------------------
 
 function isStateToken(token: string): boolean {
-  // If the token has no colon outside brackets, it is NOT a state variant.
-  let depth = 0;
-  let hasColon = false;
-  for (const ch of token) {
-    if (ch === "[") depth++;
-    else if (ch === "]") depth--;
-    else if (ch === ":" && depth === 0) {
-      hasColon = true;
-      break;
-    }
-  }
-  if (!hasColon) return false;
+  const prefix = firstLeadingVariantPrefix(token);
+  if (prefix === undefined) return false;
 
-  // Responsive / container query prefixes
+  // Responsive / container query prefixes (check full token — regex is ^-anchored)
   if (RESPONSIVE_PREFIX.test(token)) return true;
+  if (STATE_PREFIXES.has(prefix)) return true;
 
-  const prefix = token.split(":")[0];
-  return STATE_PREFIXES.has(prefix);
+  // Arbitrary attribute selectors on data / aria / supports
+  if (prefix.startsWith("data-[")) return true;
+  if (prefix.startsWith("aria-[")) return true;
+  if (prefix.startsWith("supports-[")) return true;
+
+  // Shorthand data-* / aria-* variants (e.g. data-open:, aria-disabled:)
+  if (/^data-(?!\[)/.test(prefix)) return true;
+  if (/^aria-/.test(prefix)) return true;
+
+  // Compound group/peer variants (group-hover:, peer-focus:, group-data-…:)
+  if (/^(group|peer)-/.test(prefix)) return true;
+  // not-disabled:, not-focus:, …
+  if (/^not-/.test(prefix)) return true;
+
+  return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -337,7 +359,7 @@ function classifyToken(token: string): Bucket {
   // ── Motion / Animation ──────────────────────────────────────────────────
   if (
     /^(?:transition|duration|ease|delay|animate|will-change)(?:-|$)/.test(t) ||
-    /^animate-/.test(t)
+    /^ease-/.test(t)
   ) {
     return "motion";
   }
@@ -361,6 +383,24 @@ function classifyToken(token: string): Bucket {
   return "other";
 }
 
+/** Dominant bucket of a whitespace-delimited class group (for merge heuristics). */
+function dominantBucketOfGroup(g: string): Bucket {
+  const counts = new Map<Bucket, number>();
+  for (const tok of tokenizeClassString(g)) {
+    const b = classifyToken(tok);
+    counts.set(b, (counts.get(b) ?? 0) + 1);
+  }
+  let best: Bucket = "other";
+  let bestN = 0;
+  for (const [b, n] of counts) {
+    if (n > bestN) {
+      best = b;
+      bestN = n;
+    }
+  }
+  return best;
+}
+
 // ---------------------------------------------------------------------------
 // stateKey — uses the FIRST colon outside brackets (top-level variant prefix)
 //
@@ -378,15 +418,16 @@ function classifyToken(token: string): Bucket {
 // whenever compound variants like "focus-visible:aria-checked:*" appeared.
 // ---------------------------------------------------------------------------
 
-/** Extract the leading attribute stem from a data-[...] variant string.
- *  e.g. "data-[range-end=true]:rounded-md" → "data-[range"
- *       "data-[state=open]:animate-in"      → "data-[state"
- *       "data-[vaul-drawer-direction=bottom]:inset-x-0" → "data-[vaul"
- *  Falls back to "data" if the bracket content cannot be parsed.
- */
+/** Extract attribute name inside data-[...] for subgrouping (hyphenated names ok). */
 function dataAttributeStem(token: string): string {
-  const m = token.match(/^data-\[([^\]=/-]+)/);
+  const m = token.match(/^data-\[([^\]=]+)/);
   return m ? `data-[${m[1]}` : "data";
+}
+
+/** Same for aria-[pressed=true]:… */
+function ariaAttributeStem(token: string): string {
+  const m = token.match(/^aria-\[([^\]=]+)/);
+  return m ? `aria-[${m[1]}` : "aria";
 }
 
 function stateKey(token: string): string {
@@ -396,11 +437,12 @@ function stateKey(token: string): string {
     else if (token[i] === "]") depth--;
     else if (token[i] === ":" && depth === 0) {
       const prefix = token.slice(0, i);
-      // Sub-group data-[...] variants by attribute stem to avoid collapsing
-      // semantically distinct data attributes (range vs state vs vaul-*) into
-      // one giant group.
+      // Sub-group data-[...] / aria-[...] variants by attribute stem.
       if (prefix.startsWith("data-[")) {
         return dataAttributeStem(token);
+      }
+      if (prefix.startsWith("aria-[")) {
+        return ariaAttributeStem(token);
       }
       return prefix;
     }
@@ -414,37 +456,18 @@ function stateKey(token: string): string {
 
 /** Dynamic cap: more tokens → allow more groups, within [BASE, CAP]. */
 function dynamicMaxGroups(tokenCount: number): number {
-  return Math.max(MAX_GROUPS_BASE, Math.min(MAX_GROUPS_CAP, Math.ceil(tokenCount / 4)));
+  return Math.max(MAX_GROUPS_BASE, Math.min(MAX_GROUPS_CAP, Math.ceil(tokenCount / 2)));
 }
 
 /**
  * Merge singleton groups (< MIN_GROUP_TOKENS tokens) into their nearest
  * neighbour. Prefers merging toward a bucket-compatible neighbor (same or
- * compatible bucket set) to avoid cross-bucket pollution (e.g. interaction
- * tokens landing in a typography group). Falls back to forward-then-backward
- * if no compatible neighbor exists.
+ * compatible bucket set). If **neither** neighbor is compatible, keeps the
+ * singleton (avoids e.g. merging lone `text-sm` into `cursor-default …`).
  */
 function mergeSingletons(groups: string[]): string[] {
   if (groups.length <= 1) return groups;
   const result = [...groups];
-
-  /** Dominant bucket of a group (most-represented bucket among its tokens). */
-  function dominantBucket(g: string): Bucket {
-    const counts = new Map<Bucket, number>();
-    for (const tok of tokenizeClassString(g)) {
-      const b = classifyToken(tok);
-      counts.set(b, (counts.get(b) ?? 0) + 1);
-    }
-    let best: Bucket = "other";
-    let bestN = 0;
-    for (const [b, n] of counts) {
-      if (n > bestN) {
-        best = b;
-        bestN = n;
-      }
-    }
-    return best;
-  }
 
   let changed = true;
   while (changed) {
@@ -452,21 +475,23 @@ function mergeSingletons(groups: string[]): string[] {
     for (let i = 0; i < result.length; i++) {
       if (tokenizeClassString(result[i]).length < MIN_GROUP_TOKENS) {
         if (result.length === 1) break;
-        const myBucket = dominantBucket(result[i]);
+        const myBucket = dominantBucketOfGroup(result[i]);
 
-        // Determine merge direction: prefer a bucket-compatible neighbor.
-        const prevCompat = i > 0 && bucketsCompatible(myBucket, dominantBucket(result[i - 1]));
+        const prevCompat =
+          i > 0 && bucketsMergeCompatible(myBucket, dominantBucketOfGroup(result[i - 1]));
         const nextCompat =
-          i < result.length - 1 && bucketsCompatible(myBucket, dominantBucket(result[i + 1]));
+          i < result.length - 1 &&
+          bucketsMergeCompatible(myBucket, dominantBucketOfGroup(result[i + 1]));
 
         let mergeDir: "forward" | "backward";
         if (nextCompat && !prevCompat) {
           mergeDir = "forward";
         } else if (prevCompat && !nextCompat) {
           mergeDir = "backward";
-        } else {
-          // Both or neither compatible → use positional default.
+        } else if (prevCompat && nextCompat) {
           mergeDir = i < result.length - 1 ? "forward" : "backward";
+        } else {
+          continue;
         }
 
         if (mergeDir === "forward") {
@@ -485,23 +510,53 @@ function mergeSingletons(groups: string[]): string[] {
 
 /**
  * Merge adjacent groups until total count ≤ maxGroups.
- * Caches token counts alongside the result array to avoid O(n²) re-splitting.
- * Always merges the pair with fewest combined tokens (least information loss).
+ * Prefers bucket-compatible pairs, then lowest merge penalty, then smaller size.
  */
+/** Higher = worse to merge when shrinking groups (incompatible pairs only). */
+function capMergePenalty(a: Bucket, b: Bucket): number {
+  if (a === "state" && b === "state") return 1_000;
+  // Never merge variant blobs with base buckets before crossing other thresholds.
+  if (a === "state" || b === "state") return 350;
+
+  const hi = 100;
+  const set = new Set([a, b]);
+  if (set.has("surface") && set.has("typography")) return hi;
+  if (set.has("typography") && set.has("interaction")) return hi;
+  if (set.has("typography") && set.has("motion")) return hi;
+  if (set.has("spacing") && set.has("typography")) return hi - 5;
+  if (set.has("spacing") && set.has("surface")) return hi - 10;
+  if (set.has("layout") && set.has("spacing")) return hi - 8;
+  if (set.has("arbitrary")) return 60;
+  return 0;
+}
+
 function capGroups(groups: string[], maxGroups: number): string[] {
   const result = [...groups];
   const lengths = result.map((g) => tokenizeClassString(g).length);
 
   while (result.length > maxGroups) {
-    let bestIdx = 0;
-    let bestSize = Infinity;
+    type Cand = { i: number; size: number; compat: boolean; penalty: number };
+    const cands: Cand[] = [];
     for (let i = 0; i < result.length - 1; i++) {
-      const size = lengths[i] + lengths[i + 1];
-      if (size < bestSize) {
-        bestSize = size;
-        bestIdx = i;
+      const d0 = dominantBucketOfGroup(result[i]);
+      const d1 = dominantBucketOfGroup(result[i + 1]);
+      const compat = bucketsMergeCompatible(d0, d1);
+      cands.push({
+        i,
+        size: lengths[i] + lengths[i + 1],
+        compat,
+        penalty: compat ? 0 : capMergePenalty(d0, d1),
+      });
+    }
+    const preferred = cands.filter((c) => c.compat);
+    const pool = preferred.length > 0 ? preferred : cands;
+    let best = pool[0]!;
+    for (const c of pool) {
+      if (c.penalty < best.penalty || (c.penalty === best.penalty && c.size < best.size)) {
+        best = c;
       }
     }
+    const bestIdx = best.i;
     result[bestIdx] = result[bestIdx] + " " + result[bestIdx + 1];
     lengths[bestIdx] = lengths[bestIdx] + lengths[bestIdx + 1];
     result.splice(bestIdx + 1, 1);
@@ -516,8 +571,9 @@ export function suggestCnGroups(classString: string): string[] {
 
   // ── Pre-sort: stable sort tokens by bucket order ──────────────────────────
   // Ensures all layout tokens are adjacent, all surface tokens adjacent, etc.,
-  // regardless of the author's original ordering. This is safe in Tailwind v4
-  // because cascade layers eliminate source-order specificity conflicts.
+  // regardless of the author's original ordering. Tailwind layers reduce
+  // conflicts, but same-layer order can still matter for overlapping utilities;
+  // review `apply` output when in doubt.
   // State tokens cluster together and are then sub-grouped by variant key.
   const classified = tokens.map((tok) => ({ tok, bucket: classifyToken(tok) }));
   classified.sort((a, b) => BUCKET_ORDER[a.bucket] - BUCKET_ORDER[b.bucket]);
@@ -581,12 +637,43 @@ export function suggestCnGroups(classString: string): string[] {
 // Formatters
 // ---------------------------------------------------------------------------
 
+function escapeTsStringLiteralContent(g: string): string {
+  return g.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
+}
+
+/**
+ * Multiline fragment for use *inside* an existing `cn(...)` — replaces one
+ * string argument with several, without producing `cn(cn(...))`.
+ */
+export function formatCnArguments(
+  groups: string[],
+  options?: {
+    indent?: string;
+    /** When true, the last string group is followed by more args (or className). */
+    commaAfterLastGroup?: boolean;
+    trailingClassName?: boolean;
+  },
+): string {
+  const indent = options?.indent ?? "  ";
+  const commaAfterLast = options?.commaAfterLastGroup ?? options?.trailingClassName ?? false;
+  const lines: string[] = [];
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i];
+    const comma = i < groups.length - 1 || commaAfterLast ? "," : "";
+    lines.push(`${indent}"${escapeTsStringLiteralContent(g)}"${comma}`);
+  }
+  if (options?.trailingClassName) {
+    lines.push(`${indent}className,`);
+  }
+  return lines.join("\n");
+}
+
 export function formatCnCall(groups: string[], options?: { trailingClassName?: boolean }): string {
   const lines: string[] = ["cn("];
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i];
     const comma = i < groups.length - 1 || options?.trailingClassName ? "," : "";
-    lines.push(`  "${g.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"${comma}`);
+    lines.push(`  "${escapeTsStringLiteralContent(g)}"${comma}`);
   }
   if (options?.trailingClassName) {
     lines.push("  className,");
@@ -600,7 +687,7 @@ export function formatArray(groups: string[]): string {
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i];
     const comma = i < groups.length - 1 ? "," : "";
-    lines.push(`  "${g.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"${comma}`);
+    lines.push(`  "${escapeTsStringLiteralContent(g)}"${comma}`);
   }
   lines.push("]");
   return lines.join("\n");
@@ -659,6 +746,58 @@ function lineOf(sf: ts.SourceFile, node: ts.Node): number {
   return sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
 }
 
+/** Whitespace from line start up to `pos` (used to align split literals with siblings). */
+function indentBeforePosition(source: string, pos: number): string {
+  let lineStart = pos;
+  while (lineStart > 0) {
+    const c = source[lineStart - 1];
+    if (c === "\n" || c === "\r") break;
+    lineStart--;
+  }
+  return source.slice(lineStart, pos);
+}
+
+/** Leading indentation of the line containing `pos` (tabs / spaces only). */
+function indentOfLineContaining(source: string, pos: number): string {
+  let lineStart = pos;
+  while (lineStart > 0) {
+    const c = source[lineStart - 1];
+    if (c === "\n" || c === "\r") break;
+    lineStart--;
+  }
+  const nl = source.indexOf("\n", pos);
+  const line = source.slice(lineStart, nl === -1 ? undefined : nl);
+  const m = /^[\t ]*/.exec(line);
+  return m?.[0] ?? "";
+}
+
+// ---------------------------------------------------------------------------
+// JSX: static className string (analyze / apply)
+// ---------------------------------------------------------------------------
+
+type JsxClassNameStatic = {
+  lit: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+  /** Replace this node: `StringLiteral` or whole `JsxExpression`. */
+  valueNode: ts.Node;
+};
+
+function jsxClassNameStaticLiteral(attr: ts.JsxAttribute): JsxClassNameStatic | undefined {
+  if (!ts.isIdentifier(attr.name) || attr.name.text !== "className") return undefined;
+  const init = attr.initializer;
+  if (!init) return undefined;
+
+  if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
+    return { lit: init, valueNode: init };
+  }
+  if (ts.isJsxExpression(init) && init.expression) {
+    const ex = init.expression;
+    if (ts.isStringLiteral(ex) || ts.isNoSubstitutionTemplateLiteral(ex)) {
+      return { lit: ex, valueNode: init };
+    }
+  }
+  return undefined;
+}
+
 // ---------------------------------------------------------------------------
 // Shared tv() object traversal
 // ---------------------------------------------------------------------------
@@ -666,6 +805,8 @@ function lineOf(sf: ts.SourceFile, node: ts.Node): number {
 type StringNodeVisitor = (
   node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral,
   sf: ts.SourceFile,
+  /** When set, the literal is an argument of this `cn(...)` (e.g. nested inside `tv`). */
+  cnCall?: ts.CallExpression,
 ) => void;
 
 /**
@@ -685,11 +826,11 @@ function traverseTvObject(
     const init = prop.initializer;
 
     if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
-      visitor(init as ts.StringLiteral, sf);
+      visitor(init as ts.StringLiteral, sf, undefined);
     } else if (ts.isArrayLiteralExpression(init)) {
       for (const el of init.elements) {
         if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
-          visitor(el as ts.StringLiteral, sf);
+          visitor(el as ts.StringLiteral, sf, undefined);
         }
       }
     } else if (ts.isObjectLiteralExpression(init)) {
@@ -697,7 +838,7 @@ function traverseTvObject(
     } else if (ts.isCallExpression(init) && isCnOrTvIdentifier(init.expression, "cn")) {
       for (const arg of init.arguments) {
         if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
-          visitor(arg as ts.StringLiteral, sf);
+          visitor(arg as ts.StringLiteral, sf, init);
         }
       }
     }
@@ -719,6 +860,12 @@ type AnalyzeReport = {
     preview: string;
   }>;
   longTvStringLiterals: Array<{
+    file: string;
+    line: number;
+    tokenCount: number;
+    preview: string;
+  }>;
+  longJsxClassNameLiterals: Array<{
     file: string;
     line: number;
     tokenCount: number;
@@ -749,6 +896,7 @@ function analyzeDirectory(target: string): AnalyzeReport {
     tvCallExpressions: 0,
     longCnStringLiterals: [],
     longTvStringLiterals: [],
+    longJsxClassNameLiterals: [],
   };
 
   const files = fs.statSync(target).isDirectory() ? walkTsxFiles(target) : [target];
@@ -788,6 +936,21 @@ function analyzeDirectory(target: string): AnalyzeReport {
           }
         }
       }
+      if (filePath.endsWith(".tsx") && ts.isJsxAttribute(node)) {
+        const parsed = jsxClassNameStaticLiteral(node);
+        if (parsed) {
+          const text = parsed.lit.text;
+          const n = tokenizeClassString(text).length;
+          if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+            report.longJsxClassNameLiterals.push({
+              file: sf.fileName,
+              line: lineOf(sf, parsed.lit),
+              tokenCount: n,
+              preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
+            });
+          }
+        }
+      }
       ts.forEachChild(node, visit);
     };
     visit(sf);
@@ -819,6 +982,15 @@ function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
   if (r.longTvStringLiterals.length > MAX_REPORT_LINES) {
     out(`  … và ${r.longTvStringLiterals.length - MAX_REPORT_LINES} vị trí khác`);
   }
+  out(
+    `\nJSX className="..." hoặc className={'...'} (chuỗi tĩnh, ≥${LONG_STRING_TOKEN_THRESHOLD} token): ${r.longJsxClassNameLiterals.length}`,
+  );
+  for (const x of r.longJsxClassNameLiterals.slice(0, MAX_REPORT_LINES)) {
+    out(`  ${x.file}:${x.line}  (${x.tokenCount} token)  ${x.preview}`);
+  }
+  if (r.longJsxClassNameLiterals.length > MAX_REPORT_LINES) {
+    out(`  … và ${r.longJsxClassNameLiterals.length - MAX_REPORT_LINES} vị trí khác`);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -828,7 +1000,10 @@ function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
 type StringNode = {
   node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
   sf: ts.SourceFile;
+  /** String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`. */
   isTvContext: boolean;
+  /** When set, literal is an argument of this `cn(...)`; emit `formatCnArguments` (no nested `cn`). */
+  cnCall?: ts.CallExpression;
 };
 
 function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
@@ -842,15 +1017,20 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
             (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) &&
             tokenizeClassString(arg.text).length >= LONG_STRING_TOKEN_THRESHOLD
           ) {
-            results.push({ node: arg as ts.StringLiteral, sf, isTvContext: false });
+            results.push({ node: arg as ts.StringLiteral, sf, isTvContext: false, cnCall: node });
           }
         }
       } else if (isCnOrTvIdentifier(node.expression, "tv")) {
         const arg0 = node.arguments[0];
         if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-          traverseTvObject(sf, arg0, (strNode) => {
+          traverseTvObject(sf, arg0, (strNode, innerSf, nestedCn) => {
             if (tokenizeClassString(strNode.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
-              results.push({ node: strNode, sf, isTvContext: true });
+              results.push({
+                node: strNode,
+                sf: innerSf,
+                isTvContext: true,
+                cnCall: nestedCn,
+              });
             }
           });
         }
@@ -861,6 +1041,170 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
 
   visit(sf);
   return results;
+}
+
+function formatApplyReplacement(
+  item: StringNode,
+  groups: string[],
+  /** Source text to read indentation from (write mode: `newText` up to the edit point). */
+  sourceSlice: string,
+  nodeStartInSlice: number,
+  withClassName: boolean,
+): string {
+  if (item.cnCall) {
+    const indent = indentBeforePosition(sourceSlice, nodeStartInSlice);
+    // When more `cn(...)` args follow the replaced literal, the source already has
+    // `, nextArg` right after the string — only `--with-classname` should force a
+    // comma on the last inserted literal (before the injected `className` line).
+    return formatCnArguments(groups, {
+      indent,
+      commaAfterLastGroup: withClassName,
+      trailingClassName: withClassName,
+    });
+  }
+  return formatArray(groups);
+}
+
+// ---------------------------------------------------------------------------
+// JSX className → cn(...) value (format + import)
+// ---------------------------------------------------------------------------
+
+/** `className={cn(...)}` value for JSX; replaces the attribute value node only. */
+export function formatJsxCnAttributeValue(
+  groups: string[],
+  source: string,
+  valueNodeStart: number,
+): string {
+  const baseIndent = indentOfLineContaining(source, valueNodeStart);
+  const argIndent = `${baseIndent}  `;
+  const inner = formatCnArguments(groups, { indent: argIndent, commaAfterLastGroup: false });
+  return `{cn(\n${inner}\n${baseIndent})}`;
+}
+
+function sourceFileImportsCn(sf: ts.SourceFile): boolean {
+  for (const st of sf.statements) {
+    if (!ts.isImportDeclaration(st) || !st.importClause) continue;
+    const clause = st.importClause;
+    if (clause.name?.text === "cn") return true;
+    if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
+      for (const el of clause.namedBindings.elements) {
+        if (el.name.text === "cn") return true;
+      }
+    }
+  }
+  return false;
+}
+
+function cnModuleSpecifierForFile(filePath: string): string {
+  const norm = path.normalize(filePath).replace(/\\/g, "/");
+  if (norm.includes("/packages/ui/")) return "#utils/tv";
+  return "@codefast/tailwind-variants";
+}
+
+function findImportDeclarationFromModule(
+  sf: ts.SourceFile,
+  moduleSpecifier: string,
+): ts.ImportDeclaration | undefined {
+  for (const st of sf.statements) {
+    if (!ts.isImportDeclaration(st)) continue;
+    const spec = st.moduleSpecifier;
+    if (ts.isStringLiteral(spec) && spec.text === moduleSpecifier) {
+      return st;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Ensure `cn` is in scope: merge into an existing named import from the default
+ * module for this file, or insert `import { cn } from "...";`.
+ */
+function ensureCnImport(sourceText: string, filePath: string): string {
+  const sf = ts.createSourceFile(
+    filePath,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+    filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+  if (sourceFileImportsCn(sf)) return sourceText;
+
+  const moduleSpecifier = cnModuleSpecifierForFile(filePath);
+  const decl = findImportDeclarationFromModule(sf, moduleSpecifier);
+
+  if (
+    decl?.importClause &&
+    !decl.importClause.isTypeOnly &&
+    decl.importClause.namedBindings &&
+    ts.isNamedImports(decl.importClause.namedBindings)
+  ) {
+    const elements = decl.importClause.namedBindings.elements;
+    if (elements.length > 0) {
+      const pos = elements[0].getStart(sf);
+      return `${sourceText.slice(0, pos)}cn, ${sourceText.slice(pos)}`;
+    }
+  }
+
+  const importLine = `import { cn } from "${moduleSpecifier}";`;
+
+  let firstImport = -1;
+  for (const st of sf.statements) {
+    if (ts.isImportDeclaration(st)) {
+      firstImport = st.getStart(sf);
+      break;
+    }
+  }
+
+  const useClient = /^["']use client["'];?\s*\r?\n/.exec(sourceText);
+  let insertAt: number;
+  if (useClient) {
+    insertAt = useClient[0].length;
+  } else if (firstImport !== -1) {
+    insertAt = firstImport;
+  } else {
+    insertAt = 0;
+  }
+
+  return `${sourceText.slice(0, insertAt)}${importLine}\n${sourceText.slice(insertAt)}`;
+}
+
+type GroupTarget =
+  | { kind: "cnArg"; item: StringNode }
+  | {
+      kind: "jsxClassName";
+      sf: ts.SourceFile;
+      lit: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+      valueNode: ts.Node;
+    };
+
+function targetReplaceStart(t: GroupTarget): number {
+  return t.kind === "cnArg" ? t.item.node.getStart(t.item.sf) : t.valueNode.getStart(t.sf);
+}
+
+function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
+  const out: GroupTarget[] = [];
+  const visit = (node: ts.Node): void => {
+    if (ts.isJsxAttribute(node)) {
+      const parsed = jsxClassNameStaticLiteral(node);
+      if (parsed && tokenizeClassString(parsed.lit.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
+        out.push({
+          kind: "jsxClassName",
+          sf,
+          lit: parsed.lit,
+          valueNode: parsed.valueNode,
+        });
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return out;
+}
+
+function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupTarget[] {
+  const cnPart = collectLongStringNodes(sf).map((item) => ({ kind: "cnArg" as const, item }));
+  if (!filePath.endsWith(".tsx")) return cnPart;
+  return [...cnPart, ...collectLongJsxClassNameTargets(sf)];
 }
 
 // ---------------------------------------------------------------------------
@@ -886,47 +1230,74 @@ function groupFile(
     filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
 
-  const nodes = collectLongStringNodes(sf);
-  if (nodes.length === 0) return { filePath, totalFound: 0, changed: 0 };
+  const targets = collectGroupTargets(sf, filePath);
+  if (targets.length === 0) return { filePath, totalFound: 0, changed: 0 };
 
   if (!options.write) {
-    // Dry-run: print suggestions
-    out(`\n── ${filePath} (${nodes.length} chuỗi) ──`);
-    for (const { node, isTvContext } of nodes) {
-      const groups = suggestCnGroups(node.text);
-      const replacement = isTvContext
-        ? formatArray(groups)
-        : formatCnCall(groups, { trailingClassName: options.withClassName });
-      out(`  Dòng ${lineOf(sf, node)}:`);
+    out(`\n── ${filePath} (${targets.length} vị trí) ──`);
+    for (const t of targets) {
+      const lit = t.kind === "cnArg" ? t.item.node : t.lit;
+      const lineSf = t.kind === "cnArg" ? t.item.sf : t.sf;
+      const groups = suggestCnGroups(lit.text);
+      const label = t.kind === "cnArg" ? "cn/tv" : "JSX className";
+      const replacement =
+        t.kind === "cnArg"
+          ? formatApplyReplacement(
+              t.item,
+              groups,
+              sourceText,
+              lit.getStart(lineSf),
+              options.withClassName,
+            )
+          : groups.length > 1
+            ? formatJsxCnAttributeValue(groups, sourceText, t.valueNode.getStart(t.sf))
+            : lit.text;
+      out(`  Dòng ${lineOf(lineSf, lit)} [${label}]:`);
       out(`  ${replacement.split("\n").join("\n  ")}`);
     }
-    return { filePath, totalFound: nodes.length, changed: 0 };
+    return { filePath, totalFound: targets.length, changed: 0 };
   }
 
-  // Write mode: apply replacements back-to-front to preserve offsets
-  const sorted = [...nodes].sort((a, b) => b.node.getStart(b.sf) - a.node.getStart(a.sf));
+  const sorted = [...targets].sort((a, b) => targetReplaceStart(b) - targetReplaceStart(a));
 
   let newText = sourceText;
   let changed = 0;
-  for (const { node, isTvContext, sf: nodeSf } of sorted) {
-    const groups = suggestCnGroups(node.text);
-    if (groups.length <= 1) continue; // nothing to split
+  let touchedJsxCn = false;
 
-    const replacement = isTvContext
-      ? formatArray(groups)
-      : formatCnCall(groups, { trailingClassName: options.withClassName });
+  for (const t of sorted) {
+    const lit = t.kind === "cnArg" ? t.item.node : t.lit;
+    const groups = suggestCnGroups(lit.text);
+    if (groups.length <= 1) continue;
 
-    const start = node.getStart(nodeSf);
-    const end = node.getEnd();
-    newText = newText.slice(0, start) + replacement + newText.slice(end);
+    if (t.kind === "cnArg") {
+      const start = t.item.node.getStart(t.item.sf);
+      const replacement = formatApplyReplacement(
+        t.item,
+        groups,
+        newText,
+        start,
+        options.withClassName,
+      );
+      const end = t.item.node.getEnd();
+      newText = newText.slice(0, start) + replacement + newText.slice(end);
+    } else {
+      const start = t.valueNode.getStart(t.sf);
+      const replacement = formatJsxCnAttributeValue(groups, newText, start);
+      const end = t.valueNode.getEnd();
+      newText = newText.slice(0, start) + replacement + newText.slice(end);
+      touchedJsxCn = true;
+    }
     changed++;
   }
 
   if (changed > 0) {
+    if (touchedJsxCn) {
+      newText = ensureCnImport(newText, filePath);
+    }
     fs.writeFileSync(filePath, newText, "utf8");
   }
 
-  return { filePath, totalFound: nodes.length, changed };
+  return { filePath, totalFound: targets.length, changed };
 }
 
 // ---------------------------------------------------------------------------
@@ -935,41 +1306,45 @@ function groupFile(
 
 const DEFAULT_TARGET = "packages/ui/src/components";
 
-const HELP = `
-Phân nhóm Tailwind class trong cn(...) / tv(...) — hỗ trợ Tailwind CSS v4.
-
-Usage:
-  group-tailwind-cn analyze [dir|file]
-      Quét và báo cáo các chuỗi class dài cần tách nhóm.
-      Mặc định: packages/ui/src/components
-
-  group-tailwind-cn apply [dir|file] [--with-classname]
-      Ghi đè phân nhóm cho tất cả chuỗi dài trong dir/file (= pnpm tailwind:cn-apply).
-      Mặc định: packages/ui/src/components
-      --with-classname  Thêm "className," làm đối số cuối của cn().
-
-  group-tailwind-cn preview [dir|file] [--with-classname]
-      Xem trước kết quả phân nhóm mà không ghi file (dry-run của apply).
-
-  group-tailwind-cn group "<classes>" [--tv]
-      Phân nhóm nhanh một chuỗi class inline (để test / copy-paste).
-      --tv              In ra dạng mảng [...] thay vì cn(...).
-
-package.json scripts:
-  pnpm tailwind:cn-analyze          → analyze packages/ui/src/components
-  pnpm tailwind:cn-apply            → apply   packages/ui/src/components
-
-Examples:
-  pnpm tailwind:cn-analyze
-  pnpm tailwind:cn-analyze src/components/Button.tsx
-
-  pnpm tailwind:cn-apply
-  pnpm tailwind:cn-apply src/components/Button.tsx --with-classname
-
-  pnpm tsx scripts/group-tailwind-cn.ts preview src/components
-  pnpm tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border px-3 text-sm font-medium"
-  pnpm tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border" --tv
-`.trim();
+/** Mảng chuỗi (không dùng template literal) để IDE như WebStorm không inject JSX vào nội dung help. */
+const HELP = [
+  "Gợi ý tách chuỗi class Tailwind (v4): đối số trong cn(...)/tv(...), và literal tĩnh trên thuộc tính className của JSX.",
+  "",
+  "Cách làm đề xuất: analyze → preview → apply (xem trước rồi mới ghi file).",
+  "",
+  "Lệnh:",
+  "  analyze [dir|file]",
+  "      Liệt kê chuỗi class đủ dài để xem xét tách nhóm. Mặc định: packages/ui/src/components",
+  "",
+  "  preview [dir|file] [--with-classname]",
+  "      In ra phân nhóm gợi ý, không sửa file (cùng logic với apply).",
+  "",
+  "  apply [dir|file] [--with-classname]",
+  "      Áp dụng phân nhóm lên mã nguồn; literal JSX dài ở className được thay bằng lời gọi cn(...) và thêm import cn nếu thiếu.",
+  "      Mặc định: packages/ui/src/components",
+  "",
+  '  group "<classes>" [--tv]',
+  "      Thử nhanh trên một chuỗi class (copy-paste kết quả). Mặc định in cn(...); --tv in [...] cho tv().",
+  "",
+  "Tùy chọn:",
+  "  --with-classname   Dùng khi bạn muốn bổ sung đối số className vào cuối lời gọi cn(...) (xem preview trước).",
+  "",
+  "pnpm (từ root repo):",
+  "  pnpm tailwind:cn-analyze [dir|file]",
+  "  pnpm tailwind:cn-preview [dir|file] [--with-classname]",
+  "  pnpm tailwind:cn-apply [dir|file] [--with-classname]",
+  "",
+  "tsx trực tiếp:",
+  "  pnpm exec tsx scripts/group-tailwind-cn.ts <lệnh> ...",
+  "",
+  "Ví dụ:",
+  "  pnpm tailwind:cn-analyze",
+  "  pnpm tailwind:cn-analyze packages/ui/src/components/calendar.tsx",
+  "  pnpm tailwind:cn-preview packages/ui/src/components",
+  "  pnpm tailwind:cn-apply packages/ui/src/components/button.tsx",
+  '  pnpm exec tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border px-3 text-sm font-medium"',
+  '  pnpm exec tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border" --tv',
+].join("\n");
 
 function parseArgs(argv: string[]): {
   cmd: string;
@@ -1022,9 +1397,9 @@ function runOnTarget(target: string, options: { write: boolean; withClassName: b
     totalChanged += result.changed;
   }
 
-  out(`\nTổng: ${filePaths.length} file, ${totalFound} chuỗi cần xem xét.`);
+  out(`\nTổng: ${filePaths.length} file, ${totalFound} vị trí (cn/tv/JSX className) cần xem xét.`);
   if (options.write) {
-    out(`Đã áp dụng: ${totalChanged} chuỗi được cập nhật.`);
+    out(`Đã áp dụng: ${totalChanged} vị trí được cập nhật.`);
   } else {
     out(`(Chạy "apply" để ghi đè, hoặc "pnpm tailwind:cn-apply" cho toàn bộ project)`);
   }
