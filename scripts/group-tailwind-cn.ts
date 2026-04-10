@@ -339,6 +339,9 @@ function classifyToken(token: string): Bucket {
   }
 
   const t = stripVariants(token);
+  // Negated utilities reuse the same stems as positives (`-gap-4`, `-space-x-4`,
+  // `-translate-x-1`, `-z-10`, …). Optional leading `-` is folded into the
+  // matchers below (and spacing already used `^-?`).
 
   // ── Layout ──────────────────────────────────────────────────────────────
   if (
@@ -346,8 +349,8 @@ function classifyToken(token: string): Bucket {
       t,
     ) ||
     /^(?:items|justify|content|self|place)-/.test(t) ||
-    /^(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(t) ||
-    /^(?:overflow|overscroll|object-|isolate$|isolation-|z-|float-|clear-|columns-|break-)/.test(
+    /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(t) ||
+    /^-?(?:overflow|overscroll|object-|isolate$|isolation-|z-|float-|clear-|columns-|break-)/.test(
       t,
     ) ||
     /^(?:absolute|relative|fixed|sticky|static|container)$/.test(t) ||
@@ -366,7 +369,7 @@ function classifyToken(token: string): Bucket {
 
   // ── Size ────────────────────────────────────────────────────────────────
   if (
-    /^(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(t) ||
+    /^-?(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(t) ||
     t === "shrink" ||
     t === "grow" ||
     /^field-sizing-/.test(t)
@@ -388,8 +391,10 @@ function classifyToken(token: string): Bucket {
 
   // ── Surface (visual decoration) ─────────────────────────────────────────
   if (
-    /^(?:rounded|border|ring|divide|bg|from|via|to|fill|stroke|shadow|opacity)(?:-|\/|$)/.test(t) ||
-    /^(?:backdrop-blur|backdrop-filter|backdrop-|blur|drop-shadow|mix-blend)-/.test(t) ||
+    /^-?(?:rounded|border|ring|divide|bg|from|via|to|fill|stroke|shadow|opacity)(?:-|\/|$)/.test(
+      t,
+    ) ||
+    /^-?(?:backdrop-blur|backdrop-filter|backdrop-|blur|drop-shadow|mix-blend)-/.test(t) ||
     /^(?:inset-shadow|inset-ring|mask-)/.test(t) ||
     t === "border" ||
     t === "rounded" ||
@@ -402,7 +407,7 @@ function classifyToken(token: string): Bucket {
 
   // ── Typography ──────────────────────────────────────────────────────────
   if (
-    /^(?:text|font|leading|tracking|list|indent|align|whitespace|break|line-clamp|hyphens)-/.test(
+    /^-?(?:text|font|leading|tracking|list|indent|align|whitespace|break|line-clamp|hyphens)-/.test(
       t,
     ) ||
     /^(?:antialiased|subpixel-antialiased|italic|not-italic|overline|line-through|underline|no-underline|uppercase|lowercase|capitalize|normal-case|truncate|text-wrap|text-balance|text-pretty)$/.test(
@@ -418,7 +423,9 @@ function classifyToken(token: string): Bucket {
   // ── Motion / Animation ──────────────────────────────────────────────────
   if (
     /^(?:transition|duration|ease|delay|animate|will-change)(?:-|$)/.test(t) ||
-    /^ease-/.test(t)
+    /^ease-/.test(t) ||
+    /^-?(?:translate|scale|rotate|skew)(?:-|$)/.test(t) ||
+    /^transform(?:-(?:gpu|cpu|none))?$/.test(t)
   ) {
     return "motion";
   }
