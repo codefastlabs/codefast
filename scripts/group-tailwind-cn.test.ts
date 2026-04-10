@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import ts from "typescript";
 import {
   formatArray,
   formatCnArguments,
   formatCnCall,
   formatJsxCnAttributeValue,
+  forEachStringLiteralInClassExpression,
   suggestCnGroups,
 } from "./group-tailwind-cn.ts";
 
@@ -238,5 +240,41 @@ describe("formatArray", () => {
 
   it("escapes like formatCnCall", () => {
     assert.strictEqual(formatArray(['say "hi"']), ["[", '  "say \\"hi\\""', "]"].join("\n"));
+  });
+});
+
+describe("forEachStringLiteralInClassExpression", () => {
+  function literalsFromArgSnippet(snippet: string): string[] {
+    const sf = ts.createSourceFile(
+      "x.ts",
+      `cn(${snippet});`,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    const stmt = sf.statements[0];
+    assert.ok(ts.isExpressionStatement(stmt));
+    const call = stmt.expression;
+    assert.ok(ts.isCallExpression(call));
+    const arg0 = call.arguments[0];
+    assert.ok(arg0 !== undefined);
+    const out: string[] = [];
+    forEachStringLiteralInClassExpression(arg0, (n) => {
+      out.push(n.text);
+    });
+    return out;
+  }
+
+  it("collects both branches of a conditional", () => {
+    assert.deepStrictEqual(literalsFromArgSnippet('x ? "a" : "b"'), ["a", "b"]);
+  });
+
+  it("collects literals inside a class-expression array", () => {
+    assert.deepStrictEqual(literalsFromArgSnippet('["p", "q"]'), ["p", "q"]);
+  });
+
+  it("walks through parentheses and satisfies / as", () => {
+    assert.deepStrictEqual(literalsFromArgSnippet('(("hi" as const))'), ["hi"]);
+    assert.deepStrictEqual(literalsFromArgSnippet('("x" satisfies string)'), ["x"]);
   });
 });
