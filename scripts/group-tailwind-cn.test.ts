@@ -201,6 +201,60 @@ describe("suggestCnGroups", () => {
       assertPreservesAllTokens(input, g);
     });
   });
+
+  describe("negated utilities (leading -) match the same buckets as positives", () => {
+    const table: Array<{ title: string; input: string; expected: string[] }> = [
+      {
+        title: "-gap-* stays layout with flex (symmetric with gap-*)",
+        input: "-gap-4 flex",
+        expected: ["-gap-4 flex"],
+      },
+      {
+        title: "-space-x-* stays layout with flex",
+        input: "-space-x-4 flex",
+        expected: ["-space-x-4 flex"],
+      },
+      {
+        title: "grid, -gap-*, padding — layout then spacing",
+        input: "grid -gap-4 p-4",
+        expected: ["grid -gap-4", "p-4"],
+      },
+      {
+        title: "-indent-* groups with typography like indent-*",
+        input: "text-sm -indent-4",
+        expected: ["text-sm -indent-4"],
+      },
+      {
+        title: "-tracking-* groups with typography",
+        input: "-tracking-widest text-sm",
+        expected: ["-tracking-widest text-sm"],
+      },
+      {
+        title: "-z-* groups with positioning utilities",
+        input: "-z-10 relative",
+        expected: ["-z-10 relative"],
+      },
+      {
+        title: "transform translates / scale / rotate are motion (incl. negatives)",
+        input: "transform -translate-x-2 -scale-95",
+        expected: ["transform -translate-x-2 -scale-95"],
+      },
+      {
+        title: "-divide-* stays surface with divide-*",
+        input: "-divide-x -divide-white/20",
+        expected: ["-divide-x -divide-white/20"],
+      },
+      {
+        title: "size vs motion: w-full and -scale stay split by concern",
+        input: "-scale-95 w-full",
+        expected: ["w-full", "-scale-95"],
+      },
+    ];
+
+    for (const row of table) {
+      it(row.title, () => assertSuggest(row.input, row.expected));
+    }
+  });
 });
 
 describe("formatCnArguments", () => {
