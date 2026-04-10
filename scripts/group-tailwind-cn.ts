@@ -256,6 +256,38 @@ function tokenizeClassString(s: string): string[] {
   return s.trim().split(/\s+/).filter(Boolean);
 }
 
+/**
+ * True when `staticLiteralTexts` (e.g. each top-level string arg to `cn(...)`, or each
+ * literal in a `tv` array slot) carries the **same partition** of Tailwind tokens as
+ * `suggestedGroups` from {@link suggestCnGroups}, ignoring:
+ * - order of `cn` / array arguments
+ * - order of tokens **within** each chunk (oxfmt / oxlint may reorder inside a string)
+ *
+ * Used so `tailwind:cn-preview` stays quiet after `cn-apply` + `check:fix` when only
+ * formatting or per-string token order changed.
+ */
+export function areCnTailwindPartitionsEquivalent(
+  staticLiteralTexts: string[],
+  suggestedGroups: string[],
+): boolean {
+  const partitionSignatures = (chunks: string[]): string[] =>
+    chunks
+      .map((chunk) => {
+        const toks = tokenizeClassString(chunk);
+        return toks.length === 0 ? "" : [...toks].sort().join(" ");
+      })
+      .filter((s) => s.length > 0)
+      .sort((a, b) => a.localeCompare(b));
+
+  const a = partitionSignatures(staticLiteralTexts);
+  const b = partitionSignatures(suggestedGroups);
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
 // Strip all variant prefixes to get the bare utility name.
 // e.g. "hover:dark:md:text-sm" → "text-sm"
 // e.g. "@min-[600px]:flex" → "flex"
@@ -1960,6 +1992,15 @@ function planGroupEditForTarget(
   const pool = slotClassString(t.item);
   const groups = suggestCnGroups(pool);
   if (groups.length <= 1) return undefined;
+
+  if (
+    areCnTailwindPartitionsEquivalent(
+      t.item.nodes.map((n) => n.text),
+      groups,
+    )
+  ) {
+    return undefined;
+  }
 
   if (!t.item.cnCall) {
     const firstNode = t.item.node;
