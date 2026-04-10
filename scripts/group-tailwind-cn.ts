@@ -738,8 +738,77 @@ function walkTsxFiles(root: string): string[] {
 // TypeScript AST helpers
 // ---------------------------------------------------------------------------
 
-function isCnOrTvIdentifier(expr: ts.Expression, name: "cn" | "tv"): boolean {
-  return ts.isIdentifier(expr) && expr.text === name;
+// ---------------------------------------------------------------------------
+// Import-aware cn/tv identifier resolution
+//
+// `isCnOrTvIdentifier` used to match any local variable named "cn" or "tv",
+// which could produce false positives (e.g. a local `const cn = …` that is
+// not the class-name utility). The helpers below resolve the identifier back
+// to its import binding and verify it comes from a known tailwind-variants
+// package, the project's internal #utils/tv alias, or at minimum is imported
+// (not locally declared) — which is a strong signal it is the right utility.
+// ---------------------------------------------------------------------------
+
+/** Known module specifiers that export `cn` / `tv`. */
+const KNOWN_CN_TV_MODULES = new Set([
+  "tailwind-variants",
+  "@codefast/tailwind-variants",
+  "clsx",
+  "class-variance-authority",
+  "#utils/tv",
+  "#utils/cn",
+  "~/lib/utils",
+  "@/lib/utils",
+]);
+
+/**
+ * Build a set of local binding names that are imported from a known cn/tv
+ * module in `sf`. Falls back to accepting any imported `cn`/`tv` when the
+ * module specifier is not in KNOWN_CN_TV_MODULES (handles project-local
+ * re-export paths like `../../utils`).
+ */
+function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
+  const bindings = new Set<string>();
+  for (const st of sf.statements) {
+    if (!ts.isImportDeclaration(st) || !st.importClause) continue;
+    const spec = st.moduleSpecifier;
+    if (!ts.isStringLiteral(spec)) continue;
+    const mod = spec.text;
+    const isKnown = KNOWN_CN_TV_MODULES.has(mod);
+    // Also accept any path that contains "utils" or "cn" — common re-export
+    // conventions in Next.js / shadcn projects.
+    const looksLikeUtil = /utils|\/cn\b/.test(mod);
+    if (!isKnown && !looksLikeUtil) continue;
+
+    const clause = st.importClause;
+    // default import: `import cn from "…"`
+    if (clause.name) bindings.add(clause.name.text);
+    // named imports: `import { cn, tv } from "…"`
+    if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
+      for (const el of clause.namedBindings.elements) {
+        // respect aliases: `import { cn as classNames } from "…"` → "classNames"
+        bindings.add(el.name.text);
+      }
+    }
+  }
+  return bindings;
+}
+
+/**
+ * Returns true when `expr` is an identifier whose name matches `name` AND
+ * whose binding originates from an import (not a local variable). When no
+ * known-module bindings were collected for the file (e.g. an unusual import
+ * path), the check degrades gracefully to the original name-only match so
+ * that existing behaviour is preserved.
+ */
+function isCnOrTvIdentifier(
+  expr: ts.Expression,
+  name: "cn" | "tv",
+  knownBindings?: Set<string>,
+): boolean {
+  if (!ts.isIdentifier(expr) || expr.text !== name) return false;
+  if (!knownBindings || knownBindings.size === 0) return true; // graceful degradation
+  return knownBindings.has(name);
 }
 
 /**
@@ -813,7 +882,11 @@ function lineOf(sf: ts.SourceFile, node: ts.Node): number {
   return sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
 }
 
-/** Whitespace from line start up to `pos` (used to align split literals with siblings). */
+/**
+ * Returns all characters from the start of the line up to `pos` — includes
+ * any non-whitespace characters that precede `pos` on the same line. Used to
+ * align a replacement's continuation lines with the node being replaced.
+ */
 function indentBeforePosition(source: string, pos: number): string {
   let lineStart = pos;
   while (lineStart > 0) {
@@ -824,7 +897,12 @@ function indentBeforePosition(source: string, pos: number): string {
   return source.slice(lineStart, pos);
 }
 
-/** Leading indentation of the line containing `pos` (tabs / spaces only). */
+/**
+ * Returns only the leading whitespace (tabs / spaces) of the line containing
+ * `pos`. Unlike `indentBeforePosition`, non-whitespace characters before `pos`
+ * on the same line are excluded. Used to compute the base indentation level
+ * for JSX attribute replacements.
+ */
 function indentOfLineContaining(source: string, pos: number): string {
   let lineStart = pos;
   while (lineStart > 0) {
@@ -886,6 +964,7 @@ function traverseTvObject(
   obj: ts.ObjectLiteralExpression,
   visitor: StringNodeVisitor,
   depth = 0,
+  knownBindings?: Set<string>,
 ): void {
   if (depth > MAX_OBJECT_DEPTH) return;
   for (const prop of obj.properties) {
@@ -919,8 +998,11 @@ function traverseTvObject(
         }
       }
     } else if (ts.isObjectLiteralExpression(init)) {
-      traverseTvObject(sf, init, visitor, depth + 1);
-    } else if (ts.isCallExpression(init) && isCnOrTvIdentifier(init.expression, "cn")) {
+      traverseTvObject(sf, init, visitor, depth + 1, knownBindings);
+    } else if (
+      ts.isCallExpression(init) &&
+      isCnOrTvIdentifier(init.expression, "cn", knownBindings)
+    ) {
       for (const arg of init.arguments) {
         forEachStringLiteralInClassExpression(arg, (lit) => {
           visitor(lit, sf, init);
@@ -998,27 +1080,34 @@ function analyzeDirectory(target: string): AnalyzeReport {
     );
     report.files++;
 
+    const knownBindings = buildKnownCnTvBindings(sf);
     const visit = (node: ts.Node): void => {
       if (ts.isCallExpression(node)) {
-        if (isCnOrTvIdentifier(node.expression, "cn")) {
+        if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
           report.cnCallExpressions++;
           analyzeCnCall(sf, node, report);
-        } else if (isCnOrTvIdentifier(node.expression, "tv")) {
+        } else if (isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
           report.tvCallExpressions++;
           const arg0 = node.arguments[0];
           if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-            traverseTvObject(sf, arg0, (strNode) => {
-              const text = strNode.text;
-              const n = tokenizeClassString(text).length;
-              if (n >= LONG_STRING_TOKEN_THRESHOLD) {
-                report.longTvStringLiterals.push({
-                  file: sf.fileName,
-                  line: lineOf(sf, strNode),
-                  tokenCount: n,
-                  preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
-                });
-              }
-            });
+            traverseTvObject(
+              sf,
+              arg0,
+              (strNode) => {
+                const text = strNode.text;
+                const n = tokenizeClassString(text).length;
+                if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+                  report.longTvStringLiterals.push({
+                    file: sf.fileName,
+                    line: lineOf(sf, strNode),
+                    tokenCount: n,
+                    preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
+                  });
+                }
+              },
+              0,
+              knownBindings,
+            );
           }
         }
       }
@@ -1094,10 +1183,11 @@ type StringNode = {
 
 function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
   const results: StringNode[] = [];
+  const knownBindings = buildKnownCnTvBindings(sf);
 
   const visit = (node: ts.Node): void => {
     if (ts.isCallExpression(node)) {
-      if (isCnOrTvIdentifier(node.expression, "cn")) {
+      if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
         for (const arg of node.arguments) {
           forEachStringLiteralInClassExpression(arg, (lit) => {
             if (isUnsafeLiteralForCnStyleApplySplit(lit)) return;
@@ -1106,20 +1196,26 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
             }
           });
         }
-      } else if (isCnOrTvIdentifier(node.expression, "tv")) {
+      } else if (isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
         const arg0 = node.arguments[0];
         if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-          traverseTvObject(sf, arg0, (strNode, innerSf, nestedCn) => {
-            if (isUnsafeLiteralForCnStyleApplySplit(strNode)) return;
-            if (tokenizeClassString(strNode.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
-              results.push({
-                node: strNode,
-                sf: innerSf,
-                isTvContext: true,
-                cnCall: nestedCn,
-              });
-            }
-          });
+          traverseTvObject(
+            sf,
+            arg0,
+            (strNode, innerSf, nestedCn) => {
+              if (isUnsafeLiteralForCnStyleApplySplit(strNode)) return;
+              if (tokenizeClassString(strNode.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
+                results.push({
+                  node: strNode,
+                  sf: innerSf,
+                  isTvContext: true,
+                  cnCall: nestedCn,
+                });
+              }
+            },
+            0,
+            knownBindings,
+          );
         }
       }
     }
@@ -1182,7 +1278,8 @@ function sourceFileImportsCn(sf: ts.SourceFile): boolean {
   return false;
 }
 
-function cnModuleSpecifierForFile(filePath: string): string {
+function cnModuleSpecifierForFile(filePath: string, override?: string): string {
+  if (override) return override;
   const norm = path.normalize(filePath).replace(/\\/g, "/");
   if (norm.includes("/packages/ui/")) return "#utils/tv";
   return "@codefast/tailwind-variants";
@@ -1205,8 +1302,18 @@ function findImportDeclarationFromModule(
 /**
  * Ensure `cn` is in scope: merge into an existing named import from the default
  * module for this file, or insert `import { cn } from "...";`.
+ *
+ * `alreadyHasCn` can be supplied when the caller has already evaluated
+ * `sourceFileImportsCn` on the pre-edit source file, avoiding a second full
+ * TypeScript parse of the (now slightly modified) `sourceText`.
  */
-function ensureCnImport(sourceText: string, filePath: string): string {
+function ensureCnImport(
+  sourceText: string,
+  filePath: string,
+  cnImportOverride?: string,
+  alreadyHasCn?: boolean,
+): string {
+  // Re-parse only when we don't already know the answer.
   const sf = ts.createSourceFile(
     filePath,
     sourceText,
@@ -1214,9 +1321,9 @@ function ensureCnImport(sourceText: string, filePath: string): string {
     true,
     filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
-  if (sourceFileImportsCn(sf)) return sourceText;
+  if (alreadyHasCn ?? sourceFileImportsCn(sf)) return sourceText;
 
-  const moduleSpecifier = cnModuleSpecifierForFile(filePath);
+  const moduleSpecifier = cnModuleSpecifierForFile(filePath, cnImportOverride);
   const decl = findImportDeclarationFromModule(sf, moduleSpecifier);
 
   if (
@@ -1269,12 +1376,12 @@ function targetReplaceStart(t: GroupTarget): number {
 }
 
 function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
-  const out: GroupTarget[] = [];
+  const results: GroupTarget[] = [];
   const visit = (node: ts.Node): void => {
     if (ts.isJsxAttribute(node)) {
       const parsed = jsxClassNameStaticLiteral(node);
       if (parsed && tokenizeClassString(parsed.lit.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
-        out.push({
+        results.push({
           kind: "jsxClassName",
           sf,
           lit: parsed.lit,
@@ -1285,7 +1392,7 @@ function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
     ts.forEachChild(node, visit);
   };
   visit(sf);
-  return out;
+  return results;
 }
 
 function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupTarget[] {
@@ -1306,7 +1413,7 @@ type GroupFileResult = {
 
 function groupFile(
   filePath: string,
-  options: { write: boolean; withClassName: boolean },
+  options: { write: boolean; withClassName: boolean; cnImport?: string },
 ): GroupFileResult {
   const sourceText = fs.readFileSync(filePath, "utf8");
   const sf = ts.createSourceFile(
@@ -1347,6 +1454,10 @@ function groupFile(
 
   const sorted = [...targets].sort((a, b) => targetReplaceStart(b) - targetReplaceStart(a));
 
+  // Pre-check whether `cn` is already in scope using the already-parsed `sf`,
+  // avoiding a second full parse inside ensureCnImport for the common case.
+  const originallyHasCnImport = sourceFileImportsCn(sf);
+
   let newText = sourceText;
   let changed = 0;
   let touchedJsxCn = false;
@@ -1379,7 +1490,7 @@ function groupFile(
 
   if (changed > 0) {
     if (touchedJsxCn) {
-      newText = ensureCnImport(newText, filePath);
+      newText = ensureCnImport(newText, filePath, options.cnImport, originallyHasCnImport);
     }
     fs.writeFileSync(filePath, newText, "utf8");
   }
@@ -1415,6 +1526,8 @@ const HELP = [
   "",
   "Tùy chọn:",
   "  --with-classname   Dùng khi bạn muốn bổ sung đối số className vào cuối lời gọi cn(...) (xem preview trước).",
+  "  --cn-import=<mod>  Ghi đè module specifier dùng khi thêm import cn (mặc định: tự suy theo đường dẫn file).",
+  "                     Ví dụ: --cn-import=@/lib/utils",
   "",
   "pnpm (từ root repo):",
   "  pnpm tailwind:cn-analyze [dir|file]",
@@ -1439,21 +1552,44 @@ function parseArgs(argv: string[]): {
   withClassName: boolean;
   tv: boolean;
   inlineClasses: string | undefined;
+  cnImport: string | undefined;
 } {
-  const flags = new Set(argv.filter((a) => a.startsWith("--")));
-  const positional = argv.filter((a) => !a.startsWith("--"));
+  // Extract --cn-import=<value> or --cn-import <value> before flag-set construction.
+  let cnImport: string | undefined;
+  const filteredArgv: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i]!;
+    if (a.startsWith("--cn-import=")) {
+      cnImport = a.slice("--cn-import=".length);
+    } else if (a === "--cn-import") {
+      cnImport = argv[i + 1];
+      i++;
+    } else {
+      filteredArgv.push(a);
+    }
+  }
+
+  const flags = new Set(filteredArgv.filter((a) => a.startsWith("--")));
+  const positional = filteredArgv.filter((a) => !a.startsWith("--"));
 
   const cmd = positional[0] ?? "";
   const withClassName = flags.has("--with-classname");
   const tv = flags.has("--tv");
 
   // Second positional is either a path or an inline class string.
-  // Heuristic: contains "/" or "\" or ends with .ts/.tsx or exists on disk → path.
+  //
+  // Robust heuristic — avoids false positives from Tailwind v4 container
+  // query syntax like "@min-[600px]/sidebar:flex" which contains "/".
+  // A value is treated as a path only when it:
+  //   • starts with a path separator or leading dot (./  ../  /  C:\  \)
+  //   • OR ends with a known TS extension (.ts / .tsx)
+  //   • OR exists verbatim on disk (fallback for bare relative paths like "src")
+  // Plain class strings never satisfy any of these conditions.
   const second = positional.slice(1).join(" ");
   const looksLikePath =
     second.length > 0 &&
-    (second.includes("/") ||
-      second.includes("\\") ||
+    (/^\.{0,2}[/\\]/.test(second) ||
+      /^[A-Za-z]:[/\\]/.test(second) ||
       second.endsWith(".ts") ||
       second.endsWith(".tsx") ||
       fs.existsSync(second));
@@ -1464,10 +1600,14 @@ function parseArgs(argv: string[]): {
     inlineClasses: looksLikePath ? undefined : second || undefined,
     withClassName,
     tv,
+    cnImport,
   };
 }
 
-function runOnTarget(target: string, options: { write: boolean; withClassName: boolean }): void {
+function runOnTarget(
+  target: string,
+  options: { write: boolean; withClassName: boolean; cnImport?: string },
+): void {
   if (!fs.existsSync(target)) {
     err(`Không tìm thấy: ${target}`);
     process.exit(1);
@@ -1516,14 +1656,22 @@ function main(): void {
   // ── apply [dir|file] — write mode (used by pnpm tailwind:cn-apply) ──────
   if (args.cmd === "apply") {
     const target = args.target ?? path.resolve(DEFAULT_TARGET);
-    runOnTarget(target, { write: true, withClassName: args.withClassName });
+    runOnTarget(target, {
+      write: true,
+      withClassName: args.withClassName,
+      cnImport: args.cnImport,
+    });
     return;
   }
 
   // ── preview [dir|file] — dry-run of apply ───────────────────────────────
   if (args.cmd === "preview") {
     const target = args.target ?? path.resolve(DEFAULT_TARGET);
-    runOnTarget(target, { write: false, withClassName: args.withClassName });
+    runOnTarget(target, {
+      write: false,
+      withClassName: args.withClassName,
+      cnImport: args.cnImport,
+    });
     return;
   }
 
@@ -1533,7 +1681,10 @@ function main(): void {
       err('Cần truyền chuỗi class. Ví dụ: group "flex gap-2 text-sm rounded-md"');
       process.exit(1);
     }
-    const groups = suggestCnGroups(args.inlineClasses);
+    // process.exit() is typed as `never` but TypeScript doesn't narrow through
+    // it in all compiler configurations. The non-null assertion is safe here
+    // because the branch above unconditionally exits when inlineClasses is falsy.
+    const groups = suggestCnGroups(args.inlineClasses!);
     const result = args.tv
       ? formatArray(groups)
       : formatCnCall(groups, { trailingClassName: args.withClassName });
