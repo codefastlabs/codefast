@@ -3,8 +3,10 @@
  * Phân tích và gợi ý phân nhóm chuỗi Tailwind trong `cn(...)` / `tv(...)`.
  *
  * Phát hiện literal trong đối số cn: chuỗi trực tiếp, ternary, mảng, nối chuỗi +.
- * tv: compoundVariants[].className / class; cn lồng dùng cùng quy tắc. Literal nằm
- * trực tiếp trong mảng (className: ["…", x]) không apply tách (tránh `[ [`).
+ * tv: compoundVariants[].className / class; literal trong cn lồng dùng cùng quy tắc.
+ * `cn(...)` trực tiếp trong cấu hình tv không khuyến nghị — analyze/preview/apply có thể
+ * thay bằng chuỗi (1 đối số) hoặc mảng (≥2 đối số). Literal trong mảng tv trực tiếp
+ * không tách bằng apply (tránh `[ [`).
  *
  * Hỗ trợ Tailwind CSS v4 đầy đủ:
  *   - Container queries (@min-* / @max-* / @sm / @md …)
@@ -818,7 +820,7 @@ function isCnOrTvIdentifier(
 ): boolean {
   if (!ts.isIdentifier(expr) || expr.text !== name) return false;
   if (!knownBindings || knownBindings.size === 0) return true; // graceful degradation
-  return knownBindings.has(name);
+  return knownBindings.has(expr.text);
 }
 
 /**
@@ -911,6 +913,47 @@ function indentOfLineContaining(source: string, pos: number): string {
   return m?.[0] ?? "";
 }
 
+/**
+ * Replace `cn(...)` nested in `tv({...})` with a plain string (one arg) or a string
+ * array (multiple args), preserving each argument's source text (including dynamic
+ * expressions). Returns undefined when there are zero arguments (invalid call).
+ */
+export function unwrapCnInsideTvCallReplacement(
+  call: ts.CallExpression,
+  sourceText: string,
+  sf: ts.SourceFile,
+): string | undefined {
+  const args = call.arguments;
+  if (args.length === 0) return undefined;
+  const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
+  const innerIndent = `${baseIndent}  `;
+  if (args.length === 1) {
+    const a0 = args[0]!;
+    return sourceText.slice(a0.getStart(sf), a0.getEnd());
+  }
+  const lines: string[] = ["["];
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i]!;
+    const piece = sourceText.slice(a.getStart(sf), a.getEnd());
+    const comma = i < args.length - 1 ? "," : "";
+    lines.push(`${innerIndent}${piece}${comma}`);
+  }
+  lines.push(`${baseIndent}]`);
+  return lines.join("\n");
+}
+
+function applyEditsDescending(
+  sourceText: string,
+  edits: ReadonlyArray<{ start: number; end: number; replacement: string }>,
+): string {
+  const sorted = [...edits].sort((a, b) => b.start - a.start);
+  let t = sourceText;
+  for (const e of sorted) {
+    t = t.slice(0, e.start) + e.replacement + t.slice(e.end);
+  }
+  return t;
+}
+
 // ---------------------------------------------------------------------------
 // JSX: static className string (analyze / apply)
 // ---------------------------------------------------------------------------
@@ -973,6 +1016,15 @@ function traverseTvObject(
         if (ts.isSpreadElement(el)) continue;
         if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
           visitor(el as ts.StringLiteral, sf, undefined);
+        } else if (
+          ts.isCallExpression(el) &&
+          isCnOrTvIdentifier(el.expression, "cn", knownBindings)
+        ) {
+          for (const arg of el.arguments) {
+            forEachStringLiteralInClassExpression(arg, (lit) => {
+              visitor(lit, sf, el);
+            });
+          }
         } else if (ts.isObjectLiteralExpression(el)) {
           for (const inner of el.properties) {
             if (!ts.isPropertyAssignment(inner)) continue;
@@ -987,6 +1039,15 @@ function traverseTvObject(
                 if (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl)) {
                   visitor(innerEl as ts.StringLiteral, sf, undefined);
                 }
+              }
+            } else if (
+              ts.isCallExpression(innerInit) &&
+              isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
+            ) {
+              for (const arg of innerInit.arguments) {
+                forEachStringLiteralInClassExpression(arg, (lit) => {
+                  visitor(lit, sf, innerInit);
+                });
               }
             }
           }
@@ -1007,6 +1068,72 @@ function traverseTvObject(
   }
 }
 
+/**
+ * Every `cn(...)` call whose initializer sits inside `tv({ ... })` (base, variants,
+ * compoundVariants.class/className, or array slot). Used for analyze + unwrap apply.
+ */
+function collectCnCallsInsideTv(
+  sf: ts.SourceFile,
+  obj: ts.ObjectLiteralExpression,
+  knownBindings: Set<string>,
+  depth = 0,
+): ts.CallExpression[] {
+  if (depth > MAX_OBJECT_DEPTH) return [];
+  const calls: ts.CallExpression[] = [];
+  for (const prop of obj.properties) {
+    if (!ts.isPropertyAssignment(prop)) continue;
+    const init = prop.initializer;
+
+    if (ts.isArrayLiteralExpression(init)) {
+      for (const el of init.elements) {
+        if (ts.isSpreadElement(el)) continue;
+        if (ts.isCallExpression(el) && isCnOrTvIdentifier(el.expression, "cn", knownBindings)) {
+          calls.push(el);
+        } else if (ts.isObjectLiteralExpression(el)) {
+          for (const inner of el.properties) {
+            if (!ts.isPropertyAssignment(inner)) continue;
+            const propName = propertyAssignmentNameText(inner);
+            if (propName !== "className" && propName !== "class") continue;
+            const innerInit = inner.initializer;
+            if (
+              ts.isCallExpression(innerInit) &&
+              isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
+            ) {
+              calls.push(innerInit);
+            }
+          }
+        }
+      }
+    } else if (ts.isObjectLiteralExpression(init)) {
+      calls.push(...collectCnCallsInsideTv(sf, init, knownBindings, depth + 1));
+    } else if (
+      ts.isCallExpression(init) &&
+      isCnOrTvIdentifier(init.expression, "cn", knownBindings)
+    ) {
+      calls.push(init);
+    }
+  }
+  return calls;
+}
+
+function listAllCnCallsInsideTvInSourceFile(
+  sf: ts.SourceFile,
+  knownBindings: Set<string>,
+): ts.CallExpression[] {
+  const calls: ts.CallExpression[] = [];
+  const visit = (node: ts.Node): void => {
+    if (ts.isCallExpression(node) && isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
+      const arg0 = node.arguments[0];
+      if (arg0 && ts.isObjectLiteralExpression(arg0)) {
+        calls.push(...collectCnCallsInsideTv(sf, arg0, knownBindings, 0));
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return calls;
+}
+
 // ---------------------------------------------------------------------------
 // Analyzer
 // ---------------------------------------------------------------------------
@@ -1015,6 +1142,12 @@ type AnalyzeReport = {
   files: number;
   cnCallExpressions: number;
   tvCallExpressions: number;
+  cnInsideTvCalls: Array<{
+    file: string;
+    line: number;
+    argCount: number;
+    preview: string;
+  }>;
   longCnStringLiterals: Array<{
     file: string;
     line: number;
@@ -1057,6 +1190,7 @@ function analyzeDirectory(target: string): AnalyzeReport {
     files: 0,
     cnCallExpressions: 0,
     tvCallExpressions: 0,
+    cnInsideTvCalls: [],
     longCnStringLiterals: [],
     longTvStringLiterals: [],
     longJsxClassNameLiterals: [],
@@ -1085,6 +1219,16 @@ function analyzeDirectory(target: string): AnalyzeReport {
           report.tvCallExpressions++;
           const arg0 = node.arguments[0];
           if (arg0 && ts.isObjectLiteralExpression(arg0)) {
+            for (const nestedCn of collectCnCallsInsideTv(sf, arg0, knownBindings, 0)) {
+              const src = sourceText.slice(nestedCn.getStart(sf), nestedCn.getEnd());
+              const preview = src.length > 72 ? `${src.slice(0, 72)}…` : src;
+              report.cnInsideTvCalls.push({
+                file: sf.fileName,
+                line: lineOf(sf, nestedCn),
+                argCount: nestedCn.arguments.length,
+                preview,
+              });
+            }
             traverseTvObject(
               sf,
               arg0,
@@ -1160,6 +1304,15 @@ function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
   }
   if (r.longJsxClassNameLiterals.length > MAX_REPORT_LINES) {
     out(`  … và ${r.longJsxClassNameLiterals.length - MAX_REPORT_LINES} vị trí khác`);
+  }
+  out(
+    `\nGọi cn(...) lồng trong tv({...}) (nên thay bằng chuỗi hoặc mảng — preview/apply): ${r.cnInsideTvCalls.length}`,
+  );
+  for (const x of r.cnInsideTvCalls.slice(0, MAX_REPORT_LINES)) {
+    out(`  ${x.file}:${x.line}  (${x.argCount} đối số)  ${x.preview}`);
+  }
+  if (r.cnInsideTvCalls.length > MAX_REPORT_LINES) {
+    out(`  … và ${r.cnInsideTvCalls.length - MAX_REPORT_LINES} vị trí khác`);
   }
 }
 
@@ -1454,12 +1607,58 @@ function groupFile(
     filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
 
-  const targets = collectGroupTargets(sf, filePath);
-  if (targets.length === 0) return { filePath, totalFound: 0, changed: 0 };
+  const knownBindings = buildKnownCnTvBindings(sf);
+  const cnInTvCalls = listAllCnCallsInsideTvInSourceFile(sf, knownBindings);
+
+  const unwrapEdits = cnInTvCalls
+    .map((call) => {
+      const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
+      if (replacement === undefined) return undefined;
+      return { start: call.getStart(sf), end: call.getEnd(), replacement };
+    })
+    .filter((e): e is { start: number; end: number; replacement: string } => e !== undefined);
+
+  const textAfterUnwrap =
+    unwrapEdits.length > 0 ? applyEditsDescending(sourceText, unwrapEdits) : sourceText;
+
+  const sfGrouped = ts.createSourceFile(
+    filePath,
+    textAfterUnwrap,
+    ts.ScriptTarget.Latest,
+    true,
+    filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+
+  const groupTargets = collectGroupTargets(sfGrouped, filePath);
+  const cnInTvSkipped = cnInTvCalls.length - unwrapEdits.length;
+  const totalFound = unwrapEdits.length + groupTargets.length;
+
+  if (cnInTvCalls.length === 0 && groupTargets.length === 0) {
+    return { filePath, totalFound: 0, changed: 0 };
+  }
 
   if (!options.write) {
-    out(`\n── ${filePath} (${targets.length} vị trí) ──`);
-    for (const t of targets) {
+    let header = `\n── ${filePath} (${totalFound} vị trí`;
+    if (cnInTvSkipped > 0) {
+      header += `; thêm ${cnInTvSkipped} cn() trong tv không đổi (0 đối số)`;
+    }
+    header += `) ──`;
+    out(header);
+    for (const call of cnInTvCalls) {
+      const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
+      if (replacement === undefined) {
+        out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn]: cn(...) không có đối số — bỏ qua`);
+        continue;
+      }
+      out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn → chuỗi/mảng]:`);
+      out(`  ${replacement.split("\n").join("\n  ")}`);
+    }
+    if (unwrapEdits.length > 0 && groupTargets.length > 0) {
+      out(
+        "  (Số dòng [cn/tv] và [JSX className] dưới đây theo nội dung sau bước unwrap cn trong tv.)",
+      );
+    }
+    for (const t of groupTargets) {
       const lit = t.kind === "cnArg" ? t.item.node : t.lit;
       const lineSf = t.kind === "cnArg" ? t.item.sf : t.sf;
       const groups = suggestCnGroups(lit.text);
@@ -1470,37 +1669,35 @@ function groupFile(
         if (!t.item.cnCall) {
           replacement = formatArray(groups);
         } else {
-          replacement = formatCnCallReplacement(t.item, groups, sourceText, options.withClassName);
+          replacement = formatCnCallReplacement(
+            t.item,
+            groups,
+            textAfterUnwrap,
+            options.withClassName,
+          );
         }
       } else {
-        replacement = formatJsxCnAttributeValue(groups, sourceText, t.valueNode.getStart(t.sf));
+        replacement = formatJsxCnAttributeValue(
+          groups,
+          textAfterUnwrap,
+          t.valueNode.getStart(t.sf),
+        );
       }
       out(`  Dòng ${lineOf(lineSf, lit)} [${label}]:`);
       out(`  ${replacement.split("\n").join("\n  ")}`);
     }
-    return { filePath, totalFound: targets.length, changed: 0 };
+    return { filePath, totalFound, changed: 0 };
   }
 
-  const sorted = [...targets].sort((a, b) => targetReplaceStart(b) - targetReplaceStart(a));
-
-  // Pre-check whether `cn` is already in scope using the already-parsed `sf`,
-  // avoiding a second full parse inside ensureCnImport for the common case.
+  // Pre-check whether `cn` is already in scope using the original parse (before
+  // any edits), avoiding a second full parse inside ensureCnImport when unchanged.
   const originallyHasCnImport = sourceFileImportsCn(sf);
 
-  // ── Pre-compute all edits against the ORIGINAL sourceText ─────────────────
-  // All AST node offsets (getStart / getEnd) are valid only for the source file
-  // they were parsed from. Once we mutate newText the offsets drift. The safe
-  // approach is:
-  //   1. Compute every (start, end, replacement) tuple from sourceText.
-  //   2. Deduplicate: multiple StringNode targets can share the same cnCall
-  //      (e.g. cn("a", "b") yields two targets but one call). Keep only the
-  //      first occurrence per call — formatCnCallReplacement handles all args.
-  //   3. Sort descending by start so each splice doesn't affect earlier offsets.
-  //   4. Apply in one linear pass over the now-stable list.
+  // Grouping edits use offsets in `textAfterUnwrap` (after cn→string/array unwrap).
   type Edit = { start: number; end: number; replacement: string; jsxCn: boolean };
-  const edits: Edit[] = [];
+  const sorted = [...groupTargets].sort((a, b) => targetReplaceStart(b) - targetReplaceStart(a));
+  const groupEdits: Edit[] = [];
   const seenCnCalls = new Set<ts.CallExpression>();
-  let touchedJsxCn = false;
 
   for (const t of sorted) {
     const lit = t.kind === "cnArg" ? t.item.node : t.lit;
@@ -1509,49 +1706,40 @@ function groupFile(
 
     if (t.kind === "cnArg") {
       if (!t.item.cnCall) {
-        // tv() context — no wrapping cn() call, replace the string literal only.
         const start = t.item.node.getStart(t.item.sf);
         const end = t.item.node.getEnd();
-        const baseIndent = indentOfLineContaining(sourceText, start);
+        const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
         const replacement = formatArray(groups)
           .split("\n")
           .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
           .join("\n");
-        edits.push({ start, end, replacement, jsxCn: false });
+        groupEdits.push({ start, end, replacement, jsxCn: false });
       } else {
-        // Multiple StringNode targets may share the same cnCall — only emit
-        // one edit per call (formatCnCallReplacement processes all args).
         if (seenCnCalls.has(t.item.cnCall)) continue;
         seenCnCalls.add(t.item.cnCall);
         const start = t.item.cnCall.getStart(t.item.sf);
         const end = t.item.cnCall.getEnd();
-        // Pass sourceText so arg slices use the same offsets as the AST nodes.
         const replacement = formatCnCallReplacement(
           t.item,
           groups,
-          sourceText,
+          textAfterUnwrap,
           options.withClassName,
         );
-        edits.push({ start, end, replacement, jsxCn: false });
+        groupEdits.push({ start, end, replacement, jsxCn: false });
       }
     } else {
       const start = t.valueNode.getStart(t.sf);
       const end = t.valueNode.getEnd();
-      const replacement = formatJsxCnAttributeValue(groups, sourceText, start);
-      edits.push({ start, end, replacement, jsxCn: true });
+      const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
+      groupEdits.push({ start, end, replacement, jsxCn: true });
     }
   }
 
-  // Sort descending so later edits don't shift earlier offsets.
-  edits.sort((a, b) => b.start - a.start);
+  const touchedJsxCn = groupEdits.some((e) => e.jsxCn);
+  let newText =
+    groupEdits.length > 0 ? applyEditsDescending(textAfterUnwrap, groupEdits) : textAfterUnwrap;
 
-  let newText = sourceText;
-  for (const { start, end, replacement, jsxCn } of edits) {
-    newText = newText.slice(0, start) + replacement + newText.slice(end);
-    if (jsxCn) touchedJsxCn = true;
-  }
-
-  const changed = edits.length;
+  const changed = unwrapEdits.length + groupEdits.length;
 
   if (changed > 0) {
     if (touchedJsxCn) {
@@ -1560,7 +1748,7 @@ function groupFile(
     fs.writeFileSync(filePath, newText, "utf8");
   }
 
-  return { filePath, totalFound: targets.length, changed };
+  return { filePath, totalFound, changed };
 }
 
 // ---------------------------------------------------------------------------
@@ -1571,19 +1759,19 @@ const DEFAULT_TARGET = "packages/ui/src/components";
 
 /** Mảng chuỗi (không dùng template literal) để IDE như WebStorm không inject JSX vào nội dung help. */
 const HELP = [
-  "Gợi ý tách chuỗi class Tailwind (v4): đối số trong cn(...)/tv(...), và literal tĩnh trên thuộc tính className của JSX.",
+  "Gợi ý tách chuỗi class Tailwind (v4): đối số trong cn(...)/tv(...), literal tĩnh JSX className, và bỏ cn lồng trong tv (→ chuỗi / mảng).",
   "",
   "Cách làm đề xuất: analyze → preview → apply (xem trước rồi mới ghi file).",
   "",
   "Lệnh:",
   "  analyze [dir|file]",
-  "      Liệt kê chuỗi class đủ dài để xem xét tách nhóm. Mặc định: packages/ui/src/components",
+  "      Liệt kê: chuỗi dài, cn lồng trong tv (nên đổi sang chuỗi/mảng), v.v. Mặc định: packages/ui/src/components",
   "",
   "  preview [dir|file] [--with-classname]",
   "      In ra phân nhóm gợi ý, không sửa file (cùng logic với apply).",
   "",
   "  apply [dir|file] [--with-classname]",
-  "      Áp dụng phân nhóm lên mã nguồn; literal JSX dài ở className được thay bằng lời gọi cn(...) và thêm import cn nếu thiếu.",
+  "      Áp dụng: (1) cn(...) trong tv({...}) → một chuỗi nếu 1 đối số, mảng nếu ≥2; (2) tách nhóm class dài trong cn/tv/JSX; JSX thêm import cn nếu thiếu.",
   "      Mặc định: packages/ui/src/components",
   "",
   '  group "<classes>" [--tv]',

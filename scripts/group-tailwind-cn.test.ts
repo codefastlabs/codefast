@@ -8,6 +8,7 @@ import {
   formatJsxCnAttributeValue,
   forEachStringLiteralInClassExpression,
   suggestCnGroups,
+  unwrapCnInsideTvCallReplacement,
 } from "./group-tailwind-cn.ts";
 
 // ---------------------------------------------------------------------------
@@ -240,6 +241,41 @@ describe("formatArray", () => {
 
   it("escapes like formatCnCall", () => {
     assert.strictEqual(formatArray(['say "hi"']), ["[", '  "say \\"hi\\""', "]"].join("\n"));
+  });
+});
+
+describe("unwrapCnInsideTvCallReplacement", () => {
+  function parseTopLevelCall(sourceText: string): { sf: ts.SourceFile; call: ts.CallExpression } {
+    const sf = ts.createSourceFile(
+      "x.ts",
+      sourceText,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    const stmt = sf.statements[0];
+    assert.ok(ts.isExpressionStatement(stmt));
+    assert.ok(ts.isCallExpression(stmt.expression));
+    return { sf, call: stmt.expression };
+  }
+
+  it("unwraps single arg to the argument source", () => {
+    const src = 'cn("flex gap-2")';
+    const { sf, call } = parseTopLevelCall(src);
+    assert.strictEqual(unwrapCnInsideTvCallReplacement(call, src, sf), '"flex gap-2"');
+  });
+
+  it("unwraps multiple args to a multiline array", () => {
+    const src = 'cn("flex gap-2", "text-sm")';
+    const { sf, call } = parseTopLevelCall(src);
+    const got = unwrapCnInsideTvCallReplacement(call, src, sf);
+    assert.strictEqual(got, ["[", '  "flex gap-2",', '  "text-sm"', "]"].join("\n"));
+  });
+
+  it("returns undefined when cn has no arguments", () => {
+    const src = "cn()";
+    const { sf, call } = parseTopLevelCall(src);
+    assert.strictEqual(unwrapCnInsideTvCallReplacement(call, src, sf), undefined);
   });
 });
 
