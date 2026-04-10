@@ -2,6 +2,10 @@
 /**
  * Phân tích và gợi ý phân nhóm chuỗi Tailwind trong `cn(...)` / `tv(...)`.
  *
+ * Phát hiện literal trong đối số cn: chuỗi trực tiếp, ternary, mảng, nối chuỗi +.
+ * tv: compoundVariants[].className / class; cn lồng dùng cùng quy tắc. Literal nằm
+ * trực tiếp trong mảng (className: ["…", x]) không apply tách (tránh `[ [`).
+ *
  * Hỗ trợ Tailwind CSS v4 đầy đủ:
  *   - Container queries (@min-* / @max-* / @sm / @md …)
  *   - Logical properties (ps/pe/ms/me/start/end)
@@ -46,6 +50,9 @@ const MAX_REPORT_LINES = 40;
 
 // Maximum recursion depth when traversing tv() object literals.
 const MAX_OBJECT_DEPTH = 12;
+
+// Maximum depth when peeling conditional / parens / arrays inside cn(...) arguments.
+const MAX_CLASS_EXPR_DEPTH = 12;
 
 // ---------------------------------------------------------------------------
 // Bucket types
@@ -735,10 +742,70 @@ function isCnOrTvIdentifier(expr: ts.Expression, name: "cn" | "tv"): boolean {
   return ts.isIdentifier(expr) && expr.text === name;
 }
 
-function stringNodeText(node: ts.Node): string | undefined {
-  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
-    return node.text;
+/**
+ * Collect string / no-substitution template literals used as Tailwind class blobs
+ * inside a `cn(...)` argument: direct literals, ternary branches, parenthesized
+ * expressions, string arrays, and `a + b` string concatenation.
+ *
+ * Does not descend into arbitrary calls (e.g. `foo()`) to avoid false positives.
+ */
+export function forEachStringLiteralInClassExpression(
+  expr: ts.Expression,
+  sink: (node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral) => void,
+  depth = 0,
+): void {
+  if (depth > MAX_CLASS_EXPR_DEPTH) return;
+
+  if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) {
+    sink(expr);
+    return;
   }
+
+  if (ts.isParenthesizedExpression(expr)) {
+    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1);
+    return;
+  }
+
+  if (ts.isAsExpression(expr) || ts.isSatisfiesExpression(expr)) {
+    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1);
+    return;
+  }
+
+  if (ts.isNonNullExpression(expr)) {
+    forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1);
+    return;
+  }
+
+  if (ts.isConditionalExpression(expr)) {
+    forEachStringLiteralInClassExpression(expr.whenTrue, sink, depth + 1);
+    forEachStringLiteralInClassExpression(expr.whenFalse, sink, depth + 1);
+    return;
+  }
+
+  if (ts.isBinaryExpression(expr) && expr.operatorToken.kind === ts.SyntaxKind.PlusToken) {
+    forEachStringLiteralInClassExpression(expr.left, sink, depth + 1);
+    forEachStringLiteralInClassExpression(expr.right, sink, depth + 1);
+    return;
+  }
+
+  if (ts.isArrayLiteralExpression(expr)) {
+    for (const el of expr.elements) {
+      if (ts.isSpreadElement(el)) continue;
+      forEachStringLiteralInClassExpression(el, sink, depth + 1);
+    }
+  }
+}
+
+/** Replacing literals that sit inside an array arg would produce `cn([[...]])` or break `className: [[...]]`. */
+function isUnsafeLiteralForCnStyleApplySplit(
+  node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral,
+): boolean {
+  return ts.isArrayLiteralExpression(node.parent);
+}
+
+function propertyAssignmentNameText(prop: ts.PropertyAssignment): string | undefined {
+  if (ts.isIdentifier(prop.name)) return prop.name.text;
+  if (ts.isStringLiteral(prop.name)) return prop.name.text;
   return undefined;
 }
 
@@ -829,17 +896,35 @@ function traverseTvObject(
       visitor(init as ts.StringLiteral, sf, undefined);
     } else if (ts.isArrayLiteralExpression(init)) {
       for (const el of init.elements) {
+        if (ts.isSpreadElement(el)) continue;
         if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
           visitor(el as ts.StringLiteral, sf, undefined);
+        } else if (ts.isObjectLiteralExpression(el)) {
+          for (const inner of el.properties) {
+            if (!ts.isPropertyAssignment(inner)) continue;
+            const propName = propertyAssignmentNameText(inner);
+            if (propName !== "className" && propName !== "class") continue;
+            const innerInit = inner.initializer;
+            if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
+              visitor(innerInit as ts.StringLiteral, sf, undefined);
+            } else if (ts.isArrayLiteralExpression(innerInit)) {
+              for (const innerEl of innerInit.elements) {
+                if (ts.isSpreadElement(innerEl)) continue;
+                if (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl)) {
+                  visitor(innerEl as ts.StringLiteral, sf, undefined);
+                }
+              }
+            }
+          }
         }
       }
     } else if (ts.isObjectLiteralExpression(init)) {
       traverseTvObject(sf, init, visitor, depth + 1);
     } else if (ts.isCallExpression(init) && isCnOrTvIdentifier(init.expression, "cn")) {
       for (const arg of init.arguments) {
-        if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
-          visitor(arg as ts.StringLiteral, sf, init);
-        }
+        forEachStringLiteralInClassExpression(arg, (lit) => {
+          visitor(lit, sf, init);
+        });
       }
     }
   }
@@ -875,17 +960,18 @@ type AnalyzeReport = {
 
 function analyzeCnCall(sf: ts.SourceFile, call: ts.CallExpression, report: AnalyzeReport): void {
   for (const arg of call.arguments) {
-    const text = stringNodeText(arg);
-    if (text === undefined) continue;
-    const n = tokenizeClassString(text).length;
-    if (n >= LONG_STRING_TOKEN_THRESHOLD) {
-      report.longCnStringLiterals.push({
-        file: sf.fileName,
-        line: lineOf(sf, arg),
-        tokenCount: n,
-        preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
-      });
-    }
+    forEachStringLiteralInClassExpression(arg, (lit) => {
+      const text = lit.text;
+      const n = tokenizeClassString(text).length;
+      if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+        report.longCnStringLiterals.push({
+          file: sf.fileName,
+          line: lineOf(sf, lit),
+          tokenCount: n,
+          preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
+        });
+      }
+    });
   }
 }
 
@@ -1013,17 +1099,18 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
     if (ts.isCallExpression(node)) {
       if (isCnOrTvIdentifier(node.expression, "cn")) {
         for (const arg of node.arguments) {
-          if (
-            (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) &&
-            tokenizeClassString(arg.text).length >= LONG_STRING_TOKEN_THRESHOLD
-          ) {
-            results.push({ node: arg as ts.StringLiteral, sf, isTvContext: false, cnCall: node });
-          }
+          forEachStringLiteralInClassExpression(arg, (lit) => {
+            if (isUnsafeLiteralForCnStyleApplySplit(lit)) return;
+            if (tokenizeClassString(lit.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
+              results.push({ node: lit, sf, isTvContext: false, cnCall: node });
+            }
+          });
         }
       } else if (isCnOrTvIdentifier(node.expression, "tv")) {
         const arg0 = node.arguments[0];
         if (arg0 && ts.isObjectLiteralExpression(arg0)) {
           traverseTvObject(sf, arg0, (strNode, innerSf, nestedCn) => {
+            if (isUnsafeLiteralForCnStyleApplySplit(strNode)) return;
             if (tokenizeClassString(strNode.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
               results.push({
                 node: strNode,
