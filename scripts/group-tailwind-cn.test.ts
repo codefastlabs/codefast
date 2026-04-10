@@ -407,4 +407,11 @@ describe("mergeCnUnconditionalLiteralPoolForTest (cn apply pool)", () => {
   it("direct string literal arg is merged even when another arg is a ternary", () => {
     assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('"foo", nest ? "a" : "b"'), "foo");
   });
+
+  it("supports an aliased callee name (import { cn as cx } …)", () => {
+    assert.strictEqual(
+      mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"', { callee: "cx" }),
+      "a b",
+    );
+  });
 });

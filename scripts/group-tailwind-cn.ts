@@ -66,6 +66,9 @@ const MAX_OBJECT_DEPTH = 12;
 // Maximum depth when peeling conditional / parens / arrays inside cn(...) arguments.
 const MAX_CLASS_EXPR_DEPTH = 12;
 
+/** Passed when optional `knownBindings` is missing — size 0 disables matching. */
+const EMPTY_CN_TV_BINDINGS = new Set<string>();
+
 // ---------------------------------------------------------------------------
 // Bucket types
 // ---------------------------------------------------------------------------
@@ -625,14 +628,18 @@ export function suggestCnGroups(classString: string): string[] {
   const tokens = tokenizeClassString(classString);
   if (tokens.length === 0) return [];
 
-  // ── Pre-sort: stable sort tokens by bucket order ──────────────────────────
-  // Ensures all layout tokens are adjacent, all surface tokens adjacent, etc.,
-  // regardless of the author's original ordering. Tailwind layers reduce
-  // conflicts, but same-layer order can still matter for overlapping utilities;
-  // review `apply` output when in doubt.
+  // ── Pre-sort: by bucket order, then by original index (stable within bucket) ─
+  // Ensures all layout tokens are adjacent, all surface tokens adjacent, etc.
+  // Tie-breaking on source index preserves relative order among tokens that
+  // share the same bucket, reducing avoidable cascade churn vs. an unstable sort.
+  // Cross-bucket order still changes; review `apply` when overlapping utilities
+  // depend on source order.
   // State tokens cluster together and are then sub-grouped by variant key.
-  const classified = tokens.map((tok) => ({ tok, bucket: classifyToken(tok) }));
-  classified.sort((a, b) => BUCKET_ORDER[a.bucket] - BUCKET_ORDER[b.bucket]);
+  const classified = tokens.map((tok, index) => ({ tok, bucket: classifyToken(tok), index }));
+  classified.sort((a, b) => {
+    const od = BUCKET_ORDER[a.bucket] - BUCKET_ORDER[b.bucket];
+    return od !== 0 ? od : a.index - b.index;
+  });
 
   // ── Pass 1: bucket-based split, with state sub-grouping by variant key ────
   const rawGroups: string[] = [];
@@ -812,10 +819,22 @@ const KNOWN_CN_TV_MODULES = new Set([
 ]);
 
 /**
+ * True for typical shadcn-style re-exports: `./utils`, `@/lib/utils`, `…/utils/…`,
+ * or a dedicated `cn.ts` / `cn.tsx` module. Intentionally excludes arbitrary paths
+ * that merely contain the substring "utils" (e.g. `my-utils`).
+ */
+function moduleLooksLikeCnTvReexport(mod: string): boolean {
+  const norm = mod.replace(/\\/g, "/");
+  if (/(?:^|[./])utils(?:\/|$)/.test(norm)) return true;
+  if (/\/utils\//.test(norm) || /\/utils$/.test(norm)) return true;
+  if (/(?:^|\/)cn\.tsx?$/.test(norm)) return true;
+  return false;
+}
+
+/**
  * Build a set of local binding names that are imported from a known cn/tv
- * module in `sf`. Falls back to accepting any imported `cn`/`tv` when the
- * module specifier is not in KNOWN_CN_TV_MODULES (handles project-local
- * re-export paths like `../../utils`).
+ * module in `sf`. Unknown specifiers are matched only via
+ * {@link moduleLooksLikeCnTvReexport} (narrower than a bare "utils" substring).
  */
 function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
   const bindings = new Set<string>();
@@ -825,10 +844,7 @@ function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
     if (!ts.isStringLiteral(spec)) continue;
     const mod = spec.text;
     const isKnown = KNOWN_CN_TV_MODULES.has(mod);
-    // Also accept any path that contains "utils" or "cn" — common re-export
-    // conventions in Next.js / shadcn projects.
-    const looksLikeUtil = /utils|\/cn\b/.test(mod);
-    if (!isKnown && !looksLikeUtil) continue;
+    if (!isKnown && !moduleLooksLikeCnTvReexport(mod)) continue;
 
     const clause = st.importClause;
     // default import: `import cn from "…"`
@@ -846,18 +862,17 @@ function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
 
 /**
  * Returns true when `expr` is an identifier whose name matches `name` AND
- * whose binding originates from an import (not a local variable). When no
- * known-module bindings were collected for the file (e.g. an unusual import
- * path), the check degrades gracefully to the original name-only match so
- * that existing behaviour is preserved.
+ * that name is listed in `knownBindings` from a recognized import. If the file
+ * has no such imports (empty or omitted set), returns false — avoids treating
+ * unrelated locals named `cn` / `tv` as the utilities.
  */
 function isCnOrTvIdentifier(
   expr: ts.Expression,
   name: "cn" | "tv",
-  knownBindings?: Set<string>,
+  knownBindings: Set<string> = EMPTY_CN_TV_BINDINGS,
 ): boolean {
   if (!ts.isIdentifier(expr) || expr.text !== name) return false;
-  if (!knownBindings || knownBindings.size === 0) return true; // graceful degradation
+  if (knownBindings.size === 0) return false;
   return knownBindings.has(expr.text);
 }
 
@@ -971,11 +986,15 @@ function collectUnconditionalTailwindLiteralsFromCnArguments(
 }
 
 /**
- * Test helper: parse `cn(<argsSnippet>);` and return the merged unconditional literal
- * text (same pool as apply grouping). Throws if the statement is not a `cn(...)` call.
+ * Test helper: parse `<callee>(<argsSnippet>);` and return the merged unconditional literal
+ * text (same pool as apply grouping). Default `callee` is `cn` (matches real imports).
  */
-export function mergeCnUnconditionalLiteralPoolForTest(argsSnippet: string): string {
-  const sourceText = `cn(${argsSnippet});`;
+export function mergeCnUnconditionalLiteralPoolForTest(
+  argsSnippet: string,
+  options?: { callee?: string },
+): string {
+  const callee = options?.callee ?? "cn";
+  const sourceText = `${callee}(${argsSnippet});`;
   const sf = ts.createSourceFile(
     "mergeCnUnconditionalLiteralPoolForTest.ts",
     sourceText,
@@ -991,9 +1010,9 @@ export function mergeCnUnconditionalLiteralPoolForTest(argsSnippet: string): str
   if (
     !ts.isCallExpression(call) ||
     !ts.isIdentifier(call.expression) ||
-    call.expression.text !== "cn"
+    call.expression.text !== callee
   ) {
-    throw new Error("expected cn(...) call");
+    throw new Error(`expected ${callee}(...) call`);
   }
   return collectUnconditionalTailwindLiteralsFromCnArguments(call.arguments)
     .map((n) => n.text)
