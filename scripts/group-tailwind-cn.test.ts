@@ -5,6 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import ts from "typescript";
 import {
+  areCnTailwindPartitionsEquivalent,
   formatArray,
   formatCnArguments,
   formatCnCall,
@@ -254,6 +255,20 @@ describe("suggestCnGroups", () => {
     for (const row of table) {
       it(row.title, () => assertSuggest(row.input, row.expected));
     }
+  });
+});
+
+describe("areCnTailwindPartitionsEquivalent (idempotent vs formatter token order)", () => {
+  it("returns true when args are reordered but each string holds the same token multiset", () => {
+    assert.strictEqual(areCnTailwindPartitionsEquivalent(["b a", "d c"], ["a b", "c d"]), true);
+  });
+
+  it("returns true when cn arg order is permuted but partitions match", () => {
+    assert.strictEqual(areCnTailwindPartitionsEquivalent(["c d", "a b"], ["a b", "c d"]), true);
+  });
+
+  it("returns false when partition of tokens across chunks differs", () => {
+    assert.strictEqual(areCnTailwindPartitionsEquivalent(["a", "b c"], ["a b", "c"]), false);
   });
 });
 
