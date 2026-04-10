@@ -7,6 +7,7 @@ import {
   formatCnCall,
   formatJsxCnAttributeValue,
   forEachStringLiteralInClassExpression,
+  mergeCnUnconditionalLiteralPoolForTest,
   suggestCnGroups,
   unwrapCnInsideTvCallReplacement,
 } from "./group-tailwind-cn.ts";
@@ -138,6 +139,41 @@ describe("suggestCnGroups", () => {
         input: "grid",
         expected: ["grid"],
       },
+      {
+        title: "v4 @3xl container query prefix is state (leading digit after @)",
+        input: "@3xl:flex @3xl:gap-4 p-4",
+        expected: ["p-4", "@3xl:flex @3xl:gap-4"],
+      },
+      {
+        title: "has-checked compound variant stays in state bucket",
+        input: "bg-white has-checked:bg-indigo-50",
+        expected: ["bg-white", "has-checked:bg-indigo-50"],
+      },
+      {
+        title: "nth-3 numbered variant is state",
+        input: "flex nth-3:underline",
+        expected: ["flex", "nth-3:underline"],
+      },
+      {
+        title: "pointer-coarse media variant is state",
+        input: "p-2 pointer-coarse:p-4",
+        expected: ["p-2", "pointer-coarse:p-4"],
+      },
+      {
+        title: "inert variant is state",
+        input: "opacity-100 inert:opacity-50",
+        expected: ["opacity-100", "inert:opacity-50"],
+      },
+      {
+        title: "in-[…] ancestor variant is state",
+        input: "flex in-[.popover]:opacity-100",
+        expected: ["flex", "in-[.popover]:opacity-100"],
+      },
+      {
+        title: "* and ** child variants are state (distinct state keys stay split)",
+        input: "flex *:rounded **:text-sm",
+        expected: ["flex", "*:rounded", "**:text-sm"],
+      },
     ];
 
     for (const row of table) {
@@ -202,15 +238,15 @@ describe("formatJsxCnAttributeValue", () => {
     assert.ok(got.startsWith("{cn("));
     assert.ok(got.endsWith(")}"));
     assert.ok(got.includes('        "flex gap-2",'));
-    assert.ok(got.includes('        "text-sm"'));
+    assert.ok(got.includes('        "text-sm",'));
   });
 });
 
 describe("formatCnCall", () => {
-  it("renders multiline cn() with trailing comma on all but last group", () => {
+  it("renders multiline cn() with trailing commas (oxfmt / Prettier style)", () => {
     assert.strictEqual(
       formatCnCall(["flex gap-2", "text-sm"]),
-      ["cn(", '  "flex gap-2",', '  "text-sm"', ")"].join("\n"),
+      ["cn(", '  "flex gap-2",', '  "text-sm",', ")"].join("\n"),
     );
   });
 
@@ -236,7 +272,7 @@ describe("formatCnCall", () => {
 
 describe("formatArray", () => {
   it("renders multiline string array for tv() bases", () => {
-    assert.strictEqual(formatArray(["a", "b"]), ["[", '  "a",', '  "b"', "]"].join("\n"));
+    assert.strictEqual(formatArray(["a", "b"]), ["[", '  "a",', '  "b",', "]"].join("\n"));
   });
 
   it("escapes like formatCnCall", () => {
@@ -269,7 +305,7 @@ describe("unwrapCnInsideTvCallReplacement", () => {
     const src = 'cn("flex gap-2", "text-sm")';
     const { sf, call } = parseTopLevelCall(src);
     const got = unwrapCnInsideTvCallReplacement(call, src, sf);
-    assert.strictEqual(got, ["[", '  "flex gap-2",', '  "text-sm"', "]"].join("\n"));
+    assert.strictEqual(got, ["[", '  "flex gap-2",', '  "text-sm",', "]"].join("\n"));
   });
 
   it("returns undefined when cn has no arguments", () => {
@@ -280,7 +316,10 @@ describe("unwrapCnInsideTvCallReplacement", () => {
 });
 
 describe("forEachStringLiteralInClassExpression", () => {
-  function literalsFromArgSnippet(snippet: string): string[] {
+  function literalsFromArgSnippet(
+    snippet: string,
+    walk?: { descendIntoConditional?: boolean },
+  ): string[] {
     const sf = ts.createSourceFile(
       "x.ts",
       `cn(${snippet});`,
@@ -295,22 +334,77 @@ describe("forEachStringLiteralInClassExpression", () => {
     const arg0 = call.arguments[0];
     assert.ok(arg0 !== undefined);
     const out: string[] = [];
-    forEachStringLiteralInClassExpression(arg0, (n) => {
-      out.push(n.text);
-    });
+    forEachStringLiteralInClassExpression(
+      arg0,
+      (n) => {
+        out.push(n.text);
+      },
+      0,
+      walk,
+    );
     return out;
   }
 
-  it("collects both branches of a conditional", () => {
+  it("collects both branches of a conditional (default walk)", () => {
     assert.deepStrictEqual(literalsFromArgSnippet('x ? "a" : "b"'), ["a", "b"]);
+  });
+
+  it("skips conditional branches when descendIntoConditional is false", () => {
+    assert.deepStrictEqual(
+      literalsFromArgSnippet('x ? "a" : "b"', { descendIntoConditional: false }),
+      [],
+    );
   });
 
   it("collects literals inside a class-expression array", () => {
     assert.deepStrictEqual(literalsFromArgSnippet('["p", "q"]'), ["p", "q"]);
   });
 
+  it("with descendIntoConditional false, still collects unconditional array elements", () => {
+    assert.deepStrictEqual(
+      literalsFromArgSnippet('["p", x ? "a" : "b"]', { descendIntoConditional: false }),
+      ["p"],
+    );
+  });
+
   it("walks through parentheses and satisfies / as", () => {
     assert.deepStrictEqual(literalsFromArgSnippet('(("hi" as const))'), ["hi"]);
     assert.deepStrictEqual(literalsFromArgSnippet('("x" satisfies string)'), ["x"]);
+  });
+});
+
+describe("mergeCnUnconditionalLiteralPoolForTest (cn apply pool)", () => {
+  it("does not merge classes from mutually exclusive ternary branches (chart.tsx)", () => {
+    const pool = mergeCnUnconditionalLiteralPoolForTest(
+      '"flex flex-1 justify-between leading-none", nestLabel ? "items-end" : "items-center"',
+    );
+    assert.strictEqual(pool, "flex flex-1 justify-between leading-none");
+    const groups = suggestCnGroups(pool);
+    assert.ok(!groups.some((g) => g.includes("items-center") && g.includes("items-end")));
+  });
+
+  it("does not pull pt-3 and pb-3 from both ternary branches into the static pool (legend)", () => {
+    const pool = mergeCnUnconditionalLiteralPoolForTest(
+      '"flex items-center justify-center gap-4", verticalAlign === "top" ? "pb-3" : "pt-3"',
+    );
+    assert.strictEqual(pool, "flex items-center justify-center gap-4");
+    assert.ok(!pool.includes("pt-3"));
+    assert.ok(!pool.includes("pb-3"));
+  });
+
+  it("merges only unconditional args when the only dynamic arg is a ternary", () => {
+    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"'), "a b");
+  });
+
+  it("returns empty when every arg is a ternary", () => {
+    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('x ? "a" : "b"'), "");
+  });
+
+  it("cn([...]) array arg: literals are skipped for the apply pool (unsafe to split)", () => {
+    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('["foo", nest ? "a" : "b"]'), "");
+  });
+
+  it("direct string literal arg is merged even when another arg is a ternary", () => {
+    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('"foo", nest ? "a" : "b"'), "foo");
   });
 });
