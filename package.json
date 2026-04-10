@@ -30,6 +30,7 @@
     "start": "turbo run start",
     "tailwind:cn-analyze": "tsx scripts/group-tailwind-cn.ts analyze",
     "tailwind:cn-apply": "tsx scripts/group-tailwind-cn.ts apply",
+    "tailwind:cn-preview": "tsx scripts/group-tailwind-cn.ts preview",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
