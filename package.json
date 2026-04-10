@@ -34,6 +34,7 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
+    "test:group-cn": "node --import tsx --test scripts/group-tailwind-cn.test.ts",
     "test:watch": "turbo run test:watch"
   },
   "devDependencies": {
