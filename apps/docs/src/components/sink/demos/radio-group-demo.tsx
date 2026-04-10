@@ -43,7 +43,7 @@ export function RadioGroupDemo() {
       <RadioGroup defaultValue="starter" className="max-w-sm">
         {plans.map((plan) => (
           <Label
-            className="flex items-start gap-3 rounded-xl border p-4 hover:bg-accent/50 has-[[data-state=checked]]:border-green-600 has-[[data-state=checked]]:bg-green-50 dark:has-[[data-state=checked]]:border-green-900 dark:has-[[data-state=checked]]:bg-green-950"
+            className="flex items-start gap-3 rounded-xl border p-4 hover:bg-accent/50 has-data-[state=checked]:border-green-600 has-data-[state=checked]:bg-green-50 dark:has-data-[state=checked]:border-green-900 dark:has-data-[state=checked]:bg-green-950"
             key={plan.id}
           >
             <RadioGroupItem
