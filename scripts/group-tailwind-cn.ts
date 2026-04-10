@@ -35,6 +35,16 @@ function err(line: string): void {
 
 const LONG_STRING_TOKEN_THRESHOLD = 18;
 
+// Minimum token count for a string to be considered a candidate for grouping
+// in the apply/preview pipeline. This is intentionally much lower than
+// LONG_STRING_TOKEN_THRESHOLD (which is only used for the analyze report).
+//
+// The real gate for apply/preview is whether suggestCnGroups() produces more
+// than one group — i.e. the string actually benefits from being split. This
+// floor just avoids wasting work on trivially short strings (e.g. "flex p-2")
+// that can never produce multiple meaningful groups.
+const APPLY_MIN_TOKENS = 2;
+
 // Minimum tokens a group must have to stand alone before singleton-merging.
 // Set to 2 so that natural pairs like "transition outline-hidden" are never
 // collapsed into an unrelated bucket (e.g. typography) by the merger.
@@ -883,21 +893,6 @@ function lineOf(sf: ts.SourceFile, node: ts.Node): number {
 }
 
 /**
- * Returns all characters from the start of the line up to `pos` — includes
- * any non-whitespace characters that precede `pos` on the same line. Used to
- * align a replacement's continuation lines with the node being replaced.
- */
-function indentBeforePosition(source: string, pos: number): string {
-  let lineStart = pos;
-  while (lineStart > 0) {
-    const c = source[lineStart - 1];
-    if (c === "\n" || c === "\r") break;
-    lineStart--;
-  }
-  return source.slice(lineStart, pos);
-}
-
-/**
  * Returns only the leading whitespace (tabs / spaces) of the line containing
  * `pos`. Unlike `indentBeforePosition`, non-whitespace characters before `pos`
  * on the same line are excluded. Used to compute the base indentation level
@@ -1191,7 +1186,7 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
         for (const arg of node.arguments) {
           forEachStringLiteralInClassExpression(arg, (lit) => {
             if (isUnsafeLiteralForCnStyleApplySplit(lit)) return;
-            if (tokenizeClassString(lit.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
+            if (tokenizeClassString(lit.text).length >= APPLY_MIN_TOKENS) {
               results.push({ node: lit, sf, isTvContext: false, cnCall: node });
             }
           });
@@ -1204,7 +1199,7 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
             arg0,
             (strNode, innerSf, nestedCn) => {
               if (isUnsafeLiteralForCnStyleApplySplit(strNode)) return;
-              if (tokenizeClassString(strNode.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
+              if (tokenizeClassString(strNode.text).length >= APPLY_MIN_TOKENS) {
                 results.push({
                   node: strNode,
                   sf: innerSf,
@@ -1226,26 +1221,56 @@ function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
   return results;
 }
 
-function formatApplyReplacement(
+/**
+ * Build a full `cn(\n  "g1",\n  "g2",\n  ...remainingArgs\n)` replacement for
+ * an entire `cn(...)` call expression. Replaces the whole call — not just the
+ * one string arg being split — so opening/closing parens, newlines, and all
+ * existing args are formatted correctly as a unit.
+ *
+ * Every string literal arg is re-evaluated with suggestCnGroups so that a call
+ * like `cn("a b c", "d e f", className)` expands ALL splittable args in one
+ * pass rather than requiring a separate edit per arg.
+ */
+function formatCnCallReplacement(
   item: StringNode,
-  groups: string[],
-  /** Source text to read indentation from (write mode: `newText` up to the edit point). */
-  sourceSlice: string,
-  nodeStartInSlice: number,
+  _groups: string[],
+  sourceText: string,
   withClassName: boolean,
 ): string {
-  if (item.cnCall) {
-    const indent = indentBeforePosition(sourceSlice, nodeStartInSlice);
-    // When more `cn(...)` args follow the replaced literal, the source already has
-    // `, nextArg` right after the string — only `--with-classname` should force a
-    // comma on the last inserted literal (before the injected `className` line).
-    return formatCnArguments(groups, {
-      indent,
-      commaAfterLastGroup: withClassName,
-      trailingClassName: withClassName,
-    });
+  const call = item.cnCall!;
+  const sf = item.sf;
+  const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
+  const argIndent = `${baseIndent}  `;
+
+  const allArgs: string[] = [];
+
+  for (const arg of call.arguments) {
+    // Collect string literals directly under this arg (handles ternaries etc.)
+    const lits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+    forEachStringLiteralInClassExpression(arg, (lit) => lits.push(lit));
+
+    if (lits.length === 1 && lits[0] === arg) {
+      // Simple string literal arg — try to split it.
+      const g = suggestCnGroups(lits[0].text);
+      if (g.length > 1) {
+        for (const group of g) {
+          allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(group)}"`);
+        }
+        continue;
+      }
+    }
+    // Complex arg (conditional, identifier, expression) or unsplittable literal
+    // — preserve verbatim.
+    allArgs.push(`${argIndent}${sourceText.slice(arg.getStart(sf), arg.getEnd())}`);
   }
-  return formatArray(groups);
+
+  if (withClassName) {
+    allArgs.push(`${argIndent}className`);
+  }
+
+  // Trailing comma on every arg except the last.
+  const argLines = allArgs.map((a, i) => (i < allArgs.length - 1 ? `${a},` : a));
+  return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
 
 // ---------------------------------------------------------------------------
@@ -1372,7 +1397,12 @@ type GroupTarget =
     };
 
 function targetReplaceStart(t: GroupTarget): number {
-  return t.kind === "cnArg" ? t.item.node.getStart(t.item.sf) : t.valueNode.getStart(t.sf);
+  if (t.kind === "cnArg") {
+    // We replace the whole cn() call when cnCall is present; use its start for
+    // reverse-order sorting so later edits don't shift earlier positions.
+    return t.item.cnCall ? t.item.cnCall.getStart(t.item.sf) : t.item.node.getStart(t.item.sf);
+  }
+  return t.valueNode.getStart(t.sf);
 }
 
 function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
@@ -1380,7 +1410,7 @@ function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
   const visit = (node: ts.Node): void => {
     if (ts.isJsxAttribute(node)) {
       const parsed = jsxClassNameStaticLiteral(node);
-      if (parsed && tokenizeClassString(parsed.lit.text).length >= LONG_STRING_TOKEN_THRESHOLD) {
+      if (parsed && tokenizeClassString(parsed.lit.text).length >= APPLY_MIN_TOKENS) {
         results.push({
           kind: "jsxClassName",
           sf,
@@ -1433,19 +1463,18 @@ function groupFile(
       const lit = t.kind === "cnArg" ? t.item.node : t.lit;
       const lineSf = t.kind === "cnArg" ? t.item.sf : t.sf;
       const groups = suggestCnGroups(lit.text);
+      if (groups.length <= 1) continue;
       const label = t.kind === "cnArg" ? "cn/tv" : "JSX className";
-      const replacement =
-        t.kind === "cnArg"
-          ? formatApplyReplacement(
-              t.item,
-              groups,
-              sourceText,
-              lit.getStart(lineSf),
-              options.withClassName,
-            )
-          : groups.length > 1
-            ? formatJsxCnAttributeValue(groups, sourceText, t.valueNode.getStart(t.sf))
-            : lit.text;
+      let replacement: string;
+      if (t.kind === "cnArg") {
+        if (!t.item.cnCall) {
+          replacement = formatArray(groups);
+        } else {
+          replacement = formatCnCallReplacement(t.item, groups, sourceText, options.withClassName);
+        }
+      } else {
+        replacement = formatJsxCnAttributeValue(groups, sourceText, t.valueNode.getStart(t.sf));
+      }
       out(`  Dòng ${lineOf(lineSf, lit)} [${label}]:`);
       out(`  ${replacement.split("\n").join("\n  ")}`);
     }
@@ -1458,8 +1487,19 @@ function groupFile(
   // avoiding a second full parse inside ensureCnImport for the common case.
   const originallyHasCnImport = sourceFileImportsCn(sf);
 
-  let newText = sourceText;
-  let changed = 0;
+  // ── Pre-compute all edits against the ORIGINAL sourceText ─────────────────
+  // All AST node offsets (getStart / getEnd) are valid only for the source file
+  // they were parsed from. Once we mutate newText the offsets drift. The safe
+  // approach is:
+  //   1. Compute every (start, end, replacement) tuple from sourceText.
+  //   2. Deduplicate: multiple StringNode targets can share the same cnCall
+  //      (e.g. cn("a", "b") yields two targets but one call). Keep only the
+  //      first occurrence per call — formatCnCallReplacement handles all args.
+  //   3. Sort descending by start so each splice doesn't affect earlier offsets.
+  //   4. Apply in one linear pass over the now-stable list.
+  type Edit = { start: number; end: number; replacement: string; jsxCn: boolean };
+  const edits: Edit[] = [];
+  const seenCnCalls = new Set<ts.CallExpression>();
   let touchedJsxCn = false;
 
   for (const t of sorted) {
@@ -1468,25 +1508,50 @@ function groupFile(
     if (groups.length <= 1) continue;
 
     if (t.kind === "cnArg") {
-      const start = t.item.node.getStart(t.item.sf);
-      const replacement = formatApplyReplacement(
-        t.item,
-        groups,
-        newText,
-        start,
-        options.withClassName,
-      );
-      const end = t.item.node.getEnd();
-      newText = newText.slice(0, start) + replacement + newText.slice(end);
+      if (!t.item.cnCall) {
+        // tv() context — no wrapping cn() call, replace the string literal only.
+        const start = t.item.node.getStart(t.item.sf);
+        const end = t.item.node.getEnd();
+        const baseIndent = indentOfLineContaining(sourceText, start);
+        const replacement = formatArray(groups)
+          .split("\n")
+          .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
+          .join("\n");
+        edits.push({ start, end, replacement, jsxCn: false });
+      } else {
+        // Multiple StringNode targets may share the same cnCall — only emit
+        // one edit per call (formatCnCallReplacement processes all args).
+        if (seenCnCalls.has(t.item.cnCall)) continue;
+        seenCnCalls.add(t.item.cnCall);
+        const start = t.item.cnCall.getStart(t.item.sf);
+        const end = t.item.cnCall.getEnd();
+        // Pass sourceText so arg slices use the same offsets as the AST nodes.
+        const replacement = formatCnCallReplacement(
+          t.item,
+          groups,
+          sourceText,
+          options.withClassName,
+        );
+        edits.push({ start, end, replacement, jsxCn: false });
+      }
     } else {
       const start = t.valueNode.getStart(t.sf);
-      const replacement = formatJsxCnAttributeValue(groups, newText, start);
       const end = t.valueNode.getEnd();
-      newText = newText.slice(0, start) + replacement + newText.slice(end);
-      touchedJsxCn = true;
+      const replacement = formatJsxCnAttributeValue(groups, sourceText, start);
+      edits.push({ start, end, replacement, jsxCn: true });
     }
-    changed++;
   }
+
+  // Sort descending so later edits don't shift earlier offsets.
+  edits.sort((a, b) => b.start - a.start);
+
+  let newText = sourceText;
+  for (const { start, end, replacement, jsxCn } of edits) {
+    newText = newText.slice(0, start) + replacement + newText.slice(end);
+    if (jsxCn) touchedJsxCn = true;
+  }
+
+  const changed = edits.length;
 
   if (changed > 0) {
     if (touchedJsxCn) {
