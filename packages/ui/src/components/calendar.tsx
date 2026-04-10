@@ -34,22 +34,26 @@ function Calendar({
     <DayPicker
       captionLayout={captionLayout}
       className={cn(
-        "group/calendar bg-background p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+        "group/calendar bg-background p-3 [--cell-size:--spacing(8)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
         "rtl:**:[.rdp-button_next>svg]:rotate-180",
         "rtl:**:[.rdp-button_previous>svg]:rotate-180",
         className,
       )}
       classNames={{
-        button_next: cn(
-          buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
-          defaultClassNames.button_next,
-        ),
-        button_previous: cn(
-          buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
-          defaultClassNames.button_previous,
-        ),
+        button_next: buttonVariants({
+          variant: buttonVariant,
+          className: [
+            "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+            defaultClassNames.button_next,
+          ],
+        }),
+        button_previous: buttonVariants({
+          variant: buttonVariant,
+          className: [
+            "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+            defaultClassNames.button_previous,
+          ],
+        }),
         caption_label: cn(
           "font-medium select-none",
           captionLayout === "label"
