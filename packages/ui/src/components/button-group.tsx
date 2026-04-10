@@ -41,7 +41,7 @@ type ButtonGroupProps = ComponentProps<"div"> & VariantProps<typeof buttonGroupV
 function ButtonGroup({ className, orientation, ...props }: ButtonGroupProps): JSX.Element {
   return (
     <div
-      className={cn(buttonGroupVariants({ orientation }), className)}
+      className={buttonGroupVariants({ orientation, className })}
       data-orientation={orientation}
       data-slot="button-group"
       role="group"
