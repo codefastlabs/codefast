@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { describe, it } from "node:test";
 import ts from "typescript";
 import {
@@ -7,6 +10,7 @@ import {
   formatCnCall,
   formatJsxCnAttributeValue,
   forEachStringLiteralInClassExpression,
+  groupFile,
   mergeCnUnconditionalLiteralPoolForTest,
   suggestCnGroups,
   unwrapCnInsideTvCallReplacement,
@@ -413,5 +417,69 @@ describe("mergeCnUnconditionalLiteralPoolForTest (cn apply pool)", () => {
       mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"', { callee: "cx" }),
       "a b",
     );
+  });
+});
+
+describe("groupFile (integration)", () => {
+  function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "group-cn-"));
+    const filePath = path.join(dir, name);
+    try {
+      fs.writeFileSync(filePath, source, "utf8");
+      fn(filePath);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+
+  it("unwraps cn() inside tv base and splits a long class string into a tv array", () => {
+    const before = `import { cn, tv } from "tailwind-variants";
+
+export const styles = tv({
+  base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium"),
+});
+`;
+    withTempFixture("FixtureTv.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      assert.ok(r.changed > 0, "expected at least one edit");
+      const after = fs.readFileSync(filePath, "utf8");
+      assert.ok(!after.includes("base: cn("), "cn() should be unwrapped from tv base");
+      assert.ok(after.includes("[") && after.includes('"flex'), "expected array of class strings");
+    });
+  });
+
+  it("converts long static JSX className to cn(...) and inserts cn import", () => {
+    const before = `export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    withTempFixture("FixtureJsx.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      assert.ok(r.changed > 0);
+      const after = fs.readFileSync(filePath, "utf8");
+      assert.ok(after.includes("{cn("), "expected className={cn(...)}");
+      assert.ok(
+        after.includes('import { cn } from "@codefast/tailwind-variants"'),
+        "expected default cn import for apps outside packages/ui",
+      );
+    });
+  });
+
+  it("counts cn() inside tv with zero args in totalFound for preview and apply", () => {
+    const before = `import { cn, tv } from "tailwind-variants";
+
+export const broken = tv({
+  base: cn(),
+});
+`;
+    withTempFixture("FixtureZeroArg.tsx", before, (filePath) => {
+      const dry = groupFile(filePath, { write: false, withClassName: false });
+      assert.strictEqual(dry.changed, 0);
+      assert.strictEqual(dry.totalFound, 1);
+
+      const wet = groupFile(filePath, { write: true, withClassName: false });
+      assert.strictEqual(wet.changed, 0);
+      assert.strictEqual(wet.totalFound, 1);
+    });
   });
 });

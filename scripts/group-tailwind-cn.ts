@@ -568,10 +568,9 @@ function mergeSingletons(groups: string[]): string[] {
 }
 
 /**
- * Merge adjacent groups until total count ≤ maxGroups.
- * Prefers bucket-compatible pairs, then lowest merge penalty, then smaller size.
+ * Penalty for merging two dominant buckets when `capGroups` must shrink the group
+ * count (incompatible pairs only). Higher = worse merge.
  */
-/** Higher = worse to merge when shrinking groups (incompatible pairs only). */
 function capMergePenalty(a: Bucket, b: Bucket): number {
   if (a === "state" && b === "state") return 1_000;
   // Never merge variant blobs with base buckets before crossing other thresholds.
@@ -589,6 +588,10 @@ function capMergePenalty(a: Bucket, b: Bucket): number {
   return 0;
 }
 
+/**
+ * Merge adjacent groups until total count ≤ maxGroups.
+ * Prefers bucket-compatible pairs, then lowest merge penalty, then smaller size.
+ */
 function capGroups(groups: string[], maxGroups: number): string[] {
   const result = [...groups];
   const lengths = result.map((g) => tokenizeClassString(g).length);
@@ -795,6 +798,9 @@ function walkTsxFiles(root: string): string[] {
 // TypeScript AST helpers
 // ---------------------------------------------------------------------------
 
+/** String or no-substitution template literal used as a Tailwind class blob. */
+type TailwindClassLiteral = ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+
 // ---------------------------------------------------------------------------
 // Import-aware cn/tv identifier resolution
 //
@@ -894,7 +900,7 @@ export type ForEachStringLiteralInClassExpressionOptions = {
  */
 export function forEachStringLiteralInClassExpression(
   expr: ts.Expression,
-  sink: (node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral) => void,
+  sink: (node: TailwindClassLiteral) => void,
   depth = 0,
   options?: ForEachStringLiteralInClassExpressionOptions,
 ): void {
@@ -944,9 +950,7 @@ export function forEachStringLiteralInClassExpression(
 }
 
 /** Replacing literals that sit inside an array arg would produce `cn([[...]])` or break `className: [[...]]`. */
-function isUnsafeLiteralForCnStyleApplySplit(
-  node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral,
-): boolean {
+function isUnsafeLiteralForCnStyleApplySplit(node: TailwindClassLiteral): boolean {
   return ts.isArrayLiteralExpression(node.parent);
 }
 
@@ -962,8 +966,8 @@ const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOptions =
  */
 function collectUnconditionalTailwindLiteralsFromCnArguments(
   args: ts.NodeArray<ts.Expression>,
-): Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> {
-  const staticLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+): TailwindClassLiteral[] {
+  const staticLits: TailwindClassLiteral[] = [];
   for (const arg of args) {
     if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) {
       if (!isUnsafeLiteralForCnStyleApplySplit(arg)) {
@@ -1094,7 +1098,7 @@ function applyEditsDescending(
 // ---------------------------------------------------------------------------
 
 type JsxClassNameStatic = {
-  lit: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+  lit: TailwindClassLiteral;
   /** Replace this node: `StringLiteral` or whole `JsxExpression`. */
   valueNode: ts.Node;
 };
@@ -1121,7 +1125,7 @@ function jsxClassNameStaticLiteral(attr: ts.JsxAttribute): JsxClassNameStatic | 
 // ---------------------------------------------------------------------------
 
 type StringNodeVisitor = (
-  node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral,
+  node: TailwindClassLiteral,
   sf: ts.SourceFile,
   /** When set, the literal is an argument of this `cn(...)` (e.g. nested inside `tv`). */
   cnCall?: ts.CallExpression,
@@ -1145,12 +1149,12 @@ function traverseTvObject(
     const init = prop.initializer;
 
     if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
-      visitor(init as ts.StringLiteral, sf, undefined);
+      visitor(init, sf, undefined);
     } else if (ts.isArrayLiteralExpression(init)) {
       for (const el of init.elements) {
         if (ts.isSpreadElement(el)) continue;
         if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
-          visitor(el as ts.StringLiteral, sf, undefined);
+          visitor(el, sf, undefined);
         } else if (
           ts.isCallExpression(el) &&
           isCnOrTvIdentifier(el.expression, "cn", knownBindings)
@@ -1167,12 +1171,12 @@ function traverseTvObject(
             if (propName !== "className" && propName !== "class") continue;
             const innerInit = inner.initializer;
             if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
-              visitor(innerInit as ts.StringLiteral, sf, undefined);
+              visitor(innerInit, sf, undefined);
             } else if (ts.isArrayLiteralExpression(innerInit)) {
               for (const innerEl of innerInit.elements) {
                 if (ts.isSpreadElement(innerEl)) continue;
                 if (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl)) {
-                  visitor(innerEl as ts.StringLiteral, sf, undefined);
+                  visitor(innerEl, sf, undefined);
                 }
               }
             } else if (
@@ -1468,7 +1472,7 @@ function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
  */
 type StringNode = {
   /** All static string literals belonging to this slot, in source order. */
-  nodes: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral>;
+  nodes: TailwindClassLiteral[];
   sf: ts.SourceFile;
   /** String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`. */
   isTvContext: boolean;
@@ -1476,11 +1480,11 @@ type StringNode = {
   cnCall?: ts.CallExpression;
   // Convenience accessor kept for callers that need a single representative node
   // (e.g. for line-number reporting). Always the first node in the slot.
-  get node(): ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+  get node(): TailwindClassLiteral;
 };
 
 function makeStringNode(
-  nodes: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral>,
+  nodes: TailwindClassLiteral[],
   sf: ts.SourceFile,
   isTvContext: boolean,
   cnCall?: ts.CallExpression,
@@ -1567,18 +1571,18 @@ function collectTvSlots(
 
     if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
       // Single string value — one slot.
-      emitTvSlot([init as ts.StringLiteral], sf, undefined, results, seenNodePos);
+      emitTvSlot([init], sf, undefined, results, seenNodePos);
     } else if (ts.isArrayLiteralExpression(init)) {
       // Array value — all string elements form one merged slot.
       const arrayPos = init.getStart(sf);
       if (seenNodePos.has(arrayPos)) continue;
       seenNodePos.add(arrayPos);
 
-      const staticLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+      const staticLits: TailwindClassLiteral[] = [];
       for (const el of init.elements) {
         if (ts.isSpreadElement(el)) continue;
         if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
-          staticLits.push(el as ts.StringLiteral);
+          staticLits.push(el);
         } else if (
           ts.isCallExpression(el) &&
           isCnOrTvIdentifier(el.expression, "cn", knownBindings)
@@ -1603,15 +1607,15 @@ function collectTvSlots(
             if (propName !== "className" && propName !== "class") continue;
             const innerInit = inner.initializer;
             if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
-              emitTvSlot([innerInit as ts.StringLiteral], sf, undefined, results, seenNodePos);
+              emitTvSlot([innerInit], sf, undefined, results, seenNodePos);
             } else if (ts.isArrayLiteralExpression(innerInit)) {
-              const innerLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+              const innerLits: TailwindClassLiteral[] = [];
               for (const innerEl of innerInit.elements) {
                 if (
                   !ts.isSpreadElement(innerEl) &&
                   (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl))
                 ) {
-                  innerLits.push(innerEl as ts.StringLiteral);
+                  innerLits.push(innerEl);
                 }
               }
               emitTvSlot(innerLits, sf, undefined, results, seenNodePos);
@@ -1619,7 +1623,7 @@ function collectTvSlots(
               ts.isCallExpression(innerInit) &&
               isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
             ) {
-              const cnLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+              const cnLits: TailwindClassLiteral[] = [];
               for (const arg of innerInit.arguments) {
                 forEachStringLiteralInClassExpression(
                   arg,
@@ -1646,7 +1650,7 @@ function collectTvSlots(
       ts.isCallExpression(init) &&
       isCnOrTvIdentifier(init.expression, "cn", knownBindings)
     ) {
-      const cnLits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral> = [];
+      const cnLits: TailwindClassLiteral[] = [];
       for (const arg of init.arguments) {
         forEachStringLiteralInClassExpression(
           arg,
@@ -1663,7 +1667,7 @@ function collectTvSlots(
 }
 
 function emitTvSlot(
-  lits: Array<ts.StringLiteral | ts.NoSubstitutionTemplateLiteral>,
+  lits: TailwindClassLiteral[],
   sf: ts.SourceFile,
   cnCall: ts.CallExpression | undefined,
   results: StringNode[],
@@ -1871,7 +1875,7 @@ type GroupTarget =
   | {
       kind: "jsxClassName";
       sf: ts.SourceFile;
-      lit: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+      lit: TailwindClassLiteral;
       valueNode: ts.Node;
     };
 
@@ -1993,13 +1997,18 @@ function planGroupEditForTarget(
 // Core: group a single source file in-place or dry-run
 // ---------------------------------------------------------------------------
 
-type GroupFileResult = {
+export type GroupFileResult = {
   filePath: string;
+  /**
+   * Sites worth human review: applied edits plus `cn()` inside `tv` with no args
+   * (skipped). Matches preview totals when `groupEdits` correspond to the same plan.
+   */
   totalFound: number;
+  /** Edits actually written in apply mode; always 0 in preview. */
   changed: number;
 };
 
-function groupFile(
+export function groupFile(
   filePath: string,
   options: { write: boolean; withClassName: boolean; cnImport?: string },
 ): GroupFileResult {
@@ -2051,25 +2060,22 @@ function groupFile(
     plannedGroupEdits.push(plan);
   }
 
-  const totalFound = unwrapEdits.length + plannedGroupEdits.length;
+  const editSitesCount = unwrapEdits.length + plannedGroupEdits.length;
+  const cnInTvZeroArgCount = cnInTvCalls.filter(
+    (call) => unwrapCnInsideTvCallReplacement(call, sourceText, sf) === undefined,
+  ).length;
+  const reportTotal = editSitesCount + cnInTvZeroArgCount;
 
   if (cnInTvCalls.length === 0 && groupTargets.length === 0) {
     return { filePath, totalFound: 0, changed: 0 };
   }
 
   if (!options.write) {
-    let unwrapArgErrorLines = 0;
-    for (const call of cnInTvCalls) {
-      if (unwrapCnInsideTvCallReplacement(call, sourceText, sf) === undefined) {
-        unwrapArgErrorLines++;
-      }
-    }
-
-    if (totalFound === 0 && unwrapArgErrorLines === 0) {
+    if (editSitesCount === 0 && cnInTvZeroArgCount === 0) {
       return { filePath, totalFound: 0, changed: 0 };
     }
 
-    let header = `\n── ${filePath} (${totalFound + unwrapArgErrorLines} vị trí`;
+    let header = `\n── ${filePath} (${reportTotal} vị trí`;
     if (cnInTvNoReplacement > 0) {
       header += `; thêm ${cnInTvNoReplacement} cn() trong tv không đổi (0 đối số)`;
     }
@@ -2099,7 +2105,7 @@ function groupFile(
     }
     return {
       filePath,
-      totalFound: totalFound + unwrapArgErrorLines,
+      totalFound: reportTotal,
       changed: 0,
     };
   }
@@ -2128,7 +2134,7 @@ function groupFile(
     fs.writeFileSync(filePath, newText, "utf8");
   }
 
-  return { filePath, totalFound: changed, changed };
+  return { filePath, totalFound: changed + cnInTvZeroArgCount, changed };
 }
 
 // ---------------------------------------------------------------------------
@@ -2142,6 +2148,8 @@ const HELP = [
   "Gợi ý tách chuỗi class Tailwind (v4): đối số trong cn(...)/tv(...), literal tĩnh JSX className, và bỏ cn lồng trong tv (→ chuỗi / mảng).",
   "",
   "Cách làm đề xuất: analyze → preview → apply (xem trước rồi mới ghi file).",
+  "",
+  "Lưu ý: tách nhóm sắp xếp lại thứ tự class theo bucket (layout, surface, …). Mọi token vẫn giữ nhưng thứ tự giữa bucket có thể đổi — kiểm tra UI nếu có utility xung đột (cascade).",
   "",
   "Lệnh:",
   "  analyze [dir|file]",
@@ -2158,7 +2166,7 @@ const HELP = [
   "      Thử nhanh trên một chuỗi class (copy-paste kết quả). Mặc định in cn(...); --tv in [...] cho tv().",
   "",
   "Tùy chọn:",
-  "  --with-classname   Dùng khi bạn muốn bổ sung đối số className vào cuối lời gọi cn(...) (xem preview trước).",
+  "  --with-classname   Thêm `className` làm đối số cuối trong cn(...). Chỉ dùng khi identifier `className` thật sự tồn tại trong scope component; nếu không, TypeScript sẽ báo lỗi.",
   "  --cn-import=<mod>  Ghi đè module specifier dùng khi thêm import cn (mặc định: tự suy theo đường dẫn file).",
   "                     Ví dụ: --cn-import=@/lib/utils",
   "",
@@ -2262,6 +2270,13 @@ function runOnTarget(
     out(`Đã áp dụng: ${totalChanged} vị trí được cập nhật.`);
   } else {
     out(`(Chạy "apply" để ghi đè, hoặc "pnpm tailwind:cn-apply" cho toàn bộ project)`);
+  }
+
+  const showCascadeHint = options.write ? totalChanged > 0 : totalFound > 0;
+  if (showCascadeHint) {
+    out(
+      "Lưu ý: thứ tự class có thể đổi giữa các nhóm concern — smoke-test UI nếu có xung đột cascade.",
+    );
   }
 }
 
