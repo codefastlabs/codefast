@@ -15,10 +15,10 @@
  *   - Arbitrary variants [&...] mọi dạng
  *
  * Usage (repo root):
- *   pnpm cli:tailwind-cn:analyze [dir|file]
- *   pnpm exec codefast tailwind-cn analyze [dir|file]
- *   pnpm exec codefast tailwind-cn group flex gap-2 rounded-md border px-3
- *   pnpm exec codefast tailwind-cn group -- … --tv
+ *   pnpm cli:arrange-analyze [dir|file]
+ *   pnpm exec codefast arrange analyze [dir|file]
+ *   pnpm exec codefast arrange group flex gap-2 rounded-md border px-3
+ *   pnpm exec codefast arrange group -- … --tv
  */
 
 import fs from "node:fs";
@@ -262,7 +262,7 @@ export function tokenizeClassString(s: string): string[] {
  * - order of `cn` / array arguments
  * - order of tokens **within** each chunk (oxfmt / oxlint may reorder inside a string)
  *
- * Used so `cli:tailwind-cn:preview` stays quiet after `cli:tailwind-cn:apply` + `check:fix` when only
+ * Used so `cli:arrange-preview` stays quiet after `cli:arrange-apply` + `check:fix` when only
  * formatting or per-string token order changed.
  */
 export function areCnTailwindPartitionsEquivalent(
@@ -2183,7 +2183,7 @@ export function groupFile(
   return { filePath, totalFound: changed + cnInTvZeroArgCount, changed };
 }
 
-export const DEFAULT_CN_TARGET = "packages/ui/src/components";
+export const DEFAULT_ARRANGE_TARGET = "packages/ui/src/components";
 
 export function runOnTarget(
   target: string,
@@ -2210,7 +2210,7 @@ export function runOnTarget(
     out(`Đã áp dụng: ${totalChanged} vị trí được cập nhật.`);
   } else {
     out(
-      `(Chạy "apply" để ghi đè, hoặc "pnpm cli:tailwind-cn:apply" / "pnpm exec codefast tailwind-cn apply")`,
+      `(Chạy "apply" để ghi đè, hoặc "pnpm cli:arrange-apply" / "pnpm exec codefast arrange apply")`,
     );
   }
 

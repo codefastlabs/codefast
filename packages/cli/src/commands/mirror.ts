@@ -1,7 +1,7 @@
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { normalizePath, runGenerateExports } from "#lib/generate-exports";
+import { normalizePath, runMirrorSync } from "#lib/mirror";
 import { findRepoRoot } from "#lib/repo-root";
 
 function packageArgToRelative(rootDir: string, arg: string | undefined): string | undefined {
@@ -14,10 +14,14 @@ function packageArgToRelative(rootDir: string, arg: string | undefined): string 
   return normalizePath(rel);
 }
 
-export function registerExportsCommand(program: Command): void {
-  program
-    .command("exports")
-    .description("Generate package.json exports from dist/ for workspace packages")
+export function registerMirrorCommand(program: Command): void {
+  const mirror = program
+    .command("mirror")
+    .description("Keep package manifests aligned with what you ship");
+
+  mirror
+    .command("sync")
+    .description("Write package.json exports from dist/ for workspace packages")
     .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
     .option("-v, --verbose", "Print extra diagnostics", false)
     .action(async function (
@@ -34,7 +38,7 @@ export function registerExportsCommand(program: Command): void {
         this.error(e instanceof Error ? e.message : String(e));
         return;
       }
-      const exitCode = await runGenerateExports({
+      const exitCode = await runMirrorSync({
         rootDir,
         verbose: options.verbose,
         /** Commander sets `color: false` when `--no-color` is passed (default `color: true`). */

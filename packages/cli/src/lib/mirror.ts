@@ -1,13 +1,13 @@
 /**
- * Automatically generate package.json exports from the dist directory.
- *
- * This script scans the dist directory recursively, identifies valid module files,
- * and generates the appropriate export paths for both ESM and CommonJS formats.
+ * Mirror — sync `package.json` `exports` from each package’s built `dist/` tree.
  *
  * Usage:
- *   pnpm cli:exports                        # Process all packages (repo root)
- *   pnpm exec codefast exports              # Same via binary
- *   pnpm exec codefast exports [path]       # Single package path
+ *   pnpm cli:mirror-sync                    # Process all packages (repo root)
+ *   pnpm exec codefast mirror sync        # Same via binary
+ *   pnpm exec codefast mirror sync [path] # Single package path
+ *
+ * Config: `codefast.config.js` (or `.mjs` / `.cjs` / `.json`) with a `mirror` section;
+ * legacy `generate-exports.config.js` / `.json` is still read if present.
  *
  * ## Algorithm Overview
  *
@@ -27,6 +27,7 @@ import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { pathToFileURL } from "node:url";
 
 function out(line: string): void {
   process.stdout.write(`${line}\n`);
@@ -105,8 +106,16 @@ async function readPackageJsonDisplayName(
 
 const DIST_DIR = "dist";
 const PACKAGE_JSON = "package.json";
-const CONFIG_FILE_JS = "generate-exports.config.js";
-const CONFIG_FILE_JSON = "generate-exports.config.json";
+
+const CODEFAST_CONFIG_JS = [
+  "codefast.config.js",
+  "codefast.config.mjs",
+  "codefast.config.cjs",
+] as const;
+const CODEFAST_CONFIG_JSON = "codefast.config.json";
+const LEGACY_CONFIG_JS = "generate-exports.config.js";
+const LEGACY_CONFIG_JSON = "generate-exports.config.json";
+
 const VALID_JS_EXTENSIONS = new Set([".js", ".cjs"]);
 const DTS_EXTENSION = ".d.ts";
 const PACKAGE_JSON_EXPORT = "./package.json";
@@ -166,25 +175,64 @@ interface Config {
 
 // ── Configuration ────────────────────────────────────────────────────────────
 
-async function loadConfig(rootDir: string): Promise<Config> {
-  const jsPath = path.join(rootDir, CONFIG_FILE_JS);
-  const jsonPath = path.join(rootDir, CONFIG_FILE_JSON);
+function configImportUrl(filePath: string): string {
+  return pathToFileURL(filePath).href;
+}
 
-  if (existsSync(jsPath)) {
+function normalizeLoadedConfig(raw: unknown): Config {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const o = raw as Record<string, unknown>;
+  if ("mirror" in o && o.mirror && typeof o.mirror === "object" && !Array.isArray(o.mirror)) {
+    return o.mirror as Config;
+  }
+  return raw as Config;
+}
+
+async function loadConfig(rootDir: string): Promise<Config> {
+  for (const name of CODEFAST_CONFIG_JS) {
+    const filePath = path.join(rootDir, name);
+    if (!existsSync(filePath)) continue;
     try {
-      const mod = await import(jsPath);
-      return mod.default || mod;
+      const mod = await import(configImportUrl(filePath));
+      return normalizeLoadedConfig(mod.default ?? mod);
     } catch {
-      out(`${Colors.YELLOW}⚠ Could not load .js config. Falling back to .json${Colors.RESET}`);
+      out(`${Colors.YELLOW}⚠ Could not load ${name}. Trying other config files…${Colors.RESET}`);
     }
   }
 
-  if (existsSync(jsonPath)) {
+  const codefastJson = path.join(rootDir, CODEFAST_CONFIG_JSON);
+  if (existsSync(codefastJson)) {
     try {
-      const content = await fs.readFile(jsonPath, "utf-8");
-      return JSON.parse(content);
+      const content = await fs.readFile(codefastJson, "utf-8");
+      return normalizeLoadedConfig(JSON.parse(content));
     } catch (error) {
-      out(`${Colors.YELLOW}⚠ Could not parse ${CONFIG_FILE_JSON}: ${String(error)}${Colors.RESET}`);
+      out(
+        `${Colors.YELLOW}⚠ Could not parse ${CODEFAST_CONFIG_JSON}: ${String(error)}${Colors.RESET}`,
+      );
+    }
+  }
+
+  const legacyJs = path.join(rootDir, LEGACY_CONFIG_JS);
+  if (existsSync(legacyJs)) {
+    try {
+      const mod = await import(configImportUrl(legacyJs));
+      return normalizeLoadedConfig(mod.default ?? mod);
+    } catch {
+      out(
+        `${Colors.YELLOW}⚠ Could not load ${LEGACY_CONFIG_JS}. Falling back to .json${Colors.RESET}`,
+      );
+    }
+  }
+
+  const legacyJson = path.join(rootDir, LEGACY_CONFIG_JSON);
+  if (existsSync(legacyJson)) {
+    try {
+      const content = await fs.readFile(legacyJson, "utf-8");
+      return normalizeLoadedConfig(JSON.parse(content));
+    } catch (error) {
+      out(
+        `${Colors.YELLOW}⚠ Could not parse ${LEGACY_CONFIG_JSON}: ${String(error)}${Colors.RESET}`,
+      );
     }
   }
 
@@ -591,7 +639,7 @@ async function findPackages(rootDir: string): Promise<string[]> {
   }
 }
 
-export interface RunGenerateExportsOptions {
+export interface RunMirrorSyncOptions {
   rootDir: string;
   verbose?: boolean;
   noColor?: boolean;
@@ -600,10 +648,10 @@ export interface RunGenerateExportsOptions {
 }
 
 /** @returns Process exit code (0 or 1). */
-export async function runGenerateExports(opts: RunGenerateExportsOptions): Promise<number> {
+export async function runMirrorSync(opts: RunMirrorSyncOptions): Promise<number> {
   configureColors(!!opts.noColor);
 
-  out(`\n${Colors.BOLD}${Colors.CYAN}📦 Generate Package Exports${Colors.RESET}`);
+  out(`\n${Colors.BOLD}${Colors.CYAN}📦 Mirror — package exports${Colors.RESET}`);
   out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 
   const startTime = performance.now();

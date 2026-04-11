@@ -13,7 +13,7 @@ import {
   mergeCnUnconditionalLiteralPoolForTest,
   suggestCnGroups,
   unwrapCnInsideTvCallReplacement,
-} from "#lib/tailwind-cn";
+} from "#lib/arrange";
 
 // ---------------------------------------------------------------------------
 // Test helpers
