@@ -4,25 +4,26 @@ import type { Command } from "commander";
 import {
   analyzeDirectory,
   classifyToken,
-  DEFAULT_CN_TARGET,
+  DEFAULT_ARRANGE_TARGET,
   formatArray,
   formatCnCall,
   printAnalyzeReport,
   runOnTarget,
   suggestCnGroups,
   tokenizeClassString,
-} from "#lib/tailwind-cn";
+} from "#lib/arrange";
 
 function defaultTargetPath(): string {
-  return path.resolve(process.cwd(), DEFAULT_CN_TARGET);
+  return path.resolve(process.cwd(), DEFAULT_ARRANGE_TARGET);
 }
 
-export function registerTailwindCnCommand(program: Command): void {
-  const tw = program
-    .command("tailwind-cn")
+export function registerArrangeCommand(program: Command): void {
+  const arrange = program
+    .command("arrange")
     .description("Analyze and regroup Tailwind classes in cn() / tv() calls (Tailwind v4)");
 
-  tw.command("analyze")
+  arrange
+    .command("analyze")
     .description("Report long strings, nested cn in tv(), and related findings")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .action((target: string | undefined) => {
@@ -35,7 +36,8 @@ export function registerTailwindCnCommand(program: Command): void {
       printAnalyzeReport(resolved, analyzeDirectory(resolved));
     });
 
-  tw.command("preview")
+  arrange
+    .command("preview")
     .description("Dry-run: print suggested replacements without writing files")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .option("--with-classname", "Append className as final cn() argument", false)
@@ -49,7 +51,8 @@ export function registerTailwindCnCommand(program: Command): void {
       });
     });
 
-  tw.command("apply")
+  arrange
+    .command("apply")
     .description("Apply grouping and cn-in-tv unwrap edits to files")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .option("--with-classname", "Append className as final cn() argument", false)
@@ -63,7 +66,8 @@ export function registerTailwindCnCommand(program: Command): void {
       });
     });
 
-  tw.command("group")
+  arrange
+    .command("group")
     .description("Try grouping on a pasted class string (stdout: cn(...) or tv array with --tv)")
     .argument("[tokens...]", "Class tokens (quote a single string if it contains spaces)")
     .option("--tv", "Emit tv()-style array instead of cn() call", false)
@@ -72,7 +76,7 @@ export function registerTailwindCnCommand(program: Command): void {
       const inlineClasses = tokens.join(" ").trim();
       if (!inlineClasses) {
         process.stderr.write(
-          'Cần truyền chuỗi class. Ví dụ: codefast tailwind-cn group "flex gap-2 text-sm rounded-md"\n',
+          'Cần truyền chuỗi class. Ví dụ: codefast arrange group "flex gap-2 text-sm rounded-md"\n',
         );
         process.exitCode = 1;
         return;

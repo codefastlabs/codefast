@@ -3,8 +3,8 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { registerExportsCommand } from "#commands/exports";
-import { registerTailwindCnCommand } from "#commands/tailwind-cn";
+import { registerArrangeCommand } from "#commands/arrange";
+import { registerMirrorCommand } from "#commands/mirror";
 
 function readVersion(): string {
   const dir = path.dirname(fileURLToPath(import.meta.url));
@@ -22,8 +22,8 @@ export function createProgram(): Command {
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 
-  registerExportsCommand(program);
-  registerTailwindCnCommand(program);
+  registerMirrorCommand(program);
+  registerArrangeCommand(program);
 
   return program;
 }

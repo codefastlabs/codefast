@@ -4,9 +4,9 @@ import {
   groupFilesByModule,
   normalizePath,
   toExportPath,
-} from "#lib/generate-exports";
+} from "#lib/mirror";
 
-describe("generate-exports pure functions", () => {
+describe("mirror pure functions", () => {
   describe("normalizePath", () => {
     it("converts backslashes to forward slashes", () => {
       expect(normalizePath("src\\components\\index.ts")).toBe("src/components/index.ts");
