@@ -1,7 +1,7 @@
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 import { buttonVariants } from "#components/button";

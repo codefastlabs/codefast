@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { tv } from "#utils/tv";
+import { tv } from "#lib/utils";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 
 /* -----------------------------------------------------------------------------

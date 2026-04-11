@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { cn, tv } from "#utils/tv";
+import { cn, tv } from "#lib/utils";
 import { useMemo } from "react";
 
 import { Label } from "#components/label";

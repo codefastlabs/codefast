@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";

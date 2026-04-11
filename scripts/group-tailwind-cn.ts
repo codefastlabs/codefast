@@ -847,18 +847,17 @@ type TailwindClassLiteral = ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
 // which could produce false positives (e.g. a local `const cn = …` that is
 // not the class-name utility). The helpers below resolve the identifier back
 // to its import binding and verify it comes from a known tailwind-variants
-// package, the project's internal #utils/tv alias, or at minimum is imported
+// package, the project's internal #lib/utils alias, or at minimum is imported
 // (not locally declared) — which is a strong signal it is the right utility.
 // ---------------------------------------------------------------------------
 
 /** Known module specifiers that export `cn` / `tv`. */
 const KNOWN_CN_TV_MODULES = new Set([
-  "tailwind-variants",
   "@codefast/tailwind-variants",
   "clsx",
   "class-variance-authority",
-  "#utils/tv",
-  "#utils/cn",
+  "tailwind-variants",
+  "#lib/utils",
   "~/lib/utils",
   "@/lib/utils",
 ]);
@@ -1828,7 +1827,7 @@ function sourceFileImportsCn(sf: ts.SourceFile): boolean {
 function cnModuleSpecifierForFile(filePath: string, override?: string): string {
   if (override) return override;
   const norm = path.normalize(filePath).replace(/\\/g, "/");
-  if (norm.includes("/packages/ui/")) return "#utils/tv";
+  if (norm.includes("/packages/ui/")) return "#lib/utils";
   return "@codefast/tailwind-variants";
 }
 

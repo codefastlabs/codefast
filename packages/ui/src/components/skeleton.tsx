@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Skeleton

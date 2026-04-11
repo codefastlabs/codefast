@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
-import { tv } from "#utils/tv";
+import { tv } from "#lib/utils";
 import { useCallback, useMemo } from "react";
 
 import { useAnimatedValue } from "#hooks/use-animated-value";

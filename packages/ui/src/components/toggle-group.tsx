@@ -3,7 +3,7 @@
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { createToggleGroupScope } from "@radix-ui/react-toggle-group";

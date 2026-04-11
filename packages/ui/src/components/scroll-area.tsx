@@ -1,10 +1,10 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#utils/tv";
+import { cn, tv } from "#lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 

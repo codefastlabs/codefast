@@ -6,7 +6,7 @@ alwaysApply: true
 # Tailwind class grouping (`cn` / `tv`)
 
 Whenever you add or edit **Tailwind** classes in this repo — via **`cn()`** (imported from
-`@codefast/ui/utils` within apps, or `#utils/tv` within the `ui` package) or
+`@codefast/ui/lib` within apps, or `#lib/utils` within the `ui` package) or
 **`tailwind-variants` (`tv`)** — **group by concern**: one string argument (or one array item)
 per logical role.
 

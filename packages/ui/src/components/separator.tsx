@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#utils/tv";
+import { cn, tv } from "#lib/utils";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 
 /* -----------------------------------------------------------------------------

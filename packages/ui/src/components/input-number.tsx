@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 import { buttonVariants } from "#components/button";
