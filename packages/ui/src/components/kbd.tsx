@@ -12,9 +12,13 @@ function Kbd({ className, ...props }: KbdProps): JSX.Element {
   return (
     <kbd
       className={cn(
-        "pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-md bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none",
+        "inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1",
+        "px-1",
+        "rounded-md bg-muted in-data-[slot=tooltip-content]:bg-background/20",
+        "font-sans text-xs font-medium text-muted-foreground in-data-[slot=tooltip-content]:text-background",
+        "pointer-events-none select-none",
+        "dark:in-data-[slot=tooltip-content]:bg-background/10",
         "[&_svg:not([class*='size-'])]:size-3",
-        "in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background dark:in-data-[slot=tooltip-content]:bg-background/10",
         className,
       )}
       data-slot="kbd"

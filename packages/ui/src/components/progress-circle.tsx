@@ -17,7 +17,7 @@ const progressCircleVariants = tv({
   defaultVariants: { size: "md", thickness: "regular", variant: "default" },
   slots: {
     indicator: "origin-center",
-    label: "absolute inset-0 flex items-center justify-center text-xs font-medium",
+    label: ["absolute flex items-center justify-center", "inset-0", "text-xs font-medium"],
     root: "relative inline-flex items-center justify-center",
     svg: "size-full",
     track: "origin-center",

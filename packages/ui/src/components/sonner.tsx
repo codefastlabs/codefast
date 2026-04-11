@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "#lib/utils";
 import type { CSSProperties, JSX } from "react";
 import type { ToasterProps as SonnerToasterProps } from "sonner";
 
@@ -17,7 +18,7 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
 
   return (
     <Sonner
-      className="toaster group"
+      className={cn("group", "toaster")}
       style={
         {
           "--normal-bg": "var(--popover)",

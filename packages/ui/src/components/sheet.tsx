@@ -14,18 +14,42 @@ import { buttonVariants } from "#components/button";
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-ui data-open:animate-in data-open:animation-duration-500 data-closed:animate-out data-closed:animation-duration-500",
+  base: [
+    "fixed z-50 flex flex-col overflow-auto",
+    "bg-background shadow-lg",
+    "ease-ui",
+    "data-open:animate-in data-open:animation-duration-500",
+    "data-closed:animate-out data-closed:animation-duration-500",
+  ],
   defaultVariants: {
     side: "right",
   },
   variants: {
     side: {
-      bottom:
-        "inset-x-0 bottom-0 max-h-[80vh] border-t data-open:slide-in-from-bottom data-closed:slide-out-to-bottom",
-      left: "inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm data-open:slide-in-from-left data-closed:slide-out-to-left",
-      right:
-        "inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm data-open:slide-in-from-right data-closed:slide-out-to-right",
-      top: "inset-x-0 top-0 max-h-[80vh] border-b data-open:slide-in-from-top data-closed:slide-out-to-top",
+      bottom: [
+        "inset-x-0 bottom-0 max-h-[80vh]",
+        "border-t",
+        "data-open:slide-in-from-bottom",
+        "data-closed:slide-out-to-bottom",
+      ],
+      left: [
+        "inset-y-0 left-0 h-full w-3/4 border-r",
+        "sm:max-w-sm",
+        "data-open:slide-in-from-left",
+        "data-closed:slide-out-to-left",
+      ],
+      right: [
+        "inset-y-0 right-0 h-full w-3/4 border-l",
+        "sm:max-w-sm",
+        "data-open:slide-in-from-right",
+        "data-closed:slide-out-to-right",
+      ],
+      top: [
+        "inset-x-0 top-0 max-h-[80vh]",
+        "border-b",
+        "data-open:slide-in-from-top",
+        "data-closed:slide-out-to-top",
+      ],
     },
   },
 });
@@ -78,7 +102,12 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-ui data-open:animate-in data-open:animation-duration-500 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-500 data-closed:fade-out-0",
+          "fixed z-50",
+          "inset-0",
+          "bg-black/50",
+          "ease-ui",
+          "data-open:animate-in data-open:animation-duration-500 data-open:fade-in-0",
+          "data-closed:animate-out data-closed:animation-duration-500 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"
@@ -115,7 +144,10 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center sm:text-left",
+        "flex shrink-0 flex-col gap-1.5",
+        "px-6 pt-6 pb-4",
+        "text-center",
+        "sm:text-left",
         className,
       )}
       data-slot="sheet-header"
@@ -132,7 +164,11 @@ type SheetBodyProps = ComponentProps<"div">;
 
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
   return (
-    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="sheet-body" {...props} />
+    <main
+      className={cn("overflow-auto", "px-6 py-2", className)}
+      data-slot="sheet-body"
+      {...props}
+    />
   );
 }
 
@@ -146,7 +182,9 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse gap-2",
+        "px-6 pt-4 pb-6",
+        "sm:flex-row sm:justify-end",
         className,
       )}
       data-slot="sheet-footer"
