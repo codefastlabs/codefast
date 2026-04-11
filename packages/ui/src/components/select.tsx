@@ -62,7 +62,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon asChild className="size-4 shrink-0 opacity-50">
+      <SelectPrimitive.Icon asChild className={cn("size-4 shrink-0", "opacity-50")}>
         <ChevronDownIcon />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
@@ -78,7 +78,7 @@ type SelectScrollUpButtonProps = ComponentProps<typeof SelectPrimitive.ScrollUpB
 function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollUpButton
-      className={cn("flex items-center justify-center py-1 text-muted-foreground", className)}
+      className={cn("flex items-center justify-center", "py-1", "text-muted-foreground", className)}
       data-slot="select-scroll-up-button"
       {...props}
     >
@@ -96,7 +96,7 @@ type SelectScrollDownButtonProps = ComponentProps<typeof SelectPrimitive.ScrollD
 function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollDownButton
-      className={cn("flex items-center justify-center py-1 text-muted-foreground", className)}
+      className={cn("flex items-center justify-center", "py-1", "text-muted-foreground", className)}
       data-slot="select-scroll-down-button"
       {...props}
     >
@@ -121,7 +121,13 @@ function SelectContent({
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          "relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg ease-ui data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          "relative z-50 max-h-(--radix-select-content-available-height) min-w-32 overflow-hidden",
+          "rounded-lg border bg-popover shadow-lg",
+          "text-popover-foreground",
+          "ease-ui",
+          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2",
+          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          "origin-(--radix-select-content-transform-origin)",
           position === "popper" &&
             "data-side-top:-translate-y-1 data-side-right:translate-x-1 data-side-bottom:translate-y-1 data-side-left:-translate-x-1",
           className,
@@ -155,7 +161,7 @@ type SelectLabelProps = ComponentProps<typeof SelectPrimitive.Label>;
 function SelectLabel({ className, ...props }: SelectLabelProps): JSX.Element {
   return (
     <SelectPrimitive.Label
-      className={cn("flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold", className)}
+      className={cn("flex items-center gap-x-2", "px-2 py-1.5", "text-sm font-semibold", className)}
       data-slot="select-label"
       {...props}
     />
@@ -172,13 +178,21 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
   return (
     <SelectPrimitive.Item
       className={cn(
-        "relative flex w-full cursor-default items-center rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex w-full items-center",
+        "py-1.5 pr-8 pl-2",
+        "rounded-sm",
+        "text-sm",
+        "cursor-default outline-hidden select-none",
+        "focus:bg-accent focus:text-accent-foreground",
+        "aria-disabled:opacity-50",
+        "*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
         className,
       )}
       data-slot="select-item"
       {...props}
     >
-      <span className="absolute right-2 flex items-center justify-center">
+      <span className={cn("absolute flex items-center justify-center", "right-2")}>
         <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>
@@ -197,7 +211,7 @@ type SelectSeparatorProps = ComponentProps<typeof SelectPrimitive.Separator>;
 function SelectSeparator({ className, ...props }: SelectSeparatorProps): JSX.Element {
   return (
     <SelectPrimitive.Separator
-      className={cn("mx-2 my-1 h-px bg-border", className)}
+      className={cn("h-px", "mx-2 my-1", "bg-border", className)}
       data-slot="select-separator"
       {...props}
     />

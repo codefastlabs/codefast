@@ -22,14 +22,16 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
 
   const spinner = (
     <span
-      className={cn("relative flex size-4 items-center justify-center opacity-60", className)}
+      className={cn("relative flex size-4 items-center justify-center", "opacity-60", className)}
       {...props}
     >
       {Array.from({ length: SPINNER_COUNT }, (_, index) => (
         <span
           key={index}
           className={cn(
-            "absolute h-full rotate-(--spinner-rotate) before:block before:h-1/3 before:w-full before:animate-out before:rounded-full before:bg-current before:delay-(--spinner-delay) before:animation-duration-(--spinner-duration) before:fade-out-25 before:repeat-infinite",
+            "absolute h-full",
+            "rotate-(--spinner-rotate)",
+            "before:block before:h-1/3 before:w-full before:animate-out before:rounded-full before:bg-current before:delay-(--spinner-delay) before:animation-duration-(--spinner-duration) before:fade-out-25 before:repeat-infinite",
           )}
           style={
             {
@@ -50,11 +52,11 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
 
   return (
     <span className="relative">
-      <span aria-hidden className="invisible contents">
+      <span aria-hidden className={cn("contents", "invisible")}>
         {children}
       </span>
       <VisuallyHidden>{children}</VisuallyHidden>
-      <span className="absolute inset-0 flex items-center justify-center">{spinner}</span>
+      <span className={cn("absolute flex items-center justify-center", "inset-0")}>{spinner}</span>
     </span>
   );
 }

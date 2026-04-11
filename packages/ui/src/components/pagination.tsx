@@ -16,7 +16,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
   return (
     <nav
       aria-label="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
+      className={cn("flex w-full justify-center", "mx-auto", className)}
       data-slot="pagination"
       {...props}
     />
