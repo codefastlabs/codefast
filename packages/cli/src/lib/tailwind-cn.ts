@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 /**
  * Phân tích và gợi ý phân nhóm chuỗi Tailwind trong `cn(...)` / `tv(...)`.
  *
@@ -15,16 +14,16 @@
  *   - Utilities mới: inset-shadow, field-sizing, mask-*, wrap-*, text-shadow-*, scheme-*, …
  *   - Arbitrary variants [&...] mọi dạng
  *
- * Usage:
- *   pnpm exec tsx scripts/group-tailwind-cn.ts analyze [dir]
- *   pnpm exec tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border px-3"
- *   pnpm exec tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border" --tv
+ * Usage (repo root):
+ *   pnpm cli:tailwind-cn:analyze [dir|file]
+ *   pnpm exec codefast tailwind-cn analyze [dir|file]
+ *   pnpm exec codefast tailwind-cn group flex gap-2 rounded-md border px-3
+ *   pnpm exec codefast tailwind-cn group -- … --tv
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
 function out(line: string): void {
@@ -252,7 +251,7 @@ function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function tokenizeClassString(s: string): string[] {
+export function tokenizeClassString(s: string): string[] {
   return s.trim().split(/\s+/).filter(Boolean);
 }
 
@@ -263,7 +262,7 @@ function tokenizeClassString(s: string): string[] {
  * - order of `cn` / array arguments
  * - order of tokens **within** each chunk (oxfmt / oxlint may reorder inside a string)
  *
- * Used so `tailwind:cn-preview` stays quiet after `cn-apply` + `check:fix` when only
+ * Used so `cli:tailwind-cn:preview` stays quiet after `cli:tailwind-cn:apply` + `check:fix` when only
  * formatting or per-string token order changed.
  */
 export function areCnTailwindPartitionsEquivalent(
@@ -359,7 +358,7 @@ function isStateToken(token: string): boolean {
 // classifyToken — full Tailwind v4 coverage
 // ---------------------------------------------------------------------------
 
-function classifyToken(token: string): Bucket {
+export function classifyToken(token: string): Bucket {
   // ── Arbitrary class / arbitrary variant ────────────────────────────────
   if (token.startsWith("[") || token.includes("[&") || token.includes("[.")) {
     return "arbitrary";
@@ -1362,7 +1361,7 @@ function analyzeCnCall(sf: ts.SourceFile, call: ts.CallExpression, report: Analy
   }
 }
 
-function analyzeDirectory(target: string): AnalyzeReport {
+export function analyzeDirectory(target: string): AnalyzeReport {
   const report: AnalyzeReport = {
     files: 0,
     cnCallExpressions: 0,
@@ -1450,7 +1449,7 @@ function analyzeDirectory(target: string): AnalyzeReport {
   return report;
 }
 
-function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
+export function printAnalyzeReport(dir: string, r: AnalyzeReport): void {
   out(`Đường dẫn: ${path.resolve(dir)}`);
   out(`File .ts/.tsx: ${r.files}`);
   out(`Số lần gọi cn(...): ${r.cnCallExpressions}`);
@@ -2184,115 +2183,9 @@ export function groupFile(
   return { filePath, totalFound: changed + cnInTvZeroArgCount, changed };
 }
 
-// ---------------------------------------------------------------------------
-// CLI
-// ---------------------------------------------------------------------------
+export const DEFAULT_CN_TARGET = "packages/ui/src/components";
 
-const DEFAULT_TARGET = "packages/ui/src/components";
-
-/** Mảng chuỗi (không dùng template literal) để IDE như WebStorm không inject JSX vào nội dung help. */
-const HELP = [
-  "Gợi ý tách chuỗi class Tailwind (v4): đối số trong cn(...)/tv(...), literal tĩnh JSX className, và bỏ cn lồng trong tv (→ chuỗi / mảng).",
-  "",
-  "Cách làm đề xuất: analyze → preview → apply (xem trước rồi mới ghi file).",
-  "",
-  "Lưu ý: tách nhóm sắp xếp lại thứ tự class theo bucket (layout, surface, …). Mọi token vẫn giữ nhưng thứ tự giữa bucket có thể đổi — kiểm tra UI nếu có utility xung đột (cascade).",
-  "",
-  "Lệnh:",
-  "  analyze [dir|file]",
-  "      Liệt kê: chuỗi dài, cn lồng trong tv (nên đổi sang chuỗi/mảng), v.v. Mặc định: packages/ui/src/components",
-  "",
-  "  preview [dir|file] [--with-classname]",
-  "      Dry-run: in gợi ý thay thế từng vị trí, không ghi file. Chạy trước apply để xem trước.",
-  "",
-  "  apply [dir|file] [--with-classname]",
-  "      Áp dụng: (1) cn(...) trong tv({...}) → một chuỗi nếu 1 đối số, mảng nếu ≥2; (2) tách nhóm class dài trong cn/tv/JSX; JSX thêm import cn nếu thiếu.",
-  "      Mặc định: packages/ui/src/components",
-  "",
-  '  group "<classes>" [--tv]',
-  "      Thử nhanh trên một chuỗi class (copy-paste kết quả). Mặc định in cn(...); --tv in [...] cho tv().",
-  "",
-  "Tùy chọn:",
-  "  --with-classname   Thêm `className` làm đối số cuối trong cn(...). Chỉ dùng khi identifier `className` thật sự tồn tại trong scope component; nếu không, TypeScript sẽ báo lỗi.",
-  "  --cn-import=<mod>  Ghi đè module specifier dùng khi thêm import cn (mặc định: tự suy theo đường dẫn file).",
-  "                     Ví dụ: --cn-import=@/lib/utils",
-  "",
-  "pnpm (từ root repo):",
-  "  pnpm tailwind:cn-analyze [dir|file]",
-  "  pnpm tailwind:cn-preview [dir|file] [--with-classname]",
-  "  pnpm tailwind:cn-apply [dir|file] [--with-classname]",
-  "",
-  "tsx trực tiếp:",
-  "  pnpm exec tsx scripts/group-tailwind-cn.ts <lệnh> ...",
-  "",
-  "Ví dụ:",
-  "  pnpm tailwind:cn-analyze",
-  "  pnpm tailwind:cn-analyze packages/ui/src/components/calendar.tsx",
-  "  pnpm tailwind:cn-preview packages/ui/src/components",
-  "  pnpm tailwind:cn-apply packages/ui/src/components/button.tsx",
-  '  pnpm exec tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border px-3 text-sm font-medium"',
-  '  pnpm exec tsx scripts/group-tailwind-cn.ts group "flex gap-2 rounded-md border" --tv',
-].join("\n");
-
-function parseArgs(argv: string[]): {
-  cmd: string;
-  target: string | undefined;
-  withClassName: boolean;
-  tv: boolean;
-  inlineClasses: string | undefined;
-  cnImport: string | undefined;
-} {
-  // Extract --cn-import=<value> or --cn-import <value> before flag-set construction.
-  let cnImport: string | undefined;
-  const filteredArgv: string[] = [];
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i]!;
-    if (a.startsWith("--cn-import=")) {
-      cnImport = a.slice("--cn-import=".length);
-    } else if (a === "--cn-import") {
-      cnImport = argv[i + 1];
-      i++;
-    } else {
-      filteredArgv.push(a);
-    }
-  }
-
-  const flags = new Set(filteredArgv.filter((a) => a.startsWith("--")));
-  const positional = filteredArgv.filter((a) => !a.startsWith("--"));
-
-  const cmd = positional[0] ?? "";
-  const withClassName = flags.has("--with-classname");
-  const tv = flags.has("--tv");
-
-  // Second positional is either a path or an inline class string.
-  //
-  // Robust heuristic — avoids false positives from Tailwind v4 container
-  // query syntax like "@min-[600px]/sidebar:flex" which contains "/".
-  // A value is treated as a path only when it:
-  //   • starts with a path separator or leading dot (./  ../  /  C:\  \)
-  //   • OR ends with a known TS extension (.ts / .tsx)
-  //   • OR exists verbatim on disk (fallback for bare relative paths like "src")
-  // Plain class strings never satisfy any of these conditions.
-  const second = positional.slice(1).join(" ");
-  const looksLikePath =
-    second.length > 0 &&
-    (/^\.{0,2}[/\\]/.test(second) ||
-      /^[A-Za-z]:[/\\]/.test(second) ||
-      second.endsWith(".ts") ||
-      second.endsWith(".tsx") ||
-      fs.existsSync(second));
-
-  return {
-    cmd,
-    target: looksLikePath ? path.resolve(second) : undefined,
-    inlineClasses: looksLikePath ? undefined : second || undefined,
-    withClassName,
-    tv,
-    cnImport,
-  };
-}
-
-function runOnTarget(
+export function runOnTarget(
   target: string,
   options: { write: boolean; withClassName: boolean; cnImport?: string },
 ): void {
@@ -2316,7 +2209,9 @@ function runOnTarget(
   if (options.write) {
     out(`Đã áp dụng: ${totalChanged} vị trí được cập nhật.`);
   } else {
-    out(`(Chạy "apply" để ghi đè, hoặc "pnpm tailwind:cn-apply" cho toàn bộ project)`);
+    out(
+      `(Chạy "apply" để ghi đè, hoặc "pnpm cli:tailwind-cn:apply" / "pnpm exec codefast tailwind-cn apply")`,
+    );
   }
 
   const showCascadeHint = options.write ? totalChanged > 0 : totalFound > 0;
@@ -2325,82 +2220,4 @@ function runOnTarget(
       "Lưu ý: thứ tự class có thể đổi giữa các nhóm concern — smoke-test UI nếu có xung đột cascade.",
     );
   }
-}
-
-function main(): void {
-  const argv = process.argv.slice(2);
-
-  if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") {
-    out(HELP);
-    process.exit(0);
-  }
-
-  const args = parseArgs(argv);
-
-  // ── analyze [dir|file] ──────────────────────────────────────────────────
-  if (args.cmd === "analyze") {
-    const target = args.target ?? path.resolve(DEFAULT_TARGET);
-    if (!fs.existsSync(target)) {
-      err(`Không tìm thấy: ${target}`);
-      process.exit(1);
-    }
-    printAnalyzeReport(target, analyzeDirectory(target));
-    return;
-  }
-
-  // ── apply [dir|file] — write mode (used by pnpm tailwind:cn-apply) ──────
-  if (args.cmd === "apply") {
-    const target = args.target ?? path.resolve(DEFAULT_TARGET);
-    runOnTarget(target, {
-      write: true,
-      withClassName: args.withClassName,
-      cnImport: args.cnImport,
-    });
-    return;
-  }
-
-  // ── preview [dir|file] — dry-run of apply ───────────────────────────────
-  if (args.cmd === "preview") {
-    const target = args.target ?? path.resolve(DEFAULT_TARGET);
-    runOnTarget(target, {
-      write: false,
-      withClassName: args.withClassName,
-      cnImport: args.cnImport,
-    });
-    return;
-  }
-
-  // ── group "<classes>" — quick inline test ───────────────────────────────
-  if (args.cmd === "group") {
-    if (!args.inlineClasses) {
-      err('Cần truyền chuỗi class. Ví dụ: group "flex gap-2 text-sm rounded-md"');
-      process.exit(1);
-    }
-    // process.exit() is typed as `never` but TypeScript doesn't narrow through
-    // it in all compiler configurations. The non-null assertion is safe here
-    // because the branch above unconditionally exits when inlineClasses is falsy.
-    const groups = suggestCnGroups(args.inlineClasses!);
-    const result = args.tv
-      ? formatArray(groups)
-      : formatCnCall(groups, { trailingClassName: args.withClassName });
-    out(result);
-    const bucketSummary = groups.map((g) => {
-      const uniq = new Set(tokenizeClassString(g).map(classifyToken));
-      return uniq.size === 1 ? [...uniq][0] : `mixed:${[...uniq].sort().join("+")}`;
-    });
-    out(`\n// Buckets: ${JSON.stringify(bucketSummary)}`);
-    return;
-  }
-
-  err(`Lệnh không hợp lệ: "${args.cmd}". Chạy --help để xem hướng dẫn.`);
-  process.exit(1);
-}
-
-// ---------------------------------------------------------------------------
-// Entry point guard — prevents main() from running when this module is
-// imported by tests or other scripts (e.g. for suggestCnGroups unit tests).
-// ---------------------------------------------------------------------------
-const _scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] === _scriptPath) {
-  main();
 }

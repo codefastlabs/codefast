@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 /**
  * Automatically generate package.json exports from the dist directory.
  *
@@ -6,8 +5,9 @@
  * and generates the appropriate export paths for both ESM and CommonJS formats.
  *
  * Usage:
- *   pnpm run generate:exports         # Process all packages
- *   pnpm run generate:exports [path]  # Process single package
+ *   pnpm cli:exports                        # Process all packages (repo root)
+ *   pnpm exec codefast exports              # Same via binary
+ *   pnpm exec codefast exports [path]       # Single package path
  *
  * ## Algorithm Overview
  *
@@ -27,12 +27,6 @@ import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
-import util from "node:util";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT_DIR = path.resolve(__dirname, "..");
 
 function out(line: string): void {
   process.stdout.write(`${line}\n`);
@@ -66,8 +60,10 @@ const Colors = {
   },
 };
 
-if (!process.stdout.isTTY || process.argv.includes("--no-color")) {
-  Colors.disable();
+function configureColors(noColor: boolean): void {
+  if (!process.stdout.isTTY || noColor) {
+    Colors.disable();
+  }
 }
 
 // ── Constants & Utilities ────────────────────────────────────────────────────
@@ -421,6 +417,7 @@ async function generateExports(
 }
 
 async function processPackage(
+  rootDir: string,
   packagePathStr: string,
   index: number,
   total: number,
@@ -428,10 +425,10 @@ async function processPackage(
   args: Record<string, unknown>,
   stats: GlobalStats,
 ) {
-  const packageDir = path.resolve(ROOT_DIR, packagePathStr);
+  const packageDir = path.resolve(rootDir, packagePathStr);
   const distDir = path.join(packageDir, DIST_DIR);
   const packageJsonPath = path.join(packageDir, PACKAGE_JSON);
-  const relativePath = normalizePath(path.relative(ROOT_DIR, packageDir));
+  const relativePath = normalizePath(path.relative(rootDir, packageDir));
   const pkgName = path.basename(packageDir);
 
   const pkgStats: PackageStats = {
@@ -535,37 +532,38 @@ async function processPackage(
   return pkgStats;
 }
 
-async function findPackages(): Promise<string[]> {
-  const packagesDir = path.join(ROOT_DIR, "packages");
+async function findPackages(rootDir: string): Promise<string[]> {
+  const packagesDir = path.join(rootDir, "packages");
   try {
     const files = await fs.readdir(packagesDir, { withFileTypes: true });
     return files
       .filter((f) => f.isDirectory())
-      .map((f) => normalizePath(path.relative(ROOT_DIR, path.join(packagesDir, f.name))));
+      .map((f) => normalizePath(path.relative(rootDir, path.join(packagesDir, f.name))));
   } catch {
     return [];
   }
 }
 
-// ── Application Entry ────────────────────────────────────────────────────────
+export interface RunGenerateExportsOptions {
+  rootDir: string;
+  verbose?: boolean;
+  noColor?: boolean;
+  /** Relative to `rootDir`, e.g. `packages/ui` */
+  packageFilter?: string;
+}
 
-async function main() {
-  const { values, positionals } = util.parseArgs({
-    options: {
-      verbose: { type: "boolean", short: "v" },
-      "no-color": { type: "boolean" },
-    },
-    allowPositionals: true,
-  });
-
-  if (values["no-color"]) Colors.disable();
+/** @returns Process exit code (0 or 1). */
+export async function runGenerateExports(opts: RunGenerateExportsOptions): Promise<number> {
+  configureColors(!!opts.noColor);
 
   out(`\n${Colors.BOLD}${Colors.CYAN}📦 Generate Package Exports${Colors.RESET}`);
   out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 
   const startTime = performance.now();
+  const values = { verbose: !!opts.verbose, "no-color": !!opts.noColor };
+
   try {
-    const config = await loadConfig(ROOT_DIR);
+    const config = await loadConfig(opts.rootDir);
     const stats: GlobalStats = {
       packagesFound: 0,
       packagesProcessed: 0,
@@ -578,23 +576,24 @@ async function main() {
     };
 
     let targetPackages: string[] = [];
-    if (positionals.length > 0) {
-      targetPackages = [positionals[0] as string];
+    if (opts.packageFilter) {
+      targetPackages = [opts.packageFilter];
       out(`${Colors.DIM}Processing single package...${Colors.RESET}\n`);
     } else {
-      targetPackages = await findPackages();
+      targetPackages = await findPackages(opts.rootDir);
       out(`${Colors.DIM}Scanning for packages with dist/ directory...${Colors.RESET}\n`);
     }
 
     stats.packagesFound = targetPackages.length;
     if (targetPackages.length === 0) {
       out(`${Colors.YELLOW}⚠ No packages found${Colors.RESET}`);
-      return;
+      return 0;
     }
 
     let i = 1;
     for (const pkgPath of targetPackages) {
       const pkgStats = await processPackage(
+        opts.rootDir,
         pkgPath,
         i++,
         targetPackages.length,
@@ -638,14 +637,10 @@ async function main() {
 
     out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 
-    if (stats.packagesErrored > 0) {
-      process.exitCode = 1;
-    }
+    return stats.packagesErrored > 0 ? 1 : 0;
   } catch (e: unknown) {
     out(`${Colors.YELLOW}Fatal error: ${String(e)}${Colors.RESET}`);
     err(e instanceof Error && e.stack ? e.stack : String(e));
-    process.exitCode = 1;
+    return 1;
   }
 }
-
-void main();

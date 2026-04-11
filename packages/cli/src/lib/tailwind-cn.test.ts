@@ -1,8 +1,6 @@
-import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { describe, it } from "node:test";
 import ts from "typescript";
 import {
   areCnTailwindPartitionsEquivalent,
@@ -15,7 +13,7 @@ import {
   mergeCnUnconditionalLiteralPoolForTest,
   suggestCnGroups,
   unwrapCnInsideTvCallReplacement,
-} from "./group-tailwind-cn.ts";
+} from "#lib/tailwind-cn";
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -24,20 +22,6 @@ import {
 /** Token multiset: order-independent (algorithm may reorder within concerns). */
 function sortedTokens(classString: string): string[] {
   return classString.trim().split(/\s+/).filter(Boolean).sort();
-}
-
-function assertPreservesAllTokens(input: string, groups: string[]): void {
-  assert.deepStrictEqual(
-    sortedTokens(input),
-    sortedTokens(groups.join(" ")),
-    "every input token must appear exactly once in the grouped output",
-  );
-}
-
-function assertSuggest(input: string, expected: string[], message?: string): void {
-  const got = suggestCnGroups(input);
-  assert.deepStrictEqual(got, expected, message);
-  assertPreservesAllTokens(input, got);
 }
 
 // ---------------------------------------------------------------------------
@@ -81,9 +65,9 @@ const COMMAND_MENU_ITEM_GROUPS = [
 describe("suggestCnGroups", () => {
   describe("empty input", () => {
     it("returns [] for empty or whitespace-only strings", () => {
-      assert.deepStrictEqual(suggestCnGroups(""), []);
-      assert.deepStrictEqual(suggestCnGroups("   "), []);
-      assert.deepStrictEqual(suggestCnGroups("\n\t"), []);
+      expect(suggestCnGroups("")).toEqual([]);
+      expect(suggestCnGroups("   ")).toEqual([]);
+      expect(suggestCnGroups("\n\t")).toEqual([]);
     });
   });
 
@@ -182,15 +166,23 @@ describe("suggestCnGroups", () => {
     ];
 
     for (const row of table) {
-      it(row.title, () => assertSuggest(row.input, row.expected));
+      it(`[golden] ${row.title}`, () => {
+        const got = suggestCnGroups(row.input);
+        expect(got).toEqual(row.expected);
+        expect(sortedTokens(row.input)).toEqual(sortedTokens(got.join(" ")));
+      });
     }
 
     it("command menu item: stable multi-concern split", () => {
-      assertSuggest(COMMAND_MENU_ITEM_INPUT, [...COMMAND_MENU_ITEM_GROUPS]);
+      const got = suggestCnGroups(COMMAND_MENU_ITEM_INPUT);
+      expect(got).toEqual([...COMMAND_MENU_ITEM_GROUPS]);
+      expect(sortedTokens(COMMAND_MENU_ITEM_INPUT)).toEqual(sortedTokens(got.join(" ")));
     });
 
     it("checkbox group item: many state subgroups (golden partition)", () => {
-      assertSuggest(CHECKBOX_GROUP_ITEM_INPUT, [...CHECKBOX_GROUP_ITEM_GROUPS]);
+      const got = suggestCnGroups(CHECKBOX_GROUP_ITEM_INPUT);
+      expect(got).toEqual([...CHECKBOX_GROUP_ITEM_GROUPS]);
+      expect(sortedTokens(CHECKBOX_GROUP_ITEM_INPUT)).toEqual(sortedTokens(got.join(" ")));
     });
   });
 
@@ -199,7 +191,7 @@ describe("suggestCnGroups", () => {
       const input =
         "md:flex p-4 bg-card text-muted-foreground hover:bg-accent aria-invalid:ring-2 [&_svg]:size-4";
       const g = suggestCnGroups(input);
-      assertPreservesAllTokens(input, g);
+      expect(sortedTokens(input)).toEqual(sortedTokens(g.join(" ")));
     });
   });
 
@@ -253,53 +245,54 @@ describe("suggestCnGroups", () => {
     ];
 
     for (const row of table) {
-      it(row.title, () => assertSuggest(row.input, row.expected));
+      it(`[golden] ${row.title}`, () => {
+        const got = suggestCnGroups(row.input);
+        expect(got).toEqual(row.expected);
+        expect(sortedTokens(row.input)).toEqual(sortedTokens(got.join(" ")));
+      });
     }
   });
 });
 
 describe("areCnTailwindPartitionsEquivalent (idempotent vs formatter token order)", () => {
   it("returns true when args are reordered but each string holds the same token multiset", () => {
-    assert.strictEqual(areCnTailwindPartitionsEquivalent(["b a", "d c"], ["a b", "c d"]), true);
+    expect(areCnTailwindPartitionsEquivalent(["b a", "d c"], ["a b", "c d"])).toBe(true);
   });
 
   it("returns true when cn arg order is permuted but partitions match", () => {
-    assert.strictEqual(areCnTailwindPartitionsEquivalent(["c d", "a b"], ["a b", "c d"]), true);
+    expect(areCnTailwindPartitionsEquivalent(["c d", "a b"], ["a b", "c d"])).toBe(true);
   });
 
   it("returns false when partition of tokens across chunks differs", () => {
-    assert.strictEqual(areCnTailwindPartitionsEquivalent(["a", "b c"], ["a b", "c"]), false);
+    expect(areCnTailwindPartitionsEquivalent(["a", "b c"], ["a b", "c"])).toBe(false);
   });
 });
 
 describe("formatCnArguments", () => {
   it("renders indented string args without wrapping cn()", () => {
-    assert.strictEqual(
-      formatCnArguments(["flex gap-2", "text-sm"], { indent: "        " }),
+    expect(formatCnArguments(["flex gap-2", "text-sm"], { indent: "        " })).toBe(
       ['        "flex gap-2",', '        "text-sm"'].join("\n"),
     );
   });
 
   it("commaAfterLastGroup adds trailing comma on the last literal", () => {
-    assert.strictEqual(
-      formatCnArguments(["a", "b"], { commaAfterLastGroup: true }),
+    expect(formatCnArguments(["a", "b"], { commaAfterLastGroup: true })).toBe(
       ['  "a",', '  "b",'].join("\n"),
     );
   });
 
   it("omits comma on last literal when it is the final cn arg", () => {
-    assert.strictEqual(formatCnArguments(["a", "b"]), ['  "a",', '  "b"'].join("\n"));
+    expect(formatCnArguments(["a", "b"])).toBe(['  "a",', '  "b"'].join("\n"));
   });
 
   it("supports trailingClassName like formatCnCall", () => {
-    assert.strictEqual(
-      formatCnArguments(["a", "b"], { trailingClassName: true }),
+    expect(formatCnArguments(["a", "b"], { trailingClassName: true })).toBe(
       ['  "a",', '  "b",', "  className,"].join("\n"),
     );
   });
 
   it("escapes like formatCnCall", () => {
-    assert.strictEqual(formatCnArguments(['x"y']), ['  "x\\"y"'].join("\n"));
+    expect(formatCnArguments(['x"y'])).toBe(['  "x\\"y"'].join("\n"));
   });
 });
 
@@ -308,48 +301,46 @@ describe("formatJsxCnAttributeValue", () => {
     const source = ['      <div className="x" />'].join("\n");
     const valueStart = source.indexOf('"');
     const got = formatJsxCnAttributeValue(["flex gap-2", "text-sm"], source, valueStart);
-    assert.ok(got.startsWith("{cn("));
-    assert.ok(got.endsWith(")}"));
-    assert.ok(got.includes('        "flex gap-2",'));
-    assert.ok(got.includes('        "text-sm",'));
+    expect(got.startsWith("{cn(")).toBe(true);
+    expect(got.endsWith(")}")).toBe(true);
+    expect(got.includes('        "flex gap-2",')).toBe(true);
+    expect(got.includes('        "text-sm",')).toBe(true);
   });
 });
 
 describe("formatCnCall", () => {
   it("renders multiline cn() with trailing commas (oxfmt / Prettier style)", () => {
-    assert.strictEqual(
-      formatCnCall(["flex gap-2", "text-sm"]),
+    expect(formatCnCall(["flex gap-2", "text-sm"])).toBe(
       ["cn(", '  "flex gap-2",', '  "text-sm",', ")"].join("\n"),
     );
   });
 
   it("omits comma on last literal when no trailing className", () => {
-    assert.strictEqual(formatCnCall(["only"]), ["cn(", '  "only"', ")"].join("\n"));
+    expect(formatCnCall(["only"])).toBe(["cn(", '  "only"', ")"].join("\n"));
   });
 
   it("adds className and keeps comma on last literal when requested", () => {
-    assert.strictEqual(
-      formatCnCall(["a", "b"], { trailingClassName: true }),
+    expect(formatCnCall(["a", "b"], { trailingClassName: true })).toBe(
       ["cn(", '  "a",', '  "b",', "  className,", ")"].join("\n"),
     );
   });
 
   it("escapes backslashes in literals", () => {
-    assert.strictEqual(formatCnCall(["a\\b"]), ["cn(", '  "a\\\\b"', ")"].join("\n"));
+    expect(formatCnCall(["a\\b"])).toBe(["cn(", '  "a\\\\b"', ")"].join("\n"));
   });
 
   it("escapes double quotes in literals", () => {
-    assert.strictEqual(formatCnCall(['x"y']), ["cn(", '  "x\\"y"', ")"].join("\n"));
+    expect(formatCnCall(['x"y'])).toBe(["cn(", '  "x\\"y"', ")"].join("\n"));
   });
 });
 
 describe("formatArray", () => {
   it("renders multiline string array for tv() bases", () => {
-    assert.strictEqual(formatArray(["a", "b"]), ["[", '  "a",', '  "b",', "]"].join("\n"));
+    expect(formatArray(["a", "b"])).toBe(["[", '  "a",', '  "b",', "]"].join("\n"));
   });
 
   it("escapes like formatCnCall", () => {
-    assert.strictEqual(formatArray(['say "hi"']), ["[", '  "say \\"hi\\""', "]"].join("\n"));
+    expect(formatArray(['say "hi"'])).toBe(["[", '  "say \\"hi\\""', "]"].join("\n"));
   });
 });
 
@@ -363,28 +354,32 @@ describe("unwrapCnInsideTvCallReplacement", () => {
       ts.ScriptKind.TS,
     );
     const stmt = sf.statements[0];
-    assert.ok(ts.isExpressionStatement(stmt));
-    assert.ok(ts.isCallExpression(stmt.expression));
+    if (!ts.isExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
+    if (!ts.isCallExpression(stmt.expression)) {
+      throw new Error("expected call expression");
+    }
     return { sf, call: stmt.expression };
   }
 
   it("unwraps single arg to the argument source", () => {
     const src = 'cn("flex gap-2")';
     const { sf, call } = parseTopLevelCall(src);
-    assert.strictEqual(unwrapCnInsideTvCallReplacement(call, src, sf), '"flex gap-2"');
+    expect(unwrapCnInsideTvCallReplacement(call, src, sf)).toBe('"flex gap-2"');
   });
 
   it("unwraps multiple args to a multiline array", () => {
     const src = 'cn("flex gap-2", "text-sm")';
     const { sf, call } = parseTopLevelCall(src);
     const got = unwrapCnInsideTvCallReplacement(call, src, sf);
-    assert.strictEqual(got, ["[", '  "flex gap-2",', '  "text-sm",', "]"].join("\n"));
+    expect(got).toBe(["[", '  "flex gap-2",', '  "text-sm",', "]"].join("\n"));
   });
 
   it("returns undefined when cn has no arguments", () => {
     const src = "cn()";
     const { sf, call } = parseTopLevelCall(src);
-    assert.strictEqual(unwrapCnInsideTvCallReplacement(call, src, sf), undefined);
+    expect(unwrapCnInsideTvCallReplacement(call, src, sf)).toBeUndefined();
   });
 });
 
@@ -401,11 +396,17 @@ describe("forEachStringLiteralInClassExpression", () => {
       ts.ScriptKind.TS,
     );
     const stmt = sf.statements[0];
-    assert.ok(ts.isExpressionStatement(stmt));
+    if (!ts.isExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
     const call = stmt.expression;
-    assert.ok(ts.isCallExpression(call));
+    if (!ts.isCallExpression(call)) {
+      throw new Error("expected call expression");
+    }
     const arg0 = call.arguments[0];
-    assert.ok(arg0 !== undefined);
+    if (arg0 === undefined) {
+      throw new Error("expected first argument");
+    }
     const out: string[] = [];
     forEachStringLiteralInClassExpression(
       arg0,
@@ -419,30 +420,26 @@ describe("forEachStringLiteralInClassExpression", () => {
   }
 
   it("collects both branches of a conditional (default walk)", () => {
-    assert.deepStrictEqual(literalsFromArgSnippet('x ? "a" : "b"'), ["a", "b"]);
+    expect(literalsFromArgSnippet('x ? "a" : "b"')).toEqual(["a", "b"]);
   });
 
   it("skips conditional branches when descendIntoConditional is false", () => {
-    assert.deepStrictEqual(
-      literalsFromArgSnippet('x ? "a" : "b"', { descendIntoConditional: false }),
-      [],
-    );
+    expect(literalsFromArgSnippet('x ? "a" : "b"', { descendIntoConditional: false })).toEqual([]);
   });
 
   it("collects literals inside a class-expression array", () => {
-    assert.deepStrictEqual(literalsFromArgSnippet('["p", "q"]'), ["p", "q"]);
+    expect(literalsFromArgSnippet('["p", "q"]')).toEqual(["p", "q"]);
   });
 
   it("with descendIntoConditional false, still collects unconditional array elements", () => {
-    assert.deepStrictEqual(
+    expect(
       literalsFromArgSnippet('["p", x ? "a" : "b"]', { descendIntoConditional: false }),
-      ["p"],
-    );
+    ).toEqual(["p"]);
   });
 
   it("walks through parentheses and satisfies / as", () => {
-    assert.deepStrictEqual(literalsFromArgSnippet('(("hi" as const))'), ["hi"]);
-    assert.deepStrictEqual(literalsFromArgSnippet('("x" satisfies string)'), ["x"]);
+    expect(literalsFromArgSnippet('(("hi" as const))')).toEqual(["hi"]);
+    expect(literalsFromArgSnippet('("x" satisfies string)')).toEqual(["x"]);
   });
 });
 
@@ -451,41 +448,40 @@ describe("mergeCnUnconditionalLiteralPoolForTest (cn apply pool)", () => {
     const pool = mergeCnUnconditionalLiteralPoolForTest(
       '"flex flex-1 justify-between leading-none", nestLabel ? "items-end" : "items-center"',
     );
-    assert.strictEqual(pool, "flex flex-1 justify-between leading-none");
+    expect(pool).toBe("flex flex-1 justify-between leading-none");
     const groups = suggestCnGroups(pool);
-    assert.ok(!groups.some((g) => g.includes("items-center") && g.includes("items-end")));
+    expect(groups.some((g) => g.includes("items-center") && g.includes("items-end"))).toBe(false);
   });
 
   it("does not pull pt-3 and pb-3 from both ternary branches into the static pool (legend)", () => {
     const pool = mergeCnUnconditionalLiteralPoolForTest(
       '"flex items-center justify-center gap-4", verticalAlign === "top" ? "pb-3" : "pt-3"',
     );
-    assert.strictEqual(pool, "flex items-center justify-center gap-4");
-    assert.ok(!pool.includes("pt-3"));
-    assert.ok(!pool.includes("pb-3"));
+    expect(pool).toBe("flex items-center justify-center gap-4");
+    expect(pool.includes("pt-3")).toBe(false);
+    expect(pool.includes("pb-3")).toBe(false);
   });
 
   it("merges only unconditional args when the only dynamic arg is a ternary", () => {
-    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"'), "a b");
+    expect(mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"')).toBe("a b");
   });
 
   it("returns empty when every arg is a ternary", () => {
-    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('x ? "a" : "b"'), "");
+    expect(mergeCnUnconditionalLiteralPoolForTest('x ? "a" : "b"')).toBe("");
   });
 
   it("cn([...]) array arg: literals are skipped for the apply pool (unsafe to split)", () => {
-    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('["foo", nest ? "a" : "b"]'), "");
+    expect(mergeCnUnconditionalLiteralPoolForTest('["foo", nest ? "a" : "b"]')).toBe("");
   });
 
   it("direct string literal arg is merged even when another arg is a ternary", () => {
-    assert.strictEqual(mergeCnUnconditionalLiteralPoolForTest('"foo", nest ? "a" : "b"'), "foo");
+    expect(mergeCnUnconditionalLiteralPoolForTest('"foo", nest ? "a" : "b"')).toBe("foo");
   });
 
   it("supports an aliased callee name (import { cn as cx } …)", () => {
-    assert.strictEqual(
+    expect(
       mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"', { callee: "cx" }),
-      "a b",
-    );
+    ).toBe("a b");
   });
 });
 
@@ -510,10 +506,10 @@ export const styles = tv({
 `;
     withTempFixture("FixtureTv.tsx", before, (filePath) => {
       const r = groupFile(filePath, { write: true, withClassName: false });
-      assert.ok(r.changed > 0, "expected at least one edit");
+      expect(r.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
-      assert.ok(!after.includes("base: cn("), "cn() should be unwrapped from tv base");
-      assert.ok(after.includes("[") && after.includes('"flex'), "expected array of class strings");
+      expect(after.includes("base: cn(")).toBe(false);
+      expect(after.includes("[") && after.includes('"flex')).toBe(true);
     });
   });
 
@@ -524,13 +520,10 @@ export const styles = tv({
 `;
     withTempFixture("FixtureJsx.tsx", before, (filePath) => {
       const r = groupFile(filePath, { write: true, withClassName: false });
-      assert.ok(r.changed > 0);
+      expect(r.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
-      assert.ok(after.includes("{cn("), "expected className={cn(...)}");
-      assert.ok(
-        after.includes('import { cn } from "@codefast/tailwind-variants"'),
-        "expected default cn import for apps outside packages/ui",
-      );
+      expect(after.includes("{cn(")).toBe(true);
+      expect(after.includes('import { cn } from "@codefast/tailwind-variants"')).toBe(true);
     });
   });
 
@@ -543,12 +536,12 @@ export const broken = tv({
 `;
     withTempFixture("FixtureZeroArg.tsx", before, (filePath) => {
       const dry = groupFile(filePath, { write: false, withClassName: false });
-      assert.strictEqual(dry.changed, 0);
-      assert.strictEqual(dry.totalFound, 1);
+      expect(dry.changed).toBe(0);
+      expect(dry.totalFound).toBe(1);
 
       const wet = groupFile(filePath, { write: true, withClassName: false });
-      assert.strictEqual(wet.changed, 0);
-      assert.strictEqual(wet.totalFound, 1);
+      expect(wet.changed).toBe(0);
+      expect(wet.totalFound).toBe(1);
     });
   });
 });
