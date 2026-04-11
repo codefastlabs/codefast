@@ -3,7 +3,9 @@ import os from "node:os";
 import path from "node:path";
 import ts from "typescript";
 import {
+  analyzeDirectory,
   areCnTailwindPartitionsEquivalent,
+  classifyToken,
   formatArray,
   formatCnArguments,
   formatCnCall,
@@ -11,7 +13,10 @@ import {
   forEachStringLiteralInClassExpression,
   groupFile,
   mergeCnUnconditionalLiteralPoolForTest,
+  printAnalyzeReport,
+  runOnTarget,
   suggestCnGroups,
+  tokenizeClassString,
   unwrapCnInsideTvCallReplacement,
 } from "#lib/arrange";
 
@@ -563,6 +568,260 @@ export const broken = tv({
       const wet = groupFile(filePath, { write: true, withClassName: false });
       expect(wet.changed).toBe(0);
       expect(wet.totalFound).toBe(1);
+    });
+  });
+});
+
+describe("tokenizeClassString", () => {
+  it("trims and splits on whitespace runs", () => {
+    expect(tokenizeClassString("  flex  gap-2  ")).toEqual(["flex", "gap-2"]);
+  });
+
+  it("returns empty for whitespace-only input", () => {
+    expect(tokenizeClassString(" \n\t ")).toEqual([]);
+  });
+});
+
+describe("classifyToken", () => {
+  it("maps representative utilities to buckets", () => {
+    expect(classifyToken("flex")).toBe("layout");
+    expect(classifyToken("w-4")).toBe("size");
+    expect(classifyToken("px-3")).toBe("spacing");
+    expect(classifyToken("rounded-md")).toBe("surface");
+    expect(classifyToken("text-sm")).toBe("typography");
+    expect(classifyToken("transition")).toBe("motion");
+    expect(classifyToken("outline-hidden")).toBe("interaction");
+    expect(classifyToken("hover:opacity-80")).toBe("state");
+    expect(classifyToken("[&_svg]:size-4")).toBe("arbitrary");
+    expect(classifyToken("user-valid:ring-2")).toBe("state");
+    expect(classifyToken("pointer-fine:flex")).toBe("state");
+    expect(classifyToken("portrait:hidden")).toBe("state");
+    expect(classifyToken("contrast-more:opacity-100")).toBe("state");
+  });
+});
+
+describe("formatJsxCnAttributeValue", () => {
+  it("formats a multi-group cn() JSX expression with indentation from source", () => {
+    const src = `export function F() {
+  return <div className={"flex gap-2 text-sm rounded-md border px-3 font-medium"} />;
+}`;
+    const classNameIdx = src.indexOf("className=");
+    const valueStart = src.indexOf("{", classNameIdx);
+    const out = formatJsxCnAttributeValue(
+      ["flex gap-2", "text-sm", "rounded-md border px-3 font-medium"],
+      src,
+      valueStart,
+    );
+    expect(out.startsWith("{cn(")).toBe(true);
+    expect(out).toContain('"flex gap-2"');
+    expect(out).toContain('"text-sm"');
+  });
+});
+
+describe("analyzeDirectory + printAnalyzeReport", () => {
+  function captureStdout(fn: () => void): string {
+    const chunks: string[] = [];
+    const spy = jest.spyOn(process.stdout, "write").mockImplementation((c: string | Uint8Array) => {
+      chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+      return true;
+    });
+    try {
+      fn();
+    } finally {
+      spy.mockRestore();
+    }
+    return chunks.join("");
+  }
+
+  it("collects long cn / tv / JSX literals and nested cn(...) inside tv", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-analyze-"));
+    const long = CHECKBOX_GROUP_ITEM_INPUT;
+    const src = `import { cn, tv } from "tailwind-variants";
+
+cn("${long}");
+
+export const styles = tv({
+  base: "${long}",
+  variants: { a: { b: "${long}" } },
+});
+
+export function X() {
+  return <div className={"${long}"} />;
+}
+
+export function Y() {
+  return <div className={\`${long}\`} />;
+}
+
+export const nested = tv({
+  base: cn("x", "${long}"),
+});
+`;
+    try {
+      const fp = path.join(dir, "Report.tsx");
+      fs.writeFileSync(fp, src, "utf8");
+      const r = analyzeDirectory(dir);
+      expect(r.files).toBe(1);
+      expect(r.cnCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(r.tvCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(r.longCnStringLiterals.length).toBeGreaterThanOrEqual(1);
+      expect(r.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
+      expect(r.longJsxClassNameLiterals.length).toBeGreaterThanOrEqual(1);
+      expect(r.cnInsideTvCalls.length).toBeGreaterThanOrEqual(1);
+
+      const printed = captureStdout(() => printAnalyzeReport(dir, r));
+      expect(printed).toContain("Đường dẫn:");
+      expect(printed).toContain("Chuỗi literal trong cn");
+      expect(printed).toContain("Gọi cn(...) lồng trong tv");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("truncates per-category listings after MAX_REPORT_LINES", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-analyze-many-"));
+    const long = CHECKBOX_GROUP_ITEM_INPUT;
+    try {
+      let body = `import { cn } from "tailwind-variants";\n`;
+      for (let i = 0; i < 42; i++) {
+        body += `cn("${long}");\n`;
+      }
+      fs.writeFileSync(path.join(dir, "Many.tsx"), body, "utf8");
+      const r = analyzeDirectory(dir);
+      expect(r.longCnStringLiterals.length).toBeGreaterThan(40);
+      const printed = captureStdout(() => printAnalyzeReport(dir, r));
+      expect(printed).toMatch(/vị trí khác/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("runOnTarget", () => {
+  it("prints totals in dry-run mode for a directory of TSX files", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-run-dry-"));
+    const long = CHECKBOX_GROUP_ITEM_INPUT;
+    try {
+      fs.writeFileSync(
+        path.join(dir, "Page.tsx"),
+        `import { cn } from "tailwind-variants";
+export function P() { cn("${long}"); return null; }
+`,
+        "utf8",
+      );
+      const chunks: string[] = [];
+      const spy = jest
+        .spyOn(process.stdout, "write")
+        .mockImplementation((c: string | Uint8Array) => {
+          chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+          return true;
+        });
+      try {
+        runOnTarget(dir, { write: false, withClassName: false });
+      } finally {
+        spy.mockRestore();
+      }
+      const out = chunks.join("");
+      expect(out).toContain("Tổng:");
+      expect(out).toMatch(/cần xem xét/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("prints apply summary when write mode changes files", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-run-apply-"));
+    const before = `import { cn } from "tailwind-variants";
+
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    try {
+      const fp = path.join(dir, "Apply.tsx");
+      fs.writeFileSync(fp, before, "utf8");
+      const chunks: string[] = [];
+      const spy = jest
+        .spyOn(process.stdout, "write")
+        .mockImplementation((c: string | Uint8Array) => {
+          chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+          return true;
+        });
+      try {
+        runOnTarget(dir, { write: true, withClassName: false });
+      } finally {
+        spy.mockRestore();
+      }
+      const out = chunks.join("");
+      expect(out).toContain("Đã áp dụng");
+      expect(out).toMatch(/cascade|Lưu ý/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("exits with code 1 when the target path does not exist", () => {
+    const exitSpy = jest
+      .spyOn(process, "exit")
+      .mockImplementation((code?: string | number | null) => {
+        throw new Error(`EXIT:${String(code)}`);
+      });
+    const errSpy = jest.spyOn(process.stderr, "write").mockImplementation(() => true);
+    try {
+      expect(() =>
+        runOnTarget(path.join(os.tmpdir(), "no-such-codefast-arrange-path-xyz"), {
+          write: false,
+          withClassName: false,
+        }),
+      ).toThrow("EXIT:1");
+    } finally {
+      exitSpy.mockRestore();
+      errSpy.mockRestore();
+    }
+  });
+});
+
+describe("groupFile (integration) — options", () => {
+  function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "group-cn-opt-"));
+    const filePath = path.join(dir, name);
+    try {
+      fs.writeFileSync(filePath, source, "utf8");
+      fn(filePath);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+
+  it("passes withClassName through to cn(...) replacement", () => {
+    const before = `import { cn } from "tailwind-variants";
+
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    withTempFixture("WithCN.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: true });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after).toContain("className");
+      expect(after).toMatch(/className=\{\s*cn\(/s);
+    });
+  });
+
+  it("merges cn into an existing named import when cnImport matches", () => {
+    const before = `import { tv } from "clsx";
+
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    withTempFixture("MergeImport.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false, cnImport: "clsx" });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after).toContain("cn, ");
+      expect(after).toContain('from "clsx"');
     });
   });
 });
