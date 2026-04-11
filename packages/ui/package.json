@@ -342,6 +342,10 @@
       "types": "./dist/primitives/progress-circle.d.ts",
       "import": "./dist/primitives/progress-circle.js"
     },
+    "./lib/utils": {
+      "types": "./dist/lib/utils.d.ts",
+      "import": "./dist/lib/utils.js"
+    },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"
   },

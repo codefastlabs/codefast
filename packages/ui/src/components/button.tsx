@@ -1,7 +1,7 @@
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { tv } from "#utils/tv";
+import { tv } from "#lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------

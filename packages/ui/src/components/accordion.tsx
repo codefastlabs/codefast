@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronDownIcon } from "lucide-react";
