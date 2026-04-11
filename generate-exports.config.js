@@ -5,7 +5,7 @@
  */
 const config = {
   // Packages to skip (relative paths from workspace root)
-  skipPackages: ["packages/tailwind-variants"],
+  skipPackages: ["packages/tailwind-variants", "packages/cli"],
 
   // Path transformations for specific packages
   pathTransformations: {

@@ -66,6 +66,41 @@ function configureColors(noColor: boolean): void {
   }
 }
 
+function logSkippedWorkspacePackage(
+  index: number,
+  total: number,
+  displayName: string,
+  reason: string,
+): void {
+  const progress = `${Colors.DIM}[${index}/${total}]${Colors.RESET}`;
+  out(`${progress} ${Colors.GRAY}○${Colors.RESET} ${Colors.DIM}${displayName}${Colors.RESET}`);
+  out(`  ${Colors.DIM}└─${Colors.RESET} ${Colors.GRAY}Skipped: ${reason}${Colors.RESET}`);
+  out("");
+}
+
+/** Shared rule: show `package.json#name` when it is a non-empty string; else folder basename. */
+function resolvePackageDisplayName(
+  packageJson: { name?: unknown },
+  folderBasename: string,
+): string {
+  const n = packageJson.name;
+  return typeof n === "string" && n.length > 0 ? n : folderBasename;
+}
+
+async function readPackageJsonDisplayName(
+  packageJsonPath: string,
+  folderBasename: string,
+): Promise<string> {
+  if (!existsSync(packageJsonPath)) return folderBasename;
+  try {
+    const raw = await fs.readFile(packageJsonPath, "utf-8");
+    const parsed = JSON.parse(raw) as { name?: unknown };
+    return resolvePackageDisplayName(parsed, folderBasename);
+  } catch {
+    return folderBasename;
+  }
+}
+
 // ── Constants & Utilities ────────────────────────────────────────────────────
 
 const DIST_DIR = "dist";
@@ -449,20 +484,32 @@ async function processPackage(
     pkgStats.skipped = true;
     pkgStats.skipReason = "configured to skip";
     stats.packagesSkipped++;
+    pkgStats.name = await readPackageJsonDisplayName(packageJsonPath, pkgName);
+    logSkippedWorkspacePackage(index, total, pkgStats.name, pkgStats.skipReason);
     return pkgStats;
   }
 
-  if (!existsSync(packageJsonPath) || !existsSync(distDir)) {
+  if (!existsSync(packageJsonPath)) {
     pkgStats.skipped = true;
-    pkgStats.skipReason = "package.json or dist/ not found";
+    pkgStats.skipReason = "package.json not found";
     stats.packagesSkipped++;
+    logSkippedWorkspacePackage(index, total, pkgName, pkgStats.skipReason);
+    return pkgStats;
+  }
+
+  if (!existsSync(distDir)) {
+    pkgStats.skipped = true;
+    pkgStats.skipReason = "dist/ not found";
+    stats.packagesSkipped++;
+    pkgStats.name = await readPackageJsonDisplayName(packageJsonPath, pkgName);
+    logSkippedWorkspacePackage(index, total, pkgStats.name, pkgStats.skipReason);
     return pkgStats;
   }
 
   try {
     const pkgContent = await fs.readFile(packageJsonPath, "utf-8");
     const packageJson = JSON.parse(pkgContent);
-    pkgStats.name = packageJson.name || pkgName;
+    pkgStats.name = resolvePackageDisplayName(packageJson, pkgName);
 
     const pathTransform = createPathTransform(config, relativePath);
     pkgStats.hasTransform = !!pathTransform;
@@ -581,7 +628,7 @@ export async function runGenerateExports(opts: RunGenerateExportsOptions): Promi
       out(`${Colors.DIM}Processing single package...${Colors.RESET}\n`);
     } else {
       targetPackages = await findPackages(opts.rootDir);
-      out(`${Colors.DIM}Scanning for packages with dist/ directory...${Colors.RESET}\n`);
+      out(`${Colors.DIM}Discovering packages under packages/...${Colors.RESET}\n`);
     }
 
     stats.packagesFound = targetPackages.length;
