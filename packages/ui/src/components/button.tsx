@@ -44,13 +44,15 @@ const buttonVariants = tv({
     },
     variant: {
       default: [
-        "bg-primary text-primary-foreground",
+        "bg-primary",
+        "text-primary-foreground",
         "hover:not-disabled:bg-primary/80",
         "focus-visible:ring-primary/20",
         "dark:focus-visible:ring-primary/40",
       ],
       destructive: [
-        "bg-destructive text-white",
+        "bg-destructive",
+        "text-white",
         "hover:not-disabled:bg-destructive/90",
         "focus-visible:ring-destructive/20",
         "dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",

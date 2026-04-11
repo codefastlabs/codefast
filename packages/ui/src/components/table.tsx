@@ -79,7 +79,8 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
     <tr
       className={cn(
-        "border-b transition-colors",
+        "border-b",
+        "transition-colors",
         "hover:bg-muted/50",
         "has-aria-expanded:bg-muted/50",
         "data-selected:bg-muted",

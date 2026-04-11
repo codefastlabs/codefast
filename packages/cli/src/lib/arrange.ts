@@ -55,6 +55,9 @@ const MIN_GROUP_TOKENS = 2;
 // merging unrelated concerns when pass 1 already produced many variant groups.
 const MAX_GROUPS_BASE = 4;
 const MAX_GROUPS_CAP = 24;
+/** Extra slots so a few state / aria groups do not force `capGroups` to merge
+ *  adjacent surface + interaction (e.g. `bg-border` + `outline-hidden`). */
+const MAX_GROUPS_HEADROOM = 2;
 
 // Maximum number of findings printed per category in the analyze report.
 const MAX_REPORT_LINES = 40;
@@ -515,16 +518,22 @@ function dominantBucketOfGroup(g: string): Bucket {
 // whenever compound variants like "focus-visible:aria-checked:*" appeared.
 // ---------------------------------------------------------------------------
 
-/** Extract attribute name inside data-[...] for subgrouping (hyphenated names ok). */
+/**
+ * Stable key for `data-[…]` variants so unrelated selectors stay split, while
+ * **branching on the full bracket** (e.g. `data-[vaul-drawer-direction=bottom]`
+ * vs `=left`) keeps direction-specific utilities in separate state groups.
+ * (Stopping at the first `=` inside `[` used to collapse every direction into
+ * one mega-group, which blocked preview/apply on long `cn` literals.)
+ */
 function dataAttributeStem(token: string): string {
-  const m = token.match(/^data-\[([^\]=]+)/);
-  return m ? `data-[${m[1]}` : "data";
+  const m = token.match(/^data-\[([^\]]*)\]/);
+  return m ? `data-[${m[1]}]` : "data";
 }
 
-/** Same for aria-[pressed=true]:… */
+/** Same idea as {@link dataAttributeStem} for `aria-[…]:` variants. */
 function ariaAttributeStem(token: string): string {
-  const m = token.match(/^aria-\[([^\]=]+)/);
-  return m ? `aria-[${m[1]}` : "aria";
+  const m = token.match(/^aria-\[([^\]]*)\]/);
+  return m ? `aria-[${m[1]}]` : "aria";
 }
 
 function stateKey(token: string): string {
@@ -553,7 +562,8 @@ function stateKey(token: string): string {
 
 /** Dynamic cap: more tokens → allow more groups, within [BASE, CAP]. */
 function dynamicMaxGroups(tokenCount: number): number {
-  return Math.max(MAX_GROUPS_BASE, Math.min(MAX_GROUPS_CAP, Math.ceil(tokenCount / 2)));
+  const byTokens = Math.ceil(tokenCount / 2) + MAX_GROUPS_HEADROOM;
+  return Math.max(MAX_GROUPS_BASE, Math.min(MAX_GROUPS_CAP, byTokens));
 }
 
 /**

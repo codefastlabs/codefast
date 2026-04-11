@@ -236,7 +236,8 @@ function Sidebar({
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
           className={cn(
-            "w-(--sidebar-width) p-0",
+            "w-(--sidebar-width)",
+            "p-0",
             "bg-sidebar",
             "text-sidebar-foreground",
             "[&>button]:hidden",
@@ -273,7 +274,8 @@ function Sidebar({
       {/* This is what handles the sidebar gap on desktop */}
       <div
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent",
+          "relative w-(--sidebar-width)",
+          "bg-transparent",
           "transition-[width] duration-200 ease-linear",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-side-right:rotate-180",
@@ -714,7 +716,8 @@ function SidebarMenuAction({
     <Component
       className={cn(
         "absolute flex aspect-square w-5 items-center justify-center",
-        "top-1.5 right-1 rounded-md p-0 ring-sidebar-ring",
+        "top-1.5 right-1 p-0",
+        "rounded-md ring-sidebar-ring",
         "text-sidebar-foreground",
         "outline-hidden transition-transform",
         "group-data-[collapsible=icon]:hidden",
@@ -749,7 +752,8 @@ function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.E
     <div
       className={cn(
         "absolute flex h-5 min-w-5 items-center justify-center",
-        "right-1 rounded-md px-1",
+        "right-1 px-1",
+        "rounded-md",
         "text-xs font-medium text-sidebar-foreground",
         "pointer-events-none select-none",
         "group-data-[collapsible=icon]:hidden",

@@ -52,7 +52,8 @@ function ResizableSeparator({
         "bg-border",
         "outline-hidden",
         "focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-        "aria-[orientation=horizontal]:h-px aria-[orientation=vertical]:w-px",
+        "aria-[orientation=horizontal]:h-px",
+        "aria-[orientation=vertical]:w-px",
         className,
       )}
       data-slot="resizable-separator"

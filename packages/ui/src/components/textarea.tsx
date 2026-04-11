@@ -12,7 +12,8 @@ function Textarea({ className, ...props }: TextareaProps): JSX.Element {
   return (
     <textarea
       className={cn(
-        "flex min-h-16 w-full grow px-3 py-2",
+        "flex min-h-16 w-full grow",
+        "px-3 py-2",
         "rounded-lg border border-input shadow-xs",
         "text-base",
         "outline-hidden transition",
