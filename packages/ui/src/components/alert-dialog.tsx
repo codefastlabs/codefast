@@ -52,7 +52,8 @@ function AlertDialogContent({
         className={cn(
           "fixed z-50",
           "inset-0",
-          "bg-black/50 ease-ui",
+          "bg-black/50",
+          "ease-ui",
           "data-open:animate-in data-open:fade-in-0",
           "data-closed:animate-out data-closed:fade-out-0",
           classNames?.overlay,

@@ -37,7 +37,8 @@ function CheckboxCardsItem({
       className={cn(
         "flex items-start gap-3",
         "p-3",
-        "rounded-lg border border-input transition",
+        "rounded-lg border border-input",
+        "transition",
         "hover:not-has-disabled:not-has-aria-checked:bg-secondary",
         "has-focus-visible:border-ring",
         "has-disabled:opacity-50",

@@ -100,7 +100,8 @@ const inputGroupButtonVariants = tv({
       sm: ["h-8 gap-1.5", "px-2.5", "rounded-md", "has-[>svg]:px-2.5"],
       xs: [
         "h-6 gap-1",
-        "rounded-[calc(var(--radius)-5px)] px-2",
+        "px-2",
+        "rounded-[calc(var(--radius)-5px)]",
         "has-[>svg]:px-2",
         "[&>svg]:size-3.5",
       ],
@@ -242,7 +243,8 @@ function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): J
       className={cn(
         "flex-1",
         "py-3",
-        "resize-none rounded-none border-0 bg-transparent shadow-none",
+        "rounded-none border-0 bg-transparent shadow-none",
+        "resize-none",
         "focus-visible:ring-0",
         "dark:bg-transparent",
         className,

@@ -32,7 +32,8 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
     >
       <SwitchPrimitives.Thumb
         className={cn(
-          "block size-3.5 rounded-full bg-background shadow-sm",
+          "block size-3.5",
+          "rounded-full bg-background shadow-sm",
           "pointer-events-none transition-transform",
           "dark:not-data-checked:bg-foreground",
           "data-checked:translate-x-3.5",

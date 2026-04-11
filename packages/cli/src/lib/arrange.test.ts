@@ -109,6 +109,16 @@ describe("suggestCnGroups", () => {
         expected: ["group-hover:bg-red-500"],
       },
       {
+        title: "data-[attr=value] with different bracket values split (vaul drawer directions)",
+        input:
+          "data-[vaul-drawer-direction=bottom]:a data-[vaul-drawer-direction=left]:b data-[vaul-drawer-direction=right]:c",
+        expected: [
+          "data-[vaul-drawer-direction=bottom]:a",
+          "data-[vaul-drawer-direction=left]:b",
+          "data-[vaul-drawer-direction=right]:c",
+        ],
+      },
+      {
         title: "not-disabled compound variant is state",
         input: "not-disabled:opacity-50",
         expected: ["not-disabled:opacity-50"],
@@ -251,6 +261,17 @@ describe("suggestCnGroups", () => {
         expect(sortedTokens(row.input)).toEqual(sortedTokens(got.join(" ")));
       });
     }
+  });
+
+  describe("capGroups headroom", () => {
+    it("keeps surface split from interaction when aria state groups raise the group count", () => {
+      const pool =
+        "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-[orientation=horizontal]:h-px aria-[orientation=vertical]:w-px";
+      const g = suggestCnGroups(pool);
+      expect(
+        g.some((chunk) => /\bbg-border\b/.test(chunk) && /\boutline-hidden\b/.test(chunk)),
+      ).toBe(false);
+    });
   });
 });
 

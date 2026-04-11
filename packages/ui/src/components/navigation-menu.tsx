@@ -133,8 +133,12 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
         "ease-ui",
         "group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-2 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-lg group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:p-1 group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:shadow",
         "group-data-[viewport=true]/navigation-menu:p-2",
-        "data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52",
-        "data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0 data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0",
+        "data-[motion=from-end]:slide-in-from-right-52",
+        "data-[motion=from-start]:slide-in-from-left-52",
+        "data-[motion=to-end]:slide-out-to-right-52",
+        "data-[motion=to-start]:slide-out-to-left-52",
+        "data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0",
+        "data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0",
         "md:absolute md:w-auto",
         "group-data-[viewport=false]/navigation-menu:data-open:animate-in group-data-[viewport=false]/navigation-menu:data-open:fade-in-0 group-data-[viewport=false]/navigation-menu:data-open:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-closed:animate-out group-data-[viewport=false]/navigation-menu:data-closed:fade-out-0 group-data-[viewport=false]/navigation-menu:data-closed:zoom-out-95",
         className,
@@ -219,7 +223,8 @@ function NavigationMenuIndicator({
         "z-10 flex h-2 items-center justify-center overflow-hidden",
         "top-full",
         "ease-ui",
-        "data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:animate-in data-[state=visible]:fade-in-0",
+        "data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0",
+        "data-[state=visible]:animate-in data-[state=visible]:fade-in-0",
         className,
       )}
       data-slot="navigation-menu-indicator"
@@ -228,7 +233,8 @@ function NavigationMenuIndicator({
       <div
         className={cn(
           "relative size-2.5",
-          "top-[60%] rounded-tl-xs bg-popover",
+          "top-[60%]",
+          "rounded-tl-xs bg-popover",
           "text-popover-foreground",
           "rotate-45",
         )}
