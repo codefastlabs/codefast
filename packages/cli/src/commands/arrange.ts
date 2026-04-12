@@ -33,7 +33,7 @@ function defaultTargetPath(): string {
 
 function checkTargetExists(resolved: string, fs: CliFs, logger: CliLogger): boolean {
   if (!fs.existsSync(resolved)) {
-    logger.err(`Không tìm thấy: ${resolved}`);
+    logger.err(`Not found: ${resolved}`);
     process.exitCode = 1;
     return false;
   }
@@ -150,7 +150,7 @@ export function registerArrangeCommand(program: Command): void {
       const inlineClasses = tokens.join(" ").trim();
       if (!inlineClasses) {
         process.stderr.write(
-          'Cần truyền chuỗi class. Ví dụ: codefast arrange group "flex gap-2 text-sm rounded-md"\n',
+          'Pass a class string. Example: codefast arrange group "flex gap-2 text-sm rounded-md"\n',
         );
         process.exitCode = 1;
         return;

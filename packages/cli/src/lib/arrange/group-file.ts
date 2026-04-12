@@ -53,9 +53,9 @@ function printGroupFilePreview(
     plannedGroupEdits,
   } = args;
 
-  let header = `\n── ${filePath} (${reportTotal} vị trí`;
+  let header = `\n── ${filePath} (${reportTotal} site(s)`;
   if (cnInTvNoReplacement > 0) {
-    header += `; thêm ${cnInTvNoReplacement} cn() trong tv không đổi (0 đối số)`;
+    header += `; plus ${cnInTvNoReplacement} cn() inside tv left unchanged (0 args)`;
   }
   header += `) ──`;
   out(header);
@@ -63,22 +63,22 @@ function printGroupFilePreview(
   for (const call of cnInTvCalls) {
     const replacement = unwrapReplacementByCall.get(call);
     if (replacement === undefined) {
-      out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn]: cn(...) không có đối số — bỏ qua`);
+      out(`  Line ${lineOf(sf, call)} [tv ⊃ cn]: cn(...) has no arguments — skipped`);
       continue;
     }
     const start = call.getStart(sf);
     const end = call.getEnd();
     if (sourceText.slice(start, end) === replacement) continue;
-    out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn → chuỗi/mảng]:`);
+    out(`  Line ${lineOf(sf, call)} [tv ⊃ cn → string/array]:`);
     out(`  ${replacement.split("\n").join("\n  ")}`);
   }
   if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
     out(
-      "  (Các dòng [cn] / [tv] / [JSX className] bên dưới theo nội dung sau bước unwrap cn trong tv.)",
+      "  ([cn] / [tv] / [JSX className] lines below reflect content after unwrap of cn inside tv.)",
     );
   }
   for (const plan of plannedGroupEdits) {
-    out(`  Dòng ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
+    out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
     out(`  ${plan.replacement.split("\n").join("\n  ")}`);
   }
 }

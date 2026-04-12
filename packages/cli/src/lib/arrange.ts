@@ -1,18 +1,18 @@
 /**
- * Phân tích và gợi ý phân nhóm chuỗi Tailwind trong `cn(...)` / `tv(...)`.
+ * Analyze and suggest Tailwind class grouping inside `cn(...)` / `tv(...)`.
  *
- * Phát hiện literal trong đối số cn: chuỗi trực tiếp, ternary, mảng, nối chuỗi +.
- * tv: compoundVariants[].className / class; literal trong cn lồng dùng cùng quy tắc.
- * `cn(...)` trực tiếp trong cấu hình tv không khuyến nghị — analyze/preview/apply có thể
- * thay bằng chuỗi (1 đối số) hoặc mảng (≥2 đối số). Literal trong mảng tv trực tiếp
- * không tách bằng apply (tránh `[ [`).
+ * Detects literals in cn arguments: direct strings, ternaries, arrays, string concatenation.
+ * tv: compoundVariants[].className / class; nested cn literals use the same rules.
+ * Direct `cn(...)` inside tv config is discouraged — analyze/preview/apply may replace it with
+ * a string (one argument) or an array (≥2 arguments). Literals in bare tv arrays are not split
+ * by apply (avoids `[ [` artifacts).
  *
- * Hỗ trợ Tailwind CSS v4 đầy đủ:
+ * Tailwind CSS v4-oriented heuristics:
  *   - Container queries (@min-* / @max-* / @sm / @md / @3xl / @max-3xs …)
  *   - Logical properties (ps/pe/ms/me/start/end)
- *   - not-* modifier; has-*; in-[…]; * / **; nth-* (kể cả số); media (pointer-*, contrast-* …)
- *   - Utilities mới: inset-shadow, field-sizing, mask-*, wrap-*, text-shadow-*, scheme-*, …
- *   - Arbitrary variants [&...] mọi dạng
+ *   - not-* modifier; has-*; in-[…]; * / **; nth-* (including numeric); media (pointer-*, contrast-* …)
+ *   - Newer utilities: inset-shadow, field-sizing, mask-*, wrap-*, text-shadow-*, scheme-*, …
+ *   - Arbitrary variants [&...] in general forms
  *
  * Usage (repo root):
  *   pnpm cli:arrange-analyze [dir|file]
