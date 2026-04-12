@@ -10,9 +10,9 @@ export function jsxClassNameStaticLiteral(attr: ts.JsxAttribute): JsxClassNameSt
     return { lit: init, valueNode: init };
   }
   if (ts.isJsxExpression(init) && init.expression) {
-    const ex = init.expression;
-    if (ts.isStringLiteral(ex) || ts.isNoSubstitutionTemplateLiteral(ex)) {
-      return { lit: ex, valueNode: init };
+    const innerExpr = init.expression;
+    if (ts.isStringLiteral(innerExpr) || ts.isNoSubstitutionTemplateLiteral(innerExpr)) {
+      return { lit: innerExpr, valueNode: init };
     }
   }
   return undefined;

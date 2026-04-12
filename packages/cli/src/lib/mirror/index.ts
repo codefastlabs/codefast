@@ -104,20 +104,26 @@ async function processPackage(
 
     const customExports = config.customExports?.[relativePath] || {};
 
-    const res = await generateExports(fs, distDir, pathTransform, cssConfig, customExports);
-    pkgStats.jsModules = res.jsCount;
-    pkgStats.cssExports = res.cssCount;
+    const generatedExports = await generateExports(
+      fs,
+      distDir,
+      pathTransform,
+      cssConfig,
+      customExports,
+    );
+    pkgStats.jsModules = generatedExports.jsCount;
+    pkgStats.cssExports = generatedExports.cssCount;
     pkgStats.customExports = Object.keys(customExports).length;
-    pkgStats.totalExports = Object.keys(res.exports).length;
+    pkgStats.totalExports = Object.keys(generatedExports.exports).length;
 
-    await writePackageJsonExportsAtomic(fs, packageJsonPath, res.exports);
+    await writePackageJsonExportsAtomic(fs, packageJsonPath, generatedExports.exports);
 
     stats.packagesProcessed++;
     stats.totalExports += pkgStats.totalExports;
     stats.totalJsModules += pkgStats.jsModules;
     stats.totalCssExports += pkgStats.cssExports;
 
-    logPackageSuccess(logger, index, total, pkgStats, res, verbose);
+    logPackageSuccess(logger, index, total, pkgStats, generatedExports, verbose);
   } catch (e: unknown) {
     pkgStats.error = String(e);
     stats.packagesErrored++;
@@ -174,14 +180,14 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
       return 0;
     }
 
-    let i = 1;
+    let nextPackageOrdinal = 1;
     for (const pkgPath of targetPackages) {
       const pkgStats = await processPackage(
         fs,
         logger,
         opts.rootDir,
         pkgPath,
-        i++,
+        nextPackageOrdinal++,
         targetPackages.length,
         config,
         verbose,

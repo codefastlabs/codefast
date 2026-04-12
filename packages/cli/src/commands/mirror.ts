@@ -6,11 +6,11 @@ import { createNodeCliFs } from "#lib/infra/node-io";
 import { normalizePath, runMirrorSync } from "#lib/mirror";
 import { findRepoRoot } from "#lib/repo-root";
 
-function tryRealpath(p: string): string {
+function tryRealpath(entryPath: string): string {
   try {
-    return realpathSync.native(p);
+    return realpathSync.native(entryPath);
   } catch {
-    return path.resolve(p);
+    return path.resolve(entryPath);
   }
 }
 

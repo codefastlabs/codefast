@@ -30,15 +30,15 @@ export function moduleLooksLikeCnTvReexport(mod: string): boolean {
  */
 export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
   const bindings = new Set<string>();
-  for (const st of sf.statements) {
-    if (!ts.isImportDeclaration(st) || !st.importClause) continue;
-    const spec = st.moduleSpecifier;
+  for (const stmt of sf.statements) {
+    if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
+    const spec = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(spec)) continue;
     const mod = spec.text;
     const isKnown = KNOWN_CN_TV_MODULES.has(mod);
     if (!isKnown && !moduleLooksLikeCnTvReexport(mod)) continue;
 
-    const clause = st.importClause;
+    const clause = stmt.importClause;
     if (clause.name) bindings.add(clause.name.text);
     if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
       for (const el of clause.namedBindings.elements) {
@@ -80,26 +80,26 @@ export function lineOf(sf: ts.SourceFile, node: ts.Node): number {
 export function indentOfLineContaining(source: string, pos: number): string {
   let lineStart = pos;
   while (lineStart > 0) {
-    const c = source[lineStart - 1];
-    if (c === "\n" || c === "\r") break;
+    const charBefore = source[lineStart - 1];
+    if (charBefore === "\n" || charBefore === "\r") break;
     lineStart--;
   }
-  const nl = source.indexOf("\n", pos);
-  const line = source.slice(lineStart, nl === -1 ? undefined : nl);
-  const m = /^[\t ]*/.exec(line);
-  return m?.[0] ?? "";
+  const nextNewline = source.indexOf("\n", pos);
+  const line = source.slice(lineStart, nextNewline === -1 ? undefined : nextNewline);
+  const indentMatch = /^[\t ]*/.exec(line);
+  return indentMatch?.[0] ?? "";
 }
 
 export function applyEditsDescending(
   sourceText: string,
   edits: ReadonlyArray<{ start: number; end: number; replacement: string }>,
 ): string {
-  const sorted = [...edits].sort((a, b) => b.start - a.start);
-  let t = sourceText;
-  for (const e of sorted) {
-    t = t.slice(0, e.start) + e.replacement + t.slice(e.end);
+  const sorted = [...edits].sort((editA, editB) => editB.start - editA.start);
+  let out = sourceText;
+  for (const edit of sorted) {
+    out = out.slice(0, edit.start) + edit.replacement + out.slice(edit.end);
   }
-  return t;
+  return out;
 }
 
 /**
@@ -116,13 +116,13 @@ export function unwrapCnInsideTvCallReplacement(
   const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
   const innerIndent = `${baseIndent}  `;
   if (args.length === 1) {
-    const a0 = args[0]!;
-    return sourceText.slice(a0.getStart(sf), a0.getEnd());
+    const firstArg = args[0]!;
+    return sourceText.slice(firstArg.getStart(sf), firstArg.getEnd());
   }
   const lines: string[] = ["["];
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
-    const piece = sourceText.slice(a.getStart(sf), a.getEnd());
+    const arg = args[i]!;
+    const piece = sourceText.slice(arg.getStart(sf), arg.getEnd());
     const comma = i < args.length - 1 || args.length > 1 ? "," : "";
     lines.push(`${innerIndent}${piece}${comma}`);
   }

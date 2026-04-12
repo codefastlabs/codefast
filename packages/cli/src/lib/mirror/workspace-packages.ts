@@ -12,8 +12,8 @@ const PNPM_WORKSPACE = "pnpm-workspace.yaml";
 /** Default when the workspace file is missing or has no `packages` key. */
 const DEFAULT_INCLUDE = ["packages/*"];
 
-function toPosix(p: string): string {
-  return p.split(path.sep).join("/");
+function toPosix(filePath: string): string {
+  return filePath.split(path.sep).join("/");
 }
 
 function isGlobPermissionError(err: unknown): boolean {
@@ -24,9 +24,9 @@ function isGlobPermissionError(err: unknown): boolean {
 
 /** Turn a pnpm `packages` glob into a `globSync` pattern that finds `package.json` files. */
 export function workspacePatternToPackageJsonGlob(pattern: string): string {
-  const p = toPosix(pattern.trim()).replace(/\/+$/, "");
-  if (!p) return "**/package.json";
-  return `${p}/package.json`;
+  const normalizedPattern = toPosix(pattern.trim()).replace(/\/+$/, "");
+  if (!normalizedPattern) return "**/package.json";
+  return `${normalizedPattern}/package.json`;
 }
 
 export function splitWorkspacePackageEntries(raw: unknown): {
@@ -36,12 +36,12 @@ export function splitWorkspacePackageEntries(raw: unknown): {
   const include: string[] = [];
   const exclude: string[] = [];
   if (!Array.isArray(raw)) return { include, exclude };
-  for (const e of raw) {
-    if (typeof e !== "string") continue;
-    const s = e.trim();
-    if (!s) continue;
-    if (s.startsWith("!")) exclude.push(s.slice(1).trim());
-    else include.push(s);
+  for (const entry of raw) {
+    if (typeof entry !== "string") continue;
+    const trimmed = entry.trim();
+    if (!trimmed) continue;
+    if (trimmed.startsWith("!")) exclude.push(trimmed.slice(1).trim());
+    else include.push(trimmed);
   }
   return { include, exclude };
 }
@@ -63,11 +63,11 @@ export function parsePnpmWorkspaceDocument(doc: unknown): {
   if (typeof doc !== "object" || Array.isArray(doc)) {
     throw new Error(`${PNPM_WORKSPACE} root must be a mapping, not an array or scalar`);
   }
-  const o = doc as Record<string, unknown>;
-  if (!Object.prototype.hasOwnProperty.call(o, "packages")) {
+  const parsedDoc = doc as Record<string, unknown>;
+  if (!Object.prototype.hasOwnProperty.call(parsedDoc, "packages")) {
     return { include: [], exclude: [], hasPackagesKey: false, isEmptyPackagesArray: false };
   }
-  const pkgs = o.packages;
+  const pkgs = parsedDoc.packages;
   if (!Array.isArray(pkgs)) {
     throw new Error(`${PNPM_WORKSPACE} field "packages" must be an array`);
   }
@@ -86,13 +86,13 @@ type ReadWorkspaceYamlOk = { exists: true; doc: unknown };
 type ReadWorkspaceYamlResult = ReadWorkspaceYamlMissing | ReadWorkspaceYamlOk;
 
 async function readWorkspaceYaml(rootDir: string, fs: CliFs): Promise<ReadWorkspaceYamlResult> {
-  const fp = path.join(rootDir, PNPM_WORKSPACE);
-  if (!fs.existsSync(fp)) {
+  const workspaceYamlPath = path.join(rootDir, PNPM_WORKSPACE);
+  if (!fs.existsSync(workspaceYamlPath)) {
     return { exists: false };
   }
   let raw: string;
   try {
-    raw = await fs.readFile(fp, "utf8");
+    raw = await fs.readFile(workspaceYamlPath, "utf8");
   } catch (error) {
     throw new Error(
       `Failed to read ${PNPM_WORKSPACE}: ${error instanceof Error ? error.message : String(error)}`,
@@ -122,18 +122,18 @@ export async function findWorkspacePackageRelPaths(
   fs: CliFs,
   logger: CliLogger,
 ): Promise<FindWorkspacePackagesResult> {
-  const ws = await readWorkspaceYaml(rootDir, fs);
+  const workspaceYaml = await readWorkspaceYaml(rootDir, fs);
 
   let include: string[];
   let exclude: string[];
   let multiSource: WorkspaceMultiDiscoverySource;
 
-  if (!ws.exists) {
+  if (!workspaceYaml.exists) {
     include = [...DEFAULT_INCLUDE];
     exclude = [];
     multiSource = "default-patterns";
   } else {
-    const parsed = parsePnpmWorkspaceDocument(ws.doc);
+    const parsed = parsePnpmWorkspaceDocument(workspaceYaml.doc);
     if (!parsed.hasPackagesKey) {
       include = [...DEFAULT_INCLUDE];
       exclude = [];
@@ -171,8 +171,8 @@ export async function findWorkspacePackageRelPaths(
         `Invalid workspace glob "${pattern}": ${error instanceof Error ? error.message : String(error)}`,
       );
     }
-    for (const m of matches) {
-      const posix = toPosix(m);
+    for (const matchedPath of matches) {
+      const posix = toPosix(matchedPath);
       if (!posix.endsWith("/package.json")) continue;
       const rel = posix.slice(0, -"/package.json".length);
       if (!rel) continue;

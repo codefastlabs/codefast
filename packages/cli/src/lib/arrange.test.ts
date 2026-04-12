@@ -219,8 +219,8 @@ describe("suggestCnGroups", () => {
     it("preserves tokens on a mixed variant string", () => {
       const input =
         "md:flex p-4 bg-card text-muted-foreground hover:bg-accent aria-invalid:ring-2 [&_svg]:size-4";
-      const g = suggestCnGroups(input);
-      expect(sortedTokens(input)).toEqual(sortedTokens(g.join(" ")));
+      const suggestedGroups = suggestCnGroups(input);
+      expect(sortedTokens(input)).toEqual(sortedTokens(suggestedGroups.join(" ")));
     });
   });
 
@@ -267,9 +267,9 @@ describe("suggestCnGroups", () => {
       const base =
         "flex gap-2 text-sm rounded-md border px-3 py-2 bg-card outline-hidden transition";
       const input = `${base} ${states.join(" ")}`;
-      const g = suggestCnGroups(input);
-      expect(g.length).toBeLessThanOrEqual(24);
-      expect(sortedTokens(input)).toEqual(sortedTokens(g.join(" ")));
+      const suggestedGroups = suggestCnGroups(input);
+      expect(suggestedGroups.length).toBeLessThanOrEqual(24);
+      expect(sortedTokens(input)).toEqual(sortedTokens(suggestedGroups.join(" ")));
     });
   });
 
@@ -335,9 +335,11 @@ describe("suggestCnGroups", () => {
     it("keeps surface split from interaction when aria state groups raise the group count", () => {
       const pool =
         "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-[orientation=horizontal]:h-px aria-[orientation=vertical]:w-px";
-      const g = suggestCnGroups(pool);
+      const suggestedGroups = suggestCnGroups(pool);
       expect(
-        g.some((chunk) => /\bbg-border\b/.test(chunk) && /\boutline-hidden\b/.test(chunk)),
+        suggestedGroups.some(
+          (chunk) => /\bbg-border\b/.test(chunk) && /\boutline-hidden\b/.test(chunk),
+        ),
       ).toBe(false);
     });
   });
@@ -610,13 +612,13 @@ export const styles = tv({
 });
 `;
     withTempFixture("FixtureTv.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after.includes("base: cn(")).toBe(false);
       expect(after.includes("[") && after.includes('"flex')).toBe(true);
@@ -629,13 +631,13 @@ export const styles = tv({
 }
 `;
     withTempFixture("FixtureJsx.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after.includes("{cn(")).toBe(true);
       expect(after.includes('import { cn } from "@codefast/tailwind-variants"')).toBe(true);
@@ -648,13 +650,13 @@ export const styles = tv({
 }
 `;
     withTempFixture("FixtureJsxBraceStr.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after.includes("{cn(")).toBe(true);
     });
@@ -668,13 +670,13 @@ export function Fixture() {
 }
 `;
     withTempFixture("FixtureUseClient.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after.startsWith(`"use client";`)).toBe(true);
       const useClientEnd = after.indexOf("\n", after.indexOf(`"use client"`));
@@ -694,13 +696,13 @@ export const styles = tv({
 });
 `;
     withTempFixture("FixtureTvBaseArray.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after.includes("base:")).toBe(true);
     });
@@ -714,13 +716,13 @@ export const styles = tv({
 });
 `;
     withTempFixture("FixtureLocalUtils.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
     });
   });
 
@@ -732,13 +734,13 @@ export const styles = tv({
 });
 `;
     withTempFixture("FixtureUtilsPath.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
     });
   });
 
@@ -750,13 +752,13 @@ export const styles = tv({
 });
 `;
     withTempFixture("FixtureCnTs.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
     });
   });
 
@@ -767,13 +769,13 @@ import { debounce } from "lodash";
 cn("${COMMAND_MENU_ITEM_INPUT}");
 `;
     withTempFixture("FixtureExtraImport.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
     });
   });
 
@@ -792,8 +794,8 @@ export const styles = tv({
       const chunks: string[] = [];
       const spy = jest
         .spyOn(process.stdout, "write")
-        .mockImplementation((c: string | Uint8Array) => {
-          chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+        .mockImplementation((chunk: string | Uint8Array) => {
+          chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
           return true;
         });
       try {
@@ -888,13 +890,13 @@ export function Fixture() {
 }
 `;
     withTempFixture("FixtureImportOrder.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       const cnIdx = after.indexOf("import { cn }");
       const reactIdx = after.indexOf("import React");
@@ -917,13 +919,13 @@ export const sheet = tv({
 });
 `;
     withTempFixture("FixtureCvClassArray.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
     });
   });
 
@@ -941,13 +943,13 @@ export const sheet = tv({
 });
 `;
     withTempFixture("FixtureCvClassCn.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
     });
   });
 
@@ -962,13 +964,13 @@ export function Row({ className }: { className?: string }) {
 }
 `;
     withTempFixture("FixtureCnDynamic.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after.includes("className")).toBe(true);
     });
@@ -1100,10 +1102,12 @@ describe("formatJsxCnAttributeValue", () => {
 describe("analyzeDirectory + printAnalyzeReport", () => {
   function captureStdout(fn: () => void): string {
     const chunks: string[] = [];
-    const spy = jest.spyOn(process.stdout, "write").mockImplementation((c: string | Uint8Array) => {
-      chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
-      return true;
-    });
+    const spy = jest
+      .spyOn(process.stdout, "write")
+      .mockImplementation((chunk: string | Uint8Array) => {
+        chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
+        return true;
+      });
     try {
       fn();
     } finally {
@@ -1123,13 +1127,13 @@ export const styles = tv({
 });
 `;
     try {
-      const fp = path.join(dir, "TvArrays.tsx");
-      fs.writeFileSync(fp, src, "utf8");
-      const r = analyzeDirectory(dir, arrangeFs);
-      expect(r.files).toBe(1);
-      expect(r.tvCallExpressions).toBeGreaterThanOrEqual(1);
-      expect(r.cnInsideTvCalls.length).toBeGreaterThanOrEqual(2);
-      expect(r.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
+      const fixturePath = path.join(dir, "TvArrays.tsx");
+      fs.writeFileSync(fixturePath, src, "utf8");
+      const analyzeReport = analyzeDirectory(dir, arrangeFs);
+      expect(analyzeReport.files).toBe(1);
+      expect(analyzeReport.tvCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(analyzeReport.cnInsideTvCalls.length).toBeGreaterThanOrEqual(2);
+      expect(analyzeReport.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1160,18 +1164,18 @@ export const nested = tv({
 });
 `;
     try {
-      const fp = path.join(dir, "Report.tsx");
-      fs.writeFileSync(fp, src, "utf8");
-      const r = analyzeDirectory(dir, arrangeFs);
-      expect(r.files).toBe(1);
-      expect(r.cnCallExpressions).toBeGreaterThanOrEqual(1);
-      expect(r.tvCallExpressions).toBeGreaterThanOrEqual(1);
-      expect(r.longCnStringLiterals.length).toBeGreaterThanOrEqual(1);
-      expect(r.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
-      expect(r.longJsxClassNameLiterals.length).toBeGreaterThanOrEqual(1);
-      expect(r.cnInsideTvCalls.length).toBeGreaterThanOrEqual(1);
+      const fixturePath = path.join(dir, "Report.tsx");
+      fs.writeFileSync(fixturePath, src, "utf8");
+      const analyzeReport = analyzeDirectory(dir, arrangeFs);
+      expect(analyzeReport.files).toBe(1);
+      expect(analyzeReport.cnCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(analyzeReport.tvCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(analyzeReport.longCnStringLiterals.length).toBeGreaterThanOrEqual(1);
+      expect(analyzeReport.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
+      expect(analyzeReport.longJsxClassNameLiterals.length).toBeGreaterThanOrEqual(1);
+      expect(analyzeReport.cnInsideTvCalls.length).toBeGreaterThanOrEqual(1);
 
-      const printed = captureStdout(() => printAnalyzeReport(dir, r, arrangeLogger));
+      const printed = captureStdout(() => printAnalyzeReport(dir, analyzeReport, arrangeLogger));
       expect(printed).toContain("Path:");
       expect(printed).toContain("Long cn(...)");
       expect(printed).toContain("nested inside tv");
@@ -1189,9 +1193,9 @@ export const nested = tv({
         body += `cn("${long}");\n`;
       }
       fs.writeFileSync(path.join(dir, "Many.tsx"), body, "utf8");
-      const r = analyzeDirectory(dir, arrangeFs);
-      expect(r.longCnStringLiterals.length).toBeGreaterThan(40);
-      const printed = captureStdout(() => printAnalyzeReport(dir, r, arrangeLogger));
+      const analyzeReport = analyzeDirectory(dir, arrangeFs);
+      expect(analyzeReport.longCnStringLiterals.length).toBeGreaterThan(40);
+      const printed = captureStdout(() => printAnalyzeReport(dir, analyzeReport, arrangeLogger));
       expect(printed).toMatch(/… and \d+ more/);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -1238,9 +1242,9 @@ export const nested = tv({
 `,
         "utf8",
       );
-      const r = analyzeDirectory(dir, arrangeFs);
-      expect(r.files).toBe(1);
-      expect(r.longJsxClassNameLiterals.length).toBe(0);
+      const analyzeReport = analyzeDirectory(dir, arrangeFs);
+      expect(analyzeReport.files).toBe(1);
+      expect(analyzeReport.longJsxClassNameLiterals.length).toBe(0);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1254,7 +1258,7 @@ export const nested = tv({
         path.join(dir, "Quoted.tsx"),
         `import { tv } from "tailwind-variants";
 
-export const s = tv({
+export const quotedCompoundVariants = tv({
   compoundVariants: [
     {
       "className": "${long}",
@@ -1264,8 +1268,8 @@ export const s = tv({
 `,
         "utf8",
       );
-      const r = analyzeDirectory(dir, arrangeFs);
-      expect(r.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
+      const analyzeReport = analyzeDirectory(dir, arrangeFs);
+      expect(analyzeReport.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1287,8 +1291,8 @@ export function P() { cn("${long}"); return null; }
       const chunks: string[] = [];
       const spy = jest
         .spyOn(process.stdout, "write")
-        .mockImplementation((c: string | Uint8Array) => {
-          chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+        .mockImplementation((chunk: string | Uint8Array) => {
+          chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
           return true;
         });
       try {
@@ -1313,13 +1317,13 @@ export function Fixture() {
 }
 `;
     try {
-      const fp = path.join(dir, "Apply.tsx");
-      fs.writeFileSync(fp, before, "utf8");
+      const fixturePath = path.join(dir, "Apply.tsx");
+      fs.writeFileSync(fixturePath, before, "utf8");
       const chunks: string[] = [];
       const spy = jest
         .spyOn(process.stdout, "write")
-        .mockImplementation((c: string | Uint8Array) => {
-          chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+        .mockImplementation((chunk: string | Uint8Array) => {
+          chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
           return true;
         });
       try {
@@ -1344,8 +1348,8 @@ export function Fixture() {
         arrangeFs,
         arrangeLogger,
       );
-    } catch (e) {
-      caught = e;
+    } catch (error) {
+      caught = error;
     }
     expect(caught).toBeInstanceOf(ArrangeError);
     expect((caught as ArrangeError).code).toBe(ArrangeErrorCode.TARGET_NOT_FOUND);
@@ -1363,7 +1367,7 @@ describe("walkTsxFiles", () => {
       fs.writeFileSync(path.join(dir, "sub", "handwritten.d.ts"), "", "utf8");
       fs.writeFileSync(path.join(dir, "sub", "e.tsx"), "", "utf8");
       const rel = walkTsxFiles(dir, arrangeFs)
-        .map((p) => path.relative(dir, p).split(path.sep).join("/"))
+        .map((absPath) => path.relative(dir, absPath).split(path.sep).join("/"))
         .sort();
       expect(rel).toEqual(["a.tsx", "b.ts", "sub/e.tsx"]);
     } finally {
@@ -1392,8 +1396,13 @@ export function Fixture() {
 }
 `;
     withTempFixture("WithCN.tsx", before, (filePath) => {
-      const r = groupFile(filePath, { write: true, withClassName: true }, arrangeFs, arrangeLogger);
-      expect(r.changed).toBeGreaterThan(0);
+      const groupFileResult = groupFile(
+        filePath,
+        { write: true, withClassName: true },
+        arrangeFs,
+        arrangeLogger,
+      );
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after).toContain("className");
       expect(after).toMatch(/className=\{\s*cn\(/s);
@@ -1408,13 +1417,13 @@ export function Fixture() {
 }
 `;
     withTempFixture("MergeImport.tsx", before, (filePath) => {
-      const r = groupFile(
+      const groupFileResult = groupFile(
         filePath,
         { write: true, withClassName: false, cnImport: "clsx" },
         arrangeFs,
         arrangeLogger,
       );
-      expect(r.changed).toBeGreaterThan(0);
+      expect(groupFileResult.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
       expect(after).toContain("cn, ");
       expect(after).toContain('from "clsx"');

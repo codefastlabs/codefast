@@ -32,28 +32,28 @@ export function areCnTailwindPartitionsEquivalent(
       .filter((s) => s.length > 0)
       .sort((a, b) => a.localeCompare(b));
 
-  const a = partitionSignatures(staticLiteralTexts);
-  const b = partitionSignatures(suggestedGroups);
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) return false;
+  const staticPartitionSigs = partitionSignatures(staticLiteralTexts);
+  const suggestedPartitionSigs = partitionSignatures(suggestedGroups);
+  if (staticPartitionSigs.length !== suggestedPartitionSigs.length) return false;
+  for (let i = 0; i < staticPartitionSigs.length; i++) {
+    if (staticPartitionSigs[i] !== suggestedPartitionSigs[i]) return false;
   }
   return true;
 }
 
 /** Dominant bucket of a whitespace-delimited class group (for merge heuristics). */
-function dominantBucketOfGroup(g: string): Bucket {
+function dominantBucketOfGroup(groupStr: string): Bucket {
   const counts = new Map<Bucket, number>();
-  for (const tok of tokenizeClassString(g)) {
-    const b = classifyToken(tok);
-    counts.set(b, (counts.get(b) ?? 0) + 1);
+  for (const tok of tokenizeClassString(groupStr)) {
+    const tokenBucket = classifyToken(tok);
+    counts.set(tokenBucket, (counts.get(tokenBucket) ?? 0) + 1);
   }
   let best: Bucket = "other";
   let bestN = 0;
-  for (const [b, n] of counts) {
-    if (n > bestN) {
-      best = b;
-      bestN = n;
+  for (const [bucket, count] of counts) {
+    if (count > bestN) {
+      best = bucket;
+      bestN = count;
     }
   }
   return best;
@@ -112,12 +112,12 @@ export function mergeSingletons(groups: string[]): string[] {
   return result;
 }
 
-function capMergePenalty(a: Bucket, b: Bucket): number {
-  if (a === "state" && b === "state") return 1_000;
-  if (a === "state" || b === "state") return 350;
+function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
+  if (leftBucket === "state" && rightBucket === "state") return 1_000;
+  if (leftBucket === "state" || rightBucket === "state") return 350;
 
   const hi = 100;
-  const set = new Set([a, b]);
+  const set = new Set([leftBucket, rightBucket]);
   if (set.has("surface") && set.has("typography")) return hi;
   if (set.has("typography") && set.has("interaction")) return hi;
   if (set.has("typography") && set.has("motion")) return hi;
@@ -134,28 +134,31 @@ function capMergePenalty(a: Bucket, b: Bucket): number {
  */
 export function capGroups(groups: string[], maxGroups: number): string[] {
   const result = [...groups];
-  const lengths = result.map((g) => tokenizeClassString(g).length);
+  const lengths = result.map((groupStr) => tokenizeClassString(groupStr).length);
 
   while (result.length > maxGroups) {
     type Cand = { i: number; size: number; compat: boolean; penalty: number };
     const cands: Cand[] = [];
     for (let i = 0; i < result.length - 1; i++) {
-      const d0 = dominantBucketOfGroup(result[i]);
-      const d1 = dominantBucketOfGroup(result[i + 1]);
-      const compat = bucketsMergeCompatible(d0, d1);
+      const dominantLeft = dominantBucketOfGroup(result[i]);
+      const dominantRight = dominantBucketOfGroup(result[i + 1]);
+      const compat = bucketsMergeCompatible(dominantLeft, dominantRight);
       cands.push({
         i,
         size: lengths[i] + lengths[i + 1],
         compat,
-        penalty: compat ? 0 : capMergePenalty(d0, d1),
+        penalty: compat ? 0 : capMergePenalty(dominantLeft, dominantRight),
       });
     }
-    const preferred = cands.filter((c) => c.compat);
+    const preferred = cands.filter((candidate) => candidate.compat);
     const pool = preferred.length > 0 ? preferred : cands;
     let best = pool[0]!;
-    for (const c of pool) {
-      if (c.penalty < best.penalty || (c.penalty === best.penalty && c.size < best.size)) {
-        best = c;
+    for (const candidate of pool) {
+      if (
+        candidate.penalty < best.penalty ||
+        (candidate.penalty === best.penalty && candidate.size < best.size)
+      ) {
+        best = candidate;
       }
     }
     const bestIdx = best.i;
@@ -172,9 +175,9 @@ export function suggestCnGroups(classString: string): string[] {
   if (tokens.length === 0) return [];
 
   const classified = tokens.map((tok, index) => ({ tok, bucket: classifyToken(tok), index }));
-  classified.sort((a, b) => {
-    const od = BUCKET_ORDER[a.bucket] - BUCKET_ORDER[b.bucket];
-    return od !== 0 ? od : a.index - b.index;
+  classified.sort((left, right) => {
+    const bucketOrderDiff = BUCKET_ORDER[left.bucket] - BUCKET_ORDER[right.bucket];
+    return bucketOrderDiff !== 0 ? bucketOrderDiff : left.index - right.index;
   });
 
   const rawGroups: string[] = [];
@@ -189,31 +192,31 @@ export function suggestCnGroups(classString: string): string[] {
     }
   };
 
-  for (const { tok, bucket: b } of classified) {
+  for (const { tok, bucket: tokenBucket } of classified) {
     if (currentBucket === null) {
-      currentBucket = b;
-      currentStateKey = b === "state" ? stateKey(tok) : null;
+      currentBucket = tokenBucket;
+      currentStateKey = tokenBucket === "state" ? stateKey(tok) : null;
       currentTokens.push(tok);
       continue;
     }
 
-    if (!bucketsCompatible(b, currentBucket)) {
+    if (!bucketsCompatible(tokenBucket, currentBucket)) {
       flush();
-      currentBucket = b;
-      currentStateKey = b === "state" ? stateKey(tok) : null;
+      currentBucket = tokenBucket;
+      currentStateKey = tokenBucket === "state" ? stateKey(tok) : null;
       currentTokens.push(tok);
       continue;
     }
 
-    if (b === "state") {
+    if (tokenBucket === "state") {
       const key = stateKey(tok);
       if (key !== currentStateKey) {
         flush();
-        currentBucket = b;
+        currentBucket = tokenBucket;
         currentStateKey = key;
       }
-    } else if (currentBucket !== b) {
-      currentBucket = b;
+    } else if (currentBucket !== tokenBucket) {
+      currentBucket = tokenBucket;
     }
 
     currentTokens.push(tok);

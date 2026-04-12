@@ -11,8 +11,8 @@ function readVersion(): string {
     const dir = path.dirname(fileURLToPath(import.meta.url));
     const pkgPath = path.join(dir, "..", "package.json");
     const raw = readFileSync(pkgPath, "utf-8");
-    const v = (JSON.parse(raw) as { version?: unknown }).version;
-    return typeof v === "string" && v.length > 0 ? v : "unknown";
+    const pkgVersion = (JSON.parse(raw) as { version?: unknown }).version;
+    return typeof pkgVersion === "string" && pkgVersion.length > 0 ? pkgVersion : "unknown";
   } catch {
     return "unknown";
   }

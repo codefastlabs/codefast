@@ -31,8 +31,8 @@ function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
   return false;
 }
 
-export function tokenizeClassString(s: string): string[] {
-  return s.trim().split(/\s+/).filter(Boolean);
+export function tokenizeClassString(classString: string): string[] {
+  return classString.trim().split(/\s+/).filter(Boolean);
 }
 
 /**
@@ -40,10 +40,10 @@ export function tokenizeClassString(s: string): string[] {
  * Colons inside `[...]` (at positive bracket depth) are ignored so selectors like
  * `[&_a:hover]:text-red-500` split as `[&_a:hover]:` + `text-red-500`.
  */
-export function indexOfFirstVariantColon(s: string): number {
+export function indexOfFirstVariantColon(text: string): number {
   let depth = 0;
-  for (let i = 0; i < s.length; i++) {
-    const ch = s[i];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
     if (ch === "[") {
       depth++;
     } else if (ch === "]") {
@@ -60,21 +60,21 @@ export function indexOfFirstVariantColon(s: string): number {
 // e.g. "@min-[600px]:flex" → "flex"
 // e.g. "[&_a:hover]:text-red-500" → "text-red-500"
 export function stripVariants(token: string): string {
-  let t = token;
+  let withoutVariants = token;
   const MAX_PASSES = 12;
   for (let i = 0; i < MAX_PASSES; i++) {
-    const colonIdx = indexOfFirstVariantColon(t);
+    const colonIdx = indexOfFirstVariantColon(withoutVariants);
     if (colonIdx === -1) break;
-    t = t.slice(colonIdx + 1);
+    withoutVariants = withoutVariants.slice(colonIdx + 1);
   }
-  return t;
+  return withoutVariants;
 }
 
 /** Outermost variant segment: first `:` at bracket depth 0 → text before it. */
 function firstLeadingVariantPrefix(token: string): string | undefined {
-  const idx = indexOfFirstVariantColon(token);
-  if (idx === -1) return undefined;
-  return token.slice(0, idx);
+  const colonIdx = indexOfFirstVariantColon(token);
+  if (colonIdx === -1) return undefined;
+  return token.slice(0, colonIdx);
 }
 
 function isStateToken(token: string): boolean {
@@ -122,93 +122,95 @@ export function classifyToken(token: string): Bucket {
     return "state";
   }
 
-  const t = stripVariants(token);
+  const bareUtility = stripVariants(token);
 
   if (
     /^(?:flex|inline-flex|grid|inline-grid|block|inline|hidden|contents|flow-root|table(?:-|$)|list-item)/.test(
-      t,
+      bareUtility,
     ) ||
-    /^(?:items|justify|content|self|place)-/.test(t) ||
-    /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(t) ||
+    /^(?:items|justify|content|self|place)-/.test(bareUtility) ||
+    /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(bareUtility) ||
     /^-?(?:overflow|overscroll|object-|isolate$|isolation-|z-|float-|clear-|columns-|break-)/.test(
-      t,
+      bareUtility,
     ) ||
-    /^(?:absolute|relative|fixed|sticky|static|container)$/.test(t) ||
+    /^(?:absolute|relative|fixed|sticky|static|container)$/.test(bareUtility) ||
     /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-[0-9])/.test(
-      t,
+      bareUtility,
     ) ||
-    /^(?:subgrid|masonry)$/.test(t) ||
-    t === "flex" ||
-    t === "grid" ||
-    /^(?:peer|group)(?:\/[a-z][a-z0-9-]*)?$/.test(t)
+    /^(?:subgrid|masonry)$/.test(bareUtility) ||
+    bareUtility === "flex" ||
+    bareUtility === "grid" ||
+    /^(?:peer|group)(?:\/[a-z][a-z0-9-]*)?$/.test(bareUtility)
   ) {
     return "layout";
   }
 
   if (
-    /^-?(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(t) ||
-    t === "shrink" ||
-    t === "grow" ||
-    /^field-sizing-/.test(t)
+    /^-?(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(bareUtility) ||
+    bareUtility === "shrink" ||
+    bareUtility === "grow" ||
+    /^field-sizing-/.test(bareUtility)
   ) {
     return "size";
   }
 
   if (
     /^-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|inset|top|right|bottom|left|start|end)-/.test(
-      t,
+      bareUtility,
     ) ||
-    /^-?(?:inset|top|right|bottom|left|start|end)(?:\/|$)/.test(t) ||
-    /^-?(?:inset-x|inset-y)-/.test(t)
+    /^-?(?:inset|top|right|bottom|left|start|end)(?:\/|$)/.test(bareUtility) ||
+    /^-?(?:inset-x|inset-y)-/.test(bareUtility)
   ) {
     return "spacing";
   }
 
   if (
     /^-?(?:rounded|border|ring|divide|bg|from|via|to|fill|stroke|shadow|opacity)(?:-|\/|$)/.test(
-      t,
+      bareUtility,
     ) ||
-    /^-?(?:backdrop-blur|backdrop-filter|backdrop-|blur|drop-shadow|mix-blend)-/.test(t) ||
-    /^(?:inset-shadow|inset-ring|mask-)/.test(t) ||
-    t === "border" ||
-    t === "rounded" ||
-    t === "shadow" ||
-    t === "ring" ||
-    t === "blur"
+    /^-?(?:backdrop-blur|backdrop-filter|backdrop-|blur|drop-shadow|mix-blend)-/.test(
+      bareUtility,
+    ) ||
+    /^(?:inset-shadow|inset-ring|mask-)/.test(bareUtility) ||
+    bareUtility === "border" ||
+    bareUtility === "rounded" ||
+    bareUtility === "shadow" ||
+    bareUtility === "ring" ||
+    bareUtility === "blur"
   ) {
     return "surface";
   }
 
   if (
     /^-?(?:text|font|leading|tracking|list|indent|align|whitespace|break|line-clamp|hyphens)-/.test(
-      t,
+      bareUtility,
     ) ||
     /^(?:antialiased|subpixel-antialiased|italic|not-italic|overline|line-through|underline|no-underline|uppercase|lowercase|capitalize|normal-case|truncate|text-wrap|text-balance|text-pretty)$/.test(
-      t,
+      bareUtility,
     ) ||
-    /^text-wrap-/.test(t) ||
-    /^text-shadow(?:-|$)/.test(t) ||
-    /^scheme-/.test(t)
+    /^text-wrap-/.test(bareUtility) ||
+    /^text-shadow(?:-|$)/.test(bareUtility) ||
+    /^scheme-/.test(bareUtility)
   ) {
     return "typography";
   }
 
   if (
-    /^(?:transition|duration|ease|delay|animate|will-change)(?:-|$)/.test(t) ||
-    /^ease-/.test(t) ||
-    /^-?(?:translate|scale|rotate|skew)(?:-|$)/.test(t) ||
-    /^transform(?:-(?:gpu|cpu|none))?$/.test(t)
+    /^(?:transition|duration|ease|delay|animate|will-change)(?:-|$)/.test(bareUtility) ||
+    /^ease-/.test(bareUtility) ||
+    /^-?(?:translate|scale|rotate|skew)(?:-|$)/.test(bareUtility) ||
+    /^transform(?:-(?:gpu|cpu|none))?$/.test(bareUtility)
   ) {
     return "motion";
   }
 
   if (
     /^(?:outline|cursor|pointer-events|select|appearance|resize|touch-action|scroll-behavior|scroll-snap|caret|accent)(?:-|$)/.test(
-      t,
+      bareUtility,
     ) ||
-    /^(?:outline|cursor|select|resize)$/.test(t) ||
-    t === "outline-hidden" ||
-    t === "outline-none"
+    /^(?:outline|cursor|select|resize)$/.test(bareUtility) ||
+    bareUtility === "outline-hidden" ||
+    bareUtility === "outline-none"
   ) {
     return "interaction";
   }
@@ -222,14 +224,14 @@ export function classifyToken(token: string): Bucket {
  * vs `=left`) keeps direction-specific utilities in separate state groups.
  */
 function dataAttributeStem(token: string): string {
-  const m = token.match(/^data-\[([^\]]*)\]/);
-  return m ? `data-[${m[1]}]` : "data";
+  const match = token.match(/^data-\[([^\]]*)\]/);
+  return match ? `data-[${match[1]}]` : "data";
 }
 
 /** Same idea as {@link dataAttributeStem} for `aria-[…]:` variants. */
 function ariaAttributeStem(token: string): string {
-  const m = token.match(/^aria-\[([^\]]*)\]/);
-  return m ? `aria-[${m[1]}]` : "aria";
+  const match = token.match(/^aria-\[([^\]]*)\]/);
+  return match ? `aria-[${match[1]}]` : "aria";
 }
 
 /**
@@ -245,10 +247,10 @@ export function stateKey(token: string): string {
   const layers: string[] = [];
   let rest = token;
   while (rest.length > 0) {
-    const idx = indexOfFirstVariantColon(rest);
-    if (idx === -1) break;
-    layers.push(rest.slice(0, idx));
-    rest = rest.slice(idx + 1);
+    const colonIdx = indexOfFirstVariantColon(rest);
+    if (colonIdx === -1) break;
+    layers.push(rest.slice(0, colonIdx));
+    rest = rest.slice(colonIdx + 1);
   }
   if (layers.length === 0) {
     return token;
@@ -263,7 +265,7 @@ export function stateKey(token: string): string {
 
 export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
   if (a === b) return true;
-  return COMPATIBLE_BUCKET_SETS.some((s) => s.has(a) && s.has(b));
+  return COMPATIBLE_BUCKET_SETS.some((bucketSet) => bucketSet.has(a) && bucketSet.has(b));
 }
 
 /** Like {@link bucketsCompatible}, but never merge two distinct state variant blobs. */

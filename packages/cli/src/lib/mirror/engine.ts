@@ -4,8 +4,8 @@ import { isDirentList } from "#lib/shared/utils";
 import { DTS_EXTENSION, PACKAGE_JSON_EXPORT, VALID_JS_EXTENSIONS } from "#lib/mirror/constants";
 import type { ExportEntry, GenerateExportsResult, MirrorConfig, Module } from "#lib/mirror/types";
 
-export function normalizePath(p: string): string {
-  return p.split(path.sep).join("/").replace(/\\/g, "/");
+export function normalizePath(relPath: string): string {
+  return relPath.split(path.sep).join("/").replace(/\\/g, "/");
 }
 
 async function scanDirectoryFiles(
@@ -93,12 +93,12 @@ const GROUP_ORDER: Record<string, number> = {
 };
 
 export function getExportGroup(
-  p: string,
-  pathTransform: ((s: string) => string) | null,
+  exportPath: string,
+  pathTransform: ((pathString: string) => string) | null,
 ): [string, string, number, number] {
-  if (p === ".") return [".", "", 0, 0];
+  if (exportPath === ".") return [".", "", 0, 0];
 
-  const cleanPath = p.startsWith("./") ? p.slice(2) : p;
+  const cleanPath = exportPath.startsWith("./") ? exportPath.slice(2) : exportPath;
 
   if (cleanPath.endsWith("/*")) {
     const dirName = cleanPath.slice(0, -2);
@@ -121,7 +121,7 @@ export function getExportGroup(
 export function createPathTransform(
   config: MirrorConfig | undefined,
   packagePath: string,
-): ((p: string) => string) | null {
+): ((pathString: string) => string) | null {
   if (!config?.pathTransformations?.[packagePath]) return null;
   const { removePrefix } = config.pathTransformations[packagePath];
   if (!removePrefix) return null;
@@ -138,16 +138,19 @@ export function createPathTransform(
 
 type SortTuple = [number, string, number, string];
 
-function getSortTuple(p: string, pathTransform: ((s: string) => string) | null): SortTuple {
-  const [group, subpath, order, isIndex] = getExportGroup(p, pathTransform);
+function getSortTuple(
+  exportPath: string,
+  pathTransform: ((pathString: string) => string) | null,
+): SortTuple {
+  const [group, subpath, order, isIndex] = getExportGroup(exportPath, pathTransform);
   return [order, group, isIndex, subpath];
 }
 
-function compareTuples(a: SortTuple, b: SortTuple): number {
-  if (a[0] !== b[0]) return a[0] - b[0];
-  if (a[1] !== b[1]) return a[1] < b[1] ? -1 : 1;
-  if (a[2] !== b[2]) return a[2] - b[2];
-  if (a[3] !== b[3]) return a[3] < b[3] ? -1 : 1;
+function compareTuples(left: SortTuple, right: SortTuple): number {
+  if (left[0] !== right[0]) return left[0] - right[0];
+  if (left[1] !== right[1]) return left[1] < right[1] ? -1 : 1;
+  if (left[2] !== right[2]) return left[2] - right[2];
+  if (left[3] !== right[3]) return left[3] < right[3] ? -1 : 1;
   return 0;
 }
 
@@ -211,7 +214,7 @@ async function generateCssExports(
 export async function generateExports(
   fs: CliFs,
   distDir: string,
-  pathTransform: ((s: string) => string) | null,
+  pathTransform: ((pathString: string) => string) | null,
   cssConfig: Record<string, unknown> | boolean | undefined,
   customExports: Record<string, string>,
 ): Promise<GenerateExportsResult> {
@@ -220,7 +223,7 @@ export async function generateExports(
     return { exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT }, jsCount: 0, cssCount: 0 };
 
   const modules = groupFilesByModule(files);
-  const validModules = Array.from(modules.values()).filter((m) => m.files.js && m.files.dts);
+  const validModules = Array.from(modules.values()).filter((mod) => mod.files.js && mod.files.dts);
 
   if (!validModules.length)
     return { exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT }, jsCount: 0, cssCount: 0 };
@@ -238,25 +241,30 @@ export async function generateExports(
     exportsObj[exportPath] = entry;
   }
 
-  let sortedKeys = Object.keys(exportsObj).sort((a, b) =>
-    compareTuples(getSortTuple(a, pathTransform), getSortTuple(b, pathTransform)),
+  let sortedKeys = Object.keys(exportsObj).sort((pathA, pathB) =>
+    compareTuples(getSortTuple(pathA, pathTransform), getSortTuple(pathB, pathTransform)),
   );
   const sortedExports: Record<string, ExportEntry | string> = {};
-  for (const k of sortedKeys) sortedExports[k] = exportsObj[k] as ExportEntry;
+  for (const exportKey of sortedKeys)
+    sortedExports[exportKey] = exportsObj[exportKey] as ExportEntry;
 
   const cssExports = await generateCssExports(fs, distDir, cssConfig ?? { enabled: true });
 
   Object.assign(sortedExports, cssExports);
-  for (const [k, v] of Object.entries(customExports || {})) {
-    if (k !== PACKAGE_JSON_EXPORT) sortedExports[k] = v;
+  for (const [specifier, mappedPath] of Object.entries(customExports || {})) {
+    if (specifier !== PACKAGE_JSON_EXPORT) sortedExports[specifier] = mappedPath;
   }
 
   sortedKeys = Object.keys(sortedExports)
-    .filter((k) => k !== PACKAGE_JSON_EXPORT)
-    .sort((a, b) => compareTuples(getSortTuple(a, pathTransform), getSortTuple(b, pathTransform)));
+    .filter((exportKey) => exportKey !== PACKAGE_JSON_EXPORT)
+    .sort((pathA, pathB) =>
+      compareTuples(getSortTuple(pathA, pathTransform), getSortTuple(pathB, pathTransform)),
+    );
 
   const finalExports: Record<string, ExportEntry | string> = {};
-  for (const k of sortedKeys) finalExports[k] = sortedExports[k] as ExportEntry | string;
+  for (const exportKey of sortedKeys) {
+    finalExports[exportKey] = sortedExports[exportKey] as ExportEntry | string;
+  }
   finalExports[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT;
 
   return {

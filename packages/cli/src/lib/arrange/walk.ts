@@ -17,17 +17,17 @@ const SKIP_DIRS = new Set([
 
 export function walkTsxFiles(root: string, fs: CliFs): string[] {
   const result: string[] = [];
-  const visit = (p: string) => {
-    const st = fs.statSync(p);
-    if (st.isDirectory()) {
-      for (const name of fs.readdirSync(p)) {
+  const visit = (entryPath: string) => {
+    const entryStats = fs.statSync(entryPath);
+    if (entryStats.isDirectory()) {
+      for (const name of fs.readdirSync(entryPath)) {
         if (SKIP_DIRS.has(name)) continue;
-        visit(path.join(p, name));
+        visit(path.join(entryPath, name));
       }
       return;
     }
-    if (p.endsWith(".d.ts")) return;
-    if (p.endsWith(".tsx") || p.endsWith(".ts")) result.push(p);
+    if (entryPath.endsWith(".d.ts")) return;
+    if (entryPath.endsWith(".tsx") || entryPath.endsWith(".ts")) result.push(entryPath);
   };
   visit(root);
   return result;
