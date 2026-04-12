@@ -1,4 +1,4 @@
-import type { ArrangeFs, ArrangeLogger } from "#lib/arrange/fs-contract";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { ArrangeError, ArrangeErrorCode } from "#lib/arrange/errors";
 import type { ArrangeRunOnTargetOptions } from "#lib/arrange/types";
 import { groupFile } from "#lib/arrange/group-file";
@@ -7,8 +7,8 @@ import { walkTsxFiles } from "#lib/arrange/walk";
 export function runOnTarget(
   target: string,
   options: ArrangeRunOnTargetOptions,
-  fs: ArrangeFs,
-  logger: ArrangeLogger,
+  fs: CliFs,
+  logger: CliLogger,
 ): void {
   const { out } = logger;
   if (!fs.existsSync(target)) {

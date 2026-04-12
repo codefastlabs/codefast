@@ -8,8 +8,8 @@ import {
   analyzeDirectory,
   areCnTailwindPartitionsEquivalent,
   classifyToken,
-  createNodeArrangeFs,
-  createNodeArrangeLogger,
+  createNodeCliFs,
+  createNodeCliLogger,
   formatArray,
   formatCnArguments,
   formatCnCall,
@@ -24,8 +24,8 @@ import {
   unwrapCnInsideTvCallReplacement,
 } from "#lib/arrange";
 
-const arrangeFs = createNodeArrangeFs();
-const arrangeLogger = createNodeArrangeLogger();
+const arrangeFs = createNodeCliFs();
+const arrangeLogger = createNodeCliLogger();
 
 // ---------------------------------------------------------------------------
 // Test helpers
