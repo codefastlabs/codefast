@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { ButtonGroup, ButtonGroupText } from "@codefast/ui/button-group";
 import {
@@ -52,7 +53,7 @@ export function InputGroupDemo() {
   const [country, setCountry] = useState("+1");
 
   return (
-    <div className="flex w-full flex-wrap gap-12 pb-72 *:[div]:w-full *:[div]:max-w-sm">
+    <div className={cn("flex w-full flex-wrap gap-12", "pb-72", "*:[div]:w-full *:[div]:max-w-sm")}>
       <div className="flex flex-col gap-10">
         <Field>
           <FieldLabel htmlFor="input-default-01">Default (No Input Group)</FieldLabel>
@@ -106,7 +107,7 @@ export function InputGroupDemo() {
           <InputGroup>
             <InputGroupInput id="input-icon-right-08" />
             <InputGroupAddon align="inline-end">
-              <IconLoader2 className="animate-spin text-muted-foreground" />
+              <IconLoader2 className={cn("text-muted-foreground", "animate-spin")} />
             </InputGroupAddon>
           </InputGroup>
         </Field>
@@ -118,7 +119,7 @@ export function InputGroupDemo() {
               <IconMicrophone className="text-muted-foreground" />
             </InputGroupAddon>
             <InputGroupAddon align="inline-end">
-              <IconPlayerRecordFilled className="animate-pulse text-red-500" />
+              <IconPlayerRecordFilled className={cn("text-red-500", "animate-pulse")} />
             </InputGroupAddon>
           </InputGroup>
         </Field>
@@ -133,7 +134,7 @@ export function InputGroupDemo() {
               </InputGroupButton>
             </InputGroupAddon>
             <InputGroupAddon>
-              <IconPlayerRecordFilled className="animate-pulse text-red-500" />
+              <IconPlayerRecordFilled className={cn("text-red-500", "animate-pulse")} />
             </InputGroupAddon>
           </InputGroup>
         </Field>
@@ -192,7 +193,7 @@ export function InputGroupDemo() {
             <InputGroupAddon>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <InputGroupButton className="text-muted-foreground tabular-nums">
+                  <InputGroupButton className={cn("text-muted-foreground", "tabular-nums")}>
                     {country} <ChevronDownIcon />
                   </InputGroupButton>
                 </DropdownMenuTrigger>
@@ -284,7 +285,10 @@ export function InputGroupDemo() {
                   </InputGroupButton>
                 </InputGroupAddon>
               </PopoverTrigger>
-              <PopoverContent align="start" className="flex flex-col gap-1 rounded-2xl text-sm">
+              <PopoverContent
+                align="start"
+                className={cn("flex flex-col gap-1", "rounded-2xl", "text-sm")}
+              >
                 <p className="font-medium">Your connection is not secure.</p>
                 <p>You should not enter any sensitive information on this site.</p>
               </PopoverContent>
@@ -304,7 +308,7 @@ export function InputGroupDemo() {
             <InputGroupInput id="input-addon-20" />
             <InputGroupAddon align="block-start">
               <InputGroupText>First Name</InputGroupText>
-              <IconInfoCircle className="ml-auto text-muted-foreground" />
+              <IconInfoCircle className={cn("ml-auto", "text-muted-foreground")} />
             </InputGroupAddon>
           </InputGroup>
         </Field>
@@ -314,7 +318,7 @@ export function InputGroupDemo() {
             <InputGroupInput id="input-addon-21" />
             <InputGroupAddon align="block-end">
               <InputGroupText>20/240 characters</InputGroupText>
-              <IconInfoCircle className="ml-auto text-muted-foreground" />
+              <IconInfoCircle className={cn("ml-auto", "text-muted-foreground")} />
             </InputGroupAddon>
           </InputGroup>
         </Field>
@@ -385,8 +389,14 @@ export function InputGroupDemo() {
           <InputGroup>
             <InputGroupInput id="input-username-26" defaultValue="codefast" />
             <InputGroupAddon align="inline-end">
-              <div className="flex size-4 items-center justify-center rounded-full bg-green-500 dark:bg-green-800">
-                <IconCheck className="size-3 text-white" />
+              <div
+                className={cn(
+                  "flex size-4 items-center justify-center",
+                  "rounded-full bg-green-500",
+                  "dark:bg-green-800",
+                )}
+              >
+                <IconCheck className={cn("size-3", "text-white")} />
               </div>
             </InputGroupAddon>
           </InputGroup>
@@ -443,7 +453,7 @@ export function InputGroupDemo() {
             <InputGroupTextarea
               id="textarea-code-32"
               placeholder="console.log('Hello, world!');"
-              className="min-h-75 py-3"
+              className={cn("min-h-75", "py-3")}
             />
             <InputGroupAddon align="block-start" className="border-b">
               <InputGroupText className="font-mono font-medium">
@@ -510,7 +520,11 @@ export function InputGroupDemo() {
             />
             <InputGroupAddon align="block-end">
               <InputGroupText>0/280 characters</InputGroupText>
-              <InputGroupButton variant="default" size="icon-xs" className="ml-auto rounded-full">
+              <InputGroupButton
+                variant="default"
+                size="icon-xs"
+                className={cn("ml-auto", "rounded-full")}
+              >
                 <ArrowUpIcon />
                 <span className="sr-only">Send</span>
               </InputGroupButton>

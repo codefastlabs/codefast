@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Label } from "@codefast/ui/label";
 import { Switch } from "@codefast/ui/switch";
 
@@ -11,12 +12,19 @@ export function SwitchDemo() {
       <div className="flex items-center gap-2">
         <Switch
           id="switch-demo-bluetooth"
-          className="data-checked:bg-blue-500 dark:data-checked:bg-blue-600"
+          className={cn("data-checked:bg-blue-500", "dark:data-checked:bg-blue-600")}
           defaultChecked
         />
         <Label htmlFor="switch-demo-bluetooth">Bluetooth</Label>
       </div>
-      <Label className="flex items-center gap-6 rounded-xl border p-4 has-data-[state=checked]:border-blue-600">
+      <Label
+        className={cn(
+          "flex items-center gap-6",
+          "p-4",
+          "rounded-xl border",
+          "has-data-[state=checked]:border-blue-600",
+        )}
+      >
         <div className="flex flex-col gap-1">
           <div className="font-medium">Share across devices</div>
           <div className="text-sm font-normal text-muted-foreground">
@@ -25,7 +33,7 @@ export function SwitchDemo() {
         </div>
         <Switch
           id="switch-demo-focus-mode"
-          className="data-checked:bg-blue-500 dark:data-checked:bg-blue-600"
+          className={cn("data-checked:bg-blue-500", "dark:data-checked:bg-blue-600")}
         />
       </Label>
     </div>

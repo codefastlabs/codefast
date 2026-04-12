@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Badge } from "@codefast/ui/badge";
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -18,14 +19,19 @@ export function BadgeDemo() {
           <AlertCircleIcon />
           Alert
         </Badge>
-        <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">8</Badge>
+        <Badge className={cn("h-5 min-w-5", "px-1", "rounded-full", "font-mono", "tabular-nums")}>
+          8
+        </Badge>
         <Badge
-          className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
+          className={cn("h-5 min-w-5", "px-1", "rounded-full", "font-mono", "tabular-nums")}
           variant="destructive"
         >
           99
         </Badge>
-        <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums" variant="outline">
+        <Badge
+          className={cn("h-5 min-w-5", "px-1", "rounded-full", "font-mono", "tabular-nums")}
+          variant="outline"
+        >
           20+
         </Badge>
       </div>

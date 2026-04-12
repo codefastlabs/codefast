@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Badge } from "@codefast/ui/badge";
 import { Checkbox } from "@codefast/ui/checkbox";
 import {
@@ -38,7 +39,7 @@ export function ShippingForm() {
               <RadioGroupItem value="standard" id="shipping-method-1" />
               <FieldLabel htmlFor="shipping-method-1" className="font-normal">
                 Standard{" "}
-                <Badge className="rounded-full py-px" variant="outline">
+                <Badge className={cn("py-px", "rounded-full")} variant="outline">
                   Free
                 </Badge>
               </FieldLabel>

@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Skeleton } from "@codefast/ui/skeleton";
@@ -41,7 +42,7 @@ function ComponentPage() {
   const config = componentRegistry[name];
 
   if (!config || config.type !== "registry:ui") {
-    return <div className="p-6 text-center">Component not found</div>;
+    return <div className={cn("p-6", "text-center")}>Component not found</div>;
   }
 
   const Component = config.component;

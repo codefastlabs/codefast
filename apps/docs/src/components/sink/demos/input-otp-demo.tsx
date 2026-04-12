@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
 import { Label } from "@codefast/ui/label";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
@@ -5,7 +6,7 @@ import { useState } from "react";
 
 export function InputOTPDemo() {
   return (
-    <div className="flex flex-col flex-wrap gap-6 md:flex-row">
+    <div className={cn("flex flex-col flex-wrap gap-6", "md:flex-row")}>
       <InputOTPSimple />
       <InputOTPPattern />
       <InputOTPWithSeparator />
@@ -84,7 +85,12 @@ function InputOTPWithSpacing() {
     <div className="grid gap-2">
       <Label htmlFor="with-spacing">With Spacing</Label>
       <InputOTP id="with-spacing" maxLength={6}>
-        <InputOTPGroup className="gap-2 *:data-[slot=input-otp-slot]:rounded-lg *:data-[slot=input-otp-slot]:border">
+        <InputOTPGroup
+          className={cn(
+            "gap-2",
+            "*:data-[slot=input-otp-slot]:rounded-lg *:data-[slot=input-otp-slot]:border",
+          )}
+        >
           <InputOTPSlot index={0} aria-invalid="true" />
           <InputOTPSlot index={1} aria-invalid="true" />
           <InputOTPSlot index={2} aria-invalid="true" />

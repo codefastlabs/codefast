@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@codefast/ui/resizable";
 
 export function ResizableDemo() {
@@ -5,10 +6,10 @@ export function ResizableDemo() {
     <div className="flex w-full flex-col gap-6">
       <ResizableGroup
         orientation="horizontal"
-        className="max-w-md rounded-xl border md:min-w-112.5"
+        className={cn("max-w-md", "rounded-xl border", "md:min-w-112.5")}
       >
         <ResizablePanel defaultSize={50}>
-          <div className="flex h-50 items-center justify-center p-6">
+          <div className={cn("flex h-50 items-center justify-center", "p-6")}>
             <span className="font-semibold">One</span>
           </div>
         </ResizablePanel>
@@ -16,13 +17,13 @@ export function ResizableDemo() {
         <ResizablePanel defaultSize={50}>
           <ResizableGroup orientation="vertical">
             <ResizablePanel defaultSize={25}>
-              <div className="flex h-full items-center justify-center p-6">
+              <div className={cn("flex h-full items-center justify-center", "p-6")}>
                 <span className="font-semibold">Two</span>
               </div>
             </ResizablePanel>
             <ResizableSeparator />
             <ResizablePanel defaultSize={75}>
-              <div className="flex h-full items-center justify-center p-6">
+              <div className={cn("flex h-full items-center justify-center", "p-6")}>
                 <span className="font-semibold">Three</span>
               </div>
             </ResizablePanel>
@@ -31,32 +32,32 @@ export function ResizableDemo() {
       </ResizableGroup>
       <ResizableGroup
         orientation="horizontal"
-        className="min-h-50 max-w-md rounded-xl border md:min-w-112.5"
+        className={cn("min-h-50 max-w-md", "rounded-xl border", "md:min-w-112.5")}
       >
         <ResizablePanel defaultSize={25}>
-          <div className="flex h-full items-center justify-center p-6">
+          <div className={cn("flex h-full items-center justify-center", "p-6")}>
             <span className="font-semibold">Sidebar</span>
           </div>
         </ResizablePanel>
         <ResizableSeparator withHandle />
         <ResizablePanel defaultSize={75}>
-          <div className="flex h-full items-center justify-center p-6">
+          <div className={cn("flex h-full items-center justify-center", "p-6")}>
             <span className="font-semibold">Content</span>
           </div>
         </ResizablePanel>
       </ResizableGroup>
       <ResizableGroup
         orientation="vertical"
-        className="min-h-50 max-w-md rounded-xl border md:min-w-112.5"
+        className={cn("min-h-50 max-w-md", "rounded-xl border", "md:min-w-112.5")}
       >
         <ResizablePanel defaultSize={25}>
-          <div className="flex h-full items-center justify-center p-6">
+          <div className={cn("flex h-full items-center justify-center", "p-6")}>
             <span className="font-semibold">Header</span>
           </div>
         </ResizablePanel>
         <ResizableSeparator />
         <ResizablePanel defaultSize={75}>
-          <div className="flex h-full items-center justify-center p-6">
+          <div className={cn("flex h-full items-center justify-center", "p-6")}>
             <span className="font-semibold">Content</span>
           </div>
         </ResizablePanel>

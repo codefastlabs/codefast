@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { AspectRatio } from "@codefast/ui/aspect-ratio";
 import { Image } from "@unpic/react";
 
@@ -11,7 +12,12 @@ export function AspectRatioDemo() {
           width={768}
           height={432}
           layout="constrained"
-          className="absolute inset-0 h-full w-full rounded-xl object-cover dark:brightness-[0.2] dark:grayscale"
+          className={cn(
+            "absolute h-full w-full object-cover",
+            "inset-0",
+            "rounded-xl",
+            "dark:brightness-[0.2] dark:grayscale",
+          )}
         />
       </AspectRatio>
       <AspectRatio ratio={1} className="rounded-xl bg-muted">
@@ -21,7 +27,12 @@ export function AspectRatioDemo() {
           width={768}
           height={768}
           layout="constrained"
-          className="absolute inset-0 h-full w-full rounded-xl object-cover dark:brightness-[0.2] dark:grayscale"
+          className={cn(
+            "absolute h-full w-full object-cover",
+            "inset-0",
+            "rounded-xl",
+            "dark:brightness-[0.2] dark:grayscale",
+          )}
         />
       </AspectRatio>
     </div>

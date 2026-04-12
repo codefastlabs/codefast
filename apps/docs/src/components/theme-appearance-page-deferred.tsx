@@ -45,7 +45,14 @@ function ThemeCodeBlock({
   return (
     <div className="space-y-2">
       <p className="text-xs font-semibold text-foreground">{title}</p>
-      <div className="flex items-start justify-between gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-3 shadow-inner sm:text-xs">
+      <div
+        className={cn(
+          "flex items-start justify-between gap-2",
+          "px-3 py-3",
+          "rounded-xl border border-border/60 bg-background/80 shadow-inner",
+          "sm:text-xs",
+        )}
+      >
         <ShikiThemeCodeBlock code={code} lang={lang} />
         <CopySnippetButton text={code} />
       </div>
@@ -65,7 +72,9 @@ function ThemeTransitionSamplesGrid({ variant }: { variant: "inline" | "full" })
     >
       <Card
         className={cn(
-          "border-border/60 transition-all duration-500 hover:scale-[1.02] hover:shadow-lg",
+          "border-border/60",
+          "transition-all duration-500",
+          "hover:scale-[1.02] hover:shadow-lg",
           inline && "shadow-sm",
         )}
       >
@@ -85,22 +94,31 @@ function ThemeTransitionSamplesGrid({ variant }: { variant: "inline" | "full" })
 
       <div
         className={cn(
-          "flex items-center justify-center rounded-2xl border border-border/60 bg-card/90 transition-all duration-500 hover:bg-accent",
+          "flex items-center justify-center",
+          "rounded-2xl border border-border/60 bg-card/90",
+          "transition-all duration-500",
+          "hover:bg-accent",
           inline ? "min-h-[4.25rem] p-2 sm:min-h-[4.5rem] sm:p-3" : "min-h-[8.5rem] p-4",
         )}
       >
-        <Button size={inline ? "sm" : "md"} className="transition-all duration-500 hover:scale-105">
+        <Button
+          size={inline ? "sm" : "md"}
+          className={cn("transition-all duration-500", "hover:scale-105")}
+        >
           Button
         </Button>
       </div>
 
       <div
         className={cn(
-          "flex items-center justify-center gap-2 rounded-2xl border border-border/60 bg-card/90 transition-all duration-500 hover:border-primary",
+          "flex items-center justify-center gap-2",
+          "rounded-2xl border border-border/60 bg-card/90",
+          "transition-all duration-500",
+          "hover:border-primary",
           inline ? "min-h-[4.25rem] p-2 sm:min-h-[4.5rem] sm:p-3" : "min-h-[8.5rem] p-4",
         )}
       >
-        <Badge className="transition-all duration-500 hover:scale-105">Badge</Badge>
+        <Badge className={cn("transition-all duration-500", "hover:scale-105")}>Badge</Badge>
       </div>
     </div>
   );
@@ -118,14 +136,23 @@ function ThemeSectionHeader({
   id: string;
 }) {
   return (
-    <div className="mb-6 max-w-2xl md:mb-8">
-      <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+    <div className={cn("max-w-2xl", "mb-6", "md:mb-8")}>
+      <p className={cn("mb-2", "text-xs font-semibold tracking-[0.2em] text-primary uppercase")}>
         {eyebrow}
       </p>
-      <h2 id={id} className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+      <h2
+        id={id}
+        className={cn("text-2xl font-bold tracking-tight text-foreground", "md:text-3xl")}
+      >
         {title}
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground md:text-base">
+      <p
+        className={cn(
+          "mt-2",
+          "text-sm leading-relaxed text-pretty text-muted-foreground",
+          "md:text-base",
+        )}
+      >
         {description}
       </p>
     </div>
@@ -136,34 +163,62 @@ function TanStackThemeSetupCollapsible() {
     <section
       id="tanstack-theme-setup"
       aria-labelledby="tanstack-setup-title"
-      className="scroll-mt-24 md:scroll-mt-28"
+      className={cn("md:scroll-mt-28", "scroll-mt-24")}
     >
       <Collapsible defaultOpen={false} className="group/collapsible">
-        <Card className="overflow-hidden border-border/60 bg-linear-to-br from-card via-card to-muted/20 shadow-md ring-1 ring-border/40">
-          <CardHeader className="flex flex-col gap-4 space-y-0 border-b border-border/40 bg-muted/15 pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
+        <Card
+          className={cn(
+            "overflow-hidden",
+            "border-border/60 bg-linear-to-br from-card via-card to-muted/20 shadow-md ring-1 ring-border/40",
+          )}
+        >
+          <CardHeader
+            className={cn(
+              "flex flex-col gap-4 space-y-0",
+              "pb-4",
+              "border-b border-border/40 bg-muted/15",
+              "sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4",
+            )}
+          >
             <div className="flex min-w-0 flex-1 gap-3">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary shadow-sm ring-1 ring-primary/15">
+              <div
+                className={cn(
+                  "flex size-11 shrink-0 items-center justify-center",
+                  "rounded-xl bg-primary/12 shadow-sm ring-1 ring-primary/15",
+                  "text-primary",
+                )}
+              >
                 <CodeIcon className="size-5" aria-hidden />
               </div>
               <div className="min-w-0 space-y-1">
-                <CardTitle id="tanstack-setup-title" className="text-lg md:text-xl">
+                <CardTitle id="tanstack-setup-title" className={cn("text-lg", "md:text-xl")}>
                   TanStack Start + @codefast/theme
                 </CardTitle>
                 <CardDescription className="text-pretty">
                   Cookie-backed light, dark, and system for TanStack Start: SSR reads the
                   preference,{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  <code
+                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  >
                     {"<html>"}
                   </code>{" "}
                   matches the first paint, and any route can use{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  <code
+                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  >
                     useTheme()
                   </code>
                   .
                 </CardDescription>
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   Open the panel below for install, ordered steps, copy-paste{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.65rem] text-foreground">
+                  <code
+                    className={cn(
+                      "px-1",
+                      "rounded bg-muted",
+                      "font-mono text-[0.65rem] text-foreground",
+                    )}
+                  >
                     __root.tsx
                   </code>
                   , and a toggle example.
@@ -175,23 +230,29 @@ function TanStackThemeSetupCollapsible() {
                 type="button"
                 variant="secondary"
                 size="sm"
-                className="w-full shrink-0 gap-2 shadow-sm sm:w-auto"
+                className={cn("w-full shrink-0 gap-2", "shadow-sm", "sm:w-auto")}
                 aria-controls="tanstack-setup-panel"
               >
                 <span className="group-data-open/collapsible:hidden">Show setup guide</span>
-                <span className="hidden group-data-open/collapsible:inline">Hide setup guide</span>
+                <span className={cn("hidden", "group-data-open/collapsible:inline")}>
+                  Hide setup guide
+                </span>
                 <ChevronDownIcon
-                  className="size-4 shrink-0 transition-transform duration-200 group-data-open/collapsible:rotate-180"
+                  className={cn(
+                    "size-4 shrink-0",
+                    "transition-transform duration-200",
+                    "group-data-open/collapsible:rotate-180",
+                  )}
                   aria-hidden
                 />
               </Button>
             </CollapsibleTrigger>
           </CardHeader>
           <CollapsibleContent id="tanstack-setup-panel">
-            <CardContent className="space-y-8 pt-6">
+            <CardContent className={cn("space-y-8", "pt-6")}>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Outcome</h3>
-                <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                <ul className={cn("space-y-1.5", "mt-2", "text-sm text-muted-foreground")}>
                   <li className="flex gap-2">
                     <span className="text-foreground" aria-hidden>
                       •
@@ -206,7 +267,13 @@ function TanStackThemeSetupCollapsible() {
                       •
                     </span>
                     <span>
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         ThemeScript
                       </code>{" "}
                       aligns the first paint with the cookie before React hydrates.
@@ -217,11 +284,23 @@ function TanStackThemeSetupCollapsible() {
                       •
                     </span>
                     <span>
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         useTheme()
                       </code>{" "}
                       exposes{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         setTheme
                       </code>
                       , stored value, and OS-resolved mode for UI.
@@ -232,7 +311,13 @@ function TanStackThemeSetupCollapsible() {
 
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Install</h3>
-                <div className="mt-2 flex items-start justify-between gap-3 rounded-xl border border-border/60 bg-background/80 px-3 py-2 shadow-inner">
+                <div
+                  className={cn(
+                    "flex items-start justify-between gap-3",
+                    "mt-2 px-3 py-2",
+                    "rounded-xl border border-border/60 bg-background/80 shadow-inner",
+                  )}
+                >
                   <ShikiThemeCodeBlock
                     code={PNPM_INSTALL}
                     lang="bash"
@@ -240,9 +325,15 @@ function TanStackThemeSetupCollapsible() {
                   />
                   <CopySnippetButton text={PNPM_INSTALL} />
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className={cn("mt-2", "text-xs text-muted-foreground")}>
                   npm / yarn equivalent works. You still need global CSS from{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.65rem] text-foreground">
+                  <code
+                    className={cn(
+                      "px-1",
+                      "rounded bg-muted",
+                      "font-mono text-[0.65rem] text-foreground",
+                    )}
+                  >
                     @codefast/ui
                   </code>{" "}
                   (preset + palette) as in the home page install snippet.
@@ -251,87 +342,196 @@ function TanStackThemeSetupCollapsible() {
 
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Implementation steps</h3>
-                <ol className="mt-3 list-decimal space-y-3 pl-5 text-sm text-muted-foreground marker:font-semibold marker:text-foreground">
+                <ol
+                  className={cn(
+                    "space-y-3",
+                    "mt-3 pl-5",
+                    "list-decimal text-sm text-muted-foreground",
+                    "marker:font-semibold marker:text-foreground",
+                  )}
+                >
                   <li>
                     <span className="font-medium text-foreground">Root route loader</span> — Call{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       getThemeServerFn()
                     </code>{" "}
                     and return{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       theme
                     </code>{" "}
                     so the value is available during SSR and on the client after navigation.
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Shell component</span> — Use{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       shellComponent
                     </code>{" "}
                     (not the default route component) to render the full document: apply{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       className=&#123;resolveTheme(theme)&#125;
                     </code>{" "}
                     and{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       style=&#123;&#123; colorScheme: resolveTheme(theme) &#125;&#125;
                     </code>{" "}
                     on{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       {"<html>"}
                     </code>
                     .
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Head</span> — Render{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       HeadContent
                     </code>{" "}
                     for the framework, then{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       ThemeScript theme=&#123;theme&#125;
                     </code>
                     .
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Body</span> — Wrap the app with{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       ThemeProvider
                     </code>{" "}
                     using the loader&apos;s{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       theme
                     </code>{" "}
                     and{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       persistTheme=&#123;persistThemeCookie&#125;
                     </code>
                     ,{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       syncThemeFromServer=&#123;getThemeServerFn&#125;
                     </code>{" "}
                     (avoids stale theme when duplicating a tab after another tab changed the
                     cookie), or{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       (v) =&gt; setThemeServerFn(&#123; data: v &#125;)
                     </code>
                     ). Include{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       Scripts
                     </code>{" "}
                     after children.
                   </li>
                   <li>
                     <span className="font-medium text-foreground">Toggles</span> — Import{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       useTheme
                     </code>{" "}
                     from{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       @codefast/theme
                     </code>{" "}
                     in any client component and call{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded bg-muted",
+                        "font-mono text-xs text-foreground",
+                      )}
+                    >
                       setTheme
                     </code>
                     .
@@ -348,18 +548,24 @@ function TanStackThemeSetupCollapsible() {
 
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Persistence details</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                <p className={cn("mt-2", "text-sm leading-relaxed text-muted-foreground")}>
+                  <code
+                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  >
                     persistThemeCookie
                   </code>{" "}
                   calls the Start adapter&apos;s POST server function, which sets an HTTP-only
                   cookie (see{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  <code
+                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  >
                     setThemeServerFn
                   </code>{" "}
                   in the package). The browser cannot read that cookie from JS; only the server
                   reads it on the next request via{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  <code
+                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  >
                     getThemeServerFn
                   </code>
                   .
@@ -368,7 +574,7 @@ function TanStackThemeSetupCollapsible() {
 
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Sanity check</h3>
-                <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                <ul className={cn("space-y-1.5", "mt-2", "text-sm text-muted-foreground")}>
                   <li className="flex gap-2">
                     <span className="text-foreground" aria-hidden>
                       •
@@ -389,19 +595,43 @@ function TanStackThemeSetupCollapsible() {
                     </span>
                     <span>
                       If the page flashes the wrong mode once, confirm{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         ThemeScript
                       </code>{" "}
                       is in{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         {"<head>"}
                       </code>{" "}
                       and the shell applies{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         resolveTheme
                       </code>{" "}
                       on{" "}
-                      <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                      <code
+                        className={cn(
+                          "px-1",
+                          "rounded bg-muted",
+                          "font-mono text-xs text-foreground",
+                        )}
+                      >
                         {"<html>"}
                       </code>
                       .
@@ -410,7 +640,7 @@ function TanStackThemeSetupCollapsible() {
                 </ul>
               </div>
 
-              <div className="flex flex-wrap gap-2 border-t border-border/40 pt-6">
+              <div className={cn("flex flex-wrap gap-2", "pt-6", "border-t border-border/40")}>
                 <Button asChild variant="outline" size="sm">
                   <a
                     href="https://github.com/codefastlabs/codefast/blob/main/apps/docs/src/routes/__root.tsx"
@@ -453,19 +683,28 @@ const TOKEN_SWATCHES: { label: string; varName: string; note?: string }[] = [
 
 function TokenSwatch({ label, varName, note }: { label: string; varName: string; note?: string }) {
   return (
-    <div className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-200 hover:border-primary/25 hover:shadow-md">
+    <div
+      className={cn(
+        "group overflow-hidden",
+        "rounded-2xl border border-border/60 bg-card shadow-sm",
+        "transition-all duration-200",
+        "hover:border-primary/25 hover:shadow-md",
+      )}
+    >
       <div
-        className="h-16 w-full border-b border-border/40"
+        className={cn("h-16 w-full", "border-b border-border/40")}
         style={{ backgroundColor: `var(${varName})` }}
         aria-hidden
       />
       <div className="p-3.5">
         <p className="text-xs font-semibold text-foreground">{label}</p>
-        <code className="mt-0.5 block font-mono text-[0.65rem] text-muted-foreground">
+        <code className={cn("block", "mt-0.5", "font-mono text-[0.65rem] text-muted-foreground")}>
           {varName}
         </code>
         {note ? (
-          <p className="mt-1.5 text-[0.65rem] leading-snug text-muted-foreground">{note}</p>
+          <p className={cn("mt-1.5", "text-[0.65rem] leading-snug text-muted-foreground")}>
+            {note}
+          </p>
         ) : null}
       </div>
     </div>
@@ -484,7 +723,14 @@ export function ThemeAppearancePageDeferred({
   setTheme,
 }: ThemeAppearancePageDeferredProps): JSX.Element {
   return (
-    <div className="mx-auto max-w-[1400px] space-y-10 px-4 py-12 sm:px-6 md:space-y-14 md:py-16">
+    <div
+      className={cn(
+        "max-w-[1400px] space-y-10",
+        "mx-auto px-4 py-12",
+        "sm:px-6",
+        "md:space-y-14 md:py-16",
+      )}
+    >
       <ThemeSectionHeader
         eyebrow="Controls"
         id="playground-heading"
@@ -492,30 +738,58 @@ export function ThemeAppearancePageDeferred({
         description="Exercise the same light/dark/system flow your users get from @codefast/theme: document class, cookie persistence, and live useTheme() values."
       />
 
-      <div className="rounded-[1.75rem] border border-border/50 bg-muted/15 p-4 shadow-inner ring-1 ring-border/30 md:p-6 lg:p-8">
-        <div className="grid gap-4 md:grid-cols-12">
-          <Card className="border-border/60 bg-card/95 shadow-md ring-1 ring-border/35 md:col-span-12 lg:col-span-5 lg:row-span-2">
+      <div
+        className={cn(
+          "p-4",
+          "rounded-[1.75rem] border border-border/50 bg-muted/15 shadow-inner ring-1 ring-border/30",
+          "md:p-6",
+          "lg:p-8",
+        )}
+      >
+        <div className={cn("grid gap-4", "md:grid-cols-12")}>
+          <Card
+            className={cn(
+              "border-border/60 bg-card/95 shadow-md ring-1 ring-border/35",
+              "md:col-span-12",
+              "lg:col-span-5 lg:row-span-2",
+            )}
+          >
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <span className="flex size-9 items-center justify-center rounded-lg bg-primary/12 text-primary">
+              <CardTitle className={cn("flex items-center gap-2", "text-lg")}>
+                <span
+                  className={cn(
+                    "flex size-9 items-center justify-center",
+                    "rounded-lg bg-primary/12",
+                    "text-primary",
+                  )}
+                >
                   <PaletteIcon className="size-5" aria-hidden />
                 </span>
                 Color mode
               </CardTitle>
               <CardDescription>
                 Light, dark, or system (follow the OS). Updates the document{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                <code
+                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                >
                   class
                 </code>{" "}
                 so Tailwind{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                <code
+                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                >
                   dark:
                 </code>{" "}
                 variants line up.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-1.5 sm:rounded-2xl sm:bg-muted/50 sm:p-1.5">
+              <div
+                className={cn(
+                  "grid grid-cols-1 gap-2",
+                  "sm:grid-cols-3 sm:gap-1.5 sm:rounded-2xl sm:bg-muted/50 sm:p-1.5",
+                )}
+              >
                 {themes.map((themeOption) => {
                   const isActive = theme === themeOption;
                   const Icon =
@@ -548,22 +822,34 @@ export function ThemeAppearancePageDeferred({
               <Separator className="bg-border/60" />
 
               <div
-                className="rounded-2xl border border-dashed border-primary/25 bg-linear-to-b from-muted/40 to-muted/10 p-3 ring-1 ring-primary/10"
+                className={cn(
+                  "p-3",
+                  "rounded-2xl border border-dashed border-primary/25 bg-linear-to-b from-muted/40 to-muted/10 ring-1 ring-primary/10",
+                )}
                 aria-label="Samples for mode changes and hover transitions"
               >
                 <p className="text-xs font-semibold text-foreground">Mode change vs hover motion</p>
-                <p className="mt-1 text-[0.7rem] leading-snug text-pretty text-muted-foreground">
+                <p
+                  className={cn(
+                    "mt-1",
+                    "text-[0.7rem] leading-snug text-pretty text-muted-foreground",
+                  )}
+                >
                   A new appearance applies to surfaces right away. Hover transitions on these
                   samples are independent—use them to confirm both behaviors.
                 </p>
                 <div className="mt-3">
                   <ThemeTransitionSamplesGrid variant="inline" />
                 </div>
-                <div className="mt-3 border-t border-border/40 pt-3">
+                <div className={cn("mt-3 pt-3", "border-t border-border/40")}>
                   <Link
                     to="."
                     hash="motion-lab-full"
-                    className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+                    className={cn(
+                      "text-xs font-medium text-primary",
+                      "hover:underline",
+                      "underline-offset-4",
+                    )}
                   >
                     Extended samples ↓
                   </Link>
@@ -572,7 +858,13 @@ export function ThemeAppearancePageDeferred({
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 bg-card/95 shadow-sm ring-1 ring-border/30 md:col-span-6 lg:col-span-4">
+          <Card
+            className={cn(
+              "border-border/60 bg-card/95 shadow-sm ring-1 ring-border/30",
+              "md:col-span-6",
+              "lg:col-span-4",
+            )}
+          >
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Current state</CardTitle>
               <CardDescription>
@@ -581,13 +873,13 @@ export function ThemeAppearancePageDeferred({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-center justify-between gap-4 text-sm">
+              <div className={cn("flex items-center justify-between gap-4", "text-sm")}>
                 <span className="text-muted-foreground">Preference</span>
                 <Badge variant="outline" className="capitalize">
                   {theme}
                 </Badge>
               </div>
-              <div className="flex items-center justify-between gap-4 text-sm">
+              <div className={cn("flex items-center justify-between gap-4", "text-sm")}>
                 <span className="text-muted-foreground">Resolved</span>
                 <Badge
                   variant={resolvedTheme === "dark" ? "secondary" : "outline"}
@@ -597,7 +889,7 @@ export function ThemeAppearancePageDeferred({
                 </Badge>
               </div>
               <Separator />
-              <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <div className={cn("flex flex-wrap items-center justify-between gap-2", "text-sm")}>
                 <span className="text-muted-foreground">Modes</span>
                 <div className="flex flex-wrap justify-end gap-1">
                   {themes.map((t) => (
@@ -610,10 +902,21 @@ export function ThemeAppearancePageDeferred({
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 bg-card/95 shadow-sm ring-1 ring-border/30 md:col-span-6 lg:col-span-3">
+          <Card
+            className={cn(
+              "border-border/60 bg-card/95 shadow-sm ring-1 ring-border/30",
+              "md:col-span-6",
+              "lg:col-span-3",
+            )}
+          >
             <CardHeader className="pb-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-primary/15">
-                <PackageIcon className="size-4 text-primary" aria-hidden />
+              <div
+                className={cn(
+                  "flex size-9 items-center justify-center",
+                  "rounded-lg bg-primary/15",
+                )}
+              >
+                <PackageIcon className={cn("size-4", "text-primary")} aria-hidden />
               </div>
               <CardTitle className="text-base">Scope of this package</CardTitle>
               <CardDescription className="text-pretty">
@@ -626,39 +929,89 @@ export function ThemeAppearancePageDeferred({
           </Card>
 
           {/* Mode vs palette — spans under state+cta on lg */}
-          <div className="grid gap-4 md:col-span-12 md:grid-cols-2 lg:col-span-7 lg:col-start-6 lg:row-start-2">
-            <Card className="border-border/60 bg-card/90 shadow-sm ring-1 ring-border/25 transition-colors hover:ring-primary/15">
+          <div
+            className={cn(
+              "grid gap-4",
+              "md:col-span-12 md:grid-cols-2",
+              "lg:col-span-7 lg:col-start-6 lg:row-start-2",
+            )}
+          >
+            <Card
+              className={cn(
+                "border-border/60 bg-card/90 shadow-sm ring-1 ring-border/25",
+                "transition-colors",
+                "hover:ring-primary/15",
+              )}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-amber-500/12 text-amber-800 dark:text-amber-300">
+                <CardTitle className={cn("flex items-center gap-2", "text-base")}>
+                  <span
+                    className={cn(
+                      "flex size-8 items-center justify-center",
+                      "rounded-lg bg-amber-500/12",
+                      "text-amber-800",
+                      "dark:text-amber-300",
+                    )}
+                  >
                     <SunIcon className="size-4" aria-hidden />
                   </span>
                   Appearance mode
                 </CardTitle>
                 <CardDescription className="text-pretty">
                   Stored preference + resolved light/dark. Handled by{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
+                  <code
+                    className={cn(
+                      "px-1",
+                      "rounded bg-muted",
+                      "font-mono text-[0.7rem] text-foreground",
+                    )}
+                  >
                     @codefast/theme
                   </code>{" "}
                   (cookie, SSR script, tab sync).
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="border-border/60 bg-card/90 shadow-sm ring-1 ring-border/25 transition-colors hover:ring-violet-400/20">
+            <Card
+              className={cn(
+                "border-border/60 bg-card/90 shadow-sm ring-1 ring-border/25",
+                "transition-colors",
+                "hover:ring-violet-400/20",
+              )}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-violet-500/12 text-violet-800 dark:text-violet-300">
+                <CardTitle className={cn("flex items-center gap-2", "text-base")}>
+                  <span
+                    className={cn(
+                      "flex size-8 items-center justify-center",
+                      "rounded-lg bg-violet-500/12",
+                      "text-violet-800",
+                      "dark:text-violet-300",
+                    )}
+                  >
                     <LayersIcon className="size-4" aria-hidden />
                   </span>
                   Brand colors (@codefast/ui)
                 </CardTitle>
                 <CardDescription className="text-pretty">
                   Accent CSS (e.g.{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
+                  <code
+                    className={cn(
+                      "px-1",
+                      "rounded bg-muted",
+                      "font-mono text-[0.7rem] text-foreground",
+                    )}
+                  >
                     neutral.css
                   </code>
                   ,{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-[0.7rem] text-foreground">
+                  <code
+                    className={cn(
+                      "px-1",
+                      "rounded bg-muted",
+                      "font-mono text-[0.7rem] text-foreground",
+                    )}
+                  >
                     blue.css
                   </code>
                   ) ships with the UI kit. Orthogonal to light/dark/system from @codefast/theme.
@@ -679,7 +1032,7 @@ export function ThemeAppearancePageDeferred({
           title="Semantic colors"
           description="On this site, semantic colors come from the docs CSS (e.g. @codefast/ui palettes). Switching mode here shows how @codefast/theme drives light/dark while those variables update underneath."
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className={cn("grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3", "xl:grid-cols-5")}>
           {TOKEN_SWATCHES.map((t) => (
             <TokenSwatch key={t.varName} label={t.label} varName={t.varName} note={t.note} />
           ))}
@@ -692,49 +1045,73 @@ export function ThemeAppearancePageDeferred({
         title="What this app wires for you"
         description="The same defaults ship with the TanStack Start adapter: cookie persistence, SSR script, and smooth handoff to Tailwind tokens."
       />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex gap-3 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm ring-1 ring-border/25">
+      <div className={cn("grid gap-4", "sm:grid-cols-2")}>
+        <div
+          className={cn(
+            "flex gap-3",
+            "p-4",
+            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+          )}
+        >
           <CheckCircle2Icon
-            className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Light, dark, and system (follow OS) modes.
           </p>
         </div>
-        <div className="flex gap-3 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm ring-1 ring-border/25">
+        <div
+          className={cn(
+            "flex gap-3",
+            "p-4",
+            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+          )}
+        >
           <CheckCircle2Icon
-            className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Persisted preference (cookie) with SSR-friendly script to limit flash.
           </p>
         </div>
-        <div className="flex gap-3 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm ring-1 ring-border/25">
+        <div
+          className={cn(
+            "flex gap-3",
+            "p-4",
+            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+          )}
+        >
           <CheckCircle2Icon
-            className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Tab sync and sensible{" "}
-            <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+            <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}>
               color-scheme
             </code>{" "}
             on the document.
           </p>
         </div>
-        <div className="flex gap-3 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm ring-1 ring-border/25">
+        <div
+          className={cn(
+            "flex gap-3",
+            "p-4",
+            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+          )}
+        >
           <CheckCircle2Icon
-            className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
-            <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+            <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}>
               disableTransitionOnChange
             </code>{" "}
             on{" "}
-            <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+            <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}>
               ThemeProvider
             </code>{" "}
             to avoid long cross-fades when swapping modes.
@@ -745,7 +1122,7 @@ export function ThemeAppearancePageDeferred({
       <section
         id="motion-lab-full"
         aria-labelledby="transitions-heading"
-        className="scroll-mt-24 md:scroll-mt-28"
+        className={cn("md:scroll-mt-28", "scroll-mt-24")}
       >
         <ThemeSectionHeader
           eyebrow="Motion"
@@ -753,12 +1130,12 @@ export function ThemeAppearancePageDeferred({
           title="Transitions & mode switches"
           description="Larger samples and a slow-hover panel. Use them to confirm appearance updates apply immediately while hover-driven motion on controls still behaves normally."
         />
-        <Card className="overflow-hidden border-border/60 shadow-md ring-1 ring-border/35">
-          <CardContent className="space-y-6 p-6 md:p-8">
+        <Card className={cn("overflow-hidden", "border-border/60 shadow-md ring-1 ring-border/35")}>
+          <CardContent className={cn("space-y-6", "p-6", "md:p-8")}>
             <Alert className="border-primary/20 bg-primary/5">
-              <InfoIcon className="size-4 text-primary" aria-hidden />
+              <InfoIcon className={cn("size-4", "text-primary")} aria-hidden />
               <AlertTitle>Expected behavior</AlertTitle>
-              <AlertDescription className="block text-pretty text-foreground">
+              <AlertDescription className={cn("block", "text-pretty text-foreground")}>
                 While the document appearance changes, transition suppression avoids blending
                 through unintended intermediate colors. Hover and focus transitions on UI components
                 are unchanged.
@@ -767,8 +1144,17 @@ export function ThemeAppearancePageDeferred({
 
             <ThemeTransitionSamplesGrid variant="full" />
 
-            <div className="rounded-2xl border border-border/60 bg-linear-to-r from-primary/12 via-secondary/8 to-transparent p-6 transition-all duration-700 hover:from-primary/18">
-              <h3 className="mb-1 text-sm font-semibold text-foreground">Long hover transition</h3>
+            <div
+              className={cn(
+                "p-6",
+                "rounded-2xl border border-border/60 bg-linear-to-r from-primary/12 via-secondary/8 to-transparent",
+                "transition-all duration-700",
+                "hover:from-primary/18",
+              )}
+            >
+              <h3 className={cn("mb-1", "text-sm font-semibold text-foreground")}>
+                Long hover transition
+              </h3>
               <p className="text-xs text-muted-foreground">
                 700ms on hover; theme toggles should never “fade” through odd in-between colors.
               </p>
@@ -787,7 +1173,10 @@ export function ThemeAppearancePageDeferred({
         <Suspense
           fallback={
             <div
-              className="flex min-h-[12rem] items-center justify-center rounded-2xl border border-border/50 bg-muted/20"
+              className={cn(
+                "flex min-h-[12rem] items-center justify-center",
+                "rounded-2xl border border-border/50 bg-muted/20",
+              )}
               role="status"
               aria-live="polite"
             >
@@ -800,19 +1189,34 @@ export function ThemeAppearancePageDeferred({
       </section>
 
       <Card className="border-border/60 bg-muted/20 shadow-sm ring-1 ring-border/30">
-        <CardContent className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <CardContent
+          className={cn(
+            "flex flex-col gap-3",
+            "p-6",
+            "sm:flex-row sm:items-center sm:justify-between",
+          )}
+        >
           <div className="flex gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-background shadow-sm ring-1 ring-border/50">
-              <InfoIcon className="size-5 text-primary" aria-hidden />
+            <div
+              className={cn(
+                "flex size-10 shrink-0 items-center justify-center",
+                "rounded-xl bg-background shadow-sm ring-1 ring-border/50",
+              )}
+            >
+              <InfoIcon className={cn("size-5", "text-primary")} aria-hidden />
             </div>
             <div>
               <p className="font-semibold text-foreground">How it fits together</p>
-              <p className="mt-1 max-w-2xl text-sm text-pretty text-muted-foreground">
-                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+              <p className={cn("max-w-2xl", "mt-1", "text-sm text-pretty text-muted-foreground")}>
+                <code
+                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                >
                   @codefast/theme
                 </code>{" "}
                 keeps the preference and document class. Tailwind and the UI preset supply{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                <code
+                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                >
                   dark:
                 </code>{" "}
                 and CSS variables. Accent palettes come from a stylesheet import—see the home page

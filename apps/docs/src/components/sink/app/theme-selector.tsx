@@ -120,7 +120,12 @@ export function ThemeSelector({ className }: ComponentProps<"div">) {
         <SelectTrigger
           id="theme-selector"
           size="sm"
-          className="justify-start border-secondary bg-secondary text-secondary-foreground shadow-none *:data-[slot=select-value]:w-16"
+          className={cn(
+            "justify-start",
+            "border-secondary bg-secondary shadow-none",
+            "text-secondary-foreground",
+            "*:data-[slot=select-value]:w-16",
+          )}
         >
           <SelectValue placeholder="Select" />
         </SelectTrigger>

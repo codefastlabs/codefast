@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -18,7 +19,13 @@ import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
 export function ContextMenuDemo() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-37.5 w-75 items-center justify-center rounded-lg border border-dashed text-sm">
+      <ContextMenuTrigger
+        className={cn(
+          "flex h-37.5 w-75 items-center justify-center",
+          "rounded-lg border border-dashed",
+          "text-sm",
+        )}
+      >
         Right click here
       </ContextMenuTrigger>
       <ContextMenuContent className="w-64">

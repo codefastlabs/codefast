@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "@codefast/ui/button-group";
 import {
@@ -227,7 +228,12 @@ export function ButtonGroupDemo() {
             </InputGroupAddon>
           </InputGroup>
         </ButtonGroup>
-        <div className="flex gap-2 [--radius:0.95rem] [--ring:var(--color-blue-300)] [--spacing:0.22rem] **:[.shadow-xs]:shadow-none">
+        <div
+          className={cn(
+            "flex gap-2",
+            "[--radius:0.95rem] [--ring:var(--color-blue-300)] [--spacing:0.22rem] **:[.shadow-xs]:shadow-none",
+          )}
+        >
           <InputGroup>
             <InputGroupInput placeholder="Type to search..." />
             <InputGroupAddon align="inline-start" className="text-muted-foreground">
@@ -245,15 +251,15 @@ export function ButtonGroupDemo() {
                   <IconChevronDown />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="rounded-2xl p-0 text-sm">
+              <PopoverContent align="end" className={cn("p-0", "rounded-2xl", "text-sm")}>
                 <div className="px-4 py-3">
                   <div className="text-sm font-medium">Agent Tasks</div>
                 </div>
                 <Separator />
-                <div className="p-4 *:[p:not(:last-child)]:mb-2">
+                <div className={cn("p-4", "*:[p:not(:last-child)]:mb-2")}>
                   <Textarea
                     placeholder="Describe your task in natural language."
-                    className="mb-4 resize-none"
+                    className={cn("mb-4", "resize-none")}
                   />
                   <p className="font-medium">Start a new task with Copilot</p>
                   <p className="text-muted-foreground">
@@ -265,7 +271,7 @@ export function ButtonGroupDemo() {
             </Popover>
           </ButtonGroup>
         </div>
-        <FieldGroup className="grid grid-cols-2 gap-4 [--spacing:0.22rem]">
+        <FieldGroup className={cn("grid grid-cols-2 gap-4", "[--spacing:0.22rem]")}>
           <Field>
             <Label htmlFor="width">Width</Label>
             <ButtonGroup>
@@ -293,12 +299,12 @@ export function ButtonGroupDemo() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <InputGroupButton>
-                        <span className="size-4 rounded-sm bg-blue-600" />
+                        <span className={cn("size-4", "rounded-sm bg-blue-600")} />
                       </InputGroupButton>
                     </PopoverTrigger>
                     <PopoverContent
                       align="start"
-                      className="max-w-48 rounded-xl p-2"
+                      className={cn("max-w-48", "p-2", "rounded-xl")}
                       alignOffset={-8}
                       sideOffset={8}
                     >
@@ -319,7 +325,12 @@ export function ButtonGroupDemo() {
                         ].map((color) => (
                           <div
                             key={color}
-                            className="size-6 cursor-pointer rounded transition-transform hover:scale-110"
+                            className={cn(
+                              "size-6",
+                              "rounded",
+                              "cursor-pointer transition-transform",
+                              "hover:scale-110",
+                            )}
                             style={{ backgroundColor: color }}
                           />
                         ))}
@@ -341,7 +352,7 @@ export function ButtonGroupDemo() {
           <Button
             variant="outline"
             asChild
-            className="pointer-events-none px-2 text-muted-foreground"
+            className={cn("px-2", "text-muted-foreground", "pointer-events-none")}
           >
             <span>1.2K</span>
           </Button>

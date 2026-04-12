@@ -13,13 +13,13 @@ export function ComponentWrapper({
       <div
         id={name}
         data-name={name.toLowerCase()}
-        className={cn("flex w-full scroll-mt-16 flex-col rounded-xl border", className)}
+        className={cn("flex w-full flex-col", "rounded-xl border", "scroll-mt-16", className)}
         {...props}
       >
-        <div className="border-b px-4 py-3">
+        <div className={cn("px-4 py-3", "border-b")}>
           <div className="text-sm font-medium">{getComponentName(name)}</div>
         </div>
-        <div className="flex flex-1 items-center gap-2 p-4">{children}</div>
+        <div className={cn("flex flex-1 items-center gap-2", "p-4")}>{children}</div>
       </div>
     </ComponentErrorBoundary>
   );
@@ -45,7 +45,9 @@ class ComponentErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-4 text-red-500">Something went wrong in component: {this.props.name}</div>
+        <div className={cn("p-4", "text-red-500")}>
+          Something went wrong in component: {this.props.name}
+        </div>
       );
     }
 
