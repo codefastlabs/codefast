@@ -1,9 +1,13 @@
-import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import type { Command } from "commander";
 import {
+  ArrangeError,
+  ArrangeErrorCode,
   analyzeDirectory,
   classifyToken,
+  createNodeArrangeFs,
+  createNodeArrangeLogger,
   DEFAULT_ARRANGE_TARGET,
   formatArray,
   formatCnCall,
@@ -13,8 +17,20 @@ import {
   tokenizeClassString,
 } from "#lib/arrange";
 
+const arrangeFs = createNodeArrangeFs();
+const arrangeLogger = createNodeArrangeLogger();
+
 function defaultTargetPath(): string {
   return path.resolve(process.cwd(), DEFAULT_ARRANGE_TARGET);
+}
+
+function handleArrangeLibError(e: unknown): boolean {
+  if (e instanceof ArrangeError && e.code === ArrangeErrorCode.TARGET_NOT_FOUND) {
+    arrangeLogger.err(e.message);
+    process.exitCode = 1;
+    return true;
+  }
+  return false;
 }
 
 export function registerArrangeCommand(program: Command): void {
@@ -28,12 +44,12 @@ export function registerArrangeCommand(program: Command): void {
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .action((target: string | undefined) => {
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      if (!fs.existsSync(resolved)) {
-        process.stderr.write(`Không tìm thấy: ${resolved}\n`);
+      if (!arrangeFs.existsSync(resolved)) {
+        arrangeLogger.err(`Không tìm thấy: ${resolved}`);
         process.exitCode = 1;
         return;
       }
-      printAnalyzeReport(resolved, analyzeDirectory(resolved));
+      printAnalyzeReport(resolved, analyzeDirectory(resolved, arrangeFs), arrangeLogger);
     });
 
   arrange
@@ -44,11 +60,20 @@ export function registerArrangeCommand(program: Command): void {
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action((target: string | undefined, opts: { withClassname?: boolean; cnImport?: string }) => {
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      runOnTarget(resolved, {
-        write: false,
-        withClassName: !!opts.withClassname,
-        cnImport: opts.cnImport,
-      });
+      try {
+        runOnTarget(
+          resolved,
+          {
+            write: false,
+            withClassName: !!opts.withClassname,
+            cnImport: opts.cnImport,
+          },
+          arrangeFs,
+          arrangeLogger,
+        );
+      } catch (e) {
+        if (!handleArrangeLibError(e)) throw e;
+      }
     });
 
   arrange
@@ -59,11 +84,20 @@ export function registerArrangeCommand(program: Command): void {
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action((target: string | undefined, opts: { withClassname?: boolean; cnImport?: string }) => {
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      runOnTarget(resolved, {
-        write: true,
-        withClassName: !!opts.withClassname,
-        cnImport: opts.cnImport,
-      });
+      try {
+        runOnTarget(
+          resolved,
+          {
+            write: true,
+            withClassName: !!opts.withClassname,
+            cnImport: opts.cnImport,
+          },
+          arrangeFs,
+          arrangeLogger,
+        );
+      } catch (e) {
+        if (!handleArrangeLibError(e)) throw e;
+      }
     });
 
   arrange
