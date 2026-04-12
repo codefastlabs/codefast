@@ -1,0 +1,58 @@
+---
+description: TypeScript naming (casing, boolean prefixes, collections, verbs), English-only identifiers, clarity over abbreviations — no I/T prefixes
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# TypeScript naming & clean identifiers
+
+When writing, modifying, or refactoring **TypeScript** (`.ts` / `.tsx`), follow these conventions.
+
+## Casing
+
+| Kind | Convention | Examples |
+|------|--------------|----------|
+| Variables, object properties, functions | `camelCase` | `userName`, `getUserData` |
+| Classes, interfaces, type aliases, enums | `PascalCase` | `UserProfile`, `ProductStatus` |
+| **Module-level** constants / config | `UPPER_SNAKE_CASE` | `MAX_RETRY_COUNT`, `API_BASE_URL` |
+| `const` inside functions | `camelCase` | `const pageSize = 20` |
+
+## Booleans
+
+Prefix with answering verbs: `is`, `has`, `should`, `can`, `will` (e.g. `isActive`, `hasPermission`, `shouldUpdate`). Avoid bare adjectives for boolean fields (`active: boolean` → `isActive`).
+
+## Arrays & collections
+
+Use **plural** nouns (`users`, `productIds`) or an explicit suffix like `List` / `Array` when it reads better (`categoryList`).
+
+## Functions & methods
+
+Start with an **action verb** that states behavior: `fetchUserData`, `calculateTotalPrice`, `handleSubmit`.
+
+## Interfaces & types
+
+Do **not** use `I` / `T` prefixes. Name from the domain noun: `interface User`, not `IUser`.
+
+## Language & clarity
+
+- **English only** for identifiers, comments, and docstrings — no Vietnamese or mixed-language names (e.g. not `userTuoi`).
+- Prefer **clear names** over cryptic abbreviations: `maxUserConnectionLimit` over `maxUsrConn`.
+- Avoid **generic** names (`data`, `info`, `item`, `val`, `temp`, `obj`, `res`) unless scope is tiny and obvious. In narrow callbacks, `items.map((item) => …)` is acceptable.
+
+```typescript
+// ❌ vague / non-English
+const res = await fetch(url);
+const temp = items[0];
+
+// ✅ domain-specific
+const userListResponse = await fetchUsers(url);
+const primaryContact = contacts[0];
+```
+
+```typescript
+// ❌ boolean without verb
+type Props = { visible: boolean };
+
+// ✅
+type Props = { isVisible: boolean };
+```
