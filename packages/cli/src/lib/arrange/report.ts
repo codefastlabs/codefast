@@ -1,9 +1,9 @@
 import path from "node:path";
 import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#lib/arrange/constants";
-import type { ArrangeLogger } from "#lib/arrange/fs-contract";
+import type { CliLogger } from "#lib/infra/fs-contract";
 import type { AnalyzeReport } from "#lib/arrange/types";
 
-export function printAnalyzeReport(dir: string, r: AnalyzeReport, logger: ArrangeLogger): void {
+export function printAnalyzeReport(dir: string, r: AnalyzeReport, logger: CliLogger): void {
   const { out } = logger;
   out(`Đường dẫn: ${path.resolve(dir)}`);
   out(`File .ts/.tsx: ${r.files}`);

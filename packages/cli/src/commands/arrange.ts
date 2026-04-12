@@ -6,8 +6,8 @@ import {
   ArrangeErrorCode,
   analyzeDirectory,
   classifyToken,
-  createNodeArrangeFs,
-  createNodeArrangeLogger,
+  createNodeCliFs,
+  createNodeCliLogger,
   DEFAULT_ARRANGE_TARGET,
   formatArray,
   formatCnCall,
@@ -17,8 +17,8 @@ import {
   tokenizeClassString,
 } from "#lib/arrange";
 
-const arrangeFs = createNodeArrangeFs();
-const arrangeLogger = createNodeArrangeLogger();
+const arrangeFs = createNodeCliFs();
+const arrangeLogger = createNodeCliLogger();
 
 function defaultTargetPath(): string {
   return path.resolve(process.cwd(), DEFAULT_ARRANGE_TARGET);

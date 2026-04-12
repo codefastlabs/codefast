@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { ArrangeFs } from "#lib/arrange/fs-contract";
+import type { CliFs } from "#lib/infra/fs-contract";
 
 const SKIP_DIRS = new Set([
   "node_modules",
@@ -15,7 +15,7 @@ const SKIP_DIRS = new Set([
   ".output",
 ]);
 
-export function walkTsxFiles(root: string, fs: ArrangeFs): string[] {
+export function walkTsxFiles(root: string, fs: CliFs): string[] {
   const result: string[] = [];
   const visit = (p: string) => {
     const st = fs.statSync(p);

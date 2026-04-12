@@ -1,5 +1,5 @@
 import ts from "typescript";
-import type { ArrangeFs, ArrangeLogger } from "#lib/arrange/fs-contract";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import type {
   ArrangeGroupFileOptions,
   GroupFileResult,
@@ -22,8 +22,8 @@ import { ensureCnImport, sourceFileImportsCn } from "#lib/arrange/imports";
 export function groupFile(
   filePath: string,
   options: ArrangeGroupFileOptions,
-  fs: ArrangeFs,
-  logger: ArrangeLogger,
+  fs: CliFs,
+  logger: CliLogger,
 ): GroupFileResult {
   const { out } = logger;
   const sourceText = fs.readFileSync(filePath, "utf8");

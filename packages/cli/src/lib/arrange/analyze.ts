@@ -1,5 +1,5 @@
 import ts from "typescript";
-import type { ArrangeFs } from "#lib/arrange/fs-contract";
+import type { CliFs } from "#lib/infra/fs-contract";
 import { LONG_STRING_TOKEN_THRESHOLD } from "#lib/arrange/constants";
 import type { AnalyzeReport } from "#lib/arrange/types";
 import { tokenizeClassString } from "#lib/arrange/tokenizer";
@@ -29,7 +29,7 @@ function analyzeCnCall(sf: ts.SourceFile, call: ts.CallExpression, report: Analy
   }
 }
 
-export function analyzeDirectory(target: string, fs: ArrangeFs): AnalyzeReport {
+export function analyzeDirectory(target: string, fs: CliFs): AnalyzeReport {
   const report: AnalyzeReport = {
     files: 0,
     cnCallExpressions: 0,
