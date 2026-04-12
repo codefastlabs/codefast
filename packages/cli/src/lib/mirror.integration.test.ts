@@ -294,14 +294,14 @@ describe("runMirrorSync (integration)", () => {
     expect(joinedStdout()).toContain("dist/ not found");
   });
 
-  it("returns 0 when no packages/ directory exists", async () => {
+  it("returns 0 when no workspace packages match discovery globs", async () => {
     const root = await makeTempRoot();
     const code = await runMirrorSync({ rootDir: root, noColor: true });
     expect(code).toBe(0);
     expect(joinedStdout()).toContain("No packages found");
   });
 
-  it("discovers all packages under packages/ when no filter is set", async () => {
+  it("discovers packages under packages/ via default glob when pnpm-workspace.yaml is absent", async () => {
     const root = await makeTempRoot();
     for (const name of ["alpha", "beta"]) {
       const rel = path.join("packages", name);
@@ -316,8 +316,72 @@ describe("runMirrorSync (integration)", () => {
 
     const code = await runMirrorSync({ rootDir: root, noColor: true });
     expect(code).toBe(0);
+    expect(joinedStdout()).toContain("default patterns");
     expect(joinedStdout()).toContain("@fixture/alpha");
     expect(joinedStdout()).toContain("@fixture/beta");
+  });
+
+  it("discovers packages from explicit pnpm-workspace.yaml globs (e.g. apps/* and packages/*)", async () => {
+    const root = await makeTempRoot();
+    await writeText(
+      path.join(root, "pnpm-workspace.yaml"),
+      `packages:
+  - 'apps/*'
+  - 'packages/*'
+`,
+    );
+    for (const [rel, nm] of [
+      ["apps/web", "@fixture/web"],
+      ["packages/lib", "@fixture/lib"],
+    ] as const) {
+      const pkgDir = path.join(root, rel);
+      await writeJson(path.join(pkgDir, "package.json"), {
+        name: nm,
+        version: "0.0.0",
+      });
+      await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+      await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+    }
+
+    const code = await runMirrorSync({ rootDir: root, noColor: true });
+    expect(code).toBe(0);
+    expect(joinedStdout()).toContain("from pnpm-workspace.yaml");
+    expect(joinedStdout()).toContain("@fixture/web");
+    expect(joinedStdout()).toContain("@fixture/lib");
+  });
+
+  it("skips packages excluded with ! in pnpm-workspace.yaml", async () => {
+    const root = await makeTempRoot();
+    await writeText(
+      path.join(root, "pnpm-workspace.yaml"),
+      `packages:
+  - 'packages/*'
+  - '!packages/ignored'
+`,
+    );
+    for (const name of ["kept", "ignored"]) {
+      const rel = path.join("packages", name);
+      const pkgDir = path.join(root, rel);
+      await writeJson(path.join(pkgDir, "package.json"), {
+        name: `@fixture/${name}`,
+        version: "0.0.0",
+        exports: { "./only": "./dist/only.json" },
+      });
+      await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+      await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+    }
+
+    const code = await runMirrorSync({ rootDir: root, noColor: true });
+    expect(code).toBe(0);
+    expect(joinedStdout()).toContain("@fixture/kept");
+    expect(joinedStdout()).not.toContain("@fixture/ignored");
+
+    const ignoredRaw = await fs.readFile(
+      path.join(root, "packages", "ignored", "package.json"),
+      "utf8",
+    );
+    const ignoredPkg = JSON.parse(ignoredRaw) as { exports?: unknown };
+    expect(ignoredPkg.exports).toEqual({ "./only": "./dist/only.json" });
   });
 
   it("returns exit code 1 when package.json is invalid JSON", async () => {
@@ -494,6 +558,67 @@ describe("runMirrorSync (integration)", () => {
     const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
     expect(code).toBe(0);
     expect(joinedStdout()).toContain("Could not parse generate-exports.config.json");
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+    expect(pkg.exports["."]).toBeDefined();
+  });
+
+  it("fails fast when pnpm-workspace.yaml exists but is invalid YAML", async () => {
+    const root = await makeTempRoot();
+    await writeText(path.join(root, "pnpm-workspace.yaml"), "packages:\n  - [\n");
+    const code = await runMirrorSync({ rootDir: root, noColor: true });
+    expect(code).toBe(1);
+    expect(joinedStdout()).toContain("Fatal error");
+    expect(joinedStdout()).toMatch(/pnpm-workspace\.yaml|Failed to parse/i);
+  });
+
+  it("treats packages: [] as no workspace packages", async () => {
+    const root = await makeTempRoot();
+    await writeText(path.join(root, "pnpm-workspace.yaml"), "packages: []\n");
+    const code = await runMirrorSync({ rootDir: root, noColor: true });
+    expect(code).toBe(0);
+    expect(joinedStdout()).toContain("empty workspace package list");
+    expect(joinedStdout()).toContain("No packages found");
+  });
+
+  it("fails fast when pnpm-workspace.yaml packages is not an array", async () => {
+    const root = await makeTempRoot();
+    await writeText(
+      path.join(root, "pnpm-workspace.yaml"),
+      `packages: "oops"
+`,
+    );
+    const code = await runMirrorSync({ rootDir: root, noColor: true });
+    expect(code).toBe(1);
+    expect(joinedStdout()).toContain("Fatal error");
+    expect(joinedStdout()).toMatch(/packages.*must be an array/i);
+  });
+
+  it("resolves packageFilter relative to rootDir when cwd differs (API)", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/api-cwd";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/api-cwd",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const prev = process.cwd();
+    try {
+      process.chdir(os.tmpdir());
+      const code = await runMirrorSync({
+        rootDir: root,
+        noColor: true,
+        packageFilter: rel,
+      });
+      expect(code).toBe(0);
+    } finally {
+      process.chdir(prev);
+    }
+
     const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
       exports: Record<string, unknown>;
     };
