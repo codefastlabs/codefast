@@ -65,7 +65,7 @@ export {
 export {
   forEachStringLiteralInClassExpression,
   mergeCnUnconditionalLiteralPoolForTest,
-} from "#lib/arrange/ast/collectors";
+} from "#lib/arrange/ast/collectors-cn";
 export {
   applyEditsDescending,
   buildKnownCnTvBindings,

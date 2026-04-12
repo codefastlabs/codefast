@@ -3,12 +3,9 @@ import type { CliFs } from "#lib/infra/fs-contract";
 import { LONG_STRING_TOKEN_THRESHOLD } from "#lib/arrange/constants";
 import type { AnalyzeReport } from "#lib/arrange/types";
 import { tokenizeClassString } from "#lib/arrange/tokenizer";
-import {
-  collectCnCallsInsideTv,
-  forEachStringLiteralInClassExpression,
-  jsxClassNameStaticLiteral,
-  traverseTvObject,
-} from "#lib/arrange/ast/collectors";
+import { forEachStringLiteralInClassExpression } from "#lib/arrange/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#lib/arrange/ast/collectors-jsx";
+import { collectCnCallsInsideTv, traverseTvObject } from "#lib/arrange/ast/collectors-tv";
 import { buildKnownCnTvBindings, isCnOrTvIdentifier, lineOf } from "#lib/arrange/ast/utils";
 import { walkTsxFiles } from "#lib/arrange/walk";
 
