@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 import { buttonVariants } from "#components/button";
@@ -50,14 +50,24 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-ui data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          "fixed z-50",
+          "inset-0",
+          "bg-black/50",
+          "ease-ui",
+          "data-open:animate-in data-open:fade-in-0",
+          "data-closed:animate-out data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="alert-dialog-overlay"
       />
       <AlertDialogPrimitive.Content
         className={cn(
-          "fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 ease-ui sm:grid-rows-[1fr_auto_3fr] sm:p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto",
+          "inset-0 p-8",
+          "ease-ui",
+          "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
+          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           classNames?.wrapper,
         )}
         data-slot="alert-dialog-content-wrapper"
@@ -65,7 +75,9 @@ function AlertDialogContent({
       >
         <div
           className={cn(
-            "relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border bg-popover text-popover-foreground shadow-lg",
+            "relative row-start-2 flex w-full max-w-lg flex-col",
+            "rounded-2xl border bg-popover shadow-lg",
+            "text-popover-foreground",
             classNames?.content,
             className,
           )}
@@ -88,7 +100,10 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center sm:text-left",
+        "flex shrink-0 flex-col gap-1.5",
+        "px-6 pt-6 pb-4",
+        "text-center",
+        "sm:text-left",
         className,
       )}
       data-slot="alert-dialog-header"
@@ -106,7 +121,7 @@ type AlertDialogBodyProps = ComponentProps<"div">;
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
   return (
     <main
-      className={cn("overflow-auto px-6 py-2", className)}
+      className={cn("overflow-auto", "px-6 py-2", className)}
       data-slot="alert-dialog-body"
       {...props}
     />
@@ -123,7 +138,9 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse gap-2",
+        "px-6 pt-4 pb-6",
+        "sm:flex-row sm:justify-end",
         className,
       )}
       data-slot="alert-dialog-footer"

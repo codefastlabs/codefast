@@ -12,6 +12,10 @@
     "clean": "turbo clean",
     "clean:cache": "pnpm store prune",
     "clean:modules": "pnpm -r exec rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml",
+    "cli:mirror-sync": "pnpm exec codefast mirror sync",
+    "cli:arrange-analyze": "pnpm exec codefast arrange analyze",
+    "cli:arrange-apply": "pnpm exec codefast arrange apply",
+    "cli:arrange-preview": "pnpm exec codefast arrange preview",
     "deps:install": "pnpm install && pnpm build:packages",
     "deps:outdated": "pnpm outdated",
     "deps:reinstall": "pnpm clean && pnpm install && pnpm build:packages",
@@ -20,7 +24,6 @@
     "dev": "pnpm build:packages && turbo run dev",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "generate:exports": "scripts/generate-exports.py",
     "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix --deny-warnings",
     "prepare": "simple-git-hooks",
@@ -36,6 +39,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
+    "@codefast/cli": "workspace:*",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
     "@commitlint/types": "catalog:",
@@ -48,7 +52,8 @@
     "simple-git-hooks": "catalog:",
     "ts-node": "catalog:",
     "tsx": "catalog:",
-    "turbo": "catalog:"
+    "turbo": "catalog:",
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=24.0.0"

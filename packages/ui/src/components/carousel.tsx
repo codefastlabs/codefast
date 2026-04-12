@@ -4,7 +4,7 @@ import type { Scope } from "@radix-ui/react-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
@@ -246,7 +246,8 @@ function CarouselPrevious({
     <Button
       aria-label="Previous slide"
       className={cn(
-        "absolute size-8 shadow-none",
+        "absolute size-8",
+        "shadow-none",
         orientation === "horizontal"
           ? "top-1/2 -left-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -289,7 +290,8 @@ function CarouselNext({
     <Button
       aria-label="Next slide"
       className={cn(
-        "absolute size-8 shadow-none",
+        "absolute size-8",
+        "shadow-none",
         orientation === "horizontal"
           ? "top-1/2 -right-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",

@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Table
@@ -12,7 +12,7 @@ function Table({ className, ...props }: TableProps): JSX.Element {
   return (
     <div className="relative w-full overflow-auto" data-slot="table-cotainer">
       <table
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full", "text-sm", "caption-bottom", className)}
         data-slot="table"
         {...props}
       />
@@ -58,7 +58,9 @@ function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
     <tfoot
       className={cn(
-        "bg-muted/50 font-medium *:border-t *:border-b-0 *:has-aria-expanded:bg-transparent",
+        "bg-muted/50",
+        "font-medium",
+        "*:border-t *:border-b-0 *:has-aria-expanded:bg-transparent",
         className,
       )}
       data-slot="table-footer"
@@ -77,7 +79,11 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
     <tr
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-selected:bg-muted",
+        "border-b",
+        "transition-colors",
+        "hover:bg-muted/50",
+        "has-aria-expanded:bg-muted/50",
+        "data-selected:bg-muted",
         className,
       )}
       data-slot="table-row"
@@ -95,7 +101,7 @@ type TableHeadProps = ComponentProps<"th">;
 function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
   return (
     <th
-      className={cn("p-2 text-left align-middle font-medium", className)}
+      className={cn("p-2", "text-left align-middle font-medium", className)}
       data-slot="table-head"
       {...props}
     />
@@ -109,7 +115,7 @@ function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
 type TableCellProps = ComponentProps<"td">;
 
 function TableCell({ className, ...props }: TableCellProps): JSX.Element {
-  return <td className={cn("p-2 align-middle", className)} data-slot="table-cell" {...props} />;
+  return <td className={cn("p-2", "align-middle", className)} data-slot="table-cell" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -121,7 +127,7 @@ type TableCaptionProps = ComponentProps<"caption">;
 function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
   return (
     <caption
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      className={cn("mt-4", "text-sm text-muted-foreground", className)}
       data-slot="table-caption"
       {...props}
     />

@@ -1,9 +1,9 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
-import { tv } from "#utils/tv";
+import { tv } from "#lib/utils";
 import { useCallback, useMemo } from "react";
 
 import { useAnimatedValue } from "#hooks/use-animated-value";
@@ -17,7 +17,7 @@ const progressCircleVariants = tv({
   defaultVariants: { size: "md", thickness: "regular", variant: "default" },
   slots: {
     indicator: "origin-center",
-    label: "absolute inset-0 flex items-center justify-center text-xs font-medium",
+    label: ["absolute flex items-center justify-center", "inset-0", "text-xs font-medium"],
     root: "relative inline-flex items-center justify-center",
     svg: "size-full",
     track: "origin-center",

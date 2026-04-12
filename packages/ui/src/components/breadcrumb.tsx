@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
@@ -28,7 +28,9 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
   return (
     <ol
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2",
+        "flex flex-wrap items-center gap-1.5 break-words",
+        "text-sm text-muted-foreground",
+        "sm:gap-2",
         className,
       )}
       data-slot="breadcrumb-list"
@@ -66,7 +68,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
 
   return (
     <Component
-      className={cn("transition-colors hover:text-foreground", className)}
+      className={cn("transition-colors", "hover:text-foreground", className)}
       data-slot="breadcrumb-link"
       {...props}
     />
