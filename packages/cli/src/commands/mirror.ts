@@ -1,6 +1,7 @@
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
+import { createNodeCliFs } from "#lib/infra/node-io";
 import { normalizePath, runMirrorSync } from "#lib/mirror";
 import { findRepoRoot } from "#lib/repo-root";
 
@@ -30,7 +31,8 @@ export function registerMirrorCommand(program: Command): void {
       options: { verbose?: boolean },
     ) {
       const globals = this.optsWithGlobals() as { color?: boolean };
-      const rootDir = findRepoRoot();
+      const fs = createNodeCliFs();
+      const rootDir = findRepoRoot(fs);
       let packageFilter: string | undefined;
       try {
         packageFilter = packageArgToRelative(rootDir, pkg);
@@ -44,6 +46,7 @@ export function registerMirrorCommand(program: Command): void {
         /** Commander sets `color: false` when `--no-color` is passed (default `color: true`). */
         noColor: globals.color === false,
         packageFilter,
+        fs,
       });
       process.exitCode = exitCode;
     });

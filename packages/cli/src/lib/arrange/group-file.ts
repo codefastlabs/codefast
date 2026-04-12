@@ -11,7 +11,7 @@ import {
   lineOf,
   unwrapCnInsideTvCallReplacement,
 } from "#lib/arrange/ast/utils";
-import { listAllCnCallsInsideTvInSourceFile } from "#lib/arrange/ast/collectors";
+import { listAllCnCallsInsideTvInSourceFile } from "#lib/arrange/ast/collectors-tv";
 import {
   collectGroupTargets,
   planGroupEditForTarget,
@@ -92,7 +92,7 @@ function applyGroupFileWrites(
   unwrapEdits: UnwrapPlan[],
   textAfterUnwrap: string,
   plannedGroupEdits: PlannedGroupEdit[],
-  cnInTvZeroArgCount: number,
+  cnInTvNoReplacement: number,
 ): GroupFileResult {
   const originallyHasCnImport = sourceFileImportsCn(sf);
 
@@ -116,7 +116,7 @@ function applyGroupFileWrites(
     fs.writeFileSync(filePath, newText, "utf8");
   }
 
-  return { filePath, totalFound: changed + cnInTvZeroArgCount, changed };
+  return { filePath, totalFound: changed + cnInTvNoReplacement, changed };
 }
 
 export function groupFile(
@@ -175,15 +175,14 @@ export function groupFile(
   }
 
   const editSitesCount = unwrapEdits.length + plannedGroupEdits.length;
-  const cnInTvZeroArgCount = cnInTvCalls.length - unwrapPlans.length;
-  const reportTotal = editSitesCount + cnInTvZeroArgCount;
+  const reportTotal = editSitesCount + cnInTvNoReplacement;
 
   if (cnInTvCalls.length === 0 && groupTargets.length === 0) {
     return { filePath, totalFound: 0, changed: 0 };
   }
 
   if (!options.write) {
-    if (editSitesCount === 0 && cnInTvZeroArgCount === 0) {
+    if (editSitesCount === 0 && cnInTvNoReplacement === 0) {
       return { filePath, totalFound: 0, changed: 0 };
     }
 
@@ -214,6 +213,6 @@ export function groupFile(
     unwrapEdits,
     textAfterUnwrap,
     plannedGroupEdits,
-    cnInTvZeroArgCount,
+    cnInTvNoReplacement,
   );
 }

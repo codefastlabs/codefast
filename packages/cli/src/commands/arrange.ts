@@ -2,6 +2,7 @@ import path from "node:path";
 import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import {
   ArrangeError,
   ArrangeErrorCode,
@@ -18,9 +19,6 @@ import {
   tokenizeClassString,
 } from "#lib/arrange";
 
-const arrangeFs = createNodeCliFs();
-const arrangeLogger = createNodeCliLogger();
-
 /** Commander attribute `withClassName` (second long flag `--with-class-name`). */
 function createWithClassNameOption(): Option {
   return new Option(
@@ -33,9 +31,18 @@ function defaultTargetPath(): string {
   return path.resolve(process.cwd(), DEFAULT_ARRANGE_TARGET);
 }
 
-function handleArrangeLibError(e: unknown): boolean {
+function checkTargetExists(resolved: string, fs: CliFs, logger: CliLogger): boolean {
+  if (!fs.existsSync(resolved)) {
+    logger.err(`Không tìm thấy: ${resolved}`);
+    process.exitCode = 1;
+    return false;
+  }
+  return true;
+}
+
+function handleArrangeLibError(e: unknown, logger: CliLogger): boolean {
   if (e instanceof ArrangeError && e.code === ArrangeErrorCode.TARGET_NOT_FOUND) {
-    arrangeLogger.err(e.message);
+    logger.err(e.message);
     process.exitCode = 1;
     return true;
   }
@@ -48,7 +55,12 @@ type ArrangeCliRunOpts = {
   cnImport?: string;
 };
 
-function runArrangeAction(resolvedTarget: string, runOpts: ArrangeCliRunOpts): void {
+function runArrangeAction(
+  resolvedTarget: string,
+  runOpts: ArrangeCliRunOpts,
+  fs: CliFs,
+  logger: CliLogger,
+): void {
   try {
     runOnTarget(
       resolvedTarget,
@@ -57,11 +69,11 @@ function runArrangeAction(resolvedTarget: string, runOpts: ArrangeCliRunOpts): v
         withClassName: !!runOpts.withClassName,
         cnImport: runOpts.cnImport,
       },
-      arrangeFs,
-      arrangeLogger,
+      fs,
+      logger,
     );
   } catch (e) {
-    if (!handleArrangeLibError(e)) throw e;
+    if (!handleArrangeLibError(e, logger)) throw e;
   }
 }
 
@@ -75,13 +87,11 @@ export function registerArrangeCommand(program: Command): void {
     .description("Report long strings, nested cn in tv(), and related findings")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .action((target: string | undefined) => {
+      const fs = createNodeCliFs();
+      const logger = createNodeCliLogger();
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      if (!arrangeFs.existsSync(resolved)) {
-        arrangeLogger.err(`Không tìm thấy: ${resolved}`);
-        process.exitCode = 1;
-        return;
-      }
-      printAnalyzeReport(resolved, analyzeDirectory(resolved, arrangeFs), arrangeLogger);
+      if (!checkTargetExists(resolved, fs, logger)) return;
+      printAnalyzeReport(resolved, analyzeDirectory(resolved, fs), logger);
     });
 
   arrange
@@ -91,12 +101,20 @@ export function registerArrangeCommand(program: Command): void {
     .addOption(createWithClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
+      const fs = createNodeCliFs();
+      const logger = createNodeCliLogger();
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      runArrangeAction(resolved, {
-        write: false,
-        withClassName: opts.withClassName,
-        cnImport: opts.cnImport,
-      });
+      if (!checkTargetExists(resolved, fs, logger)) return;
+      runArrangeAction(
+        resolved,
+        {
+          write: false,
+          withClassName: opts.withClassName,
+          cnImport: opts.cnImport,
+        },
+        fs,
+        logger,
+      );
     });
 
   arrange
@@ -106,12 +124,20 @@ export function registerArrangeCommand(program: Command): void {
     .addOption(createWithClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
+      const fs = createNodeCliFs();
+      const logger = createNodeCliLogger();
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      runArrangeAction(resolved, {
-        write: true,
-        withClassName: opts.withClassName,
-        cnImport: opts.cnImport,
-      });
+      if (!checkTargetExists(resolved, fs, logger)) return;
+      runArrangeAction(
+        resolved,
+        {
+          write: true,
+          withClassName: opts.withClassName,
+          cnImport: opts.cnImport,
+        },
+        fs,
+        logger,
+      );
     });
 
   arrange

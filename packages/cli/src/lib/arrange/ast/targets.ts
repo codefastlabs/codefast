@@ -8,12 +8,9 @@ import {
 } from "#lib/arrange/formatters";
 import type { GroupTarget, PlannedGroupEdit, StringNode } from "#lib/arrange/types";
 import { tokenizeClassString } from "#lib/arrange/tokenizer";
-import {
-  collectLongStringNodes,
-  isUnsafeLiteralForCnStyleApplySplit,
-  jsxClassNameStaticLiteral,
-  slotClassString,
-} from "#lib/arrange/ast/collectors";
+import { isUnsafeLiteralForCnStyleApplySplit } from "#lib/arrange/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#lib/arrange/ast/collectors-jsx";
+import { collectLongStringNodes, slotClassString } from "#lib/arrange/ast/collectors-tv";
 import { indentOfLineContaining } from "#lib/arrange/ast/utils";
 
 export function targetReplaceStart(t: GroupTarget): number {
