@@ -432,4 +432,71 @@ describe("runMirrorSync (integration)", () => {
     };
     expect(pkg.exports["."]).toBeDefined();
   });
+
+  it("loads mirror config from codefast.config.mjs when no .js config exists", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/mjs-cfg";
+    const pkgDir = path.join(root, rel);
+    await writeText(
+      path.join(root, "codefast.config.mjs"),
+      "export default { mirror: { skipPackages: [] } };\n",
+    );
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/mjscfg",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    expect(code).toBe(0);
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+    expect(pkg.exports["."]).toBeDefined();
+  });
+
+  it("loads legacy generate-exports.config.js when no codefast config is present", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/legacy-js-only";
+    const pkgDir = path.join(root, rel);
+    await writeText(
+      path.join(root, "generate-exports.config.js"),
+      "export default { skipPackages: [] };\n",
+    );
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/legjsonly",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    expect(code).toBe(0);
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+    expect(pkg.exports["."]).toBeDefined();
+  });
+
+  it("warns when generate-exports.config.json is invalid JSON", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/bad-legacy-json";
+    const pkgDir = path.join(root, rel);
+    await writeText(path.join(root, "generate-exports.config.json"), "{ not json");
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/badlegjson",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    expect(code).toBe(0);
+    expect(joinedStdout()).toContain("Could not parse generate-exports.config.json");
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+    expect(pkg.exports["."]).toBeDefined();
+  });
 });

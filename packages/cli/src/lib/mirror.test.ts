@@ -55,6 +55,17 @@ describe("mirror pure functions", () => {
       // Keeps unmodified paths untouched
       expect(transform!("./utils/string")).toBe("./utils/string");
     });
+
+    it("prefixes ./ when the stripped path is not already relative", () => {
+      const config = {
+        pathTransformations: {
+          "packages/ui": { removePrefix: "components/" },
+        },
+      };
+      const transform = createPathTransform(config, "packages/ui");
+      expect(transform).not.toBeNull();
+      expect(transform!("components/button")).toBe("./button");
+    });
   });
 
   describe("getExportGroup (sorting algorithm properties)", () => {

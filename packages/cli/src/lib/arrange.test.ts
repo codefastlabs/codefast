@@ -210,6 +210,55 @@ describe("suggestCnGroups", () => {
     });
   });
 
+  describe("capGroups under many state keys", () => {
+    it("caps a very large variant fan-out without dropping tokens", () => {
+      const states = [
+        "hover:a",
+        "focus:b",
+        "active:c",
+        "disabled:d",
+        "checked:e",
+        "focus-visible:f",
+        "aria-invalid:g",
+        "data-open:h",
+        "dark:i",
+        "print:j",
+        "sm:k",
+        "md:l",
+        "lg:m",
+        "max-sm:n",
+        "@md:o",
+        "group-hover:p",
+        "peer-focus:q",
+        "not-disabled:r",
+        "has-checked:s",
+        "in-[.x]:t",
+        "*:u",
+        "**:v",
+        "nth-2:w",
+        "inert:x",
+        "user-valid:y",
+        "pointer-coarse:z",
+        "portrait:aa",
+        "contrast-more:ab",
+        "min-[100px]:ac",
+        "max-[200px]:ad",
+        "starting:ae",
+        "supports-[grid]:af",
+        "aria-[label=a]:ag",
+        "aria-[label=b]:ah",
+        "data-[state=open]:ai",
+        "data-[state=closed]:aj",
+      ];
+      const base =
+        "flex gap-2 text-sm rounded-md border px-3 py-2 bg-card outline-hidden transition";
+      const input = `${base} ${states.join(" ")}`;
+      const g = suggestCnGroups(input);
+      expect(g.length).toBeLessThanOrEqual(24);
+      expect(sortedTokens(input)).toEqual(sortedTokens(g.join(" ")));
+    });
+  });
+
   describe("negated utilities (leading -) match the same buckets as positives", () => {
     const table: Array<{ title: string; input: string; expected: string[] }> = [
       {
@@ -467,6 +516,14 @@ describe("forEachStringLiteralInClassExpression", () => {
     expect(literalsFromArgSnippet('(("hi" as const))')).toEqual(["hi"]);
     expect(literalsFromArgSnippet('("x" satisfies string)')).toEqual(["x"]);
   });
+
+  it("walks through non-null assertions", () => {
+    expect(literalsFromArgSnippet('("a" as const)!')).toEqual(["a"]);
+  });
+
+  it("collects literals from string concatenation with +", () => {
+    expect(literalsFromArgSnippet('"a" + "b"')).toEqual(["a", "b"]);
+  });
 });
 
 describe("mergeCnUnconditionalLiteralPoolForTest (cn apply pool)", () => {
@@ -553,6 +610,122 @@ export const styles = tv({
     });
   });
 
+  it("inserts cn import after use client when grouping JSX className", () => {
+    const before = `"use client";
+
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    withTempFixture("FixtureUseClient.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.startsWith(`"use client";`)).toBe(true);
+      const useClientEnd = after.indexOf("\n", after.indexOf(`"use client"`));
+      const importIdx = after.indexOf("import { cn }");
+      expect(importIdx).toBeGreaterThan(useClientEnd);
+    });
+  });
+
+  it("groups tv base array slots that merge cn(...) string args", () => {
+    const before = `import { cn, tv } from "tailwind-variants";
+
+export const styles = tv({
+  base: [
+    cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+    "shadow-sm",
+  ],
+});
+`;
+    withTempFixture("FixtureTvBaseArray.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.includes("base:")).toBe(true);
+    });
+  });
+
+  it("recognizes cn/tv imported from a local ./utils re-export path", () => {
+    const before = `import { cn, tv } from "./utils";
+
+export const styles = tv({
+  base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureLocalUtils.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("recognizes cn/tv from modules whose path contains /utils/", () => {
+    const before = `import { cn, tv } from "pkg/utils/cn";
+
+export const styles = tv({
+  base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureUtilsPath.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("recognizes cn/tv from a ./cn.ts shim filename", () => {
+    const before = `import { cn, tv } from "./cn.ts";
+
+export const styles = tv({
+  base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureCnTs.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("ignores unrelated imports when resolving cn/tv bindings", () => {
+    const before = `import { cn } from "tailwind-variants";
+import { debounce } from "lodash";
+
+cn("${COMMAND_MENU_ITEM_INPUT}");
+`;
+    withTempFixture("FixtureExtraImport.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("dry-run mentions combined unwrap + grouping when both apply", () => {
+    const long =
+      "flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card font-medium shadow-xs";
+    const before = `import { cn, tv } from "tailwind-variants";
+
+cn("${long}");
+
+export const styles = tv({
+  base: cn("${long}"),
+});
+`;
+    withTempFixture("FixtureDryCombined.tsx", before, (filePath) => {
+      const chunks: string[] = [];
+      const spy = jest
+        .spyOn(process.stdout, "write")
+        .mockImplementation((c: string | Uint8Array) => {
+          chunks.push(typeof c === "string" ? c : Buffer.from(c).toString("utf8"));
+          return true;
+        });
+      try {
+        groupFile(filePath, { write: false, withClassName: false });
+      } finally {
+        spy.mockRestore();
+      }
+      const out = chunks.join("");
+      expect(out).toContain("Các dòng [cn]");
+    });
+  });
+
   it("counts cn() inside tv with zero args in totalFound for preview and apply", () => {
     const before = `import { cn, tv } from "tailwind-variants";
 
@@ -594,9 +767,19 @@ describe("classifyToken", () => {
     expect(classifyToken("hover:opacity-80")).toBe("state");
     expect(classifyToken("[&_svg]:size-4")).toBe("arbitrary");
     expect(classifyToken("user-valid:ring-2")).toBe("state");
+    expect(classifyToken("user-invalid:ring-destructive")).toBe("state");
     expect(classifyToken("pointer-fine:flex")).toBe("state");
+    expect(classifyToken("any-pointer-none:flex")).toBe("state");
     expect(classifyToken("portrait:hidden")).toBe("state");
+    expect(classifyToken("landscape:flex")).toBe("state");
+    expect(classifyToken("noscript:hidden")).toBe("state");
     expect(classifyToken("contrast-more:opacity-100")).toBe("state");
+    expect(classifyToken("contrast-less:opacity-50")).toBe("state");
+    expect(classifyToken("forced-colors:bg-zinc-900")).toBe("state");
+    expect(classifyToken("inverted-colors:invert")).toBe("state");
+    expect(classifyToken("cursor")).toBe("interaction");
+    expect(classifyToken("resize-y")).toBe("interaction");
+    expect(classifyToken("custom-variant:text-sm")).toBe("typography");
   });
 });
 
@@ -632,6 +815,29 @@ describe("analyzeDirectory + printAnalyzeReport", () => {
     }
     return chunks.join("");
   }
+
+  it("traverse tv array slots with nested cn and compoundVariants className arrays", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-analyze-tv-arr-"));
+    const long = CHECKBOX_GROUP_ITEM_INPUT;
+    const src = `import { cn, tv } from "tailwind-variants";
+
+export const styles = tv({
+  base: [cn("${long}"), "py-0"],
+  compoundVariants: [{ className: cn("${long}") }],
+});
+`;
+    try {
+      const fp = path.join(dir, "TvArrays.tsx");
+      fs.writeFileSync(fp, src, "utf8");
+      const r = analyzeDirectory(dir);
+      expect(r.files).toBe(1);
+      expect(r.tvCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(r.cnInsideTvCalls.length).toBeGreaterThanOrEqual(2);
+      expect(r.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
 
   it("collects long cn / tv / JSX literals and nested cn(...) inside tv", () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-analyze-"));
