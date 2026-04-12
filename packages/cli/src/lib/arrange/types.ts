@@ -1,0 +1,119 @@
+/**
+ * Shared types for the arrange pipeline (Tailwind `cn()` / `tv()` tooling).
+ */
+
+import type ts from "typescript";
+
+export type Bucket =
+  | "layout"
+  | "size"
+  | "spacing"
+  | "surface"
+  | "typography"
+  | "motion"
+  | "state"
+  | "interaction"
+  | "arbitrary"
+  | "other";
+
+/** String or no-substitution template literal used as a Tailwind class blob. */
+export type TailwindClassLiteral = ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+
+export type ForEachStringLiteralInClassExpressionOptions = {
+  /**
+   * When `false`, do not visit literals inside `cond ? "a" : "b"`. Used when
+   * building the cn/tv **apply** pool so mutually exclusive branch classes are
+   * never merged into one static string (while `analyze` still uses the default).
+   */
+  descendIntoConditional?: boolean;
+};
+
+export type JsxClassNameStatic = {
+  lit: TailwindClassLiteral;
+  /** Replace this node: `StringLiteral` or whole `JsxExpression`. */
+  valueNode: ts.Node;
+};
+
+/**
+ * A StringNode represents a single "grouping slot" — the full set of static
+ * string literals that belong to one logical class surface.
+ */
+export type StringNode = {
+  /** All static string literals belonging to this slot, in source order. */
+  nodes: TailwindClassLiteral[];
+  sf: ts.SourceFile;
+  /** String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`. */
+  isTvContext: boolean;
+  /** When set, the entire cn(...) call is replaced at once. */
+  cnCall?: ts.CallExpression;
+  /** Representative node (first in slot) for line-number reporting. */
+  get node(): TailwindClassLiteral;
+};
+
+export type GroupTarget =
+  | { kind: "cnArg"; item: StringNode }
+  | {
+      kind: "jsxClassName";
+      sf: ts.SourceFile;
+      lit: TailwindClassLiteral;
+      valueNode: ts.Node;
+    };
+
+export type PlannedGroupEdit = {
+  start: number;
+  end: number;
+  replacement: string;
+  jsxCn: boolean;
+  lineSf: ts.SourceFile;
+  reportNode: ts.Node;
+  label: string;
+};
+
+export type AnalyzeReport = {
+  files: number;
+  cnCallExpressions: number;
+  tvCallExpressions: number;
+  cnInsideTvCalls: Array<{
+    file: string;
+    line: number;
+    argCount: number;
+    preview: string;
+  }>;
+  longCnStringLiterals: Array<{
+    file: string;
+    line: number;
+    tokenCount: number;
+    preview: string;
+  }>;
+  longTvStringLiterals: Array<{
+    file: string;
+    line: number;
+    tokenCount: number;
+    preview: string;
+  }>;
+  longJsxClassNameLiterals: Array<{
+    file: string;
+    line: number;
+    tokenCount: number;
+    preview: string;
+  }>;
+};
+
+export type GroupFileResult = {
+  filePath: string;
+  /**
+   * Sites worth human review: applied edits plus `cn()` inside `tv` with no args
+   * (skipped). Matches preview totals when `groupEdits` correspond to the same plan.
+   */
+  totalFound: number;
+  /** Edits actually written in apply mode; always 0 in preview. */
+  changed: number;
+};
+
+export type ArrangeGroupFileOptions = {
+  write: boolean;
+  withClassName: boolean;
+  cnImport?: string;
+};
+
+export type ArrangeRunOnTargetOptions = ArrangeGroupFileOptions;
