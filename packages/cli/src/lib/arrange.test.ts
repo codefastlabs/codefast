@@ -610,6 +610,19 @@ export const styles = tv({
     });
   });
 
+  it("converts long JSX className when the value is a string inside `{…}` (JsxExpression)", () => {
+    const before = `export function Fixture() {
+  return <div className={"flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card"} />;
+}
+`;
+    withTempFixture("FixtureJsxBraceStr.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.includes("{cn(")).toBe(true);
+    });
+  });
+
   it("inserts cn import after use client when grouping JSX className", () => {
     const before = `"use client";
 
@@ -741,6 +754,101 @@ export const broken = tv({
       const wet = groupFile(filePath, { write: true, withClassName: false });
       expect(wet.changed).toBe(0);
       expect(wet.totalFound).toBe(1);
+    });
+  });
+
+  it("returns totalFound 0 for files with no cn/tv/long class targets", () => {
+    const before = `export const only = 1;
+`;
+    withTempFixture("FixtureEmpty.tsx", before, (filePath) => {
+      expect(groupFile(filePath, { write: false, withClassName: false })).toEqual({
+        filePath,
+        totalFound: 0,
+        changed: 0,
+      });
+    });
+  });
+
+  it("dry-run returns totalFound 0 when cn splits are already idempotent (no edits)", () => {
+    const before = `import { cn } from "tailwind-variants";
+
+cn("flex gap-2");
+`;
+    withTempFixture("FixtureShortCn.tsx", before, (filePath) => {
+      expect(groupFile(filePath, { write: false, withClassName: false })).toEqual({
+        filePath,
+        totalFound: 0,
+        changed: 0,
+      });
+    });
+  });
+
+  it("dry-run skips cn when static arg partitions already match suggestCnGroups output", () => {
+    const before = `import { cn } from "tailwind-variants";
+
+cn("flex gap-2", "text-sm");
+`;
+    withTempFixture("FixturePartitionEq.tsx", before, (filePath) => {
+      expect(groupFile(filePath, { write: false, withClassName: false })).toEqual({
+        filePath,
+        totalFound: 0,
+        changed: 0,
+      });
+    });
+  });
+
+  it("inserts cn import before the first existing import when adding JSX cn", () => {
+    const before = `import React from "react";
+
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    withTempFixture("FixtureImportOrder.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      const cnIdx = after.indexOf("import { cn }");
+      const reactIdx = after.indexOf("import React");
+      expect(cnIdx).toBeLessThan(reactIdx);
+    });
+  });
+
+  it("groups tv compoundVariants whose className is a merged string array slot", () => {
+    const before = `import { tv } from "tailwind-variants";
+
+export const sheet = tv({
+  compoundVariants: [
+    {
+      className: [
+        "flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent",
+        "shadow-xs outline-hidden",
+      ],
+    },
+  ],
+});
+`;
+    withTempFixture("FixtureCvClassArray.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("formats cn(...) replacement when static pool splits and dynamic args follow", () => {
+    const before = `import { cn } from "tailwind-variants";
+
+export function Row({ className }: { className?: string }) {
+  return cn(
+    "flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent shadow-xs",
+    className,
+  );
+}
+`;
+    withTempFixture("FixtureCnDynamic.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.includes("className")).toBe(true);
     });
   });
 });
@@ -897,6 +1005,75 @@ export const nested = tv({
       expect(r.longCnStringLiterals.length).toBeGreaterThan(40);
       const printed = captureStdout(() => printAnalyzeReport(dir, r));
       expect(printed).toMatch(/vị trí khác/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("printAnalyzeReport truncates long tv, JSX, and cn-inside-tv sections", () => {
+    const row = { file: "x.tsx", line: 1, tokenCount: 22, preview: "p".repeat(40) };
+    const manyTv = Array.from({ length: 42 }, (_, i) => ({ ...row, line: i + 1 }));
+    const manyJsx = Array.from({ length: 42 }, (_, i) => ({ ...row, line: i + 1 }));
+    const manyNested = Array.from({ length: 42 }, (_, i) => ({
+      file: "x.tsx",
+      line: i + 1,
+      argCount: 1,
+      preview: "cn(...)",
+    }));
+    const printed = captureStdout(() =>
+      printAnalyzeReport("/tmp/arr-truncate", {
+        files: 1,
+        cnCallExpressions: 0,
+        tvCallExpressions: 1,
+        cnInsideTvCalls: manyNested,
+        longCnStringLiterals: [],
+        longTvStringLiterals: manyTv,
+        longJsxClassNameLiterals: manyJsx,
+      } as Parameters<typeof printAnalyzeReport>[1]),
+    );
+    const matches = printed.match(/vị trí khác/g);
+    expect(matches?.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("analyze visits JSX className={identifier} without counting as long literal", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-jsx-dyn-"));
+    try {
+      fs.writeFileSync(
+        path.join(dir, "Dyn.tsx"),
+        `export function F(cls: string) {
+  return <div className={cls} />;
+}
+`,
+        "utf8",
+      );
+      const r = analyzeDirectory(dir);
+      expect(r.files).toBe(1);
+      expect(r.longJsxClassNameLiterals.length).toBe(0);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("analyze picks up tv compoundVariants with quoted className key", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-tv-quoted-"));
+    const long = CHECKBOX_GROUP_ITEM_INPUT;
+    try {
+      fs.writeFileSync(
+        path.join(dir, "Quoted.tsx"),
+        `import { tv } from "tailwind-variants";
+
+export const s = tv({
+  compoundVariants: [
+    {
+      "className": "${long}",
+    },
+  ],
+});
+`,
+        "utf8",
+      );
+      const r = analyzeDirectory(dir);
+      expect(r.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

@@ -66,6 +66,18 @@ describe("mirror pure functions", () => {
       expect(transform).not.toBeNull();
       expect(transform!("components/button")).toBe("./button");
     });
+
+    it("returns the stripped path unchanged when it is empty or already relative", () => {
+      const config = {
+        pathTransformations: {
+          "packages/ui": { removePrefix: "./entry" },
+        },
+      };
+      const transform = createPathTransform(config, "packages/ui");
+      expect(transform).not.toBeNull();
+      expect(transform!("./entry")).toBe("");
+      expect(transform!("./entry.js")).toBe("./.js");
+    });
   });
 
   describe("getExportGroup (sorting algorithm properties)", () => {
