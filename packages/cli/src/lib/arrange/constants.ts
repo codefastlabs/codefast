@@ -70,10 +70,11 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
 /**
  * Responsive / variant prefix — Tailwind v4 aware.
  *
- * v3: sm: md: … — v4: @sm:, @min-[600px]:, named container @sidebar/md:, …
+ * v3: sm: md: … — v4: @sm:, @min-[600px]:, @[480px]:, named @md/sidebar:,
+ * viewport md/sidebar:, min-[100px]: / max-[100px]:, …
  */
 export const RESPONSIVE_PREFIX =
-  /^(?:@(?:min|max)-\[[^\]]+\]:|@(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl):)/;
+  /^(?:@(?:min|max)-\[[^\]]+\]:|@\[[^\]]+\]:|@(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)\[[^\]]+\]:)/;
 
 /** State variant stems — hoisted to module scope (not recreated per call). */
 export const STATE_PREFIXES = new Set([

@@ -7,6 +7,7 @@ import {
   ArrangeErrorCode,
   analyzeDirectory,
   areCnTailwindPartitionsEquivalent,
+  bucketsMergeCompatible,
   classifyToken,
   createNodeCliFs,
   createNodeCliLogger,
@@ -16,9 +17,12 @@ import {
   formatJsxCnAttributeValue,
   forEachStringLiteralInClassExpression,
   groupFile,
+  indexOfFirstVariantColon,
   mergeCnUnconditionalLiteralPoolForTest,
   printAnalyzeReport,
   runOnTarget,
+  stateKey,
+  stripVariants,
   suggestCnGroups,
   tokenizeClassString,
   unwrapCnInsideTvCallReplacement,
@@ -57,7 +61,9 @@ const CHECKBOX_GROUP_ITEM_GROUPS = [
   "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
   "hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60",
   "aria-checked:aria-invalid:bg-destructive",
-  "dark:bg-input/30 dark:focus-visible:aria-checked:ring-primary/40 dark:aria-invalid:ring-destructive/40",
+  "dark:bg-input/30",
+  "dark:focus-visible:aria-checked:ring-primary/40",
+  "dark:aria-invalid:ring-destructive/40",
 ] as const;
 
 const COMMAND_MENU_ITEM_INPUT =
@@ -979,6 +985,59 @@ describe("tokenizeClassString", () => {
   });
 });
 
+describe("bucketsMergeCompatible", () => {
+  it("never merges arbitrary buckets (prevents singleton merge dump buckets)", () => {
+    expect(bucketsMergeCompatible("arbitrary", "arbitrary")).toBe(false);
+    expect(bucketsMergeCompatible("arbitrary", "state")).toBe(false);
+    expect(bucketsMergeCompatible("layout", "arbitrary")).toBe(false);
+  });
+});
+
+describe("stateKey", () => {
+  it("uses the full variant stack so same outer @md/foo does not collapse unrelated utilities", () => {
+    expect(stateKey("@md/field-group:[&>*]:w-auto")).not.toBe(
+      stateKey("@md/field-group:[&>[data-slot=field-label]]:flex-auto"),
+    );
+  });
+
+  it("preserves single-layer data variant stem", () => {
+    expect(stateKey("data-[state=open]:opacity-100")).toBe("data-[state=open]");
+  });
+});
+
+describe("suggestCnGroups (field.tv responsive row)", () => {
+  const FIELD_RESPONSIVE_ROW =
+    "[&>*]:w-full @md/field-group:[&>*]:w-auto [&>.sr-only]:w-auto @md/field-group:[&>[data-slot=field-label]]:flex-auto @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px";
+
+  it("splits each state token into its own chunk (no mixed dump bucket)", () => {
+    expect(suggestCnGroups(FIELD_RESPONSIVE_ROW)).toEqual([
+      "[&>*]:w-full",
+      "@md/field-group:[&>*]:w-auto",
+      "[&>.sr-only]:w-auto",
+      "@md/field-group:[&>[data-slot=field-label]]:flex-auto",
+      "@md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+    ]);
+  });
+});
+
+describe("indexOfFirstVariantColon + stripVariants", () => {
+  it("ignores colons inside square brackets for variant boundaries", () => {
+    const tok = "[&_a:hover]:text-red-500";
+    expect(indexOfFirstVariantColon(tok)).toBe("[&_a:hover]".length);
+    expect(stripVariants(tok)).toBe("text-red-500");
+    expect(stripVariants("[&_a:hover]:focus:text-blue-500")).toBe("text-blue-500");
+  });
+
+  it("strips stacked arbitrary container query variants", () => {
+    expect(stripVariants("@min-[600px]:@max-[900px]:hidden")).toBe("hidden");
+  });
+
+  it("preserves data-[…] bracket boundaries", () => {
+    expect(stripVariants("data-[state=open]:opacity-100")).toBe("opacity-100");
+    expect(stateKey("data-[state=open]:opacity-100")).toBe("data-[state=open]");
+  });
+});
+
 describe("classifyToken", () => {
   it("maps representative utilities to buckets", () => {
     expect(classifyToken("flex")).toBe("layout");
@@ -989,7 +1048,7 @@ describe("classifyToken", () => {
     expect(classifyToken("transition")).toBe("motion");
     expect(classifyToken("outline-hidden")).toBe("interaction");
     expect(classifyToken("hover:opacity-80")).toBe("state");
-    expect(classifyToken("[&_svg]:size-4")).toBe("arbitrary");
+    expect(classifyToken("[&_svg]:size-4")).toBe("state");
     expect(classifyToken("user-valid:ring-2")).toBe("state");
     expect(classifyToken("user-invalid:ring-destructive")).toBe("state");
     expect(classifyToken("pointer-fine:flex")).toBe("state");
@@ -1004,6 +1063,19 @@ describe("classifyToken", () => {
     expect(classifyToken("cursor")).toBe("interaction");
     expect(classifyToken("resize-y")).toBe("interaction");
     expect(classifyToken("custom-variant:text-sm")).toBe("typography");
+  });
+
+  it("classifies Tailwind v4 container query and named-container tokens", () => {
+    expect(classifyToken("@[1024px]:flex-row")).toBe("state");
+    expect(classifyToken("@min-[600px]:@max-[900px]:hidden")).toBe("state");
+    expect(classifyToken("@container/sidebar")).toBe("layout");
+    expect(classifyToken("@md/sidebar:w-full")).toBe("state");
+    expect(classifyToken("md/sidebar:w-full")).toBe("state");
+  });
+
+  it("classifies arbitrary variant chains and data variants", () => {
+    expect(classifyToken("[&_a:hover]:focus:text-blue-500")).toBe("state");
+    expect(classifyToken("data-[state=open]:opacity-100")).toBe("state");
   });
 });
 

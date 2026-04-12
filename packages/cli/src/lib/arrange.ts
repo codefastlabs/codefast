@@ -8,7 +8,7 @@
  * by apply (avoids `[ [` artifacts).
  *
  * Tailwind CSS v4-oriented heuristics:
- *   - Container queries (@min-* / @max-* / @sm / @md / @3xl / @max-3xs …)
+ *   - Container queries (@min-* / @max-* / @[…] / @sm / @md / @3xl / @max-3xs, md/sidebar:, …)
  *   - Logical properties (ps/pe/ms/me/start/end)
  *   - not-* modifier; has-*; in-[…]; * / **; nth-* (including numeric); media (pointer-*, contrast-* …)
  *   - Newer utilities: inset-shadow, field-sizing, mask-*, wrap-*, text-shadow-*, scheme-*, …
@@ -55,6 +55,7 @@ export {
 } from "#lib/arrange/grouping";
 export {
   classifyToken,
+  indexOfFirstVariantColon,
   stripVariants,
   tokenizeClassString,
   bucketsCompatible,
