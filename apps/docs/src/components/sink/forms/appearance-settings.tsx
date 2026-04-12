@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   Field,
   FieldContent,
@@ -74,7 +75,10 @@ export function AppearanceSettings() {
                   width={320}
                   height={180}
                   layout="constrained"
-                  className="hidden aspect-video w-full object-cover @min-[448px]/field-group:block dark:brightness-[0.2] dark:grayscale"
+                  className={cn(
+                    "hidden aspect-video w-full object-cover @min-[448px]/field-group:block",
+                    "dark:brightness-[0.2] dark:grayscale",
+                  )}
                 />
                 <Field
                   orientation="horizontal"
@@ -99,16 +103,18 @@ export function AppearanceSettings() {
                 <Label
                   htmlFor={accent.value}
                   key={accent.value}
-                  className="flex size-6 items-center justify-center rounded-full"
+                  className={cn("flex size-6 items-center justify-center", "rounded-full")}
                   style={{ backgroundColor: accent.value }}
                 >
                   <RadioGroupItem
                     id={accent.value}
                     value={accent.value}
                     aria-label={accent.name}
-                    className="peer sr-only"
+                    className={cn("peer", "sr-only")}
                   />
-                  <CheckIcon className="hidden size-4 stroke-white peer-data-checked:block" />
+                  <CheckIcon
+                    className={cn("hidden size-4", "stroke-white", "peer-data-checked:block")}
+                  />
                 </Label>
               ))}
             </RadioGroup>

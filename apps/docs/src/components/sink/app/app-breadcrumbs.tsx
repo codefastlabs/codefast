@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,8 +33,8 @@ export function AppBreadcrumbs() {
             <Link to="/sink">Components</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator className="hidden sm:flex" />
-        <BreadcrumbItem className="hidden sm:block">
+        <BreadcrumbSeparator className={cn("hidden", "sm:flex")} />
+        <BreadcrumbItem className={cn("hidden", "sm:block")}>
           <BreadcrumbPage className="capitalize">{name}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

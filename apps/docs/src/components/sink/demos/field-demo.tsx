@@ -53,8 +53,16 @@ import { Link } from "@tanstack/react-router";
 
 export function FieldDemo() {
   return (
-    <div className="@container w-full">
-      <div className="grid gap-4 bg-muted p-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5 @3xl:grid-cols-2 @5xl:grid-cols-3">
+    <div className={cn("w-full", "@container")}>
+      <div
+        className={cn(
+          "grid gap-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5",
+          "p-4",
+          "bg-muted",
+          "@3xl:grid-cols-2",
+          "@5xl:grid-cols-3",
+        )}
+      >
         <div className="flex flex-col gap-6">
           <BasicFields />
           <PrivacySettings />
@@ -492,8 +500,20 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-f8k" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
+                <IconCircle
+                  className={cn(
+                    "size-5",
+                    "stroke-input stroke-1",
+                    "group-has-data-checked/field:hidden",
+                  )}
+                />
+                <IconCircleCheckFilled
+                  className={cn(
+                    "hidden size-5",
+                    "fill-primary",
+                    "group-has-data-checked/field:block",
+                  )}
+                />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="followers-s7m">
@@ -503,8 +523,20 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers" id="followers-s7m" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
+                <IconCircle
+                  className={cn(
+                    "size-5",
+                    "stroke-input stroke-1",
+                    "group-has-data-checked/field:hidden",
+                  )}
+                />
+                <IconCircleCheckFilled
+                  className={cn(
+                    "hidden size-5",
+                    "fill-primary",
+                    "group-has-data-checked/field:block",
+                  )}
+                />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="custom-q3r">
@@ -514,8 +546,20 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom" id="custom-q3r" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
+                <IconCircle
+                  className={cn(
+                    "size-5",
+                    "stroke-input stroke-1",
+                    "group-has-data-checked/field:hidden",
+                  )}
+                />
+                <IconCircleCheckFilled
+                  className={cn(
+                    "hidden size-5",
+                    "fill-primary",
+                    "group-has-data-checked/field:block",
+                  )}
+                />
               </Field>
             </FieldLabel>
           </RadioGroup>
@@ -570,7 +614,14 @@ function PrivacySettings() {
           <RadioGroup>
             <FieldLabel htmlFor="everyone-3-k4p">
               <Field orientation="horizontal">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground">
+                <div
+                  className={cn(
+                    "flex size-8 shrink-0 items-center justify-center",
+                    "rounded-full border bg-muted",
+                    "transition-all duration-100",
+                    "group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground",
+                  )}
+                >
                   <IconWorld className="size-4" />
                 </div>
                 <FieldContent>
@@ -578,13 +629,32 @@ function PrivacySettings() {
                   <FieldDescription>Anyone can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="everyone" id="everyone-3-k4p" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
+                <IconCircle
+                  className={cn(
+                    "size-5",
+                    "stroke-input stroke-1",
+                    "group-has-data-checked/field:hidden",
+                  )}
+                />
+                <IconCircleCheckFilled
+                  className={cn(
+                    "hidden size-5",
+                    "fill-primary",
+                    "group-has-data-checked/field:block",
+                  )}
+                />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="followers-3-m7j">
               <Field orientation="horizontal">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground">
+                <div
+                  className={cn(
+                    "flex size-8 shrink-0 items-center justify-center",
+                    "rounded-full border bg-muted",
+                    "transition-all duration-100",
+                    "group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground",
+                  )}
+                >
                   <IconUsers className="size-4" />
                 </div>
                 <FieldContent>
@@ -592,13 +662,32 @@ function PrivacySettings() {
                   <FieldDescription>Visible to your followers and connections.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="followers-3" id="followers-3-m7j" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
+                <IconCircle
+                  className={cn(
+                    "size-5",
+                    "stroke-input stroke-1",
+                    "group-has-data-checked/field:hidden",
+                  )}
+                />
+                <IconCircleCheckFilled
+                  className={cn(
+                    "hidden size-5",
+                    "fill-primary",
+                    "group-has-data-checked/field:block",
+                  )}
+                />
               </Field>
             </FieldLabel>
             <FieldLabel htmlFor="custom-3-r9w">
               <Field orientation="horizontal">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted transition-all duration-100 group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground">
+                <div
+                  className={cn(
+                    "flex size-8 shrink-0 items-center justify-center",
+                    "rounded-full border bg-muted",
+                    "transition-all duration-100",
+                    "group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground",
+                  )}
+                >
                   <IconPlus className="size-4" />
                 </div>
                 <FieldContent>
@@ -606,8 +695,20 @@ function PrivacySettings() {
                   <FieldDescription>Choose who can see your profile.</FieldDescription>
                 </FieldContent>
                 <RadioGroupItem value="custom-3" id="custom-3-r9w" className="sr-only" />
-                <IconCircle className="size-5 stroke-input stroke-1 group-has-data-checked/field:hidden" />
-                <IconCircleCheckFilled className="hidden size-5 fill-primary group-has-data-checked/field:block" />
+                <IconCircle
+                  className={cn(
+                    "size-5",
+                    "stroke-input stroke-1",
+                    "group-has-data-checked/field:hidden",
+                  )}
+                />
+                <IconCircleCheckFilled
+                  className={cn(
+                    "hidden size-5",
+                    "fill-primary",
+                    "group-has-data-checked/field:block",
+                  )}
+                />
               </Field>
             </FieldLabel>
           </RadioGroup>
@@ -628,13 +729,24 @@ function HearAboutUs() {
               <FieldDescription>
                 Select the option that best describes how you heard about us.
               </FieldDescription>
-              <FieldGroup className="flex flex-row flex-wrap gap-2 [--radius:9999px] **:data-[slot=checkbox]:rounded-full **:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2 *:data-[slot=field-label]:w-fit">
+              <FieldGroup
+                className={cn(
+                  "flex flex-row flex-wrap gap-2",
+                  "**:data-[slot=checkbox]:rounded-full **:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2",
+                  "*:data-[slot=field-label]:w-fit",
+                  "[--radius:9999px]",
+                )}
+              >
                 <FieldLabel htmlFor="social-media-b2s">
                   <Field orientation="horizontal">
                     <Checkbox
                       value="social-media"
                       id="social-media-b2s"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
+                      className={cn(
+                        "-ml-6",
+                        "-translate-x-1 transition-all duration-100",
+                        "group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0",
+                      )}
                     />
                     <FieldTitle>Social Media</FieldTitle>
                   </Field>
@@ -644,7 +756,11 @@ function HearAboutUs() {
                     <Checkbox
                       value="search-engine"
                       id="search-engine-f6h"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
+                      className={cn(
+                        "-ml-6",
+                        "-translate-x-1 transition-all duration-100",
+                        "group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0",
+                      )}
                     />
                     <FieldTitle>Search Engine</FieldTitle>
                   </Field>
@@ -654,7 +770,11 @@ function HearAboutUs() {
                     <Checkbox
                       value="referral"
                       id="referral-l3n"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
+                      className={cn(
+                        "-ml-6",
+                        "-translate-x-1 transition-all duration-100",
+                        "group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0",
+                      )}
                     />
                     <FieldTitle>Referral</FieldTitle>
                   </Field>
@@ -664,7 +784,11 @@ function HearAboutUs() {
                     <Checkbox
                       value="other"
                       id="other-u5c"
-                      className="-ml-6 -translate-x-1 transition-all duration-100 group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0"
+                      className={cn(
+                        "-ml-6",
+                        "-translate-x-1 transition-all duration-100",
+                        "group-has-data-checked/field-label:ml-0 group-has-data-checked/field-label:translate-x-0",
+                      )}
                     />
                     <FieldTitle>Other (Please specify)</FieldTitle>
                   </Field>
@@ -870,7 +994,7 @@ function ShippingMethods() {
         </CardContent>
       </Card>
       <form>
-        <FieldGroup className="gap-6 rounded-xl border bg-background p-6">
+        <FieldGroup className={cn("gap-6", "p-6", "rounded-xl border bg-background")}>
           <FieldSet>
             <FieldLegend>GPU Type</FieldLegend>
             <FieldDescription>Select the GPU type for your cluster.</FieldDescription>
@@ -1013,7 +1137,7 @@ function SignupForm() {
               <Field>
                 <p className="text-center text-sm">
                   Already have an account?{" "}
-                  <Link to="/" className="underline underline-offset-4">
+                  <Link to="/" className={cn("underline", "underline-offset-4")}>
                     Sign in
                   </Link>
                 </p>
@@ -1049,7 +1173,7 @@ function LoginForm() {
                 required
               />
               <FieldDescription>
-                <Link to="/" className="text-sm underline underline-offset-4">
+                <Link to="/" className={cn("text-sm underline", "underline-offset-4")}>
                   Forgot your password?
                 </Link>
               </FieldDescription>
@@ -1068,7 +1192,7 @@ function LoginForm() {
 
             <FieldGroup>
               <Button variant="outline" className="w-full">
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+                <svg className={cn("h-4 w-4", "mr-2")} viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                     fill="#4285F4"
@@ -1089,13 +1213,13 @@ function LoginForm() {
                 Continue with Google
               </Button>
               <Button variant="outline" className="w-full">
-                <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <svg className={cn("h-4 w-4", "mr-2")} fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                 </svg>
                 Continue with GitHub
               </Button>
               <Button variant="outline" className="w-full">
-                <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <svg className={cn("h-4 w-4", "mr-2")} fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z" />
                 </svg>
                 Continue with Facebook
@@ -1107,7 +1231,7 @@ function LoginForm() {
             <Field>
               <p className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link to="/" className="font-medium underline underline-offset-4">
+                <Link to="/" className={cn("font-medium underline", "underline-offset-4")}>
                   Create an account
                 </Link>
               </p>
@@ -1927,7 +2051,7 @@ export function FormCheckboxDemo() {
           </FieldSet>
           <FieldSet>
             <FieldLegend>Skills</FieldLegend>
-            <FieldGroup className="flex-row flex-wrap gap-3 *:data-[slot=field]:w-fit">
+            <FieldGroup className={cn("flex-row flex-wrap gap-3", "*:data-[slot=field]:w-fit")}>
               <Field orientation="horizontal">
                 <Checkbox id="javascript-4ee" />
                 <FieldLabel htmlFor="javascript-4ee" className="font-normal">
@@ -2423,7 +2547,8 @@ export function FormDatePickerDemo() {
                   variant="outline"
                   aria-invalid={true}
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start",
+                    "text-left font-normal",
                     !date && "text-muted-foreground",
                   )}
                 >
@@ -2431,7 +2556,7 @@ export function FormDatePickerDemo() {
                   {date ? format(date, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className={cn("w-auto", "p-0")} align="start">
                 <Calendar mode="single" selected={date} onSelect={setDate} />
               </PopoverContent>
             </Popover>
@@ -2444,7 +2569,8 @@ export function FormDatePickerDemo() {
                   id="birth-date-0fq"
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start",
+                    "text-left font-normal",
                     !birthDate && "text-muted-foreground",
                   )}
                 >
@@ -2452,7 +2578,7 @@ export function FormDatePickerDemo() {
                   {birthDate ? format(birthDate, "PPP") : <span>Select your birth date</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className={cn("w-auto", "p-0")} align="start">
                 <Calendar mode="single" selected={birthDate} onSelect={setBirthDate} />
               </PopoverContent>
             </Popover>
@@ -2469,7 +2595,8 @@ export function FormDatePickerDemo() {
                   id="appointment-f44"
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start",
+                    "text-left font-normal",
                     !appointmentDate && "text-muted-foreground",
                   )}
                 >
@@ -2481,7 +2608,7 @@ export function FormDatePickerDemo() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className={cn("w-auto", "p-0")} align="start">
                 <Calendar
                   mode="single"
                   selected={appointmentDate}
@@ -2503,7 +2630,8 @@ export function FormDatePickerDemo() {
                   id="date-range-7yr"
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start",
+                    "text-left font-normal",
                     !dateRange && "text-muted-foreground",
                   )}
                 >
@@ -2521,7 +2649,7 @@ export function FormDatePickerDemo() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className={cn("w-auto", "p-0")} align="start">
                 <Calendar
                   mode="range"
                   defaultMonth={dateRange?.from}
@@ -2541,7 +2669,8 @@ export function FormDatePickerDemo() {
                   id="vacation-w9w"
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start",
+                    "text-left font-normal",
                     !vacationDates && "text-muted-foreground",
                   )}
                 >
@@ -2560,9 +2689,9 @@ export function FormDatePickerDemo() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className={cn("w-auto", "p-0")} align="start">
                 <div className="flex flex-col">
-                  <div className="flex gap-2 border-b p-3">
+                  <div className={cn("flex gap-2", "p-3", "border-b")}>
                     <Button
                       variant="outline"
                       size="sm"
@@ -2609,7 +2738,7 @@ export function FormDatePickerDemo() {
             <Button
               id="disabled-date-1vz"
               variant="outline"
-              className="w-full justify-start text-left font-normal opacity-50"
+              className={cn("w-full justify-start", "opacity-50", "text-left font-normal")}
               disabled
             >
               <CalendarIcon />
@@ -3511,7 +3640,8 @@ export function ComplexFormInvalidDemo() {
                           id="birthdate-invalid-49m"
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
+                            "w-full justify-start",
+                            "text-left font-normal",
                             !startDate && "text-muted-foreground",
                           )}
                         >
@@ -3519,7 +3649,7 @@ export function ComplexFormInvalidDemo() {
                           {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className={cn("w-auto", "p-0")} align="start">
                         <Calendar
                           mode="single"
                           selected={startDate}
@@ -3909,7 +4039,7 @@ function CheckoutForm() {
                   </FieldLabel>
                   <Input id="checkout-7j9-address2-d4t" placeholder="Apartment 4B" />
                 </Field>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div className={cn("grid grid-cols-2 gap-4", "sm:grid-cols-4")}>
                   <Field className="sm:col-span-2">
                     <FieldLabel htmlFor="checkout-7j9-city-poj">City</FieldLabel>
                     <Input id="checkout-7j9-city-poj" placeholder="New York" required />

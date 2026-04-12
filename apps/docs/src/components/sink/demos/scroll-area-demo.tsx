@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { ScrollArea, ScrollAreaScrollbar } from "@codefast/ui/scroll-area";
 import { Separator } from "@codefast/ui/separator";
 import { Fragment } from "react";
@@ -17,9 +18,9 @@ const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length
 function ScrollAreaVertical() {
   return (
     <div className="flex flex-col gap-6">
-      <ScrollArea className="h-72 w-48 rounded-lg border">
+      <ScrollArea className={cn("h-72 w-48", "rounded-lg border")}>
         <div className="p-4">
-          <h4 className="mb-4 text-sm leading-none font-medium">Tags</h4>
+          <h4 className={cn("mb-4", "text-sm leading-none font-medium")}>Tags</h4>
           {tags.map((tag) => (
             <Fragment key={tag}>
               <div className="text-sm">{tag}</div>
@@ -49,11 +50,11 @@ export const works = [
 
 function ScrollAreaHorizontalDemo() {
   return (
-    <ScrollArea className="w-full max-w-96 rounded-lg border p-4">
+    <ScrollArea className={cn("w-full max-w-96", "p-4", "rounded-lg border")}>
       <div className="flex gap-4">
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
-            <div className="overflow-hidden rounded-lg">
+            <div className={cn("overflow-hidden", "rounded-lg")}>
               <Image
                 src={artwork.art}
                 alt={`Photo by ${artwork.artist}`}
@@ -63,7 +64,7 @@ function ScrollAreaHorizontalDemo() {
                 className="aspect-3/4 h-fit w-fit object-cover"
               />
             </div>
-            <figcaption className="pt-2 text-xs text-muted-foreground">
+            <figcaption className={cn("pt-2", "text-xs text-muted-foreground")}>
               Photo by <span className="font-semibold text-foreground">{artwork.artist}</span>
             </figcaption>
           </figure>

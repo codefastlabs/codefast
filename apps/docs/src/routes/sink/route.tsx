@@ -18,13 +18,19 @@ function SinkLayout() {
       <SidebarProvider defaultOpen={true} className={cn("theme-container")}>
         <AppSidebar />
         <SidebarInset>
-          <header className="sticky top-0 z-10 flex h-14 items-center border-b bg-background p-4">
+          <header
+            className={cn(
+              "sticky z-10 flex h-14 items-center",
+              "top-0 p-4",
+              "border-b bg-background",
+            )}
+          >
             <SidebarTrigger />
-            <Separator orientation="vertical" className="mr-4 ml-2 h-4!" />
+            <Separator orientation="vertical" className={cn("h-4!", "mr-4 ml-2")} />
             <AppBreadcrumbs />
             <div
               id="sink-accent-palette"
-              className="ml-auto flex scroll-mt-14 items-center gap-2"
+              className={cn("flex items-center gap-2", "ml-auto", "scroll-mt-14")}
               aria-label="Appearance and accent palette"
             >
               <ModeSwitcher />

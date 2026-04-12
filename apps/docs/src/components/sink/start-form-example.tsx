@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import {
   Card,
@@ -330,7 +331,14 @@ export function ExampleForm() {
             <DialogTitle>Subscription Created!</DialogTitle>
             <DialogDescription>Here are the details of your subscription.</DialogDescription>
           </DialogHeader>
-          <pre className="overflow-x-auto rounded-lg bg-black p-4 font-mono text-sm text-white">
+          <pre
+            className={cn(
+              "overflow-x-auto",
+              "p-4",
+              "rounded-lg bg-black",
+              "font-mono text-sm text-white",
+            )}
+          >
             <code>{JSON.stringify(formState.values, null, 2)}</code>
           </pre>
         </DialogContent>

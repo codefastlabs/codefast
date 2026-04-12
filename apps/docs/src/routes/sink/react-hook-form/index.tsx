@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExampleForm } from "#components/sink/react-hook-form-example";
 
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/sink/react-hook-form/")({
 
 function ReactHookFormPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className={cn("flex min-h-screen items-center justify-center", "p-4")}>
       <ExampleForm />
     </div>
   );

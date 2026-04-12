@@ -1,10 +1,11 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Label } from "@codefast/ui/label";
 import { Slider } from "@codefast/ui/slider";
 import { useState } from "react";
 
 export function SliderDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col flex-wrap gap-6 md:flex-row">
+    <div className={cn("flex w-full max-w-sm flex-col flex-wrap gap-6", "md:flex-row")}>
       <Slider defaultValue={[50]} max={100} step={1} />
       <Slider defaultValue={[25, 50]} max={100} step={1} />
       <Slider defaultValue={[10, 20]} max={100} step={10} />
