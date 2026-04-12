@@ -50,7 +50,7 @@ Heuristics rewrite literals inside **`cn(...)`** and in **`tv()`** slots (`class
 
 **Useful options** (see `--help` for the full list):
 
-- **`--with-classname`** — Append **`className`** as the **last** argument to the suggested **`cn(...)`** (preview / apply / `group`).
+- **`--with-class-name`** (alias **`--with-classname`**) — Append **`className`** as the **last** argument to the suggested **`cn(...)`** (preview / apply / `group`).
 - **`--cn-import <spec>`** — Override the module specifier when the tool adds a **`cn`** import (preview / apply).
 
 **`group [tokens...]`** — No filesystem: paste a class string (quote it if it contains spaces). Stdout shows a suggested **`cn(...)`** or, with **`--tv`**, a **`tv()`**-style array, plus a short **buckets** summary. Use this to **tune your mental model** of how grouping works before running **`analyze`** on a large tree.

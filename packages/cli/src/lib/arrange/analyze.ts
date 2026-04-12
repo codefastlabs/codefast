@@ -29,6 +29,75 @@ function analyzeCnCall(sf: ts.SourceFile, call: ts.CallExpression, report: Analy
   }
 }
 
+function visitCallExpressionForArrangeAnalyze(
+  node: ts.CallExpression,
+  sf: ts.SourceFile,
+  sourceText: string,
+  knownBindings: Set<string>,
+  report: AnalyzeReport,
+): void {
+  if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
+    report.cnCallExpressions++;
+    analyzeCnCall(sf, node, report);
+    return;
+  }
+  if (!isCnOrTvIdentifier(node.expression, "tv", knownBindings)) return;
+
+  report.tvCallExpressions++;
+  const arg0 = node.arguments[0];
+  if (!arg0 || !ts.isObjectLiteralExpression(arg0)) return;
+
+  for (const nestedCn of collectCnCallsInsideTv(sf, arg0, knownBindings, 0)) {
+    const src = sourceText.slice(nestedCn.getStart(sf), nestedCn.getEnd());
+    const preview = src.length > 72 ? `${src.slice(0, 72)}…` : src;
+    report.cnInsideTvCalls.push({
+      file: sf.fileName,
+      line: lineOf(sf, nestedCn),
+      argCount: nestedCn.arguments.length,
+      preview,
+    });
+  }
+  traverseTvObject(
+    sf,
+    arg0,
+    (strNode) => {
+      const text = strNode.text;
+      const n = tokenizeClassString(text).length;
+      if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+        report.longTvStringLiterals.push({
+          file: sf.fileName,
+          line: lineOf(sf, strNode),
+          tokenCount: n,
+          preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
+        });
+      }
+    },
+    0,
+    knownBindings,
+  );
+}
+
+function visitJsxAttributeForArrangeAnalyze(
+  node: ts.JsxAttribute,
+  sf: ts.SourceFile,
+  filePath: string,
+  report: AnalyzeReport,
+): void {
+  if (!filePath.endsWith(".tsx")) return;
+  const parsed = jsxClassNameStaticLiteral(node);
+  if (!parsed) return;
+  const text = parsed.lit.text;
+  const n = tokenizeClassString(text).length;
+  if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+    report.longJsxClassNameLiterals.push({
+      file: sf.fileName,
+      line: lineOf(sf, parsed.lit),
+      tokenCount: n,
+      preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
+    });
+  }
+}
+
 export function analyzeDirectory(target: string, fs: CliFs): AnalyzeReport {
   const report: AnalyzeReport = {
     files: 0,
@@ -56,58 +125,10 @@ export function analyzeDirectory(target: string, fs: CliFs): AnalyzeReport {
     const knownBindings = buildKnownCnTvBindings(sf);
     const visit = (node: ts.Node): void => {
       if (ts.isCallExpression(node)) {
-        if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
-          report.cnCallExpressions++;
-          analyzeCnCall(sf, node, report);
-        } else if (isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
-          report.tvCallExpressions++;
-          const arg0 = node.arguments[0];
-          if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-            for (const nestedCn of collectCnCallsInsideTv(sf, arg0, knownBindings, 0)) {
-              const src = sourceText.slice(nestedCn.getStart(sf), nestedCn.getEnd());
-              const preview = src.length > 72 ? `${src.slice(0, 72)}…` : src;
-              report.cnInsideTvCalls.push({
-                file: sf.fileName,
-                line: lineOf(sf, nestedCn),
-                argCount: nestedCn.arguments.length,
-                preview,
-              });
-            }
-            traverseTvObject(
-              sf,
-              arg0,
-              (strNode) => {
-                const text = strNode.text;
-                const n = tokenizeClassString(text).length;
-                if (n >= LONG_STRING_TOKEN_THRESHOLD) {
-                  report.longTvStringLiterals.push({
-                    file: sf.fileName,
-                    line: lineOf(sf, strNode),
-                    tokenCount: n,
-                    preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
-                  });
-                }
-              },
-              0,
-              knownBindings,
-            );
-          }
-        }
+        visitCallExpressionForArrangeAnalyze(node, sf, sourceText, knownBindings, report);
       }
-      if (filePath.endsWith(".tsx") && ts.isJsxAttribute(node)) {
-        const parsed = jsxClassNameStaticLiteral(node);
-        if (parsed) {
-          const text = parsed.lit.text;
-          const n = tokenizeClassString(text).length;
-          if (n >= LONG_STRING_TOKEN_THRESHOLD) {
-            report.longJsxClassNameLiterals.push({
-              file: sf.fileName,
-              line: lineOf(sf, parsed.lit),
-              tokenCount: n,
-              preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
-            });
-          }
-        }
+      if (ts.isJsxAttribute(node)) {
+        visitJsxAttributeForArrangeAnalyze(node, sf, filePath, report);
       }
       ts.forEachChild(node, visit);
     };

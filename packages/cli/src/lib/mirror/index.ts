@@ -1,6 +1,6 @@
-import type { Dirent } from "node:fs";
 import path from "node:path";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { isDirentList } from "#lib/shared/utils";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { loadMirrorConfig } from "#lib/mirror/config";
 import {
@@ -31,12 +31,6 @@ import {
   writePackageJsonExportsAtomic,
 } from "#lib/mirror/update-pkg";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
-
-function isDirentList(x: string[] | Dirent[]): x is Dirent[] {
-  if (x.length === 0) return true;
-  const first = x[0] as Dirent | string;
-  return typeof first === "object" && first !== null && "isDirectory" in first;
-}
 
 async function findWorkspacePackages(fs: CliFs, rootDir: string): Promise<string[]> {
   const packagesDir = path.join(rootDir, "packages");
