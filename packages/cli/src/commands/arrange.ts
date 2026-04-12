@@ -1,6 +1,7 @@
 import path from "node:path";
 import process from "node:process";
 import type { Command } from "commander";
+import { Option } from "commander";
 import {
   ArrangeError,
   ArrangeErrorCode,
@@ -20,6 +21,14 @@ import {
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
 
+/** Commander attribute `withClassName` (second long flag `--with-class-name`). */
+function createWithClassNameOption(): Option {
+  return new Option(
+    "--with-classname, --with-class-name",
+    "Append className as final cn() argument",
+  ).default(false);
+}
+
 function defaultTargetPath(): string {
   return path.resolve(process.cwd(), DEFAULT_ARRANGE_TARGET);
 }
@@ -31,6 +40,29 @@ function handleArrangeLibError(e: unknown): boolean {
     return true;
   }
   return false;
+}
+
+type ArrangeCliRunOpts = {
+  write: boolean;
+  withClassName?: boolean;
+  cnImport?: string;
+};
+
+function runArrangeAction(resolvedTarget: string, runOpts: ArrangeCliRunOpts): void {
+  try {
+    runOnTarget(
+      resolvedTarget,
+      {
+        write: runOpts.write,
+        withClassName: !!runOpts.withClassName,
+        cnImport: runOpts.cnImport,
+      },
+      arrangeFs,
+      arrangeLogger,
+    );
+  } catch (e) {
+    if (!handleArrangeLibError(e)) throw e;
+  }
 }
 
 export function registerArrangeCommand(program: Command): void {
@@ -56,48 +88,30 @@ export function registerArrangeCommand(program: Command): void {
     .command("preview")
     .description("Dry-run: print suggested replacements without writing files")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
-    .option("--with-classname", "Append className as final cn() argument", false)
+    .addOption(createWithClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
-    .action((target: string | undefined, opts: { withClassname?: boolean; cnImport?: string }) => {
+    .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      try {
-        runOnTarget(
-          resolved,
-          {
-            write: false,
-            withClassName: !!opts.withClassname,
-            cnImport: opts.cnImport,
-          },
-          arrangeFs,
-          arrangeLogger,
-        );
-      } catch (e) {
-        if (!handleArrangeLibError(e)) throw e;
-      }
+      runArrangeAction(resolved, {
+        write: false,
+        withClassName: opts.withClassName,
+        cnImport: opts.cnImport,
+      });
     });
 
   arrange
     .command("apply")
     .description("Apply grouping and cn-in-tv unwrap edits to files")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
-    .option("--with-classname", "Append className as final cn() argument", false)
+    .addOption(createWithClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
-    .action((target: string | undefined, opts: { withClassname?: boolean; cnImport?: string }) => {
+    .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      try {
-        runOnTarget(
-          resolved,
-          {
-            write: true,
-            withClassName: !!opts.withClassname,
-            cnImport: opts.cnImport,
-          },
-          arrangeFs,
-          arrangeLogger,
-        );
-      } catch (e) {
-        if (!handleArrangeLibError(e)) throw e;
-      }
+      runArrangeAction(resolved, {
+        write: true,
+        withClassName: opts.withClassName,
+        cnImport: opts.cnImport,
+      });
     });
 
   arrange
@@ -105,8 +119,8 @@ export function registerArrangeCommand(program: Command): void {
     .description("Try grouping on a pasted class string (stdout: cn(...) or tv array with --tv)")
     .argument("[tokens...]", "Class tokens (quote a single string if it contains spaces)")
     .option("--tv", "Emit tv()-style array instead of cn() call", false)
-    .option("--with-classname", "Append className as final cn() argument", false)
-    .action((tokens: string[], opts: { tv?: boolean; withClassname?: boolean }) => {
+    .addOption(createWithClassNameOption())
+    .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean }) => {
       const inlineClasses = tokens.join(" ").trim();
       if (!inlineClasses) {
         process.stderr.write(
@@ -118,7 +132,7 @@ export function registerArrangeCommand(program: Command): void {
       const groups = suggestCnGroups(inlineClasses);
       const result = opts.tv
         ? formatArray(groups)
-        : formatCnCall(groups, { trailingClassName: !!opts.withClassname });
+        : formatCnCall(groups, { trailingClassName: !!opts.withClassName });
       process.stdout.write(`${result}\n`);
       const bucketSummary = groups.map((g) => {
         const uniq = new Set(tokenizeClassString(g).map(classifyToken));

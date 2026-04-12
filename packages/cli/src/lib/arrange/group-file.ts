@@ -19,13 +19,112 @@ import {
 } from "#lib/arrange/ast/targets";
 import { ensureCnImport, sourceFileImportsCn } from "#lib/arrange/imports";
 
+type UnwrapPlan = {
+  start: number;
+  end: number;
+  replacement: string;
+  call: ts.CallExpression;
+};
+
+function printGroupFilePreview(
+  logger: CliLogger,
+  args: {
+    filePath: string;
+    reportTotal: number;
+    cnInTvNoReplacement: number;
+    cnInTvCalls: ts.CallExpression[];
+    unwrapReplacementByCall: ReadonlyMap<ts.CallExpression, string>;
+    sourceText: string;
+    sf: ts.SourceFile;
+    unwrapEdits: UnwrapPlan[];
+    plannedGroupEdits: PlannedGroupEdit[];
+  },
+): void {
+  const { out } = logger;
+  const {
+    filePath,
+    reportTotal,
+    cnInTvNoReplacement,
+    cnInTvCalls,
+    unwrapReplacementByCall,
+    sourceText,
+    sf,
+    unwrapEdits,
+    plannedGroupEdits,
+  } = args;
+
+  let header = `\n── ${filePath} (${reportTotal} vị trí`;
+  if (cnInTvNoReplacement > 0) {
+    header += `; thêm ${cnInTvNoReplacement} cn() trong tv không đổi (0 đối số)`;
+  }
+  header += `) ──`;
+  out(header);
+
+  for (const call of cnInTvCalls) {
+    const replacement = unwrapReplacementByCall.get(call);
+    if (replacement === undefined) {
+      out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn]: cn(...) không có đối số — bỏ qua`);
+      continue;
+    }
+    const start = call.getStart(sf);
+    const end = call.getEnd();
+    if (sourceText.slice(start, end) === replacement) continue;
+    out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn → chuỗi/mảng]:`);
+    out(`  ${replacement.split("\n").join("\n  ")}`);
+  }
+  if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
+    out(
+      "  (Các dòng [cn] / [tv] / [JSX className] bên dưới theo nội dung sau bước unwrap cn trong tv.)",
+    );
+  }
+  for (const plan of plannedGroupEdits) {
+    out(`  Dòng ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
+    out(`  ${plan.replacement.split("\n").join("\n  ")}`);
+  }
+}
+
+function applyGroupFileWrites(
+  filePath: string,
+  options: ArrangeGroupFileOptions,
+  fs: CliFs,
+  sourceText: string,
+  sf: ts.SourceFile,
+  unwrapEdits: UnwrapPlan[],
+  textAfterUnwrap: string,
+  plannedGroupEdits: PlannedGroupEdit[],
+  cnInTvZeroArgCount: number,
+): GroupFileResult {
+  const originallyHasCnImport = sourceFileImportsCn(sf);
+
+  const groupEdits = plannedGroupEdits.map((p) => ({
+    start: p.start,
+    end: p.end,
+    replacement: p.replacement,
+    jsxCn: p.jsxCn,
+  }));
+
+  const touchedJsxCn = groupEdits.some((e) => e.jsxCn);
+  let newText =
+    groupEdits.length > 0 ? applyEditsDescending(textAfterUnwrap, groupEdits) : textAfterUnwrap;
+
+  const changed = unwrapEdits.length + groupEdits.length;
+
+  if (changed > 0) {
+    if (touchedJsxCn) {
+      newText = ensureCnImport(newText, filePath, options.cnImport, originallyHasCnImport);
+    }
+    fs.writeFileSync(filePath, newText, "utf8");
+  }
+
+  return { filePath, totalFound: changed + cnInTvZeroArgCount, changed };
+}
+
 export function groupFile(
   filePath: string,
   options: ArrangeGroupFileOptions,
   fs: CliFs,
   logger: CliLogger,
 ): GroupFileResult {
-  const { out } = logger;
   const sourceText = fs.readFileSync(filePath, "utf8");
   const sf = ts.createSourceFile(
     filePath,
@@ -38,7 +137,6 @@ export function groupFile(
   const knownBindings = buildKnownCnTvBindings(sf);
   const cnInTvCalls = listAllCnCallsInsideTvInSourceFile(sf, knownBindings);
 
-  type UnwrapPlan = { start: number; end: number; replacement: string; call: ts.CallExpression };
   const unwrapPlans = cnInTvCalls
     .map((call): UnwrapPlan | undefined => {
       const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
@@ -46,6 +144,8 @@ export function groupFile(
       return { start: call.getStart(sf), end: call.getEnd(), replacement, call };
     })
     .filter((e): e is UnwrapPlan => e !== undefined);
+
+  const unwrapReplacementByCall = new Map(unwrapPlans.map((p) => [p.call, p.replacement] as const));
 
   const unwrapEdits = unwrapPlans.filter((e) => sourceText.slice(e.start, e.end) !== e.replacement);
 
@@ -75,9 +175,7 @@ export function groupFile(
   }
 
   const editSitesCount = unwrapEdits.length + plannedGroupEdits.length;
-  const cnInTvZeroArgCount = cnInTvCalls.filter(
-    (call) => unwrapCnInsideTvCallReplacement(call, sourceText, sf) === undefined,
-  ).length;
+  const cnInTvZeroArgCount = cnInTvCalls.length - unwrapPlans.length;
   const reportTotal = editSitesCount + cnInTvZeroArgCount;
 
   if (cnInTvCalls.length === 0 && groupTargets.length === 0) {
@@ -89,34 +187,17 @@ export function groupFile(
       return { filePath, totalFound: 0, changed: 0 };
     }
 
-    let header = `\n── ${filePath} (${reportTotal} vị trí`;
-    if (cnInTvNoReplacement > 0) {
-      header += `; thêm ${cnInTvNoReplacement} cn() trong tv không đổi (0 đối số)`;
-    }
-    header += `) ──`;
-    out(header);
-
-    for (const call of cnInTvCalls) {
-      const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
-      if (replacement === undefined) {
-        out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn]: cn(...) không có đối số — bỏ qua`);
-        continue;
-      }
-      const start = call.getStart(sf);
-      const end = call.getEnd();
-      if (sourceText.slice(start, end) === replacement) continue;
-      out(`  Dòng ${lineOf(sf, call)} [tv ⊃ cn → chuỗi/mảng]:`);
-      out(`  ${replacement.split("\n").join("\n  ")}`);
-    }
-    if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
-      out(
-        "  (Các dòng [cn] / [tv] / [JSX className] bên dưới theo nội dung sau bước unwrap cn trong tv.)",
-      );
-    }
-    for (const plan of plannedGroupEdits) {
-      out(`  Dòng ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
-      out(`  ${plan.replacement.split("\n").join("\n  ")}`);
-    }
+    printGroupFilePreview(logger, {
+      filePath,
+      reportTotal,
+      cnInTvNoReplacement,
+      cnInTvCalls,
+      unwrapReplacementByCall,
+      sourceText,
+      sf,
+      unwrapEdits,
+      plannedGroupEdits,
+    });
     return {
       filePath,
       totalFound: reportTotal,
@@ -124,27 +205,15 @@ export function groupFile(
     };
   }
 
-  const originallyHasCnImport = sourceFileImportsCn(sf);
-
-  const groupEdits = plannedGroupEdits.map((p) => ({
-    start: p.start,
-    end: p.end,
-    replacement: p.replacement,
-    jsxCn: p.jsxCn,
-  }));
-
-  const touchedJsxCn = groupEdits.some((e) => e.jsxCn);
-  let newText =
-    groupEdits.length > 0 ? applyEditsDescending(textAfterUnwrap, groupEdits) : textAfterUnwrap;
-
-  const changed = unwrapEdits.length + groupEdits.length;
-
-  if (changed > 0) {
-    if (touchedJsxCn) {
-      newText = ensureCnImport(newText, filePath, options.cnImport, originallyHasCnImport);
-    }
-    fs.writeFileSync(filePath, newText, "utf8");
-  }
-
-  return { filePath, totalFound: changed + cnInTvZeroArgCount, changed };
+  return applyGroupFileWrites(
+    filePath,
+    options,
+    fs,
+    sourceText,
+    sf,
+    unwrapEdits,
+    textAfterUnwrap,
+    plannedGroupEdits,
+    cnInTvZeroArgCount,
+  );
 }

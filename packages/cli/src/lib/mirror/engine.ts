@@ -1,17 +1,11 @@
-import type { Dirent } from "node:fs";
 import path from "node:path";
 import type { CliFs } from "#lib/infra/fs-contract";
+import { isDirentList } from "#lib/shared/utils";
 import { DTS_EXTENSION, PACKAGE_JSON_EXPORT, VALID_JS_EXTENSIONS } from "#lib/mirror/constants";
 import type { ExportEntry, GenerateExportsResult, MirrorConfig, Module } from "#lib/mirror/types";
 
 export function normalizePath(p: string): string {
   return p.split(path.sep).join("/").replace(/\\/g, "/");
-}
-
-function isDirentList(x: string[] | Dirent[]): x is Dirent[] {
-  if (x.length === 0) return true;
-  const first = x[0] as Dirent | string;
-  return typeof first === "object" && first !== null && "isFile" in first;
 }
 
 async function scanDirectoryFiles(
