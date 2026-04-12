@@ -26,6 +26,7 @@ export function walkTsxFiles(root: string, fs: CliFs): string[] {
       }
       return;
     }
+    if (p.endsWith(".d.ts")) return;
     if (p.endsWith(".tsx") || p.endsWith(".ts")) result.push(p);
   };
   visit(root);

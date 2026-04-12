@@ -7,9 +7,15 @@ import { registerArrangeCommand } from "#commands/arrange";
 import { registerMirrorCommand } from "#commands/mirror";
 
 function readVersion(): string {
-  const dir = path.dirname(fileURLToPath(import.meta.url));
-  const pkgPath = path.join(dir, "..", "package.json");
-  return JSON.parse(readFileSync(pkgPath, "utf-8")).version as string;
+  try {
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const pkgPath = path.join(dir, "..", "package.json");
+    const raw = readFileSync(pkgPath, "utf-8");
+    const v = (JSON.parse(raw) as { version?: unknown }).version;
+    return typeof v === "string" && v.length > 0 ? v : "unknown";
+  } catch {
+    return "unknown";
+  }
 }
 
 export function createProgram(): Command {

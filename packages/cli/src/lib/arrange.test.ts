@@ -22,6 +22,7 @@ import {
   suggestCnGroups,
   tokenizeClassString,
   unwrapCnInsideTvCallReplacement,
+  walkTsxFiles,
 } from "#lib/arrange";
 
 const arrangeFs = createNodeCliFs();
@@ -795,7 +796,7 @@ export const styles = tv({
         spy.mockRestore();
       }
       const out = chunks.join("");
-      expect(out).toContain("Các dòng [cn]");
+      expect(out).toContain("[cn] / [tv] / [JSX className]");
     });
   });
 
@@ -1099,9 +1100,9 @@ export const nested = tv({
       expect(r.cnInsideTvCalls.length).toBeGreaterThanOrEqual(1);
 
       const printed = captureStdout(() => printAnalyzeReport(dir, r, arrangeLogger));
-      expect(printed).toContain("Đường dẫn:");
-      expect(printed).toContain("Chuỗi literal trong cn");
-      expect(printed).toContain("Gọi cn(...) lồng trong tv");
+      expect(printed).toContain("Path:");
+      expect(printed).toContain("Long cn(...)");
+      expect(printed).toContain("nested inside tv");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1119,7 +1120,7 @@ export const nested = tv({
       const r = analyzeDirectory(dir, arrangeFs);
       expect(r.longCnStringLiterals.length).toBeGreaterThan(40);
       const printed = captureStdout(() => printAnalyzeReport(dir, r, arrangeLogger));
-      expect(printed).toMatch(/vị trí khác/);
+      expect(printed).toMatch(/… and \d+ more/);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1150,7 +1151,7 @@ export const nested = tv({
         arrangeLogger,
       ),
     );
-    const matches = printed.match(/vị trí khác/g);
+    const matches = printed.match(/… and \d+ more/g);
     expect(matches?.length).toBeGreaterThanOrEqual(3);
   });
 
@@ -1224,8 +1225,8 @@ export function P() { cn("${long}"); return null; }
         spy.mockRestore();
       }
       const out = chunks.join("");
-      expect(out).toContain("Tổng:");
-      expect(out).toMatch(/cần xem xét/);
+      expect(out).toContain("Total:");
+      expect(out).toMatch(/to review/);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1255,8 +1256,8 @@ export function Fixture() {
         spy.mockRestore();
       }
       const out = chunks.join("");
-      expect(out).toContain("Đã áp dụng");
-      expect(out).toMatch(/cascade|Lưu ý/);
+      expect(out).toContain("Applied:");
+      expect(out).toMatch(/cascade|Note:/);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1276,6 +1277,26 @@ export function Fixture() {
     }
     expect(caught).toBeInstanceOf(ArrangeError);
     expect((caught as ArrangeError).code).toBe(ArrangeErrorCode.TARGET_NOT_FOUND);
+  });
+});
+
+describe("walkTsxFiles", () => {
+  it("collects .ts and .tsx but skips .d.ts", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-walk-dts-"));
+    try {
+      fs.mkdirSync(path.join(dir, "sub"), { recursive: true });
+      fs.writeFileSync(path.join(dir, "a.tsx"), "", "utf8");
+      fs.writeFileSync(path.join(dir, "b.ts"), "", "utf8");
+      fs.writeFileSync(path.join(dir, "c.d.ts"), "", "utf8");
+      fs.writeFileSync(path.join(dir, "sub", "handwritten.d.ts"), "", "utf8");
+      fs.writeFileSync(path.join(dir, "sub", "e.tsx"), "", "utf8");
+      const rel = walkTsxFiles(dir, arrangeFs)
+        .map((p) => path.relative(dir, p).split(path.sep).join("/"))
+        .sort();
+      expect(rel).toEqual(["a.tsx", "b.ts", "sub/e.tsx"]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 

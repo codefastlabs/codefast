@@ -12,7 +12,7 @@ export function runOnTarget(
 ): void {
   const { out } = logger;
   if (!fs.existsSync(target)) {
-    throw new ArrangeError(ArrangeErrorCode.TARGET_NOT_FOUND, `Không tìm thấy: ${target}`);
+    throw new ArrangeError(ArrangeErrorCode.TARGET_NOT_FOUND, `Not found: ${target}`);
   }
 
   const filePaths = fs.statSync(target).isDirectory() ? walkTsxFiles(target, fs) : [target];
@@ -26,19 +26,21 @@ export function runOnTarget(
     totalChanged += result.changed;
   }
 
-  out(`\nTổng: ${filePaths.length} file, ${totalFound} vị trí (cn/tv/JSX className) cần xem xét.`);
+  out(
+    `\nTotal: ${filePaths.length} file(s), ${totalFound} site(s) (cn/tv/JSX className) to review.`,
+  );
   if (options.write) {
-    out(`Đã áp dụng: ${totalChanged} vị trí được cập nhật.`);
+    out(`Applied: ${totalChanged} site(s) updated.`);
   } else {
     out(
-      `(Chạy "apply" để ghi đè, hoặc "pnpm cli:arrange-apply" / "pnpm exec codefast arrange apply")`,
+      `(Run "apply" to write changes, or "pnpm cli:arrange-apply" / "pnpm exec codefast arrange apply")`,
     );
   }
 
   const showCascadeHint = options.write ? totalChanged > 0 : totalFound > 0;
   if (showCascadeHint) {
     out(
-      "Lưu ý: thứ tự class có thể đổi giữa các nhóm concern — smoke-test UI nếu có xung đột cascade.",
+      "Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.",
     );
   }
 }

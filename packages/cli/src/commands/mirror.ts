@@ -1,3 +1,4 @@
+import { realpathSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
@@ -5,14 +6,31 @@ import { createNodeCliFs } from "#lib/infra/node-io";
 import { normalizePath, runMirrorSync } from "#lib/mirror";
 import { findRepoRoot } from "#lib/repo-root";
 
-function packageArgToRelative(rootDir: string, arg: string | undefined): string | undefined {
-  if (!arg) return undefined;
-  const resolved = path.resolve(process.cwd(), arg);
-  const rel = path.relative(rootDir, resolved);
-  if (rel.startsWith("..") || path.isAbsolute(rel)) {
-    throw new Error(`Package path must be under monorepo root: ${rootDir}`);
+function tryRealpath(p: string): string {
+  try {
+    return realpathSync.native(p);
+  } catch {
+    return path.resolve(p);
   }
-  return normalizePath(rel);
+}
+
+export function packageArgToRelative(rootDir: string, arg: string | undefined): string | undefined {
+  if (!arg) return undefined;
+  const rootReal = tryRealpath(path.resolve(rootDir));
+  const cwdReal = tryRealpath(process.cwd());
+  const resolved = path.isAbsolute(arg) ? path.resolve(arg) : path.resolve(cwdReal, arg);
+  const targetReal = tryRealpath(resolved);
+  const rel = path.relative(rootReal, targetReal);
+  const normalized = normalizePath(rel);
+  if (
+    normalized.startsWith("..") ||
+    path.isAbsolute(normalized) ||
+    normalized === "" ||
+    normalized === "."
+  ) {
+    throw new Error(`Package path must be a subdirectory under monorepo root: ${rootDir}`);
+  }
+  return normalized;
 }
 
 export function registerMirrorCommand(program: Command): void {
