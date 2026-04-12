@@ -35,23 +35,35 @@ export function tokenizeClassString(s: string): string[] {
   return s.trim().split(/\s+/).filter(Boolean);
 }
 
+/**
+ * Index of the first `:` that separates a Tailwind variant segment from the rest.
+ * Colons inside `[...]` (at positive bracket depth) are ignored so selectors like
+ * `[&_a:hover]:text-red-500` split as `[&_a:hover]:` + `text-red-500`.
+ */
+export function indexOfFirstVariantColon(s: string): number {
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === "[") {
+      depth++;
+    } else if (ch === "]") {
+      depth = Math.max(0, depth - 1);
+    } else if (ch === ":" && depth === 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 // Strip all variant prefixes to get the bare utility name.
 // e.g. "hover:dark:md:text-sm" → "text-sm"
 // e.g. "@min-[600px]:flex" → "flex"
+// e.g. "[&_a:hover]:text-red-500" → "text-red-500"
 export function stripVariants(token: string): string {
   let t = token;
   const MAX_PASSES = 12;
   for (let i = 0; i < MAX_PASSES; i++) {
-    let depth = 0;
-    let colonIdx = -1;
-    for (let ci = 0; ci < t.length; ci++) {
-      if (t[ci] === "[") depth++;
-      else if (t[ci] === "]") depth--;
-      else if (t[ci] === ":" && depth === 0) {
-        colonIdx = ci;
-        break;
-      }
-    }
+    const colonIdx = indexOfFirstVariantColon(t);
     if (colonIdx === -1) break;
     t = t.slice(colonIdx + 1);
   }
@@ -60,15 +72,9 @@ export function stripVariants(token: string): string {
 
 /** Outermost variant segment: first `:` at bracket depth 0 → text before it. */
 function firstLeadingVariantPrefix(token: string): string | undefined {
-  let depth = 0;
-  for (let i = 0; i < token.length; i++) {
-    if (token[i] === "[") depth++;
-    else if (token[i] === "]") depth--;
-    else if (token[i] === ":" && depth === 0) {
-      return token.slice(0, i);
-    }
-  }
-  return undefined;
+  const idx = indexOfFirstVariantColon(token);
+  if (idx === -1) return undefined;
+  return token.slice(0, idx);
 }
 
 function isStateToken(token: string): boolean {
@@ -90,12 +96,26 @@ function isStateToken(token: string): boolean {
 
   if (isCompoundOrMediaVariantPrefix(prefix)) return true;
 
+  if (prefix.startsWith("[") && prefix.endsWith("]")) {
+    return true;
+  }
+
   return false;
 }
 
 export function classifyToken(token: string): Bucket {
-  if (token.startsWith("[") || token.includes("[&") || token.includes("[.")) {
-    return "arbitrary";
+  if (/^@container(?:\/[a-z][a-z0-9-]*)?$/i.test(token)) {
+    return "layout";
+  }
+
+  if (token.startsWith("[")) {
+    const splitIdx = indexOfFirstVariantColon(token);
+    if (splitIdx === -1) {
+      return "arbitrary";
+    }
+    if (splitIdx === 0 || token[splitIdx - 1] !== "]") {
+      return "arbitrary";
+    }
   }
 
   if (isStateToken(token)) {
@@ -212,23 +232,33 @@ function ariaAttributeStem(token: string): string {
   return m ? `aria-[${m[1]}]` : "aria";
 }
 
+/**
+ * Stable key for splitting adjacent `state` tokens in {@link suggestCnGroups}.
+ * Uses the **full variant stack** (every `:` segment outside `[…]`), not only the
+ * outermost prefix, so `@md/foo:[&>*]:w-auto` and `@md/foo:has-[…]:mt-px` stay in
+ * separate groups while `hover:opacity` still keys as `hover` + `opacity`…
+ *
+ * `data-[…]` / `aria-[…]` normalize the first segment via {@link dataAttributeStem} /
+ * {@link ariaAttributeStem} (full token required for bracket capture).
+ */
 export function stateKey(token: string): string {
-  let depth = 0;
-  for (let i = 0; i < token.length; i++) {
-    if (token[i] === "[") depth++;
-    else if (token[i] === "]") depth--;
-    else if (token[i] === ":" && depth === 0) {
-      const prefix = token.slice(0, i);
-      if (prefix.startsWith("data-[")) {
-        return dataAttributeStem(token);
-      }
-      if (prefix.startsWith("aria-[")) {
-        return ariaAttributeStem(token);
-      }
-      return prefix;
-    }
+  const layers: string[] = [];
+  let rest = token;
+  while (rest.length > 0) {
+    const idx = indexOfFirstVariantColon(rest);
+    if (idx === -1) break;
+    layers.push(rest.slice(0, idx));
+    rest = rest.slice(idx + 1);
   }
-  return token;
+  if (layers.length === 0) {
+    return token;
+  }
+  if (layers[0]!.startsWith("data-[")) {
+    layers[0] = dataAttributeStem(token);
+  } else if (layers[0]!.startsWith("aria-[")) {
+    layers[0] = ariaAttributeStem(token);
+  }
+  return layers.join("\u001f");
 }
 
 export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
@@ -239,5 +269,6 @@ export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
 /** Like {@link bucketsCompatible}, but never merge two distinct state variant blobs. */
 export function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
   if (a === "state" && b === "state") return false;
+  if (a === "arbitrary" || b === "arbitrary") return false;
   return bucketsCompatible(a, b);
 }
