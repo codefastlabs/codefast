@@ -7,8 +7,10 @@ export function resolvePackageDisplayName(
   packageJson: { name?: unknown },
   folderBasename: string,
 ): string {
-  const n = packageJson.name;
-  return typeof n === "string" && n.length > 0 ? n : folderBasename;
+  const declaredName = packageJson.name;
+  return typeof declaredName === "string" && declaredName.length > 0
+    ? declaredName
+    : folderBasename;
 }
 
 export async function readPackageJsonDisplayName(

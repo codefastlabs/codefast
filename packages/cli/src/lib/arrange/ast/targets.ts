@@ -13,11 +13,13 @@ import { jsxClassNameStaticLiteral } from "#lib/arrange/ast/collectors-jsx";
 import { collectLongStringNodes, slotClassString } from "#lib/arrange/ast/collectors-tv";
 import { indentOfLineContaining } from "#lib/arrange/ast/utils";
 
-export function targetReplaceStart(t: GroupTarget): number {
-  if (t.kind === "cnArg") {
-    return t.item.cnCall ? t.item.cnCall.getStart(t.item.sf) : t.item.node.getStart(t.item.sf);
+export function targetReplaceStart(target: GroupTarget): number {
+  if (target.kind === "cnArg") {
+    return target.item.cnCall
+      ? target.item.cnCall.getStart(target.item.sf)
+      : target.item.node.getStart(target.item.sf);
   }
-  return t.valueNode.getStart(t.sf);
+  return target.valueNode.getStart(target.sf);
 }
 
 export function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
@@ -87,84 +89,88 @@ export function formatCnCallReplacement(
     allArgs.push(`${argIndent}className`);
   }
 
-  const argLines = allArgs.map((a, i) => (i < allArgs.length - 1 ? `${a},` : `${a}`));
+  const argLines = allArgs.map((argLine, lineIndex) =>
+    lineIndex < allArgs.length - 1 ? `${argLine},` : `${argLine}`,
+  );
   if (allArgs.length > 1) {
-    const li = allArgs.length - 1;
-    argLines[li] = `${allArgs[li]},`;
+    const lastArgIndex = allArgs.length - 1;
+    argLines[lastArgIndex] = `${allArgs[lastArgIndex]},`;
   }
   return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
 
 export function planGroupEditForTarget(
-  t: GroupTarget,
+  target: GroupTarget,
   textAfterUnwrap: string,
   withClassName: boolean,
 ): PlannedGroupEdit | undefined {
-  if (t.kind === "jsxClassName") {
-    const groups = suggestCnGroups(t.lit.text);
+  if (target.kind === "jsxClassName") {
+    const groups = suggestCnGroups(target.lit.text);
     if (groups.length <= 1) return undefined;
-    const start = t.valueNode.getStart(t.sf);
-    const end = t.valueNode.getEnd();
+    const start = target.valueNode.getStart(target.sf);
+    const end = target.valueNode.getEnd();
     const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
     return {
       start,
       end,
       replacement,
       jsxCn: true,
-      lineSf: t.sf,
-      reportNode: t.lit,
+      lineSf: target.sf,
+      reportNode: target.lit,
       label: "JSX className",
     };
   }
 
-  const pool = slotClassString(t.item);
+  const pool = slotClassString(target.item);
   const groups = suggestCnGroups(pool);
   if (groups.length <= 1) return undefined;
 
   if (
     areCnTailwindPartitionsEquivalent(
-      t.item.nodes.map((n) => n.text),
+      target.item.nodes.map((node) => node.text),
       groups,
     )
   ) {
     return undefined;
   }
 
-  if (!t.item.cnCall) {
-    const firstNode = t.item.node;
+  if (!target.item.cnCall) {
+    const firstNode = target.item.node;
     const parentArray =
-      t.item.nodes.length > 1 && ts.isArrayLiteralExpression(firstNode.parent)
+      target.item.nodes.length > 1 && ts.isArrayLiteralExpression(firstNode.parent)
         ? firstNode.parent
         : null;
-    const start = parentArray ? parentArray.getStart(t.item.sf) : firstNode.getStart(t.item.sf);
+    const start = parentArray
+      ? parentArray.getStart(target.item.sf)
+      : firstNode.getStart(target.item.sf);
     const end = parentArray ? parentArray.getEnd() : firstNode.getEnd();
     const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
     const replacement = formatArray(groups)
       .split("\n")
-      .map((l, i) => (i === 0 ? l : `${baseIndent}${l}`))
+      .map((line, lineIndex) => (lineIndex === 0 ? line : `${baseIndent}${line}`))
       .join("\n");
     return {
       start,
       end,
       replacement,
       jsxCn: false,
-      lineSf: t.item.sf,
+      lineSf: target.item.sf,
       reportNode: firstNode,
-      label: t.item.isTvContext ? "tv" : "cn",
+      label: target.item.isTvContext ? "tv" : "cn",
     };
   }
 
-  const call = t.item.cnCall;
-  const start = call.getStart(t.item.sf);
+  const call = target.item.cnCall;
+  const start = call.getStart(target.item.sf);
   const end = call.getEnd();
-  const replacement = formatCnCallReplacement(t.item, textAfterUnwrap, withClassName);
+  const replacement = formatCnCallReplacement(target.item, textAfterUnwrap, withClassName);
   return {
     start,
     end,
     replacement,
     jsxCn: false,
-    lineSf: t.item.sf,
-    reportNode: t.item.node,
-    label: t.item.isTvContext ? "tv" : "cn",
+    lineSf: target.item.sf,
+    reportNode: target.item.node,
+    label: target.item.isTvContext ? "tv" : "cn",
   };
 }

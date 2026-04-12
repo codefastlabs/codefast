@@ -2,11 +2,11 @@ import { realpathSync } from "node:fs";
 import path from "node:path";
 import { normalizePath } from "#lib/mirror/engine";
 
-function tryRealpath(p: string): string {
+function tryRealpath(entryPath: string): string {
   try {
-    return realpathSync.native(p);
+    return realpathSync.native(entryPath);
   } catch {
-    return path.resolve(p);
+    return path.resolve(entryPath);
   }
 }
 

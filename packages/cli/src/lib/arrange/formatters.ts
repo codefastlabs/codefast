@@ -1,7 +1,7 @@
 import { indentOfLineContaining } from "#lib/arrange/ast/utils";
 
-export function escapeTsStringLiteralContent(g: string): string {
-  return g.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
+export function escapeTsStringLiteralContent(group: string): string {
+  return group.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
 }
 
 /**
@@ -20,9 +20,9 @@ export function formatCnArguments(
   const commaAfterLast = options?.commaAfterLastGroup ?? options?.trailingClassName ?? false;
   const lines: string[] = [];
   for (let i = 0; i < groups.length; i++) {
-    const g = groups[i];
+    const group = groups[i];
     const comma = i < groups.length - 1 || commaAfterLast ? "," : "";
-    lines.push(`${indent}"${escapeTsStringLiteralContent(g)}"${comma}`);
+    lines.push(`${indent}"${escapeTsStringLiteralContent(group)}"${comma}`);
   }
   if (options?.trailingClassName) {
     lines.push(`${indent}className,`);
@@ -34,9 +34,9 @@ export function formatCnCall(groups: string[], options?: { trailingClassName?: b
   const lines: string[] = ["cn("];
   const commaOnEachStringLine = groups.length > 1 || Boolean(options?.trailingClassName);
   for (let i = 0; i < groups.length; i++) {
-    const g = groups[i];
+    const group = groups[i];
     const comma = commaOnEachStringLine ? "," : "";
-    lines.push(`  "${escapeTsStringLiteralContent(g)}"${comma}`);
+    lines.push(`  "${escapeTsStringLiteralContent(group)}"${comma}`);
   }
   if (options?.trailingClassName) {
     lines.push("  className,");
@@ -48,9 +48,9 @@ export function formatCnCall(groups: string[], options?: { trailingClassName?: b
 export function formatArray(groups: string[]): string {
   const lines: string[] = ["["];
   for (let i = 0; i < groups.length; i++) {
-    const g = groups[i];
+    const group = groups[i];
     const comma = i < groups.length - 1 || groups.length > 1 ? "," : "";
-    lines.push(`  "${escapeTsStringLiteralContent(g)}"${comma}`);
+    lines.push(`  "${escapeTsStringLiteralContent(group)}"${comma}`);
   }
   lines.push("]");
   return lines.join("\n");

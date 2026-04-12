@@ -13,12 +13,12 @@ function analyzeCnCall(sf: ts.SourceFile, call: ts.CallExpression, report: Analy
   for (const arg of call.arguments) {
     forEachStringLiteralInClassExpression(arg, (lit) => {
       const text = lit.text;
-      const n = tokenizeClassString(text).length;
-      if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+      const tokenCount = tokenizeClassString(text).length;
+      if (tokenCount >= LONG_STRING_TOKEN_THRESHOLD) {
         report.longCnStringLiterals.push({
           file: sf.fileName,
           line: lineOf(sf, lit),
-          tokenCount: n,
+          tokenCount,
           preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
         });
       }
@@ -59,12 +59,12 @@ function visitCallExpressionForArrangeAnalyze(
     arg0,
     (strNode) => {
       const text = strNode.text;
-      const n = tokenizeClassString(text).length;
-      if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+      const tokenCount = tokenizeClassString(text).length;
+      if (tokenCount >= LONG_STRING_TOKEN_THRESHOLD) {
         report.longTvStringLiterals.push({
           file: sf.fileName,
           line: lineOf(sf, strNode),
-          tokenCount: n,
+          tokenCount,
           preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
         });
       }
@@ -84,12 +84,12 @@ function visitJsxAttributeForArrangeAnalyze(
   const parsed = jsxClassNameStaticLiteral(node);
   if (!parsed) return;
   const text = parsed.lit.text;
-  const n = tokenizeClassString(text).length;
-  if (n >= LONG_STRING_TOKEN_THRESHOLD) {
+  const tokenCount = tokenizeClassString(text).length;
+  if (tokenCount >= LONG_STRING_TOKEN_THRESHOLD) {
     report.longJsxClassNameLiterals.push({
       file: sf.fileName,
       line: lineOf(sf, parsed.lit),
-      tokenCount: n,
+      tokenCount,
       preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
     });
   }
