@@ -74,6 +74,7 @@ catalog:
   "@types/jest": ^30.0.0
   "@types/jest-axe": ^3.5.9
   "@types/node": ^25.6.0
+  "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
   "@typescript/native-preview": 7.0.0-dev.20260411.1
@@ -133,6 +134,8 @@ catalog:
   vite: ^8.0.8
   vitest: ^4.1.4
   web-vitals: ^5.2.0
+  picomatch: ^4.0.4
+  yaml: ^2.8.3
   zod: ^4.3.6
 
 catalogMode: strict

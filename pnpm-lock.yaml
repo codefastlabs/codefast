@@ -216,6 +216,9 @@ catalogs:
     '@types/node':
       specifier: ^25.6.0
       version: 25.6.0
+    '@types/picomatch':
+      specifier: ^4.0.3
+      version: 4.0.3
     '@types/react':
       specifier: ^19.2.14
       version: 19.2.14
@@ -297,6 +300,9 @@ catalogs:
     oxlint-tsgolint:
       specifier: ^0.20.0
       version: 0.20.0
+    picomatch:
+      specifier: ^4.0.4
+      version: 4.0.4
     postcss:
       specifier: ^8.5.9
       version: 8.5.9
@@ -390,6 +396,9 @@ catalogs:
     web-vitals:
       specifier: ^5.2.0
       version: 5.2.0
+    yaml:
+      specifier: ^2.8.3
+      version: 2.8.3
     zod:
       specifier: ^4.3.6
       version: 4.3.6
@@ -673,9 +682,15 @@ importers:
       commander:
         specifier: 'catalog:'
         version: 14.0.3
+      picomatch:
+        specifier: 'catalog:'
+        version: 4.0.4
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
+      yaml:
+        specifier: 'catalog:'
+        version: 2.8.3
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
@@ -692,6 +707,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.6.0
+      '@types/picomatch':
+        specifier: 'catalog:'
+        version: 4.0.3
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260411.1
@@ -3793,6 +3811,9 @@ packages:
 
   '@types/node@25.6.0':
     resolution: {integrity: sha512-+qIYRKdNYJwY3vRCZMdJbPLJAtGjQBudzZzdzwQYkEPQd+PJGixUL5QfvCLDaULoLv+RhT3LDkwEfKaAkgSmNQ==}
+
+  '@types/picomatch@4.0.3':
+    resolution: {integrity: sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -9682,6 +9703,8 @@ snapshots:
   '@types/node@25.6.0':
     dependencies:
       undici-types: 7.19.2
+
+  '@types/picomatch@4.0.3': {}
 
   '@types/react-dom@19.2.3(@types/react@19.2.14)':
     dependencies:

@@ -1,6 +1,5 @@
 import path from "node:path";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import { isDirentList } from "#lib/shared/utils";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { loadMirrorConfig } from "#lib/mirror/config";
 import {
@@ -11,6 +10,7 @@ import {
   normalizePath,
   toExportPath,
 } from "#lib/mirror/engine";
+import { resolvePackageFilterUnderRoot } from "#lib/mirror/package-filter";
 import type { GlobalStats, MirrorConfig, MirrorOptions, PackageStats } from "#lib/mirror/types";
 import {
   configureMirrorColors,
@@ -31,19 +31,7 @@ import {
   writePackageJsonExportsAtomic,
 } from "#lib/mirror/update-pkg";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
-
-async function findWorkspacePackages(fs: CliFs, rootDir: string): Promise<string[]> {
-  const packagesDir = path.join(rootDir, "packages");
-  try {
-    const raw = await fs.readdir(packagesDir, { withFileTypes: true });
-    if (!isDirentList(raw)) return [];
-    return raw
-      .filter((f) => f.isDirectory())
-      .map((f) => normalizePath(path.relative(rootDir, path.join(packagesDir, f.name))));
-  } catch {
-    return [];
-  }
-}
+import { findWorkspacePackageRelPaths } from "#lib/mirror/workspace-packages";
 
 async function processPackage(
   fs: CliFs,
@@ -133,7 +121,8 @@ async function processPackage(
   } catch (e: unknown) {
     pkgStats.error = String(e);
     stats.packagesErrored++;
-    logPackageError(logger, index, total, pkgName, e, verbose);
+    const displayName = await readPackageJsonDisplayName(fs, packageJsonPath, pkgName);
+    logPackageError(logger, index, total, displayName, e, verbose);
   }
   return pkgStats;
 }
@@ -166,11 +155,17 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
 
     let targetPackages: string[] = [];
     if (opts.packageFilter) {
-      targetPackages = [opts.packageFilter];
-      mirrorProcessingMode(logger, true);
+      const safe = resolvePackageFilterUnderRoot(opts.rootDir, opts.packageFilter);
+      targetPackages = [safe];
+      mirrorProcessingMode(logger, { kind: "single" });
     } else {
-      targetPackages = await findWorkspacePackages(fs, opts.rootDir);
-      mirrorProcessingMode(logger, false);
+      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(
+        opts.rootDir,
+        fs,
+        logger,
+      );
+      targetPackages = relPaths;
+      mirrorProcessingMode(logger, { kind: "multi", source: multiSource });
     }
 
     stats.packagesFound = targetPackages.length;
@@ -209,10 +204,14 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
 export type {
   ExportMap,
   ExportMapData,
+  FindWorkspacePackagesResult,
   MirrorOptions,
   RunMirrorSyncOptions,
+  WorkspaceMultiDiscoverySource,
 } from "#lib/mirror/types";
 export { MirrorError, MirrorErrorCode } from "#lib/mirror/errors";
+export { resolvePackageFilterUnderRoot } from "#lib/mirror/package-filter";
+export { parsePnpmWorkspaceDocument } from "#lib/mirror/workspace-packages";
 export {
   createPathTransform,
   generateExports,

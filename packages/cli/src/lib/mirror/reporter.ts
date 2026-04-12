@@ -1,6 +1,6 @@
 import process from "node:process";
 import type { CliLogger } from "#lib/infra/fs-contract";
-import type { GlobalStats, PackageStats } from "#lib/mirror/types";
+import type { GlobalStats, PackageStats, WorkspaceMultiDiscoverySource } from "#lib/mirror/types";
 
 const Colors = {
   RESET: "\x1b[0m",
@@ -36,6 +36,11 @@ export function printMirrorConfigWarnings(logger: CliLogger, warnings: string[])
   }
 }
 
+export function mirrorGlobWarning(logger: CliLogger, message: string): void {
+  const { out } = logger;
+  out(`${Colors.YELLOW}⚠ ${message}${Colors.RESET}`);
+}
+
 export function logSkippedWorkspacePackage(
   logger: CliLogger,
   index: number,
@@ -56,12 +61,30 @@ export function mirrorBanner(logger: CliLogger): void {
   out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 }
 
-export function mirrorProcessingMode(logger: CliLogger, singlePackage: boolean): void {
+export type MirrorProcessingMode =
+  | { kind: "single" }
+  | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
+
+export function mirrorProcessingMode(logger: CliLogger, mode: MirrorProcessingMode): void {
   const { out } = logger;
-  if (singlePackage) {
+  if (mode.kind === "single") {
     out(`${Colors.DIM}Processing single package...${Colors.RESET}\n`);
-  } else {
-    out(`${Colors.DIM}Discovering packages under packages/...${Colors.RESET}\n`);
+    return;
+  }
+  switch (mode.source) {
+    case "default-patterns":
+      out(
+        `${Colors.DIM}Discovering workspace packages using default patterns (packages/*)…${Colors.RESET}\n`,
+      );
+      break;
+    case "pnpm-workspace-yaml":
+      out(`${Colors.DIM}Discovering workspace packages from pnpm-workspace.yaml…${Colors.RESET}\n`);
+      break;
+    case "declared-empty":
+      out(
+        `${Colors.DIM}pnpm-workspace.yaml declares an empty workspace package list.${Colors.RESET}\n`,
+      );
+      break;
   }
 }
 
@@ -117,13 +140,13 @@ export function logPackageError(
   logger: CliLogger,
   index: number,
   total: number,
-  pkgName: string,
+  displayName: string,
   errValue: unknown,
   verbose: boolean,
 ): void {
   const { out, err: errLine } = logger;
   out(
-    `${Colors.DIM}[${index}/${total}]${Colors.RESET} ${Colors.YELLOW}✗${Colors.RESET} ${Colors.BOLD}${pkgName}${Colors.RESET}`,
+    `${Colors.DIM}[${index}/${total}]${Colors.RESET} ${Colors.YELLOW}✗${Colors.RESET} ${Colors.BOLD}${displayName}${Colors.RESET}`,
   );
   out(
     `  ${Colors.DIM}└─${Colors.RESET} ${Colors.YELLOW}Error: ${String(errValue)}${Colors.RESET}\n`,

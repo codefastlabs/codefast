@@ -72,11 +72,22 @@ export interface GlobalStats {
   packageDetails: PackageStats[];
 }
 
+/** How workspace packages were resolved when scanning the repo (for logging / UX). */
+export type WorkspaceMultiDiscoverySource =
+  | "default-patterns"
+  | "pnpm-workspace-yaml"
+  | "declared-empty";
+
+export type FindWorkspacePackagesResult = {
+  relPaths: string[];
+  multiSource: WorkspaceMultiDiscoverySource;
+};
+
 export interface MirrorOptions {
   rootDir: string;
   verbose?: boolean;
   noColor?: boolean;
-  /** Relative to `rootDir`, e.g. `packages/ui` */
+  /** Path under `rootDir` (relative or absolute within the repo), e.g. `packages/ui`. */
   packageFilter?: string;
   fs?: CliFs;
   logger?: CliLogger;

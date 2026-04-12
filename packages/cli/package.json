@@ -59,7 +59,9 @@
   },
   "dependencies": {
     "commander": "catalog:",
-    "typescript": "catalog:"
+    "picomatch": "catalog:",
+    "typescript": "catalog:",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
@@ -67,6 +69,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/picomatch": "catalog:",
     "@typescript/native-preview": "catalog:",
     "jest": "catalog:"
   },

@@ -59,11 +59,13 @@ Heuristics rewrite literals inside **`cn(...)`** and in **`tv()`** slots (`class
 
 Run from anywhere under the monorepo; the CLI finds the root via **`pnpm-workspace.yaml`**.
 
-- **`codefast mirror sync`** — All packages under **`packages/`** that participate in the generator.
+- **`codefast mirror sync`** — Every workspace package listed in **`pnpm-workspace.yaml`** (the `packages` globs, including e.g. **`apps/*`**, **`packages/**`**, and negated entries such as **`!packages/playground`**). If that file is missing or has no `packages` entries, the CLI falls back to **`packages/\*`\*\* only.
 - **`codefast mirror sync packages/ui`** — Only that package (path **relative to repo root**).
 - **`codefast mirror sync -v`** / **`--verbose`** — Extra diagnostics.
 
 **Config** — Prefer repo-root **`codefast.config.js`** (or `.mjs` / `.cjs` / `.json`) with a **`mirror`** object (`skipPackages`, `pathTransformations`, `customExports`, …). Legacy **`generate-exports.config.js`** / **`.json`** is still read if the Codefast config files are absent.
+
+**Trust boundary** — Repo-root **`codefast.config.js`** / **`.mjs`** / **`.cjs`** (and legacy **`generate-exports.config.js`**) are loaded with **`import()`**, so they execute as JavaScript in your Node process. Treat them like any other repo-local build config: only run **`mirror sync`** in repositories you trust (or audit those files first). JSON-only config does not execute code.
 
 After changing build output layout, run **`mirror sync`** so **`package.json` `exports`** stay aligned with **`dist/`**.
 
