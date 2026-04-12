@@ -15,11 +15,11 @@ import { DEFAULT_RESOLVED_THEME, MEDIA } from "#constants";
  * @returns 'light' or 'dark' based on OS preference
  */
 export function getSystemTheme(): ResolvedTheme {
-  if (typeof window === "undefined") {
+  if (typeof globalThis.window === "undefined") {
     return DEFAULT_RESOLVED_THEME;
   }
 
-  return window.matchMedia(MEDIA).matches ? "dark" : "light";
+  return globalThis.window.matchMedia(MEDIA).matches ? "dark" : "light";
 }
 
 /**
@@ -42,7 +42,7 @@ export function resolveTheme(theme: Theme, ssrSystemTheme?: ResolvedTheme): Reso
     return theme;
   }
 
-  if (typeof window === "undefined") {
+  if (typeof globalThis.window === "undefined") {
     return ssrSystemTheme ?? DEFAULT_RESOLVED_THEME;
   }
 

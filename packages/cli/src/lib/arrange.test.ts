@@ -566,6 +566,14 @@ describe("mergeCnUnconditionalLiteralPoolForTest (cn apply pool)", () => {
       mergeCnUnconditionalLiteralPoolForTest('"a b", cond ? "c" : "d"', { callee: "cx" }),
     ).toBe("a b");
   });
+
+  it("collects literals from a parenthesized string arg (non-direct string literal)", () => {
+    expect(mergeCnUnconditionalLiteralPoolForTest('(("flex gap-2" as const))')).toBe("flex gap-2");
+  });
+
+  it("collects literals from a no-substitution template literal arg", () => {
+    expect(mergeCnUnconditionalLiteralPoolForTest("`flex gap-2`")).toBe("flex gap-2");
+  });
 });
 
 describe("groupFile (integration)", () => {
@@ -829,6 +837,25 @@ export const sheet = tv({
 });
 `;
     withTempFixture("FixtureCvClassArray.tsx", before, (filePath) => {
+      const r = groupFile(filePath, { write: true, withClassName: false });
+      expect(r.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("groups tv compoundVariants class array slot that mixes plain strings and cn(...)", () => {
+    const long =
+      "flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent shadow-xs outline-hidden";
+    const before = `import { cn, tv } from "tailwind-variants";
+
+export const sheet = tv({
+  compoundVariants: [
+    {
+      class: ["py-1", cn("${long}")],
+    },
+  ],
+});
+`;
+    withTempFixture("FixtureCvClassCn.tsx", before, (filePath) => {
       const r = groupFile(filePath, { write: true, withClassName: false });
       expect(r.changed).toBeGreaterThan(0);
     });
