@@ -14,6 +14,18 @@ describe("cnModuleSpecifierForFile", () => {
   it("returns override when provided", () => {
     expect(cnModuleSpecifierForFile("/repo/packages/ui/src/components/a.tsx", "clsx")).toBe("clsx");
   });
+
+  it("invokes onHeuristicDetected when ui path heuristic applies", () => {
+    const seen: string[] = [];
+    cnModuleSpecifierForFile("/repo/packages/ui/src/a.tsx", undefined, (s) => seen.push(s));
+    expect(seen).toEqual(["#lib/utils"]);
+  });
+
+  it("does not invoke onHeuristicDetected when override is set", () => {
+    const seen: string[] = [];
+    cnModuleSpecifierForFile("/repo/packages/ui/src/a.tsx", "clsx", (s) => seen.push(s));
+    expect(seen).toEqual([]);
+  });
 });
 
 describe("ensureCnImport", () => {
@@ -50,5 +62,19 @@ describe("ensureCnImport", () => {
     const source = "const x = 1;\n";
     const out = ensureCnImport(source, "/repo/x.ts", "clsx");
     expect(out.startsWith('import { cn } from "clsx";\n')).toBe(true);
+  });
+
+  it("invokes onHeuristicDetected for packages/ui paths when injecting import", () => {
+    const source = "const x = 1;\n";
+    const seen: string[] = [];
+    ensureCnImport(source, "/repo/packages/ui/src/a.tsx", undefined, (s) => seen.push(s));
+    expect(seen).toEqual(["#lib/utils"]);
+  });
+
+  it("does not invoke onHeuristicDetected when cn is already imported", () => {
+    const source = 'import { cn } from "anywhere";\nconst x = 1;\n';
+    const seen: string[] = [];
+    ensureCnImport(source, "/repo/packages/ui/src/a.tsx", undefined, (s) => seen.push(s));
+    expect(seen).toEqual([]);
   });
 });

@@ -15,10 +15,32 @@ function sourceFileImportsCn(sf: ts.SourceFile): boolean {
   return false;
 }
 
-export function cnModuleSpecifierForFile(filePath: string, override?: string): string {
+/**
+ * Resolve the module specifier used when injecting a `cn` import into a file.
+ *
+ * The heuristic checks for `/packages/ui/` in the normalized path to select
+ * the internal `#lib/utils` specifier; all other files fall back to
+ * `@codefast/tailwind-variants`.
+ *
+ * **Portability note:** path-substring detection will silently produce wrong
+ * results if the repo layout changes (e.g. package renamed or moved). Prefer
+ * the `--cn-import` CLI flag / `cnImport` option to pin the specifier
+ * explicitly. When the heuristic fires and no override is provided,
+ * `onHeuristicDetected` is called (if provided) so callers can surface a
+ * warning — `arrange group` passes a callback that logs via `CliLogger.err`
+ * (stderr when using the default Node CLI logger).
+ */
+export function cnModuleSpecifierForFile(
+  filePath: string,
+  override?: string,
+  onHeuristicDetected?: (specifier: string) => void,
+): string {
   if (override) return override;
   const norm = path.normalize(filePath).replace(/\\/g, "/");
-  if (norm.includes("/packages/ui/")) return "#lib/utils";
+  if (norm.includes("/packages/ui/")) {
+    onHeuristicDetected?.("#lib/utils");
+    return "#lib/utils";
+  }
   return "@codefast/tailwind-variants";
 }
 
@@ -40,6 +62,7 @@ export function ensureCnImport(
   sourceText: string,
   filePath: string,
   cnImportOverride?: string,
+  onHeuristicDetected?: (specifier: string) => void,
 ): string {
   const sf = ts.createSourceFile(
     filePath,
@@ -50,7 +73,7 @@ export function ensureCnImport(
   );
   if (sourceFileImportsCn(sf)) return sourceText;
 
-  const moduleSpecifier = cnModuleSpecifierForFile(filePath, cnImportOverride);
+  const moduleSpecifier = cnModuleSpecifierForFile(filePath, cnImportOverride, onHeuristicDetected);
   const decl = findImportDeclarationFromModule(sf, moduleSpecifier);
 
   if (

@@ -38,6 +38,13 @@ export const MAX_OBJECT_DEPTH = 12;
 export const MAX_CLASS_EXPR_DEPTH = 12;
 
 /**
+ * Maximum variant-stripping passes in {@link stripVariants}.
+ * Real-world Tailwind stacks rarely exceed 4–5 segments (e.g. `@md/sidebar:group-hover:dark:focus-visible:`);
+ * 12 is a conservative safety cap that prevents runaway loops on malformed input.
+ */
+export const MAX_STRIP_VARIANT_PASSES = 12;
+
+/**
  * Passed when optional `knownBindings` is missing — size 0 disables matching
  * for `cn` / `tv` identifier resolution.
  */

@@ -1,4 +1,9 @@
-import { COMPATIBLE_BUCKET_SETS, RESPONSIVE_PREFIX, STATE_PREFIXES } from "#lib/arrange/constants";
+import {
+  COMPATIBLE_BUCKET_SETS,
+  MAX_STRIP_VARIANT_PASSES,
+  RESPONSIVE_PREFIX,
+  STATE_PREFIXES,
+} from "#lib/arrange/constants";
 import type { Bucket } from "#lib/arrange/types";
 
 /**
@@ -61,7 +66,7 @@ export function indexOfFirstVariantColon(text: string): number {
 // e.g. "[&_a:hover]:text-red-500" → "text-red-500"
 export function stripVariants(token: string): string {
   let withoutVariants = token;
-  const MAX_PASSES = 12;
+  const MAX_PASSES = MAX_STRIP_VARIANT_PASSES;
   for (let i = 0; i < MAX_PASSES; i++) {
     const colonIdx = indexOfFirstVariantColon(withoutVariants);
     if (colonIdx === -1) break;
