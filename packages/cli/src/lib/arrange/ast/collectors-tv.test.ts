@@ -1,5 +1,6 @@
 import ts from "typescript";
 import { collectGroupableStringNodes, slotClassString } from "#lib/arrange/ast/collectors-tv";
+import { MAX_OBJECT_DEPTH } from "#lib/arrange/constants";
 
 describe("collectGroupableStringNodes", () => {
   it("collects cn/tv static class slots eligible for grouping", () => {
@@ -57,6 +58,19 @@ export const styles = tv({
       true,
       ts.ScriptKind.TS,
     );
+    expect(collectGroupableStringNodes(sf)).toEqual([]);
+  });
+
+  it("documents that tv object traversal stops safely when nesting exceeds the configured depth limit", () => {
+    let nestedObject = '{ className: "flex gap-2 text-sm rounded-md border px-3" }';
+    for (let i = 0; i < MAX_OBJECT_DEPTH + 2; i += 1) {
+      nestedObject = `{ layer${i}: ${nestedObject} }`;
+    }
+    const source = `import { tv } from "tailwind-variants";
+export const styles = tv(${nestedObject});
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    expect(() => collectGroupableStringNodes(sf)).not.toThrow();
     expect(collectGroupableStringNodes(sf)).toEqual([]);
   });
 });

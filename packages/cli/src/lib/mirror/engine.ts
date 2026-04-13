@@ -220,13 +220,23 @@ export async function generateExports(
 ): Promise<GenerateExportsResult> {
   const files = await scanDirectoryFiles(fs, distDir);
   if (!files.length)
-    return { exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT }, jsCount: 0, cssCount: 0 };
+    return {
+      // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
+      exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
+      jsCount: 0,
+      cssCount: 0,
+    };
 
   const modules = groupFilesByModule(files);
   const validModules = Array.from(modules.values()).filter((mod) => mod.files.js && mod.files.dts);
 
   if (!validModules.length)
-    return { exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT }, jsCount: 0, cssCount: 0 };
+    return {
+      // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
+      exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
+      jsCount: 0,
+      cssCount: 0,
+    };
 
   const exportsObj: Record<string, ExportEntry> = {};
   for (const mod of validModules) {

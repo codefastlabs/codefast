@@ -109,11 +109,7 @@ function applyGroupFileWrites(
 
   if (changed > 0) {
     if (touchedJsxCn) {
-      newText = ensureCnImport(newText, filePath, options.cnImport, (specifier) => {
-        logger.err(
-          `arrange: inferred cn import "${specifier}" from file path; use --cn-import if wrong: ${filePath}`,
-        );
-      });
+      newText = ensureCnImport(newText, filePath, options.cnImport);
     }
     fs.writeFileSync(filePath, newText, "utf8");
   }
@@ -154,6 +150,10 @@ export function groupFile(
   const textAfterUnwrap =
     unwrapEdits.length > 0 ? applyEditsDescending(sourceText, unwrapEdits) : sourceText;
 
+  // The first parse (`sf`) intentionally targets the original source text to discover unwrap edits.
+  // After `applyEditsDescending` runs, node offsets from that AST no longer match the updated text.
+  // Re-parse `textAfterUnwrap` so group-target traversal uses valid positions; reusing the first AST
+  // would produce incorrect start/end offsets for subsequent grouping edits.
   const sfGrouped = ts.createSourceFile(
     filePath,
     textAfterUnwrap,
