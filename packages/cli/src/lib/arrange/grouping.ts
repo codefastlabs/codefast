@@ -10,9 +10,15 @@ import {
   bucketsCompatible,
   bucketsMergeCompatible,
   classifyToken,
+  compositeSecondaryOrder,
   stateKey,
+  stripVariants,
   tokenizeClassString,
 } from "#lib/arrange/tokenizer";
+
+function isVariantKeyedBucket(bucket: Bucket): bucket is "state" | "starting" {
+  return bucket === "state" || bucket === "starting";
+}
 
 /**
  * True when `staticLiteralTexts` carries the **same partition** of Tailwind tokens as
@@ -54,6 +60,11 @@ function dominantBucketOfGroup(groupStr: string): Bucket {
     if (count > bestN) {
       best = bucket;
       bestN = count;
+      continue;
+    }
+    // Deterministic tie-break: prefer earlier render-pipeline bucket.
+    if (count === bestN && BUCKET_ORDER[bucket] < BUCKET_ORDER[best]) {
+      best = bucket;
     }
   }
   return best;
@@ -112,48 +123,39 @@ export function mergeSingletons(groups: string[]): string[] {
   return result;
 }
 
+/** Tie-break when two merge candidates are both {@link bucketsMergeCompatible} (same bucket or COMPATIBLE_BUCKET_SETS). */
 function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
-  if (leftBucket === "state" && rightBucket === "state") return 1_000;
-  if (leftBucket === "state" || rightBucket === "state") return 350;
-
-  const hi = 100;
-  const set = new Set([leftBucket, rightBucket]);
-  if (set.has("surface") && set.has("typography")) return hi;
-  if (set.has("typography") && set.has("interaction")) return hi;
-  if (set.has("typography") && set.has("motion")) return hi;
-  if (set.has("spacing") && set.has("typography")) return hi - 5;
-  if (set.has("spacing") && set.has("surface")) return hi - 10;
-  if (set.has("layout") && set.has("spacing")) return hi - 8;
-  if (set.has("arbitrary")) return 60;
-  return 0;
+  if (leftBucket === rightBucket) return 0;
+  if (bucketsCompatible(leftBucket, rightBucket)) return 0;
+  return 500;
 }
 
 /**
  * Merge adjacent groups until total count ≤ maxGroups.
- * Prefers bucket-compatible pairs, then lowest merge penalty, then smaller size.
+ * Only merges pairs allowed by {@link bucketsMergeCompatible} — never glues incompatible
+ * buckets (which previously defaulted to penalty 0 and merged layout+state when over cap).
  */
 export function capGroups(groups: string[], maxGroups: number): string[] {
   const result = [...groups];
   const lengths = result.map((groupStr) => tokenizeClassString(groupStr).length);
 
   while (result.length > maxGroups) {
-    type Cand = { i: number; size: number; compat: boolean; penalty: number };
+    type Cand = { i: number; size: number; penalty: number };
     const cands: Cand[] = [];
     for (let i = 0; i < result.length - 1; i++) {
       const dominantLeft = dominantBucketOfGroup(result[i]);
       const dominantRight = dominantBucketOfGroup(result[i + 1]);
-      const compat = bucketsMergeCompatible(dominantLeft, dominantRight);
+      if (!bucketsMergeCompatible(dominantLeft, dominantRight)) continue;
       cands.push({
         i,
         size: lengths[i] + lengths[i + 1],
-        compat,
-        penalty: compat ? 0 : capMergePenalty(dominantLeft, dominantRight),
+        penalty: capMergePenalty(dominantLeft, dominantRight),
       });
     }
-    const preferred = cands.filter((candidate) => candidate.compat);
-    const pool = preferred.length > 0 ? preferred : cands;
-    let best = pool[0]!;
-    for (const candidate of pool) {
+    if (cands.length === 0) break;
+
+    let best = cands[0]!;
+    for (const candidate of cands) {
       if (
         candidate.penalty < best.penalty ||
         (candidate.penalty === best.penalty && candidate.size < best.size)
@@ -170,6 +172,44 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
   return result;
 }
 
+/**
+ * If a chunk is **only** bare `ease-*` timing (Motion), buffer it and prepend to the **first**
+ * **later** chunk that is predominantly `state` **and** contains some `animate-*` utility —
+ * skipping intermediate `state` chunks (`sm:…`, `group-data-[…]:…`, etc.) that sit between
+ * `ease-ui` and `data-open:animate-*`. If no such chunk exists, the ease chunk is left as-is.
+ */
+export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): string[] {
+  const result = [...groups];
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (let i = 0; i < result.length; i++) {
+      if (!chunkIsOnlyEaseTimingMotion(result[i]!)) continue;
+      const easeStr = result[i]!;
+      let target = -1;
+      for (let j = i + 1; j < result.length; j++) {
+        if (dominantBucketOfGroup(result[j]!) !== "state") continue;
+        const toks = tokenizeClassString(result[j]!);
+        if (!toks.some((t) => /^animate/.test(stripVariants(t)))) continue;
+        target = j;
+        break;
+      }
+      if (target === -1) continue;
+      result[target] = `${easeStr} ${result[target]!}`.trim();
+      result.splice(i, 1);
+      changed = true;
+      break;
+    }
+  }
+  return result;
+}
+
+function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
+  const toks = tokenizeClassString(groupStr);
+  if (toks.length === 0) return false;
+  return toks.every((t) => classifyToken(t) === "motion" && /^ease-/.test(stripVariants(t)));
+}
+
 export function suggestCnGroups(classString: string): string[] {
   const tokens = tokenizeClassString(classString);
   if (tokens.length === 0) return [];
@@ -177,11 +217,19 @@ export function suggestCnGroups(classString: string): string[] {
   const classified = tokens.map((tok, index) => ({ tok, bucket: classifyToken(tok), index }));
   classified.sort((left, right) => {
     const bucketOrderDiff = BUCKET_ORDER[left.bucket] - BUCKET_ORDER[right.bucket];
-    return bucketOrderDiff !== 0 ? bucketOrderDiff : left.index - right.index;
+    if (bucketOrderDiff !== 0) return bucketOrderDiff;
+    if (left.bucket === "composite" && right.bucket === "composite") {
+      const c =
+        compositeSecondaryOrder(stripVariants(left.tok)) -
+        compositeSecondaryOrder(stripVariants(right.tok));
+      if (c !== 0) return c;
+    }
+    return left.index - right.index;
   });
 
   const rawGroups: string[] = [];
-  let currentBucket: Bucket | null = null;
+  /** Bucket of the last token already placed in the current run (pairwise compat with `COMPATIBLE_BUCKET_SETS`). */
+  let lastBucketInRun: Bucket | null = null;
   let currentStateKey: string | null = null;
   let currentTokens: string[] = [];
 
@@ -190,40 +238,54 @@ export function suggestCnGroups(classString: string): string[] {
       rawGroups.push(currentTokens.join(" "));
       currentTokens = [];
     }
+    lastBucketInRun = null;
+    currentStateKey = null;
   };
 
   for (const { tok, bucket: tokenBucket } of classified) {
-    if (currentBucket === null) {
-      currentBucket = tokenBucket;
-      currentStateKey = tokenBucket === "state" ? stateKey(tok) : null;
+    if (lastBucketInRun === null) {
+      lastBucketInRun = tokenBucket;
+      currentStateKey = isVariantKeyedBucket(tokenBucket) ? stateKey(tok) : null;
       currentTokens.push(tok);
       continue;
     }
 
-    if (!bucketsCompatible(tokenBucket, currentBucket)) {
-      flush();
-      currentBucket = tokenBucket;
-      currentStateKey = tokenBucket === "state" ? stateKey(tok) : null;
-      currentTokens.push(tok);
-      continue;
-    }
-
-    if (tokenBucket === "state") {
+    if (isVariantKeyedBucket(tokenBucket)) {
       const key = stateKey(tok);
-      if (key !== currentStateKey) {
+      if (currentStateKey !== null && key !== currentStateKey) {
         flush();
-        currentBucket = tokenBucket;
+        lastBucketInRun = tokenBucket;
         currentStateKey = key;
+        currentTokens.push(tok);
+        continue;
       }
-    } else if (currentBucket !== tokenBucket) {
-      currentBucket = tokenBucket;
     }
 
+    if (!bucketsCompatible(tokenBucket, lastBucketInRun)) {
+      flush();
+      lastBucketInRun = tokenBucket;
+      currentStateKey = isVariantKeyedBucket(tokenBucket) ? stateKey(tok) : null;
+      currentTokens.push(tok);
+      continue;
+    }
+
+    if (isVariantKeyedBucket(tokenBucket)) {
+      currentStateKey = stateKey(tok);
+    } else if (currentStateKey !== null) {
+      // Defensive reset: keeps state-key logic explicit if bucket rules evolve.
+      currentStateKey = null;
+    }
+
+    lastBucketInRun = tokenBucket;
     currentTokens.push(tok);
   }
   flush();
 
   const merged = mergeSingletons(rawGroups);
+  const withEaseMerged = mergeEaseTimingIntoFollowingAnimatedState(merged);
+  // Never cap-merge below the semantic chunk count from the tokenizer (fixes layout+state glued
+  // when `preferred` compat list was empty and unrelated pairs used penalty 0).
+  const maxAllowed = Math.max(dynamicMaxGroups(tokens.length), withEaseMerged.length);
 
-  return capGroups(merged, dynamicMaxGroups(tokens.length));
+  return capGroups(withEaseMerged, maxAllowed);
 }

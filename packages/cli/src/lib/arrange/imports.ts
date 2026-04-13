@@ -40,7 +40,6 @@ export function ensureCnImport(
   sourceText: string,
   filePath: string,
   cnImportOverride?: string,
-  alreadyHasCn?: boolean,
 ): string {
   const sf = ts.createSourceFile(
     filePath,
@@ -49,7 +48,7 @@ export function ensureCnImport(
     true,
     filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
-  if (alreadyHasCn ?? sourceFileImportsCn(sf)) return sourceText;
+  if (sourceFileImportsCn(sf)) return sourceText;
 
   const moduleSpecifier = cnModuleSpecifierForFile(filePath, cnImportOverride);
   const decl = findImportDeclarationFromModule(sf, moduleSpecifier);
@@ -89,5 +88,3 @@ export function ensureCnImport(
 
   return `${sourceText.slice(0, insertAt)}${importLine}\n${sourceText.slice(insertAt)}`;
 }
-
-export { sourceFileImportsCn };

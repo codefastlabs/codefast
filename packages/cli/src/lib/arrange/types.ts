@@ -1,18 +1,27 @@
 /**
  * Shared types for the arrange pipeline (Tailwind `cn()` / `tv()` tooling).
+ *
+ * Buckets follow a **render-pipeline order** (existence → … → conditions), aligned
+ * with Tailwind v4 utility groupings.
  */
 
 import type ts from "typescript";
 
 export type Bucket =
+  | "existence"
+  | "position"
   | "layout"
-  | "size"
+  | "sizing"
   | "spacing"
-  | "surface"
+  | "shape"
+  | "background"
+  | "shadow"
   | "typography"
+  | "composite"
   | "motion"
+  | "starting"
+  | "behavior"
   | "state"
-  | "interaction"
   | "arbitrary"
   | "other";
 
@@ -106,7 +115,7 @@ export type GroupFileResult = {
    * (skipped). Matches preview totals when `groupEdits` correspond to the same plan.
    */
   totalFound: number;
-  /** Edits actually written in apply mode; always 0 in preview. */
+  /** Edits actually written in apply mode; always 0 in preview mode. */
   changed: number;
 };
 

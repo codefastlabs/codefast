@@ -17,7 +17,7 @@ import {
   planGroupEditForTarget,
   targetReplaceStart,
 } from "#lib/arrange/ast/targets";
-import { ensureCnImport, sourceFileImportsCn } from "#lib/arrange/imports";
+import { ensureCnImport } from "#lib/arrange/imports";
 
 type UnwrapPlan = {
   start: number;
@@ -87,15 +87,11 @@ function applyGroupFileWrites(
   filePath: string,
   options: ArrangeGroupFileOptions,
   fs: CliFs,
-  sourceText: string,
-  sf: ts.SourceFile,
   unwrapEdits: UnwrapPlan[],
   textAfterUnwrap: string,
   plannedGroupEdits: PlannedGroupEdit[],
   cnInTvNoReplacement: number,
 ): GroupFileResult {
-  const originallyHasCnImport = sourceFileImportsCn(sf);
-
   const groupEdits = plannedGroupEdits.map((p) => ({
     start: p.start,
     end: p.end,
@@ -111,7 +107,7 @@ function applyGroupFileWrites(
 
   if (changed > 0) {
     if (touchedJsxCn) {
-      newText = ensureCnImport(newText, filePath, options.cnImport, originallyHasCnImport);
+      newText = ensureCnImport(newText, filePath, options.cnImport);
     }
     fs.writeFileSync(filePath, newText, "utf8");
   }
@@ -208,8 +204,6 @@ export function groupFile(
     filePath,
     options,
     fs,
-    sourceText,
-    sf,
     unwrapEdits,
     textAfterUnwrap,
     plannedGroupEdits,

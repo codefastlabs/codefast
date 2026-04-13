@@ -8,6 +8,7 @@ export const ArrangeErrorCode = {
   INTERNAL: "INTERNAL",
 } as const;
 
+// Const-object + indexed type gives enum-like safety without TS enum runtime output.
 export type ArrangeErrorCode = (typeof ArrangeErrorCode)[keyof typeof ArrangeErrorCode];
 
 export class ArrangeError extends Error {

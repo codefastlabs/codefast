@@ -295,7 +295,7 @@ export function collectTvSlots(
   }
 }
 
-export function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
+export function collectGroupableStringNodes(sf: ts.SourceFile): StringNode[] {
   const results: StringNode[] = [];
   const seenNodePos = new Set<number>();
   const knownBindings = buildKnownCnTvBindings(sf);
@@ -329,3 +329,6 @@ export function collectLongStringNodes(sf: ts.SourceFile): StringNode[] {
   visit(sf);
   return results;
 }
+
+/** @deprecated Use `collectGroupableStringNodes`. */
+export const collectLongStringNodes = collectGroupableStringNodes;

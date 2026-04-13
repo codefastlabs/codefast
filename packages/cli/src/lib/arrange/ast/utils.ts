@@ -40,11 +40,12 @@ export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
 
     const clause = stmt.importClause;
     if (clause.name) bindings.add(clause.name.text);
-    if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
-      for (const el of clause.namedBindings.elements) {
-        bindings.add(el.name.text);
-      }
+    if (!clause.namedBindings) continue;
+    if (ts.isNamedImports(clause.namedBindings)) {
+      for (const el of clause.namedBindings.elements) bindings.add(el.name.text);
+      continue;
     }
+    bindings.add(clause.namedBindings.name.text);
   }
   return bindings;
 }
@@ -58,9 +59,12 @@ export function isCnOrTvIdentifier(
   name: "cn" | "tv",
   knownBindings: Set<string> = EMPTY_CN_TV_BINDINGS,
 ): boolean {
-  if (!ts.isIdentifier(expr) || expr.text !== name) return false;
   if (knownBindings.size === 0) return false;
-  return knownBindings.has(expr.text);
+  if (ts.isIdentifier(expr) && expr.text === name) return knownBindings.has(expr.text);
+  if (ts.isPropertyAccessExpression(expr) && expr.name.text === name) {
+    return ts.isIdentifier(expr.expression) && knownBindings.has(expr.expression.text);
+  }
+  return false;
 }
 
 export function propertyAssignmentNameText(prop: ts.PropertyAssignment): string | undefined {
@@ -78,14 +82,23 @@ export function lineOf(sf: ts.SourceFile, node: ts.Node): number {
  * `pos`.
  */
 export function indentOfLineContaining(source: string, pos: number): string {
-  let lineStart = pos;
-  while (lineStart > 0) {
-    const charBefore = source[lineStart - 1];
-    if (charBefore === "\n" || charBefore === "\r") break;
-    lineStart--;
+  const searchPos = Math.max(0, Math.min(pos, source.length));
+  const prevLineBreak = Math.max(
+    source.lastIndexOf("\n", searchPos - 1),
+    source.lastIndexOf("\r", searchPos - 1),
+  );
+  const lineStart = prevLineBreak === -1 ? 0 : prevLineBreak + 1;
+
+  let lineEnd = source.length;
+  for (let i = lineStart; i < source.length; i++) {
+    const ch = source[i];
+    if (ch === "\n" || ch === "\r") {
+      lineEnd = i;
+      break;
+    }
   }
-  const nextNewline = source.indexOf("\n", pos);
-  const line = source.slice(lineStart, nextNewline === -1 ? undefined : nextNewline);
+
+  const line = source.slice(lineStart, lineEnd);
   const indentMatch = /^[\t ]*/.exec(line);
   return indentMatch?.[0] ?? "";
 }

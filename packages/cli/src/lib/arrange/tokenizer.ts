@@ -88,6 +88,11 @@ function isStateToken(token: string): boolean {
   if (prefix.startsWith("aria-[")) return true;
   if (prefix.startsWith("supports-[")) return true;
 
+  // Tailwind v4: style when inside an ancestor with matching `data-*` (e.g. `in-data-side-left:`,
+  // `in-data-[slot=tooltip-content]:`). The short stem `in` is in STATE_PREFIXES but outer
+  // prefixes are `in-data-…`, so they must be recognized explicitly.
+  if (prefix.startsWith("in-data-")) return true;
+
   if (/^data-(?!\[)/.test(prefix)) return true;
   if (/^aria-/.test(prefix)) return true;
 
@@ -103,9 +108,254 @@ function isStateToken(token: string): boolean {
   return false;
 }
 
-export function classifyToken(token: string): Bucket {
-  if (/^@container(?:\/[a-z][a-z0-9-]*)?$/i.test(token)) {
+/**
+ * Secondary sort inside the **composite** bucket: opacity / blend / isolation →
+ * 3D context → 3D transforms → 2D transforms → filters → will-change.
+ */
+export function compositeSecondaryOrder(bareUtility: string): number {
+  const b = bareUtility;
+  if (
+    /^opacity(?:-|$)/.test(b) ||
+    /^mix-blend-/.test(b) ||
+    /^isolation(?:-|$)/.test(b) ||
+    b === "isolate"
+  ) {
+    return 0;
+  }
+  if (b === "transform-3d" || /^perspective(?:-|$)/.test(b)) {
+    return 10;
+  }
+  if (
+    /^rotate-[xyz](?:-|$)/.test(b) ||
+    /^translate-z(?:-|$)/.test(b) ||
+    /^scale-z(?:-|$)/.test(b)
+  ) {
+    return 20;
+  }
+  if (
+    /^translate(?:-|$)/.test(b) ||
+    /^scale(?:-|$)/.test(b) ||
+    /^rotate(?:-|$)/.test(b) ||
+    /^skew(?:-|$)/.test(b)
+  ) {
+    return 30;
+  }
+  if (/^transform(?:-(?:gpu|cpu|none))?$/.test(b)) {
+    return 35;
+  }
+  if (
+    /^blur(?:-|$)/.test(b) ||
+    /^backdrop-/.test(b) ||
+    /^filter(?:-|$)/.test(b) ||
+    /^brightness-/.test(b) ||
+    /^contrast-/.test(b) ||
+    /^grayscale(?:-|$)/.test(b) ||
+    /^hue-rotate-/.test(b) ||
+    /^invert(?:-|$)/.test(b) ||
+    /^saturate-/.test(b) ||
+    /^sepia(?:-|$)/.test(b)
+  ) {
+    return 40;
+  }
+  if (/^will-change/.test(b)) {
+    return 50;
+  }
+  return 99;
+}
+
+/** Classify a **bare** utility (no `hover:` / `md:` / … prefixes). */
+export function classifyBareUtility(bareUtility: string): Bucket {
+  const b = bareUtility;
+
+  // --- Existence: display roots, containment, named groups/peers ---
+  if (/^@container(?:\/[a-z][a-z0-9-]*)?$/i.test(b)) {
+    return "existence";
+  }
+  if (
+    /^(?:hidden|contents|sr-only|not-sr-only|list-item|flow-root)$/.test(b) ||
+    /^(?:block|inline-block|inline)$/.test(b)
+  ) {
+    return "existence";
+  }
+  if (/^table(?:$|-)/.test(b)) {
+    return "existence";
+  }
+  if (/^contain-/.test(b)) {
+    return "existence";
+  }
+  if (/^(?:group|peer)(?:\/[a-z][a-z0-9-]*)?$/.test(b)) {
+    return "existence";
+  }
+
+  // --- Position ---
+  if (/^(?:static|relative|absolute|fixed|sticky)$/.test(b)) {
+    return "position";
+  }
+  if (
+    /^-?(?:inset|top|right|bottom|left|start|end)(?:-|\/|$)/.test(b) ||
+    /^-?(?:inset-x|inset-y|inset-s|inset-e)-/.test(b)
+  ) {
+    return "position";
+  }
+  if (/^-?z-/.test(b) || b === "z-auto") {
+    return "position";
+  }
+
+  // --- Layout ---
+  if (
+    /^(?:flex|inline-flex|grid|inline-grid|subgrid|masonry)(?:$|-)/.test(b) ||
+    /^(?:items|justify|justify-items|justify-self|content|self|place|place-content|place-items|place-self)-/.test(
+      b,
+    ) ||
+    /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(b) ||
+    /^-?(?:auto-flow|grid-flow)-/.test(b) ||
+    /^(?:columns-|break-after|break-before|break-inside)-/.test(b) ||
+    /^(?:float|clear)-/.test(b) ||
+    /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-\[)/.test(
+      b,
+    ) ||
+    /^container$/.test(b)
+  ) {
     return "layout";
+  }
+
+  // --- Sizing ---
+  if (
+    /^-?(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(b) ||
+    /^(?:shrink|grow)(?:$|-)/.test(b) ||
+    /^-?overflow-/.test(b) ||
+    /^-?object-/.test(b)
+  ) {
+    return "sizing";
+  }
+
+  // --- Spacing (margin / padding only; gap lives in layout) ---
+  if (/^-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me)-/.test(b)) {
+    return "spacing";
+  }
+
+  // --- Shape & border (no `outline-*` — see Shadow; outline paints in the overlay pass) ---
+  if (
+    /^-?(?:rounded|border|ring|divide|inset-ring)(?:-|\/|$)/.test(b) ||
+    /^(?:rounded|border|ring|divide|inset-ring)$/.test(b) ||
+    /^ring-offset-/.test(b)
+  ) {
+    return "shape";
+  }
+
+  // --- Background & fill ---
+  if (
+    /^-?bg-/.test(b) ||
+    /^(?:from|via|to)(?:-|\/|$)/.test(b) ||
+    /^bg-(?:linear|radial|conic)-/.test(b) ||
+    /^-?mask-/.test(b) ||
+    /^-?(?:fill|stroke)-/.test(b)
+  ) {
+    return "background";
+  }
+
+  // --- Shadow & depth (includes `outline-*` — same paint phase as box-shadow overlay) ---
+  if (
+    /^-?(?:shadow|inset-shadow|drop-shadow|text-shadow)(?:-|\/|$)/.test(b) ||
+    /^(?:shadow|inset-shadow)$/.test(b) ||
+    /^-?outline(?:-|\/|$)/.test(b) ||
+    /^outline$/.test(b)
+  ) {
+    return "shadow";
+  }
+
+  // --- Typography ---
+  if (
+    /^-?(?:font|leading|tracking|list|indent|align|decoration|underline-offset|text-wrap|text-balance|text-pretty)-/.test(
+      b,
+    ) ||
+    /^-?(?:text-(?!shadow))/.test(b) ||
+    /^-?(?:whitespace|break|line-clamp|hyphens)-/.test(b) ||
+    /^(?:antialiased|subpixel-antialiased|italic|not-italic|overline|line-through|underline|no-underline|uppercase|lowercase|capitalize|normal-case|truncate|text-wrap|text-balance|text-pretty)$/.test(
+      b,
+    ) ||
+    /^text-wrap-/.test(b) ||
+    /^tabular-nums$|^slashed-zero$|^lining-nums$|^oldstyle-nums$|^proportional-nums$/.test(b)
+  ) {
+    return "typography";
+  }
+
+  // --- Composite & transforms (GPU / filter stack) ---
+  if (
+    /^opacity(?:-|$)/.test(b) ||
+    /^mix-blend-/.test(b) ||
+    /^isolation(?:-|$)/.test(b) ||
+    b === "isolate" ||
+    /^transform(?:-(?:gpu|cpu|none))?$/.test(b) ||
+    /^-?(?:translate|scale|rotate|skew)-/.test(b) ||
+    /^perspective(?:-|$)/.test(b) ||
+    b === "transform-3d" ||
+    /^blur(?:-|$)/.test(b) ||
+    /^backdrop-/.test(b) ||
+    /^filter(?:-|$)/.test(b) ||
+    /^brightness-/.test(b) ||
+    /^contrast-/.test(b) ||
+    /^grayscale(?:-|$)/.test(b) ||
+    /^hue-rotate-/.test(b) ||
+    /^invert(?:-|$)/.test(b) ||
+    /^saturate-/.test(b) ||
+    /^sepia(?:-|$)/.test(b) ||
+    /^will-change/.test(b)
+  ) {
+    return "composite";
+  }
+
+  // --- Motion ---
+  if (/^(?:transition|duration|ease|delay|animate)(?:-|$)/.test(b) || /^ease-/.test(b)) {
+    return "motion";
+  }
+
+  // --- Behavior & interaction ---
+  if (
+    /^(?:cursor|pointer-events|select|touch|scroll|scroll-m|scroll-p|overscroll|snap|resize|field-sizing|appearance|scheme|color-scheme|accent|caret)(?:-|$)/.test(
+      b,
+    ) ||
+    /^(?:cursor|select|resize)$/.test(b) ||
+    /^scroll-behavior/.test(b) ||
+    /^scroll-snap/.test(b) ||
+    /^touch-action/.test(b) ||
+    b === "inert"
+  ) {
+    return "behavior";
+  }
+
+  return "other";
+}
+
+/**
+ * Arbitrary **parent** selectors (`[&…]`, `[&>a]:…`, slot forms with `&` inside the bracket)
+ * scope utilities like variants — bucket as `state` so they chunk apart from base layout/typography.
+ * Pure arbitrary **properties** (`[--x]:`, `[color:red]`) have no `&` in the leading `[…]` segment.
+ */
+export function isArbitraryParentSelectorStateToken(token: string): boolean {
+  if (/^\[&/.test(token)) {
+    return true;
+  }
+  if (!token.startsWith("[")) {
+    return false;
+  }
+  const colonIdx = indexOfFirstVariantColon(token);
+  if (colonIdx === -1 || colonIdx === 0 || token[colonIdx - 1] !== "]") {
+    return false;
+  }
+  const selector = token.slice(0, colonIdx);
+  return selector.includes("&");
+}
+
+export function classifyToken(token: string): Bucket {
+  // Before `[` arbitrary-property handling and `isStateToken`, parent-selector tokens must
+  // be `state` so they flush into their own chunk after unconditional utilities.
+  if (isArbitraryParentSelectorStateToken(token)) {
+    return "state";
+  }
+
+  if (/^@container(?:\/[a-z][a-z0-9-]*)?$/i.test(token)) {
+    return "existence";
   }
 
   if (token.startsWith("[")) {
@@ -118,104 +368,17 @@ export function classifyToken(token: string): Bucket {
     }
   }
 
+  const outer = firstLeadingVariantPrefix(token);
+  if (outer === "starting") {
+    return "starting";
+  }
+
   if (isStateToken(token)) {
     return "state";
   }
 
   const bareUtility = stripVariants(token);
-
-  if (
-    /^(?:flex|inline-flex|grid|inline-grid|block|inline|hidden|contents|flow-root|table(?:-|$)|list-item)/.test(
-      bareUtility,
-    ) ||
-    /^(?:items|justify|content|self|place)-/.test(bareUtility) ||
-    /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(bareUtility) ||
-    /^-?(?:overflow|overscroll|object-|isolate$|isolation-|z-|float-|clear-|columns-|break-)/.test(
-      bareUtility,
-    ) ||
-    /^(?:absolute|relative|fixed|sticky|static|container)$/.test(bareUtility) ||
-    /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-[0-9])/.test(
-      bareUtility,
-    ) ||
-    /^(?:subgrid|masonry)$/.test(bareUtility) ||
-    bareUtility === "flex" ||
-    bareUtility === "grid" ||
-    /^(?:peer|group)(?:\/[a-z][a-z0-9-]*)?$/.test(bareUtility)
-  ) {
-    return "layout";
-  }
-
-  if (
-    /^-?(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(bareUtility) ||
-    bareUtility === "shrink" ||
-    bareUtility === "grow" ||
-    /^field-sizing-/.test(bareUtility)
-  ) {
-    return "size";
-  }
-
-  if (
-    /^-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|inset|top|right|bottom|left|start|end)-/.test(
-      bareUtility,
-    ) ||
-    /^-?(?:inset|top|right|bottom|left|start|end)(?:\/|$)/.test(bareUtility) ||
-    /^-?(?:inset-x|inset-y)-/.test(bareUtility)
-  ) {
-    return "spacing";
-  }
-
-  if (
-    /^-?(?:rounded|border|ring|divide|bg|from|via|to|fill|stroke|shadow|opacity)(?:-|\/|$)/.test(
-      bareUtility,
-    ) ||
-    /^-?(?:backdrop-blur|backdrop-filter|backdrop-|blur|drop-shadow|mix-blend)-/.test(
-      bareUtility,
-    ) ||
-    /^(?:inset-shadow|inset-ring|mask-)/.test(bareUtility) ||
-    bareUtility === "border" ||
-    bareUtility === "rounded" ||
-    bareUtility === "shadow" ||
-    bareUtility === "ring" ||
-    bareUtility === "blur"
-  ) {
-    return "surface";
-  }
-
-  if (
-    /^-?(?:text|font|leading|tracking|list|indent|align|whitespace|break|line-clamp|hyphens)-/.test(
-      bareUtility,
-    ) ||
-    /^(?:antialiased|subpixel-antialiased|italic|not-italic|overline|line-through|underline|no-underline|uppercase|lowercase|capitalize|normal-case|truncate|text-wrap|text-balance|text-pretty)$/.test(
-      bareUtility,
-    ) ||
-    /^text-wrap-/.test(bareUtility) ||
-    /^text-shadow(?:-|$)/.test(bareUtility) ||
-    /^scheme-/.test(bareUtility)
-  ) {
-    return "typography";
-  }
-
-  if (
-    /^(?:transition|duration|ease|delay|animate|will-change)(?:-|$)/.test(bareUtility) ||
-    /^ease-/.test(bareUtility) ||
-    /^-?(?:translate|scale|rotate|skew)(?:-|$)/.test(bareUtility) ||
-    /^transform(?:-(?:gpu|cpu|none))?$/.test(bareUtility)
-  ) {
-    return "motion";
-  }
-
-  if (
-    /^(?:outline|cursor|pointer-events|select|appearance|resize|touch-action|scroll-behavior|scroll-snap|caret|accent)(?:-|$)/.test(
-      bareUtility,
-    ) ||
-    /^(?:outline|cursor|select|resize)$/.test(bareUtility) ||
-    bareUtility === "outline-hidden" ||
-    bareUtility === "outline-none"
-  ) {
-    return "interaction";
-  }
-
-  return "other";
+  return classifyBareUtility(bareUtility);
 }
 
 /**
@@ -234,8 +397,14 @@ function ariaAttributeStem(token: string): string {
   return match ? `aria-[${match[1]}]` : "aria";
 }
 
+/** `in-data-[…]:` — normalize on the full bracket expression like {@link dataAttributeStem}. */
+function inDataAttributeStem(token: string): string {
+  const match = token.match(/^in-data-\[([^\]]*)\]/);
+  return match ? `in-data-[${match[1]}]` : "in-data";
+}
+
 /**
- * Stable key for splitting adjacent `state` tokens in {@link suggestCnGroups}.
+ * Stable key for splitting adjacent `state` / `starting` tokens in {@link suggestCnGroups}.
  * Uses the **full variant stack** (every `:` segment outside `[…]`), not only the
  * outermost prefix, so `@md/foo:[&>*]:w-auto` and `@md/foo:has-[…]:mt-px` stay in
  * separate groups while `hover:opacity` still keys as `hover` + `opacity`…
@@ -259,6 +428,8 @@ export function stateKey(token: string): string {
     layers[0] = dataAttributeStem(token);
   } else if (layers[0]!.startsWith("aria-[")) {
     layers[0] = ariaAttributeStem(token);
+  } else if (layers[0]!.startsWith("in-data-[")) {
+    layers[0] = inDataAttributeStem(token);
   }
   return layers.join("\u001f");
 }
@@ -268,9 +439,10 @@ export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
   return COMPATIBLE_BUCKET_SETS.some((bucketSet) => bucketSet.has(a) && bucketSet.has(b));
 }
 
-/** Like {@link bucketsCompatible}, but never merge two distinct state variant blobs. */
+/** Like {@link bucketsCompatible}, but never merge two distinct state / starting variant blobs. */
 export function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
   if (a === "state" && b === "state") return false;
+  if (a === "starting" && b === "starting") return false;
   if (a === "arbitrary" || b === "arbitrary") return false;
   return bucketsCompatible(a, b);
 }

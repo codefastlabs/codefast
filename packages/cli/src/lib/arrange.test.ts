@@ -19,6 +19,7 @@ import {
   groupFile,
   indexOfFirstVariantColon,
   mergeCnUnconditionalLiteralPoolForTest,
+  mergeEaseTimingIntoFollowingAnimatedState,
   printAnalyzeReport,
   runOnTarget,
   stateKey,
@@ -50,9 +51,9 @@ const CHECKBOX_GROUP_ITEM_INPUT =
 
 const CHECKBOX_GROUP_ITEM_GROUPS = [
   "peer flex items-center justify-center size-4 shrink-0",
-  "rounded-sm border border-input shadow-xs",
+  "rounded-sm border border-input shadow-xs outline-hidden",
   "text-primary-foreground",
-  "transition outline-hidden",
+  "transition",
   "hover:not-disabled:not-aria-checked:border-ring/60",
   "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
   "disabled:opacity-50",
@@ -72,9 +73,9 @@ const COMMAND_MENU_ITEM_INPUT =
 const COMMAND_MENU_ITEM_GROUPS = [
   "group/cmd relative flex items-center gap-x-2",
   "px-2 py-1.5",
-  "rounded-sm",
+  "rounded-sm outline-hidden",
   "text-sm",
-  "cursor-default outline-hidden select-none",
+  "cursor-default select-none",
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -98,24 +99,65 @@ describe("suggestCnGroups", () => {
         expected: ["flex gap-2"],
       },
       {
-        title: "layout then typography flush into two groups",
+        title: "layout + typography merge when adjacent (COMPATIBLE_BUCKET_SETS)",
         input: "flex gap-2 text-sm",
-        expected: ["flex gap-2", "text-sm"],
+        expected: ["flex gap-2 text-sm"],
       },
       {
-        title: "size bucket then surface",
+        title: "sizing bucket then shape",
         input: "w-4 h-4 rounded-md",
         expected: ["w-4 h-4", "rounded-md"],
       },
       {
-        title: "motion + interaction stay one pragmatic bundle",
+        title: "shadow (outline overlay) is ordered before motion (transition) in pipeline",
         input: "transition outline-hidden",
-        expected: ["transition outline-hidden"],
+        expected: ["outline-hidden", "transition"],
       },
       {
-        title: "typography is not merged into transition/outline",
+        title: "typography stays separate from shadow overlay and motion",
         input: "text-sm transition outline-hidden",
-        expected: ["text-sm", "transition outline-hidden"],
+        expected: ["outline-hidden", "text-sm", "transition"],
+      },
+      {
+        title: "orphan ease-* merges into following state chunk that uses animate-*",
+        input: "ease-ui data-open:animate-in data-open:fade-in-0",
+        expected: ["ease-ui data-open:animate-in data-open:fade-in-0"],
+      },
+      {
+        title: "ease-* skips intermediate state chunks to merge with later animate state",
+        input:
+          "fixed z-50 inset-0 grid grid-rows-[1fr_auto] justify-items-center overflow-auto ease-ui sm:grid-rows-[1fr_auto_3fr] sm:p-4 data-open:animate-in data-open:fade-in-0",
+        expected: [
+          "fixed z-50 inset-0 grid grid-rows-[1fr_auto] justify-items-center overflow-auto",
+          "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
+          "ease-ui data-open:animate-in data-open:fade-in-0",
+        ],
+      },
+      {
+        title: "ease-* skips group-data state chunk to reach animate state",
+        input:
+          "flex ease-ui group-data-[side=right]:rotate-90 group-data-[state=open]:grid-cols-2 data-open:animate-in data-open:fade-in-0",
+        expected: [
+          "flex",
+          "group-data-[side=right]:rotate-90",
+          "group-data-[state=open]:grid-cols-2",
+          "ease-ui data-open:animate-in data-open:fade-in-0",
+        ],
+      },
+      {
+        title: "ease-* stays standalone when no later state chunk uses animate-*",
+        input: "ease-ui sm:p-4 sm:gap-2",
+        expected: ["ease-ui", "sm:p-4 sm:gap-2"],
+      },
+      {
+        title: "position + sizing without layout bridge splits (no direct position↔sizing pair)",
+        input: "fixed inset-0 overflow-auto",
+        expected: ["fixed inset-0", "overflow-auto"],
+      },
+      {
+        title: "position + layout + sizing stays one chunk via pairwise bridge",
+        input: "fixed inset-0 grid overflow-auto",
+        expected: ["fixed inset-0 grid overflow-auto"],
       },
       {
         title: "responsive variant is state; single token stays one group",
@@ -268,7 +310,8 @@ describe("suggestCnGroups", () => {
         "flex gap-2 text-sm rounded-md border px-3 py-2 bg-card outline-hidden transition";
       const input = `${base} ${states.join(" ")}`;
       const suggestedGroups = suggestCnGroups(input);
-      expect(suggestedGroups.length).toBeLessThanOrEqual(24);
+      // Semantic state chunks are no longer force-merged across incompatible boundaries to stay ≤24.
+      expect(suggestedGroups.length).toBeGreaterThan(20);
       expect(sortedTokens(input)).toEqual(sortedTokens(suggestedGroups.join(" ")));
     });
   });
@@ -306,19 +349,19 @@ describe("suggestCnGroups", () => {
         expected: ["-z-10 relative"],
       },
       {
-        title: "transform translates / scale / rotate are motion (incl. negatives)",
+        title: "transform / translate / scale are composite (incl. negatives)",
         input: "transform -translate-x-2 -scale-95",
         expected: ["transform -translate-x-2 -scale-95"],
       },
       {
-        title: "-divide-* stays surface with divide-*",
+        title: "-divide-* stays shape with divide-*",
         input: "-divide-x -divide-white/20",
         expected: ["-divide-x -divide-white/20"],
       },
       {
-        title: "size vs motion: w-full and -scale stay split by concern",
+        title: "sizing + composite merge when adjacent (e.g. width + scale)",
         input: "-scale-95 w-full",
-        expected: ["w-full", "-scale-95"],
+        expected: ["w-full -scale-95"],
       },
     ];
 
@@ -332,7 +375,7 @@ describe("suggestCnGroups", () => {
   });
 
   describe("capGroups headroom", () => {
-    it("keeps surface split from interaction when aria state groups raise the group count", () => {
+    it("may place bg + outline-hidden in one chunk (background ↔ shadow compatibility)", () => {
       const pool =
         "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-[orientation=horizontal]:h-px aria-[orientation=vertical]:w-px";
       const suggestedGroups = suggestCnGroups(pool);
@@ -340,7 +383,7 @@ describe("suggestCnGroups", () => {
         suggestedGroups.some(
           (chunk) => /\bbg-border\b/.test(chunk) && /\boutline-hidden\b/.test(chunk),
         ),
-      ).toBe(false);
+      ).toBe(true);
     });
   });
 });
@@ -762,6 +805,24 @@ export const styles = tv({
     });
   });
 
+  it("recognizes namespace imports from known cn/tv modules", () => {
+    const before = `import * as tw from "tailwind-variants";
+
+export const styles = tw.tv({
+  base: tw.cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureNamespace.tsx", before, (filePath) => {
+      const groupFileResult = groupFile(
+        filePath,
+        { write: true, withClassName: false },
+        arrangeFs,
+        arrangeLogger,
+      );
+      expect(groupFileResult.changed).toBeGreaterThan(0);
+    });
+  });
+
   it("ignores unrelated imports when resolving cn/tv bindings", () => {
     const before = `import { cn } from "tailwind-variants";
 import { debounce } from "lodash";
@@ -1005,6 +1066,19 @@ describe("stateKey", () => {
   it("preserves single-layer data variant stem", () => {
     expect(stateKey("data-[state=open]:opacity-100")).toBe("data-[state=open]");
   });
+
+  it("normalizes in-data-[…] bracket stem like data-[…]", () => {
+    expect(stateKey("in-data-[slot=tooltip-content]:bg-background/20")).toBe(
+      "in-data-[slot=tooltip-content]",
+    );
+  });
+
+  it("keeps distinct keys for in-data-side-* stems", () => {
+    expect(stateKey("in-data-side-right:cursor-e-resize")).toBe("in-data-side-right");
+    expect(stateKey("in-data-side-left:cursor-w-resize")).not.toBe(
+      stateKey("in-data-side-right:cursor-e-resize"),
+    );
+  });
 });
 
 describe("suggestCnGroups (field.tv responsive row)", () => {
@@ -1043,12 +1117,15 @@ describe("indexOfFirstVariantColon + stripVariants", () => {
 describe("classifyToken", () => {
   it("maps representative utilities to buckets", () => {
     expect(classifyToken("flex")).toBe("layout");
-    expect(classifyToken("w-4")).toBe("size");
+    expect(classifyToken("w-4")).toBe("sizing");
     expect(classifyToken("px-3")).toBe("spacing");
-    expect(classifyToken("rounded-md")).toBe("surface");
+    expect(classifyToken("rounded-md")).toBe("shape");
     expect(classifyToken("text-sm")).toBe("typography");
     expect(classifyToken("transition")).toBe("motion");
-    expect(classifyToken("outline-hidden")).toBe("interaction");
+    expect(classifyToken("outline-hidden")).toBe("shadow");
+    expect(classifyToken("outline-2")).toBe("shadow");
+    expect(classifyToken("outline-ring")).toBe("shadow");
+    expect(classifyToken("focus-visible:outline-hidden")).toBe("state");
     expect(classifyToken("hover:opacity-80")).toBe("state");
     expect(classifyToken("[&_svg]:size-4")).toBe("state");
     expect(classifyToken("user-valid:ring-2")).toBe("state");
@@ -1062,15 +1139,16 @@ describe("classifyToken", () => {
     expect(classifyToken("contrast-less:opacity-50")).toBe("state");
     expect(classifyToken("forced-colors:bg-zinc-900")).toBe("state");
     expect(classifyToken("inverted-colors:invert")).toBe("state");
-    expect(classifyToken("cursor")).toBe("interaction");
-    expect(classifyToken("resize-y")).toBe("interaction");
+    expect(classifyToken("cursor")).toBe("behavior");
+    expect(classifyToken("resize-y")).toBe("behavior");
+    expect(classifyToken("starting:opacity-0")).toBe("starting");
     expect(classifyToken("custom-variant:text-sm")).toBe("typography");
   });
 
   it("classifies Tailwind v4 container query and named-container tokens", () => {
     expect(classifyToken("@[1024px]:flex-row")).toBe("state");
     expect(classifyToken("@min-[600px]:@max-[900px]:hidden")).toBe("state");
-    expect(classifyToken("@container/sidebar")).toBe("layout");
+    expect(classifyToken("@container/sidebar")).toBe("existence");
     expect(classifyToken("@md/sidebar:w-full")).toBe("state");
     expect(classifyToken("md/sidebar:w-full")).toBe("state");
   });
@@ -1078,6 +1156,172 @@ describe("classifyToken", () => {
   it("classifies arbitrary variant chains and data variants", () => {
     expect(classifyToken("[&_a:hover]:focus:text-blue-500")).toBe("state");
     expect(classifyToken("data-[state=open]:opacity-100")).toBe("state");
+  });
+
+  it("classifies in-data-* (ancestor data context) as state", () => {
+    expect(classifyToken("in-data-[slot=tooltip-content]:bg-background/20")).toBe("state");
+    expect(classifyToken("in-data-[slot=tooltip-content]:text-background")).toBe("state");
+    expect(classifyToken("in-data-side-right:cursor-e-resize")).toBe("state");
+    expect(classifyToken("in-data-side-left:cursor-w-resize")).toBe("state");
+  });
+
+  it("classifies long arbitrary parent selectors [&_…] as state (variant-like scoping)", () => {
+    const long =
+      "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50";
+    for (const t of long.split(/\s+/)) {
+      expect(classifyToken(t)).toBe("state");
+    }
+  });
+
+  it("classifies arbitrary parent-selector forms as state", () => {
+    expect(classifyToken("[&_svg]:shrink-0")).toBe("state");
+    expect(classifyToken("[&_.some-lib-class]:fill-muted-foreground")).toBe("state");
+    expect(classifyToken("[&[data-state=open]>svg]:rotate-180")).toBe("state");
+    expect(classifyToken("[&>a]:underline")).toBe("state");
+  });
+
+  it("does not classify pure arbitrary properties (no &) as state", () => {
+    expect(classifyToken("[--my-var:1rem]")).toBe("arbitrary");
+    expect(classifyToken("[color:red]")).toBe("arbitrary");
+  });
+});
+
+describe("suggestCnGroups (in-data-* state variants)", () => {
+  it("splits kbd-style base surface from in-data-[slot=…] tokens", () => {
+    const input =
+      "rounded-md bg-muted in-data-[slot=tooltip-content]:bg-background/20 font-sans text-xs font-medium text-muted-foreground in-data-[slot=tooltip-content]:text-background";
+    const got = suggestCnGroups(input);
+    expect(got.some((c) => c.includes("bg-muted") && !c.includes("in-data-"))).toBe(true);
+    expect(got.some((c) => c.includes("in-data-[slot=tooltip-content]:bg-background"))).toBe(true);
+    expect(got.some((c) => c.includes("text-muted-foreground") && !c.includes("in-data-"))).toBe(
+      true,
+    );
+    expect(got.some((c) => c.includes("in-data-[slot=tooltip-content]:text-background"))).toBe(
+      true,
+    );
+    expect(sortedTokens(input)).toEqual(sortedTokens(got.join(" ")));
+  });
+
+  it("splits sidebar-style motion+sizing from in-data-side-* cursor utilities", () => {
+    const input =
+      "w-4 -translate-x-1/2 transition-all ease-linear in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize";
+    const got = suggestCnGroups(input);
+    const base = got.find((c) => c.includes("w-4") && c.includes("ease-linear"));
+    expect(base).toBeDefined();
+    expect(base).not.toMatch(/in-data-/);
+    expect(got.some((c) => c.includes("in-data-side-right"))).toBe(true);
+    expect(got.some((c) => c.includes("in-data-side-left"))).toBe(true);
+    expect(sortedTokens(input)).toEqual(sortedTokens(got.join(" ")));
+  });
+});
+
+describe("suggestCnGroups (arbitrary parent selectors)", () => {
+  it("splits base utilities from [&_…] tokens into separate chunks", () => {
+    const input = "flex gap-2 text-sm [&_svg]:size-4 [&_button]:rounded-md";
+    const got = suggestCnGroups(input);
+    expect(got.some((c) => c.includes("flex") && !c.includes("[&"))).toBe(true);
+    expect(got.filter((c) => /\[&/.test(c)).length).toBeGreaterThanOrEqual(1);
+    expect(got.join(" ").split(/\s+/).sort()).toEqual(input.split(/\s+/).sort());
+  });
+
+  it("splits chart-style flex row from scoped recharts arbitrary selectors", () => {
+    const input =
+      "flex justify-center aspect-video text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-layer]:outline-hidden";
+    const got = suggestCnGroups(input);
+    expect(got[0]).toMatch(/flex|justify-center|aspect-video|text-xs/);
+    expect(got[0]).not.toContain("[&");
+    expect(got.some((c) => c.includes("[&_.recharts-cartesian-axis"))).toBe(true);
+    expect(got.some((c) => c.includes("[&_.recharts-layer]"))).toBe(true);
+    expect(sortedTokens(input)).toEqual(sortedTokens(got.join(" ")));
+  });
+
+  it("matches chart.tsx cn pool: base pipeline chunk separate from all [&_…] state tokens", () => {
+    const pool =
+      "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden";
+    const got = suggestCnGroups(pool);
+    expect(got[0]).toMatch(/flex|aspect-video|justify-center|text-xs/);
+    expect(got[0]).not.toContain("[&");
+    expect(got.some((c) => c.includes("[&"))).toBe(true);
+    expect(sortedTokens(pool)).toEqual(sortedTokens(got.join(" ")));
+  });
+});
+
+describe("arrange invariants (compat merge + state split)", () => {
+  it("A: adjacent compatible buckets share one chunk (bg + text)", () => {
+    const got = suggestCnGroups("bg-destructive text-white");
+    expect(got).toEqual(["bg-destructive text-white"]);
+  });
+
+  it("A: motion + behavior share one chunk", () => {
+    expect(suggestCnGroups("transition-transform pointer-events-none")).toEqual([
+      "transition-transform pointer-events-none",
+    ]);
+  });
+
+  it("A: sizing + spacing share one chunk", () => {
+    expect(suggestCnGroups("w-auto min-w-0 shrink-0 px-3")).toEqual([
+      "w-auto min-w-0 shrink-0 px-3",
+    ]);
+  });
+
+  it("A: sizing + composite + motion chain (≤2 chunks)", () => {
+    const got = suggestCnGroups("w-4 -translate-x-1/2 transition-all ease-linear");
+    expect(got.length).toBeLessThanOrEqual(2);
+    expect(got.join(" ")).toContain("w-4");
+    expect(got.join(" ")).toContain("-translate-x-1/2");
+    expect(got.join(" ")).toContain("transition-all");
+    expect(got.join(" ")).toContain("ease-linear");
+  });
+
+  it("B: base literals stay free of [&_…] state tokens in the first chunk", () => {
+    const got = suggestCnGroups(
+      "flex justify-center aspect-video text-xs [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden",
+    );
+    expect(got[0]).not.toContain("[&");
+    expect(got.some((c) => /\[&/.test(c))).toBe(true);
+  });
+
+  it("C: ease-only motion chunk merges into later animate state (full suggestCnGroups)", () => {
+    const got = suggestCnGroups("ease-ui data-open:animate-in");
+    expect(got).toEqual(["ease-ui data-open:animate-in"]);
+  });
+
+  it("D: outline-hidden stays shadow bucket", () => {
+    expect(classifyToken("outline-hidden")).toBe("shadow");
+  });
+});
+
+describe("mergeEaseTimingIntoFollowingAnimatedState", () => {
+  it("prepends ease-only chunk before a dominant-state chunk containing animate-*", () => {
+    expect(
+      mergeEaseTimingIntoFollowingAnimatedState([
+        "ease-ui",
+        "data-open:animate-in data-open:fade-in-0",
+      ]),
+    ).toEqual(["ease-ui data-open:animate-in data-open:fade-in-0"]);
+  });
+
+  it("skips intermediate state chunks to merge ease with a later animate state chunk", () => {
+    expect(
+      mergeEaseTimingIntoFollowingAnimatedState([
+        "base-tokens",
+        "ease-ui",
+        "sm:grid-rows-1 sm:p-4",
+        "data-open:animate-in",
+      ]),
+    ).toEqual(["base-tokens", "sm:grid-rows-1 sm:p-4", "ease-ui data-open:animate-in"]);
+  });
+
+  it("does not merge when the next chunk has animate but is not predominantly state", () => {
+    expect(
+      mergeEaseTimingIntoFollowingAnimatedState(["ease-ui", "flex data-open:animate-in"]),
+    ).toEqual(["ease-ui", "flex data-open:animate-in"]);
+  });
+
+  it("does not merge when the motion chunk is not only ease-*", () => {
+    expect(
+      mergeEaseTimingIntoFollowingAnimatedState(["transition ease-out", "data-open:animate-in"]),
+    ).toEqual(["transition ease-out", "data-open:animate-in"]);
   });
 });
 
