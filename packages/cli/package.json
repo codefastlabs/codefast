@@ -1,7 +1,6 @@
 {
   "name": "@codefast/cli",
   "version": "0.3.12",
-  "private": true,
   "description": "Developer CLI for the Codefast monorepo (mirror, arrange)",
   "keywords": [
     "cli",
