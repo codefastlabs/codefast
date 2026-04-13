@@ -49,7 +49,8 @@ function ThemeCodeBlock({
         className={cn(
           "flex items-start justify-between gap-2",
           "px-3 py-3",
-          "rounded-xl border border-border/60 bg-background/80 shadow-inner",
+          "rounded-xl border border-border/60",
+          "bg-background/80 shadow-inner",
           "sm:text-xs",
         )}
       >
@@ -95,7 +96,8 @@ function ThemeTransitionSamplesGrid({ variant }: { variant: "inline" | "full" })
       <div
         className={cn(
           "flex items-center justify-center",
-          "rounded-2xl border border-border/60 bg-card/90",
+          "rounded-2xl border border-border/60",
+          "bg-card/90",
           "transition-all duration-500",
           "hover:bg-accent",
           inline ? "min-h-[4.25rem] p-2 sm:min-h-[4.5rem] sm:p-3" : "min-h-[8.5rem] p-4",
@@ -112,7 +114,8 @@ function ThemeTransitionSamplesGrid({ variant }: { variant: "inline" | "full" })
       <div
         className={cn(
           "flex items-center justify-center gap-2",
-          "rounded-2xl border border-border/60 bg-card/90",
+          "rounded-2xl border border-border/60",
+          "bg-card/90",
           "transition-all duration-500",
           "hover:border-primary",
           inline ? "min-h-[4.25rem] p-2 sm:min-h-[4.5rem] sm:p-3" : "min-h-[8.5rem] p-4",
@@ -136,7 +139,7 @@ function ThemeSectionHeader({
   id: string;
 }) {
   return (
-    <div className={cn("max-w-2xl", "mb-6", "md:mb-8")}>
+    <div className={cn("mb-6 max-w-2xl", "md:mb-8")}>
       <p className={cn("mb-2", "text-xs font-semibold tracking-[0.2em] text-primary uppercase")}>
         {eyebrow}
       </p>
@@ -169,14 +172,16 @@ function TanStackThemeSetupCollapsible() {
         <Card
           className={cn(
             "overflow-hidden",
-            "border-border/60 bg-linear-to-br from-card via-card to-muted/20 shadow-md ring-1 ring-border/40",
+            "border-border/60 ring-1 ring-border/40",
+            "bg-linear-to-br from-card via-card to-muted/20 shadow-md",
           )}
         >
           <CardHeader
             className={cn(
               "flex flex-col gap-4 space-y-0",
               "pb-4",
-              "border-b border-border/40 bg-muted/15",
+              "border-b border-border/40",
+              "bg-muted/15",
               "sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4",
             )}
           >
@@ -184,8 +189,8 @@ function TanStackThemeSetupCollapsible() {
               <div
                 className={cn(
                   "flex size-11 shrink-0 items-center justify-center",
-                  "rounded-xl bg-primary/12 shadow-sm ring-1 ring-primary/15",
-                  "text-primary",
+                  "rounded-xl ring-1 ring-primary/15",
+                  "bg-primary/12 text-primary shadow-sm",
                 )}
               >
                 <CodeIcon className="size-5" aria-hidden />
@@ -198,13 +203,13 @@ function TanStackThemeSetupCollapsible() {
                   Cookie-backed light, dark, and system for TanStack Start: SSR reads the
                   preference,{" "}
                   <code
-                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                   >
                     {"<html>"}
                   </code>{" "}
                   matches the first paint, and any route can use{" "}
                   <code
-                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                   >
                     useTheme()
                   </code>
@@ -215,8 +220,8 @@ function TanStackThemeSetupCollapsible() {
                   <code
                     className={cn(
                       "px-1",
-                      "rounded bg-muted",
-                      "font-mono text-[0.65rem] text-foreground",
+                      "rounded",
+                      "bg-muted font-mono text-[0.65rem] text-foreground",
                     )}
                   >
                     __root.tsx
@@ -270,8 +275,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         ThemeScript
@@ -287,8 +292,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         useTheme()
@@ -297,8 +302,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         setTheme
@@ -315,7 +320,8 @@ function TanStackThemeSetupCollapsible() {
                   className={cn(
                     "flex items-start justify-between gap-3",
                     "mt-2 px-3 py-2",
-                    "rounded-xl border border-border/60 bg-background/80 shadow-inner",
+                    "rounded-xl border border-border/60",
+                    "bg-background/80 shadow-inner",
                   )}
                 >
                   <ShikiThemeCodeBlock
@@ -330,8 +336,8 @@ function TanStackThemeSetupCollapsible() {
                   <code
                     className={cn(
                       "px-1",
-                      "rounded bg-muted",
-                      "font-mono text-[0.65rem] text-foreground",
+                      "rounded",
+                      "bg-muted font-mono text-[0.65rem] text-foreground",
                     )}
                   >
                     @codefast/ui
@@ -355,8 +361,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       getThemeServerFn()
@@ -365,8 +371,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       theme
@@ -378,8 +384,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       shellComponent
@@ -388,8 +394,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       className=&#123;resolveTheme(theme)&#125;
@@ -398,8 +404,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       style=&#123;&#123; colorScheme: resolveTheme(theme) &#125;&#125;
@@ -408,8 +414,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       {"<html>"}
@@ -421,8 +427,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       HeadContent
@@ -431,8 +437,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       ThemeScript theme=&#123;theme&#125;
@@ -444,8 +450,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       ThemeProvider
@@ -454,8 +460,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       theme
@@ -464,8 +470,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       persistTheme=&#123;persistThemeCookie&#125;
@@ -474,8 +480,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       syncThemeFromServer=&#123;getThemeServerFn&#125;
@@ -485,8 +491,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       (v) =&gt; setThemeServerFn(&#123; data: v &#125;)
@@ -495,8 +501,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       Scripts
@@ -508,8 +514,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       useTheme
@@ -518,8 +524,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       @codefast/theme
@@ -528,8 +534,8 @@ function TanStackThemeSetupCollapsible() {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       setTheme
@@ -550,21 +556,21 @@ function TanStackThemeSetupCollapsible() {
                 <h3 className="text-sm font-semibold text-foreground">Persistence details</h3>
                 <p className={cn("mt-2", "text-sm leading-relaxed text-muted-foreground")}>
                   <code
-                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                   >
                     persistThemeCookie
                   </code>{" "}
                   calls the Start adapter&apos;s POST server function, which sets an HTTP-only
                   cookie (see{" "}
                   <code
-                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                   >
                     setThemeServerFn
                   </code>{" "}
                   in the package). The browser cannot read that cookie from JS; only the server
                   reads it on the next request via{" "}
                   <code
-                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                   >
                     getThemeServerFn
                   </code>
@@ -598,8 +604,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         ThemeScript
@@ -608,8 +614,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         {"<head>"}
@@ -618,8 +624,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         resolveTheme
@@ -628,8 +634,8 @@ function TanStackThemeSetupCollapsible() {
                       <code
                         className={cn(
                           "px-1",
-                          "rounded bg-muted",
-                          "font-mono text-xs text-foreground",
+                          "rounded",
+                          "bg-muted font-mono text-xs text-foreground",
                         )}
                       >
                         {"<html>"}
@@ -685,8 +691,10 @@ function TokenSwatch({ label, varName, note }: { label: string; varName: string;
   return (
     <div
       className={cn(
-        "group overflow-hidden",
-        "rounded-2xl border border-border/60 bg-card shadow-sm",
+        "group",
+        "overflow-hidden",
+        "rounded-2xl border border-border/60",
+        "bg-card shadow-sm",
         "transition-all duration-200",
         "hover:border-primary/25 hover:shadow-md",
       )}
@@ -725,8 +733,7 @@ export function ThemeAppearancePageDeferred({
   return (
     <div
       className={cn(
-        "max-w-[1400px] space-y-10",
-        "mx-auto px-4 py-12",
+        "mx-auto max-w-[1400px] space-y-10 px-4 py-12",
         "sm:px-6",
         "md:space-y-14 md:py-16",
       )}
@@ -741,7 +748,8 @@ export function ThemeAppearancePageDeferred({
       <div
         className={cn(
           "p-4",
-          "rounded-[1.75rem] border border-border/50 bg-muted/15 shadow-inner ring-1 ring-border/30",
+          "rounded-[1.75rem] border border-border/50 ring-1 ring-border/30",
+          "bg-muted/15 shadow-inner",
           "md:p-6",
           "lg:p-8",
         )}
@@ -749,7 +757,8 @@ export function ThemeAppearancePageDeferred({
         <div className={cn("grid gap-4", "md:grid-cols-12")}>
           <Card
             className={cn(
-              "border-border/60 bg-card/95 shadow-md ring-1 ring-border/35",
+              "border-border/60 ring-1 ring-border/35",
+              "bg-card/95 shadow-md",
               "md:col-span-12",
               "lg:col-span-5 lg:row-span-2",
             )}
@@ -759,8 +768,8 @@ export function ThemeAppearancePageDeferred({
                 <span
                   className={cn(
                     "flex size-9 items-center justify-center",
-                    "rounded-lg bg-primary/12",
-                    "text-primary",
+                    "rounded-lg",
+                    "bg-primary/12 text-primary",
                   )}
                 >
                   <PaletteIcon className="size-5" aria-hidden />
@@ -770,13 +779,13 @@ export function ThemeAppearancePageDeferred({
               <CardDescription>
                 Light, dark, or system (follow the OS). Updates the document{" "}
                 <code
-                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                 >
                   class
                 </code>{" "}
                 so Tailwind{" "}
                 <code
-                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                 >
                   dark:
                 </code>{" "}
@@ -824,7 +833,8 @@ export function ThemeAppearancePageDeferred({
               <div
                 className={cn(
                   "p-3",
-                  "rounded-2xl border border-dashed border-primary/25 bg-linear-to-b from-muted/40 to-muted/10 ring-1 ring-primary/10",
+                  "rounded-2xl border border-dashed border-primary/25 ring-1 ring-primary/10",
+                  "bg-linear-to-b from-muted/40 to-muted/10",
                 )}
                 aria-label="Samples for mode changes and hover transitions"
               >
@@ -846,9 +856,8 @@ export function ThemeAppearancePageDeferred({
                     to="."
                     hash="motion-lab-full"
                     className={cn(
-                      "text-xs font-medium text-primary",
+                      "text-xs font-medium text-primary underline-offset-4",
                       "hover:underline",
-                      "underline-offset-4",
                     )}
                   >
                     Extended samples ↓
@@ -860,7 +869,8 @@ export function ThemeAppearancePageDeferred({
 
           <Card
             className={cn(
-              "border-border/60 bg-card/95 shadow-sm ring-1 ring-border/30",
+              "border-border/60 ring-1 ring-border/30",
+              "bg-card/95 shadow-sm",
               "md:col-span-6",
               "lg:col-span-4",
             )}
@@ -904,7 +914,8 @@ export function ThemeAppearancePageDeferred({
 
           <Card
             className={cn(
-              "border-border/60 bg-card/95 shadow-sm ring-1 ring-border/30",
+              "border-border/60 ring-1 ring-border/30",
+              "bg-card/95 shadow-sm",
               "md:col-span-6",
               "lg:col-span-3",
             )}
@@ -913,7 +924,8 @@ export function ThemeAppearancePageDeferred({
               <div
                 className={cn(
                   "flex size-9 items-center justify-center",
-                  "rounded-lg bg-primary/15",
+                  "rounded-lg",
+                  "bg-primary/15",
                 )}
               >
                 <PackageIcon className={cn("size-4", "text-primary")} aria-hidden />
@@ -938,7 +950,8 @@ export function ThemeAppearancePageDeferred({
           >
             <Card
               className={cn(
-                "border-border/60 bg-card/90 shadow-sm ring-1 ring-border/25",
+                "border-border/60 ring-1 ring-border/25",
+                "bg-card/90 shadow-sm",
                 "transition-colors",
                 "hover:ring-primary/15",
               )}
@@ -948,8 +961,8 @@ export function ThemeAppearancePageDeferred({
                   <span
                     className={cn(
                       "flex size-8 items-center justify-center",
-                      "rounded-lg bg-amber-500/12",
-                      "text-amber-800",
+                      "rounded-lg",
+                      "bg-amber-500/12 text-amber-800",
                       "dark:text-amber-300",
                     )}
                   >
@@ -962,8 +975,8 @@ export function ThemeAppearancePageDeferred({
                   <code
                     className={cn(
                       "px-1",
-                      "rounded bg-muted",
-                      "font-mono text-[0.7rem] text-foreground",
+                      "rounded",
+                      "bg-muted font-mono text-[0.7rem] text-foreground",
                     )}
                   >
                     @codefast/theme
@@ -974,7 +987,8 @@ export function ThemeAppearancePageDeferred({
             </Card>
             <Card
               className={cn(
-                "border-border/60 bg-card/90 shadow-sm ring-1 ring-border/25",
+                "border-border/60 ring-1 ring-border/25",
+                "bg-card/90 shadow-sm",
                 "transition-colors",
                 "hover:ring-violet-400/20",
               )}
@@ -984,8 +998,8 @@ export function ThemeAppearancePageDeferred({
                   <span
                     className={cn(
                       "flex size-8 items-center justify-center",
-                      "rounded-lg bg-violet-500/12",
-                      "text-violet-800",
+                      "rounded-lg",
+                      "bg-violet-500/12 text-violet-800",
                       "dark:text-violet-300",
                     )}
                   >
@@ -998,8 +1012,8 @@ export function ThemeAppearancePageDeferred({
                   <code
                     className={cn(
                       "px-1",
-                      "rounded bg-muted",
-                      "font-mono text-[0.7rem] text-foreground",
+                      "rounded",
+                      "bg-muted font-mono text-[0.7rem] text-foreground",
                     )}
                   >
                     neutral.css
@@ -1008,8 +1022,8 @@ export function ThemeAppearancePageDeferred({
                   <code
                     className={cn(
                       "px-1",
-                      "rounded bg-muted",
-                      "font-mono text-[0.7rem] text-foreground",
+                      "rounded",
+                      "bg-muted font-mono text-[0.7rem] text-foreground",
                     )}
                   >
                     blue.css
@@ -1050,11 +1064,12 @@ export function ThemeAppearancePageDeferred({
           className={cn(
             "flex gap-3",
             "p-4",
-            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+            "rounded-2xl border border-border/50 ring-1 ring-border/25",
+            "bg-card/80 shadow-sm",
           )}
         >
           <CheckCircle2Icon
-            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
+            className={cn("mt-0.5 size-5 shrink-0 text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
@@ -1065,11 +1080,12 @@ export function ThemeAppearancePageDeferred({
           className={cn(
             "flex gap-3",
             "p-4",
-            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+            "rounded-2xl border border-border/50 ring-1 ring-border/25",
+            "bg-card/80 shadow-sm",
           )}
         >
           <CheckCircle2Icon
-            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
+            className={cn("mt-0.5 size-5 shrink-0 text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
@@ -1080,16 +1096,17 @@ export function ThemeAppearancePageDeferred({
           className={cn(
             "flex gap-3",
             "p-4",
-            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+            "rounded-2xl border border-border/50 ring-1 ring-border/25",
+            "bg-card/80 shadow-sm",
           )}
         >
           <CheckCircle2Icon
-            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
+            className={cn("mt-0.5 size-5 shrink-0 text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Tab sync and sensible{" "}
-            <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}>
+            <code className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}>
               color-scheme
             </code>{" "}
             on the document.
@@ -1099,19 +1116,20 @@ export function ThemeAppearancePageDeferred({
           className={cn(
             "flex gap-3",
             "p-4",
-            "rounded-2xl border border-border/50 bg-card/80 shadow-sm ring-1 ring-border/25",
+            "rounded-2xl border border-border/50 ring-1 ring-border/25",
+            "bg-card/80 shadow-sm",
           )}
         >
           <CheckCircle2Icon
-            className={cn("size-5 shrink-0", "mt-0.5", "text-emerald-600", "dark:text-emerald-400")}
+            className={cn("mt-0.5 size-5 shrink-0 text-emerald-600", "dark:text-emerald-400")}
             aria-hidden
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
-            <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}>
+            <code className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}>
               disableTransitionOnChange
             </code>{" "}
             on{" "}
-            <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}>
+            <code className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}>
               ThemeProvider
             </code>{" "}
             to avoid long cross-fades when swapping modes.
@@ -1132,7 +1150,7 @@ export function ThemeAppearancePageDeferred({
         />
         <Card className={cn("overflow-hidden", "border-border/60 shadow-md ring-1 ring-border/35")}>
           <CardContent className={cn("space-y-6", "p-6", "md:p-8")}>
-            <Alert className="border-primary/20 bg-primary/5">
+            <Alert className={cn("border-primary/20", "bg-primary/5")}>
               <InfoIcon className={cn("size-4", "text-primary")} aria-hidden />
               <AlertTitle>Expected behavior</AlertTitle>
               <AlertDescription className={cn("block", "text-pretty text-foreground")}>
@@ -1147,7 +1165,8 @@ export function ThemeAppearancePageDeferred({
             <div
               className={cn(
                 "p-6",
-                "rounded-2xl border border-border/60 bg-linear-to-r from-primary/12 via-secondary/8 to-transparent",
+                "rounded-2xl border border-border/60",
+                "bg-linear-to-r from-primary/12 via-secondary/8 to-transparent",
                 "transition-all duration-700",
                 "hover:from-primary/18",
               )}
@@ -1175,7 +1194,8 @@ export function ThemeAppearancePageDeferred({
             <div
               className={cn(
                 "flex min-h-[12rem] items-center justify-center",
-                "rounded-2xl border border-border/50 bg-muted/20",
+                "rounded-2xl border border-border/50",
+                "bg-muted/20",
               )}
               role="status"
               aria-live="polite"
@@ -1188,7 +1208,7 @@ export function ThemeAppearancePageDeferred({
         </Suspense>
       </section>
 
-      <Card className="border-border/60 bg-muted/20 shadow-sm ring-1 ring-border/30">
+      <Card className={cn("border-border/60 ring-1 ring-border/30", "bg-muted/20 shadow-sm")}>
         <CardContent
           className={cn(
             "flex flex-col gap-3",
@@ -1200,22 +1220,23 @@ export function ThemeAppearancePageDeferred({
             <div
               className={cn(
                 "flex size-10 shrink-0 items-center justify-center",
-                "rounded-xl bg-background shadow-sm ring-1 ring-border/50",
+                "rounded-xl ring-1 ring-border/50",
+                "bg-background shadow-sm",
               )}
             >
               <InfoIcon className={cn("size-5", "text-primary")} aria-hidden />
             </div>
             <div>
               <p className="font-semibold text-foreground">How it fits together</p>
-              <p className={cn("max-w-2xl", "mt-1", "text-sm text-pretty text-muted-foreground")}>
+              <p className={cn("mt-1 max-w-2xl", "text-sm text-pretty text-muted-foreground")}>
                 <code
-                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                 >
                   @codefast/theme
                 </code>{" "}
                 keeps the preference and document class. Tailwind and the UI preset supply{" "}
                 <code
-                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                 >
                   dark:
                 </code>{" "}

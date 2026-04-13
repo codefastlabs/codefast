@@ -106,7 +106,7 @@ export function EmptyDemo() {
         </EmptyContent>
       </Empty>
       <div
-        className={cn("flex min-h-200 items-center justify-center", "p-20", "rounded-xl bg-muted")}
+        className={cn("flex min-h-200 items-center justify-center p-20", "rounded-xl", "bg-muted")}
       >
         <Card className="max-w-sm">
           <CardContent>
@@ -137,7 +137,7 @@ export function EmptyDemo() {
         </Card>
       </div>
       <div
-        className={cn("flex min-h-200 items-center justify-center", "p-20", "rounded-xl bg-muted")}
+        className={cn("flex min-h-200 items-center justify-center p-20", "rounded-xl", "bg-muted")}
       >
         <Card className="max-w-sm">
           <CardContent>

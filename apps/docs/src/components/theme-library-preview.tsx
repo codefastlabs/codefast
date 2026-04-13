@@ -54,9 +54,9 @@ export function ThemeLibraryPreview(): JSX.Element {
         <Tabs defaultValue="forms">
           <TabsList
             className={cn(
-              "grid h-auto w-full grid-cols-2 gap-2",
-              "mb-6 p-1",
-              "rounded-xl bg-muted/40",
+              "mb-6 grid h-auto w-full grid-cols-2 gap-2 p-1",
+              "rounded-xl",
+              "bg-muted/40",
               "sm:grid-cols-4 sm:gap-1",
             )}
           >
@@ -80,7 +80,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                 <div
                   className={cn(
                     "p-5",
-                    "rounded-2xl border border-border/50 bg-linear-to-br from-card via-card to-muted/25 shadow-sm ring-1 ring-border/30",
+                    "rounded-2xl border border-border/50 ring-1 ring-border/30",
+                    "bg-linear-to-br from-card via-card to-muted/25 shadow-sm",
                     "dark:from-card dark:via-card dark:to-muted/15",
                   )}
                 >
@@ -103,8 +104,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                         className={cn(
                           "hidden",
                           "px-1.5 py-0.5",
-                          "rounded border border-border/80 bg-muted/80",
-                          "font-mono text-[0.65rem] font-medium text-muted-foreground",
+                          "rounded border border-border/80",
+                          "bg-muted/80 font-mono text-[0.65rem] font-medium text-muted-foreground",
                           "pointer-events-none",
                           "sm:inline",
                         )}
@@ -149,7 +150,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                     className={cn(
                       "flex items-start gap-3",
                       "px-3 py-3",
-                      "rounded-xl border border-border/50 bg-muted/15",
+                      "rounded-xl border border-border/50",
+                      "bg-muted/15",
                     )}
                   >
                     <Checkbox id="lib-preview-terms" defaultChecked className="mt-0.5" />
@@ -170,13 +172,13 @@ export function ThemeLibraryPreview(): JSX.Element {
                     "border-border/60 shadow-md ring-1 ring-primary/15",
                   )}
                 >
-                  <CardHeader className={cn("pb-4", "border-b border-border/40 bg-muted/20")}>
+                  <CardHeader className={cn("pb-4", "border-b border-border/40", "bg-muted/20")}>
                     <div className="flex items-center gap-2">
                       <div
                         className={cn(
                           "flex size-9 items-center justify-center",
-                          "rounded-lg bg-primary/15",
-                          "text-primary",
+                          "rounded-lg",
+                          "bg-primary/15 text-primary",
                         )}
                       >
                         <MailIcon className="size-4" aria-hidden />
@@ -315,7 +317,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                     className={cn(
                       "inline-flex items-center gap-1",
                       "p-1.5",
-                      "rounded-xl border border-border/60 bg-muted/25 shadow-inner",
+                      "rounded-xl border border-border/60",
+                      "bg-muted/25 shadow-inner",
                     )}
                   >
                     <Tooltip>
@@ -377,7 +380,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                 className={cn(
                   "space-y-2",
                   "p-4",
-                  "rounded-2xl border border-border/50 bg-card/80 ring-1 ring-border/25",
+                  "rounded-2xl border border-border/50 ring-1 ring-border/25",
+                  "bg-card/80",
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
@@ -393,7 +397,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                 className={cn(
                   "space-y-3",
                   "p-4",
-                  "rounded-2xl border border-border/50 bg-card/80 ring-1 ring-border/25",
+                  "rounded-2xl border border-border/50 ring-1 ring-border/25",
+                  "bg-card/80",
                 )}
               >
                 <p className="text-sm font-medium text-foreground">Loading shell</p>
@@ -408,7 +413,8 @@ export function ThemeLibraryPreview(): JSX.Element {
             <div className={cn("grid gap-3", "md:grid-cols-2")}>
               <Alert
                 className={cn(
-                  "border-emerald-500/25 bg-emerald-500/5",
+                  "border-emerald-500/25",
+                  "bg-emerald-500/5",
                   "dark:border-emerald-400/20 dark:bg-emerald-500/10",
                 )}
               >
@@ -420,7 +426,7 @@ export function ThemeLibraryPreview(): JSX.Element {
                 <AlertDescription className={cn("block", "text-pretty")}>
                   Theme tokens validated against the preset; no contrast regressions on{" "}
                   <code
-                    className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                   >
                     muted-foreground
                   </code>
@@ -442,7 +448,7 @@ export function ThemeLibraryPreview(): JSX.Element {
               <AlertDescription className={cn("block", "text-pretty")}>
                 Default alerts use{" "}
                 <code
-                  className={cn("px-1", "rounded bg-muted", "font-mono text-xs text-foreground")}
+                  className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
                 >
                   card
                 </code>{" "}
@@ -455,8 +461,9 @@ export function ThemeLibraryPreview(): JSX.Element {
             <div className={cn("grid gap-4", "md:grid-cols-12 md:grid-rows-[auto_auto]")}>
               <Card
                 className={cn(
+                  "border-border/50 ring-1 ring-primary/20",
+                  "bg-linear-to-br from-primary/8 via-card to-card shadow-lg",
                   "md:col-span-7 md:row-span-2",
-                  "border-border/50 bg-linear-to-br from-primary/8 via-card to-card shadow-lg ring-1 ring-primary/20",
                   "dark:from-primary/15 dark:via-card dark:to-card dark:ring-primary/25",
                 )}
               >
@@ -541,7 +548,9 @@ export function ThemeLibraryPreview(): JSX.Element {
                 </CardContent>
               </Card>
 
-              <Card className={cn("border-dashed border-border/70 bg-muted/10", "md:col-span-5")}>
+              <Card
+                className={cn("border-dashed border-border/70", "bg-muted/10", "md:col-span-5")}
+              >
                 <CardHeader>
                   <CardTitle className="text-base">Muted canvas</CardTitle>
                   <CardDescription>Secondary panel for settings or empty states</CardDescription>
@@ -552,8 +561,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       border
@@ -562,8 +571,8 @@ export function ThemeLibraryPreview(): JSX.Element {
                     <code
                       className={cn(
                         "px-1",
-                        "rounded bg-muted",
-                        "font-mono text-xs text-foreground",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
                       )}
                     >
                       muted

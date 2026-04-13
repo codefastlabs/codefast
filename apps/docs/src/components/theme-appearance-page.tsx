@@ -22,16 +22,16 @@ function ThemePackageInstallStrip() {
       id="theme-package-install"
       className={cn(
         "py-8",
-        "border-b border-border/60 bg-muted/10",
-        "md:scroll-mt-28",
+        "border-b border-border/60",
+        "bg-muted/10",
         "scroll-mt-24",
+        "md:scroll-mt-28",
       )}
       aria-labelledby="theme-package-install-heading"
     >
       <div
         className={cn(
-          "flex max-w-[1400px] flex-col gap-4",
-          "mx-auto px-4",
+          "mx-auto flex max-w-[1400px] flex-col gap-4 px-4",
           "sm:flex-row sm:items-center sm:justify-between sm:px-6",
         )}
       >
@@ -45,16 +45,16 @@ function ThemePackageInstallStrip() {
               @codefast/theme
             </span>
           </h2>
-          <p className={cn("max-w-xl", "mt-1", "text-xs leading-relaxed text-muted-foreground")}>
+          <p className={cn("mt-1 max-w-xl", "text-xs leading-relaxed text-muted-foreground")}>
             Persisted light, dark, and system appearance, SSR-friendly first paint, and an optional
             TanStack Start adapter — see the integration guide below for wiring.
           </p>
         </div>
         <div
           className={cn(
-            "flex w-full max-w-full min-w-0 items-center justify-between gap-3",
-            "px-4 py-3",
-            "rounded-xl border border-border/60 bg-card shadow-sm",
+            "flex w-full max-w-full min-w-0 items-center justify-between gap-3 px-4 py-3",
+            "rounded-xl border border-border/60",
+            "bg-card shadow-sm",
             "font-mono text-sm",
             "sm:w-auto sm:max-w-md",
           )}
@@ -72,11 +72,10 @@ export function ThemeAppearancePage(): JSX.Element {
 
   return (
     <div className={cn("min-h-screen", "bg-background")}>
-      <div className={cn("relative overflow-hidden", "border-b border-border/80")}>
+      <div className={cn("relative", "overflow-hidden", "border-b border-border/80")}>
         <div
           className={cn(
-            "absolute",
-            "inset-0",
+            "absolute inset-0",
             "bg-[linear-gradient(to_right,hsl(var(--border)/0.35)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.35)_1px,transparent_1px)] mask-[radial-gradient(ellipse_85%_65%_at_50%_-15%,#000_45%,transparent_100%)] bg-size-[2.5rem_2.5rem]",
             "pointer-events-none",
             "dark:bg-[linear-gradient(to_right,hsl(var(--border)/0.2)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.2)_1px,transparent_1px)]",
@@ -85,8 +84,7 @@ export function ThemeAppearancePage(): JSX.Element {
         />
         <div
           className={cn(
-            "absolute",
-            "inset-0",
+            "absolute inset-0",
             "bg-linear-to-b from-primary/[0.07] via-transparent to-transparent",
             "pointer-events-none",
           )}
@@ -94,16 +92,18 @@ export function ThemeAppearancePage(): JSX.Element {
         />
         <div
           className={cn(
-            "absolute h-72 w-72",
-            "-top-24 right-0",
-            "rounded-full bg-linear-to-br from-primary/20 via-violet-500/10 to-transparent blur-3xl",
+            "absolute -top-24 right-0",
+            "h-72 w-72",
+            "rounded-full",
+            "bg-linear-to-br from-primary/20 via-violet-500/10 to-transparent",
+            "blur-3xl",
             "pointer-events-none",
             "md:right-[10%]",
             "dark:from-primary/25",
           )}
           aria-hidden
         />
-        <div className={cn("relative max-w-[1400px]", "mx-auto px-4 py-14", "sm:px-6", "md:py-20")}>
+        <div className={cn("relative", "mx-auto max-w-[1400px] px-4 py-14", "sm:px-6", "md:py-20")}>
           <div
             className={cn(
               "grid items-center gap-12",
@@ -130,8 +130,7 @@ export function ThemeAppearancePage(): JSX.Element {
                 Theme &amp;{" "}
                 <span
                   className={cn(
-                    "bg-linear-to-r from-primary to-violet-600 bg-clip-text",
-                    "text-transparent",
+                    "bg-linear-to-r from-primary to-violet-600 bg-clip-text text-transparent",
                     "dark:from-primary dark:to-fuchsia-400",
                   )}
                 >
@@ -140,16 +139,15 @@ export function ThemeAppearancePage(): JSX.Element {
               </h1>
               <p
                 className={cn(
-                  "max-w-xl",
-                  "text-lg leading-relaxed text-pretty text-muted-foreground",
+                  "max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground",
                   "md:text-xl",
                 )}
               >
                 <code
                   className={cn(
                     "px-1.5 py-0.5",
-                    "rounded bg-muted",
-                    "font-mono text-[0.9em] text-foreground",
+                    "rounded",
+                    "bg-muted font-mono text-[0.9em] text-foreground",
                   )}
                 >
                   @codefast/theme
@@ -158,8 +156,8 @@ export function ThemeAppearancePage(): JSX.Element {
                 <code
                   className={cn(
                     "px-1.5 py-0.5",
-                    "rounded bg-muted",
-                    "font-mono text-[0.9em] text-foreground",
+                    "rounded",
+                    "bg-muted font-mono text-[0.9em] text-foreground",
                   )}
                 >
                   useTheme()
@@ -177,7 +175,12 @@ export function ThemeAppearancePage(): JSX.Element {
                   asChild
                   variant="outline"
                   size="md"
-                  className={cn("gap-2", "border-border/80 bg-background/60 backdrop-blur-sm")}
+                  className={cn(
+                    "gap-2",
+                    "border-border/80",
+                    "bg-background/60",
+                    "backdrop-blur-sm",
+                  )}
                 >
                   <Link to="." hash="theme-package-install">
                     Install <span className="font-mono text-xs">@codefast/theme</span>
@@ -191,7 +194,9 @@ export function ThemeAppearancePage(): JSX.Element {
               <div
                 className={cn(
                   "p-6",
-                  "rounded-3xl border border-border/50 bg-card/80 shadow-xl ring-1 shadow-black/5 ring-border/40 backdrop-blur-md",
+                  "rounded-3xl border border-border/50 ring-1 ring-border/40",
+                  "bg-card/80 shadow-xl shadow-black/5",
+                  "backdrop-blur-md",
                   "dark:bg-card/60 dark:shadow-black/20",
                 )}
               >
@@ -212,9 +217,8 @@ export function ThemeAppearancePage(): JSX.Element {
                 <p
                   className={cn(
                     "mt-4",
-                    "text-4xl font-bold tracking-tight text-foreground capitalize",
+                    "text-4xl font-bold tracking-tight text-foreground capitalize tabular-nums",
                     "md:text-5xl",
-                    "tabular-nums",
                   )}
                 >
                   {resolvedTheme}
@@ -241,12 +245,7 @@ export function ThemeAppearancePage(): JSX.Element {
       <Suspense
         fallback={
           <div
-            className={cn(
-              "min-h-[40vh] max-w-[1400px]",
-              "mx-auto px-4 py-12",
-              "sm:px-6",
-              "md:py-16",
-            )}
+            className={cn("mx-auto min-h-[40vh] max-w-[1400px] px-4 py-12", "sm:px-6", "md:py-16")}
             role="status"
             aria-live="polite"
           >

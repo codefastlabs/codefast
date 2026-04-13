@@ -39,9 +39,8 @@ export function CardDemo() {
                     className={cn(
                       "inline-block",
                       "ml-auto",
-                      "text-sm",
+                      "text-sm underline-offset-4",
                       "hover:underline",
-                      "underline-offset-4",
                     )}
                   >
                     Forgot your password?
@@ -129,7 +128,7 @@ export function CardDemo() {
           <Badge variant="outline">
             <LandPlotIcon /> 350m²
           </Badge>
-          <div className={cn("ml-auto", "font-medium", "tabular-nums")}>$135,000</div>
+          <div className={cn("ml-auto", "font-medium tabular-nums")}>$135,000</div>
         </CardFooter>
       </Card>
       <div

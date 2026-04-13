@@ -13,13 +13,13 @@ function MainLayout() {
         to="."
         hash="main-content"
         className={cn(
-          "absolute z-100",
-          "top-3 left-3 px-4 py-2",
-          "rounded-lg bg-primary shadow-md",
+          "sr-only absolute top-3 left-3 z-100",
+          "px-4 py-2",
+          "rounded-lg",
+          "bg-primary shadow-md",
           "text-sm font-medium text-primary-foreground",
           "focus:not-sr-only focus:outline-none",
           "focus-visible:ring-2 focus-visible:ring-ring",
-          "sr-only",
         )}
       >
         Skip to main content

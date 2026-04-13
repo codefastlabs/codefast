@@ -437,10 +437,9 @@ export function ExampleForm() {
           </DialogHeader>
           <pre
             className={cn(
-              "overflow-x-auto",
-              "p-4",
-              "rounded-lg bg-black",
-              "font-mono text-sm text-white",
+              "overflow-x-auto p-4",
+              "rounded-lg",
+              "bg-black font-mono text-sm text-white",
             )}
           >
             <code>{JSON.stringify(values, null, 2)}</code>

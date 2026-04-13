@@ -53,7 +53,7 @@ export function InputGroupDemo() {
   const [country, setCountry] = useState("+1");
 
   return (
-    <div className={cn("flex w-full flex-wrap gap-12", "pb-72", "*:[div]:w-full *:[div]:max-w-sm")}>
+    <div className={cn("flex w-full flex-wrap gap-12 pb-72", "*:[div]:w-full *:[div]:max-w-sm")}>
       <div className="flex flex-col gap-10">
         <Field>
           <FieldLabel htmlFor="input-default-01">Default (No Input Group)</FieldLabel>
@@ -392,7 +392,8 @@ export function InputGroupDemo() {
               <div
                 className={cn(
                   "flex size-4 items-center justify-center",
-                  "rounded-full bg-green-500",
+                  "rounded-full",
+                  "bg-green-500",
                   "dark:bg-green-800",
                 )}
               >

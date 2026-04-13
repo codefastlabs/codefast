@@ -182,7 +182,7 @@ function DropdownMenuWithAvatar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={cn("h-12 justify-start", "px-2", "md:max-w-50")}>
+        <Button variant="outline" className={cn("h-12 justify-start px-2", "md:max-w-50")}>
           <Avatar>
             <AvatarImage src="https://github.com/codefastlabs.png" alt="CodeFast" />
             <AvatarFallback className="rounded-xl">CF</AvatarFallback>
@@ -246,7 +246,7 @@ function DropdownMenuAvatarOnly() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={cn("size-8", "p-0", "rounded-full border-none")}>
+        <Button variant="outline" className={cn("size-8 p-0", "rounded-full border-none")}>
           <Avatar>
             <AvatarImage src="https://github.com/maxleiter.png" alt="maxleiter" />
             <AvatarFallback className="rounded-xl">LR</AvatarFallback>

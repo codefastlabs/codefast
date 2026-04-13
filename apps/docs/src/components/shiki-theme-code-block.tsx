@@ -56,8 +56,7 @@ export function ShikiThemeCodeBlock({ code, lang = "tsx", className }: ShikiThem
     return (
       <pre
         className={cn(
-          "min-w-0 flex-1 overflow-x-auto",
-          "p-3",
+          "min-w-0 flex-1 overflow-x-auto p-3",
           "rounded-lg",
           "font-mono text-[0.7rem] leading-relaxed text-foreground",
           "sm:text-xs",
@@ -73,10 +72,9 @@ export function ShikiThemeCodeBlock({ code, lang = "tsx", className }: ShikiThem
     return (
       <pre
         className={cn(
-          "min-w-0 flex-1 overflow-x-auto",
-          "p-3",
-          "rounded-lg bg-muted/30",
-          "font-mono text-[0.7rem] text-muted-foreground",
+          "min-w-0 flex-1 overflow-x-auto p-3",
+          "rounded-lg",
+          "bg-muted/30 font-mono text-[0.7rem] text-muted-foreground",
           "animate-pulse",
           "sm:text-xs",
           className,
@@ -90,9 +88,10 @@ export function ShikiThemeCodeBlock({ code, lang = "tsx", className }: ShikiThem
   return (
     <div
       className={cn(
-        "min-w-0 flex-1 overflow-x-auto",
-        "text-left",
-        "[&_code]:bg-transparent [&_code]:font-mono [&_code]:text-[0.7rem] sm:[&_code]:text-xs [&_pre]:m-0 [&_pre]:max-h-[min(24rem,55vh)] [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:p-3",
+        "min-w-0 flex-1 overflow-x-auto text-left",
+        "[&_code]:bg-transparent [&_code]:font-mono [&_code]:text-[0.7rem]",
+        "sm:[&_code]:text-xs",
+        "[&_pre]:m-0 [&_pre]:max-h-[min(24rem,55vh)] [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:p-3",
         className,
       )}
       dangerouslySetInnerHTML={{ __html: html }}

@@ -122,8 +122,8 @@ export function ThemeSelector({ className }: ComponentProps<"div">) {
           size="sm"
           className={cn(
             "justify-start",
-            "border-secondary bg-secondary shadow-none",
-            "text-secondary-foreground",
+            "border-secondary",
+            "bg-secondary text-secondary-foreground shadow-none",
             "*:data-[slot=select-value]:w-16",
           )}
         >

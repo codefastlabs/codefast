@@ -19,17 +19,17 @@ export function BadgeDemo() {
           <AlertCircleIcon />
           Alert
         </Badge>
-        <Badge className={cn("h-5 min-w-5", "px-1", "rounded-full", "font-mono", "tabular-nums")}>
+        <Badge className={cn("h-5 min-w-5 px-1", "rounded-full", "font-mono tabular-nums")}>
           8
         </Badge>
         <Badge
-          className={cn("h-5 min-w-5", "px-1", "rounded-full", "font-mono", "tabular-nums")}
+          className={cn("h-5 min-w-5 px-1", "rounded-full", "font-mono tabular-nums")}
           variant="destructive"
         >
           99
         </Badge>
         <Badge
-          className={cn("h-5 min-w-5", "px-1", "rounded-full", "font-mono", "tabular-nums")}
+          className={cn("h-5 min-w-5 px-1", "rounded-full", "font-mono tabular-nums")}
           variant="outline"
         >
           20+

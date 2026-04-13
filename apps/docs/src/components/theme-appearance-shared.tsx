@@ -18,8 +18,7 @@ export function CopySnippetButton({ text }: { text: string }) {
         void handleCopy();
       }}
       className={cn(
-        "shrink-0",
-        "p-1.5",
+        "shrink-0 p-1.5",
         "rounded-md",
         "text-muted-foreground",
         "transition-colors",
@@ -28,7 +27,7 @@ export function CopySnippetButton({ text }: { text: string }) {
       aria-label="Copy code to clipboard"
     >
       {copied ? (
-        <CheckIcon className={cn("size-4", "text-green-800", "dark:text-green-400")} />
+        <CheckIcon className={cn("size-4 text-green-800", "dark:text-green-400")} />
       ) : (
         <CopyIcon className="size-4" />
       )}

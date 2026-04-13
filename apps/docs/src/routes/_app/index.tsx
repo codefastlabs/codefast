@@ -69,8 +69,7 @@ function CopyButton({ text }: { text: string }) {
         void handleCopy();
       }}
       className={cn(
-        "shrink-0",
-        "p-1.5",
+        "shrink-0 p-1.5",
         "rounded-md",
         "text-muted-foreground",
         "transition-colors",
@@ -79,7 +78,7 @@ function CopyButton({ text }: { text: string }) {
       aria-label="Copy to clipboard"
     >
       {copied ? (
-        <CheckIcon className={cn("size-4", "text-green-800", "dark:text-green-400")} />
+        <CheckIcon className={cn("size-4 text-green-800", "dark:text-green-400")} />
       ) : (
         <CopyIcon className="size-4" />
       )}
@@ -99,7 +98,7 @@ function SectionHeading({
   titleId?: string;
 }): ReactNode {
   return (
-    <div className={cn("max-w-2xl", "mx-auto mb-12", "text-center")}>
+    <div className={cn("mx-auto mb-12 max-w-2xl", "text-center")}>
       {eyebrow ? (
         <p className={cn("mb-3", "text-xs font-semibold tracking-[0.2em] text-primary uppercase")}>
           {eyebrow}
@@ -196,11 +195,10 @@ function HomePage() {
   return (
     <div className={cn("min-h-screen", "bg-background")}>
       {/* Hero */}
-      <section className={cn("relative overflow-hidden", "border-b border-border/80")}>
+      <section className={cn("relative", "overflow-hidden", "border-b border-border/80")}>
         <div
           className={cn(
-            "absolute",
-            "inset-0",
+            "absolute inset-0",
             "bg-[linear-gradient(to_right,hsl(var(--border)/0.45)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.45)_1px,transparent_1px)] mask-[radial-gradient(ellipse_85%_70%_at_50%_-5%,#000_45%,transparent_100%)] bg-size-[3.5rem_3.5rem]",
             "pointer-events-none",
             "dark:bg-[linear-gradient(to_right,hsl(var(--border)/0.25)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.25)_1px,transparent_1px)]",
@@ -209,18 +207,18 @@ function HomePage() {
         />
         <div
           className={cn(
-            "absolute",
-            "inset-0",
+            "absolute inset-0",
             "bg-linear-to-b from-primary/6 via-transparent to-transparent",
           )}
           aria-hidden
         />
         <div
           className={cn(
-            "absolute h-112 w-[min(100%,56rem)]",
-            "top-0 left-1/2",
-            "rounded-[100%] bg-linear-to-br from-primary/15 via-violet-500/10 to-transparent blur-3xl",
-            "-translate-x-1/2",
+            "absolute top-0 left-1/2",
+            "h-112 w-[min(100%,56rem)]",
+            "rounded-[100%]",
+            "bg-linear-to-br from-primary/15 via-violet-500/10 to-transparent",
+            "-translate-x-1/2 blur-3xl",
             "dark:from-primary/20",
           )}
           aria-hidden
@@ -228,8 +226,8 @@ function HomePage() {
 
         <div
           className={cn(
-            "relative max-w-4xl",
-            "mx-auto px-4 pt-20 pb-16",
+            "relative",
+            "mx-auto max-w-4xl px-4 pt-20 pb-16",
             "text-center",
             "sm:px-6",
             "md:pt-28 md:pb-24",
@@ -240,8 +238,9 @@ function HomePage() {
             className={cn(
               "gap-1.5",
               "mb-6 px-3 py-1.5",
-              "border border-border/60 bg-background/80 shadow-sm backdrop-blur-sm",
-              "text-sm",
+              "border border-border/60",
+              "bg-background/80 text-sm shadow-sm",
+              "backdrop-blur-sm",
             )}
           >
             <PackageIcon className="size-3.5" aria-hidden />
@@ -261,8 +260,7 @@ function HomePage() {
 
           <p
             className={cn(
-              "max-w-2xl",
-              "mx-auto mb-4",
+              "mx-auto mb-4 max-w-2xl",
               "text-xl leading-relaxed text-pretty text-muted-foreground",
               "md:text-2xl",
             )}
@@ -272,11 +270,7 @@ function HomePage() {
           </p>
 
           <p
-            className={cn(
-              "max-w-xl",
-              "mx-auto mb-10",
-              "text-base text-pretty text-muted-foreground",
-            )}
+            className={cn("mx-auto mb-10 max-w-xl", "text-base text-pretty text-muted-foreground")}
           >
             Tweak light, dark, or system mode on the theme page, copy install snippets, and ship
             accessible UI without reinventing patterns.
@@ -295,7 +289,9 @@ function HomePage() {
               size="lg"
               className={cn(
                 "h-12 min-w-44 gap-2",
-                "border-border/80 bg-background/50 backdrop-blur-sm",
+                "border-border/80",
+                "bg-background/50",
+                "backdrop-blur-sm",
               )}
             >
               <Link to="/theme">
@@ -307,18 +303,16 @@ function HomePage() {
 
           <dl
             className={cn(
-              "grid max-w-xl grid-cols-3 gap-2",
-              "mx-auto mt-14 px-4 py-5",
-              "rounded-2xl border border-border/60 bg-card/40 shadow-sm backdrop-blur-sm",
-              "text-center",
+              "mx-auto mt-14 grid max-w-xl grid-cols-3 gap-2 px-4 py-5",
+              "rounded-2xl border border-border/60",
+              "bg-card/40 text-center shadow-sm",
+              "backdrop-blur-sm",
               "md:gap-4 md:px-6",
             )}
           >
             <div className={cn("pr-2", "border-r border-border/50", "md:pr-4")}>
               <dt className="sr-only">Component modules</dt>
-              <dd
-                className={cn("text-2xl font-bold text-foreground", "md:text-3xl", "tabular-nums")}
-              >
+              <dd className={cn("text-2xl font-bold text-foreground tabular-nums", "md:text-3xl")}>
                 62
               </dd>
               <dt
@@ -333,9 +327,7 @@ function HomePage() {
             </div>
             <div className={cn("pr-2", "border-r border-border/50", "md:pr-4")}>
               <dt className="sr-only">Color themes</dt>
-              <dd
-                className={cn("text-2xl font-bold text-foreground", "md:text-3xl", "tabular-nums")}
-              >
+              <dd className={cn("text-2xl font-bold text-foreground tabular-nums", "md:text-3xl")}>
                 22
               </dd>
               <dt
@@ -350,9 +342,7 @@ function HomePage() {
             </div>
             <div>
               <dt className="sr-only">Custom hooks</dt>
-              <dd
-                className={cn("text-2xl font-bold text-foreground", "md:text-3xl", "tabular-nums")}
-              >
+              <dd className={cn("text-2xl font-bold text-foreground tabular-nums", "md:text-3xl")}>
                 6
               </dd>
               <dt
@@ -373,7 +363,8 @@ function HomePage() {
       <section
         className={cn(
           "px-4 py-16",
-          "border-b border-border/60 bg-linear-to-b from-muted/15 to-background",
+          "border-b border-border/60",
+          "bg-linear-to-b from-muted/15 to-background",
           "sm:px-6",
           "md:py-24",
         )}
@@ -390,7 +381,7 @@ function HomePage() {
 
       {/* Install */}
       <section
-        className={cn("w-full max-w-[1400px]", "mx-auto px-4 py-16", "sm:px-6", "md:py-24")}
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="install-heading"
       >
         <SectionHeading
@@ -413,8 +404,8 @@ function HomePage() {
               <span
                 className={cn(
                   "flex size-10 shrink-0 items-center justify-center",
-                  "rounded-full bg-primary/10",
-                  "text-sm font-bold text-primary",
+                  "rounded-full",
+                  "bg-primary/10 text-sm font-bold text-primary",
                 )}
               >
                 1
@@ -429,8 +420,8 @@ function HomePage() {
                 className={cn(
                   "flex items-center justify-between gap-3",
                   "px-4 py-3",
-                  "rounded-xl border border-border/80 bg-muted/40",
-                  "font-mono text-sm",
+                  "rounded-xl border border-border/80",
+                  "bg-muted/40 font-mono text-sm",
                 )}
               >
                 <code className={cn("min-w-0", "truncate text-foreground")}>
@@ -453,8 +444,8 @@ function HomePage() {
               <span
                 className={cn(
                   "flex size-10 shrink-0 items-center justify-center",
-                  "rounded-full bg-primary/10",
-                  "text-sm font-bold text-primary",
+                  "rounded-full",
+                  "bg-primary/10 text-sm font-bold text-primary",
                 )}
               >
                 2
@@ -469,8 +460,8 @@ function HomePage() {
                 className={cn(
                   "space-y-1",
                   "px-4 py-3",
-                  "rounded-xl border border-border/80 bg-muted/40",
-                  "font-mono text-sm leading-relaxed",
+                  "rounded-xl border border-border/80",
+                  "bg-muted/40 font-mono text-sm leading-relaxed",
                 )}
               >
                 <div className="text-muted-foreground">{"/* globals.css */"}</div>
@@ -504,8 +495,8 @@ function HomePage() {
               <span
                 className={cn(
                   "flex size-10 shrink-0 items-center justify-center",
-                  "rounded-full bg-primary/10",
-                  "text-sm font-bold text-primary",
+                  "rounded-full",
+                  "bg-primary/10 text-sm font-bold text-primary",
                 )}
               >
                 3
@@ -520,8 +511,8 @@ function HomePage() {
                 className={cn(
                   "space-y-1",
                   "px-4 py-3",
-                  "rounded-xl border border-border/80 bg-muted/40",
-                  "font-mono text-sm leading-relaxed",
+                  "rounded-xl border border-border/80",
+                  "bg-muted/40 font-mono text-sm leading-relaxed",
                 )}
               >
                 <div>
@@ -552,10 +543,10 @@ function HomePage() {
 
       {/* Features */}
       <section
-        className={cn("w-full max-w-[1400px]", "mx-auto px-4 py-16", "sm:px-6", "md:py-24")}
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="features-heading"
       >
-        <div className={cn("max-w-2xl", "mx-auto mb-12", "text-center")}>
+        <div className={cn("mx-auto mb-12 max-w-2xl", "text-center")}>
           <p
             className={cn("mb-3", "text-xs font-semibold tracking-[0.2em] text-primary uppercase")}
           >
@@ -583,7 +574,8 @@ function HomePage() {
               key={feature.title}
               className={cn(
                 "group",
-                "border-border/80 bg-card/60 shadow-sm",
+                "border-border/80",
+                "bg-card/60 shadow-sm",
                 "transition-all duration-200",
                 "hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md",
               )}
@@ -591,9 +583,9 @@ function HomePage() {
               <CardHeader className="pb-2">
                 <div
                   className={cn(
-                    "flex size-11 items-center justify-center",
-                    "mb-3",
-                    "rounded-xl bg-primary/10 ring-1 ring-primary/15",
+                    "mb-3 flex size-11 items-center justify-center",
+                    "rounded-xl ring-1 ring-primary/15",
+                    "bg-primary/10",
                     "transition-colors",
                     "group-hover:bg-primary/15",
                   )}
@@ -616,7 +608,7 @@ function HomePage() {
 
       {/* Component Categories */}
       <section
-        className={cn("w-full max-w-[1400px]", "mx-auto px-4 py-16", "sm:px-6", "md:py-24")}
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="library-heading"
       >
         <SectionHeading
@@ -632,7 +624,8 @@ function HomePage() {
               key={category.title}
               className={cn(
                 "group",
-                "border-border/80 bg-card/50",
+                "border-border/80",
+                "bg-card/50",
                 "transition-all duration-200",
                 "hover:border-violet-500/30 hover:shadow-md",
                 "dark:hover:border-violet-400/25",
@@ -642,13 +635,14 @@ function HomePage() {
                 <div
                   className={cn(
                     "flex size-11 shrink-0 items-center justify-center",
-                    "rounded-xl bg-violet-500/10",
+                    "rounded-xl",
+                    "bg-violet-500/10",
                     "transition-colors",
                     "group-hover:bg-violet-500/18",
                   )}
                 >
                   <category.icon
-                    className={cn("size-5", "text-violet-800", "dark:text-violet-400")}
+                    className={cn("size-5 text-violet-800", "dark:text-violet-400")}
                     aria-hidden
                   />
                 </div>
@@ -682,7 +676,7 @@ function HomePage() {
 
       {/* Theme CTA */}
       <section
-        className={cn("w-full max-w-[1400px]", "mx-auto px-4 py-16", "sm:px-6", "md:py-24")}
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="themes-heading"
       >
         <SectionHeading
@@ -706,7 +700,7 @@ function HomePage() {
 
       {/* Tech Stack */}
       <section
-        className={cn("w-full max-w-[1400px]", "mx-auto px-4 py-16", "sm:px-6", "md:py-24")}
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="stack-heading"
       >
         <SectionHeading
@@ -728,8 +722,8 @@ function HomePage() {
               className={cn(
                 "flex flex-col items-center",
                 "px-4 py-6",
-                "rounded-2xl border border-border/80 bg-muted/25",
-                "text-center",
+                "rounded-2xl border border-border/80",
+                "bg-muted/25 text-center",
                 "transition-colors",
                 "hover:bg-muted/45",
                 "md:py-8",
@@ -748,7 +742,8 @@ function HomePage() {
       <section
         className={cn(
           "px-4 py-16",
-          "border-t border-border/80 bg-linear-to-b from-muted/30 to-background",
+          "border-t border-border/80",
+          "bg-linear-to-b from-muted/30 to-background",
           "sm:px-6",
           "md:py-24",
         )}
@@ -779,7 +774,7 @@ function HomePage() {
               asChild
               variant="ghost"
               size="lg"
-              className={cn("h-12 gap-2", "text-muted-foreground", "hover:text-foreground")}
+              className={cn("h-12 gap-2 text-muted-foreground", "hover:text-foreground")}
             >
               <a
                 href="https://github.com/codefastlabs/codefast"
@@ -799,10 +794,9 @@ function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "font-medium text-foreground",
+                "font-medium text-foreground underline-offset-4",
                 "transition-colors",
                 "hover:underline",
-                "underline-offset-4",
               )}
             >
               codefastlabs

@@ -152,9 +152,8 @@ function CalendarWithTime() {
             <div className="relative flex w-full items-center gap-2">
               <Clock2Icon
                 className={cn(
-                  "absolute size-4",
-                  "left-2.5",
-                  "text-muted-foreground",
+                  "absolute left-2.5",
+                  "size-4 text-muted-foreground",
                   "pointer-events-none select-none",
                 )}
               />
@@ -176,9 +175,8 @@ function CalendarWithTime() {
             <div className="relative flex w-full items-center gap-2">
               <Clock2Icon
                 className={cn(
-                  "absolute size-4",
-                  "left-2.5",
-                  "text-muted-foreground",
+                  "absolute left-2.5",
+                  "size-4 text-muted-foreground",
                   "pointer-events-none select-none",
                 )}
               />

@@ -200,7 +200,7 @@ function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
                         <Link to={item.href}>
                           <span>{item.name}</span>
                           {item.label ? (
-                            <span className={cn("flex size-2", "rounded-full bg-blue-500")} />
+                            <span className={cn("flex size-2", "rounded-full", "bg-blue-500")} />
                           ) : null}
                         </Link>
                       </SidebarMenuSubButton>

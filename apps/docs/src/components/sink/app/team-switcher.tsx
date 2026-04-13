@@ -41,8 +41,8 @@ export function TeamSwitcher({
               <div
                 className={cn(
                   "flex aspect-square size-8 items-center justify-center",
-                  "rounded-xl bg-sidebar-primary",
-                  "text-sidebar-primary-foreground",
+                  "rounded-xl",
+                  "bg-sidebar-primary text-sidebar-primary-foreground",
                 )}
               >
                 <activeTeam.logo className="size-4" />
@@ -79,7 +79,8 @@ export function TeamSwitcher({
               <div
                 className={cn(
                   "flex size-6 items-center justify-center",
-                  "rounded-lg border bg-transparent",
+                  "rounded-lg border",
+                  "bg-transparent",
                 )}
               >
                 <PlusIcon className="size-4" />

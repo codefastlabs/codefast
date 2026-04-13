@@ -179,7 +179,7 @@ function UserCombobox({
           role="combobox"
           aria-expanded={open}
           aria-controls={listId}
-          className={cn("w-full justify-between", "px-2", "md:max-w-50")}
+          className={cn("w-full justify-between px-2", "md:max-w-50")}
         >
           {selectedUser ? (
             <div className="flex items-center gap-2">
@@ -265,7 +265,7 @@ function TimezoneCombobox({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={cn("h-12 w-full justify-between", "px-2.5", "md:max-w-50")}
+          className={cn("h-12 w-full justify-between px-2.5", "md:max-w-50")}
         >
           {selectedTimezone ? (
             <div className="flex flex-col items-start gap-0.5">
@@ -306,7 +306,7 @@ function TimezoneCombobox({
               </CommandGroup>
             ))}
             <CommandSeparator className={cn("sticky", "bottom-10")} />
-            <CommandGroup className={cn("sticky", "bottom-0", "bg-popover")}>
+            <CommandGroup className={cn("sticky bottom-0", "bg-popover")}>
               <CommandItem>
                 <PlusCircleIcon />
                 Create timezone
