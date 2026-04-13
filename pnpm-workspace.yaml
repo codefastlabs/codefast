@@ -94,7 +94,7 @@ catalog:
   jest-environment-jsdom: ^30.3.0
   jsdom: ^29.0.2
   lint-staged: ^16.4.0
-  lucide-react: ^1.7.0
+  lucide-react: ^1.8.0
   next-themes: ^0.4.6
   nitro: 3.0.260311-beta
   oxfmt: ^0.44.0
