@@ -231,7 +231,8 @@ export function ButtonGroupDemo() {
         <div
           className={cn(
             "flex gap-2",
-            "[--radius:0.95rem] [--ring:var(--color-blue-300)] [--spacing:0.22rem] **:[.shadow-xs]:shadow-none",
+            "**:[.shadow-xs]:shadow-none",
+            "[--radius:0.95rem] [--ring:var(--color-blue-300)] [--spacing:0.22rem]",
           )}
         >
           <InputGroup>
@@ -299,12 +300,12 @@ export function ButtonGroupDemo() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <InputGroupButton>
-                        <span className={cn("size-4", "rounded-sm bg-blue-600")} />
+                        <span className={cn("size-4", "rounded-sm", "bg-blue-600")} />
                       </InputGroupButton>
                     </PopoverTrigger>
                     <PopoverContent
                       align="start"
-                      className={cn("max-w-48", "p-2", "rounded-xl")}
+                      className={cn("max-w-48 p-2", "rounded-xl")}
                       alignOffset={-8}
                       sideOffset={8}
                     >

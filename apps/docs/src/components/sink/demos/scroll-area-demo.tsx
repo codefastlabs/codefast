@@ -50,7 +50,7 @@ export const works = [
 
 function ScrollAreaHorizontalDemo() {
   return (
-    <ScrollArea className={cn("w-full max-w-96", "p-4", "rounded-lg border")}>
+    <ScrollArea className={cn("w-full max-w-96 p-4", "rounded-lg border")}>
       <div className="flex gap-4">
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">

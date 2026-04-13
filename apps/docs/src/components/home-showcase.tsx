@@ -32,7 +32,8 @@ function LivePlaygroundCard() {
     <Card
       className={cn(
         "flex h-full min-h-[min(22rem,70dvh)] flex-col",
-        "border-border/80 bg-card/90 shadow-md ring-1 ring-border/40",
+        "border-border/80 ring-1 ring-border/40",
+        "bg-card/90 shadow-md",
       )}
     >
       <CardHeader className="pb-3">
@@ -41,7 +42,7 @@ function LivePlaygroundCard() {
             <CardTitle className="text-lg">Live playground</CardTitle>
             <CardDescription>
               Tabs, inputs, switches, and actions from{" "}
-              <code className={cn("px-1", "rounded bg-muted", "font-mono text-xs")}>
+              <code className={cn("px-1", "rounded", "bg-muted font-mono text-xs")}>
                 @codefast/ui
               </code>
               .
@@ -73,7 +74,8 @@ function LivePlaygroundCard() {
               className={cn(
                 "flex items-center justify-between gap-4",
                 "px-3 py-2.5",
-                "rounded-lg border border-border/80 bg-muted/30",
+                "rounded-lg border border-border/80",
+                "bg-muted/30",
               )}
             >
               <div className="space-y-0.5">
@@ -88,7 +90,8 @@ function LivePlaygroundCard() {
               className={cn(
                 "flex items-start gap-3",
                 "px-3 py-3",
-                "rounded-lg border border-border/80 bg-muted/20",
+                "rounded-lg border border-border/80",
+                "bg-muted/20",
               )}
             >
               <Checkbox id={checkboxId} defaultChecked className="mt-0.5" />
@@ -156,9 +159,13 @@ function ProgressDemoCard() {
   };
 
   return (
-    <Card className={cn("h-full", "border-border/80 bg-card/80 shadow-sm ring-1 ring-border/30")}>
+    <Card
+      className={cn("h-full", "border-border/80 ring-1 ring-border/30", "bg-card/80 shadow-sm")}
+    >
       <CardHeader className="pb-2">
-        <div className={cn("flex size-9 items-center justify-center", "rounded-lg bg-primary/10")}>
+        <div
+          className={cn("flex size-9 items-center justify-center", "rounded-lg", "bg-primary/10")}
+        >
           <ZapIcon className={cn("size-4", "text-primary")} aria-hidden />
         </div>
         <CardTitle className="text-base">Feedback states</CardTitle>
@@ -189,8 +196,7 @@ export function HomeBentoShowcase() {
   return (
     <div
       className={cn(
-        "grid max-w-[1400px] gap-4",
-        "mx-auto",
+        "mx-auto grid max-w-[1400px] gap-4",
         "md:grid-cols-12 md:grid-rows-[auto_auto]",
       )}
     >
@@ -202,12 +208,17 @@ export function HomeBentoShowcase() {
         <Card
           className={cn(
             "h-full",
-            "border-border/80 bg-linear-to-br from-primary/8 via-card to-card shadow-sm ring-1 ring-primary/10",
+            "border-border/80 ring-1 ring-primary/10",
+            "bg-linear-to-br from-primary/8 via-card to-card shadow-sm",
           )}
         >
           <CardHeader className="pb-2">
             <div
-              className={cn("flex size-9 items-center justify-center", "rounded-lg bg-primary/12")}
+              className={cn(
+                "flex size-9 items-center justify-center",
+                "rounded-lg",
+                "bg-primary/12",
+              )}
             >
               <RocketIcon className={cn("size-4", "text-primary")} aria-hidden />
             </div>
@@ -230,17 +241,18 @@ export function HomeBentoShowcase() {
 
       <div className={cn("md:col-span-12", "lg:col-span-5")}>
         <Card
-          className={cn("h-full", "border-border/80 bg-card/80 shadow-sm ring-1 ring-border/30")}
+          className={cn("h-full", "border-border/80 ring-1 ring-border/30", "bg-card/80 shadow-sm")}
         >
           <CardHeader className="pb-2">
             <div
               className={cn(
                 "flex size-9 items-center justify-center",
-                "rounded-lg bg-violet-500/12",
+                "rounded-lg",
+                "bg-violet-500/12",
               )}
             >
               <PaletteIcon
-                className={cn("size-4", "text-violet-700", "dark:text-violet-300")}
+                className={cn("size-4 text-violet-700", "dark:text-violet-300")}
                 aria-hidden
               />
             </div>
@@ -267,17 +279,18 @@ export function HomeBentoShowcase() {
 
       <div className={cn("md:col-span-6", "lg:col-span-4")}>
         <Card
-          className={cn("h-full", "border-border/80 bg-card/80 shadow-sm ring-1 ring-border/30")}
+          className={cn("h-full", "border-border/80 ring-1 ring-border/30", "bg-card/80 shadow-sm")}
         >
           <CardHeader className="pb-2">
             <div
               className={cn(
                 "flex size-9 items-center justify-center",
-                "rounded-lg bg-emerald-500/12",
+                "rounded-lg",
+                "bg-emerald-500/12",
               )}
             >
               <AccessibilityIcon
-                className={cn("size-4", "text-emerald-700", "dark:text-emerald-400")}
+                className={cn("size-4 text-emerald-700", "dark:text-emerald-400")}
                 aria-hidden
               />
             </div>
@@ -292,13 +305,18 @@ export function HomeBentoShowcase() {
 
       <div className={cn("md:col-span-12", "lg:col-span-4")}>
         <Card
-          className={cn("h-full", "border-border/80 bg-muted/25 shadow-sm ring-1 ring-border/40")}
+          className={cn(
+            "h-full",
+            "border-border/80 ring-1 ring-border/40",
+            "bg-muted/25 shadow-sm",
+          )}
         >
           <CardHeader className="pb-2">
             <div
               className={cn(
                 "flex size-9 items-center justify-center",
-                "rounded-lg bg-foreground/8",
+                "rounded-lg",
+                "bg-foreground/8",
               )}
             >
               <LayersIcon className={cn("size-4", "text-foreground")} aria-hidden />
@@ -312,8 +330,8 @@ export function HomeBentoShowcase() {
             <div
               className={cn(
                 "px-3 py-2.5",
-                "rounded-lg border border-border/80 bg-background/80",
-                "font-mono text-[0.7rem] leading-relaxed text-foreground",
+                "rounded-lg border border-border/80",
+                "bg-background/80 font-mono text-[0.7rem] leading-relaxed text-foreground",
                 "sm:text-xs",
               )}
             >

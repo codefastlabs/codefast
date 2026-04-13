@@ -20,9 +20,9 @@ function SinkLayout() {
         <SidebarInset>
           <header
             className={cn(
-              "sticky z-10 flex h-14 items-center",
-              "top-0 p-4",
-              "border-b bg-background",
+              "sticky top-0 z-10 flex h-14 items-center p-4",
+              "border-b",
+              "bg-background",
             )}
           >
             <SidebarTrigger />

@@ -247,7 +247,7 @@ export function NotionPromptForm() {
                 </Command>
               </PopoverContent>
             </Popover>
-            <div className={cn("flex gap-1 overflow-y-auto", "-m-1.5 p-1.5", "no-scrollbar")}>
+            <div className={cn("-m-1.5 flex gap-1 overflow-y-auto p-1.5", "no-scrollbar")}>
               {mentions.map((mention) => {
                 const item = SAMPLE_DATA.mentionable.find(
                   (mentionable) => mentionable.title === mention,
@@ -323,10 +323,9 @@ export function NotionPromptForm() {
                         <Badge
                           variant="secondary"
                           className={cn(
-                            "h-5",
-                            "px-1",
-                            "rounded bg-blue-100",
-                            "text-xs text-blue-800",
+                            "h-5 px-1",
+                            "rounded",
+                            "bg-blue-100 text-xs text-blue-800",
                             "dark:bg-blue-900 dark:text-blue-100",
                           )}
                         >
@@ -372,9 +371,7 @@ export function NotionPromptForm() {
                       </Avatar>
                       codefast
                     </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent
-                      className={cn("w-72", "p-0", "[--radius:--spacing(5)]")}
-                    >
+                    <DropdownMenuSubContent className={cn("w-72 p-0", "[--radius:--spacing(5)]")}>
                       <Command>
                         <CommandInput placeholder="Find or use knowledge in..." />
                         <CommandList>

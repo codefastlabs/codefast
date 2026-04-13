@@ -21,8 +21,8 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           }}
           className={cn(
             "px-2 py-1",
-            "rounded-sm bg-gray-600",
-            "font-extrabold text-white uppercase",
+            "rounded-sm",
+            "bg-gray-600 font-extrabold text-white uppercase",
             "dark:bg-gray-700",
           )}
         >
@@ -33,8 +33,8 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
             to="/"
             className={cn(
               "px-2 py-1",
-              "rounded-sm bg-gray-600",
-              "font-extrabold text-white uppercase",
+              "rounded-sm",
+              "bg-gray-600 font-extrabold text-white uppercase",
               "dark:bg-gray-700",
             )}
           >
@@ -45,8 +45,8 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
             to="/"
             className={cn(
               "px-2 py-1",
-              "rounded-sm bg-gray-600",
-              "font-extrabold text-white uppercase",
+              "rounded-sm",
+              "bg-gray-600 font-extrabold text-white uppercase",
               "dark:bg-gray-700",
             )}
             onClick={(e) => {

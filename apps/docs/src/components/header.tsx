@@ -90,12 +90,13 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "sticky z-40",
-        "top-0",
-        "border-b border-border/60 bg-background/80 shadow-sm backdrop-blur-md supports-backdrop-filter:bg-background/70",
+        "sticky top-0 z-40",
+        "border-b border-border/60",
+        "bg-background/80 shadow-sm supports-backdrop-filter:bg-background/70",
+        "backdrop-blur-md",
       )}
     >
-      <div className={cn("flex h-14 max-w-350 items-center gap-3", "mx-auto px-4", "sm:px-6")}>
+      <div className={cn("mx-auto flex h-14 max-w-350 items-center gap-3 px-4", "sm:px-6")}>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
             <Button
@@ -109,15 +110,15 @@ export default function Header() {
           </SheetTrigger>
           <SheetContent
             side="left"
-            className={cn("flex w-[min(100%,20rem)] flex-col gap-0", "p-0", "sm:max-w-sm")}
+            className={cn("flex w-[min(100%,20rem)] flex-col gap-0 p-0", "sm:max-w-sm")}
           >
             <SheetHeader className={cn("px-6 py-5", "border-b border-border", "text-left")}>
               <SheetTitle className={cn("flex items-center gap-2", "font-semibold tracking-tight")}>
                 <span
                   className={cn(
                     "flex size-9 items-center justify-center",
-                    "rounded-lg bg-primary/10",
-                    "text-primary",
+                    "rounded-lg",
+                    "bg-primary/10 text-primary",
                   )}
                 >
                   <PackageIcon className="size-5" />
@@ -171,8 +172,8 @@ export default function Header() {
             to="/"
             className={cn(
               "flex min-w-0 items-center gap-2.5",
-              "rounded-lg ring-offset-background",
-              "transition-opacity outline-none",
+              "rounded-lg ring-offset-background outline-none",
+              "transition-opacity",
               "hover:opacity-90",
               "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             )}
@@ -181,13 +182,13 @@ export default function Header() {
             <span
               className={cn(
                 "flex size-9 shrink-0 items-center justify-center",
-                "rounded-lg bg-primary shadow-sm",
-                "text-primary-foreground",
+                "rounded-lg",
+                "bg-primary text-primary-foreground shadow-sm",
               )}
             >
               <PackageIcon className="size-4.5" aria-hidden />
             </span>
-            <span className={cn("hidden min-w-0 flex-col", "leading-tight", "sm:flex")}>
+            <span className={cn("hidden min-w-0 flex-col leading-tight", "sm:flex")}>
               <span className="truncate text-sm font-semibold tracking-tight text-foreground">
                 @codefast/ui
               </span>
@@ -200,7 +201,7 @@ export default function Header() {
 
         <NavLinks variant="desktop" className={cn("hidden", "md:flex")} />
 
-        <div className={cn("flex shrink-0 items-center gap-1", "ml-auto", "sm:gap-2")}>
+        <div className={cn("ml-auto flex shrink-0 items-center gap-1", "sm:gap-2")}>
           <Button
             variant="ghost"
             size="icon"

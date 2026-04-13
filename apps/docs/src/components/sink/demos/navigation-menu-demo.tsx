@@ -63,16 +63,15 @@ export function NavigationMenuDemo() {
           <NavigationMenuItem>
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className={cn("grid gap-2", "md:w-100", "lg:w-125", "lg:grid-cols-[.75fr_1fr]")}>
+              <ul className={cn("grid gap-2", "md:w-100", "lg:w-125 lg:grid-cols-[.75fr_1fr]")}>
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <Link
                       className={cn(
-                        "flex h-full w-full flex-col justify-end",
-                        "p-6",
-                        "rounded-lg bg-linear-to-b from-muted/50 to-muted",
-                        "no-underline",
-                        "outline-hidden select-none",
+                        "flex h-full w-full flex-col justify-end p-6",
+                        "rounded-lg",
+                        "bg-linear-to-b from-muted/50 to-muted no-underline outline-hidden",
+                        "select-none",
                         "focus:shadow-md",
                       )}
                       to="/"

@@ -76,7 +76,8 @@ export function AppearanceSettings() {
                   height={180}
                   layout="constrained"
                   className={cn(
-                    "hidden aspect-video w-full object-cover @min-[448px]/field-group:block",
+                    "hidden @min-[448px]/field-group:block",
+                    "aspect-video w-full object-cover",
                     "dark:brightness-[0.2] dark:grayscale",
                   )}
                 />
@@ -113,7 +114,7 @@ export function AppearanceSettings() {
                     className={cn("peer", "sr-only")}
                   />
                   <CheckIcon
-                    className={cn("hidden size-4", "stroke-white", "peer-data-checked:block")}
+                    className={cn("hidden", "size-4", "stroke-white", "peer-data-checked:block")}
                   />
                 </Label>
               ))}

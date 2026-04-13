@@ -56,9 +56,11 @@ export function FieldDemo() {
     <div className={cn("w-full", "@container")}>
       <div
         className={cn(
-          "grid gap-4 @[1920px]:grid-cols-4 @[2240px]:grid-cols-5",
+          "grid gap-4",
           "p-4",
           "bg-muted",
+          "@[1920px]:grid-cols-4",
+          "@[2240px]:grid-cols-5",
           "@3xl:grid-cols-2",
           "@5xl:grid-cols-3",
         )}
@@ -509,7 +511,8 @@ function PrivacySettings() {
                 />
                 <IconCircleCheckFilled
                   className={cn(
-                    "hidden size-5",
+                    "hidden",
+                    "size-5",
                     "fill-primary",
                     "group-has-data-checked/field:block",
                   )}
@@ -532,7 +535,8 @@ function PrivacySettings() {
                 />
                 <IconCircleCheckFilled
                   className={cn(
-                    "hidden size-5",
+                    "hidden",
+                    "size-5",
                     "fill-primary",
                     "group-has-data-checked/field:block",
                   )}
@@ -555,7 +559,8 @@ function PrivacySettings() {
                 />
                 <IconCircleCheckFilled
                   className={cn(
-                    "hidden size-5",
+                    "hidden",
+                    "size-5",
                     "fill-primary",
                     "group-has-data-checked/field:block",
                   )}
@@ -617,7 +622,8 @@ function PrivacySettings() {
                 <div
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center",
-                    "rounded-full border bg-muted",
+                    "rounded-full border",
+                    "bg-muted",
                     "transition-all duration-100",
                     "group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground",
                   )}
@@ -638,7 +644,8 @@ function PrivacySettings() {
                 />
                 <IconCircleCheckFilled
                   className={cn(
-                    "hidden size-5",
+                    "hidden",
+                    "size-5",
                     "fill-primary",
                     "group-has-data-checked/field:block",
                   )}
@@ -650,7 +657,8 @@ function PrivacySettings() {
                 <div
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center",
-                    "rounded-full border bg-muted",
+                    "rounded-full border",
+                    "bg-muted",
                     "transition-all duration-100",
                     "group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground",
                   )}
@@ -671,7 +679,8 @@ function PrivacySettings() {
                 />
                 <IconCircleCheckFilled
                   className={cn(
-                    "hidden size-5",
+                    "hidden",
+                    "size-5",
                     "fill-primary",
                     "group-has-data-checked/field:block",
                   )}
@@ -683,7 +692,8 @@ function PrivacySettings() {
                 <div
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center",
-                    "rounded-full border bg-muted",
+                    "rounded-full border",
+                    "bg-muted",
                     "transition-all duration-100",
                     "group-has-data-checked/field:border-primary group-has-data-checked/field:bg-primary group-has-data-checked/field:text-primary-foreground",
                   )}
@@ -704,7 +714,8 @@ function PrivacySettings() {
                 />
                 <IconCircleCheckFilled
                   className={cn(
-                    "hidden size-5",
+                    "hidden",
+                    "size-5",
                     "fill-primary",
                     "group-has-data-checked/field:block",
                   )}
@@ -732,7 +743,8 @@ function HearAboutUs() {
               <FieldGroup
                 className={cn(
                   "flex flex-row flex-wrap gap-2",
-                  "**:data-[slot=checkbox]:rounded-full **:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2",
+                  "**:data-[slot=checkbox]:rounded-full",
+                  "**:data-[slot=field]:gap-2 **:data-[slot=field]:overflow-hidden **:data-[slot=field]:px-2.5 **:data-[slot=field]:py-2",
                   "*:data-[slot=field-label]:w-fit",
                   "[--radius:9999px]",
                 )}
@@ -994,7 +1006,7 @@ function ShippingMethods() {
         </CardContent>
       </Card>
       <form>
-        <FieldGroup className={cn("gap-6", "p-6", "rounded-xl border bg-background")}>
+        <FieldGroup className={cn("gap-6", "p-6", "rounded-xl border", "bg-background")}>
           <FieldSet>
             <FieldLegend>GPU Type</FieldLegend>
             <FieldDescription>Select the GPU type for your cluster.</FieldDescription>
@@ -2738,7 +2750,7 @@ export function FormDatePickerDemo() {
             <Button
               id="disabled-date-1vz"
               variant="outline"
-              className={cn("w-full justify-start", "opacity-50", "text-left font-normal")}
+              className={cn("w-full justify-start text-left font-normal", "opacity-50")}
               disabled
             >
               <CalendarIcon />

@@ -334,7 +334,7 @@ export function ChatSettings() {
               <FieldSeparator />
               <Field
                 orientation="responsive"
-                className="@md/field-group:flex-col @2xl/field-group:flex-row"
+                className={cn("@md/field-group:flex-col", "@2xl/field-group:flex-row")}
               >
                 <FieldContent>
                   <FieldLabel htmlFor="about">More about you</FieldLabel>
@@ -346,7 +346,11 @@ export function ChatSettings() {
                 <Textarea
                   id="about"
                   placeholder="I'm a software engineer..."
-                  className="min-h-30 @md/field-group:min-w-full @2xl/field-group:min-w-75"
+                  className={cn(
+                    "min-h-30",
+                    "@md/field-group:min-w-full",
+                    "@2xl/field-group:min-w-75",
+                  )}
                 />
               </Field>
               <FieldSeparator />

@@ -41,10 +41,10 @@ export function CommandDemo() {
         Press{" "}
         <kbd
           className={cn(
-            "inline-flex h-5 items-center gap-1",
-            "px-1.5",
-            "rounded border bg-muted opacity-100",
-            "text-2.5 font-mono font-medium text-muted-foreground",
+            "inline-flex h-5 items-center gap-1 px-1.5",
+            "rounded border",
+            "text-2.5 bg-muted font-mono font-medium text-muted-foreground",
+            "opacity-100",
             "pointer-events-none select-none",
           )}
         >

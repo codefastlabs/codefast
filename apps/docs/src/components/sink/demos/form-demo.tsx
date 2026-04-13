@@ -108,7 +108,7 @@ export function FormDemo() {
   function onSubmit(data: FormValues) {
     toast("You submitted the following values:", {
       description: (
-        <pre className={cn("w-80", "mt-2 p-4", "rounded-lg bg-neutral-950")}>
+        <pre className={cn("mt-2 w-80 p-4", "rounded-lg", "bg-neutral-950")}>
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
@@ -302,8 +302,7 @@ export function FormDemo() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-60",
-                        "pl-3",
+                        "w-60 pl-3",
                         "text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}

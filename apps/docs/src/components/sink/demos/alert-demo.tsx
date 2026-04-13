@@ -82,15 +82,15 @@ export function AlertDemo() {
         <Button
           size="sm"
           variant="outline"
-          className={cn("absolute h-6", "top-2.5 right-3", "shadow-none")}
+          className={cn("absolute top-2.5 right-3", "h-6", "shadow-none")}
         >
           Undo
         </Button>
       </Alert>
       <Alert
         className={cn(
-          "border-amber-50 bg-amber-50",
-          "text-amber-900",
+          "border-amber-50",
+          "bg-amber-50 text-amber-900",
           "dark:border-amber-950 dark:bg-amber-950 dark:text-amber-100",
         )}
       >

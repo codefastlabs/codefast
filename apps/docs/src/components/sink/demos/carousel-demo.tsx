@@ -10,11 +10,14 @@ import {
 
 export function CarouselDemo() {
   return (
-    <div className={cn("w-full flex-col items-center gap-4", "px-12", "@4xl:flex")}>
+    <div className={cn("w-full flex-col items-center gap-4 px-12", "@4xl:flex")}>
       <Carousel
         className={cn(
           "max-w-sm",
-          "*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex",
+          "*:data-[slot=carousel-next]:hidden",
+          "*:data-[slot=carousel-previous]:hidden",
+          "*:data-[slot=carousel-next]:md:inline-flex",
+          "*:data-[slot=carousel-previous]:md:inline-flex",
         )}
       >
         <CarouselContent>
@@ -38,7 +41,10 @@ export function CarouselDemo() {
       <Carousel
         className={cn(
           "max-w-sm",
-          "*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex",
+          "*:data-[slot=carousel-next]:hidden",
+          "*:data-[slot=carousel-previous]:hidden",
+          "*:data-[slot=carousel-next]:md:inline-flex",
+          "*:data-[slot=carousel-previous]:md:inline-flex",
         )}
         opts={{
           align: "start",
@@ -65,7 +71,10 @@ export function CarouselDemo() {
       <Carousel
         className={cn(
           "max-w-sm",
-          "*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex",
+          "*:data-[slot=carousel-next]:hidden",
+          "*:data-[slot=carousel-previous]:hidden",
+          "*:data-[slot=carousel-next]:md:inline-flex",
+          "*:data-[slot=carousel-previous]:md:inline-flex",
         )}
       >
         <CarouselContent className="-ml-1">

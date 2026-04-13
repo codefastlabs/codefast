@@ -59,7 +59,7 @@ function SinkPage() {
   );
 
   return (
-    <div className={cn("grid flex-1 gap-4", "p-4", "@container")}>
+    <div className={cn("@container grid flex-1 gap-4", "p-4")}>
       {uiComponents.map(([key, component]) => (
         <LazyComponentItem key={key} componentKey={key} config={component} />
       ))}

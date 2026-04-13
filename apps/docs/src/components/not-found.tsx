@@ -17,8 +17,8 @@ export function NotFound({ children }: NotFoundProps) {
           onClick={() => window.history.back()}
           className={cn(
             "px-2 py-1",
-            "rounded-sm bg-emerald-500",
-            "text-sm font-black text-white uppercase",
+            "rounded-sm",
+            "bg-emerald-500 text-sm font-black text-white uppercase",
           )}
         >
           Go back
@@ -27,8 +27,8 @@ export function NotFound({ children }: NotFoundProps) {
           to="/"
           className={cn(
             "px-2 py-1",
-            "rounded-sm bg-cyan-600",
-            "text-sm font-black text-white uppercase",
+            "rounded-sm",
+            "bg-cyan-600 text-sm font-black text-white uppercase",
           )}
         >
           Start Over
