@@ -32,6 +32,7 @@ export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
   const bindings = new Set<string>();
   for (const stmt of sf.statements) {
     if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
+    if (stmt.importClause.isTypeOnly) continue;
     const spec = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(spec)) continue;
     const mod = spec.text;

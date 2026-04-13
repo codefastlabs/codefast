@@ -329,6 +329,3 @@ export function collectGroupableStringNodes(sf: ts.SourceFile): StringNode[] {
   visit(sf);
   return results;
 }
-
-/** @deprecated Use `collectGroupableStringNodes`. */
-export const collectLongStringNodes = collectGroupableStringNodes;
