@@ -16,6 +16,11 @@ describe("cnModuleSpecifierForFile", () => {
 });
 
 describe("ensureCnImport", () => {
+  it("does not change source when cn is imported as default binding", () => {
+    const source = 'import cn from "@codefast/tailwind-variants";\nconst x = 1;\n';
+    expect(ensureCnImport(source, "/repo/x.ts")).toBe(source);
+  });
+
   it("does not change source when cn already imported", () => {
     const source = 'import { cn, tv } from "@codefast/tailwind-variants";\nconst x = 1;\n';
     expect(ensureCnImport(source, "/repo/x.ts")).toBe(source);
