@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Label } from "@codefast/ui/label";
 
@@ -21,13 +22,25 @@ export function CheckboxDemo() {
         <Checkbox id="toggle" disabled />
         <Label htmlFor="toggle">Enable notifications</Label>
       </div>
-      <Label className="flex items-start gap-3 rounded-xl border p-3 hover:bg-accent/50 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
+      <Label
+        className={cn(
+          "flex items-start gap-3",
+          "p-3",
+          "rounded-xl border",
+          "hover:bg-accent/50",
+          "has-aria-checked:border-blue-600 has-aria-checked:bg-blue-50",
+          "dark:has-aria-checked:border-blue-900 dark:has-aria-checked:bg-blue-950",
+        )}
+      >
         <Checkbox
           id="toggle-2"
           defaultChecked
-          className="data-checked:border-blue-600 data-checked:bg-blue-600 data-checked:text-white dark:data-checked:border-blue-700 dark:data-checked:bg-blue-700"
+          className={cn(
+            "data-checked:border-blue-600 data-checked:bg-blue-600 data-checked:text-white",
+            "dark:data-checked:border-blue-700 dark:data-checked:bg-blue-700",
+          )}
         />
-        <div className="grid gap-1.5 font-normal">
+        <div className={cn("grid gap-1.5", "font-normal")}>
           <p className="text-sm leading-none font-medium">Enable notifications</p>
           <p className="text-sm text-muted-foreground">
             You can enable or disable notifications at any time.

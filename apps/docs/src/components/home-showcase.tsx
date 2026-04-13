@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
@@ -28,17 +29,26 @@ function LivePlaygroundCard() {
   const checkboxId = `${baseId}-checkbox`;
 
   return (
-    <Card className="flex h-full min-h-[min(22rem,70dvh)] flex-col border-border/80 bg-card/90 shadow-md ring-1 ring-border/40">
+    <Card
+      className={cn(
+        "flex h-full min-h-[min(22rem,70dvh)] flex-col",
+        "border-border/80 ring-1 ring-border/40",
+        "bg-card/90 shadow-md",
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <CardTitle className="text-lg">Live playground</CardTitle>
             <CardDescription>
               Tabs, inputs, switches, and actions from{" "}
-              <code className="rounded bg-muted px-1 font-mono text-xs">@codefast/ui</code>.
+              <code className={cn("px-1", "rounded", "bg-muted font-mono text-xs")}>
+                @codefast/ui
+              </code>
+              .
             </CardDescription>
           </div>
-          <Badge variant="secondary" className="shrink-0 font-normal">
+          <Badge variant="secondary" className={cn("shrink-0", "font-normal")}>
             Interactive
           </Badge>
         </div>
@@ -49,7 +59,7 @@ function LivePlaygroundCard() {
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="workspace">Workspace</TabsTrigger>
           </TabsList>
-          <TabsContent value="profile" className="mt-4 space-y-4">
+          <TabsContent value="profile" className={cn("space-y-4", "mt-4")}>
             <div className="grid gap-2">
               <Label htmlFor={nameId}>Display name</Label>
               <Input id={nameId} placeholder="Ada Lovelace" defaultValue="Ada Lovelace" />
@@ -59,8 +69,15 @@ function LivePlaygroundCard() {
               <Input id={roleId} placeholder="Engineer" defaultValue="Design systems" />
             </div>
           </TabsContent>
-          <TabsContent value="workspace" className="mt-4 space-y-4">
-            <div className="flex items-center justify-between gap-4 rounded-lg border border-border/80 bg-muted/30 px-3 py-2.5">
+          <TabsContent value="workspace" className={cn("space-y-4", "mt-4")}>
+            <div
+              className={cn(
+                "flex items-center justify-between gap-4",
+                "px-3 py-2.5",
+                "rounded-lg border border-border/80",
+                "bg-muted/30",
+              )}
+            >
               <div className="space-y-0.5">
                 <Label htmlFor={switchId} className="text-sm font-medium">
                   Public workspace
@@ -69,9 +86,16 @@ function LivePlaygroundCard() {
               </div>
               <Switch id={switchId} defaultChecked />
             </div>
-            <div className="flex items-start gap-3 rounded-lg border border-border/80 bg-muted/20 px-3 py-3">
+            <div
+              className={cn(
+                "flex items-start gap-3",
+                "px-3 py-3",
+                "rounded-lg border border-border/80",
+                "bg-muted/20",
+              )}
+            >
               <Checkbox id={checkboxId} defaultChecked className="mt-0.5" />
-              <div className="grid gap-0.5 leading-none">
+              <div className={cn("grid gap-0.5", "leading-none")}>
                 <Label htmlFor={checkboxId} className="text-sm leading-snug font-medium">
                   Sync edits to cloud
                 </Label>
@@ -135,10 +159,14 @@ function ProgressDemoCard() {
   };
 
   return (
-    <Card className="h-full border-border/80 bg-card/80 shadow-sm ring-1 ring-border/30">
+    <Card
+      className={cn("h-full", "border-border/80 ring-1 ring-border/30", "bg-card/80 shadow-sm")}
+    >
       <CardHeader className="pb-2">
-        <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
-          <ZapIcon className="size-4 text-primary" aria-hidden />
+        <div
+          className={cn("flex size-9 items-center justify-center", "rounded-lg", "bg-primary/10")}
+        >
+          <ZapIcon className={cn("size-4", "text-primary")} aria-hidden />
         </div>
         <CardTitle className="text-base">Feedback states</CardTitle>
         <CardDescription>
@@ -148,12 +176,12 @@ function ProgressDemoCard() {
       <CardContent className="space-y-4">
         <Progress value={progress} className="h-2" />
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs text-muted-foreground tabular-nums">{progress}%</span>
+          <span className={cn("text-xs text-muted-foreground", "tabular-nums")}>{progress}%</span>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="h-8 text-xs"
+            className={cn("h-8", "text-xs")}
             onClick={replay}
           >
             Replay
@@ -166,16 +194,33 @@ function ProgressDemoCard() {
 
 export function HomeBentoShowcase() {
   return (
-    <div className="mx-auto grid max-w-[1400px] gap-4 md:grid-cols-12 md:grid-rows-[auto_auto]">
-      <div className="md:col-span-12 md:row-span-2 lg:col-span-7">
+    <div
+      className={cn(
+        "mx-auto grid max-w-[1400px] gap-4",
+        "md:grid-cols-12 md:grid-rows-[auto_auto]",
+      )}
+    >
+      <div className={cn("md:col-span-12 md:row-span-2", "lg:col-span-7")}>
         <LivePlaygroundCard />
       </div>
 
-      <div className="md:col-span-12 lg:col-span-5">
-        <Card className="h-full border-border/80 bg-linear-to-br from-primary/8 via-card to-card shadow-sm ring-1 ring-primary/10">
+      <div className={cn("md:col-span-12", "lg:col-span-5")}>
+        <Card
+          className={cn(
+            "h-full",
+            "border-border/80 ring-1 ring-primary/10",
+            "bg-linear-to-br from-primary/8 via-card to-card shadow-sm",
+          )}
+        >
           <CardHeader className="pb-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/12">
-              <RocketIcon className="size-4 text-primary" aria-hidden />
+            <div
+              className={cn(
+                "flex size-9 items-center justify-center",
+                "rounded-lg",
+                "bg-primary/12",
+              )}
+            >
+              <RocketIcon className={cn("size-4", "text-primary")} aria-hidden />
             </div>
             <CardTitle className="text-base">Ship consistent UI faster</CardTitle>
             <CardDescription className="text-pretty">
@@ -194,11 +239,22 @@ export function HomeBentoShowcase() {
         </Card>
       </div>
 
-      <div className="md:col-span-12 lg:col-span-5">
-        <Card className="h-full border-border/80 bg-card/80 shadow-sm ring-1 ring-border/30">
+      <div className={cn("md:col-span-12", "lg:col-span-5")}>
+        <Card
+          className={cn("h-full", "border-border/80 ring-1 ring-border/30", "bg-card/80 shadow-sm")}
+        >
           <CardHeader className="pb-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-violet-500/12">
-              <PaletteIcon className="size-4 text-violet-700 dark:text-violet-300" aria-hidden />
+            <div
+              className={cn(
+                "flex size-9 items-center justify-center",
+                "rounded-lg",
+                "bg-violet-500/12",
+              )}
+            >
+              <PaletteIcon
+                className={cn("size-4 text-violet-700", "dark:text-violet-300")}
+                aria-hidden
+              />
             </div>
             <CardTitle className="text-base">Theme-ready tokens</CardTitle>
             <CardDescription className="text-pretty">
@@ -217,16 +273,24 @@ export function HomeBentoShowcase() {
         </Card>
       </div>
 
-      <div className="md:col-span-6 lg:col-span-4">
+      <div className={cn("md:col-span-6", "lg:col-span-4")}>
         <ProgressDemoCard />
       </div>
 
-      <div className="md:col-span-6 lg:col-span-4">
-        <Card className="h-full border-border/80 bg-card/80 shadow-sm ring-1 ring-border/30">
+      <div className={cn("md:col-span-6", "lg:col-span-4")}>
+        <Card
+          className={cn("h-full", "border-border/80 ring-1 ring-border/30", "bg-card/80 shadow-sm")}
+        >
           <CardHeader className="pb-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-500/12">
+            <div
+              className={cn(
+                "flex size-9 items-center justify-center",
+                "rounded-lg",
+                "bg-emerald-500/12",
+              )}
+            >
               <AccessibilityIcon
-                className="size-4 text-emerald-700 dark:text-emerald-400"
+                className={cn("size-4 text-emerald-700", "dark:text-emerald-400")}
                 aria-hidden
               />
             </div>
@@ -239,11 +303,23 @@ export function HomeBentoShowcase() {
         </Card>
       </div>
 
-      <div className="md:col-span-12 lg:col-span-4">
-        <Card className="h-full border-border/80 bg-muted/25 shadow-sm ring-1 ring-border/40">
+      <div className={cn("md:col-span-12", "lg:col-span-4")}>
+        <Card
+          className={cn(
+            "h-full",
+            "border-border/80 ring-1 ring-border/40",
+            "bg-muted/25 shadow-sm",
+          )}
+        >
           <CardHeader className="pb-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-foreground/8">
-              <LayersIcon className="size-4 text-foreground" aria-hidden />
+            <div
+              className={cn(
+                "flex size-9 items-center justify-center",
+                "rounded-lg",
+                "bg-foreground/8",
+              )}
+            >
+              <LayersIcon className={cn("size-4", "text-foreground")} aria-hidden />
             </div>
             <CardTitle className="text-base">Tree-shakeable imports</CardTitle>
             <CardDescription className="text-pretty">
@@ -251,21 +327,28 @@ export function HomeBentoShowcase() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="rounded-lg border border-border/80 bg-background/80 px-3 py-2.5 font-mono text-[0.7rem] leading-relaxed text-foreground sm:text-xs">
-              <span className="text-blue-700 dark:text-blue-400">import</span>
+            <div
+              className={cn(
+                "px-3 py-2.5",
+                "rounded-lg border border-border/80",
+                "bg-background/80 font-mono text-[0.7rem] leading-relaxed text-foreground",
+                "sm:text-xs",
+              )}
+            >
+              <span className={cn("text-blue-700", "dark:text-blue-400")}>import</span>
               {" { Button } "}
-              <span className="text-blue-700 dark:text-blue-400">from</span>
+              <span className={cn("text-blue-700", "dark:text-blue-400")}>from</span>
               <br />
-              <span className="text-green-800 dark:text-green-400">
+              <span className={cn("text-green-800", "dark:text-green-400")}>
                 &apos;@codefast/ui/button&apos;
               </span>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Badge variant="outline" className="gap-1 font-normal">
+            <div className={cn("flex flex-wrap gap-2", "mt-3")}>
+              <Badge variant="outline" className={cn("gap-1", "font-normal")}>
                 <CodeIcon className="size-3" aria-hidden />
                 TypeScript
               </Badge>
-              <Badge variant="outline" className="gap-1 font-normal">
+              <Badge variant="outline" className={cn("gap-1", "font-normal")}>
                 <SparklesIcon className="size-3" aria-hidden />
                 Tailwind v4
               </Badge>

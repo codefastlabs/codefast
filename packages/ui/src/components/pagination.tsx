@@ -1,7 +1,7 @@
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 import { buttonVariants } from "#components/button";
@@ -16,7 +16,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
   return (
     <nav
       aria-label="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
+      className={cn("flex w-full justify-center", "mx-auto", className)}
       data-slot="pagination"
       {...props}
     />

@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import {
   BoldIcon,
@@ -93,7 +94,10 @@ export function ToggleGroupDemo() {
         <ToggleGroupItem
           value="star"
           aria-label="Toggle star"
-          className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-yellow-500 data-[state=on]:*:[svg]:stroke-yellow-500"
+          className={cn(
+            "data-[state=on]:bg-transparent",
+            "data-[state=on]:*:[svg]:fill-yellow-500 data-[state=on]:*:[svg]:stroke-yellow-500",
+          )}
         >
           <StarIcon />
           Star
@@ -101,7 +105,10 @@ export function ToggleGroupDemo() {
         <ToggleGroupItem
           value="heart"
           aria-label="Toggle heart"
-          className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500"
+          className={cn(
+            "data-[state=on]:bg-transparent",
+            "data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500",
+          )}
         >
           <HeartIcon />
           Heart
@@ -109,7 +116,10 @@ export function ToggleGroupDemo() {
         <ToggleGroupItem
           value="bookmark"
           aria-label="Toggle bookmark"
-          className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500"
+          className={cn(
+            "data-[state=on]:bg-transparent",
+            "data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500",
+          )}
         >
           <BookmarkIcon />
           Bookmark

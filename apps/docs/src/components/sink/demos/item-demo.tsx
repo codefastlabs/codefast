@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Button } from "@codefast/ui/button";
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@codefast/ui/field";
@@ -154,8 +155,8 @@ const issues: IssueItem[] = [
 
 export function ItemDemo() {
   return (
-    <div className="@container w-full">
-      <div className="flex flex-wrap gap-6 2xl:gap-12">
+    <div className={cn("w-full", "@container")}>
+      <div className={cn("flex flex-wrap gap-6", "2xl:gap-12")}>
         <div className="flex max-w-sm flex-col gap-6">
           <Item>
             <ItemContent>
@@ -253,7 +254,7 @@ export function ItemDemo() {
                     <ItemDescription>{person.message}</ItemDescription>
                   </ItemContent>
                   <ItemActions>
-                    <Button variant="outline" size="icon" className="size-8 rounded-full">
+                    <Button variant="outline" size="icon" className={cn("size-8", "rounded-full")}>
                       <PlusIcon />
                     </Button>
                   </ItemActions>
@@ -264,7 +265,12 @@ export function ItemDemo() {
           </ItemGroup>
           <Item variant="outline">
             <ItemMedia>
-              <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
+              <div
+                className={cn(
+                  "flex -space-x-2",
+                  "*:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale",
+                )}
+              >
                 <Avatar>
                   <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
                   <AvatarFallback>CF</AvatarFallback>
@@ -286,7 +292,7 @@ export function ItemDemo() {
               </ItemDescription>
             </ItemContent>
             <ItemActions className="self-start">
-              <Button variant="outline" size="icon" className="size-8 rounded-full">
+              <Button variant="outline" size="icon" className={cn("size-8", "rounded-full")}>
                 <IconChevronRight />
               </Button>
             </ItemActions>
@@ -330,14 +336,14 @@ export function ItemDemo() {
                     </ItemTitle>
                     <ItemDescription>{song.artist}</ItemDescription>
                   </ItemContent>
-                  <ItemContent className="flex-none text-center">
+                  <ItemContent className={cn("flex-none", "text-center")}>
                     <ItemDescription>{song.duration}</ItemDescription>
                   </ItemContent>
                   <ItemActions>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="size-8 rounded-full"
+                      className={cn("size-8", "rounded-full")}
                       aria-label="Download"
                     >
                       <IconDownload />

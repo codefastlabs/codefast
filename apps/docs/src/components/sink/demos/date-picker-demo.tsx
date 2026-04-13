@@ -18,7 +18,7 @@ import type { DateRange } from "react-day-picker";
 
 export function DatePickerDemo() {
   return (
-    <div className="flex flex-col flex-wrap items-start gap-4 md:flex-row">
+    <div className={cn("flex flex-col flex-wrap items-start gap-4", "md:flex-row")}>
       <DatePickerSimple />
       <DataPickerWithDropdowns />
       <DatePickerWithRange />
@@ -35,7 +35,9 @@ function DatePickerSimple() {
         <Button
           variant="outline"
           className={cn(
-            "min-w-50 justify-start px-2 font-normal",
+            "min-w-50 justify-start",
+            "px-2",
+            "font-normal",
             !date && "text-muted-foreground",
           )}
         >
@@ -43,7 +45,7 @@ function DatePickerSimple() {
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className={cn("w-auto", "p-0")} align="start">
         <Calendar mode="single" selected={date} onSelect={setDate} />
       </PopoverContent>
     </Popover>
@@ -62,7 +64,12 @@ function DatePickerWithRange() {
         <Button
           id="date"
           variant="outline"
-          className={cn("w-fit justify-start px-2 font-normal", !date && "text-muted-foreground")}
+          className={cn(
+            "w-fit justify-start",
+            "px-2",
+            "font-normal",
+            !date && "text-muted-foreground",
+          )}
         >
           <CalendarIcon className="text-muted-foreground" />
           {date?.from ? (
@@ -78,7 +85,7 @@ function DatePickerWithRange() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className={cn("w-auto", "p-0")} align="start">
         <Calendar
           mode="range"
           defaultMonth={date?.from}
@@ -103,12 +110,14 @@ function DataPickerWithDropdowns() {
           <Button
             variant="outline"
             className={cn(
-              "min-w-50 justify-start px-2 font-normal",
+              "min-w-50 justify-start",
+              "px-2",
+              "font-normal",
               !date && "text-muted-foreground",
             )}
           >
             {date ? format(date, "PPP") : <span>Pick a date</span>}
-            <CalendarIcon className="ml-auto text-muted-foreground" />
+            <CalendarIcon className={cn("ml-auto", "text-muted-foreground")} />
           </Button>
         </DrawerTrigger>
         <DrawerContent>
@@ -135,17 +144,19 @@ function DataPickerWithDropdowns() {
         <Button
           variant="outline"
           className={cn(
-            "min-w-50 justify-start px-2 font-normal",
+            "min-w-50 justify-start",
+            "px-2",
+            "font-normal",
             !date && "text-muted-foreground",
           )}
         >
           {date ? format(date, "PPP") : <span>Pick a date</span>}
-          <CalendarIcon className="ml-auto text-muted-foreground" />
+          <CalendarIcon className={cn("ml-auto", "text-muted-foreground")} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className={cn("w-auto", "p-0")} align="start">
         <Calendar mode="single" selected={date} onSelect={setDate} captionLayout="dropdown" />
-        <div className="flex gap-2 border-t p-2">
+        <div className={cn("flex gap-2", "p-2", "border-t")}>
           <Button variant="outline" size="sm" className="w-full" onClick={() => setOpen(false)}>
             Done
           </Button>

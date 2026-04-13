@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Suspense, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Skeleton } from "@codefast/ui/skeleton";
@@ -58,7 +59,7 @@ function SinkPage() {
   );
 
   return (
-    <div className="@container grid flex-1 gap-4 p-4">
+    <div className={cn("@container grid flex-1 gap-4", "p-4")}>
       {uiComponents.map(([key, component]) => (
         <LazyComponentItem key={key} componentKey={key} config={component} />
       ))}

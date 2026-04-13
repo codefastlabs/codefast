@@ -50,9 +50,16 @@ export function ThemeLibraryPreview(): JSX.Element {
 
   return (
     <Card className="border-border/60 shadow-md ring-1 ring-border/35">
-      <CardContent className="p-4 md:p-6">
+      <CardContent className={cn("p-4", "md:p-6")}>
         <Tabs defaultValue="forms">
-          <TabsList className="mb-6 grid h-auto w-full grid-cols-2 gap-2 rounded-xl bg-muted/40 p-1 sm:grid-cols-4 sm:gap-1">
+          <TabsList
+            className={cn(
+              "mb-6 grid h-auto w-full grid-cols-2 gap-2 p-1",
+              "rounded-xl",
+              "bg-muted/40",
+              "sm:grid-cols-4 sm:gap-1",
+            )}
+          >
             <TabsTrigger value="forms" className="rounded-lg">
               Forms
             </TabsTrigger>
@@ -68,30 +75,46 @@ export function ThemeLibraryPreview(): JSX.Element {
           </TabsList>
 
           <TabsContent value="forms" className="mt-0">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+            <div className={cn("grid gap-6", "lg:grid-cols-2 lg:gap-8")}>
               <div className="space-y-6">
                 <div
                   className={cn(
-                    "rounded-2xl border border-border/50 bg-linear-to-br from-card via-card to-muted/25 p-5 shadow-sm ring-1 ring-border/30",
+                    "p-5",
+                    "rounded-2xl border border-border/50 ring-1 ring-border/30",
+                    "bg-linear-to-br from-card via-card to-muted/25 shadow-sm",
                     "dark:from-card dark:via-card dark:to-muted/15",
                   )}
                 >
-                  <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                    <SearchIcon className="size-3.5 text-primary" aria-hidden />
+                  <div
+                    className={cn(
+                      "flex items-center gap-2",
+                      "text-xs font-semibold tracking-wide text-muted-foreground uppercase",
+                    )}
+                  >
+                    <SearchIcon className={cn("size-3.5", "text-primary")} aria-hidden />
                     Command palette style
                   </div>
-                  <InputGroup className="mt-4 shadow-xs">
+                  <InputGroup className={cn("mt-4", "shadow-xs")}>
                     <InputGroupAddon align="inline-start">
                       <SearchIcon className="text-muted-foreground" aria-hidden />
                     </InputGroupAddon>
                     <InputGroupInput placeholder="Jump to route, token, or snippet…" />
                     <InputGroupAddon align="inline-end">
-                      <kbd className="pointer-events-none hidden rounded border border-border/80 bg-muted/80 px-1.5 py-0.5 font-mono text-[0.65rem] font-medium text-muted-foreground sm:inline">
+                      <kbd
+                        className={cn(
+                          "hidden",
+                          "px-1.5 py-0.5",
+                          "rounded border border-border/80",
+                          "bg-muted/80 font-mono text-[0.65rem] font-medium text-muted-foreground",
+                          "pointer-events-none",
+                          "sm:inline",
+                        )}
+                      >
                         ⌘K
                       </kbd>
                     </InputGroupAddon>
                   </InputGroup>
-                  <p className="mt-3 text-xs text-muted-foreground">
+                  <p className={cn("mt-3", "text-xs text-muted-foreground")}>
                     Input group addons pick up focus rings and border tokens in both modes.
                   </p>
                 </div>
@@ -123,7 +146,14 @@ export function ThemeLibraryPreview(): JSX.Element {
                       </Select>
                     </FieldContent>
                   </Field>
-                  <div className="flex items-start gap-3 rounded-xl border border-border/50 bg-muted/15 px-3 py-3">
+                  <div
+                    className={cn(
+                      "flex items-start gap-3",
+                      "px-3 py-3",
+                      "rounded-xl border border-border/50",
+                      "bg-muted/15",
+                    )}
+                  >
                     <Checkbox id="lib-preview-terms" defaultChecked className="mt-0.5" />
                     <Label
                       htmlFor="lib-preview-terms"
@@ -136,10 +166,21 @@ export function ThemeLibraryPreview(): JSX.Element {
               </div>
 
               <div className="space-y-5">
-                <Card className="overflow-hidden border-border/60 shadow-md ring-1 ring-primary/15">
-                  <CardHeader className="border-b border-border/40 bg-muted/20 pb-4">
+                <Card
+                  className={cn(
+                    "overflow-hidden",
+                    "border-border/60 shadow-md ring-1 ring-primary/15",
+                  )}
+                >
+                  <CardHeader className={cn("pb-4", "border-b border-border/40", "bg-muted/20")}>
                     <div className="flex items-center gap-2">
-                      <div className="flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                      <div
+                        className={cn(
+                          "flex size-9 items-center justify-center",
+                          "rounded-lg",
+                          "bg-primary/15 text-primary",
+                        )}
+                      >
                         <MailIcon className="size-4" aria-hidden />
                       </div>
                       <div>
@@ -148,7 +189,7 @@ export function ThemeLibraryPreview(): JSX.Element {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4 pt-5">
+                  <CardContent className={cn("space-y-4", "pt-5")}>
                     <div className="grid gap-2">
                       <Label htmlFor="lib-preview-email">Work email</Label>
                       <InputGroup>
@@ -177,9 +218,9 @@ export function ThemeLibraryPreview(): JSX.Element {
                         />
                       </InputGroup>
                     </div>
-                    <Button className="w-full gap-2 shadow-sm">
+                    <Button className={cn("w-full gap-2", "shadow-sm")}>
                       Continue
-                      <SparklesIcon className="size-4 opacity-80" aria-hidden />
+                      <SparklesIcon className={cn("size-4", "opacity-80")} aria-hidden />
                     </Button>
                   </CardContent>
                 </Card>
@@ -189,7 +230,7 @@ export function ThemeLibraryPreview(): JSX.Element {
                   <Textarea
                     id="lib-preview-note"
                     placeholder="Ship summary, risk, rollback…"
-                    className="min-h-30 resize-y"
+                    className={cn("min-h-30", "resize-y")}
                   />
                   <p className="text-xs text-muted-foreground">
                     Textarea inherits surface and ring tokens from the active theme.
@@ -203,7 +244,12 @@ export function ThemeLibraryPreview(): JSX.Element {
             <TooltipProvider delayDuration={200}>
               <div className="space-y-8">
                 <div>
-                  <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <p
+                    className={cn(
+                      "mb-3",
+                      "text-xs font-semibold tracking-wide text-muted-foreground uppercase",
+                    )}
+                  >
                     Primary clusters
                   </p>
                   <div className="flex flex-wrap items-center gap-3">
@@ -211,7 +257,7 @@ export function ThemeLibraryPreview(): JSX.Element {
                       <Button>Save draft</Button>
                       <Button variant="secondary" className="gap-1.5">
                         Review
-                        <ChevronDownIcon className="size-4 opacity-70" aria-hidden />
+                        <ChevronDownIcon className={cn("size-4", "opacity-70")} aria-hidden />
                       </Button>
                     </ButtonGroup>
                     <ButtonGroup>
@@ -228,7 +274,9 @@ export function ThemeLibraryPreview(): JSX.Element {
                           <DropdownMenuItem>Staging</DropdownMenuItem>
                           <DropdownMenuItem>Production</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive focus:text-destructive">
+                          <DropdownMenuItem
+                            className={cn("text-destructive", "focus:text-destructive")}
+                          >
                             Discard
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -238,7 +286,12 @@ export function ThemeLibraryPreview(): JSX.Element {
                 </div>
 
                 <div>
-                  <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <p
+                    className={cn(
+                      "mb-3",
+                      "text-xs font-semibold tracking-wide text-muted-foreground uppercase",
+                    )}
+                  >
                     Variants
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -252,17 +305,29 @@ export function ThemeLibraryPreview(): JSX.Element {
                 </div>
 
                 <div>
-                  <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <p
+                    className={cn(
+                      "mb-3",
+                      "text-xs font-semibold tracking-wide text-muted-foreground uppercase",
+                    )}
+                  >
                     Icon toolbar
                   </p>
-                  <div className="inline-flex items-center gap-1 rounded-xl border border-border/60 bg-muted/25 p-1.5 shadow-inner">
+                  <div
+                    className={cn(
+                      "inline-flex items-center gap-1",
+                      "p-1.5",
+                      "rounded-xl border border-border/60",
+                      "bg-muted/25 shadow-inner",
+                    )}
+                  >
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="size-9 rounded-lg"
+                          className={cn("size-9", "rounded-lg")}
                         >
                           <CopyIcon className="size-4" aria-hidden />
                         </Button>
@@ -275,21 +340,21 @@ export function ThemeLibraryPreview(): JSX.Element {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="size-9 rounded-lg"
+                          className={cn("size-9", "rounded-lg")}
                         >
                           <Share2Icon className="size-4" aria-hidden />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>Share</TooltipContent>
                     </Tooltip>
-                    <Separator orientation="vertical" className="mx-0.5 h-6" />
+                    <Separator orientation="vertical" className={cn("h-6", "mx-0.5")} />
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="size-9 rounded-lg"
+                          className={cn("size-9", "rounded-lg")}
                         >
                           <SendIcon className="size-4" aria-hidden />
                         </Button>
@@ -302,7 +367,7 @@ export function ThemeLibraryPreview(): JSX.Element {
             </TooltipProvider>
           </TabsContent>
 
-          <TabsContent value="feedback" className="mt-0 space-y-6">
+          <TabsContent value="feedback" className={cn("space-y-6", "mt-0")}>
             <div className="flex flex-wrap items-center gap-2">
               <Badge className="shadow-sm">Shipped</Badge>
               <Badge variant="secondary">Canary</Badge>
@@ -310,34 +375,59 @@ export function ThemeLibraryPreview(): JSX.Element {
               <Badge variant="destructive">Breaking</Badge>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2 rounded-2xl border border-border/50 bg-card/80 p-4 ring-1 ring-border/25">
+            <div className={cn("grid gap-4", "md:grid-cols-2")}>
+              <div
+                className={cn(
+                  "space-y-2",
+                  "p-4",
+                  "rounded-2xl border border-border/50 ring-1 ring-border/25",
+                  "bg-card/80",
+                )}
+              >
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm font-medium text-foreground">Sync progress</span>
-                  <span className="text-xs text-muted-foreground tabular-nums">72%</span>
+                  <span className={cn("text-xs text-muted-foreground", "tabular-nums")}>72%</span>
                 </div>
                 <Progress value={72} className="h-2" />
                 <p className="text-xs text-muted-foreground">
                   Track and muted foreground read cleanly in dark mode.
                 </p>
               </div>
-              <div className="space-y-3 rounded-2xl border border-border/50 bg-card/80 p-4 ring-1 ring-border/25">
+              <div
+                className={cn(
+                  "space-y-3",
+                  "p-4",
+                  "rounded-2xl border border-border/50 ring-1 ring-border/25",
+                  "bg-card/80",
+                )}
+              >
                 <p className="text-sm font-medium text-foreground">Loading shell</p>
                 <div className="space-y-2">
-                  <Skeleton className="h-3 w-4/5 rounded-md" />
-                  <Skeleton className="h-3 w-full rounded-md" />
-                  <Skeleton className="h-3 w-3/5 rounded-md" />
+                  <Skeleton className={cn("h-3 w-4/5", "rounded-md")} />
+                  <Skeleton className={cn("h-3 w-full", "rounded-md")} />
+                  <Skeleton className={cn("h-3 w-3/5", "rounded-md")} />
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-2">
-              <Alert className="border-emerald-500/25 bg-emerald-500/5 dark:border-emerald-400/20 dark:bg-emerald-500/10">
-                <CheckCircle2Icon className="text-emerald-600 dark:text-emerald-400" aria-hidden />
+            <div className={cn("grid gap-3", "md:grid-cols-2")}>
+              <Alert
+                className={cn(
+                  "border-emerald-500/25",
+                  "bg-emerald-500/5",
+                  "dark:border-emerald-400/20 dark:bg-emerald-500/10",
+                )}
+              >
+                <CheckCircle2Icon
+                  className={cn("text-emerald-600", "dark:text-emerald-400")}
+                  aria-hidden
+                />
                 <AlertTitle>Checks passed</AlertTitle>
-                <AlertDescription className="block text-pretty">
+                <AlertDescription className={cn("block", "text-pretty")}>
                   Theme tokens validated against the preset; no contrast regressions on{" "}
-                  <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                  <code
+                    className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
+                  >
                     muted-foreground
                   </code>
                   .
@@ -346,7 +436,7 @@ export function ThemeLibraryPreview(): JSX.Element {
               <Alert variant="destructive">
                 <TriangleAlertIcon aria-hidden />
                 <AlertTitle>Action required</AlertTitle>
-                <AlertDescription className="block text-pretty">
+                <AlertDescription className={cn("block", "text-pretty")}>
                   Destructive surfaces stay legible when the document class flips.
                 </AlertDescription>
               </Alert>
@@ -355,9 +445,11 @@ export function ThemeLibraryPreview(): JSX.Element {
             <Alert>
               <InfoIcon className="size-4" aria-hidden />
               <AlertTitle>Neutral callout</AlertTitle>
-              <AlertDescription className="block text-pretty">
+              <AlertDescription className={cn("block", "text-pretty")}>
                 Default alerts use{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                <code
+                  className={cn("px-1", "rounded", "bg-muted font-mono text-xs text-foreground")}
+                >
                   card
                 </code>{" "}
                 and border tokens so they track appearance mode without extra wiring.
@@ -366,40 +458,51 @@ export function ThemeLibraryPreview(): JSX.Element {
           </TabsContent>
 
           <TabsContent value="surfaces" className="mt-0">
-            <div className="grid gap-4 md:grid-cols-12 md:grid-rows-[auto_auto]">
+            <div className={cn("grid gap-4", "md:grid-cols-12 md:grid-rows-[auto_auto]")}>
               <Card
                 className={cn(
+                  "border-border/50 ring-1 ring-primary/20",
+                  "bg-linear-to-br from-primary/8 via-card to-card shadow-lg",
                   "md:col-span-7 md:row-span-2",
-                  "border-border/50 bg-linear-to-br from-primary/8 via-card to-card shadow-lg ring-1 ring-primary/20",
                   "dark:from-primary/15 dark:via-card dark:to-card dark:ring-primary/25",
                 )}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <Badge variant="secondary" className="mb-2 font-normal">
+                      <Badge variant="secondary" className={cn("mb-2", "font-normal")}>
                         Featured
                       </Badge>
                       <CardTitle className="text-xl">Bento surface</CardTitle>
-                      <CardDescription className="mt-1 max-w-md">
+                      <CardDescription className={cn("max-w-md", "mt-1")}>
                         Gradient wash and ring use semantic tokens — swap mode and the panel should
                         stay balanced, not neon.
                       </CardDescription>
                     </div>
-                    <BellIcon className="size-8 shrink-0 text-primary/70" aria-hidden />
+                    <BellIcon className={cn("size-8 shrink-0", "text-primary/70")} aria-hidden />
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Separator />
                   <div className="flex flex-wrap gap-4">
                     <div>
-                      <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+                      <p
+                        className={cn(
+                          "text-2xl font-bold tracking-tight text-foreground",
+                          "tabular-nums",
+                        )}
+                      >
                         24ms
                       </p>
                       <p className="text-xs text-muted-foreground">p95 hydration</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+                      <p
+                        className={cn(
+                          "text-2xl font-bold tracking-tight text-foreground",
+                          "tabular-nums",
+                        )}
+                      >
                         99.2%
                       </p>
                       <p className="text-xs text-muted-foreground">Contrast pass</p>
@@ -408,7 +511,7 @@ export function ThemeLibraryPreview(): JSX.Element {
                 </CardContent>
               </Card>
 
-              <Card className="border-border/60 md:col-span-5">
+              <Card className={cn("border-border/60", "md:col-span-5")}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">Team</CardTitle>
                   <CardDescription>Avatar + list density</CardDescription>
@@ -421,10 +524,18 @@ export function ThemeLibraryPreview(): JSX.Element {
                   ].map((m) => (
                     <div
                       key={m.initials}
-                      className="flex items-center gap-3 rounded-xl border border-transparent px-2 py-2 transition-colors hover:border-border/60 hover:bg-muted/30"
+                      className={cn(
+                        "flex items-center gap-3",
+                        "px-2 py-2",
+                        "rounded-xl border border-transparent",
+                        "transition-colors",
+                        "hover:border-border/60 hover:bg-muted/30",
+                      )}
                     >
-                      <Avatar className="size-9 ring-2 ring-background">
-                        <AvatarFallback className="bg-primary/15 text-xs font-medium text-primary">
+                      <Avatar className={cn("size-9", "ring-2 ring-background")}>
+                        <AvatarFallback
+                          className={cn("bg-primary/15", "text-xs font-medium text-primary")}
+                        >
                           {m.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -437,7 +548,9 @@ export function ThemeLibraryPreview(): JSX.Element {
                 </CardContent>
               </Card>
 
-              <Card className="border-dashed border-border/70 bg-muted/10 md:col-span-5">
+              <Card
+                className={cn("border-dashed border-border/70", "bg-muted/10", "md:col-span-5")}
+              >
                 <CardHeader>
                   <CardTitle className="text-base">Muted canvas</CardTitle>
                   <CardDescription>Secondary panel for settings or empty states</CardDescription>
@@ -445,11 +558,23 @@ export function ThemeLibraryPreview(): JSX.Element {
                 <CardContent>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Borders, dashed or solid, pick up{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
+                      )}
+                    >
                       border
                     </code>{" "}
                     and{" "}
-                    <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">
+                    <code
+                      className={cn(
+                        "px-1",
+                        "rounded",
+                        "bg-muted font-mono text-xs text-foreground",
+                      )}
+                    >
                       muted
                     </code>{" "}
                     so previews stay honest in both themes.

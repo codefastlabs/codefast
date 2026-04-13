@@ -1,10 +1,11 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { ArrowRightIcon, Loader2Icon, SendIcon } from "lucide-react";
 
 export function ButtonDemo() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className={cn("flex flex-wrap items-center gap-2", "md:flex-row")}>
         <Button>Button</Button>
         <Button variant="outline">Outline</Button>
         <Button variant="ghost">Ghost</Button>
@@ -22,7 +23,7 @@ export function ButtonDemo() {
           Please wait
         </Button>
       </div>
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className={cn("flex flex-wrap items-center gap-2", "md:flex-row")}>
         <Button size="sm">Small</Button>
         <Button variant="outline" size="sm">
           Outline
@@ -50,7 +51,7 @@ export function ButtonDemo() {
           Please wait
         </Button>
       </div>
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className={cn("flex flex-wrap items-center gap-2", "md:flex-row")}>
         <Button size="lg">Large</Button>
         <Button variant="outline" size="lg">
           Outline

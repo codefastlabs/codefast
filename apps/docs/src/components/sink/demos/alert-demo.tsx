@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
 import { Button } from "@codefast/ui/button";
 import {
@@ -75,14 +76,24 @@ export function AlertDemo() {
       </Alert>
       <Alert>
         <CheckCircle2Icon />
-        <AlertTitle className="max-w-[calc(100%---spacing(16))] text-ellipsis">
+        <AlertTitle className={cn("max-w-[calc(100%---spacing(16))]", "text-ellipsis")}>
           The selected emails have been marked as spam.
         </AlertTitle>
-        <Button size="sm" variant="outline" className="absolute top-2.5 right-3 h-6 shadow-none">
+        <Button
+          size="sm"
+          variant="outline"
+          className={cn("absolute top-2.5 right-3", "h-6", "shadow-none")}
+        >
           Undo
         </Button>
       </Alert>
-      <Alert className="border-amber-50 bg-amber-50 text-amber-900 dark:border-amber-950 dark:bg-amber-950 dark:text-amber-100">
+      <Alert
+        className={cn(
+          "border-amber-50",
+          "bg-amber-50 text-amber-900",
+          "dark:border-amber-950 dark:bg-amber-950 dark:text-amber-100",
+        )}
+      >
         <CheckCircle2Icon />
         <AlertTitle>Plot Twist: This Alert is Actually Amber!</AlertTitle>
         <AlertDescription>This one has custom colors for light and dark mode.</AlertDescription>

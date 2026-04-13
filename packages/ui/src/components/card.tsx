@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Card
@@ -12,7 +12,9 @@ function Card({ className, ...props }: CardProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 overflow-auto rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
+        "flex flex-col gap-6 overflow-auto py-6",
+        "rounded-xl border",
+        "bg-card text-card-foreground shadow-sm",
         className,
       )}
       data-slot="card"
@@ -31,7 +33,10 @@ function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
   return (
     <div
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-[data-slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5",
+        "px-6",
+        "has-[data-slot=card-action]:grid-cols-[1fr_auto]",
+        "[.border-b]:pb-6",
         className,
       )}
       data-slot="card-header"
@@ -89,7 +94,7 @@ type CardFooterProps = ComponentProps<"div">;
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return (
     <div
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
+      className={cn("flex items-center", "px-6", "[.border-t]:pt-6", className)}
       data-slot="card-footer"
       {...props}
     />

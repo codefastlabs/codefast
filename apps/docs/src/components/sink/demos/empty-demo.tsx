@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { Card, CardContent } from "@codefast/ui/card";
 import {
@@ -50,7 +51,7 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <Empty className="min-h-[80svh] bg-muted">
+      <Empty className={cn("min-h-[80svh]", "bg-muted")}>
         <EmptyHeader>
           <EmptyTitle>No results found</EmptyTitle>
           <EmptyDescription>
@@ -66,7 +67,7 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <Empty className="min-h-[80svh] border">
+      <Empty className={cn("min-h-[80svh]", "border")}>
         <EmptyHeader>
           <EmptyTitle>404 - Not Found</EmptyTitle>
           <EmptyDescription>
@@ -104,7 +105,9 @@ export function EmptyDemo() {
           </Button>
         </EmptyContent>
       </Empty>
-      <div className="flex min-h-200 items-center justify-center rounded-xl bg-muted p-20">
+      <div
+        className={cn("flex min-h-200 items-center justify-center p-20", "rounded-xl", "bg-muted")}
+      >
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
@@ -133,7 +136,9 @@ export function EmptyDemo() {
           </CardContent>
         </Card>
       </div>
-      <div className="flex min-h-200 items-center justify-center rounded-xl bg-muted p-20">
+      <div
+        className={cn("flex min-h-200 items-center justify-center p-20", "rounded-xl", "bg-muted")}
+      >
         <Card className="max-w-sm">
           <CardContent>
             <Empty className="p-4">
@@ -206,8 +211,8 @@ export function EmptyDemo() {
             <PopoverTrigger asChild>
               <Button variant="outline">Open Popover</Button>
             </PopoverTrigger>
-            <PopoverContent className="rounded-3xl p-2">
-              <Empty className="rounded p-6">
+            <PopoverContent className={cn("p-2", "rounded-3xl")}>
+              <Empty className={cn("p-6", "rounded")}>
                 <EmptyHeader>
                   <EmptyTitle>Nothing to see here</EmptyTitle>
                   <EmptyDescription>

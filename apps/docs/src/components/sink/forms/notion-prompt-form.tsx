@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Badge } from "@codefast/ui/badge";
 import {
@@ -202,7 +203,7 @@ export function NotionPromptForm() {
         <FieldLabel htmlFor="notion-prompt" className="sr-only">
           Prompt
         </FieldLabel>
-        <InputGroup className="bg-background shadow-none dark:bg-background">
+        <InputGroup className={cn("bg-background shadow-none", "dark:bg-background")}>
           <InputGroupTextarea id="notion-prompt" placeholder="Ask, search, or make anything..." />
           <InputGroupAddon align="block-start">
             <Popover open={mentionPopoverOpen} onOpenChange={setMentionPopoverOpen}>
@@ -212,7 +213,7 @@ export function NotionPromptForm() {
                     <InputGroupButton
                       variant="outline"
                       size={!hasMentions ? "sm" : "icon-sm"}
-                      className="rounded-full transition-transform"
+                      className={cn("rounded-full", "transition-transform")}
                     >
                       <IconAt /> {!hasMentions && "Add context"}
                     </InputGroupButton>
@@ -220,7 +221,7 @@ export function NotionPromptForm() {
                 </TooltipTrigger>
                 <TooltipContent>Mention a person, page, or date</TooltipContent>
               </Tooltip>
-              <PopoverContent className="p-0 [--radius:--spacing(5)]" align="start">
+              <PopoverContent className={cn("p-0", "[--radius:--spacing(5)]")} align="start">
                 <Command>
                   <CommandInput placeholder="Search pages..." />
                   <CommandList>
@@ -246,7 +247,7 @@ export function NotionPromptForm() {
                 </Command>
               </PopoverContent>
             </Popover>
-            <div className="-m-1.5 no-scrollbar flex gap-1 overflow-y-auto p-1.5">
+            <div className={cn("-m-1.5 flex gap-1 overflow-y-auto p-1.5", "no-scrollbar")}>
               {mentions.map((mention) => {
                 const item = SAMPLE_DATA.mentionable.find(
                   (mentionable) => mentionable.title === mention,
@@ -261,7 +262,7 @@ export function NotionPromptForm() {
                     key={mention}
                     size="sm"
                     variant="secondary"
-                    className="rounded-full !pl-2"
+                    className={cn("rounded-full", "!pl-2")}
                     onClick={() => {
                       setMentions((prev) => prev.filter((m) => m !== mention));
                     }}
@@ -311,14 +312,22 @@ export function NotionPromptForm() {
                           setSelectedModel(model);
                         }
                       }}
-                      className="pl-2 *:[span:first-child]:right-2 *:[span:first-child]:left-auto"
+                      className={cn(
+                        "pl-2",
+                        "*:[span:first-child]:right-2 *:[span:first-child]:left-auto",
+                      )}
                     >
                       {model.icon && <model.icon />}
                       {model.name}
                       {model.badge && (
                         <Badge
                           variant="secondary"
-                          className="h-5 rounded bg-blue-100 px-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-100"
+                          className={cn(
+                            "h-5 px-1",
+                            "rounded",
+                            "bg-blue-100 text-xs text-blue-800",
+                            "dark:bg-blue-900 dark:text-blue-100",
+                          )}
                         >
                           {model.badge}
                         </Badge>
@@ -362,7 +371,7 @@ export function NotionPromptForm() {
                       </Avatar>
                       codefast
                     </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className="w-72 p-0 [--radius:--spacing(5)]">
+                    <DropdownMenuSubContent className={cn("w-72 p-0", "[--radius:--spacing(5)]")}>
                       <Command>
                         <CommandInput placeholder="Find or use knowledge in..." />
                         <CommandList>
@@ -409,7 +418,7 @@ export function NotionPromptForm() {
             </DropdownMenu>
             <InputGroupButton
               aria-label="Send"
-              className="ml-auto rounded-full"
+              className={cn("ml-auto", "rounded-full")}
               variant="default"
               size="icon-sm"
             >

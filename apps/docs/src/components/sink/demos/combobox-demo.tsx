@@ -118,7 +118,7 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
           role="combobox"
           aria-expanded={open}
           aria-controls={listId}
-          className="w-full justify-between md:max-w-50"
+          className={cn("w-full justify-between", "md:max-w-50")}
         >
           {value
             ? frameworkList.find((framework) => framework.value === value)?.label
@@ -126,7 +126,7 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
+      <PopoverContent className={cn("w-(--radix-popover-trigger-width)", "p-0")}>
         <Command>
           <CommandInput placeholder="Search framework..." />
           <CommandList id={listId}>
@@ -179,7 +179,7 @@ function UserCombobox({
           role="combobox"
           aria-expanded={open}
           aria-controls={listId}
-          className="w-full justify-between px-2 md:max-w-50"
+          className={cn("w-full justify-between px-2", "md:max-w-50")}
         >
           {selectedUser ? (
             <div className="flex items-center gap-2">
@@ -195,7 +195,7 @@ function UserCombobox({
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
+      <PopoverContent className={cn("w-(--radix-popover-trigger-width)", "p-0")}>
         <Command>
           <CommandInput placeholder="Search user..." />
           <CommandList id={listId}>
@@ -263,7 +263,10 @@ function TimezoneCombobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="h-12 w-full justify-between px-2.5 md:max-w-50">
+        <Button
+          variant="outline"
+          className={cn("h-12 w-full justify-between px-2.5", "md:max-w-50")}
+        >
           {selectedTimezone ? (
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-xs font-normal text-muted-foreground">
@@ -295,15 +298,15 @@ function TimezoneCombobox({
                   >
                     {timezone.label}
                     <CheckIcon
-                      className="ml-auto opacity-0 data-selected:opacity-100"
+                      className={cn("ml-auto", "opacity-0", "data-selected:opacity-100")}
                       data-selected={value === timezone.value}
                     />
                   </CommandItem>
                 ))}
               </CommandGroup>
             ))}
-            <CommandSeparator className="sticky bottom-10" />
-            <CommandGroup className="sticky bottom-0 bg-popover">
+            <CommandSeparator className={cn("sticky", "bottom-10")} />
+            <CommandGroup className={cn("sticky bottom-0", "bg-popover")}>
               <CommandItem>
                 <PlusCircleIcon />
                 Create timezone
@@ -337,7 +340,7 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
           <ChevronsUpDownIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-75 p-0" align="start">
+      <PopoverContent className={cn("w-75", "p-0")} align="start">
         <Command>
           <CommandInput placeholder="Search framework..." />
           <CommandList id={listId}>
@@ -356,10 +359,17 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
                   }}
                 >
                   <div
-                    className="pointer-events-none size-4 shrink-0 rounded border border-input transition-all select-none data-selected:border-primary data-selected:bg-primary data-selected:text-primary-foreground *:[svg]:opacity-0 data-selected:*:[svg]:opacity-100"
+                    className={cn(
+                      "size-4 shrink-0",
+                      "rounded border border-input",
+                      "pointer-events-none transition-all select-none",
+                      "data-selected:border-primary data-selected:bg-primary data-selected:text-primary-foreground",
+                      "*:[svg]:opacity-0",
+                      "data-selected:*:[svg]:opacity-100",
+                    )}
                     data-selected={selectedFrameworks.some((f) => f.value === framework.value)}
                   >
-                    <CheckIcon className="size-3.5 text-current" />
+                    <CheckIcon className={cn("size-3.5", "text-current")} />
                   </div>
                   {framework.label}
                 </CommandItem>

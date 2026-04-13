@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { ErrorComponent, Link, rootRouteId, useMatch, useRouter } from "@tanstack/react-router";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 
@@ -11,28 +12,43 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   console.error(error);
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-4">
+    <div className={cn("flex min-w-0 flex-1 flex-col items-center justify-center gap-6", "p-4")}>
       <ErrorComponent error={error} />
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => {
             void router.invalidate();
           }}
-          className="rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
+          className={cn(
+            "px-2 py-1",
+            "rounded-sm",
+            "bg-gray-600 font-extrabold text-white uppercase",
+            "dark:bg-gray-700",
+          )}
         >
           Try Again
         </button>
         {isRoot ? (
           <Link
             to="/"
-            className="rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
+            className={cn(
+              "px-2 py-1",
+              "rounded-sm",
+              "bg-gray-600 font-extrabold text-white uppercase",
+              "dark:bg-gray-700",
+            )}
           >
             Home
           </Link>
         ) : (
           <Link
             to="/"
-            className="rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
+            className={cn(
+              "px-2 py-1",
+              "rounded-sm",
+              "bg-gray-600 font-extrabold text-white uppercase",
+              "dark:bg-gray-700",
+            )}
             onClick={(e) => {
               e.preventDefault();
               window.history.back();
