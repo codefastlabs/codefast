@@ -1,8 +1,9 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Input } from "@codefast/ui/input";
 
 export function InputDemo() {
   return (
-    <div className="flex flex-col flex-wrap gap-4 md:flex-row">
+    <div className={cn("flex flex-col flex-wrap gap-4", "md:flex-row")}>
       <Input type="email" placeholder="Email" />
       <Input type="text" placeholder="Error" aria-invalid="true" />
       <Input type="password" placeholder="Password" autoComplete="current-password" />

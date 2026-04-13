@@ -2,9 +2,11 @@ import type React from "react";
 
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { renderToString } from "react-dom/server";
 
 import { ThemeProvider } from "#core/provider";
 import { useTheme } from "#core/use-theme";
+import { THEME_CHANNEL } from "#constants";
 
 describe("ThemeProvider", () => {
   const originalMatchMedia = window.matchMedia;
@@ -311,6 +313,241 @@ describe("ThemeProvider", () => {
       });
 
       expect(sync).toHaveBeenCalledTimes(1);
+    });
+
+    test("keeps initial theme when syncThemeFromServer rejects", async () => {
+      const sync = jest.fn().mockRejectedValue(new Error("network"));
+
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        <ThemeProvider syncThemeFromServer={sync} theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      await waitFor(() => {
+        expect(sync).toHaveBeenCalled();
+      });
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+    });
+
+    test("does not change preference when server returns the same theme", async () => {
+      const sync = jest.fn().mockResolvedValue("light");
+
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        <ThemeProvider syncThemeFromServer={sync} theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      await waitFor(() => {
+        expect(sync).toHaveBeenCalled();
+      });
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+    });
+
+    test("ignores server result after unmount", async () => {
+      let resolveSync!: (value: import("#types").Theme) => void;
+      const sync = jest.fn(
+        () =>
+          new Promise<import("#types").Theme>((resolve) => {
+            resolveSync = resolve;
+          }),
+      );
+
+      const { unmount } = render(
+        <ThemeProvider syncThemeFromServer={sync} theme="light">
+          <span data-testid="x">x</span>
+        </ThemeProvider>,
+      );
+
+      await waitFor(() => {
+        expect(sync).toHaveBeenCalled();
+      });
+
+      unmount();
+
+      await act(async () => {
+        resolveSync("dark");
+        await Promise.resolve();
+      });
+    });
+  });
+
+  describe("ssrSystemTheme", () => {
+    test("uses ssrSystemTheme as resolved system preference during SSR", () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { resolvedTheme } = useTheme();
+
+        return <span data-testid="resolved">{resolvedTheme}</span>;
+      };
+
+      const html = renderToString(
+        <ThemeProvider ssrSystemTheme="light" theme="system">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      expect(html).toContain("light");
+    });
+  });
+
+  describe("BroadcastChannel", () => {
+    const listenersByName = new Map<string, Set<(event: MessageEvent) => void>>();
+    const OriginalBroadcastChannel = globalThis.BroadcastChannel;
+
+    beforeAll(() => {
+      globalThis.BroadcastChannel = class MockBroadcastChannel {
+        readonly name: string;
+
+        constructor(name: string) {
+          this.name = name;
+        }
+
+        addEventListener(type: string, listener: EventListener): void {
+          if (type !== "message") return;
+          let set = listenersByName.get(this.name);
+          if (!set) {
+            set = new Set();
+            listenersByName.set(this.name, set);
+          }
+          set.add(listener as (event: MessageEvent) => void);
+        }
+
+        removeEventListener(type: string, listener: EventListener): void {
+          if (type !== "message") return;
+          listenersByName.get(this.name)?.delete(listener as (event: MessageEvent) => void);
+        }
+
+        postMessage(data: unknown): void {
+          const set = listenersByName.get(this.name);
+          if (!set) return;
+          const event = { data } as MessageEvent;
+          for (const fn of [...set]) {
+            fn(event);
+          }
+        }
+
+        close(): void {
+          /* real BC disconnects this port only; listener cleanup uses removeEventListener */
+        }
+      } as unknown as typeof BroadcastChannel;
+    });
+
+    afterAll(() => {
+      globalThis.BroadcastChannel = OriginalBroadcastChannel;
+    });
+
+    beforeEach(() => {
+      listenersByName.clear();
+    });
+
+    test("updates theme when another tab posts a different preference", async () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        <ThemeProvider theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+
+      const channel = new BroadcastChannel(THEME_CHANNEL);
+
+      await act(async () => {
+        channel.postMessage("dark");
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("theme-label")).toHaveTextContent("dark");
+      });
+
+      channel.close();
+    });
+
+    test("ignores BroadcastChannel message when preference matches current", async () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        <ThemeProvider theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      const channel = new BroadcastChannel(THEME_CHANNEL);
+
+      await act(async () => {
+        channel.postMessage("light");
+      });
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+
+      channel.close();
+    });
+  });
+
+  describe("setTheme errors", () => {
+    test("logs and keeps prior theme when persistTheme rejects", async () => {
+      const user = userEvent.setup();
+      const persistTheme = jest.fn().mockRejectedValue(new Error("persist failed"));
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+      const TestConsumer = (): React.ReactElement => {
+        const { setTheme, theme } = useTheme();
+
+        return (
+          <>
+            <span data-testid="theme-label">{theme}</span>
+            <button
+              data-testid="go-dark"
+              type="button"
+              onClick={() => {
+                void setTheme("dark");
+              }}
+            >
+              Dark
+            </button>
+          </>
+        );
+      };
+
+      render(
+        <ThemeProvider persistTheme={persistTheme} theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      await user.click(screen.getByTestId("go-dark"));
+
+      await waitFor(() => {
+        expect(consoleSpy).toHaveBeenCalled();
+      });
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+
+      consoleSpy.mockRestore();
     });
   });
 });

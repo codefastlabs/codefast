@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 
 /* -----------------------------------------------------------------------------
@@ -52,7 +52,22 @@ function PopoverContent({
       <PopoverPrimitive.Content
         align={align}
         className={cn(
-          "z-50 min-w-32 origin-(--radix-popover-content-transform-origin) rounded-lg border bg-popover p-4 text-popover-foreground shadow-lg outline-hidden ease-ui data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          "z-50",
+          "min-w-32 p-4",
+          "rounded-lg border",
+          "bg-popover shadow-lg outline-hidden",
+          "text-popover-foreground",
+          "ease-ui data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+          "data-open:data-side-top:slide-in-from-bottom-2",
+          "data-open:data-side-right:slide-in-from-left-2",
+          "data-open:data-side-bottom:slide-in-from-top-2",
+          "data-open:data-side-left:slide-in-from-right-2",
+          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "data-closed:data-side-top:slide-out-to-bottom-2",
+          "data-closed:data-side-right:slide-out-to-left-2",
+          "data-closed:data-side-bottom:slide-out-to-top-2",
+          "data-closed:data-side-left:slide-out-to-right-2",
+          "origin-(--radix-popover-content-transform-origin)",
           className,
         )}
         data-slot="popover-content"

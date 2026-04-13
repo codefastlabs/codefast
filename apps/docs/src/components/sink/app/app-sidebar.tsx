@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
 import { Label } from "@codefast/ui/label";
@@ -44,13 +45,13 @@ const SINK_PATH_PREFIX = "/sink/";
 
 function SearchForm(): JSX.Element {
   return (
-    <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
+    <SidebarGroup className={cn("py-0", "group-data-[collapsible=icon]:hidden")}>
       <SidebarGroupContent>
         <form className="relative">
           <Label htmlFor="search" className="sr-only">
             Search
           </Label>
-          <InputGroup className="h-8 bg-background shadow-none">
+          <InputGroup className={cn("h-8", "bg-background shadow-none")}>
             <InputGroupInput
               id="search"
               placeholder="Search the docs..."
@@ -114,7 +115,13 @@ function NavMainSection({ items }: NavMainSectionProps): JSX.Element {
                 <SidebarMenuButton tooltip={item.title}>
                   <item.icon />
                   <span>{item.title}</span>
-                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
+                  <ChevronRightIcon
+                    className={cn(
+                      "ml-auto",
+                      "transition-transform duration-200",
+                      "group-data-open/collapsible:rotate-90",
+                    )}
+                  />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -176,7 +183,13 @@ function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
                   <span>{REGISTRY_TYPE_LABELS[type]}</span>
-                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
+                  <ChevronRightIcon
+                    className={cn(
+                      "ml-auto",
+                      "transition-transform duration-200",
+                      "group-data-open/collapsible:rotate-90",
+                    )}
+                  />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -187,7 +200,7 @@ function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
                         <Link to={item.href}>
                           <span>{item.name}</span>
                           {item.label ? (
-                            <span className="flex size-2 rounded-full bg-blue-500" />
+                            <span className={cn("flex size-2", "rounded-full", "bg-blue-500")} />
                           ) : null}
                         </Link>
                       </SidebarMenuSubButton>

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-children-prop */
 
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { Calendar } from "@codefast/ui/calendar";
 import {
@@ -319,7 +320,7 @@ export function ExampleForm() {
                             )}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className={cn("w-auto", "p-0")} align="start">
                           <Calendar
                             required
                             mode="single"
@@ -438,7 +439,13 @@ export function ExampleForm() {
             <DialogTitle>Submitted Values</DialogTitle>
             <DialogDescription>Here are the values you submitted.</DialogDescription>
           </DialogHeader>
-          <pre className="overflow-x-auto rounded-lg bg-black p-4 font-mono text-sm text-white">
+          <pre
+            className={cn(
+              "overflow-x-auto p-4",
+              "rounded-lg",
+              "bg-black font-mono text-sm text-white",
+            )}
+          >
             <code>{JSON.stringify(values, null, 2)}</code>
           </pre>
         </DialogContent>

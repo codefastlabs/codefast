@@ -108,7 +108,7 @@ export function FormDemo() {
   function onSubmit(data: FormValues) {
     toast("You submitted the following values:", {
       description: (
-        <pre className="mt-2 w-80 rounded-lg bg-neutral-950 p-4">
+        <pre className={cn("mt-2 w-80 p-4", "rounded-lg", "bg-neutral-950")}>
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
@@ -222,7 +222,13 @@ export function FormDemo() {
           control={form.control}
           name="mobile"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start gap-3 rounded-lg border p-4 shadow-xs">
+            <FormItem
+              className={cn(
+                "flex flex-row items-start gap-3",
+                "p-4",
+                "rounded-lg border shadow-xs",
+              )}
+            >
               <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
@@ -296,16 +302,17 @@ export function FormDemo() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-60 pl-3 text-left font-normal",
+                        "w-60 pl-3",
+                        "text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      <CalendarIcon className={cn("h-4 w-4", "ml-auto", "opacity-50")} />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className={cn("w-auto", "p-0")} align="start">
                   <Calendar
                     mode="single"
                     selected={field.value}
@@ -321,13 +328,19 @@ export function FormDemo() {
           )}
         />
         <div>
-          <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+          <h3 className={cn("mb-4", "text-lg font-medium")}>Email Notifications</h3>
           <div className="flex flex-col gap-4">
             <FormField
               control={form.control}
               name="marketing_emails"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start justify-between rounded-xl border p-4 shadow-xs">
+                <FormItem
+                  className={cn(
+                    "flex flex-row items-start justify-between",
+                    "p-4",
+                    "rounded-xl border shadow-xs",
+                  )}
+                >
                   <div className="flex flex-col gap-0.5">
                     <FormLabel className="leading-normal">Marketing emails</FormLabel>
                     <FormDescription className="leading-snug">
@@ -344,8 +357,14 @@ export function FormDemo() {
               control={form.control}
               name="security_emails"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start justify-between rounded-xl border p-4 shadow-xs">
-                  <div className="flex flex-col gap-0.5 opacity-60">
+                <FormItem
+                  className={cn(
+                    "flex flex-row items-start justify-between",
+                    "p-4",
+                    "rounded-xl border shadow-xs",
+                  )}
+                >
+                  <div className={cn("flex flex-col gap-0.5", "opacity-60")}>
                     <FormLabel className="leading-normal">Security emails</FormLabel>
                     <FormDescription className="leading-snug">
                       Receive emails about your account security.

@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { HomeBentoShowcase } from "#components/home-showcase";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
@@ -67,11 +68,17 @@ function CopyButton({ text }: { text: string }) {
       onClick={() => {
         void handleCopy();
       }}
-      className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      className={cn(
+        "shrink-0 p-1.5",
+        "rounded-md",
+        "text-muted-foreground",
+        "transition-colors",
+        "hover:bg-muted hover:text-foreground",
+      )}
       aria-label="Copy to clipboard"
     >
       {copied ? (
-        <CheckIcon className="size-4 text-green-800 dark:text-green-400" />
+        <CheckIcon className={cn("size-4 text-green-800", "dark:text-green-400")} />
       ) : (
         <CopyIcon className="size-4" />
       )}
@@ -91,15 +98,15 @@ function SectionHeading({
   titleId?: string;
 }): ReactNode {
   return (
-    <div className="mx-auto mb-12 max-w-2xl text-center">
+    <div className={cn("mx-auto mb-12 max-w-2xl", "text-center")}>
       {eyebrow ? (
-        <p className="mb-3 text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+        <p className={cn("mb-3", "text-xs font-semibold tracking-[0.2em] text-primary uppercase")}>
           {eyebrow}
         </p>
       ) : null}
       <h2
         id={titleId}
-        className="mb-3 text-3xl font-bold tracking-tight text-foreground md:text-4xl"
+        className={cn("mb-3", "text-3xl font-bold tracking-tight text-foreground", "md:text-4xl")}
       >
         {title}
       </h2>
@@ -186,49 +193,91 @@ const FEATURES = [
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className={cn("min-h-screen", "bg-background")}>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/80">
+      <section className={cn("relative", "overflow-hidden", "border-b border-border/80")}>
         <div
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.45)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.45)_1px,transparent_1px)] mask-[radial-gradient(ellipse_85%_70%_at_50%_-5%,#000_45%,transparent_100%)] bg-size-[3.5rem_3.5rem] dark:bg-[linear-gradient(to_right,hsl(var(--border)/0.25)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.25)_1px,transparent_1px)]"
+          className={cn(
+            "absolute inset-0",
+            "bg-[linear-gradient(to_right,hsl(var(--border)/0.45)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.45)_1px,transparent_1px)] mask-[radial-gradient(ellipse_85%_70%_at_50%_-5%,#000_45%,transparent_100%)] bg-size-[3.5rem_3.5rem]",
+            "pointer-events-none",
+            "dark:bg-[linear-gradient(to_right,hsl(var(--border)/0.25)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.25)_1px,transparent_1px)]",
+          )}
           aria-hidden
         />
         <div
-          className="absolute inset-0 bg-linear-to-b from-primary/6 via-transparent to-transparent"
+          className={cn(
+            "absolute inset-0",
+            "bg-linear-to-b from-primary/6 via-transparent to-transparent",
+          )}
           aria-hidden
         />
         <div
-          className="absolute top-0 left-1/2 h-112 w-[min(100%,56rem)] -translate-x-1/2 rounded-[100%] bg-linear-to-br from-primary/15 via-violet-500/10 to-transparent blur-3xl dark:from-primary/20"
+          className={cn(
+            "absolute top-0 left-1/2",
+            "h-112 w-[min(100%,56rem)]",
+            "rounded-[100%]",
+            "bg-linear-to-br from-primary/15 via-violet-500/10 to-transparent",
+            "-translate-x-1/2 blur-3xl",
+            "dark:from-primary/20",
+          )}
           aria-hidden
         />
 
-        <div className="relative mx-auto max-w-4xl px-4 pt-20 pb-16 text-center sm:px-6 md:pt-28 md:pb-24">
+        <div
+          className={cn(
+            "relative",
+            "mx-auto max-w-4xl px-4 pt-20 pb-16",
+            "text-center",
+            "sm:px-6",
+            "md:pt-28 md:pb-24",
+          )}
+        >
           <Badge
             variant="secondary"
-            className="mb-6 gap-1.5 border border-border/60 bg-background/80 px-3 py-1.5 text-sm shadow-sm backdrop-blur-sm"
+            className={cn(
+              "gap-1.5",
+              "mb-6 px-3 py-1.5",
+              "border border-border/60",
+              "bg-background/80 text-sm shadow-sm",
+              "backdrop-blur-sm",
+            )}
           >
             <PackageIcon className="size-3.5" aria-hidden />
             v0.3.9 — Open source
           </Badge>
 
-          <h1 className="mb-6 text-5xl font-extrabold tracking-tight md:text-7xl">
-            <span className="text-foreground dark:bg-linear-to-r dark:from-primary dark:via-violet-400 dark:to-fuchsia-400 dark:bg-clip-text dark:text-transparent">
+          <h1 className={cn("mb-6", "text-5xl font-extrabold tracking-tight", "md:text-7xl")}>
+            <span
+              className={cn(
+                "text-foreground",
+                "dark:bg-linear-to-r dark:from-primary dark:via-violet-400 dark:to-fuchsia-400 dark:bg-clip-text dark:text-transparent",
+              )}
+            >
               @codefast/ui
             </span>
           </h1>
 
-          <p className="mx-auto mb-4 max-w-2xl text-xl leading-relaxed text-pretty text-muted-foreground md:text-2xl">
+          <p
+            className={cn(
+              "mx-auto mb-4 max-w-2xl",
+              "text-xl leading-relaxed text-pretty text-muted-foreground",
+              "md:text-2xl",
+            )}
+          >
             Production-ready React components with Radix primitives, Tailwind CSS v4, and
             tree-shakeable imports—explore a live bento below, then dive into every module.
           </p>
 
-          <p className="mx-auto mb-10 max-w-xl text-base text-pretty text-muted-foreground">
+          <p
+            className={cn("mx-auto mb-10 max-w-xl", "text-base text-pretty text-muted-foreground")}
+          >
             Tweak light, dark, or system mode on the theme page, copy install snippets, and ship
             accessible UI without reinventing patterns.
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" className="h-12 min-w-44 gap-2 shadow-md">
+          <div className={cn("flex flex-col items-center justify-center gap-3", "sm:flex-row")}>
+            <Button asChild size="lg" className={cn("h-12 min-w-44 gap-2", "shadow-md")}>
               <Link to="/sink">
                 Explore components
                 <ArrowRightIcon className="size-4" aria-hidden />
@@ -238,7 +287,12 @@ function HomePage() {
               asChild
               variant="outline"
               size="lg"
-              className="h-12 min-w-44 gap-2 border-border/80 bg-background/50 backdrop-blur-sm"
+              className={cn(
+                "h-12 min-w-44 gap-2",
+                "border-border/80",
+                "bg-background/50",
+                "backdrop-blur-sm",
+              )}
             >
               <Link to="/theme">
                 <PaletteIcon className="size-4" aria-hidden />
@@ -247,25 +301,57 @@ function HomePage() {
             </Button>
           </div>
 
-          <dl className="mx-auto mt-14 grid max-w-xl grid-cols-3 gap-2 rounded-2xl border border-border/60 bg-card/40 px-4 py-5 text-center shadow-sm backdrop-blur-sm md:gap-4 md:px-6">
-            <div className="border-r border-border/50 pr-2 md:pr-4">
+          <dl
+            className={cn(
+              "mx-auto mt-14 grid max-w-xl grid-cols-3 gap-2 px-4 py-5",
+              "rounded-2xl border border-border/60",
+              "bg-card/40 text-center shadow-sm",
+              "backdrop-blur-sm",
+              "md:gap-4 md:px-6",
+            )}
+          >
+            <div className={cn("pr-2", "border-r border-border/50", "md:pr-4")}>
               <dt className="sr-only">Component modules</dt>
-              <dd className="text-2xl font-bold text-foreground tabular-nums md:text-3xl">62</dd>
-              <dt className="mt-1 text-[0.65rem] font-medium text-muted-foreground uppercase md:text-xs">
+              <dd className={cn("text-2xl font-bold text-foreground tabular-nums", "md:text-3xl")}>
+                62
+              </dd>
+              <dt
+                className={cn(
+                  "mt-1",
+                  "text-[0.65rem] font-medium text-muted-foreground uppercase",
+                  "md:text-xs",
+                )}
+              >
                 Components
               </dt>
             </div>
-            <div className="border-r border-border/50 pr-2 md:pr-4">
+            <div className={cn("pr-2", "border-r border-border/50", "md:pr-4")}>
               <dt className="sr-only">Color themes</dt>
-              <dd className="text-2xl font-bold text-foreground tabular-nums md:text-3xl">22</dd>
-              <dt className="mt-1 text-[0.65rem] font-medium text-muted-foreground uppercase md:text-xs">
+              <dd className={cn("text-2xl font-bold text-foreground tabular-nums", "md:text-3xl")}>
+                22
+              </dd>
+              <dt
+                className={cn(
+                  "mt-1",
+                  "text-[0.65rem] font-medium text-muted-foreground uppercase",
+                  "md:text-xs",
+                )}
+              >
                 Themes
               </dt>
             </div>
             <div>
               <dt className="sr-only">Custom hooks</dt>
-              <dd className="text-2xl font-bold text-foreground tabular-nums md:text-3xl">6</dd>
-              <dt className="mt-1 text-[0.65rem] font-medium text-muted-foreground uppercase md:text-xs">
+              <dd className={cn("text-2xl font-bold text-foreground tabular-nums", "md:text-3xl")}>
+                6
+              </dd>
+              <dt
+                className={cn(
+                  "mt-1",
+                  "text-[0.65rem] font-medium text-muted-foreground uppercase",
+                  "md:text-xs",
+                )}
+              >
                 Hooks
               </dt>
             </div>
@@ -275,7 +361,13 @@ function HomePage() {
 
       {/* Bento + live demo */}
       <section
-        className="border-b border-border/60 bg-linear-to-b from-muted/15 to-background px-4 py-16 sm:px-6 md:py-24"
+        className={cn(
+          "px-4 py-16",
+          "border-b border-border/60",
+          "bg-linear-to-b from-muted/15 to-background",
+          "sm:px-6",
+          "md:py-24",
+        )}
         aria-labelledby="showcase-heading"
       >
         <SectionHeading
@@ -289,7 +381,7 @@ function HomePage() {
 
       {/* Install */}
       <section
-        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="install-heading"
       >
         <SectionHeading
@@ -299,10 +391,23 @@ function HomePage() {
           titleId="install-heading"
         />
 
-        <div className="mx-auto max-w-2xl space-y-5">
-          <Card className="overflow-hidden border-border/80 shadow-sm transition-shadow hover:shadow-md">
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+        <div className={cn("max-w-2xl space-y-5", "mx-auto")}>
+          <Card
+            className={cn(
+              "overflow-hidden",
+              "border-border/80 shadow-sm",
+              "transition-shadow",
+              "hover:shadow-md",
+            )}
+          >
+            <CardHeader className={cn("flex flex-row items-center gap-4 space-y-0", "pb-4")}>
+              <span
+                className={cn(
+                  "flex size-10 shrink-0 items-center justify-center",
+                  "rounded-full",
+                  "bg-primary/10 text-sm font-bold text-primary",
+                )}
+              >
                 1
               </span>
               <div>
@@ -311,16 +416,38 @@ function HomePage() {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="flex items-center justify-between gap-3 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm">
-                <code className="min-w-0 truncate text-foreground">pnpm add @codefast/ui</code>
+              <div
+                className={cn(
+                  "flex items-center justify-between gap-3",
+                  "px-4 py-3",
+                  "rounded-xl border border-border/80",
+                  "bg-muted/40 font-mono text-sm",
+                )}
+              >
+                <code className={cn("min-w-0", "truncate text-foreground")}>
+                  pnpm add @codefast/ui
+                </code>
                 <CopyButton text="pnpm add @codefast/ui" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden border-border/80 shadow-sm transition-shadow hover:shadow-md">
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+          <Card
+            className={cn(
+              "overflow-hidden",
+              "border-border/80 shadow-sm",
+              "transition-shadow",
+              "hover:shadow-md",
+            )}
+          >
+            <CardHeader className={cn("flex flex-row items-center gap-4 space-y-0", "pb-4")}>
+              <span
+                className={cn(
+                  "flex size-10 shrink-0 items-center justify-center",
+                  "rounded-full",
+                  "bg-primary/10 text-sm font-bold text-primary",
+                )}
+              >
                 2
               </span>
               <div>
@@ -329,18 +456,25 @@ function HomePage() {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="space-y-1 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm leading-relaxed">
+              <div
+                className={cn(
+                  "space-y-1",
+                  "px-4 py-3",
+                  "rounded-xl border border-border/80",
+                  "bg-muted/40 font-mono text-sm leading-relaxed",
+                )}
+              >
                 <div className="text-muted-foreground">{"/* globals.css */"}</div>
                 <div>
-                  <span className="text-blue-800 dark:text-blue-400">@import</span>{" "}
-                  <span className="text-green-800 dark:text-green-400">
+                  <span className={cn("text-blue-800", "dark:text-blue-400")}>@import</span>{" "}
+                  <span className={cn("text-green-800", "dark:text-green-400")}>
                     &apos;@codefast/ui/css/preset.css&apos;
                   </span>
                   ;
                 </div>
                 <div>
-                  <span className="text-blue-800 dark:text-blue-400">@import</span>{" "}
-                  <span className="text-green-800 dark:text-green-400">
+                  <span className={cn("text-blue-800", "dark:text-blue-400")}>@import</span>{" "}
+                  <span className={cn("text-green-800", "dark:text-green-400")}>
                     &apos;@codefast/ui/css/neutral.css&apos;
                   </span>
                   ;
@@ -349,9 +483,22 @@ function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden border-border/80 shadow-sm transition-shadow hover:shadow-md">
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+          <Card
+            className={cn(
+              "overflow-hidden",
+              "border-border/80 shadow-sm",
+              "transition-shadow",
+              "hover:shadow-md",
+            )}
+          >
+            <CardHeader className={cn("flex flex-row items-center gap-4 space-y-0", "pb-4")}>
+              <span
+                className={cn(
+                  "flex size-10 shrink-0 items-center justify-center",
+                  "rounded-full",
+                  "bg-primary/10 text-sm font-bold text-primary",
+                )}
+              >
                 3
               </span>
               <div>
@@ -360,24 +507,31 @@ function HomePage() {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="space-y-1 rounded-xl border border-border/80 bg-muted/40 px-4 py-3 font-mono text-sm leading-relaxed">
+              <div
+                className={cn(
+                  "space-y-1",
+                  "px-4 py-3",
+                  "rounded-xl border border-border/80",
+                  "bg-muted/40 font-mono text-sm leading-relaxed",
+                )}
+              >
                 <div>
-                  <span className="text-blue-800 dark:text-blue-400">import</span>
+                  <span className={cn("text-blue-800", "dark:text-blue-400")}>import</span>
                   {" { Button } "}
-                  <span className="text-blue-800 dark:text-blue-400">from</span>{" "}
-                  <span className="text-green-800 dark:text-green-400">
+                  <span className={cn("text-blue-800", "dark:text-blue-400")}>from</span>{" "}
+                  <span className={cn("text-green-800", "dark:text-green-400")}>
                     &apos;@codefast/ui/button&apos;
                   </span>
                   ;
                 </div>
                 <div className="mt-2">
-                  <span className="text-purple-800 dark:text-purple-400">{"<"}</span>
-                  <span className="text-blue-800 dark:text-blue-400">Button</span>
-                  <span className="text-purple-800 dark:text-purple-400">{">"}</span>
+                  <span className={cn("text-purple-800", "dark:text-purple-400")}>{"<"}</span>
+                  <span className={cn("text-blue-800", "dark:text-blue-400")}>Button</span>
+                  <span className={cn("text-purple-800", "dark:text-purple-400")}>{">"}</span>
                   Click me
-                  <span className="text-purple-800 dark:text-purple-400">{"</"}</span>
-                  <span className="text-blue-800 dark:text-blue-400">Button</span>
-                  <span className="text-purple-800 dark:text-purple-400">{">"}</span>
+                  <span className={cn("text-purple-800", "dark:text-purple-400")}>{"</"}</span>
+                  <span className={cn("text-blue-800", "dark:text-blue-400")}>Button</span>
+                  <span className={cn("text-purple-800", "dark:text-purple-400")}>{">"}</span>
                 </div>
               </div>
             </CardContent>
@@ -389,15 +543,21 @@ function HomePage() {
 
       {/* Features */}
       <section
-        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="features-heading"
       >
-        <div className="mx-auto mb-12 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+        <div className={cn("mx-auto mb-12 max-w-2xl", "text-center")}>
+          <p
+            className={cn("mb-3", "text-xs font-semibold tracking-[0.2em] text-primary uppercase")}
+          >
             Library
           </p>
           <h2
-            className="mb-3 text-3xl font-bold tracking-tight text-foreground md:text-4xl"
+            className={cn(
+              "mb-3",
+              "text-3xl font-bold tracking-tight text-foreground",
+              "md:text-4xl",
+            )}
             id="features-heading"
           >
             What @codefast/ui includes
@@ -408,15 +568,29 @@ function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className={cn("grid grid-cols-1 gap-5", "md:grid-cols-2", "lg:grid-cols-3")}>
           {FEATURES.map((feature) => (
             <Card
               key={feature.title}
-              className="group border-border/80 bg-card/60 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md"
+              className={cn(
+                "group",
+                "border-border/80",
+                "bg-card/60 shadow-sm",
+                "transition-all duration-200",
+                "hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md",
+              )}
             >
               <CardHeader className="pb-2">
-                <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15 transition-colors group-hover:bg-primary/15">
-                  <feature.icon className="size-5 text-primary" aria-hidden />
+                <div
+                  className={cn(
+                    "mb-3 flex size-11 items-center justify-center",
+                    "rounded-xl ring-1 ring-primary/15",
+                    "bg-primary/10",
+                    "transition-colors",
+                    "group-hover:bg-primary/15",
+                  )}
+                >
+                  <feature.icon className={cn("size-5", "text-primary")} aria-hidden />
                 </div>
                 <CardTitle className="text-lg">{feature.title}</CardTitle>
               </CardHeader>
@@ -434,7 +608,7 @@ function HomePage() {
 
       {/* Component Categories */}
       <section
-        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="library-heading"
       >
         <SectionHeading
@@ -444,21 +618,36 @@ function HomePage() {
           titleId="library-heading"
         />
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className={cn("grid grid-cols-1 gap-4", "md:grid-cols-2", "lg:grid-cols-3")}>
           {COMPONENT_CATEGORIES.map((category) => (
             <Card
               key={category.title}
-              className="group border-border/80 bg-card/50 transition-all duration-200 hover:border-violet-500/30 hover:shadow-md dark:hover:border-violet-400/25"
+              className={cn(
+                "group",
+                "border-border/80",
+                "bg-card/50",
+                "transition-all duration-200",
+                "hover:border-violet-500/30 hover:shadow-md",
+                "dark:hover:border-violet-400/25",
+              )}
             >
-              <CardContent className="flex items-start gap-4 p-5">
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 transition-colors group-hover:bg-violet-500/18">
+              <CardContent className={cn("flex items-start gap-4", "p-5")}>
+                <div
+                  className={cn(
+                    "flex size-11 shrink-0 items-center justify-center",
+                    "rounded-xl",
+                    "bg-violet-500/10",
+                    "transition-colors",
+                    "group-hover:bg-violet-500/18",
+                  )}
+                >
                   <category.icon
-                    className="size-5 text-violet-800 dark:text-violet-400"
+                    className={cn("size-5 text-violet-800", "dark:text-violet-400")}
                     aria-hidden
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                  <div className={cn("flex flex-wrap items-center gap-2", "mb-1.5")}>
                     <h3 className="text-sm font-semibold text-foreground">{category.title}</h3>
                     <Badge variant="secondary" className="text-xs font-normal">
                       {category.count} modules
@@ -473,7 +662,7 @@ function HomePage() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className={cn("mt-12", "text-center")}>
           <Button asChild variant="outline" size="lg" className="h-12 gap-2">
             <Link to="/sink">
               <CodeIcon className="size-4" aria-hidden />
@@ -487,7 +676,7 @@ function HomePage() {
 
       {/* Theme CTA */}
       <section
-        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="themes-heading"
       >
         <SectionHeading
@@ -511,7 +700,7 @@ function HomePage() {
 
       {/* Tech Stack */}
       <section
-        className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 md:py-24"
+        className={cn("mx-auto w-full max-w-[1400px] px-4 py-16", "sm:px-6", "md:py-24")}
         aria-labelledby="stack-heading"
       >
         <SectionHeading
@@ -521,7 +710,7 @@ function HomePage() {
           titleId="stack-heading"
         />
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        <div className={cn("grid grid-cols-2 gap-3", "md:grid-cols-4 md:gap-4")}>
           {[
             { name: "React 19", description: "UI framework" },
             { name: "Radix UI", description: "Primitives" },
@@ -530,9 +719,19 @@ function HomePage() {
           ].map((tech) => (
             <div
               key={tech.name}
-              className="flex flex-col items-center rounded-2xl border border-border/80 bg-muted/25 px-4 py-6 text-center transition-colors hover:bg-muted/45 md:py-8"
+              className={cn(
+                "flex flex-col items-center",
+                "px-4 py-6",
+                "rounded-2xl border border-border/80",
+                "bg-muted/25 text-center",
+                "transition-colors",
+                "hover:bg-muted/45",
+                "md:py-8",
+              )}
             >
-              <span className="mb-1 text-sm font-semibold text-foreground">{tech.name}</span>
+              <span className={cn("mb-1", "text-sm font-semibold text-foreground")}>
+                {tech.name}
+              </span>
               <span className="text-xs text-muted-foreground">{tech.description}</span>
             </div>
           ))}
@@ -540,18 +739,32 @@ function HomePage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="border-t border-border/80 bg-linear-to-b from-muted/30 to-background px-4 py-16 sm:px-6 md:py-24">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+      <section
+        className={cn(
+          "px-4 py-16",
+          "border-t border-border/80",
+          "bg-linear-to-b from-muted/30 to-background",
+          "sm:px-6",
+          "md:py-24",
+        )}
+      >
+        <div className={cn("max-w-2xl", "mx-auto", "text-center")}>
+          <h2
+            className={cn(
+              "mb-3",
+              "text-2xl font-bold tracking-tight text-foreground",
+              "md:text-3xl",
+            )}
+          >
             Next step
           </h2>
-          <p className="mb-10 text-pretty text-muted-foreground">
+          <p className={cn("mb-10", "text-pretty text-muted-foreground")}>
             Browse components for interactive examples, or adjust appearance on the theme page
             before you wire palettes into your codebase.
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" className="h-12 min-w-48 gap-2 shadow-md">
+          <div className={cn("flex flex-col items-center justify-center gap-3", "sm:flex-row")}>
+            <Button asChild size="lg" className={cn("h-12 min-w-48 gap-2", "shadow-md")}>
               <Link to="/sink">
                 <CodeIcon className="size-4" aria-hidden />
                 All components
@@ -561,7 +774,7 @@ function HomePage() {
               asChild
               variant="ghost"
               size="lg"
-              className="h-12 gap-2 text-muted-foreground hover:text-foreground"
+              className={cn("h-12 gap-2 text-muted-foreground", "hover:text-foreground")}
             >
               <a
                 href="https://github.com/codefastlabs/codefast"
@@ -574,13 +787,17 @@ function HomePage() {
             </Button>
           </div>
 
-          <p className="mt-14 text-sm text-muted-foreground">
+          <p className={cn("mt-14", "text-sm text-muted-foreground")}>
             Made with care by{" "}
             <a
               href="https://github.com/codefastlabs"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground underline-offset-4 transition-colors hover:underline"
+              className={cn(
+                "font-medium text-foreground underline-offset-4",
+                "transition-colors",
+                "hover:underline",
+              )}
             >
               codefastlabs
             </a>

@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Label } from "@codefast/ui/label";
 import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
 
@@ -43,15 +44,26 @@ export function RadioGroupDemo() {
       <RadioGroup defaultValue="starter" className="max-w-sm">
         {plans.map((plan) => (
           <Label
-            className="flex items-start gap-3 rounded-xl border p-4 hover:bg-accent/50 has-[[data-state=checked]]:border-green-600 has-[[data-state=checked]]:bg-green-50 dark:has-[[data-state=checked]]:border-green-900 dark:has-[[data-state=checked]]:bg-green-950"
+            className={cn(
+              "flex items-start gap-3",
+              "p-4",
+              "rounded-xl border",
+              "hover:bg-accent/50",
+              "has-data-[state=checked]:border-green-600 has-data-[state=checked]:bg-green-50",
+              "dark:has-data-[state=checked]:border-green-900 dark:has-data-[state=checked]:bg-green-950",
+            )}
             key={plan.id}
           >
             <RadioGroupItem
               value={plan.id}
               id={plan.name}
-              className="shadow-none data-checked:border-green-600 data-checked:bg-green-600 *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white"
+              className={cn(
+                "shadow-none",
+                "data-checked:border-green-600 data-checked:bg-green-600",
+                "*:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white",
+              )}
             />
-            <div className="grid gap-1 font-normal">
+            <div className={cn("grid gap-1", "font-normal")}>
               <div className="font-medium">{plan.name}</div>
               <div className="leading-snug text-muted-foreground">{plan.description}</div>
             </div>

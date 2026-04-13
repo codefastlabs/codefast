@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +24,7 @@ export function AlertDialogDemo() {
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogBody>
-          <AlertDialogDescription className="text-center sm:text-left">
+          <AlertDialogDescription className={cn("text-center", "sm:text-left")}>
             This action cannot be undone. This will permanently delete your account and remove your
             data from our servers.
           </AlertDialogDescription>

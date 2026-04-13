@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import { Checkbox } from "@codefast/ui/checkbox";
 import {
@@ -123,7 +124,7 @@ export function ChatSettings() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Button variant="outline" asChild className="w-full md:hidden">
+      <Button variant="outline" asChild className={cn("w-full", "md:hidden")}>
         <select value={tab} onChange={(e) => setTab(e.target.value)} className="appearance-none">
           <option value="general">General</option>
           <option value="notifications">Notifications</option>
@@ -132,13 +133,15 @@ export function ChatSettings() {
         </select>
       </Button>
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="hidden md:flex">
+        <TabsList className={cn("hidden", "md:flex")}>
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="personalization">Personalization</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
-        <div className="rounded-xl border p-6 **:data-[slot=select-trigger]:min-w-31.25">
+        <div
+          className={cn("p-6", "rounded-xl border", "**:data-[slot=select-trigger]:min-w-31.25")}
+        >
           <TabsContent value="general">
             <FieldSet>
               <FieldGroup>
@@ -164,27 +167,57 @@ export function ChatSettings() {
                     </SelectTrigger>
                     <SelectContent align="end">
                       <SelectItem value="default">
-                        <CircleIcon className="fill-neutral-500 stroke-neutral-500 dark:fill-neutral-400 dark:stroke-neutral-400" />
+                        <CircleIcon
+                          className={cn(
+                            "fill-neutral-500 stroke-neutral-500",
+                            "dark:fill-neutral-400 dark:stroke-neutral-400",
+                          )}
+                        />
                         Default
                       </SelectItem>
                       <SelectItem value="red">
-                        <CircleIcon className="fill-red-500 stroke-red-500 dark:fill-red-400 dark:stroke-red-400" />
+                        <CircleIcon
+                          className={cn(
+                            "fill-red-500 stroke-red-500",
+                            "dark:fill-red-400 dark:stroke-red-400",
+                          )}
+                        />
                         Red
                       </SelectItem>
                       <SelectItem value="blue">
-                        <CircleIcon className="fill-blue-500 stroke-blue-500 dark:fill-blue-400 dark:stroke-blue-400" />
+                        <CircleIcon
+                          className={cn(
+                            "fill-blue-500 stroke-blue-500",
+                            "dark:fill-blue-400 dark:stroke-blue-400",
+                          )}
+                        />
                         Blue
                       </SelectItem>
                       <SelectItem value="green">
-                        <CircleIcon className="fill-green-500 stroke-green-500 dark:fill-green-400 dark:stroke-green-400" />
+                        <CircleIcon
+                          className={cn(
+                            "fill-green-500 stroke-green-500",
+                            "dark:fill-green-400 dark:stroke-green-400",
+                          )}
+                        />
                         Green
                       </SelectItem>
                       <SelectItem value="purple">
-                        <CircleIcon className="fill-purple-500 stroke-purple-500 dark:fill-purple-400 dark:stroke-purple-400" />
+                        <CircleIcon
+                          className={cn(
+                            "fill-purple-500 stroke-purple-500",
+                            "dark:fill-purple-400 dark:stroke-purple-400",
+                          )}
+                        />
                         Purple
                       </SelectItem>
                       <SelectItem value="pink">
-                        <CircleIcon className="fill-pink-500 stroke-pink-500 dark:fill-pink-400 dark:stroke-pink-400" />
+                        <CircleIcon
+                          className={cn(
+                            "fill-pink-500 stroke-pink-500",
+                            "dark:fill-pink-400 dark:stroke-pink-400",
+                          )}
+                        />
                         Pink
                       </SelectItem>
                     </SelectContent>
@@ -301,7 +334,7 @@ export function ChatSettings() {
               <FieldSeparator />
               <Field
                 orientation="responsive"
-                className="@md/field-group:flex-col @2xl/field-group:flex-row"
+                className={cn("@md/field-group:flex-col", "@2xl/field-group:flex-row")}
               >
                 <FieldContent>
                   <FieldLabel htmlFor="about">More about you</FieldLabel>
@@ -313,7 +346,11 @@ export function ChatSettings() {
                 <Textarea
                   id="about"
                   placeholder="I'm a software engineer..."
-                  className="min-h-30 @md/field-group:min-w-full @2xl/field-group:min-w-75"
+                  className={cn(
+                    "min-h-30",
+                    "@md/field-group:min-w-full",
+                    "@2xl/field-group:min-w-75",
+                  )}
                 />
               </Field>
               <FieldSeparator />

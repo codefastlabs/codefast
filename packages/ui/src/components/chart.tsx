@@ -5,7 +5,7 @@ import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } fro
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import type { TooltipContentProps, TooltipProps } from "recharts";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 import { useId, useMemo } from "react";
 import * as RechartsPrimitive from "recharts";
@@ -80,7 +80,19 @@ function ChartContainer({
     <ChartContextProvider config={config} scope={__scopeChart}>
       <div
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
+          "flex aspect-video justify-center text-xs",
+          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground",
+          "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50",
+          "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border",
+          "[&_.recharts-dot[stroke='#fff']]:stroke-transparent",
+          "[&_.recharts-layer]:outline-hidden",
+          "[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border",
+          "[&_.recharts-radial-bar-background-sector]:fill-muted",
+          "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted",
+          "[&_.recharts-reference-line_[stroke='#ccc']]:stroke-border",
+          "[&_.recharts-sector]:outline-hidden",
+          "[&_.recharts-sector[stroke='#fff']]:stroke-transparent",
+          "[&_.recharts-surface]:outline-hidden",
           className,
         )}
         data-chart={chartId}
@@ -210,7 +222,9 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
   return (
     <div
       className={cn(
-        "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+        "grid min-w-[8rem] items-start gap-1.5 px-2.5 py-1.5",
+        "rounded-lg border border-border/50",
+        "bg-background text-xs shadow-xl",
         className,
       )}
     >
@@ -232,7 +246,8 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
             <div
               key={key}
               className={cn(
-                "flex w-full flex-wrap items-stretch gap-2 [&>svg]:size-2.5 [&>svg]:text-muted-foreground",
+                "flex w-full flex-wrap items-stretch gap-2",
+                "[&>svg]:size-2.5 [&>svg]:text-muted-foreground",
                 indicator === "dot" && "items-center",
               )}
             >
@@ -246,7 +261,9 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                     !hideIndicator && (
                       <div
                         className={cn(
-                          "shrink-0 rounded-xs border-(--color-border) bg-(--color-bg)",
+                          "shrink-0",
+                          "rounded-xs border-(--color-border)",
+                          "bg-(--color-bg)",
                           {
                             "h-2.5 w-2.5": indicator === "dot",
                             "my-0.5": nestLabel && indicator === "dashed",
@@ -265,7 +282,8 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                   )}
                   <div
                     className={cn(
-                      "flex flex-1 justify-between leading-none",
+                      "flex flex-1 justify-between",
+                      "leading-none",
                       nestLabel ? "items-end" : "items-center",
                     )}
                   >
@@ -276,7 +294,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                       </span>
                     </div>
                     {item.value != null && (
-                      <span className="font-mono font-medium text-foreground tabular-nums">
+                      <span className={cn("font-mono font-medium text-foreground", "tabular-nums")}>
                         {typeof item.value === "number"
                           ? item.value.toLocaleString()
                           : safeToString(item.value)}
@@ -349,13 +367,16 @@ function ChartLegendContent({
         return (
           <div
             key={nameKey ? safeToString(itemConfig?.color ?? "") : safeToString(item.value ?? "")}
-            className={cn("flex items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-muted-foreground")}
+            className={cn(
+              "flex items-center gap-1.5",
+              "[&>svg]:size-3 [&>svg]:text-muted-foreground",
+            )}
           >
             {itemConfig?.icon && !hideIcon ? (
               <itemConfig.icon />
             ) : (
               <div
-                className="size-2 shrink-0 rounded-md"
+                className={cn("size-2 shrink-0", "rounded-md")}
                 style={{
                   backgroundColor: item.color,
                 }}

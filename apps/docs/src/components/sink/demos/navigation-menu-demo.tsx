@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -56,20 +57,26 @@ const components: ComponentItem[] = [
 
 export function NavigationMenuDemo() {
   return (
-    <div className="w-full flex-col items-center justify-center gap-6 @xl:flex">
+    <div className={cn("w-full flex-col items-center justify-center gap-6", "@xl:flex")}>
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid gap-2 md:w-100 lg:w-125 lg:grid-cols-[.75fr_1fr]">
+              <ul className={cn("grid gap-2", "md:w-100", "lg:w-125 lg:grid-cols-[.75fr_1fr]")}>
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <Link
-                      className="flex h-full w-full flex-col justify-end rounded-lg bg-linear-to-b from-muted/50 to-muted p-6 no-underline outline-hidden select-none focus:shadow-md"
+                      className={cn(
+                        "flex h-full w-full flex-col justify-end p-6",
+                        "rounded-lg",
+                        "bg-linear-to-b from-muted/50 to-muted no-underline outline-hidden",
+                        "select-none",
+                        "focus:shadow-md",
+                      )}
                       to="/"
                     >
-                      <div className="mt-4 mb-2 text-lg font-medium">@codefast/ui</div>
+                      <div className={cn("mt-4 mb-2", "text-lg font-medium")}>@codefast/ui</div>
                       <p className="text-sm leading-tight text-muted-foreground">
                         Beautifully designed components built with Tailwind CSS.
                       </p>
@@ -91,7 +98,7 @@ export function NavigationMenuDemo() {
           <NavigationMenuItem>
             <NavigationMenuTrigger>Components</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">
+              <ul className={cn("grid w-100 gap-2", "md:w-125 md:grid-cols-2", "lg:w-150")}>
                 {components.map((component) => (
                   <ListItem key={component.title} title={component.title} href={component.href}>
                     {component.description}

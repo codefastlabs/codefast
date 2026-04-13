@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
@@ -63,7 +64,11 @@ function InputSearch({
       {value ? (
         <InputGroupButton
           aria-label="Clear search"
-          className="rounded-full focus-visible:ring-0 focus-visible:not-disabled:bg-input"
+          className={cn(
+            "rounded-full",
+            "focus-visible:ring-0",
+            "focus-visible:not-disabled:bg-input",
+          )}
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
           size="icon-sm"

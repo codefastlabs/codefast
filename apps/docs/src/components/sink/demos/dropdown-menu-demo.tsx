@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Button } from "@codefast/ui/button";
 import {
@@ -181,29 +182,29 @@ function DropdownMenuWithAvatar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-12 justify-start px-2 md:max-w-50">
+        <Button variant="outline" className={cn("h-12 justify-start px-2", "md:max-w-50")}>
           <Avatar>
             <AvatarImage src="https://github.com/codefastlabs.png" alt="CodeFast" />
             <AvatarFallback className="rounded-xl">CF</AvatarFallback>
           </Avatar>
-          <div className="grid flex-1 text-left text-sm leading-tight">
+          <div className={cn("grid flex-1", "text-left text-sm leading-tight")}>
             <span className="truncate font-semibold">codefast</span>
             <span className="truncate text-xs text-muted-foreground">m@example.com</span>
           </div>
-          <ChevronsUpDownIcon className="ml-auto text-muted-foreground" />
+          <ChevronsUpDownIcon className={cn("ml-auto", "text-muted-foreground")} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
         align="start"
       >
-        <DropdownMenuLabel className="p-0 font-normal">
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+        <DropdownMenuLabel className={cn("p-0", "font-normal")}>
+          <div className={cn("flex items-center gap-2", "px-1 py-1.5", "text-left text-sm")}>
             <Avatar>
               <AvatarImage src="https://github.com/codefastlabs.png" alt="CodeFast" />
               <AvatarFallback className="rounded-xl">CF</AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
+            <div className={cn("grid flex-1", "text-left text-sm leading-tight")}>
               <span className="truncate font-semibold">codefast</span>
               <span className="truncate text-xs text-muted-foreground">m@example.com</span>
             </div>
@@ -245,7 +246,7 @@ function DropdownMenuAvatarOnly() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="size-8 rounded-full border-none p-0">
+        <Button variant="outline" className={cn("size-8 p-0", "rounded-full border-none")}>
           <Avatar>
             <AvatarImage src="https://github.com/maxleiter.png" alt="maxleiter" />
             <AvatarFallback className="rounded-xl">LR</AvatarFallback>
@@ -256,13 +257,13 @@ function DropdownMenuAvatarOnly() {
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
         align="start"
       >
-        <DropdownMenuLabel className="p-0 font-normal">
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+        <DropdownMenuLabel className={cn("p-0", "font-normal")}>
+          <div className={cn("flex items-center gap-2", "px-1 py-1.5", "text-left text-sm")}>
             <Avatar>
               <AvatarImage src="https://github.com/maxleiter.png" alt="maxleiter" />
               <AvatarFallback className="rounded-xl">LR</AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
+            <div className={cn("grid flex-1", "text-left text-sm leading-tight")}>
               <span className="truncate font-semibold">maxleiter</span>
               <span className="truncate text-xs text-muted-foreground">maxleiter@example.com</span>
             </div>

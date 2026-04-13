@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#utils/tv";
+import { cn } from "#lib/utils";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
@@ -19,7 +19,9 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        "flex flex-col overflow-hidden rounded-[inherit] bg-popover text-popover-foreground outline-hidden",
+        "flex flex-col overflow-hidden",
+        "rounded-[inherit]",
+        "bg-popover text-popover-foreground outline-hidden",
         className,
       )}
       data-slot="command"
@@ -37,14 +39,23 @@ type CommandDialogProps = ComponentProps<typeof Dialog>;
 function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element {
   return (
     <Dialog data-slot="command-dialog" {...props}>
-      <DialogContent className="rounded-t-lg sm:rounded-lg" data-slot="command-dialog-content">
+      <DialogContent
+        className={cn("rounded-t-lg", "sm:rounded-lg")}
+        data-slot="command-dialog-content"
+      >
         <VisuallyHidden>
           <DialogTitle>Search command</DialogTitle>
           <DialogDescription>
             Use the search bar to find and select the desired command.
           </DialogDescription>
         </VisuallyHidden>
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
+        <Command
+          className={cn(
+            "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
+            "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
+            "[&_[cmdk-input]]:h-12",
+          )}
+        >
           {children}
         </Command>
       </DialogContent>
@@ -62,13 +73,18 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
     <div
       cmdk-input-wrapper
-      className="flex items-center gap-2 border-b px-3"
+      className={cn("flex items-center gap-2", "px-3", "border-b")}
       data-slot="command-input-wrapper"
     >
-      <SearchIcon className="size-4 shrink-0 opacity-50" />
+      <SearchIcon className={cn("size-4 shrink-0", "opacity-50")} />
       <CommandPrimitive.Input
         className={cn(
-          "flex h-10 w-full text-base outline-hidden placeholder:text-muted-foreground disabled:opacity-50 md:text-sm",
+          "flex h-10 w-full",
+          "text-base",
+          "outline-hidden",
+          "placeholder:text-muted-foreground",
+          "disabled:opacity-50",
+          "md:text-sm",
           className,
         )}
         data-slot="command-input"
@@ -103,7 +119,7 @@ type CommandEmptyProps = ComponentProps<typeof CommandPrimitive.Empty>;
 function CommandEmpty({ className, ...props }: CommandEmptyProps): JSX.Element {
   return (
     <CommandPrimitive.Empty
-      className={cn("py-6 text-center text-sm", className)}
+      className={cn("py-6", "text-center text-sm", className)}
       data-slot="command-empty"
       {...props}
     />
@@ -120,7 +136,8 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
   return (
     <CommandPrimitive.Group
       className={cn(
-        "overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
+        "overflow-hidden p-1 text-foreground",
+        "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
         className,
       )}
       data-slot="command-group"
@@ -138,7 +155,7 @@ type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
 function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
   return (
     <CommandPrimitive.Separator
-      className={cn("-mx-1 h-px bg-border", className)}
+      className={cn("-mx-1 h-px", "bg-border", className)}
       data-slot="command-separator"
       {...props}
     />
@@ -155,7 +172,16 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
   return (
     <CommandPrimitive.Item
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none aria-disabled:opacity-50 aria-selected:bg-accent aria-selected:text-accent-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "group/command-item relative flex items-center gap-x-2",
+        "px-2 py-1.5",
+        "rounded-sm outline-hidden",
+        "text-sm",
+        "cursor-default select-none",
+        "aria-disabled:opacity-50",
+        "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        "[&_svg]:shrink-0",
+        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       data-slot="command-item"
@@ -173,7 +199,7 @@ type CommandLoadingProps = ComponentProps<typeof CommandPrimitive.Loading>;
 function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Element {
   return (
     <CommandPrimitive.Loading
-      className={cn("flex justify-center p-2", className)}
+      className={cn("flex justify-center", "p-2", className)}
       data-slot="command-loading"
       {...props}
     />
@@ -189,7 +215,7 @@ type CommandShortcutProps = ComponentProps<"span">;
 function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
   return (
     <span
-      className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)}
+      className={cn("ml-auto", "text-xs tracking-widest text-muted-foreground", className)}
       data-slot="command-shortcut"
       {...props}
     />

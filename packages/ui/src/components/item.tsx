@@ -1,7 +1,7 @@
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#utils/tv";
+import { cn, tv } from "#lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 
 import { Separator } from "#components/separator";
@@ -11,19 +11,23 @@ import { Separator } from "#components/separator";
  * -------------------------------------------------------------------------- */
 
 const itemVariants = tv({
-  base: cn(
-    "group/item flex flex-wrap items-center rounded-lg border border-transparent text-sm outline-hidden transition-colors duration-100",
-    "[a]:transition-colors [a]:hover:bg-accent/50",
+  base: [
+    "group/item flex flex-wrap items-center",
+    "rounded-lg border border-transparent outline-hidden",
+    "text-sm",
+    "transition-colors duration-100",
     "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-  ),
+    "[a]:transition-colors",
+    "[a]:hover:bg-accent/50",
+  ],
   defaultVariants: {
     size: "default",
     variant: "default",
   },
   variants: {
     size: {
-      default: "gap-4 p-4",
-      sm: "gap-2.5 px-4 py-3",
+      default: ["gap-4", "p-4"],
+      sm: ["gap-2.5", "px-4 py-3"],
     },
     variant: {
       default: "bg-transparent",
@@ -34,18 +38,28 @@ const itemVariants = tv({
 });
 
 const itemMediaVariants = tv({
-  base: cn(
-    "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:self-start",
-    "group-has-[[data-slot=item-description]]/item:translate-y-0.5 [&_svg]:pointer-events-none",
-  ),
+  base: [
+    "flex shrink-0 items-center justify-center gap-2",
+    "group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start",
+    "[&_svg]:pointer-events-none",
+  ],
   defaultVariants: {
     variant: "default",
   },
   variants: {
     variant: {
       default: "bg-transparent",
-      icon: "size-8 shrink-0 rounded-md border bg-muted [&_svg:not([class*='size-'])]:size-4",
-      image: "size-10 shrink-0 overflow-hidden rounded-md [&_img]:size-full [&_img]:object-cover",
+      icon: [
+        "size-8 shrink-0",
+        "rounded-md border",
+        "bg-muted",
+        "[&_svg:not([class*='size-'])]:size-4",
+      ],
+      image: [
+        "size-10 shrink-0 overflow-hidden",
+        "rounded-md",
+        "[&_img]:size-full [&_img]:object-cover",
+      ],
     },
   },
 });
@@ -139,7 +153,11 @@ type ItemContentProps = ComponentProps<"div">;
 function ItemContent({ className, ...props }: ItemContentProps): JSX.Element {
   return (
     <div
-      className={cn("flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none", className)}
+      className={cn(
+        "flex flex-1 flex-col gap-1",
+        "[&+[data-slot=item-content]]:flex-none",
+        className,
+      )}
       data-slot="item-content"
       {...props}
     />
@@ -155,7 +173,7 @@ type ItemTitleProps = ComponentProps<"div">;
 function ItemTitle({ className, ...props }: ItemTitleProps): JSX.Element {
   return (
     <div
-      className={cn("flex w-fit items-center gap-2 text-sm leading-snug font-medium", className)}
+      className={cn("flex w-fit items-center gap-2", "text-sm leading-snug font-medium", className)}
       data-slot="item-title"
       {...props}
     />
@@ -173,7 +191,8 @@ function ItemDescription({ className, ...props }: ItemDescriptionProps): JSX.Ele
     <p
       className={cn(
         "line-clamp-2 text-sm leading-normal font-normal text-balance text-muted-foreground",
-        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "[&>a]:underline [&>a]:underline-offset-4",
+        "[&>a:hover]:text-primary",
         className,
       )}
       data-slot="item-description"

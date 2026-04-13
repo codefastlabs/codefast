@@ -1,10 +1,10 @@
 "use client";
 
-import type { VariantProps } from "#utils/tv";
+import type { VariantProps } from "#lib/utils";
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#utils/tv";
+import { cn, tv } from "#lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 
@@ -13,7 +13,7 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
  * -------------------------------------------------------------------------- */
 
 const scrollAreaScrollbarVariants = tv({
-  base: "flex touch-none p-px transition-colors select-none",
+  base: ["flex", "p-px", "touch-none transition-colors select-none"],
   compoundVariants: [
     {
       className: "w-1.5",
@@ -52,8 +52,8 @@ const scrollAreaScrollbarVariants = tv({
   },
   variants: {
     orientation: {
-      horizontal: "w-full flex-col border-t border-t-transparent",
-      vertical: "h-full flex-row border-l border-l-transparent",
+      horizontal: ["w-full flex-col", "border-t border-t-transparent"],
+      vertical: ["h-full flex-row", "border-l border-l-transparent"],
     },
     size: {
       none: "",
@@ -105,7 +105,12 @@ function ScrollArea({
         {...props}
       >
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] ring-ring/50 outline-ring transition focus-visible:ring-4 focus-visible:outline-1"
+          className={cn(
+            "size-full",
+            "rounded-[inherit] ring-ring/50 outline-ring",
+            "transition",
+            "focus-visible:ring-4 focus-visible:outline-1",
+          )}
           data-slot="scroll-area-viewport"
         >
           {children}
@@ -139,7 +144,9 @@ function ScrollAreaScrollbar({
       orientation={orientation}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+      <ScrollAreaPrimitive.ScrollAreaThumb
+        className={cn("relative flex-1", "rounded-full", "bg-border")}
+      />
     </ScrollAreaPrimitive.Scrollbar>
   );
 }

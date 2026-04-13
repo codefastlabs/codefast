@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
@@ -35,7 +36,12 @@ export function CardDemo() {
                   <Label htmlFor="password">Password</Label>
                   <Link
                     to="/"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    className={cn(
+                      "inline-block",
+                      "ml-auto",
+                      "text-sm underline-offset-4",
+                      "hover:underline",
+                    )}
                   >
                     Forgot your password?
                   </Link>
@@ -52,9 +58,9 @@ export function CardDemo() {
           <Button variant="outline" className="w-full">
             Login with Google
           </Button>
-          <div className="mt-4 text-center text-sm">
+          <div className={cn("mt-4", "text-center text-sm")}>
             Don&apos;t have an account?{" "}
-            <Link to="/" className="underline underline-offset-4">
+            <Link to="/" className={cn("underline", "underline-offset-4")}>
               Sign up
             </Link>
           </div>
@@ -67,7 +73,7 @@ export function CardDemo() {
         </CardHeader>
         <CardContent className="text-sm">
           <p>Client requested dashboard redesign with focus on mobile responsiveness.</p>
-          <ol className="mt-4 flex list-decimal flex-col gap-2 pl-6">
+          <ol className={cn("flex flex-col gap-2", "mt-4 pl-6", "list-decimal")}>
             <li>New analytics widgets for daily/weekly metrics</li>
             <li>Simplified navigation menu</li>
             <li>Dark mode support</li>
@@ -76,7 +82,12 @@ export function CardDemo() {
           </ol>
         </CardContent>
         <CardFooter>
-          <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
+          <div
+            className={cn(
+              "flex -space-x-2",
+              "*:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale",
+            )}
+          >
             <Avatar>
               <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
               <AvatarFallback>CF</AvatarFallback>
@@ -117,10 +128,12 @@ export function CardDemo() {
           <Badge variant="outline">
             <LandPlotIcon /> 350m²
           </Badge>
-          <div className="ml-auto font-medium tabular-nums">$135,000</div>
+          <div className={cn("ml-auto", "font-medium tabular-nums")}>$135,000</div>
         </CardFooter>
       </Card>
-      <div className="flex w-full flex-wrap items-start gap-8 md:*:data-[slot=card]:basis-1/4">
+      <div
+        className={cn("flex w-full flex-wrap items-start gap-8", "md:*:data-[slot=card]:basis-1/4")}
+      >
         <Card>
           <CardContent className="text-sm">Content Only</CardContent>
         </Card>

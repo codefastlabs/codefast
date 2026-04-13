@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Checkbox } from "@codefast/ui/checkbox";
 import {
   Field,
@@ -85,7 +86,7 @@ export function DisplaySettings() {
             <FieldDescription>Select the display refresh rate.</FieldDescription>
           </FieldContent>
           <Select>
-            <SelectTrigger id="refresh-rate" className="ml-auto min-w-50">
+            <SelectTrigger id="refresh-rate" className={cn("min-w-50", "ml-auto")}>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent align="end">

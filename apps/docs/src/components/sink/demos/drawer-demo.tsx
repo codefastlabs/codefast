@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import {
   Drawer,
@@ -83,7 +84,7 @@ function DrawerBottom() {
         <Button variant="outline">Open Drawer</Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
+        <div className={cn("w-full max-w-sm", "mx-auto")}>
           <DrawerHeader>
             <DrawerTitle>Move Goal</DrawerTitle>
             <DrawerDescription>Set your daily activity goal.</DrawerDescription>
@@ -93,21 +94,21 @@ function DrawerBottom() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
+                className={cn("h-8 w-8 shrink-0", "rounded-full")}
                 onClick={() => onClick(-10)}
                 disabled={goal <= 200}
               >
                 <MinusIcon />
                 <span className="sr-only">Decrease</span>
               </Button>
-              <div className="flex-1 text-center">
+              <div className={cn("flex-1", "text-center")}>
                 <div className="text-7xl font-bold tracking-tighter">{goal}</div>
                 <div className="text-xs text-muted-foreground uppercase">Calories/day</div>
               </div>
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
+                className={cn("h-8 w-8 shrink-0", "rounded-full")}
                 onClick={() => onClick(10)}
                 disabled={goal >= 400}
               >
@@ -115,7 +116,7 @@ function DrawerBottom() {
                 <span className="sr-only">Increase</span>
               </Button>
             </div>
-            <div className="mt-3 h-30">
+            <div className={cn("h-30", "mt-3")}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data}>
                   <Bar
@@ -154,10 +155,10 @@ function DrawerScrollableContent() {
           <DrawerTitle>Move Goal</DrawerTitle>
           <DrawerDescription>Set your daily activity goal.</DrawerDescription>
         </DrawerHeader>
-        <div className="overflow-y-auto px-4 text-sm">
-          <h4 className="mb-4 text-lg leading-none font-medium">Lorem Ipsum</h4>
+        <div className={cn("overflow-y-auto", "px-4", "text-sm")}>
+          <h4 className={cn("mb-4", "text-lg leading-none font-medium")}>Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
-            <p key={index} className="mb-4 leading-normal">
+            <p key={index} className={cn("mb-4", "leading-normal")}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
               exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
@@ -195,9 +196,9 @@ function DrawerDirections() {
               <DrawerTitle>Move Goal</DrawerTitle>
               <DrawerDescription>Set your daily activity goal.</DrawerDescription>
             </DrawerHeader>
-            <div className="overflow-y-auto px-4 text-sm">
+            <div className={cn("overflow-y-auto", "px-4", "text-sm")}>
               {Array.from({ length: 10 }).map((_, index) => (
-                <p key={index} className="mb-4 leading-normal">
+                <p key={index} className={cn("mb-4", "leading-normal")}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                   incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
                   exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute

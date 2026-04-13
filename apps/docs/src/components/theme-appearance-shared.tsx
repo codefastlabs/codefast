@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -16,11 +17,17 @@ export function CopySnippetButton({ text }: { text: string }) {
       onClick={() => {
         void handleCopy();
       }}
-      className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      className={cn(
+        "shrink-0 p-1.5",
+        "rounded-md",
+        "text-muted-foreground",
+        "transition-colors",
+        "hover:bg-muted hover:text-foreground",
+      )}
       aria-label="Copy code to clipboard"
     >
       {copied ? (
-        <CheckIcon className="size-4 text-green-800 dark:text-green-400" />
+        <CheckIcon className={cn("size-4 text-green-800", "dark:text-green-400")} />
       ) : (
         <CopyIcon className="size-4" />
       )}

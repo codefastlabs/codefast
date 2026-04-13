@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   Card,
   CardContent,
@@ -91,8 +92,8 @@ export function ChartBarMixedDemo() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 leading-none font-medium">
+      <CardFooter className={cn("flex-col items-start gap-2", "text-sm")}>
+        <div className={cn("flex gap-2", "leading-none font-medium")}>
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">

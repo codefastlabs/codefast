@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Card, CardContent } from "@codefast/ui/card";
 import {
   Carousel,
@@ -9,14 +10,24 @@ import {
 
 export function CarouselDemo() {
   return (
-    <div className="w-full flex-col items-center gap-4 px-12 @4xl:flex">
-      <Carousel className="max-w-sm *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex">
+    <div className={cn("w-full flex-col items-center gap-4 px-12", "@4xl:flex")}>
+      <Carousel
+        className={cn(
+          "max-w-sm",
+          "*:data-[slot=carousel-next]:hidden",
+          "*:data-[slot=carousel-previous]:hidden",
+          "*:data-[slot=carousel-next]:md:inline-flex",
+          "*:data-[slot=carousel-previous]:md:inline-flex",
+        )}
+      >
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
             <CarouselItem key={index}>
               <div className="p-1">
                 <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-6">
+                  <CardContent
+                    className={cn("flex aspect-square items-center justify-center", "p-6")}
+                  >
                     <span className="text-4xl font-semibold">{index + 1}</span>
                   </CardContent>
                 </Card>
@@ -28,17 +39,25 @@ export function CarouselDemo() {
         <CarouselNext />
       </Carousel>
       <Carousel
-        className="max-w-sm *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
+        className={cn(
+          "max-w-sm",
+          "*:data-[slot=carousel-next]:hidden",
+          "*:data-[slot=carousel-previous]:hidden",
+          "*:data-[slot=carousel-next]:md:inline-flex",
+          "*:data-[slot=carousel-previous]:md:inline-flex",
+        )}
         opts={{
           align: "start",
         }}
       >
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={index} className={cn("md:basis-1/2", "lg:basis-1/3")}>
               <div className="p-1">
                 <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-6">
+                  <CardContent
+                    className={cn("flex aspect-square items-center justify-center", "p-6")}
+                  >
                     <span className="text-3xl font-semibold">{index + 1}</span>
                   </CardContent>
                 </Card>
@@ -49,13 +68,23 @@ export function CarouselDemo() {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-      <Carousel className="max-w-sm *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex">
+      <Carousel
+        className={cn(
+          "max-w-sm",
+          "*:data-[slot=carousel-next]:hidden",
+          "*:data-[slot=carousel-previous]:hidden",
+          "*:data-[slot=carousel-next]:md:inline-flex",
+          "*:data-[slot=carousel-previous]:md:inline-flex",
+        )}
+      >
         <CarouselContent className="-ml-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index} className="pl-1 md:basis-1/2">
+            <CarouselItem key={index} className={cn("pl-1", "md:basis-1/2")}>
               <div className="p-1">
                 <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-6">
+                  <CardContent
+                    className={cn("flex aspect-square items-center justify-center", "p-6")}
+                  >
                     <span className="text-2xl font-semibold">{index + 1}</span>
                   </CardContent>
                 </Card>
