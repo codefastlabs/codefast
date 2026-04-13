@@ -2,16 +2,9 @@ import path from "node:path";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { loadMirrorConfig } from "#lib/mirror/config";
-import {
-  createPathTransform,
-  generateExports,
-  getExportGroup,
-  groupFilesByModule,
-  normalizePath,
-  toExportPath,
-} from "#lib/mirror/engine";
+import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
+import { createPathTransform, generateExports, normalizePath } from "#lib/mirror/engine";
 import { resolvePackageFilterUnderRoot } from "#lib/mirror/package-filter";
-import type { GlobalStats, MirrorConfig, MirrorOptions, PackageStats } from "#lib/mirror/types";
 import {
   configureMirrorColors,
   logPackageError,
@@ -25,12 +18,12 @@ import {
   mirrorSummarySeparator,
   printMirrorConfigWarnings,
 } from "#lib/mirror/reporter";
+import type { GlobalStats, MirrorConfig, MirrorOptions, PackageStats } from "#lib/mirror/types";
 import {
   readPackageJsonDisplayName,
   resolvePackageDisplayName,
   writePackageJsonExportsAtomic,
 } from "#lib/mirror/update-pkg";
-import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
 import { findWorkspacePackageRelPaths } from "#lib/mirror/workspace-packages";
 
 async function processPackage(
@@ -111,12 +104,13 @@ async function processPackage(
       cssConfig,
       customExports,
     );
+
+    await writePackageJsonExportsAtomic(fs, packageJsonPath, generatedExports.exports);
+
     pkgStats.jsModules = generatedExports.jsCount;
     pkgStats.cssExports = generatedExports.cssCount;
     pkgStats.customExports = Object.keys(customExports).length;
     pkgStats.totalExports = Object.keys(generatedExports.exports).length;
-
-    await writePackageJsonExportsAtomic(fs, packageJsonPath, generatedExports.exports);
 
     stats.packagesProcessed++;
     stats.totalExports += pkgStats.totalExports;
@@ -206,22 +200,3 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
     return 1;
   }
 }
-
-export type {
-  ExportMap,
-  ExportMapData,
-  FindWorkspacePackagesResult,
-  MirrorOptions,
-  WorkspaceMultiDiscoverySource,
-} from "#lib/mirror/types";
-export { MirrorError, MirrorErrorCode } from "#lib/mirror/errors";
-export { resolvePackageFilterUnderRoot } from "#lib/mirror/package-filter";
-export { parsePnpmWorkspaceDocument } from "#lib/mirror/workspace-packages";
-export {
-  createPathTransform,
-  generateExports,
-  getExportGroup,
-  groupFilesByModule,
-  normalizePath,
-  toExportPath,
-} from "#lib/mirror/engine";
