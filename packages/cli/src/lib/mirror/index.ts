@@ -212,7 +212,6 @@ export type {
   ExportMapData,
   FindWorkspacePackagesResult,
   MirrorOptions,
-  RunMirrorSyncOptions,
   WorkspaceMultiDiscoverySource,
 } from "#lib/mirror/types";
 export { MirrorError, MirrorErrorCode } from "#lib/mirror/errors";

@@ -92,6 +92,3 @@ export interface MirrorOptions {
   fs?: CliFs;
   logger?: CliLogger;
 }
-
-/** @deprecated Prefer {@link MirrorOptions} */
-export type RunMirrorSyncOptions = MirrorOptions;

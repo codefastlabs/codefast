@@ -27,18 +27,9 @@ export { analyzeDirectory } from "#lib/arrange/analyze";
 export { printAnalyzeReport } from "#lib/arrange/report";
 export { groupFile } from "#lib/arrange/group-file";
 export { runOnTarget } from "#lib/arrange/run-target";
-export {
-  createNodeCliFs,
-  createNodeCliLogger,
-  createNodeCliFs as createNodeArrangeFs,
-  createNodeCliLogger as createNodeArrangeLogger,
-} from "#lib/infra/node-io";
+export { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 export { ArrangeError, ArrangeErrorCode } from "#lib/arrange/errors";
 export type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-/** @deprecated Use {@link CliFs} */
-export type { CliFs as ArrangeFs } from "#lib/infra/fs-contract";
-/** @deprecated Use {@link CliLogger} */
-export type { CliLogger as ArrangeLogger } from "#lib/infra/fs-contract";
 export type {
   AnalyzeReport,
   ArrangeGroupFileOptions,
@@ -49,6 +40,7 @@ export type {
 } from "#lib/arrange/types";
 
 export { DEFAULT_ARRANGE_TARGET, LONG_STRING_TOKEN_THRESHOLD } from "#lib/arrange/constants";
+export { cnModuleSpecifierForFile, ensureCnImport } from "#lib/arrange/imports";
 export {
   areCnTailwindPartitionsEquivalent,
   capGroups,
