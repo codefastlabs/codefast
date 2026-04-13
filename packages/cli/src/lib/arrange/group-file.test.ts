@@ -35,7 +35,7 @@ function captureStdout(fn: () => void): string {
 
 describe("groupFile", () => {
   it("unwraps cn() inside tv base into string/array form", () => {
-    const before = `import { cn, tv } from "tailwind-variants";
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
 
 export const styles = tv({
   base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium"),
@@ -77,13 +77,35 @@ export function Fixture() {
   });
 
   it("supports namespace imports for tw.tv / tw.cn and rewrites tw.cn usage", () => {
-    const before = `import * as tw from "tailwind-variants";
+    const before = `import * as tw from "@codefast/tailwind-variants";
 
 export const styles = tw.tv({
   base: tw.cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
 });
 `;
     withTempFixture("FixtureNamespace.tsx", before, (filePath) => {
+      const result = groupFile(
+        filePath,
+        { write: true, withClassName: false },
+        arrangeFs,
+        arrangeLogger,
+      );
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(result.changed).toBeGreaterThan(0);
+      expect(after).toContain("tw.tv(");
+      expect(after.includes("tw.cn(")).toBe(false);
+      expect(after).toMatch(/base:\s*(\[|"[^"]+)/);
+    });
+  });
+
+  it("supports namespace imports from legacy tailwind-variants package (backward compat)", () => {
+    const before = `import * as tw from "tailwind-variants";
+
+export const styles = tw.tv({
+  base: tw.cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureNamespaceLegacy.tsx", before, (filePath) => {
       const result = groupFile(
         filePath,
         { write: true, withClassName: false },
@@ -153,7 +175,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
   });
 
   it("dry-run returns totalFound 0 when cn partition is already idempotent", () => {
-    const before = `import { cn } from "tailwind-variants";
+    const before = `import { cn } from "@codefast/tailwind-variants";
 cn("flex gap-2", "text-sm");`;
     withTempFixture("FixturePartitionEq.tsx", before, (filePath) => {
       expect(
@@ -167,7 +189,7 @@ cn("flex gap-2", "text-sm");`;
   });
 
   it("counts cn() inside tv with zero args as found but unchanged", () => {
-    const before = `import { cn, tv } from "tailwind-variants";
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
 export const broken = tv({ base: cn() });`;
     withTempFixture("FixtureZeroArg.tsx", before, (filePath) => {
       const dry = groupFile(
@@ -206,7 +228,7 @@ export function Fixture() {
   });
 
   it("passes withClassName option through cn replacement", () => {
-    const before = `import { cn } from "tailwind-variants";
+    const before = `import { cn } from "@codefast/tailwind-variants";
 export function Fixture() {
   return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
 }`;
@@ -243,7 +265,7 @@ export function Fixture() {
   });
 
   it("groups compoundVariants class array slots", () => {
-    const before = `import { tv } from "tailwind-variants";
+    const before = `import { tv } from "@codefast/tailwind-variants";
 export const sheet = tv({
   compoundVariants: [{ className: ["flex gap-2 text-sm rounded-md border px-3 font-medium", "shadow-xs"] }],
 });`;
@@ -261,7 +283,7 @@ export const sheet = tv({
   });
 
   it("groups compoundVariants mixed class array slot with cn(...) and plain strings", () => {
-    const before = `import { cn, tv } from "tailwind-variants";
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
 export const sheet = tv({
   compoundVariants: [{ class: ["py-1", cn("flex gap-2 text-sm rounded-md border px-3 font-medium shadow-xs")] }],
 });`;
@@ -281,7 +303,7 @@ export const sheet = tv({
   it("dry-run prints combined unwrap + grouping note", () => {
     const long =
       "flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card font-medium shadow-xs";
-    const before = `import { cn, tv } from "tailwind-variants";
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
 cn("${long}");
 export const styles = tv({ base: cn("${long}") });`;
     withTempFixture("FixtureDryCombined.tsx", before, (filePath) => {

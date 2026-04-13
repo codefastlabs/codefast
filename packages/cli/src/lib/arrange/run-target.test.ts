@@ -36,7 +36,7 @@ describe("runOnTarget", () => {
     try {
       fs.writeFileSync(
         path.join(dir, "Page.tsx"),
-        `import { cn } from "tailwind-variants"; export function P(){ cn("${long}"); return null; }`,
+        `import { cn } from "@codefast/tailwind-variants"; export function P(){ cn("${long}"); return null; }`,
         "utf8",
       );
       const out = captureStdout(() =>
@@ -67,7 +67,7 @@ describe("runOnTarget", () => {
 
   it("prints apply summary in write mode", () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-run-apply-"));
-    const before = `import { cn } from "tailwind-variants";
+    const before = `import { cn } from "@codefast/tailwind-variants";
 export function Fixture() {
   return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
 }`;
@@ -78,6 +78,26 @@ export function Fixture() {
       );
       expect(out).toContain("Applied:");
       expect(out).toContain("Note:");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("accepts legacy tailwind-variants imports when running directory dry-run (backward compat)", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-run-dry-legacy-"));
+    const long =
+      "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
+    try {
+      fs.writeFileSync(
+        path.join(dir, "Page.tsx"),
+        `import { cn } from "tailwind-variants"; export function P(){ cn("${long}"); return null; }`,
+        "utf8",
+      );
+      const out = captureStdout(() =>
+        runOnTarget(dir, { write: false, withClassName: false }, arrangeFs, arrangeLogger),
+      );
+      expect(out).toContain("Total:");
+      expect(out).toContain("to review");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

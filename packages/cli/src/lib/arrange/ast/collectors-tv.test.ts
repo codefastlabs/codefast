@@ -4,7 +4,7 @@ import { MAX_OBJECT_DEPTH } from "#lib/arrange/constants";
 
 describe("collectGroupableStringNodes", () => {
   it("collects cn/tv static class slots eligible for grouping", () => {
-    const source = `import { cn, tv } from "tailwind-variants";
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
 export const styles = tv({
   base: cn("flex gap-2 text-sm rounded-md border px-3"),
 });
@@ -16,7 +16,7 @@ export const styles = tv({
   });
 
   it("collects tv array slots without cn()", () => {
-    const source = `import { tv } from "tailwind-variants";
+    const source = `import { tv } from "@codefast/tailwind-variants";
 export const styles = tv({
   base: ["flex gap-2 text-sm rounded-md border px-3", "shadow-xs"],
 });
@@ -28,7 +28,7 @@ export const styles = tv({
   });
 
   it("collects compoundVariants className string slots", () => {
-    const source = `import { tv } from "tailwind-variants";
+    const source = `import { tv } from "@codefast/tailwind-variants";
 export const styles = tv({
   compoundVariants: [{ className: "flex gap-2 text-sm rounded-md border px-3" }],
 });
@@ -39,7 +39,7 @@ export const styles = tv({
   });
 
   it("collects compoundVariants class array with mixed strings and cn()", () => {
-    const source = `import { cn, tv } from "tailwind-variants";
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
 export const styles = tv({
   compoundVariants: [{ class: ["py-1", cn("flex gap-2 text-sm rounded-md border px-3")] }],
 });
@@ -66,11 +66,23 @@ export const styles = tv({
     for (let i = 0; i < MAX_OBJECT_DEPTH + 2; i += 1) {
       nestedObject = `{ layer${i}: ${nestedObject} }`;
     }
-    const source = `import { tv } from "tailwind-variants";
+    const source = `import { tv } from "@codefast/tailwind-variants";
 export const styles = tv(${nestedObject});
 `;
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     expect(() => collectGroupableStringNodes(sf)).not.toThrow();
     expect(collectGroupableStringNodes(sf)).toEqual([]);
+  });
+
+  it("accepts legacy tailwind-variants import for tv slot collection (backward compat)", () => {
+    const source = `import { cn, tv } from "tailwind-variants";
+export const styles = tv({
+  base: cn("flex gap-2 text-sm rounded-md border px-3"),
+});
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const nodes = collectGroupableStringNodes(sf);
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(slotClassString(nodes[0]!)).toContain("flex gap-2");
   });
 });
