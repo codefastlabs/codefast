@@ -55,6 +55,7 @@ export {
   mergeEaseTimingIntoFollowingAnimatedState,
   mergeSingletons,
   suggestCnGroups,
+  summarizeGroupBucketLabels,
 } from "#lib/arrange/grouping";
 export {
   classifyToken,

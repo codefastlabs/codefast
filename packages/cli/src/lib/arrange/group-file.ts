@@ -80,6 +80,7 @@ function printGroupFilePreview(
   for (const plan of plannedGroupEdits) {
     out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
     out(`  ${plan.replacement.split("\n").join("\n  ")}`);
+    out(`  // Buckets: ${JSON.stringify(plan.bucketSummary)}`);
   }
 }
 

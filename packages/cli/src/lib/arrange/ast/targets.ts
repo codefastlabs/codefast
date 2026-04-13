@@ -1,6 +1,10 @@
 import ts from "typescript";
 import { APPLY_MIN_TOKENS } from "#lib/arrange/constants";
-import { areCnTailwindPartitionsEquivalent, suggestCnGroups } from "#lib/arrange/grouping";
+import {
+  areCnTailwindPartitionsEquivalent,
+  suggestCnGroups,
+  summarizeGroupBucketLabels,
+} from "#lib/arrange/grouping";
 import {
   escapeTsStringLiteralContent,
   formatArray,
@@ -112,6 +116,7 @@ export function planGroupEditForTarget(
       start,
       end,
       replacement,
+      bucketSummary: summarizeGroupBucketLabels(groups),
       jsxCn: true,
       lineSf: target.sf,
       reportNode: target.lit,
@@ -151,6 +156,7 @@ export function planGroupEditForTarget(
       start,
       end,
       replacement,
+      bucketSummary: summarizeGroupBucketLabels(groups),
       jsxCn: false,
       lineSf: target.item.sf,
       reportNode: firstNode,
@@ -166,6 +172,7 @@ export function planGroupEditForTarget(
     start,
     end,
     replacement,
+    bucketSummary: summarizeGroupBucketLabels(groups),
     jsxCn: false,
     lineSf: target.item.sf,
     reportNode: target.item.node,
