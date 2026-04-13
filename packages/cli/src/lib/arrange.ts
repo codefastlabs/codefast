@@ -33,6 +33,7 @@ export type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 export type {
   AnalyzeReport,
   ArrangeGroupFileOptions,
+  ArrangeRunResult,
   ArrangeRunOnTargetOptions,
   Bucket,
   ForEachStringLiteralInClassExpressionOptions,

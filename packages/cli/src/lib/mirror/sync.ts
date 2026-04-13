@@ -84,6 +84,11 @@ async function processPackage(
     return pkgStats;
   }
 
+  /**
+   * Carries legacy path metadata for backward compatibility fallback in config lookup.
+   * @deprecated Path-based configuration keys are deprecated. Use package name instead.
+   * @todo Remove in v2.0
+   */
   const pkgMeta: MirrorPackageMeta = { relPath: relativePath, packageName: pkgStats.name };
 
   if (isPackageSkipped(config.skipPackages, pkgMeta, logger)) {

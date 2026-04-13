@@ -130,3 +130,10 @@ export type ArrangeGroupFileOptions = {
 };
 
 export type ArrangeRunOnTargetOptions = ArrangeGroupFileOptions;
+
+export type ArrangeRunResult = {
+  filePaths: string[];
+  modifiedFiles: string[];
+  totalFound: number;
+  totalChanged: number;
+};

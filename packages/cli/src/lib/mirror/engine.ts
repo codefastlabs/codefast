@@ -127,6 +127,11 @@ export function getExportGroup(
 
 export function createPathTransform(
   config: MirrorConfig | undefined,
+  /**
+   * Includes legacy path metadata to support backward-compatible config lookup.
+   * @deprecated Path-based configuration keys are deprecated. Use package name instead.
+   * @todo Remove in v2.0
+   */
   pkgMeta: MirrorPackageMeta,
   logger?: CliLogger,
 ): ((pathString: string) => string) | null {
