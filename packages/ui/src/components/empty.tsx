@@ -9,8 +9,7 @@ import { cn, tv } from "#lib/utils";
 
 const emptyMediaVariants = tv({
   base: [
-    "flex shrink-0 items-center justify-center",
-    "mb-2",
+    "mb-2 flex shrink-0 items-center justify-center",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0",
   ],
   defaultVariants: {
@@ -21,8 +20,8 @@ const emptyMediaVariants = tv({
       default: "bg-transparent",
       icon: [
         "flex size-10 shrink-0 items-center justify-center",
-        "rounded-xl bg-muted",
-        "text-foreground",
+        "rounded-xl",
+        "bg-muted text-foreground",
         "[&_svg:not([class*='size-'])]:size-6",
       ],
     },
@@ -39,8 +38,7 @@ function Empty({ className, ...props }: EmptyProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col items-center justify-center gap-6",
-        "p-6",
+        "flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-6",
         "rounded-xl border-dashed",
         "text-center text-balance",
         "md:p-12",
@@ -112,7 +110,8 @@ function EmptyDescription({ className, ...props }: EmptyDescriptionProps): JSX.E
     <p
       className={cn(
         "text-sm/relaxed text-muted-foreground",
-        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "[&>a]:underline [&>a]:underline-offset-4",
+        "[&>a:hover]:text-primary",
         className,
       )}
       data-slot="empty-description"

@@ -48,7 +48,8 @@ function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Eleme
     <AvatarPrimitive.Fallback
       className={cn(
         "flex size-full items-center justify-center",
-        "rounded-full bg-muted",
+        "rounded-full",
+        "bg-muted",
         className,
       )}
       data-slot="avatar-fallback"

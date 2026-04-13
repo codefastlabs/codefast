@@ -49,8 +49,7 @@ function ResizableSeparator({
     <ResizablePrimitive.Separator
       className={cn(
         "flex items-center justify-center",
-        "bg-border",
-        "outline-hidden",
+        "bg-border outline-hidden",
         "focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "aria-[orientation=horizontal]:h-px",
         "aria-[orientation=vertical]:w-px",
@@ -63,7 +62,8 @@ function ResizableSeparator({
         <div
           className={cn(
             "z-10 flex h-4 w-3 items-center justify-center",
-            "rounded-sm border bg-border",
+            "rounded-sm border",
+            "bg-border",
           )}
         >
           <GripVerticalIcon className="size-2.5" />

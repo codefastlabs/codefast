@@ -12,10 +12,9 @@ function Card({ className, ...props }: CardProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 overflow-auto",
-        "py-6",
-        "rounded-xl border bg-card shadow-sm",
-        "text-card-foreground",
+        "flex flex-col gap-6 overflow-auto py-6",
+        "rounded-xl border",
+        "bg-card text-card-foreground shadow-sm",
         className,
       )}
       data-slot="card"
@@ -34,10 +33,9 @@ function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
   return (
     <div
       className={cn(
-        "grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5",
+        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5",
         "px-6",
         "has-[data-slot=card-action]:grid-cols-[1fr_auto]",
-        "@container/card-header",
         "[.border-b]:pb-6",
         className,
       )}

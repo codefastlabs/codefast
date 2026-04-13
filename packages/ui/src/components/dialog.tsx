@@ -52,11 +52,9 @@ function DialogContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          "fixed z-50",
-          "inset-0",
+          "fixed inset-0 z-50",
           "bg-black/50",
-          "ease-ui",
-          "data-open:animate-in data-open:fade-in-0",
+          "ease-ui data-open:animate-in data-open:fade-in-0",
           "data-closed:animate-out data-closed:fade-out-0",
           classNames?.overlay,
         )}
@@ -64,11 +62,9 @@ function DialogContent({
       />
       <DialogPrimitive.Content
         className={cn(
-          "fixed z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto",
-          "inset-0",
-          "ease-ui",
+          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto",
           "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
-          "data-open:animate-in",
+          "ease-ui data-open:animate-in",
           "max-sm:data-open:animation-duration-500 max-sm:data-open:slide-in-from-bottom",
           "sm:data-open:fade-in-0 sm:data-open:zoom-in-95",
           "data-closed:animate-out",
@@ -82,8 +78,8 @@ function DialogContent({
         <div
           className={cn(
             "relative row-start-2 flex w-full flex-col",
-            "rounded-t-2xl border bg-popover shadow-lg",
-            "text-popover-foreground",
+            "rounded-t-2xl border",
+            "bg-popover text-popover-foreground shadow-lg",
             "sm:max-w-lg sm:rounded-2xl",
             classNames?.content,
             className,
@@ -118,9 +114,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5",
-        "px-6 pt-6 pb-2",
-        "text-center",
+        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-2 text-center",
         "sm:text-left",
         className,
       )}
@@ -156,8 +150,7 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2",
-        "px-6 pt-2 pb-6",
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-2 pb-6",
         "sm:flex-row sm:justify-end",
         className,
       )}

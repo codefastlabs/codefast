@@ -10,9 +10,9 @@ type TableProps = ComponentProps<"table">;
 
 function Table({ className, ...props }: TableProps): JSX.Element {
   return (
-    <div className="relative w-full overflow-auto" data-slot="table-cotainer">
+    <div className={cn("relative", "w-full overflow-auto")} data-slot="table-cotainer">
       <table
-        className={cn("w-full", "text-sm", "caption-bottom", className)}
+        className={cn("w-full text-sm", "caption-bottom", className)}
         data-slot="table"
         {...props}
       />
@@ -29,7 +29,7 @@ type TableHeaderProps = ComponentProps<"thead">;
 function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
   return (
     <thead
-      className={cn("*:border-b *:has-aria-expanded:bg-transparent", className)}
+      className={cn("*:border-b", "*:has-aria-expanded:bg-transparent", className)}
       data-slot="table-header"
       {...props}
     />
@@ -58,9 +58,9 @@ function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
     <tfoot
       className={cn(
-        "bg-muted/50",
-        "font-medium",
-        "*:border-t *:border-b-0 *:has-aria-expanded:bg-transparent",
+        "bg-muted/50 font-medium",
+        "*:border-t *:border-b-0",
+        "*:has-aria-expanded:bg-transparent",
         className,
       )}
       data-slot="table-footer"

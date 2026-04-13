@@ -18,17 +18,22 @@ function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JS
     <input
       className={cn(
         "peer inline-flex size-4 shrink-0 items-center justify-center",
-        "rounded-full border border-input shadow-xs",
-        "appearance-none outline-hidden",
+        "rounded-full border border-input shadow-xs outline-hidden",
+        "appearance-none",
         "after:size-full after:rounded-full after:bg-background after:transition-[width,height]",
-        "checked:border-primary checked:bg-primary checked:after:size-1",
+        "checked:border-primary checked:bg-primary",
+        "checked:after:size-1",
         "hover:not-disabled:not-checked:border-ring/60",
-        "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:not-checked:border-ring focus-visible:checked:ring-primary/20",
+        "focus-visible:ring-3 focus-visible:ring-ring/50",
+        "focus-visible:not-checked:border-ring",
+        "focus-visible:checked:ring-primary/20",
         "disabled:opacity-50",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
         "checked:aria-invalid:bg-destructive",
         "hover:not-disabled:not-checked:aria-invalid:border-destructive/60",
-        "dark:not-checked:after:bg-input/30 dark:focus-visible:checked:ring-primary/40 dark:aria-invalid:ring-destructive/40",
+        "dark:not-checked:after:bg-input/30",
+        "dark:focus-visible:checked:ring-primary/40",
+        "dark:aria-invalid:ring-destructive/40",
         className,
       )}
       data-slot="radio"

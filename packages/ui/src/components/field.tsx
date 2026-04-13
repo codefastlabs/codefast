@@ -23,13 +23,20 @@ const fieldVariants = tv({
       horizontal: [
         "flex-row items-center",
         "has-[>[data-slot=field-content]]:items-start",
-        "[&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "[&>[data-slot=field-label]]:flex-auto",
+        "has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
       ],
       responsive: [
-        "flex-col @md/field-group:flex-row @md/field-group:items-center @md/field-group:has-[>[data-slot=field-content]]:items-start",
-        "[&>*]:w-full @md/field-group:[&>*]:w-auto [&>.sr-only]:w-auto @md/field-group:[&>[data-slot=field-label]]:flex-auto @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "flex-col",
+        "@md/field-group:flex-row @md/field-group:items-center",
+        "@md/field-group:has-[>[data-slot=field-content]]:items-start",
+        "[&>*]:w-full",
+        "@md/field-group:[&>*]:w-auto",
+        "[&>.sr-only]:w-auto",
+        "@md/field-group:[&>[data-slot=field-label]]:flex-auto",
+        "@md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
       ],
-      vertical: ["flex-col", "[&>*]:w-full [&>.sr-only]:w-auto"],
+      vertical: ["flex-col", "[&>*]:w-full", "[&>.sr-only]:w-auto"],
     },
   },
 });
@@ -84,9 +91,8 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
   return (
     <div
       className={cn(
-        "group/field-group flex w-full flex-col gap-7",
+        "group/field-group @container/field-group flex w-full flex-col gap-7",
         "data-[slot=checkbox-group]:gap-3",
-        "@container/field-group",
         "[&>[data-slot=field-group]]:gap-4",
         className,
       )}
@@ -140,8 +146,7 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
   return (
     <Label
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2",
-        "leading-snug",
+        "group/field-label peer/field-label flex w-fit gap-2 leading-snug",
         "group-data-disabled/field:opacity-50",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border",
         "has-data-checked:border-primary has-data-checked:bg-primary/5",
@@ -165,8 +170,7 @@ function FieldTitle({ className, ...props }: FieldTitleProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex w-fit items-center gap-2",
-        "text-sm leading-snug font-medium",
+        "flex w-fit items-center gap-2 text-sm leading-snug font-medium",
         "group-data-disabled/field:opacity-50",
         className,
       )}
@@ -190,7 +194,9 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.E
         "group-has-data-[orientation=horizontal]/field:text-balance",
         "last:mt-0",
         "nth-last-2:-mt-1",
-        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary [[data-variant=legend]+&]:-mt-1.5",
+        "[&>a]:underline [&>a]:underline-offset-4",
+        "[&>a:hover]:text-primary",
+        "[[data-variant=legend]+&]:-mt-1.5",
         className,
       )}
       data-slot="field-description"
@@ -213,9 +219,8 @@ function FieldSeparator({ children, className, ...props }: FieldSeparatorProps):
   return (
     <div
       className={cn(
-        "relative h-5",
-        "-my-2",
-        "text-sm",
+        "relative",
+        "-my-2 h-5 text-sm",
         "group-data-[variant=outline]/field-group:-mb-2",
         className,
       )}
@@ -227,10 +232,9 @@ function FieldSeparator({ children, className, ...props }: FieldSeparatorProps):
       {hasContent ? (
         <span
           className={cn(
-            "relative block w-fit",
-            "mx-auto px-2",
-            "bg-background",
-            "text-muted-foreground",
+            "relative block",
+            "mx-auto w-fit px-2",
+            "bg-background text-muted-foreground",
           )}
           data-slot="field-separator-content"
         >

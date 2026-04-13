@@ -32,10 +32,9 @@ function Slider({
     <SliderPrimitive.Root
       className={cn(
         "relative flex w-full items-center",
-        "select-none",
+        "touch-none select-none",
         "data-vertical:h-full data-vertical:min-h-44 data-vertical:w-auto data-vertical:flex-col",
         "data-disabled:opacity-50",
-        "touch-none",
         className,
       )}
       data-slot="slider"
@@ -47,8 +46,10 @@ function Slider({
     >
       <SliderPrimitive.Track
         className={cn(
-          "relative w-full grow overflow-hidden",
-          "rounded-full bg-input",
+          "relative",
+          "w-full grow overflow-hidden",
+          "rounded-full",
+          "bg-input",
           "data-horizontal:h-1 data-horizontal:w-full",
           "data-vertical:h-full data-vertical:w-1",
         )}
@@ -65,8 +66,8 @@ function Slider({
           aria-label="Volume"
           className={cn(
             "flex size-4 items-center justify-center",
-            "rounded-full border-2 border-primary bg-primary shadow-sm",
-            "outline-hidden",
+            "rounded-full border-2 border-primary",
+            "bg-primary shadow-sm outline-hidden",
             "after:size-full after:rounded-full after:bg-background after:transition-[width,height]",
             "focus-visible:ring-4 focus-visible:ring-primary/20",
             "active:not-data-disabled:after:size-1",

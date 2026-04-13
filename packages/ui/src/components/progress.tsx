@@ -14,7 +14,13 @@ type ProgressProps = ComponentProps<typeof ProgressPrimitive.Root>;
 function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
   return (
     <ProgressPrimitive.Root
-      className={cn("relative h-2 w-full overflow-hidden", "rounded-full bg-primary/20", className)}
+      className={cn(
+        "relative",
+        "h-2 w-full overflow-hidden",
+        "rounded-full",
+        "bg-primary/20",
+        className,
+      )}
       data-slot="progress"
       {...props}
     >

@@ -50,13 +50,14 @@ function CheckboxCardsItem({
       <CheckboxGroupPrimitive.Item
         className={cn(
           "peer flex size-4 shrink-0",
-          "rounded-sm border border-input shadow-xs",
+          "rounded-sm border border-input shadow-xs outline-hidden",
           "text-primary-foreground",
-          "outline-hidden transition",
+          "transition",
           "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
           "aria-checked:border-primary aria-checked:bg-primary",
           "focus-visible:aria-checked:ring-primary/20",
-          "dark:bg-input/30 dark:focus-visible:aria-checked:ring-primary/40",
+          "dark:bg-input/30",
+          "dark:focus-visible:aria-checked:ring-primary/40",
           checkboxClassName,
         )}
         data-slot="checkbox-card-item"

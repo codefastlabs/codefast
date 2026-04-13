@@ -55,7 +55,7 @@ function DrawerContent({
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Overlay
-        className={cn("fixed z-50", "inset-0", "bg-black/50", classNames?.overlay)}
+        className={cn("fixed inset-0 z-50", "bg-black/50", classNames?.overlay)}
         data-slot="drawer-overlay"
       />
       <DrawerPrimitive.Content
@@ -76,9 +76,10 @@ function DrawerContent({
       >
         <div
           className={cn(
-            "hidden h-1.5 w-12 shrink-0",
-            "mx-auto mt-4",
-            "rounded-full bg-muted",
+            "hidden",
+            "mx-auto mt-4 h-1.5 w-12 shrink-0",
+            "rounded-full",
+            "bg-muted",
             "group-data-[vaul-drawer-direction=bottom]/drawer-content:block",
             classNames?.handle,
           )}

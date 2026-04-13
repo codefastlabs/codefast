@@ -15,13 +15,14 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
-        "peer inline-flex h-5 w-9 shrink-0 items-center",
-        "p-0.75",
-        "rounded-full border border-transparent shadow-xs",
-        "outline-hidden transition-all",
-        "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:not-data-checked:border-ring/60",
+        "peer inline-flex h-5 w-9 shrink-0 items-center p-0.75",
+        "rounded-full border border-transparent shadow-xs outline-hidden",
+        "transition-all",
+        "focus-visible:ring-3 focus-visible:ring-ring/50",
+        "focus-visible:not-data-checked:border-ring/60",
         "disabled:opacity-50",
-        "data-checked:bg-primary data-checked:focus-visible:ring-primary/20",
+        "data-checked:bg-primary",
+        "data-checked:focus-visible:ring-primary/20",
         "dark:data-checked:focus-visible:ring-primary/40",
         "data-unchecked:bg-input",
         "dark:data-unchecked:bg-input/80",
@@ -32,8 +33,10 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
     >
       <SwitchPrimitives.Thumb
         className={cn(
-          "block size-3.5",
-          "rounded-full bg-background shadow-sm",
+          "block",
+          "size-3.5",
+          "rounded-full",
+          "bg-background shadow-sm",
           "pointer-events-none transition-transform",
           "dark:not-data-checked:bg-foreground",
           "data-checked:translate-x-3.5",

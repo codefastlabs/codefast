@@ -20,9 +20,8 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
     <CommandPrimitive
       className={cn(
         "flex flex-col overflow-hidden",
-        "rounded-[inherit] bg-popover",
-        "text-popover-foreground",
-        "outline-hidden",
+        "rounded-[inherit]",
+        "bg-popover text-popover-foreground outline-hidden",
         className,
       )}
       data-slot="command"
@@ -50,7 +49,13 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
             Use the search bar to find and select the desired command.
           </DialogDescription>
         </VisuallyHidden>
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
+        <Command
+          className={cn(
+            "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
+            "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
+            "[&_[cmdk-input]]:h-12",
+          )}
+        >
           {children}
         </Command>
       </DialogContent>
@@ -131,9 +136,7 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
   return (
     <CommandPrimitive.Group
       className={cn(
-        "overflow-hidden",
-        "p-1",
-        "text-foreground",
+        "overflow-hidden p-1 text-foreground",
         "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
         className,
       )}
@@ -152,7 +155,7 @@ type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
 function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
   return (
     <CommandPrimitive.Separator
-      className={cn("h-px", "-mx-1", "bg-border", className)}
+      className={cn("-mx-1 h-px", "bg-border", className)}
       data-slot="command-separator"
       {...props}
     />
@@ -171,12 +174,14 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
       className={cn(
         "group/command-item relative flex items-center gap-x-2",
         "px-2 py-1.5",
-        "rounded-sm",
+        "rounded-sm outline-hidden",
         "text-sm",
-        "cursor-default outline-hidden select-none",
+        "cursor-default select-none",
         "aria-disabled:opacity-50",
         "aria-selected:bg-accent aria-selected:text-accent-foreground",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "[&_svg]:shrink-0",
+        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       data-slot="command-item"

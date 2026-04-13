@@ -11,12 +11,13 @@ import { Slot } from "@radix-ui/react-slot";
 const buttonVariants = tv({
   base: [
     "inline-flex shrink-0 items-center justify-center gap-2",
-    "rounded-lg",
+    "rounded-lg outline-hidden",
     "text-sm font-medium whitespace-nowrap",
-    "outline-hidden transition select-none",
+    "transition select-none",
     "focus-visible:ring-3",
     "disabled:opacity-50",
-    "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    "[&_svg]:shrink-0",
+    "[&_svg:not([class*='size-'])]:size-4",
   ],
   defaultVariants: {
     size: "md",
@@ -34,28 +35,27 @@ const buttonVariants = tv({
       "icon-lg": "size-10",
 
       // 32px
-      sm: ["h-8", "px-3", "has-[>svg]:px-2.5"],
+      sm: ["h-8 px-3", "has-[>svg]:px-2.5"],
 
       // 36px
-      md: ["h-9", "px-4", "has-[>svg]:px-3"],
+      md: ["h-9 px-4", "has-[>svg]:px-3"],
 
       // 40px
-      lg: ["h-10", "px-6", "has-[>svg]:px-4"],
+      lg: ["h-10 px-6", "has-[>svg]:px-4"],
     },
     variant: {
       default: [
-        "bg-primary",
-        "text-primary-foreground",
+        "bg-primary text-primary-foreground",
         "hover:not-disabled:bg-primary/80",
         "focus-visible:ring-primary/20",
         "dark:focus-visible:ring-primary/40",
       ],
       destructive: [
-        "bg-destructive",
-        "text-white",
+        "bg-destructive text-white",
         "hover:not-disabled:bg-destructive/90",
         "focus-visible:ring-destructive/20",
-        "dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        "dark:bg-destructive/60",
+        "dark:focus-visible:ring-destructive/40",
       ],
       ghost: [
         "hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground",
@@ -63,10 +63,9 @@ const buttonVariants = tv({
         "dark:hover:not-disabled:bg-secondary/50",
       ],
       link: [
-        "text-primary",
+        "text-primary underline-offset-4",
         "hover:not-disabled:underline",
         "focus-visible:ring-ring/50",
-        "underline-offset-4",
       ],
       outline: [
         "border border-input shadow-xs",
@@ -75,11 +74,13 @@ const buttonVariants = tv({
         "aria-invalid:border-destructive",
         "focus-within:aria-invalid:ring-destructive/20",
         "hover:not-disabled:aria-invalid:border-destructive/60",
-        "dark:bg-input/30 dark:hover:not-disabled:bg-input/50 dark:aria-invalid:border-destructive/70 dark:focus-within:aria-invalid:ring-destructive/40",
+        "dark:bg-input/30",
+        "dark:hover:not-disabled:bg-input/50",
+        "dark:aria-invalid:border-destructive/70",
+        "dark:focus-within:aria-invalid:ring-destructive/40",
       ],
       secondary: [
-        "bg-secondary",
-        "text-secondary-foreground",
+        "bg-secondary text-secondary-foreground",
         "hover:not-disabled:bg-secondary/80",
         "focus-visible:ring-ring/50",
       ],

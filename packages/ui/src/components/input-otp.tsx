@@ -62,15 +62,16 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
     <div
       className={cn(
         "relative flex size-9 items-center justify-center",
-        "border border-input",
+        "border border-input outline-hidden",
         "text-sm",
-        "outline-hidden transition-all",
+        "transition-all",
         "not-has-disabled:shadow-xs",
         "first:rounded-l-lg",
         "last:rounded-r-lg",
         "aria-invalid:border-destructive",
         "dark:bg-input/30",
-        "data-active:z-10 data-active:border-ring data-active:ring-3 data-active:ring-ring/50 data-active:aria-invalid:border-destructive data-active:aria-invalid:ring-destructive/20",
+        "data-active:z-10 data-active:border-ring data-active:ring-3 data-active:ring-ring/50",
+        "data-active:aria-invalid:border-destructive data-active:aria-invalid:ring-destructive/20",
         "dark:data-active:aria-invalid:ring-destructive/40",
         className,
       )}
@@ -81,11 +82,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
       {char}
       {hasFakeCaret ? (
         <div
-          className={cn(
-            "absolute flex items-center justify-center",
-            "inset-0",
-            "pointer-events-none",
-          )}
+          className={cn("absolute inset-0 flex items-center justify-center", "pointer-events-none")}
         >
           <div
             className={cn(

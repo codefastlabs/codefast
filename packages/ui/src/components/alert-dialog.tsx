@@ -50,11 +50,9 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          "fixed z-50",
-          "inset-0",
+          "fixed inset-0 z-50",
           "bg-black/50",
-          "ease-ui",
-          "data-open:animate-in data-open:fade-in-0",
+          "ease-ui data-open:animate-in data-open:fade-in-0",
           "data-closed:animate-out data-closed:fade-out-0",
           classNames?.overlay,
         )}
@@ -62,11 +60,9 @@ function AlertDialogContent({
       />
       <AlertDialogPrimitive.Content
         className={cn(
-          "fixed z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto",
-          "inset-0 p-8",
-          "ease-ui",
+          "fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8",
           "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+          "ease-ui data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
           "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           classNames?.wrapper,
         )}
@@ -76,8 +72,8 @@ function AlertDialogContent({
         <div
           className={cn(
             "relative row-start-2 flex w-full max-w-lg flex-col",
-            "rounded-2xl border bg-popover shadow-lg",
-            "text-popover-foreground",
+            "rounded-2xl border",
+            "bg-popover text-popover-foreground shadow-lg",
             classNames?.content,
             className,
           )}
@@ -100,9 +96,7 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col gap-1.5",
-        "px-6 pt-6 pb-4",
-        "text-center",
+        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center",
         "sm:text-left",
         className,
       )}
@@ -138,8 +132,7 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2",
-        "px-6 pt-4 pb-6",
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6",
         "sm:flex-row sm:justify-end",
         className,
       )}

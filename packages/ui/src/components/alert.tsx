@@ -9,10 +9,9 @@ import { cn, tv } from "#lib/utils";
 
 const alertVariants = tv({
   base: [
-    "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5",
-    "px-4 py-3",
-    "rounded-xl border bg-card",
-    "text-sm",
+    "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 px-4 py-3",
+    "rounded-xl border",
+    "bg-card text-sm",
     "has-[>svg]:grid-cols-[--spacing(4)_1fr] has-[>svg]:gap-x-3",
     "[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
   ],
@@ -76,8 +75,7 @@ function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.E
   return (
     <div
       className={cn(
-        "col-start-2 grid justify-items-start gap-1",
-        "text-sm text-muted-foreground",
+        "col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground",
         "[&_p]:leading-relaxed",
         className,
       )}

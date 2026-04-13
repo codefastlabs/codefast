@@ -44,8 +44,7 @@ function InputNumber({
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
       className={cn(
-        "group peer flex h-9 w-full grow items-center gap-3",
-        "px-3 pr-0",
+        "group peer flex h-9 w-full grow items-center gap-3 px-3 pr-0",
         "rounded-lg border border-input",
         "text-base",
         "transition",
@@ -57,8 +56,11 @@ function InputNumber({
         "focus-within:has-aria-invalid:ring-destructive/20",
         "hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60",
         "md:text-sm",
-        "dark:bg-input/30 dark:focus-within:has-aria-invalid:ring-destructive/40",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg]:text-muted-foreground",
+        "dark:bg-input/30",
+        "dark:focus-within:has-aria-invalid:ring-destructive/40",
+        "[&_svg]:shrink-0",
+        "[&_svg:not([class*='size-'])]:size-4",
+        "[&>svg]:text-muted-foreground",
         className,
       )}
       data-slot="input-number"
@@ -83,11 +85,11 @@ function InputNumber({
         autoComplete="off"
         autoCorrect="off"
         className={cn(
-          "h-9 w-full min-w-0",
-          "px-3 py-1",
-          "rounded-md border border-input bg-transparent shadow-xs",
+          "h-9 w-full min-w-0 px-3 py-1",
+          "rounded-md border border-input",
+          "bg-transparent shadow-xs outline-none",
           "text-base",
-          "transition-[color,box-shadow] outline-none",
+          "transition-[color,box-shadow]",
           "selection:bg-primary selection:text-primary-foreground",
           "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
           "placeholder:text-muted-foreground",
@@ -95,15 +97,15 @@ function InputNumber({
           "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
           "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
           "md:text-sm",
-          "dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+          "dark:bg-input/30",
+          "dark:aria-invalid:ring-destructive/40",
         )}
         spellCheck="false"
         {...props}
       />
       <div
         className={cn(
-          "order-last grid h-full shrink-0",
-          "ml-auto",
+          "order-last ml-auto grid h-full shrink-0",
           "divide-y divide-input border-l border-l-input",
           "transition",
           "group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60",
