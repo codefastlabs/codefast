@@ -7,7 +7,7 @@
     "@codefast/theme": "0.3.11",
     "@codefast/typescript-config": "0.3.11",
     "@codefast/ui": "0.3.11",
-    "@codefast/cli": "0.3.12-canary.0"
+    "@codefast/cli": "0.3.11"
   },
   "changesets": [
     "better-cats-bow",
