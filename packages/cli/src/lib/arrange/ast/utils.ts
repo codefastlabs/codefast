@@ -137,6 +137,8 @@ export function unwrapCnInsideTvCallReplacement(
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
     const piece = sourceText.slice(arg.getStart(sf), arg.getEnd());
+    // Trailing comma on every element — intentional (Prettier-compatible style;
+    // keeps array diffs clean when arguments are later added or removed).
     const comma = i < args.length - 1 || args.length > 1 ? "," : "";
     lines.push(`${innerIndent}${piece}${comma}`);
   }

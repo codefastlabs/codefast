@@ -79,6 +79,11 @@ function dynamicMaxGroups(tokenCount: number): number {
 /**
  * Merge singleton groups (< MIN_GROUP_TOKENS tokens) into their nearest
  * neighbour. Prefers merging toward a bucket-compatible neighbor.
+ *
+ * Loop termination: each iteration either splices one element (shrinking the
+ * array, guaranteeing progress) or finds no singleton that can merge and exits
+ * via `changed = false`. Two mutually-incompatible singletons both hit
+ * `continue` and `changed` stays false, so the loop exits without spinning.
  */
 export function mergeSingletons(groups: string[]): string[] {
   if (groups.length <= 1) return groups;
@@ -134,6 +139,11 @@ function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
  * Merge adjacent groups until total count ≤ maxGroups.
  * Only merges pairs allowed by {@link bucketsMergeCompatible} — never glues incompatible
  * buckets (which previously defaulted to penalty 0 and merged layout+state when over cap).
+ *
+ * Complexity: O(n²) in the number of groups — each merge pass scans all remaining adjacent
+ * pairs. In practice `n` is bounded by {@link MAX_GROUPS_CAP} (24) and typical class strings
+ * are well below that, so this is not a concern for the current usage pattern. If this ever
+ * runs in a high-throughput batch mode, consider a priority-queue approach.
  */
 export function capGroups(groups: string[], maxGroups: number): string[] {
   const result = [...groups];

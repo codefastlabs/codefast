@@ -49,6 +49,8 @@ export function formatArray(groups: string[]): string {
   const lines: string[] = ["["];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
+    // Trailing comma on every element when there are multiple entries — matches
+    // Prettier's default array formatting and keeps diffs minimal on insertion.
     const comma = i < groups.length - 1 || groups.length > 1 ? "," : "";
     lines.push(`  "${escapeTsStringLiteralContent(group)}"${comma}`);
   }

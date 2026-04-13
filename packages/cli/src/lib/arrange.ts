@@ -39,7 +39,11 @@ export type {
   GroupFileResult,
 } from "#lib/arrange/types";
 
-export { DEFAULT_ARRANGE_TARGET, LONG_STRING_TOKEN_THRESHOLD } from "#lib/arrange/constants";
+export {
+  DEFAULT_ARRANGE_TARGET,
+  LONG_STRING_TOKEN_THRESHOLD,
+  MAX_STRIP_VARIANT_PASSES,
+} from "#lib/arrange/constants";
 export { cnModuleSpecifierForFile, ensureCnImport } from "#lib/arrange/imports";
 export {
   areCnTailwindPartitionsEquivalent,

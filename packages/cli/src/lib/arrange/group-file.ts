@@ -88,6 +88,7 @@ function applyGroupFileWrites(
   filePath: string,
   options: ArrangeGroupFileOptions,
   fs: CliFs,
+  logger: CliLogger,
   unwrapEdits: UnwrapPlan[],
   textAfterUnwrap: string,
   plannedGroupEdits: PlannedGroupEdit[],
@@ -108,7 +109,11 @@ function applyGroupFileWrites(
 
   if (changed > 0) {
     if (touchedJsxCn) {
-      newText = ensureCnImport(newText, filePath, options.cnImport);
+      newText = ensureCnImport(newText, filePath, options.cnImport, (specifier) => {
+        logger.err(
+          `arrange: inferred cn import "${specifier}" from file path; use --cn-import if wrong: ${filePath}`,
+        );
+      });
     }
     fs.writeFileSync(filePath, newText, "utf8");
   }
@@ -205,6 +210,7 @@ export function groupFile(
     filePath,
     options,
     fs,
+    logger,
     unwrapEdits,
     textAfterUnwrap,
     plannedGroupEdits,
