@@ -149,6 +149,12 @@ describe("suggestCnGroups", () => {
     expect(got.some((c) => c.includes("[&_.recharts-layer]"))).toBe(true);
   });
 
+  it("merges shadcn [&_svg] utilities and :not size guard into one selector chunk", () => {
+    const input =
+      "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6";
+    expect(suggestCnGroups(input)).toEqual([input]);
+  });
+
   it("keeps cap-groups headroom behavior for bg + outline-hidden", () => {
     const pool =
       "flex items-center justify-center bg-border outline-hidden focus-visible:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-[orientation=horizontal]:h-px aria-[orientation=vertical]:w-px";

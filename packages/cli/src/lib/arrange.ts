@@ -9,7 +9,7 @@
  *
  * Tailwind CSS v4-oriented heuristics (class buckets follow **render-pipeline order**):
  *   existence → position → layout → sizing → spacing → shape → background → shadow
- *   → typography → composite → motion → starting → behavior → state (variants).
+ *   → typography → composite → motion → starting → behavior → state (variants) → selector variants.
  *   - Container queries (@min-* / @max-* / @[…] / @sm / @md / @3xl / @max-3xs, md/sidebar:, …)
  *   - Logical properties (ps/pe/ms/me/start/end)
  *   - not-* modifier; has-*; in-[…]; * / **; nth-* (including numeric); media (pointer-*, contrast-* …)
@@ -60,6 +60,7 @@ export {
   tokenizeClassString,
   bucketsCompatible,
   bucketsMergeCompatible,
+  selectorKey,
   stateKey,
 } from "#lib/arrange/tokenizer";
 

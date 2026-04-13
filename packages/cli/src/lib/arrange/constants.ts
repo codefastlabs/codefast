@@ -53,7 +53,7 @@ export const EMPTY_CN_TV_BINDINGS = new Set<string>();
 /**
  * Bucket sort order — **render pipeline** (lower → earlier in output).
  * Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow
- * → Typography → Composite → Motion → Starting → Behavior → Conditions (state).
+ * → Typography → Composite → Motion → Starting → Behavior → State (variants) → Selector variants.
  */
 export const BUCKET_ORDER: Record<Bucket, number> = {
   existence: 0,
@@ -70,8 +70,9 @@ export const BUCKET_ORDER: Record<Bucket, number> = {
   starting: 11,
   behavior: 12,
   state: 13,
-  other: 14,
-  arbitrary: 15,
+  selector: 14,
+  other: 15,
+  arbitrary: 16,
 };
 
 /**
@@ -100,7 +101,7 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
   new Set<Bucket>(["background", "typography"]),
   // layout + typography: title rows (`flex` + `text-sm`) in one literal when adjacent in sort order.
   new Set<Bucket>(["layout", "typography"]),
-  // sizing + typography: chart shell (`aspect-video` + `text-xs`) before scoped `[&_…]` state.
+  // sizing + typography: chart shell (`aspect-video` + `text-xs`) before selector-variant chunks.
   new Set<Bucket>(["sizing", "typography"]),
   // motion + behavior: `transition-*` with `pointer-events-*` / `select-*` on the same surface.
   new Set<Bucket>(["motion", "behavior"]),
