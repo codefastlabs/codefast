@@ -12,8 +12,7 @@ export const APPLY_MIN_TOKENS = 2;
 
 /**
  * Minimum tokens a group must have to stand alone before singleton-merging.
- * Set to 2 so pairs like "transition outline-hidden" are not collapsed into an
- * unrelated bucket by the merger.
+ * Set to 2 so single-token groups are not collapsed into unrelated buckets by the merger.
  */
 export const MIN_GROUP_TOKENS = 2;
 
@@ -25,7 +24,7 @@ export const MAX_GROUPS_CAP = 24;
 
 /**
  * Extra slots so a few state / aria groups do not force `capGroups` to merge
- * adjacent surface + interaction (e.g. `bg-border` + `outline-hidden`).
+ * unrelated buckets (e.g. `bg-border` + `outline-hidden`).
  */
 export const MAX_GROUPS_HEADROOM = 2;
 
@@ -44,27 +43,68 @@ export const MAX_CLASS_EXPR_DEPTH = 12;
  */
 export const EMPTY_CN_TV_BINDINGS = new Set<string>();
 
-/** Bucket sort order — pre-sort tokens before grouping (lower → earlier in output). */
+/**
+ * Bucket sort order — **render pipeline** (lower → earlier in output).
+ * Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow
+ * → Typography → Composite → Motion → Starting → Behavior → Conditions (state).
+ */
 export const BUCKET_ORDER: Record<Bucket, number> = {
-  layout: 0,
-  size: 1,
-  spacing: 2,
-  surface: 3,
-  typography: 4,
-  motion: 5,
-  interaction: 6,
-  state: 7,
-  other: 8,
-  arbitrary: 9,
+  existence: 0,
+  position: 1,
+  layout: 2,
+  sizing: 3,
+  spacing: 4,
+  shape: 5,
+  background: 6,
+  shadow: 7,
+  typography: 8,
+  composite: 9,
+  motion: 10,
+  starting: 11,
+  behavior: 12,
+  state: 13,
+  other: 14,
+  arbitrary: 15,
 };
 
 /**
- * Compatible bucket pairs — a transition between these does NOT flush the
- * current group, so "flex size-4 shrink-0 items-center" stays together.
+ * Compatible bucket **pairs** — two adjacent tokens whose buckets appear in the same
+ * `Set` may stay in one `cn()` string chunk. Compatibility is **not transitive**: there is
+ * no `{position, sizing}` pair, so `fixed inset-0` and `overflow-auto` become **separate**
+ * literals unless **layout** tokens sit between them in sorted order; then
+ * `position↔layout` and `layout↔sizing` each justify one hop and the whole “box in flow”
+ * (place + tracks + scrollport) stays in one chunk — co-located because they jointly define
+ * stacking and scroll behavior for the same surface.
  */
 export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
-  new Set<Bucket>(["layout", "size"]),
-  new Set<Bucket>(["motion", "interaction"]),
+  // existence + position: named container / group / peer context edited next to inset & z-index.
+  new Set<Bucket>(["existence", "position"]),
+  // existence + layout: `group/cmd` + `flex …` are one template row (context + grid/flex).
+  new Set<Bucket>(["existence", "layout"]),
+  // position + layout: `fixed inset-0` + `grid` describe the same stacking + track shell.
+  new Set<Bucket>(["position", "layout"]),
+  // layout + sizing: `grid` + `overflow-auto` / min size are one scrollport / track concern.
+  new Set<Bucket>(["layout", "sizing"]),
+  // shape + shadow: radius/border + shadow/outline overlay are one “chrome” literal in UIs.
+  new Set<Bucket>(["shape", "shadow"]),
+  // background + shadow: fill + depth (card surface) without splitting noise across args.
+  new Set<Bucket>(["background", "shadow"]),
+  // background + typography: destructive buttons etc. (`bg-*` + `text-*` on the same control).
+  new Set<Bucket>(["background", "typography"]),
+  // layout + typography: title rows (`flex` + `text-sm`) in one literal when adjacent in sort order.
+  new Set<Bucket>(["layout", "typography"]),
+  // sizing + typography: chart shell (`aspect-video` + `text-xs`) before scoped `[&_…]` state.
+  new Set<Bucket>(["sizing", "typography"]),
+  // motion + behavior: `transition-*` with `pointer-events-*` / `select-*` on the same surface.
+  new Set<Bucket>(["motion", "behavior"]),
+  // motion + starting: `transition` beside `starting:*` for coordinated enter/exit motion.
+  new Set<Bucket>(["motion", "starting"]),
+  // composite + motion: transforms then transitions (`-translate-*` + `transition-*` + `ease-*`).
+  new Set<Bucket>(["composite", "motion"]),
+  // sizing + composite: width/position utilities with transforms in one interaction block.
+  new Set<Bucket>(["sizing", "composite"]),
+  // sizing + spacing: width utilities with padding on the same slot (`w-auto` + `px-3`).
+  new Set<Bucket>(["sizing", "spacing"]),
 ];
 
 /**
@@ -129,7 +169,6 @@ export const STATE_PREFIXES = new Set([
   "screen",
   "ltr",
   "rtl",
-  "starting",
   "not",
   "has",
   "in",

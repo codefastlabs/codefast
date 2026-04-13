@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { CliFs } from "#lib/infra/fs-contract";
 
-const SKIP_DIRS = new Set([
+export const DEFAULT_SKIP_DIRS = new Set([
   "node_modules",
   "dist",
   ".git",
@@ -21,7 +21,7 @@ export function walkTsxFiles(root: string, fs: CliFs): string[] {
     const entryStats = fs.statSync(entryPath);
     if (entryStats.isDirectory()) {
       for (const name of fs.readdirSync(entryPath)) {
-        if (SKIP_DIRS.has(name)) continue;
+        if (DEFAULT_SKIP_DIRS.has(name)) continue;
         visit(path.join(entryPath, name));
       }
       return;

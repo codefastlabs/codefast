@@ -10,7 +10,7 @@ import type { GroupTarget, PlannedGroupEdit, StringNode } from "#lib/arrange/typ
 import { tokenizeClassString } from "#lib/arrange/tokenizer";
 import { isUnsafeLiteralForCnStyleApplySplit } from "#lib/arrange/ast/collectors-cn";
 import { jsxClassNameStaticLiteral } from "#lib/arrange/ast/collectors-jsx";
-import { collectLongStringNodes, slotClassString } from "#lib/arrange/ast/collectors-tv";
+import { collectGroupableStringNodes, slotClassString } from "#lib/arrange/ast/collectors-tv";
 import { indentOfLineContaining } from "#lib/arrange/ast/utils";
 
 export function targetReplaceStart(target: GroupTarget): number {
@@ -43,7 +43,7 @@ export function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[]
 }
 
 export function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupTarget[] {
-  const cnPart = collectLongStringNodes(sf).map((item) => ({ kind: "cnArg" as const, item }));
+  const cnPart = collectGroupableStringNodes(sf).map((item) => ({ kind: "cnArg" as const, item }));
   if (!filePath.endsWith(".tsx")) return cnPart;
   return [...cnPart, ...collectLongJsxClassNameTargets(sf)];
 }
@@ -89,13 +89,11 @@ export function formatCnCallReplacement(
     allArgs.push(`${argIndent}className`);
   }
 
+  // Keep formatter behavior explicit: multiline cn() calls with multiple args use trailing comma.
+  const commaAfterLastArg = allArgs.length > 1;
   const argLines = allArgs.map((argLine, lineIndex) =>
-    lineIndex < allArgs.length - 1 ? `${argLine},` : `${argLine}`,
+    lineIndex < allArgs.length - 1 || commaAfterLastArg ? `${argLine},` : `${argLine}`,
   );
-  if (allArgs.length > 1) {
-    const lastArgIndex = allArgs.length - 1;
-    argLines[lastArgIndex] = `${allArgs[lastArgIndex]},`;
-  }
   return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
 
