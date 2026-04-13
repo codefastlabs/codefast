@@ -1,101 +1,189 @@
 # @codefast/cli
 
-Two tools bundled in one CLI:
+A focused CLI for two recurring maintenance tasks in monorepos:
 
-| Command       | Purpose                                                                                                                                                                             |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mirror sync` | Regenerate `package.json` `exports` from each package's built `dist/` tree (pnpm workspace packages)                                                                                |
-| `arrange`     | Analyze, dry-run, or apply suggested grouping for long Tailwind class strings inside `cn()` / `tv()` call sites (Tailwind v4–oriented heuristics), or `group` a pasted class string |
+- **`arrange`** — analyze and regroup Tailwind class strings inside `cn()` / `tv()` calls according to a consistent render-pipeline order.
+- **`mirror`** — regenerate `package.json` `exports` fields from built `dist/` trees across a pnpm workspace.
+
+```mermaid
+flowchart LR
+  R[codefast]
+  R --> A[arrange]
+  R --> M[mirror]
+
+  A --> A0[analyze]
+  A --> A1[preview]
+  A --> A2[apply]
+  A --> A3[group]
+
+  M --> M0[sync]
+```
 
 ---
 
-## Requirements & Install
+## Requirements
 
-**Node.js ≥ 24** is required.
+- Node.js `>=22.0.0`
+- pnpm (recommended)
+
+---
+
+## Installation
 
 ```bash
-# Global
+# Install globally
 pnpm add -g @codefast/cli
 
-# Without a global install
-pnpm dlx @codefast/cli -- --help
+# Or run without installing
+pnpm dlx @codefast/cli --help
+```
+
+---
+
+## Quick start
+
+```bash
+# 1. Preview proposed changes — no files written
+codefast arrange preview packages/ui/src/components
+
+# 2. Apply after reviewing the diff
+codefast arrange apply packages/ui/src/components
+
+# 3. Regenerate package exports from built dist/
+codefast mirror sync
 ```
 
 ---
 
 ## `arrange`
 
-### Recommended workflow
+Reads `cn()` and `tv()` call sites, classifies each Tailwind utility, and rewrites the class strings in render-pipeline order (see [Grouping philosophy](#grouping-philosophy--render-pipeline-order) below).
 
-1. **`analyze [target]`** — Prints a report (long strings, nested `cn` in `tv`, related notes). No files changed.
-2. **`preview [target]`** — Same transforms as `apply`, but writes nothing. Inspect stdout before touching the tree.
-3. **`apply [target]`** — Writes edits. Run `preview` first.
+### Workflow
 
-**Default target** (when path is omitted): `packages/ui/src/components` resolved from `process.cwd()`.
+Run the three subcommands in order:
 
-### Useful options
+| Step | Command                             | Effect                                |
+| ---- | ----------------------------------- | ------------------------------------- |
+| 1    | `codefast arrange analyze [target]` | Report only — no files changed        |
+| 2    | `codefast arrange preview [target]` | Show exactly what `apply` would write |
+| 3    | `codefast arrange apply [target]`   | Write the changes                     |
 
-- **`--with-class-name`** — Append `className` as the last argument to the suggested `cn(...)`.
-- **`--cn-import <spec>`** — Override the module specifier when the tool adds a `cn` import.
+The default `target` when omitted is `packages/ui/src/components`, resolved from `process.cwd()`.
 
-### `group [tokens...]`
+### Flags
 
-No filesystem involved — paste a class string, get back a suggested `cn(...)` (or a `tv()`-style array with `--tv`) plus a short buckets summary. Use this to tune your mental model before running `analyze` on a large tree.
+| Flag                 | Description                                                             |
+| -------------------- | ----------------------------------------------------------------------- |
+| `--with-class-name`  | Append `className` as the last argument when rewriting a `cn(...)` call |
+| `--cn-import <spec>` | Override the module specifier used when adding a missing `cn` import    |
 
----
+### `arrange group` — one-shot string grouping
 
-## Grouping philosophy — Render Pipeline Order
+Groups a single class string without touching the filesystem. Useful for checking how a string would be classified before running `apply`:
 
-`arrange` does **not** sort alphabetically. It groups utilities in roughly the same order the browser reasons about them:
-
-**Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow → Typography → Composite → Motion → Starting → Behavior → Conditions (State) → Selectors**
-
-Bucket breakdown:
-
-| Bucket         | What it covers                                    | Examples                                          |
-| -------------- | ------------------------------------------------- | ------------------------------------------------- |
-| **Existence**  | Display / containment context                     | `hidden`, `block`, `@container`, `group`, `peer`  |
-| **Position**   | Where the box sits                                | `absolute`, `inset-*`, `top-*`, `z-*`             |
-| **Layout**     | How children flow                                 | `flex`, `grid`, `gap-*`, `items-*`                |
-| **Sizing**     | Box dimensions and overflow                       | `w-*`, `h-*`, `aspect-*`, `overflow-*`            |
-| **Spacing**    | Padding and margin only (gaps stay with Layout)   | `p-*`, `m-*`                                      |
-| **Shape**      | Corners and strokes                               | `rounded-*`, `border-*`, `ring-*`                 |
-| **Background** | Surfaces and masks                                | `bg-*`, `from-*`, `via-*`, `to-*`, `mask-*`       |
-| **Shadow**     | Depth                                             | `shadow-*`, `inset-shadow-*`, `text-shadow-*`     |
-| **Typography** | Text appearance                                   | `font-*`, `text-*`, `leading-*`                   |
-| **Composite**  | Layers and transforms — 3D context → 3D → 2D      | `opacity-*`, `rotate-x-*`, `translate-*`          |
-| **Motion**     | Time-based change                                 | `transition-*`, `animate-*`                       |
-| **Starting**   | Tailwind's `starting:` layer, kept next to Motion | `starting:*`                                      |
-| **Behavior**   | Input / scrolling / chrome                        | `cursor-*`, `scroll-*`, `field-sizing-*`, `inert` |
-| **State**      | Interactive/conditional variants (non-selector)   | `hover:`, `md:`, `@md/sidebar:`, `data-[…]:`      |
-| **Selector**   | Selector-driven variants                          | `[&…]:`, `*:`, `**:`, `has-*`, `group-[…]:`       |
-
-Some adjacent buckets may be merged into one string literal when declared _compatible_ (e.g. `layout` + `sizing`) — keeps `cn()` readable without flattening unrelated concerns.
-
-To change a placement, edit `classifyBareUtility` in `src/lib/arrange/tokenizer.ts` and add a `classifyToken` test in `src/lib/arrange.test.ts`.
+```bash
+codefast arrange group "relative flex items-center h-10 w-full rounded-md bg-primary text-white hover:bg-primary/90"
+```
 
 ---
 
 ## `mirror sync`
 
-Run from anywhere under the monorepo — the CLI finds the root via `pnpm-workspace.yaml`.
+Scans built `dist/` trees and regenerates the `exports` field in each `package.json`. Run from anywhere inside the monorepo — the workspace root is discovered automatically via `pnpm-workspace.yaml`.
 
 ```bash
-codefast mirror sync              # All workspace packages
-codefast mirror sync packages/ui  # One package only
-codefast mirror sync -v           # Verbose
+codefast mirror sync              # all packages in the workspace
+codefast mirror sync packages/ui  # a single package path
+codefast mirror sync -v           # verbose output
 ```
 
-**Config:** Place `codefast.config.js` (or `.mjs` / `.cjs` / `.json`) at repo root with a `mirror` object (`skipPackages`, `pathTransformations`, `customExports`, …).
+> **Note:** Packages must be built first so `dist/` exists. Run your build step before `mirror sync`.
 
-> ⚠️ `.js`/`.mjs`/`.cjs` config files are loaded via `import()` — only run `mirror sync` in repositories you trust.
+### Configuration
+
+Create a `codefast.config.js` (or `.mjs`, `.cjs`, `.json`) at the repo root with a `mirror` key:
+
+```js
+// codefast.config.mjs
+export default {
+  mirror: {
+    skipPackages: ["@acme/internal"],
+    pathTransformations: {
+      "packages/ui": {
+        removePrefix: "./components/",
+      },
+    },
+    customExports: {
+      "packages/ui": {
+        "./css/*": "./src/styles/*",
+      },
+    },
+  },
+};
+```
+
+Replace package paths/entries above with values from your workspace.
+
+> **Security note:** `.js`, `.mjs`, and `.cjs` config files are loaded via `import()`. Only run `mirror sync` in repositories you trust.
 
 ---
 
-## Developing inside this monorepo
+## Grouping philosophy — Render Pipeline Order
+
+`arrange` does **not** sort classes alphabetically. Instead, it groups utilities in roughly the order the browser applies them — from the box's existence, through its shape and surface, to interactive behavior. This makes class strings easier to scan and reason about at a glance.
+
+**Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow → Typography → Composite → Motion → Starting → Behavior → State → Selector**
+
+| Bucket         | What it covers                                      | Examples                                          |
+| -------------- | --------------------------------------------------- | ------------------------------------------------- |
+| **Existence**  | Display and containment context                     | `hidden`, `block`, `@container`, `group`, `peer`  |
+| **Position**   | Where the box sits                                  | `absolute`, `inset-*`, `top-*`, `z-*`             |
+| **Layout**     | How children flow                                   | `flex`, `grid`, `gap-*`, `items-*`                |
+| **Sizing**     | Box dimensions and overflow                         | `w-*`, `h-*`, `aspect-*`, `overflow-*`            |
+| **Spacing**    | Padding and margin only (gaps stay with Layout)     | `p-*`, `m-*`                                      |
+| **Shape**      | Corners and strokes                                 | `rounded-*`, `border-*`, `ring-*`                 |
+| **Background** | Surfaces and masks                                  | `bg-*`, `from-*`, `via-*`, `to-*`, `mask-*`       |
+| **Shadow**     | Depth                                               | `shadow-*`, `inset-shadow-*`, `text-shadow-*`     |
+| **Typography** | Text appearance                                     | `font-*`, `text-*`, `leading-*`                   |
+| **Composite**  | Layers and transforms (3D context → 3D → 2D)        | `opacity-*`, `rotate-x-*`, `translate-*`          |
+| **Motion**     | Time-based change                                   | `transition-*`, `animate-*`                       |
+| **Starting**   | Tailwind's `starting:` layer — kept next to Motion  | `starting:*`                                      |
+| **Behavior**   | Input, scrolling, and browser chrome                | `cursor-*`, `scroll-*`, `field-sizing-*`, `inert` |
+| **State**      | Interactive and conditional variants (non-selector) | `hover:`, `md:`, `@md/sidebar:`, `data-[…]:`      |
+| **Selector**   | Selector-driven variants                            | `[&…]:`, `*:`, `**:`, `has-*`, `group-[…]:`       |
+
+Adjacent buckets may be merged into one string literal when declared _compatible_ (e.g. `layout` + `sizing`). This keeps `cn()` calls readable without flattening unrelated concerns into a single undifferentiated blob.
+
+To change a placement, edit `classifyBareUtility` in `src/lib/arrange/tokenizer.ts` and add a corresponding `classifyToken` test in `src/lib/arrange.test.ts`.
+
+---
+
+## Troubleshooting
+
+**`codefast: command not found`**
+Install globally with `pnpm add -g @codefast/cli`, or run via `pnpm dlx @codefast/cli <command>`.
+
+**`mirror sync` writes little or no output**
+Packages must be built before syncing. Ensure `dist/` exists by running your build step first, then re-run `codefast mirror sync`.
+
+**Unexpected class reorder after `arrange apply`**
+Run `arrange preview` before applying and smoke-test the UI. Some components rely on cascade-sensitive ordering that `arrange` cannot detect automatically.
+
+---
+
+## Contributing (monorepo setup)
 
 ```bash
+# Build the local CLI (produces dist/bin.js)
+pnpm --filter @codefast/cli build
+
+# Run the local entrypoint
 pnpm exec codefast --help
 ```
 
-Root `package.json` defines optional `cli:*` scripts (e.g. `cli:mirror-sync`, `cli:arrange-analyze`) as thin wrappers around `pnpm exec codefast …`.
+A few naming conventions to keep in mind:
+
+- **`codefast <command>`** refers to CLI commands exposed via the `@codefast/cli` `bin` entry.
+- **Scripts in `packages/cli/package.json`** (`build`, `test`, …) are package-local dev scripts, not CLI commands.
+- The root `package.json` includes optional convenience wrappers such as `cli:mirror-sync` and `cli:arrange-analyze` for common dev workflows.
