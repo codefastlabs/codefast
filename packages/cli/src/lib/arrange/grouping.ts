@@ -289,3 +289,14 @@ export function suggestCnGroups(classString: string): string[] {
 
   return capGroups(withEaseMerged, maxAllowed);
 }
+
+/**
+ * One label per suggested group: a single bucket name, or `mixed:a+b` when that chunk
+ * spans multiple Tailwind buckets (matches `codefast arrange group` stdout).
+ */
+export function summarizeGroupBucketLabels(groups: string[]): string[] {
+  return groups.map((g) => {
+    const uniq = new Set(tokenizeClassString(g).map(classifyToken));
+    return uniq.size === 1 ? [...uniq][0]! : `mixed:${[...uniq].sort().join("+")}`;
+  });
+}

@@ -72,6 +72,8 @@ export type PlannedGroupEdit = {
   start: number;
   end: number;
   replacement: string;
+  /** Per-chunk bucket labels (same as `arrange group` trailing `// Buckets:` line). */
+  bucketSummary: string[];
   jsxCn: boolean;
   lineSf: ts.SourceFile;
   reportNode: ts.Node;

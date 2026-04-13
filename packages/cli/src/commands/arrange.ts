@@ -7,7 +7,6 @@ import {
   ArrangeError,
   ArrangeErrorCode,
   analyzeDirectory,
-  classifyToken,
   createNodeCliFs,
   createNodeCliLogger,
   DEFAULT_ARRANGE_TARGET,
@@ -16,7 +15,7 @@ import {
   printAnalyzeReport,
   runOnTarget,
   suggestCnGroups,
-  tokenizeClassString,
+  summarizeGroupBucketLabels,
 } from "#lib/arrange";
 
 /** Commander attribute `withClassName` (second long flag `--with-class-name`). */
@@ -160,10 +159,7 @@ export function registerArrangeCommand(program: Command): void {
         ? formatArray(groups)
         : formatCnCall(groups, { trailingClassName: !!opts.withClassName });
       process.stdout.write(`${result}\n`);
-      const bucketSummary = groups.map((g) => {
-        const uniq = new Set(tokenizeClassString(g).map(classifyToken));
-        return uniq.size === 1 ? [...uniq][0]! : `mixed:${[...uniq].sort().join("+")}`;
-      });
+      const bucketSummary = summarizeGroupBucketLabels(groups);
       process.stdout.write(`\n// Buckets: ${JSON.stringify(bucketSummary)}\n`);
     });
 }
