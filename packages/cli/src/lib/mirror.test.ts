@@ -36,8 +36,10 @@ describe("mirror pure functions", () => {
 
   describe("createPathTransform", () => {
     it("returns null if config or transformation for package is missing", () => {
-      expect(createPathTransform(undefined, "pkg")).toBeNull();
-      expect(createPathTransform({ pathTransformations: {} }, "pkg")).toBeNull();
+      expect(createPathTransform(undefined, { relPath: "pkg", packageName: "pkg" })).toBeNull();
+      expect(
+        createPathTransform({ pathTransformations: {} }, { relPath: "pkg", packageName: "pkg" }),
+      ).toBeNull();
     });
 
     it("creates a transform function that removes prefixes", () => {
@@ -46,7 +48,10 @@ describe("mirror pure functions", () => {
           "packages/ui": { removePrefix: "./components/" },
         },
       };
-      const transform = createPathTransform(config, "packages/ui");
+      const transform = createPathTransform(config, {
+        relPath: "packages/ui",
+        packageName: "@acme/ui",
+      });
       expect(transform).not.toBeNull();
 
       expect(transform!("./components/button")).toBe("./button");
@@ -62,7 +67,10 @@ describe("mirror pure functions", () => {
           "packages/ui": { removePrefix: "components/" },
         },
       };
-      const transform = createPathTransform(config, "packages/ui");
+      const transform = createPathTransform(config, {
+        relPath: "packages/ui",
+        packageName: "@acme/ui",
+      });
       expect(transform).not.toBeNull();
       expect(transform!("components/button")).toBe("./button");
     });
@@ -73,7 +81,10 @@ describe("mirror pure functions", () => {
           "packages/ui": { removePrefix: "./entry" },
         },
       };
-      const transform = createPathTransform(config, "packages/ui");
+      const transform = createPathTransform(config, {
+        relPath: "packages/ui",
+        packageName: "@acme/ui",
+      });
       expect(transform).not.toBeNull();
       expect(transform!("./entry")).toBe("");
       expect(transform!("./entry.js")).toBe("./.js");

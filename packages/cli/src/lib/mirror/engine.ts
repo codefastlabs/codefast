@@ -1,8 +1,15 @@
 import path from "node:path";
-import type { CliFs } from "#lib/infra/fs-contract";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { MIRROR_CONFIG_KEYS, resolvePackageScopedConfig } from "#lib/mirror/config-resolver";
 import { isDirentList } from "#lib/shared/utils";
 import { DTS_EXTENSION, PACKAGE_JSON_EXPORT, VALID_JS_EXTENSIONS } from "#lib/mirror/constants";
-import type { ExportEntry, GenerateExportsResult, MirrorConfig, Module } from "#lib/mirror/types";
+import type {
+  ExportEntry,
+  GenerateExportsResult,
+  MirrorConfig,
+  MirrorPackageMeta,
+  Module,
+} from "#lib/mirror/types";
 
 export function normalizePath(relPath: string): string {
   return relPath.split(path.sep).join("/").replace(/\\/g, "/");
@@ -120,10 +127,17 @@ export function getExportGroup(
 
 export function createPathTransform(
   config: MirrorConfig | undefined,
-  packagePath: string,
+  pkgMeta: MirrorPackageMeta,
+  logger?: CliLogger,
 ): ((pathString: string) => string) | null {
-  if (!config?.pathTransformations?.[packagePath]) return null;
-  const { removePrefix } = config.pathTransformations[packagePath];
+  const pathConfig = resolvePackageScopedConfig(
+    config?.pathTransformations,
+    pkgMeta,
+    MIRROR_CONFIG_KEYS.PATH_TRANSFORMATIONS,
+    logger,
+  );
+  if (!pathConfig) return null;
+  const { removePrefix } = pathConfig;
   if (!removePrefix) return null;
 
   return (exportPath: string) => {

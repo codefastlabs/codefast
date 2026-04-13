@@ -5,21 +5,26 @@
 const config = {
   mirror: {
     // Packages to skip (relative paths from workspace root)
-    skipPackages: ["packages/tailwind-variants", "packages/cli"],
+    customExports: {
+      "@codefast/ui": {
+        "./css/*": "./src/css/*",
+      },
+    },
 
     // Path transformations for specific packages
     pathTransformations: {
-      "packages/ui": {
+      "@codefast/ui": {
         removePrefix: "./components/",
       },
     },
 
     // Custom exports that should be preserved/overridden per package
-    customExports: {
-      "packages/ui": {
-        "./css/*": "./src/css/*",
-      },
-    },
+    skipPackages: [
+      "@apps/docs",
+      "@codefast/cli",
+      "@codefast/benchmark-tailwind-variants",
+      "@codefast/tailwind-variants",
+    ],
   },
 };
 
