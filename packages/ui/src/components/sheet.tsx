@@ -17,8 +17,7 @@ const sheetContentVariants = tv({
   base: [
     "fixed z-50 flex flex-col overflow-auto",
     "bg-background shadow-lg",
-    "ease-ui",
-    "data-open:animate-in data-open:animation-duration-500",
+    "ease-ui data-open:animate-in data-open:animation-duration-500",
     "data-closed:animate-out data-closed:animation-duration-500",
   ],
   defaultVariants: {
@@ -108,11 +107,9 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "fixed z-50",
-          "inset-0",
+          "fixed inset-0 z-50",
           "bg-black/50",
-          "ease-ui",
-          "data-open:animate-in data-open:animation-duration-500 data-open:fade-in-0",
+          "ease-ui data-open:animate-in data-open:animation-duration-500 data-open:fade-in-0",
           "data-closed:animate-out data-closed:animation-duration-500 data-closed:fade-out-0",
           classNames?.overlay,
         )}
@@ -150,9 +147,7 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5",
-        "px-6 pt-6 pb-4",
-        "text-center",
+        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center",
         "sm:text-left",
         className,
       )}
@@ -188,8 +183,7 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2",
-        "px-6 pt-4 pb-6",
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6",
         "sm:flex-row sm:justify-end",
         className,
       )}

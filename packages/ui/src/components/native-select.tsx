@@ -12,20 +12,21 @@ type NativeSelectProps = ComponentProps<"select">;
 function NativeSelect({ className, ...props }: NativeSelectProps): JSX.Element {
   return (
     <div
-      className={cn("group/native-select relative w-fit", "has-[select:disabled]:opacity-50")}
+      className={cn("group/native-select relative", "w-fit", "has-[select:disabled]:opacity-50")}
       data-slot="native-select-wrapper"
     >
       <select
         className={cn(
-          "h-9 w-full min-w-0",
-          "px-3 py-2 pr-9",
-          "rounded-lg border border-input bg-transparent shadow-xs",
+          "h-9 w-full min-w-0 px-3 py-2 pr-9",
+          "rounded-lg border border-input",
+          "bg-transparent shadow-xs outline-none",
           "text-sm",
-          "appearance-none transition-[color,box-shadow] outline-none",
+          "appearance-none transition-[color,box-shadow]",
           "selection:bg-primary selection:text-primary-foreground",
           "placeholder:text-muted-foreground",
           "disabled:pointer-events-none disabled:cursor-not-allowed",
-          "dark:bg-input/30 dark:hover:bg-input/50",
+          "dark:bg-input/30",
+          "dark:hover:bg-input/50",
           "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
           "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
           "dark:aria-invalid:ring-destructive/40",
@@ -37,11 +38,10 @@ function NativeSelect({ className, ...props }: NativeSelectProps): JSX.Element {
       <ChevronDownIcon
         aria-hidden="true"
         className={cn(
-          "absolute size-4",
-          "top-1/2 right-3.5",
-          "opacity-50",
-          "text-muted-foreground",
-          "pointer-events-none -translate-y-1/2 select-none",
+          "absolute top-1/2 right-3.5",
+          "size-4 text-muted-foreground",
+          "-translate-y-1/2 opacity-50",
+          "pointer-events-none select-none",
         )}
         data-slot="native-select-icon"
       />

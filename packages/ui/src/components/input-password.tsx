@@ -42,7 +42,11 @@ function InputPassword({
       />
       <InputGroupButton
         aria-label={type === "password" ? "Show password" : "Hide password"}
-        className={cn("rounded-full", "focus-visible:ring-0 focus-visible:not-disabled:bg-input")}
+        className={cn(
+          "rounded-full",
+          "focus-visible:ring-0",
+          "focus-visible:not-disabled:bg-input",
+        )}
         data-slot="input-password-toggle"
         disabled={disabled}
         size="icon-sm"

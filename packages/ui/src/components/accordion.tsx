@@ -49,8 +49,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
     <Component
       aria-hidden
       className={cn(
-        "size-4 shrink-0",
-        "text-muted-foreground",
+        "size-4 shrink-0 text-muted-foreground",
         "translate-y-0.5 transition-transform duration-200",
         className,
       )}
@@ -71,11 +70,9 @@ function AccordionTrigger({ children, className, ...props }: AccordionTriggerPro
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
         className={cn(
-          "group/accordion-trigger flex grow items-start justify-between gap-4",
-          "py-4",
-          "rounded-md",
+          "group/accordion-trigger flex grow items-start justify-between gap-4 py-4",
+          "rounded-md outline-hidden",
           "text-left text-sm font-medium",
-          "outline-hidden",
           "hover:not-disabled:underline",
           "focus-visible:ring-3 focus-visible:ring-ring/50",
           "disabled:opacity-50",

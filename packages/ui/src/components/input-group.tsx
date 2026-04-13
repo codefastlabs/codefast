@@ -20,8 +20,8 @@ import { Textarea } from "#components/textarea";
 const inputGroupVariants = tv({
   base: [
     "group/input-group relative flex h-9 w-full min-w-0 items-center",
-    "rounded-lg border border-input shadow-xs",
-    "transition-[color,box-shadow] outline-none",
+    "rounded-lg border border-input shadow-xs outline-none",
+    "transition-[color,box-shadow]",
     "dark:bg-input/30",
     "has-[>textarea]:h-auto",
     "has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col",
@@ -29,7 +29,10 @@ const inputGroupVariants = tv({
     "has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50",
     "has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-destructive/20",
     "dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
-    "has-[>[data-align=block-end]]:[&>[data-slot=input-group-control]]:pt-3 has-[>[data-align=block-start]]:[&>[data-slot=input-group-control]]:pb-3 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-2 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-2",
+    "has-[>[data-align=block-end]]:[&>[data-slot=input-group-control]]:pt-3",
+    "has-[>[data-align=block-start]]:[&>[data-slot=input-group-control]]:pb-3",
+    "has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-2",
+    "has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-2",
   ],
 });
 
@@ -39,12 +42,12 @@ const inputGroupVariants = tv({
 
 const inputGroupAddonVariants = tv({
   base: [
-    "flex h-auto items-center justify-center gap-2",
-    "py-1.5",
+    "flex h-auto items-center justify-center gap-2 py-1.5",
     "text-sm font-medium text-muted-foreground",
     "cursor-text select-none",
     "group-data-disabled/input-group:opacity-50",
-    "[&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
+    "[&>kbd]:rounded-[calc(var(--radius)-5px)]",
+    "[&>svg:not([class*='size-'])]:size-4",
   ],
   defaultVariants: {
     align: "inline-start",
@@ -52,14 +55,12 @@ const inputGroupAddonVariants = tv({
   variants: {
     align: {
       "block-end": [
-        "order-last w-full justify-start",
-        "px-3 pb-3",
+        "order-last w-full justify-start px-3 pb-3",
         "group-has-[>input]/input-group:pb-2.5",
         "[.border-t]:pt-3",
       ],
       "block-start": [
-        "order-first w-full justify-start",
-        "px-3 pt-3",
+        "order-first w-full justify-start px-3 pt-3",
         "group-has-[>input]/input-group:pt-2.5",
         "[.border-b]:pb-3",
       ],
@@ -95,12 +96,11 @@ const inputGroupButtonVariants = tv({
   },
   variants: {
     size: {
-      "icon-sm": ["size-8", "p-0", "has-[>svg]:p-0"],
-      "icon-xs": ["size-6", "p-0", "rounded-[calc(var(--radius)-5px)]", "has-[>svg]:p-0"],
-      sm: ["h-8 gap-1.5", "px-2.5", "rounded-md", "has-[>svg]:px-2.5"],
+      "icon-sm": ["size-8 p-0", "has-[>svg]:p-0"],
+      "icon-xs": ["size-6 p-0", "rounded-[calc(var(--radius)-5px)]", "has-[>svg]:p-0"],
+      sm: ["h-8 gap-1.5 px-2.5", "rounded-md", "has-[>svg]:px-2.5"],
       xs: [
-        "h-6 gap-1",
-        "px-2",
+        "h-6 gap-1 px-2",
         "rounded-[calc(var(--radius)-5px)]",
         "has-[>svg]:px-2",
         "[&>svg]:size-3.5",
@@ -197,9 +197,9 @@ function InputGroupText({ className, ...props }: InputGroupTextProps): JSX.Eleme
   return (
     <span
       className={cn(
-        "flex items-center gap-2",
-        "text-sm text-muted-foreground",
-        "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center gap-2 text-sm text-muted-foreground",
+        "[&_svg]:pointer-events-none",
+        "[&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="input-group-text"
@@ -220,7 +220,8 @@ function InputGroupInput({ className, ...props }: InputGroupInputProps): JSX.Ele
       className={cn(
         "flex-1",
         "px-3 py-1",
-        "rounded-none border-0 bg-transparent shadow-none",
+        "rounded-none border-0",
+        "bg-transparent shadow-none",
         "focus-visible:ring-0",
         "dark:bg-transparent",
         className,
@@ -243,7 +244,8 @@ function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): J
       className={cn(
         "flex-1",
         "py-3",
-        "rounded-none border-0 bg-transparent shadow-none",
+        "rounded-none border-0",
+        "bg-transparent shadow-none",
         "resize-none",
         "focus-visible:ring-0",
         "dark:bg-transparent",

@@ -34,9 +34,9 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
     <CheckboxGroupPrimitive.Item
       className={cn(
         "peer flex size-4 shrink-0 items-center justify-center",
-        "rounded-sm border border-input shadow-xs",
+        "rounded-sm border border-input shadow-xs outline-hidden",
         "text-primary-foreground",
-        "outline-hidden transition",
+        "transition",
         "hover:not-disabled:not-aria-checked:border-ring/60",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:opacity-50",
@@ -45,14 +45,16 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
         "hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60",
         "aria-checked:aria-invalid:bg-destructive",
-        "dark:bg-input/30 dark:focus-visible:aria-checked:ring-primary/40 dark:aria-invalid:ring-destructive/40",
+        "dark:bg-input/30",
+        "dark:focus-visible:aria-checked:ring-primary/40",
+        "dark:aria-invalid:ring-destructive/40",
         className,
       )}
       data-slot="checkbox-group-item"
       {...props}
     >
       <CheckboxGroupPrimitive.CheckboxGroupIndicator
-        className={cn("flex items-center justify-center", "text-current", "transition-none")}
+        className={cn("flex items-center justify-center text-current", "transition-none")}
         data-slot="checkbox-group-indicator"
       >
         <CheckIcon className="size-3.5" />

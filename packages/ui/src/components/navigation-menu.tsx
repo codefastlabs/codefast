@@ -108,8 +108,8 @@ function NavigationMenuTrigger({
       <ChevronDownIcon
         aria-hidden="true"
         className={cn(
-          "relative size-3",
-          "top-px ml-1",
+          "relative top-px",
+          "ml-1 size-3",
           "transition duration-300",
           "group-data-open/navigation-menu-trigger:rotate-180",
         )}
@@ -128,19 +128,19 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
   return (
     <NavigationMenuPrimitive.Content
       className={cn(
-        "w-full",
         "top-0 left-0",
-        "ease-ui",
+        "w-full",
         "group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-2 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-lg group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:p-1 group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:shadow",
         "group-data-[viewport=true]/navigation-menu:p-2",
         "data-[motion=from-end]:slide-in-from-right-52",
         "data-[motion=from-start]:slide-in-from-left-52",
         "data-[motion=to-end]:slide-out-to-right-52",
         "data-[motion=to-start]:slide-out-to-left-52",
-        "data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0",
+        "ease-ui data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0",
         "data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0",
         "md:absolute md:w-auto",
-        "group-data-[viewport=false]/navigation-menu:data-open:animate-in group-data-[viewport=false]/navigation-menu:data-open:fade-in-0 group-data-[viewport=false]/navigation-menu:data-open:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-closed:animate-out group-data-[viewport=false]/navigation-menu:data-closed:fade-out-0 group-data-[viewport=false]/navigation-menu:data-closed:zoom-out-95",
+        "group-data-[viewport=false]/navigation-menu:data-open:animate-in group-data-[viewport=false]/navigation-menu:data-open:fade-in-0 group-data-[viewport=false]/navigation-menu:data-open:zoom-in-95",
+        "group-data-[viewport=false]/navigation-menu:data-closed:animate-out group-data-[viewport=false]/navigation-menu:data-closed:fade-out-0 group-data-[viewport=false]/navigation-menu:data-closed:zoom-out-95",
         className,
       )}
       data-slot="navigation-menu-content"
@@ -161,13 +161,18 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): J
       className={cn(
         "flex flex-col gap-1",
         "p-2",
-        "rounded-sm",
+        "rounded-sm outline-hidden",
         "text-sm",
-        "outline-hidden transition",
+        "transition",
         "hover:bg-accent hover:text-accent-foreground",
         "focus:bg-accent focus:text-accent-foreground",
-        "data-active:bg-accent/50 data-active:text-accent-foreground data-active:hover:bg-accent data-active:focus:bg-accent",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "data-active:bg-accent/50 data-active:text-accent-foreground",
+        "data-active:hover:bg-accent",
+        "data-active:focus:bg-accent",
+        "[&_svg]:shrink-0",
+        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground",
+        "data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
         className,
       )}
       data-slot="navigation-menu-link"
@@ -184,15 +189,13 @@ type NavigationMenuViewportProps = ComponentProps<typeof NavigationMenuPrimitive
 
 function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportProps): JSX.Element {
   return (
-    <div
-      className={cn("absolute z-30 flex justify-center", "top-full left-0", "perspective-distant")}
-    >
+    <div className={cn("absolute top-full left-0 z-30 flex justify-center", "perspective-distant")}>
       <NavigationMenuPrimitive.Viewport
         className={cn(
-          "relative min-h-[calc(var(--radix-navigation-menu-viewport-height)+2px)] w-full overflow-hidden",
-          "mt-2",
-          "rounded-lg border bg-popover shadow-lg",
-          "text-popover-foreground",
+          "relative",
+          "mt-2 min-h-[calc(var(--radix-navigation-menu-viewport-height)+2px)] w-full overflow-hidden",
+          "rounded-lg border",
+          "bg-popover text-popover-foreground shadow-lg",
           "transition-[width,height] ease-ui",
           "sm:min-w-[calc(var(--radix-navigation-menu-viewport-width)+2px)]",
           "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-90",
@@ -220,10 +223,8 @@ function NavigationMenuIndicator({
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(
-        "z-10 flex h-2 items-center justify-center overflow-hidden",
-        "top-full",
-        "ease-ui",
-        "data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0",
+        "top-full z-10 flex h-2 items-center justify-center overflow-hidden",
+        "ease-ui data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0",
         "data-[state=visible]:animate-in data-[state=visible]:fade-in-0",
         className,
       )}
@@ -232,10 +233,10 @@ function NavigationMenuIndicator({
     >
       <div
         className={cn(
-          "relative size-2.5",
-          "top-[60%]",
-          "rounded-tl-xs bg-popover",
-          "text-popover-foreground",
+          "relative top-[60%]",
+          "size-2.5",
+          "rounded-tl-xs",
+          "bg-popover text-popover-foreground",
           "rotate-45",
         )}
       />

@@ -12,11 +12,10 @@ function Textarea({ className, ...props }: TextareaProps): JSX.Element {
   return (
     <textarea
       className={cn(
-        "flex min-h-16 w-full grow",
-        "px-3 py-2",
-        "rounded-lg border border-input shadow-xs",
+        "flex min-h-16 w-full grow px-3 py-2",
+        "rounded-lg border border-input shadow-xs outline-hidden",
         "text-base",
-        "outline-hidden transition",
+        "transition",
         "placeholder:text-muted-foreground",
         "hover:not-disabled:not-focus-visible:border-ring/60",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
@@ -25,7 +24,8 @@ function Textarea({ className, ...props }: TextareaProps): JSX.Element {
         "focus-within:aria-invalid:ring-destructive/20",
         "hover:not-disabled:not-focus-within:aria-invalid:border-destructive/60",
         "md:text-sm",
-        "dark:bg-input/30 dark:focus-within:aria-invalid:ring-destructive/40",
+        "dark:bg-input/30",
+        "dark:focus-within:aria-invalid:ring-destructive/40",
         className,
       )}
       data-slot="textarea"

@@ -13,11 +13,12 @@ import { Separator } from "#components/separator";
 const itemVariants = tv({
   base: [
     "group/item flex flex-wrap items-center",
-    "rounded-lg border border-transparent",
+    "rounded-lg border border-transparent outline-hidden",
     "text-sm",
-    "outline-hidden transition-colors duration-100",
+    "transition-colors duration-100",
     "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-    "[a]:transition-colors [a]:hover:bg-accent/50",
+    "[a]:transition-colors",
+    "[a]:hover:bg-accent/50",
   ],
   defaultVariants: {
     size: "default",
@@ -50,7 +51,8 @@ const itemMediaVariants = tv({
       default: "bg-transparent",
       icon: [
         "size-8 shrink-0",
-        "rounded-md border bg-muted",
+        "rounded-md border",
+        "bg-muted",
         "[&_svg:not([class*='size-'])]:size-4",
       ],
       image: [
@@ -189,7 +191,8 @@ function ItemDescription({ className, ...props }: ItemDescriptionProps): JSX.Ele
     <p
       className={cn(
         "line-clamp-2 text-sm leading-normal font-normal text-balance text-muted-foreground",
-        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "[&>a]:underline [&>a]:underline-offset-4",
+        "[&>a:hover]:text-primary",
         className,
       )}
       data-slot="item-description"

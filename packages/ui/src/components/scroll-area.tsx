@@ -13,7 +13,7 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
  * -------------------------------------------------------------------------- */
 
 const scrollAreaScrollbarVariants = tv({
-  base: ["flex", "p-px", "transition-colors select-none", "touch-none"],
+  base: ["flex", "p-px", "touch-none transition-colors select-none"],
   compoundVariants: [
     {
       className: "w-1.5",
@@ -107,8 +107,8 @@ function ScrollArea({
         <ScrollAreaPrimitive.Viewport
           className={cn(
             "size-full",
-            "rounded-[inherit] ring-ring/50",
-            "outline-ring transition",
+            "rounded-[inherit] ring-ring/50 outline-ring",
+            "transition",
             "focus-visible:ring-4 focus-visible:outline-1",
           )}
           data-slot="scroll-area-viewport"
@@ -145,7 +145,7 @@ function ScrollAreaScrollbar({
       {...props}
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
-        className={cn("relative flex-1", "rounded-full bg-border")}
+        className={cn("relative flex-1", "rounded-full", "bg-border")}
       />
     </ScrollAreaPrimitive.Scrollbar>
   );

@@ -246,7 +246,8 @@ function CarouselPrevious({
     <Button
       aria-label="Previous slide"
       className={cn(
-        "absolute size-8",
+        "absolute",
+        "size-8",
         "shadow-none",
         orientation === "horizontal"
           ? "top-1/2 -left-12 -translate-y-1/2"
@@ -290,7 +291,8 @@ function CarouselNext({
     <Button
       aria-label="Next slide"
       className={cn(
-        "absolute size-8",
+        "absolute",
+        "size-8",
         "shadow-none",
         orientation === "horizontal"
           ? "top-1/2 -right-12 -translate-y-1/2"

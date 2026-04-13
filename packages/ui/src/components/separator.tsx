@@ -68,8 +68,7 @@ function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element
       className={cn(
         "absolute",
         "mx-2 px-2",
-        "bg-background",
-        "text-sm text-muted-foreground",
+        "bg-background text-sm text-muted-foreground",
         className,
       )}
       data-slot="separator-item"
