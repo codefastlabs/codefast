@@ -1,0 +1,13 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "@codefast/benchmark-tailwind-variants": "0.0.1",
+    "@codefast/cli": "0.3.12",
+    "@codefast/tailwind-variants": "0.3.12",
+    "@codefast/theme": "0.3.12",
+    "@codefast/typescript-config": "0.3.12",
+    "@codefast/ui": "0.3.12"
+  },
+  "changesets": ["gentle-dingos-guess"]
+}

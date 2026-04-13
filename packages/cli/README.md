@@ -48,7 +48,7 @@ No filesystem involved — paste a class string, get back a suggested `cn(...)` 
 
 `arrange` does **not** sort alphabetically. It groups utilities in roughly the same order the browser reasons about them:
 
-**Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow → Typography → Composite → Motion → Starting → Behavior → Conditions (State)**
+**Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow → Typography → Composite → Motion → Starting → Behavior → Conditions (State) → Selectors**
 
 Bucket breakdown:
 
@@ -67,7 +67,8 @@ Bucket breakdown:
 | **Motion**     | Time-based change                                 | `transition-*`, `animate-*`                       |
 | **Starting**   | Tailwind's `starting:` layer, kept next to Motion | `starting:*`                                      |
 | **Behavior**   | Input / scrolling / chrome                        | `cursor-*`, `scroll-*`, `field-sizing-*`, `inert` |
-| **State**      | Everything with a variant stack                   | `hover:`, `md:`, `@md/sidebar:`, `data-[…]:`      |
+| **State**      | Interactive/conditional variants (non-selector)   | `hover:`, `md:`, `@md/sidebar:`, `data-[…]:`      |
+| **Selector**   | Selector-driven variants                          | `[&…]:`, `*:`, `**:`, `has-*`, `group-[…]:`       |
 
 Some adjacent buckets may be merged into one string literal when declared _compatible_ (e.g. `layout` + `sizing`) — keeps `cn()` readable without flattening unrelated concerns.
 

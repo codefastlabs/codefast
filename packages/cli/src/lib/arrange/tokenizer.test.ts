@@ -3,6 +3,7 @@ import {
   bucketsMergeCompatible,
   classifyToken,
   indexOfFirstVariantColon,
+  selectorKey,
   stateKey,
   stripVariants,
   tokenizeClassString,
@@ -27,6 +28,9 @@ describe("bucketsMergeCompatible", () => {
     ["layout", "state", false],
     ["arbitrary", "arbitrary", false],
     ["arbitrary", "state", false],
+    ["selector", "selector", false],
+    ["layout", "selector", false],
+    ["selector", "state", false],
   ] as const)("merge compatibility %s + %s -> %s", (a, b, expected) => {
     expect(bucketsMergeCompatible(a, b)).toBe(expected);
     expect(bucketsMergeCompatible(b, a)).toBe(expected);
@@ -40,6 +44,7 @@ describe("bucketsCompatible", () => {
     ["shape", "shadow", true],
     ["layout", "state", false],
     ["arbitrary", "state", false],
+    ["layout", "selector", false],
   ] as const)("compatibility %s + %s -> %s", (a, b, expected) => {
     expect(bucketsCompatible(a, b)).toBe(expected);
     expect(bucketsCompatible(b, a)).toBe(expected);
@@ -91,12 +96,31 @@ describe("classifyToken", () => {
     ["outline-hidden", "shadow"],
     ["focus-visible:outline-hidden", "state"],
     ["hover:opacity-80", "state"],
-    ["[&_svg]:size-4", "state"],
+    ["[&_svg]:size-4", "selector"],
+    ["*:rounded", "selector"],
+    ["**:text-sm", "selector"],
+    ["has-[img]:bg-muted", "selector"],
+    ["in-[.popover]:opacity-100", "selector"],
+    ["group-[.is-published]:block", "selector"],
+    ["peer-[.is-dirty]:peer-required:block", "selector"],
+    ["not-[.prose]:mt-4", "selector"],
     ["starting:opacity-0", "starting"],
     ["cursor-default", "behavior"],
     ["@container/sidebar", "existence"],
     ["@md/sidebar:w-full", "state"],
   ] as const)("classifies %s -> %s", (token, bucket) => {
     expect(classifyToken(token)).toBe(bucket);
+  });
+});
+
+describe("selectorKey", () => {
+  it("merges shadcn svg size guard with plain [&_svg] utilities", () => {
+    expect(selectorKey("[&_svg]:pointer-events-none")).toBe(
+      selectorKey("[&_svg:not([class*='size-'])]:size-6"),
+    );
+  });
+
+  it("still splits unrelated arbitrary parent selectors", () => {
+    expect(selectorKey("[&_svg]:size-4")).not.toBe(selectorKey("[&>*]:block"));
   });
 });

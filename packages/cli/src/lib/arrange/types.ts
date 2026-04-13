@@ -21,6 +21,8 @@ export type Bucket =
   | "motion"
   | "starting"
   | "behavior"
+  /** Selector variants (e.g. `[&…]:`, `*:`, `has-*`) distinct from interactive/data state. */
+  | "selector"
   | "state"
   | "arbitrary"
   | "other";

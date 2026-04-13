@@ -11,13 +11,18 @@ import {
   bucketsMergeCompatible,
   classifyToken,
   compositeSecondaryOrder,
+  selectorKey,
   stateKey,
   stripVariants,
   tokenizeClassString,
 } from "#lib/arrange/tokenizer";
 
-function isVariantKeyedBucket(bucket: Bucket): bucket is "state" | "starting" {
-  return bucket === "state" || bucket === "starting";
+function isVariantKeyedBucket(bucket: Bucket): bucket is "selector" | "state" | "starting" {
+  return bucket === "selector" || bucket === "state" || bucket === "starting";
+}
+
+function variantGroupKey(bucket: Bucket, tok: string): string {
+  return bucket === "selector" ? selectorKey(tok) : stateKey(tok);
 }
 
 /**
@@ -255,13 +260,15 @@ export function suggestCnGroups(classString: string): string[] {
   for (const { tok, bucket: tokenBucket } of classified) {
     if (lastBucketInRun === null) {
       lastBucketInRun = tokenBucket;
-      currentStateKey = isVariantKeyedBucket(tokenBucket) ? stateKey(tok) : null;
+      currentStateKey = isVariantKeyedBucket(tokenBucket)
+        ? variantGroupKey(tokenBucket, tok)
+        : null;
       currentTokens.push(tok);
       continue;
     }
 
     if (isVariantKeyedBucket(tokenBucket)) {
-      const key = stateKey(tok);
+      const key = variantGroupKey(tokenBucket, tok);
       if (currentStateKey !== null && key !== currentStateKey) {
         flush();
         lastBucketInRun = tokenBucket;
@@ -274,13 +281,15 @@ export function suggestCnGroups(classString: string): string[] {
     if (!bucketsCompatible(tokenBucket, lastBucketInRun)) {
       flush();
       lastBucketInRun = tokenBucket;
-      currentStateKey = isVariantKeyedBucket(tokenBucket) ? stateKey(tok) : null;
+      currentStateKey = isVariantKeyedBucket(tokenBucket)
+        ? variantGroupKey(tokenBucket, tok)
+        : null;
       currentTokens.push(tok);
       continue;
     }
 
     if (isVariantKeyedBucket(tokenBucket)) {
-      currentStateKey = stateKey(tok);
+      currentStateKey = variantGroupKey(tokenBucket, tok);
     } else if (currentStateKey !== null) {
       // Defensive reset: keeps state-key logic explicit if bucket rules evolve.
       currentStateKey = null;

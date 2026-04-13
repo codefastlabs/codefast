@@ -82,6 +82,19 @@ function firstLeadingVariantPrefix(token: string): string | undefined {
   return token.slice(0, colonIdx);
 }
 
+function isSelectorVariantToken(token: string): boolean {
+  const prefix = firstLeadingVariantPrefix(token);
+  if (prefix === undefined) return false;
+
+  if (prefix === "*" || prefix === "**") return true;
+  if (prefix.startsWith("has-")) return true;
+  if (prefix.startsWith("in-[")) return true;
+  if (prefix.startsWith("group-[")) return true;
+  if (prefix.startsWith("peer-[")) return true;
+  if (prefix.startsWith("not-[")) return true;
+  return false;
+}
+
 function isStateToken(token: string): boolean {
   const prefix = firstLeadingVariantPrefix(token);
   if (prefix === undefined) return false;
@@ -334,7 +347,8 @@ export function classifyBareUtility(bareUtility: string): Bucket {
 
 /**
  * Arbitrary **parent** selectors (`[&…]`, `[&>a]:…`, slot forms with `&` inside the bracket)
- * scope utilities like variants — bucket as `state` so they chunk apart from base layout/typography.
+ * scope utilities to descendants — bucket as `selector` so they chunk apart from base layout/typography
+ * and are labeled distinctly from interactive `state` variants (`hover:`, `data-[…]:`, …).
  * Pure arbitrary **properties** (`[--x]:`, `[color:red]`) have no `&` in the leading `[…]` segment.
  */
 export function isArbitraryParentSelectorStateToken(token: string): boolean {
@@ -354,9 +368,12 @@ export function isArbitraryParentSelectorStateToken(token: string): boolean {
 
 export function classifyToken(token: string): Bucket {
   // Before `[` arbitrary-property handling and `isStateToken`, parent-selector tokens must
-  // be `state` so they flush into their own chunk after unconditional utilities.
+  // be `selector` so they flush into their own chunk after unconditional utilities.
   if (isArbitraryParentSelectorStateToken(token)) {
-    return "state";
+    return "selector";
+  }
+  if (isSelectorVariantToken(token)) {
+    return "selector";
   }
 
   if (/^@container(?:\/[a-z][a-z0-9-]*)?$/i.test(token)) {
@@ -409,7 +426,8 @@ function inDataAttributeStem(token: string): string {
 }
 
 /**
- * Stable key for splitting adjacent `state` / `starting` tokens in {@link suggestCnGroups}.
+ * Stable key for splitting adjacent `state` / `starting` tokens in {@link suggestCnGroups}
+ * (`selector` uses {@link selectorKey}).
  * Uses the **full variant stack** (every `:` segment outside `[…]`), not only the
  * outermost prefix, so `@md/foo:[&>*]:w-auto` and `@md/foo:has-[…]:mt-px` stay in
  * separate groups while `hover:opacity` still keys as `hover` + `opacity`…
@@ -439,15 +457,37 @@ export function stateKey(token: string): string {
   return layers.join("\u001f");
 }
 
+const SELECTOR_KEY_SEP = "\u001f";
+
+/**
+ * Variant key for {@link Bucket} `"selector"` tokens in {@link suggestCnGroups}.
+ * Reuses {@link stateKey} layer splitting, then normalizes common shadcn/Radix SVG patterns so
+ * `[&_svg]:…` and `[&_svg:not([class*='size-'])]:…` stay in one chunk.
+ */
+export function selectorKey(token: string): string {
+  return stateKey(token)
+    .split(SELECTOR_KEY_SEP)
+    .map(normalizeSelectorVariantLayer)
+    .join(SELECTOR_KEY_SEP);
+}
+
+function normalizeSelectorVariantLayer(layer: string): string {
+  if (layer === "[&_svg:not([class*='size-'])]") {
+    return "[&_svg]";
+  }
+  return layer;
+}
+
 export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
   if (a === b) return true;
   return COMPATIBLE_BUCKET_SETS.some((bucketSet) => bucketSet.has(a) && bucketSet.has(b));
 }
 
-/** Like {@link bucketsCompatible}, but never merge two distinct state / starting variant blobs. */
+/** Like {@link bucketsCompatible}, but never merge two distinct state / starting / selector variant blobs. */
 export function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
   if (a === "state" && b === "state") return false;
   if (a === "starting" && b === "starting") return false;
+  if (a === "selector" && b === "selector") return false;
   if (a === "arbitrary" || b === "arbitrary") return false;
   return bucketsCompatible(a, b);
 }
