@@ -71,6 +71,7 @@ build-storybook.log
 # codecov
 codecov
 codecov.*
+!codecov.yml
 
 # scripts
 .exports-analysis

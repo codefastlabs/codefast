@@ -1,5 +1,12 @@
 import ts from "typescript";
-import { collectGroupableStringNodes, slotClassString } from "#lib/arrange/ast/collectors-tv";
+import { buildKnownCnTvBindings } from "#lib/arrange/ast/utils";
+import {
+  collectCnCallsInsideTv,
+  collectGroupableStringNodes,
+  listAllCnCallsInsideTvInSourceFile,
+  slotClassString,
+  traverseTvObject,
+} from "#lib/arrange/ast/collectors-tv";
 import { MAX_OBJECT_DEPTH } from "#lib/arrange/constants";
 
 describe("collectGroupableStringNodes", () => {
@@ -50,6 +57,31 @@ export const styles = tv({
     expect(nodes.some((n) => slotClassString(n).includes("flex gap-2"))).toBe(true);
   });
 
+  it("collects direct cn(...) entries inside tv arrays and ignores unsafe nested array literals", () => {
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
+export const styles = tv({
+  base: [cn(["skip-a", "skip-b"]), cn("flex gap-2 text-sm rounded-md border px-3")],
+});
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const nodes = collectGroupableStringNodes(sf);
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(nodes.some((n) => slotClassString(n).includes("flex gap-2 text-sm"))).toBe(true);
+    expect(nodes.some((n) => slotClassString(n).includes("skip-a"))).toBe(false);
+  });
+
+  it("collects compoundVariants class set directly to cn(...) call", () => {
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
+export const styles = tv({
+  compoundVariants: [{ class: cn("flex gap-2 text-sm rounded-md border px-3") }],
+});
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const nodes = collectGroupableStringNodes(sf);
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(nodes.some((n) => slotClassString(n).includes("rounded-md border px-3"))).toBe(true);
+  });
+
   it("returns empty when file has no cn/tv candidates", () => {
     const sf = ts.createSourceFile(
       "x.ts",
@@ -84,5 +116,83 @@ export const styles = tv({
     const nodes = collectGroupableStringNodes(sf);
     expect(nodes.length).toBeGreaterThan(0);
     expect(slotClassString(nodes[0]!)).toContain("flex gap-2");
+  });
+});
+
+describe("tv collector helpers", () => {
+  it("traverseTvObject visits nested className/class string literals and cn call literals", () => {
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
+const cfg = {
+  base: [{ className: ["flex gap-2", "text-sm"] }, { class: cn("rounded-md border", "px-3") }],
+  variants: {
+    intent: { primary: { className: "font-medium shadow-xs" } },
+  },
+};
+tv(cfg);
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const knownBindings = buildKnownCnTvBindings(sf);
+    const stmt = sf.statements[1] as ts.VariableStatement;
+    const decl = stmt.declarationList.declarations[0]!;
+    const obj = decl.initializer as ts.ObjectLiteralExpression;
+    const visited: string[] = [];
+    traverseTvObject(
+      sf,
+      obj,
+      (node) => {
+        visited.push(node.text);
+      },
+      0,
+      knownBindings,
+    );
+
+    expect(visited).toEqual(
+      expect.arrayContaining([
+        "flex gap-2",
+        "text-sm",
+        "rounded-md border",
+        "px-3",
+        "font-medium shadow-xs",
+      ]),
+    );
+  });
+
+  it("collectCnCallsInsideTv finds cn calls from arrays, class fields, and nested objects", () => {
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
+tv({
+  base: [cn("flex gap-2"), { class: cn("text-sm rounded-md") }],
+  variants: {
+    intent: {
+      primary: { className: cn("border px-3") },
+    },
+  },
+});
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const knownBindings = buildKnownCnTvBindings(sf);
+    const tvCall = (sf.statements[1] as ts.ExpressionStatement).expression as ts.CallExpression;
+    const tvObj = tvCall.arguments[0] as ts.ObjectLiteralExpression;
+
+    const calls = collectCnCallsInsideTv(sf, tvObj, knownBindings, 0);
+    expect(calls).toHaveLength(3);
+    expect(calls.map((call) => call.getText(sf))).toEqual(
+      expect.arrayContaining(['cn("flex gap-2")', 'cn("text-sm rounded-md")', 'cn("border px-3")']),
+    );
+  });
+
+  it("listAllCnCallsInsideTvInSourceFile collects cn calls only from tv() object arguments", () => {
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
+cn("outside call should not be counted");
+tv({
+  base: [cn("inside-tv one"), { className: cn("inside-tv two") }],
+});
+`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const knownBindings = buildKnownCnTvBindings(sf);
+    const calls = listAllCnCallsInsideTvInSourceFile(sf, knownBindings);
+    expect(calls).toHaveLength(2);
+    expect(calls.map((call) => call.getText(sf))).toEqual(
+      expect.arrayContaining(['cn("inside-tv one")', 'cn("inside-tv two")']),
+    );
   });
 });
