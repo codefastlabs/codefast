@@ -1,5 +1,5 @@
 {
-  "mode": "pre",
+  "mode": "exit",
   "tag": "canary",
   "initialVersions": {
     "@codefast/benchmark-tailwind-variants": "0.0.1",
