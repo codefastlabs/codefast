@@ -3,6 +3,7 @@ import {
   forEachStringLiteralInClassExpression,
   mergeCnUnconditionalLiteralPoolForTest,
 } from "#lib/arrange";
+import { MAX_CLASS_EXPR_DEPTH } from "#lib/arrange/constants";
 
 describe("forEachStringLiteralInClassExpression", () => {
   function literalsFromArgSnippet(
@@ -34,6 +35,28 @@ describe("forEachStringLiteralInClassExpression", () => {
 
   it("walks nested arrays and assertions", () => {
     expect(literalsFromArgSnippet('["p", (("q" as const))]')).toEqual(["p", "q"]);
+  });
+
+  it("documents that traversal stops safely when class expression depth exceeds the configured limit", () => {
+    let expr = '"deep-token"';
+    for (let i = 0; i < MAX_CLASS_EXPR_DEPTH + 2; i += 1) {
+      expr = `[${expr}]`;
+    }
+    const sf = ts.createSourceFile(
+      "x.ts",
+      `cn(${expr});`,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    const stmt = sf.statements[0] as ts.ExpressionStatement;
+    const call = stmt.expression as ts.CallExpression;
+    const arg0 = call.arguments[0]!;
+    const out: string[] = [];
+    expect(() => {
+      forEachStringLiteralInClassExpression(arg0, (n) => out.push(n.text), 0);
+    }).not.toThrow();
+    expect(out).toEqual([]);
   });
 });
 

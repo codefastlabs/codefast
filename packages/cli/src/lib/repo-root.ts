@@ -23,5 +23,7 @@ export function findRepoRoot(fs: CliFs): string {
     }
   }
 
-  throw new Error("Could not locate monorepo root (missing pnpm-workspace.yaml).");
+  throw new Error(
+    `Could not locate monorepo root (missing pnpm-workspace.yaml). Searched from: ${candidates.join(", ")}`,
+  );
 }
