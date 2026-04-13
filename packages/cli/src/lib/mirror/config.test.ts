@@ -3,9 +3,21 @@ import os from "node:os";
 import path from "node:path";
 import { createNodeCliFs } from "#lib/infra/node-io";
 import { loadMirrorConfig } from "#lib/mirror/config";
+import { resetConfigLoaderCacheForTests } from "#lib/shared/config-loader";
 
 describe("loadMirrorConfig", () => {
   const cliFs = createNodeCliFs();
+  async function withCwd<T>(cwd: string, fn: () => Promise<T>): Promise<T> {
+    const prev = process.cwd();
+    process.chdir(cwd);
+    resetConfigLoaderCacheForTests();
+    try {
+      return await fn();
+    } finally {
+      process.chdir(prev);
+      resetConfigLoaderCacheForTests();
+    }
+  }
 
   it("documents that runtime import() failures push a warning and continue with JSON fallback", async () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "mirror-config-js-throw-"));
@@ -17,10 +29,12 @@ describe("loadMirrorConfig", () => {
         "utf8",
       );
 
-      const { config, warnings } = await loadMirrorConfig(root, cliFs);
-      expect(config).toEqual({ skipPackages: ["packages/skip"] });
-      expect(warnings).toHaveLength(1);
-      expect(warnings[0]).toContain("Could not load codefast.config.js");
+      await withCwd(root, async () => {
+        const { config, warnings } = await loadMirrorConfig(root, cliFs);
+        expect(config).toEqual({ skipPackages: ["packages/skip"] });
+        expect(warnings).toHaveLength(1);
+        expect(warnings[0]).toContain("Could not load codefast.config.js");
+      });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
@@ -31,10 +45,12 @@ describe("loadMirrorConfig", () => {
     try {
       fs.writeFileSync(path.join(root, "codefast.config.json"), "{ invalid json", "utf8");
 
-      const { config, warnings } = await loadMirrorConfig(root, cliFs);
-      expect(config).toEqual({});
-      expect(warnings).toHaveLength(1);
-      expect(warnings[0]).toContain("Could not parse codefast.config.json");
+      await withCwd(root, async () => {
+        const { config, warnings } = await loadMirrorConfig(root, cliFs);
+        expect(config).toEqual({});
+        expect(warnings).toHaveLength(1);
+        expect(warnings[0]).toContain("Could not load codefast.config.json");
+      });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
@@ -58,15 +74,17 @@ describe("loadMirrorConfig", () => {
         "utf8",
       );
 
-      const { config, warnings } = await loadMirrorConfig(root, cliFs);
-      expect(warnings).toEqual([]);
-      expect(config).toEqual({
-        skipPackages: ["packages/legacy"],
-        customExports: {
-          "packages/ui": {
-            "./custom": "./dist/custom.js",
+      await withCwd(root, async () => {
+        const { config, warnings } = await loadMirrorConfig(root, cliFs);
+        expect(warnings).toEqual([]);
+        expect(config).toEqual({
+          skipPackages: ["packages/legacy"],
+          customExports: {
+            "packages/ui": {
+              "./custom": "./dist/custom.js",
+            },
           },
-        },
+        });
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });

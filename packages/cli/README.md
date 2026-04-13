@@ -4,12 +4,14 @@ A focused CLI for two recurring maintenance tasks in monorepos:
 
 - **`arrange`** — analyze and regroup Tailwind class strings inside `cn()` / `tv()` calls according to a consistent render-pipeline order.
 - **`mirror`** — regenerate `package.json` `exports` fields from built `dist/` trees across a pnpm workspace.
+- **`tag`** (alias: **`annotate`**) — auto-add `@since <version>` to exported TypeScript declarations that are still missing version metadata.
 
 ```mermaid
 flowchart LR
   R[codefast]
   R --> A[arrange]
   R --> M[mirror]
+  R --> T[tag]
 
   A --> A0[analyze]
   A --> A1[preview]
@@ -51,6 +53,9 @@ codefast arrange apply packages/ui/src/components
 
 # 3. Regenerate package exports from built dist/
 codefast mirror sync
+
+# 4. Add @since tags to exported APIs under src/
+codefast tag
 ```
 
 ---
@@ -136,6 +141,57 @@ Use your real package names from `package.json#name` (for example `@acme/ui`) an
 > **Migration:** Path-based keys (for example `packages/ui`) are deprecated for `pathTransformations`, `customExports`, `cssExports`, and `skipPackages`. Migrate to package-name keys.
 
 > **Security note:** `.js`, `.mjs`, and `.cjs` config files are loaded via `import()`. Only run `mirror sync` in repositories you trust.
+
+---
+
+## Lifecycle hooks (`codefast.config.mjs`)
+
+`codefast` supports lifecycle hooks so teams can plug in their own post-write workflow (formatter, lint-fix, codemods) without hardcoding any formatter inside CLI core.
+
+```javascript
+import { execSync } from "node:child_process";
+
+export default {
+  tag: {
+    onAfterWrite: ({ files }) => {
+      console.log(`Formatting ${files.length} files with Oxc...`);
+      execSync(`npx oxc format ${files.join(" ")}`, { stdio: "inherit" });
+    },
+  },
+  arrange: {
+    onAfterWrite: ({ files }) => {
+      execSync(`npx oxc format ${files.join(" ")}`, { stdio: "inherit" });
+    },
+  },
+};
+```
+
+Hook contract:
+
+- `tag.onAfterWrite?.({ files })` runs after `codefast tag` writes files.
+- `arrange.onAfterWrite?.({ files })` runs after `codefast arrange apply` writes files.
+- Hooks support both sync and async functions (`void | Promise<void>`).
+- Hook errors are logged but do not crash the CLI process.
+
+---
+
+## `tag` / `annotate`
+
+Scans `.ts` / `.tsx` source files and annotates exported declarations with `@since <current-package-version>`. This keeps API evolution visible and reduces documentation drift in long-lived codebases.
+
+```bash
+codefast tag                  # annotate exports in ./src
+codefast tag packages/ui/src  # annotate a custom target
+codefast annotate --dry-run   # preview only, do not write files
+```
+
+What it updates:
+
+- Adds `/** @since <version> */` when an exported declaration has no JSDoc.
+- Injects `@since <version>` into an existing JSDoc block when missing.
+- Leaves declarations unchanged when `@since` is already present.
+
+The `<version>` value is read from the nearest `package.json` found by walking up from the target path.
 
 ---
 

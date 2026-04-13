@@ -3,9 +3,12 @@ import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { loadConfig } from "#lib/shared/config-loader";
+import type { CodefastConfig } from "#lib/shared/config-types";
 import {
   ArrangeError,
   ArrangeErrorCode,
+  type ArrangeRunResult,
   analyzeDirectory,
   createNodeCliFs,
   createNodeCliLogger,
@@ -54,14 +57,42 @@ type ArrangeCliRunOpts = {
   cnImport?: string;
 };
 
-function runArrangeAction(
+async function loadCodefastConfigWithWarnings(
+  fs: CliFs,
+  logger: CliLogger,
+): Promise<CodefastConfig | undefined> {
+  const { config, warnings } = await loadConfig(fs);
+  for (const warning of warnings) {
+    logger.err(`[config] ${warning}`);
+  }
+  return config;
+}
+
+async function runArrangeOnAfterWriteHook(
+  config: CodefastConfig | undefined,
+  modifiedFiles: string[],
+  logger: CliLogger,
+): Promise<void> {
+  if (modifiedFiles.length === 0) return;
+  const hook = config?.arrange?.onAfterWrite;
+  if (!hook) return;
+  try {
+    await hook({ files: modifiedFiles });
+  } catch (error) {
+    logger.err(
+      `[arrange] onAfterWrite hook failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+async function runArrangeAction(
   resolvedTarget: string,
   runOpts: ArrangeCliRunOpts,
   fs: CliFs,
   logger: CliLogger,
-): void {
+): Promise<ArrangeRunResult | undefined> {
   try {
-    runOnTarget(
+    const result = runOnTarget(
       resolvedTarget,
       {
         write: runOpts.write,
@@ -71,8 +102,10 @@ function runArrangeAction(
       fs,
       logger,
     );
+    return result;
   } catch (e) {
     if (!handleArrangeLibError(e, logger)) throw e;
+    return undefined;
   }
 }
 
@@ -99,22 +132,24 @@ export function registerArrangeCommand(program: Command): void {
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .addOption(createWithClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
-    .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
-      const fs = createNodeCliFs();
-      const logger = createNodeCliLogger();
-      const resolved = target ? path.resolve(target) : defaultTargetPath();
-      if (!checkTargetExists(resolved, fs, logger)) return;
-      runArrangeAction(
-        resolved,
-        {
-          write: false,
-          withClassName: opts.withClassName,
-          cnImport: opts.cnImport,
-        },
-        fs,
-        logger,
-      );
-    });
+    .action(
+      async (target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
+        const fs = createNodeCliFs();
+        const logger = createNodeCliLogger();
+        const resolved = target ? path.resolve(target) : defaultTargetPath();
+        if (!checkTargetExists(resolved, fs, logger)) return;
+        await runArrangeAction(
+          resolved,
+          {
+            write: false,
+            withClassName: opts.withClassName,
+            cnImport: opts.cnImport,
+          },
+          fs,
+          logger,
+        );
+      },
+    );
 
   arrange
     .command("apply")
@@ -122,22 +157,27 @@ export function registerArrangeCommand(program: Command): void {
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .addOption(createWithClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
-    .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
-      const fs = createNodeCliFs();
-      const logger = createNodeCliLogger();
-      const resolved = target ? path.resolve(target) : defaultTargetPath();
-      if (!checkTargetExists(resolved, fs, logger)) return;
-      runArrangeAction(
-        resolved,
-        {
-          write: true,
-          withClassName: opts.withClassName,
-          cnImport: opts.cnImport,
-        },
-        fs,
-        logger,
-      );
-    });
+    .action(
+      async (target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
+        const fs = createNodeCliFs();
+        const logger = createNodeCliLogger();
+        const resolved = target ? path.resolve(target) : defaultTargetPath();
+        if (!checkTargetExists(resolved, fs, logger)) return;
+        const result = await runArrangeAction(
+          resolved,
+          {
+            write: true,
+            withClassName: opts.withClassName,
+            cnImport: opts.cnImport,
+          },
+          fs,
+          logger,
+        );
+        if (!result || result.modifiedFiles.length === 0) return;
+        const config = await loadCodefastConfigWithWarnings(fs, logger);
+        await runArrangeOnAfterWriteHook(config, result.modifiedFiles, logger);
+      },
+    );
 
   arrange
     .command("group")

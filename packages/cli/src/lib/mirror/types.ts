@@ -35,6 +35,11 @@ export interface MirrorConfig {
 }
 
 export interface MirrorPackageMeta {
+  /**
+   * Legacy workspace-relative package path used only for backward compatibility fallback.
+   * @deprecated Path-based configuration keys are deprecated. Use package name instead.
+   * @todo Remove in v2.0
+   */
   relPath: string;
   packageName: string;
 }

@@ -1,6 +1,6 @@
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { ArrangeError, ArrangeErrorCode } from "#lib/arrange/errors";
-import type { ArrangeRunOnTargetOptions } from "#lib/arrange/types";
+import type { ArrangeRunOnTargetOptions, ArrangeRunResult } from "#lib/arrange/types";
 import { groupFile } from "#lib/arrange/group-file";
 import { walkTsxFiles } from "#lib/arrange/walk";
 
@@ -9,13 +9,14 @@ export function runOnTarget(
   options: ArrangeRunOnTargetOptions,
   fs: CliFs,
   logger: CliLogger,
-): void {
+): ArrangeRunResult {
   const { out } = logger;
   if (!fs.existsSync(target)) {
     throw new ArrangeError(ArrangeErrorCode.TARGET_NOT_FOUND, `Not found: ${target}`);
   }
 
   const filePaths = fs.statSync(target).isDirectory() ? walkTsxFiles(target, fs) : [target];
+  const modifiedFiles: string[] = [];
 
   let totalFound = 0;
   let totalChanged = 0;
@@ -24,6 +25,7 @@ export function runOnTarget(
     const result = groupFile(fp, options, fs, logger);
     totalFound += result.totalFound;
     totalChanged += result.changed;
+    if (result.changed > 0) modifiedFiles.push(result.filePath);
   }
 
   out(
@@ -43,4 +45,11 @@ export function runOnTarget(
       "Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.",
     );
   }
+
+  return {
+    filePaths,
+    modifiedFiles,
+    totalFound,
+    totalChanged,
+  };
 }

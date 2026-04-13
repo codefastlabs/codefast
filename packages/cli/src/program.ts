@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { registerArrangeCommand } from "#commands/arrange";
 import { registerMirrorCommand } from "#commands/mirror";
+import { registerTagCommand } from "#commands/tag";
 
 function readVersion(): string {
   try {
@@ -30,6 +31,7 @@ export function createProgram(): Command {
 
   registerMirrorCommand(program);
   registerArrangeCommand(program);
+  registerTagCommand(program);
 
   return program;
 }

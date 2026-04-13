@@ -10,6 +10,11 @@ export const MIRROR_CONFIG_KEYS = {
 
 export type MirrorConfigKey = (typeof MIRROR_CONFIG_KEYS)[keyof typeof MIRROR_CONFIG_KEYS];
 
+/**
+ * Builds the deprecation warning for legacy path-based config keys.
+ * @deprecated Path-based configuration keys are deprecated. Use package name instead.
+ * @todo Remove in v2.0
+ */
 function formatPathKeyDeprecationWarning(
   pkgMeta: MirrorPackageMeta,
   configKeyName: MirrorConfigKey,
@@ -18,6 +23,11 @@ function formatPathKeyDeprecationWarning(
   return `[Deprecation Warning] Path-based configuration key "${relPath}" for "${configKeyName}" is deprecated and will be removed in the future. Please migrate to using the package name "${packageName}".`;
 }
 
+/**
+ * Emits a deprecation warning when legacy path-based keys are used.
+ * @deprecated Path-based configuration keys are deprecated. Use package name instead.
+ * @todo Remove in v2.0
+ */
 function logPathKeyDeprecation(
   pkgMeta: MirrorPackageMeta,
   configKeyName: MirrorConfigKey,
@@ -36,6 +46,8 @@ function findMatchingKey(
   if (keysToMatch.includes(pkgMeta.packageName)) {
     return pkgMeta.packageName;
   }
+  // @deprecated Path-based configuration keys are deprecated. Use package name instead.
+  // @todo Remove in v2.0
   if (keysToMatch.includes(pkgMeta.relPath)) {
     logPathKeyDeprecation(pkgMeta, configKeyName, logger);
     return pkgMeta.relPath;
