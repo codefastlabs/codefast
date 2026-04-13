@@ -34,6 +34,11 @@ export interface MirrorConfig {
   >;
 }
 
+export interface MirrorPackageMeta {
+  relPath: string;
+  packageName: string;
+}
+
 /** Parsed `package.json` — only fields mirror reads/writes are typed strictly. */
 export type PackageJsonShape = {
   name?: unknown;

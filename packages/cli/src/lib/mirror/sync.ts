@@ -1,6 +1,11 @@
 import path from "node:path";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+import {
+  isPackageSkipped,
+  MIRROR_CONFIG_KEYS,
+  resolvePackageScopedConfig,
+} from "#lib/mirror/config-resolver";
 import { loadMirrorConfig } from "#lib/mirror/config";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
 import { createPathTransform, generateExports, normalizePath } from "#lib/mirror/engine";
@@ -18,12 +23,15 @@ import {
   mirrorSummarySeparator,
   printMirrorConfigWarnings,
 } from "#lib/mirror/reporter";
-import type { GlobalStats, MirrorConfig, MirrorOptions, PackageStats } from "#lib/mirror/types";
-import {
-  readPackageJsonDisplayName,
-  resolvePackageDisplayName,
-  writePackageJsonExportsAtomic,
-} from "#lib/mirror/update-pkg";
+import type {
+  GlobalStats,
+  MirrorConfig,
+  MirrorOptions,
+  MirrorPackageMeta,
+  PackageJsonShape,
+  PackageStats,
+} from "#lib/mirror/types";
+import { resolvePackageDisplayName, writePackageJsonExportsAtomic } from "#lib/mirror/update-pkg";
 import { findWorkspacePackageRelPaths } from "#lib/mirror/workspace-packages";
 
 async function processPackage(
@@ -57,15 +65,6 @@ async function processPackage(
     error: null,
   };
 
-  if (config.skipPackages?.includes(relativePath)) {
-    pkgStats.skipped = true;
-    pkgStats.skipReason = "configured to skip";
-    stats.packagesSkipped++;
-    pkgStats.name = await readPackageJsonDisplayName(fs, packageJsonPath, pkgName);
-    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
-    return pkgStats;
-  }
-
   if (!fs.existsSync(packageJsonPath)) {
     pkgStats.skipped = true;
     pkgStats.skipReason = "package.json not found";
@@ -74,28 +73,55 @@ async function processPackage(
     return pkgStats;
   }
 
+  try {
+    const pkgContent = await fs.readFile(packageJsonPath, "utf8");
+    const parsedPackageJson = JSON.parse(pkgContent) as PackageJsonShape;
+    pkgStats.name = resolvePackageDisplayName(parsedPackageJson, pkgName);
+  } catch (e: unknown) {
+    pkgStats.error = String(e);
+    stats.packagesErrored++;
+    logPackageError(logger, index, total, pkgStats.name, e, verbose);
+    return pkgStats;
+  }
+
+  const pkgMeta: MirrorPackageMeta = { relPath: relativePath, packageName: pkgStats.name };
+
+  if (isPackageSkipped(config.skipPackages, pkgMeta, logger)) {
+    pkgStats.skipped = true;
+    pkgStats.skipReason = "configured to skip";
+    stats.packagesSkipped++;
+    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+    return pkgStats;
+  }
+
   if (!fs.existsSync(distDir)) {
     pkgStats.skipped = true;
     pkgStats.skipReason = "dist/ not found";
     stats.packagesSkipped++;
-    pkgStats.name = await readPackageJsonDisplayName(fs, packageJsonPath, pkgName);
     logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
     return pkgStats;
   }
 
   try {
-    const pkgContent = await fs.readFile(packageJsonPath, "utf8");
-    const packageJson = JSON.parse(pkgContent) as { name?: unknown };
-    pkgStats.name = resolvePackageDisplayName(packageJson, pkgName);
-
-    const pathTransform = createPathTransform(config, relativePath);
+    const pathTransform = createPathTransform(config, pkgMeta, logger);
     pkgStats.hasTransform = !!pathTransform;
 
-    const cssConfig = config.cssExports?.[relativePath];
+    const cssConfig = resolvePackageScopedConfig(
+      config.cssExports,
+      pkgMeta,
+      MIRROR_CONFIG_KEYS.CSS_EXPORTS,
+      logger,
+    );
     if (cssConfig === false) pkgStats.cssConfigStatus = "disabled";
     else if (cssConfig !== undefined) pkgStats.cssConfigStatus = "configured";
 
-    const customExports = config.customExports?.[relativePath] || {};
+    const customExports =
+      resolvePackageScopedConfig(
+        config.customExports,
+        pkgMeta,
+        MIRROR_CONFIG_KEYS.CUSTOM_EXPORTS,
+        logger,
+      ) || {};
 
     const generatedExports = await generateExports(
       fs,
@@ -121,8 +147,7 @@ async function processPackage(
   } catch (e: unknown) {
     pkgStats.error = String(e);
     stats.packagesErrored++;
-    const displayName = await readPackageJsonDisplayName(fs, packageJsonPath, pkgName);
-    logPackageError(logger, index, total, displayName, e, verbose);
+    logPackageError(logger, index, total, pkgStats.name, e, verbose);
   }
   return pkgStats;
 }

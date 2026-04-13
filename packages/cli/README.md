@@ -110,20 +110,30 @@ export default {
   mirror: {
     skipPackages: ["@acme/internal"],
     pathTransformations: {
-      "packages/ui": {
+      "@acme/ui": {
         removePrefix: "./components/",
       },
     },
     customExports: {
-      "packages/ui": {
+      "@acme/ui": {
         "./css/*": "./src/styles/*",
+      },
+    },
+    cssExports: {
+      "@acme/ui": {
+        enabled: true,
+        customExports: {
+          "./tokens.css": "./dist/tokens.css",
+        },
       },
     },
   },
 };
 ```
 
-Replace package paths/entries above with values from your workspace.
+Use your real package names from `package.json#name` (for example `@acme/ui`) and adjust entries to match your workspace.
+
+> **Migration:** Path-based keys (for example `packages/ui`) are deprecated for `pathTransformations`, `customExports`, `cssExports`, and `skipPackages`. Migrate to package-name keys.
 
 > **Security note:** `.js`, `.mjs`, and `.cjs` config files are loaded via `import()`. Only run `mirror sync` in repositories you trust.
 
