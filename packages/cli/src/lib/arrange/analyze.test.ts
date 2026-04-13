@@ -32,7 +32,7 @@ describe("analyzeDirectory + printAnalyzeReport", () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-analyze-"));
     const long =
       "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
-    const source = `import { cn, tv } from "tailwind-variants";
+    const source = `import { cn, tv } from "@codefast/tailwind-variants";
 
 cn("${long}");
 export const styles = tv({ base: "${long}" });
@@ -63,7 +63,7 @@ export const nested = tv({ base: cn("x", "${long}") });
     const long =
       "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
     try {
-      let body = `import { cn } from "tailwind-variants";\n`;
+      let body = `import { cn } from "@codefast/tailwind-variants";\n`;
       for (let i = 0; i < 42; i++) body += `cn("${long}");\n`;
       fs.writeFileSync(path.join(dir, "Many.tsx"), body, "utf8");
       const report = analyzeDirectory(dir, arrangeFs);
@@ -126,7 +126,7 @@ export const nested = tv({ base: cn("x", "${long}") });
     try {
       fs.writeFileSync(
         path.join(dir, "Quoted.tsx"),
-        `import { tv } from "tailwind-variants";
+        `import { tv } from "@codefast/tailwind-variants";
 export const styles = tv({ compoundVariants: [{ "className": "${long}" }] });`,
         "utf8",
       );
@@ -144,13 +144,32 @@ export const styles = tv({ compoundVariants: [{ "className": "${long}" }] });`,
     try {
       fs.writeFileSync(
         path.join(dir, "TvArray.tsx"),
-        `import { cn, tv } from "tailwind-variants";
+        `import { cn, tv } from "@codefast/tailwind-variants";
 export const styles = tv({ base: [cn("${long}"), "py-0"] });`,
         "utf8",
       );
       const report = analyzeDirectory(dir, arrangeFs);
       expect(report.tvCallExpressions).toBeGreaterThanOrEqual(1);
       expect(report.cnInsideTvCalls.length).toBeGreaterThanOrEqual(1);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("accepts legacy tailwind-variants imports during analyze pass (backward compat)", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-analyze-legacy-"));
+    const long =
+      "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
+    const source = `import { cn, tv } from "tailwind-variants";
+
+cn("${long}");
+export const styles = tv({ base: "${long}" });
+`;
+    try {
+      fs.writeFileSync(path.join(dir, "Legacy.tsx"), source, "utf8");
+      const report = analyzeDirectory(dir, arrangeFs);
+      expect(report.cnCallExpressions).toBeGreaterThanOrEqual(1);
+      expect(report.tvCallExpressions).toBeGreaterThanOrEqual(1);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

@@ -61,8 +61,8 @@ describe("buildKnownCnTvBindings", () => {
     const sf = ts.createSourceFile(
       "x.ts",
       [
-        'import tvDefault, { cn as cx } from "tailwind-variants";',
-        'import * as tw from "tailwind-variants";',
+        'import tvDefault, { cn as cx } from "@codefast/tailwind-variants";',
+        'import * as tw from "@codefast/tailwind-variants";',
       ].join("\n"),
       ts.ScriptTarget.Latest,
       true,
@@ -74,7 +74,10 @@ describe("buildKnownCnTvBindings", () => {
   it("ignores type-only and unknown-module imports", () => {
     const sf = ts.createSourceFile(
       "x.ts",
-      ['import type { cn } from "tailwind-variants";', 'import { cn } from "lodash";'].join("\n"),
+      [
+        'import type { cn } from "@codefast/tailwind-variants";',
+        'import { cn } from "lodash";',
+      ].join("\n"),
       ts.ScriptTarget.Latest,
       true,
       ts.ScriptKind.TS,
@@ -87,6 +90,7 @@ describe("known cn/tv module helpers", () => {
   it("includes canonical shadcn-style module specifiers", () => {
     expect(KNOWN_CN_TV_MODULES.has("#lib/utils")).toBe(true);
     expect(KNOWN_CN_TV_MODULES.has("@codefast/tailwind-variants")).toBe(true);
+    expect(KNOWN_CN_TV_MODULES.has("tailwind-variants")).toBe(true);
   });
 
   it.each([
@@ -96,6 +100,20 @@ describe("known cn/tv module helpers", () => {
     ["lodash", false],
   ] as const)("moduleLooksLikeCnTvReexport(%s) -> %s", (mod, expected) => {
     expect(moduleLooksLikeCnTvReexport(mod)).toBe(expected);
+  });
+
+  it("accepts legacy tailwind-variants import bindings (backward compat)", () => {
+    const sf = ts.createSourceFile(
+      "x.ts",
+      [
+        'import tvDefault, { cn as cx } from "tailwind-variants";',
+        'import * as tw from "tailwind-variants";',
+      ].join("\n"),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    expect(buildKnownCnTvBindings(sf)).toEqual(new Set(["tvDefault", "cx", "tw"]));
   });
 });
 

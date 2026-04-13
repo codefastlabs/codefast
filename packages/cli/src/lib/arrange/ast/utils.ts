@@ -6,6 +6,8 @@ export const KNOWN_CN_TV_MODULES = new Set([
   "@codefast/tailwind-variants",
   "clsx",
   "class-variance-authority",
+  // Backward compatibility only: keep detection for existing user code that still imports
+  // from "tailwind-variants"; new code should prefer "@codefast/tailwind-variants".
   "tailwind-variants",
   "#lib/utils",
   "~/lib/utils",

@@ -17,7 +17,7 @@ describe("cnModuleSpecifierForFile", () => {
 
 describe("ensureCnImport", () => {
   it("does not change source when cn already imported", () => {
-    const source = 'import { cn, tv } from "tailwind-variants";\nconst x = 1;\n';
+    const source = 'import { cn, tv } from "@codefast/tailwind-variants";\nconst x = 1;\n';
     expect(ensureCnImport(source, "/repo/x.ts")).toBe(source);
   });
 
@@ -34,7 +34,7 @@ describe("ensureCnImport", () => {
   });
 
   it("inserts before first import when no matching import exists", () => {
-    const source = 'import { tv } from "tailwind-variants";\nconst x = 1;\n';
+    const source = 'import { tv } from "clsx";\nconst x = 1;\n';
     const out = ensureCnImport(source, "/repo/x.ts");
     expect(out.indexOf('import { cn } from "@codefast/tailwind-variants";')).toBe(0);
   });
@@ -49,5 +49,10 @@ describe("ensureCnImport", () => {
     const source = "const x = 1;\n";
     const out = ensureCnImport(source, "/repo/x.ts", "clsx");
     expect(out.startsWith('import { cn } from "clsx";\n')).toBe(true);
+  });
+
+  it("keeps existing legacy tailwind-variants import unchanged (backward compat)", () => {
+    const source = 'import { cn, tv } from "tailwind-variants";\nconst x = 1;\n';
+    expect(ensureCnImport(source, "/repo/x.ts")).toBe(source);
   });
 });

@@ -8,7 +8,7 @@ import {
 
 describe("formatCnCallReplacement", () => {
   it("keeps multiline trailing comma behavior explicit for multi-arg cn calls", () => {
-    const source = `import { cn } from "tailwind-variants";
+    const source = `import { cn } from "@codefast/tailwind-variants";
 export function Row(className: string) {
   return cn("flex gap-2 text-sm rounded-md border px-3", className);
 }
@@ -38,7 +38,7 @@ describe("collectGroupTargets + planGroupEditForTarget", () => {
   });
 
   it("plans undefined when groups length <= 1", () => {
-    const source = `import { cn } from "tailwind-variants"; cn("flex gap-2");`;
+    const source = `import { cn } from "@codefast/tailwind-variants"; cn("flex gap-2");`;
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const targets = collectGroupTargets(sf, "x.ts");
     const cnTarget = targets.find((t) => t.kind === "cnArg");
@@ -48,6 +48,18 @@ describe("collectGroupTargets + planGroupEditForTarget", () => {
   });
 
   it("includes trailing className when withClassName=true", () => {
+    const source = `import { cn } from "@codefast/tailwind-variants";
+export function C(className: string) {
+  return cn("flex gap-2 text-sm rounded-md border px-3 font-medium", className);
+}`;
+    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const targets = collectGroupTargets(sf, "x.ts");
+    const cnTarget = targets.find((t) => t.kind === "cnArg");
+    const plan = planGroupEditForTarget(cnTarget!, source, true);
+    expect(plan?.replacement).toContain("className");
+  });
+
+  it("accepts legacy tailwind-variants import when planning cn target edits (backward compat)", () => {
     const source = `import { cn } from "tailwind-variants";
 export function C(className: string) {
   return cn("flex gap-2 text-sm rounded-md border px-3 font-medium", className);
