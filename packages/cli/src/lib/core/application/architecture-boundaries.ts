@@ -1,8 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const BOUNDED_CONTEXTS = new Set(["arrange", "mirror", "tag"]);
+/** Product bounded contexts: no direct cross-imports between these (domain + application rules). */
+const PRODUCT_BOUNDED_CONTEXTS = new Set(["arrange", "mirror", "tag"]);
+
+const SHARED_SOURCE_CODE_CONTEXT = "shared-source-code";
+
 const LAYERS = new Set(["domain", "application", "infra", "presentation"]);
+
+function sharedSourceCodeLayerFromSpecifier(segments: string[]): string | null {
+  if (segments.length < 3 || segments[0] !== "shared" || segments[1] !== "source-code") {
+    return null;
+  }
+  return segments[2]!;
+}
 
 export type LibSourceLocation = {
   readonly context: string;
@@ -51,6 +62,19 @@ export function parseLibSourceLocation(absoluteFilePath: string): LibSourceLocat
   if (parts.length < 2) {
     return null;
   }
+
+  if (parts[0] === "shared" && parts[1] === "source-code" && parts.length >= 3) {
+    const layer = parts[2]!;
+    if (!LAYERS.has(layer)) {
+      return null;
+    }
+    const rest = parts.slice(3);
+    if (layer === "domain" && rest[0] === "__tests__") {
+      return { context: SHARED_SOURCE_CODE_CONTEXT, layer: "domain" };
+    }
+    return { context: SHARED_SOURCE_CODE_CONTEXT, layer };
+  }
+
   const [context, layer, ...rest] = parts;
   if (!LAYERS.has(layer)) {
     return null;
@@ -99,6 +123,10 @@ function violationDomainLayer(
     if (segments[0] === "infra") {
       return `${fromAbsoluteFile}: domain must not import ${specifier}`;
     }
+    const sharedLayerImported = sharedSourceCodeLayerFromSpecifier(segments);
+    if (sharedLayerImported !== null && sharedLayerImported !== "domain") {
+      return `${fromAbsoluteFile}: domain must not import ${specifier}`;
+    }
     if (segments[0] === loc.context && segments.length >= 2) {
       const importLayer = segments[1];
       if (
@@ -112,7 +140,7 @@ function violationDomainLayer(
     if (
       segments.length >= 2 &&
       segments[1] === "domain" &&
-      BOUNDED_CONTEXTS.has(segments[0]) &&
+      PRODUCT_BOUNDED_CONTEXTS.has(segments[0]) &&
       segments[0] !== loc.context
     ) {
       return `${fromAbsoluteFile}: domain (${loc.context}) must not import other bounded context domain ${specifier}`;
@@ -121,7 +149,7 @@ function violationDomainLayer(
       loc.context === "core" &&
       segments.length >= 2 &&
       segments[1] === "domain" &&
-      BOUNDED_CONTEXTS.has(segments[0])
+      PRODUCT_BOUNDED_CONTEXTS.has(segments[0])
     ) {
       return `${fromAbsoluteFile}: core/domain must not import bounded context domain ${specifier}`;
     }
@@ -129,9 +157,12 @@ function violationDomainLayer(
       loc.context === "config" &&
       segments.length >= 2 &&
       segments[1] === "domain" &&
-      BOUNDED_CONTEXTS.has(segments[0])
+      PRODUCT_BOUNDED_CONTEXTS.has(segments[0])
     ) {
       return `${fromAbsoluteFile}: config/domain must not import bounded context domain ${specifier}`;
+    }
+    if (loc.context === SHARED_SOURCE_CODE_CONTEXT && PRODUCT_BOUNDED_CONTEXTS.has(segments[0])) {
+      return `${fromAbsoluteFile}: shared source-code domain must not import product context ${specifier}`;
     }
     return null;
   }
@@ -153,10 +184,10 @@ function violationDomainLayer(
       return `${fromAbsoluteFile}: domain must not resolve into ${relLayer} via ${specifier}`;
     }
   }
-  if (relLayer === "domain" && BOUNDED_CONTEXTS.has(relCtx) && relCtx !== loc.context) {
+  if (relLayer === "domain" && PRODUCT_BOUNDED_CONTEXTS.has(relCtx) && relCtx !== loc.context) {
     return `${fromAbsoluteFile}: domain must not resolve into other bounded context domain via ${specifier}`;
   }
-  if (loc.context === "core" && relLayer === "domain" && BOUNDED_CONTEXTS.has(relCtx)) {
+  if (loc.context === "core" && relLayer === "domain" && PRODUCT_BOUNDED_CONTEXTS.has(relCtx)) {
     return `${fromAbsoluteFile}: core/domain must not resolve into bounded context domain via ${specifier}`;
   }
   return null;
@@ -167,7 +198,6 @@ function violationApplicationLayer(
   specifier: string,
   fromAbsoluteFile: string,
 ): string | null {
-  void loc;
   if (specifier.startsWith("#lib/")) {
     const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
     if (segments.length === 0) {
@@ -176,8 +206,23 @@ function violationApplicationLayer(
     if (segments[0] === "infra") {
       return `${fromAbsoluteFile}: application must not import ${specifier}`;
     }
+    const sharedLayerImported = sharedSourceCodeLayerFromSpecifier(segments);
+    if (
+      sharedLayerImported === "infra" ||
+      sharedLayerImported === "presentation" ||
+      sharedLayerImported === "application"
+    ) {
+      return `${fromAbsoluteFile}: application must not import ${specifier}`;
+    }
     if (segments.length >= 2 && (segments[1] === "infra" || segments[1] === "presentation")) {
       return `${fromAbsoluteFile}: application must not import ${specifier}`;
+    }
+    if (
+      PRODUCT_BOUNDED_CONTEXTS.has(loc.context) &&
+      PRODUCT_BOUNDED_CONTEXTS.has(segments[0]) &&
+      segments[0] !== loc.context
+    ) {
+      return `${fromAbsoluteFile}: application (${loc.context}) must not import ${specifier}`;
     }
     return null;
   }

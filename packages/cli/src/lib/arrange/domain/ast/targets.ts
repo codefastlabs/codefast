@@ -17,7 +17,7 @@ import {
   collectGroupableStringNodes,
   slotClassString,
 } from "#lib/arrange/domain/ast/collectors-tv";
-import { indentOfLineContaining } from "#lib/arrange/domain/ast/ast-helpers";
+import { indentOfLineContaining } from "#lib/shared/source-code/domain/text-edit";
 import {
   type DomainAstNode,
   type DomainSourceFile,

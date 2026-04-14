@@ -89,4 +89,4 @@ export {
   formatJsxCnAttributeValue,
 } from "#lib/arrange/domain/source-text-formatters";
 
-export { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/arrange/infra/walk";
+export { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/shared/source-code/infra/tsx-file-walk";
