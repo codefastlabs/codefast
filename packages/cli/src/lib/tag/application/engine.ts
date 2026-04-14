@@ -2,7 +2,10 @@ import path from "node:path";
 import ts from "typescript";
 import { appError, type AppError } from "#lib/core/domain/errors";
 import { err, ok, type Result } from "#lib/core/domain/result";
-import { applyEditsDescending, indentOfLineContaining } from "#lib/arrange/domain/ast/ast-helpers";
+import {
+  applyEditsDescending,
+  indentOfLineContaining,
+} from "#lib/shared/source-code/domain/text-edit";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#lib/config/domain/schema";
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";

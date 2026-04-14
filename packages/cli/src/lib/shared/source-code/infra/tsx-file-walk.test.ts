@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/arrange/infra/walk";
 import { createNodeCliFs } from "#lib/infra/node-io";
+import { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/shared/source-code/infra/tsx-file-walk";
 
-const arrangeFs = createNodeCliFs();
+const cliFs = createNodeCliFs();
 
 describe("DEFAULT_SKIP_DIRS", () => {
   it("contains common generated directories", () => {
@@ -17,7 +17,7 @@ describe("DEFAULT_SKIP_DIRS", () => {
 
 describe("walkTsxFiles", () => {
   it("collects .ts/.tsx, skips .d.ts and nested skipped directories", () => {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-walk-"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tsx-walk-"));
     try {
       fs.mkdirSync(path.join(dir, "a", "node_modules", "x"), { recursive: true });
       fs.mkdirSync(path.join(dir, ".git", "hooks"), { recursive: true });
@@ -27,7 +27,7 @@ describe("walkTsxFiles", () => {
       fs.writeFileSync(path.join(dir, "a", "node_modules", "x", "ignored.tsx"), "", "utf8");
       fs.writeFileSync(path.join(dir, ".git", "hooks", "ignored.ts"), "", "utf8");
 
-      const rel = walkTsxFiles(dir, arrangeFs)
+      const rel = walkTsxFiles(dir, cliFs)
         .map((p) => path.relative(dir, p).split(path.sep).join("/"))
         .sort();
       expect(rel).toEqual(["root.ts", "root.tsx"]);
@@ -37,9 +37,9 @@ describe("walkTsxFiles", () => {
   });
 
   it("returns empty array for empty directory", () => {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-walk-empty-"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tsx-walk-empty-"));
     try {
-      expect(walkTsxFiles(dir, arrangeFs)).toEqual([]);
+      expect(walkTsxFiles(dir, cliFs)).toEqual([]);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

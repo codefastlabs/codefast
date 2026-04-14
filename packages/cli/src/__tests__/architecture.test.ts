@@ -72,6 +72,38 @@ describe("architecture boundaries (CI guardrails)", () => {
       );
       expect(violations).toEqual([]);
     });
+
+    it("allows product domain importing shared source-code domain", () => {
+      const violations = violationsForFileContent(
+        arrangeDomainFile,
+        { context: "arrange", layer: "domain" },
+        `import { applyEditsDescending } from "#lib/shared/source-code/domain/text-edit";\n`,
+      );
+      expect(violations).toEqual([]);
+    });
+
+    it("rejects shared source-code domain importing product context", () => {
+      const sharedDomainFile = path.join(
+        cliPackageRoot,
+        "src/lib/shared/source-code/domain/hypothetical.ts",
+      );
+      const violations = violationsForFileContent(
+        sharedDomainFile,
+        { context: "shared-source-code", layer: "domain" },
+        `import type { X } from "#lib/arrange/domain/types";\n`,
+      );
+      expect(violations.length).toBeGreaterThan(0);
+    });
+
+    it("rejects application importing sibling product context", () => {
+      const mirrorAppFile = path.join(cliPackageRoot, "src/lib/mirror/application/x.ts");
+      const violations = violationsForFileContent(
+        mirrorAppFile,
+        { context: "mirror", layer: "application" },
+        `import { groupFile } from "#lib/arrange/application/group-file";\n`,
+      );
+      expect(violations.length).toBeGreaterThan(0);
+    });
   });
 
   describe("live codebase scan", () => {
