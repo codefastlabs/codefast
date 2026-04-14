@@ -10,6 +10,7 @@ import {
 } from "#lib/mirror/domain/constants";
 import type {
   ExportEntry,
+  ExportOriginalPathBySpecifier,
   GenerateExportsResult,
   MirrorPackageMeta,
   Module,
@@ -91,12 +92,14 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
 
     let distModule = modules.get(modulePath);
     if (!distModule) {
-      distModule = { path: modulePath, files: { js: null, cjs: null, dts: null } };
+      distModule = { path: modulePath, files: { js: null, mjs: null, cjs: null, dts: null } };
       modules.set(modulePath, distModule);
     }
 
     if (ext === ".js") {
       distModule.files.js = file;
+    } else if (ext === ".mjs") {
+      distModule.files.mjs = file;
     } else if (ext === ".cjs") {
       distModule.files.cjs = file;
     } else if (ext === DTS_EXTENSION) {
@@ -294,33 +297,41 @@ export async function generateExports(
     return {
       // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
       exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
+      originalPathBySpecifier: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       jsCount: 0,
       cssCount: 0,
     };
   }
 
   const modules = groupFilesByModule(files);
-  const validModules = Array.from(modules.values()).filter((mod) => mod.files.js && mod.files.dts);
+  const validModules = Array.from(modules.values()).filter(
+    (moduleEntry) => (moduleEntry.files.js || moduleEntry.files.mjs) && moduleEntry.files.dts,
+  );
 
   if (!validModules.length) {
     return {
       // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
       exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
+      originalPathBySpecifier: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       jsCount: 0,
       cssCount: 0,
     };
   }
 
   const exportsObj: Record<string, ExportEntry> = {};
+  const originalPathBySpecifier: ExportOriginalPathBySpecifier = {};
   for (const distModuleEntry of validModules) {
-    let exportPath = toExportPath(distModuleEntry.path);
+    const originalExportPath = toExportPath(distModuleEntry.path);
+    let exportPath = originalExportPath;
     if (pathTransform) {
       exportPath = pathTransform(exportPath);
     }
 
     const distPath = `./dist/${distModuleEntry.path}`;
     const entry: ExportEntry = { types: `${distPath}.d.ts` };
-    if (distModuleEntry.files.js) {
+    if (distModuleEntry.files.mjs) {
+      entry.import = `${distPath}.mjs`;
+    } else if (distModuleEntry.files.js) {
       entry.import = `${distPath}.js`;
     }
     if (distModuleEntry.files.cjs) {
@@ -328,6 +339,7 @@ export async function generateExports(
     }
 
     exportsObj[exportPath] = entry;
+    originalPathBySpecifier[exportPath] = originalExportPath;
   }
 
   let sortedKeys = Object.keys(exportsObj).sort((pathA, pathB) =>
@@ -347,6 +359,17 @@ export async function generateExports(
     }
   }
 
+  for (const cssSpecifier of Object.keys(cssExports)) {
+    if (!(cssSpecifier in originalPathBySpecifier)) {
+      originalPathBySpecifier[cssSpecifier] = cssSpecifier;
+    }
+  }
+  for (const customSpecifier of Object.keys(customExports || {})) {
+    if (customSpecifier !== PACKAGE_JSON_EXPORT && !(customSpecifier in originalPathBySpecifier)) {
+      originalPathBySpecifier[customSpecifier] = customSpecifier;
+    }
+  }
+
   sortedKeys = Object.keys(sortedExports)
     .filter((exportKey) => exportKey !== PACKAGE_JSON_EXPORT)
     .sort((pathA, pathB) =>
@@ -358,9 +381,11 @@ export async function generateExports(
     finalExports[exportKey] = sortedExports[exportKey] as ExportEntry | string;
   }
   finalExports[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT;
+  originalPathBySpecifier[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT;
 
   return {
     exports: finalExports,
+    originalPathBySpecifier,
     jsCount: Object.keys(exportsObj).length,
     cssCount: Object.keys(cssExports).length,
   };

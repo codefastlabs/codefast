@@ -49,6 +49,14 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./adapters/tanstack-start/server": {
+      "types": "./dist/adapters/tanstack-start/server.d.ts",
+      "import": "./dist/adapters/tanstack-start/server.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js"
+    },
     "./core": {
       "types": "./dist/core/index.d.ts",
       "import": "./dist/core/index.js"
@@ -65,6 +73,22 @@
       "types": "./dist/core/use-theme.d.ts",
       "import": "./dist/core/use-theme.js"
     },
+    "./script": {
+      "types": "./dist/script/index.d.ts",
+      "import": "./dist/script/index.js"
+    },
+    "./script/theme-script": {
+      "types": "./dist/script/theme-script.d.ts",
+      "import": "./dist/script/theme-script.js"
+    },
+    "./start": {
+      "types": "./dist/start.d.ts",
+      "import": "./dist/start.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js"
@@ -76,30 +100,6 @@
     "./utils/system": {
       "types": "./dist/utils/system.d.ts",
       "import": "./dist/utils/system.js"
-    },
-    "./adapters/tanstack-start/server": {
-      "types": "./dist/adapters/tanstack-start/server.d.ts",
-      "import": "./dist/adapters/tanstack-start/server.js"
-    },
-    "./script": {
-      "types": "./dist/script/index.d.ts",
-      "import": "./dist/script/index.js"
-    },
-    "./script/theme-script": {
-      "types": "./dist/script/theme-script.d.ts",
-      "import": "./dist/script/theme-script.js"
-    },
-    "./constants": {
-      "types": "./dist/constants.d.ts",
-      "import": "./dist/constants.js"
-    },
-    "./start": {
-      "types": "./dist/start.d.ts",
-      "import": "./dist/start.js"
-    },
-    "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js"
     },
     "./package.json": "./package.json"
   },

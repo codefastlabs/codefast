@@ -185,6 +185,162 @@ describe("runMirrorSync (integration)", () => {
     expect(pkg.exports["."]).toBeDefined();
   });
 
+  it("preserves unmanaged manual exports while overriding generated exports", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/smart-merge";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/smart-merge",
+      version: "0.0.0",
+      exports: {
+        ".": "./legacy-main.js",
+        "./manual": "./manual/path.js",
+      },
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const code = await runMirrorSyncWithNodeDependencies({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+    });
+    expect(code).toBe(0);
+
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+
+    expect(pkg.exports["./manual"]).toBe("./manual/path.js");
+    expect(pkg.exports["."]).toEqual({
+      types: "./dist/index.d.ts",
+      import: "./dist/index.js",
+    });
+    expect(pkg.exports["./package.json"]).toBe("./package.json");
+    expect(Object.keys(pkg.exports)).toEqual([".", "./manual", "./package.json"]);
+  });
+
+  it("removes stale unmanaged exports that still point to dist files", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/stale-exports";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/stale-exports",
+      version: "0.0.0",
+      exports: {
+        "./manual": "./manual/path.js",
+        "./stale": "./dist/old.js",
+        "./stale-object": {
+          import: "./dist/old.mjs",
+          types: "./dist/old.d.ts",
+        },
+      },
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const code = await runMirrorSyncWithNodeDependencies({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+    });
+    expect(code).toBe(0);
+
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+
+    expect(pkg.exports["./manual"]).toBe("./manual/path.js");
+    expect(pkg.exports["./stale"]).toBeUndefined();
+    expect(pkg.exports["./stale-object"]).toBeUndefined();
+    expect(pkg.exports["."]).toEqual({
+      types: "./dist/index.d.ts",
+      import: "./dist/index.js",
+    });
+    expect(pkg.exports["./package.json"]).toBe("./package.json");
+    expect(Object.keys(pkg.exports)).toEqual([".", "./manual", "./package.json"]);
+    expect(joinedStdout()).toContain("Pruned stale export: ./stale");
+    expect(joinedStdout()).toContain("Pruned stale export: ./stale-object");
+  });
+
+  it("orders exports safely and syncs top-level compatibility fields from root export", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/compat-order";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/compat-order",
+      version: "0.0.0",
+      files: ["README.md"],
+      exports: {
+        "./manual": "./manual/path.js",
+      },
+    });
+    await writeText(path.join(pkgDir, "dist/index.mjs"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.cjs"), "module.exports = {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/theme/a.css"), "a {}\n");
+    await writeText(path.join(pkgDir, "dist/theme/b.css"), "b {}\n");
+
+    const code = await runMirrorSyncWithNodeDependencies({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        cssExports: {
+          "@fixture/compat-order": { enabled: true },
+        },
+      },
+    });
+    expect(code).toBe(0);
+
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+      main?: string;
+      module?: string;
+      types?: string;
+      files?: string[];
+    };
+
+    expect(Object.keys(pkg.exports)).toEqual([".", "./manual", "./theme/*", "./package.json"]);
+    expect(pkg.main).toBe("./dist/index.cjs");
+    expect(pkg.module).toBe("./dist/index.mjs");
+    expect(pkg.types).toBe("./dist/index.d.ts");
+    expect(pkg.files).toEqual(["README.md", "dist"]);
+  });
+
+  it("sorts transformed specifiers by original dist path order", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/path-order";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/path-order",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/external/a.js"), "export const a = 1;\n");
+    await writeText(path.join(pkgDir, "dist/external/a.d.ts"), "export declare const a: number;\n");
+    await writeText(path.join(pkgDir, "dist/internal/b.js"), "export const b = 1;\n");
+    await writeText(path.join(pkgDir, "dist/internal/b.d.ts"), "export declare const b: number;\n");
+
+    const code = await runMirrorSyncWithNodeDependencies({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        pathTransformations: {
+          "@fixture/path-order": { removePrefix: "./internal/" },
+        },
+      },
+    });
+    expect(code).toBe(0);
+
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+
+    // Original paths are ./external/a then ./internal/b (transformed to ./b).
+    expect(Object.keys(pkg.exports)).toEqual(["./external/a", "./b", "./package.json"]);
+  });
+
   it("emits CSS wildcard exports for a css-only subfolder when cssExports is enabled", async () => {
     const root = await makeTempRoot();
     const rel = "packages/styles";

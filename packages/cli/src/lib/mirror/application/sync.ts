@@ -8,6 +8,7 @@ import { resolvePackageFilterUnderRoot } from "#lib/mirror/infra/package-filter"
 import {
   configureMirrorColors,
   logPackageError,
+  logPrunedStaleExport,
   logPackageSuccess,
   logSkippedWorkspacePackage,
   mirrorBanner,
@@ -155,7 +156,14 @@ async function syncExportsForWorkspacePackage(
       customExports,
     );
 
-    await writePackageJsonExportsAtomic(fs, packageJsonPath, generatedExports.exports);
+    const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
+      generatedExports: generatedExports.exports,
+      managedExportSpecifiers: Object.keys(generatedExports.exports),
+      originalPathBySpecifier: generatedExports.originalPathBySpecifier,
+    });
+    for (const exportSpecifier of prunedKeys) {
+      logPrunedStaleExport(logger, exportSpecifier);
+    }
 
     pkgStats.jsModules = generatedExports.jsCount;
     pkgStats.cssExports = generatedExports.cssCount;
