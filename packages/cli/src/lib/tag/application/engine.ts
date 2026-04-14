@@ -4,13 +4,19 @@ import { applyEditsDescending, indentOfLineContaining } from "#lib/arrange";
 import { walkTsxFiles } from "#lib/arrange";
 import type { CodefastAfterWriteHook } from "#lib/config";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import type { CliFs } from "#lib/infra/fs-contract";
 import type {
   TagFileResult,
+  TagTargetCandidate,
+  TagTargetSource,
+  TagResolvedTarget,
   TagRunOptions,
   TagRunResult,
+  TagSyncResult,
   TagSyncOptions,
+  TagTargetExecutionResult,
 } from "#lib/tag/domain/types";
+import { resolveTagTargetCandidates } from "#lib/tag/infra/target-resolver";
 
 type TextEdit = {
   start: number;
@@ -265,46 +271,175 @@ export function runTagOnTarget(targetPath: string, opts: TagRunOptions, fs: CliF
 }
 
 async function runTagOnAfterWriteHook(
-  logger: CliLogger,
   hook: CodefastAfterWriteHook | undefined,
   modifiedFiles: string[],
-): Promise<void> {
-  if (!hook || modifiedFiles.length === 0) return;
+): Promise<string | null> {
+  if (!hook || modifiedFiles.length === 0) return null;
   try {
     await hook({ files: modifiedFiles });
+    return null;
   } catch (caughtHookError: unknown) {
-    logger.err(`[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
+    return `[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`;
+  }
+}
+
+function summarizeVersions(targetResults: TagTargetExecutionResult[]): string {
+  const distinctVersions = extractDistinctVersions(targetResults);
+  if (distinctVersions.size === 0) {
+    return "none";
+  }
+  if (distinctVersions.size > 1) {
+    return "mixed";
+  }
+  return [...distinctVersions][0]!;
+}
+
+function extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set<string> {
+  return new Set(
+    targetResults
+      .map((targetResult) => targetResult.result?.version)
+      .filter((version): version is string => typeof version === "string" && version.length > 0),
+  );
+}
+
+function chooseWorkspacePackageTargetPath(
+  candidate: TagTargetCandidate,
+  fs: CliFs,
+): { targetPath: string; source: TagTargetSource } {
+  if (candidate.source !== "workspace-package") {
+    return {
+      targetPath: candidate.candidatePath,
+      source: candidate.source,
+    };
+  }
+
+  const preferredSourceDir = path.join(candidate.candidatePath, "src");
+  if (fs.existsSync(preferredSourceDir) && fs.statSync(preferredSourceDir).isDirectory()) {
+    return {
+      targetPath: preferredSourceDir,
+      source: "workspace-package-selected-src",
+    };
+  }
+
+  return {
+    targetPath: candidate.candidatePath,
+    source: "workspace-package-selected-root",
+  };
+}
+
+function resolveTargetSelection(
+  candidate: TagTargetCandidate,
+  rootDir: string,
+  fs: CliFs,
+): TagResolvedTarget {
+  const selectedTarget = chooseWorkspacePackageTargetPath(candidate, fs);
+  const rootRelativeTargetPath = path
+    .relative(rootDir, selectedTarget.targetPath)
+    .split(path.sep)
+    .join("/");
+  return {
+    targetPath: selectedTarget.targetPath,
+    rootRelativeTargetPath: rootRelativeTargetPath || ".",
+    source: selectedTarget.source,
+    packageDir: candidate.packageDir,
+    packageName: candidate.packageName,
+  };
+}
+
+async function runOnResolvedTarget(
+  resolvedTarget: TagResolvedTarget,
+  write: boolean,
+  fs: CliFs,
+  listener: TagSyncOptions["listener"],
+): Promise<TagTargetExecutionResult> {
+  listener?.onTargetStarted(resolvedTarget);
+  const absoluteTargetPath = path.resolve(resolvedTarget.targetPath);
+  if (!fs.existsSync(absoluteTargetPath)) {
+    const missingTargetResult: TagTargetExecutionResult = {
+      target: resolvedTarget,
+      targetExists: false,
+      runError: `Not found: ${absoluteTargetPath}`,
+      result: null,
+    };
+    listener?.onTargetCompleted(resolvedTarget, missingTargetResult);
+    return missingTargetResult;
+  }
+
+  try {
+    const runResult = runTagOnTarget(absoluteTargetPath, { write }, fs);
+    const targetRunResult: TagTargetExecutionResult = {
+      target: resolvedTarget,
+      targetExists: true,
+      runError: null,
+      result: runResult,
+    };
+    listener?.onTargetCompleted(resolvedTarget, targetRunResult);
+    return targetRunResult;
+  } catch (caughtRunError: unknown) {
+    const failedTargetRunResult: TagTargetExecutionResult = {
+      target: resolvedTarget,
+      targetExists: true,
+      runError: messageFromCaughtUnknown(caughtRunError),
+      result: null,
+    };
+    listener?.onTargetCompleted(resolvedTarget, failedTargetRunResult);
+    return failedTargetRunResult;
   }
 }
 
 /**
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
- * @returns Process exit code (`0` or `1` when the target path is missing).
+ * Returns structured execution data; presentation/logging belongs to command layer.
  */
-export async function runTagSync(opts: TagSyncOptions): Promise<number> {
-  void opts.rootDir;
-  const { fs, logger } = opts;
-  const resolvedTarget = path.resolve(opts.targetPath);
-
-  if (!fs.existsSync(resolvedTarget)) {
-    logger.err(`Not found: ${resolvedTarget}`);
-    return 1;
-  }
-
-  const result = runTagOnTarget(resolvedTarget, { write: opts.write }, fs);
-  const mode = opts.write ? "applied" : "dry-run";
-  logger.out(
-    `[tag:${mode}] version=${result.version} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}`,
+export async function runTagSync(opts: TagSyncOptions): Promise<TagSyncResult> {
+  const { fs } = opts;
+  const targetCandidates = await resolveTagTargetCandidates(opts.rootDir, opts.targetPath, fs);
+  const selectedTargets = targetCandidates.map((candidate) =>
+    resolveTargetSelection(candidate, opts.rootDir, fs),
+  );
+  const targetResults = await Promise.all(
+    selectedTargets.map((resolvedTarget) =>
+      runOnResolvedTarget(resolvedTarget, opts.write, fs, opts.listener),
+    ),
   );
 
-  if (!opts.write || result.filesChanged === 0) {
-    return 0;
-  }
-
-  const modifiedFiles = result.fileResults
+  const allFileResults: TagFileResult[] = targetResults.flatMap(
+    (targetResult) => targetResult.result?.fileResults ?? [],
+  );
+  const filesScanned = targetResults.reduce(
+    (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
+    0,
+  );
+  const filesChanged = targetResults.reduce(
+    (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
+    0,
+  );
+  const taggedDeclarations = targetResults.reduce(
+    (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
+    0,
+  );
+  const modifiedFiles = allFileResults
     .filter((entry) => entry.changed)
     .map((entry) => entry.filePath);
+  const hookError =
+    opts.write && modifiedFiles.length > 0
+      ? await runTagOnAfterWriteHook(opts.config?.onAfterWrite, modifiedFiles)
+      : null;
+  const distinctVersions = [...extractDistinctVersions(targetResults)].sort((left, right) =>
+    left.localeCompare(right),
+  );
 
-  await runTagOnAfterWriteHook(logger, opts.config?.onAfterWrite, modifiedFiles);
-  return 0;
+  return {
+    mode: opts.write ? "applied" : "dry-run",
+    selectedTargets,
+    resolvedTargets: selectedTargets,
+    targetResults,
+    filesScanned,
+    filesChanged,
+    taggedDeclarations,
+    versionSummary: summarizeVersions(targetResults),
+    distinctVersions,
+    modifiedFiles,
+    hookError,
+  };
 }
