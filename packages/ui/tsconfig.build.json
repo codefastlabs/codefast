@@ -1,10 +1,6 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@codefast/typescript-config/build-base.json"],
   "compilerOptions": {
-    "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
     "rootDir": "src",
     "outDir": "dist"
   },
@@ -20,7 +16,6 @@
     "src/**/*.story.tsx",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx",
-    "src/**/*.test-d.ts",
     "dist",
     "node_modules"
   ]

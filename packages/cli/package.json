@@ -36,11 +36,11 @@
       "./dist/*.js",
       "./dist/*/index.js",
       "./dist/*",
+      "./src/*",
       "./src/*.ts",
       "./src/*.tsx",
       "./src/*/index.ts",
-      "./src/*/index.tsx",
-      "./src/*"
+      "./src/*/index.tsx"
     ]
   },
   "publishConfig": {

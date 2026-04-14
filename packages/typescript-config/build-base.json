@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Shared emit compilerOptions for library packages. rootDir/outDir/include/exclude must stay in each package tsconfig.build.json — TypeScript resolves those paths relative to the config file that declares them, not the consumer.",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false
+  }
+}
