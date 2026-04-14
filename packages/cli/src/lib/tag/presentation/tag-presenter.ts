@@ -4,13 +4,7 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#lib/tag/domain/types";
-
-const CliColors = {
-  RESET: "\x1b[0m",
-  RED: "\x1b[31m",
-  GREEN: "\x1b[32m",
-  YELLOW: "\x1b[33m",
-};
+import { TAG_COLORS, withTagColor } from "#lib/tag/presentation/colors";
 
 export type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }
@@ -73,9 +67,9 @@ export function formatWarningsAndErrors(result: TagSyncResult): string | null {
   if (entries.length === 0) {
     return null;
   }
-  const lines = [`${CliColors.YELLOW}⚠️ Warnings & Errors${CliColors.RESET}`];
+  const lines = [withTagColor("⚠️ Warnings & Errors", TAG_COLORS.YELLOW)];
   for (const entry of entries) {
-    lines.push(`${CliColors.RED}- ${entry}${CliColors.RESET}`);
+    lines.push(withTagColor(`- ${entry}`, TAG_COLORS.RED));
   }
   return lines.join("\n");
 }
@@ -90,8 +84,17 @@ export function formatSummary(result: TagSyncResult): string {
   const hasError =
     result.targetResults.some((targetResult) => targetResult.runError !== null) ||
     result.hookError !== null;
-  const summaryColor = hasError ? CliColors.RED : isDryRun ? CliColors.YELLOW : CliColors.GREEN;
-  return `${summaryColor}${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}${CliColors.RESET}`;
+  const summaryColor = hasError ? TAG_COLORS.RED : isDryRun ? TAG_COLORS.YELLOW : TAG_COLORS.GREEN;
+  const lines = [
+    withTagColor(
+      `${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}`,
+      summaryColor,
+    ),
+  ];
+  if (result.skippedPackages.length > 0) {
+    lines.push(`[tag] Skipped: ${result.skippedPackages.length} package(s)`);
+  }
+  return lines.join("\n");
 }
 
 export function createTagProgressListener(

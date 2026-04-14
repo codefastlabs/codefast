@@ -27,6 +27,10 @@ const config = {
       "@codefast/typescript-config",
     ],
   },
+  tag: {
+    // Custom exports that should be preserved/overridden per package
+    skipPackages: ["@apps/docs", "@codefast/benchmark-tailwind-variants"],
+  },
 };
 
 export default config;
