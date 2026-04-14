@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs, resolveNearestPackageVersion, runTagOnTarget } from "#lib/tag";
+import {
+  createNodeCliFs,
+  resolveNearestPackageVersion,
+  runTagOnTarget,
+  runTagSync,
+} from "#lib/tag";
 
 const tagFs = createNodeCliFs();
 
@@ -86,5 +91,70 @@ export type TailwindClassBlob = string;
       expect(result.taggedDeclarations).toBe(1);
       expect(after).toBe(before);
     });
+  });
+});
+
+describe("runTagSync", () => {
+  it("auto-discovers workspace package src directories when no target is provided", async () => {
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "tag-workspace-"));
+    const packageOneDir = path.join(rootDir, "packages", "one");
+    const packageTwoDir = path.join(rootDir, "packages", "two");
+    const packageOneSrcDir = path.join(packageOneDir, "src");
+    const packageTwoSrcDir = path.join(packageTwoDir, "src");
+    try {
+      fs.mkdirSync(packageOneSrcDir, { recursive: true });
+      fs.mkdirSync(packageTwoSrcDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(rootDir, "pnpm-workspace.yaml"),
+        "packages:\n  - 'packages/*'\n",
+        "utf8",
+      );
+      fs.writeFileSync(
+        path.join(packageOneDir, "package.json"),
+        '{"name":"one","version":"1.0.0"}',
+        "utf8",
+      );
+      fs.writeFileSync(
+        path.join(packageTwoDir, "package.json"),
+        '{"name":"two","version":"2.0.0"}',
+        "utf8",
+      );
+      fs.writeFileSync(path.join(packageOneSrcDir, "index.ts"), "export const one = 1;\n", "utf8");
+      fs.writeFileSync(path.join(packageTwoSrcDir, "index.ts"), "export const two = 2;\n", "utf8");
+
+      const startedTargets: string[] = [];
+      const completedTargets: string[] = [];
+      const runResult = await runTagSync({
+        rootDir,
+        write: true,
+        fs: tagFs,
+        listener: {
+          onTargetStarted: (target) => startedTargets.push(target.rootRelativeTargetPath),
+          onTargetCompleted: (target) => completedTargets.push(target.rootRelativeTargetPath),
+        },
+      });
+
+      expect(runResult.selectedTargets.length).toBe(2);
+      expect(runResult.targetResults.every((entry) => entry.runError === null)).toBe(true);
+      expect(fs.readFileSync(path.join(packageOneSrcDir, "index.ts"), "utf8")).toContain(
+        "* @since 1.0.0",
+      );
+      expect(fs.readFileSync(path.join(packageTwoSrcDir, "index.ts"), "utf8")).toContain(
+        "* @since 2.0.0",
+      );
+      expect(runResult.versionSummary).toBe("mixed");
+      expect(runResult.distinctVersions).toEqual(["1.0.0", "2.0.0"]);
+      expect(runResult.filesChanged).toBe(2);
+      expect(startedTargets.sort((left, right) => left.localeCompare(right))).toEqual([
+        "packages/one/src",
+        "packages/two/src",
+      ]);
+      expect(completedTargets.sort((left, right) => left.localeCompare(right))).toEqual([
+        "packages/one/src",
+        "packages/two/src",
+      ]);
+    } finally {
+      fs.rmSync(rootDir, { recursive: true, force: true });
+    }
   });
 });
