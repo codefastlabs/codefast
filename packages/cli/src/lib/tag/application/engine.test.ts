@@ -57,7 +57,22 @@ export { c };
       expect(result.taggedDeclarations).toBe(2);
       expect(after).toContain("* @since 1.2.3");
       expect(after).toContain("/** @since 0.0.1 */");
-      expect(after).toMatch(/\/\*\* @since 1\.2\.3 \*\/\nconst c = 3;/);
+      expect(after).toContain("/**\n * @since 1.2.3\n */\nconst c = 3;");
+    });
+  });
+
+  it("normalizes single-line JSDoc to multiline before appending @since", () => {
+    const before = `/** String or no-substitution template literal used as a Tailwind class blob. */
+export type TailwindClassBlob = string;
+`;
+    withTempPackage("types.ts", before, ({ sourceFile, rootDir }) => {
+      runTagOnTarget(path.join(rootDir, "src"), { write: true }, tagFs);
+      const after = fs.readFileSync(sourceFile, "utf8");
+      expect(after).toContain(`/**
+ * String or no-substitution template literal used as a Tailwind class blob.
+ *
+ * @since 1.2.3
+ */`);
     });
   });
 

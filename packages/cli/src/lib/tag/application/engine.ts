@@ -135,22 +135,27 @@ function makeJSDocSinceLine(
 ): TextEdit {
   const commentText = sourceText.slice(existingComment.pos, existingComment.end);
   const baseIndent = indentOfLineContaining(sourceText, existingComment.pos);
-  const closingLinePattern = /\n([ \t]*)\*\/\s*$/;
-  if (commentText.includes("\n") && closingLinePattern.test(commentText)) {
-    const replacement = commentText.replace(
-      closingLinePattern,
-      `\n${baseIndent} * ${VERSION_TAG} ${version}\n$1*/`,
-    );
-    return { start: existingComment.pos, end: existingComment.end, replacement };
-  }
+  const rawBody = commentText.replace(/^\/\*\*\s?/, "").replace(/\s*\*\/$/, "");
+  const normalizedBodyLines = rawBody
+    .split("\n")
+    .map((line) => line.replace(/^\s*\*\s?/, "").replace(/\s+$/, ""))
+    .filter((line, lineIndex, lines) => {
+      if (line.length > 0) return true;
+      const hasNonEmptyBefore = lines.slice(0, lineIndex).some((value) => value.length > 0);
+      const hasNonEmptyAfter = lines.slice(lineIndex + 1).some((value) => value.length > 0);
+      return hasNonEmptyBefore && hasNonEmptyAfter;
+    });
 
-  const inner = commentText
-    .replace(/^\/\*\*\s?/, "")
-    .replace(/\s*\*\/$/, "")
-    .trim();
-  const innerLine = inner.length > 0 ? ` ${inner}` : "";
-  const replacement = `/**${innerLine}\n${baseIndent} * ${VERSION_TAG} ${version}\n${baseIndent} */`;
+  const formattedBody =
+    normalizedBodyLines.length > 0
+      ? `${normalizedBodyLines.map((line) => `${baseIndent} * ${line}`).join("\n")}\n${baseIndent} *\n`
+      : "";
+  const replacement = `/**\n${formattedBody}${baseIndent} * ${VERSION_TAG} ${version}\n${baseIndent} */`;
   return { start: existingComment.pos, end: existingComment.end, replacement };
+}
+
+function makeSinceOnlyJSDocBlock(declarationIndent: string, version: string): string {
+  return `/**\n${declarationIndent} * ${VERSION_TAG} ${version}\n${declarationIndent} */`;
 }
 
 function makeDeclarationSinceLine(
@@ -173,7 +178,7 @@ function makeDeclarationSinceLine(
   return {
     start,
     end: start,
-    replacement: `${indent}/** ${VERSION_TAG} ${version} */\n${indent}`,
+    replacement: `${indent}${makeSinceOnlyJSDocBlock(indent, version)}\n${indent}`,
   };
 }
 
