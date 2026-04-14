@@ -57,8 +57,8 @@ export type StringNode = {
   isTvContext: boolean;
   /** When set, the entire cn(...) call is replaced at once. */
   cnCall?: ts.CallExpression;
-  /** Representative node (first in slot) for line-number reporting. */
-  get node(): TailwindClassLiteral;
+  /** First literal in the slot; used for positions and line-number reporting. */
+  get primaryClassLiteral(): TailwindClassLiteral;
 };
 
 export type GroupTarget =

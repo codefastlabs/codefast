@@ -18,8 +18,8 @@ export const KNOWN_CN_TV_MODULES = new Set([
  * True for typical shadcn-style re-exports: `./utils`, `@/lib/utils`, `…/utils/…`,
  * or a dedicated `cn.ts` / `cn.tsx` module.
  */
-export function moduleLooksLikeCnTvReexport(mod: string): boolean {
-  const norm = mod.replace(/\\/g, "/");
+export function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
+  const norm = moduleSpecifier.replace(/\\/g, "/");
   if (/(?:^|[./])utils(?:\/|$)/.test(norm)) return true;
   if (/\/utils\//.test(norm) || /\/utils$/.test(norm)) return true;
   if (/(?:^|\/)cn\.tsx?$/.test(norm)) return true;
@@ -37,15 +37,17 @@ export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
     if (stmt.importClause.isTypeOnly) continue;
     const spec = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(spec)) continue;
-    const mod = spec.text;
-    const isKnown = KNOWN_CN_TV_MODULES.has(mod);
-    if (!isKnown && !moduleLooksLikeCnTvReexport(mod)) continue;
+    const moduleSpecifier = spec.text;
+    const isKnown = KNOWN_CN_TV_MODULES.has(moduleSpecifier);
+    if (!isKnown && !moduleLooksLikeCnTvReexport(moduleSpecifier)) continue;
 
     const clause = stmt.importClause;
     if (clause.name) bindings.add(clause.name.text);
     if (!clause.namedBindings) continue;
     if (ts.isNamedImports(clause.namedBindings)) {
-      for (const el of clause.namedBindings.elements) bindings.add(el.name.text);
+      for (const namedImport of clause.namedBindings.elements) {
+        bindings.add(namedImport.name.text);
+      }
       continue;
     }
     bindings.add(clause.namedBindings.name.text);
@@ -76,8 +78,8 @@ export function propertyAssignmentNameText(prop: ts.PropertyAssignment): string 
   return undefined;
 }
 
-export function lineOf(sf: ts.SourceFile, node: ts.Node): number {
-  return sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
+export function lineOf(sf: ts.SourceFile, tsNode: ts.Node): number {
+  return sf.getLineAndCharacterOfPosition(tsNode.getStart(sf)).line + 1;
 }
 
 /**

@@ -1,4 +1,5 @@
 import process from "node:process";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import type { CliLogger } from "#lib/infra/fs-contract";
 import type { GlobalStats, PackageStats, WorkspaceMultiDiscoverySource } from "#lib/mirror/types";
 
@@ -31,8 +32,8 @@ export function configureMirrorColors(noColor: boolean): void {
 
 export function printMirrorConfigWarnings(logger: CliLogger, warnings: string[]): void {
   const { out } = logger;
-  for (const w of warnings) {
-    out(`${Colors.YELLOW}⚠ ${w}${Colors.RESET}`);
+  for (const warningMessage of warnings) {
+    out(`${Colors.YELLOW}⚠ ${warningMessage}${Colors.RESET}`);
   }
 }
 
@@ -97,7 +98,7 @@ export function logPackageSuccess(
   index: number,
   total: number,
   pkgStats: PackageStats,
-  res: { jsCount: number; cssCount: number },
+  generatedDistAssetCounts: { jsCount: number; cssCount: number },
   verbose: boolean,
 ): void {
   const { out } = logger;
@@ -119,8 +120,10 @@ export function logPackageSuccess(
   }
 
   const breakdown: string[] = [];
-  if (res.jsCount > 0) breakdown.push(`${Colors.GREEN}${res.jsCount} modules${Colors.RESET}`);
-  if (res.cssCount > 0) breakdown.push(`${Colors.MAGENTA}${res.cssCount} CSS${Colors.RESET}`);
+  if (generatedDistAssetCounts.jsCount > 0)
+    breakdown.push(`${Colors.GREEN}${generatedDistAssetCounts.jsCount} modules${Colors.RESET}`);
+  if (generatedDistAssetCounts.cssCount > 0)
+    breakdown.push(`${Colors.MAGENTA}${generatedDistAssetCounts.cssCount} CSS${Colors.RESET}`);
   if (pkgStats.customExports > 0)
     breakdown.push(`${Colors.YELLOW}${pkgStats.customExports} custom${Colors.RESET}`);
 
@@ -149,10 +152,14 @@ export function logPackageError(
     `${Colors.DIM}[${index}/${total}]${Colors.RESET} ${Colors.YELLOW}✗${Colors.RESET} ${Colors.BOLD}${displayName}${Colors.RESET}`,
   );
   out(
-    `  ${Colors.DIM}└─${Colors.RESET} ${Colors.YELLOW}Error: ${String(errValue)}${Colors.RESET}\n`,
+    `  ${Colors.DIM}└─${Colors.RESET} ${Colors.YELLOW}Error: ${messageFromCaughtUnknown(errValue)}${Colors.RESET}\n`,
   );
   if (verbose)
-    errLine(errValue instanceof Error && errValue.stack ? errValue.stack : String(errValue));
+    errLine(
+      errValue instanceof Error && errValue.stack
+        ? errValue.stack
+        : messageFromCaughtUnknown(errValue),
+    );
 }
 
 export function mirrorSummarySeparator(logger: CliLogger): void {
@@ -193,8 +200,12 @@ export function mirrorSummary(logger: CliLogger, stats: GlobalStats, elapsedSeco
   out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 }
 
-export function mirrorFatalError(logger: CliLogger, e: unknown): void {
+export function mirrorFatalError(logger: CliLogger, caughtError: unknown): void {
   const { out, err: errLine } = logger;
-  out(`${Colors.YELLOW}Fatal error: ${String(e)}${Colors.RESET}`);
-  errLine(e instanceof Error && e.stack ? e.stack : String(e));
+  out(`${Colors.YELLOW}Fatal error: ${messageFromCaughtUnknown(caughtError)}${Colors.RESET}`);
+  errLine(
+    caughtError instanceof Error && caughtError.stack
+      ? caughtError.stack
+      : messageFromCaughtUnknown(caughtError),
+  );
 }

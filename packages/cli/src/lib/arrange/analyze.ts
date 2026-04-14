@@ -27,21 +27,21 @@ function analyzeCnCall(sf: ts.SourceFile, call: ts.CallExpression, report: Analy
 }
 
 function visitCallExpressionForArrangeAnalyze(
-  node: ts.CallExpression,
+  callExpression: ts.CallExpression,
   sf: ts.SourceFile,
   sourceText: string,
   knownBindings: Set<string>,
   report: AnalyzeReport,
 ): void {
-  if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
+  if (isCnOrTvIdentifier(callExpression.expression, "cn", knownBindings)) {
     report.cnCallExpressions++;
-    analyzeCnCall(sf, node, report);
+    analyzeCnCall(sf, callExpression, report);
     return;
   }
-  if (!isCnOrTvIdentifier(node.expression, "tv", knownBindings)) return;
+  if (!isCnOrTvIdentifier(callExpression.expression, "tv", knownBindings)) return;
 
   report.tvCallExpressions++;
-  const arg0 = node.arguments[0];
+  const arg0 = callExpression.arguments[0];
   if (!arg0 || !ts.isObjectLiteralExpression(arg0)) return;
 
   for (const nestedCn of collectCnCallsInsideTv(sf, arg0, knownBindings, 0)) {
@@ -57,13 +57,13 @@ function visitCallExpressionForArrangeAnalyze(
   traverseTvObject(
     sf,
     arg0,
-    (strNode) => {
-      const text = strNode.text;
+    (classLiteral) => {
+      const text = classLiteral.text;
       const tokenCount = tokenizeClassString(text).length;
       if (tokenCount >= LONG_STRING_TOKEN_THRESHOLD) {
         report.longTvStringLiterals.push({
           file: sf.fileName,
-          line: lineOf(sf, strNode),
+          line: lineOf(sf, classLiteral),
           tokenCount,
           preview: text.length > 72 ? `${text.slice(0, 72)}…` : text,
         });
@@ -75,13 +75,13 @@ function visitCallExpressionForArrangeAnalyze(
 }
 
 function visitJsxAttributeForArrangeAnalyze(
-  node: ts.JsxAttribute,
+  jsxClassAttribute: ts.JsxAttribute,
   sf: ts.SourceFile,
   filePath: string,
   report: AnalyzeReport,
 ): void {
   if (!filePath.endsWith(".tsx")) return;
-  const parsed = jsxClassNameStaticLiteral(node);
+  const parsed = jsxClassNameStaticLiteral(jsxClassAttribute);
   if (!parsed) return;
   const text = parsed.lit.text;
   const tokenCount = tokenizeClassString(text).length;
@@ -95,7 +95,7 @@ function visitJsxAttributeForArrangeAnalyze(
   }
 }
 
-export function analyzeDirectory(target: string, fs: CliFs): AnalyzeReport {
+export function analyzeDirectory(analyzeRootPath: string, fs: CliFs): AnalyzeReport {
   const report: AnalyzeReport = {
     files: 0,
     cnCallExpressions: 0,
@@ -106,7 +106,9 @@ export function analyzeDirectory(target: string, fs: CliFs): AnalyzeReport {
     longJsxClassNameLiterals: [],
   };
 
-  const files = fs.statSync(target).isDirectory() ? walkTsxFiles(target, fs) : [target];
+  const files = fs.statSync(analyzeRootPath).isDirectory()
+    ? walkTsxFiles(analyzeRootPath, fs)
+    : [analyzeRootPath];
 
   for (const filePath of files) {
     const sourceText = fs.readFileSync(filePath, "utf8");
@@ -120,16 +122,16 @@ export function analyzeDirectory(target: string, fs: CliFs): AnalyzeReport {
     report.files++;
 
     const knownBindings = buildKnownCnTvBindings(sf);
-    const visit = (node: ts.Node): void => {
-      if (ts.isCallExpression(node)) {
-        visitCallExpressionForArrangeAnalyze(node, sf, sourceText, knownBindings, report);
+    const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
+      if (ts.isCallExpression(tsNode)) {
+        visitCallExpressionForArrangeAnalyze(tsNode, sf, sourceText, knownBindings, report);
       }
-      if (ts.isJsxAttribute(node)) {
-        visitJsxAttributeForArrangeAnalyze(node, sf, filePath, report);
+      if (ts.isJsxAttribute(tsNode)) {
+        visitJsxAttributeForArrangeAnalyze(tsNode, sf, filePath, report);
       }
-      ts.forEachChild(node, visit);
+      ts.forEachChild(tsNode, visitTypeScriptSubtree);
     };
-    visit(sf);
+    visitTypeScriptSubtree(sf);
   }
 
   return report;

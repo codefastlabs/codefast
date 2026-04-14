@@ -31,17 +31,17 @@ async function scanDirectoryFiles(
     const raw = await fs.readdir(dir, { recursive: true, withFileTypes: true });
     if (!isDirentList(raw)) return [];
     return raw
-      .filter((f) => f.isFile())
-      .map((f) => {
-        const fullPath = path.join(f.parentPath, f.name);
+      .filter((dirent) => dirent.isFile())
+      .map((dirent) => {
+        const fullPath = path.join(dirent.parentPath, dirent.name);
         const relPath = path.relative(baseDir, fullPath);
         return normalizePath(relPath);
       });
-  } catch (err: unknown) {
-    if (err && typeof err === "object" && "code" in err) {
-      if (err.code === "ENOENT" || err.code === "EACCES") return [];
+  } catch (caughtError: unknown) {
+    if (caughtError && typeof caughtError === "object" && "code" in caughtError) {
+      if (caughtError.code === "ENOENT" || caughtError.code === "EACCES") return [];
     }
-    throw err;
+    throw caughtError;
   }
 }
 
@@ -50,7 +50,7 @@ async function isDirectoryCssOnly(fs: CliFs, distDir: string, dirPath: string): 
     const raw = await fs.readdir(path.join(distDir, dirPath), { withFileTypes: true });
     if (!isDirentList(raw)) return false;
     if (raw.length === 0) return true;
-    return raw.every((f) => f.isFile() && f.name.endsWith(".css"));
+    return raw.every((dirent) => dirent.isFile() && dirent.name.endsWith(".css"));
   } catch {
     return false;
   }
@@ -74,15 +74,15 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
 
     if (!path.basename(modulePath)) continue;
 
-    let mod = modules.get(modulePath);
-    if (!mod) {
-      mod = { path: modulePath, files: { js: null, cjs: null, dts: null } };
-      modules.set(modulePath, mod);
+    let distModule = modules.get(modulePath);
+    if (!distModule) {
+      distModule = { path: modulePath, files: { js: null, cjs: null, dts: null } };
+      modules.set(modulePath, distModule);
     }
 
-    if (ext === ".js") mod.files.js = file;
-    else if (ext === ".cjs") mod.files.cjs = file;
-    else if (ext === DTS_EXTENSION) mod.files.dts = file;
+    if (ext === ".js") distModule.files.js = file;
+    else if (ext === ".cjs") distModule.files.cjs = file;
+    else if (ext === DTS_EXTENSION) distModule.files.dts = file;
   }
 
   return modules;
@@ -179,7 +179,7 @@ async function generateCssExports(
   if (!cssConfig || (cssConfig as Record<string, unknown>).enabled === false) return {};
 
   const files = await scanDirectoryFiles(fs, distDir);
-  const cssFiles = files.filter((f) => f.endsWith(".css"));
+  const cssFiles = files.filter((relativeDistPath) => relativeDistPath.endsWith(".css"));
   if (!cssFiles.length) return {};
 
   const cssExports: Record<string, string> = {
@@ -254,14 +254,14 @@ export async function generateExports(
     };
 
   const exportsObj: Record<string, ExportEntry> = {};
-  for (const mod of validModules) {
-    let exportPath = toExportPath(mod.path);
+  for (const distModuleEntry of validModules) {
+    let exportPath = toExportPath(distModuleEntry.path);
     if (pathTransform) exportPath = pathTransform(exportPath);
 
-    const distPath = `./dist/${mod.path}`;
+    const distPath = `./dist/${distModuleEntry.path}`;
     const entry: ExportEntry = { types: `${distPath}.d.ts` };
-    if (mod.files.js) entry.import = `${distPath}.js`;
-    if (mod.files.cjs) entry.require = `${distPath}.cjs`;
+    if (distModuleEntry.files.js) entry.import = `${distPath}.js`;
+    if (distModuleEntry.files.cjs) entry.require = `${distPath}.cjs`;
 
     exportsObj[exportPath] = entry;
   }

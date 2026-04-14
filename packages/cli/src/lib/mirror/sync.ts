@@ -1,4 +1,5 @@
 import path from "node:path";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import type { MirrorConfig } from "#lib/config/schema";
@@ -43,7 +44,7 @@ function isPackageSkipped(
   return skipPackagesArray.includes(pkgMeta.packageName);
 }
 
-async function processPackage(
+async function syncExportsForWorkspacePackage(
   fs: CliFs,
   logger: CliLogger,
   rootDir: string,
@@ -57,10 +58,10 @@ async function processPackage(
   const packageDir = path.resolve(rootDir, packagePathStr);
   const distDir = path.join(packageDir, DIST_DIR);
   const packageJsonPath = path.join(packageDir, PACKAGE_JSON);
-  const pkgName = path.basename(packageDir);
+  const folderBasename = path.basename(packageDir);
 
   const pkgStats: PackageStats = {
-    name: pkgName,
+    name: folderBasename,
     path: packageDir,
     jsModules: 0,
     cssExports: 0,
@@ -77,27 +78,22 @@ async function processPackage(
     pkgStats.skipped = true;
     pkgStats.skipReason = "package.json not found";
     stats.packagesSkipped++;
-    logSkippedWorkspacePackage(logger, index, total, pkgName, pkgStats.skipReason);
+    logSkippedWorkspacePackage(logger, index, total, folderBasename, pkgStats.skipReason);
     return pkgStats;
   }
 
-  if (!fs.existsSync(distDir)) {
-    pkgStats.skipped = true;
-    pkgStats.skipReason = "dist/ not found";
-    stats.packagesSkipped++;
-    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
-    return pkgStats;
-  }
-
+  let packageJsonParseError: unknown;
   try {
     const pkgContent = await fs.readFile(packageJsonPath, "utf8");
-    const parsedPackageJson = JSON.parse(pkgContent) as PackageJsonShape;
-    pkgStats.name = resolvePackageDisplayName(parsedPackageJson, pkgName);
-  } catch (e: unknown) {
-    pkgStats.error = String(e);
-    stats.packagesErrored++;
-    logPackageError(logger, index, total, pkgStats.name, e, verbose);
-    return pkgStats;
+    const raw = JSON.parse(pkgContent) as unknown;
+    if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+      throw new SyntaxError("package.json root must be a JSON object");
+    }
+    const parsedPackageJson = raw as PackageJsonShape;
+    pkgStats.name = resolvePackageDisplayName(parsedPackageJson, folderBasename);
+  } catch (caughtError: unknown) {
+    pkgStats.name = folderBasename;
+    packageJsonParseError = caughtError;
   }
 
   const pkgMeta: MirrorPackageMeta = { packageName: pkgStats.name };
@@ -105,6 +101,28 @@ async function processPackage(
   if (isPackageSkipped(config.skipPackages, pkgMeta)) {
     pkgStats.skipped = true;
     pkgStats.skipReason = "configured to skip";
+    stats.packagesSkipped++;
+    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+    return pkgStats;
+  }
+
+  if (packageJsonParseError !== undefined) {
+    if (!fs.existsSync(distDir)) {
+      pkgStats.skipped = true;
+      pkgStats.skipReason = "dist/ not found";
+      stats.packagesSkipped++;
+      logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+      return pkgStats;
+    }
+    pkgStats.error = messageFromCaughtUnknown(packageJsonParseError);
+    stats.packagesErrored++;
+    logPackageError(logger, index, total, pkgStats.name, packageJsonParseError, verbose);
+    return pkgStats;
+  }
+
+  if (!fs.existsSync(distDir)) {
+    pkgStats.skipped = true;
+    pkgStats.skipReason = "dist/ not found";
     stats.packagesSkipped++;
     logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
     return pkgStats;
@@ -141,10 +159,10 @@ async function processPackage(
     stats.totalCssExports += pkgStats.cssExports;
 
     logPackageSuccess(logger, index, total, pkgStats, generatedExports, verbose);
-  } catch (e: unknown) {
-    pkgStats.error = String(e);
+  } catch (caughtError: unknown) {
+    pkgStats.error = messageFromCaughtUnknown(caughtError);
     stats.packagesErrored++;
-    logPackageError(logger, index, total, pkgStats.name, e, verbose);
+    logPackageError(logger, index, total, pkgStats.name, caughtError, verbose);
   }
   return pkgStats;
 }
@@ -196,7 +214,7 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
 
     let nextPackageOrdinal = 1;
     for (const pkgPath of targetPackages) {
-      const pkgStats = await processPackage(
+      const pkgStats = await syncExportsForWorkspacePackage(
         fs,
         logger,
         opts.rootDir,
@@ -215,8 +233,8 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
     mirrorSummary(logger, stats, elapsed);
 
     return stats.packagesErrored > 0 ? 1 : 0;
-  } catch (e: unknown) {
-    mirrorFatalError(logger, e);
+  } catch (caughtError: unknown) {
+    mirrorFatalError(logger, caughtError);
     return 1;
   }
 }

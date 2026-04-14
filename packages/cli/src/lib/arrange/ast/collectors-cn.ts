@@ -7,7 +7,7 @@ import type {
 
 export function forEachStringLiteralInClassExpression(
   expr: ts.Expression,
-  sink: (node: TailwindClassLiteral) => void,
+  sink: (classLiteral: TailwindClassLiteral) => void,
   depth = 0,
   options?: ForEachStringLiteralInClassExpressionOptions,
 ): void {
@@ -49,15 +49,15 @@ export function forEachStringLiteralInClassExpression(
   }
 
   if (ts.isArrayLiteralExpression(expr)) {
-    for (const el of expr.elements) {
-      if (ts.isSpreadElement(el)) continue;
-      forEachStringLiteralInClassExpression(el, sink, depth + 1, options);
+    for (const arrayElement of expr.elements) {
+      if (ts.isSpreadElement(arrayElement)) continue;
+      forEachStringLiteralInClassExpression(arrayElement, sink, depth + 1, options);
     }
   }
 }
 
-export function isUnsafeLiteralForCnStyleApplySplit(node: TailwindClassLiteral): boolean {
-  return ts.isArrayLiteralExpression(node.parent);
+export function isUnsafeLiteralForCnStyleApplySplit(classLiteral: TailwindClassLiteral): boolean {
+  return ts.isArrayLiteralExpression(classLiteral.parent);
 }
 
 export const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOptions = {
@@ -115,6 +115,6 @@ export function mergeCnUnconditionalLiteralPoolForTest(
     throw new Error(`expected ${callee}(...) call`);
   }
   return collectUnconditionalTailwindLiteralsFromCnArguments(call.arguments)
-    .map((n) => n.text)
+    .map((literal) => literal.text)
     .join(" ");
 }

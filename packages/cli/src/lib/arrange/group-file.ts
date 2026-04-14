@@ -94,14 +94,14 @@ function applyGroupFileWrites(
   plannedGroupEdits: PlannedGroupEdit[],
   cnInTvNoReplacement: number,
 ): GroupFileResult {
-  const groupEdits = plannedGroupEdits.map((p) => ({
-    start: p.start,
-    end: p.end,
-    replacement: p.replacement,
-    jsxCn: p.jsxCn,
+  const groupEdits = plannedGroupEdits.map((plannedEdit) => ({
+    start: plannedEdit.start,
+    end: plannedEdit.end,
+    replacement: plannedEdit.replacement,
+    jsxCn: plannedEdit.jsxCn,
   }));
 
-  const touchedJsxCn = groupEdits.some((e) => e.jsxCn);
+  const touchedJsxCn = groupEdits.some((groupEdit) => groupEdit.jsxCn);
   let newText =
     groupEdits.length > 0 ? applyEditsDescending(textAfterUnwrap, groupEdits) : textAfterUnwrap;
 
@@ -141,17 +141,21 @@ export function groupFile(
       if (replacement === undefined) return undefined;
       return { start: call.getStart(sf), end: call.getEnd(), replacement, call };
     })
-    .filter((e): e is UnwrapPlan => e !== undefined);
+    .filter((planOrUndefined): planOrUndefined is UnwrapPlan => planOrUndefined !== undefined);
 
-  const unwrapReplacementByCall = new Map(unwrapPlans.map((p) => [p.call, p.replacement] as const));
+  const unwrapReplacementByCall = new Map(
+    unwrapPlans.map((unwrapPlan) => [unwrapPlan.call, unwrapPlan.replacement] as const),
+  );
 
-  const unwrapEdits = unwrapPlans.filter((e) => sourceText.slice(e.start, e.end) !== e.replacement);
+  const unwrapEdits = unwrapPlans.filter(
+    (unwrapPlan) => sourceText.slice(unwrapPlan.start, unwrapPlan.end) !== unwrapPlan.replacement,
+  );
 
   const textAfterUnwrap =
     unwrapEdits.length > 0 ? applyEditsDescending(sourceText, unwrapEdits) : sourceText;
 
   // The first parse (`sf`) intentionally targets the original source text to discover unwrap edits.
-  // After `applyEditsDescending` runs, node offsets from that AST no longer match the updated text.
+  // After `applyEditsDescending` runs, TypeScript source spans from that AST no longer match the updated text.
   // Re-parse `textAfterUnwrap` so group-target traversal uses valid positions; reusing the first AST
   // would produce incorrect start/end offsets for subsequent grouping edits.
   const sfGrouped = ts.createSourceFile(
@@ -166,11 +170,11 @@ export function groupFile(
   const cnInTvNoReplacement = cnInTvCalls.length - unwrapPlans.length;
 
   const sortedTargets = [...groupTargets].sort(
-    (a, b) => targetReplaceStart(b) - targetReplaceStart(a),
+    (leftTarget, rightTarget) => targetReplaceStart(rightTarget) - targetReplaceStart(leftTarget),
   );
   const plannedGroupEdits: PlannedGroupEdit[] = [];
-  for (const t of sortedTargets) {
-    const plan = planGroupEditForTarget(t, textAfterUnwrap, options.withClassName);
+  for (const groupTarget of sortedTargets) {
+    const plan = planGroupEditForTarget(groupTarget, textAfterUnwrap, options.withClassName);
     if (plan === undefined) continue;
     if (textAfterUnwrap.slice(plan.start, plan.end) === plan.replacement) continue;
     plannedGroupEdits.push(plan);

@@ -1,13 +1,13 @@
 import ts from "typescript";
 
 function sourceFileImportsCn(sf: ts.SourceFile): boolean {
-  for (const st of sf.statements) {
-    if (!ts.isImportDeclaration(st) || !st.importClause) continue;
-    const clause = st.importClause;
+  for (const statement of sf.statements) {
+    if (!ts.isImportDeclaration(statement) || !statement.importClause) continue;
+    const clause = statement.importClause;
     if (clause.name?.text === "cn") return true;
     if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
-      for (const el of clause.namedBindings.elements) {
-        if (el.name.text === "cn") return true;
+      for (const importedBinding of clause.namedBindings.elements) {
+        if (importedBinding.name.text === "cn") return true;
       }
     }
   }
@@ -27,11 +27,11 @@ function findImportDeclarationFromModule(
   sf: ts.SourceFile,
   moduleSpecifier: string,
 ): ts.ImportDeclaration | undefined {
-  for (const st of sf.statements) {
-    if (!ts.isImportDeclaration(st)) continue;
-    const spec = st.moduleSpecifier;
+  for (const statement of sf.statements) {
+    if (!ts.isImportDeclaration(statement)) continue;
+    const spec = statement.moduleSpecifier;
     if (ts.isStringLiteral(spec) && spec.text === moduleSpecifier) {
-      return st;
+      return statement;
     }
   }
   return undefined;
@@ -70,9 +70,9 @@ export function ensureCnImport(
   const importLine = `import { cn } from "${moduleSpecifier}";`;
 
   let firstImport = -1;
-  for (const st of sf.statements) {
-    if (ts.isImportDeclaration(st)) {
-      firstImport = st.getStart(sf);
+  for (const statement of sf.statements) {
+    if (ts.isImportDeclaration(statement)) {
+      firstImport = statement.getStart(sf);
       break;
     }
   }

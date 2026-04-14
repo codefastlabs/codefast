@@ -21,8 +21,8 @@ function isVariantKeyedBucket(bucket: Bucket): bucket is "selector" | "state" | 
   return bucket === "selector" || bucket === "state" || bucket === "starting";
 }
 
-function variantGroupKey(bucket: Bucket, tok: string): string {
-  return bucket === "selector" ? selectorKey(tok) : stateKey(tok);
+function variantGroupKey(bucket: Bucket, classToken: string): string {
+  return bucket === "selector" ? selectorKey(classToken) : stateKey(classToken);
 }
 
 /**
@@ -37,8 +37,8 @@ export function areCnTailwindPartitionsEquivalent(
   const partitionSignatures = (chunks: string[]): string[] =>
     chunks
       .map((chunk) => {
-        const toks = tokenizeClassString(chunk);
-        return toks.length === 0 ? "" : [...toks].sort().join(" ");
+        const classTokens = tokenizeClassString(chunk);
+        return classTokens.length === 0 ? "" : [...classTokens].sort().join(" ");
       })
       .filter((s) => s.length > 0)
       .sort((a, b) => a.localeCompare(b));
@@ -55,8 +55,8 @@ export function areCnTailwindPartitionsEquivalent(
 /** Dominant bucket of a whitespace-delimited class group (for merge heuristics). */
 function dominantBucketOfGroup(groupStr: string): Bucket {
   const counts = new Map<Bucket, number>();
-  for (const tok of tokenizeClassString(groupStr)) {
-    const tokenBucket = classifyToken(tok);
+  for (const classToken of tokenizeClassString(groupStr)) {
+    const tokenBucket = classifyToken(classToken);
     counts.set(tokenBucket, (counts.get(tokenBucket) ?? 0) + 1);
   }
   let best: Bucket = "other";
@@ -155,22 +155,22 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
   const lengths = result.map((groupStr) => tokenizeClassString(groupStr).length);
 
   while (result.length > maxGroups) {
-    type Cand = { i: number; size: number; penalty: number };
-    const cands: Cand[] = [];
+    type MergePairCandidate = { i: number; size: number; penalty: number };
+    const mergePairCandidates: MergePairCandidate[] = [];
     for (let i = 0; i < result.length - 1; i++) {
       const dominantLeft = dominantBucketOfGroup(result[i]);
       const dominantRight = dominantBucketOfGroup(result[i + 1]);
       if (!bucketsMergeCompatible(dominantLeft, dominantRight)) continue;
-      cands.push({
+      mergePairCandidates.push({
         i,
         size: lengths[i] + lengths[i + 1],
         penalty: capMergePenalty(dominantLeft, dominantRight),
       });
     }
-    if (cands.length === 0) break;
+    if (mergePairCandidates.length === 0) break;
 
-    let best = cands[0]!;
-    for (const candidate of cands) {
+    let best = mergePairCandidates[0]!;
+    for (const candidate of mergePairCandidates) {
       if (
         candidate.penalty < best.penalty ||
         (candidate.penalty === best.penalty && candidate.size < best.size)
@@ -204,8 +204,8 @@ export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): str
       let target = -1;
       for (let j = i + 1; j < result.length; j++) {
         if (dominantBucketOfGroup(result[j]!) !== "state") continue;
-        const toks = tokenizeClassString(result[j]!);
-        if (!toks.some((t) => /^animate/.test(stripVariants(t)))) continue;
+        const classTokens = tokenizeClassString(result[j]!);
+        if (!classTokens.some((classToken) => /^animate/.test(stripVariants(classToken)))) continue;
         target = j;
         break;
       }
@@ -220,24 +220,31 @@ export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): str
 }
 
 function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
-  const toks = tokenizeClassString(groupStr);
-  if (toks.length === 0) return false;
-  return toks.every((t) => classifyToken(t) === "motion" && /^ease-/.test(stripVariants(t)));
+  const classTokens = tokenizeClassString(groupStr);
+  if (classTokens.length === 0) return false;
+  return classTokens.every(
+    (classToken) =>
+      classifyToken(classToken) === "motion" && /^ease-/.test(stripVariants(classToken)),
+  );
 }
 
 export function suggestCnGroups(classString: string): string[] {
   const tokens = tokenizeClassString(classString);
   if (tokens.length === 0) return [];
 
-  const classified = tokens.map((tok, index) => ({ tok, bucket: classifyToken(tok), index }));
+  const classified = tokens.map((classToken, index) => ({
+    classToken,
+    bucket: classifyToken(classToken),
+    index,
+  }));
   classified.sort((left, right) => {
     const bucketOrderDiff = BUCKET_ORDER[left.bucket] - BUCKET_ORDER[right.bucket];
     if (bucketOrderDiff !== 0) return bucketOrderDiff;
     if (left.bucket === "composite" && right.bucket === "composite") {
-      const c =
-        compositeSecondaryOrder(stripVariants(left.tok)) -
-        compositeSecondaryOrder(stripVariants(right.tok));
-      if (c !== 0) return c;
+      const compositeOrderDiff =
+        compositeSecondaryOrder(stripVariants(left.classToken)) -
+        compositeSecondaryOrder(stripVariants(right.classToken));
+      if (compositeOrderDiff !== 0) return compositeOrderDiff;
     }
     return left.index - right.index;
   });
@@ -257,23 +264,23 @@ export function suggestCnGroups(classString: string): string[] {
     currentStateKey = null;
   };
 
-  for (const { tok, bucket: tokenBucket } of classified) {
+  for (const { classToken, bucket: tokenBucket } of classified) {
     if (lastBucketInRun === null) {
       lastBucketInRun = tokenBucket;
       currentStateKey = isVariantKeyedBucket(tokenBucket)
-        ? variantGroupKey(tokenBucket, tok)
+        ? variantGroupKey(tokenBucket, classToken)
         : null;
-      currentTokens.push(tok);
+      currentTokens.push(classToken);
       continue;
     }
 
     if (isVariantKeyedBucket(tokenBucket)) {
-      const key = variantGroupKey(tokenBucket, tok);
+      const key = variantGroupKey(tokenBucket, classToken);
       if (currentStateKey !== null && key !== currentStateKey) {
         flush();
         lastBucketInRun = tokenBucket;
         currentStateKey = key;
-        currentTokens.push(tok);
+        currentTokens.push(classToken);
         continue;
       }
     }
@@ -282,21 +289,21 @@ export function suggestCnGroups(classString: string): string[] {
       flush();
       lastBucketInRun = tokenBucket;
       currentStateKey = isVariantKeyedBucket(tokenBucket)
-        ? variantGroupKey(tokenBucket, tok)
+        ? variantGroupKey(tokenBucket, classToken)
         : null;
-      currentTokens.push(tok);
+      currentTokens.push(classToken);
       continue;
     }
 
     if (isVariantKeyedBucket(tokenBucket)) {
-      currentStateKey = variantGroupKey(tokenBucket, tok);
+      currentStateKey = variantGroupKey(tokenBucket, classToken);
     } else if (currentStateKey !== null) {
       // Defensive reset: keeps state-key logic explicit if bucket rules evolve.
       currentStateKey = null;
     }
 
     lastBucketInRun = tokenBucket;
-    currentTokens.push(tok);
+    currentTokens.push(classToken);
   }
   flush();
 

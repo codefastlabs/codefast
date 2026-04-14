@@ -21,16 +21,16 @@ export function targetReplaceStart(target: GroupTarget): number {
   if (target.kind === "cnArg") {
     return target.item.cnCall
       ? target.item.cnCall.getStart(target.item.sf)
-      : target.item.node.getStart(target.item.sf);
+      : target.item.primaryClassLiteral.getStart(target.item.sf);
   }
   return target.valueNode.getStart(target.sf);
 }
 
 export function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
   const results: GroupTarget[] = [];
-  const visit = (node: ts.Node): void => {
-    if (ts.isJsxAttribute(node)) {
-      const parsed = jsxClassNameStaticLiteral(node);
+  const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
+    if (ts.isJsxAttribute(tsNode)) {
+      const parsed = jsxClassNameStaticLiteral(tsNode);
       if (parsed && tokenizeClassString(parsed.lit.text).length >= APPLY_MIN_TOKENS) {
         results.push({
           kind: "jsxClassName",
@@ -40,25 +40,28 @@ export function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[]
         });
       }
     }
-    ts.forEachChild(node, visit);
+    ts.forEachChild(tsNode, visitTypeScriptSubtree);
   };
-  visit(sf);
+  visitTypeScriptSubtree(sf);
   return results;
 }
 
 export function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupTarget[] {
-  const cnPart = collectGroupableStringNodes(sf).map((item) => ({ kind: "cnArg" as const, item }));
+  const cnPart = collectGroupableStringNodes(sf).map((stringNode) => ({
+    kind: "cnArg" as const,
+    item: stringNode,
+  }));
   if (!filePath.endsWith(".tsx")) return cnPart;
   return [...cnPart, ...collectLongJsxClassNameTargets(sf)];
 }
 
 export function formatCnCallReplacement(
-  item: StringNode,
+  stringNode: StringNode,
   sourceText: string,
   withClassName: boolean,
 ): string {
-  const call = item.cnCall!;
-  const sf = item.sf;
+  const call = stringNode.cnCall!;
+  const sf = stringNode.sf;
   const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
   const argIndent = `${baseIndent}  `;
 
@@ -72,7 +75,7 @@ export function formatCnCallReplacement(
     }
   }
 
-  const pool = slotClassString(item);
+  const pool = slotClassString(stringNode);
   const groups = pool.trim() ? suggestCnGroups(pool) : [];
 
   const allArgs: string[] = [];
@@ -85,8 +88,8 @@ export function formatCnCallReplacement(
     allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(groups[0]!)}"`);
   }
 
-  for (const dyn of dynamicArgTexts) {
-    allArgs.push(`${argIndent}${dyn}`);
+  for (const dynamicArgumentSource of dynamicArgTexts) {
+    allArgs.push(`${argIndent}${dynamicArgumentSource}`);
   }
 
   if (withClassName) {
@@ -130,7 +133,7 @@ export function planGroupEditForTarget(
 
   if (
     areCnTailwindPartitionsEquivalent(
-      target.item.nodes.map((node) => node.text),
+      target.item.nodes.map((classLiteral) => classLiteral.text),
       groups,
     )
   ) {
@@ -138,15 +141,15 @@ export function planGroupEditForTarget(
   }
 
   if (!target.item.cnCall) {
-    const firstNode = target.item.node;
+    const anchorClassLiteral = target.item.primaryClassLiteral;
     const parentArray =
-      target.item.nodes.length > 1 && ts.isArrayLiteralExpression(firstNode.parent)
-        ? firstNode.parent
+      target.item.nodes.length > 1 && ts.isArrayLiteralExpression(anchorClassLiteral.parent)
+        ? anchorClassLiteral.parent
         : null;
     const start = parentArray
       ? parentArray.getStart(target.item.sf)
-      : firstNode.getStart(target.item.sf);
-    const end = parentArray ? parentArray.getEnd() : firstNode.getEnd();
+      : anchorClassLiteral.getStart(target.item.sf);
+    const end = parentArray ? parentArray.getEnd() : anchorClassLiteral.getEnd();
     const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
     const replacement = formatArray(groups)
       .split("\n")
@@ -159,7 +162,7 @@ export function planGroupEditForTarget(
       bucketSummary: summarizeGroupBucketLabels(groups),
       jsxCn: false,
       lineSf: target.item.sf,
-      reportNode: firstNode,
+      reportNode: anchorClassLiteral,
       label: target.item.isTvContext ? "tv" : "cn",
     };
   }
@@ -175,7 +178,7 @@ export function planGroupEditForTarget(
     bucketSummary: summarizeGroupBucketLabels(groups),
     jsxCn: false,
     lineSf: target.item.sf,
-    reportNode: target.item.node,
+    reportNode: target.item.primaryClassLiteral,
     label: target.item.isTvContext ? "tv" : "cn",
   };
 }

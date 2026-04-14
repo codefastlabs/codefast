@@ -15,20 +15,20 @@ export const DEFAULT_SKIP_DIRS = new Set([
   ".output",
 ]);
 
-export function walkTsxFiles(root: string, fs: CliFs): string[] {
+export function walkTsxFiles(rootDirectoryPath: string, fs: CliFs): string[] {
   const result: string[] = [];
   const visit = (entryPath: string) => {
     const entryStats = fs.statSync(entryPath);
     if (entryStats.isDirectory()) {
-      for (const name of fs.readdirSync(entryPath)) {
-        if (DEFAULT_SKIP_DIRS.has(name)) continue;
-        visit(path.join(entryPath, name));
+      for (const childName of fs.readdirSync(entryPath)) {
+        if (DEFAULT_SKIP_DIRS.has(childName)) continue;
+        visit(path.join(entryPath, childName));
       }
       return;
     }
     if (entryPath.endsWith(".d.ts")) return;
     if (entryPath.endsWith(".tsx") || entryPath.endsWith(".ts")) result.push(entryPath);
   };
-  visit(root);
+  visit(rootDirectoryPath);
   return result;
 }

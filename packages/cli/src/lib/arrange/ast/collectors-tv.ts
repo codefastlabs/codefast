@@ -15,7 +15,7 @@ import {
 } from "#lib/arrange/ast/utils";
 
 type StringNodeVisitor = (
-  node: TailwindClassLiteral,
+  classLiteral: TailwindClassLiteral,
   sf: ts.SourceFile,
   cnCall?: ts.CallExpression,
 ) => void;
@@ -35,32 +35,35 @@ export function traverseTvObject(
     if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
       visitor(init, sf, undefined);
     } else if (ts.isArrayLiteralExpression(init)) {
-      for (const el of init.elements) {
-        if (ts.isSpreadElement(el)) continue;
-        if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
-          visitor(el, sf, undefined);
+      for (const arrayElement of init.elements) {
+        if (ts.isSpreadElement(arrayElement)) continue;
+        if (ts.isStringLiteral(arrayElement) || ts.isNoSubstitutionTemplateLiteral(arrayElement)) {
+          visitor(arrayElement, sf, undefined);
         } else if (
-          ts.isCallExpression(el) &&
-          isCnOrTvIdentifier(el.expression, "cn", knownBindings)
+          ts.isCallExpression(arrayElement) &&
+          isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
         ) {
-          for (const arg of el.arguments) {
+          for (const arg of arrayElement.arguments) {
             forEachStringLiteralInClassExpression(arg, (lit) => {
-              visitor(lit, sf, el);
+              visitor(lit, sf, arrayElement);
             });
           }
-        } else if (ts.isObjectLiteralExpression(el)) {
-          for (const inner of el.properties) {
-            if (!ts.isPropertyAssignment(inner)) continue;
-            const propName = propertyAssignmentNameText(inner);
+        } else if (ts.isObjectLiteralExpression(arrayElement)) {
+          for (const objectProperty of arrayElement.properties) {
+            if (!ts.isPropertyAssignment(objectProperty)) continue;
+            const propName = propertyAssignmentNameText(objectProperty);
             if (propName !== "className" && propName !== "class") continue;
-            const innerInit = inner.initializer;
+            const innerInit = objectProperty.initializer;
             if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
               visitor(innerInit, sf, undefined);
             } else if (ts.isArrayLiteralExpression(innerInit)) {
-              for (const innerEl of innerInit.elements) {
-                if (ts.isSpreadElement(innerEl)) continue;
-                if (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl)) {
-                  visitor(innerEl, sf, undefined);
+              for (const nestedArrayElement of innerInit.elements) {
+                if (ts.isSpreadElement(nestedArrayElement)) continue;
+                if (
+                  ts.isStringLiteral(nestedArrayElement) ||
+                  ts.isNoSubstitutionTemplateLiteral(nestedArrayElement)
+                ) {
+                  visitor(nestedArrayElement, sf, undefined);
                 }
               }
             } else if (
@@ -104,16 +107,19 @@ export function collectCnCallsInsideTv(
     const init = prop.initializer;
 
     if (ts.isArrayLiteralExpression(init)) {
-      for (const el of init.elements) {
-        if (ts.isSpreadElement(el)) continue;
-        if (ts.isCallExpression(el) && isCnOrTvIdentifier(el.expression, "cn", knownBindings)) {
-          calls.push(el);
-        } else if (ts.isObjectLiteralExpression(el)) {
-          for (const inner of el.properties) {
-            if (!ts.isPropertyAssignment(inner)) continue;
-            const propName = propertyAssignmentNameText(inner);
+      for (const arrayElement of init.elements) {
+        if (ts.isSpreadElement(arrayElement)) continue;
+        if (
+          ts.isCallExpression(arrayElement) &&
+          isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
+        ) {
+          calls.push(arrayElement);
+        } else if (ts.isObjectLiteralExpression(arrayElement)) {
+          for (const objectProperty of arrayElement.properties) {
+            if (!ts.isPropertyAssignment(objectProperty)) continue;
+            const propName = propertyAssignmentNameText(objectProperty);
             if (propName !== "className" && propName !== "class") continue;
-            const innerInit = inner.initializer;
+            const innerInit = objectProperty.initializer;
             if (
               ts.isCallExpression(innerInit) &&
               isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
@@ -140,16 +146,16 @@ export function listAllCnCallsInsideTvInSourceFile(
   knownBindings: Set<string>,
 ): ts.CallExpression[] {
   const calls: ts.CallExpression[] = [];
-  const visit = (node: ts.Node): void => {
-    if (ts.isCallExpression(node) && isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
-      const arg0 = node.arguments[0];
+  const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
+    if (ts.isCallExpression(tsNode) && isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)) {
+      const arg0 = tsNode.arguments[0];
       if (arg0 && ts.isObjectLiteralExpression(arg0)) {
         calls.push(...collectCnCallsInsideTv(sf, arg0, knownBindings, 0));
       }
     }
-    ts.forEachChild(node, visit);
+    ts.forEachChild(tsNode, visitTypeScriptSubtree);
   };
-  visit(sf);
+  visitTypeScriptSubtree(sf);
   return calls;
 }
 
@@ -164,14 +170,14 @@ export function makeStringNode(
     sf,
     isTvContext,
     cnCall,
-    get node() {
+    get primaryClassLiteral() {
       return this.nodes[0]!;
     },
   };
 }
 
-export function slotClassString(item: StringNode): string {
-  return item.nodes.map((n) => n.text).join(" ");
+export function slotClassString(stringNode: StringNode): string {
+  return stringNode.nodes.map((literal) => literal.text).join(" ");
 }
 
 export function emitTvSlot(
@@ -186,7 +192,11 @@ export function emitTvSlot(
   if (seenNodePos.has(firstPos)) return;
   seenNodePos.add(firstPos);
 
-  const totalTokens = lits.reduce((s, n) => s + tokenizeClassString(n.text).length, 0);
+  const totalTokens = lits.reduce(
+    (accumulatedTokenCount, literal) =>
+      accumulatedTokenCount + tokenizeClassString(literal.text).length,
+    0,
+  );
   if (totalTokens < APPLY_MIN_TOKENS) return;
   results.push(makeStringNode(lits, sf, true, cnCall));
 }
@@ -213,15 +223,15 @@ export function collectTvSlots(
       seenNodePos.add(arrayPos);
 
       const staticLits: TailwindClassLiteral[] = [];
-      for (const el of init.elements) {
-        if (ts.isSpreadElement(el)) continue;
-        if (ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el)) {
-          staticLits.push(el);
+      for (const arrayElement of init.elements) {
+        if (ts.isSpreadElement(arrayElement)) continue;
+        if (ts.isStringLiteral(arrayElement) || ts.isNoSubstitutionTemplateLiteral(arrayElement)) {
+          staticLits.push(arrayElement);
         } else if (
-          ts.isCallExpression(el) &&
-          isCnOrTvIdentifier(el.expression, "cn", knownBindings)
+          ts.isCallExpression(arrayElement) &&
+          isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
         ) {
-          for (const arg of el.arguments) {
+          for (const arg of arrayElement.arguments) {
             forEachStringLiteralInClassExpression(
               arg,
               (lit) => {
@@ -231,22 +241,23 @@ export function collectTvSlots(
               CN_APPLY_LITERAL_WALK_OPTS,
             );
           }
-        } else if (ts.isObjectLiteralExpression(el)) {
-          for (const inner of el.properties) {
-            if (!ts.isPropertyAssignment(inner)) continue;
-            const propName = propertyAssignmentNameText(inner);
+        } else if (ts.isObjectLiteralExpression(arrayElement)) {
+          for (const objectProperty of arrayElement.properties) {
+            if (!ts.isPropertyAssignment(objectProperty)) continue;
+            const propName = propertyAssignmentNameText(objectProperty);
             if (propName !== "className" && propName !== "class") continue;
-            const innerInit = inner.initializer;
+            const innerInit = objectProperty.initializer;
             if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
               emitTvSlot([innerInit], sf, undefined, results, seenNodePos);
             } else if (ts.isArrayLiteralExpression(innerInit)) {
               const innerLits: TailwindClassLiteral[] = [];
-              for (const innerEl of innerInit.elements) {
+              for (const nestedArrayElement of innerInit.elements) {
                 if (
-                  !ts.isSpreadElement(innerEl) &&
-                  (ts.isStringLiteral(innerEl) || ts.isNoSubstitutionTemplateLiteral(innerEl))
+                  !ts.isSpreadElement(nestedArrayElement) &&
+                  (ts.isStringLiteral(nestedArrayElement) ||
+                    ts.isNoSubstitutionTemplateLiteral(nestedArrayElement))
                 ) {
-                  innerLits.push(innerEl);
+                  innerLits.push(nestedArrayElement);
                 }
               }
               emitTvSlot(innerLits, sf, undefined, results, seenNodePos);
@@ -300,32 +311,36 @@ export function collectGroupableStringNodes(sf: ts.SourceFile): StringNode[] {
   const seenNodePos = new Set<number>();
   const knownBindings = buildKnownCnTvBindings(sf);
 
-  const visit = (node: ts.Node): void => {
-    if (ts.isCallExpression(node)) {
-      if (isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
-        const callPos = node.getStart(sf);
+  const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
+    if (ts.isCallExpression(tsNode)) {
+      if (isCnOrTvIdentifier(tsNode.expression, "cn", knownBindings)) {
+        const callPos = tsNode.getStart(sf);
         if (seenNodePos.has(callPos)) {
-          ts.forEachChild(node, visit);
+          ts.forEachChild(tsNode, visitTypeScriptSubtree);
           return;
         }
         seenNodePos.add(callPos);
 
-        const staticLits = collectUnconditionalTailwindLiteralsFromCnArguments(node.arguments);
+        const staticLits = collectUnconditionalTailwindLiteralsFromCnArguments(tsNode.arguments);
 
-        const totalTokens = staticLits.reduce((s, n) => s + tokenizeClassString(n.text).length, 0);
+        const totalTokens = staticLits.reduce(
+          (accumulatedTokenCount, literal) =>
+            accumulatedTokenCount + tokenizeClassString(literal.text).length,
+          0,
+        );
         if (staticLits.length > 0 && totalTokens >= APPLY_MIN_TOKENS) {
-          results.push(makeStringNode(staticLits, sf, false, node));
+          results.push(makeStringNode(staticLits, sf, false, tsNode));
         }
-      } else if (isCnOrTvIdentifier(node.expression, "tv", knownBindings)) {
-        const arg0 = node.arguments[0];
+      } else if (isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)) {
+        const arg0 = tsNode.arguments[0];
         if (arg0 && ts.isObjectLiteralExpression(arg0)) {
           collectTvSlots(sf, arg0, knownBindings, results, seenNodePos);
         }
       }
     }
-    ts.forEachChild(node, visit);
+    ts.forEachChild(tsNode, visitTypeScriptSubtree);
   };
 
-  visit(sf);
+  visitTypeScriptSubtree(sf);
   return results;
 }
