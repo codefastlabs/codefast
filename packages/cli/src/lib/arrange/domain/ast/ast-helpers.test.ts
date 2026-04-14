@@ -2,12 +2,12 @@ import {
   KNOWN_CN_TV_MODULES,
   applyEditsDescending,
   buildKnownCnTvBindings,
+  indentOfLineContaining,
   isCnOrTvIdentifier,
   lineOf,
   moduleLooksLikeCnTvReexport,
   unwrapCnInsideTvCallReplacement,
-} from "#lib/arrange";
-import { indentOfLineContaining } from "#lib/arrange/domain/ast/ast-helpers";
+} from "#lib/arrange/domain/ast/ast-helpers";
 import {
   isDomainCallExpression,
   isDomainExpressionStatement,

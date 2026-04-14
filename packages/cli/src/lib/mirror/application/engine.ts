@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
-import type { MirrorConfig } from "#lib/config";
+import type { MirrorConfig } from "#lib/config/domain/schema";
 import {
   DTS_EXTENSION,
   PACKAGE_JSON_EXPORT,

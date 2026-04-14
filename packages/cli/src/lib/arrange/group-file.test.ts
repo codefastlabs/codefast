@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs, createNodeCliLogger, groupFile } from "#lib/arrange";
+import { groupFile } from "#lib/arrange/application/group-file";
+import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 
 const arrangeFs = createNodeCliFs();

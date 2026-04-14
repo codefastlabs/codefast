@@ -1,4 +1,4 @@
-import { buildKnownCnTvBindings, isCnOrTvIdentifier } from "#lib/arrange";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier } from "#lib/arrange/domain/ast/ast-helpers";
 import {
   collectCnCallsInsideTv,
   collectGroupableStringNodes,

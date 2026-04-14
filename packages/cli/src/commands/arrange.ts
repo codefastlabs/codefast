@@ -4,14 +4,10 @@ import type { Command } from "commander";
 import { Option } from "commander";
 import { ArrangeAnalyzeDirectoryRequestSchema } from "#lib/arrange/application/requests/analyze-directory.request";
 import { ArrangeSyncRunRequestSchema } from "#lib/arrange/application/requests/arrange-sync.request";
-import {
-  DEFAULT_ARRANGE_TARGET,
-  formatArray,
-  formatCnCall,
-  printAnalyzeReport,
-  suggestCnGroups,
-  summarizeGroupBucketLabels,
-} from "#lib/arrange";
+import { DEFAULT_ARRANGE_TARGET } from "#lib/arrange/domain/constants";
+import { suggestCnGroups, summarizeGroupBucketLabels } from "#lib/arrange/domain/grouping";
+import { formatArray, formatCnCall } from "#lib/arrange/domain/source-text-formatters";
+import { printAnalyzeReport } from "#lib/arrange/presentation/report";
 import { consumeCliAppError } from "#lib/core/presentation/cli-executor";
 import {
   assertPathExistsOrExit,

@@ -1,4 +1,4 @@
-import type { CodefastTagConfig } from "#lib/config";
+import type { CodefastTagConfig } from "#lib/config/domain/schema";
 import type { CliFs } from "#lib/infra/fs-contract";
 import type { TagProgressListener } from "#lib/tag/domain/types";
 

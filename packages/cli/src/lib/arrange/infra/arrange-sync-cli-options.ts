@@ -1,4 +1,4 @@
-import type { CodefastArrangeConfig } from "#lib/config";
+import type { CodefastArrangeConfig } from "#lib/config/domain/schema";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 
 /** CLI / container wiring: filesystem and logger injected at the boundary. */

@@ -7,7 +7,7 @@ import {
   stateKey,
   stripVariants,
   tokenizeClassString,
-} from "#lib/arrange";
+} from "#lib/arrange/domain/tokenizer";
 
 describe("tokenizeClassString", () => {
   it("trims and splits on whitespace runs", () => {
