@@ -3,8 +3,8 @@ import process from "node:process";
 import jiti from "jiti";
 import { ZodError } from "zod";
 import type { CliFs } from "#lib/infra/fs-contract";
-import type { CodefastConfig } from "#lib/shared/config-types";
 import { codefastConfigSchema } from "#lib/config/schema";
+import type { CodefastConfig } from "#lib/config/schema";
 
 const CONFIG_JS_PRIORITY = [
   "codefast.config.mjs",

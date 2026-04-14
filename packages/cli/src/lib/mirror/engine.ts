@@ -1,11 +1,11 @@
 import path from "node:path";
 import type { CliFs } from "#lib/infra/fs-contract";
 import { isDirentList } from "#lib/shared/utils";
+import type { MirrorConfig } from "#lib/config/schema";
 import { DTS_EXTENSION, PACKAGE_JSON_EXPORT, VALID_JS_EXTENSIONS } from "#lib/mirror/constants";
 import type {
   ExportEntry,
   GenerateExportsResult,
-  MirrorConfig,
   MirrorPackageMeta,
   Module,
 } from "#lib/mirror/types";

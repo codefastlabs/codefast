@@ -3,7 +3,7 @@ import process from "node:process";
 import { Command } from "commander";
 import type { CliLogger } from "#lib/infra/fs-contract";
 import { loadConfig } from "#lib/config/loader";
-import type { CodefastConfig } from "#lib/shared/config-types";
+import type { CodefastConfig } from "#lib/config/schema";
 import { createNodeCliFs, createNodeCliLogger, runTagOnTarget } from "#lib/tag";
 
 const DEFAULT_TAG_TARGET = "src";
