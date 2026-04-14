@@ -1,7 +1,15 @@
+import path from "node:path";
+import type { CodefastAfterWriteHook } from "#lib/config/schema";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { ArrangeError, ArrangeErrorCode } from "#lib/arrange/errors";
-import type { ArrangeRunOnTargetOptions, ArrangeRunResult } from "#lib/arrange/types";
 import { groupFile } from "#lib/arrange/group-file";
+import type {
+  ArrangeRunOnTargetOptions,
+  ArrangeRunResult,
+  ArrangeSyncOptions,
+} from "#lib/arrange/types";
 import { walkTsxFiles } from "#lib/arrange/walk";
 
 export function runOnTarget(
@@ -52,4 +60,57 @@ export function runOnTarget(
     totalFound,
     totalChanged,
   };
+}
+
+async function runArrangeOnAfterWriteHook(
+  logger: CliLogger,
+  hook: CodefastAfterWriteHook | undefined,
+  modifiedFiles: string[],
+): Promise<void> {
+  if (!hook || modifiedFiles.length === 0) return;
+  try {
+    await hook({ files: modifiedFiles });
+  } catch (caughtHookError: unknown) {
+    logger.err(`[arrange] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
+  }
+}
+
+/**
+ * CLI entry: run arrange preview/apply using config injected by the command layer.
+ * @returns Process exit code (`0`, or `1` when the target path is missing).
+ */
+export async function runArrangeSync(opts: ArrangeSyncOptions): Promise<number> {
+  void opts.rootDir;
+  const fs = opts.fs ?? createNodeCliFs();
+  const logger = opts.logger ?? createNodeCliLogger();
+  const resolvedTarget = path.resolve(opts.targetPath);
+
+  let result: ArrangeRunResult;
+  try {
+    result = runOnTarget(
+      resolvedTarget,
+      {
+        write: opts.write,
+        withClassName: !!opts.withClassName,
+        cnImport: opts.cnImport,
+      },
+      fs,
+      logger,
+    );
+  } catch (caughtError: unknown) {
+    if (
+      caughtError instanceof ArrangeError &&
+      caughtError.code === ArrangeErrorCode.TARGET_NOT_FOUND
+    ) {
+      logger.err(caughtError.message);
+      return 1;
+    }
+    throw caughtError;
+  }
+
+  if (opts.write && result.modifiedFiles.length > 0) {
+    await runArrangeOnAfterWriteHook(logger, opts.config?.onAfterWrite, result.modifiedFiles);
+  }
+
+  return 0;
 }

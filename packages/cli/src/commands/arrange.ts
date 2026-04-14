@@ -5,11 +5,9 @@ import { Option } from "commander";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { loadConfig } from "#lib/config/loader";
-import type { CodefastConfig } from "#lib/config/schema";
+import type { CodefastArrangeConfig } from "#lib/config/schema";
+import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import {
-  ArrangeError,
-  ArrangeErrorCode,
-  type ArrangeRunResult,
   analyzeDirectory,
   createNodeCliFs,
   createNodeCliLogger,
@@ -17,10 +15,11 @@ import {
   formatArray,
   formatCnCall,
   printAnalyzeReport,
-  runOnTarget,
+  runArrangeSync,
   suggestCnGroups,
   summarizeGroupBucketLabels,
 } from "#lib/arrange";
+import { findRepoRoot } from "#lib/repo-root";
 
 /** Commander attribute `withClassName` (second long flag `--with-class-name`). */
 function createWithClassNameOption(): Option {
@@ -43,70 +42,18 @@ function checkTargetExists(resolved: string, fs: CliFs, logger: CliLogger): bool
   return true;
 }
 
-function handleArrangeLibError(caughtError: unknown, logger: CliLogger): boolean {
-  if (
-    caughtError instanceof ArrangeError &&
-    caughtError.code === ArrangeErrorCode.TARGET_NOT_FOUND
-  ) {
-    logger.err(caughtError.message);
+async function loadArrangeCommandConfig(
+  fs: CliFs,
+  logger: CliLogger,
+  rootDir: string,
+): Promise<{ arrangeConfig: CodefastArrangeConfig } | undefined> {
+  try {
+    const { config, warnings } = await loadConfig(fs, rootDir);
+    printConfigSchemaWarnings(logger, warnings);
+    return { arrangeConfig: config.arrange ?? {} };
+  } catch (caughtConfigError: unknown) {
+    logger.err(messageFromCaughtUnknown(caughtConfigError));
     process.exitCode = 1;
-    return true;
-  }
-  return false;
-}
-
-type ArrangeCliRunOpts = {
-  write: boolean;
-  withClassName?: boolean;
-  cnImport?: string;
-};
-
-async function loadCodefastConfigWithWarnings(
-  fs: CliFs,
-  logger: CliLogger,
-): Promise<CodefastConfig | undefined> {
-  const { config, warnings } = await loadConfig(fs);
-  for (const warning of warnings) {
-    logger.err(`[config] ${warning}`);
-  }
-  return config;
-}
-
-async function runArrangeOnAfterWriteHook(
-  config: CodefastConfig | undefined,
-  modifiedFiles: string[],
-  logger: CliLogger,
-): Promise<void> {
-  if (modifiedFiles.length === 0) return;
-  const hook = config?.arrange?.onAfterWrite;
-  if (!hook) return;
-  try {
-    await hook({ files: modifiedFiles });
-  } catch (caughtHookError: unknown) {
-    logger.err(`[arrange] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
-  }
-}
-
-async function runArrangeAction(
-  resolvedTarget: string,
-  runOpts: ArrangeCliRunOpts,
-  fs: CliFs,
-  logger: CliLogger,
-): Promise<ArrangeRunResult | undefined> {
-  try {
-    const result = runOnTarget(
-      resolvedTarget,
-      {
-        write: runOpts.write,
-        withClassName: !!runOpts.withClassName,
-        cnImport: runOpts.cnImport,
-      },
-      fs,
-      logger,
-    );
-    return result;
-  } catch (caughtError: unknown) {
-    if (!handleArrangeLibError(caughtError, logger)) throw caughtError;
     return undefined;
   }
 }
@@ -120,11 +67,16 @@ export function registerArrangeCommand(program: Command): void {
     .command("analyze")
     .description("Report long strings, nested cn in tv(), and related findings")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
-    .action((target: string | undefined) => {
+    .action(async (target: string | undefined) => {
       const fs = createNodeCliFs();
       const logger = createNodeCliLogger();
       const resolved = target ? path.resolve(target) : defaultTargetPath();
       if (!checkTargetExists(resolved, fs, logger)) return;
+
+      const rootDir = findRepoRoot(fs);
+      const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
+      if (!loaded) return;
+
       printAnalyzeReport(resolved, analyzeDirectory(resolved, fs), logger);
     });
 
@@ -140,16 +92,22 @@ export function registerArrangeCommand(program: Command): void {
         const logger = createNodeCliLogger();
         const resolved = target ? path.resolve(target) : defaultTargetPath();
         if (!checkTargetExists(resolved, fs, logger)) return;
-        await runArrangeAction(
-          resolved,
-          {
-            write: false,
-            withClassName: opts.withClassName,
-            cnImport: opts.cnImport,
-          },
+
+        const rootDir = findRepoRoot(fs);
+        const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
+        if (!loaded) return;
+
+        const exitCode = await runArrangeSync({
+          rootDir,
+          config: loaded.arrangeConfig,
+          targetPath: resolved,
+          write: false,
+          withClassName: opts.withClassName,
+          cnImport: opts.cnImport,
           fs,
           logger,
-        );
+        });
+        process.exitCode = exitCode;
       },
     );
 
@@ -165,19 +123,22 @@ export function registerArrangeCommand(program: Command): void {
         const logger = createNodeCliLogger();
         const resolved = target ? path.resolve(target) : defaultTargetPath();
         if (!checkTargetExists(resolved, fs, logger)) return;
-        const result = await runArrangeAction(
-          resolved,
-          {
-            write: true,
-            withClassName: opts.withClassName,
-            cnImport: opts.cnImport,
-          },
+
+        const rootDir = findRepoRoot(fs);
+        const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
+        if (!loaded) return;
+
+        const exitCode = await runArrangeSync({
+          rootDir,
+          config: loaded.arrangeConfig,
+          targetPath: resolved,
+          write: true,
+          withClassName: opts.withClassName,
+          cnImport: opts.cnImport,
           fs,
           logger,
-        );
-        if (!result || result.modifiedFiles.length === 0) return;
-        const config = await loadCodefastConfigWithWarnings(fs, logger);
-        await runArrangeOnAfterWriteHook(config, result.modifiedFiles, logger);
+        });
+        process.exitCode = exitCode;
       },
     );
 

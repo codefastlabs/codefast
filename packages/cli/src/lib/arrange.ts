@@ -26,7 +26,7 @@
 export { analyzeDirectory } from "#lib/arrange/analyze";
 export { printAnalyzeReport } from "#lib/arrange/report";
 export { groupFile } from "#lib/arrange/group-file";
-export { runOnTarget } from "#lib/arrange/run-target";
+export { runOnTarget, runArrangeSync } from "#lib/arrange/run-target";
 export { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 export { ArrangeError, ArrangeErrorCode } from "#lib/arrange/errors";
 export type { CliFs, CliLogger } from "#lib/infra/fs-contract";
@@ -35,6 +35,7 @@ export type {
   ArrangeGroupFileOptions,
   ArrangeRunResult,
   ArrangeRunOnTargetOptions,
+  ArrangeSyncOptions,
   Bucket,
   ForEachStringLiteralInClassExpressionOptions,
   GroupFileResult,
