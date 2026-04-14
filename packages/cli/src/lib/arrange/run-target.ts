@@ -21,8 +21,8 @@ export function runOnTarget(
   let totalFound = 0;
   let totalChanged = 0;
 
-  for (const fp of filePaths) {
-    const result = groupFile(fp, options, fs, logger);
+  for (const filePath of filePaths) {
+    const result = groupFile(filePath, options, fs, logger);
     totalFound += result.totalFound;
     totalChanged += result.changed;
     if (result.changed > 0) modifiedFiles.push(result.filePath);

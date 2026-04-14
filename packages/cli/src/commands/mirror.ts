@@ -2,6 +2,7 @@ import { realpathSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { loadConfig } from "#lib/config/loader";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { runMirrorSync } from "#lib/mirror/sync";
@@ -61,8 +62,8 @@ export function registerMirrorCommand(program: Command): void {
       let packageFilter: string | undefined;
       try {
         packageFilter = packageArgToRelative(rootDir, pkg);
-      } catch (e) {
-        this.error(e instanceof Error ? e.message : String(e));
+      } catch (caughtPathError: unknown) {
+        this.error(messageFromCaughtUnknown(caughtPathError));
         return;
       }
       let mirrorConfig = {};
@@ -70,8 +71,8 @@ export function registerMirrorCommand(program: Command): void {
         const { config, warnings } = await loadConfig(fs, rootDir);
         printMirrorConfigWarnings(logger, warnings);
         mirrorConfig = config.mirror ?? {};
-      } catch (e) {
-        this.error(e instanceof Error ? e.message : String(e));
+      } catch (caughtConfigError: unknown) {
+        this.error(messageFromCaughtUnknown(caughtConfigError));
         return;
       }
       const exitCode = await runMirrorSync({

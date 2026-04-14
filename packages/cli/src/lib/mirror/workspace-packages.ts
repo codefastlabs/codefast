@@ -2,6 +2,7 @@ import { globSync } from "node:fs";
 import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { normalizePath } from "#lib/mirror/engine";
 import { mirrorGlobWarning } from "#lib/mirror/reporter";
@@ -16,9 +17,10 @@ function toPosix(filePath: string): string {
   return filePath.split(path.sep).join("/");
 }
 
-function isGlobPermissionError(err: unknown): boolean {
-  if (typeof err !== "object" || err === null || !("code" in err)) return false;
-  const code = (err as NodeJS.ErrnoException).code;
+function isGlobPermissionError(caughtError: unknown): boolean {
+  if (typeof caughtError !== "object" || caughtError === null || !("code" in caughtError))
+    return false;
+  const code = (caughtError as NodeJS.ErrnoException).code;
   return code === "EACCES" || code === "EPERM";
 }
 
@@ -93,17 +95,17 @@ async function readWorkspaceYaml(rootDir: string, fs: CliFs): Promise<ReadWorksp
   let raw: string;
   try {
     raw = await fs.readFile(workspaceYamlPath, "utf8");
-  } catch (error) {
+  } catch (caughtReadError: unknown) {
     throw new Error(
-      `Failed to read ${PNPM_WORKSPACE}: ${error instanceof Error ? error.message : String(error)}`,
+      `Failed to read ${PNPM_WORKSPACE}: ${messageFromCaughtUnknown(caughtReadError)}`,
     );
   }
   let doc: unknown;
   try {
     doc = parseYaml(raw) as unknown;
-  } catch (error) {
+  } catch (caughtYamlParseError: unknown) {
     throw new Error(
-      `Failed to parse ${PNPM_WORKSPACE}: ${error instanceof Error ? error.message : String(error)}`,
+      `Failed to parse ${PNPM_WORKSPACE}: ${messageFromCaughtUnknown(caughtYamlParseError)}`,
     );
   }
   if (doc === null || doc === undefined) {
@@ -159,16 +161,16 @@ export async function findWorkspacePackageRelPaths(
     let matches: string[];
     try {
       matches = globSync(globPat, globOpts);
-    } catch (error) {
-      if (isGlobPermissionError(error)) {
+    } catch (caughtGlobError: unknown) {
+      if (isGlobPermissionError(caughtGlobError)) {
         mirrorGlobWarning(
           logger,
-          `Skipping workspace glob "${pattern}" (${error instanceof Error ? error.message : String(error)})`,
+          `Skipping workspace glob "${pattern}" (${messageFromCaughtUnknown(caughtGlobError)})`,
         );
         continue;
       }
       throw new Error(
-        `Invalid workspace glob "${pattern}": ${error instanceof Error ? error.message : String(error)}`,
+        `Invalid workspace glob "${pattern}": ${messageFromCaughtUnknown(caughtGlobError)}`,
       );
     }
     for (const matchedPath of matches) {

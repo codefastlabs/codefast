@@ -24,6 +24,7 @@ const config = {
       "@codefast/cli",
       "@codefast/benchmark-tailwind-variants",
       "@codefast/tailwind-variants",
+      "@codefast/typescript-config",
     ],
   },
 };

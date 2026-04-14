@@ -26,7 +26,7 @@ describe("loadConfig", () => {
         path.join(root, "codefast.config.cjs"),
         [
           "module.exports = {",
-          '  mirror: { skipPackages: ["packages/private"] },',
+          '  mirror: { skipPackages: ["@acme/private"] },',
           "  tag: { onAfterWrite: async ({ files }) => {",
           "    if (files.length === 0) return;",
           "  } },",
@@ -40,7 +40,7 @@ describe("loadConfig", () => {
       await withCwd(root, async () => {
         const { config, warnings } = await loadConfig(cliFs);
         expect(warnings).toEqual([]);
-        expect(config.mirror).toEqual({ skipPackages: ["packages/private"] });
+        expect(config.mirror).toEqual({ skipPackages: ["@acme/private"] });
         expect(typeof config.tag?.onAfterWrite).toBe("function");
         expect(typeof config.arrange?.onAfterWrite).toBe("function");
       });
@@ -54,7 +54,7 @@ describe("loadConfig", () => {
     try {
       fs.writeFileSync(
         path.join(root, "codefast.config.json"),
-        JSON.stringify({ skipPackages: ["packages/legacy"] }),
+        JSON.stringify({ skipPackages: ["@acme/legacy"] }),
         "utf8",
       );
 
@@ -95,13 +95,13 @@ describe("loadConfig", () => {
       fs.mkdirSync(nested, { recursive: true });
       fs.writeFileSync(
         path.join(root, "codefast.config.json"),
-        JSON.stringify({ mirror: { skipPackages: ["packages/infra"] } }),
+        JSON.stringify({ mirror: { skipPackages: ["@acme/infra"] } }),
         "utf8",
       );
 
       await withCwd(nested, async () => {
         const { config } = await loadConfig(cliFs);
-        expect(config.mirror).toEqual({ skipPackages: ["packages/infra"] });
+        expect(config.mirror).toEqual({ skipPackages: ["@acme/infra"] });
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
@@ -113,7 +113,7 @@ describe("loadConfig", () => {
     try {
       fs.writeFileSync(
         path.join(root, "codefast.config.json"),
-        JSON.stringify({ mirror: { skipPackages: ["packages/one"] } }),
+        JSON.stringify({ mirror: { skipPackages: ["@acme/one"] } }),
         "utf8",
       );
 
@@ -121,7 +121,7 @@ describe("loadConfig", () => {
         const first = await loadConfig(cliFs);
         fs.writeFileSync(
           path.join(root, "codefast.config.json"),
-          JSON.stringify({ mirror: { skipPackages: ["packages/two"] } }),
+          JSON.stringify({ mirror: { skipPackages: ["@acme/two"] } }),
           "utf8",
         );
         const second = await loadConfig(cliFs);

@@ -14,8 +14,8 @@ export function Row(className: string) {
 }
 `;
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const item = collectGroupableStringNodes(sf)[0]!;
-    const out = formatCnCallReplacement(item, source, false);
+    const stringNode = collectGroupableStringNodes(sf)[0]!;
+    const out = formatCnCallReplacement(stringNode, source, false);
     expect(out).toContain("className,");
     expect(out).toContain('"flex gap-2"');
   });
@@ -34,14 +34,14 @@ describe("collectGroupTargets + planGroupEditForTarget", () => {
       ts.ScriptKind.TSX,
     );
     const targets = collectGroupTargets(sf, "x.tsx");
-    expect(targets.some((t) => t.kind === "jsxClassName")).toBe(true);
+    expect(targets.some((groupTarget) => groupTarget.kind === "jsxClassName")).toBe(true);
   });
 
   it("plans undefined when groups length <= 1", () => {
     const source = `import { cn } from "@codefast/tailwind-variants"; cn("flex gap-2");`;
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const targets = collectGroupTargets(sf, "x.ts");
-    const cnTarget = targets.find((t) => t.kind === "cnArg");
+    const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
     expect(cnTarget).toBeDefined();
     const plan = planGroupEditForTarget(cnTarget!, source, false);
     expect(plan).toBeUndefined();
@@ -54,7 +54,7 @@ export function C(className: string) {
 }`;
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const targets = collectGroupTargets(sf, "x.ts");
-    const cnTarget = targets.find((t) => t.kind === "cnArg");
+    const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
     const plan = planGroupEditForTarget(cnTarget!, source, true);
     expect(plan?.replacement).toContain("className");
   });
@@ -66,7 +66,7 @@ export function C(className: string) {
 }`;
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const targets = collectGroupTargets(sf, "x.ts");
-    const cnTarget = targets.find((t) => t.kind === "cnArg");
+    const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
     const plan = planGroupEditForTarget(cnTarget!, source, true);
     expect(plan?.replacement).toContain("className");
   });

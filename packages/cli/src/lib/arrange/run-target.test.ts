@@ -58,8 +58,8 @@ describe("runOnTarget", () => {
         arrangeFs,
         arrangeLogger,
       );
-    } catch (err) {
-      caught = err;
+    } catch (caughtError: unknown) {
+      caught = caughtError;
     }
     expect(caught).toBeInstanceOf(ArrangeError);
     expect((caught as ArrangeError).code).toBe(ArrangeErrorCode.TARGET_NOT_FOUND);

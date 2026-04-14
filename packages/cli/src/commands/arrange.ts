@@ -3,6 +3,7 @@ import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { loadConfig } from "#lib/config/loader";
 import type { CodefastConfig } from "#lib/config/schema";
 import {
@@ -42,9 +43,12 @@ function checkTargetExists(resolved: string, fs: CliFs, logger: CliLogger): bool
   return true;
 }
 
-function handleArrangeLibError(e: unknown, logger: CliLogger): boolean {
-  if (e instanceof ArrangeError && e.code === ArrangeErrorCode.TARGET_NOT_FOUND) {
-    logger.err(e.message);
+function handleArrangeLibError(caughtError: unknown, logger: CliLogger): boolean {
+  if (
+    caughtError instanceof ArrangeError &&
+    caughtError.code === ArrangeErrorCode.TARGET_NOT_FOUND
+  ) {
+    logger.err(caughtError.message);
     process.exitCode = 1;
     return true;
   }
@@ -78,10 +82,8 @@ async function runArrangeOnAfterWriteHook(
   if (!hook) return;
   try {
     await hook({ files: modifiedFiles });
-  } catch (error) {
-    logger.err(
-      `[arrange] onAfterWrite hook failed: ${error instanceof Error ? error.message : String(error)}`,
-    );
+  } catch (caughtHookError: unknown) {
+    logger.err(`[arrange] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
   }
 }
 
@@ -103,8 +105,8 @@ async function runArrangeAction(
       logger,
     );
     return result;
-  } catch (e) {
-    if (!handleArrangeLibError(e, logger)) throw e;
+  } catch (caughtError: unknown) {
+    if (!handleArrangeLibError(caughtError, logger)) throw caughtError;
     return undefined;
   }
 }

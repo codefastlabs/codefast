@@ -12,9 +12,9 @@ async function writeText(filePath: string, content: string): Promise<void> {
   await fs.writeFile(filePath, content, "utf8");
 }
 
-async function writeJson(filePath: string, data: unknown): Promise<void> {
+async function writeJson(filePath: string, jsonPayload: unknown): Promise<void> {
   await mkdirp(filePath);
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
+  await fs.writeFile(filePath, JSON.stringify(jsonPayload, null, 2) + "\n", "utf8");
 }
 
 async function makeTempRoot(): Promise<string> {
@@ -104,6 +104,41 @@ describe("runMirrorSync (integration)", () => {
     };
     expect(pkg.exports["./foo"]).toBeDefined();
     expect(pkg.exports["./internal/foo"]).toBeUndefined();
+    expect(joinedStdout()).toContain("@fixture/bridge");
+    expect(joinedStdout()).not.toContain("ui-bridge");
+  });
+
+  it("ignores pathTransformations keyed by workspace-relative path (package name only)", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/ui-bridge";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/bridge",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/internal/foo.js"), "export const x = 1;\n");
+    await writeText(
+      path.join(pkgDir, "dist/internal/foo.d.ts"),
+      "export declare const x: number;\n",
+    );
+
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        pathTransformations: {
+          [rel]: { removePrefix: "./internal/" },
+        },
+      },
+    });
+    expect(code).toBe(0);
+
+    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
+      exports: Record<string, unknown>;
+    };
+    expect(pkg.exports["./internal/foo"]).toBeDefined();
+    expect(pkg.exports["./foo"]).toBeUndefined();
   });
 
   it("merges customExports for the package", async () => {
@@ -252,6 +287,35 @@ describe("runMirrorSync (integration)", () => {
     const pkg = JSON.parse(raw) as { exports?: unknown };
     expect(pkg.exports).toBeUndefined();
     expect(joinedStdout()).toContain("Skipped");
+    expect(joinedStdout()).toContain("@fixture/skip");
+  });
+
+  it("applies skipPackages before dist/ existence (skipped package without dist/)", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/skip-no-dist";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/skip-nodist",
+      version: "0.0.0",
+    });
+
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: { skipPackages: ["@fixture/skip-nodist"] },
+    });
+    expect(code).toBe(0);
+
+    const raw = await fs.readFile(path.join(pkgDir, "package.json"), "utf8");
+    const pkg = JSON.parse(raw) as { exports?: unknown };
+    expect(pkg.exports).toBeUndefined();
+
+    const out = joinedStdout();
+    expect(out).toContain("Skipped");
+    expect(out).toContain("configured to skip");
+    expect(out).toContain("@fixture/skip-nodist");
+    expect(out).not.toContain("dist/ not found");
   });
 
   it("skips when package.json is missing", async () => {
@@ -277,6 +341,7 @@ describe("runMirrorSync (integration)", () => {
     const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
     expect(code).toBe(0);
     expect(joinedStdout()).toContain("dist/ not found");
+    expect(joinedStdout()).toContain("@fixture/nodist");
   });
 
   it("returns 0 when no workspace packages match discovery globs", async () => {
@@ -407,7 +472,7 @@ describe("runMirrorSync (integration)", () => {
     expect(Object.keys(pkg.exports)).toEqual(["./package.json"]);
   });
 
-  it("uses folder basename when package.json is invalid JSON while skipping missing dist", async () => {
+  it("uses folder basename in logs when package.json is invalid JSON while skipping missing dist", async () => {
     const root = await makeTempRoot();
     const rel = "packages/bad-json-nodist";
     const pkgDir = path.join(root, rel);
@@ -415,6 +480,7 @@ describe("runMirrorSync (integration)", () => {
     const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
     expect(code).toBe(0);
     expect(joinedStdout()).toContain("dist/ not found");
+    expect(joinedStdout()).toContain("bad-json-nodist");
   });
 
   it("fails fast when pnpm-workspace.yaml exists but is invalid YAML", async () => {

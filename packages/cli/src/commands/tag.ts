@@ -2,6 +2,7 @@ import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
 import type { CliLogger } from "#lib/infra/fs-contract";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { loadConfig } from "#lib/config/loader";
 import type { CodefastConfig } from "#lib/config/schema";
 import { createNodeCliFs, createNodeCliLogger, runTagOnTarget } from "#lib/tag";
@@ -18,10 +19,8 @@ async function runTagOnAfterWriteHook(
   if (!hook) return;
   try {
     await hook({ files: modifiedFiles });
-  } catch (error) {
-    logger.err(
-      `[tag] onAfterWrite hook failed: ${error instanceof Error ? error.message : String(error)}`,
-    );
+  } catch (caughtHookError: unknown) {
+    logger.err(`[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
   }
 }
 

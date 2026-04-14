@@ -31,7 +31,9 @@ export const styles = tv({
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const nodes = collectGroupableStringNodes(sf);
     expect(nodes.length).toBeGreaterThan(0);
-    expect(nodes.some((n) => slotClassString(n).includes("shadow-xs"))).toBe(true);
+    expect(nodes.some((stringNode) => slotClassString(stringNode).includes("shadow-xs"))).toBe(
+      true,
+    );
   });
 
   it("collects compoundVariants className string slots", () => {
@@ -54,7 +56,9 @@ export const styles = tv({
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const nodes = collectGroupableStringNodes(sf);
     expect(nodes.length).toBeGreaterThan(0);
-    expect(nodes.some((n) => slotClassString(n).includes("flex gap-2"))).toBe(true);
+    expect(nodes.some((stringNode) => slotClassString(stringNode).includes("flex gap-2"))).toBe(
+      true,
+    );
   });
 
   it("collects direct cn(...) entries inside tv arrays and ignores unsafe nested array literals", () => {
@@ -66,8 +70,10 @@ export const styles = tv({
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const nodes = collectGroupableStringNodes(sf);
     expect(nodes.length).toBeGreaterThan(0);
-    expect(nodes.some((n) => slotClassString(n).includes("flex gap-2 text-sm"))).toBe(true);
-    expect(nodes.some((n) => slotClassString(n).includes("skip-a"))).toBe(false);
+    expect(
+      nodes.some((stringNode) => slotClassString(stringNode).includes("flex gap-2 text-sm")),
+    ).toBe(true);
+    expect(nodes.some((stringNode) => slotClassString(stringNode).includes("skip-a"))).toBe(false);
   });
 
   it("collects compoundVariants class set directly to cn(...) call", () => {
@@ -79,7 +85,9 @@ export const styles = tv({
     const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const nodes = collectGroupableStringNodes(sf);
     expect(nodes.length).toBeGreaterThan(0);
-    expect(nodes.some((n) => slotClassString(n).includes("rounded-md border px-3"))).toBe(true);
+    expect(
+      nodes.some((stringNode) => slotClassString(stringNode).includes("rounded-md border px-3")),
+    ).toBe(true);
   });
 
   it("returns empty when file has no cn/tv candidates", () => {
@@ -139,8 +147,8 @@ tv(cfg);
     traverseTvObject(
       sf,
       obj,
-      (node) => {
-        visited.push(node.text);
+      (classLiteral) => {
+        visited.push(classLiteral.text);
       },
       0,
       knownBindings,

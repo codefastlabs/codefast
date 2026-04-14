@@ -65,9 +65,9 @@ export function formatJsxCnAttributeValue(
 ): string {
   const baseIndent = indentOfLineContaining(source, valueNodeStart);
   const argIndent = `${baseIndent}  `;
-  const inner = formatCnArguments(groups, {
+  const cnArgumentsBlock = formatCnArguments(groups, {
     indent: argIndent,
     commaAfterLastGroup: groups.length > 1,
   });
-  return `{cn(\n${inner}\n${baseIndent})}`;
+  return `{cn(\n${cnArgumentsBlock}\n${baseIndent})}`;
 }

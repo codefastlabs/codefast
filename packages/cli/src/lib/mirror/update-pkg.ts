@@ -1,4 +1,5 @@
 import type { CliFs } from "#lib/infra/fs-contract";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { MirrorError, MirrorErrorCode } from "#lib/mirror/errors";
 import type { ExportMapData, PackageJsonShape } from "#lib/mirror/types";
 
@@ -47,12 +48,12 @@ export async function writePackageJsonExportsAtomic(
 
   try {
     await fs.rename(tmpPath, packageJsonPath);
-  } catch (e) {
+  } catch (caughtRenameError: unknown) {
     await fs.unlink(tmpPath).catch(() => {});
     throw new MirrorError(
       MirrorErrorCode.PACKAGE_WRITE,
-      `Failed to atomically update ${packageJsonPath}: ${String(e)}`,
-      e instanceof Error ? { cause: e } : undefined,
+      `Failed to atomically update ${packageJsonPath}: ${messageFromCaughtUnknown(caughtRenameError)}`,
+      caughtRenameError instanceof Error ? { cause: caughtRenameError } : undefined,
     );
   }
 }

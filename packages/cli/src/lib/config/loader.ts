@@ -35,11 +35,11 @@ function formatZodError(error: ZodError, filePath: string): string {
 function parseLoadedConfig(raw: unknown, filePath: string): CodefastConfig {
   try {
     return codefastConfigSchema.parse(raw);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      throw new Error(formatZodError(error, filePath));
+  } catch (caughtError: unknown) {
+    if (caughtError instanceof ZodError) {
+      throw new Error(formatZodError(caughtError, filePath));
     }
-    throw error;
+    throw caughtError;
   }
 }
 
