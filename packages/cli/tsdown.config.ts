@@ -1,5 +1,11 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: "src/**/*.ts",
+  entry: [
+    "src/**/*.ts",
+    "!**/*.test.ts",
+    "!**/*.spec.ts",
+    "!**/*.integration.test.ts",
+    "!**/tests/**",
+  ],
 });
