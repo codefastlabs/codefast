@@ -4,9 +4,9 @@ import process from "node:process";
 import { Command } from "commander";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { loadConfig } from "#lib/config/loader";
+import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { runMirrorSync } from "#lib/mirror/sync";
-import { printMirrorConfigWarnings } from "#lib/mirror/reporter";
 import { findRepoRoot } from "#lib/repo-root";
 
 function tryRealpath(entryPath: string): string {
@@ -69,7 +69,7 @@ export function registerMirrorCommand(program: Command): void {
       let mirrorConfig = {};
       try {
         const { config, warnings } = await loadConfig(fs, rootDir);
-        printMirrorConfigWarnings(logger, warnings);
+        printConfigSchemaWarnings(logger, warnings);
         mirrorConfig = config.mirror ?? {};
       } catch (caughtConfigError: unknown) {
         this.error(messageFromCaughtUnknown(caughtConfigError));

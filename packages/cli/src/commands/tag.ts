@@ -1,28 +1,14 @@
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import type { CliLogger } from "#lib/infra/fs-contract";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { loadConfig } from "#lib/config/loader";
-import type { CodefastConfig } from "#lib/config/schema";
-import { createNodeCliFs, createNodeCliLogger, runTagOnTarget } from "#lib/tag";
+import type { CodefastTagConfig } from "#lib/config/schema";
+import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
+import { createNodeCliFs, createNodeCliLogger, runTagSync } from "#lib/tag";
+import { findRepoRoot } from "#lib/repo-root";
 
 const DEFAULT_TAG_TARGET = "src";
-
-async function runTagOnAfterWriteHook(
-  config: CodefastConfig | undefined,
-  modifiedFiles: string[],
-  logger: CliLogger,
-): Promise<void> {
-  if (modifiedFiles.length === 0) return;
-  const hook = config?.tag?.onAfterWrite;
-  if (!hook) return;
-  try {
-    await hook({ files: modifiedFiles });
-  } catch (caughtHookError: unknown) {
-    logger.err(`[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
-  }
-}
 
 export function registerTagCommand(program: Command): void {
   program
@@ -35,28 +21,32 @@ export function registerTagCommand(program: Command): void {
       const fs = createNodeCliFs();
       const logger = createNodeCliLogger();
       const resolvedTarget = path.resolve(target ?? DEFAULT_TAG_TARGET);
-
       if (!fs.existsSync(resolvedTarget)) {
         logger.err(`Not found: ${resolvedTarget}`);
         process.exitCode = 1;
         return;
       }
 
-      const write = !options.dryRun;
-      const result = runTagOnTarget(resolvedTarget, { write }, fs);
-      const mode = write ? "applied" : "dry-run";
-      logger.out(
-        `[tag:${mode}] version=${result.version} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}`,
-      );
-
-      if (!write || result.filesChanged === 0) return;
-      const modifiedFiles = result.fileResults
-        .filter((entry) => entry.changed)
-        .map((entry) => entry.filePath);
-      const { config, warnings } = await loadConfig(fs);
-      for (const warning of warnings) {
-        logger.err(`[config] ${warning}`);
+      const rootDir = findRepoRoot(fs);
+      let tagConfig: CodefastTagConfig = {};
+      try {
+        const { config, warnings } = await loadConfig(fs, rootDir);
+        printConfigSchemaWarnings(logger, warnings);
+        tagConfig = config.tag ?? {};
+      } catch (caughtConfigError: unknown) {
+        logger.err(messageFromCaughtUnknown(caughtConfigError));
+        process.exitCode = 1;
+        return;
       }
-      await runTagOnAfterWriteHook(config, modifiedFiles, logger);
+
+      const exitCode = await runTagSync({
+        rootDir,
+        config: tagConfig,
+        targetPath: resolvedTarget,
+        write: !options.dryRun,
+        fs,
+        logger,
+      });
+      process.exitCode = exitCode;
     });
 }

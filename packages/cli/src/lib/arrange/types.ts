@@ -6,6 +6,8 @@
  */
 
 import type ts from "typescript";
+import type { CodefastArrangeConfig } from "#lib/config/schema";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 
 export type Bucket =
   | "existence"
@@ -136,4 +138,16 @@ export type ArrangeRunResult = {
   modifiedFiles: string[];
   totalFound: number;
   totalChanged: number;
+};
+
+/** Command-orchestrated arrange run: config is injected at the CLI boundary (no filesystem config reads in core). */
+export type ArrangeSyncOptions = {
+  rootDir: string;
+  config?: CodefastArrangeConfig;
+  targetPath: string;
+  write: boolean;
+  withClassName?: boolean;
+  cnImport?: string;
+  fs?: CliFs;
+  logger?: CliLogger;
 };

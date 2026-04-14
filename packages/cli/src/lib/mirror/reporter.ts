@@ -1,5 +1,6 @@
 import process from "node:process";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
+import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import type { CliLogger } from "#lib/infra/fs-contract";
 import type { GlobalStats, PackageStats, WorkspaceMultiDiscoverySource } from "#lib/mirror/types";
 
@@ -31,10 +32,7 @@ export function configureMirrorColors(noColor: boolean): void {
 }
 
 export function printMirrorConfigWarnings(logger: CliLogger, warnings: string[]): void {
-  const { out } = logger;
-  for (const warningMessage of warnings) {
-    out(`${Colors.YELLOW}⚠ ${warningMessage}${Colors.RESET}`);
-  }
+  printConfigSchemaWarnings(logger, warnings);
 }
 
 export function mirrorGlobWarning(logger: CliLogger, message: string): void {

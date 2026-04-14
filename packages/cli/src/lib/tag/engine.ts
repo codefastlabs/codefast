@@ -2,8 +2,11 @@ import path from "node:path";
 import ts from "typescript";
 import { applyEditsDescending, indentOfLineContaining } from "#lib/arrange/ast/utils";
 import { walkTsxFiles } from "#lib/arrange/walk";
-import type { CliFs } from "#lib/infra/fs-contract";
-import type { TagFileResult, TagRunOptions, TagRunResult } from "#lib/tag/types";
+import type { CodefastAfterWriteHook } from "#lib/config/schema";
+import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+import type { TagFileResult, TagRunOptions, TagRunResult, TagSyncOptions } from "#lib/tag/types";
 
 type TextEdit = {
   start: number;
@@ -250,4 +253,50 @@ export function runTagOnTarget(targetPath: string, opts: TagRunOptions, fs: CliF
     taggedDeclarations,
     fileResults,
   };
+}
+
+async function runTagOnAfterWriteHook(
+  logger: CliLogger,
+  hook: CodefastAfterWriteHook | undefined,
+  modifiedFiles: string[],
+): Promise<void> {
+  if (!hook || modifiedFiles.length === 0) return;
+  try {
+    await hook({ files: modifiedFiles });
+  } catch (caughtHookError: unknown) {
+    logger.err(`[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`);
+  }
+}
+
+/**
+ * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
+ * @returns Process exit code (`0` or `1` when the target path is missing).
+ */
+export async function runTagSync(opts: TagSyncOptions): Promise<number> {
+  void opts.rootDir;
+  const fs = opts.fs ?? createNodeCliFs();
+  const logger = opts.logger ?? createNodeCliLogger();
+  const resolvedTarget = path.resolve(opts.targetPath);
+
+  if (!fs.existsSync(resolvedTarget)) {
+    logger.err(`Not found: ${resolvedTarget}`);
+    return 1;
+  }
+
+  const result = runTagOnTarget(resolvedTarget, { write: opts.write }, fs);
+  const mode = opts.write ? "applied" : "dry-run";
+  logger.out(
+    `[tag:${mode}] version=${result.version} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}`,
+  );
+
+  if (!opts.write || result.filesChanged === 0) {
+    return 0;
+  }
+
+  const modifiedFiles = result.fileResults
+    .filter((entry) => entry.changed)
+    .map((entry) => entry.filePath);
+
+  await runTagOnAfterWriteHook(logger, opts.config?.onAfterWrite, modifiedFiles);
+  return 0;
 }
