@@ -2,7 +2,7 @@ import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
 import type { CliLogger } from "#lib/infra/fs-contract";
-import { loadConfig } from "#lib/shared/config-loader";
+import { loadConfig } from "#lib/config/loader";
 import type { CodefastConfig } from "#lib/shared/config-types";
 import { createNodeCliFs, createNodeCliLogger, runTagOnTarget } from "#lib/tag";
 

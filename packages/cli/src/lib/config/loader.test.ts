@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createNodeCliFs } from "#lib/infra/node-io";
-import { loadConfig, resetConfigLoaderCacheForTests } from "#lib/shared/config-loader";
+import { loadConfig, resetConfigLoaderCacheForTests } from "#lib/config/loader";
 
 describe("loadConfig", () => {
   const cliFs = createNodeCliFs();
@@ -49,7 +49,7 @@ describe("loadConfig", () => {
     }
   });
 
-  it("keeps backward compatibility with top-level mirror keys", async () => {
+  it("requires mirror config to be nested under the mirror key", async () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "codefast-config-mirror-top-"));
     try {
       fs.writeFileSync(
@@ -59,15 +59,15 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        const { config } = await loadConfig(cliFs);
-        expect(config.mirror).toEqual({ skipPackages: ["packages/legacy"] });
+        await expect(loadConfig(cliFs)).rejects.toThrow("Invalid config schema");
+        await expect(loadConfig(cliFs)).rejects.toThrow('Unrecognized key: "skipPackages"');
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
   });
 
-  it("ignores invalid hook values in JSON config", async () => {
+  it("throws schema validation errors for invalid hook values", async () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "codefast-config-invalid-hook-"));
     try {
       fs.writeFileSync(
@@ -80,9 +80,8 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        const { config } = await loadConfig(cliFs);
-        expect(config.tag).toBeUndefined();
-        expect(config.arrange).toBeUndefined();
+        await expect(loadConfig(cliFs)).rejects.toThrow("Invalid config schema");
+        await expect(loadConfig(cliFs)).rejects.toThrow("tag.onAfterWrite");
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });

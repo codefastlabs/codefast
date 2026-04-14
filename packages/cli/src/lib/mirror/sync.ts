@@ -1,14 +1,8 @@
 import path from "node:path";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
-import {
-  isPackageSkipped,
-  MIRROR_CONFIG_KEYS,
-  resolvePackageScopedConfig,
-} from "#lib/mirror/config-resolver";
-import { loadMirrorConfig } from "#lib/mirror/config";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
-import { createPathTransform, generateExports, normalizePath } from "#lib/mirror/engine";
+import { createPathTransform, generateExports } from "#lib/mirror/engine";
 import { resolvePackageFilterUnderRoot } from "#lib/mirror/package-filter";
 import {
   configureMirrorColors,
@@ -21,7 +15,6 @@ import {
   mirrorProcessingMode,
   mirrorSummary,
   mirrorSummarySeparator,
-  printMirrorConfigWarnings,
 } from "#lib/mirror/reporter";
 import type {
   GlobalStats,
@@ -33,6 +26,22 @@ import type {
 } from "#lib/mirror/types";
 import { resolvePackageDisplayName, writePackageJsonExportsAtomic } from "#lib/mirror/update-pkg";
 import { findWorkspacePackageRelPaths } from "#lib/mirror/workspace-packages";
+
+function resolvePackageScopedConfig<T>(
+  configMap: Record<string, T> | undefined,
+  pkgMeta: MirrorPackageMeta,
+): T | undefined {
+  if (!configMap) return undefined;
+  return configMap[pkgMeta.packageName];
+}
+
+function isPackageSkipped(
+  skipPackagesArray: string[] | undefined,
+  pkgMeta: MirrorPackageMeta,
+): boolean {
+  if (!skipPackagesArray) return false;
+  return skipPackagesArray.includes(pkgMeta.packageName);
+}
 
 async function processPackage(
   fs: CliFs,
@@ -48,7 +57,6 @@ async function processPackage(
   const packageDir = path.resolve(rootDir, packagePathStr);
   const distDir = path.join(packageDir, DIST_DIR);
   const packageJsonPath = path.join(packageDir, PACKAGE_JSON);
-  const relativePath = normalizePath(path.relative(rootDir, packageDir));
   const pkgName = path.basename(packageDir);
 
   const pkgStats: PackageStats = {
@@ -73,6 +81,14 @@ async function processPackage(
     return pkgStats;
   }
 
+  if (!fs.existsSync(distDir)) {
+    pkgStats.skipped = true;
+    pkgStats.skipReason = "dist/ not found";
+    stats.packagesSkipped++;
+    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+    return pkgStats;
+  }
+
   try {
     const pkgContent = await fs.readFile(packageJsonPath, "utf8");
     const parsedPackageJson = JSON.parse(pkgContent) as PackageJsonShape;
@@ -84,14 +100,9 @@ async function processPackage(
     return pkgStats;
   }
 
-  /**
-   * Carries legacy path metadata for backward compatibility fallback in config lookup.
-   * @deprecated Path-based configuration keys are deprecated. Use package name instead.
-   * @todo Remove in v2.0
-   */
-  const pkgMeta: MirrorPackageMeta = { relPath: relativePath, packageName: pkgStats.name };
+  const pkgMeta: MirrorPackageMeta = { packageName: pkgStats.name };
 
-  if (isPackageSkipped(config.skipPackages, pkgMeta, logger)) {
+  if (isPackageSkipped(config.skipPackages, pkgMeta)) {
     pkgStats.skipped = true;
     pkgStats.skipReason = "configured to skip";
     stats.packagesSkipped++;
@@ -99,34 +110,15 @@ async function processPackage(
     return pkgStats;
   }
 
-  if (!fs.existsSync(distDir)) {
-    pkgStats.skipped = true;
-    pkgStats.skipReason = "dist/ not found";
-    stats.packagesSkipped++;
-    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
-    return pkgStats;
-  }
-
   try {
-    const pathTransform = createPathTransform(config, pkgMeta, logger);
+    const pathTransform = createPathTransform(config, pkgMeta);
     pkgStats.hasTransform = !!pathTransform;
 
-    const cssConfig = resolvePackageScopedConfig(
-      config.cssExports,
-      pkgMeta,
-      MIRROR_CONFIG_KEYS.CSS_EXPORTS,
-      logger,
-    );
+    const cssConfig = resolvePackageScopedConfig(config.cssExports, pkgMeta);
     if (cssConfig === false) pkgStats.cssConfigStatus = "disabled";
     else if (cssConfig !== undefined) pkgStats.cssConfigStatus = "configured";
 
-    const customExports =
-      resolvePackageScopedConfig(
-        config.customExports,
-        pkgMeta,
-        MIRROR_CONFIG_KEYS.CUSTOM_EXPORTS,
-        logger,
-      ) || {};
+    const customExports = resolvePackageScopedConfig(config.customExports, pkgMeta) || {};
 
     const generatedExports = await generateExports(
       fs,
@@ -161,6 +153,7 @@ async function processPackage(
 export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
   const fs = opts.fs ?? createNodeCliFs();
   const logger = opts.logger ?? createNodeCliLogger();
+  const config = opts.config ?? {};
 
   configureMirrorColors(!!opts.noColor);
   mirrorBanner(logger);
@@ -169,9 +162,6 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
   const verbose = !!opts.verbose;
 
   try {
-    const { config, warnings } = await loadMirrorConfig(opts.rootDir, fs);
-    printMirrorConfigWarnings(logger, warnings);
-
     const stats: GlobalStats = {
       packagesFound: 0,
       packagesProcessed: 0,
