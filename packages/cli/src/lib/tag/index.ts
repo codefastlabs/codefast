@@ -14,3 +14,11 @@ export type {
   TagSyncOptions,
   TagTargetExecutionResult,
 } from "#lib/tag/domain/types";
+export {
+  createTagProgressListener,
+  formatProgress,
+  formatSummary,
+  formatTargetTable,
+  formatWarningsAndErrors,
+} from "#lib/tag/presentation/tag-presenter";
+export type { TagProgressEvent } from "#lib/tag/presentation/tag-presenter";
