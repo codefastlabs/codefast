@@ -22,7 +22,9 @@ function normalizePath(relPath: string): string {
 }
 
 export function packageArgToRelative(rootDir: string, arg: string | undefined): string | undefined {
-  if (!arg) return undefined;
+  if (!arg) {
+    return undefined;
+  }
   const rootReal = tryRealpath(path.resolve(rootDir));
   const cwdReal = tryRealpath(process.cwd());
   const resolved = path.isAbsolute(arg) ? path.resolve(arg) : path.resolve(cwdReal, arg);

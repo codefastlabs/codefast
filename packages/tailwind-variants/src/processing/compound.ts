@@ -36,7 +36,9 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
   const groupLength = compoundVariantGroups.length;
 
   // Early return for empty or no compound variants
-  if (groupLength === 0) return [];
+  if (groupLength === 0) {
+    return [];
+  }
 
   // Pre-allocate with reasonable estimate
   const resolvedClasses: ClassValue[] = [];

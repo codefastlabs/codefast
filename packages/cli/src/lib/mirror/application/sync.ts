@@ -34,7 +34,9 @@ function resolvePackageScopedConfig<T>(
   configMap: Record<string, T> | undefined,
   pkgMeta: MirrorPackageMeta,
 ): T | undefined {
-  if (!configMap) return undefined;
+  if (!configMap) {
+    return undefined;
+  }
   return configMap[pkgMeta.packageName];
 }
 
@@ -42,7 +44,9 @@ function isPackageSkipped(
   skipPackagesArray: string[] | undefined,
   pkgMeta: MirrorPackageMeta,
 ): boolean {
-  if (!skipPackagesArray) return false;
+  if (!skipPackagesArray) {
+    return false;
+  }
   return skipPackagesArray.includes(pkgMeta.packageName);
 }
 
@@ -135,8 +139,11 @@ async function syncExportsForWorkspacePackage(
     pkgStats.hasTransform = !!pathTransform;
 
     const cssConfig = resolvePackageScopedConfig(config.cssExports, pkgMeta);
-    if (cssConfig === false) pkgStats.cssConfigStatus = "disabled";
-    else if (cssConfig !== undefined) pkgStats.cssConfigStatus = "configured";
+    if (cssConfig === false) {
+      pkgStats.cssConfigStatus = "disabled";
+    } else if (cssConfig !== undefined) {
+      pkgStats.cssConfigStatus = "configured";
+    }
 
     const customExports = resolvePackageScopedConfig(config.customExports, pkgMeta) || {};
 

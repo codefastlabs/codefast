@@ -208,7 +208,9 @@ export function ThemeProvider({
   const handleCrossTabMessage = useEffectEvent((event: MessageEvent) => {
     const newTheme = event.data as Theme;
 
-    if (newTheme === theme) return;
+    if (newTheme === theme) {
+      return;
+    }
 
     startTransition(() => {
       setThemeState(newTheme);
@@ -230,7 +232,9 @@ export function ThemeProvider({
     async (value: Theme): Promise<void> => {
       await Promise.resolve();
 
-      if (value === theme) return;
+      if (value === theme) {
+        return;
+      }
 
       // Optionally disable animations during theme switch
       const enable = disableTransitionOnChange ? disableAnimation(nonce) : null;

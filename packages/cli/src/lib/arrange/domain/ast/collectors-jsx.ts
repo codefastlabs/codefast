@@ -7,10 +7,13 @@ export function jsxClassNameStaticLiteral(
   if (
     !ts.isIdentifier(jsxClassNameAttribute.name) ||
     jsxClassNameAttribute.name.text !== "className"
-  )
+  ) {
     return undefined;
+  }
   const init = jsxClassNameAttribute.initializer;
-  if (!init) return undefined;
+  if (!init) {
+    return undefined;
+  }
 
   if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
     return { lit: init, valueNode: init };

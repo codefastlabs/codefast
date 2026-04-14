@@ -111,23 +111,28 @@ export function logPackageSuccess(
 
   if (verbose) {
     out(`  ${Colors.DIM}├─${Colors.RESET} Path: ${pkgStats.path}`);
-    if (pkgStats.hasTransform)
+    if (pkgStats.hasTransform) {
       out(
         `  ${Colors.DIM}├─${Colors.RESET} ${Colors.CYAN}Custom path transformation${Colors.RESET}`,
       );
-    if (pkgStats.cssConfigStatus)
+    }
+    if (pkgStats.cssConfigStatus) {
       out(
         `  ${Colors.DIM}├─${Colors.RESET} ${Colors.CYAN}${pkgStats.cssConfigStatus === "disabled" ? "CSS disabled" : "CSS configured"}${Colors.RESET}`,
       );
+    }
   }
 
   const breakdown: string[] = [];
-  if (generatedDistAssetCounts.jsCount > 0)
+  if (generatedDistAssetCounts.jsCount > 0) {
     breakdown.push(`${Colors.GREEN}${generatedDistAssetCounts.jsCount} modules${Colors.RESET}`);
-  if (generatedDistAssetCounts.cssCount > 0)
+  }
+  if (generatedDistAssetCounts.cssCount > 0) {
     breakdown.push(`${Colors.MAGENTA}${generatedDistAssetCounts.cssCount} CSS${Colors.RESET}`);
-  if (pkgStats.customExports > 0)
+  }
+  if (pkgStats.customExports > 0) {
     breakdown.push(`${Colors.YELLOW}${pkgStats.customExports} custom${Colors.RESET}`);
+  }
 
   if (breakdown.length > 0) {
     out(
@@ -156,12 +161,13 @@ export function logPackageError(
   out(
     `  ${Colors.DIM}└─${Colors.RESET} ${Colors.YELLOW}Error: ${messageFromCaughtUnknown(errValue)}${Colors.RESET}\n`,
   );
-  if (verbose)
+  if (verbose) {
     errLine(
       errValue instanceof Error && errValue.stack
         ? errValue.stack
         : messageFromCaughtUnknown(errValue),
     );
+  }
 }
 
 export function mirrorSummarySeparator(logger: CliLogger): void {
@@ -178,14 +184,16 @@ export function mirrorSummary(logger: CliLogger, stats: GlobalStats, elapsedSeco
   out(
     `  ${Colors.DIM}├─${Colors.RESET} Processed: ${Colors.GREEN}${stats.packagesProcessed}${Colors.RESET}`,
   );
-  if (stats.packagesSkipped > 0)
+  if (stats.packagesSkipped > 0) {
     out(
       `  ${Colors.DIM}├─${Colors.RESET} Skipped: ${Colors.GRAY}${stats.packagesSkipped}${Colors.RESET}`,
     );
-  if (stats.packagesErrored > 0)
+  }
+  if (stats.packagesErrored > 0) {
     out(
       `  ${Colors.DIM}├─${Colors.RESET} Errors: ${Colors.YELLOW}${stats.packagesErrored}${Colors.RESET}`,
     );
+  }
   out(`  ${Colors.DIM}└─${Colors.RESET} Total found: ${stats.packagesFound}\n`);
 
   out(`  ${Colors.BOLD}Exports:${Colors.RESET}`);

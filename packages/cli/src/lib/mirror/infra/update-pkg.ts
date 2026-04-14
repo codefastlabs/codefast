@@ -19,7 +19,9 @@ export async function readPackageJsonDisplayName(
   packageJsonPath: string,
   folderBasename: string,
 ): Promise<string> {
-  if (!fs.existsSync(packageJsonPath)) return folderBasename;
+  if (!fs.existsSync(packageJsonPath)) {
+    return folderBasename;
+  }
   try {
     const raw = await fs.readFile(packageJsonPath, "utf8");
     const parsed = JSON.parse(raw) as { name?: unknown };

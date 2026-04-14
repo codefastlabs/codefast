@@ -7,7 +7,9 @@ function firstJsxClassAttr(source: string): ts.JsxAttribute {
   const decl = stmt.declarationList.declarations[0]!;
   const jsx = decl.initializer as ts.JsxSelfClosingElement;
   const attr = jsx.attributes.properties[0];
-  if (!attr || !ts.isJsxAttribute(attr)) throw new Error("expected jsx attribute");
+  if (!attr || !ts.isJsxAttribute(attr)) {
+    throw new Error("expected jsx attribute");
+  }
   return attr;
 }
 

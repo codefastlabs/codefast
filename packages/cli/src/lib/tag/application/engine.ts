@@ -86,7 +86,9 @@ function collectLocalNamedDeclarations(sf: ts.SourceFile): Map<string, Set<Tagga
       addDeclarationName(declarations, statement.name.text, statement);
       continue;
     }
-    if (!ts.isVariableStatement(statement)) continue;
+    if (!ts.isVariableStatement(statement)) {
+      continue;
+    }
     for (const declaration of statement.declarationList.declarations) {
       if (ts.isIdentifier(declaration.name)) {
         addDeclarationName(declarations, declaration.name.text, statement);
@@ -115,7 +117,9 @@ function collectExportedDeclarations(sf: ts.SourceFile): Set<TaggableDeclaration
       for (const element of statement.exportClause.elements) {
         const localName = element.propertyName?.text ?? element.name.text;
         const declarations = localNamed.get(localName);
-        if (!declarations) continue;
+        if (!declarations) {
+          continue;
+        }
         for (const declaration of declarations) {
           exported.add(declaration);
         }
@@ -123,9 +127,13 @@ function collectExportedDeclarations(sf: ts.SourceFile): Set<TaggableDeclaration
       continue;
     }
 
-    if (!ts.isExportAssignment(statement) || !ts.isIdentifier(statement.expression)) continue;
+    if (!ts.isExportAssignment(statement) || !ts.isIdentifier(statement.expression)) {
+      continue;
+    }
     const declarations = localNamed.get(statement.expression.text);
-    if (!declarations) continue;
+    if (!declarations) {
+      continue;
+    }
     for (const declaration of declarations) {
       exported.add(declaration);
     }
@@ -146,7 +154,9 @@ function makeJSDocSinceLine(
     .split("\n")
     .map((line) => line.replace(/^\s*\*\s?/, "").replace(/\s+$/, ""))
     .filter((line, lineIndex, lines) => {
-      if (line.length > 0) return true;
+      if (line.length > 0) {
+        return true;
+      }
       const hasNonEmptyBefore = lines.slice(0, lineIndex).some((value) => value.length > 0);
       const hasNonEmptyAfter = lines.slice(lineIndex + 1).some((value) => value.length > 0);
       return hasNonEmptyBefore && hasNonEmptyAfter;
@@ -171,7 +181,9 @@ function makeDeclarationSinceLine(
   version: string,
 ): TextEdit | undefined {
   const jsDocTags = ts.getJSDocTags(declaration);
-  if (jsDocTags.some((tag) => tag.tagName.text === "since")) return undefined;
+  if (jsDocTags.some((tag) => tag.tagName.text === "since")) {
+    return undefined;
+  }
 
   const jsDocComments = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
   const lastJsDoc = jsDocComments.at(-1);
@@ -206,7 +218,9 @@ function applySinceTagsToFile(
   const edits: TextEdit[] = [];
   for (const declaration of collectExportedDeclarations(sf)) {
     const edit = makeDeclarationSinceLine(declaration, sf, sourceText, version);
-    if (edit) edits.push(edit);
+    if (edit) {
+      edits.push(edit);
+    }
   }
 
   if (edits.length > 0 && write) {
@@ -231,12 +245,16 @@ export function resolveNearestPackageVersion(targetPath: string, fs: CliFs): str
     if (fs.existsSync(packageJsonPath)) {
       const raw = fs.readFileSync(packageJsonPath, "utf8");
       const version = (JSON.parse(raw) as { version?: unknown }).version;
-      if (typeof version === "string" && version.length > 0) return version;
+      if (typeof version === "string" && version.length > 0) {
+        return version;
+      }
       throw new Error(`Missing or invalid version in ${packageJsonPath}`);
     }
 
     const parent = path.dirname(current);
-    if (parent === current) break;
+    if (parent === current) {
+      break;
+    }
     current = parent;
   }
 
@@ -274,7 +292,9 @@ async function runTagOnAfterWriteHook(
   hook: CodefastAfterWriteHook | undefined,
   modifiedFiles: string[],
 ): Promise<string | null> {
-  if (!hook || modifiedFiles.length === 0) return null;
+  if (!hook || modifiedFiles.length === 0) {
+    return null;
+  }
   try {
     await hook({ files: modifiedFiles });
     return null;

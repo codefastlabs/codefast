@@ -49,14 +49,20 @@ function listConfigCandidates(startDir: string, fs: CliFs): string[] {
   while (true) {
     for (const name of CONFIG_JS_PRIORITY) {
       const candidate = path.join(current, name);
-      if (fs.existsSync(candidate)) candidates.push(candidate);
+      if (fs.existsSync(candidate)) {
+        candidates.push(candidate);
+      }
     }
 
     const jsonCandidate = path.join(current, CONFIG_JSON);
-    if (fs.existsSync(jsonCandidate)) candidates.push(jsonCandidate);
+    if (fs.existsSync(jsonCandidate)) {
+      candidates.push(jsonCandidate);
+    }
 
     const parent = path.dirname(current);
-    if (parent === current) break;
+    if (parent === current) {
+      break;
+    }
     current = parent;
   }
   return candidates;
@@ -84,7 +90,9 @@ async function readConfigFromPath(filePath: string, fs: CliFs): Promise<Codefast
 async function loadOnce(fs: CliFs, startDir: string): Promise<LoadConfigResult> {
   const warnings: string[] = [];
   const configPaths = listConfigCandidates(startDir, fs);
-  if (configPaths.length === 0) return { config: {}, warnings };
+  if (configPaths.length === 0) {
+    return { config: {}, warnings };
+  }
 
   const configPath = configPaths[0];
   const config = await readConfigFromPath(configPath, fs);

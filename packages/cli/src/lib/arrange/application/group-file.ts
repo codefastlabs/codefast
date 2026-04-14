@@ -68,7 +68,9 @@ function printGroupFilePreview(
     }
     const start = call.getStart(sf);
     const end = call.getEnd();
-    if (sourceText.slice(start, end) === replacement) continue;
+    if (sourceText.slice(start, end) === replacement) {
+      continue;
+    }
     out(`  Line ${lineOf(sf, call)} [tv ⊃ cn → string/array]:`);
     out(`  ${replacement.split("\n").join("\n  ")}`);
   }
@@ -138,7 +140,9 @@ export function groupFile(
   const unwrapPlans = cnInTvCalls
     .map((call): UnwrapPlan | undefined => {
       const replacement = unwrapCnInsideTvCallReplacement(call, sourceText, sf);
-      if (replacement === undefined) return undefined;
+      if (replacement === undefined) {
+        return undefined;
+      }
       return { start: call.getStart(sf), end: call.getEnd(), replacement, call };
     })
     .filter((planOrUndefined): planOrUndefined is UnwrapPlan => planOrUndefined !== undefined);
@@ -175,8 +179,12 @@ export function groupFile(
   const plannedGroupEdits: PlannedGroupEdit[] = [];
   for (const groupTarget of sortedTargets) {
     const plan = planGroupEditForTarget(groupTarget, textAfterUnwrap, options.withClassName);
-    if (plan === undefined) continue;
-    if (textAfterUnwrap.slice(plan.start, plan.end) === plan.replacement) continue;
+    if (plan === undefined) {
+      continue;
+    }
+    if (textAfterUnwrap.slice(plan.start, plan.end) === plan.replacement) {
+      continue;
+    }
     plannedGroupEdits.push(plan);
   }
 

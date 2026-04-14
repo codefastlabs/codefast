@@ -27,16 +27,22 @@ export function traverseTvObject(
   depth = 0,
   knownBindings?: Set<string>,
 ): void {
-  if (depth > MAX_OBJECT_DEPTH) return;
+  if (depth > MAX_OBJECT_DEPTH) {
+    return;
+  }
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop)) continue;
+    if (!ts.isPropertyAssignment(prop)) {
+      continue;
+    }
     const init = prop.initializer;
 
     if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
       visitor(init, sf, undefined);
     } else if (ts.isArrayLiteralExpression(init)) {
       for (const arrayElement of init.elements) {
-        if (ts.isSpreadElement(arrayElement)) continue;
+        if (ts.isSpreadElement(arrayElement)) {
+          continue;
+        }
         if (ts.isStringLiteral(arrayElement) || ts.isNoSubstitutionTemplateLiteral(arrayElement)) {
           visitor(arrayElement, sf, undefined);
         } else if (
@@ -50,15 +56,21 @@ export function traverseTvObject(
           }
         } else if (ts.isObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
-            if (!ts.isPropertyAssignment(objectProperty)) continue;
+            if (!ts.isPropertyAssignment(objectProperty)) {
+              continue;
+            }
             const propName = propertyAssignmentNameText(objectProperty);
-            if (propName !== "className" && propName !== "class") continue;
+            if (propName !== "className" && propName !== "class") {
+              continue;
+            }
             const innerInit = objectProperty.initializer;
             if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
               visitor(innerInit, sf, undefined);
             } else if (ts.isArrayLiteralExpression(innerInit)) {
               for (const nestedArrayElement of innerInit.elements) {
-                if (ts.isSpreadElement(nestedArrayElement)) continue;
+                if (ts.isSpreadElement(nestedArrayElement)) {
+                  continue;
+                }
                 if (
                   ts.isStringLiteral(nestedArrayElement) ||
                   ts.isNoSubstitutionTemplateLiteral(nestedArrayElement)
@@ -100,15 +112,21 @@ export function collectCnCallsInsideTv(
   knownBindings: Set<string>,
   depth = 0,
 ): ts.CallExpression[] {
-  if (depth > MAX_OBJECT_DEPTH) return [];
+  if (depth > MAX_OBJECT_DEPTH) {
+    return [];
+  }
   const calls: ts.CallExpression[] = [];
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop)) continue;
+    if (!ts.isPropertyAssignment(prop)) {
+      continue;
+    }
     const init = prop.initializer;
 
     if (ts.isArrayLiteralExpression(init)) {
       for (const arrayElement of init.elements) {
-        if (ts.isSpreadElement(arrayElement)) continue;
+        if (ts.isSpreadElement(arrayElement)) {
+          continue;
+        }
         if (
           ts.isCallExpression(arrayElement) &&
           isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
@@ -116,9 +134,13 @@ export function collectCnCallsInsideTv(
           calls.push(arrayElement);
         } else if (ts.isObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
-            if (!ts.isPropertyAssignment(objectProperty)) continue;
+            if (!ts.isPropertyAssignment(objectProperty)) {
+              continue;
+            }
             const propName = propertyAssignmentNameText(objectProperty);
-            if (propName !== "className" && propName !== "class") continue;
+            if (propName !== "className" && propName !== "class") {
+              continue;
+            }
             const innerInit = objectProperty.initializer;
             if (
               ts.isCallExpression(innerInit) &&
@@ -187,9 +209,13 @@ export function emitTvSlot(
   results: StringNode[],
   seenNodePos: Set<number>,
 ): void {
-  if (lits.length === 0) return;
+  if (lits.length === 0) {
+    return;
+  }
   const firstPos = lits[0]!.getStart(sf);
-  if (seenNodePos.has(firstPos)) return;
+  if (seenNodePos.has(firstPos)) {
+    return;
+  }
   seenNodePos.add(firstPos);
 
   const totalTokens = lits.reduce(
@@ -197,7 +223,9 @@ export function emitTvSlot(
       accumulatedTokenCount + tokenizeClassString(literal.text).length,
     0,
   );
-  if (totalTokens < APPLY_MIN_TOKENS) return;
+  if (totalTokens < APPLY_MIN_TOKENS) {
+    return;
+  }
   results.push(makeStringNode(lits, sf, true, cnCall));
 }
 
@@ -209,22 +237,30 @@ export function collectTvSlots(
   seenNodePos: Set<number>,
   depth = 0,
 ): void {
-  if (depth > MAX_OBJECT_DEPTH) return;
+  if (depth > MAX_OBJECT_DEPTH) {
+    return;
+  }
 
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop)) continue;
+    if (!ts.isPropertyAssignment(prop)) {
+      continue;
+    }
     const init = prop.initializer;
 
     if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
       emitTvSlot([init], sf, undefined, results, seenNodePos);
     } else if (ts.isArrayLiteralExpression(init)) {
       const arrayPos = init.getStart(sf);
-      if (seenNodePos.has(arrayPos)) continue;
+      if (seenNodePos.has(arrayPos)) {
+        continue;
+      }
       seenNodePos.add(arrayPos);
 
       const staticLits: TailwindClassLiteral[] = [];
       for (const arrayElement of init.elements) {
-        if (ts.isSpreadElement(arrayElement)) continue;
+        if (ts.isSpreadElement(arrayElement)) {
+          continue;
+        }
         if (ts.isStringLiteral(arrayElement) || ts.isNoSubstitutionTemplateLiteral(arrayElement)) {
           staticLits.push(arrayElement);
         } else if (
@@ -235,7 +271,9 @@ export function collectTvSlots(
             forEachStringLiteralInClassExpression(
               arg,
               (lit) => {
-                if (!isUnsafeLiteralForCnStyleApplySplit(lit)) staticLits.push(lit);
+                if (!isUnsafeLiteralForCnStyleApplySplit(lit)) {
+                  staticLits.push(lit);
+                }
               },
               0,
               CN_APPLY_LITERAL_WALK_OPTS,
@@ -243,9 +281,13 @@ export function collectTvSlots(
           }
         } else if (ts.isObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
-            if (!ts.isPropertyAssignment(objectProperty)) continue;
+            if (!ts.isPropertyAssignment(objectProperty)) {
+              continue;
+            }
             const propName = propertyAssignmentNameText(objectProperty);
-            if (propName !== "className" && propName !== "class") continue;
+            if (propName !== "className" && propName !== "class") {
+              continue;
+            }
             const innerInit = objectProperty.initializer;
             if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
               emitTvSlot([innerInit], sf, undefined, results, seenNodePos);
@@ -270,7 +312,9 @@ export function collectTvSlots(
                 forEachStringLiteralInClassExpression(
                   arg,
                   (lit) => {
-                    if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
+                    if (!isUnsafeLiteralForCnStyleApplySplit(lit)) {
+                      cnLits.push(lit);
+                    }
                   },
                   0,
                   CN_APPLY_LITERAL_WALK_OPTS,
@@ -295,7 +339,9 @@ export function collectTvSlots(
         forEachStringLiteralInClassExpression(
           arg,
           (lit) => {
-            if (!isUnsafeLiteralForCnStyleApplySplit(lit)) cnLits.push(lit);
+            if (!isUnsafeLiteralForCnStyleApplySplit(lit)) {
+              cnLits.push(lit);
+            }
           },
           0,
           CN_APPLY_LITERAL_WALK_OPTS,

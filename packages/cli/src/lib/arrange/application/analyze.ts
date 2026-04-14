@@ -42,11 +42,15 @@ function visitCallExpressionForArrangeAnalyze(
     analyzeCnCall(sf, callExpression, report);
     return;
   }
-  if (!isCnOrTvIdentifier(callExpression.expression, "tv", knownBindings)) return;
+  if (!isCnOrTvIdentifier(callExpression.expression, "tv", knownBindings)) {
+    return;
+  }
 
   report.tvCallExpressions++;
   const arg0 = callExpression.arguments[0];
-  if (!arg0 || !ts.isObjectLiteralExpression(arg0)) return;
+  if (!arg0 || !ts.isObjectLiteralExpression(arg0)) {
+    return;
+  }
 
   for (const nestedCn of collectCnCallsInsideTv(sf, arg0, knownBindings, 0)) {
     const src = sourceText.slice(nestedCn.getStart(sf), nestedCn.getEnd());
@@ -84,9 +88,13 @@ function visitJsxAttributeForArrangeAnalyze(
   filePath: string,
   report: AnalyzeReport,
 ): void {
-  if (!filePath.endsWith(".tsx")) return;
+  if (!filePath.endsWith(".tsx")) {
+    return;
+  }
   const parsed = jsxClassNameStaticLiteral(jsxClassAttribute);
-  if (!parsed) return;
+  if (!parsed) {
+    return;
+  }
   const text = parsed.lit.text;
   const tokenCount = tokenizeClassString(text).length;
   if (tokenCount >= LONG_STRING_TOKEN_THRESHOLD) {

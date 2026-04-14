@@ -128,7 +128,9 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
   }
 
   // Return early if no classes to process
-  if (classIndex === 0) return;
+  if (classIndex === 0) {
+    return;
+  }
 
   // Trim array to actual size
   resolvedClasses.length = classIndex;

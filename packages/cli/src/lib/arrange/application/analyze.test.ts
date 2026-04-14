@@ -64,7 +64,9 @@ export const nested = tv({ base: cn("x", "${long}") });
       "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50";
     try {
       let body = `import { cn } from "@codefast/tailwind-variants";\n`;
-      for (let i = 0; i < 42; i++) body += `cn("${long}");\n`;
+      for (let i = 0; i < 42; i++) {
+        body += `cn("${long}");\n`;
+      }
       fs.writeFileSync(path.join(dir, "Many.tsx"), body, "utf8");
       const report = analyzeDirectory(dir, arrangeFs);
       const printed = captureStdout(() => printAnalyzeReport(dir, report, arrangeLogger));

@@ -160,7 +160,9 @@ function createBulletLine(bulletColor, label, value, valueColor = colors.white) 
  * Display the fastest performer section
  */
 function displayFastestPerformer(analysis) {
-  if (!analysis.fastest) return;
+  if (!analysis.fastest) {
+    return;
+  }
 
   const fastestRanking = analysis.performanceRanking.find((r) => r.rank === 1);
   const name = fastestRanking?.name ?? "Unknown";
@@ -277,10 +279,18 @@ function getMedalEmoji(index) {
  * Get color based on performance percentage
  */
 function getPerformanceColor(performance) {
-  if (performance >= PERFORMANCE_THRESHOLDS.excellent) return colors.green; // Excellent (90-100%)
-  if (performance >= PERFORMANCE_THRESHOLDS.good) return colors.yellow; // Good (70-89%)
-  if (performance >= PERFORMANCE_THRESHOLDS.fair) return `${colors.bright}${colors.red}`; // Fair (50-69%)
-  if (performance >= PERFORMANCE_THRESHOLDS.poor) return colors.red; // Poor (25-49%)
+  if (performance >= PERFORMANCE_THRESHOLDS.excellent) {
+    return colors.green;
+  } // Excellent (90-100%)
+  if (performance >= PERFORMANCE_THRESHOLDS.good) {
+    return colors.yellow;
+  } // Good (70-89%)
+  if (performance >= PERFORMANCE_THRESHOLDS.fair) {
+    return `${colors.bright}${colors.red}`;
+  } // Fair (50-69%)
+  if (performance >= PERFORMANCE_THRESHOLDS.poor) {
+    return colors.red;
+  } // Poor (25-49%)
   return `${colors.red}${colors.bright}`; // Very Poor (0-24%)
 }
 

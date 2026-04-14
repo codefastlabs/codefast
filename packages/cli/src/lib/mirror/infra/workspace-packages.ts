@@ -21,8 +21,9 @@ function toPosix(filePath: string): string {
 }
 
 function isGlobPermissionError(caughtError: unknown): boolean {
-  if (typeof caughtError !== "object" || caughtError === null || !("code" in caughtError))
+  if (typeof caughtError !== "object" || caughtError === null || !("code" in caughtError)) {
     return false;
+  }
   const code = (caughtError as NodeJS.ErrnoException).code;
   return code === "EACCES" || code === "EPERM";
 }
@@ -30,7 +31,9 @@ function isGlobPermissionError(caughtError: unknown): boolean {
 /** Turn a pnpm `packages` glob into a `globSync` pattern that finds `package.json` files. */
 export function workspacePatternToPackageJsonGlob(pattern: string): string {
   const normalizedPattern = toPosix(pattern.trim()).replace(/\/+$/, "");
-  if (!normalizedPattern) return "**/package.json";
+  if (!normalizedPattern) {
+    return "**/package.json";
+  }
   return `${normalizedPattern}/package.json`;
 }
 
@@ -40,13 +43,22 @@ export function splitWorkspacePackageEntries(raw: unknown): {
 } {
   const include: string[] = [];
   const exclude: string[] = [];
-  if (!Array.isArray(raw)) return { include, exclude };
+  if (!Array.isArray(raw)) {
+    return { include, exclude };
+  }
   for (const entry of raw) {
-    if (typeof entry !== "string") continue;
+    if (typeof entry !== "string") {
+      continue;
+    }
     const trimmed = entry.trim();
-    if (!trimmed) continue;
-    if (trimmed.startsWith("!")) exclude.push(trimmed.slice(1).trim());
-    else include.push(trimmed);
+    if (!trimmed) {
+      continue;
+    }
+    if (trimmed.startsWith("!")) {
+      exclude.push(trimmed.slice(1).trim());
+    } else {
+      include.push(trimmed);
+    }
   }
   return { include, exclude };
 }
@@ -178,9 +190,13 @@ export async function findWorkspacePackageRelPaths(
     }
     for (const matchedPath of matches) {
       const posix = toPosix(matchedPath);
-      if (!posix.endsWith("/package.json")) continue;
+      if (!posix.endsWith("/package.json")) {
+        continue;
+      }
       const rel = posix.slice(0, -"/package.json".length);
-      if (!rel) continue;
+      if (!rel) {
+        continue;
+      }
       found.add(normalizePath(rel));
     }
   }

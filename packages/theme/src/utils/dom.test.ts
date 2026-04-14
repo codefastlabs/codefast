@@ -97,7 +97,9 @@ describe("DOM Utilities", () => {
       });
 
       // Clean up any injected styles
-      for (const element of document.querySelectorAll("style")) element.remove();
+      for (const element of document.querySelectorAll("style")) {
+        element.remove();
+      }
     });
 
     test("should inject style tag that disables transitions", () => {
