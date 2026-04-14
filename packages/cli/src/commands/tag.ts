@@ -8,19 +8,12 @@ import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import { createNodeCliFs, createNodeCliLogger, runTagSync } from "#lib/tag";
 import { findRepoRoot } from "#lib/infra/workspace/repo-root";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import type {
-  TagProgressListener,
-  TagResolvedTarget,
-  TagSyncResult,
-  TagTargetExecutionResult,
-} from "#lib/tag/domain/types";
-
-const CliColors = {
-  RESET: "\x1b[0m",
-  RED: "\x1b[31m",
-  GREEN: "\x1b[32m",
-  YELLOW: "\x1b[33m",
-};
+import {
+  createTagProgressListener,
+  formatSummary,
+  formatTargetTable,
+  formatWarningsAndErrors,
+} from "#lib/tag/presentation/tag-presenter";
 
 function resolveTagRootDir(fs: CliFs, logger: CliLogger): string {
   try {
@@ -31,67 +24,6 @@ function resolveTagRootDir(fs: CliFs, logger: CliLogger): string {
     );
     return process.cwd();
   }
-}
-
-function printResolvedTargets(logger: CliLogger, rootDir: string, result: TagSyncResult): void {
-  const packageColumnWidth = Math.max(
-    "package".length,
-    ...result.selectedTargets.map((target) => (target.packageName ?? "-").length),
-  );
-  const pathColumnWidth = Math.max(
-    "path".length,
-    ...result.selectedTargets.map((target) => target.rootRelativeTargetPath.length),
-  );
-
-  const lines: string[] = [];
-  lines.push(`[tag] Root: ${rootDir}`);
-  lines.push(`[tag] Resolved targets: ${result.selectedTargets.length}`);
-  lines.push("[tag] Targets:");
-  lines.push(
-    `  ${"package".padEnd(packageColumnWidth)}   ${"path".padEnd(pathColumnWidth)}   source`,
-  );
-  lines.push(
-    `  ${"-".repeat(packageColumnWidth)}   ${"-".repeat(pathColumnWidth)}   ${"-".repeat("source".length)}`,
-  );
-  for (const target of result.selectedTargets) {
-    const packageLabel = target.packageName ?? "-";
-    lines.push(
-      `  ${packageLabel.padEnd(packageColumnWidth)}   ${target.rootRelativeTargetPath.padEnd(pathColumnWidth)}   ${target.source}`,
-    );
-  }
-  logger.out(lines.join("\n"));
-}
-
-function printTagSummary(logger: CliLogger, result: TagSyncResult): void {
-  const isDryRun = result.mode === "dry-run";
-  const summaryPrefix = isDryRun ? "[tag:dry-run]" : "[tag]";
-  const versionSuffix =
-    result.versionSummary === "mixed" && result.distinctVersions.length > 0
-      ? ` [${result.distinctVersions.join(", ")}]`
-      : "";
-  const hasError =
-    result.targetResults.some((targetResult) => targetResult.runError !== null) ||
-    result.hookError !== null;
-  const summaryColor = hasError ? CliColors.RED : isDryRun ? CliColors.YELLOW : CliColors.GREEN;
-  logger.out(
-    `${summaryColor}${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}${CliColors.RESET}`,
-  );
-}
-
-function createTagProgressListener(logger: CliLogger): TagProgressListener {
-  function targetDisplayName(target: TagResolvedTarget): string {
-    return target.packageName ?? target.rootRelativeTargetPath;
-  }
-
-  return {
-    onTargetStarted: (target: TagResolvedTarget) => {
-      logger.out(`[tag] Processing ${targetDisplayName(target)}...`);
-    },
-    onTargetCompleted: (target: TagResolvedTarget, result: TagTargetExecutionResult) => {
-      const changedFiles = result.result?.filesChanged ?? 0;
-      logger.out(`[tag] Done ${targetDisplayName(target)} (${changedFiles} changes)`);
-    },
-  };
 }
 
 export function registerTagCommand(program: Command): void {
@@ -125,31 +57,28 @@ export function registerTagCommand(program: Command): void {
         targetPath: target ? path.resolve(target) : undefined,
         write: !options.dryRun,
         fs,
-        listener: createTagProgressListener(logger),
+        listener: createTagProgressListener((line) => logger.out(line)),
       });
-      printResolvedTargets(logger, rootDir, tagResult);
+      logger.out(formatTargetTable(tagResult.selectedTargets, rootDir));
 
       if (tagResult.selectedTargets.length === 0) {
         logger.err(
-          `${CliColors.YELLOW}No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.${CliColors.RESET}`,
+          "No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.",
         );
         process.exitCode = 1;
         return;
       }
 
-      const targetErrors = tagResult.targetResults
-        .map((targetResult) => targetResult.runError)
-        .filter((runError): runError is string => typeof runError === "string");
-      for (const targetError of targetErrors) {
-        logger.err(`${CliColors.RED}[tag] ${targetError}${CliColors.RESET}`);
+      const warningsAndErrorsSection = formatWarningsAndErrors(tagResult);
+      if (warningsAndErrorsSection) {
+        logger.err(warningsAndErrorsSection);
       }
 
-      printTagSummary(logger, tagResult);
+      logger.out(formatSummary(tagResult));
 
-      if (tagResult.hookError) {
-        logger.err(`${CliColors.RED}${tagResult.hookError}${CliColors.RESET}`);
-      }
-
-      process.exitCode = targetErrors.length > 0 || tagResult.hookError ? 1 : 0;
+      const hasRunErrors = tagResult.targetResults.some(
+        (targetResult) => targetResult.runError !== null,
+      );
+      process.exitCode = hasRunErrors || tagResult.hookError ? 1 : 0;
     });
 }
