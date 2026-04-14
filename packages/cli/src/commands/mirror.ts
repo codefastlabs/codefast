@@ -3,11 +3,11 @@ import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import { loadConfig } from "#lib/config/loader";
+import { loadConfig } from "#lib/config";
 import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
-import { runMirrorSync } from "#lib/mirror/sync";
-import { findRepoRoot } from "#lib/repo-root";
+import { runMirrorSync } from "#lib/mirror";
+import { findRepoRoot } from "#lib/infra/workspace/repo-root";
 
 function tryRealpath(entryPath: string): string {
   try {
