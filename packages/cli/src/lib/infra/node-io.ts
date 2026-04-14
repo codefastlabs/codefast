@@ -1,7 +1,7 @@
 import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import process from "node:process";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 
 export function createNodeCliFs(): CliFs {
   return {

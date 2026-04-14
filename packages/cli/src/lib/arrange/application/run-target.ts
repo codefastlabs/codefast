@@ -1,35 +1,51 @@
 import path from "node:path";
-import type { CodefastAfterWriteHook } from "#lib/config";
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import { ArrangeError, ArrangeErrorCode } from "#lib/arrange/domain/errors";
+import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#lib/config";
+import { appError, type AppError } from "#lib/core/domain/errors";
+import { err, ok, type Result } from "#lib/core/domain/result";
+import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
 import { groupFile } from "#lib/arrange/application/group-file";
+import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
+import type { FileWalkerPort } from "#lib/arrange/application/ports/file-walker.port";
 import type {
-  ArrangeRunOnTargetOptions,
-  ArrangeRunResult,
-  ArrangeSyncOptions,
-} from "#lib/arrange/domain/types";
-import { walkTsxFiles } from "#lib/arrange/infra/walk";
+  ArrangeRunTargetRequest,
+  ArrangeSyncRunRequest,
+} from "#lib/arrange/application/requests/arrange-sync.request";
+import type { ArrangeRunResult } from "#lib/arrange/domain/types";
+
+export type ArrangeSyncDeps = {
+  readonly fs: CliFs;
+  readonly logger: CliLogger;
+  readonly fileWalker: FileWalkerPort;
+  readonly domainSourceParser: DomainSourceParserPort;
+};
 
 export function runOnTarget(
-  target: string,
-  options: ArrangeRunOnTargetOptions,
-  fs: CliFs,
-  logger: CliLogger,
-): ArrangeRunResult {
-  const { out } = logger;
-  if (!fs.existsSync(target)) {
-    throw new ArrangeError(ArrangeErrorCode.TARGET_NOT_FOUND, `Not found: ${target}`);
+  request: ArrangeRunTargetRequest,
+  deps: ArrangeSyncDeps,
+): Result<ArrangeRunResult, AppError> {
+  const { out } = deps.logger;
+  const { fs, fileWalker, domainSourceParser } = deps;
+  if (!fs.existsSync(request.targetPath)) {
+    return err(appError("NOT_FOUND", `Not found: ${request.targetPath}`));
   }
 
-  const filePaths = fs.statSync(target).isDirectory() ? walkTsxFiles(target, fs) : [target];
+  const filePaths = fs.statSync(request.targetPath).isDirectory()
+    ? fileWalker.walkTypeScriptFiles(request.targetPath, fs)
+    : [request.targetPath];
   const modifiedFiles: string[] = [];
 
   let totalFound = 0;
   let totalChanged = 0;
 
+  const groupOptions = {
+    write: request.write,
+    withClassName: !!request.withClassName,
+    cnImport: request.cnImport,
+  };
+
   for (const filePath of filePaths) {
-    const result = groupFile(filePath, options, fs, logger);
+    const result = groupFile(filePath, groupOptions, fs, deps.logger, domainSourceParser);
     totalFound += result.totalFound;
     totalChanged += result.changed;
     if (result.changed > 0) {
@@ -40,7 +56,7 @@ export function runOnTarget(
   out(
     `\nTotal: ${filePaths.length} file(s), ${totalFound} site(s) (cn/tv/JSX className) to review.`,
   );
-  if (options.write) {
+  if (request.write) {
     out(`Applied: ${totalChanged} site(s) updated.`);
   } else {
     out(
@@ -48,19 +64,19 @@ export function runOnTarget(
     );
   }
 
-  const showCascadeHint = options.write ? totalChanged > 0 : totalFound > 0;
+  const showCascadeHint = request.write ? totalChanged > 0 : totalFound > 0;
   if (showCascadeHint) {
     out(
       "Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.",
     );
   }
 
-  return {
+  return ok({
     filePaths,
     modifiedFiles,
     totalFound,
     totalChanged,
-  };
+  });
 }
 
 async function runArrangeOnAfterWriteHook(
@@ -79,40 +95,40 @@ async function runArrangeOnAfterWriteHook(
 }
 
 /**
- * CLI entry: run arrange preview/apply using config injected by the command layer.
- * @returns Process exit code (`0`, or `1` when the target path is missing).
+ * Preview/apply orchestration: resolves target path, runs grouping pipeline, optional hook.
  */
-export async function runArrangeSync(opts: ArrangeSyncOptions): Promise<number> {
-  void opts.rootDir;
-  const { fs, logger } = opts;
-  const resolvedTarget = path.resolve(opts.targetPath);
+export async function runArrangeSync(
+  request: ArrangeSyncRunRequest,
+  deps: ArrangeSyncDeps,
+): Promise<Result<number, AppError>> {
+  void request.rootDir;
+  const resolvedTarget = path.resolve(request.targetPath);
 
-  let result: ArrangeRunResult;
-  try {
-    result = runOnTarget(
-      resolvedTarget,
-      {
-        write: opts.write,
-        withClassName: !!opts.withClassName,
-        cnImport: opts.cnImport,
-      },
-      fs,
-      logger,
-    );
-  } catch (caughtError: unknown) {
-    if (
-      caughtError instanceof ArrangeError &&
-      caughtError.code === ArrangeErrorCode.TARGET_NOT_FOUND
-    ) {
-      logger.err(caughtError.message);
-      return 1;
+  const runTargetRequest: ArrangeRunTargetRequest = {
+    targetPath: resolvedTarget,
+    write: request.write,
+    withClassName: request.withClassName,
+    cnImport: request.cnImport,
+  };
+
+  const runOutcome = runOnTarget(runTargetRequest, deps);
+  if (!runOutcome.ok) {
+    if (runOutcome.error.code === "NOT_FOUND") {
+      deps.logger.err(runOutcome.error.message);
     }
-    throw caughtError;
+    return runOutcome;
   }
 
-  if (opts.write && result.modifiedFiles.length > 0) {
-    await runArrangeOnAfterWriteHook(logger, opts.config?.onAfterWrite, result.modifiedFiles);
+  const result = runOutcome.value;
+
+  if (request.write && result.modifiedFiles.length > 0) {
+    const arrangeConfig = request.config as CodefastArrangeConfig | undefined;
+    await runArrangeOnAfterWriteHook(
+      deps.logger,
+      arrangeConfig?.onAfterWrite,
+      result.modifiedFiles,
+    );
   }
 
-  return 0;
+  return ok(0);
 }

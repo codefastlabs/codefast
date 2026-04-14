@@ -1,7 +1,7 @@
 import process from "node:process";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
 import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
-import type { CliLogger } from "#lib/infra/fs-contract";
+import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
 import type {
   GlobalStats,
   PackageStats,

@@ -1,16 +1,20 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-  ArrangeError,
-  ArrangeErrorCode,
-  createNodeCliFs,
-  createNodeCliLogger,
-  runOnTarget,
-} from "#lib/arrange";
+import { createNodeCliFs, createNodeCliLogger, runOnTarget } from "#lib/arrange";
+import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
+import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
+const fileWalker = new FileWalkerAdapter();
+
+const arrangeDeps = {
+  fs: arrangeFs,
+  logger: arrangeLogger,
+  fileWalker,
+  domainSourceParser: domainSourceParserAdapter,
+};
 
 function captureStdout(fn: () => void): string {
   const chunks: string[] = [];
@@ -39,9 +43,13 @@ describe("runOnTarget", () => {
         `import { cn } from "@codefast/tailwind-variants"; export function P(){ cn("${long}"); return null; }`,
         "utf8",
       );
-      const out = captureStdout(() =>
-        runOnTarget(dir, { write: false, withClassName: false }, arrangeFs, arrangeLogger),
-      );
+      const out = captureStdout(() => {
+        const outcome = runOnTarget(
+          { targetPath: dir, write: false, withClassName: false },
+          arrangeDeps,
+        );
+        expect(outcome.ok).toBe(true);
+      });
       expect(out).toContain("Total:");
       expect(out).toContain("to review");
     } finally {
@@ -49,20 +57,20 @@ describe("runOnTarget", () => {
     }
   });
 
-  it("throws ArrangeError for missing target path", () => {
-    let caught: unknown;
-    try {
-      runOnTarget(
-        path.join(os.tmpdir(), "no-such-arrange-target"),
-        { write: false, withClassName: false },
-        arrangeFs,
-        arrangeLogger,
-      );
-    } catch (caughtError: unknown) {
-      caught = caughtError;
+  it("returns NOT_FOUND for missing target path", () => {
+    const outcome = runOnTarget(
+      {
+        targetPath: path.join(os.tmpdir(), "no-such-arrange-target"),
+        write: false,
+        withClassName: false,
+      },
+      arrangeDeps,
+    );
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) {
+      throw new Error("expected failure");
     }
-    expect(caught).toBeInstanceOf(ArrangeError);
-    expect((caught as ArrangeError).code).toBe(ArrangeErrorCode.TARGET_NOT_FOUND);
+    expect(outcome.error.code).toBe("NOT_FOUND");
   });
 
   it("prints apply summary in write mode", () => {
@@ -73,9 +81,13 @@ export function Fixture() {
 }`;
     try {
       fs.writeFileSync(path.join(dir, "Apply.tsx"), before, "utf8");
-      const out = captureStdout(() =>
-        runOnTarget(dir, { write: true, withClassName: false }, arrangeFs, arrangeLogger),
-      );
+      const out = captureStdout(() => {
+        const outcome = runOnTarget(
+          { targetPath: dir, write: true, withClassName: false },
+          arrangeDeps,
+        );
+        expect(outcome.ok).toBe(true);
+      });
       expect(out).toContain("Applied:");
       expect(out).toContain("Note:");
     } finally {
@@ -93,9 +105,13 @@ export function Fixture() {
         `import { cn } from "tailwind-variants"; export function P(){ cn("${long}"); return null; }`,
         "utf8",
       );
-      const out = captureStdout(() =>
-        runOnTarget(dir, { write: false, withClassName: false }, arrangeFs, arrangeLogger),
-      );
+      const out = captureStdout(() => {
+        const outcome = runOnTarget(
+          { targetPath: dir, write: false, withClassName: false },
+          arrangeDeps,
+        );
+        expect(outcome.ok).toBe(true);
+      });
       expect(out).toContain("Total:");
       expect(out).toContain("to review");
     } finally {

@@ -7,8 +7,10 @@ import {
   runTagOnTarget,
   runTagSync,
 } from "#lib/tag";
+import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
 
 const tagFs = createNodeCliFs();
+const tagSyncDeps = { fs: tagFs, targetResolver: tagTargetResolverAdapter };
 
 function withTempPackage(
   fileName: string,
@@ -124,15 +126,22 @@ describe("runTagSync", () => {
 
       const startedTargets: string[] = [];
       const completedTargets: string[] = [];
-      const runResult = await runTagSync({
-        rootDir,
-        write: true,
-        fs: tagFs,
-        listener: {
-          onTargetStarted: (target) => startedTargets.push(target.rootRelativeTargetPath),
-          onTargetCompleted: (target) => completedTargets.push(target.rootRelativeTargetPath),
+      const tagOutcome = await runTagSync(
+        {
+          rootDir,
+          write: true,
+          listener: {
+            onTargetStarted: (target) => startedTargets.push(target.rootRelativeTargetPath),
+            onTargetCompleted: (target) => completedTargets.push(target.rootRelativeTargetPath),
+          },
         },
-      });
+        tagSyncDeps,
+      );
+      expect(tagOutcome.ok).toBe(true);
+      if (!tagOutcome.ok) {
+        throw new Error(tagOutcome.error.message);
+      }
+      const runResult = tagOutcome.value;
 
       expect(runResult.selectedTargets.length).toBe(2);
       expect(runResult.targetResults.every((entry) => entry.runError === null)).toBe(true);
@@ -186,12 +195,19 @@ describe("runTagSync", () => {
       fs.writeFileSync(path.join(packageOneSrcDir, "index.ts"), "export const one = 1;\n", "utf8");
       fs.writeFileSync(path.join(packageTwoSrcDir, "index.ts"), "export const two = 2;\n", "utf8");
 
-      const runResult = await runTagSync({
-        rootDir,
-        write: true,
-        fs: tagFs,
-        skipPackages: ["@scope/two"],
-      });
+      const tagOutcome = await runTagSync(
+        {
+          rootDir,
+          write: true,
+          skipPackages: ["@scope/two"],
+        },
+        tagSyncDeps,
+      );
+      expect(tagOutcome.ok).toBe(true);
+      if (!tagOutcome.ok) {
+        throw new Error(tagOutcome.error.message);
+      }
+      const runResult = tagOutcome.value;
 
       expect(runResult.skippedPackages).toEqual(["@scope/two"]);
       expect(runResult.selectedTargets).toHaveLength(1);

@@ -1,35 +1,31 @@
 import path from "node:path";
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { appError, type AppError } from "#lib/core/domain/errors";
+import { err, ok, type Result } from "#lib/core/domain/result";
+import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
 import type { MirrorConfig } from "#lib/config";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/domain/constants";
 import { createPathTransform, generateExports } from "#lib/mirror/application/engine";
-import { resolvePackageFilterUnderRoot } from "#lib/mirror/infra/package-filter";
-import {
-  configureMirrorColors,
-  logPackageError,
-  logPrunedStaleExport,
-  logPackageSuccess,
-  logSkippedWorkspacePackage,
-  mirrorBanner,
-  mirrorFatalError,
-  mirrorNoPackages,
-  mirrorProcessingMode,
-  mirrorSummary,
-  mirrorSummarySeparator,
-} from "#lib/mirror/presentation/reporter";
+import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
+import type { MirrorSyncReporterPort } from "#lib/mirror/application/ports/mirror-sync-reporter.port";
+import type { PackageRepositoryPort } from "#lib/mirror/application/ports/package-repository.port";
+import type { WorkspaceServicePort } from "#lib/mirror/application/ports/workspace-service.port";
+import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
 import type {
   GlobalStats,
-  MirrorOptions,
   MirrorPackageMeta,
   PackageJsonShape,
   PackageStats,
 } from "#lib/mirror/domain/types";
-import {
-  resolvePackageDisplayName,
-  writePackageJsonExportsAtomic,
-} from "#lib/mirror/infra/update-pkg";
-import { findWorkspacePackageRelPaths } from "#lib/mirror/infra/workspace-packages";
+
+export type MirrorSyncRunDeps = {
+  readonly fs: CliFs;
+  readonly logger: CliLogger;
+  readonly workspaceService: WorkspaceServicePort;
+  readonly packageRepository: PackageRepositoryPort;
+  readonly fileSystemService: FileSystemServicePort;
+  readonly mirrorReporter: MirrorSyncReporterPort;
+};
 
 function resolvePackageScopedConfig<T>(
   configMap: Record<string, T> | undefined,
@@ -53,7 +49,10 @@ function isPackageSkipped(
 
 async function syncExportsForWorkspacePackage(
   fs: CliFs,
+  packageRepository: PackageRepositoryPort,
+  fileSystemService: FileSystemServicePort,
   logger: CliLogger,
+  mirrorReporter: MirrorSyncReporterPort,
   rootDir: string,
   packagePathStr: string,
   index: number,
@@ -85,7 +84,13 @@ async function syncExportsForWorkspacePackage(
     pkgStats.skipped = true;
     pkgStats.skipReason = "package.json not found";
     stats.packagesSkipped++;
-    logSkippedWorkspacePackage(logger, index, total, folderBasename, pkgStats.skipReason);
+    mirrorReporter.logSkippedWorkspacePackage(
+      logger,
+      index,
+      total,
+      folderBasename,
+      pkgStats.skipReason,
+    );
     return pkgStats;
   }
 
@@ -93,11 +98,8 @@ async function syncExportsForWorkspacePackage(
   try {
     const pkgContent = await fs.readFile(packageJsonPath, "utf8");
     const raw = JSON.parse(pkgContent) as unknown;
-    if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
-      throw new SyntaxError("package.json root must be a JSON object");
-    }
-    const parsedPackageJson = raw as PackageJsonShape;
-    pkgStats.name = resolvePackageDisplayName(parsedPackageJson, folderBasename);
+    const parsedPackageJson = packageRepository.parsePackageJsonShape(raw) as PackageJsonShape;
+    pkgStats.name = packageRepository.resolvePackageDisplayName(parsedPackageJson, folderBasename);
   } catch (caughtError: unknown) {
     pkgStats.name = folderBasename;
     packageJsonParseError = caughtError;
@@ -109,7 +111,13 @@ async function syncExportsForWorkspacePackage(
     pkgStats.skipped = true;
     pkgStats.skipReason = "configured to skip";
     stats.packagesSkipped++;
-    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+    mirrorReporter.logSkippedWorkspacePackage(
+      logger,
+      index,
+      total,
+      pkgStats.name,
+      pkgStats.skipReason,
+    );
     return pkgStats;
   }
 
@@ -118,12 +126,25 @@ async function syncExportsForWorkspacePackage(
       pkgStats.skipped = true;
       pkgStats.skipReason = "dist/ not found";
       stats.packagesSkipped++;
-      logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+      mirrorReporter.logSkippedWorkspacePackage(
+        logger,
+        index,
+        total,
+        pkgStats.name,
+        pkgStats.skipReason,
+      );
       return pkgStats;
     }
     pkgStats.error = messageFromCaughtUnknown(packageJsonParseError);
     stats.packagesErrored++;
-    logPackageError(logger, index, total, pkgStats.name, packageJsonParseError, verbose);
+    mirrorReporter.logPackageError(
+      logger,
+      index,
+      total,
+      pkgStats.name,
+      packageJsonParseError,
+      verbose,
+    );
     return pkgStats;
   }
 
@@ -131,7 +152,13 @@ async function syncExportsForWorkspacePackage(
     pkgStats.skipped = true;
     pkgStats.skipReason = "dist/ not found";
     stats.packagesSkipped++;
-    logSkippedWorkspacePackage(logger, index, total, pkgStats.name, pkgStats.skipReason);
+    mirrorReporter.logSkippedWorkspacePackage(
+      logger,
+      index,
+      total,
+      pkgStats.name,
+      pkgStats.skipReason,
+    );
     return pkgStats;
   }
 
@@ -150,19 +177,24 @@ async function syncExportsForWorkspacePackage(
 
     const generatedExports = await generateExports(
       fs,
+      fileSystemService,
       distDir,
       pathTransform,
       cssConfig,
       customExports,
     );
 
-    const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
-      generatedExports: generatedExports.exports,
-      managedExportSpecifiers: Object.keys(generatedExports.exports),
-      originalPathBySpecifier: generatedExports.originalPathBySpecifier,
-    });
+    const { prunedKeys } = await packageRepository.writePackageJsonExportsAtomic(
+      fs,
+      packageJsonPath,
+      {
+        generatedExports: generatedExports.exports,
+        managedExportSpecifiers: Object.keys(generatedExports.exports),
+        originalPathBySpecifier: generatedExports.originalPathBySpecifier,
+      },
+    );
     for (const exportSpecifier of prunedKeys) {
-      logPrunedStaleExport(logger, exportSpecifier);
+      mirrorReporter.logPrunedStaleExport(logger, exportSpecifier);
     }
 
     pkgStats.jsModules = generatedExports.jsCount;
@@ -175,25 +207,29 @@ async function syncExportsForWorkspacePackage(
     stats.totalJsModules += pkgStats.jsModules;
     stats.totalCssExports += pkgStats.cssExports;
 
-    logPackageSuccess(logger, index, total, pkgStats, generatedExports, verbose);
+    mirrorReporter.logPackageSuccess(logger, index, total, pkgStats, generatedExports, verbose);
   } catch (caughtError: unknown) {
     pkgStats.error = messageFromCaughtUnknown(caughtError);
     stats.packagesErrored++;
-    logPackageError(logger, index, total, pkgStats.name, caughtError, verbose);
+    mirrorReporter.logPackageError(logger, index, total, pkgStats.name, caughtError, verbose);
   }
   return pkgStats;
 }
 
-/** @returns Process exit code (0 or 1). */
-export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
-  const { fs, logger } = opts;
-  const config = opts.config ?? {};
+/** @returns Process exit code (0 or 1) on success, or a structured application error. */
+export async function runMirrorSync(
+  request: MirrorSyncRunRequest,
+  deps: MirrorSyncRunDeps,
+): Promise<Result<number, AppError>> {
+  const { fs, logger, workspaceService, packageRepository, fileSystemService, mirrorReporter } =
+    deps;
+  const config = (request.config ?? {}) as MirrorConfig;
 
-  configureMirrorColors(!!opts.noColor);
-  mirrorBanner(logger);
+  mirrorReporter.configureMirrorColors(!!request.noColor);
+  mirrorReporter.mirrorBanner(logger);
 
   const startTime = performance.now();
-  const verbose = !!opts.verbose;
+  const verbose = !!request.verbose;
 
   try {
     const stats: GlobalStats = {
@@ -208,32 +244,38 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
     };
 
     let targetPackages: string[] = [];
-    if (opts.packageFilter) {
-      const safe = resolvePackageFilterUnderRoot(opts.rootDir, opts.packageFilter);
+    if (request.packageFilter) {
+      const safe = workspaceService.resolvePackageFilterUnderRoot(
+        request.rootDir,
+        request.packageFilter,
+      );
       targetPackages = [safe];
-      mirrorProcessingMode(logger, { kind: "single" });
+      mirrorReporter.mirrorProcessingMode(logger, { kind: "single" });
     } else {
-      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(
-        opts.rootDir,
+      const { relPaths, multiSource } = await workspaceService.findWorkspacePackageRelPaths(
+        request.rootDir,
         fs,
         logger,
       );
       targetPackages = relPaths;
-      mirrorProcessingMode(logger, { kind: "multi", source: multiSource });
+      mirrorReporter.mirrorProcessingMode(logger, { kind: "multi", source: multiSource });
     }
 
     stats.packagesFound = targetPackages.length;
     if (targetPackages.length === 0) {
-      mirrorNoPackages(logger);
-      return 0;
+      mirrorReporter.mirrorNoPackages(logger);
+      return ok(0);
     }
 
     let nextPackageOrdinal = 1;
     for (const pkgPath of targetPackages) {
       const pkgStats = await syncExportsForWorkspacePackage(
         fs,
+        packageRepository,
+        fileSystemService,
         logger,
-        opts.rootDir,
+        mirrorReporter,
+        request.rootDir,
         pkgPath,
         nextPackageOrdinal++,
         targetPackages.length,
@@ -245,12 +287,11 @@ export async function runMirrorSync(opts: MirrorOptions): Promise<number> {
     }
 
     const elapsed = (performance.now() - startTime) / 1000;
-    mirrorSummarySeparator(logger);
-    mirrorSummary(logger, stats, elapsed);
+    mirrorReporter.mirrorSummarySeparator(logger);
+    mirrorReporter.mirrorSummary(logger, stats, elapsed);
 
-    return stats.packagesErrored > 0 ? 1 : 0;
+    return ok(stats.packagesErrored > 0 ? 1 : 0);
   } catch (caughtError: unknown) {
-    mirrorFatalError(logger, caughtError);
-    return 1;
+    return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
   }
 }

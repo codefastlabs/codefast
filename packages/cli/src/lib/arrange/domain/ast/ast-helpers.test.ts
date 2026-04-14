@@ -1,4 +1,3 @@
-import ts from "typescript";
 import {
   KNOWN_CN_TV_MODULES,
   applyEditsDescending,
@@ -8,15 +7,20 @@ import {
   moduleLooksLikeCnTvReexport,
   unwrapCnInsideTvCallReplacement,
 } from "#lib/arrange";
-import { indentOfLineContaining } from "#lib/arrange";
+import { indentOfLineContaining } from "#lib/arrange/domain/ast/ast-helpers";
+import {
+  isDomainCallExpression,
+  isDomainExpressionStatement,
+} from "#lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator";
 
-function parseCallee(source: string): ts.Expression {
-  const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-  const stmt = sf.statements[0];
-  if (!ts.isExpressionStatement(stmt)) {
+function parseCallee(source: string) {
+  const domainSf = parseDomainSourceFile("x.ts", source);
+  const stmt = domainSf.statements[0];
+  if (!isDomainExpressionStatement(stmt)) {
     throw new Error("expected expression statement");
   }
-  if (!ts.isCallExpression(stmt.expression)) {
+  if (!isDomainCallExpression(stmt.expression)) {
     throw new Error("expected call expression");
   }
   return stmt.expression.expression;
@@ -62,31 +66,25 @@ describe("applyEditsDescending", () => {
 
 describe("buildKnownCnTvBindings", () => {
   it("collects default, named alias, and namespace bindings", () => {
-    const sf = ts.createSourceFile(
+    const domainSf = parseDomainSourceFile(
       "x.ts",
       [
         'import tvDefault, { cn as cx } from "@codefast/tailwind-variants";',
         'import * as tw from "@codefast/tailwind-variants";',
       ].join("\n"),
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TS,
     );
-    expect(buildKnownCnTvBindings(sf)).toEqual(new Set(["tvDefault", "cx", "tw"]));
+    expect(buildKnownCnTvBindings(domainSf)).toEqual(new Set(["tvDefault", "cx", "tw"]));
   });
 
   it("ignores type-only and unknown-module imports", () => {
-    const sf = ts.createSourceFile(
+    const domainSf = parseDomainSourceFile(
       "x.ts",
       [
         'import type { cn } from "@codefast/tailwind-variants";',
         'import { cn } from "lodash";',
       ].join("\n"),
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TS,
     );
-    expect(buildKnownCnTvBindings(sf)).toEqual(new Set<string>());
+    expect(buildKnownCnTvBindings(domainSf)).toEqual(new Set<string>());
   });
 });
 
@@ -107,17 +105,14 @@ describe("known cn/tv module helpers", () => {
   });
 
   it("accepts legacy tailwind-variants import bindings (backward compat)", () => {
-    const sf = ts.createSourceFile(
+    const domainSf = parseDomainSourceFile(
       "x.ts",
       [
         'import tvDefault, { cn as cx } from "tailwind-variants";',
         'import * as tw from "tailwind-variants";',
       ].join("\n"),
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TS,
     );
-    expect(buildKnownCnTvBindings(sf)).toEqual(new Set(["tvDefault", "cx", "tw"]));
+    expect(buildKnownCnTvBindings(domainSf)).toEqual(new Set(["tvDefault", "cx", "tw"]));
   });
 });
 
@@ -143,32 +138,53 @@ describe("isCnOrTvIdentifier", () => {
 describe("unwrapCnInsideTvCallReplacement", () => {
   it("unwraps single arg to argument source", () => {
     const src = 'cn("flex gap-2")';
-    const sf = ts.createSourceFile("x.ts", src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const expr = (sf.statements[0] as ts.ExpressionStatement).expression as ts.CallExpression;
-    expect(unwrapCnInsideTvCallReplacement(expr, src, sf)).toBe('"flex gap-2"');
+    const domainSf = parseDomainSourceFile("x.ts", src);
+    const stmt = domainSf.statements[0];
+    if (!isDomainExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
+    const expr = stmt.expression;
+    if (!isDomainCallExpression(expr)) {
+      throw new Error("expected call");
+    }
+    expect(unwrapCnInsideTvCallReplacement(expr, src)).toBe('"flex gap-2"');
   });
 
   it("unwraps multiple args to multiline array", () => {
     const src = 'cn("flex gap-2", "text-sm")';
-    const sf = ts.createSourceFile("x.ts", src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const expr = (sf.statements[0] as ts.ExpressionStatement).expression as ts.CallExpression;
-    expect(unwrapCnInsideTvCallReplacement(expr, src, sf)).toBe(
+    const domainSf = parseDomainSourceFile("x.ts", src);
+    const stmt = domainSf.statements[0];
+    if (!isDomainExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
+    const expr = stmt.expression;
+    if (!isDomainCallExpression(expr)) {
+      throw new Error("expected call");
+    }
+    expect(unwrapCnInsideTvCallReplacement(expr, src)).toBe(
       ["[", '  "flex gap-2",', '  "text-sm",', "]"].join("\n"),
     );
   });
 
   it("returns undefined for zero args", () => {
-    const sf = ts.createSourceFile("x.ts", "cn()", ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const expr = (sf.statements[0] as ts.ExpressionStatement).expression as ts.CallExpression;
-    expect(unwrapCnInsideTvCallReplacement(expr, "cn()", sf)).toBeUndefined();
+    const domainSf = parseDomainSourceFile("x.ts", "cn()");
+    const stmt = domainSf.statements[0];
+    if (!isDomainExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
+    const expr = stmt.expression;
+    if (!isDomainCallExpression(expr)) {
+      throw new Error("expected call");
+    }
+    expect(unwrapCnInsideTvCallReplacement(expr, "cn()")).toBeUndefined();
   });
 });
 
 describe("lineOf", () => {
   it("returns 1-based line number for node start", () => {
     const src = ["const a = 1;", "const b = 2;", "const c = 3;"].join("\n");
-    const sf = ts.createSourceFile("x.ts", src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const stmt = sf.statements[1]!;
-    expect(lineOf(sf, stmt)).toBe(2);
+    const domainSf = parseDomainSourceFile("x.ts", src);
+    const stmt = domainSf.statements[1]!;
+    expect(lineOf(domainSf, stmt)).toBe(2);
   });
 });

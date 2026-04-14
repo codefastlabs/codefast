@@ -1,24 +1,28 @@
-import ts from "typescript";
 import {
   forEachStringLiteralInClassExpression,
   mergeCnUnconditionalLiteralPoolForTest,
 } from "#lib/arrange";
 import { MAX_CLASS_EXPR_DEPTH } from "#lib/arrange/domain/constants";
+import {
+  isDomainCallExpression,
+  isDomainExpressionStatement,
+} from "#lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator";
 
 describe("forEachStringLiteralInClassExpression", () => {
   function literalsFromArgSnippet(
     snippet: string,
     walk?: { descendIntoConditional?: boolean },
   ): string[] {
-    const sf = ts.createSourceFile(
-      "x.ts",
-      `cn(${snippet});`,
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TS,
-    );
-    const stmt = sf.statements[0] as ts.ExpressionStatement;
-    const call = stmt.expression as ts.CallExpression;
+    const domainSf = parseDomainSourceFile("x.ts", `cn(${snippet});`);
+    const stmt = domainSf.statements[0];
+    if (!isDomainExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
+    if (!isDomainCallExpression(stmt.expression)) {
+      throw new Error("expected call");
+    }
+    const call = stmt.expression;
     const arg0 = call.arguments[0]!;
     const out: string[] = [];
     forEachStringLiteralInClassExpression(arg0, (n) => out.push(n.text), 0, walk);
@@ -42,16 +46,15 @@ describe("forEachStringLiteralInClassExpression", () => {
     for (let i = 0; i < MAX_CLASS_EXPR_DEPTH + 2; i += 1) {
       expr = `[${expr}]`;
     }
-    const sf = ts.createSourceFile(
-      "x.ts",
-      `cn(${expr});`,
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TS,
-    );
-    const stmt = sf.statements[0] as ts.ExpressionStatement;
-    const call = stmt.expression as ts.CallExpression;
-    const arg0 = call.arguments[0]!;
+    const domainSf = parseDomainSourceFile("x.ts", `cn(${expr});`);
+    const stmt = domainSf.statements[0];
+    if (!isDomainExpressionStatement(stmt)) {
+      throw new Error("expected expression statement");
+    }
+    if (!isDomainCallExpression(stmt.expression)) {
+      throw new Error("expected call");
+    }
+    const arg0 = stmt.expression.arguments[0]!;
     const out: string[] = [];
     expect(() => {
       forEachStringLiteralInClassExpression(arg0, (n) => out.push(n.text), 0);

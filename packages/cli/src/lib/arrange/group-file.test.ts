@@ -2,6 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createNodeCliFs, createNodeCliLogger, groupFile } from "#lib/arrange";
+import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
@@ -47,6 +48,7 @@ export const styles = tv({
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -68,6 +70,7 @@ export function Fixture() {
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -89,6 +92,7 @@ export const styles = tw.tv({
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -111,6 +115,7 @@ export const styles = tw.tv({
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -129,6 +134,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -143,6 +149,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -157,6 +164,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -165,7 +173,13 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
   it("returns totalFound 0 for files without cn/tv/long class targets", () => {
     withTempFixture("FixtureEmpty.tsx", "export const only = 1;\n", (filePath) => {
       expect(
-        groupFile(filePath, { write: false, withClassName: false }, arrangeFs, arrangeLogger),
+        groupFile(
+          filePath,
+          { write: false, withClassName: false },
+          arrangeFs,
+          arrangeLogger,
+          domainSourceParserAdapter,
+        ),
       ).toEqual({
         filePath,
         totalFound: 0,
@@ -179,7 +193,13 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
 cn("flex gap-2", "text-sm");`;
     withTempFixture("FixturePartitionEq.tsx", before, (filePath) => {
       expect(
-        groupFile(filePath, { write: false, withClassName: false }, arrangeFs, arrangeLogger),
+        groupFile(
+          filePath,
+          { write: false, withClassName: false },
+          arrangeFs,
+          arrangeLogger,
+          domainSourceParserAdapter,
+        ),
       ).toEqual({
         filePath,
         totalFound: 0,
@@ -197,6 +217,7 @@ export const broken = tv({ base: cn() });`;
         { write: false, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(dry).toEqual({ filePath, totalFound: 1, changed: 0 });
       const wet = groupFile(
@@ -204,6 +225,7 @@ export const broken = tv({ base: cn() });`;
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(wet).toEqual({ filePath, totalFound: 1, changed: 0 });
     });
@@ -220,6 +242,7 @@ export function Fixture() {
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -238,6 +261,7 @@ export function Fixture() {
         { write: true, withClassName: true },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -257,6 +281,7 @@ export function Fixture() {
         { write: true, withClassName: false, cnImport: "clsx" },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -275,6 +300,7 @@ export const sheet = tv({
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -293,6 +319,7 @@ export const sheet = tv({
         { write: true, withClassName: false },
         arrangeFs,
         arrangeLogger,
+        domainSourceParserAdapter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -308,7 +335,13 @@ cn("${long}");
 export const styles = tv({ base: cn("${long}") });`;
     withTempFixture("FixtureDryCombined.tsx", before, (filePath) => {
       const output = captureStdout(() => {
-        groupFile(filePath, { write: false, withClassName: false }, arrangeFs, arrangeLogger);
+        groupFile(
+          filePath,
+          { write: false, withClassName: false },
+          arrangeFs,
+          arrangeLogger,
+          domainSourceParserAdapter,
+        );
       });
       expect(output).toContain("[cn] / [tv] / [JSX className]");
     });

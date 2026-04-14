@@ -7,9 +7,29 @@ import {
   createNodeCliLogger,
   printAnalyzeReport,
 } from "#lib/arrange";
+import type { AnalyzeReport } from "#lib/arrange/domain/types";
+import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
+import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
+const fileWalker = new FileWalkerAdapter();
+
+function analyzeReportOrThrow(rootPath: string): AnalyzeReport {
+  const outcome = analyzeDirectory(
+    { analyzeRootPath: rootPath },
+    {
+      fs: arrangeFs,
+      fileWalker,
+      domainSourceParser: domainSourceParserAdapter,
+    },
+  );
+  expect(outcome.ok).toBe(true);
+  if (!outcome.ok) {
+    throw new Error(outcome.error.message);
+  }
+  return outcome.value;
+}
 
 function captureStdout(fn: () => void): string {
   const chunks: string[] = [];
@@ -41,7 +61,7 @@ export const nested = tv({ base: cn("x", "${long}") });
 `;
     try {
       fs.writeFileSync(path.join(dir, "Report.tsx"), source, "utf8");
-      const report = analyzeDirectory(dir, arrangeFs);
+      const report = analyzeReportOrThrow(dir);
       expect(report.files).toBe(1);
       expect(report.cnCallExpressions).toBeGreaterThanOrEqual(1);
       expect(report.tvCallExpressions).toBeGreaterThanOrEqual(1);
@@ -68,7 +88,7 @@ export const nested = tv({ base: cn("x", "${long}") });
         body += `cn("${long}");\n`;
       }
       fs.writeFileSync(path.join(dir, "Many.tsx"), body, "utf8");
-      const report = analyzeDirectory(dir, arrangeFs);
+      const report = analyzeReportOrThrow(dir);
       const printed = captureStdout(() => printAnalyzeReport(dir, report, arrangeLogger));
       expect(report.longCnStringLiterals.length).toBeGreaterThan(40);
       expect(printed).toMatch(/… and \d+ more/);
@@ -114,7 +134,7 @@ export const nested = tv({ base: cn("x", "${long}") });
         `export function F(cls: string) { return <div className={cls} />; }`,
         "utf8",
       );
-      const report = analyzeDirectory(dir, arrangeFs);
+      const report = analyzeReportOrThrow(dir);
       expect(report.longJsxClassNameLiterals.length).toBe(0);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -132,7 +152,7 @@ export const nested = tv({ base: cn("x", "${long}") });
 export const styles = tv({ compoundVariants: [{ "className": "${long}" }] });`,
         "utf8",
       );
-      const report = analyzeDirectory(dir, arrangeFs);
+      const report = analyzeReportOrThrow(dir);
       expect(report.longTvStringLiterals.length).toBeGreaterThanOrEqual(1);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -150,7 +170,7 @@ export const styles = tv({ compoundVariants: [{ "className": "${long}" }] });`,
 export const styles = tv({ base: [cn("${long}"), "py-0"] });`,
         "utf8",
       );
-      const report = analyzeDirectory(dir, arrangeFs);
+      const report = analyzeReportOrThrow(dir);
       expect(report.tvCallExpressions).toBeGreaterThanOrEqual(1);
       expect(report.cnInsideTvCalls.length).toBeGreaterThanOrEqual(1);
     } finally {
@@ -169,7 +189,7 @@ export const styles = tv({ base: "${long}" });
 `;
     try {
       fs.writeFileSync(path.join(dir, "Legacy.tsx"), source, "utf8");
-      const report = analyzeDirectory(dir, arrangeFs);
+      const report = analyzeReportOrThrow(dir);
       expect(report.cnCallExpressions).toBeGreaterThanOrEqual(1);
       expect(report.tvCallExpressions).toBeGreaterThanOrEqual(1);
     } finally {

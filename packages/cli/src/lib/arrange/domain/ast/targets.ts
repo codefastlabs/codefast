@@ -1,4 +1,3 @@
-import ts from "typescript";
 import { APPLY_MIN_TOKENS } from "#lib/arrange/domain/constants";
 import {
   areCnTailwindPartitionsEquivalent,
@@ -9,7 +8,7 @@ import {
   escapeTsStringLiteralContent,
   formatArray,
   formatJsxCnAttributeValue,
-} from "#lib/arrange/presentation/formatters";
+} from "#lib/arrange/domain/source-text-formatters";
 import type { GroupTarget, PlannedGroupEdit, StringNode } from "#lib/arrange/domain/types";
 import { tokenizeClassString } from "#lib/arrange/domain/tokenizer";
 import { isUnsafeLiteralForCnStyleApplySplit } from "#lib/arrange/domain/ast/collectors-cn";
@@ -19,45 +18,53 @@ import {
   slotClassString,
 } from "#lib/arrange/domain/ast/collectors-tv";
 import { indentOfLineContaining } from "#lib/arrange/domain/ast/ast-helpers";
+import {
+  type DomainAstNode,
+  type DomainSourceFile,
+  isDomainArrayLiteralExpression,
+  isDomainJsxAttribute,
+  isDomainTailwindClassLiteral,
+  forEachDomainChild,
+} from "#lib/arrange/domain/ast/ast-node.model";
 
 export function targetReplaceStart(target: GroupTarget): number {
   if (target.kind === "cnArg") {
-    return target.item.cnCall
-      ? target.item.cnCall.getStart(target.item.sf)
-      : target.item.primaryClassLiteral.getStart(target.item.sf);
+    return target.item.cnCall ? target.item.cnCall.pos : target.item.primaryClassLiteral.pos;
   }
-  return target.valueNode.getStart(target.sf);
+  return target.valueNode.pos;
 }
 
-export function collectLongJsxClassNameTargets(sf: ts.SourceFile): GroupTarget[] {
+export function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): GroupTarget[] {
   const results: GroupTarget[] = [];
-  const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
-    if (ts.isJsxAttribute(tsNode)) {
+  const visitTypeScriptSubtree = (tsNode: DomainAstNode): void => {
+    if (isDomainJsxAttribute(tsNode)) {
       const parsed = jsxClassNameStaticLiteral(tsNode);
       if (parsed && tokenizeClassString(parsed.lit.text).length >= APPLY_MIN_TOKENS) {
         results.push({
           kind: "jsxClassName",
-          sf,
+          sf: sourceFile,
           lit: parsed.lit,
           valueNode: parsed.valueNode,
         });
       }
     }
-    ts.forEachChild(tsNode, visitTypeScriptSubtree);
+    forEachDomainChild(tsNode, visitTypeScriptSubtree);
   };
-  visitTypeScriptSubtree(sf);
+  for (const stmt of sourceFile.statements) {
+    visitTypeScriptSubtree(stmt);
+  }
   return results;
 }
 
-export function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupTarget[] {
-  const cnPart = collectGroupableStringNodes(sf).map((stringNode) => ({
+export function collectGroupTargets(sourceFile: DomainSourceFile, filePath: string): GroupTarget[] {
+  const cnPart = collectGroupableStringNodes(sourceFile).map((stringNode) => ({
     kind: "cnArg" as const,
     item: stringNode,
   }));
   if (!filePath.endsWith(".tsx")) {
     return cnPart;
   }
-  return [...cnPart, ...collectLongJsxClassNameTargets(sf)];
+  return [...cnPart, ...collectLongJsxClassNameTargets(sourceFile)];
 }
 
 export function formatCnCallReplacement(
@@ -66,17 +73,15 @@ export function formatCnCallReplacement(
   withClassName: boolean,
 ): string {
   const call = stringNode.cnCall!;
-  const sf = stringNode.sf;
-  const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
+  const baseIndent = indentOfLineContaining(sourceText, call.pos);
   const argIndent = `${baseIndent}  `;
 
   const dynamicArgTexts: string[] = [];
   for (const arg of call.arguments) {
     const isSimpleStatic =
-      (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) &&
-      !isUnsafeLiteralForCnStyleApplySplit(arg);
+      isDomainTailwindClassLiteral(arg) && !isUnsafeLiteralForCnStyleApplySplit(arg);
     if (!isSimpleStatic) {
-      dynamicArgTexts.push(sourceText.slice(arg.getStart(sf), arg.getEnd()));
+      dynamicArgTexts.push(sourceText.slice(arg.pos, arg.end));
     }
   }
 
@@ -119,8 +124,8 @@ export function planGroupEditForTarget(
     if (groups.length <= 1) {
       return undefined;
     }
-    const start = target.valueNode.getStart(target.sf);
-    const end = target.valueNode.getEnd();
+    const start = target.valueNode.pos;
+    const end = target.valueNode.end;
     const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
     return {
       start,
@@ -152,13 +157,13 @@ export function planGroupEditForTarget(
   if (!target.item.cnCall) {
     const anchorClassLiteral = target.item.primaryClassLiteral;
     const parentArray =
-      target.item.nodes.length > 1 && ts.isArrayLiteralExpression(anchorClassLiteral.parent)
+      target.item.nodes.length > 1 &&
+      anchorClassLiteral.parent !== null &&
+      isDomainArrayLiteralExpression(anchorClassLiteral.parent)
         ? anchorClassLiteral.parent
         : null;
-    const start = parentArray
-      ? parentArray.getStart(target.item.sf)
-      : anchorClassLiteral.getStart(target.item.sf);
-    const end = parentArray ? parentArray.getEnd() : anchorClassLiteral.getEnd();
+    const start = parentArray ? parentArray.pos : anchorClassLiteral.pos;
+    const end = parentArray ? parentArray.end : anchorClassLiteral.end;
     const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
     const replacement = formatArray(groups)
       .split("\n")
@@ -177,8 +182,8 @@ export function planGroupEditForTarget(
   }
 
   const call = target.item.cnCall;
-  const start = call.getStart(target.item.sf);
-  const end = call.getEnd();
+  const start = call.pos;
+  const end = call.end;
   const replacement = formatCnCallReplacement(target.item, textAfterUnwrap, withClassName);
   return {
     start,

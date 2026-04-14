@@ -23,30 +23,46 @@
  *   pnpm exec codefast arrange group -- … --tv
  */
 
+import { ensureCnImport as ensureCnImportOnDomainSourceFile } from "#lib/arrange/domain/imports";
+import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator";
+
 export { analyzeDirectory } from "#lib/arrange/application/analyze";
 export { printAnalyzeReport } from "#lib/arrange/presentation/report";
 export { groupFile } from "#lib/arrange/application/group-file";
 export { runOnTarget, runArrangeSync } from "#lib/arrange/application/run-target";
 export { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+export { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 export { ArrangeError, ArrangeErrorCode } from "#lib/arrange/domain/errors";
-export type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+export type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 export type {
   AnalyzeReport,
   ArrangeGroupFileOptions,
   ArrangeRunResult,
   ArrangeRunOnTargetOptions,
-  ArrangeSyncOptions,
   Bucket,
   ForEachStringLiteralInClassExpressionOptions,
   GroupFileResult,
 } from "#lib/arrange/domain/types";
+export type { ArrangeSyncOptions } from "#lib/arrange/infra/arrange-sync-cli-options";
 
 export {
   DEFAULT_ARRANGE_TARGET,
   LONG_STRING_TOKEN_THRESHOLD,
   MAX_STRIP_VARIANT_PASSES,
 } from "#lib/arrange/domain/constants";
-export { cnModuleSpecifierForFile, ensureCnImport } from "#lib/arrange/domain/imports";
+export { cnModuleSpecifierForFile } from "#lib/arrange/domain/imports";
+
+/** Public API: parses source text then applies domain import injection rules. */
+export function ensureCnImport(
+  sourceText: string,
+  filePath: string,
+  cnImportOverride?: string,
+): string {
+  return ensureCnImportOnDomainSourceFile(
+    parseDomainSourceFile(filePath, sourceText),
+    cnImportOverride,
+  );
+}
 export {
   areCnTailwindPartitionsEquivalent,
   capGroups,
@@ -66,10 +82,8 @@ export {
   stateKey,
 } from "#lib/arrange/domain/tokenizer";
 
-export {
-  forEachStringLiteralInClassExpression,
-  mergeCnUnconditionalLiteralPoolForTest,
-} from "#lib/arrange/domain/ast/collectors-cn";
+export { forEachStringLiteralInClassExpression } from "#lib/arrange/domain/ast/collectors-cn";
+export { mergeCnUnconditionalLiteralPoolForTest } from "#lib/arrange/infra/merge-cn-literal-pool-for-test";
 export {
   applyEditsDescending,
   buildKnownCnTvBindings,
@@ -87,6 +101,6 @@ export {
   formatCnArguments,
   formatCnCall,
   formatJsxCnAttributeValue,
-} from "#lib/arrange/presentation/formatters";
+} from "#lib/arrange/domain/source-text-formatters";
 
 export { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/arrange/infra/walk";

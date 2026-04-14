@@ -1,15 +1,20 @@
-import ts from "typescript";
+import {
+  type DomainSourceFile,
+  isDomainImportDeclaration,
+  isDomainNamedImports,
+  isDomainStringLiteral,
+} from "#lib/arrange/domain/ast/ast-node.model";
 
-function sourceFileImportsCn(sf: ts.SourceFile): boolean {
-  for (const statement of sf.statements) {
-    if (!ts.isImportDeclaration(statement) || !statement.importClause) {
+function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
+  for (const statement of sourceFile.statements) {
+    if (!isDomainImportDeclaration(statement) || !statement.importClause) {
       continue;
     }
     const clause = statement.importClause;
     if (clause.name?.text === "cn") {
       return true;
     }
-    if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
+    if (clause.namedBindings && isDomainNamedImports(clause.namedBindings)) {
       for (const importedBinding of clause.namedBindings.elements) {
         if (importedBinding.name.text === "cn") {
           return true;
@@ -31,50 +36,37 @@ export function cnModuleSpecifierForFile(filePath: string, override?: string): s
   return "@codefast/tailwind-variants";
 }
 
-function findImportDeclarationFromModule(
-  sf: ts.SourceFile,
-  moduleSpecifier: string,
-): ts.ImportDeclaration | undefined {
-  for (const statement of sf.statements) {
-    if (!ts.isImportDeclaration(statement)) {
+function findImportDeclarationFromModule(sourceFile: DomainSourceFile, moduleSpecifier: string) {
+  for (const statement of sourceFile.statements) {
+    if (!isDomainImportDeclaration(statement)) {
       continue;
     }
     const spec = statement.moduleSpecifier;
-    if (ts.isStringLiteral(spec) && spec.text === moduleSpecifier) {
+    if (isDomainStringLiteral(spec) && spec.text === moduleSpecifier) {
       return statement;
     }
   }
   return undefined;
 }
 
-export function ensureCnImport(
-  sourceText: string,
-  filePath: string,
-  cnImportOverride?: string,
-): string {
-  const sf = ts.createSourceFile(
-    filePath,
-    sourceText,
-    ts.ScriptTarget.Latest,
-    true,
-    filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-  );
-  if (sourceFileImportsCn(sf)) {
+export function ensureCnImport(sourceFile: DomainSourceFile, cnImportOverride?: string): string {
+  const sourceText = sourceFile.text;
+  if (sourceFileImportsCn(sourceFile)) {
     return sourceText;
   }
 
-  const moduleSpecifier = cnModuleSpecifierForFile(filePath, cnImportOverride);
-  const decl = findImportDeclarationFromModule(sf, moduleSpecifier);
+  const moduleSpecifier = cnModuleSpecifierForFile(sourceFile.fileName, cnImportOverride);
+  const decl = findImportDeclarationFromModule(sourceFile, moduleSpecifier);
 
   if (
     decl?.importClause &&
     !decl.importClause.isTypeOnly &&
     decl.importClause.namedBindings &&
-    ts.isNamedImports(decl.importClause.namedBindings)
+    isDomainNamedImports(decl.importClause.namedBindings)
   ) {
     const elements = decl.importClause.namedBindings.elements;
     if (elements.length > 0) {
-      const pos = elements[0].getStart(sf);
+      const pos = elements[0].pos;
       return `${sourceText.slice(0, pos)}cn, ${sourceText.slice(pos)}`;
     }
   }
@@ -82,9 +74,9 @@ export function ensureCnImport(
   const importLine = `import { cn } from "${moduleSpecifier}";`;
 
   let firstImport = -1;
-  for (const statement of sf.statements) {
-    if (ts.isImportDeclaration(statement)) {
-      firstImport = statement.getStart(sf);
+  for (const statement of sourceFile.statements) {
+    if (isDomainImportDeclaration(statement)) {
+      firstImport = statement.pos;
       break;
     }
   }
