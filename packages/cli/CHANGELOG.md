@@ -1,5 +1,35 @@
 # @codefast/cli
 
+## 0.3.13-canary.0
+
+### Patch Changes
+
+- [`45cdb03`](https://github.com/codefastlabs/codefast/commit/45cdb03954953704ef343bf13cfe186a7b07df80) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance tagging with workspace auto-discovery
+
+- [`9323864`](https://github.com/codefastlabs/codefast/commit/9323864d3a6a9cac1c3a6eee4ab7eb7cdc2c586e) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance `mirror.sync` to improve package handling
+
+- [`91fa485`](https://github.com/codefastlabs/codefast/commit/91fa48514bccc8b69fbec936211b4f07f1a5255b) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add support for selector-driven variants in `arrange`
+
+- [`7b89864`](https://github.com/codefastlabs/codefast/commit/7b89864560298b3977720f770ab5de4b86fca503) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): simplify tsconfig and tsdown configuration
+
+- [`7c67231`](https://github.com/codefastlabs/codefast/commit/7c672312679e75b6bb20ad2eaf7b79d7e7ec4805) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add package-name based config resolution
+
+- [`f5289de`](https://github.com/codefastlabs/codefast/commit/f5289ded778c2d1cfd7a1fdd7ce64add49ff218d) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add `skipPackages` support to tag command
+
+- [`28c9b1b`](https://github.com/codefastlabs/codefast/commit/28c9b1b3acff0e695eb9ccdcfc898d25f9d2d8da) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): improve JSDoc formatting and normalization logic
+
+- [`3a79459`](https://github.com/codefastlabs/codefast/commit/3a794598cbe2be30fa64a057ae98d87e6855b7d9) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): unify config schema under `#lib/config/schema`
+
+- [`c38fa71`](https://github.com/codefastlabs/codefast/commit/c38fa7130dd0e9e8da75f21ba0df7a215fe675e4) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): introduce `tag` command for version annotation
+
+- [`fbd2d22`](https://github.com/codefastlabs/codefast/commit/fbd2d22884e4f7839ab8a5c5cf8b85bf56723326) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): streamline tag command output formatting
+
+- [`1da009f`](https://github.com/codefastlabs/codefast/commit/1da009fe3fd0fa12055e056746856b69bbc9d57c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): remove legacy mirror config implementation
+
+- [`e48a452`](https://github.com/codefastlabs/codefast/commit/e48a4520a3db3501a41f2a4e23cf7b4d0844f600) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): refactor CLI commands for config-driven workflows
+
+- [`c60f71a`](https://github.com/codefastlabs/codefast/commit/c60f71a01743c4e7015f0635aacca6bc99d99777) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): restructure library imports to domain-driven design
+
 ## 0.3.12
 
 ### Patch Changes
