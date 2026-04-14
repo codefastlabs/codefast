@@ -10,7 +10,9 @@
     "@codefast/ui": "0.3.12"
   },
   "changesets": [
+    "all-sheep-shout",
     "big-bees-feel",
+    "curly-eggs-camp",
     "fluffy-parrots-call",
     "gentle-dingos-guess",
     "gentle-dodos-clap",
@@ -22,6 +24,7 @@
     "some-meteors-own",
     "sour-years-unite",
     "tender-lines-smile",
+    "tricky-mangos-find",
     "twenty-flies-fold"
   ]
 }

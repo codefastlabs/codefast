@@ -1,5 +1,7 @@
 # @codefast/typescript-config
 
+## 0.3.13-canary.1
+
 ## 0.3.13-canary.0
 
 ## 0.3.12
