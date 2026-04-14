@@ -1,5 +1,19 @@
 # @codefast/cli
 
+## 0.3.13-canary.2
+
+### Patch Changes
+
+- [`a042ee5`](https://github.com/codefastlabs/codefast/commit/a042ee5a6a10973492665b90d750a8b86817bf7d) Thanks [@thevuong](https://github.com/thevuong)! - feat: standardize TypeScript build configurations across packages
+
+- [`f3e4bf5`](https://github.com/codefastlabs/codefast/commit/f3e4bf50176bd8add9469572b5bec9b7253d3b25) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): refactor module imports and introduce TypeScript tree walk adapter
+
+- [`b8b5a03`](https://github.com/codefastlabs/codefast/commit/b8b5a03ff086e47e07323f27a5e48ef91da97d14) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): introduce CLI container with request schema validation and telemetry adapters
+
+- [`697d957`](https://github.com/codefastlabs/codefast/commit/697d957d8a426ed7a0962a752b74b917a0c3753c) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): refactor `arrange` and `shared-source-code` boundaries
+
+- [`32a3168`](https://github.com/codefastlabs/codefast/commit/32a31685be7fd12c1eb3197fceb5b8d3bfa1192a) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): migrate build system from tsdown to tsconfig-based workflow
+
 ## 0.3.13-canary.1
 
 ### Patch Changes

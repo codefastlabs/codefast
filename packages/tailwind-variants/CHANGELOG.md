@@ -1,5 +1,11 @@
 # @codefast/tailwind-variants
 
+## 0.3.13-canary.2
+
+### Patch Changes
+
+- [`a042ee5`](https://github.com/codefastlabs/codefast/commit/a042ee5a6a10973492665b90d750a8b86817bf7d) Thanks [@thevuong](https://github.com/thevuong)! - feat: standardize TypeScript build configurations across packages
+
 ## 0.3.13-canary.1
 
 ### Patch Changes
