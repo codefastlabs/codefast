@@ -1,5 +1,17 @@
-import ts from "typescript";
 import { EMPTY_CN_TV_BINDINGS } from "#lib/arrange/domain/constants";
+import {
+  type DomainAstNode,
+  type DomainCallExpression,
+  type DomainPropertyAssignment,
+  type DomainSourceFile,
+  isDomainIdentifier,
+  isDomainImportDeclaration,
+  isDomainNamedImports,
+  isDomainNamespaceImport,
+  isDomainPropertyAccessExpression,
+  isDomainStringLiteral,
+  lineOfSourcePosition,
+} from "#lib/arrange/domain/ast/ast-node.model";
 
 /** Known module specifiers that export `cn` / `tv`. */
 export const KNOWN_CN_TV_MODULES = new Set([
@@ -34,24 +46,24 @@ export function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
 
 /**
  * Build a set of local binding names that are imported from a known cn/tv
- * module in `sf`.
+ * module in `sourceFile`.
  */
-export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
+export function buildKnownCnTvBindings(sourceFile: DomainSourceFile): Set<string> {
   const bindings = new Set<string>();
-  for (const stmt of sf.statements) {
-    if (!ts.isImportDeclaration(stmt) || !stmt.importClause) {
+  for (const stmt of sourceFile.statements) {
+    if (!isDomainImportDeclaration(stmt) || !stmt.importClause) {
       continue;
     }
     if (stmt.importClause.isTypeOnly) {
       continue;
     }
     const spec = stmt.moduleSpecifier;
-    if (!ts.isStringLiteral(spec)) {
+    if (!isDomainStringLiteral(spec)) {
       continue;
     }
-    const moduleSpecifier = spec.text;
-    const isKnown = KNOWN_CN_TV_MODULES.has(moduleSpecifier);
-    if (!isKnown && !moduleLooksLikeCnTvReexport(moduleSpecifier)) {
+    const moduleSpecifierText = spec.text;
+    const isKnown = KNOWN_CN_TV_MODULES.has(moduleSpecifierText);
+    if (!isKnown && !moduleLooksLikeCnTvReexport(moduleSpecifierText)) {
       continue;
     }
 
@@ -59,16 +71,19 @@ export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
     if (clause.name) {
       bindings.add(clause.name.text);
     }
-    if (!clause.namedBindings) {
+    const { namedBindings } = clause;
+    if (!namedBindings) {
       continue;
     }
-    if (ts.isNamedImports(clause.namedBindings)) {
-      for (const namedImport of clause.namedBindings.elements) {
+    if (isDomainNamedImports(namedBindings)) {
+      for (const namedImport of namedBindings.elements) {
         bindings.add(namedImport.name.text);
       }
       continue;
     }
-    bindings.add(clause.namedBindings.name.text);
+    if (isDomainNamespaceImport(namedBindings)) {
+      bindings.add(namedBindings.name.text);
+    }
   }
   return bindings;
 }
@@ -78,34 +93,34 @@ export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
  * that name is listed in `knownBindings` from a recognized import.
  */
 export function isCnOrTvIdentifier(
-  expr: ts.Expression,
+  expr: DomainAstNode,
   name: "cn" | "tv",
   knownBindings: Set<string> = EMPTY_CN_TV_BINDINGS,
 ): boolean {
   if (knownBindings.size === 0) {
     return false;
   }
-  if (ts.isIdentifier(expr) && expr.text === name) {
+  if (isDomainIdentifier(expr) && expr.text === name) {
     return knownBindings.has(expr.text);
   }
-  if (ts.isPropertyAccessExpression(expr) && expr.name.text === name) {
-    return ts.isIdentifier(expr.expression) && knownBindings.has(expr.expression.text);
+  if (isDomainPropertyAccessExpression(expr) && expr.name.text === name) {
+    return isDomainIdentifier(expr.expression) && knownBindings.has(expr.expression.text);
   }
   return false;
 }
 
-export function propertyAssignmentNameText(prop: ts.PropertyAssignment): string | undefined {
-  if (ts.isIdentifier(prop.name)) {
+export function propertyAssignmentNameText(prop: DomainPropertyAssignment): string | undefined {
+  if (isDomainIdentifier(prop.name)) {
     return prop.name.text;
   }
-  if (ts.isStringLiteral(prop.name)) {
+  if (isDomainStringLiteral(prop.name)) {
     return prop.name.text;
   }
   return undefined;
 }
 
-export function lineOf(sf: ts.SourceFile, tsNode: ts.Node): number {
-  return sf.getLineAndCharacterOfPosition(tsNode.getStart(sf)).line + 1;
+export function lineOf(sourceFile: DomainSourceFile, node: DomainAstNode): number {
+  return lineOfSourcePosition(sourceFile.text, node.pos);
 }
 
 /**
@@ -151,24 +166,23 @@ export function applyEditsDescending(
  * array (multiple args). Returns undefined when there are zero arguments.
  */
 export function unwrapCnInsideTvCallReplacement(
-  call: ts.CallExpression,
+  call: DomainCallExpression,
   sourceText: string,
-  sf: ts.SourceFile,
 ): string | undefined {
   const args = call.arguments;
   if (args.length === 0) {
     return undefined;
   }
-  const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
+  const baseIndent = indentOfLineContaining(sourceText, call.pos);
   const innerIndent = `${baseIndent}  `;
   if (args.length === 1) {
     const firstArg = args[0]!;
-    return sourceText.slice(firstArg.getStart(sf), firstArg.getEnd());
+    return sourceText.slice(firstArg.pos, firstArg.end);
   }
   const lines: string[] = ["["];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
-    const piece = sourceText.slice(arg.getStart(sf), arg.getEnd());
+    const piece = sourceText.slice(arg.pos, arg.end);
     // Trailing comma on every element — intentional (Prettier-compatible style;
     // keeps array diffs clean when arguments are later added or removed).
     const comma = i < args.length - 1 || args.length > 1 ? "," : "";

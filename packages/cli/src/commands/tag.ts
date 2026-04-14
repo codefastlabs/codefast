@@ -1,30 +1,18 @@
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import { loadConfig } from "#lib/config";
-import type { CodefastTagConfig } from "#lib/config";
-import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
-import { createNodeCliFs, createNodeCliLogger, runTagSync } from "#lib/tag";
-import { findRepoRoot } from "#lib/infra/workspace/repo-root";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import { consumeCliAppError } from "#lib/core/presentation/cli-executor";
+import {
+  createCliContext,
+  parseWithCliSchema,
+  resolveTagWorkspaceRoot,
+  tryLoadCodefastConfig,
+} from "#lib/core/presentation/create-command-handler";
+import { TagSyncRunRequestSchema } from "#lib/tag/application/requests/tag-sync.request";
 import {
   createTagProgressListener,
-  formatSummary,
-  formatTargetTable,
-  formatWarningsAndErrors,
+  presentTagSyncCliResult,
 } from "#lib/tag/presentation/tag-presenter";
-
-function resolveTagRootDir(fs: CliFs, logger: CliLogger): string {
-  try {
-    return findRepoRoot(fs);
-  } catch (caughtRepoRootError: unknown) {
-    logger.out(
-      `[tag] workspace root auto-detection failed (${messageFromCaughtUnknown(caughtRepoRootError)}), using cwd=${process.cwd()}`,
-    );
-    return process.cwd();
-  }
-}
 
 export function registerTagCommand(program: Command): void {
   program
@@ -37,49 +25,30 @@ export function registerTagCommand(program: Command): void {
     )
     .option("--dry-run", "Show summary without writing files", false)
     .action(async (target: string | undefined, options: { dryRun?: boolean }) => {
-      const fs = createNodeCliFs();
-      const logger = createNodeCliLogger();
-      const rootDir = resolveTagRootDir(fs, logger);
-      let tagConfig: CodefastTagConfig = {};
-      try {
-        const { config, warnings } = await loadConfig(fs, rootDir);
-        printConfigSchemaWarnings(logger, warnings);
-        tagConfig = config.tag ?? {};
-      } catch (caughtConfigError: unknown) {
-        logger.err(messageFromCaughtUnknown(caughtConfigError));
-        process.exitCode = 1;
+      const cli = createCliContext();
+      const rootDir = resolveTagWorkspaceRoot(cli);
+      const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+      if (!consumeCliAppError(cli.logger, loadedOutcome)) {
         return;
       }
-
-      const tagResult = await runTagSync({
+      const tagConfig = loadedOutcome.value.config.tag ?? {};
+      const parsed = parseWithCliSchema(TagSyncRunRequestSchema, {
         rootDir,
-        config: tagConfig,
-        skipPackages: tagConfig.skipPackages,
-        targetPath: target ? path.resolve(target) : undefined,
         write: !options.dryRun,
-        fs,
-        listener: createTagProgressListener((line) => logger.out(line)),
+        targetPath: target ? path.resolve(target) : undefined,
+        skipPackages: tagConfig.skipPackages,
+        config: tagConfig,
       });
-      logger.out(formatTargetTable(tagResult.selectedTargets, rootDir));
-
-      if (tagResult.selectedTargets.length === 0) {
-        logger.err(
-          "No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.",
-        );
-        process.exitCode = 1;
+      if (!consumeCliAppError(cli.logger, parsed)) {
         return;
       }
-
-      const warningsAndErrorsSection = formatWarningsAndErrors(tagResult);
-      if (warningsAndErrorsSection) {
-        logger.err(warningsAndErrorsSection);
+      const tagOutcome = await cli.tag.runTagSync({
+        ...parsed.value,
+        listener: createTagProgressListener((line) => cli.logger.out(line)),
+      });
+      if (!consumeCliAppError(cli.logger, tagOutcome)) {
+        return;
       }
-
-      logger.out(formatSummary(tagResult));
-
-      const hasRunErrors = tagResult.targetResults.some(
-        (targetResult) => targetResult.runError !== null,
-      );
-      process.exitCode = hasRunErrors || tagResult.hookError ? 1 : 0;
+      process.exitCode = presentTagSyncCliResult(cli.logger, tagOutcome.value, rootDir);
     });
 }

@@ -1,6 +1,3 @@
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import type { MirrorConfig } from "#lib/config";
-
 export interface ExportEntry {
   types: string;
   import?: string;
@@ -79,14 +76,3 @@ export type FindWorkspacePackagesResult = {
   relPaths: string[];
   multiSource: WorkspaceMultiDiscoverySource;
 };
-
-export interface MirrorOptions {
-  rootDir: string;
-  config?: MirrorConfig;
-  verbose?: boolean;
-  noColor?: boolean;
-  /** Path under `rootDir` (relative or absolute within the repo), e.g. `packages/ui`. */
-  packageFilter?: string;
-  fs: CliFs;
-  logger: CliLogger;
-}

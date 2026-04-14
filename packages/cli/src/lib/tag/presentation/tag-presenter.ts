@@ -1,3 +1,4 @@
+import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
 import type {
   TagProgressListener,
   TagResolvedTarget,
@@ -95,6 +96,32 @@ export function formatSummary(result: TagSyncResult): string {
     lines.push(`[tag] Skipped: ${result.skippedPackages.length} package(s)`);
   }
   return lines.join("\n");
+}
+
+/**
+ * Prints tag sync output and returns a process exit code (0 success, 1 when empty targets or hook/run errors).
+ */
+export function presentTagSyncCliResult(
+  logger: CliLogger,
+  tagResult: TagSyncResult,
+  rootDir: string,
+): number {
+  logger.out(formatTargetTable(tagResult.selectedTargets, rootDir));
+  if (tagResult.selectedTargets.length === 0) {
+    logger.err(
+      "No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.",
+    );
+    return 1;
+  }
+  const warningsAndErrorsSection = formatWarningsAndErrors(tagResult);
+  if (warningsAndErrorsSection) {
+    logger.err(warningsAndErrorsSection);
+  }
+  logger.out(formatSummary(tagResult));
+  const hasRunErrors = tagResult.targetResults.some(
+    (targetResult) => targetResult.runError !== null,
+  );
+  return hasRunErrors || tagResult.hookError ? 1 : 0;
 }
 
 export function createTagProgressListener(

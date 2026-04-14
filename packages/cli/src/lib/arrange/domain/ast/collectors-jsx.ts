@@ -1,11 +1,16 @@
-import ts from "typescript";
+import {
+  type DomainJsxAttribute,
+  isDomainIdentifier,
+  isDomainJsxExpression,
+  isDomainTailwindClassLiteral,
+} from "#lib/arrange/domain/ast/ast-node.model";
 import type { JsxClassNameStatic } from "#lib/arrange/domain/types";
 
 export function jsxClassNameStaticLiteral(
-  jsxClassNameAttribute: ts.JsxAttribute,
+  jsxClassNameAttribute: DomainJsxAttribute,
 ): JsxClassNameStatic | undefined {
   if (
-    !ts.isIdentifier(jsxClassNameAttribute.name) ||
+    !isDomainIdentifier(jsxClassNameAttribute.name) ||
     jsxClassNameAttribute.name.text !== "className"
   ) {
     return undefined;
@@ -15,15 +20,12 @@ export function jsxClassNameStaticLiteral(
     return undefined;
   }
 
-  if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
+  if (isDomainTailwindClassLiteral(init)) {
     return { lit: init, valueNode: init };
   }
-  if (ts.isJsxExpression(init) && init.expression) {
+  if (isDomainJsxExpression(init) && init.expression) {
     const jsxExpressionBody = init.expression;
-    if (
-      ts.isStringLiteral(jsxExpressionBody) ||
-      ts.isNoSubstitutionTemplateLiteral(jsxExpressionBody)
-    ) {
+    if (isDomainTailwindClassLiteral(jsxExpressionBody)) {
       return { lit: jsxExpressionBody, valueNode: init };
     }
   }

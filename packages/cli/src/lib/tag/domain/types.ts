@@ -1,6 +1,3 @@
-import type { CodefastTagConfig } from "#lib/config";
-import type { CliFs } from "#lib/infra/fs-contract";
-
 export type TagFileResult = {
   filePath: string;
   taggedDeclarations: number;
@@ -71,15 +68,4 @@ export type TagSyncResult = {
   distinctVersions: string[];
   modifiedFiles: string[];
   hookError: string | null;
-};
-
-/** Command-orchestrated tag run: config is injected at the CLI boundary (no filesystem config reads in core). */
-export type TagSyncOptions = {
-  rootDir: string;
-  config?: CodefastTagConfig;
-  skipPackages?: string[];
-  targetPath?: string;
-  write: boolean;
-  fs: CliFs;
-  listener?: TagProgressListener;
 };

@@ -1,10 +1,10 @@
-import ts from "typescript";
 import { collectGroupableStringNodes } from "#lib/arrange/domain/ast/collectors-tv";
 import {
   collectGroupTargets,
   formatCnCallReplacement,
   planGroupEditForTarget,
 } from "#lib/arrange/domain/ast/targets";
+import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator";
 
 describe("formatCnCallReplacement", () => {
   it("keeps multiline trailing comma behavior explicit for multi-arg cn calls", () => {
@@ -13,8 +13,8 @@ export function Row(className: string) {
   return cn("flex gap-2 text-sm rounded-md border px-3", className);
 }
 `;
-    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const stringNode = collectGroupableStringNodes(sf)[0]!;
+    const domainSf = parseDomainSourceFile("x.ts", source);
+    const stringNode = collectGroupableStringNodes(domainSf)[0]!;
     const out = formatCnCallReplacement(stringNode, source, false);
     expect(out).toContain("className,");
     expect(out).toContain('"flex gap-2"');
@@ -26,21 +26,15 @@ describe("collectGroupTargets + planGroupEditForTarget", () => {
     const source = `export function C() {
   return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
 }`;
-    const sf = ts.createSourceFile(
-      "x.tsx",
-      source,
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TSX,
-    );
-    const targets = collectGroupTargets(sf, "x.tsx");
+    const domainSf = parseDomainSourceFile("x.tsx", source);
+    const targets = collectGroupTargets(domainSf, "x.tsx");
     expect(targets.some((groupTarget) => groupTarget.kind === "jsxClassName")).toBe(true);
   });
 
   it("plans undefined when groups length <= 1", () => {
     const source = `import { cn } from "@codefast/tailwind-variants"; cn("flex gap-2");`;
-    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const targets = collectGroupTargets(sf, "x.ts");
+    const domainSf = parseDomainSourceFile("x.ts", source);
+    const targets = collectGroupTargets(domainSf, "x.ts");
     const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
     expect(cnTarget).toBeDefined();
     const plan = planGroupEditForTarget(cnTarget!, source, false);
@@ -52,8 +46,8 @@ describe("collectGroupTargets + planGroupEditForTarget", () => {
 export function C(className: string) {
   return cn("flex gap-2 text-sm rounded-md border px-3 font-medium", className);
 }`;
-    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const targets = collectGroupTargets(sf, "x.ts");
+    const domainSf = parseDomainSourceFile("x.ts", source);
+    const targets = collectGroupTargets(domainSf, "x.ts");
     const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
     const plan = planGroupEditForTarget(cnTarget!, source, true);
     expect(plan?.replacement).toContain("className");
@@ -64,8 +58,8 @@ export function C(className: string) {
 export function C(className: string) {
   return cn("flex gap-2 text-sm rounded-md border px-3 font-medium", className);
 }`;
-    const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const targets = collectGroupTargets(sf, "x.ts");
+    const domainSf = parseDomainSourceFile("x.ts", source);
+    const targets = collectGroupTargets(domainSf, "x.ts");
     const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
     const plan = planGroupEditForTarget(cnTarget!, source, true);
     expect(plan?.replacement).toContain("className");

@@ -2,27 +2,28 @@ import path from "node:path";
 import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import { loadConfig } from "#lib/config";
-import type { CodefastArrangeConfig } from "#lib/config";
-import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
+import { ArrangeAnalyzeDirectoryRequestSchema } from "#lib/arrange/application/requests/analyze-directory.request";
+import { ArrangeSyncRunRequestSchema } from "#lib/arrange/application/requests/arrange-sync.request";
 import {
-  analyzeDirectory,
-  createNodeCliFs,
-  createNodeCliLogger,
   DEFAULT_ARRANGE_TARGET,
   formatArray,
   formatCnCall,
   printAnalyzeReport,
-  runArrangeSync,
   suggestCnGroups,
   summarizeGroupBucketLabels,
 } from "#lib/arrange";
-import { findRepoRoot } from "#lib/infra/workspace/repo-root";
+import { consumeCliAppError } from "#lib/core/presentation/cli-executor";
+import {
+  assertPathExistsOrExit,
+  createCliContext,
+  parseWithCliSchema,
+  resolveWorkspaceRoot,
+  runAsyncExitCodeUseCaseAfterParse,
+  runSyncUseCaseAfterParse,
+  tryLoadCodefastConfig,
+} from "#lib/core/presentation/create-command-handler";
 
-/** Commander attribute `withClassName` (second long flag `--with-class-name`). */
-function createWithClassNameOption(): Option {
+function withClassNameOption(): Option {
   return new Option(
     "--with-classname, --with-class-name",
     "Append className as final cn() argument",
@@ -31,31 +32,6 @@ function createWithClassNameOption(): Option {
 
 function defaultTargetPath(): string {
   return path.resolve(process.cwd(), DEFAULT_ARRANGE_TARGET);
-}
-
-function checkTargetExists(resolved: string, fs: CliFs, logger: CliLogger): boolean {
-  if (!fs.existsSync(resolved)) {
-    logger.err(`Not found: ${resolved}`);
-    process.exitCode = 1;
-    return false;
-  }
-  return true;
-}
-
-async function loadArrangeCommandConfig(
-  fs: CliFs,
-  logger: CliLogger,
-  rootDir: string,
-): Promise<{ arrangeConfig: CodefastArrangeConfig } | undefined> {
-  try {
-    const { config, warnings } = await loadConfig(fs, rootDir);
-    printConfigSchemaWarnings(logger, warnings);
-    return { arrangeConfig: config.arrange ?? {} };
-  } catch (caughtConfigError: unknown) {
-    logger.err(messageFromCaughtUnknown(caughtConfigError));
-    process.exitCode = 1;
-    return undefined;
-  }
 }
 
 export function registerArrangeCommand(program: Command): void {
@@ -68,54 +44,64 @@ export function registerArrangeCommand(program: Command): void {
     .description("Report long strings, nested cn in tv(), and related findings")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
     .action(async (target: string | undefined) => {
-      const fs = createNodeCliFs();
-      const logger = createNodeCliLogger();
+      const cli = createCliContext();
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      if (!checkTargetExists(resolved, fs, logger)) {
+      if (!assertPathExistsOrExit(resolved, cli)) {
         return;
       }
-
-      const rootDir = findRepoRoot(fs);
-      const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
-      if (!loaded) {
+      const rootOutcome = resolveWorkspaceRoot(cli);
+      if (!consumeCliAppError(cli.logger, rootOutcome)) {
         return;
       }
-
-      printAnalyzeReport(resolved, analyzeDirectory(resolved, fs), logger);
+      const rootDir = rootOutcome.value;
+      const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+      if (!consumeCliAppError(cli.logger, loadedOutcome)) {
+        return;
+      }
+      const parsed = parseWithCliSchema(ArrangeAnalyzeDirectoryRequestSchema, {
+        analyzeRootPath: resolved,
+      });
+      runSyncUseCaseAfterParse(
+        cli,
+        parsed,
+        (input) => cli.arrange.analyzeDirectory(input),
+        (report) => printAnalyzeReport(resolved, report, cli.logger),
+      );
     });
 
   arrange
     .command("preview")
     .description("Dry-run: print suggested replacements without writing files")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
-    .addOption(createWithClassNameOption())
+    .addOption(withClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action(
       async (target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
-        const fs = createNodeCliFs();
-        const logger = createNodeCliLogger();
+        const cli = createCliContext();
         const resolved = target ? path.resolve(target) : defaultTargetPath();
-        if (!checkTargetExists(resolved, fs, logger)) {
+        if (!assertPathExistsOrExit(resolved, cli)) {
           return;
         }
-
-        const rootDir = findRepoRoot(fs);
-        const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
-        if (!loaded) {
+        const rootOutcome = resolveWorkspaceRoot(cli);
+        if (!consumeCliAppError(cli.logger, rootOutcome)) {
           return;
         }
-
-        const exitCode = await runArrangeSync({
+        const rootDir = rootOutcome.value;
+        const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+        if (!consumeCliAppError(cli.logger, loadedOutcome)) {
+          return;
+        }
+        const parsed = parseWithCliSchema(ArrangeSyncRunRequestSchema, {
           rootDir,
-          config: loaded.arrangeConfig,
           targetPath: resolved,
           write: false,
           withClassName: opts.withClassName,
           cnImport: opts.cnImport,
-          fs,
-          logger,
+          config: loadedOutcome.value.config.arrange ?? {},
         });
-        process.exitCode = exitCode;
+        await runAsyncExitCodeUseCaseAfterParse(cli, parsed, (input) =>
+          cli.arrange.runArrangeSync(input),
+        );
       },
     );
 
@@ -123,34 +109,35 @@ export function registerArrangeCommand(program: Command): void {
     .command("apply")
     .description("Apply grouping and cn-in-tv unwrap edits to files")
     .argument("[target]", "Directory or file (default: packages/ui/src/components)")
-    .addOption(createWithClassNameOption())
+    .addOption(withClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action(
       async (target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) => {
-        const fs = createNodeCliFs();
-        const logger = createNodeCliLogger();
+        const cli = createCliContext();
         const resolved = target ? path.resolve(target) : defaultTargetPath();
-        if (!checkTargetExists(resolved, fs, logger)) {
+        if (!assertPathExistsOrExit(resolved, cli)) {
           return;
         }
-
-        const rootDir = findRepoRoot(fs);
-        const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
-        if (!loaded) {
+        const rootOutcome = resolveWorkspaceRoot(cli);
+        if (!consumeCliAppError(cli.logger, rootOutcome)) {
           return;
         }
-
-        const exitCode = await runArrangeSync({
+        const rootDir = rootOutcome.value;
+        const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+        if (!consumeCliAppError(cli.logger, loadedOutcome)) {
+          return;
+        }
+        const parsed = parseWithCliSchema(ArrangeSyncRunRequestSchema, {
           rootDir,
-          config: loaded.arrangeConfig,
           targetPath: resolved,
           write: true,
           withClassName: opts.withClassName,
           cnImport: opts.cnImport,
-          fs,
-          logger,
+          config: loadedOutcome.value.config.arrange ?? {},
         });
-        process.exitCode = exitCode;
+        await runAsyncExitCodeUseCaseAfterParse(cli, parsed, (input) =>
+          cli.arrange.runArrangeSync(input),
+        );
       },
     );
 
@@ -159,11 +146,12 @@ export function registerArrangeCommand(program: Command): void {
     .description("Try grouping on a pasted class string (stdout: cn(...) or tv array with --tv)")
     .argument("[tokens...]", "Class tokens (quote a single string if it contains spaces)")
     .option("--tv", "Emit tv()-style array instead of cn() call", false)
-    .addOption(createWithClassNameOption())
+    .addOption(withClassNameOption())
     .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean }) => {
+      const cli = createCliContext();
       const inlineClasses = tokens.join(" ").trim();
       if (!inlineClasses) {
-        process.stderr.write(
+        cli.logger.err(
           'Pass a class string. Example: codefast arrange group "flex gap-2 text-sm rounded-md"\n',
         );
         process.exitCode = 1;
@@ -173,8 +161,7 @@ export function registerArrangeCommand(program: Command): void {
       const result = opts.tv
         ? formatArray(groups)
         : formatCnCall(groups, { trailingClassName: !!opts.withClassName });
-      process.stdout.write(`${result}\n`);
-      const bucketSummary = summarizeGroupBucketLabels(groups);
-      process.stdout.write(`\n// Buckets: ${JSON.stringify(bucketSummary)}\n`);
+      cli.logger.out(result);
+      cli.logger.out(`// Buckets: ${JSON.stringify(summarizeGroupBucketLabels(groups))}`);
     });
 }

@@ -1,8 +1,7 @@
 import path from "node:path";
-import type { CliFs } from "#lib/infra/fs-contract";
-import { isDirentList } from "#lib/mirror/infra/dirent-list";
+import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
 import type { MirrorConfig } from "#lib/config";
-import { normalizePath } from "#lib/mirror/infra/path-normalizer";
 import {
   DTS_EXTENSION,
   PACKAGE_JSON_EXPORT,
@@ -24,48 +23,6 @@ function resolvePackageScopedConfig<T>(
     return undefined;
   }
   return configMap[pkgMeta.packageName];
-}
-
-async function scanDirectoryFiles(
-  fs: CliFs,
-  dir: string,
-  baseDir: string = dir,
-): Promise<string[]> {
-  try {
-    const raw = await fs.readdir(dir, { recursive: true, withFileTypes: true });
-    if (!isDirentList(raw)) {
-      return [];
-    }
-    return raw
-      .filter((dirent) => dirent.isFile())
-      .map((dirent) => {
-        const fullPath = path.join(dirent.parentPath, dirent.name);
-        const relPath = path.relative(baseDir, fullPath);
-        return normalizePath(relPath);
-      });
-  } catch (caughtError: unknown) {
-    if (caughtError && typeof caughtError === "object" && "code" in caughtError) {
-      if (caughtError.code === "ENOENT" || caughtError.code === "EACCES") {
-        return [];
-      }
-    }
-    throw caughtError;
-  }
-}
-
-async function isDirectoryCssOnly(fs: CliFs, distDir: string, dirPath: string): Promise<boolean> {
-  try {
-    const raw = await fs.readdir(path.join(distDir, dirPath), { withFileTypes: true });
-    if (!isDirentList(raw)) {
-      return false;
-    }
-    if (raw.length === 0) {
-      return true;
-    }
-    return raw.every((dirent) => dirent.isFile() && dirent.name.endsWith(".css"));
-  } catch {
-    return false;
-  }
 }
 
 function groupFilesByModule(files: string[]): Map<string, Module> {
@@ -217,6 +174,7 @@ function compareTuples(left: SortTuple, right: SortTuple): number {
 
 async function generateCssExports(
   fs: CliFs,
+  fileSystemService: FileSystemServicePort,
   distDir: string,
   cssConfig: Record<string, unknown> | boolean | undefined,
 ): Promise<Record<string, string>> {
@@ -230,7 +188,7 @@ async function generateCssExports(
     return {};
   }
 
-  const files = await scanDirectoryFiles(fs, distDir);
+  const files = await fileSystemService.listRelativeFilesRecursively(fs, distDir);
   const cssFiles = files.filter((relativeDistPath) => relativeDistPath.endsWith(".css"));
   if (!cssFiles.length) {
     return {};
@@ -243,7 +201,7 @@ async function generateCssExports(
   const rootCss: string[] = [];
 
   for (const file of cssFiles) {
-    const dirName = normalizePath(path.dirname(file));
+    const dirName = path.dirname(file).split(path.sep).join("/");
     if (dirName === ".") {
       rootCss.push(file);
     } else {
@@ -262,7 +220,7 @@ async function generateCssExports(
 
   for (const [dirName, dirFiles] of cssByDir.entries()) {
     if (
-      (await isDirectoryCssOnly(fs, distDir, dirName)) &&
+      (await fileSystemService.isDirectoryCssOnly(fs, distDir, dirName)) &&
       !(cssConfig as Record<string, unknown>).forceExportFiles
     ) {
       const wildcardExport = `./${dirName}/*`;
@@ -287,12 +245,13 @@ async function generateCssExports(
  */
 export async function generateExports(
   fs: CliFs,
+  fileSystemService: FileSystemServicePort,
   distDir: string,
   pathTransform: ((pathString: string) => string) | null,
   cssConfig: Record<string, unknown> | boolean | undefined,
   customExports: Record<string, string>,
 ): Promise<GenerateExportsResult> {
-  const files = await scanDirectoryFiles(fs, distDir);
+  const files = await fileSystemService.listRelativeFilesRecursively(fs, distDir);
   if (!files.length) {
     return {
       // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
@@ -350,7 +309,12 @@ export async function generateExports(
     sortedExports[exportKey] = exportsObj[exportKey] as ExportEntry;
   }
 
-  const cssExports = await generateCssExports(fs, distDir, cssConfig ?? { enabled: true });
+  const cssExports = await generateCssExports(
+    fs,
+    fileSystemService,
+    distDir,
+    cssConfig ?? { enabled: true },
+  );
 
   Object.assign(sortedExports, cssExports);
   for (const [specifier, mappedPath] of Object.entries(customExports || {})) {

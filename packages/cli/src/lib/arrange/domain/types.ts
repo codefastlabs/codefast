@@ -5,9 +5,12 @@
  * with Tailwind v4 utility groupings.
  */
 
-import type ts from "typescript";
-import type { CodefastArrangeConfig } from "#lib/config";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import type {
+  DomainAstNode,
+  DomainCallExpression,
+  DomainSourceFile,
+  DomainTailwindClassLiteral,
+} from "#lib/arrange/domain/ast/ast-node.model";
 
 export type Bucket =
   | "existence"
@@ -30,7 +33,7 @@ export type Bucket =
   | "other";
 
 /** String or no-substitution template literal used as a Tailwind class blob. */
-export type TailwindClassLiteral = ts.StringLiteral | ts.NoSubstitutionTemplateLiteral;
+export type TailwindClassLiteral = DomainTailwindClassLiteral;
 
 export type ForEachStringLiteralInClassExpressionOptions = {
   /**
@@ -44,7 +47,7 @@ export type ForEachStringLiteralInClassExpressionOptions = {
 export type JsxClassNameStatic = {
   lit: TailwindClassLiteral;
   /** Replace this node: `StringLiteral` or whole `JsxExpression`. */
-  valueNode: ts.Node;
+  valueNode: DomainAstNode;
 };
 
 /**
@@ -54,11 +57,11 @@ export type JsxClassNameStatic = {
 export type StringNode = {
   /** All static string literals belonging to this slot, in source order. */
   nodes: TailwindClassLiteral[];
-  sf: ts.SourceFile;
+  sf: DomainSourceFile;
   /** String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`. */
   isTvContext: boolean;
   /** When set, the entire cn(...) call is replaced at once. */
-  cnCall?: ts.CallExpression;
+  cnCall?: DomainCallExpression;
   /** First literal in the slot; used for positions and line-number reporting. */
   get primaryClassLiteral(): TailwindClassLiteral;
 };
@@ -67,9 +70,9 @@ export type GroupTarget =
   | { kind: "cnArg"; item: StringNode }
   | {
       kind: "jsxClassName";
-      sf: ts.SourceFile;
+      sf: DomainSourceFile;
       lit: TailwindClassLiteral;
-      valueNode: ts.Node;
+      valueNode: DomainAstNode;
     };
 
 export type PlannedGroupEdit = {
@@ -79,8 +82,8 @@ export type PlannedGroupEdit = {
   /** Per-chunk bucket labels (same as `arrange group` trailing `// Buckets:` line). */
   bucketSummary: string[];
   jsxCn: boolean;
-  lineSf: ts.SourceFile;
-  reportNode: ts.Node;
+  lineSf: DomainSourceFile;
+  reportNode: DomainAstNode;
   label: string;
 };
 
@@ -138,16 +141,4 @@ export type ArrangeRunResult = {
   modifiedFiles: string[];
   totalFound: number;
   totalChanged: number;
-};
-
-/** Command-orchestrated arrange run: config is injected at the CLI boundary (no filesystem config reads in core). */
-export type ArrangeSyncOptions = {
-  rootDir: string;
-  config?: CodefastArrangeConfig;
-  targetPath: string;
-  write: boolean;
-  withClassName?: boolean;
-  cnImport?: string;
-  fs: CliFs;
-  logger: CliLogger;
 };

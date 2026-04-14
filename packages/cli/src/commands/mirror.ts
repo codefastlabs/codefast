@@ -2,12 +2,16 @@ import { realpathSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import { loadConfig } from "#lib/config";
-import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
-import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
-import { runMirrorSync } from "#lib/mirror";
-import { findRepoRoot } from "#lib/infra/workspace/repo-root";
+import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
+import { consumeCliAppError } from "#lib/core/presentation/cli-executor";
+import {
+  createCliContext,
+  parseWithCliSchema,
+  resolveWorkspaceRoot,
+  runAsyncExitCodeUseCaseAfterParse,
+  tryLoadCodefastConfig,
+} from "#lib/core/presentation/create-command-handler";
+import { MirrorSyncRunRequestSchema } from "#lib/mirror/application/requests/mirror-sync.request";
 
 function tryRealpath(entryPath: string): string {
   try {
@@ -58,9 +62,12 @@ export function registerMirrorCommand(program: Command): void {
       options: { verbose?: boolean },
     ) {
       const globals = this.optsWithGlobals() as { color?: boolean };
-      const fs = createNodeCliFs();
-      const logger = createNodeCliLogger();
-      const rootDir = findRepoRoot(fs);
+      const cli = createCliContext();
+      const rootOutcome = resolveWorkspaceRoot(cli);
+      if (!consumeCliAppError(cli.logger, rootOutcome)) {
+        return;
+      }
+      const rootDir = rootOutcome.value;
       let packageFilter: string | undefined;
       try {
         packageFilter = packageArgToRelative(rootDir, pkg);
@@ -68,25 +75,19 @@ export function registerMirrorCommand(program: Command): void {
         this.error(messageFromCaughtUnknown(caughtPathError));
         return;
       }
-      let mirrorConfig = {};
-      try {
-        const { config, warnings } = await loadConfig(fs, rootDir);
-        printConfigSchemaWarnings(logger, warnings);
-        mirrorConfig = config.mirror ?? {};
-      } catch (caughtConfigError: unknown) {
-        this.error(messageFromCaughtUnknown(caughtConfigError));
+      const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+      if (!consumeCliAppError(cli.logger, loadedOutcome)) {
         return;
       }
-      const exitCode = await runMirrorSync({
+      const parsed = parseWithCliSchema(MirrorSyncRunRequestSchema, {
         rootDir,
-        config: mirrorConfig,
+        config: loadedOutcome.value.config.mirror ?? {},
         verbose: options.verbose,
-        /** Commander sets `color: false` when `--no-color` is passed (default `color: true`). */
         noColor: globals.color === false,
         packageFilter,
-        fs,
-        logger,
       });
-      process.exitCode = exitCode;
+      await runAsyncExitCodeUseCaseAfterParse(cli, parsed, (input) =>
+        cli.mirror.runMirrorSync(input),
+      );
     });
 }

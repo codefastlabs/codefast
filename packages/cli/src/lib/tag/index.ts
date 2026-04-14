@@ -4,6 +4,8 @@ export {
   runTagSync,
   resolveNearestPackageVersion,
 } from "#lib/tag/application/engine";
+export type { TagSyncExecutionInput, TagSyncRunDeps } from "#lib/tag/application/engine";
+export { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
 export type {
   TagFileResult,
   TagProgressListener,
@@ -11,9 +13,9 @@ export type {
   TagRunOptions,
   TagRunResult,
   TagSyncResult,
-  TagSyncOptions,
   TagTargetExecutionResult,
 } from "#lib/tag/domain/types";
+export type { TagSyncOptions } from "#lib/tag/infra/tag-sync-cli-options";
 export {
   createTagProgressListener,
   formatProgress,

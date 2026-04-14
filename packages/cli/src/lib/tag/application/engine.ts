@@ -1,22 +1,34 @@
 import path from "node:path";
 import ts from "typescript";
+import { appError, type AppError } from "#lib/core/domain/errors";
+import { err, ok, type Result } from "#lib/core/domain/result";
 import { applyEditsDescending, indentOfLineContaining } from "#lib/arrange";
 import { walkTsxFiles } from "#lib/arrange";
-import type { CodefastAfterWriteHook } from "#lib/config";
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import type { CliFs } from "#lib/infra/fs-contract";
+import type { CodefastAfterWriteHook, CodefastTagConfig } from "#lib/config";
+import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
+import type { TagSyncRunRequest } from "#lib/tag/application/requests/tag-sync.request";
+import type { TagTargetResolverPort } from "#lib/tag/application/ports/target-resolver.port";
 import type {
   TagFileResult,
+  TagProgressListener,
   TagTargetCandidate,
   TagTargetSource,
   TagResolvedTarget,
   TagRunOptions,
   TagRunResult,
   TagSyncResult,
-  TagSyncOptions,
   TagTargetExecutionResult,
 } from "#lib/tag/domain/types";
-import { resolveTagTargetCandidates } from "#lib/tag/infra/target-resolver";
+
+export type TagSyncRunDeps = {
+  readonly fs: CliFs;
+  readonly targetResolver: TagTargetResolverPort;
+};
+
+export type TagSyncExecutionInput = TagSyncRunRequest & {
+  listener?: TagProgressListener;
+};
 
 type TextEdit = {
   start: number;
@@ -396,7 +408,7 @@ async function runOnResolvedTarget(
   resolvedTarget: TagResolvedTarget,
   write: boolean,
   fs: CliFs,
-  listener: TagSyncOptions["listener"],
+  listener: TagProgressListener | undefined,
 ): Promise<TagTargetExecutionResult> {
   listener?.onTargetStarted(resolvedTarget);
   const absoluteTargetPath = path.resolve(resolvedTarget.targetPath);
@@ -437,60 +449,72 @@ async function runOnResolvedTarget(
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
  * Returns structured execution data; presentation/logging belongs to command layer.
  */
-export async function runTagSync(opts: TagSyncOptions): Promise<TagSyncResult> {
-  const { fs } = opts;
-  const targetCandidates = await resolveTagTargetCandidates(opts.rootDir, opts.targetPath, fs);
-  const { includedCandidates, skippedPackages } = filterSkippedCandidates(
-    targetCandidates,
-    opts.skipPackages,
-  );
-  const selectedTargets = includedCandidates.map((candidate) =>
-    resolveTargetSelection(candidate, opts.rootDir, fs),
-  );
-  const targetResults = await Promise.all(
-    selectedTargets.map((resolvedTarget) =>
-      runOnResolvedTarget(resolvedTarget, opts.write, fs, opts.listener),
-    ),
-  );
+export async function runTagSync(
+  input: TagSyncExecutionInput,
+  deps: TagSyncRunDeps,
+): Promise<Result<TagSyncResult, AppError>> {
+  try {
+    const { fs, targetResolver } = deps;
+    const tagConfig = input.config as CodefastTagConfig | undefined;
+    const targetCandidates = await targetResolver.resolveTagTargetCandidates(
+      input.rootDir,
+      input.targetPath,
+      fs,
+    );
+    const { includedCandidates, skippedPackages } = filterSkippedCandidates(
+      targetCandidates,
+      input.skipPackages,
+    );
+    const selectedTargets = includedCandidates.map((candidate) =>
+      resolveTargetSelection(candidate, input.rootDir, fs),
+    );
+    const targetResults = await Promise.all(
+      selectedTargets.map((resolvedTarget) =>
+        runOnResolvedTarget(resolvedTarget, input.write, fs, input.listener),
+      ),
+    );
 
-  const allFileResults: TagFileResult[] = targetResults.flatMap(
-    (targetResult) => targetResult.result?.fileResults ?? [],
-  );
-  const filesScanned = targetResults.reduce(
-    (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
-    0,
-  );
-  const filesChanged = targetResults.reduce(
-    (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
-    0,
-  );
-  const taggedDeclarations = targetResults.reduce(
-    (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
-    0,
-  );
-  const modifiedFiles = allFileResults
-    .filter((entry) => entry.changed)
-    .map((entry) => entry.filePath);
-  const hookError =
-    opts.write && modifiedFiles.length > 0
-      ? await runTagOnAfterWriteHook(opts.config?.onAfterWrite, modifiedFiles)
-      : null;
-  const distinctVersions = [...extractDistinctVersions(targetResults)].sort((left, right) =>
-    left.localeCompare(right),
-  );
+    const allFileResults: TagFileResult[] = targetResults.flatMap(
+      (targetResult) => targetResult.result?.fileResults ?? [],
+    );
+    const filesScanned = targetResults.reduce(
+      (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
+      0,
+    );
+    const filesChanged = targetResults.reduce(
+      (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
+      0,
+    );
+    const taggedDeclarations = targetResults.reduce(
+      (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
+      0,
+    );
+    const modifiedFiles = allFileResults
+      .filter((entry) => entry.changed)
+      .map((entry) => entry.filePath);
+    const hookError =
+      input.write && modifiedFiles.length > 0
+        ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
+        : null;
+    const distinctVersions = [...extractDistinctVersions(targetResults)].sort((left, right) =>
+      left.localeCompare(right),
+    );
 
-  return {
-    mode: opts.write ? "applied" : "dry-run",
-    selectedTargets,
-    resolvedTargets: selectedTargets,
-    skippedPackages,
-    targetResults,
-    filesScanned,
-    filesChanged,
-    taggedDeclarations,
-    versionSummary: summarizeVersions(targetResults),
-    distinctVersions,
-    modifiedFiles,
-    hookError,
-  };
+    return ok({
+      mode: input.write ? "applied" : "dry-run",
+      selectedTargets,
+      resolvedTargets: selectedTargets,
+      skippedPackages,
+      targetResults,
+      filesScanned,
+      filesChanged,
+      taggedDeclarations,
+      versionSummary: summarizeVersions(targetResults),
+      distinctVersions,
+      modifiedFiles,
+      hookError,
+    });
+  } catch (caughtError: unknown) {
+    return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+  }
 }

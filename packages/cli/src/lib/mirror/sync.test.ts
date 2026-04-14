@@ -1,8 +1,13 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runMirrorSync } from "#lib/mirror/application/sync";
+import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
+import { runMirrorSync, type MirrorSyncRunDeps } from "#lib/mirror/application/sync";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+import { FileSystemServiceAdapter } from "#lib/mirror/infra/file-system-service.adapter";
+import { mirrorSyncReporterAdapter } from "#lib/mirror/infra/mirror-sync-reporter.adapter";
+import { PackageRepositoryAdapter } from "#lib/mirror/infra/package-repository.adapter";
+import { WorkspaceServiceAdapter } from "#lib/mirror/infra/workspace-service.adapter";
 
 async function mkdirp(filePath: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -24,11 +29,26 @@ async function makeTempRoot(): Promise<string> {
 
 const mirrorFs = createNodeCliFs();
 const mirrorLogger = createNodeCliLogger();
+const workspaceService = new WorkspaceServiceAdapter();
+const packageRepository = new PackageRepositoryAdapter();
+const fileSystemService = new FileSystemServiceAdapter();
 
-async function runMirrorSyncWithNodeDependencies(
-  options: Omit<Parameters<typeof runMirrorSync>[0], "fs" | "logger">,
-): Promise<number> {
-  return runMirrorSync({ ...options, fs: mirrorFs, logger: mirrorLogger });
+const mirrorSyncDeps: MirrorSyncRunDeps = {
+  fs: mirrorFs,
+  logger: mirrorLogger,
+  workspaceService,
+  packageRepository,
+  fileSystemService,
+  mirrorReporter: mirrorSyncReporterAdapter,
+};
+
+async function runMirrorSyncWithNodeDependencies(request: MirrorSyncRunRequest): Promise<number> {
+  const outcome = await runMirrorSync(request, mirrorSyncDeps);
+  expect(outcome.ok).toBe(true);
+  if (!outcome.ok) {
+    throw new Error(outcome.error.message);
+  }
+  return outcome.value;
 }
 
 describe("runMirrorSync (integration)", () => {
@@ -672,10 +692,19 @@ describe("runMirrorSync (integration)", () => {
   it("fails fast when pnpm-workspace.yaml exists but is invalid YAML", async () => {
     const root = await makeTempRoot();
     await writeText(path.join(root, "pnpm-workspace.yaml"), "packages:\n  - [\n");
-    const code = await runMirrorSyncWithNodeDependencies({ rootDir: root, noColor: true });
-    expect(code).toBe(1);
-    expect(joinedStdout()).toContain("Fatal error");
-    expect(joinedStdout()).toMatch(/pnpm-workspace\.yaml|Failed to parse/i);
+    const outcome = await runMirrorSync(
+      {
+        rootDir: root,
+        noColor: true,
+      },
+      mirrorSyncDeps,
+    );
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) {
+      throw new Error("expected mirror failure");
+    }
+    expect(outcome.error.code).toBe("INFRA_FAILURE");
+    expect(outcome.error.message).toMatch(/pnpm-workspace\.yaml|Failed to parse/i);
   });
 
   it("treats packages: [] as no workspace packages", async () => {
@@ -694,10 +723,19 @@ describe("runMirrorSync (integration)", () => {
       `packages: "oops"
 `,
     );
-    const code = await runMirrorSyncWithNodeDependencies({ rootDir: root, noColor: true });
-    expect(code).toBe(1);
-    expect(joinedStdout()).toContain("Fatal error");
-    expect(joinedStdout()).toMatch(/packages.*must be an array/i);
+    const outcome = await runMirrorSync(
+      {
+        rootDir: root,
+        noColor: true,
+      },
+      mirrorSyncDeps,
+    );
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) {
+      throw new Error("expected mirror failure");
+    }
+    expect(outcome.error.code).toBe("INFRA_FAILURE");
+    expect(outcome.error.message).toMatch(/packages.*must be an array/i);
   });
 
   it("resolves packageFilter relative to rootDir when cwd differs (API)", async () => {

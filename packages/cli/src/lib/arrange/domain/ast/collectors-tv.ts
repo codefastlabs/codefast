@@ -1,5 +1,17 @@
-import ts from "typescript";
 import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#lib/arrange/domain/constants";
+import {
+  type DomainAstNode,
+  type DomainCallExpression,
+  type DomainObjectLiteralExpression,
+  type DomainSourceFile,
+  isDomainArrayLiteralExpression,
+  isDomainCallExpression,
+  isDomainObjectLiteralExpression,
+  isDomainPropertyAssignment,
+  isDomainSpreadElement,
+  isDomainTailwindClassLiteral,
+  forEachDomainChild,
+} from "#lib/arrange/domain/ast/ast-node.model";
 import {
   CN_APPLY_LITERAL_WALK_OPTS,
   collectUnconditionalTailwindLiteralsFromCnArguments,
@@ -16,13 +28,13 @@ import {
 
 type StringNodeVisitor = (
   classLiteral: TailwindClassLiteral,
-  sf: ts.SourceFile,
-  cnCall?: ts.CallExpression,
+  sourceFile: DomainSourceFile,
+  cnCall?: DomainCallExpression,
 ) => void;
 
 export function traverseTvObject(
-  sf: ts.SourceFile,
-  obj: ts.ObjectLiteralExpression,
+  sourceFile: DomainSourceFile,
+  obj: DomainObjectLiteralExpression,
   visitor: StringNodeVisitor,
   depth = 0,
   knownBindings?: Set<string>,
@@ -31,32 +43,32 @@ export function traverseTvObject(
     return;
   }
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop)) {
+    if (!isDomainPropertyAssignment(prop)) {
       continue;
     }
     const init = prop.initializer;
 
-    if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
-      visitor(init, sf, undefined);
-    } else if (ts.isArrayLiteralExpression(init)) {
+    if (isDomainTailwindClassLiteral(init)) {
+      visitor(init, sourceFile, undefined);
+    } else if (isDomainArrayLiteralExpression(init)) {
       for (const arrayElement of init.elements) {
-        if (ts.isSpreadElement(arrayElement)) {
+        if (isDomainSpreadElement(arrayElement)) {
           continue;
         }
-        if (ts.isStringLiteral(arrayElement) || ts.isNoSubstitutionTemplateLiteral(arrayElement)) {
-          visitor(arrayElement, sf, undefined);
+        if (isDomainTailwindClassLiteral(arrayElement)) {
+          visitor(arrayElement, sourceFile, undefined);
         } else if (
-          ts.isCallExpression(arrayElement) &&
+          isDomainCallExpression(arrayElement) &&
           isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
         ) {
           for (const arg of arrayElement.arguments) {
             forEachStringLiteralInClassExpression(arg, (lit) => {
-              visitor(lit, sf, arrayElement);
+              visitor(lit, sourceFile, arrayElement);
             });
           }
-        } else if (ts.isObjectLiteralExpression(arrayElement)) {
+        } else if (isDomainObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
-            if (!ts.isPropertyAssignment(objectProperty)) {
+            if (!isDomainPropertyAssignment(objectProperty)) {
               continue;
             }
             const propName = propertyAssignmentNameText(objectProperty);
@@ -64,42 +76,39 @@ export function traverseTvObject(
               continue;
             }
             const innerInit = objectProperty.initializer;
-            if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
-              visitor(innerInit, sf, undefined);
-            } else if (ts.isArrayLiteralExpression(innerInit)) {
+            if (isDomainTailwindClassLiteral(innerInit)) {
+              visitor(innerInit, sourceFile, undefined);
+            } else if (isDomainArrayLiteralExpression(innerInit)) {
               for (const nestedArrayElement of innerInit.elements) {
-                if (ts.isSpreadElement(nestedArrayElement)) {
+                if (isDomainSpreadElement(nestedArrayElement)) {
                   continue;
                 }
-                if (
-                  ts.isStringLiteral(nestedArrayElement) ||
-                  ts.isNoSubstitutionTemplateLiteral(nestedArrayElement)
-                ) {
-                  visitor(nestedArrayElement, sf, undefined);
+                if (isDomainTailwindClassLiteral(nestedArrayElement)) {
+                  visitor(nestedArrayElement, sourceFile, undefined);
                 }
               }
             } else if (
-              ts.isCallExpression(innerInit) &&
+              isDomainCallExpression(innerInit) &&
               isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
             ) {
               for (const arg of innerInit.arguments) {
                 forEachStringLiteralInClassExpression(arg, (lit) => {
-                  visitor(lit, sf, innerInit);
+                  visitor(lit, sourceFile, innerInit);
                 });
               }
             }
           }
         }
       }
-    } else if (ts.isObjectLiteralExpression(init)) {
-      traverseTvObject(sf, init, visitor, depth + 1, knownBindings);
+    } else if (isDomainObjectLiteralExpression(init)) {
+      traverseTvObject(sourceFile, init, visitor, depth + 1, knownBindings);
     } else if (
-      ts.isCallExpression(init) &&
+      isDomainCallExpression(init) &&
       isCnOrTvIdentifier(init.expression, "cn", knownBindings)
     ) {
       for (const arg of init.arguments) {
         forEachStringLiteralInClassExpression(arg, (lit) => {
-          visitor(lit, sf, init);
+          visitor(lit, sourceFile, init);
         });
       }
     }
@@ -107,34 +116,34 @@ export function traverseTvObject(
 }
 
 export function collectCnCallsInsideTv(
-  sf: ts.SourceFile,
-  obj: ts.ObjectLiteralExpression,
+  sourceFile: DomainSourceFile,
+  obj: DomainObjectLiteralExpression,
   knownBindings: Set<string>,
   depth = 0,
-): ts.CallExpression[] {
+): DomainCallExpression[] {
   if (depth > MAX_OBJECT_DEPTH) {
     return [];
   }
-  const calls: ts.CallExpression[] = [];
+  const calls: DomainCallExpression[] = [];
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop)) {
+    if (!isDomainPropertyAssignment(prop)) {
       continue;
     }
     const init = prop.initializer;
 
-    if (ts.isArrayLiteralExpression(init)) {
+    if (isDomainArrayLiteralExpression(init)) {
       for (const arrayElement of init.elements) {
-        if (ts.isSpreadElement(arrayElement)) {
+        if (isDomainSpreadElement(arrayElement)) {
           continue;
         }
         if (
-          ts.isCallExpression(arrayElement) &&
+          isDomainCallExpression(arrayElement) &&
           isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
         ) {
           calls.push(arrayElement);
-        } else if (ts.isObjectLiteralExpression(arrayElement)) {
+        } else if (isDomainObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
-            if (!ts.isPropertyAssignment(objectProperty)) {
+            if (!isDomainPropertyAssignment(objectProperty)) {
               continue;
             }
             const propName = propertyAssignmentNameText(objectProperty);
@@ -143,7 +152,7 @@ export function collectCnCallsInsideTv(
             }
             const innerInit = objectProperty.initializer;
             if (
-              ts.isCallExpression(innerInit) &&
+              isDomainCallExpression(innerInit) &&
               isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
             ) {
               calls.push(innerInit);
@@ -151,10 +160,10 @@ export function collectCnCallsInsideTv(
           }
         }
       }
-    } else if (ts.isObjectLiteralExpression(init)) {
-      calls.push(...collectCnCallsInsideTv(sf, init, knownBindings, depth + 1));
+    } else if (isDomainObjectLiteralExpression(init)) {
+      calls.push(...collectCnCallsInsideTv(sourceFile, init, knownBindings, depth + 1));
     } else if (
-      ts.isCallExpression(init) &&
+      isDomainCallExpression(init) &&
       isCnOrTvIdentifier(init.expression, "cn", knownBindings)
     ) {
       calls.push(init);
@@ -164,32 +173,37 @@ export function collectCnCallsInsideTv(
 }
 
 export function listAllCnCallsInsideTvInSourceFile(
-  sf: ts.SourceFile,
+  sourceFile: DomainSourceFile,
   knownBindings: Set<string>,
-): ts.CallExpression[] {
-  const calls: ts.CallExpression[] = [];
-  const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
-    if (ts.isCallExpression(tsNode) && isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)) {
+): DomainCallExpression[] {
+  const calls: DomainCallExpression[] = [];
+  const visitSubtree = (tsNode: DomainAstNode): void => {
+    if (
+      isDomainCallExpression(tsNode) &&
+      isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)
+    ) {
       const arg0 = tsNode.arguments[0];
-      if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-        calls.push(...collectCnCallsInsideTv(sf, arg0, knownBindings, 0));
+      if (arg0 && isDomainObjectLiteralExpression(arg0)) {
+        calls.push(...collectCnCallsInsideTv(sourceFile, arg0, knownBindings, 0));
       }
     }
-    ts.forEachChild(tsNode, visitTypeScriptSubtree);
+    forEachDomainChild(tsNode, visitSubtree);
   };
-  visitTypeScriptSubtree(sf);
+  for (const stmt of sourceFile.statements) {
+    visitSubtree(stmt);
+  }
   return calls;
 }
 
 export function makeStringNode(
   nodes: TailwindClassLiteral[],
-  sf: ts.SourceFile,
+  sourceFile: DomainSourceFile,
   isTvContext: boolean,
-  cnCall?: ts.CallExpression,
+  cnCall?: DomainCallExpression,
 ): StringNode {
   return {
     nodes,
-    sf,
+    sf: sourceFile,
     isTvContext,
     cnCall,
     get primaryClassLiteral() {
@@ -204,15 +218,15 @@ export function slotClassString(stringNode: StringNode): string {
 
 export function emitTvSlot(
   lits: TailwindClassLiteral[],
-  sf: ts.SourceFile,
-  cnCall: ts.CallExpression | undefined,
+  sourceFile: DomainSourceFile,
+  cnCall: DomainCallExpression | undefined,
   results: StringNode[],
   seenNodePos: Set<number>,
 ): void {
   if (lits.length === 0) {
     return;
   }
-  const firstPos = lits[0]!.getStart(sf);
+  const firstPos = lits[0]!.pos;
   if (seenNodePos.has(firstPos)) {
     return;
   }
@@ -226,12 +240,12 @@ export function emitTvSlot(
   if (totalTokens < APPLY_MIN_TOKENS) {
     return;
   }
-  results.push(makeStringNode(lits, sf, true, cnCall));
+  results.push(makeStringNode(lits, sourceFile, true, cnCall));
 }
 
 export function collectTvSlots(
-  sf: ts.SourceFile,
-  obj: ts.ObjectLiteralExpression,
+  sourceFile: DomainSourceFile,
+  obj: DomainObjectLiteralExpression,
   knownBindings: Set<string>,
   results: StringNode[],
   seenNodePos: Set<number>,
@@ -242,15 +256,15 @@ export function collectTvSlots(
   }
 
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop)) {
+    if (!isDomainPropertyAssignment(prop)) {
       continue;
     }
     const init = prop.initializer;
 
-    if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
-      emitTvSlot([init], sf, undefined, results, seenNodePos);
-    } else if (ts.isArrayLiteralExpression(init)) {
-      const arrayPos = init.getStart(sf);
+    if (isDomainTailwindClassLiteral(init)) {
+      emitTvSlot([init], sourceFile, undefined, results, seenNodePos);
+    } else if (isDomainArrayLiteralExpression(init)) {
+      const arrayPos = init.pos;
       if (seenNodePos.has(arrayPos)) {
         continue;
       }
@@ -258,13 +272,13 @@ export function collectTvSlots(
 
       const staticLits: TailwindClassLiteral[] = [];
       for (const arrayElement of init.elements) {
-        if (ts.isSpreadElement(arrayElement)) {
+        if (isDomainSpreadElement(arrayElement)) {
           continue;
         }
-        if (ts.isStringLiteral(arrayElement) || ts.isNoSubstitutionTemplateLiteral(arrayElement)) {
+        if (isDomainTailwindClassLiteral(arrayElement)) {
           staticLits.push(arrayElement);
         } else if (
-          ts.isCallExpression(arrayElement) &&
+          isDomainCallExpression(arrayElement) &&
           isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
         ) {
           for (const arg of arrayElement.arguments) {
@@ -279,9 +293,9 @@ export function collectTvSlots(
               CN_APPLY_LITERAL_WALK_OPTS,
             );
           }
-        } else if (ts.isObjectLiteralExpression(arrayElement)) {
+        } else if (isDomainObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
-            if (!ts.isPropertyAssignment(objectProperty)) {
+            if (!isDomainPropertyAssignment(objectProperty)) {
               continue;
             }
             const propName = propertyAssignmentNameText(objectProperty);
@@ -289,22 +303,21 @@ export function collectTvSlots(
               continue;
             }
             const innerInit = objectProperty.initializer;
-            if (ts.isStringLiteral(innerInit) || ts.isNoSubstitutionTemplateLiteral(innerInit)) {
-              emitTvSlot([innerInit], sf, undefined, results, seenNodePos);
-            } else if (ts.isArrayLiteralExpression(innerInit)) {
+            if (isDomainTailwindClassLiteral(innerInit)) {
+              emitTvSlot([innerInit], sourceFile, undefined, results, seenNodePos);
+            } else if (isDomainArrayLiteralExpression(innerInit)) {
               const innerLits: TailwindClassLiteral[] = [];
               for (const nestedArrayElement of innerInit.elements) {
                 if (
-                  !ts.isSpreadElement(nestedArrayElement) &&
-                  (ts.isStringLiteral(nestedArrayElement) ||
-                    ts.isNoSubstitutionTemplateLiteral(nestedArrayElement))
+                  !isDomainSpreadElement(nestedArrayElement) &&
+                  isDomainTailwindClassLiteral(nestedArrayElement)
                 ) {
                   innerLits.push(nestedArrayElement);
                 }
               }
-              emitTvSlot(innerLits, sf, undefined, results, seenNodePos);
+              emitTvSlot(innerLits, sourceFile, undefined, results, seenNodePos);
             } else if (
-              ts.isCallExpression(innerInit) &&
+              isDomainCallExpression(innerInit) &&
               isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
             ) {
               const cnLits: TailwindClassLiteral[] = [];
@@ -320,18 +333,18 @@ export function collectTvSlots(
                   CN_APPLY_LITERAL_WALK_OPTS,
                 );
               }
-              emitTvSlot(cnLits, sf, innerInit, results, seenNodePos);
+              emitTvSlot(cnLits, sourceFile, innerInit, results, seenNodePos);
             }
           }
         }
       }
       if (staticLits.length > 0) {
-        emitTvSlot(staticLits, sf, undefined, results, seenNodePos);
+        emitTvSlot(staticLits, sourceFile, undefined, results, seenNodePos);
       }
-    } else if (ts.isObjectLiteralExpression(init)) {
-      collectTvSlots(sf, init, knownBindings, results, seenNodePos, depth + 1);
+    } else if (isDomainObjectLiteralExpression(init)) {
+      collectTvSlots(sourceFile, init, knownBindings, results, seenNodePos, depth + 1);
     } else if (
-      ts.isCallExpression(init) &&
+      isDomainCallExpression(init) &&
       isCnOrTvIdentifier(init.expression, "cn", knownBindings)
     ) {
       const cnLits: TailwindClassLiteral[] = [];
@@ -347,22 +360,22 @@ export function collectTvSlots(
           CN_APPLY_LITERAL_WALK_OPTS,
         );
       }
-      emitTvSlot(cnLits, sf, init, results, seenNodePos);
+      emitTvSlot(cnLits, sourceFile, init, results, seenNodePos);
     }
   }
 }
 
-export function collectGroupableStringNodes(sf: ts.SourceFile): StringNode[] {
+export function collectGroupableStringNodes(sourceFile: DomainSourceFile): StringNode[] {
   const results: StringNode[] = [];
   const seenNodePos = new Set<number>();
-  const knownBindings = buildKnownCnTvBindings(sf);
+  const knownBindings = buildKnownCnTvBindings(sourceFile);
 
-  const visitTypeScriptSubtree = (tsNode: ts.Node): void => {
-    if (ts.isCallExpression(tsNode)) {
+  const visitTypeScriptSubtree = (tsNode: DomainAstNode): void => {
+    if (isDomainCallExpression(tsNode)) {
       if (isCnOrTvIdentifier(tsNode.expression, "cn", knownBindings)) {
-        const callPos = tsNode.getStart(sf);
+        const callPos = tsNode.pos;
         if (seenNodePos.has(callPos)) {
-          ts.forEachChild(tsNode, visitTypeScriptSubtree);
+          forEachDomainChild(tsNode, visitTypeScriptSubtree);
           return;
         }
         seenNodePos.add(callPos);
@@ -375,18 +388,20 @@ export function collectGroupableStringNodes(sf: ts.SourceFile): StringNode[] {
           0,
         );
         if (staticLits.length > 0 && totalTokens >= APPLY_MIN_TOKENS) {
-          results.push(makeStringNode(staticLits, sf, false, tsNode));
+          results.push(makeStringNode(staticLits, sourceFile, false, tsNode));
         }
       } else if (isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)) {
         const arg0 = tsNode.arguments[0];
-        if (arg0 && ts.isObjectLiteralExpression(arg0)) {
-          collectTvSlots(sf, arg0, knownBindings, results, seenNodePos);
+        if (arg0 && isDomainObjectLiteralExpression(arg0)) {
+          collectTvSlots(sourceFile, arg0, knownBindings, results, seenNodePos);
         }
       }
     }
-    ts.forEachChild(tsNode, visitTypeScriptSubtree);
+    forEachDomainChild(tsNode, visitTypeScriptSubtree);
   };
 
-  visitTypeScriptSubtree(sf);
+  for (const stmt of sourceFile.statements) {
+    visitTypeScriptSubtree(stmt);
+  }
   return results;
 }

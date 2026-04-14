@@ -1,13 +1,14 @@
-import ts from "typescript";
 import { jsxClassNameStaticLiteral } from "#lib/arrange/domain/ast/collectors-jsx";
+import {
+  findFirstDomainDescendantWhere,
+  isDomainJsxAttribute,
+} from "#lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator";
 
-function firstJsxClassAttr(source: string): ts.JsxAttribute {
-  const sf = ts.createSourceFile("x.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-  const stmt = sf.statements[0] as ts.VariableStatement;
-  const decl = stmt.declarationList.declarations[0]!;
-  const jsx = decl.initializer as ts.JsxSelfClosingElement;
-  const attr = jsx.attributes.properties[0];
-  if (!attr || !ts.isJsxAttribute(attr)) {
+function firstJsxClassAttr(source: string) {
+  const domainSf = parseDomainSourceFile("x.tsx", source);
+  const attr = findFirstDomainDescendantWhere(domainSf, isDomainJsxAttribute);
+  if (!attr || !isDomainJsxAttribute(attr)) {
     throw new Error("expected jsx attribute");
   }
   return attr;
