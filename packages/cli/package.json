@@ -22,7 +22,7 @@
     "directory": "packages/cli"
   },
   "bin": {
-    "codefast": "./dist/bin.js"
+    "codefast": "./dist/bin.mjs"
   },
   "files": [
     "dist",
@@ -33,22 +33,18 @@
   "type": "module",
   "imports": {
     "#*": [
-      "./dist/*.js",
-      "./dist/*/index.js",
-      "./dist/*",
+      "./src/*",
       "./src/*.ts",
       "./src/*.tsx",
       "./src/*/index.ts",
-      "./src/*/index.tsx",
-      "./src/*"
+      "./src/*/index.tsx"
     ]
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "prepack": "pnpm run build",
-    "build": "rm -rf dist && tsgo -p tsconfig.build.json",
+    "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "test": "jest",
@@ -72,7 +68,8 @@
     "@types/node": "catalog:",
     "@types/picomatch": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "tsdown": "catalog:"
   },
   "engines": {
     "node": ">=22.0.0"

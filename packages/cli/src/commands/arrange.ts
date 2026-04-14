@@ -4,8 +4,8 @@ import type { Command } from "commander";
 import { Option } from "commander";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import { loadConfig } from "#lib/config/loader";
-import type { CodefastArrangeConfig } from "#lib/config/schema";
+import { loadConfig } from "#lib/config";
+import type { CodefastArrangeConfig } from "#lib/config";
 import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import {
   analyzeDirectory,
@@ -19,7 +19,7 @@ import {
   suggestCnGroups,
   summarizeGroupBucketLabels,
 } from "#lib/arrange";
-import { findRepoRoot } from "#lib/repo-root";
+import { findRepoRoot } from "#lib/infra/workspace/repo-root";
 
 /** Commander attribute `withClassName` (second long flag `--with-class-name`). */
 function createWithClassNameOption(): Option {

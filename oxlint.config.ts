@@ -40,6 +40,40 @@ export default defineConfig({
         "no-console": "off",
       },
     },
+    {
+      files: ["packages/cli/src/lib/**/domain/**/*.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: ["node:*", "fs", "path", "os", "child_process"],
+                message:
+                  "Pure domain modules must stay platform-agnostic and cannot import Node.js modules.",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      files: ["packages/cli/src/lib/**/*.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: ["../*", "../../*", "../../../*", "../../../../*"],
+                message:
+                  "Relative parent imports (../) are forbidden for scalability. Use absolute aliases (#lib/...) instead.",
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
   plugins: ["import", "react", "jest", "vitest", "jsx-a11y", "typescript"],
   rules: {

@@ -2,11 +2,11 @@ import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
 import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import { loadConfig } from "#lib/config/loader";
-import type { CodefastTagConfig } from "#lib/config/schema";
+import { loadConfig } from "#lib/config";
+import type { CodefastTagConfig } from "#lib/config";
 import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import { createNodeCliFs, createNodeCliLogger, runTagSync } from "#lib/tag";
-import { findRepoRoot } from "#lib/repo-root";
+import { findRepoRoot } from "#lib/infra/workspace/repo-root";
 
 const DEFAULT_TAG_TARGET = "src";
 
