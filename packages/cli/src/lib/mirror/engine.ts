@@ -1,6 +1,5 @@
 import path from "node:path";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import { MIRROR_CONFIG_KEYS, resolvePackageScopedConfig } from "#lib/mirror/config-resolver";
+import type { CliFs } from "#lib/infra/fs-contract";
 import { isDirentList } from "#lib/shared/utils";
 import { DTS_EXTENSION, PACKAGE_JSON_EXPORT, VALID_JS_EXTENSIONS } from "#lib/mirror/constants";
 import type {
@@ -10,6 +9,14 @@ import type {
   MirrorPackageMeta,
   Module,
 } from "#lib/mirror/types";
+
+function resolvePackageScopedConfig<T>(
+  configMap: Record<string, T> | undefined,
+  pkgMeta: MirrorPackageMeta,
+): T | undefined {
+  if (!configMap) return undefined;
+  return configMap[pkgMeta.packageName];
+}
 
 export function normalizePath(relPath: string): string {
   return relPath.split(path.sep).join("/").replace(/\\/g, "/");
@@ -49,7 +56,7 @@ async function isDirectoryCssOnly(fs: CliFs, distDir: string, dirPath: string): 
   }
 }
 
-export function groupFilesByModule(files: string[]): Map<string, Module> {
+function groupFilesByModule(files: string[]): Map<string, Module> {
   const modules = new Map<string, Module>();
 
   for (const file of files) {
@@ -81,7 +88,7 @@ export function groupFilesByModule(files: string[]): Map<string, Module> {
   return modules;
 }
 
-export function toExportPath(distPath: string): string {
+function toExportPath(distPath: string): string {
   if (distPath === "index") return ".";
   if (distPath.endsWith("/index")) return `./${distPath.slice(0, -6)}`;
   return `./${distPath}`;
@@ -99,7 +106,7 @@ const GROUP_ORDER: Record<string, number> = {
   css: 900,
 };
 
-export function getExportGroup(
+function getExportGroup(
   exportPath: string,
   pathTransform: ((pathString: string) => string) | null,
 ): [string, string, number, number] {
@@ -127,20 +134,9 @@ export function getExportGroup(
 
 export function createPathTransform(
   config: MirrorConfig | undefined,
-  /**
-   * Includes legacy path metadata to support backward-compatible config lookup.
-   * @deprecated Path-based configuration keys are deprecated. Use package name instead.
-   * @todo Remove in v2.0
-   */
   pkgMeta: MirrorPackageMeta,
-  logger?: CliLogger,
 ): ((pathString: string) => string) | null {
-  const pathConfig = resolvePackageScopedConfig(
-    config?.pathTransformations,
-    pkgMeta,
-    MIRROR_CONFIG_KEYS.PATH_TRANSFORMATIONS,
-    logger,
-  );
+  const pathConfig = resolvePackageScopedConfig(config?.pathTransformations, pkgMeta);
   if (!pathConfig) return null;
   const { removePrefix } = pathConfig;
   if (!removePrefix) return null;

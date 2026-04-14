@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runMirrorSync } from "#lib/mirror";
+import { runMirrorSync } from "#lib/mirror/sync";
 
 async function mkdirp(filePath: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -73,17 +73,10 @@ describe("runMirrorSync (integration)", () => {
     expect(joinedStdout().includes(String.fromCharCode(27))).toBe(false);
   });
 
-  it("applies pathTransformations from codefast.config.json", async () => {
+  it("applies pathTransformations from injected config", async () => {
     const root = await makeTempRoot();
     const rel = "packages/ui-bridge";
     const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "codefast.config.json"), {
-      mirror: {
-        pathTransformations: {
-          [rel]: { removePrefix: "./internal/" },
-        },
-      },
-    });
     await writeJson(path.join(pkgDir, "package.json"), {
       name: "@fixture/bridge",
       version: "0.0.0",
@@ -94,7 +87,16 @@ describe("runMirrorSync (integration)", () => {
       "export declare const x: number;\n",
     );
 
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        pathTransformations: {
+          "@fixture/bridge": { removePrefix: "./internal/" },
+        },
+      },
+    });
     expect(code).toBe(0);
 
     const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
@@ -108,13 +110,6 @@ describe("runMirrorSync (integration)", () => {
     const root = await makeTempRoot();
     const rel = "packages/custom";
     const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "codefast.config.json"), {
-      mirror: {
-        customExports: {
-          [rel]: { "./extra": "./dist/extra.json" },
-        },
-      },
-    });
     await writeJson(path.join(pkgDir, "package.json"), {
       name: "@fixture/custom",
       version: "0.0.0",
@@ -122,7 +117,16 @@ describe("runMirrorSync (integration)", () => {
     await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
     await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
 
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        customExports: {
+          "@fixture/custom": { "./extra": "./dist/extra.json" },
+        },
+      },
+    });
     expect(code).toBe(0);
 
     const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
@@ -136,13 +140,6 @@ describe("runMirrorSync (integration)", () => {
     const root = await makeTempRoot();
     const rel = "packages/styles";
     const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "codefast.config.json"), {
-      mirror: {
-        cssExports: {
-          [rel]: { enabled: true },
-        },
-      },
-    });
     await writeJson(path.join(pkgDir, "package.json"), {
       name: "@fixture/styles",
       version: "0.0.0",
@@ -152,7 +149,16 @@ describe("runMirrorSync (integration)", () => {
     await writeText(path.join(pkgDir, "dist/theme/a.css"), "a {}\n");
     await writeText(path.join(pkgDir, "dist/theme/b.css"), "b {}\n");
 
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        cssExports: {
+          "@fixture/styles": { enabled: true },
+        },
+      },
+    });
     expect(code).toBe(0);
 
     const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
@@ -165,13 +171,6 @@ describe("runMirrorSync (integration)", () => {
     const root = await makeTempRoot();
     const rel = "packages/styles-force";
     const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "codefast.config.json"), {
-      mirror: {
-        cssExports: {
-          [rel]: { enabled: true, forceExportFiles: true },
-        },
-      },
-    });
     await writeJson(path.join(pkgDir, "package.json"), {
       name: "@fixture/styles2",
       version: "0.0.0",
@@ -181,7 +180,16 @@ describe("runMirrorSync (integration)", () => {
     await writeText(path.join(pkgDir, "dist/blocks/x.css"), "x {}\n");
     await writeText(path.join(pkgDir, "dist/blocks/y.css"), "y {}\n");
 
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: {
+        cssExports: {
+          "@fixture/styles2": { enabled: true, forceExportFiles: true },
+        },
+      },
+    });
     expect(code).toBe(0);
 
     const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
@@ -196,13 +204,6 @@ describe("runMirrorSync (integration)", () => {
     const root = await makeTempRoot();
     const rel = "packages/no-css";
     const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "codefast.config.json"), {
-      mirror: {
-        cssExports: {
-          [rel]: false,
-        },
-      },
-    });
     await writeJson(path.join(pkgDir, "package.json"), {
       name: "@fixture/nocss",
       version: "0.0.0",
@@ -216,6 +217,11 @@ describe("runMirrorSync (integration)", () => {
       noColor: true,
       packageFilter: rel,
       verbose: true,
+      config: {
+        cssExports: {
+          "@fixture/nocss": false,
+        },
+      },
     });
     expect(code).toBe(0);
 
@@ -230,43 +236,22 @@ describe("runMirrorSync (integration)", () => {
     const root = await makeTempRoot();
     const rel = "packages/skipped-one";
     const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "codefast.config.json"), {
-      mirror: { skipPackages: [rel] },
-    });
     await writeJson(path.join(pkgDir, "package.json"), { name: "@fixture/skip", version: "0.0.0" });
     await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
     await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
 
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
+    const code = await runMirrorSync({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      config: { skipPackages: ["@fixture/skip"] },
+    });
     expect(code).toBe(0);
 
     const raw = await fs.readFile(path.join(pkgDir, "package.json"), "utf8");
     const pkg = JSON.parse(raw) as { exports?: unknown };
     expect(pkg.exports).toBeUndefined();
     expect(joinedStdout()).toContain("Skipped");
-  });
-
-  it("reads mirror section from legacy generate-exports.config.json", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/legacy";
-    const pkgDir = path.join(root, rel);
-    await writeJson(path.join(root, "generate-exports.config.json"), {
-      skipPackages: [],
-    });
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/legacy",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
   });
 
   it("skips when package.json is missing", async () => {
@@ -422,50 +407,6 @@ describe("runMirrorSync (integration)", () => {
     expect(Object.keys(pkg.exports)).toEqual(["./package.json"]);
   });
 
-  it("falls through when codefast.config.js fails to import then reads codefast.config.json", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/js-then-json";
-    const pkgDir = path.join(root, rel);
-    await writeText(path.join(root, "codefast.config.js"), "export default +++");
-    await writeJson(path.join(root, "codefast.config.json"), { mirror: {} });
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/jsjson",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-    expect(joinedStdout()).toContain("Could not load codefast.config.js");
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
-  });
-
-  it("falls through when generate-exports.config.js fails then reads generate-exports.config.json", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/legacy-js-json";
-    const pkgDir = path.join(root, rel);
-    await writeText(path.join(root, "generate-exports.config.js"), "export default +++");
-    await writeJson(path.join(root, "generate-exports.config.json"), { skipPackages: [] });
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/legjs",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-    expect(joinedStdout()).toContain("Could not load generate-exports.config.js");
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
-  });
-
   it("uses folder basename when package.json is invalid JSON while skipping missing dist", async () => {
     const root = await makeTempRoot();
     const rel = "packages/bad-json-nodist";
@@ -474,94 +415,6 @@ describe("runMirrorSync (integration)", () => {
     const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
     expect(code).toBe(0);
     expect(joinedStdout()).toContain("dist/ not found");
-  });
-
-  it("warns but continues when codefast.config.json is invalid", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/ok-after-bad-config";
-    const pkgDir = path.join(root, rel);
-    await writeText(path.join(root, "codefast.config.json"), "{");
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/okcfg",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-    expect(joinedStdout()).toContain("Could not parse codefast.config.json");
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
-  });
-
-  it("loads mirror config from codefast.config.mjs when no .js config exists", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/mjs-cfg";
-    const pkgDir = path.join(root, rel);
-    await writeText(
-      path.join(root, "codefast.config.mjs"),
-      "export default { mirror: { skipPackages: [] } };\n",
-    );
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/mjscfg",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
-  });
-
-  it("loads legacy generate-exports.config.js when no codefast config is present", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/legacy-js-only";
-    const pkgDir = path.join(root, rel);
-    await writeText(
-      path.join(root, "generate-exports.config.js"),
-      "export default { skipPackages: [] };\n",
-    );
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/legjsonly",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
-  });
-
-  it("warns when generate-exports.config.json is invalid JSON", async () => {
-    const root = await makeTempRoot();
-    const rel = "packages/bad-legacy-json";
-    const pkgDir = path.join(root, rel);
-    await writeText(path.join(root, "generate-exports.config.json"), "{ not json");
-    await writeJson(path.join(pkgDir, "package.json"), {
-      name: "@fixture/badlegjson",
-      version: "0.0.0",
-    });
-    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
-    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
-
-    const code = await runMirrorSync({ rootDir: root, noColor: true, packageFilter: rel });
-    expect(code).toBe(0);
-    expect(joinedStdout()).toContain("Could not parse generate-exports.config.json");
-    const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {
-      exports: Record<string, unknown>;
-    };
-    expect(pkg.exports["."]).toBeDefined();
   });
 
   it("fails fast when pnpm-workspace.yaml exists but is invalid YAML", async () => {

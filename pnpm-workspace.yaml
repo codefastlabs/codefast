@@ -94,6 +94,7 @@ catalog:
   jest: ^30.3.0
   jest-axe: ^10.0.0
   jest-environment-jsdom: ^30.3.0
+  jiti: ^2.6.1
   jsdom: ^29.0.2
   lint-staged: ^16.4.0
   lucide-react: ^1.8.0
@@ -102,6 +103,7 @@ catalog:
   oxfmt: ^0.44.0
   oxlint: ^1.59.0
   oxlint-tsgolint: ^0.20.0
+  picomatch: ^4.0.4
   postcss: ^8.5.9
   react: ^19.2.5
   react-day-picker: ^9.14.0
@@ -134,7 +136,6 @@ catalog:
   vite: ^8.0.8
   vitest: ^4.1.4
   web-vitals: ^5.2.0
-  picomatch: ^4.0.4
   yaml: ^2.8.3
   zod: ^4.3.6
 

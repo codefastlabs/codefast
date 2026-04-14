@@ -2,8 +2,10 @@ import { realpathSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { createNodeCliFs } from "#lib/infra/node-io";
-import { normalizePath, runMirrorSync } from "#lib/mirror";
+import { loadConfig } from "#lib/config/loader";
+import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+import { runMirrorSync } from "#lib/mirror/sync";
+import { printMirrorConfigWarnings } from "#lib/mirror/reporter";
 import { findRepoRoot } from "#lib/repo-root";
 
 function tryRealpath(entryPath: string): string {
@@ -12,6 +14,10 @@ function tryRealpath(entryPath: string): string {
   } catch {
     return path.resolve(entryPath);
   }
+}
+
+function normalizePath(relPath: string): string {
+  return relPath.split(path.sep).join("/").replace(/\\/g, "/");
 }
 
 export function packageArgToRelative(rootDir: string, arg: string | undefined): string | undefined {
@@ -50,6 +56,7 @@ export function registerMirrorCommand(program: Command): void {
     ) {
       const globals = this.optsWithGlobals() as { color?: boolean };
       const fs = createNodeCliFs();
+      const logger = createNodeCliLogger();
       const rootDir = findRepoRoot(fs);
       let packageFilter: string | undefined;
       try {
@@ -58,13 +65,24 @@ export function registerMirrorCommand(program: Command): void {
         this.error(e instanceof Error ? e.message : String(e));
         return;
       }
+      let mirrorConfig = {};
+      try {
+        const { config, warnings } = await loadConfig(fs, rootDir);
+        printMirrorConfigWarnings(logger, warnings);
+        mirrorConfig = config.mirror ?? {};
+      } catch (e) {
+        this.error(e instanceof Error ? e.message : String(e));
+        return;
+      }
       const exitCode = await runMirrorSync({
         rootDir,
+        config: mirrorConfig,
         verbose: options.verbose,
         /** Commander sets `color: false` when `--no-color` is passed (default `color: true`). */
         noColor: globals.color === false,
         packageFilter,
         fs,
+        logger,
       });
       process.exitCode = exitCode;
     });

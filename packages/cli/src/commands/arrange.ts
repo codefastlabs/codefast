@@ -3,7 +3,7 @@ import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import { loadConfig } from "#lib/shared/config-loader";
+import { loadConfig } from "#lib/config/loader";
 import type { CodefastConfig } from "#lib/shared/config-types";
 import {
   ArrangeError,

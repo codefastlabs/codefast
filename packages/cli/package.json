@@ -58,9 +58,11 @@
   },
   "dependencies": {
     "commander": "catalog:",
+    "jiti": "catalog:",
     "picomatch": "catalog:",
     "typescript": "catalog:",
-    "yaml": "catalog:"
+    "yaml": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
