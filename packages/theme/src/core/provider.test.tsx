@@ -418,7 +418,9 @@ describe("ThemeProvider", () => {
         }
 
         addEventListener(type: string, listener: EventListener): void {
-          if (type !== "message") return;
+          if (type !== "message") {
+            return;
+          }
           let set = listenersByName.get(this.name);
           if (!set) {
             set = new Set();
@@ -428,13 +430,17 @@ describe("ThemeProvider", () => {
         }
 
         removeEventListener(type: string, listener: EventListener): void {
-          if (type !== "message") return;
+          if (type !== "message") {
+            return;
+          }
           listenersByName.get(this.name)?.delete(listener as (event: MessageEvent) => void);
         }
 
         postMessage(data: unknown): void {
           const set = listenersByName.get(this.name);
-          if (!set) return;
+          if (!set) {
+            return;
+          }
           const event = { data } as MessageEvent;
           for (const fn of [...set]) {
             fn(event);

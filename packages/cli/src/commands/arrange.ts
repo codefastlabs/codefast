@@ -71,11 +71,15 @@ export function registerArrangeCommand(program: Command): void {
       const fs = createNodeCliFs();
       const logger = createNodeCliLogger();
       const resolved = target ? path.resolve(target) : defaultTargetPath();
-      if (!checkTargetExists(resolved, fs, logger)) return;
+      if (!checkTargetExists(resolved, fs, logger)) {
+        return;
+      }
 
       const rootDir = findRepoRoot(fs);
       const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
-      if (!loaded) return;
+      if (!loaded) {
+        return;
+      }
 
       printAnalyzeReport(resolved, analyzeDirectory(resolved, fs), logger);
     });
@@ -91,11 +95,15 @@ export function registerArrangeCommand(program: Command): void {
         const fs = createNodeCliFs();
         const logger = createNodeCliLogger();
         const resolved = target ? path.resolve(target) : defaultTargetPath();
-        if (!checkTargetExists(resolved, fs, logger)) return;
+        if (!checkTargetExists(resolved, fs, logger)) {
+          return;
+        }
 
         const rootDir = findRepoRoot(fs);
         const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
-        if (!loaded) return;
+        if (!loaded) {
+          return;
+        }
 
         const exitCode = await runArrangeSync({
           rootDir,
@@ -122,11 +130,15 @@ export function registerArrangeCommand(program: Command): void {
         const fs = createNodeCliFs();
         const logger = createNodeCliLogger();
         const resolved = target ? path.resolve(target) : defaultTargetPath();
-        if (!checkTargetExists(resolved, fs, logger)) return;
+        if (!checkTargetExists(resolved, fs, logger)) {
+          return;
+        }
 
         const rootDir = findRepoRoot(fs);
         const loaded = await loadArrangeCommandConfig(fs, logger, rootDir);
-        if (!loaded) return;
+        if (!loaded) {
+          return;
+        }
 
         const exitCode = await runArrangeSync({
           rootDir,

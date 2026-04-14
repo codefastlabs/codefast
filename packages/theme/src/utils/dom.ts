@@ -38,10 +38,11 @@ export function applyTheme(resolved: ResolvedTheme): void {
  * ```
  */
 export function disableAnimation(nonce?: string): () => void {
-  if (typeof globalThis.window === "undefined")
+  if (typeof globalThis.window === "undefined") {
     return () => {
       /* noop */
     };
+  }
 
   // Respect user's motion preferences
   const prefersReducedMotion = globalThis.window.matchMedia(

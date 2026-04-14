@@ -20,9 +20,15 @@ export const KNOWN_CN_TV_MODULES = new Set([
  */
 export function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
   const norm = moduleSpecifier.replace(/\\/g, "/");
-  if (/(?:^|[./])utils(?:\/|$)/.test(norm)) return true;
-  if (/\/utils\//.test(norm) || /\/utils$/.test(norm)) return true;
-  if (/(?:^|\/)cn\.tsx?$/.test(norm)) return true;
+  if (/(?:^|[./])utils(?:\/|$)/.test(norm)) {
+    return true;
+  }
+  if (/\/utils\//.test(norm) || /\/utils$/.test(norm)) {
+    return true;
+  }
+  if (/(?:^|\/)cn\.tsx?$/.test(norm)) {
+    return true;
+  }
   return false;
 }
 
@@ -33,17 +39,29 @@ export function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
 export function buildKnownCnTvBindings(sf: ts.SourceFile): Set<string> {
   const bindings = new Set<string>();
   for (const stmt of sf.statements) {
-    if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
-    if (stmt.importClause.isTypeOnly) continue;
+    if (!ts.isImportDeclaration(stmt) || !stmt.importClause) {
+      continue;
+    }
+    if (stmt.importClause.isTypeOnly) {
+      continue;
+    }
     const spec = stmt.moduleSpecifier;
-    if (!ts.isStringLiteral(spec)) continue;
+    if (!ts.isStringLiteral(spec)) {
+      continue;
+    }
     const moduleSpecifier = spec.text;
     const isKnown = KNOWN_CN_TV_MODULES.has(moduleSpecifier);
-    if (!isKnown && !moduleLooksLikeCnTvReexport(moduleSpecifier)) continue;
+    if (!isKnown && !moduleLooksLikeCnTvReexport(moduleSpecifier)) {
+      continue;
+    }
 
     const clause = stmt.importClause;
-    if (clause.name) bindings.add(clause.name.text);
-    if (!clause.namedBindings) continue;
+    if (clause.name) {
+      bindings.add(clause.name.text);
+    }
+    if (!clause.namedBindings) {
+      continue;
+    }
     if (ts.isNamedImports(clause.namedBindings)) {
       for (const namedImport of clause.namedBindings.elements) {
         bindings.add(namedImport.name.text);
@@ -64,8 +82,12 @@ export function isCnOrTvIdentifier(
   name: "cn" | "tv",
   knownBindings: Set<string> = EMPTY_CN_TV_BINDINGS,
 ): boolean {
-  if (knownBindings.size === 0) return false;
-  if (ts.isIdentifier(expr) && expr.text === name) return knownBindings.has(expr.text);
+  if (knownBindings.size === 0) {
+    return false;
+  }
+  if (ts.isIdentifier(expr) && expr.text === name) {
+    return knownBindings.has(expr.text);
+  }
   if (ts.isPropertyAccessExpression(expr) && expr.name.text === name) {
     return ts.isIdentifier(expr.expression) && knownBindings.has(expr.expression.text);
   }
@@ -73,8 +95,12 @@ export function isCnOrTvIdentifier(
 }
 
 export function propertyAssignmentNameText(prop: ts.PropertyAssignment): string | undefined {
-  if (ts.isIdentifier(prop.name)) return prop.name.text;
-  if (ts.isStringLiteral(prop.name)) return prop.name.text;
+  if (ts.isIdentifier(prop.name)) {
+    return prop.name.text;
+  }
+  if (ts.isStringLiteral(prop.name)) {
+    return prop.name.text;
+  }
   return undefined;
 }
 
@@ -130,7 +156,9 @@ export function unwrapCnInsideTvCallReplacement(
   sf: ts.SourceFile,
 ): string | undefined {
   const args = call.arguments;
-  if (args.length === 0) return undefined;
+  if (args.length === 0) {
+    return undefined;
+  }
   const baseIndent = indentOfLineContaining(sourceText, call.getStart(sf));
   const innerIndent = `${baseIndent}  `;
   if (args.length === 1) {

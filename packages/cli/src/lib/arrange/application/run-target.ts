@@ -32,7 +32,9 @@ export function runOnTarget(
     const result = groupFile(filePath, options, fs, logger);
     totalFound += result.totalFound;
     totalChanged += result.changed;
-    if (result.changed > 0) modifiedFiles.push(result.filePath);
+    if (result.changed > 0) {
+      modifiedFiles.push(result.filePath);
+    }
   }
 
   out(
@@ -66,7 +68,9 @@ async function runArrangeOnAfterWriteHook(
   hook: CodefastAfterWriteHook | undefined,
   modifiedFiles: string[],
 ): Promise<void> {
-  if (!hook || modifiedFiles.length === 0) return;
+  if (!hook || modifiedFiles.length === 0) {
+    return;
+  }
   try {
     await hook({ files: modifiedFiles });
   } catch (caughtHookError: unknown) {

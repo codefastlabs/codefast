@@ -250,7 +250,9 @@ export const createSlotFunctionFactory = <
     const extraCount = (slotClassName ? 1 : 0) + (slotClass ? 1 : 0);
     const totalLength = baseClasses.length + extraCount;
 
-    if (totalLength === 0) return;
+    if (totalLength === 0) {
+      return;
+    }
 
     // Combine classes directly
     if (extraCount === 0) {
@@ -267,9 +269,13 @@ export const createSlotFunctionFactory = <
       allClasses[classIndex++] = baseClasses[index];
     }
 
-    if (slotClassName) allClasses[classIndex++] = slotClassName;
+    if (slotClassName) {
+      allClasses[classIndex++] = slotClassName;
+    }
 
-    if (slotClass) allClasses[classIndex++] = slotClass;
+    if (slotClass) {
+      allClasses[classIndex++] = slotClass;
+    }
 
     const classString = cx(...allClasses);
 
@@ -307,7 +313,9 @@ export const createSlotFunctionFactory = <
         const extraCount = (slotClassName ? 1 : 0) + (slotClass ? 1 : 0);
         const totalLength = slotClasses.length + extraCount;
 
-        if (totalLength === 0) return;
+        if (totalLength === 0) {
+          return;
+        }
 
         // Combine classes directly
         if (extraCount === 0) {
@@ -328,9 +336,13 @@ export const createSlotFunctionFactory = <
           allClasses[classIndex++] = slotClasses[slotIndex];
         }
 
-        if (slotClassName) allClasses[classIndex++] = slotClassName;
+        if (slotClassName) {
+          allClasses[classIndex++] = slotClassName;
+        }
 
-        if (slotClass) allClasses[classIndex++] = slotClass;
+        if (slotClass) {
+          allClasses[classIndex++] = slotClass;
+        }
 
         const classString = cx(...allClasses);
 

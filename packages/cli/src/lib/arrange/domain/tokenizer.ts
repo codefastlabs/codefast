@@ -13,10 +13,18 @@ import type { Bucket } from "#lib/arrange/domain/types";
  * utility is then bucketed as if it were unconditional, which breaks preview grouping.
  */
 function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
-  if (prefix === "*" || prefix === "**") return true;
-  if (prefix === "inert") return true;
-  if (prefix.startsWith("has-")) return true;
-  if (prefix.startsWith("in-[")) return true;
+  if (prefix === "*" || prefix === "**") {
+    return true;
+  }
+  if (prefix === "inert") {
+    return true;
+  }
+  if (prefix.startsWith("has-")) {
+    return true;
+  }
+  if (prefix.startsWith("in-[")) {
+    return true;
+  }
   if (
     /^nth(?:-last)?(?:-of-type)?(?:-\d+|-\[)/.test(prefix) ||
     /^nth-of-type-\d+$/.test(prefix) ||
@@ -31,8 +39,12 @@ function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
   ) {
     return true;
   }
-  if (/^(?:any-)?pointer-(?:fine|coarse|none)$/.test(prefix)) return true;
-  if (/^(?:portrait|landscape|noscript)$/.test(prefix)) return true;
+  if (/^(?:any-)?pointer-(?:fine|coarse|none)$/.test(prefix)) {
+    return true;
+  }
+  if (/^(?:portrait|landscape|noscript)$/.test(prefix)) {
+    return true;
+  }
   return false;
 }
 
@@ -69,7 +81,9 @@ export function stripVariants(token: string): string {
   const MAX_PASSES = MAX_STRIP_VARIANT_PASSES;
   for (let i = 0; i < MAX_PASSES; i++) {
     const colonIdx = indexOfFirstVariantColon(withoutVariants);
-    if (colonIdx === -1) break;
+    if (colonIdx === -1) {
+      break;
+    }
     withoutVariants = withoutVariants.slice(colonIdx + 1);
   }
   return withoutVariants;
@@ -78,46 +92,86 @@ export function stripVariants(token: string): string {
 /** Outermost variant segment: first `:` at bracket depth 0 → text before it. */
 function firstLeadingVariantPrefix(token: string): string | undefined {
   const colonIdx = indexOfFirstVariantColon(token);
-  if (colonIdx === -1) return undefined;
+  if (colonIdx === -1) {
+    return undefined;
+  }
   return token.slice(0, colonIdx);
 }
 
 function isSelectorVariantToken(token: string): boolean {
   const prefix = firstLeadingVariantPrefix(token);
-  if (prefix === undefined) return false;
+  if (prefix === undefined) {
+    return false;
+  }
 
-  if (prefix === "*" || prefix === "**") return true;
-  if (prefix.startsWith("has-")) return true;
-  if (prefix.startsWith("in-[")) return true;
-  if (prefix.startsWith("group-[")) return true;
-  if (prefix.startsWith("peer-[")) return true;
-  if (prefix.startsWith("not-[")) return true;
+  if (prefix === "*" || prefix === "**") {
+    return true;
+  }
+  if (prefix.startsWith("has-")) {
+    return true;
+  }
+  if (prefix.startsWith("in-[")) {
+    return true;
+  }
+  if (prefix.startsWith("group-[")) {
+    return true;
+  }
+  if (prefix.startsWith("peer-[")) {
+    return true;
+  }
+  if (prefix.startsWith("not-[")) {
+    return true;
+  }
   return false;
 }
 
 function isStateToken(token: string): boolean {
   const prefix = firstLeadingVariantPrefix(token);
-  if (prefix === undefined) return false;
+  if (prefix === undefined) {
+    return false;
+  }
 
-  if (RESPONSIVE_PREFIX.test(token)) return true;
-  if (STATE_PREFIXES.has(prefix)) return true;
+  if (RESPONSIVE_PREFIX.test(token)) {
+    return true;
+  }
+  if (STATE_PREFIXES.has(prefix)) {
+    return true;
+  }
 
-  if (prefix.startsWith("data-[")) return true;
-  if (prefix.startsWith("aria-[")) return true;
-  if (prefix.startsWith("supports-[")) return true;
+  if (prefix.startsWith("data-[")) {
+    return true;
+  }
+  if (prefix.startsWith("aria-[")) {
+    return true;
+  }
+  if (prefix.startsWith("supports-[")) {
+    return true;
+  }
 
   // Tailwind v4: style when inside an ancestor with matching `data-*` (e.g. `in-data-side-left:`,
   // `in-data-[slot=tooltip-content]:`). The short stem `in` is in STATE_PREFIXES but outer
   // prefixes are `in-data-…`, so they must be recognized explicitly.
-  if (prefix.startsWith("in-data-")) return true;
+  if (prefix.startsWith("in-data-")) {
+    return true;
+  }
 
-  if (/^data-(?!\[)/.test(prefix)) return true;
-  if (/^aria-/.test(prefix)) return true;
+  if (/^data-(?!\[)/.test(prefix)) {
+    return true;
+  }
+  if (/^aria-/.test(prefix)) {
+    return true;
+  }
 
-  if (/^(group|peer)-/.test(prefix)) return true;
-  if (/^not-/.test(prefix)) return true;
+  if (/^(group|peer)-/.test(prefix)) {
+    return true;
+  }
+  if (/^not-/.test(prefix)) {
+    return true;
+  }
 
-  if (isCompoundOrMediaVariantPrefix(prefix)) return true;
+  if (isCompoundOrMediaVariantPrefix(prefix)) {
+    return true;
+  }
 
   if (prefix.startsWith("[") && prefix.endsWith("]")) {
     return true;
@@ -440,7 +494,9 @@ export function stateKey(token: string): string {
   let rest = token;
   while (rest.length > 0) {
     const colonIdx = indexOfFirstVariantColon(rest);
-    if (colonIdx === -1) break;
+    if (colonIdx === -1) {
+      break;
+    }
     layers.push(rest.slice(0, colonIdx));
     rest = rest.slice(colonIdx + 1);
   }
@@ -479,15 +535,25 @@ function normalizeSelectorVariantLayer(layer: string): string {
 }
 
 export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
-  if (a === b) return true;
+  if (a === b) {
+    return true;
+  }
   return COMPATIBLE_BUCKET_SETS.some((bucketSet) => bucketSet.has(a) && bucketSet.has(b));
 }
 
 /** Like {@link bucketsCompatible}, but never merge two distinct state / starting / selector variant blobs. */
 export function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
-  if (a === "state" && b === "state") return false;
-  if (a === "starting" && b === "starting") return false;
-  if (a === "selector" && b === "selector") return false;
-  if (a === "arbitrary" || b === "arbitrary") return false;
+  if (a === "state" && b === "state") {
+    return false;
+  }
+  if (a === "starting" && b === "starting") {
+    return false;
+  }
+  if (a === "selector" && b === "selector") {
+    return false;
+  }
+  if (a === "arbitrary" || b === "arbitrary") {
+    return false;
+  }
   return bucketsCompatible(a, b);
 }

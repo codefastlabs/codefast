@@ -84,6 +84,7 @@ export default defineConfig({
     "typescript/no-misused-promises": "error",
     "import/no-cycle": "error",
     "import/no-self-import": "error",
+    curly: ["error", "all"],
     "no-console": "error",
     "no-debugger": "error",
   },

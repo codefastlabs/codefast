@@ -54,7 +54,9 @@ export function collectGroupTargets(sf: ts.SourceFile, filePath: string): GroupT
     kind: "cnArg" as const,
     item: stringNode,
   }));
-  if (!filePath.endsWith(".tsx")) return cnPart;
+  if (!filePath.endsWith(".tsx")) {
+    return cnPart;
+  }
   return [...cnPart, ...collectLongJsxClassNameTargets(sf)];
 }
 
@@ -114,7 +116,9 @@ export function planGroupEditForTarget(
 ): PlannedGroupEdit | undefined {
   if (target.kind === "jsxClassName") {
     const groups = suggestCnGroups(target.lit.text);
-    if (groups.length <= 1) return undefined;
+    if (groups.length <= 1) {
+      return undefined;
+    }
     const start = target.valueNode.getStart(target.sf);
     const end = target.valueNode.getEnd();
     const replacement = formatJsxCnAttributeValue(groups, textAfterUnwrap, start);
@@ -132,7 +136,9 @@ export function planGroupEditForTarget(
 
   const pool = slotClassString(target.item);
   const groups = suggestCnGroups(pool);
-  if (groups.length <= 1) return undefined;
+  if (groups.length <= 1) {
+    return undefined;
+  }
 
   if (
     areCnTailwindPartitionsEquivalent(

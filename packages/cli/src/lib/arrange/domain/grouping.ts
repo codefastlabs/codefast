@@ -45,9 +45,13 @@ export function areCnTailwindPartitionsEquivalent(
 
   const staticPartitionSigs = partitionSignatures(staticLiteralTexts);
   const suggestedPartitionSigs = partitionSignatures(suggestedGroups);
-  if (staticPartitionSigs.length !== suggestedPartitionSigs.length) return false;
+  if (staticPartitionSigs.length !== suggestedPartitionSigs.length) {
+    return false;
+  }
   for (let i = 0; i < staticPartitionSigs.length; i++) {
-    if (staticPartitionSigs[i] !== suggestedPartitionSigs[i]) return false;
+    if (staticPartitionSigs[i] !== suggestedPartitionSigs[i]) {
+      return false;
+    }
   }
   return true;
 }
@@ -91,7 +95,9 @@ function dynamicMaxGroups(tokenCount: number): number {
  * `continue` and `changed` stays false, so the loop exits without spinning.
  */
 export function mergeSingletons(groups: string[]): string[] {
-  if (groups.length <= 1) return groups;
+  if (groups.length <= 1) {
+    return groups;
+  }
   const result = [...groups];
 
   let changed = true;
@@ -99,7 +105,9 @@ export function mergeSingletons(groups: string[]): string[] {
     changed = false;
     for (let i = 0; i < result.length; i++) {
       if (tokenizeClassString(result[i]).length < MIN_GROUP_TOKENS) {
-        if (result.length === 1) break;
+        if (result.length === 1) {
+          break;
+        }
         const myBucket = dominantBucketOfGroup(result[i]);
 
         const prevCompat =
@@ -135,8 +143,12 @@ export function mergeSingletons(groups: string[]): string[] {
 
 /** Tie-break when two merge candidates are both {@link bucketsMergeCompatible} (same bucket or COMPATIBLE_BUCKET_SETS). */
 function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
-  if (leftBucket === rightBucket) return 0;
-  if (bucketsCompatible(leftBucket, rightBucket)) return 0;
+  if (leftBucket === rightBucket) {
+    return 0;
+  }
+  if (bucketsCompatible(leftBucket, rightBucket)) {
+    return 0;
+  }
   return 500;
 }
 
@@ -160,14 +172,18 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
     for (let i = 0; i < result.length - 1; i++) {
       const dominantLeft = dominantBucketOfGroup(result[i]);
       const dominantRight = dominantBucketOfGroup(result[i + 1]);
-      if (!bucketsMergeCompatible(dominantLeft, dominantRight)) continue;
+      if (!bucketsMergeCompatible(dominantLeft, dominantRight)) {
+        continue;
+      }
       mergePairCandidates.push({
         i,
         size: lengths[i] + lengths[i + 1],
         penalty: capMergePenalty(dominantLeft, dominantRight),
       });
     }
-    if (mergePairCandidates.length === 0) break;
+    if (mergePairCandidates.length === 0) {
+      break;
+    }
 
     let best = mergePairCandidates[0]!;
     for (const candidate of mergePairCandidates) {
@@ -199,17 +215,25 @@ export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): str
   while (changed) {
     changed = false;
     for (let i = 0; i < result.length; i++) {
-      if (!chunkIsOnlyEaseTimingMotion(result[i]!)) continue;
+      if (!chunkIsOnlyEaseTimingMotion(result[i]!)) {
+        continue;
+      }
       const easeStr = result[i]!;
       let target = -1;
       for (let j = i + 1; j < result.length; j++) {
-        if (dominantBucketOfGroup(result[j]!) !== "state") continue;
+        if (dominantBucketOfGroup(result[j]!) !== "state") {
+          continue;
+        }
         const classTokens = tokenizeClassString(result[j]!);
-        if (!classTokens.some((classToken) => /^animate/.test(stripVariants(classToken)))) continue;
+        if (!classTokens.some((classToken) => /^animate/.test(stripVariants(classToken)))) {
+          continue;
+        }
         target = j;
         break;
       }
-      if (target === -1) continue;
+      if (target === -1) {
+        continue;
+      }
       result[target] = `${easeStr} ${result[target]!}`.trim();
       result.splice(i, 1);
       changed = true;
@@ -221,7 +245,9 @@ export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): str
 
 function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
   const classTokens = tokenizeClassString(groupStr);
-  if (classTokens.length === 0) return false;
+  if (classTokens.length === 0) {
+    return false;
+  }
   return classTokens.every(
     (classToken) =>
       classifyToken(classToken) === "motion" && /^ease-/.test(stripVariants(classToken)),
@@ -230,7 +256,9 @@ function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
 
 export function suggestCnGroups(classString: string): string[] {
   const tokens = tokenizeClassString(classString);
-  if (tokens.length === 0) return [];
+  if (tokens.length === 0) {
+    return [];
+  }
 
   const classified = tokens.map((classToken, index) => ({
     classToken,
@@ -239,12 +267,16 @@ export function suggestCnGroups(classString: string): string[] {
   }));
   classified.sort((left, right) => {
     const bucketOrderDiff = BUCKET_ORDER[left.bucket] - BUCKET_ORDER[right.bucket];
-    if (bucketOrderDiff !== 0) return bucketOrderDiff;
+    if (bucketOrderDiff !== 0) {
+      return bucketOrderDiff;
+    }
     if (left.bucket === "composite" && right.bucket === "composite") {
       const compositeOrderDiff =
         compositeSecondaryOrder(stripVariants(left.classToken)) -
         compositeSecondaryOrder(stripVariants(right.classToken));
-      if (compositeOrderDiff !== 0) return compositeOrderDiff;
+      if (compositeOrderDiff !== 0) {
+        return compositeOrderDiff;
+      }
     }
     return left.index - right.index;
   });

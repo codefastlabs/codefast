@@ -11,7 +11,9 @@ export function forEachStringLiteralInClassExpression(
   depth = 0,
   options?: ForEachStringLiteralInClassExpressionOptions,
 ): void {
-  if (depth > MAX_CLASS_EXPR_DEPTH) return;
+  if (depth > MAX_CLASS_EXPR_DEPTH) {
+    return;
+  }
 
   if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) {
     sink(expr);
@@ -50,7 +52,9 @@ export function forEachStringLiteralInClassExpression(
 
   if (ts.isArrayLiteralExpression(expr)) {
     for (const arrayElement of expr.elements) {
-      if (ts.isSpreadElement(arrayElement)) continue;
+      if (ts.isSpreadElement(arrayElement)) {
+        continue;
+      }
       forEachStringLiteralInClassExpression(arrayElement, sink, depth + 1, options);
     }
   }

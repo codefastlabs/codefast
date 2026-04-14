@@ -13,8 +13,12 @@ import { indentOfLineContaining } from "#lib/arrange";
 function parseCallee(source: string): ts.Expression {
   const sf = ts.createSourceFile("x.ts", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const stmt = sf.statements[0];
-  if (!ts.isExpressionStatement(stmt)) throw new Error("expected expression statement");
-  if (!ts.isCallExpression(stmt.expression)) throw new Error("expected call expression");
+  if (!ts.isExpressionStatement(stmt)) {
+    throw new Error("expected expression statement");
+  }
+  if (!ts.isCallExpression(stmt.expression)) {
+    throw new Error("expected call expression");
+  }
   return stmt.expression.expression;
 }
 

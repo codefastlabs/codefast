@@ -21,13 +21,19 @@ export function walkTsxFiles(rootDirectoryPath: string, fs: CliFs): string[] {
     const entryStats = fs.statSync(entryPath);
     if (entryStats.isDirectory()) {
       for (const childName of fs.readdirSync(entryPath)) {
-        if (DEFAULT_SKIP_DIRS.has(childName)) continue;
+        if (DEFAULT_SKIP_DIRS.has(childName)) {
+          continue;
+        }
         visit(path.join(entryPath, childName));
       }
       return;
     }
-    if (entryPath.endsWith(".d.ts")) return;
-    if (entryPath.endsWith(".tsx") || entryPath.endsWith(".ts")) result.push(entryPath);
+    if (entryPath.endsWith(".d.ts")) {
+      return;
+    }
+    if (entryPath.endsWith(".tsx") || entryPath.endsWith(".ts")) {
+      result.push(entryPath);
+    }
   };
   visit(rootDirectoryPath);
   return result;

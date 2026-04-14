@@ -33,14 +33,20 @@ import type {
 export const cx = (...classes: ClassValue[]): string => {
   const length = classes.length;
 
-  if (length === 0) return "";
+  if (length === 0) {
+    return "";
+  }
 
   if (length === 1) {
     const single = classes[0];
 
-    if (typeof single === "string") return single;
+    if (typeof single === "string") {
+      return single;
+    }
 
-    if (!single) return "";
+    if (!single) {
+      return "";
+    }
 
     return clsx(single);
   }
@@ -86,14 +92,20 @@ export const cx = (...classes: ClassValue[]): string => {
 export const cn = (...classes: ClassValue[]): string => {
   const length = classes.length;
 
-  if (length === 0) return "";
+  if (length === 0) {
+    return "";
+  }
 
   if (length === 1) {
     const single = classes[0];
 
-    if (typeof single === "string") return twMerge(single);
+    if (typeof single === "string") {
+      return twMerge(single);
+    }
 
-    if (!single) return "";
+    if (!single) {
+      return "";
+    }
 
     return twMerge(clsx(single));
   }
