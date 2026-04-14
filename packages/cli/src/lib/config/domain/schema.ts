@@ -33,6 +33,7 @@ export const mirrorConfigSchema = z
 
 export const codefastTagConfigSchema = z
   .object({
+    skipPackages: z.array(z.string()).optional(),
     onAfterWrite: hookSchema.optional(),
   })
   .strict();

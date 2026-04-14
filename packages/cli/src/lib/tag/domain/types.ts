@@ -62,6 +62,7 @@ export type TagSyncResult = {
   mode: "applied" | "dry-run";
   selectedTargets: TagResolvedTarget[];
   resolvedTargets: TagResolvedTarget[];
+  skippedPackages: string[];
   targetResults: TagTargetExecutionResult[];
   filesScanned: number;
   filesChanged: number;
@@ -76,6 +77,7 @@ export type TagSyncResult = {
 export type TagSyncOptions = {
   rootDir: string;
   config?: CodefastTagConfig;
+  skipPackages?: string[];
   targetPath?: string;
   write: boolean;
   fs: CliFs;

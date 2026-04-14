@@ -54,6 +54,7 @@ export function registerTagCommand(program: Command): void {
       const tagResult = await runTagSync({
         rootDir,
         config: tagConfig,
+        skipPackages: tagConfig.skipPackages,
         targetPath: target ? path.resolve(target) : undefined,
         write: !options.dryRun,
         fs,

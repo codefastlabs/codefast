@@ -346,6 +346,32 @@ function resolveTargetSelection(
   };
 }
 
+function filterSkippedCandidates(
+  targetCandidates: TagTargetCandidate[],
+  skipPackages: readonly string[] | undefined,
+): { includedCandidates: TagTargetCandidate[]; skippedPackages: string[] } {
+  if (!skipPackages || skipPackages.length === 0) {
+    return {
+      includedCandidates: targetCandidates,
+      skippedPackages: [],
+    };
+  }
+
+  const skipPackageSet = new Set(skipPackages);
+  const includedCandidates: TagTargetCandidate[] = [];
+  const skippedPackages: string[] = [];
+  for (const candidate of targetCandidates) {
+    const packageName = candidate.packageName;
+    if (packageName && skipPackageSet.has(packageName)) {
+      skippedPackages.push(packageName);
+      continue;
+    }
+    includedCandidates.push(candidate);
+  }
+
+  return { includedCandidates, skippedPackages };
+}
+
 async function runOnResolvedTarget(
   resolvedTarget: TagResolvedTarget,
   write: boolean,
@@ -394,7 +420,11 @@ async function runOnResolvedTarget(
 export async function runTagSync(opts: TagSyncOptions): Promise<TagSyncResult> {
   const { fs } = opts;
   const targetCandidates = await resolveTagTargetCandidates(opts.rootDir, opts.targetPath, fs);
-  const selectedTargets = targetCandidates.map((candidate) =>
+  const { includedCandidates, skippedPackages } = filterSkippedCandidates(
+    targetCandidates,
+    opts.skipPackages,
+  );
+  const selectedTargets = includedCandidates.map((candidate) =>
     resolveTargetSelection(candidate, opts.rootDir, fs),
   );
   const targetResults = await Promise.all(
@@ -433,6 +463,7 @@ export async function runTagSync(opts: TagSyncOptions): Promise<TagSyncResult> {
     mode: opts.write ? "applied" : "dry-run",
     selectedTargets,
     resolvedTargets: selectedTargets,
+    skippedPackages,
     targetResults,
     filesScanned,
     filesChanged,

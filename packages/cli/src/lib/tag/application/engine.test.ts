@@ -144,6 +144,7 @@ describe("runTagSync", () => {
       );
       expect(runResult.versionSummary).toBe("mixed");
       expect(runResult.distinctVersions).toEqual(["1.0.0", "2.0.0"]);
+      expect(runResult.skippedPackages).toEqual([]);
       expect(runResult.filesChanged).toBe(2);
       expect(startedTargets.sort((left, right) => left.localeCompare(right))).toEqual([
         "packages/one/src",
@@ -153,6 +154,54 @@ describe("runTagSync", () => {
         "packages/one/src",
         "packages/two/src",
       ]);
+    } finally {
+      fs.rmSync(rootDir, { recursive: true, force: true });
+    }
+  });
+
+  it("skips workspace packages listed in skipPackages", async () => {
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "tag-workspace-skip-"));
+    const packageOneDir = path.join(rootDir, "packages", "one");
+    const packageTwoDir = path.join(rootDir, "packages", "two");
+    const packageOneSrcDir = path.join(packageOneDir, "src");
+    const packageTwoSrcDir = path.join(packageTwoDir, "src");
+    try {
+      fs.mkdirSync(packageOneSrcDir, { recursive: true });
+      fs.mkdirSync(packageTwoSrcDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(rootDir, "pnpm-workspace.yaml"),
+        "packages:\n  - 'packages/*'\n",
+        "utf8",
+      );
+      fs.writeFileSync(
+        path.join(packageOneDir, "package.json"),
+        '{"name":"@scope/one","version":"1.0.0"}',
+        "utf8",
+      );
+      fs.writeFileSync(
+        path.join(packageTwoDir, "package.json"),
+        '{"name":"@scope/two","version":"2.0.0"}',
+        "utf8",
+      );
+      fs.writeFileSync(path.join(packageOneSrcDir, "index.ts"), "export const one = 1;\n", "utf8");
+      fs.writeFileSync(path.join(packageTwoSrcDir, "index.ts"), "export const two = 2;\n", "utf8");
+
+      const runResult = await runTagSync({
+        rootDir,
+        write: true,
+        fs: tagFs,
+        skipPackages: ["@scope/two"],
+      });
+
+      expect(runResult.skippedPackages).toEqual(["@scope/two"]);
+      expect(runResult.selectedTargets).toHaveLength(1);
+      expect(runResult.selectedTargets[0]?.packageName).toBe("@scope/one");
+      expect(fs.readFileSync(path.join(packageOneSrcDir, "index.ts"), "utf8")).toContain(
+        "* @since 1.0.0",
+      );
+      expect(fs.readFileSync(path.join(packageTwoSrcDir, "index.ts"), "utf8")).not.toContain(
+        "* @since 2.0.0",
+      );
     } finally {
       fs.rmSync(rootDir, { recursive: true, force: true });
     }
