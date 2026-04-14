@@ -9,5 +9,19 @@
     "@codefast/typescript-config": "0.3.12",
     "@codefast/ui": "0.3.12"
   },
-  "changesets": []
+  "changesets": [
+    "big-bees-feel",
+    "fluffy-parrots-call",
+    "gentle-dingos-guess",
+    "gentle-dodos-clap",
+    "great-memes-camp",
+    "lucky-peaches-happen",
+    "new-zebras-wait",
+    "six-wasps-poke",
+    "smooth-jokes-act",
+    "some-meteors-own",
+    "sour-years-unite",
+    "tender-lines-smile",
+    "twenty-flies-fold"
+  ]
 }
