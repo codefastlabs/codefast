@@ -146,6 +146,12 @@ export function logPackageSuccess(
   out("");
 }
 
+export function logPrunedStaleExport(logger: CliLogger, exportSpecifier: string): void {
+  logger.out(
+    `  ${Colors.DIM}└─${Colors.RESET} ${Colors.GRAY}Pruned stale export: ${exportSpecifier}${Colors.RESET}`,
+  );
+}
+
 export function logPackageError(
   logger: CliLogger,
   index: number,

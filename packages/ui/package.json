@@ -326,6 +326,10 @@
       "types": "./dist/hooks/use-pagination.d.ts",
       "import": "./dist/hooks/use-pagination.js"
     },
+    "./lib/utils": {
+      "types": "./dist/lib/utils.d.ts",
+      "import": "./dist/lib/utils.js"
+    },
     "./primitives/checkbox-group": {
       "types": "./dist/primitives/checkbox-group.d.ts",
       "import": "./dist/primitives/checkbox-group.js"
@@ -341,10 +345,6 @@
     "./primitives/progress-circle": {
       "types": "./dist/primitives/progress-circle.d.ts",
       "import": "./dist/primitives/progress-circle.js"
-    },
-    "./lib/utils": {
-      "types": "./dist/lib/utils.d.ts",
-      "import": "./dist/lib/utils.js"
     },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"

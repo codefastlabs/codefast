@@ -9,12 +9,14 @@ export interface ExportEntry {
 
 /** Final `package.json#exports` map (conditional exports + string shims + `./package.json`). */
 export type ExportMapData = Record<string, ExportEntry | string>;
+export type ExportOriginalPathBySpecifier = Record<string, string>;
 
 /** Alias for the exports object shape produced by the mirror engine. */
 export type ExportMap = ExportMapData;
 
 export interface ModuleFiles {
   js: string | null;
+  mjs: string | null;
   cjs: string | null;
   dts: string | null;
 }
@@ -37,6 +39,7 @@ export type PackageJsonShape = {
 
 export interface GenerateExportsResult {
   exports: ExportMapData;
+  originalPathBySpecifier: ExportOriginalPathBySpecifier;
   jsCount: number;
   cssCount: number;
 }
