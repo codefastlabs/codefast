@@ -1,11 +1,12 @@
 import { z } from "zod";
-import type { CodefastAfterWriteHook } from "#lib/shared/config-types";
 
-const hookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
+export type CodefastAfterWriteHook = (ctx: { files: string[] }) => void | Promise<void>;
+
+export const hookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
   message: "Expected a function",
 });
 
-const mirrorConfigSchema = z
+export const mirrorConfigSchema = z
   .object({
     skipPackages: z.array(z.string()).optional(),
     pathTransformations: z
@@ -30,13 +31,13 @@ const mirrorConfigSchema = z
   })
   .strict();
 
-const codefastTagConfigSchema = z
+export const codefastTagConfigSchema = z
   .object({
     onAfterWrite: hookSchema.optional(),
   })
   .strict();
 
-const codefastArrangeConfigSchema = z
+export const codefastArrangeConfigSchema = z
   .object({
     onAfterWrite: hookSchema.optional(),
   })
@@ -49,3 +50,8 @@ export const codefastConfigSchema = z
     arrange: codefastArrangeConfigSchema.optional(),
   })
   .strict();
+
+export type MirrorConfig = z.infer<typeof mirrorConfigSchema>;
+export type CodefastTagConfig = z.infer<typeof codefastTagConfigSchema>;
+export type CodefastArrangeConfig = z.infer<typeof codefastArrangeConfigSchema>;
+export type CodefastConfig = z.infer<typeof codefastConfigSchema>;

@@ -9,5 +9,5 @@
     "@codefast/typescript-config": "0.3.12",
     "@codefast/ui": "0.3.12"
   },
-  "changesets": ["gentle-dingos-guess"]
+  "changesets": []
 }

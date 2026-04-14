@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+import type { MirrorConfig } from "#lib/config/schema";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/constants";
 import { createPathTransform, generateExports } from "#lib/mirror/engine";
 import { resolvePackageFilterUnderRoot } from "#lib/mirror/package-filter";
@@ -18,7 +19,6 @@ import {
 } from "#lib/mirror/reporter";
 import type {
   GlobalStats,
-  MirrorConfig,
   MirrorOptions,
   MirrorPackageMeta,
   PackageJsonShape,

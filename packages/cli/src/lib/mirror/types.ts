@@ -1,4 +1,5 @@
 import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import type { MirrorConfig } from "#lib/config/schema";
 
 export interface ExportEntry {
   types: string;
@@ -21,17 +22,6 @@ export interface ModuleFiles {
 export interface Module {
   path: string;
   files: ModuleFiles;
-}
-
-export interface MirrorConfig {
-  skipPackages?: string[];
-  pathTransformations?: Record<string, { removePrefix?: string }>;
-  customExports?: Record<string, Record<string, string>>;
-  cssExports?: Record<
-    string,
-    | boolean
-    | { enabled?: boolean; customExports?: Record<string, string>; forceExportFiles?: boolean }
-  >;
 }
 
 export interface MirrorPackageMeta {
