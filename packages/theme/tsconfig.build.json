@@ -1,10 +1,6 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@codefast/typescript-config/build-base.json"],
   "compilerOptions": {
-    "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
     "rootDir": "src",
     "outDir": "dist"
   },
