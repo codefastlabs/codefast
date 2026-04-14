@@ -23,6 +23,7 @@ import { runTagSync } from "#lib/tag/application/engine";
 import type { TagSyncExecutionInput, TagSyncRunDeps } from "#lib/tag/application/engine";
 import type { TagSyncResult } from "#lib/tag/domain/types";
 import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
+import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
 
 /**
  * Composition root: wires default infra adapters and exposes thin use-case facades.
@@ -97,6 +98,11 @@ export function createCliContainer(): CliContainer {
   const tagDeps: TagSyncRunDeps = {
     fs,
     targetResolver,
+    typeScriptTreeWalk: maybeTelemetry(
+      "TypeScriptTreeWalkPort",
+      tagTypeScriptTreeWalkAdapter,
+      logger,
+    ),
   };
 
   return {

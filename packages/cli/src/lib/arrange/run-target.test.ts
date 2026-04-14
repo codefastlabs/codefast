@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs, createNodeCliLogger, runOnTarget } from "#lib/arrange";
+import { runOnTarget } from "#lib/arrange/application/run-target";
+import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
 

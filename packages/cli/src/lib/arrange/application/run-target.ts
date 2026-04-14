@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#lib/config";
+import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#lib/config/domain/schema";
 import { appError, type AppError } from "#lib/core/domain/errors";
 import { err, ok, type Result } from "#lib/core/domain/result";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";

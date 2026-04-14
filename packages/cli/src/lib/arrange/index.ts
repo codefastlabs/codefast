@@ -23,9 +23,6 @@
  *   pnpm exec codefast arrange group -- … --tv
  */
 
-import { ensureCnImport as ensureCnImportOnDomainSourceFile } from "#lib/arrange/domain/imports";
-import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator";
-
 export { analyzeDirectory } from "#lib/arrange/application/analyze";
 export { printAnalyzeReport } from "#lib/arrange/presentation/report";
 export { groupFile } from "#lib/arrange/application/group-file";
@@ -51,18 +48,7 @@ export {
   MAX_STRIP_VARIANT_PASSES,
 } from "#lib/arrange/domain/constants";
 export { cnModuleSpecifierForFile } from "#lib/arrange/domain/imports";
-
-/** Public API: parses source text then applies domain import injection rules. */
-export function ensureCnImport(
-  sourceText: string,
-  filePath: string,
-  cnImportOverride?: string,
-): string {
-  return ensureCnImportOnDomainSourceFile(
-    parseDomainSourceFile(filePath, sourceText),
-    cnImportOverride,
-  );
-}
+export { ensureCnImport } from "#lib/arrange/infra/ensure-cn-import";
 export {
   areCnTailwindPartitionsEquivalent,
   capGroups,

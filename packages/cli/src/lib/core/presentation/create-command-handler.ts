@@ -6,8 +6,8 @@ import { appError, type AppError } from "#lib/core/domain/errors";
 import { err, ok, type Result } from "#lib/core/domain/result";
 import { createCliContainer, type CliContainer } from "#lib/core/infra/container";
 import { consumeCliAppError, runCliResultAsync } from "#lib/core/presentation/cli-executor";
-import { loadConfig } from "#lib/config";
-import type { CodefastConfig } from "#lib/config";
+import type { CodefastConfig } from "#lib/config/domain/schema";
+import { loadConfig } from "#lib/config/infra/loader";
 import { printConfigSchemaWarnings } from "#lib/infra/config-reporter";
 import { findRepoRoot } from "#lib/infra/workspace/repo-root";
 

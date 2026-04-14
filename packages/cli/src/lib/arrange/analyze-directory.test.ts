@@ -1,12 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-  analyzeDirectory,
-  createNodeCliFs,
-  createNodeCliLogger,
-  printAnalyzeReport,
-} from "#lib/arrange";
+import { analyzeDirectory } from "#lib/arrange/application/analyze";
+import { printAnalyzeReport } from "#lib/arrange/presentation/report";
+import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
 import type { AnalyzeReport } from "#lib/arrange/domain/types";
 import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";

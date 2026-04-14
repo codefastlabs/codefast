@@ -1,7 +1,5 @@
-import {
-  forEachStringLiteralInClassExpression,
-  mergeCnUnconditionalLiteralPoolForTest,
-} from "#lib/arrange";
+import { forEachStringLiteralInClassExpression } from "#lib/arrange/domain/ast/collectors-cn";
+import { mergeCnUnconditionalLiteralPoolForTest } from "#lib/arrange/infra/merge-cn-literal-pool-for-test";
 import { MAX_CLASS_EXPR_DEPTH } from "#lib/arrange/domain/constants";
 import {
   isDomainCallExpression,

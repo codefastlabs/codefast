@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs, DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/arrange";
+import { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/arrange/infra/walk";
+import { createNodeCliFs } from "#lib/infra/node-io";
 
 const arrangeFs = createNodeCliFs();
 

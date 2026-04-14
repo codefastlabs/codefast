@@ -1,16 +1,21 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { createNodeCliFs } from "#lib/infra/node-io";
 import {
-  createNodeCliFs,
   resolveNearestPackageVersion,
   runTagOnTarget,
   runTagSync,
-} from "#lib/tag";
+} from "#lib/tag/application/engine";
 import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
+import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
 
 const tagFs = createNodeCliFs();
-const tagSyncDeps = { fs: tagFs, targetResolver: tagTargetResolverAdapter };
+const tagSyncDeps = {
+  fs: tagFs,
+  targetResolver: tagTargetResolverAdapter,
+  typeScriptTreeWalk: tagTypeScriptTreeWalkAdapter,
+};
 
 function withTempPackage(
   fileName: string,
@@ -56,7 +61,12 @@ const c = 3;
 export { c };
 `;
     withTempPackage("index.ts", before, ({ sourceFile, rootDir }) => {
-      const result = runTagOnTarget(path.join(rootDir, "src"), { write: true }, tagFs);
+      const result = runTagOnTarget(
+        path.join(rootDir, "src"),
+        { write: true },
+        tagFs,
+        tagTypeScriptTreeWalkAdapter,
+      );
       const after = fs.readFileSync(sourceFile, "utf8");
 
       expect(result.version).toBe("1.2.3");
@@ -73,7 +83,12 @@ export { c };
 export type TailwindClassBlob = string;
 `;
     withTempPackage("types.ts", before, ({ sourceFile, rootDir }) => {
-      runTagOnTarget(path.join(rootDir, "src"), { write: true }, tagFs);
+      runTagOnTarget(
+        path.join(rootDir, "src"),
+        { write: true },
+        tagFs,
+        tagTypeScriptTreeWalkAdapter,
+      );
       const after = fs.readFileSync(sourceFile, "utf8");
       expect(after).toContain(`/**
  * String or no-substitution template literal used as a Tailwind class blob.
@@ -86,7 +101,12 @@ export type TailwindClassBlob = string;
   it("supports dry-run mode without changing files", () => {
     const before = "export interface User { id: string }\n";
     withTempPackage("types.ts", before, ({ sourceFile, rootDir }) => {
-      const result = runTagOnTarget(path.join(rootDir, "src"), { write: false }, tagFs);
+      const result = runTagOnTarget(
+        path.join(rootDir, "src"),
+        { write: false },
+        tagFs,
+        tagTypeScriptTreeWalkAdapter,
+      );
       const after = fs.readFileSync(sourceFile, "utf8");
 
       expect(result.filesChanged).toBe(1);

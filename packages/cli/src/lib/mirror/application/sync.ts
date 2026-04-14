@@ -3,7 +3,7 @@ import { appError, type AppError } from "#lib/core/domain/errors";
 import { err, ok, type Result } from "#lib/core/domain/result";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
-import type { MirrorConfig } from "#lib/config";
+import type { MirrorConfig } from "#lib/config/domain/schema";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/domain/constants";
 import { createPathTransform, generateExports } from "#lib/mirror/application/engine";
 import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";

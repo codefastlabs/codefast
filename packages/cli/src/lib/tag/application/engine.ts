@@ -2,13 +2,13 @@ import path from "node:path";
 import ts from "typescript";
 import { appError, type AppError } from "#lib/core/domain/errors";
 import { err, ok, type Result } from "#lib/core/domain/result";
-import { applyEditsDescending, indentOfLineContaining } from "#lib/arrange";
-import { walkTsxFiles } from "#lib/arrange";
-import type { CodefastAfterWriteHook, CodefastTagConfig } from "#lib/config";
+import { applyEditsDescending, indentOfLineContaining } from "#lib/arrange/domain/ast/ast-helpers";
+import type { CodefastAfterWriteHook, CodefastTagConfig } from "#lib/config/domain/schema";
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
 import type { TagSyncRunRequest } from "#lib/tag/application/requests/tag-sync.request";
 import type { TagTargetResolverPort } from "#lib/tag/application/ports/target-resolver.port";
+import type { TypeScriptTreeWalkPort } from "#lib/tag/application/ports/typescript-tree-walk.port";
 import type {
   TagFileResult,
   TagProgressListener,
@@ -24,6 +24,7 @@ import type {
 export type TagSyncRunDeps = {
   readonly fs: CliFs;
   readonly targetResolver: TagTargetResolverPort;
+  readonly typeScriptTreeWalk: TypeScriptTreeWalkPort;
 };
 
 export type TagSyncExecutionInput = TagSyncRunRequest & {
@@ -273,12 +274,17 @@ export function resolveNearestPackageVersion(targetPath: string, fs: CliFs): str
   throw new Error(`Unable to locate ${PACKAGE_JSON} from target: ${targetPath}`);
 }
 
-export function runTagOnTarget(targetPath: string, opts: TagRunOptions, fs: CliFs): TagRunResult {
+export function runTagOnTarget(
+  targetPath: string,
+  opts: TagRunOptions,
+  fs: CliFs,
+  typeScriptTreeWalk: TypeScriptTreeWalkPort,
+): TagRunResult {
   const resolvedTarget = path.resolve(targetPath);
   const version = resolveNearestPackageVersion(resolvedTarget, fs);
 
   const files = fs.statSync(resolvedTarget).isDirectory()
-    ? walkTsxFiles(resolvedTarget, fs)
+    ? typeScriptTreeWalk.walkTsxFiles(resolvedTarget, fs)
     : [resolvedTarget];
   const tsFiles = files.filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
 
@@ -408,6 +414,7 @@ async function runOnResolvedTarget(
   resolvedTarget: TagResolvedTarget,
   write: boolean,
   fs: CliFs,
+  typeScriptTreeWalk: TypeScriptTreeWalkPort,
   listener: TagProgressListener | undefined,
 ): Promise<TagTargetExecutionResult> {
   listener?.onTargetStarted(resolvedTarget);
@@ -424,7 +431,7 @@ async function runOnResolvedTarget(
   }
 
   try {
-    const runResult = runTagOnTarget(absoluteTargetPath, { write }, fs);
+    const runResult = runTagOnTarget(absoluteTargetPath, { write }, fs, typeScriptTreeWalk);
     const targetRunResult: TagTargetExecutionResult = {
       target: resolvedTarget,
       targetExists: true,
@@ -454,7 +461,7 @@ export async function runTagSync(
   deps: TagSyncRunDeps,
 ): Promise<Result<TagSyncResult, AppError>> {
   try {
-    const { fs, targetResolver } = deps;
+    const { fs, targetResolver, typeScriptTreeWalk } = deps;
     const tagConfig = input.config as CodefastTagConfig | undefined;
     const targetCandidates = await targetResolver.resolveTagTargetCandidates(
       input.rootDir,
@@ -470,7 +477,7 @@ export async function runTagSync(
     );
     const targetResults = await Promise.all(
       selectedTargets.map((resolvedTarget) =>
-        runOnResolvedTarget(resolvedTarget, input.write, fs, input.listener),
+        runOnResolvedTarget(resolvedTarget, input.write, fs, typeScriptTreeWalk, input.listener),
       ),
     );
 
