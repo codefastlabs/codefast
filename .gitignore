@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 #
 # Stack: pnpm workspaces + Turborepo. App: apps/docs (TanStack Start, Vite, Nitro).
-# Libraries: Rslib builds → dist/.
+# Libraries: TypeScript emit (tsgo) → dist/.
 
 # dependencies
 node_modules
