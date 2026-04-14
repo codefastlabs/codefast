@@ -1,5 +1,15 @@
 # @codefast/cli
 
+## 0.3.13-canary.1
+
+### Patch Changes
+
+- [`02b16bc`](https://github.com/codefastlabs/codefast/commit/02b16bcb5e13712294a2fe285461bd8c9faa3c51) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): update tsconfig and tsdown for consistency
+
+- [`317237b`](https://github.com/codefastlabs/codefast/commit/317237b72983d75365739003af6e17f476143660) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): exclude test files from tsdown entry points
+
+- [`fd3ee2e`](https://github.com/codefastlabs/codefast/commit/fd3ee2ee35dc780e8e925759e6520e51f0cb6320) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance export generation and stale export pruning
+
 ## 0.3.13-canary.0
 
 ### Patch Changes
