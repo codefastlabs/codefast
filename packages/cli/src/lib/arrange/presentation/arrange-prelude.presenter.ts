@@ -19,7 +19,11 @@ export async function prepareArrangeTargetWorkspaceAndConfig(
     readonly rawTarget: string | undefined;
   },
 ): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>> {
-  const resolvedTarget = resolveArrangeCliTargetPath(args.currentWorkingDirectory, args.rawTarget);
+  const resolvedTarget = resolveArrangeCliTargetPath({
+    fs: cli.fs,
+    currentWorkingDirectory: args.currentWorkingDirectory,
+    rawTarget: args.rawTarget,
+  });
   if (!cli.fs.existsSync(resolvedTarget)) {
     return err(appError("NOT_FOUND", `Not found: ${resolvedTarget}`));
   }

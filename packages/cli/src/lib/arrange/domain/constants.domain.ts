@@ -195,6 +195,3 @@ export const STATE_PREFIXES = new Set([
   "details-content",
   "popover-open",
 ]);
-
-/** Default directory for arrange analyze/preview/apply when no target is passed. */
-export const DEFAULT_ARRANGE_TARGET = "packages/ui/src/components";
