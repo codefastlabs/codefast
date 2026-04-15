@@ -1,9 +1,11 @@
 import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
-import { ArrangeAnalyzeDirectoryRequestSchema } from "#lib/arrange/application/requests/analyze-directory.request";
-import { ArrangeSyncRunRequestSchema } from "#lib/arrange/application/requests/arrange-sync.request";
-import { ArrangeSuggestGroupsRequestSchema } from "#lib/arrange/application/requests/suggest-groups.request";
+import {
+  ArrangeAnalyzeDirectoryRequestSchema,
+  ArrangeSuggestGroupsRequestSchema,
+  ArrangeSyncRunRequestSchema,
+} from "#lib/arrange/presentation/arrange-cli-schema.presenter";
 import { createCliContainer } from "#lib/core/infra/container.adapter";
 import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
 import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";

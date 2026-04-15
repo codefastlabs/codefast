@@ -3,7 +3,7 @@ import { Command } from "commander";
 import { createCliContainer } from "#lib/core/infra/container.adapter";
 import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
 import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
-import { TagSyncRunRequestSchema } from "#lib/tag/application/requests/tag-sync.request";
+import { TagSyncRunRequestSchema } from "#lib/tag/presentation/tag-cli-schema.presenter";
 
 export function registerTagCommand(program: Command): void {
   program
