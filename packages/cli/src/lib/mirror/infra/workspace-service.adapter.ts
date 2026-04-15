@@ -1,8 +1,8 @@
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract.port";
 import type { WorkspaceServicePort } from "#lib/mirror/application/ports/workspace-service.port";
-import type { FindWorkspacePackagesResult } from "#lib/mirror/domain/types";
-import { resolvePackageFilterUnderRoot } from "#lib/mirror/infra/package-filter";
-import { findWorkspacePackageRelPaths } from "#lib/mirror/infra/workspace-packages";
+import type { FindWorkspacePackagesResult } from "#lib/mirror/domain/types.domain";
+import { resolvePackageFilterUnderRoot } from "#lib/mirror/infra/package-filter.adapter";
+import { findWorkspacePackageRelPaths } from "#lib/mirror/infra/workspace-packages.adapter";
 
 export class WorkspaceServiceAdapter implements WorkspaceServicePort {
   resolvePackageFilterUnderRoot(rootDir: string, packageFilter: string): string {

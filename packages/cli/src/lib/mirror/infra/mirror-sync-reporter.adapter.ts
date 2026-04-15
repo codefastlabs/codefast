@@ -1,5 +1,5 @@
 import type { MirrorSyncReporterPort } from "#lib/mirror/application/ports/mirror-sync-reporter.port";
-import * as mirrorReporter from "#lib/mirror/presentation/reporter";
+import * as mirrorReporter from "#lib/mirror/presentation/reporter.presenter";
 
 export const mirrorSyncReporterAdapter: MirrorSyncReporterPort = {
   configureMirrorColors: mirrorReporter.configureMirrorColors,

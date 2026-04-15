@@ -3,7 +3,7 @@ import {
   extractImportSpecifiers,
   scanCliPackageArchitectureViolations,
   violationsForFileContent,
-} from "#lib/core/application/architecture-boundaries";
+} from "#lib/core/application/architecture-boundaries.policy";
 
 const cliPackageRoot = path.resolve(__dirname, "..", "..");
 
@@ -31,7 +31,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         arrangeDomainFile,
         { context: "arrange", layer: "domain" },
-        `import { x } from "#lib/infra/node-io";\n`,
+        `import { x } from "#lib/infra/node-io.adapter";\n`,
       );
       expect(violations.length).toBeGreaterThan(0);
     });
@@ -40,7 +40,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         arrangeDomainFile,
         { context: "arrange", layer: "domain" },
-        `import { analyzeDirectory } from "#lib/arrange/application/analyze";\n`,
+        `import { analyzeDirectory } from "#lib/arrange/application/use-cases/analyze-directory.use-case";\n`,
       );
       expect(violations.length).toBeGreaterThan(0);
     });
@@ -49,7 +49,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         arrangeDomainFile,
         { context: "arrange", layer: "domain" },
-        `import type { X } from "#lib/mirror/domain/types";\n`,
+        `import type { X } from "#lib/mirror/domain/types.domain";\n`,
       );
       expect(violations.length).toBeGreaterThan(0);
     });
@@ -59,7 +59,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         appFile,
         { context: "mirror", layer: "application" },
-        `import type { CliFs } from "#lib/infra/fs-contract";\n`,
+        `import type { CliFs } from "#lib/infra/fs-contract.port";\n`,
       );
       expect(violations.length).toBeGreaterThan(0);
     });
@@ -68,7 +68,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         arrangeDomainFile,
         { context: "arrange", layer: "domain" },
-        `import type { Result } from "#lib/core/domain/result";\n`,
+        `import type { Result } from "#lib/core/domain/result.model";\n`,
       );
       expect(violations).toEqual([]);
     });
@@ -77,7 +77,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         arrangeDomainFile,
         { context: "arrange", layer: "domain" },
-        `import { applyEditsDescending } from "#lib/shared/source-code/domain/text-edit";\n`,
+        `import { applyEditsDescending } from "#lib/shared/source-code/domain/text-edit.model";\n`,
       );
       expect(violations).toEqual([]);
     });
@@ -90,7 +90,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         sharedDomainFile,
         { context: "shared-source-code", layer: "domain" },
-        `import type { X } from "#lib/arrange/domain/types";\n`,
+        `import type { X } from "#lib/arrange/domain/types.domain";\n`,
       );
       expect(violations.length).toBeGreaterThan(0);
     });
@@ -100,7 +100,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       const violations = violationsForFileContent(
         mirrorAppFile,
         { context: "mirror", layer: "application" },
-        `import { groupFile } from "#lib/arrange/application/group-file";\n`,
+        `import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";\n`,
       );
       expect(violations.length).toBeGreaterThan(0);
     });

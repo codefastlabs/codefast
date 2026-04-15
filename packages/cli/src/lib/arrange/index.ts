@@ -23,13 +23,16 @@
  *   pnpm exec codefast arrange group -- … --tv
  */
 
-export { analyzeDirectory } from "#lib/arrange/application/analyze";
-export { printAnalyzeReport } from "#lib/arrange/presentation/report";
-export { groupFile } from "#lib/arrange/application/group-file";
-export { runOnTarget, runArrangeSync } from "#lib/arrange/application/run-target";
-export { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io";
+export { analyzeDirectory } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
+export { printAnalyzeReport } from "#lib/arrange/presentation/report.presenter";
+export { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
+export {
+  runOnTarget,
+  runArrangeSync,
+} from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
+export { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
 export { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
-export { ArrangeError, ArrangeErrorCode } from "#lib/arrange/domain/errors";
+export { ArrangeError, ArrangeErrorCode } from "#lib/arrange/domain/errors.domain";
 export type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 export type {
   AnalyzeReport,
@@ -39,16 +42,16 @@ export type {
   Bucket,
   ForEachStringLiteralInClassExpressionOptions,
   GroupFileResult,
-} from "#lib/arrange/domain/types";
-export type { ArrangeSyncOptions } from "#lib/arrange/infra/arrange-sync-cli-options";
+} from "#lib/arrange/domain/types.domain";
+export type { ArrangeSyncOptions } from "#lib/arrange/infra/arrange-sync-cli-options.adapter";
 
 export {
   DEFAULT_ARRANGE_TARGET,
   LONG_STRING_TOKEN_THRESHOLD,
   MAX_STRIP_VARIANT_PASSES,
-} from "#lib/arrange/domain/constants";
-export { cnModuleSpecifierForFile } from "#lib/arrange/domain/imports";
-export { ensureCnImport } from "#lib/arrange/infra/ensure-cn-import";
+} from "#lib/arrange/domain/constants.domain";
+export { cnModuleSpecifierForFile } from "#lib/arrange/domain/imports.domain";
+export { ensureCnImport } from "#lib/arrange/infra/ensure-cn-import.adapter";
 export {
   areCnTailwindPartitionsEquivalent,
   capGroups,
@@ -56,7 +59,7 @@ export {
   mergeSingletons,
   suggestCnGroups,
   summarizeGroupBucketLabels,
-} from "#lib/arrange/domain/grouping";
+} from "#lib/arrange/domain/grouping.domain";
 export {
   classifyToken,
   indexOfFirstVariantColon,
@@ -66,10 +69,10 @@ export {
   bucketsMergeCompatible,
   selectorKey,
   stateKey,
-} from "#lib/arrange/domain/tokenizer";
+} from "#lib/arrange/domain/tokenizer.util";
 
-export { forEachStringLiteralInClassExpression } from "#lib/arrange/domain/ast/collectors-cn";
-export { mergeCnUnconditionalLiteralPoolForTest } from "#lib/arrange/infra/merge-cn-literal-pool-for-test";
+export { forEachStringLiteralInClassExpression } from "#lib/arrange/domain/ast/collectors-cn.collector";
+export { mergeCnUnconditionalLiteralPoolForTest } from "#lib/arrange/infra/merge-cn-literal-pool-for-test.test-helper";
 export {
   applyEditsDescending,
   buildKnownCnTvBindings,
@@ -79,7 +82,7 @@ export {
   lineOf,
   moduleLooksLikeCnTvReexport,
   unwrapCnInsideTvCallReplacement,
-} from "#lib/arrange/domain/ast/ast-helpers";
+} from "#lib/arrange/domain/ast/ast-helpers.helper";
 
 export {
   escapeTsStringLiteralContent,
@@ -87,6 +90,9 @@ export {
   formatCnArguments,
   formatCnCall,
   formatJsxCnAttributeValue,
-} from "#lib/arrange/domain/source-text-formatters";
+} from "#lib/arrange/domain/source-text-formatters.formatter";
 
-export { DEFAULT_SKIP_DIRS, walkTsxFiles } from "#lib/shared/source-code/infra/tsx-file-walk";
+export {
+  DEFAULT_SKIP_DIRS,
+  walkTsxFiles,
+} from "#lib/shared/source-code/infra/tsx-file-walk.adapter";

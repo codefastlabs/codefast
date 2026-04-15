@@ -1,5 +1,5 @@
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { FindWorkspacePackagesResult } from "#lib/mirror/domain/types";
+import type { FindWorkspacePackagesResult } from "#lib/mirror/domain/types.domain";
 
 export interface WorkspaceServicePort {
   resolvePackageFilterUnderRoot(rootDir: string, packageFilter: string): string;

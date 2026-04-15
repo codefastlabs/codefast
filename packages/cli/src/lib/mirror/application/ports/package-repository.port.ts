@@ -3,7 +3,7 @@ import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,
   PackageJsonShape,
-} from "#lib/mirror/domain/types";
+} from "#lib/mirror/domain/types.domain";
 
 export interface PackageRepositoryPort {
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string;

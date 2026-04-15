@@ -1,8 +1,8 @@
 import path from "node:path";
-import type { CliFs } from "#lib/infra/fs-contract";
+import type { CliFs } from "#lib/infra/fs-contract.port";
 import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
-import { isDirentList } from "#lib/mirror/infra/dirent-list";
-import { normalizePath } from "#lib/mirror/infra/path-normalizer";
+import { isDirentList } from "#lib/mirror/infra/dirent-list.adapter";
+import { normalizePath } from "#lib/mirror/infra/path-normalizer.adapter";
 
 function isKnownReadDirError(caughtError: unknown): boolean {
   return (

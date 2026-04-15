@@ -1,50 +1,10 @@
-import { realpathSync } from "node:fs";
-import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message";
-import { consumeCliAppError } from "#lib/core/presentation/cli-executor";
-import {
-  createCliContext,
-  parseWithCliSchema,
-  resolveWorkspaceRoot,
-  runAsyncExitCodeUseCaseAfterParse,
-  tryLoadCodefastConfig,
-} from "#lib/core/presentation/create-command-handler";
+import { createCliContainer } from "#lib/core/infra/container.adapter";
+import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
+import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
+import { runAsyncExitCodeUseCaseAfterParse } from "#lib/core/presentation/run-cli-use-case-after-parse.presenter";
 import { MirrorSyncRunRequestSchema } from "#lib/mirror/application/requests/mirror-sync.request";
-
-function tryRealpath(entryPath: string): string {
-  try {
-    return realpathSync.native(entryPath);
-  } catch {
-    return path.resolve(entryPath);
-  }
-}
-
-function normalizePath(relPath: string): string {
-  return relPath.split(path.sep).join("/").replace(/\\/g, "/");
-}
-
-export function packageArgToRelative(rootDir: string, arg: string | undefined): string | undefined {
-  if (!arg) {
-    return undefined;
-  }
-  const rootReal = tryRealpath(path.resolve(rootDir));
-  const cwdReal = tryRealpath(process.cwd());
-  const resolved = path.isAbsolute(arg) ? path.resolve(arg) : path.resolve(cwdReal, arg);
-  const targetReal = tryRealpath(resolved);
-  const rel = path.relative(rootReal, targetReal);
-  const normalized = normalizePath(rel);
-  if (
-    normalized.startsWith("..") ||
-    path.isAbsolute(normalized) ||
-    normalized === "" ||
-    normalized === "."
-  ) {
-    throw new Error(`Package path must be a subdirectory under monorepo root: ${rootDir}`);
-  }
-  return normalized;
-}
 
 export function registerMirrorCommand(program: Command): void {
   const mirror = program
@@ -61,27 +21,19 @@ export function registerMirrorCommand(program: Command): void {
       pkg: string | undefined,
       options: { verbose?: boolean },
     ) {
-      const globals = this.optsWithGlobals() as { color?: boolean };
-      const cli = createCliContext();
-      const rootOutcome = resolveWorkspaceRoot(cli);
-      if (!consumeCliAppError(cli.logger, rootOutcome)) {
+      const cli = createCliContainer();
+      const prelude = await cli.mirror.prepareMirrorSync({
+        currentWorkingDirectory: process.cwd(),
+        packageArg: pkg,
+        globalCliRaw: this.optsWithGlobals(),
+      });
+      if (!consumeCliAppError(cli.logger, prelude)) {
         return;
       }
-      const rootDir = rootOutcome.value;
-      let packageFilter: string | undefined;
-      try {
-        packageFilter = packageArgToRelative(rootDir, pkg);
-      } catch (caughtPathError: unknown) {
-        this.error(messageFromCaughtUnknown(caughtPathError));
-        return;
-      }
-      const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
-      if (!consumeCliAppError(cli.logger, loadedOutcome)) {
-        return;
-      }
+      const { rootDir, config, packageFilter, globals } = prelude.value;
       const parsed = parseWithCliSchema(MirrorSyncRunRequestSchema, {
         rootDir,
-        config: loadedOutcome.value.config.mirror ?? {},
+        config: config.mirror ?? {},
         verbose: options.verbose,
         noColor: globals.color === false,
         packageFilter,

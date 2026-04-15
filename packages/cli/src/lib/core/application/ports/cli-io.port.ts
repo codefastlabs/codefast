@@ -5,6 +5,10 @@ import type { Dirent } from "node:fs";
  */
 export type CliFs = {
   existsSync: (path: string) => boolean;
+  /**
+   * Resolve symlinks when possible; fall back to normalizing `inputPath` to an absolute path.
+   */
+  canonicalPathSync: (inputPath: string) => string;
   statSync: (path: string) => { isDirectory: () => boolean; isFile: () => boolean };
   readFileSync: (path: string, encoding: BufferEncoding) => string;
   writeFileSync: (path: string, data: string, encoding: BufferEncoding) => void;
