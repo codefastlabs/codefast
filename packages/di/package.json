@@ -1,0 +1,69 @@
+{
+  "name": "@codefast/di",
+  "version": "0.3.13-canary.3",
+  "description": "Lightweight dependency injection primitives for Codefast",
+  "keywords": [
+    "codefast",
+    "dependency-injection",
+    "di",
+    "inversion-of-control",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/di"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "imports": {
+    "#lib/*": [
+      "./dist/*",
+      "./dist/*.js",
+      "./dist/*/index.js",
+      "./src/*",
+      "./src/*.ts",
+      "./src/*/index.ts"
+    ]
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsgo -p tsconfig.build.json",
+    "check-types": "tsgo --noEmit",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ci": "vitest run --coverage --reporter=dot",
+    "test:watch": "vitest watch"
+  },
+  "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "esbuild": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

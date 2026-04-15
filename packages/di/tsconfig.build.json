@@ -1,0 +1,9 @@
+{
+  "extends": ["./tsconfig.json", "@codefast/typescript-config/build-base.json"],
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts", "dist", "node_modules"]
+}
