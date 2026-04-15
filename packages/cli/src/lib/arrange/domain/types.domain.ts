@@ -1,8 +1,11 @@
 /**
  * Shared types for the arrange pipeline (Tailwind `cn()` / `tv()` tooling).
  *
- * Buckets follow a **render-pipeline order** (existence → … → conditions), aligned
- * with Tailwind v4 utility groupings.
+ * **Render Pipeline Order** (see `packages/cli/README.md`): Existence → Position → Layout
+ * → Sizing → Spacing → Shape → Background → Shadow → Typography → Composite → Motion
+ * → Starting → Behavior → State → Selector.
+ *
+ * `arbitrary` and `other` are non-pipeline tails for `[prop:value]` syntax and unknown utilities.
  */
 
 import type {
@@ -26,9 +29,9 @@ export type Bucket =
   | "motion"
   | "starting"
   | "behavior"
+  | "state"
   /** Selector variants (e.g. `[&…]:`, `*:`, `has-*`) distinct from interactive/data state. */
   | "selector"
-  | "state"
   | "arbitrary"
   | "other";
 

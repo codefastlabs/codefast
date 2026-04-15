@@ -18,7 +18,7 @@ const CHECKBOX_GROUP_ITEM_GROUPS = [
   "hover:not-disabled:not-aria-checked:border-ring/60",
   "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
   "disabled:opacity-50",
-  "aria-checked:border-primary aria-checked:bg-primary",
+  "aria-checked:bg-primary aria-checked:border-primary",
   "focus-visible:aria-checked:ring-primary/20",
   "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
   "hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60",
@@ -152,7 +152,20 @@ describe("suggestCnGroups", () => {
   it("merges shadcn [&_svg] utilities and :not size guard into one selector chunk", () => {
     const input =
       "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6";
-    expect(suggestCnGroups(input)).toEqual([input]);
+    const canonical =
+      "[&_svg:not([class*='size-'])]:size-6 [&_svg]:pointer-events-none [&_svg]:shrink-0";
+    expect(suggestCnGroups(input)).toEqual([canonical]);
+    expect(suggestCnGroups(canonical)).toEqual([canonical]);
+  });
+
+  it("should produce identical output for same classNames in different orders", () => {
+    const inputA = "focus-visible:border-ring focus-visible:ring-3";
+    const inputB = "focus-visible:ring-3 focus-visible:border-ring";
+    const outA = suggestCnGroups(inputA);
+    const outB = suggestCnGroups(inputB);
+    expect(outA).toEqual(outB);
+    expect(outA).toEqual(["focus-visible:border-ring focus-visible:ring-3"]);
+    expect(summarizeGroupBucketLabels(outA)).toEqual(summarizeGroupBucketLabels(outB));
   });
 
   it("keeps cap-groups headroom behavior for bg + outline-hidden", () => {
