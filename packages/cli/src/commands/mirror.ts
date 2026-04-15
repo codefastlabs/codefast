@@ -4,7 +4,7 @@ import { createCliContainer } from "#lib/core/infra/container.adapter";
 import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
 import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
 import { runAsyncExitCodeUseCaseAfterParse } from "#lib/core/presentation/run-cli-use-case-after-parse.presenter";
-import { MirrorSyncRunRequestSchema } from "#lib/mirror/presentation/mirror-cli-schema.presenter";
+import { mirrorSyncRunRequestSchema } from "#lib/mirror/presentation/mirror-cli-schema.presenter";
 
 export function registerMirrorCommand(program: Command): void {
   const mirror = program
@@ -31,7 +31,7 @@ export function registerMirrorCommand(program: Command): void {
         return;
       }
       const { rootDir, config, packageFilter, globals } = prelude.value;
-      const parsed = parseWithCliSchema(MirrorSyncRunRequestSchema, {
+      const parsed = parseWithCliSchema(mirrorSyncRunRequestSchema, {
         rootDir,
         config: config.mirror ?? {},
         verbose: options.verbose,

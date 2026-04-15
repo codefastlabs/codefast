@@ -11,13 +11,13 @@ const PNPM_WORKSPACE_FILE = "pnpm-workspace.yaml";
 const PACKAGE_JSON_FILE = "package.json";
 const DEFAULT_WORKSPACE_PACKAGE_PATTERNS = ["packages/*"];
 
-const PnpmWorkspaceSchema = z
+const pnpmWorkspaceSchema = z
   .object({
     packages: z.array(z.string()).optional(),
   })
   .passthrough();
 
-const PackageNameSchema = z
+const packageNameSchema = z
   .object({
     name: z.string().min(1).optional(),
   })
@@ -86,7 +86,7 @@ async function readWorkspacePackagePatterns(
     );
   }
 
-  const parsedWorkspaceResult = PnpmWorkspaceSchema.safeParse(parsedWorkspaceDoc);
+  const parsedWorkspaceResult = pnpmWorkspaceSchema.safeParse(parsedWorkspaceDoc);
   if (!parsedWorkspaceResult.success) {
     const issuePath = parsedWorkspaceResult.error.issues[0]?.path.join(".") ?? "<root>";
     const issueMessage = parsedWorkspaceResult.error.issues[0]?.message ?? "Invalid value";
@@ -178,7 +178,7 @@ function readPackageName(packageDir: string, fs: CliFs): string | null {
   try {
     const rawPackageJson = fs.readFileSync(packageJsonPath, "utf8");
     const parsedPackageJson = JSON.parse(rawPackageJson) as unknown;
-    const parsedPackageName = PackageNameSchema.safeParse(parsedPackageJson);
+    const parsedPackageName = packageNameSchema.safeParse(parsedPackageJson);
     if (!parsedPackageName.success) {
       return null;
     }
