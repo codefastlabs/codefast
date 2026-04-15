@@ -1,5 +1,13 @@
 # @codefast/cli
 
+## 0.3.13-canary.3
+
+### Patch Changes
+
+- [`309f871`](https://github.com/codefastlabs/codefast/commit/309f871821b089cb04b9a371f05ac95663491d78) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): introduce architecture checks and enhance test coverage
+
+- [`2131374`](https://github.com/codefastlabs/codefast/commit/21313748b6e3a0aff129d8cced951b0f0825dab2) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update architecture boundary imports and enhance CLI command structure
+
 ## 0.3.13-canary.2
 
 ### Patch Changes
