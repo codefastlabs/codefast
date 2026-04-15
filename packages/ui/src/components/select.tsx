@@ -192,11 +192,10 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
         "cursor-default select-none",
         "focus:bg-accent focus:text-accent-foreground",
         "aria-disabled:opacity-50",
-        "*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
-        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         "data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       data-slot="select-item"

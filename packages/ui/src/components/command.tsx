@@ -179,8 +179,7 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
         "cursor-default select-none",
         "aria-disabled:opacity-50",
         "aria-selected:bg-accent aria-selected:text-accent-foreground",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         "[&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}

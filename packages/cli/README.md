@@ -155,12 +155,12 @@ export default {
   tag: {
     onAfterWrite: ({ files }) => {
       console.log(`Formatting ${files.length} files with Oxc...`);
-      execSync(`npx oxc format ${files.join(" ")}`, { stdio: "inherit" });
+      execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
     },
   },
   arrange: {
     onAfterWrite: ({ files }) => {
-      execSync(`npx oxc format ${files.join(" ")}`, { stdio: "inherit" });
+      execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
     },
   },
 };

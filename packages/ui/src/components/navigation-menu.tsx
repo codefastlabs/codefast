@@ -169,10 +169,9 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): J
         "data-active:bg-accent/50 data-active:text-accent-foreground",
         "data-active:hover:bg-accent",
         "data-active:focus:bg-accent",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
-        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         "data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       data-slot="navigation-menu-link"
