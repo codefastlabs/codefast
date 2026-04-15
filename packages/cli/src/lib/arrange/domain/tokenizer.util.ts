@@ -7,6 +7,9 @@ import {
 import type { Bucket } from "#lib/arrange/domain/types.domain";
 
 /**
+ * Bare-token classification is **total** (always returns a {@link Bucket}). The `Result` pattern
+ * (`isOk` / `isErr`) belongs at arrange use-case / I/O boundaries, not on this hot path.
+ *
  * Variant stems not covered by a single entry in STATE_PREFIXES (compound `has-*`,
  * numbered `nth-*`, media features, v4 `in-[…]`, child selectors `*` / `**`, …).
  * When these are missed, `isStateToken` is false and the variant is stripped — the

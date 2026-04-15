@@ -51,9 +51,11 @@ export const MAX_STRIP_VARIANT_PASSES = 12;
 export const EMPTY_CN_TV_BINDINGS = new Set<string>();
 
 /**
- * Bucket sort order — **render pipeline** (lower → earlier in output).
- * Existence → Position → Layout → Sizing → Spacing → Shape → Background → Shadow
- * → Typography → Composite → Motion → Starting → Behavior → State (variants) → Selector variants.
+ * Bucket sort order — **render pipeline** (lower → earlier in `cn()` output).
+ *
+ * Matches README: Existence → Position → Layout → Sizing → Spacing → Shape → Background
+ * → Shadow → Typography → Composite → Motion → Starting → Behavior → State → Selector,
+ * then `other` and `arbitrary` as sort tails for unknown utilities and arbitrary properties.
  */
 export const BUCKET_ORDER: Record<Bucket, number> = {
   existence: 0,

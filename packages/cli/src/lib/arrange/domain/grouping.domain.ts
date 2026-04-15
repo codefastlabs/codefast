@@ -17,12 +17,98 @@ import {
   tokenizeClassString,
 } from "#lib/arrange/domain/tokenizer.util";
 
+/**
+ * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with
+ * {@link classifyToken}. Comparators here (`compareClassifiedTailwindTokensForCnGrouping`, …)
+ * are the single place for variant-aware sort — do not reintroduce parallel bucket ordering.
+ */
+
+/** Separates bucket id from variant key in {@link buildFirstVariantKeySourceIndex} map keys. */
+const VARIANT_BUCKET_KEY_SEP = "\u0000";
+
+type ClassifiedTailwindToken = {
+  readonly classToken: string;
+  readonly bucket: Bucket;
+  readonly index: number;
+};
+
 function isVariantKeyedBucket(bucket: Bucket): bucket is "selector" | "state" | "starting" {
   return bucket === "selector" || bucket === "state" || bucket === "starting";
 }
 
 function variantGroupKey(bucket: Bucket, classToken: string): string {
   return bucket === "selector" ? selectorKey(classToken) : stateKey(classToken);
+}
+
+function variantKeyedBlockMapKey(bucket: Bucket, classToken: string): string {
+  return `${bucket}${VARIANT_BUCKET_KEY_SEP}${variantGroupKey(bucket, classToken)}`;
+}
+
+/**
+ * Deterministic lexicographic order for Tailwind class tokens (and token-space signatures).
+ * Used wherever we need stable, locale-agnostic ASCII ordering of utility strings.
+ */
+function compareClassTokensCanonically(left: string, right: string): number {
+  return left.localeCompare(right);
+}
+
+/**
+ * First source index where each `(bucket, variantGroupKey)` appears — drives stable clustering
+ * in {@link suggestCnGroups} without reordering unrelated variant blocks by alphabet alone.
+ */
+function buildFirstVariantKeySourceIndex(
+  classified: readonly ClassifiedTailwindToken[],
+): Map<string, number> {
+  const firstVariantKeySourceIndex = new Map<string, number>();
+  for (const item of classified) {
+    if (!isVariantKeyedBucket(item.bucket)) {
+      continue;
+    }
+    const mapKey = variantKeyedBlockMapKey(item.bucket, item.classToken);
+    const prior = firstVariantKeySourceIndex.get(mapKey);
+    if (prior === undefined || item.index < prior) {
+      firstVariantKeySourceIndex.set(mapKey, item.index);
+    }
+  }
+  return firstVariantKeySourceIndex;
+}
+
+function compareClassifiedTailwindTokensForCnGrouping(
+  left: ClassifiedTailwindToken,
+  right: ClassifiedTailwindToken,
+  firstVariantKeySourceIndex: ReadonlyMap<string, number>,
+): number {
+  const bucketOrderDiff = BUCKET_ORDER[left.bucket] - BUCKET_ORDER[right.bucket];
+  if (bucketOrderDiff !== 0) {
+    return bucketOrderDiff;
+  }
+  if (left.bucket === "composite" && right.bucket === "composite") {
+    const compositeOrderDiff =
+      compositeSecondaryOrder(stripVariants(left.classToken)) -
+      compositeSecondaryOrder(stripVariants(right.classToken));
+    if (compositeOrderDiff !== 0) {
+      return compositeOrderDiff;
+    }
+    return left.index - right.index;
+  }
+  if (isVariantKeyedBucket(left.bucket) && isVariantKeyedBucket(right.bucket)) {
+    const leftMapKey = variantKeyedBlockMapKey(left.bucket, left.classToken);
+    const rightMapKey = variantKeyedBlockMapKey(right.bucket, right.classToken);
+    const leftBlockStart = firstVariantKeySourceIndex.get(leftMapKey)!;
+    const rightBlockStart = firstVariantKeySourceIndex.get(rightMapKey)!;
+    if (leftBlockStart !== rightBlockStart) {
+      return leftBlockStart - rightBlockStart;
+    }
+    const variantKeyCompare = compareClassTokensCanonically(
+      variantGroupKey(left.bucket, left.classToken),
+      variantGroupKey(right.bucket, right.classToken),
+    );
+    if (variantKeyCompare !== 0) {
+      return variantKeyCompare;
+    }
+    return compareClassTokensCanonically(left.classToken, right.classToken);
+  }
+  return left.index - right.index;
 }
 
 /**
@@ -38,10 +124,12 @@ export function areCnTailwindPartitionsEquivalent(
     chunks
       .map((chunk) => {
         const classTokens = tokenizeClassString(chunk);
-        return classTokens.length === 0 ? "" : [...classTokens].sort().join(" ");
+        return classTokens.length === 0
+          ? ""
+          : [...classTokens].sort(compareClassTokensCanonically).join(" ");
       })
       .filter((s) => s.length > 0)
-      .sort((a, b) => a.localeCompare(b));
+      .sort(compareClassTokensCanonically);
 
   const staticPartitionSigs = partitionSignatures(staticLiteralTexts);
   const suggestedPartitionSigs = partitionSignatures(suggestedGroups);
@@ -260,26 +348,24 @@ export function suggestCnGroups(classString: string): string[] {
     return [];
   }
 
-  const classified = tokens.map((classToken, index) => ({
+  /**
+   * Variant-keyed buckets (`state`, `starting`, `selector`): after global bucket ordering,
+   * cluster tokens that share the same {@link variantGroupKey} so the same modifier stack
+   * (e.g. `focus-visible:`) merges one `cn()` arg regardless of interleaved unrelated
+   * variants. Block order follows the **first source index** of each key so unrelated
+   * states keep document order; within a key, `classToken` order is lexicographic for
+   * idempotency.
+   */
+  const classified: ClassifiedTailwindToken[] = tokens.map((classToken, index) => ({
     classToken,
     bucket: classifyToken(classToken),
     index,
   }));
-  classified.sort((left, right) => {
-    const bucketOrderDiff = BUCKET_ORDER[left.bucket] - BUCKET_ORDER[right.bucket];
-    if (bucketOrderDiff !== 0) {
-      return bucketOrderDiff;
-    }
-    if (left.bucket === "composite" && right.bucket === "composite") {
-      const compositeOrderDiff =
-        compositeSecondaryOrder(stripVariants(left.classToken)) -
-        compositeSecondaryOrder(stripVariants(right.classToken));
-      if (compositeOrderDiff !== 0) {
-        return compositeOrderDiff;
-      }
-    }
-    return left.index - right.index;
-  });
+
+  const firstVariantKeySourceIndex = buildFirstVariantKeySourceIndex(classified);
+  classified.sort((left, right) =>
+    compareClassifiedTailwindTokensForCnGrouping(left, right, firstVariantKeySourceIndex),
+  );
 
   const rawGroups: string[] = [];
   /** Bucket of the last token already placed in the current run (pairwise compat with `COMPATIBLE_BUCKET_SETS`). */
@@ -355,6 +441,8 @@ export function suggestCnGroups(classString: string): string[] {
 export function summarizeGroupBucketLabels(groups: string[]): string[] {
   return groups.map((g) => {
     const uniq = new Set(tokenizeClassString(g).map(classifyToken));
-    return uniq.size === 1 ? [...uniq][0]! : `mixed:${[...uniq].sort().join("+")}`;
+    return uniq.size === 1
+      ? [...uniq][0]!
+      : `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
   });
 }

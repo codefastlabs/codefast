@@ -221,7 +221,7 @@ The `<version>` value is read from the nearest `package.json` found by walking u
 
 Adjacent buckets may be merged into one string literal when declared _compatible_ (e.g. `layout` + `sizing`). This keeps `cn()` calls readable without flattening unrelated concerns into a single undifferentiated blob.
 
-To change a placement, edit `classifyBareUtility` in `src/lib/arrange/tokenizer.ts` and add a corresponding `classifyToken` test in `src/lib/arrange.test.ts`.
+To change a placement, edit `classifyBareUtility` in `src/lib/arrange/domain/tokenizer.util.ts` and add a corresponding `classifyToken` test in `src/lib/arrange/domain/tokenizer.util.test.ts`.
 
 ---
 
