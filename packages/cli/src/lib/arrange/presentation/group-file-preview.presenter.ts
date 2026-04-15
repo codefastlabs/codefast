@@ -1,4 +1,5 @@
 import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
 import type {
   GroupFileUnwrapPlan,
   GroupFileWorkPlan,
@@ -47,7 +48,7 @@ export function printGroupFilePreview(
   for (const call of cnInTvCalls) {
     const replacement = unwrapReplacementByCall.get(call);
     if (replacement === undefined) {
-      out(`  Line ${lineOf(domainSf, call)} [tv \u2283 cn]: cn(...) has no arguments — skipped`);
+      out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn]: cn(...) has no arguments — skipped`);
       continue;
     }
     const start = call.pos;
@@ -55,7 +56,7 @@ export function printGroupFilePreview(
     if (sourceText.slice(start, end) === replacement) {
       continue;
     }
-    out(`  Line ${lineOf(domainSf, call)} [tv \u2283 cn \u2192 string/array]:`);
+    out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn → string/array]:`);
     out(`  ${replacement.split("\n").join("\n  ")}`);
   }
   if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
@@ -83,3 +84,7 @@ export function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFile
     plannedGroupEdits: work.plannedGroupEdits,
   });
 }
+
+export const groupFilePreviewPresenter: GroupFilePreviewPort = {
+  printGroupFilePreviewFromWork,
+};

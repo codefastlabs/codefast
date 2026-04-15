@@ -85,7 +85,9 @@ describe("findWorkspacePackageRelPaths", () => {
     try {
       fs.mkdirSync(path.join(root, "packages", "a"), { recursive: true });
       fs.writeFileSync(path.join(root, "packages", "a", "package.json"), "{}", "utf8");
-      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, logger);
+      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, (message) =>
+        logger.out(message),
+      );
       expect(relPaths).toEqual(["packages/a"]);
       expect(multiSource).toBe("default-patterns");
     } finally {
@@ -110,7 +112,9 @@ describe("findWorkspacePackageRelPaths", () => {
       fs.mkdirSync(path.join(root, "packages", "ui"), { recursive: true });
       fs.writeFileSync(path.join(root, "packages", "ui", "package.json"), "{}", "utf8");
 
-      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, logger);
+      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, (message) =>
+        logger.out(message),
+      );
       expect(relPaths).toEqual(["packages/ui", "tooling/eslint"]);
       expect(multiSource).toBe("pnpm-workspace-yaml");
     } finally {
@@ -134,7 +138,9 @@ describe("findWorkspacePackageRelPaths", () => {
         fs.mkdirSync(path.join(root, "packages", name), { recursive: true });
         fs.writeFileSync(path.join(root, "packages", name, "package.json"), "{}", "utf8");
       }
-      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, logger);
+      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, (message) =>
+        logger.out(message),
+      );
       expect(relPaths).toEqual(["packages/keep"]);
       expect(multiSource).toBe("pnpm-workspace-yaml");
     } finally {
@@ -152,7 +158,9 @@ describe("findWorkspacePackageRelPaths", () => {
 `,
         "utf8",
       );
-      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, logger);
+      const { relPaths, multiSource } = await findWorkspacePackageRelPaths(root, cliFs, (message) =>
+        logger.out(message),
+      );
       expect(relPaths).toEqual([]);
       expect(multiSource).toBe("declared-empty");
     } finally {
@@ -165,9 +173,9 @@ describe("findWorkspacePackageRelPaths", () => {
     const logger = createTestLogger();
     try {
       fs.writeFileSync(path.join(root, "pnpm-workspace.yaml"), "{ not yaml", "utf8");
-      await expect(findWorkspacePackageRelPaths(root, cliFs, logger)).rejects.toThrow(
-        /Failed to parse pnpm-workspace.yaml/,
-      );
+      await expect(
+        findWorkspacePackageRelPaths(root, cliFs, (message) => logger.out(message)),
+      ).rejects.toThrow(/Failed to parse pnpm-workspace.yaml/);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }

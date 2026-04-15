@@ -7,14 +7,20 @@ import {
   runTagOnTarget,
   runTagSync,
 } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
+import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
 import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
 import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
+import { TagVersionResolverAdapter } from "#lib/tag/infra/tag-version-resolver.adapter";
 
 const tagFs = createNodeCliFs();
 const tagSyncDeps = {
   fs: tagFs,
+  path: nodeCliPath,
   targetResolver: tagTargetResolverAdapter,
   typeScriptTreeWalk: tagTypeScriptTreeWalkAdapter,
+  sinceWriter: tagSinceWriterAdapter,
+  versionResolver: new TagVersionResolverAdapter(nodeCliPath),
 };
 
 function withTempPackage(
@@ -42,7 +48,9 @@ function withTempPackage(
 describe("resolveNearestPackageVersion", () => {
   it("loads version from nearest package.json", () => {
     withTempPackage("index.ts", "export const foo = 1;\n", ({ sourceFile }) => {
-      expect(resolveNearestPackageVersion(sourceFile, tagFs)).toBe("1.2.3");
+      expect(
+        resolveNearestPackageVersion(sourceFile, tagFs, new TagVersionResolverAdapter(nodeCliPath)),
+      ).toBe("1.2.3");
     });
   });
 });
@@ -65,6 +73,9 @@ export { c };
         path.join(rootDir, "src"),
         { write: true },
         tagFs,
+        nodeCliPath,
+        new TagVersionResolverAdapter(nodeCliPath),
+        tagSinceWriterAdapter,
         tagTypeScriptTreeWalkAdapter,
       );
       const after = fs.readFileSync(sourceFile, "utf8");
@@ -87,6 +98,9 @@ export type TailwindClassBlob = string;
         path.join(rootDir, "src"),
         { write: true },
         tagFs,
+        nodeCliPath,
+        new TagVersionResolverAdapter(nodeCliPath),
+        tagSinceWriterAdapter,
         tagTypeScriptTreeWalkAdapter,
       );
       const after = fs.readFileSync(sourceFile, "utf8");
@@ -105,6 +119,9 @@ export type TailwindClassBlob = string;
         path.join(rootDir, "src"),
         { write: false },
         tagFs,
+        nodeCliPath,
+        new TagVersionResolverAdapter(nodeCliPath),
+        tagSinceWriterAdapter,
         tagTypeScriptTreeWalkAdapter,
       );
       const after = fs.readFileSync(sourceFile, "utf8");

@@ -1,7 +1,7 @@
-import path from "node:path";
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
 import type { MirrorConfig } from "#lib/config/domain/schema.domain";
 import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/domain/constants.domain";
@@ -24,6 +24,7 @@ import type {
 export type MirrorSyncRunDeps = {
   readonly fs: CliFs;
   readonly logger: CliLogger;
+  readonly path: CliPath;
   readonly workspaceService: WorkspaceServicePort;
   readonly packageRepository: PackageRepositoryPort;
   readonly fileSystemService: FileSystemServicePort;
@@ -52,6 +53,7 @@ function isPackageSkipped(
 
 async function syncExportsForWorkspacePackage(
   fs: CliFs,
+  pathService: CliPath,
   packageRepository: PackageRepositoryPort,
   fileSystemService: FileSystemServicePort,
   logger: CliLogger,
@@ -64,10 +66,10 @@ async function syncExportsForWorkspacePackage(
   verbose: boolean,
   stats: GlobalStats,
 ): Promise<PackageStats> {
-  const packageDir = path.resolve(rootDir, packagePathStr);
-  const distDir = path.join(packageDir, DIST_DIR);
-  const packageJsonPath = path.join(packageDir, PACKAGE_JSON);
-  const folderBasename = path.basename(packageDir);
+  const packageDir = pathService.resolve(rootDir, packagePathStr);
+  const distDir = pathService.join(packageDir, DIST_DIR);
+  const packageJsonPath = pathService.join(packageDir, PACKAGE_JSON);
+  const folderBasename = pathService.basename(packageDir);
 
   const pkgStats: PackageStats = {
     name: folderBasename,
@@ -180,6 +182,7 @@ async function syncExportsForWorkspacePackage(
 
     const generatedExports = await generateExports(
       fs,
+      pathService,
       fileSystemService,
       distDir,
       pathTransform,
@@ -258,7 +261,7 @@ export async function runMirrorSync(
       const { relPaths, multiSource } = await workspaceService.findWorkspacePackageRelPaths(
         request.rootDir,
         fs,
-        logger,
+        (message: string) => mirrorReporter.logWorkspaceGlobWarning(logger, message),
       );
       targetPackages = relPaths;
       mirrorReporter.mirrorProcessingMode(logger, { kind: "multi", source: multiSource });
@@ -274,6 +277,7 @@ export async function runMirrorSync(
     for (const pkgPath of targetPackages) {
       const pkgStats = await syncExportsForWorkspacePackage(
         fs,
+        deps.path,
         packageRepository,
         fileSystemService,
         logger,

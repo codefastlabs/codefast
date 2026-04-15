@@ -1,4 +1,5 @@
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
 import {
   runMirrorSync,
@@ -16,6 +17,7 @@ describe("runMirrorSync use case", () => {
   it("returns INFRA_FAILURE when workspace resolution throws inside the sync try block", async () => {
     const deps: MirrorSyncRunDeps = {
       fs: {} as CliFs,
+      path: nodeCliPath,
       logger: { out: jest.fn(), err: jest.fn() },
       workspaceService: {
         resolvePackageFilterUnderRoot: jest.fn(() => {

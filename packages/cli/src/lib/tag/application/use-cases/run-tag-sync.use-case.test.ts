@@ -1,10 +1,23 @@
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import { isOk } from "#lib/core/domain/result.model";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import type { TagTargetCandidate } from "#lib/tag/domain/types.domain";
 import {
   runTagSync,
   type TagSyncRunDeps,
 } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
+
+const mockVersionResolver: TagSyncRunDeps["versionResolver"] = {
+  resolveNearestPackageVersion: jest.fn(() => "1.0.0"),
+};
+
+const mockSinceWriter: TagSyncRunDeps["sinceWriter"] = {
+  applySinceTagsToFile: jest.fn((filePath: string) => ({
+    filePath,
+    taggedDeclarations: 1,
+    changed: true,
+  })),
+};
 
 function toPosix(filePath: string): string {
   return filePath.split("\\").join("/");
@@ -25,6 +38,9 @@ describe("runTagSync use case", () => {
       typeScriptTreeWalk: {
         walkTsxFiles: jest.fn(),
       },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync(
       {
@@ -50,6 +66,9 @@ describe("runTagSync use case", () => {
         }),
       },
       typeScriptTreeWalk: { walkTsxFiles: jest.fn() },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
     expect(isOk(outcome)).toBe(false);
@@ -78,6 +97,9 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: jest.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: jest.fn() },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync(
       { rootDir: "/repo", write: false, skipPackages: ["pkg-a"] },
@@ -123,6 +145,9 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: jest.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: jest.fn(() => []) },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
     expect(isOk(outcome)).toBe(true);
@@ -159,6 +184,9 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: jest.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: jest.fn(() => []) },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
     expect(isOk(outcome)).toBe(true);
@@ -188,6 +216,9 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: jest.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: jest.fn() },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
     expect(isOk(outcome)).toBe(true);
@@ -245,6 +276,13 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: jest.fn(async () => [candidateA, candidateB]),
       },
       typeScriptTreeWalk: { walkTsxFiles: jest.fn(() => []) },
+      path: nodeCliPath,
+      versionResolver: {
+        resolveNearestPackageVersion: jest.fn((targetPath: string) =>
+          toPosix(targetPath).includes("/repo/a") ? "1.0.0" : "2.0.0",
+        ),
+      },
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
     expect(isOk(outcome)).toBe(true);
@@ -295,6 +333,9 @@ describe("runTagSync use case", () => {
       typeScriptTreeWalk: {
         walkTsxFiles: jest.fn((root: string) => [`${toPosix(root)}/x.ts`]),
       },
+      path: nodeCliPath,
+      versionResolver: mockVersionResolver,
+      sinceWriter: mockSinceWriter,
     };
     const outcome = await runTagSync(
       {

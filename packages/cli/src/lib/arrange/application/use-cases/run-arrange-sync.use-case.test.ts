@@ -1,4 +1,5 @@
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import { runOnTarget } from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
 
 describe("runOnTarget use case", () => {
@@ -10,8 +11,10 @@ describe("runOnTarget use case", () => {
           existsSync: () => false,
         } as unknown as CliFs,
         logger: { out: jest.fn(), err: jest.fn() },
+        path: nodeCliPath,
         fileWalker: { walkTypeScriptFiles: jest.fn() },
         domainSourceParser: { parseDomainSourceFile: jest.fn() },
+        groupFilePreview: { printGroupFilePreviewFromWork: jest.fn() },
       },
     );
     expect(outcome.ok).toBe(false);
@@ -30,8 +33,10 @@ describe("runOnTarget use case", () => {
           statSync: () => ({ isDirectory: () => true }),
         } as unknown as CliFs,
         logger: { out: jest.fn(), err: jest.fn() },
+        path: nodeCliPath,
         fileWalker: { walkTypeScriptFiles: () => [] },
         domainSourceParser: { parseDomainSourceFile: jest.fn() },
+        groupFilePreview: { printGroupFilePreviewFromWork: jest.fn() },
       },
     );
     expect(outcome.ok).toBe(true);

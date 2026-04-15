@@ -1,8 +1,15 @@
-import type { Dirent } from "node:fs";
-
 /**
  * Filesystem surface for CLI use cases — inject in tests. Implementations live in infra.
  */
+export type CliFileEncoding = "utf8";
+
+export type CliDirectoryEntry = {
+  readonly name: string;
+  readonly parentPath: string;
+  isFile(): boolean;
+  isDirectory(): boolean;
+};
+
 export type CliFs = {
   existsSync: (path: string) => boolean;
   /**
@@ -10,15 +17,15 @@ export type CliFs = {
    */
   canonicalPathSync: (inputPath: string) => string;
   statSync: (path: string) => { isDirectory: () => boolean; isFile: () => boolean };
-  readFileSync: (path: string, encoding: BufferEncoding) => string;
-  writeFileSync: (path: string, data: string, encoding: BufferEncoding) => void;
+  readFileSync: (path: string, encoding: CliFileEncoding) => string;
+  writeFileSync: (path: string, data: string, encoding: CliFileEncoding) => void;
   readdirSync: (path: string) => string[];
-  readFile: (path: string, encoding: BufferEncoding) => Promise<string>;
-  writeFile: (path: string, data: string, encoding: BufferEncoding) => Promise<void>;
+  readFile: (path: string, encoding: CliFileEncoding) => Promise<string>;
+  writeFile: (path: string, data: string, encoding: CliFileEncoding) => Promise<void>;
   readdir: (
     path: string,
     options?: { recursive?: boolean; withFileTypes?: boolean },
-  ) => Promise<string[] | Dirent[]>;
+  ) => Promise<string[] | CliDirectoryEntry[]>;
   rename: (oldPath: string, newPath: string) => Promise<void>;
   unlink: (path: string) => Promise<void>;
 };

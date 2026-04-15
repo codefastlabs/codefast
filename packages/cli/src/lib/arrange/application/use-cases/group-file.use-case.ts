@@ -1,6 +1,6 @@
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
-import { printGroupFilePreviewFromWork } from "#lib/arrange/application/use-cases/group-file-preview.use-case";
+import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
 import type { ArrangeGroupFileOptions, GroupFileResult } from "#lib/arrange/domain/types.domain";
 import {
   buildGroupFileUnwrapState,
@@ -20,6 +20,7 @@ export function groupFile(
   fs: CliFs,
   logger: CliLogger,
   domainSourceParser: DomainSourceParserPort,
+  groupFilePreview: GroupFilePreviewPort,
 ): GroupFileResult {
   const sourceText = fs.readFileSync(filePath, "utf8");
   const domainSfInitial = domainSourceParser.parseDomainSourceFile(filePath, sourceText);
@@ -46,7 +47,7 @@ export function groupFile(
     if (groupFileWorkHasNothingToReport(work)) {
       return groupFileDryRunNoEdits(filePath);
     }
-    printGroupFilePreviewFromWork(logger, work);
+    groupFilePreview.printGroupFilePreviewFromWork(logger, work);
     return groupFilePreviewTotals(work);
   }
 

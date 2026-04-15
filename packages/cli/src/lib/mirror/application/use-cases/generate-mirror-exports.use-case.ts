@@ -1,5 +1,5 @@
-import path from "node:path";
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
 import type { MirrorConfig } from "#lib/config/domain/schema.domain";
 import {
@@ -25,7 +25,7 @@ function resolvePackageScopedConfig<T>(
   return configMap[pkgMeta.packageName];
 }
 
-function groupFilesByModule(files: string[]): Map<string, Module> {
+function groupFilesByModule(files: string[], pathService: CliPath): Map<string, Module> {
   const modules = new Map<string, Module>();
 
   for (const file of files) {
@@ -36,14 +36,14 @@ function groupFilesByModule(files: string[]): Map<string, Module> {
       ext = DTS_EXTENSION;
       modulePath = file.slice(0, -DTS_EXTENSION.length);
     } else {
-      ext = path.extname(file);
+      ext = pathService.extname(file);
       if (!VALID_JS_EXTENSIONS.has(ext)) {
         continue;
       }
       modulePath = file.slice(0, -ext.length);
     }
 
-    if (!path.basename(modulePath)) {
+    if (!pathService.basename(modulePath)) {
       continue;
     }
 
@@ -174,6 +174,7 @@ function compareTuples(left: SortTuple, right: SortTuple): number {
 
 async function generateCssExports(
   fs: CliFs,
+  pathService: CliPath,
   fileSystemService: FileSystemServicePort,
   distDir: string,
   cssConfig: Record<string, unknown> | boolean | undefined,
@@ -201,7 +202,7 @@ async function generateCssExports(
   const rootCss: string[] = [];
 
   for (const file of cssFiles) {
-    const dirName = path.dirname(file).split(path.sep).join("/");
+    const dirName = pathService.dirname(file).split(pathService.separator).join("/");
     if (dirName === ".") {
       rootCss.push(file);
     } else {
@@ -245,6 +246,7 @@ async function generateCssExports(
  */
 export async function generateExports(
   fs: CliFs,
+  pathService: CliPath,
   fileSystemService: FileSystemServicePort,
   distDir: string,
   pathTransform: ((pathString: string) => string) | null,
@@ -262,7 +264,7 @@ export async function generateExports(
     };
   }
 
-  const modules = groupFilesByModule(files);
+  const modules = groupFilesByModule(files, pathService);
   const validModules = Array.from(modules.values()).filter(
     (moduleEntry) => (moduleEntry.files.js || moduleEntry.files.mjs) && moduleEntry.files.dts,
   );
@@ -311,6 +313,7 @@ export async function generateExports(
 
   const cssExports = await generateCssExports(
     fs,
+    pathService,
     fileSystemService,
     distDir,
     cssConfig ?? { enabled: true },

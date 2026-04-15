@@ -1,6 +1,7 @@
 import type { AppError } from "#lib/core/domain/errors.domain";
 import type { Result } from "#lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 import {
   withCliPortTelemetry,
   isCliTelemetryEnabled,
@@ -20,9 +21,11 @@ import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
 import { prepareArrangeTargetWorkspaceAndConfig } from "#lib/arrange/presentation/arrange-prelude.presenter";
 import type { ArrangeTargetWorkspaceAndConfig } from "#lib/arrange/presentation/arrange-prelude.presenter";
 import { presentAnalyzeCliReport } from "#lib/arrange/presentation/present-analyze-cli.presenter";
+import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
 import { DomainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import { runMirrorSync } from "#lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import type { MirrorSyncRunDeps } from "#lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
@@ -46,6 +49,8 @@ import {
 } from "#lib/tag/presentation/tag-sync.presenter";
 import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
 import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
+import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
+import { TagVersionResolverAdapter } from "#lib/tag/infra/tag-version-resolver.adapter";
 
 /**
  * Composition root: wires default infra adapters and exposes thin use-case facades.
@@ -53,6 +58,7 @@ import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-wal
 export type CliContainer = {
   readonly fs: CliFs;
   readonly logger: CliLogger;
+  readonly path: CliPath;
   readonly arrange: {
     readonly deps: AnalyzeDirectoryDeps & ArrangeSyncDeps;
     prepareTargetWorkspaceAndConfig(args: {
@@ -102,6 +108,7 @@ function maybeTelemetry<T extends object>(
 export function createCliContainer(): CliContainer {
   const logger = createNodeCliLogger();
   const rawFs = createNodeCliFs();
+  const pathService = nodeCliPath;
   const fs = maybeTelemetry("CliFs", rawFs, logger);
   const fileWalker = maybeTelemetry("FileWalkerPort", new FileWalkerAdapter(logger), logger);
   const domainSourceParser = maybeTelemetry(
@@ -113,13 +120,16 @@ export function createCliContainer(): CliContainer {
   const arrangeDeps: AnalyzeDirectoryDeps & ArrangeSyncDeps = {
     fs,
     logger,
+    path: pathService,
     fileWalker,
     domainSourceParser,
+    groupFilePreview: groupFilePreviewPresenter,
   };
 
   const mirrorDeps: MirrorSyncRunDeps = {
     fs,
     logger,
+    path: pathService,
     workspaceService: maybeTelemetry("WorkspaceServicePort", new WorkspaceServiceAdapter(), logger),
     packageRepository: maybeTelemetry(
       "PackageRepositoryPort",
@@ -139,10 +149,17 @@ export function createCliContainer(): CliContainer {
 
   const tagDeps: TagSyncRunDeps = {
     fs,
+    path: pathService,
     targetResolver,
     typeScriptTreeWalk: maybeTelemetry(
       "TypeScriptTreeWalkPort",
       tagTypeScriptTreeWalkAdapter,
+      logger,
+    ),
+    sinceWriter: maybeTelemetry("TagSinceWriterPort", tagSinceWriterAdapter, logger),
+    versionResolver: maybeTelemetry(
+      "TagVersionResolverPort",
+      new TagVersionResolverAdapter(pathService),
       logger,
     ),
   };
@@ -152,6 +169,7 @@ export function createCliContainer(): CliContainer {
   cli = {
     fs,
     logger,
+    path: pathService,
     arrange: {
       deps: arrangeDeps,
       prepareTargetWorkspaceAndConfig: (args) => prepareArrangeTargetWorkspaceAndConfig(cli, args),
