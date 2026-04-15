@@ -29,7 +29,7 @@ export function registerArrangeCommand(program: Command): void {
   arrange
     .command("analyze")
     .description("Report long strings, nested cn in tv(), and related findings")
-    .argument("[target]", "Directory or file (default: packages/ui/src/components)")
+    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
     .action(async (target: string | undefined) => {
       const cli = createCliContainer();
       const prelude = await cli.arrange.prepareTargetWorkspaceAndConfig({
@@ -54,7 +54,7 @@ export function registerArrangeCommand(program: Command): void {
   arrange
     .command("preview")
     .description("Dry-run: print suggested replacements without writing files")
-    .argument("[target]", "Directory or file (default: packages/ui/src/components)")
+    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
     .addOption(withClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action(
@@ -85,7 +85,7 @@ export function registerArrangeCommand(program: Command): void {
   arrange
     .command("apply")
     .description("Apply grouping and cn-in-tv unwrap edits to files")
-    .argument("[target]", "Directory or file (default: packages/ui/src/components)")
+    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
     .addOption(withClassNameOption())
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .action(
