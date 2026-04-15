@@ -33,14 +33,14 @@
   "type": "module",
   "imports": {
     "#*": [
-      "./dist/*.js",
-      "./dist/*/index.js",
-      "./dist/*",
       "./src/*",
       "./src/*.ts",
       "./src/*.tsx",
       "./src/*/index.ts",
-      "./src/*/index.tsx"
+      "./src/*/index.tsx",
+      "./dist/*.js",
+      "./dist/*/index.js",
+      "./dist/*"
     ]
   },
   "publishConfig": {
@@ -50,12 +50,14 @@
     "build": "rm -rf dist && tsgo -p tsconfig.build.json",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
+    "di:graph": "tsx scripts/visualize-di.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@codefast/di": "workspace:*",
     "commander": "catalog:",
     "jiti": "catalog:",
     "picomatch": "catalog:",
@@ -71,7 +73,8 @@
     "@types/node": "catalog:",
     "@types/picomatch": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "tsx": "catalog:"
   },
   "engines": {
     "node": ">=22.0.0"

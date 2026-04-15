@@ -1,16 +1,11 @@
-import type { CodefastConfig } from "#lib/config/domain/schema.domain";
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
-import type { CliContainer } from "#lib/core/infra/container.adapter";
-import { tryLoadCodefastConfig } from "#lib/core/presentation/load-codefast-config.presenter";
+import type { CliContainer } from "#lib/core/infra/cli-container.contract";
 import { resolveCliWorkspaceRootStrict } from "#lib/core/presentation/workspace-root-strict.presenter";
 import { resolveArrangeCliTargetPath } from "#lib/arrange/presentation/resolve-arrange-cli-target.presenter";
+import type { ArrangeTargetWorkspaceAndConfig } from "#lib/arrange/presentation/arrange-prelude.types";
 
-export type ArrangeTargetWorkspaceAndConfig = {
-  readonly resolvedTarget: string;
-  readonly rootDir: string;
-  readonly config: CodefastConfig;
-};
+export type { ArrangeTargetWorkspaceAndConfig } from "#lib/arrange/presentation/arrange-prelude.types";
 
 export async function prepareArrangeTargetWorkspaceAndConfig(
   cli: CliContainer,
@@ -31,13 +26,15 @@ export async function prepareArrangeTargetWorkspaceAndConfig(
   if (!rootOutcome.ok) {
     return rootOutcome;
   }
-  const loadedOutcome = await tryLoadCodefastConfig(cli, rootOutcome.value);
+  const rootDir = rootOutcome.value;
+  cli.appOrchestrator.bindWorkspaceContext({ rootDir });
+  const loadedOutcome = await cli.appOrchestrator.tryLoadCodefastConfig(rootDir);
   if (!loadedOutcome.ok) {
     return loadedOutcome;
   }
   return ok({
     resolvedTarget,
-    rootDir: rootOutcome.value,
+    rootDir,
     config: loadedOutcome.value.config,
   });
 }

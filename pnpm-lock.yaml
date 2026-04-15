@@ -465,9 +465,6 @@ importers:
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.15.24)(@types/node@25.6.0)(typescript@6.0.2)
-      tsx:
-        specifier: 'catalog:'
-        version: 4.21.0
       turbo:
         specifier: 'catalog:'
         version: 2.9.6
@@ -685,9 +682,15 @@ importers:
       tinybench:
         specifier: 'catalog:'
         version: 6.0.0
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
 
   packages/cli:
     dependencies:
+      '@codefast/di':
+        specifier: workspace:*
+        version: link:../di
       commander:
         specifier: 'catalog:'
         version: 14.0.3
@@ -731,6 +734,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.3.0(@types/node@25.6.0)(ts-node@10.9.2(@swc/core@1.15.24)(@types/node@25.6.0)(typescript@6.0.2))
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
 
   packages/di:
     devDependencies:

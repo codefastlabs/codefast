@@ -1,18 +1,13 @@
-import type { CodefastConfig } from "#lib/config/domain/schema.domain";
 import type { AppError } from "#lib/core/domain/errors.domain";
 import { ok, type Result } from "#lib/core/domain/result.model";
-import type { CliContainer } from "#lib/core/infra/container.adapter";
-import { tryLoadCodefastConfig } from "#lib/core/presentation/load-codefast-config.presenter";
+import type { CliContainer } from "#lib/core/infra/cli-container.contract";
 import { parseGlobalCliOptions } from "#lib/core/presentation/global-cli-options.presenter";
 import { findRepoRoot } from "#lib/infra/workspace/repo-root.adapter";
 import { resolveTagCliTargetPath } from "#lib/tag/presentation/resolve-tag-cli-target.presenter";
 import { resolveTagWorkspaceRootPath } from "#lib/tag/presentation/resolve-tag-workspace-root.presenter";
+import type { TagCommandPrelude } from "#lib/tag/presentation/tag-prelude.types";
 
-export type TagCommandPrelude = {
-  readonly rootDir: string;
-  readonly config: CodefastConfig;
-  readonly resolvedTargetPath: string | undefined;
-};
+export type { TagCommandPrelude } from "#lib/tag/presentation/tag-prelude.types";
 
 export async function prepareTagSync(
   cli: CliContainer,
@@ -31,7 +26,8 @@ export async function prepareTagSync(
     logger: cli.logger,
     currentWorkingDirectory: args.currentWorkingDirectory,
   });
-  const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+  cli.appOrchestrator.bindWorkspaceContext({ rootDir, globalCliRaw: args.globalCliRaw });
+  const loadedOutcome = await cli.appOrchestrator.tryLoadCodefastConfig(rootDir);
   if (!loadedOutcome.ok) {
     return loadedOutcome;
   }

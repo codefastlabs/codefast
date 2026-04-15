@@ -1,21 +1,12 @@
-import type { CodefastConfig } from "#lib/config/domain/schema.domain";
 import type { AppError } from "#lib/core/domain/errors.domain";
 import { ok, type Result } from "#lib/core/domain/result.model";
-import type { CliContainer } from "#lib/core/infra/container.adapter";
-import { tryLoadCodefastConfig } from "#lib/core/presentation/load-codefast-config.presenter";
-import {
-  parseGlobalCliOptions,
-  type GlobalCliOptions,
-} from "#lib/core/presentation/global-cli-options.presenter";
+import type { CliContainer } from "#lib/core/infra/cli-container.contract";
+import { parseGlobalCliOptions } from "#lib/core/presentation/global-cli-options.presenter";
 import { resolveCliWorkspaceRootStrict } from "#lib/core/presentation/workspace-root-strict.presenter";
 import { resolveMirrorPackageArgToRelative } from "#lib/mirror/presentation/resolve-mirror-package-arg.presenter";
+import type { MirrorSyncCommandPrelude } from "#lib/mirror/presentation/mirror-prelude.types";
 
-export type MirrorSyncCommandPrelude = {
-  readonly globals: GlobalCliOptions;
-  readonly rootDir: string;
-  readonly config: CodefastConfig;
-  readonly packageFilter: string | undefined;
-};
+export type { MirrorSyncCommandPrelude } from "#lib/mirror/presentation/mirror-prelude.types";
 
 export async function prepareMirrorSync(
   cli: CliContainer,
@@ -43,7 +34,8 @@ export async function prepareMirrorSync(
   if (!filterOutcome.ok) {
     return filterOutcome;
   }
-  const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
+  cli.appOrchestrator.bindWorkspaceContext({ rootDir, globalCliRaw: args.globalCliRaw });
+  const loadedOutcome = await cli.appOrchestrator.tryLoadCodefastConfig(rootDir);
   if (!loadedOutcome.ok) {
     return loadedOutcome;
   }

@@ -51,7 +51,6 @@
     "oxlint-tsgolint": "catalog:",
     "simple-git-hooks": "catalog:",
     "ts-node": "catalog:",
-    "tsx": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   },

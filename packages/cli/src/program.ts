@@ -6,6 +6,7 @@ import { Command } from "commander";
 import { registerArrangeCommand } from "#commands/arrange";
 import { registerMirrorCommand } from "#commands/mirror";
 import { registerTagCommand } from "#commands/tag";
+import { createCliRuntimeContainer } from "#lib/core/infra/composition-root";
 
 function readVersion(): string {
   try {
@@ -37,6 +38,12 @@ export function createProgram(): Command {
 }
 
 export async function runCli(argv: string[]): Promise<number> {
+  if (process.env.NODE_ENV !== "production") {
+    const runtimeContainer = createCliRuntimeContainer();
+    runtimeContainer.validate();
+    runtimeContainer.initialize();
+    runtimeContainer.disposeSync();
+  }
   const program = createProgram();
   await program.parseAsync(argv, { from: "node" });
   const code = process.exitCode ?? 0;

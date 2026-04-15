@@ -4,6 +4,6 @@
     "types": ["node", "jest"],
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

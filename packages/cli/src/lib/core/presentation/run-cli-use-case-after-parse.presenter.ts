@@ -1,6 +1,6 @@
 import type { AppError } from "#lib/core/domain/errors.domain";
 import type { Result } from "#lib/core/domain/result.model";
-import type { CliContainer } from "#lib/core/infra/container.adapter";
+import type { CliContainer } from "#lib/core/infra/cli-container.contract";
 import {
   consumeCliAppError,
   runCliResultAsync,
