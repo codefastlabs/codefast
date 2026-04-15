@@ -7,6 +7,7 @@
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@codefast*/*...",
     "check": "turbo run lint format:check check-types",
+    "check-architecture": "pnpm --filter @codefast/cli run check-architecture",
     "check-types": "turbo run check-types",
     "check:fix": "turbo run lint:fix && turbo run format",
     "clean": "turbo clean",

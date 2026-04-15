@@ -104,6 +104,56 @@ describe("architecture boundaries (CI guardrails)", () => {
       );
       expect(violations.length).toBeGreaterThan(0);
     });
+
+    it("Rule A: rejects *.model.ts importing a use-case module", () => {
+      const modelFile = path.join(cliPackageRoot, "src/lib/core/domain/result.model.ts");
+      const violations = violationsForFileContent(
+        modelFile,
+        { context: "core", layer: "domain" },
+        `import { x } from "#lib/arrange/application/use-cases/group-file.use-case";\n`,
+      );
+      expect(violations.some((line) => line.includes("Rule A"))).toBe(true);
+    });
+
+    it("Rule A: rejects *.domain.ts importing an adapter module", () => {
+      const domainFile = path.join(cliPackageRoot, "src/lib/arrange/domain/types.domain.ts");
+      const violations = violationsForFileContent(
+        domainFile,
+        { context: "arrange", layer: "domain" },
+        `import { x } from "#lib/arrange/infra/file-walker.adapter";\n`,
+      );
+      expect(violations.some((line) => line.includes("Rule A"))).toBe(true);
+    });
+
+    it("Rule B: rejects application importing a presenter", () => {
+      const appFile = path.join(cliPackageRoot, "src/lib/arrange/application/x.ts");
+      const violations = violationsForFileContent(
+        appFile,
+        { context: "arrange", layer: "application" },
+        `import { p } from "#lib/core/presentation/cli-executor.presenter";\n`,
+      );
+      expect(violations.some((line) => line.includes("Rule B"))).toBe(true);
+    });
+
+    it("Rule C: rejects arrange infra importing mirror", () => {
+      const infraFile = path.join(cliPackageRoot, "src/lib/arrange/infra/x.adapter.ts");
+      const violations = violationsForFileContent(
+        infraFile,
+        { context: "arrange", layer: "infra" },
+        `import type { X } from "#lib/mirror/domain/types.domain";\n`,
+      );
+      expect(violations.some((line) => line.includes("Rule C"))).toBe(true);
+    });
+
+    it("Rule C: allows arrange importing shared source-code", () => {
+      const domainFile = path.join(cliPackageRoot, "src/lib/arrange/domain/x.domain.ts");
+      const violations = violationsForFileContent(
+        domainFile,
+        { context: "arrange", layer: "domain" },
+        `import { applyEditsDescending } from "#lib/shared/source-code/domain/text-edit.model";\n`,
+      );
+      expect(violations.some((line) => line.includes("Rule C"))).toBe(false);
+    });
   });
 
   describe("live codebase scan", () => {

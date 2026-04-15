@@ -8,6 +8,9 @@ const SHARED_SOURCE_CODE_CONTEXT = "shared-source-code";
 
 const LAYERS = new Set(["domain", "application", "infra", "presentation"]);
 
+/** Import roots that any product slice may depend on without going "through" another slice. */
+const NEUTRAL_LIB_IMPORT_ROOTS = new Set(["core", "config", "infra", "shared"]);
+
 function sharedSourceCodeLayerFromSpecifier(segments: string[]): string | null {
   if (segments.length < 3 || segments[0] !== "shared" || segments[1] !== "source-code") {
     return null;
@@ -108,6 +111,120 @@ function libTailAfterResolution(absoluteResolved: string): string[] | null {
     return null;
   }
   return tail.split(path.sep).filter(Boolean);
+}
+
+function lastSegmentOfLibSpecifier(specifier: string): string | null {
+  if (!specifier.startsWith("#lib/")) {
+    return null;
+  }
+  const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
+  return segments.length > 0 ? segments[segments.length - 1]! : null;
+}
+
+function importedModuleStem(specifier: string, fromAbsoluteFile: string): string | null {
+  if (specifier.startsWith("#lib/")) {
+    return lastSegmentOfLibSpecifier(specifier);
+  }
+  const resolved = resolveRelativeSpecifier(fromAbsoluteFile, specifier);
+  if (resolved === null) {
+    return null;
+  }
+  const withTsExtension = resolved.endsWith(".ts") ? resolved : `${resolved}.ts`;
+  const baseName = path.basename(withTsExtension);
+  return baseName.endsWith(".ts") ? baseName.slice(0, -".ts".length) : baseName;
+}
+
+function isPureDomainOrModelFileName(fileBaseName: string): boolean {
+  return /\.(domain|model)\.ts$/.test(fileBaseName);
+}
+
+function isRuleAForbiddenImportedStem(moduleStem: string): boolean {
+  return (
+    moduleStem.includes(".use-case") ||
+    moduleStem.includes(".adapter") ||
+    moduleStem.includes(".presenter")
+  );
+}
+
+function isRuleBForbiddenImportedStem(moduleStem: string): boolean {
+  return moduleStem.includes(".adapter") || moduleStem.includes(".presenter");
+}
+
+function violationRuleAPureDomainModel(
+  absoluteFilePath: string,
+  fileBaseName: string,
+  specifier: string,
+): string | null {
+  if (!isPureDomainOrModelFileName(fileBaseName)) {
+    return null;
+  }
+  const stem = importedModuleStem(specifier, absoluteFilePath);
+  if (stem === null || !isRuleAForbiddenImportedStem(stem)) {
+    return null;
+  }
+  return `${absoluteFilePath}: Rule A (pure domain/model) must not import orchestration or IO modules — blocked ${specifier} (stem "${stem}")`;
+}
+
+function violationRuleBApplicationIsolation(
+  loc: LibSourceLocation,
+  absoluteFilePath: string,
+  specifier: string,
+): string | null {
+  if (loc.layer !== "application") {
+    return null;
+  }
+  const stem = importedModuleStem(specifier, absoluteFilePath);
+  if (stem === null || !isRuleBForbiddenImportedStem(stem)) {
+    return null;
+  }
+  return `${absoluteFilePath}: Rule B (application isolation) must not import adapters or presenters — blocked ${specifier} (stem "${stem}")`;
+}
+
+function violationRuleCAntiCrossSlice(
+  loc: LibSourceLocation,
+  specifier: string,
+  fromAbsoluteFile: string,
+): string | null {
+  if (!PRODUCT_BOUNDED_CONTEXTS.has(loc.context)) {
+    return null;
+  }
+  if (specifier.startsWith("#lib/")) {
+    const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
+    if (segments.length === 0) {
+      return null;
+    }
+    const importedRoot = segments[0]!;
+    if (NEUTRAL_LIB_IMPORT_ROOTS.has(importedRoot)) {
+      return null;
+    }
+    if (importedRoot === loc.context) {
+      return null;
+    }
+    if (PRODUCT_BOUNDED_CONTEXTS.has(importedRoot)) {
+      return `${fromAbsoluteFile}: Rule C (slice isolation) context "${loc.context}" must not import "${specifier}" — use #lib/shared/... or neutral roots (core, config, infra) instead`;
+    }
+    return null;
+  }
+  const resolved = resolveRelativeSpecifier(fromAbsoluteFile, specifier);
+  if (resolved === null) {
+    return null;
+  }
+  const resolvedPath = resolved.endsWith(".ts") ? resolved : `${resolved}.ts`;
+  const parts = libTailAfterResolution(resolvedPath);
+  if (parts === null || parts.length === 0) {
+    return null;
+  }
+  const importedContext = parts[0]!;
+  if (NEUTRAL_LIB_IMPORT_ROOTS.has(importedContext)) {
+    return null;
+  }
+  if (importedContext === loc.context) {
+    return null;
+  }
+  if (PRODUCT_BOUNDED_CONTEXTS.has(importedContext)) {
+    return `${fromAbsoluteFile}: Rule C (slice isolation) context "${loc.context}" must not resolve into sibling slice via ${specifier}`;
+  }
+  return null;
 }
 
 function violationDomainLayer(
@@ -253,7 +370,20 @@ export function violationsForFileContent(
   sourceText: string,
 ): string[] {
   const violations: string[] = [];
+  const fileBaseName = path.basename(absoluteFilePath);
   for (const specifier of extractImportSpecifiers(sourceText)) {
+    const ruleA = violationRuleAPureDomainModel(absoluteFilePath, fileBaseName, specifier);
+    if (ruleA !== null) {
+      violations.push(ruleA);
+    }
+    const ruleB = violationRuleBApplicationIsolation(loc, absoluteFilePath, specifier);
+    if (ruleB !== null) {
+      violations.push(ruleB);
+    }
+    const ruleC = violationRuleCAntiCrossSlice(loc, specifier, absoluteFilePath);
+    if (ruleC !== null) {
+      violations.push(ruleC);
+    }
     if (loc.layer === "domain") {
       const domainViolation = violationDomainLayer(loc, specifier, absoluteFilePath);
       if (domainViolation !== null) {
@@ -266,7 +396,7 @@ export function violationsForFileContent(
       }
     }
   }
-  return violations;
+  return [...new Set(violations)];
 }
 
 function walkNonTestTsFiles(rootDir: string): string[] {
@@ -298,7 +428,7 @@ export function scanCliPackageArchitectureViolations(cliPackageRoot: string): st
   const violations: string[] = [];
   for (const absoluteFilePath of walkNonTestTsFiles(libRoot)) {
     const loc = parseLibSourceLocation(absoluteFilePath);
-    if (loc === null || (loc.layer !== "domain" && loc.layer !== "application")) {
+    if (loc === null) {
       continue;
     }
     const sourceText = fs.readFileSync(absoluteFilePath, "utf8");
