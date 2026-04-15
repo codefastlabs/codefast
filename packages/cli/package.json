@@ -51,7 +51,7 @@
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "test": "jest",
-    "test:architecture": "jest src/__tests__/architecture.test.ts",
+    "check-architecture": "jest src/__tests__/architecture.test.ts",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch"

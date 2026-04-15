@@ -32,7 +32,7 @@ Use-case entry points exposed to commands return `Result<T, AppError>` where `Ap
 3. **Bounded contexts** (`arrange`, `mirror`, `tag`): `domain` in one context must not import `domain` from another.
 4. **core/domain** and **config/domain** must not depend on `arrange|mirror|tag` domain types.
 
-CI enforces rules (1)–(4) via `packages/cli/src/__tests__/architecture.test.ts` (run `pnpm test:architecture` in `packages/cli`) and `packages/cli/src/lib/core/application/architecture-boundaries.ts`.
+CI enforces rules (1)–(4) via `packages/cli/src/__tests__/architecture.test.ts` (run `pnpm check-architecture` from the repo root or `pnpm run check-architecture` in `packages/cli`) and `packages/cli/src/lib/core/application/architecture-boundaries.policy.ts`.
 
 ### Observability
 
