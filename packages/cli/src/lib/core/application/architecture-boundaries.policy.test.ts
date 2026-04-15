@@ -1,11 +1,12 @@
-import path from "node:path";
 import {
   extractImportSpecifiers,
   scanCliPackageArchitectureViolations,
   violationsForFileContent,
 } from "#lib/core/application/architecture-boundaries.policy";
+import { createNodeCliFs } from "#lib/infra/node-io.adapter";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 
-const cliPackageRoot = path.resolve(__dirname, "..", "..", "..", "..");
+const cliPackageRoot = nodeCliPath.resolve(__dirname, "..", "..", "..", "..");
 
 describe("architecture boundaries (CI guardrails)", () => {
   describe("import extraction", () => {
@@ -25,7 +26,10 @@ describe("architecture boundaries (CI guardrails)", () => {
   });
 
   describe("rule engine (deliberate forbidden imports)", () => {
-    const arrangeDomainFile = path.join(cliPackageRoot, "src/lib/arrange/domain/hypothetical.ts");
+    const arrangeDomainFile = nodeCliPath.join(
+      cliPackageRoot,
+      "src/lib/arrange/domain/hypothetical.ts",
+    );
 
     it("rejects domain importing #lib/infra (shared infra package)", () => {
       const violations = violationsForFileContent(
@@ -55,7 +59,7 @@ describe("architecture boundaries (CI guardrails)", () => {
     });
 
     it("rejects application importing infra (any bounded context)", () => {
-      const appFile = path.join(cliPackageRoot, "src/lib/mirror/application/x.ts");
+      const appFile = nodeCliPath.join(cliPackageRoot, "src/lib/mirror/application/x.ts");
       const violations = violationsForFileContent(
         appFile,
         { context: "mirror", layer: "application" },
@@ -76,7 +80,11 @@ describe("architecture boundaries (CI guardrails)", () => {
 
   describe("live codebase scan", () => {
     it("has zero boundary violations under src/lib (non-test sources only)", () => {
-      const violations = scanCliPackageArchitectureViolations(cliPackageRoot);
+      const violations = scanCliPackageArchitectureViolations(
+        cliPackageRoot,
+        createNodeCliFs(),
+        nodeCliPath,
+      );
       expect(violations).toEqual([]);
     });
   });

@@ -1,15 +1,66 @@
-import fs from "node:fs";
-import path from "node:path";
+import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 
 /** Product bounded contexts: no direct cross-imports between these (domain + application rules). */
 const PRODUCT_BOUNDED_CONTEXTS = new Set(["arrange", "mirror", "tag"]);
 
 const SHARED_SOURCE_CODE_CONTEXT = "shared-source-code";
+const PATH_SEPARATOR = "/";
 
 const LAYERS = new Set(["domain", "application", "infra", "presentation"]);
 
 /** Import roots that any product slice may depend on without going "through" another slice. */
 const NEUTRAL_LIB_IMPORT_ROOTS = new Set(["core", "config", "infra", "shared"]);
+
+function normalizePathSeparators(pathValue: string): string {
+  return pathValue.split("\\").join(PATH_SEPARATOR);
+}
+
+function splitPath(pathValue: string): string[] {
+  return normalizePathSeparators(pathValue).split(PATH_SEPARATOR).filter(Boolean);
+}
+
+function basenamePath(pathValue: string): string {
+  const parts = splitPath(pathValue);
+  return parts.length === 0 ? "" : (parts[parts.length - 1] ?? "");
+}
+
+function dirnamePath(pathValue: string): string {
+  const normalized = normalizePathSeparators(pathValue);
+  const parts = normalized.split(PATH_SEPARATOR);
+  parts.pop();
+  if (parts.length === 0) {
+    return PATH_SEPARATOR;
+  }
+  const joined = parts.join(PATH_SEPARATOR);
+  return joined === "" ? PATH_SEPARATOR : joined;
+}
+
+function joinPath(...segments: string[]): string {
+  const joined = segments.map((segment) => normalizePathSeparators(segment)).join(PATH_SEPARATOR);
+  return joined.replace(/\/+/g, PATH_SEPARATOR);
+}
+
+function normalizeDotSegments(pathValue: string): string {
+  const normalized = normalizePathSeparators(pathValue);
+  const isAbsolute = normalized.startsWith(PATH_SEPARATOR);
+  const segments = normalized.split(PATH_SEPARATOR);
+  const stack: string[] = [];
+  for (const segment of segments) {
+    if (!segment || segment === ".") {
+      continue;
+    }
+    if (segment === "..") {
+      if (stack.length > 0) {
+        stack.pop();
+      }
+      continue;
+    }
+    stack.push(segment);
+  }
+  const suffix = stack.join(PATH_SEPARATOR);
+  return isAbsolute ? `${PATH_SEPARATOR}${suffix}` : suffix;
+}
 
 function sharedSourceCodeLayerFromSpecifier(segments: string[]): string | null {
   if (segments.length < 3 || segments[0] !== "shared" || segments[1] !== "source-code") {
@@ -47,8 +98,8 @@ export function extractImportSpecifiers(sourceText: string): string[] {
 }
 
 function pathUnderCliSrcLib(absolutePath: string): string | null {
-  const normalized = path.normalize(absolutePath);
-  const marker = `${path.sep}src${path.sep}lib${path.sep}`;
+  const normalized = normalizePathSeparators(absolutePath);
+  const marker = `${PATH_SEPARATOR}src${PATH_SEPARATOR}lib${PATH_SEPARATOR}`;
   const index = normalized.lastIndexOf(marker);
   if (index === -1) {
     return null;
@@ -61,7 +112,7 @@ export function parseLibSourceLocation(absoluteFilePath: string): LibSourceLocat
   if (tail === null) {
     return null;
   }
-  const parts = tail.split(path.sep).filter(Boolean);
+  const parts = tail.split(PATH_SEPARATOR).filter(Boolean);
   if (parts.length < 2) {
     return null;
   }
@@ -89,19 +140,19 @@ export function parseLibSourceLocation(absoluteFilePath: string): LibSourceLocat
 }
 
 export function isArchitectureExcludedSourceFile(absoluteFilePath: string): boolean {
-  const base = path.basename(absoluteFilePath);
+  const base = basenamePath(absoluteFilePath);
   if (base.endsWith(".test.ts") || base.endsWith(".integration.test.ts")) {
     return true;
   }
-  return absoluteFilePath.split(path.sep).includes("__tests__");
+  return normalizePathSeparators(absoluteFilePath).split(PATH_SEPARATOR).includes("__tests__");
 }
 
 function resolveRelativeSpecifier(fromAbsoluteFile: string, specifier: string): string | null {
   if (!specifier.startsWith(".")) {
     return null;
   }
-  const dir = path.dirname(fromAbsoluteFile);
-  const resolved = path.normalize(path.join(dir, specifier));
+  const dir = dirnamePath(fromAbsoluteFile);
+  const resolved = normalizeDotSegments(joinPath(dir, specifier));
   return resolved;
 }
 
@@ -110,7 +161,7 @@ function libTailAfterResolution(absoluteResolved: string): string[] | null {
   if (tail === null) {
     return null;
   }
-  return tail.split(path.sep).filter(Boolean);
+  return tail.split(PATH_SEPARATOR).filter(Boolean);
 }
 
 function lastSegmentOfLibSpecifier(specifier: string): string | null {
@@ -130,7 +181,7 @@ function importedModuleStem(specifier: string, fromAbsoluteFile: string): string
     return null;
   }
   const withTsExtension = resolved.endsWith(".ts") ? resolved : `${resolved}.ts`;
-  const baseName = path.basename(withTsExtension);
+  const baseName = basenamePath(withTsExtension);
   return baseName.endsWith(".ts") ? baseName.slice(0, -".ts".length) : baseName;
 }
 
@@ -370,7 +421,7 @@ export function violationsForFileContent(
   sourceText: string,
 ): string[] {
   const violations: string[] = [];
-  const fileBaseName = path.basename(absoluteFilePath);
+  const fileBaseName = basenamePath(absoluteFilePath);
   for (const specifier of extractImportSpecifiers(sourceText)) {
     const ruleA = violationRuleAPureDomainModel(absoluteFilePath, fileBaseName, specifier);
     if (ruleA !== null) {
@@ -399,17 +450,18 @@ export function violationsForFileContent(
   return [...new Set(violations)];
 }
 
-function walkNonTestTsFiles(rootDir: string): string[] {
+function walkNonTestTsFiles(rootDir: string, fs: CliFs): string[] {
   const results: string[] = [];
   const scan = (dir: string): void => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        if (entry.name === "node_modules" || entry.name === "dist") {
+    for (const entryName of fs.readdirSync(dir)) {
+      const full = joinPath(dir, entryName);
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) {
+        if (entryName === "node_modules" || entryName === "dist") {
           continue;
         }
         scan(full);
-      } else if (entry.isFile() && entry.name.endsWith(".ts")) {
+      } else if (stat.isFile() && entryName.endsWith(".ts")) {
         if (!isArchitectureExcludedSourceFile(full)) {
           results.push(full);
         }
@@ -423,10 +475,14 @@ function walkNonTestTsFiles(rootDir: string): string[] {
 /**
  * Scans `packages/cli/src/lib` for explicit-architecture boundary violations (non-test sources only).
  */
-export function scanCliPackageArchitectureViolations(cliPackageRoot: string): string[] {
-  const libRoot = path.join(cliPackageRoot, "src", "lib");
+export function scanCliPackageArchitectureViolations(
+  cliPackageRoot: string,
+  fs: CliFs,
+  pathService: CliPath,
+): string[] {
+  const libRoot = pathService.join(cliPackageRoot, "src", "lib");
   const violations: string[] = [];
-  for (const absoluteFilePath of walkNonTestTsFiles(libRoot)) {
+  for (const absoluteFilePath of walkNonTestTsFiles(libRoot, fs)) {
     const loc = parseLibSourceLocation(absoluteFilePath);
     if (loc === null) {
       continue;

@@ -1,58 +1,35 @@
-import { z } from "zod";
-
 export type CodefastAfterWriteHook = (ctx: { files: string[] }) => void | Promise<void>;
 
-export const hookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
-  message: "Expected a function",
-});
+export type MirrorPathTransformation = {
+  removePrefix?: string;
+};
 
-export const mirrorConfigSchema = z
-  .object({
-    skipPackages: z.array(z.string()).optional(),
-    pathTransformations: z
-      .record(z.string(), z.object({ removePrefix: z.string().optional() }).strict())
-      .optional(),
-    customExports: z.record(z.string(), z.record(z.string(), z.string())).optional(),
-    cssExports: z
-      .record(
-        z.string(),
-        z.union([
-          z.boolean(),
-          z
-            .object({
-              enabled: z.boolean().optional(),
-              customExports: z.record(z.string(), z.string()).optional(),
-              forceExportFiles: z.boolean().optional(),
-            })
-            .strict(),
-        ]),
-      )
-      .optional(),
-  })
-  .strict();
+export type MirrorCssExportRule =
+  | boolean
+  | {
+      enabled?: boolean;
+      customExports?: Record<string, string>;
+      forceExportFiles?: boolean;
+    };
 
-export const codefastTagConfigSchema = z
-  .object({
-    skipPackages: z.array(z.string()).optional(),
-    onAfterWrite: hookSchema.optional(),
-  })
-  .strict();
+export type MirrorConfig = {
+  skipPackages?: string[];
+  pathTransformations?: Record<string, MirrorPathTransformation>;
+  customExports?: Record<string, Record<string, string>>;
+  cssExports?: Record<string, MirrorCssExportRule>;
+};
 
-export const codefastArrangeConfigSchema = z
-  .object({
-    onAfterWrite: hookSchema.optional(),
-  })
-  .strict();
+export type CodefastTagConfig = {
+  skipPackages?: string[];
+  onAfterWrite?: CodefastAfterWriteHook;
+};
 
-export const codefastConfigSchema = z
-  .object({
-    mirror: mirrorConfigSchema.optional(),
-    tag: codefastTagConfigSchema.optional(),
-    arrange: codefastArrangeConfigSchema.optional(),
-  })
-  .strict();
+export type CodefastArrangeConfig = {
+  onAfterWrite?: CodefastAfterWriteHook;
+};
 
-export type MirrorConfig = z.infer<typeof mirrorConfigSchema>;
-export type CodefastTagConfig = z.infer<typeof codefastTagConfigSchema>;
-export type CodefastArrangeConfig = z.infer<typeof codefastArrangeConfigSchema>;
-export type CodefastConfig = z.infer<typeof codefastConfigSchema>;
+export type CodefastConfig = {
+  mirror?: MirrorConfig;
+  tag?: CodefastTagConfig;
+  arrange?: CodefastArrangeConfig;
+};
