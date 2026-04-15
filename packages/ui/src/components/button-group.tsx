@@ -80,8 +80,7 @@ function ButtonGroupText({
         "rounded-lg border",
         "bg-muted shadow-xs",
         "text-sm font-medium",
-        "[&_svg]:pointer-events-none",
-        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}

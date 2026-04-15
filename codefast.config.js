@@ -1,3 +1,5 @@
+import { execSync } from "node:child_process";
+
 /**
  * Codefast monorepo tooling — `mirror` is read by `codefast mirror sync`.
  * Legacy `generate-exports.config.js` / `.json` is still supported if absent.
@@ -26,6 +28,11 @@ const config = {
       "@codefast/tailwind-variants",
       "@codefast/typescript-config",
     ],
+  },
+  arrange: {
+    onAfterWrite: ({ files }) => {
+      execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
+    },
   },
   tag: {
     // Custom exports that should be preserved/overridden per package

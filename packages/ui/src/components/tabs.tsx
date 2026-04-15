@@ -65,8 +65,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
         "data-active:bg-background data-active:text-foreground data-active:shadow-sm",
         "dark:data-active:bg-input/50",
         "dark:focus-visible:data-active:outline-1",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="tabs-trigger"

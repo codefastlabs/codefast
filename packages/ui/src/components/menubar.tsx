@@ -228,10 +228,9 @@ function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps):
         "data-[variant=destructive]:text-destructive",
         "data-[variant=destructive]:focus:bg-destructive/10",
         "dark:data-[variant=destructive]:focus:bg-destructive/20",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
-        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         "data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "[&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       data-inset={inset}
@@ -265,8 +264,7 @@ function MenubarCheckboxItem({
         "cursor-default select-none",
         "focus:bg-accent focus:text-accent-foreground",
         "aria-disabled:opacity-50",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="menubar-checkbox-item"
@@ -299,8 +297,7 @@ function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemPro
         "cursor-default select-none",
         "focus:bg-accent focus:text-accent-foreground",
         "aria-disabled:opacity-50",
-        "[&_svg]:shrink-0",
-        "[&_svg:not([class*='size-'])]:size-4",
+        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="menubar-radio-item"

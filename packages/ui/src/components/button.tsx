@@ -16,8 +16,7 @@ const buttonVariants = tv({
     "transition select-none",
     "focus-visible:ring-3",
     "disabled:opacity-50",
-    "[&_svg]:shrink-0",
-    "[&_svg:not([class*='size-'])]:size-4",
+    "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ],
   defaultVariants: {
     size: "md",
