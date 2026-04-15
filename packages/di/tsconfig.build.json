@@ -1,8 +1,11 @@
 {
   "extends": ["./tsconfig.json", "@codefast/typescript-config/build-base.json"],
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "target": "ESNext"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts", "dist", "node_modules"]
