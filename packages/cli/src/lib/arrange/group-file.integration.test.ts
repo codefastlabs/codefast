@@ -4,6 +4,7 @@ import path from "node:path";
 import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
 import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
+import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
@@ -50,6 +51,7 @@ export const styles = tv({
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -72,6 +74,7 @@ export function Fixture() {
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -94,6 +97,7 @@ export const styles = tw.tv({
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -117,6 +121,7 @@ export const styles = tw.tv({
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -136,6 +141,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -151,6 +157,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -166,6 +173,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -180,6 +188,7 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
           arrangeFs,
           arrangeLogger,
           domainSourceParserAdapter,
+          groupFilePreviewPresenter,
         ),
       ).toEqual({
         filePath,
@@ -200,6 +209,7 @@ cn("flex gap-2", "text-sm");`;
           arrangeFs,
           arrangeLogger,
           domainSourceParserAdapter,
+          groupFilePreviewPresenter,
         ),
       ).toEqual({
         filePath,
@@ -219,6 +229,7 @@ export const broken = tv({ base: cn() });`;
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(dry).toEqual({ filePath, totalFound: 1, changed: 0 });
       const wet = groupFile(
@@ -227,6 +238,7 @@ export const broken = tv({ base: cn() });`;
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(wet).toEqual({ filePath, totalFound: 1, changed: 0 });
     });
@@ -244,6 +256,7 @@ export function Fixture() {
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -263,6 +276,7 @@ export function Fixture() {
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -283,6 +297,7 @@ export function Fixture() {
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -302,6 +317,7 @@ export const sheet = tv({
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -321,6 +337,7 @@ export const sheet = tv({
         arrangeFs,
         arrangeLogger,
         domainSourceParserAdapter,
+        groupFilePreviewPresenter,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -342,6 +359,7 @@ export const styles = tv({ base: cn("${long}") });`;
           arrangeFs,
           arrangeLogger,
           domainSourceParserAdapter,
+          groupFilePreviewPresenter,
         );
       });
       expect(output).toContain("[cn] / [tv] / [JSX className]");

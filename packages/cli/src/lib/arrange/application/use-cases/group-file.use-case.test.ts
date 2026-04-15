@@ -2,6 +2,7 @@ import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
 import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
 import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
+import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
 
 function createForwardingParserPort(): DomainSourceParserPort {
   return {
@@ -29,6 +30,7 @@ describe("groupFile use case", () => {
       mockFs,
       mockLogger,
       domainSourceParser,
+      groupFilePreviewPresenter,
     );
 
     expect(outcome.filePath).toBe(filePath);
@@ -60,6 +62,7 @@ export const styles = tv({
       mockFs,
       mockLogger,
       domainSourceParser,
+      groupFilePreviewPresenter,
     );
 
     expect(outcome.changed).toBe(0);
@@ -92,6 +95,7 @@ export const styles = tv({
       mockFs,
       mockLogger,
       domainSourceParser,
+      groupFilePreviewPresenter,
     );
 
     expect(outcome.changed).toBeGreaterThan(0);

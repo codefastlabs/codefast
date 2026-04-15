@@ -1,4 +1,4 @@
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import type { FindWorkspacePackagesResult } from "#lib/mirror/domain/types.domain";
 
 export interface WorkspaceServicePort {
@@ -6,6 +6,6 @@ export interface WorkspaceServicePort {
   findWorkspacePackageRelPaths(
     rootDir: string,
     fs: CliFs,
-    logger: CliLogger,
+    onGlobWarning: (message: string) => void,
   ): Promise<FindWorkspacePackagesResult>;
 }

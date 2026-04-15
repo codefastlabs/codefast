@@ -1,4 +1,4 @@
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract.port";
+import type { CliFs } from "#lib/infra/fs-contract.port";
 import type { WorkspaceServicePort } from "#lib/mirror/application/ports/workspace-service.port";
 import type { FindWorkspacePackagesResult } from "#lib/mirror/domain/types.domain";
 import { resolvePackageFilterUnderRoot } from "#lib/mirror/infra/package-filter.adapter";
@@ -12,8 +12,8 @@ export class WorkspaceServiceAdapter implements WorkspaceServicePort {
   findWorkspacePackageRelPaths(
     rootDir: string,
     fs: CliFs,
-    logger: CliLogger,
+    onGlobWarning: (message: string) => void,
   ): Promise<FindWorkspacePackagesResult> {
-    return findWorkspacePackageRelPaths(rootDir, fs, logger);
+    return findWorkspacePackageRelPaths(rootDir, fs, onGlobWarning);
   }
 }

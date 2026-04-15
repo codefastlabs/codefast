@@ -2,9 +2,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { runOnTarget } from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
 import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
+import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
@@ -13,8 +15,10 @@ const fileWalker = new FileWalkerAdapter();
 const arrangeDeps = {
   fs: arrangeFs,
   logger: arrangeLogger,
+  path: nodeCliPath,
   fileWalker,
   domainSourceParser: domainSourceParserAdapter,
+  groupFilePreview: groupFilePreviewPresenter,
 };
 
 function captureStdout(fn: () => void): string {

@@ -3,9 +3,8 @@ import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract.port";
+import type { CliFs } from "#lib/infra/fs-contract.port";
 import { normalizePath } from "#lib/mirror/infra/path-normalizer.adapter";
-import { mirrorGlobWarning } from "#lib/mirror/presentation/reporter.presenter";
 import type {
   FindWorkspacePackagesResult,
   WorkspaceMultiDiscoverySource,
@@ -137,7 +136,7 @@ async function readWorkspaceYaml(rootDir: string, fs: CliFs): Promise<ReadWorksp
 export async function findWorkspacePackageRelPaths(
   rootDir: string,
   fs: CliFs,
-  logger: CliLogger,
+  onGlobWarning: (message: string) => void,
 ): Promise<FindWorkspacePackagesResult> {
   const workspaceYaml = await readWorkspaceYaml(rootDir, fs);
 
@@ -178,8 +177,7 @@ export async function findWorkspacePackageRelPaths(
       matches = globSync(globPat, globOpts);
     } catch (caughtGlobError: unknown) {
       if (isGlobPermissionError(caughtGlobError)) {
-        mirrorGlobWarning(
-          logger,
+        onGlobWarning(
           `Skipping workspace glob "${pattern}" (${messageFromCaughtUnknown(caughtGlobError)})`,
         );
         continue;

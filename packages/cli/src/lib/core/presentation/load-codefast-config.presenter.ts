@@ -3,7 +3,8 @@ import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
 import type { CliContainer } from "#lib/core/infra/container.adapter";
 import type { CodefastConfig } from "#lib/config/domain/schema.domain";
-import { loadConfig } from "#lib/config/infra/loader.adapter";
+import { loadCodefastConfig } from "#lib/config/application/use-cases/load-config.use-case";
+import { configLoaderAdapter } from "#lib/config/infra/loader.adapter";
 import { printConfigSchemaWarnings } from "#lib/infra/config-reporter.adapter";
 
 export async function tryLoadCodefastConfig(
@@ -11,9 +12,12 @@ export async function tryLoadCodefastConfig(
   rootDir: string,
 ): Promise<Result<{ config: CodefastConfig }, AppError>> {
   try {
-    const { config, warnings } = await loadConfig(cli.fs, rootDir);
-    printConfigSchemaWarnings(cli.logger, warnings);
-    return ok({ config });
+    const loadedConfig = await loadCodefastConfig(configLoaderAdapter, cli.fs, rootDir);
+    if (!loadedConfig.ok) {
+      return loadedConfig;
+    }
+    printConfigSchemaWarnings(cli.logger, loadedConfig.value.warnings);
+    return ok({ config: loadedConfig.value.config });
   } catch (caughtError: unknown) {
     return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
   }

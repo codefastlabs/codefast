@@ -1,4 +1,3 @@
-import path from "node:path";
 import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
@@ -6,8 +5,10 @@ import type {
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
 import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
+import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
 import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
 import type { FileWalkerPort } from "#lib/arrange/application/ports/file-walker.port";
 import type {
@@ -19,8 +20,10 @@ import type { ArrangeRunResult } from "#lib/arrange/domain/types.domain";
 export type ArrangeSyncDeps = {
   readonly fs: CliFs;
   readonly logger: CliLogger;
+  readonly path: CliPath;
   readonly fileWalker: FileWalkerPort;
   readonly domainSourceParser: DomainSourceParserPort;
+  readonly groupFilePreview: GroupFilePreviewPort;
 };
 
 export function runOnTarget(
@@ -48,7 +51,14 @@ export function runOnTarget(
   };
 
   for (const filePath of filePaths) {
-    const result = groupFile(filePath, groupOptions, fs, deps.logger, domainSourceParser);
+    const result = groupFile(
+      filePath,
+      groupOptions,
+      fs,
+      deps.logger,
+      domainSourceParser,
+      deps.groupFilePreview,
+    );
     totalFound += result.totalFound;
     totalChanged += result.changed;
     if (result.changed > 0) {
@@ -105,7 +115,7 @@ export async function runArrangeSync(
   deps: ArrangeSyncDeps,
 ): Promise<Result<number, AppError>> {
   void request.rootDir;
-  const resolvedTarget = path.resolve(request.targetPath);
+  const resolvedTarget = deps.path.resolve(request.targetPath);
 
   const runTargetRequest: ArrangeRunTargetRequest = {
     targetPath: resolvedTarget,

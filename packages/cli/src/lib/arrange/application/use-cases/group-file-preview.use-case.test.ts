@@ -2,7 +2,7 @@ import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
 import {
   printGroupFilePreview,
   printGroupFilePreviewFromWork,
-} from "#lib/arrange/application/use-cases/group-file-preview.use-case";
+} from "#lib/arrange/presentation/group-file-preview.presenter";
 import type { GroupFileWorkPlan } from "#lib/arrange/domain/arrange-grouping.service";
 import {
   DomainSyntaxKind,

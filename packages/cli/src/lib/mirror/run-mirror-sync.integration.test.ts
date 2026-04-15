@@ -7,6 +7,7 @@ import {
   type MirrorSyncRunDeps,
 } from "#lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
+import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import { FileSystemServiceAdapter } from "#lib/mirror/infra/file-system-service.adapter";
 import { mirrorSyncReporterAdapter } from "#lib/mirror/infra/mirror-sync-reporter.adapter";
 import { PackageRepositoryAdapter } from "#lib/mirror/infra/package-repository.adapter";
@@ -38,6 +39,7 @@ const fileSystemService = new FileSystemServiceAdapter();
 
 const mirrorSyncDeps: MirrorSyncRunDeps = {
   fs: mirrorFs,
+  path: nodeCliPath,
   logger: mirrorLogger,
   workspaceService,
   packageRepository,

@@ -1,15 +1,12 @@
-import path from "node:path";
-import ts from "typescript";
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
-import {
-  applyEditsDescending,
-  indentOfLineContaining,
-} from "#lib/shared/source-code/domain/text-edit.model";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#lib/config/domain/schema.domain";
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
+import type { TagSinceWriterPort } from "#lib/tag/application/ports/tag-since-writer.port";
 import type { TagSyncRunRequest } from "#lib/tag/application/requests/tag-sync.request";
+import type { TagVersionResolverPort } from "#lib/tag/application/ports/tag-version-resolver.port";
 import type { TagTargetResolverPort } from "#lib/tag/application/ports/target-resolver.port";
 import type { TypeScriptTreeWalkPort } from "#lib/tag/application/ports/typescript-tree-walk.port";
 import type {
@@ -26,265 +23,36 @@ import type {
 
 export type TagSyncRunDeps = {
   readonly fs: CliFs;
+  readonly path: CliPath;
   readonly targetResolver: TagTargetResolverPort;
   readonly typeScriptTreeWalk: TypeScriptTreeWalkPort;
+  readonly versionResolver: TagVersionResolverPort;
+  readonly sinceWriter: TagSinceWriterPort;
 };
 
 export type TagSyncExecutionInput = TagSyncRunRequest & {
   listener?: TagProgressListener;
 };
 
-type TextEdit = {
-  start: number;
-  end: number;
-  replacement: string;
-};
-
-type TaggableDeclaration =
-  | ts.FunctionDeclaration
-  | ts.ClassDeclaration
-  | ts.InterfaceDeclaration
-  | ts.TypeAliasDeclaration
-  | ts.EnumDeclaration
-  | ts.VariableStatement;
-
-const PACKAGE_JSON = "package.json";
-const VERSION_TAG = "@since";
-
-function hasExportModifier(node: ts.Node): boolean {
-  const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined;
-  return modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) ?? false;
-}
-
-function isTaggableDeclaration(node: ts.Statement): node is TaggableDeclaration {
-  return (
-    ts.isFunctionDeclaration(node) ||
-    ts.isClassDeclaration(node) ||
-    ts.isInterfaceDeclaration(node) ||
-    ts.isTypeAliasDeclaration(node) ||
-    ts.isEnumDeclaration(node) ||
-    ts.isVariableStatement(node)
-  );
-}
-
-function addDeclarationName(
-  registry: Map<string, Set<TaggableDeclaration>>,
-  name: string,
-  declaration: TaggableDeclaration,
-): void {
-  if (!registry.has(name)) {
-    registry.set(name, new Set([declaration]));
-    return;
-  }
-  registry.get(name)!.add(declaration);
-}
-
-function collectLocalNamedDeclarations(sf: ts.SourceFile): Map<string, Set<TaggableDeclaration>> {
-  const declarations = new Map<string, Set<TaggableDeclaration>>();
-  for (const statement of sf.statements) {
-    if (ts.isFunctionDeclaration(statement) && statement.name) {
-      addDeclarationName(declarations, statement.name.text, statement);
-      continue;
-    }
-    if (ts.isClassDeclaration(statement) && statement.name) {
-      addDeclarationName(declarations, statement.name.text, statement);
-      continue;
-    }
-    if (ts.isInterfaceDeclaration(statement)) {
-      addDeclarationName(declarations, statement.name.text, statement);
-      continue;
-    }
-    if (ts.isTypeAliasDeclaration(statement)) {
-      addDeclarationName(declarations, statement.name.text, statement);
-      continue;
-    }
-    if (ts.isEnumDeclaration(statement)) {
-      addDeclarationName(declarations, statement.name.text, statement);
-      continue;
-    }
-    if (!ts.isVariableStatement(statement)) {
-      continue;
-    }
-    for (const declaration of statement.declarationList.declarations) {
-      if (ts.isIdentifier(declaration.name)) {
-        addDeclarationName(declarations, declaration.name.text, statement);
-      }
-    }
-  }
-  return declarations;
-}
-
-function collectExportedDeclarations(sf: ts.SourceFile): Set<TaggableDeclaration> {
-  const exported = new Set<TaggableDeclaration>();
-  const localNamed = collectLocalNamedDeclarations(sf);
-
-  for (const statement of sf.statements) {
-    if (isTaggableDeclaration(statement) && hasExportModifier(statement)) {
-      exported.add(statement);
-      continue;
-    }
-
-    if (
-      ts.isExportDeclaration(statement) &&
-      !statement.moduleSpecifier &&
-      statement.exportClause &&
-      ts.isNamedExports(statement.exportClause)
-    ) {
-      for (const element of statement.exportClause.elements) {
-        const localName = element.propertyName?.text ?? element.name.text;
-        const declarations = localNamed.get(localName);
-        if (!declarations) {
-          continue;
-        }
-        for (const declaration of declarations) {
-          exported.add(declaration);
-        }
-      }
-      continue;
-    }
-
-    if (!ts.isExportAssignment(statement) || !ts.isIdentifier(statement.expression)) {
-      continue;
-    }
-    const declarations = localNamed.get(statement.expression.text);
-    if (!declarations) {
-      continue;
-    }
-    for (const declaration of declarations) {
-      exported.add(declaration);
-    }
-  }
-
-  return exported;
-}
-
-function makeJSDocSinceLine(
-  existingComment: ts.JSDoc,
-  sourceText: string,
-  version: string,
-): TextEdit {
-  const commentText = sourceText.slice(existingComment.pos, existingComment.end);
-  const baseIndent = indentOfLineContaining(sourceText, existingComment.pos);
-  const rawBody = commentText.replace(/^\/\*\*\s?/, "").replace(/\s*\*\/$/, "");
-  const normalizedBodyLines = rawBody
-    .split("\n")
-    .map((line) => line.replace(/^\s*\*\s?/, "").replace(/\s+$/, ""))
-    .filter((line, lineIndex, lines) => {
-      if (line.length > 0) {
-        return true;
-      }
-      const hasNonEmptyBefore = lines.slice(0, lineIndex).some((value) => value.length > 0);
-      const hasNonEmptyAfter = lines.slice(lineIndex + 1).some((value) => value.length > 0);
-      return hasNonEmptyBefore && hasNonEmptyAfter;
-    });
-
-  const formattedBody =
-    normalizedBodyLines.length > 0
-      ? `${normalizedBodyLines.map((line) => `${baseIndent} * ${line}`).join("\n")}\n${baseIndent} *\n`
-      : "";
-  const replacement = `/**\n${formattedBody}${baseIndent} * ${VERSION_TAG} ${version}\n${baseIndent} */`;
-  return { start: existingComment.pos, end: existingComment.end, replacement };
-}
-
-function makeSinceOnlyJSDocBlock(declarationIndent: string, version: string): string {
-  return `/**\n${declarationIndent} * ${VERSION_TAG} ${version}\n${declarationIndent} */`;
-}
-
-function makeDeclarationSinceLine(
-  declaration: TaggableDeclaration,
-  sf: ts.SourceFile,
-  sourceText: string,
-  version: string,
-): TextEdit | undefined {
-  const jsDocTags = ts.getJSDocTags(declaration);
-  if (jsDocTags.some((tag) => tag.tagName.text === "since")) {
-    return undefined;
-  }
-
-  const jsDocComments = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
-  const lastJsDoc = jsDocComments.at(-1);
-  if (lastJsDoc) {
-    return makeJSDocSinceLine(lastJsDoc, sourceText, version);
-  }
-
-  const start = declaration.getStart(sf);
-  const indent = indentOfLineContaining(sourceText, start);
-  return {
-    start,
-    end: start,
-    replacement: `${indent}${makeSinceOnlyJSDocBlock(indent, version)}\n${indent}`,
-  };
-}
-
-function applySinceTagsToFile(
-  filePath: string,
-  version: string,
+export function resolveNearestPackageVersion(
+  targetPath: string,
   fs: CliFs,
-  write: boolean,
-): TagFileResult {
-  const sourceText = fs.readFileSync(filePath, "utf8");
-  const sf = ts.createSourceFile(
-    filePath,
-    sourceText,
-    ts.ScriptTarget.Latest,
-    true,
-    filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-  );
-
-  const edits: TextEdit[] = [];
-  for (const declaration of collectExportedDeclarations(sf)) {
-    const edit = makeDeclarationSinceLine(declaration, sf, sourceText, version);
-    if (edit) {
-      edits.push(edit);
-    }
-  }
-
-  if (edits.length > 0 && write) {
-    const updated = applyEditsDescending(sourceText, edits);
-    fs.writeFileSync(filePath, updated, "utf8");
-  }
-
-  return {
-    filePath,
-    taggedDeclarations: edits.length,
-    changed: edits.length > 0,
-  };
-}
-
-export function resolveNearestPackageVersion(targetPath: string, fs: CliFs): string {
-  const resolved = path.resolve(targetPath);
-  const startDir = fs.statSync(resolved).isDirectory() ? resolved : path.dirname(resolved);
-
-  let current = startDir;
-  while (true) {
-    const packageJsonPath = path.join(current, PACKAGE_JSON);
-    if (fs.existsSync(packageJsonPath)) {
-      const raw = fs.readFileSync(packageJsonPath, "utf8");
-      const version = (JSON.parse(raw) as { version?: unknown }).version;
-      if (typeof version === "string" && version.length > 0) {
-        return version;
-      }
-      throw new Error(`Missing or invalid version in ${packageJsonPath}`);
-    }
-
-    const parent = path.dirname(current);
-    if (parent === current) {
-      break;
-    }
-    current = parent;
-  }
-
-  throw new Error(`Unable to locate ${PACKAGE_JSON} from target: ${targetPath}`);
+  versionResolver: TagVersionResolverPort,
+): string {
+  return versionResolver.resolveNearestPackageVersion(targetPath, fs);
 }
 
 export function runTagOnTarget(
   targetPath: string,
   opts: TagRunOptions,
   fs: CliFs,
+  pathService: CliPath,
+  versionResolver: TagVersionResolverPort,
+  sinceWriter: TagSinceWriterPort,
   typeScriptTreeWalk: TypeScriptTreeWalkPort,
 ): TagRunResult {
-  const resolvedTarget = path.resolve(targetPath);
-  const version = resolveNearestPackageVersion(resolvedTarget, fs);
+  const resolvedTarget = pathService.resolve(targetPath);
+  const version = resolveNearestPackageVersion(resolvedTarget, fs, versionResolver);
 
   const files = fs.statSync(resolvedTarget).isDirectory()
     ? typeScriptTreeWalk.walkTsxFiles(resolvedTarget, fs)
@@ -292,7 +60,7 @@ export function runTagOnTarget(
   const tsFiles = files.filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
 
   const fileResults = tsFiles.map((filePath) =>
-    applySinceTagsToFile(filePath, version, fs, opts.write),
+    sinceWriter.applySinceTagsToFile(filePath, version, fs, opts.write),
   );
   const filesChanged = fileResults.filter((result) => result.changed).length;
   const taggedDeclarations = fileResults.reduce(
@@ -345,6 +113,7 @@ function extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set
 
 function chooseWorkspacePackageTargetPath(
   candidate: TagTargetCandidate,
+  pathService: CliPath,
   fs: CliFs,
 ): { targetPath: string; source: TagTargetSource } {
   if (candidate.source !== "workspace-package") {
@@ -354,7 +123,7 @@ function chooseWorkspacePackageTargetPath(
     };
   }
 
-  const preferredSourceDir = path.join(candidate.candidatePath, "src");
+  const preferredSourceDir = pathService.join(candidate.candidatePath, "src");
   if (fs.existsSync(preferredSourceDir) && fs.statSync(preferredSourceDir).isDirectory()) {
     return {
       targetPath: preferredSourceDir,
@@ -371,12 +140,13 @@ function chooseWorkspacePackageTargetPath(
 function resolveTargetSelection(
   candidate: TagTargetCandidate,
   rootDir: string,
+  pathService: CliPath,
   fs: CliFs,
 ): TagResolvedTarget {
-  const selectedTarget = chooseWorkspacePackageTargetPath(candidate, fs);
-  const rootRelativeTargetPath = path
+  const selectedTarget = chooseWorkspacePackageTargetPath(candidate, pathService, fs);
+  const rootRelativeTargetPath = pathService
     .relative(rootDir, selectedTarget.targetPath)
-    .split(path.sep)
+    .split(pathService.separator)
     .join("/");
   return {
     targetPath: selectedTarget.targetPath,
@@ -417,11 +187,14 @@ async function runOnResolvedTarget(
   resolvedTarget: TagResolvedTarget,
   write: boolean,
   fs: CliFs,
+  pathService: CliPath,
+  versionResolver: TagVersionResolverPort,
+  sinceWriter: TagSinceWriterPort,
   typeScriptTreeWalk: TypeScriptTreeWalkPort,
   listener: TagProgressListener | undefined,
 ): Promise<TagTargetExecutionResult> {
   listener?.onTargetStarted(resolvedTarget);
-  const absoluteTargetPath = path.resolve(resolvedTarget.targetPath);
+  const absoluteTargetPath = pathService.resolve(resolvedTarget.targetPath);
   if (!fs.existsSync(absoluteTargetPath)) {
     const missingTargetResult: TagTargetExecutionResult = {
       target: resolvedTarget,
@@ -434,7 +207,15 @@ async function runOnResolvedTarget(
   }
 
   try {
-    const runResult = runTagOnTarget(absoluteTargetPath, { write }, fs, typeScriptTreeWalk);
+    const runResult = runTagOnTarget(
+      absoluteTargetPath,
+      { write },
+      fs,
+      pathService,
+      versionResolver,
+      sinceWriter,
+      typeScriptTreeWalk,
+    );
     const targetRunResult: TagTargetExecutionResult = {
       target: resolvedTarget,
       targetExists: true,
@@ -464,7 +245,7 @@ export async function runTagSync(
   deps: TagSyncRunDeps,
 ): Promise<Result<TagSyncResult, AppError>> {
   try {
-    const { fs, targetResolver, typeScriptTreeWalk } = deps;
+    const { fs, path, targetResolver, typeScriptTreeWalk, versionResolver, sinceWriter } = deps;
     const tagConfig = input.config as CodefastTagConfig | undefined;
     const targetCandidates = await targetResolver.resolveTagTargetCandidates(
       input.rootDir,
@@ -476,26 +257,34 @@ export async function runTagSync(
       input.skipPackages,
     );
     const selectedTargets = includedCandidates.map((candidate) =>
-      resolveTargetSelection(candidate, input.rootDir, fs),
+      resolveTargetSelection(candidate, input.rootDir, path, fs),
     );
-    const targetResults = await Promise.all(
+    const targetExecutionResults = await Promise.all(
       selectedTargets.map((resolvedTarget) =>
-        runOnResolvedTarget(resolvedTarget, input.write, fs, typeScriptTreeWalk, input.listener),
+        runOnResolvedTarget(
+          resolvedTarget,
+          input.write,
+          fs,
+          path,
+          versionResolver,
+          sinceWriter,
+          typeScriptTreeWalk,
+          input.listener,
+        ),
       ),
     );
-
-    const allFileResults: TagFileResult[] = targetResults.flatMap(
+    const allFileResults: TagFileResult[] = targetExecutionResults.flatMap(
       (targetResult) => targetResult.result?.fileResults ?? [],
     );
-    const filesScanned = targetResults.reduce(
+    const filesScanned = targetExecutionResults.reduce(
       (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
       0,
     );
-    const filesChanged = targetResults.reduce(
+    const filesChanged = targetExecutionResults.reduce(
       (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
       0,
     );
-    const taggedDeclarations = targetResults.reduce(
+    const taggedDeclarations = targetExecutionResults.reduce(
       (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
       0,
     );
@@ -506,8 +295,8 @@ export async function runTagSync(
       input.write && modifiedFiles.length > 0
         ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
         : null;
-    const distinctVersions = [...extractDistinctVersions(targetResults)].sort((left, right) =>
-      left.localeCompare(right),
+    const distinctVersions = [...extractDistinctVersions(targetExecutionResults)].sort(
+      (left, right) => left.localeCompare(right),
     );
 
     return ok({
@@ -515,11 +304,11 @@ export async function runTagSync(
       selectedTargets,
       resolvedTargets: selectedTargets,
       skippedPackages,
-      targetResults,
+      targetResults: targetExecutionResults,
       filesScanned,
       filesChanged,
       taggedDeclarations,
-      versionSummary: summarizeVersions(targetResults),
+      versionSummary: summarizeVersions(targetExecutionResults),
       distinctVersions,
       modifiedFiles,
       hookError,
