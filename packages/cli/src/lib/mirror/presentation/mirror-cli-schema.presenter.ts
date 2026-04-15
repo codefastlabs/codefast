@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
 
-export const MirrorSyncRunRequestSchema: z.ZodType<MirrorSyncRunRequest> = z.object({
+export const mirrorSyncRunRequestSchema: z.ZodType<MirrorSyncRunRequest> = z.object({
   rootDir: z.string().min(1),
   verbose: z.boolean().optional(),
   noColor: z.boolean().optional(),

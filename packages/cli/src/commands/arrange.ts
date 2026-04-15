@@ -2,9 +2,9 @@ import process from "node:process";
 import type { Command } from "commander";
 import { Option } from "commander";
 import {
-  ArrangeAnalyzeDirectoryRequestSchema,
-  ArrangeSuggestGroupsRequestSchema,
-  ArrangeSyncRunRequestSchema,
+  arrangeAnalyzeDirectoryRequestSchema,
+  arrangeSuggestGroupsRequestSchema,
+  arrangeSyncRunRequestSchema,
 } from "#lib/arrange/presentation/arrange-cli-schema.presenter";
 import { createCliContainer } from "#lib/core/infra/container.adapter";
 import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
@@ -40,7 +40,7 @@ export function registerArrangeCommand(program: Command): void {
         return;
       }
       const { resolvedTarget } = prelude.value;
-      const parsed = parseWithCliSchema(ArrangeAnalyzeDirectoryRequestSchema, {
+      const parsed = parseWithCliSchema(arrangeAnalyzeDirectoryRequestSchema, {
         analyzeRootPath: resolvedTarget,
       });
       runSyncUseCaseAfterParse(
@@ -68,7 +68,7 @@ export function registerArrangeCommand(program: Command): void {
           return;
         }
         const { resolvedTarget, rootDir, config } = prelude.value;
-        const parsed = parseWithCliSchema(ArrangeSyncRunRequestSchema, {
+        const parsed = parseWithCliSchema(arrangeSyncRunRequestSchema, {
           rootDir,
           targetPath: resolvedTarget,
           write: false,
@@ -99,7 +99,7 @@ export function registerArrangeCommand(program: Command): void {
           return;
         }
         const { resolvedTarget, rootDir, config } = prelude.value;
-        const parsed = parseWithCliSchema(ArrangeSyncRunRequestSchema, {
+        const parsed = parseWithCliSchema(arrangeSyncRunRequestSchema, {
           rootDir,
           targetPath: resolvedTarget,
           write: true,
@@ -121,7 +121,7 @@ export function registerArrangeCommand(program: Command): void {
     .addOption(withClassNameOption())
     .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean }) => {
       const cli = createCliContainer();
-      const parsed = parseWithCliSchema(ArrangeSuggestGroupsRequestSchema, {
+      const parsed = parseWithCliSchema(arrangeSuggestGroupsRequestSchema, {
         inlineClasses: tokens.join(" ").trim(),
         emitTvStyleArray: !!opts.tv,
         trailingClassName: !!opts.withClassName,

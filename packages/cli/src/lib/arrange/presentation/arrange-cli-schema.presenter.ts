@@ -6,12 +6,12 @@ import type {
 } from "#lib/arrange/application/requests/arrange-sync.request";
 import type { ArrangeSuggestGroupsRequest } from "#lib/arrange/application/requests/suggest-groups.request";
 
-export const ArrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> =
+export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> =
   z.object({
     analyzeRootPath: z.string().min(1, "analyzeRootPath is required"),
   });
 
-export const ArrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.object({
+export const arrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.object({
   rootDir: z.string().min(1),
   targetPath: z.string().min(1),
   write: z.boolean(),
@@ -20,14 +20,14 @@ export const ArrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.o
   config: z.unknown().optional(),
 });
 
-export const ArrangeRunTargetRequestSchema: z.ZodType<ArrangeRunTargetRequest> = z.object({
+export const arrangeRunTargetRequestSchema: z.ZodType<ArrangeRunTargetRequest> = z.object({
   targetPath: z.string().min(1),
   write: z.boolean(),
   withClassName: z.boolean().optional(),
   cnImport: z.string().optional(),
 });
 
-export const ArrangeSuggestGroupsRequestSchema: z.ZodType<ArrangeSuggestGroupsRequest> = z.object({
+export const arrangeSuggestGroupsRequestSchema: z.ZodType<ArrangeSuggestGroupsRequest> = z.object({
   inlineClasses: z
     .string()
     .min(1, 'Pass a class string. Example: codefast arrange group "flex gap-2 text-sm rounded-md"'),
