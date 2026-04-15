@@ -1,5 +1,5 @@
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { TagTargetCandidate } from "#lib/tag/domain/types";
+import type { TagTargetCandidate } from "#lib/tag/domain/types.domain";
 
 export interface TagTargetResolverPort {
   resolveTagTargetCandidates(

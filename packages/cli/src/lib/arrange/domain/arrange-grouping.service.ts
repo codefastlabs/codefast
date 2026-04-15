@@ -3,18 +3,18 @@
  * Pure: only DomainSourceFile, source strings, and options — no I/O.
  */
 
-import type { GroupFileResult, PlannedGroupEdit } from "#lib/arrange/domain/types";
+import type { GroupFileResult, PlannedGroupEdit } from "#lib/arrange/domain/types.domain";
 import {
   applyEditsDescending,
   buildKnownCnTvBindings,
   unwrapCnInsideTvCallReplacement,
-} from "#lib/arrange/domain/ast/ast-helpers";
-import { listAllCnCallsInsideTvInSourceFile } from "#lib/arrange/domain/ast/collectors-tv";
+} from "#lib/arrange/domain/ast/ast-helpers.helper";
+import { listAllCnCallsInsideTvInSourceFile } from "#lib/arrange/domain/ast/collectors-tv.collector";
 import {
   collectGroupTargets,
   planGroupEditForTarget,
   targetReplaceStart,
-} from "#lib/arrange/domain/ast/targets";
+} from "#lib/arrange/domain/ast/targets.model";
 import type {
   DomainCallExpression,
   DomainSourceFile,

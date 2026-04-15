@@ -14,7 +14,7 @@ import {
   type DomainCallExpression,
   type DomainSourceFile,
 } from "#lib/arrange/domain/ast/ast-node.model";
-import type { PlannedGroupEdit } from "#lib/arrange/domain/types";
+import type { PlannedGroupEdit } from "#lib/arrange/domain/types.domain";
 
 const emptySourceFile = (fileName: string, text: string): DomainSourceFile => ({
   fileName,

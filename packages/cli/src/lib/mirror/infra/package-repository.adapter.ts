@@ -1,14 +1,14 @@
-import type { CliFs } from "#lib/infra/fs-contract";
+import type { CliFs } from "#lib/infra/fs-contract.port";
 import type { PackageRepositoryPort } from "#lib/mirror/application/ports/package-repository.port";
 import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,
   PackageJsonShape,
-} from "#lib/mirror/domain/types";
+} from "#lib/mirror/domain/types.domain";
 import {
   resolvePackageDisplayName,
   writePackageJsonExportsAtomic,
-} from "#lib/mirror/infra/update-pkg";
+} from "#lib/mirror/infra/update-pkg.adapter";
 
 export class PackageRepositoryAdapter implements PackageRepositoryPort {
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string {

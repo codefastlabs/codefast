@@ -3,14 +3,14 @@ import type {
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#lib/mirror/domain/types";
+} from "#lib/mirror/domain/types.domain";
 
 export type MirrorProcessingModeInput =
   | { kind: "single" }
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
 /**
- * CLI output for mirror sync — implemented in `presentation`, injected here so `application/sync` stays clean.
+ * CLI output for mirror sync — implemented in `presentation`, injected here so `application/use-cases/run-mirror-sync` stays clean.
  */
 export type MirrorSyncReporterPort = {
   configureMirrorColors(noColor: boolean): void;

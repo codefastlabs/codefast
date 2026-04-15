@@ -1,18 +1,9 @@
-import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { consumeCliAppError } from "#lib/core/presentation/cli-executor";
-import {
-  createCliContext,
-  parseWithCliSchema,
-  resolveTagWorkspaceRoot,
-  tryLoadCodefastConfig,
-} from "#lib/core/presentation/create-command-handler";
+import { createCliContainer } from "#lib/core/infra/container.adapter";
+import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
+import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
 import { TagSyncRunRequestSchema } from "#lib/tag/application/requests/tag-sync.request";
-import {
-  createTagProgressListener,
-  presentTagSyncCliResult,
-} from "#lib/tag/presentation/tag-presenter";
 
 export function registerTagCommand(program: Command): void {
   program
@@ -24,18 +15,26 @@ export function registerTagCommand(program: Command): void {
       "Directory or file to annotate (default: auto-discover workspace packages)",
     )
     .option("--dry-run", "Show summary without writing files", false)
-    .action(async (target: string | undefined, options: { dryRun?: boolean }) => {
-      const cli = createCliContext();
-      const rootDir = resolveTagWorkspaceRoot(cli);
-      const loadedOutcome = await tryLoadCodefastConfig(cli, rootDir);
-      if (!consumeCliAppError(cli.logger, loadedOutcome)) {
+    .action(async function (
+      this: Command,
+      target: string | undefined,
+      options: { dryRun?: boolean },
+    ) {
+      const cli = createCliContainer();
+      const prelude = await cli.tag.prepareTagSync({
+        currentWorkingDirectory: process.cwd(),
+        rawTarget: target,
+        globalCliRaw: this.optsWithGlobals(),
+      });
+      if (!consumeCliAppError(cli.logger, prelude)) {
         return;
       }
-      const tagConfig = loadedOutcome.value.config.tag ?? {};
+      const { rootDir, config, resolvedTargetPath } = prelude.value;
+      const tagConfig = config.tag ?? {};
       const parsed = parseWithCliSchema(TagSyncRunRequestSchema, {
         rootDir,
         write: !options.dryRun,
-        targetPath: target ? path.resolve(target) : undefined,
+        targetPath: resolvedTargetPath,
         skipPackages: tagConfig.skipPackages,
         config: tagConfig,
       });
@@ -44,11 +43,11 @@ export function registerTagCommand(program: Command): void {
       }
       const tagOutcome = await cli.tag.runTagSync({
         ...parsed.value,
-        listener: createTagProgressListener((line) => cli.logger.out(line)),
+        listener: cli.tag.createProgressListener((line) => cli.logger.out(line)),
       });
       if (!consumeCliAppError(cli.logger, tagOutcome)) {
         return;
       }
-      process.exitCode = presentTagSyncCliResult(cli.logger, tagOutcome.value, rootDir);
+      process.exitCode = cli.tag.presentSyncCliResult(tagOutcome.value, rootDir);
     });
 }

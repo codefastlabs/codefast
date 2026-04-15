@@ -1,6 +1,6 @@
-import { messageFromCaughtUnknown } from "#lib/infra/caught-unknown-message";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract";
-import { walkTsxFiles } from "#lib/shared/source-code/infra/tsx-file-walk";
+import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
+import type { CliFs, CliLogger } from "#lib/infra/fs-contract.port";
+import { walkTsxFiles } from "#lib/shared/source-code/infra/tsx-file-walk.adapter";
 import type { FileWalkerPort } from "#lib/arrange/application/ports/file-walker.port";
 
 export class FileWalkerAdapter implements FileWalkerPort {
