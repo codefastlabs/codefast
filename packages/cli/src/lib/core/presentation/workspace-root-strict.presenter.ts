@@ -1,7 +1,7 @@
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
-import type { CliContainer } from "#lib/core/infra/container.adapter";
+import type { CliContainer } from "#lib/core/infra/cli-container.contract";
 import { findRepoRoot } from "#lib/infra/workspace/repo-root.adapter";
 
 export function resolveCliWorkspaceRootStrict(cli: CliContainer): Result<string, AppError> {

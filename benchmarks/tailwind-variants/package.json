@@ -39,6 +39,7 @@
     "class-variance-authority": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwind-variants": "catalog:",
-    "tinybench": "catalog:"
+    "tinybench": "catalog:",
+    "tsx": "catalog:"
   }
 }
