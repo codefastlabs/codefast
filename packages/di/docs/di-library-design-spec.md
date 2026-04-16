@@ -730,36 +730,36 @@ class AsyncModuleLoadError extends DiError {
 packages/di/
 ├── src/
 │   ├── token.ts                Token<Value> — factory fn, branded type, TokenValue
+│   ├── token.test.ts
 │   ├── binding.ts              Binding union, BindingBuilder fluent API, BindingIdentifier
+│   ├── binding.test.ts
 │   ├── registry.ts             BindingRegistry — Map<Token, Binding[]>
+│   ├── registry.test.ts
 │   ├── resolver.ts             DependencyResolver — graph walk, circular detection
+│   ├── resolver.test.ts        Bao gồm circular dependency cases
 │   ├── scope.ts                ScopeManager — singleton/scoped cache
+│   ├── scope.test.ts
 │   ├── lifecycle.ts            LifecycleManager — onActivation/onDeactivation
+│   ├── lifecycle.test.ts
 │   ├── container.ts            DefaultContainer + Container interface
+│   ├── container.test.ts       Bao gồm named/tagged và integration tests
 │   ├── module.ts               Module + AsyncModule
+│   ├── module.test.ts
 │   │
 │   ├── decorators/
 │   │   ├── injectable.ts       @injectable() — Stage 3 class decorator
+│   │   ├── injectable.test.ts
 │   │   ├── inject.ts           @inject() + @injectOptional()
+│   │   ├── inject.test.ts
 │   │   ├── metadata.ts         SymbolMetadataReader — implements MetadataReader
 │   │   └── index.ts
 │   │
 │   ├── errors.ts               DiError + tất cả subclasses
 │   └── index.ts                Public API exports
 │
-├── test/
-│   ├── token.test.ts
-│   ├── container.test.ts
-│   ├── scope.test.ts
-│   ├── lifecycle.test.ts
-│   ├── circular.test.ts
-│   ├── decorators.test.ts
-│   ├── module.test.ts
-│   └── named-tagged.test.ts
-│
 ├── package.json
 ├── tsconfig.json
-└── tsup.config.ts
+└── tsdown.config.ts
 ```
 
 ### 9.1 Public API (`index.ts`)
@@ -817,14 +817,14 @@ export {
 
 ESM-only, không có `"require"` export — giống InversifyJS v8. Node 20.19+ hỗ trợ `require(esm)` mà không cần flag.
 
-### 9.3 `tsup.config.ts`
+### 9.3 `tsdown.config.ts`
 
 ```ts
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["esm"], // ESM-only — không cần CJS
+  format: "esm", // ESM-only — không cần CJS
   dts: true,
   clean: true,
   sourcemap: true,
@@ -837,7 +837,7 @@ export default defineConfig({
 
 ### Phase 0 — Nền móng (1–2 ngày)
 
-Setup package trong monorepo: tsconfig strict, tsup, vitest. Định nghĩa `Token<Value>`, `Binding` union, `DiError` hierarchy. Không có logic — chỉ là types và contracts.
+Setup package trong monorepo: tsconfig strict, tsdown, vitest. Định nghĩa `Token<Value>`, `Binding` union, `DiError` hierarchy. Không có logic — chỉ là types và contracts.
 
 **Deliverable:** Package import được, types compile sạch, zero runtime code.
 
@@ -910,7 +910,7 @@ TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagge
 | Công cụ                 | Vai trò                                      |
 | ----------------------- | -------------------------------------------- |
 | TypeScript 5.5+         | Decorator Stage 3, `Symbol.metadata`, strict |
-| tsup                    | Bundle ESM, `.d.ts`                          |
+| tsdown                  | Bundle ESM, `.d.ts`                          |
 | Vitest                  | Unit test                                    |
 | publint                 | Kiểm tra package exports correctness         |
 | `@arethetypeswrong/cli` | Kiểm tra type resolution correctness         |
@@ -932,7 +932,8 @@ TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagge
     "sourceMap": true,
     "outDir": "./dist"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
 }
 ```
 
