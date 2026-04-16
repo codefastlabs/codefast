@@ -278,7 +278,7 @@ Prefer Node subpath imports via `package.json#imports` for internal aliases:
 {
   "type": "module",
   "imports": {
-    "#*": ["./src/*", "./src/*.ts", "./src/*.tsx"]
+    "#*": ["./src/*"]
   }
 }
 ```

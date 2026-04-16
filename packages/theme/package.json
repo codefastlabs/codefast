@@ -35,11 +35,7 @@
   "types": "./dist/index.d.mts",
   "imports": {
     "#*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
+      "./src/*"
     ]
   },
   "exports": {

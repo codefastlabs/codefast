@@ -33,9 +33,7 @@
   "type": "module",
   "imports": {
     "#*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*/index.ts"
+      "./src/*"
     ]
   },
   "publishConfig": {
