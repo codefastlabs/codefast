@@ -18,7 +18,7 @@ describe("SymbolMetadataReader", () => {
 
     const sampleToken = token<string>("Sample");
     const payload: ConstructorMetadata = {
-      parameters: [{ optional: false, token: sampleToken }],
+      params: [{ index: 0, optional: false, token: sampleToken }],
     };
 
     const bucket: Record<string, unknown> = {

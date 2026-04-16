@@ -9,3 +9,12 @@ export function isProductionEnvironment(): boolean {
   }
   return processRef.env.NODE_ENV === "production";
 }
+
+/**
+ * True when not in production: `development`, `test`, unset `NODE_ENV`, or any value other than `"production"`.
+ * The container uses this to run one-time static scope validation after load/resolve so graph issues surface
+ * during local work and CI tests (e.g. Vitest).
+ */
+export function isDevelopmentOrTestEnvironment(): boolean {
+  return !isProductionEnvironment();
+}

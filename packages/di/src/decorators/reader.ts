@@ -7,10 +7,10 @@ import {
 } from "#lib/decorators/metadata";
 
 function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
-  if (typeof value !== "object" || value === null || !("parameters" in value)) {
+  if (typeof value !== "object" || value === null || !("params" in value)) {
     return false;
   }
-  return Array.isArray((value as ConstructorMetadata).parameters);
+  return Array.isArray((value as ConstructorMetadata).params);
 }
 
 /**

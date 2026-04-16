@@ -51,7 +51,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["test/**/*.test.ts", "src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.integration.test.ts"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",

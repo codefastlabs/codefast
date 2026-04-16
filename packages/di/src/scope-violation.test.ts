@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Container, ScopeViolationError, token } from "../src/index";
+import { Container } from "#lib/container";
+import { ScopeViolationError } from "#lib/errors";
+import { token } from "#lib/token";
 
 class Ephemeral {
   readonly tag = "ephemeral";
@@ -8,19 +10,17 @@ class Ephemeral {
 const TShort = token<Ephemeral>("ShortLived");
 const TLong = token<string>("LongLived");
 
-describe("ScopeViolationError", () => {
+describe("ScopeValidation", () => {
   it("throws from validate() when a singleton binding statically depends on a transient binding", () => {
     const container = Container.create();
     container
       .bind(TShort)
       .toDynamic(() => new Ephemeral())
-      .transient()
-      .build();
+      .transient();
     container
       .bind(TLong)
       .toResolved((shortLived) => `holds:${shortLived.tag}`, [TShort])
-      .singleton()
-      .build();
+      .singleton();
 
     expect(() => {
       container.validate();
@@ -32,13 +32,11 @@ describe("ScopeViolationError", () => {
     container
       .bind(TShort)
       .toDynamic(() => new Ephemeral())
-      .transient()
-      .build();
+      .transient();
     container
       .bind(TLong)
       .toResolved((shortLived) => `holds:${shortLived.tag}`, [TShort])
-      .singleton()
-      .build();
+      .singleton();
 
     expect(() => {
       container.resolve(TLong);
@@ -50,26 +48,23 @@ describe("ScopeViolationError", () => {
     container
       .bind(TShort)
       .toDynamic(() => new Ephemeral())
-      .singleton()
-      .build();
+      .singleton();
     container
       .bind(TLong)
       .toResolved((shortLived) => `holds:${shortLived.tag}`, [TShort])
-      .singleton()
-      .build();
+      .singleton();
     container.validate();
     expect(container.resolve(TLong)).toBe("holds:ephemeral");
   });
 
-  it("allows singleton depending on a constant binding even when the constant uses transient scope", () => {
+  it("allows singleton depending on a constant binding", () => {
     const TConfig = token<string>("Config");
     const container = Container.create();
-    container.bind(TConfig).toConstantValue("x").transient().build();
+    container.bind(TConfig).toConstantValue("x");
     container
       .bind(TLong)
       .toResolved((config) => `holds:${config}`, [TConfig])
-      .singleton()
-      .build();
+      .singleton();
     container.validate();
     expect(container.resolve(TLong)).toBe("holds:x");
   });

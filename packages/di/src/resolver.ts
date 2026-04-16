@@ -7,27 +7,25 @@ import type {
   ResolutionContext,
   ResolveHint,
 } from "#lib/binding";
-import { registryKeyLabel, selectBindingForRegistry } from "#lib/binding-select";
+import {
+  filterMatchingBindings,
+  registryKeyLabel,
+  selectBindingForRegistry,
+} from "#lib/binding-select";
+import { runActivation, runActivationAsync } from "#lib/lifecycle";
 import type { RegistryKey } from "#lib/registry";
 import type { Token } from "#lib/token";
 import { ScopeManager } from "#lib/scope";
 import {
   AsyncResolutionError,
   CircularDependencyError,
+  DiError,
   MissingMetadataError,
+  NoMatchingBindingError,
   ScopeViolationError,
   TokenNotBoundError,
 } from "#lib/errors";
 import type { MetadataReader } from "#lib/decorators/metadata";
-
-function isPromiseLike(value: unknown): value is Promise<unknown> {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "then" in value &&
-    typeof (value as Promise<unknown>).then === "function"
-  );
-}
 
 function bindingToMaterializationFrame(
   registryKey: RegistryKey,
@@ -57,6 +55,123 @@ export class DependencyResolver {
 
   resolveAsyncRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T> {
     return this.resolveAsync(key, hint, [], new Set(), []) as Promise<T>;
+  }
+
+  resolveOptionalRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined {
+    const registryKey = key as RegistryKey;
+    const label = registryKeyLabel(key);
+    const pathLabels: string[] = [label];
+    const bindings = this.hooks.lookup(registryKey);
+    if (bindings === undefined || bindings.length === 0) {
+      return undefined;
+    }
+    const selectionConstraintCtx = this.buildConstraintContext(pathLabels, [], hint);
+    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
+    if (candidates.length === 0) {
+      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+        throw new NoMatchingBindingError(label, hint, pathLabels);
+      }
+      return undefined;
+    }
+    if (candidates.length !== 1) {
+      throw new DiError(
+        `Ambiguous binding for "${label}": ${String(candidates.length)} candidates matched (resolution path: ${pathLabels.join(" -> ")})`,
+      );
+    }
+    const binding = candidates[0];
+    this.assertDependencyScopeAllowed(binding, pathLabels, []);
+    if (binding.kind === "async-dynamic") {
+      throw new AsyncResolutionError(
+        label,
+        pathLabels,
+        "encountered async-dynamic factory during synchronous resolution",
+      );
+    }
+    const visiting = new Set<RegistryKey>();
+    visiting.add(registryKey);
+    try {
+      return this.instantiateBinding(binding, registryKey, hint, pathLabels, visiting, []) as T;
+    } finally {
+      visiting.delete(registryKey);
+    }
+  }
+
+  resolveAllRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[] {
+    const registryKey = key as RegistryKey;
+    const label = registryKeyLabel(key);
+    const basePath: string[] = [label];
+    const bindings = this.hooks.lookup(registryKey);
+    if (bindings === undefined || bindings.length === 0) {
+      return [];
+    }
+    const selectionConstraintCtx = this.buildConstraintContext(basePath, [], hint);
+    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
+    if (candidates.length === 0) {
+      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+        throw new NoMatchingBindingError(label, hint, basePath);
+      }
+      return [];
+    }
+    const results: T[] = [];
+    for (const binding of candidates) {
+      this.assertDependencyScopeAllowed(binding, basePath, []);
+      if (binding.kind === "async-dynamic") {
+        throw new AsyncResolutionError(
+          label,
+          basePath,
+          "encountered async-dynamic factory during synchronous resolveAll",
+        );
+      }
+      const visiting = new Set<RegistryKey>();
+      visiting.add(registryKey);
+      try {
+        results.push(
+          this.instantiateBinding(binding, registryKey, hint, basePath, visiting, []) as T,
+        );
+      } finally {
+        visiting.delete(registryKey);
+      }
+    }
+    return results;
+  }
+
+  async resolveAllAsyncRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]> {
+    const registryKey = key as RegistryKey;
+    const label = registryKeyLabel(key);
+    const basePath: string[] = [label];
+    const bindings = this.hooks.lookup(registryKey);
+    if (bindings === undefined || bindings.length === 0) {
+      return [];
+    }
+    const selectionConstraintCtx = this.buildConstraintContext(basePath, [], hint);
+    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
+    if (candidates.length === 0) {
+      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+        throw new NoMatchingBindingError(label, hint, basePath);
+      }
+      return [];
+    }
+    const results: T[] = [];
+    for (const binding of candidates) {
+      this.assertDependencyScopeAllowed(binding, basePath, []);
+      const visiting = new Set<RegistryKey>();
+      visiting.add(registryKey);
+      try {
+        results.push(
+          (await this.instantiateBindingAsync(
+            binding,
+            registryKey,
+            hint,
+            basePath,
+            visiting,
+            [],
+          )) as T,
+        );
+      } finally {
+        visiting.delete(registryKey);
+      }
+    }
+    return results;
   }
 
   private buildConstraintContext(
@@ -122,10 +237,23 @@ export class DependencyResolver {
         this.resolve(k, h, [...pathLabels], visiting, materializationStack) as T,
       resolveAsync: <T>(k: Token<T> | Constructor<T>, h?: ResolveHint) =>
         this.resolveAsync(k, h, [...pathLabels], visiting, materializationStack) as Promise<T>,
+      resolveOptional: <T>(k: Token<T> | Constructor<T>, h?: ResolveHint) => {
+        try {
+          return this.resolve(k, h, [...pathLabels], visiting, materializationStack) as T;
+        } catch (caughtError: unknown) {
+          if (caughtError instanceof TokenNotBoundError) {
+            return undefined;
+          }
+          throw caughtError;
+        }
+      },
       constraint,
     };
   }
 
+  /**
+   * @param materializationStack Bindings along the current construction chain; used to block singleton→scoped/transient.
+   */
   private resolve<T>(
     key: Token<T> | Constructor<T>,
     hint: ResolveHint | undefined,
@@ -170,7 +298,7 @@ export class DependencyResolver {
 
     visiting.add(registryKey);
     try {
-      return this.instantiateBindingSync(
+      return this.instantiateBinding(
         binding,
         registryKey,
         hint,
@@ -183,6 +311,9 @@ export class DependencyResolver {
     }
   }
 
+  /**
+   * @param materializationStack Same captive-dependency chain as {@link resolve}.
+   */
   private async resolveAsync<T>(
     key: Token<T> | Constructor<T>,
     hint: ResolveHint | undefined,
@@ -232,7 +363,7 @@ export class DependencyResolver {
     }
   }
 
-  private instantiateBindingSync(
+  private instantiateBinding(
     binding: Binding<unknown>,
     registryKey: RegistryKey,
     hint: ResolveHint | undefined,
@@ -242,18 +373,11 @@ export class DependencyResolver {
   ): unknown {
     return this.hooks.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
+      // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
       const extendedStack = [...materializationStack, frame];
       const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
-      const instance = this.materializeSync(
-        binding,
-        hint,
-        ctx,
-        pathLabels,
-        visiting,
-        extendedStack,
-      );
-      this.runActivationSync(binding, instance, ctx, pathLabels);
-      return instance;
+      const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
+      return runActivation(binding, instance, ctx, pathLabels);
     });
   }
 
@@ -267,6 +391,7 @@ export class DependencyResolver {
   ): Promise<unknown> {
     return this.hooks.scopeManager.getOrCreateAsync(binding, async () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
+      // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
       const extendedStack = [...materializationStack, frame];
       const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
       const instance = await this.materializeAsync(
@@ -277,12 +402,11 @@ export class DependencyResolver {
         visiting,
         extendedStack,
       );
-      await this.runActivationAsync(binding, instance, ctx, pathLabels);
-      return instance;
+      return await runActivationAsync(binding, instance, ctx, pathLabels);
     });
   }
 
-  private materializeSync(
+  private materialize(
     binding: Binding<unknown>,
     hint: ResolveHint | undefined,
     ctx: ResolutionContext,
@@ -294,15 +418,15 @@ export class DependencyResolver {
       case "constant":
         return binding.value;
       case "class":
-        return this.instantiateClassBindingSync(
-          binding,
-          pathLabels,
-          visiting,
-          materializationStack,
-        );
+        return this.instantiateClassBinding(binding, pathLabels, visiting, materializationStack);
       case "dynamic": {
         const result = binding.factory(ctx);
-        if (isPromiseLike(result)) {
+        if (
+          typeof result === "object" &&
+          result !== null &&
+          "then" in result &&
+          typeof (result as Promise<unknown>).then === "function"
+        ) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
             pathLabels,
@@ -323,7 +447,12 @@ export class DependencyResolver {
           deps.push(this.resolve(depToken, undefined, pathLabels, visiting, materializationStack));
         }
         const product = binding.factory(...deps);
-        if (isPromiseLike(product)) {
+        if (
+          typeof product === "object" &&
+          product !== null &&
+          "then" in product &&
+          typeof (product as Promise<unknown>).then === "function"
+        ) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
             pathLabels,
@@ -393,7 +522,7 @@ export class DependencyResolver {
     }
   }
 
-  private instantiateClassBindingSync(
+  private instantiateClassBinding(
     binding: Extract<Binding<unknown>, { kind: "class" }>,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
@@ -412,12 +541,17 @@ export class DependencyResolver {
     if (arity > 0 && meta === undefined) {
       throw new MissingMetadataError(registryKeyLabel(ctorKey), pathLabels);
     }
-    if (meta === undefined || meta.parameters.length === 0) {
+    if (meta === undefined || meta.params.length === 0) {
       return new Ctor();
     }
 
-    const deps = meta.parameters.map((param) => {
-      const paramHint = param.hint;
+    const deps = meta.params.map((param) => {
+      const paramHint =
+        param.name !== undefined
+          ? { name: param.name }
+          : param.tag !== undefined
+            ? { tag: param.tag }
+            : undefined;
       if (param.optional) {
         try {
           return this.resolve(param.token, paramHint, pathLabels, visiting, materializationStack);
@@ -452,13 +586,18 @@ export class DependencyResolver {
     if (arity > 0 && meta === undefined) {
       throw new MissingMetadataError(registryKeyLabel(ctorKey), pathLabels);
     }
-    if (meta === undefined || meta.parameters.length === 0) {
+    if (meta === undefined || meta.params.length === 0) {
       return new Ctor();
     }
 
     const deps: unknown[] = [];
-    for (const param of meta.parameters) {
-      const paramHint = param.hint;
+    for (const param of meta.params) {
+      const paramHint =
+        param.name !== undefined
+          ? { name: param.name }
+          : param.tag !== undefined
+            ? { tag: param.tag }
+            : undefined;
       if (param.optional) {
         try {
           deps.push(
@@ -490,39 +629,5 @@ export class DependencyResolver {
       }
     }
     return new Ctor(...deps);
-  }
-
-  private runActivationSync(
-    binding: Binding<unknown>,
-    instance: unknown,
-    ctx: ResolutionContext,
-    pathLabels: string[],
-  ): void {
-    const handler = binding.onActivation;
-    if (handler === undefined) {
-      return;
-    }
-    const tokenLabel = pathLabels[pathLabels.length - 1] ?? "(unknown)";
-    const result = handler(ctx, instance);
-    if (isPromiseLike(result)) {
-      throw new AsyncResolutionError(
-        tokenLabel,
-        pathLabels,
-        "onActivation returned a Promise during synchronous resolution",
-      );
-    }
-  }
-
-  private async runActivationAsync(
-    binding: Binding<unknown>,
-    instance: unknown,
-    ctx: ResolutionContext,
-    _pathLabels: string[],
-  ): Promise<void> {
-    const handler = binding.onActivation;
-    if (handler === undefined) {
-      return;
-    }
-    await handler(ctx, instance);
   }
 }

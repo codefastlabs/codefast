@@ -1,15 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  AsyncModule,
-  AsyncResolutionError,
-  Container,
-  decoratorMetadataObjectSymbol,
-  inject,
-  injectable,
-  Module,
-  SymbolMetadataReader,
-  token,
-} from "#lib/index";
+import { AsyncResolutionError, Container, inject, injectable, Module, token } from "#lib/index";
 
 // --- Domain types & tokens
 
@@ -57,13 +47,8 @@ const DatabaseToken = token<Database>("Database");
 
 // --- User service (constructor injection via Symbol.metadata)
 
-@injectable()
+@injectable([inject(LoggerToken), inject(DatabaseToken)])
 class UserService {
-  static {
-    inject.param(UserService, 0, LoggerToken);
-    inject.param(UserService, 1, DatabaseToken);
-  }
-
   constructor(
     readonly logger: Logger,
     readonly database: Database,
@@ -75,57 +60,39 @@ class UserService {
   }
 }
 
-const metadataReader = new SymbolMetadataReader();
-
-describe("@codefast/di integration (database & app)", () => {
+describe("Integration: Application Lifecycle", () => {
   it("loads async infra then sync app, resolves UserService, enforces sync/async rules, dispose, child last-wins, and Symbol.metadata", async () => {
-    expect(
-      Reflect.getOwnPropertyDescriptor(UserService, decoratorMetadataObjectSymbol()),
-    ).toBeDefined();
-    expect(metadataReader.getConstructorMetadata(UserService)).toEqual({
-      parameters: [
-        { optional: false, token: LoggerToken },
-        { optional: false, token: DatabaseToken },
-      ],
-    });
-
     let deactivationCallCount = 0;
 
-    const InfraModule = AsyncModule.createAsync("infra", async (api) => {
+    const InfraModule = Module.createAsync("infra", async (api) => {
       await Promise.resolve();
 
-      api
-        .bind(ConfigToken)
-        .toConstantValue({ databaseUrl: "postgresql://integration:5432/app" })
-        .build();
+      api.bind(ConfigToken).toConstantValue({ databaseUrl: "postgresql://integration:5432/app" });
 
       api
         .bind(LoggerToken)
         .toDynamic(() => new ConsoleLogger())
-        .singleton()
-        .build();
+        .singleton();
 
       api
         .bind(DatabaseToken)
-        .toAsyncDynamic(async (ctx) => {
+        .toDynamicAsync(async (ctx) => {
           const config = ctx.resolve(ConfigToken);
           return new Database(config.databaseUrl);
         })
         .singleton()
         .onActivation((_ctx, instance) => {
           instance.activate();
+          return instance;
         })
-        .onDeactivation((_ctx, instance) => {
+        .onDeactivation((instance) => {
           deactivationCallCount += 1;
           instance.disconnect();
-        })
-        .build();
+        });
     });
 
-    // Sync app module: bindings only. Infra is an AsyncModule, so it cannot be referenced from
-    // Module.import(); load order via fromModulesAsync(InfraModule, AppModule) provides the graph.
     const AppModule = Module.create("app", (api) => {
-      api.bind(UserService).toSelf().singleton().build();
+      api.bind(UserService).toSelf().singleton();
     });
 
     const container = await Container.fromModulesAsync(InfraModule, AppModule);
@@ -148,7 +115,7 @@ describe("@codefast/di integration (database & app)", () => {
 
     const child = container.createChild();
     const childLogger: Logger = { log: vi.fn<(message: string) => void>() };
-    child.bind(LoggerToken).toConstantValue(childLogger).build();
+    child.bind(LoggerToken).toConstantValue(childLogger);
 
     expect(child.resolve(LoggerToken)).toBe(childLogger);
     expect(container.resolve(LoggerToken)).toBe(rootLogger);
@@ -157,7 +124,7 @@ describe("@codefast/di integration (database & app)", () => {
     expect(userViaChild).toBe(user);
     expect(userViaChild.logger).toBe(rootLogger);
 
-    container.dispose();
+    await container.dispose();
     expect(deactivationCallCount).toBe(1);
     expect(user.database.disconnected).toBe(true);
   });

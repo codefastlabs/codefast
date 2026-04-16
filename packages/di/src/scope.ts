@@ -1,36 +1,10 @@
-import type {
-  Binding,
-  BindingIdentifier,
-  ConstraintContext,
-  ResolutionContext,
-} from "#lib/binding";
-import { InvalidBindingError } from "#lib/errors";
-
-const DISPOSE_CONSTRAINT_CONTEXT: ConstraintContext = {
-  resolutionPath: [],
-  materializationStack: [],
-  parent: undefined,
-  ancestors: [],
-  currentResolveHint: undefined,
-};
+import type { Binding, BindingIdentifier } from "#lib/binding";
+import { DiError } from "#lib/errors";
 
 type CacheEntry = {
   readonly binding: Binding<unknown>;
   readonly instance: unknown;
 };
-
-function createDisposeOnlyContext(): ResolutionContext {
-  const unavailable = (): never => {
-    throw new InvalidBindingError(
-      "resolve() and resolveAsync() are not available during scope disposal.",
-    );
-  };
-  return {
-    resolve: unavailable,
-    resolveAsync: async (): Promise<never> => unavailable(),
-    constraint: DISPOSE_CONSTRAINT_CONTEXT,
-  };
-}
 
 function isPromiseLike(value: unknown): value is Promise<unknown> {
   return (
@@ -120,55 +94,44 @@ export class ScopeManager {
    * Runs synchronous `onDeactivation` hooks for scoped instances owned by this manager.
    * Throws if any hook returns a Promise.
    */
-  disposeSync(): void {
-    const disposeContext = createDisposeOnlyContext();
-    this.disposeMapSync(this.scopedStore, disposeContext);
-    if (this.ownsSingletonDisposal) {
-      this.disposeMapSync(this.singletonStore, disposeContext);
-    }
-  }
-
-  /**
-   * Synchronous disposal (alias of {@link disposeSync}).
-   */
   dispose(): void {
-    this.disposeSync();
+    this.disposeMap(this.scopedStore);
+    if (this.ownsSingletonDisposal) {
+      this.disposeMap(this.singletonStore);
+    }
   }
 
   /**
    * Runs `onDeactivation` hooks for scoped instances; root also disposes shared singletons.
    */
   async disposeAsync(): Promise<void> {
-    const disposeContext = createDisposeOnlyContext();
-    await this.disposeMapAsync(this.scopedStore, disposeContext);
+    await this.disposeMapAsync(this.scopedStore);
     if (this.ownsSingletonDisposal) {
-      await this.disposeMapAsync(this.singletonStore, disposeContext);
+      await this.disposeMapAsync(this.singletonStore);
     }
   }
 
   /**
    * Drops a cached singleton/scoped instance for `bindingId` and runs `onDeactivation` synchronously.
    */
-  releaseByBindingIdSync(bindingId: BindingIdentifier): void {
-    const disposeContext = createDisposeOnlyContext();
-    this.releaseFromStoreSync(this.singletonStore, bindingId, disposeContext);
-    this.releaseFromStoreSync(this.scopedStore, bindingId, disposeContext);
+  releaseByBindingId(bindingId: BindingIdentifier): void {
+    this.releaseFromStore(this.singletonStore, bindingId);
+    this.releaseFromStore(this.scopedStore, bindingId);
   }
 
   /**
    * Drops a cached singleton/scoped instance for `bindingId` and awaits `onDeactivation`.
    */
   async releaseByBindingIdAsync(bindingId: BindingIdentifier): Promise<void> {
-    const disposeContext = createDisposeOnlyContext();
-    await this.releaseFromStoreAsync(this.singletonStore, bindingId, disposeContext);
-    await this.releaseFromStoreAsync(this.scopedStore, bindingId, disposeContext);
+    await this.releaseFromStoreAsync(this.singletonStore, bindingId);
+    await this.releaseFromStoreAsync(this.scopedStore, bindingId);
   }
 
   /**
    * Drops a cached singleton/scoped instance for `binding.id` and runs `onDeactivation` synchronously.
    */
-  releaseBindingSync(binding: Binding<unknown>): void {
-    this.releaseByBindingIdSync(binding.id);
+  releaseBinding(binding: Binding<unknown>): void {
+    this.releaseByBindingId(binding.id);
   }
 
   /**
@@ -178,10 +141,9 @@ export class ScopeManager {
     await this.releaseByBindingIdAsync(binding.id);
   }
 
-  private releaseFromStoreSync(
+  private releaseFromStore(
     store: Map<BindingIdentifier, CacheEntry>,
     bindingId: BindingIdentifier,
-    disposeContext: ResolutionContext,
   ): void {
     const entry = store.get(bindingId);
     if (entry === undefined) {
@@ -189,12 +151,12 @@ export class ScopeManager {
     }
     store.delete(bindingId);
     const handler = entry.binding.onDeactivation;
-    if (handler === undefined) {
+    if (handler === undefined || entry.binding.scope !== "singleton") {
       return;
     }
-    const result = handler(disposeContext, entry.instance);
+    const result = handler(entry.instance);
     if (isPromiseLike(result)) {
-      throw new InvalidBindingError(
+      throw new DiError(
         "onDeactivation returned a Promise during synchronous scope release; use releaseBindingAsync() or unloadAsync().",
       );
     }
@@ -203,7 +165,6 @@ export class ScopeManager {
   private async releaseFromStoreAsync(
     store: Map<BindingIdentifier, CacheEntry>,
     bindingId: BindingIdentifier,
-    disposeContext: ResolutionContext,
   ): Promise<void> {
     const entry = store.get(bindingId);
     if (entry === undefined) {
@@ -211,44 +172,38 @@ export class ScopeManager {
     }
     store.delete(bindingId);
     const handler = entry.binding.onDeactivation;
-    if (handler === undefined) {
+    if (handler === undefined || entry.binding.scope !== "singleton") {
       return;
     }
-    await handler(disposeContext, entry.instance);
+    await handler(entry.instance);
   }
 
-  private disposeMapSync(
-    store: Map<BindingIdentifier, CacheEntry>,
-    disposeContext: ResolutionContext,
-  ): void {
+  private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
     const entries = [...store.values()];
     store.clear();
     for (const entry of entries) {
       const handler = entry.binding.onDeactivation;
-      if (handler === undefined) {
+      if (handler === undefined || entry.binding.scope !== "singleton") {
         continue;
       }
-      const result = handler(disposeContext, entry.instance);
+      const result = handler(entry.instance);
       if (isPromiseLike(result)) {
-        throw new InvalidBindingError(
-          "onDeactivation returned a Promise; use disposeAsync() instead of disposeSync().",
+        throw new DiError(
+          "onDeactivation returned a Promise; use disposeAsync() instead of dispose().",
         );
       }
     }
   }
 
-  private async disposeMapAsync(
-    store: Map<BindingIdentifier, CacheEntry>,
-    disposeContext: ResolutionContext,
-  ): Promise<void> {
+  private async disposeMapAsync(store: Map<BindingIdentifier, CacheEntry>): Promise<void> {
     const entries = [...store.values()];
     store.clear();
     for (const entry of entries) {
       const handler = entry.binding.onDeactivation;
-      if (handler === undefined) {
+      if (handler === undefined || entry.binding.scope !== "singleton") {
         continue;
       }
-      await handler(disposeContext, entry.instance);
+      await handler(entry.instance);
     }
   }
 }

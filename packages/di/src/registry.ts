@@ -50,6 +50,19 @@ export class BindingRegistry {
     }
   }
 
+  replaceById(id: BindingIdentifier, next: Binding<unknown>): void {
+    for (const [registryKey, list] of this.store.entries()) {
+      const index = list.findIndex((binding) => binding.id === id);
+      if (index === -1) {
+        continue;
+      }
+      const updated = [...list];
+      updated[index] = next;
+      this.store.set(registryKey, updated);
+      return;
+    }
+  }
+
   /**
    * Replaces all bindings for `key` with a single binding (module "last-wins" semantics).
    * Invokes `onReplaced` for every removed binding so scopes can run deactivation.

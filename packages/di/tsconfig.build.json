@@ -8,5 +8,5 @@
     "target": "ESNext"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts", "dist", "node_modules"]
+  "exclude": ["src/**/*.test.ts", "src/**/*.integration.test.ts", "src/**/*.spec.ts", "dist", "node_modules"]
 }

@@ -1,10 +1,15 @@
-import type { Constructor, ResolveHint } from "#lib/binding";
+import type { Constructor } from "#lib/binding";
 import type { Token } from "#lib/token";
 
 /**
  * Well-known key for Codefast DI constructor metadata on `Symbol.metadata`.
  */
 export const CODEFAST_DI_CONSTRUCTOR_METADATA = "codefast/di:constructor-metadata:v1";
+
+/** Optional scope hint from `@singleton()` / `@scoped()` (container may override at bind time). */
+export const CODEFAST_DI_CLASS_SCOPE_HINT = "codefast/di:class-scope-hint:v1";
+
+export type ClassScopeHint = "singleton" | "scoped";
 
 /**
  * Runtime symbol for the decorator metadata object (TC39 `Symbol.metadata`).
@@ -18,23 +23,26 @@ export function decoratorMetadataObjectSymbol(): symbol {
 /**
  * Per-parameter injection description collected by `@injectable()`.
  */
-export type ParamMetadata =
-  | {
-      readonly optional: false;
-      readonly token: Token<unknown>;
-      readonly hint?: ResolveHint;
-    }
-  | {
-      readonly optional: true;
-      readonly token: Token<unknown>;
-      readonly hint?: ResolveHint;
-    };
+export type ParamMetadata = {
+  readonly index: number;
+  readonly token: Token<unknown> | Constructor<unknown>;
+  readonly optional: boolean;
+  readonly name?: string;
+  readonly tag?: readonly [tag: string, value: unknown];
+};
+
+export type InjectionDescriptor<Value = unknown> = {
+  readonly token: Token<Value> | Constructor<Value>;
+  readonly optional: boolean;
+  readonly name?: string;
+  readonly tag?: readonly [tag: string, value: unknown];
+};
 
 /**
  * Constructor injection shape stored on the class `Symbol.metadata` object.
  */
 export type ConstructorMetadata = {
-  readonly parameters: readonly ParamMetadata[];
+  readonly params: readonly ParamMetadata[];
 };
 
 /**

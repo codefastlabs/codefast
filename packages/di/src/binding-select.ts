@@ -1,13 +1,37 @@
 import type { Binding, ConstraintContext, Constructor, ResolveHint } from "#lib/binding";
 import type { RegistryKey } from "#lib/registry";
 import type { Token } from "#lib/token";
-import { InvalidBindingError, TokenNotBoundError } from "#lib/errors";
+import { DiError, NoMatchingBindingError, TokenNotBoundError } from "#lib/errors";
 
 export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): string {
   if (typeof key === "function") {
     return key.name.length > 0 ? key.name : "(anonymous class)";
   }
   return key.name;
+}
+
+/**
+ * Applies resolve hints and optional constraint predicates to a binding list.
+ */
+export function filterMatchingBindings(
+  bindings: readonly Binding<unknown>[],
+  hint: ResolveHint | undefined,
+  constraintCtx: ConstraintContext | undefined,
+): Binding<unknown>[] {
+  let candidates = [...bindings];
+  if (hint?.name !== undefined) {
+    candidates = candidates.filter((binding) => binding.bindingName === hint.name);
+  }
+  if (hint?.tag !== undefined) {
+    const [tagKey, tagValue] = hint.tag;
+    candidates = candidates.filter((binding) => Object.is(binding.tags.get(tagKey), tagValue));
+  }
+  if (constraintCtx !== undefined) {
+    candidates = candidates.filter(
+      (binding) => binding.constraint === undefined || binding.constraint(constraintCtx),
+    );
+  }
+  return candidates;
 }
 
 /**
@@ -25,28 +49,18 @@ export function selectBindingForRegistry(
     throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
   }
 
-  let candidates = bindings;
-  if (hint?.name !== undefined) {
-    candidates = candidates.filter((binding) => binding.bindingName === hint.name);
-  }
-  if (hint?.tag !== undefined) {
-    const tagKey = hint.tag;
-    candidates = candidates.filter((binding) => Object.is(binding.tags.get(tagKey), hint.tagValue));
-  }
-
-  if (constraintCtx !== undefined) {
-    candidates = candidates.filter(
-      (binding) => binding.constraint === undefined || binding.constraint(constraintCtx),
-    );
-  }
+  const candidates = filterMatchingBindings(bindings, hint, constraintCtx);
 
   if (candidates.length === 1) {
     return candidates[0];
   }
   if (candidates.length === 0) {
+    if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+      throw new NoMatchingBindingError(tokenLabel, hint, [...pathLabels]);
+    }
     throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
   }
-  throw new InvalidBindingError(
+  throw new DiError(
     `Ambiguous binding for "${tokenLabel}": ${String(candidates.length)} candidates matched after applying ResolveHint (resolution path: ${pathLabels.join(" -> ")})`,
   );
 }

@@ -1,6 +1,11 @@
-import { InvalidBindingError } from "#lib/errors";
+import { DiError } from "#lib/errors";
+import {
+  CODEFAST_DI_CLASS_SCOPE_HINT,
+  decoratorMetadataObjectSymbol,
+  type ClassScopeHint,
+} from "#lib/decorators/metadata";
 import type { RegistryKey } from "#lib/registry";
-import type { Token } from "#lib/token";
+import type { Token, TokenValue } from "#lib/token";
 
 declare const bindingIdentifierBrand: unique symbol;
 
@@ -28,9 +33,10 @@ export type BindingScope = "singleton" | "transient" | "scoped";
  */
 export type ResolveHint = {
   readonly name?: string;
-  readonly tag?: string | symbol;
-  readonly tagValue?: unknown;
+  readonly tag?: readonly [tag: string | symbol, value: unknown];
 };
+
+export type ResolveOptions = ResolveHint;
 
 /**
  * Snapshot of a binding on the materialization stack (for {@link ConstraintContext}).
@@ -71,8 +77,18 @@ export type ConstraintContext = {
  * Context passed to factories and lifecycle hooks so nested dependencies resolve with the same path rules.
  */
 export type ResolutionContext = {
-  readonly resolve: <T>(key: Token<T> | Constructor<T>, hint?: ResolveHint) => T;
-  readonly resolveAsync: <T>(key: Token<T> | Constructor<T>, hint?: ResolveHint) => Promise<T>;
+  readonly resolve: <Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ) => Value;
+  readonly resolveAsync: <Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ) => Promise<Value>;
+  readonly resolveOptional: <Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ) => Value | undefined;
   readonly constraint: ConstraintContext;
 };
 
@@ -87,13 +103,15 @@ type BindingLifecycle = {
 export type ActivationHandler<Value> = (
   ctx: ResolutionContext,
   instance: Value,
-) => void | Promise<void>;
+) => Value | Promise<Value>;
 
-export type DeactivationHandler<Value> = ActivationHandler<Value>;
+export type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 
 type BindingBase = BindingLifecycle & {
   readonly id: BindingIdentifier;
   readonly scope: BindingScope;
+  /** Set when the binding was registered from {@link Module} / {@link AsyncModule} setup. */
+  readonly moduleId?: string;
 };
 
 export type ConstantBinding<Value> = BindingBase & {
@@ -118,7 +136,7 @@ export type AsyncDynamicBinding<Value> = BindingBase & {
 
 export type ResolvedBinding<Value> = BindingBase & {
   readonly kind: "resolved";
-  readonly dependencyTokens: readonly Token<unknown>[];
+  readonly dependencyTokens: readonly (Token<unknown> | Constructor<unknown>)[];
   readonly factory: (...args: unknown[]) => Value;
 };
 
@@ -150,132 +168,221 @@ type Strategy<Value> =
   | {
       readonly type: "resolved";
       readonly factory: (...args: unknown[]) => Value;
-      readonly dependencyTokens: readonly Token<unknown>[];
+      readonly dependencyTokens: readonly (Token<unknown> | Constructor<unknown>)[];
     }
   | { readonly type: "alias"; readonly targetToken: Token<Value> };
 
-/**
- * Fluent builder for a {@link Binding}. The registry only stores the product of {@link BindingBuilder.build}.
- */
+export type ConstantBindingBuilder<Value> = Omit<
+  BindingBuilder<Value>,
+  "singleton" | "transient" | "scoped"
+>;
+
+type BindingBuilderHooks<Value> = {
+  readonly register?: (binding: Binding<Value>) => void;
+  readonly update?: (binding: Binding<Value>) => void;
+};
+
+function resolveClassScopeHint<Value>(ctor: Constructor<Value>): ClassScopeHint | undefined {
+  const metadataRecordUnknown = (ctor as unknown as Record<symbol, unknown>)[
+    decoratorMetadataObjectSymbol()
+  ];
+  if (typeof metadataRecordUnknown !== "object" || metadataRecordUnknown === null) {
+    return undefined;
+  }
+  const value = (metadataRecordUnknown as Record<PropertyKey, unknown>)[
+    CODEFAST_DI_CLASS_SCOPE_HINT
+  ];
+  return value === "singleton" || value === "scoped" ? value : undefined;
+}
+
 export class BindingBuilder<Value> {
   private strategy: Strategy<Value> = { type: "unset" };
   private scope: BindingScope = "transient";
+  private isScopeExplicit = false;
   private explicitId: BindingIdentifier | undefined;
   private bindingName: string | undefined;
   private readonly tags = new Map<string | symbol, unknown>();
   private readonly constraintPredicates: ((ctx: ConstraintContext) => boolean)[] = [];
   private onActivationHandler: ActivationHandler<unknown> | undefined;
   private onDeactivationHandler: DeactivationHandler<unknown> | undefined;
+  private readonly moduleId: string | undefined;
+  private currentBinding: Binding<Value> | undefined;
+  private readonly hooks: BindingBuilderHooks<Value>;
 
-  constructor(protected readonly bindingKey: Token<Value> | Constructor<Value>) {}
+  constructor(
+    protected readonly bindingKey: Token<Value> | Constructor<Value>,
+    moduleId?: string,
+    hooks?: BindingBuilderHooks<Value>,
+  ) {
+    this.moduleId = moduleId;
+    this.hooks = hooks ?? {};
+  }
 
   to<C extends Constructor<Value>>(ctor: C): BindingBuilder<Value> {
-    this.assignStrategy({ type: "class", ctor });
+    if (!this.isScopeExplicit) {
+      const hint = resolveClassScopeHint(ctor);
+      if (hint !== undefined) {
+        this.scope = hint;
+      }
+    }
+    this.registerWithStrategy({ type: "class", ctor });
     return this;
   }
 
   toSelf(): BindingBuilder<Value> {
     if (typeof this.bindingKey !== "function") {
-      throw new InvalidBindingError(
+      throw new DiError(
         "toSelf() requires the binding key to be a constructor; use bind(SomeClass) or call to(Class) instead.",
       );
     }
-    this.assignStrategy({ type: "class", ctor: this.bindingKey });
+    if (!this.isScopeExplicit) {
+      const hint = resolveClassScopeHint(this.bindingKey);
+      if (hint !== undefined) {
+        this.scope = hint;
+      }
+    }
+    this.registerWithStrategy({ type: "class", ctor: this.bindingKey });
     return this;
   }
 
-  toConstantValue<const ConcreteValue extends Value>(value: ConcreteValue): BindingBuilder<Value> {
-    this.assignStrategy({ type: "constant", value });
-    return this;
+  toConstantValue<const ConcreteValue extends Value>(
+    value: ConcreteValue,
+  ): ConstantBindingBuilder<Value> {
+    this.scope = "singleton";
+    this.registerWithStrategy({ type: "constant", value });
+    return this as ConstantBindingBuilder<Value>;
   }
 
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
-    this.assignStrategy({ type: "dynamic", factory });
+    this.registerWithStrategy({ type: "dynamic", factory });
     return this;
   }
 
-  toAsyncDynamic(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
-    this.assignStrategy({ type: "async-dynamic", factory });
+  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
+    this.registerWithStrategy({ type: "async-dynamic", factory });
     return this;
   }
 
-  toResolved<Deps extends readonly unknown[]>(
-    factory: (...deps: Deps) => Value,
-    dependencyTokens: { readonly [Index in keyof Deps]: Token<Deps[Index]> },
+  toResolved<Deps extends readonly (Token<unknown> | Constructor<unknown>)[]>(
+    factory: (...args: { [Index in keyof Deps]: TokenValue<Deps[Index]> }) => Value,
+    deps: Deps,
   ): BindingBuilder<Value> {
-    this.assignStrategy({
+    this.registerWithStrategy({
       type: "resolved",
       factory: factory as unknown as (...args: unknown[]) => Value,
-      dependencyTokens: dependencyTokens as unknown as readonly Token<unknown>[],
+      dependencyTokens: deps,
     });
     return this;
   }
 
   toAlias(targetToken: Token<Value>): BindingBuilder<Value> {
-    this.assignStrategy({ type: "alias", targetToken });
+    this.registerWithStrategy({ type: "alias", targetToken });
     return this;
   }
 
   singleton(): BindingBuilder<Value> {
+    this.assertScopeMutable();
     this.scope = "singleton";
+    this.isScopeExplicit = true;
+    this.refreshRegisteredBinding();
     return this;
   }
 
   transient(): BindingBuilder<Value> {
+    this.assertScopeMutable();
     this.scope = "transient";
+    this.isScopeExplicit = true;
+    this.refreshRegisteredBinding();
     return this;
   }
 
   scoped(): BindingBuilder<Value> {
+    this.assertScopeMutable();
     this.scope = "scoped";
+    this.isScopeExplicit = true;
+    this.refreshRegisteredBinding();
     return this;
   }
 
   onActivation(handler: ActivationHandler<Value>): BindingBuilder<Value> {
     this.onActivationHandler = handler as ActivationHandler<unknown>;
+    this.refreshRegisteredBinding();
     return this;
   }
 
   onDeactivation(handler: DeactivationHandler<Value>): BindingBuilder<Value> {
     this.onDeactivationHandler = handler as DeactivationHandler<unknown>;
+    this.refreshRegisteredBinding();
     return this;
   }
 
   whenNamed(name: string): BindingBuilder<Value> {
     this.bindingName = name;
+    this.refreshRegisteredBinding();
     return this;
   }
 
   whenTagged(tag: string | symbol, tagValue: unknown): BindingBuilder<Value> {
     this.tags.set(tag, tagValue);
+    this.refreshRegisteredBinding();
     return this;
   }
 
   when(constraint: (ctx: ConstraintContext) => boolean): BindingBuilder<Value> {
     this.constraintPredicates.push(constraint);
+    this.refreshRegisteredBinding();
     return this;
   }
 
-  id(): BindingBuilder<Value>;
-  id(identifier: BindingIdentifier): BindingBuilder<Value>;
-  id(identifier?: BindingIdentifier): BindingBuilder<Value> {
-    if (identifier === undefined) {
-      this.explicitId = this.explicitId ?? createBindingIdentifier();
-    } else {
-      this.explicitId = identifier;
+  id(): BindingIdentifier;
+  id(identifier: BindingIdentifier): BindingIdentifier;
+  id(identifier?: BindingIdentifier): BindingIdentifier {
+    if (this.currentBinding !== undefined) {
+      if (identifier !== undefined && identifier !== this.currentBinding.id) {
+        throw new DiError("Cannot change binding identifier after registration.");
+      }
+      return this.currentBinding.id;
     }
-    return this;
+    if (identifier !== undefined) {
+      this.explicitId = identifier;
+      return this.explicitId;
+    }
+    this.explicitId = this.explicitId ?? createBindingIdentifier();
+    return this.explicitId;
   }
 
-  build(): Binding<Value> {
-    const strategy = this.strategy;
-    if (strategy.type === "unset") {
-      throw new InvalidBindingError(
-        "Cannot build binding: no strategy was selected (call one of the to*(...) methods first).",
+  private registerWithStrategy(next: Exclude<Strategy<Value>, { type: "unset" }>): void {
+    if (this.strategy.type !== "unset") {
+      throw new DiError(
+        "A binding strategy was already selected; only one to*(...) chain is allowed per builder.",
       );
     }
+    this.strategy = next;
+    const bindingId = this.id();
+    const binding = this.createBinding(bindingId, next);
+    this.currentBinding = binding;
+    this.hooks.register?.(binding);
+  }
 
-    const id = this.explicitId ?? createBindingIdentifier();
+  private refreshRegisteredBinding(): void {
+    if (this.currentBinding === undefined || this.strategy.type === "unset") {
+      return;
+    }
+    const next = this.createBinding(this.currentBinding.id, this.strategy);
+    this.currentBinding = next;
+    this.hooks.update?.(next);
+  }
+
+  private assertScopeMutable(): void {
+    if (this.strategy.type === "constant") {
+      throw new DiError("Constant bindings are always singleton and do not support scope changes.");
+    }
+  }
+
+  private createBinding(
+    id: BindingIdentifier,
+    strategy: Exclude<Strategy<Value>, { type: "unset" }>,
+  ): Binding<Value> {
     const constraint =
       this.constraintPredicates.length === 0
         ? undefined
@@ -288,19 +395,23 @@ export class BindingBuilder<Value> {
       onDeactivation: this.onDeactivationHandler,
       constraint,
     };
+    const moduleFields =
+      this.moduleId === undefined ? {} : ({ moduleId: this.moduleId } as { moduleId: string });
 
     switch (strategy.type) {
       case "constant":
         return {
           ...lifecycle,
+          ...moduleFields,
           id,
-          scope: this.scope,
+          scope: "singleton",
           kind: "constant",
           value: strategy.value,
         };
       case "class":
         return {
           ...lifecycle,
+          ...moduleFields,
           id,
           scope: this.scope,
           kind: "class",
@@ -309,6 +420,7 @@ export class BindingBuilder<Value> {
       case "dynamic":
         return {
           ...lifecycle,
+          ...moduleFields,
           id,
           scope: this.scope,
           kind: "dynamic",
@@ -317,6 +429,7 @@ export class BindingBuilder<Value> {
       case "async-dynamic":
         return {
           ...lifecycle,
+          ...moduleFields,
           id,
           scope: this.scope,
           kind: "async-dynamic",
@@ -325,6 +438,7 @@ export class BindingBuilder<Value> {
       case "resolved":
         return {
           ...lifecycle,
+          ...moduleFields,
           id,
           scope: this.scope,
           kind: "resolved",
@@ -334,6 +448,7 @@ export class BindingBuilder<Value> {
       case "alias":
         return {
           ...lifecycle,
+          ...moduleFields,
           id,
           scope: this.scope,
           kind: "alias",
@@ -345,15 +460,6 @@ export class BindingBuilder<Value> {
       }
     }
   }
-
-  private assignStrategy(next: Exclude<Strategy<Value>, { type: "unset" }>): void {
-    if (this.strategy.type !== "unset") {
-      throw new InvalidBindingError(
-        "A binding strategy was already selected; only one to*(...) chain is allowed per builder.",
-      );
-    }
-    this.strategy = next;
-  }
 }
 
 /**
@@ -362,5 +468,5 @@ export class BindingBuilder<Value> {
 export function bind<Value>(key: Token<Value>): BindingBuilder<Value>;
 export function bind<Value>(key: Constructor<Value>): BindingBuilder<Value>;
 export function bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
-  return new BindingBuilder<Value>(key);
+  return new BindingBuilder<Value>(key, undefined);
 }

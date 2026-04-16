@@ -14,6 +14,7 @@ export type ContainerBindingSnapshot = {
   readonly activationStatus: BindingActivationStatus;
   /** True when {@link BindingBuilder.when} was used (runtime predicate; static graph may still show edges). */
   readonly hasConditionalConstraint: boolean;
+  readonly moduleId?: string;
 };
 
 export type ContainerSnapshot = {
@@ -25,6 +26,14 @@ export type ContainerInspectorContext = {
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
   isBindingCached(binding: Binding<unknown>): boolean;
   metadataReader: MetadataReader | undefined;
+};
+
+export type DotGraphOptions = {
+  /**
+   * When true, omit registry keys whose label starts with `CODEFAST_DI_` (framework-style tokens)
+   * and any edges that would only connect hidden nodes.
+   */
+  readonly hideInternals?: boolean;
 };
 
 function activationStatusFor(
@@ -60,6 +69,33 @@ function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
   }
 }
 
+function scopeVisualAttributes(scope: BindingScope): string {
+  switch (scope) {
+    case "singleton":
+      return 'style="filled", fillcolor="#FFD700", penwidth=2';
+    case "scoped":
+      return 'style="filled", fillcolor="#ADD8E6"';
+    case "transient":
+      return 'style="dashed"';
+    default: {
+      const exhaustive: never = scope;
+      return exhaustive;
+    }
+  }
+}
+
+function sanitizeClusterId(moduleName: string): string {
+  return moduleName.replace(/[^0-9a-zA-Z_]/g, "_");
+}
+
+function registryKeyLabelIsInternal(label: string): boolean {
+  return label.startsWith("CODEFAST_DI_");
+}
+
+function isInternalRegistryKey(key: RegistryKey): boolean {
+  return registryKeyLabelIsInternal(registryKeyLabel(key));
+}
+
 /**
  * Read-only introspection and Graphviz DOT export for a container graph.
  */
@@ -81,7 +117,7 @@ export class ContainerInspector {
           continue;
         }
         seen.add(binding.id);
-        bindings.push({
+        const row: ContainerBindingSnapshot = {
           registryKeyLabel: registryLabel,
           bindingId: binding.id,
           kind: binding.kind,
@@ -90,7 +126,10 @@ export class ContainerInspector {
             this.ctx.isBindingCached(bindingArg),
           ),
           hasConditionalConstraint: binding.constraint !== undefined,
-        });
+        };
+        bindings.push(
+          binding.moduleId === undefined ? row : { ...row, moduleId: binding.moduleId },
+        );
       }
     }
 
@@ -100,59 +139,118 @@ export class ContainerInspector {
   /**
    * Produces a Graphviz `digraph` string. Cycles are represented as ordinary edges (Graphviz handles cycles).
    */
-  generateDotGraph(): string {
-    const lines: string[] = ["digraph codefast_di {", "  rankdir=LR;"];
-    const snapshot = this.getSnapshot();
-    const declaredNodes = new Set<BindingIdentifier>();
+  generateDotGraph(options?: DotGraphOptions): string {
+    const hideInternals = options?.hideInternals === true;
+    const fullSnapshot = this.getSnapshot();
+    const visibleRows = hideInternals
+      ? fullSnapshot.bindings.filter((row) => !registryKeyLabelIsInternal(row.registryKeyLabel))
+      : fullSnapshot.bindings;
+    const allowedBindingIds = new Set(visibleRows.map((row) => row.bindingId));
 
-    for (const row of snapshot.bindings) {
-      declaredNodes.add(row.bindingId);
+    const lines: string[] = ["digraph codefast_di {", "  rankdir=LR;"];
+
+    const byModule = new Map<string | undefined, ContainerBindingSnapshot[]>();
+    for (const row of visibleRows) {
+      const key = row.moduleId;
+      const bucket = byModule.get(key);
+      if (bucket === undefined) {
+        byModule.set(key, [row]);
+      } else {
+        bucket.push(row);
+      }
+    }
+
+    const clusteredEntries = [...byModule.entries()].filter(
+      (entry): entry is [string, ContainerBindingSnapshot[]] => entry[0] !== undefined,
+    );
+    const unclustered = byModule.get(undefined) ?? [];
+
+    const nodeAttributeLine = (row: ContainerBindingSnapshot, indent: string): string => {
       const shape = nodeShapeForKind(row.kind);
+      const scopeAttrs = scopeVisualAttributes(row.scope);
       const constraintNote = row.hasConditionalConstraint ? "\\nwhen(...)" : "";
       const label = dotEscapeLabel(
         `${row.kind}\\n${row.registryKeyLabel}\\nscope=${row.scope}\\n${row.bindingId}\\n${row.activationStatus}${constraintNote}`,
       );
-      lines.push(`  "${row.bindingId}" [shape=${shape}, label="${label}"];`);
+      return `${indent}"${row.bindingId}" [shape=${shape}, ${scopeAttrs}, label="${label}"];`;
+    };
+
+    for (const [moduleName, rows] of clusteredEntries) {
+      const clusterId = sanitizeClusterId(moduleName);
+      lines.push(`  subgraph cluster_${clusterId} {`);
+      lines.push(`    label="${dotEscapeLabel(moduleName)}";`);
+      lines.push(`    style=filled;`);
+      lines.push(`    fillcolor=lightgray;`);
+      for (const row of rows) {
+        lines.push(nodeAttributeLine(row, "    "));
+      }
+      lines.push(`  }`);
     }
 
+    for (const row of unclustered) {
+      lines.push(nodeAttributeLine(row, "  "));
+    }
+
+    const emittedNodeIds = new Set(visibleRows.map((row) => row.bindingId));
     const edgeSeen = new Set<string>();
     for (const registryKey of this.ctx.collectAllRegistryKeys()) {
+      if (hideInternals && isInternalRegistryKey(registryKey)) {
+        continue;
+      }
       const list = this.ctx.lookupBindings(registryKey);
       if (list === undefined) {
         continue;
       }
       const pathStart = [registryKeyLabel(registryKey)];
       for (const consumer of list) {
+        if (hideInternals && !allowedBindingIds.has(consumer.id)) {
+          continue;
+        }
         const edges = collectStaticDependencyEdges(
           consumer,
-          (registryKey) => this.ctx.lookupBindings(registryKey),
+          (registryKeyArg) => this.ctx.lookupBindings(registryKeyArg),
           this.ctx.metadataReader,
           pathStart,
         );
         for (const edge of edges) {
-          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}`;
+          if (
+            hideInternals &&
+            (!allowedBindingIds.has(edge.fromBindingId) || !allowedBindingIds.has(edge.toBindingId))
+          ) {
+            continue;
+          }
+          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${edge.injectHintLabel ?? ""}`;
           if (edgeSeen.has(edgeKey)) {
             continue;
           }
           edgeSeen.add(edgeKey);
-          if (!declaredNodes.has(edge.fromBindingId)) {
-            declaredNodes.add(edge.fromBindingId);
+
+          if (!emittedNodeIds.has(edge.fromBindingId)) {
+            emittedNodeIds.add(edge.fromBindingId);
             lines.push(
-              `  "${edge.fromBindingId}" [shape=box, label="(unlisted ${edge.fromBindingId})"];`,
+              `  "${edge.fromBindingId}" [shape=box, style=dashed, label="(unlisted ${edge.fromBindingId})"];`,
             );
           }
-          if (!declaredNodes.has(edge.toBindingId)) {
-            declaredNodes.add(edge.toBindingId);
+          if (!emittedNodeIds.has(edge.toBindingId)) {
+            emittedNodeIds.add(edge.toBindingId);
             lines.push(
-              `  "${edge.toBindingId}" [shape=box, label="(unlisted ${edge.toBindingId})"];`,
+              `  "${edge.toBindingId}" [shape=box, style=dashed, label="(unlisted ${edge.toBindingId})"];`,
             );
           }
-          const edgeLabel = dotEscapeLabel(
-            edge.toBindingConditional ? `${edge.edgeKind}|conditional` : edge.edgeKind,
-          );
+
+          const labelParts: string[] = [];
+          if (edge.injectHintLabel !== undefined) {
+            labelParts.push(edge.injectHintLabel);
+          }
+          labelParts.push(edge.edgeKind);
+          if (edge.toBindingConditional) {
+            labelParts.push("conditional");
+          }
+          const edgeLabel = dotEscapeLabel(labelParts.join(" | "));
           const pathLabel = dotEscapeLabel(edge.resolutionPath.join(" -> "));
+          const edgeStyle = edge.isAliasEdge ? ", style=dashed" : "";
           lines.push(
-            `  "${edge.fromBindingId}" -> "${edge.toBindingId}" [label="${edgeLabel}", xlabel="${pathLabel}"];`,
+            `  "${edge.fromBindingId}" -> "${edge.toBindingId}" [label="${edgeLabel}", xlabel="${pathLabel}"${edgeStyle}];`,
           );
         }
       }
@@ -160,5 +258,54 @@ export class ContainerInspector {
 
     lines.push("}");
     return lines.join("\n");
+  }
+
+  /**
+   * Produces a JSON graph representation with `nodes` and `edges`.
+   */
+  generateDependencyGraphJson(options?: DotGraphOptions): string {
+    const hideInternals = options?.hideInternals === true;
+    const snapshot = this.getSnapshot();
+    const visibleNodes = hideInternals
+      ? snapshot.bindings.filter((row) => !registryKeyLabelIsInternal(row.registryKeyLabel))
+      : snapshot.bindings;
+    const allowedBindingIds = new Set(visibleNodes.map((row) => row.bindingId));
+    const edges: ReturnType<typeof collectStaticDependencyEdges>[number][] = [];
+    const edgeSeen = new Set<string>();
+    for (const registryKey of this.ctx.collectAllRegistryKeys()) {
+      if (hideInternals && isInternalRegistryKey(registryKey)) {
+        continue;
+      }
+      const list = this.ctx.lookupBindings(registryKey);
+      if (list === undefined) {
+        continue;
+      }
+      const pathStart = [registryKeyLabel(registryKey)];
+      for (const consumer of list) {
+        if (hideInternals && !allowedBindingIds.has(consumer.id)) {
+          continue;
+        }
+        for (const edge of collectStaticDependencyEdges(
+          consumer,
+          (registryKeyArg) => this.ctx.lookupBindings(registryKeyArg),
+          this.ctx.metadataReader,
+          pathStart,
+        )) {
+          if (
+            hideInternals &&
+            (!allowedBindingIds.has(edge.fromBindingId) || !allowedBindingIds.has(edge.toBindingId))
+          ) {
+            continue;
+          }
+          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${edge.injectHintLabel ?? ""}`;
+          if (edgeSeen.has(edgeKey)) {
+            continue;
+          }
+          edgeSeen.add(edgeKey);
+          edges.push(edge);
+        }
+      }
+    }
+    return JSON.stringify({ nodes: visibleNodes, edges });
   }
 }
