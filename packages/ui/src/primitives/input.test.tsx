@@ -80,8 +80,8 @@ describe("input", () => {
     });
 
     test("should not stop propagation when clicking directly on input", async () => {
-      const containerClickHandler = jest.fn();
-      const inputClickHandler = jest.fn();
+      const containerClickHandler = vi.fn<(...args: unknown[]) => unknown>();
+      const inputClickHandler = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -110,9 +110,9 @@ describe("input", () => {
 
       const container = screen.getByRole("presentation");
       const fileInput = screen.getByTestId("file-input");
-      const clickSpy = jest.spyOn(fileInput, "click");
+      const clickSpy = vi.spyOn(fileInput, "click");
 
-      const rafSpy = jest
+      const rafSpy = vi
         .spyOn(window, "requestAnimationFrame")
         .mockImplementation((callback) => setTimeout(callback, 0));
 
@@ -140,9 +140,9 @@ describe("input", () => {
       input.focus();
       expect(input).toHaveFocus();
 
-      const focusSpy = jest.spyOn(input, "focus");
+      const focusSpy = vi.spyOn(input, "focus");
 
-      const mockPreventDefault = jest.fn();
+      const mockPreventDefault = vi.fn<(...args: unknown[]) => unknown>();
       const pointerEvent = new Event("pointerdown", {
         bubbles: true,
         cancelable: true,
@@ -318,7 +318,7 @@ describe("input", () => {
   describe("Edge cases", () => {
     test("should handle nested clickable elements correctly", async () => {
       const user = userEvent.setup();
-      const linkClickHandler = jest.fn();
+      const linkClickHandler = vi.fn<(...args: unknown[]) => unknown>();
 
       render(
         <Input
@@ -371,7 +371,7 @@ describe("input", () => {
 
       const container = screen.getByRole("presentation");
 
-      const rafSpy = jest.spyOn(window, "requestAnimationFrame");
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
 
       await user.click(container);
 

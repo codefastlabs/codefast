@@ -22,7 +22,7 @@
     "directory": "packages/cli"
   },
   "bin": {
-    "codefast": "./dist/bin.js"
+    "codefast": "./dist/bin.mjs"
   },
   "files": [
     "dist",
@@ -33,9 +33,6 @@
   "type": "module",
   "imports": {
     "#*": [
-      "./dist/*.js",
-      "./dist/*/index.js",
-      "./dist/*",
       "./src/*",
       "./src/*.ts",
       "./src/*/index.ts"
@@ -45,14 +42,14 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && tsgo -p tsconfig.build.json",
+    "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "di:graph": "tsx scripts/visualize-di.ts",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ci": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@codefast/di": "workspace:*",
@@ -65,14 +62,15 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/picomatch": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "jest": "catalog:",
-    "tsx": "catalog:"
+    "@vitest/coverage-v8": "catalog:",
+    "esbuild": "catalog:",
+    "tsx": "catalog:",
+    "unplugin-swc": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=22.0.0"

@@ -1,23 +1,22 @@
 import { act, renderHook } from "@testing-library/react";
+import type { Mock } from "vitest";
 
 import { useCopyToClipboard } from "#hooks/use-copy-to-clipboard";
 
 describe("useCopyToClipboard", () => {
   const originalClipboard = window.navigator.clipboard;
-  let mockWriteText: jest.Mock;
+  let mockWriteText: Mock<(data: string) => Promise<void>>;
 
   beforeEach(() => {
-    mockWriteText = jest.fn().mockResolvedValue(async () => {
-      /* noop */
-    });
+    mockWriteText = vi.fn<(data: string) => Promise<void>>().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
       value: {
         writeText: mockWriteText,
-      },
+      } as unknown as Clipboard,
     });
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
@@ -26,9 +25,9 @@ describe("useCopyToClipboard", () => {
       value: originalClipboard,
     });
 
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllMocks();
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+    vi.clearAllMocks();
   });
 
   test("should initialize with isCopied as false", () => {
@@ -48,14 +47,14 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
     });
 
     expect(result.current.isCopied).toBe(false);
   });
 
   test("should call onCopy callback when copying is successful", async () => {
-    const onCopy = jest.fn();
+    const onCopy = vi.fn<(...args: unknown[]) => unknown>();
     const { result } = renderHook(() => useCopyToClipboard({ onCopy }));
 
     await act(async () => {
@@ -65,7 +64,7 @@ describe("useCopyToClipboard", () => {
     expect(onCopy).toHaveBeenCalledTimes(1);
 
     act(() => {
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
     });
 
     expect(result.current.isCopied).toBe(false);
@@ -81,7 +80,7 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
 
     expect(result.current.isCopied).toBe(false);
@@ -99,7 +98,7 @@ describe("useCopyToClipboard", () => {
   });
 
   test("should handle errors when copying fails", async () => {
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     mockWriteText.mockRejectedValue(new Error("Clipboard error"));
 
@@ -125,12 +124,12 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(1900);
+      vi.advanceTimersByTime(1900);
     });
     expect(result.current.isCopied).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(200);
+      vi.advanceTimersByTime(200);
     });
     expect(result.current.isCopied).toBe(false);
   });

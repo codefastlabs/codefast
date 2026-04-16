@@ -1,4 +1,4 @@
-import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#lib/binding";
+import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#binding";
 
 function formatResolutionPath(resolutionPath: readonly string[]): string {
   return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
@@ -135,9 +135,11 @@ export type ScopeViolationDetails = {
   readonly consumerBindingId: BindingIdentifier;
   readonly consumerKind: Binding<unknown>["kind"];
   readonly consumerScope: BindingScope;
+  readonly consumerLabel?: string;
   readonly dependencyBindingId: BindingIdentifier;
   readonly dependencyKind: Binding<unknown>["kind"];
   readonly dependencyScope: BindingScope;
+  readonly dependencyLabel?: string;
   readonly resolutionPath: readonly string[];
 };
 
@@ -157,8 +159,14 @@ export class ScopeViolationError extends DiError {
 
   constructor(details: ScopeViolationDetails, options?: ErrorOptions) {
     const pathText = formatResolutionPath(details.resolutionPath);
+    const consumerLabel = details.consumerLabel ?? String(details.consumerBindingId);
+    const dependencyLabel = details.dependencyLabel ?? String(details.dependencyBindingId);
+    const consumerScopeLabel =
+      details.consumerScope[0].toUpperCase() + details.consumerScope.slice(1);
+    const dependencyScopeLabel =
+      details.dependencyScope[0].toUpperCase() + details.dependencyScope.slice(1);
     super(
-      `Scope Violation: A long-lived ${details.consumerScope} (${details.consumerBindingId}) cannot depend on a short-lived ${details.dependencyScope} (${details.dependencyBindingId}). Full resolution path: ${pathText}`,
+      `Scope Violation: ${consumerScopeLabel} "${consumerLabel}" cannot depend on ${dependencyScopeLabel} "${dependencyLabel}" (resolution path: ${pathText})`,
       options,
     );
     this.consumerBindingId = details.consumerBindingId;

@@ -1,3 +1,4 @@
+import { injectable } from "@codefast/di";
 import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
@@ -5,92 +6,17 @@ import type {
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { CliPath } from "#lib/core/application/ports/path.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
-import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
-import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
-import type { FileWalkerPort } from "#lib/arrange/application/ports/file-walker.port";
-import type {
-  ArrangeRunTargetRequest,
-  ArrangeSyncRunRequest,
-} from "#lib/arrange/application/requests/arrange-sync.request";
-import type { ArrangeRunResult } from "#lib/arrange/domain/types.domain";
-
-export type ArrangeSyncDeps = {
-  readonly fs: CliFs;
-  readonly logger: CliLogger;
-  readonly path: CliPath;
-  readonly fileWalker: FileWalkerPort;
-  readonly domainSourceParser: DomainSourceParserPort;
-  readonly groupFilePreview: GroupFilePreviewPort;
-};
-
-export function runOnTarget(
-  request: ArrangeRunTargetRequest,
-  deps: ArrangeSyncDeps,
-): Result<ArrangeRunResult, AppError> {
-  const { out } = deps.logger;
-  const { fs, fileWalker, domainSourceParser } = deps;
-  if (!fs.existsSync(request.targetPath)) {
-    return err(appError("NOT_FOUND", `Not found: ${request.targetPath}`));
-  }
-
-  const filePaths = fs.statSync(request.targetPath).isDirectory()
-    ? fileWalker.walkTypeScriptFiles(request.targetPath, fs)
-    : [request.targetPath];
-  const modifiedFiles: string[] = [];
-
-  let totalFound = 0;
-  let totalChanged = 0;
-
-  const groupOptions = {
-    write: request.write,
-    withClassName: !!request.withClassName,
-    cnImport: request.cnImport,
-  };
-
-  for (const filePath of filePaths) {
-    const result = groupFile(
-      filePath,
-      groupOptions,
-      fs,
-      deps.logger,
-      domainSourceParser,
-      deps.groupFilePreview,
-    );
-    totalFound += result.totalFound;
-    totalChanged += result.changed;
-    if (result.changed > 0) {
-      modifiedFiles.push(result.filePath);
-    }
-  }
-
-  out(
-    `\nTotal: ${filePaths.length} file(s), ${totalFound} site(s) (cn/tv/JSX className) to review.`,
-  );
-  if (request.write) {
-    out(`Applied: ${totalChanged} site(s) updated.`);
-  } else {
-    out(
-      `(Run "apply" to write changes, or "pnpm cli:arrange-apply" / "pnpm exec codefast arrange apply")`,
-    );
-  }
-
-  const showCascadeHint = request.write ? totalChanged > 0 : totalFound > 0;
-  if (showCascadeHint) {
-    out(
-      "Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.",
-    );
-  }
-
-  return ok({
-    filePaths,
-    modifiedFiles,
-    totalFound,
-    totalChanged,
-  });
-}
+import type { ArrangeSyncRunRequest } from "#lib/arrange/application/requests/arrange-sync.request";
+import {
+  ArrangeFileProcessorToken,
+  ArrangeTargetScannerToken,
+  CliFsToken,
+  CliLoggerToken,
+  type ArrangeFileProcessorService,
+  type ArrangeTargetScannerService,
+  type RunArrangeSyncUseCase,
+} from "#lib/tokens";
 
 async function runArrangeOnAfterWriteHook(
   logger: CliLogger,
@@ -110,38 +36,78 @@ async function runArrangeOnAfterWriteHook(
 /**
  * Preview/apply orchestration: resolves target path, runs grouping pipeline, optional hook.
  */
-export async function runArrangeSync(
-  request: ArrangeSyncRunRequest,
-  deps: ArrangeSyncDeps,
-): Promise<Result<number, AppError>> {
-  void request.rootDir;
-  const resolvedTarget = deps.path.resolve(request.targetPath);
+@injectable([
+  CliFsToken,
+  CliLoggerToken,
+  ArrangeTargetScannerToken,
+  ArrangeFileProcessorToken,
+] as const)
+export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {
+  constructor(
+    private readonly fs: CliFs,
+    private readonly logger: CliLogger,
+    private readonly targetScanner: ArrangeTargetScannerService,
+    private readonly fileProcessor: ArrangeFileProcessorService,
+  ) {}
 
-  const runTargetRequest: ArrangeRunTargetRequest = {
-    targetPath: resolvedTarget,
-    write: request.write,
-    withClassName: request.withClassName,
-    cnImport: request.cnImport,
-  };
-
-  const runOutcome = runOnTarget(runTargetRequest, deps);
-  if (!runOutcome.ok) {
-    if (runOutcome.error.code === "NOT_FOUND") {
-      deps.logger.err(runOutcome.error.message);
+  async execute(request: ArrangeSyncRunRequest): Promise<Result<number, AppError>> {
+    void request.rootDir;
+    if (!this.fs.existsSync(request.targetPath)) {
+      const notFoundError = appError("NOT_FOUND", `Not found: ${request.targetPath}`);
+      this.logger.err(notFoundError.message);
+      return err(notFoundError);
     }
-    return runOutcome;
-  }
 
-  const result = runOutcome.value;
+    const filePaths = this.targetScanner.scanTarget({
+      targetPath: request.targetPath,
+      fs: this.fs,
+    });
+    const modifiedFiles: string[] = [];
+    let totalFound = 0;
+    let totalChanged = 0;
 
-  if (request.write && result.modifiedFiles.length > 0) {
-    const arrangeConfig = request.config as CodefastArrangeConfig | undefined;
-    await runArrangeOnAfterWriteHook(
-      deps.logger,
-      arrangeConfig?.onAfterWrite,
-      result.modifiedFiles,
+    const groupOptions = {
+      write: request.write,
+      withClassName: !!request.withClassName,
+      cnImport: request.cnImport,
+    };
+
+    for (const filePath of filePaths) {
+      const fileProcessResult = this.fileProcessor.processFile({
+        filePath,
+        options: groupOptions,
+        logger: this.logger,
+      });
+      totalFound += fileProcessResult.totalFound;
+      totalChanged += fileProcessResult.changed;
+      if (fileProcessResult.changed > 0) {
+        modifiedFiles.push(fileProcessResult.filePath);
+      }
+    }
+
+    this.logger.out(
+      `\nTotal: ${filePaths.length} file(s), ${totalFound} site(s) (cn/tv/JSX className) to review.`,
     );
-  }
+    if (request.write) {
+      this.logger.out(`Applied: ${totalChanged} site(s) updated.`);
+    } else {
+      this.logger.out(
+        `(Run "apply" to write changes, or "pnpm cli:arrange-apply" / "pnpm exec codefast arrange apply")`,
+      );
+    }
 
-  return ok(0);
+    const shouldShowCascadeHint = request.write ? totalChanged > 0 : totalFound > 0;
+    if (shouldShowCascadeHint) {
+      this.logger.out(
+        "Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.",
+      );
+    }
+
+    if (request.write && modifiedFiles.length > 0) {
+      const arrangeConfig = request.config as CodefastArrangeConfig | undefined;
+      await runArrangeOnAfterWriteHook(this.logger, arrangeConfig?.onAfterWrite, modifiedFiles);
+    }
+
+    return ok(0);
+  }
 }

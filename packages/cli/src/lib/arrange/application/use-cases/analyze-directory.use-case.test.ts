@@ -1,5 +1,5 @@
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import { analyzeDirectory } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
+import { AnalyzeDirectoryUseCaseImpl } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
 import type { DomainSourceFile } from "#lib/arrange/domain/ast/ast-node.model";
 
 function emptyDomainSourceFile(fileName: string): DomainSourceFile {
@@ -12,74 +12,78 @@ function emptyDomainSourceFile(fileName: string): DomainSourceFile {
 describe("analyzeDirectory use case", () => {
   it("returns ok with aggregated report for a single file target", () => {
     const mockFs = {
-      statSync: jest.fn(() => ({ isDirectory: () => false })),
-      readFileSync: jest.fn(() => "export const x = 1;"),
+      statSync: vi.fn<(...args: unknown[]) => unknown>(() => ({ isDirectory: () => false })),
+      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => "export const x = 1;"),
     };
-    const mockWalker = {
-      walkTypeScriptFiles: jest.fn(),
+    const mockTargetScanner = {
+      scanTarget: vi.fn<(...args: unknown[]) => unknown>(() => ["/src/one.ts"]),
     };
     const mockParser = {
-      parseDomainSourceFile: jest.fn(() => emptyDomainSourceFile("/src/one.ts")),
+      parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>(() =>
+        emptyDomainSourceFile("/src/one.ts"),
+      ),
     };
-    const outcome = analyzeDirectory(
-      { analyzeRootPath: "/src/one.ts" },
-      {
-        fs: mockFs as unknown as CliFs,
-        fileWalker: mockWalker,
-        domainSourceParser: mockParser,
-      },
+    const subject = new AnalyzeDirectoryUseCaseImpl(
+      mockFs as unknown as CliFs,
+      mockTargetScanner,
+      mockParser,
     );
+    const outcome = subject.execute({ analyzeRootPath: "/src/one.ts" });
     expect(outcome.ok).toBe(true);
     if (!outcome.ok) {
       throw new Error("expected ok outcome");
     }
     expect(outcome.value.files).toBe(1);
-    expect(mockWalker.walkTypeScriptFiles).not.toHaveBeenCalled();
+    expect(mockTargetScanner.scanTarget).toHaveBeenCalledWith({
+      targetPath: "/src/one.ts",
+      fs: mockFs,
+    });
     expect(mockFs.readFileSync).toHaveBeenCalledWith("/src/one.ts", "utf8");
   });
 
   it("walks directory targets before reading each file", () => {
     const mockFs = {
-      statSync: jest.fn(() => ({ isDirectory: () => true })),
-      readFileSync: jest.fn(() => ""),
+      statSync: vi.fn<(...args: unknown[]) => unknown>(() => ({ isDirectory: () => true })),
+      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => ""),
     };
-    const mockWalker = {
-      walkTypeScriptFiles: jest.fn(() => ["/pkg/a.ts", "/pkg/b.ts"]),
+    const mockTargetScanner = {
+      scanTarget: vi.fn<(...args: unknown[]) => unknown>(() => ["/pkg/a.ts", "/pkg/b.ts"]),
     };
     const mockParser = {
-      parseDomainSourceFile: jest.fn((filePath: string) => emptyDomainSourceFile(filePath)),
+      parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>((filePath: string) =>
+        emptyDomainSourceFile(filePath),
+      ),
     };
-    const outcome = analyzeDirectory(
-      { analyzeRootPath: "/pkg" },
-      {
-        fs: mockFs as unknown as CliFs,
-        fileWalker: mockWalker,
-        domainSourceParser: mockParser,
-      },
+    const subject = new AnalyzeDirectoryUseCaseImpl(
+      mockFs as unknown as CliFs,
+      mockTargetScanner,
+      mockParser,
     );
+    const outcome = subject.execute({ analyzeRootPath: "/pkg" });
     expect(outcome.ok).toBe(true);
     if (!outcome.ok) {
       throw new Error("expected ok outcome");
     }
     expect(outcome.value.files).toBe(2);
-    expect(mockWalker.walkTypeScriptFiles).toHaveBeenCalledWith("/pkg", mockFs);
+    expect(mockTargetScanner.scanTarget).toHaveBeenCalledWith({
+      targetPath: "/pkg",
+      fs: mockFs,
+    });
   });
 
   it("returns INFRA_FAILURE when the filesystem throws", () => {
     const mockFs = {
-      statSync: jest.fn(() => {
+      statSync: vi.fn<(...args: unknown[]) => unknown>(() => {
         throw new Error("disk unavailable");
       }),
-      readFileSync: jest.fn(),
+      readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
     };
-    const outcome = analyzeDirectory(
-      { analyzeRootPath: "/any" },
-      {
-        fs: mockFs as unknown as CliFs,
-        fileWalker: { walkTypeScriptFiles: jest.fn() },
-        domainSourceParser: { parseDomainSourceFile: jest.fn() },
-      },
+    const subject = new AnalyzeDirectoryUseCaseImpl(
+      mockFs as unknown as CliFs,
+      { scanTarget: vi.fn<(...args: unknown[]) => unknown>() },
+      { parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>() },
     );
+    const outcome = subject.execute({ analyzeRootPath: "/any" });
     expect(outcome.ok).toBe(false);
     if (outcome.ok) {
       throw new Error("expected failure outcome");

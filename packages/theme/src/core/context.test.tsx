@@ -30,7 +30,7 @@ describe("ThemeContext", () => {
     const mockValue = {
       isPending: false,
       resolvedTheme: "dark" as const,
-      setTheme: jest.fn(),
+      setTheme: vi.fn<(...args: unknown[]) => unknown>(),
       theme: "dark" as const,
     };
 

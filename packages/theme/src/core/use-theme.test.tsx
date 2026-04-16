@@ -21,7 +21,7 @@ describe("useTheme Hook", () => {
   describe("without ThemeProvider", () => {
     test("should throw error when used outside of ThemeProvider", () => {
       // Suppress console.error for this test since we expect an error
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {
         /* noop */
       });
 
@@ -38,7 +38,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "dark",
-        setTheme: jest.fn(),
+        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
         theme: "dark",
       };
 
@@ -53,7 +53,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "light",
-        setTheme: jest.fn(),
+        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
         theme: "system",
       };
 
@@ -68,7 +68,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: true,
         resolvedTheme: "dark",
-        setTheme: jest.fn(),
+        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
         theme: "dark",
       };
 
@@ -80,7 +80,7 @@ describe("useTheme Hook", () => {
     });
 
     test("should return setTheme function from context", () => {
-      const mockSetTheme = jest.fn();
+      const mockSetTheme = vi.fn<(...args: unknown[]) => unknown>();
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "dark",
@@ -99,7 +99,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "dark",
-        setTheme: jest.fn(),
+        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
         theme: "dark",
       };
 

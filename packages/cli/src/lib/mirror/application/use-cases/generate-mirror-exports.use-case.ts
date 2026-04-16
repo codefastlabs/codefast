@@ -3,8 +3,8 @@ import type { CliPath } from "#lib/core/application/ports/path.port";
 import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
 import type { MirrorConfig } from "#lib/config/domain/schema.domain";
 import {
-  DTS_EXTENSION,
   PACKAGE_JSON_EXPORT,
+  VALID_DTS_EXTENSIONS,
   VALID_JS_EXTENSIONS,
 } from "#lib/mirror/domain/constants.domain";
 import type {
@@ -32,9 +32,10 @@ function groupFilesByModule(files: string[], pathService: CliPath): Map<string, 
     let ext: string;
     let modulePath: string;
 
-    if (file.endsWith(DTS_EXTENSION)) {
-      ext = DTS_EXTENSION;
-      modulePath = file.slice(0, -DTS_EXTENSION.length);
+    const dtsExt = Array.from(VALID_DTS_EXTENSIONS).find((candidate) => file.endsWith(candidate));
+    if (dtsExt) {
+      ext = dtsExt;
+      modulePath = file.slice(0, -dtsExt.length);
     } else {
       ext = pathService.extname(file);
       if (!VALID_JS_EXTENSIONS.has(ext)) {
@@ -59,7 +60,7 @@ function groupFilesByModule(files: string[], pathService: CliPath): Map<string, 
       distModule.files.mjs = file;
     } else if (ext === ".cjs") {
       distModule.files.cjs = file;
-    } else if (ext === DTS_EXTENSION) {
+    } else if (VALID_DTS_EXTENSIONS.has(ext)) {
       distModule.files.dts = file;
     }
   }
@@ -288,15 +289,14 @@ export async function generateExports(
       exportPath = pathTransform(exportPath);
     }
 
-    const distPath = `./dist/${distModuleEntry.path}`;
-    const entry: ExportEntry = { types: `${distPath}.d.ts` };
+    const entry: ExportEntry = { types: `./dist/${distModuleEntry.files.dts!}` };
     if (distModuleEntry.files.mjs) {
-      entry.import = `${distPath}.mjs`;
+      entry.import = `./dist/${distModuleEntry.files.mjs}`;
     } else if (distModuleEntry.files.js) {
-      entry.import = `${distPath}.js`;
+      entry.import = `./dist/${distModuleEntry.files.js}`;
     }
     if (distModuleEntry.files.cjs) {
-      entry.require = `${distPath}.cjs`;
+      entry.require = `./dist/${distModuleEntry.files.cjs}`;
     }
 
     exportsObj[exportPath] = entry;

@@ -1,5 +1,5 @@
-import type { Binding, BindingIdentifier } from "#lib/binding";
-import { DiError } from "#lib/errors";
+import type { Binding, BindingIdentifier } from "#binding";
+import { DiError } from "#errors";
 
 type CacheEntry = {
   readonly binding: Binding<unknown>;

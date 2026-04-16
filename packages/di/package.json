@@ -24,13 +24,11 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "imports": {
-    "#lib/*": [
-      "./dist/*.js",
-      "./dist/*/index.js",
-      "./dist/*",
+    "#*": [
       "./src/*",
       "./src/*.ts",
       "./src/*/index.ts"
@@ -38,8 +36,100 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./binding": {
+      "types": "./dist/binding.d.mts",
+      "import": "./dist/binding.mjs"
+    },
+    "./binding-select": {
+      "types": "./dist/binding-select.d.mts",
+      "import": "./dist/binding-select.mjs"
+    },
+    "./constraints": {
+      "types": "./dist/constraints.d.mts",
+      "import": "./dist/constraints.mjs"
+    },
+    "./container": {
+      "types": "./dist/container.d.mts",
+      "import": "./dist/container.mjs"
+    },
+    "./decorators": {
+      "types": "./dist/decorators/index.d.mts",
+      "import": "./dist/decorators/index.mjs"
+    },
+    "./decorators/inject": {
+      "types": "./dist/decorators/inject.d.mts",
+      "import": "./dist/decorators/inject.mjs"
+    },
+    "./decorators/injectable": {
+      "types": "./dist/decorators/injectable.d.mts",
+      "import": "./dist/decorators/injectable.mjs"
+    },
+    "./decorators/metadata": {
+      "types": "./dist/decorators/metadata.d.mts",
+      "import": "./dist/decorators/metadata.mjs"
+    },
+    "./decorators/param-registry": {
+      "types": "./dist/decorators/param-registry.d.mts",
+      "import": "./dist/decorators/param-registry.mjs"
+    },
+    "./decorators/reader": {
+      "types": "./dist/decorators/reader.d.mts",
+      "import": "./dist/decorators/reader.mjs"
+    },
+    "./decorators/scoped": {
+      "types": "./dist/decorators/scoped.d.mts",
+      "import": "./dist/decorators/scoped.mjs"
+    },
+    "./decorators/singleton": {
+      "types": "./dist/decorators/singleton.d.mts",
+      "import": "./dist/decorators/singleton.mjs"
+    },
+    "./dependency-graph": {
+      "types": "./dist/dependency-graph.d.mts",
+      "import": "./dist/dependency-graph.mjs"
+    },
+    "./environment": {
+      "types": "./dist/environment.d.mts",
+      "import": "./dist/environment.mjs"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.mts",
+      "import": "./dist/errors.mjs"
+    },
+    "./inspector": {
+      "types": "./dist/inspector.d.mts",
+      "import": "./dist/inspector.mjs"
+    },
+    "./lifecycle": {
+      "types": "./dist/lifecycle.d.mts",
+      "import": "./dist/lifecycle.mjs"
+    },
+    "./module": {
+      "types": "./dist/module.d.mts",
+      "import": "./dist/module.mjs"
+    },
+    "./registry": {
+      "types": "./dist/registry.d.mts",
+      "import": "./dist/registry.mjs"
+    },
+    "./resolver": {
+      "types": "./dist/resolver.d.mts",
+      "import": "./dist/resolver.mjs"
+    },
+    "./scope": {
+      "types": "./dist/scope.d.mts",
+      "import": "./dist/scope.mjs"
+    },
+    "./scope-validation": {
+      "types": "./dist/scope-validation.d.mts",
+      "import": "./dist/scope-validation.mjs"
+    },
+    "./token": {
+      "types": "./dist/token.d.mts",
+      "import": "./dist/token.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -47,7 +137,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && tsgo -p tsconfig.build.json",
+    "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
@@ -62,6 +152,7 @@
     "@vitest/coverage-v8": "catalog:",
     "esbuild": "catalog:",
     "typescript": "catalog:",
+    "unplugin-swc": "catalog:",
     "vitest": "catalog:"
   },
   "engines": {

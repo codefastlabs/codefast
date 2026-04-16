@@ -1,21 +1,21 @@
-import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#lib/binding";
-import { BindingBuilder } from "#lib/binding";
-import type { MetadataReader } from "#lib/decorators/metadata";
-import { SymbolMetadataReader } from "#lib/decorators/reader";
-import { AsyncModuleLoadError, CircularDependencyError, DiError } from "#lib/errors";
+import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#binding";
+import { BindingBuilder } from "#binding";
+import type { MetadataReader } from "#decorators/metadata";
+import { SymbolMetadataReader } from "#decorators/reader";
+import { AsyncModuleLoadError, CircularDependencyError, DiError } from "#errors";
 import {
   ContainerInspector,
   type ContainerInspectorContext,
   type ContainerSnapshot,
   type DotGraphOptions,
-} from "#lib/inspector";
-import { AsyncModule, Module, type AsyncModuleBuilder, type ModuleBuilder } from "#lib/module";
-import { BindingRegistry, type RegistryKey } from "#lib/registry";
-import { DependencyResolver } from "#lib/resolver";
-import { validateScopeRules } from "#lib/scope-validation";
-import { ScopeManager } from "#lib/scope";
-import type { Token } from "#lib/token";
-import { isDevelopmentOrTestEnvironment } from "#lib/environment";
+} from "#inspector";
+import { AsyncModule, Module, type AsyncModuleBuilder, type ModuleBuilder } from "#module";
+import { BindingRegistry, type RegistryKey } from "#registry";
+import { DependencyResolver } from "#resolver";
+import { validateScopeRules } from "#scope-validation";
+import { ScopeManager } from "#scope";
+import type { Token } from "#token";
+import { isDevelopmentOrTestEnvironment } from "#environment";
 
 type ContainerRef = { current: DefaultContainer | undefined };
 
@@ -494,5 +494,5 @@ export class Container {
   }
 }
 
-export type { BindingIdentifier, ResolveOptions } from "#lib/binding";
-export type { ContainerSnapshot } from "#lib/inspector";
+export type { BindingIdentifier, ResolveOptions } from "#binding";
+export type { ContainerSnapshot } from "#inspector";

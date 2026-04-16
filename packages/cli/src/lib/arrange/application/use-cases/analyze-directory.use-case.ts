@@ -1,43 +1,51 @@
+import { injectable } from "@codefast/di";
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
 import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
 import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
 import type { ArrangeAnalyzeDirectoryRequest } from "#lib/arrange/application/requests/analyze-directory.request";
-import type { FileWalkerPort } from "#lib/arrange/application/ports/file-walker.port";
 import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
 } from "#lib/arrange/domain/arrange-analyze.service";
-
-export type AnalyzeDirectoryDeps = {
-  readonly fs: CliFs;
-  readonly fileWalker: FileWalkerPort;
-  readonly domainSourceParser: DomainSourceParserPort;
-};
+import {
+  ArrangeTargetScannerToken,
+  CliFsToken,
+  DomainSourceParserPortToken,
+  type ArrangeTargetScannerService,
+  type AnalyzeDirectoryUseCase,
+} from "#lib/tokens";
 
 /**
  * Orchestrates filesystem + parse ports, delegates analysis rules to the domain service.
  */
-export function analyzeDirectory(
-  request: ArrangeAnalyzeDirectoryRequest,
-  deps: AnalyzeDirectoryDeps,
-): Result<AnalyzeReport, AppError> {
-  const report = createEmptyAnalyzeReport();
-  try {
-    const files = deps.fs.statSync(request.analyzeRootPath).isDirectory()
-      ? deps.fileWalker.walkTypeScriptFiles(request.analyzeRootPath, deps.fs)
-      : [request.analyzeRootPath];
+@injectable([CliFsToken, ArrangeTargetScannerToken, DomainSourceParserPortToken] as const)
+export class AnalyzeDirectoryUseCaseImpl implements AnalyzeDirectoryUseCase {
+  constructor(
+    private readonly fs: CliFs,
+    private readonly targetScanner: ArrangeTargetScannerService,
+    private readonly domainSourceParser: DomainSourceParserPort,
+  ) {}
 
-    for (const filePath of files) {
-      const sourceText = deps.fs.readFileSync(filePath, "utf8");
-      const domainSf = deps.domainSourceParser.parseDomainSourceFile(filePath, sourceText);
-      accumulateAnalyzeReportForSourceFile(report, domainSf, sourceText, filePath);
+  execute(request: ArrangeAnalyzeDirectoryRequest): Result<AnalyzeReport, AppError> {
+    const report = createEmptyAnalyzeReport();
+    try {
+      const files = this.targetScanner.scanTarget({
+        targetPath: request.analyzeRootPath,
+        fs: this.fs,
+      });
+
+      for (const filePath of files) {
+        const sourceText = this.fs.readFileSync(filePath, "utf8");
+        const domainSf = this.domainSourceParser.parseDomainSourceFile(filePath, sourceText);
+        accumulateAnalyzeReportForSourceFile(report, domainSf, sourceText, filePath);
+      }
+
+      return ok(report);
+    } catch (caughtError: unknown) {
+      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
-
-    return ok(report);
-  } catch (caughtError: unknown) {
-    return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
   }
 }

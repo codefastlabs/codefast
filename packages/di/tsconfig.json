@@ -2,15 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "paths": {
-      "#lib/*": ["./src/*"]
-    },
-    "types": ["node"],
-    "lib": ["ESNext"],
-    "noEmit": true,
-    "useDefineForClassFields": true,
-    "ignoreDeprecations": "6.0"
+    "experimentalDecorators": false,
+    "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
 }

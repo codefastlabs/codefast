@@ -3,10 +3,9 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { registerArrangeCommand } from "#commands/arrange";
-import { registerMirrorCommand } from "#commands/mirror";
-import { registerTagCommand } from "#commands/tag";
 import { createCliRuntimeContainer } from "#lib/core/infra/composition-root";
+import type { CliCommand } from "#lib/core/presentation/command.interface";
+import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
 
 function readVersion(): string {
   try {
@@ -20,7 +19,7 @@ function readVersion(): string {
   }
 }
 
-export function createProgram(): Command {
+export function createProgram(commands: readonly CliCommand[]): Command {
   const program = new Command();
   program
     .name("codefast")
@@ -30,22 +29,26 @@ export function createProgram(): Command {
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 
-  registerMirrorCommand(program);
-  registerArrangeCommand(program);
-  registerTagCommand(program);
+  for (const cliCommand of commands) {
+    cliCommand.register(program);
+  }
 
   return program;
 }
 
 export async function runCli(argv: string[]): Promise<number> {
-  if (process.env.NODE_ENV !== "production") {
-    const runtimeContainer = createCliRuntimeContainer();
-    runtimeContainer.validate();
-    runtimeContainer.initialize();
-    runtimeContainer.disposeSync();
+  const runtimeContainer = createCliRuntimeContainer();
+  try {
+    if (process.env.NODE_ENV !== "production") {
+      runtimeContainer.validate();
+      runtimeContainer.initialize();
+    }
+    const commands = runtimeContainer.resolveAll(COMMAND_TOKEN);
+    const program = createProgram(commands);
+    await program.parseAsync(argv, { from: "node" });
+    const code = process.exitCode ?? 0;
+    return typeof code === "number" ? code : Number(code) || 0;
+  } finally {
+    await runtimeContainer.dispose();
   }
-  const program = createProgram();
-  await program.parseAsync(argv, { from: "node" });
-  const code = process.exitCode ?? 0;
-  return typeof code === "number" ? code : Number(code) || 0;
 }

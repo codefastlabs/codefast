@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { Container } from "#lib/container";
-import { ScopeViolationError } from "#lib/errors";
-import { token } from "#lib/token";
+import { Container } from "#container";
+import { ScopeViolationError } from "#errors";
+import { token } from "#token";
+import { injectable } from "#decorators/injectable";
+import { scoped } from "#decorators/scoped";
+import { singleton } from "#decorators/singleton";
 
 class Ephemeral {
   readonly tag = "ephemeral";
@@ -24,7 +27,7 @@ describe("ScopeValidation", () => {
 
     expect(() => {
       container.validate();
-    }).toThrowError(ScopeViolationError);
+    }).toThrow(ScopeViolationError);
   });
 
   it("throws during resolve when a singleton captures a transient dependency", () => {
@@ -40,7 +43,7 @@ describe("ScopeValidation", () => {
 
     expect(() => {
       container.resolve(TLong);
-    }).toThrowError(ScopeViolationError);
+    }).toThrow(ScopeViolationError);
   });
 
   it("allows singleton depending on another singleton", () => {
@@ -67,5 +70,65 @@ describe("ScopeValidation", () => {
       .singleton();
     container.validate();
     expect(container.resolve(TLong)).toBe("holds:x");
+  });
+
+  it("throws when singleton class depends on scoped class", () => {
+    @scoped()
+    @injectable()
+    class UserContext {}
+
+    @singleton()
+    @injectable([UserContext])
+    class DatabaseService {
+      constructor(readonly userContext: UserContext) {}
+    }
+
+    const container = Container.create();
+    container.bind(UserContext).toSelf();
+    container.bind(DatabaseService).toSelf();
+
+    expect(() => {
+      container.resolve(DatabaseService);
+    }).toThrow(ScopeViolationError);
+    expect(() => {
+      container.resolve(DatabaseService);
+    }).toThrow(/Singleton "DatabaseService" cannot depend on Scoped "UserContext"/);
+  });
+
+  it("allows scoped class depending on singleton class", () => {
+    @singleton()
+    @injectable()
+    class DatabaseService {}
+
+    @scoped()
+    @injectable([DatabaseService])
+    class UserContext {
+      constructor(readonly databaseService: DatabaseService) {}
+    }
+
+    const container = Container.create();
+    container.bind(DatabaseService).toSelf();
+    container.bind(UserContext).toSelf();
+
+    const resolved = container.resolve(UserContext);
+    expect(resolved.databaseService).toBeInstanceOf(DatabaseService);
+  });
+
+  it("allows transient class depending on scoped class", () => {
+    @scoped()
+    @injectable()
+    class UserContext {}
+
+    @injectable([UserContext])
+    class AuditTrailService {
+      constructor(readonly userContext: UserContext) {}
+    }
+
+    const container = Container.create();
+    container.bind(UserContext).toSelf();
+    container.bind(AuditTrailService).toSelf().transient();
+
+    const resolved = container.resolve(AuditTrailService);
+    expect(resolved.userContext).toBeInstanceOf(UserContext);
   });
 });

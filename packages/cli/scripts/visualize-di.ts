@@ -37,14 +37,14 @@ async function main(): Promise<void> {
       return;
     }
 
-    const dotGraph = container.inspect().generateDotGraph();
+    const dotGraph = container.generateDependencyGraphDot();
     const outputPath = path.resolve(process.cwd(), "architecture-graph.dot");
     await writeFile(outputPath, dotGraph, "utf8");
     console.log(
       "Architecture graph generated at architecture-graph.dot. Use Graphviz or an online viewer to visualize.",
     );
   } finally {
-    container.disposeSync();
+    await container.dispose();
   }
 }
 

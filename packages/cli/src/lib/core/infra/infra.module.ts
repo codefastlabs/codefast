@@ -28,17 +28,16 @@ export const InfraModule = Module.create("cli-infra", (api) => {
   api
     .bind(CliLoggerToken)
     .toDynamic(() => createNodeCliLogger())
-    .singleton()
-    .build();
+    .singleton();
 
   api
     .bind(CliFsToken)
     .toDynamic(() => createNodeCliFs())
     .onActivation((ctx, rawFs) => {
       applyCliFsTelemetryOnActivation(rawFs, ctx.resolve(CliLoggerToken));
+      return rawFs;
     })
-    .singleton()
-    .build();
+    .singleton();
 
-  api.bind(ConfigLoaderPortToken).toConstantValue(configLoaderAdapter).singleton().build();
+  api.bind(ConfigLoaderPortToken).toConstantValue(configLoaderAdapter);
 });

@@ -1,3 +1,4 @@
+import { injectable } from "@codefast/di";
 import { appError, type AppError } from "#lib/core/domain/errors.domain";
 import { err, ok, type Result } from "#lib/core/domain/result.model";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#lib/config/domain/schema.domain";
@@ -20,15 +21,15 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#lib/tag/domain/types.domain";
-
-export type TagSyncRunDeps = {
-  readonly fs: CliFs;
-  readonly path: CliPath;
-  readonly targetResolver: TagTargetResolverPort;
-  readonly typeScriptTreeWalk: TypeScriptTreeWalkPort;
-  readonly versionResolver: TagVersionResolverPort;
-  readonly sinceWriter: TagSinceWriterPort;
-};
+import {
+  CliFsToken,
+  CliPathToken,
+  TagSinceWriterPortToken,
+  TagTargetResolverPortToken,
+  TagVersionResolverPortToken,
+  TypeScriptTreeWalkPortToken,
+  type RunTagSyncUseCase,
+} from "#lib/tokens";
 
 export type TagSyncExecutionInput = TagSyncRunRequest & {
   listener?: TagProgressListener;
@@ -240,80 +241,95 @@ async function runOnResolvedTarget(
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
  * Returns structured execution data; presentation/logging belongs to command layer.
  */
-export async function runTagSync(
-  input: TagSyncExecutionInput,
-  deps: TagSyncRunDeps,
-): Promise<Result<TagSyncResult, AppError>> {
-  try {
-    const { fs, path, targetResolver, typeScriptTreeWalk, versionResolver, sinceWriter } = deps;
-    const tagConfig = input.config as CodefastTagConfig | undefined;
-    const targetCandidates = await targetResolver.resolveTagTargetCandidates(
-      input.rootDir,
-      input.targetPath,
-      fs,
-    );
-    const { includedCandidates, skippedPackages } = filterSkippedCandidates(
-      targetCandidates,
-      input.skipPackages,
-    );
-    const selectedTargets = includedCandidates.map((candidate) =>
-      resolveTargetSelection(candidate, input.rootDir, path, fs),
-    );
-    const targetExecutionResults = await Promise.all(
-      selectedTargets.map((resolvedTarget) =>
-        runOnResolvedTarget(
-          resolvedTarget,
-          input.write,
-          fs,
-          path,
-          versionResolver,
-          sinceWriter,
-          typeScriptTreeWalk,
-          input.listener,
-        ),
-      ),
-    );
-    const allFileResults: TagFileResult[] = targetExecutionResults.flatMap(
-      (targetResult) => targetResult.result?.fileResults ?? [],
-    );
-    const filesScanned = targetExecutionResults.reduce(
-      (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
-      0,
-    );
-    const filesChanged = targetExecutionResults.reduce(
-      (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
-      0,
-    );
-    const taggedDeclarations = targetExecutionResults.reduce(
-      (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
-      0,
-    );
-    const modifiedFiles = allFileResults
-      .filter((entry) => entry.changed)
-      .map((entry) => entry.filePath);
-    const hookError =
-      input.write && modifiedFiles.length > 0
-        ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
-        : null;
-    const distinctVersions = [...extractDistinctVersions(targetExecutionResults)].sort(
-      (left, right) => left.localeCompare(right),
-    );
+@injectable([
+  CliFsToken,
+  CliPathToken,
+  TagTargetResolverPortToken,
+  TypeScriptTreeWalkPortToken,
+  TagVersionResolverPortToken,
+  TagSinceWriterPortToken,
+] as const)
+export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
+  constructor(
+    private readonly fs: CliFs,
+    private readonly path: CliPath,
+    private readonly targetResolver: TagTargetResolverPort,
+    private readonly typeScriptTreeWalk: TypeScriptTreeWalkPort,
+    private readonly versionResolver: TagVersionResolverPort,
+    private readonly sinceWriter: TagSinceWriterPort,
+  ) {}
 
-    return ok({
-      mode: input.write ? "applied" : "dry-run",
-      selectedTargets,
-      resolvedTargets: selectedTargets,
-      skippedPackages,
-      targetResults: targetExecutionResults,
-      filesScanned,
-      filesChanged,
-      taggedDeclarations,
-      versionSummary: summarizeVersions(targetExecutionResults),
-      distinctVersions,
-      modifiedFiles,
-      hookError,
-    });
-  } catch (caughtError: unknown) {
-    return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+  async execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>> {
+    try {
+      const tagConfig = input.config as CodefastTagConfig | undefined;
+      const targetCandidates = await this.targetResolver.resolveTagTargetCandidates(
+        input.rootDir,
+        input.targetPath,
+        this.fs,
+      );
+      const { includedCandidates, skippedPackages } = filterSkippedCandidates(
+        targetCandidates,
+        input.skipPackages,
+      );
+      const selectedTargets = includedCandidates.map((candidate) =>
+        resolveTargetSelection(candidate, input.rootDir, this.path, this.fs),
+      );
+      const targetExecutionResults = await Promise.all(
+        selectedTargets.map((resolvedTarget) =>
+          runOnResolvedTarget(
+            resolvedTarget,
+            input.write,
+            this.fs,
+            this.path,
+            this.versionResolver,
+            this.sinceWriter,
+            this.typeScriptTreeWalk,
+            input.listener,
+          ),
+        ),
+      );
+      const allFileResults: TagFileResult[] = targetExecutionResults.flatMap(
+        (targetResult) => targetResult.result?.fileResults ?? [],
+      );
+      const filesScanned = targetExecutionResults.reduce(
+        (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
+        0,
+      );
+      const filesChanged = targetExecutionResults.reduce(
+        (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
+        0,
+      );
+      const taggedDeclarations = targetExecutionResults.reduce(
+        (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
+        0,
+      );
+      const modifiedFiles = allFileResults
+        .filter((entry) => entry.changed)
+        .map((entry) => entry.filePath);
+      const hookError =
+        input.write && modifiedFiles.length > 0
+          ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
+          : null;
+      const distinctVersions = [...extractDistinctVersions(targetExecutionResults)].sort(
+        (left, right) => left.localeCompare(right),
+      );
+
+      return ok({
+        mode: input.write ? "applied" : "dry-run",
+        selectedTargets,
+        resolvedTargets: selectedTargets,
+        skippedPackages,
+        targetResults: targetExecutionResults,
+        filesScanned,
+        filesChanged,
+        taggedDeclarations,
+        versionSummary: summarizeVersions(targetExecutionResults),
+        distinctVersions,
+        modifiedFiles,
+        hookError,
+      });
+    } catch (caughtError: unknown) {
+      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+    }
   }
 }

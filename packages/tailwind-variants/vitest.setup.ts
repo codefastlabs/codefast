@@ -16,13 +16,8 @@ expect.extend({
             this.utils.printExpected(parsedExpected.join(" ")),
           ) +
           "\n\n" +
-          this.utils.printDiffOrStringify(
-            parsedExpected,
-            parsedReceived,
-            "Expected",
-            "Received",
-            this.expand !== false,
-          )
+          `Expected: ${this.utils.printExpected(parsedExpected)}\n` +
+          `Received: ${this.utils.printReceived(parsedReceived)}`
         );
       },
       pass:

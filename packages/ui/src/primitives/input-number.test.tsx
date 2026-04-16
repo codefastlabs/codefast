@@ -52,7 +52,7 @@ describe("input-number", () => {
     });
 
     test("works in controlled mode", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       const { rerender } = render(
@@ -177,7 +177,7 @@ describe("input-number", () => {
     });
 
     test("should handle Enter key press to confirm entered value", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -201,7 +201,7 @@ describe("input-number", () => {
     });
 
     test("should handle Enter key press with percentage values", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -232,7 +232,7 @@ describe("input-number", () => {
     });
 
     test("should respect min/max constraints when pressing Enter", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -267,7 +267,7 @@ describe("input-number", () => {
     });
 
     test("should handle Enter correctly with invalid values", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -347,7 +347,7 @@ describe("input-number", () => {
 
     test("should decrement value on wheel up event when input is focused", async () => {
       const user = userEvent.setup();
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
 
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
@@ -368,7 +368,7 @@ describe("input-number", () => {
     });
 
     test("should increment value on wheel down event when input is focused", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -390,7 +390,7 @@ describe("input-number", () => {
     });
 
     test("should respect min/max constraints on wheel events", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -446,7 +446,7 @@ describe("input-number", () => {
     });
 
     test("should honor step value when using wheel events", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -471,7 +471,7 @@ describe("input-number", () => {
     });
 
     test("should not respond to wheel events when disabled", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -494,7 +494,7 @@ describe("input-number", () => {
     });
 
     test("should not respond to wheel events when not focused", () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
 
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
@@ -513,7 +513,7 @@ describe("input-number", () => {
     });
 
     test("right-clicking on increment/decrement buttons should affect the value like left clicking", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -551,131 +551,122 @@ describe("input-number", () => {
       expect(handleChange).toHaveBeenCalledWith(11);
     });
 
-    test("should increment continuously when increment button is pressed and held", async () => {
-      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-
-      jest.useFakeTimers();
-
-      const onChange = jest.fn();
-
-      render(
-        <InputNumber data-testid="input-number" defaultValue={5} onChange={onChange}>
-          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberField data-testid="input-item" />
-          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
-        </InputNumber>,
-      );
-
-      const input = screen.getByTestId("input-item");
-      const incrementButton = screen.getByTestId("increment-btn");
-
-      expect(input).toHaveValue("5");
-
-      await user.pointer({ keys: "[MouseLeft>]", target: incrementButton });
-
-      expect(input).toHaveValue("6");
-
-      act(() => {
-        jest.advanceTimersByTime(200);
+    describe("InputNumber - Continuous Increment/Decrement", () => {
+      beforeEach(() => {
+        vi.useFakeTimers();
+        userEvent.setup({
+          delay: null,
+          advanceTimers: vi.advanceTimersByTime.bind(vi),
+        });
       });
-      expect(input).toHaveValue("7");
 
-      act(() => {
-        jest.advanceTimersByTime(100);
+      afterEach(() => {
+        vi.useRealTimers();
+        vi.clearAllMocks();
       });
-      expect(input).toHaveValue("8");
 
-      act(() => {
-        jest.advanceTimersByTime(100);
+      test("should increment continuously when increment button is pressed and held", async () => {
+        const onChange = vi.fn<(...args: unknown[]) => unknown>();
+
+        render(
+          <InputNumber data-testid="input-number" defaultValue={5} onChange={onChange}>
+            <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+            <InputNumberField data-testid="input-item" />
+            <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+          </InputNumber>,
+        );
+
+        const input = screen.getByTestId("input-item");
+        const incrementButton = screen.getByTestId("increment-btn");
+
+        expect(input).toHaveValue("5");
+
+        await act(async () => {
+          fireEvent.pointerDown(incrementButton);
+        });
+        expect(input).toHaveValue("6");
+
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(200);
+        });
+        expect(input).toHaveValue("7");
+
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(100);
+        });
+        expect(input).toHaveValue("8");
+
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(100);
+        });
+        expect(input).toHaveValue("9");
+
+        fireEvent.pointerUp(incrementButton);
+
+        await vi.advanceTimersByTimeAsync(500);
+        expect(input).toHaveValue("9");
       });
-      expect(input).toHaveValue("9");
 
-      await user.pointer({ keys: "[/MouseLeft]" });
+      test("should decrement continuously when decrement button is pressed and held", async () => {
+        const onChange = vi.fn<(...args: unknown[]) => unknown>();
 
-      act(() => {
-        jest.advanceTimersByTime(300);
+        render(
+          <InputNumber data-testid="input-number" defaultValue={10} onChange={onChange}>
+            <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+            <InputNumberField data-testid="input-item" />
+            <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+          </InputNumber>,
+        );
+
+        const input = screen.getByTestId("input-item");
+        const decrementButton = screen.getByTestId("decrement-btn");
+
+        expect(input).toHaveValue("10");
+
+        await act(async () => {
+          fireEvent.pointerDown(decrementButton);
+        });
+        expect(input).toHaveValue("9");
+
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(200);
+        });
+        expect(input).toHaveValue("8");
+
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(100);
+        });
+        expect(input).toHaveValue("7");
+
+        fireEvent.pointerUp(decrementButton);
+
+        await vi.advanceTimersByTimeAsync(500);
+        expect(input).toHaveValue("7");
       });
-      expect(input).toHaveValue("9");
 
-      jest.useRealTimers();
-    });
+      test("should stop incrementing when pointer leaves the button", async () => {
+        render(
+          <InputNumber data-testid="input-number" defaultValue={5}>
+            <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+            <InputNumberField data-testid="input-item" />
+            <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+          </InputNumber>,
+        );
 
-    test("should decrement continuously when decrement button is pressed and held", async () => {
-      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        const input = screen.getByTestId("input-item");
+        const incrementButton = screen.getByTestId("increment-btn");
 
-      jest.useFakeTimers();
+        fireEvent.pointerDown(incrementButton);
+        expect(input).toHaveValue("6");
 
-      const onChange = jest.fn();
+        await vi.advanceTimersByTimeAsync(200);
+        expect(input).toHaveValue("7");
 
-      render(
-        <InputNumber data-testid="input-number" defaultValue={10} onChange={onChange}>
-          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberField data-testid="input-item" />
-          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
-        </InputNumber>,
-      );
+        fireEvent.pointerLeave(incrementButton);
 
-      const input = screen.getByTestId("input-item");
-      const decrementButton = screen.getByTestId("decrement-btn");
-
-      expect(input).toHaveValue("10");
-
-      await user.pointer({ keys: "[MouseLeft>]", target: decrementButton });
-
-      expect(input).toHaveValue("9");
-
-      act(() => {
-        jest.advanceTimersByTime(200);
+        await vi.advanceTimersByTimeAsync(500);
+        expect(input).toHaveValue("7");
       });
-      expect(input).toHaveValue("8");
-
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
-      expect(input).toHaveValue("7");
-
-      await user.pointer({ keys: "[/MouseLeft]" });
-
-      act(() => {
-        jest.advanceTimersByTime(300);
-      });
-      expect(input).toHaveValue("7");
-
-      jest.useRealTimers();
-    });
-
-    test("should stop incrementing when pointer leaves the button", async () => {
-      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-
-      jest.useFakeTimers();
-
-      render(
-        <InputNumber data-testid="input-number" defaultValue={5}>
-          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberField data-testid="input-item" />
-          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
-        </InputNumber>,
-      );
-
-      const input = screen.getByTestId("input-item");
-      const incrementButton = screen.getByTestId("increment-btn");
-
-      await user.pointer({ keys: "[MouseLeft>]", target: incrementButton });
-      expect(input).toHaveValue("6");
-
-      act(() => {
-        jest.advanceTimersByTime(200);
-      });
-      expect(input).toHaveValue("7");
-
-      await user.pointer({ target: document.body });
-
-      act(() => {
-        jest.advanceTimersByTime(300);
-      });
-      expect(input).toHaveValue("7");
-
-      jest.useRealTimers();
     });
 
     test("applies step size correctly", async () => {
@@ -825,7 +816,7 @@ describe("input-number", () => {
 
       await user.click(input);
 
-      const preventDefaultMock = jest.fn();
+      const preventDefaultMock = vi.fn<(...args: unknown[]) => unknown>();
 
       const functionKeys = ["F1", "F5", "F12"];
 
@@ -889,7 +880,7 @@ describe("input-number", () => {
   describe("InputNumberItem", () => {
     test("handles direct user input", async () => {
       const user = userEvent.setup();
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
 
       render(
         <InputNumber defaultValue={10} onChange={handleChange}>
@@ -934,7 +925,7 @@ describe("input-number", () => {
     });
 
     test("handles keyboard navigation", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -1069,7 +1060,7 @@ describe("input-number", () => {
 
   describe("InputNumber Integration Tests", () => {
     test("works together as a complete component", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(
@@ -1136,7 +1127,7 @@ describe("input-number", () => {
     });
 
     test("handles invalid user input gracefully", async () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
       const user = userEvent.setup();
 
       render(

@@ -1,5 +1,4 @@
 import { act, renderHook } from "@testing-library/react";
-
 import { useAnimatedValue } from "#hooks/use-animated-value";
 
 describe("useAnimatedValue", () => {
@@ -10,24 +9,26 @@ describe("useAnimatedValue", () => {
   // Improve mocks to ensure proper functionality
   let animationFrameCallback: ((time: number) => void) | null = null;
 
-  const requestAnimationFrameMock = jest.fn<number, [(time: number) => void]>((callback) => {
-    animationFrameCallback = callback;
+  const requestAnimationFrameMock = vi.fn<(...args: unknown[]) => unknown>(
+    (callback: FrameRequestCallback): number => {
+      animationFrameCallback = callback;
 
-    return 1; // Return a fake ID
-  });
+      return 1; // Return a fake ID
+    },
+  );
 
-  const cancelAnimationFrameMock = jest.fn();
+  const cancelAnimationFrameMock = vi.fn<(...args: unknown[]) => unknown>();
 
   // Mock for performance.now
   let currentTime: number;
-  let performanceNowMock: jest.Mock;
+  let performanceNowMock: () => number;
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     // Initialize mocks and time
     currentTime = 0;
-    performanceNowMock = jest.fn(() => currentTime);
+    performanceNowMock = () => currentTime;
 
     // Store original functions
     originalRequestAnimationFrame = window.requestAnimationFrame;
@@ -42,7 +43,7 @@ describe("useAnimatedValue", () => {
     // Reset mocks and time
     currentTime = 0;
     animationFrameCallback = null;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -51,7 +52,7 @@ describe("useAnimatedValue", () => {
     window.cancelAnimationFrame = originalCancelAnimationFrame;
     performance.now = originalPerformanceNow;
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test("returns the target value immediately when animate is false", () => {

@@ -6,7 +6,11 @@ import type { DomainSourceParserPort } from "#lib/arrange/application/ports/doma
 import type { FileWalkerPort } from "#lib/arrange/application/ports/file-walker.port";
 import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
 import type { ArrangeSuggestGroupsOutput } from "#lib/arrange/application/use-cases/suggest-cn-groups.use-case";
-import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
+import type {
+  AnalyzeReport,
+  ArrangeGroupFileOptions,
+  GroupFileResult,
+} from "#lib/arrange/domain/types.domain";
 import type { ArrangeTargetWorkspaceAndConfig } from "#lib/arrange/presentation/arrange-prelude.types";
 import type { ConfigLoaderPort } from "#lib/config/application/ports/config-loader.port";
 import type { CodefastConfig } from "#lib/config/domain/schema.domain";
@@ -17,6 +21,7 @@ import type { Result } from "#lib/core/domain/result.model";
 import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
 import type { MirrorSyncReporterPort } from "#lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { PackageRepositoryPort } from "#lib/mirror/application/ports/package-repository.port";
+import type { SyncWorkspacePackageService } from "#lib/mirror/application/ports/sync-workspace-package.port";
 import type { WorkspaceServicePort } from "#lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
 import type { MirrorSyncCommandPrelude } from "#lib/mirror/presentation/mirror-prelude.types";
@@ -28,42 +33,60 @@ import type { TagSyncExecutionInput } from "#lib/tag/application/use-cases/run-t
 import type { TagProgressListener, TagSyncResult } from "#lib/tag/domain/types.domain";
 import type { TagCommandPrelude } from "#lib/tag/presentation/tag-prelude.types";
 
-export type AnalyzeDirectoryUseCase = (
-  request: ArrangeAnalyzeDirectoryRequest,
-) => Result<AnalyzeReport, AppError>;
+export type AnalyzeDirectoryUseCase = {
+  execute(request: ArrangeAnalyzeDirectoryRequest): Result<AnalyzeReport, AppError>;
+};
 
-export type RunArrangeSyncUseCase = (
-  request: ArrangeSyncRunRequest,
-) => Promise<Result<number, AppError>>;
+export type RunArrangeSyncUseCase = {
+  execute(request: ArrangeSyncRunRequest): Promise<Result<number, AppError>>;
+};
 
-export type SuggestCnGroupsUseCase = (
-  request: ArrangeSuggestGroupsRequest,
-) => ArrangeSuggestGroupsOutput;
+export type ArrangeTargetScannerService = {
+  scanTarget(args: { readonly targetPath: string; readonly fs: CliFs }): string[];
+};
 
-export type RunMirrorSyncUseCase = (
-  request: MirrorSyncRunRequest,
-) => Promise<Result<number, AppError>>;
+export type ArrangeFileProcessorService = {
+  processFile(args: {
+    readonly filePath: string;
+    readonly options: ArrangeGroupFileOptions;
+    readonly logger: CliLogger;
+  }): GroupFileResult;
+};
 
-export type RunTagSyncUseCase = (
-  input: TagSyncExecutionInput,
-) => Promise<Result<TagSyncResult, AppError>>;
+export type SuggestCnGroupsUseCase = {
+  execute(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput;
+};
 
-export type PrepareArrangeOrchestrator = (args: {
-  readonly currentWorkingDirectory: string;
-  readonly rawTarget: string | undefined;
-}) => Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
+export type RunMirrorSyncUseCase = {
+  execute(request: MirrorSyncRunRequest): Promise<Result<number, AppError>>;
+};
 
-export type PrepareMirrorOrchestrator = (args: {
-  readonly currentWorkingDirectory: string;
-  readonly packageArg: string | undefined;
-  readonly globalCliRaw: unknown;
-}) => Promise<Result<MirrorSyncCommandPrelude, AppError>>;
+export type RunTagSyncUseCase = {
+  execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
+};
 
-export type PrepareTagOrchestrator = (args: {
-  readonly currentWorkingDirectory: string;
-  readonly rawTarget: string | undefined;
-  readonly globalCliRaw: unknown;
-}) => Promise<Result<TagCommandPrelude, AppError>>;
+export type PrepareArrangeOrchestrator = {
+  execute(args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
+};
+
+export type PrepareMirrorOrchestrator = {
+  execute(args: {
+    readonly currentWorkingDirectory: string;
+    readonly packageArg: string | undefined;
+    readonly globalCliRaw: unknown;
+  }): Promise<Result<MirrorSyncCommandPrelude, AppError>>;
+};
+
+export type PrepareTagOrchestrator = {
+  execute(args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+    readonly globalCliRaw: unknown;
+  }): Promise<Result<TagCommandPrelude, AppError>>;
+};
 
 export type PresentAnalyzeReportPresenter = (
   resolvedTargetPath: string,
@@ -103,6 +126,10 @@ export const DomainSourceParserPortToken: Token<DomainSourceParserPort> =
   token<DomainSourceParserPort>("DomainSourceParserPort");
 export const GroupFilePreviewPortToken: Token<GroupFilePreviewPort> =
   token<GroupFilePreviewPort>("GroupFilePreviewPort");
+export const ArrangeTargetScannerToken: Token<ArrangeTargetScannerService> =
+  token<ArrangeTargetScannerService>("ArrangeTargetScannerService");
+export const ArrangeFileProcessorToken: Token<ArrangeFileProcessorService> =
+  token<ArrangeFileProcessorService>("ArrangeFileProcessorService");
 
 export const WorkspaceServicePortToken: Token<WorkspaceServicePort> =
   token<WorkspaceServicePort>("WorkspaceServicePort");
@@ -112,6 +139,8 @@ export const FileSystemServicePortToken: Token<FileSystemServicePort> =
   token<FileSystemServicePort>("FileSystemServicePort");
 export const MirrorSyncReporterPortToken: Token<MirrorSyncReporterPort> =
   token<MirrorSyncReporterPort>("MirrorSyncReporterPort");
+export const SyncWorkspacePackageServiceToken: Token<SyncWorkspacePackageService> =
+  token<SyncWorkspacePackageService>("SyncWorkspacePackageService");
 
 export const TagTargetResolverPortToken: Token<TagTargetResolverPort> =
   token<TagTargetResolverPort>("TagTargetResolverPort");

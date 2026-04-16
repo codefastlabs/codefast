@@ -62,15 +62,15 @@ describe("DOM Utilities", () => {
     beforeEach(() => {
       // Mock matchMedia to NOT prefer reduced motion
       Object.defineProperty(window, "matchMedia", {
-        value: jest.fn().mockImplementation(() => ({
-          addEventListener: jest.fn(),
-          addListener: jest.fn(),
-          dispatchEvent: jest.fn(),
+        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => ({
+          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          addListener: vi.fn<(...args: unknown[]) => unknown>(),
+          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
           matches: false, // prefers-reduced-motion: reduce is FALSE
           media: "",
           onchange: null,
-          removeEventListener: jest.fn(),
-          removeListener: jest.fn(),
+          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
         })),
         writable: true,
       });
@@ -162,16 +162,19 @@ describe("DOM Utilities", () => {
 
     test("should do nothing when prefers-reduced-motion is enabled", () => {
       Object.defineProperty(window, "matchMedia", {
-        value: jest.fn().mockImplementation((query: string) => ({
-          addEventListener: jest.fn(),
-          addListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-          matches: query === "(prefers-reduced-motion: reduce)", // prefers-reduced-motion is TRUE
-          media: query,
-          onchange: null,
-          removeEventListener: jest.fn(),
-          removeListener: jest.fn(),
-        })),
+        value: vi.fn<(query: string) => MediaQueryList>().mockImplementation(
+          (query: string) =>
+            ({
+              addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+              addListener: vi.fn<(...args: unknown[]) => unknown>(),
+              dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+              matches: query === "(prefers-reduced-motion: reduce)", // prefers-reduced-motion is TRUE
+              media: query,
+              onchange: null,
+              removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+              removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+            }) as unknown as MediaQueryList,
+        ),
         writable: true,
       });
 

@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
 import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
@@ -6,8 +7,9 @@ import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-
 
 function createForwardingParserPort(): DomainSourceParserPort {
   return {
-    parseDomainSourceFile: jest.fn((filePath: string, sourceText: string) =>
-      domainSourceParserAdapter.parseDomainSourceFile(filePath, sourceText),
+    parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>(
+      (filePath: string, sourceText: string) =>
+        domainSourceParserAdapter.parseDomainSourceFile(filePath, sourceText),
     ),
   };
 }
@@ -17,11 +19,11 @@ describe("groupFile use case", () => {
     const filePath = "/virtual/no-cn.ts";
     const sourceText = `export const x = 1;\n`;
     const mockFs = {
-      readFileSync: jest.fn(() => sourceText),
-      writeFileSync: jest.fn(),
+      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => sourceText),
+      writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
     } as unknown as CliFs;
-    const loggerOut: jest.Mock<void, [string]> = jest.fn();
-    const mockLogger: CliLogger = { out: loggerOut, err: jest.fn() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(
@@ -49,11 +51,11 @@ export const styles = tv({
 `;
     const filePath = "/virtual/preview.tsx";
     const mockFs = {
-      readFileSync: jest.fn(() => sourceText),
-      writeFileSync: jest.fn(),
+      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => sourceText),
+      writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
     } as unknown as CliFs;
-    const loggerOut: jest.Mock<void, [string]> = jest.fn();
-    const mockLogger: CliLogger = { out: loggerOut, err: jest.fn() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(
@@ -82,11 +84,11 @@ export const styles = tv({
 `;
     const filePath = "/virtual/apply.tsx";
     const mockFs = {
-      readFileSync: jest.fn(() => sourceText),
-      writeFileSync: jest.fn(),
+      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => sourceText),
+      writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
     } as unknown as CliFs;
-    const loggerOut: jest.Mock<void, [string]> = jest.fn();
-    const mockLogger: CliLogger = { out: loggerOut, err: jest.fn() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(

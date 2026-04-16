@@ -22,12 +22,10 @@ function withTempFixture(name: string, source: string, fn: (filePath: string) =>
 
 function captureStdout(fn: () => void): string {
   const chunks: string[] = [];
-  const spy = jest
-    .spyOn(process.stdout, "write")
-    .mockImplementation((chunk: string | Uint8Array) => {
-      chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
-      return true;
-    });
+  const spy = vi.spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
+    chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
+    return true;
+  });
   try {
     fn();
   } finally {

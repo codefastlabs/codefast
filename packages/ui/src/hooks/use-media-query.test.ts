@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import type { Mock } from "vitest";
 
 import { useMediaQuery } from "#hooks/use-media-query";
 
@@ -7,24 +8,24 @@ type ChangeHandler = (event: MediaQueryListEvent) => void;
 const setupMockMatchMedia = (
   matches: boolean,
 ): {
-  mockAddEventListener: jest.Mock;
+  mockAddEventListener: Mock;
   mockMediaQueryList: {
-    addEventListener: jest.Mock;
+    addEventListener: Mock;
     matches: boolean;
     media: string;
     onchange: null;
-    removeEventListener: jest.Mock;
-    addListener: jest.Mock;
-    removeListener: jest.Mock;
-    dispatchEvent: jest.Mock;
+    removeEventListener: Mock;
+    addListener: Mock;
+    removeListener: Mock;
+    dispatchEvent: Mock;
   };
-  mockRemoveEventListener: jest.Mock;
+  mockRemoveEventListener: Mock;
 } => {
-  const mockAddEventListener = jest.fn();
-  const mockRemoveEventListener = jest.fn();
-  const mockAddListener = jest.fn();
-  const mockRemoveListener = jest.fn();
-  const mockDispatchEvent = jest.fn();
+  const mockAddEventListener = vi.fn<(...args: unknown[]) => unknown>();
+  const mockRemoveEventListener = vi.fn<(...args: unknown[]) => unknown>();
+  const mockAddListener = vi.fn<(...args: unknown[]) => unknown>();
+  const mockRemoveListener = vi.fn<(...args: unknown[]) => unknown>();
+  const mockDispatchEvent = vi.fn<(...args: unknown[]) => unknown>();
 
   const mockMediaQueryList = {
     addEventListener: mockAddEventListener,
@@ -39,7 +40,7 @@ const setupMockMatchMedia = (
 
   // Ensure matchMedia exists on window for the test environment
   Object.defineProperty(window, "matchMedia", {
-    value: jest.fn().mockImplementation(() => mockMediaQueryList),
+    value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => mockMediaQueryList),
     writable: true,
   });
 
