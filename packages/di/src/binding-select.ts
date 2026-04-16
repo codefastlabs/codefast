@@ -7,7 +7,7 @@ export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): st
   if (typeof key === "function") {
     return key.name.length > 0 ? key.name : "(anonymous class)";
   }
-  return key.name;
+  return key.name.trim().length > 0 ? key.name : "(anonymous token)";
 }
 
 /**

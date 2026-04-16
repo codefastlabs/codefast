@@ -50,6 +50,14 @@ function dotEscapeLabel(text: string): string {
   return text.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
 }
 
+function dotEscapeHtml(text: string): string {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
 function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
   switch (kind) {
     case "constant":
@@ -147,7 +155,13 @@ export class ContainerInspector {
       : fullSnapshot.bindings;
     const allowedBindingIds = new Set(visibleRows.map((row) => row.bindingId));
 
-    const lines: string[] = ["digraph codefast_di {", "  rankdir=LR;"];
+    const lines: string[] = [
+      "digraph codefast_di {",
+      "  rankdir=LR;",
+      '  graph [fontname="Arial", fontsize=12, nodesep=0.8, ranksep=1.2];',
+      '  node  [fontname="Arial", fontsize=12, shape=box, style="filled,rounded", fillcolor="#F5F5F5"];',
+      '  edge  [fontname="Arial", fontsize=10];',
+    ];
 
     const byModule = new Map<string | undefined, ContainerBindingSnapshot[]>();
     for (const row of visibleRows) {
@@ -168,12 +182,29 @@ export class ContainerInspector {
     const nodeAttributeLine = (row: ContainerBindingSnapshot, indent: string): string => {
       const shape = nodeShapeForKind(row.kind);
       const scopeAttrs = scopeVisualAttributes(row.scope);
-      const constraintNote = row.hasConditionalConstraint ? "\nwhen(...)" : "";
-      const rawLabel = `${row.kind}
-${row.registryKeyLabel}
-scope=${row.scope}${constraintNote}`;
-      const label = dotEscapeLabel(rawLabel);
-      return `${indent}"${row.bindingId}" [shape=${shape}, ${scopeAttrs}, label="${label}"];`;
+
+      const kindText = dotEscapeHtml(row.kind);
+      const nameText = dotEscapeHtml(row.registryKeyLabel);
+      const scopeText = dotEscapeHtml(`scope=${row.scope}`);
+
+      const whenRow = row.hasConditionalConstraint
+        ? `      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">when(...)</FONT></TD></TR>\n`
+        : "";
+
+      const htmlLabel = [
+        "<",
+        '    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">',
+        `      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">${kindText}</FONT></TD></TR>`,
+        `      <TR><TD ALIGN="LEFT"><B>${nameText}</B></TD></TR>`,
+        `      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">${scopeText}</FONT></TD></TR>`,
+        whenRow.trimEnd(),
+        "    </TABLE>",
+        "  >",
+      ]
+        .filter((line) => line.length > 0)
+        .join("\n");
+
+      return `${indent}"${row.bindingId}" [shape=${shape}, ${scopeAttrs}, label=${htmlLabel}];`;
     };
 
     for (const [moduleName, rows] of clusteredEntries) {
