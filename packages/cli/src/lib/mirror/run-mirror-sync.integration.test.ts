@@ -7,13 +7,7 @@ import { InfraModule } from "#lib/core/infra/infra.module";
 import { PresentationModule } from "#lib/core/presentation/presentation.module";
 import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
 import { MirrorModule } from "#lib/mirror/mirror.module";
-import {
-  CliGlobalCliRawToken,
-  CliRootDirToken,
-  RunMirrorSyncUseCaseToken,
-  WorkspaceContextBinderToken,
-  type RunMirrorSyncUseCase,
-} from "#lib/tokens";
+import { RunMirrorSyncUseCaseToken, type RunMirrorSyncUseCase } from "#lib/tokens";
 
 async function mkdirp(filePath: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -34,14 +28,6 @@ async function makeTempRoot(): Promise<string> {
 }
 
 const container = Container.create();
-container.bind(CliRootDirToken).toConstantValue(process.cwd());
-container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
-container
-  .bind(WorkspaceContextBinderToken)
-  .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
-    container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
-    container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
-  });
 container.load(CoreModule, InfraModule, PresentationModule, MirrorModule);
 const runMirrorSyncUseCase = container.resolve(RunMirrorSyncUseCaseToken) as RunMirrorSyncUseCase;
 

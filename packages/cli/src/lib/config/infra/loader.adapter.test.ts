@@ -38,7 +38,7 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        const { config, warnings } = await loadConfig(cliFs);
+        const { config, warnings } = await loadConfig(cliFs, process.cwd());
         expect(warnings).toEqual([]);
         expect(config.mirror).toEqual({ skipPackages: ["@acme/private"] });
         expect(typeof config.tag?.onAfterWrite).toBe("function");
@@ -59,8 +59,10 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        await expect(loadConfig(cliFs)).rejects.toThrow("Invalid config schema");
-        await expect(loadConfig(cliFs)).rejects.toThrow('Unrecognized key: "skipPackages"');
+        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow("Invalid config schema");
+        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow(
+          'Unrecognized key: "skipPackages"',
+        );
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
@@ -80,8 +82,8 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        await expect(loadConfig(cliFs)).rejects.toThrow("Invalid config schema");
-        await expect(loadConfig(cliFs)).rejects.toThrow("tag.onAfterWrite");
+        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow("Invalid config schema");
+        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow("tag.onAfterWrite");
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
@@ -100,7 +102,7 @@ describe("loadConfig", () => {
       );
 
       await withCwd(nested, async () => {
-        const { config } = await loadConfig(cliFs);
+        const { config } = await loadConfig(cliFs, process.cwd());
         expect(config.mirror).toEqual({ skipPackages: ["@acme/infra"] });
       });
     } finally {
@@ -118,13 +120,13 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        const first = await loadConfig(cliFs);
+        const first = await loadConfig(cliFs, process.cwd());
         fs.writeFileSync(
           path.join(root, "codefast.config.json"),
           JSON.stringify({ mirror: { skipPackages: ["@acme/two"] } }),
           "utf8",
         );
-        const second = await loadConfig(cliFs);
+        const second = await loadConfig(cliFs, process.cwd());
         expect(second.config.mirror).toEqual(first.config.mirror);
       });
     } finally {

@@ -1,5 +1,4 @@
 import { Module } from "@codefast/di";
-import { ArrangeCommand } from "#commands/arrange";
 import { ArrangeFileProcessorServiceImpl } from "#lib/arrange/application/services/arrange-file-processor.service";
 import { ArrangeTargetScannerServiceImpl } from "#lib/arrange/application/services/arrange-target-scanner.service";
 import { AnalyzeDirectoryUseCaseImpl } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
@@ -8,7 +7,6 @@ import { SuggestCnGroupsUseCaseImpl } from "#lib/arrange/application/use-cases/s
 import { DomainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
 import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
-import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
 import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
 import {
   isCliTelemetryEnabled,
@@ -38,8 +36,6 @@ function withOptionalTelemetry<T extends object>(
 }
 
 export const ArrangeModule = Module.create("cli-arrange", (api) => {
-  api.bind(COMMAND_TOKEN).to(ArrangeCommand).singleton();
-
   api
     .bind(FileWalkerPortToken)
     .toResolved(

@@ -1,0 +1,135 @@
+digraph codefast_di {
+  rankdir=LR;
+  subgraph cluster_cli_core {
+    label="cli-core";
+    style=filled;
+    fillcolor=lightgray;
+    "600bda24-531f-46b4-acec-7734745a2bfe" [shape=ellipse, style="filled", fillcolor="#FFD700", penwidth=2, label="constant\nCliPath\nscope=singleton"];
+  }
+  subgraph cluster_cli_infra {
+    label="cli-infra";
+    style=filled;
+    fillcolor=lightgray;
+    "9366d757-fcbc-4d10-af67-6faa3c653d66" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="dynamic\nCliLogger\nscope=singleton"];
+    "33908ff8-030b-467a-9a45-aa8959fe459a" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="dynamic\nCliFs\nscope=singleton"];
+    "0df9b9c6-3e8f-4f49-80ca-391095a12dcb" [shape=ellipse, style="filled", fillcolor="#FFD700", penwidth=2, label="constant\nConfigLoaderPort\nscope=singleton"];
+  }
+  subgraph cluster_cli_presentation {
+    label="cli-presentation";
+    style=filled;
+    fillcolor=lightgray;
+    "b937fd1b-d86b-4c5c-8b52-5f6046af8a66" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nTryLoadCodefastConfigPresenter\nscope=singleton"];
+    "7d57995d-3c76-4568-bfd5-ae52d66302e7" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nPrepareArrangeOrchestrator\nscope=singleton"];
+    "a79acecf-351f-42c8-8f6d-27e5771a3d5f" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nPrepareMirrorOrchestrator\nscope=singleton"];
+    "188e2e08-2062-4b9a-a563-07bd09ab08a7" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nPrepareTagOrchestrator\nscope=singleton"];
+    "fbb6b77f-e853-478c-a58c-08afbacc54f6" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nPresentAnalyzeReportPresenter\nscope=singleton"];
+    "dc733b74-fd7d-49ec-ae6b-3f3ec957f1ee" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nPresentTagSyncResultPresenter\nscope=singleton"];
+    "108ee185-2a44-4d34-8cd5-833a0d38f25b" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="dynamic\nCreateTagProgressListenerPresenter\nscope=singleton"];
+    "487fd13d-5bb6-498e-a94a-c30bd7ebd8a7" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nAppOrchestrator\nscope=singleton"];
+  }
+  subgraph cluster_cli_arrange {
+    label="cli-arrange";
+    style=filled;
+    fillcolor=lightgray;
+    "2398dcf2-b168-4244-ae04-5f99eecb7940" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nFileWalkerPort\nscope=singleton"];
+    "afffc896-d502-40dd-a0b5-d087fa742d63" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nDomainSourceParserPort\nscope=singleton"];
+    "4d498975-5b41-47d8-9c46-7d07a3344dea" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nGroupFilePreviewPort\nscope=singleton"];
+    "f3bfe4a0-f9e0-471e-84fe-708b39fdb2d8" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nAnalyzeDirectoryUseCase\nscope=singleton"];
+    "484a1292-1f79-4e98-991d-bbfd51b3ef9d" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nArrangeTargetScannerService\nscope=singleton"];
+    "da5edcac-a86d-4aeb-b2ed-081b0692de9a" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nArrangeFileProcessorService\nscope=singleton"];
+    "9bc705ea-c763-4135-a807-8b36d801a3bc" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nRunArrangeSyncUseCase\nscope=singleton"];
+    "b49d1933-27ad-4a51-a9ef-93195ccabedf" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nSuggestCnGroupsUseCase\nscope=singleton"];
+  }
+  subgraph cluster_cli_mirror {
+    label="cli-mirror";
+    style=filled;
+    fillcolor=lightgray;
+    "163245aa-0afd-4619-ab31-a7ee08b1bf5d" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nWorkspaceServicePort\nscope=singleton"];
+    "4f0ba33c-acbf-4225-8ff1-8e10fd88f358" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nPackageRepositoryPort\nscope=singleton"];
+    "16707103-dbc4-4b97-97e6-1d1d5f4ba707" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nFileSystemServicePort\nscope=singleton"];
+    "c8f119ae-17a1-412f-bfbd-4993841af34c" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nMirrorSyncReporterPort\nscope=singleton"];
+    "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nSyncWorkspacePackageService\nscope=singleton"];
+    "d246879d-da41-41f2-8335-52dc29673f2b" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nRunMirrorSyncUseCase\nscope=singleton"];
+  }
+  subgraph cluster_cli_tag {
+    label="cli-tag";
+    style=filled;
+    fillcolor=lightgray;
+    "3ae7191c-915e-4088-b69d-071d5a39b9e3" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nTagTargetResolverPort\nscope=singleton"];
+    "aa8fca06-3381-480a-bd6d-7511485389c4" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nTypeScriptTreeWalkPort\nscope=singleton"];
+    "c1492bf7-a765-449a-8554-ab003432e2b4" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nTagSinceWriterPort\nscope=singleton"];
+    "19d173f7-7bc1-4054-821d-61443052dcd0" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label="resolved\nTagVersionResolverPort\nscope=singleton"];
+    "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nRunTagSyncUseCase\nscope=singleton"];
+  }
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nCliCommand\nscope=singleton"];
+  "e1bebc26-ec08-4d0e-9496-d07ff32b18e6" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nCliCommand\nscope=singleton"];
+  "54ee24c8-09cd-4663-8831-d7ba07e951c7" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label="class\nCliCommand\nscope=singleton"];
+  "b937fd1b-d86b-4c5c-8b52-5f6046af8a66" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="TryLoadCodefastConfigPresenter -> CliFs"];
+  "b937fd1b-d86b-4c5c-8b52-5f6046af8a66" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="TryLoadCodefastConfigPresenter -> CliLogger"];
+  "b937fd1b-d86b-4c5c-8b52-5f6046af8a66" -> "0df9b9c6-3e8f-4f49-80ca-391095a12dcb" [label="sync", xlabel="TryLoadCodefastConfigPresenter -> ConfigLoaderPort"];
+  "7d57995d-3c76-4568-bfd5-ae52d66302e7" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="PrepareArrangeOrchestrator -> CliFs"];
+  "7d57995d-3c76-4568-bfd5-ae52d66302e7" -> "487fd13d-5bb6-498e-a94a-c30bd7ebd8a7" [label="sync", xlabel="PrepareArrangeOrchestrator -> AppOrchestrator"];
+  "a79acecf-351f-42c8-8f6d-27e5771a3d5f" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="PrepareMirrorOrchestrator -> CliFs"];
+  "a79acecf-351f-42c8-8f6d-27e5771a3d5f" -> "487fd13d-5bb6-498e-a94a-c30bd7ebd8a7" [label="sync", xlabel="PrepareMirrorOrchestrator -> AppOrchestrator"];
+  "188e2e08-2062-4b9a-a563-07bd09ab08a7" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="PrepareTagOrchestrator -> CliFs"];
+  "188e2e08-2062-4b9a-a563-07bd09ab08a7" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="PrepareTagOrchestrator -> CliLogger"];
+  "188e2e08-2062-4b9a-a563-07bd09ab08a7" -> "487fd13d-5bb6-498e-a94a-c30bd7ebd8a7" [label="sync", xlabel="PrepareTagOrchestrator -> AppOrchestrator"];
+  "fbb6b77f-e853-478c-a58c-08afbacc54f6" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="PresentAnalyzeReportPresenter -> CliLogger"];
+  "dc733b74-fd7d-49ec-ae6b-3f3ec957f1ee" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="PresentTagSyncResultPresenter -> CliLogger"];
+  "487fd13d-5bb6-498e-a94a-c30bd7ebd8a7" -> "b937fd1b-d86b-4c5c-8b52-5f6046af8a66" [label="sync", xlabel="AppOrchestrator -> TryLoadCodefastConfigPresenter"];
+  "2398dcf2-b168-4244-ae04-5f99eecb7940" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="FileWalkerPort -> CliLogger"];
+  "afffc896-d502-40dd-a0b5-d087fa742d63" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="DomainSourceParserPort -> CliLogger"];
+  "4d498975-5b41-47d8-9c46-7d07a3344dea" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="GroupFilePreviewPort -> CliLogger"];
+  "f3bfe4a0-f9e0-471e-84fe-708b39fdb2d8" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="AnalyzeDirectoryUseCase -> CliFs"];
+  "f3bfe4a0-f9e0-471e-84fe-708b39fdb2d8" -> "484a1292-1f79-4e98-991d-bbfd51b3ef9d" [label="sync", xlabel="AnalyzeDirectoryUseCase -> ArrangeTargetScannerService"];
+  "f3bfe4a0-f9e0-471e-84fe-708b39fdb2d8" -> "afffc896-d502-40dd-a0b5-d087fa742d63" [label="sync", xlabel="AnalyzeDirectoryUseCase -> DomainSourceParserPort"];
+  "484a1292-1f79-4e98-991d-bbfd51b3ef9d" -> "2398dcf2-b168-4244-ae04-5f99eecb7940" [label="sync", xlabel="ArrangeTargetScannerService -> FileWalkerPort"];
+  "484a1292-1f79-4e98-991d-bbfd51b3ef9d" -> "600bda24-531f-46b4-acec-7734745a2bfe" [label="sync", xlabel="ArrangeTargetScannerService -> CliPath"];
+  "da5edcac-a86d-4aeb-b2ed-081b0692de9a" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="ArrangeFileProcessorService -> CliFs"];
+  "da5edcac-a86d-4aeb-b2ed-081b0692de9a" -> "afffc896-d502-40dd-a0b5-d087fa742d63" [label="sync", xlabel="ArrangeFileProcessorService -> DomainSourceParserPort"];
+  "da5edcac-a86d-4aeb-b2ed-081b0692de9a" -> "4d498975-5b41-47d8-9c46-7d07a3344dea" [label="sync", xlabel="ArrangeFileProcessorService -> GroupFilePreviewPort"];
+  "9bc705ea-c763-4135-a807-8b36d801a3bc" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="RunArrangeSyncUseCase -> CliFs"];
+  "9bc705ea-c763-4135-a807-8b36d801a3bc" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="RunArrangeSyncUseCase -> CliLogger"];
+  "9bc705ea-c763-4135-a807-8b36d801a3bc" -> "484a1292-1f79-4e98-991d-bbfd51b3ef9d" [label="sync", xlabel="RunArrangeSyncUseCase -> ArrangeTargetScannerService"];
+  "9bc705ea-c763-4135-a807-8b36d801a3bc" -> "da5edcac-a86d-4aeb-b2ed-081b0692de9a" [label="sync", xlabel="RunArrangeSyncUseCase -> ArrangeFileProcessorService"];
+  "163245aa-0afd-4619-ab31-a7ee08b1bf5d" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="WorkspaceServicePort -> CliLogger"];
+  "4f0ba33c-acbf-4225-8ff1-8e10fd88f358" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="PackageRepositoryPort -> CliLogger"];
+  "16707103-dbc4-4b97-97e6-1d1d5f4ba707" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="FileSystemServicePort -> CliLogger"];
+  "c8f119ae-17a1-412f-bfbd-4993841af34c" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="MirrorSyncReporterPort -> CliLogger"];
+  "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="SyncWorkspacePackageService -> CliFs"];
+  "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" -> "600bda24-531f-46b4-acec-7734745a2bfe" [label="sync", xlabel="SyncWorkspacePackageService -> CliPath"];
+  "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" -> "4f0ba33c-acbf-4225-8ff1-8e10fd88f358" [label="sync", xlabel="SyncWorkspacePackageService -> PackageRepositoryPort"];
+  "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" -> "16707103-dbc4-4b97-97e6-1d1d5f4ba707" [label="sync", xlabel="SyncWorkspacePackageService -> FileSystemServicePort"];
+  "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="SyncWorkspacePackageService -> CliLogger"];
+  "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" -> "c8f119ae-17a1-412f-bfbd-4993841af34c" [label="sync", xlabel="SyncWorkspacePackageService -> MirrorSyncReporterPort"];
+  "d246879d-da41-41f2-8335-52dc29673f2b" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="RunMirrorSyncUseCase -> CliFs"];
+  "d246879d-da41-41f2-8335-52dc29673f2b" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="RunMirrorSyncUseCase -> CliLogger"];
+  "d246879d-da41-41f2-8335-52dc29673f2b" -> "163245aa-0afd-4619-ab31-a7ee08b1bf5d" [label="sync", xlabel="RunMirrorSyncUseCase -> WorkspaceServicePort"];
+  "d246879d-da41-41f2-8335-52dc29673f2b" -> "c8f119ae-17a1-412f-bfbd-4993841af34c" [label="sync", xlabel="RunMirrorSyncUseCase -> MirrorSyncReporterPort"];
+  "d246879d-da41-41f2-8335-52dc29673f2b" -> "87d41fb0-3e52-4ec4-bd08-d58f28214c7e" [label="sync", xlabel="RunMirrorSyncUseCase -> SyncWorkspacePackageService"];
+  "3ae7191c-915e-4088-b69d-071d5a39b9e3" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="TagTargetResolverPort -> CliLogger"];
+  "aa8fca06-3381-480a-bd6d-7511485389c4" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="TypeScriptTreeWalkPort -> CliLogger"];
+  "c1492bf7-a765-449a-8554-ab003432e2b4" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="TagSinceWriterPort -> CliLogger"];
+  "19d173f7-7bc1-4054-821d-61443052dcd0" -> "600bda24-531f-46b4-acec-7734745a2bfe" [label="sync", xlabel="TagVersionResolverPort -> CliPath"];
+  "19d173f7-7bc1-4054-821d-61443052dcd0" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="TagVersionResolverPort -> CliLogger"];
+  "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" -> "33908ff8-030b-467a-9a45-aa8959fe459a" [label="sync", xlabel="RunTagSyncUseCase -> CliFs"];
+  "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" -> "600bda24-531f-46b4-acec-7734745a2bfe" [label="sync", xlabel="RunTagSyncUseCase -> CliPath"];
+  "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" -> "3ae7191c-915e-4088-b69d-071d5a39b9e3" [label="sync", xlabel="RunTagSyncUseCase -> TagTargetResolverPort"];
+  "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" -> "aa8fca06-3381-480a-bd6d-7511485389c4" [label="sync", xlabel="RunTagSyncUseCase -> TypeScriptTreeWalkPort"];
+  "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" -> "19d173f7-7bc1-4054-821d-61443052dcd0" [label="sync", xlabel="RunTagSyncUseCase -> TagVersionResolverPort"];
+  "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" -> "c1492bf7-a765-449a-8554-ab003432e2b4" [label="sync", xlabel="RunTagSyncUseCase -> TagSinceWriterPort"];
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="CliCommand -> CliLogger"];
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" -> "7d57995d-3c76-4568-bfd5-ae52d66302e7" [label="sync", xlabel="CliCommand -> PrepareArrangeOrchestrator"];
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" -> "f3bfe4a0-f9e0-471e-84fe-708b39fdb2d8" [label="sync", xlabel="CliCommand -> AnalyzeDirectoryUseCase"];
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" -> "9bc705ea-c763-4135-a807-8b36d801a3bc" [label="sync", xlabel="CliCommand -> RunArrangeSyncUseCase"];
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" -> "b49d1933-27ad-4a51-a9ef-93195ccabedf" [label="sync", xlabel="CliCommand -> SuggestCnGroupsUseCase"];
+  "94851350-f0e6-404f-9e79-cf9c8bdf3eb5" -> "fbb6b77f-e853-478c-a58c-08afbacc54f6" [label="sync", xlabel="CliCommand -> PresentAnalyzeReportPresenter"];
+  "e1bebc26-ec08-4d0e-9496-d07ff32b18e6" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="CliCommand -> CliLogger"];
+  "e1bebc26-ec08-4d0e-9496-d07ff32b18e6" -> "a79acecf-351f-42c8-8f6d-27e5771a3d5f" [label="sync", xlabel="CliCommand -> PrepareMirrorOrchestrator"];
+  "e1bebc26-ec08-4d0e-9496-d07ff32b18e6" -> "d246879d-da41-41f2-8335-52dc29673f2b" [label="sync", xlabel="CliCommand -> RunMirrorSyncUseCase"];
+  "54ee24c8-09cd-4663-8831-d7ba07e951c7" -> "9366d757-fcbc-4d10-af67-6faa3c653d66" [label="sync", xlabel="CliCommand -> CliLogger"];
+  "54ee24c8-09cd-4663-8831-d7ba07e951c7" -> "188e2e08-2062-4b9a-a563-07bd09ab08a7" [label="sync", xlabel="CliCommand -> PrepareTagOrchestrator"];
+  "54ee24c8-09cd-4663-8831-d7ba07e951c7" -> "8c2f1b9d-72ef-48ef-8107-17508dbe0ef1" [label="sync", xlabel="CliCommand -> RunTagSyncUseCase"];
+  "54ee24c8-09cd-4663-8831-d7ba07e951c7" -> "108ee185-2a44-4d34-8cd5-833a0d38f25b" [label="sync", xlabel="CliCommand -> CreateTagProgressListenerPresenter"];
+  "54ee24c8-09cd-4663-8831-d7ba07e951c7" -> "dc733b74-fd7d-49ec-ae6b-3f3ec957f1ee" [label="sync", xlabel="CliCommand -> PresentTagSyncResultPresenter"];
+}

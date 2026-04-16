@@ -168,10 +168,11 @@ export class ContainerInspector {
     const nodeAttributeLine = (row: ContainerBindingSnapshot, indent: string): string => {
       const shape = nodeShapeForKind(row.kind);
       const scopeAttrs = scopeVisualAttributes(row.scope);
-      const constraintNote = row.hasConditionalConstraint ? "\\nwhen(...)" : "";
-      const label = dotEscapeLabel(
-        `${row.kind}\\n${row.registryKeyLabel}\\nscope=${row.scope}\\n${row.bindingId}\\n${row.activationStatus}${constraintNote}`,
-      );
+      const constraintNote = row.hasConditionalConstraint ? "\nwhen(...)" : "";
+      const rawLabel = `${row.kind}
+${row.registryKeyLabel}
+scope=${row.scope}${constraintNote}`;
+      const label = dotEscapeLabel(rawLabel);
       return `${indent}"${row.bindingId}" [shape=${shape}, ${scopeAttrs}, label="${label}"];`;
     };
 

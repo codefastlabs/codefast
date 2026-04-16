@@ -103,13 +103,7 @@ export type TryLoadCodefastConfigPresenter = (
   rootDir: string,
 ) => Promise<Result<{ config: CodefastConfig }, AppError>>;
 
-export type WorkspaceContextBinder = (args: {
-  readonly rootDir: string;
-  readonly globalCliRaw?: unknown;
-}) => void;
-
 export type AppOrchestrator = {
-  bindWorkspaceContext(args: { readonly rootDir: string; readonly globalCliRaw?: unknown }): void;
   tryLoadCodefastConfig(rootDir: string): Promise<Result<{ config: CodefastConfig }, AppError>>;
 };
 
@@ -118,8 +112,6 @@ export const CliLoggerToken: Token<CliLogger> = token<CliLogger>("CliLogger");
 export const CliPathToken: Token<CliPath> = token<CliPath>("CliPath");
 export const ConfigLoaderPortToken: Token<ConfigLoaderPort> =
   token<ConfigLoaderPort>("ConfigLoaderPort");
-export const CliRootDirToken: Token<string> = token<string>("CliRootDir");
-export const CliGlobalCliRawToken: Token<unknown> = token<unknown>("CliGlobalCliRaw");
 
 export const FileWalkerPortToken: Token<FileWalkerPort> = token<FileWalkerPort>("FileWalkerPort");
 export const DomainSourceParserPortToken: Token<DomainSourceParserPort> =
@@ -175,7 +167,5 @@ export const CreateTagProgressListenerPresenterToken: Token<CreateTagProgressLis
   token<CreateTagProgressListenerPresenter>("CreateTagProgressListenerPresenter");
 export const TryLoadCodefastConfigPresenterToken: Token<TryLoadCodefastConfigPresenter> =
   token<TryLoadCodefastConfigPresenter>("TryLoadCodefastConfigPresenter");
-export const WorkspaceContextBinderToken: Token<WorkspaceContextBinder> =
-  token<WorkspaceContextBinder>("WorkspaceContextBinder");
 export const AppOrchestratorToken: Token<AppOrchestrator> =
   token<AppOrchestrator>("AppOrchestrator");

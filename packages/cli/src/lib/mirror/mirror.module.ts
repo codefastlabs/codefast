@@ -1,6 +1,4 @@
 import { Module } from "@codefast/di";
-import { MirrorCommand } from "../../commands/mirror";
-import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
 import { SyncWorkspacePackageServiceImpl } from "#lib/mirror/application/services/sync-workspace-package.service";
 import { RunMirrorSyncUseCaseImpl } from "#lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { FileSystemServiceAdapter } from "#lib/mirror/infra/file-system-service.adapter";
@@ -34,8 +32,6 @@ function withOptionalTelemetry<T extends object>(
 }
 
 export const MirrorModule = Module.create("cli-mirror", (api) => {
-  api.bind(COMMAND_TOKEN).to(MirrorCommand).singleton();
-
   api
     .bind(WorkspaceServicePortToken)
     .toResolved(

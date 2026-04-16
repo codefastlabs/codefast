@@ -10,22 +10,11 @@ import { PresentationModule } from "#lib/core/presentation/presentation.module";
 import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
 import {
   AnalyzeDirectoryUseCaseToken,
-  CliGlobalCliRawToken,
   CliLoggerToken,
-  CliRootDirToken,
-  WorkspaceContextBinderToken,
   type AnalyzeDirectoryUseCase,
 } from "#lib/tokens";
 
 const container = Container.create();
-container.bind(CliRootDirToken).toConstantValue(process.cwd());
-container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
-container
-  .bind(WorkspaceContextBinderToken)
-  .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
-    container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
-    container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
-  });
 container.load(CoreModule, InfraModule, PresentationModule, ArrangeModule);
 const analyzeDirectoryUseCase = container.resolve(
   AnalyzeDirectoryUseCaseToken,
