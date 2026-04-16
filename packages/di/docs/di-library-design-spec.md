@@ -148,11 +148,31 @@ container.bind(Logger).to(ConsoleLogger);
 const logger = container.resolve(Logger); // ^? LoggerService
 ```
 
+> **`toSelf()` không có `@injectable()`:** Nếu `ConsoleLogger` không có `@injectable()` và constructor có deps, container throw `MissingMetadataError` — không assume zero deps. Để dùng `toSelf()` với constructor deps mà không có decorator, dùng `toDynamic()` hoặc `toResolved()` thay thế.
+
 ---
 
 ## 4. Binding API
 
 Binding mô tả cách tạo ra một value từ một token. API theo kiểu fluent builder.
+
+### 4.0 ResolutionContext
+
+`ctx` trong `toDynamic` và `toDynamicAsync` là một `ResolutionContext` — không phải container đầy đủ, chỉ expose resolve:
+
+```ts
+interface ResolutionContext {
+  resolve<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value;
+  resolveAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ): Promise<Value>;
+  resolveOptional<Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ): Value | undefined;
+}
+```
 
 ### 4.1 Các loại binding
 
@@ -162,7 +182,7 @@ Binding mô tả cách tạo ra một value từ một token. API theo kiểu fl
 | `.toSelf()`                       | `.toSelf()`                       | Token chính là class              |
 | `.toConstantValue(v)`             | `.toConstantValue(v)`             | Constant — config, primitive      |
 | `.toDynamic(ctx => ...)`          | `.toDynamicValue(ctx => ...)`     | Factory với `ctx.resolve()`       |
-| `.toAsyncDynamic(ctx => Promise)` | (dùng `toDynamicValue` async)     | I/O khi khởi tạo                  |
+| `.toDynamicAsync(ctx => Promise)` | (dùng `toDynamicValue` async)     | I/O khi khởi tạo                  |
 | `.toResolved(factory, deps)`      | `.toResolvedValue(factory, deps)` | Explicit deps, không cần `ctx`    |
 | `.toAlias(otherToken)`            | `.toService(otherId)`             | Alias token này → token khác      |
 
@@ -247,6 +267,17 @@ container.bind(App).toResolved(
 );
 ```
 
+Type signature — tuple inference đảm bảo factory params khớp chính xác với deps:
+
+```ts
+toResolved<Deps extends readonly (Token<unknown> | Constructor)[]>(
+  factory: (...args: { [K in keyof Deps]: TokenValue<Deps[K]> }) => Value,
+  deps: Deps,
+): BindingBuilder<Value>;
+```
+
+Với `deps: [Logger, Config]`, TypeScript infer factory params là `[LoggerService, AppConfig]` — không cần annotate thủ công.
+
 ### 4.6 BindingIdentifier — unbind chính xác (học từ v8)
 
 `bind()` trả về builder có `.id()` để lấy `BindingIdentifier` — dùng để unbind một binding cụ thể trong multi-binding, không phải tất cả bindings của token:
@@ -261,33 +292,29 @@ container.unbind(consoleLoggerBindingId);
 ### 4.7 Ví dụ đầy đủ
 
 ```ts
+// Class binding
+container.bind(Logger).to(ConsoleLogger).singleton();
+
+// Self binding
+container.bind(ConsoleLogger).toSelf().singleton();
+
+// Constant value — không có scope (luôn là singleton)
+container.bind(Config).toConstantValue({ port: 3000, env: "production" });
+
+// Dynamic factory
 container
-  // Class binding
-  .bind(Logger)
-  .to(ConsoleLogger)
-  .singleton()
-
-  // Self binding
-  .bind(ConsoleLogger)
-  .toSelf()
-  .singleton()
-
-  // Constant value — không có scope (luôn là singleton)
-  .bind(Config)
-  .toConstantValue({ port: 3000, env: "production" })
-
-  // Dynamic factory
   .bind(App)
   .toDynamic((ctx) => {
     const logger = ctx.resolve(Logger); // ^? LoggerService
     const config = ctx.resolve(Config); // ^? AppConfig
     return new App(logger, config);
   })
-  .singleton()
+  .singleton();
 
-  // Async factory — phải dùng container.resolveAsync()
+// Async factory — phải dùng container.resolveAsync()
+container
   .bind(Database)
-  .toAsyncDynamic(async (ctx) => {
+  .toDynamicAsync(async (ctx) => {
     const cfg = ctx.resolve(Config);
     const db = new PostgresDatabase(cfg.dbUrl);
     await db.connect();
@@ -296,22 +323,22 @@ container
   .singleton()
   .onDeactivation(async (db) => {
     await db.disconnect();
-  })
+  });
 
-  // Resolved — explicit deps
+// Resolved — explicit deps
+container
   .bind(Mailer)
   .toResolved((logger, config) => new Mailer(logger, config), [Logger, Config])
-  .singleton()
+  .singleton();
 
-  // Alias
-  .bind(AbstractLogger)
-  .toAlias(Logger)
+// Alias
+container.bind(AbstractLogger).toAlias(Logger);
 
-  // Named binding
-  .bind(Logger)
-  .to(FileLogger)
-  .whenNamed("file");
+// Named binding
+container.bind(Logger).to(FileLogger).whenNamed("file");
 ```
+
+> **Nguyên tắc fluent chain:** `BindingBuilder` trả về chính nó (`BindingBuilder<Value>`) — không phải `Container`. Mỗi `container.bind(...)` là một câu độc lập. Không thể chain `.bind()` liên tiếp trên builder.
 
 ---
 
@@ -367,7 +394,7 @@ container.rebind(Logger).to(FileLogger).singleton();
 
 // Async variants (khi onDeactivation là async)
 await container.unbindAsync(Database);
-await container.rebindAsync(Database).then((b) => b.to(NewDatabase).singleton());
+container.bind(Database).to(NewDatabase).singleton(); // bind lại là sync
 
 // Load / unload module
 container.load(FeatureModule);
@@ -386,7 +413,7 @@ requestContainer.bind(RequestId).toConstantValue(crypto.randomUUID());
 
 const handler = requestContainer.resolve(RequestHandler);
 
-// Dispose: gọi onDeactivation cho tất cả singleton/scoped trong child
+// Dispose: gọi onDeactivation cho tất cả singleton thuộc child
 await requestContainer.dispose();
 ```
 
@@ -399,13 +426,13 @@ interface Container {
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void;
   unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void>;
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
-  rebindAsync<Value>(token: Token<Value> | Constructor<Value>): Promise<BindingBuilder<Value>>;
+  // Không có rebindAsync — async deactivation dùng unbindAsync rồi bind lại
 
   // Module
   load(...modules: Module[]): void;
-  loadAsync(...modules: Module[]): Promise<void>;
+  loadAsync(...modules: Array<Module | AsyncModule>): Promise<void>;
   unload(...modules: Module[]): void;
-  unloadAsync(...modules: Module[]): Promise<void>;
+  unloadAsync(...modules: Array<Module | AsyncModule>): Promise<void>;
 
   // Resolution
   resolve<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value;
@@ -431,6 +458,13 @@ interface Container {
 interface ResolveOptions {
   name?: string;
   tag?: [tag: string, value: unknown];
+}
+
+// Static methods — không nằm trong interface vì TypeScript interface không model static
+interface ContainerStatic {
+  create(): Container;
+  fromModules(...modules: Module[]): Container;
+  fromModulesAsync(...modules: Array<Module | AsyncModule>): Promise<Container>;
 }
 ```
 
@@ -520,13 +554,13 @@ interface ParamMetadata {
 
 ### 6.5 Danh sách decorator
 
-| Decorator                       | Target            | Tác dụng                                                                     |
-| ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
-| `@injectable()`                 | class             | Đánh dấu class có thể auto-resolve; ghi param metadata vào `Symbol.metadata` |
-| `@inject(token, opts?)`         | constructor param | Ghi token + options (name/tag) cho param đó                                  |
-| `@injectOptional(token, opts?)` | constructor param | Như `@inject` nhưng không throw nếu không có binding                         |
-| `@singleton()`                  | class             | Gợi ý scope `singleton` — container có thể override                          |
-| `@scoped()`                     | class             | Gợi ý scope `scoped`                                                         |
+| Decorator                       | Target            | Tác dụng                                                                                                                                                                          |
+| ------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@injectable()`                 | class             | Đánh dấu class có thể auto-resolve; ghi param metadata vào `Symbol.metadata`                                                                                                      |
+| `@inject(token, opts?)`         | constructor param | Ghi token + options (name/tag) cho param đó                                                                                                                                       |
+| `@injectOptional(token, opts?)` | constructor param | Như `@inject` nhưng không throw nếu không có binding                                                                                                                              |
+| `@singleton()`                  | class             | Gợi ý scope `singleton` — chỉ có hiệu lực khi binding dùng `.toSelf()` hoặc `.to()` mà không gọi `.singleton()` / `.transient()` / `.scoped()` explicit; explicit call luôn thắng |
+| `@scoped()`                     | class             | Gợi ý scope `scoped` — cùng precedence rule như `@singleton()`                                                                                                                    |
 
 ### 6.6 Cấu hình tsconfig
 
@@ -574,7 +608,7 @@ export const DatabaseModule = Module.createAsync("Database", async (m) => {
   m.import(LoggerModule);
   m.bind(Config).toConstantValue(config);
   m.bind(Database)
-    .toAsyncDynamic(async (ctx) => {
+    .toDynamicAsync(async (ctx) => {
       const db = new PostgresDatabase(config.dbUrl);
       await db.connect();
       return db;
@@ -605,19 +639,33 @@ const testContainer = Container.fromModules(AppModule).bind(Database).toConstant
 
 ### 7.4 Module interface
 
+Hai type riêng biệt — không nhầm lẫn:
+
 ```ts
-interface Module {
-  readonly name: string;
+// ModuleBuilder — chỉ tồn tại trong callback của Module.create()
+// Người dùng không cầm giữ type này; chỉ gọi m.bind() và m.import() trong callback
+interface ModuleBuilder {
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
   import(...modules: Module[]): void;
 }
 
-interface AsyncModule {
-  readonly name: string;
+interface AsyncModuleBuilder {
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
   import(...modules: Array<Module | AsyncModule>): void;
 }
+
+// Module — object đã hoàn chỉnh, được export và pass vào container
+// Người dùng không gọi bind() hay import() trực tiếp trên object này
+interface Module {
+  readonly name: string;
+}
+
+interface AsyncModule {
+  readonly name: string;
+}
 ```
+
+`Module.create("name", (m: ModuleBuilder) => { ... })` — callback nhận `ModuleBuilder`, trả về `Module`. Tương tự cho `Module.createAsync`.
 
 ---
 
@@ -723,10 +771,13 @@ export type { Token, TokenValue } from "./token";
 
 // Container
 export { Container } from "./container";
-export type { ResolveOptions, ContainerSnapshot, BindingIdentifier } from "./container";
+export type { ResolveOptions, ContainerSnapshot } from "./container";
+
+// Binding types
+export type { BindingIdentifier } from "./binding";
 
 // Module
-export { Module } from "./module";
+export { Module, AsyncModule } from "./module";
 
 // Decorators
 export { injectable, inject, injectOptional, singleton, scoped } from "./decorators";
@@ -807,16 +858,18 @@ Build theo thứ tự — mỗi bước test được độc lập:
 **Deliverable:** Dùng được hoàn toàn với explicit binding, không cần decorator:
 
 ```ts
-const container = Container.create()
-  .bind(Config)
-  .toConstantValue({ port: 3000 })
+const container = Container.create();
+
+container.bind(Config).toConstantValue({ port: 3000 });
+container
   .bind(Logger)
   .to(ConsoleLogger)
   .singleton()
   .onActivation((ctx, logger) => {
     logger.log("Logger initialized");
     return logger;
-  })
+  });
+container
   .bind(App)
   .toResolved((logger, config) => new App(logger, config), [Logger, Config])
   .singleton();
@@ -897,7 +950,7 @@ TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagge
 | `toResolvedValue(factory, deps)`         | Đổi tên thành `toResolved(factory, deps)`                                             |
 | `toService()` alias                      | Đổi tên thành `toAlias()`                                                             |
 | `BindingIdentifier` / `.getIdentifier()` | Giữ concept, đổi method thành `.id()`                                                 |
-| Bỏ `Provider` / `ProviderBinding`        | Không có từ đầu — chỉ có `toDynamic` và `toAsyncDynamic`                              |
+| Bỏ `Provider` / `ProviderBinding`        | Không có từ đầu — chỉ có `toDynamic` và `toDynamicAsync`                              |
 | Named/tagged bindings                    | Giữ `whenNamed`, `whenTagged` — bỏ `whenAnyAncestor*` cho Phase 1                     |
 
 ### Cải thiện hơn v8
@@ -908,7 +961,7 @@ TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagge
 | `ServiceIdentifier = string \| symbol \| Newable<T>`   | `Token<Value>` branded type — resolve luôn đúng type                |
 | `container.get<WrongType>('id')` compile được          | Không thể — `Token<Value>` mang type ở compile time                 |
 | `.inSingletonScope()`, `.inTransientScope()`           | `.singleton()`, `.transient()` — ngắn hơn                           |
-| `toDynamicValue` cho cả sync lẫn async                 | `toDynamic` vs `toAsyncDynamic` — compiler enforce `resolveAsync()` |
+| `toDynamicValue` cho cả sync lẫn async                 | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()` |
 | Async module không có API riêng                        | `Module.createAsync()` + `container.loadAsync()` — explicit         |
 
 ### Không học từ v8
