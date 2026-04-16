@@ -823,7 +823,7 @@ ESM-only, không có `"require"` export — giống InversifyJS v8. Node 20.19+ 
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: ["src/index.ts", "!src/**/*.test.ts"],
   format: "esm", // ESM-only — không cần CJS
   dts: true,
   clean: true,
@@ -932,8 +932,7 @@ TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagge
     "sourceMap": true,
     "outDir": "./dist"
   },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.ts"]
+  "include": ["src"]
 }
 ```
 
