@@ -1,7 +1,7 @@
-import type { Binding, BindingIdentifier, Constructor } from "#lib/binding";
+import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#lib/binding";
 import { registryKeyLabel, selectBindingForRegistry } from "#lib/binding-select";
 import type { MetadataReader } from "#lib/decorators/metadata";
-import { InvalidBindingError } from "#lib/errors";
+import { DiError } from "#lib/errors";
 import type { RegistryKey } from "#lib/registry";
 import type { Token } from "#lib/token";
 
@@ -12,12 +12,50 @@ export type StaticDependencyEdge = {
   readonly edgeKind: "sync" | "async";
   /** True when the resolved target binding carries a {@link BindingBuilder.when} predicate (runtime may skip this edge). */
   readonly toBindingConditional: boolean;
+  /** Constructor inject hint for this edge (named / tagged), when known statically. */
+  readonly injectHintLabel?: string;
+  /** True when the consumer binding is an alias (rebind to another token). */
+  readonly isAliasEdge: boolean;
 };
 
 export type ResolvedDependency = {
   readonly binding: Binding<unknown>;
   readonly path: readonly string[];
+  readonly injectHintLabel?: string;
 };
+
+function formatTagKeyForGraph(tag: string | symbol): string {
+  if (typeof tag === "string") {
+    return tag;
+  }
+  const description = tag.description;
+  return description !== undefined && description.length > 0 ? description : String(tag);
+}
+
+function formatTagValueForGraph(value: unknown): string {
+  if (typeof value === "string") {
+    return value;
+  }
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+export function injectHintLabelFromResolveHint(hint: ResolveHint | undefined): string | undefined {
+  if (hint === undefined) {
+    return undefined;
+  }
+  if (hint.name !== undefined) {
+    return `name: ${hint.name}`;
+  }
+  if (hint.tag !== undefined) {
+    const [tagKey, tagValue] = hint.tag;
+    return `tag: ${formatTagKeyForGraph(tagKey)}=${formatTagValueForGraph(tagValue)}`;
+  }
+  return undefined;
+}
 
 function edgeKindFor(consumer: Binding<unknown>, dependency: Binding<unknown>): "sync" | "async" {
   if (consumer.kind === "async-dynamic" || dependency.kind === "async-dynamic") {
@@ -82,7 +120,7 @@ export function listResolvedDependencies(
       const label = registryKeyLabel(consumer.targetToken as Token<unknown> | Constructor<unknown>);
       const nextPath = [...pathPrefix, label];
       const effective = expandAliasChain(lookup, binding, nextPath);
-      return [{ binding: effective, path: nextPath }];
+      return [{ binding: effective, path: nextPath, injectHintLabel: undefined }];
     }
     case "resolved": {
       return consumer.dependencyTokens.map((tok) => {
@@ -90,12 +128,12 @@ export function listResolvedDependencies(
         const nextPath = [...pathPrefix, label];
         const binding = resolveDefaultBinding(lookup, tok, pathPrefix);
         if (binding === undefined) {
-          throw new InvalidBindingError(
+          throw new DiError(
             `Missing binding for dependency "${label}" while building dependency graph (resolution path: ${nextPath.join(" -> ")})`,
           );
         }
         const effective = expandAliasChain(lookup, binding, nextPath);
-        return { binding: effective, path: nextPath };
+        return { binding: effective, path: nextPath, injectHintLabel: undefined };
       });
     }
     case "class": {
@@ -103,10 +141,10 @@ export function listResolvedDependencies(
         return [];
       }
       const meta = reader.getConstructorMetadata(consumer.ctor);
-      if (meta === undefined || meta.parameters.length === 0) {
+      if (meta === undefined || meta.params.length === 0) {
         return [];
       }
-      return meta.parameters.flatMap((param) => {
+      return meta.params.flatMap((param) => {
         const tok = param.token;
         const label = registryKeyLabel(tok as Token<unknown> | Constructor<unknown>);
         const nextPath = [...pathPrefix, label];
@@ -115,12 +153,19 @@ export function listResolvedDependencies(
           if (param.optional) {
             return [];
           }
-          throw new InvalidBindingError(
+          throw new DiError(
             `Missing binding for constructor parameter "${label}" while building dependency graph (resolution path: ${nextPath.join(" -> ")})`,
           );
         }
         const effective = expandAliasChain(lookup, binding, nextPath);
-        return [{ binding: effective, path: nextPath }];
+        const injectHintLabel = injectHintLabelFromResolveHint(
+          param.name !== undefined
+            ? { name: param.name }
+            : param.tag !== undefined
+              ? { tag: param.tag }
+              : undefined,
+        );
+        return [{ binding: effective, path: nextPath, injectHintLabel }];
       });
     }
     default: {
@@ -137,11 +182,14 @@ export function collectStaticDependencyEdges(
   pathPrefix: readonly string[],
 ): readonly StaticDependencyEdge[] {
   const deps = listResolvedDependencies(consumer, lookup, reader, pathPrefix);
+  const isAliasEdge = consumer.kind === "alias";
   return deps.map((dep) => ({
     fromBindingId: consumer.id,
     toBindingId: dep.binding.id,
     resolutionPath: dep.path,
     edgeKind: edgeKindFor(consumer, dep.binding),
     toBindingConditional: dep.binding.constraint !== undefined,
+    injectHintLabel: dep.injectHintLabel,
+    isAliasEdge,
   }));
 }

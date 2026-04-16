@@ -1,14 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  Container,
-  Module,
-  token,
-  whenAnyAncestorIs,
-  whenParentIs,
-  whenTargetTagged,
-} from "#lib/index";
+import { Container, Module, token } from "#lib/index";
 
-describe("@codefast/di advanced constraints & container hardening", () => {
+describe("Integration: Advanced Constraints", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
@@ -22,22 +15,17 @@ describe("@codefast/di advanced constraints & container hardening", () => {
     container
       .bind(ChildToken)
       .toConstantValue("from-parent")
-      .singleton()
-      .when(whenParentIs(ParentToken))
-      .build();
+      .when((ctx) => ctx.parent?.registryKey === ParentToken);
 
     container
       .bind(ChildToken)
       .toConstantValue("from-root")
-      .singleton()
-      .when((ctx) => ctx.parent === undefined)
-      .build();
+      .when((ctx) => ctx.parent === undefined);
 
     container
       .bind(ParentToken)
       .toDynamic((ctx) => ({ child: ctx.resolve(ChildToken) }))
-      .singleton()
-      .build();
+      .singleton();
 
     expect(container.resolve(ChildToken)).toBe("from-root");
 
@@ -55,22 +43,17 @@ describe("@codefast/di advanced constraints & container hardening", () => {
     container
       .bind(LeafToken)
       .toConstantValue("under-root")
-      .singleton()
-      .when(whenAnyAncestorIs(RootToken))
-      .build();
+      .when((ctx) => ctx.ancestors.some((ancestor) => ancestor.registryKey === RootToken));
 
     container
       .bind(LeafToken)
       .toConstantValue("default")
-      .singleton()
-      .when((ctx) => ctx.parent === undefined)
-      .build();
+      .when((ctx) => ctx.parent === undefined);
 
     container
       .bind(MidToken)
       .toDynamic((ctx) => ({ leaf: ctx.resolve(LeafToken) }))
-      .singleton()
-      .build();
+      .singleton();
 
     container
       .bind(RootToken)
@@ -78,8 +61,7 @@ describe("@codefast/di advanced constraints & container hardening", () => {
         ctx.resolve(MidToken);
         return {};
       })
-      .singleton()
-      .build();
+      .singleton();
 
     expect(container.resolve(LeafToken)).toBe("default");
     container.resolve(RootToken);
@@ -97,32 +79,25 @@ describe("@codefast/di advanced constraints & container hardening", () => {
     container
       .bind(ApiToken)
       .toConstantValue("prod")
-      .singleton()
       .whenTagged(tag, "prod")
-      .when(whenTargetTagged(tag, "prod"))
-      .build();
+      .when((ctx) => ctx.parent?.tags.get(tag) === "prod");
 
     container
       .bind(ApiToken)
       .toConstantValue("dev")
-      .singleton()
       .whenTagged(tag, "dev")
-      .when(whenTargetTagged(tag, "dev"))
-      .build();
+      .when((ctx) => ctx.parent?.tags.get(tag) === "dev");
 
     container
       .bind(ApiToken)
       .toConstantValue("standalone")
-      .singleton()
-      .when((ctx) => ctx.parent === undefined)
-      .build();
+      .when((ctx) => ctx.parent === undefined);
 
     container
       .bind(ParentToken)
       .toDynamic((ctx) => ({ v: ctx.resolve(ApiToken) }))
       .singleton()
-      .whenTagged(tag, "prod")
-      .build();
+      .whenTagged(tag, "prod");
 
     const parent = container.resolve(ParentToken);
     expect(parent.v).toBe("prod");
@@ -133,8 +108,8 @@ describe("@codefast/di advanced constraints & container hardening", () => {
     const A = token("A");
     const B = token("B");
     const container = Container.create();
-    container.bind(A).toConstantValue("a").singleton().build();
-    container.bind(B).toConstantValue("b").singleton().build();
+    container.bind(A).toConstantValue("a");
+    container.bind(B).toConstantValue("b");
 
     const results = await Promise.all([
       container.resolveAsync(A),
@@ -149,7 +124,7 @@ describe("@codefast/di advanced constraints & container hardening", () => {
 
     const T = token<number>("T");
     const Mod = Module.create("mod", (api) => {
-      api.bind(T).toConstantValue(1).singleton().build();
+      api.bind(T).toConstantValue(1);
     });
 
     const container = Container.create();
@@ -167,7 +142,7 @@ describe("@codefast/di advanced constraints & container hardening", () => {
 
     const T = token<number>("T");
     const container = Container.create();
-    container.bind(T).toConstantValue(1).singleton().build();
+    container.bind(T).toConstantValue(1);
     const validateSpy = vi.spyOn(container, "validate");
 
     container.resolve(T);
@@ -179,21 +154,17 @@ describe("@codefast/di advanced constraints & container hardening", () => {
     const Async = token<string>("Async");
 
     const container = Container.create();
-    container.bind(Sync).toConstantValue("sync").singleton().build();
+    container.bind(Sync).toConstantValue("sync");
     container
       .bind(Async)
-      .toAsyncDynamic(async () => "async")
-      .singleton()
-      .build();
+      .toDynamicAsync(async () => "async")
+      .singleton();
 
     const syncBinding = container.lookupBindings(Sync)![0];
     const asyncBinding = container.lookupBindings(Async)![0];
 
     const statusOf = (bindingId: string) =>
-      container
-        .inspect()
-        .getSnapshot()
-        .bindings.find((row) => row.bindingId === bindingId)?.activationStatus;
+      container.inspect().bindings.find((row) => row.bindingId === bindingId)?.activationStatus;
 
     expect(statusOf(syncBinding.id)).toBe("not-cached");
 

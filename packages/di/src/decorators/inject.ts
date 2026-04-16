@@ -1,75 +1,49 @@
 import type { Constructor, ResolveHint } from "#lib/binding";
-import { InvalidBindingError } from "#lib/errors";
-import type { ParamMetadata } from "#lib/decorators/metadata";
-import { getOrCreatePendingMap } from "#lib/decorators/param-registry";
+import type { InjectionDescriptor } from "#lib/decorators/metadata";
 import type { Token } from "#lib/token";
 
-export type InjectParamOptions = ResolveHint;
+export type InjectOptions = ResolveHint;
 
-function hintFromOptions(options: InjectParamOptions | undefined): ResolveHint | undefined {
-  if (options === undefined) {
+function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor["tag"] | undefined {
+  if (tag === undefined) {
     return undefined;
   }
-  if (options.name === undefined && options.tag === undefined && options.tagValue === undefined) {
-    return undefined;
-  }
-  return {
-    name: options.name,
-    tag: options.tag,
-    tagValue: options.tagValue,
-  };
+  const [tagName, value] = tag;
+  return typeof tagName === "string" ? [tagName, value] : undefined;
 }
 
-function toParamMetadata(
-  token: Token<unknown>,
+function toDescriptor<Value>(
+  token: Token<Value> | Constructor<Value>,
   optional: boolean,
-  options: InjectParamOptions | undefined,
-): ParamMetadata {
-  const hint = hintFromOptions(options);
-  if (optional) {
-    return hint === undefined ? { optional: true, token } : { optional: true, token, hint };
+  options: InjectOptions | undefined,
+): InjectionDescriptor<Value> {
+  const normalizedTag = normalizeTag(options?.tag);
+  if (options?.name !== undefined) {
+    return { token, optional, name: options.name };
   }
-  return hint === undefined ? { optional: false, token } : { optional: false, token, hint };
-}
-
-/**
- * Registers a required constructor parameter injection. Call from a `static { }` block on the same
- * class so registrations exist before `@injectable()` finalizes `Symbol.metadata`.
- *
- * TypeScript Stage 3 does not yet allow decorators on constructor parameters (TS1206); this is the
- * supported registration surface until parameter decorators land.
- */
-export function registerInjectParam<Value>(
-  ctor: Constructor<unknown>,
-  parameterIndex: number,
-  token: Token<Value>,
-  options?: InjectParamOptions,
-): void {
-  const map = getOrCreatePendingMap(ctor);
-  if (map.has(parameterIndex)) {
-    throw new InvalidBindingError(
-      `Duplicate inject metadata for constructor parameter index ${String(parameterIndex)} on "${ctor.name}".`,
-    );
+  if (normalizedTag !== undefined) {
+    return { token, optional, tag: normalizedTag };
   }
-  map.set(parameterIndex, toParamMetadata(token as Token<unknown>, false, options));
+  return { token, optional };
 }
 
-function injectDecoratorStub<Value>(
-  token: Token<Value>,
-  options?: InjectParamOptions,
-): (value: unknown, context: DecoratorContext) => void {
-  void token;
-  void options;
-  return () => {
-    throw new InvalidBindingError(
-      "The @inject() decorator cannot be applied to constructor parameters in current TypeScript Stage 3 mode (TS1206). Use inject.param(Constructor, parameterIndex, token, options?) from a static block instead.",
-    );
-  };
+export function inject<Value>(
+  token: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> {
+  return toDescriptor(token, false, options);
 }
 
-/**
- * `@inject(token, opts?)` factory (throws at decoration time — see `inject.param` for supported registration).
- */
-export const inject = Object.assign(injectDecoratorStub, {
-  param: registerInjectParam,
-});
+export function optional<Value>(
+  token: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> {
+  return toDescriptor(token, true, options);
+}
+
+export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  return "token" in value && "optional" in value;
+}

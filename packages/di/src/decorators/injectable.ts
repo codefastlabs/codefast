@@ -1,52 +1,58 @@
-import { InvalidBindingError } from "#lib/errors";
+import { DiError } from "#lib/errors";
 import {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   type ConstructorMetadata,
+  type InjectionDescriptor,
   type ParamMetadata,
 } from "#lib/decorators/metadata";
-import { takePendingMap } from "#lib/decorators/param-registry";
+import { isInjectionDescriptor } from "#lib/decorators/inject";
+import type { Constructor } from "#lib/binding";
+import type { Token } from "#lib/token";
 
-function finalizePending(pending: Map<number, ParamMetadata>): readonly ParamMetadata[] {
-  const indices = [...pending.keys()].sort((a, b) => a - b);
-  if (indices.length === 0) {
-    return [];
+export type InjectableDependency =
+  | Token<unknown>
+  | Constructor<unknown>
+  | InjectionDescriptor<unknown>;
+
+function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
+  if (isInjectionDescriptor(dependency)) {
+    return {
+      index,
+      token: dependency.token,
+      optional: dependency.optional,
+      name: dependency.name,
+      tag: dependency.tag,
+    };
   }
-  const max = indices[indices.length - 1];
-  const out: ParamMetadata[] = [];
-  for (let parameterIndex = 0; parameterIndex <= max; parameterIndex++) {
-    const meta = pending.get(parameterIndex);
-    if (meta === undefined) {
-      throw new InvalidBindingError(
-        `Missing inject metadata for constructor parameter index ${String(parameterIndex)}.`,
-      );
-    }
-    out.push(meta);
-  }
-  return out;
+  return {
+    index,
+    token: dependency,
+    optional: false,
+  };
 }
 
 /**
- * Stage 3 class decorator: merges pending parameter registrations into `context.metadata` / `Symbol.metadata`
- * and clears the temporary WeakMap bucket for this constructor.
+ * Stage 3 class decorator: writes explicit constructor dependency metadata into `Symbol.metadata`.
  */
-export function injectable(): <Class extends abstract new (...args: never[]) => unknown>(
+export function injectable(
+  deps: readonly InjectableDependency[] = [],
+): <Class extends abstract new (...args: never[]) => unknown>(
   ctor: Class,
   context: ClassDecoratorContext<Class>,
 ) => void {
   return (ctor, context) => {
-    const pending = takePendingMap(ctor);
     const ctorFn = ctor as unknown as { readonly length: number };
     const declaredArity = ctorFn.length;
-    if (declaredArity > 0 && (pending === undefined || pending.size === 0)) {
-      throw new InvalidBindingError(
-        `Class "${String(context.name ?? ctor.name)}" declares constructor parameters but no inject registrations were found. Call inject.param(...) / injectOptional.param(...) from a static block before @injectable() runs.`,
+    if (declaredArity !== deps.length) {
+      throw new DiError(
+        `Class "${String(context.name ?? ctor.name)}" declares ${String(declaredArity)} constructor parameters but @injectable(...) received ${String(deps.length)} dependency descriptors.`,
       );
     }
 
-    const parameters: readonly ParamMetadata[] =
-      pending === undefined || pending.size === 0 ? [] : finalizePending(pending);
-
-    const payload: ConstructorMetadata = { parameters };
+    const params: readonly ParamMetadata[] = deps.map((dependency, index) =>
+      toParamMetadata(dependency, index),
+    );
+    const payload: ConstructorMetadata = { params };
     const metadataRecord = context.metadata as Record<PropertyKey, unknown>;
     metadataRecord[CODEFAST_DI_CONSTRUCTOR_METADATA] = payload;
   };

@@ -1,4 +1,4 @@
-import type { Binding, BindingIdentifier, BindingScope } from "#lib/binding";
+import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#lib/binding";
 
 function formatResolutionPath(resolutionPath: readonly string[]): string {
   return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
@@ -7,12 +7,39 @@ function formatResolutionPath(resolutionPath: readonly string[]): string {
 /**
  * Base error for all `@codefast/di` failures. Subclasses expose a stable, machine-readable `code`.
  */
-export abstract class DiError extends Error {
-  abstract readonly code: string;
+export class DiError extends Error {
+  readonly code: string = "DI_ERROR";
 
-  protected constructor(message: string, options?: ErrorOptions) {
+  constructor(message: string, options?: ErrorOptions) {
     super(message, options);
     this.name = new.target.name;
+  }
+}
+
+/**
+ * Raised when a name/tag filter matches no binding although other bindings exist for the token.
+ */
+export class NoMatchingBindingError extends DiError {
+  readonly code = "NO_MATCHING_BINDING";
+  readonly tokenName: string;
+  readonly hint: ResolveHint;
+  readonly resolutionPath: readonly string[];
+
+  constructor(
+    tokenName: string,
+    hint: ResolveHint,
+    resolutionPath: readonly string[],
+    options?: ErrorOptions,
+  ) {
+    const pathText = resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
+    const hintText = JSON.stringify(hint);
+    super(
+      `No binding matched resolve options ${hintText} for token "${tokenName}" (resolution path: ${pathText})`,
+      options,
+    );
+    this.tokenName = tokenName;
+    this.hint = hint;
+    this.resolutionPath = resolutionPath;
   }
 }
 
@@ -38,11 +65,13 @@ export class TokenNotBoundError extends DiError {
 export class CircularDependencyError extends DiError {
   readonly code = "CIRCULAR_DEPENDENCY";
   readonly resolutionPath: readonly string[];
+  readonly cycle: string[];
 
   constructor(resolutionPath: readonly string[], options?: ErrorOptions) {
     const pathText = formatResolutionPath(resolutionPath);
     super(`Circular dependency detected: ${pathText}`, options);
     this.resolutionPath = resolutionPath;
+    this.cycle = [...resolutionPath];
   }
 }
 
@@ -65,23 +94,7 @@ export class MissingMetadataError extends DiError {
   }
 }
 
-/**
- * Raised when a binding is configured incorrectly (for example calling `toSelf()` for a token key).
- */
-export class InvalidBindingError extends DiError {
-  readonly code = "INVALID_BINDING";
-
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
-  }
-}
-
-/**
- * Raised when an asynchronous provider is resolved in a synchronous resolution path.
- */
-/**
- * Raised when `load()` is used with an async module.
- */
+/** Raised when `load()` is used with an async module. */
 export class AsyncModuleLoadError extends DiError {
   readonly code = "ASYNC_MODULE_LOAD";
   readonly moduleName: string;
@@ -92,19 +105,6 @@ export class AsyncModuleLoadError extends DiError {
       options,
     );
     this.moduleName = moduleName;
-  }
-}
-
-/**
- * Raised when module imports form a cycle.
- */
-export class ModuleCycleError extends DiError {
-  readonly code = "MODULE_IMPORT_CYCLE";
-  readonly modulePath: readonly string[];
-
-  constructor(modulePath: readonly string[], options?: ErrorOptions) {
-    super(`Module import cycle: ${modulePath.join(" -> ")}`, options);
-    this.modulePath = modulePath;
   }
 }
 
@@ -142,8 +142,8 @@ export type ScopeViolationDetails = {
 };
 
 /**
- * Raised when a singleton binding would capture a shorter-lived (scoped or transient) dependency.
- * Constant bindings are excluded: they always yield the same value reference regardless of binding scope.
+ * Raised when a long-lived binding would capture a shorter-lived (scoped or transient) dependency
+ * (captive dependency). Constant value dependencies are excluded.
  */
 export class ScopeViolationError extends DiError {
   readonly code = "SCOPE_VIOLATION";
@@ -158,7 +158,7 @@ export class ScopeViolationError extends DiError {
   constructor(details: ScopeViolationDetails, options?: ErrorOptions) {
     const pathText = formatResolutionPath(details.resolutionPath);
     super(
-      `Scope violation: singleton binding "${details.consumerBindingId}" (${details.consumerKind}) cannot depend on ${details.dependencyScope} binding "${details.dependencyBindingId}" (${details.dependencyKind}) (resolution path: ${pathText})`,
+      `Scope Violation: A long-lived ${details.consumerScope} (${details.consumerBindingId}) cannot depend on a short-lived ${details.dependencyScope} (${details.dependencyBindingId}). Full resolution path: ${pathText}`,
       options,
     );
     this.consumerBindingId = details.consumerBindingId;
