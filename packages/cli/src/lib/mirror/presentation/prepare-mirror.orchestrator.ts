@@ -31,7 +31,7 @@ export class PrepareMirrorOrchestrator implements PrepareMirrorOrchestratorContr
     }
     let rootDir: string;
     try {
-      rootDir = findRepoRoot(this.fs);
+      rootDir = findRepoRoot(this.fs, args.currentWorkingDirectory);
     } catch (caughtError: unknown) {
       return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
@@ -44,7 +44,6 @@ export class PrepareMirrorOrchestrator implements PrepareMirrorOrchestratorContr
     if (!filterOutcome.ok) {
       return filterOutcome;
     }
-    this.appOrchestrator.bindWorkspaceContext({ rootDir, globalCliRaw: args.globalCliRaw });
     const loadedOutcome = await this.appOrchestrator.tryLoadCodefastConfig(rootDir);
     if (!loadedOutcome.ok) {
       return loadedOutcome;

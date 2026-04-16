@@ -31,11 +31,10 @@ export class PrepareTagOrchestrator implements PrepareTagOrchestratorContract {
       return globalsOutcome;
     }
     const rootDir = resolveTagWorkspaceRootPath({
-      resolveStrictRepoRoot: () => findRepoRoot(this.fs),
+      resolveStrictRepoRoot: () => findRepoRoot(this.fs, args.currentWorkingDirectory),
       logger: this.logger,
       currentWorkingDirectory: args.currentWorkingDirectory,
     });
-    this.appOrchestrator.bindWorkspaceContext({ rootDir, globalCliRaw: args.globalCliRaw });
     const loadedOutcome = await this.appOrchestrator.tryLoadCodefastConfig(rootDir);
     if (!loadedOutcome.ok) {
       return loadedOutcome;

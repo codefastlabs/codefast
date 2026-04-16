@@ -6,13 +6,7 @@ import { ArrangeModule } from "#lib/arrange/arrange.module";
 import { CoreModule } from "#lib/core/core.module";
 import { InfraModule } from "#lib/core/infra/infra.module";
 import { PresentationModule } from "#lib/core/presentation/presentation.module";
-import {
-  CliGlobalCliRawToken,
-  CliRootDirToken,
-  type RunArrangeSyncUseCase,
-  RunArrangeSyncUseCaseToken,
-  WorkspaceContextBinderToken,
-} from "#lib/tokens";
+import { type RunArrangeSyncUseCase, RunArrangeSyncUseCaseToken } from "#lib/tokens";
 
 async function captureStdout(fn: () => Promise<void>): Promise<string> {
   const chunks: string[] = [];
@@ -30,14 +24,6 @@ async function captureStdout(fn: () => Promise<void>): Promise<string> {
 
 describe("RunArrangeSyncUseCase integration", () => {
   const container = Container.create();
-  container.bind(CliRootDirToken).toConstantValue(process.cwd());
-  container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
-  container
-    .bind(WorkspaceContextBinderToken)
-    .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
-      container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
-      container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
-    });
   container.load(CoreModule, InfraModule, PresentationModule, ArrangeModule);
   const useCase = container.resolve(RunArrangeSyncUseCaseToken) as RunArrangeSyncUseCase;
 

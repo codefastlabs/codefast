@@ -33,11 +33,10 @@ export class PrepareArrangeOrchestrator implements PrepareArrangeOrchestratorCon
     }
     let rootDir: string;
     try {
-      rootDir = findRepoRoot(this.fs);
+      rootDir = findRepoRoot(this.fs, args.currentWorkingDirectory);
     } catch (caughtError: unknown) {
       return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
-    this.appOrchestrator.bindWorkspaceContext({ rootDir });
     const loadedOutcome = await this.appOrchestrator.tryLoadCodefastConfig(rootDir);
     if (!loadedOutcome.ok) {
       return loadedOutcome;

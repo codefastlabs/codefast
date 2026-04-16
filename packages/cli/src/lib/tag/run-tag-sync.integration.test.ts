@@ -15,25 +15,11 @@ import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
 import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#lib/tag/infra/tag-version-resolver.adapter";
-import {
-  CliGlobalCliRawToken,
-  CliRootDirToken,
-  RunTagSyncUseCaseToken,
-  WorkspaceContextBinderToken,
-  type RunTagSyncUseCase,
-} from "#lib/tokens";
+import { RunTagSyncUseCaseToken, type RunTagSyncUseCase } from "#lib/tokens";
 
 const tagFs = createNodeCliFs();
 
 const container = Container.create();
-container.bind(CliRootDirToken).toConstantValue(process.cwd());
-container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
-container
-  .bind(WorkspaceContextBinderToken)
-  .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
-    container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
-    container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
-  });
 container.load(CoreModule, InfraModule, PresentationModule, TagModule);
 const runTagSyncUseCase = container.resolve(RunTagSyncUseCaseToken) as RunTagSyncUseCase;
 

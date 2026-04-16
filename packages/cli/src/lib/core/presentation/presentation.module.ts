@@ -20,7 +20,6 @@ import {
   PresentAnalyzeReportPresenterToken,
   PresentTagSyncResultPresenterToken,
   TryLoadCodefastConfigPresenterToken,
-  WorkspaceContextBinderToken,
 } from "#lib/tokens";
 
 export const PresentationModule = Module.create("cli-presentation", (api) => {
@@ -63,11 +62,10 @@ export const PresentationModule = Module.create("cli-presentation", (api) => {
   api
     .bind(AppOrchestratorToken)
     .toResolved(
-      (bindWorkspaceContext, tryLoadCodefastConfigPresenter) => ({
-        bindWorkspaceContext,
+      (tryLoadCodefastConfigPresenter) => ({
         tryLoadCodefastConfig: tryLoadCodefastConfigPresenter,
       }),
-      [WorkspaceContextBinderToken, TryLoadCodefastConfigPresenterToken] as const,
+      [TryLoadCodefastConfigPresenterToken] as const,
     )
     .singleton();
 });

@@ -1,5 +1,4 @@
 import path from "node:path";
-import process from "node:process";
 import jiti from "jiti";
 import { ZodError } from "zod";
 import type { CliFs } from "#lib/infra/fs-contract.port";
@@ -69,14 +68,18 @@ function listConfigCandidates(startDir: string, fs: CliFs): string[] {
   return candidates;
 }
 
-async function readConfigFromPath(filePath: string, fs: CliFs): Promise<CodefastConfig> {
+async function readConfigFromPath(
+  filePath: string,
+  fs: CliFs,
+  jitiBaseDir: string,
+): Promise<CodefastConfig> {
   const ext = path.extname(filePath);
   if (ext === ".json") {
     const content = await fs.readFile(filePath, "utf8");
     return parseLoadedConfig(JSON.parse(content), filePath);
   }
 
-  const loadWithJiti = jiti(process.cwd(), {
+  const loadWithJiti = jiti(jitiBaseDir, {
     interopDefault: true,
     moduleCache: false,
   });
@@ -96,11 +99,11 @@ async function loadOnce(fs: CliFs, startDir: string): Promise<LoadConfigResult> 
   }
 
   const configPath = configPaths[0];
-  const config = await readConfigFromPath(configPath, fs);
+  const config = await readConfigFromPath(configPath, fs, startDir);
   return { config, warnings, configPath };
 }
 
-export async function loadConfig(fs: CliFs, startDir = process.cwd()): Promise<LoadConfigResult> {
+export async function loadConfig(fs: CliFs, startDir: string): Promise<LoadConfigResult> {
   const cacheKey = path.resolve(startDir);
   if (!cachedLoads.has(cacheKey)) {
     cachedLoads.set(cacheKey, loadOnce(fs, cacheKey));

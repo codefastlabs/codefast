@@ -1,6 +1,4 @@
 import { Module } from "@codefast/di";
-import { TagCommand } from "../../commands/tag";
-import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
 import { RunTagSyncUseCaseImpl } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
 import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
@@ -33,8 +31,6 @@ function withOptionalTelemetry<T extends object>(
 }
 
 export const TagModule = Module.create("cli-tag", (api) => {
-  api.bind(COMMAND_TOKEN).to(TagCommand).singleton().whenNamed("tag");
-
   api
     .bind(TagTargetResolverPortToken)
     .toResolved(
