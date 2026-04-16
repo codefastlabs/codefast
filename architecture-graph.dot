@@ -1,0 +1,342 @@
+digraph codefast_di {
+  rankdir=LR;
+  graph [fontname="Arial", fontsize=12, nodesep=0.8, ranksep=1.2];
+  node  [fontname="Arial", fontsize=12, shape=box, style="filled,rounded", fillcolor="#F5F5F5"];
+  edge  [fontname="Arial", fontsize=10];
+  subgraph cluster_cli_core {
+    label="cli-core";
+    style=filled;
+    fillcolor=lightgray;
+    "d77828ba-de1d-4b24-8859-67956e54d574" [shape=ellipse, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">constant</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CliPath</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  }
+  subgraph cluster_cli_infra {
+    label="cli-infra";
+    style=filled;
+    fillcolor=lightgray;
+    "8f167575-5e66-4046-8584-e5aa6932d989" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">dynamic</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CliLogger</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "b710fb2e-5255-4b71-978e-1386ff479f5b" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">dynamic</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CliFs</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "6123232a-86d1-487f-8348-4e1241e600f8" [shape=ellipse, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">constant</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>ConfigLoaderPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  }
+  subgraph cluster_cli_presentation {
+    label="cli-presentation";
+    style=filled;
+    fillcolor=lightgray;
+    "78f77e95-7f5e-40e7-95b1-7b4f8ce6fffd" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>TryLoadCodefastConfigPresenter</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "e3588100-6057-4247-9af7-56b4f851419d" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PrepareArrangeOrchestrator</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "ffd8744a-39ef-4a43-a77b-2eb762a3ad50" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PrepareMirrorOrchestrator</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "40e6883a-1724-4ef9-8ea4-2b43fd4c6b5c" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PrepareTagOrchestrator</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "c7afc996-87fa-4481-a0c9-297dcbcd2028" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PresentAnalyzeReportPresenter</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "6ea32e08-0ef4-4f56-a7ac-e9a7cd29f63d" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PresentTagSyncResultPresenter</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "d234f733-48f5-4232-ae63-b3268ecea3f3" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">dynamic</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CreateTagProgressListenerPresenter</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "afd05d95-116e-4bc1-90a8-d2c7918fc77a" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>AppOrchestrator</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  }
+  subgraph cluster_cli_arrange {
+    label="cli-arrange";
+    style=filled;
+    fillcolor=lightgray;
+    "65a5e73a-64d0-4af2-959b-c3bae75c1696" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FileWalkerPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "a08377c6-8a01-400f-b61f-361a6c06d3ef" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>DomainSourceParserPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "04040380-1b88-4bd8-9456-131244733932" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>GroupFilePreviewPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "b86174c7-13d8-451e-b4dd-9c68fa8f001c" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>AnalyzeDirectoryUseCase</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "f9b30e85-9f77-4c8d-ba7c-124a4d7d34c0" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>ArrangeTargetScannerService</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "1ae59116-a588-4214-88b0-845fdedce725" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>ArrangeFileProcessorService</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "42caeb83-9ddc-4d94-b190-d86612d51d06" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>RunArrangeSyncUseCase</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "f7c9a721-7495-4472-a767-e019db4e6f05" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>SuggestCnGroupsUseCase</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  }
+  subgraph cluster_cli_mirror {
+    label="cli-mirror";
+    style=filled;
+    fillcolor=lightgray;
+    "ffd0e403-50bc-4867-a3b9-2ffbbf91c568" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>WorkspaceServicePort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "496d7917-b37c-4095-8e3d-1e9d020471ad" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PackageRepositoryPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "cc69cc5f-a660-497a-9286-35aebaaffb6e" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FileSystemServicePort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "3204e3c5-ea57-40fe-a813-6c10bcf26a5a" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>MirrorSyncReporterPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "4f3498e4-25e5-4825-86cc-f24b25ad3444" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>SyncWorkspacePackageService</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "00949233-5bb8-4e21-b5a5-66d166053d25" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>RunMirrorSyncUseCase</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  }
+  subgraph cluster_cli_tag {
+    label="cli-tag";
+    style=filled;
+    fillcolor=lightgray;
+    "105d8d77-c1c6-4961-966e-09526e098966" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>TagTargetResolverPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "b16739ad-9a10-4360-ba59-2c4a736246cb" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>TypeScriptTreeWalkPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "b1fdde76-2538-411f-ad27-6afca0051c27" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>TagSinceWriterPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "b0c56399-3f62-484e-8f4d-aeb43bed6519" [shape=diamond, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">resolved</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>TagVersionResolverPort</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+    "895a9f6b-0f2d-4760-82dd-3f16cb3de434" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>RunTagSyncUseCase</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  }
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CliCommand</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  "7c6d3d12-4af7-45b9-9ac2-e38bc9ec4bad" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CliCommand</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  "12fc1664-5109-4ce2-a0a4-afb2a6969538" [shape=box, style="filled", fillcolor="#FFD700", penwidth=2, label=<
+    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">class</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>CliCommand</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">scope=singleton</FONT></TD></TR>
+    </TABLE>
+  >];
+  "78f77e95-7f5e-40e7-95b1-7b4f8ce6fffd" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="TryLoadCodefastConfigPresenter -> CliFs"];
+  "78f77e95-7f5e-40e7-95b1-7b4f8ce6fffd" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="TryLoadCodefastConfigPresenter -> CliLogger"];
+  "78f77e95-7f5e-40e7-95b1-7b4f8ce6fffd" -> "6123232a-86d1-487f-8348-4e1241e600f8" [label="sync", xlabel="TryLoadCodefastConfigPresenter -> ConfigLoaderPort"];
+  "e3588100-6057-4247-9af7-56b4f851419d" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="PrepareArrangeOrchestrator -> CliFs"];
+  "e3588100-6057-4247-9af7-56b4f851419d" -> "afd05d95-116e-4bc1-90a8-d2c7918fc77a" [label="sync", xlabel="PrepareArrangeOrchestrator -> AppOrchestrator"];
+  "ffd8744a-39ef-4a43-a77b-2eb762a3ad50" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="PrepareMirrorOrchestrator -> CliFs"];
+  "ffd8744a-39ef-4a43-a77b-2eb762a3ad50" -> "afd05d95-116e-4bc1-90a8-d2c7918fc77a" [label="sync", xlabel="PrepareMirrorOrchestrator -> AppOrchestrator"];
+  "40e6883a-1724-4ef9-8ea4-2b43fd4c6b5c" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="PrepareTagOrchestrator -> CliFs"];
+  "40e6883a-1724-4ef9-8ea4-2b43fd4c6b5c" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="PrepareTagOrchestrator -> CliLogger"];
+  "40e6883a-1724-4ef9-8ea4-2b43fd4c6b5c" -> "afd05d95-116e-4bc1-90a8-d2c7918fc77a" [label="sync", xlabel="PrepareTagOrchestrator -> AppOrchestrator"];
+  "c7afc996-87fa-4481-a0c9-297dcbcd2028" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="PresentAnalyzeReportPresenter -> CliLogger"];
+  "6ea32e08-0ef4-4f56-a7ac-e9a7cd29f63d" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="PresentTagSyncResultPresenter -> CliLogger"];
+  "afd05d95-116e-4bc1-90a8-d2c7918fc77a" -> "78f77e95-7f5e-40e7-95b1-7b4f8ce6fffd" [label="sync", xlabel="AppOrchestrator -> TryLoadCodefastConfigPresenter"];
+  "65a5e73a-64d0-4af2-959b-c3bae75c1696" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="FileWalkerPort -> CliLogger"];
+  "a08377c6-8a01-400f-b61f-361a6c06d3ef" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="DomainSourceParserPort -> CliLogger"];
+  "04040380-1b88-4bd8-9456-131244733932" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="GroupFilePreviewPort -> CliLogger"];
+  "b86174c7-13d8-451e-b4dd-9c68fa8f001c" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="AnalyzeDirectoryUseCase -> CliFs"];
+  "b86174c7-13d8-451e-b4dd-9c68fa8f001c" -> "f9b30e85-9f77-4c8d-ba7c-124a4d7d34c0" [label="sync", xlabel="AnalyzeDirectoryUseCase -> ArrangeTargetScannerService"];
+  "b86174c7-13d8-451e-b4dd-9c68fa8f001c" -> "a08377c6-8a01-400f-b61f-361a6c06d3ef" [label="sync", xlabel="AnalyzeDirectoryUseCase -> DomainSourceParserPort"];
+  "f9b30e85-9f77-4c8d-ba7c-124a4d7d34c0" -> "65a5e73a-64d0-4af2-959b-c3bae75c1696" [label="sync", xlabel="ArrangeTargetScannerService -> FileWalkerPort"];
+  "f9b30e85-9f77-4c8d-ba7c-124a4d7d34c0" -> "d77828ba-de1d-4b24-8859-67956e54d574" [label="sync", xlabel="ArrangeTargetScannerService -> CliPath"];
+  "1ae59116-a588-4214-88b0-845fdedce725" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="ArrangeFileProcessorService -> CliFs"];
+  "1ae59116-a588-4214-88b0-845fdedce725" -> "a08377c6-8a01-400f-b61f-361a6c06d3ef" [label="sync", xlabel="ArrangeFileProcessorService -> DomainSourceParserPort"];
+  "1ae59116-a588-4214-88b0-845fdedce725" -> "04040380-1b88-4bd8-9456-131244733932" [label="sync", xlabel="ArrangeFileProcessorService -> GroupFilePreviewPort"];
+  "42caeb83-9ddc-4d94-b190-d86612d51d06" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="RunArrangeSyncUseCase -> CliFs"];
+  "42caeb83-9ddc-4d94-b190-d86612d51d06" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="RunArrangeSyncUseCase -> CliLogger"];
+  "42caeb83-9ddc-4d94-b190-d86612d51d06" -> "f9b30e85-9f77-4c8d-ba7c-124a4d7d34c0" [label="sync", xlabel="RunArrangeSyncUseCase -> ArrangeTargetScannerService"];
+  "42caeb83-9ddc-4d94-b190-d86612d51d06" -> "1ae59116-a588-4214-88b0-845fdedce725" [label="sync", xlabel="RunArrangeSyncUseCase -> ArrangeFileProcessorService"];
+  "ffd0e403-50bc-4867-a3b9-2ffbbf91c568" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="WorkspaceServicePort -> CliLogger"];
+  "496d7917-b37c-4095-8e3d-1e9d020471ad" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="PackageRepositoryPort -> CliLogger"];
+  "cc69cc5f-a660-497a-9286-35aebaaffb6e" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="FileSystemServicePort -> CliLogger"];
+  "3204e3c5-ea57-40fe-a813-6c10bcf26a5a" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="MirrorSyncReporterPort -> CliLogger"];
+  "4f3498e4-25e5-4825-86cc-f24b25ad3444" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="SyncWorkspacePackageService -> CliFs"];
+  "4f3498e4-25e5-4825-86cc-f24b25ad3444" -> "d77828ba-de1d-4b24-8859-67956e54d574" [label="sync", xlabel="SyncWorkspacePackageService -> CliPath"];
+  "4f3498e4-25e5-4825-86cc-f24b25ad3444" -> "496d7917-b37c-4095-8e3d-1e9d020471ad" [label="sync", xlabel="SyncWorkspacePackageService -> PackageRepositoryPort"];
+  "4f3498e4-25e5-4825-86cc-f24b25ad3444" -> "cc69cc5f-a660-497a-9286-35aebaaffb6e" [label="sync", xlabel="SyncWorkspacePackageService -> FileSystemServicePort"];
+  "4f3498e4-25e5-4825-86cc-f24b25ad3444" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="SyncWorkspacePackageService -> CliLogger"];
+  "4f3498e4-25e5-4825-86cc-f24b25ad3444" -> "3204e3c5-ea57-40fe-a813-6c10bcf26a5a" [label="sync", xlabel="SyncWorkspacePackageService -> MirrorSyncReporterPort"];
+  "00949233-5bb8-4e21-b5a5-66d166053d25" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="RunMirrorSyncUseCase -> CliFs"];
+  "00949233-5bb8-4e21-b5a5-66d166053d25" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="RunMirrorSyncUseCase -> CliLogger"];
+  "00949233-5bb8-4e21-b5a5-66d166053d25" -> "ffd0e403-50bc-4867-a3b9-2ffbbf91c568" [label="sync", xlabel="RunMirrorSyncUseCase -> WorkspaceServicePort"];
+  "00949233-5bb8-4e21-b5a5-66d166053d25" -> "3204e3c5-ea57-40fe-a813-6c10bcf26a5a" [label="sync", xlabel="RunMirrorSyncUseCase -> MirrorSyncReporterPort"];
+  "00949233-5bb8-4e21-b5a5-66d166053d25" -> "4f3498e4-25e5-4825-86cc-f24b25ad3444" [label="sync", xlabel="RunMirrorSyncUseCase -> SyncWorkspacePackageService"];
+  "105d8d77-c1c6-4961-966e-09526e098966" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="TagTargetResolverPort -> CliLogger"];
+  "b16739ad-9a10-4360-ba59-2c4a736246cb" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="TypeScriptTreeWalkPort -> CliLogger"];
+  "b1fdde76-2538-411f-ad27-6afca0051c27" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="TagSinceWriterPort -> CliLogger"];
+  "b0c56399-3f62-484e-8f4d-aeb43bed6519" -> "d77828ba-de1d-4b24-8859-67956e54d574" [label="sync", xlabel="TagVersionResolverPort -> CliPath"];
+  "b0c56399-3f62-484e-8f4d-aeb43bed6519" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="TagVersionResolverPort -> CliLogger"];
+  "895a9f6b-0f2d-4760-82dd-3f16cb3de434" -> "b710fb2e-5255-4b71-978e-1386ff479f5b" [label="sync", xlabel="RunTagSyncUseCase -> CliFs"];
+  "895a9f6b-0f2d-4760-82dd-3f16cb3de434" -> "d77828ba-de1d-4b24-8859-67956e54d574" [label="sync", xlabel="RunTagSyncUseCase -> CliPath"];
+  "895a9f6b-0f2d-4760-82dd-3f16cb3de434" -> "105d8d77-c1c6-4961-966e-09526e098966" [label="sync", xlabel="RunTagSyncUseCase -> TagTargetResolverPort"];
+  "895a9f6b-0f2d-4760-82dd-3f16cb3de434" -> "b16739ad-9a10-4360-ba59-2c4a736246cb" [label="sync", xlabel="RunTagSyncUseCase -> TypeScriptTreeWalkPort"];
+  "895a9f6b-0f2d-4760-82dd-3f16cb3de434" -> "b0c56399-3f62-484e-8f4d-aeb43bed6519" [label="sync", xlabel="RunTagSyncUseCase -> TagVersionResolverPort"];
+  "895a9f6b-0f2d-4760-82dd-3f16cb3de434" -> "b1fdde76-2538-411f-ad27-6afca0051c27" [label="sync", xlabel="RunTagSyncUseCase -> TagSinceWriterPort"];
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="CliCommand -> CliLogger"];
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" -> "e3588100-6057-4247-9af7-56b4f851419d" [label="sync", xlabel="CliCommand -> PrepareArrangeOrchestrator"];
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" -> "b86174c7-13d8-451e-b4dd-9c68fa8f001c" [label="sync", xlabel="CliCommand -> AnalyzeDirectoryUseCase"];
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" -> "42caeb83-9ddc-4d94-b190-d86612d51d06" [label="sync", xlabel="CliCommand -> RunArrangeSyncUseCase"];
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" -> "f7c9a721-7495-4472-a767-e019db4e6f05" [label="sync", xlabel="CliCommand -> SuggestCnGroupsUseCase"];
+  "b775f1f1-ed5b-4d99-9c7c-3f6503b4a0d2" -> "c7afc996-87fa-4481-a0c9-297dcbcd2028" [label="sync", xlabel="CliCommand -> PresentAnalyzeReportPresenter"];
+  "7c6d3d12-4af7-45b9-9ac2-e38bc9ec4bad" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="CliCommand -> CliLogger"];
+  "7c6d3d12-4af7-45b9-9ac2-e38bc9ec4bad" -> "ffd8744a-39ef-4a43-a77b-2eb762a3ad50" [label="sync", xlabel="CliCommand -> PrepareMirrorOrchestrator"];
+  "7c6d3d12-4af7-45b9-9ac2-e38bc9ec4bad" -> "00949233-5bb8-4e21-b5a5-66d166053d25" [label="sync", xlabel="CliCommand -> RunMirrorSyncUseCase"];
+  "12fc1664-5109-4ce2-a0a4-afb2a6969538" -> "8f167575-5e66-4046-8584-e5aa6932d989" [label="sync", xlabel="CliCommand -> CliLogger"];
+  "12fc1664-5109-4ce2-a0a4-afb2a6969538" -> "40e6883a-1724-4ef9-8ea4-2b43fd4c6b5c" [label="sync", xlabel="CliCommand -> PrepareTagOrchestrator"];
+  "12fc1664-5109-4ce2-a0a4-afb2a6969538" -> "895a9f6b-0f2d-4760-82dd-3f16cb3de434" [label="sync", xlabel="CliCommand -> RunTagSyncUseCase"];
+  "12fc1664-5109-4ce2-a0a4-afb2a6969538" -> "d234f733-48f5-4232-ae63-b3268ecea3f3" [label="sync", xlabel="CliCommand -> CreateTagProgressListenerPresenter"];
+  "12fc1664-5109-4ce2-a0a4-afb2a6969538" -> "6ea32e08-0ef4-4f56-a7ac-e9a7cd29f63d" [label="sync", xlabel="CliCommand -> PresentTagSyncResultPresenter"];
+}
