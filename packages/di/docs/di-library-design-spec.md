@@ -476,9 +476,14 @@ Decorator là syntactic sugar — core container không phụ thuộc vào chún
 
 ### 6.1 Cách dùng
 
-```ts
-import { injectable, inject, injectOptional } from "@codefast/di";
+TC39 Decorator Stage 3 **không hỗ trợ parameter decorator** (TS1206) — đây là quyết định có chủ ý của TC39, không phải thiếu sót. `@inject` trên constructor parameter chỉ khả dụng với `experimentalDecorators: true` (legacy), trái với mục tiêu của thư viện.
 
+Giải pháp: `@injectable()` nhận **deps array** khai báo tường minh thứ tự constructor — pattern tương tự Angular Ivy và tsyringe v2, và khớp hoàn hảo với nguyên tắc "explicit over magic" của spec.
+
+```ts
+import { injectable, inject, optional } from "@codefast/di";
+
+// Class không có deps — không cần truyền gì
 @injectable()
 class ConsoleLogger implements LoggerService {
   log(msg: string) {
@@ -486,44 +491,92 @@ class ConsoleLogger implements LoggerService {
   }
 }
 
-@injectable()
+// Class có deps — khai báo tường minh qua deps array
+@injectable([Logger, Config])
 class App {
   constructor(
-    @inject(Logger) private logger: LoggerService,
-    @inject(Config) private config: AppConfig,
-    @injectOptional(Analytics) private analytics?: AnalyticsService,
+    private logger: LoggerService,
+    private config: AppConfig,
+  ) {}
+}
+
+// Optional dependency — dùng helper optional()
+@injectable([Logger, Config, optional(Analytics)])
+class App {
+  constructor(
+    private logger: LoggerService,
+    private config: AppConfig,
+    private analytics?: AnalyticsService,
   ) {}
 }
 ```
 
+`optional()` là plain function trả về `InjectionDescriptor` — không phải decorator — hoàn toàn Stage 3 compatible.
+
 ### 6.2 Named / tagged inject
 
+`inject()` là plain function trả về `InjectionDescriptor` — dùng trong deps array của `@injectable()`. Hỗ trợ đầy đủ `name` và `tag` options:
+
 ```ts
-@injectable()
+import { injectable, inject, optional } from "@codefast/di";
+
+@injectable([inject(Logger, { name: "console" }), inject(Engine, { tag: ["fuel", "electric"] })])
 class Dashboard {
   constructor(
-    @inject(Logger, { name: "console" }) private logger: LoggerService,
-    @inject(Engine, { tag: ["fuel", "electric"] }) private engine: Engine,
+    private logger: LoggerService,
+    private engine: Engine,
   ) {}
+}
+
+// Kết hợp optional + named
+@injectable([inject(Logger, { name: "file" }), optional(Analytics)])
+class Reporter {
+  constructor(
+    private logger: LoggerService,
+    private analytics?: AnalyticsService,
+  ) {}
+}
+```
+
+Type signature của `inject()` và `optional()`:
+
+```ts
+// Plain function — không phải decorator
+function inject<Value>(
+  token: Token<Value> | Constructor<Value>,
+  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+): InjectionDescriptor<Value>;
+
+function optional<Value>(
+  token: Token<Value> | Constructor<Value>,
+  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+): InjectionDescriptor<Value | undefined>;
+
+// InjectionDescriptor — được truyền vào deps array
+interface InjectionDescriptor<Value = unknown> {
+  readonly token: Token<Value> | Constructor<Value>;
+  readonly optional: boolean;
+  readonly name?: string;
+  readonly tag?: [tag: string, value: unknown];
 }
 ```
 
 ### 6.3 Inheritance — explicit, không có magic
 
-InversifyJS v7 có implicit inheritance injection — bị deprecated và thay bằng `@injectFromBase`. Thư viện này không có implicit injection từ đầu — mọi dep phải khai báo tường minh trong constructor:
+InversifyJS v7 có implicit inheritance injection — bị deprecated và thay bằng `@injectFromBase`. Thư viện này không có implicit injection từ đầu — mọi dep phải khai báo tường minh trong deps array:
 
 ```ts
-@injectable()
+@injectable([Logger])
 class BaseService {
-  constructor(@inject(Logger) protected logger: LoggerService) {}
+  constructor(protected logger: LoggerService) {}
 }
 
 // Child khai báo lại toàn bộ — explicit, không magic
-@injectable()
+@injectable([Logger, UserRepo])
 class UserService extends BaseService {
   constructor(
-    @inject(Logger) logger: LoggerService,
-    @inject(UserRepo) private repo: UserRepository,
+    logger: LoggerService,
+    private repo: UserRepository,
   ) {
     super(logger);
   }
@@ -552,15 +605,18 @@ interface ParamMetadata {
 }
 ```
 
-### 6.5 Danh sách decorator
+### 6.5 Danh sách decorator và helpers
 
-| Decorator                       | Target            | Tác dụng                                                                                                                                                                          |
-| ------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@injectable()`                 | class             | Đánh dấu class có thể auto-resolve; ghi param metadata vào `Symbol.metadata`                                                                                                      |
-| `@inject(token, opts?)`         | constructor param | Ghi token + options (name/tag) cho param đó                                                                                                                                       |
-| `@injectOptional(token, opts?)` | constructor param | Như `@inject` nhưng không throw nếu không có binding                                                                                                                              |
-| `@singleton()`                  | class             | Gợi ý scope `singleton` — chỉ có hiệu lực khi binding dùng `.toSelf()` hoặc `.to()` mà không gọi `.singleton()` / `.transient()` / `.scoped()` explicit; explicit call luôn thắng |
-| `@scoped()`                     | class             | Gợi ý scope `scoped` — cùng precedence rule như `@singleton()`                                                                                                                    |
+| API                      | Loại      | Target / Ngữ cảnh | Tác dụng                                                                                                                                                                          |
+| ------------------------ | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@injectable(deps?)`     | decorator | class             | Đánh dấu class có thể auto-resolve; ghi param metadata vào `Symbol.metadata`. `deps` là array `(Token \| Constructor \| InjectionDescriptor)[]` theo thứ tự constructor           |
+| `inject(token, opts?)`   | plain fn  | deps array        | Tạo `InjectionDescriptor` với token + options (name/tag). Required dependency                                                                                                     |
+| `optional(token, opts?)` | plain fn  | deps array        | Như `inject` nhưng không throw nếu không có binding — resolve trả về `undefined`                                                                                                  |
+| `@singleton()`           | decorator | class             | Gợi ý scope `singleton` — chỉ có hiệu lực khi binding dùng `.toSelf()` hoặc `.to()` mà không gọi `.singleton()` / `.transient()` / `.scoped()` explicit; explicit call luôn thắng |
+| `@scoped()`              | decorator | class             | Gợi ý scope `scoped` — cùng precedence rule như `@singleton()`                                                                                                                    |
+
+> **Tại sao không có `@inject` / `@injectOptional` trên parameter?**
+> TC39 Decorator Stage 3 không định nghĩa parameter decorator (TS1206). Chúng chỉ tồn tại trong hệ thống `experimentalDecorators` legacy — trái với mục tiêu zero legacy flag. Deps array trong `@injectable()` thay thế hoàn toàn và còn explicit hơn: nhìn vào `@injectable([Logger, Config])` là biết ngay class phụ thuộc gì, không cần đọc từng dòng constructor.
 
 ### 6.6 Cấu hình tsconfig
 
@@ -780,7 +836,10 @@ export type { BindingIdentifier } from "./binding";
 export { Module, AsyncModule } from "./module";
 
 // Decorators
-export { injectable, inject, injectOptional, singleton, scoped } from "./decorators";
+export { injectable, singleton, scoped } from "./decorators";
+
+// Injection helpers (plain functions — không phải decorator)
+export { inject, optional } from "./injection";
 
 // Errors
 export {
@@ -881,7 +940,7 @@ const app = container.resolve(App); // fully typed, no any
 
 ### Phase 2 — Decorator layer (3–4 ngày)
 
-TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagged options. `SymbolMetadataReader` implements `MetadataReader`. Container nhận `MetadataReader` qua constructor — injectable trong test.
+TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter decorator (TS1206). `inject()` và `optional()` là plain functions tạo `InjectionDescriptor`. `SymbolMetadataReader` implements `MetadataReader`. Container nhận `MetadataReader` qua constructor — injectable trong test.
 
 **Deliverable:** Decorator hoạt động, test cả decorator path và non-decorator path.
 
@@ -955,24 +1014,26 @@ TC39 Stage 3 `@injectable()`, `@inject()`, `@injectOptional()` với named/tagge
 
 ### Cải thiện hơn v8
 
-| InversifyJS v8                                         | Thư viện này                                                        |
-| ------------------------------------------------------ | ------------------------------------------------------------------- |
-| `reflect-metadata` + `experimentalDecorators` bắt buộc | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`          |
-| `ServiceIdentifier = string \| symbol \| Newable<T>`   | `Token<Value>` branded type — resolve luôn đúng type                |
-| `container.get<WrongType>('id')` compile được          | Không thể — `Token<Value>` mang type ở compile time                 |
-| `.inSingletonScope()`, `.inTransientScope()`           | `.singleton()`, `.transient()` — ngắn hơn                           |
-| `toDynamicValue` cho cả sync lẫn async                 | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()` |
-| Async module không có API riêng                        | `Module.createAsync()` + `container.loadAsync()` — explicit         |
+| InversifyJS v8                                          | Thư viện này                                                                           |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `reflect-metadata` + `experimentalDecorators` bắt buộc  | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                             |
+| `ServiceIdentifier = string \| symbol \| Newable<T>`    | `Token<Value>` branded type — resolve luôn đúng type                                   |
+| `container.get<WrongType>('id')` compile được           | Không thể — `Token<Value>` mang type ở compile time                                    |
+| `.inSingletonScope()`, `.inTransientScope()`            | `.singleton()`, `.transient()` — ngắn hơn                                              |
+| `toDynamicValue` cho cả sync lẫn async                  | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                    |
+| Async module không có API riêng                         | `Module.createAsync()` + `container.loadAsync()` — explicit                            |
+| `@inject` trên parameter (cần `experimentalDecorators`) | `@injectable([deps])` + `inject()` / `optional()` plain functions — TC39 Stage 3 thuần |
 
 ### Không học từ v8
 
-| InversifyJS v8                                     | Lý do không học                                    |
-| -------------------------------------------------- | -------------------------------------------------- |
-| `string \| symbol` làm service identifier          | Không type-safe — dùng `Token<Value>`              |
-| `new Container()` public constructor               | Dùng `Container.create()` static factory           |
-| Implicit inheritance injection (`@injectFromBase`) | Explicit từ đầu — `@inject` trong từng constructor |
+| InversifyJS v8                                     | Lý do không học                                                                    |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `string \| symbol` làm service identifier          | Không type-safe — dùng `Token<Value>`                                              |
+| `new Container()` public constructor               | Dùng `Container.create()` static factory                                           |
+| Implicit inheritance injection (`@injectFromBase`) | Explicit từ đầu — deps array trong `@injectable()` khai báo tường minh tất cả      |
+| Parameter decorator `@inject` / `@injectOptional`  | TS1206 — không tồn tại trong TC39 Stage 3; dùng `inject()` / `optional()` thay thế |
 
 ---
 
-_Phiên bản tài liệu: 2.0 — April 2026_
+_Phiên bản tài liệu: 2.1 — April 2026_
 _Lấy cảm hứng từ InversifyJS v8.0.0 (March 2026)_
