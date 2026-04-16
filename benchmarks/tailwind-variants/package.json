@@ -26,9 +26,7 @@
   "type": "module",
   "imports": {
     "#*": [
-      "./src/*",
-      "./src/*.js",
-      "./src/*/index.js"
+      "./src/*"
     ]
   },
   "scripts": {
