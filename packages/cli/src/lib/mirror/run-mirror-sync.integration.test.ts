@@ -1,17 +1,19 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { Container } from "@codefast/di";
+import { CoreModule } from "#lib/core/core.module";
+import { InfraModule } from "#lib/core/infra/infra.module";
+import { PresentationModule } from "#lib/core/presentation/presentation.module";
 import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
+import { MirrorModule } from "#lib/mirror/mirror.module";
 import {
-  runMirrorSync,
-  type MirrorSyncRunDeps,
-} from "#lib/mirror/application/use-cases/run-mirror-sync.use-case";
-import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
-import { nodeCliPath } from "#lib/core/infra/path.adapter";
-import { FileSystemServiceAdapter } from "#lib/mirror/infra/file-system-service.adapter";
-import { mirrorSyncReporterAdapter } from "#lib/mirror/infra/mirror-sync-reporter.adapter";
-import { PackageRepositoryAdapter } from "#lib/mirror/infra/package-repository.adapter";
-import { WorkspaceServiceAdapter } from "#lib/mirror/infra/workspace-service.adapter";
+  CliGlobalCliRawToken,
+  CliRootDirToken,
+  RunMirrorSyncUseCaseToken,
+  WorkspaceContextBinderToken,
+  type RunMirrorSyncUseCase,
+} from "#lib/tokens";
 
 async function mkdirp(filePath: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -31,24 +33,20 @@ async function makeTempRoot(): Promise<string> {
   return fs.mkdtemp(path.join(os.tmpdir(), "mirror-sync-"));
 }
 
-const mirrorFs = createNodeCliFs();
-const mirrorLogger = createNodeCliLogger();
-const workspaceService = new WorkspaceServiceAdapter();
-const packageRepository = new PackageRepositoryAdapter();
-const fileSystemService = new FileSystemServiceAdapter();
-
-const mirrorSyncDeps: MirrorSyncRunDeps = {
-  fs: mirrorFs,
-  path: nodeCliPath,
-  logger: mirrorLogger,
-  workspaceService,
-  packageRepository,
-  fileSystemService,
-  mirrorReporter: mirrorSyncReporterAdapter,
-};
+const container = Container.create();
+container.bind(CliRootDirToken).toConstantValue(process.cwd());
+container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
+container
+  .bind(WorkspaceContextBinderToken)
+  .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
+    container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
+    container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
+  });
+container.load(CoreModule, InfraModule, PresentationModule, MirrorModule);
+const runMirrorSyncUseCase = container.resolve(RunMirrorSyncUseCaseToken) as RunMirrorSyncUseCase;
 
 async function runMirrorSyncWithNodeDependencies(request: MirrorSyncRunRequest): Promise<number> {
-  const outcome = await runMirrorSync(request, mirrorSyncDeps);
+  const outcome = await runMirrorSyncUseCase.execute(request);
   expect(outcome.ok).toBe(true);
   if (!outcome.ok) {
     throw new Error(outcome.error.message);
@@ -63,18 +61,18 @@ describe("runMirrorSync (integration)", () => {
   beforeEach(() => {
     stdoutChunks.length = 0;
     stderrChunks.length = 0;
-    jest.spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
+    vi.spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
       stdoutChunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
       return true;
     });
-    jest.spyOn(process.stderr, "write").mockImplementation((chunk: string | Uint8Array) => {
+    vi.spyOn(process.stderr, "write").mockImplementation((chunk: string | Uint8Array) => {
       stderrChunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
       return true;
     });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   function joinedStdout(): string {
@@ -697,13 +695,10 @@ describe("runMirrorSync (integration)", () => {
   it("fails fast when pnpm-workspace.yaml exists but is invalid YAML", async () => {
     const root = await makeTempRoot();
     await writeText(path.join(root, "pnpm-workspace.yaml"), "packages:\n  - [\n");
-    const outcome = await runMirrorSync(
-      {
-        rootDir: root,
-        noColor: true,
-      },
-      mirrorSyncDeps,
-    );
+    const outcome = await runMirrorSyncUseCase.execute({
+      rootDir: root,
+      noColor: true,
+    });
     expect(outcome.ok).toBe(false);
     if (outcome.ok) {
       throw new Error("expected mirror failure");
@@ -728,13 +723,10 @@ describe("runMirrorSync (integration)", () => {
       `packages: "oops"
 `,
     );
-    const outcome = await runMirrorSync(
-      {
-        rootDir: root,
-        noColor: true,
-      },
-      mirrorSyncDeps,
-    );
+    const outcome = await runMirrorSyncUseCase.execute({
+      rootDir: root,
+      noColor: true,
+    });
     expect(outcome.ok).toBe(false);
     if (outcome.ok) {
       throw new Error("expected mirror failure");
@@ -754,9 +746,8 @@ describe("runMirrorSync (integration)", () => {
     await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
     await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
 
-    const prev = process.cwd();
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(os.tmpdir());
     try {
-      process.chdir(os.tmpdir());
       const code = await runMirrorSyncWithNodeDependencies({
         rootDir: root,
         noColor: true,
@@ -764,7 +755,7 @@ describe("runMirrorSync (integration)", () => {
       });
       expect(code).toBe(0);
     } finally {
-      process.chdir(prev);
+      cwdSpy.mockRestore();
     }
 
     const pkg = JSON.parse(await fs.readFile(path.join(pkgDir, "package.json"), "utf8")) as {

@@ -30,13 +30,11 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "imports": {
     "#*": [
-      "./dist/*",
-      "./dist/*.js",
-      "./dist/*/index.js",
       "./src/*",
       "./src/*.ts",
       "./src/*.tsx",
@@ -46,60 +44,60 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./adapters/tanstack-start/server": {
-      "types": "./dist/adapters/tanstack-start/server.d.ts",
-      "import": "./dist/adapters/tanstack-start/server.js"
+      "types": "./dist/adapters/tanstack-start/server.d.mts",
+      "import": "./dist/adapters/tanstack-start/server.mjs"
     },
     "./constants": {
-      "types": "./dist/constants.d.ts",
-      "import": "./dist/constants.js"
+      "types": "./dist/constants.d.mts",
+      "import": "./dist/constants.mjs"
     },
     "./core": {
-      "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js"
+      "types": "./dist/core/index.d.mts",
+      "import": "./dist/core/index.mjs"
     },
     "./core/context": {
-      "types": "./dist/core/context.d.ts",
-      "import": "./dist/core/context.js"
+      "types": "./dist/core/context.d.mts",
+      "import": "./dist/core/context.mjs"
     },
     "./core/provider": {
-      "types": "./dist/core/provider.d.ts",
-      "import": "./dist/core/provider.js"
+      "types": "./dist/core/provider.d.mts",
+      "import": "./dist/core/provider.mjs"
     },
     "./core/use-theme": {
-      "types": "./dist/core/use-theme.d.ts",
-      "import": "./dist/core/use-theme.js"
+      "types": "./dist/core/use-theme.d.mts",
+      "import": "./dist/core/use-theme.mjs"
     },
     "./script": {
-      "types": "./dist/script/index.d.ts",
-      "import": "./dist/script/index.js"
+      "types": "./dist/script/index.d.mts",
+      "import": "./dist/script/index.mjs"
     },
     "./script/theme-script": {
-      "types": "./dist/script/theme-script.d.ts",
-      "import": "./dist/script/theme-script.js"
+      "types": "./dist/script/theme-script.d.mts",
+      "import": "./dist/script/theme-script.mjs"
     },
     "./start": {
-      "types": "./dist/start.d.ts",
-      "import": "./dist/start.js"
+      "types": "./dist/start.d.mts",
+      "import": "./dist/start.mjs"
     },
     "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js"
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
     },
     "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js"
+      "types": "./dist/utils/index.d.mts",
+      "import": "./dist/utils/index.mjs"
     },
     "./utils/dom": {
-      "types": "./dist/utils/dom.d.ts",
-      "import": "./dist/utils/dom.js"
+      "types": "./dist/utils/dom.d.mts",
+      "import": "./dist/utils/dom.mjs"
     },
     "./utils/system": {
-      "types": "./dist/utils/system.d.ts",
-      "import": "./dist/utils/system.js"
+      "types": "./dist/utils/system.d.mts",
+      "import": "./dist/utils/system.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -107,33 +105,31 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && tsgo -p tsconfig.build.json",
+    "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
-    "dev": "tsgo -p tsconfig.build.json --watch --preserveWatchOutput",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch"
+    "dev": "tsdown --watch",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ci": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "zod": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
     "@tanstack/react-start": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
-    "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:",
-    "typescript": "catalog:"
+    "@vitest/coverage-v8": "catalog:",
+    "jsdom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/react-start": "^1.0",

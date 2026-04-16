@@ -1,45 +1,68 @@
 import process from "node:process";
+import { injectable } from "@codefast/di";
 import { Command } from "commander";
-import { createCliContainer } from "#lib/core/infra/container.adapter";
-import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
+import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import {
+  consumeCliAppError,
+  runCliResultAsync,
+} from "#lib/core/presentation/cli-executor.presenter";
+import type { CliCommand } from "#lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
-import { runAsyncExitCodeUseCaseAfterParse } from "#lib/core/presentation/run-cli-use-case-after-parse.presenter";
 import { mirrorSyncRunRequestSchema } from "#lib/mirror/presentation/mirror-cli-schema.presenter";
+import {
+  CliLoggerToken,
+  type PrepareMirrorOrchestrator,
+  PrepareMirrorOrchestratorToken,
+  type RunMirrorSyncUseCase,
+  RunMirrorSyncUseCaseToken,
+} from "#lib/tokens";
 
-export function registerMirrorCommand(program: Command): void {
-  const mirror = program
-    .command("mirror")
-    .description("Keep package manifests aligned with what you ship");
+@injectable([CliLoggerToken, PrepareMirrorOrchestratorToken, RunMirrorSyncUseCaseToken] as const)
+export class MirrorCommand implements CliCommand {
+  readonly name = "mirror";
+  readonly description = "Keep package manifests aligned with what you ship";
 
-  mirror
-    .command("sync")
-    .description("Write package.json exports from dist/ for workspace packages")
-    .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
-    .option("-v, --verbose", "Print extra diagnostics", false)
-    .action(async function (
-      this: Command,
-      pkg: string | undefined,
-      options: { verbose?: boolean },
-    ) {
-      const cli = createCliContainer();
-      const prelude = await cli.mirror.prepareMirrorSync({
-        currentWorkingDirectory: process.cwd(),
-        packageArg: pkg,
-        globalCliRaw: this.optsWithGlobals(),
-      });
-      if (!consumeCliAppError(cli.logger, prelude)) {
-        return;
-      }
-      const { rootDir, config, packageFilter, globals } = prelude.value;
-      const parsed = parseWithCliSchema(mirrorSyncRunRequestSchema, {
-        rootDir,
-        config: config.mirror ?? {},
-        verbose: options.verbose,
-        noColor: globals.color === false,
-        packageFilter,
-      });
-      await runAsyncExitCodeUseCaseAfterParse(cli, parsed, (input) =>
-        cli.mirror.runMirrorSync(input),
-      );
+  constructor(
+    private readonly logger: CliLogger,
+    private readonly prepareMirrorSync: PrepareMirrorOrchestrator,
+    private readonly runMirrorSync: RunMirrorSyncUseCase,
+  ) {}
+
+  register(program: Command): void {
+    const mirror = program.command(this.name).description(this.description);
+
+    mirror
+      .command("sync")
+      .description("Write package.json exports from dist/ for workspace packages")
+      .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
+      .option("-v, --verbose", "Print extra diagnostics", false)
+      .action(this.execute.bind(this));
+  }
+
+  async execute(
+    pkg: string | undefined,
+    options: { verbose?: boolean },
+    command: Command,
+  ): Promise<void> {
+    const prelude = await this.prepareMirrorSync.execute({
+      currentWorkingDirectory: process.cwd(),
+      packageArg: pkg,
+      globalCliRaw: command.optsWithGlobals(),
     });
+    if (!consumeCliAppError(this.logger, prelude)) {
+      return;
+    }
+    const { rootDir, config, packageFilter, globals } = prelude.value;
+    const parsed = parseWithCliSchema(mirrorSyncRunRequestSchema, {
+      rootDir,
+      config: config.mirror ?? {},
+      verbose: options.verbose,
+      noColor: globals.color === false,
+      packageFilter,
+    });
+    if (!consumeCliAppError(this.logger, parsed)) {
+      return;
+    }
+    await runCliResultAsync(this.logger, this.runMirrorSync.execute(parsed.value), (code) => code);
+  }
 }

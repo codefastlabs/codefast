@@ -15,15 +15,15 @@ describe("System Theme Detection", () => {
   describe("getSystemTheme", () => {
     test('should return "dark" when system prefers dark mode', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: jest.fn().mockImplementation((query: string) => ({
-          addEventListener: jest.fn(),
-          addListener: jest.fn(),
-          dispatchEvent: jest.fn(),
+        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
+          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          addListener: vi.fn<(...args: unknown[]) => unknown>(),
+          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
           matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
-          removeEventListener: jest.fn(),
-          removeListener: jest.fn(),
+          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
         })),
         writable: true,
       });
@@ -33,15 +33,15 @@ describe("System Theme Detection", () => {
 
     test('should return "light" when system prefers light mode', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: jest.fn().mockImplementation((query: string) => ({
-          addEventListener: jest.fn(),
-          addListener: jest.fn(),
-          dispatchEvent: jest.fn(),
+        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
+          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          addListener: vi.fn<(...args: unknown[]) => unknown>(),
+          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
           matches: false, // prefers-color-scheme: dark does NOT match
           media: query,
           onchange: null,
-          removeEventListener: jest.fn(),
-          removeListener: jest.fn(),
+          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
         })),
         writable: true,
       });
@@ -67,15 +67,15 @@ describe("System Theme Detection", () => {
 
     test('should resolve "system" to system preference (light)', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: jest.fn().mockImplementation(() => ({
-          addEventListener: jest.fn(),
-          addListener: jest.fn(),
-          dispatchEvent: jest.fn(),
+        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => ({
+          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          addListener: vi.fn<(...args: unknown[]) => unknown>(),
+          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
           matches: false, // light mode
           media: "",
           onchange: null,
-          removeEventListener: jest.fn(),
-          removeListener: jest.fn(),
+          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
         })),
         writable: true,
       });
@@ -85,15 +85,15 @@ describe("System Theme Detection", () => {
 
     test('should resolve "system" to system preference (dark)', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: jest.fn().mockImplementation((query: string) => ({
-          addEventListener: jest.fn(),
-          addListener: jest.fn(),
-          dispatchEvent: jest.fn(),
+        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
+          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          addListener: vi.fn<(...args: unknown[]) => unknown>(),
+          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
           matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
-          removeEventListener: jest.fn(),
-          removeListener: jest.fn(),
+          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
         })),
         writable: true,
       });

@@ -6,16 +6,16 @@ import type {
   MaterializationFrame,
   ResolutionContext,
   ResolveHint,
-} from "#lib/binding";
+} from "#binding";
 import {
   filterMatchingBindings,
   registryKeyLabel,
   selectBindingForRegistry,
-} from "#lib/binding-select";
-import { runActivation, runActivationAsync } from "#lib/lifecycle";
-import type { RegistryKey } from "#lib/registry";
-import type { Token } from "#lib/token";
-import { ScopeManager } from "#lib/scope";
+} from "#binding-select";
+import { runActivation, runActivationAsync } from "#lifecycle";
+import type { RegistryKey } from "#registry";
+import type { Token } from "#token";
+import { ScopeManager } from "#scope";
 import {
   AsyncResolutionError,
   CircularDependencyError,
@@ -24,8 +24,8 @@ import {
   NoMatchingBindingError,
   ScopeViolationError,
   TokenNotBoundError,
-} from "#lib/errors";
-import type { MetadataReader } from "#lib/decorators/metadata";
+} from "#errors";
+import type { MetadataReader } from "#decorators/metadata";
 
 function bindingToMaterializationFrame(
   registryKey: RegistryKey,
@@ -209,13 +209,18 @@ export class DependencyResolver {
       return;
     }
     if (dependencyBinding.scope === "transient" || dependencyBinding.scope === "scoped") {
+      const dependencyLabel = resolutionPath[resolutionPath.length - 1];
+      const consumerLabel =
+        resolutionPath.length >= 2 ? resolutionPath[resolutionPath.length - 2] : undefined;
       throw new ScopeViolationError({
         consumerBindingId: consumer.bindingId,
         consumerKind: consumer.bindingKind,
         consumerScope: consumer.scope,
+        consumerLabel,
         dependencyBindingId: dependencyBinding.id,
         dependencyKind: dependencyBinding.kind,
         dependencyScope: dependencyBinding.scope,
+        dependencyLabel,
         resolutionPath: [...resolutionPath],
       });
     }
@@ -371,6 +376,7 @@ export class DependencyResolver {
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
+    this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
     return this.hooks.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
@@ -389,6 +395,7 @@ export class DependencyResolver {
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
+    this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
     return this.hooks.scopeManager.getOrCreateAsync(binding, async () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
@@ -404,6 +411,39 @@ export class DependencyResolver {
       );
       return await runActivationAsync(binding, instance, ctx, pathLabels);
     });
+  }
+
+  private assertCaptiveDependencyFromMaterializationStack(
+    dependencyBinding: Binding<unknown>,
+    resolutionPath: readonly string[],
+    materializationStack: readonly MaterializationFrame[],
+  ): void {
+    const parentFrame = materializationStack[materializationStack.length - 1];
+    if (parentFrame === undefined) {
+      return;
+    }
+    if (parentFrame.scope !== "singleton") {
+      return;
+    }
+    if (dependencyBinding.kind === "constant") {
+      return;
+    }
+    if (dependencyBinding.scope === "scoped" || dependencyBinding.scope === "transient") {
+      const dependencyLabel = resolutionPath[resolutionPath.length - 1];
+      const consumerLabel =
+        resolutionPath.length >= 2 ? resolutionPath[resolutionPath.length - 2] : undefined;
+      throw new ScopeViolationError({
+        consumerBindingId: parentFrame.bindingId,
+        consumerKind: parentFrame.bindingKind,
+        consumerScope: parentFrame.scope,
+        consumerLabel,
+        dependencyBindingId: dependencyBinding.id,
+        dependencyKind: dependencyBinding.kind,
+        dependencyScope: dependencyBinding.scope,
+        dependencyLabel,
+        resolutionPath: [...resolutionPath],
+      });
+    }
   }
 
   private materialize(

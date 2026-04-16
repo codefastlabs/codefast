@@ -1,26 +1,39 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { analyzeDirectory } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
+import { Container } from "@codefast/di";
+import { ArrangeModule } from "#lib/arrange/arrange.module";
 import { printAnalyzeReport } from "#lib/arrange/presentation/report.presenter";
-import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
+import { CoreModule } from "#lib/core/core.module";
+import { InfraModule } from "#lib/core/infra/infra.module";
+import { PresentationModule } from "#lib/core/presentation/presentation.module";
 import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
-import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
-import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
+import {
+  AnalyzeDirectoryUseCaseToken,
+  CliGlobalCliRawToken,
+  CliLoggerToken,
+  CliRootDirToken,
+  WorkspaceContextBinderToken,
+  type AnalyzeDirectoryUseCase,
+} from "#lib/tokens";
 
-const arrangeFs = createNodeCliFs();
-const arrangeLogger = createNodeCliLogger();
-const fileWalker = new FileWalkerAdapter();
+const container = Container.create();
+container.bind(CliRootDirToken).toConstantValue(process.cwd());
+container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
+container
+  .bind(WorkspaceContextBinderToken)
+  .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
+    container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
+    container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
+  });
+container.load(CoreModule, InfraModule, PresentationModule, ArrangeModule);
+const analyzeDirectoryUseCase = container.resolve(
+  AnalyzeDirectoryUseCaseToken,
+) as AnalyzeDirectoryUseCase;
+const arrangeLogger = container.resolve(CliLoggerToken);
 
 function analyzeReportOrThrow(rootPath: string): AnalyzeReport {
-  const outcome = analyzeDirectory(
-    { analyzeRootPath: rootPath },
-    {
-      fs: arrangeFs,
-      fileWalker,
-      domainSourceParser: domainSourceParserAdapter,
-    },
-  );
+  const outcome = analyzeDirectoryUseCase.execute({ analyzeRootPath: rootPath });
   expect(outcome.ok).toBe(true);
   if (!outcome.ok) {
     throw new Error(outcome.error.message);
@@ -30,12 +43,10 @@ function analyzeReportOrThrow(rootPath: string): AnalyzeReport {
 
 function captureStdout(fn: () => void): string {
   const chunks: string[] = [];
-  const spy = jest
-    .spyOn(process.stdout, "write")
-    .mockImplementation((chunk: string | Uint8Array) => {
-      chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
-      return true;
-    });
+  const spy = vi.spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
+    chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
+    return true;
+  });
   try {
     fn();
   } finally {

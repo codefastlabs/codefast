@@ -623,7 +623,7 @@ interface ParamMetadata {
 ```json
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "module": "NodeNext",
     "strict": true
   }
@@ -882,11 +882,7 @@ ESM-only, không có `"require"` export — giống InversifyJS v8. Node 20.19+ 
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["src/index.ts", "!src/**/*.test.ts"],
-  format: "esm", // ESM-only — không cần CJS
-  dts: true,
-  clean: true,
-  sourcemap: true,
+  entry: ["src/**/*.ts", "!src/**/*.test.ts"],
 });
 ```
 
@@ -980,7 +976,7 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 ```json
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,

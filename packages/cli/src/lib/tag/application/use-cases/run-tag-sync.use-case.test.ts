@@ -2,17 +2,28 @@ import type { CliFs } from "#lib/core/application/ports/cli-io.port";
 import { isOk } from "#lib/core/domain/result.model";
 import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import type { TagTargetCandidate } from "#lib/tag/domain/types.domain";
-import {
-  runTagSync,
-  type TagSyncRunDeps,
-} from "#lib/tag/application/use-cases/run-tag-sync.use-case";
+import { RunTagSyncUseCaseImpl } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
+import type { TagSinceWriterPort } from "#lib/tag/application/ports/tag-since-writer.port";
+import type { TagTargetResolverPort } from "#lib/tag/application/ports/target-resolver.port";
+import type { TypeScriptTreeWalkPort } from "#lib/tag/application/ports/typescript-tree-walk.port";
+import type { TagVersionResolverPort } from "#lib/tag/application/ports/tag-version-resolver.port";
+import type { CliPath } from "#lib/core/application/ports/path.port";
 
-const mockVersionResolver: TagSyncRunDeps["versionResolver"] = {
-  resolveNearestPackageVersion: jest.fn(() => "1.0.0"),
+type TagSyncUseCaseDeps = {
+  fs: CliFs;
+  path: CliPath;
+  targetResolver: TagTargetResolverPort;
+  typeScriptTreeWalk: TypeScriptTreeWalkPort;
+  versionResolver: TagVersionResolverPort;
+  sinceWriter: TagSinceWriterPort;
 };
 
-const mockSinceWriter: TagSyncRunDeps["sinceWriter"] = {
-  applySinceTagsToFile: jest.fn((filePath: string) => ({
+const mockVersionResolver: TagSyncUseCaseDeps["versionResolver"] = {
+  resolveNearestPackageVersion: vi.fn<(...args: unknown[]) => unknown>(() => "1.0.0"),
+};
+
+const mockSinceWriter: TagSyncUseCaseDeps["sinceWriter"] = {
+  applySinceTagsToFile: vi.fn<(...args: unknown[]) => unknown>((filePath: string) => ({
     filePath,
     taggedDeclarations: 1,
     changed: true,
@@ -23,32 +34,40 @@ function toPosix(filePath: string): string {
   return filePath.split("\\").join("/");
 }
 
+function createSubject(deps: TagSyncUseCaseDeps): RunTagSyncUseCaseImpl {
+  return new RunTagSyncUseCaseImpl(
+    deps.fs,
+    deps.path,
+    deps.targetResolver,
+    deps.typeScriptTreeWalk,
+    deps.versionResolver,
+    deps.sinceWriter,
+  );
+}
+
 describe("runTagSync use case", () => {
   it("returns ok with no targets when resolver yields no candidates", async () => {
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn(),
-        statSync: jest.fn(),
-        readFileSync: jest.fn(),
-        writeFileSync: jest.fn(),
+        existsSync: vi.fn<(...args: unknown[]) => unknown>(),
+        statSync: vi.fn<(...args: unknown[]) => unknown>(),
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => []),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => []),
       },
       typeScriptTreeWalk: {
-        walkTsxFiles: jest.fn(),
+        walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(),
       },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync(
-      {
-        rootDir: "/repo",
-        write: false,
-      },
-      deps,
-    );
+    const outcome = await createSubject(deps).execute({
+      rootDir: "/repo",
+      write: false,
+    });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");
@@ -58,19 +77,19 @@ describe("runTagSync use case", () => {
   });
 
   it("returns INFRA_FAILURE when resolver throws", async () => {
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {} as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => {
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => {
           throw new Error("resolver boom");
         }),
       },
-      typeScriptTreeWalk: { walkTsxFiles: jest.fn() },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>() },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
+    const outcome = await createSubject(deps).execute({ rootDir: "/repo", write: false });
     expect(isOk(outcome)).toBe(false);
     if (isOk(outcome)) {
       throw new Error("expected failure outcome");
@@ -86,25 +105,26 @@ describe("runTagSync use case", () => {
       packageDir: "/repo/packages/a",
       packageName: "pkg-a",
     };
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn(() => false),
-        statSync: jest.fn(),
-        readFileSync: jest.fn(),
-        writeFileSync: jest.fn(),
+        existsSync: vi.fn<(...args: unknown[]) => unknown>(() => false),
+        statSync: vi.fn<(...args: unknown[]) => unknown>(),
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: jest.fn() },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>() },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync(
-      { rootDir: "/repo", write: false, skipPackages: ["pkg-a"] },
-      deps,
-    );
+    const outcome = await createSubject(deps).execute({
+      rootDir: "/repo",
+      write: false,
+      skipPackages: ["pkg-a"],
+    });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");
@@ -121,35 +141,35 @@ describe("runTagSync use case", () => {
       packageDir: "/repo/packages/a",
       packageName: "pkg-a",
     };
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn((p: string) => {
+        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           return n.endsWith("/packages/a/src") || n.endsWith("/packages/a/package.json");
         }),
-        statSync: jest.fn((p: string) => {
+        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           return {
             isDirectory: () => n.endsWith("/packages/a/src") || n.endsWith("/packages/a"),
           };
         }),
-        readFileSync: jest.fn((p: string) => {
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           if (toPosix(p).endsWith("/packages/a/package.json")) {
             return JSON.stringify({ version: "9.9.9" });
           }
           return "";
         }),
-        writeFileSync: jest.fn(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: jest.fn(() => []) },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(() => []) },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
+    const outcome = await createSubject(deps).execute({ rootDir: "/repo", write: false });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");
@@ -166,29 +186,31 @@ describe("runTagSync use case", () => {
       packageDir: "/repo/packages/a",
       packageName: "pkg-a",
     };
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn((p: string) => toPosix(p).endsWith("/packages/a/package.json")),
-        statSync: jest.fn((p: string) => ({
+        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) =>
+          toPosix(p).endsWith("/packages/a/package.json"),
+        ),
+        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => ({
           isDirectory: () => toPosix(p).endsWith("/packages/a"),
         })),
-        readFileSync: jest.fn((p: string) => {
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           if (toPosix(p).endsWith("/packages/a/package.json")) {
             return JSON.stringify({ version: "1.0.0" });
           }
           return "";
         }),
-        writeFileSync: jest.fn(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: jest.fn(() => []) },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(() => []) },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
+    const outcome = await createSubject(deps).execute({ rootDir: "/repo", write: false });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");
@@ -205,22 +227,22 @@ describe("runTagSync use case", () => {
       packageDir: null,
       packageName: null,
     };
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn(() => false),
-        statSync: jest.fn(),
-        readFileSync: jest.fn(),
-        writeFileSync: jest.fn(),
+        existsSync: vi.fn<(...args: unknown[]) => unknown>(() => false),
+        statSync: vi.fn<(...args: unknown[]) => unknown>(),
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: jest.fn() },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>() },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
+    const outcome = await createSubject(deps).execute({ rootDir: "/repo", write: false });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");
@@ -245,9 +267,9 @@ describe("runTagSync use case", () => {
       packageDir: null,
       packageName: null,
     };
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn((p: string) => {
+        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           return (
             n === "/repo/a" ||
@@ -256,11 +278,11 @@ describe("runTagSync use case", () => {
             n.endsWith("/b/package.json")
           );
         }),
-        statSync: jest.fn((p: string) => {
+        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           return { isDirectory: () => n === "/repo/a" || n === "/repo/b" };
         }),
-        readFileSync: jest.fn((p: string) => {
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           if (n.endsWith("/a/package.json")) {
             return JSON.stringify({ version: "1.0.0" });
@@ -270,21 +292,24 @@ describe("runTagSync use case", () => {
           }
           return "";
         }),
-        writeFileSync: jest.fn(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => [candidateA, candidateB]),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [
+          candidateA,
+          candidateB,
+        ]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: jest.fn(() => []) },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(() => []) },
       path: nodeCliPath,
       versionResolver: {
-        resolveNearestPackageVersion: jest.fn((targetPath: string) =>
+        resolveNearestPackageVersion: vi.fn<(...args: unknown[]) => unknown>((targetPath: string) =>
           toPosix(targetPath).includes("/repo/a") ? "1.0.0" : "2.0.0",
         ),
       },
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync({ rootDir: "/repo", write: false }, deps);
+    const outcome = await createSubject(deps).execute({ rootDir: "/repo", write: false });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");
@@ -302,20 +327,20 @@ describe("runTagSync use case", () => {
       packageName: null,
     };
     const taggedSource = `export function HookTarget() { return 1; }\n`;
-    const deps: TagSyncRunDeps = {
+    const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: jest.fn((p: string) => {
+        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           return n === "/repo/pkg" || n.endsWith("/pkg/package.json") || n.endsWith("/pkg/x.ts");
         }),
-        statSync: jest.fn((p: string) => {
+        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           if (n === "/repo/pkg") {
             return { isDirectory: () => true };
           }
           return { isDirectory: () => false };
         }),
-        readFileSync: jest.fn((p: string) => {
+        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
           const n = toPosix(p);
           if (n.endsWith("/pkg/package.json")) {
             return JSON.stringify({ version: "3.0.0" });
@@ -325,30 +350,29 @@ describe("runTagSync use case", () => {
           }
           return "";
         }),
-        writeFileSync: jest.fn(),
+        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: jest.fn(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
       },
       typeScriptTreeWalk: {
-        walkTsxFiles: jest.fn((root: string) => [`${toPosix(root)}/x.ts`]),
+        walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>((root: string) => [
+          `${toPosix(root)}/x.ts`,
+        ]),
       },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
-    const outcome = await runTagSync(
-      {
-        rootDir: "/repo",
-        write: true,
-        config: {
-          onAfterWrite: jest.fn(async () => {
-            throw new Error("hook failed");
-          }),
-        },
+    const outcome = await createSubject(deps).execute({
+      rootDir: "/repo",
+      write: true,
+      config: {
+        onAfterWrite: vi.fn<(...args: unknown[]) => unknown>(async () => {
+          throw new Error("hook failed");
+        }),
       },
-      deps,
-    );
+    });
     expect(isOk(outcome)).toBe(true);
     if (!isOk(outcome)) {
       throw new Error("expected ok outcome");

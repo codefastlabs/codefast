@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Container } from "#lib/container";
-import { Module } from "#lib/module";
-import { token } from "#lib/token";
+import { Container } from "#container";
+import { Module } from "#module";
+import { token } from "#token";
 
 const TA = token<string>("A");
 const TB = token<string>("B");

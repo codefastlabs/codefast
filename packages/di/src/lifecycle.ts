@@ -1,5 +1,5 @@
-import type { Binding, ResolutionContext } from "#lib/binding";
-import { AsyncResolutionError } from "#lib/errors";
+import type { Binding, ResolutionContext } from "#binding";
+import { AsyncResolutionError } from "#errors";
 
 function isPromiseLike(value: unknown): value is Promise<unknown> {
   return (

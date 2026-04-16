@@ -1,6 +1,6 @@
-import type { ConstraintContext } from "#lib/binding";
-import type { Constructor } from "#lib/binding";
-import type { Token } from "#lib/token";
+import type { ConstraintContext } from "#binding";
+import type { Constructor } from "#binding";
+import type { Token } from "#token";
 
 /**
  * Matches when the direct parent materialization was registered for `registryKey`.

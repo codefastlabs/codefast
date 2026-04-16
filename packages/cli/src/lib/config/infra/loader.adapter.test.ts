@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { vi } from "vitest";
 import { createNodeCliFs } from "#lib/infra/node-io.adapter";
 import { loadConfig, resetConfigLoaderCacheForTests } from "#lib/config/infra/loader.adapter";
 
@@ -8,13 +9,12 @@ describe("loadConfig", () => {
   const cliFs = createNodeCliFs();
 
   async function withCwd<T>(cwd: string, fn: () => Promise<T>): Promise<T> {
-    const prev = process.cwd();
-    process.chdir(cwd);
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(cwd);
     resetConfigLoaderCacheForTests();
     try {
       return await fn();
     } finally {
-      process.chdir(prev);
+      cwdSpy.mockRestore();
       resetConfigLoaderCacheForTests();
     }
   }

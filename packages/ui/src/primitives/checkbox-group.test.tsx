@@ -78,7 +78,7 @@ describe("checkbox-group", () => {
 
       test("fires `onValueChange` when checkbox is toggled", async () => {
         const user = userEvent.setup();
-        const onValueChange = jest.fn();
+        const onValueChange = vi.fn<(...args: unknown[]) => unknown>();
 
         render(
           <CheckboxGroup defaultValue={["item1"]} onValueChange={onValueChange}>
@@ -158,7 +158,7 @@ describe("checkbox-group", () => {
 
       test("disabled checkboxes cannot be checked", async () => {
         const user = userEvent.setup();
-        const onValueChange = jest.fn();
+        const onValueChange = vi.fn<(...args: unknown[]) => unknown>();
 
         render(
           <CheckboxGroup defaultValue={[]} onValueChange={onValueChange}>
@@ -180,7 +180,7 @@ describe("checkbox-group", () => {
     describe("Required state", () => {
       test("prevents unchecking the last checked item when required is true", async () => {
         const user = userEvent.setup();
-        const onValueChange = jest.fn();
+        const onValueChange = vi.fn<(...args: unknown[]) => unknown>();
 
         const { rerender } = render(
           <CheckboxGroup required value={["item1"]} onValueChange={onValueChange}>
@@ -274,7 +274,7 @@ describe("checkbox-group", () => {
 
       test("changes state on click", async () => {
         const user = userEvent.setup();
-        const onValueChange = jest.fn();
+        const onValueChange = vi.fn<(...args: unknown[]) => unknown>();
 
         render(
           <CheckboxGroup value={[]} onValueChange={onValueChange}>
@@ -447,7 +447,7 @@ describe("checkbox-group", () => {
 
     test("toggles item with Space key", async () => {
       const user = userEvent.setup();
-      const onValueChange = jest.fn();
+      const onValueChange = vi.fn<(...args: unknown[]) => unknown>();
 
       render(
         <CheckboxGroup value={[]} onValueChange={onValueChange}>
@@ -548,7 +548,7 @@ describe("checkbox-group", () => {
     });
 
     test("handles duplicate values correctly", () => {
-      const onValueChange = jest.fn();
+      const onValueChange = vi.fn<(...args: unknown[]) => unknown>();
 
       render(
         <CheckboxGroup value={["item1"]} onValueChange={onValueChange}>

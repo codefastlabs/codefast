@@ -1,10 +1,14 @@
 import { Module } from "@codefast/di";
-import { analyzeDirectory } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
-import { runArrangeSync } from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
-import { suggestCnGroupsForCli } from "#lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { ArrangeCommand } from "#commands/arrange";
+import { ArrangeFileProcessorServiceImpl } from "#lib/arrange/application/services/arrange-file-processor.service";
+import { ArrangeTargetScannerServiceImpl } from "#lib/arrange/application/services/arrange-target-scanner.service";
+import { AnalyzeDirectoryUseCaseImpl } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
+import { RunArrangeSyncUseCaseImpl } from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
+import { SuggestCnGroupsUseCaseImpl } from "#lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
 import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
+import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
 import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
 import {
   isCliTelemetryEnabled,
@@ -12,9 +16,9 @@ import {
 } from "#lib/core/infra/logging-decorator.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
-  CliFsToken,
+  ArrangeFileProcessorToken,
+  ArrangeTargetScannerToken,
   CliLoggerToken,
-  CliPathToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
   GroupFilePreviewPortToken,
@@ -34,15 +38,16 @@ function withOptionalTelemetry<T extends object>(
 }
 
 export const ArrangeModule = Module.create("cli-arrange", (api) => {
+  api.bind(COMMAND_TOKEN).to(ArrangeCommand).singleton();
+
   api
     .bind(FileWalkerPortToken)
     .toResolved(
       (logger: CliLogger) =>
         withOptionalTelemetry("FileWalkerPort", new FileWalkerAdapter(logger), logger),
-      [CliLoggerToken],
+      [CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
   api
     .bind(DomainSourceParserPortToken)
@@ -53,58 +58,26 @@ export const ArrangeModule = Module.create("cli-arrange", (api) => {
           new DomainSourceParserAdapter(logger),
           logger,
         ),
-      [CliLoggerToken],
+      [CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
   api
     .bind(GroupFilePreviewPortToken)
     .toResolved(
       (logger: CliLogger) =>
         withOptionalTelemetry("GroupFilePreviewPort", groupFilePreviewPresenter, logger),
-      [CliLoggerToken],
+      [CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
-  api
-    .bind(AnalyzeDirectoryUseCaseToken)
-    .toResolved(
-      (fs, fileWalker, domainSourceParser) => (request) =>
-        analyzeDirectory(request, { fs, fileWalker, domainSourceParser }),
-      [CliFsToken, FileWalkerPortToken, DomainSourceParserPortToken],
-    )
-    .singleton()
-    .build();
+  api.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 
-  api
-    .bind(RunArrangeSyncUseCaseToken)
-    .toResolved(
-      (fs, logger, path, fileWalker, domainSourceParser, groupFilePreview) => (request) =>
-        runArrangeSync(request, {
-          fs,
-          logger,
-          path,
-          fileWalker,
-          domainSourceParser,
-          groupFilePreview,
-        }),
-      [
-        CliFsToken,
-        CliLoggerToken,
-        CliPathToken,
-        FileWalkerPortToken,
-        DomainSourceParserPortToken,
-        GroupFilePreviewPortToken,
-      ],
-    )
-    .singleton()
-    .build();
+  api.bind(ArrangeTargetScannerToken).to(ArrangeTargetScannerServiceImpl).singleton();
 
-  api
-    .bind(SuggestCnGroupsUseCaseToken)
-    .toDynamic(() => suggestCnGroupsForCli)
-    .singleton()
-    .build();
+  api.bind(ArrangeFileProcessorToken).to(ArrangeFileProcessorServiceImpl).singleton();
+
+  api.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
+
+  api.bind(SuggestCnGroupsUseCaseToken).to(SuggestCnGroupsUseCaseImpl).singleton();
 });

@@ -1,5 +1,7 @@
 import { Module } from "@codefast/di";
-import { runTagSync } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
+import { TagCommand } from "../../commands/tag";
+import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
+import { RunTagSyncUseCaseImpl } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
 import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
 import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
@@ -10,7 +12,6 @@ import {
   withCliPortTelemetry,
 } from "#lib/core/infra/logging-decorator.adapter";
 import {
-  CliFsToken,
   CliLoggerToken,
   CliPathToken,
   RunTagSyncUseCaseToken,
@@ -32,35 +33,34 @@ function withOptionalTelemetry<T extends object>(
 }
 
 export const TagModule = Module.create("cli-tag", (api) => {
+  api.bind(COMMAND_TOKEN).to(TagCommand).singleton().whenNamed("tag");
+
   api
     .bind(TagTargetResolverPortToken)
     .toResolved(
       (logger: CliLogger) =>
         withOptionalTelemetry("TagTargetResolverPort", tagTargetResolverAdapter, logger),
-      [CliLoggerToken],
+      [CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
   api
     .bind(TypeScriptTreeWalkPortToken)
     .toResolved(
       (logger: CliLogger) =>
         withOptionalTelemetry("TypeScriptTreeWalkPort", tagTypeScriptTreeWalkAdapter, logger),
-      [CliLoggerToken],
+      [CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
   api
     .bind(TagSinceWriterPortToken)
     .toResolved(
       (logger: CliLogger) =>
         withOptionalTelemetry("TagSinceWriterPort", tagSinceWriterAdapter, logger),
-      [CliLoggerToken],
+      [CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
   api
     .bind(TagVersionResolverPortToken)
@@ -71,32 +71,9 @@ export const TagModule = Module.create("cli-tag", (api) => {
           new TagVersionResolverAdapter(path),
           logger,
         ),
-      [CliPathToken, CliLoggerToken],
+      [CliPathToken, CliLoggerToken] as const,
     )
-    .singleton()
-    .build();
+    .singleton();
 
-  api
-    .bind(RunTagSyncUseCaseToken)
-    .toResolved(
-      (fs, path, targetResolver, typeScriptTreeWalk, versionResolver, sinceWriter) => (input) =>
-        runTagSync(input, {
-          fs,
-          path,
-          targetResolver,
-          typeScriptTreeWalk,
-          versionResolver,
-          sinceWriter,
-        }),
-      [
-        CliFsToken,
-        CliPathToken,
-        TagTargetResolverPortToken,
-        TypeScriptTreeWalkPortToken,
-        TagVersionResolverPortToken,
-        TagSinceWriterPortToken,
-      ],
-    )
-    .singleton()
-    .build();
+  api.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();
 });

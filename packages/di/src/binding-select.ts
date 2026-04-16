@@ -1,7 +1,7 @@
-import type { Binding, ConstraintContext, Constructor, ResolveHint } from "#lib/binding";
-import type { RegistryKey } from "#lib/registry";
-import type { Token } from "#lib/token";
-import { DiError, NoMatchingBindingError, TokenNotBoundError } from "#lib/errors";
+import type { Binding, ConstraintContext, Constructor, ResolveHint } from "#binding";
+import type { RegistryKey } from "#registry";
+import type { Token } from "#token";
+import { DiError, NoMatchingBindingError, TokenNotBoundError } from "#errors";
 
 export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): string {
   if (typeof key === "function") {

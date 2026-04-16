@@ -22,7 +22,7 @@ describe("findRepoRoot", () => {
   it("returns the nearest ancestor containing pnpm-workspace.yaml", () => {
     const root = "/tmp/repo";
     const marker = path.join(root, "pnpm-workspace.yaml");
-    const cwdSpy = jest.spyOn(process, "cwd").mockReturnValue("/tmp/repo/packages/cli");
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue("/tmp/repo/packages/cli");
     try {
       const fs = makeFs((targetPath) => targetPath === marker);
       expect(findRepoRoot(fs)).toBe(root);
@@ -32,7 +32,7 @@ describe("findRepoRoot", () => {
   });
 
   it("includes searched candidate paths when root cannot be resolved", () => {
-    const cwdSpy = jest.spyOn(process, "cwd").mockReturnValue("/tmp/no-repo");
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue("/tmp/no-repo");
     try {
       const fs = makeFs(() => false);
       expect(() => findRepoRoot(fs)).toThrow(/Searched from:/);

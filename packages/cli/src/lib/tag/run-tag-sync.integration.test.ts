@@ -1,27 +1,41 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { Container } from "@codefast/di";
+import { CoreModule } from "#lib/core/core.module";
+import { InfraModule } from "#lib/core/infra/infra.module";
+import { PresentationModule } from "#lib/core/presentation/presentation.module";
 import { createNodeCliFs } from "#lib/infra/node-io.adapter";
 import {
   resolveNearestPackageVersion,
   runTagOnTarget,
-  runTagSync,
 } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
+import { TagModule } from "#lib/tag/tag.module";
 import { nodeCliPath } from "#lib/core/infra/path.adapter";
 import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
-import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
 import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#lib/tag/infra/tag-version-resolver.adapter";
+import {
+  CliGlobalCliRawToken,
+  CliRootDirToken,
+  RunTagSyncUseCaseToken,
+  WorkspaceContextBinderToken,
+  type RunTagSyncUseCase,
+} from "#lib/tokens";
 
 const tagFs = createNodeCliFs();
-const tagSyncDeps = {
-  fs: tagFs,
-  path: nodeCliPath,
-  targetResolver: tagTargetResolverAdapter,
-  typeScriptTreeWalk: tagTypeScriptTreeWalkAdapter,
-  sinceWriter: tagSinceWriterAdapter,
-  versionResolver: new TagVersionResolverAdapter(nodeCliPath),
-};
+
+const container = Container.create();
+container.bind(CliRootDirToken).toConstantValue(process.cwd());
+container.bind(CliGlobalCliRawToken).toConstantValue(undefined);
+container
+  .bind(WorkspaceContextBinderToken)
+  .toConstantValue((args: { readonly rootDir: string; readonly globalCliRaw?: unknown }) => {
+    container.rebind(CliRootDirToken).toConstantValue(args.rootDir);
+    container.rebind(CliGlobalCliRawToken).toConstantValue(args.globalCliRaw ?? undefined);
+  });
+container.load(CoreModule, InfraModule, PresentationModule, TagModule);
+const runTagSyncUseCase = container.resolve(RunTagSyncUseCaseToken) as RunTagSyncUseCase;
 
 function withTempPackage(
   fileName: string,
@@ -163,17 +177,14 @@ describe("runTagSync", () => {
 
       const startedTargets: string[] = [];
       const completedTargets: string[] = [];
-      const tagOutcome = await runTagSync(
-        {
-          rootDir,
-          write: true,
-          listener: {
-            onTargetStarted: (target) => startedTargets.push(target.rootRelativeTargetPath),
-            onTargetCompleted: (target) => completedTargets.push(target.rootRelativeTargetPath),
-          },
+      const tagOutcome = await runTagSyncUseCase.execute({
+        rootDir,
+        write: true,
+        listener: {
+          onTargetStarted: (target) => startedTargets.push(target.rootRelativeTargetPath),
+          onTargetCompleted: (target) => completedTargets.push(target.rootRelativeTargetPath),
         },
-        tagSyncDeps,
-      );
+      });
       expect(tagOutcome.ok).toBe(true);
       if (!tagOutcome.ok) {
         throw new Error(tagOutcome.error.message);
@@ -232,14 +243,11 @@ describe("runTagSync", () => {
       fs.writeFileSync(path.join(packageOneSrcDir, "index.ts"), "export const one = 1;\n", "utf8");
       fs.writeFileSync(path.join(packageTwoSrcDir, "index.ts"), "export const two = 2;\n", "utf8");
 
-      const tagOutcome = await runTagSync(
-        {
-          rootDir,
-          write: true,
-          skipPackages: ["@scope/two"],
-        },
-        tagSyncDeps,
-      );
+      const tagOutcome = await runTagSyncUseCase.execute({
+        rootDir,
+        write: true,
+        skipPackages: ["@scope/two"],
+      });
       expect(tagOutcome.ok).toBe(true);
       if (!tagOutcome.ok) {
         throw new Error(tagOutcome.error.message);

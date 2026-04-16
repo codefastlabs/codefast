@@ -1,9 +1,9 @@
-import type { Binding } from "#lib/binding";
-import { registryKeyLabel } from "#lib/binding-select";
-import type { MetadataReader } from "#lib/decorators/metadata";
-import { ScopeViolationError } from "#lib/errors";
-import { listResolvedDependencies } from "#lib/dependency-graph";
-import type { RegistryKey } from "#lib/registry";
+import type { Binding } from "#binding";
+import { registryKeyLabel } from "#binding-select";
+import type { MetadataReader } from "#decorators/metadata";
+import { ScopeViolationError } from "#errors";
+import { listResolvedDependencies } from "#dependency-graph";
+import type { RegistryKey } from "#registry";
 
 export function validateScopeRules(context: {
   collectAllRegistryKeys(): readonly RegistryKey[];

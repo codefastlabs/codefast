@@ -1,9 +1,9 @@
-import type { BindingBuilder } from "#lib/binding";
-import type { BindingIdentifier } from "#lib/binding";
-import type { Constructor } from "#lib/binding";
-import type { DefaultContainer } from "#lib/container";
-import { DiError } from "#lib/errors";
-import type { Token } from "#lib/token";
+import type { BindingBuilder } from "#binding";
+import type { BindingIdentifier } from "#binding";
+import type { Constructor } from "#binding";
+import type { DefaultContainer } from "#container";
+import { DiError } from "#errors";
+import type { Token } from "#token";
 
 /**
  * Builder passed to synchronous module setup: register bindings and import other sync modules.

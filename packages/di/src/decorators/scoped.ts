@@ -1,5 +1,5 @@
-import { DiError } from "#lib/errors";
-import { CODEFAST_DI_CLASS_SCOPE_HINT, type ClassScopeHint } from "#lib/decorators/metadata";
+import { DiError } from "#errors";
+import { CODEFAST_DI_CLASS_SCOPE_HINT, type ClassScopeHint } from "#decorators/metadata";
 
 /**
  * Stage 3 class decorator: records a **hint** that this class prefers scoped (per-child) scope.

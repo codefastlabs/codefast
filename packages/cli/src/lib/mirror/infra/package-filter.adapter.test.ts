@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { vi } from "vitest";
 import { resolvePackageFilterUnderRoot } from "#lib/mirror/infra/package-filter.adapter";
 
 describe("resolvePackageFilterUnderRoot", () => {
@@ -8,12 +9,11 @@ describe("resolvePackageFilterUnderRoot", () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "pkg-filter-root-"));
     const pkgDir = path.join(root, "packages", "widget");
     fs.mkdirSync(pkgDir, { recursive: true });
-    const prev = process.cwd();
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(os.tmpdir());
     try {
-      process.chdir(os.tmpdir());
       expect(resolvePackageFilterUnderRoot(root, "packages/widget")).toBe("packages/widget");
     } finally {
-      process.chdir(prev);
+      cwdSpy.mockRestore();
     }
   });
 
