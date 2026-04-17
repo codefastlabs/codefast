@@ -12,8 +12,6 @@ import { TrendingUpIcon } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import type { ChartConfig } from "@codefast/ui/chart";
 
-export const description = "A multiple line chart";
-
 interface ChartDataItem {
   month: string;
   desktop: number;

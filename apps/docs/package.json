@@ -40,7 +40,6 @@
     "@unpic/react": "catalog:",
     "date-fns": "catalog:",
     "hast-util-to-string": "catalog:",
-    "html-react-parser": "catalog:",
     "input-otp": "catalog:",
     "lucide-react": "catalog:",
     "nitro": "catalog:",
@@ -72,9 +71,7 @@
     "@fontsource-variable/nunito-sans": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
-    "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
-    "@testing-library/react": "catalog:",
     "@types/hast": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -86,7 +83,6 @@
     "jsdom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "web-vitals": "catalog:"
+    "vitest": "catalog:"
   }
 }

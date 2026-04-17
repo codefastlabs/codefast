@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const SHIKI_THEME_LIGHT = "github-light";
 const SHIKI_THEME_DARK = "tokyo-night";
 
-export type ShikiCodeLang = "tsx" | "typescript" | "bash";
+type ShikiCodeLang = "tsx" | "typescript" | "bash";
 
 type ShikiThemeCodeBlockProps = {
   code: string;

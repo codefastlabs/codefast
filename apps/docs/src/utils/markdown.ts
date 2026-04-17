@@ -11,13 +11,13 @@ import { visit } from "unist-util-visit";
 import { toString } from "hast-util-to-string";
 import type { Element as HastElement, Root as HastRoot } from "hast";
 
-export type MarkdownHeading = {
+type MarkdownHeading = {
   id: string;
   text: string;
   level: number;
 };
 
-export type MarkdownResult = {
+type MarkdownResult = {
   html: string;
   headings: MarkdownHeading[];
 };
