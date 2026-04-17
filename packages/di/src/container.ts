@@ -1,4 +1,10 @@
-import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
+import type {
+  Binding,
+  BindingIdentifier,
+  Constructor,
+  ResolveHint,
+  ResolveOptions,
+} from "#/binding";
 import { BindingBuilder } from "#/binding";
 import type { MetadataReader } from "#/decorators/metadata";
 import { SymbolMetadataReader } from "#/decorators/reader";
@@ -30,9 +36,38 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
 }
 
 /**
+ * Public instance API for an IoC container (registry, modules, resolution, lifecycle).
+ */
+export interface ContainerInstance {
+  bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
+  rebind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
+  unbind(keyOrId: RegistryKey | BindingIdentifier): void;
+  unbindAsync(keyOrId: RegistryKey | BindingIdentifier): Promise<void>;
+  has(key: RegistryKey, hint?: Pick<ResolveOptions, "name" | "tag">): boolean;
+  resolve<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T;
+  resolveAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T>;
+  resolveAll<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[];
+  resolveOptional<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined;
+  load(...modules: Module[]): void;
+  loadAsync(...modules: (Module | AsyncModule)[]): Promise<void>;
+  unload(...modules: (Module | AsyncModule)[]): void;
+  unloadAsync(...modules: (Module | AsyncModule)[]): Promise<void>;
+  initialize(): void;
+  initializeAsync(): Promise<void>;
+  validate(): void;
+  inspect(): ContainerSnapshot;
+  generateDependencyGraphDot(options?: DotGraphOptions): string;
+  generateDependencyGraphJson(options?: DotGraphOptions): string;
+  createChild(): ContainerInstance;
+  lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
+  dispose(): Promise<void>;
+  disposeAsync(): Promise<void>;
+}
+
+/**
  * Default IoC container: registry + scoped caches + synchronous / asynchronous resolution.
  */
-export class DefaultContainer {
+export class DefaultContainer implements ContainerInstance {
   private readonly syncModuleStack: Module[] = [];
   private readonly asyncModuleStack: AsyncModule[] = [];
   private devValidationRan = false;
@@ -78,17 +113,36 @@ export class DefaultContainer {
   bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     return new BindingBuilder<Value>(key, undefined, {
       register: (built) => {
+        this.devValidationRan = false;
         this.registryOwned.add(key, built);
       },
       update: (built) => {
+        this.devValidationRan = false;
         this.registryOwned.replaceById(built.id, built as Binding<unknown>);
       },
     });
   }
 
-  has(key: RegistryKey): boolean {
+  has(key: RegistryKey, hint?: Pick<ResolveOptions, "name" | "tag">): boolean {
     const list = this.lookupBindings(key);
-    return list !== undefined && list.length > 0;
+    if (list === undefined || list.length === 0) {
+      return false;
+    }
+    if (hint === undefined) {
+      return true;
+    }
+    return list.some((binding) => {
+      if (hint.name !== undefined && binding.bindingName !== hint.name) {
+        return false;
+      }
+      if (hint.tag !== undefined) {
+        const tag = hint.tag;
+        if (binding.tags.get(tag[0]) !== tag[1]) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   unbind(keyOrId: RegistryKey | BindingIdentifier): void {
@@ -341,7 +395,7 @@ export class DefaultContainer {
    * Child inherits parent bindings via lookup fallback and shares singleton instances,
    * but receives an isolated scoped cache.
    */
-  createChild(): DefaultContainer {
+  createChild(): ContainerInstance {
     const childRegistry = new BindingRegistry();
     const childScope = this.scopeManagerOwned.createChildScope();
     const holder: ContainerRef = { current: undefined };
@@ -377,6 +431,10 @@ export class DefaultContainer {
 
   async dispose(): Promise<void> {
     await this.scopeManagerOwned.disposeAsync();
+  }
+
+  disposeAsync(): Promise<void> {
+    return this.dispose();
   }
 
   private bindForModule(
@@ -485,21 +543,22 @@ export class DefaultContainer {
 
 /**
  * Static factory entry point matching the design spec naming.
+ * Instance API: {@link ContainerInstance}.
  */
 export class Container {
   private constructor() {}
 
-  static create(): DefaultContainer {
+  static create(): ContainerInstance {
     return DefaultContainer.create();
   }
 
-  static fromModules(...modules: Module[]): DefaultContainer {
+  static fromModules(...modules: Module[]): ContainerInstance {
     const container = DefaultContainer.create();
     container.load(...modules);
     return container;
   }
 
-  static async fromModulesAsync(...modules: (Module | AsyncModule)[]): Promise<DefaultContainer> {
+  static async fromModulesAsync(...modules: (Module | AsyncModule)[]): Promise<ContainerInstance> {
     const container = DefaultContainer.create();
     await container.loadAsync(...modules);
     return container;

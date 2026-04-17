@@ -9,7 +9,7 @@ function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor[
     return undefined;
   }
   const [tagName, value] = tag;
-  return typeof tagName === "string" ? [tagName, value] : undefined;
+  return typeof tagName === "string" || typeof tagName === "symbol" ? [tagName, value] : undefined;
 }
 
 function toDescriptor<Value>(

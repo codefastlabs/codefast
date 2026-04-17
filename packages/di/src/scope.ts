@@ -22,26 +22,32 @@ export class ScopeManager {
   private readonly singletonStore: Map<BindingIdentifier, CacheEntry>;
   private readonly scopedStore: Map<BindingIdentifier, CacheEntry>;
   private readonly ownsSingletonDisposal: boolean;
+  private readonly pendingPromises: Map<BindingIdentifier, Promise<unknown>>;
+  private readonly scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
 
   private constructor(
     singletonStore: Map<BindingIdentifier, CacheEntry>,
     scopedStore: Map<BindingIdentifier, CacheEntry>,
     ownsSingletonDisposal: boolean,
+    pendingPromises: Map<BindingIdentifier, Promise<unknown>>,
+    scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>,
   ) {
     this.singletonStore = singletonStore;
     this.scopedStore = scopedStore;
     this.ownsSingletonDisposal = ownsSingletonDisposal;
+    this.pendingPromises = pendingPromises;
+    this.scopedPendingPromises = scopedPendingPromises;
   }
 
   static createRoot(): ScopeManager {
-    return new ScopeManager(new Map(), new Map(), true);
+    return new ScopeManager(new Map(), new Map(), true, new Map(), new Map());
   }
 
   /**
    * Shares the parent singleton cache; receives a fresh scoped cache (for child containers).
    */
   createChildScope(): ScopeManager {
-    return new ScopeManager(this.singletonStore, new Map(), false);
+    return new ScopeManager(this.singletonStore, new Map(), false, this.pendingPromises, new Map());
   }
 
   /**
@@ -80,14 +86,29 @@ export class ScopeManager {
     }
 
     const store = binding.scope === "singleton" ? this.singletonStore : this.scopedStore;
+    const pendingMap =
+      binding.scope === "singleton" ? this.pendingPromises : this.scopedPendingPromises;
     const cached = store.get(binding.id);
     if (cached !== undefined) {
       return cached.instance;
     }
 
-    const instance = await createInstance();
-    store.set(binding.id, { binding, instance });
-    return instance;
+    const existingPending = pendingMap.get(binding.id);
+    if (existingPending !== undefined) {
+      return existingPending;
+    }
+
+    const promise = (async () => {
+      try {
+        const instance = await createInstance();
+        store.set(binding.id, { binding, instance });
+        return instance;
+      } finally {
+        pendingMap.delete(binding.id);
+      }
+    })();
+    pendingMap.set(binding.id, promise);
+    return promise;
   }
 
   /**
@@ -151,7 +172,7 @@ export class ScopeManager {
     }
     store.delete(bindingId);
     const handler = entry.binding.onDeactivation;
-    if (handler === undefined || entry.binding.scope !== "singleton") {
+    if (handler === undefined) {
       return;
     }
     const result = handler(entry.instance);
@@ -172,7 +193,7 @@ export class ScopeManager {
     }
     store.delete(bindingId);
     const handler = entry.binding.onDeactivation;
-    if (handler === undefined || entry.binding.scope !== "singleton") {
+    if (handler === undefined) {
       return;
     }
     await handler(entry.instance);
@@ -183,7 +204,7 @@ export class ScopeManager {
     store.clear();
     for (const entry of entries) {
       const handler = entry.binding.onDeactivation;
-      if (handler === undefined || entry.binding.scope !== "singleton") {
+      if (handler === undefined) {
         continue;
       }
       const result = handler(entry.instance);
@@ -200,7 +221,7 @@ export class ScopeManager {
     store.clear();
     for (const entry of entries) {
       const handler = entry.binding.onDeactivation;
-      if (handler === undefined || entry.binding.scope !== "singleton") {
+      if (handler === undefined) {
         continue;
       }
       await handler(entry.instance);

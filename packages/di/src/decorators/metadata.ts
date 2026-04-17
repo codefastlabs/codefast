@@ -28,14 +28,14 @@ export type ParamMetadata = {
   readonly token: Token<unknown> | Constructor<unknown>;
   readonly optional: boolean;
   readonly name?: string;
-  readonly tag?: readonly [tag: string, value: unknown];
+  readonly tag?: readonly [tag: string | symbol, value: unknown];
 };
 
 export type InjectionDescriptor<Value = unknown> = {
   readonly token: Token<Value> | Constructor<Value>;
   readonly optional: boolean;
   readonly name?: string;
-  readonly tag?: readonly [tag: string, value: unknown];
+  readonly tag?: readonly [tag: string | symbol, value: unknown];
 };
 
 /**
