@@ -48,7 +48,11 @@ function addDeclarationName(
     registry.set(name, new Set([declaration]));
     return;
   }
-  registry.get(name)!.add(declaration);
+  const bucket = registry.get(name);
+  if (bucket === undefined) {
+    throw new Error(`declaration registry missing set for ${name}`);
+  }
+  bucket.add(declaration);
 }
 
 function collectLocalNamedDeclarations(sf: ts.SourceFile): Map<string, Set<TaggableDeclaration>> {

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { render, renderHook, screen } from "@testing-library/react";
 
-import type { ThemeContextType } from "#/types";
+import type { Theme, ThemeContextType } from "#/types";
 
 import { ThemeContext } from "#/core/context";
 import { useTheme } from "#/core/use-theme";
@@ -38,7 +38,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "dark",
-        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
+        setTheme: vi.fn(async (_value: Theme) => {}),
         theme: "dark",
       };
 
@@ -53,7 +53,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "light",
-        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
+        setTheme: vi.fn(async (_value: Theme) => {}),
         theme: "system",
       };
 
@@ -68,7 +68,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: true,
         resolvedTheme: "dark",
-        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
+        setTheme: vi.fn(async (_value: Theme) => {}),
         theme: "dark",
       };
 
@@ -80,7 +80,7 @@ describe("useTheme Hook", () => {
     });
 
     test("should return setTheme function from context", () => {
-      const mockSetTheme = vi.fn<(...args: unknown[]) => unknown>();
+      const mockSetTheme = vi.fn(async (_value: Theme) => {});
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "dark",
@@ -99,7 +99,7 @@ describe("useTheme Hook", () => {
       const mockValue: ThemeContextType = {
         isPending: false,
         resolvedTheme: "dark",
-        setTheme: vi.fn<(...args: unknown[]) => unknown>(),
+        setTheme: vi.fn(async (_value: Theme) => {}),
         theme: "dark",
       };
 

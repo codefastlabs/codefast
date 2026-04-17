@@ -79,6 +79,11 @@ export class DependencyResolver {
       );
     }
     const binding = candidates[0];
+    if (binding === undefined) {
+      throw new DiError(
+        `Internal: expected single binding candidate for "${label}" (resolution path: ${pathLabels.join(" -> ")})`,
+      );
+    }
     this.assertDependencyScopeAllowed(binding, pathLabels, []);
     if (binding.kind === "async-dynamic") {
       throw new AsyncResolutionError(

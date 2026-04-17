@@ -25,6 +25,9 @@ describe("formatTargetTable", () => {
     const headerLine = lines[3];
     const firstDataLine = lines[5];
     const secondDataLine = lines[6];
+    if (headerLine === undefined || firstDataLine === undefined || secondDataLine === undefined) {
+      throw new Error("expected table lines");
+    }
 
     const pathHeaderIndex = headerLine.indexOf("path");
     const firstPathIndex = firstDataLine.indexOf("packages/core/src");

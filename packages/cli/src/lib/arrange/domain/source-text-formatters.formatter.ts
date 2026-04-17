@@ -21,6 +21,9 @@ export function formatCnArguments(
   const lines: string[] = [];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
+    if (group === undefined) {
+      throw new Error("invariant: formatCnArguments group missing");
+    }
     const comma = i < groups.length - 1 || commaAfterLast ? "," : "";
     lines.push(`${indent}"${escapeTsStringLiteralContent(group)}"${comma}`);
   }
@@ -35,6 +38,9 @@ export function formatCnCall(groups: string[], options?: { trailingClassName?: b
   const commaOnEachStringLine = groups.length > 1 || Boolean(options?.trailingClassName);
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
+    if (group === undefined) {
+      throw new Error("invariant: formatCnCall group missing");
+    }
     const comma = commaOnEachStringLine ? "," : "";
     lines.push(`  "${escapeTsStringLiteralContent(group)}"${comma}`);
   }
@@ -49,6 +55,9 @@ export function formatArray(groups: string[]): string {
   const lines: string[] = ["["];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
+    if (group === undefined) {
+      throw new Error("invariant: formatArray group missing");
+    }
     const comma = i < groups.length - 1 || groups.length > 1 ? "," : "";
     lines.push(`  "${escapeTsStringLiteralContent(group)}"${comma}`);
   }

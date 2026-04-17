@@ -78,7 +78,13 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
   // Process each variant group using cached keys
   for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
     const variantKey = cachedVariantKeys[index];
+    if (variantKey === undefined) {
+      continue;
+    }
     const variantGroup = mergedVariantGroups[variantKey];
+    if (variantGroup === undefined) {
+      continue;
+    }
     const variantValue = variantProps[variantKey];
 
     let resolvedValue: string | undefined;
@@ -118,7 +124,10 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
 
     // Use for loop instead of spread for better performance
     for (let index = 0, length = compoundVariantClasses.length; index < length; index++) {
-      resolvedClasses[classIndex++] = compoundVariantClasses[index];
+      const compoundClass = compoundVariantClasses[index];
+      if (compoundClass !== undefined) {
+        resolvedClasses[classIndex++] = compoundClass;
+      }
     }
   }
 
@@ -281,6 +290,9 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
 
   for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
     const key = cachedVariantKeys[index];
+    if (key === undefined) {
+      continue;
+    }
     const keyString = key as string;
     const defaultValue = (mergedDefaultVariantProps as Record<string, unknown>)[keyString];
     const variantGroup = (mergedVariantGroups as Record<string, Record<string, unknown>>)[
@@ -294,7 +306,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
           : defaultValue === false
             ? "false"
             : (defaultValue as string);
-    } else if ("true" in variantGroup || "false" in variantGroup) {
+    } else if (variantGroup !== undefined && ("true" in variantGroup || "false" in variantGroup)) {
       // Boolean variant default
       precomputedDefaults[keyString] = "false";
     }

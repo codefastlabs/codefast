@@ -144,12 +144,18 @@ export function unwrapCnInsideTvCallReplacement(
   const baseIndent = indentOfLineContaining(sourceText, call.pos);
   const innerIndent = `${baseIndent}  `;
   if (args.length === 1) {
-    const firstArg = args[0]!;
+    const firstArg = args[0];
+    if (firstArg === undefined) {
+      return undefined;
+    }
     return sourceText.slice(firstArg.pos, firstArg.end);
   }
   const lines: string[] = ["["];
   for (let i = 0; i < args.length; i++) {
-    const arg = args[i]!;
+    const arg = args[i];
+    if (arg === undefined) {
+      throw new Error("invariant: unwrapCnInsideTvCall argument missing");
+    }
     const piece = sourceText.slice(arg.pos, arg.end);
     // Trailing comma on every element — intentional (Prettier-compatible style;
     // keeps array diffs clean when arguments are later added or removed).

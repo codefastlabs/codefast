@@ -1,7 +1,7 @@
 {
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "#/*": ["./src/*"]
     }

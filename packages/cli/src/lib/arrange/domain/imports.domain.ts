@@ -66,7 +66,11 @@ export function ensureCnImport(sourceFile: DomainSourceFile, cnImportOverride?: 
   ) {
     const elements = decl.importClause.namedBindings.elements;
     if (elements.length > 0) {
-      const pos = elements[0].pos;
+      const firstElement = elements[0];
+      if (firstElement === undefined) {
+        return sourceText;
+      }
+      const pos = firstElement.pos;
       return `${sourceText.slice(0, pos)}cn, ${sourceText.slice(pos)}`;
     }
   }

@@ -12,6 +12,25 @@ const LAYERS = new Set(["domain", "application", "infra", "presentation"]);
 /** Import roots that any product slice may depend on without going "through" another slice. */
 const NEUTRAL_LIB_IMPORT_ROOTS = new Set(["core", "config", "infra", "shared"]);
 
+/** Internal imports: tsconfig `#/*` → `src/*`. */
+const INTERNAL_LIB_PREFIX = "#/lib/";
+
+function pathAfterInternalLibPrefix(specifier: string): string | null {
+  if (!specifier.startsWith(INTERNAL_LIB_PREFIX)) {
+    return null;
+  }
+  return specifier.slice(INTERNAL_LIB_PREFIX.length);
+}
+
+function internalLibSpecifierSegmentList(specifier: string): string[] | null {
+  const afterPrefix = pathAfterInternalLibPrefix(specifier);
+  if (afterPrefix === null) {
+    return null;
+  }
+  const segments = afterPrefix.split(PATH_SEPARATOR).filter(Boolean);
+  return segments.length === 0 ? null : segments;
+}
+
 function normalizePathSeparators(pathValue: string): string {
   return pathValue.split("\\").join(PATH_SEPARATOR);
 }
@@ -66,7 +85,8 @@ function sharedSourceCodeLayerFromSpecifier(segments: string[]): string | null {
   if (segments.length < 3 || segments[0] !== "shared" || segments[1] !== "source-code") {
     return null;
   }
-  return segments[2]!;
+  const layer = segments[2];
+  return layer ?? null;
 }
 
 export type LibSourceLocation = {
@@ -75,24 +95,34 @@ export type LibSourceLocation = {
 };
 
 /**
- * Extract `#lib/...` and relative import specifiers from TypeScript source (static `from` / `import("...")` only).
+ * Extract `#/lib/...` and relative import specifiers from TypeScript source
+ * (static `from` / `import("...")` only).
  */
 export function extractImportSpecifiers(sourceText: string): string[] {
   const specifiers: string[] = [];
   const fromPattern = /\bfrom\s+["']([^"']+)["']/g;
   let fromMatch: RegExpExecArray | null;
   while ((fromMatch = fromPattern.exec(sourceText)) !== null) {
-    specifiers.push(fromMatch[1]);
+    const cap = fromMatch[1];
+    if (cap !== undefined) {
+      specifiers.push(cap);
+    }
   }
   const importOnlyPattern = /^\s*import\s+["']([^"']+)["']\s*;/gm;
   let importOnlyMatch: RegExpExecArray | null;
   while ((importOnlyMatch = importOnlyPattern.exec(sourceText)) !== null) {
-    specifiers.push(importOnlyMatch[1]);
+    const cap = importOnlyMatch[1];
+    if (cap !== undefined) {
+      specifiers.push(cap);
+    }
   }
   const importCallPattern = /\bimport\s*\(\s*["']([^"']+)["']\s*\)/g;
   let importCallMatch: RegExpExecArray | null;
   while ((importCallMatch = importCallPattern.exec(sourceText)) !== null) {
-    specifiers.push(importCallMatch[1]);
+    const cap = importCallMatch[1];
+    if (cap !== undefined) {
+      specifiers.push(cap);
+    }
   }
   return specifiers;
 }
@@ -118,8 +148,8 @@ export function parseLibSourceLocation(absoluteFilePath: string): LibSourceLocat
   }
 
   if (parts[0] === "shared" && parts[1] === "source-code" && parts.length >= 3) {
-    const layer = parts[2]!;
-    if (!LAYERS.has(layer)) {
+    const layer = parts[2];
+    if (layer === undefined || !LAYERS.has(layer)) {
       return null;
     }
     const rest = parts.slice(3);
@@ -129,8 +159,10 @@ export function parseLibSourceLocation(absoluteFilePath: string): LibSourceLocat
     return { context: SHARED_SOURCE_CODE_CONTEXT, layer };
   }
 
-  const [context, layer, ...rest] = parts;
-  if (!LAYERS.has(layer)) {
+  const context = parts[0];
+  const layer = parts[1];
+  const rest = parts.slice(2);
+  if (context === undefined || layer === undefined || !LAYERS.has(layer)) {
     return null;
   }
   if (layer === "domain" && rest[0] === "__tests__") {
@@ -165,15 +197,15 @@ function libTailAfterResolution(absoluteResolved: string): string[] | null {
 }
 
 function lastSegmentOfLibSpecifier(specifier: string): string | null {
-  if (!specifier.startsWith("#lib/")) {
+  const segments = internalLibSpecifierSegmentList(specifier);
+  if (segments === null) {
     return null;
   }
-  const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
-  return segments.length > 0 ? segments[segments.length - 1]! : null;
+  return segments[segments.length - 1] ?? null;
 }
 
 function importedModuleStem(specifier: string, fromAbsoluteFile: string): string | null {
-  if (specifier.startsWith("#lib/")) {
+  if (pathAfterInternalLibPrefix(specifier) !== null) {
     return lastSegmentOfLibSpecifier(specifier);
   }
   const resolved = resolveRelativeSpecifier(fromAbsoluteFile, specifier);
@@ -239,20 +271,17 @@ function violationRuleCAntiCrossSlice(
   if (!PRODUCT_BOUNDED_CONTEXTS.has(loc.context)) {
     return null;
   }
-  if (specifier.startsWith("#lib/")) {
-    const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
-    if (segments.length === 0) {
-      return null;
-    }
-    const importedRoot = segments[0]!;
-    if (NEUTRAL_LIB_IMPORT_ROOTS.has(importedRoot)) {
+  const ruleCSegments = internalLibSpecifierSegmentList(specifier);
+  if (ruleCSegments !== null) {
+    const importedRoot = ruleCSegments[0];
+    if (importedRoot === undefined || NEUTRAL_LIB_IMPORT_ROOTS.has(importedRoot)) {
       return null;
     }
     if (importedRoot === loc.context) {
       return null;
     }
     if (PRODUCT_BOUNDED_CONTEXTS.has(importedRoot)) {
-      return `${fromAbsoluteFile}: Rule C (slice isolation) context "${loc.context}" must not import "${specifier}" — use #lib/shared/... or neutral roots (core, config, infra) instead`;
+      return `${fromAbsoluteFile}: Rule C (slice isolation) context "${loc.context}" must not import "${specifier}" — use #/lib/shared/... or neutral roots (core, config, infra) instead`;
     }
     return null;
   }
@@ -265,8 +294,8 @@ function violationRuleCAntiCrossSlice(
   if (parts === null || parts.length === 0) {
     return null;
   }
-  const importedContext = parts[0]!;
-  if (NEUTRAL_LIB_IMPORT_ROOTS.has(importedContext)) {
+  const importedContext = parts[0];
+  if (importedContext === undefined || NEUTRAL_LIB_IMPORT_ROOTS.has(importedContext)) {
     return null;
   }
   if (importedContext === loc.context) {
@@ -283,11 +312,9 @@ function violationDomainLayer(
   specifier: string,
   fromAbsoluteFile: string,
 ): string | null {
-  if (specifier.startsWith("#lib/")) {
-    const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
-    if (segments.length === 0) {
-      return null;
-    }
+  const domainSegments = internalLibSpecifierSegmentList(specifier);
+  if (domainSegments !== null) {
+    const segments = domainSegments;
     if (segments[0] === "infra") {
       return `${fromAbsoluteFile}: domain must not import ${specifier}`;
     }
@@ -305,11 +332,13 @@ function violationDomainLayer(
         return `${fromAbsoluteFile}: domain must not import ${specifier}`;
       }
     }
+    const segmentZero = segments[0];
     if (
       segments.length >= 2 &&
       segments[1] === "domain" &&
-      PRODUCT_BOUNDED_CONTEXTS.has(segments[0]) &&
-      segments[0] !== loc.context
+      segmentZero !== undefined &&
+      PRODUCT_BOUNDED_CONTEXTS.has(segmentZero) &&
+      segmentZero !== loc.context
     ) {
       return `${fromAbsoluteFile}: domain (${loc.context}) must not import other bounded context domain ${specifier}`;
     }
@@ -317,7 +346,8 @@ function violationDomainLayer(
       loc.context === "core" &&
       segments.length >= 2 &&
       segments[1] === "domain" &&
-      PRODUCT_BOUNDED_CONTEXTS.has(segments[0])
+      segmentZero !== undefined &&
+      PRODUCT_BOUNDED_CONTEXTS.has(segmentZero)
     ) {
       return `${fromAbsoluteFile}: core/domain must not import bounded context domain ${specifier}`;
     }
@@ -325,11 +355,16 @@ function violationDomainLayer(
       loc.context === "config" &&
       segments.length >= 2 &&
       segments[1] === "domain" &&
-      PRODUCT_BOUNDED_CONTEXTS.has(segments[0])
+      segmentZero !== undefined &&
+      PRODUCT_BOUNDED_CONTEXTS.has(segmentZero)
     ) {
       return `${fromAbsoluteFile}: config/domain must not import bounded context domain ${specifier}`;
     }
-    if (loc.context === SHARED_SOURCE_CODE_CONTEXT && PRODUCT_BOUNDED_CONTEXTS.has(segments[0])) {
+    if (
+      loc.context === SHARED_SOURCE_CODE_CONTEXT &&
+      segmentZero !== undefined &&
+      PRODUCT_BOUNDED_CONTEXTS.has(segmentZero)
+    ) {
       return `${fromAbsoluteFile}: shared source-code domain must not import product context ${specifier}`;
     }
     return null;
@@ -343,7 +378,11 @@ function violationDomainLayer(
   if (parts === null || parts.length < 2) {
     return null;
   }
-  const [relCtx, relLayer] = parts;
+  const relCtx = parts[0];
+  const relLayer = parts[1];
+  if (relCtx === undefined || relLayer === undefined) {
+    return null;
+  }
   if (relCtx === "infra") {
     return `${fromAbsoluteFile}: domain must not resolve into infra via ${specifier}`;
   }
@@ -366,11 +405,9 @@ function violationApplicationLayer(
   specifier: string,
   fromAbsoluteFile: string,
 ): string | null {
-  if (specifier.startsWith("#lib/")) {
-    const segments = specifier.slice("#lib/".length).split("/").filter(Boolean);
-    if (segments.length === 0) {
-      return null;
-    }
+  const applicationSegments = internalLibSpecifierSegmentList(specifier);
+  if (applicationSegments !== null) {
+    const segments = applicationSegments;
     if (segments[0] === "infra") {
       return `${fromAbsoluteFile}: application must not import ${specifier}`;
     }
@@ -385,10 +422,12 @@ function violationApplicationLayer(
     if (segments.length >= 2 && (segments[1] === "infra" || segments[1] === "presentation")) {
       return `${fromAbsoluteFile}: application must not import ${specifier}`;
     }
+    const appSegmentZero = segments[0];
     if (
       PRODUCT_BOUNDED_CONTEXTS.has(loc.context) &&
-      PRODUCT_BOUNDED_CONTEXTS.has(segments[0]) &&
-      segments[0] !== loc.context
+      appSegmentZero !== undefined &&
+      PRODUCT_BOUNDED_CONTEXTS.has(appSegmentZero) &&
+      appSegmentZero !== loc.context
     ) {
       return `${fromAbsoluteFile}: application (${loc.context}) must not import ${specifier}`;
     }
@@ -402,7 +441,11 @@ function violationApplicationLayer(
   if (parts === null || parts.length < 2) {
     return null;
   }
-  const [relCtx, relLayer] = parts;
+  const relCtx = parts[0];
+  const relLayer = parts[1];
+  if (relCtx === undefined || relLayer === undefined) {
+    return null;
+  }
   if (relCtx === "infra") {
     return `${fromAbsoluteFile}: application must not resolve into infra via ${specifier}`;
   }

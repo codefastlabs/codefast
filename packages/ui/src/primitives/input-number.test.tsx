@@ -52,7 +52,7 @@ describe("input-number", () => {
     });
 
     test("works in controlled mode", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       const { rerender } = render(
@@ -177,7 +177,7 @@ describe("input-number", () => {
     });
 
     test("should handle Enter key press to confirm entered value", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -201,7 +201,7 @@ describe("input-number", () => {
     });
 
     test("should handle Enter key press with percentage values", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -232,7 +232,7 @@ describe("input-number", () => {
     });
 
     test("should respect min/max constraints when pressing Enter", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -267,7 +267,7 @@ describe("input-number", () => {
     });
 
     test("should handle Enter correctly with invalid values", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -347,7 +347,7 @@ describe("input-number", () => {
 
     test("should decrement value on wheel up event when input is focused", async () => {
       const user = userEvent.setup();
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
 
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
@@ -368,7 +368,7 @@ describe("input-number", () => {
     });
 
     test("should increment value on wheel down event when input is focused", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -390,7 +390,7 @@ describe("input-number", () => {
     });
 
     test("should respect min/max constraints on wheel events", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -446,7 +446,7 @@ describe("input-number", () => {
     });
 
     test("should honor step value when using wheel events", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -471,7 +471,7 @@ describe("input-number", () => {
     });
 
     test("should not respond to wheel events when disabled", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -494,7 +494,7 @@ describe("input-number", () => {
     });
 
     test("should not respond to wheel events when not focused", () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
 
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
@@ -513,7 +513,7 @@ describe("input-number", () => {
     });
 
     test("right-clicking on increment/decrement buttons should affect the value like left clicking", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -566,7 +566,7 @@ describe("input-number", () => {
       });
 
       test("should increment continuously when increment button is pressed and held", async () => {
-        const onChange = vi.fn<(...args: unknown[]) => unknown>();
+        const onChange = vi.fn();
 
         render(
           <InputNumber data-testid="input-number" defaultValue={5} onChange={onChange}>
@@ -608,7 +608,7 @@ describe("input-number", () => {
       });
 
       test("should decrement continuously when decrement button is pressed and held", async () => {
-        const onChange = vi.fn<(...args: unknown[]) => unknown>();
+        const onChange = vi.fn();
 
         render(
           <InputNumber data-testid="input-number" defaultValue={10} onChange={onChange}>
@@ -816,7 +816,7 @@ describe("input-number", () => {
 
       await user.click(input);
 
-      const preventDefaultMock = vi.fn<(...args: unknown[]) => unknown>();
+      const preventDefaultMock = vi.fn();
 
       const functionKeys = ["F1", "F5", "F12"];
 
@@ -880,7 +880,7 @@ describe("input-number", () => {
   describe("InputNumberItem", () => {
     test("handles direct user input", async () => {
       const user = userEvent.setup();
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
 
       render(
         <InputNumber defaultValue={10} onChange={handleChange}>
@@ -925,7 +925,7 @@ describe("input-number", () => {
     });
 
     test("handles keyboard navigation", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -1060,7 +1060,7 @@ describe("input-number", () => {
 
   describe("InputNumber Integration Tests", () => {
     test("works together as a complete component", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -1127,7 +1127,7 @@ describe("input-number", () => {
     });
 
     test("handles invalid user input gracefully", async () => {
-      const handleChange = vi.fn<(...args: unknown[]) => unknown>();
+      const handleChange = vi.fn();
       const user = userEvent.setup();
 
       render(

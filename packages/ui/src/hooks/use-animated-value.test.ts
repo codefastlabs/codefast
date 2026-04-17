@@ -9,15 +9,13 @@ describe("useAnimatedValue", () => {
   // Improve mocks to ensure proper functionality
   let animationFrameCallback: ((time: number) => void) | null = null;
 
-  const requestAnimationFrameMock = vi.fn<(...args: unknown[]) => unknown>(
-    (callback: FrameRequestCallback): number => {
-      animationFrameCallback = callback;
+  const requestAnimationFrameMock = vi.fn((callback: FrameRequestCallback): number => {
+    animationFrameCallback = callback;
 
-      return 1; // Return a fake ID
-    },
-  );
+    return 1; // Return a fake ID
+  });
 
-  const cancelAnimationFrameMock = vi.fn<(...args: unknown[]) => unknown>();
+  const cancelAnimationFrameMock = vi.fn();
 
   // Mock for performance.now
   let currentTime: number;

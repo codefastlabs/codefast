@@ -62,15 +62,15 @@ describe("DOM Utilities", () => {
     beforeEach(() => {
       // Mock matchMedia to NOT prefer reduced motion
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation(() => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: false, // prefers-reduced-motion: reduce is FALSE
           media: "",
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });
@@ -162,17 +162,17 @@ describe("DOM Utilities", () => {
 
     test("should do nothing when prefers-reduced-motion is enabled", () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(query: string) => MediaQueryList>().mockImplementation(
+        value: vi.fn().mockImplementation(
           (query: string) =>
             ({
-              addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-              addListener: vi.fn<(...args: unknown[]) => unknown>(),
-              dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+              addEventListener: vi.fn(),
+              addListener: vi.fn(),
+              dispatchEvent: vi.fn(),
               matches: query === "(prefers-reduced-motion: reduce)", // prefers-reduced-motion is TRUE
               media: query,
               onchange: null,
-              removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-              removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+              removeEventListener: vi.fn(),
+              removeListener: vi.fn(),
             }) as unknown as MediaQueryList,
         ),
         writable: true,

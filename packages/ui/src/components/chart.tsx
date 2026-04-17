@@ -190,13 +190,17 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
       return null;
     }
 
-    const [item] = payload;
+    const item = payload[0];
+    if (item === undefined) {
+      return null;
+    }
     const key = safeToString(labelKey ?? item.dataKey ?? item.name ?? "value");
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
+    const configEntry = typeof label === "string" && label in config ? config[label] : undefined;
     const value =
       !labelKey && typeof label === "string"
-        ? label in config
-          ? (config[label].label ?? label)
+        ? configEntry !== undefined
+          ? (configEntry.label ?? label)
           : label
         : itemConfig?.label;
 

@@ -12,16 +12,14 @@ function emptyDomainSourceFile(fileName: string): DomainSourceFile {
 describe("analyzeDirectory use case", () => {
   it("returns ok with aggregated report for a single file target", () => {
     const mockFs = {
-      statSync: vi.fn<(...args: unknown[]) => unknown>(() => ({ isDirectory: () => false })),
-      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => "export const x = 1;"),
+      statSync: vi.fn(() => ({ isDirectory: () => false })),
+      readFileSync: vi.fn(() => "export const x = 1;"),
     };
     const mockTargetScanner = {
-      scanTarget: vi.fn<(...args: unknown[]) => unknown>(() => ["/src/one.ts"]),
+      scanTarget: vi.fn(() => ["/src/one.ts"]),
     };
     const mockParser = {
-      parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>(() =>
-        emptyDomainSourceFile("/src/one.ts"),
-      ),
+      parseDomainSourceFile: vi.fn(() => emptyDomainSourceFile("/src/one.ts")),
     };
     const subject = new AnalyzeDirectoryUseCaseImpl(
       mockFs as unknown as CliFs,
@@ -43,16 +41,14 @@ describe("analyzeDirectory use case", () => {
 
   it("walks directory targets before reading each file", () => {
     const mockFs = {
-      statSync: vi.fn<(...args: unknown[]) => unknown>(() => ({ isDirectory: () => true })),
-      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => ""),
+      statSync: vi.fn(() => ({ isDirectory: () => true })),
+      readFileSync: vi.fn(() => ""),
     };
     const mockTargetScanner = {
-      scanTarget: vi.fn<(...args: unknown[]) => unknown>(() => ["/pkg/a.ts", "/pkg/b.ts"]),
+      scanTarget: vi.fn(() => ["/pkg/a.ts", "/pkg/b.ts"]),
     };
     const mockParser = {
-      parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>((filePath: string) =>
-        emptyDomainSourceFile(filePath),
-      ),
+      parseDomainSourceFile: vi.fn((filePath: string) => emptyDomainSourceFile(filePath)),
     };
     const subject = new AnalyzeDirectoryUseCaseImpl(
       mockFs as unknown as CliFs,
@@ -73,15 +69,15 @@ describe("analyzeDirectory use case", () => {
 
   it("returns INFRA_FAILURE when the filesystem throws", () => {
     const mockFs = {
-      statSync: vi.fn<(...args: unknown[]) => unknown>(() => {
+      statSync: vi.fn(() => {
         throw new Error("disk unavailable");
       }),
-      readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+      readFileSync: vi.fn(),
     };
     const subject = new AnalyzeDirectoryUseCaseImpl(
       mockFs as unknown as CliFs,
-      { scanTarget: vi.fn<(...args: unknown[]) => unknown>() },
-      { parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>() },
+      { scanTarget: vi.fn() },
+      { parseDomainSourceFile: vi.fn() },
     );
     const outcome = subject.execute({ analyzeRootPath: "/any" });
     expect(outcome.ok).toBe(false);

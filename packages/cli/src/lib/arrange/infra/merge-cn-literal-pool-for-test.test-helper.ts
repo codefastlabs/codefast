@@ -18,6 +18,9 @@ export function mergeCnUnconditionalLiteralPoolForTest(
   const sourceText = `${callee}(${argsSnippet});`;
   const domainSf = parseDomainSourceFile("mergeCnUnconditionalLiteralPoolForTest.ts", sourceText);
   const stmt = domainSf.statements[0];
+  if (stmt === undefined) {
+    throw new Error("expected one statement");
+  }
   if (!isDomainExpressionStatement(stmt)) {
     throw new Error("expected expression statement");
   }

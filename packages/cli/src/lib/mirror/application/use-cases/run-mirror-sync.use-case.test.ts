@@ -13,37 +13,29 @@ function minimalRequest(overrides: Partial<MirrorSyncRunRequest> = {}): MirrorSy
 
 describe("runMirrorSync use case", () => {
   it("returns INFRA_FAILURE when workspace resolution throws inside the sync try block", async () => {
-    const syncExportsForWorkspacePackage =
-      vi.fn<SyncWorkspacePackageService["syncExportsForWorkspacePackage"]>();
+    const syncExportsForWorkspacePackage = vi.fn();
     const syncWorkspacePackage: SyncWorkspacePackageService = {
       syncExportsForWorkspacePackage,
     };
     const subject = new RunMirrorSyncUseCaseImpl(
       {} as CliFs,
       {
-        out: vi.fn<(...args: unknown[]) => unknown>(),
-        err: vi.fn<(...args: unknown[]) => unknown>(),
+        out: vi.fn(),
+        err: vi.fn(),
       },
       {
-        resolvePackageFilterUnderRoot: vi.fn<
-          ConstructorParameters<typeof RunMirrorSyncUseCaseImpl>[2]["resolvePackageFilterUnderRoot"]
-        >(() => {
+        resolvePackageFilterUnderRoot: vi.fn(() => {
           throw new Error("resolve failed");
         }),
-        findWorkspacePackageRelPaths:
-          vi.fn<
-            ConstructorParameters<
-              typeof RunMirrorSyncUseCaseImpl
-            >[2]["findWorkspacePackageRelPaths"]
-          >(),
+        findWorkspacePackageRelPaths: vi.fn(),
       },
       {
-        configureMirrorColors: vi.fn<(...args: unknown[]) => unknown>(),
-        mirrorBanner: vi.fn<(...args: unknown[]) => unknown>(),
-        mirrorProcessingMode: vi.fn<(...args: unknown[]) => unknown>(),
-        mirrorNoPackages: vi.fn<(...args: unknown[]) => unknown>(),
-        mirrorSummarySeparator: vi.fn<(...args: unknown[]) => unknown>(),
-        mirrorSummary: vi.fn<(...args: unknown[]) => unknown>(),
+        configureMirrorColors: vi.fn(),
+        mirrorBanner: vi.fn(),
+        mirrorProcessingMode: vi.fn(),
+        mirrorNoPackages: vi.fn(),
+        mirrorSummarySeparator: vi.fn(),
+        mirrorSummary: vi.fn(),
       } as unknown as MirrorSyncReporterPort,
       syncWorkspacePackage,
     );

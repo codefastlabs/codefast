@@ -56,7 +56,11 @@ interface InputOTPSlotProps extends ComponentProps<"div"> {
 
 function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.Element {
   const inputOTPContext = use(OTPInputContext);
-  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index];
+  const slot = inputOTPContext.slots[index];
+  if (slot === undefined) {
+    throw new Error(`InputOTPSlot: no slot at index ${index}`);
+  }
+  const { char, hasFakeCaret, isActive } = slot;
 
   return (
     <div

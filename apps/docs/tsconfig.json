@@ -10,6 +10,7 @@
 
     /* Modules */
     "module": "ESNext",
+    "moduleDetection": "force",
     "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "isolatedModules": true,

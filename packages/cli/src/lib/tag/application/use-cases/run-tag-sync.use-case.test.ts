@@ -19,11 +19,11 @@ type TagSyncUseCaseDeps = {
 };
 
 const mockVersionResolver: TagSyncUseCaseDeps["versionResolver"] = {
-  resolveNearestPackageVersion: vi.fn<(...args: unknown[]) => unknown>(() => "1.0.0"),
+  resolveNearestPackageVersion: vi.fn(() => "1.0.0"),
 };
 
 const mockSinceWriter: TagSyncUseCaseDeps["sinceWriter"] = {
-  applySinceTagsToFile: vi.fn<(...args: unknown[]) => unknown>((filePath: string) => ({
+  applySinceTagsToFile: vi.fn((filePath: string) => ({
     filePath,
     taggedDeclarations: 1,
     changed: true,
@@ -49,16 +49,16 @@ describe("runTagSync use case", () => {
   it("returns ok with no targets when resolver yields no candidates", async () => {
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>(),
-        statSync: vi.fn<(...args: unknown[]) => unknown>(),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        existsSync: vi.fn(),
+        statSync: vi.fn(),
+        readFileSync: vi.fn(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => []),
+        resolveTagTargetCandidates: vi.fn(async () => []),
       },
       typeScriptTreeWalk: {
-        walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(),
+        walkTsxFiles: vi.fn(),
       },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
@@ -80,11 +80,11 @@ describe("runTagSync use case", () => {
     const deps: TagSyncUseCaseDeps = {
       fs: {} as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => {
+        resolveTagTargetCandidates: vi.fn(async () => {
           throw new Error("resolver boom");
         }),
       },
-      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>() },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn() },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
@@ -107,15 +107,15 @@ describe("runTagSync use case", () => {
     };
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>(() => false),
-        statSync: vi.fn<(...args: unknown[]) => unknown>(),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        existsSync: vi.fn(() => false),
+        statSync: vi.fn(),
+        readFileSync: vi.fn(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>() },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn() },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
@@ -143,28 +143,28 @@ describe("runTagSync use case", () => {
     };
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        existsSync: vi.fn((p: string) => {
           const n = toPosix(p);
           return n.endsWith("/packages/a/src") || n.endsWith("/packages/a/package.json");
         }),
-        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        statSync: vi.fn((p: string) => {
           const n = toPosix(p);
           return {
             isDirectory: () => n.endsWith("/packages/a/src") || n.endsWith("/packages/a"),
           };
         }),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        readFileSync: vi.fn((p: string) => {
           if (toPosix(p).endsWith("/packages/a/package.json")) {
             return JSON.stringify({ version: "9.9.9" });
           }
           return "";
         }),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(() => []) },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn(() => []) },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
@@ -188,24 +188,22 @@ describe("runTagSync use case", () => {
     };
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) =>
-          toPosix(p).endsWith("/packages/a/package.json"),
-        ),
-        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => ({
+        existsSync: vi.fn((p: string) => toPosix(p).endsWith("/packages/a/package.json")),
+        statSync: vi.fn((p: string) => ({
           isDirectory: () => toPosix(p).endsWith("/packages/a"),
         })),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        readFileSync: vi.fn((p: string) => {
           if (toPosix(p).endsWith("/packages/a/package.json")) {
             return JSON.stringify({ version: "1.0.0" });
           }
           return "";
         }),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(() => []) },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn(() => []) },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
@@ -229,15 +227,15 @@ describe("runTagSync use case", () => {
     };
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>(() => false),
-        statSync: vi.fn<(...args: unknown[]) => unknown>(),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>(),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        existsSync: vi.fn(() => false),
+        statSync: vi.fn(),
+        readFileSync: vi.fn(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>() },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn() },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
@@ -269,7 +267,7 @@ describe("runTagSync use case", () => {
     };
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        existsSync: vi.fn((p: string) => {
           const n = toPosix(p);
           return (
             n === "/repo/a" ||
@@ -278,11 +276,11 @@ describe("runTagSync use case", () => {
             n.endsWith("/b/package.json")
           );
         }),
-        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        statSync: vi.fn((p: string) => {
           const n = toPosix(p);
           return { isDirectory: () => n === "/repo/a" || n === "/repo/b" };
         }),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        readFileSync: vi.fn((p: string) => {
           const n = toPosix(p);
           if (n.endsWith("/a/package.json")) {
             return JSON.stringify({ version: "1.0.0" });
@@ -292,18 +290,15 @@ describe("runTagSync use case", () => {
           }
           return "";
         }),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [
-          candidateA,
-          candidateB,
-        ]),
+        resolveTagTargetCandidates: vi.fn(async () => [candidateA, candidateB]),
       },
-      typeScriptTreeWalk: { walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>(() => []) },
+      typeScriptTreeWalk: { walkTsxFiles: vi.fn(() => []) },
       path: nodeCliPath,
       versionResolver: {
-        resolveNearestPackageVersion: vi.fn<(...args: unknown[]) => unknown>((targetPath: string) =>
+        resolveNearestPackageVersion: vi.fn((targetPath: string) =>
           toPosix(targetPath).includes("/repo/a") ? "1.0.0" : "2.0.0",
         ),
       },
@@ -329,18 +324,18 @@ describe("runTagSync use case", () => {
     const taggedSource = `export function HookTarget() { return 1; }\n`;
     const deps: TagSyncUseCaseDeps = {
       fs: {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        existsSync: vi.fn((p: string) => {
           const n = toPosix(p);
           return n === "/repo/pkg" || n.endsWith("/pkg/package.json") || n.endsWith("/pkg/x.ts");
         }),
-        statSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        statSync: vi.fn((p: string) => {
           const n = toPosix(p);
           if (n === "/repo/pkg") {
             return { isDirectory: () => true };
           }
           return { isDirectory: () => false };
         }),
-        readFileSync: vi.fn<(...args: unknown[]) => unknown>((p: string) => {
+        readFileSync: vi.fn((p: string) => {
           const n = toPosix(p);
           if (n.endsWith("/pkg/package.json")) {
             return JSON.stringify({ version: "3.0.0" });
@@ -350,15 +345,13 @@ describe("runTagSync use case", () => {
           }
           return "";
         }),
-        writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+        writeFileSync: vi.fn(),
       } as unknown as CliFs,
       targetResolver: {
-        resolveTagTargetCandidates: vi.fn<(...args: unknown[]) => unknown>(async () => [candidate]),
+        resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: {
-        walkTsxFiles: vi.fn<(...args: unknown[]) => unknown>((root: string) => [
-          `${toPosix(root)}/x.ts`,
-        ]),
+        walkTsxFiles: vi.fn((root: string) => [`${toPosix(root)}/x.ts`]),
       },
       path: nodeCliPath,
       versionResolver: mockVersionResolver,
@@ -368,7 +361,7 @@ describe("runTagSync use case", () => {
       rootDir: "/repo",
       write: true,
       config: {
-        onAfterWrite: vi.fn<(...args: unknown[]) => unknown>(async () => {
+        onAfterWrite: vi.fn(async () => {
           throw new Error("hook failed");
         }),
       },

@@ -4,7 +4,7 @@ import { useMutationObserver } from "#/hooks/use-mutation-observer";
 
 describe("useMutationObserver", () => {
   test("should attach a MutationObserver and call the callback on mutations", () => {
-    const callback = vi.fn<(...args: unknown[]) => unknown>();
+    const callback = vi.fn();
     const ref = { current: document.createElement("div") };
 
     ref.current.innerHTML = "<div></div>";
@@ -26,7 +26,7 @@ describe("useMutationObserver", () => {
   });
 
   test("should clean up the MutationObserver on unmount", () => {
-    const callback = vi.fn<(...args: unknown[]) => unknown>();
+    const callback = vi.fn();
     const ref = { current: document.createElement("div") };
 
     const { unmount } = renderHook(() => {

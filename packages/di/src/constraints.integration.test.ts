@@ -160,8 +160,15 @@ describe("Integration: Advanced Constraints", () => {
       .toDynamicAsync(async () => "async")
       .singleton();
 
-    const syncBinding = container.lookupBindings(Sync)![0];
-    const asyncBinding = container.lookupBindings(Async)![0];
+    const syncBindings = container.lookupBindings(Sync);
+    const asyncBindings = container.lookupBindings(Async);
+    const syncBinding = syncBindings?.[0];
+    const asyncBinding = asyncBindings?.[0];
+    expect(syncBinding).toBeDefined();
+    expect(asyncBinding).toBeDefined();
+    if (syncBinding === undefined || asyncBinding === undefined) {
+      throw new Error("expected sync and async bindings");
+    }
 
     const statusOf = (bindingId: string) =>
       container.inspect().bindings.find((row) => row.bindingId === bindingId)?.activationStatus;

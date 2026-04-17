@@ -14,14 +14,14 @@ describe("architecture boundaries (CI guardrails)", () => {
       const src = `
         import a from "#/lib/foo";
         import type { B } from "#/lib/bar";
-        import "#lib/side";
+        import "#/lib/side";
         void import("#/lib/dyn");
       `;
       const specs = extractImportSpecifiers(src);
-      expect(specs).toContain("#lib/foo");
-      expect(specs).toContain("#lib/bar");
-      expect(specs).toContain("#lib/side");
-      expect(specs).toContain("#lib/dyn");
+      expect(specs).toContain("#/lib/foo");
+      expect(specs).toContain("#/lib/bar");
+      expect(specs).toContain("#/lib/side");
+      expect(specs).toContain("#/lib/dyn");
     });
   });
 
@@ -31,7 +31,7 @@ describe("architecture boundaries (CI guardrails)", () => {
       "src/lib/arrange/domain/hypothetical.ts",
     );
 
-    it("rejects domain importing #lib/infra (shared infra package)", () => {
+    it("rejects domain importing #/lib/infra (shared infra package)", () => {
       const violations = violationsForFileContent(
         arrangeDomainFile,
         { context: "arrange", layer: "domain" },

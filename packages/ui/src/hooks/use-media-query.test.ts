@@ -21,11 +21,11 @@ const setupMockMatchMedia = (
   };
   mockRemoveEventListener: Mock;
 } => {
-  const mockAddEventListener = vi.fn<(...args: unknown[]) => unknown>();
-  const mockRemoveEventListener = vi.fn<(...args: unknown[]) => unknown>();
-  const mockAddListener = vi.fn<(...args: unknown[]) => unknown>();
-  const mockRemoveListener = vi.fn<(...args: unknown[]) => unknown>();
-  const mockDispatchEvent = vi.fn<(...args: unknown[]) => unknown>();
+  const mockAddEventListener = vi.fn();
+  const mockRemoveEventListener = vi.fn();
+  const mockAddListener = vi.fn();
+  const mockRemoveListener = vi.fn();
+  const mockDispatchEvent = vi.fn();
 
   const mockMediaQueryList = {
     addEventListener: mockAddEventListener,
@@ -40,7 +40,7 @@ const setupMockMatchMedia = (
 
   // Ensure matchMedia exists on window for the test environment
   Object.defineProperty(window, "matchMedia", {
-    value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => mockMediaQueryList),
+    value: vi.fn().mockImplementation(() => mockMediaQueryList),
     writable: true,
   });
 
@@ -80,6 +80,9 @@ describe("useMediaQuery", () => {
       // Use an explicit type cast to ensure the correctness of the changeHandler type
       const calls = mockAddEventListener.mock.calls as [string, ChangeHandler][];
       const changeHandler = calls[0]?.[1];
+      if (changeHandler === undefined) {
+        throw new Error("expected change handler");
+      }
 
       mockMediaQueryList.matches = true;
       changeHandler({ matches: true } as MediaQueryListEvent);
