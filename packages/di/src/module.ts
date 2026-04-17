@@ -1,8 +1,5 @@
 import type { BindingBuilder } from "#/binding";
-import type { BindingIdentifier } from "#/binding";
 import type { Constructor } from "#/binding";
-import type { Container } from "#/container";
-import { DiError } from "#/errors";
 import type { Token } from "#/token";
 
 /**
@@ -21,55 +18,19 @@ export type AsyncModuleBuilder = {
   readonly bind: <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value>;
 };
 
-abstract class ModuleBase {
+/**
+ * Immutable description of a bundle of bindings. A {@link Module} holds no runtime state and the
+ * same instance may be loaded into any number of containers independently (spec §7.3).
+ *
+ * The owning container is responsible for tracking which modules have been loaded and which
+ * binding ids each module produced; the module itself never sees a container reference.
+ */
+export class Module {
   readonly name: string;
-  private loadState: "idle" | "loaded" = "idle";
-  private loadedContainer: Container | undefined;
-  private readonly ownedBindingIds: BindingIdentifier[] = [];
-
-  protected constructor(name: string) {
-    this.name = name;
-  }
-
-  isLoadedOn(container: Container): boolean {
-    return this.loadState === "loaded" && this.loadedContainer === container;
-  }
-
-  assertNotLoadedOnOtherContainer(container: Container): void {
-    if (
-      this.loadState === "loaded" &&
-      this.loadedContainer !== undefined &&
-      this.loadedContainer !== container
-    ) {
-      throw new DiError(`Module "${this.name}" is already loaded on another container.`);
-    }
-  }
-
-  markLoaded(container: Container): void {
-    this.loadState = "loaded";
-    this.loadedContainer = container;
-  }
-
-  recordOwnedBinding(id: BindingIdentifier): void {
-    this.ownedBindingIds.push(id);
-  }
-
-  getOwnedBindingIds(): readonly BindingIdentifier[] {
-    return this.ownedBindingIds;
-  }
-
-  clearAfterUnload(): void {
-    this.loadState = "idle";
-    this.loadedContainer = undefined;
-    this.ownedBindingIds.length = 0;
-  }
-}
-
-export class Module extends ModuleBase {
   private readonly syncSetup: (api: ModuleBuilder) => void;
 
   private constructor(name: string, syncSetup: (api: ModuleBuilder) => void) {
-    super(name);
+    this.name = name;
     this.syncSetup = syncSetup;
   }
 
@@ -89,11 +50,12 @@ export class Module extends ModuleBase {
   }
 }
 
-export class AsyncModule extends ModuleBase {
+export class AsyncModule {
+  readonly name: string;
   private readonly asyncSetup: (api: AsyncModuleBuilder) => Promise<void>;
 
   constructor(name: string, asyncSetup: (api: AsyncModuleBuilder) => Promise<void>) {
-    super(name);
+    this.name = name;
     this.asyncSetup = asyncSetup;
   }
 

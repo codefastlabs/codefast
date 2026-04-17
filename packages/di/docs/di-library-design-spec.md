@@ -245,15 +245,26 @@ container.bind(Logger).to(FileLogger).whenNamed("file");
 // Resolve theo tên
 const logger = container.resolve(Logger, { name: "file" }); // ^? LoggerService
 
-// Tagged binding — tag key là string, value là unknown
+// Tagged binding — tag key là string | symbol, value là unknown
 container.bind(Engine).to(PetrolEngine).whenTagged("fuel", "petrol");
 container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
 
 // Resolve theo tag
 const engine = container.resolve(Engine, { tag: ["fuel", "electric"] });
+
+// Symbol tag — tránh collision giữa các package
+const FUEL = Symbol.for("mylib.fuel");
+container.bind(Engine).to(HydrogenEngine).whenTagged(FUEL, "hydrogen");
+const h = container.resolve(Engine, { tag: [FUEL, "hydrogen"] });
 ```
 
-> **Tag key phải là `string`:** `whenTagged` và `ResolveOptions.tag` chỉ hỗ trợ `string` key — không hỗ trợ `Symbol`. Đây là quyết định có chủ ý để giữ API đơn giản và serializable. Nếu cần namespace tránh collision, dùng prefix convention (`"mylib:fuel"`) thay vì Symbol.
+> **Tag key là `string | symbol`:** `whenTagged` và `ResolveOptions.tag` chấp nhận cả `string` lẫn `symbol` — tận dụng `unique symbol` / `Symbol.for()` của TypeScript hiện đại để tránh collision giữa các package. Matching ở runtime dựa trên symbol identity (qua `Map`).
+>
+> **Hệ quả với serialization:** Inspector phải serialize cả hai. Convention:
+>
+> - `Symbol.for("key")` → `"Symbol.for(\"key\")"` (round-trippable qua realm).
+> - `Symbol("desc")` local → `"Symbol(desc)"`. Hai local symbol cùng description sẽ có cùng label — đây là giới hạn hiển thị, không phải lỗi matching (runtime vẫn phân biệt qua identity).
+> - Nếu cần label tuyệt đối ổn định cho cross-process log/graph, dùng `string` tag với prefix convention (`"mylib:fuel"`).
 
 ### 4.5 `toResolved` — explicit deps (lấy cảm hứng từ `toResolvedValue` của v8)
 
@@ -424,6 +435,14 @@ const handler = requestContainer.resolve(RequestHandler);
 
 // Dispose: gọi onDeactivation cho tất cả singleton thuộc child
 await requestContainer.dispose();
+
+// Hoặc dùng `await using` (TC39 Stage 3 — TypeScript 5.2+) — tự động dispose khi ra khỏi scope.
+{
+  await using scoped = container.createChild();
+  scoped.bind(RequestId).toConstantValue(crypto.randomUUID());
+  const handler = scoped.resolve(RequestHandler);
+  // scoped[Symbol.asyncDispose]() được gọi ở cuối block
+}
 ```
 
 ### 5.5 Container interface
@@ -463,7 +482,12 @@ interface Container {
 
   // Scoping
   createChild(): Container;
+
+  // Disposal — hỗ trợ TC39 Explicit Resource Management (`await using`).
+  // Deactivation vốn bất đồng bộ (onDeactivation có thể async) nên chỉ có một method
+  // `dispose(): Promise<void>` duy nhất; không có biến thể sync `disposeSync()`.
   dispose(): Promise<void>;
+  [Symbol.asyncDispose](): Promise<void>;
 
   // Introspection — chỉ dùng dev/debug
   has(token: Token<unknown> | Constructor): boolean;
@@ -472,7 +496,7 @@ interface Container {
 
 interface ResolveOptions {
   name?: string;
-  tag?: [tag: string, value: unknown];
+  tag?: [tag: string | symbol, value: unknown];
 }
 
 // Static methods — không nằm trong interface vì TypeScript interface không model static
@@ -559,12 +583,12 @@ Type signature của `inject()` và `optional()`:
 // Plain function — không phải decorator
 function inject<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+  opts?: { name?: string; tag?: [tag: string | symbol, value: unknown] },
 ): InjectionDescriptor<Value>;
 
 function optional<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+  opts?: { name?: string; tag?: [tag: string | symbol, value: unknown] },
 ): InjectionDescriptor<Value | undefined>;
 
 // InjectionDescriptor — được truyền vào deps array
@@ -572,7 +596,7 @@ interface InjectionDescriptor<Value = unknown> {
   readonly token: Token<Value> | Constructor<Value>;
   readonly optional: boolean;
   readonly name?: string;
-  readonly tag?: [tag: string, value: unknown];
+  readonly tag?: [tag: string | symbol, value: unknown];
 }
 ```
 
@@ -709,7 +733,9 @@ const testContainer = Container.fromModules(AppModule);
 testContainer.bind(Database).toConstantValue(mockDatabase);
 ```
 
-> **Module là reusable:** Cùng một `Module` object có thể load vào nhiều containers độc lập — đây là use case chính để test. Mỗi lần `Container.fromModules(AppModule)` tạo ra một container mới với bindings riêng, không share state với container khác. Module không bị "owned" bởi container nào.
+> **Module là pure description — không ôm state runtime:** Cùng một `Module` object có thể load song song vào nhiều containers độc lập. `Module` chỉ giữ `name` và callback `setup`; container mới là bên track "đã load module nào" và "binding nào thuộc module nào". Đây là use case chính để test (share module AppModule giữa nhiều integration test mà không cần reset).
+>
+> **Deduplication:** Trong cùng một container, gọi `container.load(M)` nhiều lần hoặc `m.import(M)` từ nhiều module là **no-op cho lần thứ hai trở đi** — module chỉ chạy `setup` đúng một lần trên mỗi container. Dedup dựa trên Module object identity, không phải `name`.
 
 ### 7.4 Module interface
 

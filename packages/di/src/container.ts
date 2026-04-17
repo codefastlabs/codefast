@@ -18,6 +18,7 @@ import type { Token } from "#/token";
 import { isDevelopmentOrTestEnvironment } from "#/environment";
 
 type ContainerRef = { current: DefaultContainer | undefined };
+type ModuleLike = Module | AsyncModule;
 
 function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefined {
   if (binding.bindingName !== undefined) {
@@ -32,8 +33,11 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
 /**
  * Public contract for an IoC container (registry, modules, resolution, lifecycle).
  * Construct instances with {@link Container.create} or {@link Container.fromModules}.
+ *
+ * Implements {@link AsyncDisposable} so `await using container = Container.create()` runs
+ * {@link Container.dispose} automatically at scope exit (TC39 Explicit Resource Management).
  */
-export interface Container {
+export interface Container extends AsyncDisposable {
   bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
   rebind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
   unbind(keyOrId: RegistryKey | BindingIdentifier): void;
@@ -42,11 +46,12 @@ export interface Container {
   resolve<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T;
   resolveAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T>;
   resolveAll<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[];
+  resolveAllAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]>;
   resolveOptional<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined;
   load(...modules: Module[]): void;
-  loadAsync(...modules: (Module | AsyncModule)[]): Promise<void>;
-  unload(...modules: (Module | AsyncModule)[]): void;
-  unloadAsync(...modules: (Module | AsyncModule)[]): Promise<void>;
+  loadAsync(...modules: ModuleLike[]): Promise<void>;
+  unload(...modules: ModuleLike[]): void;
+  unloadAsync(...modules: ModuleLike[]): Promise<void>;
   initialize(): void;
   initializeAsync(): Promise<void>;
   validate(): void;
@@ -56,7 +61,7 @@ export interface Container {
   createChild(): Container;
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
   dispose(): Promise<void>;
-  disposeAsync(): Promise<void>;
+  [Symbol.asyncDispose](): Promise<void>;
 }
 
 /**
@@ -66,6 +71,7 @@ export interface Container {
 class DefaultContainer implements Container {
   private readonly syncModuleStack: Module[] = [];
   private readonly asyncModuleStack: AsyncModule[] = [];
+  private readonly loadedModules = new Map<ModuleLike, BindingIdentifier[]>();
   private devValidationRan = false;
 
   private constructor(
@@ -186,10 +192,9 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Registers bindings from synchronous modules. When {@link isDevelopmentOrTestEnvironment} is true,
-   * runs {@link validate} at most once after the registry changes so static singleton→scoped/transient
-   * edges fail fast. Runtime resolution still enforces the same rules via the resolver (including inside
-   * dynamic factories). Production skips this static pass; call {@link validate} yourself if needed.
+   * Registers bindings from synchronous modules. Re-loading a module already present on this
+   * container is a no-op (deduplication, spec §7.3 Phase 3). When {@link isDevelopmentOrTestEnvironment}
+   * is true, runs {@link validate} at most once after the registry changes.
    */
   load(...modules: Module[]): void {
     this.invalidateDevValidationState();
@@ -203,9 +208,9 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Like {@link load} but allows async modules. Dev/test automatic {@link validate} behavior is the same.
+   * Like {@link load} but allows async modules. Re-loading is deduplicated the same way.
    */
-  async loadAsync(...modules: (Module | AsyncModule)[]): Promise<void> {
+  async loadAsync(...modules: ModuleLike[]): Promise<void> {
     this.invalidateDevValidationState();
     for (const moduleOrAsync of modules) {
       if (moduleOrAsync instanceof AsyncModule) {
@@ -217,31 +222,33 @@ class DefaultContainer implements Container {
     this.maybeRunDevValidationOnce();
   }
 
-  unload(...modules: (Module | AsyncModule)[]): void {
+  unload(...modules: ModuleLike[]): void {
     this.invalidateDevValidationState();
     for (const module of modules) {
-      if (!module.isLoadedOn(this)) {
+      const ownedBindingIds = this.loadedModules.get(module);
+      if (ownedBindingIds === undefined) {
         throw new DiError(`Module "${module.name}" is not loaded on this container.`);
       }
-      for (const bindingId of [...module.getOwnedBindingIds()].reverse()) {
+      for (const bindingId of [...ownedBindingIds].reverse()) {
         this.scopeManagerOwned.releaseByBindingId(bindingId);
         this.registryOwned.removeById(bindingId);
       }
-      module.clearAfterUnload();
+      this.loadedModules.delete(module);
     }
   }
 
-  async unloadAsync(...modules: (Module | AsyncModule)[]): Promise<void> {
+  async unloadAsync(...modules: ModuleLike[]): Promise<void> {
     this.invalidateDevValidationState();
     for (const module of modules) {
-      if (!module.isLoadedOn(this)) {
+      const ownedBindingIds = this.loadedModules.get(module);
+      if (ownedBindingIds === undefined) {
         throw new DiError(`Module "${module.name}" is not loaded on this container.`);
       }
-      for (const bindingId of [...module.getOwnedBindingIds()].reverse()) {
+      for (const bindingId of [...ownedBindingIds].reverse()) {
         await this.scopeManagerOwned.releaseByBindingIdAsync(bindingId);
         this.registryOwned.removeById(bindingId);
       }
-      module.clearAfterUnload();
+      this.loadedModules.delete(module);
     }
   }
 
@@ -279,6 +286,16 @@ class DefaultContainer implements Container {
     } finally {
       this.maybeRunDevValidationOnce();
     }
+  }
+
+  /**
+   * Async variant of {@link resolveAll}: safe for multi-bindings that mix sync and async factories
+   * (spec §5.2).
+   */
+  resolveAllAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]> {
+    return this.resolver.resolveAllAsyncRoot<T>(key, hint).finally(() => {
+      this.maybeRunDevValidationOnce();
+    });
   }
 
   /**
@@ -440,12 +457,12 @@ class DefaultContainer implements Container {
     await this.scopeManagerOwned.disposeAsync();
   }
 
-  disposeAsync(): Promise<void> {
+  [Symbol.asyncDispose](): Promise<void> {
     return this.dispose();
   }
 
   private bindForModule(
-    owner: Module | AsyncModule,
+    owner: ModuleLike,
   ): <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value> {
     return <Value>(key: Token<Value> | Constructor<Value>) =>
       new BindingBuilder<Value>(key, owner.name, {
@@ -454,13 +471,22 @@ class DefaultContainer implements Container {
           this.registryOwned.replaceKeyLastWins(key, built, (removed) => {
             this.scopeManagerOwned.releaseBinding(removed);
           });
-          owner.recordOwnedBinding(built.id);
+          this.recordBindingForModule(owner, built.id);
         },
         update: (built) => {
           this.invalidateDevValidationState();
           this.registryOwned.replaceById(built.id, built as Binding<unknown>);
         },
       });
+  }
+
+  private recordBindingForModule(owner: ModuleLike, id: BindingIdentifier): void {
+    const list = this.loadedModules.get(owner);
+    if (list === undefined) {
+      this.loadedModules.set(owner, [id]);
+      return;
+    }
+    list.push(id);
   }
 
   private createSyncModuleApi(module: Module): ModuleBuilder {
@@ -486,7 +512,7 @@ class DefaultContainer implements Container {
     const pendingImports: Promise<void>[] = [];
     return {
       api: {
-        import: (...deps: (Module | AsyncModule)[]) => {
+        import: (...deps: ModuleLike[]) => {
           for (const dep of deps) {
             if (dep instanceof AsyncModule) {
               pendingImports.push(this.ensureAsyncModuleLoaded(dep));
@@ -507,10 +533,9 @@ class DefaultContainer implements Container {
   }
 
   private ensureSyncModuleLoaded(module: Module): void {
-    if (module.isLoadedOn(this)) {
+    if (this.loadedModules.has(module)) {
       return;
     }
-    module.assertNotLoadedOnOtherContainer(this);
     if (this.syncModuleStack.includes(module)) {
       throw new CircularDependencyError([
         ...this.syncModuleStack.map((stackedModule) => stackedModule.name),
@@ -519,19 +544,20 @@ class DefaultContainer implements Container {
     }
     this.syncModuleStack.push(module);
     try {
+      // Register the module in the tracking table before running setup so nested imports
+      // (which may bind before returning) find an entry keyed by this module.
+      this.loadedModules.set(module, []);
       const api = this.createSyncModuleApi(module);
       module.runSyncSetup(api);
-      module.markLoaded(this);
     } finally {
       this.syncModuleStack.pop();
     }
   }
 
   private async ensureAsyncModuleLoaded(asyncModule: AsyncModule): Promise<void> {
-    if (asyncModule.isLoadedOn(this)) {
+    if (this.loadedModules.has(asyncModule)) {
       return;
     }
-    asyncModule.assertNotLoadedOnOtherContainer(this);
     if (this.asyncModuleStack.includes(asyncModule)) {
       throw new CircularDependencyError([
         ...this.asyncModuleStack.map((stackedAsyncModule) => stackedAsyncModule.name),
@@ -540,10 +566,10 @@ class DefaultContainer implements Container {
     }
     this.asyncModuleStack.push(asyncModule);
     try {
+      this.loadedModules.set(asyncModule, []);
       const { api, awaitImports } = this.createAsyncModuleApi(asyncModule);
       await asyncModule.runAsyncSetup(api);
       await awaitImports();
-      asyncModule.markLoaded(this);
     } finally {
       this.asyncModuleStack.pop();
     }
