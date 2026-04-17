@@ -99,6 +99,9 @@ async function loadOnce(fs: CliFs, startDir: string): Promise<LoadConfigResult> 
   }
 
   const configPath = configPaths[0];
+  if (configPath === undefined) {
+    return { config: {}, warnings };
+  }
   const config = await readConfigFromPath(configPath, fs, startDir);
   return { config, warnings, configPath };
 }
@@ -108,7 +111,11 @@ export async function loadConfig(fs: CliFs, startDir: string): Promise<LoadConfi
   if (!cachedLoads.has(cacheKey)) {
     cachedLoads.set(cacheKey, loadOnce(fs, cacheKey));
   }
-  return cachedLoads.get(cacheKey)!;
+  const cached = cachedLoads.get(cacheKey);
+  if (cached === undefined) {
+    throw new Error("config loader cache invariant violated");
+  }
+  return cached;
 }
 
 export function resetConfigLoaderCacheForTests(): void {

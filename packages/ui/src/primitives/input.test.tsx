@@ -80,8 +80,8 @@ describe("input", () => {
     });
 
     test("should not stop propagation when clicking directly on input", async () => {
-      const containerClickHandler = vi.fn<(...args: unknown[]) => unknown>();
-      const inputClickHandler = vi.fn<(...args: unknown[]) => unknown>();
+      const containerClickHandler = vi.fn();
+      const inputClickHandler = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -142,7 +142,7 @@ describe("input", () => {
 
       const focusSpy = vi.spyOn(input, "focus");
 
-      const mockPreventDefault = vi.fn<(...args: unknown[]) => unknown>();
+      const mockPreventDefault = vi.fn();
       const pointerEvent = new Event("pointerdown", {
         bubbles: true,
         cancelable: true,
@@ -318,7 +318,7 @@ describe("input", () => {
   describe("Edge cases", () => {
     test("should handle nested clickable elements correctly", async () => {
       const user = userEvent.setup();
-      const linkClickHandler = vi.fn<(...args: unknown[]) => unknown>();
+      const linkClickHandler = vi.fn();
 
       render(
         <Input

@@ -94,8 +94,11 @@ function compareClassifiedTailwindTokensForCnGrouping(
   if (isVariantKeyedBucket(left.bucket) && isVariantKeyedBucket(right.bucket)) {
     const leftMapKey = variantKeyedBlockMapKey(left.bucket, left.classToken);
     const rightMapKey = variantKeyedBlockMapKey(right.bucket, right.classToken);
-    const leftBlockStart = firstVariantKeySourceIndex.get(leftMapKey)!;
-    const rightBlockStart = firstVariantKeySourceIndex.get(rightMapKey)!;
+    const leftBlockStart = firstVariantKeySourceIndex.get(leftMapKey);
+    const rightBlockStart = firstVariantKeySourceIndex.get(rightMapKey);
+    if (leftBlockStart === undefined || rightBlockStart === undefined) {
+      throw new Error("invariant: variant-keyed token missing block start index");
+    }
     if (leftBlockStart !== rightBlockStart) {
       return leftBlockStart - rightBlockStart;
     }
@@ -192,17 +195,23 @@ export function mergeSingletons(groups: string[]): string[] {
   while (changed) {
     changed = false;
     for (let i = 0; i < result.length; i++) {
-      if (tokenizeClassString(result[i]).length < MIN_GROUP_TOKENS) {
+      const groupAtI = result[i];
+      if (groupAtI === undefined) {
+        throw new Error("invariant: mergeSingletons group missing");
+      }
+      if (tokenizeClassString(groupAtI).length < MIN_GROUP_TOKENS) {
         if (result.length === 1) {
           break;
         }
-        const myBucket = dominantBucketOfGroup(result[i]);
-
+        const myBucket = dominantBucketOfGroup(groupAtI);
+        const prevGroup = i > 0 ? result[i - 1] : undefined;
+        const nextGroup = i < result.length - 1 ? result[i + 1] : undefined;
         const prevCompat =
-          i > 0 && bucketsMergeCompatible(myBucket, dominantBucketOfGroup(result[i - 1]));
+          prevGroup !== undefined &&
+          bucketsMergeCompatible(myBucket, dominantBucketOfGroup(prevGroup));
         const nextCompat =
-          i < result.length - 1 &&
-          bucketsMergeCompatible(myBucket, dominantBucketOfGroup(result[i + 1]));
+          nextGroup !== undefined &&
+          bucketsMergeCompatible(myBucket, dominantBucketOfGroup(nextGroup));
 
         let mergeDir: "forward" | "backward";
         if (nextCompat && !prevCompat) {
@@ -216,9 +225,15 @@ export function mergeSingletons(groups: string[]): string[] {
         }
 
         if (mergeDir === "forward") {
-          result[i + 1] = result[i] + " " + result[i + 1];
+          if (nextGroup === undefined) {
+            throw new Error("invariant: forward merge missing right group");
+          }
+          result[i + 1] = `${groupAtI} ${nextGroup}`;
         } else {
-          result[i - 1] = result[i - 1] + " " + result[i];
+          if (prevGroup === undefined) {
+            throw new Error("invariant: backward merge missing left group");
+          }
+          result[i - 1] = `${prevGroup} ${groupAtI}`;
         }
         result.splice(i, 1);
         changed = true;
@@ -258,14 +273,26 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
     type MergePairCandidate = { i: number; size: number; penalty: number };
     const mergePairCandidates: MergePairCandidate[] = [];
     for (let i = 0; i < result.length - 1; i++) {
-      const dominantLeft = dominantBucketOfGroup(result[i]);
-      const dominantRight = dominantBucketOfGroup(result[i + 1]);
+      const leftGroup = result[i];
+      const rightGroup = result[i + 1];
+      const leftLen = lengths[i];
+      const rightLen = lengths[i + 1];
+      if (
+        leftGroup === undefined ||
+        rightGroup === undefined ||
+        leftLen === undefined ||
+        rightLen === undefined
+      ) {
+        throw new Error("invariant: capGroups adjacent pair missing");
+      }
+      const dominantLeft = dominantBucketOfGroup(leftGroup);
+      const dominantRight = dominantBucketOfGroup(rightGroup);
       if (!bucketsMergeCompatible(dominantLeft, dominantRight)) {
         continue;
       }
       mergePairCandidates.push({
         i,
-        size: lengths[i] + lengths[i + 1],
+        size: leftLen + rightLen,
         penalty: capMergePenalty(dominantLeft, dominantRight),
       });
     }
@@ -273,7 +300,11 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
       break;
     }
 
-    let best = mergePairCandidates[0]!;
+    const firstCandidate = mergePairCandidates[0];
+    if (firstCandidate === undefined) {
+      throw new Error("invariant: merge candidates empty");
+    }
+    let best = firstCandidate;
     for (const candidate of mergePairCandidates) {
       if (
         candidate.penalty < best.penalty ||
@@ -283,8 +314,20 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
       }
     }
     const bestIdx = best.i;
-    result[bestIdx] = result[bestIdx] + " " + result[bestIdx + 1];
-    lengths[bestIdx] = lengths[bestIdx] + lengths[bestIdx + 1];
+    const leftMerge = result[bestIdx];
+    const rightMerge = result[bestIdx + 1];
+    const leftMergeLen = lengths[bestIdx];
+    const rightMergeLen = lengths[bestIdx + 1];
+    if (
+      leftMerge === undefined ||
+      rightMerge === undefined ||
+      leftMergeLen === undefined ||
+      rightMergeLen === undefined
+    ) {
+      throw new Error("invariant: capGroups best merge pair missing");
+    }
+    result[bestIdx] = `${leftMerge} ${rightMerge}`;
+    lengths[bestIdx] = leftMergeLen + rightMergeLen;
     result.splice(bestIdx + 1, 1);
     lengths.splice(bestIdx + 1, 1);
   }
@@ -303,16 +346,24 @@ export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): str
   while (changed) {
     changed = false;
     for (let i = 0; i < result.length; i++) {
-      if (!chunkIsOnlyEaseTimingMotion(result[i]!)) {
+      const chunkI = result[i];
+      if (chunkI === undefined) {
+        throw new Error("invariant: mergeEase chunk missing");
+      }
+      if (!chunkIsOnlyEaseTimingMotion(chunkI)) {
         continue;
       }
-      const easeStr = result[i]!;
+      const easeStr = chunkI;
       let target = -1;
       for (let j = i + 1; j < result.length; j++) {
-        if (dominantBucketOfGroup(result[j]!) !== "state") {
+        const chunkJ = result[j];
+        if (chunkJ === undefined) {
+          throw new Error("invariant: mergeEase following chunk missing");
+        }
+        if (dominantBucketOfGroup(chunkJ) !== "state") {
           continue;
         }
-        const classTokens = tokenizeClassString(result[j]!);
+        const classTokens = tokenizeClassString(chunkJ);
         if (!classTokens.some((classToken) => /^animate/.test(stripVariants(classToken)))) {
           continue;
         }
@@ -322,7 +373,11 @@ export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): str
       if (target === -1) {
         continue;
       }
-      result[target] = `${easeStr} ${result[target]!}`.trim();
+      const targetChunk = result[target];
+      if (targetChunk === undefined) {
+        throw new Error("invariant: mergeEase target chunk missing");
+      }
+      result[target] = `${easeStr} ${targetChunk}`.trim();
       result.splice(i, 1);
       changed = true;
       break;
@@ -441,8 +496,13 @@ export function suggestCnGroups(classString: string): string[] {
 export function summarizeGroupBucketLabels(groups: string[]): string[] {
   return groups.map((g) => {
     const uniq = new Set(tokenizeClassString(g).map(classifyToken));
-    return uniq.size === 1
-      ? [...uniq][0]!
-      : `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+    if (uniq.size !== 1) {
+      return `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+    }
+    const onlyBucket = [...uniq][0];
+    if (onlyBucket === undefined) {
+      return `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+    }
+    return onlyBucket;
   });
 }

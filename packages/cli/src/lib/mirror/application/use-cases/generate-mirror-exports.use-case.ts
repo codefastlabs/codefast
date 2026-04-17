@@ -108,6 +108,9 @@ function getExportGroup(
   const parts = cleanPath.split("/");
   if (parts.length === 1) {
     const name = parts[0];
+    if (name === undefined) {
+      throw new Error("invariant: export path segment missing");
+    }
     if (name in GROUP_ORDER) {
       return [name, "", GROUP_ORDER[name] ?? 0, 0];
     }
@@ -289,7 +292,11 @@ export async function generateExports(
       exportPath = pathTransform(exportPath);
     }
 
-    const entry: ExportEntry = { types: `./dist/${distModuleEntry.files.dts!}` };
+    const dtsFile = distModuleEntry.files.dts;
+    if (dtsFile === undefined) {
+      throw new Error(`mirror exports: missing .d.ts for ${distModuleEntry.path}`);
+    }
+    const entry: ExportEntry = { types: `./dist/${dtsFile}` };
     if (distModuleEntry.files.mjs) {
       entry.import = `./dist/${distModuleEntry.files.mjs}`;
     } else if (distModuleEntry.files.js) {

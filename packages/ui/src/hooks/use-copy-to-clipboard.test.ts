@@ -8,7 +8,7 @@ describe("useCopyToClipboard", () => {
   let mockWriteText: Mock<(data: string) => Promise<void>>;
 
   beforeEach(() => {
-    mockWriteText = vi.fn<(data: string) => Promise<void>>().mockResolvedValue(undefined);
+    mockWriteText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
       value: {
@@ -54,7 +54,7 @@ describe("useCopyToClipboard", () => {
   });
 
   test("should call onCopy callback when copying is successful", async () => {
-    const onCopy = vi.fn<(...args: unknown[]) => unknown>();
+    const onCopy = vi.fn();
     const { result } = renderHook(() => useCopyToClipboard({ onCopy }));
 
     await act(async () => {

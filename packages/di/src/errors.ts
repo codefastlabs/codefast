@@ -162,9 +162,9 @@ export class ScopeViolationError extends DiError {
     const consumerLabel = details.consumerLabel ?? String(details.consumerBindingId);
     const dependencyLabel = details.dependencyLabel ?? String(details.dependencyBindingId);
     const consumerScopeLabel =
-      details.consumerScope[0].toUpperCase() + details.consumerScope.slice(1);
+      details.consumerScope.charAt(0).toUpperCase() + details.consumerScope.slice(1);
     const dependencyScopeLabel =
-      details.dependencyScope[0].toUpperCase() + details.dependencyScope.slice(1);
+      details.dependencyScope.charAt(0).toUpperCase() + details.dependencyScope.slice(1);
     super(
       `Scope Violation: ${consumerScopeLabel} "${consumerLabel}" cannot depend on ${dependencyScopeLabel} "${dependencyLabel}" (resolution path: ${pathText})`,
       options,

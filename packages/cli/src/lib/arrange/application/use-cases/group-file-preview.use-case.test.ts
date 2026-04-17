@@ -26,8 +26,8 @@ describe("group file preview", () => {
   it("prints header with cn-in-tv no-replacement note when count is positive", () => {
     const sourceText = "line1\n";
     const domainSf: DomainSourceFile = { fileName: "x.tsx", text: sourceText, statements: [] };
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
 
     printGroupFilePreview(mockLogger, {
       filePath: "/pkg/a.tsx",
@@ -55,8 +55,8 @@ describe("group file preview", () => {
       expression: {} as DomainAstNode,
       arguments: [],
     };
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
 
     printGroupFilePreview(mockLogger, {
       filePath: "/pkg/a.tsx",
@@ -83,8 +83,8 @@ describe("group file preview", () => {
       expression: {} as DomainAstNode,
       arguments: [],
     };
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const unwrapReplacementByCall = new Map<DomainCallExpression, string>([[call, sourceText]]);
 
     printGroupFilePreview(mockLogger, {
@@ -106,8 +106,8 @@ describe("group file preview", () => {
   it("prints unwrap/plan hint when both unwrap edits and planned group edits exist", () => {
     const sourceText = "src";
     const domainSf: DomainSourceFile = { fileName: "x.tsx", text: sourceText, statements: [] };
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const planned: PlannedGroupEdit = {
       start: 0,
       end: 1,
@@ -154,8 +154,8 @@ describe("group file preview", () => {
   it("delegates printGroupFilePreviewFromWork to printGroupFilePreview with work fields", () => {
     const sourceText = "src";
     const domainSf: DomainSourceFile = { fileName: "x.tsx", text: sourceText, statements: [] };
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const work = {
       filePath: "/w.tsx",
       sourceText,

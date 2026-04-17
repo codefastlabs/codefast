@@ -2,6 +2,8 @@ import type React from "react";
 
 import { render, screen } from "@testing-library/react";
 
+import type { Theme } from "#/types";
+
 import { ThemeContext } from "#/core/context";
 
 describe("ThemeContext", () => {
@@ -30,7 +32,7 @@ describe("ThemeContext", () => {
     const mockValue = {
       isPending: false,
       resolvedTheme: "dark" as const,
-      setTheme: vi.fn<(...args: unknown[]) => unknown>(),
+      setTheme: vi.fn(async (_value: Theme) => {}),
       theme: "dark" as const,
     };
 

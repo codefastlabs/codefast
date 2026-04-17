@@ -207,7 +207,11 @@ export function makeStringNode(
     isTvContext,
     cnCall,
     get primaryClassLiteral() {
-      return this.nodes[0]!;
+      const first = this.nodes[0];
+      if (first === undefined) {
+        throw new Error("invariant: StringNode requires at least one class literal");
+      }
+      return first;
     },
   };
 }
@@ -226,7 +230,11 @@ export function emitTvSlot(
   if (lits.length === 0) {
     return;
   }
-  const firstPos = lits[0]!.pos;
+  const firstLit = lits[0];
+  if (firstLit === undefined) {
+    return;
+  }
+  const firstPos = firstLit.pos;
   if (seenNodePos.has(firstPos)) {
     return;
   }

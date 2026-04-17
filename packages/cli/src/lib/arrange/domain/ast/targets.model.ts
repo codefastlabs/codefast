@@ -72,7 +72,10 @@ export function formatCnCallReplacement(
   sourceText: string,
   withClassName: boolean,
 ): string {
-  const call = stringNode.cnCall!;
+  const call = stringNode.cnCall;
+  if (call === undefined) {
+    throw new Error("formatCnCallReplacement requires a cn() call on the string node");
+  }
   const baseIndent = indentOfLineContaining(sourceText, call.pos);
   const argIndent = `${baseIndent}  `;
 
@@ -95,7 +98,11 @@ export function formatCnCallReplacement(
       allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(group)}"`);
     }
   } else if (groups.length === 1) {
-    allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(groups[0]!)}"`);
+    const onlyGroup = groups[0];
+    if (onlyGroup === undefined) {
+      throw new Error("invariant: single cn group missing");
+    }
+    allArgs.push(`${argIndent}"${escapeTsStringLiteralContent(onlyGroup)}"`);
   }
 
   for (const dynamicArgumentSource of dynamicArgTexts) {

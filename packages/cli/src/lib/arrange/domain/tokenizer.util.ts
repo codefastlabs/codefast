@@ -506,11 +506,15 @@ export function stateKey(token: string): string {
   if (layers.length === 0) {
     return token;
   }
-  if (layers[0]!.startsWith("data-[")) {
+  const firstLayer = layers[0];
+  if (firstLayer === undefined) {
+    return token;
+  }
+  if (firstLayer.startsWith("data-[")) {
     layers[0] = dataAttributeStem(token);
-  } else if (layers[0]!.startsWith("aria-[")) {
+  } else if (firstLayer.startsWith("aria-[")) {
     layers[0] = ariaAttributeStem(token);
-  } else if (layers[0]!.startsWith("in-data-[")) {
+  } else if (firstLayer.startsWith("in-data-[")) {
     layers[0] = inDataAttributeStem(token);
   }
   return layers.join("\u001f");

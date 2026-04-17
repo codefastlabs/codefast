@@ -53,7 +53,11 @@ export const styles = tv({
     const domainSf = parseDomainSourceFile("x.ts", source);
     const nodes = collectGroupableStringNodes(domainSf);
     expect(nodes.length).toBeGreaterThan(0);
-    expect(slotClassString(nodes[0]!)).toContain("flex gap-2");
+    const firstNode = nodes[0];
+    if (firstNode === undefined) {
+      throw new Error("expected at least one node");
+    }
+    expect(slotClassString(firstNode)).toContain("flex gap-2");
   });
 
   it("collects tv array slots without cn()", () => {
@@ -151,7 +155,11 @@ export const styles = tv({
     const domainSf = parseDomainSourceFile("x.ts", source);
     const nodes = collectGroupableStringNodes(domainSf);
     expect(nodes.length).toBeGreaterThan(0);
-    expect(slotClassString(nodes[0]!)).toContain("flex gap-2");
+    const firstNode = nodes[0];
+    if (firstNode === undefined) {
+      throw new Error("expected at least one node");
+    }
+    expect(slotClassString(firstNode)).toContain("flex gap-2");
   });
 });
 

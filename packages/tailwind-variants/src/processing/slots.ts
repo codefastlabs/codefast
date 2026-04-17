@@ -67,9 +67,15 @@ export const resolveSlotClasses = <
 
     for (let index = 0, length = variantKeys.length; index < length; index++) {
       const variantKey = variantKeys[index];
+      if (variantKey === undefined) {
+        continue;
+      }
       const variantGroup = (variantGroups as Record<string, Record<string, ClassValue>>)[
         variantKey
       ];
+      if (variantGroup === undefined) {
+        continue;
+      }
 
       // Priority: slotProps > variantProps > defaultVariantProps (no object spread needed)
       const slotValue = (slotProps as Record<string, unknown>)[variantKey];
@@ -121,7 +127,11 @@ export const resolveSlotClasses = <
   // Process compound variants with slots if they exist
   if (compoundVariantGroups && compoundVariantGroups.length > 0) {
     for (let index = 0, length = compoundVariantGroups.length; index < length; index++) {
-      const compoundVariant: CompoundVariantWithSlotsType<T, S> = compoundVariantGroups[index];
+      const compoundVariantRaw = compoundVariantGroups[index];
+      if (compoundVariantRaw === undefined) {
+        continue;
+      }
+      const compoundVariant: CompoundVariantWithSlotsType<T, S> = compoundVariantRaw;
       let isMatching = true;
 
       const compoundKeys = Object.keys(compoundVariant);
@@ -129,6 +139,9 @@ export const resolveSlotClasses = <
       // Check each compound variant condition
       for (let keyIndex = 0, keyLength = compoundKeys.length; keyIndex < keyLength; keyIndex++) {
         const compoundKey = compoundKeys[keyIndex];
+        if (compoundKey === undefined) {
+          continue;
+        }
 
         // Skip class properties
         if (compoundKey === "className" || compoundKey === "class") {
@@ -176,7 +189,10 @@ export const resolveSlotClasses = <
 
   // Add pre-computed compound slot classes using for loop
   for (let index = 0, length = compoundSlotClasses.length; index < length; index++) {
-    resolvedClasses[classIndex++] = compoundSlotClasses[index];
+    const slotClass = compoundSlotClasses[index];
+    if (slotClass !== undefined) {
+      resolvedClasses[classIndex++] = slotClass;
+    }
   }
 
   // Trim array to actual size
@@ -286,7 +302,11 @@ export const createSlotFunctionFactory = <
   const slotKeys = Object.keys(mergedSlotDefinitions);
 
   for (let index = 0, length = slotKeys.length; index < length; index++) {
-    const slotKey = slotKeys[index] as keyof S;
+    const rawSlotKey = slotKeys[index];
+    if (rawSlotKey === undefined) {
+      continue;
+    }
+    const slotKey = rawSlotKey as keyof S;
 
     if (slotKey !== "base") {
       // Pre-cache slot-specific values

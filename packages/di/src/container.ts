@@ -51,7 +51,13 @@ export class DefaultContainer {
     const metadataReader = new SymbolMetadataReader();
     const holder: ContainerRef = { current: undefined };
     const resolver = new DependencyResolver({
-      lookup: (key) => holder.current!.lookupBindings(key),
+      lookup: (key) => {
+        const current = holder.current;
+        if (current === undefined) {
+          throw new DiError("container is not initialized");
+        }
+        return current.lookupBindings(key);
+      },
       scopeManager: scopeManagerOwned,
       metadataReader,
     });
@@ -340,7 +346,13 @@ export class DefaultContainer {
     const childScope = this.scopeManagerOwned.createChildScope();
     const holder: ContainerRef = { current: undefined };
     const resolver = new DependencyResolver({
-      lookup: (registryKey) => holder.current!.lookupBindings(registryKey),
+      lookup: (registryKey) => {
+        const current = holder.current;
+        if (current === undefined) {
+          throw new DiError("child container is not initialized");
+        }
+        return current.lookupBindings(registryKey);
+      },
       scopeManager: childScope,
       metadataReader: this.metadataReader,
     });

@@ -101,7 +101,10 @@ function summarizeVersions(targetResults: TagTargetExecutionResult[]): string {
   if (distinctVersions.size > 1) {
     return "mixed";
   }
-  return [...distinctVersions][0]!;
+  for (const version of distinctVersions) {
+    return version;
+  }
+  return "none";
 }
 
 function extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set<string> {

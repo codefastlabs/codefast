@@ -114,7 +114,7 @@ describe("Integration: Application Lifecycle", () => {
     const rootLogger = container.resolve(LoggerToken);
 
     const child = container.createChild();
-    const childLogger: Logger = { log: vi.fn<(message: string) => void>() };
+    const childLogger: Logger = { log: vi.fn() };
     child.bind(LoggerToken).toConstantValue(childLogger);
 
     expect(child.resolve(LoggerToken)).toBe(childLogger);

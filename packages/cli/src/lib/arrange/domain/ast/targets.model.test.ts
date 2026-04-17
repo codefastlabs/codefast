@@ -14,7 +14,10 @@ export function Row(className: string) {
 }
 `;
     const domainSf = parseDomainSourceFile("x.ts", source);
-    const stringNode = collectGroupableStringNodes(domainSf)[0]!;
+    const stringNode = collectGroupableStringNodes(domainSf)[0];
+    if (stringNode === undefined) {
+      throw new Error("expected string node");
+    }
     const out = formatCnCallReplacement(stringNode, source, false);
     expect(out).toContain("className,");
     expect(out).toContain('"flex gap-2"');
@@ -36,8 +39,10 @@ describe("collectGroupTargets + planGroupEditForTarget", () => {
     const domainSf = parseDomainSourceFile("x.ts", source);
     const targets = collectGroupTargets(domainSf, "x.ts");
     const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
-    expect(cnTarget).toBeDefined();
-    const plan = planGroupEditForTarget(cnTarget!, source, false);
+    if (cnTarget === undefined) {
+      throw new Error("expected cnArg target");
+    }
+    const plan = planGroupEditForTarget(cnTarget, source, false);
     expect(plan).toBeUndefined();
   });
 
@@ -49,7 +54,10 @@ export function C(className: string) {
     const domainSf = parseDomainSourceFile("x.ts", source);
     const targets = collectGroupTargets(domainSf, "x.ts");
     const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
-    const plan = planGroupEditForTarget(cnTarget!, source, true);
+    if (cnTarget === undefined) {
+      throw new Error("expected cnArg target");
+    }
+    const plan = planGroupEditForTarget(cnTarget, source, true);
     expect(plan?.replacement).toContain("className");
   });
 
@@ -61,7 +69,10 @@ export function C(className: string) {
     const domainSf = parseDomainSourceFile("x.ts", source);
     const targets = collectGroupTargets(domainSf, "x.ts");
     const cnTarget = targets.find((groupTarget) => groupTarget.kind === "cnArg");
-    const plan = planGroupEditForTarget(cnTarget!, source, true);
+    if (cnTarget === undefined) {
+      throw new Error("expected cnArg target");
+    }
+    const plan = planGroupEditForTarget(cnTarget, source, true);
     expect(plan?.replacement).toContain("className");
   });
 });

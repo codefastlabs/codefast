@@ -8,13 +8,11 @@ import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
 
 describe("SyncWorkspacePackageServiceImpl", () => {
   it("records skip stats when package.json is missing", async () => {
-    const logSkippedWorkspacePackage = vi.fn<(...args: unknown[]) => unknown>();
+    const logSkippedWorkspacePackage = vi.fn();
     const subject = new SyncWorkspacePackageServiceImpl(
       {
-        existsSync: vi.fn<(...args: unknown[]) => unknown>(
-          (checkPath: string) => !checkPath.endsWith("package.json"),
-        ),
-        readFile: vi.fn<(...args: unknown[]) => unknown>(),
+        existsSync: vi.fn((checkPath: string) => !checkPath.endsWith("package.json")),
+        readFile: vi.fn(),
       } as unknown as CliFs,
       {
         resolve: (_rootDir: string, relPath: string) => `/root/${relPath}`,
@@ -24,8 +22,8 @@ describe("SyncWorkspacePackageServiceImpl", () => {
       {} as PackageRepositoryPort,
       {} as FileSystemServicePort,
       {
-        out: vi.fn<(...args: unknown[]) => unknown>(),
-        err: vi.fn<(...args: unknown[]) => unknown>(),
+        out: vi.fn(),
+        err: vi.fn(),
       } as CliLogger,
       {
         logSkippedWorkspacePackage,

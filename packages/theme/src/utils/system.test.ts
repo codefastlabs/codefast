@@ -15,15 +15,15 @@ describe("System Theme Detection", () => {
   describe("getSystemTheme", () => {
     test('should return "dark" when system prefers dark mode', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation((query: string) => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });
@@ -33,15 +33,15 @@ describe("System Theme Detection", () => {
 
     test('should return "light" when system prefers light mode', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation((query: string) => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: false, // prefers-color-scheme: dark does NOT match
           media: query,
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });
@@ -67,15 +67,15 @@ describe("System Theme Detection", () => {
 
     test('should resolve "system" to system preference (light)', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation(() => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: false, // light mode
           media: "",
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });
@@ -85,15 +85,15 @@ describe("System Theme Detection", () => {
 
     test('should resolve "system" to system preference (dark)', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation((query: string) => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });

@@ -23,6 +23,16 @@ export default defineConfig({
   },
   overrides: [
     {
+      files: [
+        "**/*.test.{ts,tsx,mts,cts,js,jsx,mjs,cjs}",
+        "**/*.spec.{ts,tsx,mts,cts,js,jsx,mjs,cjs}",
+      ],
+      rules: {
+        // Inference from implementations is enough; explicit vi.fn<...>() everywhere is noisy.
+        "vitest/require-mock-type-parameters": "off",
+      },
+    },
+    {
       files: ["benchmarks/**/*.{js,ts,tsx}"],
       rules: {
         "no-console": "off",
@@ -67,7 +77,7 @@ export default defineConfig({
               {
                 group: ["../*", "../../*", "../../../*", "../../../../*"],
                 message:
-                  "Relative parent imports (../) are forbidden for scalability. Use absolute aliases (#lib/...) instead.",
+                  "Relative parent imports (../) are forbidden for scalability. Use absolute aliases (#/lib/...) instead.",
               },
             ],
           },

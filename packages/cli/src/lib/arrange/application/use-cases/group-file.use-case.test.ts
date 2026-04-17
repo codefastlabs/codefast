@@ -7,9 +7,8 @@ import { groupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file
 
 function createForwardingParserPort(): DomainSourceParserPort {
   return {
-    parseDomainSourceFile: vi.fn<(...args: unknown[]) => unknown>(
-      (filePath: string, sourceText: string) =>
-        domainSourceParserAdapter.parseDomainSourceFile(filePath, sourceText),
+    parseDomainSourceFile: vi.fn((filePath: string, sourceText: string) =>
+      domainSourceParserAdapter.parseDomainSourceFile(filePath, sourceText),
     ),
   };
 }
@@ -19,11 +18,11 @@ describe("groupFile use case", () => {
     const filePath = "/virtual/no-cn.ts";
     const sourceText = `export const x = 1;\n`;
     const mockFs = {
-      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => sourceText),
-      writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+      readFileSync: vi.fn(() => sourceText),
+      writeFileSync: vi.fn(),
     } as unknown as CliFs;
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(
@@ -51,11 +50,11 @@ export const styles = tv({
 `;
     const filePath = "/virtual/preview.tsx";
     const mockFs = {
-      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => sourceText),
-      writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+      readFileSync: vi.fn(() => sourceText),
+      writeFileSync: vi.fn(),
     } as unknown as CliFs;
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(
@@ -84,11 +83,11 @@ export const styles = tv({
 `;
     const filePath = "/virtual/apply.tsx";
     const mockFs = {
-      readFileSync: vi.fn<(...args: unknown[]) => unknown>(() => sourceText),
-      writeFileSync: vi.fn<(...args: unknown[]) => unknown>(),
+      readFileSync: vi.fn(() => sourceText),
+      writeFileSync: vi.fn(),
     } as unknown as CliFs;
-    const loggerOut: Mock<(message: string) => void> = vi.fn<(...args: unknown[]) => unknown>();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn<(...args: unknown[]) => unknown>() };
+    const loggerOut: Mock<(message: string) => void> = vi.fn();
+    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(

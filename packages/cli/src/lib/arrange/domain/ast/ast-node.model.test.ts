@@ -32,7 +32,7 @@ describe("ast-node.model guards", () => {
       parent: null,
       children: [child],
     };
-    const visit = vi.fn<(...args: unknown[]) => unknown>();
+    const visit = vi.fn();
     forEachDomainChild(root, visit);
     expect(visit).toHaveBeenCalledWith(child);
   });

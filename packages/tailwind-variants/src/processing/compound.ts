@@ -46,13 +46,20 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
   // Process each compound variant
   for (let index = 0; index < groupLength; index++) {
     const compoundVariant = compoundVariantGroups[index];
+    if (compoundVariant === undefined) {
+      continue;
+    }
     let isMatching = true;
 
     const compoundKeys = Object.keys(compoundVariant);
 
     // Check each variant condition
     for (let keyIndex = 0, keyLength = compoundKeys.length; keyIndex < keyLength; keyIndex++) {
-      const compoundKey = compoundKeys[keyIndex] as keyof typeof compoundVariant;
+      const rawKey = compoundKeys[keyIndex];
+      if (rawKey === undefined) {
+        continue;
+      }
+      const compoundKey = rawKey as keyof typeof compoundVariant;
 
       // Skip class properties
       if (compoundKey === "className" || compoundKey === "class") {
@@ -131,6 +138,9 @@ export const applyCompoundSlotClasses = <
 
   for (let index = 0; index < definitionLength; index++) {
     const compoundSlot = compoundSlotDefinitions[index];
+    if (compoundSlot === undefined) {
+      continue;
+    }
     let isMatching = true;
 
     const keys = Object.keys(compoundSlot);
@@ -139,6 +149,9 @@ export const applyCompoundSlotClasses = <
     // Check each variant condition
     for (let keyIndex = 0; keyIndex < keyLength; keyIndex++) {
       const compoundKey = keys[keyIndex];
+      if (compoundKey === undefined) {
+        continue;
+      }
 
       // Skip class and slot properties
       if (compoundKey === "className" || compoundKey === "class" || compoundKey === "slots") {
@@ -184,6 +197,9 @@ export const applyCompoundSlotClasses = <
 
       for (let slotIndex = 0; slotIndex < slotLength; slotIndex++) {
         const slotKey = slots[slotIndex];
+        if (slotKey === undefined) {
+          continue;
+        }
         const existing = resolvedSlotClasses[slotKey];
 
         if (existing) {

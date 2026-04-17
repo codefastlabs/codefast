@@ -12,18 +12,18 @@ interface MockMediaQueryList {
 }
 
 const createMockMediaQueryList = (matches: boolean, media: string): MockMediaQueryList => ({
-  addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-  addListener: vi.fn<(...args: unknown[]) => unknown>(),
-  dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+  addEventListener: vi.fn(),
+  addListener: vi.fn(),
+  dispatchEvent: vi.fn(),
   matches,
   media,
   onchange: null,
-  removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-  removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+  removeEventListener: vi.fn(),
+  removeListener: vi.fn(),
 });
 
 Object.defineProperty(window, "matchMedia", {
-  value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => {
+  value: vi.fn().mockImplementation((query: string) => {
     const matches = query === "(prefers-color-scheme: dark)" ? false : false;
 
     return createMockMediaQueryList(matches, query);
@@ -39,11 +39,11 @@ class MockBroadcastChannel {
     this.name = name;
   }
 
-  addEventListener = vi.fn<(...args: unknown[]) => unknown>();
-  close = vi.fn<(...args: unknown[]) => unknown>();
-  dispatchEvent = vi.fn<(...args: unknown[]) => unknown>();
-  postMessage = vi.fn<(...args: unknown[]) => unknown>();
-  removeEventListener = vi.fn<(...args: unknown[]) => unknown>();
+  addEventListener = vi.fn();
+  close = vi.fn();
+  dispatchEvent = vi.fn();
+  postMessage = vi.fn();
+  removeEventListener = vi.fn();
 }
 
 Object.defineProperty(window, "BroadcastChannel", {

@@ -14,6 +14,9 @@ describe("forEachStringLiteralInClassExpression", () => {
   ): string[] {
     const domainSf = parseDomainSourceFile("x.ts", `cn(${snippet});`);
     const stmt = domainSf.statements[0];
+    if (stmt === undefined) {
+      throw new Error("expected statement");
+    }
     if (!isDomainExpressionStatement(stmt)) {
       throw new Error("expected expression statement");
     }
@@ -21,7 +24,10 @@ describe("forEachStringLiteralInClassExpression", () => {
       throw new Error("expected call");
     }
     const call = stmt.expression;
-    const arg0 = call.arguments[0]!;
+    const arg0 = call.arguments[0];
+    if (arg0 === undefined) {
+      throw new Error("expected first argument");
+    }
     const out: string[] = [];
     forEachStringLiteralInClassExpression(arg0, (n) => out.push(n.text), 0, walk);
     return out;
@@ -46,13 +52,19 @@ describe("forEachStringLiteralInClassExpression", () => {
     }
     const domainSf = parseDomainSourceFile("x.ts", `cn(${expr});`);
     const stmt = domainSf.statements[0];
+    if (stmt === undefined) {
+      throw new Error("expected statement");
+    }
     if (!isDomainExpressionStatement(stmt)) {
       throw new Error("expected expression statement");
     }
     if (!isDomainCallExpression(stmt.expression)) {
       throw new Error("expected call");
     }
-    const arg0 = stmt.expression.arguments[0]!;
+    const arg0 = stmt.expression.arguments[0];
+    if (arg0 === undefined) {
+      throw new Error("expected first argument");
+    }
     const out: string[] = [];
     expect(() => {
       forEachStringLiteralInClassExpression(arg0, (n) => out.push(n.text), 0);

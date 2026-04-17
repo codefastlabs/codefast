@@ -7,6 +7,7 @@ import { renderToString } from "react-dom/server";
 import { ThemeProvider } from "#/core/provider";
 import { useTheme } from "#/core/use-theme";
 import { THEME_CHANNEL } from "#/constants";
+import type { Theme } from "#/types";
 
 describe("ThemeProvider", () => {
   const originalMatchMedia = window.matchMedia;
@@ -18,15 +19,15 @@ describe("ThemeProvider", () => {
 
     // Default matchMedia mock (light mode)
     Object.defineProperty(window, "matchMedia", {
-      value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
-        addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-        addListener: vi.fn<(...args: unknown[]) => unknown>(),
-        dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+      value: vi.fn().mockImplementation((query: string) => ({
+        addEventListener: vi.fn(),
+        addListener: vi.fn(),
+        dispatchEvent: vi.fn(),
         matches: false,
         media: query,
         onchange: null,
-        removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-        removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+        removeEventListener: vi.fn(),
+        removeListener: vi.fn(),
       })),
       writable: true,
     });
@@ -98,15 +99,15 @@ describe("ThemeProvider", () => {
 
     test('should resolve "system" theme to OS preference (light)', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation(() => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation(() => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: false, // light mode
           media: "",
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });
@@ -134,15 +135,15 @@ describe("ThemeProvider", () => {
 
     test('should resolve "system" theme to OS preference (dark)', () => {
       Object.defineProperty(window, "matchMedia", {
-        value: vi.fn<(...args: unknown[]) => unknown>().mockImplementation((query: string) => ({
-          addEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          addListener: vi.fn<(...args: unknown[]) => unknown>(),
-          dispatchEvent: vi.fn<(...args: unknown[]) => unknown>(),
+        value: vi.fn().mockImplementation((query: string) => ({
+          addEventListener: vi.fn(),
+          addListener: vi.fn(),
+          dispatchEvent: vi.fn(),
           matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
-          removeEventListener: vi.fn<(...args: unknown[]) => unknown>(),
-          removeListener: vi.fn<(...args: unknown[]) => unknown>(),
+          removeEventListener: vi.fn(),
+          removeListener: vi.fn(),
         })),
         writable: true,
       });
@@ -224,9 +225,7 @@ describe("ThemeProvider", () => {
   describe("setTheme", () => {
     test("should call persistTheme when provided", async () => {
       const user = userEvent.setup();
-      const mockPersistTheme = vi
-        .fn<(...args: unknown[]) => unknown>()
-        .mockResolvedValue(undefined);
+      const mockPersistTheme = vi.fn(async (_theme: Theme) => {});
 
       const TestConsumer = (): React.ReactElement => {
         const { setTheme } = useTheme();
@@ -258,9 +257,7 @@ describe("ThemeProvider", () => {
 
     test("should not call persistTheme when setting same theme", async () => {
       const user = userEvent.setup();
-      const mockPersistTheme = vi
-        .fn<(...args: unknown[]) => unknown>()
-        .mockResolvedValue(undefined);
+      const mockPersistTheme = vi.fn(async (_theme: Theme) => {});
 
       const TestConsumer = (): React.ReactElement => {
         const { setTheme, theme } = useTheme();
@@ -296,7 +293,7 @@ describe("ThemeProvider", () => {
 
   describe("syncThemeFromServer", () => {
     test("reconciles state when server returns a different theme after mount", async () => {
-      const sync = vi.fn<(...args: unknown[]) => unknown>().mockResolvedValue("dark");
+      const sync = vi.fn().mockResolvedValue("dark" as Theme);
 
       const TestConsumer = (): React.ReactElement => {
         const { theme } = useTheme();
@@ -320,7 +317,7 @@ describe("ThemeProvider", () => {
     });
 
     test("keeps initial theme when syncThemeFromServer rejects", async () => {
-      const sync = vi.fn<(...args: unknown[]) => unknown>().mockRejectedValue(new Error("network"));
+      const sync = vi.fn().mockRejectedValue(new Error("network"));
 
       const TestConsumer = (): React.ReactElement => {
         const { theme } = useTheme();
@@ -342,7 +339,7 @@ describe("ThemeProvider", () => {
     });
 
     test("does not change preference when server returns the same theme", async () => {
-      const sync = vi.fn<(...args: unknown[]) => unknown>().mockResolvedValue("light");
+      const sync = vi.fn().mockResolvedValue("light" as Theme);
 
       const TestConsumer = (): React.ReactElement => {
         const { theme } = useTheme();
@@ -364,10 +361,10 @@ describe("ThemeProvider", () => {
     });
 
     test("ignores server result after unmount", async () => {
-      let resolveSync!: (value: import("#/types").Theme) => void;
-      const sync = vi.fn<(...args: unknown[]) => unknown>(
+      let resolveSync: ((value: Theme) => void) | undefined;
+      const sync = vi.fn(
         () =>
-          new Promise<import("#/types").Theme>((resolve) => {
+          new Promise<Theme>((resolve) => {
             resolveSync = resolve;
           }),
       );
@@ -385,6 +382,9 @@ describe("ThemeProvider", () => {
       unmount();
 
       await act(async () => {
+        if (resolveSync === undefined) {
+          throw new Error("expected syncThemeFromServer to have started");
+        }
         resolveSync("dark");
         await Promise.resolve();
       });
@@ -521,9 +521,9 @@ describe("ThemeProvider", () => {
   describe("setTheme errors", () => {
     test("logs and keeps prior theme when persistTheme rejects", async () => {
       const user = userEvent.setup();
-      const persistTheme = vi
-        .fn<(...args: unknown[]) => unknown>()
-        .mockRejectedValue(new Error("persist failed"));
+      const persistTheme = vi.fn(async (_theme: Theme) => {
+        throw new Error("persist failed");
+      });
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const TestConsumer = (): React.ReactElement => {

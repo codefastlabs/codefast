@@ -109,12 +109,20 @@ export const mergeConfigurationSchemas = (
 
     for (const extensionKey of extensionKeys) {
       const extensionVariantGroup = extensionConfiguration.variants[extensionKey];
+      if (extensionVariantGroup === undefined) {
+        continue;
+      }
 
       // Merge variant groups or add new ones
-      mergedVariantGroups[extensionKey] =
-        extensionKey in mergedVariantGroups
-          ? mergeVariantGroups(mergedVariantGroups[extensionKey], extensionVariantGroup)
-          : extensionVariantGroup;
+      const existingVariantGroup = mergedVariantGroups[extensionKey];
+      if (existingVariantGroup !== undefined) {
+        mergedVariantGroups[extensionKey] = mergeVariantGroups(
+          existingVariantGroup,
+          extensionVariantGroup,
+        );
+      } else {
+        mergedVariantGroups[extensionKey] = extensionVariantGroup;
+      }
     }
   }
 

@@ -15,6 +15,9 @@ import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.ada
 function parseCallee(source: string) {
   const domainSf = parseDomainSourceFile("x.ts", source);
   const stmt = domainSf.statements[0];
+  if (stmt === undefined) {
+    throw new Error("expected statement");
+  }
   if (!isDomainExpressionStatement(stmt)) {
     throw new Error("expected expression statement");
   }
@@ -100,6 +103,9 @@ describe("unwrapCnInsideTvCallReplacement", () => {
     const src = 'cn("flex gap-2")';
     const domainSf = parseDomainSourceFile("x.ts", src);
     const stmt = domainSf.statements[0];
+    if (stmt === undefined) {
+      throw new Error("expected statement");
+    }
     if (!isDomainExpressionStatement(stmt)) {
       throw new Error("expected expression statement");
     }
@@ -114,6 +120,9 @@ describe("unwrapCnInsideTvCallReplacement", () => {
     const src = 'cn("flex gap-2", "text-sm")';
     const domainSf = parseDomainSourceFile("x.ts", src);
     const stmt = domainSf.statements[0];
+    if (stmt === undefined) {
+      throw new Error("expected statement");
+    }
     if (!isDomainExpressionStatement(stmt)) {
       throw new Error("expected expression statement");
     }
@@ -129,6 +138,9 @@ describe("unwrapCnInsideTvCallReplacement", () => {
   it("returns undefined for zero args", () => {
     const domainSf = parseDomainSourceFile("x.ts", "cn()");
     const stmt = domainSf.statements[0];
+    if (stmt === undefined) {
+      throw new Error("expected statement");
+    }
     if (!isDomainExpressionStatement(stmt)) {
       throw new Error("expected expression statement");
     }
@@ -144,7 +156,10 @@ describe("lineOf", () => {
   it("returns 1-based line number for node start", () => {
     const src = ["const a = 1;", "const b = 2;", "const c = 3;"].join("\n");
     const domainSf = parseDomainSourceFile("x.ts", src);
-    const stmt = domainSf.statements[1]!;
+    const stmt = domainSf.statements[1];
+    if (stmt === undefined) {
+      throw new Error("expected second statement");
+    }
     expect(lineOf(domainSf, stmt)).toBe(2);
   });
 });

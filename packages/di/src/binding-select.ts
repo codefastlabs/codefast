@@ -52,7 +52,13 @@ export function selectBindingForRegistry(
   const candidates = filterMatchingBindings(bindings, hint, constraintCtx);
 
   if (candidates.length === 1) {
-    return candidates[0];
+    const [only] = candidates;
+    if (only === undefined) {
+      throw new DiError(
+        `Internal: expected binding candidate for "${tokenLabel}" (resolution path: ${pathLabels.join(" -> ")})`,
+      );
+    }
+    return only;
   }
   if (candidates.length === 0) {
     if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {

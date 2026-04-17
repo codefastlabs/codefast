@@ -5,8 +5,8 @@ import { useIsMobile } from "#/hooks/use-is-mobile";
 import { useMediaQuery } from "#/hooks/use-media-query";
 
 // Mock hook useMediaQuery
-vi.mock("#hooks/use-media-query", () => ({
-  useMediaQuery: vi.fn<(...args: unknown[]) => unknown>(),
+vi.mock("#/hooks/use-media-query", () => ({
+  useMediaQuery: vi.fn(),
 }));
 
 describe("useIsMobile", () => {
