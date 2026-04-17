@@ -28,8 +28,18 @@ function formatTagKeyForGraph(tag: string | symbol): string {
   if (typeof tag === "string") {
     return tag;
   }
+  // Registered (global) symbols round-trip: `Symbol.for("key")` is reconstructible across realms.
+  const registryKey = Symbol.keyFor(tag);
+  if (registryKey !== undefined) {
+    return `Symbol.for(${JSON.stringify(registryKey)})`;
+  }
+  // Local symbols: render as `Symbol(description)` to match Node's util.inspect output.
+  // Two local symbols with the same description render identically in the graph — this is a
+  // display limitation, not a matching bug; runtime selection uses symbol identity via Map.
   const description = tag.description;
-  return description !== undefined && description.length > 0 ? description : String(tag);
+  return description !== undefined && description.length > 0
+    ? `Symbol(${description})`
+    : "Symbol()";
 }
 
 function formatTagValueForGraph(value: unknown): string {

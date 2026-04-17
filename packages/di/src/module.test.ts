@@ -1,0 +1,122 @@
+import { describe, expect, it } from "vitest";
+import { Container } from "#/container";
+import { AsyncModule, Module } from "#/module";
+import { token } from "#/token";
+
+describe("Module", () => {
+  it("is reusable across independent containers (pure description, no container ownership)", () => {
+    const portToken = token<number>("module-reuse-port");
+    const sharedModule = Module.create("shared", (moduleApi) => {
+      moduleApi.bind(portToken).toConstantValue(3000);
+    });
+
+    const firstContainer = Container.fromModules(sharedModule);
+    const secondContainer = Container.fromModules(sharedModule);
+
+    expect(firstContainer.resolve(portToken)).toBe(3000);
+    expect(secondContainer.resolve(portToken)).toBe(3000);
+
+    firstContainer.rebind(portToken).toConstantValue(4000);
+    expect(firstContainer.resolve(portToken)).toBe(4000);
+    expect(secondContainer.resolve(portToken)).toBe(3000);
+  });
+
+  it("deduplicates repeated load(M) on the same container (spec §7.3)", () => {
+    const portToken = token<number>("module-dedup-port");
+    let setupRunCount = 0;
+    const dedupedModule = Module.create("dedup", (moduleApi) => {
+      setupRunCount += 1;
+      moduleApi.bind(portToken).toConstantValue(setupRunCount);
+    });
+
+    const container = Container.create();
+    container.load(dedupedModule);
+    container.load(dedupedModule);
+    container.load(dedupedModule);
+
+    expect(setupRunCount).toBe(1);
+    expect(container.resolve(portToken)).toBe(1);
+  });
+
+  it("deduplicates diamond import graphs (shared leaf imported by multiple parents runs once)", () => {
+    const sharedValueToken = token<number>("module-diamond-shared");
+    let leafSetupCount = 0;
+
+    const leafModule = Module.create("leaf", (moduleApi) => {
+      leafSetupCount += 1;
+      moduleApi.bind(sharedValueToken).toConstantValue(42);
+    });
+
+    const leftBranchModule = Module.create("left", (moduleApi) => {
+      moduleApi.import(leafModule);
+    });
+
+    const rightBranchModule = Module.create("right", (moduleApi) => {
+      moduleApi.import(leafModule);
+    });
+
+    const rootModule = Module.create("root", (moduleApi) => {
+      moduleApi.import(leftBranchModule, rightBranchModule);
+    });
+
+    const container = Container.fromModules(rootModule);
+    expect(leafSetupCount).toBe(1);
+    expect(container.resolve(sharedValueToken)).toBe(42);
+  });
+
+  it("deduplicates async module imports as well", async () => {
+    const sharedValueToken = token<number>("module-async-dedup");
+    let leafSetupCount = 0;
+
+    const asyncLeafModule = Module.createAsync("async-leaf", async (moduleApi) => {
+      await Promise.resolve();
+      leafSetupCount += 1;
+      moduleApi.bind(sharedValueToken).toConstantValue(leafSetupCount);
+    });
+
+    const asyncRootModule = Module.createAsync("async-root", async (moduleApi) => {
+      moduleApi.import(asyncLeafModule, asyncLeafModule);
+    });
+
+    const container = await Container.fromModulesAsync(asyncLeafModule, asyncRootModule);
+    expect(leafSetupCount).toBe(1);
+    expect(container.resolve(sharedValueToken)).toBe(1);
+  });
+
+  it("unload removes only the bindings this container recorded for that module", () => {
+    const alphaToken = token<string>("module-unload-alpha");
+    const betaToken = token<string>("module-unload-beta");
+
+    const unloadableModule = Module.create("unloadable", (moduleApi) => {
+      moduleApi.bind(alphaToken).toConstantValue("alpha");
+      moduleApi.bind(betaToken).toConstantValue("beta");
+    });
+
+    const container = Container.fromModules(unloadableModule);
+    expect(container.resolve(alphaToken)).toBe("alpha");
+    container.unload(unloadableModule);
+
+    expect(container.has(alphaToken)).toBe(false);
+    expect(container.has(betaToken)).toBe(false);
+  });
+
+  it("unload errors when the module was never loaded on this container", () => {
+    const neverLoadedModule = Module.create("never-loaded", () => undefined);
+    const emptyContainer = Container.create();
+    expect(() => {
+      emptyContainer.unload(neverLoadedModule);
+    }).toThrow(/not loaded/i);
+  });
+
+  it("AsyncModule is exposed and `createAsync` returns it", async () => {
+    const valueToken = token<number>("module-async-type");
+    const exposedAsyncModule = Module.createAsync("async-exposed", async (moduleApi) => {
+      await Promise.resolve();
+      moduleApi.bind(valueToken).toConstantValue(7);
+    });
+    expect(exposedAsyncModule).toBeInstanceOf(AsyncModule);
+
+    const container = await Container.fromModulesAsync(exposedAsyncModule);
+    expect(container.resolve(valueToken)).toBe(7);
+  });
+});
