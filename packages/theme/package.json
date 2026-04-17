@@ -111,7 +111,6 @@
     "dev": "tsdown --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:coverage:ci": "vitest run --coverage",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -126,6 +125,7 @@
     "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "jsdom": "catalog:",
     "typescript": "catalog:",
