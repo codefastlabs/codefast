@@ -1,10 +1,70 @@
+export { bind, BindingBuilder, createBindingIdentifier } from "#/binding";
+export type {
+  ActivationHandler,
+  AliasBinding,
+  AsyncDynamicBinding,
+  Binding,
+  BindingIdentifier,
+  BindingScope,
+  ClassBinding,
+  ConstantBinding,
+  ConstantBindingBuilder,
+  ConstraintBindingKind,
+  ConstraintContext,
+  ConstraintParentFrame,
+  Constructor,
+  DeactivationHandler,
+  DynamicBinding,
+  MaterializationFrame,
+  ResolutionContext,
+  ResolvedBinding,
+  ResolveHint,
+  ResolveOptions,
+} from "#/binding";
+
+export {
+  filterMatchingBindings,
+  registryKeyLabel,
+  selectBindingForRegistry,
+  selectDefaultBindingForKey,
+} from "#/binding-select";
+export { whenAnyAncestorIs, whenParentIs, whenTargetTagged } from "#/constraints";
+
 export { Container } from "#/container";
-export type { BindingIdentifier, ContainerSnapshot, ResolveOptions } from "#/container";
-export { whenParentIs, whenAnyAncestorIs, whenTargetTagged } from "#/constraints";
-export { inject, optional } from "#/decorators/inject";
+export { inject, isInjectionDescriptor, optional } from "#/decorators/inject";
+
+export type { InjectOptions } from "#/decorators/inject";
 export { injectable } from "#/decorators/injectable";
+
+export type { InjectableDependency } from "#/decorators/injectable";
+export {
+  CODEFAST_DI_CLASS_SCOPE_HINT,
+  CODEFAST_DI_CONSTRUCTOR_METADATA,
+  decoratorMetadataObjectSymbol,
+} from "#/decorators/metadata";
+
+export type {
+  ClassScopeHint,
+  ConstructorMetadata,
+  InjectionDescriptor,
+  MetadataReader,
+  ParamMetadata,
+} from "#/decorators/metadata";
+export { getOrCreatePendingMap, takePendingMap } from "#/decorators/param-registry";
+
+export { SymbolMetadataReader } from "#/decorators/reader";
 export { scoped } from "#/decorators/scoped";
+
 export { singleton } from "#/decorators/singleton";
+export {
+  collectStaticDependencyEdges,
+  injectHintLabelFromResolveHint,
+  listResolvedDependencies,
+} from "#/dependency-graph";
+
+export type { ResolvedDependency, StaticDependencyEdge } from "#/dependency-graph";
+export { isDevelopmentOrTestEnvironment, isProductionEnvironment } from "#/environment";
+
 export {
   AsyncModuleLoadError,
   AsyncResolutionError,
@@ -15,5 +75,30 @@ export {
   ScopeViolationError,
   TokenNotBoundError,
 } from "#/errors";
+export type { ScopeViolationDetails } from "#/errors";
+
+export { ContainerInspector } from "#/inspector";
+export type {
+  BindingActivationStatus,
+  ContainerBindingSnapshot,
+  ContainerInspectorContext,
+  ContainerSnapshot,
+  DotGraphOptions,
+} from "#/inspector";
+
+export { runActivation, runActivationAsync } from "#/lifecycle";
+
 export { AsyncModule, Module } from "#/module";
-export { token, type Token, type TokenValue } from "#/token";
+export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
+
+export { BindingRegistry } from "#/registry";
+export type { RegistryKey } from "#/registry";
+
+export { DependencyResolver } from "#/resolver";
+
+export { ScopeManager } from "#/scope";
+
+export { validateScopeRules } from "#/scope-validation";
+
+export { token } from "#/token";
+export type { Token, TokenValue } from "#/token";
