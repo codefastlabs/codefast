@@ -16,7 +16,8 @@ import type { ResolvedTheme, Theme, ThemeContextType } from "#/types";
 
 import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from "#/constants";
 import { ThemeContext } from "#/core/context";
-import { applyTheme, disableAnimation, getSystemTheme } from "#/utils";
+import { applyTheme, disableAnimation } from "#/utils/dom";
+import { getSystemTheme } from "#/utils/system";
 
 /* -----------------------------------------------------------------------------
  * System Theme Subscription

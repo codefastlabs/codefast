@@ -57,10 +57,6 @@
       "types": "./dist/container.d.mts",
       "import": "./dist/container.mjs"
     },
-    "./decorators": {
-      "types": "./dist/decorators/index.d.mts",
-      "import": "./dist/decorators/index.mjs"
-    },
     "./decorators/inject": {
       "types": "./dist/decorators/inject.d.mts",
       "import": "./dist/decorators/inject.mjs"
