@@ -55,10 +55,6 @@
       "types": "./dist/constants.d.mts",
       "import": "./dist/constants.mjs"
     },
-    "./core": {
-      "types": "./dist/core/index.d.mts",
-      "import": "./dist/core/index.mjs"
-    },
     "./core/context": {
       "types": "./dist/core/context.d.mts",
       "import": "./dist/core/context.mjs"
@@ -71,10 +67,6 @@
       "types": "./dist/core/use-theme.d.mts",
       "import": "./dist/core/use-theme.mjs"
     },
-    "./script": {
-      "types": "./dist/script/index.d.mts",
-      "import": "./dist/script/index.mjs"
-    },
     "./script/theme-script": {
       "types": "./dist/script/theme-script.d.mts",
       "import": "./dist/script/theme-script.mjs"
@@ -86,10 +78,6 @@
     "./types": {
       "types": "./dist/types.d.mts",
       "import": "./dist/types.mjs"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.mts",
-      "import": "./dist/utils/index.mjs"
     },
     "./utils/dom": {
       "types": "./dist/utils/dom.d.mts",

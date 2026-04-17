@@ -1,7 +1,10 @@
 export { Container } from "#/container";
 export type { BindingIdentifier, ContainerSnapshot, ResolveOptions } from "#/container";
 export { whenParentIs, whenAnyAncestorIs, whenTargetTagged } from "#/constraints";
-export { inject, optional, injectable, scoped, singleton } from "#/decorators/index";
+export { inject, optional } from "#/decorators/inject";
+export { injectable } from "#/decorators/injectable";
+export { scoped } from "#/decorators/scoped";
+export { singleton } from "#/decorators/singleton";
 export {
   AsyncModuleLoadError,
   AsyncResolutionError,
