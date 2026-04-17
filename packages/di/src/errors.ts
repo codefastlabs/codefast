@@ -4,6 +4,21 @@ function formatResolutionPath(resolutionPath: readonly string[]): string {
   return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
 }
 
+function safeSerializeHint(hint: ResolveHint): string {
+  if (hint === undefined) {return "(none)";}
+  try {
+    const parts: string[] = [];
+    if (hint.name !== undefined) {parts.push(`name: ${String(hint.name)}`);}
+    if (hint.tag !== undefined) {
+      const [tagKey, tagValue] = hint.tag;
+      parts.push(`tag: [${String(tagKey)}, <${typeof tagValue}>]`);
+    }
+    return `{ ${parts.join(", ")} }`;
+  } catch {
+    return "(unserializable hint)";
+  }
+}
+
 /**
  * Base error for all `@codefast/di` failures. Subclasses expose a stable, machine-readable `code`.
  */
@@ -32,7 +47,7 @@ export class NoMatchingBindingError extends DiError {
     options?: ErrorOptions,
   ) {
     const pathText = resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
-    const hintText = JSON.stringify(hint);
+    const hintText = safeSerializeHint(hint);
     super(
       `No binding matched resolve options ${hintText} for token "${tokenName}" (resolution path: ${pathText})`,
       options,

@@ -198,9 +198,8 @@ export class ScopeManager {
   }
 
   private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
-    const entries = [...store.values()];
-    store.clear();
-    for (const entry of entries) {
+    for (const [id, entry] of [...store.entries()]) {
+      store.delete(id);
       const handler = entry.binding.onDeactivation;
       if (handler === undefined) {
         continue;
@@ -217,12 +216,20 @@ export class ScopeManager {
   private async disposeMapAsync(store: Map<BindingIdentifier, CacheEntry>): Promise<void> {
     const entries = [...store.values()];
     store.clear();
+    const errors: unknown[] = [];
     for (const entry of entries) {
       const handler = entry.binding.onDeactivation;
       if (handler === undefined) {
         continue;
       }
-      await handler(entry.instance);
+      try {
+        await handler(entry.instance);
+      } catch (error) {
+        errors.push(error);
+      }
     }
+    if (errors.length === 1) {throw errors[0];}
+    if (errors.length > 1)
+      {throw new AggregateError(errors, "disposeAsync: multiple deactivation handlers failed");}
   }
 }
