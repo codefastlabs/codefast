@@ -1,9 +1,9 @@
-import type { VariantProps } from "#index";
+import type { VariantProps } from "#/index";
 
 /**
  * Verification of README code examples - ensures documented examples work correctly.
  */
-import { cn, createTV, cx, tv } from "#index";
+import { cn, createTV, cx, tv } from "#/index";
 
 describe("README code examples", () => {
   test("Quick Start - button variants", () => {

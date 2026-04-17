@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import type { z } from "zod";
-import { exampleFormSchema } from "#components/sink/schema";
+import { exampleFormSchema } from "#/components/sink/schema";
 
 export type FormState = {
   values: z.infer<typeof exampleFormSchema>;

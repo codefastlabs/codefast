@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { AsyncResolutionError, Container, inject, injectable, Module, token } from "#index";
+import { AsyncResolutionError, Container, inject, injectable, Module, token } from "#/index";
 
 // --- Domain types & tokens
 

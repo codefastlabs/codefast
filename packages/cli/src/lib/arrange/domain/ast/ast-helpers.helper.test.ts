@@ -5,12 +5,12 @@ import {
   lineOf,
   moduleLooksLikeCnTvReexport,
   unwrapCnInsideTvCallReplacement,
-} from "#lib/arrange/domain/ast/ast-helpers.helper";
+} from "#/lib/arrange/domain/ast/ast-helpers.helper";
 import {
   isDomainCallExpression,
   isDomainExpressionStatement,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator.adapter";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 
 function parseCallee(source: string) {
   const domainSf = parseDomainSourceFile("x.ts", source);

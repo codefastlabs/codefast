@@ -1,8 +1,8 @@
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { CliLogger } from "#lib/infra/fs-contract.port";
-import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
-import type { DomainSourceFile } from "#lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#lib/arrange/infra/ts-ast-translator.adapter";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import type { CliLogger } from "#/lib/infra/fs-contract.port";
+import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
+import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 
 export class DomainSourceParserAdapter implements DomainSourceParserPort {
   constructor(private readonly logger?: CliLogger) {}

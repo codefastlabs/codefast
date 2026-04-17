@@ -1,10 +1,10 @@
-import { collectGroupableStringNodes } from "#lib/arrange/domain/ast/collectors-tv.collector";
+import { collectGroupableStringNodes } from "#/lib/arrange/domain/ast/collectors-tv.collector";
 import {
   collectGroupTargets,
   formatCnCallReplacement,
   planGroupEditForTarget,
-} from "#lib/arrange/domain/ast/targets.model";
-import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator.adapter";
+} from "#/lib/arrange/domain/ast/targets.model";
+import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 
 describe("formatCnCallReplacement", () => {
   it("keeps multiline trailing comma behavior explicit for multi-arg cn calls", () => {

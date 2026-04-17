@@ -1,17 +1,17 @@
 import { Module } from "@codefast/di";
-import { ArrangeFileProcessorServiceImpl } from "#lib/arrange/application/services/arrange-file-processor.service";
-import { ArrangeTargetScannerServiceImpl } from "#lib/arrange/application/services/arrange-target-scanner.service";
-import { AnalyzeDirectoryUseCaseImpl } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
-import { RunArrangeSyncUseCaseImpl } from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
-import { SuggestCnGroupsUseCaseImpl } from "#lib/arrange/application/use-cases/suggest-cn-groups.use-case";
-import { DomainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
-import { FileWalkerAdapter } from "#lib/arrange/infra/file-walker.adapter";
-import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import { ArrangeFileProcessorServiceImpl } from "#/lib/arrange/application/services/arrange-file-processor.service";
+import { ArrangeTargetScannerServiceImpl } from "#/lib/arrange/application/services/arrange-target-scanner.service";
+import { AnalyzeDirectoryUseCaseImpl } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
+import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
+import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
+import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
+import { groupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
-} from "#lib/core/infra/logging-decorator.adapter";
+} from "#/lib/core/infra/logging-decorator.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorToken,
@@ -22,7 +22,7 @@ import {
   GroupFilePreviewPortToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 function withOptionalTelemetry<T extends object>(
   portName: string,

@@ -1,19 +1,19 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { CliPath } from "#lib/core/application/ports/path.port";
-import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
-import type { MirrorConfig } from "#lib/config/domain/schema.domain";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#/lib/core/application/ports/path.port";
+import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
+import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import {
   PACKAGE_JSON_EXPORT,
   VALID_DTS_EXTENSIONS,
   VALID_JS_EXTENSIONS,
-} from "#lib/mirror/domain/constants.domain";
+} from "#/lib/mirror/domain/constants.domain";
 import type {
   ExportEntry,
   ExportOriginalPathBySpecifier,
   GenerateExportsResult,
   MirrorPackageMeta,
   Module,
-} from "#lib/mirror/domain/types.domain";
+} from "#/lib/mirror/domain/types.domain";
 
 function resolvePackageScopedConfig<T>(
   configMap: Record<string, T> | undefined,

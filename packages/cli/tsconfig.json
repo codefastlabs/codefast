@@ -3,7 +3,10 @@
   "compilerOptions": {
     "experimentalDecorators": false,
     "types": ["node", "vitest/globals"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "#/*": ["./src/*"]
+    }
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

@@ -4,9 +4,9 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderToString } from "react-dom/server";
 
-import { ThemeProvider } from "#core/provider";
-import { useTheme } from "#core/use-theme";
-import { THEME_CHANNEL } from "#constants";
+import { ThemeProvider } from "#/core/provider";
+import { useTheme } from "#/core/use-theme";
+import { THEME_CHANNEL } from "#/constants";
 
 describe("ThemeProvider", () => {
   const originalMatchMedia = window.matchMedia;
@@ -364,10 +364,10 @@ describe("ThemeProvider", () => {
     });
 
     test("ignores server result after unmount", async () => {
-      let resolveSync!: (value: import("#types").Theme) => void;
+      let resolveSync!: (value: import("#/types").Theme) => void;
       const sync = vi.fn<(...args: unknown[]) => unknown>(
         () =>
-          new Promise<import("#types").Theme>((resolve) => {
+          new Promise<import("#/types").Theme>((resolve) => {
             resolveSync = resolve;
           }),
       );

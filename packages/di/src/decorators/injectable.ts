@@ -1,13 +1,13 @@
-import { DiError } from "#errors";
+import { DiError } from "#/errors";
 import {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   type ConstructorMetadata,
   type InjectionDescriptor,
   type ParamMetadata,
-} from "#decorators/metadata";
-import { isInjectionDescriptor } from "#decorators/inject";
-import type { Constructor } from "#binding";
-import type { Token } from "#token";
+} from "#/decorators/metadata";
+import { isInjectionDescriptor } from "#/decorators/inject";
+import type { Constructor } from "#/binding";
+import type { Token } from "#/token";
 
 export type InjectableDependency =
   | Token<unknown>

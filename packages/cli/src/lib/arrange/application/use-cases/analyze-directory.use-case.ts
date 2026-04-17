@@ -1,22 +1,22 @@
 import { injectable } from "@codefast/di";
-import { appError, type AppError } from "#lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#lib/core/domain/result.model";
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
-import type { ArrangeAnalyzeDirectoryRequest } from "#lib/arrange/application/requests/analyze-directory.request";
-import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
+import { appError, type AppError } from "#/lib/core/domain/errors.domain";
+import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
+import type { ArrangeAnalyzeDirectoryRequest } from "#/lib/arrange/application/requests/analyze-directory.request";
+import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
-} from "#lib/arrange/domain/arrange-analyze.service";
+} from "#/lib/arrange/domain/arrange-analyze.service";
 import {
   ArrangeTargetScannerToken,
   CliFsToken,
   DomainSourceParserPortToken,
   type ArrangeTargetScannerService,
   type AnalyzeDirectoryUseCase,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 /**
  * Orchestrates filesystem + parse ports, delegates analysis rules to the domain service.

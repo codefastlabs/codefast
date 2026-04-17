@@ -1,6 +1,6 @@
-import type { Constructor, ResolveHint } from "#binding";
-import type { InjectionDescriptor } from "#decorators/metadata";
-import type { Token } from "#token";
+import type { Constructor, ResolveHint } from "#/binding";
+import type { InjectionDescriptor } from "#/decorators/metadata";
+import type { Token } from "#/token";
 
 export type InjectOptions = ResolveHint;
 

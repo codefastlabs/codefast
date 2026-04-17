@@ -2,8 +2,8 @@
 
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import { createCliRuntimeContainer } from "#lib/core/infra/composition-root";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { createCliRuntimeContainer } from "#/lib/core/infra/composition-root";
 
 const isArchitectureGuard = process.argv.includes("--architecture-guard");
 

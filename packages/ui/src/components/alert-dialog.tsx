@@ -1,12 +1,12 @@
 "use client";
 
-import type { VariantProps } from "#lib/utils";
+import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
-import { buttonVariants } from "#components/button";
+import { buttonVariants } from "#/components/button";
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog

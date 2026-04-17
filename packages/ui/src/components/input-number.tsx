@@ -2,12 +2,12 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-import { buttonVariants } from "#components/button";
-import { Spinner } from "#components/spinner";
-import * as InputNumberPrimitive from "#primitives/input-number";
+import { buttonVariants } from "#/components/button";
+import { Spinner } from "#/components/spinner";
+import * as InputNumberPrimitive from "#/primitives/input-number";
 
 /* -----------------------------------------------------------------------------
  * Component: InputNumber

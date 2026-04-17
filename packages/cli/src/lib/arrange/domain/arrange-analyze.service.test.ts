@@ -1,8 +1,8 @@
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
-} from "#lib/arrange/domain/arrange-analyze.service";
-import type { DomainSourceFile } from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/arrange-analyze.service";
+import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
 
 describe("arrange-analyze.service", () => {
   it("createEmptyAnalyzeReport initializes counters", () => {

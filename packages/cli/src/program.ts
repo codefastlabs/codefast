@@ -3,9 +3,9 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { createCliRuntimeContainer } from "#lib/core/infra/composition-root";
-import type { CliCommand } from "#lib/core/presentation/command.interface";
-import { COMMAND_TOKEN } from "#lib/core/presentation/tokens";
+import { createCliRuntimeContainer } from "#/lib/core/infra/composition-root";
+import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import { COMMAND_TOKEN } from "#/lib/core/presentation/tokens";
 
 function readVersion(): string {
   try {

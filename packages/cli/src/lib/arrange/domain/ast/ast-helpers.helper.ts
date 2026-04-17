@@ -1,8 +1,8 @@
-import { EMPTY_CN_TV_BINDINGS } from "#lib/arrange/domain/constants.domain";
+import { EMPTY_CN_TV_BINDINGS } from "#/lib/arrange/domain/constants.domain";
 import {
   applyEditsDescending,
   indentOfLineContaining,
-} from "#lib/shared/source-code/domain/text-edit.model";
+} from "#/lib/shared/source-code/domain/text-edit.model";
 import {
   type DomainAstNode,
   type DomainCallExpression,
@@ -15,7 +15,7 @@ import {
   isDomainPropertyAccessExpression,
   isDomainStringLiteral,
   lineOfSourcePosition,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 
 /** Known module specifiers that export `cn` / `tv`. */
 export const KNOWN_CN_TV_MODULES = new Set([

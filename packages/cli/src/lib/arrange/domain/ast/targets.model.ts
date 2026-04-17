@@ -1,23 +1,23 @@
-import { APPLY_MIN_TOKENS } from "#lib/arrange/domain/constants.domain";
+import { APPLY_MIN_TOKENS } from "#/lib/arrange/domain/constants.domain";
 import {
   areCnTailwindPartitionsEquivalent,
   suggestCnGroups,
   summarizeGroupBucketLabels,
-} from "#lib/arrange/domain/grouping.domain";
+} from "#/lib/arrange/domain/grouping.domain";
 import {
   escapeTsStringLiteralContent,
   formatArray,
   formatJsxCnAttributeValue,
-} from "#lib/arrange/domain/source-text-formatters.formatter";
-import type { GroupTarget, PlannedGroupEdit, StringNode } from "#lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#lib/arrange/domain/tokenizer.util";
-import { isUnsafeLiteralForCnStyleApplySplit } from "#lib/arrange/domain/ast/collectors-cn.collector";
-import { jsxClassNameStaticLiteral } from "#lib/arrange/domain/ast/collectors-jsx.collector";
+} from "#/lib/arrange/domain/source-text-formatters.formatter";
+import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/lib/arrange/domain/types.domain";
+import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
+import { isUnsafeLiteralForCnStyleApplySplit } from "#/lib/arrange/domain/ast/collectors-cn.collector";
+import { jsxClassNameStaticLiteral } from "#/lib/arrange/domain/ast/collectors-jsx.collector";
 import {
   collectGroupableStringNodes,
   slotClassString,
-} from "#lib/arrange/domain/ast/collectors-tv.collector";
-import { indentOfLineContaining } from "#lib/shared/source-code/domain/text-edit.model";
+} from "#/lib/arrange/domain/ast/collectors-tv.collector";
+import { indentOfLineContaining } from "#/lib/shared/source-code/domain/text-edit.model";
 import {
   type DomainAstNode,
   type DomainSourceFile,
@@ -25,7 +25,7 @@ import {
   isDomainJsxAttribute,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 
 export function targetReplaceStart(target: GroupTarget): number {
   if (target.kind === "cnArg") {

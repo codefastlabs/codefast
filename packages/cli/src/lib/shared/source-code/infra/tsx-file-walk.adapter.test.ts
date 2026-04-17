@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs } from "#lib/infra/node-io.adapter";
+import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
 import {
   DEFAULT_SKIP_DIRS,
   walkTsxFiles,
-} from "#lib/shared/source-code/infra/tsx-file-walk.adapter";
+} from "#/lib/shared/source-code/infra/tsx-file-walk.adapter";
 
 const cliFs = createNodeCliFs();
 

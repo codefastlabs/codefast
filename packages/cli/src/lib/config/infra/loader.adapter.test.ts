@@ -2,8 +2,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { vi } from "vitest";
-import { createNodeCliFs } from "#lib/infra/node-io.adapter";
-import { loadConfig, resetConfigLoaderCacheForTests } from "#lib/config/infra/loader.adapter";
+import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { loadConfig, resetConfigLoaderCacheForTests } from "#/lib/config/infra/loader.adapter";
 
 describe("loadConfig", () => {
   const cliFs = createNodeCliFs();

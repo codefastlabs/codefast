@@ -1,10 +1,10 @@
 import { z } from "zod";
-import type { ArrangeAnalyzeDirectoryRequest } from "#lib/arrange/application/requests/analyze-directory.request";
+import type { ArrangeAnalyzeDirectoryRequest } from "#/lib/arrange/application/requests/analyze-directory.request";
 import type {
   ArrangeRunTargetRequest,
   ArrangeSyncRunRequest,
-} from "#lib/arrange/application/requests/arrange-sync.request";
-import type { ArrangeSuggestGroupsRequest } from "#lib/arrange/application/requests/suggest-groups.request";
+} from "#/lib/arrange/application/requests/arrange-sync.request";
+import type { ArrangeSuggestGroupsRequest } from "#/lib/arrange/application/requests/suggest-groups.request";
 
 export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> =
   z.object({

@@ -3,8 +3,8 @@ import {
   MAX_STRIP_VARIANT_PASSES,
   RESPONSIVE_PREFIX,
   STATE_PREFIXES,
-} from "#lib/arrange/domain/constants.domain";
-import type { Bucket } from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/constants.domain";
+import type { Bucket } from "#/lib/arrange/domain/types.domain";
 
 /**
  * Bare-token classification is **total** (always returns a {@link Bucket}). The `Result` pattern

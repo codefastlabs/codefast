@@ -1,10 +1,10 @@
 import path from "node:path";
 import jiti from "jiti";
 import { ZodError } from "zod";
-import type { CliFs } from "#lib/infra/fs-contract.port";
-import type { ConfigLoaderPort } from "#lib/config/application/ports/config-loader.port";
-import { codefastConfigSchema } from "#lib/config/infra/config-schema.adapter";
-import type { CodefastConfig } from "#lib/config/domain/schema.domain";
+import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { ConfigLoaderPort } from "#/lib/config/application/ports/config-loader.port";
+import { codefastConfigSchema } from "#/lib/config/infra/config-schema.adapter";
+import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
 
 const CONFIG_JS_PRIORITY = [
   "codefast.config.mjs",

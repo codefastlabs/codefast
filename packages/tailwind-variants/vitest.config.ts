@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    alias: { "#*": "./src/*" },
+    alias: { "#/*": "./src/*" },
     setupFiles: ["./vitest.setup.ts"],
   },
 });

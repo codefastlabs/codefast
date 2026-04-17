@@ -9,7 +9,7 @@ import { twMerge } from "tailwind-merge";
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { complexTestProps, complexVariants } from "#benchmarks/complex/data.js";
+import { complexTestProps, complexVariants } from "#/benchmarks/complex/data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions

@@ -2,12 +2,12 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { CoreModule } from "#lib/core/core.module";
-import { InfraModule } from "#lib/core/infra/infra.module";
-import { PresentationModule } from "#lib/core/presentation/presentation.module";
-import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
-import { MirrorModule } from "#lib/mirror/mirror.module";
-import { RunMirrorSyncUseCaseToken, type RunMirrorSyncUseCase } from "#lib/tokens";
+import { CoreModule } from "#/lib/core/core.module";
+import { InfraModule } from "#/lib/core/infra/infra.module";
+import { PresentationModule } from "#/lib/core/presentation/presentation.module";
+import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
+import { MirrorModule } from "#/lib/mirror/mirror.module";
+import { RunMirrorSyncUseCaseToken, type RunMirrorSyncUseCase } from "#/lib/tokens";
 
 async function mkdirp(filePath: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });

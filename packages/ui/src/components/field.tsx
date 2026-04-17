@@ -1,13 +1,13 @@
 "use client";
 
-import type { VariantProps } from "#lib/utils";
+import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { cn, tv } from "#lib/utils";
+import { cn, tv } from "#/lib/utils";
 import { useMemo } from "react";
 
-import { Label } from "#components/label";
-import { Separator } from "#components/separator";
+import { Label } from "#/components/label";
+import { Separator } from "#/components/separator";
 
 /* -----------------------------------------------------------------------------
  * Variants: Field

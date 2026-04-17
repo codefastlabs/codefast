@@ -1,11 +1,11 @@
 import ts from "typescript";
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import {
   applyEditsDescending,
   indentOfLineContaining,
-} from "#lib/shared/source-code/domain/text-edit.model";
-import type { TagSinceWriterPort } from "#lib/tag/application/ports/tag-since-writer.port";
-import type { TagFileResult } from "#lib/tag/domain/types.domain";
+} from "#/lib/shared/source-code/domain/text-edit.model";
+import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
+import type { TagFileResult } from "#/lib/tag/domain/types.domain";
 
 type TextEdit = {
   start: number;

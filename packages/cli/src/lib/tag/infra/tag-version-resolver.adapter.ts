@@ -1,6 +1,6 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { CliPath } from "#lib/core/application/ports/path.port";
-import type { TagVersionResolverPort } from "#lib/tag/application/ports/tag-version-resolver.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#/lib/core/application/ports/path.port";
+import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 
 const PACKAGE_JSON = "package.json";
 

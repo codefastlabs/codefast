@@ -1,5 +1,5 @@
-import type { Constructor } from "#binding";
-import type { Token } from "#token";
+import type { Constructor } from "#/binding";
+import type { Token } from "#/token";
 
 /**
  * Well-known key for Codefast DI constructor metadata on `Symbol.metadata`.

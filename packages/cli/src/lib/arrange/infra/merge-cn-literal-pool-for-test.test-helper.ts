@@ -2,9 +2,9 @@ import {
   isDomainCallExpression,
   isDomainExpressionStatement,
   isDomainIdentifier,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import { collectUnconditionalTailwindLiteralsFromCnArguments } from "#lib/arrange/domain/ast/collectors-cn.collector";
-import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator.adapter";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import { collectUnconditionalTailwindLiteralsFromCnArguments } from "#/lib/arrange/domain/ast/collectors-cn.collector";
+import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 
 /**
  * Test / REPL helper: parse `callee(<snippet>)` and return merged unconditional literal text.

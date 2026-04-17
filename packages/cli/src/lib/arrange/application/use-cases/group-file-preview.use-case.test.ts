@@ -1,17 +1,17 @@
 import type { Mock } from "vitest";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import {
   printGroupFilePreview,
   printGroupFilePreviewFromWork,
-} from "#lib/arrange/presentation/group-file-preview.presenter";
-import type { GroupFileWorkPlan } from "#lib/arrange/domain/arrange-grouping.service";
+} from "#/lib/arrange/presentation/group-file-preview.presenter";
+import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
 import {
   DomainSyntaxKind,
   type DomainAstNode,
   type DomainCallExpression,
   type DomainSourceFile,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import type { PlannedGroupEdit } from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 
 function nodeBase(pos: number, end: number, parent: null) {
   return { pos, end, parent } as const;

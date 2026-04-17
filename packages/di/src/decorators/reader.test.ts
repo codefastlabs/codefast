@@ -3,9 +3,9 @@ import {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   decoratorMetadataObjectSymbol,
   type ConstructorMetadata,
-} from "#decorators/metadata";
-import { SymbolMetadataReader } from "#decorators/reader";
-import { token } from "#token";
+} from "#/decorators/metadata";
+import { SymbolMetadataReader } from "#/decorators/reader";
+import { token } from "#/token";
 
 describe("SymbolMetadataReader", () => {
   it('reads constructor metadata from Symbol.for("Symbol.metadata") when global Symbol.metadata is missing', () => {

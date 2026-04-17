@@ -1,1 +1,1 @@
-export { ThemeScript } from "#script/theme-script";
+export { ThemeScript } from "#/script/theme-script";

@@ -1,4 +1,4 @@
-import { tv } from "#index";
+import { tv } from "#/index";
 
 describe("Tailwind Variants (TV) - Compound Slots", () => {
   test("should work with compound slots -- without variants", () => {

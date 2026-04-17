@@ -1,13 +1,13 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import { isOk } from "#lib/core/domain/result.model";
-import { nodeCliPath } from "#lib/core/infra/path.adapter";
-import type { TagTargetCandidate } from "#lib/tag/domain/types.domain";
-import { RunTagSyncUseCaseImpl } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
-import type { TagSinceWriterPort } from "#lib/tag/application/ports/tag-since-writer.port";
-import type { TagTargetResolverPort } from "#lib/tag/application/ports/target-resolver.port";
-import type { TypeScriptTreeWalkPort } from "#lib/tag/application/ports/typescript-tree-walk.port";
-import type { TagVersionResolverPort } from "#lib/tag/application/ports/tag-version-resolver.port";
-import type { CliPath } from "#lib/core/application/ports/path.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import { isOk } from "#/lib/core/domain/result.model";
+import { nodeCliPath } from "#/lib/core/infra/path.adapter";
+import type { TagTargetCandidate } from "#/lib/tag/domain/types.domain";
+import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
+import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
+import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-resolver.port";
+import type { TypeScriptTreeWalkPort } from "#/lib/tag/application/ports/typescript-tree-walk.port";
+import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
+import type { CliPath } from "#/lib/core/application/ports/path.port";
 
 type TagSyncUseCaseDeps = {
   fs: CliFs;

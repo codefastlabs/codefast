@@ -1,13 +1,13 @@
 import { Module } from "@codefast/di";
-import { configLoaderAdapter } from "#lib/config/infra/loader.adapter";
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { CoreModule } from "#lib/core/core.module";
+import { configLoaderAdapter } from "#/lib/config/infra/loader.adapter";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CoreModule } from "#/lib/core/core.module";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
-} from "#lib/core/infra/logging-decorator.adapter";
-import { CliFsToken, CliLoggerToken, ConfigLoaderPortToken } from "#lib/core/tokens";
-import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
+} from "#/lib/core/infra/logging-decorator.adapter";
+import { CliFsToken, CliLoggerToken, ConfigLoaderPortToken } from "#/lib/core/tokens";
+import { createNodeCliFs, createNodeCliLogger } from "#/lib/infra/node-io.adapter";
 
 function applyCliFsTelemetryOnActivation(rawFs: CliFs, logger: CliLogger): void {
   if (!isCliTelemetryEnabled()) {

@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
 export type ResolveArrangeCliTargetPathInput = {
   readonly fs: CliFs;

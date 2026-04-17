@@ -1,4 +1,4 @@
-import { tv } from "#index";
+import { tv } from "#/index";
 
 describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
   test("should handle undefined slot variants", () => {

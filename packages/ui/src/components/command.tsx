@@ -2,12 +2,12 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "#components/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "#/components/dialog";
 
 /* -----------------------------------------------------------------------------
  * Component: Command

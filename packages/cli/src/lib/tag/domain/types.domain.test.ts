@@ -1,4 +1,4 @@
-import type { TagRunOptions, TagSyncResult } from "#lib/tag/domain/types.domain";
+import type { TagRunOptions, TagSyncResult } from "#/lib/tag/domain/types.domain";
 
 describe("tag domain types", () => {
   it("TagRunOptions accepts write flag", () => {

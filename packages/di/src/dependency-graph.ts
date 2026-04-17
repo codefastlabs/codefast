@@ -1,9 +1,9 @@
-import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#binding";
-import { registryKeyLabel, selectBindingForRegistry } from "#binding-select";
-import type { MetadataReader } from "#decorators/metadata";
-import { DiError } from "#errors";
-import type { RegistryKey } from "#registry";
-import type { Token } from "#token";
+import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
+import { registryKeyLabel, selectBindingForRegistry } from "#/binding-select";
+import type { MetadataReader } from "#/decorators/metadata";
+import { DiError } from "#/errors";
+import type { RegistryKey } from "#/registry";
+import type { Token } from "#/token";
 
 export type StaticDependencyEdge = {
   readonly fromBindingId: BindingIdentifier;

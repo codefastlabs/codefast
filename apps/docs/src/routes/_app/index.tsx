@@ -1,5 +1,5 @@
 import { cn } from "@codefast/tailwind-variants";
-import { HomeBentoShowcase } from "#components/home-showcase";
+import { HomeBentoShowcase } from "#/components/home-showcase";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";

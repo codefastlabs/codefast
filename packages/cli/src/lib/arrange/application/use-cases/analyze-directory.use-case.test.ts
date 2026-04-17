@@ -1,6 +1,6 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import { AnalyzeDirectoryUseCaseImpl } from "#lib/arrange/application/use-cases/analyze-directory.use-case";
-import type { DomainSourceFile } from "#lib/arrange/domain/ast/ast-node.model";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import { AnalyzeDirectoryUseCaseImpl } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
+import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
 
 function emptyDomainSourceFile(fileName: string): DomainSourceFile {
   return {

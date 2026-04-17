@@ -1,7 +1,11 @@
 {
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
+    "paths": {
+      "#/test/*": ["./tests/*"],
+      "#/*": ["./src/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]

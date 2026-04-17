@@ -1,15 +1,15 @@
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import type {
   GroupFileUnwrapPlan,
   GroupFileWorkPlan,
-} from "#lib/arrange/domain/arrange-grouping.service";
-import { lineOf } from "#lib/arrange/domain/ast/ast-helpers.helper";
+} from "#/lib/arrange/domain/arrange-grouping.service";
+import { lineOf } from "#/lib/arrange/domain/ast/ast-helpers.helper";
 import type {
   DomainCallExpression,
   DomainSourceFile,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import type { PlannedGroupEdit } from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 
 export function printGroupFilePreview(
   logger: CliLogger,

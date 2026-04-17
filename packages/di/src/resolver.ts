@@ -6,16 +6,16 @@ import type {
   MaterializationFrame,
   ResolutionContext,
   ResolveHint,
-} from "#binding";
+} from "#/binding";
 import {
   filterMatchingBindings,
   registryKeyLabel,
   selectBindingForRegistry,
-} from "#binding-select";
-import { runActivation, runActivationAsync } from "#lifecycle";
-import type { RegistryKey } from "#registry";
-import type { Token } from "#token";
-import { ScopeManager } from "#scope";
+} from "#/binding-select";
+import { runActivation, runActivationAsync } from "#/lifecycle";
+import type { RegistryKey } from "#/registry";
+import type { Token } from "#/token";
+import { ScopeManager } from "#/scope";
 import {
   AsyncResolutionError,
   CircularDependencyError,
@@ -24,8 +24,8 @@ import {
   NoMatchingBindingError,
   ScopeViolationError,
   TokenNotBoundError,
-} from "#errors";
-import type { MetadataReader } from "#decorators/metadata";
+} from "#/errors";
+import type { MetadataReader } from "#/decorators/metadata";
 
 function bindingToMaterializationFrame(
   registryKey: RegistryKey,

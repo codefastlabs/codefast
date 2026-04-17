@@ -37,20 +37,20 @@ const uiComponents = {
   accordion: {
     name: "Accordion",
     component: createLazyComponent(
-      () => import("#components/sink/demos/accordion-demo"),
+      () => import("#/components/sink/demos/accordion-demo"),
       "AccordionDemo",
     ),
     href: "/sink/accordion",
   },
   alert: {
     name: "Alert",
-    component: createLazyComponent(() => import("#components/sink/demos/alert-demo"), "AlertDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/alert-demo"), "AlertDemo"),
     href: "/sink/alert",
   },
   "alert-dialog": {
     name: "Alert Dialog",
     component: createLazyComponent(
-      () => import("#components/sink/demos/alert-dialog-demo"),
+      () => import("#/components/sink/demos/alert-dialog-demo"),
       "AlertDialogDemo",
     ),
     href: "/sink/alert-dialog",
@@ -58,7 +58,7 @@ const uiComponents = {
   "aspect-ratio": {
     name: "Aspect Ratio",
     component: createLazyComponent(
-      () => import("#components/sink/demos/aspect-ratio-demo"),
+      () => import("#/components/sink/demos/aspect-ratio-demo"),
       "AspectRatioDemo",
     ),
     href: "/sink/aspect-ratio",
@@ -66,20 +66,20 @@ const uiComponents = {
   avatar: {
     name: "Avatar",
     component: createLazyComponent(
-      () => import("#components/sink/demos/avatar-demo"),
+      () => import("#/components/sink/demos/avatar-demo"),
       "AvatarDemo",
     ),
     href: "/sink/avatar",
   },
   badge: {
     name: "Badge",
-    component: createLazyComponent(() => import("#components/sink/demos/badge-demo"), "BadgeDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/badge-demo"), "BadgeDemo"),
     href: "/sink/badge",
   },
   breadcrumb: {
     name: "Breadcrumb",
     component: createLazyComponent(
-      () => import("#components/sink/demos/breadcrumb-demo"),
+      () => import("#/components/sink/demos/breadcrumb-demo"),
       "BreadcrumbDemo",
     ),
     href: "/sink/breadcrumb",
@@ -87,7 +87,7 @@ const uiComponents = {
   button: {
     name: "Button",
     component: createLazyComponent(
-      () => import("#components/sink/demos/button-demo"),
+      () => import("#/components/sink/demos/button-demo"),
       "ButtonDemo",
     ),
     href: "/sink/button",
@@ -95,7 +95,7 @@ const uiComponents = {
   "button-group": {
     name: "Button Group",
     component: createLazyComponent(
-      () => import("#components/sink/demos/button-group-demo"),
+      () => import("#/components/sink/demos/button-group-demo"),
       "ButtonGroupDemo",
     ),
     href: "/sink/button-group",
@@ -104,34 +104,34 @@ const uiComponents = {
   calendar: {
     name: "Calendar",
     component: createLazyComponent(
-      () => import("#components/sink/demos/calendar-demo"),
+      () => import("#/components/sink/demos/calendar-demo"),
       "CalendarDemo",
     ),
     href: "/sink/calendar",
   },
   card: {
     name: "Card",
-    component: createLazyComponent(() => import("#components/sink/demos/card-demo"), "CardDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/card-demo"), "CardDemo"),
     href: "/sink/card",
   },
   carousel: {
     name: "Carousel",
     component: createLazyComponent(
-      () => import("#components/sink/demos/carousel-demo"),
+      () => import("#/components/sink/demos/carousel-demo"),
       "CarouselDemo",
     ),
     href: "/sink/carousel",
   },
   chart: {
     name: "Chart",
-    component: createLazyComponent(() => import("#components/sink/demos/chart-demo"), "ChartDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/chart-demo"), "ChartDemo"),
     className: "w-full",
     href: "/sink/chart",
   },
   checkbox: {
     name: "Checkbox",
     component: createLazyComponent(
-      () => import("#components/sink/demos/checkbox-demo"),
+      () => import("#/components/sink/demos/checkbox-demo"),
       "CheckboxDemo",
     ),
     href: "/sink/checkbox",
@@ -139,7 +139,7 @@ const uiComponents = {
   collapsible: {
     name: "Collapsible",
     component: createLazyComponent(
-      () => import("#components/sink/demos/collapsible-demo"),
+      () => import("#/components/sink/demos/collapsible-demo"),
       "CollapsibleDemo",
     ),
     href: "/sink/collapsible",
@@ -147,7 +147,7 @@ const uiComponents = {
   combobox: {
     name: "Combobox",
     component: createLazyComponent(
-      () => import("#components/sink/demos/combobox-demo"),
+      () => import("#/components/sink/demos/combobox-demo"),
       "ComboboxDemo",
     ),
     href: "/sink/combobox",
@@ -155,7 +155,7 @@ const uiComponents = {
   command: {
     name: "Command",
     component: createLazyComponent(
-      () => import("#components/sink/demos/command-demo"),
+      () => import("#/components/sink/demos/command-demo"),
       "CommandDemo",
     ),
     href: "/sink/command",
@@ -163,7 +163,7 @@ const uiComponents = {
   "context-menu": {
     name: "Context Menu",
     component: createLazyComponent(
-      () => import("#components/sink/demos/context-menu-demo"),
+      () => import("#/components/sink/demos/context-menu-demo"),
       "ContextMenuDemo",
     ),
     href: "/sink/context-menu",
@@ -171,7 +171,7 @@ const uiComponents = {
   "date-picker": {
     name: "Date Picker",
     component: createLazyComponent(
-      () => import("#components/sink/demos/date-picker-demo"),
+      () => import("#/components/sink/demos/date-picker-demo"),
       "DatePickerDemo",
     ),
     href: "/sink/date-picker",
@@ -179,7 +179,7 @@ const uiComponents = {
   dialog: {
     name: "Dialog",
     component: createLazyComponent(
-      () => import("#components/sink/demos/dialog-demo"),
+      () => import("#/components/sink/demos/dialog-demo"),
       "DialogDemo",
     ),
     href: "/sink/dialog",
@@ -187,7 +187,7 @@ const uiComponents = {
   drawer: {
     name: "Drawer",
     component: createLazyComponent(
-      () => import("#components/sink/demos/drawer-demo"),
+      () => import("#/components/sink/demos/drawer-demo"),
       "DrawerDemo",
     ),
     href: "/sink/drawer",
@@ -195,45 +195,45 @@ const uiComponents = {
   "dropdown-menu": {
     name: "Dropdown Menu",
     component: createLazyComponent(
-      () => import("#components/sink/demos/dropdown-menu-demo"),
+      () => import("#/components/sink/demos/dropdown-menu-demo"),
       "DropdownMenuDemo",
     ),
     href: "/sink/dropdown-menu",
   },
   empty: {
     name: "Empty",
-    component: createLazyComponent(() => import("#components/sink/demos/empty-demo"), "EmptyDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/empty-demo"), "EmptyDemo"),
     href: "/sink/empty",
     label: "New",
   },
   field: {
     name: "Field",
-    component: createLazyComponent(() => import("#components/sink/demos/field-demo"), "FieldDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/field-demo"), "FieldDemo"),
     href: "/sink/field",
     label: "New",
   },
   form: {
     name: "Form",
-    component: createLazyComponent(() => import("#components/sink/demos/form-demo"), "FormDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/form-demo"), "FormDemo"),
     href: "/sink/form",
   },
   "hover-card": {
     name: "Hover Card",
     component: createLazyComponent(
-      () => import("#components/sink/demos/hover-card-demo"),
+      () => import("#/components/sink/demos/hover-card-demo"),
       "HoverCardDemo",
     ),
     href: "/sink/hover-card",
   },
   input: {
     name: "Input",
-    component: createLazyComponent(() => import("#components/sink/demos/input-demo"), "InputDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/input-demo"), "InputDemo"),
     href: "/sink/input",
   },
   "input-group": {
     name: "Input Group",
     component: createLazyComponent(
-      () => import("#components/sink/demos/input-group-demo"),
+      () => import("#/components/sink/demos/input-group-demo"),
       "InputGroupDemo",
     ),
     href: "/sink/input-group",
@@ -242,32 +242,32 @@ const uiComponents = {
   "input-otp": {
     name: "Input OTP",
     component: createLazyComponent(
-      () => import("#components/sink/demos/input-otp-demo"),
+      () => import("#/components/sink/demos/input-otp-demo"),
       "InputOTPDemo",
     ),
     href: "/sink/input-otp",
   },
   item: {
     name: "Item",
-    component: createLazyComponent(() => import("#components/sink/demos/item-demo"), "ItemDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/item-demo"), "ItemDemo"),
     href: "/sink/item",
     label: "New",
   },
   kbd: {
     name: "Kbd",
-    component: createLazyComponent(() => import("#components/sink/demos/kbd-demo"), "KbdDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/kbd-demo"), "KbdDemo"),
     href: "/sink/kbd",
     label: "New",
   },
   label: {
     name: "Label",
-    component: createLazyComponent(() => import("#components/sink/demos/label-demo"), "LabelDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/label-demo"), "LabelDemo"),
     href: "/sink/label",
   },
   menubar: {
     name: "Menubar",
     component: createLazyComponent(
-      () => import("#components/sink/demos/menubar-demo"),
+      () => import("#/components/sink/demos/menubar-demo"),
       "MenubarDemo",
     ),
     href: "/sink/menubar",
@@ -275,7 +275,7 @@ const uiComponents = {
   "navigation-menu": {
     name: "Navigation Menu",
     component: createLazyComponent(
-      () => import("#components/sink/demos/navigation-menu-demo"),
+      () => import("#/components/sink/demos/navigation-menu-demo"),
       "NavigationMenuDemo",
     ),
     href: "/sink/navigation-menu",
@@ -283,7 +283,7 @@ const uiComponents = {
   "native-select": {
     name: "Native Select",
     component: createLazyComponent(
-      () => import("#components/sink/demos/native-select-demo"),
+      () => import("#/components/sink/demos/native-select-demo"),
       "NativeSelectDemo",
     ),
     href: "/sink/native-select",
@@ -292,7 +292,7 @@ const uiComponents = {
   pagination: {
     name: "Pagination",
     component: createLazyComponent(
-      () => import("#components/sink/demos/pagination-demo"),
+      () => import("#/components/sink/demos/pagination-demo"),
       "PaginationDemo",
     ),
     href: "/sink/pagination",
@@ -300,7 +300,7 @@ const uiComponents = {
   popover: {
     name: "Popover",
     component: createLazyComponent(
-      () => import("#components/sink/demos/popover-demo"),
+      () => import("#/components/sink/demos/popover-demo"),
       "PopoverDemo",
     ),
     href: "/sink/popover",
@@ -308,7 +308,7 @@ const uiComponents = {
   progress: {
     name: "Progress",
     component: createLazyComponent(
-      () => import("#components/sink/demos/progress-demo"),
+      () => import("#/components/sink/demos/progress-demo"),
       "ProgressDemo",
     ),
     href: "/sink/progress",
@@ -316,7 +316,7 @@ const uiComponents = {
   "radio-group": {
     name: "Radio Group",
     component: createLazyComponent(
-      () => import("#components/sink/demos/radio-group-demo"),
+      () => import("#/components/sink/demos/radio-group-demo"),
       "RadioGroupDemo",
     ),
     href: "/sink/radio-group",
@@ -324,7 +324,7 @@ const uiComponents = {
   resizable: {
     name: "Resizable",
     component: createLazyComponent(
-      () => import("#components/sink/demos/resizable-demo"),
+      () => import("#/components/sink/demos/resizable-demo"),
       "ResizableDemo",
     ),
     href: "/sink/resizable",
@@ -332,7 +332,7 @@ const uiComponents = {
   "scroll-area": {
     name: "Scroll Area",
     component: createLazyComponent(
-      () => import("#components/sink/demos/scroll-area-demo"),
+      () => import("#/components/sink/demos/scroll-area-demo"),
       "ScrollAreaDemo",
     ),
     href: "/sink/scroll-area",
@@ -340,7 +340,7 @@ const uiComponents = {
   select: {
     name: "Select",
     component: createLazyComponent(
-      () => import("#components/sink/demos/select-demo"),
+      () => import("#/components/sink/demos/select-demo"),
       "SelectDemo",
     ),
     href: "/sink/select",
@@ -348,20 +348,20 @@ const uiComponents = {
   separator: {
     name: "Separator",
     component: createLazyComponent(
-      () => import("#components/sink/demos/separator-demo"),
+      () => import("#/components/sink/demos/separator-demo"),
       "SeparatorDemo",
     ),
     href: "/sink/separator",
   },
   sheet: {
     name: "Sheet",
-    component: createLazyComponent(() => import("#components/sink/demos/sheet-demo"), "SheetDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/sheet-demo"), "SheetDemo"),
     href: "/sink/sheet",
   },
   skeleton: {
     name: "Skeleton",
     component: createLazyComponent(
-      () => import("#components/sink/demos/skeleton-demo"),
+      () => import("#/components/sink/demos/skeleton-demo"),
       "SkeletonDemo",
     ),
     href: "/sink/skeleton",
@@ -369,7 +369,7 @@ const uiComponents = {
   slider: {
     name: "Slider",
     component: createLazyComponent(
-      () => import("#components/sink/demos/slider-demo"),
+      () => import("#/components/sink/demos/slider-demo"),
       "SliderDemo",
     ),
     href: "/sink/slider",
@@ -377,7 +377,7 @@ const uiComponents = {
   sonner: {
     name: "Sonner",
     component: createLazyComponent(
-      () => import("#components/sink/demos/sonner-demo"),
+      () => import("#/components/sink/demos/sonner-demo"),
       "SonnerDemo",
     ),
     href: "/sink/sonner",
@@ -385,7 +385,7 @@ const uiComponents = {
   spinner: {
     name: "Spinner",
     component: createLazyComponent(
-      () => import("#components/sink/demos/spinner-demo"),
+      () => import("#/components/sink/demos/spinner-demo"),
       "SpinnerDemo",
     ),
     href: "/sink/spinner",
@@ -394,25 +394,25 @@ const uiComponents = {
   switch: {
     name: "Switch",
     component: createLazyComponent(
-      () => import("#components/sink/demos/switch-demo"),
+      () => import("#/components/sink/demos/switch-demo"),
       "SwitchDemo",
     ),
     href: "/sink/switch",
   },
   table: {
     name: "Table",
-    component: createLazyComponent(() => import("#components/sink/demos/table-demo"), "TableDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/table-demo"), "TableDemo"),
     href: "/sink/table",
   },
   tabs: {
     name: "Tabs",
-    component: createLazyComponent(() => import("#components/sink/demos/tabs-demo"), "TabsDemo"),
+    component: createLazyComponent(() => import("#/components/sink/demos/tabs-demo"), "TabsDemo"),
     href: "/sink/tabs",
   },
   textarea: {
     name: "Textarea",
     component: createLazyComponent(
-      () => import("#components/sink/demos/textarea-demo"),
+      () => import("#/components/sink/demos/textarea-demo"),
       "TextareaDemo",
     ),
     href: "/sink/textarea",
@@ -420,7 +420,7 @@ const uiComponents = {
   toggle: {
     name: "Toggle",
     component: createLazyComponent(
-      () => import("#components/sink/demos/toggle-demo"),
+      () => import("#/components/sink/demos/toggle-demo"),
       "ToggleDemo",
     ),
     href: "/sink/toggle",
@@ -428,7 +428,7 @@ const uiComponents = {
   "toggle-group": {
     name: "Toggle Group",
     component: createLazyComponent(
-      () => import("#components/sink/demos/toggle-group-demo"),
+      () => import("#/components/sink/demos/toggle-group-demo"),
       "ToggleGroupDemo",
     ),
     href: "/sink/toggle-group",
@@ -436,7 +436,7 @@ const uiComponents = {
   tooltip: {
     name: "Tooltip",
     component: createLazyComponent(
-      () => import("#components/sink/demos/tooltip-demo"),
+      () => import("#/components/sink/demos/tooltip-demo"),
       "TooltipDemo",
     ),
     href: "/sink/tooltip",

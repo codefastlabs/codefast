@@ -1,4 +1,4 @@
-import type { CodefastConfig } from "#lib/config/domain/schema.domain";
+import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
 
 export type ArrangeTargetWorkspaceAndConfig = {
   readonly resolvedTarget: string;

@@ -13,7 +13,7 @@ import type {
   ConfigurationSchema,
   ConfigurationVariants,
   SlotConfigurationSchema,
-} from "#types/types";
+} from "#/types/types";
 
 /**
  * Apply compound variant classes based on variant conditions.

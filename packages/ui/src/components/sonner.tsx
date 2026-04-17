@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import type { CSSProperties, JSX } from "react";
 import type { ToasterProps as SonnerToasterProps } from "sonner";
 

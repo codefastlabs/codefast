@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { CliPath } from "#lib/core/application/ports/path.port";
+import type { CliPath } from "#/lib/core/application/ports/path.port";
 
 export const nodeCliPath: CliPath = {
   resolve: (...paths: string[]) => path.resolve(...paths),

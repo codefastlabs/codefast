@@ -2,13 +2,13 @@ import { globSync } from "node:fs";
 import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { CliFs } from "#lib/infra/fs-contract.port";
-import { normalizePath } from "#lib/mirror/infra/path-normalizer.adapter";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import type { CliFs } from "#/lib/infra/fs-contract.port";
+import { normalizePath } from "#/lib/mirror/infra/path-normalizer.adapter";
 import type {
   FindWorkspacePackagesResult,
   WorkspaceMultiDiscoverySource,
-} from "#lib/mirror/domain/types.domain";
+} from "#/lib/mirror/domain/types.domain";
 
 const PNPM_WORKSPACE = "pnpm-workspace.yaml";
 

@@ -1,13 +1,13 @@
 import { Module } from "@codefast/di";
-import { PrepareArrangeOrchestrator } from "#lib/arrange/presentation/prepare-arrange.orchestrator";
-import { presentAnalyzeCliReport } from "#lib/arrange/presentation/present-analyze-cli.presenter";
-import { tryLoadCodefastConfig } from "#lib/core/presentation/load-codefast-config.presenter";
-import { PrepareMirrorOrchestrator } from "#lib/mirror/presentation/prepare-mirror.orchestrator";
+import { PrepareArrangeOrchestrator } from "#/lib/arrange/presentation/prepare-arrange.orchestrator";
+import { presentAnalyzeCliReport } from "#/lib/arrange/presentation/present-analyze-cli.presenter";
+import { tryLoadCodefastConfig } from "#/lib/core/presentation/load-codefast-config.presenter";
+import { PrepareMirrorOrchestrator } from "#/lib/mirror/presentation/prepare-mirror.orchestrator";
 import {
   createTagProgressListener,
   presentTagSyncCliResult,
-} from "#lib/tag/presentation/tag-sync.presenter";
-import { PrepareTagOrchestrator } from "#lib/tag/presentation/prepare-tag.orchestrator";
+} from "#/lib/tag/presentation/tag-sync.presenter";
+import { PrepareTagOrchestrator } from "#/lib/tag/presentation/prepare-tag.orchestrator";
 import {
   AppOrchestratorToken,
   CliFsToken,
@@ -20,7 +20,7 @@ import {
   PresentAnalyzeReportPresenterToken,
   PresentTagSyncResultPresenterToken,
   TryLoadCodefastConfigPresenterToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 export const PresentationModule = Module.create("cli-presentation", (api) => {
   api

@@ -1,4 +1,4 @@
-import { SuggestCnGroupsUseCaseImpl } from "#lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 
 describe("suggestCnGroupsForCli use case", () => {
   it("formats a cn() call on the happy path", () => {

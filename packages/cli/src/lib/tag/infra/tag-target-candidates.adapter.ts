@@ -3,9 +3,9 @@ import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { CliFs } from "#lib/infra/fs-contract.port";
-import type { TagTargetCandidate } from "#lib/tag/domain/types.domain";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { TagTargetCandidate } from "#/lib/tag/domain/types.domain";
 
 const PNPM_WORKSPACE_FILE = "pnpm-workspace.yaml";
 const PACKAGE_JSON_FILE = "package.json";

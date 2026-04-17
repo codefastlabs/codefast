@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs } from "#lib/infra/node-io.adapter";
-import { resolveArrangeCliTargetPath } from "#lib/arrange/presentation/resolve-arrange-cli-target.presenter";
+import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { resolveArrangeCliTargetPath } from "#/lib/arrange/presentation/resolve-arrange-cli-target.presenter";
 
 const cliFs = createNodeCliFs();
 

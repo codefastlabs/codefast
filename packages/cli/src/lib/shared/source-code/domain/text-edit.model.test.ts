@@ -1,7 +1,7 @@
 import {
   applyEditsDescending,
   indentOfLineContaining,
-} from "#lib/shared/source-code/domain/text-edit.model";
+} from "#/lib/shared/source-code/domain/text-edit.model";
 
 describe("indentOfLineContaining", () => {
   it("handles CRLF files", () => {

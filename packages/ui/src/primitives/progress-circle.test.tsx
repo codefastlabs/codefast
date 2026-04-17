@@ -8,7 +8,7 @@ import {
   ProgressCircleSVG,
   ProgressCircleTrack,
   ProgressCircleValue,
-} from "#primitives/progress-circle";
+} from "#/primitives/progress-circle";
 
 describe("ProgressCircle", () => {
   test("renders correctly with default props", () => {

@@ -2,9 +2,9 @@ import path from "node:path";
 import {
   LONG_STRING_TOKEN_THRESHOLD,
   MAX_REPORT_LINES,
-} from "#lib/arrange/domain/constants.domain";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/constants.domain";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
 
 export function printAnalyzeReport(
   analyzeRootDirectoryPath: string,

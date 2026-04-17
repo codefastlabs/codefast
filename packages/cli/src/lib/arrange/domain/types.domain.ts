@@ -13,7 +13,7 @@ import type {
   DomainCallExpression,
   DomainSourceFile,
   DomainTailwindClassLiteral,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 
 export type Bucket =
   | "existence"

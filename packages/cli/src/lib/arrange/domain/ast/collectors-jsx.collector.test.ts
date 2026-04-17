@@ -1,9 +1,9 @@
-import { jsxClassNameStaticLiteral } from "#lib/arrange/domain/ast/collectors-jsx.collector";
+import { jsxClassNameStaticLiteral } from "#/lib/arrange/domain/ast/collectors-jsx.collector";
 import {
   findFirstDomainDescendantWhere,
   isDomainJsxAttribute,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator.adapter";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 
 function firstJsxClassAttr(source: string) {
   const domainSf = parseDomainSourceFile("x.tsx", source);

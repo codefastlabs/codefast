@@ -1,9 +1,9 @@
 import process from "node:process";
-import type { AppError } from "#lib/core/domain/errors.domain";
-import type { Result } from "#lib/core/domain/result.model";
-import { formatAppError } from "#lib/core/presentation/format-app-error.presenter";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { isVerboseInfraDiagnostics } from "#lib/core/application/utils/verbose-diagnostics.util";
+import type { AppError } from "#/lib/core/domain/errors.domain";
+import type { Result } from "#/lib/core/domain/result.model";
+import { formatAppError } from "#/lib/core/presentation/format-app-error.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { isVerboseInfraDiagnostics } from "#/lib/core/application/utils/verbose-diagnostics.util";
 
 function assertExhaustiveAppErrorCode(code: never): number {
   return code;

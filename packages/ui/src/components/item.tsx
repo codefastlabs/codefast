@@ -1,10 +1,10 @@
-import type { VariantProps } from "#lib/utils";
+import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#lib/utils";
+import { cn, tv } from "#/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 
-import { Separator } from "#components/separator";
+import { Separator } from "#/components/separator";
 
 /* -----------------------------------------------------------------------------
  * Variants: Item

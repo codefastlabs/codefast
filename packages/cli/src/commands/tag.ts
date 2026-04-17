@@ -1,11 +1,11 @@
 import process from "node:process";
 import { injectable } from "@codefast/di";
 import { Command } from "commander";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { consumeCliAppError } from "#lib/core/presentation/cli-executor.presenter";
-import type { CliCommand } from "#lib/core/presentation/command.interface";
-import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
-import { tagSyncRunRequestSchema } from "#lib/tag/presentation/tag-cli-schema.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
+import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
 import {
   CliLoggerToken,
   type CreateTagProgressListenerPresenter,
@@ -16,7 +16,7 @@ import {
   PresentTagSyncResultPresenterToken,
   type RunTagSyncUseCase,
   RunTagSyncUseCaseToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 @injectable([
   CliLoggerToken,

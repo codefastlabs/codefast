@@ -4,7 +4,7 @@ import {
   formatCnArguments,
   formatCnCall,
   formatJsxCnAttributeValue,
-} from "#lib/arrange/domain/source-text-formatters.formatter";
+} from "#/lib/arrange/domain/source-text-formatters.formatter";
 
 describe("escapeTsStringLiteralContent", () => {
   it("escapes backslashes and quotes", () => {

@@ -1,16 +1,16 @@
 import { injectable } from "@codefast/di";
-import { appError } from "#lib/core/domain/errors.domain";
-import { err, ok } from "#lib/core/domain/result.model";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import { findRepoRoot } from "#lib/infra/workspace/repo-root.adapter";
-import { resolveArrangeCliTargetPath } from "#lib/arrange/presentation/resolve-arrange-cli-target.presenter";
+import { appError } from "#/lib/core/domain/errors.domain";
+import { err, ok } from "#/lib/core/domain/result.model";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
+import { resolveArrangeCliTargetPath } from "#/lib/arrange/presentation/resolve-arrange-cli-target.presenter";
 import {
   AppOrchestratorToken,
   CliFsToken,
   type AppOrchestrator,
   type PrepareArrangeOrchestrator as PrepareArrangeOrchestratorContract,
-} from "#lib/tokens";
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+} from "#/lib/tokens";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
 @injectable([CliFsToken, AppOrchestratorToken] as const)
 export class PrepareArrangeOrchestrator implements PrepareArrangeOrchestratorContract {

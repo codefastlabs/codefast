@@ -1,4 +1,4 @@
-import { ArrangeError, ArrangeErrorCode } from "#lib/arrange/domain/errors.domain";
+import { ArrangeError, ArrangeErrorCode } from "#/lib/arrange/domain/errors.domain";
 
 describe("ArrangeError", () => {
   it("preserves code and message", () => {

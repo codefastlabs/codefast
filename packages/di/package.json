@@ -28,8 +28,12 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "imports": {
-    "#*": [
-      "./src/*"
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
     ]
   },
   "exports": {

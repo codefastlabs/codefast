@@ -1,8 +1,8 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { MirrorSyncReporterPort } from "#lib/mirror/application/ports/mirror-sync-reporter.port";
-import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
-import type { SyncWorkspacePackageService } from "#lib/mirror/application/ports/sync-workspace-package.port";
-import { RunMirrorSyncUseCaseImpl } from "#lib/mirror/application/use-cases/run-mirror-sync.use-case";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
+import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
+import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
+import { RunMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 
 function minimalRequest(overrides: Partial<MirrorSyncRunRequest> = {}): MirrorSyncRunRequest {
   return {

@@ -1,11 +1,11 @@
-import { DiError } from "#errors";
+import { DiError } from "#/errors";
 import {
   CODEFAST_DI_CLASS_SCOPE_HINT,
   decoratorMetadataObjectSymbol,
   type ClassScopeHint,
-} from "#decorators/metadata";
-import type { RegistryKey } from "#registry";
-import type { Token, TokenValue } from "#token";
+} from "#/decorators/metadata";
+import type { RegistryKey } from "#/registry";
+import type { Token, TokenValue } from "#/token";
 
 declare const bindingIdentifierBrand: unique symbol;
 

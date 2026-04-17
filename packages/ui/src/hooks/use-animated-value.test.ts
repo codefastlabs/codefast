@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useAnimatedValue } from "#hooks/use-animated-value";
+import { useAnimatedValue } from "#/hooks/use-animated-value";
 
 describe("useAnimatedValue", () => {
   let originalRequestAnimationFrame: typeof window.requestAnimationFrame;

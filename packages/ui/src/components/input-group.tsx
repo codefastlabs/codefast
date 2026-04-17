@@ -1,17 +1,17 @@
 "use client";
 
-import type { VariantProps } from "#lib/utils";
+import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#lib/utils";
+import { cn, tv } from "#/lib/utils";
 
-import type { ButtonProps } from "#components/button";
-import type { InputProps } from "#components/input";
-import type { TextareaProps } from "#components/textarea";
+import type { ButtonProps } from "#/components/button";
+import type { InputProps } from "#/components/input";
+import type { TextareaProps } from "#/components/textarea";
 
-import { Button } from "#components/button";
-import { Input } from "#components/input";
-import { Textarea } from "#components/textarea";
+import { Button } from "#/components/button";
+import { Input } from "#/components/input";
+import { Textarea } from "#/components/textarea";
 
 /* -----------------------------------------------------------------------------
  * Variants: InputGroup

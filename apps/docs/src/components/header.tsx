@@ -15,7 +15,7 @@ import type { LucideIcon } from "lucide-react";
 import { CodeIcon, HomeIcon, MenuIcon, PackageIcon, PaletteIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { useState } from "react";
-import { ModeSwitcher } from "#components/mode-switcher";
+import { ModeSwitcher } from "#/components/mode-switcher";
 
 interface NavItem {
   to: ComponentProps<typeof Link>["to"];

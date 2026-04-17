@@ -1,4 +1,4 @@
-import { tv } from "#index";
+import { tv } from "#/index";
 
 describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
   test("should handle extends with undefined base variants", () => {

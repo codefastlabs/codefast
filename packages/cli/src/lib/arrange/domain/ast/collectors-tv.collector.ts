@@ -1,4 +1,4 @@
-import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#lib/arrange/domain/constants.domain";
+import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#/lib/arrange/domain/constants.domain";
 import {
   type DomainAstNode,
   type DomainCallExpression,
@@ -11,20 +11,20 @@ import {
   isDomainSpreadElement,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 import {
   CN_APPLY_LITERAL_WALK_OPTS,
   collectUnconditionalTailwindLiteralsFromCnArguments,
   forEachStringLiteralInClassExpression,
   isUnsafeLiteralForCnStyleApplySplit,
-} from "#lib/arrange/domain/ast/collectors-cn.collector";
-import type { StringNode, TailwindClassLiteral } from "#lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#lib/arrange/domain/tokenizer.util";
+} from "#/lib/arrange/domain/ast/collectors-cn.collector";
+import type { StringNode, TailwindClassLiteral } from "#/lib/arrange/domain/types.domain";
+import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
 import {
   buildKnownCnTvBindings,
   isCnOrTvIdentifier,
   propertyAssignmentNameText,
-} from "#lib/arrange/domain/ast/ast-helpers.helper";
+} from "#/lib/arrange/domain/ast/ast-helpers.helper";
 
 type StringNodeVisitor = (
   classLiteral: TailwindClassLiteral,

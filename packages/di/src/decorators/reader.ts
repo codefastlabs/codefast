@@ -1,10 +1,10 @@
-import type { Constructor } from "#binding";
+import type { Constructor } from "#/binding";
 import {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   decoratorMetadataObjectSymbol,
   type ConstructorMetadata,
   type MetadataReader,
-} from "#decorators/metadata";
+} from "#/decorators/metadata";
 
 function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
   if (typeof value !== "object" || value === null || !("params" in value)) {

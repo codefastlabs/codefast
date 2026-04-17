@@ -1,4 +1,4 @@
-import type { CliLogger } from "#lib/infra/fs-contract.port";
+import type { CliLogger } from "#/lib/infra/fs-contract.port";
 
 const YELLOW = "\x1b[33m";
 const RESET = "\x1b[0m";
