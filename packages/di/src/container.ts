@@ -1,10 +1,4 @@
-import type {
-  Binding,
-  BindingIdentifier,
-  Constructor,
-  ResolveHint,
-  ResolveOptions,
-} from "#/binding";
+import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { BindingBuilder } from "#/binding";
 import type { MetadataReader } from "#/decorators/metadata";
 import { SymbolMetadataReader } from "#/decorators/reader";
@@ -36,14 +30,15 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
 }
 
 /**
- * Public instance API for an IoC container (registry, modules, resolution, lifecycle).
+ * Public contract for an IoC container (registry, modules, resolution, lifecycle).
+ * Construct instances with {@link Container.create} or {@link Container.fromModules}.
  */
-export interface ContainerInstance {
+export interface Container {
   bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
   rebind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
   unbind(keyOrId: RegistryKey | BindingIdentifier): void;
   unbindAsync(keyOrId: RegistryKey | BindingIdentifier): Promise<void>;
-  has(key: RegistryKey, hint?: Pick<ResolveOptions, "name" | "tag">): boolean;
+  has(key: RegistryKey, hint?: ResolveHint): boolean;
   resolve<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T;
   resolveAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T>;
   resolveAll<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[];
@@ -58,7 +53,7 @@ export interface ContainerInstance {
   inspect(): ContainerSnapshot;
   generateDependencyGraphDot(options?: DotGraphOptions): string;
   generateDependencyGraphJson(options?: DotGraphOptions): string;
-  createChild(): ContainerInstance;
+  createChild(): Container;
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
   dispose(): Promise<void>;
   disposeAsync(): Promise<void>;
@@ -66,8 +61,9 @@ export interface ContainerInstance {
 
 /**
  * Default IoC container: registry + scoped caches + synchronous / asynchronous resolution.
+ * @internal Implementation of {@link Container}; not part of the public package contract.
  */
-export class DefaultContainer implements ContainerInstance {
+class DefaultContainer implements Container {
   private readonly syncModuleStack: Module[] = [];
   private readonly asyncModuleStack: AsyncModule[] = [];
   private devValidationRan = false;
@@ -80,7 +76,7 @@ export class DefaultContainer implements ContainerInstance {
     private readonly metadataReader: MetadataReader,
   ) {}
 
-  static create(): DefaultContainer {
+  static create(): Container {
     const registryOwned = new BindingRegistry();
     const scopeManagerOwned = ScopeManager.createRoot();
     const metadataReader = new SymbolMetadataReader();
@@ -113,17 +109,17 @@ export class DefaultContainer implements ContainerInstance {
   bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     return new BindingBuilder<Value>(key, undefined, {
       register: (built) => {
-        this.devValidationRan = false;
+        this.invalidateDevValidationState();
         this.registryOwned.add(key, built);
       },
       update: (built) => {
-        this.devValidationRan = false;
+        this.invalidateDevValidationState();
         this.registryOwned.replaceById(built.id, built as Binding<unknown>);
       },
     });
   }
 
-  has(key: RegistryKey, hint?: Pick<ResolveOptions, "name" | "tag">): boolean {
+  has(key: RegistryKey, hint?: ResolveHint): boolean {
     const list = this.lookupBindings(key);
     if (list === undefined || list.length === 0) {
       return false;
@@ -146,6 +142,7 @@ export class DefaultContainer implements ContainerInstance {
   }
 
   unbind(keyOrId: RegistryKey | BindingIdentifier): void {
+    this.invalidateDevValidationState();
     if (typeof keyOrId === "string") {
       this.scopeManagerOwned.releaseByBindingId(keyOrId);
       this.registryOwned.removeById(keyOrId);
@@ -161,6 +158,7 @@ export class DefaultContainer implements ContainerInstance {
   }
 
   async unbindAsync(keyOrId: RegistryKey | BindingIdentifier): Promise<void> {
+    this.invalidateDevValidationState();
     if (typeof keyOrId === "string") {
       await this.scopeManagerOwned.releaseByBindingIdAsync(keyOrId);
       this.registryOwned.removeById(keyOrId);
@@ -176,6 +174,7 @@ export class DefaultContainer implements ContainerInstance {
   }
 
   rebind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
+    this.invalidateDevValidationState();
     const owned = this.registryOwned.get(key as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
@@ -193,6 +192,7 @@ export class DefaultContainer implements ContainerInstance {
    * dynamic factories). Production skips this static pass; call {@link validate} yourself if needed.
    */
   load(...modules: Module[]): void {
+    this.invalidateDevValidationState();
     for (const syncModule of modules) {
       if (syncModule instanceof AsyncModule) {
         throw new AsyncModuleLoadError(syncModule.name);
@@ -206,6 +206,7 @@ export class DefaultContainer implements ContainerInstance {
    * Like {@link load} but allows async modules. Dev/test automatic {@link validate} behavior is the same.
    */
   async loadAsync(...modules: (Module | AsyncModule)[]): Promise<void> {
+    this.invalidateDevValidationState();
     for (const moduleOrAsync of modules) {
       if (moduleOrAsync instanceof AsyncModule) {
         await this.ensureAsyncModuleLoaded(moduleOrAsync);
@@ -217,6 +218,7 @@ export class DefaultContainer implements ContainerInstance {
   }
 
   unload(...modules: (Module | AsyncModule)[]): void {
+    this.invalidateDevValidationState();
     for (const module of modules) {
       if (!module.isLoadedOn(this)) {
         throw new DiError(`Module "${module.name}" is not loaded on this container.`);
@@ -230,6 +232,7 @@ export class DefaultContainer implements ContainerInstance {
   }
 
   async unloadAsync(...modules: (Module | AsyncModule)[]): Promise<void> {
+    this.invalidateDevValidationState();
     for (const module of modules) {
       if (!module.isLoadedOn(this)) {
         throw new DiError(`Module "${module.name}" is not loaded on this container.`);
@@ -321,6 +324,10 @@ export class DefaultContainer implements ContainerInstance {
     }
   }
 
+  private invalidateDevValidationState(): void {
+    this.devValidationRan = false;
+  }
+
   private maybeRunDevValidationOnce(): void {
     if (!isDevelopmentOrTestEnvironment()) {
       return;
@@ -395,7 +402,7 @@ export class DefaultContainer implements ContainerInstance {
    * Child inherits parent bindings via lookup fallback and shares singleton instances,
    * but receives an isolated scoped cache.
    */
-  createChild(): ContainerInstance {
+  createChild(): Container {
     const childRegistry = new BindingRegistry();
     const childScope = this.scopeManagerOwned.createChildScope();
     const holder: ContainerRef = { current: undefined };
@@ -443,12 +450,14 @@ export class DefaultContainer implements ContainerInstance {
     return <Value>(key: Token<Value> | Constructor<Value>) =>
       new BindingBuilder<Value>(key, owner.name, {
         register: (built) => {
+          this.invalidateDevValidationState();
           this.registryOwned.replaceKeyLastWins(key, built, (removed) => {
             this.scopeManagerOwned.releaseBinding(removed);
           });
           owner.recordOwnedBinding(built.id);
         },
         update: (built) => {
+          this.invalidateDevValidationState();
           this.registryOwned.replaceById(built.id, built as Binding<unknown>);
         },
       });
@@ -542,23 +551,20 @@ export class DefaultContainer implements ContainerInstance {
 }
 
 /**
- * Static factory entry point matching the design spec naming.
- * Instance API: {@link ContainerInstance}.
+ * Factory functions for {@link Container} instances (interface + namespace merge).
  */
-export class Container {
-  private constructor() {}
-
-  static create(): ContainerInstance {
+export namespace Container {
+  export function create(): Container {
     return DefaultContainer.create();
   }
 
-  static fromModules(...modules: Module[]): ContainerInstance {
+  export function fromModules(...modules: Module[]): Container {
     const container = DefaultContainer.create();
     container.load(...modules);
     return container;
   }
 
-  static async fromModulesAsync(...modules: (Module | AsyncModule)[]): Promise<ContainerInstance> {
+  export async function fromModulesAsync(...modules: (Module | AsyncModule)[]): Promise<Container> {
     const container = DefaultContainer.create();
     await container.loadAsync(...modules);
     return container;

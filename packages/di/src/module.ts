@@ -1,7 +1,7 @@
 import type { BindingBuilder } from "#/binding";
 import type { BindingIdentifier } from "#/binding";
 import type { Constructor } from "#/binding";
-import type { DefaultContainer } from "#/container";
+import type { Container } from "#/container";
 import { DiError } from "#/errors";
 import type { Token } from "#/token";
 
@@ -24,18 +24,18 @@ export type AsyncModuleBuilder = {
 abstract class ModuleBase {
   readonly name: string;
   private loadState: "idle" | "loaded" = "idle";
-  private loadedContainer: DefaultContainer | undefined;
+  private loadedContainer: Container | undefined;
   private readonly ownedBindingIds: BindingIdentifier[] = [];
 
   protected constructor(name: string) {
     this.name = name;
   }
 
-  isLoadedOn(container: DefaultContainer): boolean {
+  isLoadedOn(container: Container): boolean {
     return this.loadState === "loaded" && this.loadedContainer === container;
   }
 
-  assertNotLoadedOnOtherContainer(container: DefaultContainer): void {
+  assertNotLoadedOnOtherContainer(container: Container): void {
     if (
       this.loadState === "loaded" &&
       this.loadedContainer !== undefined &&
@@ -45,7 +45,7 @@ abstract class ModuleBase {
     }
   }
 
-  markLoaded(container: DefaultContainer): void {
+  markLoaded(container: Container): void {
     this.loadState = "loaded";
     this.loadedContainer = container;
   }

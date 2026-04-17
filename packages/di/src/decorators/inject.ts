@@ -1,5 +1,6 @@
 import type { Constructor, ResolveHint } from "#/binding";
 import type { InjectionDescriptor } from "#/decorators/metadata";
+import { DiError } from "#/errors";
 import type { Token } from "#/token";
 
 export type InjectOptions = ResolveHint;
@@ -8,8 +9,16 @@ function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor[
   if (tag === undefined) {
     return undefined;
   }
+  if (!Array.isArray(tag) || tag.length !== 2) {
+    throw new DiError(
+      `@inject tag must be a tuple [tagKey, value] with length 2; received ${String(tag)}`,
+    );
+  }
   const [tagName, value] = tag;
-  return typeof tagName === "string" || typeof tagName === "symbol" ? [tagName, value] : undefined;
+  if (typeof tagName !== "string" && typeof tagName !== "symbol") {
+    throw new DiError(`@inject tag key must be a string or symbol; received ${typeof tagName}`);
+  }
+  return [tagName, value];
 }
 
 function toDescriptor<Value>(

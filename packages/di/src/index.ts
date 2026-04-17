@@ -1,10 +1,5 @@
 export { Container } from "#/container";
-export type {
-  BindingIdentifier,
-  ContainerInstance,
-  ContainerSnapshot,
-  ResolveOptions,
-} from "#/container";
+export type { BindingIdentifier, ContainerSnapshot, ResolveOptions } from "#/container";
 export { whenParentIs, whenAnyAncestorIs, whenTargetTagged } from "#/constraints";
 export { inject, optional, injectable, scoped, singleton } from "#/decorators/index";
 export {
