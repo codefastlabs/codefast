@@ -1,6 +1,6 @@
 # DI Library — Design Specification
 
-> Lấy cảm hứng từ InversifyJS v8 · Xây dựng hoàn toàn mới · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 5.5+ · ESM-only
+> Lấy cảm hứng từ InversifyJS v8 · Xây dựng hoàn toàn mới · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 5.9+ · ESM-only
 
 ---
 
@@ -35,14 +35,14 @@ InversifyJS v8 (release tháng 3/2026) mang lại nhiều cải thiện đáng k
 npm install inversify reflect-metadata
 ```
 
-Và vẫn cần `experimentalDecorators: true` cùng `emitDecoratorMetadata: true` trong tsconfig — hai flag legacy gắn liền với một proposal TC39 đã bị thay thế.
+Và vẫn cần `experimentalDecorators: true` cùng `emitDecoratorMetadata: true` trong tsconfig — hai flag legacy gắn liền với một proposal TC39 đã bị thay thế. v8 không có kế hoạch bỏ `reflect-metadata` vì toàn bộ decorator layer của nó vẫn phụ thuộc vào `emitDecoratorMetadata` để đọc constructor types.
 
-**`ServiceIdentifier` vẫn là `string | symbol | Newable<T>`** — không phải branded type. `container.get<WrongType>('my-service')` vẫn compile được và trả về sai type. Không có gì ngăn được lỗi này ở compile time.
+**`ServiceIdentifier` vẫn không phải branded type.** v8 đã narrow từ `string | symbol | Function` xuống `string | symbol | AbstractNewable<T> | Newable<T>` — cải thiện nhỏ so với v7 — nhưng vẫn không phải branded type. `container.get<WrongType>('my-service')` vẫn compile được và trả về sai type. Không có gì ngăn được lỗi này ở compile time.
 
 ### Mục tiêu của thư viện này
 
 - **Zero `reflect-metadata`** — không polyfill, không flag legacy
-- **TC39 Decorator Stage 3** — `Symbol.metadata`, TypeScript 5.2+, không cần `experimentalDecorators`
+- **TC39 Decorator Stage 3** — `Symbol.metadata` stable (TypeScript 5.9+), không cần `experimentalDecorators`
 - **Branded `Token<Value>`** — type-safe hoàn toàn, không bao giờ `any` rò rỉ ra ngoài
 - **ESM-only** — như InversifyJS v8, không dual build
 - **Học API đẹp từ v8** — lifecycle hooks, fluent builder, naming convention — nhưng làm lại từ đầu
@@ -200,7 +200,8 @@ interface ResolutionContext {
 
 ```ts
 // onActivation: chạy sau khi resolve, trước khi cache vào scope
-// onDeactivation: chạy khi unbind hoặc dispose — chỉ có ở singleton
+// onDeactivation: chạy khi unbind hoặc dispose
+//   → Chỉ có ý nghĩa với singleton. Transient và scoped không gọi onDeactivation.
 container
   .bind(Database)
   .to(PostgresDatabase)
@@ -213,6 +214,10 @@ container
     await db.disconnect();
   });
 ```
+
+> **`onDeactivation` và scope:** `onDeactivation` chỉ được gọi cho `singleton` binding — khi `container.dispose()` hoặc `container.unbind()` chạy. Transient không có lifecycle (mỗi resolve tạo instance mới, không có cache để track). Scoped tương tự — instance bị release khi child container bị dispose nhưng `onDeactivation` không được gọi.
+>
+> Gọi `.onDeactivation()` trên transient hoặc scoped binding **không throw** — `BindingBuilder` vẫn fluent — nhưng callback sẽ không bao giờ được invoke. Đây là trade-off có chủ ý: throw ở runtime sẽ break fluent chain; type-level prevention không khả thi vì scope được set sau (`.transient()` sau `.onDeactivation()`). Developer cần đọc doc để biết convention này.
 
 Type-safe hơn InversifyJS v8 — callback nhận đúng type của binding, không phải generic:
 
@@ -240,7 +245,7 @@ container.bind(Logger).to(FileLogger).whenNamed("file");
 // Resolve theo tên
 const logger = container.resolve(Logger, { name: "file" }); // ^? LoggerService
 
-// Tagged binding
+// Tagged binding — tag key là string, value là unknown
 container.bind(Engine).to(PetrolEngine).whenTagged("fuel", "petrol");
 container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
 
@@ -248,7 +253,9 @@ container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
 const engine = container.resolve(Engine, { tag: ["fuel", "electric"] });
 ```
 
-### 4.5 `toResolved` — explicit deps (học từ `toResolvedValue` của v8)
+> **Tag key phải là `string`:** `whenTagged` và `ResolveOptions.tag` chỉ hỗ trợ `string` key — không hỗ trợ `Symbol`. Đây là quyết định có chủ ý để giữ API đơn giản và serializable. Nếu cần namespace tránh collision, dùng prefix convention (`"mylib:fuel"`) thay vì Symbol.
+
+### 4.5 `toResolved` — explicit deps (lấy cảm hứng từ `toResolvedValue` của v8)
 
 Alternative sạch hơn `toDynamic` khi deps đơn giản — không cần `ctx` object:
 
@@ -277,6 +284,8 @@ toResolved<Deps extends readonly (Token<unknown> | Constructor)[]>(
 ```
 
 Với `deps: [Logger, Config]`, TypeScript infer factory params là `[LoggerService, AppConfig]` — không cần annotate thủ công.
+
+> **Khác với `toResolvedValue` của InversifyJS v8:** v8 dùng `injectOptions` thay vì plain token array — mỗi phần tử có thể là `ServiceIdentifier` hoặc object `{ name, serviceIdentifier }` để support named injection. Thư viện này dùng plain token array cho trường hợp không cần named/tagged, và `toDynamic` với `ctx.resolve(token, { name })` cho trường hợp cần — tách biệt rõ ràng hơn.
 
 ### 4.6 BindingIdentifier — unbind chính xác (học từ v8)
 
@@ -445,6 +454,12 @@ interface Container {
     opts?: ResolveOptions,
   ): Value | undefined;
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value[];
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ): Promise<Value[]>;
+  // resolveAll() throw AsyncResolutionError nếu bất kỳ binding nào là async.
+  // resolveAllAsync() an toàn cho cả sync lẫn async binding trong cùng multi-binding.
 
   // Scoping
   createChild(): Container;
@@ -630,7 +645,7 @@ interface ParamMetadata {
 }
 ```
 
-Không cần `experimentalDecorators: true`. Decorator Stage 3 là chuẩn từ TypeScript 5.2.
+Không cần `experimentalDecorators: true`. Decorator Stage 3 là chuẩn từ TypeScript 5.0; `Symbol.metadata` stable từ TypeScript 5.9.
 
 ---
 
@@ -690,8 +705,11 @@ const container = Container.fromModules(AppModule, LoggerModule);
 const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 
 // Override binding trong test — last-wins
-const testContainer = Container.fromModules(AppModule).bind(Database).toConstantValue(mockDatabase);
+const testContainer = Container.fromModules(AppModule);
+testContainer.bind(Database).toConstantValue(mockDatabase);
 ```
+
+> **Module là reusable:** Cùng một `Module` object có thể load vào nhiều containers độc lập — đây là use case chính để test. Mỗi lần `Container.fromModules(AppModule)` tạo ra một container mới với bindings riêng, không share state với container khác. Module không bị "owned" bởi container nào.
 
 ### 7.4 Module interface
 
@@ -805,7 +823,7 @@ packages/di/
 │   ├── decorators/
 │   │   ├── injectable.ts       @injectable() — Stage 3 class decorator
 │   │   ├── injectable.test.ts
-│   │   ├── inject.ts           @inject() + @injectOptional()
+│   │   ├── inject.ts           inject() + optional() plain functions
 │   │   ├── inject.test.ts
 │   │   ├── metadata.ts         SymbolMetadataReader — implements MetadataReader
 │   │   └── index.ts
@@ -946,6 +964,8 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 
 `Module.create()` và `Module.createAsync()`. Import graph resolution. `Container.fromModules()` / `Container.fromModulesAsync()`. `load`/`loadAsync`/`unload`/`unloadAsync` theo convention v8. Deduplication tự động.
 
+**Constraint quan trọng:** Module phải reusable — cùng một `Module` object có thể load vào nhiều containers độc lập. Không có "single-container ownership". Đây là requirement cứng cho test workflow.
+
 **Deliverable:** Tổ chức app thành modules, override binding dễ dàng trong test.
 
 ---
@@ -962,14 +982,14 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 
 ## 11. Stack kỹ thuật
 
-| Công cụ                 | Vai trò                                      |
-| ----------------------- | -------------------------------------------- |
-| TypeScript 5.5+         | Decorator Stage 3, `Symbol.metadata`, strict |
-| tsdown                  | Bundle ESM, `.d.ts`                          |
-| Vitest                  | Unit test                                    |
-| publint                 | Kiểm tra package exports correctness         |
-| `@arethetypeswrong/cli` | Kiểm tra type resolution correctness         |
-| pnpm                    | Package manager (workspace monorepo)         |
+| Công cụ                 | Vai trò                                             |
+| ----------------------- | --------------------------------------------------- |
+| TypeScript 5.9+         | Decorator Stage 3, `Symbol.metadata` stable, strict |
+| tsdown                  | Bundle ESM, `.d.ts`                                 |
+| Vitest                  | Unit test                                           |
+| publint                 | Kiểm tra package exports correctness                |
+| `@arethetypeswrong/cli` | Kiểm tra type resolution correctness                |
+| pnpm                    | Package manager (workspace monorepo)                |
 
 ### tsconfig
 
@@ -997,39 +1017,40 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 
 ### Học từ v8
 
-| Tính năng v8                             | Cách triển khai ở đây                                                                 |
-| ---------------------------------------- | ------------------------------------------------------------------------------------- |
-| Naming: unqualified=sync, `Async`=async  | Giữ nguyên: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, ... |
-| ESM-only, Node ≥ 20.19                   | Giống v8                                                                              |
-| `onActivation` / `onDeactivation`        | Giữ, nhưng callback tự infer type — không cần annotate                                |
-| `toResolvedValue(factory, deps)`         | Đổi tên thành `toResolved(factory, deps)`                                             |
-| `toService()` alias                      | Đổi tên thành `toAlias()`                                                             |
-| `BindingIdentifier` / `.getIdentifier()` | Giữ concept, đổi method thành `.id()`                                                 |
-| Bỏ `Provider` / `ProviderBinding`        | Không có từ đầu — chỉ có `toDynamic` và `toDynamicAsync`                              |
-| Named/tagged bindings                    | Giữ `whenNamed`, `whenTagged` — bỏ `whenAnyAncestor*` cho Phase 1                     |
+| Tính năng v8                              | Cách triển khai ở đây                                                                  |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| Naming: unqualified=sync, `Async`=async   | Giữ nguyên: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, ...  |
+| ESM-only, Node ≥ 20.19                    | Giống v8                                                                               |
+| `onActivation` / `onDeactivation`         | Giữ, nhưng callback tự infer type — không cần annotate                                 |
+| `toResolvedValue(factory, injectOptions)` | Đổi tên thành `toResolved(factory, deps)` với deps là plain token array — đơn giản hơn |
+| `toService()` alias                       | Đổi tên thành `toAlias()`                                                              |
+| `BindingIdentifier` / `.getIdentifier()`  | Giữ concept, đổi method thành `.id()`                                                  |
+| Bỏ `Provider` / `ProviderBinding`         | Không có từ đầu — chỉ có `toDynamic` và `toDynamicAsync`                               |
+| Named/tagged bindings                     | Giữ `whenNamed`, `whenTagged` — bỏ `whenAnyAncestor*` cho Phase 1                      |
 
 ### Cải thiện hơn v8
 
-| InversifyJS v8                                          | Thư viện này                                                                           |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `reflect-metadata` + `experimentalDecorators` bắt buộc  | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                             |
-| `ServiceIdentifier = string \| symbol \| Newable<T>`    | `Token<Value>` branded type — resolve luôn đúng type                                   |
-| `container.get<WrongType>('id')` compile được           | Không thể — `Token<Value>` mang type ở compile time                                    |
-| `.inSingletonScope()`, `.inTransientScope()`            | `.singleton()`, `.transient()` — ngắn hơn                                              |
-| `toDynamicValue` cho cả sync lẫn async                  | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                    |
-| Async module không có API riêng                         | `Module.createAsync()` + `container.loadAsync()` — explicit                            |
-| `@inject` trên parameter (cần `experimentalDecorators`) | `@injectable([deps])` + `inject()` / `optional()` plain functions — TC39 Stage 3 thuần |
+| InversifyJS v8                                                             | Thư viện này                                                                           |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `reflect-metadata` + `experimentalDecorators` bắt buộc                     | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                             |
+| `ServiceIdentifier = string \| symbol \| AbstractNewable<T> \| Newable<T>` | `Token<Value>` branded type — resolve luôn đúng type                                   |
+| `container.get<WrongType>('id')` compile được                              | Không thể — `Token<Value>` mang type ở compile time                                    |
+| `.inSingletonScope()`, `.inTransientScope()`                               | `.singleton()`, `.transient()` — ngắn hơn                                              |
+| `toDynamicValue` cho cả sync lẫn async                                     | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                    |
+| Async module không có API riêng                                            | `Module.createAsync()` + `container.loadAsync()` — explicit                            |
+| `@inject` trên parameter (cần `experimentalDecorators`)                    | `@injectable([deps])` + `inject()` / `optional()` plain functions — TC39 Stage 3 thuần |
+| `getAll()` chỉ có sync                                                     | `resolveAll()` + `resolveAllAsync()` — consistent với sync/async convention            |
 
 ### Không học từ v8
 
 | InversifyJS v8                                     | Lý do không học                                                                    |
 | -------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `string \| symbol` làm service identifier          | Không type-safe — dùng `Token<Value>`                                              |
-| `new Container()` public constructor               | Dùng `Container.create()` static factory                                           |
+| `new Container({ parent })` để tạo child container | Dùng `container.createChild()` — explicit hơn, không lộ constructor options        |
 | Implicit inheritance injection (`@injectFromBase`) | Explicit từ đầu — deps array trong `@injectable()` khai báo tường minh tất cả      |
 | Parameter decorator `@inject` / `@injectOptional`  | TS1206 — không tồn tại trong TC39 Stage 3; dùng `inject()` / `optional()` thay thế |
 
 ---
 
-_Phiên bản tài liệu: 2.1 — April 2026_
+_Phiên bản tài liệu: 2.2 — April 2026_
 _Lấy cảm hứng từ InversifyJS v8.0.0 (March 2026)_
