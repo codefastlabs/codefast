@@ -119,4 +119,28 @@ describe("Module", () => {
     const container = await Container.fromModulesAsync(exposedAsyncModule);
     expect(container.resolve(valueToken)).toBe(7);
   });
+
+  it("successfully imports a sync module from an async module", async () => {
+    const container = Container.create();
+    const tVal = token<string>("val");
+    const SyncM = Module.create("SyncM", (api) => {
+      api.bind(tVal).toConstantValue("sync-val");
+    });
+    const AsyncM = Module.createAsync("AsyncM", async (api) => {
+      api.import(SyncM);
+    });
+
+    await container.loadAsync(AsyncM);
+    expect(container.resolve(tVal)).toBe("sync-val");
+  });
+
+  it("instantiates classes without parameters", () => {
+    class Service {}
+    const tokenService = token<Service>("service");
+    const mod = Module.create("mod", (api) => {
+      api.bind(tokenService).to(Service);
+    });
+    const container = Container.fromModules(mod);
+    expect(container.resolve(tokenService)).toBeInstanceOf(Service);
+  });
 });
