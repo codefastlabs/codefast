@@ -1,7 +1,7 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { RunArrangeSyncUseCaseImpl } from "#lib/arrange/application/use-cases/run-arrange-sync.use-case";
-import type { ArrangeFileProcessorService, ArrangeTargetScannerService } from "#lib/tokens";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
+import type { ArrangeFileProcessorService, ArrangeTargetScannerService } from "#/lib/tokens";
 
 describe("RunArrangeSyncUseCaseImpl", () => {
   it("returns NOT_FOUND when the target path does not exist", async () => {

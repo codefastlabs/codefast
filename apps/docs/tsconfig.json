@@ -16,6 +16,9 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "allowImportingTsExtensions": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
 
     /* Emit */
     "noEmit": true,

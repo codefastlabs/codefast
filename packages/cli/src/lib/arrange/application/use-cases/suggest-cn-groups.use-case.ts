@@ -1,8 +1,8 @@
 import { injectable } from "@codefast/di";
-import type { ArrangeSuggestGroupsRequest } from "#lib/arrange/application/requests/suggest-groups.request";
-import { suggestCnGroups, summarizeGroupBucketLabels } from "#lib/arrange/domain/grouping.domain";
-import { formatArray, formatCnCall } from "#lib/arrange/domain/source-text-formatters.formatter";
-import type { SuggestCnGroupsUseCase } from "#lib/tokens";
+import type { ArrangeSuggestGroupsRequest } from "#/lib/arrange/application/requests/suggest-groups.request";
+import { suggestCnGroups, summarizeGroupBucketLabels } from "#/lib/arrange/domain/grouping.domain";
+import { formatArray, formatCnCall } from "#/lib/arrange/domain/source-text-formatters.formatter";
+import type { SuggestCnGroupsUseCase } from "#/lib/tokens";
 
 export type ArrangeSuggestGroupsOutput = {
   readonly primaryLine: string;

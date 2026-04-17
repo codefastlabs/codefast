@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@codefast/ui/select";
 import type { ComponentProps } from "react";
-import { useThemeConfig } from "#components/active-theme";
+import { useThemeConfig } from "#/components/active-theme";
 
 const THEMES = {
   sizes: [

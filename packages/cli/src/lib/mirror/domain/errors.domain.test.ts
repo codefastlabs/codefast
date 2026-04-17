@@ -1,4 +1,4 @@
-import { MirrorError, MirrorErrorCode } from "#lib/mirror/domain/errors.domain";
+import { MirrorError, MirrorErrorCode } from "#/lib/mirror/domain/errors.domain";
 
 describe("MirrorError", () => {
   it("preserves code and message", () => {

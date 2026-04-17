@@ -1,12 +1,12 @@
 "use client";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import type { ComponentProps, JSX, MouseEventHandler } from "react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import { InputGroup, InputGroupButton, InputGroupInput } from "#components/input-group";
+import { InputGroup, InputGroupButton, InputGroupInput } from "#/components/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputPassword

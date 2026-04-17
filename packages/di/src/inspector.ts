@@ -1,8 +1,8 @@
-import type { Binding, BindingIdentifier, BindingScope } from "#binding";
-import { registryKeyLabel } from "#binding-select";
-import { collectStaticDependencyEdges } from "#dependency-graph";
-import type { MetadataReader } from "#decorators/metadata";
-import type { RegistryKey } from "#registry";
+import type { Binding, BindingIdentifier, BindingScope } from "#/binding";
+import { registryKeyLabel } from "#/binding-select";
+import { collectStaticDependencyEdges } from "#/dependency-graph";
+import type { MetadataReader } from "#/decorators/metadata";
+import type { RegistryKey } from "#/registry";
 
 export type BindingActivationStatus = "cached" | "not-cached" | "transient";
 

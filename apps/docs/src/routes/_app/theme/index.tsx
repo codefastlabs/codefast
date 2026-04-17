@@ -1,4 +1,4 @@
-import { ThemeAppearancePage } from "#components/theme-appearance-page";
+import { ThemeAppearancePage } from "#/components/theme-appearance-page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/theme/")({

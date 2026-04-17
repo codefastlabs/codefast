@@ -12,11 +12,11 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import type { ResolvedTheme, Theme, ThemeContextType } from "#types";
+import type { ResolvedTheme, Theme, ThemeContextType } from "#/types";
 
-import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from "#constants";
-import { ThemeContext } from "#core/context";
-import { applyTheme, disableAnimation, getSystemTheme } from "#utils";
+import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from "#/constants";
+import { ThemeContext } from "#/core/context";
+import { applyTheme, disableAnimation, getSystemTheme } from "#/utils";
 
 /* -----------------------------------------------------------------------------
  * System Theme Subscription

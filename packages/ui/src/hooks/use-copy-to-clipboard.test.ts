@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import type { Mock } from "vitest";
 
-import { useCopyToClipboard } from "#hooks/use-copy-to-clipboard";
+import { useCopyToClipboard } from "#/hooks/use-copy-to-clipboard";
 
 describe("useCopyToClipboard", () => {
   const originalClipboard = window.navigator.clipboard;

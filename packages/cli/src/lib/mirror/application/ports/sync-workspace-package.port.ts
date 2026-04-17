@@ -1,5 +1,5 @@
-import type { MirrorConfig } from "#lib/config/domain/schema.domain";
-import type { GlobalStats, PackageStats } from "#lib/mirror/domain/types.domain";
+import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
+import type { GlobalStats, PackageStats } from "#/lib/mirror/domain/types.domain";
 
 export type SyncWorkspacePackageService = {
   syncExportsForWorkspacePackage(

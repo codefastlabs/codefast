@@ -2,8 +2,8 @@ import { cn } from "@codefast/tailwind-variants";
 import { Suspense, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Skeleton } from "@codefast/ui/skeleton";
-import { ComponentWrapper } from "#components/sink/app/component-wrapper";
-import { componentRegistry } from "#components/sink/component-registry";
+import { ComponentWrapper } from "#/components/sink/app/component-wrapper";
+import { componentRegistry } from "#/components/sink/component-registry";
 
 export const Route = createFileRoute("/sink/")({
   component: SinkPage,

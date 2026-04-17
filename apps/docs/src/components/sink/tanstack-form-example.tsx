@@ -42,7 +42,7 @@ import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import { useForm } from "@tanstack/react-form";
 import { format } from "date-fns";
 import { useState } from "react";
-import { addons, exampleFormSchema } from "#components/sink/schema";
+import { addons, exampleFormSchema } from "#/components/sink/schema";
 
 export function ExampleForm() {
   const form = useForm({

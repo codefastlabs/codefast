@@ -35,9 +35,9 @@ import { Spinner } from "@codefast/ui/spinner";
 import { Switch } from "@codefast/ui/switch";
 import { Textarea } from "@codefast/ui/textarea";
 import { useActionState, useEffect, useEffectEvent, useId, useState } from "react";
-import type { FormState } from "#components/sink/server-fn";
-import { subscriptionAction } from "#components/sink/server-fn";
-import { addons } from "#components/sink/schema";
+import type { FormState } from "#/components/sink/server-fn";
+import { subscriptionAction } from "#/components/sink/server-fn";
+import { addons } from "#/components/sink/schema";
 
 export function ExampleForm() {
   const formId = useId();

@@ -1,5 +1,5 @@
-import type { TagResolvedTarget } from "#lib/tag/domain/types.domain";
-import { formatTargetTable } from "#lib/tag/presentation/tag-sync.presenter";
+import type { TagResolvedTarget } from "#/lib/tag/domain/types.domain";
+import { formatTargetTable } from "#/lib/tag/presentation/tag-sync.presenter";
 
 describe("formatTargetTable", () => {
   it("aligns columns using longest package and path values", () => {

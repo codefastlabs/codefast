@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 
-import { ThemeScript } from "#script/theme-script";
+import { ThemeScript } from "#/script/theme-script";
 
 describe("ThemeScript", () => {
   describe("rendering", () => {

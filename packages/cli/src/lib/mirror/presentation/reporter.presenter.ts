@@ -1,12 +1,12 @@
 import process from "node:process";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import { printConfigSchemaWarnings } from "#lib/infra/config-reporter.adapter";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { printConfigSchemaWarnings } from "#/lib/infra/config-reporter.adapter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type {
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#lib/mirror/domain/types.domain";
+} from "#/lib/mirror/domain/types.domain";
 
 const Colors = {
   RESET: "\x1b[0m",

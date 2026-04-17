@@ -6,14 +6,14 @@ import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
-} from "#lib/arrange/presentation/arrange-cli-schema.presenter";
-import type { CliCommand } from "#lib/core/presentation/command.interface";
-import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
+} from "#/lib/arrange/presentation/arrange-cli-schema.presenter";
+import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import {
   consumeCliAppError,
   runCliResultAsync,
-} from "#lib/core/presentation/cli-executor.presenter";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+} from "#/lib/core/presentation/cli-executor.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import {
   AnalyzeDirectoryUseCaseToken,
   CliLoggerToken,
@@ -26,7 +26,7 @@ import {
   RunArrangeSyncUseCaseToken,
   type SuggestCnGroupsUseCase,
   SuggestCnGroupsUseCaseToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 function withClassNameOption(): Option {
   return new Option(

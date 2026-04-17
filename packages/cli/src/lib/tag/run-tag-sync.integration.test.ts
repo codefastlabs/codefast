@@ -2,20 +2,20 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { CoreModule } from "#lib/core/core.module";
-import { InfraModule } from "#lib/core/infra/infra.module";
-import { PresentationModule } from "#lib/core/presentation/presentation.module";
-import { createNodeCliFs } from "#lib/infra/node-io.adapter";
+import { CoreModule } from "#/lib/core/core.module";
+import { InfraModule } from "#/lib/core/infra/infra.module";
+import { PresentationModule } from "#/lib/core/presentation/presentation.module";
+import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
 import {
   resolveNearestPackageVersion,
   runTagOnTarget,
-} from "#lib/tag/application/use-cases/run-tag-sync.use-case";
-import { TagModule } from "#lib/tag/tag.module";
-import { nodeCliPath } from "#lib/core/infra/path.adapter";
-import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
-import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
-import { TagVersionResolverAdapter } from "#lib/tag/infra/tag-version-resolver.adapter";
-import { RunTagSyncUseCaseToken, type RunTagSyncUseCase } from "#lib/tokens";
+} from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
+import { TagModule } from "#/lib/tag/tag.module";
+import { nodeCliPath } from "#/lib/core/infra/path.adapter";
+import { tagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
+import { tagTypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
+import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
+import { RunTagSyncUseCaseToken, type RunTagSyncUseCase } from "#/lib/tokens";
 
 const tagFs = createNodeCliFs();
 

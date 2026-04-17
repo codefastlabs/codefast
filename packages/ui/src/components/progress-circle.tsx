@@ -1,13 +1,13 @@
 "use client";
 
-import type { VariantProps } from "#lib/utils";
+import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
-import { tv } from "#lib/utils";
+import { tv } from "#/lib/utils";
 import { useCallback, useMemo } from "react";
 
-import { useAnimatedValue } from "#hooks/use-animated-value";
-import * as ProgressCirclePrimitive from "#primitives/progress-circle";
+import { useAnimatedValue } from "#/hooks/use-animated-value";
+import * as ProgressCirclePrimitive from "#/primitives/progress-circle";
 
 /* -------------------------------------------------------------------------------------------------
  * Variant: ProgressCircle

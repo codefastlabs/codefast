@@ -4,8 +4,8 @@ import {
   MAX_GROUPS_CAP,
   MAX_GROUPS_HEADROOM,
   MIN_GROUP_TOKENS,
-} from "#lib/arrange/domain/constants.domain";
-import type { Bucket } from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/constants.domain";
+import type { Bucket } from "#/lib/arrange/domain/types.domain";
 import {
   bucketsCompatible,
   bucketsMergeCompatible,
@@ -15,7 +15,7 @@ import {
   stateKey,
   stripVariants,
   tokenizeClassString,
-} from "#lib/arrange/domain/tokenizer.util";
+} from "#/lib/arrange/domain/tokenizer.util";
 
 /**
  * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with

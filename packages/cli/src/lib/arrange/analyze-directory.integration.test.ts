@@ -2,17 +2,17 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { ArrangeModule } from "#lib/arrange/arrange.module";
-import { printAnalyzeReport } from "#lib/arrange/presentation/report.presenter";
-import { CoreModule } from "#lib/core/core.module";
-import { InfraModule } from "#lib/core/infra/infra.module";
-import { PresentationModule } from "#lib/core/presentation/presentation.module";
-import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
+import { ArrangeModule } from "#/lib/arrange/arrange.module";
+import { printAnalyzeReport } from "#/lib/arrange/presentation/report.presenter";
+import { CoreModule } from "#/lib/core/core.module";
+import { InfraModule } from "#/lib/core/infra/infra.module";
+import { PresentationModule } from "#/lib/core/presentation/presentation.module";
+import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
 import {
   AnalyzeDirectoryUseCaseToken,
   CliLoggerToken,
   type AnalyzeDirectoryUseCase,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 const container = Container.create();
 container.load(CoreModule, InfraModule, PresentationModule, ArrangeModule);

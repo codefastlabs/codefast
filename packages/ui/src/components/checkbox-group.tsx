@@ -2,10 +2,10 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import { CheckIcon } from "lucide-react";
 
-import * as CheckboxGroupPrimitive from "#primitives/checkbox-group";
+import * as CheckboxGroupPrimitive from "#/primitives/checkbox-group";
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroup

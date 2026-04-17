@@ -1,9 +1,9 @@
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type {
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#lib/mirror/domain/types.domain";
+} from "#/lib/mirror/domain/types.domain";
 
 export type MirrorProcessingModeInput =
   | { kind: "single" }

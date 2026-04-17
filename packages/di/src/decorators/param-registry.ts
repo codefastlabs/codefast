@@ -1,5 +1,5 @@
-import type { Constructor } from "#binding";
-import type { ParamMetadata } from "#decorators/metadata";
+import type { Constructor } from "#/binding";
+import type { ParamMetadata } from "#/decorators/metadata";
 
 const pendingByConstructor = new WeakMap<Constructor<unknown>, Map<number, ParamMetadata>>();
 

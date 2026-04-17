@@ -1,10 +1,10 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#lib/utils";
+import { cn, tv } from "#/lib/utils";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { ChevronDownIcon } from "lucide-react";
 
-import { buttonVariants } from "#components/button";
+import { buttonVariants } from "#/components/button";
 
 /* -----------------------------------------------------------------------------
  * Style: NavigationMenuTrigger

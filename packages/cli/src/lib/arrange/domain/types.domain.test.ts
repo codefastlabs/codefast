@@ -1,4 +1,4 @@
-import type { AnalyzeReport, Bucket } from "#lib/arrange/domain/types.domain";
+import type { AnalyzeReport, Bucket } from "#/lib/arrange/domain/types.domain";
 
 describe("arrange domain types", () => {
   it("allows constructing a minimal AnalyzeReport shape", () => {

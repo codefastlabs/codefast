@@ -7,7 +7,7 @@ import {
   Settings2Icon,
   SquareTerminalIcon,
 } from "lucide-react";
-import type { AppSidebarData } from "#components/sink/app/app-sidebar-types";
+import type { AppSidebarData } from "#/components/sink/app/app-sidebar-types";
 
 /* -------------------------------------------------------------------------------------------------
  * Sample Data: AppSidebar

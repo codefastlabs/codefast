@@ -2,12 +2,12 @@ import { injectable } from "@codefast/di";
 import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
-} from "#lib/config/domain/schema.domain";
-import { appError, type AppError } from "#lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#lib/core/domain/result.model";
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { ArrangeSyncRunRequest } from "#lib/arrange/application/requests/arrange-sync.request";
+} from "#/lib/config/domain/schema.domain";
+import { appError, type AppError } from "#/lib/core/domain/errors.domain";
+import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import type { ArrangeSyncRunRequest } from "#/lib/arrange/application/requests/arrange-sync.request";
 import {
   ArrangeFileProcessorToken,
   ArrangeTargetScannerToken,
@@ -16,7 +16,7 @@ import {
   type ArrangeFileProcessorService,
   type ArrangeTargetScannerService,
   type RunArrangeSyncUseCase,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 async function runArrangeOnAfterWriteHook(
   logger: CliLogger,

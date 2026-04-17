@@ -1,15 +1,15 @@
-import { MAX_CLASS_EXPR_DEPTH } from "#lib/arrange/domain/constants.domain";
+import { MAX_CLASS_EXPR_DEPTH } from "#/lib/arrange/domain/constants.domain";
 import type {
   ForEachStringLiteralInClassExpressionOptions,
   TailwindClassLiteral,
-} from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/types.domain";
 import {
   DomainBinaryOperator,
   DomainSyntaxKind,
   type DomainAstNode,
   isDomainArrayLiteralExpression,
   isDomainTailwindClassLiteral,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 
 export function forEachStringLiteralInClassExpression(
   expr: DomainAstNode,

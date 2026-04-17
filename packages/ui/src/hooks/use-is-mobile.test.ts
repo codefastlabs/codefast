@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
 import type { Mock } from "vitest";
 
-import { useIsMobile } from "#hooks/use-is-mobile";
-import { useMediaQuery } from "#hooks/use-media-query";
+import { useIsMobile } from "#/hooks/use-is-mobile";
+import { useMediaQuery } from "#/hooks/use-media-query";
 
 // Mock hook useMediaQuery
 vi.mock("#hooks/use-media-query", () => ({

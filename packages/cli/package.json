@@ -32,8 +32,12 @@
   ],
   "type": "module",
   "imports": {
-    "#*": [
-      "./src/*"
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
     ]
   },
   "publishConfig": {

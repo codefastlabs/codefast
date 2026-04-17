@@ -5,7 +5,7 @@ import type {
   CodefastConfig,
   CodefastTagConfig,
   MirrorConfig,
-} from "#lib/config/domain/schema.domain";
+} from "#/lib/config/domain/schema.domain";
 
 export const hookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
   message: "Expected a function",

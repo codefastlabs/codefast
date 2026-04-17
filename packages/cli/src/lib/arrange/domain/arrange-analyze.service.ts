@@ -3,20 +3,20 @@
  * Pure orchestration of domain collectors and invariants — no I/O.
  */
 
-import { LONG_STRING_TOKEN_THRESHOLD } from "#lib/arrange/domain/constants.domain";
-import type { AnalyzeReport } from "#lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#lib/arrange/domain/tokenizer.util";
-import { forEachStringLiteralInClassExpression } from "#lib/arrange/domain/ast/collectors-cn.collector";
-import { jsxClassNameStaticLiteral } from "#lib/arrange/domain/ast/collectors-jsx.collector";
+import { LONG_STRING_TOKEN_THRESHOLD } from "#/lib/arrange/domain/constants.domain";
+import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
+import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
+import { forEachStringLiteralInClassExpression } from "#/lib/arrange/domain/ast/collectors-cn.collector";
+import { jsxClassNameStaticLiteral } from "#/lib/arrange/domain/ast/collectors-jsx.collector";
 import {
   collectCnCallsInsideTv,
   traverseTvObject,
-} from "#lib/arrange/domain/ast/collectors-tv.collector";
+} from "#/lib/arrange/domain/ast/collectors-tv.collector";
 import {
   buildKnownCnTvBindings,
   isCnOrTvIdentifier,
   lineOf,
-} from "#lib/arrange/domain/ast/ast-helpers.helper";
+} from "#/lib/arrange/domain/ast/ast-helpers.helper";
 import {
   type DomainAstNode,
   type DomainCallExpression,
@@ -26,7 +26,7 @@ import {
   isDomainJsxAttribute,
   isDomainObjectLiteralExpression,
   forEachDomainChild,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 
 const PREVIEW_MAX_LENGTH = 72;
 

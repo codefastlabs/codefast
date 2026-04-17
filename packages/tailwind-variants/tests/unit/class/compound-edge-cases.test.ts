@@ -1,4 +1,4 @@
-import { tv } from "#index";
+import { tv } from "#/index";
 
 describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
   test("should handle empty compound slots array", () => {

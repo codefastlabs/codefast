@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
@@ -11,7 +11,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "#components/input-group";
+} from "#/components/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch

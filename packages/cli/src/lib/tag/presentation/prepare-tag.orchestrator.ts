@@ -1,17 +1,17 @@
 import { injectable } from "@codefast/di";
-import { ok } from "#lib/core/domain/result.model";
-import { parseGlobalCliOptions } from "#lib/core/presentation/global-cli-options.presenter";
-import { findRepoRoot } from "#lib/infra/workspace/repo-root.adapter";
-import { resolveTagCliTargetPath } from "#lib/tag/presentation/resolve-tag-cli-target.presenter";
-import { resolveTagWorkspaceRootPath } from "#lib/tag/presentation/resolve-tag-workspace-root.presenter";
+import { ok } from "#/lib/core/domain/result.model";
+import { parseGlobalCliOptions } from "#/lib/core/presentation/global-cli-options.presenter";
+import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
+import { resolveTagCliTargetPath } from "#/lib/tag/presentation/resolve-tag-cli-target.presenter";
+import { resolveTagWorkspaceRootPath } from "#/lib/tag/presentation/resolve-tag-workspace-root.presenter";
 import {
   AppOrchestratorToken,
   CliFsToken,
   CliLoggerToken,
   type AppOrchestrator,
   type PrepareTagOrchestrator as PrepareTagOrchestratorContract,
-} from "#lib/tokens";
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
+} from "#/lib/tokens";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
 @injectable([CliFsToken, CliLoggerToken, AppOrchestratorToken] as const)
 export class PrepareTagOrchestrator implements PrepareTagOrchestratorContract {

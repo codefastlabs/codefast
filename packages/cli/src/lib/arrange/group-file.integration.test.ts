@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
-import { createNodeCliFs, createNodeCliLogger } from "#lib/infra/node-io.adapter";
-import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
-import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
+import { groupFile } from "#/lib/arrange/application/use-cases/group-file.use-case";
+import { createNodeCliFs, createNodeCliLogger } from "#/lib/infra/node-io.adapter";
+import { domainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
+import { groupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();

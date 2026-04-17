@@ -1,23 +1,23 @@
 import { injectable } from "@codefast/di";
-import type { MirrorConfig } from "#lib/config/domain/schema.domain";
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { CliPath } from "#lib/core/application/ports/path.port";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import { DIST_DIR, PACKAGE_JSON } from "#lib/mirror/domain/constants.domain";
+import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#/lib/core/application/ports/path.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { DIST_DIR, PACKAGE_JSON } from "#/lib/mirror/domain/constants.domain";
 import {
   createPathTransform,
   generateExports,
-} from "#lib/mirror/application/use-cases/generate-mirror-exports.use-case";
-import type { FileSystemServicePort } from "#lib/mirror/application/ports/file-system-service.port";
-import type { MirrorSyncReporterPort } from "#lib/mirror/application/ports/mirror-sync-reporter.port";
-import type { PackageRepositoryPort } from "#lib/mirror/application/ports/package-repository.port";
-import type { SyncWorkspacePackageService } from "#lib/mirror/application/ports/sync-workspace-package.port";
+} from "#/lib/mirror/application/use-cases/generate-mirror-exports.use-case";
+import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
+import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
+import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";
+import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
 import type {
   GlobalStats,
   MirrorPackageMeta,
   PackageJsonShape,
   PackageStats,
-} from "#lib/mirror/domain/types.domain";
+} from "#/lib/mirror/domain/types.domain";
 import {
   CliFsToken,
   CliLoggerToken,
@@ -25,7 +25,7 @@ import {
   FileSystemServicePortToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 function resolvePackageScopedConfig<T>(
   configMap: Record<string, T> | undefined,

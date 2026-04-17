@@ -1,6 +1,6 @@
-export { Container } from "#container";
-export type { BindingIdentifier, ContainerSnapshot, ResolveOptions } from "#container";
-export { inject, optional, injectable, scoped, singleton } from "#decorators/index";
+export { Container } from "#/container";
+export type { BindingIdentifier, ContainerSnapshot, ResolveOptions } from "#/container";
+export { inject, optional, injectable, scoped, singleton } from "#/decorators/index";
 export {
   AsyncModuleLoadError,
   AsyncResolutionError,
@@ -10,6 +10,6 @@ export {
   NoMatchingBindingError,
   ScopeViolationError,
   TokenNotBoundError,
-} from "#errors";
-export { AsyncModule, Module } from "#module";
-export { token, type Token, type TokenValue } from "#token";
+} from "#/errors";
+export { AsyncModule, Module } from "#/module";
+export { token, type Token, type TokenValue } from "#/token";

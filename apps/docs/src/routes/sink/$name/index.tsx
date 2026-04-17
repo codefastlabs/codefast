@@ -2,7 +2,7 @@ import { cn } from "@codefast/tailwind-variants";
 import { Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Skeleton } from "@codefast/ui/skeleton";
-import { componentRegistry } from "#components/sink/component-registry";
+import { componentRegistry } from "#/components/sink/component-registry";
 
 export const Route = createFileRoute("/sink/$name/")({
   component: ComponentPage,

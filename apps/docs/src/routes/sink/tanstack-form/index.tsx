@@ -1,6 +1,6 @@
 import { cn } from "@codefast/tailwind-variants";
 import { createFileRoute } from "@tanstack/react-router";
-import { ExampleForm } from "#components/sink/tanstack-form-example";
+import { ExampleForm } from "#/components/sink/tanstack-form-example";
 
 export const Route = createFileRoute("/sink/tanstack-form/")({
   component: TanstackFormPage,

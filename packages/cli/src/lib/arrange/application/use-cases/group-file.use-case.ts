@@ -1,7 +1,7 @@
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
-import type { GroupFilePreviewPort } from "#lib/arrange/application/ports/group-file-preview.port";
-import type { ArrangeGroupFileOptions, GroupFileResult } from "#lib/arrange/domain/types.domain";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
+import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
+import type { ArrangeGroupFileOptions, GroupFileResult } from "#/lib/arrange/domain/types.domain";
 import {
   buildGroupFileUnwrapState,
   countPersistedGroupFileEdits,
@@ -11,8 +11,8 @@ import {
   groupFileWorkHasNothingToReport,
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
-} from "#lib/arrange/domain/arrange-grouping.service";
-import { ensureCnImport } from "#lib/arrange/domain/imports.domain";
+} from "#/lib/arrange/domain/arrange-grouping.service";
+import { ensureCnImport } from "#/lib/arrange/domain/imports.domain";
 
 export function groupFile(
   filePath: string,

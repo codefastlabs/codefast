@@ -1,4 +1,4 @@
-import { tv } from "#index";
+import { tv } from "#/index";
 
 describe("Tailwind Variants (TV) - twMerge: false", () => {
   test("should not resolve tailwind conflicts when twMerge is false", () => {

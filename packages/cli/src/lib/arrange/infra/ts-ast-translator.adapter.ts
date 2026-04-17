@@ -33,7 +33,7 @@ import {
   type DomainSpreadElement,
   type DomainStringLiteral,
   type DomainUnknownAstNode,
-} from "#lib/arrange/domain/ast/ast-node.model";
+} from "#/lib/arrange/domain/ast/ast-node.model";
 
 /** Mutable build view for wiring `parent` links; results satisfy readonly domain types. */
 type WritableDomainAst<T extends DomainAstNode> = {

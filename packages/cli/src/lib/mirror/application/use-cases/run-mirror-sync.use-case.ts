@@ -1,14 +1,14 @@
 import { injectable } from "@codefast/di";
-import { appError, type AppError } from "#lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#lib/core/domain/result.model";
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import type { MirrorConfig } from "#lib/config/domain/schema.domain";
-import type { MirrorSyncRunRequest } from "#lib/mirror/application/requests/mirror-sync.request";
-import type { GlobalStats } from "#lib/mirror/domain/types.domain";
-import type { WorkspaceServicePort } from "#lib/mirror/application/ports/workspace-service.port";
-import type { MirrorSyncReporterPort } from "#lib/mirror/application/ports/mirror-sync-reporter.port";
-import type { SyncWorkspacePackageService } from "#lib/mirror/application/ports/sync-workspace-package.port";
+import { appError, type AppError } from "#/lib/core/domain/errors.domain";
+import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
+import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
+import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
+import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
+import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
+import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
 import {
   CliFsToken,
   CliLoggerToken,
@@ -16,7 +16,7 @@ import {
   SyncWorkspacePackageServiceToken,
   type RunMirrorSyncUseCase,
   WorkspaceServicePortToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 @injectable([
   CliFsToken,

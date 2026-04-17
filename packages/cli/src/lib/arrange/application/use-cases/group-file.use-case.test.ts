@@ -1,9 +1,9 @@
 import type { Mock } from "vitest";
-import type { CliFs, CliLogger } from "#lib/core/application/ports/cli-io.port";
-import type { DomainSourceParserPort } from "#lib/arrange/application/ports/domain-source-parser.port";
-import { groupFile } from "#lib/arrange/application/use-cases/group-file.use-case";
-import { domainSourceParserAdapter } from "#lib/arrange/infra/domain-source-parser.adapter";
-import { groupFilePreviewPresenter } from "#lib/arrange/presentation/group-file-preview.presenter";
+import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
+import { groupFile } from "#/lib/arrange/application/use-cases/group-file.use-case";
+import { domainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
+import { groupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
 function createForwardingParserPort(): DomainSourceParserPort {
   return {

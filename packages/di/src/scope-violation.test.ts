@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { Container } from "#container";
-import { ScopeViolationError } from "#errors";
-import { token } from "#token";
-import { injectable } from "#decorators/injectable";
-import { scoped } from "#decorators/scoped";
-import { singleton } from "#decorators/singleton";
+import { Container } from "#/container";
+import { ScopeViolationError } from "#/errors";
+import { token } from "#/token";
+import { injectable } from "#/decorators/injectable";
+import { scoped } from "#/decorators/scoped";
+import { singleton } from "#/decorators/singleton";
 
 class Ephemeral {
   readonly tag = "ephemeral";

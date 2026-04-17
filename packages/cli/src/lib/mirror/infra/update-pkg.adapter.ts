@@ -1,12 +1,12 @@
-import type { CliFs } from "#lib/infra/fs-contract.port";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
-import { MirrorError, MirrorErrorCode } from "#lib/mirror/domain/errors.domain";
+import type { CliFs } from "#/lib/infra/fs-contract.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { MirrorError, MirrorErrorCode } from "#/lib/mirror/domain/errors.domain";
 import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,
   PackageJsonShape,
-} from "#lib/mirror/domain/types.domain";
-import { PACKAGE_JSON_EXPORT } from "#lib/mirror/domain/constants.domain";
+} from "#/lib/mirror/domain/types.domain";
+import { PACKAGE_JSON_EXPORT } from "#/lib/mirror/domain/constants.domain";
 
 function containsDistTarget(value: unknown): boolean {
   if (typeof value === "string") {

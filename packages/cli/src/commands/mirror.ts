@@ -1,21 +1,21 @@
 import process from "node:process";
 import { injectable } from "@codefast/di";
 import { Command } from "commander";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import {
   consumeCliAppError,
   runCliResultAsync,
-} from "#lib/core/presentation/cli-executor.presenter";
-import type { CliCommand } from "#lib/core/presentation/command.interface";
-import { parseWithCliSchema } from "#lib/core/presentation/parse-cli-schema.presenter";
-import { mirrorSyncRunRequestSchema } from "#lib/mirror/presentation/mirror-cli-schema.presenter";
+} from "#/lib/core/presentation/cli-executor.presenter";
+import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
 import {
   CliLoggerToken,
   type PrepareMirrorOrchestrator,
   PrepareMirrorOrchestratorToken,
   type RunMirrorSyncUseCase,
   RunMirrorSyncUseCaseToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 @injectable([CliLoggerToken, PrepareMirrorOrchestratorToken, RunMirrorSyncUseCaseToken] as const)
 export class MirrorCommand implements CliCommand {

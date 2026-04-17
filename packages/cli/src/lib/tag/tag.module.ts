@@ -1,14 +1,14 @@
 import { Module } from "@codefast/di";
-import { RunTagSyncUseCaseImpl } from "#lib/tag/application/use-cases/run-tag-sync.use-case";
-import { tagSinceWriterAdapter } from "#lib/tag/infra/tag-since-writer.adapter";
-import { tagTargetResolverAdapter } from "#lib/tag/infra/tag-target-resolver.adapter";
-import { tagTypeScriptTreeWalkAdapter } from "#lib/tag/infra/typescript-tree-walk.adapter";
-import { TagVersionResolverAdapter } from "#lib/tag/infra/tag-version-resolver.adapter";
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
+import { tagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
+import { tagTargetResolverAdapter } from "#/lib/tag/infra/tag-target-resolver.adapter";
+import { tagTypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
+import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
-} from "#lib/core/infra/logging-decorator.adapter";
+} from "#/lib/core/infra/logging-decorator.adapter";
 import {
   CliLoggerToken,
   CliPathToken,
@@ -17,7 +17,7 @@ import {
   TagTargetResolverPortToken,
   TagVersionResolverPortToken,
   TypeScriptTreeWalkPortToken,
-} from "#lib/tokens";
+} from "#/lib/tokens";
 
 function withOptionalTelemetry<T extends object>(
   portName: string,

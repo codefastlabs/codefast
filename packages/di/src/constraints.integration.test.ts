@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Container, Module, token } from "#index";
+import { Container, Module, token } from "#/index";
 
 describe("Integration: Advanced Constraints", () => {
   afterEach(() => {

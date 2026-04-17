@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { TagSyncRunRequest } from "#lib/tag/application/requests/tag-sync.request";
+import type { TagSyncRunRequest } from "#/lib/tag/application/requests/tag-sync.request";
 
 export const tagSyncRunRequestSchema: z.ZodType<TagSyncRunRequest> = z.object({
   rootDir: z.string().min(1),

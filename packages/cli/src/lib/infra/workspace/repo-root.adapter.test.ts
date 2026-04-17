@@ -1,6 +1,6 @@
 import path from "node:path";
-import type { CliFs } from "#lib/infra/fs-contract.port";
-import { findRepoRoot } from "#lib/infra/workspace/repo-root.adapter";
+import type { CliFs } from "#/lib/infra/fs-contract.port";
+import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
 
 function makeFs(existsSync: (targetPath: string) => boolean): CliFs {
   return {

@@ -1,5 +1,5 @@
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
-import { messageFromCaughtUnknown } from "#lib/core/application/utils/caught-unknown-message.util";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 
 export type ResolveTagWorkspaceRootPathInput = {
   readonly resolveStrictRepoRoot: () => string;

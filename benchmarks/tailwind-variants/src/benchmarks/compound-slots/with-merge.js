@@ -7,7 +7,7 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { compoundSlotsTestProps, compoundSlotsVariants } from "#benchmarks/compound-slots/data.js";
+import { compoundSlotsTestProps, compoundSlotsVariants } from "#/benchmarks/compound-slots/data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions

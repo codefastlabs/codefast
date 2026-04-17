@@ -1,4 +1,4 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
 export interface FileSystemServicePort {
   listRelativeFilesRecursively(fs: CliFs, dirPath: string): Promise<string[]>;

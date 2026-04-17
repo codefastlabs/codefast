@@ -1,5 +1,5 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { CliPath } from "#lib/core/application/ports/path.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import type { CliPath } from "#/lib/core/application/ports/path.port";
 
 /** Product bounded contexts: no direct cross-imports between these (domain + application rules). */
 const PRODUCT_BOUNDED_CONTEXTS = new Set(["arrange", "mirror", "tag"]);

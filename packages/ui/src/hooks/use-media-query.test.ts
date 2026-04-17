@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import type { Mock } from "vitest";
 
-import { useMediaQuery } from "#hooks/use-media-query";
+import { useMediaQuery } from "#/hooks/use-media-query";
 
 type ChangeHandler = (event: MediaQueryListEvent) => void;
 

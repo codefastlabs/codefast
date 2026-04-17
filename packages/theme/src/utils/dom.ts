@@ -1,4 +1,4 @@
-import type { ResolvedTheme } from "#types";
+import type { ResolvedTheme } from "#/types";
 
 /* -----------------------------------------------------------------------------
  * DOM Utilities

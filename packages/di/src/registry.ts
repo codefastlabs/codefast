@@ -1,5 +1,5 @@
-import type { Binding, BindingIdentifier, Constructor } from "#binding";
-import type { Token } from "#token";
+import type { Binding, BindingIdentifier, Constructor } from "#/binding";
+import type { Token } from "#/token";
 
 /**
  * Key used to group {@link Binding} instances in the registry (reference equality for tokens).

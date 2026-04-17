@@ -1,4 +1,4 @@
-import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#binding";
+import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#/binding";
 
 function formatResolutionPath(resolutionPath: readonly string[]): string {
   return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";

@@ -1,4 +1,4 @@
-import type { GlobalStats, MirrorPackageMeta } from "#lib/mirror/domain/types.domain";
+import type { GlobalStats, MirrorPackageMeta } from "#/lib/mirror/domain/types.domain";
 
 describe("mirror domain types", () => {
   it("supports GlobalStats initialization", () => {

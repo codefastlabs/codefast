@@ -1,5 +1,5 @@
-import type { MirrorConfig } from "#lib/config/domain/schema.domain";
-import type { CliFs, CliLogger } from "#lib/infra/fs-contract.port";
+import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
+import type { CliFs, CliLogger } from "#/lib/infra/fs-contract.port";
 
 /** CLI / container wiring: filesystem and logger injected at the boundary. */
 export interface MirrorOptions {

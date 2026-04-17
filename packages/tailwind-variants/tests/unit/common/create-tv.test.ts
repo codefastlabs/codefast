@@ -1,4 +1,4 @@
-import { createTV } from "#index";
+import { createTV } from "#/index";
 
 describe("createTV", () => {
   test("should use config in tv calls", () => {

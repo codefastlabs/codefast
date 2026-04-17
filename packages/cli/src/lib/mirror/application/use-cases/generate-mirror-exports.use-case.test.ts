@@ -1,4 +1,4 @@
-import { createPathTransform } from "#lib/mirror/application/use-cases/generate-mirror-exports.use-case";
+import { createPathTransform } from "#/lib/mirror/application/use-cases/generate-mirror-exports.use-case";
 
 describe("createPathTransform", () => {
   const pkgMeta = { packageName: "@acme/widget" };

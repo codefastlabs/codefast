@@ -11,7 +11,7 @@ import {
   extendsBaseVariants,
   extendsExtensionVariants,
   extendsTestProps,
-} from "#benchmarks/extends/data.js";
+} from "#/benchmarks/extends/data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 const originalTVBase = originalTV(extendsBaseVariants, { twMerge: false });

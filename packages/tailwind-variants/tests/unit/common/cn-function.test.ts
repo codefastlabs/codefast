@@ -1,4 +1,4 @@
-import { cn, createTV } from "#index";
+import { cn, createTV } from "#/index";
 
 describe("cn function", () => {
   test("should work like cx but with tailwind-merge", () => {

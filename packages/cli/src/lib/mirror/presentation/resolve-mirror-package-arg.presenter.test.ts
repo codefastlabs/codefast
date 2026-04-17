@@ -3,8 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { vi } from "vitest";
-import { createNodeCliFs } from "#lib/infra/node-io.adapter";
-import { resolveMirrorPackageArgToRelative } from "#lib/mirror/presentation/resolve-mirror-package-arg.presenter";
+import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { resolveMirrorPackageArgToRelative } from "#/lib/mirror/presentation/resolve-mirror-package-arg.presenter";
 
 const cliFs = createNodeCliFs();
 

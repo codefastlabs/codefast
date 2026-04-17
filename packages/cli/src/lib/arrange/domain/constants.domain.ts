@@ -1,4 +1,4 @@
-import type { Bucket } from "#lib/arrange/domain/types.domain";
+import type { Bucket } from "#/lib/arrange/domain/types.domain";
 
 /** Analyze report: long literal threshold (token count). */
 export const LONG_STRING_TOKEN_THRESHOLD = 18;

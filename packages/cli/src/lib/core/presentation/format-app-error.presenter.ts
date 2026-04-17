@@ -1,4 +1,4 @@
-import type { AppError } from "#lib/core/domain/errors.domain";
+import type { AppError } from "#/lib/core/domain/errors.domain";
 
 function assertExhaustiveAppErrorCode(code: never): string {
   return `Unhandled error code: ${String(code)}`;

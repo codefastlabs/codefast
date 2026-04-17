@@ -1,14 +1,14 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { CliLogger } from "#lib/infra/fs-contract.port";
-import { createNodeCliFs } from "#lib/infra/node-io.adapter";
+import type { CliLogger } from "#/lib/infra/fs-contract.port";
+import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
 import {
   findWorkspacePackageRelPaths,
   parsePnpmWorkspaceDocument,
   splitWorkspacePackageEntries,
   workspacePatternToPackageJsonGlob,
-} from "#lib/mirror/infra/workspace-packages.adapter";
+} from "#/lib/mirror/infra/workspace-packages.adapter";
 
 function createTestLogger(): CliLogger & { lines: string[] } {
   const lines: string[] = [];

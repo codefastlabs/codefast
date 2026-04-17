@@ -1,4 +1,4 @@
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
 function summarizeTelemetryArg(value: unknown, maxLen = 160): string {
   if (typeof value === "string") {

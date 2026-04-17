@@ -1,23 +1,23 @@
 import {
   buildKnownCnTvBindings,
   isCnOrTvIdentifier,
-} from "#lib/arrange/domain/ast/ast-helpers.helper";
+} from "#/lib/arrange/domain/ast/ast-helpers.helper";
 import {
   collectCnCallsInsideTv,
   collectGroupableStringNodes,
   listAllCnCallsInsideTvInSourceFile,
   slotClassString,
   traverseTvObject,
-} from "#lib/arrange/domain/ast/collectors-tv.collector";
-import { MAX_OBJECT_DEPTH } from "#lib/arrange/domain/constants.domain";
+} from "#/lib/arrange/domain/ast/collectors-tv.collector";
+import { MAX_OBJECT_DEPTH } from "#/lib/arrange/domain/constants.domain";
 import {
   type DomainObjectLiteralExpression,
   type DomainSourceFile,
   forEachDomainDescendantFromSourceFile,
   isDomainCallExpression,
   isDomainObjectLiteralExpression,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#lib/arrange/infra/ts-ast-translator.adapter";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 
 function firstTvConfigObject(domainSf: DomainSourceFile): DomainObjectLiteralExpression {
   const knownBindings = buildKnownCnTvBindings(domainSf);

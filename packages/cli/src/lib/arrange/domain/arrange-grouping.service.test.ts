@@ -8,13 +8,13 @@ import {
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
   type GroupFileWorkPlan,
-} from "#lib/arrange/domain/arrange-grouping.service";
+} from "#/lib/arrange/domain/arrange-grouping.service";
 import {
   DomainSyntaxKind,
   type DomainCallExpression,
   type DomainSourceFile,
-} from "#lib/arrange/domain/ast/ast-node.model";
-import type { PlannedGroupEdit } from "#lib/arrange/domain/types.domain";
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 
 const emptySourceFile = (fileName: string, text: string): DomainSourceFile => ({
   fileName,

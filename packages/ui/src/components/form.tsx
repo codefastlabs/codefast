@@ -5,13 +5,13 @@ import type * as LabelPrimitive from "@radix-ui/react-label";
 import type { ComponentProps, JSX, ReactNode } from "react";
 import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 
-import { cn } from "#lib/utils";
+import { cn } from "#/lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 import { useId } from "react";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
-import { Label } from "#components/label";
+import { Label } from "#/components/label";
 
 /* -----------------------------------------------------------------------------
  * Component: Form

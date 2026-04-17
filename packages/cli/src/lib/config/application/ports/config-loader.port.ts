@@ -1,5 +1,5 @@
-import type { CliFs } from "#lib/core/application/ports/cli-io.port";
-import type { CodefastConfig } from "#lib/config/domain/schema.domain";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
 
 export type LoadConfigPayload = {
   config: CodefastConfig;

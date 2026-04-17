@@ -1,5 +1,5 @@
-import { DiError } from "#errors";
-import { CODEFAST_DI_CLASS_SCOPE_HINT, type ClassScopeHint } from "#decorators/metadata";
+import { DiError } from "#/errors";
+import { CODEFAST_DI_CLASS_SCOPE_HINT, type ClassScopeHint } from "#/decorators/metadata";
 
 /**
  * Stage 3 class decorator: records a **hint** that this class prefers singleton scope.

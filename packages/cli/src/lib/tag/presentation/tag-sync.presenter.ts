@@ -1,11 +1,11 @@
-import type { CliLogger } from "#lib/core/application/ports/cli-io.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type {
   TagProgressListener,
   TagResolvedTarget,
   TagSyncResult,
   TagTargetExecutionResult,
-} from "#lib/tag/domain/types.domain";
-import { TAG_COLORS, withTagColor } from "#lib/tag/presentation/colors.presenter";
+} from "#/lib/tag/domain/types.domain";
+import { TAG_COLORS, withTagColor } from "#/lib/tag/presentation/colors.presenter";
 
 export type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }
