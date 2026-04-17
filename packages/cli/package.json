@@ -47,7 +47,6 @@
     "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
-    "di:graph": "tsx scripts/visualize-di.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
@@ -68,7 +67,6 @@
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "esbuild": "catalog:",
-    "tsx": "catalog:",
     "unplugin-swc": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
