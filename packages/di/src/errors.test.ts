@@ -25,8 +25,8 @@ describe("errors", () => {
     const error = new NoMatchingBindingError("Logger", hint, path);
     expect(error.code).toBe("NO_MATCHING_BINDING");
     expect(error.message).toContain("No binding matched resolve options");
-    expect(error.message).toContain('"test-hint"');
-    expect(error.message).toContain('["role","admin"]');
+    expect(error.message).toContain("name: test-hint");
+    expect(error.message).toContain("tag: [role, <string>]");
     expect(error.message).toContain("App -> UserService -> Logger");
     expect(error.hint).toEqual(hint);
     expect(error.tokenName).toBe("Logger");

@@ -243,13 +243,19 @@ export class DependencyResolver {
       currentResolveHint,
     );
     return {
-      resolve: <T>(k: Token<T> | Constructor<T>, h?: ResolveHint) =>
-        this.resolve(k, h, [...pathLabels], visiting, materializationStack) as T,
-      resolveAsync: <T>(k: Token<T> | Constructor<T>, h?: ResolveHint) =>
-        this.resolveAsync(k, h, [...pathLabels], visiting, materializationStack) as Promise<T>,
-      resolveOptional: <T>(k: Token<T> | Constructor<T>, h?: ResolveHint) => {
+      resolve: <T>(token: Token<T> | Constructor<T>, hint?: ResolveHint) =>
+        this.resolve(token, hint, [...pathLabels], visiting, materializationStack) as T,
+      resolveAsync: <T>(token: Token<T> | Constructor<T>, hint?: ResolveHint) =>
+        this.resolveAsync(
+          token,
+          hint,
+          [...pathLabels],
+          visiting,
+          materializationStack,
+        ) as Promise<T>,
+      resolveOptional: <T>(token: Token<T> | Constructor<T>, hint?: ResolveHint) => {
         try {
-          return this.resolve(k, h, [...pathLabels], visiting, materializationStack) as T;
+          return this.resolve(token, hint, [...pathLabels], visiting, materializationStack) as T;
         } catch (caughtError: unknown) {
           if (caughtError instanceof TokenNotBoundError) {
             return undefined;
