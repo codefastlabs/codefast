@@ -67,7 +67,6 @@
     "dev": "tsdown --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:coverage:ci": "vitest run --coverage",
     "test:watch": "vitest"
   },
   "dependencies": {

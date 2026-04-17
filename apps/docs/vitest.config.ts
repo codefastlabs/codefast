@@ -18,11 +18,17 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: [],
-    include: ["**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    setupFiles: ["./vitest.setup.ts"],
+    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
     exclude: ["**/node_modules/**", "**/.git/**", "**/dist/**"],
-    // Allow tests to pass when no test files are found
     passWithNoTests: true,
+    coverage: {
+      provider: "v8",
+      reportsDirectory: "./coverage",
+      reporter: ["text", "html", "lcov"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+    },
   },
   resolve: {
     tsconfigPaths: true,

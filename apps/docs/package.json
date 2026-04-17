@@ -16,7 +16,9 @@
     "check-types": "tsgo --noEmit",
     "dev": "vite dev",
     "start": "node .output/server/index.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
@@ -71,6 +73,7 @@
     "@rolldown/plugin-babel": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
     "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/hast": "catalog:",
     "@types/node": "catalog:",
@@ -78,6 +81,7 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "jsdom": "catalog:",
     "typescript": "catalog:",

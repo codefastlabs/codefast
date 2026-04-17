@@ -1,19 +1,27 @@
 import swc from "unplugin-swc";
 import { defineConfig } from "vitest/config";
 
+/**
+ * CLI: Node, TypeScript decorators (DI-style) via SWC.
+ * Pool defaults to `forks` (Vitest 4) — safer than `threads` for native / process APIs.
+ */
 export default defineConfig({
   oxc: false,
   test: {
     globals: true,
     environment: "node",
-    pool: "threads",
     include: ["src/**/*.test.ts", "src/**/*.integration.test.ts"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.ts"],
-      exclude: ["src/**/*.test.ts"],
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.integration.test.ts",
+        "src/**/*.spec.ts",
+        "**/*.d.ts",
+      ],
     },
   },
   plugins: [

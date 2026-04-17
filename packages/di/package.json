@@ -144,8 +144,7 @@
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:coverage:ci": "vitest run --coverage --reporter=dot",
-    "test:watch": "vitest watch"
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",

@@ -33,14 +33,10 @@
       "cache": false
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"]
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:coverage": {
-      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
-      "outputs": ["coverage/**"]
-    },
-    "test:coverage:ci": {
-      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {

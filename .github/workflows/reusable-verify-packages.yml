@@ -34,7 +34,7 @@ jobs:
         run: npx turbo run lint format:check check-types --filter="./packages/**"
 
       - name: Execute Automated Tests with Coverage
-        run: npx turbo run test:coverage:ci --filter="./packages/**"
+        run: npx turbo run test:coverage --filter="./packages/**"
 
       - name: Publish Coverage Results to Codecov
         uses: codecov/codecov-action@v6
