@@ -5,10 +5,14 @@ function formatResolutionPath(resolutionPath: readonly string[]): string {
 }
 
 function safeSerializeHint(hint: ResolveHint): string {
-  if (hint === undefined) {return "(none)";}
+  if (hint === undefined) {
+    return "(none)";
+  }
   try {
     const parts: string[] = [];
-    if (hint.name !== undefined) {parts.push(`name: ${String(hint.name)}`);}
+    if (hint.name !== undefined) {
+      parts.push(`name: ${String(hint.name)}`);
+    }
     if (hint.tag !== undefined) {
       const [tagKey, tagValue] = hint.tag;
       parts.push(`tag: [${String(tagKey)}, <${typeof tagValue}>]`);
