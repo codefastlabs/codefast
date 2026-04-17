@@ -12,8 +12,6 @@ import { TrendingUpIcon } from "lucide-react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import type { ChartConfig } from "@codefast/ui/chart";
 
-export const description = "A mixed bar chart";
-
 interface ChartDataItem {
   browser: string;
   visitors: number;

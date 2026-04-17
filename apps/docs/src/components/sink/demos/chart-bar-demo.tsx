@@ -12,8 +12,6 @@ import { TrendingUpIcon } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import type { ChartConfig } from "@codefast/ui/chart";
 
-export const description = "A multiple bar chart";
-
 interface ChartDataItem {
   month: string;
   desktop: number;

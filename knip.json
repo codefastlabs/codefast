@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["package.json", "codefast.config.js"],
+      "ignoreDependencies": [
+        "@typescript/native-preview",
+        "@vitest/coverage-v8",
+        "jsdom",
+        "ts-node",
+        "unplugin-swc",
+        "vitest"
+      ]
+    },
+    "apps/docs": {
+      "entry": ["content-collections.ts", "src/router.tsx"]
+    }
+  },
+  "rules": {
+    "optionalPeerDependencies": "off"
+  }
+}

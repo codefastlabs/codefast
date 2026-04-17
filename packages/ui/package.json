@@ -395,7 +395,6 @@
     "@radix-ui/react-use-controllable-state": "catalog:",
     "@radix-ui/react-visually-hidden": "catalog:",
     "cmdk": "catalog:",
-    "date-fns": "catalog:",
     "embla-carousel-react": "catalog:",
     "input-otp": "catalog:",
     "lucide-react": "catalog:",
@@ -424,7 +423,6 @@
     "jsdom": "catalog:",
     "postcss": "catalog:",
     "tailwindcss": "catalog:",
-    "ts-node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

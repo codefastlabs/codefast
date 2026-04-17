@@ -7,7 +7,7 @@ import type { ComponentType, LazyExoticComponent } from "react";
 
 export type RegistryType = "registry:ui" | "registry:page" | "registry:block";
 
-export interface ComponentConfig {
+interface ComponentConfig {
   name: string;
   component: ComponentType | LazyExoticComponent<ComponentType>;
   className?: string;
