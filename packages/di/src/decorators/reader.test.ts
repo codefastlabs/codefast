@@ -7,6 +7,15 @@ import {
 import { SymbolMetadataReader } from "#/decorators/reader";
 import { token } from "#/token";
 
+function setConstructorMetadata(ctor: object, key: symbol, payload: unknown) {
+  Object.defineProperty(ctor, key, {
+    value: payload,
+    configurable: true,
+    enumerable: false,
+    writable: true,
+  });
+}
+
 describe("SymbolMetadataReader", () => {
   it('reads constructor metadata from Symbol.for("Symbol.metadata") when global Symbol.metadata is missing', () => {
     const metadataKey = decoratorMetadataObjectSymbol();
@@ -25,14 +34,45 @@ describe("SymbolMetadataReader", () => {
       [CODEFAST_DI_CONSTRUCTOR_METADATA]: payload,
     };
 
-    Object.defineProperty(Sample, metadataKey, {
-      value: bucket,
-      configurable: true,
-      enumerable: false,
-      writable: true,
-    });
+    setConstructorMetadata(Sample, metadataKey, bucket);
 
     const reader = new SymbolMetadataReader();
     expect(reader.getConstructorMetadata(Sample)).toBe(payload);
+  });
+
+  it("returns undefined if metadata object is missing", () => {
+    class Sample {}
+    const reader = new SymbolMetadataReader();
+    expect(reader.getConstructorMetadata(Sample)).toBeUndefined();
+  });
+
+  it("returns undefined if metadata object is null or not an object", () => {
+    const metadataKey = decoratorMetadataObjectSymbol();
+    class Sample {}
+    setConstructorMetadata(Sample, metadataKey, null);
+
+    const reader = new SymbolMetadataReader();
+    expect(reader.getConstructorMetadata(Sample)).toBeUndefined();
+  });
+
+  it("returns undefined if constructor metadata bucket is missing or invalid", () => {
+    const metadataKey = decoratorMetadataObjectSymbol();
+    class Sample {}
+    setConstructorMetadata(Sample, metadataKey, {
+      // Missing CODEFAST_DI_CONSTRUCTOR_METADATA
+    });
+    const reader = new SymbolMetadataReader();
+    expect(reader.getConstructorMetadata(Sample)).toBeUndefined();
+
+    // Invalid structure (params missing or not array)
+    setConstructorMetadata(Sample, metadataKey, {
+      [CODEFAST_DI_CONSTRUCTOR_METADATA]: { params: "not-an-array" },
+    });
+    expect(reader.getConstructorMetadata(Sample)).toBeUndefined();
+
+    setConstructorMetadata(Sample, metadataKey, {
+      [CODEFAST_DI_CONSTRUCTOR_METADATA]: "not-an-object",
+    });
+    expect(reader.getConstructorMetadata(Sample)).toBeUndefined();
   });
 });
