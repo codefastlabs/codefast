@@ -93,22 +93,20 @@ export class ScopeManager {
       return cached.instance;
     }
 
-    const existingPending = pendingMap.get(binding.id);
-    if (existingPending !== undefined) {
-      return existingPending;
+    let inflight = pendingMap.get(binding.id);
+    if (inflight === undefined) {
+      inflight = (async () => {
+        try {
+          const instance = await createInstance();
+          store.set(binding.id, { binding, instance });
+          return instance;
+        } finally {
+          pendingMap.delete(binding.id);
+        }
+      })();
+      pendingMap.set(binding.id, inflight);
     }
-
-    const promise = (async () => {
-      try {
-        const instance = await createInstance();
-        store.set(binding.id, { binding, instance });
-        return instance;
-      } finally {
-        pendingMap.delete(binding.id);
-      }
-    })();
-    pendingMap.set(binding.id, promise);
-    return promise;
+    return inflight;
   }
 
   /**
