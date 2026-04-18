@@ -281,7 +281,7 @@ container.bind(App).toDynamic((ctx) => {
 // toResolved — khai báo deps explicit, sạch hơn cho trường hợp đơn giản
 container.bind(App).toResolved(
   (logger, config) => new App(logger, config),
-  [Logger, Config], // deps array — type-safe với tuple inference
+  [Logger, Config] as const, // `as const` bắt buộc để TypeScript infer tuple, không infer union
 );
 ```
 
@@ -489,9 +489,20 @@ interface Container {
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
 
+  // Initialization — warm up singletons trước khi serve traffic
+  initialize(): void; // resolve tất cả sync singletons ngay lập tức
+  initializeAsync(): Promise<void>; // resolve tất cả singletons, kể cả async factories
+
+  // Validation — phát hiện scope violations (captive dependency)
+  // Throw ScopeViolationError nếu singleton phụ thuộc vào scoped/transient.
+  // Nên gọi sau khi load xong tất cả modules, trước khi serve traffic.
+  validate(): void;
+
   // Introspection — chỉ dùng dev/debug
   has(token: Token<unknown> | Constructor): boolean;
   inspect(): ContainerSnapshot;
+  generateDependencyGraphDot(opts?: DotGraphOptions): string; // Graphviz DOT format
+  generateDependencyGraphJson(opts?: DotGraphOptions): string; // JSON adjacency list
 }
 
 interface ResolveOptions {
@@ -914,7 +925,7 @@ export {
     }
   },
   "files": ["dist"],
-  "engines": { "node": ">=20.19.0" }
+  "engines": { "node": ">=22.0.0" }
 }
 ```
 
@@ -996,13 +1007,18 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 
 ---
 
-### Phase 4 — Advanced + DX (ongoing)
+### Phase 4 — Advanced + DX ✅ Hoàn thành
 
-- **Constraint bindings đầy đủ:** `when(constraint)` tùy chỉnh, `whenParentIs`, `whenAnyAncestorIs`
-- **Scope violation detection:** Warn khi singleton phụ thuộc vào scoped
-- **Container-level initialize():** Warm up tất cả singleton một lần
-- **Dependency graph:** Export DOT/JSON cho visualization
-- **Integration packages:** `@codefast/di-hono`, `@codefast/di-fastify`
+- **Constraint bindings đầy đủ:** `when(constraint)` tùy chỉnh, `whenParentIs`, `whenAnyAncestorIs` — export từ `@codefast/di/constraints`
+- **Scope violation detection:** `container.validate()` throw `ScopeViolationError` khi singleton phụ thuộc vào scoped/transient (captive dependency)
+- **Container-level initialize():** `initialize()` (sync) và `initializeAsync()` — warm up tất cả singleton trước khi serve traffic
+- **Dependency graph:** `generateDependencyGraphDot()` (Graphviz) và `generateDependencyGraphJson()` — export từ `@codefast/di/dependency-graph`
+- **Integration packages:** `@codefast/di-hono`, `@codefast/di-fastify` — chưa làm
+
+### Phase 5 — Integration packages (planned)
+
+- `@codefast/di-hono` — middleware + scoped container per request cho Hono
+- `@codefast/di-fastify` — plugin + scoped container per request cho Fastify
 
 ---
 

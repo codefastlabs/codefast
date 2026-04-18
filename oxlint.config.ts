@@ -33,24 +33,6 @@ export default defineConfig({
       },
     },
     {
-      files: ["benchmarks/**/*.{js,ts,tsx}"],
-      rules: {
-        "no-console": "off",
-      },
-    },
-    {
-      files: [
-        "apps/docs/src/components/default-catch-boundary.tsx",
-        "apps/docs/src/components/sink/app/component-wrapper.tsx",
-        "apps/docs/src/components/sink/forms/notion-prompt-form.tsx",
-        "packages/ui/src/hooks/use-copy-to-clipboard.ts",
-        "packages/theme/src/core/provider.tsx",
-      ],
-      rules: {
-        "no-console": "off",
-      },
-    },
-    {
       files: ["packages/cli/src/lib/**/domain/**/*.ts"],
       rules: {
         "no-restricted-imports": [
@@ -95,8 +77,6 @@ export default defineConfig({
     "import/no-cycle": "error",
     "import/no-self-import": "error",
     curly: ["error", "all"],
-    "no-console": "error",
-    "no-debugger": "error",
   },
   settings: {
     react: {
