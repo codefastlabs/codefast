@@ -200,8 +200,7 @@ interface ResolutionContext {
 
 ```ts
 // onActivation: chạy sau khi resolve, trước khi cache vào scope
-// onDeactivation: chạy khi unbind hoặc dispose
-//   → Chỉ có ý nghĩa với singleton. Transient và scoped không gọi onDeactivation.
+// onDeactivation: chỉ áp dụng singleton — chạy khi unbind hoặc dispose
 container
   .bind(Database)
   .to(PostgresDatabase)
@@ -215,9 +214,43 @@ container
   });
 ```
 
-> **`onDeactivation` và scope:** `onDeactivation` chỉ được gọi cho `singleton` binding — khi `container.dispose()` hoặc `container.unbind()` chạy. Transient không có lifecycle (mỗi resolve tạo instance mới, không có cache để track). Scoped tương tự — instance bị release khi child container bị dispose nhưng `onDeactivation` không được gọi.
->
-> Gọi `.onDeactivation()` trên transient hoặc scoped binding **không throw** — `BindingBuilder` vẫn fluent — nhưng callback sẽ không bao giờ được invoke. Đây là trade-off có chủ ý: throw ở runtime sẽ break fluent chain; type-level prevention không khả thi vì scope được set sau (`.transient()` sau `.onDeactivation()`). Developer cần đọc doc để biết convention này.
+> **`onDeactivation` và scope:** `onDeactivation` chỉ được gọi cho `singleton` binding. Transient không có lifecycle. Scoped — instance bị release khi child container bị dispose nhưng `onDeactivation` không được gọi.
+
+**Builder type narrowing — compile-time enforcement:** `.singleton()`, `.transient()`, `.scoped()` trả về các builder type khác nhau. `onDeactivation` **chỉ có mặt** trên `SingletonBindingBuilder` — gọi trên transient/scoped là lỗi TypeScript, không phải silent no-op:
+
+```ts
+container.bind(Handler).to(RequestHandler)
+  .transient()
+  .onDeactivation(...); // ← TypeScript Error: Property 'onDeactivation' does not exist
+
+container.bind(Database).to(PostgresDatabase)
+  .singleton()
+  .onDeactivation(...); // ← OK
+```
+
+Type interfaces của builder:
+
+```ts
+// Base — chứa các method chung, không có scope hoặc deactivation
+interface BindingBuilder<Value> {
+  singleton(): SingletonBindingBuilder<Value>;
+  transient(): TransientBindingBuilder<Value>;
+  scoped(): ScopedBindingBuilder<Value>;
+  onActivation(fn: (ctx: ResolutionContext, instance: Value) => Value | Promise<Value>): this;
+  whenNamed(name: string): this;
+  whenTagged(tag: string | symbol, value: unknown): this;
+  id(): BindingIdentifier;
+}
+
+// Singleton — thêm onDeactivation
+interface SingletonBindingBuilder<Value> extends BindingBuilder<Value> {
+  onDeactivation(fn: (instance: Value) => void | Promise<void>): this;
+}
+
+// Transient và Scoped — KHÔNG có onDeactivation
+interface TransientBindingBuilder<Value> extends BindingBuilder<Value> {}
+interface ScopedBindingBuilder<Value> extends BindingBuilder<Value> {}
+```
 
 Type-safe hơn InversifyJS v8 — callback nhận đúng type của binding, không phải generic:
 
@@ -436,7 +469,9 @@ const handler = requestContainer.resolve(RequestHandler);
 // Dispose: gọi onDeactivation cho tất cả singleton thuộc child
 await requestContainer.dispose();
 
-// Hoặc dùng `await using` (TC39 Stage 3 — TypeScript 5.2+) — tự động dispose khi ra khỏi scope.
+// Hoặc dùng `await using` (TC39 Explicit Resource Management — TypeScript 5.2+) — tự động dispose khi ra khỏi scope.
+// Lưu ý: `using` (sync) KHÔNG hoạt động — Container chỉ implement Symbol.asyncDispose.
+// Gọi `using container = ...` sẽ throw ngay tại runtime với message hướng dẫn.
 {
   await using scoped = container.createChild();
   scoped.bind(RequestId).toConstantValue(crypto.randomUUID());
@@ -484,14 +519,16 @@ interface Container {
   createChild(): Container;
 
   // Disposal — hỗ trợ TC39 Explicit Resource Management (`await using`).
-  // Deactivation vốn bất đồng bộ (onDeactivation có thể async) nên chỉ có một method
-  // `dispose(): Promise<void>` duy nhất; không có biến thể sync `disposeSync()`.
+  // Disposal — hỗ trợ TC39 Explicit Resource Management.
+  // Chỉ có async dispose vì onDeactivation có thể async.
+  // [Symbol.dispose] tồn tại nhưng throw ngay — hướng dẫn dùng `await using`.
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
+  [Symbol.dispose](): never; // throws: "Container disposal is async. Use `await using` or `await container.dispose()`."
 
-  // Initialization — warm up singletons trước khi serve traffic
-  initialize(): void; // resolve tất cả sync singletons ngay lập tức
-  initializeAsync(): Promise<void>; // resolve tất cả singletons, kể cả async factories
+  // Initialization — warm up tất cả singletons trước khi serve traffic
+  // initialize() sync đã bị bỏ — dùng initializeAsync() cho mọi trường hợp
+  initializeAsync(): Promise<void>;
 
   // Validation — phát hiện scope violations (captive dependency)
   // Throw ScopeViolationError nếu singleton phụ thuộc vào scoped/transient.
@@ -501,8 +538,15 @@ interface Container {
   // Introspection — chỉ dùng dev/debug
   has(token: Token<unknown> | Constructor): boolean;
   inspect(): ContainerSnapshot;
-  generateDependencyGraphDot(opts?: DotGraphOptions): string; // Graphviz DOT format
-  generateDependencyGraphJson(opts?: DotGraphOptions): string; // JSON adjacency list
+  // Overloaded — format quyết định return type (không phải hai method riêng)
+  generateDependencyGraph(opts?: DotGraphOptions & { format?: "dot" }): string;
+  generateDependencyGraph(opts: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+}
+
+// ContainerGraphJson — typed, không phải raw string
+interface ContainerGraphJson {
+  nodes: Array<{ id: string; scope: "singleton" | "transient" | "scoped" }>;
+  edges: Array<{ from: string; to: string }>;
 }
 
 interface ResolveOptions {
@@ -640,6 +684,7 @@ Container không đọc `Symbol.metadata` trực tiếp — đọc qua port này
 ```ts
 interface MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
+  getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;
 }
 
 interface ConstructorMetadata {
@@ -651,22 +696,151 @@ interface ParamMetadata {
   token: Token<unknown> | Constructor;
   optional: boolean;
   name?: string;
-  tag?: [tag: string, value: unknown];
+  tag?: [tag: string | symbol, value: unknown];
+}
+
+interface LifecycleMetadata {
+  postConstruct?: string; // method name
+  preDestroy?: string; // method name
 }
 ```
 
-### 6.5 Danh sách decorator và helpers
+> **`Symbol.metadata` prototype chain safety — quy tắc bắt buộc:**
+>
+> TC39 quy định `Symbol.metadata` của subclass prototype-chain từ parent. Nếu child không có `@injectable()`, `target[Symbol.metadata]` vẫn có thể đọc được metadata của parent — dẫn đến inject sai số lượng deps, không có lỗi compile.
+>
+> `SymbolMetadataReader` (implementation của `MetadataReader`) **phải** kiểm tra `Object.hasOwn` trước khi đọc:
+>
+> ```ts
+> getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
+>   const meta = target[Symbol.metadata];
+>   // PHẢI dùng hasOwn — không dùng `in` hay truy cập trực tiếp
+>   if (!meta || !Object.hasOwn(meta, INJECTABLE_KEY)) return undefined;
+>   return meta[INJECTABLE_KEY] as ConstructorMetadata;
+> }
+> ```
+>
+> Nếu child kế thừa parent nhưng không có `@injectable()` → `getConstructorMetadata` trả về `undefined` → container throw `MissingMetadataError`, không silently dùng metadata của parent.
 
-| API                      | Loại      | Target / Ngữ cảnh | Tác dụng                                                                                                                                                                          |
-| ------------------------ | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@injectable(deps?)`     | decorator | class             | Đánh dấu class có thể auto-resolve; ghi param metadata vào `Symbol.metadata`. `deps` là array `(Token \| Constructor \| InjectionDescriptor)[]` theo thứ tự constructor           |
-| `inject(token, opts?)`   | plain fn  | deps array        | Tạo `InjectionDescriptor` với token + options (name/tag). Required dependency                                                                                                     |
-| `optional(token, opts?)` | plain fn  | deps array        | Như `inject` nhưng không throw nếu không có binding — resolve trả về `undefined`                                                                                                  |
-| `@singleton()`           | decorator | class             | Gợi ý scope `singleton` — chỉ có hiệu lực khi binding dùng `.toSelf()` hoặc `.to()` mà không gọi `.singleton()` / `.transient()` / `.scoped()` explicit; explicit call luôn thắng |
-| `@scoped()`              | decorator | class             | Gợi ý scope `scoped` — cùng precedence rule như `@singleton()`                                                                                                                    |
+### 6.5 Property injection qua `accessor` field decorator
+
+TC39 Stage 3 hỗ trợ `accessor` keyword — tạo getter/setter với private backing slot. `@inject(token)` có thể dùng như **field decorator** trên `accessor` để inject property sau khi construct, thay thế cho deps array khi muốn:
+
+```ts
+import { injectable, inject } from "@codefast/di";
+
+@injectable()
+class Dashboard {
+  @inject(Logger) accessor logger!: LoggerService;
+  @inject(Database) accessor db!: DatabaseService;
+
+  // Không cần truyền deps array — injection qua accessor
+}
+```
+
+Cơ chế hoạt động:
+
+- `@inject(Logger)` trên `accessor` ghi token vào `Symbol.metadata` của class qua `context.metadata`
+- `context.addInitializer` (chạy **per-instance** khi object được tạo) gọi `container.resolve(token)` và set vào backing slot
+- Container truyền reference vào class decorator context qua `ResolutionContext` — không cần global container
+
+> **Constructor injection vẫn là cách ưu tiên** — dễ test hơn, immutable, rõ deps hơn. Property injection qua `accessor` hữu ích khi:
+>
+> - Class kế thừa framework mà bạn không kiểm soát constructor
+> - Circular dependency có chủ ý (hiếm, cần document rõ)
+> - Tích hợp với hệ thống ngoài (web components, ORM entities)
+>
+> **Không hỗ trợ plain field** (`@inject(Logger) logger!: LoggerService`) — chỉ `accessor`. Plain field decorator trong TC39 Stage 3 không có getter/setter để intercept; `accessor` là cách đúng theo spec.
+
+Type signature của `inject` khi dùng làm field decorator:
+
+```ts
+// inject() hoạt động như cả plain function (deps array) lẫn accessor decorator
+function inject<Value>(
+  token: Token<Value> | Constructor<Value>,
+  opts?: { name?: string; tag?: [tag: string | symbol, value: unknown] },
+): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
+```
+
+### 6.6 Method lifecycle decorators — `@postConstruct` và `@preDestroy`
+
+TC39 Stage 3 hỗ trợ method decorator. `@postConstruct()` và `@preDestroy()` là method decorators, ghi method name vào `Symbol.metadata` — `LifecycleManager` đọc và gọi tự động:
+
+```ts
+@injectable([Config])
+class DatabaseService {
+  constructor(private config: AppConfig) {}
+
+  @postConstruct()
+  async initialize(): Promise<void> {
+    // chạy sau khi construct, trước khi cache vào scope
+    await this.connect(this.config.dbUrl);
+  }
+
+  @preDestroy()
+  async cleanup(): Promise<void> {
+    // chạy khi onDeactivation (singleton dispose)
+    await this.disconnect();
+  }
+}
+
+// Binding không cần .onActivation() / .onDeactivation() nữa
+container.bind(Database).to(DatabaseService).singleton();
+```
+
+> **Precedence:** Nếu binding có cả `@postConstruct()` trên class **và** `.onActivation()` tại binding site, thứ tự là: `@postConstruct()` chạy trước → `.onActivation()` chạy sau (nhận instance đã được init). Tương tự, `.onDeactivation()` chạy trước → `@preDestroy()` chạy sau.
+>
+> **Scope:** `@postConstruct()` chạy cho mọi scope (singleton, transient, scoped) — mỗi lần instance mới được tạo. `@preDestroy()` chỉ chạy cho singleton (giống `onDeactivation`), vì transient không có lifecycle tracking.
+>
+> **Async:** Cả hai đều hỗ trợ async — method trả về `Promise` sẽ được await. Dùng `@postConstruct()` async trên transient binding đồng nghĩa với resolve luôn trả về `Promise` → bắt buộc dùng `resolveAsync()`.
+
+### 6.7 Auto-registration qua `context.addInitializer`
+
+`@injectable()` hỗ trợ option `autoRegister` — khi bật, class tự đăng ký vào một global registry tại thời điểm class được định nghĩa (module load time), không cần `container.bind()` tường minh:
+
+```ts
+import { injectable, autoRegistered } from "@codefast/di";
+
+@injectable([Logger, Config], { autoRegister: true })
+class UserService { ... }
+
+@injectable([Logger], { autoRegister: true })
+class EmailService { ... }
+
+// Container load tất cả auto-registered classes một lần
+const container = Container.create();
+container.loadAutoRegistered(); // bind tất cả class có autoRegister: true
+```
+
+Cơ chế: Class decorator `@injectable` dùng `context.addInitializer` để push constructor vào `AUTO_REGISTER_REGISTRY` (module-level array). `context.addInitializer` trên class decorator chạy **một lần khi class được định nghĩa** (không phải per-instance) — phù hợp cho registration.
+
+> **Auto-register scope:** Default là `transient`. Để override: `{ autoRegister: true, scope: "singleton" }`.
+>
+> **Circular import:** `autoRegister` không giải quyết circular import — class phải được import (module phải chạy) trước khi `container.loadAutoRegistered()`. Convention: import tất cả service files vào một `index.ts` entry point trước khi khởi tạo container.
+>
+> **Coexistence:** Auto-register và explicit binding cùng tồn tại. Explicit `container.bind(UserService)` sau `loadAutoRegistered()` override binding tự động (last-wins).
+
+`loadAutoRegistered()` trả về số lượng class đã đăng ký, dùng để debug:
+
+```ts
+const count = container.loadAutoRegistered();
+console.log(`Registered ${count} services`); // "Registered 12 services"
+```
+
+### 6.8 Danh sách decorator và helpers
+
+| API                         | Loại                          | Target / Ngữ cảnh                | Tác dụng                                                                                                                                      |
+| --------------------------- | ----------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@injectable(deps?, opts?)` | decorator                     | class                            | Ghi param metadata vào `Symbol.metadata`. `deps` = array `(Token \| Constructor \| InjectionDescriptor)[]`. `opts.autoRegister` để tự đăng ký |
+| `inject(token, opts?)`      | plain fn / accessor decorator | deps array hoặc `accessor` field | Tạo `InjectionDescriptor` hoặc inject qua accessor getter/setter                                                                              |
+| `optional(token, opts?)`    | plain fn                      | deps array                       | Như `inject` nhưng resolve trả về `undefined` nếu không có binding                                                                            |
+| `@postConstruct()`          | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi sau khi construct, trước khi cache                                               |
+| `@preDestroy()`             | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi khi deactivation (singleton only)                                                |
+
+> **`@singleton()` và `@scoped()` đã bị bỏ.** Scope là binding-time concern — khai báo tại `.singleton()` / `.transient()` / `.scoped()` trong fluent chain, không phải trên class. Decorator scope-hint tạo ra hai nguồn sự thật và dễ gây nhầm lẫn.
 
 > **Tại sao không có `@inject` / `@injectOptional` trên parameter?**
-> TC39 Decorator Stage 3 không định nghĩa parameter decorator (TS1206). Chúng chỉ tồn tại trong hệ thống `experimentalDecorators` legacy — trái với mục tiêu zero legacy flag. Deps array trong `@injectable()` thay thế hoàn toàn và còn explicit hơn: nhìn vào `@injectable([Logger, Config])` là biết ngay class phụ thuộc gì, không cần đọc từng dòng constructor.
+> TC39 Decorator Stage 3 không định nghĩa parameter decorator (TS1206). Chúng chỉ tồn tại trong hệ thống `experimentalDecorators` legacy. Deps array trong `@injectable()` thay thế hoàn toàn và explicit hơn.
 
 ### 6.6 Cấu hình tsconfig
 
@@ -858,11 +1032,13 @@ packages/di/
 │   ├── module.test.ts
 │   │
 │   ├── decorators/
-│   │   ├── injectable.ts       @injectable() — Stage 3 class decorator
+│   │   ├── injectable.ts       @injectable(deps?, opts?) — class decorator + autoRegister option
 │   │   ├── injectable.test.ts
-│   │   ├── inject.ts           inject() + optional() plain functions
+│   │   ├── inject.ts           inject() + optional() — plain fn và accessor field decorator
 │   │   ├── inject.test.ts
-│   │   ├── metadata.ts         SymbolMetadataReader — implements MetadataReader
+│   │   ├── lifecycle-decorators.ts  @postConstruct() + @preDestroy() — method decorators
+│   │   ├── lifecycle-decorators.test.ts
+│   │   ├── metadata.ts         SymbolMetadataReader — implements MetadataReader (hasOwn guard)
 │   │   └── index.ts
 │   │
 │   ├── errors.ts               DiError + tất cả subclasses
@@ -891,10 +1067,14 @@ export type { BindingIdentifier } from "./binding";
 export { Module, AsyncModule } from "./module";
 
 // Decorators
-export { injectable, singleton, scoped } from "./decorators";
+export { injectable } from "./decorators";
+// @singleton() và @scoped() đã bị bỏ — scope khai báo tại binding site
 
-// Injection helpers (plain functions — không phải decorator)
-export { inject, optional } from "./injection";
+// Lifecycle method decorators
+export { postConstruct, preDestroy } from "./decorators";
+
+// Injection helpers — dùng được cả trong deps array lẫn như accessor field decorator
+export { inject, optional } from "./decorators";
 
 // Errors
 export {
@@ -989,11 +1169,11 @@ const app = container.resolve(App); // fully typed, no any
 
 ---
 
-### Phase 2 — Decorator layer (3–4 ngày)
+### Phase 2 — Decorator layer (4–5 ngày)
 
-TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter decorator (TS1206). `inject()` và `optional()` là plain functions tạo `InjectionDescriptor`. `SymbolMetadataReader` implements `MetadataReader`. Container nhận `MetadataReader` qua constructor — injectable trong test.
+TC39 Stage 3 `@injectable(deps?, opts?)` với deps array và `autoRegister` option. `inject()` và `optional()` hoạt động cả như plain function (deps array) lẫn `accessor` field decorator (property injection). `@postConstruct()` và `@preDestroy()` method decorators tích hợp vào `LifecycleManager`. `SymbolMetadataReader` với `Object.hasOwn` guard cho prototype chain safety. Container nhận `MetadataReader` qua constructor — injectable trong test.
 
-**Deliverable:** Decorator hoạt động, test cả decorator path và non-decorator path.
+**Deliverable:** Đầy đủ constructor injection, property injection qua `accessor`, method lifecycle decorators, auto-registration. Test cả decorator path và non-decorator path.
 
 ---
 
@@ -1011,8 +1191,9 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 
 - **Constraint bindings đầy đủ:** `when(constraint)` tùy chỉnh, `whenParentIs`, `whenAnyAncestorIs` — export từ `@codefast/di/constraints`
 - **Scope violation detection:** `container.validate()` throw `ScopeViolationError` khi singleton phụ thuộc vào scoped/transient (captive dependency)
-- **Container-level initialize():** `initialize()` (sync) và `initializeAsync()` — warm up tất cả singleton trước khi serve traffic
-- **Dependency graph:** `generateDependencyGraphDot()` (Graphviz) và `generateDependencyGraphJson()` — export từ `@codefast/di/dependency-graph`
+- **Container-level `initializeAsync()`:** warm up tất cả singletons (sync lẫn async) trước khi serve traffic. `initialize()` sync đã bị bỏ
+- **Dependency graph:** `generateDependencyGraph({ format: "dot" })` (Graphviz) và `generateDependencyGraph({ format: "json" })` trả về `ContainerGraphJson` typed — export từ `@codefast/di/dependency-graph`
+- **Builder type narrowing:** `onDeactivation` chỉ compile được trên `SingletonBindingBuilder`
 - **Integration packages:** `@codefast/di-hono`, `@codefast/di-fastify` — chưa làm
 
 ### Phase 5 — Integration packages (planned)
@@ -1072,16 +1253,20 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 
 ### Cải thiện hơn v8
 
-| InversifyJS v8                                                             | Thư viện này                                                                           |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `reflect-metadata` + `experimentalDecorators` bắt buộc                     | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                             |
-| `ServiceIdentifier = string \| symbol \| AbstractNewable<T> \| Newable<T>` | `Token<Value>` branded type — resolve luôn đúng type                                   |
-| `container.get<WrongType>('id')` compile được                              | Không thể — `Token<Value>` mang type ở compile time                                    |
-| `.inSingletonScope()`, `.inTransientScope()`                               | `.singleton()`, `.transient()` — ngắn hơn                                              |
-| `toDynamicValue` cho cả sync lẫn async                                     | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                    |
-| Async module không có API riêng                                            | `Module.createAsync()` + `container.loadAsync()` — explicit                            |
-| `@inject` trên parameter (cần `experimentalDecorators`)                    | `@injectable([deps])` + `inject()` / `optional()` plain functions — TC39 Stage 3 thuần |
-| `getAll()` chỉ có sync                                                     | `resolveAll()` + `resolveAllAsync()` — consistent với sync/async convention            |
+| InversifyJS v8                                                             | Thư viện này                                                                                                                   |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `reflect-metadata` + `experimentalDecorators` bắt buộc                     | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                                                                     |
+| `ServiceIdentifier = string \| symbol \| AbstractNewable<T> \| Newable<T>` | `Token<Value>` branded type — resolve luôn đúng type                                                                           |
+| `container.get<WrongType>('id')` compile được                              | Không thể — `Token<Value>` mang type ở compile time                                                                            |
+| `.inSingletonScope()`, `.inTransientScope()`                               | `.singleton()`, `.transient()` — ngắn hơn                                                                                      |
+| `toDynamicValue` cho cả sync lẫn async                                     | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                                                            |
+| Async module không có API riêng                                            | `Module.createAsync()` + `container.loadAsync()` — explicit                                                                    |
+| `@inject` trên parameter (cần `experimentalDecorators`)                    | `@injectable([deps])` + `inject()` / `optional()` — TC39 Stage 3 thuần; `inject()` cũng dùng được như accessor field decorator |
+| `getAll()` chỉ có sync                                                     | `resolveAll()` + `resolveAllAsync()` — consistent với sync/async convention                                                    |
+| `onDeactivation` không có compile-time guard                               | Builder type narrowing — `onDeactivation` chỉ tồn tại trên `SingletonBindingBuilder`                                           |
+| Không có method lifecycle decorator trên class                             | `@postConstruct()` / `@preDestroy()` method decorators — TC39 Stage 3, không cần `reflect-metadata`                            |
+| Không có property injection trong Stage 3                                  | `@inject(token) accessor field` — TC39 `accessor` keyword, per-instance via `context.addInitializer`                           |
+| `Symbol.metadata` prototype chain không được xử lý                         | `SymbolMetadataReader` dùng `Object.hasOwn` guard — không silently inherit metadata của parent class                           |
 
 ### Không học từ v8
 
@@ -1091,8 +1276,9 @@ TC39 Stage 3 `@injectable(deps?)` với deps array — không có parameter deco
 | `new Container({ parent })` để tạo child container | Dùng `container.createChild()` — explicit hơn, không lộ constructor options        |
 | Implicit inheritance injection (`@injectFromBase`) | Explicit từ đầu — deps array trong `@injectable()` khai báo tường minh tất cả      |
 | Parameter decorator `@inject` / `@injectOptional`  | TS1206 — không tồn tại trong TC39 Stage 3; dùng `inject()` / `optional()` thay thế |
+| `@singleton()` / `@scoped()` scope hint decorators | Scope là binding-time concern — decorator scope-hint tạo hai nguồn sự thật         |
 
 ---
 
-_Phiên bản tài liệu: 2.2 — April 2026_
+_Phiên bản tài liệu: 3.0 — April 2026_
 _Lấy cảm hứng từ InversifyJS v8.0.0 (March 2026)_
