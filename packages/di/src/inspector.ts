@@ -21,6 +21,11 @@ export type ContainerSnapshot = {
   readonly bindings: readonly ContainerBindingSnapshot[];
 };
 
+export type ContainerGraphJson = {
+  nodes: ContainerBindingSnapshot[];
+  edges: ReturnType<typeof collectStaticDependencyEdges>[number][];
+};
+
 export type ContainerInspectorContext = {
   collectAllRegistryKeys(): readonly RegistryKey[];
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
@@ -292,8 +297,66 @@ export class ContainerInspector {
     return lines.join("\n");
   }
 
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
+  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  generateDependencyGraph(
+    options?: DotGraphOptions & { format?: "dot" | "json" },
+  ): string | ContainerGraphJson {
+    if (options?.format === "json") {
+      return this.generateDependencyGraphJsonTyped(options);
+    }
+    return this.generateDotGraph(options);
+  }
+
+  generateDependencyGraphJsonTyped(options?: DotGraphOptions): ContainerGraphJson {
+    const hideInternals = options?.hideInternals === true;
+    const snapshot = this.getSnapshot();
+    const visibleNodes = hideInternals
+      ? snapshot.bindings.filter((row) => !registryKeyLabelIsInternal(row.registryKeyLabel))
+      : [...snapshot.bindings];
+    const allowedBindingIds = new Set(visibleNodes.map((row) => row.bindingId));
+    const edges: ReturnType<typeof collectStaticDependencyEdges>[number][] = [];
+    const edgeSeen = new Set<string>();
+    for (const registryKey of this.ctx.collectAllRegistryKeys()) {
+      if (hideInternals && isInternalRegistryKey(registryKey)) {
+        continue;
+      }
+      const list = this.ctx.lookupBindings(registryKey);
+      if (list === undefined) {
+        continue;
+      }
+      const pathStart = [registryKeyLabel(registryKey)];
+      for (const consumer of list) {
+        if (hideInternals && !allowedBindingIds.has(consumer.id)) {
+          continue;
+        }
+        for (const edge of collectStaticDependencyEdges(
+          consumer,
+          (registryKeyArg) => this.ctx.lookupBindings(registryKeyArg),
+          this.ctx.metadataReader,
+          pathStart,
+        )) {
+          if (
+            hideInternals &&
+            (!allowedBindingIds.has(edge.fromBindingId) || !allowedBindingIds.has(edge.toBindingId))
+          ) {
+            continue;
+          }
+          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${edge.injectHintLabel ?? ""}`;
+          if (edgeSeen.has(edgeKey)) {
+            continue;
+          }
+          edgeSeen.add(edgeKey);
+          edges.push(edge);
+        }
+      }
+    }
+    return { nodes: visibleNodes, edges };
+  }
+
   /**
    * Produces a JSON graph representation with `nodes` and `edges`.
+   * @internal Use `generateDependencyGraph({ format: "json" })` for typed output.
    */
   generateDependencyGraphJson(options?: DotGraphOptions): string {
     const hideInternals = options?.hideInternals === true;

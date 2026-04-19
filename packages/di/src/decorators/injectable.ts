@@ -6,13 +6,22 @@ import {
   type ParamMetadata,
 } from "#/decorators/metadata";
 import { isInjectionDescriptor } from "#/decorators/inject";
-import type { Constructor } from "#/binding";
+import type { BindingScope, Constructor } from "#/binding";
 import type { Token } from "#/token";
 
 export type InjectableDependency =
   | Token<unknown>
   | Constructor<unknown>
   | InjectionDescriptor<unknown>;
+
+const AUTO_REGISTER_REGISTRY: Array<{ ctor: Constructor<unknown>; scope: BindingScope }> = [];
+
+export function getAutoRegistered(): ReadonlyArray<{
+  ctor: Constructor<unknown>;
+  scope: BindingScope;
+}> {
+  return AUTO_REGISTER_REGISTRY;
+}
 
 function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
   if (isInjectionDescriptor(dependency)) {
@@ -36,6 +45,7 @@ function toParamMetadata(dependency: InjectableDependency, index: number): Param
  */
 export function injectable(
   deps: readonly InjectableDependency[] = [],
+  opts?: { autoRegister?: boolean; scope?: BindingScope },
 ): <Class extends abstract new (...args: never[]) => unknown>(
   ctor: Class,
   context: ClassDecoratorContext<Class>,
@@ -55,5 +65,16 @@ export function injectable(
     const payload: ConstructorMetadata = { params };
     const metadataRecord = context.metadata as Record<PropertyKey, unknown>;
     metadataRecord[CODEFAST_DI_CONSTRUCTOR_METADATA] = payload;
+
+    if (opts?.autoRegister === true) {
+      const scope = opts.scope ?? "transient";
+      // context.addInitializer runs once per class definition (NOT per instance)
+      context.addInitializer(function (this: unknown) {
+        AUTO_REGISTER_REGISTRY.push({
+          ctor: this as Constructor<unknown>,
+          scope,
+        });
+      });
+    }
   };
 }

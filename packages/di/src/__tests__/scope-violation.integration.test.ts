@@ -3,8 +3,6 @@ import { Container } from "#/container";
 import { ScopeViolationError } from "#/errors";
 import { token } from "#/token";
 import { injectable } from "#/decorators/injectable";
-import { scoped } from "#/decorators/scoped";
-import { singleton } from "#/decorators/singleton";
 
 class Ephemeral {
   readonly tag = "ephemeral";
@@ -73,19 +71,17 @@ describe("ScopeValidation", () => {
   });
 
   it("throws when singleton class depends on scoped class", () => {
-    @scoped()
     @injectable()
     class UserContext {}
 
-    @singleton()
     @injectable([UserContext])
     class DatabaseService {
       constructor(readonly userContext: UserContext) {}
     }
 
     const container = Container.create();
-    container.bind(UserContext).toSelf();
-    container.bind(DatabaseService).toSelf();
+    container.bind(UserContext).toSelf().scoped();
+    container.bind(DatabaseService).toSelf().singleton();
 
     expect(() => {
       container.resolve(DatabaseService);
@@ -96,26 +92,23 @@ describe("ScopeValidation", () => {
   });
 
   it("allows scoped class depending on singleton class", () => {
-    @singleton()
     @injectable()
     class DatabaseService {}
 
-    @scoped()
     @injectable([DatabaseService])
     class UserContext {
       constructor(readonly databaseService: DatabaseService) {}
     }
 
     const container = Container.create();
-    container.bind(DatabaseService).toSelf();
-    container.bind(UserContext).toSelf();
+    container.bind(DatabaseService).toSelf().singleton();
+    container.bind(UserContext).toSelf().scoped();
 
     const resolved = container.resolve(UserContext);
     expect(resolved.databaseService).toBeInstanceOf(DatabaseService);
   });
 
   it("allows transient class depending on scoped class", () => {
-    @scoped()
     @injectable()
     class UserContext {}
 
@@ -125,7 +118,7 @@ describe("ScopeValidation", () => {
     }
 
     const container = Container.create();
-    container.bind(UserContext).toSelf();
+    container.bind(UserContext).toSelf().scoped();
     container.bind(AuditTrailService).toSelf().transient();
 
     const resolved = container.resolve(AuditTrailService);

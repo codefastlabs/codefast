@@ -8,7 +8,7 @@
  * - Collect all bindings with resolveAll
  */
 
-import { Container, inject, injectable, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, token } from "@codefast/di";
 import { whenParentIs } from "@codefast/di/constraints";
 
 // --- Tokens -----------------------------------------------------------------
@@ -90,7 +90,6 @@ class LocalStorage implements Storage {
 // OrderService uses parent-aware constraint; PaymentService uses named hint.
 
 @injectable([inject(LoggerToken), inject(S3StorageToken)])
-@singleton()
 class OrderService {
   constructor(
     private readonly logger: Logger,
@@ -106,7 +105,6 @@ class OrderService {
 }
 
 @injectable([inject(PaymentLoggerToken), inject(LocalStorageToken)])
-@singleton()
 class PaymentService {
   constructor(
     private readonly logger: Logger,
@@ -168,8 +166,8 @@ appContainer.bind(S3StorageToken).to(S3Storage).singleton();
 appContainer.bind(LocalStorageToken).to(LocalStorage).singleton();
 
 // Services (OrderService uses constraint-based logger selection above)
-appContainer.bind(OrderServiceToken).to(OrderService);
-appContainer.bind(PaymentServiceToken).to(PaymentService);
+appContainer.bind(OrderServiceToken).to(OrderService).singleton();
+appContainer.bind(PaymentServiceToken).to(PaymentService).singleton();
 
 // Multi-binding: three handlers under the same token
 appContainer.bind(EventHandlerToken).to(LogEventHandler);

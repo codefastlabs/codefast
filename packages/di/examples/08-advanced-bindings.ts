@@ -9,7 +9,7 @@
  * - Plain tokens directly in @injectable (no inject() wrapper needed)
  */
 
-import { Container, inject, injectable, optional, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, optional, token } from "@codefast/di";
 
 // --- Tokens -----------------------------------------------------------------
 
@@ -114,7 +114,6 @@ console.log("toAlias — same instance:", concreteLogger === aliasedLogger); // 
 
 // Plain tokens — no inject() wrapper
 @injectable([LoggerToken, ConfigToken])
-@singleton()
 class PlainNotifier implements Notifier {
   constructor(
     private readonly logger: Logger,
@@ -143,7 +142,7 @@ class MixedService {
 
 const MixedServiceToken = token<MixedService>("MixedService");
 container.bind(MixedServiceToken).to(MixedService);
-container.bind(NotifierToken).to(PlainNotifier);
+container.bind(NotifierToken).to(PlainNotifier).singleton();
 const notifier = container.resolve(NotifierToken);
 notifier.notify("system ready");
 

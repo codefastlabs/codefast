@@ -36,7 +36,7 @@ describe("ContainerInspector", () => {
     const container = Container.create();
     container.load(InfrastructureModule);
 
-    const dot = container.generateDependencyGraphDot();
+    const dot = container.generateDependencyGraph();
     expect(dot).toContain("digraph codefast_di");
     expect(dot).toContain("subgraph cluster_InfraModule");
     expect(dot).toContain('label="InfraModule"');
@@ -54,11 +54,11 @@ describe("ContainerInspector", () => {
     container.bind(HttpClientToken).toAlias(LoggerToken).singleton();
     container.bind(InternalTelemetryToken).toConstantValue("trace-123");
 
-    const full = container.generateDependencyGraphDot();
+    const full = container.generateDependencyGraph();
     expect(full).toContain(InternalTelemetryToken.name);
     expect(full).toMatch(/->.*style=dashed/s);
 
-    const filtered = container.generateDependencyGraphDot({ hideInternals: true });
+    const filtered = container.generateDependencyGraph({ hideInternals: true });
     expect(filtered).not.toContain(InternalTelemetryToken.name);
     expect(filtered).toContain(LoggerToken.name);
     expect(filtered).toContain(HttpClientToken.name);
@@ -71,10 +71,9 @@ describe("ContainerInspector", () => {
     container.bind(InternalTelemetryToken).toConstantValue("trace-123");
     container.bind(token("SharedService")).toAlias(LoggerToken);
 
-    const jsonStr = container.generateDependencyGraphJson({ hideInternals: true });
-    const data = JSON.parse(jsonStr) as { nodes: ContainerBindingSnapshot[]; edges: unknown[] };
+    const data = container.generateDependencyGraph({ format: "json", hideInternals: true });
 
-    const nodeLabels = data.nodes.map((n) => n.registryKeyLabel);
+    const nodeLabels = data.nodes.map((n: ContainerBindingSnapshot) => n.registryKeyLabel);
     expect(nodeLabels).not.toContain("CODEFAST_DI_InternalProbe");
     expect(data.edges).toBeDefined();
   });

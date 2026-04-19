@@ -2,10 +2,10 @@
  * Example 02 — Decorators
  *
  * TC39 Stage 3 decorators (no reflect-metadata needed).
- * Shows @injectable, @singleton, @scoped, inject(), and optional().
+ * Shows @injectable, inject(), and optional().
  */
 
-import { Container, inject, injectable, optional, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, optional, token } from "@codefast/di";
 
 // --- Tokens -----------------------------------------------------------------
 
@@ -35,7 +35,6 @@ interface Logger {
 // @injectable declares constructor dependencies in order.
 // inject() marks a required dependency; optional() marks optional.
 @injectable([inject(ConfigToken), optional(LoggerToken)])
-@singleton()
 class Database {
   readonly url: string;
 
@@ -45,9 +44,7 @@ class Database {
   }
 }
 
-// @singleton() hint — container respects this when using .toSelf()
 @injectable([inject(ConfigToken)])
-@singleton()
 class InMemoryCache implements Cache {
   private readonly store = new Map<string, string>();
 
@@ -97,9 +94,8 @@ const container = Container.create();
 container.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", debug: true });
 container.bind(LoggerToken).toConstantValue({ log: (msg) => console.log(msg) });
 
-// .toSelf() reads @singleton / @injectable metadata from the class
-container.bind(Database).toSelf();
-container.bind(CacheToken).to(InMemoryCache); // reads @injectable + @singleton
+container.bind(Database).toSelf().singleton();
+container.bind(CacheToken).to(InMemoryCache).singleton();
 container.bind(UserServiceToken).to(UserService);
 
 // --- Usage ------------------------------------------------------------------
@@ -109,7 +105,7 @@ const svc = container.resolve(UserServiceToken);
 console.log(svc.findUser("42")); // loads from db
 console.log(svc.findUser("42")); // cache hit
 
-// Verify @singleton — same Database instance across resolutions
+// Verify singleton — same Database instance across resolutions
 const firstDatabaseResolve = container.resolve(Database);
 const secondDatabaseResolve = container.resolve(Database);
 console.log("Same Database singleton:", firstDatabaseResolve === secondDatabaseResolve); // true

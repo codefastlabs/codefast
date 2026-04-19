@@ -1,9 +1,4 @@
 import { DiError } from "#/errors";
-import {
-  CODEFAST_DI_CLASS_SCOPE_HINT,
-  decoratorMetadataObjectSymbol,
-  type ClassScopeHint,
-} from "#/decorators/metadata";
 import type { RegistryKey } from "#/registry";
 import type { Token, TokenValue } from "#/token";
 
@@ -172,28 +167,10 @@ type Strategy<Value> =
     }
   | { readonly type: "alias"; readonly targetToken: Token<Value> };
 
-export type ConstantBindingBuilder<Value> = Omit<
-  BindingBuilder<Value>,
-  "singleton" | "transient" | "scoped"
->;
-
 type BindingBuilderHooks<Value> = {
   readonly register?: (binding: Binding<Value>) => void;
   readonly update?: (binding: Binding<Value>) => void;
 };
-
-function resolveClassScopeHint<Value>(ctor: Constructor<Value>): ClassScopeHint | undefined {
-  const metadataRecordUnknown = (ctor as unknown as Record<symbol, unknown>)[
-    decoratorMetadataObjectSymbol()
-  ];
-  if (typeof metadataRecordUnknown !== "object" || metadataRecordUnknown === null) {
-    return undefined;
-  }
-  const value = (metadataRecordUnknown as Record<PropertyKey, unknown>)[
-    CODEFAST_DI_CLASS_SCOPE_HINT
-  ];
-  return value === "singleton" || value === "scoped" ? value : undefined;
-}
 
 export class BindingBuilder<Value> {
   private strategy: Strategy<Value> = { type: "unset" };
@@ -218,31 +195,19 @@ export class BindingBuilder<Value> {
     this.hooks = hooks ?? {};
   }
 
-  to<C extends Constructor<Value>>(ctor: C): BindingBuilder<Value> {
-    if (!this.isScopeExplicit) {
-      const hint = resolveClassScopeHint(ctor);
-      if (hint !== undefined) {
-        this.scope = hint;
-      }
-    }
+  to<C extends Constructor<Value>>(ctor: C): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "class", ctor });
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
-  toSelf(): BindingBuilder<Value> {
+  toSelf(): TransientBindingBuilder<Value> {
     if (typeof this.bindingKey !== "function") {
       throw new DiError(
         "toSelf() requires the binding key to be a constructor; use bind(SomeClass) or call to(Class) instead.",
       );
     }
-    if (!this.isScopeExplicit) {
-      const hint = resolveClassScopeHint(this.bindingKey);
-      if (hint !== undefined) {
-        this.scope = hint;
-      }
-    }
     this.registerWithStrategy({ type: "class", ctor: this.bindingKey });
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
   toConstantValue<const ConcreteValue extends Value>(
@@ -250,85 +215,88 @@ export class BindingBuilder<Value> {
   ): ConstantBindingBuilder<Value> {
     this.scope = "singleton";
     this.registerWithStrategy({ type: "constant", value });
-    return this as ConstantBindingBuilder<Value>;
+    return this as unknown as ConstantBindingBuilder<Value>;
   }
 
-  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
+  toDynamic(factory: (ctx: ResolutionContext) => Value): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "dynamic", factory });
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
+  toDynamicAsync(
+    factory: (ctx: ResolutionContext) => Promise<Value>,
+  ): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "async-dynamic", factory });
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
   toResolved<Deps extends readonly (Token<unknown> | Constructor<unknown>)[]>(
     factory: (...args: { [Index in keyof Deps]: TokenValue<Deps[Index]> }) => Value,
     deps: Deps,
-  ): BindingBuilder<Value> {
+  ): TransientBindingBuilder<Value> {
     this.registerWithStrategy({
       type: "resolved",
       factory: factory as unknown as (...args: unknown[]) => Value,
       dependencyTokens: deps,
     });
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
-  toAlias(targetToken: Token<Value>): BindingBuilder<Value> {
+  toAlias(targetToken: Token<Value>): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "alias", targetToken });
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
-  singleton(): BindingBuilder<Value> {
+  singleton(): SingletonBindingBuilder<Value> {
     this.assertScopeMutable();
     this.scope = "singleton";
     this.isScopeExplicit = true;
     this.refreshRegisteredBinding();
-    return this;
+    return this as unknown as SingletonBindingBuilder<Value>;
   }
 
-  transient(): BindingBuilder<Value> {
+  transient(): TransientBindingBuilder<Value> {
     this.assertScopeMutable();
     this.scope = "transient";
     this.isScopeExplicit = true;
     this.refreshRegisteredBinding();
-    return this;
+    return this as unknown as TransientBindingBuilder<Value>;
   }
 
-  scoped(): BindingBuilder<Value> {
+  scoped(): ScopedBindingBuilder<Value> {
     this.assertScopeMutable();
     this.scope = "scoped";
     this.isScopeExplicit = true;
     this.refreshRegisteredBinding();
-    return this;
+    return this as unknown as ScopedBindingBuilder<Value>;
   }
 
-  onActivation(handler: ActivationHandler<Value>): BindingBuilder<Value> {
+  onActivation(handler: ActivationHandler<Value>): this {
     this.onActivationHandler = handler as ActivationHandler<unknown>;
     this.refreshRegisteredBinding();
     return this;
   }
 
-  onDeactivation(handler: DeactivationHandler<Value>): BindingBuilder<Value> {
+  /** @internal Keep public for runtime correctness; hidden from transient/scoped builders via type aliases. */
+  onDeactivation(handler: DeactivationHandler<Value>): this {
     this.onDeactivationHandler = handler as DeactivationHandler<unknown>;
     this.refreshRegisteredBinding();
     return this;
   }
 
-  whenNamed(name: string): BindingBuilder<Value> {
+  whenNamed(name: string): this {
     this.bindingName = name;
     this.refreshRegisteredBinding();
     return this;
   }
 
-  whenTagged(tag: string | symbol, tagValue: unknown): BindingBuilder<Value> {
+  whenTagged(tag: string | symbol, tagValue: unknown): this {
     this.tags.set(tag, tagValue);
     this.refreshRegisteredBinding();
     return this;
   }
 
-  when(constraint: (ctx: ConstraintContext) => boolean): BindingBuilder<Value> {
+  when(constraint: (ctx: ConstraintContext) => boolean): this {
     this.constraintPredicates.push(constraint);
     this.refreshRegisteredBinding();
     return this;
@@ -461,6 +429,31 @@ export class BindingBuilder<Value> {
     }
   }
 }
+
+/**
+ * Builder returned after calling `.singleton()` — exposes `onDeactivation`.
+ */
+export type SingletonBindingBuilder<Value> = BindingBuilder<Value>;
+
+/**
+ * Builder returned after calling `.transient()`, or any strategy method before a scope is set.
+ * Does NOT expose `onDeactivation` at the type level.
+ */
+export type TransientBindingBuilder<Value> = Omit<BindingBuilder<Value>, "onDeactivation">;
+
+/**
+ * Builder returned after calling `.scoped()`.
+ * Does NOT expose `onDeactivation` at the type level.
+ */
+export type ScopedBindingBuilder<Value> = Omit<BindingBuilder<Value>, "onDeactivation">;
+
+/**
+ * Builder returned after calling `.toConstantValue()`.
+ */
+export type ConstantBindingBuilder<Value> = Omit<
+  SingletonBindingBuilder<Value>,
+  "singleton" | "transient" | "scoped"
+>;
 
 /**
  * Starts a fluent binding for the given token or constructor key.

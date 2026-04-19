@@ -6,10 +6,24 @@ import type { Token } from "#/token";
  */
 export const CODEFAST_DI_CONSTRUCTOR_METADATA = "codefast/di:constructor-metadata:v1";
 
-/** Optional scope hint from `@singleton()` / `@scoped()` (container may override at bind time). */
-export const CODEFAST_DI_CLASS_SCOPE_HINT = "codefast/di:class-scope-hint:v1";
+export const CODEFAST_DI_ACCESSOR_INJECTIONS = "codefast/di:accessor-injections:v1";
+export const CODEFAST_DI_LIFECYCLE_METADATA = "codefast/di:lifecycle-metadata:v1";
 
-export type ClassScopeHint = "singleton" | "scoped";
+export type AccessorInjectionMetadata = {
+  readonly name: string;
+  readonly token: Token<unknown> | Constructor<unknown>;
+  readonly optional: boolean;
+  readonly resolveHint?: {
+    readonly name?: string;
+    readonly tag?: readonly [tag: string | symbol, value: unknown];
+  };
+};
+
+export type LifecycleMetadata = {
+  readonly postConstruct?: string;
+  readonly preDestroy?: string;
+  readonly accessorInjections?: readonly AccessorInjectionMetadata[];
+};
 
 /**
  * Runtime symbol for the decorator metadata object (TC39 `Symbol.metadata`).
@@ -50,4 +64,5 @@ export type ConstructorMetadata = {
  */
 export type MetadataReader = {
   getConstructorMetadata(ctor: Constructor<unknown>): ConstructorMetadata | undefined;
+  getLifecycleMetadata?(ctor: Constructor<unknown>): LifecycleMetadata | undefined;
 };

@@ -6,7 +6,7 @@
  * (including diamond imports) runs setup only once.
  */
 
-import { Container, inject, injectable, Module, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token } from "@codefast/di";
 
 // --- Tokens -----------------------------------------------------------------
 
@@ -31,7 +31,6 @@ interface Logger {
 // --- Implementations --------------------------------------------------------
 
 @injectable([inject(ConfigToken), inject(LoggerToken)])
-@singleton()
 class EmailService {
   constructor(
     private readonly config: Config,
@@ -44,7 +43,6 @@ class EmailService {
 }
 
 @injectable([inject(ConfigToken), inject(LoggerToken)])
-@singleton()
 class AuthService {
   constructor(
     private readonly config: Config,
@@ -89,13 +87,13 @@ const CoreModule = Module.create("Core", (api) => {
 // EmailModule: depends on CoreModule
 const EmailModule = Module.create("Email", (api) => {
   api.import(CoreModule); // declares dependency
-  api.bind(EmailServiceToken).to(EmailService);
+  api.bind(EmailServiceToken).to(EmailService).singleton();
 });
 
 // AuthModule: also depends on CoreModule
 const AuthModule = Module.create("Auth", (api) => {
   api.import(CoreModule); // CoreModule deduped — setup runs only once
-  api.bind(AuthServiceToken).to(AuthService);
+  api.bind(AuthServiceToken).to(AuthService).singleton();
 });
 
 // AppModule: composes all above — CoreModule imported 3 times, runs once

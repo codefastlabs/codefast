@@ -12,7 +12,12 @@ import {
   registryKeyLabel,
   selectBindingForRegistry,
 } from "#/binding-select";
-import { runActivation, runActivationAsync } from "#/lifecycle";
+import {
+  runActivation,
+  runActivationAsync,
+  runPostConstruct,
+  runPostConstructAsync,
+} from "#/lifecycle";
 import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";
 import { ScopeManager } from "#/scope";
@@ -394,6 +399,10 @@ export class DependencyResolver {
       const extendedStack = [...materializationStack, frame];
       const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
       const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
+      // @postConstruct runs BEFORE onActivation
+      if (binding.kind === "class") {
+        runPostConstruct(binding.ctor, instance, pathLabels);
+      }
       return runActivation(binding, instance, ctx, pathLabels);
     });
   }
@@ -420,6 +429,10 @@ export class DependencyResolver {
         visiting,
         extendedStack,
       );
+      // @postConstruct runs BEFORE onActivation
+      if (binding.kind === "class") {
+        await runPostConstructAsync(binding.ctor, instance);
+      }
       return await runActivationAsync(binding, instance, ctx, pathLabels);
     });
   }

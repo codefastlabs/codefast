@@ -6,7 +6,7 @@
  * or per-session isolation in a server context.
  */
 
-import { Container, inject, injectable, scoped, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, token } from "@codefast/di";
 
 // --- Tokens -----------------------------------------------------------------
 
@@ -24,7 +24,6 @@ interface RequestContext {
 
 // Singleton — shared across all requests
 @injectable([])
-@singleton()
 class AppDatabase {
   private static instanceCount = 0;
   readonly instanceId: number;
@@ -41,7 +40,6 @@ class AppDatabase {
 
 // Scoped — one per child container (i.e., one per request)
 @injectable([inject(RequestContextToken)])
-@scoped()
 class RequestLogger {
   constructor(private readonly ctx: RequestContext) {
     console.log(`[RequestLogger] created for request ${ctx.requestId}`);
@@ -79,7 +77,7 @@ rootContainer.bind(RequestContextToken).toConstantValue({
   requestId: "bootstrap",
   userId: "system",
 });
-rootContainer.bind(RequestLoggerToken).to(RequestLogger); // reads @scoped() hint
+rootContainer.bind(RequestLoggerToken).to(RequestLogger).scoped();
 
 // HandlerToken is explicitly transient — new per resolution
 rootContainer

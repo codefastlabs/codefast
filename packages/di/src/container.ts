@@ -1,10 +1,12 @@
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { BindingBuilder } from "#/binding";
+import { getAutoRegistered } from "#/decorators/injectable";
 import type { MetadataReader } from "#/decorators/metadata";
 import { SymbolMetadataReader } from "#/decorators/reader";
 import { AsyncModuleLoadError, CircularDependencyError, DiError } from "#/errors";
 import {
   ContainerInspector,
+  type ContainerGraphJson,
   type ContainerInspectorContext,
   type ContainerSnapshot,
   type DotGraphOptions,
@@ -52,13 +54,14 @@ export interface Container extends AsyncDisposable {
   loadAsync(...modules: ModuleLike[]): Promise<void>;
   unload(...modules: ModuleLike[]): void;
   unloadAsync(...modules: ModuleLike[]): Promise<void>;
-  initialize(): void;
   initializeAsync(): Promise<void>;
+  loadAutoRegistered(): number;
   validate(): void;
   inspect(): ContainerSnapshot;
-  generateDependencyGraphDot(options?: DotGraphOptions): string;
-  generateDependencyGraphJson(options?: DotGraphOptions): string;
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
+  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
   createChild(): Container;
+  [Symbol.dispose](): never;
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
@@ -299,30 +302,6 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Eagerly resolves every registered `singleton` binding (sync-capable only in this overload).
-   * Skips `async-dynamic` singletons; use {@link initializeAsync} for those.
-   * Order follows registry iteration; dependency order is not topologically sorted.
-   */
-  initialize(): void {
-    for (const registryKey of this.collectAllRegistryKeysInHierarchy()) {
-      const list = this.lookupBindings(registryKey);
-      if (list === undefined) {
-        continue;
-      }
-      for (const binding of list) {
-        if (binding.scope !== "singleton") {
-          continue;
-        }
-        if (binding.kind === "async-dynamic") {
-          continue;
-        }
-        const hint = resolveHintForBinding(binding);
-        this.resolve(registryKey as Token<unknown> | Constructor<unknown>, hint);
-      }
-    }
-  }
-
-  /**
    * Eagerly resolves every registered `singleton` binding, including `async-dynamic` factories.
    */
   async initializeAsync(): Promise<void> {
@@ -375,15 +354,42 @@ class DefaultContainer implements Container {
     return this.createInspector().getSnapshot();
   }
 
-  /**
-   * Graphviz `digraph` for the static binding graph (not part of the public package exports).
-   */
-  generateDependencyGraphDot(options?: DotGraphOptions): string {
-    return this.createInspector().generateDotGraph(options);
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
+  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  generateDependencyGraph(
+    options?: DotGraphOptions & { format?: "dot" | "json" },
+  ): string | ContainerGraphJson {
+    const inspector = this.createInspector();
+    if (options?.format === "json") {
+      return inspector.generateDependencyGraph(options as DotGraphOptions & { format: "json" });
+    }
+    return inspector.generateDotGraph(options);
   }
 
-  generateDependencyGraphJson(options?: DotGraphOptions): string {
-    return this.createInspector().generateDependencyGraphJson(options);
+  loadAutoRegistered(): number {
+    const entries = getAutoRegistered();
+    let count = 0;
+    for (const { ctor, scope } of entries) {
+      const builder = this.bind(ctor as Constructor<unknown>).toSelf();
+      switch (scope) {
+        case "singleton":
+          (builder as BindingBuilder<unknown>).singleton();
+          break;
+        case "scoped":
+          (builder as BindingBuilder<unknown>).scoped();
+          break;
+        default:
+          (builder as BindingBuilder<unknown>).transient();
+      }
+      count++;
+    }
+    return count;
+  }
+
+  [Symbol.dispose](): never {
+    throw new DiError(
+      "Container disposal is async. Use `await using container = Container.create()` or call `await container.dispose()` instead of `using`.",
+    );
   }
 
   private createInspector(): ContainerInspector {
@@ -598,4 +604,4 @@ export namespace Container {
 }
 
 export type { BindingIdentifier, ResolveOptions } from "#/binding";
-export type { ContainerSnapshot } from "#/inspector";
+export type { ContainerGraphJson, ContainerSnapshot } from "#/inspector";
