@@ -36,7 +36,7 @@
  *   └── UserServiceToken    → uses all of the above
  */
 
-import { Container, Module, inject, injectable, scoped, token } from "@codefast/di";
+import { Container, Module, inject, injectable, token } from "@codefast/di";
 
 // ============================================================================
 // Global types
@@ -279,7 +279,6 @@ class PlanRateLimiter implements RateLimiter {
   inject(RateLimiterToken),
   inject(TenantContextToken),
 ])
-@scoped()
 class UserService {
   constructor(
     private readonly db: TenantDatabase,
@@ -333,7 +332,6 @@ class UserService {
   inject(RateLimiterToken),
   inject(TenantContextToken),
 ])
-@scoped()
 class InviteService {
   constructor(
     private readonly db: TenantDatabase,
@@ -472,8 +470,8 @@ function createTenantContainer(
     .scoped();
 
   // Domain services — plain class bindings that read everything from tokens above
-  tenantContainer.bind(UserServiceToken).to(UserService);
-  tenantContainer.bind(InviteServiceToken).to(InviteService);
+  tenantContainer.bind(UserServiceToken).to(UserService).scoped();
+  tenantContainer.bind(InviteServiceToken).to(InviteService).scoped();
 
   return tenantContainer;
 }

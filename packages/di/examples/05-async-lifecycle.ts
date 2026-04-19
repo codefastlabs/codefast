@@ -9,7 +9,7 @@
  * - Parallel inflight deduplication for async singletons
  */
 
-import { Container, inject, injectable, Module, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token } from "@codefast/di";
 
 // --- Tokens -----------------------------------------------------------------
 
@@ -78,7 +78,6 @@ class Cache {
 }
 
 @injectable([inject(DatabaseToken), inject(CacheToken)])
-@singleton()
 class App {
   constructor(
     private readonly db: Database,
@@ -137,7 +136,7 @@ const CacheModule = Module.create("Cache", (api) => {
 });
 
 const AppModule = Module.create("App", (api) => {
-  api.bind(AppToken).to(App);
+  api.bind(AppToken).to(App).singleton();
 });
 
 // --- Bootstrap & teardown ---------------------------------------------------

@@ -1,5 +1,9 @@
 import type { Constructor, ResolveHint } from "#/binding";
-import type { InjectionDescriptor } from "#/decorators/metadata";
+import {
+  CODEFAST_DI_ACCESSOR_INJECTIONS,
+  type AccessorInjectionMetadata,
+  type InjectionDescriptor,
+} from "#/decorators/metadata";
 import { DiError } from "#/errors";
 import type { Token } from "#/token";
 
@@ -36,11 +40,34 @@ function toDescriptor<Value>(
   return { token, optional };
 }
 
+function isAccessorDecoratorContext(v: unknown): v is ClassAccessorDecoratorContext {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    "kind" in v &&
+    (v as { kind: unknown }).kind === "accessor"
+  );
+}
+
 export function inject<Value>(
   token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
+  optionsOrContext?: InjectOptions | ClassAccessorDecoratorContext,
 ): InjectionDescriptor<Value> {
-  return toDescriptor(token, false, options);
+  if (isAccessorDecoratorContext(optionsOrContext)) {
+    const ctx = optionsOrContext;
+    const metaRecord = ctx.metadata as Record<PropertyKey, unknown>;
+    const key = CODEFAST_DI_ACCESSOR_INJECTIONS;
+    if (!Array.isArray(metaRecord[key])) {
+      metaRecord[key] = [];
+    }
+    (metaRecord[key] as AccessorInjectionMetadata[]).push({
+      name: String(ctx.name),
+      token: token as Token<unknown> | Constructor<unknown>,
+      optional: false,
+    });
+    return undefined as unknown as InjectionDescriptor<Value>; // no-op — container does the injection post-construction
+  }
+  return toDescriptor(token, false, optionsOrContext as InjectOptions | undefined);
 }
 
 export function optional<Value>(

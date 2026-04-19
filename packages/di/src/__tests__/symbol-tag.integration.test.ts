@@ -54,9 +54,8 @@ describe("Symbol tag keys (spec §4.4)", () => {
     container.bind(engineToken).whenTagged(globalFuelTag, "diesel").toConstantValue("diesel");
     container.bind(engineToken).whenTagged(localFuelTag, "petrol").toConstantValue("petrol");
 
-    const graphJson = container.generateDependencyGraphJson();
-    expect(() => {
-      JSON.parse(graphJson);
-    }).not.toThrow();
+    const graphData = container.generateDependencyGraph({ format: "json" });
+    expect(graphData).toHaveProperty("nodes");
+    expect(graphData).toHaveProperty("edges");
   });
 });

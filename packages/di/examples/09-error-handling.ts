@@ -26,8 +26,6 @@ import {
   TokenNotBoundError,
   inject,
   injectable,
-  scoped,
-  singleton,
   token,
 } from "@codefast/di";
 
@@ -202,20 +200,18 @@ const ScopedServiceToken = token<ScopedService>("ScopedService");
 const SingletonConsumerToken = token<SingletonConsumer>("SingletonConsumer");
 
 @injectable([])
-@scoped()
 class ScopedService {
   readonly id = Math.random();
 }
 
 @injectable([inject(ScopedServiceToken)])
-@singleton()
 class SingletonConsumer {
   constructor(readonly scoped: ScopedService) {}
 }
 
 const scopeViolationContainer = Container.create();
-scopeViolationContainer.bind(ScopedServiceToken).to(ScopedService);
-scopeViolationContainer.bind(SingletonConsumerToken).to(SingletonConsumer);
+scopeViolationContainer.bind(ScopedServiceToken).to(ScopedService).scoped();
+scopeViolationContainer.bind(SingletonConsumerToken).to(SingletonConsumer).singleton();
 
 try {
   // validate() checks the dependency graph for scope violations

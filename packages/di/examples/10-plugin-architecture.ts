@@ -48,7 +48,7 @@
  *   └──────────────────────────────────────────────────────┘
  */
 
-import { Container, inject, injectable, Module, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token } from "@codefast/di";
 
 // ============================================================================
 // Core contracts
@@ -276,7 +276,6 @@ const SlackPluginModule = Module.createAsync("SlackPlugin", async (api) => {
   inject(NotificationToken),
   inject(AppLoggerToken),
 ])
-@singleton()
 class DocumentService {
   constructor(
     private readonly storage: StorageProvider,

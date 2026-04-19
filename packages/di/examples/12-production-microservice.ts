@@ -34,7 +34,7 @@
  * order, parallelises independent branches, and disposes in reverse.
  */
 
-import { Container, Module, inject, injectable, singleton, token } from "@codefast/di";
+import { Container, Module, inject, injectable, token } from "@codefast/di";
 
 // ============================================================================
 // Tokens
@@ -505,7 +505,6 @@ class InMemoryMetricsCollector implements MetricsCollector {
 // ============================================================================
 
 @injectable([inject(JobQueueToken), inject(RedisClientToken)])
-@singleton()
 class JobRepository {
   constructor(
     private readonly queue: JobQueue,
@@ -535,7 +534,6 @@ class JobRepository {
 }
 
 @injectable([inject(JobRepositoryToken), inject(MetricsCollectorToken), inject(DatabasePoolToken)])
-@singleton()
 class JobService {
   constructor(
     private readonly repository: JobRepository,
@@ -750,8 +748,8 @@ const HttpModule = Module.createAsync("Http", async (api) => {
 // ServiceModule imports async modules → must be async itself
 const ServiceModule = Module.createAsync("Service", async (api) => {
   api.import(DatabaseModule, RedisModule, MetricsModule);
-  api.bind(JobRepositoryToken).to(JobRepository);
-  api.bind(JobServiceToken).to(JobService);
+  api.bind(JobRepositoryToken).to(JobRepository).singleton();
+  api.bind(JobServiceToken).to(JobService).singleton();
 });
 
 // AppModule composes everything — async because it imports async modules

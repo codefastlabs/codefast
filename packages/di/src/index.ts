@@ -20,6 +20,9 @@ export type {
   ResolvedBinding,
   ResolveHint,
   ResolveOptions,
+  SingletonBindingBuilder,
+  ScopedBindingBuilder,
+  TransientBindingBuilder,
 } from "#/binding";
 
 export {
@@ -31,31 +34,32 @@ export {
 export { whenAnyAncestorIs, whenParentIs, whenTargetTagged } from "#/constraints";
 
 export { Container } from "#/container";
+export type { ContainerGraphJson } from "#/container";
 export { inject, isInjectionDescriptor, optional } from "#/decorators/inject";
 
 export type { InjectOptions } from "#/decorators/inject";
-export { injectable } from "#/decorators/injectable";
+export { getAutoRegistered, injectable } from "#/decorators/injectable";
 
 export type { InjectableDependency } from "#/decorators/injectable";
 export {
-  CODEFAST_DI_CLASS_SCOPE_HINT,
+  CODEFAST_DI_ACCESSOR_INJECTIONS,
   CODEFAST_DI_CONSTRUCTOR_METADATA,
+  CODEFAST_DI_LIFECYCLE_METADATA,
   decoratorMetadataObjectSymbol,
 } from "#/decorators/metadata";
 
 export type {
-  ClassScopeHint,
+  AccessorInjectionMetadata,
   ConstructorMetadata,
   InjectionDescriptor,
+  LifecycleMetadata,
   MetadataReader,
   ParamMetadata,
 } from "#/decorators/metadata";
 export { getOrCreatePendingMap, takePendingMap } from "#/decorators/param-registry";
 
 export { SymbolMetadataReader } from "#/decorators/reader";
-export { scoped } from "#/decorators/scoped";
-
-export { singleton } from "#/decorators/singleton";
+export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
 export {
   collectStaticDependencyEdges,
   injectHintLabelFromResolveHint,
@@ -86,7 +90,15 @@ export type {
   DotGraphOptions,
 } from "#/inspector";
 
-export { runActivation, runActivationAsync } from "#/lifecycle";
+export {
+  readLifecycleMetadataFromCtor,
+  runActivation,
+  runActivationAsync,
+  runPostConstruct,
+  runPostConstructAsync,
+  runPreDestroy,
+  runPreDestroyAsync,
+} from "#/lifecycle";
 
 export { AsyncModule, Module } from "#/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";

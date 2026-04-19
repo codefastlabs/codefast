@@ -4,7 +4,6 @@ import {
   token,
   injectable,
   inject,
-  singleton,
   Module,
   AsyncModule,
   TokenNotBoundError,
@@ -15,14 +14,13 @@ describe("index smoke test", () => {
     const ApiKeyToken = token<string>("ApiKey");
 
     @injectable([inject(ApiKeyToken)])
-    @singleton()
     class PaymentGateway {
       constructor(public apiKey: string) {}
     }
 
     const container = Container.create();
     container.bind(ApiKeyToken).toConstantValue("sk_test_123");
-    container.bind(PaymentGateway).toSelf();
+    container.bind(PaymentGateway).toSelf().singleton();
 
     const gateway = container.resolve(PaymentGateway);
     expect(gateway).toBeInstanceOf(PaymentGateway);
@@ -67,13 +65,11 @@ describe("index smoke test", () => {
   });
 
   it("verifies secondary exports are available", () => {
-    // Just checking existence for utility exports not covered by the lifecycle test
     expect(Container).toBeDefined();
     expect(Module).toBeDefined();
     expect(token).toBeDefined();
     expect(inject).toBeDefined();
     expect(injectable).toBeDefined();
-    expect(singleton).toBeDefined();
     expect(AsyncModule).toBeDefined();
   });
 });

@@ -1,5 +1,6 @@
 import type { Binding, BindingIdentifier } from "#/binding";
 import { DiError } from "#/errors";
+import { runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
 
 type CacheEntry = {
   readonly binding: Binding<unknown>;
@@ -170,14 +171,17 @@ export class ScopeManager {
     }
     store.delete(bindingId);
     const handler = entry.binding.onDeactivation;
-    if (handler === undefined) {
-      return;
+    if (handler !== undefined) {
+      const result = handler(entry.instance);
+      if (isPromiseLike(result)) {
+        throw new DiError(
+          "onDeactivation returned a Promise during synchronous scope release; use releaseBindingAsync() or unloadAsync().",
+        );
+      }
     }
-    const result = handler(entry.instance);
-    if (isPromiseLike(result)) {
-      throw new DiError(
-        "onDeactivation returned a Promise during synchronous scope release; use releaseBindingAsync() or unloadAsync().",
-      );
+    // @preDestroy runs AFTER onDeactivation
+    if (entry.binding.kind === "class") {
+      runPreDestroy(entry.binding.ctor, entry.instance);
     }
   }
 
@@ -191,24 +195,30 @@ export class ScopeManager {
     }
     store.delete(bindingId);
     const handler = entry.binding.onDeactivation;
-    if (handler === undefined) {
-      return;
+    if (handler !== undefined) {
+      await handler(entry.instance);
     }
-    await handler(entry.instance);
+    // @preDestroy runs AFTER onDeactivation
+    if (entry.binding.kind === "class") {
+      await runPreDestroyAsync(entry.binding.ctor, entry.instance);
+    }
   }
 
   private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
     for (const [id, entry] of [...store.entries()]) {
       store.delete(id);
       const handler = entry.binding.onDeactivation;
-      if (handler === undefined) {
-        continue;
+      if (handler !== undefined) {
+        const result = handler(entry.instance);
+        if (isPromiseLike(result)) {
+          throw new DiError(
+            "onDeactivation returned a Promise; use disposeAsync() instead of dispose().",
+          );
+        }
       }
-      const result = handler(entry.instance);
-      if (isPromiseLike(result)) {
-        throw new DiError(
-          "onDeactivation returned a Promise; use disposeAsync() instead of dispose().",
-        );
+      // @preDestroy runs AFTER onDeactivation
+      if (entry.binding.kind === "class") {
+        runPreDestroy(entry.binding.ctor, entry.instance);
       }
     }
   }
@@ -218,12 +228,15 @@ export class ScopeManager {
     store.clear();
     const errors: unknown[] = [];
     for (const entry of entries) {
-      const handler = entry.binding.onDeactivation;
-      if (handler === undefined) {
-        continue;
-      }
       try {
-        await handler(entry.instance);
+        const handler = entry.binding.onDeactivation;
+        if (handler !== undefined) {
+          await handler(entry.instance);
+        }
+        // @preDestroy runs AFTER onDeactivation
+        if (entry.binding.kind === "class") {
+          await runPreDestroyAsync(entry.binding.ctor, entry.instance);
+        }
       } catch (error) {
         errors.push(error);
       }

@@ -149,7 +149,7 @@ describe("Integration: Advanced Constraints", () => {
     expect(validateSpy).not.toHaveBeenCalled();
   });
 
-  it("initialize() warms singleton sync bindings; initializeAsync includes async-dynamic", async () => {
+  it("initializeAsync warms all singleton bindings including async-dynamic", async () => {
     const Sync = token<string>("Sync");
     const Async = token<string>("Async");
 
@@ -174,12 +174,10 @@ describe("Integration: Advanced Constraints", () => {
       container.inspect().bindings.find((row) => row.bindingId === bindingId)?.activationStatus;
 
     expect(statusOf(syncBinding.id)).toBe("not-cached");
-
-    container.initialize();
-    expect(statusOf(syncBinding.id)).toBe("cached");
     expect(statusOf(asyncBinding.id)).toBe("not-cached");
 
     await container.initializeAsync();
+    expect(statusOf(syncBinding.id)).toBe("cached");
     expect(statusOf(asyncBinding.id)).toBe("cached");
   });
 });

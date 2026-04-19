@@ -12,7 +12,7 @@
  * - Graceful shutdown with await using
  */
 
-import { Container, inject, injectable, Module, scoped, singleton, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token } from "@codefast/di";
 
 // ============================================================================
 // Domain types
@@ -90,7 +90,6 @@ interface User {
 }
 
 @injectable([inject(DatabaseToken)])
-@singleton()
 class UserRepository {
   constructor(private readonly db: Database) {}
 
@@ -105,7 +104,6 @@ class UserRepository {
 // ============================================================================
 
 @injectable([inject(ConfigToken), inject(UserRepoToken)])
-@singleton()
 class AuthService {
   constructor(
     private readonly config: AppConfig,
@@ -171,7 +169,6 @@ class AuthMiddleware implements Middleware {
 // ============================================================================
 
 @injectable([inject(RequestContextToken), inject(UserRepoToken), inject(AuthServiceToken)])
-@scoped()
 class UserController {
   constructor(
     private readonly req: HttpRequest,
@@ -220,12 +217,12 @@ const InfraModule = Module.createAsync("Infra", async (api) => {
 });
 
 const RepositoryModule = Module.create("Repository", (api) => {
-  api.bind(UserRepoToken).to(UserRepository);
+  api.bind(UserRepoToken).to(UserRepository).singleton();
 });
 
 const ServiceModule = Module.create("Service", (api) => {
   api.import(RepositoryModule);
-  api.bind(AuthServiceToken).to(AuthService);
+  api.bind(AuthServiceToken).to(AuthService).singleton();
 });
 
 const MiddlewareModule = Module.create("Middleware", (api) => {
@@ -237,7 +234,7 @@ const MiddlewareModule = Module.create("Middleware", (api) => {
 
 const ControllerModule = Module.create("Controller", (api) => {
   api.import(ServiceModule);
-  api.bind(UserControllerToken).to(UserController);
+  api.bind(UserControllerToken).to(UserController).scoped();
 });
 
 const AppModule = Module.create("App", (api) => {
@@ -323,7 +320,7 @@ async function main(): Promise<void> {
   console.log("Response 2:", JSON.stringify(res2));
 
   // Introspect dependency graph
-  const dot = server.container.generateDependencyGraphDot();
+  const dot = server.container.generateDependencyGraph();
   console.log(`\nDOT graph (${dot.split("\n").length} lines, paste at graphviz.org)`);
 }
 
