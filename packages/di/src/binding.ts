@@ -28,7 +28,7 @@ export type BindingScope = "singleton" | "transient" | "scoped";
  */
 export type ResolveHint = {
   readonly name?: string;
-  readonly tag?: readonly [tag: string | symbol, value: unknown];
+  readonly tag?: readonly [tag: string, value: unknown];
 };
 
 export type ResolveOptions = ResolveHint;
@@ -48,7 +48,7 @@ export type ConstraintParentFrame = {
   readonly registryKey: RegistryKey;
   readonly bindingId: BindingIdentifier;
   readonly bindingKind: ConstraintBindingKind;
-  readonly tags: ReadonlyMap<string | symbol, unknown>;
+  readonly tags: ReadonlyMap<string, unknown>;
   readonly scope: BindingScope;
 };
 
@@ -94,7 +94,7 @@ export type ResolutionContext = {
 
 type BindingLifecycle = {
   readonly bindingName?: string;
-  readonly tags: ReadonlyMap<string | symbol, unknown>;
+  readonly tags: ReadonlyMap<string, unknown>;
   readonly onActivation?: ActivationHandler<unknown>;
   readonly onDeactivation?: DeactivationHandler<unknown>;
   readonly constraint?: (ctx: ConstraintContext) => boolean;
@@ -188,7 +188,7 @@ export class BindingBuilder<Value> {
   private isScopeExplicit = false;
   private explicitId: BindingIdentifier | undefined;
   private bindingName: string | undefined;
-  private readonly tags = new Map<string | symbol, unknown>();
+  private readonly tags = new Map<string, unknown>();
   private readonly constraintPredicates: ((ctx: ConstraintContext) => boolean)[] = [];
   private onActivationHandler: ActivationHandler<unknown> | undefined;
   private onDeactivationHandler: DeactivationHandler<unknown> | undefined;
@@ -300,7 +300,7 @@ export class BindingBuilder<Value> {
     return this;
   }
 
-  whenTagged(tag: string | symbol, tagValue: unknown): this {
+  whenTagged(tag: string, tagValue: unknown): this {
     this.tags.set(tag, tagValue);
     this.refreshRegisteredBinding();
     return this;

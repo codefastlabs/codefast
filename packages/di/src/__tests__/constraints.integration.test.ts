@@ -72,7 +72,7 @@ describe("Integration: Advanced Constraints", () => {
   it("whenTargetTagged matches parent binding tags on the materialization stack", () => {
     const ApiToken = token<string>("ApiToken");
     const ParentToken = token<{ v: string }>("TaggedParent");
-    const tag = Symbol("role");
+    const tag = "role";
 
     const container = Container.create();
 

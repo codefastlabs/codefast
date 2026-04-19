@@ -24,24 +24,6 @@ export type ResolvedDependency = {
   readonly injectHintLabel?: string;
 };
 
-function formatTagKeyForGraph(tag: string | symbol): string {
-  if (typeof tag === "string") {
-    return tag;
-  }
-  // Registered (global) symbols round-trip: `Symbol.for("key")` is reconstructible across realms.
-  const registryKey = Symbol.keyFor(tag);
-  if (registryKey !== undefined) {
-    return `Symbol.for(${JSON.stringify(registryKey)})`;
-  }
-  // Local symbols: render as `Symbol(description)` to match Node's util.inspect output.
-  // Two local symbols with the same description render identically in the graph — this is a
-  // display limitation, not a matching bug; runtime selection uses symbol identity via Map.
-  const description = tag.description;
-  return description !== undefined && description.length > 0
-    ? `Symbol(${description})`
-    : "Symbol()";
-}
-
 function formatTagValueForGraph(value: unknown): string {
   if (typeof value === "string") {
     return value;
@@ -62,7 +44,7 @@ export function injectHintLabelFromResolveHint(hint: ResolveHint | undefined): s
   }
   if (hint.tag !== undefined) {
     const [tagKey, tagValue] = hint.tag;
-    return `tag: ${formatTagKeyForGraph(tagKey)}=${formatTagValueForGraph(tagValue)}`;
+    return `tag: ${tagKey}=${formatTagValueForGraph(tagValue)}`;
   }
   return undefined;
 }

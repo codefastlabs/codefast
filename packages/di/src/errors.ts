@@ -15,7 +15,7 @@ function safeSerializeHint(hint: ResolveHint): string {
     }
     if (hint.tag !== undefined) {
       const [tagKey, tagValue] = hint.tag;
-      parts.push(`tag: [${String(tagKey)}, <${typeof tagValue}>]`);
+      parts.push(`tag: [${tagKey}, <${typeof tagValue}>]`);
     }
     return `{ ${parts.join(", ")} }`;
   } catch {

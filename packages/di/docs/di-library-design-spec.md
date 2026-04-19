@@ -264,7 +264,7 @@ interface BindingBuilder<Value> {
   scoped(): ScopedBindingBuilder<Value>;
   onActivation(fn: (ctx: ResolutionContext, instance: Value) => Value | Promise<Value>): this;
   whenNamed(name: string): this;
-  whenTagged(tag: string | symbol, value: unknown): this;
+  whenTagged(tag: string, value: unknown): this;
   id(): BindingIdentifier;
 }
 
@@ -304,26 +304,19 @@ container.bind(Logger).to(FileLogger).whenNamed("file");
 // Resolve theo tên
 const logger = container.resolve(Logger, { name: "file" }); // ^? LoggerService
 
-// Tagged binding — tag key là string | symbol, value là unknown
+// Tagged binding — tag key là string, value là unknown
 container.bind(Engine).to(PetrolEngine).whenTagged("fuel", "petrol");
 container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
 
 // Resolve theo tag
 const engine = container.resolve(Engine, { tag: ["fuel", "electric"] });
 
-// Symbol tag — tránh collision giữa các package
-const FUEL = Symbol.for("mylib.fuel");
-container.bind(Engine).to(HydrogenEngine).whenTagged(FUEL, "hydrogen");
-const h = container.resolve(Engine, { tag: [FUEL, "hydrogen"] });
+// Tránh collision giữa các package — dùng namespace prefix trong string
+container.bind(Engine).to(HydrogenEngine).whenTagged("mylib:fuel", "hydrogen");
+const h = container.resolve(Engine, { tag: ["mylib:fuel", "hydrogen"] });
 ```
 
-> **Tag key là `string | symbol`:** `whenTagged` và `ResolveOptions.tag` chấp nhận cả `string` lẫn `symbol` — tận dụng `unique symbol` / `Symbol.for()` của TypeScript hiện đại để tránh collision giữa các package. Matching ở runtime dựa trên symbol identity (qua `Map`).
->
-> **Hệ quả với serialization:** Inspector phải serialize cả hai. Convention:
->
-> - `Symbol.for("key")` → `"Symbol.for(\"key\")"` (round-trippable qua realm).
-> - `Symbol("desc")` local → `"Symbol(desc)"`. Hai local symbol cùng description sẽ có cùng label — đây là giới hạn hiển thị, không phải lỗi matching (runtime vẫn phân biệt qua identity).
-> - Nếu cần label tuyệt đối ổn định cho cross-process log/graph, dùng `string` tag với prefix convention (`"mylib:fuel"`).
+> **Tag key là `string`:** `whenTagged` và `ResolveOptions.tag` chỉ nhận `string`. Để tránh collision giữa các package, dùng namespace prefix: `"mylib:fuel"`, `"@scope/pkg:tag"`. Cách này nhất quán với convention đã phổ biến trong hệ sinh thái JS/TS, serialize thẳng vào JSON, và không gây vấn đề debugging với local symbols cùng description.
 
 ### 4.5 `toResolved` — explicit deps (lấy cảm hứng từ `toResolvedValue` của v8)
 
@@ -577,7 +570,7 @@ interface ContainerGraphJson {
 
 interface ResolveOptions {
   name?: string;
-  tag?: [tag: string | symbol, value: unknown];
+  tag?: [tag: string, value: unknown];
 }
 
 // Static methods — không nằm trong interface vì TypeScript interface không model static
@@ -640,7 +633,7 @@ class App {
 ```ts
 import { injectable, inject, optional } from "@codefast/di";
 
-@injectable([inject(Logger, { name: "console" }), inject(Engine, { tag: ["fuel", "electric"] })])
+@injectable([inject(Logger, { name: "console" }), inject(Engine, { tag: ["fuel", "electric"] })]) // tag key luôn là string
 class Dashboard {
   constructor(
     private logger: LoggerService,
@@ -664,12 +657,12 @@ Type signature của `inject()` và `optional()`:
 // Plain function — không phải decorator
 function inject<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string | symbol, value: unknown] },
+  opts?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value>;
 
 function optional<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string | symbol, value: unknown] },
+  opts?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value | undefined>;
 
 // InjectionDescriptor — được truyền vào deps array
@@ -677,7 +670,7 @@ interface InjectionDescriptor<Value = unknown> {
   readonly token: Token<Value> | Constructor<Value>;
   readonly optional: boolean;
   readonly name?: string;
-  readonly tag?: [tag: string | symbol, value: unknown];
+  readonly tag?: [tag: string, value: unknown];
 }
 ```
 
@@ -722,7 +715,7 @@ interface ParamMetadata {
   token: Token<unknown> | Constructor;
   optional: boolean;
   name?: string;
-  tag?: [tag: string | symbol, value: unknown];
+  tag?: [tag: string, value: unknown];
 }
 
 interface LifecycleMetadata {
@@ -784,7 +777,7 @@ Type signature của `inject` khi dùng làm field decorator:
 // inject() hoạt động như cả plain function (deps array) lẫn accessor decorator
 function inject<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string | symbol, value: unknown] },
+  opts?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
 ```
 
@@ -1267,16 +1260,16 @@ TC39 Stage 3 `@injectable(deps?, opts?)` với deps array và `autoRegister` opt
 
 ### Học từ v8
 
-| Tính năng v8                              | Cách triển khai ở đây                                                                  |
-| ----------------------------------------- | -------------------------------------------------------------------------------------- |
-| Naming: unqualified=sync, `Async`=async   | Giữ nguyên: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, ...  |
-| ESM-only, Node ≥ 20.19                    | Giống v8                                                                               |
-| `onActivation` / `onDeactivation`         | Giữ, nhưng callback tự infer type — không cần annotate                                 |
-| `toResolvedValue(factory, injectOptions)` | Đổi tên thành `toResolved(factory, deps)` với deps là plain token array — đơn giản hơn |
-| `toService()` alias                       | Đổi tên thành `toAlias()`                                                              |
-| `BindingIdentifier` / `.getIdentifier()`  | Giữ concept, đổi method thành `.id()`                                                  |
-| Bỏ `Provider` / `ProviderBinding`         | Không có từ đầu — chỉ có `toDynamic` và `toDynamicAsync`                               |
-| Named/tagged bindings                     | Giữ `whenNamed`, `whenTagged` — bỏ `whenAnyAncestor*` cho Phase 1                      |
+| Tính năng v8                              | Cách triển khai ở đây                                                                     |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Naming: unqualified=sync, `Async`=async   | Giữ nguyên: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, ...     |
+| ESM-only, Node ≥ 20.19                    | Giống v8                                                                                  |
+| `onActivation` / `onDeactivation`         | Giữ, nhưng callback tự infer type — không cần annotate                                    |
+| `toResolvedValue(factory, injectOptions)` | Đổi tên thành `toResolved(factory, deps)` với deps là plain token array — đơn giản hơn    |
+| `toService()` alias                       | Đổi tên thành `toAlias()`                                                                 |
+| `BindingIdentifier` / `.getIdentifier()`  | Giữ concept, đổi method thành `.id()`                                                     |
+| Bỏ `Provider` / `ProviderBinding`         | Không có từ đầu — chỉ có `toDynamic` và `toDynamicAsync`                                  |
+| Named/tagged bindings                     | Giữ `whenNamed`, `whenTagged` (tag key `string` only) — bỏ `whenAnyAncestor*` cho Phase 1 |
 
 ### Cải thiện hơn v8
 

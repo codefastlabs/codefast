@@ -3,19 +3,18 @@ import { token } from "#/token";
 import { inject, optional, isInjectionDescriptor } from "#/decorators/inject";
 
 describe("inject", () => {
-  it("preserves Symbol keys in tag resolve hints", () => {
+  it("preserves string keys in tag resolve hints", () => {
     const T = token<number>("inject-test-token");
-    const tagKey = Symbol("inject-test-tag");
-    const descriptor = inject(T, { tag: [tagKey, "payload"] });
+    const descriptor = inject(T, { tag: ["inject-test-tag", "payload"] });
 
-    expect(descriptor.tag).toEqual([tagKey, "payload"]);
+    expect(descriptor.tag).toEqual(["inject-test-tag", "payload"]);
   });
 
-  it("throws when tag tuple is malformed", () => {
+  it("throws when tag key is not a string", () => {
     const T = token<number>("inject-test-bad-tag");
     expect(() =>
       inject(T, {
-        // @ts-expect-error — exercise runtime validation for non-string/symbol tag keys
+        // @ts-expect-error — exercise runtime validation for non-string tag keys
         tag: [1, 2],
       }),
     ).toThrow(DiError);
