@@ -150,7 +150,7 @@ export function listResolvedDependencies(
       if (reader === undefined) {
         return [];
       }
-      const meta = reader.getConstructorMetadata(consumer.ctor);
+      const meta = reader.getConstructorMetadata(consumer.implementationClass);
       if (meta === undefined || meta.params.length === 0) {
         return [];
       }

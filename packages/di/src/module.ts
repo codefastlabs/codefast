@@ -27,34 +27,37 @@ export type AsyncModuleBuilder = {
  */
 export class Module {
   readonly name: string;
-  private readonly syncSetup: (api: ModuleBuilder) => void;
+  private readonly syncSetup: (builder: ModuleBuilder) => void;
 
-  private constructor(name: string, syncSetup: (api: ModuleBuilder) => void) {
+  private constructor(name: string, syncSetup: (builder: ModuleBuilder) => void) {
     this.name = name;
     this.syncSetup = syncSetup;
   }
 
-  static create(name: string, setup: (api: ModuleBuilder) => void): Module {
+  static create(name: string, setup: (builder: ModuleBuilder) => void): Module {
     return new Module(name, setup);
   }
 
-  static createAsync(name: string, setup: (api: AsyncModuleBuilder) => Promise<void>): AsyncModule {
+  static createAsync(
+    name: string,
+    setup: (builder: AsyncModuleBuilder) => Promise<void>,
+  ): AsyncModule {
     return new AsyncModule(name, setup);
   }
 
   /**
    * @internal Invoked by the container while loading this module.
    */
-  runSyncSetup(api: ModuleBuilder): void {
-    this.syncSetup(api);
+  runSyncSetup(builder: ModuleBuilder): void {
+    this.syncSetup(builder);
   }
 }
 
 export class AsyncModule {
   readonly name: string;
-  private readonly asyncSetup: (api: AsyncModuleBuilder) => Promise<void>;
+  private readonly asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>;
 
-  constructor(name: string, asyncSetup: (api: AsyncModuleBuilder) => Promise<void>) {
+  constructor(name: string, asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>) {
     this.name = name;
     this.asyncSetup = asyncSetup;
   }
@@ -62,7 +65,7 @@ export class AsyncModule {
   /**
    * @internal Invoked by the container while loading this module.
    */
-  async runAsyncSetup(api: AsyncModuleBuilder): Promise<void> {
-    await this.asyncSetup(api);
+  async runAsyncSetup(builder: AsyncModuleBuilder): Promise<void> {
+    await this.asyncSetup(builder);
   }
 }

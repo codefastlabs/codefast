@@ -571,9 +571,9 @@ class JobService {
 // Modules
 // ============================================================================
 
-const ConfigModule = Module.createAsync("Config", async (api) => {
+const ConfigModule = Module.createAsync("Config", async (builder) => {
   // In production, read from process.env / secrets manager
-  api.bind(ServiceConfigToken).toConstantValue({
+  builder.bind(ServiceConfigToken).toConstantValue({
     port: 3000,
     databaseUrl: "postgres://localhost:5432/jobservice",
     redisUrl: "redis://localhost:6379",
@@ -583,10 +583,10 @@ const ConfigModule = Module.createAsync("Config", async (api) => {
   });
 });
 
-const DatabaseModule = Module.createAsync("Database", async (api) => {
-  api.import(ConfigModule);
+const DatabaseModule = Module.createAsync("Database", async (builder) => {
+  builder.import(ConfigModule);
 
-  api
+  builder
     .bind(DatabasePoolToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(ServiceConfigToken);
@@ -601,10 +601,10 @@ const DatabaseModule = Module.createAsync("Database", async (api) => {
     });
 });
 
-const RedisModule = Module.createAsync("Redis", async (api) => {
-  api.import(ConfigModule);
+const RedisModule = Module.createAsync("Redis", async (builder) => {
+  builder.import(ConfigModule);
 
-  api
+  builder
     .bind(RedisClientToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(ServiceConfigToken);
@@ -619,15 +619,15 @@ const RedisModule = Module.createAsync("Redis", async (api) => {
     });
 });
 
-const WorkerModule = Module.createAsync("Worker", async (api) => {
-  api.import(ConfigModule);
+const WorkerModule = Module.createAsync("Worker", async (builder) => {
+  builder.import(ConfigModule);
 
-  api
+  builder
     .bind(JobQueueToken)
     .toDynamic(() => new InMemoryJobQueue())
     .singleton();
 
-  api
+  builder
     .bind(JobWorkerToken)
     .toDynamic((ctx) => {
       const config = ctx.resolve(ServiceConfigToken);
@@ -644,20 +644,20 @@ const WorkerModule = Module.createAsync("Worker", async (api) => {
     });
 });
 
-const MetricsModule = Module.create("Metrics", (api) => {
-  api
+const MetricsModule = Module.create("Metrics", (builder) => {
+  builder
     .bind(MetricsCollectorToken)
     .toDynamic(() => new InMemoryMetricsCollector())
     .singleton();
 });
 
 // HealthModule imports async modules → must be async itself
-const HealthModule = Module.createAsync("Health", async (api) => {
-  api.import(ConfigModule);
+const HealthModule = Module.createAsync("Health", async (builder) => {
+  builder.import(ConfigModule);
 
   // DatabasePool and RedisClient have async factories — use toDynamicAsync
   // and resolveAsync so the sync resolver is never called on async bindings.
-  api
+  builder
     .bind(HealthRegistryToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(ServiceConfigToken);
@@ -685,12 +685,12 @@ const HealthModule = Module.createAsync("Health", async (api) => {
 });
 
 // HttpModule imports async modules → must be async itself
-const HttpModule = Module.createAsync("Http", async (api) => {
-  api.import(ConfigModule, HealthModule);
+const HttpModule = Module.createAsync("Http", async (builder) => {
+  builder.import(ConfigModule, HealthModule);
 
   // HealthRegistry is toDynamicAsync → HttpServer must also use toDynamicAsync
   // and resolve its async deps via resolveAsync before wiring routes.
-  api
+  builder
     .bind(HttpServerToken)
     .toDynamicAsync(async (ctx) => {
       const healthRegistry = await ctx.resolveAsync(HealthRegistryToken);
@@ -746,15 +746,15 @@ const HttpModule = Module.createAsync("Http", async (api) => {
 });
 
 // ServiceModule imports async modules → must be async itself
-const ServiceModule = Module.createAsync("Service", async (api) => {
-  api.import(DatabaseModule, RedisModule, MetricsModule);
-  api.bind(JobRepositoryToken).to(JobRepository).singleton();
-  api.bind(JobServiceToken).to(JobService).singleton();
+const ServiceModule = Module.createAsync("Service", async (builder) => {
+  builder.import(DatabaseModule, RedisModule, MetricsModule);
+  builder.bind(JobRepositoryToken).to(JobRepository).singleton();
+  builder.bind(JobServiceToken).to(JobService).singleton();
 });
 
 // AppModule composes everything — async because it imports async modules
-const AppModule = Module.createAsync("App", async (api) => {
-  api.import(
+const AppModule = Module.createAsync("App", async (builder) => {
+  builder.import(
     ConfigModule,
     DatabaseModule,
     RedisModule,

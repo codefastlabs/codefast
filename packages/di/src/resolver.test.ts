@@ -240,7 +240,7 @@ describe("DependencyResolver", () => {
     }
     const processorBinding = mockBinding<PaymentProcessor>({
       kind: "class",
-      ctor: PaymentProcessor,
+      implementationClass: PaymentProcessor,
     });
 
     vi.mocked(getConstructorMetadata).mockReturnValue({
@@ -266,7 +266,7 @@ describe("DependencyResolver", () => {
     }
     const processorBinding = mockBinding<AsyncPaymentProcessor>({
       kind: "class",
-      ctor: AsyncPaymentProcessor,
+      implementationClass: AsyncPaymentProcessor,
     });
 
     vi.mocked(getConstructorMetadata).mockReturnValue({
@@ -294,7 +294,7 @@ describe("DependencyResolver", () => {
     }
     const processorBinding = mockBinding<AsyncPaymentProcessor>({
       kind: "class",
-      ctor: AsyncPaymentProcessor,
+      implementationClass: AsyncPaymentProcessor,
     });
 
     vi.mocked(getConstructorMetadata).mockReturnValue({
@@ -321,7 +321,7 @@ describe("DependencyResolver", () => {
     }
     const processorBinding = mockBinding<PaymentProcessor>({
       kind: "class",
-      ctor: PaymentProcessor,
+      implementationClass: PaymentProcessor,
     });
 
     vi.mocked(getConstructorMetadata).mockReturnValue({
@@ -348,7 +348,10 @@ describe("DependencyResolver", () => {
         // _dep is unused
       }
     }
-    const serviceBinding = mockBinding<UnmarkedService>({ kind: "class", ctor: UnmarkedService });
+    const serviceBinding = mockBinding<UnmarkedService>({
+      kind: "class",
+      implementationClass: UnmarkedService,
+    });
 
     vi.mocked(getConstructorMetadata).mockReturnValue(undefined);
     lookup.mockReturnValue([serviceBinding]);
@@ -359,7 +362,10 @@ describe("DependencyResolver", () => {
   it("instantiateClassBinding handles classes with no parameters", () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class NoOpService {}
-    const serviceBinding = mockBinding<NoOpService>({ kind: "class", ctor: NoOpService });
+    const serviceBinding = mockBinding<NoOpService>({
+      kind: "class",
+      implementationClass: NoOpService,
+    });
     lookup.mockReturnValue([serviceBinding]);
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [],
@@ -370,7 +376,10 @@ describe("DependencyResolver", () => {
 
   it("instantiateClassBinding handles undefined metadata reader", () => {
     class BasicService {}
-    const serviceBinding = mockBinding<BasicService>({ kind: "class", ctor: BasicService });
+    const serviceBinding = mockBinding<BasicService>({
+      kind: "class",
+      implementationClass: BasicService,
+    });
     const lookup = vi.fn().mockReturnValue([serviceBinding]);
     const resolver = new DependencyResolver({
       lookup,
@@ -388,7 +397,10 @@ describe("DependencyResolver", () => {
         // _dep is unused
       }
     }
-    const databaseBinding = mockBinding<AsyncDatabase>({ kind: "class", ctor: AsyncDatabase });
+    const databaseBinding = mockBinding<AsyncDatabase>({
+      kind: "class",
+      implementationClass: AsyncDatabase,
+    });
 
     vi.mocked(getConstructorMetadata).mockReturnValue(undefined);
     lookup.mockReturnValue([databaseBinding]);
@@ -399,7 +411,7 @@ describe("DependencyResolver", () => {
   it("instantiateClassBindingAsync handles classes with no parameters", async () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class AsyncNoOp {}
-    const noOpBinding = mockBinding<AsyncNoOp>({ kind: "class", ctor: AsyncNoOp });
+    const noOpBinding = mockBinding<AsyncNoOp>({ kind: "class", implementationClass: AsyncNoOp });
     lookup.mockReturnValue([noOpBinding]);
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [],

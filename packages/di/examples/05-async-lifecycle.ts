@@ -92,15 +92,15 @@ class App {
 
 // --- AsyncModule ------------------------------------------------------------
 
-const InfraModule = Module.createAsync("Infra", async (api) => {
+const InfraModule = Module.createAsync("Infra", async (builder) => {
   // Async module setup — fetch config from "remote" source
   const config = await fetchConfig();
-  api.bind(ConfigToken).toConstantValue(config);
+  builder.bind(ConfigToken).toConstantValue(config);
 });
 
-const DatabaseModule = Module.create("Database", (api) => {
+const DatabaseModule = Module.create("Database", (builder) => {
   // toDynamicAsync: async factory with access to ResolutionContext
-  api
+  builder
     .bind(DatabaseToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(ConfigToken);
@@ -118,8 +118,8 @@ const DatabaseModule = Module.create("Database", (api) => {
     });
 });
 
-const CacheModule = Module.create("Cache", (api) => {
-  api
+const CacheModule = Module.create("Cache", (builder) => {
+  builder
     .bind(CacheToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(ConfigToken);
@@ -135,8 +135,8 @@ const CacheModule = Module.create("Cache", (api) => {
     });
 });
 
-const AppModule = Module.create("App", (api) => {
-  api.bind(AppToken).to(App).singleton();
+const AppModule = Module.create("App", (builder) => {
+  builder.bind(AppToken).to(App).singleton();
 });
 
 // --- Bootstrap & teardown ---------------------------------------------------

@@ -171,6 +171,32 @@ interface ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     opts?: ResolveOptions,
   ): Value | undefined;
+  /**
+   * Dependency-graph navigation context — dùng trong `BindingBuilder.when()` predicates.
+   * Khác với `resolve*`: không cần để tạo instance thông thường, chỉ cần khi binding
+   * cần biết vị trí trong dependency graph để quyết định resolve hay không.
+   */
+  graph: ConstraintContext;
+}
+```
+
+`ConstraintContext` chứa:
+
+```ts
+interface ConstraintContext {
+  /** Mảng label (readonly snapshot) của token trên path hiện tại — dùng để hiển thị lỗi. */
+  resolutionPath: readonly string[];
+  /**
+   * Stack các frame trên construction chain — dùng để detect captive dependency
+   * (singleton giữ scoped/transient). Khác với `resolutionPath` (chỉ là labels string),
+   * `materializationStack` chứa metadata đầy đủ (scope, bindingId, kind) của từng step.
+   */
+  materializationStack: readonly MaterializationFrame[];
+  /** Frame ngay trên (direct parent) trong construction chain, hoặc `undefined` ở root. */
+  parent: MaterializationFrame | undefined;
+  /** Tất cả các frame trên parent (không gồm direct parent). */
+  ancestors: readonly MaterializationFrame[];
+  currentResolveHint: ResolveHint | undefined;
 }
 ```
 
@@ -867,27 +893,28 @@ Module là cách nhóm binding theo domain. Hỗ trợ cả sync lẫn async set
 ```ts
 import { Module } from "@codefast/di";
 
-export const LoggerModule = Module.create("Logger", (m) => {
-  m.bind(Logger).to(ConsoleLogger).singleton();
+export const LoggerModule = Module.create("Logger", (builder) => {
+  builder.bind(Logger).to(ConsoleLogger).singleton();
 });
 
-export const AppModule = Module.create("App", (m) => {
-  m.import(LoggerModule);
-  m.bind(Config).toConstantValue(loadConfig());
-  m.bind(App).toSelf().singleton();
+export const AppModule = Module.create("App", (builder) => {
+  builder.import(LoggerModule);
+  builder.bind(Config).toConstantValue(loadConfig());
+  builder.bind(App).toSelf().singleton();
 });
 ```
 
 ### 7.2 Async module
 
 ```ts
-export const DatabaseModule = Module.createAsync("Database", async (m) => {
+export const DatabaseModule = Module.createAsync("Database", async (builder) => {
   // Có thể chạy async setup trước khi đăng ký binding
   const config = await loadRemoteConfig();
 
-  m.import(LoggerModule);
-  m.bind(Config).toConstantValue(config);
-  m.bind(Database)
+  builder.import(LoggerModule);
+  builder.bind(Config).toConstantValue(config);
+  builder
+    .bind(Database)
     .toDynamicAsync(async (ctx) => {
       const db = new PostgresDatabase(config.dbUrl);
       await db.connect();

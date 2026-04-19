@@ -368,19 +368,19 @@ class InviteService {
 // Root module — shared infrastructure
 // ============================================================================
 
-const InfraModule = Module.createAsync("Infra", async (api) => {
-  api.bind(AppConfigToken).toConstantValue({
+const InfraModule = Module.createAsync("Infra", async (builder) => {
+  builder.bind(AppConfigToken).toConstantValue({
     defaultDbUrl: "postgres://localhost:5432/saas",
     redisUrl: "redis://localhost:6379",
     maxConnectionsPerTenant: 10,
   });
 
-  api.bind(AppLoggerToken).toConstantValue({
+  builder.bind(AppLoggerToken).toConstantValue({
     info: (msg) => console.log(`  [APP]   ${msg}`),
     error: (msg) => console.error(`  [APP]   ${msg}`),
   });
 
-  api
+  builder
     .bind(DatabasePoolToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(AppConfigToken);

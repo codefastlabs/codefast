@@ -134,7 +134,7 @@ describe("BindingBuilder", () => {
     class AuthService {}
     builder.to(AuthService as unknown as Constructor<string>);
     const b = getBinding()!;
-    expect(b).toMatchObject({ kind: "class", ctor: AuthService });
+    expect(b).toMatchObject({ kind: "class", implementationClass: AuthService });
   });
 
   it("toSelf creates a class binding if key is a class", () => {
@@ -144,7 +144,7 @@ describe("BindingBuilder", () => {
       register: (b) => (registeredBinding = b),
     });
     builder.toSelf();
-    expect(registeredBinding).toMatchObject({ kind: "class", ctor: AuthService });
+    expect(registeredBinding).toMatchObject({ kind: "class", implementationClass: AuthService });
   });
 
   it("toSelf throws if key is a token", () => {

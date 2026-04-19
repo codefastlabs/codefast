@@ -196,11 +196,11 @@ class UserController {
 // Modules
 // ============================================================================
 
-const InfraModule = Module.createAsync("Infra", async (api) => {
+const InfraModule = Module.createAsync("Infra", async (builder) => {
   const config = await loadConfig();
-  api.bind(ConfigToken).toConstantValue(config);
+  builder.bind(ConfigToken).toConstantValue(config);
 
-  api
+  builder
     .bind(DatabaseToken)
     .toDynamicAsync(async (ctx) => {
       const cfg = ctx.resolve(ConfigToken);
@@ -216,30 +216,30 @@ const InfraModule = Module.createAsync("Infra", async (api) => {
     });
 });
 
-const RepositoryModule = Module.create("Repository", (api) => {
-  api.bind(UserRepoToken).to(UserRepository).singleton();
+const RepositoryModule = Module.create("Repository", (builder) => {
+  builder.bind(UserRepoToken).to(UserRepository).singleton();
 });
 
-const ServiceModule = Module.create("Service", (api) => {
-  api.import(RepositoryModule);
-  api.bind(AuthServiceToken).to(AuthService).singleton();
+const ServiceModule = Module.create("Service", (builder) => {
+  builder.import(RepositoryModule);
+  builder.bind(AuthServiceToken).to(AuthService).singleton();
 });
 
-const MiddlewareModule = Module.create("Middleware", (api) => {
-  api.import(ServiceModule);
+const MiddlewareModule = Module.create("Middleware", (builder) => {
+  builder.import(ServiceModule);
   // Multi-binding: register all middleware under the same token
-  api.bind(MiddlewareToken).to(LoggingMiddleware);
-  api.bind(MiddlewareToken).to(AuthMiddleware);
+  builder.bind(MiddlewareToken).to(LoggingMiddleware);
+  builder.bind(MiddlewareToken).to(AuthMiddleware);
 });
 
-const ControllerModule = Module.create("Controller", (api) => {
-  api.import(ServiceModule);
-  api.bind(UserControllerToken).to(UserController).scoped();
+const ControllerModule = Module.create("Controller", (builder) => {
+  builder.import(ServiceModule);
+  builder.bind(UserControllerToken).to(UserController).scoped();
 });
 
-const AppModule = Module.create("App", (api) => {
-  api.import(RepositoryModule, ServiceModule, MiddlewareModule, ControllerModule);
-  api.bind(RequestContextToken).toConstantValue({
+const AppModule = Module.create("App", (builder) => {
+  builder.import(RepositoryModule, ServiceModule, MiddlewareModule, ControllerModule);
+  builder.bind(RequestContextToken).toConstantValue({
     requestId: "bootstrap",
     method: "GET",
     path: "/bootstrap",

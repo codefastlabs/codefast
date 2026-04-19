@@ -44,10 +44,15 @@ export function runActivation(
  * Reads lifecycle metadata directly from a constructor's Symbol.metadata.
  */
 export function readLifecycleMetadataFromCtor(
-  ctor: Constructor<unknown>,
+  implementationClass: Constructor<unknown>,
 ): LifecycleMetadata | undefined {
   const metadataSymbol = decoratorMetadataObjectSymbol();
-  const metadataObject = (ctor as unknown as Record<symbol, unknown>)[metadataSymbol];
+  if (metadataSymbol === undefined) {
+    return Reflect.getMetadata(CODEFAST_DI_LIFECYCLE_METADATA, implementationClass);
+  }
+  const metadataObject = (implementationClass as unknown as Record<symbol, unknown>)[
+    metadataSymbol
+  ];
   if (typeof metadataObject !== "object" || metadataObject === null) {
     return undefined;
   }
@@ -59,11 +64,11 @@ export function readLifecycleMetadataFromCtor(
  * Runs the `@postConstruct()` method synchronously if present. Throws if it returns a Promise.
  */
 export function runPostConstruct(
-  ctor: Constructor<unknown>,
+  implementationClass: Constructor<unknown>,
   instance: unknown,
-  pathLabels: readonly string[],
+  pathLabels?: string[],
 ): void {
-  const meta = readLifecycleMetadataFromCtor(ctor);
+  const meta = readLifecycleMetadataFromCtor(implementationClass);
   if (meta?.postConstruct === undefined) {
     return;
   }
@@ -92,10 +97,10 @@ export function runPostConstruct(
  * Runs the `@postConstruct()` method, awaiting if it returns a Promise.
  */
 export async function runPostConstructAsync(
-  ctor: Constructor<unknown>,
+  implementationClass: Constructor<unknown>,
   instance: unknown,
 ): Promise<void> {
-  const meta = readLifecycleMetadataFromCtor(ctor);
+  const meta = readLifecycleMetadataFromCtor(implementationClass);
   if (meta?.postConstruct === undefined) {
     return;
   }
@@ -110,8 +115,8 @@ export async function runPostConstructAsync(
 /**
  * Runs the `@preDestroy()` method synchronously if present. Throws if it returns a Promise.
  */
-export function runPreDestroy(ctor: Constructor<unknown>, instance: unknown): void {
-  const meta = readLifecycleMetadataFromCtor(ctor);
+export function runPreDestroy(implementationClass: Constructor<unknown>, instance: unknown): void {
+  const meta = readLifecycleMetadataFromCtor(implementationClass);
   if (meta?.preDestroy === undefined) {
     return;
   }
@@ -137,10 +142,10 @@ export function runPreDestroy(ctor: Constructor<unknown>, instance: unknown): vo
  * Runs the `@preDestroy()` method, awaiting if it returns a Promise.
  */
 export async function runPreDestroyAsync(
-  ctor: Constructor<unknown>,
+  implementationClass: Constructor<unknown>,
   instance: unknown,
 ): Promise<void> {
-  const meta = readLifecycleMetadataFromCtor(ctor);
+  const meta = readLifecycleMetadataFromCtor(implementationClass);
   if (meta?.preDestroy === undefined) {
     return;
   }

@@ -14,10 +14,13 @@ export type InjectableDependency =
   | Constructor<unknown>
   | InjectionDescriptor<unknown>;
 
-const AUTO_REGISTER_REGISTRY: Array<{ ctor: Constructor<unknown>; scope: BindingScope }> = [];
+const AUTO_REGISTER_REGISTRY: Array<{
+  implementationClass: Constructor<unknown>;
+  scope: BindingScope;
+}> = [];
 
 export function getAutoRegistered(): ReadonlyArray<{
-  ctor: Constructor<unknown>;
+  implementationClass: Constructor<unknown>;
   scope: BindingScope;
 }> {
   return AUTO_REGISTER_REGISTRY;
@@ -47,15 +50,15 @@ export function injectable(
   deps: readonly InjectableDependency[] = [],
   opts?: { autoRegister?: boolean; scope?: BindingScope },
 ): <Class extends abstract new (...args: never[]) => unknown>(
-  ctor: Class,
+  implementationClass: Class,
   context: ClassDecoratorContext<Class>,
 ) => void {
-  return (ctor, context) => {
-    const ctorFn = ctor as unknown as { readonly length: number };
+  return (implementationClass, context) => {
+    const ctorFn = implementationClass as unknown as { readonly length: number };
     const declaredArity = ctorFn.length;
     if (declaredArity !== deps.length) {
       throw new DiError(
-        `Class "${String(context.name ?? ctor.name)}" declares ${String(declaredArity)} constructor parameters but @injectable(...) received ${String(deps.length)} dependency descriptors.`,
+        `Class "${String(context.name ?? implementationClass.name)}" declares ${String(declaredArity)} constructor parameters but @injectable(...) received ${String(deps.length)} dependency descriptors.`,
       );
     }
 
@@ -71,7 +74,7 @@ export function injectable(
       // context.addInitializer runs once per class definition (NOT per instance)
       context.addInitializer(function (this: unknown) {
         AUTO_REGISTER_REGISTRY.push({
-          ctor: this as Constructor<unknown>,
+          implementationClass: this as Constructor<unknown>,
           scope,
         });
       });
