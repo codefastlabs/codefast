@@ -30,7 +30,7 @@ import {
   ScopeViolationError,
   TokenNotBoundError,
 } from "#/errors";
-import type { MetadataReader } from "#/decorators/metadata";
+import type { MetadataReader } from "#/metadata/metadata-types";
 
 function bindingToMaterializationFrame(
   registryKey: RegistryKey,

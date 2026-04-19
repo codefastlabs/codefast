@@ -3,8 +3,10 @@ import { loadCodefastConfig } from "#/lib/config/application/use-cases/load-conf
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import { appError, type AppError } from "#/lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { AppError } from "#/lib/core/domain/errors.domain";
+import { appError } from "#/lib/core/domain/errors.domain";
+import type { Result } from "#/lib/core/domain/result.model";
+import { err, ok } from "#/lib/core/domain/result.model";
 import { printConfigSchemaWarnings } from "#/lib/infra/config-reporter.adapter";
 
 /** Minimal CLI slice required to load config (avoids depending on the full CLI composition-root type). */

@@ -1,6 +1,8 @@
 import { injectable } from "@codefast/di";
-import { appError, type AppError } from "#/lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { AppError } from "#/lib/core/domain/errors.domain";
+import { appError } from "#/lib/core/domain/errors.domain";
+import type { Result } from "#/lib/core/domain/result.model";
+import { err, ok } from "#/lib/core/domain/result.model";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";

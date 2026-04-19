@@ -1,5 +1,7 @@
-import { appError, type AppError } from "#/lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { AppError } from "#/lib/core/domain/errors.domain";
+import { appError } from "#/lib/core/domain/errors.domain";
+import type { Result } from "#/lib/core/domain/result.model";
+import { err, ok } from "#/lib/core/domain/result.model";
 
 type SchemaIssue = {
   readonly path: readonly PropertyKey[];

@@ -3,10 +3,12 @@ import {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   CODEFAST_DI_LIFECYCLE_METADATA,
   decoratorMetadataObjectSymbol,
-  type ConstructorMetadata,
-  type LifecycleMetadata,
-  type MetadataReader,
-} from "#/decorators/metadata";
+} from "#/metadata/metadata-keys";
+import type {
+  ConstructorMetadata,
+  LifecycleMetadata,
+  MetadataReader,
+} from "#/metadata/metadata-types";
 
 function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
   if (typeof value !== "object" || value === null || !("params" in value)) {

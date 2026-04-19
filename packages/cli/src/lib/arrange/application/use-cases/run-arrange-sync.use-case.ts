@@ -3,8 +3,10 @@ import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
 } from "#/lib/config/domain/schema.domain";
-import { appError, type AppError } from "#/lib/core/domain/errors.domain";
-import { err, ok, type Result } from "#/lib/core/domain/result.model";
+import type { AppError } from "#/lib/core/domain/errors.domain";
+import { appError } from "#/lib/core/domain/errors.domain";
+import type { Result } from "#/lib/core/domain/result.model";
+import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { ArrangeSyncRunRequest } from "#/lib/arrange/application/requests/arrange-sync.request";

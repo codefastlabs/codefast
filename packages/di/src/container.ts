@@ -1,18 +1,20 @@
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { BindingBuilder } from "#/binding";
 import { getAutoRegistered } from "#/decorators/injectable";
-import type { MetadataReader } from "#/decorators/metadata";
-import { SymbolMetadataReader } from "#/decorators/reader";
+import type { MetadataReader } from "#/metadata/metadata-types";
+import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { AsyncModuleLoadError, CircularDependencyError, DiError } from "#/errors";
-import {
-  ContainerInspector,
-  type ContainerGraphJson,
-  type ContainerInspectorContext,
-  type ContainerSnapshot,
-  type DotGraphOptions,
+import type {
+  ContainerGraphJson,
+  ContainerInspectorContext,
+  ContainerSnapshot,
+  DotGraphOptions,
 } from "#/inspector";
-import { AsyncModule, Module, type AsyncModuleBuilder, type ModuleBuilder } from "#/module";
-import { BindingRegistry, type RegistryKey } from "#/registry";
+import { ContainerInspector } from "#/inspector";
+import type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
+import { AsyncModule, Module } from "#/module";
+import type { RegistryKey } from "#/registry";
+import { BindingRegistry } from "#/registry";
 import { DependencyResolver } from "#/resolver";
 import { validateScopeRules } from "#/scope-validation";
 import { ScopeManager } from "#/scope";

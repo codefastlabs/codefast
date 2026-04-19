@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createBindingIdentifier, type Binding } from "#/binding";
+import type { Binding } from "#/binding";
+import { createBindingIdentifier } from "#/binding";
 import { ScopeManager } from "#/scope";
 import { DiError } from "#/errors";
 

@@ -1051,15 +1051,21 @@ packages/di/
 │   ├── module.ts               Module + AsyncModule
 │   ├── module.test.ts
 │   │
-│   ├── decorators/
+│   ├── metadata/               Keys, types, đọc/ghi metadata — không phải decorator
+│   │   ├── metadata-keys.ts    Hằng key trên Symbol.metadata + decoratorMetadataObjectSymbol()
+│   │   ├── metadata-types.ts   ConstructorMetadata, ParamMetadata, MetadataReader, …
+│   │   ├── symbol-metadata-reader.ts  SymbolMetadataReader (Object.hasOwn guard)
+│   │   ├── symbol-metadata-reader.test.ts
+│   │   ├── param-registry.ts   WeakMap pending ParamMetadata (internal / advanced tooling)
+│   │   └── param-registry.test.ts
+│   │
+│   ├── decorators/             Chỉ decorator và helper decorator-runtime (inject / optional)
 │   │   ├── injectable.ts       @injectable(deps?, opts?) — class decorator + autoRegister option
 │   │   ├── injectable.test.ts
 │   │   ├── inject.ts           inject() + optional() — plain fn và accessor field decorator
 │   │   ├── inject.test.ts
 │   │   ├── lifecycle-decorators.ts  @postConstruct() + @preDestroy() — method decorators
-│   │   ├── lifecycle-decorators.test.ts
-│   │   ├── metadata.ts         SymbolMetadataReader — implements MetadataReader (hasOwn guard)
-│   │   └── index.ts
+│   │   └── lifecycle-decorators.test.ts
 │   │
 │   ├── errors.ts               DiError + tất cả subclasses
 │   └── index.ts                Public API exports

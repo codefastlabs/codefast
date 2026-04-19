@@ -65,25 +65,9 @@
       "types": "./dist/decorators/injectable.d.mts",
       "import": "./dist/decorators/injectable.mjs"
     },
-    "./decorators/metadata": {
-      "types": "./dist/decorators/metadata.d.mts",
-      "import": "./dist/decorators/metadata.mjs"
-    },
-    "./decorators/param-registry": {
-      "types": "./dist/decorators/param-registry.d.mts",
-      "import": "./dist/decorators/param-registry.mjs"
-    },
-    "./decorators/reader": {
-      "types": "./dist/decorators/reader.d.mts",
-      "import": "./dist/decorators/reader.mjs"
-    },
-    "./decorators/scoped": {
-      "types": "./dist/decorators/scoped.d.mts",
-      "import": "./dist/decorators/scoped.mjs"
-    },
-    "./decorators/singleton": {
-      "types": "./dist/decorators/singleton.d.mts",
-      "import": "./dist/decorators/singleton.mjs"
+    "./decorators/lifecycle-decorators": {
+      "types": "./dist/decorators/lifecycle-decorators.d.mts",
+      "import": "./dist/decorators/lifecycle-decorators.mjs"
     },
     "./dependency-graph": {
       "types": "./dist/dependency-graph.d.mts",
@@ -104,6 +88,22 @@
     "./lifecycle": {
       "types": "./dist/lifecycle.d.mts",
       "import": "./dist/lifecycle.mjs"
+    },
+    "./metadata/metadata-keys": {
+      "types": "./dist/metadata/metadata-keys.d.mts",
+      "import": "./dist/metadata/metadata-keys.mjs"
+    },
+    "./metadata/metadata-types": {
+      "types": "./dist/metadata/metadata-types.d.mts",
+      "import": "./dist/metadata/metadata-types.mjs"
+    },
+    "./metadata/param-registry": {
+      "types": "./dist/metadata/param-registry.d.mts",
+      "import": "./dist/metadata/param-registry.mjs"
+    },
+    "./metadata/symbol-metadata-reader": {
+      "types": "./dist/metadata/symbol-metadata-reader.d.mts",
+      "import": "./dist/metadata/symbol-metadata-reader.mjs"
     },
     "./module": {
       "types": "./dist/module.d.mts",

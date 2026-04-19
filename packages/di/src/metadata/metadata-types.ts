@@ -1,14 +1,6 @@
 import type { Constructor } from "#/binding";
 import type { Token } from "#/token";
 
-/**
- * Well-known key for Codefast DI constructor metadata on `Symbol.metadata`.
- */
-export const CODEFAST_DI_CONSTRUCTOR_METADATA = "codefast/di:constructor-metadata:v1";
-
-export const CODEFAST_DI_ACCESSOR_INJECTIONS = "codefast/di:accessor-injections:v1";
-export const CODEFAST_DI_LIFECYCLE_METADATA = "codefast/di:lifecycle-metadata:v1";
-
 export type AccessorInjectionMetadata = {
   readonly name: string;
   readonly token: Token<unknown> | Constructor<unknown>;
@@ -24,15 +16,6 @@ export type LifecycleMetadata = {
   readonly preDestroy?: string;
   readonly accessorInjections?: readonly AccessorInjectionMetadata[];
 };
-
-/**
- * Runtime symbol for the decorator metadata object (TC39 `Symbol.metadata`).
- * Node may expose this only via `Symbol.for("Symbol.metadata")` until the global
- * `Symbol.metadata` property is available.
- */
-export function decoratorMetadataObjectSymbol(): symbol {
-  return typeof Symbol.metadata === "symbol" ? Symbol.metadata : Symbol.for("Symbol.metadata");
-}
 
 /**
  * Per-parameter injection description collected by `@injectable()`.

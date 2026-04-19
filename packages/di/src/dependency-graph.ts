@@ -1,6 +1,6 @@
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { registryKeyLabel, selectBindingForRegistry } from "#/binding-select";
-import type { MetadataReader } from "#/decorators/metadata";
+import type { MetadataReader } from "#/metadata/metadata-types";
 import { DiError } from "#/errors";
 import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";

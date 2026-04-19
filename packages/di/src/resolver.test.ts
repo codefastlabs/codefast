@@ -4,7 +4,7 @@ import { ScopeManager } from "#/scope";
 import { token } from "#/token";
 import { createBindingIdentifier } from "#/binding";
 import type { Binding, ResolutionContext } from "#/binding";
-import type { MetadataReader } from "#/decorators/metadata";
+import type { MetadataReader } from "#/metadata/metadata-types";
 import { AsyncResolutionError, NoMatchingBindingError, MissingMetadataError } from "#/errors";
 
 describe("DependencyResolver", () => {

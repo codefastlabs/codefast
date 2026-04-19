@@ -6,7 +6,8 @@ import { ArrangeModule } from "#/lib/arrange/arrange.module";
 import { CoreModule } from "#/lib/core/core.module";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
-import { type RunArrangeSyncUseCase, RunArrangeSyncUseCaseToken } from "#/lib/tokens";
+import type { RunArrangeSyncUseCase } from "#/lib/tokens";
+import { RunArrangeSyncUseCaseToken } from "#/lib/tokens";
 
 describe("RunArrangeSyncUseCase integration", () => {
   const container = Container.create();

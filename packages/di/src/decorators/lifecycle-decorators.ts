@@ -1,4 +1,5 @@
-import { CODEFAST_DI_LIFECYCLE_METADATA, type LifecycleMetadata } from "#/decorators/metadata";
+import { CODEFAST_DI_LIFECYCLE_METADATA } from "#/metadata/metadata-keys";
+import type { LifecycleMetadata } from "#/metadata/metadata-types";
 
 /**
  * Stage 3 method decorator: marks a method to be called after the class is instantiated by the container.

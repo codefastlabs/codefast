@@ -11,7 +11,7 @@ import type {
 import { createBindingIdentifier } from "#/binding";
 import { token } from "#/token";
 import type { Token } from "#/token";
-import type { MetadataReader } from "#/decorators/metadata";
+import type { MetadataReader } from "#/metadata/metadata-types";
 
 function mockConstant(id: string = createBindingIdentifier()): ConstantBinding<unknown> {
   return {
