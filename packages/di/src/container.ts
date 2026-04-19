@@ -47,11 +47,17 @@ export interface Container extends AsyncDisposable {
   unbind(tokenOrId: RegistryKey | BindingIdentifier): void;
   unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void>;
   has(token: RegistryKey, hint?: ResolveHint): boolean;
-  resolve<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): T;
-  resolveAsync<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T>;
-  resolveAll<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): T[];
-  resolveAllAsync<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]>;
-  resolveOptional<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined;
+  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value;
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Promise<Value>;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[];
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Promise<Value[]>;
+  resolveOptional<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Value | undefined;
   load(...modules: Module[]): void;
   loadAsync(...modules: ModuleLike[]): Promise<void>;
   unload(...modules: ModuleLike[]): void;
@@ -262,7 +268,7 @@ class DefaultContainer implements Container {
    * {@link ScopeViolationError} with binding ids and full resolution path. In dev/test, the first
    * successful resolution also triggers a one-time static {@link validate} when not in production.
    */
-  resolve<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T {
+  resolve<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
     try {
       return this.resolver.resolveRoot(key, hint);
     } finally {
@@ -271,13 +277,16 @@ class DefaultContainer implements Container {
   }
 
   /** Async variant of {@link resolve}; same dev/test validation and runtime scope enforcement. */
-  resolveAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T> {
+  resolveAsync<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Promise<Value> {
     return this.resolver.resolveAsyncRoot(key, hint).finally(() => {
       this.maybeRunDevValidationOnce();
     });
   }
 
-  resolveOptional<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined {
+  resolveOptional<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Value | undefined {
     try {
       return this.resolver.resolveOptionalRoot(key, hint);
     } finally {
@@ -285,7 +294,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  resolveAll<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[] {
+  resolveAll<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     try {
       return this.resolver.resolveAllRoot(key, hint);
     } finally {
@@ -297,8 +306,11 @@ class DefaultContainer implements Container {
    * Async variant of {@link resolveAll}: safe for multi-bindings that mix sync and async factories
    * (spec §5.2).
    */
-  resolveAllAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]> {
-    return this.resolver.resolveAllAsyncRoot<T>(key, hint).finally(() => {
+  resolveAllAsync<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Promise<Value[]> {
+    return this.resolver.resolveAllAsyncRoot<Value>(key, hint).finally(() => {
       this.maybeRunDevValidationOnce();
     });
   }

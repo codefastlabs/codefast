@@ -19,7 +19,7 @@ export function createBindingIdentifier(): BindingIdentifier {
 /**
  * Runtime constructor token used as a registry key (no reflection metadata).
  */
-export type Constructor<T> = abstract new (...args: never[]) => T;
+export type Constructor<Value> = abstract new (...args: never[]) => Value;
 
 export type BindingScope = "singleton" | "transient" | "scoped";
 
