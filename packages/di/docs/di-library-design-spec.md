@@ -555,7 +555,10 @@ interface Container {
   validate(): void;
 
   // Introspection — chỉ dùng dev/debug
-  has(token: Token<unknown> | Constructor): boolean;
+  has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
+  // hint cho phép kiểm tra binding theo name/tag cụ thể
+  lookupBindings(token: Token<unknown> | Constructor): readonly Binding<unknown>[] | undefined;
+  // lookupBindings — trả về tất cả bindings đăng ký cho token (kể cả chưa resolved)
   inspect(): ContainerSnapshot;
   // Overloaded — format quyết định return type (không phải hai method riêng)
   generateDependencyGraph(opts?: DotGraphOptions & { format?: "dot" }): string;
@@ -979,9 +982,15 @@ interface AsyncModule {
 Tất cả error có `code` string (machine-readable) và message đủ context để debug ngay không cần tra tài liệu.
 
 ```ts
-// Base
-class DiError extends Error {
+// Base — abstract, buộc mọi subclass khai báo code cụ thể
+abstract class DiError extends Error {
   abstract readonly code: string;
+}
+
+// Lỗi lập trình / cấu hình sai — "should never happen at runtime nếu dùng đúng"
+class InternalError extends DiError {
+  code = "INTERNAL_ERROR";
+  // Dùng thay cho new DiError(...) trực tiếp trong nội bộ thư viện
 }
 
 // Token không có binding nào
@@ -1079,63 +1088,102 @@ packages/di/
 
 ```ts
 // Token
-export { token } from "./token";
-export type { Token, TokenValue } from "./token";
+export { token } from "#/token";
+export type { Token, TokenValue } from "#/token";
 
 // Container
-export { Container } from "./container";
-export type { ResolveOptions, ContainerSnapshot } from "./container";
+export { Container } from "#/container";
+export type { ContainerGraphJson, ContainerSnapshot } from "#/container";
 
-// Binding types
-export type { BindingIdentifier } from "./binding";
+// Binding — types consumers need when writing modules or typed helpers
+export type {
+  ActivationHandler, // onActivation callback handler type
+  BindingBuilder, // return type of container.bind() / rebind()
+  BindingIdentifier, // opaque ID returned by binding.id(), used with unbind()
+  BindingScope, // "singleton" | "transient" | "scoped"
+  ConstraintContext, // parameter type for when() custom constraint predicates
+  Constructor, // new (...args) => T — for class tokens
+  DeactivationHandler, // onDeactivation callback handler type
+  ResolveOptions, // { name?, tag? } for named/tagged resolution
+} from "#/binding";
+// Không export từ binding: builder variants (ConstantBindingBuilder, SingletonBindingBuilder, …),
+// ConstraintBindingKind, ConstraintParentFrame, MaterializationFrame, ResolutionContext, ResolveHint
+// — user không bao giờ annotate trực tiếp; TypeScript infer đủ. Truy cập qua @codefast/di/binding.
 
 // Module
-export { Module, AsyncModule } from "./module";
+export { AsyncModule, Module } from "#/module";
+export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
 
 // Decorators
-export { injectable } from "./decorators";
-// @singleton() và @scoped() đã bị bỏ — scope khai báo tại binding site
-
-// Lifecycle method decorators
-export { postConstruct, preDestroy } from "./decorators";
-
-// Injection helpers — dùng được cả trong deps array lẫn như accessor field decorator
-export { inject, optional } from "./decorators";
+export { inject, isInjectionDescriptor, optional } from "#/decorators/inject";
+export type { InjectOptions } from "#/decorators/inject";
+export { getAutoRegistered, injectable } from "#/decorators/injectable";
+// getAutoRegistered() — trả về danh sách class đã dùng { autoRegister: true }
+export type { InjectableDependency } from "#/decorators/injectable";
+export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
 
 // Errors
 export {
-  DiError,
-  TokenNotBoundError,
-  CircularDependencyError,
+  AsyncModuleLoadError,
   AsyncResolutionError,
-  ScopeViolationError,
+  CircularDependencyError,
+  DiError,
+  InternalError,
   MissingMetadataError,
   NoMatchingBindingError,
-  AsyncModuleLoadError,
-} from "./errors";
+  ScopeViolationError,
+  TokenNotBoundError,
+} from "#/errors";
+export type { ScopeViolationDetails } from "#/errors";
 
-// Không export:
-// Binding, Registry, Resolver, ScopeManager, LifecycleManager, MetadataReader
+// Không export từ index.ts — truy cập qua subpath exports nếu cần:
+// BindingRegistry    → @codefast/di/registry
+// DependencyResolver → @codefast/di/resolver
+// ScopeManager       → @codefast/di/scope
+// ContainerInspector → @codefast/di/inspector
+// Metadata internals → @codefast/di/metadata/*
+// Lifecycle runners  → @codefast/di/lifecycle
+// Constraint helpers → @codefast/di/constraints
+// Dependency graph   → @codefast/di/dependency-graph
+// Environment utils  → @codefast/di/environment
 ```
 
 ### 9.2 `package.json`
+
+ESM-only, không có `"require"` export — giống InversifyJS v8. Node 20.19+ hỗ trợ `require(esm)` mà không cần flag.
+
+Ngoài `"."` (public API), package expose từng module nội bộ qua subpath exports cho tooling và advanced consumers. Người dùng thông thường chỉ cần `"."`.
 
 ```json
 {
   "name": "@codefast/di",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
+    ".": "./dist/index.{mjs,d.mts}",
+    "./binding": "./dist/binding.{mjs,d.mts}",
+    "./binding-select": "./dist/binding-select.{mjs,d.mts}",
+    "./constraints": "./dist/constraints.{mjs,d.mts}",
+    "./container": "./dist/container.{mjs,d.mts}",
+    "./dependency-graph": "./dist/dependency-graph.{mjs,d.mts}",
+    "./environment": "./dist/environment.{mjs,d.mts}",
+    "./errors": "./dist/errors.{mjs,d.mts}",
+    "./inspector": "./dist/inspector.{mjs,d.mts}",
+    "./lifecycle": "./dist/lifecycle.{mjs,d.mts}",
+    "./metadata/metadata-keys": "./dist/metadata/metadata-keys.{mjs,d.mts}",
+    "./metadata/metadata-types": "./dist/metadata/metadata-types.{mjs,d.mts}",
+    "./metadata/param-registry": "./dist/metadata/param-registry.{mjs,d.mts}",
+    "./metadata/symbol-metadata-reader": "./dist/metadata/symbol-metadata-reader.{mjs,d.mts}",
+    "./module": "./dist/module.{mjs,d.mts}",
+    "./registry": "./dist/registry.{mjs,d.mts}",
+    "./resolver": "./dist/resolver.{mjs,d.mts}",
+    "./scope": "./dist/scope.{mjs,d.mts}",
+    "./scope-validation": "./dist/scope-validation.{mjs,d.mts}",
+    "./token": "./dist/token.{mjs,d.mts}"
   },
   "files": ["dist"],
   "engines": { "node": ">=22.0.0" }
 }
 ```
-
-ESM-only, không có `"require"` export — giống InversifyJS v8. Node 20.19+ hỗ trợ `require(esm)` mà không cần flag.
 
 ### 9.3 `tsdown.config.ts`
 

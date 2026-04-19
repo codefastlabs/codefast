@@ -1,7 +1,7 @@
 import type { Binding, ConstraintContext, Constructor, ResolveHint } from "#/binding";
 import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";
-import { DiError, NoMatchingBindingError, TokenNotBoundError } from "#/errors";
+import { InternalError, NoMatchingBindingError, TokenNotBoundError } from "#/errors";
 
 export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): string {
   if (typeof key === "function") {
@@ -54,7 +54,7 @@ export function selectBindingForRegistry(
   if (candidates.length === 1) {
     const [only] = candidates;
     if (only === undefined) {
-      throw new DiError(
+      throw new InternalError(
         `Internal: expected binding candidate for "${tokenLabel}" (resolution path: ${pathLabels.join(" -> ")})`,
       );
     }
@@ -66,7 +66,7 @@ export function selectBindingForRegistry(
     }
     throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
   }
-  throw new DiError(
+  throw new InternalError(
     `Ambiguous binding for "${tokenLabel}": ${String(candidates.length)} candidates matched after applying ResolveHint (resolution path: ${pathLabels.join(" -> ")})`,
   );
 }

@@ -1,7 +1,7 @@
 import type { Constructor, ResolveHint } from "#/binding";
 import { CODEFAST_DI_ACCESSOR_INJECTIONS } from "#/metadata/metadata-keys";
 import type { AccessorInjectionMetadata, InjectionDescriptor } from "#/metadata/metadata-types";
-import { DiError } from "#/errors";
+import { InternalError } from "#/errors";
 import type { Token } from "#/token";
 
 export type InjectOptions = ResolveHint;
@@ -11,13 +11,13 @@ function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor[
     return undefined;
   }
   if (!Array.isArray(tag) || tag.length !== 2) {
-    throw new DiError(
+    throw new InternalError(
       `@inject tag must be a tuple [tagKey, value] with length 2; received ${String(tag)}`,
     );
   }
   const [tagName, value] = tag;
   if (typeof tagName !== "string") {
-    throw new DiError(`@inject tag key must be a string; received ${typeof tagName}`);
+    throw new InternalError(`@inject tag key must be a string; received ${typeof tagName}`);
   }
   return [tagName, value];
 }

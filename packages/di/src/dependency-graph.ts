@@ -1,7 +1,7 @@
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { registryKeyLabel, selectBindingForRegistry } from "#/binding-select";
 import type { MetadataReader } from "#/metadata/metadata-types";
-import { DiError } from "#/errors";
+import { InternalError } from "#/errors";
 import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";
 
@@ -120,7 +120,7 @@ export function listResolvedDependencies(
         const nextPath = [...pathPrefix, label];
         const binding = resolveDefaultBinding(lookup, tok, pathPrefix);
         if (binding === undefined) {
-          throw new DiError(
+          throw new InternalError(
             `Missing binding for dependency "${label}" while building dependency graph (resolution path: ${nextPath.join(" -> ")})`,
           );
         }
@@ -145,7 +145,7 @@ export function listResolvedDependencies(
           if (param.optional) {
             return [];
           }
-          throw new DiError(
+          throw new InternalError(
             `Missing binding for constructor parameter "${label}" while building dependency graph (resolution path: ${nextPath.join(" -> ")})`,
           );
         }

@@ -1,4 +1,4 @@
-import { DiError } from "#/errors";
+import { InternalError } from "#/errors";
 import { CODEFAST_DI_CONSTRUCTOR_METADATA } from "#/metadata/metadata-keys";
 import type {
   ConstructorMetadata,
@@ -57,7 +57,7 @@ export function injectable(
     const ctorFn = implementationClass as unknown as { readonly length: number };
     const declaredArity = ctorFn.length;
     if (declaredArity !== deps.length) {
-      throw new DiError(
+      throw new InternalError(
         `Class "${String(context.name ?? implementationClass.name)}" declares ${String(declaredArity)} constructor parameters but @injectable(...) received ${String(deps.length)} dependency descriptors.`,
       );
     }

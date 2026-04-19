@@ -24,7 +24,7 @@ import { ScopeManager } from "#/scope";
 import {
   AsyncResolutionError,
   CircularDependencyError,
-  DiError,
+  InternalError,
   MissingMetadataError,
   NoMatchingBindingError,
   ScopeViolationError,
@@ -91,13 +91,13 @@ export class DependencyResolver {
       return undefined;
     }
     if (candidates.length !== 1) {
-      throw new DiError(
+      throw new InternalError(
         `Ambiguous binding for "${label}": ${String(candidates.length)} candidates matched (resolution path: ${pathLabels.join(" -> ")})`,
       );
     }
     const binding = candidates[0];
     if (binding === undefined) {
-      throw new DiError(
+      throw new InternalError(
         `Internal: expected single binding candidate for "${label}" (resolution path: ${pathLabels.join(" -> ")})`,
       );
     }
