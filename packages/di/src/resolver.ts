@@ -484,12 +484,12 @@ export class DependencyResolver {
       case "class":
         return this.instantiateClassBinding(binding, pathLabels, visiting, materializationStack);
       case "dynamic": {
-        const result = binding.factory(ctx);
+        const factoryResult = binding.factory(ctx);
         if (
-          typeof result === "object" &&
-          result !== null &&
-          "then" in result &&
-          typeof (result as Promise<unknown>).then === "function"
+          typeof factoryResult === "object" &&
+          factoryResult !== null &&
+          "then" in factoryResult &&
+          typeof (factoryResult as Promise<unknown>).then === "function"
         ) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
@@ -497,7 +497,7 @@ export class DependencyResolver {
             "dynamic factory returned a Promise during synchronous resolution",
           );
         }
-        return result;
+        return factoryResult;
       }
       case "async-dynamic":
         throw new AsyncResolutionError(
@@ -510,12 +510,12 @@ export class DependencyResolver {
         for (const depToken of binding.dependencyTokens) {
           deps.push(this.resolve(depToken, undefined, pathLabels, visiting, materializationStack));
         }
-        const product = binding.factory(...deps);
+        const resolvedValue = binding.factory(...deps);
         if (
-          typeof product === "object" &&
-          product !== null &&
-          "then" in product &&
-          typeof (product as Promise<unknown>).then === "function"
+          typeof resolvedValue === "object" &&
+          resolvedValue !== null &&
+          "then" in resolvedValue &&
+          typeof (resolvedValue as Promise<unknown>).then === "function"
         ) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
@@ -523,7 +523,7 @@ export class DependencyResolver {
             "resolved factory returned a Promise during synchronous resolution",
           );
         }
-        return product;
+        return resolvedValue;
       }
       case "alias":
         return this.resolve(binding.targetToken, hint, pathLabels, visiting, materializationStack);
@@ -593,20 +593,20 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
     const reader = this.hooks.metadataReader;
-    const Ctor = binding.ctor as new (...args: unknown[]) => unknown;
-    const ctorKey = binding.ctor;
+    const ClassConstructorFn = binding.ctor as new (...args: unknown[]) => unknown;
+    const constructorRef = binding.ctor;
 
     if (reader === undefined) {
-      return new Ctor();
+      return new ClassConstructorFn();
     }
 
-    const meta = reader.getConstructorMetadata(ctorKey);
-    const arity = (Ctor as Function).length;
+    const meta = reader.getConstructorMetadata(constructorRef);
+    const arity = (ClassConstructorFn as Function).length;
     if (arity > 0 && meta === undefined) {
-      throw new MissingMetadataError(registryKeyLabel(ctorKey), pathLabels);
+      throw new MissingMetadataError(registryKeyLabel(constructorRef), pathLabels);
     }
     if (meta === undefined || meta.params.length === 0) {
-      return new Ctor();
+      return new ClassConstructorFn();
     }
 
     const deps = meta.params.map((param) => {
@@ -628,7 +628,7 @@ export class DependencyResolver {
       }
       return this.resolve(param.token, paramHint, pathLabels, visiting, materializationStack);
     });
-    return new Ctor(...deps);
+    return new ClassConstructorFn(...deps);
   }
 
   private async instantiateClassBindingAsync(
@@ -638,20 +638,20 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
     const reader = this.hooks.metadataReader;
-    const Ctor = binding.ctor as new (...args: unknown[]) => unknown;
-    const ctorKey = binding.ctor;
+    const ClassConstructorFn = binding.ctor as new (...args: unknown[]) => unknown;
+    const constructorRef = binding.ctor;
 
     if (reader === undefined) {
-      return new Ctor();
+      return new ClassConstructorFn();
     }
 
-    const meta = reader.getConstructorMetadata(ctorKey);
-    const arity = (Ctor as Function).length;
+    const meta = reader.getConstructorMetadata(constructorRef);
+    const arity = (ClassConstructorFn as Function).length;
     if (arity > 0 && meta === undefined) {
-      throw new MissingMetadataError(registryKeyLabel(ctorKey), pathLabels);
+      throw new MissingMetadataError(registryKeyLabel(constructorRef), pathLabels);
     }
     if (meta === undefined || meta.params.length === 0) {
-      return new Ctor();
+      return new ClassConstructorFn();
     }
 
     const deps: unknown[] = [];
@@ -692,6 +692,6 @@ export class DependencyResolver {
         );
       }
     }
-    return new Ctor(...deps);
+    return new ClassConstructorFn(...deps);
   }
 }

@@ -1,7 +1,7 @@
 import type { Constructor, ResolveHint } from "#/binding";
 import {
-  CODEFAST_DI_ACCESSOR_INJECTIONS,
   type AccessorInjectionMetadata,
+  CODEFAST_DI_ACCESSOR_INJECTIONS,
   type InjectionDescriptor,
 } from "#/decorators/metadata";
 import { DiError } from "#/errors";
@@ -40,12 +40,12 @@ function toDescriptor<Value>(
   return { token, optional };
 }
 
-function isAccessorDecoratorContext(v: unknown): v is ClassAccessorDecoratorContext {
+function isAccessorDecoratorContext(value: unknown): value is ClassAccessorDecoratorContext {
   return (
-    typeof v === "object" &&
-    v !== null &&
-    "kind" in v &&
-    (v as { kind: unknown }).kind === "accessor"
+    typeof value === "object" &&
+    value !== null &&
+    "kind" in value &&
+    (value as { kind: unknown }).kind === "accessor"
   );
 }
 
