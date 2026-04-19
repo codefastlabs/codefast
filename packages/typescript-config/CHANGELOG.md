@@ -1,5 +1,15 @@
 # @codefast/typescript-config
 
+## 0.3.13
+
+### Patch Changes
+
+- [`a042ee5`](https://github.com/codefastlabs/codefast/commit/a042ee5a6a10973492665b90d750a8b86817bf7d) Thanks [@thevuong](https://github.com/thevuong)! - feat: standardize TypeScript build configurations across packages
+
+- [`2340231`](https://github.com/codefastlabs/codefast/commit/23402311084871d238ec50aa23061afd4b14e61e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(imports): standardize import paths across applications and benchmarks
+
+- [`35329d5`](https://github.com/codefastlabs/codefast/commit/35329d5f17682542e3ef0907d4936fa513346a72) Thanks [@thevuong](https://github.com/thevuong)! - feat(tsconfig): enforce module detection in TypeScript configuration
+
 ## 0.3.13-canary.4
 
 ### Patch Changes
