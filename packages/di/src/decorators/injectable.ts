@@ -9,6 +9,11 @@ import { isInjectionDescriptor } from "#/decorators/inject";
 import type { BindingScope, Constructor } from "#/binding";
 import type { Token } from "#/token";
 
+/**
+ * A single entry in the `deps` array passed to `@injectable()`.
+ * Can be a plain token/constructor (resolved with no hint) or an {@link InjectionDescriptor}
+ * produced by {@link inject} / {@link optional} when name, tag, or optional semantics are needed.
+ */
 export type InjectableDependency =
   | Token<unknown>
   | Constructor<unknown>
@@ -19,6 +24,10 @@ const AUTO_REGISTER_REGISTRY: Array<{
   scope: BindingScope;
 }> = [];
 
+/**
+ * Returns all classes decorated with `@injectable({ autoRegister: true })`.
+ * Pass to {@link Container.loadAutoRegistered} or iterate manually to bind them.
+ */
 export function getAutoRegistered(): ReadonlyArray<{
   implementationClass: Constructor<unknown>;
   scope: BindingScope;
@@ -26,6 +35,7 @@ export function getAutoRegistered(): ReadonlyArray<{
   return AUTO_REGISTER_REGISTRY;
 }
 
+/** Converts a single `@injectable` deps-array entry into a {@link ParamMetadata} record. */
 function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
   if (isInjectionDescriptor(dependency)) {
     return {
@@ -44,11 +54,23 @@ function toParamMetadata(dependency: InjectableDependency, index: number): Param
 }
 
 /**
- * Stage 3 class decorator: writes explicit constructor dependency metadata into `Symbol.metadata`.
+ * Stage 3 class decorator that writes constructor dependency metadata into `Symbol.metadata`.
+ *
+ * @param deps - Ordered list of constructor parameters; length must match the class arity.
+ * @param autoRegisterOptions - Optional auto-registration flags.
+ * @param autoRegisterOptions.autoRegister - When `true`, registers the class in {@link getAutoRegistered} at
+ *   class-definition time so {@link Container.loadAutoRegistered} can bind it automatically.
+ * @param autoRegisterOptions.scope - Scope used when auto-registering; defaults to `"transient"`.
+ *
+ * @example
+ * ```ts
+ * @injectable([Logger, inject(Config, { name: "app" })])
+ * class UserService { constructor(log: Logger, cfg: AppConfig) {} }
+ * ```
  */
 export function injectable(
   deps: readonly InjectableDependency[] = [],
-  opts?: { autoRegister?: boolean; scope?: BindingScope },
+  autoRegisterOptions?: { autoRegister?: boolean; scope?: BindingScope },
 ): <Class extends abstract new (...args: never[]) => unknown>(
   implementationClass: Class,
   context: ClassDecoratorContext<Class>,
@@ -69,8 +91,8 @@ export function injectable(
     const metadataRecord = context.metadata as Record<PropertyKey, unknown>;
     metadataRecord[CODEFAST_DI_CONSTRUCTOR_METADATA] = payload;
 
-    if (opts?.autoRegister === true) {
-      const scope = opts.scope ?? "transient";
+    if (autoRegisterOptions?.autoRegister === true) {
+      const scope = autoRegisterOptions.scope ?? "transient";
       // context.addInitializer runs once per class definition (NOT per instance)
       context.addInitializer(function (this: unknown) {
         AUTO_REGISTER_REGISTRY.push({

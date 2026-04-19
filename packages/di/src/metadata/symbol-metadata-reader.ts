@@ -10,6 +10,7 @@ import type {
   MetadataReader,
 } from "#/metadata/metadata-types";
 
+/** Type guard — returns `true` when `value` has the shape of a {@link ConstructorMetadata} object. */
 function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
   if (typeof value !== "object" || value === null || !("params" in value)) {
     return false;
@@ -21,6 +22,7 @@ function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
  * Reads {@link ConstructorMetadata} from the standard `Symbol.metadata` object.
  */
 export class SymbolMetadataReader implements MetadataReader {
+  /** Reads constructor param metadata written by `@injectable()`. Returns `undefined` if none present. */
   getConstructorMetadata(
     implementationClass: Constructor<unknown>,
   ): ConstructorMetadata | undefined {
@@ -48,6 +50,7 @@ export class SymbolMetadataReader implements MetadataReader {
     return raw;
   }
 
+  /** Reads lifecycle method names written by `@postConstruct()` / `@preDestroy()`. Inherits from parent classes. */
   getLifecycleMetadata(implementationClass: Constructor<unknown>): LifecycleMetadata | undefined {
     const metadataSymbol = decoratorMetadataObjectSymbol();
     const metadataObject = (implementationClass as unknown as Record<symbol, unknown>)[

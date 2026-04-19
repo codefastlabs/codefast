@@ -42,35 +42,58 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
  * {@link Container.dispose} automatically at scope exit (TC39 Explicit Resource Management).
  */
 export interface Container extends AsyncDisposable {
+  /** Starts a fluent binding builder for the given token or constructor. */
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
+  /** Removes all existing bindings for the token (with sync deactivation) then starts a fresh builder. */
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
+  /** Removes all bindings for a token or a single binding by its {@link BindingIdentifier}; runs sync deactivation. */
   unbind(tokenOrId: RegistryKey | BindingIdentifier): void;
+  /** Same as {@link unbind} but awaits async `onDeactivation` handlers before removing. */
   unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void>;
+  /** Returns `true` if at least one binding exists for `token`, optionally filtered by `hint`. */
   has(token: RegistryKey, hint?: ResolveHint): boolean;
+  /** Resolves the token synchronously. Throws {@link AsyncResolutionError} if any binding in the chain is async. */
   resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value;
+  /** Resolves the token, awaiting any async factory in the chain. Safe for both sync and async bindings. */
   resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Promise<Value>;
+  /** Resolves all bindings registered for the token (multi-binding). Throws {@link AsyncResolutionError} if any is async. */
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[];
+  /** Async variant of {@link resolveAll} — safe when the multi-binding set contains async factories. */
   resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value[]>;
+  /** Resolves the token or returns `undefined` if no binding is registered (never throws on missing). */
   resolveOptional<Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Value | undefined;
+  /** Registers bindings from one or more synchronous modules. Re-loading a module already present is a no-op. */
   load(...modules: Module[]): void;
+  /** Registers bindings from sync and/or async modules, awaiting each async setup in sequence. */
   loadAsync(...modules: ModuleLike[]): Promise<void>;
+  /** Removes all bindings contributed by the given modules; runs sync deactivation on released singletons. */
   unload(...modules: ModuleLike[]): void;
+  /** Same as {@link unload} but awaits async `onDeactivation` handlers. */
   unloadAsync(...modules: ModuleLike[]): Promise<void>;
+  /** Eagerly constructs every singleton binding so the first request is never cold. */
   initializeAsync(): Promise<void>;
+  /** Scans {@link getAutoRegistered} entries and binds each to its declared scope. Returns the count added. */
   loadAutoRegistered(): number;
+  /** Checks for scope violations (captive dependencies). Throws {@link ScopeViolationError} on the first violation found. */
   validate(): void;
+  /** Returns a debug snapshot of all registered bindings and their activation state. */
   inspect(): ContainerSnapshot;
+  /** Renders the dependency graph as a Graphviz DOT string (default) or a typed JSON object. */
   generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
   generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  /** Creates a child container that inherits bindings from this container without polluting its registry. */
   createChild(): Container;
+  /** @throws Always — container disposal is async; use `await using` or `await container.dispose()`. */
   [Symbol.dispose](): never;
+  /** Returns the raw binding list for a token without triggering resolution. `undefined` means no binding. */
   lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined;
+  /** Runs all `onDeactivation` hooks on active singletons and releases all caches. */
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
 }
@@ -600,16 +623,19 @@ class DefaultContainer implements Container {
  * Factory functions for {@link Container} instances (interface + namespace merge).
  */
 export namespace Container {
+  /** Creates an empty container with no bindings. */
   export function create(): Container {
     return DefaultContainer.create();
   }
 
+  /** Creates a container and immediately loads the given sync modules. */
   export function fromModules(...modules: Module[]): Container {
     const container = DefaultContainer.create();
     container.load(...modules);
     return container;
   }
 
+  /** Creates a container and awaits loading of sync and/or async modules. */
   export async function fromModulesAsync(...modules: (Module | AsyncModule)[]): Promise<Container> {
     const container = DefaultContainer.create();
     await container.loadAsync(...modules);

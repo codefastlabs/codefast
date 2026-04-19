@@ -4,8 +4,10 @@ import { collectStaticDependencyEdges } from "#/dependency-graph";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import type { RegistryKey } from "#/registry";
 
+/** Whether a singleton/scoped binding's instance is currently held in the scope cache. */
 export type BindingActivationStatus = "cached" | "not-cached" | "transient";
 
+/** Per-binding row inside a {@link ContainerSnapshot}. */
 export type ContainerBindingSnapshot = {
   readonly registryKeyLabel: string;
   readonly bindingId: BindingIdentifier;
@@ -17,15 +19,18 @@ export type ContainerBindingSnapshot = {
   readonly moduleId?: string;
 };
 
+/** Full debug snapshot returned by {@link Container.inspect}. */
 export type ContainerSnapshot = {
   readonly bindings: readonly ContainerBindingSnapshot[];
 };
 
+/** Structured dependency graph returned by {@link Container.generateDependencyGraph} with `format: "json"`. */
 export type ContainerGraphJson = {
   nodes: ContainerBindingSnapshot[];
   edges: ReturnType<typeof collectStaticDependencyEdges>[number][];
 };
 
+/** Read-only view of the container internals exposed to {@link ContainerInspector}. */
 export type ContainerInspectorContext = {
   collectAllRegistryKeys(): readonly RegistryKey[];
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
@@ -33,6 +38,7 @@ export type ContainerInspectorContext = {
   metadataReader: MetadataReader | undefined;
 };
 
+/** Options for {@link Container.generateDependencyGraph}. */
 export type DotGraphOptions = {
   /**
    * When true, omit registry keys whose label starts with `CODEFAST_DI_` (framework-style tokens)
@@ -41,6 +47,7 @@ export type DotGraphOptions = {
   readonly hideInternals?: boolean;
 };
 
+/** Maps a binding's scope and cache state to a {@link BindingActivationStatus} label. */
 function activationStatusFor(
   binding: Binding<unknown>,
   isCached: (bindingToCheck: Binding<unknown>) => boolean,
@@ -51,10 +58,12 @@ function activationStatusFor(
   return isCached(binding) ? "cached" : "not-cached";
 }
 
+/** Escapes a string for use as a DOT `label="..."` attribute value. */
 function dotEscapeLabel(text: string): string {
   return text.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
 }
 
+/** Escapes a string for safe embedding inside a DOT HTML-label (`<...>`) table cell. */
 function dotEscapeHtml(text: string): string {
   return text
     .replaceAll("&", "&amp;")
@@ -63,6 +72,7 @@ function dotEscapeHtml(text: string): string {
     .replaceAll('"', "&quot;");
 }
 
+/** Returns the Graphviz node shape name for a given binding kind. */
 function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
   switch (kind) {
     case "constant":
@@ -82,6 +92,7 @@ function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
   }
 }
 
+/** Returns DOT fill-color and style attributes that visually distinguish binding scopes. */
 function scopeVisualAttributes(scope: BindingScope): string {
   switch (scope) {
     case "singleton":
@@ -97,14 +108,17 @@ function scopeVisualAttributes(scope: BindingScope): string {
   }
 }
 
+/** Strips non-alphanumeric characters from a module name to produce a valid DOT subgraph identifier. */
 function sanitizeClusterId(moduleName: string): string {
   return moduleName.replace(/[^0-9a-zA-Z_]/g, "_");
 }
 
+/** Returns `true` when the label string belongs to a framework-internal registry key. */
 function registryKeyLabelIsInternal(label: string): boolean {
   return label.startsWith("CODEFAST_DI_");
 }
 
+/** Returns `true` when the registry key resolves to an internal framework label. */
 function isInternalRegistryKey(key: RegistryKey): boolean {
   return registryKeyLabelIsInternal(registryKeyLabel(key));
 }
@@ -112,9 +126,15 @@ function isInternalRegistryKey(key: RegistryKey): boolean {
 /**
  * Read-only introspection and Graphviz DOT export for a container graph.
  */
+/**
+ * Reads the registry and scope-cache state to produce debug snapshots and dependency graphs.
+ * Instantiated internally by the container; advanced consumers can construct it directly via
+ * the `@codefast/di/inspector` subpath export.
+ */
 export class ContainerInspector {
   constructor(private readonly ctx: ContainerInspectorContext) {}
 
+  /** Collects all registered bindings into a flat, serialisable snapshot. */
   getSnapshot(): ContainerSnapshot {
     const bindings: ContainerBindingSnapshot[] = [];
     const seen = new Set<BindingIdentifier>();
@@ -150,7 +170,9 @@ export class ContainerInspector {
   }
 
   /**
-   * Produces a Graphviz `digraph` string. Cycles are represented as ordinary edges (Graphviz handles cycles).
+   * Produces a Graphviz `digraph` string with HTML-label nodes and styled edges.
+   * Cycles are represented as ordinary edges (Graphviz renders them correctly).
+   * Pass `hideInternals: true` to suppress `CODEFAST_DI_`-prefixed tokens.
    */
   generateDotGraph(options?: DotGraphOptions): string {
     const hideInternals = options?.hideInternals === true;
