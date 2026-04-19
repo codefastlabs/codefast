@@ -94,9 +94,9 @@ export class ScopeManager {
       return cached.instance;
     }
 
-    let inflight = pendingMap.get(binding.id);
-    if (inflight === undefined) {
-      inflight = (async () => {
+    let inflightPromise = pendingMap.get(binding.id);
+    if (inflightPromise === undefined) {
+      inflightPromise = (async () => {
         try {
           const instance = await createInstance();
           store.set(binding.id, { binding, instance });
@@ -105,9 +105,9 @@ export class ScopeManager {
           pendingMap.delete(binding.id);
         }
       })();
-      pendingMap.set(binding.id, inflight);
+      pendingMap.set(binding.id, inflightPromise);
     }
-    return inflight;
+    return inflightPromise;
   }
 
   /**
@@ -205,8 +205,8 @@ export class ScopeManager {
   }
 
   private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
-    for (const [id, entry] of [...store.entries()]) {
-      store.delete(id);
+    for (const [bindingId, entry] of [...store.entries()]) {
+      store.delete(bindingId);
       const handler = entry.binding.onDeactivation;
       if (handler !== undefined) {
         const result = handler(entry.instance);

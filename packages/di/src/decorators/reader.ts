@@ -20,20 +20,22 @@ function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
  */
 export class SymbolMetadataReader implements MetadataReader {
   getConstructorMetadata(ctor: Constructor<unknown>): ConstructorMetadata | undefined {
-    const metadataObjectKey = decoratorMetadataObjectSymbol();
-    const bucketUnknown: unknown = (ctor as unknown as Record<symbol, unknown>)[metadataObjectKey];
-    if (typeof bucketUnknown !== "object" || bucketUnknown === null) {
+    const metadataSymbol = decoratorMetadataObjectSymbol();
+    const rawMetadata: unknown = (ctor as unknown as Record<symbol, unknown>)[metadataSymbol];
+    if (typeof rawMetadata !== "object" || rawMetadata === null) {
       return undefined;
     }
-    const bucket = bucketUnknown;
+    const metadataObject = rawMetadata;
     // CRITICAL: Use Object.hasOwn to prevent reading inherited metadata from parent classes.
     // TC39 Symbol.metadata prototype-chains from parent → child. Without this guard,
     // a subclass without @injectable() would silently inherit parent metadata, causing
     // wrong dep count injection with no compile-time error.
-    if (!Object.hasOwn(bucket, CODEFAST_DI_CONSTRUCTOR_METADATA)) {
+    if (!Object.hasOwn(metadataObject, CODEFAST_DI_CONSTRUCTOR_METADATA)) {
       return undefined;
     }
-    const raw: unknown = (bucket as Record<PropertyKey, unknown>)[CODEFAST_DI_CONSTRUCTOR_METADATA];
+    const raw: unknown = (metadataObject as Record<PropertyKey, unknown>)[
+      CODEFAST_DI_CONSTRUCTOR_METADATA
+    ];
     if (!isConstructorMetadata(raw)) {
       return undefined;
     }
@@ -41,13 +43,13 @@ export class SymbolMetadataReader implements MetadataReader {
   }
 
   getLifecycleMetadata(ctor: Constructor<unknown>): LifecycleMetadata | undefined {
-    const metadataObjectKey = decoratorMetadataObjectSymbol();
-    const bucket = (ctor as unknown as Record<symbol, unknown>)[metadataObjectKey];
-    if (typeof bucket !== "object" || bucket === null) {
+    const metadataSymbol = decoratorMetadataObjectSymbol();
+    const metadataObject = (ctor as unknown as Record<symbol, unknown>)[metadataSymbol];
+    if (typeof metadataObject !== "object" || metadataObject === null) {
       return undefined;
     }
     // Lifecycle metadata CAN be inherited (postConstruct on parent is valid for child)
-    const raw = (bucket as Record<PropertyKey, unknown>)[CODEFAST_DI_LIFECYCLE_METADATA];
+    const raw = (metadataObject as Record<PropertyKey, unknown>)[CODEFAST_DI_LIFECYCLE_METADATA];
     if (typeof raw !== "object" || raw === null) {
       return undefined;
     }

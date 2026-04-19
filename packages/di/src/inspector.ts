@@ -43,7 +43,7 @@ export type DotGraphOptions = {
 
 function activationStatusFor(
   binding: Binding<unknown>,
-  isCached: (bindingArg: Binding<unknown>) => boolean,
+  isCached: (bindingToCheck: Binding<unknown>) => boolean,
 ): BindingActivationStatus {
   if (binding.scope === "transient") {
     return "transient";
@@ -171,11 +171,11 @@ export class ContainerInspector {
     const byModule = new Map<string | undefined, ContainerBindingSnapshot[]>();
     for (const row of visibleRows) {
       const key = row.moduleId;
-      const bucket = byModule.get(key);
-      if (bucket === undefined) {
+      const moduleGroup = byModule.get(key);
+      if (moduleGroup === undefined) {
         byModule.set(key, [row]);
       } else {
-        bucket.push(row);
+        moduleGroup.push(row);
       }
     }
 
@@ -239,13 +239,13 @@ export class ContainerInspector {
         continue;
       }
       const pathStart = [registryKeyLabel(registryKey)];
-      for (const consumer of list) {
-        if (hideInternals && !allowedBindingIds.has(consumer.id)) {
+      for (const consumerBinding of list) {
+        if (hideInternals && !allowedBindingIds.has(consumerBinding.id)) {
           continue;
         }
         const edges = collectStaticDependencyEdges(
-          consumer,
-          (registryKeyArg) => this.ctx.lookupBindings(registryKeyArg),
+          consumerBinding,
+          (dependencyKey) => this.ctx.lookupBindings(dependencyKey),
           this.ctx.metadataReader,
           pathStart,
         );
@@ -326,13 +326,13 @@ export class ContainerInspector {
         continue;
       }
       const pathStart = [registryKeyLabel(registryKey)];
-      for (const consumer of list) {
-        if (hideInternals && !allowedBindingIds.has(consumer.id)) {
+      for (const consumerBinding of list) {
+        if (hideInternals && !allowedBindingIds.has(consumerBinding.id)) {
           continue;
         }
         for (const edge of collectStaticDependencyEdges(
-          consumer,
-          (registryKeyArg) => this.ctx.lookupBindings(registryKeyArg),
+          consumerBinding,
+          (dependencyKey) => this.ctx.lookupBindings(dependencyKey),
           this.ctx.metadataReader,
           pathStart,
         )) {
@@ -376,13 +376,13 @@ export class ContainerInspector {
         continue;
       }
       const pathStart = [registryKeyLabel(registryKey)];
-      for (const consumer of list) {
-        if (hideInternals && !allowedBindingIds.has(consumer.id)) {
+      for (const consumerBinding of list) {
+        if (hideInternals && !allowedBindingIds.has(consumerBinding.id)) {
           continue;
         }
         for (const edge of collectStaticDependencyEdges(
-          consumer,
-          (registryKeyArg) => this.ctx.lookupBindings(registryKeyArg),
+          consumerBinding,
+          (dependencyKey) => this.ctx.lookupBindings(dependencyKey),
           this.ctx.metadataReader,
           pathStart,
         )) {

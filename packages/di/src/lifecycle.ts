@@ -28,16 +28,16 @@ export function runActivation(
   if (handler === undefined) {
     return instance;
   }
-  const tokenLabel = pathLabels[pathLabels.length - 1] ?? "(unknown)";
-  const result = handler(ctx, instance);
-  if (isPromiseLike(result)) {
+  const bindingLabel = pathLabels[pathLabels.length - 1] ?? "(unknown)";
+  const activationResult = handler(ctx, instance);
+  if (isPromiseLike(activationResult)) {
     throw new AsyncResolutionError(
-      tokenLabel,
+      bindingLabel,
       pathLabels,
       "onActivation returned a Promise during synchronous resolution",
     );
   }
-  return result;
+  return activationResult;
 }
 
 /**
@@ -46,12 +46,12 @@ export function runActivation(
 export function readLifecycleMetadataFromCtor(
   ctor: Constructor<unknown>,
 ): LifecycleMetadata | undefined {
-  const metaKey = decoratorMetadataObjectSymbol();
-  const bucket = (ctor as unknown as Record<symbol, unknown>)[metaKey];
-  if (typeof bucket !== "object" || bucket === null) {
+  const metadataSymbol = decoratorMetadataObjectSymbol();
+  const metadataObject = (ctor as unknown as Record<symbol, unknown>)[metadataSymbol];
+  if (typeof metadataObject !== "object" || metadataObject === null) {
     return undefined;
   }
-  const raw = (bucket as Record<PropertyKey, unknown>)[CODEFAST_DI_LIFECYCLE_METADATA];
+  const raw = (metadataObject as Record<PropertyKey, unknown>)[CODEFAST_DI_LIFECYCLE_METADATA];
   return typeof raw === "object" && raw !== null ? (raw as LifecycleMetadata) : undefined;
 }
 
@@ -68,20 +68,20 @@ export function runPostConstruct(
     return;
   }
   const methodName = meta.postConstruct;
-  const method = (instance as Record<string, unknown>)[methodName];
-  if (typeof method !== "function") {
+  const lifecycleMethod = (instance as Record<string, unknown>)[methodName];
+  if (typeof lifecycleMethod !== "function") {
     return;
   }
-  const result = (method as () => unknown).call(instance);
+  const postConstructResult = (lifecycleMethod as () => unknown).call(instance);
   if (
-    typeof result === "object" &&
-    result !== null &&
-    "then" in result &&
-    typeof (result as Promise<unknown>).then === "function"
+    typeof postConstructResult === "object" &&
+    postConstructResult !== null &&
+    "then" in postConstructResult &&
+    typeof (postConstructResult as Promise<unknown>).then === "function"
   ) {
-    const tokenLabel = pathLabels[pathLabels.length - 1] ?? "(unknown)";
+    const bindingLabel = pathLabels[pathLabels.length - 1] ?? "(unknown)";
     throw new AsyncResolutionError(
-      tokenLabel,
+      bindingLabel,
       pathLabels,
       `@postConstruct() "${methodName}" returned a Promise during synchronous resolution`,
     );
@@ -100,11 +100,11 @@ export async function runPostConstructAsync(
     return;
   }
   const methodName = meta.postConstruct;
-  const method = (instance as Record<string, unknown>)[methodName];
-  if (typeof method !== "function") {
+  const lifecycleMethod = (instance as Record<string, unknown>)[methodName];
+  if (typeof lifecycleMethod !== "function") {
     return;
   }
-  await (method as () => unknown).call(instance);
+  await (lifecycleMethod as () => unknown).call(instance);
 }
 
 /**
@@ -116,16 +116,16 @@ export function runPreDestroy(ctor: Constructor<unknown>, instance: unknown): vo
     return;
   }
   const methodName = meta.preDestroy;
-  const method = (instance as Record<string, unknown>)[methodName];
-  if (typeof method !== "function") {
+  const lifecycleMethod = (instance as Record<string, unknown>)[methodName];
+  if (typeof lifecycleMethod !== "function") {
     return;
   }
-  const result = (method as () => unknown).call(instance);
+  const preDestroyResult = (lifecycleMethod as () => unknown).call(instance);
   if (
-    typeof result === "object" &&
-    result !== null &&
-    "then" in result &&
-    typeof (result as Promise<unknown>).then === "function"
+    typeof preDestroyResult === "object" &&
+    preDestroyResult !== null &&
+    "then" in preDestroyResult &&
+    typeof (preDestroyResult as Promise<unknown>).then === "function"
   ) {
     throw new Error(
       `@preDestroy() "${methodName}" returned a Promise during synchronous disposal; use disposeAsync() / unloadAsync().`,
@@ -145,11 +145,11 @@ export async function runPreDestroyAsync(
     return;
   }
   const methodName = meta.preDestroy;
-  const method = (instance as Record<string, unknown>)[methodName];
-  if (typeof method !== "function") {
+  const lifecycleMethod = (instance as Record<string, unknown>)[methodName];
+  if (typeof lifecycleMethod !== "function") {
     return;
   }
-  await (method as () => unknown).call(instance);
+  await (lifecycleMethod as () => unknown).call(instance);
 }
 
 /**
