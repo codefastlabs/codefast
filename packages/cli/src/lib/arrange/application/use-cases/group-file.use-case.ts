@@ -1,4 +1,4 @@
-import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import type { ArrangeGroupFileOptions, GroupFileResult } from "#/lib/arrange/domain/types.domain";
@@ -18,7 +18,6 @@ export function groupFile(
   filePath: string,
   options: ArrangeGroupFileOptions,
   fs: CliFs,
-  logger: CliLogger,
   domainSourceParser: DomainSourceParserPort,
   groupFilePreview: GroupFilePreviewPort,
 ): GroupFileResult {
@@ -47,7 +46,7 @@ export function groupFile(
     if (groupFileWorkHasNothingToReport(work)) {
       return groupFileDryRunNoEdits(filePath);
     }
-    groupFilePreview.printGroupFilePreviewFromWork(logger, work);
+    groupFilePreview.printGroupFilePreviewFromWork(work);
     return groupFilePreviewTotals(work);
   }
 

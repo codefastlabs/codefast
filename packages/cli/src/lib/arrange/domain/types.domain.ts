@@ -144,4 +144,5 @@ export type ArrangeRunResult = {
   modifiedFiles: string[];
   totalFound: number;
   totalChanged: number;
+  hookError: string | null;
 };

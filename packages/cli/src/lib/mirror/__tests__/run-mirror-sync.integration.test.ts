@@ -37,7 +37,7 @@ async function runMirrorSyncWithNodeDependencies(request: MirrorSyncRunRequest):
   if (!outcome.ok) {
     throw new Error(outcome.error.message);
   }
-  return outcome.value;
+  return outcome.value.packagesErrored > 0 ? 1 : 0;
 }
 
 describe("runMirrorSync (integration)", () => {

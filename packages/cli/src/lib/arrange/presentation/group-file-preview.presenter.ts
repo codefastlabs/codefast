@@ -85,6 +85,8 @@ export function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFile
   });
 }
 
-export const groupFilePreviewPresenter: GroupFilePreviewPort = {
-  printGroupFilePreviewFromWork,
-};
+export function createGroupFilePreviewPresenter(logger: CliLogger): GroupFilePreviewPort {
+  return {
+    printGroupFilePreviewFromWork: (work) => printGroupFilePreviewFromWork(logger, work),
+  };
+}

@@ -34,7 +34,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
     private readonly syncWorkspacePackage: SyncWorkspacePackageService,
   ) {}
 
-  async execute(request: MirrorSyncRunRequest): Promise<Result<number, AppError>> {
+  async execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>> {
     const config = (request.config ?? {}) as MirrorConfig;
 
     this.mirrorReporter.configureMirrorColors(!!request.noColor);
@@ -79,7 +79,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
       stats.packagesFound = targetPackages.length;
       if (targetPackages.length === 0) {
         this.mirrorReporter.mirrorNoPackages(this.logger);
-        return ok(0);
+        return ok(stats);
       }
 
       let nextPackageOrdinal = 1;
@@ -100,7 +100,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
       this.mirrorReporter.mirrorSummarySeparator(this.logger);
       this.mirrorReporter.mirrorSummary(this.logger, stats, elapsed);
 
-      return ok(stats.packagesErrored > 0 ? 1 : 0);
+      return ok(stats);
     } catch (caughtError: unknown) {
       return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }

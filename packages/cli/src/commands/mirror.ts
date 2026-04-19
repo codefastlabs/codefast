@@ -63,6 +63,8 @@ export class MirrorCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, parsed)) {
       return;
     }
-    await runCliResultAsync(this.logger, this.runMirrorSync.execute(parsed.value), (code) => code);
+    await runCliResultAsync(this.logger, this.runMirrorSync.execute(parsed.value), (stats) =>
+      stats.packagesErrored > 0 ? 1 : 0,
+    );
   }
 }

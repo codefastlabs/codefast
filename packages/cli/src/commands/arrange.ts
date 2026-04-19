@@ -7,12 +7,10 @@ import {
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/lib/arrange/presentation/arrange-cli-schema.presenter";
+import { presentArrangeSyncResult } from "#/lib/arrange/presentation/arrange-sync.presenter";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
-import {
-  consumeCliAppError,
-  runCliResultAsync,
-} from "#/lib/core/presentation/cli-executor.presenter";
+import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import {
   AnalyzeDirectoryUseCaseToken,
@@ -34,8 +32,6 @@ function withClassNameOption(): Option {
     "Append className as final cn() argument",
   ).default(false);
 }
-
-type ArrangeAction = "analyze" | "preview" | "apply" | "group";
 
 @injectable([
   CliLoggerToken,
@@ -65,7 +61,7 @@ export class ArrangeCommand implements CliCommand {
       .command("analyze")
       .description("Report long strings, nested cn in tv(), and related findings")
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-      .action(this.execute.bind(this, "analyze"));
+      .action((target: string | undefined) => this.executeAnalyze(target));
 
     arrange
       .command("preview")
@@ -73,7 +69,9 @@ export class ArrangeCommand implements CliCommand {
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
       .addOption(withClassNameOption())
       .option("--cn-import <spec>", "Override module specifier when adding cn import")
-      .action(this.execute.bind(this, "preview"));
+      .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) =>
+        this.executePreviewOrApply(false, target, opts),
+      );
 
     arrange
       .command("apply")
@@ -81,7 +79,9 @@ export class ArrangeCommand implements CliCommand {
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
       .addOption(withClassNameOption())
       .option("--cn-import <spec>", "Override module specifier when adding cn import")
-      .action(this.execute.bind(this, "apply"));
+      .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) =>
+        this.executePreviewOrApply(true, target, opts),
+      );
 
     arrange
       .command("group")
@@ -89,38 +89,9 @@ export class ArrangeCommand implements CliCommand {
       .argument("[tokens...]", "Class tokens (quote a single string if it contains spaces)")
       .option("--tv", "Emit tv()-style array instead of cn() call", false)
       .addOption(withClassNameOption())
-      .action(this.execute.bind(this, "group"));
-  }
-
-  async execute(...args: unknown[]): Promise<void> {
-    const [action, ...rest] = args as [ArrangeAction, ...unknown[]];
-    switch (action) {
-      case "analyze":
-        await this.executeAnalyze(rest[0] as string | undefined);
-        return;
-      case "preview":
-        await this.executePreviewOrApply(
-          false,
-          rest[0] as string | undefined,
-          rest[1] as { withClassName?: boolean; cnImport?: string },
-        );
-        return;
-      case "apply":
-        await this.executePreviewOrApply(
-          true,
-          rest[0] as string | undefined,
-          rest[1] as { withClassName?: boolean; cnImport?: string },
-        );
-        return;
-      case "group":
-        await this.executeGroup(
-          rest[0] as string[],
-          rest[1] as { tv?: boolean; withClassName?: boolean },
-        );
-        return;
-      default:
-        return;
-    }
+      .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean }) =>
+        this.executeGroup(tokens, opts),
+      );
   }
 
   private async executeAnalyze(target: string | undefined): Promise<void> {
@@ -169,7 +140,11 @@ export class ArrangeCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, parsed)) {
       return;
     }
-    await runCliResultAsync(this.logger, this.runArrangeSync.execute(parsed.value), (code) => code);
+    const outcome = await this.runArrangeSync.execute(parsed.value);
+    if (!consumeCliAppError(this.logger, outcome)) {
+      return;
+    }
+    process.exitCode = presentArrangeSyncResult(this.logger, outcome.value, write);
   }
 
   private async executeGroup(
