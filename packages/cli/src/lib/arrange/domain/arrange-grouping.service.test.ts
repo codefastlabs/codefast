@@ -7,12 +7,12 @@ import {
   groupFileWorkHasNothingToReport,
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
-  type GroupFileWorkPlan,
 } from "#/lib/arrange/domain/arrange-grouping.service";
-import {
-  DomainSyntaxKind,
-  type DomainCallExpression,
-  type DomainSourceFile,
+import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
+import { DomainSyntaxKind } from "#/lib/arrange/domain/ast/ast-node.model";
+import type {
+  DomainCallExpression,
+  DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 

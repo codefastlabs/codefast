@@ -4,19 +4,19 @@ import { Command } from "commander";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import {
+  PrepareMirrorOrchestratorToken,
+  RunMirrorSyncUseCaseToken,
+} from "#/lib/mirror/contracts/tokens";
+import type { PrepareMirrorOrchestrator } from "#/lib/mirror/contracts/presentation.contract";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
+import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import {
   consumeCliAppError,
   runCliResultAsync,
 } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
-import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
-import {
-  CliLoggerToken,
-  type PrepareMirrorOrchestrator,
-  PrepareMirrorOrchestratorToken,
-  type RunMirrorSyncUseCase,
-  RunMirrorSyncUseCaseToken,
-} from "#/lib/tokens";
 
 @injectable([
   inject(CliLoggerToken),

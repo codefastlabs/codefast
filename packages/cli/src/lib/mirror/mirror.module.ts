@@ -5,17 +5,17 @@ import { FileSystemServiceAdapter } from "#/lib/mirror/infra/file-system-service
 import { MirrorSyncReporterAdapter } from "#/lib/mirror/infra/mirror-sync-reporter.adapter";
 import { PackageRepositoryAdapter } from "#/lib/mirror/infra/package-repository.adapter";
 import { WorkspaceServiceAdapter } from "#/lib/mirror/infra/workspace-service.adapter";
-import { InfraModule } from "#/lib/core/infra/infra.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
-  CliLoggerToken,
   FileSystemServicePortToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
   RunMirrorSyncUseCaseToken,
   SyncWorkspacePackageServiceToken,
   WorkspaceServicePortToken,
-} from "#/lib/tokens";
+} from "#/lib/mirror/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { InfraModule } from "#/lib/core/infra/infra.module";
+import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 
 export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
   moduleBuilder.import(InfraModule);

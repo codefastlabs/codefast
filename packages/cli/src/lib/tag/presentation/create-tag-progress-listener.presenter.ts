@@ -1,5 +1,5 @@
 import { injectable } from "@codefast/di";
-import type { CreateTagProgressListenerPresenter } from "#/lib/tokens";
+import type { CreateTagProgressListenerPresenter } from "#/lib/tag/contracts/presentation.contract";
 import { createTagProgressListener } from "#/lib/tag/presentation/tag-sync.presenter";
 
 @injectable([])

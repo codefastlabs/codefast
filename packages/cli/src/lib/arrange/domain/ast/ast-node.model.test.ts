@@ -1,9 +1,9 @@
 import {
   DomainSyntaxKind,
-  type DomainAstNode,
   forEachDomainChild,
   isDomainCallExpression,
 } from "#/lib/arrange/domain/ast/ast-node.model";
+import type { DomainAstNode } from "#/lib/arrange/domain/ast/ast-node.model";
 
 describe("ast-node.model guards", () => {
   it("isDomainCallExpression rejects non-call nodes", () => {

@@ -5,11 +5,11 @@ import {
   printGroupFilePreviewFromWork,
 } from "#/lib/arrange/presentation/group-file-preview.presenter";
 import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
-import {
-  DomainSyntaxKind,
-  type DomainAstNode,
-  type DomainCallExpression,
-  type DomainSourceFile,
+import { DomainSyntaxKind } from "#/lib/arrange/domain/ast/ast-node.model";
+import type {
+  DomainAstNode,
+  DomainCallExpression,
+  DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 

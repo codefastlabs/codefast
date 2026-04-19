@@ -1,9 +1,5 @@
 import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#/lib/arrange/domain/constants.domain";
 import {
-  type DomainAstNode,
-  type DomainCallExpression,
-  type DomainObjectLiteralExpression,
-  type DomainSourceFile,
   isDomainArrayLiteralExpression,
   isDomainCallExpression,
   isDomainObjectLiteralExpression,
@@ -11,6 +7,12 @@ import {
   isDomainSpreadElement,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type {
+  DomainAstNode,
+  DomainCallExpression,
+  DomainObjectLiteralExpression,
+  DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import {
   CN_APPLY_LITERAL_WALK_OPTS,

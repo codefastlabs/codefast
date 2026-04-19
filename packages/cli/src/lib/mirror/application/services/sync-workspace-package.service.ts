@@ -2,6 +2,7 @@ import { injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
+import { CliFsToken, CliLoggerToken, CliPathToken } from "#/lib/core/operational/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import { DIST_DIR, PACKAGE_JSON } from "#/lib/mirror/domain/constants.domain";
 import {
@@ -19,13 +20,10 @@ import type {
   PackageStats,
 } from "#/lib/mirror/domain/types.domain";
 import {
-  CliFsToken,
-  CliLoggerToken,
-  CliPathToken,
   FileSystemServicePortToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
-} from "#/lib/tokens";
+} from "#/lib/mirror/contracts/tokens";
 
 function resolvePackageScopedConfig<T>(
   configMap: Record<string, T> | undefined,

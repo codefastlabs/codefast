@@ -18,14 +18,16 @@ import {
   lineOf,
 } from "#/lib/arrange/domain/ast/ast-helpers.helper";
 import {
-  type DomainAstNode,
-  type DomainCallExpression,
-  type DomainJsxAttribute,
-  type DomainSourceFile,
   isDomainCallExpression,
   isDomainJsxAttribute,
   isDomainObjectLiteralExpression,
   forEachDomainChild,
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type {
+  DomainAstNode,
+  DomainCallExpression,
+  DomainJsxAttribute,
+  DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 
 const PREVIEW_MAX_LENGTH = 72;

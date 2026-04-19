@@ -3,9 +3,8 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { createCliRuntimeContainer } from "#/lib/core/infra/composition-root";
+import { createCliRuntimeContainer, resolveCliCommands } from "#/lib/core/infra/composition-root";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
-import { COMMAND_TOKEN } from "#/lib/core/presentation/tokens";
 
 function readVersion(): string {
   try {
@@ -43,7 +42,7 @@ export async function runCli(argv: string[]): Promise<number> {
       runtimeContainer.validate();
       await runtimeContainer.initializeAsync();
     }
-    const commands = runtimeContainer.resolveAll(COMMAND_TOKEN);
+    const commands = resolveCliCommands(runtimeContainer);
     const program = createProgram(commands);
     await program.parseAsync(argv, { from: "node" });
     const code = process.exitCode ?? 0;

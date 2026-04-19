@@ -7,19 +7,19 @@ import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/
 import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
 import { GroupFilePreviewPresenterAdapter } from "#/lib/arrange/presentation/group-file-preview.presenter";
-import { InfraModule } from "#/lib/core/infra/infra.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorToken,
   ArrangeTargetScannerToken,
-  CliLoggerToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
   GroupFilePreviewPortToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
-} from "#/lib/tokens";
+} from "#/lib/arrange/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { InfraModule } from "#/lib/core/infra/infra.module";
+import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 
 export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
   moduleBuilder.import(InfraModule);

@@ -42,7 +42,8 @@ import {
   SparklesIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { type JSX, useState } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 export function ThemeLibraryPreview(): JSX.Element {
   const [productUpdates, setProductUpdates] = useState(true);

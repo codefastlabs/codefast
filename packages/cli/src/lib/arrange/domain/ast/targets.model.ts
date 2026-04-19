@@ -19,13 +19,12 @@ import {
 } from "#/lib/arrange/domain/ast/collectors-tv.collector";
 import { indentOfLineContaining } from "#/lib/shared/source-code/domain/text-edit.model";
 import {
-  type DomainAstNode,
-  type DomainSourceFile,
   isDomainArrayLiteralExpression,
   isDomainJsxAttribute,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
 } from "#/lib/arrange/domain/ast/ast-node.model";
+import type { DomainAstNode, DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
 
 export function targetReplaceStart(target: GroupTarget): number {
   if (target.kind === "cnArg") {

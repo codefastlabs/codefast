@@ -3,11 +3,11 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/lib/arrange/arrange.module";
+import type { RunArrangeSyncUseCase } from "#/lib/arrange/contracts/use-cases.contract";
+import { RunArrangeSyncUseCaseToken } from "#/lib/arrange/contracts/tokens";
 import { CoreModule } from "#/lib/core/core.module";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
-import type { RunArrangeSyncUseCase } from "#/lib/tokens";
-import { RunArrangeSyncUseCaseToken } from "#/lib/tokens";
 
 describe("RunArrangeSyncUseCase integration", () => {
   const container = Container.create();

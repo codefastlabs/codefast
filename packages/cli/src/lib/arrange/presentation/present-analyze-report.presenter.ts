@@ -1,8 +1,8 @@
 import { inject, injectable } from "@codefast/di";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
-import type { PresentAnalyzeReportPresenter } from "#/lib/tokens";
-import { CliLoggerToken } from "#/lib/tokens";
 import { presentAnalyzeCliReport } from "#/lib/arrange/presentation/present-analyze-cli.presenter";
 
 @injectable([inject(CliLoggerToken)])

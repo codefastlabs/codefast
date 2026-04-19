@@ -4,16 +4,16 @@ import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter"
 import { TagTargetResolverAdapter } from "#/lib/tag/infra/tag-target-resolver.adapter";
 import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
-import { InfraModule } from "#/lib/core/infra/infra.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
-  CliLoggerToken,
   RunTagSyncUseCaseToken,
   TagSinceWriterPortToken,
   TagTargetResolverPortToken,
   TagVersionResolverPortToken,
   TypeScriptTreeWalkPortToken,
-} from "#/lib/tokens";
+} from "#/lib/tag/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { InfraModule } from "#/lib/core/infra/infra.module";
+import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 
 export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
   moduleBuilder.import(InfraModule);

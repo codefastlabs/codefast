@@ -4,19 +4,17 @@ import { err, ok } from "#/lib/core/domain/result.model";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
 import { resolveArrangeCliTargetPath } from "#/lib/arrange/presentation/resolve-arrange-cli-target.presenter";
-import {
-  AppOrchestratorToken,
-  CliFsToken,
-  type AppOrchestrator,
-  type PrepareArrangeOrchestrator as PrepareArrangeOrchestratorContract,
-} from "#/lib/tokens";
+import type { PrepareArrangeOrchestrator as PrepareArrangeOrchestratorContract } from "#/lib/arrange/contracts/presentation.contract";
+import { TryLoadCodefastConfigPresenterToken } from "#/lib/core/contracts/tokens";
+import type { TryLoadCodefastConfigPresenter } from "#/lib/core/contracts/presentation.contract";
+import { CliFsToken } from "#/lib/core/operational/contracts/tokens";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
-@injectable([inject(CliFsToken), inject(AppOrchestratorToken)])
+@injectable([inject(CliFsToken), inject(TryLoadCodefastConfigPresenterToken)])
 export class PrepareArrangeOrchestrator implements PrepareArrangeOrchestratorContract {
   constructor(
     private readonly fs: CliFs,
-    private readonly appOrchestrator: AppOrchestrator,
+    private readonly tryLoadCodefastConfig: TryLoadCodefastConfigPresenter,
   ) {}
 
   async execute(args: {
@@ -37,7 +35,7 @@ export class PrepareArrangeOrchestrator implements PrepareArrangeOrchestratorCon
     } catch (caughtError: unknown) {
       return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
-    const loadedOutcome = await this.appOrchestrator.tryLoadCodefastConfig(rootDir);
+    const loadedOutcome = await this.tryLoadCodefastConfig.execute(rootDir);
     if (!loadedOutcome.ok) {
       return loadedOutcome;
     }
