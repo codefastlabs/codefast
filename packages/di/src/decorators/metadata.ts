@@ -63,6 +63,8 @@ export type ConstructorMetadata = {
  * Abstraction for reading DI metadata (section 6.4) without tying callers to `Symbol.metadata`.
  */
 export type MetadataReader = {
-  getConstructorMetadata(ctor: Constructor<unknown>): ConstructorMetadata | undefined;
-  getLifecycleMetadata?(ctor: Constructor<unknown>): LifecycleMetadata | undefined;
+  getConstructorMetadata(
+    implementationClass: Constructor<unknown>,
+  ): ConstructorMetadata | undefined;
+  getLifecycleMetadata?(implementationClass: Constructor<unknown>): LifecycleMetadata | undefined;
 };

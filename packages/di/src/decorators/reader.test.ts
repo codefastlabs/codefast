@@ -7,8 +7,8 @@ import {
 import { SymbolMetadataReader } from "#/decorators/reader";
 import { token } from "#/token";
 
-function setConstructorMetadata(ctor: object, key: symbol, payload: unknown) {
-  Object.defineProperty(ctor, key, {
+function setConstructorMetadata(implementationClass: object, key: symbol, payload: unknown) {
+  Object.defineProperty(implementationClass, key, {
     value: payload,
     configurable: true,
     enumerable: false,

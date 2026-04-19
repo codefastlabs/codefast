@@ -5,7 +5,7 @@
  * analytics, notifications) is a hot-swappable plugin module.
  *
  * Key architectural insight about multi-binding:
- *   - Module api.bind() uses "last-wins" semantics per token — correct for
+ *   - Module builder.bind() uses "last-wins" semantics per token — correct for
  *     infrastructure (each module owns its capability token: StorageToken,
  *     AnalyticsToken, etc.).
  *   - container.bind() uses "append" semantics — correct for registries where
@@ -62,7 +62,7 @@ const NotificationToken = token<NotificationProvider>("NotificationProvider");
 const DocumentServiceToken = token<DocumentService>("DocumentService");
 
 // PluginToken is the multi-binding registry populated via container.bind() —
-// NOT via module api.bind() — to leverage append semantics.
+// NOT via module builder.bind() — to leverage append semantics.
 const PluginToken = token<PluginDescriptor>("Plugin");
 
 // ============================================================================
@@ -111,8 +111,8 @@ interface PluginDescriptor {
 // CoreModule — shared infrastructure, loaded once (diamond-dedup)
 // ============================================================================
 
-const CoreModule = Module.create("Core", (api) => {
-  api.bind(AppConfigToken).toConstantValue({
+const CoreModule = Module.create("Core", (builder) => {
+  builder.bind(AppConfigToken).toConstantValue({
     env: "production",
     region: "ap-southeast-1",
     s3Bucket: "myapp-uploads",
@@ -120,7 +120,7 @@ const CoreModule = Module.create("Core", (api) => {
     analyticsKey: "ak_live_xxx",
   });
 
-  api.bind(AppLoggerToken).toConstantValue({
+  builder.bind(AppLoggerToken).toConstantValue({
     info: (msg) => console.log(`  [INFO]  ${msg}`),
     warn: (msg) => console.log(`  [WARN]  ${msg}`),
   });
@@ -163,11 +163,11 @@ class S3StorageProvider implements StorageProvider {
   }
 }
 
-const S3PluginModule = Module.createAsync("S3Plugin", async (api) => {
+const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
   // CoreModule imported here — deduped if already loaded
-  api.import(CoreModule);
+  builder.import(CoreModule);
 
-  api
+  builder
     .bind(StorageToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(AppConfigToken);
@@ -215,10 +215,10 @@ class SegmentAnalyticsProvider implements AnalyticsProvider {
   }
 }
 
-const AnalyticsPluginModule = Module.createAsync("AnalyticsPlugin", async (api) => {
-  api.import(CoreModule); // deduped — CoreModule setup runs exactly once
+const AnalyticsPluginModule = Module.createAsync("AnalyticsPlugin", async (builder) => {
+  builder.import(CoreModule); // deduped — CoreModule setup runs exactly once
 
-  api
+  builder
     .bind(AnalyticsToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(AppConfigToken);
@@ -251,10 +251,10 @@ class SlackNotificationProvider implements NotificationProvider {
   }
 }
 
-const SlackPluginModule = Module.createAsync("SlackPlugin", async (api) => {
-  api.import(CoreModule); // third import of CoreModule — still runs only once
+const SlackPluginModule = Module.createAsync("SlackPlugin", async (builder) => {
+  builder.import(CoreModule); // third import of CoreModule — still runs only once
 
-  api
+  builder
     .bind(NotificationToken)
     .toDynamicAsync(async (ctx) => {
       const config = ctx.resolve(AppConfigToken);
@@ -337,10 +337,10 @@ class LocalStorageProvider implements StorageProvider {
   }
 }
 
-const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async (api) => {
-  api.import(CoreModule);
+const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async (builder) => {
+  builder.import(CoreModule);
 
-  api
+  builder
     .bind(StorageToken)
     .toDynamicAsync(async (ctx) => {
       const logger = ctx.resolve(AppLoggerToken);

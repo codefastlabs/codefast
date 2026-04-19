@@ -19,9 +19,13 @@ function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
  * Reads {@link ConstructorMetadata} from the standard `Symbol.metadata` object.
  */
 export class SymbolMetadataReader implements MetadataReader {
-  getConstructorMetadata(ctor: Constructor<unknown>): ConstructorMetadata | undefined {
+  getConstructorMetadata(
+    implementationClass: Constructor<unknown>,
+  ): ConstructorMetadata | undefined {
     const metadataSymbol = decoratorMetadataObjectSymbol();
-    const rawMetadata: unknown = (ctor as unknown as Record<symbol, unknown>)[metadataSymbol];
+    const rawMetadata: unknown = (implementationClass as unknown as Record<symbol, unknown>)[
+      metadataSymbol
+    ];
     if (typeof rawMetadata !== "object" || rawMetadata === null) {
       return undefined;
     }
@@ -42,9 +46,11 @@ export class SymbolMetadataReader implements MetadataReader {
     return raw;
   }
 
-  getLifecycleMetadata(ctor: Constructor<unknown>): LifecycleMetadata | undefined {
+  getLifecycleMetadata(implementationClass: Constructor<unknown>): LifecycleMetadata | undefined {
     const metadataSymbol = decoratorMetadataObjectSymbol();
-    const metadataObject = (ctor as unknown as Record<symbol, unknown>)[metadataSymbol];
+    const metadataObject = (implementationClass as unknown as Record<symbol, unknown>)[
+      metadataSymbol
+    ];
     if (typeof metadataObject !== "object" || metadataObject === null) {
       return undefined;
     }

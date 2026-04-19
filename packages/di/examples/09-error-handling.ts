@@ -227,9 +227,9 @@ try {
 
 section("7. AsyncModuleLoadError");
 
-const AsyncDbModule = Module.createAsync("Database", async (api) => {
+const AsyncDbModule = Module.createAsync("Database", async (builder) => {
   const DbSetupToken = token<string>("DbSetup");
-  api.bind(DbSetupToken).toConstantValue("connected");
+  builder.bind(DbSetupToken).toConstantValue("connected");
 });
 
 const asyncModuleContainer = Container.create();

@@ -63,43 +63,43 @@ class App {
   ) {}
 
   register(userId: string, email: string): string {
-    const token = this.auth.issueToken(userId);
+    const jwtToken = this.auth.issueToken(userId);
     this.email.send(email, "Welcome!");
-    return token;
+    return jwtToken;
   }
 }
 
 // --- Modules ----------------------------------------------------------------
 
 // CoreModule: shared primitives (config + logger) — can be imported by others
-const CoreModule = Module.create("Core", (api) => {
-  api.bind(ConfigToken).toConstantValue({
+const CoreModule = Module.create("Core", (builder) => {
+  builder.bind(ConfigToken).toConstantValue({
     smtpHost: "smtp.example.com",
     jwtSecret: "supersecret",
   });
 
-  api.bind(LoggerToken).toConstantValue({
+  builder.bind(LoggerToken).toConstantValue({
     info: (msg) => console.log(`[INFO] ${msg}`),
     error: (msg) => console.error(`[ERROR] ${msg}`),
   });
 });
 
 // EmailModule: depends on CoreModule
-const EmailModule = Module.create("Email", (api) => {
-  api.import(CoreModule); // declares dependency
-  api.bind(EmailServiceToken).to(EmailService).singleton();
+const EmailModule = Module.create("Email", (builder) => {
+  builder.import(CoreModule); // declares dependency
+  builder.bind(EmailServiceToken).to(EmailService).singleton();
 });
 
 // AuthModule: also depends on CoreModule
-const AuthModule = Module.create("Auth", (api) => {
-  api.import(CoreModule); // CoreModule deduped — setup runs only once
-  api.bind(AuthServiceToken).to(AuthService).singleton();
+const AuthModule = Module.create("Auth", (builder) => {
+  builder.import(CoreModule); // CoreModule deduped — setup runs only once
+  builder.bind(AuthServiceToken).to(AuthService).singleton();
 });
 
 // AppModule: composes all above — CoreModule imported 3 times, runs once
-const AppModule = Module.create("App", (api) => {
-  api.import(CoreModule, EmailModule, AuthModule);
-  api.bind(AppToken).to(App);
+const AppModule = Module.create("App", (builder) => {
+  builder.import(CoreModule, EmailModule, AuthModule);
+  builder.bind(AppToken).to(App);
 });
 
 // --- Bootstrap --------------------------------------------------------------
@@ -120,9 +120,9 @@ const logger2 = container.resolve(LoggerToken);
 console.log("Shared Logger:", logger1 === logger2); // true
 
 // You can also load/unload modules dynamically after container creation
-const ExtraModule = Module.create("Extra", (api) => {
+const ExtraModule = Module.create("Extra", (builder) => {
   const ExtraToken = token<string>("Extra");
-  api.bind(ExtraToken).toConstantValue("extra-value");
+  builder.bind(ExtraToken).toConstantValue("extra-value");
 });
 
 container.load(ExtraModule);

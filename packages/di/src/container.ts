@@ -40,16 +40,16 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
  * {@link Container.dispose} automatically at scope exit (TC39 Explicit Resource Management).
  */
 export interface Container extends AsyncDisposable {
-  bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
-  rebind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
-  unbind(keyOrId: RegistryKey | BindingIdentifier): void;
-  unbindAsync(keyOrId: RegistryKey | BindingIdentifier): Promise<void>;
-  has(key: RegistryKey, hint?: ResolveHint): boolean;
-  resolve<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T;
-  resolveAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T>;
-  resolveAll<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[];
-  resolveAllAsync<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]>;
-  resolveOptional<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined;
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
+  unbind(tokenOrId: RegistryKey | BindingIdentifier): void;
+  unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void>;
+  has(token: RegistryKey, hint?: ResolveHint): boolean;
+  resolve<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): T;
+  resolveAsync<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T>;
+  resolveAll<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): T[];
+  resolveAllAsync<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]>;
+  resolveOptional<T>(token: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined;
   load(...modules: Module[]): void;
   loadAsync(...modules: ModuleLike[]): Promise<void>;
   unload(...modules: ModuleLike[]): void;
@@ -62,7 +62,7 @@ export interface Container extends AsyncDisposable {
   generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
   createChild(): Container;
   [Symbol.dispose](): never;
-  lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
+  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined;
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
 }
@@ -78,32 +78,32 @@ class DefaultContainer implements Container {
   private devValidationRan = false;
 
   private constructor(
-    private readonly registryOwned: BindingRegistry,
-    private readonly scopeManagerOwned: ScopeManager,
+    private readonly ownRegistry: BindingRegistry,
+    private readonly ownScopeManager: ScopeManager,
     private readonly parent: DefaultContainer | undefined,
     private readonly resolver: DependencyResolver,
     private readonly metadataReader: MetadataReader,
   ) {}
 
   static create(): Container {
-    const registryOwned = new BindingRegistry();
-    const scopeManagerOwned = ScopeManager.createRoot();
+    const ownRegistry = new BindingRegistry();
+    const ownScopeManager = ScopeManager.createRoot();
     const metadataReader = new SymbolMetadataReader();
     const holder: ContainerRef = { current: undefined };
     const resolver = new DependencyResolver({
-      lookup: (key) => {
+      lookup: (token) => {
         const current = holder.current;
         if (current === undefined) {
           throw new DiError("container is not initialized");
         }
-        return current.lookupBindings(key);
+        return current.lookupBindings(token);
       },
-      scopeManager: scopeManagerOwned,
+      scopeManager: ownScopeManager,
       metadataReader,
     });
     const container = new DefaultContainer(
-      registryOwned,
-      scopeManagerOwned,
+      ownRegistry,
+      ownScopeManager,
       undefined,
       resolver,
       metadataReader,
@@ -115,21 +115,21 @@ class DefaultContainer implements Container {
   /**
    * Starts a fluent binding registered on this container when {@link BindingBuilder.build} runs.
    */
-  bind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
-    return new BindingBuilder<Value>(key, undefined, {
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
+    return new BindingBuilder<Value>(token, undefined, {
       register: (built) => {
         this.invalidateDevValidationState();
-        this.registryOwned.add(key, built);
+        this.ownRegistry.add(token, built);
       },
       update: (built) => {
         this.invalidateDevValidationState();
-        this.registryOwned.replaceById(built.id, built as Binding<unknown>);
+        this.ownRegistry.replaceById(built.id, built as Binding<unknown>);
       },
     });
   }
 
-  has(key: RegistryKey, hint?: ResolveHint): boolean {
-    const list = this.lookupBindings(key);
+  has(token: RegistryKey, hint?: ResolveHint): boolean {
+    const list = this.lookupBindings(token);
     if (list === undefined || list.length === 0) {
       return false;
     }
@@ -150,48 +150,48 @@ class DefaultContainer implements Container {
     });
   }
 
-  unbind(keyOrId: RegistryKey | BindingIdentifier): void {
+  unbind(tokenOrId: RegistryKey | BindingIdentifier): void {
     this.invalidateDevValidationState();
-    if (typeof keyOrId === "string") {
-      this.scopeManagerOwned.releaseByBindingId(keyOrId);
-      this.registryOwned.removeById(keyOrId);
+    if (typeof tokenOrId === "string") {
+      this.ownScopeManager.releaseByBindingId(tokenOrId);
+      this.ownRegistry.removeById(tokenOrId);
       return;
     }
-    const owned = this.registryOwned.get(keyOrId as Token<unknown> | Constructor<unknown>);
+    const owned = this.ownRegistry.get(tokenOrId as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
-        this.scopeManagerOwned.releaseBinding(binding);
+        this.ownScopeManager.releaseBinding(binding);
       }
     }
-    this.registryOwned.remove(keyOrId);
+    this.ownRegistry.remove(tokenOrId);
   }
 
-  async unbindAsync(keyOrId: RegistryKey | BindingIdentifier): Promise<void> {
+  async unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void> {
     this.invalidateDevValidationState();
-    if (typeof keyOrId === "string") {
-      await this.scopeManagerOwned.releaseByBindingIdAsync(keyOrId);
-      this.registryOwned.removeById(keyOrId);
+    if (typeof tokenOrId === "string") {
+      await this.ownScopeManager.releaseByBindingIdAsync(tokenOrId);
+      this.ownRegistry.removeById(tokenOrId);
       return;
     }
-    const owned = this.registryOwned.get(keyOrId as Token<unknown> | Constructor<unknown>);
+    const owned = this.ownRegistry.get(tokenOrId as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
-        await this.scopeManagerOwned.releaseBindingAsync(binding);
+        await this.ownScopeManager.releaseBindingAsync(binding);
       }
     }
-    this.registryOwned.remove(keyOrId);
+    this.ownRegistry.remove(tokenOrId);
   }
 
-  rebind<Value>(key: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     this.invalidateDevValidationState();
-    const owned = this.registryOwned.get(key as Token<unknown> | Constructor<unknown>);
+    const owned = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
-        this.scopeManagerOwned.releaseBinding(binding);
+        this.ownScopeManager.releaseBinding(binding);
       }
     }
-    this.registryOwned.remove(key as RegistryKey);
-    return this.bind(key);
+    this.ownRegistry.remove(token as RegistryKey);
+    return this.bind(token);
   }
 
   /**
@@ -233,8 +233,8 @@ class DefaultContainer implements Container {
         throw new DiError(`Module "${module.name}" is not loaded on this container.`);
       }
       for (const bindingId of [...ownedBindingIds].reverse()) {
-        this.scopeManagerOwned.releaseByBindingId(bindingId);
-        this.registryOwned.removeById(bindingId);
+        this.ownScopeManager.releaseByBindingId(bindingId);
+        this.ownRegistry.removeById(bindingId);
       }
       this.loadedModules.delete(module);
     }
@@ -248,8 +248,8 @@ class DefaultContainer implements Container {
         throw new DiError(`Module "${module.name}" is not loaded on this container.`);
       }
       for (const bindingId of [...ownedBindingIds].reverse()) {
-        await this.scopeManagerOwned.releaseByBindingIdAsync(bindingId);
-        this.registryOwned.removeById(bindingId);
+        await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
+        this.ownRegistry.removeById(bindingId);
       }
       this.loadedModules.delete(module);
     }
@@ -369,8 +369,8 @@ class DefaultContainer implements Container {
   loadAutoRegistered(): number {
     const entries = getAutoRegistered();
     let count = 0;
-    for (const { ctor, scope } of entries) {
-      const builder = this.bind(ctor as Constructor<unknown>).toSelf();
+    for (const { implementationClass, scope } of entries) {
+      const builder = this.bind(implementationClass as Constructor<unknown>).toSelf();
       switch (scope) {
         case "singleton":
           (builder as BindingBuilder<unknown>).singleton();
@@ -395,8 +395,8 @@ class DefaultContainer implements Container {
   private createInspector(): ContainerInspector {
     const context: ContainerInspectorContext = {
       collectAllRegistryKeys: () => this.collectAllRegistryKeysInHierarchy(),
-      lookupBindings: (registryKey) => this.lookupBindings(registryKey),
-      isBindingCached: (binding) => this.scopeManagerOwned.isBindingCached(binding),
+      lookupBindings: (token) => this.lookupBindings(token),
+      isBindingCached: (binding) => this.ownScopeManager.isBindingCached(binding),
       metadataReader: this.metadataReader,
     };
     return new ContainerInspector(context);
@@ -415,7 +415,7 @@ class DefaultContainer implements Container {
     if (container === undefined) {
       return;
     }
-    for (const entry of container.registryOwned.listEntries()) {
+    for (const entry of container.ownRegistry.listEntries()) {
       keys.add(entry.key);
     }
     this.accumulateRegistryKeysFromHierarchy(keys, container.parent);
@@ -427,15 +427,15 @@ class DefaultContainer implements Container {
    */
   createChild(): Container {
     const childRegistry = new BindingRegistry();
-    const childScope = this.scopeManagerOwned.createChildScope();
+    const childScope = this.ownScopeManager.createChildScope();
     const holder: ContainerRef = { current: undefined };
     const resolver = new DependencyResolver({
-      lookup: (registryKey) => {
+      lookup: (token) => {
         const current = holder.current;
         if (current === undefined) {
           throw new DiError("child container is not initialized");
         }
-        return current.lookupBindings(registryKey);
+        return current.lookupBindings(token);
       },
       scopeManager: childScope,
       metadataReader: this.metadataReader,
@@ -451,16 +451,16 @@ class DefaultContainer implements Container {
     return child;
   }
 
-  lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined {
-    const own = this.registryOwned.get(key as Token<unknown> | Constructor<unknown>);
+  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
+    const own = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
     if (own !== undefined && own.length > 0) {
       return own;
     }
-    return this.parent?.lookupBindings(key);
+    return this.parent?.lookupBindings(token);
   }
 
   async dispose(): Promise<void> {
-    await this.scopeManagerOwned.disposeAsync();
+    await this.ownScopeManager.disposeAsync();
   }
 
   [Symbol.asyncDispose](): Promise<void> {
@@ -469,19 +469,19 @@ class DefaultContainer implements Container {
 
   private bindForModule(
     owner: ModuleLike,
-  ): <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value> {
-    return <Value>(key: Token<Value> | Constructor<Value>) =>
-      new BindingBuilder<Value>(key, owner.name, {
+  ): <Value>(token: Token<Value> | Constructor<Value>) => BindingBuilder<Value> {
+    return <Value>(token: Token<Value> | Constructor<Value>) =>
+      new BindingBuilder<Value>(token, owner.name, {
         register: (built) => {
           this.invalidateDevValidationState();
-          this.registryOwned.replaceKeyLastWins(key, built, (removed) => {
-            this.scopeManagerOwned.releaseBinding(removed);
+          this.ownRegistry.replaceKeyLastWins(token, built, (removed) => {
+            this.ownScopeManager.releaseBinding(removed);
           });
           this.recordBindingForModule(owner, built.id);
         },
         update: (built) => {
           this.invalidateDevValidationState();
-          this.registryOwned.replaceById(built.id, built as Binding<unknown>);
+          this.ownRegistry.replaceById(built.id, built as Binding<unknown>);
         },
       });
   }
@@ -495,7 +495,7 @@ class DefaultContainer implements Container {
     list.push(id);
   }
 
-  private createSyncModuleApi(module: Module): ModuleBuilder {
+  private createSyncModuleBuilder(module: Module): ModuleBuilder {
     return {
       import: (...deps: Module[]) => {
         for (const dep of deps) {
@@ -511,13 +511,13 @@ class DefaultContainer implements Container {
     };
   }
 
-  private createAsyncModuleApi(module: AsyncModule): {
-    readonly api: AsyncModuleBuilder;
+  private createAsyncModuleBuilder(module: AsyncModule): {
+    readonly moduleBuilder: AsyncModuleBuilder;
     readonly awaitImports: () => Promise<void>;
   } {
     const pendingImports: Promise<void>[] = [];
     return {
-      api: {
+      moduleBuilder: {
         import: (...deps: ModuleLike[]) => {
           for (const dep of deps) {
             if (dep instanceof AsyncModule) {
@@ -553,8 +553,8 @@ class DefaultContainer implements Container {
       // Register the module in the tracking table before running setup so nested imports
       // (which may bind before returning) find an entry keyed by this module.
       this.loadedModules.set(module, []);
-      const api = this.createSyncModuleApi(module);
-      module.runSyncSetup(api);
+      const moduleBuilder = this.createSyncModuleBuilder(module);
+      module.runSyncSetup(moduleBuilder);
     } finally {
       this.syncModuleStack.pop();
     }
@@ -573,8 +573,8 @@ class DefaultContainer implements Container {
     this.asyncModuleStack.push(asyncModule);
     try {
       this.loadedModules.set(asyncModule, []);
-      const { api, awaitImports } = this.createAsyncModuleApi(asyncModule);
-      await asyncModule.runAsyncSetup(api);
+      const { moduleBuilder, awaitImports } = this.createAsyncModuleBuilder(asyncModule);
+      await asyncModule.runAsyncSetup(moduleBuilder);
       await awaitImports();
     } finally {
       this.asyncModuleStack.pop();

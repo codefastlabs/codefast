@@ -45,14 +45,20 @@ function bindingToMaterializationFrame(
   };
 }
 
+/**
+ * Infrastructure dependencies injected into {@link DependencyResolver} at construction time.
+ * Separates storage (registry lookup), lifecycle (scope caching), and metadata reading
+ * concerns — each replaceable independently for testing.
+ */
+export type ResolverDependencies = {
+  /** Looks up all bindings registered for a given registry key (own + parent containers). */
+  readonly lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined;
+  readonly scopeManager: ScopeManager;
+  readonly metadataReader?: MetadataReader;
+};
+
 export class DependencyResolver {
-  constructor(
-    private readonly hooks: {
-      readonly lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined;
-      readonly scopeManager: ScopeManager;
-      readonly metadataReader?: MetadataReader;
-    },
-  ) {}
+  constructor(private readonly deps: ResolverDependencies) {}
 
   resolveRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T {
     return this.resolve(key, hint, [], new Set(), []) as T;
@@ -66,7 +72,7 @@ export class DependencyResolver {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const pathLabels: string[] = [label];
-    const bindings = this.hooks.lookup(registryKey);
+    const bindings = this.deps.lookup(registryKey);
     if (bindings === undefined || bindings.length === 0) {
       return undefined;
     }
@@ -110,7 +116,7 @@ export class DependencyResolver {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const basePath: string[] = [label];
-    const bindings = this.hooks.lookup(registryKey);
+    const bindings = this.deps.lookup(registryKey);
     if (bindings === undefined || bindings.length === 0) {
       return [];
     }
@@ -149,7 +155,7 @@ export class DependencyResolver {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const basePath: string[] = [label];
-    const bindings = this.hooks.lookup(registryKey);
+    const bindings = this.deps.lookup(registryKey);
     if (bindings === undefined || bindings.length === 0) {
       return [];
     }
@@ -237,12 +243,17 @@ export class DependencyResolver {
   }
 
   private createContext(
+    /**
+     * Mutable working array of token labels along the current resolution path.
+     * Distinct from the readonly `resolutionPath` snapshot exposed in `ConstraintContext` —
+     * this array is extended in place as the graph walk descends, then snapshotted at each level.
+     */
     pathLabels: readonly string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
     currentResolveHint: ResolveHint | undefined,
   ): ResolutionContext {
-    const constraint = this.buildConstraintContext(
+    const graphContext = this.buildConstraintContext(
       pathLabels,
       materializationStack,
       currentResolveHint,
@@ -268,7 +279,7 @@ export class DependencyResolver {
           throw caughtError;
         }
       },
-      constraint,
+      graph: graphContext,
     };
   }
 
@@ -290,7 +301,7 @@ export class DependencyResolver {
       throw new CircularDependencyError(nextPath);
     }
 
-    const bindings = this.hooks.lookup(registryKey);
+    const bindings = this.deps.lookup(registryKey);
     if (bindings === undefined || bindings.length === 0) {
       throw new TokenNotBoundError(label, nextPath);
     }
@@ -350,7 +361,7 @@ export class DependencyResolver {
       throw new CircularDependencyError(nextPath);
     }
 
-    const bindings = this.hooks.lookup(registryKey);
+    const bindings = this.deps.lookup(registryKey);
     if (bindings === undefined || bindings.length === 0) {
       throw new TokenNotBoundError(label, nextPath);
     }
@@ -393,7 +404,7 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
-    return this.hooks.scopeManager.getOrCreate(binding, () => {
+    return this.deps.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
       const extendedStack = [...materializationStack, frame];
@@ -401,7 +412,7 @@ export class DependencyResolver {
       const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
       // @postConstruct runs BEFORE onActivation
       if (binding.kind === "class") {
-        runPostConstruct(binding.ctor, instance, pathLabels);
+        runPostConstruct(binding.implementationClass, instance, pathLabels);
       }
       return runActivation(binding, instance, ctx, pathLabels);
     });
@@ -416,7 +427,7 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
-    return this.hooks.scopeManager.getOrCreateAsync(binding, async () => {
+    return this.deps.scopeManager.getOrCreateAsync(binding, async () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
       const extendedStack = [...materializationStack, frame];
@@ -431,7 +442,7 @@ export class DependencyResolver {
       );
       // @postConstruct runs BEFORE onActivation
       if (binding.kind === "class") {
-        await runPostConstructAsync(binding.ctor, instance);
+        await runPostConstructAsync(binding.implementationClass, instance);
       }
       return await runActivationAsync(binding, instance, ctx, pathLabels);
     });
@@ -592,21 +603,20 @@ export class DependencyResolver {
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
-    const reader = this.hooks.metadataReader;
-    const ClassConstructorFn = binding.ctor as new (...args: unknown[]) => unknown;
-    const constructorRef = binding.ctor;
+    const reader = this.deps.metadataReader;
+    const ImplementationClass = binding.implementationClass as new (...args: unknown[]) => unknown;
 
     if (reader === undefined) {
-      return new ClassConstructorFn();
+      return new ImplementationClass();
     }
 
-    const meta = reader.getConstructorMetadata(constructorRef);
-    const arity = (ClassConstructorFn as Function).length;
+    const meta = reader.getConstructorMetadata(binding.implementationClass);
+    const arity = (ImplementationClass as Function).length;
     if (arity > 0 && meta === undefined) {
-      throw new MissingMetadataError(registryKeyLabel(constructorRef), pathLabels);
+      throw new MissingMetadataError(registryKeyLabel(binding.implementationClass), pathLabels);
     }
     if (meta === undefined || meta.params.length === 0) {
-      return new ClassConstructorFn();
+      return new ImplementationClass();
     }
 
     const deps = meta.params.map((param) => {
@@ -628,7 +638,7 @@ export class DependencyResolver {
       }
       return this.resolve(param.token, paramHint, pathLabels, visiting, materializationStack);
     });
-    return new ClassConstructorFn(...deps);
+    return new ImplementationClass(...deps);
   }
 
   private async instantiateClassBindingAsync(
@@ -637,21 +647,20 @@ export class DependencyResolver {
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
-    const reader = this.hooks.metadataReader;
-    const ClassConstructorFn = binding.ctor as new (...args: unknown[]) => unknown;
-    const constructorRef = binding.ctor;
+    const reader = this.deps.metadataReader;
+    const ImplementationClass = binding.implementationClass as new (...args: unknown[]) => unknown;
 
     if (reader === undefined) {
-      return new ClassConstructorFn();
+      return new ImplementationClass();
     }
 
-    const meta = reader.getConstructorMetadata(constructorRef);
-    const arity = (ClassConstructorFn as Function).length;
+    const meta = reader.getConstructorMetadata(binding.implementationClass);
+    const arity = (ImplementationClass as Function).length;
     if (arity > 0 && meta === undefined) {
-      throw new MissingMetadataError(registryKeyLabel(constructorRef), pathLabels);
+      throw new MissingMetadataError(registryKeyLabel(binding.implementationClass), pathLabels);
     }
     if (meta === undefined || meta.params.length === 0) {
-      return new ClassConstructorFn();
+      return new ImplementationClass();
     }
 
     const deps: unknown[] = [];
@@ -692,6 +701,6 @@ export class DependencyResolver {
         );
       }
     }
-    return new ClassConstructorFn(...deps);
+    return new ImplementationClass(...deps);
   }
 }

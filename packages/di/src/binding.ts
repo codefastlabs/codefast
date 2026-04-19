@@ -70,6 +70,10 @@ export type ConstraintContext = {
 
 /**
  * Context passed to factories and lifecycle hooks so nested dependencies resolve with the same path rules.
+ *
+ * `graph` exposes the current position in the dependency graph (resolution path, materialization
+ * stack, parent/ancestor frames) — used by {@link BindingBuilder.when} predicates to implement
+ * context-sensitive bindings such as `whenParentIs` or `whenAnyAncestorIs`.
  */
 export type ResolutionContext = {
   readonly resolve: <Value>(
@@ -84,7 +88,8 @@ export type ResolutionContext = {
     token: Token<Value> | Constructor<Value>,
     opts?: ResolveOptions,
   ) => Value | undefined;
-  readonly constraint: ConstraintContext;
+  /** Dependency-graph navigation context — path, materialization stack, parent/ancestor frames. */
+  readonly graph: ConstraintContext;
 };
 
 type BindingLifecycle = {
@@ -116,7 +121,7 @@ export type ConstantBinding<Value> = BindingBase & {
 
 export type ClassBinding<Value> = BindingBase & {
   readonly kind: "class";
-  readonly ctor: Constructor<Value>;
+  readonly implementationClass: Constructor<Value>;
 };
 
 export type DynamicBinding<Value> = BindingBase & {
@@ -154,7 +159,7 @@ export type Binding<Value> =
 type Strategy<Value> =
   | { readonly type: "unset" }
   | { readonly type: "constant"; readonly value: Value }
-  | { readonly type: "class"; readonly ctor: Constructor<Value> }
+  | { readonly type: "class"; readonly implementationClass: Constructor<Value> }
   | { readonly type: "dynamic"; readonly factory: (ctx: ResolutionContext) => Value }
   | {
       readonly type: "async-dynamic";
@@ -167,7 +172,12 @@ type Strategy<Value> =
     }
   | { readonly type: "alias"; readonly targetToken: Token<Value> };
 
-type BindingBuilderHooks<Value> = {
+/**
+ * Callbacks injected by the owning container to sync each builder mutation into the registry.
+ * `register` fires once when a `to*(…)` strategy is selected; `update` fires on every
+ * subsequent chain call (`.singleton()`, `.onActivation()`, …).
+ */
+type RegistryCallbacks<Value> = {
   readonly register?: (binding: Binding<Value>) => void;
   readonly update?: (binding: Binding<Value>) => void;
 };
@@ -184,19 +194,19 @@ export class BindingBuilder<Value> {
   private onDeactivationHandler: DeactivationHandler<unknown> | undefined;
   private readonly moduleId: string | undefined;
   private currentBinding: Binding<Value> | undefined;
-  private readonly hooks: BindingBuilderHooks<Value>;
+  private readonly callbacks: RegistryCallbacks<Value>;
 
   constructor(
     protected readonly bindingKey: Token<Value> | Constructor<Value>,
     moduleId?: string,
-    hooks?: BindingBuilderHooks<Value>,
+    callbacks?: RegistryCallbacks<Value>,
   ) {
     this.moduleId = moduleId;
-    this.hooks = hooks ?? {};
+    this.callbacks = callbacks ?? {};
   }
 
-  to<C extends Constructor<Value>>(ctor: C): TransientBindingBuilder<Value> {
-    this.registerWithStrategy({ type: "class", ctor });
+  to<C extends Constructor<Value>>(implementationClass: C): TransientBindingBuilder<Value> {
+    this.registerWithStrategy({ type: "class", implementationClass });
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
@@ -206,7 +216,7 @@ export class BindingBuilder<Value> {
         "toSelf() requires the binding key to be a constructor; use bind(SomeClass) or call to(Class) instead.",
       );
     }
-    this.registerWithStrategy({ type: "class", ctor: this.bindingKey });
+    this.registerWithStrategy({ type: "class", implementationClass: this.bindingKey });
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
@@ -329,7 +339,7 @@ export class BindingBuilder<Value> {
     const bindingId = this.id();
     const binding = this.createBinding(bindingId, next);
     this.currentBinding = binding;
-    this.hooks.register?.(binding);
+    this.callbacks.register?.(binding);
   }
 
   private refreshRegisteredBinding(): void {
@@ -338,7 +348,7 @@ export class BindingBuilder<Value> {
     }
     const next = this.createBinding(this.currentBinding.id, this.strategy);
     this.currentBinding = next;
-    this.hooks.update?.(next);
+    this.callbacks.update?.(next);
   }
 
   private assertScopeMutable(): void {
@@ -383,7 +393,7 @@ export class BindingBuilder<Value> {
           id,
           scope: this.scope,
           kind: "class",
-          ctor: strategy.ctor,
+          implementationClass: strategy.implementationClass,
         };
       case "dynamic":
         return {

@@ -51,14 +51,14 @@ function mockResolved(
 }
 
 function mockClass(
-  ctor: Constructor<unknown>,
+  implementationClass: Constructor<unknown>,
   id: string = createBindingIdentifier(),
 ): ClassBinding<unknown> {
   return {
     id: id as BindingIdentifier,
     kind: "class",
     scope: "transient",
-    ctor,
+    implementationClass,
     tags: new Map(),
   };
 }

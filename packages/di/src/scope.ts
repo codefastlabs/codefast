@@ -20,23 +20,26 @@ function isPromiseLike(value: unknown): value is Promise<unknown> {
  * Caches singleton and scoped instances and runs deactivation hooks on disposal.
  */
 export class ScopeManager {
-  private readonly singletonStore: Map<BindingIdentifier, CacheEntry>;
-  private readonly scopedStore: Map<BindingIdentifier, CacheEntry>;
+  /** Cached singleton instances: `bindingId → { binding, instance }`. */
+  private readonly singletonCache: Map<BindingIdentifier, CacheEntry>;
+  /** Cached scoped instances for this container level: `bindingId → { binding, instance }`. */
+  private readonly scopedCache: Map<BindingIdentifier, CacheEntry>;
   private readonly ownsSingletonDisposal: boolean;
-  private readonly pendingPromises: Map<BindingIdentifier, Promise<unknown>>;
+  /** In-flight async singleton creation promises (deduplicate concurrent resolveAsync calls). */
+  private readonly singletonPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
   private readonly scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
 
   private constructor(
-    singletonStore: Map<BindingIdentifier, CacheEntry>,
-    scopedStore: Map<BindingIdentifier, CacheEntry>,
+    singletonCache: Map<BindingIdentifier, CacheEntry>,
+    scopedCache: Map<BindingIdentifier, CacheEntry>,
     ownsSingletonDisposal: boolean,
-    pendingPromises: Map<BindingIdentifier, Promise<unknown>>,
+    singletonPendingPromises: Map<BindingIdentifier, Promise<unknown>>,
     scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>,
   ) {
-    this.singletonStore = singletonStore;
-    this.scopedStore = scopedStore;
+    this.singletonCache = singletonCache;
+    this.scopedCache = scopedCache;
     this.ownsSingletonDisposal = ownsSingletonDisposal;
-    this.pendingPromises = pendingPromises;
+    this.singletonPendingPromises = singletonPendingPromises;
     this.scopedPendingPromises = scopedPendingPromises;
   }
 
@@ -48,7 +51,13 @@ export class ScopeManager {
    * Shares the parent singleton cache; receives a fresh scoped cache (for child containers).
    */
   createChildScope(): ScopeManager {
-    return new ScopeManager(this.singletonStore, new Map(), false, this.pendingPromises, new Map());
+    return new ScopeManager(
+      this.singletonCache,
+      new Map(),
+      false,
+      this.singletonPendingPromises,
+      new Map(),
+    );
   }
 
   /**
@@ -58,8 +67,8 @@ export class ScopeManager {
     if (binding.scope === "transient") {
       return false;
     }
-    const store = binding.scope === "singleton" ? this.singletonStore : this.scopedStore;
-    return store.has(binding.id);
+    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
+    return cache.has(binding.id);
   }
 
   getOrCreate(binding: Binding<unknown>, createInstance: () => unknown): unknown {
@@ -67,14 +76,14 @@ export class ScopeManager {
       return createInstance();
     }
 
-    const store = binding.scope === "singleton" ? this.singletonStore : this.scopedStore;
-    const cached = store.get(binding.id);
+    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
+    const cached = cache.get(binding.id);
     if (cached !== undefined) {
       return cached.instance;
     }
 
     const instance = createInstance();
-    store.set(binding.id, { binding, instance });
+    cache.set(binding.id, { binding, instance });
     return instance;
   }
 
@@ -86,28 +95,28 @@ export class ScopeManager {
       return createInstance();
     }
 
-    const store = binding.scope === "singleton" ? this.singletonStore : this.scopedStore;
-    const pendingMap =
-      binding.scope === "singleton" ? this.pendingPromises : this.scopedPendingPromises;
-    const cached = store.get(binding.id);
+    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
+    const pendingCreationMap =
+      binding.scope === "singleton" ? this.singletonPendingPromises : this.scopedPendingPromises;
+    const cached = cache.get(binding.id);
     if (cached !== undefined) {
       return cached.instance;
     }
 
-    let inflightPromise = pendingMap.get(binding.id);
-    if (inflightPromise === undefined) {
-      inflightPromise = (async () => {
+    let pendingCreation = pendingCreationMap.get(binding.id);
+    if (pendingCreation === undefined) {
+      pendingCreation = (async () => {
         try {
           const instance = await createInstance();
-          store.set(binding.id, { binding, instance });
+          cache.set(binding.id, { binding, instance });
           return instance;
         } finally {
-          pendingMap.delete(binding.id);
+          pendingCreationMap.delete(binding.id);
         }
       })();
-      pendingMap.set(binding.id, inflightPromise);
+      pendingCreationMap.set(binding.id, pendingCreation);
     }
-    return inflightPromise;
+    return pendingCreation;
   }
 
   /**
@@ -115,9 +124,9 @@ export class ScopeManager {
    * Throws if any hook returns a Promise.
    */
   dispose(): void {
-    this.disposeMap(this.scopedStore);
+    this.disposeMap(this.scopedCache);
     if (this.ownsSingletonDisposal) {
-      this.disposeMap(this.singletonStore);
+      this.disposeMap(this.singletonCache);
     }
   }
 
@@ -125,9 +134,9 @@ export class ScopeManager {
    * Runs `onDeactivation` hooks for scoped instances; root also disposes shared singletons.
    */
   async disposeAsync(): Promise<void> {
-    await this.disposeMapAsync(this.scopedStore);
+    await this.disposeMapAsync(this.scopedCache);
     if (this.ownsSingletonDisposal) {
-      await this.disposeMapAsync(this.singletonStore);
+      await this.disposeMapAsync(this.singletonCache);
     }
   }
 
@@ -135,16 +144,16 @@ export class ScopeManager {
    * Drops a cached singleton/scoped instance for `bindingId` and runs `onDeactivation` synchronously.
    */
   releaseByBindingId(bindingId: BindingIdentifier): void {
-    this.releaseFromStore(this.singletonStore, bindingId);
-    this.releaseFromStore(this.scopedStore, bindingId);
+    this.releaseFromStore(this.singletonCache, bindingId);
+    this.releaseFromStore(this.scopedCache, bindingId);
   }
 
   /**
    * Drops a cached singleton/scoped instance for `bindingId` and awaits `onDeactivation`.
    */
   async releaseByBindingIdAsync(bindingId: BindingIdentifier): Promise<void> {
-    await this.releaseFromStoreAsync(this.singletonStore, bindingId);
-    await this.releaseFromStoreAsync(this.scopedStore, bindingId);
+    await this.releaseFromStoreAsync(this.singletonCache, bindingId);
+    await this.releaseFromStoreAsync(this.scopedCache, bindingId);
   }
 
   /**
@@ -181,7 +190,7 @@ export class ScopeManager {
     }
     // @preDestroy runs AFTER onDeactivation
     if (entry.binding.kind === "class") {
-      runPreDestroy(entry.binding.ctor, entry.instance);
+      runPreDestroy(entry.binding.implementationClass, entry.instance);
     }
   }
 
@@ -200,7 +209,7 @@ export class ScopeManager {
     }
     // @preDestroy runs AFTER onDeactivation
     if (entry.binding.kind === "class") {
-      await runPreDestroyAsync(entry.binding.ctor, entry.instance);
+      await runPreDestroyAsync(entry.binding.implementationClass, entry.instance);
     }
   }
 
@@ -218,7 +227,7 @@ export class ScopeManager {
       }
       // @preDestroy runs AFTER onDeactivation
       if (entry.binding.kind === "class") {
-        runPreDestroy(entry.binding.ctor, entry.instance);
+        runPreDestroy(entry.binding.implementationClass, entry.instance);
       }
     }
   }
@@ -235,7 +244,7 @@ export class ScopeManager {
         }
         // @preDestroy runs AFTER onDeactivation
         if (entry.binding.kind === "class") {
-          await runPreDestroyAsync(entry.binding.ctor, entry.instance);
+          await runPreDestroyAsync(entry.binding.implementationClass, entry.instance);
         }
       } catch (error) {
         errors.push(error);
