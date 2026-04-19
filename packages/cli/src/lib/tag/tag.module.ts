@@ -4,6 +4,7 @@ import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter"
 import { TagTargetResolverAdapter } from "#/lib/tag/infra/tag-target-resolver.adapter";
 import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
+import { InfraModule } from "#/lib/core/infra/infra.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   CliLoggerToken,
@@ -14,8 +15,10 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tokens";
 
-export const TagModule = Module.create("cli-tag", (api) => {
-  api
+export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
+  moduleBuilder.import(InfraModule);
+
+  moduleBuilder
     .bind(TagTargetResolverPortToken)
     .to(TagTargetResolverAdapter)
     .onActivation((ctx, implementation) =>
@@ -27,7 +30,7 @@ export const TagModule = Module.create("cli-tag", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(TypeScriptTreeWalkPortToken)
     .to(TypeScriptTreeWalkAdapter)
     .onActivation((ctx, implementation) =>
@@ -39,7 +42,7 @@ export const TagModule = Module.create("cli-tag", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(TagSinceWriterPortToken)
     .to(TagSinceWriterAdapter)
     .onActivation((ctx, implementation) =>
@@ -47,7 +50,7 @@ export const TagModule = Module.create("cli-tag", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(TagVersionResolverPortToken)
     .to(TagVersionResolverAdapter)
     .onActivation((ctx, implementation) =>
@@ -59,5 +62,5 @@ export const TagModule = Module.create("cli-tag", (api) => {
     )
     .singleton();
 
-  api.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();
+  moduleBuilder.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();
 });

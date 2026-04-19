@@ -7,6 +7,7 @@ import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/
 import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
 import { GroupFilePreviewPresenterAdapter } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import { InfraModule } from "#/lib/core/infra/infra.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
@@ -20,8 +21,10 @@ import {
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/tokens";
 
-export const ArrangeModule = Module.create("cli-arrange", (api) => {
-  api
+export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
+  moduleBuilder.import(InfraModule);
+
+  moduleBuilder
     .bind(FileWalkerPortToken)
     .to(FileWalkerAdapter)
     .onActivation((ctx, implementation) =>
@@ -29,7 +32,7 @@ export const ArrangeModule = Module.create("cli-arrange", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(DomainSourceParserPortToken)
     .to(DomainSourceParserAdapter)
     .onActivation((ctx, implementation) =>
@@ -41,7 +44,7 @@ export const ArrangeModule = Module.create("cli-arrange", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(GroupFilePreviewPortToken)
     .to(GroupFilePreviewPresenterAdapter)
     .onActivation((ctx, implementation) =>
@@ -53,13 +56,13 @@ export const ArrangeModule = Module.create("cli-arrange", (api) => {
     )
     .singleton();
 
-  api.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
+  moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 
-  api.bind(ArrangeTargetScannerToken).to(ArrangeTargetScannerServiceImpl).singleton();
+  moduleBuilder.bind(ArrangeTargetScannerToken).to(ArrangeTargetScannerServiceImpl).singleton();
 
-  api.bind(ArrangeFileProcessorToken).to(ArrangeFileProcessorServiceImpl).singleton();
+  moduleBuilder.bind(ArrangeFileProcessorToken).to(ArrangeFileProcessorServiceImpl).singleton();
 
-  api.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
+  moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
 
-  api.bind(SuggestCnGroupsUseCaseToken).to(SuggestCnGroupsUseCaseImpl).singleton();
+  moduleBuilder.bind(SuggestCnGroupsUseCaseToken).to(SuggestCnGroupsUseCaseImpl).singleton();
 });

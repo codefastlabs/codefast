@@ -8,12 +8,12 @@ import {
 import { CliFsToken, CliLoggerToken, ConfigLoaderPortToken } from "#/lib/core/tokens";
 import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "../../infra/node-io.adapter";
 
-export const InfraModule = Module.create("cli-infra", (api) => {
-  api.import(CoreModule);
+export const InfraModule = Module.create("cli-infra", (moduleBuilder) => {
+  moduleBuilder.import(CoreModule);
 
-  api.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
+  moduleBuilder.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
 
-  api
+  moduleBuilder
     .bind(CliFsToken)
     .to(NodeCliFsAdapter)
     .onActivation((ctx, rawFs) => {
@@ -28,5 +28,5 @@ export const InfraModule = Module.create("cli-infra", (api) => {
     })
     .singleton();
 
-  api.bind(ConfigLoaderPortToken).toConstantValue(configLoaderAdapter);
+  moduleBuilder.bind(ConfigLoaderPortToken).toConstantValue(configLoaderAdapter);
 });
