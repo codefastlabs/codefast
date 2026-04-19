@@ -20,7 +20,7 @@ export function whenAnyAncestorIs(registryKey: Token<unknown> | Constructor<unkn
 /**
  * Matches when the immediate parent binding carries `tag` with `tagValue` (same metadata as {@link BindingBuilder.whenTagged} on the parent).
  */
-export function whenTargetTagged(tag: string | symbol, tagValue: unknown) {
+export function whenTargetTagged(tag: string, tagValue: unknown) {
   return (ctx: ConstraintContext): boolean => {
     if (ctx.parent === undefined) {
       return false;

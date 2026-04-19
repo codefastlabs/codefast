@@ -19,8 +19,8 @@ function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor[
     );
   }
   const [tagName, value] = tag;
-  if (typeof tagName !== "string" && typeof tagName !== "symbol") {
-    throw new DiError(`@inject tag key must be a string or symbol; received ${typeof tagName}`);
+  if (typeof tagName !== "string") {
+    throw new DiError(`@inject tag key must be a string; received ${typeof tagName}`);
   }
   return [tagName, value];
 }

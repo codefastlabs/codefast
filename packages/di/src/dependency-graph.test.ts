@@ -83,22 +83,6 @@ describe("dependency-graph", () => {
       );
     });
 
-    it("formats tagged hints with global symbols", () => {
-      expect(injectHintLabelFromResolveHint({ tag: [Symbol.for("global-tag"), "val"] })).toBe(
-        'tag: Symbol.for("global-tag")=val',
-      );
-    });
-
-    it("formats tagged hints with local symbols", () => {
-      expect(injectHintLabelFromResolveHint({ tag: [Symbol("local"), "val"] })).toBe(
-        "tag: Symbol(local)=val",
-      );
-    });
-
-    it("formats tagged hints with empty symbols", () => {
-      expect(injectHintLabelFromResolveHint({ tag: [Symbol(), "val"] })).toBe("tag: Symbol()=val");
-    });
-
     it("formats tagged hints with unserializable objects", () => {
       const complexObj = {} as Record<string, unknown>;
       complexObj.self = complexObj;

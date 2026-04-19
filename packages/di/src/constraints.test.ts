@@ -12,7 +12,7 @@ describe("constraints", () => {
 
   function createMockFrame(
     registryKey: RegistryKey,
-    tags: Map<string | symbol, unknown> = new Map(),
+    tags: Map<string, unknown> = new Map(),
   ): ConstraintParentFrame {
     return {
       registryKey,
@@ -91,7 +91,7 @@ describe("constraints", () => {
   describe("whenTargetTagged", () => {
     it("returns true if the parent has the specified tag and value", () => {
       const predicate = whenTargetTagged("role", "admin");
-      const tags = new Map<string | symbol, unknown>();
+      const tags = new Map<string, unknown>();
       tags.set("role", "admin");
 
       const ctx = createMockContext({
@@ -102,7 +102,7 @@ describe("constraints", () => {
 
     it("returns false if the parent has the specified tag but wrong value", () => {
       const predicate = whenTargetTagged("role", "admin");
-      const tags = new Map<string | symbol, unknown>();
+      const tags = new Map<string, unknown>();
       tags.set("role", "user");
 
       const ctx = createMockContext({

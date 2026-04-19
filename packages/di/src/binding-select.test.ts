@@ -64,11 +64,11 @@ describe("binding-select", () => {
     });
 
     it("filters by tag hint", () => {
-      const tags1 = new Map<string | symbol, unknown>();
+      const tags1 = new Map<string, unknown>();
       tags1.set("role", "admin");
       const b1 = mockBinding({ tags: tags1 });
 
-      const tags2 = new Map<string | symbol, unknown>();
+      const tags2 = new Map<string, unknown>();
       tags2.set("role", "user");
       const b2 = mockBinding({ tags: tags2 });
 

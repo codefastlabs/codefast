@@ -48,7 +48,7 @@ describe("Container", () => {
   it("has(key, hint) matches bindings by name and tag metadata", () => {
     const container = Container.create();
     const multi = token<string>("container-test-multi");
-    const tagKey = Symbol("container-test-tag");
+    const tagKey = "container-test-tag";
 
     container.bind(multi).whenNamed("alpha").toConstantValue("A");
     container.bind(multi).whenNamed("beta").toConstantValue("B");
