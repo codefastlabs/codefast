@@ -1,6 +1,7 @@
 import { Module } from "@codefast/di";
 import { PrepareArrangeOrchestrator } from "#/lib/arrange/presentation/prepare-arrange.orchestrator";
 import { PresentAnalyzeReportPresenterImpl } from "#/lib/arrange/presentation/present-analyze-report.presenter";
+import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PrepareMirrorOrchestrator } from "#/lib/mirror/presentation/prepare-mirror.orchestrator";
 import { AppOrchestratorImpl } from "#/lib/core/presentation/app-orchestrator.service";
 import { TryLoadCodefastConfigPresenterImpl } from "#/lib/core/presentation/try-load-codefast-config.presenter";
@@ -18,23 +19,34 @@ import {
   TryLoadCodefastConfigPresenterToken,
 } from "#/lib/tokens";
 
-export const PresentationModule = Module.create("cli-presentation", (api) => {
-  api.bind(TryLoadCodefastConfigPresenterToken).to(TryLoadCodefastConfigPresenterImpl).singleton();
+export const PresentationModule = Module.create("cli-presentation", (moduleBuilder) => {
+  moduleBuilder.import(InfraModule);
 
-  api.bind(PrepareArrangeOrchestratorToken).to(PrepareArrangeOrchestrator).singleton();
+  moduleBuilder
+    .bind(TryLoadCodefastConfigPresenterToken)
+    .to(TryLoadCodefastConfigPresenterImpl)
+    .singleton();
 
-  api.bind(PrepareMirrorOrchestratorToken).to(PrepareMirrorOrchestrator).singleton();
+  moduleBuilder.bind(PrepareArrangeOrchestratorToken).to(PrepareArrangeOrchestrator).singleton();
 
-  api.bind(PrepareTagOrchestratorToken).to(PrepareTagOrchestrator).singleton();
+  moduleBuilder.bind(PrepareMirrorOrchestratorToken).to(PrepareMirrorOrchestrator).singleton();
 
-  api.bind(PresentAnalyzeReportPresenterToken).to(PresentAnalyzeReportPresenterImpl).singleton();
+  moduleBuilder.bind(PrepareTagOrchestratorToken).to(PrepareTagOrchestrator).singleton();
 
-  api.bind(PresentTagSyncResultPresenterToken).to(PresentTagSyncResultPresenterImpl).singleton();
+  moduleBuilder
+    .bind(PresentAnalyzeReportPresenterToken)
+    .to(PresentAnalyzeReportPresenterImpl)
+    .singleton();
 
-  api
+  moduleBuilder
+    .bind(PresentTagSyncResultPresenterToken)
+    .to(PresentTagSyncResultPresenterImpl)
+    .singleton();
+
+  moduleBuilder
     .bind(CreateTagProgressListenerPresenterToken)
     .to(CreateTagProgressListenerPresenterImpl)
     .singleton();
 
-  api.bind(AppOrchestratorToken).to(AppOrchestratorImpl).singleton();
+  moduleBuilder.bind(AppOrchestratorToken).to(AppOrchestratorImpl).singleton();
 });

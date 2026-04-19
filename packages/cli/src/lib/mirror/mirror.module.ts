@@ -5,6 +5,7 @@ import { FileSystemServiceAdapter } from "#/lib/mirror/infra/file-system-service
 import { MirrorSyncReporterAdapter } from "#/lib/mirror/infra/mirror-sync-reporter.adapter";
 import { PackageRepositoryAdapter } from "#/lib/mirror/infra/package-repository.adapter";
 import { WorkspaceServiceAdapter } from "#/lib/mirror/infra/workspace-service.adapter";
+import { InfraModule } from "#/lib/core/infra/infra.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   CliLoggerToken,
@@ -16,8 +17,10 @@ import {
   WorkspaceServicePortToken,
 } from "#/lib/tokens";
 
-export const MirrorModule = Module.create("cli-mirror", (api) => {
-  api
+export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
+  moduleBuilder.import(InfraModule);
+
+  moduleBuilder
     .bind(WorkspaceServicePortToken)
     .to(WorkspaceServiceAdapter)
     .onActivation((ctx, implementation) =>
@@ -29,7 +32,7 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(PackageRepositoryPortToken)
     .to(PackageRepositoryAdapter)
     .onActivation((ctx, implementation) =>
@@ -41,7 +44,7 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(FileSystemServicePortToken)
     .to(FileSystemServiceAdapter)
     .onActivation((ctx, implementation) =>
@@ -53,7 +56,7 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     )
     .singleton();
 
-  api
+  moduleBuilder
     .bind(MirrorSyncReporterPortToken)
     .to(MirrorSyncReporterAdapter)
     .onActivation((ctx, implementation) =>
@@ -65,7 +68,10 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     )
     .singleton();
 
-  api.bind(SyncWorkspacePackageServiceToken).to(SyncWorkspacePackageServiceImpl).singleton();
+  moduleBuilder
+    .bind(SyncWorkspacePackageServiceToken)
+    .to(SyncWorkspacePackageServiceImpl)
+    .singleton();
 
-  api.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCaseImpl).singleton();
+  moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCaseImpl).singleton();
 });
