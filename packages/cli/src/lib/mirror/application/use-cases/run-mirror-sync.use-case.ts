@@ -8,6 +8,7 @@ import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-un
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
 import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
+import { formatMirrorSyncJsonOutput } from "#/lib/mirror/application/mirror-sync-json.format";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
@@ -38,9 +39,12 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
 
   async execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>> {
     const config = (request.config ?? {}) as MirrorConfig;
+    const json = !!request.json;
 
-    this.mirrorReporter.configureMirrorColors(!!request.noColor);
-    this.mirrorReporter.mirrorBanner(this.logger);
+    if (!json) {
+      this.mirrorReporter.configureMirrorColors(!!request.noColor);
+      this.mirrorReporter.mirrorBanner(this.logger);
+    }
 
     const startTime = performance.now();
     const verbose = !!request.verbose;
@@ -64,23 +68,36 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
           request.packageFilter,
         );
         targetPackages = [safe];
-        this.mirrorReporter.mirrorProcessingMode(this.logger, { kind: "single" });
+        if (!json) {
+          this.mirrorReporter.mirrorProcessingMode(this.logger, { kind: "single" });
+        }
       } else {
         const { relPaths, multiSource } = await this.workspaceService.findWorkspacePackageRelPaths(
           request.rootDir,
           this.fs,
-          (message: string) => this.mirrorReporter.logWorkspaceGlobWarning(this.logger, message),
+          json
+            ? () => {}
+            : (message: string) =>
+                this.mirrorReporter.logWorkspaceGlobWarning(this.logger, message),
         );
         targetPackages = relPaths;
-        this.mirrorReporter.mirrorProcessingMode(this.logger, {
-          kind: "multi",
-          source: multiSource,
-        });
+        if (!json) {
+          this.mirrorReporter.mirrorProcessingMode(this.logger, {
+            kind: "multi",
+            source: multiSource,
+          });
+        }
       }
 
       stats.packagesFound = targetPackages.length;
       if (targetPackages.length === 0) {
-        this.mirrorReporter.mirrorNoPackages(this.logger);
+        if (!json) {
+          this.mirrorReporter.mirrorNoPackages(this.logger);
+        }
+        const elapsedEmpty = (performance.now() - startTime) / 1000;
+        if (json) {
+          this.logger.out(formatMirrorSyncJsonOutput(stats, elapsedEmpty));
+        }
         return ok(stats);
       }
 
@@ -94,13 +111,18 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
           config,
           verbose,
           stats,
+          json,
         );
         stats.packageDetails.push(pkgStats);
       }
 
       const elapsed = (performance.now() - startTime) / 1000;
-      this.mirrorReporter.mirrorSummarySeparator(this.logger);
-      this.mirrorReporter.mirrorSummary(this.logger, stats, elapsed);
+      if (!json) {
+        this.mirrorReporter.mirrorSummarySeparator(this.logger);
+        this.mirrorReporter.mirrorSummary(this.logger, stats, elapsed);
+      } else {
+        this.logger.out(formatMirrorSyncJsonOutput(stats, elapsed));
+      }
 
       return ok(stats);
     } catch (caughtError: unknown) {

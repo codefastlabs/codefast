@@ -3,7 +3,7 @@ import {
   scanCliPackageArchitectureViolations,
   violationsForFileContent,
 } from "#/lib/core/application/architecture-boundaries.policy";
-import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import { nodeCliPath } from "#/lib/core/infra/path.adapter";
 
 const cliPackageRoot = nodeCliPath.resolve(__dirname, "..", "..", "..", "..");
@@ -82,7 +82,7 @@ describe("architecture boundaries (CI guardrails)", () => {
     it("has zero boundary violations under src/lib (non-test sources only)", () => {
       const violations = scanCliPackageArchitectureViolations(
         cliPackageRoot,
-        createNodeCliFs(),
+        new NodeCliFsAdapter(),
         nodeCliPath,
       );
       expect(violations).toEqual([]);

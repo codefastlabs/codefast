@@ -2,12 +2,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { groupFile } from "#/lib/arrange/application/use-cases/group-file.use-case";
-import { createNodeCliFs, createNodeCliLogger } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/lib/infra/node-io.adapter";
 import { domainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { createGroupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
-const arrangeFs = createNodeCliFs();
-const arrangeLogger = createNodeCliLogger();
+const arrangeFs = new NodeCliFsAdapter();
+const arrangeLogger = new NodeCliLoggerAdapter();
 const groupFilePreview = createGroupFilePreviewPresenter(arrangeLogger);
 
 function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {

@@ -1,4 +1,6 @@
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CLI_EXIT_GENERAL_ERROR } from "#/lib/core/domain/cli-exit-codes.domain";
+import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 import type {
   TagProgressListener,
   TagResolvedTarget,
@@ -111,17 +113,14 @@ export function presentTagSyncCliResult(
     logger.err(
       "No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.",
     );
-    return 1;
+    return CLI_EXIT_GENERAL_ERROR;
   }
   const warningsAndErrorsSection = formatWarningsAndErrors(tagResult);
   if (warningsAndErrorsSection) {
     logger.err(warningsAndErrorsSection);
   }
   logger.out(formatSummary(tagResult));
-  const hasRunErrors = tagResult.targetResults.some(
-    (targetResult) => targetResult.runError !== null,
-  );
-  return hasRunErrors || tagResult.hookError ? 1 : 0;
+  return exitCodeForTagSyncResult(tagResult);
 }
 
 export function createTagProgressListener(

@@ -1,9 +1,12 @@
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
 import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
+import { CliPathToken } from "#/lib/tokens";
 
 const PACKAGE_JSON = "package.json";
 
+@injectable([inject(CliPathToken)])
 export class TagVersionResolverAdapter implements TagVersionResolverPort {
   constructor(private readonly path: CliPath) {}
 

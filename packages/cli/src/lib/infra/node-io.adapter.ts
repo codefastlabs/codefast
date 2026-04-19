@@ -2,6 +2,7 @@ import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { injectable } from "@codefast/di";
 import type { CliDirectoryEntry, CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
 function canonicalPathSyncNode(inputPath: string): string {
@@ -12,35 +13,33 @@ function canonicalPathSyncNode(inputPath: string): string {
   }
 }
 
-export function createNodeCliFs(): CliFs {
-  return {
-    existsSync: fsSync.existsSync,
-    canonicalPathSync: canonicalPathSyncNode,
-    statSync: fsSync.statSync,
-    readFileSync: fsSync.readFileSync,
-    writeFileSync: fsSync.writeFileSync,
-    readdirSync: fsSync.readdirSync,
-    readFile: (p, enc) => fsPromises.readFile(p, enc),
-    writeFile: (p, data, enc) => fsPromises.writeFile(p, data, enc),
-    readdir: async (p, opts) => {
-      const raw = await fsPromises.readdir(p, opts as Parameters<typeof fsPromises.readdir>[1]);
-      if (!opts?.withFileTypes) {
-        return raw as unknown as string[];
-      }
-      return raw as unknown as CliDirectoryEntry[];
-    },
-    rename: (oldPath, newPath) => fsPromises.rename(oldPath, newPath),
-    unlink: (p) => fsPromises.unlink(p),
+@injectable([])
+export class NodeCliFsAdapter implements CliFs {
+  existsSync = fsSync.existsSync;
+  canonicalPathSync = canonicalPathSyncNode;
+  statSync = fsSync.statSync;
+  readFileSync = fsSync.readFileSync;
+  writeFileSync = fsSync.writeFileSync;
+  readdirSync = fsSync.readdirSync;
+  readFile = (p: string, enc: BufferEncoding) => fsPromises.readFile(p, enc);
+  writeFile = (p: string, data: string, enc: BufferEncoding) => fsPromises.writeFile(p, data, enc);
+  readdir = async (p: string, opts?: { withFileTypes?: boolean }) => {
+    const raw = await fsPromises.readdir(p, opts as Parameters<typeof fsPromises.readdir>[1]);
+    if (!opts?.withFileTypes) {
+      return raw as unknown as string[];
+    }
+    return raw as unknown as CliDirectoryEntry[];
   };
+  rename = (oldPath: string, newPath: string) => fsPromises.rename(oldPath, newPath);
+  unlink = (p: string) => fsPromises.unlink(p);
 }
 
-export function createNodeCliLogger(): CliLogger {
-  return {
-    out: (line: string) => {
-      process.stdout.write(`${line}\n`);
-    },
-    err: (line: string) => {
-      process.stderr.write(`${line}\n`);
-    },
-  };
+@injectable([])
+export class NodeCliLoggerAdapter implements CliLogger {
+  out(line: string): void {
+    process.stdout.write(`${line}\n`);
+  }
+  err(line: string): void {
+    process.stderr.write(`${line}\n`);
+  }
 }

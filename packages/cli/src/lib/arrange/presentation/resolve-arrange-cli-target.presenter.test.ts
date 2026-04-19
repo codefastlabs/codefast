@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import { resolveArrangeCliTargetPath } from "#/lib/arrange/presentation/resolve-arrange-cli-target.presenter";
 
-const cliFs = createNodeCliFs();
+const cliFs = new NodeCliFsAdapter();
 
 describe("resolveArrangeCliTargetPath", () => {
   it("returns canonical explicit target resolved from cwd", () => {

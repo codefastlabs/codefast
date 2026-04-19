@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import { appError } from "#/lib/core/domain/errors.domain";
 import { err, ok } from "#/lib/core/domain/result.model";
@@ -13,7 +13,7 @@ import {
 } from "#/lib/tokens";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
-@injectable([CliFsToken, AppOrchestratorToken] as const)
+@injectable([inject(CliFsToken), inject(AppOrchestratorToken)])
 export class PrepareMirrorOrchestrator implements PrepareMirrorOrchestratorContract {
   constructor(
     private readonly fs: CliFs,

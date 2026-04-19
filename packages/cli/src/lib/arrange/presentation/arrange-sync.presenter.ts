@@ -1,4 +1,5 @@
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { exitCodeForArrangeSyncResult } from "#/lib/arrange/application/arrange-sync-cli-result";
 import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 
 export function presentArrangeSyncResult(
@@ -25,5 +26,5 @@ export function presentArrangeSyncResult(
   if (result.hookError !== null) {
     logger.err(result.hookError);
   }
-  return 0;
+  return exitCodeForArrangeSyncResult(result);
 }

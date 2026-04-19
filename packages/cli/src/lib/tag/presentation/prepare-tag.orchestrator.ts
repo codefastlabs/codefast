@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import { ok } from "#/lib/core/domain/result.model";
 import { parseGlobalCliOptions } from "#/lib/core/presentation/global-cli-options.presenter";
 import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
@@ -13,7 +13,7 @@ import {
 } from "#/lib/tokens";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
-@injectable([CliFsToken, CliLoggerToken, AppOrchestratorToken] as const)
+@injectable([inject(CliFsToken), inject(CliLoggerToken), inject(AppOrchestratorToken)])
 export class PrepareTagOrchestrator implements PrepareTagOrchestratorContract {
   constructor(
     private readonly fs: CliFs,

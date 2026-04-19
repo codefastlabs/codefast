@@ -2,6 +2,10 @@ import process from "node:process";
 import { injectable } from "@codefast/di";
 import type { Command } from "commander";
 import { Option } from "commander";
+import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/application/arrange-analyze-json.format";
+import { formatArrangeGroupJsonOutput } from "#/lib/arrange/application/arrange-group-json.format";
+import { exitCodeForArrangeSyncResult } from "#/lib/arrange/application/arrange-sync-cli-result";
+import { formatArrangeSyncJsonOutput } from "#/lib/arrange/application/arrange-sync-json.format";
 import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
@@ -61,7 +65,10 @@ export class ArrangeCommand implements CliCommand {
       .command("analyze")
       .description("Report long strings, nested cn in tv(), and related findings")
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-      .action((target: string | undefined) => this.executeAnalyze(target));
+      .option("--json", "Print one JSON object on stdout instead of a human report", false)
+      .action((target: string | undefined, options: { json?: boolean }) =>
+        this.executeAnalyze(target, options),
+      );
 
     arrange
       .command("preview")
@@ -69,8 +76,12 @@ export class ArrangeCommand implements CliCommand {
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
       .addOption(withClassNameOption())
       .option("--cn-import <spec>", "Override module specifier when adding cn import")
-      .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) =>
-        this.executePreviewOrApply(false, target, opts),
+      .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
+      .action(
+        (
+          target: string | undefined,
+          opts: { withClassName?: boolean; cnImport?: string; json?: boolean },
+        ) => this.executePreviewOrApply(false, target, opts),
       );
 
     arrange
@@ -79,8 +90,12 @@ export class ArrangeCommand implements CliCommand {
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
       .addOption(withClassNameOption())
       .option("--cn-import <spec>", "Override module specifier when adding cn import")
-      .action((target: string | undefined, opts: { withClassName?: boolean; cnImport?: string }) =>
-        this.executePreviewOrApply(true, target, opts),
+      .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
+      .action(
+        (
+          target: string | undefined,
+          opts: { withClassName?: boolean; cnImport?: string; json?: boolean },
+        ) => this.executePreviewOrApply(true, target, opts),
       );
 
     arrange
@@ -89,12 +104,16 @@ export class ArrangeCommand implements CliCommand {
       .argument("[tokens...]", "Class tokens (quote a single string if it contains spaces)")
       .option("--tv", "Emit tv()-style array instead of cn() call", false)
       .addOption(withClassNameOption())
-      .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean }) =>
+      .option("--json", "Print one JSON object on stdout instead of plain lines", false)
+      .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean; json?: boolean }) =>
         this.executeGroup(tokens, opts),
       );
   }
 
-  private async executeAnalyze(target: string | undefined): Promise<void> {
+  private async executeAnalyze(
+    target: string | undefined,
+    options?: { json?: boolean },
+  ): Promise<void> {
     const prelude = await this.prepareTargetWorkspaceAndConfig.execute({
       currentWorkingDirectory: process.cwd(),
       rawTarget: target,
@@ -105,6 +124,7 @@ export class ArrangeCommand implements CliCommand {
     const { resolvedTarget } = prelude.value;
     const parsed = parseWithCliSchema(arrangeAnalyzeDirectoryRequestSchema, {
       analyzeRootPath: resolvedTarget,
+      json: options?.json,
     });
     if (!consumeCliAppError(this.logger, parsed)) {
       return;
@@ -113,13 +133,17 @@ export class ArrangeCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, outcome)) {
       return;
     }
-    this.presentAnalyzeReport(resolvedTarget, outcome.value);
+    if (parsed.value.json) {
+      this.logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
+    } else {
+      this.presentAnalyzeReport.present(resolvedTarget, outcome.value);
+    }
   }
 
   private async executePreviewOrApply(
     write: boolean,
     target: string | undefined,
-    opts: { withClassName?: boolean; cnImport?: string },
+    opts: { withClassName?: boolean; cnImport?: string; json?: boolean },
   ): Promise<void> {
     const prelude = await this.prepareTargetWorkspaceAndConfig.execute({
       currentWorkingDirectory: process.cwd(),
@@ -133,6 +157,7 @@ export class ArrangeCommand implements CliCommand {
       rootDir,
       targetPath: resolvedTarget,
       write,
+      json: opts.json,
       withClassName: opts.withClassName,
       cnImport: opts.cnImport,
       config: config.arrange ?? {},
@@ -144,23 +169,33 @@ export class ArrangeCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, outcome)) {
       return;
     }
-    process.exitCode = presentArrangeSyncResult(this.logger, outcome.value, write);
+    if (parsed.value.json) {
+      this.logger.out(formatArrangeSyncJsonOutput(outcome.value, write));
+      process.exitCode = exitCodeForArrangeSyncResult(outcome.value);
+    } else {
+      process.exitCode = presentArrangeSyncResult(this.logger, outcome.value, write);
+    }
   }
 
   private async executeGroup(
     tokens: string[],
-    opts: { tv?: boolean; withClassName?: boolean },
+    opts: { tv?: boolean; withClassName?: boolean; json?: boolean },
   ): Promise<void> {
     const parsed = parseWithCliSchema(arrangeSuggestGroupsRequestSchema, {
       inlineClasses: tokens.join(" ").trim(),
       emitTvStyleArray: !!opts.tv,
       trailingClassName: !!opts.withClassName,
+      json: opts.json,
     });
     if (!consumeCliAppError(this.logger, parsed)) {
       return;
     }
     const output = this.suggestCnGroups.execute(parsed.value);
-    this.logger.out(output.primaryLine);
-    this.logger.out(output.bucketsCommentLine);
+    if (parsed.value.json) {
+      this.logger.out(formatArrangeGroupJsonOutput(output));
+    } else {
+      this.logger.out(output.primaryLine);
+      this.logger.out(output.bucketsCommentLine);
+    }
   }
 }

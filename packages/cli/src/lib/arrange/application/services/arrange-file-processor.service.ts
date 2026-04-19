@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
@@ -11,7 +11,11 @@ import {
   type ArrangeFileProcessorService,
 } from "#/lib/tokens";
 
-@injectable([CliFsToken, DomainSourceParserPortToken, GroupFilePreviewPortToken] as const)
+@injectable([
+  inject(CliFsToken),
+  inject(DomainSourceParserPortToken),
+  inject(GroupFilePreviewPortToken),
+])
 export class ArrangeFileProcessorServiceImpl implements ArrangeFileProcessorService {
   constructor(
     private readonly fs: CliFs,

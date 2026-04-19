@@ -1,3 +1,4 @@
+import { inject, injectable } from "@codefast/di";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import type {
@@ -10,6 +11,7 @@ import type {
   DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
+import { CliLoggerToken } from "#/lib/tokens";
 
 export function printGroupFilePreview(
   logger: CliLogger,
@@ -89,4 +91,13 @@ export function createGroupFilePreviewPresenter(logger: CliLogger): GroupFilePre
   return {
     printGroupFilePreviewFromWork: (work) => printGroupFilePreviewFromWork(logger, work),
   };
+}
+
+@injectable([inject(CliLoggerToken)])
+export class GroupFilePreviewPresenterAdapter implements GroupFilePreviewPort {
+  constructor(private readonly logger: CliLogger) {}
+
+  printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
+    printGroupFilePreviewFromWork(this.logger, work);
+  }
 }

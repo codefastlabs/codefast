@@ -5,6 +5,7 @@ export const mirrorSyncRunRequestSchema: z.ZodType<MirrorSyncRunRequest> = z.obj
   rootDir: z.string().min(1),
   verbose: z.boolean().optional(),
   noColor: z.boolean().optional(),
+  json: z.boolean().optional(),
   packageFilter: z.string().optional(),
   config: z.unknown().optional(),
 });

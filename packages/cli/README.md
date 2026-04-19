@@ -30,6 +30,18 @@ flowchart LR
 
 ---
 
+## Exit codes
+
+| Code | Meaning                                                                                                                                                         |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Success.                                                                                                                                                        |
+| `1`  | General failure (missing paths, infrastructure errors, partial failures such as `mirror sync` with package errors, or hook / run errors for `tag` / `arrange`). |
+| `2`  | Invalid invocation or input (Zod / schema validation for CLI requests).                                                                                         |
+
+Human-readable errors and diagnostics go to **stderr**; primary command output goes to **stdout**.
+
+---
+
 ## Installation
 
 ```bash
@@ -91,6 +103,16 @@ Groups a single class string without touching the filesystem. Useful for checkin
 codefast arrange group "relative flex items-center h-10 w-full rounded-md bg-primary text-white hover:bg-primary/90"
 ```
 
+### `--json` (machine-readable output)
+
+Use **`--json`** on any `arrange` subcommand to print **one JSON object** on stdout (human tables / colors are suppressed):
+
+| Subcommand          | Payload highlights                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `analyze`           | `schemaVersion`, `analyzeRootPath`, full `report` (same data as the human report).                                                   |
+| `preview` / `apply` | `schemaVersion`, `write`, `ok` (false if `onAfterWrite` hook failed), full `result` (`filePaths`, `modifiedFiles`, `totalFound`, …). |
+| `group`             | `schemaVersion`, `primaryLine`, `bucketsCommentLine`.                                                                                |
+
 ---
 
 ## `mirror sync`
@@ -101,7 +123,10 @@ Scans built `dist/` trees and regenerates the `exports` field in each `package.j
 codefast mirror sync              # all packages in the workspace
 codefast mirror sync packages/ui  # a single package path
 codefast mirror sync -v           # verbose output
+codefast mirror sync --json       # one JSON object on stdout (for scripts / CI)
 ```
+
+`--json` prints a single line of JSON with `schemaVersion`, `ok`, `elapsedSeconds`, and `stats` (same counters as the human summary). Human progress and styling are suppressed; use normal mode for interactive runs.
 
 > **Note:** Packages must be built first so `dist/` exists. Run your build step before `mirror sync`.
 
@@ -171,7 +196,7 @@ Hook contract:
 - `tag.onAfterWrite?.({ files })` runs after `codefast tag` writes files.
 - `arrange.onAfterWrite?.({ files })` runs after `codefast arrange apply` writes files.
 - Hooks support both sync and async functions (`void | Promise<void>`).
-- Hook errors are logged but do not crash the CLI process.
+- Hook failures are reported on stderr; `tag` and `arrange apply` exit with code `1` when a hook fails (see [Exit codes](#exit-codes)).
 
 ---
 
@@ -183,6 +208,7 @@ Scans `.ts` / `.tsx` source files and annotates exported declarations with `@sin
 codefast tag                  # annotate exports in ./src
 codefast tag packages/ui/src  # annotate a custom target
 codefast annotate --dry-run   # preview only, do not write files
+codefast tag --json           # one JSON object on stdout (for scripts / CI)
 ```
 
 What it updates:
