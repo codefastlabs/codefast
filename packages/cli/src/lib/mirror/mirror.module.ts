@@ -6,10 +6,7 @@ import { mirrorSyncReporterAdapter } from "#/lib/mirror/infra/mirror-sync-report
 import { PackageRepositoryAdapter } from "#/lib/mirror/infra/package-repository.adapter";
 import { WorkspaceServiceAdapter } from "#/lib/mirror/infra/workspace-service.adapter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import {
-  isCliTelemetryEnabled,
-  withCliPortTelemetry,
-} from "#/lib/core/infra/logging-decorator.adapter";
+import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   CliLoggerToken,
   FileSystemServicePortToken,
@@ -20,23 +17,12 @@ import {
   WorkspaceServicePortToken,
 } from "#/lib/tokens";
 
-function withOptionalTelemetry<T extends object>(
-  portName: string,
-  implementation: T,
-  logger: CliLogger,
-): T {
-  if (!isCliTelemetryEnabled()) {
-    return implementation;
-  }
-  return withCliPortTelemetry({ portName, implementation, logger });
-}
-
 export const MirrorModule = Module.create("cli-mirror", (api) => {
   api
     .bind(WorkspaceServicePortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("WorkspaceServicePort", new WorkspaceServiceAdapter(), logger),
+        withOptionalPortTelemetry("WorkspaceServicePort", new WorkspaceServiceAdapter(), logger),
       [CliLoggerToken] as const,
     )
     .singleton();
@@ -45,7 +31,7 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     .bind(PackageRepositoryPortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("PackageRepositoryPort", new PackageRepositoryAdapter(), logger),
+        withOptionalPortTelemetry("PackageRepositoryPort", new PackageRepositoryAdapter(), logger),
       [CliLoggerToken] as const,
     )
     .singleton();
@@ -54,7 +40,7 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     .bind(FileSystemServicePortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("FileSystemServicePort", new FileSystemServiceAdapter(), logger),
+        withOptionalPortTelemetry("FileSystemServicePort", new FileSystemServiceAdapter(), logger),
       [CliLoggerToken] as const,
     )
     .singleton();
@@ -63,7 +49,7 @@ export const MirrorModule = Module.create("cli-mirror", (api) => {
     .bind(MirrorSyncReporterPortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("MirrorSyncReporterPort", mirrorSyncReporterAdapter, logger),
+        withOptionalPortTelemetry("MirrorSyncReporterPort", mirrorSyncReporterAdapter, logger),
       [CliLoggerToken] as const,
     )
     .singleton();

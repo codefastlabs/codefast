@@ -1,5 +1,5 @@
 import { injectable } from "@codefast/di";
-import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import { groupFile } from "#/lib/arrange/application/use-cases/group-file.use-case";
@@ -22,13 +22,11 @@ export class ArrangeFileProcessorServiceImpl implements ArrangeFileProcessorServ
   processFile(args: {
     readonly filePath: string;
     readonly options: ArrangeGroupFileOptions;
-    readonly logger: CliLogger;
   }): GroupFileResult {
     return groupFile(
       args.filePath,
       args.options,
       this.fs,
-      args.logger,
       this.domainSourceParser,
       this.groupFilePreview,
     );

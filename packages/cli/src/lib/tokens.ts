@@ -9,6 +9,7 @@ import type { ArrangeSuggestGroupsOutput } from "#/lib/arrange/application/use-c
 import type {
   AnalyzeReport,
   ArrangeGroupFileOptions,
+  ArrangeRunResult,
   GroupFileResult,
 } from "#/lib/arrange/domain/types.domain";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/lib/arrange/presentation/arrange-prelude.types";
@@ -24,6 +25,7 @@ import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/packa
 import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
+import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
 import type { MirrorSyncCommandPrelude } from "#/lib/mirror/presentation/mirror-prelude.types";
 import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
 import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-resolver.port";
@@ -38,7 +40,7 @@ export type AnalyzeDirectoryUseCase = {
 };
 
 export type RunArrangeSyncUseCase = {
-  execute(request: ArrangeSyncRunRequest): Promise<Result<number, AppError>>;
+  execute(request: ArrangeSyncRunRequest): Promise<Result<ArrangeRunResult, AppError>>;
 };
 
 export type ArrangeTargetScannerService = {
@@ -49,7 +51,6 @@ export type ArrangeFileProcessorService = {
   processFile(args: {
     readonly filePath: string;
     readonly options: ArrangeGroupFileOptions;
-    readonly logger: CliLogger;
   }): GroupFileResult;
 };
 
@@ -58,7 +59,7 @@ export type SuggestCnGroupsUseCase = {
 };
 
 export type RunMirrorSyncUseCase = {
-  execute(request: MirrorSyncRunRequest): Promise<Result<number, AppError>>;
+  execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>>;
 };
 
 export type RunTagSyncUseCase = {

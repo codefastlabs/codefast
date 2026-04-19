@@ -5,10 +5,7 @@ import { tagTargetResolverAdapter } from "#/lib/tag/infra/tag-target-resolver.ad
 import { tagTypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import {
-  isCliTelemetryEnabled,
-  withCliPortTelemetry,
-} from "#/lib/core/infra/logging-decorator.adapter";
+import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   CliLoggerToken,
   CliPathToken,
@@ -19,23 +16,12 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tokens";
 
-function withOptionalTelemetry<T extends object>(
-  portName: string,
-  implementation: T,
-  logger: CliLogger,
-): T {
-  if (!isCliTelemetryEnabled()) {
-    return implementation;
-  }
-  return withCliPortTelemetry({ portName, implementation, logger });
-}
-
 export const TagModule = Module.create("cli-tag", (api) => {
   api
     .bind(TagTargetResolverPortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("TagTargetResolverPort", tagTargetResolverAdapter, logger),
+        withOptionalPortTelemetry("TagTargetResolverPort", tagTargetResolverAdapter, logger),
       [CliLoggerToken] as const,
     )
     .singleton();
@@ -44,7 +30,7 @@ export const TagModule = Module.create("cli-tag", (api) => {
     .bind(TypeScriptTreeWalkPortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("TypeScriptTreeWalkPort", tagTypeScriptTreeWalkAdapter, logger),
+        withOptionalPortTelemetry("TypeScriptTreeWalkPort", tagTypeScriptTreeWalkAdapter, logger),
       [CliLoggerToken] as const,
     )
     .singleton();
@@ -53,7 +39,7 @@ export const TagModule = Module.create("cli-tag", (api) => {
     .bind(TagSinceWriterPortToken)
     .toResolved(
       (logger: CliLogger) =>
-        withOptionalTelemetry("TagSinceWriterPort", tagSinceWriterAdapter, logger),
+        withOptionalPortTelemetry("TagSinceWriterPort", tagSinceWriterAdapter, logger),
       [CliLoggerToken] as const,
     )
     .singleton();
@@ -62,7 +48,7 @@ export const TagModule = Module.create("cli-tag", (api) => {
     .bind(TagVersionResolverPortToken)
     .toResolved(
       (path, logger) =>
-        withOptionalTelemetry(
+        withOptionalPortTelemetry(
           "TagVersionResolverPort",
           new TagVersionResolverAdapter(path),
           logger,

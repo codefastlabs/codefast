@@ -1,9 +1,10 @@
 import type { Mock } from "vitest";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
+import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import { groupFile } from "#/lib/arrange/application/use-cases/group-file.use-case";
 import { domainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
-import { groupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import { createGroupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
 function createForwardingParserPort(): DomainSourceParserPort {
   return {
@@ -11,6 +12,14 @@ function createForwardingParserPort(): DomainSourceParserPort {
       domainSourceParserAdapter.parseDomainSourceFile(filePath, sourceText),
     ),
   };
+}
+
+function createSilentPreviewPort(): {
+  port: GroupFilePreviewPort;
+  printSpy: Mock;
+} {
+  const printSpy = vi.fn();
+  return { port: { printGroupFilePreviewFromWork: printSpy }, printSpy };
 }
 
 describe("groupFile use case", () => {
@@ -21,24 +30,22 @@ describe("groupFile use case", () => {
       readFileSync: vi.fn(() => sourceText),
       writeFileSync: vi.fn(),
     } as unknown as CliFs;
-    const loggerOut: Mock<(message: string) => void> = vi.fn();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
+    const { port: previewPort, printSpy } = createSilentPreviewPort();
     const domainSourceParser = createForwardingParserPort();
 
     const outcome = groupFile(
       filePath,
       { write: false, withClassName: false },
       mockFs,
-      mockLogger,
       domainSourceParser,
-      groupFilePreviewPresenter,
+      previewPort,
     );
 
     expect(outcome.filePath).toBe(filePath);
     expect(outcome.totalFound).toBe(0);
     expect(outcome.changed).toBe(0);
     expect(mockFs.writeFileSync).not.toHaveBeenCalled();
-    expect(loggerOut).not.toHaveBeenCalled();
+    expect(printSpy).not.toHaveBeenCalled();
   });
 
   it("prints preview and does not write when write is false and edits exist", () => {
@@ -56,14 +63,14 @@ export const styles = tv({
     const loggerOut: Mock<(message: string) => void> = vi.fn();
     const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const domainSourceParser = createForwardingParserPort();
+    const previewPort = createGroupFilePreviewPresenter(mockLogger);
 
     const outcome = groupFile(
       filePath,
       { write: false, withClassName: false },
       mockFs,
-      mockLogger,
       domainSourceParser,
-      groupFilePreviewPresenter,
+      previewPort,
     );
 
     expect(outcome.changed).toBe(0);
@@ -86,17 +93,15 @@ export const styles = tv({
       readFileSync: vi.fn(() => sourceText),
       writeFileSync: vi.fn(),
     } as unknown as CliFs;
-    const loggerOut: Mock<(message: string) => void> = vi.fn();
-    const mockLogger: CliLogger = { out: loggerOut, err: vi.fn() };
     const domainSourceParser = createForwardingParserPort();
+    const { port: previewPort } = createSilentPreviewPort();
 
     const outcome = groupFile(
       filePath,
       { write: true, withClassName: false },
       mockFs,
-      mockLogger,
       domainSourceParser,
-      groupFilePreviewPresenter,
+      previewPort,
     );
 
     expect(outcome.changed).toBeGreaterThan(0);

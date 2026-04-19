@@ -41,7 +41,7 @@ export async function runCli(argv: string[]): Promise<number> {
   try {
     if (process.env.NODE_ENV !== "production") {
       runtimeContainer.validate();
-      runtimeContainer.initialize();
+      await runtimeContainer.initializeAsync();
     }
     const commands = runtimeContainer.resolveAll(COMMAND_TOKEN);
     const program = createProgram(commands);

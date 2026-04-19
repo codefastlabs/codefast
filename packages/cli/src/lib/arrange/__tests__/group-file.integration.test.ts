@@ -4,10 +4,11 @@ import path from "node:path";
 import { groupFile } from "#/lib/arrange/application/use-cases/group-file.use-case";
 import { createNodeCliFs, createNodeCliLogger } from "#/lib/infra/node-io.adapter";
 import { domainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
-import { groupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import { createGroupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
 const arrangeFs = createNodeCliFs();
 const arrangeLogger = createNodeCliLogger();
+const groupFilePreview = createGroupFilePreviewPresenter(arrangeLogger);
 
 function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "group-file-"));
@@ -47,9 +48,8 @@ export const styles = tv({
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -70,9 +70,8 @@ export function Fixture() {
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -93,9 +92,8 @@ export const styles = tw.tv({
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -117,9 +115,8 @@ export const styles = tw.tv({
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       const after = fs.readFileSync(filePath, "utf8");
       expect(result.changed).toBeGreaterThan(0);
@@ -137,9 +134,8 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -153,9 +149,8 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -169,9 +164,8 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
     });
@@ -184,9 +178,8 @@ export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 f
           filePath,
           { write: false, withClassName: false },
           arrangeFs,
-          arrangeLogger,
           domainSourceParserAdapter,
-          groupFilePreviewPresenter,
+          groupFilePreview,
         ),
       ).toEqual({
         filePath,
@@ -205,9 +198,8 @@ cn("flex gap-2", "text-sm");`;
           filePath,
           { write: false, withClassName: false },
           arrangeFs,
-          arrangeLogger,
           domainSourceParserAdapter,
-          groupFilePreviewPresenter,
+          groupFilePreview,
         ),
       ).toEqual({
         filePath,
@@ -225,18 +217,16 @@ export const broken = tv({ base: cn() });`;
         filePath,
         { write: false, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(dry).toEqual({ filePath, totalFound: 1, changed: 0 });
       const wet = groupFile(
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(wet).toEqual({ filePath, totalFound: 1, changed: 0 });
     });
@@ -252,9 +242,8 @@ export function Fixture() {
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -272,9 +261,8 @@ export function Fixture() {
         filePath,
         { write: true, withClassName: true },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -293,9 +281,8 @@ export function Fixture() {
         filePath,
         { write: true, withClassName: false, cnImport: "clsx" },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -313,9 +300,8 @@ export const sheet = tv({
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -333,9 +319,8 @@ export const sheet = tv({
         filePath,
         { write: true, withClassName: false },
         arrangeFs,
-        arrangeLogger,
         domainSourceParserAdapter,
-        groupFilePreviewPresenter,
+        groupFilePreview,
       );
       expect(result.changed).toBeGreaterThan(0);
       const after = fs.readFileSync(filePath, "utf8");
@@ -355,9 +340,8 @@ export const styles = tv({ base: cn("${long}") });`;
           filePath,
           { write: false, withClassName: false },
           arrangeFs,
-          arrangeLogger,
           domainSourceParserAdapter,
-          groupFilePreviewPresenter,
+          groupFilePreview,
         );
       });
       expect(output).toContain("[cn] / [tv] / [JSX className]");

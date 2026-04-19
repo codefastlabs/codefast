@@ -93,3 +93,14 @@ export function isCliTelemetryEnabled(): boolean {
   const raw = process.env.ENABLE_TELEMETRY;
   return raw === "1" || raw === "true";
 }
+
+export function withOptionalPortTelemetry<T extends object>(
+  portName: string,
+  implementation: T,
+  logger: CliLogger,
+): T {
+  if (!isCliTelemetryEnabled()) {
+    return implementation;
+  }
+  return withCliPortTelemetry({ portName, implementation, logger });
+}
