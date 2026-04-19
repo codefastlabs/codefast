@@ -26,13 +26,21 @@ function safeSerializeHint(hint: ResolveHint): string {
 /**
  * Base error for all `@codefast/di` failures. Subclasses expose a stable, machine-readable `code`.
  */
-export class DiError extends Error {
-  readonly code: string = "DI_ERROR";
+export abstract class DiError extends Error {
+  abstract readonly code: string;
 
   constructor(message: string, options?: ErrorOptions) {
     super(message, options);
     this.name = new.target.name;
   }
+}
+
+/**
+ * Raised for internal programming errors — invalid library usage or unexpected state that
+ * indicates a bug in the caller (e.g. accessing an uninitialized container, misconfigured binding).
+ */
+export class InternalError extends DiError {
+  readonly code = "INTERNAL_ERROR";
 }
 
 /**

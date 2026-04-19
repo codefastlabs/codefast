@@ -3,7 +3,7 @@ import {
   AsyncModuleLoadError,
   AsyncResolutionError,
   CircularDependencyError,
-  DiError,
+  InternalError,
   MissingMetadataError,
   NoMatchingBindingError,
   ScopeViolationError,
@@ -12,11 +12,11 @@ import {
 import { createBindingIdentifier } from "#/binding";
 
 describe("errors", () => {
-  it("DiError provides a base code and message", () => {
-    const error = new DiError("Base error message");
-    expect(error.code).toBe("DI_ERROR");
+  it("InternalError provides a stable code and message", () => {
+    const error = new InternalError("Base error message");
+    expect(error.code).toBe("INTERNAL_ERROR");
     expect(error.message).toBe("Base error message");
-    expect(error.name).toBe("DiError");
+    expect(error.name).toBe("InternalError");
   });
 
   it("NoMatchingBindingError provides formatted message and hint", () => {

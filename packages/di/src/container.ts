@@ -3,7 +3,7 @@ import { BindingBuilder } from "#/binding";
 import { getAutoRegistered } from "#/decorators/injectable";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
-import { AsyncModuleLoadError, CircularDependencyError, DiError } from "#/errors";
+import { AsyncModuleLoadError, CircularDependencyError, InternalError } from "#/errors";
 import type {
   ContainerGraphJson,
   ContainerInspectorContext,
@@ -102,7 +102,7 @@ class DefaultContainer implements Container {
       lookup: (token) => {
         const current = holder.current;
         if (current === undefined) {
-          throw new DiError("container is not initialized");
+          throw new InternalError("container is not initialized");
         }
         return current.lookupBindings(token);
       },
@@ -238,7 +238,7 @@ class DefaultContainer implements Container {
     for (const module of modules) {
       const ownedBindingIds = this.loadedModules.get(module);
       if (ownedBindingIds === undefined) {
-        throw new DiError(`Module "${module.name}" is not loaded on this container.`);
+        throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
       }
       for (const bindingId of [...ownedBindingIds].reverse()) {
         this.ownScopeManager.releaseByBindingId(bindingId);
@@ -253,7 +253,7 @@ class DefaultContainer implements Container {
     for (const module of modules) {
       const ownedBindingIds = this.loadedModules.get(module);
       if (ownedBindingIds === undefined) {
-        throw new DiError(`Module "${module.name}" is not loaded on this container.`);
+        throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
       }
       for (const bindingId of [...ownedBindingIds].reverse()) {
         await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
@@ -401,7 +401,7 @@ class DefaultContainer implements Container {
   }
 
   [Symbol.dispose](): never {
-    throw new DiError(
+    throw new InternalError(
       "Container disposal is async. Use `await using container = Container.create()` or call `await container.dispose()` instead of `using`.",
     );
   }
@@ -447,7 +447,7 @@ class DefaultContainer implements Container {
       lookup: (token) => {
         const current = holder.current;
         if (current === undefined) {
-          throw new DiError("child container is not initialized");
+          throw new InternalError("child container is not initialized");
         }
         return current.lookupBindings(token);
       },
@@ -514,7 +514,7 @@ class DefaultContainer implements Container {
       import: (...deps: Module[]) => {
         for (const dep of deps) {
           if (dep instanceof AsyncModule) {
-            throw new DiError(
+            throw new InternalError(
               `Module "${module.name}" cannot synchronously import async module "${dep.name}".`,
             );
           }

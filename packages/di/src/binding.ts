@@ -1,4 +1,4 @@
-import { DiError } from "#/errors";
+import { InternalError } from "#/errors";
 import type { RegistryKey } from "#/registry";
 import type { Token, TokenValue } from "#/token";
 
@@ -212,7 +212,7 @@ export class BindingBuilder<Value> {
 
   toSelf(): TransientBindingBuilder<Value> {
     if (typeof this.bindingKey !== "function") {
-      throw new DiError(
+      throw new InternalError(
         "toSelf() requires the binding key to be a constructor; use bind(SomeClass) or call to(Class) instead.",
       );
     }
@@ -317,7 +317,7 @@ export class BindingBuilder<Value> {
   id(identifier?: BindingIdentifier): BindingIdentifier {
     if (this.currentBinding !== undefined) {
       if (identifier !== undefined && identifier !== this.currentBinding.id) {
-        throw new DiError("Cannot change binding identifier after registration.");
+        throw new InternalError("Cannot change binding identifier after registration.");
       }
       return this.currentBinding.id;
     }
@@ -331,7 +331,7 @@ export class BindingBuilder<Value> {
 
   private registerWithStrategy(next: Exclude<Strategy<Value>, { type: "unset" }>): void {
     if (this.strategy.type !== "unset") {
-      throw new DiError(
+      throw new InternalError(
         "A binding strategy was already selected; only one to*(...) chain is allowed per builder.",
       );
     }
@@ -353,7 +353,9 @@ export class BindingBuilder<Value> {
 
   private assertScopeMutable(): void {
     if (this.strategy.type === "constant") {
-      throw new DiError("Constant bindings are always singleton and do not support scope changes.");
+      throw new InternalError(
+        "Constant bindings are always singleton and do not support scope changes.",
+      );
     }
   }
 

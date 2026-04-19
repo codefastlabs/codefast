@@ -1,5 +1,5 @@
 import type { Binding, BindingIdentifier } from "#/binding";
-import { DiError } from "#/errors";
+import { InternalError } from "#/errors";
 import { runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
 
 type CacheEntry = {
@@ -183,7 +183,7 @@ export class ScopeManager {
     if (handler !== undefined) {
       const result = handler(entry.instance);
       if (isPromiseLike(result)) {
-        throw new DiError(
+        throw new InternalError(
           "onDeactivation returned a Promise during synchronous scope release; use releaseBindingAsync() or unloadAsync().",
         );
       }
@@ -220,7 +220,7 @@ export class ScopeManager {
       if (handler !== undefined) {
         const result = handler(entry.instance);
         if (isPromiseLike(result)) {
-          throw new DiError(
+          throw new InternalError(
             "onDeactivation returned a Promise; use disposeAsync() instead of dispose().",
           );
         }
