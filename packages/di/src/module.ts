@@ -34,10 +34,19 @@ export class Module {
     this.syncSetup = syncSetup;
   }
 
+  /**
+   * Defines a synchronous module.
+   * @param name - Human-readable label used in error messages and debug output.
+   * @param setup - Callback that registers bindings via the {@link ModuleBuilder}.
+   */
   static create(name: string, setup: (builder: ModuleBuilder) => void): Module {
     return new Module(name, setup);
   }
 
+  /**
+   * Defines an async module — use when setup requires awaiting (e.g. reading config, dynamic imports).
+   * Load with {@link Container.loadAsync} or {@link Container.fromModulesAsync}.
+   */
   static createAsync(
     name: string,
     setup: (builder: AsyncModuleBuilder) => Promise<void>,
@@ -53,6 +62,10 @@ export class Module {
   }
 }
 
+/**
+ * An async module whose setup callback may `await` before registering bindings.
+ * Prefer {@link Module.createAsync} over constructing this class directly.
+ */
 export class AsyncModule {
   readonly name: string;
   private readonly asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>;

@@ -21,6 +21,7 @@ export function createBindingIdentifier(): BindingIdentifier {
  */
 export type Constructor<Value> = abstract new (...args: never[]) => Value;
 
+/** Lifetime strategy for a resolved instance. */
 export type BindingScope = "singleton" | "transient" | "scoped";
 
 /**
@@ -78,15 +79,15 @@ export type ConstraintContext = {
 export type ResolutionContext = {
   readonly resolve: <Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ) => Value;
   readonly resolveAsync: <Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ) => Promise<Value>;
   readonly resolveOptional: <Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ) => Value | undefined;
   /** Dependency-graph navigation context — path, materialization stack, parent/ancestor frames. */
   readonly graph: ConstraintContext;
@@ -100,11 +101,20 @@ type BindingLifecycle = {
   readonly constraint?: (ctx: ConstraintContext) => boolean;
 };
 
+/**
+ * Called after an instance is constructed (and after `@postConstruct`).
+ * The return value replaces the instance in the scope cache — use this to wrap with a proxy or
+ * apply post-processing. May be async; async handlers require `resolveAsync`.
+ */
 export type ActivationHandler<Value> = (
   ctx: ResolutionContext,
   instance: Value,
 ) => Value | Promise<Value>;
 
+/**
+ * Called before a singleton/scoped instance is evicted from the scope cache.
+ * Runs after `@preDestroy`. May be async; async deactivation requires `disposeAsync` / `unloadAsync`.
+ */
 export type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 
 type BindingBase = BindingLifecycle & {
@@ -114,32 +124,38 @@ type BindingBase = BindingLifecycle & {
   readonly moduleId?: string;
 };
 
+/** Binding backed by a pre-existing constant value; always singleton, no construction cost. */
 export type ConstantBinding<Value> = BindingBase & {
   readonly kind: "constant";
   readonly value: Value;
 };
 
+/** Binding that constructs `implementationClass` via the container's metadata-driven instantiation. */
 export type ClassBinding<Value> = BindingBase & {
   readonly kind: "class";
   readonly implementationClass: Constructor<Value>;
 };
 
+/** Binding backed by a synchronous factory that receives a {@link ResolutionContext}. */
 export type DynamicBinding<Value> = BindingBase & {
   readonly kind: "dynamic";
   readonly factory: (ctx: ResolutionContext) => Value;
 };
 
+/** Binding backed by an async factory; must be resolved via `resolveAsync` / `resolveAllAsync`. */
 export type AsyncDynamicBinding<Value> = BindingBase & {
   readonly kind: "async-dynamic";
   readonly factory: (ctx: ResolutionContext) => Promise<Value>;
 };
 
+/** Binding whose dependencies are declared statically and pre-resolved before the factory is called. */
 export type ResolvedBinding<Value> = BindingBase & {
   readonly kind: "resolved";
   readonly dependencyTokens: readonly (Token<unknown> | Constructor<unknown>)[];
   readonly factory: (...args: unknown[]) => Value;
 };
 
+/** Binding that forwards resolution to `targetToken`; the container resolves whatever is bound there. */
 export type AliasBinding<Value> = BindingBase & {
   readonly kind: "alias";
   readonly targetToken: Token<Value>;
@@ -205,11 +221,13 @@ export class BindingBuilder<Value> {
     this.callbacks = callbacks ?? {};
   }
 
+  /** Binds the token to a concrete implementation class; the container constructs it on demand. */
   to<C extends Constructor<Value>>(implementationClass: C): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "class", implementationClass });
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /** Binds the class key to itself — only valid when the key is a constructor. */
   toSelf(): TransientBindingBuilder<Value> {
     if (typeof this.bindingKey !== "function") {
       throw new InternalError(
@@ -220,6 +238,7 @@ export class BindingBuilder<Value> {
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /** Binds the token to a pre-existing value; always resolved as singleton, no construction. */
   toConstantValue<const ConcreteValue extends Value>(
     value: ConcreteValue,
   ): ConstantBindingBuilder<Value> {
@@ -228,11 +247,13 @@ export class BindingBuilder<Value> {
     return this as unknown as ConstantBindingBuilder<Value>;
   }
 
+  /** Binds to a synchronous factory; `ctx` provides nested resolution within the same path. */
   toDynamic(factory: (ctx: ResolutionContext) => Value): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "dynamic", factory });
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /** Binds to an async factory; must be resolved via `resolveAsync` / `resolveAllAsync`. */
   toDynamicAsync(
     factory: (ctx: ResolutionContext) => Promise<Value>,
   ): TransientBindingBuilder<Value> {
@@ -240,6 +261,10 @@ export class BindingBuilder<Value> {
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /**
+   * Binds to a factory whose dependencies are declared explicitly in `deps` and pre-resolved by
+   * the container before the factory is called — no `ResolutionContext` needed inside the factory.
+   */
   toResolved<Deps extends readonly (Token<unknown> | Constructor<unknown>)[]>(
     factory: (...args: { [Index in keyof Deps]: TokenValue<Deps[Index]> }) => Value,
     deps: Deps,
@@ -252,11 +277,13 @@ export class BindingBuilder<Value> {
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /** Redirects resolution to `targetToken`; the container resolves whatever is bound there. */
   toAlias(targetToken: Token<Value>): TransientBindingBuilder<Value> {
     this.registerWithStrategy({ type: "alias", targetToken });
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /** One instance per container; supports `onDeactivation`. */
   singleton(): SingletonBindingBuilder<Value> {
     this.assertScopeMutable();
     this.scope = "singleton";
@@ -265,6 +292,7 @@ export class BindingBuilder<Value> {
     return this as unknown as SingletonBindingBuilder<Value>;
   }
 
+  /** New instance on every resolution (default scope). */
   transient(): TransientBindingBuilder<Value> {
     this.assertScopeMutable();
     this.scope = "transient";
@@ -273,6 +301,7 @@ export class BindingBuilder<Value> {
     return this as unknown as TransientBindingBuilder<Value>;
   }
 
+  /** One instance per child container scope. */
   scoped(): ScopedBindingBuilder<Value> {
     this.assertScopeMutable();
     this.scope = "scoped";
@@ -281,6 +310,7 @@ export class BindingBuilder<Value> {
     return this as unknown as ScopedBindingBuilder<Value>;
   }
 
+  /** Called with the resolved instance after construction; the return value replaces the instance. */
   onActivation(handler: ActivationHandler<Value>): this {
     this.onActivationHandler = handler as ActivationHandler<unknown>;
     this.refreshRegisteredBinding();
@@ -294,24 +324,32 @@ export class BindingBuilder<Value> {
     return this;
   }
 
+  /** This binding only resolves when the caller passes `{ name }` as the resolve hint. */
   whenNamed(name: string): this {
     this.bindingName = name;
     this.refreshRegisteredBinding();
     return this;
   }
 
+  /** This binding only resolves when the caller passes `{ tag: [tag, tagValue] }` as the resolve hint. */
   whenTagged(tag: string, tagValue: unknown): this {
     this.tags.set(tag, tagValue);
     this.refreshRegisteredBinding();
     return this;
   }
 
+  /** Adds a custom predicate; all predicates must pass for the binding to be selected. */
   when(constraint: (ctx: ConstraintContext) => boolean): this {
     this.constraintPredicates.push(constraint);
     this.refreshRegisteredBinding();
     return this;
   }
 
+  /**
+   * Returns the binding's stable ID, allocating one if needed.
+   * Passing an `identifier` pre-sets the ID before a `to*()` call — useful when modules need to
+   * reference a binding ID before it is registered.
+   */
   id(): BindingIdentifier;
   id(identifier: BindingIdentifier): BindingIdentifier;
   id(identifier?: BindingIdentifier): BindingIdentifier {

@@ -5,6 +5,14 @@ import { ScopeViolationError } from "#/errors";
 import { listResolvedDependencies } from "#/dependency-graph";
 import type { RegistryKey } from "#/registry";
 
+/**
+ * Walks every binding in the registry and throws {@link ScopeViolationError} on the first
+ * captive-dependency violation found: a singleton that directly or transitively depends on a
+ * scoped or transient binding. Constant bindings are exempt (no stateful instance to capture).
+ *
+ * Called by {@link Container.validate} and automatically after each `load()` in non-production
+ * environments.
+ */
 export function validateScopeRules(context: {
   collectAllRegistryKeys(): readonly RegistryKey[];
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;

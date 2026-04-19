@@ -2,11 +2,13 @@ import type { Binding, BindingIdentifier } from "#/binding";
 import { InternalError } from "#/errors";
 import { runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
 
+/** Cached singleton or scoped instance together with its binding (needed for deactivation). */
 type CacheEntry = {
   readonly binding: Binding<unknown>;
   readonly instance: unknown;
 };
 
+/** Returns `true` when `value` is a thenable (duck-typed Promise check). */
 function isPromiseLike(value: unknown): value is Promise<unknown> {
   return (
     typeof value === "object" &&
@@ -43,6 +45,7 @@ export class ScopeManager {
     this.scopedPendingPromises = scopedPendingPromises;
   }
 
+  /** Creates a root scope manager that owns both the singleton cache and scoped cache. */
   static createRoot(): ScopeManager {
     return new ScopeManager(new Map(), new Map(), true, new Map(), new Map());
   }
@@ -71,6 +74,7 @@ export class ScopeManager {
     return cache.has(binding.id);
   }
 
+  /** Returns the cached instance for singleton/scoped bindings, or calls `createInstance` on first access. */
   getOrCreate(binding: Binding<unknown>, createInstance: () => unknown): unknown {
     if (binding.scope === "transient") {
       return createInstance();
@@ -87,6 +91,10 @@ export class ScopeManager {
     return instance;
   }
 
+  /**
+   * Async variant of {@link getOrCreate}. Deduplicates concurrent creation calls for the same
+   * binding using an in-flight promise map, preventing double-instantiation under parallel resolves.
+   */
   async getOrCreateAsync(
     binding: Binding<unknown>,
     createInstance: () => Promise<unknown>,
@@ -170,6 +178,10 @@ export class ScopeManager {
     await this.releaseByBindingIdAsync(binding.id);
   }
 
+  /**
+   * Removes a single entry from `store`, runs `onDeactivation` synchronously, then calls
+   * `@preDestroy`. Throws {@link InternalError} if the handler returns a Promise.
+   */
   private releaseFromStore(
     store: Map<BindingIdentifier, CacheEntry>,
     bindingId: BindingIdentifier,
@@ -194,6 +206,9 @@ export class ScopeManager {
     }
   }
 
+  /**
+   * Async counterpart of {@link releaseFromStore}: awaits `onDeactivation` then `@preDestroy`.
+   */
   private async releaseFromStoreAsync(
     store: Map<BindingIdentifier, CacheEntry>,
     bindingId: BindingIdentifier,
@@ -213,6 +228,10 @@ export class ScopeManager {
     }
   }
 
+  /**
+   * Iterates all entries in `store`, clears each one, runs `onDeactivation` + `@preDestroy`
+   * synchronously. Throws {@link InternalError} if any handler returns a Promise.
+   */
   private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
     for (const [bindingId, entry] of [...store.entries()]) {
       store.delete(bindingId);
@@ -232,6 +251,10 @@ export class ScopeManager {
     }
   }
 
+  /**
+   * Async counterpart of {@link disposeMap}: clears the store first, then runs all
+   * deactivation hooks; collects errors and rethrows as `AggregateError` when multiple fail.
+   */
   private async disposeMapAsync(store: Map<BindingIdentifier, CacheEntry>): Promise<void> {
     const entries = [...store.values()];
     store.clear();

@@ -12,6 +12,7 @@ export type RegistryKey = Token<unknown> | Constructor<unknown>;
 export class BindingRegistry {
   private readonly bindingsByKey = new Map<RegistryKey, Binding<unknown>[]>();
 
+  /** Appends `binding` to the list for `key` (multi-binding: each call adds an entry). */
   add<Value>(key: Token<Value> | Constructor<Value>, binding: Binding<Value>): void {
     const registryKey = key as RegistryKey;
     const nextBinding = binding as Binding<unknown>;
@@ -20,11 +21,13 @@ export class BindingRegistry {
     this.bindingsByKey.set(registryKey, merged);
   }
 
+  /** Returns all bindings registered for `key`, or `undefined` if none exist. */
   get<Value>(key: Token<Value> | Constructor<Value>): readonly Binding<Value>[] | undefined {
     const found = this.bindingsByKey.get(key as RegistryKey);
     return found as readonly Binding<Value>[] | undefined;
   }
 
+  /** Removes all bindings for `key` without running any deactivation hooks. */
   remove(key: RegistryKey): void {
     this.bindingsByKey.delete(key);
   }
@@ -36,6 +39,7 @@ export class BindingRegistry {
     return [...this.bindingsByKey.entries()].map(([key, bindings]) => ({ key, bindings }));
   }
 
+  /** Removes the single binding with the given `id` across all keys. */
   removeById(id: BindingIdentifier): void {
     for (const [registryKey, list] of [...this.bindingsByKey.entries()]) {
       const filtered = list.filter((binding) => binding.id !== id);
@@ -50,6 +54,7 @@ export class BindingRegistry {
     }
   }
 
+  /** Swaps the binding with the given `id` in place, preserving its position in the list. */
   replaceById(id: BindingIdentifier, next: Binding<unknown>): void {
     for (const [registryKey, list] of this.bindingsByKey.entries()) {
       const index = list.findIndex((binding) => binding.id === id);

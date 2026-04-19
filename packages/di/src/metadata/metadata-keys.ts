@@ -3,7 +3,9 @@
  */
 export const CODEFAST_DI_CONSTRUCTOR_METADATA = "codefast/di:constructor-metadata:v1";
 
+/** Well-known key for accessor field injection metadata written by `@inject` on `accessor` fields. */
 export const CODEFAST_DI_ACCESSOR_INJECTIONS = "codefast/di:accessor-injections:v1";
+/** Well-known key for lifecycle method names written by `@postConstruct()` / `@preDestroy()`. */
 export const CODEFAST_DI_LIFECYCLE_METADATA = "codefast/di:lifecycle-metadata:v1";
 
 /**

@@ -1,9 +1,11 @@
 import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#/binding";
 
+/** Formats a resolution path array into a human-readable `"A -> B -> C"` string. */
 function formatResolutionPath(resolutionPath: readonly string[]): string {
   return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
 }
 
+/** Serializes a {@link ResolveHint} to a debug string; never throws even for exotic values. */
 function safeSerializeHint(hint: ResolveHint): string {
   if (hint === undefined) {
     return "(none)";
@@ -135,6 +137,10 @@ export class AsyncModuleLoadError extends DiError {
   }
 }
 
+/**
+ * Raised when `resolve()` is called on a binding chain that contains an async factory or
+ * an async `onActivation` handler. Use `resolveAsync()` / `resolveAllAsync()` instead.
+ */
 export class AsyncResolutionError extends DiError {
   readonly code = "ASYNC_RESOLUTION";
   readonly tokenName: string;
@@ -158,6 +164,7 @@ export class AsyncResolutionError extends DiError {
   }
 }
 
+/** Structured payload attached to {@link ScopeViolationError}. */
 export type ScopeViolationDetails = {
   readonly consumerBindingId: BindingIdentifier;
   readonly consumerKind: Binding<unknown>["kind"];
