@@ -2,8 +2,8 @@ import type { Binding, Constructor, ResolutionContext } from "#/binding";
 import {
   CODEFAST_DI_LIFECYCLE_METADATA,
   decoratorMetadataObjectSymbol,
-  type LifecycleMetadata,
-} from "#/decorators/metadata";
+} from "#/metadata/metadata-keys";
+import type { LifecycleMetadata } from "#/metadata/metadata-types";
 import { AsyncResolutionError } from "#/errors";
 
 function isPromiseLike(value: unknown): value is Promise<unknown> {
@@ -47,9 +47,6 @@ export function readLifecycleMetadataFromCtor(
   implementationClass: Constructor<unknown>,
 ): LifecycleMetadata | undefined {
   const metadataSymbol = decoratorMetadataObjectSymbol();
-  if (metadataSymbol === undefined) {
-    return Reflect.getMetadata(CODEFAST_DI_LIFECYCLE_METADATA, implementationClass);
-  }
   const metadataObject = (implementationClass as unknown as Record<symbol, unknown>)[
     metadataSymbol
   ];
@@ -84,10 +81,11 @@ export function runPostConstruct(
     "then" in postConstructResult &&
     typeof (postConstructResult as Promise<unknown>).then === "function"
   ) {
-    const bindingLabel = pathLabels[pathLabels.length - 1] ?? "(unknown)";
+    const labels = pathLabels ?? [];
+    const bindingLabel = labels[labels.length - 1] ?? "(unknown)";
     throw new AsyncResolutionError(
       bindingLabel,
-      pathLabels,
+      labels,
       `@postConstruct() "${methodName}" returned a Promise during synchronous resolution`,
     );
   }

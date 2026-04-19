@@ -46,7 +46,7 @@ export {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   CODEFAST_DI_LIFECYCLE_METADATA,
   decoratorMetadataObjectSymbol,
-} from "#/decorators/metadata";
+} from "#/metadata/metadata-keys";
 
 export type {
   AccessorInjectionMetadata,
@@ -55,10 +55,10 @@ export type {
   LifecycleMetadata,
   MetadataReader,
   ParamMetadata,
-} from "#/decorators/metadata";
-export { getOrCreatePendingMap, takePendingMap } from "#/decorators/param-registry";
+} from "#/metadata/metadata-types";
+export { getOrCreatePendingMap, takePendingMap } from "#/metadata/param-registry";
 
-export { SymbolMetadataReader } from "#/decorators/reader";
+export { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
 export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
 export {
   collectStaticDependencyEdges,

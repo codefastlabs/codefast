@@ -1,9 +1,6 @@
 import type { Constructor, ResolveHint } from "#/binding";
-import {
-  type AccessorInjectionMetadata,
-  CODEFAST_DI_ACCESSOR_INJECTIONS,
-  type InjectionDescriptor,
-} from "#/decorators/metadata";
+import { CODEFAST_DI_ACCESSOR_INJECTIONS } from "#/metadata/metadata-keys";
+import type { AccessorInjectionMetadata, InjectionDescriptor } from "#/metadata/metadata-types";
 import { DiError } from "#/errors";
 import type { Token } from "#/token";
 

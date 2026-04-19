@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOrCreatePendingMap, takePendingMap } from "#/decorators/param-registry";
+import { getOrCreatePendingMap, takePendingMap } from "#/metadata/param-registry";
 import { token } from "#/token";
 
 describe("param-registry", () => {

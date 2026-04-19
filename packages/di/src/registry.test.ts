@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { type Binding, type BindingIdentifier } from "#/binding";
+import type { Binding, BindingIdentifier } from "#/binding";
 import { BindingRegistry } from "#/registry";
 import { token } from "#/token";
 

@@ -1,4 +1,5 @@
-import { token, type Token } from "@codefast/di";
+import type { Token } from "@codefast/di";
+import { token } from "@codefast/di";
 import type { ArrangeAnalyzeDirectoryRequest } from "#/lib/arrange/application/requests/analyze-directory.request";
 import type { ArrangeSyncRunRequest } from "#/lib/arrange/application/requests/arrange-sync.request";
 import type { ArrangeSuggestGroupsRequest } from "#/lib/arrange/application/requests/suggest-groups.request";

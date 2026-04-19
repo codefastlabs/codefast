@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   CODEFAST_DI_CONSTRUCTOR_METADATA,
   decoratorMetadataObjectSymbol,
-  type ConstructorMetadata,
-} from "#/decorators/metadata";
-import { SymbolMetadataReader } from "#/decorators/reader";
+} from "#/metadata/metadata-keys";
+import type { ConstructorMetadata } from "#/metadata/metadata-types";
+import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { token } from "#/token";
 
 function setConstructorMetadata(implementationClass: object, key: symbol, payload: unknown) {

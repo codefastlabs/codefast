@@ -1,10 +1,10 @@
 import { DiError } from "#/errors";
-import {
-  CODEFAST_DI_CONSTRUCTOR_METADATA,
-  type ConstructorMetadata,
-  type InjectionDescriptor,
-  type ParamMetadata,
-} from "#/decorators/metadata";
+import { CODEFAST_DI_CONSTRUCTOR_METADATA } from "#/metadata/metadata-keys";
+import type {
+  ConstructorMetadata,
+  InjectionDescriptor,
+  ParamMetadata,
+} from "#/metadata/metadata-types";
 import { isInjectionDescriptor } from "#/decorators/inject";
 import type { BindingScope, Constructor } from "#/binding";
 import type { Token } from "#/token";
