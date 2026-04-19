@@ -861,7 +861,7 @@ console.log(`Registered ${count} services`); // "Registered 12 services"
 > **Tại sao không có `@inject` / `@injectOptional` trên parameter?**
 > TC39 Decorator Stage 3 không định nghĩa parameter decorator (TS1206). Chúng chỉ tồn tại trong hệ thống `experimentalDecorators` legacy. Deps array trong `@injectable()` thay thế hoàn toàn và explicit hơn.
 
-### 6.6 Cấu hình tsconfig
+### 6.9 Cấu hình tsconfig
 
 ```json
 {

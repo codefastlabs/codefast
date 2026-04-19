@@ -60,15 +60,21 @@ export type ResolverDependencies = {
 export class DependencyResolver {
   constructor(private readonly deps: ResolverDependencies) {}
 
-  resolveRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T {
-    return this.resolve(key, hint, [], new Set(), []) as T;
+  resolveRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
+    return this.resolve(key, hint, [], new Set(), []) as Value;
   }
 
-  resolveAsyncRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T> {
-    return this.resolveAsync(key, hint, [], new Set(), []) as Promise<T>;
+  resolveAsyncRoot<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Promise<Value> {
+    return this.resolveAsync(key, hint, [], new Set(), []) as Promise<Value>;
   }
 
-  resolveOptionalRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T | undefined {
+  resolveOptionalRoot<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Value | undefined {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const pathLabels: string[] = [label];
@@ -106,13 +112,13 @@ export class DependencyResolver {
     const visiting = new Set<RegistryKey>();
     visiting.add(registryKey);
     try {
-      return this.instantiateBinding(binding, registryKey, hint, pathLabels, visiting, []) as T;
+      return this.instantiateBinding(binding, registryKey, hint, pathLabels, visiting, []) as Value;
     } finally {
       visiting.delete(registryKey);
     }
   }
 
-  resolveAllRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): T[] {
+  resolveAllRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const basePath: string[] = [label];
@@ -128,7 +134,7 @@ export class DependencyResolver {
       }
       return [];
     }
-    const results: T[] = [];
+    const results: Value[] = [];
     for (const binding of candidates) {
       this.assertDependencyScopeAllowed(binding, basePath, []);
       if (binding.kind === "async-dynamic") {
@@ -142,7 +148,7 @@ export class DependencyResolver {
       visiting.add(registryKey);
       try {
         results.push(
-          this.instantiateBinding(binding, registryKey, hint, basePath, visiting, []) as T,
+          this.instantiateBinding(binding, registryKey, hint, basePath, visiting, []) as Value,
         );
       } finally {
         visiting.delete(registryKey);
@@ -151,7 +157,10 @@ export class DependencyResolver {
     return results;
   }
 
-  async resolveAllAsyncRoot<T>(key: Token<T> | Constructor<T>, hint?: ResolveHint): Promise<T[]> {
+  async resolveAllAsyncRoot<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Promise<Value[]> {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const basePath: string[] = [label];
@@ -167,7 +176,7 @@ export class DependencyResolver {
       }
       return [];
     }
-    const results: T[] = [];
+    const results: Value[] = [];
     for (const binding of candidates) {
       this.assertDependencyScopeAllowed(binding, basePath, []);
       const visiting = new Set<RegistryKey>();
@@ -181,7 +190,7 @@ export class DependencyResolver {
             basePath,
             visiting,
             [],
-          )) as T,
+          )) as Value,
         );
       } finally {
         visiting.delete(registryKey);
@@ -259,19 +268,25 @@ export class DependencyResolver {
       currentResolveHint,
     );
     return {
-      resolve: <T>(token: Token<T> | Constructor<T>, hint?: ResolveHint) =>
-        this.resolve(token, hint, [...pathLabels], visiting, materializationStack) as T,
-      resolveAsync: <T>(token: Token<T> | Constructor<T>, hint?: ResolveHint) =>
+      resolve: <Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint) =>
+        this.resolve(token, hint, [...pathLabels], visiting, materializationStack) as Value,
+      resolveAsync: <Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint) =>
         this.resolveAsync(
           token,
           hint,
           [...pathLabels],
           visiting,
           materializationStack,
-        ) as Promise<T>,
-      resolveOptional: <T>(token: Token<T> | Constructor<T>, hint?: ResolveHint) => {
+        ) as Promise<Value>,
+      resolveOptional: <Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint) => {
         try {
-          return this.resolve(token, hint, [...pathLabels], visiting, materializationStack) as T;
+          return this.resolve(
+            token,
+            hint,
+            [...pathLabels],
+            visiting,
+            materializationStack,
+          ) as Value;
         } catch (caughtError: unknown) {
           if (caughtError instanceof TokenNotBoundError) {
             return undefined;
@@ -286,13 +301,13 @@ export class DependencyResolver {
   /**
    * @param materializationStack Bindings along the current construction chain; used to block singleton→scoped/transient.
    */
-  private resolve<T>(
-    key: Token<T> | Constructor<T>,
+  private resolve<Value>(
+    key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
-  ): T {
+  ): Value {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const nextPath = [...pathLabels, label];
@@ -337,7 +352,7 @@ export class DependencyResolver {
         nextPath,
         visiting,
         materializationStack,
-      ) as T;
+      ) as Value;
     } finally {
       visiting.delete(registryKey);
     }
@@ -346,13 +361,13 @@ export class DependencyResolver {
   /**
    * @param materializationStack Same captive-dependency chain as {@link resolve}.
    */
-  private async resolveAsync<T>(
-    key: Token<T> | Constructor<T>,
+  private async resolveAsync<Value>(
+    key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
-  ): Promise<T> {
+  ): Promise<Value> {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
     const nextPath = [...pathLabels, label];
@@ -389,7 +404,7 @@ export class DependencyResolver {
         nextPath,
         visiting,
         materializationStack,
-      )) as T;
+      )) as Value;
     } finally {
       visiting.delete(registryKey);
     }
