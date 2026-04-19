@@ -1,19 +1,26 @@
 import { Container } from "@codefast/di";
-import { ArrangeCommand } from "#/commands/arrange";
-import { MirrorCommand } from "#/commands/mirror";
-import { TagCommand } from "#/commands/tag";
-import { ArrangeModule } from "#/lib/arrange/arrange.module";
-import { PresentationModule } from "#/lib/core/presentation/presentation.module";
-import { COMMAND_TOKEN } from "#/lib/core/presentation/tokens";
-import { MirrorModule } from "#/lib/mirror/mirror.module";
-import { TagModule } from "#/lib/tag/tag.module";
+import {
+  registerArrangeFeature,
+  resolveArrangeCommand,
+} from "#/lib/arrange/arrange.feature.module";
+import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import { registerMirrorFeature, resolveMirrorCommand } from "#/lib/mirror/mirror.feature.module";
+import { registerTagFeature, resolveTagCommand } from "#/lib/tag/tag.feature.module";
 
 export function createCliRuntimeContainer(): ReturnType<typeof Container.create> {
-  const di = Container.create();
-  di.load(PresentationModule, ArrangeModule, MirrorModule, TagModule);
-  // Multi-bind CLI commands at container level. Module bindings are last-wins per key.
-  di.bind(COMMAND_TOKEN).to(ArrangeCommand).singleton().whenNamed("arrange");
-  di.bind(COMMAND_TOKEN).to(MirrorCommand).singleton().whenNamed("mirror");
-  di.bind(COMMAND_TOKEN).to(TagCommand).singleton().whenNamed("tag");
-  return di;
+  const runtimeContainer = Container.create();
+  registerArrangeFeature(runtimeContainer);
+  registerMirrorFeature(runtimeContainer);
+  registerTagFeature(runtimeContainer);
+  return runtimeContainer;
+}
+
+export function resolveCliCommands(
+  runtimeContainer: ReturnType<typeof Container.create>,
+): readonly CliCommand[] {
+  return [
+    resolveArrangeCommand(runtimeContainer),
+    resolveMirrorCommand(runtimeContainer),
+    resolveTagCommand(runtimeContainer),
+  ];
 }

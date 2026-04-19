@@ -4,20 +4,18 @@ import { appError } from "#/lib/core/domain/errors.domain";
 import { err, ok } from "#/lib/core/domain/result.model";
 import { parseGlobalCliOptions } from "#/lib/core/presentation/global-cli-options.presenter";
 import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
+import type { PrepareMirrorOrchestrator as PrepareMirrorOrchestratorContract } from "#/lib/mirror/contracts/presentation.contract";
 import { resolveMirrorPackageArgToRelative } from "#/lib/mirror/presentation/resolve-mirror-package-arg.presenter";
-import {
-  AppOrchestratorToken,
-  CliFsToken,
-  type AppOrchestrator,
-  type PrepareMirrorOrchestrator as PrepareMirrorOrchestratorContract,
-} from "#/lib/tokens";
+import { TryLoadCodefastConfigPresenterToken } from "#/lib/core/contracts/tokens";
+import type { TryLoadCodefastConfigPresenter } from "#/lib/core/contracts/presentation.contract";
+import { CliFsToken } from "#/lib/core/operational/contracts/tokens";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
-@injectable([inject(CliFsToken), inject(AppOrchestratorToken)])
+@injectable([inject(CliFsToken), inject(TryLoadCodefastConfigPresenterToken)])
 export class PrepareMirrorOrchestrator implements PrepareMirrorOrchestratorContract {
   constructor(
     private readonly fs: CliFs,
-    private readonly appOrchestrator: AppOrchestrator,
+    private readonly tryLoadCodefastConfig: TryLoadCodefastConfigPresenter,
   ) {}
 
   async execute(args: {
@@ -44,7 +42,7 @@ export class PrepareMirrorOrchestrator implements PrepareMirrorOrchestratorContr
     if (!filterOutcome.ok) {
       return filterOutcome;
     }
-    const loadedOutcome = await this.appOrchestrator.tryLoadCodefastConfig(rootDir);
+    const loadedOutcome = await this.tryLoadCodefastConfig.execute(rootDir);
     if (!loadedOutcome.ok) {
       return loadedOutcome;
     }

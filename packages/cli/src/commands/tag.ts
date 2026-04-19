@@ -1,5 +1,5 @@
 import process from "node:process";
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
@@ -7,26 +7,28 @@ import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
-import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
 import {
-  CliLoggerToken,
-  type CreateTagProgressListenerPresenter,
   CreateTagProgressListenerPresenterToken,
-  type PrepareTagOrchestrator,
   PrepareTagOrchestratorToken,
-  type PresentTagSyncResultPresenter,
   PresentTagSyncResultPresenterToken,
-  type RunTagSyncUseCase,
   RunTagSyncUseCaseToken,
-} from "#/lib/tokens";
+} from "#/lib/tag/contracts/tokens";
+import type {
+  CreateTagProgressListenerPresenter,
+  PrepareTagOrchestrator,
+  PresentTagSyncResultPresenter,
+} from "#/lib/tag/contracts/presentation.contract";
+import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
+import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 
 @injectable([
-  CliLoggerToken,
-  PrepareTagOrchestratorToken,
-  RunTagSyncUseCaseToken,
-  CreateTagProgressListenerPresenterToken,
-  PresentTagSyncResultPresenterToken,
-] as const)
+  inject(CliLoggerToken),
+  inject(PrepareTagOrchestratorToken),
+  inject(RunTagSyncUseCaseToken),
+  inject(CreateTagProgressListenerPresenterToken),
+  inject(PresentTagSyncResultPresenterToken),
+])
 export class TagCommand implements CliCommand {
   readonly name = "tag";
   readonly description = "Add @since <version> JSDoc tags to exported declarations";

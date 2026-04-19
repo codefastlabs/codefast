@@ -1,8 +1,8 @@
 import { inject, injectable } from "@codefast/di";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/presentation.contract";
 import type { TagSyncResult } from "#/lib/tag/domain/types.domain";
-import type { PresentTagSyncResultPresenter } from "#/lib/tokens";
-import { CliLoggerToken } from "#/lib/tokens";
 import { presentTagSyncCliResult } from "#/lib/tag/presentation/tag-sync.presenter";
 
 @injectable([inject(CliLoggerToken)])

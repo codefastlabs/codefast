@@ -4,10 +4,6 @@ import {
   indentOfLineContaining,
 } from "#/lib/shared/source-code/domain/text-edit.model";
 import {
-  type DomainAstNode,
-  type DomainCallExpression,
-  type DomainPropertyAssignment,
-  type DomainSourceFile,
   isDomainIdentifier,
   isDomainImportDeclaration,
   isDomainNamedImports,
@@ -15,6 +11,12 @@ import {
   isDomainPropertyAccessExpression,
   isDomainStringLiteral,
   lineOfSourcePosition,
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type {
+  DomainAstNode,
+  DomainCallExpression,
+  DomainPropertyAssignment,
+  DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 
 /** Known module specifiers that export `cn` / `tv`. */

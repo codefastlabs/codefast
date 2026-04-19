@@ -6,10 +6,10 @@ import type {
 import {
   DomainBinaryOperator,
   DomainSyntaxKind,
-  type DomainAstNode,
   isDomainArrayLiteralExpression,
   isDomainTailwindClassLiteral,
 } from "#/lib/arrange/domain/ast/ast-node.model";
+import type { DomainAstNode } from "#/lib/arrange/domain/ast/ast-node.model";
 
 export function forEachStringLiteralInClassExpression(
   expr: DomainAstNode,

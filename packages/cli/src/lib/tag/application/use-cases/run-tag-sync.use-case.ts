@@ -1,4 +1,12 @@
 import { injectable } from "@codefast/di";
+import {
+  TagSinceWriterPortToken,
+  TagTargetResolverPortToken,
+  TagVersionResolverPortToken,
+  TypeScriptTreeWalkPortToken,
+} from "#/lib/tag/contracts/tokens";
+import type { TagSyncExecutionInput } from "#/lib/tag/contracts/models";
+import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
@@ -6,9 +14,9 @@ import { err, ok } from "#/lib/core/domain/result.model";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
+import { CliFsToken, CliPathToken } from "#/lib/core/operational/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
-import type { TagSyncRunRequest } from "#/lib/tag/application/requests/tag-sync.request";
 import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-resolver.port";
 import type { TypeScriptTreeWalkPort } from "#/lib/tag/application/ports/typescript-tree-walk.port";
@@ -23,19 +31,6 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/lib/tag/domain/types.domain";
-import {
-  CliFsToken,
-  CliPathToken,
-  TagSinceWriterPortToken,
-  TagTargetResolverPortToken,
-  TagVersionResolverPortToken,
-  TypeScriptTreeWalkPortToken,
-  type RunTagSyncUseCase,
-} from "#/lib/tokens";
-
-export type TagSyncExecutionInput = TagSyncRunRequest & {
-  listener?: TagProgressListener;
-};
 
 export function resolveNearestPackageVersion(
   targetPath: string,

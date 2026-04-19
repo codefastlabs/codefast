@@ -1,11 +1,12 @@
 import { Module } from "@codefast/di";
+import { ConfigLoaderPortToken } from "#/lib/config/contracts/tokens";
 import { configLoaderAdapter } from "#/lib/config/infra/loader.adapter";
 import { CoreModule } from "#/lib/core/core.module";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
 } from "#/lib/core/infra/logging-decorator.adapter";
-import { CliFsToken, CliLoggerToken, ConfigLoaderPortToken } from "#/lib/core/tokens";
+import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "../../infra/node-io.adapter";
 
 export const InfraModule = Module.create("cli-infra", (moduleBuilder) => {

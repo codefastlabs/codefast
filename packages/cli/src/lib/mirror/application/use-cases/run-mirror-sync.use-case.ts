@@ -1,9 +1,16 @@
 import { injectable } from "@codefast/di";
+import {
+  MirrorSyncReporterPortToken,
+  SyncWorkspacePackageServiceToken,
+  WorkspaceServicePortToken,
+} from "#/lib/mirror/contracts/tokens";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
@@ -12,14 +19,6 @@ import { formatMirrorSyncJsonOutput } from "#/lib/mirror/application/mirror-sync
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
-import {
-  CliFsToken,
-  CliLoggerToken,
-  MirrorSyncReporterPortToken,
-  SyncWorkspacePackageServiceToken,
-  type RunMirrorSyncUseCase,
-  WorkspaceServicePortToken,
-} from "#/lib/tokens";
 
 @injectable([
   CliFsToken,

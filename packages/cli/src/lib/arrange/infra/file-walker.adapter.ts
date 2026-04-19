@@ -3,7 +3,7 @@ import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-un
 import type { CliFs, CliLogger } from "#/lib/infra/fs-contract.port";
 import { walkTsxFiles } from "#/lib/shared/source-code/infra/tsx-file-walk.adapter";
 import type { FileWalkerPort } from "#/lib/arrange/application/ports/file-walker.port";
-import { CliLoggerToken } from "#/lib/tokens";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 
 @injectable([inject(CliLoggerToken)])
 export class FileWalkerAdapter implements FileWalkerPort {

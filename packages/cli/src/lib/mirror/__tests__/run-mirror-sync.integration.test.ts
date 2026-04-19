@@ -6,9 +6,9 @@ import { CoreModule } from "#/lib/core/core.module";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
+import { RunMirrorSyncUseCaseToken } from "#/lib/mirror/contracts/tokens";
 import { MirrorModule } from "#/lib/mirror/mirror.module";
-import type { RunMirrorSyncUseCase } from "#/lib/tokens";
-import { RunMirrorSyncUseCaseToken } from "#/lib/tokens";
 
 async function mkdirp(filePath: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });

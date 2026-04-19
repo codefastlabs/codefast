@@ -12,7 +12,8 @@ import {
 } from "#/components/theme-appearance-constants";
 import { CopySnippetButton } from "#/components/theme-appearance-shared";
 import { cn } from "@codefast/tailwind-variants";
-import { themes, type ResolvedTheme, type Theme } from "@codefast/theme";
+import { themes } from "@codefast/theme";
+import type { ResolvedTheme, Theme } from "@codefast/theme";
 import { Link } from "@tanstack/react-router";
 import {
   CheckCircle2Icon,

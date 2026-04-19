@@ -11,11 +11,13 @@ import {
 } from "#/lib/arrange/domain/ast/collectors-tv.collector";
 import { MAX_OBJECT_DEPTH } from "#/lib/arrange/domain/constants.domain";
 import {
-  type DomainObjectLiteralExpression,
-  type DomainSourceFile,
   forEachDomainDescendantFromSourceFile,
   isDomainCallExpression,
   isDomainObjectLiteralExpression,
+} from "#/lib/arrange/domain/ast/ast-node.model";
+import type {
+  DomainObjectLiteralExpression,
+  DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 

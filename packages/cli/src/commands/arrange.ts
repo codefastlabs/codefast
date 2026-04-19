@@ -1,5 +1,5 @@
 import process from "node:process";
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { Command } from "commander";
 import { Option } from "commander";
 import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/application/arrange-analyze-json.format";
@@ -7,28 +7,32 @@ import { formatArrangeGroupJsonOutput } from "#/lib/arrange/application/arrange-
 import { exitCodeForArrangeSyncResult } from "#/lib/arrange/application/arrange-sync-cli-result";
 import { formatArrangeSyncJsonOutput } from "#/lib/arrange/application/arrange-sync-json.format";
 import {
+  AnalyzeDirectoryUseCaseToken,
+  PrepareArrangeOrchestratorToken,
+  PresentAnalyzeReportPresenterToken,
+  RunArrangeSyncUseCaseToken,
+  SuggestCnGroupsUseCaseToken,
+} from "#/lib/arrange/contracts/tokens";
+import type {
+  PrepareArrangeOrchestrator,
+  PresentAnalyzeReportPresenter,
+} from "#/lib/arrange/contracts/presentation.contract";
+import type {
+  AnalyzeDirectoryUseCase,
+  RunArrangeSyncUseCase,
+  SuggestCnGroupsUseCase,
+} from "#/lib/arrange/contracts/use-cases.contract";
+import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/lib/arrange/presentation/arrange-cli-schema.presenter";
 import { presentArrangeSyncResult } from "#/lib/arrange/presentation/arrange-sync.presenter";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import {
-  AnalyzeDirectoryUseCaseToken,
-  CliLoggerToken,
-  type AnalyzeDirectoryUseCase,
-  type PrepareArrangeOrchestrator,
-  PrepareArrangeOrchestratorToken,
-  type PresentAnalyzeReportPresenter,
-  PresentAnalyzeReportPresenterToken,
-  type RunArrangeSyncUseCase,
-  RunArrangeSyncUseCaseToken,
-  type SuggestCnGroupsUseCase,
-  SuggestCnGroupsUseCaseToken,
-} from "#/lib/tokens";
 
 function withClassNameOption(): Option {
   return new Option(
@@ -38,13 +42,13 @@ function withClassNameOption(): Option {
 }
 
 @injectable([
-  CliLoggerToken,
-  PrepareArrangeOrchestratorToken,
-  AnalyzeDirectoryUseCaseToken,
-  RunArrangeSyncUseCaseToken,
-  SuggestCnGroupsUseCaseToken,
-  PresentAnalyzeReportPresenterToken,
-] as const)
+  inject(CliLoggerToken),
+  inject(PrepareArrangeOrchestratorToken),
+  inject(AnalyzeDirectoryUseCaseToken),
+  inject(RunArrangeSyncUseCaseToken),
+  inject(SuggestCnGroupsUseCaseToken),
+  inject(PresentAnalyzeReportPresenterToken),
+])
 export class ArrangeCommand implements CliCommand {
   readonly name = "arrange";
   readonly description = "Analyze and regroup Tailwind classes in cn() / tv() calls (Tailwind v4)";
