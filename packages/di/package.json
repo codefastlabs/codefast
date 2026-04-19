@@ -1,6 +1,6 @@
 {
   "name": "@codefast/di",
-  "version": "0.3.13-canary.4",
+  "version": "0.3.13",
   "description": "Lightweight dependency injection primitives for Codefast",
   "keywords": [
     "codefast",
