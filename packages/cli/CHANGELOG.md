@@ -1,5 +1,50 @@
 # @codefast/cli
 
+## 0.3.13-canary.4
+
+### Patch Changes
+
+- [`93b7399`](https://github.com/codefastlabs/codefast/commit/93b7399737eb2220866338da31023f95665021a0) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance CLI structure and update dependencies
+
+- [`0542867`](https://github.com/codefastlabs/codefast/commit/054286713c242d3aa75eb7b6ad259693e266faed) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add architecture graph and refine dependency injection
+
+- [`3074bb8`](https://github.com/codefastlabs/codefast/commit/3074bb8b61094225aae914c5d9388b173d827e77) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): reorganize imports and enhance type usage across components
+
+- [`39f4a46`](https://github.com/codefastlabs/codefast/commit/39f4a466e89cbdda8818be4251ce43abf6128174) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update arrange command execution and logging
+
+- [`733dafa`](https://github.com/codefastlabs/codefast/commit/733dafadff88e32a82f00d44599efbb0771b7b6a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): reorganize imports for clarity and consistency
+
+- [`4248d75`](https://github.com/codefastlabs/codefast/commit/4248d75f2d547247dde937c322c2ed48d484f9e0) Thanks [@thevuong](https://github.com/thevuong)! - chore(tests): streamline test coverage commands and configurations
+
+- [`fae4b7a`](https://github.com/codefastlabs/codefast/commit/fae4b7a2026e9891974b83e9955776940f86781e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): standardize request schema naming conventions and update imports
+
+- [`fa53c0b`](https://github.com/codefastlabs/codefast/commit/fa53c0b361200eadf6238d633c8b181fd165acec) Thanks [@thevuong](https://github.com/thevuong)! - test(cli): add integration tests for arrange, mirror, and tag modules
+
+- [`c3d0d3b`](https://github.com/codefastlabs/codefast/commit/c3d0d3bf006d8b58c2cecbf06b13ebbd27ceaf15) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update default target directory handling and enhance CLI command descriptions
+
+- [`2340231`](https://github.com/codefastlabs/codefast/commit/23402311084871d238ec50aa23061afd4b14e61e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(imports): standardize import paths across applications and benchmarks
+
+- [`4891e0f`](https://github.com/codefastlabs/codefast/commit/4891e0fef642c527c65531ef2233491cac686558) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): enhance file formatting integration and update SVG class handling
+
+- [`f30e9d0`](https://github.com/codefastlabs/codefast/commit/f30e9d0677cbf5147a8f906828402f01fe9578ff) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update architecture tests and enhance group file preview functionality
+
+- [`4d72cfe`](https://github.com/codefastlabs/codefast/commit/4d72cfec776f07fc5fee528cfee02725183a2653) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update dependency management and enhance CLI structure
+
+- [`35329d5`](https://github.com/codefastlabs/codefast/commit/35329d5f17682542e3ef0907d4936fa513346a72) Thanks [@thevuong](https://github.com/thevuong)! - feat(tsconfig): enforce module detection in TypeScript configuration
+
+- [`7b75659`](https://github.com/codefastlabs/codefast/commit/7b756597f347558e9405fe12bfebadce40d35964) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): reorganize request schemas and update import paths
+
+- [`36375c3`](https://github.com/codefastlabs/codefast/commit/36375c3430f5ffceaeaba261dcc615d328e25e75) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): enhance CLI command output with JSON support
+
+- [`2c156bb`](https://github.com/codefastlabs/codefast/commit/2c156bbef480aa1c7f312289f25c7dd19bb971d1) Thanks [@thevuong](https://github.com/thevuong)! - refactor(di): simplify binding API and enhance type definitions
+
+- [`2f838ea`](https://github.com/codefastlabs/codefast/commit/2f838eac809dc72f71a508fae9d0d60cbc489dcf) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): remove deprecated architecture check command and update documentation
+
+- [`2b6468d`](https://github.com/codefastlabs/codefast/commit/2b6468d380092bc4f6eec680d6e6c2180a12bcaf) Thanks [@thevuong](https://github.com/thevuong)! - refactor(di): update module structure to use moduleBuilder for consistency
+
+- Updated dependencies [[`93b7399`](https://github.com/codefastlabs/codefast/commit/93b7399737eb2220866338da31023f95665021a0), [`78d25cd`](https://github.com/codefastlabs/codefast/commit/78d25cd2bacd37f623ceeceb211375d2daf93541), [`0542867`](https://github.com/codefastlabs/codefast/commit/054286713c242d3aa75eb7b6ad259693e266faed), [`c458ff9`](https://github.com/codefastlabs/codefast/commit/c458ff9806426dd664ebfbc71dc387973f2aa2ef), [`3d25484`](https://github.com/codefastlabs/codefast/commit/3d254841f2aad4e00d9e18da62369c659bdd88d6), [`c5727bb`](https://github.com/codefastlabs/codefast/commit/c5727bb3d739bb68a829a550471cfb9fb6152da8), [`2ba60d2`](https://github.com/codefastlabs/codefast/commit/2ba60d256c93b2590984f3992d35b3d71c40d472), [`45426cf`](https://github.com/codefastlabs/codefast/commit/45426cf610c09764d2a0fbae394f8b997d0a3312), [`142cfbc`](https://github.com/codefastlabs/codefast/commit/142cfbc6a8e882824eacc14cbe84877a1c7c7d23), [`733dafa`](https://github.com/codefastlabs/codefast/commit/733dafadff88e32a82f00d44599efbb0771b7b6a), [`b8a9cca`](https://github.com/codefastlabs/codefast/commit/b8a9cca27306e0ce68bee5b47b61a49e568296ec), [`5c5c103`](https://github.com/codefastlabs/codefast/commit/5c5c10374fdfbd480047111fc0e6b90c027f7c8d), [`4248d75`](https://github.com/codefastlabs/codefast/commit/4248d75f2d547247dde937c322c2ed48d484f9e0), [`fa53c0b`](https://github.com/codefastlabs/codefast/commit/fa53c0b361200eadf6238d633c8b181fd165acec), [`77c7b9c`](https://github.com/codefastlabs/codefast/commit/77c7b9c35960e7a3038185c7b9dfc2736e2868a9), [`cf7055c`](https://github.com/codefastlabs/codefast/commit/cf7055c916ea7c630a41c13a0398a00bbaa12fd5), [`2dd4641`](https://github.com/codefastlabs/codefast/commit/2dd464127708066e900deb42d88d6d38bd7849b2), [`453bc2e`](https://github.com/codefastlabs/codefast/commit/453bc2ec63f65fe03cb77bdcc36ccbf8ef8cb3d0), [`a626eb5`](https://github.com/codefastlabs/codefast/commit/a626eb58a56a73aab2e5cf79fba92e68d4080274), [`2340231`](https://github.com/codefastlabs/codefast/commit/23402311084871d238ec50aa23061afd4b14e61e), [`e0f6065`](https://github.com/codefastlabs/codefast/commit/e0f6065323255e2c1aa2c1e8f9c28a4b4c6e0ac2), [`35329d5`](https://github.com/codefastlabs/codefast/commit/35329d5f17682542e3ef0907d4936fa513346a72), [`2fbf6a0`](https://github.com/codefastlabs/codefast/commit/2fbf6a07da06fd9383ab7c97fb69640a472fda19), [`2c156bb`](https://github.com/codefastlabs/codefast/commit/2c156bbef480aa1c7f312289f25c7dd19bb971d1), [`8120fd0`](https://github.com/codefastlabs/codefast/commit/8120fd034761f456e0706439172a7f50b4abfe1e), [`1a66f91`](https://github.com/codefastlabs/codefast/commit/1a66f911632ed23bd9a6fb3f178909ef23e44ea6), [`dea6bbc`](https://github.com/codefastlabs/codefast/commit/dea6bbcebaaecc09808c42b3f93e0fbf2296eb5b)]:
+  - @codefast/di@0.3.13-canary.4
+
 ## 0.3.13-canary.3
 
 ### Patch Changes
