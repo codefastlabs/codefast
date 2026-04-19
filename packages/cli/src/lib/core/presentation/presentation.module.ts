@@ -1,18 +1,14 @@
 import { Module } from "@codefast/di";
 import { PrepareArrangeOrchestrator } from "#/lib/arrange/presentation/prepare-arrange.orchestrator";
-import { presentAnalyzeCliReport } from "#/lib/arrange/presentation/present-analyze-cli.presenter";
-import { tryLoadCodefastConfig } from "#/lib/core/presentation/load-codefast-config.presenter";
+import { PresentAnalyzeReportPresenterImpl } from "#/lib/arrange/presentation/present-analyze-report.presenter";
 import { PrepareMirrorOrchestrator } from "#/lib/mirror/presentation/prepare-mirror.orchestrator";
-import {
-  createTagProgressListener,
-  presentTagSyncCliResult,
-} from "#/lib/tag/presentation/tag-sync.presenter";
+import { AppOrchestratorImpl } from "#/lib/core/presentation/app-orchestrator.service";
+import { TryLoadCodefastConfigPresenterImpl } from "#/lib/core/presentation/try-load-codefast-config.presenter";
+import { CreateTagProgressListenerPresenterImpl } from "#/lib/tag/presentation/create-tag-progress-listener.presenter";
 import { PrepareTagOrchestrator } from "#/lib/tag/presentation/prepare-tag.orchestrator";
+import { PresentTagSyncResultPresenterImpl } from "#/lib/tag/presentation/present-tag-sync-result.presenter";
 import {
   AppOrchestratorToken,
-  CliFsToken,
-  CliLoggerToken,
-  ConfigLoaderPortToken,
   CreateTagProgressListenerPresenterToken,
   PrepareArrangeOrchestratorToken,
   PrepareMirrorOrchestratorToken,
@@ -23,14 +19,7 @@ import {
 } from "#/lib/tokens";
 
 export const PresentationModule = Module.create("cli-presentation", (api) => {
-  api
-    .bind(TryLoadCodefastConfigPresenterToken)
-    .toResolved(
-      (fs, logger, configLoader) => (rootDir) =>
-        tryLoadCodefastConfig({ fs, logger }, configLoader, rootDir),
-      [CliFsToken, CliLoggerToken, ConfigLoaderPortToken] as const,
-    )
-    .singleton();
+  api.bind(TryLoadCodefastConfigPresenterToken).to(TryLoadCodefastConfigPresenterImpl).singleton();
 
   api.bind(PrepareArrangeOrchestratorToken).to(PrepareArrangeOrchestrator).singleton();
 
@@ -38,34 +27,14 @@ export const PresentationModule = Module.create("cli-presentation", (api) => {
 
   api.bind(PrepareTagOrchestratorToken).to(PrepareTagOrchestrator).singleton();
 
-  api
-    .bind(PresentAnalyzeReportPresenterToken)
-    .toResolved(
-      (logger) => (resolvedTargetPath, report) =>
-        presentAnalyzeCliReport(logger, resolvedTargetPath, report),
-      [CliLoggerToken] as const,
-    )
-    .singleton();
+  api.bind(PresentAnalyzeReportPresenterToken).to(PresentAnalyzeReportPresenterImpl).singleton();
 
-  api
-    .bind(PresentTagSyncResultPresenterToken)
-    .toResolved((logger) => (result, rootDir) => presentTagSyncCliResult(logger, result, rootDir), [
-      CliLoggerToken,
-    ] as const)
-    .singleton();
+  api.bind(PresentTagSyncResultPresenterToken).to(PresentTagSyncResultPresenterImpl).singleton();
 
   api
     .bind(CreateTagProgressListenerPresenterToken)
-    .toDynamic(() => createTagProgressListener)
+    .to(CreateTagProgressListenerPresenterImpl)
     .singleton();
 
-  api
-    .bind(AppOrchestratorToken)
-    .toResolved(
-      (tryLoadCodefastConfigPresenter) => ({
-        tryLoadCodefastConfig: tryLoadCodefastConfigPresenter,
-      }),
-      [TryLoadCodefastConfigPresenterToken] as const,
-    )
-    .singleton();
+  api.bind(AppOrchestratorToken).to(AppOrchestratorImpl).singleton();
 });

@@ -90,24 +90,25 @@ export type PrepareTagOrchestrator = {
   }): Promise<Result<TagCommandPrelude, AppError>>;
 };
 
-export type PresentAnalyzeReportPresenter = (
-  resolvedTargetPath: string,
-  report: AnalyzeReport,
-) => void;
+export interface PresentAnalyzeReportPresenter {
+  present(resolvedTargetPath: string, report: AnalyzeReport): void;
+}
 
-export type PresentTagSyncResultPresenter = (result: TagSyncResult, rootDir: string) => number;
+export interface PresentTagSyncResultPresenter {
+  present(result: TagSyncResult, rootDir: string): number;
+}
 
-export type CreateTagProgressListenerPresenter = (
-  emitLine: (line: string) => void,
-) => TagProgressListener;
+export interface CreateTagProgressListenerPresenter {
+  create(emitLine: (line: string) => void): TagProgressListener;
+}
 
-export type TryLoadCodefastConfigPresenter = (
-  rootDir: string,
-) => Promise<Result<{ config: CodefastConfig }, AppError>>;
+export interface TryLoadCodefastConfigPresenter {
+  execute(rootDir: string): Promise<Result<{ config: CodefastConfig }, AppError>>;
+}
 
-export type AppOrchestrator = {
+export interface AppOrchestrator {
   tryLoadCodefastConfig(rootDir: string): Promise<Result<{ config: CodefastConfig }, AppError>>;
-};
+}
 
 export const CliFsToken: Token<CliFs> = token<CliFs>("CliFs");
 export const CliLoggerToken: Token<CliLogger> = token<CliLogger>("CliLogger");

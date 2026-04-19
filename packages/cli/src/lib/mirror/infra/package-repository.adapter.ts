@@ -1,3 +1,4 @@
+import { injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/infra/fs-contract.port";
 import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";
 import type {
@@ -10,6 +11,7 @@ import {
   writePackageJsonExportsAtomic,
 } from "#/lib/mirror/infra/update-pkg.adapter";
 
+@injectable([])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string {
     return resolvePackageDisplayName(packageJson, folderBasename);

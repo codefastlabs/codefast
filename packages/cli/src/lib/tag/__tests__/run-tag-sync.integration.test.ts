@@ -5,20 +5,22 @@ import { Container } from "@codefast/di";
 import { CoreModule } from "#/lib/core/core.module";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
-import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import {
   resolveNearestPackageVersion,
   runTagOnTarget,
 } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { TagModule } from "#/lib/tag/tag.module";
 import { nodeCliPath } from "#/lib/core/infra/path.adapter";
-import { tagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
-import { tagTypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
+import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
+import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
 import type { RunTagSyncUseCase } from "#/lib/tokens";
 import { RunTagSyncUseCaseToken } from "#/lib/tokens";
 
-const tagFs = createNodeCliFs();
+const tagFs = new NodeCliFsAdapter();
+const tagSinceWriterAdapter = new TagSinceWriterAdapter();
+const tagTypeScriptTreeWalkAdapter = new TypeScriptTreeWalkAdapter();
 
 const container = Container.create();
 container.load(CoreModule, InfraModule, PresentationModule, TagModule);

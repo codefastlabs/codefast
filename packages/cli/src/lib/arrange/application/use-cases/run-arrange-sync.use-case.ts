@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
@@ -39,7 +39,11 @@ async function runOnAfterWriteHook(
  * Preview/apply orchestration: scans target, runs grouping pipeline, runs optional hook.
  * All presentation (logging, exit codes) belongs to the command layer.
  */
-@injectable([CliFsToken, ArrangeTargetScannerToken, ArrangeFileProcessorToken] as const)
+@injectable([
+  inject(CliFsToken),
+  inject(ArrangeTargetScannerToken),
+  inject(ArrangeFileProcessorToken),
+])
 export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {
   constructor(
     private readonly fs: CliFs,

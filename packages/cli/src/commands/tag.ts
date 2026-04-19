@@ -5,6 +5,8 @@ import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
+import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
 import {
   CliLoggerToken,
@@ -47,12 +49,13 @@ export class TagCommand implements CliCommand {
         "Directory or file to annotate (default: auto-discover workspace packages)",
       )
       .option("--dry-run", "Show summary without writing files", false)
+      .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
       .action(this.execute.bind(this));
   }
 
   async execute(
     target: string | undefined,
-    options: { dryRun?: boolean },
+    options: { dryRun?: boolean; json?: boolean },
     command: Command,
   ): Promise<void> {
     const prelude = await this.prepareTagSync.execute({
@@ -68,6 +71,7 @@ export class TagCommand implements CliCommand {
     const parsed = parseWithCliSchema(tagSyncRunRequestSchema, {
       rootDir,
       write: !options.dryRun,
+      json: options.json,
       targetPath: resolvedTargetPath,
       skipPackages: tagConfig.skipPackages,
       config: tagConfig,
@@ -77,11 +81,18 @@ export class TagCommand implements CliCommand {
     }
     const tagOutcome = await this.runTagSync.execute({
       ...parsed.value,
-      listener: this.createProgressListener((line) => this.logger.out(line)),
+      listener: parsed.value.json
+        ? undefined
+        : this.createProgressListener.create((line) => this.logger.out(line)),
     });
     if (!consumeCliAppError(this.logger, tagOutcome)) {
       return;
     }
-    process.exitCode = this.presentSyncCliResult(tagOutcome.value, rootDir);
+    if (parsed.value.json) {
+      this.logger.out(formatTagSyncJsonOutput(tagOutcome.value, rootDir));
+      process.exitCode = exitCodeForTagSyncResult(tagOutcome.value);
+    } else {
+      process.exitCode = this.presentSyncCliResult.present(tagOutcome.value, rootDir);
+    }
   }
 }

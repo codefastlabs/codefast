@@ -1,7 +1,8 @@
 import process from "node:process";
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import {
   consumeCliAppError,
   runCliResultAsync,
@@ -17,7 +18,11 @@ import {
   RunMirrorSyncUseCaseToken,
 } from "#/lib/tokens";
 
-@injectable([CliLoggerToken, PrepareMirrorOrchestratorToken, RunMirrorSyncUseCaseToken] as const)
+@injectable([
+  inject(CliLoggerToken),
+  inject(PrepareMirrorOrchestratorToken),
+  inject(RunMirrorSyncUseCaseToken),
+])
 export class MirrorCommand implements CliCommand {
   readonly name = "mirror";
   readonly description = "Keep package manifests aligned with what you ship";
@@ -36,12 +41,13 @@ export class MirrorCommand implements CliCommand {
       .description("Write package.json exports from dist/ for workspace packages")
       .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
       .option("-v, --verbose", "Print extra diagnostics", false)
+      .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
       .action(this.execute.bind(this));
   }
 
   async execute(
     pkg: string | undefined,
-    options: { verbose?: boolean },
+    options: { verbose?: boolean; json?: boolean },
     command: Command,
   ): Promise<void> {
     const prelude = await this.prepareMirrorSync.execute({
@@ -57,6 +63,7 @@ export class MirrorCommand implements CliCommand {
       rootDir,
       config: config.mirror ?? {},
       verbose: options.verbose,
+      json: options.json,
       noColor: globals.color === false,
       packageFilter,
     });
@@ -64,7 +71,7 @@ export class MirrorCommand implements CliCommand {
       return;
     }
     await runCliResultAsync(this.logger, this.runMirrorSync.execute(parsed.value), (stats) =>
-      stats.packagesErrored > 0 ? 1 : 0,
+      stats.packagesErrored > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS,
     );
   }
 }

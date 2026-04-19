@@ -2,11 +2,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { vi } from "vitest";
-import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import { loadConfig, resetConfigLoaderCacheForTests } from "#/lib/config/infra/loader.adapter";
 
 describe("loadConfig", () => {
-  const cliFs = createNodeCliFs();
+  const cliFs = new NodeCliFsAdapter();
 
   async function withCwd<T>(cwd: string, fn: () => Promise<T>): Promise<T> {
     const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(cwd);

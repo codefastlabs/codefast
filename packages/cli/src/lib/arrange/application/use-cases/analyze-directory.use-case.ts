@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
@@ -23,7 +23,11 @@ import {
 /**
  * Orchestrates filesystem + parse ports, delegates analysis rules to the domain service.
  */
-@injectable([CliFsToken, ArrangeTargetScannerToken, DomainSourceParserPortToken] as const)
+@injectable([
+  inject(CliFsToken),
+  inject(ArrangeTargetScannerToken),
+  inject(DomainSourceParserPortToken),
+])
 export class AnalyzeDirectoryUseCaseImpl implements AnalyzeDirectoryUseCase {
   constructor(
     private readonly fs: CliFs,

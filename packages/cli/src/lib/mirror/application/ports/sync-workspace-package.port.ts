@@ -10,5 +10,6 @@ export type SyncWorkspacePackageService = {
     config: MirrorConfig,
     verbose: boolean,
     stats: GlobalStats,
+    suppressMirrorLogs?: boolean,
   ): Promise<PackageStats>;
 };

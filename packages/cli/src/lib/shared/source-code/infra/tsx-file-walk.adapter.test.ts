@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import {
   DEFAULT_SKIP_DIRS,
   walkTsxFiles,
 } from "#/lib/shared/source-code/infra/tsx-file-walk.adapter";
 
-const cliFs = createNodeCliFs();
+const cliFs = new NodeCliFsAdapter();
 
 describe("DEFAULT_SKIP_DIRS", () => {
   it("contains common generated directories", () => {

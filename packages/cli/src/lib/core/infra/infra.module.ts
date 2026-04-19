@@ -6,19 +6,16 @@ import {
   withCliPortTelemetry,
 } from "#/lib/core/infra/logging-decorator.adapter";
 import { CliFsToken, CliLoggerToken, ConfigLoaderPortToken } from "#/lib/core/tokens";
-import { createNodeCliFs, createNodeCliLogger } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "../../infra/node-io.adapter";
 
 export const InfraModule = Module.create("cli-infra", (api) => {
   api.import(CoreModule);
 
-  api
-    .bind(CliLoggerToken)
-    .toDynamic(() => createNodeCliLogger())
-    .singleton();
+  api.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
 
   api
     .bind(CliFsToken)
-    .toDynamic(() => createNodeCliFs())
+    .to(NodeCliFsAdapter)
     .onActivation((ctx, rawFs) => {
       if (!isCliTelemetryEnabled()) {
         return rawFs;

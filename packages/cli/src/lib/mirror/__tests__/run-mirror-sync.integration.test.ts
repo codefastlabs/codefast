@@ -97,6 +97,39 @@ describe("runMirrorSync (integration)", () => {
     expect(joinedStdout().includes(String.fromCharCode(27))).toBe(false);
   });
 
+  it("prints a single JSON payload on stdout when json is true", async () => {
+    const root = await makeTempRoot();
+    const rel = "packages/widget";
+    const pkgDir = path.join(root, rel);
+    await writeJson(path.join(pkgDir, "package.json"), {
+      name: "@fixture/widget",
+      version: "0.0.0",
+    });
+    await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
+    await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
+
+    const code = await runMirrorSyncWithNodeDependencies({
+      rootDir: root,
+      noColor: true,
+      packageFilter: rel,
+      json: true,
+    });
+    expect(code).toBe(0);
+
+    const trimmed = joinedStdout().trim();
+    const parsed = JSON.parse(trimmed) as {
+      schemaVersion: number;
+      ok: boolean;
+      elapsedSeconds: number;
+      stats: { packagesFound: number; packagesProcessed: number; packagesErrored: number };
+    };
+    expect(parsed.schemaVersion).toBe(1);
+    expect(parsed.ok).toBe(true);
+    expect(parsed.stats.packagesFound).toBe(1);
+    expect(parsed.stats.packagesErrored).toBe(0);
+    expect(joinedStdout().includes("Mirror —")).toBe(false);
+  });
+
   it("applies pathTransformations from injected config", async () => {
     const root = await makeTempRoot();
     const rel = "packages/ui-bridge";

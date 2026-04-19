@@ -1,4 +1,5 @@
 import ts from "typescript";
+import { injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import {
   applyEditsDescending,
@@ -192,7 +193,8 @@ function makeDeclarationSinceLine(
   };
 }
 
-export const tagSinceWriterAdapter: TagSinceWriterPort = {
+@injectable([])
+export class TagSinceWriterAdapter implements TagSinceWriterPort {
   applySinceTagsToFile(
     filePath: string,
     version: string,
@@ -226,5 +228,5 @@ export const tagSinceWriterAdapter: TagSinceWriterPort = {
       taggedDeclarations: edits.length,
       changed: edits.length > 0,
     };
-  },
-};
+  }
+}

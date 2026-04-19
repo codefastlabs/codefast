@@ -1,4 +1,5 @@
 import path from "node:path";
+import { injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/infra/fs-contract.port";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
 import { isDirentList } from "#/lib/mirror/infra/dirent-list.adapter";
@@ -13,6 +14,7 @@ function isKnownReadDirError(caughtError: unknown): boolean {
   );
 }
 
+@injectable([])
 export class FileSystemServiceAdapter implements FileSystemServicePort {
   async listRelativeFilesRecursively(fs: CliFs, dirPath: string): Promise<string[]> {
     try {

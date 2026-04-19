@@ -9,7 +9,7 @@ export type ArrangeSuggestGroupsOutput = {
   readonly bucketsCommentLine: string;
 };
 
-@injectable([] as const)
+@injectable([])
 export class SuggestCnGroupsUseCaseImpl implements SuggestCnGroupsUseCase {
   execute(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput {
     const groups = suggestCnGroups(request.inlineClasses);

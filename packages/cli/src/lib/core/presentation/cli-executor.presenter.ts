@@ -1,4 +1,5 @@
 import process from "node:process";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/lib/core/domain/cli-exit-codes.domain";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { formatAppError } from "#/lib/core/presentation/format-app-error.presenter";
@@ -16,11 +17,11 @@ export function exitCodeForAppError(error: AppError): number {
   const { code } = error;
   switch (code) {
     case "NOT_FOUND":
-      return 1;
+      return CLI_EXIT_GENERAL_ERROR;
     case "VALIDATION_ERROR":
-      return 1;
+      return CLI_EXIT_USAGE;
     case "INFRA_FAILURE":
-      return 1;
+      return CLI_EXIT_GENERAL_ERROR;
     default:
       return assertExhaustiveAppErrorCode(code);
   }

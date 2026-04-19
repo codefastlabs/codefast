@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { CliLogger } from "#/lib/infra/fs-contract.port";
-import { createNodeCliFs } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import {
   findWorkspacePackageRelPaths,
   parsePnpmWorkspaceDocument,
@@ -77,7 +77,7 @@ describe("workspacePatternToPackageJsonGlob", () => {
 });
 
 describe("findWorkspacePackageRelPaths", () => {
-  const cliFs = createNodeCliFs();
+  const cliFs = new NodeCliFsAdapter();
 
   it("falls back to packages/* when pnpm-workspace.yaml is missing", async () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "ws-missing-"));

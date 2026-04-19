@@ -73,6 +73,7 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
     config: MirrorConfig,
     verbose: boolean,
     stats: GlobalStats,
+    suppressMirrorLogs = false,
   ): Promise<PackageStats> {
     const packageDir = this.pathService.resolve(rootDir, packagePathStr);
     const distDir = this.pathService.join(packageDir, DIST_DIR);
@@ -97,13 +98,15 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
       pkgStats.skipped = true;
       pkgStats.skipReason = "package.json not found";
       stats.packagesSkipped++;
-      this.mirrorReporter.logSkippedWorkspacePackage(
-        this.logger,
-        index,
-        total,
-        folderBasename,
-        pkgStats.skipReason,
-      );
+      if (!suppressMirrorLogs) {
+        this.mirrorReporter.logSkippedWorkspacePackage(
+          this.logger,
+          index,
+          total,
+          folderBasename,
+          pkgStats.skipReason,
+        );
+      }
       return pkgStats;
     }
 
@@ -129,13 +132,15 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
       pkgStats.skipped = true;
       pkgStats.skipReason = "configured to skip";
       stats.packagesSkipped++;
-      this.mirrorReporter.logSkippedWorkspacePackage(
-        this.logger,
-        index,
-        total,
-        pkgStats.name,
-        pkgStats.skipReason,
-      );
+      if (!suppressMirrorLogs) {
+        this.mirrorReporter.logSkippedWorkspacePackage(
+          this.logger,
+          index,
+          total,
+          pkgStats.name,
+          pkgStats.skipReason,
+        );
+      }
       return pkgStats;
     }
 
@@ -144,25 +149,29 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
         pkgStats.skipped = true;
         pkgStats.skipReason = "dist/ not found";
         stats.packagesSkipped++;
-        this.mirrorReporter.logSkippedWorkspacePackage(
-          this.logger,
-          index,
-          total,
-          pkgStats.name,
-          pkgStats.skipReason,
-        );
+        if (!suppressMirrorLogs) {
+          this.mirrorReporter.logSkippedWorkspacePackage(
+            this.logger,
+            index,
+            total,
+            pkgStats.name,
+            pkgStats.skipReason,
+          );
+        }
         return pkgStats;
       }
       pkgStats.error = messageFromCaughtUnknown(packageJsonParseError);
       stats.packagesErrored++;
-      this.mirrorReporter.logPackageError(
-        this.logger,
-        index,
-        total,
-        pkgStats.name,
-        packageJsonParseError,
-        verbose,
-      );
+      if (!suppressMirrorLogs) {
+        this.mirrorReporter.logPackageError(
+          this.logger,
+          index,
+          total,
+          pkgStats.name,
+          packageJsonParseError,
+          verbose,
+        );
+      }
       return pkgStats;
     }
 
@@ -170,13 +179,15 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
       pkgStats.skipped = true;
       pkgStats.skipReason = "dist/ not found";
       stats.packagesSkipped++;
-      this.mirrorReporter.logSkippedWorkspacePackage(
-        this.logger,
-        index,
-        total,
-        pkgStats.name,
-        pkgStats.skipReason,
-      );
+      if (!suppressMirrorLogs) {
+        this.mirrorReporter.logSkippedWorkspacePackage(
+          this.logger,
+          index,
+          total,
+          pkgStats.name,
+          pkgStats.skipReason,
+        );
+      }
       return pkgStats;
     }
 
@@ -213,7 +224,9 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
         },
       );
       for (const exportSpecifier of prunedKeys) {
-        this.mirrorReporter.logPrunedStaleExport(this.logger, exportSpecifier);
+        if (!suppressMirrorLogs) {
+          this.mirrorReporter.logPrunedStaleExport(this.logger, exportSpecifier);
+        }
       }
 
       pkgStats.jsModules = generatedExports.jsCount;
@@ -226,25 +239,29 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
       stats.totalJsModules += pkgStats.jsModules;
       stats.totalCssExports += pkgStats.cssExports;
 
-      this.mirrorReporter.logPackageSuccess(
-        this.logger,
-        index,
-        total,
-        pkgStats,
-        generatedExports,
-        verbose,
-      );
+      if (!suppressMirrorLogs) {
+        this.mirrorReporter.logPackageSuccess(
+          this.logger,
+          index,
+          total,
+          pkgStats,
+          generatedExports,
+          verbose,
+        );
+      }
     } catch (caughtError: unknown) {
       pkgStats.error = messageFromCaughtUnknown(caughtError);
       stats.packagesErrored++;
-      this.mirrorReporter.logPackageError(
-        this.logger,
-        index,
-        total,
-        pkgStats.name,
-        caughtError,
-        verbose,
-      );
+      if (!suppressMirrorLogs) {
+        this.mirrorReporter.logPackageError(
+          this.logger,
+          index,
+          total,
+          pkgStats.name,
+          caughtError,
+          verbose,
+        );
+      }
     }
     return pkgStats;
   }

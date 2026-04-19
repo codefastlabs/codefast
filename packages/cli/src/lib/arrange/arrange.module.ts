@@ -6,8 +6,7 @@ import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/r
 import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
-import { createGroupFilePreviewPresenter } from "#/lib/arrange/presentation/group-file-preview.presenter";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { GroupFilePreviewPresenterAdapter } from "#/lib/arrange/presentation/group-file-preview.presenter";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
@@ -24,36 +23,33 @@ import {
 export const ArrangeModule = Module.create("cli-arrange", (api) => {
   api
     .bind(FileWalkerPortToken)
-    .toResolved(
-      (logger: CliLogger) =>
-        withOptionalPortTelemetry("FileWalkerPort", new FileWalkerAdapter(logger), logger),
-      [CliLoggerToken] as const,
+    .to(FileWalkerAdapter)
+    .onActivation((ctx, implementation) =>
+      withOptionalPortTelemetry("FileWalkerPort", implementation, ctx.resolve(CliLoggerToken)),
     )
     .singleton();
 
   api
     .bind(DomainSourceParserPortToken)
-    .toResolved(
-      (logger: CliLogger) =>
-        withOptionalPortTelemetry(
-          "DomainSourceParserPort",
-          new DomainSourceParserAdapter(logger),
-          logger,
-        ),
-      [CliLoggerToken] as const,
+    .to(DomainSourceParserAdapter)
+    .onActivation((ctx, implementation) =>
+      withOptionalPortTelemetry(
+        "DomainSourceParserPort",
+        implementation,
+        ctx.resolve(CliLoggerToken),
+      ),
     )
     .singleton();
 
   api
     .bind(GroupFilePreviewPortToken)
-    .toResolved(
-      (logger: CliLogger) =>
-        withOptionalPortTelemetry(
-          "GroupFilePreviewPort",
-          createGroupFilePreviewPresenter(logger),
-          logger,
-        ),
-      [CliLoggerToken] as const,
+    .to(GroupFilePreviewPresenterAdapter)
+    .onActivation((ctx, implementation) =>
+      withOptionalPortTelemetry(
+        "GroupFilePreviewPort",
+        implementation,
+        ctx.resolve(CliLoggerToken),
+      ),
     )
     .singleton();
 
