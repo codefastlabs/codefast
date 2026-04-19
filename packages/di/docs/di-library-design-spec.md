@@ -1214,16 +1214,16 @@ TC39 Stage 3 `@injectable(deps?, opts?)` với deps array và `autoRegister` opt
 
 ---
 
-### Phase 4 — Advanced + DX ✅ Hoàn thành
+### Phase 4 — Advanced + DX
 
 - **Constraint bindings đầy đủ:** `when(constraint)` tùy chỉnh, `whenParentIs`, `whenAnyAncestorIs` — export từ `@codefast/di/constraints`
 - **Scope violation detection:** `container.validate()` throw `ScopeViolationError` khi singleton phụ thuộc vào scoped/transient (captive dependency)
 - **Container-level `initializeAsync()`:** warm up tất cả singletons (sync lẫn async) trước khi serve traffic. `initialize()` sync đã bị bỏ
 - **Dependency graph:** `generateDependencyGraph({ format: "dot" })` (Graphviz) và `generateDependencyGraph({ format: "json" })` trả về `ContainerGraphJson` typed — export từ `@codefast/di/dependency-graph`
 - **Builder type narrowing:** `onDeactivation` chỉ compile được trên `SingletonBindingBuilder`
-- **Integration packages:** `@codefast/di-hono`, `@codefast/di-fastify` — chưa làm
+- **Integration packages:** `@codefast/di-hono`, `@codefast/di-fastify`
 
-### Phase 5 — Integration packages (planned)
+### Phase 5 — Integration packages
 
 - `@codefast/di-hono` — middleware + scoped container per request cho Hono
 - `@codefast/di-fastify` — plugin + scoped container per request cho Fastify
