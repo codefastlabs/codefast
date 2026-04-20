@@ -47,7 +47,9 @@ type ScopedProps<P> = P & { __scopeChart?: Scope };
  * Value provided by Chart Context
  */
 interface ChartContextValue {
-  /** Display configuration for the chart */
+  /**
+   * Display configuration for the chart
+   */
   config: ChartConfig;
 }
 

@@ -14,9 +14,13 @@ const DEFAULT_THEME = "default";
  * that can be combined with the color theme.
  */
 type ThemeContextType = {
-  /** The current active theme name (e.g., 'default', 'blue', 'green'). */
+  /**
+   * The current active theme name (e.g., 'default', 'blue', 'green').
+   */
   activeTheme: string;
-  /** Function to change the active theme. */
+  /**
+   * Function to change the active theme.
+   */
   setActiveTheme: (theme: string) => void;
 };
 
@@ -32,9 +36,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  * Props for the ActiveThemeProvider component.
  */
 type ActiveThemeProviderProps = {
-  /** Child components that will have access to the active theme context. */
+  /**
+   * Child components that will have access to the active theme context.
+   */
   children: ReactNode;
-  /** The initial active theme to apply. Defaults to 'default'. */
+  /**
+   * The initial active theme to apply. Defaults to 'default'.
+   */
   initialTheme?: string;
 };
 

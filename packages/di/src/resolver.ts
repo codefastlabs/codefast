@@ -32,7 +32,9 @@ import {
 } from "#/errors";
 import type { MetadataReader } from "#/metadata/metadata-types";
 
-/** Converts a registry key + binding into a {@link MaterializationFrame} for the captive-dependency stack. */
+/**
+ * Converts a registry key + binding into a {@link MaterializationFrame} for the captive-dependency stack.
+ */
 function bindingToMaterializationFrame(
   registryKey: RegistryKey,
   binding: Binding<unknown>,
@@ -46,13 +48,21 @@ function bindingToMaterializationFrame(
   };
 }
 
-/** Dependencies injected into {@link DependencyResolver} at construction time. */
+/**
+ * Dependencies injected into {@link DependencyResolver} at construction time.
+ */
 export type ResolverDependencies = {
-  /** Looks up all bindings registered for a given registry key (own + parent containers). */
+  /**
+   * Looks up all bindings registered for a given registry key (own + parent containers).
+   */
   readonly lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined;
-  /** Manages singleton/scoped instance caches and deactivation. */
+  /**
+   * Manages singleton/scoped instance caches and deactivation.
+   */
   readonly scopeManager: ScopeManager;
-  /** Reads `@injectable()` and lifecycle metadata from constructors. Omit to disable decorator support. */
+  /**
+   * Reads `@injectable()` and lifecycle metadata from constructors. Omit to disable decorator support.
+   */
   readonly metadataReader?: MetadataReader;
 };
 
@@ -63,12 +73,16 @@ export type ResolverDependencies = {
 export class DependencyResolver {
   constructor(private readonly deps: ResolverDependencies) {}
 
-  /** Entry point for synchronous single-binding resolution (no path prefix). */
+  /**
+   * Entry point for synchronous single-binding resolution (no path prefix).
+   */
   resolveRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
     return this.resolve(key, hint, [], new Set(), []) as Value;
   }
 
-  /** Entry point for async single-binding resolution (no path prefix). */
+  /**
+   * Entry point for async single-binding resolution (no path prefix).
+   */
   resolveAsyncRoot<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
@@ -76,7 +90,9 @@ export class DependencyResolver {
     return this.resolveAsync(key, hint, [], new Set(), []) as Promise<Value>;
   }
 
-  /** Returns `undefined` instead of throwing when no binding is found; still throws on circular deps or async factories. */
+  /**
+   * Returns `undefined` instead of throwing when no binding is found; still throws on circular deps or async factories.
+   */
   resolveOptionalRoot<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
@@ -124,7 +140,9 @@ export class DependencyResolver {
     }
   }
 
-  /** Resolves all bindings for `key` synchronously; throws on async factories. */
+  /**
+   * Resolves all bindings for `key` synchronously; throws on async factories.
+   */
   resolveAllRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
@@ -164,7 +182,9 @@ export class DependencyResolver {
     return results;
   }
 
-  /** Resolves all bindings for `key`, awaiting any async factories in the set. */
+  /**
+   * Resolves all bindings for `key`, awaiting any async factories in the set.
+   */
   async resolveAllAsyncRoot<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
@@ -274,7 +294,9 @@ export class DependencyResolver {
    * materialization stack forward so nested calls inherit captive-dependency checks.
    */
   private createContext(
-    /** Mutable label path accumulated so far; closures snapshot it with spread before extending. */
+    /**
+     * Mutable label path accumulated so far; closures snapshot it with spread before extending.
+     */
     pathLabels: readonly string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],

@@ -3,20 +3,28 @@
 import { useMemo } from "react";
 
 export interface UsePaginationProps {
-  /** Current active page number. */
+  /**
+   * Current active page number.
+   */
   currentPage: number;
-  /** Number of results displayed per page. */
+  /**
+   * Number of results displayed per page.
+   */
   resultsPerPage: number;
   /**
    * Number of sibling pages to show on each side of the current page.
    * Defaults to 1.
    */
   siblingPagesCount?: number;
-  /** Total number of results across all pages. */
+  /**
+   * Total number of results across all pages.
+   */
   totalResults: number;
 }
 
-/** Ellipsis marker used to collapse ranges in pagination output. */
+/**
+ * Ellipsis marker used to collapse ranges in pagination output.
+ */
 export const ELLIPSIS = "•••";
 
 /**
@@ -100,10 +108,14 @@ export function usePagination({
      */
     const shouldShowRightEllipsis = rightSiblingIndex < totalPages - 2;
 
-    /** First page number (always 1). */
+    /**
+     * First page number (always 1).
+     */
     const firstPage = 1;
 
-    /** Last page number (equals totalPages). */
+    /**
+     * Last page number (equals totalPages).
+     */
     const lastPage = totalPages;
 
     /**

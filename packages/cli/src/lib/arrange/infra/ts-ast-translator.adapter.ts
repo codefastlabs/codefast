@@ -34,7 +34,9 @@ import type {
   DomainUnknownAstNode,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 
-/** Mutable build view for wiring `parent` links; results satisfy readonly domain types. */
+/**
+ * Mutable build view for wiring `parent` links; results satisfy readonly domain types.
+ */
 type WritableDomainAst<T extends DomainAstNode> = {
   -readonly [K in keyof T]: T[K] extends ReadonlyArray<infer U> ? U[] : T[K];
 };

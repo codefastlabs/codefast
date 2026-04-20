@@ -2,7 +2,9 @@ import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 
 export type ArrangeSyncJsonPayloadV1 = {
   readonly schemaVersion: 1;
-  /** `true` when no `onAfterWrite` hook failure. */
+  /**
+   * `true` when no `onAfterWrite` hook failure.
+   */
   readonly ok: boolean;
   readonly write: boolean;
   readonly result: ArrangeRunResult;

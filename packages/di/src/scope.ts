@@ -2,13 +2,17 @@ import type { Binding, BindingIdentifier } from "#/binding";
 import { InternalError } from "#/errors";
 import { runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
 
-/** Cached singleton or scoped instance together with its binding (needed for deactivation). */
+/**
+ * Cached singleton or scoped instance together with its binding (needed for deactivation).
+ */
 type CacheEntry = {
   readonly binding: Binding<unknown>;
   readonly instance: unknown;
 };
 
-/** Returns `true` when `value` is a thenable (duck-typed Promise check). */
+/**
+ * Returns `true` when `value` is a thenable (duck-typed Promise check).
+ */
 function isPromiseLike(value: unknown): value is Promise<unknown> {
   return (
     typeof value === "object" &&
@@ -22,12 +26,18 @@ function isPromiseLike(value: unknown): value is Promise<unknown> {
  * Caches singleton and scoped instances and runs deactivation hooks on disposal.
  */
 export class ScopeManager {
-  /** Cached singleton instances: `bindingId → { binding, instance }`. */
+  /**
+   * Cached singleton instances: `bindingId → { binding, instance }`.
+   */
   private readonly singletonCache: Map<BindingIdentifier, CacheEntry>;
-  /** Cached scoped instances for this container level: `bindingId → { binding, instance }`. */
+  /**
+   * Cached scoped instances for this container level: `bindingId → { binding, instance }`.
+   */
   private readonly scopedCache: Map<BindingIdentifier, CacheEntry>;
   private readonly ownsSingletonDisposal: boolean;
-  /** In-flight async singleton creation promises (deduplicate concurrent resolveAsync calls). */
+  /**
+   * In-flight async singleton creation promises (deduplicate concurrent resolveAsync calls).
+   */
   private readonly singletonPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
   private readonly scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
 
@@ -45,7 +55,9 @@ export class ScopeManager {
     this.scopedPendingPromises = scopedPendingPromises;
   }
 
-  /** Creates a root scope manager that owns both the singleton cache and scoped cache. */
+  /**
+   * Creates a root scope manager that owns both the singleton cache and scoped cache.
+   */
   static createRoot(): ScopeManager {
     return new ScopeManager(new Map(), new Map(), true, new Map(), new Map());
   }
@@ -74,7 +86,9 @@ export class ScopeManager {
     return cache.has(binding.id);
   }
 
-  /** Returns the cached instance for singleton/scoped bindings, or calls `createInstance` on first access. */
+  /**
+   * Returns the cached instance for singleton/scoped bindings, or calls `createInstance` on first access.
+   */
   getOrCreate(binding: Binding<unknown>, createInstance: () => unknown): unknown {
     if (binding.scope === "transient") {
       return createInstance();

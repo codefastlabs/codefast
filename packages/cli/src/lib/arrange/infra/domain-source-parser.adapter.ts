@@ -20,5 +20,7 @@ export class DomainSourceParserAdapter implements DomainSourceParserPort {
   }
 }
 
-/** Default instance without diagnostics logging (tests and legacy imports). */
+/**
+ * Default instance without diagnostics logging (tests and legacy imports).
+ */
 export const domainSourceParserAdapter = new DomainSourceParserAdapter();

@@ -4,7 +4,9 @@ import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-res
 
 export type TagSyncJsonPayloadV1 = {
   readonly schemaVersion: 1;
-  /** `true` when {@link exitCodeForTagSyncResult} would be success. */
+  /**
+   * `true` when {@link exitCodeForTagSyncResult} would be success.
+   */
   readonly ok: boolean;
   readonly rootDir: string;
   readonly result: TagSyncResult;

@@ -1,7 +1,9 @@
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
 
-/** Product bounded contexts: no direct cross-imports between these (domain + application rules). */
+/**
+ * Product bounded contexts: no direct cross-imports between these (domain + application rules).
+ */
 const PRODUCT_BOUNDED_CONTEXTS = new Set(["arrange", "mirror", "tag"]);
 
 const SHARED_SOURCE_CODE_CONTEXT = "shared-source-code";
@@ -9,10 +11,14 @@ const PATH_SEPARATOR = "/";
 
 const LAYERS = new Set(["domain", "application", "infra", "presentation"]);
 
-/** Import roots that any product slice may depend on without going "through" another slice. */
+/**
+ * Import roots that any product slice may depend on without going "through" another slice.
+ */
 const NEUTRAL_LIB_IMPORT_ROOTS = new Set(["core", "config", "infra", "shared"]);
 
-/** Internal imports: tsconfig `#/*` → `src/*`. */
+/**
+ * Internal imports: tsconfig `#/*` → `src/*`.
+ */
 const INTERNAL_LIB_PREFIX = "#/lib/";
 
 function pathAfterInternalLibPrefix(specifier: string): string | null {

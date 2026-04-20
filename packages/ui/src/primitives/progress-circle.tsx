@@ -121,34 +121,54 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
  * --------------------------------------------------------------------------- */
 
 interface ProgressCircleProviderProps {
-  /** React children to be rendered inside the progress circle */
+  /**
+   * React children to be rendered inside the progress circle
+   */
   children: ReactNode;
 
-  /** Custom function to format the numeric value for display */
+  /**
+   * Custom function to format the numeric value for display
+   */
   formatValue?: (value: number) => string;
 
-  /** Unique identifier for the progress circle component */
+  /**
+   * Unique identifier for the progress circle component
+   */
   id?: string;
 
-  /** Maximum value of the progress (defaults to 100) */
+  /**
+   * Maximum value of the progress (defaults to 100)
+   */
   max?: number;
 
-  /** Minimum value of the progress (defaults to 0) */
+  /**
+   * Minimum value of the progress (defaults to 0)
+   */
   min?: number;
 
-  /** Size of the progress circle in pixels */
+  /**
+   * Size of the progress circle in pixels
+   */
   size?: number;
 
-  /** Starting angle of the progress circle in degrees (0 = top) */
+  /**
+   * Starting angle of the progress circle in degrees (0 = top)
+   */
   startAngle?: number;
 
-  /** Width of the progress circle's stroke in pixels */
+  /**
+   * Width of the progress circle's stroke in pixels
+   */
   strokeWidth?: number;
 
-  /** Array of threshold configurations for different value ranges */
+  /**
+   * Array of threshold configurations for different value ranges
+   */
   thresholds?: Threshold[];
 
-  /** Current progress value (null for indeterminate state) */
+  /**
+   * Current progress value (null for indeterminate state)
+   */
   value?: null | number;
 }
 

@@ -65,7 +65,9 @@ export function a() {
   return 1;
 }
 
-/** @since 0.0.1 */
+/**
+ * @since 0.0.1
+ */
 export const b = 2;
 
 const c = 3;

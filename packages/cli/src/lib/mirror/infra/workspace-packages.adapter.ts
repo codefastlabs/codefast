@@ -12,7 +12,9 @@ import type {
 
 const PNPM_WORKSPACE = "pnpm-workspace.yaml";
 
-/** Default when the workspace file is missing or has no `packages` key. */
+/**
+ * Default when the workspace file is missing or has no `packages` key.
+ */
 const DEFAULT_INCLUDE = ["packages/*"];
 
 function toPosix(filePath: string): string {
@@ -27,7 +29,9 @@ function isGlobPermissionError(caughtError: unknown): boolean {
   return code === "EACCES" || code === "EPERM";
 }
 
-/** Turn a pnpm `packages` glob into a `globSync` pattern that finds `package.json` files. */
+/**
+ * Turn a pnpm `packages` glob into a `globSync` pattern that finds `package.json` files.
+ */
 export function workspacePatternToPackageJsonGlob(pattern: string): string {
   const normalizedPattern = toPosix(pattern.trim()).replace(/\/+$/, "");
   if (!normalizedPattern) {
@@ -70,7 +74,9 @@ export function parsePnpmWorkspaceDocument(doc: unknown): {
   include: string[];
   exclude: string[];
   hasPackagesKey: boolean;
-  /** True only when `packages` exists and the YAML array is literally `[]`. */
+  /**
+   * True only when `packages` exists and the YAML array is literally `[]`.
+   */
   isEmptyPackagesArray: boolean;
 } {
   if (doc === null || doc === undefined) {

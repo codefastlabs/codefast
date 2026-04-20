@@ -5,28 +5,40 @@ import { InternalError } from "#/errors";
 import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";
 
-/** A directed edge in the static dependency graph produced by {@link collectStaticDependencyEdges}. */
+/**
+ * A directed edge in the static dependency graph produced by {@link collectStaticDependencyEdges}.
+ */
 export type StaticDependencyEdge = {
   readonly fromBindingId: BindingIdentifier;
   readonly toBindingId: BindingIdentifier;
   readonly resolutionPath: readonly string[];
   readonly edgeKind: "sync" | "async";
-  /** True when the resolved target binding carries a {@link BindingBuilder.when} predicate (runtime may skip this edge). */
+  /**
+   * True when the resolved target binding carries a {@link BindingBuilder.when} predicate (runtime may skip this edge).
+   */
   readonly toBindingConditional: boolean;
-  /** Constructor inject hint for this edge (named / tagged), when known statically. */
+  /**
+   * Constructor inject hint for this edge (named / tagged), when known statically.
+   */
   readonly injectHintLabel?: string;
-  /** True when the consumer binding is an alias (rebind to another token). */
+  /**
+   * True when the consumer binding is an alias (rebind to another token).
+   */
   readonly isAliasEdge: boolean;
 };
 
-/** A single resolved dependency entry produced by {@link listResolvedDependencies}. */
+/**
+ * A single resolved dependency entry produced by {@link listResolvedDependencies}.
+ */
 export type ResolvedDependency = {
   readonly binding: Binding<unknown>;
   readonly path: readonly string[];
   readonly injectHintLabel?: string;
 };
 
-/** Converts a tag value to a printable string for graph edge labels. */
+/**
+ * Converts a tag value to a printable string for graph edge labels.
+ */
 function formatTagValueForGraph(value: unknown): string {
   if (typeof value === "string") {
     return value;
@@ -38,7 +50,9 @@ function formatTagValueForGraph(value: unknown): string {
   }
 }
 
-/** Converts a {@link ResolveHint} to a human-readable edge label for graph output (`name: x` / `tag: k=v`). */
+/**
+ * Converts a {@link ResolveHint} to a human-readable edge label for graph output (`name: x` / `tag: k=v`).
+ */
 export function injectHintLabelFromResolveHint(hint: ResolveHint | undefined): string | undefined {
   if (hint === undefined) {
     return undefined;
@@ -53,7 +67,9 @@ export function injectHintLabelFromResolveHint(hint: ResolveHint | undefined): s
   return undefined;
 }
 
-/** Returns `"async"` when either the consumer or dependency binding is an `async-dynamic` factory. */
+/**
+ * Returns `"async"` when either the consumer or dependency binding is an `async-dynamic` factory.
+ */
 function edgeKindFor(consumer: Binding<unknown>, dependency: Binding<unknown>): "sync" | "async" {
   if (consumer.kind === "async-dynamic" || dependency.kind === "async-dynamic") {
     return "async";

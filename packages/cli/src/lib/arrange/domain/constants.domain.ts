@@ -1,6 +1,8 @@
 import type { Bucket } from "#/lib/arrange/domain/types.domain";
 
-/** Analyze report: long literal threshold (token count). */
+/**
+ * Analyze report: long literal threshold (token count).
+ */
 export const LONG_STRING_TOKEN_THRESHOLD = 18;
 
 /**
@@ -16,10 +18,14 @@ export const APPLY_MIN_TOKENS = 2;
  */
 export const MIN_GROUP_TOKENS = 2;
 
-/** Dynamic max groups clamp: base bound. */
+/**
+ * Dynamic max groups clamp: base bound.
+ */
 export const MAX_GROUPS_BASE = 4;
 
-/** Dynamic max groups clamp: upper cap. */
+/**
+ * Dynamic max groups clamp: upper cap.
+ */
 export const MAX_GROUPS_CAP = 24;
 
 /**
@@ -28,13 +34,19 @@ export const MAX_GROUPS_CAP = 24;
  */
 export const MAX_GROUPS_HEADROOM = 2;
 
-/** Maximum findings printed per category in the analyze report. */
+/**
+ * Maximum findings printed per category in the analyze report.
+ */
 export const MAX_REPORT_LINES = 40;
 
-/** Maximum recursion depth when traversing `tv()` object literals. */
+/**
+ * Maximum recursion depth when traversing `tv()` object literals.
+ */
 export const MAX_OBJECT_DEPTH = 12;
 
-/** Maximum depth when peeling conditional / parens / arrays inside `cn(...)` args. */
+/**
+ * Maximum depth when peeling conditional / parens / arrays inside `cn(...)` args.
+ */
 export const MAX_CLASS_EXPR_DEPTH = 12;
 
 /**
@@ -126,7 +138,9 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
 export const RESPONSIVE_PREFIX =
   /^(?:@(?:min|max)-\[[^\]]+\]:|@\[[^\]]+\]:|@(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)\[[^\]]+\]:)/;
 
-/** State variant stems — hoisted to module scope (not recreated per call). */
+/**
+ * State variant stems — hoisted to module scope (not recreated per call).
+ */
 export const STATE_PREFIXES = new Set([
   "hover",
   "focus",

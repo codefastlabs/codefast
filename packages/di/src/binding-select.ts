@@ -3,7 +3,9 @@ import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";
 import { InternalError, NoMatchingBindingError, TokenNotBoundError } from "#/errors";
 
-/** Returns a human-readable label for a token or constructor (used in error messages and graph output). */
+/**
+ * Returns a human-readable label for a token or constructor (used in error messages and graph output).
+ */
 export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): string {
   if (typeof key === "function") {
     return key.name.length > 0 ? key.name : "(anonymous class)";
