@@ -9,7 +9,9 @@ import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import { printConfigSchemaWarnings } from "#/lib/infra/config-reporter.adapter";
 
-/** Minimal CLI slice required to load config (avoids depending on the full CLI composition-root type). */
+/**
+ * Minimal CLI slice required to load config (avoids depending on the full CLI composition-root type).
+ */
 export type TryLoadCodefastConfigCliSlice = {
   readonly fs: CliFs;
   readonly logger: CliLogger;

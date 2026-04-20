@@ -23,7 +23,9 @@ import {
  * are the single place for variant-aware sort — do not reintroduce parallel bucket ordering.
  */
 
-/** Separates bucket id from variant key in {@link buildFirstVariantKeySourceIndex} map keys. */
+/**
+ * Separates bucket id from variant key in {@link buildFirstVariantKeySourceIndex} map keys.
+ */
 const VARIANT_BUCKET_KEY_SEP = "\u0000";
 
 type ClassifiedTailwindToken = {
@@ -147,7 +149,9 @@ export function areCnTailwindPartitionsEquivalent(
   return true;
 }
 
-/** Dominant bucket of a whitespace-delimited class group (for merge heuristics). */
+/**
+ * Dominant bucket of a whitespace-delimited class group (for merge heuristics).
+ */
 function dominantBucketOfGroup(groupStr: string): Bucket {
   const counts = new Map<Bucket, number>();
   for (const classToken of tokenizeClassString(groupStr)) {
@@ -170,7 +174,9 @@ function dominantBucketOfGroup(groupStr: string): Bucket {
   return best;
 }
 
-/** Dynamic cap: more tokens → allow more groups, within [BASE, CAP]. */
+/**
+ * Dynamic cap: more tokens → allow more groups, within [BASE, CAP].
+ */
 function dynamicMaxGroups(tokenCount: number): number {
   const byTokens = Math.ceil(tokenCount / 2) + MAX_GROUPS_HEADROOM;
   return Math.max(MAX_GROUPS_BASE, Math.min(MAX_GROUPS_CAP, byTokens));
@@ -244,7 +250,9 @@ export function mergeSingletons(groups: string[]): string[] {
   return result;
 }
 
-/** Tie-break when two merge candidates are both {@link bucketsMergeCompatible} (same bucket or COMPATIBLE_BUCKET_SETS). */
+/**
+ * Tie-break when two merge candidates are both {@link bucketsMergeCompatible} (same bucket or COMPATIBLE_BUCKET_SETS).
+ */
 function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
   if (leftBucket === rightBucket) {
     return 0;
@@ -423,7 +431,9 @@ export function suggestCnGroups(classString: string): string[] {
   );
 
   const rawGroups: string[] = [];
-  /** Bucket of the last token already placed in the current run (pairwise compat with `COMPATIBLE_BUCKET_SETS`). */
+  /**
+   * Bucket of the last token already placed in the current run (pairwise compat with `COMPATIBLE_BUCKET_SETS`).
+   */
   let lastBucketInRun: Bucket | null = null;
   let currentStateKey: string | null = null;
   let currentTokens: string[] = [];

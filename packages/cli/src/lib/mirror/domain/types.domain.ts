@@ -4,11 +4,15 @@ export interface ExportEntry {
   require?: string;
 }
 
-/** Final `package.json#exports` map (conditional exports + string shims + `./package.json`). */
+/**
+ * Final `package.json#exports` map (conditional exports + string shims + `./package.json`).
+ */
 export type ExportMapData = Record<string, ExportEntry | string>;
 export type ExportOriginalPathBySpecifier = Record<string, string>;
 
-/** Alias for the exports object shape produced by the mirror engine. */
+/**
+ * Alias for the exports object shape produced by the mirror engine.
+ */
 export type ExportMap = ExportMapData;
 
 export interface ModuleFiles {
@@ -27,7 +31,9 @@ export interface MirrorPackageMeta {
   packageName: string;
 }
 
-/** Parsed `package.json` — only fields mirror reads/writes are typed strictly. */
+/**
+ * Parsed `package.json` — only fields mirror reads/writes are typed strictly.
+ */
 export type PackageJsonShape = {
   name?: unknown;
   exports?: unknown;
@@ -66,7 +72,9 @@ export interface GlobalStats {
   packageDetails: PackageStats[];
 }
 
-/** How workspace packages were resolved when scanning the repo (for logging / UX). */
+/**
+ * How workspace packages were resolved when scanning the repo (for logging / UX).
+ */
 export type WorkspaceMultiDiscoverySource =
   | "default-patterns"
   | "pnpm-workspace-yaml"

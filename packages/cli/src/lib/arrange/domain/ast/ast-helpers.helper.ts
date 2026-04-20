@@ -19,7 +19,9 @@ import type {
   DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 
-/** Known module specifiers that export `cn` / `tv`. */
+/**
+ * Known module specifiers that export `cn` / `tv`.
+ */
 export const KNOWN_CN_TV_MODULES = new Set([
   "@codefast/tailwind-variants",
   "clsx",

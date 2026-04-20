@@ -31,7 +31,9 @@ const NUMBER_INPUT_NAME = "InputNumber";
  * Props that include an optional scope for the InputNumber component.
  */
 type ScopedProps<P> = P & {
-  /** Optional scope for the InputNumber component context */
+  /**
+   * Optional scope for the InputNumber component context
+   */
   __scopeInputNumber?: Scope;
 };
 
@@ -44,61 +46,99 @@ const useInputScope = createInputScope();
  * Context value for the InputNumber component.
  */
 interface InputNumberContextValue {
-  /** Formatting options for displaying the number value */
+  /**
+   * Formatting options for displaying the number value
+   */
   formatOptions: Intl.NumberFormatOptions;
 
-  /** Function to format a number value as a string */
+  /**
+   * Function to format a number value as a string
+   */
   formatValue: (value?: number) => string;
 
-  /** Reference to the input element */
+  /**
+   * Reference to the input element
+   */
   inputRef: RefObject<HTMLInputElement | null>;
 
-  /** Handler for when the value changes */
+  /**
+   * Handler for when the value changes
+   */
   onChange: (value?: number) => void;
 
-  /** Handler to decrement the value */
+  /**
+   * Handler to decrement the value
+   */
   onDecrement: () => void;
 
-  /** Handler to decrement the value to the minimum allowed */
+  /**
+   * Handler to decrement the value to the minimum allowed
+   */
   onDecrementToMin: () => void;
 
-  /** Handler to increment the value */
+  /**
+   * Handler to increment the value
+   */
   onIncrement: () => void;
 
-  /** Handler to increment the value to the maximum allowed */
+  /**
+   * Handler to increment the value to the maximum allowed
+   */
   onIncrementToMax: () => void;
 
-  /** Function to parse a value into a number */
+  /**
+   * Function to parse a value into a number
+   */
   parseValue: (value: number | readonly string[] | string | undefined) => number;
 
-  /** Accessible label for the decrement button */
+  /**
+   * Accessible label for the decrement button
+   */
   ariaDecrementLabel?: string;
 
-  /** Accessible label for the increment button */
+  /**
+   * Accessible label for the increment button
+   */
   ariaIncrementLabel?: string;
 
-  /** Initial value used when the input is uncontrolled */
+  /**
+   * Initial value used when the input is uncontrolled
+   */
   defaultValue?: number;
 
-  /** Whether the input is disabled */
+  /**
+   * Whether the input is disabled
+   */
   disabled?: boolean;
 
-  /** Unique identifier for the input */
+  /**
+   * Unique identifier for the input
+   */
   id?: string;
 
-  /** Maximum allowed value */
+  /**
+   * Maximum allowed value
+   */
   max?: number;
 
-  /** Minimum allowed value */
+  /**
+   * Minimum allowed value
+   */
   min?: number;
 
-  /** Whether the input is read-only */
+  /**
+   * Whether the input is read-only
+   */
   readOnly?: boolean;
 
-  /** Step value for increments/decrements */
+  /**
+   * Step value for increments/decrements
+   */
   step?: number;
 
-  /** Current value of the input */
+  /**
+   * Current value of the input
+   */
   value?: number;
 }
 
@@ -113,37 +153,59 @@ const [InputNumberContextProvider, useInputNumberContext] =
  * Props for the main InputNumber component.
  */
 interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
-  /** Accessible label for the decrement button */
+  /**
+   * Accessible label for the decrement button
+   */
   ariaDecrementLabel?: string;
 
-  /** Accessible label for the increment button */
+  /**
+   * Accessible label for the increment button
+   */
   ariaIncrementLabel?: string;
 
-  /** Initial value when uncontrolled */
+  /**
+   * Initial value when uncontrolled
+   */
   defaultValue?: number;
 
-  /** Options for number formatting */
+  /**
+   * Options for number formatting
+   */
   formatOptions?: Intl.NumberFormatOptions;
 
-  /** Unique identifier for the input */
+  /**
+   * Unique identifier for the input
+   */
   id?: string;
 
-  /** Locale used for number formatting */
+  /**
+   * Locale used for number formatting
+   */
   locale?: string;
 
-  /** Maximum allowed value */
+  /**
+   * Maximum allowed value
+   */
   max?: number;
 
-  /** Minimum allowed value */
+  /**
+   * Minimum allowed value
+   */
   min?: number;
 
-  /** Handler called when the value changes */
+  /**
+   * Handler called when the value changes
+   */
   onChange?: (value?: number) => void;
 
-  /** Step value for increments/decrements */
+  /**
+   * Step value for increments/decrements
+   */
   step?: number;
 
-  /** Current value when controlled */
+  /**
+   * Current value when controlled
+   */
   value?: number;
 }
 
@@ -164,20 +226,28 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
     ...props
   } = numberInputProps;
 
-  /** Scope for the input component */
+  /**
+   * Scope for the input component
+   */
   const inputScope = useInputScope(__scopeInputNumber);
 
-  /** Reference to the input element */
+  /**
+   * Reference to the input element
+   */
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /** Controlled or uncontrolled value state */
+  /**
+   * Controlled or uncontrolled value state
+   */
   const [value, setValue] = useControllableState<number | undefined>({
     defaultProp: defaultValue,
     onChange,
     prop: valueProperty,
   });
 
-  /** Separators used for number formatting based on locale */
+  /**
+   * Separators used for number formatting based on locale
+   */
   const { decimalSeparator, thousandSeparator } = useMemo(
     () => getNumberFormatSeparators(locale),
     [locale],
@@ -790,9 +860,13 @@ function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (..
  * Interface for number formatting separators
  */
 interface NumberFormatSeparators {
-  /** The character used to separate decimal part (e.g., "." or ",") */
+  /**
+   * The character used to separate decimal part (e.g., "." or ",")
+   */
   decimalSeparator: string;
-  /** The character used to separate thousands (e.g., "," or ".") */
+  /**
+   * The character used to separate thousands (e.g., "," or ".")
+   */
   thousandSeparator: string;
 }
 

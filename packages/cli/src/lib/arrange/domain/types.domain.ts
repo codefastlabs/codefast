@@ -30,12 +30,16 @@ export type Bucket =
   | "starting"
   | "behavior"
   | "state"
-  /** Selector variants (e.g. `[&…]:`, `*:`, `has-*`) distinct from interactive/data state. */
+  /**
+   * Selector variants (e.g. `[&…]:`, `*:`, `has-*`) distinct from interactive/data state.
+   */
   | "selector"
   | "arbitrary"
   | "other";
 
-/** String or no-substitution template literal used as a Tailwind class blob. */
+/**
+ * String or no-substitution template literal used as a Tailwind class blob.
+ */
 export type TailwindClassLiteral = DomainTailwindClassLiteral;
 
 export type ForEachStringLiteralInClassExpressionOptions = {
@@ -49,7 +53,9 @@ export type ForEachStringLiteralInClassExpressionOptions = {
 
 export type JsxClassNameStatic = {
   lit: TailwindClassLiteral;
-  /** Replace this node: `StringLiteral` or whole `JsxExpression`. */
+  /**
+   * Replace this node: `StringLiteral` or whole `JsxExpression`.
+   */
   valueNode: DomainAstNode;
 };
 
@@ -58,14 +64,22 @@ export type JsxClassNameStatic = {
  * string literals that belong to one logical class surface.
  */
 export type StringNode = {
-  /** All static string literals belonging to this slot, in source order. */
+  /**
+   * All static string literals belonging to this slot, in source order.
+   */
   nodes: TailwindClassLiteral[];
   sf: DomainSourceFile;
-  /** String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`. */
+  /**
+   * String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`.
+   */
   isTvContext: boolean;
-  /** When set, the entire cn(...) call is replaced at once. */
+  /**
+   * When set, the entire cn(...) call is replaced at once.
+   */
   cnCall?: DomainCallExpression;
-  /** First literal in the slot; used for positions and line-number reporting. */
+  /**
+   * First literal in the slot; used for positions and line-number reporting.
+   */
   get primaryClassLiteral(): TailwindClassLiteral;
 };
 
@@ -82,7 +96,9 @@ export type PlannedGroupEdit = {
   start: number;
   end: number;
   replacement: string;
-  /** Per-chunk bucket labels (same as `arrange group` trailing `// Buckets:` line). */
+  /**
+   * Per-chunk bucket labels (same as `arrange group` trailing `// Buckets:` line).
+   */
   bucketSummary: string[];
   jsxCn: boolean;
   lineSf: DomainSourceFile;
@@ -127,7 +143,9 @@ export type GroupFileResult = {
    * (skipped). Matches preview totals when `groupEdits` correspond to the same plan.
    */
   totalFound: number;
-  /** Edits actually written in apply mode; always 0 in preview mode. */
+  /**
+   * Edits actually written in apply mode; always 0 in preview mode.
+   */
   changed: number;
 };
 

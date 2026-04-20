@@ -4,10 +4,14 @@ import type { AccessorInjectionMetadata, InjectionDescriptor } from "#/metadata/
 import { InternalError } from "#/errors";
 import type { Token } from "#/token";
 
-/** Options forwarded to the container when resolving an injected dependency. */
+/**
+ * Options forwarded to the container when resolving an injected dependency.
+ */
 export type InjectOptions = ResolveHint;
 
-/** Validates and normalises the `tag` option from {@link InjectOptions}; throws {@link InternalError} on bad input. */
+/**
+ * Validates and normalises the `tag` option from {@link InjectOptions}; throws {@link InternalError} on bad input.
+ */
 function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor["tag"] | undefined {
   if (tag === undefined) {
     return undefined;
@@ -24,7 +28,9 @@ function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor[
   return [tagName, value];
 }
 
-/** Builds an {@link InjectionDescriptor} from a token, optional flag, and raw inject options. */
+/**
+ * Builds an {@link InjectionDescriptor} from a token, optional flag, and raw inject options.
+ */
 function toDescriptor<Value>(
   token: Token<Value> | Constructor<Value>,
   optional: boolean,
@@ -40,7 +46,9 @@ function toDescriptor<Value>(
   return { token, optional };
 }
 
-/** Type guard — returns `true` when `value` is a TC39 `ClassAccessorDecoratorContext` (accessor field). */
+/**
+ * Type guard — returns `true` when `value` is a TC39 `ClassAccessorDecoratorContext` (accessor field).
+ */
 function isAccessorDecoratorContext(value: unknown): value is ClassAccessorDecoratorContext {
   return (
     typeof value === "object" &&
@@ -89,7 +97,9 @@ export function optional<Value>(
   return toDescriptor(token, true, options);
 }
 
-/** Type-guard — returns `true` when `value` is an {@link InjectionDescriptor}. */
+/**
+ * Type-guard — returns `true` when `value` is an {@link InjectionDescriptor}.
+ */
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
   if (typeof value !== "object" || value === null) {
     return false;

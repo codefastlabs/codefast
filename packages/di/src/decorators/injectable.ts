@@ -35,7 +35,9 @@ export function getAutoRegistered(): ReadonlyArray<{
   return AUTO_REGISTER_REGISTRY;
 }
 
-/** Converts a single `@injectable` deps-array entry into a {@link ParamMetadata} record. */
+/**
+ * Converts a single `@injectable` deps-array entry into a {@link ParamMetadata} record.
+ */
 function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
   if (isInjectionDescriptor(dependency)) {
     return {

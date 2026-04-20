@@ -47,7 +47,9 @@ export interface RootThemeLoaderData {
    * {@link DEFAULT_RESOLVED_THEME}.
    */
   ssrSystemTheme: ResolvedTheme;
-  /** User preference from the httpOnly cookie: `light`, `dark`, or `system`. */
+  /**
+   * User preference from the httpOnly cookie: `light`, `dark`, or `system`.
+   */
   theme: Theme;
 }
 

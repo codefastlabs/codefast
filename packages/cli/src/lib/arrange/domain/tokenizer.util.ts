@@ -92,7 +92,9 @@ export function stripVariants(token: string): string {
   return withoutVariants;
 }
 
-/** Outermost variant segment: first `:` at bracket depth 0 → text before it. */
+/**
+ * Outermost variant segment: first `:` at bracket depth 0 → text before it.
+ */
 function firstLeadingVariantPrefix(token: string): string | undefined {
   const colonIdx = indexOfFirstVariantColon(token);
   if (colonIdx === -1) {
@@ -238,7 +240,9 @@ export function compositeSecondaryOrder(bareUtility: string): number {
   return 99;
 }
 
-/** Classify a **bare** utility (no `hover:` / `md:` / … prefixes). */
+/**
+ * Classify a **bare** utility (no `hover:` / `md:` / … prefixes).
+ */
 export function classifyBareUtility(bareUtility: string): Bucket {
   const b = bareUtility;
 
@@ -470,13 +474,17 @@ function dataAttributeStem(token: string): string {
   return match ? `data-[${match[1]}]` : "data";
 }
 
-/** Same idea as {@link dataAttributeStem} for `aria-[…]:` variants. */
+/**
+ * Same idea as {@link dataAttributeStem} for `aria-[…]:` variants.
+ */
 function ariaAttributeStem(token: string): string {
   const match = token.match(/^aria-\[([^\]]*)\]/);
   return match ? `aria-[${match[1]}]` : "aria";
 }
 
-/** `in-data-[…]:` — normalize on the full bracket expression like {@link dataAttributeStem}. */
+/**
+ * `in-data-[…]:` — normalize on the full bracket expression like {@link dataAttributeStem}.
+ */
 function inDataAttributeStem(token: string): string {
   const match = token.match(/^in-data-\[([^\]]*)\]/);
   return match ? `in-data-[${match[1]}]` : "in-data";
@@ -548,7 +556,9 @@ export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
   return COMPATIBLE_BUCKET_SETS.some((bucketSet) => bucketSet.has(a) && bucketSet.has(b));
 }
 
-/** Like {@link bucketsCompatible}, but never merge two distinct state / starting / selector variant blobs. */
+/**
+ * Like {@link bucketsCompatible}, but never merge two distinct state / starting / selector variant blobs.
+ */
 export function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
   if (a === "state" && b === "state") {
     return false;

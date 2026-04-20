@@ -58,7 +58,9 @@ function compareExportSpecifiers(
   return leftSpecifier.localeCompare(rightSpecifier);
 }
 
-/** Shared rule: show `package.json#name` when it is a non-empty string; else folder basename. */
+/**
+ * Shared rule: show `package.json#name` when it is a non-empty string; else folder basename.
+ */
 export function resolvePackageDisplayName(
   packageJson: { name?: unknown },
   folderBasename: string,

@@ -4,33 +4,45 @@ import { collectStaticDependencyEdges } from "#/dependency-graph";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import type { RegistryKey } from "#/registry";
 
-/** Whether a singleton/scoped binding's instance is currently held in the scope cache. */
+/**
+ * Whether a singleton/scoped binding's instance is currently held in the scope cache.
+ */
 export type BindingActivationStatus = "cached" | "not-cached" | "transient";
 
-/** Per-binding row inside a {@link ContainerSnapshot}. */
+/**
+ * Per-binding row inside a {@link ContainerSnapshot}.
+ */
 export type ContainerBindingSnapshot = {
   readonly registryKeyLabel: string;
   readonly bindingId: BindingIdentifier;
   readonly kind: Binding<unknown>["kind"];
   readonly scope: BindingScope;
   readonly activationStatus: BindingActivationStatus;
-  /** True when {@link BindingBuilder.when} was used (runtime predicate; static graph may still show edges). */
+  /**
+   * True when {@link BindingBuilder.when} was used (runtime predicate; static graph may still show edges).
+   */
   readonly hasConditionalConstraint: boolean;
   readonly moduleId?: string;
 };
 
-/** Full debug snapshot returned by {@link Container.inspect}. */
+/**
+ * Full debug snapshot returned by {@link Container.inspect}.
+ */
 export type ContainerSnapshot = {
   readonly bindings: readonly ContainerBindingSnapshot[];
 };
 
-/** Structured dependency graph returned by {@link Container.generateDependencyGraph} with `format: "json"`. */
+/**
+ * Structured dependency graph returned by {@link Container.generateDependencyGraph} with `format: "json"`.
+ */
 export type ContainerGraphJson = {
   nodes: ContainerBindingSnapshot[];
   edges: ReturnType<typeof collectStaticDependencyEdges>[number][];
 };
 
-/** Read-only view of the container internals exposed to {@link ContainerInspector}. */
+/**
+ * Read-only view of the container internals exposed to {@link ContainerInspector}.
+ */
 export type ContainerInspectorContext = {
   collectAllRegistryKeys(): readonly RegistryKey[];
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
@@ -38,7 +50,9 @@ export type ContainerInspectorContext = {
   metadataReader: MetadataReader | undefined;
 };
 
-/** Options for {@link Container.generateDependencyGraph}. */
+/**
+ * Options for {@link Container.generateDependencyGraph}.
+ */
 export type DotGraphOptions = {
   /**
    * When true, omit registry keys whose label starts with `CODEFAST_DI_` (framework-style tokens)
@@ -47,7 +61,9 @@ export type DotGraphOptions = {
   readonly hideInternals?: boolean;
 };
 
-/** Maps a binding's scope and cache state to a {@link BindingActivationStatus} label. */
+/**
+ * Maps a binding's scope and cache state to a {@link BindingActivationStatus} label.
+ */
 function activationStatusFor(
   binding: Binding<unknown>,
   isCached: (bindingToCheck: Binding<unknown>) => boolean,
@@ -58,12 +74,16 @@ function activationStatusFor(
   return isCached(binding) ? "cached" : "not-cached";
 }
 
-/** Escapes a string for use as a DOT `label="..."` attribute value. */
+/**
+ * Escapes a string for use as a DOT `label="..."` attribute value.
+ */
 function dotEscapeLabel(text: string): string {
   return text.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
 }
 
-/** Escapes a string for safe embedding inside a DOT HTML-label (`<...>`) table cell. */
+/**
+ * Escapes a string for safe embedding inside a DOT HTML-label (`<...>`) table cell.
+ */
 function dotEscapeHtml(text: string): string {
   return text
     .replaceAll("&", "&amp;")
@@ -72,7 +92,9 @@ function dotEscapeHtml(text: string): string {
     .replaceAll('"', "&quot;");
 }
 
-/** Returns the Graphviz node shape name for a given binding kind. */
+/**
+ * Returns the Graphviz node shape name for a given binding kind.
+ */
 function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
   switch (kind) {
     case "constant":
@@ -92,7 +114,9 @@ function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
   }
 }
 
-/** Returns DOT fill-color and style attributes that visually distinguish binding scopes. */
+/**
+ * Returns DOT fill-color and style attributes that visually distinguish binding scopes.
+ */
 function scopeVisualAttributes(scope: BindingScope): string {
   switch (scope) {
     case "singleton":
@@ -108,17 +132,23 @@ function scopeVisualAttributes(scope: BindingScope): string {
   }
 }
 
-/** Strips non-alphanumeric characters from a module name to produce a valid DOT subgraph identifier. */
+/**
+ * Strips non-alphanumeric characters from a module name to produce a valid DOT subgraph identifier.
+ */
 function sanitizeClusterId(moduleName: string): string {
   return moduleName.replace(/[^0-9a-zA-Z_]/g, "_");
 }
 
-/** Returns `true` when the label string belongs to a framework-internal registry key. */
+/**
+ * Returns `true` when the label string belongs to a framework-internal registry key.
+ */
 function registryKeyLabelIsInternal(label: string): boolean {
   return label.startsWith("CODEFAST_DI_");
 }
 
-/** Returns `true` when the registry key resolves to an internal framework label. */
+/**
+ * Returns `true` when the registry key resolves to an internal framework label.
+ */
 function isInternalRegistryKey(key: RegistryKey): boolean {
   return registryKeyLabelIsInternal(registryKeyLabel(key));
 }
@@ -134,7 +164,9 @@ function isInternalRegistryKey(key: RegistryKey): boolean {
 export class ContainerInspector {
   constructor(private readonly ctx: ContainerInspectorContext) {}
 
-  /** Collects all registered bindings into a flat, serialisable snapshot. */
+  /**
+   * Collects all registered bindings into a flat, serialisable snapshot.
+   */
   getSnapshot(): ContainerSnapshot {
     const bindings: ContainerBindingSnapshot[] = [];
     const seen = new Set<BindingIdentifier>();

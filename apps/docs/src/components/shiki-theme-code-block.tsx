@@ -3,7 +3,9 @@ import { cn } from "@codefast/tailwind-variants";
 import { codeToHtml } from "shiki";
 import { useEffect, useState } from "react";
 
-/** Match apps/docs markdown pipeline (see src/utils/markdown.ts). */
+/**
+ * Match apps/docs markdown pipeline (see src/utils/markdown.ts).
+ */
 const SHIKI_THEME_LIGHT = "github-light";
 const SHIKI_THEME_DARK = "tokyo-night";
 
@@ -32,7 +34,9 @@ export function ShikiThemeCodeBlock({ code, lang = "tsx", className }: ShikiThem
         const out = await codeToHtml(code, {
           lang,
           theme,
-          /** Let the panel use `bg-background`; avoid theme `pre` bg (e.g. tokyo-night navy vs section charcoal). */
+          /**
+           * Let the panel use `bg-background`; avoid theme `pre` bg (e.g. tokyo-night navy vs section charcoal).
+           */
           rootStyle: false,
         });
         if (!cancelled) {

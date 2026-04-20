@@ -1,7 +1,9 @@
 import type { Constructor } from "#/binding";
 import type { Token } from "#/token";
 
-/** Metadata written per `accessor` field decorated with `@inject`; collected into `Symbol.metadata`. */
+/**
+ * Metadata written per `accessor` field decorated with `@inject`; collected into `Symbol.metadata`.
+ */
 export type AccessorInjectionMetadata = {
   readonly name: string;
   readonly token: Token<unknown> | Constructor<unknown>;
@@ -12,7 +14,9 @@ export type AccessorInjectionMetadata = {
   };
 };
 
-/** Lifecycle method names written by `@postConstruct()` / `@preDestroy()` into `Symbol.metadata`. */
+/**
+ * Lifecycle method names written by `@postConstruct()` / `@preDestroy()` into `Symbol.metadata`.
+ */
 export type LifecycleMetadata = {
   readonly postConstruct?: string;
   readonly preDestroy?: string;
