@@ -12,7 +12,7 @@ Theme management for React 19 — SSR-safe `system` resolution, optimistic updat
 
 ## Table of Contents
 
-- [Why this package](#why-this-package)
+- [Why @codefast/theme](#why-codefasttheme)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -32,10 +32,11 @@ Theme management for React 19 — SSR-safe `system` resolution, optimistic updat
 - [Package exports](#package-exports)
 - [Contributing](#contributing)
 - [License](#license)
+- [Changelog](#changelog)
 
 ---
 
-## Why this package
+## Why @codefast/theme
 
 `@codefast/theme` is a focused theme-state primitive built around the React 19 concurrent APIs. Drop it at the root of your app, persist the user's preference however you want, and let the hook and inline script keep the DOM in sync.
 
@@ -64,6 +65,8 @@ All peers except `react` / `react-dom` are optional.
 pnpm add @codefast/theme
 # or
 npm install @codefast/theme
+# or
+yarn add @codefast/theme
 ```
 
 Peer dependencies:
@@ -378,4 +381,8 @@ pnpm --filter @codefast/theme dev     # watch-mode build
 
 [MIT](https://opensource.org/licenses/MIT) — see [`package.json`](./package.json).
 
-Version history is published on [npm](https://www.npmjs.com/package/@codefast/theme?activeTab=versions) and mirrored in [`CHANGELOG.md`](./CHANGELOG.md).
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full version history. Releases are also published on [npm](https://www.npmjs.com/package/@codefast/theme?activeTab=versions).

@@ -9,9 +9,9 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 
 ## Table of Contents
 
-- [Why this package](#why-this-package)
-- [Installation](#installation)
+- [Why @codefast/di](#why-codefastdi)
 - [Requirements](#requirements)
+- [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Core Concepts](#core-concepts)
 - [Tokens](#tokens)
@@ -39,10 +39,11 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 - [Package exports](#package-exports)
 - [Contributing](#contributing)
 - [License](#license)
+- [Changelog](#changelog)
 
 ---
 
-## Why this package
+## Why @codefast/di
 
 `@codefast/di` is a small IoC container designed for applications that compile to ESM and want strong typing without metadata reflection tricks.
 
@@ -53,16 +54,6 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 - **Scope safety.** Detects captive dependencies (a singleton depending on a scoped or transient binding) during development and test.
 - **Async-first.** Dedupes in-flight async singleton construction and supports `await using` for automatic cleanup.
 - **Tree-shakeable subpaths.** Import only the surface you need.
-
----
-
-## Installation
-
-```bash
-pnpm add @codefast/di
-# or
-npm install @codefast/di
-```
 
 ---
 
@@ -83,6 +74,18 @@ Enable native decorators in `tsconfig.json` — do **not** enable `experimentalD
     "moduleResolution": "bundler"
   }
 }
+```
+
+---
+
+## Installation
+
+```bash
+pnpm add @codefast/di
+# or
+npm install @codefast/di
+# or
+yarn add @codefast/di
 ```
 
 ---
@@ -386,7 +389,8 @@ Use the `*Async` variants when any binding in the resolution chain uses `toDynam
 ```typescript
 const db = await container.resolveAsync(DbToken);
 const handlers = await container.resolveAllAsync(HandlerToken);
-const optional = await container.resolveOptionalAsync?.(CacheToken);
+// resolveOptional is sync-only — for async optional lookups, check `has` then `resolveAsync`
+const cache = container.has(CacheToken) ? await container.resolveAsync(CacheToken) : undefined;
 
 // Eagerly construct every singleton binding
 await container.initializeAsync();
@@ -578,4 +582,8 @@ pnpm --filter @codefast/di check-types
 
 [MIT](https://opensource.org/licenses/MIT) — see [`package.json`](./package.json).
 
-Version history is published on [npm](https://www.npmjs.com/package/@codefast/di?activeTab=versions) and mirrored in [`CHANGELOG.md`](./CHANGELOG.md).
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full version history. Releases are also published on [npm](https://www.npmjs.com/package/@codefast/di?activeTab=versions).

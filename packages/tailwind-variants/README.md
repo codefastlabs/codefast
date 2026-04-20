@@ -10,7 +10,8 @@ A drop-in, type-safe replacement for `tailwind-variants` with significantly fast
 
 ## Table of Contents
 
-- [Why this package?](#why-this-package)
+- [Why @codefast/tailwind-variants](#why-codefasttailwind-variants)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
@@ -30,7 +31,7 @@ A drop-in, type-safe replacement for `tailwind-variants` with significantly fast
 - [License](#license)
 - [Changelog](#changelog)
 
-## Why this package?
+## Why @codefast/tailwind-variants
 
 `@codefast/tailwind-variants` is an **API-compatible, higher-performance** alternative to [tailwind-variants](https://github.com/nextui-org/tailwind-variants) with the same surface area (`tv`, `createTV`, `cn`, `cx`, `VariantProps`).
 
@@ -74,6 +75,11 @@ All configuration shapes, option names, and return types are identical.
 
 ---
 
+## Requirements
+
+- TypeScript `>= 5.9` (recommended for best type inference)
+- Tailwind CSS `>= 4` — optional peer; the variant function itself is pure JavaScript and only produces classes you would use with Tailwind
+
 ## Installation
 
 ```bash
@@ -84,16 +90,10 @@ npm install @codefast/tailwind-variants
 yarn add @codefast/tailwind-variants
 ```
 
-**Runtime dependencies** (installed automatically):
+Runtime dependencies are installed automatically:
 
 - `clsx` — conditional class string composition
 - `tailwind-merge` — Tailwind class conflict resolution
-
-**Optional peer**: `tailwindcss` >= 4 (the variant function itself is pure JavaScript — it does not import Tailwind, it only produces classes you'd use with it).
-
-**Requirements**
-
-- TypeScript >= 5.9 (recommended for best type inference)
 
 ## Quick Start
 
