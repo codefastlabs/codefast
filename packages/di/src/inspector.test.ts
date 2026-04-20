@@ -36,13 +36,14 @@ describe("ContainerInspector", () => {
     const container = Container.create();
     container.load(InfrastructureModule);
 
-    const dot = container.generateDependencyGraph();
+    const dot = container.generateDependencyGraph({ format: "dot" });
     expect(dot).toContain("digraph codefast_di");
     expect(dot).toContain("subgraph cluster_InfraModule");
     expect(dot).toContain('label="InfraModule"');
     expect(dot).toContain("fillcolor=lightgray");
     expect(dot).toContain('fillcolor="#FFD700"');
     expect(dot).toContain('fillcolor="#ADD8E6"');
+    expect(dot).not.toContain("label=<");
     expect(dot).toContain("->");
     expect(dot).toContain(LoggerToken.name);
     expect(dot).toContain(HttpClientToken.name);
@@ -54,11 +55,11 @@ describe("ContainerInspector", () => {
     container.bind(HttpClientToken).toAlias(LoggerToken).singleton();
     container.bind(InternalTelemetryToken).toConstantValue("trace-123");
 
-    const full = container.generateDependencyGraph();
+    const full = container.generateDependencyGraph({ format: "dot" });
     expect(full).toContain(InternalTelemetryToken.name);
     expect(full).toMatch(/->.*style=dashed/s);
 
-    const filtered = container.generateDependencyGraph({ hideInternals: true });
+    const filtered = container.generateDependencyGraph({ format: "dot", hideInternals: true });
     expect(filtered).not.toContain(InternalTelemetryToken.name);
     expect(filtered).toContain(LoggerToken.name);
     expect(filtered).toContain(HttpClientToken.name);
@@ -76,5 +77,13 @@ describe("ContainerInspector", () => {
     const nodeLabels = data.nodes.map((n: ContainerBindingSnapshot) => n.registryKeyLabel);
     expect(nodeLabels).not.toContain("CODEFAST_DI_InternalProbe");
     expect(data.edges).toBeDefined();
+  });
+
+  it("generateDependencyGraph returns json by default", () => {
+    const container = Container.create();
+    container.bind(LoggerToken).toConstantValue("console");
+    const graph = container.generateDependencyGraph();
+    expect(graph.nodes).toBeDefined();
+    expect(graph.edges).toBeDefined();
   });
 });

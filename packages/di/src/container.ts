@@ -144,10 +144,10 @@ export interface Container extends AsyncDisposable {
    */
   inspect(): ContainerSnapshot;
   /**
-   * Renders the dependency graph as a Graphviz DOT string (default) or a typed JSON object.
+   * Returns the dependency graph as a typed JSON object (default) or a Graphviz DOT string.
    */
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
-  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options: DotGraphOptions & { format: "dot" }): string;
   /**
    * Creates a child container that inherits bindings from this container without polluting its registry.
    */
@@ -540,18 +540,18 @@ class DefaultContainer implements Container {
 
   /**
    * Delegates dependency-graph rendering to {@link ContainerInspector}.
-   * Returns DOT by default, or typed JSON when `format: "json"` is requested.
+   * Returns typed JSON by default, or DOT when `format: "dot"` is requested.
    */
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
-  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options: DotGraphOptions & { format: "dot" }): string;
   generateDependencyGraph(
-    options?: DotGraphOptions & { format?: "dot" | "json" },
+    options?: DotGraphOptions & { format?: "json" | "dot" },
   ): string | ContainerGraphJson {
     const inspector = this.createInspector();
-    if (options?.format === "json") {
-      return inspector.generateDependencyGraph(options as DotGraphOptions & { format: "json" });
+    if (options?.format === "dot") {
+      return inspector.generateDotGraph(options);
     }
-    return inspector.generateDotGraph(options);
+    return inspector.generateDependencyGraph(options as DotGraphOptions & { format?: "json" });
   }
 
   /**

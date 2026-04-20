@@ -44,7 +44,7 @@
  *   ✅ @preDestroy for resource cleanup
  *   ✅ module.import() diamond-dedup (infra modules imported by many contexts)
  *   ✅ whenParentIs constraint for context-aware logger injection
- *   ✅ container.generateDependencyGraph() for architecture visualization
+ *   ✅ container.generateDependencyGraph({ format: "dot" }) for architecture visualization
  *   ✅ resolveOptional for optional A/B test service
  *   ```
  *
@@ -2639,7 +2639,7 @@ async function main(): Promise<void> {
   console.log(`[Catalog] Found ${results.length} results`);
 
   // ── Dependency graph ──────────────────────────────────────────────────
-  const dot = platform.container.generateDependencyGraph();
+  const dot = platform.container.generateDependencyGraph({ format: "dot" });
   const lineCount = dot.split("\n").length;
   console.log(
     `\n[Graph] Dependency graph: ${lineCount} lines (paste at graphviz.org to visualize)`,
