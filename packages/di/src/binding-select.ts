@@ -24,8 +24,8 @@ export function filterMatchingBindings(
   bindings: readonly Binding<unknown>[],
   hint: ResolveHint | undefined,
   constraintCtx: ConstraintContext | undefined,
-): Binding<unknown>[] {
-  let candidates = [...bindings];
+): readonly Binding<unknown>[] {
+  let candidates: readonly Binding<unknown>[] = bindings;
   if (hint?.name !== undefined) {
     candidates = candidates.filter((binding) => binding.bindingName === hint.name);
   }

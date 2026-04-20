@@ -20,7 +20,6 @@ export type AccessorInjectionMetadata = {
 export type LifecycleMetadata = {
   readonly postConstruct?: string;
   readonly preDestroy?: string;
-  readonly accessorInjections?: readonly AccessorInjectionMetadata[];
 };
 
 /**

@@ -3,9 +3,15 @@ import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#/bi
 /**
  * Formats a resolution path array into a human-readable `"A -> B -> C"` string.
  */
-function formatResolutionPath(resolutionPath: readonly string[]): string {
+export function formatResolutionPath(resolutionPath: readonly string[]): string {
   return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
 }
+
+const SCOPE_LABELS: Record<BindingScope, string> = {
+  singleton: "Singleton",
+  scoped: "Scoped",
+  transient: "Transient",
+};
 
 /**
  * Serializes a {@link ResolveHint} to a debug string; never throws even for exotic values.
@@ -93,7 +99,7 @@ export class NoMatchingBindingError extends DiError {
     resolutionPath: readonly string[],
     options?: ErrorOptions,
   ) {
-    const pathText = resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
+    const pathText = formatResolutionPath(resolutionPath);
     const hintText = safeSerializeHint(hint);
     super(
       `No binding matched resolve options ${hintText} for token "${tokenName}" (resolution path: ${pathText})`,
@@ -306,12 +312,8 @@ export class ScopeViolationError extends DiError {
     const pathText = formatResolutionPath(details.resolutionPath);
     const consumerLabel = details.consumerLabel ?? String(details.consumerBindingId);
     const dependencyLabel = details.dependencyLabel ?? String(details.dependencyBindingId);
-    const consumerScopeLabel =
-      details.consumerScope.charAt(0).toUpperCase() + details.consumerScope.slice(1);
-    const dependencyScopeLabel =
-      details.dependencyScope.charAt(0).toUpperCase() + details.dependencyScope.slice(1);
     super(
-      `Scope Violation: ${consumerScopeLabel} "${consumerLabel}" cannot depend on ${dependencyScopeLabel} "${dependencyLabel}" (resolution path: ${pathText})`,
+      `Scope Violation: ${SCOPE_LABELS[details.consumerScope]} "${consumerLabel}" cannot depend on ${SCOPE_LABELS[details.dependencyScope]} "${dependencyLabel}" (resolution path: ${pathText})`,
       options,
     );
     this.consumerBindingId = details.consumerBindingId;
