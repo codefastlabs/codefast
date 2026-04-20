@@ -23,7 +23,7 @@ interface RequestContext {
 }
 
 // Singleton — shared across all requests
-@injectable([])
+@injectable()
 class AppDatabase {
   private static instanceCount = 0;
   readonly instanceId: number;

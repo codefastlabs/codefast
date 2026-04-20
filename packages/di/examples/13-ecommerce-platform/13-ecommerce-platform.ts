@@ -72,8 +72,10 @@
 import {
   Container,
   inject,
+  injectAll,
   injectable,
   Module,
+  optional,
   postConstruct,
   preDestroy,
   token,
@@ -401,8 +403,17 @@ class ConsoleLogger implements Logger {
   }
 }
 
+/** Root logger for this demo — the container constructs it (no `new` at bind sites). */
+@injectable()
+class EcommerceRootLogger extends ConsoleLogger {
+  constructor() {
+    super({ app: "ecommerce" });
+  }
+}
+
 // ---- IdGenerator ------------------------------------------------------------
 
+@injectable()
 class UlidGenerator implements IdGenerator {
   private counter = 0;
   generate(prefix = ""): string {
@@ -423,6 +434,7 @@ interface EventBus {
   subscribe<T>(topic: string, handler: EventHandler<T>): void;
 }
 
+@injectable([inject(LoggerToken)])
 class InMemoryEventBus implements EventBus {
   private readonly handlers = new Map<string, EventHandler[]>();
   private readonly log: Logger;
@@ -456,16 +468,16 @@ interface Database {
   close(): Promise<void>;
 }
 
+@injectable([inject(LoggerToken), inject(AppConfigToken)])
 class MockDatabase implements Database {
   private connected = false;
   private readonly log: Logger;
   private queryCount = 0;
+  private readonly url: string;
 
-  constructor(
-    logger: Logger,
-    private readonly url: string,
-  ) {
+  constructor(logger: Logger, cfg: AppConfig) {
     this.log = logger.child({ service: "Database" });
+    this.url = cfg.dbUrl;
   }
 
   async connect(): Promise<void> {
@@ -531,6 +543,7 @@ interface RedisClient {
   quit(): Promise<void>;
 }
 
+@injectable([inject(LoggerToken)])
 class MockRedis implements RedisClient {
   private readonly store = new Map<string, { value: string; expiresAt?: number }>();
   private connected = false;
@@ -601,8 +614,13 @@ interface S3Client {
   upload(key: string, data: Buffer): Promise<void>;
 }
 
+@injectable([inject(AppConfigToken)])
 class MockS3 implements S3Client {
-  constructor(private readonly bucket: string) {}
+  private readonly bucket: string;
+
+  constructor(cfg: AppConfig) {
+    this.bucket = cfg.s3Bucket;
+  }
   getSignedUrl(key: string): string {
     return `https://cdn.example.com/${this.bucket}/${key}`;
   }
@@ -620,6 +638,7 @@ interface ElasticClient {
   healthCheck(): Promise<boolean>;
 }
 
+@injectable([inject(LoggerToken)])
 class MockElastic implements ElasticClient {
   private readonly indices = new Map<string, Map<string, unknown>>();
   private readonly log: Logger;
@@ -1317,6 +1336,7 @@ interface ShippingCarrier {
 }
 
 // Multi-binding: FedEx
+@injectable()
 class FedExCarrier implements ShippingCarrier {
   carrierId = "fedex";
   carrierName = "FedEx";
@@ -1340,6 +1360,7 @@ class FedExCarrier implements ShippingCarrier {
 }
 
 // Multi-binding: UPS
+@injectable()
 class UpsCarrier implements ShippingCarrier {
   carrierId = "ups";
   carrierName = "UPS";
@@ -1363,6 +1384,7 @@ class UpsCarrier implements ShippingCarrier {
 }
 
 // Multi-binding: DHL
+@injectable()
 class DhlCarrier implements ShippingCarrier {
   carrierId = "dhl";
   carrierName = "DHL Express";
@@ -1390,7 +1412,7 @@ interface FulfillmentService {
   shipOrder(orderId: string, carrierId: string, address: ShippingAddress): Promise<string>;
 }
 
-@injectable([inject(OrderRepoToken), inject(ShippingCarrierToken), inject(LoggerToken)])
+@injectable([inject(OrderRepoToken), injectAll(ShippingCarrierToken), inject(LoggerToken)])
 class FulfillmentServiceImpl implements FulfillmentService {
   private readonly log: Logger;
 
@@ -1520,15 +1542,15 @@ interface PaymentGateway {
 }
 
 // Multi-binding: Stripe (primary)
+@injectable([inject(AppConfigToken), inject(LoggerToken)])
 class StripeGateway implements PaymentGateway {
   gatewayId = "stripe";
   displayName = "Stripe";
   private readonly log: Logger;
+  private readonly apiKey: string;
 
-  constructor(
-    private readonly apiKey: string,
-    logger: Logger,
-  ) {
+  constructor(cfg: AppConfig, logger: Logger) {
+    this.apiKey = cfg.stripeKey;
     this.log = logger.child({ gateway: "stripe" });
   }
 
@@ -1558,15 +1580,15 @@ class StripeGateway implements PaymentGateway {
 }
 
 // Multi-binding: PayPal (secondary/fallback)
+@injectable([inject(AppConfigToken), inject(LoggerToken)])
 class PayPalGateway implements PaymentGateway {
   gatewayId = "paypal";
   displayName = "PayPal";
   private readonly log: Logger;
+  private readonly clientId: string;
 
-  constructor(
-    private readonly clientId: string,
-    logger: Logger,
-  ) {
+  constructor(cfg: AppConfig, logger: Logger) {
+    this.clientId = cfg.paypalClientId;
     this.log = logger.child({ gateway: "paypal" });
   }
 
@@ -1596,6 +1618,7 @@ class PayPalGateway implements PaymentGateway {
 }
 
 // Multi-binding: COD (Cash on Delivery) — for certain markets
+@injectable()
 class CashOnDeliveryGateway implements PaymentGateway {
   gatewayId = "cod";
   displayName = "Cash on Delivery";
@@ -1627,7 +1650,7 @@ interface PaymentService {
 }
 
 @injectable([
-  inject(PaymentGatewayToken),
+  injectAll(PaymentGatewayToken),
   inject(OrderRepoToken),
   inject(EventBusToken),
   inject(LoggerToken),
@@ -2004,7 +2027,7 @@ interface NotificationService {
   sendShippingUpdate(order: Order, user: User, trackingNumber: string): Promise<void>;
 }
 
-@injectable([inject(NotificationChannelToken), inject(LoggerToken)])
+@injectable([injectAll(NotificationChannelToken), inject(LoggerToken)])
 class NotificationServiceImpl implements NotificationService {
   private readonly log: Logger;
 
@@ -2071,8 +2094,8 @@ interface CheckoutApplicationService {
   inject(UserServiceToken),
   inject(FulfillmentServiceToken),
   inject(NotificationServiceToken),
-  inject(AnalyticsServiceToken),
-  inject(AbTestServiceToken),
+  optional(AnalyticsServiceToken),
+  optional(AbTestServiceToken),
 ])
 class CheckoutApplicationServiceImpl implements CheckoutApplicationService {
   constructor(
@@ -2355,17 +2378,13 @@ class AbTestServiceImpl implements AbTestService {
 const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
   const config = await loadAppConfig();
   builder.bind(AppConfigToken).toConstantValue(config);
-  builder.bind(LoggerToken).toConstantValue(new ConsoleLogger({ app: "ecommerce" }));
+  builder.bind(LoggerToken).to(EcommerceRootLogger).singleton();
   builder.bind(IdGeneratorToken).to(UlidGenerator).singleton();
 
   // Database: async connect on activation, close on deactivation
   builder
     .bind(DatabaseToken)
-    .toDynamicAsync(async (ctx) => {
-      const cfg = ctx.resolve(AppConfigToken);
-      const log = ctx.resolve(LoggerToken);
-      return new MockDatabase(log, cfg.dbUrl);
-    })
+    .to(MockDatabase)
     .singleton()
     .onActivation(async (_ctx, db) => {
       await db.connect();
@@ -2378,10 +2397,7 @@ const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
   // Redis: async connect, close on deactivation
   builder
     .bind(RedisToken)
-    .toDynamicAsync(async (ctx) => {
-      const log = ctx.resolve(LoggerToken);
-      return new MockRedis(log);
-    })
+    .to(MockRedis)
     .singleton()
     .onActivation(async (_ctx, redis) => {
       await redis.connect();
@@ -2391,29 +2407,11 @@ const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
       await redis.quit();
     });
 
-  // S3
-  builder
-    .bind(S3Token)
-    .toDynamic((ctx) => {
-      const cfg = ctx.resolve(AppConfigToken);
-      return new MockS3(cfg.s3Bucket);
-    })
-    .singleton();
-
-  // Elasticsearch
-  builder
-    .bind(ElasticToken)
-    .toDynamic((ctx) => {
-      const log = ctx.resolve(LoggerToken);
-      return new MockElastic(log);
-    })
-    .singleton();
+  builder.bind(S3Token).to(MockS3).singleton();
+  builder.bind(ElasticToken).to(MockElastic).singleton();
 
   // In-memory EventBus (replace with Kafka/RabbitMQ binding in production)
-  builder
-    .bind(EventBusToken)
-    .toDynamic((ctx) => new InMemoryEventBus(ctx.resolve(LoggerToken)))
-    .singleton();
+  builder.bind(EventBusToken).to(InMemoryEventBus).singleton();
 });
 
 // ---- Catalog ----------------------------------------------------------------
@@ -2440,12 +2438,9 @@ const CartModule = Module.create("Cart", (builder) => {
 // ---- Orders -----------------------------------------------------------------
 
 const ShippingModule = Module.create("Shipping", (builder) => {
-  // Multi-binding: all shipping carriers under the same token
-  // container.bind() (not module) is used to append multiple carriers
-  // Below we bind directly in this module since it owns the carrier set
-  builder.bind(ShippingCarrierToken).toConstantValue(new FedExCarrier());
-  builder.bind(ShippingCarrierToken).toConstantValue(new UpsCarrier());
-  builder.bind(ShippingCarrierToken).toConstantValue(new DhlCarrier());
+  builder.bind(ShippingCarrierToken).whenNamed("fedex").to(FedExCarrier).singleton();
+  builder.bind(ShippingCarrierToken).whenNamed("ups").to(UpsCarrier).singleton();
+  builder.bind(ShippingCarrierToken).whenNamed("dhl").to(DhlCarrier).singleton();
 });
 
 const OrderModule = Module.create("Orders", (builder) => {
@@ -2457,20 +2452,10 @@ const OrderModule = Module.create("Orders", (builder) => {
 
 // ---- Payments ---------------------------------------------------------------
 
-const PaymentModule = Module.createAsync("Payments", async (builder) => {
-  const config = await loadAppConfig();
-
-  // Multi-binding: all payment gateways under PaymentGatewayToken
-  builder
-    .bind(PaymentGatewayToken)
-    .toDynamic((ctx) => new StripeGateway(config.stripeKey, ctx.resolve(LoggerToken)))
-    .singleton();
-  builder
-    .bind(PaymentGatewayToken)
-    .toDynamic((ctx) => new PayPalGateway(config.paypalClientId, ctx.resolve(LoggerToken)))
-    .singleton();
-  builder.bind(PaymentGatewayToken).toConstantValue(new CashOnDeliveryGateway());
-
+const PaymentModule = Module.create("Payments", (builder) => {
+  builder.bind(PaymentGatewayToken).whenNamed("stripe").to(StripeGateway).singleton();
+  builder.bind(PaymentGatewayToken).whenNamed("paypal").to(PayPalGateway).singleton();
+  builder.bind(PaymentGatewayToken).whenNamed("cod").to(CashOnDeliveryGateway).singleton();
   builder.bind(PaymentServiceToken).to(PaymentServiceImpl).singleton();
 });
 
@@ -2487,10 +2472,9 @@ const UserModule = Module.create("Users", (builder) => {
 // ---- Notifications ----------------------------------------------------------
 
 const NotificationModule = Module.create("Notifications", (builder) => {
-  // Multi-binding: all channels under same token
-  builder.bind(NotificationChannelToken).to(EmailChannel).singleton();
-  builder.bind(NotificationChannelToken).to(SmsChannel).singleton();
-  builder.bind(NotificationChannelToken).to(PushChannel).singleton();
+  builder.bind(NotificationChannelToken).whenNamed("email").to(EmailChannel).singleton();
+  builder.bind(NotificationChannelToken).whenNamed("sms").to(SmsChannel).singleton();
+  builder.bind(NotificationChannelToken).whenNamed("push").to(PushChannel).singleton();
   builder.bind(NotificationServiceToken).to(NotificationServiceImpl).singleton();
 });
 
