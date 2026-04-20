@@ -101,6 +101,16 @@ export type ResolutionContext = {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ) => Value | undefined;
+  /** Resolves every binding registered for `token` (multi-binding). */
+  readonly resolveAll: <Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ) => Value[];
+  /** Async variant of {@link ResolutionContext.resolveAll}. */
+  readonly resolveAllAsync: <Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ) => Promise<Value[]>;
   /**
    * Dependency-graph navigation context — path, materialization stack, parent/ancestor frames.
    */
@@ -245,7 +255,7 @@ type RegistryCallbacks<Value> = {
  *
  * Calling a second `to*()` method throws {@link InternalError}.
  *
- * The builder is created by {@link Container.bind} or by the `bind` callback in {@link ModuleBuilder}.
+ * The builder is created by {@link Container.bind} or by `bind` on {@link ModuleBuilder}.
  * The container injects {@link RegistryCallbacks} so that every strategy selection and
  * refinement is immediately reflected in the live registry.
  */

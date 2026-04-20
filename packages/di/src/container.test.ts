@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Container } from "#/container";
+import { injectAll } from "#/decorators/inject";
+import { injectable } from "#/decorators/injectable";
 import * as environment from "#/environment";
 import { Module } from "#/module";
 import { token } from "#/token";
@@ -61,5 +63,25 @@ describe("Container", () => {
     expect(container.has(multi, { tag: [tagKey, 1] })).toBe(true);
     expect(container.has(multi, { tag: [tagKey, 2] })).toBe(false);
     expect(container.has(multi, { name: "alpha", tag: [tagKey, 1] })).toBe(false);
+  });
+
+  it("injectAll in @injectable receives resolveAll() for that constructor parameter", () => {
+    const part = token<string>("container-inject-all-part");
+    const svc = token<{ parts: string[] }>("container-inject-all-svc");
+
+    @injectable([injectAll(part)])
+    class Aggregator {
+      constructor(readonly parts: string[]) {}
+    }
+
+    const mod = Module.create("inject-all-mod", (api) => {
+      api.bind(part).whenNamed("a").toConstantValue("x");
+      api.bind(part).whenNamed("b").toConstantValue("y");
+      api.bind(svc).to(Aggregator).singleton();
+    });
+
+    const container = Container.fromModules(mod);
+    const instance = container.resolve(svc);
+    expect(instance.parts.sort()).toEqual(["x", "y"]);
   });
 });

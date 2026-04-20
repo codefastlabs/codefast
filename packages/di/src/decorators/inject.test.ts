@@ -1,6 +1,6 @@
 import { DiError } from "#/errors";
 import { token } from "#/token";
-import { inject, optional, isInjectionDescriptor } from "#/decorators/inject";
+import { inject, injectAll, optional, isInjectionDescriptor } from "#/decorators/inject";
 
 describe("inject", () => {
   it("preserves string keys in tag resolve hints", () => {
@@ -31,6 +31,16 @@ describe("inject", () => {
     const desc = optional(t);
     expect(desc.token).toBe(t);
     expect(desc.optional).toBe(true);
+  });
+
+  it("injectAll marks all: true and forwards name/tag options", () => {
+    const t = token<string>("inject-all-t");
+    const plain = injectAll(t);
+    expect(plain.all).toBe(true);
+    expect(plain.optional).toBe(false);
+    const named = injectAll(t, { name: "x" });
+    expect(named.all).toBe(true);
+    expect(named.name).toBe("x");
   });
 
   it("isInjectionDescriptor validates descriptors", () => {

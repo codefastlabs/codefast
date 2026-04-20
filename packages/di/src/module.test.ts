@@ -143,4 +143,38 @@ describe("Module", () => {
     const container = Container.fromModules(mod);
     expect(container.resolve(tokenService)).toBeInstanceOf(Service);
   });
+
+  it("whenNamed before to* appends for resolveAll (multi-binding inside a module)", () => {
+    const multiToken = token<string>("module-bind-multi");
+    const multiModule = Module.create("multi", (api) => {
+      api.bind(multiToken).whenNamed("a").toConstantValue("a");
+      api.bind(multiToken).whenNamed("b").toConstantValue("b");
+      api.bind(multiToken).whenNamed("c").toConstantValue("c");
+    });
+    const container = Container.fromModules(multiModule);
+    expect(container.resolveAll(multiToken)).toEqual(["a", "b", "c"]);
+  });
+
+  it("plain bind after named binds replaces all bindings for that token (last-wins)", () => {
+    const t = token<string>("module-bind-then-multi");
+    const mod = Module.create("mix", (api) => {
+      api.bind(t).whenNamed("first").toConstantValue("first");
+      api.bind(t).toConstantValue("solo");
+    });
+    const container = Container.fromModules(mod);
+    expect(container.resolveAll(t)).toEqual(["solo"]);
+    expect(container.resolve(t)).toBe("solo");
+  });
+
+  it("unload removes every binding id from a multi-binding module", () => {
+    const t = token<number>("module-unload-multi");
+    const mod = Module.create("unload-multi", (api) => {
+      api.bind(t).whenNamed("x").toConstantValue(1);
+      api.bind(t).whenNamed("y").toConstantValue(2);
+    });
+    const container = Container.fromModules(mod);
+    expect(container.resolveAll(t)).toEqual([1, 2]);
+    container.unload(mod);
+    expect(container.resolveAll(t)).toEqual([]);
+  });
 });

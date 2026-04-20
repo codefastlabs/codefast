@@ -191,42 +191,7 @@ export class DependencyResolver {
    * @throws {@link MissingMetadataError} — class binding lacks injectable metadata when required.
    */
   resolveAllRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
-    const registryKey = key as RegistryKey;
-    const label = registryKeyLabel(key);
-    const basePath: string[] = [label];
-    const bindings = this.deps.lookup(registryKey);
-    if (bindings === undefined || bindings.length === 0) {
-      return [];
-    }
-    const selectionConstraintCtx = this.buildConstraintContext(basePath, [], hint);
-    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
-    if (candidates.length === 0) {
-      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
-        throw new NoMatchingBindingError(label, hint, basePath);
-      }
-      return [];
-    }
-    const results: Value[] = [];
-    for (const binding of candidates) {
-      this.assertDependencyScopeAllowed(binding, basePath, []);
-      if (binding.kind === "async-dynamic") {
-        throw new AsyncResolutionError(
-          label,
-          basePath,
-          "encountered async-dynamic factory during synchronous resolveAll",
-        );
-      }
-      const visiting = new Set<RegistryKey>();
-      visiting.add(registryKey);
-      try {
-        results.push(
-          this.instantiateBinding(binding, registryKey, hint, basePath, visiting, []) as Value,
-        );
-      } finally {
-        visiting.delete(registryKey);
-      }
-    }
-    return results;
+    return this.resolveAll(key, hint, [], new Set(), []);
   }
 
   /**
@@ -243,40 +208,129 @@ export class DependencyResolver {
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value[]> {
+    return this.resolveAllAsync(key, hint, [], new Set(), []);
+  }
+
+  /**
+   * Context-aware sync `resolveAll`: extends the current resolution path and preserves
+   * visiting/materialization stacks so nested multi-resolution participates in cycle and
+   * captive-dependency checks exactly like single-value {@link resolve}.
+   */
+  private resolveAll<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint: ResolveHint | undefined,
+    pathLabels: readonly string[],
+    visiting: Set<RegistryKey>,
+    materializationStack: readonly MaterializationFrame[],
+  ): Value[] {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
-    const basePath: string[] = [label];
+    const nextPath = [...pathLabels, label];
+
+    if (visiting.has(registryKey)) {
+      throw new CircularDependencyError(nextPath);
+    }
+
     const bindings = this.deps.lookup(registryKey);
     if (bindings === undefined || bindings.length === 0) {
       return [];
     }
-    const selectionConstraintCtx = this.buildConstraintContext(basePath, [], hint);
+    const selectionConstraintCtx = this.buildConstraintContext(
+      nextPath,
+      materializationStack,
+      hint,
+    );
     const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
     if (candidates.length === 0) {
       if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
-        throw new NoMatchingBindingError(label, hint, basePath);
+        throw new NoMatchingBindingError(label, hint, nextPath);
       }
       return [];
     }
+
+    visiting.add(registryKey);
     const results: Value[] = [];
-    for (const binding of candidates) {
-      this.assertDependencyScopeAllowed(binding, basePath, []);
-      const visiting = new Set<RegistryKey>();
-      visiting.add(registryKey);
-      try {
+    try {
+      for (const binding of candidates) {
+        this.assertDependencyScopeAllowed(binding, nextPath, materializationStack);
+        if (binding.kind === "async-dynamic") {
+          throw new AsyncResolutionError(
+            label,
+            nextPath,
+            "encountered async-dynamic factory during synchronous resolveAll",
+          );
+        }
+        results.push(
+          this.instantiateBinding(
+            binding,
+            registryKey,
+            hint,
+            nextPath,
+            visiting,
+            materializationStack,
+          ) as Value,
+        );
+      }
+    } finally {
+      visiting.delete(registryKey);
+    }
+    return results;
+  }
+
+  /**
+   * Async counterpart of {@link resolveAll}: keeps the current path and materialization stack
+   * so `when()` constraints and scope validation behave consistently for nested multi-resolution.
+   */
+  private async resolveAllAsync<Value>(
+    key: Token<Value> | Constructor<Value>,
+    hint: ResolveHint | undefined,
+    pathLabels: readonly string[],
+    visiting: Set<RegistryKey>,
+    materializationStack: readonly MaterializationFrame[],
+  ): Promise<Value[]> {
+    const registryKey = key as RegistryKey;
+    const label = registryKeyLabel(key);
+    const nextPath = [...pathLabels, label];
+
+    if (visiting.has(registryKey)) {
+      throw new CircularDependencyError(nextPath);
+    }
+
+    const bindings = this.deps.lookup(registryKey);
+    if (bindings === undefined || bindings.length === 0) {
+      return [];
+    }
+    const selectionConstraintCtx = this.buildConstraintContext(
+      nextPath,
+      materializationStack,
+      hint,
+    );
+    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
+    if (candidates.length === 0) {
+      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+        throw new NoMatchingBindingError(label, hint, nextPath);
+      }
+      return [];
+    }
+
+    visiting.add(registryKey);
+    const results: Value[] = [];
+    try {
+      for (const binding of candidates) {
+        this.assertDependencyScopeAllowed(binding, nextPath, materializationStack);
         results.push(
           (await this.instantiateBindingAsync(
             binding,
             registryKey,
             hint,
-            basePath,
+            nextPath,
             visiting,
-            [],
+            materializationStack,
           )) as Value,
         );
-      } finally {
-        visiting.delete(registryKey);
       }
+    } finally {
+      visiting.delete(registryKey);
     }
     return results;
   }
@@ -388,6 +442,16 @@ export class DependencyResolver {
           throw caughtError;
         }
       },
+      resolveAll: <Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint) =>
+        this.resolveAll(token, hint, [...pathLabels], visiting, materializationStack) as Value[],
+      resolveAllAsync: <Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint) =>
+        this.resolveAllAsync(
+          token,
+          hint,
+          [...pathLabels],
+          visiting,
+          materializationStack,
+        ) as Promise<Value[]>,
       graph: graphContext,
     };
   }
@@ -764,6 +828,9 @@ export class DependencyResolver {
           : param.tag !== undefined
             ? { tag: param.tag }
             : undefined;
+      if (param.all === true) {
+        return this.resolveAll(param.token, paramHint, pathLabels, visiting, materializationStack);
+      }
       if (param.optional) {
         try {
           return this.resolve(param.token, paramHint, pathLabels, visiting, materializationStack);
@@ -813,6 +880,18 @@ export class DependencyResolver {
           : param.tag !== undefined
             ? { tag: param.tag }
             : undefined;
+      if (param.all === true) {
+        deps.push(
+          await this.resolveAllAsync(
+            param.token,
+            paramHint,
+            pathLabels,
+            visiting,
+            materializationStack,
+          ),
+        );
+        continue;
+      }
       if (param.optional) {
         try {
           deps.push(

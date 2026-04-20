@@ -31,6 +31,11 @@ export type ParamMetadata = {
   readonly optional: boolean;
   readonly name?: string;
   readonly tag?: readonly [tag: string, value: unknown];
+  /**
+   * When true, the parameter receives every binding for `token` as an array (same semantics as
+   * `Container.resolveAll` / `ResolutionContext.resolveAll`), using `name` / `tag` as a filter when set.
+   */
+  readonly all?: boolean;
 };
 
 /**
@@ -42,6 +47,8 @@ export type InjectionDescriptor<Value = unknown> = {
   readonly optional: boolean;
   readonly name?: string;
   readonly tag?: readonly [tag: string, value: unknown];
+  /** When true, resolve every binding for {@link InjectionDescriptor.token} into an array. */
+  readonly all?: boolean;
 };
 
 /**

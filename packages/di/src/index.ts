@@ -35,7 +35,7 @@ export { AsyncModule, Module } from "#/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
 
 // Decorators
-export { inject, isInjectionDescriptor, optional } from "#/decorators/inject";
+export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
 export type { InjectOptions } from "#/decorators/inject";
 export { getAutoRegistered, injectable } from "#/decorators/injectable";
 export type { InjectableDependency } from "#/decorators/injectable";

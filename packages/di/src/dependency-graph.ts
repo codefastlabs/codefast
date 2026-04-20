@@ -12,7 +12,11 @@
  * @module
  */
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
-import { registryKeyLabel, selectBindingForRegistry } from "#/binding-select";
+import {
+  filterMatchingBindings,
+  registryKeyLabel,
+  selectBindingForRegistry,
+} from "#/binding-select";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { InternalError } from "#/errors";
 import type { RegistryKey } from "#/registry";
@@ -196,6 +200,32 @@ export function listResolvedDependencies(
         const tok = param.token;
         const label = registryKeyLabel(tok as Token<unknown> | Constructor<unknown>);
         const nextPath = [...pathPrefix, label];
+        const paramHint: ResolveHint | undefined =
+          param.name !== undefined
+            ? { name: param.name }
+            : param.tag !== undefined
+              ? { tag: param.tag }
+              : undefined;
+
+        if (param.all === true) {
+          const bindings = lookup(tok as RegistryKey);
+          if (bindings === undefined || bindings.length === 0) {
+            return [];
+          }
+          const candidates = filterMatchingBindings(bindings, paramHint, undefined);
+          if (candidates.length === 0) {
+            return [];
+          }
+          return candidates.map((binding) => {
+            const effective = expandAliasChain(lookup, binding, nextPath);
+            return {
+              binding: effective,
+              path: nextPath,
+              injectHintLabel: injectHintLabelFromResolveHint(paramHint),
+            };
+          });
+        }
+
         const binding = resolveDefaultBinding(lookup, tok, pathPrefix);
         if (binding === undefined) {
           if (param.optional) {
@@ -206,13 +236,7 @@ export function listResolvedDependencies(
           );
         }
         const effective = expandAliasChain(lookup, binding, nextPath);
-        const injectHintLabel = injectHintLabelFromResolveHint(
-          param.name !== undefined
-            ? { name: param.name }
-            : param.tag !== undefined
-              ? { tag: param.tag }
-              : undefined,
-        );
+        const injectHintLabel = injectHintLabelFromResolveHint(paramHint);
         return [{ binding: effective, path: nextPath, injectHintLabel }];
       });
     }

@@ -12,7 +12,8 @@ import type { Token } from "#/token";
 /**
  * A single entry in the `deps` array passed to `@injectable()`.
  * Can be a plain token/constructor (resolved with no hint) or an {@link InjectionDescriptor}
- * produced by {@link inject} / {@link optional} when name, tag, or optional semantics are needed.
+ * produced by `inject` / `optional` / `injectAll` when name, tag, optional, or resolve-all
+ * semantics are needed.
  */
 export type InjectableDependency =
   | Token<unknown>
@@ -55,6 +56,7 @@ function toParamMetadata(dependency: InjectableDependency, index: number): Param
       optional: dependency.optional,
       name: dependency.name,
       tag: dependency.tag,
+      all: dependency.all === true ? true : undefined,
     };
   }
   return {

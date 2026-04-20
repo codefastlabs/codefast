@@ -104,6 +104,31 @@ describe("Integration: Advanced Constraints", () => {
     expect(container.resolve(ApiToken)).toBe("standalone");
   });
 
+  it("ctx.resolveAll preserves parent-aware when constraints", () => {
+    const ParentToken = token<{ children: string[] }>("ParentResolveAllToken");
+    const ChildToken = token<string>("ChildResolveAllToken");
+
+    const container = Container.create();
+
+    container
+      .bind(ChildToken)
+      .toConstantValue("from-parent")
+      .when((ctx) => ctx.parent?.registryKey === ParentToken);
+
+    container
+      .bind(ChildToken)
+      .toConstantValue("from-root")
+      .when((ctx) => ctx.parent === undefined);
+
+    container
+      .bind(ParentToken)
+      .toDynamic((ctx) => ({ children: ctx.resolveAll(ChildToken) }))
+      .singleton();
+
+    expect(container.resolveAll(ChildToken)).toEqual(["from-root"]);
+    expect(container.resolve(ParentToken).children).toEqual(["from-parent"]);
+  });
+
   it("isolates materialization stacks across concurrent resolveAsync roots", async () => {
     const A = token("A");
     const B = token("B");

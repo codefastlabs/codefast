@@ -171,6 +171,11 @@ interface ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     opts?: ResolveOptions,
   ): Value | undefined;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value[];
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    opts?: ResolveOptions,
+  ): Promise<Value[]>;
   /**
    * Dependency-graph navigation context — dùng trong `BindingBuilder.when()` predicates.
    * Khác với `resolve*`: không cần để tạo instance thông thường, chỉ cần khi binding
@@ -179,6 +184,10 @@ interface ResolutionContext {
   graph: ConstraintContext;
 }
 ```
+
+`resolveAll`/`resolveAllAsync` trong `ResolutionContext` giữ nguyên ngữ cảnh resolve hiện tại
+(`resolutionPath`, `materializationStack`, parent/ancestors) — nghĩa là vẫn áp dụng đầy đủ
+scope validation (captive dependency) và `when()` predicates như `resolve`/`resolveAsync`.
 
 `ConstraintContext` chứa:
 
@@ -597,7 +606,7 @@ TC39 Decorator Stage 3 **không hỗ trợ parameter decorator** (TS1206) — đ
 Giải pháp: `@injectable()` nhận **deps array** khai báo tường minh thứ tự constructor — pattern tương tự Angular Ivy và tsyringe v2, và khớp hoàn hảo với nguyên tắc "explicit over magic" của spec.
 
 ```ts
-import { injectable, inject, optional } from "@codefast/di";
+import { injectable, inject, injectAll, optional } from "@codefast/di";
 
 // Class không có deps — không cần truyền gì
 @injectable()
@@ -625,16 +634,22 @@ class App {
     private analytics?: AnalyticsService,
   ) {}
 }
+
+// Multi dependency — inject tất cả binding cùng token thành mảng
+@injectable([injectAll(Plugin)])
+class PluginRunner {
+  constructor(private plugins: Plugin[]) {}
+}
 ```
 
 `optional()` là plain function trả về `InjectionDescriptor` — không phải decorator — hoàn toàn Stage 3 compatible.
 
-### 6.2 Named / tagged inject
+### 6.2 Named / tagged / multi inject
 
-`inject()` là plain function trả về `InjectionDescriptor` — dùng trong deps array của `@injectable()`. Hỗ trợ đầy đủ `name` và `tag` options:
+`inject()`, `optional()`, `injectAll()` đều là plain function trả về `InjectionDescriptor` — dùng trong deps array của `@injectable()`.
 
 ```ts
-import { injectable, inject, optional } from "@codefast/di";
+import { injectable, inject, injectAll, optional } from "@codefast/di";
 
 @injectable([inject(Logger, { name: "console" }), inject(Engine, { tag: ["fuel", "electric"] })]) // tag key luôn là string
 class Dashboard {
@@ -652,9 +667,15 @@ class Reporter {
     private analytics?: AnalyticsService,
   ) {}
 }
+
+// Multi-binding injection
+@injectable([injectAll(Plugin)])
+class Runner {
+  constructor(private plugins: Plugin[]) {}
+}
 ```
 
-Type signature của `inject()` và `optional()`:
+Type signature của `inject()`, `optional()`, `injectAll()`:
 
 ```ts
 // Plain function — không phải decorator
@@ -668,12 +689,18 @@ function optional<Value>(
   opts?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value | undefined>;
 
+function injectAll<Value>(
+  token: Token<Value> | Constructor<Value>,
+  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+): InjectionDescriptor<Value>;
+
 // InjectionDescriptor — được truyền vào deps array
 interface InjectionDescriptor<Value = unknown> {
   readonly token: Token<Value> | Constructor<Value>;
   readonly optional: boolean;
   readonly name?: string;
   readonly tag?: [tag: string, value: unknown];
+  readonly all?: boolean;
 }
 ```
 
@@ -856,6 +883,7 @@ console.log(`Registered ${count} services`); // "Registered 12 services"
 | `@injectable(deps?, opts?)` | decorator                     | class                            | Ghi param metadata vào `Symbol.metadata`. `deps` = array `(Token \| Constructor \| InjectionDescriptor)[]`. `opts.autoRegister` để tự đăng ký |
 | `inject(token, opts?)`      | plain fn / accessor decorator | deps array hoặc `accessor` field | Tạo `InjectionDescriptor` hoặc inject qua accessor getter/setter                                                                              |
 | `optional(token, opts?)`    | plain fn                      | deps array                       | Như `inject` nhưng resolve trả về `undefined` nếu không có binding                                                                            |
+| `injectAll(token, opts?)`   | plain fn                      | deps array                       | Resolve tất cả bindings khớp token (và `name`/`tag` nếu có) thành mảng                                                                        |
 | `@postConstruct()`          | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi sau khi construct, trước khi cache                                               |
 | `@preDestroy()`             | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi khi deactivation (singleton only)                                                |
 
@@ -883,6 +911,15 @@ Không cần `experimentalDecorators: true`. Decorator Stage 3 là chuẩn từ 
 ## 7. Module system
 
 Module là cách nhóm binding theo domain. Hỗ trợ cả sync lẫn async setup — theo convention `load`/`loadAsync` của InversifyJS v8.
+
+**Quy tắc bind trong module (last-wins vs multi-binding):**
+
+- `bind(token).to*(...)` (không có `whenNamed` / `whenTagged` / `when` trước `to*`) dùng
+  **single-slot last-wins**: binding mới thay thế toàn bộ binding cũ của token trong module pass đó.
+- Muốn **append multi-binding** trong module, đặt disambiguator trước `to*`, ví dụ:
+  `bind(token).whenNamed("a").to*(...)`, `whenTagged(...).to*(...)`, hoặc `when(...).to*(...)`.
+- Chaining `to*(...).whenNamed(...)` chỉ update binding hiện tại tại chỗ; không mở multi-slot cho
+  các dòng bind khác trong module.
 
 ### 7.1 Sync module
 
@@ -1115,7 +1152,7 @@ export { AsyncModule, Module } from "#/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
 
 // Decorators
-export { inject, isInjectionDescriptor, optional } from "#/decorators/inject";
+export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
 export type { InjectOptions } from "#/decorators/inject";
 export { getAutoRegistered, injectable } from "#/decorators/injectable";
 // getAutoRegistered() — trả về danh sách class đã dùng { autoRegister: true }
