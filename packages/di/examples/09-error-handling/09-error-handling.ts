@@ -19,14 +19,14 @@ import {
   AsyncResolutionError,
   CircularDependencyError,
   Container,
+  inject,
+  injectable,
   MissingMetadataError,
   Module,
   NoMatchingBindingError,
   ScopeViolationError,
-  TokenNotBoundError,
-  inject,
-  injectable,
   token,
+  TokenNotBoundError,
 } from "@codefast/di";
 
 // --- Helpers ----------------------------------------------------------------
@@ -199,7 +199,7 @@ section("6. ScopeViolationError — captive dependency");
 const ScopedServiceToken = token<ScopedService>("ScopedService");
 const SingletonConsumerToken = token<SingletonConsumer>("SingletonConsumer");
 
-@injectable([])
+@injectable()
 class ScopedService {
   readonly id = Math.random();
 }
