@@ -7,9 +7,26 @@ import type { Token } from "#/token";
 export type RegistryKey = Token<unknown> | Constructor<unknown>;
 
 /**
- * Dumb storage for bindings keyed by token or constructor. Selection and construction logic live elsewhere.
+ * Flat, in-memory storage for {@link Binding} entries keyed by {@link RegistryKey}.
+ * Each key maps to an ordered list of bindings (multi-binding support).
+ *
+ * The registry is a "dumb" store — it does not perform selection, scope caching, or
+ * lifecycle management. Those concerns live in `DependencyResolver` and `ScopeManager`.
+ *
+ * Mutation styles:
+ * - `add` — append-only; never removes existing entries.
+ * - `replaceById` — swaps a single binding in place by ID; no removal callback.
+ * - `remove` / `removeById` — delete entries **without** notifying callers; the caller
+ *   is responsible for draining the scope cache before calling these.
+ * - `replaceKeyLastWins` — replaces all bindings for a key with a single new one **and**
+ *   invokes the `onReplaced` callback for each evicted binding, giving the caller
+ *   (typically the container or scope manager) a chance to run deactivation.
  */
 export class BindingRegistry {
+  /**
+   * Primary index: registry key → ordered binding list.
+   * Reference equality on the key (i.e. the same {@link Token} or {@link Constructor} object).
+   */
   private readonly bindingsByKey = new Map<RegistryKey, Binding<unknown>[]>();
 
   /**
@@ -32,7 +49,8 @@ export class BindingRegistry {
   }
 
   /**
-   * Removes all bindings for `key` without running any deactivation hooks.
+   * Removes all bindings for `key`. Does **not** invoke any callback — the caller must
+   * drain the scope cache (run deactivation) for the affected bindings before calling this.
    */
   remove(key: RegistryKey): void {
     this.bindingsByKey.delete(key);
@@ -46,7 +64,8 @@ export class BindingRegistry {
   }
 
   /**
-   * Removes the single binding with the given `id` across all keys.
+   * Removes the single binding whose `id` matches, scanning all keys.
+   * Like {@link remove}, does **not** invoke a removal callback.
    */
   removeById(id: BindingIdentifier): void {
     for (const [registryKey, list] of [...this.bindingsByKey.entries()]) {
@@ -79,8 +98,10 @@ export class BindingRegistry {
   }
 
   /**
-   * Replaces all bindings for `key` with a single binding (module "last-wins" semantics).
-   * Invokes `onReplaced` for every removed binding so scopes can run deactivation.
+   * Replaces all bindings for `key` with a single new binding (module "last-wins" semantics).
+   * Unlike {@link remove} / {@link removeById}, this method invokes `onReplaced` for every
+   * evicted binding **before** inserting the replacement, giving the caller (e.g. the
+   * container's scope manager) a chance to release cached instances and run deactivation hooks.
    */
   replaceKeyLastWins<Value>(
     key: Token<Value> | Constructor<Value>,

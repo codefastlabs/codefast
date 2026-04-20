@@ -19,6 +19,11 @@ export type InjectableDependency =
   | Constructor<unknown>
   | InjectionDescriptor<unknown>;
 
+/**
+ * Global mutable registry of classes decorated with `@injectable({ autoRegister: true })`.
+ * Populated at class-definition time (via `context.addInitializer`), drained by
+ * {@link Container.loadAutoRegistered}. Entries accumulate for the lifetime of the process.
+ */
 const AUTO_REGISTER_REGISTRY: Array<{
   implementationClass: Constructor<unknown>;
   scope: BindingScope;
@@ -36,7 +41,11 @@ export function getAutoRegistered(): ReadonlyArray<{
 }
 
 /**
- * Converts a single `@injectable` deps-array entry into a {@link ParamMetadata} record.
+ * Normalises a single `@injectable` deps-array entry into the uniform {@link ParamMetadata}
+ * shape used by the resolver's constructor-instantiation path.
+ *
+ * - {@link InjectionDescriptor} entries carry `optional`, `name`, and `tag` fields.
+ * - Plain token / constructor entries are wrapped with `optional: false` and no hint.
  */
 function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
   if (isInjectionDescriptor(dependency)) {

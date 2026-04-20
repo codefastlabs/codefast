@@ -14,7 +14,11 @@ export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): st
 }
 
 /**
- * Applies resolve hints and optional constraint predicates to a binding list.
+ * Narrows a binding list by applying name/tag hints and `when()` constraint predicates.
+ *
+ * Filtering order: name filter → tag filter → constraint predicate. Bindings without a
+ * constraint predicate always pass the constraint stage. Returns the surviving candidates
+ * (may be empty).
  */
 export function filterMatchingBindings(
   bindings: readonly Binding<unknown>[],
@@ -38,8 +42,12 @@ export function filterMatchingBindings(
 }
 
 /**
- * Picks the binding that would be used for resolution with the given hint (same rules as {@link DependencyResolver}).
- * When `constraintCtx` is set, bindings with a {@link BindingBuilder.when} predicate must pass it.
+ * Selects exactly one binding from the provided list, applying hint and constraint filtering.
+ *
+ * @throws {@link TokenNotBoundError} — `bindings` list is empty, or no candidate survives
+ *   filtering without a name/tag hint.
+ * @throws {@link NoMatchingBindingError} — a name/tag hint was provided but no candidate matched.
+ * @throws {@link InternalError} — multiple candidates survive filtering (ambiguous binding).
  */
 export function selectBindingForRegistry(
   bindings: readonly Binding<unknown>[],
@@ -75,7 +83,8 @@ export function selectBindingForRegistry(
 }
 
 /**
- * Resolves the effective binding for a registry key using the default (no-hint) selection rules.
+ * Convenience wrapper: looks up bindings for `key` and selects the default (no-hint,
+ * no-constraint) binding. Throws {@link TokenNotBoundError} if the key is unregistered.
  */
 export function selectDefaultBindingForKey(
   lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,

@@ -21,11 +21,24 @@ function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
 }
 
 /**
- * Reads {@link ConstructorMetadata} from the standard `Symbol.metadata` object.
+ * Default {@link MetadataReader} implementation backed by TC39 `Symbol.metadata`.
+ *
+ * Constructor metadata (`@injectable()`) is read with `Object.hasOwn` to prevent
+ * a subclass from silently inheriting a parent's dependency list — each class must
+ * declare its own `@injectable()` decorator or be constructed with zero arguments.
+ *
+ * Lifecycle metadata (`@postConstruct` / `@preDestroy`) *is* inherited through the
+ * prototype chain, matching the intent that a parent's lifecycle hook applies to children.
  */
 export class SymbolMetadataReader implements MetadataReader {
   /**
-   * Reads constructor param metadata written by `@injectable()`. Returns `undefined` if none present.
+   * Reads constructor param metadata written by `@injectable()`.
+   * Returns `undefined` if no own metadata is present on the class.
+   *
+   * @remarks
+   * Uses `Object.hasOwn` intentionally — TC39 `Symbol.metadata` prototype-chains from
+   * parent to child, so without this guard a subclass without `@injectable()` would
+   * silently inherit the parent's parameter list and inject the wrong dependency count.
    */
   getConstructorMetadata(
     implementationClass: Constructor<unknown>,

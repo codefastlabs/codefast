@@ -5,7 +5,8 @@ import { InternalError } from "#/errors";
 import type { Token } from "#/token";
 
 /**
- * Options forwarded to the container when resolving an injected dependency.
+ * Name/tag hint forwarded to the container when resolving an injected dependency.
+ * Alias for {@link ResolveHint}; used as the second parameter of {@link inject} and {@link optional}.
  */
 export type InjectOptions = ResolveHint;
 
@@ -59,11 +60,27 @@ function isAccessorDecoratorContext(value: unknown): value is ClassAccessorDecor
 }
 
 /**
- * Creates an {@link InjectionDescriptor} for use in an `@injectable(deps)` array, or as an
- * `accessor` field decorator for post-construction property injection.
+ * Dual-purpose injection helper:
  *
- * As a deps-array entry: `@injectable([inject(Logger, { name: 'file' })])`
- * As an accessor decorator: `@inject(Logger) accessor logger!: LoggerService`
+ * **1. As a deps-array entry** — returns an {@link InjectionDescriptor} carrying the token,
+ * optional flag (`false`), and any name/tag hint. Used inside `@injectable([...deps])`.
+ *
+ * ```ts
+ * @injectable([inject(Logger, { name: 'file' })])
+ * class UserService { constructor(log: Logger) {} }
+ * ```
+ *
+ * **2. As a Stage 3 accessor decorator** — writes accessor-injection metadata into
+ * `Symbol.metadata` and returns a no-op sentinel. The container performs the actual
+ * injection after construction.
+ *
+ * ```ts
+ * @inject(Logger) accessor logger!: LoggerService;
+ * ```
+ *
+ * @param token - The injection key (token or constructor) to resolve.
+ * @param optionsOrContext - Either an {@link InjectOptions} hint or the TC39
+ *   `ClassAccessorDecoratorContext` automatically supplied by the runtime.
  */
 export function inject<Value>(
   token: Token<Value> | Constructor<Value>,
@@ -87,8 +104,9 @@ export function inject<Value>(
 }
 
 /**
- * Same as {@link inject} but marks the dependency as optional — resolves to `undefined` instead
- * of throwing {@link TokenNotBoundError} when no binding exists.
+ * Same as {@link inject} but marks the dependency as optional (`InjectionDescriptor.optional = true`).
+ * During resolution, an unbound token resolves to `undefined` instead of throwing
+ * {@link TokenNotBoundError}. Only usable as a deps-array entry (not as an accessor decorator).
  */
 export function optional<Value>(
   token: Token<Value> | Constructor<Value>,

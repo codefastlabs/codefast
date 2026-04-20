@@ -1,10 +1,14 @@
 /**
- * Well-known key for Codefast DI constructor metadata on `Symbol.metadata`.
+ * Well-known property key for constructor injection metadata on `Symbol.metadata`.
+ * Written by `@injectable()`, read by `SymbolMetadataReader.getConstructorMetadata()`.
+ * The `:v1` suffix is a schema version — bump only when the `ConstructorMetadata` shape changes.
  */
 export const CODEFAST_DI_CONSTRUCTOR_METADATA = "codefast/di:constructor-metadata:v1";
 
 /**
- * Well-known key for accessor field injection metadata written by `@inject` on `accessor` fields.
+ * Well-known property key for accessor-field injection metadata on `Symbol.metadata`.
+ * Written by `@inject()` when used as an accessor decorator; read during post-construction
+ * property injection by the resolver.
  */
 export const CODEFAST_DI_ACCESSOR_INJECTIONS = "codefast/di:accessor-injections:v1";
 /**
@@ -13,9 +17,12 @@ export const CODEFAST_DI_ACCESSOR_INJECTIONS = "codefast/di:accessor-injections:
 export const CODEFAST_DI_LIFECYCLE_METADATA = "codefast/di:lifecycle-metadata:v1";
 
 /**
- * Runtime symbol for the decorator metadata object (TC39 `Symbol.metadata`).
- * Node may expose this only via `Symbol.for("Symbol.metadata")` until the global
- * `Symbol.metadata` property is available.
+ * Returns the runtime symbol used to access TC39 decorator metadata on a class.
+ *
+ * Prefers the native `Symbol.metadata` when available (Stage 3 decorators); falls back to
+ * `Symbol.for("Symbol.metadata")` for Node/runtime versions that polyfill or partially
+ * implement the proposal. The fallback key is the de facto convention used by TypeScript
+ * and polyfill libraries.
  */
 export function decoratorMetadataObjectSymbol(): symbol {
   return typeof Symbol.metadata === "symbol" ? Symbol.metadata : Symbol.for("Symbol.metadata");

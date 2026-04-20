@@ -10,7 +10,8 @@ export type Token<Value> = {
 };
 
 /**
- * Extracts the value type carried by a {@link Token}.
+ * Extracts the value type carried by a {@link Token} or the instance type of a {@link Constructor}.
+ * Falls through to `never` for types that are neither a token nor a constructor.
  */
 export type TokenValue<Type> =
   Type extends Token<infer Value>
@@ -20,7 +21,13 @@ export type TokenValue<Type> =
       : never;
 
 /**
- * Creates a type-safe injection token identified by `name` (for debugging and errors).
+ * Creates a frozen, type-safe injection token identified by `name`.
+ *
+ * The returned object is `Object.freeze`-d; `name` is used only for debugging and error
+ * messages — binding lookup relies on **reference equality** of the token object.
+ * Store the return value in a module-level `const` and import it wherever needed.
+ *
+ * @param name - Human-readable label (appears in error messages, graph output, and debug snapshots).
  */
 export function token<Value>(name: string): Token<Value> {
   return Object.freeze({ name }) as Token<Value>;

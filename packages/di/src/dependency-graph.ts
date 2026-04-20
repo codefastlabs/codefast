@@ -1,3 +1,16 @@
+/**
+ * Static dependency-graph analysis for `@codefast/di`.
+ *
+ * This module walks binding metadata (constructor params, `toResolved` tokens, alias targets)
+ * **without performing resolution** to produce typed graph edges. The output drives both
+ * the Graphviz DOT renderer in {@link ContainerInspector} and the captive-dependency
+ * validation in {@link validateScopeRules}.
+ *
+ * "Static" means the graph is derived from declared metadata only — `toDynamic` / `toDynamicAsync`
+ * factories have no enumerable keys and produce zero edges.
+ *
+ * @module
+ */
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { registryKeyLabel, selectBindingForRegistry } from "#/binding-select";
 import type { MetadataReader } from "#/metadata/metadata-types";
@@ -97,7 +110,13 @@ function resolveDefaultBinding(
 
 /**
  * Follows alias bindings until a non-alias binding is reached.
- * Returns the last reachable binding; stops if an alias target is unregistered.
+ * Returns the last reachable binding; stops early if an alias target is unregistered.
+ *
+ * **Warning:** This is a static walk with no cycle detection (`visiting` set). If the
+ * registry contains a cyclic alias chain (A → B → A), this function will loop
+ * indefinitely. The runtime resolver prevents such cycles via its own `visiting`
+ * guard, but callers invoking `expandAliasChain` on a manually-constructed or
+ * corrupted registry must ensure alias chains are acyclic.
  */
 function expandAliasChain(
   lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
@@ -119,8 +138,16 @@ function expandAliasChain(
 }
 
 /**
- * Lists direct static dependencies (constructor metadata, `toResolved` tokens, alias targets).
- * Factories (`toDynamic` / `toAsyncDynamic`) have no enumerable dependency keys.
+ * Lists the direct static dependencies of `consumer` by inspecting binding metadata.
+ *
+ * - `constant` / `dynamic` / `async-dynamic` — no enumerable deps (empty array).
+ * - `alias` — single dependency on the alias target (chased through alias chains).
+ * - `resolved` — one dependency per entry in `dependencyTokens`; a missing binding
+ *   always throws {@link InternalError} (there is no optional concept for `resolved`).
+ * - `class` — one dependency per `@injectable()` constructor parameter
+ *   (requires a {@link MetadataReader}). Parameters marked `optional` whose token
+ *   has no binding are silently skipped; non-optional missing tokens throw
+ *   {@link InternalError}.
  */
 export function listResolvedDependencies(
   consumer: Binding<unknown>,

@@ -21,9 +21,21 @@ import { ScopeManager } from "#/scope";
 import type { Token } from "#/token";
 import { isDevelopmentOrTestEnvironment } from "#/environment";
 
+/**
+ * Mutable holder used to break the circular reference between container and resolver at creation time.
+ */
 type ContainerRef = { current: DefaultContainer | undefined };
+
+/**
+ * Union of sync and async modules accepted by `loadAsync` / `unloadAsync`.
+ */
 type ModuleLike = Module | AsyncModule;
 
+/**
+ * Derives a {@link ResolveHint} from a binding's name or first tag.
+ * Used by {@link DefaultContainer.initializeAsync} to re-resolve named/tagged singletons
+ * through the standard resolution path.
+ */
 function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefined {
   if (binding.bindingName !== undefined) {
     return { name: binding.bindingName };
@@ -149,19 +161,53 @@ export interface Container extends AsyncDisposable {
  * @internal Implementation of {@link Container}; not part of the public package contract.
  */
 class DefaultContainer implements Container {
+  /**
+   * Stack guard for detecting circular sync module imports during {@link ensureSyncModuleLoaded}.
+   */
   private readonly syncModuleStack: Module[] = [];
+  /**
+   * Stack guard for detecting circular async module imports during {@link ensureAsyncModuleLoaded}.
+   */
   private readonly asyncModuleStack: AsyncModule[] = [];
+  /**
+   * Tracks loaded modules → their binding IDs so {@link unload} / {@link unloadAsync} can
+   * remove exactly the bindings contributed by each module.
+   * Also serves as a deduplication set: a module present as a key is considered loaded.
+   */
   private readonly loadedModules = new Map<ModuleLike, BindingIdentifier[]>();
+  /**
+   * True after the first dev/test one-shot scope validation has run for the current registry state.
+   * Reset to `false` by {@link invalidateDevValidationState} on every registry mutation.
+   */
   private devValidationRan = false;
 
   private constructor(
+    /**
+     * This container's own registry (does not include parent bindings).
+     */
     private readonly ownRegistry: BindingRegistry,
+    /**
+     * Scope cache manager; root owns singleton disposal, children share the singleton map.
+     */
     private readonly ownScopeManager: ScopeManager,
+    /**
+     * Parent container for binding lookup fallback; `undefined` for root containers.
+     */
     private readonly parent: DefaultContainer | undefined,
+    /**
+     * Stateless graph walker that delegates caching and lookup back to the container.
+     */
     private readonly resolver: DependencyResolver,
+    /**
+     * Strategy for reading `@injectable()` / `@postConstruct()` metadata from constructors.
+     */
     private readonly metadataReader: MetadataReader,
   ) {}
 
+  /**
+   * Creates a root container with an empty registry and fresh singleton/scoped caches.
+   * Wires the circular container↔resolver reference via a mutable {@link ContainerRef} holder.
+   */
   static create(): Container {
     const ownRegistry = new BindingRegistry();
     const ownScopeManager = ScopeManager.createRoot();
@@ -190,7 +236,9 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Starts a fluent binding registered on this container when {@link BindingBuilder.build} runs.
+   * Starts a fluent {@link BindingBuilder} for the given token or constructor.
+   * The binding is registered into this container's registry immediately when a
+   * `to*()` strategy method is called on the returned builder.
    */
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     return new BindingBuilder<Value>(token, undefined, {
@@ -405,10 +453,18 @@ class DefaultContainer implements Container {
     }
   }
 
+  /**
+   * Marks the dev/test one-shot validation as stale so the next resolve or load triggers it again.
+   * Called on every registry mutation (bind, unbind, rebind, load, unload).
+   */
   private invalidateDevValidationState(): void {
     this.devValidationRan = false;
   }
 
+  /**
+   * Runs scope validation at most once per registry epoch when `NODE_ENV` is not `"production"`.
+   * Guards against repeated validation on successive resolves without intervening mutations.
+   */
   private maybeRunDevValidationOnce(): void {
     if (!isDevelopmentOrTestEnvironment()) {
       return;
@@ -477,6 +533,9 @@ class DefaultContainer implements Container {
     );
   }
 
+  /**
+   * Constructs a {@link ContainerInspector} wired to this container's full hierarchy.
+   */
   private createInspector(): ContainerInspector {
     const context: ContainerInspectorContext = {
       collectAllRegistryKeys: () => this.collectAllRegistryKeysInHierarchy(),
@@ -487,12 +546,19 @@ class DefaultContainer implements Container {
     return new ContainerInspector(context);
   }
 
+  /**
+   * Collects the union of all registry keys from this container and every ancestor.
+   * Deduplicates by reference equality (tokens are objects).
+   */
   private collectAllRegistryKeysInHierarchy(): RegistryKey[] {
     const keys = new Set<RegistryKey>();
     this.accumulateRegistryKeysFromHierarchy(keys, this);
     return [...keys];
   }
 
+  /**
+   * Recursive helper: walks the parent chain bottom-up, adding each level's registry keys.
+   */
   private accumulateRegistryKeysFromHierarchy(
     keys: Set<RegistryKey>,
     container: DefaultContainer | undefined,
@@ -552,6 +618,11 @@ class DefaultContainer implements Container {
     return this.dispose();
   }
 
+  /**
+   * Returns a `bind` function scoped to a module: bindings use "last-wins" semantics
+   * (re-binding the same token inside a module replaces the previous entry) and their IDs
+   * are tracked in {@link loadedModules} for later {@link unload}.
+   */
   private bindForModule(
     owner: ModuleLike,
   ): <Value>(token: Token<Value> | Constructor<Value>) => BindingBuilder<Value> {
@@ -571,6 +642,9 @@ class DefaultContainer implements Container {
       });
   }
 
+  /**
+   * Appends a binding ID to the tracking list for `owner` so {@link unload} can remove it later.
+   */
   private recordBindingForModule(owner: ModuleLike, id: BindingIdentifier): void {
     const list = this.loadedModules.get(owner);
     if (list === undefined) {
@@ -580,6 +654,10 @@ class DefaultContainer implements Container {
     list.push(id);
   }
 
+  /**
+   * Creates the {@link ModuleBuilder} passed to a sync module's setup callback.
+   * The `import` method throws {@link InternalError} if an {@link AsyncModule} is passed.
+   */
   private createSyncModuleBuilder(module: Module): ModuleBuilder {
     return {
       import: (...deps: Module[]) => {
@@ -596,6 +674,11 @@ class DefaultContainer implements Container {
     };
   }
 
+  /**
+   * Creates the {@link AsyncModuleBuilder} and a companion `awaitImports` thunk.
+   * Async sub-imports are collected into `pendingImports` and flushed after the module's
+   * own setup returns — this avoids interleaving setup code with dependency loading.
+   */
   private createAsyncModuleBuilder(module: AsyncModule): {
     readonly moduleBuilder: AsyncModuleBuilder;
     readonly awaitImports: () => Promise<void>;
@@ -623,6 +706,11 @@ class DefaultContainer implements Container {
     };
   }
 
+  /**
+   * Loads a sync module if not already loaded. Detects circular module imports via
+   * {@link syncModuleStack} and throws {@link CircularDependencyError} with the full cycle path.
+   * The module is marked as loaded *before* its setup runs so that re-entrant imports are deduped.
+   */
   private ensureSyncModuleLoaded(module: Module): void {
     if (this.loadedModules.has(module)) {
       return;
@@ -645,6 +733,10 @@ class DefaultContainer implements Container {
     }
   }
 
+  /**
+   * Async counterpart of {@link ensureSyncModuleLoaded}: loads the module's async setup,
+   * then flushes any pending async sub-imports collected during setup.
+   */
   private async ensureAsyncModuleLoaded(asyncModule: AsyncModule): Promise<void> {
     if (this.loadedModules.has(asyncModule)) {
       return;
