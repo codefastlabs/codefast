@@ -100,10 +100,10 @@ container.bind(UserServiceToken).to(UserService);
 
 // --- Usage ------------------------------------------------------------------
 
-const svc = container.resolve(UserServiceToken);
+const userService = container.resolve(UserServiceToken);
 
-console.log(svc.findUser("42")); // loads from db
-console.log(svc.findUser("42")); // cache hit
+console.log(userService.findUser("42")); // loads from db
+console.log(userService.findUser("42")); // cache hit
 
 // Verify singleton — same Database instance across resolutions
 const firstDatabaseResolve = container.resolve(Database);
