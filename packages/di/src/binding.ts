@@ -30,7 +30,9 @@ export type BindingScope = "singleton" | "transient" | "scoped";
  * Hint for disambiguating multi-bindings registered against the same token or constructor.
  */
 export type ResolveHint = {
+  /** Matches bindings configured with `.whenNamed(name)`. */
   readonly name?: string;
+  /** Matches bindings configured with `.whenTagged(tagKey, value)`. */
   readonly tag?: readonly [tag: string, value: unknown];
 };
 
@@ -58,10 +60,15 @@ export type ConstraintBindingKind =
  * ({@link whenParentIs}, {@link whenAnyAncestorIs}) and captive-dependency detection.
  */
 export type ConstraintParentFrame = {
+  /** Registry key (token/constructor) that selected this binding. */
   readonly registryKey: RegistryKey;
+  /** Stable identifier of the materialized binding. */
   readonly bindingId: BindingIdentifier;
+  /** Discriminant of the selected binding strategy. */
   readonly bindingKind: ConstraintBindingKind;
+  /** Immutable tag map present on the selected binding. */
   readonly tags: ReadonlyMap<string, unknown>;
+  /** Effective scope of the selected binding. */
   readonly scope: BindingScope;
 };
 
@@ -74,10 +81,15 @@ export type MaterializationFrame = ConstraintParentFrame;
  * Context for {@link BindingBuilder.when} predicates: path, ancestor metadata, and the current resolve hint.
  */
 export type ConstraintContext = {
+  /** Resolution labels from root request to current key. */
   readonly resolutionPath: readonly string[];
+  /** Full chain of materialized parent frames (oldest → newest). */
   readonly materializationStack: readonly ConstraintParentFrame[];
+  /** Immediate parent frame, if the current resolution has one. */
   readonly parent: ConstraintParentFrame | undefined;
+  /** Parent chain excluding the immediate parent frame. */
   readonly ancestors: readonly ConstraintParentFrame[];
+  /** Name/tag hint used for the current lookup, if provided. */
   readonly currentResolveHint: ResolveHint | undefined;
 };
 
@@ -89,14 +101,17 @@ export type ConstraintContext = {
  * context-sensitive bindings such as `whenParentIs` or `whenAnyAncestorIs`.
  */
 export type ResolutionContext = {
+  /** Resolves one binding synchronously using current path/stack context. */
   readonly resolve: <Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ) => Value;
+  /** Async variant of {@link ResolutionContext.resolve}. */
   readonly resolveAsync: <Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ) => Promise<Value>;
+  /** Returns `undefined` when the requested root key is unbound. */
   readonly resolveOptional: <Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
@@ -288,7 +303,15 @@ export class BindingBuilder<Value> {
    * Custom constraint predicates accumulated by `.when()`; all must pass for this binding to be selected.
    */
   private readonly constraintPredicates: ((ctx: ConstraintContext) => boolean)[] = [];
+  /**
+   * Latest `onActivation` hook provided by `.onActivation(...)`.
+   * Applied to emitted binding snapshots until replaced.
+   */
   private onActivationHandler: ActivationHandler<unknown> | undefined;
+  /**
+   * Latest `onDeactivation` hook provided by `.onDeactivation(...)`.
+   * Emitted only on builder variants that expose deactivation support.
+   */
   private onDeactivationHandler: DeactivationHandler<unknown> | undefined;
   /**
    * Set when this binding was created inside a {@link Module} / {@link AsyncModule} setup callback.

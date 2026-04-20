@@ -26,9 +26,13 @@ import type { Token } from "#/token";
  * A directed edge in the static dependency graph produced by {@link collectStaticDependencyEdges}.
  */
 export type StaticDependencyEdge = {
+  /** Binding id of the consumer node (edge source). */
   readonly fromBindingId: BindingIdentifier;
+  /** Binding id of the dependency node (edge target). */
   readonly toBindingId: BindingIdentifier;
+  /** Resolution labels leading to this edge. */
   readonly resolutionPath: readonly string[];
+  /** Edge execution kind inferred from binding strategies. */
   readonly edgeKind: "sync" | "async";
   /**
    * True when the resolved target binding carries a {@link BindingBuilder.when} predicate (runtime may skip this edge).
@@ -48,8 +52,11 @@ export type StaticDependencyEdge = {
  * A single resolved dependency entry produced by {@link listResolvedDependencies}.
  */
 export type ResolvedDependency = {
+  /** Effective dependency binding selected for this edge. */
   readonly binding: Binding<unknown>;
+  /** Resolution labels from consumer to dependency. */
   readonly path: readonly string[];
+  /** Optional name/tag label shown in graph outputs. */
   readonly injectHintLabel?: string;
 };
 

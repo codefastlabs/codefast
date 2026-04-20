@@ -275,14 +275,23 @@ export class AsyncResolutionError extends DiError {
  * Carries identities and scopes of both the long-lived consumer and the shorter-lived dependency.
  */
 export type ScopeViolationDetails = {
+  /** Binding id of the long-lived consumer (typically singleton). */
   readonly consumerBindingId: BindingIdentifier;
+  /** Binding strategy kind of the consumer. */
   readonly consumerKind: Binding<unknown>["kind"];
+  /** Scope of the consumer binding. */
   readonly consumerScope: BindingScope;
+  /** Optional display label for consumer in error messages. */
   readonly consumerLabel?: string;
+  /** Binding id of the shorter-lived dependency. */
   readonly dependencyBindingId: BindingIdentifier;
+  /** Binding strategy kind of the dependency. */
   readonly dependencyKind: Binding<unknown>["kind"];
+  /** Scope of the dependency binding. */
   readonly dependencyScope: BindingScope;
+  /** Optional display label for dependency in error messages. */
   readonly dependencyLabel?: string;
+  /** Resolution path captured at the violation point. */
   readonly resolutionPath: readonly string[];
 };
 

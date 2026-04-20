@@ -47,6 +47,10 @@ export class ScopeManager {
    */
   private readonly scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
 
+  /**
+   * Internal constructor for root/child scope managers.
+   * Prefer {@link createRoot} and {@link createChildScope}.
+   */
   private constructor(
     singletonCache: Map<BindingIdentifier, CacheEntry>,
     scopedCache: Map<BindingIdentifier, CacheEntry>,

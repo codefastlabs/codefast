@@ -13,10 +13,15 @@ export type BindingActivationStatus = "cached" | "not-cached" | "transient";
  * Per-binding row inside a {@link ContainerSnapshot}.
  */
 export type ContainerBindingSnapshot = {
+  /** Human-readable token/constructor label that owns this binding row. */
   readonly registryKeyLabel: string;
+  /** Stable binding identifier. */
   readonly bindingId: BindingIdentifier;
+  /** Binding strategy kind. */
   readonly kind: Binding<unknown>["kind"];
+  /** Declared binding scope. */
   readonly scope: BindingScope;
+  /** Cache/materialization status at snapshot time. */
   readonly activationStatus: BindingActivationStatus;
   /**
    * True when {@link BindingBuilder.when} was used (runtime predicate; static graph may still show edges).
@@ -29,6 +34,7 @@ export type ContainerBindingSnapshot = {
  * Full debug snapshot returned by {@link Container.inspect}.
  */
 export type ContainerSnapshot = {
+  /** Flat list of every visible binding row in the container hierarchy. */
   readonly bindings: readonly ContainerBindingSnapshot[];
 };
 
@@ -36,7 +42,9 @@ export type ContainerSnapshot = {
  * Structured dependency graph returned by {@link Container.generateDependencyGraph} with `format: "json"`.
  */
 export type ContainerGraphJson = {
+  /** Graph nodes (same shape as snapshot rows). */
   nodes: ContainerBindingSnapshot[];
+  /** Directed dependency edges between node binding ids. */
   edges: ReturnType<typeof collectStaticDependencyEdges>[number][];
 };
 
@@ -44,9 +52,13 @@ export type ContainerGraphJson = {
  * Read-only view of the container internals exposed to {@link ContainerInspector}.
  */
 export type ContainerInspectorContext = {
+  /** Enumerates every registry key visible to the inspector. */
   collectAllRegistryKeys(): readonly RegistryKey[];
+  /** Returns bindings for a given key, including hierarchy lookup behavior. */
   lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
+  /** Reports whether a binding currently has a cached scoped/singleton instance. */
   isBindingCached(binding: Binding<unknown>): boolean;
+  /** Metadata reader used for static constructor/lifecycle analysis. */
   metadataReader: MetadataReader | undefined;
 };
 
