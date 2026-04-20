@@ -1,5 +1,15 @@
 # @codefast/theme
 
+## 0.3.14-canary.0
+
+### Patch Changes
+
+- [`b728f3e`](https://github.com/codefastlabs/codefast/commit/b728f3e74c94ce448b48b2cfd3e7a119b9649cb1) Thanks [@thevuong](https://github.com/thevuong)! - docs(theme): update README.md for clarity and structure
+
+- [`b44597c`](https://github.com/codefastlabs/codefast/commit/b44597c9ec3a121a707aa269d7f68550ae1da72a) Thanks [@thevuong](https://github.com/thevuong)! - docs: enhance type annotations and comments for clarity across multiple files
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
 ## 0.3.13
 
 ### Patch Changes
