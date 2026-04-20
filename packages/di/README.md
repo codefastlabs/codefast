@@ -93,32 +93,42 @@ yarn add @codefast/di
 ## Quick Start
 
 ```typescript
-import { Container, inject, injectable, token } from "@codefast/di";
+import { Container, injectable, token } from "@codefast/di";
 
 interface Logger {
-  log(message: string): void;
+  info(message: string): void;
 }
 
 const LoggerToken = token<Logger>("Logger");
 
 @injectable([LoggerToken])
-class AppService {
+class CheckoutService {
   constructor(private readonly logger: Logger) {}
 
-  run(): void {
-    this.logger.log("App started");
+  complete(orderId: string): void {
+    this.logger.info(`Order ${orderId} completed`);
   }
 }
 
 const container = Container.create();
 
-container.bind(LoggerToken).toConstantValue({ log: console.log });
-container.bind(AppService).toSelf().singleton();
+// Production wiring
+container.bind(LoggerToken).toConstantValue({
+  info: (message) => console.log(`[prod] ${message}`),
+});
+container.bind(CheckoutService).toSelf();
 
-container.resolve(AppService).run(); // "App started"
+container.resolve(CheckoutService).complete("ORD-1001");
+
+// Same service, test wiring
+container.rebind(LoggerToken).toConstantValue({
+  info: (message) => console.log(`[test] ${message}`),
+});
+
+container.resolve(CheckoutService).complete("ORD-1002");
 ```
 
-The `@injectable([LoggerToken])` call lists constructor dependencies in order. Wrap an entry with `inject(token, options)` or `optional(token, options)` when you need a named/tagged hint or optional semantics.
+`@injectable([...])` lists constructor dependencies in order. The key idea: business classes (`CheckoutService`) stay unchanged while behavior swaps by rebinding infrastructure (`LoggerToken`) per environment.
 
 ---
 
@@ -576,10 +586,18 @@ The root entry re-exports the full public API. Subpath exports are provided for 
 | `@codefast/di/scope-validation`                | `validateScopeRules`                                             |
 | `@codefast/di/lifecycle`                       | Activation/deactivation runners                                  |
 | `@codefast/di/dependency-graph`                | Dependency-edge collection helpers                               |
+| `@codefast/di/graph-adapters/cytoscape`        | Cytoscape adapter for `ContainerGraphJson`                       |
+| `@codefast/di/graph-adapters/dot`              | DOT adapter for `ContainerGraphJson`                             |
+| `@codefast/di/graph-adapters/reactflow`        | React Flow adapter for `ContainerGraphJson`                      |
+| `@codefast/di/graph-adapters/types`            | Shared graph adapter type definitions                            |
 | `@codefast/di/inspector`                       | `ContainerInspector`, snapshot + graph types                     |
 | `@codefast/di/errors`                          | Full `DiError` hierarchy                                         |
 | `@codefast/di/environment`                     | `isDevelopmentOrTestEnvironment`, `isProductionEnvironment`      |
-| `@codefast/di/metadata/*`                      | Metadata keys, types, readers, parameter registry                |
+| `@codefast/di/metadata/metadata-keys`          | Metadata symbol keys                                             |
+| `@codefast/di/metadata/metadata-types`         | Metadata type definitions                                        |
+| `@codefast/di/metadata/param-registry`         | Constructor parameter metadata registry                          |
+| `@codefast/di/metadata/symbol-metadata-reader` | Symbol metadata reader utilities                                 |
+| `@codefast/di/package.json`                    | Package metadata                                                 |
 
 See `package.json → exports` for the authoritative list.
 
