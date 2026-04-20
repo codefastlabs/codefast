@@ -1,5 +1,12 @@
 # @codefast/cli
 
+## 0.3.14-canary.1
+
+### Patch Changes
+
+- Updated dependencies [[`2097bf6`](https://github.com/codefastlabs/codefast/commit/2097bf6c81639506c4c7f3f8a9a0f72bdb49ea49), [`0720553`](https://github.com/codefastlabs/codefast/commit/0720553f01bfae88725c1688efaf608e2cf45493), [`ab92dc7`](https://github.com/codefastlabs/codefast/commit/ab92dc7e5d864727bb5dcb1f2a3d08660c4112e8)]:
+  - @codefast/di@0.3.14-canary.1
+
 ## 0.3.14-canary.0
 
 ### Patch Changes
