@@ -98,7 +98,7 @@ catalog:
   nitro: 3.0.260311-beta
   oxfmt: ^0.44.0
   oxlint: ^1.59.0
-  oxlint-tsgolint: ^0.20.0
+  oxlint-tsgolint: ^0.21.1
   picomatch: ^4.0.4
   postcss: ^8.5.9
   react: ^19.2.5
