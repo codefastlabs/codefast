@@ -1,5 +1,13 @@
 # @codefast/tailwind-variants
 
+## 0.3.14-canary.0
+
+### Patch Changes
+
+- [`85e5ac1`](https://github.com/codefastlabs/codefast/commit/85e5ac122d7a75f756ae4c03b5ab5e9489823b59) Thanks [@thevuong](https://github.com/thevuong)! - docs(tailwind-variants): update README.md for improved clarity and performance emphasis
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
 ## 0.3.13
 
 ### Patch Changes
