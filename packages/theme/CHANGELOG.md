@@ -1,5 +1,7 @@
 # @codefast/theme
 
+## 0.3.14-canary.1
+
 ## 0.3.14-canary.0
 
 ### Patch Changes
