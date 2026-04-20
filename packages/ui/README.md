@@ -1,6 +1,6 @@
 # @codefast/ui
 
-Core UI components library built with React, Tailwind CSS, and Radix UI for creating modern, accessible, and customizable user interfaces with a comprehensive design system.
+Accessible, typed React components built on Radix UI primitives and styled with Tailwind CSS 4.
 
 [![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
 [![npm version](https://img.shields.io/npm/v/@codefast/ui.svg)](https://www.npmjs.com/package/@codefast/ui)
@@ -8,167 +8,308 @@ Core UI components library built with React, Tailwind CSS, and Radix UI for crea
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@codefast/ui)](https://bundlephobia.com/package/@codefast/ui)
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+---
+
 ## Table of Contents
 
-- [Overview](#overview)
+- [Highlights](#highlights)
+- [Requirements](#requirements)
 - [Installation](#installation)
-- [Styling Integration](#styling-integration)
-  - [SSR with Nitro (TanStack Start)](#ssr-with-nitro-tanstack-start)
+- [Styling](#styling)
+  - [With an existing Tailwind 4 setup (recommended)](#with-an-existing-tailwind-4-setup-recommended)
+  - [Standalone (no Tailwind yet)](#standalone-no-tailwind-yet)
+  - [Theme palettes](#theme-palettes)
+  - [Dark mode](#dark-mode)
+  - [Customizing tokens](#customizing-tokens)
 - [Quick Start](#quick-start)
-- [Components](#components)
-  - [Layout](#layout)
-  - [Form](#form)
-  - [Navigation](#navigation)
-  - [Overlay](#overlay)
-  - [Data Display](#data-display)
-- [Usage Examples](#usage-examples)
-- [Theming and Customization](#theming-and-customization)
-- [API Reference](#api-reference)
+- [Component catalog](#component-catalog)
+- [Hooks](#hooks)
+- [Primitives and utilities](#primitives-and-utilities)
+- [SSR with Nitro (TanStack Start)](#ssr-with-nitro-tanstack-start)
+- [Troubleshooting](#troubleshooting)
 - [Accessibility](#accessibility)
-- [Browser Compatibility](#browser-compatibility)
+- [Browser support](#browser-support)
 - [Contributing](#contributing)
 - [License](#license)
-- [Changelog](#changelog)
 
-## Overview
+---
 
-`@codefast/ui` provides **60+ accessible components** for building production-grade user interfaces. Every component is built on [Radix UI](https://radix-ui.com/) primitives, styled with [Tailwind CSS 4](https://tailwindcss.com/), and fully typed with TypeScript.
+## Highlights
 
-**Key features:**
+- **62+ components** across layout, form, navigation, overlay, and data-display categories.
+- **Built on [Radix UI](https://www.radix-ui.com/)** — keyboard navigation, focus management, and ARIA semantics come for free.
+- **Tailwind CSS 4** tokens shipped as CSS files (`@codefast/ui/css/*`), with 22 palette variants and a dark-mode scheme.
+- **Fully typed.** Every component exports its props (`ButtonProps`, `DialogContentProps`, …) for use in wrappers.
+- **Side-effect-free ESM** with per-component subpaths — bundlers tree-shake to what you actually import.
+- **Dependency-light.** Only the Radix + headless-UI libraries that each component needs are pulled in.
 
-- **60+ Components** -- Layout, form, navigation, overlay, and data display categories.
-- **Accessible by Default** -- WAI-ARIA compliant with keyboard navigation and screen reader support.
-- **Fully Typed** -- Complete TypeScript definitions for all components and props.
-- **Customizable** -- Extend styles with Tailwind CSS utility classes or Tailwind Variants.
-- **Tree-shakeable** -- Import only the components you use.
+---
+
+## Requirements
+
+- React `^19` and `react-dom` (peer; `@types/*` are optional peers)
+- Tailwind CSS `4.x` at build time (only if you use one of the theme CSS imports)
+- TypeScript `>= 5.9` (recommended)
+
+---
 
 ## Installation
 
 ```bash
 pnpm add @codefast/ui
-```
-
-Or using npm:
-
-```bash
+# or
 npm install @codefast/ui
 ```
 
-**Peer dependencies:**
+Peers:
 
 ```bash
 pnpm add react react-dom
 pnpm add -D @types/react @types/react-dom
 ```
 
-**Requirements:**
+---
 
-- Node.js >= 24.0.0 (LTS)
-- React >= 19.0.0
-- TypeScript >= 5.9.2 (recommended)
-- Tailwind CSS 4.x (for styling)
+## Styling
 
-## Styling Integration
+`@codefast/ui` ships theme tokens and component-layer styles as CSS files under `@codefast/ui/css/*`. Pick the integration that matches your project.
 
-`@codefast/ui` requires CSS styles to render correctly. Choose one of the following approaches based on your project setup.
+### With an existing Tailwind 4 setup (recommended)
 
-### Option 1: Project Already Uses Tailwind CSS (Recommended)
-
-If your project already has Tailwind CSS 4.x configured (e.g. Vite, Next.js, TanStack Start), import only the **theme variables** and **preset** to avoid duplicate Tailwind output:
-
-**1. In your main CSS file** (e.g. `src/styles.css` or `src/index.css`):
+Import the palette and the preset **after** `tailwindcss` so Tailwind isn't duplicated:
 
 ```css
+/* src/styles.css (or app/globals.css, …) */
 @import "tailwindcss";
 
-/* @codefast/ui – theme variables & preset (must come after tailwindcss) */
+/* @codefast/ui tokens + preset */
 @import "@codefast/ui/css/slate.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
-**2. Select a theme.** Available themes (replace `slate` with any below):
+Then import the stylesheet once from your app entry:
 
-| Theme   | Import Path                    |
-| ------- | ------------------------------ |
-| slate   | `@codefast/ui/css/slate.css`   |
-| gray    | `@codefast/ui/css/gray.css`    |
-| zinc    | `@codefast/ui/css/zinc.css`    |
-| neutral | `@codefast/ui/css/neutral.css` |
-| stone   | `@codefast/ui/css/stone.css`   |
-| red     | `@codefast/ui/css/red.css`     |
-| orange  | `@codefast/ui/css/orange.css`  |
-| amber   | `@codefast/ui/css/amber.css`   |
-| yellow  | `@codefast/ui/css/yellow.css`  |
-| lime    | `@codefast/ui/css/lime.css`    |
-| green   | `@codefast/ui/css/green.css`   |
-| emerald | `@codefast/ui/css/emerald.css` |
-| teal    | `@codefast/ui/css/teal.css`    |
-| cyan    | `@codefast/ui/css/cyan.css`    |
-| sky     | `@codefast/ui/css/sky.css`     |
-| blue    | `@codefast/ui/css/blue.css`    |
-| indigo  | `@codefast/ui/css/indigo.css`  |
-| violet  | `@codefast/ui/css/violet.css`  |
-| purple  | `@codefast/ui/css/purple.css`  |
-| fuchsia | `@codefast/ui/css/fuchsia.css` |
-| pink    | `@codefast/ui/css/pink.css`    |
-| rose    | `@codefast/ui/css/rose.css`    |
-
-**3. Dark mode.** All themes include light/dark variants. Add the `.dark` class to `<html>` or `<body>` to enable dark mode:
-
-```tsx
-// Example: toggle dark mode
-document.documentElement.classList.toggle("dark", isDark);
+```ts
+import "./styles.css";
 ```
 
-### Option 2: Standalone (No Existing Tailwind)
+Works the same for Vite (`@tailwindcss/vite`), Next.js (App Router), and TanStack Start.
 
-If your project does **not** use Tailwind yet, import the full stylesheet (includes Tailwind + theme + preset):
+### Standalone (no Tailwind yet)
 
-```tsx
-// In your app entry (e.g. main.tsx, _app.tsx)
+If your app doesn't run Tailwind, import the bundled stylesheet — it includes Tailwind 4 plus the default palette and preset:
+
+```ts
 import "@codefast/ui/css/style.css";
 ```
 
-> **Note:** This bundles Tailwind CSS. Ensure your build tool (Vite, webpack, etc.) can process CSS `@import`. You may need `@tailwindcss/vite` or `@tailwindcss/postcss` in devDependencies.
+Make sure your bundler can process CSS `@import` (Vite and Next.js do this out of the box; for other setups, add `@tailwindcss/postcss` or `@tailwindcss/vite`).
 
-### Option 3: Framework-Specific Setup
+### Theme palettes
 
-**Vite (with `@tailwindcss/vite`):**
+Replace `slate.css` with any of the palettes below:
 
-```css
-/* src/styles.css */
-@import "tailwindcss";
-@import "@codefast/ui/css/slate.css";
-@import "@codefast/ui/css/preset.css";
+```
+amber · blue · cyan · emerald · fuchsia · gray · green · indigo · lime · neutral
+orange · pink · purple · red · rose · sky · slate · stone · teal · violet · yellow · zinc
 ```
 
-**Next.js (App Router):**
+Each palette defines a light set on `:root` and a dark set under `.dark`.
 
-```css
-/* app/globals.css */
-@import "tailwindcss";
-@import "@codefast/ui/css/slate.css";
-@import "@codefast/ui/css/preset.css";
+### Dark mode
+
+Toggle the `dark` class on `<html>` (or any ancestor) to switch schemes:
+
+```ts
+document.documentElement.classList.toggle("dark", isDark);
 ```
 
-**TanStack Start:**
+Pair with [`@codefast/theme`](../theme/README.md) for SSR-safe theme management and cross-tab sync.
+
+### Customizing tokens
+
+Override CSS custom properties after the imports:
 
 ```css
-/* src/styles.css */
-@import "tailwindcss";
 @import "@codefast/ui/css/slate.css";
 @import "@codefast/ui/css/preset.css";
+
+:root {
+  --radius: 0.5rem;
+  --primary: oklch(0.4 0.2 260);
+}
+
+.dark {
+  --primary: oklch(0.72 0.18 260);
+}
 ```
 
-#### SSR with Nitro (TanStack Start)
+---
 
-Use this when you ship with **[Nitro](https://v3.nitro.build/)** (e.g. Vercel, Node) and **Vite 8** (Rolldown) via **TanStack Start**.
+## Quick Start
 
-**If you see** a server `TypeError` about `__extends` and `__toESM(...).default` (sometimes minified as `__toESM$1`), often during SSR or route loaders, configure `vite.config.ts` as below.
+```tsx
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
 
-##### Recommended: `nitro.exportConditions`
+export function Hero() {
+  return (
+    <Card className="w-96">
+      <CardHeader>
+        <CardTitle>Welcome to Codefast UI</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p>A typed React component library built on Radix and Tailwind CSS 4.</p>
+        <Button>Get started</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
 
-Prefer ESM entry points from dependencies (`import` / `module` in `package.json` `exports`). That avoids pulling CommonJS builds that `require("tslib")`, which can trip Rolldown’s CJS→ESM interop. Nitro still merges in `production` / `development`, `node`, and related conditions.
+Prefer per-component imports when you care about bundle visibility:
+
+```tsx
+import { Button } from "@codefast/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@codefast/ui/dialog";
+```
+
+Every subpath from the table below is tree-shakeable and ships its own types.
+
+---
+
+## Component catalog
+
+All components are also re-exported from the root entry `@codefast/ui`.
+
+### Layout & structure
+
+| Component     | Subpath                     | Notes                                         |
+| ------------- | --------------------------- | --------------------------------------------- |
+| `AspectRatio` | `@codefast/ui/aspect-ratio` | Maintain a consistent width/height ratio.     |
+| `Card`        | `@codefast/ui/card`         | Container with header/content/footer.         |
+| `Resizable`   | `@codefast/ui/resizable`    | Split-panel layouts (react-resizable-panels). |
+| `ScrollArea`  | `@codefast/ui/scroll-area`  | Styled scroll container with custom bars.     |
+| `Separator`   | `@codefast/ui/separator`    | Decorative or semantic divider.               |
+| `Sidebar`     | `@codefast/ui/sidebar`      | App shell sidebar primitive.                  |
+| `Skeleton`    | `@codefast/ui/skeleton`     | Loading placeholder.                          |
+
+### Forms & inputs
+
+| Component        | Subpath                                   | Notes                                     |
+| ---------------- | ----------------------------------------- | ----------------------------------------- |
+| `Button`         | `@codefast/ui/button`                     | Variants + sizes via Tailwind Variants.   |
+| `ButtonGroup`    | `@codefast/ui/button-group`               | Segmented button container.               |
+| `Checkbox`       | `@codefast/ui/checkbox`                   | Single checkbox.                          |
+| `CheckboxCards`  | `@codefast/ui/checkbox-cards`             | Card-style multi-select.                  |
+| `CheckboxGroup`  | `@codefast/ui/checkbox-group`             | Controlled multi-select group.            |
+| `Field` / `Form` | `@codefast/ui/field`, `@codefast/ui/form` | Form primitives, integrates with RHF.     |
+| `Input`          | `@codefast/ui/input`                      | Standard text input.                      |
+| `InputGroup`     | `@codefast/ui/input-group`                | Prefixed / suffixed composite input.      |
+| `InputNumber`    | `@codefast/ui/input-number`               | Numeric stepper with keyboard support.    |
+| `InputOTP`       | `@codefast/ui/input-otp`                  | One-time-password code input (input-otp). |
+| `InputPassword`  | `@codefast/ui/input-password`             | Password field with visibility toggle.    |
+| `InputSearch`    | `@codefast/ui/input-search`               | Search field with clear affordance.       |
+| `Label`          | `@codefast/ui/label`                      | Accessible form label.                    |
+| `NativeSelect`   | `@codefast/ui/native-select`              | Styled `<select>` wrapper.                |
+| `Radio`          | `@codefast/ui/radio`                      | Single radio button.                      |
+| `RadioCards`     | `@codefast/ui/radio-cards`                | Card-style single-select.                 |
+| `RadioGroup`     | `@codefast/ui/radio-group`                | Controlled single-select group.           |
+| `Select`         | `@codefast/ui/select`                     | Rich dropdown (Radix Select).             |
+| `Slider`         | `@codefast/ui/slider`                     | Range slider.                             |
+| `Switch`         | `@codefast/ui/switch`                     | Boolean toggle.                           |
+| `Textarea`       | `@codefast/ui/textarea`                   | Multi-line input.                         |
+| `Toggle`         | `@codefast/ui/toggle`                     | Pressable toggle button.                  |
+| `ToggleGroup`    | `@codefast/ui/toggle-group`               | Grouped toggles.                          |
+
+### Navigation
+
+| Component        | Subpath                        | Notes                       |
+| ---------------- | ------------------------------ | --------------------------- |
+| `Breadcrumb`     | `@codefast/ui/breadcrumb`      | Breadcrumb trail.           |
+| `Menubar`        | `@codefast/ui/menubar`         | Desktop-style menubar.      |
+| `NavigationMenu` | `@codefast/ui/navigation-menu` | Top-level nav with flyouts. |
+| `Pagination`     | `@codefast/ui/pagination`      | Page number controls.       |
+| `Tabs`           | `@codefast/ui/tabs`            | Tabbed content.             |
+
+### Overlay & feedback
+
+| Component      | Subpath                      | Notes                                 |
+| -------------- | ---------------------------- | ------------------------------------- |
+| `AlertDialog`  | `@codefast/ui/alert-dialog`  | Confirm / destructive dialog.         |
+| `Command`      | `@codefast/ui/command`       | Command palette (cmdk).               |
+| `ContextMenu`  | `@codefast/ui/context-menu`  | Right-click menu.                     |
+| `Dialog`       | `@codefast/ui/dialog`        | Modal dialog.                         |
+| `Drawer`       | `@codefast/ui/drawer`        | Mobile-friendly drawer (vaul).        |
+| `DropdownMenu` | `@codefast/ui/dropdown-menu` | Menu triggered from a button.         |
+| `HoverCard`    | `@codefast/ui/hover-card`    | Rich hover preview.                   |
+| `Popover`      | `@codefast/ui/popover`       | Floating panel anchored to a trigger. |
+| `Sheet`        | `@codefast/ui/sheet`         | Side-sheet (dialog from edge).        |
+| `Sonner`       | `@codefast/ui/sonner`        | Toast stack (sonner).                 |
+| `Tooltip`      | `@codefast/ui/tooltip`       | Keyboard-friendly tooltip.            |
+
+### Data display & content
+
+| Component        | Subpath                        | Notes                           |
+| ---------------- | ------------------------------ | ------------------------------- |
+| `Accordion`      | `@codefast/ui/accordion`       | Collapsible sections.           |
+| `Alert`          | `@codefast/ui/alert`           | Inline status message.          |
+| `Avatar`         | `@codefast/ui/avatar`          | User avatar with fallback.      |
+| `Badge`          | `@codefast/ui/badge`           | Status pill.                    |
+| `Calendar`       | `@codefast/ui/calendar`        | Date picker (react-day-picker). |
+| `Carousel`       | `@codefast/ui/carousel`        | Slider (embla-carousel).        |
+| `Chart`          | `@codefast/ui/chart`           | Responsive charts (recharts).   |
+| `Collapsible`    | `@codefast/ui/collapsible`     | Expand/collapse primitive.      |
+| `Empty`          | `@codefast/ui/empty`           | Empty-state illustration block. |
+| `Item`           | `@codefast/ui/item`            | List-item building block.       |
+| `Kbd`            | `@codefast/ui/kbd`             | Keyboard-key styling.           |
+| `Progress`       | `@codefast/ui/progress`        | Linear progress bar.            |
+| `ProgressCircle` | `@codefast/ui/progress-circle` | Circular progress indicator.    |
+| `Spinner`        | `@codefast/ui/spinner`         | Busy indicator.                 |
+| `Table`          | `@codefast/ui/table`           | Semantic table + styled cells.  |
+
+---
+
+## Hooks
+
+Available from `@codefast/ui/hooks/*`:
+
+| Hook                  | Subpath                                    | Purpose                                          |
+| --------------------- | ------------------------------------------ | ------------------------------------------------ |
+| `useAnimatedValue`    | `@codefast/ui/hooks/use-animated-value`    | Tween a number over time with easing control.    |
+| `useCopyToClipboard`  | `@codefast/ui/hooks/use-copy-to-clipboard` | Clipboard write with success state.              |
+| `useIsMobile`         | `@codefast/ui/hooks/use-is-mobile`         | Boolean for the standard mobile breakpoint.      |
+| `useMediaQuery`       | `@codefast/ui/hooks/use-media-query`       | Subscribe to a `matchMedia` query, SSR-safe.     |
+| `useMutationObserver` | `@codefast/ui/hooks/use-mutation-observer` | Run a callback on DOM mutations.                 |
+| `usePagination`       | `@codefast/ui/hooks/use-pagination`        | Page range / ellipsis helper for pagination UIs. |
+
+---
+
+## Primitives and utilities
+
+Low-level building blocks, used internally by the styled components, exposed for custom wrappers.
+
+| Import                                    | Contents                                                 |
+| ----------------------------------------- | -------------------------------------------------------- |
+| `@codefast/ui/primitives/input`           | Unstyled controlled-input primitive.                     |
+| `@codefast/ui/primitives/input-number`    | Numeric stepper logic (keyboard, parsing, clamp).        |
+| `@codefast/ui/primitives/checkbox-group`  | Controlled checkbox-group state machine.                 |
+| `@codefast/ui/primitives/progress-circle` | Math + a11y primitive for circular progress.             |
+| `@codefast/ui/lib/utils`                  | `cn()` — classname merge helper used by every component. |
+| `@codefast/ui/css/*`                      | Palette + preset CSS files (see [Styling](#styling)).    |
+
+```tsx
+import { cn } from "@codefast/ui/lib/utils";
+
+const classes = cn("rounded-md px-3 py-1", disabled && "opacity-50");
+```
+
+---
+
+## SSR with Nitro (TanStack Start)
+
+If you ship TanStack Start behind **[Nitro](https://v3.nitro.build/)** and **Vite 8 (Rolldown)**, you may hit a server-side `TypeError` referencing `__extends` or `__toESM(...).default` during route loaders or SSR. It originates from CJS `tslib` usage inside overlay-related dependencies (Dialog, Sheet, Menu, …) that reach for `react-remove-scroll-bar` and friends.
+
+**Preferred fix** — make Nitro pick ESM entry points from those packages:
 
 ```ts
 // vite.config.ts
@@ -178,13 +319,11 @@ export default defineConfig({
   nitro: {
     exportConditions: ["import", "module", "default"],
   },
-  // plugins: [ tanstackStart(), nitro(), … ]
+  // plugins: [tanstackStart(), nitro(), …],
 });
 ```
 
-##### Fallback: `resolve.alias`
-
-If the error persists, point `tslib` at its ESM file:
+**Fallback** — alias `tslib` to its ESM build:
 
 ```ts
 export default defineConfig({
@@ -194,312 +333,66 @@ export default defineConfig({
 });
 ```
 
-##### Why it happens (short)
+> Don't use `nitro.alias` for the bare specifier `tslib`. In Nitro v3 that option is for unenv path overrides, not npm package names, and produces broken resolutions.
 
-- **Bundler:** Rolldown may wrap `tslib`’s CJS build and read helpers from `.default` in a way that breaks when the module is marked `__esModule`.
-- **Dependencies:** Overlay-related packages (Dialog, Sheet, Menu, …) often pull in utilities such as [`react-remove-scroll-bar`](https://www.npmjs.com/package/react-remove-scroll-bar). Their legacy CJS output can use `require("tslib")` even when your app source is ESM.
+---
 
-> **Note:** Don’t use `nitro.alias` for the bare specifier `tslib`. In Nitro v3 that option is for unenv-style path overrides, not npm package names, and can produce broken paths.
+## Troubleshooting
 
-### Troubleshooting
+| Issue                                            | Fix                                                                                               |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Components render unstyled                       | Make sure CSS imports run before the first component mounts (import from the app entry).          |
+| Tailwind output is duplicated                    | Use the palette + `preset.css` import — don't also import `css/style.css` in the same app.        |
+| Dark mode doesn't apply                          | Add the `dark` class to `<html>` (or any ancestor). See [Dark mode](#dark-mode).                  |
+| `Cannot destructure property '__extends'` in SSR | Set `nitro.exportConditions: ["import", "module", "default"]` (see above).                        |
+| Missing font or radius after palette switch      | Re-import the palette **before** `preset.css`. Preset depends on palette variables being defined. |
 
-| Issue                                                    | Solution                                                                                                                                                  |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Components look unstyled                                 | Ensure CSS imports run before any component renders (entry point first).                                                                                  |
-| Duplicate Tailwind CSS                                   | Use Option 1 (theme + preset only), **not** `style.css`.                                                                                                  |
-| Dark mode not working                                    | Add `class="dark"` to `<html>` when dark mode is active.                                                                                                  |
-| Build: CSS not found                                     | Verify path: `@codefast/ui/css/[theme].css` (e.g. `slate.css`).                                                                                           |
-| SSR / loaders: `Cannot destructure property '__extends'` | Set `nitro.exportConditions: ['import', 'module', 'default']`, or add `resolve.alias` for `tslib` (see [SSR with Nitro](#ssr-with-nitro-tanstack-start)). |
-
-### Customizing Theme
-
-Override CSS variables in your own CSS after imports:
-
-```css
-@import "@codefast/ui/css/slate.css";
-@import "@codefast/ui/css/preset.css";
-
-:root {
-  --radius: 0.5rem; /* Increase border radius */
-  --primary: oklch(0.4 0.2 260); /* Custom primary color */
-}
-```
-
-## Quick Start
-
-After integrating styles (see [Styling Integration](#styling-integration)), import and use components:
-
-```tsx
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
-
-function App() {
-  return (
-    <Card className="w-96">
-      <CardHeader>
-        <CardTitle>Welcome to CodeFast UI</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">
-          A comprehensive UI components library built with React and Tailwind CSS.
-        </p>
-        <Button>Get Started</Button>
-      </CardContent>
-    </Card>
-  );
-}
-```
-
-## Components
-
-### Layout
-
-| Component   | Description                                                 |
-| ----------- | ----------------------------------------------------------- |
-| Card        | Content container with header, content, and footer sections |
-| Separator   | Visual divider between content sections                     |
-| AspectRatio | Maintain consistent aspect ratios for media content         |
-
-### Form
-
-| Component  | Description                                         |
-| ---------- | --------------------------------------------------- |
-| Button     | Interactive button with multiple variants and sizes |
-| Input      | Text input with validation support                  |
-| Checkbox   | Individual checkbox and checkbox groups             |
-| RadioGroup | Radio button group for single selection             |
-| Select     | Dropdown selection component                        |
-| Switch     | Toggle switch for boolean values                    |
-| Slider     | Range input slider                                  |
-| Label      | Form label with accessibility features              |
-
-### Navigation
-
-| Component      | Description                            |
-| -------------- | -------------------------------------- |
-| Breadcrumb     | Navigation breadcrumb trail            |
-| NavigationMenu | Complex navigation menus with submenus |
-| Menubar        | Application menu bar                   |
-| Tabs           | Tabbed interface with content panels   |
-
-### Overlay
-
-| Component   | Description                          |
-| ----------- | ------------------------------------ |
-| Dialog      | Modal dialog and popup               |
-| AlertDialog | Confirmation and alert dialog        |
-| Popover     | Contextual popover                   |
-| Tooltip     | Informational tooltip                |
-| HoverCard   | Rich hover card with preview content |
-
-### Data Display
-
-| Component | Description                      |
-| --------- | -------------------------------- |
-| Avatar    | User profile image with fallback |
-| Badge     | Status indicator and label       |
-| Alert     | System message and notification  |
-| Progress  | Progress indicator               |
-| Accordion | Expandable content sections      |
-| Calendar  | Date selection calendar          |
-| Carousel  | Content carousel and slider      |
-
-## Usage Examples
-
-### Form Components
-
-```tsx
-import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
-import { useState } from "react";
-
-function ContactForm() {
-  const [email, setEmail] = useState("");
-
-  return (
-    <Card className="w-96">
-      <CardHeader>
-        <CardTitle>Contact Us</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <Button className="w-full">Submit</Button>
-      </CardContent>
-    </Card>
-  );
-}
-```
-
-### Navigation Components
-
-```tsx
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui";
-
-function TabExample() {
-  return (
-    <Tabs defaultValue="account" className="w-96">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
-      </TabsList>
-      <TabsContent value="account" className="mt-4">
-        <p>Make changes to your account here.</p>
-      </TabsContent>
-      <TabsContent value="password" className="mt-4">
-        <p>Change your password here.</p>
-      </TabsContent>
-    </Tabs>
-  );
-}
-```
-
-### Overlay Components
-
-```tsx
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-} from "@codefast/ui";
-
-function DialogExample() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">{/* Form content */}</div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-```
-
-## Theming and Customization
-
-All components use CSS custom properties (`--primary`, `--background`, `--radius`, etc.). You can:
-
-1. **Switch themes** — Import a different theme file (e.g. `zinc.css` instead of `slate.css`).
-2. **Override variables** — Define your own values in `:root` or `.dark` after imports (see [Customizing Theme](#customizing-theme)).
-3. **Use a theme provider** — For system/light/dark switching, add/remove `dark` class on `<html>`; many apps use `next-themes` or similar for persistence.
-
-## API Reference
-
-### Common Props
-
-Most components accept these common props:
-
-| Prop        | Type              | Default     | Description            |
-| ----------- | ----------------- | ----------- | ---------------------- |
-| `className` | `string`          | `undefined` | Additional CSS classes |
-| `children`  | `React.ReactNode` | `undefined` | Child elements         |
-
-### TypeScript Support
-
-All components export their prop types for use in custom wrappers:
-
-```tsx
-import type { ButtonProps, CardProps, InputProps } from "@codefast/ui";
-
-function MyCustomButton(props: ButtonProps) {
-  return <Button {...props} />;
-}
-```
-
-### Component Prop Types
-
-**Layout:** `CardProps`, `SeparatorProps`, `AspectRatioProps`
-
-**Form:** `ButtonProps`, `InputProps`, `LabelProps`, `CheckboxProps`, `RadioGroupProps`, `SelectProps`, `SwitchProps`, `SliderProps`
-
-**Navigation:** `TabsProps`, `NavigationMenuProps`, `BreadcrumbProps`, `MenubarProps`
-
-**Overlay:** `DialogProps`, `AlertDialogProps`, `PopoverProps`, `TooltipProps`, `HoverCardProps`
+---
 
 ## Accessibility
 
-All components follow [WAI-ARIA](https://www.w3.org/WAI/ARIA/apg/) guidelines and provide:
+Every component inherits Radix's accessibility guarantees and is audited with `jest-axe` in the test suite:
 
-- **Keyboard Navigation** -- Full keyboard support for all interactive elements.
-- **Screen Reader Support** -- Proper ARIA labels and descriptions.
-- **Focus Management** -- Logical focus order and visible focus indicators.
-- **High Contrast** -- Support for high contrast themes.
-- **Reduced Motion** -- Respects the `prefers-reduced-motion` media query.
+- Full keyboard navigation (`Tab`, arrows, `Enter` / `Space`, `Escape`, `Home` / `End`).
+- Correct ARIA roles, `aria-expanded`, `aria-controls`, and live regions where relevant.
+- Focus trap + restore for overlays (Dialog, AlertDialog, Sheet, Drawer, DropdownMenu, …).
+- Respects `prefers-reduced-motion`.
+- High-contrast friendly color tokens — palettes use `oklch` and ship explicit `--ring`, `--border` values.
 
-### Keyboard Shortcuts
+---
 
-| Key                 | Action                                |
-| ------------------- | ------------------------------------- |
-| `Tab` / `Shift+Tab` | Navigate between focusable elements   |
-| `Enter` / `Space`   | Activate buttons and controls         |
-| `Arrow Keys`        | Navigate within component groups      |
-| `Escape`            | Close overlays and cancel actions     |
-| `Home` / `End`      | Navigate to first/last items in lists |
+## Browser support
 
-## Browser Compatibility
+Last two versions of Chrome, Edge, Firefox, and Safari. Internet Explorer is not supported.
 
-`@codefast/ui` supports all modern browsers:
-
-| Browser | Version         |
-| ------- | --------------- |
-| Chrome  | Last 2 versions |
-| Firefox | Last 2 versions |
-| Safari  | Last 2 versions |
-| Edge    | Last 2 versions |
-
-> Internet Explorer is not supported.
+---
 
 ## Contributing
 
-We welcome contributions! Please see the [contributing guide](../../README.md#contributing) in the root of this repository for detailed instructions.
-
-For package-specific development:
+This package lives in the [Codefast monorepo](https://github.com/codefastlabs/codefast). From the repo root:
 
 ```bash
-# Development mode
-pnpm dev --filter=@codefast/ui
-
-# Run tests
-pnpm test --filter=@codefast/ui
-
-# Run tests with coverage
-pnpm test:coverage --filter=@codefast/ui
+pnpm --filter @codefast/ui build
+pnpm --filter @codefast/ui dev          # watch build via tsdown
+pnpm --filter @codefast/ui test
+pnpm --filter @codefast/ui test:coverage
+pnpm --filter @codefast/ui check-types
 ```
 
-Package build/dev scripts use TypeScript directly via `tsc -p tsconfig.build.json` (watch mode for `pnpm dev --filter=@codefast/ui`).
+Adding a component:
 
-CSS entry exports under `@codefast/ui/css/*` are sourced from `src/css/*`.
+1. Implement it under `src/components/<name>.tsx`.
+2. Export the component and its prop types from `src/index.ts`.
+3. Add a new subpath entry in `package.json → exports` following the existing pattern.
+4. Add tests under `src/components/__tests__` (unit + `jest-axe` if interactive).
+5. Run `pnpm --filter @codefast/ui build` to verify `tsdown` picks up the new entry.
 
-### Adding New Components
+CSS entry exports under `@codefast/ui/css/*` are sourced directly from `src/css/*`.
 
-1. Create component files in `src/components/[component-name]/`.
-2. Export the component and types from the package entry point.
-3. Add comprehensive tests.
-4. Update documentation.
-5. Submit a pull request.
+---
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
+[MIT](https://opensource.org/licenses/MIT) — see [`package.json`](./package.json).
 
-## Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for a complete list of changes and version history.
+Version history is published on [npm](https://www.npmjs.com/package/@codefast/ui?activeTab=versions) and mirrored in [`CHANGELOG.md`](./CHANGELOG.md).
