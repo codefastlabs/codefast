@@ -6,6 +6,15 @@ import type { Token } from "#/token";
  * Builder passed to the setup callback of a synchronous {@link Module}.
  * Use `import()` to declare module dependencies (sync modules only —
  * passing an {@link AsyncModule} throws {@link InternalError}) and `bind()` to register tokens.
+ *
+ * **Single slot (last-wins)** — `bind(key).to*(...)` with no `whenNamed` / `whenTagged` / `when`
+ * *before* the `to*()` call replaces all prior bindings for `key` from this module pass.
+ *
+ * **Multi-binding** — put at least one disambiguator *before* `to*()` (e.g.
+ * `bind(key).whenNamed("a").to*(...)`, `whenTagged` before `to*()`, or `when` before `to*()`).
+ * Each such line **appends** another binding so {@link Container.resolveAll} can return every
+ * implementation. Use this order in modules; chaining `.to*(...).whenNamed()` only updates that
+ * binding in place and does not stack multiple registrations across lines.
  */
 export type ModuleBuilder = {
   readonly import: (...modules: Module[]) => void;

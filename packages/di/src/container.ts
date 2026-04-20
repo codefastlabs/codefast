@@ -47,6 +47,17 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
 }
 
 /**
+ * Module {@link ModuleBuilder.bind}: append when the binding is disambiguated **at first
+ * registration** (`whenNamed` / `whenTagged` / `when` before `to*()`). Otherwise replace
+ * all bindings for the token (last-wins). Chaining `.whenNamed()` after `.to*()` only updates
+ * in place and does not enable multi-binding for subsequent module lines — use hint-before-`to*()`
+ * in modules (same style as `container.bind(...).whenNamed("x").to*(...)` in the package README).
+ */
+function moduleBindingUsesMultiSlot(built: Binding<unknown>): boolean {
+  return built.bindingName !== undefined || built.tags.size > 0 || built.constraint !== undefined;
+}
+
+/**
  * Public contract for an IoC container (registry, modules, resolution, lifecycle).
  * Construct instances with {@link Container.create} or {@link Container.fromModules}.
  *
@@ -619,9 +630,14 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Returns a `bind` function scoped to a module: bindings use "last-wins" semantics
-   * (re-binding the same token inside a module replaces the previous entry) and their IDs
-   * are tracked in {@link loadedModules} for later {@link unload}.
+   * Returns a `bind` function scoped to a module. Registrations are tracked in
+   * {@link loadedModules} for {@link unload}.
+   *
+   * - **Last-wins** (replaces every binding for that token): `bind(token).to*(...)` with no
+   *   `whenNamed` / `whenTagged` / `when` **before** the `to*()` call.
+   * - **Multi-binding** (append): call `whenNamed`, `whenTagged`, and/or `when` **before** `to*()`
+   *   so the disambiguator exists at registration time — supports `resolveAll` and per-binding
+   *   hints in {@link Container.initializeAsync}.
    */
   private bindForModule(
     owner: ModuleLike,
@@ -630,9 +646,13 @@ class DefaultContainer implements Container {
       new BindingBuilder<Value>(token, owner.name, {
         register: (built) => {
           this.invalidateDevValidationState();
-          this.ownRegistry.replaceKeyLastWins(token, built, (removed) => {
-            this.ownScopeManager.releaseBinding(removed);
-          });
+          if (moduleBindingUsesMultiSlot(built)) {
+            this.ownRegistry.add(token, built);
+          } else {
+            this.ownRegistry.replaceKeyLastWins(token, built, (removed) => {
+              this.ownScopeManager.releaseBinding(removed);
+            });
+          }
           this.recordBindingForModule(owner, built.id);
         },
         update: (built) => {

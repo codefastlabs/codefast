@@ -22,7 +22,7 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
   - [Lifecycle hooks](#lifecycle-hooks)
 - [Decorators](#decorators)
   - [`@injectable`](#injectable)
-  - [`inject` / `optional`](#inject--optional)
+  - [`inject` / `optional` / `injectAll`](#inject--optional--injectall)
   - [Accessor injection](#accessor-injection)
   - [`@postConstruct` / `@preDestroy`](#postconstruct--predestroy)
   - [Auto-registration](#auto-registration)
@@ -294,18 +294,20 @@ class AppService {
 }
 ```
 
-Each entry is either a plain `Token` / `Constructor` or an `InjectionDescriptor` produced by `inject()` / `optional()`.
+Each entry is either a plain `Token` / `Constructor` or an `InjectionDescriptor` produced by `inject()` / `optional()` / `injectAll()`.
 
-### `inject` / `optional`
+### `inject` / `optional` / `injectAll`
 
 ```typescript
 inject(LoggerToken, { name: "console" });
 inject(StorageToken, { tag: ["provider", "s3"] });
 optional(CacheToken);
+injectAll(PluginToken);
 ```
 
 - `inject(token, options?)` — required. Throws `TokenNotBoundError` if the dependency is missing.
 - `optional(token, options?)` — optional. Resolves to `undefined` when unbound.
+- `injectAll(token, options?)` — resolves every matching binding into an array (`Value[]`), applying `name`/`tag` filters when provided.
 
 ### Accessor injection
 
@@ -381,6 +383,8 @@ container.resolve(StorageToken, { tag: ["provider", "s3"] });
 container.has(CacheToken);
 container.has(LoggerToken, { name: "console" });
 ```
+
+`resolveAll()` and `ctx.resolveAll()` preserve the current resolution context (path + parent/ancestors stack), so `when(...)` predicates and scope checks behave the same as `resolve()`.
 
 ### Async resolution
 
@@ -459,6 +463,12 @@ Sync `using` is intentionally rejected: calling `Symbol.dispose` throws. Use `aw
 ## Modules
 
 Modules bundle related bindings into reusable units. A module holds no runtime state and can be loaded into any number of containers.
+
+Inside module setup, binding semantics depend on whether a disambiguator is present before `to*()`:
+
+- `api.bind(Token).to*(...)` uses last-wins for that token.
+- `api.bind(Token).whenNamed(...)` / `.whenTagged(...)` / `.when(...)` **before** `to*()` appends another multi-binding entry.
+- `api.bind(Token).to*(...).whenNamed(...)` updates only that single built binding; it does not switch later lines into append mode.
 
 ```typescript
 import { Container, Module } from "@codefast/di";
@@ -547,7 +557,7 @@ The root entry re-exports the full public API. Subpath exports are provided for 
 | `@codefast/di/binding`                         | `BindingBuilder`, binding type definitions                       |
 | `@codefast/di/binding-select`                  | Binding selection internals (`filterMatchingBindings`, …)        |
 | `@codefast/di/module`                          | `Module`, `AsyncModule`, module builders                         |
-| `@codefast/di/decorators/inject`               | `inject`, `optional`, `isInjectionDescriptor`                    |
+| `@codefast/di/decorators/inject`               | `inject`, `optional`, `injectAll`, `isInjectionDescriptor`       |
 | `@codefast/di/decorators/injectable`           | `@injectable`, `getAutoRegistered`                               |
 | `@codefast/di/decorators/lifecycle-decorators` | `@postConstruct`, `@preDestroy`                                  |
 | `@codefast/di/constraints`                     | `whenParentIs`, `whenAnyAncestorIs`, `whenTargetTagged`          |

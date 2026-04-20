@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#/container";
 import { ScopeViolationError } from "#/errors";
 import { token } from "#/token";
+import { injectAll } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 
 class Ephemeral {
@@ -89,6 +90,43 @@ describe("ScopeValidation", () => {
     expect(() => {
       container.resolve(DatabaseService);
     }).toThrow(/Singleton "DatabaseService" cannot depend on Scoped "UserContext"/);
+  });
+
+  it("throws when singleton class injectAll captures scoped dependencies", () => {
+    @injectable()
+    class UserContext {}
+
+    @injectable([injectAll(UserContext)])
+    class UserContextAggregator {
+      constructor(readonly userContexts: UserContext[]) {}
+    }
+
+    const container = Container.create();
+    container.bind(UserContext).toSelf().scoped();
+    container.bind(UserContextAggregator).toSelf().singleton();
+
+    expect(() => {
+      container.resolve(UserContextAggregator);
+    }).toThrow(ScopeViolationError);
+  });
+
+  it("throws when singleton dynamic factory resolveAll captures scoped dependencies", () => {
+    const ScopedItemToken = token<{ id: number }>("ScopedItem");
+    const AggregatedToken = token<readonly { id: number }[]>("AggregatedItems");
+
+    const container = Container.create();
+    container
+      .bind(ScopedItemToken)
+      .toDynamic(() => ({ id: 1 }))
+      .scoped();
+    container
+      .bind(AggregatedToken)
+      .toDynamic((ctx) => ctx.resolveAll(ScopedItemToken))
+      .singleton();
+
+    expect(() => {
+      container.resolve(AggregatedToken);
+    }).toThrow(ScopeViolationError);
   });
 
   it("allows scoped class depending on singleton class", () => {

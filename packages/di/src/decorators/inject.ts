@@ -116,6 +116,21 @@ export function optional<Value>(
 }
 
 /**
+ * Deps-array helper for `@injectable()`: injects **all** bindings registered for `token`
+ * (same semantics as {@link Container.resolveAll} / {@link ResolutionContext.resolveAll}).
+ * Use for multi-binding — constructor parameter type should be `T[]` (or a readonly array).
+ *
+ * Optional {@link InjectOptions.name} / `tag` narrow which bindings are collected (unusual; most
+ * callers omit options and register disambiguators on each binding instead).
+ */
+export function injectAll<Value>(
+  token: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> {
+  return { ...toDescriptor(token, false, options), all: true as const };
+}
+
+/**
  * Type-guard — returns `true` when `value` is an {@link InjectionDescriptor}.
  */
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
