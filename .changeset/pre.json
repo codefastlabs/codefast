@@ -10,5 +10,21 @@
     "@codefast/typescript-config": "0.3.13",
     "@codefast/ui": "0.3.13"
   },
-  "changesets": []
+  "changesets": [
+    "afraid-spoons-glow",
+    "brown-dragons-slide",
+    "chatty-dragons-bet",
+    "cool-colts-retire",
+    "dirty-bags-draw",
+    "dry-singers-cut",
+    "late-mails-notice",
+    "shiny-moose-read",
+    "smooth-guests-warn",
+    "tasty-maps-learn",
+    "ten-cases-knock",
+    "vast-aliens-jog",
+    "wacky-beds-act",
+    "warm-heads-hang",
+    "wild-apes-study"
+  ]
 }

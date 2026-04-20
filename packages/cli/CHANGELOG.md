@@ -1,5 +1,22 @@
 # @codefast/cli
 
+## 0.3.14-canary.0
+
+### Patch Changes
+
+- [`df74f89`](https://github.com/codefastlabs/codefast/commit/df74f89c1c1d0daa546cabf85cdb71865a6a1fd5) Thanks [@thevuong](https://github.com/thevuong)! - style: simplify comment formatting in run-tag-sync integration test
+
+- [`3aedb57`](https://github.com/codefastlabs/codefast/commit/3aedb57e0ed465d6348fc85bbaceeaa009ace127) Thanks [@thevuong](https://github.com/thevuong)! - refactor: remove outdated architecture guidelines and linting rules
+
+- [`b44597c`](https://github.com/codefastlabs/codefast/commit/b44597c9ec3a121a707aa269d7f68550ae1da72a) Thanks [@thevuong](https://github.com/thevuong)! - docs: enhance type annotations and comments for clarity across multiple files
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
+- [`e03f421`](https://github.com/codefastlabs/codefast/commit/e03f421667c45bfb913a3ec58697eae52bf60ac8) Thanks [@thevuong](https://github.com/thevuong)! - docs(cli): enhance README.md for clarity and structure
+
+- Updated dependencies [[`5d39880`](https://github.com/codefastlabs/codefast/commit/5d398804b061eac5102730ae4121d0f6f0197590), [`787a8fc`](https://github.com/codefastlabs/codefast/commit/787a8fc818295bb7f7e8455ff0a7f993d7e0aab5), [`3457958`](https://github.com/codefastlabs/codefast/commit/3457958f3a90c62149b14161db92b9d763e90fd2), [`a78ae1d`](https://github.com/codefastlabs/codefast/commit/a78ae1d57f4fea0c7d9cfeb345e67d9fc040b0e0), [`680b28d`](https://github.com/codefastlabs/codefast/commit/680b28d6fca0c5ec754967b02a994231dca0fa9f), [`b44597c`](https://github.com/codefastlabs/codefast/commit/b44597c9ec3a121a707aa269d7f68550ae1da72a), [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef), [`0803cd0`](https://github.com/codefastlabs/codefast/commit/0803cd04c5f12848061451d664b74fd5552eb2fb)]:
+  - @codefast/di@0.3.14-canary.0
+
 ## 0.3.13
 
 ### Patch Changes
