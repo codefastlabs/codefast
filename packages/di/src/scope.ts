@@ -1,6 +1,6 @@
 import type { Binding, BindingIdentifier } from "#/binding";
 import { InternalError } from "#/errors";
-import { runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
+import { isPromiseLike, runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
 
 /**
  * Cached singleton or scoped instance together with its binding (needed for deactivation).
@@ -9,18 +9,6 @@ type CacheEntry = {
   readonly binding: Binding<unknown>;
   readonly instance: unknown;
 };
-
-/**
- * Returns `true` when `value` is a thenable (duck-typed Promise check).
- */
-function isPromiseLike(value: unknown): value is Promise<unknown> {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "then" in value &&
-    typeof (value as Promise<unknown>).then === "function"
-  );
-}
 
 /**
  * Caches singleton and scoped instances, deduplicates concurrent async creation, and runs
@@ -232,7 +220,6 @@ export class ScopeManager {
         );
       }
     }
-    // @preDestroy runs AFTER onDeactivation
     if (entry.binding.kind === "class") {
       runPreDestroy(entry.binding.implementationClass, entry.instance);
     }
@@ -254,7 +241,6 @@ export class ScopeManager {
     if (handler !== undefined) {
       await handler(entry.instance);
     }
-    // @preDestroy runs AFTER onDeactivation
     if (entry.binding.kind === "class") {
       await runPreDestroyAsync(entry.binding.implementationClass, entry.instance);
     }
@@ -265,8 +251,9 @@ export class ScopeManager {
    * synchronously. Throws {@link InternalError} if any handler returns a Promise.
    */
   private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
-    for (const [bindingId, entry] of [...store.entries()]) {
-      store.delete(bindingId);
+    const entries = [...store.values()];
+    store.clear();
+    for (const entry of entries) {
       const handler = entry.binding.onDeactivation;
       if (handler !== undefined) {
         const result = handler(entry.instance);
@@ -276,7 +263,6 @@ export class ScopeManager {
           );
         }
       }
-      // @preDestroy runs AFTER onDeactivation
       if (entry.binding.kind === "class") {
         runPreDestroy(entry.binding.implementationClass, entry.instance);
       }
@@ -297,7 +283,6 @@ export class ScopeManager {
         if (handler !== undefined) {
           await handler(entry.instance);
         }
-        // @preDestroy runs AFTER onDeactivation
         if (entry.binding.kind === "class") {
           await runPreDestroyAsync(entry.binding.implementationClass, entry.instance);
         }

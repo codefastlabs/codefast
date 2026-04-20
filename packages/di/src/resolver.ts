@@ -13,6 +13,7 @@ import {
   selectBindingForRegistry,
 } from "#/binding-select";
 import {
+  isPromiseLike,
   runActivation,
   runActivationAsync,
   runPostConstruct,
@@ -532,11 +533,9 @@ export class DependencyResolver {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
     return this.deps.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
-      // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
       const extendedStack = [...materializationStack, frame];
       const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
       const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
-      // @postConstruct runs BEFORE onActivation
       if (binding.kind === "class") {
         runPostConstruct(binding.implementationClass, instance, pathLabels);
       }
@@ -559,7 +558,6 @@ export class DependencyResolver {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
     return this.deps.scopeManager.getOrCreateAsync(binding, async () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
-      // Push parent frame so nested ctx.resolve sees the consumer scope (captive dependency check).
       const extendedStack = [...materializationStack, frame];
       const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
       const instance = await this.materializeAsync(
@@ -570,7 +568,6 @@ export class DependencyResolver {
         visiting,
         extendedStack,
       );
-      // @postConstruct runs BEFORE onActivation
       if (binding.kind === "class") {
         await runPostConstructAsync(binding.implementationClass, instance);
       }
@@ -638,12 +635,7 @@ export class DependencyResolver {
         return this.instantiateClassBinding(binding, pathLabels, visiting, materializationStack);
       case "dynamic": {
         const factoryResult = binding.factory(ctx);
-        if (
-          typeof factoryResult === "object" &&
-          factoryResult !== null &&
-          "then" in factoryResult &&
-          typeof (factoryResult as Promise<unknown>).then === "function"
-        ) {
+        if (isPromiseLike(factoryResult)) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
             pathLabels,
@@ -664,12 +656,7 @@ export class DependencyResolver {
           deps.push(this.resolve(depToken, undefined, pathLabels, visiting, materializationStack));
         }
         const resolvedValue = binding.factory(...deps);
-        if (
-          typeof resolvedValue === "object" &&
-          resolvedValue !== null &&
-          "then" in resolvedValue &&
-          typeof (resolvedValue as Promise<unknown>).then === "function"
-        ) {
+        if (isPromiseLike(resolvedValue)) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
             pathLabels,

@@ -10,7 +10,7 @@ import { AsyncResolutionError } from "#/errors";
  * Duck-typed Promise check: returns `true` when `value` has a `then` method.
  * Used throughout the lifecycle layer to guard against async return values on sync resolution paths.
  */
-function isPromiseLike(value: unknown): value is Promise<unknown> {
+export function isPromiseLike(value: unknown): value is Promise<unknown> {
   return (
     typeof value === "object" &&
     value !== null &&
@@ -89,12 +89,7 @@ export function runPostConstruct(
     return;
   }
   const postConstructResult = (lifecycleMethod as () => unknown).call(instance);
-  if (
-    typeof postConstructResult === "object" &&
-    postConstructResult !== null &&
-    "then" in postConstructResult &&
-    typeof (postConstructResult as Promise<unknown>).then === "function"
-  ) {
+  if (isPromiseLike(postConstructResult)) {
     const labels = pathLabels ?? [];
     const bindingLabel = labels[labels.length - 1] ?? "(unknown)";
     throw new AsyncResolutionError(
@@ -141,12 +136,7 @@ export function runPreDestroy(implementationClass: Constructor<unknown>, instanc
     return;
   }
   const preDestroyResult = (lifecycleMethod as () => unknown).call(instance);
-  if (
-    typeof preDestroyResult === "object" &&
-    preDestroyResult !== null &&
-    "then" in preDestroyResult &&
-    typeof (preDestroyResult as Promise<unknown>).then === "function"
-  ) {
+  if (isPromiseLike(preDestroyResult)) {
     throw new Error(
       `@preDestroy() "${methodName}" returned a Promise during synchronous disposal; use disposeAsync() / unloadAsync().`,
     );
