@@ -17,7 +17,13 @@ import type { Token } from "#/token";
  * binding in place and does not stack multiple registrations across lines.
  */
 export type ModuleBuilder = {
+  /**
+   * Declares synchronous module dependencies to load before/alongside current setup.
+   */
   readonly import: (...modules: Module[]) => void;
+  /**
+   * Starts binding registration for a token/constructor within this module setup pass.
+   */
   readonly bind: <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value>;
 };
 
@@ -27,7 +33,13 @@ export type ModuleBuilder = {
  * Async sub-imports are collected and awaited **after** the setup callback returns.
  */
 export type AsyncModuleBuilder = {
+  /**
+   * Declares sync/async module dependencies to be loaded by the async module loader.
+   */
   readonly import: (...modules: (Module | AsyncModule)[]) => void;
+  /**
+   * Starts binding registration for a token/constructor within this async module setup pass.
+   */
   readonly bind: <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value>;
 };
 

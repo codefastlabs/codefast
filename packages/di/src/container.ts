@@ -192,6 +192,10 @@ class DefaultContainer implements Container {
    */
   private devValidationRan = false;
 
+  /**
+   * Internal constructor for root/child instances.
+   * Use {@link Container.create}, {@link Container.fromModules}, or {@link createChild}.
+   */
   private constructor(
     /**
      * This container's own registry (does not include parent bindings).
@@ -264,6 +268,12 @@ class DefaultContainer implements Container {
     });
   }
 
+  /**
+   * Fast registry presence check without instantiation.
+   *
+   * When `hint` is provided, this only verifies that at least one binding matches
+   * the name/tag discriminator; it does not evaluate runtime `when()` predicates.
+   */
   has(token: RegistryKey, hint?: ResolveHint): boolean {
     const list = this.lookupBindings(token);
     if (list === undefined || list.length === 0) {
@@ -286,6 +296,12 @@ class DefaultContainer implements Container {
     });
   }
 
+  /**
+   * Removes bindings by token or by binding id and synchronously releases cached instances.
+   *
+   * - `binding id` path removes one binding and its cache entry.
+   * - `token` path removes all owned bindings for that key at once.
+   */
   unbind(tokenOrId: RegistryKey | BindingIdentifier): void {
     this.invalidateDevValidationState();
     if (typeof tokenOrId === "string") {
@@ -302,6 +318,9 @@ class DefaultContainer implements Container {
     this.ownRegistry.remove(tokenOrId);
   }
 
+  /**
+   * Async counterpart of {@link unbind}; awaits deactivation hooks before registry removal.
+   */
   async unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void> {
     this.invalidateDevValidationState();
     if (typeof tokenOrId === "string") {
@@ -318,6 +337,11 @@ class DefaultContainer implements Container {
     this.ownRegistry.remove(tokenOrId);
   }
 
+  /**
+   * Replaces all owned bindings for `token` and returns a fresh builder.
+   *
+   * Existing cached instances for the removed bindings are synchronously released first.
+   */
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     this.invalidateDevValidationState();
     const owned = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
@@ -413,6 +437,10 @@ class DefaultContainer implements Container {
     });
   }
 
+  /**
+   * Optional root resolution: returns `undefined` when the requested key is absent (or filtered out
+   * without a name/tag hint), while preserving normal errors for nested required dependencies.
+   */
   resolveOptional<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
@@ -424,6 +452,10 @@ class DefaultContainer implements Container {
     }
   }
 
+  /**
+   * Synchronously resolves every matching binding for a key.
+   * Returns an empty array when no binding exists.
+   */
   resolveAll<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     try {
       return this.resolver.resolveAllRoot(key, hint);
@@ -506,6 +538,10 @@ class DefaultContainer implements Container {
     return this.createInspector().getSnapshot();
   }
 
+  /**
+   * Delegates dependency-graph rendering to {@link ContainerInspector}.
+   * Returns DOT by default, or typed JSON when `format: "json"` is requested.
+   */
   generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
   generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
   generateDependencyGraph(
@@ -518,6 +554,10 @@ class DefaultContainer implements Container {
     return inspector.generateDotGraph(options);
   }
 
+  /**
+   * Registers every class collected by `@injectable({ autoRegister: true })`.
+   * Returns how many entries were processed.
+   */
   loadAutoRegistered(): number {
     const entries = getAutoRegistered();
     let count = 0;
@@ -613,6 +653,9 @@ class DefaultContainer implements Container {
     return child;
   }
 
+  /**
+   * Lookup helper with parent fallback: own bindings take precedence over parent bindings.
+   */
   lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
     const own = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
     if (own !== undefined && own.length > 0) {
@@ -621,10 +664,16 @@ class DefaultContainer implements Container {
     return this.parent?.lookupBindings(token);
   }
 
+  /**
+   * Disposes this container's scope manager and runs async deactivation hooks.
+   */
   async dispose(): Promise<void> {
     await this.ownScopeManager.disposeAsync();
   }
 
+  /**
+   * Async-dispose protocol hook used by `await using`.
+   */
   [Symbol.asyncDispose](): Promise<void> {
     return this.dispose();
   }
