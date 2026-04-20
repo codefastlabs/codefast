@@ -154,12 +154,11 @@ function isInternalRegistryKey(key: RegistryKey): boolean {
 }
 
 /**
- * Read-only introspection and Graphviz DOT export for a container graph.
- */
-/**
- * Reads the registry and scope-cache state to produce debug snapshots and dependency graphs.
- * Instantiated internally by the container; advanced consumers can construct it directly via
- * the `@codefast/di/inspector` subpath export.
+ * Reads the container's registry and scope-cache state to produce debug snapshots
+ * and dependency-graph output (Graphviz DOT / typed JSON).
+ *
+ * Constructed internally by the container; advanced consumers can also construct it
+ * directly via the `@codefast/di/inspector` subpath export.
  */
 export class ContainerInspector {
   constructor(private readonly ctx: ContainerInspectorContext) {}
@@ -351,6 +350,10 @@ export class ContainerInspector {
     return lines.join("\n");
   }
 
+  /**
+   * Overloaded entry point: returns DOT format by default, or a typed {@link ContainerGraphJson}
+   * when `format: "json"` is specified.
+   */
   generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
   generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
   generateDependencyGraph(
@@ -362,6 +365,10 @@ export class ContainerInspector {
     return this.generateDotGraph(options);
   }
 
+  /**
+   * Builds the typed JSON graph (nodes + edges) used by the `"json"` format path.
+   * Applies the same `hideInternals` / deduplication logic as {@link generateDotGraph}.
+   */
   generateDependencyGraphJsonTyped(options?: DotGraphOptions): ContainerGraphJson {
     const hideInternals = options?.hideInternals === true;
     const snapshot = this.getSnapshot();

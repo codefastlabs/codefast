@@ -34,6 +34,11 @@ export type ResolveHint = {
   readonly tag?: readonly [tag: string, value: unknown];
 };
 
+/**
+ * Public alias for {@link ResolveHint} — the `hint` parameter accepted by
+ * `Container.resolve`, `Container.resolveAsync`, and related methods.
+ * Passes `name` and/or `tag` to select among multi-bindings.
+ */
 export type ResolveOptions = ResolveHint;
 
 /**
@@ -47,6 +52,11 @@ export type ConstraintBindingKind =
   | "resolved"
   | "alias";
 
+/**
+ * Snapshot of a single binding on the materialization stack during resolution.
+ * Each frame captures enough identity to implement contextual constraints
+ * ({@link whenParentIs}, {@link whenAnyAncestorIs}) and captive-dependency detection.
+ */
 export type ConstraintParentFrame = {
   readonly registryKey: RegistryKey;
   readonly bindingId: BindingIdentifier;
@@ -97,6 +107,10 @@ export type ResolutionContext = {
   readonly graph: ConstraintContext;
 };
 
+/**
+ * Lifecycle and constraint fields shared by every concrete {@link Binding} variant.
+ * Separated from {@link BindingBase} so the builder can accumulate them independently of `id` / `scope`.
+ */
 type BindingLifecycle = {
   readonly bindingName?: string;
   readonly tags: ReadonlyMap<string, unknown>;
@@ -190,6 +204,10 @@ export type Binding<Value> =
   | ResolvedBinding<Value>
   | AliasBinding<Value>;
 
+/**
+ * Internal discriminated union tracking which `to*()` method has been called on a
+ * {@link BindingBuilder}. Starts as `"unset"` and transitions exactly once.
+ */
 type Strategy<Value> =
   | { readonly type: "unset" }
   | { readonly type: "constant"; readonly value: Value }
@@ -216,18 +234,63 @@ type RegistryCallbacks<Value> = {
   readonly update?: (binding: Binding<Value>) => void;
 };
 
+/**
+ * Fluent builder for registering a single binding against a {@link Token} or {@link Constructor}.
+ *
+ * A builder has two phases:
+ * 1. **Strategy selection** — exactly one `to*()` call (`to`, `toSelf`, `toConstantValue`,
+ *    `toDynamic`, `toDynamicAsync`, `toResolved`, `toAlias`) that determines how the value is produced.
+ * 2. **Refinement chain** — optional calls to `singleton()`, `transient()`, `scoped()`,
+ *    `onActivation()`, `onDeactivation()`, `whenNamed()`, `whenTagged()`, `when()`, and `id()`.
+ *
+ * Calling a second `to*()` method throws {@link InternalError}.
+ *
+ * The builder is created by {@link Container.bind} or by the `bind` callback in {@link ModuleBuilder}.
+ * The container injects {@link RegistryCallbacks} so that every strategy selection and
+ * refinement is immediately reflected in the live registry.
+ */
 export class BindingBuilder<Value> {
+  /**
+   * Current resolution strategy; starts as `"unset"` until a `to*()` method is called.
+   */
   private strategy: Strategy<Value> = { type: "unset" };
+  /**
+   * Lifetime scope applied to the next binding snapshot; defaults to `"transient"`.
+   */
   private scope: BindingScope = "transient";
+  /**
+   * True after an explicit `.singleton()` / `.transient()` / `.scoped()` call (prevents constant scope change).
+   */
   private isScopeExplicit = false;
+  /**
+   * Pre-allocated binding ID set via `id(identifier)` before the first `to*()` call.
+   */
   private explicitId: BindingIdentifier | undefined;
+  /**
+   * Resolve-hint name filter set by `.whenNamed()`.
+   */
   private bindingName: string | undefined;
+  /**
+   * Tag filters accumulated by successive `.whenTagged()` calls.
+   */
   private readonly tags = new Map<string, unknown>();
+  /**
+   * Custom constraint predicates accumulated by `.when()`; all must pass for this binding to be selected.
+   */
   private readonly constraintPredicates: ((ctx: ConstraintContext) => boolean)[] = [];
   private onActivationHandler: ActivationHandler<unknown> | undefined;
   private onDeactivationHandler: DeactivationHandler<unknown> | undefined;
+  /**
+   * Set when this binding was created inside a {@link Module} / {@link AsyncModule} setup callback.
+   */
   private readonly moduleId: string | undefined;
+  /**
+   * The most recently emitted {@link Binding} snapshot; `undefined` before the first `to*()` call.
+   */
   private currentBinding: Binding<Value> | undefined;
+  /**
+   * Container-injected hooks that sync builder mutations into the live registry.
+   */
   private readonly callbacks: RegistryCallbacks<Value>;
 
   constructor(
@@ -413,6 +476,10 @@ export class BindingBuilder<Value> {
     return this.explicitId;
   }
 
+  /**
+   * Records the chosen strategy and emits the first {@link Binding} snapshot.
+   * Throws {@link InternalError} if a strategy was already selected (double `to*()` call).
+   */
   private registerWithStrategy(next: Exclude<Strategy<Value>, { type: "unset" }>): void {
     if (this.strategy.type !== "unset") {
       throw new InternalError(
@@ -426,6 +493,10 @@ export class BindingBuilder<Value> {
     this.callbacks.register?.(binding);
   }
 
+  /**
+   * Re-creates the {@link Binding} snapshot from the current builder state and pushes
+   * the update to the registry. No-op if no strategy has been set yet.
+   */
   private refreshRegisteredBinding(): void {
     if (this.currentBinding === undefined || this.strategy.type === "unset") {
       return;
@@ -435,6 +506,10 @@ export class BindingBuilder<Value> {
     this.callbacks.update?.(next);
   }
 
+  /**
+   * Guards against calling `.singleton()` / `.transient()` / `.scoped()` on a constant binding,
+   * which is locked to `"singleton"` scope by invariant.
+   */
   private assertScopeMutable(): void {
     if (this.strategy.type === "constant") {
       throw new InternalError(
@@ -443,6 +518,10 @@ export class BindingBuilder<Value> {
     }
   }
 
+  /**
+   * Produces an immutable {@link Binding} snapshot from the current builder fields.
+   * Called by both {@link registerWithStrategy} and {@link refreshRegisteredBinding}.
+   */
   private createBinding(
     id: BindingIdentifier,
     strategy: Exclude<Strategy<Value>, { type: "unset" }>,

@@ -1,3 +1,15 @@
+/**
+ * `@codefast/di` — Lightweight dependency-injection primitives for TypeScript.
+ *
+ * Start with {@link Container.create} to build a root container, register bindings via
+ * {@link Container.bind} or {@link Module}, and resolve values with {@link Container.resolve}.
+ *
+ * This barrel re-exports every public symbol; individual subpath exports
+ * (e.g. `@codefast/di/token`, `@codefast/di/errors`) are also available for tree-shaking.
+ *
+ * @packageDocumentation
+ */
+
 // Token
 export { token } from "#/token";
 export type { Token, TokenValue } from "#/token";

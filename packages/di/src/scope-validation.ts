@@ -7,8 +7,9 @@ import type { RegistryKey } from "#/registry";
 
 /**
  * Walks every binding in the registry and throws {@link ScopeViolationError} on the first
- * captive-dependency violation found: a singleton that directly or transitively depends on a
- * scoped or transient binding. Constant bindings are exempt (no stateful instance to capture).
+ * captive-dependency violation found **along a direct static edge**: for each binding, only
+ * targets returned by {@link listResolvedDependencies} are considered (not a full recursive
+ * graph walk). Constant bindings are exempt.
  *
  * Called by {@link Container.validate} and automatically after each `load()` in non-production
  * environments.

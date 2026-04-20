@@ -23,7 +23,15 @@ function isPromiseLike(value: unknown): value is Promise<unknown> {
 }
 
 /**
- * Caches singleton and scoped instances and runs deactivation hooks on disposal.
+ * Caches singleton and scoped instances, deduplicates concurrent async creation, and runs
+ * deactivation hooks (`onDeactivation`, `@preDestroy`) on disposal.
+ *
+ * A root scope manager owns both singleton and scoped caches. A child scope manager (created
+ * via {@link createChildScope}) shares the parent's singleton cache but receives a fresh scoped
+ * cache — singletons are shared across the hierarchy, scoped instances are isolated per child.
+ *
+ * Invariant: `ownsSingletonDisposal` is `true` only for the root. When a child disposes, only
+ * its scoped bindings are deactivated; singletons remain alive until the root disposes.
  */
 export class ScopeManager {
   /**
@@ -34,11 +42,21 @@ export class ScopeManager {
    * Cached scoped instances for this container level: `bindingId → { binding, instance }`.
    */
   private readonly scopedCache: Map<BindingIdentifier, CacheEntry>;
+  /**
+   * True only for the root scope manager. Controls whether {@link dispose} / {@link disposeAsync}
+   * also drain the shared singleton cache; child scopes leave singleton disposal to the root.
+   */
   private readonly ownsSingletonDisposal: boolean;
   /**
-   * In-flight async singleton creation promises (deduplicate concurrent resolveAsync calls).
+   * In-flight async singleton creation promises.
+   * Guards against double-instantiation when multiple `resolveAsync` calls for the same
+   * singleton binding overlap before the first one settles.
    */
   private readonly singletonPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
+  /**
+   * In-flight async scoped creation promises (same deduplication role as
+   * {@link singletonPendingPromises} but for scoped bindings).
+   */
   private readonly scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
 
   private constructor(

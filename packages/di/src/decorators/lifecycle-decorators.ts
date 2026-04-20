@@ -2,8 +2,14 @@ import { CODEFAST_DI_LIFECYCLE_METADATA } from "#/metadata/metadata-keys";
 import type { LifecycleMetadata } from "#/metadata/metadata-types";
 
 /**
- * Stage 3 method decorator: marks a method to be called after the class is instantiated by the container.
- * Order: construct → `@postConstruct()` → `.onActivation()` → cache.
+ * Stage 3 method decorator: marks a method to be called after the class is instantiated
+ * by the container and before the `onActivation` hook runs.
+ *
+ * Lifecycle order: `new Class(…)` → **`@postConstruct()`** → `onActivation()` → scope cache.
+ *
+ * Only one method per class may carry this decorator; a second application throws.
+ * If the decorated method returns a `Promise` during synchronous resolution,
+ * {@link AsyncResolutionError} is thrown — use `Container.resolveAsync()` instead.
  */
 export function postConstruct(): (
   target: () => unknown,
@@ -26,8 +32,14 @@ export function postConstruct(): (
 }
 
 /**
- * Stage 3 method decorator: marks a method to be called before the instance is destroyed by the container.
- * Order: `.onDeactivation()` → `@preDestroy()`.
+ * Stage 3 method decorator: marks a method to be called when the container disposes or
+ * unloads the owning binding.
+ *
+ * Lifecycle order: `onDeactivation()` → **`@preDestroy()`**.
+ *
+ * Only one method per class may carry this decorator; a second application throws.
+ * If the decorated method returns a `Promise` during synchronous disposal,
+ * an error is thrown — use `Container.disposeAsync()` instead.
  */
 export function preDestroy(): (
   target: () => unknown,

@@ -67,21 +67,47 @@ export type ResolverDependencies = {
 };
 
 /**
- * Walks the binding graph, manages circular-dependency detection, delegates caching to
- * {@link ScopeManager}, and calls lifecycle hooks. Used exclusively by the container.
+ * Stateless graph walker: selects a binding, checks for cycles and scope violations,
+ * delegates instance caching to `ScopeManager`, and runs lifecycle hooks.
+ *
+ * Resolution algorithm (per token):
+ * 1. Lookup all bindings for the registry key.
+ * 2. Apply name/tag hint and `when()` constraint filtering.
+ * 3. Circular-dependency check via a mutable `visiting` set (per call tree).
+ * 4. Captive-dependency check via the `materializationStack`.
+ * 5. Scope-cache hit → return cached instance.
+ * 6. Scope-cache miss → `materialize` → `@postConstruct` → `onActivation` → cache.
+ *
+ * Used exclusively by `DefaultContainer`; not part of the public API.
  */
 export class DependencyResolver {
   constructor(private readonly deps: ResolverDependencies) {}
 
   /**
-   * Entry point for synchronous single-binding resolution (no path prefix).
+   * Entry point for synchronous single-binding resolution.
+   *
+   * @throws {@link TokenNotBoundError} — no binding registered for `key`, or a nested dependency is unbound.
+   * @throws {@link NoMatchingBindingError} — a name/tag `hint` was given for `key` but no binding matched it.
+   * @throws {@link InternalError} — multiple bindings matched for `key` after applying the hint (ambiguous).
+   * @throws {@link CircularDependencyError} — `key` or a nested token appears twice on the resolution stack.
+   * @throws {@link AsyncResolutionError} — an `async-dynamic` binding or async lifecycle/activation on the sync path.
+   * @throws {@link ScopeViolationError} — captive dependency (singleton → scoped/transient).
+   * @throws {@link MissingMetadataError} — `class` binding lacks injectable metadata when the reader requires it.
    */
   resolveRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
     return this.resolve(key, hint, [], new Set(), []) as Value;
   }
 
   /**
-   * Entry point for async single-binding resolution (no path prefix).
+   * Entry point for async single-binding resolution. Awaits `async-dynamic` factories
+   * and async lifecycle hooks that would cause {@link AsyncResolutionError} on the sync path.
+   *
+   * @throws {@link TokenNotBoundError} — no binding registered for `key`, or a nested dependency is unbound.
+   * @throws {@link NoMatchingBindingError} — a name/tag `hint` was given for `key` but no binding matched it.
+   * @throws {@link InternalError} — multiple bindings matched for `key` after applying the hint (ambiguous).
+   * @throws {@link CircularDependencyError} — `key` or a nested token appears twice on the resolution stack.
+   * @throws {@link ScopeViolationError} — captive dependency (singleton → scoped/transient).
+   * @throws {@link MissingMetadataError} — `class` binding lacks injectable metadata when the reader requires it.
    */
   resolveAsyncRoot<Value>(
     key: Token<Value> | Constructor<Value>,
@@ -91,7 +117,19 @@ export class DependencyResolver {
   }
 
   /**
-   * Returns `undefined` instead of throwing when no binding is found; still throws on circular deps or async factories.
+   * Optional resolution for the **requested key only**: returns `undefined` when that key has no
+   * bindings or every candidate is filtered out **without** a name/tag hint — without throwing
+   * {@link TokenNotBoundError} for those cases. Instantiating the selected binding still runs the
+   * normal sync resolution path for nested dependencies; an unregistered transitive dependency
+   * throws {@link TokenNotBoundError} as usual.
+   *
+   * Behavioral rules:
+   * 1. If the registry key is completely unbound → returns `undefined`.
+   * 2. If no candidate survives constraint filtering (without a hint) → returns `undefined`.
+   * 3. If a name/tag hint was provided but no binding matches it → throws {@link NoMatchingBindingError}.
+   * 4. Still throws on: circular dependencies, async operations on the sync path,
+   *    scope violations, ambiguous multi-binding matches, and {@link TokenNotBoundError} when a
+   *    required nested dependency is unbound.
    */
   resolveOptionalRoot<Value>(
     key: Token<Value> | Constructor<Value>,
@@ -141,7 +179,15 @@ export class DependencyResolver {
   }
 
   /**
-   * Resolves all bindings for `key` synchronously; throws on async factories.
+   * Resolves every matching binding for `key` synchronously into an array.
+   * Returns an empty array when no bindings exist (does not throw).
+   *
+   * @throws {@link AsyncResolutionError} — any candidate is `async-dynamic`.
+   * @throws {@link NoMatchingBindingError} — hint was specified but no binding matched it.
+   * @throws {@link TokenNotBoundError} — nested dependency unbound (same as {@link resolveRoot}).
+   * @throws {@link CircularDependencyError} — cycle while materializing a candidate.
+   * @throws {@link ScopeViolationError} — captive dependency during materialization.
+   * @throws {@link MissingMetadataError} — class binding lacks injectable metadata when required.
    */
   resolveAllRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     const registryKey = key as RegistryKey;
@@ -183,7 +229,14 @@ export class DependencyResolver {
   }
 
   /**
-   * Resolves all bindings for `key`, awaiting any async factories in the set.
+   * Async counterpart of {@link resolveAllRoot}: resolves every matching binding for `key`,
+   * awaiting `async-dynamic` factories. Returns an empty array when no bindings exist.
+   *
+   * @throws {@link NoMatchingBindingError} — hint was specified but no binding matched it.
+   * @throws {@link TokenNotBoundError} — nested dependency unbound (same as {@link resolveAsyncRoot}).
+   * @throws {@link CircularDependencyError} — cycle while materializing a candidate.
+   * @throws {@link ScopeViolationError} — captive dependency during materialization.
+   * @throws {@link MissingMetadataError} — class binding lacks injectable metadata when required.
    */
   async resolveAllAsyncRoot<Value>(
     key: Token<Value> | Constructor<Value>,
@@ -339,6 +392,9 @@ export class DependencyResolver {
   }
 
   /**
+   * Core synchronous resolution: lookup → filter → cycle check → scope check → instantiate.
+   * Called recursively when a binding's dependencies need resolution.
+   *
    * @param key - Token or constructor being resolved.
    * @param hint - Optional name/tag filter for multi-binding selection.
    * @param pathLabels - Mutable label path accumulated during graph walk; extended in place.
@@ -403,6 +459,9 @@ export class DependencyResolver {
   }
 
   /**
+   * Core async resolution: same pipeline as {@link resolve} but awaits `async-dynamic`
+   * factories and async lifecycle hooks instead of throwing {@link AsyncResolutionError}.
+   *
    * @param key - Token or constructor being resolved.
    * @param hint - Optional name/tag filter for multi-binding selection.
    * @param pathLabels - Mutable label path accumulated during graph walk; extended in place.
@@ -557,8 +616,12 @@ export class DependencyResolver {
   }
 
   /**
-   * Synchronously produces the raw instance for a binding without touching the scope cache.
-   * Dispatches on `binding.kind`; throws {@link AsyncResolutionError} for `async-dynamic` factories.
+   * Synchronously produces the raw instance for a binding **without** touching the scope cache
+   * or running lifecycle hooks. The caller ({@link instantiateBinding}) wraps this with
+   * cache logic and post-construction hooks.
+   *
+   * Dispatches on `binding.kind`; throws {@link AsyncResolutionError} if the binding is
+   * `async-dynamic` or if a `dynamic` / `resolved` factory returns a Promise.
    */
   private materialize(
     binding: Binding<unknown>,

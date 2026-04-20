@@ -53,11 +53,26 @@ export type ConstructorMetadata = {
 };
 
 /**
- * Abstraction for reading DI metadata (section 6.4) without tying callers to `Symbol.metadata`.
+ * Abstraction for reading DI metadata without tying callers to `Symbol.metadata` directly.
+ * The {@link DependencyResolver} uses this to instantiate `class` bindings and read lifecycle hooks.
+ *
+ * The default implementation is {@link SymbolMetadataReader}; consumers can supply a custom
+ * reader (e.g. backed by a static config object) via `ResolverDependencies.metadataReader`.
  */
 export type MetadataReader = {
+  /**
+   * Returns constructor parameter injection metadata for `implementationClass`, or `undefined`
+   * if the class has no own `@injectable()` metadata. When a {@link MetadataReader} is
+   * configured on the container, `undefined` here combined with `arity > 0` on the class
+   * causes {@link MissingMetadataError} during resolution; when no reader is configured, the
+   * resolver instantiates with zero arguments instead (see `DependencyResolver` class binding path).
+   */
   getConstructorMetadata(
     implementationClass: Constructor<unknown>,
   ): ConstructorMetadata | undefined;
+  /**
+   * Returns lifecycle method names (`@postConstruct` / `@preDestroy`), or `undefined` if none.
+   * Optional: when absent the resolver skips lifecycle hooks entirely.
+   */
   getLifecycleMetadata?(implementationClass: Constructor<unknown>): LifecycleMetadata | undefined;
 };

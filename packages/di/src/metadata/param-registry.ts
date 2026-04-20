@@ -1,6 +1,12 @@
 import type { Constructor } from "#/binding";
 import type { ParamMetadata } from "#/metadata/metadata-types";
 
+/**
+ * WeakMap keyed by constructor → pending parameter metadata.
+ * Entries are populated by legacy parameter decorators that fire *before* the
+ * `@injectable()` class decorator runs, and consumed (via {@link takePendingMap})
+ * by the class decorator to merge into the final {@link ConstructorMetadata}.
+ */
 const pendingByConstructor = new WeakMap<Constructor<unknown>, Map<number, ParamMetadata>>();
 
 /**

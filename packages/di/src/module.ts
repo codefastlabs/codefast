@@ -3,7 +3,9 @@ import type { Constructor } from "#/binding";
 import type { Token } from "#/token";
 
 /**
- * Builder passed to synchronous module setup: register bindings and import other sync modules.
+ * Builder passed to the setup callback of a synchronous {@link Module}.
+ * Use `import()` to declare module dependencies (sync modules only —
+ * passing an {@link AsyncModule} throws {@link InternalError}) and `bind()` to register tokens.
  */
 export type ModuleBuilder = {
   readonly import: (...modules: Module[]) => void;
@@ -11,7 +13,9 @@ export type ModuleBuilder = {
 };
 
 /**
- * Builder passed to async module setup.
+ * Builder passed to the setup callback of an {@link AsyncModule}.
+ * Unlike {@link ModuleBuilder}, `import()` accepts both sync and async modules.
+ * Async sub-imports are collected and awaited **after** the setup callback returns.
  */
 export type AsyncModuleBuilder = {
   readonly import: (...modules: (Module | AsyncModule)[]) => void;
@@ -26,9 +30,18 @@ export type AsyncModuleBuilder = {
  * binding ids each module produced; the module itself never sees a container reference.
  */
 export class Module {
+  /**
+   * Human-readable label used in error messages, graph output, and module-cycle diagnostics.
+   */
   readonly name: string;
+  /**
+   * The user-supplied setup callback; invoked exactly once per `load()` call.
+   */
   private readonly syncSetup: (builder: ModuleBuilder) => void;
 
+  /**
+   * @internal Use {@link Module.create} instead.
+   */
   private constructor(name: string, syncSetup: (builder: ModuleBuilder) => void) {
     this.name = name;
     this.syncSetup = syncSetup;
@@ -65,9 +78,19 @@ export class Module {
 /**
  * An async module whose setup callback may `await` before registering bindings.
  * Prefer {@link Module.createAsync} over constructing this class directly.
+ *
+ * Load via `Container.loadAsync()` or `Container.fromModulesAsync()`;
+ * passing an `AsyncModule` to the synchronous `Container.load()` throws
+ * {@link AsyncModuleLoadError}.
  */
 export class AsyncModule {
+  /**
+   * Human-readable label used in error messages and graph output.
+   */
   readonly name: string;
+  /**
+   * The user-supplied async setup callback; invoked exactly once per `loadAsync()` call.
+   */
   private readonly asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>;
 
   constructor(name: string, asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>) {
