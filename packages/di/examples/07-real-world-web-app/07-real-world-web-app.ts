@@ -320,7 +320,7 @@ async function main(): Promise<void> {
   console.log("Response 2:", JSON.stringify(res2));
 
   // Introspect dependency graph
-  const dot = server.container.generateDependencyGraph();
+  const dot = server.container.generateDependencyGraph({ format: "dot" });
   console.log(`\nDOT graph (${dot.split("\n").length} lines, paste at graphviz.org)`);
 }
 

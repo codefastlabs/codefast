@@ -436,11 +436,11 @@ Control the environment heuristic via `NODE_ENV` — see `isDevelopmentOrTestEnv
 
 ```typescript
 const snapshot = container.inspect();
-const dot = container.generateDependencyGraph({ hideInternals: true });
-const json = container.generateDependencyGraph({ format: "json" });
+const json = container.generateDependencyGraph({ hideInternals: true });
+const dot = container.generateDependencyGraph({ format: "dot", hideInternals: true });
 ```
 
-`generateDependencyGraph` returns a Graphviz DOT string by default, or a typed `ContainerGraphJson` when `format: "json"` is passed.
+`generateDependencyGraph` returns a typed `ContainerGraphJson` by default, or a Graphviz DOT string when `format: "dot"` is passed.
 
 ### Disposal
 

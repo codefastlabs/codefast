@@ -94,14 +94,10 @@ function dotEscapeLabel(text: string): string {
 }
 
 /**
- * Escapes a string for safe embedding inside a DOT HTML-label (`<...>`) table cell.
+ * Escapes a string for use inside a quoted DOT node identifier.
  */
-function dotEscapeHtml(text: string): string {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+function dotEscapeId(id: string): string {
+  return id.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
 }
 
 /**
@@ -213,7 +209,7 @@ export class ContainerInspector {
   }
 
   /**
-   * Produces a Graphviz `digraph` string with HTML-label nodes and styled edges.
+   * Produces a Graphviz `digraph` string with plain-text labels and styled edges.
    * Cycles are represented as ordinary edges (Graphviz renders them correctly).
    * Pass `hideInternals: true` to suppress `CODEFAST_DI_`-prefixed tokens.
    */
@@ -252,29 +248,13 @@ export class ContainerInspector {
     const nodeAttributeLine = (row: ContainerBindingSnapshot, indent: string): string => {
       const shape = nodeShapeForKind(row.kind);
       const scopeAttrs = scopeVisualAttributes(row.scope);
-
-      const kindText = dotEscapeHtml(row.kind);
-      const nameText = dotEscapeHtml(row.registryKeyLabel);
-      const scopeText = dotEscapeHtml(`scope=${row.scope}`);
-
-      const whenRow = row.hasConditionalConstraint
-        ? `      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">when(...)</FONT></TD></TR>\n`
-        : "";
-
-      const htmlLabel = [
-        "<",
-        '    <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0">',
-        `      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9" COLOR="#666666">${kindText}</FONT></TD></TR>`,
-        `      <TR><TD ALIGN="LEFT"><B>${nameText}</B></TD></TR>`,
-        `      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="9">${scopeText}</FONT></TD></TR>`,
-        whenRow.trimEnd(),
-        "    </TABLE>",
-        "  >",
-      ]
-        .filter((line) => line.length > 0)
-        .join("\n");
-
-      return `${indent}"${row.bindingId}" [shape=${shape}, ${scopeAttrs}, label=${htmlLabel}];`;
+      const labelLines = [row.kind, row.registryKeyLabel, `scope=${row.scope}`];
+      if (row.hasConditionalConstraint) {
+        labelLines.push("when(...)");
+      }
+      const nodeLabel = dotEscapeLabel(labelLines.join("\n"));
+      const nodeId = dotEscapeId(row.bindingId);
+      return `${indent}"${nodeId}" [shape=${shape}, ${scopeAttrs}, label="${nodeLabel}"];`;
     };
 
     for (const [moduleName, rows] of clusteredEntries) {
@@ -330,13 +310,13 @@ export class ContainerInspector {
           if (!emittedNodeIds.has(edge.fromBindingId)) {
             emittedNodeIds.add(edge.fromBindingId);
             lines.push(
-              `  "${edge.fromBindingId}" [shape=box, style=dashed, label="(unlisted ${edge.fromBindingId})"];`,
+              `  "${dotEscapeId(edge.fromBindingId)}" [shape=box, style=dashed, label="(unlisted ${dotEscapeLabel(edge.fromBindingId)})"];`,
             );
           }
           if (!emittedNodeIds.has(edge.toBindingId)) {
             emittedNodeIds.add(edge.toBindingId);
             lines.push(
-              `  "${edge.toBindingId}" [shape=box, style=dashed, label="(unlisted ${edge.toBindingId})"];`,
+              `  "${dotEscapeId(edge.toBindingId)}" [shape=box, style=dashed, label="(unlisted ${dotEscapeLabel(edge.toBindingId)})"];`,
             );
           }
 
@@ -351,8 +331,10 @@ export class ContainerInspector {
           const edgeLabel = dotEscapeLabel(labelParts.join(" | "));
           const pathLabel = dotEscapeLabel(edge.resolutionPath.join(" -> "));
           const edgeStyle = edge.isAliasEdge ? ", style=dashed" : "";
+          const fromNodeId = dotEscapeId(edge.fromBindingId);
+          const toNodeId = dotEscapeId(edge.toBindingId);
           lines.push(
-            `  "${edge.fromBindingId}" -> "${edge.toBindingId}" [label="${edgeLabel}", xlabel="${pathLabel}"${edgeStyle}];`,
+            `  "${fromNodeId}" -> "${toNodeId}" [label="${edgeLabel}", xlabel="${pathLabel}"${edgeStyle}];`,
           );
         }
       }
@@ -363,18 +345,18 @@ export class ContainerInspector {
   }
 
   /**
-   * Overloaded entry point: returns DOT format by default, or a typed {@link ContainerGraphJson}
-   * when `format: "json"` is specified.
+   * Overloaded entry point: returns typed {@link ContainerGraphJson} by default, or DOT format
+   * when `format: "dot"` is specified.
    */
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
-  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options: DotGraphOptions & { format: "dot" }): string;
   generateDependencyGraph(
-    options?: DotGraphOptions & { format?: "dot" | "json" },
+    options?: DotGraphOptions & { format?: "json" | "dot" },
   ): string | ContainerGraphJson {
-    if (options?.format === "json") {
-      return this.generateDependencyGraphJsonTyped(options);
+    if (options?.format === "dot") {
+      return this.generateDotGraph(options);
     }
-    return this.generateDotGraph(options);
+    return this.generateDependencyGraphJsonTyped(options);
   }
 
   /**
