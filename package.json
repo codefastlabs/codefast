@@ -34,7 +34,8 @@
     "start": "turbo run start",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
-    "test:watch": "turbo run test:watch"
+    "test:watch": "turbo run test:watch",
+    "verify": "pnpm build:packages && turbo run lint:fix format check-types test:coverage"
   },
   "devDependencies": {
     "@changesets/changelog-github": "catalog:",
