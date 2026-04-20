@@ -1,6 +1,33 @@
 # @codefast/cli
 
-A small developer CLI for three recurring maintenance tasks in a TypeScript monorepo:
+A small developer CLI for maintenance tasks in a TypeScript monorepo — Tailwind class arranging, `package.json` `exports` mirroring, and `@since` JSDoc tagging.
+
+---
+
+## Table of Contents
+
+- [Why @codefast/cli](#why-codefastcli)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Global options](#global-options)
+- [Exit codes](#exit-codes)
+- [`arrange`](#arrange)
+- [`mirror sync`](#mirror-sync)
+- [`tag` / `annotate`](#tag--annotate)
+- [Configuration (`codefast.config.*`)](#configuration-codefastconfig)
+- [Lifecycle hooks](#lifecycle-hooks)
+- [Grouping philosophy — Render Pipeline Order](#grouping-philosophy--render-pipeline-order)
+- [Troubleshooting](#troubleshooting)
+- [Contributing (monorepo setup)](#contributing-monorepo-setup)
+- [License](#license)
+- [Changelog](#changelog)
+
+---
+
+## Why @codefast/cli
+
+Three recurring maintenance chores you don't want to script by hand:
 
 - **`arrange`** — regroup Tailwind class strings inside `cn()` / `tv()` calls in render-pipeline order.
 - **`mirror`** — regenerate `package.json` `exports` fields from built `dist/` trees across a pnpm workspace.
@@ -23,24 +50,6 @@ flowchart LR
 
 ---
 
-## Table of Contents
-
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Quick start](#quick-start)
-- [Global options](#global-options)
-- [Exit codes](#exit-codes)
-- [`arrange`](#arrange)
-- [`mirror sync`](#mirror-sync)
-- [`tag` / `annotate`](#tag--annotate)
-- [Configuration (`codefast.config.*`)](#configuration-codefastconfig)
-- [Lifecycle hooks](#lifecycle-hooks)
-- [Grouping philosophy — Render Pipeline Order](#grouping-philosophy--render-pipeline-order)
-- [Troubleshooting](#troubleshooting)
-- [Contributing (monorepo setup)](#contributing-monorepo-setup)
-
----
-
 ## Requirements
 
 - Node.js `>= 22.0.0`
@@ -53,9 +62,15 @@ flowchart LR
 ```bash
 # Install globally
 pnpm add -g @codefast/cli
+# or
+npm install -g @codefast/cli
+# or
+yarn global add @codefast/cli
 
 # Or run without installing
 pnpm dlx @codefast/cli --help
+# or
+npx @codefast/cli --help
 ```
 
 ---
@@ -358,3 +373,15 @@ A few naming conventions:
 - **`codefast <command>`** refers to CLI commands exposed via the `bin` entry in `@codefast/cli`.
 - **Scripts in `packages/cli/package.json`** (`build`, `test`, …) are package-local dev scripts, not CLI commands.
 - The root `package.json` includes optional convenience wrappers (e.g. `cli:mirror-sync`, `cli:arrange-analyze`) for common dev workflows.
+
+---
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT) — see [`package.json`](./package.json).
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full version history. Releases are also published on [npm](https://www.npmjs.com/package/@codefast/cli?activeTab=versions).

@@ -12,7 +12,7 @@ Accessible, typed React components built on Radix UI primitives and styled with 
 
 ## Table of Contents
 
-- [Highlights](#highlights)
+- [Why @codefast/ui](#why-codefastui)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Styling](#styling)
@@ -31,10 +31,11 @@ Accessible, typed React components built on Radix UI primitives and styled with 
 - [Browser support](#browser-support)
 - [Contributing](#contributing)
 - [License](#license)
+- [Changelog](#changelog)
 
 ---
 
-## Highlights
+## Why @codefast/ui
 
 - **62+ components** across layout, form, navigation, overlay, and data-display categories.
 - **Built on [Radix UI](https://www.radix-ui.com/)** — keyboard navigation, focus management, and ARIA semantics come for free.
@@ -59,6 +60,8 @@ Accessible, typed React components built on Radix UI primitives and styled with 
 pnpm add @codefast/ui
 # or
 npm install @codefast/ui
+# or
+yarn add @codefast/ui
 ```
 
 Peers:
@@ -395,4 +398,8 @@ CSS entry exports under `@codefast/ui/css/*` are sourced directly from `src/css/
 
 [MIT](https://opensource.org/licenses/MIT) — see [`package.json`](./package.json).
 
-Version history is published on [npm](https://www.npmjs.com/package/@codefast/ui?activeTab=versions) and mirrored in [`CHANGELOG.md`](./CHANGELOG.md).
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full version history. Releases are also published on [npm](https://www.npmjs.com/package/@codefast/ui?activeTab=versions).

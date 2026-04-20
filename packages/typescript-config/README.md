@@ -10,6 +10,7 @@ Shared TypeScript compiler configurations for the `codefast` ecosystem — one s
 ## Table of Contents
 
 - [Overview](#overview)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Presets](#presets)
@@ -37,6 +38,12 @@ Design goals:
 - **Tree-shakeable ESM** — `isolatedModules` + `moduleDetection: "force"` guarantee every file is a module.
 - **No emit** — the preset assumes a separate bundler or transpiler is responsible for output (`noEmit: true`).
 
+## Requirements
+
+- TypeScript **>= 5.0** — `moduleResolution: "bundler"` requires TS 5.0+; `verbatimModuleSyntax` awareness works best on 5.2+
+
+No runtime dependency is added to your application — the package is pure JSON.
+
 ## Installation
 
 ```bash
@@ -46,12 +53,6 @@ npm install --save-dev @codefast/typescript-config
 # or
 yarn add -D @codefast/typescript-config
 ```
-
-**Requirements**
-
-- TypeScript **>= 5.0** — `moduleResolution: "bundler"` requires TS 5.0+; `verbatimModuleSyntax` awareness works best on 5.2+.
-
-No runtime dependency is added to your application — the package is pure JSON.
 
 ## Quick Start
 
