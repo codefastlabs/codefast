@@ -1,5 +1,12 @@
 # @codefast/ui
 
+## 0.3.14-canary.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.3.14-canary.1
+
 ## 0.3.14-canary.0
 
 ### Patch Changes
