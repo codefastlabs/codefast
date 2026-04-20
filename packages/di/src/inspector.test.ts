@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { Container } from "#/container";
+import { toCytoscapeGraph } from "#/graph-adapters/cytoscape";
+import { toDotGraph } from "#/graph-adapters/dot";
+import { toReactFlowGraph } from "#/graph-adapters/reactflow";
 import { Module } from "#/module";
 import { token } from "#/token";
 import type { ContainerBindingSnapshot, ContainerSnapshot } from "#/inspector";
@@ -24,7 +27,7 @@ describe("ContainerInspector", () => {
     expect(parsed.bindings![0]!.registryKeyLabel).toBe("Logger");
   });
 
-  it("generateDependencyGraphDot emits digraph, scope colors, and module subgraphs", () => {
+  it("toDotGraph emits digraph, scope colors, and module subgraphs", () => {
     const InfrastructureModule = Module.create("InfraModule", (api) => {
       api.bind(LoggerToken).toConstantValue("console");
       api
@@ -36,7 +39,7 @@ describe("ContainerInspector", () => {
     const container = Container.create();
     container.load(InfrastructureModule);
 
-    const dot = container.generateDependencyGraph({ format: "dot" });
+    const dot = toDotGraph(container.generateDependencyGraph());
     expect(dot).toContain("digraph codefast_di");
     expect(dot).toContain("subgraph cluster_InfraModule");
     expect(dot).toContain('label="InfraModule"');
@@ -49,17 +52,17 @@ describe("ContainerInspector", () => {
     expect(dot).toContain(HttpClientToken.name);
   });
 
-  it("generateDependencyGraphDot uses dashed edges for alias consumers and can hide internal tokens", () => {
+  it("toDotGraph uses dashed edges for alias consumers and can hide internal tokens", () => {
     const container = Container.create();
     container.bind(LoggerToken).toConstantValue("console");
     container.bind(HttpClientToken).toAlias(LoggerToken).singleton();
     container.bind(InternalTelemetryToken).toConstantValue("trace-123");
 
-    const full = container.generateDependencyGraph({ format: "dot" });
+    const full = toDotGraph(container.generateDependencyGraph());
     expect(full).toContain(InternalTelemetryToken.name);
     expect(full).toMatch(/->.*style=dashed/s);
 
-    const filtered = container.generateDependencyGraph({ format: "dot", hideInternals: true });
+    const filtered = toDotGraph(container.generateDependencyGraph({ hideInternals: true }));
     expect(filtered).not.toContain(InternalTelemetryToken.name);
     expect(filtered).toContain(LoggerToken.name);
     expect(filtered).toContain(HttpClientToken.name);
@@ -72,7 +75,7 @@ describe("ContainerInspector", () => {
     container.bind(InternalTelemetryToken).toConstantValue("trace-123");
     container.bind(token("SharedService")).toAlias(LoggerToken);
 
-    const data = container.generateDependencyGraph({ format: "json", hideInternals: true });
+    const data = container.generateDependencyGraph({ hideInternals: true });
 
     const nodeLabels = data.nodes.map((n: ContainerBindingSnapshot) => n.registryKeyLabel);
     expect(nodeLabels).not.toContain("CODEFAST_DI_InternalProbe");
@@ -85,5 +88,53 @@ describe("ContainerInspector", () => {
     const graph = container.generateDependencyGraph();
     expect(graph.nodes).toBeDefined();
     expect(graph.edges).toBeDefined();
+  });
+
+  it("toCytoscapeGraph adapts canonical graph with graph metadata", () => {
+    const container = Container.create();
+    container
+      .bind(LoggerToken)
+      .toConstantValue("console")
+      .when(() => true);
+    container.bind(HttpClientToken).toAlias(LoggerToken).singleton();
+    container.bind(InternalTelemetryToken).toConstantValue("trace-123");
+
+    const graph = toCytoscapeGraph(container.generateDependencyGraph({ hideInternals: true }));
+    expect(graph.elements.nodes.length).toBeGreaterThan(0);
+    expect(graph.elements.edges.length).toBeGreaterThan(0);
+
+    const nodeLabels = graph.elements.nodes.map((node) => node.data.label);
+    expect(nodeLabels).not.toContain(InternalTelemetryToken.name);
+
+    const aliasEdge = graph.elements.edges.find((edge) => edge.data.isAliasEdge);
+    expect(aliasEdge).toBeDefined();
+    expect(aliasEdge?.data.toBindingConditional).toBe(true);
+    expect(aliasEdge?.data.edgeKind).toBe("sync");
+    expect(aliasEdge?.data.resolutionPath.length).toBeGreaterThan(0);
+  });
+
+  it("toReactFlowGraph adapts canonical graph with graph metadata", () => {
+    const container = Container.create();
+    container
+      .bind(LoggerToken)
+      .toConstantValue("console")
+      .when(() => true);
+    container.bind(HttpClientToken).toAlias(LoggerToken).singleton();
+    container.bind(InternalTelemetryToken).toConstantValue("trace-123");
+
+    const graph = toReactFlowGraph(container.generateDependencyGraph({ hideInternals: true }));
+    expect(graph.nodes.length).toBeGreaterThan(0);
+    expect(graph.edges.length).toBeGreaterThan(0);
+
+    const nodeLabels = graph.nodes.map((node) => node.data.label);
+    expect(nodeLabels).not.toContain(InternalTelemetryToken.name);
+
+    const aliasEdge = graph.edges.find((edge) => edge.data.isAliasEdge);
+    expect(aliasEdge).toBeDefined();
+    expect(aliasEdge?.data.toBindingConditional).toBe(true);
+    expect(aliasEdge?.data.edgeKind).toBe("sync");
+    expect(aliasEdge?.data.resolutionPath.length).toBeGreaterThan(0);
+    expect(aliasEdge?.source).toBeDefined();
+    expect(aliasEdge?.target).toBeDefined();
   });
 });
