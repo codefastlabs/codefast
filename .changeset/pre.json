@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "@codefast/benchmark-tailwind-variants": "0.0.1",
+    "@codefast/cli": "0.3.13",
+    "@codefast/di": "0.3.13",
+    "@codefast/tailwind-variants": "0.3.13",
+    "@codefast/theme": "0.3.13",
+    "@codefast/typescript-config": "0.3.13",
+    "@codefast/ui": "0.3.13"
+  },
+  "changesets": []
+}
