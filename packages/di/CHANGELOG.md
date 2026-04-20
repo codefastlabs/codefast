@@ -1,5 +1,25 @@
 # @codefast/di
 
+## 0.3.14-canary.0
+
+### Patch Changes
+
+- [`5d39880`](https://github.com/codefastlabs/codefast/commit/5d398804b061eac5102730ae4121d0f6f0197590) Thanks [@thevuong](https://github.com/thevuong)! - refactor(di): update injectable decorator usage for consistency
+
+- [`787a8fc`](https://github.com/codefastlabs/codefast/commit/787a8fc818295bb7f7e8455ff0a7f993d7e0aab5) Thanks [@thevuong](https://github.com/thevuong)! - refactor(di): improve type safety and readability in binding selection and error handling
+
+- [`3457958`](https://github.com/codefastlabs/codefast/commit/3457958f3a90c62149b14161db92b9d763e90fd2) Thanks [@thevuong](https://github.com/thevuong)! - docs(di): add TypeDoc configuration and enhance comments for clarity
+
+- [`a78ae1d`](https://github.com/codefastlabs/codefast/commit/a78ae1d57f4fea0c7d9cfeb345e67d9fc040b0e0) Thanks [@thevuong](https://github.com/thevuong)! - refactor(di): enhance clarity and consistency in SPEC.md and examples
+
+- [`680b28d`](https://github.com/codefastlabs/codefast/commit/680b28d6fca0c5ec754967b02a994231dca0fa9f) Thanks [@thevuong](https://github.com/thevuong)! - docs(di): update README.md for clarity and structure
+
+- [`b44597c`](https://github.com/codefastlabs/codefast/commit/b44597c9ec3a121a707aa269d7f68550ae1da72a) Thanks [@thevuong](https://github.com/thevuong)! - docs: enhance type annotations and comments for clarity across multiple files
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
+- [`0803cd0`](https://github.com/codefastlabs/codefast/commit/0803cd04c5f12848061451d664b74fd5552eb2fb) Thanks [@thevuong](https://github.com/thevuong)! - feat(di): introduce injectAll for multi-binding resolution
+
 ## 0.3.13
 
 ### Patch Changes

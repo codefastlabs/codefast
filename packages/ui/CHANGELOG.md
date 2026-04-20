@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.3.14-canary.0
+
+### Patch Changes
+
+- [`b44597c`](https://github.com/codefastlabs/codefast/commit/b44597c9ec3a121a707aa269d7f68550ae1da72a) Thanks [@thevuong](https://github.com/thevuong)! - docs: enhance type annotations and comments for clarity across multiple files
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
+- [`ab6bf8d`](https://github.com/codefastlabs/codefast/commit/ab6bf8d5b1c421930e391724cbbdcaf63b9bc263) Thanks [@thevuong](https://github.com/thevuong)! - docs(ui): update README.md for clarity and structure
+
+- Updated dependencies [[`85e5ac1`](https://github.com/codefastlabs/codefast/commit/85e5ac122d7a75f756ae4c03b5ab5e9489823b59), [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef)]:
+  - @codefast/tailwind-variants@0.3.14-canary.0
+
 ## 0.3.13
 
 ### Patch Changes
