@@ -435,12 +435,21 @@ Control the environment heuristic via `NODE_ENV` — see `isDevelopmentOrTestEnv
 ### Introspection
 
 ```typescript
+import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
+import { toDotGraph } from "@codefast/di/graph-adapters/dot";
+import { toReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
+
 const snapshot = container.inspect();
 const json = container.generateDependencyGraph({ hideInternals: true });
-const dot = container.generateDependencyGraph({ format: "dot", hideInternals: true });
+const dot = toDotGraph(json);
+
+// Adapters are pure converters from the canonical JSON graph.
+const cytoscape = toCytoscapeGraph(json);
+const reactflow = toReactFlowGraph(json);
 ```
 
-`generateDependencyGraph` returns a typed `ContainerGraphJson` by default, or a Graphviz DOT string when `format: "dot"` is passed.
+`generateDependencyGraph` always returns the canonical typed `ContainerGraphJson` (`nodes` + `edges`).
+Keep visualization adapters (`toDotGraph`, `toCytoscapeGraph`, `toReactFlowGraph`, or your own converters) outside container/inspector core APIs and import them from direct subpaths under `@codefast/di/graph-adapters/*`.
 
 ### Disposal
 

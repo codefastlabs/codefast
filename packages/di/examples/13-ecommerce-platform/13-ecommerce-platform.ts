@@ -44,7 +44,7 @@
  *   ✅ @preDestroy for resource cleanup
  *   ✅ module.import() diamond-dedup (infra modules imported by many contexts)
  *   ✅ whenParentIs constraint for context-aware logger injection
- *   ✅ container.generateDependencyGraph({ format: "dot" }) for architecture visualization
+ *   ✅ toDotGraph(container.generateDependencyGraph(...)) for architecture visualization
  *   ✅ resolveOptional for optional A/B test service
  *   ```
  *
@@ -80,6 +80,7 @@ import {
   preDestroy,
   token,
 } from "@codefast/di";
+import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 
 // ============================================================================
 // ─── TOKENS ─────────────────────────────────────────────────────────────────
@@ -2639,7 +2640,7 @@ async function main(): Promise<void> {
   console.log(`[Catalog] Found ${results.length} results`);
 
   // ── Dependency graph ──────────────────────────────────────────────────
-  const dot = platform.container.generateDependencyGraph({ format: "dot" });
+  const dot = toDotGraph(platform.container.generateDependencyGraph());
   const lineCount = dot.split("\n").length;
   console.log(
     `\n[Graph] Dependency graph: ${lineCount} lines (paste at graphviz.org to visualize)`,

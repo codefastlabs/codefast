@@ -13,6 +13,7 @@
  */
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
+import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 
 // ============================================================================
 // Domain types
@@ -320,7 +321,7 @@ async function main(): Promise<void> {
   console.log("Response 2:", JSON.stringify(res2));
 
   // Introspect dependency graph
-  const dot = server.container.generateDependencyGraph({ format: "dot" });
+  const dot = toDotGraph(server.container.generateDependencyGraph());
   console.log(`\nDOT graph (${dot.split("\n").length} lines, paste at graphviz.org)`);
 }
 

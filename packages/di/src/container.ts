@@ -6,9 +6,9 @@ import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { AsyncModuleLoadError, CircularDependencyError, InternalError } from "#/errors";
 import type {
   ContainerGraphJson,
+  GraphOptions,
   ContainerInspectorContext,
   ContainerSnapshot,
-  DotGraphOptions,
 } from "#/inspector";
 import { ContainerInspector } from "#/inspector";
 import type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
@@ -144,10 +144,9 @@ export interface Container extends AsyncDisposable {
    */
   inspect(): ContainerSnapshot;
   /**
-   * Returns the dependency graph as a typed JSON object (default) or a Graphviz DOT string.
+   * Returns the canonical dependency graph as typed JSON (`nodes` + `edges`).
    */
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "json" }): ContainerGraphJson;
-  generateDependencyGraph(options: DotGraphOptions & { format: "dot" }): string;
+  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
   /**
    * Creates a child container that inherits bindings from this container without polluting its registry.
    */
@@ -539,19 +538,10 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Delegates dependency-graph rendering to {@link ContainerInspector}.
-   * Returns typed JSON by default, or DOT when `format: "dot"` is requested.
+   * Delegates canonical dependency-graph generation to {@link ContainerInspector}.
    */
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "json" }): ContainerGraphJson;
-  generateDependencyGraph(options: DotGraphOptions & { format: "dot" }): string;
-  generateDependencyGraph(
-    options?: DotGraphOptions & { format?: "json" | "dot" },
-  ): string | ContainerGraphJson {
-    const inspector = this.createInspector();
-    if (options?.format === "dot") {
-      return inspector.generateDotGraph(options);
-    }
-    return inspector.generateDependencyGraph(options as DotGraphOptions & { format?: "json" });
+  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
+    return this.createInspector().generateDependencyGraph(options);
   }
 
   /**
@@ -857,6 +847,3 @@ export namespace Container {
     return container;
   }
 }
-
-export type { BindingIdentifier, ResolveOptions } from "#/binding";
-export type { ContainerGraphJson, ContainerSnapshot } from "#/inspector";

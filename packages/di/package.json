@@ -81,6 +81,22 @@
       "types": "./dist/errors.d.mts",
       "import": "./dist/errors.mjs"
     },
+    "./graph-adapters/cytoscape": {
+      "types": "./dist/graph-adapters/cytoscape.d.mts",
+      "import": "./dist/graph-adapters/cytoscape.mjs"
+    },
+    "./graph-adapters/dot": {
+      "types": "./dist/graph-adapters/dot.d.mts",
+      "import": "./dist/graph-adapters/dot.mjs"
+    },
+    "./graph-adapters/reactflow": {
+      "types": "./dist/graph-adapters/reactflow.d.mts",
+      "import": "./dist/graph-adapters/reactflow.mjs"
+    },
+    "./graph-adapters/types": {
+      "types": "./dist/graph-adapters/types.d.mts",
+      "import": "./dist/graph-adapters/types.mjs"
+    },
     "./inspector": {
       "types": "./dist/inspector.d.mts",
       "import": "./dist/inspector.mjs"

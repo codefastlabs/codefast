@@ -39,7 +39,7 @@ export type ContainerSnapshot = {
 };
 
 /**
- * Structured dependency graph returned by {@link Container.generateDependencyGraph} with `format: "json"`.
+ * Canonical structured dependency graph returned by {@link Container.generateDependencyGraph}.
  */
 export type ContainerGraphJson = {
   /** Graph nodes (same shape as snapshot rows). */
@@ -65,7 +65,7 @@ export type ContainerInspectorContext = {
 /**
  * Options for {@link Container.generateDependencyGraph}.
  */
-export type DotGraphOptions = {
+export type GraphOptions = {
   /**
    * When true, omit registry keys whose label starts with `CODEFAST_DI_` (framework-style tokens)
    * and any edges that would only connect hidden nodes.
@@ -87,67 +87,6 @@ function activationStatusFor(
 }
 
 /**
- * Escapes a string for use as a DOT `label="..."` attribute value.
- */
-function dotEscapeLabel(text: string): string {
-  return text.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
-}
-
-/**
- * Escapes a string for use inside a quoted DOT node identifier.
- */
-function dotEscapeId(id: string): string {
-  return id.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
-}
-
-/**
- * Returns the Graphviz node shape name for a given binding kind.
- */
-function nodeShapeForKind(kind: Binding<unknown>["kind"]): string {
-  switch (kind) {
-    case "constant":
-      return "ellipse";
-    case "class":
-      return "box";
-    case "dynamic":
-    case "async-dynamic":
-    case "resolved":
-      return "diamond";
-    case "alias":
-      return "octagon";
-    default: {
-      const exhaustiveCheck: never = kind;
-      return exhaustiveCheck;
-    }
-  }
-}
-
-/**
- * Returns DOT fill-color and style attributes that visually distinguish binding scopes.
- */
-function scopeVisualAttributes(scope: BindingScope): string {
-  switch (scope) {
-    case "singleton":
-      return 'style="filled", fillcolor="#FFD700", penwidth=2';
-    case "scoped":
-      return 'style="filled", fillcolor="#ADD8E6"';
-    case "transient":
-      return 'style="dashed"';
-    default: {
-      const exhaustive: never = scope;
-      return exhaustive;
-    }
-  }
-}
-
-/**
- * Strips non-alphanumeric characters from a module name to produce a valid DOT subgraph identifier.
- */
-function sanitizeClusterId(moduleName: string): string {
-  return moduleName.replace(/[^0-9a-zA-Z_]/g, "_");
-}
-
-/**
  * Returns `true` when the label string belongs to a framework-internal registry key.
  */
 function registryKeyLabelIsInternal(label: string): boolean {
@@ -163,7 +102,7 @@ function isInternalRegistryKey(key: RegistryKey): boolean {
 
 /**
  * Reads the container's registry and scope-cache state to produce debug snapshots
- * and dependency-graph output (Graphviz DOT / typed JSON).
+ * and canonical dependency-graph output (`nodes` + `edges`).
  *
  * Constructed internally by the container; advanced consumers can also construct it
  * directly via the `@codefast/di/inspector` subpath export.
@@ -209,161 +148,9 @@ export class ContainerInspector {
   }
 
   /**
-   * Produces a Graphviz `digraph` string with plain-text labels and styled edges.
-   * Cycles are represented as ordinary edges (Graphviz renders them correctly).
-   * Pass `hideInternals: true` to suppress `CODEFAST_DI_`-prefixed tokens.
+   * Builds the canonical JSON graph (`nodes` + `edges`).
    */
-  generateDotGraph(options?: DotGraphOptions): string {
-    const hideInternals = options?.hideInternals === true;
-    const fullSnapshot = this.getSnapshot();
-    const visibleRows = hideInternals
-      ? fullSnapshot.bindings.filter((row) => !registryKeyLabelIsInternal(row.registryKeyLabel))
-      : fullSnapshot.bindings;
-    const allowedBindingIds = new Set(visibleRows.map((row) => row.bindingId));
-
-    const lines: string[] = [
-      "digraph codefast_di {",
-      "  rankdir=LR;",
-      '  graph [fontname="Arial", fontsize=12, nodesep=0.8, ranksep=1.2];',
-      '  node  [fontname="Arial", fontsize=12, shape=box, style="filled,rounded", fillcolor="#F5F5F5"];',
-      '  edge  [fontname="Arial", fontsize=10];',
-    ];
-
-    const byModule = new Map<string | undefined, ContainerBindingSnapshot[]>();
-    for (const row of visibleRows) {
-      const key = row.moduleId;
-      const moduleGroup = byModule.get(key);
-      if (moduleGroup === undefined) {
-        byModule.set(key, [row]);
-      } else {
-        moduleGroup.push(row);
-      }
-    }
-
-    const clusteredEntries = [...byModule.entries()].filter(
-      (entry): entry is [string, ContainerBindingSnapshot[]] => entry[0] !== undefined,
-    );
-    const unclustered = byModule.get(undefined) ?? [];
-
-    const nodeAttributeLine = (row: ContainerBindingSnapshot, indent: string): string => {
-      const shape = nodeShapeForKind(row.kind);
-      const scopeAttrs = scopeVisualAttributes(row.scope);
-      const labelLines = [row.kind, row.registryKeyLabel, `scope=${row.scope}`];
-      if (row.hasConditionalConstraint) {
-        labelLines.push("when(...)");
-      }
-      const nodeLabel = dotEscapeLabel(labelLines.join("\n"));
-      const nodeId = dotEscapeId(row.bindingId);
-      return `${indent}"${nodeId}" [shape=${shape}, ${scopeAttrs}, label="${nodeLabel}"];`;
-    };
-
-    for (const [moduleName, rows] of clusteredEntries) {
-      const clusterId = sanitizeClusterId(moduleName);
-      lines.push(`  subgraph cluster_${clusterId} {`);
-      lines.push(`    label="${dotEscapeLabel(moduleName)}";`);
-      lines.push(`    style=filled;`);
-      lines.push(`    fillcolor=lightgray;`);
-      for (const row of rows) {
-        lines.push(nodeAttributeLine(row, "    "));
-      }
-      lines.push(`  }`);
-    }
-
-    for (const row of unclustered) {
-      lines.push(nodeAttributeLine(row, "  "));
-    }
-
-    const emittedNodeIds = new Set(visibleRows.map((row) => row.bindingId));
-    const edgeSeen = new Set<string>();
-    for (const registryKey of this.ctx.collectAllRegistryKeys()) {
-      if (hideInternals && isInternalRegistryKey(registryKey)) {
-        continue;
-      }
-      const list = this.ctx.lookupBindings(registryKey);
-      if (list === undefined) {
-        continue;
-      }
-      const pathStart = [registryKeyLabel(registryKey)];
-      for (const consumerBinding of list) {
-        if (hideInternals && !allowedBindingIds.has(consumerBinding.id)) {
-          continue;
-        }
-        const edges = collectStaticDependencyEdges(
-          consumerBinding,
-          (dependencyKey) => this.ctx.lookupBindings(dependencyKey),
-          this.ctx.metadataReader,
-          pathStart,
-        );
-        for (const edge of edges) {
-          if (
-            hideInternals &&
-            (!allowedBindingIds.has(edge.fromBindingId) || !allowedBindingIds.has(edge.toBindingId))
-          ) {
-            continue;
-          }
-          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${edge.injectHintLabel ?? ""}`;
-          if (edgeSeen.has(edgeKey)) {
-            continue;
-          }
-          edgeSeen.add(edgeKey);
-
-          if (!emittedNodeIds.has(edge.fromBindingId)) {
-            emittedNodeIds.add(edge.fromBindingId);
-            lines.push(
-              `  "${dotEscapeId(edge.fromBindingId)}" [shape=box, style=dashed, label="(unlisted ${dotEscapeLabel(edge.fromBindingId)})"];`,
-            );
-          }
-          if (!emittedNodeIds.has(edge.toBindingId)) {
-            emittedNodeIds.add(edge.toBindingId);
-            lines.push(
-              `  "${dotEscapeId(edge.toBindingId)}" [shape=box, style=dashed, label="(unlisted ${dotEscapeLabel(edge.toBindingId)})"];`,
-            );
-          }
-
-          const labelParts: string[] = [];
-          if (edge.injectHintLabel !== undefined) {
-            labelParts.push(edge.injectHintLabel);
-          }
-          labelParts.push(edge.edgeKind);
-          if (edge.toBindingConditional) {
-            labelParts.push("conditional");
-          }
-          const edgeLabel = dotEscapeLabel(labelParts.join(" | "));
-          const pathLabel = dotEscapeLabel(edge.resolutionPath.join(" -> "));
-          const edgeStyle = edge.isAliasEdge ? ", style=dashed" : "";
-          const fromNodeId = dotEscapeId(edge.fromBindingId);
-          const toNodeId = dotEscapeId(edge.toBindingId);
-          lines.push(
-            `  "${fromNodeId}" -> "${toNodeId}" [label="${edgeLabel}", xlabel="${pathLabel}"${edgeStyle}];`,
-          );
-        }
-      }
-    }
-
-    lines.push("}");
-    return lines.join("\n");
-  }
-
-  /**
-   * Overloaded entry point: returns typed {@link ContainerGraphJson} by default, or DOT format
-   * when `format: "dot"` is specified.
-   */
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "json" }): ContainerGraphJson;
-  generateDependencyGraph(options: DotGraphOptions & { format: "dot" }): string;
-  generateDependencyGraph(
-    options?: DotGraphOptions & { format?: "json" | "dot" },
-  ): string | ContainerGraphJson {
-    if (options?.format === "dot") {
-      return this.generateDotGraph(options);
-    }
-    return this.generateDependencyGraphJsonTyped(options);
-  }
-
-  /**
-   * Builds the typed JSON graph (nodes + edges) used by the `"json"` format path.
-   * Applies the same `hideInternals` / deduplication logic as {@link generateDotGraph}.
-   */
-  generateDependencyGraphJsonTyped(options?: DotGraphOptions): ContainerGraphJson {
+  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
     const hideInternals = options?.hideInternals === true;
     const snapshot = this.getSnapshot();
     const visibleNodes = hideInternals
@@ -407,55 +194,5 @@ export class ContainerInspector {
       }
     }
     return { nodes: visibleNodes, edges };
-  }
-
-  /**
-   * Produces a JSON graph representation with `nodes` and `edges`.
-   * @internal Use `generateDependencyGraph({ format: "json" })` for typed output.
-   */
-  generateDependencyGraphJson(options?: DotGraphOptions): string {
-    const hideInternals = options?.hideInternals === true;
-    const snapshot = this.getSnapshot();
-    const visibleNodes = hideInternals
-      ? snapshot.bindings.filter((row) => !registryKeyLabelIsInternal(row.registryKeyLabel))
-      : snapshot.bindings;
-    const allowedBindingIds = new Set(visibleNodes.map((row) => row.bindingId));
-    const edges: ReturnType<typeof collectStaticDependencyEdges>[number][] = [];
-    const edgeSeen = new Set<string>();
-    for (const registryKey of this.ctx.collectAllRegistryKeys()) {
-      if (hideInternals && isInternalRegistryKey(registryKey)) {
-        continue;
-      }
-      const list = this.ctx.lookupBindings(registryKey);
-      if (list === undefined) {
-        continue;
-      }
-      const pathStart = [registryKeyLabel(registryKey)];
-      for (const consumerBinding of list) {
-        if (hideInternals && !allowedBindingIds.has(consumerBinding.id)) {
-          continue;
-        }
-        for (const edge of collectStaticDependencyEdges(
-          consumerBinding,
-          (dependencyKey) => this.ctx.lookupBindings(dependencyKey),
-          this.ctx.metadataReader,
-          pathStart,
-        )) {
-          if (
-            hideInternals &&
-            (!allowedBindingIds.has(edge.fromBindingId) || !allowedBindingIds.has(edge.toBindingId))
-          ) {
-            continue;
-          }
-          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${edge.injectHintLabel ?? ""}`;
-          if (edgeSeen.has(edgeKey)) {
-            continue;
-          }
-          edgeSeen.add(edgeKey);
-          edges.push(edge);
-        }
-      }
-    }
-    return JSON.stringify({ nodes: visibleNodes, edges });
   }
 }
