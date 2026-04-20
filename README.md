@@ -55,14 +55,14 @@
 
 ## Introduction
 
-CodeFast is a **monorepo** containing a production-ready UI component library and supporting tools for building modern web applications. The core package, `@codefast/ui`, provides **60+ accessible components** built on **Radix UI** primitives, styled with **Tailwind CSS 4**, and fully typed with **TypeScript**.
+CodeFast is a **monorepo** containing a production-ready UI component library and supporting tools for building modern web applications. The core package, `@codefast/ui`, provides **62 accessible components** built on **Radix UI** primitives, styled with **Tailwind CSS 4**, and fully typed with **TypeScript**.
 
 **Key highlights:**
 
-- **Reusability** -- Versatile UI components that work across multiple projects.
-- **Flexible Customization** -- Override or extend default styles with Tailwind Variants.
-- **High Performance** -- Optimized for fast loading and minimal bundle size.
-- **Clear Codebase** -- Modern, readable, and easy-to-maintain structure.
+- **Reusability** — Versatile UI components that work across multiple projects.
+- **Flexible Customization** — Override or extend default styles with Tailwind Variants.
+- **High Performance** — Optimized for fast loading and minimal bundle size.
+- **Clear Codebase** — Modern, readable, and easy-to-maintain structure.
 
 ## Architecture
 
@@ -73,25 +73,33 @@ graph TD
   end
 
   subgraph packages [Packages]
-    UI["@codefast/ui<br/>60+ UI components"]
+    UI["@codefast/ui<br/>62 UI components"]
     TV["@codefast/tailwind-variants<br/>Variant styling API"]
     Theme["@codefast/theme<br/>Theme management"]
+    DI["@codefast/di<br/>Dependency injection"]
+    CLI["@codefast/cli<br/>Developer CLI"]
     TSConfig["@codefast/typescript-config<br/>TypeScript presets"]
   end
 
   Docs --> UI
   Docs --> Theme
   UI --> TV
+  CLI --> DI
   UI -.->|dev dependency| TSConfig
+  CLI -.->|dev dependency| TSConfig
+  DI -.->|dev dependency| TSConfig
+  Theme -.->|dev dependency| TSConfig
 ```
 
 ## Packages
 
 | Package                                                     | Description                                                                  |
 | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [`@codefast/ui`](packages/ui)                               | 60+ accessible UI components built on Radix UI primitives                    |
-| [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant API for Tailwind CSS (4-7x faster than tailwind-variants)  |
+| [`@codefast/ui`](packages/ui)                               | 62 accessible UI components built on Radix UI primitives                     |
+| [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant API for Tailwind CSS (4–7× faster than tailwind-variants)  |
 | [`@codefast/theme`](packages/theme)                         | Theme management with React 19 features (optimistic updates, cross-tab sync) |
+| [`@codefast/di`](packages/di)                               | Lightweight dependency injection primitives for TypeScript                   |
+| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (arrange, mirror, tag)                        |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                      |
 
 | App                       | Description                                                |
@@ -125,8 +133,8 @@ export default function App() {
 
 #### Prerequisites
 
-- **Node.js** >= 24.0.0 (LTS)
-- **pnpm** 10.25.0
+- **Node.js** >= 22.0.0
+- **pnpm** 10.33.0
 
 #### Setup
 
@@ -185,7 +193,9 @@ pnpm dev --filter=@codefast/ui
 | [Turbo](https://turbo.build)                             | High-performance monorepo build system with caching                                                      |
 | [pnpm](https://pnpm.io)                                  | Fast, disk space efficient package manager                                                               |
 | [Oxc](https://oxc.rs) (Oxlint, Oxfmt, `oxlint-tsgolint`) | Fast lint and format; type-aware rules per [Oxc docs](https://oxc.rs/docs/guide/usage/linter/type-aware) |
+| [tsdown](https://tsdown.dev)                             | Fast TypeScript bundler powered by Rolldown                                                              |
 | [Changesets](https://github.com/changesets/changesets)   | Versioning and changelog management for monorepo packages                                                |
+| [Vitest](https://vitest.dev)                             | Blazing fast unit testing framework                                                                      |
 | [Zod](https://zod.dev)                                   | TypeScript-first schema validation                                                                       |
 
 ## Contributing
