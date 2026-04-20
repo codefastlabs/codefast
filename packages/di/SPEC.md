@@ -37,7 +37,7 @@ npm install inversify reflect-metadata
 
 Và vẫn cần `experimentalDecorators: true` cùng `emitDecoratorMetadata: true` trong tsconfig — hai flag legacy gắn liền với một proposal TC39 đã bị thay thế. v8 không có kế hoạch bỏ `reflect-metadata` vì toàn bộ decorator layer của nó vẫn phụ thuộc vào `emitDecoratorMetadata` để đọc constructor types.
 
-**`ServiceIdentifier` vẫn không phải branded type.** v8 đã narrow từ `string | symbol | Function` xuống `string | symbol | AbstractNewable<T> | Newable<T>` — cải thiện nhỏ so với v7 — nhưng vẫn không phải branded type. `container.get<WrongType>('my-service')` vẫn compile được và trả về sai type. Không có gì ngăn được lỗi này ở compile time.
+**`ServiceIdentifier` vẫn không phải branded type.** v8 đã narrow từ `string | symbol | Function` xuống `string | symbol | AbstractNewable<T> | Newable<T>` (ký hiệu `T` giữ nguyên theo API gốc của Inversify) — cải thiện nhỏ so với v7 — nhưng vẫn không phải branded type. `container.get<WrongType>('my-service')` vẫn compile được và trả về sai type. Không có gì ngăn được lỗi này ở compile time.
 
 ### Mục tiêu của thư viện này
 
@@ -62,6 +62,9 @@ Và vẫn cần `experimentalDecorators: true` cùng `emitDecoratorMetadata: tru
 | `T` (type param đơn lẻ) | `Value`, `Target`, `Deps`, `Ctx` | Tên mô tả ngữ cảnh                 |
 | `TResult`               | `Result`                         | —                                  |
 
+Quy tắc này áp dụng cho code của thư viện và mọi snippet minh họa trong SPEC. Trường hợp tài liệu trích
+nguyên văn API bên ngoài (ví dụ Inversify dùng `Newable<T>`) có thể giữ nguyên để tránh sai nghĩa khi đối chiếu.
+
 ### 2.2 Naming — Sync/Async convention (học từ InversifyJS v8)
 
 Quy tắc nhất quán: **unqualified = sync, `Async` suffix = async**. Không bao giờ có `Sync` suffix.
@@ -75,7 +78,7 @@ container.loadAsync(LazyModule); // async — module có async setup
 
 ### 2.3 Token thay thế ServiceIdentifier
 
-InversifyJS dùng `string | symbol | Newable<T>` làm service identifier. Cách này linh hoạt nhưng không type-safe — `container.get<WrongType>('my-service')` compile được và trả về sai type.
+InversifyJS dùng `string | symbol | Newable<T>` làm service identifier (`T` là ký hiệu generic của API gốc). Cách này linh hoạt nhưng không type-safe — `container.get<WrongType>('my-service')` compile được và trả về sai type.
 
 Thư viện này dùng `Token<Value>` — branded type — làm identifier duy nhất. Class cũng có thể dùng trực tiếp làm token (như InversifyJS), nhưng `Token<Value>` là cách ưu tiên khi cần abstraction.
 
@@ -127,7 +130,7 @@ interface Token<Value> {
 }
 
 // Helper để extract type
-type TokenValue<T> = T extends Token<infer Value> ? Value : never;
+type TokenValue<Type> = Type extends Token<infer Value> ? Value : never;
 
 // Resolve luôn trả về đúng type
 const logger = container.resolve(Logger); // ^? LoggerService — không phải any
@@ -162,19 +165,19 @@ Binding mô tả cách tạo ra một value từ một token. API theo kiểu fl
 
 ```ts
 interface ResolutionContext {
-  resolve<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value;
+  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
   resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ): Promise<Value>;
   resolveOptional<Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ): Value | undefined;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value[];
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
   resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ): Promise<Value[]>;
   /**
    * Dependency-graph navigation context — dùng trong `BindingBuilder.when()` predicates.
@@ -322,7 +325,7 @@ const engine = container.resolve(Engine, { tag: ["fuel", "electric"] });
 
 // Tránh collision giữa các package — dùng namespace prefix trong string
 container.bind(Engine).to(HydrogenEngine).whenTagged("mylib:fuel", "hydrogen");
-const h = container.resolve(Engine, { tag: ["mylib:fuel", "hydrogen"] });
+const hydrogenEngine = container.resolve(Engine, { tag: ["mylib:fuel", "hydrogen"] });
 ```
 
 > **Tag key là `string`:** `whenTagged` và `ResolveOptions.tag` chỉ nhận `string`. Để tránh collision giữa các package, dùng namespace prefix: `"mylib:fuel"`, `"@scope/pkg:tag"`. Cách này nhất quán với convention đã phổ biến trong hệ sinh thái JS/TS, serialize thẳng vào JSON, và không gây vấn đề debugging với local symbols cùng description.
@@ -396,8 +399,8 @@ container
 container
   .bind(Database)
   .toDynamicAsync(async (ctx) => {
-    const cfg = ctx.resolve(Config);
-    const db = new PostgresDatabase(cfg.dbUrl);
+    const appConfig = ctx.resolve(Config);
+    const db = new PostgresDatabase(appConfig.dbUrl);
     await db.connect();
     return db;
   })
@@ -526,19 +529,19 @@ interface Container {
   unloadAsync(...modules: Array<Module | AsyncModule>): Promise<void>;
 
   // Resolution
-  resolve<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value;
+  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
   resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ): Promise<Value>;
   resolveOptional<Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ): Value | undefined;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, opts?: ResolveOptions): Value[];
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
   resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
-    opts?: ResolveOptions,
+    hint?: ResolveOptions,
   ): Promise<Value[]>;
   // resolveAll() throw AsyncResolutionError nếu bất kỳ binding nào là async.
   // resolveAllAsync() an toàn cho cả sync lẫn async binding trong cùng multi-binding.
@@ -570,8 +573,8 @@ interface Container {
   // lookupBindings — trả về tất cả bindings đăng ký cho token (kể cả chưa resolved)
   inspect(): ContainerSnapshot;
   // Overloaded — format quyết định return type (không phải hai method riêng)
-  generateDependencyGraph(opts?: DotGraphOptions & { format?: "dot" }): string;
-  generateDependencyGraph(opts: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
+  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
 }
 
 // ContainerGraphJson — typed, không phải raw string
@@ -681,17 +684,17 @@ Type signature của `inject()`, `optional()`, `injectAll()`:
 // Plain function — không phải decorator
 function inject<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+  options?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value>;
 
 function optional<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+  options?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value | undefined>;
 
 function injectAll<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+  options?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value>;
 
 // InjectionDescriptor — được truyền vào deps array
@@ -807,7 +810,7 @@ Type signature của `inject` khi dùng làm field decorator:
 // inject() hoạt động như cả plain function (deps array) lẫn accessor decorator
 function inject<Value>(
   token: Token<Value> | Constructor<Value>,
-  opts?: { name?: string; tag?: [tag: string, value: unknown] },
+  options?: { name?: string; tag?: [tag: string, value: unknown] },
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
 ```
 
@@ -878,14 +881,14 @@ console.log(`Registered ${count} services`); // "Registered 12 services"
 
 ### 6.8 Danh sách decorator và helpers
 
-| API                         | Loại                          | Target / Ngữ cảnh                | Tác dụng                                                                                                                                      |
-| --------------------------- | ----------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@injectable(deps?, opts?)` | decorator                     | class                            | Ghi param metadata vào `Symbol.metadata`. `deps` = array `(Token \| Constructor \| InjectionDescriptor)[]`. `opts.autoRegister` để tự đăng ký |
-| `inject(token, opts?)`      | plain fn / accessor decorator | deps array hoặc `accessor` field | Tạo `InjectionDescriptor` hoặc inject qua accessor getter/setter                                                                              |
-| `optional(token, opts?)`    | plain fn                      | deps array                       | Như `inject` nhưng resolve trả về `undefined` nếu không có binding                                                                            |
-| `injectAll(token, opts?)`   | plain fn                      | deps array                       | Resolve tất cả bindings khớp token (và `name`/`tag` nếu có) thành mảng                                                                        |
-| `@postConstruct()`          | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi sau khi construct, trước khi cache                                               |
-| `@preDestroy()`             | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi khi deactivation (singleton only)                                                |
+| API                            | Loại                          | Target / Ngữ cảnh                | Tác dụng                                                                                                                                         |
+| ------------------------------ | ----------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@injectable(deps?, options?)` | decorator                     | class                            | Ghi param metadata vào `Symbol.metadata`. `deps` = array `(Token \| Constructor \| InjectionDescriptor)[]`. `options.autoRegister` để tự đăng ký |
+| `inject(token, options?)`      | plain fn / accessor decorator | deps array hoặc `accessor` field | Tạo `InjectionDescriptor` hoặc inject qua accessor getter/setter                                                                                 |
+| `optional(token, options?)`    | plain fn                      | deps array                       | Như `inject` nhưng resolve trả về `undefined` nếu không có binding                                                                               |
+| `injectAll(token, options?)`   | plain fn                      | deps array                       | Resolve tất cả bindings khớp token (và `name`/`tag` nếu có) thành mảng                                                                           |
+| `@postConstruct()`             | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi sau khi construct, trước khi cache                                                  |
+| `@preDestroy()`                | decorator                     | method                           | Ghi method name vào `Symbol.metadata` — LifecycleManager gọi khi deactivation (singleton only)                                                   |
 
 > **`@singleton()` và `@scoped()` đã bị bỏ.** Scope là binding-time concern — khai báo tại `.singleton()` / `.transient()` / `.scoped()` trong fluent chain, không phải trên class. Decorator scope-hint tạo ra hai nguồn sự thật và dễ gây nhầm lẫn.
 
@@ -1106,7 +1109,7 @@ packages/di/
 │   │   └── param-registry.test.ts
 │   │
 │   ├── decorators/             Chỉ decorator và helper decorator-runtime (inject / optional)
-│   │   ├── injectable.ts       @injectable(deps?, opts?) — class decorator + autoRegister option
+│   │   ├── injectable.ts       @injectable(deps?, options?) — class decorator + autoRegister option
 │   │   ├── injectable.test.ts
 │   │   ├── inject.ts           inject() + optional() — plain fn và accessor field decorator
 │   │   ├── inject.test.ts
@@ -1282,7 +1285,7 @@ const app = container.resolve(App); // fully typed, no any
 
 ### Phase 2 — Decorator layer (4–5 ngày)
 
-TC39 Stage 3 `@injectable(deps?, opts?)` với deps array và `autoRegister` option. `inject()` và `optional()` hoạt động cả như plain function (deps array) lẫn `accessor` field decorator (property injection). `@postConstruct()` và `@preDestroy()` method decorators tích hợp vào `LifecycleManager`. `SymbolMetadataReader` với `Object.hasOwn` guard cho prototype chain safety. Container nhận `MetadataReader` qua constructor — injectable trong test.
+TC39 Stage 3 `@injectable(deps?, options?)` với deps array và `autoRegister` option. `inject()` và `optional()` hoạt động cả như plain function (deps array) lẫn `accessor` field decorator (property injection). `@postConstruct()` và `@preDestroy()` method decorators tích hợp vào `LifecycleManager`. `SymbolMetadataReader` với `Object.hasOwn` guard cho prototype chain safety. Container nhận `MetadataReader` qua constructor — injectable trong test.
 
 **Deliverable:** Đầy đủ constructor injection, property injection qua `accessor`, method lifecycle decorators, auto-registration. Test cả decorator path và non-decorator path.
 
@@ -1364,20 +1367,20 @@ TC39 Stage 3 `@injectable(deps?, opts?)` với deps array và `autoRegister` opt
 
 ### Cải thiện hơn v8
 
-| InversifyJS v8                                                             | Thư viện này                                                                                                                   |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `reflect-metadata` + `experimentalDecorators` bắt buộc                     | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                                                                     |
-| `ServiceIdentifier = string \| symbol \| AbstractNewable<T> \| Newable<T>` | `Token<Value>` branded type — resolve luôn đúng type                                                                           |
-| `container.get<WrongType>('id')` compile được                              | Không thể — `Token<Value>` mang type ở compile time                                                                            |
-| `.inSingletonScope()`, `.inTransientScope()`                               | `.singleton()`, `.transient()` — ngắn hơn                                                                                      |
-| `toDynamicValue` cho cả sync lẫn async                                     | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                                                            |
-| Async module không có API riêng                                            | `Module.createAsync()` + `container.loadAsync()` — explicit                                                                    |
-| `@inject` trên parameter (cần `experimentalDecorators`)                    | `@injectable([deps])` + `inject()` / `optional()` — TC39 Stage 3 thuần; `inject()` cũng dùng được như accessor field decorator |
-| `getAll()` chỉ có sync                                                     | `resolveAll()` + `resolveAllAsync()` — consistent với sync/async convention                                                    |
-| `onDeactivation` không có compile-time guard                               | Builder type narrowing — `onDeactivation` chỉ tồn tại trên `SingletonBindingBuilder`                                           |
-| Không có method lifecycle decorator trên class                             | `@postConstruct()` / `@preDestroy()` method decorators — TC39 Stage 3, không cần `reflect-metadata`                            |
-| Không có property injection trong Stage 3                                  | `@inject(token) accessor field` — TC39 `accessor` keyword, per-instance via `context.addInitializer`                           |
-| `Symbol.metadata` prototype chain không được xử lý                         | `SymbolMetadataReader` dùng `Object.hasOwn` guard — không silently inherit metadata của parent class                           |
+| InversifyJS v8                                                                                    | Thư viện này                                                                                                                   |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `reflect-metadata` + `experimentalDecorators` bắt buộc                                            | Zero `reflect-metadata` — TC39 Stage 3 + `Symbol.metadata`                                                                     |
+| `ServiceIdentifier = string \| symbol \| AbstractNewable<T> \| Newable<T>` _(ký hiệu gốc của v8)_ | `Token<Value>` branded type — resolve luôn đúng type                                                                           |
+| `container.get<WrongType>('id')` compile được                                                     | Không thể — `Token<Value>` mang type ở compile time                                                                            |
+| `.inSingletonScope()`, `.inTransientScope()`                                                      | `.singleton()`, `.transient()` — ngắn hơn                                                                                      |
+| `toDynamicValue` cho cả sync lẫn async                                                            | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()`                                                            |
+| Async module không có API riêng                                                                   | `Module.createAsync()` + `container.loadAsync()` — explicit                                                                    |
+| `@inject` trên parameter (cần `experimentalDecorators`)                                           | `@injectable([deps])` + `inject()` / `optional()` — TC39 Stage 3 thuần; `inject()` cũng dùng được như accessor field decorator |
+| `getAll()` chỉ có sync                                                                            | `resolveAll()` + `resolveAllAsync()` — consistent với sync/async convention                                                    |
+| `onDeactivation` không có compile-time guard                                                      | Builder type narrowing — `onDeactivation` chỉ tồn tại trên `SingletonBindingBuilder`                                           |
+| Không có method lifecycle decorator trên class                                                    | `@postConstruct()` / `@preDestroy()` method decorators — TC39 Stage 3, không cần `reflect-metadata`                            |
+| Không có property injection trong Stage 3                                                         | `@inject(token) accessor field` — TC39 `accessor` keyword, per-instance via `context.addInitializer`                           |
+| `Symbol.metadata` prototype chain không được xử lý                                                | `SymbolMetadataReader` dùng `Object.hasOwn` guard — không silently inherit metadata của parent class                           |
 
 ### Không học từ v8
 

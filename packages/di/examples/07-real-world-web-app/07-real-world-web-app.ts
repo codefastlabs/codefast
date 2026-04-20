@@ -135,9 +135,9 @@ class LoggingMiddleware implements Middleware {
   async process(req: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse> {
     const start = Date.now();
     console.log(`→ ${req.method} ${req.path} [${req.requestId}]`);
-    const res = await next();
-    console.log(`← ${res.status} (${Date.now() - start}ms) [${req.requestId}]`);
-    return res;
+    const response = await next();
+    console.log(`← ${response.status} (${Date.now() - start}ms) [${req.requestId}]`);
+    return response;
   }
 }
 
@@ -203,8 +203,8 @@ const InfraModule = Module.createAsync("Infra", async (builder) => {
   builder
     .bind(DatabaseToken)
     .toDynamicAsync(async (ctx) => {
-      const cfg = ctx.resolve(ConfigToken);
-      return new Database(cfg.dbUrl);
+      const appConfig = ctx.resolve(ConfigToken);
+      return new Database(appConfig.dbUrl);
     })
     .singleton()
     .onActivation(async (_ctx, db) => {
