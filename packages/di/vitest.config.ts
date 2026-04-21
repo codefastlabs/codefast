@@ -19,8 +19,12 @@ export default defineConfig({
         "src/**/*.test.ts",
         "src/**/*.integration.test.ts",
         "src/**/*.spec.ts",
+        "src/**/*.bench.ts",
         "**/*.d.ts",
       ],
+    },
+    benchmark: {
+      include: ["src/**/*.bench.ts"],
     },
   },
   plugins: [

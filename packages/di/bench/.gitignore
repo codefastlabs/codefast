@@ -1,0 +1,2 @@
+# Local regression baseline: run `pnpm run bench:baseline` in this package, then `pnpm run bench:compare` after changes.
+baseline.json
