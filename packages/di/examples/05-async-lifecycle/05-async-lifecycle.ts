@@ -55,20 +55,20 @@ class Database {
 }
 
 class Cache {
-  private active = false;
+  private isStarted = false;
   private readonly store = new Map<string, string>();
 
   constructor(readonly url: string) {}
 
   async start(): Promise<void> {
     await delay(10);
-    this.active = true;
+    this.isStarted = true;
     console.log(`[Cache] started at ${this.url}`);
   }
 
   async stop(): Promise<void> {
     await delay(5);
-    this.active = false;
+    this.isStarted = false;
     console.log(`[Cache] stopped`);
   }
 
@@ -80,13 +80,13 @@ class Cache {
 @injectable([inject(DatabaseToken), inject(CacheToken)])
 class App {
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     private readonly cache: Cache,
   ) {}
 
   run(query: string): string {
     const cached = this.cache.get(query);
-    return cached ?? this.db.query(query);
+    return cached ?? this.database.query(query);
   }
 }
 
@@ -108,13 +108,13 @@ const DatabaseModule = Module.create("Database", (builder) => {
     })
     .singleton()
     // onActivation: called after instance is created; can be async
-    .onActivation(async (_ctx, db) => {
-      await db.connect();
-      return db; // must return the (possibly transformed) instance
+    .onActivation(async (_ctx, database) => {
+      await database.connect();
+      return database; // must return the (possibly transformed) instance
     })
     // onDeactivation: called during container.dispose()
-    .onDeactivation(async (db) => {
-      await db.disconnect();
+    .onDeactivation(async (database) => {
+      await database.disconnect();
     });
 });
 

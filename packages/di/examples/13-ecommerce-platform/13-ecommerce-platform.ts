@@ -973,13 +973,17 @@ class CatalogManager implements CatalogService {
   }
 }
 
+// Search contract stays technology-agnostic (`SearchService`). Concrete classes that
+// talk to a specific backend use the same axis as repositories: **domain first,
+// then infrastructure** — e.g. `ProductPostgresRepository` and
+// `ProductElasticsearchSearchService` both name the aggregate/capability, then the store/index.
 interface SearchService {
   search(query: string, filters?: Record<string, string>): Promise<Product[]>;
   indexProduct(product: Product): Promise<void>;
 }
 
 @injectable([inject(ElasticToken), inject(ProductRepoToken), inject(LoggerToken)])
-class ProductSearchService implements SearchService {
+class ProductElasticsearchSearchService implements SearchService {
   private readonly log: Logger;
 
   constructor(
@@ -2467,7 +2471,7 @@ const CatalogModule = Module.create("Catalog", (builder) => {
   builder.bind(PricingServiceToken).to(PricingManager).singleton();
   // @postConstruct handles cache warm-up; @preDestroy handles flush
   builder.bind(CatalogServiceToken).to(CatalogManager).singleton();
-  builder.bind(SearchServiceToken).to(ProductSearchService).singleton();
+  builder.bind(SearchServiceToken).to(ProductElasticsearchSearchService).singleton();
 });
 
 // ---- Cart -------------------------------------------------------------------
@@ -2678,8 +2682,8 @@ async function main(): Promise<void> {
   // ── Browse catalog ─────────────────────────────────────────────────────
 
   console.log("\n[Catalog] Searching for 'running shoes'...");
-  const searchSvc = platform.container.resolve(SearchServiceToken);
-  const results = await searchSvc.search("running shoes", { brand: "Nike" });
+  const searchService = platform.container.resolve(SearchServiceToken);
+  const results = await searchService.search("running shoes", { brand: "Nike" });
   console.log(`[Catalog] Found ${results.length} results`);
 
   // ── Dependency graph ──────────────────────────────────────────────────

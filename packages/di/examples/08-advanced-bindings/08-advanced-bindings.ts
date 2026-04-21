@@ -173,7 +173,7 @@ pluginContainer
 console.log("\n--- All plugins ---");
 const allPlugins = pluginContainer.resolveAll(PluginToken);
 console.log("Count:", allPlugins.length); // 3
-allPlugins.forEach((p) => p.run());
+allPlugins.forEach((plugin) => plugin.run());
 
 // Remove only the metrics plugin — other bindings unaffected
 pluginContainer.unbind(metricsPluginId);
@@ -181,7 +181,7 @@ pluginContainer.unbind(metricsPluginId);
 console.log("\n--- After unbinding MetricsPlugin ---");
 const remainingPlugins = pluginContainer.resolveAll(PluginToken);
 console.log("Count:", remainingPlugins.length); // 2
-remainingPlugins.forEach((p) => p.run());
+remainingPlugins.forEach((plugin) => plugin.run());
 
 // Remove the log plugin by its specific id — audit plugin still intact
 pluginContainer.unbind(logPluginId);
@@ -189,7 +189,7 @@ pluginContainer.unbind(logPluginId);
 console.log("\n--- After unbinding LogPlugin ---");
 const finalPlugins = pluginContainer.resolveAll(PluginToken);
 console.log("Count:", finalPlugins.length); // 1
-finalPlugins.forEach((p) => p.run());
+finalPlugins.forEach((plugin) => plugin.run());
 
 // ============================================================================
 // 5. rebind() — atomically replace a binding

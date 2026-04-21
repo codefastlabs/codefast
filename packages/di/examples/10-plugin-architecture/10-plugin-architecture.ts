@@ -270,13 +270,18 @@ const SlackPluginModule = Module.createAsync("SlackPlugin", async (builder) => {
 // Never imports a plugin class directly
 // ============================================================================
 
+interface DocumentService {
+  uploadDocument(userId: string, filename: string, content: string): Promise<string>;
+  downloadDocument(userId: string, filename: string): Promise<string>;
+}
+
 @injectable([
   inject(StorageToken),
   inject(AnalyticsToken),
   inject(NotificationToken),
   inject(AppLoggerToken),
 ])
-class DocumentService {
+class DocumentOrchestrator implements DocumentService {
   constructor(
     private readonly storage: StorageProvider,
     private readonly analytics: AnalyticsProvider,
@@ -398,7 +403,7 @@ class Platform {
         const analytics = await ctx.resolveAsync(AnalyticsToken);
         const notifications = await ctx.resolveAsync(NotificationToken);
         const logger = ctx.resolve(AppLoggerToken);
-        return new DocumentService(storage, analytics, notifications, logger);
+        return new DocumentOrchestrator(storage, analytics, notifications, logger);
       })
       .singleton();
 
@@ -437,7 +442,7 @@ class Platform {
         const analytics = await ctx.resolveAsync(AnalyticsToken);
         const notifications = await ctx.resolveAsync(NotificationToken);
         const logger = ctx.resolve(AppLoggerToken);
-        return new DocumentService(storage, analytics, notifications, logger);
+        return new DocumentOrchestrator(storage, analytics, notifications, logger);
       })
       .singleton();
 

@@ -58,13 +58,13 @@ class AuthService {
 @injectable([inject(EmailServiceToken), inject(AuthServiceToken)])
 class App {
   constructor(
-    private readonly email: EmailService,
-    private readonly auth: AuthService,
+    private readonly emailService: EmailService,
+    private readonly authService: AuthService,
   ) {}
 
   register(userId: string, email: string): string {
-    const jwtToken = this.auth.issueToken(userId);
-    this.email.send(email, "Welcome!");
+    const jwtToken = this.authService.issueToken(userId);
+    this.emailService.send(email, "Welcome!");
     return jwtToken;
   }
 }

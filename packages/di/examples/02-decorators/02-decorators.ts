@@ -18,7 +18,7 @@ const UserServiceToken = token<UserService>("UserService");
 
 interface AppConfig {
   dbUrl: string;
-  debug: boolean;
+  isDebug: boolean;
 }
 
 interface Cache {
@@ -49,7 +49,7 @@ class InMemoryCache implements Cache {
   private readonly store = new Map<string, string>();
 
   constructor(config: AppConfig) {
-    if (config.debug) {
+    if (config.isDebug) {
       console.log("[Cache] initialized");
     }
   }
@@ -67,7 +67,7 @@ class InMemoryCache implements Cache {
 @injectable([inject(Database), inject(CacheToken), optional(LoggerToken)])
 class UserService {
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     private readonly cache: Cache,
     private readonly logger?: Logger,
   ) {}
@@ -80,7 +80,7 @@ class UserService {
       return cached;
     }
 
-    const user = `User(${id}) from ${this.db.url}`;
+    const user = `User(${id}) from ${this.database.url}`;
     this.cache.set(id, user);
     this.logger?.log(`[UserService] loaded ${id} from db`);
     return user;
@@ -91,7 +91,7 @@ class UserService {
 
 const container = Container.create();
 
-container.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", debug: true });
+container.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", isDebug: true });
 container.bind(LoggerToken).toConstantValue({ log: (msg) => console.log(msg) });
 
 container.bind(Database).toSelf().singleton();

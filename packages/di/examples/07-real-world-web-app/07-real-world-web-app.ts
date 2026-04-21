@@ -90,12 +90,16 @@ interface User {
   role: "admin" | "user";
 }
 
+interface UserRepository {
+  findById(id: string): Promise<User | undefined>;
+}
+
 @injectable([inject(DatabaseToken)])
-class UserRepository {
-  constructor(private readonly db: Database) {}
+class UserPostgresRepository implements UserRepository {
+  constructor(private readonly database: Database) {}
 
   async findById(id: string): Promise<User | undefined> {
-    const rows = await this.db.query<User>("SELECT * FROM users WHERE id = $1", [id]);
+    const rows = await this.database.query<User>("SELECT * FROM users WHERE id = $1", [id]);
     return rows[0] ?? { id, email: `user${id}@example.com`, role: "user" };
   }
 }
@@ -104,8 +108,13 @@ class UserRepository {
 // Services
 // ============================================================================
 
+interface AuthService {
+  authenticate(token: string): Promise<User | undefined>;
+  issueToken(userId: string): string;
+}
+
 @injectable([inject(ConfigToken), inject(UserRepoToken)])
-class AuthService {
+class AuthManager implements AuthService {
   constructor(
     private readonly config: AppConfig,
     private readonly users: UserRepository,
@@ -146,7 +155,7 @@ class LoggingMiddleware implements Middleware {
 class AuthMiddleware implements Middleware {
   name = "auth";
 
-  constructor(private readonly auth: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   async process(req: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse> {
     const authHeader = req.headers["authorization"];
@@ -155,7 +164,7 @@ class AuthMiddleware implements Middleware {
       return { status: 401, body: { error: "Unauthorized" } };
     }
 
-    const user = await this.auth.authenticate(authHeader);
+    const user = await this.authService.authenticate(authHeader);
 
     if (!user) {
       return { status: 403, body: { error: "Forbidden" } };
@@ -172,14 +181,14 @@ class AuthMiddleware implements Middleware {
 @injectable([inject(RequestContextToken), inject(UserRepoToken), inject(AuthServiceToken)])
 class UserController {
   constructor(
-    private readonly req: HttpRequest,
-    private readonly users: UserRepository,
-    private readonly auth: AuthService,
+    private readonly httpRequest: HttpRequest,
+    private readonly userRepository: UserRepository,
+    private readonly authService: AuthService,
   ) {}
 
   async getProfile(): Promise<HttpResponse> {
-    const token = this.req.headers["authorization"] ?? "";
-    const user = await this.auth.authenticate(token);
+    const token = this.httpRequest.headers["authorization"] ?? "";
+    const user = await this.authService.authenticate(token);
 
     if (!user) {
       return { status: 401, body: { error: "Unauthorized" } };
@@ -189,7 +198,7 @@ class UserController {
   }
 
   issueToken(userId: string): HttpResponse {
-    return { status: 200, body: { token: this.auth.issueToken(userId) } };
+    return { status: 200, body: { token: this.authService.issueToken(userId) } };
   }
 }
 
@@ -208,22 +217,22 @@ const InfraModule = Module.createAsync("Infra", async (builder) => {
       return new Database(appConfig.dbUrl);
     })
     .singleton()
-    .onActivation(async (_ctx, db) => {
-      await db.connect();
-      return db;
+    .onActivation(async (_ctx, database) => {
+      await database.connect();
+      return database;
     })
-    .onDeactivation(async (db) => {
-      await db.disconnect();
+    .onDeactivation(async (database) => {
+      await database.disconnect();
     });
 });
 
 const RepositoryModule = Module.create("Repository", (builder) => {
-  builder.bind(UserRepoToken).to(UserRepository).singleton();
+  builder.bind(UserRepoToken).to(UserPostgresRepository).singleton();
 });
 
 const ServiceModule = Module.create("Service", (builder) => {
   builder.import(RepositoryModule);
-  builder.bind(AuthServiceToken).to(AuthService).singleton();
+  builder.bind(AuthServiceToken).to(AuthManager).singleton();
 });
 
 const MiddlewareModule = Module.create("Middleware", (builder) => {
