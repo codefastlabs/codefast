@@ -245,7 +245,7 @@ container.resolve(StorageToken, { tag: ["provider", "s3"] });
 **Predicate** — inspect the full resolution graph:
 
 ```typescript
-import { whenAnyAncestorIs, whenParentIs, whenTargetTagged } from "@codefast/di";
+import { whenAnyAncestorIs, whenParentIs, whenParentTagged } from "@codefast/di";
 
 container.bind(LoggerToken).when(whenParentIs(DiagnosticsService)).toConstantValue(verboseLogger);
 ```
@@ -256,7 +256,7 @@ Built-in predicates:
 | ------------------------------ | --------------------------------------------------------------------------- |
 | `whenParentIs(key)`            | the direct parent binding was registered for `key`.                         |
 | `whenAnyAncestorIs(key)`       | any ancestor binding on the materialization stack was registered for `key`. |
-| `whenTargetTagged(tag, value)` | the immediate parent binding carries `tag` with `value`.                    |
+| `whenParentTagged(tag, value)` | the immediate parent binding carries `tag` with `value`.                    |
 
 For anything else, pass a custom `(ctx: ConstraintContext) => boolean` to `.when(predicate)`.
 
@@ -579,7 +579,7 @@ The root entry re-exports the full public API. Subpath exports are provided for 
 | `@codefast/di/decorators/inject`               | `inject`, `optional`, `injectAll`, `isInjectionDescriptor`       |
 | `@codefast/di/decorators/injectable`           | `@injectable`, `getAutoRegistered`                               |
 | `@codefast/di/decorators/lifecycle-decorators` | `@postConstruct`, `@preDestroy`                                  |
-| `@codefast/di/constraints`                     | `whenParentIs`, `whenAnyAncestorIs`, `whenTargetTagged`          |
+| `@codefast/di/constraints`                     | `whenParentIs`, `whenAnyAncestorIs`, `whenParentTagged`          |
 | `@codefast/di/registry`                        | `BindingRegistry`                                                |
 | `@codefast/di/resolver`                        | `DependencyResolver` internals                                   |
 | `@codefast/di/scope`                           | `ScopeManager`                                                   |

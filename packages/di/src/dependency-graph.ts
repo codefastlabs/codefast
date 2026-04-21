@@ -37,7 +37,7 @@ export type StaticDependencyEdge = {
   /**
    * True when the resolved target binding carries a {@link BindingBuilder.when} predicate (runtime may skip this edge).
    */
-  readonly toBindingConditional: boolean;
+  readonly isToBindingConditional: boolean;
   /**
    * Constructor inject hint for this edge (named / tagged), when known statically.
    */
@@ -214,7 +214,7 @@ export function listResolvedDependencies(
               ? { tag: param.tag }
               : undefined;
 
-        if (param.all === true) {
+        if (param.isInjectAllBindings === true) {
           const bindings = lookup(tok as RegistryKey);
           if (bindings === undefined || bindings.length === 0) {
             return [];
@@ -271,7 +271,7 @@ export function collectStaticDependencyEdges(
     toBindingId: dep.binding.id,
     resolutionPath: dep.path,
     edgeKind: edgeKindFor(consumer, dep.binding),
-    toBindingConditional: dep.binding.constraint !== undefined,
+    isToBindingConditional: dep.binding.constraint !== undefined,
     injectHintLabel: dep.injectHintLabel,
     isAliasEdge,
   }));

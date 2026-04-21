@@ -122,16 +122,16 @@ describe("Module", () => {
 
   it("successfully imports a sync module from an async module", async () => {
     const container = Container.create();
-    const tVal = token<string>("val");
+    const syncConstantToken = token<string>("val");
     const SyncM = Module.create("SyncM", (api) => {
-      api.bind(tVal).toConstantValue("sync-val");
+      api.bind(syncConstantToken).toConstantValue("sync-val");
     });
     const AsyncM = Module.createAsync("AsyncM", async (api) => {
       api.import(SyncM);
     });
 
     await container.loadAsync(AsyncM);
-    expect(container.resolve(tVal)).toBe("sync-val");
+    expect(container.resolve(syncConstantToken)).toBe("sync-val");
   });
 
   it("instantiates classes without parameters", () => {
@@ -156,25 +156,25 @@ describe("Module", () => {
   });
 
   it("plain bind after named binds replaces all bindings for that token (last-wins)", () => {
-    const t = token<string>("module-bind-then-multi");
+    const lastWinsToken = token<string>("module-bind-then-multi");
     const mod = Module.create("mix", (api) => {
-      api.bind(t).whenNamed("first").toConstantValue("first");
-      api.bind(t).toConstantValue("solo");
+      api.bind(lastWinsToken).whenNamed("first").toConstantValue("first");
+      api.bind(lastWinsToken).toConstantValue("solo");
     });
     const container = Container.fromModules(mod);
-    expect(container.resolveAll(t)).toEqual(["solo"]);
-    expect(container.resolve(t)).toBe("solo");
+    expect(container.resolveAll(lastWinsToken)).toEqual(["solo"]);
+    expect(container.resolve(lastWinsToken)).toBe("solo");
   });
 
   it("unload removes every binding id from a multi-binding module", () => {
-    const t = token<number>("module-unload-multi");
+    const unloadMultiToken = token<number>("module-unload-multi");
     const mod = Module.create("unload-multi", (api) => {
-      api.bind(t).whenNamed("x").toConstantValue(1);
-      api.bind(t).whenNamed("y").toConstantValue(2);
+      api.bind(unloadMultiToken).whenNamed("x").toConstantValue(1);
+      api.bind(unloadMultiToken).whenNamed("y").toConstantValue(2);
     });
     const container = Container.fromModules(mod);
-    expect(container.resolveAll(t)).toEqual([1, 2]);
+    expect(container.resolveAll(unloadMultiToken)).toEqual([1, 2]);
     container.unload(mod);
-    expect(container.resolveAll(t)).toEqual([]);
+    expect(container.resolveAll(unloadMultiToken)).toEqual([]);
   });
 });

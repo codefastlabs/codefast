@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getOrCreatePendingMap, takePendingMap } from "#/metadata/param-registry";
 import { token } from "#/token";
 
-describe("param-registry", () => {
+describe("ParamRegistry (pending constructor metadata)", () => {
   it("getOrCreatePendingMap creates a new map when one does not exist", () => {
     class TestController {}
     const map = getOrCreatePendingMap(TestController);

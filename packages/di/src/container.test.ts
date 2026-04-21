@@ -47,7 +47,7 @@ describe("Container", () => {
     expect(validateSpy).toHaveBeenCalledTimes(2);
   });
 
-  it("has(key, hint) matches bindings by name and tag metadata", () => {
+  it("has(token, hint) matches bindings by name and tag metadata", () => {
     const container = Container.create();
     const multi = token<string>("container-test-multi");
     const tagKey = "container-test-tag";
@@ -67,7 +67,7 @@ describe("Container", () => {
 
   it("injectAll in @injectable receives resolveAll() for that constructor parameter", () => {
     const part = token<string>("container-inject-all-part");
-    const svc = token<{ parts: string[] }>("container-inject-all-svc");
+    const aggregatorServiceToken = token<{ parts: string[] }>("container-inject-all-svc");
 
     @injectable([injectAll(part)])
     class Aggregator {
@@ -77,11 +77,11 @@ describe("Container", () => {
     const mod = Module.create("inject-all-mod", (api) => {
       api.bind(part).whenNamed("a").toConstantValue("x");
       api.bind(part).whenNamed("b").toConstantValue("y");
-      api.bind(svc).to(Aggregator).singleton();
+      api.bind(aggregatorServiceToken).to(Aggregator).singleton();
     });
 
     const container = Container.fromModules(mod);
-    const instance = container.resolve(svc);
+    const instance = container.resolve(aggregatorServiceToken);
     expect(instance.parts.sort()).toEqual(["x", "y"]);
   });
 });

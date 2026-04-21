@@ -9,7 +9,7 @@ import {
   TokenNotBoundError,
 } from "./index";
 
-describe("index smoke test", () => {
+describe("@codefast/di public exports", () => {
   it("performs a complete DI lifecycle using public exports", () => {
     const ApiKeyToken = token<string>("ApiKey");
 

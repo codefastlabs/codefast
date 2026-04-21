@@ -32,7 +32,7 @@ function mockConstraintContext(options: Partial<ConstraintContext> = {}): Constr
   };
 }
 
-describe("binding-select", () => {
+describe("binding selection helpers", () => {
   describe("registryKeyLabel", () => {
     it("returns class name for constructors", () => {
       class MyService {}
@@ -44,45 +44,61 @@ describe("binding-select", () => {
     });
 
     it("returns token name for tokens", () => {
-      const t = token("MyToken");
-      expect(registryKeyLabel(t)).toBe("MyToken");
+      const sampleToken = token("MyToken");
+      expect(registryKeyLabel(sampleToken)).toBe("MyToken");
     });
 
     it("returns anonymous token for empty named tokens", () => {
-      const t = token("");
-      expect(registryKeyLabel(t)).toBe("(anonymous token)");
+      const unnamedToken = token("");
+      expect(registryKeyLabel(unnamedToken)).toBe("(anonymous token)");
     });
   });
 
   describe("filterMatchingBindings", () => {
     it("filters by name hint", () => {
-      const b1 = mockBinding({ bindingName: "alpha" });
-      const b2 = mockBinding({ bindingName: "beta" });
+      const alphaBinding = mockBinding({ bindingName: "alpha" });
+      const betaBinding = mockBinding({ bindingName: "beta" });
 
-      const res = filterMatchingBindings([b1, b2], { name: "alpha" }, undefined);
-      expect(res).toEqual([b1]);
+      const matchedBindings = filterMatchingBindings(
+        [alphaBinding, betaBinding],
+        { name: "alpha" },
+        undefined,
+      );
+      expect(matchedBindings).toEqual([alphaBinding]);
     });
 
     it("filters by tag hint", () => {
-      const tags1 = new Map<string, unknown>();
-      tags1.set("role", "admin");
-      const b1 = mockBinding({ tags: tags1 });
+      const adminTags = new Map<string, unknown>();
+      adminTags.set("role", "admin");
+      const adminRoleBinding = mockBinding({ tags: adminTags });
 
-      const tags2 = new Map<string, unknown>();
-      tags2.set("role", "user");
-      const b2 = mockBinding({ tags: tags2 });
+      const userTags = new Map<string, unknown>();
+      userTags.set("role", "user");
+      const userRoleBinding = mockBinding({ tags: userTags });
 
-      const res = filterMatchingBindings([b1, b2], { tag: ["role", "admin"] }, undefined);
-      expect(res).toEqual([b1]);
+      const matchedBindings = filterMatchingBindings(
+        [adminRoleBinding, userRoleBinding],
+        { tag: ["role", "admin"] },
+        undefined,
+      );
+      expect(matchedBindings).toEqual([adminRoleBinding]);
     });
 
     it("filters by constraint context", () => {
-      const b1 = mockBinding({ constraint: (ctx) => ctx.resolutionPath.length === 1 });
-      const b2 = mockBinding({ constraint: (ctx) => ctx.resolutionPath.length > 5 });
+      const shortPathBinding = mockBinding({
+        constraint: (constraintContext) => constraintContext.resolutionPath.length === 1,
+      });
+      const longPathBinding = mockBinding({
+        constraint: (constraintContext) => constraintContext.resolutionPath.length > 5,
+      });
 
-      const ctx = mockConstraintContext({ resolutionPath: ["a"] });
-      const res = filterMatchingBindings([b1, b2], undefined, ctx);
-      expect(res).toEqual([b1]);
+      const constraintContext = mockConstraintContext({ resolutionPath: ["a"] });
+      const matchedBindings = filterMatchingBindings(
+        [shortPathBinding, longPathBinding],
+        undefined,
+        constraintContext,
+      );
+      expect(matchedBindings).toEqual([shortPathBinding]);
     });
   });
 
@@ -94,30 +110,54 @@ describe("binding-select", () => {
     });
 
     it("returns the single matching binding", () => {
-      const b1 = mockBinding();
-      const res = selectBindingForRegistry([b1], undefined, "MyToken", ["path"], undefined);
-      expect(res).toBe(b1);
+      const onlyBinding = mockBinding();
+      const selectedBinding = selectBindingForRegistry(
+        [onlyBinding],
+        undefined,
+        "MyToken",
+        ["path"],
+        undefined,
+      );
+      expect(selectedBinding).toBe(onlyBinding);
     });
 
     it("throws NoMatchingBindingError if candidates length is 0 and hint was provided", () => {
-      const b1 = mockBinding({ bindingName: "alpha" });
+      const alphaNamedBinding = mockBinding({ bindingName: "alpha" });
       expect(() => {
-        selectBindingForRegistry([b1], { name: "beta" }, "MyToken", ["path"], undefined);
+        selectBindingForRegistry(
+          [alphaNamedBinding],
+          { name: "beta" },
+          "MyToken",
+          ["path"],
+          undefined,
+        );
       }).toThrowError(NoMatchingBindingError);
     });
 
     it("throws TokenNotBoundError if candidates length is 0 and hint was not provided", () => {
-      const b1 = mockBinding({ constraint: () => false }); // fails constraint
+      const neverMatchingBinding = mockBinding({ constraint: () => false }); // fails constraint
       expect(() => {
-        selectBindingForRegistry([b1], undefined, "MyToken", ["path"], mockConstraintContext());
+        selectBindingForRegistry(
+          [neverMatchingBinding],
+          undefined,
+          "MyToken",
+          ["path"],
+          mockConstraintContext(),
+        );
       }).toThrowError(TokenNotBoundError);
     });
 
     it("throws DiError (Ambiguous) if multiple candidates match", () => {
-      const b1 = mockBinding();
-      const b2 = mockBinding();
+      const firstAmbiguousBinding = mockBinding();
+      const secondAmbiguousBinding = mockBinding();
       expect(() => {
-        selectBindingForRegistry([b1, b2], undefined, "MyToken", ["path"], undefined);
+        selectBindingForRegistry(
+          [firstAmbiguousBinding, secondAmbiguousBinding],
+          undefined,
+          "MyToken",
+          ["path"],
+          undefined,
+        );
       }).toThrow(/Ambiguous binding for "MyToken"/);
     });
 
@@ -133,24 +173,28 @@ describe("binding-select", () => {
 
   describe("selectDefaultBindingForKey", () => {
     it("throws TokenNotBoundError if lookup returns undefined", () => {
-      const t = token("MyToken");
+      const registryKeyToken = token("MyToken");
       expect(() => {
-        selectDefaultBindingForKey(() => undefined, t, ["Root"]);
+        selectDefaultBindingForKey(() => undefined, registryKeyToken, ["Root"]);
       }).toThrowError(TokenNotBoundError);
     });
 
     it("throws TokenNotBoundError if lookup returns empty array", () => {
-      const t = token("MyToken");
+      const registryKeyToken = token("MyToken");
       expect(() => {
-        selectDefaultBindingForKey(() => [], t, ["Root"]);
+        selectDefaultBindingForKey(() => [], registryKeyToken, ["Root"]);
       }).toThrowError(TokenNotBoundError);
     });
 
     it("selects default binding successfully", () => {
-      const t = token("MyToken");
-      const b = mockBinding();
-      const result = selectDefaultBindingForKey(() => [b], t, ["Root"]);
-      expect(result).toBe(b);
+      const registryKeyToken = token("MyToken");
+      const registeredBinding = mockBinding();
+      const selectedBinding = selectDefaultBindingForKey(
+        () => [registeredBinding],
+        registryKeyToken,
+        ["Root"],
+      );
+      expect(selectedBinding).toBe(registeredBinding);
     });
   });
 });

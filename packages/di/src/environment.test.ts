@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { isProductionEnvironment, isDevelopmentOrTestEnvironment } from "#/environment";
 
-describe("environment", () => {
+describe("Node environment detection", () => {
   it("isProductionEnvironment returns false if process is missing", () => {
     const originalProcess = globalThis.process;
     vi.stubGlobal("process", undefined);

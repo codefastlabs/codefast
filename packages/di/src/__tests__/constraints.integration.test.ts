@@ -69,7 +69,7 @@ describe("Integration: Advanced Constraints", () => {
     expect(mid.leaf).toBe("under-root");
   });
 
-  it("whenTargetTagged matches parent binding tags on the materialization stack", () => {
+  it("whenParentTagged matches parent binding tags on the materialization stack", () => {
     const ApiToken = token<string>("ApiToken");
     const ParentToken = token<{ v: string }>("TaggedParent");
     const tag = "role";
@@ -104,7 +104,7 @@ describe("Integration: Advanced Constraints", () => {
     expect(container.resolve(ApiToken)).toBe("standalone");
   });
 
-  it("ctx.resolveAll preserves parent-aware when constraints", () => {
+  it("ResolutionContext.resolveAll preserves parent-aware when constraints", () => {
     const ParentToken = token<{ children: string[] }>("ParentResolveAllToken");
     const ChildToken = token<string>("ChildResolveAllToken");
 
@@ -130,16 +130,16 @@ describe("Integration: Advanced Constraints", () => {
   });
 
   it("isolates materialization stacks across concurrent resolveAsync roots", async () => {
-    const A = token("A");
-    const B = token("B");
+    const firstConcurrentToken = token<string>("concurrent-root-a");
+    const secondConcurrentToken = token<string>("concurrent-root-b");
     const container = Container.create();
-    container.bind(A).toConstantValue("a");
-    container.bind(B).toConstantValue("b");
+    container.bind(firstConcurrentToken).toConstantValue("a");
+    container.bind(secondConcurrentToken).toConstantValue("b");
 
     const results = await Promise.all([
-      container.resolveAsync(A),
-      container.resolveAsync(B),
-      container.resolveAsync(A),
+      container.resolveAsync(firstConcurrentToken),
+      container.resolveAsync(secondConcurrentToken),
+      container.resolveAsync(firstConcurrentToken),
     ]);
     expect(results).toEqual(["a", "b", "a"]);
   });
@@ -147,9 +147,9 @@ describe("Integration: Advanced Constraints", () => {
   it("runs validate() at most once in development after load or resolve", () => {
     vi.stubEnv("NODE_ENV", "development");
 
-    const T = token<number>("T");
+    const devValidationToken = token<number>("dev-validation-once-token");
     const Mod = Module.create("mod", (api) => {
-      api.bind(T).toConstantValue(1);
+      api.bind(devValidationToken).toConstantValue(1);
     });
 
     const container = Container.create();
@@ -158,19 +158,19 @@ describe("Integration: Advanced Constraints", () => {
     container.load(Mod);
     expect(validateSpy).toHaveBeenCalledTimes(1);
 
-    container.resolve(T);
+    container.resolve(devValidationToken);
     expect(validateSpy).toHaveBeenCalledTimes(1);
   });
 
   it("skips automatic validate when NODE_ENV is production", () => {
     vi.stubEnv("NODE_ENV", "production");
 
-    const T = token<number>("T");
+    const productionSkipValidateToken = token<number>("production-skip-validate-token");
     const container = Container.create();
-    container.bind(T).toConstantValue(1);
+    container.bind(productionSkipValidateToken).toConstantValue(1);
     const validateSpy = vi.spyOn(container, "validate");
 
-    container.resolve(T);
+    container.resolve(productionSkipValidateToken);
     expect(validateSpy).not.toHaveBeenCalled();
   });
 

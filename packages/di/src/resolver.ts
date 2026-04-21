@@ -828,7 +828,7 @@ export class DependencyResolver {
           : param.tag !== undefined
             ? { tag: param.tag }
             : undefined;
-      if (param.all === true) {
+      if (param.isInjectAllBindings === true) {
         return this.resolveAll(param.token, paramHint, pathLabels, visiting, materializationStack);
       }
       if (param.optional) {
@@ -880,7 +880,7 @@ export class DependencyResolver {
           : param.tag !== undefined
             ? { tag: param.tag }
             : undefined;
-      if (param.all === true) {
+      if (param.isInjectAllBindings === true) {
         deps.push(
           await this.resolveAllAsync(
             param.token,

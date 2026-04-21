@@ -75,11 +75,13 @@ describe("ContainerInspector", () => {
     container.bind(InternalTelemetryToken).toConstantValue("trace-123");
     container.bind(token("SharedService")).toAlias(LoggerToken);
 
-    const data = container.generateDependencyGraph({ hideInternals: true });
+    const dependencyGraphJson = container.generateDependencyGraph({ hideInternals: true });
 
-    const nodeLabels = data.nodes.map((n: ContainerBindingSnapshot) => n.registryKeyLabel);
+    const nodeLabels = dependencyGraphJson.nodes.map(
+      (n: ContainerBindingSnapshot) => n.registryKeyLabel,
+    );
     expect(nodeLabels).not.toContain("CODEFAST_DI_InternalProbe");
-    expect(data.edges).toBeDefined();
+    expect(dependencyGraphJson.edges).toBeDefined();
   });
 
   it("generateDependencyGraph returns json by default", () => {
@@ -108,7 +110,7 @@ describe("ContainerInspector", () => {
 
     const aliasEdge = graph.elements.edges.find((edge) => edge.data.isAliasEdge);
     expect(aliasEdge).toBeDefined();
-    expect(aliasEdge?.data.toBindingConditional).toBe(true);
+    expect(aliasEdge?.data.isToBindingConditional).toBe(true);
     expect(aliasEdge?.data.edgeKind).toBe("sync");
     expect(aliasEdge?.data.resolutionPath.length).toBeGreaterThan(0);
   });
@@ -131,7 +133,7 @@ describe("ContainerInspector", () => {
 
     const aliasEdge = graph.edges.find((edge) => edge.data.isAliasEdge);
     expect(aliasEdge).toBeDefined();
-    expect(aliasEdge?.data.toBindingConditional).toBe(true);
+    expect(aliasEdge?.data.isToBindingConditional).toBe(true);
     expect(aliasEdge?.data.edgeKind).toBe("sync");
     expect(aliasEdge?.data.resolutionPath.length).toBeGreaterThan(0);
     expect(aliasEdge?.source).toBeDefined();

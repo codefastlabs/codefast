@@ -34,7 +34,7 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraphJson 
     data: {
       edgeKind: edge.edgeKind,
       ...(edge.injectHintLabel === undefined ? {} : { injectHintLabel: edge.injectHintLabel }),
-      toBindingConditional: edge.toBindingConditional,
+      isToBindingConditional: edge.isToBindingConditional,
       isAliasEdge: edge.isAliasEdge,
       resolutionPath: [...edge.resolutionPath],
     },
@@ -73,7 +73,7 @@ function edgeLabelForReactFlow(edge: StaticDependencyEdge): string {
     parts.push(edge.injectHintLabel);
   }
   parts.push(edge.edgeKind);
-  if (edge.toBindingConditional) {
+  if (edge.isToBindingConditional) {
     parts.push("conditional");
   }
   return parts.join(" | ");
@@ -81,7 +81,7 @@ function edgeLabelForReactFlow(edge: StaticDependencyEdge): string {
 
 function edgeIdForReactFlow(edge: StaticDependencyEdge): string {
   const hint = edge.injectHintLabel ?? "";
-  const conditional = edge.toBindingConditional ? "conditional" : "plain";
+  const conditional = edge.isToBindingConditional ? "conditional" : "plain";
   const alias = edge.isAliasEdge ? "alias" : "direct";
   const path = edge.resolutionPath.join("->");
   return `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${hint}:${conditional}:${alias}:${path}`;
