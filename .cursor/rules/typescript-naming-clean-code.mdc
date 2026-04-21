@@ -2,7 +2,8 @@
 description: >-
   TypeScript naming: clarity-first (simplicity, focus), mechanical conventions
   (casing, booleans, verbs), flexible role suffixes (Manager/Orchestrator/Processor/…),
-  generic type parameters (descriptive > single-letter), intent-first repos,
+  generic type parameters (descriptive > single-letter), persistence repos &
+  search/integration adapters (domain + technology on concrete classes),
   English-only — single source of truth
 globs: "**/*.{ts,tsx}"
 alwaysApply: false
@@ -75,10 +76,24 @@ Start with an **action verb** + outcome when useful: `calculateTotalPrice`, `res
 | `Processor` | Ordered pipeline or side-effects with clear stages (`PaymentProcessor`). |
 | `Dispatcher` | Fan-out to channels or handlers (`NotificationDispatcher`). |
 | `Client` / `Gateway` | Outbound integration, thin over HTTP/SDK (`StripePaymentGateway`, analytics client). |
-| `Service` (on the class) | Still fine when the class *is* the obvious single implementation of that capability (`ProductSearchService`). |
+| `Service` (on the class) | When the implementation is the natural face of a capability and tech is obvious from deps — or pair with a tech-specific name below. |
 
 - **Consistency within a slice**: in one feature folder, do not mix synonyms for the same idea (one `capturePayment` story, not three verbs).
-- **Repositories / clients (adapter-first reading)**: **domain before storage** — `ProductPostgresRepository`, `CartRedisRepository` (aggregate first, then technology).
+
+### Persistence vs search / integration adapters
+
+Use the **same mental model** as repositories when the class is clearly tied to one backend:
+
+| Kind | Naming pattern | Examples |
+|------|----------------|----------|
+| **Persistence (aggregate + DB/cache)** | `Aggregate` + `Storage` + `Repository` | `ProductPostgresRepository`, `CartRedisRepository` |
+| **Search or read-model (domain + index/API)** | `Aggregate` + `Technology` + role (`SearchService`, `Client`, `Gateway`) | `ProductElasticsearchSearchService`, `OrderReadModelProjector` |
+
+- **Contract** (`SearchService`, `ProductRepository`) stays **technology-free** — swap implementations without renaming callers.
+- **Concrete class** carries **domain + infrastructure** when that class *is* the adapter (mirrors `ProductPostgresRepository`).
+
+If you deliberately omit tech from an adapter name (e.g. single implementation, tech is an implementation detail), **document in one line** near the class why — otherwise prefer domain + tech for symmetry with repositories.
+
 - **Private helpers** follow the same verb rule; encode real rules in the name when it helps (`applyWelcomeCouponIfEligible` vs a generic `applyCoupon`).
 
 ## Interfaces & types

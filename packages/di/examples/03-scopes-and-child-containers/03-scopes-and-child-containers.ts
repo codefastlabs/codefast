@@ -41,12 +41,12 @@ class AppDatabase {
 // Scoped — one per child container (i.e., one per request)
 @injectable([inject(RequestContextToken)])
 class RequestLogger {
-  constructor(private readonly ctx: RequestContext) {
-    console.log(`[RequestLogger] created for request ${ctx.requestId}`);
+  constructor(private readonly requestContext: RequestContext) {
+    console.log(`[RequestLogger] created for request ${requestContext.requestId}`);
   }
 
   log(msg: string): void {
-    console.log(`[${this.ctx.requestId}/${this.ctx.userId}] ${msg}`);
+    console.log(`[${this.requestContext.requestId}/${this.requestContext.userId}] ${msg}`);
   }
 }
 
@@ -56,7 +56,7 @@ class RequestHandler {
   readonly instanceId: number;
 
   constructor(
-    private readonly db: AppDatabase,
+    private readonly database: AppDatabase,
     private readonly logger: RequestLogger,
   ) {
     this.instanceId = ++RequestHandler.instanceCount;
@@ -64,7 +64,7 @@ class RequestHandler {
 
   handle(query: string): string {
     this.logger.log(`handling: ${query}`);
-    return this.db.query(query);
+    return this.database.query(query);
   }
 }
 

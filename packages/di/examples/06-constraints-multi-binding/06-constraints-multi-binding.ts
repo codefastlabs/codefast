@@ -40,6 +40,14 @@ interface EventHandler {
   handle(event: string): void;
 }
 
+interface OrderService {
+  createOrder(id: string): void;
+}
+
+interface PaymentService {
+  processPayment(orderId: string): void;
+}
+
 // --- Named bindings ---------------------------------------------------------
 // Use inject(token, { name }) / container.resolve(token, { name })
 
@@ -90,7 +98,7 @@ class LocalStorage implements Storage {
 // OrderService uses parent-aware constraint; PaymentService uses named hint.
 
 @injectable([inject(LoggerToken), inject(S3StorageToken)])
-class OrderService {
+class OrderManager implements OrderService {
   constructor(
     private readonly logger: Logger,
     private readonly storage: Storage,
@@ -105,7 +113,7 @@ class OrderService {
 }
 
 @injectable([inject(PaymentLoggerToken), inject(LocalStorageToken)])
-class PaymentService {
+class PaymentProcessor implements PaymentService {
   constructor(
     private readonly logger: Logger,
     private readonly storage: Storage,
@@ -166,8 +174,8 @@ appContainer.bind(S3StorageToken).to(S3Storage).singleton();
 appContainer.bind(LocalStorageToken).to(LocalStorage).singleton();
 
 // Services (OrderService uses constraint-based logger selection above)
-appContainer.bind(OrderServiceToken).to(OrderService).singleton();
-appContainer.bind(PaymentServiceToken).to(PaymentService).singleton();
+appContainer.bind(OrderServiceToken).to(OrderManager).singleton();
+appContainer.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 
 // Multi-binding: three handlers under the same token
 appContainer.bind(EventHandlerToken).to(LogEventHandler);

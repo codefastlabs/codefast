@@ -50,8 +50,8 @@ container.bind(MessageToken).toConstantValue("Good day");
 container
   .bind(GreeterToken)
   .toDynamic((ctx) => {
-    const msg = ctx.resolve(MessageToken);
-    return new FormalGreeter(msg);
+    const message = ctx.resolve(MessageToken);
+    return new FormalGreeter(message);
   })
   .singleton();
 

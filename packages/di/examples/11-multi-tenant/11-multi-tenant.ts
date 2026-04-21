@@ -87,6 +87,15 @@ interface User {
   role: "owner" | "admin" | "member";
 }
 
+interface UserService {
+  listUsers(): Promise<User[]>;
+  createUser(email: string, role: User["role"]): Promise<User>;
+}
+
+interface InviteService {
+  sendInvite(email: string): Promise<{ inviteId: string }>;
+}
+
 // ============================================================================
 // Root-level tokens (shared across all tenants)
 // ============================================================================
@@ -279,9 +288,9 @@ class PlanRateLimiter implements RateLimiter {
   inject(RateLimiterToken),
   inject(TenantContextToken),
 ])
-class UserService {
+class TenantUserManager implements UserService {
   constructor(
-    private readonly db: TenantDatabase,
+    private readonly database: TenantDatabase,
     private readonly cache: TenantCache,
     private readonly logger: TenantLogger,
     private readonly features: FeatureFlags,
@@ -300,7 +309,7 @@ class UserService {
       return cachedUsers;
     }
 
-    const users = await this.db.query<User>(
+    const users = await this.database.query<User>(
       "SELECT id, email, role FROM users ORDER BY created_at",
     );
     await this.cache.set(cacheKey, users, 60);
@@ -314,7 +323,7 @@ class UserService {
     }
 
     const newUser: User = { id: `usr_${Math.random().toString(36).slice(2, 9)}`, email, role };
-    await this.db.query("INSERT INTO users (id, email, role) VALUES ($1, $2, $3)", [
+    await this.database.query("INSERT INTO users (id, email, role) VALUES ($1, $2, $3)", [
       newUser.id,
       newUser.email,
       newUser.role,
@@ -332,9 +341,9 @@ class UserService {
   inject(RateLimiterToken),
   inject(TenantContextToken),
 ])
-class InviteService {
+class TenantInviteManager implements InviteService {
   constructor(
-    private readonly db: TenantDatabase,
+    private readonly database: TenantDatabase,
     private readonly logger: TenantLogger,
     private readonly features: FeatureFlags,
     private readonly rateLimiter: RateLimiter,
@@ -353,7 +362,7 @@ class InviteService {
     }
 
     const inviteId = `inv_${Math.random().toString(36).slice(2, 9)}`;
-    await this.db.query("INSERT INTO invites (id, email, tenant_id) VALUES ($1, $2, $3)", [
+    await this.database.query("INSERT INTO invites (id, email, tenant_id) VALUES ($1, $2, $3)", [
       inviteId,
       email,
       this.tenant.tenantId,
@@ -470,8 +479,8 @@ function createTenantContainer(
     .scoped();
 
   // Domain services — plain class bindings that read everything from tokens above
-  tenantContainer.bind(UserServiceToken).to(UserService).scoped();
-  tenantContainer.bind(InviteServiceToken).to(InviteService).scoped();
+  tenantContainer.bind(UserServiceToken).to(TenantUserManager).scoped();
+  tenantContainer.bind(InviteServiceToken).to(TenantInviteManager).scoped();
 
   return tenantContainer;
 }

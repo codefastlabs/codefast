@@ -504,16 +504,21 @@ class InMemoryMetricsCollector implements MetricsCollector {
 // Domain: JobRepository + JobService
 // ============================================================================
 
+interface JobRepository {
+  create(type: string, payload: unknown): Promise<Job>;
+  findById(id: string): Promise<Job | undefined>;
+}
+
 @injectable([inject(JobQueueToken), inject(RedisClientToken)])
-class JobRepository {
+class JobQueueBackedRepository implements JobRepository {
   constructor(
     private readonly queue: JobQueue,
-    private readonly redis: RedisClient,
+    private readonly redisClient: RedisClient,
   ) {}
 
   async create(type: string, payload: unknown): Promise<Job> {
     const job = await this.queue.enqueue(type, payload);
-    await this.redis.set(`job:${job.id}`, JSON.stringify(job), 3600);
+    await this.redisClient.set(`job:${job.id}`, JSON.stringify(job), 3600);
     return job;
   }
 
@@ -525,7 +530,7 @@ class JobRepository {
       return liveJob;
     }
     // Fall back to Redis for jobs that have been evicted from memory.
-    const cached = await this.redis.get(`job:${id}`);
+    const cached = await this.redisClient.get(`job:${id}`);
     if (cached) {
       return JSON.parse(cached) as Job;
     }
@@ -533,23 +538,28 @@ class JobRepository {
   }
 }
 
+interface JobService {
+  enqueueEmailJob(to: string, subject: string, body: string): Promise<Job>;
+  enqueueReportJob(reportType: string, params: Record<string, unknown>): Promise<Job>;
+  getJobStatus(id: string): Promise<Job | undefined>;
+}
+
 @injectable([inject(JobRepositoryToken), inject(MetricsCollectorToken), inject(DatabasePoolToken)])
-class JobService {
+class JobManager implements JobService {
   constructor(
     private readonly repository: JobRepository,
     private readonly metrics: MetricsCollector,
-    private readonly db: DatabasePool,
+    private readonly databasePool: DatabasePool,
   ) {}
 
   async enqueueEmailJob(to: string, subject: string, body: string): Promise<Job> {
     const job = await this.repository.create("send_email", { to, subject, body });
     this.metrics.increment("jobs.enqueued", { type: "send_email" });
 
-    await this.db.query("INSERT INTO job_audit (job_id, type, enqueued_at) VALUES ($1, $2, $3)", [
-      job.id,
-      job.type,
-      job.createdAt.toISOString(),
-    ]);
+    await this.databasePool.query(
+      "INSERT INTO job_audit (job_id, type, enqueued_at) VALUES ($1, $2, $3)",
+      [job.id, job.type, job.createdAt.toISOString()],
+    );
 
     console.log(`    [JobService] enqueued email job ${job.id} → ${to}`);
     return job;
@@ -664,11 +674,11 @@ const HealthModule = Module.createAsync("Health", async (builder) => {
       const registry = new ServiceHealthRegistry(config);
 
       // Resolve async infrastructure deps via resolveAsync
-      const db = await ctx.resolveAsync(DatabasePoolToken);
-      const redis = await ctx.resolveAsync(RedisClientToken);
+      const databasePool = await ctx.resolveAsync(DatabasePoolToken);
+      const redisClient = await ctx.resolveAsync(RedisClientToken);
 
-      registry.register("database", () => db.healthCheck());
-      registry.register("redis", () => redis.healthCheck());
+      registry.register("database", () => databasePool.healthCheck());
+      registry.register("redis", () => redisClient.healthCheck());
       registry.register("worker", async () => {
         const worker = ctx.resolve(JobWorkerToken);
         const queue = ctx.resolve(JobQueueToken);
@@ -748,8 +758,8 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
 // ServiceModule imports async modules → must be async itself
 const ServiceModule = Module.createAsync("Service", async (builder) => {
   builder.import(DatabaseModule, RedisModule, MetricsModule);
-  builder.bind(JobRepositoryToken).to(JobRepository).singleton();
-  builder.bind(JobServiceToken).to(JobService).singleton();
+  builder.bind(JobRepositoryToken).to(JobQueueBackedRepository).singleton();
+  builder.bind(JobServiceToken).to(JobManager).singleton();
 });
 
 // AppModule composes everything — async because it imports async modules
