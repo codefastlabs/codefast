@@ -35,7 +35,7 @@ export function whenAnyAncestorIs(registryKey: Token<unknown> | Constructor<unkn
  * @param tagValue - Expected value; compared via `Object.is`.
  * @returns A predicate compatible with {@link BindingBuilder.when}.
  */
-export function whenTargetTagged(tag: string, tagValue: unknown) {
+export function whenParentTagged(tag: string, tagValue: unknown) {
   return (ctx: ConstraintContext): boolean => {
     if (ctx.parent === undefined) {
       return false;

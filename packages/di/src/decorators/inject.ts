@@ -127,7 +127,7 @@ export function injectAll<Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> {
-  return { ...toDescriptor(token, false, options), all: true as const };
+  return { ...toDescriptor(token, false, options), isInjectAllBindings: true as const };
 }
 
 /**

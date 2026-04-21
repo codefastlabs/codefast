@@ -71,7 +71,7 @@ export function toDotGraph(graph: ContainerGraphJson): string {
       labelParts.push(edge.injectHintLabel);
     }
     labelParts.push(edge.edgeKind);
-    if (edge.toBindingConditional) {
+    if (edge.isToBindingConditional) {
       labelParts.push("conditional");
     }
     const edgeLabel = dotEscapeLabel(labelParts.join(" | "));

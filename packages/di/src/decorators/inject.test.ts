@@ -4,16 +4,16 @@ import { inject, injectAll, optional, isInjectionDescriptor } from "#/decorators
 
 describe("inject", () => {
   it("preserves string keys in tag resolve hints", () => {
-    const T = token<number>("inject-test-token");
-    const descriptor = inject(T, { tag: ["inject-test-tag", "payload"] });
+    const numericToken = token<number>("inject-test-token");
+    const descriptor = inject(numericToken, { tag: ["inject-test-tag", "payload"] });
 
     expect(descriptor.tag).toEqual(["inject-test-tag", "payload"]);
   });
 
   it("throws when tag key is not a string", () => {
-    const T = token<number>("inject-test-bad-tag");
+    const numericToken = token<number>("inject-test-bad-tag");
     expect(() =>
-      inject(T, {
+      inject(numericToken, {
         // @ts-expect-error — exercise runtime validation for non-string tag keys
         tag: [1, 2],
       }),
@@ -21,25 +21,25 @@ describe("inject", () => {
   });
 
   it("inject handles named options", () => {
-    const t = token("T");
-    const desc = inject(t, { name: "custom" });
+    const plainToken = token("inject-named-options-token");
+    const desc = inject(plainToken, { name: "custom" });
     expect(desc.name).toBe("custom");
   });
 
   it("optional creates a descriptor with optional: true", () => {
-    const t = token("T");
-    const desc = optional(t);
-    expect(desc.token).toBe(t);
+    const plainToken = token("inject-optional-token");
+    const desc = optional(plainToken);
+    expect(desc.token).toBe(plainToken);
     expect(desc.optional).toBe(true);
   });
 
-  it("injectAll marks all: true and forwards name/tag options", () => {
-    const t = token<string>("inject-all-t");
-    const plain = injectAll(t);
-    expect(plain.all).toBe(true);
+  it("injectAll sets isInjectAllBindings and forwards name/tag options", () => {
+    const stringToken = token<string>("inject-all-t");
+    const plain = injectAll(stringToken);
+    expect(plain.isInjectAllBindings).toBe(true);
     expect(plain.optional).toBe(false);
-    const named = injectAll(t, { name: "x" });
-    expect(named.all).toBe(true);
+    const named = injectAll(stringToken, { name: "x" });
+    expect(named.isInjectAllBindings).toBe(true);
     expect(named.name).toBe("x");
   });
 
@@ -51,10 +51,10 @@ describe("inject", () => {
   });
 
   it("normalizeTag throws on invalid tag format", () => {
-    const t = token("T");
+    const plainToken = token("inject-normalize-tag-token");
     // @ts-expect-error - testing invalid runtime input
-    expect(() => inject(t, { tag: "not-an-array" })).toThrow(DiError);
+    expect(() => inject(plainToken, { tag: "not-an-array" })).toThrow(DiError);
     // @ts-expect-error - testing invalid runtime input
-    expect(() => inject(t, { tag: ["only-one"] })).toThrow(/must be a tuple/);
+    expect(() => inject(plainToken, { tag: ["only-one"] })).toThrow(/must be a tuple/);
   });
 });

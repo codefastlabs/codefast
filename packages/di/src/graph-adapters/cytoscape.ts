@@ -26,7 +26,7 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson 
       target: edge.toBindingId,
       edgeKind: edge.edgeKind,
       ...(edge.injectHintLabel === undefined ? {} : { injectHintLabel: edge.injectHintLabel }),
-      toBindingConditional: edge.toBindingConditional,
+      isToBindingConditional: edge.isToBindingConditional,
       isAliasEdge: edge.isAliasEdge,
       resolutionPath: [...edge.resolutionPath],
     },
@@ -45,7 +45,7 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson 
  */
 function edgeIdForCytoscape(edge: StaticDependencyEdge): string {
   const hint = edge.injectHintLabel ?? "";
-  const conditional = edge.toBindingConditional ? "conditional" : "plain";
+  const conditional = edge.isToBindingConditional ? "conditional" : "plain";
   const alias = edge.isAliasEdge ? "alias" : "direct";
   const path = edge.resolutionPath.join("->");
   return `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${hint}:${conditional}:${alias}:${path}`;

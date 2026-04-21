@@ -10,11 +10,11 @@ describe("BindingBuilder", () => {
   function setup() {
     let resolvedBinding: Binding<unknown> | undefined;
     const hooks = {
-      register: (b: Binding<unknown>) => {
-        resolvedBinding = b;
+      register: (binding: Binding<unknown>) => {
+        resolvedBinding = binding;
       },
-      update: (b: Binding<unknown>) => {
-        resolvedBinding = b;
+      update: (binding: Binding<unknown>) => {
+        resolvedBinding = binding;
       },
     };
     const builder = new BindingBuilder(SessionToken, "AuthModule", hooks);
@@ -87,10 +87,10 @@ describe("BindingBuilder", () => {
       .when(() => true)
       .when(() => false);
 
-    const b = getBinding()!;
-    expect(b.constraint).toBeDefined();
-    const ctx = mockConstraintContext({ resolutionPath: ["Root"] });
-    expect(b.constraint!(ctx)).toBe(false);
+    const registeredBinding = getBinding()!;
+    expect(registeredBinding.constraint).toBeDefined();
+    const constraintContext = mockConstraintContext({ resolutionPath: ["Root"] });
+    expect(registeredBinding.constraint!(constraintContext)).toBe(false);
   });
 
   it("supports tags, onActivation, and onDeactivation", () => {
@@ -104,19 +104,19 @@ describe("BindingBuilder", () => {
       .onDeactivation(onDeactivate)
       .whenNamed("admin-session");
 
-    const b = getBinding()!;
-    expect(b.tags.get("role")).toBe("admin");
-    expect(b.onActivation).toBe(onActivate);
-    expect(b.onDeactivation).toBe(onDeactivate);
-    expect(b.bindingName).toBe("admin-session");
+    const registeredBinding = getBinding()!;
+    expect(registeredBinding.tags.get("role")).toBe("admin");
+    expect(registeredBinding.onActivation).toBe(onActivate);
+    expect(registeredBinding.onDeactivation).toBe(onDeactivate);
+    expect(registeredBinding.bindingName).toBe("admin-session");
   });
 
   it("toAlias creates an alias binding", () => {
     const { builder, getBinding } = setup();
     const UserAccountToken = token<string>("UserAccount");
     builder.toAlias(UserAccountToken);
-    const b = getBinding()!;
-    expect(b).toMatchObject({ kind: "alias", targetToken: UserAccountToken });
+    const registeredBinding = getBinding()!;
+    expect(registeredBinding).toMatchObject({ kind: "alias", targetToken: UserAccountToken });
   });
 
   it("toDynamic and toDynamicAsync creates respective bindings", () => {
@@ -133,15 +133,15 @@ describe("BindingBuilder", () => {
     const { builder, getBinding } = setup();
     class AuthService {}
     builder.to(AuthService as unknown as Constructor<string>);
-    const b = getBinding()!;
-    expect(b).toMatchObject({ kind: "class", implementationClass: AuthService });
+    const registeredBinding = getBinding()!;
+    expect(registeredBinding).toMatchObject({ kind: "class", implementationClass: AuthService });
   });
 
   it("toSelf creates a class binding if key is a class", () => {
     class AuthService {}
     let registeredBinding: Binding<unknown> | undefined;
     const builder = new BindingBuilder(AuthService, undefined, {
-      register: (b) => (registeredBinding = b),
+      register: (binding) => (registeredBinding = binding),
     });
     builder.toSelf();
     expect(registeredBinding).toMatchObject({ kind: "class", implementationClass: AuthService });

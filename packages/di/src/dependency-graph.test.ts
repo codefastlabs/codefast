@@ -63,7 +63,7 @@ function mockClass(
   };
 }
 
-describe("dependency-graph", () => {
+describe("static dependency graph", () => {
   describe("injectHintLabelFromResolveHint", () => {
     it("returns undefined for undefined hint", () => {
       expect(injectHintLabelFromResolveHint(undefined)).toBeUndefined();
@@ -110,15 +110,15 @@ describe("dependency-graph", () => {
       const SqliteStorageBinding = mockConstant();
       const storageAlias = mockAlias(StorageToken);
 
-      const res = listResolvedDependencies(
+      const resolvedDependencies = listResolvedDependencies(
         storageAlias,
-        (key) => (key === StorageToken ? [SqliteStorageBinding] : []),
+        (registryKey) => (registryKey === StorageToken ? [SqliteStorageBinding] : []),
         undefined,
         ["AppRoot"],
       );
-      expect(res.length).toBe(1);
-      expect(res[0]?.binding).toBe(SqliteStorageBinding);
-      expect(res[0]?.path).toEqual(["AppRoot", "Storage"]);
+      expect(resolvedDependencies.length).toBe(1);
+      expect(resolvedDependencies[0]?.binding).toBe(SqliteStorageBinding);
+      expect(resolvedDependencies[0]?.path).toEqual(["AppRoot", "Storage"]);
     });
 
     it("throws DiError if resolved factory dependencies are missing", () => {
@@ -163,8 +163,13 @@ describe("dependency-graph", () => {
         }),
       };
 
-      const res = listResolvedDependencies(repositoryBinding, () => undefined, reader, ["Root"]);
-      expect(res).toEqual([]);
+      const resolvedDependencies = listResolvedDependencies(
+        repositoryBinding,
+        () => undefined,
+        reader,
+        ["Root"],
+      );
+      expect(resolvedDependencies).toEqual([]);
     });
 
     it("handles deeply nested aliases breaking gracefully on missing links", () => {
@@ -173,17 +178,17 @@ describe("dependency-graph", () => {
       const databaseAlias = mockAlias(ReplicaDatabaseToken);
       const rootAlias = mockAlias(PrimaryDatabaseToken);
 
-      const lookup = (key: unknown) => {
-        if (key === PrimaryDatabaseToken) {
+      const lookup = (registryKey: unknown) => {
+        if (registryKey === PrimaryDatabaseToken) {
           return [databaseAlias];
         }
         return undefined; // ReplicaDB is missing
       };
 
-      const res = listResolvedDependencies(rootAlias, lookup, undefined, []);
+      const resolvedDependencies = listResolvedDependencies(rootAlias, lookup, undefined, []);
       // Should resolve to the last known link, which is databaseAlias
-      expect(res.length).toBe(1);
-      expect(res[0]?.binding).toBe(databaseAlias);
+      expect(resolvedDependencies.length).toBe(1);
+      expect(resolvedDependencies[0]?.binding).toBe(databaseAlias);
     });
   });
 });

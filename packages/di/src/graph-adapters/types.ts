@@ -24,7 +24,7 @@ export type CytoscapeEdgeData = {
   readonly target: StaticDependencyEdge["toBindingId"];
   readonly edgeKind: StaticDependencyEdge["edgeKind"];
   readonly injectHintLabel?: string;
-  readonly toBindingConditional: boolean;
+  readonly isToBindingConditional: boolean;
   readonly isAliasEdge: boolean;
   readonly resolutionPath: readonly string[];
 };
@@ -66,7 +66,7 @@ export type ReactFlowNodeData = {
 export type ReactFlowEdgeData = {
   readonly edgeKind: StaticDependencyEdge["edgeKind"];
   readonly injectHintLabel?: string;
-  readonly toBindingConditional: boolean;
+  readonly isToBindingConditional: boolean;
   readonly isAliasEdge: boolean;
   readonly resolutionPath: readonly string[];
 };

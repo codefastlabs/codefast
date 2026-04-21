@@ -703,7 +703,7 @@ interface InjectionDescriptor<Value = unknown> {
   readonly optional: boolean;
   readonly name?: string;
   readonly tag?: [tag: string, value: unknown];
-  readonly all?: boolean;
+  readonly isInjectAllBindings?: boolean;
 }
 ```
 

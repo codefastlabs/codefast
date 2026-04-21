@@ -11,15 +11,15 @@ describe("DependencyResolver", () => {
   const LoggerToken = token<string>("Logger");
   const HttpClientToken = token<string>("HttpClient");
 
-  function mockBinding<T>(options: Partial<Binding<T>>): Binding<T> {
+  function mockBinding<Value>(options: Partial<Binding<Value>>): Binding<Value> {
     const base = {
       id: createBindingIdentifier(),
       kind: "constant" as const,
       scope: "transient" as const,
-      value: "val" as unknown as T,
+      value: "default-mock-constant" as unknown as Value,
       tags: new Map(),
     };
-    return { ...base, ...options } as Binding<T>;
+    return { ...base, ...options } as Binding<Value>;
   }
 
   function setup() {
@@ -113,7 +113,8 @@ describe("DependencyResolver", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({
       kind: "dynamic",
-      factory: (ctx: ResolutionContext) => ctx.resolveOptional(HttpClientToken),
+      factory: (resolutionContext: ResolutionContext) =>
+        resolutionContext.resolveOptional(HttpClientToken),
     });
     // Logger is bound to a factory that optional-resolves HttpClient, but HttpClient is NOT bound
     lookup.mockImplementation((k) => (k === LoggerToken ? [loggerBinding] : undefined));
@@ -125,7 +126,8 @@ describe("DependencyResolver", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({
       kind: "dynamic",
-      factory: (ctx: ResolutionContext) => ctx.resolveOptional(HttpClientToken),
+      factory: (resolutionContext: ResolutionContext) =>
+        resolutionContext.resolveOptional(HttpClientToken),
     });
     lookup.mockImplementation((k) => {
       if (k === LoggerToken) {
@@ -214,7 +216,9 @@ describe("DependencyResolver", () => {
     const { resolver, lookup } = setup();
     const asyncDynamicBinding = mockBinding({
       kind: "dynamic",
-      factory: (() => Promise.resolve("async")) as unknown as (ctx: ResolutionContext) => string,
+      factory: (() => Promise.resolve("async")) as unknown as (
+        resolutionContext: ResolutionContext,
+      ) => string,
     });
     lookup.mockReturnValue([asyncDynamicBinding]);
 

@@ -189,7 +189,7 @@ class DefaultContainer implements Container {
    * True after the first dev/test one-shot scope validation has run for the current registry state.
    * Reset to `false` by {@link invalidateDevValidationState} on every registry mutation.
    */
-  private devValidationRan = false;
+  private hasDevValidationRun = false;
 
   /**
    * Internal constructor for root/child instances.
@@ -419,9 +419,9 @@ class DefaultContainer implements Container {
    * {@link ScopeViolationError} with binding ids and full resolution path. In dev/test, the first
    * successful resolution also triggers a one-time static {@link validate} when not in production.
    */
-  resolve<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
+  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
     try {
-      return this.resolver.resolveRoot(key, hint);
+      return this.resolver.resolveRoot(token, hint);
     } finally {
       this.maybeRunDevValidationOnce();
     }
@@ -430,8 +430,11 @@ class DefaultContainer implements Container {
   /**
    * Async variant of {@link resolve}; same dev/test validation and runtime scope enforcement.
    */
-  resolveAsync<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Promise<Value> {
-    return this.resolver.resolveAsyncRoot(key, hint).finally(() => {
+  resolveAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveHint,
+  ): Promise<Value> {
+    return this.resolver.resolveAsyncRoot(token, hint).finally(() => {
       this.maybeRunDevValidationOnce();
     });
   }
@@ -441,11 +444,11 @@ class DefaultContainer implements Container {
    * without a name/tag hint), while preserving normal errors for nested required dependencies.
    */
   resolveOptional<Value>(
-    key: Token<Value> | Constructor<Value>,
+    token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Value | undefined {
     try {
-      return this.resolver.resolveOptionalRoot(key, hint);
+      return this.resolver.resolveOptionalRoot(token, hint);
     } finally {
       this.maybeRunDevValidationOnce();
     }
@@ -455,9 +458,9 @@ class DefaultContainer implements Container {
    * Synchronously resolves every matching binding for a key.
    * Returns an empty array when no binding exists.
    */
-  resolveAll<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     try {
-      return this.resolver.resolveAllRoot(key, hint);
+      return this.resolver.resolveAllRoot(token, hint);
     } finally {
       this.maybeRunDevValidationOnce();
     }
@@ -468,10 +471,10 @@ class DefaultContainer implements Container {
    * (spec §5.2).
    */
   resolveAllAsync<Value>(
-    key: Token<Value> | Constructor<Value>,
+    token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value[]> {
-    return this.resolver.resolveAllAsyncRoot<Value>(key, hint).finally(() => {
+    return this.resolver.resolveAllAsyncRoot<Value>(token, hint).finally(() => {
       this.maybeRunDevValidationOnce();
     });
   }
@@ -500,7 +503,7 @@ class DefaultContainer implements Container {
    * Called on every registry mutation (bind, unbind, rebind, load, unload).
    */
   private invalidateDevValidationState(): void {
-    this.devValidationRan = false;
+    this.hasDevValidationRun = false;
   }
 
   /**
@@ -511,10 +514,10 @@ class DefaultContainer implements Container {
     if (!isDevelopmentOrTestEnvironment()) {
       return;
     }
-    if (this.devValidationRan) {
+    if (this.hasDevValidationRun) {
       return;
     }
-    this.devValidationRan = true;
+    this.hasDevValidationRun = true;
     this.validate();
   }
 
