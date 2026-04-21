@@ -176,7 +176,7 @@ interface Product {
   imageKeys: string[];
   attributes: Record<string, string>; // { color, size, brand, … }
   tags: string[];
-  active: boolean;
+  isActive: boolean;
 }
 
 interface Category {
@@ -226,7 +226,7 @@ interface Cart {
 }
 
 interface CouponResult {
-  valid: boolean;
+  isValid: boolean;
   discountAmount: number;
   reason?: string;
 }
@@ -348,7 +348,7 @@ interface NotificationPayload {
 
 interface NotificationResult {
   channel: string;
-  success: boolean;
+  isSuccess: boolean;
   messageId?: string;
   error?: string;
 }
@@ -476,9 +476,9 @@ class MockDatabase implements Database {
   private queryCount = 0;
   private readonly url: string;
 
-  constructor(logger: Logger, cfg: AppConfig) {
+  constructor(logger: Logger, appConfig: AppConfig) {
     this.log = logger.child({ service: "Database" });
-    this.url = cfg.dbUrl;
+    this.url = appConfig.dbUrl;
   }
 
   async connect(): Promise<void> {
@@ -619,8 +619,8 @@ interface S3Client {
 class MockS3 implements S3Client {
   private readonly bucket: string;
 
-  constructor(cfg: AppConfig) {
-    this.bucket = cfg.s3Bucket;
+  constructor(appConfig: AppConfig) {
+    this.bucket = appConfig.s3Bucket;
   }
   getSignedUrl(key: string): string {
     return `https://cdn.example.com/${this.bucket}/${key}`;
@@ -634,8 +634,8 @@ class MockS3 implements S3Client {
 // ---- Elasticsearch ----------------------------------------------------------
 
 interface ElasticClient {
-  index(idx: string, id: string, doc: unknown): Promise<void>;
-  search<T>(idx: string, query: unknown): Promise<T[]>;
+  index(indexName: string, id: string, document: unknown): Promise<void>;
+  search<T>(indexName: string, searchQuery: unknown): Promise<T[]>;
   healthCheck(): Promise<boolean>;
 }
 
@@ -648,15 +648,15 @@ class MockElastic implements ElasticClient {
     this.log = logger.child({ service: "Elasticsearch" });
   }
 
-  async index(idx: string, id: string, doc: unknown): Promise<void> {
-    if (!this.indices.has(idx)) {
-      this.indices.set(idx, new Map());
+  async index(indexName: string, id: string, document: unknown): Promise<void> {
+    if (!this.indices.has(indexName)) {
+      this.indices.set(indexName, new Map());
     }
-    this.indices.get(idx)!.set(id, doc);
+    this.indices.get(indexName)!.set(id, document);
   }
 
-  async search<T>(idx: string, query: unknown): Promise<T[]> {
-    this.log.info("search", { index: idx, query });
+  async search<T>(indexName: string, searchQuery: unknown): Promise<T[]> {
+    this.log.info("search", { index: indexName, query: searchQuery });
     await delay(5);
     return [] as T[];
   }
@@ -680,7 +680,7 @@ interface ProductRepository {
 }
 
 @injectable([inject(DatabaseToken), inject(LoggerToken)])
-class PostgresProductRepository implements ProductRepository {
+class ProductPostgresRepository implements ProductRepository {
   private readonly log: Logger;
 
   constructor(
@@ -747,7 +747,7 @@ interface CategoryRepository {
 }
 
 @injectable([inject(DatabaseToken)])
-class PostgresCategoryRepository implements CategoryRepository {
+class CategoryPostgresRepository implements CategoryRepository {
   constructor(private readonly db: Database) {}
 
   async findById(id: string): Promise<Category | undefined> {
@@ -777,7 +777,7 @@ interface InventoryService {
 }
 
 @injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
-class InventoryServiceImpl implements InventoryService {
+class InventoryManager implements InventoryService {
   private readonly log: Logger;
 
   constructor(
@@ -841,7 +841,7 @@ interface PricingService {
 }
 
 @injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
-class PricingServiceImpl implements PricingService {
+class PricingManager implements PricingService {
   private readonly log: Logger;
 
   constructor(
@@ -897,8 +897,8 @@ class PricingServiceImpl implements PricingService {
   async getBulkPrices(productIds: string[], userId?: string): Promise<Map<string, PriceResult>> {
     const prices = new Map<string, PriceResult>();
     await Promise.all(
-      productIds.map(async (id) => {
-        prices.set(id, await this.getPrice(id, userId));
+      productIds.map(async (productId) => {
+        prices.set(productId, await this.getPrice(productId, userId));
       }),
     );
     return prices;
@@ -913,20 +913,20 @@ class PricingServiceImpl implements PricingService {
 
     // Simulate: WELCOME20 = 20% off, SAVE10 = $10 off
     if (couponCode === "WELCOME20") {
-      return { valid: true, discountAmount: Math.round(cart.subtotal * 0.2) };
+      return { isValid: true, discountAmount: Math.round(cart.subtotal * 0.2) };
     }
     if (couponCode === "SAVE10") {
-      return { valid: true, discountAmount: 1000 };
+      return { isValid: true, discountAmount: 1000 };
     }
-    return { valid: false, discountAmount: 0, reason: "Coupon not found or expired" };
+    return { isValid: false, discountAmount: 0, reason: "Coupon not found or expired" };
   }
 }
 
 interface CatalogService {
-  getProduct(id: string): Promise<Product | undefined>;
-  listFeatured(): Promise<Array<Product & { price: PriceResult }>>;
-  getCategory(slug: string): Promise<Category | undefined>;
-  listCategories(): Promise<Category[]>;
+  getProductById(productId: string): Promise<Product | undefined>;
+  listFeaturedProducts(): Promise<Array<Product & { price: PriceResult }>>;
+  getCategoryBySlug(categorySlug: string): Promise<Category | undefined>;
+  listAllCategories(): Promise<Category[]>;
 }
 
 @injectable([
@@ -936,7 +936,7 @@ interface CatalogService {
   inject(InventoryServiceToken),
   inject(LoggerToken),
 ])
-class CatalogServiceImpl implements CatalogService {
+class CatalogManager implements CatalogService {
   private readonly log: Logger;
 
   constructor(
@@ -949,26 +949,26 @@ class CatalogServiceImpl implements CatalogService {
     this.log = logger.child({ service: "CatalogService" });
   }
 
-  async getProduct(id: string): Promise<Product | undefined> {
-    const product = await this.products.findById(id);
+  async getProductById(productId: string): Promise<Product | undefined> {
+    const product = await this.products.findById(productId);
     if (product) {
-      const inStock = await this.inventory.isInStock(id);
-      this.log.info("product fetched", { id, inStock });
+      const isInStock = await this.inventory.isInStock(productId);
+      this.log.info("product fetched", { productId, isInStock });
     }
     return product;
   }
 
-  async listFeatured(): Promise<Array<Product & { price: PriceResult }>> {
+  async listFeaturedProducts(): Promise<Array<Product & { price: PriceResult }>> {
     const featuredProducts = await this.products.listActive(6);
     const prices = await this.pricing.getBulkPrices(featuredProducts.map((product) => product.id));
     return featuredProducts.map((product) => ({ ...product, price: prices.get(product.id)! }));
   }
 
-  async getCategory(slug: string): Promise<Category | undefined> {
-    return this.categories.findBySlug(slug);
+  async getCategoryBySlug(categorySlug: string): Promise<Category | undefined> {
+    return this.categories.findBySlug(categorySlug);
   }
 
-  async listCategories(): Promise<Category[]> {
+  async listAllCategories(): Promise<Category[]> {
     return this.categories.listAll();
   }
 }
@@ -979,11 +979,11 @@ interface SearchService {
 }
 
 @injectable([inject(ElasticToken), inject(ProductRepoToken), inject(LoggerToken)])
-class ElasticSearchService implements SearchService {
+class ProductSearchService implements SearchService {
   private readonly log: Logger;
 
   constructor(
-    private readonly es: ElasticClient,
+    private readonly elasticClient: ElasticClient,
     private readonly products: ProductRepository,
     logger: Logger,
   ) {
@@ -994,18 +994,24 @@ class ElasticSearchService implements SearchService {
     this.log.info("searching products", { query, filters });
     const esQuery = {
       multi_match: { query, fields: ["name^3", "description", "tags"] },
-      filter: filters ? Object.entries(filters).map(([k, v]) => ({ term: { [k]: v } })) : [],
+      filter: filters
+        ? Object.entries(filters).map(([attributeKey, attributeValue]) => ({
+            term: { [attributeKey]: attributeValue },
+          }))
+        : [],
     };
-    const results = await this.es.search<{ id: string }>("products", esQuery);
+    const results = await this.elasticClient.search<{ id: string }>("products", esQuery);
     // Hydrate from DB for full data
     if (results.length === 0) {
       return this.products.search(query);
     }
-    return Promise.all(results.map((r) => this.products.findById(r.id).then((p) => p!)));
+    return Promise.all(
+      results.map((searchHit) => this.products.findById(searchHit.id).then((product) => product!)),
+    );
   }
 
   async indexProduct(product: Product): Promise<void> {
-    await this.es.index("products", product.id, {
+    await this.elasticClient.index("products", product.id, {
       name: product.name,
       description: product.description,
       tags: product.tags,
@@ -1028,7 +1034,7 @@ interface CartRepository {
 }
 
 @injectable([inject(RedisToken), inject(LoggerToken)])
-class RedisCartRepository implements CartRepository {
+class CartRedisRepository implements CartRepository {
   private readonly log: Logger;
 
   constructor(
@@ -1047,11 +1053,11 @@ class RedisCartRepository implements CartRepository {
   }
 
   async findByUserId(userId: string): Promise<Cart | undefined> {
-    const id = await this.redis.get(`cart:user:${userId}`);
-    if (!id) {
+    const persistedCartId = await this.redis.get(`cart:user:${userId}`);
+    if (!persistedCartId) {
       return undefined;
     }
-    return this.findById(id);
+    return this.findById(persistedCartId);
   }
 
   async save(cart: Cart): Promise<Cart> {
@@ -1070,13 +1076,13 @@ class RedisCartRepository implements CartRepository {
 }
 
 interface CartService {
-  getOrCreate(session: UserSession): Promise<Cart>;
+  getOrCreateCart(session: UserSession): Promise<Cart>;
   addItem(cartId: string, productId: string, quantity: number): Promise<Cart>;
   removeItem(cartId: string, productId: string): Promise<Cart>;
   updateQuantity(cartId: string, productId: string, quantity: number): Promise<Cart>;
   applyCoupon(cartId: string, couponCode: string): Promise<Cart>;
-  checkout(cartId: string): Promise<Cart>;
-  clear(cartId: string): Promise<void>;
+  reserveInventoryForCheckout(cartId: string): Promise<Cart>;
+  clearCart(cartId: string): Promise<void>;
 }
 
 @injectable([
@@ -1088,7 +1094,7 @@ interface CartService {
   inject(LoggerToken),
   inject(IdGeneratorToken),
 ])
-class CartServiceImpl implements CartService {
+class CartManager implements CartService {
   private readonly log: Logger;
 
   constructor(
@@ -1098,12 +1104,12 @@ class CartServiceImpl implements CartService {
     private readonly inventory: InventoryService,
     private readonly couponService: CouponService,
     logger: Logger,
-    private readonly idGen: IdGenerator,
+    private readonly idGenerator: IdGenerator,
   ) {
     this.log = logger.child({ service: "CartService" });
   }
 
-  async getOrCreate(session: UserSession): Promise<Cart> {
+  async getOrCreateCart(session: UserSession): Promise<Cart> {
     if (session.cartId) {
       const existing = await this.cartRepo.findById(session.cartId);
       if (existing) {
@@ -1117,7 +1123,7 @@ class CartServiceImpl implements CartService {
       }
     }
     const newCart: Cart = {
-      id: this.idGen.generate("cart-"),
+      id: this.idGenerator.generate("cart-"),
       userId: session.userId,
       items: [],
       couponCode: null,
@@ -1144,24 +1150,24 @@ class CartServiceImpl implements CartService {
       throw new Error(`Product ${productId} not found`);
     }
 
-    const inStock = await this.inventory.isInStock(productId, quantity);
-    if (!inStock) {
+    const isInStock = await this.inventory.isInStock(productId, quantity);
+    if (!isInStock) {
       throw new Error(`Insufficient inventory for ${productId}`);
     }
 
     const priceResult = await this.pricing.getPrice(productId, cart.userId ?? undefined);
-    const existing = cart.items.find((i) => i.productId === productId);
+    const existingCartLine = cart.items.find((cartLine) => cartLine.productId === productId);
 
     let updatedItems: CartItem[];
-    if (existing) {
-      updatedItems = cart.items.map((item) =>
-        item.productId === productId
+    if (existingCartLine) {
+      updatedItems = cart.items.map((cartLine) =>
+        cartLine.productId === productId
           ? {
-              ...item,
-              quantity: item.quantity + quantity,
-              totalPrice: (item.quantity + quantity) * priceResult.finalPrice,
+              ...cartLine,
+              quantity: cartLine.quantity + quantity,
+              totalPrice: (cartLine.quantity + quantity) * priceResult.finalPrice,
             }
-          : item,
+          : cartLine,
       );
     } else {
       updatedItems = [
@@ -1188,7 +1194,7 @@ class CartServiceImpl implements CartService {
     return this.cartRepo.save(
       this.recalculate({
         ...cart,
-        items: cart.items.filter((i) => i.productId !== productId),
+        items: cart.items.filter((cartLine) => cartLine.productId !== productId),
       }),
     );
   }
@@ -1204,8 +1210,10 @@ class CartServiceImpl implements CartService {
     return this.cartRepo.save(
       this.recalculate({
         ...cart,
-        items: cart.items.map((i) =>
-          i.productId === productId ? { ...i, quantity, totalPrice: quantity * i.unitPrice } : i,
+        items: cart.items.map((cartLine) =>
+          cartLine.productId === productId
+            ? { ...cartLine, quantity, totalPrice: quantity * cartLine.unitPrice }
+            : cartLine,
         ),
       }),
     );
@@ -1217,7 +1225,7 @@ class CartServiceImpl implements CartService {
       throw new Error(`Cart ${cartId} not found`);
     }
     const result = await this.couponService.validate(couponCode, cart);
-    if (!result.valid) {
+    if (!result.isValid) {
       throw new Error(result.reason ?? "Invalid coupon");
     }
     return this.cartRepo.save(
@@ -1229,7 +1237,7 @@ class CartServiceImpl implements CartService {
     );
   }
 
-  async checkout(cartId: string): Promise<Cart> {
+  async reserveInventoryForCheckout(cartId: string): Promise<Cart> {
     const cart = await this.cartRepo.findById(cartId);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
@@ -1245,12 +1253,15 @@ class CartServiceImpl implements CartService {
     return cart;
   }
 
-  async clear(cartId: string): Promise<void> {
+  async clearCart(cartId: string): Promise<void> {
     await this.cartRepo.delete(cartId);
   }
 
   private recalculate(cart: Cart): Cart {
-    const subtotal = cart.items.reduce((sum, i) => sum + i.totalPrice, 0);
+    const subtotal = cart.items.reduce(
+      (runningSubtotal, cartLine) => runningSubtotal + cartLine.totalPrice,
+      0,
+    );
     return { ...cart, subtotal, total: Math.max(0, subtotal - cart.discountAmount) };
   }
 }
@@ -1260,7 +1271,7 @@ interface CouponService {
 }
 
 @injectable([inject(PricingServiceToken)])
-class CouponServiceImpl implements CouponService {
+class CouponManager implements CouponService {
   constructor(private readonly pricing: PricingService) {}
 
   async validate(code: string, cart: Cart): Promise<CouponResult> {
@@ -1280,7 +1291,7 @@ interface OrderRepository {
 }
 
 @injectable([inject(DatabaseToken), inject(LoggerToken)])
-class PostgresOrderRepository implements OrderRepository {
+class OrderPostgresRepository implements OrderRepository {
   private readonly log: Logger;
 
   constructor(
@@ -1301,16 +1312,16 @@ class PostgresOrderRepository implements OrderRepository {
   }
 
   async save(order: Order): Promise<Order> {
-    await this.db.transaction(async (db) => {
-      await db.execute(
+    await this.db.transaction(async (transactionDatabase) => {
+      await transactionDatabase.execute(
         "INSERT INTO orders(id,user_id,status,total) VALUES($1,$2,$3,$4) ON CONFLICT(id) DO UPDATE SET status=$3",
         [order.id, order.userId, order.status, order.total],
       );
       await Promise.all(
-        order.items.map((item) =>
-          db.execute(
+        order.items.map((orderLineItem) =>
+          transactionDatabase.execute(
             "INSERT INTO order_items(order_id,product_id,quantity,unit_price) VALUES($1,$2,$3,$4)",
-            [order.id, item.productId, item.quantity, item.unitPrice],
+            [order.id, orderLineItem.productId, orderLineItem.quantity, orderLineItem.unitPrice],
           ),
         ),
       );
@@ -1344,7 +1355,10 @@ class FedExCarrier implements ShippingCarrier {
 
   async getQuote(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote> {
     await delay(8);
-    const weight = items.reduce((sum, i) => sum + i.quantity, 0);
+    const weight = items.reduce(
+      (totalQuantity, orderItem) => totalQuantity + orderItem.quantity,
+      0,
+    );
     return {
       carrierId: this.carrierId,
       carrierName: this.carrierName,
@@ -1368,7 +1382,10 @@ class UpsCarrier implements ShippingCarrier {
 
   async getQuote(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote> {
     await delay(8);
-    const weight = items.reduce((sum, i) => sum + i.quantity, 0);
+    const weight = items.reduce(
+      (totalQuantity, orderItem) => totalQuantity + orderItem.quantity,
+      0,
+    );
     return {
       carrierId: this.carrierId,
       carrierName: this.carrierName,
@@ -1409,12 +1426,12 @@ class DhlCarrier implements ShippingCarrier {
 
 interface FulfillmentService {
   fulfill(order: Order): Promise<Order>;
-  getShippingQuotes(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote[]>;
-  shipOrder(orderId: string, carrierId: string, address: ShippingAddress): Promise<string>;
+  listShippingQuotes(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote[]>;
+  createShipment(orderId: string, carrierId: string, address: ShippingAddress): Promise<string>;
 }
 
 @injectable([inject(OrderRepoToken), injectAll(ShippingCarrierToken), inject(LoggerToken)])
-class FulfillmentServiceImpl implements FulfillmentService {
+class ShippingFulfillmentService implements FulfillmentService {
   private readonly log: Logger;
 
   constructor(
@@ -1430,20 +1447,26 @@ class FulfillmentServiceImpl implements FulfillmentService {
     return this.orderRepo.updateStatus(order.id, "processing");
   }
 
-  async getShippingQuotes(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote[]> {
-    const quotes = await Promise.all(this.carriers.map((c) => c.getQuote(address, items)));
-    return quotes.sort((a, b) => a.cost - b.cost);
+  async listShippingQuotes(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote[]> {
+    const shippingQuotes = await Promise.all(
+      this.carriers.map((carrier) => carrier.getQuote(address, items)),
+    );
+    return shippingQuotes.sort((leftQuote, rightQuote) => leftQuote.cost - rightQuote.cost);
   }
 
-  async shipOrder(orderId: string, carrierId: string, address: ShippingAddress): Promise<string> {
-    const carrier = this.carriers.find((c) => c.carrierId === carrierId);
-    if (!carrier) {
+  async createShipment(
+    orderId: string,
+    carrierId: string,
+    address: ShippingAddress,
+  ): Promise<string> {
+    const selectedCarrier = this.carriers.find((carrier) => carrier.carrierId === carrierId);
+    if (!selectedCarrier) {
       throw new Error(`Unknown carrier: ${carrierId}`);
     }
-    const tracking = await carrier.createShipment(orderId, address);
-    await this.orderRepo.updateStatus(orderId, "shipped", { trackingNumber: tracking });
-    this.log.info("order shipped", { orderId, carrierId, tracking });
-    return tracking;
+    const trackingNumber = await selectedCarrier.createShipment(orderId, address);
+    await this.orderRepo.updateStatus(orderId, "shipped", { trackingNumber });
+    this.log.info("order shipped", { orderId, carrierId, tracking: trackingNumber });
+    return trackingNumber;
   }
 }
 
@@ -1466,7 +1489,7 @@ interface OrderService {
   inject(LoggerToken),
   inject(IdGeneratorToken),
 ])
-class OrderServiceImpl implements OrderService {
+class OrderManager implements OrderService {
   private readonly log: Logger;
 
   constructor(
@@ -1474,7 +1497,7 @@ class OrderServiceImpl implements OrderService {
     private readonly fulfillment: FulfillmentService,
     private readonly eventBus: EventBus,
     logger: Logger,
-    private readonly idGen: IdGenerator,
+    private readonly idGenerator: IdGenerator,
   ) {
     this.log = logger.child({ service: "OrderService" });
   }
@@ -1487,9 +1510,9 @@ class OrderServiceImpl implements OrderService {
   ): Promise<Order> {
     const taxAmount = Math.round(cart.subtotal * 0.08); // 8% tax
     const order: Order = {
-      id: this.idGen.generate("ord-"),
+      id: this.idGenerator.generate("ord-"),
       userId,
-      items: cart.items.map((i) => ({ ...i })),
+      items: cart.items.map((cartLine) => ({ ...cartLine })),
       shippingAddress: address,
       status: "pending_payment",
       subtotal: cart.subtotal,
@@ -1550,8 +1573,8 @@ class StripeGateway implements PaymentGateway {
   private readonly log: Logger;
   private readonly apiKey: string;
 
-  constructor(cfg: AppConfig, logger: Logger) {
-    this.apiKey = cfg.stripeKey;
+  constructor(appConfig: AppConfig, logger: Logger) {
+    this.apiKey = appConfig.stripeKey;
     this.log = logger.child({ gateway: "stripe" });
   }
 
@@ -1588,8 +1611,8 @@ class PayPalGateway implements PaymentGateway {
   private readonly log: Logger;
   private readonly clientId: string;
 
-  constructor(cfg: AppConfig, logger: Logger) {
-    this.clientId = cfg.paypalClientId;
+  constructor(appConfig: AppConfig, logger: Logger) {
+    this.clientId = appConfig.paypalClientId;
     this.log = logger.child({ gateway: "paypal" });
   }
 
@@ -1645,9 +1668,9 @@ class CashOnDeliveryGateway implements PaymentGateway {
 }
 
 interface PaymentService {
-  processPayment(order: Order, gatewayId: string): Promise<PaymentIntent>;
+  capturePayment(order: Order, gatewayId: string): Promise<PaymentIntent>;
   refundPayment(paymentId: string, gatewayId: string, amount?: number): Promise<boolean>;
-  listAvailableGateways(currency: string): PaymentGateway[];
+  listSupportedGateways(currency: string): PaymentGateway[];
 }
 
 @injectable([
@@ -1656,7 +1679,7 @@ interface PaymentService {
   inject(EventBusToken),
   inject(LoggerToken),
 ])
-class PaymentServiceImpl implements PaymentService {
+class PaymentProcessor implements PaymentService {
   private readonly log: Logger;
 
   constructor(
@@ -1668,13 +1691,13 @@ class PaymentServiceImpl implements PaymentService {
     this.log = logger.child({ service: "PaymentService" });
   }
 
-  listAvailableGateways(currency: string): PaymentGateway[] {
-    return this.gateways.filter((g) => g.supports(currency));
+  listSupportedGateways(currency: string): PaymentGateway[] {
+    return this.gateways.filter((gateway) => gateway.supports(currency));
   }
 
-  async processPayment(order: Order, gatewayId: string): Promise<PaymentIntent> {
-    const gateway = this.gateways.find((g) => g.gatewayId === gatewayId);
-    if (!gateway) {
+  async capturePayment(order: Order, gatewayId: string): Promise<PaymentIntent> {
+    const selectedGateway = this.gateways.find((gateway) => gateway.gatewayId === gatewayId);
+    if (!selectedGateway) {
       throw new Error(`Payment gateway ${gatewayId} not found`);
     }
 
@@ -1687,18 +1710,18 @@ class PaymentServiceImpl implements PaymentService {
 
     let intent: PaymentIntent;
     try {
-      intent = await gateway.charge(order.total, order.currency, order.id);
+      intent = await selectedGateway.charge(order.total, order.currency, order.id);
     } catch (err) {
       this.log.error("payment failed, attempting fallback", err, { orderId: order.id });
       // Auto-fallback: try next supported gateway
-      const fallback = this.gateways.find(
-        (g) => g.gatewayId !== gatewayId && g.supports(order.currency),
+      const fallbackGateway = this.gateways.find(
+        (gateway) => gateway.gatewayId !== gatewayId && gateway.supports(order.currency),
       );
-      if (!fallback) {
+      if (!fallbackGateway) {
         throw err;
       }
-      this.log.info("retrying with fallback gateway", { fallback: fallback.gatewayId });
-      intent = await fallback.charge(order.total, order.currency, order.id);
+      this.log.info("retrying with fallback gateway", { fallback: fallbackGateway.gatewayId });
+      intent = await fallbackGateway.charge(order.total, order.currency, order.id);
     }
 
     await this.orderRepo.updateStatus(order.id, "payment_confirmed", {
@@ -1714,11 +1737,13 @@ class PaymentServiceImpl implements PaymentService {
   }
 
   async refundPayment(paymentId: string, gatewayId: string, amount?: number): Promise<boolean> {
-    const gateway = this.gateways.find((g) => g.gatewayId === gatewayId);
-    if (!gateway) {
+    const selectedGateway = this.gateways.find(
+      (paymentGateway) => paymentGateway.gatewayId === gatewayId,
+    );
+    if (!selectedGateway) {
       throw new Error(`Gateway ${gatewayId} not found`);
     }
-    return gateway.refund(paymentId, amount);
+    return selectedGateway.refund(paymentId, amount);
   }
 }
 
@@ -1734,7 +1759,7 @@ interface UserRepository {
 }
 
 @injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
-class PostgresUserRepository implements UserRepository {
+class UserPostgresRepository implements UserRepository {
   private readonly log: Logger;
 
   constructor(
@@ -1789,7 +1814,7 @@ interface AddressRepository {
 }
 
 @injectable([inject(DatabaseToken)])
-class PostgresAddressRepository implements AddressRepository {
+class AddressPostgresRepository implements AddressRepository {
   constructor(private readonly db: Database) {}
 
   async findByUserId(userId: string): Promise<Address[]> {
@@ -1827,7 +1852,7 @@ interface LoyaltyService {
 }
 
 @injectable([inject(UserRepoToken), inject(AppConfigToken), inject(LoggerToken)])
-class LoyaltyServiceImpl implements LoyaltyService {
+class LoyaltyManager implements LoyaltyService {
   private readonly log: Logger;
 
   constructor(
@@ -1864,9 +1889,12 @@ class LoyaltyServiceImpl implements LoyaltyService {
 interface UserService {
   register(email: string, fullName: string): Promise<User>;
   authenticate(email: string): Promise<User | undefined>;
-  getProfile(userId: string): Promise<User | undefined>;
-  getAddresses(userId: string): Promise<Address[]>;
-  addAddress(userId: string, addr: Omit<Address, "id" | "userId" | "isDefault">): Promise<Address>;
+  getUserProfile(userId: string): Promise<User | undefined>;
+  listUserAddresses(userId: string): Promise<Address[]>;
+  addUserAddress(
+    userId: string,
+    addressInput: Omit<Address, "id" | "userId" | "isDefault">,
+  ): Promise<Address>;
 }
 
 @injectable([
@@ -1876,7 +1904,7 @@ interface UserService {
   inject(LoggerToken),
   inject(IdGeneratorToken),
 ])
-class UserServiceImpl implements UserService {
+class UserAccountService implements UserService {
   private readonly log: Logger;
 
   constructor(
@@ -1884,7 +1912,7 @@ class UserServiceImpl implements UserService {
     private readonly addresses: AddressRepository,
     private readonly eventBus: EventBus,
     logger: Logger,
-    private readonly idGen: IdGenerator,
+    private readonly idGenerator: IdGenerator,
   ) {
     this.log = logger.child({ service: "UserService" });
   }
@@ -1896,7 +1924,7 @@ class UserServiceImpl implements UserService {
       return existing;
     }
     const user: User = {
-      id: this.idGen.generate("usr-"),
+      id: this.idGenerator.generate("usr-"),
       email,
       fullName,
       phone: null,
@@ -1914,23 +1942,23 @@ class UserServiceImpl implements UserService {
     return this.users.findByEmail(email);
   }
 
-  async getProfile(userId: string): Promise<User | undefined> {
+  async getUserProfile(userId: string): Promise<User | undefined> {
     return this.users.findById(userId);
   }
 
-  async getAddresses(userId: string): Promise<Address[]> {
+  async listUserAddresses(userId: string): Promise<Address[]> {
     return this.addresses.findByUserId(userId);
   }
 
-  async addAddress(
+  async addUserAddress(
     userId: string,
-    addr: Omit<Address, "id" | "userId" | "isDefault">,
+    addressInput: Omit<Address, "id" | "userId" | "isDefault">,
   ): Promise<Address> {
     const address: Address = {
-      id: this.idGen.generate("addr-"),
+      id: this.idGenerator.generate("addr-"),
       userId,
       isDefault: false,
-      ...addr,
+      ...addressInput,
     };
     return this.addresses.save(address);
   }
@@ -1970,7 +1998,7 @@ class EmailChannel implements NotificationChannel {
       template: payload.template,
       userId: payload.userId,
     });
-    return { channel: this.channelId, success: true, messageId: `ses-${Date.now()}` };
+    return { channel: this.channelId, isSuccess: true, messageId: `ses-${Date.now()}` };
   }
 }
 
@@ -1994,7 +2022,7 @@ class SmsChannel implements NotificationChannel {
   async send(payload: NotificationPayload): Promise<NotificationResult> {
     await delay(8);
     this.log.info("sending SMS", { to: payload.phone, template: payload.template });
-    return { channel: this.channelId, success: true, messageId: `twilio-${Date.now()}` };
+    return { channel: this.channelId, isSuccess: true, messageId: `twilio-${Date.now()}` };
   }
 }
 
@@ -2018,18 +2046,18 @@ class PushChannel implements NotificationChannel {
       userId: payload.userId,
       template: payload.template,
     });
-    return { channel: this.channelId, success: true, messageId: `push-${Date.now()}` };
+    return { channel: this.channelId, isSuccess: true, messageId: `push-${Date.now()}` };
   }
 }
 
 interface NotificationService {
   send(payload: NotificationPayload): Promise<NotificationResult[]>;
-  sendOrderConfirmation(order: Order, user: User): Promise<void>;
-  sendShippingUpdate(order: Order, user: User, trackingNumber: string): Promise<void>;
+  sendOrderConfirmationNotification(order: Order, user: User): Promise<void>;
+  sendShippingUpdateNotification(order: Order, user: User, trackingNumber: string): Promise<void>;
 }
 
 @injectable([injectAll(NotificationChannelToken), inject(LoggerToken)])
-class NotificationServiceImpl implements NotificationService {
+class NotificationDispatcher implements NotificationService {
   private readonly log: Logger;
 
   constructor(
@@ -2040,15 +2068,15 @@ class NotificationServiceImpl implements NotificationService {
   }
 
   async send(payload: NotificationPayload): Promise<NotificationResult[]> {
-    const applicableChannels = this.channels.filter((c) => c.canHandle(payload));
+    const applicableChannels = this.channels.filter((channel) => channel.canHandle(payload));
     this.log.info("dispatching notification", {
       template: payload.template,
       channelCount: applicableChannels.length,
     });
-    return Promise.all(applicableChannels.map((c) => c.send(payload)));
+    return Promise.all(applicableChannels.map((channel) => channel.send(payload)));
   }
 
-  async sendOrderConfirmation(order: Order, user: User): Promise<void> {
+  async sendOrderConfirmationNotification(order: Order, user: User): Promise<void> {
     await this.send({
       userId: user.id,
       email: user.email,
@@ -2065,7 +2093,11 @@ class NotificationServiceImpl implements NotificationService {
     });
   }
 
-  async sendShippingUpdate(order: Order, user: User, trackingNumber: string): Promise<void> {
+  async sendShippingUpdateNotification(
+    order: Order,
+    user: User,
+    trackingNumber: string,
+  ): Promise<void> {
     await this.send({
       userId: user.id,
       email: user.email,
@@ -2082,7 +2114,7 @@ class NotificationServiceImpl implements NotificationService {
 }
 
 interface CheckoutApplicationService {
-  runCheckout(requestId: string): Promise<void>;
+  completeCheckoutJourney(requestId: string): Promise<void>;
 }
 
 @injectable([
@@ -2098,7 +2130,7 @@ interface CheckoutApplicationService {
   optional(AnalyticsServiceToken),
   optional(AbTestServiceToken),
 ])
-class CheckoutApplicationServiceImpl implements CheckoutApplicationService {
+class CheckoutOrchestrator implements CheckoutApplicationService {
   constructor(
     private readonly session: UserSession,
     private readonly logger: Logger,
@@ -2113,115 +2145,126 @@ class CheckoutApplicationServiceImpl implements CheckoutApplicationService {
     private readonly abTestService?: AbTestService,
   ) {}
 
-  async runCheckout(requestId: string): Promise<void> {
-    const requestLogger = this.logger.child({ requestId, userId: this.session.userId });
-    requestLogger.info("-> checkout request started");
+  async completeCheckoutJourney(requestId: string): Promise<void> {
+    const checkoutLog = this.logger.child({ requestId, userId: this.session.userId });
+    checkoutLog.info("-> checkout request started");
 
-    await this.runAbTest(requestLogger);
-    const cart = await this.loadCartWithFeaturedItems(requestLogger);
-    const discountedCart = await this.applyCouponSafely(cart, requestLogger);
-    const { user, shippingAddress } = await this.loadCheckoutContext();
-    const { checkedOutCart, cheapestQuote } = await this.quoteShipping(
-      discountedCart,
+    await this.assignCheckoutExperimentVariant(checkoutLog);
+    const activeCart = await this.loadCartAndAddFeaturedItems(checkoutLog);
+    const cartAfterDiscount = await this.applyWelcomeCouponIfEligible(activeCart, checkoutLog);
+    const { customer, shippingAddress } = await this.loadCustomerAndShippingAddress();
+    const { reservedCart, selectedShippingQuote } = await this.reserveItemsAndSelectShippingQuote(
+      cartAfterDiscount,
       shippingAddress,
-      requestLogger,
+      checkoutLog,
     );
-    const order = await this.createOrder(
-      checkedOutCart,
+    const order = await this.createPendingOrderFromCart(
+      reservedCart,
       shippingAddress,
-      cheapestQuote,
-      requestLogger,
+      selectedShippingQuote,
+      checkoutLog,
     );
-    const { payment, tracking } = await this.completePaymentAndShipping(
+    const { capturedPayment, trackingNumber } = await this.capturePaymentAndCreateShipment(
       order,
       shippingAddress,
-      cheapestQuote,
-      requestLogger,
+      selectedShippingQuote,
+      checkoutLog,
     );
-    await this.sendShippingNotification(order, user, tracking);
-    await this.trackCheckoutAnalytics(order, payment, cheapestQuote, checkedOutCart);
-    await this.finalizeCheckout(discountedCart, order, payment, tracking, requestLogger);
+    await this.notifyCustomerOrderShipped(order, customer, trackingNumber);
+    await this.trackCheckoutCompletedEvent(
+      order,
+      capturedPayment,
+      selectedShippingQuote,
+      reservedCart,
+    );
+    await this.clearCartAndLogCheckoutCompleted(
+      cartAfterDiscount,
+      order,
+      capturedPayment,
+      trackingNumber,
+      checkoutLog,
+    );
   }
 
-  private async runAbTest(requestLogger: Logger): Promise<void> {
+  private async assignCheckoutExperimentVariant(checkoutLog: Logger): Promise<void> {
     if (!this.abTestService) {
       return;
     }
-    const variant = await this.abTestService.getVariant(
+    const experimentVariant = await this.abTestService.getVariant(
       this.session.userId,
       "checkout_redesign_2024",
     );
-    requestLogger.info("a/b variant", { variant: variant.variant });
+    checkoutLog.info("a/b variant", { variant: experimentVariant.variant });
   }
 
-  private async loadCartWithFeaturedItems(requestLogger: Logger): Promise<Cart> {
-    let cart = await this.cartService.getOrCreate(this.session);
-    requestLogger.info("cart loaded", { cartId: cart.id, itemCount: cart.items.length });
+  private async loadCartAndAddFeaturedItems(checkoutLog: Logger): Promise<Cart> {
+    let activeCart = await this.cartService.getOrCreateCart(this.session);
+    checkoutLog.info("cart loaded", { cartId: activeCart.id, itemCount: activeCart.items.length });
 
-    const featuredProducts = await this.catalogService.listFeatured();
-    requestLogger.info(`adding ${Math.min(3, featuredProducts.length)} items to cart`);
+    const featuredProducts = await this.catalogService.listFeaturedProducts();
+    checkoutLog.info(`adding ${Math.min(3, featuredProducts.length)} items to cart`);
 
     for (const product of featuredProducts.slice(0, 3)) {
-      cart = await this.cartService.addItem(cart.id, product.id, 1);
+      activeCart = await this.cartService.addItem(activeCart.id, product.id, 1);
     }
-    return cart;
+    return activeCart;
   }
 
-  private async applyCouponSafely(cart: Cart, requestLogger: Logger): Promise<Cart> {
+  private async applyWelcomeCouponIfEligible(cart: Cart, checkoutLog: Logger): Promise<Cart> {
     try {
-      const updatedCart = await this.cartService.applyCoupon(cart.id, "WELCOME20");
-      requestLogger.info("coupon applied", {
+      const cartWithCoupon = await this.cartService.applyCoupon(cart.id, "WELCOME20");
+      checkoutLog.info("coupon applied", {
         couponCode: "WELCOME20",
-        discount: updatedCart.discountAmount,
+        discount: cartWithCoupon.discountAmount,
       });
-      return updatedCart;
+      return cartWithCoupon;
     } catch (err) {
-      requestLogger.warn("coupon failed", { err });
+      checkoutLog.warn("coupon failed", { err });
       return cart;
     }
   }
 
-  private async loadCheckoutContext(): Promise<{
-    user: User | undefined;
+  private async loadCustomerAndShippingAddress(): Promise<{
+    customer: User | undefined;
     shippingAddress: ShippingAddress;
   }> {
-    const user = await this.userService.getProfile(this.session.userId);
-    const addresses = await this.userService.getAddresses(this.session.userId);
-    return { user, shippingAddress: addresses[0]! };
+    const customer = await this.userService.getUserProfile(this.session.userId);
+    const userAddresses = await this.userService.listUserAddresses(this.session.userId);
+    return { customer, shippingAddress: userAddresses[0]! };
   }
 
-  private async quoteShipping(
+  private async reserveItemsAndSelectShippingQuote(
     cart: Cart,
     shippingAddress: ShippingAddress,
-    requestLogger: Logger,
-  ): Promise<{ checkedOutCart: Cart; cheapestQuote: ShippingQuote }> {
-    const checkedOutCart = await this.cartService.checkout(cart.id);
-    const shippingQuotes = await this.fulfillmentService.getShippingQuotes(
+    checkoutLog: Logger,
+  ): Promise<{ reservedCart: Cart; selectedShippingQuote: ShippingQuote }> {
+    const reservedCart = await this.cartService.reserveInventoryForCheckout(cart.id);
+    const shippingQuotes = await this.fulfillmentService.listShippingQuotes(
       shippingAddress,
-      checkedOutCart.items as OrderItem[],
+      reservedCart.items as OrderItem[],
     );
-    requestLogger.info("shipping quotes received", {
+    checkoutLog.info("shipping quotes received", {
       carriers: shippingQuotes.map(
         (quote) =>
           `${quote.carrierName} $${(quote.cost / 100).toFixed(2)} (${quote.estimatedDays}d)`,
       ),
     });
-    return { checkedOutCart, cheapestQuote: shippingQuotes[0]! };
+    return { reservedCart, selectedShippingQuote: shippingQuotes[0]! };
   }
 
-  private async createOrder(
-    checkedOutCart: Cart,
+  private async createPendingOrderFromCart(
+    reservedCart: Cart,
     shippingAddress: ShippingAddress,
-    cheapestQuote: ShippingQuote,
-    requestLogger: Logger,
+    selectedShippingQuote: ShippingQuote,
+    checkoutLog: Logger,
   ): Promise<Order> {
     const order = await this.orderService.createFromCart(
-      checkedOutCart,
+      reservedCart,
       this.session.userId,
       shippingAddress,
-      cheapestQuote.cost,
+      selectedShippingQuote.cost,
     );
-    requestLogger.info("order created", {
+    checkoutLog.info("order created", {
       orderId: order.id,
       total: `$${(order.total / 100).toFixed(2)}`,
       currency: order.currency,
@@ -2229,49 +2272,49 @@ class CheckoutApplicationServiceImpl implements CheckoutApplicationService {
     return order;
   }
 
-  private async completePaymentAndShipping(
+  private async capturePaymentAndCreateShipment(
     order: Order,
     shippingAddress: ShippingAddress,
-    cheapestQuote: ShippingQuote,
-    requestLogger: Logger,
-  ): Promise<{ payment: PaymentIntent; tracking: string }> {
-    const availableGateways = this.paymentService.listAvailableGateways(order.currency);
-    requestLogger.info("available payment gateways", {
+    selectedShippingQuote: ShippingQuote,
+    checkoutLog: Logger,
+  ): Promise<{ capturedPayment: PaymentIntent; trackingNumber: string }> {
+    const availableGateways = this.paymentService.listSupportedGateways(order.currency);
+    checkoutLog.info("available payment gateways", {
       gateways: availableGateways.map((gateway) => gateway.displayName),
     });
 
-    const payment = await this.paymentService.processPayment(order, "stripe");
-    requestLogger.info("payment processed", {
-      paymentId: payment.id,
-      gateway: payment.gateway,
-      status: payment.status,
+    const capturedPayment = await this.paymentService.capturePayment(order, "stripe");
+    checkoutLog.info("payment processed", {
+      paymentId: capturedPayment.id,
+      gateway: capturedPayment.gateway,
+      status: capturedPayment.status,
     });
 
-    const tracking = await this.fulfillmentService.shipOrder(
+    const trackingNumber = await this.fulfillmentService.createShipment(
       order.id,
-      cheapestQuote.carrierId,
+      selectedShippingQuote.carrierId,
       shippingAddress,
     );
-    requestLogger.info("order shipped", { orderId: order.id, tracking });
-    return { payment, tracking };
+    checkoutLog.info("order shipped", { orderId: order.id, tracking: trackingNumber });
+    return { capturedPayment, trackingNumber };
   }
 
-  private async sendShippingNotification(
+  private async notifyCustomerOrderShipped(
     order: Order,
-    user: User | undefined,
-    tracking: string,
+    customer: User | undefined,
+    trackingNumber: string,
   ): Promise<void> {
-    if (!user) {
+    if (!customer) {
       return;
     }
-    await this.notificationService.sendShippingUpdate(order, user, tracking);
+    await this.notificationService.sendShippingUpdateNotification(order, customer, trackingNumber);
   }
 
-  private async trackCheckoutAnalytics(
+  private async trackCheckoutCompletedEvent(
     order: Order,
-    payment: PaymentIntent,
-    cheapestQuote: ShippingQuote,
-    checkedOutCart: Cart,
+    capturedPayment: PaymentIntent,
+    selectedShippingQuote: ShippingQuote,
+    reservedCart: Cart,
   ): Promise<void> {
     if (!this.analyticsService) {
       return;
@@ -2284,26 +2327,26 @@ class CheckoutApplicationServiceImpl implements CheckoutApplicationService {
         total: order.total,
         currency: order.currency,
         itemCount: order.items.length,
-        gateway: payment.gateway,
-        carrier: cheapestQuote.carrierId,
-        couponUsed: !!checkedOutCart.couponCode,
+        gateway: capturedPayment.gateway,
+        carrier: selectedShippingQuote.carrierId,
+        couponUsed: !!reservedCart.couponCode,
       },
       timestamp: new Date(),
     });
   }
 
-  private async finalizeCheckout(
+  private async clearCartAndLogCheckoutCompleted(
     cart: Cart,
     order: Order,
-    payment: PaymentIntent,
-    tracking: string,
-    requestLogger: Logger,
+    capturedPayment: PaymentIntent,
+    trackingNumber: string,
+    checkoutLog: Logger,
   ): Promise<void> {
-    await this.cartService.clear(cart.id);
-    requestLogger.info("<- checkout completed ✅", {
+    await this.cartService.clearCart(cart.id);
+    checkoutLog.info("<- checkout completed ✅", {
       orderId: order.id,
-      paymentId: payment.id,
-      tracking,
+      paymentId: capturedPayment.id,
+      tracking: trackingNumber,
     });
   }
 }
@@ -2336,11 +2379,11 @@ class SegmentAnalyticsService implements AnalyticsService {
 
 interface AbTestService {
   getVariant(userId: string, experimentId: string): Promise<AbVariant>;
-  track(userId: string, experimentId: string, converted: boolean): Promise<void>;
+  track(userId: string, experimentId: string, hasConverted: boolean): Promise<void>;
 }
 
 @injectable([inject(RedisToken), inject(LoggerToken)])
-class AbTestServiceImpl implements AbTestService {
+class AbTestManager implements AbTestService {
   private readonly log: Logger;
 
   constructor(
@@ -2365,8 +2408,8 @@ class AbTestServiceImpl implements AbTestService {
     return result;
   }
 
-  async track(userId: string, experimentId: string, converted: boolean): Promise<void> {
-    this.log.info("ab test conversion", { userId, experimentId, converted });
+  async track(userId: string, experimentId: string, hasConverted: boolean): Promise<void> {
+    this.log.info("ab test conversion", { userId, experimentId, hasConverted });
   }
 }
 
@@ -2387,12 +2430,12 @@ const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
     .bind(DatabaseToken)
     .to(MockDatabase)
     .singleton()
-    .onActivation(async (_ctx, db) => {
-      await db.connect();
-      return db;
+    .onActivation(async (_ctx, database) => {
+      await database.connect();
+      return database;
     })
-    .onDeactivation(async (db) => {
-      await db.close();
+    .onDeactivation(async (database) => {
+      await database.close();
     });
 
   // Redis: async connect, close on deactivation
@@ -2400,12 +2443,12 @@ const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
     .bind(RedisToken)
     .to(MockRedis)
     .singleton()
-    .onActivation(async (_ctx, redis) => {
-      await redis.connect();
-      return redis;
+    .onActivation(async (_ctx, redisClient) => {
+      await redisClient.connect();
+      return redisClient;
     })
-    .onDeactivation(async (redis) => {
-      await redis.quit();
+    .onDeactivation(async (redisClient) => {
+      await redisClient.quit();
     });
 
   builder.bind(S3Token).to(MockS3).singleton();
@@ -2418,22 +2461,22 @@ const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
 // ---- Catalog ----------------------------------------------------------------
 
 const CatalogModule = Module.create("Catalog", (builder) => {
-  builder.bind(ProductRepoToken).to(PostgresProductRepository).singleton();
-  builder.bind(CategoryRepoToken).to(PostgresCategoryRepository).singleton();
-  builder.bind(InventoryServiceToken).to(InventoryServiceImpl).singleton();
-  builder.bind(PricingServiceToken).to(PricingServiceImpl).singleton();
+  builder.bind(ProductRepoToken).to(ProductPostgresRepository).singleton();
+  builder.bind(CategoryRepoToken).to(CategoryPostgresRepository).singleton();
+  builder.bind(InventoryServiceToken).to(InventoryManager).singleton();
+  builder.bind(PricingServiceToken).to(PricingManager).singleton();
   // @postConstruct handles cache warm-up; @preDestroy handles flush
-  builder.bind(CatalogServiceToken).to(CatalogServiceImpl).singleton();
-  builder.bind(SearchServiceToken).to(ElasticSearchService).singleton();
+  builder.bind(CatalogServiceToken).to(CatalogManager).singleton();
+  builder.bind(SearchServiceToken).to(ProductSearchService).singleton();
 });
 
 // ---- Cart -------------------------------------------------------------------
 
 const CartModule = Module.create("Cart", (builder) => {
   builder.import(CatalogModule);
-  builder.bind(CartRepoToken).to(RedisCartRepository).singleton();
-  builder.bind(CouponServiceToken).to(CouponServiceImpl).singleton();
-  builder.bind(CartServiceToken).to(CartServiceImpl).singleton();
+  builder.bind(CartRepoToken).to(CartRedisRepository).singleton();
+  builder.bind(CouponServiceToken).to(CouponManager).singleton();
+  builder.bind(CartServiceToken).to(CartManager).singleton();
 });
 
 // ---- Orders -----------------------------------------------------------------
@@ -2446,9 +2489,9 @@ const ShippingModule = Module.create("Shipping", (builder) => {
 
 const OrderModule = Module.create("Orders", (builder) => {
   builder.import(ShippingModule);
-  builder.bind(OrderRepoToken).to(PostgresOrderRepository).singleton();
-  builder.bind(FulfillmentServiceToken).to(FulfillmentServiceImpl).singleton();
-  builder.bind(OrderServiceToken).to(OrderServiceImpl).singleton();
+  builder.bind(OrderRepoToken).to(OrderPostgresRepository).singleton();
+  builder.bind(FulfillmentServiceToken).to(ShippingFulfillmentService).singleton();
+  builder.bind(OrderServiceToken).to(OrderManager).singleton();
 });
 
 // ---- Payments ---------------------------------------------------------------
@@ -2457,16 +2500,16 @@ const PaymentModule = Module.create("Payments", (builder) => {
   builder.bind(PaymentGatewayToken).whenNamed("stripe").to(StripeGateway).singleton();
   builder.bind(PaymentGatewayToken).whenNamed("paypal").to(PayPalGateway).singleton();
   builder.bind(PaymentGatewayToken).whenNamed("cod").to(CashOnDeliveryGateway).singleton();
-  builder.bind(PaymentServiceToken).to(PaymentServiceImpl).singleton();
+  builder.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 });
 
 // ---- Users ------------------------------------------------------------------
 
 const UserModule = Module.create("Users", (builder) => {
-  builder.bind(UserRepoToken).to(PostgresUserRepository).singleton();
-  builder.bind(AddressRepoToken).to(PostgresAddressRepository).singleton();
-  builder.bind(LoyaltyServiceToken).to(LoyaltyServiceImpl).singleton();
-  builder.bind(UserServiceToken).to(UserServiceImpl).singleton();
+  builder.bind(UserRepoToken).to(UserPostgresRepository).singleton();
+  builder.bind(AddressRepoToken).to(AddressPostgresRepository).singleton();
+  builder.bind(LoyaltyServiceToken).to(LoyaltyManager).singleton();
+  builder.bind(UserServiceToken).to(UserAccountService).singleton();
   // SessionToken is scoped — bound per-request in child container
 });
 
@@ -2476,14 +2519,14 @@ const NotificationModule = Module.create("Notifications", (builder) => {
   builder.bind(NotificationChannelToken).whenNamed("email").to(EmailChannel).singleton();
   builder.bind(NotificationChannelToken).whenNamed("sms").to(SmsChannel).singleton();
   builder.bind(NotificationChannelToken).whenNamed("push").to(PushChannel).singleton();
-  builder.bind(NotificationServiceToken).to(NotificationServiceImpl).singleton();
+  builder.bind(NotificationServiceToken).to(NotificationDispatcher).singleton();
 });
 
 // ---- Analytics (optional features) -----------------------------------------
 
 const AnalyticsModule = Module.create("Analytics", (builder) => {
   builder.bind(AnalyticsServiceToken).to(SegmentAnalyticsService).singleton();
-  builder.bind(AbTestServiceToken).to(AbTestServiceImpl).singleton();
+  builder.bind(AbTestServiceToken).to(AbTestManager).singleton();
 });
 
 // ---- Root app module --------------------------------------------------------
@@ -2505,7 +2548,7 @@ const AppModule = Module.create("App", (builder) => {
     cartId: null,
     requestId: "bootstrap",
   } satisfies UserSession);
-  builder.bind(CheckoutApplicationServiceToken).to(CheckoutApplicationServiceImpl).scoped();
+  builder.bind(CheckoutApplicationServiceToken).to(CheckoutOrchestrator).scoped();
 });
 
 // ============================================================================
@@ -2532,7 +2575,7 @@ async function bootstrap() {
   const eventBus = container.resolve(EventBusToken);
   const loyalty = container.resolve(LoyaltyServiceToken);
   const notif = container.resolve(NotificationServiceToken);
-  const userSvc = container.resolve(UserServiceToken);
+  const userService = container.resolve(UserServiceToken);
 
   eventBus.subscribe<{ orderId: string; userId: string; total: number }>(
     "order.created",
@@ -2547,10 +2590,10 @@ async function bootstrap() {
     async ({ orderId, userId }) => {
       const [order, user] = await Promise.all([
         container.resolve(OrderServiceToken).getOrder(orderId),
-        userSvc.getProfile(userId),
+        userService.getUserProfile(userId),
       ]);
       if (order && user) {
-        await notif.sendOrderConfirmation(order, user);
+        await notif.sendOrderConfirmationNotification(order, user);
       }
     },
   );
@@ -2571,8 +2614,8 @@ async function handleCheckoutRequest(
   // Each request gets an isolated scoped child container
   const requestContainer = rootContainer.createChild();
   requestContainer.bind(SessionToken).toConstantValue(session);
-  const checkoutApplicationService = requestContainer.resolve(CheckoutApplicationServiceToken);
-  await checkoutApplicationService.runCheckout(requestId);
+  const checkoutOrchestrator = requestContainer.resolve(CheckoutApplicationServiceToken);
+  await checkoutOrchestrator.completeCheckoutJourney(requestId);
 }
 
 // ============================================================================
@@ -2593,14 +2636,14 @@ async function main(): Promise<void> {
 
   // ── Register user & simulate full customer journey ──────────────────────
 
-  const userSvc = platform.container.resolve(UserServiceToken);
+  const userService = platform.container.resolve(UserServiceToken);
 
   // New customer registers
-  const alice = await userSvc.register("alice@example.com", "Alice Nguyen");
+  const alice = await userService.register("alice@example.com", "Alice Nguyen");
   console.log(`\n[Customer] Registered: ${alice.fullName} (${alice.id})`);
 
   // Add a shipping address
-  await userSvc.addAddress(alice.id, {
+  await userService.addUserAddress(alice.id, {
     fullName: "Alice Nguyen",
     addressLine1: "123 Le Loi St",
     city: "Ho Chi Minh City",
@@ -2696,7 +2739,7 @@ function makeFakeProduct(id: string): Product {
     imageKeys: [`products/${id}/main.jpg`],
     attributes: { color: "black", size: "42", brand: "Nike", material: "mesh" },
     tags: ["running", "sport", "shoes", "nike"],
-    active: true,
+    isActive: true,
   };
 }
 
