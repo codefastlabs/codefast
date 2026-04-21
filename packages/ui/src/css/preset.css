@@ -1,6 +1,6 @@
 @import "tw-animate-css";
 
-@source "../../dist/**/*.js";
+@source "../../dist/**/*.{js,mjs}";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
