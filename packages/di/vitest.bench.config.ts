@@ -2,20 +2,18 @@ import swc from "unplugin-swc";
 import { defineConfig } from "vitest/config";
 
 /**
- * DI: Node + decorators; same SWC + coverage layout as CLI.
+ * Dedicated config for `vitest bench`: no unit-test globs, no coverage, and
+ * single-worker / sequential file runs to reduce microbench noise.
  */
 export default defineConfig({
   oxc: false,
   test: {
     globals: true,
     environment: "node",
-    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-    coverage: {
-      provider: "v8",
-      reportsDirectory: "./coverage",
-      reporter: ["text", "html", "lcov"],
-      include: ["src/**/*.ts"],
-      exclude: ["src/**/*.{test,spec,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+    fileParallelism: false,
+    maxWorkers: 1,
+    benchmark: {
+      include: ["src/**/*.bench.?(c|m)[jt]s?(x)"],
     },
   },
   plugins: [
