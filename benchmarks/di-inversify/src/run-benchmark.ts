@@ -76,7 +76,7 @@ function printCliComparisonTable(
   const inversifyThroughputHeader = `${INVERSIFY_LIBRARY_DISPLAY_NAME} hz`;
   const codefastThroughputHeader = `${CODEFAST_DI_LIBRARY_DISPLAY_NAME} hz`;
   const throughputRatioHeader = `${CODEFAST_DI_LIBRARY_DISPLAY_NAME} / ${INVERSIFY_LIBRARY_DISPLAY_NAME}`;
-  const meanLatencyHeader = `Mean ms (${INVERSIFY_LIBRARY_DISPLAY_NAME} → ${CODEFAST_DI_LIBRARY_DISPLAY_NAME})`;
+  const meanLatencyHeader = `Mean ms (${CODEFAST_DI_LIBRARY_DISPLAY_NAME} → ${INVERSIFY_LIBRARY_DISPLAY_NAME})`;
 
   const scenarioColumnWidth = Math.max(
     28,
@@ -88,8 +88,8 @@ function printCliComparisonTable(
 
   const headerLine = [
     "Scenario".padEnd(scenarioColumnWidth),
-    inversifyThroughputHeader.padStart(inversifyThroughputColumnWidth),
     codefastThroughputHeader.padStart(codefastThroughputColumnWidth),
+    inversifyThroughputHeader.padStart(inversifyThroughputColumnWidth),
     throughputRatioHeader.padStart(throughputRatioColumnWidth),
     meanLatencyHeader,
   ].join(CLI_TABLE_COLUMN_GAP);
@@ -103,8 +103,8 @@ function printCliComparisonTable(
     if (!inversifyRow || !codefastRow) {
       const missingLine = [
         scenarioId.padEnd(scenarioColumnWidth),
-        "missing".padStart(inversifyThroughputColumnWidth),
         "missing".padStart(codefastThroughputColumnWidth),
+        "missing".padStart(inversifyThroughputColumnWidth),
         "—".padStart(throughputRatioColumnWidth),
         "—",
       ].join(CLI_TABLE_COLUMN_GAP);
@@ -116,14 +116,14 @@ function printCliComparisonTable(
       codefastRow.hz,
       inversifyRow.hz,
     );
-    const meanLatencyComparisonLabel = `${inversifyRow.meanMs.toFixed(4)} → ${codefastRow.meanMs.toFixed(4)}`;
+    const meanLatencyComparisonLabel = `${codefastRow.meanMs.toFixed(4)} → ${inversifyRow.meanMs.toFixed(4)}`;
     const inversifyThroughputFormatted = Math.round(inversifyRow.hz).toLocaleString("en-US");
     const codefastThroughputFormatted = Math.round(codefastRow.hz).toLocaleString("en-US");
 
     const dataLine = [
       scenarioId.padEnd(scenarioColumnWidth),
-      inversifyThroughputFormatted.padStart(inversifyThroughputColumnWidth),
       codefastThroughputFormatted.padStart(codefastThroughputColumnWidth),
+      inversifyThroughputFormatted.padStart(inversifyThroughputColumnWidth),
       relativeThroughputRatioLabel.padStart(throughputRatioColumnWidth),
       meanLatencyComparisonLabel,
     ].join(CLI_TABLE_COLUMN_GAP);
@@ -133,10 +133,26 @@ function printCliComparisonTable(
   console.log("");
 }
 
+function printWhyHarnessWallTimesDiffer(): void {
+  console.log(
+    [
+      "Why “Finished … (Xs wall)” can look backwards versus the table:",
+      "",
+      "Each tinybench task keeps sampling until BOTH are true: at least `iterations` samples (800)",
+      "AND the sum of per-sample durations is at least `time` (450 ms). When one callback is very",
+      "fast, 800 samples may not add up to 450 ms yet, so tinybench runs extra iterations. When a",
+      "callback is slower, 800 samples often exceed 450 ms summed time sooner, so fewer extra",
+      "iterations run. Total harness wall time is therefore not a fair head-to-head score between",
+      "libraries; use the table (throughput and mean ms per scenario) instead.",
+      "",
+    ].join("\n"),
+  );
+}
+
 function main(): void {
   console.log(
     "\n@codefast/benchmark-di-inversify — comparing InversifyJS 8 with @codefast/di (same scenario identifiers, one harness per library)\n" +
-      "(default: ~450ms wall + 800 iterations + short warm-up per task; tune BENCH_OPTIONS in *-benches.ts for longer runs)\n",
+      "(per task: warm-up, then measure until at least 800 iterations AND at least 450 ms summed sample time; tune BENCH_OPTIONS in *-benches.ts)\n",
   );
 
   const inversifyBenchmarkRows = runSubBench(
@@ -149,6 +165,8 @@ function main(): void {
     "codefast-benches.ts",
     CODEFAST_DI_LIBRARY_DISPLAY_NAME,
   );
+
+  printWhyHarnessWallTimesDiffer();
 
   const inversifyRowByScenarioId = new Map(inversifyBenchmarkRows.map((row) => [row.id, row]));
   const codefastRowByScenarioId = new Map(codefastBenchmarkRows.map((row) => [row.id, row]));
