@@ -189,4 +189,16 @@ describe("Module", () => {
     container.unload(mod);
     expect(container.resolveAll(unloadMultiToken)).toEqual([]);
   });
+
+  it("slot-aware last-wins follows module load order for the same default slot", () => {
+    const shared = token<number>("module-order-default-slot");
+    const modA = Module.create("orderA-default", (api) => {
+      api.bind(shared).toConstantValue(1);
+    });
+    const modB = Module.create("orderB-default", (api) => {
+      api.bind(shared).toConstantValue(2);
+    });
+    expect(Container.fromModules(modA, modB).resolve(shared)).toBe(2);
+    expect(Container.fromModules(modB, modA).resolve(shared)).toBe(1);
+  });
 });

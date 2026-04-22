@@ -435,11 +435,15 @@ container.bind(Logger).to(FileLogger).whenNamed("file");
   - `default` (không `whenNamed`, không `whenTagged`, không `when`)
   - `name:<value>` (`whenNamed`)
   - `tag:<k=v>` (`whenTagged`)
+  - **Implementation note:** runtime gom `whenNamed` + toàn bộ `whenTagged` thành **một khóa slot** ổn định (sort key tag theo `localeCompare`, serialize value); tương đương “cùng name + cùng tập tag” thì last-wins, khác một trong hai thì slot khác.
+- **Predicate-only `when()`:** binding chỉ có `.when(predicate)` (không kèm `whenNamed` / `whenTagged`) **không** tham gia slot last-wins ở registration-time — nhiều bản ghi cùng token có thể tồn tại song song; `resolve` / `resolveAll` lọc theo predicate + hint như bình thường. Nếu sau lọc vẫn còn **≥ 2** candidate (ví dụ hai binding cùng token đều có `when()` và cùng pass tại context hiện tại), `resolve` / `resolveAsync` throw **`InternalError`** (code `"INTERNAL_ERROR"`) — **không** last-wins; message dạng `Ambiguous binding for "<token>": N candidates matched after applying ResolveHint (resolution path: ...)`.
 - **Candidate:** bản ghi vượt qua lọc `ResolveHint` (nếu có) và `when(ctx)` (nếu có).
 - **Single (kênh `resolve`):** sau lọc còn đúng **một** candidate.
 - **Multiple (kênh `resolveAll`):** có chủ đích giữ **≥ 2** candidate để lấy toàn bộ (`resolveAll*`) hoặc chọn bằng hint.
 
 **Lưu ý:** Cùng token nhưng khác `to*` (constant vs class vs factory, …) **không** tự định nghĩa single/multiple — chỉ quan tâm còn bao nhiêu bản ghi sau luật slot.
+
+**Giá trị tag:** nên dùng giá trị JSON-serialize được (primitive, plain object/array). Với `bigint`, implementation chuẩn hóa riêng. Với object có vòng tham chiếu, implementation dùng identity (WeakMap) để tránh gộp slot sai giữa hai object khác nhau khi `JSON.stringify` thất bại.
 
 #### Bảng tình huống
 
@@ -792,15 +796,19 @@ interface LifecycleMetadata {
 
 > **`Symbol.metadata` prototype chain safety — quy tắc bắt buộc:**
 >
-> TC39 quy định `Symbol.metadata` của subclass prototype-chain từ parent. Nếu child không có `@injectable()`, `target[Symbol.metadata]` vẫn có thể đọc được metadata của parent — dẫn đến inject sai số lượng deps, không có lỗi compile.
+> TC39 cho phép `Symbol.metadata` prototype-chain từ parent → child. Nếu child không có `@injectable()`, truy cập `target[Symbol.metadata]` có thể vẫn thấy **object metadata của parent** — dẫn đến inject sai số lượng deps, không có lỗi compile.
 >
-> `SymbolMetadataReader` (implementation của `MetadataReader`) **phải** kiểm tra `Object.hasOwn` trước khi đọc:
+> `SymbolMetadataReader.getConstructorMetadata` **phải**:
+>
+> 1. Đọc **chỉ** metadata bag **own** của class: `Object.getOwnPropertyDescriptor(target, Symbol.metadata)?.value` — nếu child chưa từng ghi `Symbol.metadata` riêng thì trả về `undefined` (không đọc nhầm bag của parent).
+> 2. Trên bag đó, dùng `Object.hasOwn(meta, INJECTABLE_KEY)` trước khi đọc bucket constructor (không dùng `in` hay đọc key kế thừa trong cùng một bag).
 >
 > ```ts
 > getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
->   const meta = target[Symbol.metadata];
->   // PHẢI dùng hasOwn — không dùng `in` hay truy cập trực tiếp
->   if (!meta || !Object.hasOwn(meta, INJECTABLE_KEY)) return undefined;
+>   const own = Object.getOwnPropertyDescriptor(target, Symbol.metadata);
+>   if (own === undefined) return undefined;
+>   const meta = own.value;
+>   if (!meta || typeof meta !== "object" || !Object.hasOwn(meta, INJECTABLE_KEY)) return undefined;
 >   return meta[INJECTABLE_KEY] as ConstructorMetadata;
 > }
 > ```

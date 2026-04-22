@@ -1,5 +1,8 @@
 import { InternalError } from "#/errors";
-import { CODEFAST_DI_CONSTRUCTOR_METADATA } from "#/metadata/metadata-keys";
+import {
+  CODEFAST_DI_CONSTRUCTOR_METADATA,
+  CODEFAST_DI_INJECT_ACCESSOR_FACTORY,
+} from "#/metadata/metadata-keys";
 import type {
   ConstructorMetadata,
   InjectionDescriptor,
@@ -50,6 +53,16 @@ export function getAutoRegistered(): ReadonlyArray<{
  */
 function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
   if (isInjectionDescriptor(dependency)) {
+    if (CODEFAST_DI_INJECT_ACCESSOR_FACTORY in dependency) {
+      return {
+        index,
+        token: dependency.token,
+        optional: dependency.optional,
+        name: undefined,
+        tag: undefined,
+        isInjectAllBindings: undefined,
+      };
+    }
     return {
       index,
       token: dependency.token,

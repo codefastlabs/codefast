@@ -1,4 +1,4 @@
-import { DiError } from "#/errors";
+import { DiError, InternalError } from "#/errors";
 import { token } from "#/token";
 import { inject, injectAll, optional, isInjectionDescriptor } from "#/decorators/inject";
 
@@ -48,6 +48,12 @@ describe("inject", () => {
     expect(isInjectionDescriptor({ token: "T", optional: true })).toBe(true);
     expect(isInjectionDescriptor({})).toBe(false);
     expect(isInjectionDescriptor(null)).toBe(false);
+  });
+
+  it("throws InternalError when used with a non-accessor decorator context", () => {
+    const plainToken = token("inject-bad-decorator-context");
+    const fieldLikeContext = { kind: "field", name: "x", metadata: {} } as const;
+    expect(() => inject(plainToken, fieldLikeContext as never)).toThrow(InternalError);
   });
 
   it("normalizeTag throws on invalid tag format", () => {
