@@ -155,9 +155,9 @@
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "examples": "for file in examples/*/*.ts; do echo \"=== Running $file ===\"; tsx \"$file\"; echo \"\n\" || exit 1; done",
-    "bench": "vitest bench --config vitest.bench.config.ts",
-    "bench:baseline": "vitest bench --config vitest.bench.config.ts --outputJson bench/baseline.json",
-    "bench:compare": "vitest bench --config vitest.bench.config.ts --compare bench/baseline.json",
+    "bench": "vitest bench --config vitest.bench.config.ts --run",
+    "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/baseline.json",
+    "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/baseline.json",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
