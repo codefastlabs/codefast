@@ -9,14 +9,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    include: ["src/**/*.test.?(c|m)[jt]s?(x)"],
     setupFiles: ["./vitest.setup.ts"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.{test,spec,stories}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+      exclude: ["src/**/*.{test,stories}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
     },
   },
 });

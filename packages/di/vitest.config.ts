@@ -15,11 +15,11 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.ts"],
-      exclude: ["src/**/*.{test,spec,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+      exclude: ["src/**/*.{test,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
     },
     environment: "node",
     globals: true,
-    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    include: ["src/**/*.test.?(c|m)[jt]s?(x)"],
   },
   plugins: [
     swc.vite({
