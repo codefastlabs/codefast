@@ -119,7 +119,7 @@ function buildDynamicTransientChain16Bench(): () => void {
   };
 }
 
-function buildResolveAllNamed48Bench(): () => void {
+function buildResolveNamed48xBench(): () => void {
   const manyNamedSlotsBindingToken = token<number>("bench-cf-wide-48");
   const container = Container.create();
   for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
@@ -128,9 +128,13 @@ function buildResolveAllNamed48Bench(): () => void {
       .whenNamed(`slot-${slotIndex}`)
       .toConstantValue(slotIndex);
   }
-  container.resolveAll(manyNamedSlotsBindingToken);
+  for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
+    container.resolve(manyNamedSlotsBindingToken, { name: `slot-${slotIndex}` });
+  }
   return () => {
-    container.resolveAll(manyNamedSlotsBindingToken);
+    for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
+      container.resolve(manyNamedSlotsBindingToken, { name: `slot-${slotIndex}` });
+    }
   };
 }
 
@@ -236,7 +240,7 @@ async function main(): Promise<{ id: string; hz: number; meanMs: number }[]> {
     .add("named-constant-get", buildNamedConstantBench())
     .add("dynamic-chain-4", buildDynamicChain4Bench())
     .add("dynamic-transient-chain-16", buildDynamicTransientChain16Bench())
-    .add("resolveall-named-48", buildResolveAllNamed48Bench())
+    .add("resolve-named-48x", buildResolveNamed48xBench())
     .add("rotate-constants-32", buildRotateConstants32Bench())
     .add("child-inherit-resolve-8", buildChildInheritResolve8Bench())
     .add("from-modules-20-bindings", buildFromModules20Bench())
