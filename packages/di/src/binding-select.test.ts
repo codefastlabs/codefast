@@ -161,11 +161,50 @@ describe("binding selection helpers", () => {
       }).toThrow(/Ambiguous binding for "MyToken"/);
     });
 
+    it("throws DiError (Ambiguous) for duplicate name matches", () => {
+      const firstNamedBinding = mockBinding({ bindingName: "alpha" });
+      const secondNamedBinding = mockBinding({ bindingName: "alpha" });
+      expect(() => {
+        selectBindingForRegistry(
+          [firstNamedBinding, secondNamedBinding],
+          { name: "alpha" },
+          "MyToken",
+          ["path"],
+          undefined,
+        );
+      }).toThrow(/Ambiguous binding for "MyToken"/);
+    });
+
+    it("throws DiError (Ambiguous) when both named and default candidates match without hint", () => {
+      const namedBinding = mockBinding({ bindingName: "named" });
+      const firstDefaultBinding = mockBinding();
+      const secondDefaultBinding = mockBinding();
+      expect(() => {
+        selectBindingForRegistry(
+          [namedBinding, firstDefaultBinding, secondDefaultBinding],
+          undefined,
+          "MyToken",
+          ["path"],
+          undefined,
+        );
+      }).toThrow(/Ambiguous binding for "MyToken"/);
+    });
+
+    it("returns named binding when no-hint resolution has only one candidate", () => {
+      const namedBinding = mockBinding({ bindingName: "alpha" });
+      const selectedBinding = selectBindingForRegistry(
+        [namedBinding],
+        undefined,
+        "MyToken",
+        ["path"],
+        undefined,
+      );
+      expect(selectedBinding).toBe(namedBinding);
+    });
+
     it("throws DiError Internal if candidate is undefined (array hole)", () => {
       const candidates: Binding<unknown>[] = new Array(1);
       expect(() => {
-        // Force pass undefined constraint to trigger the hole condition if the function is naive
-        // Wait, the logic is `candidates.length === 1; const [only] = candidates; if (only === undefined) throw ...`
         selectBindingForRegistry(candidates, undefined, "MyToken", ["path"], undefined);
       }).toThrowError(/Internal: expected binding candidate/);
     });

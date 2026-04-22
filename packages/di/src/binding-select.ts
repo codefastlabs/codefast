@@ -60,7 +60,16 @@ export function selectBindingForRegistry(
     throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
   }
 
-  const candidates = filterMatchingBindings(bindings, hint, constraintCtx);
+  const allCandidates = filterMatchingBindings(bindings, hint, constraintCtx);
+  let candidates = allCandidates;
+  if (hint === undefined || (hint.name === undefined && hint.tag === undefined)) {
+    const defaultCandidates = allCandidates.filter(
+      (binding) => binding.bindingName === undefined && binding.tags.size === 0,
+    );
+    if (defaultCandidates.length > 0) {
+      candidates = defaultCandidates;
+    }
+  }
 
   if (candidates.length === 1) {
     const [only] = candidates;

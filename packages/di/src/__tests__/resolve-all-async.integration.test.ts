@@ -6,12 +6,18 @@ describe("Container.resolveAllAsync (spec §5.2)", () => {
     const pluginToken = token<string>("resolve-all-async-plugin");
     const container = Container.create();
 
-    container.bind(pluginToken).toConstantValue("sync-a");
-    container.bind(pluginToken).toDynamic(() => "sync-b");
-    container.bind(pluginToken).toDynamicAsync(async () => {
-      await Promise.resolve();
-      return "async-c";
-    });
+    container.bind(pluginToken).whenNamed("sync-a").toConstantValue("sync-a");
+    container
+      .bind(pluginToken)
+      .whenNamed("sync-b")
+      .toDynamic(() => "sync-b");
+    container
+      .bind(pluginToken)
+      .whenNamed("async-c")
+      .toDynamicAsync(async () => {
+        await Promise.resolve();
+        return "async-c";
+      });
 
     const resolvedPlugins = await container.resolveAllAsync(pluginToken);
     expect(resolvedPlugins).toEqual(["sync-a", "sync-b", "async-c"]);

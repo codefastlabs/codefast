@@ -46,15 +46,30 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
   return undefined;
 }
 
-/**
- * Module {@link ModuleBuilder.bind}: append when the binding is disambiguated **at first
- * registration** (`whenNamed` / `whenTagged` / `when` before `to*()`). Otherwise replace
- * all bindings for the token (last-wins). Chaining `.whenNamed()` after `.to*()` only updates
- * in place and does not enable multi-binding for subsequent module lines — use hint-before-`to*()`
- * in modules (same style as `container.bind(...).whenNamed("x").to*(...)` in the package README).
- */
-function moduleBindingUsesMultiSlot(built: Binding<unknown>): boolean {
-  return built.bindingName !== undefined || built.tags.size > 0 || built.constraint !== undefined;
+function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
+  if (binding.constraint !== undefined) {
+    return undefined;
+  }
+  const toStableTagValue = (value: unknown): string => {
+    try {
+      const serialized = JSON.stringify(value);
+      return serialized ?? String(value);
+    } catch {
+      return String(value);
+    }
+  };
+  const normalizedTagEntries = [...binding.tags.entries()]
+    .sort(([leftTag], [rightTag]) => leftTag.localeCompare(rightTag))
+    .map(([tagKey, tagValue]) => [tagKey, toStableTagValue(tagValue)] as const);
+  const tagsKey =
+    normalizedTagEntries.length === 0
+      ? ""
+      : normalizedTagEntries.map(([tagKey, tagValue]) => `${tagKey}:${tagValue}`).join("|");
+  const nameKey = binding.bindingName ?? "";
+  if (nameKey === "" && tagsKey === "") {
+    return "default";
+  }
+  return `name=${nameKey};tags=${tagsKey}`;
 }
 
 /**
@@ -190,6 +205,126 @@ class DefaultContainer implements Container {
    * Reset to `false` by {@link invalidateDevValidationState} on every registry mutation.
    */
   private hasDevValidationRun = false;
+  /** Pending staged registrations that belong to this container instance. */
+  private readonly pendingRegistrationBuilders = new Set<BindingBuilder<unknown>>();
+  /**
+   * Fast last-wins slot index by own registry key.
+   */
+  private readonly slotIndexByToken = new Map<RegistryKey, Map<string, BindingIdentifier>>();
+  /**
+   * Reverse index to quickly clear slot entries when a binding id is removed.
+   */
+  private readonly tokenByBindingId = new Map<BindingIdentifier, RegistryKey>();
+  private readonly slotKeyByBindingId = new Map<BindingIdentifier, string>();
+
+  private flushPendingBindings(): void {
+    if (this.pendingRegistrationBuilders.size === 0) {
+      return;
+    }
+    while (this.pendingRegistrationBuilders.size > 0) {
+      const nextPendingBuilder = this.pendingRegistrationBuilders.values().next().value as
+        | BindingBuilder<unknown>
+        | undefined;
+      if (nextPendingBuilder === undefined) {
+        return;
+      }
+      nextPendingBuilder.flushPendingRegistration();
+    }
+  }
+
+  private getOrCreateSlotIndexForToken(token: RegistryKey): Map<string, BindingIdentifier> {
+    const existing = this.slotIndexByToken.get(token);
+    if (existing !== undefined) {
+      return existing;
+    }
+    const created = new Map<string, BindingIdentifier>();
+    this.slotIndexByToken.set(token, created);
+    return created;
+  }
+
+  private untrackBinding(bindingId: BindingIdentifier): void {
+    const token = this.tokenByBindingId.get(bindingId);
+    const slotKey = this.slotKeyByBindingId.get(bindingId);
+    if (token !== undefined && slotKey !== undefined) {
+      const slotIndex = this.slotIndexByToken.get(token);
+      if (slotIndex?.get(slotKey) === bindingId) {
+        slotIndex.delete(slotKey);
+      }
+      if (slotIndex !== undefined && slotIndex.size === 0) {
+        this.slotIndexByToken.delete(token);
+      }
+    }
+    this.tokenByBindingId.delete(bindingId);
+    this.slotKeyByBindingId.delete(bindingId);
+  }
+
+  private removeOwnedBindingById(bindingId: BindingIdentifier): void {
+    this.ownScopeManager.releaseByBindingId(bindingId);
+    this.ownRegistry.removeById(bindingId);
+    this.untrackBinding(bindingId);
+  }
+
+  private async removeOwnedBindingByIdAsync(bindingId: BindingIdentifier): Promise<void> {
+    await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
+    this.ownRegistry.removeById(bindingId);
+    this.untrackBinding(bindingId);
+  }
+
+  private registerOwnedBinding(
+    token: Token<unknown> | Constructor<unknown>,
+    nextBinding: Binding<unknown>,
+  ): void {
+    const slotKey = buildLastWinsSlotKey(nextBinding);
+    if (slotKey !== undefined) {
+      const slotIndex = this.getOrCreateSlotIndexForToken(token);
+      const existingBindingId = slotIndex.get(slotKey);
+      if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
+        this.removeOwnedBindingById(existingBindingId);
+      }
+      slotIndex.set(slotKey, nextBinding.id);
+    }
+    const trackedToken = this.tokenByBindingId.get(nextBinding.id);
+    if (trackedToken !== undefined) {
+      this.removeOwnedBindingById(nextBinding.id);
+    }
+    this.ownRegistry.add(token, nextBinding);
+    this.tokenByBindingId.set(nextBinding.id, token);
+    if (slotKey !== undefined) {
+      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
+    } else {
+      this.slotKeyByBindingId.delete(nextBinding.id);
+    }
+  }
+
+  private updateOwnedBinding(
+    token: Token<unknown> | Constructor<unknown>,
+    nextBinding: Binding<unknown>,
+  ): void {
+    const previousSlotKey = this.slotKeyByBindingId.get(nextBinding.id);
+    this.ownRegistry.replaceById(nextBinding.id, nextBinding);
+    if (previousSlotKey !== undefined) {
+      const previousSlotIndex = this.slotIndexByToken.get(token);
+      if (previousSlotIndex?.get(previousSlotKey) === nextBinding.id) {
+        previousSlotIndex.delete(previousSlotKey);
+      }
+      if (previousSlotIndex !== undefined && previousSlotIndex.size === 0) {
+        this.slotIndexByToken.delete(token);
+      }
+    }
+    const slotKey = buildLastWinsSlotKey(nextBinding);
+    if (slotKey !== undefined) {
+      const slotIndex = this.getOrCreateSlotIndexForToken(token);
+      const existingBindingId = slotIndex.get(slotKey);
+      if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
+        this.removeOwnedBindingById(existingBindingId);
+      }
+      slotIndex.set(slotKey, nextBinding.id);
+      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
+    } else {
+      this.slotKeyByBindingId.delete(nextBinding.id);
+    }
+    this.tokenByBindingId.set(nextBinding.id, token);
+  }
 
   /**
    * Internal constructor for root/child instances.
@@ -233,7 +368,7 @@ class DefaultContainer implements Container {
         if (current === undefined) {
           throw new InternalError("container is not initialized");
         }
-        return current.lookupBindings(token);
+        return current.lookupBindingsInternal(token);
       },
       scopeManager: ownScopeManager,
       metadataReader,
@@ -256,13 +391,23 @@ class DefaultContainer implements Container {
    */
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     return new BindingBuilder<Value>(token, undefined, {
+      onPending: (builder) =>
+        this.pendingRegistrationBuilders.add(builder as unknown as BindingBuilder<unknown>),
+      onCommitted: (builder) =>
+        this.pendingRegistrationBuilders.delete(builder as unknown as BindingBuilder<unknown>),
       register: (built) => {
         this.invalidateDevValidationState();
-        this.ownRegistry.add(token, built);
+        this.registerOwnedBinding(
+          token as Token<unknown> | Constructor<unknown>,
+          built as Binding<unknown>,
+        );
       },
       update: (built) => {
         this.invalidateDevValidationState();
-        this.ownRegistry.replaceById(built.id, built as Binding<unknown>);
+        this.updateOwnedBinding(
+          token as Token<unknown> | Constructor<unknown>,
+          built as Binding<unknown>,
+        );
       },
     });
   }
@@ -274,7 +419,8 @@ class DefaultContainer implements Container {
    * the name/tag discriminator; it does not evaluate runtime `when()` predicates.
    */
   has(token: RegistryKey, hint?: ResolveHint): boolean {
-    const list = this.lookupBindings(token);
+    this.flushPendingBindings();
+    const list = this.lookupBindingsInternal(token);
     if (list === undefined || list.length === 0) {
       return false;
     }
@@ -302,38 +448,42 @@ class DefaultContainer implements Container {
    * - `token` path removes all owned bindings for that key at once.
    */
   unbind(tokenOrId: RegistryKey | BindingIdentifier): void {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     if (typeof tokenOrId === "string") {
-      this.ownScopeManager.releaseByBindingId(tokenOrId);
-      this.ownRegistry.removeById(tokenOrId);
+      this.removeOwnedBindingById(tokenOrId);
       return;
     }
     const owned = this.ownRegistry.get(tokenOrId as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
         this.ownScopeManager.releaseBinding(binding);
+        this.untrackBinding(binding.id);
       }
     }
     this.ownRegistry.remove(tokenOrId);
+    this.slotIndexByToken.delete(tokenOrId);
   }
 
   /**
    * Async counterpart of {@link unbind}; awaits deactivation hooks before registry removal.
    */
   async unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void> {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     if (typeof tokenOrId === "string") {
-      await this.ownScopeManager.releaseByBindingIdAsync(tokenOrId);
-      this.ownRegistry.removeById(tokenOrId);
+      await this.removeOwnedBindingByIdAsync(tokenOrId);
       return;
     }
     const owned = this.ownRegistry.get(tokenOrId as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
         await this.ownScopeManager.releaseBindingAsync(binding);
+        this.untrackBinding(binding.id);
       }
     }
     this.ownRegistry.remove(tokenOrId);
+    this.slotIndexByToken.delete(tokenOrId);
   }
 
   /**
@@ -342,14 +492,17 @@ class DefaultContainer implements Container {
    * Existing cached instances for the removed bindings are synchronously released first.
    */
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     const owned = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
     if (owned !== undefined) {
       for (const binding of owned) {
         this.ownScopeManager.releaseBinding(binding);
+        this.untrackBinding(binding.id);
       }
     }
     this.ownRegistry.remove(token as RegistryKey);
+    this.slotIndexByToken.delete(token as RegistryKey);
     return this.bind(token);
   }
 
@@ -359,6 +512,7 @@ class DefaultContainer implements Container {
    * is true, runs {@link validate} at most once after the registry changes.
    */
   load(...modules: Module[]): void {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     for (const syncModule of modules) {
       if (syncModule instanceof AsyncModule) {
@@ -366,6 +520,7 @@ class DefaultContainer implements Container {
       }
       this.ensureSyncModuleLoaded(syncModule);
     }
+    this.flushPendingBindings();
     this.maybeRunDevValidationOnce();
   }
 
@@ -373,6 +528,7 @@ class DefaultContainer implements Container {
    * Like {@link load} but allows async modules. Re-loading is deduplicated the same way.
    */
   async loadAsync(...modules: ModuleLike[]): Promise<void> {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     for (const moduleOrAsync of modules) {
       if (moduleOrAsync instanceof AsyncModule) {
@@ -381,10 +537,12 @@ class DefaultContainer implements Container {
         this.ensureSyncModuleLoaded(moduleOrAsync);
       }
     }
+    this.flushPendingBindings();
     this.maybeRunDevValidationOnce();
   }
 
   unload(...modules: ModuleLike[]): void {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     for (const module of modules) {
       const ownedBindingIds = this.loadedModules.get(module);
@@ -392,14 +550,14 @@ class DefaultContainer implements Container {
         throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
       }
       for (const bindingId of [...ownedBindingIds].reverse()) {
-        this.ownScopeManager.releaseByBindingId(bindingId);
-        this.ownRegistry.removeById(bindingId);
+        this.removeOwnedBindingById(bindingId);
       }
       this.loadedModules.delete(module);
     }
   }
 
   async unloadAsync(...modules: ModuleLike[]): Promise<void> {
+    this.flushPendingBindings();
     this.invalidateDevValidationState();
     for (const module of modules) {
       const ownedBindingIds = this.loadedModules.get(module);
@@ -407,8 +565,7 @@ class DefaultContainer implements Container {
         throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
       }
       for (const bindingId of [...ownedBindingIds].reverse()) {
-        await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
-        this.ownRegistry.removeById(bindingId);
+        await this.removeOwnedBindingByIdAsync(bindingId);
       }
       this.loadedModules.delete(module);
     }
@@ -420,6 +577,7 @@ class DefaultContainer implements Container {
    * successful resolution also triggers a one-time static {@link validate} when not in production.
    */
   resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
+    this.flushPendingBindings();
     try {
       return this.resolver.resolveRoot(token, hint);
     } finally {
@@ -434,6 +592,7 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value> {
+    this.flushPendingBindings();
     return this.resolver.resolveAsyncRoot(token, hint).finally(() => {
       this.maybeRunDevValidationOnce();
     });
@@ -447,6 +606,7 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Value | undefined {
+    this.flushPendingBindings();
     try {
       return this.resolver.resolveOptionalRoot(token, hint);
     } finally {
@@ -459,6 +619,7 @@ class DefaultContainer implements Container {
    * Returns an empty array when no binding exists.
    */
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
+    this.flushPendingBindings();
     try {
       return this.resolver.resolveAllRoot(token, hint);
     } finally {
@@ -474,6 +635,7 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value[]> {
+    this.flushPendingBindings();
     return this.resolver.resolveAllAsyncRoot<Value>(token, hint).finally(() => {
       this.maybeRunDevValidationOnce();
     });
@@ -483,6 +645,7 @@ class DefaultContainer implements Container {
    * Eagerly resolves every registered `singleton` binding, including `async-dynamic` factories.
    */
   async initializeAsync(): Promise<void> {
+    this.flushPendingBindings();
     for (const registryKey of this.collectAllRegistryKeysInHierarchy()) {
       const list = this.lookupBindings(registryKey);
       if (list === undefined) {
@@ -526,9 +689,10 @@ class DefaultContainer implements Container {
    * class/factory/alias targets. Constant dependencies are always allowed.
    */
   validate(): void {
+    this.flushPendingBindings();
     validateScopeRules({
       collectAllRegistryKeys: () => this.collectAllRegistryKeysInHierarchy(),
-      lookupBindings: (registryKey) => this.lookupBindings(registryKey),
+      lookupBindings: (registryKey) => this.lookupBindingsInternal(registryKey),
       getMetadataReader: () => this.metadataReader,
     });
   }
@@ -537,6 +701,7 @@ class DefaultContainer implements Container {
    * Dev/debug snapshot of registered bindings and activation status (design spec §5.5).
    */
   inspect(): ContainerSnapshot {
+    this.flushPendingBindings();
     return this.createInspector().getSnapshot();
   }
 
@@ -544,6 +709,7 @@ class DefaultContainer implements Container {
    * Delegates canonical dependency-graph generation to {@link ContainerInspector}.
    */
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
+    this.flushPendingBindings();
     return this.createInspector().generateDependencyGraph(options);
   }
 
@@ -583,7 +749,7 @@ class DefaultContainer implements Container {
   private createInspector(): ContainerInspector {
     const context: ContainerInspectorContext = {
       collectAllRegistryKeys: () => this.collectAllRegistryKeysInHierarchy(),
-      lookupBindings: (token) => this.lookupBindings(token),
+      lookupBindings: (token) => this.lookupBindingsInternal(token),
       isBindingCached: (binding) => this.ownScopeManager.isBindingCached(binding),
       metadataReader: this.metadataReader,
     };
@@ -630,7 +796,7 @@ class DefaultContainer implements Container {
         if (current === undefined) {
           throw new InternalError("child container is not initialized");
         }
-        return current.lookupBindings(token);
+        return current.lookupBindingsInternal(token);
       },
       scopeManager: childScope,
       metadataReader: this.metadataReader,
@@ -649,18 +815,29 @@ class DefaultContainer implements Container {
   /**
    * Lookup helper with parent fallback: own bindings take precedence over parent bindings.
    */
-  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
+  private lookupBindingsInternal(token: RegistryKey): readonly Binding<unknown>[] | undefined {
     const own = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
     if (own !== undefined && own.length > 0) {
       return own;
     }
-    return this.parent?.lookupBindings(token);
+    return this.parent?.lookupBindingsForDescendant(token);
+  }
+
+  private lookupBindingsForDescendant(token: RegistryKey): readonly Binding<unknown>[] | undefined {
+    this.flushPendingBindings();
+    return this.lookupBindingsInternal(token);
+  }
+
+  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
+    this.flushPendingBindings();
+    return this.lookupBindingsInternal(token);
   }
 
   /**
    * Disposes this container's scope manager and runs async deactivation hooks.
    */
   async dispose(): Promise<void> {
+    this.flushPendingBindings();
     await this.ownScopeManager.disposeAsync();
   }
 
@@ -674,32 +851,30 @@ class DefaultContainer implements Container {
   /**
    * Returns a `bind` function scoped to a module. Registrations are tracked in
    * {@link loadedModules} for {@link unload}.
-   *
-   * - **Last-wins** (replaces every binding for that token): `bind(token).to*(...)` with no
-   *   `whenNamed` / `whenTagged` / `when` **before** the `to*()` call.
-   * - **Multi-binding** (append): call `whenNamed`, `whenTagged`, and/or `when` **before** `to*()`
-   *   so the disambiguator exists at registration time — supports `resolveAll` and per-binding
-   *   hints in {@link Container.initializeAsync}.
    */
   private bindForModule(
     owner: ModuleLike,
   ): <Value>(token: Token<Value> | Constructor<Value>) => BindingBuilder<Value> {
     return <Value>(token: Token<Value> | Constructor<Value>) =>
       new BindingBuilder<Value>(token, owner.name, {
+        onPending: (builder) =>
+          this.pendingRegistrationBuilders.add(builder as unknown as BindingBuilder<unknown>),
+        onCommitted: (builder) =>
+          this.pendingRegistrationBuilders.delete(builder as unknown as BindingBuilder<unknown>),
         register: (built) => {
           this.invalidateDevValidationState();
-          if (moduleBindingUsesMultiSlot(built)) {
-            this.ownRegistry.add(token, built);
-          } else {
-            this.ownRegistry.replaceKeyLastWins(token, built, (removed) => {
-              this.ownScopeManager.releaseBinding(removed);
-            });
-          }
+          this.registerOwnedBinding(
+            token as Token<unknown> | Constructor<unknown>,
+            built as Binding<unknown>,
+          );
           this.recordBindingForModule(owner, built.id);
         },
         update: (built) => {
           this.invalidateDevValidationState();
-          this.ownRegistry.replaceById(built.id, built as Binding<unknown>);
+          this.updateOwnedBinding(
+            token as Token<unknown> | Constructor<unknown>,
+            built as Binding<unknown>,
+          );
         },
       });
   }
