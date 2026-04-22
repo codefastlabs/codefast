@@ -1,3 +1,11 @@
+/**
+ * Microbenchmarks for the container (Vitest bench + Tinybench, source via SWC).
+ *
+ * Numbers reflect this runner and transpilation pipeline — use them for
+ * **regression on the same machine**, not to compare across hardware or to npm
+ * consumers’ bundles. For local baselines: `pnpm run bench:baseline` then
+ * `pnpm run bench:compare` after changes (`bench/baseline.json` is gitignored).
+ */
 import { bench, describe } from "vitest";
 import { Container } from "#/container";
 import { injectable } from "#/decorators/injectable";
@@ -125,8 +133,11 @@ describe("container primitives", () => {
   const missingTok = token<number>("bench-missing-opt");
   optionalContainer.bind(benchConstantToken).toConstantValue(1);
 
-  bench("resolveOptional (hit + miss)", () => {
+  bench("resolveOptional (hit)", () => {
     optionalContainer.resolveOptional(benchConstantToken);
+  });
+
+  bench("resolveOptional (miss)", () => {
     optionalContainer.resolveOptional(missingTok);
   });
 });

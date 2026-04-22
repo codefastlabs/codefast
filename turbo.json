@@ -33,7 +33,7 @@
       "cache": false
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.bench.config.*", "vitest.setup.*"]
     },
     "test:coverage": {
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"],

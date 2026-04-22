@@ -10,18 +10,13 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["src/**/*.test.ts", "src/**/*.integration.test.ts"],
+    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.ts"],
-      exclude: [
-        "src/**/*.test.ts",
-        "src/**/*.integration.test.ts",
-        "src/**/*.spec.ts",
-        "**/*.d.ts",
-      ],
+      exclude: ["src/**/*.{test,spec,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
     },
   },
   plugins: [

@@ -37,6 +37,7 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 - [Modules](#modules)
 - [Errors](#errors)
 - [Package exports](#package-exports)
+- [Benchmarks](#benchmarks)
 - [Contributing](#contributing)
 - [License](#license)
 - [Changelog](#changelog)
@@ -602,6 +603,20 @@ The root entry re-exports the full public API. Subpath exports are provided for 
 See `package.json → exports` for the authoritative list.
 
 ---
+
+## Benchmarks
+
+Performance microbenchmarks live in `src/**/*.bench.ts` and run with Vitest’s bench mode (Tinybench), using the same SWC transform as tests. They measure **relative** changes on **your machine** — not absolute throughput comparable to other hardware or to published `dist` output.
+
+From the package directory:
+
+```bash
+pnpm run bench
+pnpm run bench:baseline   # writes bench/baseline.json (gitignored)
+pnpm run bench:compare    # compare current run to that baseline
+```
+
+Configuration is in `vitest.bench.config.ts` (single worker, sequential files) to keep microbench noise lower than the default test runner settings.
 
 ## Contributing
 
