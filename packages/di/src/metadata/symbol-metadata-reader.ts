@@ -36,17 +36,23 @@ export class SymbolMetadataReader implements MetadataReader {
    * Returns `undefined` if no own metadata is present on the class.
    *
    * @remarks
-   * Uses `Object.hasOwn` intentionally — TC39 `Symbol.metadata` prototype-chains from
-   * parent to child, so without this guard a subclass without `@injectable()` would
-   * silently inherit the parent's parameter list and inject the wrong dependency count.
+   * Uses `Object.getOwnPropertyDescriptor` for the class's `Symbol.metadata` slot so a
+   * subclass without its own metadata object does not read through to the parent's bag.
+   * Then `Object.hasOwn` on that own object ensures the constructor bucket is declared on
+   * this class, not inherited inside the metadata record.
    */
   getConstructorMetadata(
     implementationClass: Constructor<unknown>,
   ): ConstructorMetadata | undefined {
     const metadataSymbol = decoratorMetadataObjectSymbol();
-    const rawMetadata: unknown = (implementationClass as unknown as Record<symbol, unknown>)[
-      metadataSymbol
-    ];
+    const ownMetadataDescriptor = Object.getOwnPropertyDescriptor(
+      implementationClass as unknown as object,
+      metadataSymbol,
+    );
+    if (ownMetadataDescriptor === undefined) {
+      return undefined;
+    }
+    const rawMetadata: unknown = ownMetadataDescriptor.value;
     if (typeof rawMetadata !== "object" || rawMetadata === null) {
       return undefined;
     }

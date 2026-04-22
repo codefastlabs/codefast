@@ -46,15 +46,37 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
   return undefined;
 }
 
+/**
+ * Stable identity for tag values that cannot be JSON-serialized (circular refs, etc.).
+ * Referential identity distinguishes otherwise indistinguishable `String(value)` fallbacks.
+ */
+const lastWinsTagObjectIds = new WeakMap<object, number>();
+let lastWinsTagObjectIdSeq = 1;
+
+function allocateLastWinsTagObjectId(value: object): number {
+  let id = lastWinsTagObjectIds.get(value);
+  if (id === undefined) {
+    id = lastWinsTagObjectIdSeq++;
+    lastWinsTagObjectIds.set(value, id);
+  }
+  return id;
+}
+
 function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
   if (binding.constraint !== undefined) {
     return undefined;
   }
   const toStableTagValue = (value: unknown): string => {
+    if (typeof value === "bigint") {
+      return `bigint:${value.toString()}n`;
+    }
     try {
       const serialized = JSON.stringify(value);
       return serialized ?? String(value);
     } catch {
+      if (typeof value === "object" && value !== null) {
+        return `non-json:object#${String(allocateLastWinsTagObjectId(value))}`;
+      }
       return String(value);
     }
   };

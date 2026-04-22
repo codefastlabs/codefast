@@ -1,5 +1,8 @@
 import type { Constructor, ResolveHint } from "#/binding";
-import { CODEFAST_DI_ACCESSOR_INJECTIONS } from "#/metadata/metadata-keys";
+import {
+  CODEFAST_DI_ACCESSOR_INJECTIONS,
+  CODEFAST_DI_INJECT_ACCESSOR_FACTORY,
+} from "#/metadata/metadata-keys";
 import type { AccessorInjectionMetadata, InjectionDescriptor } from "#/metadata/metadata-types";
 import { InternalError } from "#/errors";
 import type { Token } from "#/token";
@@ -59,6 +62,47 @@ function isAccessorDecoratorContext(value: unknown): value is ClassAccessorDecor
   );
 }
 
+function pushAccessorInjectionMetadata(
+  token: Token<unknown> | Constructor<unknown>,
+  ctx: ClassAccessorDecoratorContext,
+): void {
+  const metaRecord = ctx.metadata as Record<PropertyKey, unknown>;
+  const key = CODEFAST_DI_ACCESSOR_INJECTIONS;
+  if (!Array.isArray(metaRecord[key])) {
+    metaRecord[key] = [];
+  }
+  (metaRecord[key] as AccessorInjectionMetadata[]).push({
+    name: String(ctx.name),
+    token,
+    optional: false,
+  });
+}
+
+/**
+ * SWC / TS emit `@inject(token) accessor` as `inject(token)(initial, context)` — the one-arg
+ * `inject(token)` path therefore returns a callable merged with the deps-array descriptor shape.
+ */
+function withAccessorDecoratorFallback<Value>(
+  token: Token<Value> | Constructor<Value>,
+  descriptor: InjectionDescriptor<Value>,
+): InjectionDescriptor<Value> {
+  const run = (_value: unknown, context: unknown): void => {
+    if (!isAccessorDecoratorContext(context)) {
+      const kind =
+        typeof context === "object" && context !== null && "kind" in context
+          ? String((context as { kind: unknown }).kind)
+          : typeof context;
+      throw new InternalError(
+        `inject(...) must be used as an \`accessor\` field decorator when used with one argument, or as an entry in @injectable([...deps]). Received decorator context kind "${kind}".`,
+      );
+    }
+    pushAccessorInjectionMetadata(token as Token<unknown> | Constructor<unknown>, context);
+  };
+  return Object.assign(run, descriptor, {
+    [CODEFAST_DI_INJECT_ACCESSOR_FACTORY]: true as const,
+  }) as InjectionDescriptor<Value>;
+}
+
 /**
  * Dual-purpose injection helper:
  *
@@ -87,20 +131,36 @@ export function inject<Value>(
   optionsOrContext?: InjectOptions | ClassAccessorDecoratorContext,
 ): InjectionDescriptor<Value> {
   if (isAccessorDecoratorContext(optionsOrContext)) {
-    const ctx = optionsOrContext;
-    const metaRecord = ctx.metadata as Record<PropertyKey, unknown>;
-    const key = CODEFAST_DI_ACCESSOR_INJECTIONS;
-    if (!Array.isArray(metaRecord[key])) {
-      metaRecord[key] = [];
-    }
-    (metaRecord[key] as AccessorInjectionMetadata[]).push({
-      name: String(ctx.name),
-      token: token as Token<unknown> | Constructor<unknown>,
-      optional: false,
-    });
-    return undefined as unknown as InjectionDescriptor<Value>; // no-op — container does the injection post-construction
+    pushAccessorInjectionMetadata(token as Token<unknown> | Constructor<unknown>, optionsOrContext);
+    return undefined as unknown as InjectionDescriptor<Value>;
   }
-  return toDescriptor(token, false, optionsOrContext as InjectOptions | undefined);
+  if (
+    typeof optionsOrContext === "object" &&
+    optionsOrContext !== null &&
+    "kind" in optionsOrContext
+  ) {
+    const decoratorKind = (optionsOrContext as { kind: unknown }).kind;
+    if (decoratorKind !== undefined && !isAccessorDecoratorContext(optionsOrContext)) {
+      const decoratorKindLabel =
+        typeof decoratorKind === "string"
+          ? decoratorKind
+          : typeof decoratorKind === "symbol"
+            ? decoratorKind.toString()
+            : typeof decoratorKind === "number" || typeof decoratorKind === "boolean"
+              ? String(decoratorKind)
+              : decoratorKind === null
+                ? "null"
+                : "object";
+      throw new InternalError(
+        `@inject(...) only supports TC39 \`accessor\` field targets (not plain fields or methods). Received decorator context kind "${decoratorKindLabel}".`,
+      );
+    }
+  }
+  const descriptor = toDescriptor(token, false, optionsOrContext as InjectOptions | undefined);
+  if (optionsOrContext === undefined) {
+    return withAccessorDecoratorFallback(token, descriptor);
+  }
+  return descriptor;
 }
 
 /**
@@ -134,7 +194,7 @@ export function injectAll<Value>(
  * Type-guard — returns `true` when `value` is an {@link InjectionDescriptor}.
  */
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
-  if (typeof value !== "object" || value === null) {
+  if (value === null || (typeof value !== "object" && typeof value !== "function")) {
     return false;
   }
   return "token" in value && "optional" in value;

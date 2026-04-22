@@ -11,6 +11,15 @@ export const CODEFAST_DI_CONSTRUCTOR_METADATA = "codefast/di:constructor-metadat
  * property injection by the resolver.
  */
 export const CODEFAST_DI_ACCESSOR_INJECTIONS = "codefast/di:accessor-injections:v1";
+
+/**
+ * Marks an {@link InjectionDescriptor} produced by {@link inject} when the one-arg overload
+ * must also serve as an accessor decorator factory (merged callable + descriptor).
+ * @internal
+ */
+export const CODEFAST_DI_INJECT_ACCESSOR_FACTORY = Symbol.for(
+  "codefast/di:inject-accessor-factory:v1",
+);
 /**
  * Well-known key for lifecycle method names written by `@postConstruct()` / `@preDestroy()`.
  */

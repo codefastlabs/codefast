@@ -132,4 +132,16 @@ describe("Container", () => {
 
     expect(container.resolveAll(constrainedToken)).toEqual(["first", "second"]);
   });
+
+  it("whenNamed after to* updates the committed binding in place (stable id, single registry row)", async () => {
+    const refineToken = token<number>("container-refine-after-commit");
+    const container = Container.create();
+    const builder = container.bind(refineToken).toConstantValue(10);
+    await Promise.resolve();
+    const bindingId = builder.id();
+    builder.whenNamed("n");
+    expect(builder.id()).toBe(bindingId);
+    expect(container.lookupBindings(refineToken)?.length).toBe(1);
+    expect(container.resolve(refineToken, { name: "n" })).toBe(10);
+  });
 });
