@@ -22,200 +22,231 @@ const ROTATE_N = 32;
 const MODULE_BINDS = 20;
 const CHILD_DEPTH = 8;
 
-const constantId = Symbol.for("bench-inv-constant");
-const wideId = Symbol.for("bench-inv-wide");
+const constantValueBindingIdentifier = Symbol.for("bench-inv-constant");
+const wideNamedBindingIdentifier = Symbol.for("bench-inv-wide");
 
 @injectable()
 class InvDep {}
 
-const depId = Symbol.for("bench-inv-dep-class");
-const svcId = Symbol.for("bench-inv-svc-class");
+const dependencyClassIdentifier = Symbol.for("bench-inv-dep-class");
+const serviceClassIdentifier = Symbol.for("bench-inv-svc-class");
 
 @injectable()
 class InvService {
-  constructor(@inject(depId) readonly dep: InvDep) {}
+  // @ts-ignore
+  constructor(@inject(dependencyClassIdentifier) readonly dep: InvDep) {}
 }
 
 function buildConstantBench(): () => void {
-  const c = new Container();
-  c.bind<number>(constantId).toConstantValue(42);
-  c.get(constantId);
+  const container = new Container();
+  container.bind<number>(constantValueBindingIdentifier).toConstantValue(42);
+  container.get(constantValueBindingIdentifier);
   return () => {
-    c.get(constantId);
+    container.get(constantValueBindingIdentifier);
   };
 }
 
 function buildSingletonClassBench(): () => void {
-  const c = new Container();
-  c.bind<InvDep>(depId).to(InvDep).inSingletonScope();
-  c.bind<InvService>(svcId).to(InvService).inSingletonScope();
-  c.get(svcId);
+  const container = new Container();
+  container.bind<InvDep>(dependencyClassIdentifier).to(InvDep).inSingletonScope();
+  container.bind<InvService>(serviceClassIdentifier).to(InvService).inSingletonScope();
+  container.get(serviceClassIdentifier);
   return () => {
-    c.get(svcId);
+    container.get(serviceClassIdentifier);
   };
 }
 
 function buildTransientClassBench(): () => void {
-  const c = new Container();
-  c.bind<InvDep>(depId).to(InvDep).inTransientScope();
-  c.bind<InvService>(svcId).to(InvService).inTransientScope();
+  const container = new Container();
+  container.bind<InvDep>(dependencyClassIdentifier).to(InvDep).inTransientScope();
+  container.bind<InvService>(serviceClassIdentifier).to(InvService).inTransientScope();
   return () => {
-    c.get(svcId);
+    container.get(serviceClassIdentifier);
   };
 }
 
 function buildNamedConstantBench(): () => void {
-  const c = new Container();
-  c.bind<number>(wideId).toConstantValue(5).whenNamed("slot-5");
-  c.bind<number>(wideId).toConstantValue(12).whenNamed("slot-12");
-  c.bind<number>(wideId).toConstantValue(20).whenNamed("slot-20");
-  c.get(wideId, { name: "slot-12" });
+  const container = new Container();
+  container.bind<number>(wideNamedBindingIdentifier).toConstantValue(5).whenNamed("slot-5");
+  container.bind<number>(wideNamedBindingIdentifier).toConstantValue(12).whenNamed("slot-12");
+  container.bind<number>(wideNamedBindingIdentifier).toConstantValue(20).whenNamed("slot-20");
+  container.get(wideNamedBindingIdentifier, { name: "slot-12" });
   return () => {
-    c.get(wideId, { name: "slot-12" });
+    container.get(wideNamedBindingIdentifier, { name: "slot-12" });
   };
 }
 
-const chain0 = Symbol.for("inv-chain-0");
-const chain1 = Symbol.for("inv-chain-1");
-const chain2 = Symbol.for("inv-chain-2");
-const chain3 = Symbol.for("inv-chain-3");
+const chainBindingIdentifierAtDepth0 = Symbol.for("inv-chain-0");
+const chainBindingIdentifierAtDepth1 = Symbol.for("inv-chain-1");
+const chainBindingIdentifierAtDepth2 = Symbol.for("inv-chain-2");
+const chainBindingIdentifierAtDepth3 = Symbol.for("inv-chain-3");
 
 function buildDynamicChain4Bench(): () => void {
-  const c = new Container();
-  c.bind<number>(chain0).toConstantValue(0);
-  c.bind<number>(chain1)
-    .toDynamicValue((ctx) => ctx.get<number>(chain0) + 1)
+  const container = new Container();
+  container.bind<number>(chainBindingIdentifierAtDepth0).toConstantValue(0);
+  container
+    .bind<number>(chainBindingIdentifierAtDepth1)
+    .toDynamicValue(
+      (resolutionContext) => resolutionContext.get<number>(chainBindingIdentifierAtDepth0) + 1,
+    )
     .inTransientScope();
-  c.bind<number>(chain2)
-    .toDynamicValue((ctx) => ctx.get<number>(chain1) + 1)
+  container
+    .bind<number>(chainBindingIdentifierAtDepth2)
+    .toDynamicValue(
+      (resolutionContext) => resolutionContext.get<number>(chainBindingIdentifierAtDepth1) + 1,
+    )
     .inTransientScope();
-  c.bind<number>(chain3)
-    .toDynamicValue((ctx) => ctx.get<number>(chain2) + 1)
+  container
+    .bind<number>(chainBindingIdentifierAtDepth3)
+    .toDynamicValue(
+      (resolutionContext) => resolutionContext.get<number>(chainBindingIdentifierAtDepth2) + 1,
+    )
     .inTransientScope();
-  c.get(chain3);
+  container.get(chainBindingIdentifierAtDepth3);
   return () => {
-    c.get(chain3);
+    container.get(chainBindingIdentifierAtDepth3);
   };
 }
 
-const deepTokens = Array.from({ length: CHAIN_DEEP }, (_, i) => Symbol.for(`inv-deep-${i}`));
-
-function buildDynamicTransientChain16Bench(): () => void {
-  const c = new Container();
-  c.bind<number>(deepTokens[0]!).toConstantValue(0);
-  for (let i = 1; i < CHAIN_DEEP; i++) {
-    const prev = deepTokens[i - 1]!;
-    const cur = deepTokens[i]!;
-    c.bind<number>(cur)
-      .toDynamicValue((ctx) => ctx.get<number>(prev) + 1)
-      .inTransientScope();
-  }
-  const leaf = deepTokens[CHAIN_DEEP - 1]!;
-  c.get(leaf);
-  return () => {
-    c.get(leaf);
-  };
-}
-
-const wide48Id = Symbol.for("bench-inv-wide-48");
-
-function buildResolveAllNamed48Bench(): () => void {
-  const c = new Container();
-  for (let i = 0; i < WIDE_N; i++) {
-    c.bind<number>(wide48Id).toConstantValue(i).whenNamed(`slot-${i}`);
-  }
-  c.getAll(wide48Id);
-  return () => {
-    c.getAll(wide48Id);
-  };
-}
-
-const rotateIds = Array.from({ length: ROTATE_N }, (_, i) => Symbol.for(`bench-inv-rot-${i}`));
-
-function buildRotateConstants32Bench(): () => void {
-  const c = new Container();
-  for (let i = 0; i < ROTATE_N; i++) {
-    c.bind<number>(rotateIds[i]!).toConstantValue(i);
-  }
-  let idx = 0;
-  return () => {
-    void c.get<number>(rotateIds[idx]!);
-    idx = (idx + 1) % ROTATE_N;
-  };
-}
-
-const childLeafId = Symbol.for("bench-inv-child-leaf");
-
-function buildChildInheritResolve8Bench(): () => void {
-  const root = new Container();
-  root.bind<number>(childLeafId).toConstantValue(42);
-  let cur: Container = root;
-  for (let d = 0; d < CHILD_DEPTH; d++) {
-    cur = new Container({ parent: cur });
-  }
-  cur.get(childLeafId);
-  return () => {
-    cur.get(childLeafId);
-  };
-}
-
-const modSymbols = Array.from({ length: MODULE_BINDS }, (_, i) =>
-  Symbol.for(`bench-inv-mod-t-${i}`),
+const deepChainBindingIdentifiers = Array.from({ length: CHAIN_DEEP }, (_, depthIndex) =>
+  Symbol.for(`inv-deep-${depthIndex}`),
 );
 
-const mod20 = new ContainerModule((options) => {
-  for (let i = 0; i < MODULE_BINDS; i++) {
-    options.bind<number>(modSymbols[i]!).toConstantValue(i);
+function buildDynamicTransientChain16Bench(): () => void {
+  const container = new Container();
+  container.bind<number>(deepChainBindingIdentifiers[0]!).toConstantValue(0);
+  for (let chainDepthIndex = 1; chainDepthIndex < CHAIN_DEEP; chainDepthIndex++) {
+    const previousDepthIdentifier = deepChainBindingIdentifiers[chainDepthIndex - 1]!;
+    const currentDepthIdentifier = deepChainBindingIdentifiers[chainDepthIndex]!;
+    container
+      .bind<number>(currentDepthIdentifier)
+      .toDynamicValue(
+        (resolutionContext) => resolutionContext.get<number>(previousDepthIdentifier) + 1,
+      )
+      .inTransientScope();
+  }
+  const leafChainBindingIdentifier = deepChainBindingIdentifiers[CHAIN_DEEP - 1]!;
+  container.get(leafChainBindingIdentifier);
+  return () => {
+    container.get(leafChainBindingIdentifier);
+  };
+}
+
+const manyNamedSlotsBindingIdentifier = Symbol.for("bench-inv-wide-48");
+
+function buildResolveAllNamed48Bench(): () => void {
+  const container = new Container();
+  for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
+    container
+      .bind<number>(manyNamedSlotsBindingIdentifier)
+      .toConstantValue(slotIndex)
+      .whenNamed(`slot-${slotIndex}`);
+  }
+  container.getAll(manyNamedSlotsBindingIdentifier);
+  return () => {
+    container.getAll(manyNamedSlotsBindingIdentifier);
+  };
+}
+
+const rotatingBindingIdentifiers = Array.from({ length: ROTATE_N }, (_, slotIndex) =>
+  Symbol.for(`bench-inv-rot-${slotIndex}`),
+);
+
+function buildRotateConstants32Bench(): () => void {
+  const container = new Container();
+  for (let slotIndex = 0; slotIndex < ROTATE_N; slotIndex++) {
+    container.bind<number>(rotatingBindingIdentifiers[slotIndex]!).toConstantValue(slotIndex);
+  }
+  let rotatingBindingIndex = 0;
+  return () => {
+    void container.get<number>(rotatingBindingIdentifiers[rotatingBindingIndex]!);
+    rotatingBindingIndex = (rotatingBindingIndex + 1) % ROTATE_N;
+  };
+}
+
+const childInheritanceLeafIdentifier = Symbol.for("bench-inv-child-leaf");
+
+function buildChildInheritResolve8Bench(): () => void {
+  const rootContainer = new Container();
+  rootContainer.bind<number>(childInheritanceLeafIdentifier).toConstantValue(42);
+  let deepestChildContainer: Container = rootContainer;
+  for (let childDepthIndex = 0; childDepthIndex < CHILD_DEPTH; childDepthIndex++) {
+    deepestChildContainer = new Container({ parent: deepestChildContainer });
+  }
+  deepestChildContainer.get(childInheritanceLeafIdentifier);
+  return () => {
+    deepestChildContainer.get(childInheritanceLeafIdentifier);
+  };
+}
+
+const moduleBindingIdentifiers = Array.from({ length: MODULE_BINDS }, (_, bindingIndex) =>
+  Symbol.for(`bench-inv-mod-t-${bindingIndex}`),
+);
+
+const twentyBindingContainerModule = new ContainerModule((moduleBindingOptions) => {
+  for (let bindingIndex = 0; bindingIndex < MODULE_BINDS; bindingIndex++) {
+    moduleBindingOptions
+      .bind<number>(moduleBindingIdentifiers[bindingIndex]!)
+      .toConstantValue(bindingIndex);
   }
 });
 
 function buildFromModules20Bench(): () => void {
   return () => {
-    const c = new Container();
-    c.load(mod20);
+    const container = new Container();
+    container.load(twentyBindingContainerModule);
   };
 }
 
-const mixC = Symbol.for("bench-inv-mix-c");
-const mixWide = Symbol.for("bench-inv-mix-wide");
-const mixD0 = Symbol.for("bench-inv-mix-d0");
-const mixD1 = Symbol.for("bench-inv-mix-d1");
-const mixD2 = Symbol.for("bench-inv-mix-d2");
-const mixD3 = Symbol.for("bench-inv-mix-d3");
+const mixedScalarConstantIdentifier = Symbol.for("bench-inv-mix-c");
+const mixedNamedAlternativesIdentifier = Symbol.for("bench-inv-mix-wide");
+const mixedDynamicChainBaseIdentifier = Symbol.for("bench-inv-mix-d0");
+const mixedDynamicChainStep1Identifier = Symbol.for("bench-inv-mix-d1");
+const mixedDynamicChainStep2Identifier = Symbol.for("bench-inv-mix-d2");
+const mixedDynamicChainStep3Identifier = Symbol.for("bench-inv-mix-d3");
 
 function buildMixedResolveBurstBench(): () => void {
-  const c = new Container();
-  c.bind<number>(mixC).toConstantValue(1);
-  c.bind<number>(mixWide).toConstantValue(10).whenNamed("a");
-  c.bind<number>(mixWide).toConstantValue(20).whenNamed("b");
-  c.bind<number>(mixWide).toConstantValue(30).whenNamed("c");
-  c.bind<number>(mixD0).toConstantValue(0);
-  c.bind<number>(mixD1)
-    .toDynamicValue((ctx) => ctx.get<number>(mixD0) + 1)
+  const container = new Container();
+  container.bind<number>(mixedScalarConstantIdentifier).toConstantValue(1);
+  container.bind<number>(mixedNamedAlternativesIdentifier).toConstantValue(10).whenNamed("a");
+  container.bind<number>(mixedNamedAlternativesIdentifier).toConstantValue(20).whenNamed("b");
+  container.bind<number>(mixedNamedAlternativesIdentifier).toConstantValue(30).whenNamed("c");
+  container.bind<number>(mixedDynamicChainBaseIdentifier).toConstantValue(0);
+  container
+    .bind<number>(mixedDynamicChainStep1Identifier)
+    .toDynamicValue(
+      (resolutionContext) => resolutionContext.get<number>(mixedDynamicChainBaseIdentifier) + 1,
+    )
     .inTransientScope();
-  c.bind<number>(mixD2)
-    .toDynamicValue((ctx) => ctx.get<number>(mixD1) + 1)
+  container
+    .bind<number>(mixedDynamicChainStep2Identifier)
+    .toDynamicValue(
+      (resolutionContext) => resolutionContext.get<number>(mixedDynamicChainStep1Identifier) + 1,
+    )
     .inTransientScope();
-  c.bind<number>(mixD3)
-    .toDynamicValue((ctx) => ctx.get<number>(mixD2) + 1)
+  container
+    .bind<number>(mixedDynamicChainStep3Identifier)
+    .toDynamicValue(
+      (resolutionContext) => resolutionContext.get<number>(mixedDynamicChainStep2Identifier) + 1,
+    )
     .inTransientScope();
-  c.bind<InvDep>(depId).to(InvDep).inSingletonScope();
-  c.bind<InvService>(svcId).to(InvService).inSingletonScope();
+  container.bind<InvDep>(dependencyClassIdentifier).to(InvDep).inSingletonScope();
+  container.bind<InvService>(serviceClassIdentifier).to(InvService).inSingletonScope();
 
-  c.get(mixC);
-  c.get(mixWide, { name: "b" });
-  c.get(mixD3);
-  c.get(svcId);
+  container.get(mixedScalarConstantIdentifier);
+  container.get(mixedNamedAlternativesIdentifier, { name: "b" });
+  container.get(mixedDynamicChainStep3Identifier);
+  container.get(serviceClassIdentifier);
 
   return () => {
-    c.get(mixC);
-    c.get(mixC);
-    c.get(mixWide, { name: "a" });
-    c.get(mixWide, { name: "b" });
-    c.get(mixWide, { name: "c" });
-    c.get(mixD3);
-    c.get(svcId);
-    c.get(svcId);
+    container.get(mixedScalarConstantIdentifier);
+    container.get(mixedScalarConstantIdentifier);
+    container.get(mixedNamedAlternativesIdentifier, { name: "a" });
+    container.get(mixedNamedAlternativesIdentifier, { name: "b" });
+    container.get(mixedNamedAlternativesIdentifier, { name: "c" });
+    container.get(mixedDynamicChainStep3Identifier);
+    container.get(serviceClassIdentifier);
+    container.get(serviceClassIdentifier);
   };
 }
 
@@ -244,19 +275,19 @@ async function main(): Promise<{ id: string; hz: number; meanMs: number }[]> {
 
   await bench.run();
 
-  return bench.tasks.map((t) => {
-    const r = t.result;
-    if (r.state !== "completed") {
-      return { id: t.name, hz: 0, meanMs: 0 };
+  return bench.tasks.map((benchTask) => {
+    const benchTaskResult = benchTask.result;
+    if (benchTaskResult.state !== "completed") {
+      return { id: benchTask.name, hz: 0, meanMs: 0 };
     }
     return {
-      id: t.name,
-      hz: r.throughput.mean,
-      meanMs: r.latency.mean * 1000,
+      id: benchTask.name,
+      hz: benchTaskResult.throughput.mean,
+      meanMs: benchTaskResult.latency.mean * 1000,
     };
   });
 }
 
-void main().then((rows) => {
-  console.log(JSON.stringify(rows));
+void main().then((benchmarkRows) => {
+  console.log(JSON.stringify(benchmarkRows));
 });

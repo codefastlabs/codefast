@@ -20,189 +20,203 @@ const ROTATE_N = 32;
 const MODULE_BINDS = 20;
 const CHILD_DEPTH = 8;
 
-const constantTok = token<number>("bench-cf-constant");
-const wideTok = token<number>("bench-cf-wide");
+const constantValueBindingToken = token<number>("bench-cf-constant");
+const wideNamedBindingToken = token<number>("bench-cf-wide");
 
-@injectable([])
+@injectable()
 class CfDep {}
 
-const depClassTok = token<CfDep>("bench-cf-dep-class");
-const svcClassTok = token<CfService>("bench-cf-svc-class");
+const dependencyClassToken = token<CfDep>("bench-cf-dep-class");
+const serviceClassToken = token<CfService>("bench-cf-svc-class");
 
-@injectable([depClassTok])
+@injectable([dependencyClassToken])
 class CfService {
   constructor(readonly dep: CfDep) {}
 }
 
 function buildConstantBench(): () => void {
-  const c = Container.create();
-  c.bind(constantTok).toConstantValue(42);
-  c.resolve(constantTok);
+  const container = Container.create();
+  container.bind(constantValueBindingToken).toConstantValue(42);
+  container.resolve(constantValueBindingToken);
   return () => {
-    c.resolve(constantTok);
+    container.resolve(constantValueBindingToken);
   };
 }
 
 function buildSingletonClassBench(): () => void {
-  const c = Container.create();
-  c.bind(depClassTok).to(CfDep).singleton();
-  c.bind(svcClassTok).to(CfService).singleton();
-  c.resolve(svcClassTok);
+  const container = Container.create();
+  container.bind(dependencyClassToken).to(CfDep).singleton();
+  container.bind(serviceClassToken).to(CfService).singleton();
+  container.resolve(serviceClassToken);
   return () => {
-    c.resolve(svcClassTok);
+    container.resolve(serviceClassToken);
   };
 }
 
 function buildTransientClassBench(): () => void {
-  const c = Container.create();
-  c.bind(depClassTok).to(CfDep);
-  c.bind(svcClassTok).to(CfService).transient();
+  const container = Container.create();
+  container.bind(dependencyClassToken).to(CfDep);
+  container.bind(serviceClassToken).to(CfService).transient();
   return () => {
-    c.resolve(svcClassTok);
+    container.resolve(serviceClassToken);
   };
 }
 
 function buildNamedConstantBench(): () => void {
-  const c = Container.create();
-  c.bind(wideTok).whenNamed("slot-5").toConstantValue(5);
-  c.bind(wideTok).whenNamed("slot-12").toConstantValue(12);
-  c.bind(wideTok).whenNamed("slot-20").toConstantValue(20);
-  c.resolve(wideTok, { name: "slot-12" });
+  const container = Container.create();
+  container.bind(wideNamedBindingToken).whenNamed("slot-5").toConstantValue(5);
+  container.bind(wideNamedBindingToken).whenNamed("slot-12").toConstantValue(12);
+  container.bind(wideNamedBindingToken).whenNamed("slot-20").toConstantValue(20);
+  container.resolve(wideNamedBindingToken, { name: "slot-12" });
   return () => {
-    c.resolve(wideTok, { name: "slot-12" });
+    container.resolve(wideNamedBindingToken, { name: "slot-12" });
   };
 }
 
 function buildDynamicChain4Bench(): () => void {
-  const t0 = token<number>("cf-chain-0");
-  const t1 = token<number>("cf-chain-1");
-  const t2 = token<number>("cf-chain-2");
-  const t3 = token<number>("cf-chain-3");
-  const c = Container.create();
-  c.bind(t0).toConstantValue(0);
-  c.bind(t1)
-    .toDynamic((ctx) => ctx.resolve(t0) + 1)
+  const chainTokenAtDepth0 = token<number>("cf-chain-0");
+  const chainTokenAtDepth1 = token<number>("cf-chain-1");
+  const chainTokenAtDepth2 = token<number>("cf-chain-2");
+  const chainTokenAtDepth3 = token<number>("cf-chain-3");
+  const container = Container.create();
+  container.bind(chainTokenAtDepth0).toConstantValue(0);
+  container
+    .bind(chainTokenAtDepth1)
+    .toDynamic((resolutionContext) => resolutionContext.resolve(chainTokenAtDepth0) + 1)
     .transient();
-  c.bind(t2)
-    .toDynamic((ctx) => ctx.resolve(t1) + 1)
+  container
+    .bind(chainTokenAtDepth2)
+    .toDynamic((resolutionContext) => resolutionContext.resolve(chainTokenAtDepth1) + 1)
     .transient();
-  c.bind(t3)
-    .toDynamic((ctx) => ctx.resolve(t2) + 1)
+  container
+    .bind(chainTokenAtDepth3)
+    .toDynamic((resolutionContext) => resolutionContext.resolve(chainTokenAtDepth2) + 1)
     .transient();
-  c.resolve(t3);
+  container.resolve(chainTokenAtDepth3);
   return () => {
-    c.resolve(t3);
+    container.resolve(chainTokenAtDepth3);
   };
 }
 
 function buildDynamicTransientChain16Bench(): () => void {
-  const tokens = Array.from({ length: CHAIN_DEEP }, (_, i) => token<number>(`cf-deep-${i}`));
-  const c = Container.create();
-  c.bind(tokens[0]!).toConstantValue(0);
-  for (let i = 1; i < CHAIN_DEEP; i++) {
-    const prev = tokens[i - 1]!;
-    const cur = tokens[i]!;
-    c.bind(cur)
-      .toDynamic((ctx) => ctx.resolve(prev) + 1)
+  const deepChainTokens = Array.from({ length: CHAIN_DEEP }, (_, depthIndex) =>
+    token<number>(`cf-deep-${depthIndex}`),
+  );
+  const container = Container.create();
+  container.bind(deepChainTokens[0]!).toConstantValue(0);
+  for (let chainDepthIndex = 1; chainDepthIndex < CHAIN_DEEP; chainDepthIndex++) {
+    const previousDepthToken = deepChainTokens[chainDepthIndex - 1]!;
+    const currentDepthToken = deepChainTokens[chainDepthIndex]!;
+    container
+      .bind(currentDepthToken)
+      .toDynamic((resolutionContext) => resolutionContext.resolve(previousDepthToken) + 1)
       .transient();
   }
-  const leaf = tokens[CHAIN_DEEP - 1]!;
-  c.resolve(leaf);
+  const leafChainToken = deepChainTokens[CHAIN_DEEP - 1]!;
+  container.resolve(leafChainToken);
   return () => {
-    c.resolve(leaf);
+    container.resolve(leafChainToken);
   };
 }
 
 function buildResolveAllNamed48Bench(): () => void {
-  const wide = token<number>("bench-cf-wide-48");
-  const c = Container.create();
-  for (let i = 0; i < WIDE_N; i++) {
-    c.bind(wide).whenNamed(`slot-${i}`).toConstantValue(i);
+  const manyNamedSlotsBindingToken = token<number>("bench-cf-wide-48");
+  const container = Container.create();
+  for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
+    container
+      .bind(manyNamedSlotsBindingToken)
+      .whenNamed(`slot-${slotIndex}`)
+      .toConstantValue(slotIndex);
   }
-  c.resolveAll(wide);
+  container.resolveAll(manyNamedSlotsBindingToken);
   return () => {
-    c.resolveAll(wide);
+    container.resolveAll(manyNamedSlotsBindingToken);
   };
 }
 
 function buildRotateConstants32Bench(): () => void {
-  const tokens = Array.from({ length: ROTATE_N }, (_, i) => token<number>(`bench-cf-rot-${i}`));
-  const c = Container.create();
-  for (let i = 0; i < ROTATE_N; i++) {
-    c.bind(tokens[i]!).toConstantValue(i);
+  const rotatingBindingTokens = Array.from({ length: ROTATE_N }, (_, slotIndex) =>
+    token<number>(`bench-cf-rot-${slotIndex}`),
+  );
+  const container = Container.create();
+  for (let slotIndex = 0; slotIndex < ROTATE_N; slotIndex++) {
+    container.bind(rotatingBindingTokens[slotIndex]!).toConstantValue(slotIndex);
   }
-  let idx = 0;
+  let rotatingTokenIndex = 0;
   return () => {
-    void c.resolve(tokens[idx]!);
-    idx = (idx + 1) % ROTATE_N;
+    void container.resolve(rotatingBindingTokens[rotatingTokenIndex]!);
+    rotatingTokenIndex = (rotatingTokenIndex + 1) % ROTATE_N;
   };
 }
 
 function buildChildInheritResolve8Bench(): () => void {
-  const leafTok = token<number>("bench-cf-child-leaf");
-  const root = Container.create();
-  root.bind(leafTok).toConstantValue(42);
-  let cur: Container = root;
-  for (let d = 0; d < CHILD_DEPTH; d++) {
-    cur = cur.createChild();
+  const childInheritanceLeafToken = token<number>("bench-cf-child-leaf");
+  const rootContainer = Container.create();
+  rootContainer.bind(childInheritanceLeafToken).toConstantValue(42);
+  let deepestChildContainer: Container = rootContainer;
+  for (let childDepthIndex = 0; childDepthIndex < CHILD_DEPTH; childDepthIndex++) {
+    deepestChildContainer = deepestChildContainer.createChild();
   }
-  cur.resolve(leafTok);
+  deepestChildContainer.resolve(childInheritanceLeafToken);
   return () => {
-    cur.resolve(leafTok);
+    deepestChildContainer.resolve(childInheritanceLeafToken);
   };
 }
 
 function buildFromModules20Bench(): () => void {
-  const mod = Module.create("bench-cf-mod20", (api) => {
-    for (let i = 0; i < MODULE_BINDS; i++) {
-      api.bind(token<number>(`bench-cf-mod-t-${i}`)).toConstantValue(i);
+  const twentyBindingModule = Module.create("bench-cf-mod20", (moduleApi) => {
+    for (let bindingIndex = 0; bindingIndex < MODULE_BINDS; bindingIndex++) {
+      moduleApi.bind(token<number>(`bench-cf-mod-t-${bindingIndex}`)).toConstantValue(bindingIndex);
     }
   });
   return () => {
-    Container.fromModules(mod);
+    Container.fromModules(twentyBindingModule);
   };
 }
 
 function buildMixedResolveBurstBench(): () => void {
-  const cTok = token<number>("bench-cf-mix-c");
-  const wTok = token<number>("bench-cf-mix-wide");
-  const d0 = token<number>("bench-cf-mix-d0");
-  const d1 = token<number>("bench-cf-mix-d1");
-  const d2 = token<number>("bench-cf-mix-d2");
-  const d3 = token<number>("bench-cf-mix-d3");
+  const mixedScalarConstantToken = token<number>("bench-cf-mix-c");
+  const mixedNamedAlternativesToken = token<number>("bench-cf-mix-wide");
+  const mixedDynamicChainBaseToken = token<number>("bench-cf-mix-d0");
+  const mixedDynamicChainStep1Token = token<number>("bench-cf-mix-d1");
+  const mixedDynamicChainStep2Token = token<number>("bench-cf-mix-d2");
+  const mixedDynamicChainStep3Token = token<number>("bench-cf-mix-d3");
 
-  const c = Container.create();
-  c.bind(cTok).toConstantValue(1);
-  c.bind(wTok).whenNamed("a").toConstantValue(10);
-  c.bind(wTok).whenNamed("b").toConstantValue(20);
-  c.bind(wTok).whenNamed("c").toConstantValue(30);
-  c.bind(d0).toConstantValue(0);
-  c.bind(d1)
-    .toDynamic((ctx) => ctx.resolve(d0) + 1)
+  const container = Container.create();
+  container.bind(mixedScalarConstantToken).toConstantValue(1);
+  container.bind(mixedNamedAlternativesToken).whenNamed("a").toConstantValue(10);
+  container.bind(mixedNamedAlternativesToken).whenNamed("b").toConstantValue(20);
+  container.bind(mixedNamedAlternativesToken).whenNamed("c").toConstantValue(30);
+  container.bind(mixedDynamicChainBaseToken).toConstantValue(0);
+  container
+    .bind(mixedDynamicChainStep1Token)
+    .toDynamic((resolutionContext) => resolutionContext.resolve(mixedDynamicChainBaseToken) + 1)
     .transient();
-  c.bind(d2)
-    .toDynamic((ctx) => ctx.resolve(d1) + 1)
+  container
+    .bind(mixedDynamicChainStep2Token)
+    .toDynamic((resolutionContext) => resolutionContext.resolve(mixedDynamicChainStep1Token) + 1)
     .transient();
-  c.bind(d3)
-    .toDynamic((ctx) => ctx.resolve(d2) + 1)
+  container
+    .bind(mixedDynamicChainStep3Token)
+    .toDynamic((resolutionContext) => resolutionContext.resolve(mixedDynamicChainStep2Token) + 1)
     .transient();
-  c.bind(depClassTok).to(CfDep).singleton();
-  c.bind(svcClassTok).to(CfService).singleton();
+  container.bind(dependencyClassToken).to(CfDep).singleton();
+  container.bind(serviceClassToken).to(CfService).singleton();
 
-  c.resolve(cTok);
-  c.resolve(wTok, { name: "b" });
-  c.resolve(d3);
-  c.resolve(svcClassTok);
+  container.resolve(mixedScalarConstantToken);
+  container.resolve(mixedNamedAlternativesToken, { name: "b" });
+  container.resolve(mixedDynamicChainStep3Token);
+  container.resolve(serviceClassToken);
 
   return () => {
-    c.resolve(cTok);
-    c.resolve(cTok);
-    c.resolve(wTok, { name: "a" });
-    c.resolve(wTok, { name: "b" });
-    c.resolve(wTok, { name: "c" });
-    c.resolve(d3);
-    c.resolve(svcClassTok);
-    c.resolve(svcClassTok);
+    container.resolve(mixedScalarConstantToken);
+    container.resolve(mixedScalarConstantToken);
+    container.resolve(mixedNamedAlternativesToken, { name: "a" });
+    container.resolve(mixedNamedAlternativesToken, { name: "b" });
+    container.resolve(mixedNamedAlternativesToken, { name: "c" });
+    container.resolve(mixedDynamicChainStep3Token);
+    container.resolve(serviceClassToken);
+    container.resolve(serviceClassToken);
   };
 }
 
@@ -231,19 +245,19 @@ async function main(): Promise<{ id: string; hz: number; meanMs: number }[]> {
 
   await bench.run();
 
-  return bench.tasks.map((t) => {
-    const r = t.result;
-    if (r.state !== "completed") {
-      return { id: t.name, hz: 0, meanMs: 0 };
+  return bench.tasks.map((benchTask) => {
+    const benchTaskResult = benchTask.result;
+    if (benchTaskResult.state !== "completed") {
+      return { id: benchTask.name, hz: 0, meanMs: 0 };
     }
     return {
-      id: t.name,
-      hz: r.throughput.mean,
-      meanMs: r.latency.mean * 1000,
+      id: benchTask.name,
+      hz: benchTaskResult.throughput.mean,
+      meanMs: benchTaskResult.latency.mean * 1000,
     };
   });
 }
 
-void main().then((rows) => {
-  console.log(JSON.stringify(rows));
+void main().then((benchmarkRows) => {
+  console.log(JSON.stringify(benchmarkRows));
 });
