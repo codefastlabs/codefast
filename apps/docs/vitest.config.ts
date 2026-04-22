@@ -19,7 +19,7 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
-    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    include: ["src/**/*.test.?(c|m)[jt]s?(x)"],
     exclude: ["**/node_modules/**", "**/.git/**", "**/dist/**"],
     passWithNoTests: true,
     coverage: {
@@ -27,7 +27,7 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+      exclude: ["src/**/*.test.?(c|m)[jt]s?(x)", "**/*.d.ts"],
     },
   },
   resolve: {
