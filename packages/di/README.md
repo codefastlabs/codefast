@@ -604,20 +604,6 @@ See `package.json → exports` for the authoritative list.
 
 ---
 
-## Benchmarks
-
-Performance microbenchmarks live in `src/**/*.bench.ts` and run with Vitest’s bench mode (Tinybench), using the same SWC transform as tests. They measure **relative** changes on **your machine** — not absolute throughput comparable to other hardware or to published `dist` output.
-
-From the package directory:
-
-```bash
-pnpm run bench
-pnpm run bench:baseline   # writes bench/baseline.json (gitignored)
-pnpm run bench:compare    # compare current run to that baseline
-```
-
-Configuration is in `vitest.bench.config.ts` (single worker, sequential files) to keep microbench noise lower than the default test runner settings.
-
 ## Contributing
 
 This package lives in the [Codefast monorepo](https://github.com/codefastlabs/codefast). From the repo root:
