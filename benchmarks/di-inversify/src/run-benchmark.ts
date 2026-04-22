@@ -15,6 +15,7 @@ type BenchmarkRow = {
 /** Full library names for logs and table headers (no abbreviations). */
 const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";
+const CODEFAST_DI_PACKAGE_FILTER = "@codefast/di";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -53,6 +54,27 @@ function runSubBench(
   );
 
   return JSON.parse(lastNonEmptyStdoutLine) as BenchmarkRow[];
+}
+
+function buildCodefastDiPackage(): void {
+  console.log(`Building ${CODEFAST_DI_LIBRARY_DISPLAY_NAME} before benchmark…`);
+  const buildStartedAtMs = performance.now();
+  const buildResult = spawnSync("pnpm", ["--filter", CODEFAST_DI_PACKAGE_FILTER, "build"], {
+    cwd: packageRootDirectory,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+    env: process.env,
+  });
+  if (buildResult.status !== 0) {
+    console.error(buildResult.stderr || buildResult.stdout);
+    throw new Error(
+      `Build failed for ${CODEFAST_DI_LIBRARY_DISPLAY_NAME}, exit ${String(buildResult.status)}`,
+    );
+  }
+  const buildWallSeconds = (performance.now() - buildStartedAtMs) / 1000;
+  console.log(
+    `Finished building ${CODEFAST_DI_LIBRARY_DISPLAY_NAME} (${buildWallSeconds.toFixed(1)}s wall).\n`,
+  );
 }
 
 function formatRelativeThroughputRatio(
@@ -154,6 +176,8 @@ function main(): void {
     "\n@codefast/benchmark-di-inversify — comparing InversifyJS 8 with @codefast/di (same scenario identifiers, one harness per library)\n" +
       "(per task: warm-up, then measure until at least 800 iterations AND at least 450 ms summed sample time; tune BENCH_OPTIONS in *-benches.ts)\n",
   );
+
+  buildCodefastDiPackage();
 
   const inversifyBenchmarkRows = runSubBench(
     "tsconfig.inversify.json",
