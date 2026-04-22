@@ -51,12 +51,12 @@ catalog:
   "@rolldown/plugin-babel": ^0.2.3
   "@shikijs/rehype": ^4.0.2
   "@tabler/icons-react": ^3.41.1
-  "@tailwindcss/postcss": ^4.2.3
-  "@tailwindcss/vite": ^4.2.3
+  "@tailwindcss/postcss": ^4.2.4
+  "@tailwindcss/vite": ^4.2.4
   "@tanstack/devtools-vite": ^0.6.0
   "@tanstack/react-devtools": ^0.10.2
-  "@tanstack/react-form": ^1.29.0
-  "@tanstack/react-form-devtools": ^0.2.21
+  "@tanstack/react-form": ^1.29.1
+  "@tanstack/react-form-devtools": ^0.2.22
   "@tanstack/react-query": ^5.99.2
   "@tanstack/react-query-devtools": ^5.99.2
   "@tanstack/react-router": ^1.168.23
@@ -73,10 +73,10 @@ catalog:
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260420.1
+  "@typescript/native-preview": 7.0.0-dev.20260422.1
   "@unpic/react": ^1.0.2
   "@vitejs/plugin-react": ^6.0.1
-  "@vitest/coverage-v8": ^4.1.4
+  "@vitest/coverage-v8": ^4.1.5
   babel-plugin-react-compiler: ^1.0.0
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
@@ -92,7 +92,7 @@ catalog:
   jest-axe: ^10.0.0
   jiti: ^2.6.1
   jsdom: ^29.0.2
-  knip: ^6.5.0
+  knip: ^6.6.1
   lint-staged: ^16.4.0
   lucide-react: ^1.8.0
   next-themes: ^0.4.6
@@ -121,7 +121,7 @@ catalog:
   sonner: ^2.0.7
   tailwind-merge: ^3.5.0
   tailwind-variants: ^3.2.2
-  tailwindcss: ^4.2.3
+  tailwindcss: ^4.2.4
   tinybench: ^6.0.0
   ts-node: ^10.9.2
   tsdown: ^0.21.9
@@ -134,7 +134,7 @@ catalog:
   unplugin-swc: ^1.5.9
   vaul: ^1.1.2
   vite: ^8.0.9
-  vitest: ^4.1.4
+  vitest: ^4.1.5
   yaml: ^2.8.3
   zod: ^4.3.6
 
@@ -143,7 +143,7 @@ catalogMode: strict
 overrides:
   h3: ^2.0.1-rc.20
   h3-v2: npm:h3@^2.0.1-rc.20
-  typescript: ^6.0.2
+  typescript: ^6.0.3
 
 packageExtensions:
   "@content-collections/core@*":
