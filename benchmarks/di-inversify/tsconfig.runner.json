@@ -2,8 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
+    "experimentalDecorators": false,
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src"]
+  "include": ["src/run-benchmark.ts"]
 }
