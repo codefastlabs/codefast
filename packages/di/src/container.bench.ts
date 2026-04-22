@@ -40,11 +40,11 @@ const benchChainTokens = Array.from({ length: CHAIN_DEPTH }, (_, i) =>
 function bindDeepTransientChain(container: Container): void {
   container.bind(benchChainTokens[0]!).toConstantValue(0);
   for (let i = 1; i < CHAIN_DEPTH; i++) {
-    const prev = benchChainTokens[i - 1]!;
-    const cur = benchChainTokens[i]!;
+    const previousChainToken = benchChainTokens[i - 1]!;
+    const currentChainToken = benchChainTokens[i]!;
     container
-      .bind(cur)
-      .toDynamic((ctx) => ctx.resolve(prev) + 1)
+      .bind(currentChainToken)
+      .toDynamic((resolverContext) => resolverContext.resolve(previousChainToken) + 1)
       .transient();
   }
 }
@@ -59,7 +59,7 @@ const benchWideModule = Module.create("bench-wide-mod", (api) => {
 
 const benchResolvedA = token<number>("bench-to-resolved-a");
 const benchResolvedB = token<number>("bench-to-resolved-b");
-const benchResolvedOut = token<number>("bench-to-resolved-out");
+const benchResolvedOutputToken = token<number>("bench-to-resolved-out");
 
 const benchAliasLeaf = token<number>("bench-alias-leaf");
 const benchAliasMid = token<number>("bench-alias-mid");
@@ -72,7 +72,7 @@ class BenchTransientService {
   constructor(readonly dep: number) {}
 }
 
-const benchTransientSvc = token<BenchTransientService>("bench-transient-svc");
+const benchTransientServiceToken = token<BenchTransientService>("bench-transient-svc");
 
 const benchPairLeft = token<number>("bench-pair-left");
 const benchPairRight = token<number>("bench-pair-right");
@@ -122,15 +122,15 @@ describe("container primitives", () => {
     container.resolve(benchColdToken);
   });
 
-  const hasContainer = Container.create();
-  hasContainer.bind(benchConstantToken).toConstantValue(1);
+  const steadyStateContainerForHasToken = Container.create();
+  steadyStateContainerForHasToken.bind(benchConstantToken).toConstantValue(1);
 
   bench("has(token) steady state", () => {
-    hasContainer.has(benchConstantToken);
+    steadyStateContainerForHasToken.has(benchConstantToken);
   });
 
   const optionalContainer = Container.create();
-  const missingTok = token<number>("bench-missing-opt");
+  const missingOptionalToken = token<number>("bench-missing-opt");
   optionalContainer.bind(benchConstantToken).toConstantValue(1);
 
   bench("resolveOptional (hit)", () => {
@@ -138,7 +138,7 @@ describe("container primitives", () => {
   });
 
   bench("resolveOptional (miss)", () => {
-    optionalContainer.resolveOptional(missingTok);
+    optionalContainer.resolveOptional(missingOptionalToken);
   });
 });
 
@@ -154,32 +154,35 @@ describe("singleton and @injectable", () => {
 
   const transientContainer = Container.create();
   transientContainer.bind(benchTransientDep).toConstantValue(99);
-  transientContainer.bind(benchTransientSvc).to(BenchTransientService).transient();
+  transientContainer.bind(benchTransientServiceToken).to(BenchTransientService).transient();
 
   bench("resolve @injectable transient (new instance each time)", () => {
-    transientContainer.resolve(benchTransientSvc);
+    transientContainer.resolve(benchTransientServiceToken);
   });
 });
 
 describe("dynamic graph", () => {
   const deepContainer = Container.create();
   bindDeepTransientChain(deepContainer);
-  const leaf = benchChainTokens[CHAIN_DEPTH - 1]!;
+  const deepestChainToken = benchChainTokens[CHAIN_DEPTH - 1]!;
 
   bench(`resolve deep transient chain (${CHAIN_DEPTH} dynamics)`, () => {
-    deepContainer.resolve(leaf);
+    deepContainer.resolve(deepestChainToken);
   });
 
   const resolvedContainer = Container.create();
   resolvedContainer.bind(benchResolvedA).toConstantValue(10);
   resolvedContainer.bind(benchResolvedB).toConstantValue(32);
   resolvedContainer
-    .bind(benchResolvedOut)
-    .toResolved((a, b) => a * 1000 + b, [benchResolvedA, benchResolvedB])
+    .bind(benchResolvedOutputToken)
+    .toResolved(
+      (resolvedLeft, resolvedRight) => resolvedLeft * 1000 + resolvedRight,
+      [benchResolvedA, benchResolvedB],
+    )
     .singleton();
 
   bench("resolve toResolved (singleton, cached)", () => {
-    resolvedContainer.resolve(benchResolvedOut);
+    resolvedContainer.resolve(benchResolvedOutputToken);
   });
 
   const aliasContainer = Container.create();
@@ -222,11 +225,11 @@ describe("hints and multi-binding", () => {
     taggedContainer.resolve(benchTaggedToken, { tag: [BENCH_TAG_KEY, 5] });
   });
 
-  const wideLoaded = Container.create();
-  wideLoaded.load(benchWideModule);
+  const containerWithWideModuleLoaded = Container.create();
+  containerWithWideModuleLoaded.load(benchWideModule);
 
   bench(`resolveAll (${WIDE_MULTI_COUNT} named bindings)`, () => {
-    wideLoaded.resolveAll(benchWideToken);
+    containerWithWideModuleLoaded.resolveAll(benchWideToken);
   });
 });
 
@@ -239,41 +242,41 @@ describe("modules", () => {
     Container.fromModules(benchDiamondRootModule);
   });
 
-  const loaded = Container.create();
-  loaded.load(benchMultiModule);
+  const containerWithMultiModule = Container.create();
+  containerWithMultiModule.load(benchMultiModule);
 
   bench("resolveAll (3 named multi-bindings)", () => {
-    loaded.resolveAll(benchMultiToken);
+    containerWithMultiModule.resolveAll(benchMultiToken);
   });
 
-  const dedupContainer = Container.create();
-  dedupContainer.load(benchWideModule);
+  const containerWithWideModulePreloaded = Container.create();
+  containerWithWideModulePreloaded.load(benchWideModule);
 
   bench("load same module again (dedup no-op)", () => {
-    dedupContainer.load(benchWideModule);
+    containerWithWideModulePreloaded.load(benchWideModule);
   });
 });
 
 describe("child container", () => {
-  const parent = Container.create();
-  parent.bind(benchParentToken).toConstantValue("parent");
-  const child = parent.createChild();
+  const parentContainer = Container.create();
+  parentContainer.bind(benchParentToken).toConstantValue("parent");
+  const childContainer = parentContainer.createChild();
 
   bench("createChild from root", () => {
-    parent.createChild();
+    parentContainer.createChild();
   });
 
   bench("resolve binding inherited in child", () => {
-    child.resolve(benchParentToken);
+    childContainer.resolve(benchParentToken);
   });
 
-  const overrideTok = token<number>("bench-child-override");
-  const parentOv = Container.create();
-  parentOv.bind(overrideTok).toConstantValue(1);
-  const childOv = parentOv.createChild();
-  childOv.rebind(overrideTok).toConstantValue(2);
+  const childOverrideToken = token<number>("bench-child-override");
+  const rebindParentContainer = Container.create();
+  rebindParentContainer.bind(childOverrideToken).toConstantValue(1);
+  const rebindChildContainer = rebindParentContainer.createChild();
+  rebindChildContainer.rebind(childOverrideToken).toConstantValue(2);
 
   bench("child rebind + resolve (overrides parent)", () => {
-    childOv.resolve(overrideTok);
+    rebindChildContainer.resolve(childOverrideToken);
   });
 });
