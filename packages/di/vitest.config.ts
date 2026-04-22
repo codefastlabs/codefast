@@ -7,9 +7,9 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   oxc: false,
   test: {
-    globals: true,
-    environment: "node",
-    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    benchmark: {
+      include: ["src/**/*.bench.?(c|m)[jt]s?(x)"],
+    },
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
@@ -17,6 +17,9 @@ export default defineConfig({
       include: ["src/**/*.ts"],
       exclude: ["src/**/*.{test,spec,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
     },
+    environment: "node",
+    globals: true,
+    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
   },
   plugins: [
     swc.vite({
