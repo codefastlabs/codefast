@@ -5,9 +5,15 @@
  * **regression on the same machine**, not to compare across hardware or to npm
  * consumers’ bundles. For local baselines: `pnpm run bench:baseline` then
  * `pnpm run bench:compare` after changes (`bench/baseline.json` is gitignored).
+ *
+ * App-shaped blocks mirror `packages/cli` and `examples/` (multi-token `inject()`,
+ * `optional()`, `injectAll()`, `toSelf()`, `scoped()` + child request scope,
+ * conditional `.when()` on the materialization stack, async module bootstrap +
+ * `resolveAsync` on a warmed singleton).
  */
-import { bench, describe } from "vitest";
+import { bench, beforeAll, describe } from "vitest";
 import { Container } from "#/container";
+import { inject, injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { Module } from "#/module";
 import { token } from "#/token";
@@ -103,6 +109,87 @@ const benchDiamondRightModule = Module.create("bench-diamond-right", (api) => {
 const benchDiamondRootModule = Module.create("bench-diamond-root", (api) => {
   api.import(benchDiamondLeftModule, benchDiamondRightModule);
 });
+
+// --- App-shaped graphs (CLI + examples patterns) --------------------------------
+
+const benchAppPortAlpha = token<number>("bench-app-port-alpha");
+const benchAppPortBeta = token<number>("bench-app-port-beta");
+const benchAppPortGamma = token<number>("bench-app-port-gamma");
+
+@injectable([inject(benchAppPortAlpha), inject(benchAppPortBeta), inject(benchAppPortGamma)])
+class BenchInjectOrchestrator {
+  constructor(
+    readonly alpha: number,
+    readonly beta: number,
+    readonly gamma: number,
+  ) {}
+}
+
+const benchInjectOrchestratorToken = token<BenchInjectOrchestrator>("bench-inject-orch");
+
+@injectable([inject(benchAppPortAlpha)])
+class BenchToSelfService {
+  constructor(readonly alpha: number) {}
+}
+
+const benchUiConfigToken = token<{ tier: string }>("bench-ui-config");
+const benchUiLoggerToken = token<{ level: number }>("bench-ui-logger");
+
+@injectable([inject(benchUiConfigToken), optional(benchUiLoggerToken)])
+class BenchOptionalDatabase {
+  constructor(
+    readonly config: { tier: string },
+    readonly logger?: { level: number },
+  ) {}
+}
+
+const benchOptionalDatabaseToken = token<BenchOptionalDatabase>("bench-optional-db");
+
+const benchPluginPartToken = token<string>("bench-plugin-part");
+
+@injectable([injectAll(benchPluginPartToken)])
+class BenchPluginAggregator {
+  constructor(readonly parts: readonly string[]) {}
+}
+
+const benchPluginAggregatorToken = token<BenchPluginAggregator>("bench-plugin-agg");
+
+const benchPluginModule = Module.create("bench-plugin-mod", (api) => {
+  api.bind(benchPluginPartToken).whenNamed("p1").toConstantValue("a");
+  api.bind(benchPluginPartToken).whenNamed("p2").toConstantValue("b");
+  api.bind(benchPluginAggregatorToken).to(BenchPluginAggregator).singleton();
+});
+
+const benchScopedRequestContextToken = token<{ requestId: string }>("bench-scoped-req-ctx");
+
+@injectable([inject(benchScopedRequestContextToken)])
+class BenchScopedPerRequestService {
+  constructor(readonly requestContext: { requestId: string }) {}
+}
+
+const benchConstraintParentToken = token<{ child: string }>("bench-constraint-parent");
+const benchConstraintChildToken = token<string>("bench-constraint-child");
+
+function bindConstraintTransientParentGraph(container: Container): void {
+  container
+    .bind(benchConstraintChildToken)
+    .toConstantValue("from-parent")
+    .when(
+      (constraintContext) => constraintContext.parent?.registryKey === benchConstraintParentToken,
+    );
+  container
+    .bind(benchConstraintChildToken)
+    .toConstantValue("from-root")
+    .when((constraintContext) => constraintContext.parent === undefined);
+  container
+    .bind(benchConstraintParentToken)
+    .toDynamic((resolverContext) => ({
+      child: resolverContext.resolve(benchConstraintChildToken),
+    }))
+    .transient();
+}
+
+const benchAsyncSingletonToken = token<number>("bench-async-singleton");
 
 describe("container primitives", () => {
   bench("Container.create", () => {
@@ -278,5 +365,101 @@ describe("child container", () => {
 
   bench("child rebind + resolve (overrides parent)", () => {
     rebindChildContainer.resolve(childOverrideToken);
+  });
+});
+
+describe("app-style inject() orchestration (CLI-shaped)", () => {
+  const injectOrchestratorContainer = Container.create();
+  injectOrchestratorContainer.bind(benchAppPortAlpha).toConstantValue(1);
+  injectOrchestratorContainer.bind(benchAppPortBeta).toConstantValue(2);
+  injectOrchestratorContainer.bind(benchAppPortGamma).toConstantValue(3);
+  injectOrchestratorContainer
+    .bind(benchInjectOrchestratorToken)
+    .to(BenchInjectOrchestrator)
+    .singleton();
+  injectOrchestratorContainer.resolve(benchInjectOrchestratorToken);
+
+  bench("resolve @injectable([inject, inject, inject]) singleton (cached)", () => {
+    injectOrchestratorContainer.resolve(benchInjectOrchestratorToken);
+  });
+});
+
+describe("app-style optional() + tokens (example 02-shaped)", () => {
+  const optionalHitContainer = Container.create();
+  optionalHitContainer.bind(benchUiConfigToken).toConstantValue({ tier: "pro" });
+  optionalHitContainer.bind(benchUiLoggerToken).toConstantValue({ level: 2 });
+  optionalHitContainer.bind(benchOptionalDatabaseToken).to(BenchOptionalDatabase).singleton();
+  optionalHitContainer.resolve(benchOptionalDatabaseToken);
+
+  bench("resolve @injectable with optional dep (hit)", () => {
+    optionalHitContainer.resolve(benchOptionalDatabaseToken);
+  });
+
+  const optionalMissContainer = Container.create();
+  optionalMissContainer.bind(benchUiConfigToken).toConstantValue({ tier: "free" });
+  optionalMissContainer.bind(benchOptionalDatabaseToken).to(BenchOptionalDatabase).singleton();
+  optionalMissContainer.resolve(benchOptionalDatabaseToken);
+
+  bench("resolve @injectable with optional dep (miss)", () => {
+    optionalMissContainer.resolve(benchOptionalDatabaseToken);
+  });
+});
+
+describe("app-style toSelf + injectAll + scoped (examples-shaped)", () => {
+  const toSelfContainer = Container.create();
+  toSelfContainer.bind(benchAppPortAlpha).toConstantValue(99);
+  toSelfContainer.bind(BenchToSelfService).toSelf().singleton();
+  toSelfContainer.resolve(BenchToSelfService);
+
+  bench("resolve(BenchToSelfService) after bind().toSelf().singleton()", () => {
+    toSelfContainer.resolve(BenchToSelfService);
+  });
+
+  const pluginContainer = Container.fromModules(benchPluginModule);
+  pluginContainer.resolve(benchPluginAggregatorToken);
+
+  bench("resolve @injectable(injectAll) singleton (plugin list)", () => {
+    pluginContainer.resolve(benchPluginAggregatorToken);
+  });
+
+  const scopedRootContainer = Container.create();
+  scopedRootContainer.bind(BenchScopedPerRequestService).to(BenchScopedPerRequestService).scoped();
+  const scopedRequestChildContainer = scopedRootContainer.createChild();
+  scopedRequestChildContainer
+    .bind(benchScopedRequestContextToken)
+    .toConstantValue({ requestId: "bench-req-1" });
+  scopedRequestChildContainer.resolve(BenchScopedPerRequestService);
+
+  bench("resolve scoped @injectable in child (cache hit, same request)", () => {
+    scopedRequestChildContainer.resolve(BenchScopedPerRequestService);
+  });
+});
+
+describe("app-style conditional .when() on stack (integration-shaped)", () => {
+  const constraintContainer = Container.create();
+  bindConstraintTransientParentGraph(constraintContainer);
+
+  bench("resolve transient graph (re-evaluates .when() for nested token each time)", () => {
+    constraintContainer.resolve(benchConstraintParentToken);
+  });
+});
+
+describe("async app-style (fromModulesAsync + resolveAsync)", () => {
+  let containerAfterAsyncBootstrap!: Container;
+
+  beforeAll(async () => {
+    const asyncBootstrapModule = Module.createAsync("bench-async-bootstrap", async (api) => {
+      await Promise.resolve();
+      api
+        .bind(benchAsyncSingletonToken)
+        .toDynamicAsync(async () => 7)
+        .singleton();
+    });
+    containerAfterAsyncBootstrap = await Container.fromModulesAsync(asyncBootstrapModule);
+    await containerAfterAsyncBootstrap.resolveAsync(benchAsyncSingletonToken);
+  });
+
+  bench("resolveAsync steady state (singleton from async factory)", async () => {
+    await containerAfterAsyncBootstrap.resolveAsync(benchAsyncSingletonToken);
   });
 });
