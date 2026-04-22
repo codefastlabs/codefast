@@ -155,15 +155,27 @@ describe("Module", () => {
     expect(container.resolveAll(multiToken)).toEqual(["a", "b", "c"]);
   });
 
-  it("plain bind after named binds replaces all bindings for that token (last-wins)", () => {
+  it("plain bind after named binds keeps named binding and replaces default slot", () => {
     const lastWinsToken = token<string>("module-bind-then-multi");
     const mod = Module.create("mix", (api) => {
       api.bind(lastWinsToken).whenNamed("first").toConstantValue("first");
       api.bind(lastWinsToken).toConstantValue("solo");
     });
     const container = Container.fromModules(mod);
-    expect(container.resolveAll(lastWinsToken)).toEqual(["solo"]);
+    expect(container.resolveAll(lastWinsToken)).toEqual(["first", "solo"]);
     expect(container.resolve(lastWinsToken)).toBe("solo");
+  });
+
+  it("whenNamed after to* behaves the same as whenNamed before to* in module bindings", () => {
+    const tokenWithPostHint = token<string>("module-when-after-to");
+    const mod = Module.create("module-when-after-to", (api) => {
+      api.bind(tokenWithPostHint).toConstantValue("first").whenNamed("alpha");
+      api.bind(tokenWithPostHint).whenNamed("alpha").toConstantValue("second");
+    });
+
+    const container = Container.fromModules(mod);
+    expect(container.resolve(tokenWithPostHint, { name: "alpha" })).toBe("second");
+    expect(container.resolveAll(tokenWithPostHint, { name: "alpha" })).toEqual(["second"]);
   });
 
   it("unload removes every binding id from a multi-binding module", () => {

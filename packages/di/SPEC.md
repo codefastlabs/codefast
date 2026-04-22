@@ -86,7 +86,7 @@ Thư viện này dùng `Token<Value>` — branded type — làm identifier duy n
 
 **Zero magic:** Decorator là optional. Toàn bộ app có thể viết với explicit binding, không cần một decorator nào.
 
-**Last-wins override:** Binding sau cùng thắng, không throw duplicate error — rất tiện cho test.
+**Last-wins / override:** `bind()` áp dụng **slot-aware last-wins ở registration-time** (container + module), không đợi đến lúc `resolve`. Cùng slot (`default`, cùng `whenNamed`, cùng `whenTagged`) thì binding mới thay binding cũ; slot khác thì append để phục vụ `resolveAll`.
 
 **Async phải explicit:** `resolve()` trên async binding throw `AsyncResolutionError` với message rõ ràng. Không silently return `Promise`.
 
@@ -423,6 +423,39 @@ container.bind(Logger).to(FileLogger).whenNamed("file");
 ```
 
 > **Nguyên tắc fluent chain:** `BindingBuilder` trả về chính nó (`BindingBuilder<Value>`) — không phải `Container`. Mỗi `container.bind(...)` là một câu độc lập. Không thể chain `.bind()` liên tiếp trên builder.
+>
+> **Staged auto-commit:** `to*()` chỉ chốt strategy trên builder; binding sẽ auto-commit ở cuối chain (microtask). Trước các thao tác đọc/resolve (`has`, `resolve*`, `resolveAll*`, `validate`, `inspect`, `generateDependencyGraph`, ...) container flush pending registrations để đảm bảo thấy trạng thái mới nhất.
+
+### 4.8 Phân loại single binding vs multiple binding (chuẩn hợp đồng + đối chiếu implementation)
+
+**Từ vựng (normative):**
+
+- **Registration (bản ghi):** một object binding trong danh sách của một `RegistryKey` (sau `to*()` đã chốt strategy).
+- **Slot:** nhóm binding có thể last-wins tại registration-time:
+  - `default` (không `whenNamed`, không `whenTagged`, không `when`)
+  - `name:<value>` (`whenNamed`)
+  - `tag:<k=v>` (`whenTagged`)
+- **Candidate:** bản ghi vượt qua lọc `ResolveHint` (nếu có) và `when(ctx)` (nếu có).
+- **Single (kênh `resolve`):** sau lọc còn đúng **một** candidate.
+- **Multiple (kênh `resolveAll`):** có chủ đích giữ **≥ 2** candidate để lấy toàn bộ (`resolveAll*`) hoặc chọn bằng hint.
+
+**Lưu ý:** Cùng token nhưng khác `to*` (constant vs class vs factory, …) **không** tự định nghĩa single/multiple — chỉ quan tâm còn bao nhiêu bản ghi sau luật slot.
+
+#### Bảng tình huống
+
+| #   | Tình huống (sau khi đăng ký xong)                                   | Phân loại                                | `resolve` / `resolveAsync` không hint                            | `resolveAll` / hint                                  |
+| --- | ------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------- |
+| 1   | `bind(T).to*()` một lần                                             | **Single**                               | Trả binding đó                                                   | Trả 1 phần tử                                        |
+| 2   | `bind(T).to*(A)` rồi `bind(T).to*(B)`                               | **Single (last-wins trên slot default)** | Trả `B`                                                          | Trả `[B]`                                            |
+| 3   | `bind(T).whenNamed("a").to*(A)` rồi `bind(T).whenNamed("a").to*(B)` | **Single theo slot named**               | Không hint: nếu không có default sẽ theo luật selector hiện hành | Hint `{ name: "a" }` trả `B`                         |
+| 4   | `bind(T).whenNamed("a").to*(A)` và `bind(T).whenNamed("b").to*(B)`  | **Multiple (named slots khác nhau)**     | Không hint có thể lỗi/không xác định nếu không có default        | `resolveAll(T)` thấy cả A/B; hint chọn từng nhánh    |
+| 5   | `bind(T).to*(A)` và `bind(T).whenNamed("x").to*(B)`                 | **Single + Multiple song song**          | Không hint trả `A` (default slot)                                | `resolveAll(T)` thấy cả `A`, `B`; hint `"x"` trả `B` |
+| 6   | `container.rebind(T).to*(C)`                                        | **Single (explicit reset)**              | Trả `C`                                                          | Trả `[C]`                                            |
+| 7   | `loadAutoRegistered()` rồi `container.bind(Class).to*()` cùng slot  | **Single (slot-aware last-wins)**        | Trả binding explicit mới nhất                                    | Trả bản thắng trong slot đó                          |
+
+#### Mục đích của last-wins trong bảng này
+
+**Last-wins ở registration-time** giúp registry không phình vì duplicate cùng slot, vẫn cho phép multi-binding có chủ đích ở slot khác.
 
 ---
 
@@ -870,7 +903,7 @@ Cơ chế: Class decorator `@injectable` dùng `context.addInitializer` để pu
 >
 > **Circular import:** `autoRegister` không giải quyết circular import — class phải được import (module phải chạy) trước khi `container.loadAutoRegistered()`. Convention: import tất cả service files vào một `index.ts` entry point trước khi khởi tạo container.
 >
-> **Coexistence:** Auto-register và explicit binding cùng tồn tại. Explicit `container.bind(UserService)` sau `loadAutoRegistered()` override binding tự động (last-wins).
+> **Coexistence:** Auto-register và explicit binding cùng tồn tại. `container.bind(UserService)` sau `loadAutoRegistered()` sẽ áp dụng slot-aware last-wins; nếu cùng slot default thì binding explicit mới sẽ thay bản cũ.
 
 `loadAutoRegistered()` trả về số lượng class đã đăng ký, dùng để debug:
 
@@ -915,14 +948,12 @@ Không cần `experimentalDecorators: true`. Decorator Stage 3 là chuẩn từ 
 
 Module là cách nhóm binding theo domain. Hỗ trợ cả sync lẫn async setup — theo convention `load`/`loadAsync` của InversifyJS v8.
 
-**Quy tắc bind trong module (last-wins vs multi-binding):**
+**Quy tắc bind trong module (đã thống nhất với container):**
 
-- `bind(token).to*(...)` (không có `whenNamed` / `whenTagged` / `when` trước `to*`) dùng
-  **single-slot last-wins**: binding mới thay thế toàn bộ binding cũ của token trong module pass đó.
-- Muốn **append multi-binding** trong module, đặt disambiguator trước `to*`, ví dụ:
-  `bind(token).whenNamed("a").to*(...)`, `whenTagged(...).to*(...)`, hoặc `when(...).to*(...)`.
-- Chaining `to*(...).whenNamed(...)` chỉ update binding hiện tại tại chỗ; không mở multi-slot cho
-  các dòng bind khác trong module.
+- `bind(token).to*(...)` áp dụng **slot-aware last-wins ở registration-time**:
+  cùng slot thì thay bản cũ, khác slot thì append.
+- `whenNamed` / `whenTagged` / `when` có thể chain **trước hoặc sau** `to*()`; cả hai form đều chỉnh cùng binding entry.
+- `resolve` giữ semantics chọn một candidate duy nhất; `resolveAll` trả toàn bộ candidate match.
 
 ### 7.1 Sync module
 
@@ -976,9 +1007,9 @@ const container = Container.fromModules(AppModule, LoggerModule);
 // Async — khi có ít nhất 1 async module
 const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 
-// Override binding trong test — last-wins
+// Override binding trong test — dùng rebind để chắc chắn single default (container.bind là append)
 const testContainer = Container.fromModules(AppModule);
-testContainer.bind(Database).toConstantValue(mockDatabase);
+testContainer.rebind(Database).toConstantValue(mockDatabase);
 ```
 
 > **Module là pure description — không ôm state runtime:** Cùng một `Module` object có thể load song song vào nhiều containers độc lập. `Module` chỉ giữ `name` và callback `setup`; container mới là bên track "đã load module nào" và "binding nào thuộc module nào". Đây là use case chính để test (share module AppModule giữa nhiều integration test mà không cần reset).

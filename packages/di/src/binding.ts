@@ -251,13 +251,33 @@ type Strategy<Value> =
 
 /**
  * Callbacks injected by the owning container to sync each builder mutation into the registry.
- * `register` fires once when a `to*(…)` strategy is selected; `update` fires on every
- * subsequent chain call (`.singleton()`, `.onActivation()`, …).
+ * `register` fires once when the staged binding is committed; `update` fires on every
+ * subsequent chain call after commit (`.singleton()`, `.onActivation()`, …).
  */
 type RegistryCallbacks<Value> = {
   readonly register?: (binding: Binding<Value>) => void;
   readonly update?: (binding: Binding<Value>) => void;
+  readonly onPending?: (builder: BindingBuilder<Value>) => void;
+  readonly onCommitted?: (builder: BindingBuilder<Value>) => void;
 };
+
+const pendingBindingBuilders = new Set<BindingBuilder<unknown>>();
+
+export function hasPendingBindingRegistrations(): boolean {
+  return pendingBindingBuilders.size > 0;
+}
+
+export function flushPendingBindingRegistrations(): void {
+  while (pendingBindingBuilders.size > 0) {
+    const nextPendingBuilder = pendingBindingBuilders.values().next().value as
+      | BindingBuilder<unknown>
+      | undefined;
+    if (nextPendingBuilder === undefined) {
+      return;
+    }
+    nextPendingBuilder.flushPendingRegistration();
+  }
+}
 
 /**
  * Fluent builder for registering a single binding against a {@link Token} or {@link Constructor}.
@@ -271,8 +291,9 @@ type RegistryCallbacks<Value> = {
  * Calling a second `to*()` method throws {@link InternalError}.
  *
  * The builder is created by {@link Container.bind} or by `bind` on {@link ModuleBuilder}.
- * The container injects {@link RegistryCallbacks} so that every strategy selection and
- * refinement is immediately reflected in the live registry.
+ * The container injects {@link RegistryCallbacks}. Registration is staged and committed
+ * automatically at the end of the current chain (microtask), then subsequent refinements
+ * update the committed binding.
  */
 export class BindingBuilder<Value> {
   /**
@@ -317,10 +338,12 @@ export class BindingBuilder<Value> {
    * Set when this binding was created inside a {@link Module} / {@link AsyncModule} setup callback.
    */
   private readonly moduleId: string | undefined;
-  /**
-   * The most recently emitted {@link Binding} snapshot; `undefined` before the first `to*()` call.
-   */
-  private currentBinding: Binding<Value> | undefined;
+  /** The committed snapshot in the registry; undefined until the first staged commit. */
+  private committedBinding: Binding<Value> | undefined;
+  /** Guards against scheduling duplicate microtask commits. */
+  private isAutoCommitQueued = false;
+  /** Ensures container pending accounting increments/decrements exactly once per staged register. */
+  private hasPendingNotification = false;
   /**
    * Container-injected hooks that sync builder mutations into the live registry.
    */
@@ -495,11 +518,11 @@ export class BindingBuilder<Value> {
   id(): BindingIdentifier;
   id(identifier: BindingIdentifier): BindingIdentifier;
   id(identifier?: BindingIdentifier): BindingIdentifier {
-    if (this.currentBinding !== undefined) {
-      if (identifier !== undefined && identifier !== this.currentBinding.id) {
+    if (this.committedBinding !== undefined) {
+      if (identifier !== undefined && identifier !== this.committedBinding.id) {
         throw new InternalError("Cannot change binding identifier after registration.");
       }
-      return this.currentBinding.id;
+      return this.committedBinding.id;
     }
     if (identifier !== undefined) {
       this.explicitId = identifier;
@@ -520,10 +543,7 @@ export class BindingBuilder<Value> {
       );
     }
     this.strategy = next;
-    const bindingId = this.id();
-    const binding = this.createBinding(bindingId, next);
-    this.currentBinding = binding;
-    this.callbacks.register?.(binding);
+    this.queueAutoCommit();
   }
 
   /**
@@ -531,12 +551,52 @@ export class BindingBuilder<Value> {
    * the update to the registry. No-op if no strategy has been set yet.
    */
   private refreshRegisteredBinding(): void {
-    if (this.currentBinding === undefined || this.strategy.type === "unset") {
+    if (this.strategy.type === "unset") {
       return;
     }
-    const next = this.createBinding(this.currentBinding.id, this.strategy);
-    this.currentBinding = next;
-    this.callbacks.update?.(next);
+    if (this.committedBinding === undefined) {
+      this.queueAutoCommit();
+      return;
+    }
+    const updatedBinding = this.createBinding(this.committedBinding.id, this.strategy);
+    this.committedBinding = updatedBinding;
+    this.callbacks.update?.(updatedBinding);
+  }
+
+  private queueAutoCommit(): void {
+    if (
+      this.strategy.type === "unset" ||
+      this.committedBinding !== undefined ||
+      this.isAutoCommitQueued
+    ) {
+      return;
+    }
+    if (!this.hasPendingNotification) {
+      this.hasPendingNotification = true;
+      this.callbacks.onPending?.(this);
+    }
+    this.isAutoCommitQueued = true;
+    pendingBindingBuilders.add(this as BindingBuilder<unknown>);
+    queueMicrotask(() => {
+      this.isAutoCommitQueued = false;
+      this.flushPendingRegistration();
+    });
+  }
+
+  flushPendingRegistration(): void {
+    if (this.strategy.type === "unset" || this.committedBinding !== undefined) {
+      pendingBindingBuilders.delete(this as BindingBuilder<unknown>);
+      return;
+    }
+    const pendingBindingId = this.id();
+    const pendingBinding = this.createBinding(pendingBindingId, this.strategy);
+    this.committedBinding = pendingBinding;
+    this.callbacks.register?.(pendingBinding);
+    if (this.hasPendingNotification) {
+      this.hasPendingNotification = false;
+      this.callbacks.onCommitted?.(this);
+    }
+    pendingBindingBuilders.delete(this as BindingBuilder<unknown>);
   }
 
   /**

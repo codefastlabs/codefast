@@ -84,4 +84,52 @@ describe("Container", () => {
     const instance = container.resolve(aggregatorServiceToken);
     expect(instance.parts.sort()).toEqual(["x", "y"]);
   });
+
+  it("resolve without hint uses last default binding on repeated container.bind()", () => {
+    const loggerToken = token<string>("container-last-default");
+    const container = Container.create();
+    container.bind(loggerToken).toConstantValue("first");
+    container.bind(loggerToken).toConstantValue("second");
+
+    expect(container.resolve(loggerToken)).toBe("second");
+    expect(container.resolveAll(loggerToken)).toEqual(["second"]);
+  });
+
+  it("whenNamed chained after to* is treated as named binding (same as before to*)", () => {
+    const namedToken = token<string>("container-when-after-to");
+    const container = Container.create();
+
+    container.bind(namedToken).toConstantValue("first").whenNamed("alpha");
+    container.bind(namedToken).whenNamed("alpha").toConstantValue("second");
+
+    expect(container.resolve(namedToken, { name: "alpha" })).toBe("second");
+    expect(container.resolveAll(namedToken, { name: "alpha" })).toEqual(["second"]);
+  });
+
+  it("replaces tagged slot on repeated bind to avoid duplicate registrations", () => {
+    const taggedToken = token<string>("container-tagged-slot");
+    const container = Container.create();
+
+    container.bind(taggedToken).whenTagged("role", "api").toConstantValue("first");
+    container.bind(taggedToken).whenTagged("role", "api").toConstantValue("second");
+
+    expect(container.resolve(taggedToken, { tag: ["role", "api"] })).toBe("second");
+    expect(container.resolveAll(taggedToken, { tag: ["role", "api"] })).toEqual(["second"]);
+  });
+
+  it("keeps constraint-based bindings as multi registrations (no last-wins slot)", () => {
+    const constrainedToken = token<string>("container-constraint-slot");
+    const container = Container.create();
+
+    container
+      .bind(constrainedToken)
+      .toConstantValue("first")
+      .when(() => true);
+    container
+      .bind(constrainedToken)
+      .toConstantValue("second")
+      .when(() => true);
+
+    expect(container.resolveAll(constrainedToken)).toEqual(["first", "second"]);
+  });
 });

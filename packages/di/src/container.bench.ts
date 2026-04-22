@@ -21,6 +21,10 @@ import { token } from "#/token";
 const benchConstantToken = token<number>("bench-constant");
 const benchColdToken = token<number>("bench-cold");
 const benchSingletonDep = token<number>("bench-singleton-dep");
+const benchResolveHotLoopToken = token<number>("bench-resolve-hot-loop");
+const benchResolveHotLoopParentToken = token<number>("bench-resolve-hot-loop-parent");
+const benchResolveHotLoopPendingToken = token<number>("bench-resolve-hot-loop-pending");
+const benchResolveHotLoopChildPendingToken = token<number>("bench-resolve-hot-loop-child-pending");
 
 @injectable([benchSingletonDep])
 class BenchConsumer {
@@ -95,6 +99,7 @@ const benchPairConsumerToken = token<BenchPairConsumer>("bench-pair-consumer");
 
 const benchTaggedToken = token<number>("bench-tagged-svc");
 const BENCH_TAG_KEY = "bench-tier";
+const benchSlotChurnToken = token<number>("bench-slot-churn");
 
 const benchDiamondLeafToken = token<number>("bench-diamond-leaf");
 const benchDiamondLeafModule = Module.create("bench-diamond-leaf", (api) => {
@@ -109,6 +114,41 @@ const benchDiamondRightModule = Module.create("bench-diamond-right", (api) => {
 const benchDiamondRootModule = Module.create("bench-diamond-root", (api) => {
   api.import(benchDiamondLeftModule, benchDiamondRightModule);
 });
+
+function createSlotChurnContainer(namedSlotCount: number): Container {
+  const container = Container.create();
+  for (let index = 0; index < namedSlotCount; index++) {
+    container.bind(benchSlotChurnToken).whenNamed(`slot-${index}`).toConstantValue(index);
+  }
+  container.bind(benchSlotChurnToken).toConstantValue(-1);
+  return container;
+}
+
+type AppendOnlyRecord = {
+  readonly slot: string;
+  readonly value: number;
+};
+
+function createAppendOnlyRegistry(slotCount: number): AppendOnlyRecord[] {
+  const records: AppendOnlyRecord[] = [];
+  for (let index = 0; index < slotCount; index++) {
+    records.push({ slot: `slot-${index}`, value: index });
+  }
+  records.push({ slot: "default", value: -1 });
+  return records;
+}
+
+function appendOnlyUpsert(records: AppendOnlyRecord[], slot: string, value: number): void {
+  records.push({ slot, value });
+}
+
+function appendOnlyResolveAllLatestBySlot(records: readonly AppendOnlyRecord[]): number[] {
+  const latestBySlot = new Map<string, number>();
+  for (const record of records) {
+    latestBySlot.set(record.slot, record.value);
+  }
+  return [...latestBySlot.values()];
+}
 
 // --- App-shaped graphs (CLI + examples patterns) --------------------------------
 
@@ -229,6 +269,65 @@ describe("container primitives", () => {
   });
 });
 
+describe("resolve hot-loop (pending=0)", () => {
+  const rootHotLoopContainer = Container.create();
+  rootHotLoopContainer.bind(benchResolveHotLoopToken).toConstantValue(7);
+  // Force staged registration to commit before entering the measured loop.
+  rootHotLoopContainer.resolve(benchResolveHotLoopToken);
+
+  bench("resolve hot-loop root (pending=0)", () => {
+    rootHotLoopContainer.resolve(benchResolveHotLoopToken);
+  });
+
+  const parentHotLoopContainer = Container.create();
+  parentHotLoopContainer.bind(benchResolveHotLoopParentToken).toConstantValue(11);
+  const childHotLoopContainer = parentHotLoopContainer.createChild();
+  // Warm up child->parent lookup once so later iterations measure steady-state path.
+  childHotLoopContainer.resolve(benchResolveHotLoopParentToken);
+
+  bench("resolve hot-loop child->parent (pending=0)", () => {
+    childHotLoopContainer.resolve(benchResolveHotLoopParentToken);
+  });
+
+  let rootPendingValue = 0;
+  bench("resolve hot-loop root (pending>0, one staged binding)", () => {
+    // Stage one unresolved registration in the same task, then force resolve-path flush.
+    rootPendingValue += 1;
+    rootHotLoopContainer.bind(benchResolveHotLoopPendingToken).toConstantValue(rootPendingValue);
+    rootHotLoopContainer.resolve(benchResolveHotLoopToken);
+  });
+
+  let childPendingValue = 0;
+  bench("resolve hot-loop child->parent (pending>0, one staged binding)", () => {
+    // Keep one pending staged builder on child before inherited parent-token lookup.
+    childPendingValue += 1;
+    childHotLoopContainer
+      .bind(benchResolveHotLoopChildPendingToken)
+      .toConstantValue(childPendingValue);
+    childHotLoopContainer.resolve(benchResolveHotLoopParentToken);
+  });
+
+  let rootSameSlotPendingValue = 1000;
+  bench("resolve hot-loop root (pending>0, same token/same slot via rebind)", () => {
+    // Rebind the same token+slot to avoid registry-key growth while keeping one staged pending entry.
+    rootSameSlotPendingValue += 1;
+    rootHotLoopContainer
+      .rebind(benchResolveHotLoopPendingToken)
+      .toConstantValue(rootSameSlotPendingValue);
+    rootHotLoopContainer.resolve(benchResolveHotLoopToken);
+  });
+
+  let childSameSlotPendingValue = 2000;
+  bench("resolve hot-loop child->parent (pending>0, same token/same slot via rebind)", () => {
+    // Same-slot rebind on child-owned token, then resolve inherited parent token.
+    childSameSlotPendingValue += 1;
+    childHotLoopContainer
+      .rebind(benchResolveHotLoopChildPendingToken)
+      .toConstantValue(childSameSlotPendingValue);
+    childHotLoopContainer.resolve(benchResolveHotLoopParentToken);
+  });
+});
+
 describe("singleton and @injectable", () => {
   const graphContainer = Container.create();
   graphContainer.bind(benchSingletonDep).toConstantValue(7);
@@ -341,6 +440,56 @@ describe("modules", () => {
 
   bench("load same module again (dedup no-op)", () => {
     containerWithWideModulePreloaded.load(benchWideModule);
+  });
+});
+
+describe("registration-time slot churn", () => {
+  const smallSlotContainer = createSlotChurnContainer(8);
+  const mediumSlotContainer = createSlotChurnContainer(64);
+  const largeSlotContainer = createSlotChurnContainer(256);
+
+  bench("replace default slot with 8 named slots present", () => {
+    smallSlotContainer.bind(benchSlotChurnToken).toConstantValue(1);
+  });
+
+  bench("replace default slot with 64 named slots present", () => {
+    mediumSlotContainer.bind(benchSlotChurnToken).toConstantValue(1);
+  });
+
+  bench("replace default slot with 256 named slots present", () => {
+    largeSlotContainer.bind(benchSlotChurnToken).toConstantValue(1);
+  });
+
+  bench("replace named slot using whenNamed after to* (64 slots)", () => {
+    mediumSlotContainer.bind(benchSlotChurnToken).toConstantValue(2).whenNamed("slot-12");
+  });
+
+  bench("replace named slot using whenNamed before to* (64 slots)", () => {
+    mediumSlotContainer.bind(benchSlotChurnToken).whenNamed("slot-12").toConstantValue(3);
+  });
+});
+
+describe("control: append-only registry growth", () => {
+  const appendOnlySmall = createAppendOnlyRegistry(8);
+  const appendOnlyMedium = createAppendOnlyRegistry(64);
+  const appendOnlyLarge = createAppendOnlyRegistry(256);
+  const appendOnlyGrowing = createAppendOnlyRegistry(64);
+
+  bench("control append-only bind/write with 8 slots", () => {
+    appendOnlyUpsert(appendOnlySmall, "default", 1);
+  });
+
+  bench("control append-only bind/write with 64 slots", () => {
+    appendOnlyUpsert(appendOnlyMedium, "default", 1);
+  });
+
+  bench("control append-only bind/write with 256 slots", () => {
+    appendOnlyUpsert(appendOnlyLarge, "default", 1);
+  });
+
+  bench("control append-only resolveAll compaction (64 slots, growing history)", () => {
+    appendOnlyUpsert(appendOnlyGrowing, "default", 2);
+    appendOnlyResolveAllLatestBySlot(appendOnlyGrowing);
   });
 });
 

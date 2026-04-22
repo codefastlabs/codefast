@@ -18,9 +18,6 @@ export type RegistryKey = Token<unknown> | Constructor<unknown>;
  * - `replaceById` — swaps a single binding in place by ID; no removal callback.
  * - `remove` / `removeById` — delete entries **without** notifying callers; the caller
  *   is responsible for draining the scope cache before calling these.
- * - `replaceKeyLastWins` — replaces all bindings for a key with a single new one **and**
- *   invokes the `onReplaced` callback for each evicted binding, giving the caller
- *   (typically the container or scope manager) a chance to run deactivation.
  */
 export class BindingRegistry {
   /**
@@ -95,27 +92,5 @@ export class BindingRegistry {
       this.bindingsByKey.set(registryKey, updated);
       return;
     }
-  }
-
-  /**
-   * Replaces all bindings for `key` with a single new binding (module "last-wins" semantics).
-   * Unlike {@link remove} / {@link removeById}, this method invokes `onReplaced` for every
-   * evicted binding **before** inserting the replacement, giving the caller (e.g. the
-   * container's scope manager) a chance to release cached instances and run deactivation hooks.
-   */
-  replaceKeyLastWins<Value>(
-    key: Token<Value> | Constructor<Value>,
-    binding: Binding<Value>,
-    onReplaced: (removed: Binding<unknown>) => void,
-  ): void {
-    const registryKey = key as RegistryKey;
-    const nextBinding = binding as Binding<unknown>;
-    const existing = this.bindingsByKey.get(registryKey);
-    if (existing !== undefined) {
-      for (const removed of existing) {
-        onReplaced(removed);
-      }
-    }
-    this.bindingsByKey.set(registryKey, [nextBinding]);
   }
 }
