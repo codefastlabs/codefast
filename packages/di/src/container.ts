@@ -239,6 +239,7 @@ class DefaultContainer implements Container {
    */
   private readonly tokenByBindingId = new Map<BindingIdentifier, RegistryKey>();
   private readonly slotKeyByBindingId = new Map<BindingIdentifier, string>();
+  private readonly inheritedConstantCache = new Map<RegistryKey, unknown>();
   private readonly isDevEnv: boolean = isDevelopmentOrTestEnvironment();
 
   private flushPendingBindings(): void {
@@ -617,6 +618,14 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
   ): Value | typeof NOT_FOUND {
+    const registryKey = token as RegistryKey;
+    if (
+      this.parent !== undefined &&
+      hint === undefined &&
+      this.inheritedConstantCache.has(registryKey)
+    ) {
+      return this.inheritedConstantCache.get(registryKey) as Value;
+    }
     const binding = this.getSingleBindingInHierarchy(token, hint);
     if (binding === undefined) {
       return NOT_FOUND;
@@ -634,6 +643,12 @@ class DefaultContainer implements Container {
       return NOT_FOUND;
     }
     if (binding.kind === "constant") {
+      if (this.parent !== undefined && hint === undefined) {
+        const own = this.ownRegistry.get(registryKey as Token<unknown> | Constructor<unknown>);
+        if (own === undefined || own.length === 0) {
+          this.inheritedConstantCache.set(registryKey, binding.value);
+        }
+      }
       return binding.value as Value;
     }
     if (this.ownScopeManager.isBindingCached(binding)) {
@@ -737,6 +752,7 @@ class DefaultContainer implements Container {
    * Called on every registry mutation (bind, unbind, rebind, load, unload).
    */
   private invalidateDevValidationState(): void {
+    this.inheritedConstantCache.clear();
     this.hasDevValidationRun = false;
   }
 

@@ -96,6 +96,15 @@ export class ScopeManager {
     return cache.has(binding.id);
   }
 
+  getCached(binding: Binding<unknown>): unknown {
+    if (binding.scope === "transient") {
+      return undefined;
+    }
+    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
+    const entry = cache.get(binding.id);
+    return entry?.instance;
+  }
+
   /**
    * Returns the cached instance for singleton/scoped bindings, or calls `createInstance` on first access.
    */
