@@ -1,8 +1,8 @@
 import { Bench } from "tinybench";
 import type { TaskResult } from "tinybench";
-import type { AnyScenario } from "../scenarios/types";
-import { isAsyncScenario } from "../scenarios/types";
-import type { ScenarioTrialResult, TrialPayload } from "./protocol";
+import { isAsyncScenario } from "#/scenarios/types";
+import type { AnyScenario } from "#/scenarios/types";
+import type { ScenarioTrialResult, TrialPayload } from "#/harness/protocol";
 
 /**
  * tinybench options shared across every scenario. Kept as a single block so the

@@ -8,13 +8,13 @@
  * The reporter renders the missing row as "—" on the inversify column.
  */
 import "reflect-metadata";
-import type { BenchScenario } from "../types";
-import { batched } from "../../harness/batched";
 import {
   buildInversifyRealisticContainer,
   sanityCheckInversifyRealisticResolve,
-} from "../../fixtures/inversify-adapter";
-import { REALISTIC_GRAPH } from "../../fixtures/realistic-graph";
+} from "#/fixtures/inversify-adapter";
+import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const REALISTIC_RESOLVE_BATCH = 20;
 

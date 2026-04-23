@@ -17,13 +17,13 @@
  *     of codefast (static scope-rule validation) should appear in its
  *     benchmark surface even when no comparator has it yet.
  */
-import type { BenchScenario } from "../types";
-import { batched } from "../../harness/batched";
 import {
   buildCodefastRealisticContainer,
   sanityCheckCodefastRealisticResolve,
-} from "../../fixtures/codefast-adapter";
-import { REALISTIC_GRAPH } from "../../fixtures/realistic-graph";
+} from "#/fixtures/codefast-adapter";
+import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const REALISTIC_RESOLVE_BATCH = 20;
 const REALISTIC_VALIDATE_BATCH = 10;

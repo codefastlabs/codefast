@@ -9,8 +9,8 @@
  *     to any real request path.
  */
 import { Container } from "@codefast/di";
-import type { BenchScenario } from "../types";
-import { batched } from "../../harness/batched";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const CONTAINER_CREATE_BATCH = 200;
 

@@ -2,7 +2,7 @@ import { arch as osArch, cpus, platform as osPlatform } from "node:os";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Fingerprint } from "./protocol";
+import type { Fingerprint } from "#/harness/protocol";
 
 /**
  * Reads the version of a dependency from the benchmark package's

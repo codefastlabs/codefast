@@ -1,4 +1,4 @@
-import type { AnyScenario } from "../scenarios/types";
+import type { AnyScenario } from "#/scenarios/types";
 
 /**
  * Per-scenario sanity assertion. Runs once before tinybench takes ownership

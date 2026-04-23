@@ -17,19 +17,19 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { SubprocessPayload } from "./protocol";
 import {
   BENCH_RESULT_JSON_END,
   BENCH_RESULT_JSON_START,
   extractSubprocessPayload,
-} from "./protocol";
-import type { LibraryReport } from "./report";
+} from "#/harness/protocol";
 import {
   buildLibraryReport,
   renderConsoleReport,
   writeJsonlRun,
   writeMarkdownReport,
-} from "./report";
+} from "#/harness/report";
+import type { SubprocessPayload } from "#/harness/protocol";
+import type { LibraryReport } from "#/harness/report";
 
 const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";

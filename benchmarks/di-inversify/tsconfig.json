@@ -3,8 +3,11 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "noEmit": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
     "types": ["node"]
   },
-  "comment": "Editor-default only. Only includes library-agnostic files so decorator-mode conflicts never surface here. check-types uses the three explicit tsconfigs (codefast / inversify / runner).",
-  "include": ["src/harness/**/*.ts", "src/scenarios/types.ts", "src/fixtures/realistic-graph.ts"]
+  "comment": "Editor-default only. Only includes library-agnostic files so decorator-mode conflicts never surface here. check-types uses the two explicit tsconfigs (codefast / inversify).",
+  "include": ["src"]
 }

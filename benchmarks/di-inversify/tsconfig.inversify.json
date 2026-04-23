@@ -5,6 +5,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noEmit": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
     "types": ["node", "reflect-metadata"]
   },
   "include": [

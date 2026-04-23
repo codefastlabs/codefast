@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "./protocol";
+import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/harness/protocol";
 
 /**
  * One (library, scenario) row after collapsing the per-trial payloads.

@@ -12,8 +12,8 @@
  *     because it is useful to catch quadratic-in-depth regressions.
  */
 import { Container, token } from "@codefast/di";
-import type { BenchScenario } from "../types";
-import { batched } from "../../harness/batched";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const CHILD_RESOLVE_BATCH = 500;
 const STRESS_DEPTH = 8;
