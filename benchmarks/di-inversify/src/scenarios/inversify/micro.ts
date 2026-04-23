@@ -6,8 +6,8 @@
  */
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
-import type { BenchScenario } from "../types";
-import { batched } from "../../harness/batched";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const CONSTANT_RESOLVE_BATCH = 1000;
 const CLASS_RESOLVE_BATCH = 200;

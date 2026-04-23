@@ -18,10 +18,10 @@
   },
   "type": "module",
   "scripts": {
-    "check-types": "tsgo --noEmit -p tsconfig.codefast.json && tsgo --noEmit -p tsconfig.inversify.json && tsgo --noEmit -p tsconfig.runner.json",
-    "bench": "pnpm exec tsx src/harness/run.ts",
-    "bench:codefast": "pnpm exec tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
-    "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts"
+    "check-types": "tsgo --noEmit -p tsconfig.codefast.json && tsgo --noEmit -p tsconfig.inversify.json",
+    "bench": "tsx src/harness/run.ts",
+    "bench:codefast": "tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
+    "bench:inversify": "tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts"
   },
   "dependencies": {
     "@codefast/di": "workspace:*",

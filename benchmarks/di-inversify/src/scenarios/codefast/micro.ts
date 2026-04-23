@@ -14,8 +14,8 @@
  * scenario would appear 1000× faster than the equivalent un-batched one.
  */
 import { Container, injectable, token } from "@codefast/di";
-import type { BenchScenario } from "../types";
-import { batched } from "../../harness/batched";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const CONSTANT_RESOLVE_BATCH = 1000;
 const CLASS_RESOLVE_BATCH = 200;

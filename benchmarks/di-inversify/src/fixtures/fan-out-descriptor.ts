@@ -1,4 +1,4 @@
-import type { GraphDescriptor, NodeDescriptor } from "./realistic-graph";
+import type { GraphDescriptor, NodeDescriptor } from "#/fixtures/realistic-graph";
 
 export const FAN_OUT_TREE_DEPTH = 3;
 export const FAN_OUT_TREE_BREADTH = 4;

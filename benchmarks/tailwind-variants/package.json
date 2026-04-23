@@ -28,7 +28,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "bench": "pnpm exec tsx src/run-benchmark.ts",
+    "bench": "tsx src/run-benchmark.ts",
     "check-types": "tsgo --noEmit -p tsconfig.json"
   },
   "dependencies": {

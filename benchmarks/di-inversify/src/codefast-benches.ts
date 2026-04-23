@@ -12,16 +12,16 @@
  * `Symbol.metadata`. The parent spawns it with `NODE_OPTIONS=--expose-gc
  * --no-warnings NODE_ENV=production`.
  */
-import { collectFingerprint } from "./harness/fingerprint";
-import { emitSubprocessPayload } from "./harness/protocol";
-import { runSanityChecks } from "./harness/sanity";
-import { runAllTrials } from "./harness/trial";
-import type { AnyScenario } from "./scenarios/types";
-import { buildCodefastDiagnosticScenarios } from "./scenarios/codefast/diagnostic";
-import { buildCodefastFanOutScenarios } from "./scenarios/codefast/fan-out";
-import { buildCodefastMicroScenarios } from "./scenarios/codefast/micro";
-import { buildCodefastRealisticScenarios } from "./scenarios/codefast/realistic";
-import { buildCodefastScopeScenarios } from "./scenarios/codefast/scope";
+import { collectFingerprint } from "#/harness/fingerprint";
+import { emitSubprocessPayload } from "#/harness/protocol";
+import { runSanityChecks } from "#/harness/sanity";
+import { runAllTrials } from "#/harness/trial";
+import { buildCodefastDiagnosticScenarios } from "#/scenarios/codefast/diagnostic";
+import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
+import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
+import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
+import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
+import type { AnyScenario } from "#/scenarios/types";
 
 const CODEFAST_LIBRARY_NAME = "@codefast/di";
 

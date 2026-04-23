@@ -15,7 +15,7 @@ import {
   type NodeDescriptor,
   type RealisticNode,
   topologicallyOrderedNodeIds,
-} from "./realistic-graph";
+} from "#/fixtures/realistic-graph";
 
 /**
  * A built container plus every service identifier, retained so sanity

@@ -5,16 +5,16 @@
  * — legacy experimental decorators + `reflect-metadata`.
  */
 import "reflect-metadata";
-import { collectFingerprint } from "./harness/fingerprint";
-import { emitSubprocessPayload } from "./harness/protocol";
-import { runSanityChecks } from "./harness/sanity";
-import { runAllTrials } from "./harness/trial";
-import type { AnyScenario } from "./scenarios/types";
-import { buildInversifyDiagnosticScenarios } from "./scenarios/inversify/diagnostic";
-import { buildInversifyFanOutScenarios } from "./scenarios/inversify/fan-out";
-import { buildInversifyMicroScenarios } from "./scenarios/inversify/micro";
-import { buildInversifyRealisticScenarios } from "./scenarios/inversify/realistic";
-import { buildInversifyScopeScenarios } from "./scenarios/inversify/scope";
+import { collectFingerprint } from "#/harness/fingerprint";
+import { emitSubprocessPayload } from "#/harness/protocol";
+import { runSanityChecks } from "#/harness/sanity";
+import { runAllTrials } from "#/harness/trial";
+import { buildInversifyDiagnosticScenarios } from "#/scenarios/inversify/diagnostic";
+import { buildInversifyFanOutScenarios } from "#/scenarios/inversify/fan-out";
+import { buildInversifyMicroScenarios } from "#/scenarios/inversify/micro";
+import { buildInversifyRealisticScenarios } from "#/scenarios/inversify/realistic";
+import { buildInversifyScopeScenarios } from "#/scenarios/inversify/scope";
+import type { AnyScenario } from "#/scenarios/types";
 
 const INVERSIFY_LIBRARY_NAME = "inversify";
 

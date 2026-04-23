@@ -1,12 +1,12 @@
 import { Container, token } from "@codefast/di";
-import { batched } from "../../harness/batched";
-import { buildCodefastRealisticContainer } from "../../fixtures/codefast-adapter";
+import { buildCodefastRealisticContainer } from "#/fixtures/codefast-adapter";
 import {
   FAN_OUT_TREE_DEPTH_3_BREADTH_4,
   RESOLVE_ALL_STRATEGY_COUNTS,
   type ResolveAllStrategyCount,
-} from "../../fixtures/fan-out-descriptor";
-import type { BenchScenario } from "../types";
+} from "#/fixtures/fan-out-descriptor";
+import { batched } from "#/harness/batched";
+import type { BenchScenario } from "#/scenarios/types";
 
 const FAN_OUT_TREE_BATCH = 20;
 
