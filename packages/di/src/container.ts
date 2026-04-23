@@ -648,32 +648,12 @@ class DefaultContainer implements Container {
     token: Token<unknown> | Constructor<unknown>,
     hint: ResolveHint | undefined,
   ): Binding<unknown> | undefined {
-    const list = this.lookupBindingsInternal(token as RegistryKey);
-    if (list === undefined || list.length === 0) {
-      return undefined;
+    const key = token as RegistryKey;
+    const own = this.ownRegistry.get(key);
+    if (own !== undefined && own.length > 0) {
+      return this.ownRegistry.getSingleBinding(key, hint);
     }
-    if (hint === undefined || (hint.name === undefined && hint.tag === undefined)) {
-      if (list.length === 1) {
-        return list[0];
-      }
-      return undefined;
-    }
-    const candidates = list.filter((binding) => {
-      if (hint.name !== undefined && binding.bindingName !== hint.name) {
-        return false;
-      }
-      if (hint.tag !== undefined) {
-        const [tagKey, tagValue] = hint.tag;
-        if (!Object.is(binding.tags.get(tagKey), tagValue)) {
-          return false;
-        }
-      }
-      return true;
-    });
-    if (candidates.length !== 1) {
-      return undefined;
-    }
-    return candidates[0];
+    return this.parent?.getSingleBindingInHierarchy(token, hint) ?? undefined;
   }
 
   /**
