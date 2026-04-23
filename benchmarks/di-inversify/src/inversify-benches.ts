@@ -17,6 +17,7 @@ import { buildInversifyScopeScenarios } from "#/scenarios/inversify/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
 const INVERSIFY_LIBRARY_NAME = "inversify";
+const INVERSIFY_SCENARIO_NAME = "inversify";
 
 function collectAllInversifyScenarios(): readonly AnyScenario[] {
   return [
@@ -29,6 +30,7 @@ function collectAllInversifyScenarios(): readonly AnyScenario[] {
 }
 
 async function main(): Promise<void> {
+  console.log(`Scenario ${INVERSIFY_SCENARIO_NAME} started`);
   const scenarios = collectAllInversifyScenarios();
   const sanityFailures = runSanityChecks(scenarios);
   const trials = await runAllTrials(scenarios, sanityFailures);
@@ -38,6 +40,7 @@ async function main(): Promise<void> {
     trials,
     sanityFailures,
   });
+  console.log(`Scenario ${INVERSIFY_SCENARIO_NAME} completed`);
 }
 
 main().catch((error: unknown) => {

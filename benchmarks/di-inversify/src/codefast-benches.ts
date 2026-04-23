@@ -24,6 +24,7 @@ import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
 const CODEFAST_LIBRARY_NAME = "@codefast/di";
+const CODEFAST_SCENARIO_NAME = "codefast";
 
 function collectAllCodefastScenarios(): readonly AnyScenario[] {
   return [
@@ -36,6 +37,7 @@ function collectAllCodefastScenarios(): readonly AnyScenario[] {
 }
 
 async function main(): Promise<void> {
+  console.log(`Scenario ${CODEFAST_SCENARIO_NAME} started`);
   const scenarios = collectAllCodefastScenarios();
   const sanityFailures = runSanityChecks(scenarios);
   const trials = await runAllTrials(scenarios, sanityFailures);
@@ -45,6 +47,7 @@ async function main(): Promise<void> {
     trials,
     sanityFailures,
   });
+  console.log(`Scenario ${CODEFAST_SCENARIO_NAME} completed`);
 }
 
 main().catch((error: unknown) => {

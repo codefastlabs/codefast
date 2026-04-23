@@ -14,7 +14,7 @@
  * The subprocess contract lives in `protocol.ts`. Any scenario list change
  * only touches the child processes; this file is stable.
  */
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -34,8 +34,19 @@ import type { LibraryReport } from "#/harness/report";
 const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";
 const CODEFAST_DI_PACKAGE_FILTER = "@codefast/di";
+const HEARTBEAT_SILENCE_MS = 10_000;
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+
+class SubprocessExecutionError extends Error {
+  readonly exitCode: number | undefined;
+
+  constructor(message: string, exitCode?: number) {
+    super(message);
+    this.name = "SubprocessExecutionError";
+    this.exitCode = exitCode;
+  }
+}
 
 /**
  * Environment pinned across both subprocesses. `NODE_OPTIONS` is where the
@@ -48,7 +59,17 @@ const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..",
 function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   const parentEnvironment = process.env;
   const existingNodeOptions = parentEnvironment["NODE_OPTIONS"] ?? "";
-  const requiredFlags = ["--expose-gc", "--no-warnings"];
+  const fastModeEnabled = parentEnvironment["BENCH_FAST"] === "1";
+  const fullModeEnabled = parentEnvironment["BENCH_FULL"] === "1";
+  const requiredFlags =
+    fastModeEnabled || !fullModeEnabled ? ["--no-warnings"] : ["--expose-gc", "--no-warnings"];
+  const hasInspectFlag =
+    existingNodeOptions.includes("--inspect-brk") || existingNodeOptions.includes("--inspect");
+  if (hasInspectFlag) {
+    console.warn(
+      "[bench] Warning: NODE_OPTIONS contains debugger flags (--inspect/--inspect-brk); benchmark subprocesses may stall until timeout.",
+    );
+  }
   const mergedNodeOptions = [existingNodeOptions, ...requiredFlags]
     .filter((segment) => segment.trim().length > 0)
     .join(" ");
@@ -81,42 +102,171 @@ function rebuildCodefastDiPackage(): void {
 }
 
 /**
- * Runs one bench subprocess end-to-end. Passes the subprocess's stdout
- * through to the parent's stdout *only* if no framing markers are found —
- * if framing is intact we assume the subprocess succeeded and suppress its
- * internal chatter so the comparison table isn't buried.
+ * Runs one bench subprocess end-to-end with line-prefixed realtime stream
+ * forwarding to parent stdout/stderr.
  */
-function runSubprocess(
+function createStreamLineForwarder(
+  prefix: string,
+  write: (chunk: string) => void,
+  onOutput: () => void,
+): (chunk: string) => void {
+  let bufferedLineRemainder = "";
+  return (chunk: string): void => {
+    onOutput();
+    bufferedLineRemainder += chunk;
+    const lines = bufferedLineRemainder.split("\n");
+    bufferedLineRemainder = lines.pop() ?? "";
+    for (const line of lines) {
+      write(`${prefix}${line}\n`);
+    }
+  };
+}
+
+function flushStreamLineForwarder(
+  prefix: string,
+  write: (chunk: string) => void,
+  remainder: string,
+): void {
+  if (remainder.length > 0) {
+    write(`${prefix}${remainder}\n`);
+  }
+}
+
+async function runSubprocess(
   tsconfigFileName: string,
   benchEntryFileName: string,
   harnessLabel: string,
-): SubprocessPayload {
+  scenarioName: string,
+): Promise<SubprocessPayload> {
   console.log(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileName}…`);
+  const fastModeEnabled = process.env["BENCH_FAST"] === "1";
+  const fullModeEnabled = process.env["BENCH_FULL"] === "1";
+  if (fullModeEnabled) {
+    console.log(
+      "[bench] Running benchmark with --expose-gc (BENCH_FULL=1). This mode is slower and may hit timeout on macOS.",
+    );
+  } else if (!fastModeEnabled) {
+    console.log(
+      "[bench] Running benchmark without --expose-gc. Expected ~15-25s per scenario. Use BENCH_FULL=1 for GC-enabled runs",
+    );
+  }
   const startedAtMs = performance.now();
+  const childOutputPrefix = `[${scenarioName}] `;
 
-  const spawnResult = spawnSync(
-    "pnpm",
-    ["exec", "tsx", "--tsconfig", tsconfigFileName, join("src", benchEntryFileName)],
-    {
-      cwd: packageRootDirectory,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-      env: buildSubprocessEnvironment(),
-    },
-  );
+  const spawnResult = await new Promise<{
+    stdout: string;
+    stderr: string;
+    exitCode: number | null;
+    signal: NodeJS.Signals | null;
+  }>((resolve, reject) => {
+    const childProcess = spawn(
+      "pnpm",
+      ["exec", "tsx", "--tsconfig", tsconfigFileName, join("src", benchEntryFileName)],
+      {
+        cwd: packageRootDirectory,
+        stdio: ["ignore", "pipe", "pipe"],
+        env: buildSubprocessEnvironment(),
+      },
+    );
+
+    let stdout = "";
+    let stderr = "";
+    let lastOutputAtMs = performance.now();
+    let lastHeartbeatAtMs = startedAtMs;
+    let stdoutRemainder = "";
+    let stderrRemainder = "";
+
+    const refreshOutputTimestamp = (): void => {
+      lastOutputAtMs = performance.now();
+      lastHeartbeatAtMs = performance.now();
+    };
+
+    const heartbeatTimer = setInterval(() => {
+      const nowMs = performance.now();
+      if (
+        nowMs - lastOutputAtMs >= HEARTBEAT_SILENCE_MS &&
+        nowMs - lastHeartbeatAtMs >= HEARTBEAT_SILENCE_MS
+      ) {
+        const elapsedSeconds = (nowMs - startedAtMs) / 1000;
+        console.log(`Still running ${scenarioName}... ${elapsedSeconds.toFixed(1)}s elapsed`);
+        lastHeartbeatAtMs = nowMs;
+      }
+    }, 1000);
+
+    const cleanupTimers = (): void => {
+      clearInterval(heartbeatTimer);
+    };
+
+    childProcess.stdout?.setEncoding("utf8");
+    childProcess.stderr?.setEncoding("utf8");
+
+    const forwardStdoutLine = createStreamLineForwarder(
+      childOutputPrefix,
+      (chunk) => {
+        process.stdout.write(chunk);
+      },
+      refreshOutputTimestamp,
+    );
+    const forwardStderrLine = createStreamLineForwarder(
+      childOutputPrefix,
+      (chunk) => {
+        process.stderr.write(chunk);
+      },
+      refreshOutputTimestamp,
+    );
+
+    childProcess.stdout?.on("data", (chunk: string) => {
+      stdout += chunk;
+      forwardStdoutLine(chunk);
+      const splitLines = stdoutRemainder.concat(chunk).split("\n");
+      stdoutRemainder = splitLines.pop() ?? "";
+    });
+    childProcess.stderr?.on("data", (chunk: string) => {
+      stderr += chunk;
+      forwardStderrLine(chunk);
+      const splitLines = stderrRemainder.concat(chunk).split("\n");
+      stderrRemainder = splitLines.pop() ?? "";
+    });
+
+    childProcess.on("error", (error) => {
+      cleanupTimers();
+      reject(error);
+    });
+
+    childProcess.on("close", (exitCode, signal) => {
+      cleanupTimers();
+      flushStreamLineForwarder(
+        childOutputPrefix,
+        (chunk) => process.stdout.write(chunk),
+        stdoutRemainder,
+      );
+      flushStreamLineForwarder(
+        childOutputPrefix,
+        (chunk) => process.stderr.write(chunk),
+        stderrRemainder,
+      );
+      resolve({
+        stdout,
+        stderr,
+        exitCode,
+        signal,
+      });
+    });
+  });
 
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(
-    `${harnessLabel} subprocess finished in ${elapsedSeconds.toFixed(1)}s wall (exit ${String(spawnResult.status)}).`,
+    `${harnessLabel} subprocess finished in ${elapsedSeconds.toFixed(1)}s wall (exit ${String(spawnResult.exitCode)}).`,
   );
 
-  if (spawnResult.status !== 0) {
+  if (spawnResult.exitCode !== 0) {
     console.error("--- subprocess stderr ---");
     console.error(spawnResult.stderr);
     console.error("--- subprocess stdout ---");
     console.error(spawnResult.stdout);
-    throw new Error(
-      `${harnessLabel} subprocess failed (${benchEntryFileName}), exit ${String(spawnResult.status)}`,
+    throw new SubprocessExecutionError(
+      `${harnessLabel} subprocess failed (${benchEntryFileName}), exit ${String(spawnResult.exitCode)}, signal ${String(spawnResult.signal)}`,
+      spawnResult.exitCode ?? undefined,
     );
   }
 
@@ -177,15 +327,17 @@ async function main(): Promise<void> {
 
   rebuildCodefastDiPackage();
 
-  const codefastPayload = runSubprocess(
+  const codefastPayload = await runSubprocess(
     "tsconfig.codefast.json",
     "codefast-benches.ts",
     CODEFAST_DI_LIBRARY_DISPLAY_NAME,
+    "codefast",
   );
-  const inversifyPayload = runSubprocess(
+  const inversifyPayload = await runSubprocess(
     "tsconfig.inversify.json",
     "inversify-benches.ts",
     INVERSIFY_LIBRARY_DISPLAY_NAME,
+    "inversify",
   );
 
   const codefastReport: LibraryReport = buildLibraryReport(
@@ -233,6 +385,10 @@ main().catch((error: unknown) => {
   console.error(`\nBenchmark run failed: ${message}`);
   if (error instanceof Error && error.stack !== undefined) {
     console.error(error.stack);
+  }
+  if (error instanceof SubprocessExecutionError && error.exitCode !== undefined) {
+    process.exitCode = error.exitCode;
+    return;
   }
   process.exitCode = 1;
 });

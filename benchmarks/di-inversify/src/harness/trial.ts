@@ -11,12 +11,29 @@ import type { ScenarioTrialResult, TrialPayload } from "#/harness/protocol";
  * - `time` / `iterations`: sample until **both** conditions are met.
  * - `warmup{Time,Iterations}`: tinybench's internal warmup, applied every `run()`.
  */
-export const DEFAULT_BENCH_OPTIONS = {
-  time: 450,
-  iterations: 800,
-  warmupTime: 60,
-  warmupIterations: 60,
-} as const;
+const FAST_MODE_ENABLED = process.env["BENCH_FAST"] === "1";
+const FULL_MODE_ENABLED = process.env["BENCH_FULL"] === "1";
+
+export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
+  ? {
+      time: 20,
+      iterations: 50,
+      warmupTime: 5,
+      warmupIterations: 5,
+    }
+  : FULL_MODE_ENABLED
+    ? {
+        time: 450,
+        iterations: 800,
+        warmupTime: 60,
+        warmupIterations: 60,
+      }
+    : {
+        time: 50,
+        iterations: 100,
+        warmupTime: 10,
+        warmupIterations: 10,
+      };
 
 /**
  * How many trials each bench subprocess runs back-to-back. The parent harness
@@ -28,7 +45,7 @@ export const DEFAULT_BENCH_OPTIONS = {
  * reduces (does not eliminate) the cross-trial correlation. For cleaner
  * isolation, spawn multiple subprocesses; that is the user's responsibility.
  */
-export const DEFAULT_TRIAL_COUNT = 5;
+export const DEFAULT_TRIAL_COUNT = FAST_MODE_ENABLED ? 1 : FULL_MODE_ENABLED ? 5 : 2;
 
 /**
  * Force a full GC between tinybench tasks when `--expose-gc` is available.
@@ -39,6 +56,9 @@ export const DEFAULT_TRIAL_COUNT = 5;
  */
 function runGarbageCollectionIfExposed(): void {
   if (typeof globalThis.gc === "function") {
+    if (FAST_MODE_ENABLED) {
+      console.debug("[GC] Manual GC triggered");
+    }
     globalThis.gc();
   }
 }
@@ -182,10 +202,16 @@ export async function runAllTrials(
   trialCount: number = resolveTrialCountFromEnvironment(),
 ): Promise<TrialPayload[]> {
   const trials: TrialPayload[] = [];
+  const scenarioStartedAtMs = performance.now();
   for (let trialIndex = 0; trialIndex < trialCount; trialIndex++) {
     runGarbageCollectionIfExposed();
     const trial = await runOneTrial(trialIndex, scenarios, sanityFailures);
     trials.push(trial);
+    console.log(`Trial ${String(trialIndex + 1)}/${String(trialCount)} done`);
+    if (trialIndex === trialCount - 1) {
+      const scenarioElapsedMs = performance.now() - scenarioStartedAtMs;
+      console.log(`Scenario total: ${scenarioElapsedMs.toFixed(0)}ms`);
+    }
   }
   return trials;
 }
