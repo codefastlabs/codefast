@@ -9,6 +9,7 @@ import { collectFingerprint } from "#/harness/fingerprint";
 import { emitSubprocessPayload } from "#/harness/protocol";
 import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
+import { buildInversifyAsyncScenarios } from "#/scenarios/inversify/async";
 import { buildInversifyDiagnosticScenarios } from "#/scenarios/inversify/diagnostic";
 import { buildInversifyFanOutScenarios } from "#/scenarios/inversify/fan-out";
 import { buildInversifyMicroScenarios } from "#/scenarios/inversify/micro";
@@ -24,6 +25,7 @@ function collectAllInversifyScenarios(): readonly AnyScenario[] {
     ...buildInversifyMicroScenarios(),
     ...buildInversifyRealisticScenarios(),
     ...buildInversifyFanOutScenarios(),
+    ...buildInversifyAsyncScenarios(),
     ...buildInversifyScopeScenarios(),
     ...buildInversifyDiagnosticScenarios(),
   ];
@@ -32,7 +34,7 @@ function collectAllInversifyScenarios(): readonly AnyScenario[] {
 async function main(): Promise<void> {
   console.log(`Scenario ${INVERSIFY_SCENARIO_NAME} started`);
   const scenarios = collectAllInversifyScenarios();
-  const sanityFailures = runSanityChecks(scenarios);
+  const sanityFailures = await runSanityChecks(scenarios);
   const trials = await runAllTrials(scenarios, sanityFailures);
 
   emitSubprocessPayload({

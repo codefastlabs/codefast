@@ -102,6 +102,7 @@ Currently migrated to the trial harness:
 | `micro`      | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                          |
 | `realistic`  | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                          |
 | `fan-out`    | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented) |
+| `async`      | `resolve-async-single-hop`, `dynamic-async-chain-8`                                                                                                                                 |
 | `scope`      | `child-depth-2-resolve`, `child-depth-8-stress` (stress)                                                                                                                            |
 | `diagnostic` | `diagnostic-container-create-empty`                                                                                                                                                 |
 
@@ -119,9 +120,21 @@ Completed in PR #420 [`feat/di-bench-fanout-phase2`](https://github.com/codefast
 
 All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures. IQR < 3%.
 
+### Phase 3 - Async baseline
+
+Completed on branch `feat/di-bench-fanout-phase2` (pending PR split for async-only review)
+
+**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1`:
+
+| Scenario                   | Hz ratio | Mean-ms ratio | Status |
+| -------------------------- | -------- | ------------- | ------ |
+| `resolve-async-single-hop` | 1.000    | 1.034         | Stable |
+| `dynamic-async-chain-8`    | 0.963    | 1.078         | Stable |
+
+All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures.
+
 Planned but not yet migrated (see the git history for the old single-bench implementations):
 
-- `async` — `resolveAsync` + dynamic async chains.
 - `lifecycle` — `postConstruct` / `preDestroy` hot paths, scope dispose.
 - `scale` — deep module trees, 500+ bindings.
 - `boot` — decorator-driven container construction (each library in its canonical decorator mode).
@@ -146,12 +159,14 @@ src/
       micro.ts
       realistic.ts
       fan-out.ts
+      async.ts
       scope.ts
       diagnostic.ts
     inversify/            # InversifyJS 8 scenario modules (mirror)
       micro.ts
       realistic.ts
       fan-out.ts
+      async.ts
       scope.ts
       diagnostic.ts
   fixtures/

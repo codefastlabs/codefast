@@ -50,7 +50,7 @@ export interface BenchScenario {
    * Optional sanity check — run once before tinybench takes the closure.
    * Must return true, or the scenario fails loudly before measurement.
    */
-  readonly sanity?: () => boolean;
+  readonly sanity?: () => boolean | Promise<boolean>;
   /**
    * Builds the closure to measure. Called once per scenario per bench run.
    * Anything expensive (registering bindings, constructing the graph) should
