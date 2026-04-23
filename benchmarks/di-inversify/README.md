@@ -97,13 +97,27 @@ Three things to check before drawing conclusions:
 
 Currently migrated to the trial harness:
 
-| Group        | Scenarios                                                                                                  |
-| ------------ | ---------------------------------------------------------------------------------------------------------- |
-| `micro`      | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                 |
-| `realistic`  | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only) |
-| `fan-out`    | `fan-out-tree-depth-3-breadth-4`, `resolve-all-strategies-10`, `resolve-all-strategies-100`                |
-| `scope`      | `child-depth-2-resolve`, `child-depth-8-stress` (stress)                                                   |
-| `diagnostic` | `diagnostic-container-create-empty`                                                                        |
+| Group        | Scenarios                                                                                                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `micro`      | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                          |
+| `realistic`  | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                          |
+| `fan-out`    | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented) |
+| `scope`      | `child-depth-2-resolve`, `child-depth-8-stress` (stress)                                                                                                                            |
+| `diagnostic` | `diagnostic-container-create-empty`                                                                                                                                                 |
+
+### Phase 2 - Fan-out baseline
+
+Completed in PR #420 [`feat/di-bench-fanout-phase2`](https://github.com/codefastlabs/codefast/pull/420)
+
+**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1`:
+
+| Scenario                         | Hz ratio | Mean-ms ratio | Status |
+| -------------------------------- | -------- | ------------- | ------ |
+| `fan-out-tree-depth-3-breadth-4` | 0.996    | 0.997         | Stable |
+| `resolve-all-strategies-10`      | 0.979    | 1.027         | Stable |
+| `resolve-all-strategies-100`     | 0.978    | 1.026         | Stable |
+
+All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures. IQR < 3%.
 
 Planned but not yet migrated (see the git history for the old single-bench implementations):
 
