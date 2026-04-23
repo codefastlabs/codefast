@@ -24,8 +24,9 @@ import {
   createSimpleWithoutMergeBenchmark,
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
-} from "#/benchmarks/index.js";
-import { generatePerformanceSummary } from "#/utils/index.js";
+} from "#/benchmarks/index";
+import { generatePerformanceSummary } from "#/utils/index";
+import type { Bench } from "tinybench";
 
 /**
  * Main function to run all benchmarks
@@ -61,7 +62,7 @@ async function main() {
     const totalSuites = 16;
     let currentSuite = 0;
 
-    const runBenchmark = async (benchmark) => {
+    const runBenchmark = async (benchmark: Bench) => {
       currentSuite++;
       const benchmarkName = benchmark.name || "Unknown Benchmark";
       console.log(`▶ [${currentSuite}/${totalSuites}] Running "${benchmarkName}" benchmark...`);

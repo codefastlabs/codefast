@@ -10,10 +10,6 @@
     "//#lint:fix": {
       "cache": false
     },
-    "bench": {
-      "cache": false,
-      "dependsOn": ["^build"]
-    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],

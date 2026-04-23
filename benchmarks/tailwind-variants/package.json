@@ -25,16 +25,11 @@
   },
   "type": "module",
   "imports": {
-    "#/*": [
-      "./src/*",
-      "./src/*.js",
-      "./src/*.jsx",
-      "./src/*/index.js",
-      "./src/*/index.jsx"
-    ]
+    "#/*": "./src/*"
   },
   "scripts": {
-    "bench": "tsx src/index.js"
+    "bench": "pnpm exec tsx src/index.ts",
+    "check-types": "tsgo --noEmit"
   },
   "dependencies": {
     "@codefast/tailwind-variants": "workspace:*",
@@ -43,5 +38,10 @@
     "tailwind-variants": "catalog:",
     "tinybench": "catalog:",
     "tsx": "catalog:"
+  },
+  "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
+    "@typescript/native-preview": "catalog:",
+    "typescript": "catalog:"
   }
 }

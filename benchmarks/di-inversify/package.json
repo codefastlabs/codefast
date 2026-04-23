@@ -18,7 +18,7 @@
   },
   "type": "module",
   "scripts": {
-    "check-types": "tsgo --noEmit -p tsconfig.runner.json && tsgo --noEmit -p tsconfig.codefast.json && tsgo --noEmit -p tsconfig.inversify.json",
+    "check-types": "tsgo --noEmit",
     "bench": "pnpm exec tsx src/run-benchmark.ts",
     "bench:codefast": "pnpm exec tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
     "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts"

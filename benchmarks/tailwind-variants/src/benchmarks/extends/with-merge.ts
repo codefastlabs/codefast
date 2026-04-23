@@ -4,15 +4,14 @@
  * Benchmarks configuration extension functionality with tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
+import { codefastTV, originalTV } from "#/benchmark-tv";
 import {
   extendsBaseVariants,
   extendsExtensionVariants,
   extendsTestProps,
-} from "#/benchmarks/extends/data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+} from "#/benchmarks/extends/data";
 
 const originalTVBase = originalTV(extendsBaseVariants);
 const codefastTVBase = codefastTV(extendsBaseVariants);
