@@ -601,6 +601,16 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
+    if (binding.scope === "transient") {
+      const frame = bindingToMaterializationFrame(registryKey, binding);
+      const extendedStack = [...materializationStack, frame];
+      const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
+      const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
+      if (binding.kind === "class") {
+        runPostConstruct(binding.implementationClass, instance, pathLabels);
+      }
+      return runActivation(binding, instance, ctx, pathLabels);
+    }
     const cached = this.deps.scopeManager.getCached(binding);
     if (cached !== undefined || this.deps.scopeManager.isBindingCached(binding)) {
       return cached;
@@ -630,6 +640,23 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
+    if (binding.scope === "transient") {
+      const frame = bindingToMaterializationFrame(registryKey, binding);
+      const extendedStack = [...materializationStack, frame];
+      const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
+      const instance = await this.materializeAsync(
+        binding,
+        hint,
+        ctx,
+        pathLabels,
+        visiting,
+        extendedStack,
+      );
+      if (binding.kind === "class") {
+        await runPostConstructAsync(binding.implementationClass, instance);
+      }
+      return await runActivationAsync(binding, instance, ctx, pathLabels);
+    }
     return this.deps.scopeManager.getOrCreateAsync(binding, async () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       const extendedStack = [...materializationStack, frame];

@@ -31,6 +31,11 @@ function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
  * prototype chain, matching the intent that a parent's lifecycle hook applies to children.
  */
 export class SymbolMetadataReader implements MetadataReader {
+  private readonly constructorMetadataCache = new WeakMap<
+    Constructor<unknown>,
+    ConstructorMetadata | null
+  >();
+
   /**
    * Reads constructor param metadata written by `@injectable()`.
    * Returns `undefined` if no own metadata is present on the class.
@@ -44,16 +49,23 @@ export class SymbolMetadataReader implements MetadataReader {
   getConstructorMetadata(
     implementationClass: Constructor<unknown>,
   ): ConstructorMetadata | undefined {
+    const cachedMetadata = this.constructorMetadataCache.get(implementationClass);
+    if (cachedMetadata !== undefined) {
+      return cachedMetadata === null ? undefined : cachedMetadata;
+    }
+
     const metadataSymbol = decoratorMetadataObjectSymbol();
     const ownMetadataDescriptor = Object.getOwnPropertyDescriptor(
       implementationClass as unknown as object,
       metadataSymbol,
     );
     if (ownMetadataDescriptor === undefined) {
+      this.constructorMetadataCache.set(implementationClass, null);
       return undefined;
     }
     const rawMetadata: unknown = ownMetadataDescriptor.value;
     if (typeof rawMetadata !== "object" || rawMetadata === null) {
+      this.constructorMetadataCache.set(implementationClass, null);
       return undefined;
     }
     const metadataObject = rawMetadata;
@@ -62,14 +74,17 @@ export class SymbolMetadataReader implements MetadataReader {
     // a subclass without @injectable() would silently inherit parent metadata, causing
     // wrong dep count injection with no compile-time error.
     if (!Object.hasOwn(metadataObject, CODEFAST_DI_CONSTRUCTOR_METADATA)) {
+      this.constructorMetadataCache.set(implementationClass, null);
       return undefined;
     }
     const raw: unknown = (metadataObject as Record<PropertyKey, unknown>)[
       CODEFAST_DI_CONSTRUCTOR_METADATA
     ];
     if (!isConstructorMetadata(raw)) {
+      this.constructorMetadataCache.set(implementationClass, null);
       return undefined;
     }
+    this.constructorMetadataCache.set(implementationClass, raw);
     return raw;
   }
 
