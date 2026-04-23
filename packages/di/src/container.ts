@@ -52,6 +52,7 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
  */
 const lastWinsTagObjectIds = new WeakMap<object, number>();
 let lastWinsTagObjectIdSeq = 1;
+const NOT_FOUND = Symbol("container-fast-path-not-found");
 
 function allocateLastWinsTagObjectId(value: object): number {
   let id = lastWinsTagObjectIds.get(value);
@@ -238,6 +239,7 @@ class DefaultContainer implements Container {
    */
   private readonly tokenByBindingId = new Map<BindingIdentifier, RegistryKey>();
   private readonly slotKeyByBindingId = new Map<BindingIdentifier, string>();
+  private readonly isDevEnv: boolean = isDevelopmentOrTestEnvironment();
 
   private flushPendingBindings(): void {
     if (this.pendingRegistrationBuilders.size === 0) {
@@ -601,10 +603,77 @@ class DefaultContainer implements Container {
   resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
     this.flushPendingBindings();
     try {
+      const fastResult = this.tryFastResolve<Value>(token, hint);
+      if (fastResult !== NOT_FOUND) {
+        return fastResult;
+      }
       return this.resolver.resolveRoot(token, hint);
     } finally {
       this.maybeRunDevValidationOnce();
     }
+  }
+
+  private tryFastResolve<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint: ResolveHint | undefined,
+  ): Value | typeof NOT_FOUND {
+    const binding = this.getSingleBindingInHierarchy(token, hint);
+    if (binding === undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.constraint !== undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.onActivation !== undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.onDeactivation !== undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.kind === "async-dynamic") {
+      return NOT_FOUND;
+    }
+    if (binding.kind === "constant") {
+      return binding.value as Value;
+    }
+    if (this.ownScopeManager.isBindingCached(binding)) {
+      return this.ownScopeManager.getOrCreate(binding, () => {
+        throw new InternalError("Expected cached value for binding");
+      }) as Value;
+    }
+    return NOT_FOUND;
+  }
+
+  private getSingleBindingInHierarchy(
+    token: Token<unknown> | Constructor<unknown>,
+    hint: ResolveHint | undefined,
+  ): Binding<unknown> | undefined {
+    const list = this.lookupBindingsInternal(token as RegistryKey);
+    if (list === undefined || list.length === 0) {
+      return undefined;
+    }
+    if (hint === undefined || (hint.name === undefined && hint.tag === undefined)) {
+      if (list.length === 1) {
+        return list[0];
+      }
+      return undefined;
+    }
+    const candidates = list.filter((binding) => {
+      if (hint.name !== undefined && binding.bindingName !== hint.name) {
+        return false;
+      }
+      if (hint.tag !== undefined) {
+        const [tagKey, tagValue] = hint.tag;
+        if (!Object.is(binding.tags.get(tagKey), tagValue)) {
+          return false;
+        }
+      }
+      return true;
+    });
+    if (candidates.length !== 1) {
+      return undefined;
+    }
+    return candidates[0];
   }
 
   /**
@@ -696,7 +765,7 @@ class DefaultContainer implements Container {
    * Guards against repeated validation on successive resolves without intervening mutations.
    */
   private maybeRunDevValidationOnce(): void {
-    if (!isDevelopmentOrTestEnvironment()) {
+    if (!this.isDevEnv) {
       return;
     }
     if (this.hasDevValidationRun) {
