@@ -67,6 +67,12 @@ function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
   if (binding.constraint !== undefined) {
     return undefined;
   }
+  if (binding.bindingName === undefined && binding.tags.size === 0) {
+    return "default";
+  }
+  if (binding.tags.size === 0) {
+    return `name=${binding.bindingName}`;
+  }
   const toStableTagValue = (value: unknown): string => {
     if (typeof value === "bigint") {
       return `bigint:${value.toString()}n`;
@@ -84,14 +90,10 @@ function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
   const normalizedTagEntries = [...binding.tags.entries()]
     .sort(([leftTag], [rightTag]) => leftTag.localeCompare(rightTag))
     .map(([tagKey, tagValue]) => [tagKey, toStableTagValue(tagValue)] as const);
-  const tagsKey =
-    normalizedTagEntries.length === 0
-      ? ""
-      : normalizedTagEntries.map(([tagKey, tagValue]) => `${tagKey}:${tagValue}`).join("|");
+  const tagsKey = normalizedTagEntries
+    .map(([tagKey, tagValue]) => `${tagKey}:${tagValue}`)
+    .join("|");
   const nameKey = binding.bindingName ?? "";
-  if (nameKey === "" && tagsKey === "") {
-    return "default";
-  }
   return `name=${nameKey};tags=${tagsKey}`;
 }
 
