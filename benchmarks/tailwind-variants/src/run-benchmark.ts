@@ -24,7 +24,8 @@ import {
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
 } from "#/benchmarks/index";
-import { Bench, type TaskResult } from "tinybench";
+import { BENCH_OPTIONS } from "#/bench-options";
+import { Bench, Task, type TaskResult } from "tinybench";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -32,16 +33,13 @@ const CODEFAST_TAILWIND_VARIANTS_FILTER = "@codefast/tailwind-variants";
 const CODEFAST_TAILWIND_VARIANTS_DISPLAY = "@codefast/tailwind-variants";
 /** Short label for report table headers (package is @codefast/tailwind-variants). */
 const REPORT_CODEFAST_LABEL = "@codefast/tv";
+/** Short label for upstream `tv` column (tailwind-variants npm package). */
+const REPORT_UPSTREAM_TV_LABEL = "tv";
 const UPSTREAM_TV_DISPLAY = "tailwind-variants";
 
 const TASK_UPSTREAM = "tailwind-variants";
 const TASK_CVA = "class-variance-authority";
 const TASK_CODEFAST = "@codefast/tailwind-variants";
-
-const BENCH_ITERATIONS = 1000;
-const BENCH_TIME_MS = 1000;
-const BENCH_WARMUP_ITERATIONS = 100;
-const BENCH_WARMUP_MS = 100;
 
 type TaskMetrics = {
   hz: number;
@@ -120,6 +118,30 @@ function formatHz(value: number): string {
   return Math.round(value).toLocaleString("en-US");
 }
 
+function shortTaskLabel(taskName: string): string {
+  if (taskName === TASK_UPSTREAM) {
+    return "tv";
+  }
+  if (taskName === TASK_CODEFAST) {
+    return "@codefast/tv";
+  }
+  if (taskName === TASK_CVA) {
+    return "CVA";
+  }
+  return taskName;
+}
+
+function logSingleLibraryTaskWallLine(task: Task): void {
+  const result = task.result;
+  if (!isStatisticalResult(result)) {
+    const state = "state" in result ? result.state : "unknown";
+    console.log(`  ${shortTaskLabel(task.name)}: — (${state})`);
+    return;
+  }
+  const seconds = (result.totalTime / 1000).toFixed(2);
+  console.log(`  ${shortTaskLabel(task.name)}: ${seconds}s wall`);
+}
+
 function formatMeanTriplet(
   codefast: TaskMetrics,
   upstream: TaskMetrics,
@@ -141,59 +163,74 @@ function printWhyHarnessWallTimesDiffer(): void {
     [
       "Why “Finished … (Xs wall)” per scenario can differ from the hz columns:",
       "",
-      `Each tinybench task keeps sampling until BOTH are true: at least \`iterations\` samples (${String(BENCH_ITERATIONS)})`,
-      `AND the sum of per-sample durations is at least \`time\` (${String(BENCH_TIME_MS)} ms). When one callback is very`,
+      `Each tinybench task keeps sampling until BOTH are true: at least \`iterations\` samples (${String(BENCH_OPTIONS.iterations)})`,
+      `AND the sum of per-sample durations is at least \`time\` (${String(BENCH_OPTIONS.time)} ms). When one callback is very`,
       "fast, the iteration budget may not add up to the time budget yet, so tinybench runs extra iterations. When a",
       "callback is slower, the time budget is reached sooner. Scenario wall time is therefore not a fair head-to-head",
       "score between libraries; use the table (throughput hz and mean ms) instead.",
+      "",
+      "Indented lines under each scenario (tv / @codefast/tv / CVA) print as each task finishes measuring, via",
+      "tinybench’s bench `cycle` event. They use per-task totalTime (ms for that task’s benchmark cycle), shown as",
+      "seconds. They may sum to less than the scenario clock wall because the scenario timer includes warmup and",
+      "bench scheduling between tasks.",
       "",
     ].join("\n"),
   );
 }
 
 function printComparisonTable(rows: ScenarioRow[]): void {
-  const hCodefast = `${REPORT_CODEFAST_LABEL} hz`;
-  const hUpstream = `${UPSTREAM_TV_DISPLAY} hz`;
-  const hCva = "CVA hz";
-  const hRatioTv = `${REPORT_CODEFAST_LABEL} / ${UPSTREAM_TV_DISPLAY}`;
-  const hRatioCva = `${REPORT_CODEFAST_LABEL} / CVA`;
-  const hMean = `Mean ms (${REPORT_CODEFAST_LABEL} → ${UPSTREAM_TV_DISPLAY} [→ CVA])`;
+  const headerScenario = "Scenario";
+  const headerCodefast = `${REPORT_CODEFAST_LABEL} hz`;
+  const headerUpstream = `${REPORT_UPSTREAM_TV_LABEL} hz`;
+  const headerCva = "CVA hz";
+  const headerRatioTv = `${REPORT_CODEFAST_LABEL} / ${REPORT_UPSTREAM_TV_LABEL}`;
+  const headerRatioCva = `${REPORT_CODEFAST_LABEL} / CVA`;
+  const headerMean = `Mean ms (${REPORT_CODEFAST_LABEL} → ${REPORT_UPSTREAM_TV_LABEL} [→ CVA])`;
 
-  const scenarioColumnWidth = Math.max(28, ...rows.map((row) => row.scenarioId.length));
-  const wCodefast = Math.max(12, hCodefast.length);
-  const wUpstream = Math.max(12, hUpstream.length);
-  const wCva = Math.max(6, hCva.length);
-  const wRatioTv = Math.max(8, hRatioTv.length);
-  const wRatioCva = Math.max(8, hRatioCva.length);
+  const cells = rows.map((row) => ({
+    scenario: row.scenarioId,
+    codefast: formatHz(row.codefast.hz),
+    upstream: formatHz(row.upstream.hz),
+    cva: row.cva !== null ? formatHz(row.cva.hz) : "—",
+    ratioTv: formatRatio(row.codefast.hz, row.upstream.hz),
+    ratioCva: row.cva !== null ? formatRatio(row.codefast.hz, row.cva.hz) : "—",
+    mean: formatMeanTriplet(row.codefast, row.upstream, row.cva),
+  }));
+
+  const wScenario = Math.max(
+    28,
+    headerScenario.length,
+    ...cells.map((cell) => cell.scenario.length),
+  );
+  const wCodefast = Math.max(headerCodefast.length, ...cells.map((cell) => cell.codefast.length));
+  const wUpstream = Math.max(headerUpstream.length, ...cells.map((cell) => cell.upstream.length));
+  const wCva = Math.max(headerCva.length, ...cells.map((cell) => cell.cva.length));
+  const wRatioTv = Math.max(headerRatioTv.length, ...cells.map((cell) => cell.ratioTv.length));
+  const wRatioCva = Math.max(headerRatioCva.length, ...cells.map((cell) => cell.ratioCva.length));
+  const wMean = Math.max(headerMean.length, ...cells.map((cell) => cell.mean.length));
 
   const headerLine = [
-    "Scenario".padEnd(scenarioColumnWidth),
-    hCodefast.padStart(wCodefast),
-    hUpstream.padStart(wUpstream),
-    hCva.padStart(wCva),
-    hRatioTv.padStart(wRatioTv),
-    hRatioCva.padStart(wRatioCva),
-    hMean,
+    headerScenario.padEnd(wScenario),
+    headerCodefast.padStart(wCodefast),
+    headerUpstream.padStart(wUpstream),
+    headerCva.padStart(wCva),
+    headerRatioTv.padStart(wRatioTv),
+    headerRatioCva.padStart(wRatioCva),
+    headerMean.padEnd(wMean),
   ].join(CLI_TABLE_COLUMN_GAP);
 
   console.log(`\n${headerLine}`);
   console.log("-".repeat(headerLine.length));
 
-  for (const row of rows) {
-    const ratioTv = formatRatio(row.codefast.hz, row.upstream.hz);
-    const ratioCvaCell = (
-      row.cva !== null ? formatRatio(row.codefast.hz, row.cva.hz) : "—"
-    ).padStart(wRatioCva);
-    const cvaCell = (row.cva !== null ? formatHz(row.cva.hz) : "—").padStart(wCva);
-
+  for (const cell of cells) {
     const dataLine = [
-      row.scenarioId.padEnd(scenarioColumnWidth),
-      formatHz(row.codefast.hz).padStart(wCodefast),
-      formatHz(row.upstream.hz).padStart(wUpstream),
-      cvaCell,
-      ratioTv.padStart(wRatioTv),
-      ratioCvaCell,
-      formatMeanTriplet(row.codefast, row.upstream, row.cva),
+      cell.scenario.padEnd(wScenario),
+      cell.codefast.padStart(wCodefast),
+      cell.upstream.padStart(wUpstream),
+      cell.cva.padStart(wCva),
+      cell.ratioTv.padStart(wRatioTv),
+      cell.ratioCva.padStart(wRatioCva),
+      cell.mean.padEnd(wMean),
     ].join(CLI_TABLE_COLUMN_GAP);
     console.log(dataLine);
   }
@@ -204,7 +241,19 @@ function printComparisonTable(rows: ScenarioRow[]): void {
 async function runScenario(scenarioId: string, bench: Bench): Promise<ScenarioRow> {
   console.log(`Running scenario: ${scenarioId}…`);
   const startedAtMs = performance.now();
-  await bench.run();
+  const onBenchCycle = (event: Event): void => {
+    const task = (event as { task?: Task }).task;
+    if (task === undefined) {
+      return;
+    }
+    logSingleLibraryTaskWallLine(task);
+  };
+  bench.addEventListener("cycle", onBenchCycle);
+  try {
+    await bench.run();
+  } finally {
+    bench.removeEventListener("cycle", onBenchCycle);
+  }
   const wallSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(`Finished scenario: ${scenarioId} (${wallSeconds.toFixed(1)}s wall).\n`);
 
@@ -220,8 +269,9 @@ async function main(): Promise<void> {
   console.log(
     "\n@codefast/benchmark-tailwind-variants — comparing libraries with " +
       `${CODEFAST_TAILWIND_VARIANTS_DISPLAY} as the primary baseline\n` +
-      `(per task: warm-up ${String(BENCH_WARMUP_ITERATIONS)} iterations / ${String(BENCH_WARMUP_MS)} ms, ` +
-      `then measure until at least ${String(BENCH_ITERATIONS)} iterations AND at least ${String(BENCH_TIME_MS)} ms summed sample time)\n`,
+      `(per task: warm-up ${String(BENCH_OPTIONS.warmupIterations)} iterations / ${String(BENCH_OPTIONS.warmupTime)} ms, ` +
+      `then measure until at least ${String(BENCH_OPTIONS.iterations)} iterations AND at least ${String(BENCH_OPTIONS.time)} ms summed sample time)\n` +
+      "Scenarios that include CVA run tasks in order: tv (tailwind-variants) → @codefast/tv → class-variance-authority.\n",
   );
 
   buildCodefastTailwindVariantsPackage();
@@ -255,8 +305,8 @@ async function main(): Promise<void> {
   printComparisonTable(rows);
 
   console.log(
-    `Note: When ${REPORT_CODEFAST_LABEL} / ${UPSTREAM_TV_DISPLAY} (or / CVA) is greater than 1, ` +
-      `${REPORT_CODEFAST_LABEL} (${CODEFAST_TAILWIND_VARIANTS_DISPLAY}) is faster (higher hz). ` +
+    `Note: When ${REPORT_CODEFAST_LABEL} / ${REPORT_UPSTREAM_TV_LABEL} (or / CVA) is greater than 1, ` +
+      `${REPORT_CODEFAST_LABEL} (${CODEFAST_TAILWIND_VARIANTS_DISPLAY}) is faster than ${REPORT_UPSTREAM_TV_LABEL} (${UPSTREAM_TV_DISPLAY}) (higher hz). ` +
       "Throughput is tinybench throughput.mean (operations per second scaled to workload per iteration). " +
       "“—” in CVA columns means that scenario has no class-variance-authority (CVA) task. Run several times on a quiet machine.\n",
   );

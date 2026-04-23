@@ -6,6 +6,7 @@
 
 import { Bench } from "tinybench";
 
+import { BENCH_OPTIONS, TV_MERGE_ENABLED } from "#/bench-options";
 import { codefastTV, originalTV } from "#/benchmark-tv";
 import {
   extendsBaseVariants,
@@ -13,12 +14,18 @@ import {
   extendsTestProps,
 } from "#/benchmarks/extends/data";
 
-const originalTVBase = originalTV(extendsBaseVariants);
-const codefastTVBase = codefastTV(extendsBaseVariants);
+const originalTVBase = originalTV(extendsBaseVariants, TV_MERGE_ENABLED);
+const codefastTVBase = codefastTV(extendsBaseVariants, TV_MERGE_ENABLED);
 
 // Initialize benchmark functions
-const originalTVExtends = originalTV({ ...extendsExtensionVariants, extend: originalTVBase });
-const codefastTVExtends = codefastTV({ ...extendsExtensionVariants, extend: codefastTVBase });
+const originalTVExtends = originalTV(
+  { ...extendsExtensionVariants, extend: originalTVBase },
+  TV_MERGE_ENABLED,
+);
+const codefastTVExtends = codefastTV(
+  { ...extendsExtensionVariants, extend: codefastTVBase },
+  TV_MERGE_ENABLED,
+);
 
 /**
  * Create extends benchmark with tailwind-merge
@@ -26,10 +33,7 @@ const codefastTVExtends = codefastTV({ ...extendsExtensionVariants, extend: code
 export function createExtendsWithMergeBenchmark(name = "Extends (With Tailwind Merge)") {
   const bench = new Bench({
     name,
-    iterations: 1000,
-    time: 1000,
-    warmupIterations: 100,
-    warmupTime: 100,
+    ...BENCH_OPTIONS,
   });
 
   bench

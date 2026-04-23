@@ -6,6 +6,7 @@
 
 import { Bench } from "tinybench";
 
+import { BENCH_OPTIONS, TV_MERGE_DISABLED } from "#/bench-options";
 import { codefastTV, originalTV } from "#/benchmark-tv";
 import {
   extendsBaseVariants,
@@ -13,17 +14,17 @@ import {
   extendsTestProps,
 } from "#/benchmarks/extends/data";
 
-const originalTVBase = originalTV(extendsBaseVariants, { twMerge: false });
-const codefastTVBase = codefastTV(extendsBaseVariants, { twMerge: false });
+const originalTVBase = originalTV(extendsBaseVariants, TV_MERGE_DISABLED);
+const codefastTVBase = codefastTV(extendsBaseVariants, TV_MERGE_DISABLED);
 
 // Initialize benchmark functions
 const originalTVExtends = originalTV(
   { ...extendsExtensionVariants, extend: originalTVBase },
-  { twMerge: false },
+  TV_MERGE_DISABLED,
 );
 const codefastTVExtends = codefastTV(
   { ...extendsExtensionVariants, extend: codefastTVBase },
-  { twMerge: false },
+  TV_MERGE_DISABLED,
 );
 
 /**
@@ -32,10 +33,7 @@ const codefastTVExtends = codefastTV(
 export function createExtendsWithoutMergeBenchmark(name = "Extends") {
   const bench = new Bench({
     name,
-    iterations: 1000,
-    time: 1000,
-    warmupIterations: 100,
-    warmupTime: 100,
+    ...BENCH_OPTIONS,
   });
 
   bench
