@@ -37,7 +37,6 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 - [Modules](#modules)
 - [Errors](#errors)
 - [Package exports](#package-exports)
-- [Benchmarks](#benchmarks)
 - [Contributing](#contributing)
 - [License](#license)
 - [Changelog](#changelog)

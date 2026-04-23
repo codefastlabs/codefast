@@ -156,8 +156,6 @@
     "clean": "rm -rf dist",
     "examples": "for file in examples/*/*.ts; do echo \"=== Running $file ===\"; tsx \"$file\"; echo \"\n\" || exit 1; done",
     "bench": "vitest bench --run",
-    "bench:baseline": "vitest bench --run --outputJson bench/baseline.json",
-    "bench:compare": "vitest bench --run --compare bench/baseline.json",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
