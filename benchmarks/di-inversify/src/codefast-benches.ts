@@ -16,6 +16,7 @@ import { collectFingerprint } from "#/harness/fingerprint";
 import { emitSubprocessPayload } from "#/harness/protocol";
 import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
+import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";
 import { buildCodefastDiagnosticScenarios } from "#/scenarios/codefast/diagnostic";
 import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
 import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
@@ -31,6 +32,7 @@ function collectAllCodefastScenarios(): readonly AnyScenario[] {
     ...buildCodefastMicroScenarios(),
     ...buildCodefastRealisticScenarios(),
     ...buildCodefastFanOutScenarios(),
+    ...buildCodefastAsyncScenarios(),
     ...buildCodefastScopeScenarios(),
     ...buildCodefastDiagnosticScenarios(),
   ];
@@ -39,7 +41,7 @@ function collectAllCodefastScenarios(): readonly AnyScenario[] {
 async function main(): Promise<void> {
   console.log(`Scenario ${CODEFAST_SCENARIO_NAME} started`);
   const scenarios = collectAllCodefastScenarios();
-  const sanityFailures = runSanityChecks(scenarios);
+  const sanityFailures = await runSanityChecks(scenarios);
   const trials = await runAllTrials(scenarios, sanityFailures);
 
   emitSubprocessPayload({

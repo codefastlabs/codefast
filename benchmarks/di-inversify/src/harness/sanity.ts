@@ -6,7 +6,7 @@ import type { AnyScenario } from "#/scenarios/types";
  * that the parent harness surfaces in the report and treats as non-fatal — the
  * scenario is skipped rather than polluting the table with zero-hz rows.
  */
-export function runSanityChecks(scenarios: readonly AnyScenario[]): string[] {
+export async function runSanityChecks(scenarios: readonly AnyScenario[]): Promise<string[]> {
   const sanityFailures: string[] = [];
   for (const scenario of scenarios) {
     if (scenario.sanity === undefined) {
@@ -14,7 +14,7 @@ export function runSanityChecks(scenarios: readonly AnyScenario[]): string[] {
     }
     let ok = false;
     try {
-      ok = scenario.sanity();
+      ok = await scenario.sanity();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`[sanity] ${scenario.id}: threw — ${errorMessage}`);
