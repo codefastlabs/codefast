@@ -6,5 +6,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/run-benchmark.ts"]
+  "include": ["src/harness/run.ts", "src/harness/protocol.ts", "src/harness/report.ts", "src/run-benchmark.ts"]
 }

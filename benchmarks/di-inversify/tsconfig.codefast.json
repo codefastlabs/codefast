@@ -6,5 +6,12 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/codefast-benches.ts"]
+  "include": [
+    "src/codefast-benches.ts",
+    "src/harness/**/*.ts",
+    "src/scenarios/types.ts",
+    "src/scenarios/codefast/**/*.ts",
+    "src/fixtures/realistic-graph.ts",
+    "src/fixtures/codefast-adapter.ts"
+  ]
 }

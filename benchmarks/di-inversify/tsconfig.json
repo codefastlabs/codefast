@@ -5,5 +5,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src"]
+  "comment": "Editor-default only. Only includes library-agnostic files so decorator-mode conflicts never surface here. check-types uses the three explicit tsconfigs (codefast / inversify / runner).",
+  "include": ["src/harness/**/*.ts", "src/scenarios/types.ts", "src/fixtures/realistic-graph.ts"]
 }
