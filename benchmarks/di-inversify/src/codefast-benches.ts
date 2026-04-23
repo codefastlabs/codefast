@@ -19,6 +19,9 @@ const CHAIN_DEEP = 16;
 const ROTATE_N = 32;
 const MODULE_BINDS = 20;
 const CHILD_DEPTH = 8;
+const cfModuleTokens = Array.from({ length: MODULE_BINDS }, (_, i) =>
+  token<number>(`bench-cf-mod-t-${i}`),
+);
 
 const constantValueBindingToken = token<number>("bench-cf-constant");
 const wideNamedBindingToken = token<number>("bench-cf-wide");
@@ -55,7 +58,7 @@ function buildSingletonClassBench(): () => void {
 
 function buildTransientClassBench(): () => void {
   const container = Container.create();
-  container.bind(dependencyClassToken).to(CfDep);
+  container.bind(dependencyClassToken).to(CfDep).transient();
   container.bind(serviceClassToken).to(CfService).transient();
   return () => {
     container.resolve(serviceClassToken);
@@ -128,12 +131,13 @@ function buildResolveNamed48xBench(): () => void {
       .whenNamed(`slot-${slotIndex}`)
       .toConstantValue(slotIndex);
   }
+  const hints = Array.from({ length: WIDE_N }, (_, slotIndex) => ({ name: `slot-${slotIndex}` }));
   for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
-    container.resolve(manyNamedSlotsBindingToken, { name: `slot-${slotIndex}` });
+    container.resolve(manyNamedSlotsBindingToken, hints[slotIndex]);
   }
   return () => {
     for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
-      container.resolve(manyNamedSlotsBindingToken, { name: `slot-${slotIndex}` });
+      container.resolve(manyNamedSlotsBindingToken, hints[slotIndex]);
     }
   };
 }
@@ -169,8 +173,8 @@ function buildChildInheritResolve8Bench(): () => void {
 
 function buildFromModules20Bench(): () => void {
   const twentyBindingModule = Module.create("bench-cf-mod20", (moduleApi) => {
-    for (let bindingIndex = 0; bindingIndex < MODULE_BINDS; bindingIndex++) {
-      moduleApi.bind(token<number>(`bench-cf-mod-t-${bindingIndex}`)).toConstantValue(bindingIndex);
+    for (let i = 0; i < MODULE_BINDS; i++) {
+      moduleApi.bind(cfModuleTokens[i]!).toConstantValue(i);
     }
   });
   return () => {

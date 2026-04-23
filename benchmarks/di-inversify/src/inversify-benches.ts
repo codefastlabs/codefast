@@ -142,12 +142,13 @@ function buildResolveNamed48xBench(): () => void {
       .toConstantValue(slotIndex)
       .whenNamed(`slot-${slotIndex}`);
   }
+  const hints = Array.from({ length: WIDE_N }, (_, slotIndex) => ({ name: `slot-${slotIndex}` }));
   for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
-    container.get<number>(manyNamedSlotsBindingIdentifier, { name: `slot-${slotIndex}` });
+    container.get<number>(manyNamedSlotsBindingIdentifier, hints[slotIndex]);
   }
   return () => {
     for (let slotIndex = 0; slotIndex < WIDE_N; slotIndex++) {
-      container.get<number>(manyNamedSlotsBindingIdentifier, { name: `slot-${slotIndex}` });
+      container.get<number>(manyNamedSlotsBindingIdentifier, hints[slotIndex]);
     }
   };
 }

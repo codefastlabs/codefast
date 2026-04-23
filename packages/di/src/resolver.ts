@@ -214,62 +214,65 @@ export class DependencyResolver {
   private resolveAll<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
-    pathLabels: readonly string[],
+    pathLabels: string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): Value[] {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
-    const nextPath = [...pathLabels, label];
-
-    if (visiting.has(registryKey)) {
-      throw new CircularDependencyError(nextPath);
-    }
-
-    const bindings = this.deps.lookup(registryKey);
-    if (bindings === undefined || bindings.length === 0) {
-      return [];
-    }
-    const selectionConstraintCtx = this.buildConstraintContext(
-      nextPath,
-      materializationStack,
-      hint,
-    );
-    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
-    if (candidates.length === 0) {
-      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
-        throw new NoMatchingBindingError(label, hint, nextPath);
-      }
-      return [];
-    }
-
-    visiting.add(registryKey);
-    const results: Value[] = [];
+    pathLabels.push(label);
     try {
-      for (const binding of candidates) {
-        this.assertDependencyScopeAllowed(binding, nextPath, materializationStack);
-        if (binding.kind === "async-dynamic") {
-          throw new AsyncResolutionError(
-            label,
-            nextPath,
-            "encountered async-dynamic factory during synchronous resolveAll",
+      if (visiting.has(registryKey)) {
+        throw new CircularDependencyError([...pathLabels]);
+      }
+
+      const bindings = this.deps.lookup(registryKey);
+      if (bindings === undefined || bindings.length === 0) {
+        return [];
+      }
+      const selectionConstraintCtx = this.buildConstraintContext(
+        pathLabels,
+        materializationStack,
+        hint,
+      );
+      const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
+      if (candidates.length === 0) {
+        if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+          throw new NoMatchingBindingError(label, hint, [...pathLabels]);
+        }
+        return [];
+      }
+
+      visiting.add(registryKey);
+      const results: Value[] = [];
+      try {
+        for (const binding of candidates) {
+          this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
+          if (binding.kind === "async-dynamic") {
+            throw new AsyncResolutionError(
+              label,
+              [...pathLabels],
+              "encountered async-dynamic factory during synchronous resolveAll",
+            );
+          }
+          results.push(
+            this.instantiateBinding(
+              binding,
+              registryKey,
+              hint,
+              pathLabels,
+              visiting,
+              materializationStack,
+            ) as Value,
           );
         }
-        results.push(
-          this.instantiateBinding(
-            binding,
-            registryKey,
-            hint,
-            nextPath,
-            visiting,
-            materializationStack,
-          ) as Value,
-        );
+      } finally {
+        visiting.delete(registryKey);
       }
+      return results;
     } finally {
-      visiting.delete(registryKey);
+      pathLabels.pop();
     }
-    return results;
   }
 
   /**
@@ -279,55 +282,58 @@ export class DependencyResolver {
   private async resolveAllAsync<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
-    pathLabels: readonly string[],
+    pathLabels: string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): Promise<Value[]> {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
-    const nextPath = [...pathLabels, label];
-
-    if (visiting.has(registryKey)) {
-      throw new CircularDependencyError(nextPath);
-    }
-
-    const bindings = this.deps.lookup(registryKey);
-    if (bindings === undefined || bindings.length === 0) {
-      return [];
-    }
-    const selectionConstraintCtx = this.buildConstraintContext(
-      nextPath,
-      materializationStack,
-      hint,
-    );
-    const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
-    if (candidates.length === 0) {
-      if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
-        throw new NoMatchingBindingError(label, hint, nextPath);
-      }
-      return [];
-    }
-
-    visiting.add(registryKey);
-    const results: Value[] = [];
+    pathLabels.push(label);
     try {
-      for (const binding of candidates) {
-        this.assertDependencyScopeAllowed(binding, nextPath, materializationStack);
-        results.push(
-          (await this.instantiateBindingAsync(
-            binding,
-            registryKey,
-            hint,
-            nextPath,
-            visiting,
-            materializationStack,
-          )) as Value,
-        );
+      if (visiting.has(registryKey)) {
+        throw new CircularDependencyError([...pathLabels]);
       }
+
+      const bindings = this.deps.lookup(registryKey);
+      if (bindings === undefined || bindings.length === 0) {
+        return [];
+      }
+      const selectionConstraintCtx = this.buildConstraintContext(
+        pathLabels,
+        materializationStack,
+        hint,
+      );
+      const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
+      if (candidates.length === 0) {
+        if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
+          throw new NoMatchingBindingError(label, hint, [...pathLabels]);
+        }
+        return [];
+      }
+
+      visiting.add(registryKey);
+      const results: Value[] = [];
+      try {
+        for (const binding of candidates) {
+          this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
+          results.push(
+            (await this.instantiateBindingAsync(
+              binding,
+              registryKey,
+              hint,
+              pathLabels,
+              visiting,
+              materializationStack,
+            )) as Value,
+          );
+        }
+      } finally {
+        visiting.delete(registryKey);
+      }
+      return results;
     } finally {
-      visiting.delete(registryKey);
+      pathLabels.pop();
     }
-    return results;
   }
 
   /**
@@ -470,51 +476,53 @@ export class DependencyResolver {
   ): Value {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
-    const nextPath = [...pathLabels, label];
-
-    if (visiting.has(registryKey)) {
-      throw new CircularDependencyError(nextPath);
-    }
-
-    const bindings = this.deps.lookup(registryKey);
-    if (bindings === undefined || bindings.length === 0) {
-      throw new TokenNotBoundError(label, nextPath);
-    }
-
-    const selectionConstraintCtx = this.buildConstraintContext(
-      nextPath,
-      materializationStack,
-      hint,
-    );
-    const binding = selectBindingForRegistry(
-      bindings,
-      hint,
-      label,
-      nextPath,
-      selectionConstraintCtx,
-    );
-    this.assertDependencyScopeAllowed(binding, nextPath, materializationStack);
-
-    if (binding.kind === "async-dynamic") {
-      throw new AsyncResolutionError(
-        label,
-        nextPath,
-        "encountered async-dynamic factory during synchronous resolution",
-      );
-    }
-
-    visiting.add(registryKey);
+    pathLabels.push(label);
     try {
-      return this.instantiateBinding(
-        binding,
-        registryKey,
+      if (visiting.has(registryKey)) {
+        throw new CircularDependencyError([...pathLabels]);
+      }
+
+      const bindings = this.deps.lookup(registryKey);
+      if (bindings === undefined || bindings.length === 0) {
+        throw new TokenNotBoundError(label, [...pathLabels]);
+      }
+
+      const hasConstraint = bindings.some((binding) => binding.constraint !== undefined);
+      const selectionConstraintCtx = hasConstraint
+        ? this.buildConstraintContext(pathLabels, materializationStack, hint)
+        : undefined;
+      const binding = selectBindingForRegistry(
+        bindings,
         hint,
-        nextPath,
-        visiting,
-        materializationStack,
-      ) as Value;
+        label,
+        pathLabels,
+        selectionConstraintCtx,
+      );
+      this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
+
+      if (binding.kind === "async-dynamic") {
+        throw new AsyncResolutionError(
+          label,
+          [...pathLabels],
+          "encountered async-dynamic factory during synchronous resolution",
+        );
+      }
+
+      visiting.add(registryKey);
+      try {
+        return this.instantiateBinding(
+          binding,
+          registryKey,
+          hint,
+          pathLabels,
+          visiting,
+          materializationStack,
+        ) as Value;
+      } finally {
+        visiting.delete(registryKey);
+      }
     } finally {
-      visiting.delete(registryKey);
+      pathLabels.pop();
     }
   }
 
@@ -537,43 +545,46 @@ export class DependencyResolver {
   ): Promise<Value> {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
-    const nextPath = [...pathLabels, label];
-
-    if (visiting.has(registryKey)) {
-      throw new CircularDependencyError(nextPath);
-    }
-
-    const bindings = this.deps.lookup(registryKey);
-    if (bindings === undefined || bindings.length === 0) {
-      throw new TokenNotBoundError(label, nextPath);
-    }
-
-    const selectionConstraintCtx = this.buildConstraintContext(
-      nextPath,
-      materializationStack,
-      hint,
-    );
-    const binding = selectBindingForRegistry(
-      bindings,
-      hint,
-      label,
-      nextPath,
-      selectionConstraintCtx,
-    );
-    this.assertDependencyScopeAllowed(binding, nextPath, materializationStack);
-
-    visiting.add(registryKey);
+    pathLabels.push(label);
     try {
-      return (await this.instantiateBindingAsync(
-        binding,
-        registryKey,
-        hint,
-        nextPath,
-        visiting,
+      if (visiting.has(registryKey)) {
+        throw new CircularDependencyError([...pathLabels]);
+      }
+
+      const bindings = this.deps.lookup(registryKey);
+      if (bindings === undefined || bindings.length === 0) {
+        throw new TokenNotBoundError(label, [...pathLabels]);
+      }
+
+      const selectionConstraintCtx = this.buildConstraintContext(
+        pathLabels,
         materializationStack,
-      )) as Value;
+        hint,
+      );
+      const binding = selectBindingForRegistry(
+        bindings,
+        hint,
+        label,
+        pathLabels,
+        selectionConstraintCtx,
+      );
+      this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
+
+      visiting.add(registryKey);
+      try {
+        return (await this.instantiateBindingAsync(
+          binding,
+          registryKey,
+          hint,
+          pathLabels,
+          visiting,
+          materializationStack,
+        )) as Value;
+      } finally {
+        visiting.delete(registryKey);
+      }
     } finally {
-      visiting.delete(registryKey);
+      pathLabels.pop();
     }
   }
 
@@ -590,6 +601,10 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
+    const cached = this.deps.scopeManager.getCached(binding);
+    if (cached !== undefined || this.deps.scopeManager.isBindingCached(binding)) {
+      return cached;
+    }
     return this.deps.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       const extendedStack = [...materializationStack, frame];
