@@ -7,6 +7,7 @@
 import type { ExtremeDialogSlots } from "#/benchmark-slot-types";
 import { Bench } from "tinybench";
 
+import { BENCH_OPTIONS, TV_MERGE_DISABLED } from "#/bench-options";
 import { codefastTV, originalTV } from "#/benchmark-tv";
 
 import { extremeSlotsTestProps, extremeSlotsVariants } from "#/benchmarks/extreme/data";
@@ -15,12 +16,14 @@ type ExtremeSlotsProps = (typeof extremeSlotsTestProps)[number];
 type ExtremeSlotsRenderer = (props: ExtremeSlotsProps) => ExtremeDialogSlots;
 
 // Initialize benchmark functions
-const originalTVExtremeSlots = originalTV(extremeSlotsVariants, {
-  twMerge: false,
-}) as ExtremeSlotsRenderer;
-const codefastTVExtremeSlots = codefastTV(extremeSlotsVariants, {
-  twMerge: false,
-}) as ExtremeSlotsRenderer;
+const originalTVExtremeSlots = originalTV(
+  extremeSlotsVariants,
+  TV_MERGE_DISABLED,
+) as ExtremeSlotsRenderer;
+const codefastTVExtremeSlots = codefastTV(
+  extremeSlotsVariants,
+  TV_MERGE_DISABLED,
+) as ExtremeSlotsRenderer;
 
 /**
  * Create extreme slots benchmark without tailwind-merge
@@ -30,10 +33,7 @@ export function createExtremeSlotsWithoutMergeBenchmark(
 ) {
   const bench = new Bench({
     name,
-    iterations: 1000,
-    time: 1000,
-    warmupIterations: 100,
-    warmupTime: 100,
+    ...BENCH_OPTIONS,
   });
 
   bench

@@ -7,6 +7,7 @@
 import type { CompoundPaginationSlots } from "#/benchmark-slot-types";
 import { Bench } from "tinybench";
 
+import { BENCH_OPTIONS, TV_MERGE_DISABLED } from "#/bench-options";
 import { codefastTV, originalTV } from "#/benchmark-tv";
 
 import { compoundSlotsTestProps, compoundSlotsVariants } from "#/benchmarks/compound-slots/data";
@@ -15,12 +16,14 @@ type CompoundProps = (typeof compoundSlotsTestProps)[number];
 type CompoundSlotsRenderer = (props: CompoundProps) => CompoundPaginationSlots;
 
 // Initialize benchmark functions
-const originalTVCompoundSlots = originalTV(compoundSlotsVariants, {
-  twMerge: false,
-}) as CompoundSlotsRenderer;
-const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants, {
-  twMerge: false,
-}) as CompoundSlotsRenderer;
+const originalTVCompoundSlots = originalTV(
+  compoundSlotsVariants,
+  TV_MERGE_DISABLED,
+) as CompoundSlotsRenderer;
+const codefastTVCompoundSlots = codefastTV(
+  compoundSlotsVariants,
+  TV_MERGE_DISABLED,
+) as CompoundSlotsRenderer;
 
 /**
  * Create compound slots benchmark without tailwind-merge
@@ -28,10 +31,7 @@ const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants, {
 export function createCompoundSlotsWithoutMergeBenchmark(name = "Compound Slots") {
   const bench = new Bench({
     name,
-    iterations: 1000,
-    time: 1000,
-    warmupIterations: 100,
-    warmupTime: 100,
+    ...BENCH_OPTIONS,
   });
 
   bench

@@ -7,6 +7,7 @@
 import type { ServicePreviewSlots } from "#/benchmark-slot-types";
 import { Bench } from "tinybench";
 
+import { BENCH_OPTIONS, TV_MERGE_DISABLED } from "#/bench-options";
 import { codefastTV, originalTV } from "#/benchmark-tv";
 
 import { slotsTestProps, slotsVariants } from "#/benchmarks/slots/data";
@@ -15,8 +16,8 @@ type SlotsProps = (typeof slotsTestProps)[number];
 type SlotsRenderer = (props: SlotsProps) => ServicePreviewSlots;
 
 // Initialize benchmark functions
-const originalTVSlots = originalTV(slotsVariants, { twMerge: false }) as SlotsRenderer;
-const codefastTVSlots = codefastTV(slotsVariants, { twMerge: false }) as SlotsRenderer;
+const originalTVSlots = originalTV(slotsVariants, TV_MERGE_DISABLED) as SlotsRenderer;
+const codefastTVSlots = codefastTV(slotsVariants, TV_MERGE_DISABLED) as SlotsRenderer;
 
 /**
  * Create slots benchmark without tailwind-merge
@@ -24,10 +25,7 @@ const codefastTVSlots = codefastTV(slotsVariants, { twMerge: false }) as SlotsRe
 export function createSlotsWithoutMergeBenchmark(name = "Slots") {
   const bench = new Bench({
     name,
-    iterations: 1000,
-    time: 1000,
-    warmupIterations: 100,
-    warmupTime: 100,
+    ...BENCH_OPTIONS,
   });
 
   bench
