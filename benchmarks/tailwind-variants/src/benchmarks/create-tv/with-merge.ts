@@ -1,27 +1,26 @@
 /**
- * CreateTV Without Tailwind Merge Benchmark
+ * CreateTV With Tailwind Merge Benchmark
  *
- * Benchmarks global factory configuration functionality without tailwind-merge
+ * Benchmarks global factory configuration functionality with tailwind-merge
  */
 
-import { createTV as originalCreateTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { buttonVariants, simpleTestProps } from "#/benchmarks/create-tv/data.js";
-import { createTV as codefastCreateTV } from "@codefast/tailwind-variants";
+import { codefastCreateTV, originalCreateTV } from "#/benchmark-tv";
+import { buttonVariants, simpleTestProps } from "#/benchmarks/create-tv/data";
 
 // Initialize global factories
-const originalTVFactory = originalCreateTV({ twMerge: false });
-const { tv: codefastTVFactory } = codefastCreateTV({ twMerge: false });
+const originalTVFactory = originalCreateTV({ twMerge: true });
+const { tv: codefastTVFactory } = codefastCreateTV({ twMerge: true });
 
 // Create variant functions using factories
 const originalTVButton = originalTVFactory(buttonVariants);
 const codefastTVButton = codefastTVFactory(buttonVariants);
 
 /**
- * Create createTV benchmark without tailwind-merge
+ * Create createTV benchmark with tailwind-merge
  */
-export function createCreateTVWithoutMergeBenchmark(name = "CreateTV") {
+export function createCreateTVWithMergeBenchmark(name = "CreateTV (With Tailwind Merge)") {
   const bench = new Bench({
     name,
     iterations: 1000,

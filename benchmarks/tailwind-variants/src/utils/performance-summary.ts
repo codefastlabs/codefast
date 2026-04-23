@@ -5,6 +5,8 @@
  * and comparing results across different benchmark scenarios.
  */
 
+import { Bench, Task, type TaskResult } from "tinybench";
+
 // ANSI color codes for terminal output
 const colors = {
   reset: "\x1b[0m",
@@ -52,22 +54,57 @@ const NUMBER_UNITS = {
   thousand: 1_000,
 };
 
+type StatisticalTaskResult = Extract<
+  TaskResult,
+  { state: "aborted-with-statistics" } | { state: "completed" }
+>;
+
+type StatisticalRow = {
+  result: StatisticalTaskResult;
+  task: Task;
+};
+
+type RankedResult = StatisticalTaskResult & {
+  name: string;
+  rank: number;
+  relativePerformance: number;
+};
+
+type PerformanceAnalysis = {
+  averageOpsPerSec: number;
+  fastest: StatisticalTaskResult | null;
+  performanceRanking: RankedResult[];
+  slowest: StatisticalTaskResult | null;
+  totalTests: number;
+};
+
+function isStatisticalResult(result: TaskResult): result is StatisticalTaskResult {
+  return result.state === "completed" || result.state === "aborted-with-statistics";
+}
+
+function statisticalRows(bench: Bench): StatisticalRow[] {
+  return bench.tasks
+    .map((task, index) => {
+      const result = bench.results[index];
+      if (!result || !isStatisticalResult(result)) {
+        return null;
+      }
+      return { result, task };
+    })
+    .filter((row): row is StatisticalRow => row !== null);
+}
+
 /**
  * Generate performance summary for benchmark results
  */
-export function generatePerformanceSummary(bench) {
-  const results = bench.results;
-
-  if (results.length === 0) {
+export function generatePerformanceSummary(bench: Bench): void {
+  if (bench.results.length === 0) {
     console.log(`${colors.red}❌ No benchmark results available for analysis${colors.reset}`);
 
     return;
   }
 
-  const analysis = analyzePerformance(
-    results.filter((r) => r !== undefined),
-    bench.tasks,
-  );
+  const analysis = analyzePerformance(bench);
 
   displayPerformanceSummary(analysis);
 }
@@ -75,45 +112,41 @@ export function generatePerformanceSummary(bench) {
 /**
  * Analyze benchmark results and extract key performance metrics
  */
-function analyzePerformance(results, tasks) {
-  // Sort results by operations per second (descending - fastest first)
-  const sortedResults = [...results].toSorted(
-    (a, b) => (b.throughput.mean || 0) - (a.throughput.mean || 0),
+function analyzePerformance(bench: Bench): PerformanceAnalysis {
+  const rows = statisticalRows(bench);
+
+  const sortedRows = [...rows].toSorted(
+    (a, b) => (b.result.throughput.mean || 0) - (a.result.throughput.mean || 0),
   );
 
-  const fastest = sortedResults[0] ?? null;
-  const slowest = sortedResults.at(-1) ?? null;
+  const fastest = sortedRows[0]?.result ?? null;
+  const slowest = sortedRows.at(-1)?.result ?? null;
 
-  const totalOpsPerSec = results.reduce((sum, result) => sum + (result.throughput.mean || 0), 0);
-  const averageOpsPerSec = totalOpsPerSec / results.length;
+  const totalOpsPerSec = rows.reduce((sum, row) => sum + (row.result.throughput.mean || 0), 0);
+  const averageOpsPerSec = rows.length > 0 ? totalOpsPerSec / rows.length : 0;
 
-  const performanceRanking = sortedResults.map((result, index) => {
-    const resultIndex = results.indexOf(result);
-    const taskName = tasks[resultIndex]?.name ?? "Unknown";
+  const fastestMean = fastest?.throughput.mean ?? 0;
 
-    return {
-      ...result,
-      name: taskName,
-      rank: index + 1,
-      relativePerformance: fastest.throughput.mean
-        ? (result.throughput.mean || 0) / fastest.throughput.mean
-        : 0,
-    };
-  });
+  const performanceRanking: RankedResult[] = sortedRows.map((row, index) => ({
+    ...row.result,
+    name: row.task.name,
+    rank: index + 1,
+    relativePerformance: fastestMean ? (row.result.throughput.mean || 0) / fastestMean : 0,
+  }));
 
   return {
     averageOpsPerSec,
     fastest,
     performanceRanking,
     slowest,
-    totalTests: results.length,
+    totalTests: rows.length,
   };
 }
 
 /**
  * Display formatted performance summary
  */
-function displayPerformanceSummary(analysis) {
+function displayPerformanceSummary(analysis: PerformanceAnalysis): void {
   displayFastestPerformer(analysis);
   displayPerformanceRanking(analysis);
 }
@@ -121,14 +154,14 @@ function displayPerformanceSummary(analysis) {
 /**
  * Create a horizontal line with a specified character
  */
-function createHorizontalLine(char = BOX_CHARS.horizontal, width = BOX_WIDTH) {
+function createHorizontalLine(char: string = BOX_CHARS.horizontal, width: number = BOX_WIDTH) {
   return char.repeat(width);
 }
 
 /**
  * Display a section with title and box border
  */
-function displaySection(title, borderColor, contentLines = []) {
+function displaySection(title: string, borderColor: string, contentLines: string[] = []) {
   console.log(`\n${borderColor}${colors.bright}${title}${colors.reset}`);
   console.log(
     `${borderColor}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`,
@@ -152,14 +185,19 @@ function displaySection(title, borderColor, contentLines = []) {
 /**
  * Create a formatted line with a bullet point
  */
-function createBulletLine(bulletColor, label, value, valueColor = colors.white) {
+function createBulletLine(
+  bulletColor: string,
+  label: string,
+  value: string,
+  valueColor: string = colors.white,
+) {
   return `${bulletColor}•${colors.reset} ${label} ${colors.bright}${valueColor}${value}${colors.reset}`;
 }
 
 /**
  * Display the fastest performer section
  */
-function displayFastestPerformer(analysis) {
+function displayFastestPerformer(analysis: PerformanceAnalysis): void {
   if (!analysis.fastest) {
     return;
   }
@@ -179,7 +217,7 @@ function displayFastestPerformer(analysis) {
 /**
  * Display performance ranking section
  */
-function displayPerformanceRanking(analysis) {
+function displayPerformanceRanking(analysis: PerformanceAnalysis): void {
   console.log(`\n${colors.blue}${colors.bright}🏁 Performance Ranking${colors.reset}`);
   console.log(
     `${colors.blue}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`,
@@ -197,7 +235,7 @@ function displayPerformanceRanking(analysis) {
 /**
  * Display a single ranking entry
  */
-function displayRankingEntry(result, index, totalLength) {
+function displayRankingEntry(result: RankedResult, index: number, totalLength: number): void {
   const medal = getMedalEmoji(index);
   const performance = result.relativePerformance;
   const performanceBar = generatePerformanceBar(performance);
@@ -236,7 +274,7 @@ function displayRankingEntry(result, index, totalLength) {
 /**
  * Format large numbers with appropriate suffixes and visual enhancements
  */
-function formatNumber(number) {
+function formatNumber(number: number): string {
   if (number >= NUMBER_UNITS.million) {
     return `${(number / NUMBER_UNITS.million).toFixed(1)}M`;
   } else if (number >= NUMBER_UNITS.thousand) {
@@ -249,7 +287,7 @@ function formatNumber(number) {
 /**
  * Format time in nanoseconds to readable format
  */
-function formatTime(nanoseconds) {
+function formatTime(nanoseconds: number): string {
   if (nanoseconds >= TIME_UNITS.millisecond) {
     return `${(nanoseconds / TIME_UNITS.millisecond).toFixed(2)}ms`;
   } else if (nanoseconds >= TIME_UNITS.microsecond) {
@@ -262,7 +300,7 @@ function formatTime(nanoseconds) {
 /**
  * Get medal emoji based on ranking position
  */
-function getMedalEmoji(index) {
+function getMedalEmoji(index: number): string {
   switch (index) {
     case 0:
       return `${colors.yellow}🥇${colors.reset}`;
@@ -278,7 +316,7 @@ function getMedalEmoji(index) {
 /**
  * Get color based on performance percentage
  */
-function getPerformanceColor(performance) {
+function getPerformanceColor(performance: number): string {
   if (performance >= PERFORMANCE_THRESHOLDS.excellent) {
     return colors.green;
   } // Excellent (90-100%)
@@ -297,7 +335,7 @@ function getPerformanceColor(performance) {
 /**
  * Get a visible length of text (excluding ANSI color codes)
  */
-function getVisibleLength(text) {
+function getVisibleLength(text: string): number {
   // Remove ANSI color codes to get actual visible length
   // eslint-disable-next-line no-control-regex
   return text.replace(/\x1b\[[0-9;]*m/g, "").length;
@@ -306,7 +344,7 @@ function getVisibleLength(text) {
 /**
  * Generate a visual performance bar with enhanced styling
  */
-function generatePerformanceBar(performance) {
+function generatePerformanceBar(performance: number): string {
   const barLength = 50;
   const filledLength = Math.round(performance * barLength);
   const emptyLength = barLength - filledLength;

@@ -1,23 +1,27 @@
 /**
- * Slots Without Tailwind Merge Benchmark
+ * Slots With Tailwind Merge Benchmark
  *
- * Benchmarks slots functionality without tailwind-merge
+ * Benchmarks slots functionality with tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
+import type { ServicePreviewSlots } from "#/benchmark-slot-types";
 import { Bench } from "tinybench";
 
-import { slotsTestProps, slotsVariants } from "#/benchmarks/slots/data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { codefastTV, originalTV } from "#/benchmark-tv";
+
+import { slotsTestProps, slotsVariants } from "#/benchmarks/slots/data";
+
+type SlotsProps = (typeof slotsTestProps)[number];
+type SlotsRenderer = (props: SlotsProps) => ServicePreviewSlots;
 
 // Initialize benchmark functions
-const originalTVSlots = originalTV(slotsVariants, { twMerge: false });
-const codefastTVSlots = codefastTV(slotsVariants, { twMerge: false });
+const originalTVSlots = originalTV(slotsVariants) as SlotsRenderer;
+const codefastTVSlots = codefastTV(slotsVariants) as SlotsRenderer;
 
 /**
- * Create slots benchmark without tailwind-merge
+ * Create slots benchmark with tailwind-merge
  */
-export function createSlotsWithoutMergeBenchmark(name = "Slots") {
+export function createSlotsWithMergeBenchmark(name = "Slots (With Tailwind Merge)") {
   const bench = new Bench({
     name,
     iterations: 1000,

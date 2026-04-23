@@ -36,7 +36,7 @@ const generateColorVariants = () => {
   ];
   const shades = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
 
-  const variants = {};
+  const variants: Record<string, string> = {};
   for (const color of colors) {
     for (const shade of shades) {
       const key = `${color}-${shade}`;
@@ -49,7 +49,7 @@ const generateColorVariants = () => {
 
 // Generate size variants with many options
 const generateSizeVariants = () => {
-  const sizes = {};
+  const sizes: Record<string, string> = {};
   for (let i = 1; i <= 20; i++) {
     sizes[`size-${i}`] =
       `h-${i * 2} px-${i} py-${Math.ceil(i / 2)} text-${i <= 4 ? "xs" : i <= 8 ? "sm" : i <= 12 ? "base" : i <= 16 ? "lg" : "xl"} min-w-${i * 2} gap-${Math.ceil(i / 4)}`;

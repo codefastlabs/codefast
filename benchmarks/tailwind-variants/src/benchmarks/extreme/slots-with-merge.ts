@@ -1,24 +1,28 @@
 /**
- * Extreme Slots Without Tailwind Merge Benchmark
+ * Extreme Slots With Tailwind Merge Benchmark
  *
- * Stress test slots with 12 slots and 15 compound slots
+ * Stress test slots with 12 slots and 15 compound slots - with tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
+import type { ExtremeDialogSlots } from "#/benchmark-slot-types";
 import { Bench } from "tinybench";
 
-import { extremeSlotsTestProps, extremeSlotsVariants } from "#/benchmarks/extreme/data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { codefastTV, originalTV } from "#/benchmark-tv";
+
+import { extremeSlotsTestProps, extremeSlotsVariants } from "#/benchmarks/extreme/data";
+
+type ExtremeSlotsProps = (typeof extremeSlotsTestProps)[number];
+type ExtremeSlotsRenderer = (props: ExtremeSlotsProps) => ExtremeDialogSlots;
 
 // Initialize benchmark functions
-const originalTVExtremeSlots = originalTV(extremeSlotsVariants, { twMerge: false });
-const codefastTVExtremeSlots = codefastTV(extremeSlotsVariants, { twMerge: false });
+const originalTVExtremeSlots = originalTV(extremeSlotsVariants) as ExtremeSlotsRenderer;
+const codefastTVExtremeSlots = codefastTV(extremeSlotsVariants) as ExtremeSlotsRenderer;
 
 /**
- * Create extreme slots benchmark without tailwind-merge
+ * Create extreme slots benchmark with tailwind-merge
  */
-export function createExtremeSlotsWithoutMergeBenchmark(
-  name = "Extreme Slots (12 slots, 15 compound slots)",
+export function createExtremeSlotsWithMergeBenchmark(
+  name = "Extreme Slots With Merge (12 slots, 15 compound slots)",
 ) {
   const bench = new Bench({
     name,

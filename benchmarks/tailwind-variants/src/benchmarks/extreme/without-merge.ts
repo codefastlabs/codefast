@@ -4,11 +4,10 @@
  * Stress test with maximum complexity - no tailwind-merge
  */
 
-import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { extremeTestProps, extremeVariants } from "#/benchmarks/extreme/data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { codefastTV, originalTV } from "#/benchmark-tv";
+import { extremeTestProps, extremeVariants } from "#/benchmarks/extreme/data";
 
 // Initialize benchmark functions
 const originalTVExtreme = originalTV(extremeVariants, { twMerge: false });

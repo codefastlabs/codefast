@@ -4,13 +4,11 @@
  * Benchmarks simple variant functionality with tailwind-merge
  */
 
-import { cva } from "class-variance-authority";
 import { twMerge } from "tailwind-merge";
-import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { buttonVariants, simpleTestProps } from "#/benchmarks/simple/data.js";
-import { tv as codefastTV } from "@codefast/tailwind-variants";
+import { cva, codefastTV, originalTV } from "#/benchmark-tv";
+import { buttonVariants, simpleTestProps } from "#/benchmarks/simple/data";
 
 // Initialize benchmark functions
 const originalTVSimple = originalTV(buttonVariants);
