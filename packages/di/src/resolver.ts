@@ -601,18 +601,8 @@ export class DependencyResolver {
     materializationStack: readonly MaterializationFrame[],
   ): unknown {
     this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
-    if (binding.scope === "transient") {
-      const frame = bindingToMaterializationFrame(registryKey, binding);
-      const extendedStack = [...materializationStack, frame];
-      const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
-      const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
-      if (binding.kind === "class") {
-        runPostConstruct(binding.implementationClass, instance, pathLabels);
-      }
-      return runActivation(binding, instance, ctx, pathLabels);
-    }
     const cached = this.deps.scopeManager.getCached(binding);
-    if (cached !== undefined || this.deps.scopeManager.isBindingCached(binding)) {
+    if (cached !== undefined) {
       return cached;
     }
     return this.deps.scopeManager.getOrCreate(binding, () => {
