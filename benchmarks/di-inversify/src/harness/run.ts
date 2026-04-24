@@ -35,6 +35,7 @@ const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";
 const CODEFAST_DI_PACKAGE_FILTER = "@codefast/di";
 const HEARTBEAT_SILENCE_MS = 10_000;
+const VERBOSE_MODE_ENABLED = process.env["BENCH_VERBOSE"] === "1";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -152,6 +153,7 @@ async function runSubprocess(
   }
   const startedAtMs = performance.now();
   const childOutputPrefix = `[${scenarioName}] `;
+  const forwardChildStdout = VERBOSE_MODE_ENABLED;
 
   const spawnResult = await new Promise<{
     stdout: string;
@@ -202,9 +204,7 @@ async function runSubprocess(
 
     const forwardStdoutLine = createStreamLineForwarder(
       childOutputPrefix,
-      (chunk) => {
-        process.stdout.write(chunk);
-      },
+      (chunk) => (forwardChildStdout ? process.stdout.write(chunk) : undefined),
       refreshOutputTimestamp,
     );
     const forwardStderrLine = createStreamLineForwarder(
@@ -324,6 +324,11 @@ async function main(): Promise<void> {
   console.log("  @codefast/di  : TC39 Stage 3 decorators + Symbol.metadata");
   console.log("  InversifyJS 8 : legacy experimental decorators + reflect-metadata");
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
+  if (!VERBOSE_MODE_ENABLED) {
+    console.log(
+      "[bench] Quiet mode: subprocess stdout is suppressed. Use `BENCH_VERBOSE=1` (or `pnpm bench:verbose`) for full child logs.\n",
+    );
+  }
 
   rebuildCodefastDiPackage();
 
