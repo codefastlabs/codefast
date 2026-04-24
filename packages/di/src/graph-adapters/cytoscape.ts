@@ -1,10 +1,6 @@
 import type { ContainerGraphJson } from "#/inspector";
 import type { StaticDependencyEdge } from "#/dependency-graph";
 import type { CytoscapeEdge, CytoscapeGraphJson, CytoscapeNode } from "#/graph-adapters/types";
-
-/**
- * Converts the canonical container graph JSON into Cytoscape elements format.
- */
 export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson {
   const nodes: CytoscapeNode[] = graph.nodes.map((node) => ({
     data: {
@@ -18,7 +14,6 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson 
       ...(node.moduleId === undefined ? {} : { moduleId: node.moduleId }),
     },
   }));
-
   const edges: CytoscapeEdge[] = graph.edges.map((edge) => ({
     data: {
       id: edgeIdForCytoscape(edge),
@@ -31,7 +26,6 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson 
       resolutionPath: [...edge.resolutionPath],
     },
   }));
-
   return {
     elements: {
       nodes,
@@ -39,10 +33,6 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson 
     },
   };
 }
-
-/**
- * Produces a stable Cytoscape edge id from edge metadata.
- */
 function edgeIdForCytoscape(edge: StaticDependencyEdge): string {
   const hint = edge.injectHintLabel ?? "";
   const conditional = edge.isToBindingConditional ? "conditional" : "plain";

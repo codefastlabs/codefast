@@ -4,12 +4,10 @@ import type { ConstraintContext, ConstraintParentFrame } from "#/binding";
 import { token } from "#/token";
 import { createBindingIdentifier } from "#/binding";
 import type { RegistryKey } from "#/registry";
-
 describe("constraint predicates", () => {
   const tokenA = token<unknown>("A");
   const tokenB = token<unknown>("B");
   const tokenC = token<unknown>("C");
-
   function createMockFrame(
     registryKey: RegistryKey,
     tags: Map<string, unknown> = new Map(),
@@ -22,7 +20,6 @@ describe("constraint predicates", () => {
       scope: "transient",
     };
   }
-
   function createMockContext(overrides: Partial<ConstraintContext> = {}): ConstraintContext {
     return {
       resolutionPath: [],
@@ -31,7 +28,6 @@ describe("constraint predicates", () => {
       ...overrides,
     } as ConstraintContext;
   }
-
   describe("whenParentIs", () => {
     it("returns true if the immediate parent matches the registry key", () => {
       const predicate = whenParentIs(tokenA);
@@ -40,7 +36,6 @@ describe("constraint predicates", () => {
       });
       expect(predicate(constraintContext)).toBe(true);
     });
-
     it("returns false if the immediate parent does not match the registry key", () => {
       const predicate = whenParentIs(tokenA);
       const constraintContext = createMockContext({
@@ -48,7 +43,6 @@ describe("constraint predicates", () => {
       });
       expect(predicate(constraintContext)).toBe(false);
     });
-
     it("returns false if there is no parent", () => {
       const predicate = whenParentIs(tokenA);
       const constraintContext = createMockContext({
@@ -57,7 +51,6 @@ describe("constraint predicates", () => {
       expect(predicate(constraintContext)).toBe(false);
     });
   });
-
   describe("whenAnyAncestorIs", () => {
     it("returns true if any ancestor matches the registry key", () => {
       const predicate = whenAnyAncestorIs(tokenA);
@@ -70,7 +63,6 @@ describe("constraint predicates", () => {
       });
       expect(predicate(constraintContext)).toBe(true);
     });
-
     it("returns false if no ancestor matches the registry key", () => {
       const predicate = whenAnyAncestorIs(tokenA);
       const constraintContext = createMockContext({
@@ -78,7 +70,6 @@ describe("constraint predicates", () => {
       });
       expect(predicate(constraintContext)).toBe(false);
     });
-
     it("returns false if materialization stack is empty", () => {
       const predicate = whenAnyAncestorIs(tokenA);
       const constraintContext = createMockContext({
@@ -87,30 +78,25 @@ describe("constraint predicates", () => {
       expect(predicate(constraintContext)).toBe(false);
     });
   });
-
   describe("whenParentTagged", () => {
     it("returns true if the parent has the specified tag and value", () => {
       const predicate = whenParentTagged("role", "admin");
       const tags = new Map<string, unknown>();
       tags.set("role", "admin");
-
       const constraintContext = createMockContext({
         parent: createMockFrame(tokenA, tags),
       });
       expect(predicate(constraintContext)).toBe(true);
     });
-
     it("returns false if the parent has the specified tag but wrong value", () => {
       const predicate = whenParentTagged("role", "admin");
       const tags = new Map<string, unknown>();
       tags.set("role", "user");
-
       const constraintContext = createMockContext({
         parent: createMockFrame(tokenA, tags),
       });
       expect(predicate(constraintContext)).toBe(false);
     });
-
     it("returns false if the parent does not have the specified tag", () => {
       const predicate = whenParentTagged("role", "admin");
       const constraintContext = createMockContext({
@@ -118,7 +104,6 @@ describe("constraint predicates", () => {
       });
       expect(predicate(constraintContext)).toBe(false);
     });
-
     it("returns false if there is no parent", () => {
       const predicate = whenParentTagged("role", "admin");
       const constraintContext = createMockContext({

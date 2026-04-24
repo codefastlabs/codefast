@@ -31,10 +31,6 @@ import {
   TokenNotBoundError,
 } from "#/errors";
 import type { MetadataReader } from "#/metadata/metadata-types";
-
-/**
- * Converts a registry key + binding into a {@link MaterializationFrame} for the captive-dependency stack.
- */
 function bindingToMaterializationFrame(
   registryKey: RegistryKey,
   binding: Binding<unknown>,
@@ -47,90 +43,22 @@ function bindingToMaterializationFrame(
     scope: binding.scope,
   };
 }
-
-/**
- * Dependencies injected into {@link DependencyResolver} at construction time.
- */
 export type ResolverDependencies = {
-  /**
-   * Looks up all bindings registered for a given registry key (own + parent containers).
-   */
   readonly lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined;
-  /**
-   * Manages singleton/scoped instance caches and deactivation.
-   */
   readonly scopeManager: ScopeManager;
-  /**
-   * Reads `@injectable()` and lifecycle metadata from constructors. Omit to disable decorator support.
-   */
   readonly metadataReader?: MetadataReader;
 };
-
-/**
- * Stateless graph walker: selects a binding, checks for cycles and scope violations,
- * delegates instance caching to `ScopeManager`, and runs lifecycle hooks.
- *
- * Resolution algorithm (per token):
- * 1. Lookup all bindings for the registry key.
- * 2. Apply name/tag hint and `when()` constraint filtering.
- * 3. Circular-dependency check via a mutable `visiting` set (per call tree).
- * 4. Captive-dependency check via the `materializationStack`.
- * 5. Scope-cache hit → return cached instance.
- * 6. Scope-cache miss → `materialize` → `@postConstruct` → `onActivation` → cache.
- *
- * Used exclusively by `DefaultContainer`; not part of the public API.
- */
 export class DependencyResolver {
   constructor(private readonly deps: ResolverDependencies) {}
-
-  /**
-   * Entry point for synchronous single-binding resolution.
-   *
-   * @throws {@link TokenNotBoundError} — no binding registered for `key`, or a nested dependency is unbound.
-   * @throws {@link NoMatchingBindingError} — a name/tag `hint` was given for `key` but no binding matched it.
-   * @throws {@link InternalError} — multiple bindings matched for `key` after applying the hint (ambiguous).
-   * @throws {@link CircularDependencyError} — `key` or a nested token appears twice on the resolution stack.
-   * @throws {@link AsyncResolutionError} — an `async-dynamic` binding or async lifecycle/activation on the sync path.
-   * @throws {@link ScopeViolationError} — captive dependency (singleton → scoped/transient).
-   * @throws {@link MissingMetadataError} — `class` binding lacks injectable metadata when the reader requires it.
-   */
   resolveRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
     return this.resolve(key, hint, [], new Set(), []) as Value;
   }
-
-  /**
-   * Entry point for async single-binding resolution. Awaits `async-dynamic` factories
-   * and async lifecycle hooks that would cause {@link AsyncResolutionError} on the sync path.
-   *
-   * @throws {@link TokenNotBoundError} — no binding registered for `key`, or a nested dependency is unbound.
-   * @throws {@link NoMatchingBindingError} — a name/tag `hint` was given for `key` but no binding matched it.
-   * @throws {@link InternalError} — multiple bindings matched for `key` after applying the hint (ambiguous).
-   * @throws {@link CircularDependencyError} — `key` or a nested token appears twice on the resolution stack.
-   * @throws {@link ScopeViolationError} — captive dependency (singleton → scoped/transient).
-   * @throws {@link MissingMetadataError} — `class` binding lacks injectable metadata when the reader requires it.
-   */
   resolveAsyncRoot<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value> {
     return this.resolveAsync(key, hint, [], new Set(), []) as Promise<Value>;
   }
-
-  /**
-   * Optional resolution for the **requested key only**: returns `undefined` when that key has no
-   * bindings or every candidate is filtered out **without** a name/tag hint — without throwing
-   * {@link TokenNotBoundError} for those cases. Instantiating the selected binding still runs the
-   * normal sync resolution path for nested dependencies; an unregistered transitive dependency
-   * throws {@link TokenNotBoundError} as usual.
-   *
-   * Behavioral rules:
-   * 1. If the registry key is completely unbound → returns `undefined`.
-   * 2. If no candidate survives constraint filtering (without a hint) → returns `undefined`.
-   * 3. If a name/tag hint was provided but no binding matches it → throws {@link NoMatchingBindingError}.
-   * 4. Still throws on: circular dependencies, async operations on the sync path,
-   *    scope violations, ambiguous multi-binding matches, and {@link TokenNotBoundError} when a
-   *    required nested dependency is unbound.
-   */
   resolveOptionalRoot<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
@@ -184,44 +112,15 @@ export class DependencyResolver {
       visiting.delete(registryKey);
     }
   }
-
-  /**
-   * Resolves every matching binding for `key` synchronously into an array.
-   * Returns an empty array when no bindings exist (does not throw).
-   *
-   * @throws {@link AsyncResolutionError} — any candidate is `async-dynamic`.
-   * @throws {@link NoMatchingBindingError} — hint was specified but no binding matched it.
-   * @throws {@link TokenNotBoundError} — nested dependency unbound (same as {@link resolveRoot}).
-   * @throws {@link CircularDependencyError} — cycle while materializing a candidate.
-   * @throws {@link ScopeViolationError} — captive dependency during materialization.
-   * @throws {@link MissingMetadataError} — class binding lacks injectable metadata when required.
-   */
   resolveAllRoot<Value>(key: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
     return this.resolveAll(key, hint, [], new Set(), []);
   }
-
-  /**
-   * Async counterpart of {@link resolveAllRoot}: resolves every matching binding for `key`,
-   * awaiting `async-dynamic` factories. Returns an empty array when no bindings exist.
-   *
-   * @throws {@link NoMatchingBindingError} — hint was specified but no binding matched it.
-   * @throws {@link TokenNotBoundError} — nested dependency unbound (same as {@link resolveAsyncRoot}).
-   * @throws {@link CircularDependencyError} — cycle while materializing a candidate.
-   * @throws {@link ScopeViolationError} — captive dependency during materialization.
-   * @throws {@link MissingMetadataError} — class binding lacks injectable metadata when required.
-   */
   async resolveAllAsyncRoot<Value>(
     key: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value[]> {
     return this.resolveAllAsync(key, hint, [], new Set(), []);
   }
-
-  /**
-   * Context-aware sync `resolveAll`: extends the current resolution path and preserves
-   * visiting/materialization stacks so nested multi-resolution participates in cycle and
-   * captive-dependency checks exactly like single-value {@link resolve}.
-   */
   private resolveAll<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
@@ -236,7 +135,6 @@ export class DependencyResolver {
       if (visiting.has(registryKey)) {
         throw new CircularDependencyError([...pathLabels]);
       }
-
       const bindings = this.deps.lookup(registryKey);
       if (bindings === undefined || bindings.length === 0) {
         return [];
@@ -252,7 +150,6 @@ export class DependencyResolver {
         }
         return [];
       }
-
       visiting.add(registryKey);
       const results: Value[] = [];
       try {
@@ -284,11 +181,6 @@ export class DependencyResolver {
       pathLabels.pop();
     }
   }
-
-  /**
-   * Async counterpart of {@link resolveAll}: keeps the current path and materialization stack
-   * so `when()` constraints and scope validation behave consistently for nested multi-resolution.
-   */
   private async resolveAllAsync<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
@@ -303,7 +195,6 @@ export class DependencyResolver {
       if (visiting.has(registryKey)) {
         throw new CircularDependencyError([...pathLabels]);
       }
-
       const bindings = this.deps.lookup(registryKey);
       if (bindings === undefined || bindings.length === 0) {
         return [];
@@ -319,7 +210,6 @@ export class DependencyResolver {
         }
         return [];
       }
-
       visiting.add(registryKey);
       const results: Value[] = [];
       try {
@@ -344,11 +234,6 @@ export class DependencyResolver {
       pathLabels.pop();
     }
   }
-
-  /**
-   * Assembles the read-only {@link ConstraintContext} snapshot passed to `when()` predicates.
-   * Extracts the top-of-stack frame as `parent` and the rest as `ancestors`.
-   */
   private buildConstraintContext(
     resolutionPath: readonly string[],
     materializationStack: readonly MaterializationFrame[],
@@ -367,12 +252,6 @@ export class DependencyResolver {
       currentResolveHint,
     };
   }
-
-  /**
-   * Throws {@link ScopeViolationError} when the immediate consumer on the stack is a singleton
-   * and the dependency has `"scoped"` or `"transient"` lifetime (captive dependency).
-   * Constants are exempt — they have no scope cache.
-   */
   private assertDependencyScopeAllowed(
     dependencyBinding: Binding<unknown>,
     resolutionPath: readonly string[],
@@ -405,12 +284,6 @@ export class DependencyResolver {
       });
     }
   }
-
-  /**
-   * Builds a {@link ResolutionContext} for use inside factories and lifecycle hooks.
-   * The `resolve` / `resolveAsync` / `resolveOptional` closures carry the current path and
-   * materialization stack forward so nested calls inherit captive-dependency checks.
-   */
   private createContext(
     pathLabels: readonly string[],
     visiting: Set<RegistryKey>,
@@ -462,17 +335,6 @@ export class DependencyResolver {
       graph: graphContext,
     };
   }
-
-  /**
-   * Core synchronous resolution: lookup → filter → cycle check → scope check → instantiate.
-   * Called recursively when a binding's dependencies need resolution.
-   *
-   * @param key - Token or constructor being resolved.
-   * @param hint - Optional name/tag filter for multi-binding selection.
-   * @param pathLabels - Mutable label path accumulated during graph walk; extended in place.
-   * @param visiting - Registry keys currently on the call stack; used for circular-dependency detection.
-   * @param materializationStack - Bindings along the current construction chain; used to block singleton→scoped/transient.
-   */
   private resolve<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
@@ -487,12 +349,10 @@ export class DependencyResolver {
       if (visiting.has(registryKey)) {
         throw new CircularDependencyError([...pathLabels]);
       }
-
       const bindings = this.deps.lookup(registryKey);
       if (bindings === undefined || bindings.length === 0) {
         throw new TokenNotBoundError(label, [...pathLabels]);
       }
-
       const hasConstraint = bindings.some((binding) => binding.constraint !== undefined);
       const selectionConstraintCtx = hasConstraint
         ? this.buildConstraintContext(pathLabels, materializationStack, hint)
@@ -505,7 +365,6 @@ export class DependencyResolver {
         selectionConstraintCtx,
       );
       this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
-
       if (binding.kind === "async-dynamic") {
         throw new AsyncResolutionError(
           label,
@@ -513,7 +372,6 @@ export class DependencyResolver {
           "encountered async-dynamic factory during synchronous resolution",
         );
       }
-
       visiting.add(registryKey);
       try {
         return this.instantiateBinding(
@@ -531,17 +389,6 @@ export class DependencyResolver {
       pathLabels.pop();
     }
   }
-
-  /**
-   * Core async resolution: same pipeline as {@link resolve} but awaits `async-dynamic`
-   * factories and async lifecycle hooks instead of throwing {@link AsyncResolutionError}.
-   *
-   * @param key - Token or constructor being resolved.
-   * @param hint - Optional name/tag filter for multi-binding selection.
-   * @param pathLabels - Mutable label path accumulated during graph walk; extended in place.
-   * @param visiting - Registry keys currently on the call stack; used for circular-dependency detection.
-   * @param materializationStack - Same captive-dependency chain as {@link resolve}.
-   */
   private async resolveAsync<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
@@ -556,12 +403,10 @@ export class DependencyResolver {
       if (visiting.has(registryKey)) {
         throw new CircularDependencyError([...pathLabels]);
       }
-
       const bindings = this.deps.lookup(registryKey);
       if (bindings === undefined || bindings.length === 0) {
         throw new TokenNotBoundError(label, [...pathLabels]);
       }
-
       const selectionConstraintCtx = this.buildConstraintContext(
         pathLabels,
         materializationStack,
@@ -575,7 +420,6 @@ export class DependencyResolver {
         selectionConstraintCtx,
       );
       this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
-
       visiting.add(registryKey);
       try {
         return (await this.instantiateBindingAsync(
@@ -593,11 +437,6 @@ export class DependencyResolver {
       pathLabels.pop();
     }
   }
-
-  /**
-   * Handles scope-cache lookup / storage and lifecycle hooks (`@postConstruct`, `onActivation`)
-   * around a synchronous call to {@link materialize}.
-   */
   private instantiateBinding(
     binding: Binding<unknown>,
     registryKey: RegistryKey,
@@ -613,7 +452,6 @@ export class DependencyResolver {
     return this.deps.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       materializationStack.push(frame);
-      // Only dynamic factories receive ctx; class/constant/alias/resolved do not.
       const ctx =
         binding.kind === "dynamic"
           ? this.createContext(pathLabels, visiting, materializationStack, hint)
@@ -637,17 +475,10 @@ export class DependencyResolver {
       } else {
         result = instance;
       }
-      // Pop after activation so ctx.resolve inside onActivation sees the correct stack.
-      // If materialize/activation throws, the stack is discarded (fresh per resolveRoot call).
       materializationStack.pop();
       return result;
     });
   }
-
-  /**
-   * Async counterpart of {@link instantiateBinding}: delegates to {@link materializeAsync}
-   * and awaits `@postConstruct` and `onActivation` hooks.
-   */
   private async instantiateBindingAsync(
     binding: Binding<unknown>,
     registryKey: RegistryKey,
@@ -691,15 +522,6 @@ export class DependencyResolver {
       return await runActivationAsync(binding, instance, ctx);
     });
   }
-
-  /**
-   * Synchronously produces the raw instance for a binding **without** touching the scope cache
-   * or running lifecycle hooks. The caller ({@link instantiateBinding}) wraps this with
-   * cache logic and post-construction hooks.
-   *
-   * Dispatches on `binding.kind`; throws {@link AsyncResolutionError} if the binding is
-   * `async-dynamic` or if a `dynamic` / `resolved` factory returns a Promise.
-   */
   private materialize(
     binding: Binding<unknown>,
     hint: ResolveHint | undefined,
@@ -714,7 +536,6 @@ export class DependencyResolver {
       case "class":
         return this.instantiateClassBinding(binding, pathLabels, visiting, materializationStack);
       case "dynamic": {
-        // ctx is always created for dynamic bindings; the cast is safe.
         const factoryResult = binding.factory(ctx as ResolutionContext);
         if (isPromiseLike(factoryResult)) {
           throw new AsyncResolutionError(
@@ -754,11 +575,6 @@ export class DependencyResolver {
       }
     }
   }
-
-  /**
-   * Async counterpart of {@link materialize}; awaits `async-dynamic` factories and
-   * recursively resolves `resolved`-binding dependencies with {@link resolveAsync}.
-   */
   private async materializeAsync(
     binding: Binding<unknown>,
     hint: ResolveHint | undefined,
@@ -810,25 +626,22 @@ export class DependencyResolver {
       }
     }
   }
-
-  /**
-   * Reads `@injectable()` constructor metadata and synchronously resolves each parameter,
-   * then calls `new ImplementationClass(...deps)`. Throws {@link MissingMetadataError} when
-   * the class has constructor parameters but no metadata.
-   */
   private instantiateClassBinding(
-    binding: Extract<Binding<unknown>, { kind: "class" }>,
+    binding: Extract<
+      Binding<unknown>,
+      {
+        kind: "class";
+      }
+    >,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
     materializationStack: MaterializationFrame[],
   ): unknown {
     const reader = this.deps.metadataReader;
     const ImplementationClass = binding.implementationClass as new (...args: unknown[]) => unknown;
-
     if (reader === undefined) {
       return new ImplementationClass();
     }
-
     const meta = reader.getConstructorMetadata(binding.implementationClass);
     const arity = (ImplementationClass as Function).length;
     if (arity > 0 && meta === undefined) {
@@ -837,7 +650,6 @@ export class DependencyResolver {
     if (meta === undefined || meta.params.length === 0) {
       return new ImplementationClass();
     }
-
     const deps = meta.params.map((param) => {
       const paramHint =
         param.name !== undefined
@@ -862,24 +674,22 @@ export class DependencyResolver {
     });
     return new ImplementationClass(...deps);
   }
-
-  /**
-   * Async counterpart of {@link instantiateClassBinding}: resolves constructor dependencies
-   * with {@link resolveAsync} so `async-dynamic` parameters are awaited in order.
-   */
   private async instantiateClassBindingAsync(
-    binding: Extract<Binding<unknown>, { kind: "class" }>,
+    binding: Extract<
+      Binding<unknown>,
+      {
+        kind: "class";
+      }
+    >,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
     const reader = this.deps.metadataReader;
     const ImplementationClass = binding.implementationClass as new (...args: unknown[]) => unknown;
-
     if (reader === undefined) {
       return new ImplementationClass();
     }
-
     const meta = reader.getConstructorMetadata(binding.implementationClass);
     const arity = (ImplementationClass as Function).length;
     if (arity > 0 && meta === undefined) {
@@ -888,7 +698,6 @@ export class DependencyResolver {
     if (meta === undefined || meta.params.length === 0) {
       return new ImplementationClass();
     }
-
     const deps: unknown[] = [];
     for (const param of meta.params) {
       const paramHint =

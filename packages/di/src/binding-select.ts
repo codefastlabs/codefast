@@ -2,24 +2,12 @@ import type { Binding, ConstraintContext, Constructor, ResolveHint } from "#/bin
 import type { RegistryKey } from "#/registry";
 import type { Token } from "#/token";
 import { InternalError, NoMatchingBindingError, TokenNotBoundError } from "#/errors";
-
-/**
- * Returns a human-readable label for a token or constructor (used in error messages and graph output).
- */
 export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): string {
   if (typeof key === "function") {
     return key.name.length > 0 ? key.name : "(anonymous class)";
   }
   return key.name.trim().length > 0 ? key.name : "(anonymous token)";
 }
-
-/**
- * Narrows a binding list by applying name/tag hints and `when()` constraint predicates.
- *
- * Filtering order: name filter → tag filter → constraint predicate. Bindings without a
- * constraint predicate always pass the constraint stage. Returns the surviving candidates
- * (may be empty).
- */
 export function filterMatchingBindings(
   bindings: readonly Binding<unknown>[],
   hint: ResolveHint | undefined,
@@ -40,15 +28,6 @@ export function filterMatchingBindings(
   }
   return candidates;
 }
-
-/**
- * Selects exactly one binding from the provided list, applying hint and constraint filtering.
- *
- * @throws {@link TokenNotBoundError} — `bindings` list is empty, or no candidate survives
- *   filtering without a name/tag hint.
- * @throws {@link NoMatchingBindingError} — a name/tag hint was provided but no candidate matched.
- * @throws {@link InternalError} — multiple candidates survive filtering (ambiguous binding).
- */
 export function selectBindingForRegistry(
   bindings: readonly Binding<unknown>[],
   hint: ResolveHint | undefined,
@@ -59,7 +38,6 @@ export function selectBindingForRegistry(
   if (bindings.length === 0) {
     throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
   }
-
   const allCandidates = filterMatchingBindings(bindings, hint, constraintCtx);
   let candidates = allCandidates;
   if (hint === undefined || (hint.name === undefined && hint.tag === undefined)) {
@@ -70,7 +48,6 @@ export function selectBindingForRegistry(
       candidates = defaultCandidates;
     }
   }
-
   if (candidates.length === 1) {
     const [only] = candidates;
     if (only === undefined) {
@@ -90,11 +67,6 @@ export function selectBindingForRegistry(
     `Ambiguous binding for "${tokenLabel}": ${String(candidates.length)} candidates matched after applying ResolveHint (resolution path: ${pathLabels.join(" -> ")})`,
   );
 }
-
-/**
- * Convenience wrapper: looks up bindings for `key` and selects the default (no-hint,
- * no-constraint) binding. Throws {@link TokenNotBoundError} if the key is unregistered.
- */
 export function selectDefaultBindingForKey(
   lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
   key: RegistryKey,

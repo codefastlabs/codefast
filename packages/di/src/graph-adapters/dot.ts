@@ -1,9 +1,5 @@
 import type { BindingScope } from "#/binding";
 import type { ContainerBindingSnapshot, ContainerGraphJson } from "#/inspector";
-
-/**
- * Converts the canonical container graph JSON into a Graphviz DOT digraph string.
- */
 export function toDotGraph(graph: ContainerGraphJson): string {
   const lines: string[] = [
     "digraph codefast_di {",
@@ -12,7 +8,6 @@ export function toDotGraph(graph: ContainerGraphJson): string {
     '  node  [fontname="Arial", fontsize=12, shape=box, style="filled,rounded", fillcolor="#F5F5F5"];',
     '  edge  [fontname="Arial", fontsize=10];',
   ];
-
   const byModule = new Map<string | undefined, ContainerBindingSnapshot[]>();
   for (const node of graph.nodes) {
     const group = byModule.get(node.moduleId);
@@ -22,12 +17,10 @@ export function toDotGraph(graph: ContainerGraphJson): string {
       group.push(node);
     }
   }
-
   const moduleGroups = [...byModule.entries()].filter(
     (entry): entry is [string, ContainerBindingSnapshot[]] => entry[0] !== undefined,
   );
   const ungrouped = byModule.get(undefined) ?? [];
-
   for (const [moduleName, nodes] of moduleGroups) {
     const clusterId = sanitizeClusterId(moduleName);
     lines.push(`  subgraph cluster_${clusterId} {`);
@@ -39,11 +32,9 @@ export function toDotGraph(graph: ContainerGraphJson): string {
     }
     lines.push("  }");
   }
-
   for (const node of ungrouped) {
     lines.push(nodeAttributeLine(node, "  "));
   }
-
   const emittedNodeIds = new Set(graph.nodes.map((node) => node.bindingId));
   const edgeSeen = new Set<string>();
   for (const edge of graph.edges) {
@@ -52,7 +43,6 @@ export function toDotGraph(graph: ContainerGraphJson): string {
       continue;
     }
     edgeSeen.add(edgeKey);
-
     if (!emittedNodeIds.has(edge.fromBindingId)) {
       emittedNodeIds.add(edge.fromBindingId);
       lines.push(
@@ -65,7 +55,6 @@ export function toDotGraph(graph: ContainerGraphJson): string {
         `  "${dotEscapeId(edge.toBindingId)}" [shape=box, style=dashed, label="(unlisted ${dotEscapeLabel(edge.toBindingId)})"];`,
       );
     }
-
     const labelParts: string[] = [];
     if (edge.injectHintLabel !== undefined) {
       labelParts.push(edge.injectHintLabel);
@@ -81,11 +70,9 @@ export function toDotGraph(graph: ContainerGraphJson): string {
       `  "${dotEscapeId(edge.fromBindingId)}" -> "${dotEscapeId(edge.toBindingId)}" [label="${edgeLabel}", xlabel="${pathLabel}"${edgeStyle}];`,
     );
   }
-
   lines.push("}");
   return lines.join("\n");
 }
-
 function nodeAttributeLine(node: ContainerBindingSnapshot, indent: string): string {
   const shape = nodeShapeForKind(node.kind);
   const scopeAttrs = scopeVisualAttributes(node.scope);
@@ -95,15 +82,12 @@ function nodeAttributeLine(node: ContainerBindingSnapshot, indent: string): stri
   }
   return `${indent}"${dotEscapeId(node.bindingId)}" [shape=${shape}, ${scopeAttrs}, label="${dotEscapeLabel(labelLines.join("\n"))}"];`;
 }
-
 function dotEscapeLabel(text: string): string {
   return text.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
 }
-
 function dotEscapeId(id: string): string {
   return id.replaceAll("\\", "\\\\").replaceAll('"', '\\"').replaceAll("\n", "\\n");
 }
-
 function nodeShapeForKind(kind: ContainerBindingSnapshot["kind"]): string {
   switch (kind) {
     case "constant":
@@ -122,7 +106,6 @@ function nodeShapeForKind(kind: ContainerBindingSnapshot["kind"]): string {
     }
   }
 }
-
 function scopeVisualAttributes(scope: BindingScope): string {
   switch (scope) {
     case "singleton":
@@ -137,7 +120,6 @@ function scopeVisualAttributes(scope: BindingScope): string {
     }
   }
 }
-
 function sanitizeClusterId(moduleName: string): string {
   return moduleName.replace(/[^0-9a-zA-Z_]/g, "_");
 }
