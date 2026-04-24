@@ -181,182 +181,6 @@ class DefaultContainer implements Container {
   private readonly inheritedConstantCache = new Map<RegistryKey, unknown>();
   private readonly isDevEnv: boolean = isDevelopmentOrTestEnvironment();
 
-  private flushPendingBindings(): void {
-    if (this.pendingRegistrationBuilders.size === 0) {
-      return;
-    }
-    while (this.pendingRegistrationBuilders.size > 0) {
-      const nextPendingBuilder = this.pendingRegistrationBuilders.values().next().value as
-        | BindingBuilder<unknown>
-        | undefined;
-      if (nextPendingBuilder === undefined) {
-        return;
-      }
-      nextPendingBuilder.flushPendingRegistration();
-    }
-  }
-
-  private getOrCreateSlotIndexForToken(token: RegistryKey): Map<string, BindingIdentifier> {
-    const existing = this.slotIndexByToken.get(token);
-    if (existing !== undefined) {
-      return existing;
-    }
-    const created = new Map<string, BindingIdentifier>();
-    this.slotIndexByToken.set(token, created);
-    return created;
-  }
-
-  private reserveLastWinsSlot(
-    token: Token<unknown> | Constructor<unknown>,
-    nextBinding: Binding<unknown>,
-  ): string | undefined {
-    const slotKey = buildLastWinsSlotKey(nextBinding);
-    if (slotKey === undefined) {
-      return undefined;
-    }
-    const slotIndex = this.getOrCreateSlotIndexForToken(token);
-    const existingBindingId = slotIndex.get(slotKey);
-    if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
-      this.removeOwnedBindingById(existingBindingId);
-    }
-    slotIndex.set(slotKey, nextBinding.id);
-    return slotKey;
-  }
-
-  private clearReservedLastWinsSlot(
-    token: Token<unknown> | Constructor<unknown>,
-    bindingId: BindingIdentifier,
-  ): void {
-    const previousSlotKey = this.slotKeyByBindingId.get(bindingId);
-    if (previousSlotKey === undefined) {
-      return;
-    }
-    const previousSlotIndex = this.slotIndexByToken.get(token);
-    if (previousSlotIndex?.get(previousSlotKey) === bindingId) {
-      previousSlotIndex.delete(previousSlotKey);
-    }
-    if (previousSlotIndex !== undefined && previousSlotIndex.size === 0) {
-      this.slotIndexByToken.delete(token);
-    }
-  }
-
-  private untrackBinding(bindingId: BindingIdentifier): void {
-    const token = this.tokenByBindingId.get(bindingId);
-    const slotKey = this.slotKeyByBindingId.get(bindingId);
-    if (token !== undefined && slotKey !== undefined) {
-      const slotIndex = this.slotIndexByToken.get(token);
-      if (slotIndex?.get(slotKey) === bindingId) {
-        slotIndex.delete(slotKey);
-      }
-      if (slotIndex !== undefined && slotIndex.size === 0) {
-        this.slotIndexByToken.delete(token);
-      }
-    }
-    this.tokenByBindingId.delete(bindingId);
-    this.slotKeyByBindingId.delete(bindingId);
-  }
-
-  private removeOwnedBindingById(bindingId: BindingIdentifier): void {
-    this.ownScopeManager.releaseByBindingId(bindingId);
-    this.ownRegistry.removeById(bindingId);
-    this.untrackBinding(bindingId);
-  }
-
-  private async removeOwnedBindingByIdAsync(bindingId: BindingIdentifier): Promise<void> {
-    await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
-    this.ownRegistry.removeById(bindingId);
-    this.untrackBinding(bindingId);
-  }
-
-  private releaseOwnedBindingsByToken(token: RegistryKey): void {
-    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
-    if (ownedBindings === undefined) {
-      return;
-    }
-    for (const binding of ownedBindings) {
-      this.ownScopeManager.releaseBinding(binding);
-      this.untrackBinding(binding.id);
-    }
-  }
-
-  private async releaseOwnedBindingsByTokenAsync(token: RegistryKey): Promise<void> {
-    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
-    if (ownedBindings === undefined) {
-      return;
-    }
-    for (const binding of ownedBindings) {
-      await this.ownScopeManager.releaseBindingAsync(binding);
-      this.untrackBinding(binding.id);
-    }
-  }
-
-  private prepareRegistryMutation(): void {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
-  }
-
-  private completeLoadMutation(): void {
-    this.flushPendingBindings();
-    this.maybeRunDevValidationOnce();
-  }
-
-  private getLoadedBindingIdsOrThrow(module: ModuleLike): readonly BindingIdentifier[] {
-    const ownedBindingIds = this.loadedModules.get(module);
-    if (ownedBindingIds === undefined) {
-      throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
-    }
-    return ownedBindingIds;
-  }
-
-  private unloadLoadedModuleSync(module: ModuleLike): void {
-    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
-    for (const bindingId of [...ownedBindingIds].reverse()) {
-      this.removeOwnedBindingById(bindingId);
-    }
-    this.loadedModules.delete(module);
-  }
-
-  private async unloadLoadedModuleAsync(module: ModuleLike): Promise<void> {
-    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
-    for (const bindingId of [...ownedBindingIds].reverse()) {
-      await this.removeOwnedBindingByIdAsync(bindingId);
-    }
-    this.loadedModules.delete(module);
-  }
-
-  private registerOwnedBinding(
-    token: Token<unknown> | Constructor<unknown>,
-    nextBinding: Binding<unknown>,
-  ): void {
-    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
-    const trackedToken = this.tokenByBindingId.get(nextBinding.id);
-    if (trackedToken !== undefined) {
-      this.removeOwnedBindingById(nextBinding.id);
-    }
-    this.ownRegistry.add(token, nextBinding);
-    this.tokenByBindingId.set(nextBinding.id, token);
-    if (slotKey !== undefined) {
-      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
-    } else {
-      this.slotKeyByBindingId.delete(nextBinding.id);
-    }
-  }
-
-  private updateOwnedBinding(
-    token: Token<unknown> | Constructor<unknown>,
-    nextBinding: Binding<unknown>,
-  ): void {
-    this.clearReservedLastWinsSlot(token, nextBinding.id);
-    this.ownRegistry.replaceById(nextBinding.id, nextBinding);
-    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
-    if (slotKey !== undefined) {
-      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
-    } else {
-      this.slotKeyByBindingId.delete(nextBinding.id);
-    }
-    this.tokenByBindingId.set(nextBinding.id, token);
-  }
-
   /**
    * Internal constructor for root/child instances.
    * Use {@link Container.create}, {@link Container.fromModules}, or {@link createChild}.
@@ -579,74 +403,19 @@ class DefaultContainer implements Container {
     }
   }
 
-  private tryFastResolve<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint: ResolveHint | undefined,
-  ): Value | typeof NOT_FOUND {
-    const registryKey = token as RegistryKey;
-    if (
-      this.parent !== undefined &&
-      hint === undefined &&
-      this.inheritedConstantCache.has(registryKey)
-    ) {
-      return this.inheritedConstantCache.get(registryKey) as Value;
-    }
-    const binding = this.getSingleBindingInHierarchy(token, hint);
-    if (binding === undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.constraint !== undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.onActivation !== undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.onDeactivation !== undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.kind === "async-dynamic") {
-      return NOT_FOUND;
-    }
-    if (binding.kind === "constant") {
-      if (this.parent !== undefined && hint === undefined) {
-        const own = this.ownRegistry.get(registryKey as Token<unknown> | Constructor<unknown>);
-        if (own === undefined || own.length === 0) {
-          this.inheritedConstantCache.set(registryKey, binding.value);
-        }
-      }
-      return binding.value as Value;
-    }
-    if (this.ownScopeManager.isBindingCached(binding)) {
-      return this.ownScopeManager.getOrCreate(binding, () => {
-        throw new InternalError("Expected cached value for binding");
-      }) as Value;
-    }
-    return NOT_FOUND;
-  }
-
-  private getSingleBindingInHierarchy(
-    token: Token<unknown> | Constructor<unknown>,
-    hint: ResolveHint | undefined,
-  ): Binding<unknown> | undefined {
-    const key = token as RegistryKey;
-    const own = this.ownRegistry.get(key);
-    if (own !== undefined && own.length > 0) {
-      return this.ownRegistry.getSingleBinding(key, hint);
-    }
-    return this.parent?.getSingleBindingInHierarchy(token, hint) ?? undefined;
-  }
-
   /**
    * Async variant of {@link resolve}; same dev/test validation and runtime scope enforcement.
    */
-  resolveAsync<Value>(
+  async resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value> {
     this.flushPendingBindings();
-    return this.resolver.resolveAsyncRoot(token, hint).finally(() => {
+    try {
+      return await this.resolver.resolveAsyncRoot(token, hint);
+    } finally {
       this.maybeRunDevValidationOnce();
-    });
+    }
   }
 
   /**
@@ -682,14 +451,16 @@ class DefaultContainer implements Container {
    * Async variant of {@link resolveAll}: safe for multi-bindings that mix sync and async factories
    * (spec §5.2).
    */
-  resolveAllAsync<Value>(
+  async resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveHint,
   ): Promise<Value[]> {
     this.flushPendingBindings();
-    return this.resolver.resolveAllAsyncRoot<Value>(token, hint).finally(() => {
+    try {
+      return await this.resolver.resolveAllAsyncRoot<Value>(token, hint);
+    } finally {
       this.maybeRunDevValidationOnce();
-    });
+    }
   }
 
   /**
@@ -710,30 +481,6 @@ class DefaultContainer implements Container {
         await this.resolveAsync(registryKey as Token<unknown> | Constructor<unknown>, hint);
       }
     }
-  }
-
-  /**
-   * Marks the dev/test one-shot validation as stale so the next resolve or load triggers it again.
-   * Called on every registry mutation (bind, unbind, rebind, load, unload).
-   */
-  private invalidateDevValidationState(): void {
-    this.inheritedConstantCache.clear();
-    this.hasDevValidationRun = false;
-  }
-
-  /**
-   * Runs scope validation at most once per registry epoch when `NODE_ENV` is not `"production"`.
-   * Guards against repeated validation on successive resolves without intervening mutations.
-   */
-  private maybeRunDevValidationOnce(): void {
-    if (!this.isDevEnv) {
-      return;
-    }
-    if (this.hasDevValidationRun) {
-      return;
-    }
-    this.hasDevValidationRun = true;
-    this.validate();
   }
 
   /**
@@ -796,6 +543,313 @@ class DefaultContainer implements Container {
   }
 
   /**
+   * Child inherits parent bindings via lookup fallback and shares singleton instances,
+   * but receives an isolated scoped cache.
+   */
+  createChild(): Container {
+    const childRegistry = new BindingRegistry();
+    const childScope = this.ownScopeManager.createChildScope();
+    const holder: ContainerRef = { current: undefined };
+    const resolver = new DependencyResolver({
+      lookup: (token) => {
+        const current = holder.current;
+        if (current === undefined) {
+          throw new InternalError("child container is not initialized");
+        }
+        return current.lookupBindingsInternal(token);
+      },
+      scopeManager: childScope,
+      metadataReader: this.metadataReader,
+    });
+    const child = new DefaultContainer(
+      childRegistry,
+      childScope,
+      this,
+      resolver,
+      this.metadataReader,
+    );
+    holder.current = child;
+    return child;
+  }
+
+  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
+    this.flushPendingBindings();
+    return this.lookupBindingsInternal(token);
+  }
+
+  /**
+   * Disposes this container's scope manager and runs async deactivation hooks.
+   */
+  async dispose(): Promise<void> {
+    this.flushPendingBindings();
+    await this.ownScopeManager.disposeAsync();
+  }
+
+  /**
+   * Async-dispose protocol hook used by `await using`.
+   */
+  [Symbol.asyncDispose](): Promise<void> {
+    return this.dispose();
+  }
+
+  private flushPendingBindings(): void {
+    if (this.pendingRegistrationBuilders.size === 0) {
+      return;
+    }
+    while (this.pendingRegistrationBuilders.size > 0) {
+      const nextPendingBuilder = this.pendingRegistrationBuilders.values().next().value as
+        | BindingBuilder<unknown>
+        | undefined;
+      if (nextPendingBuilder === undefined) {
+        return;
+      }
+      nextPendingBuilder.flushPendingRegistration();
+    }
+  }
+
+  private getOrCreateSlotIndexForToken(token: RegistryKey): Map<string, BindingIdentifier> {
+    const existing = this.slotIndexByToken.get(token);
+    if (existing !== undefined) {
+      return existing;
+    }
+    const created = new Map<string, BindingIdentifier>();
+    this.slotIndexByToken.set(token, created);
+    return created;
+  }
+
+  private reserveLastWinsSlot(
+    token: Token<unknown> | Constructor<unknown>,
+    nextBinding: Binding<unknown>,
+  ): string | undefined {
+    const slotKey = buildLastWinsSlotKey(nextBinding);
+    if (slotKey === undefined) {
+      return undefined;
+    }
+    const slotIndex = this.getOrCreateSlotIndexForToken(token);
+    const existingBindingId = slotIndex.get(slotKey);
+    if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
+      this.removeOwnedBindingById(existingBindingId);
+    }
+    slotIndex.set(slotKey, nextBinding.id);
+    return slotKey;
+  }
+
+  private clearReservedLastWinsSlot(
+    token: Token<unknown> | Constructor<unknown>,
+    bindingId: BindingIdentifier,
+  ): void {
+    const previousSlotKey = this.slotKeyByBindingId.get(bindingId);
+    if (previousSlotKey === undefined) {
+      return;
+    }
+    const previousSlotIndex = this.slotIndexByToken.get(token);
+    if (previousSlotIndex?.get(previousSlotKey) === bindingId) {
+      previousSlotIndex.delete(previousSlotKey);
+    }
+    if (previousSlotIndex !== undefined && previousSlotIndex.size === 0) {
+      this.slotIndexByToken.delete(token);
+    }
+  }
+
+  private untrackBinding(bindingId: BindingIdentifier): void {
+    const token = this.tokenByBindingId.get(bindingId);
+    const slotKey = this.slotKeyByBindingId.get(bindingId);
+    if (token !== undefined && slotKey !== undefined) {
+      const slotIndex = this.slotIndexByToken.get(token);
+      if (slotIndex?.get(slotKey) === bindingId) {
+        slotIndex.delete(slotKey);
+      }
+      if (slotIndex !== undefined && slotIndex.size === 0) {
+        this.slotIndexByToken.delete(token);
+      }
+    }
+    this.tokenByBindingId.delete(bindingId);
+    this.slotKeyByBindingId.delete(bindingId);
+  }
+
+  private removeOwnedBindingById(bindingId: BindingIdentifier): void {
+    this.ownScopeManager.releaseByBindingId(bindingId);
+    this.ownRegistry.removeById(bindingId);
+    this.untrackBinding(bindingId);
+  }
+
+  private async removeOwnedBindingByIdAsync(bindingId: BindingIdentifier): Promise<void> {
+    await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
+    this.ownRegistry.removeById(bindingId);
+    this.untrackBinding(bindingId);
+  }
+
+  private releaseOwnedBindingsByToken(token: RegistryKey): void {
+    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
+    if (ownedBindings === undefined) {
+      return;
+    }
+    for (const binding of ownedBindings) {
+      this.ownScopeManager.releaseBinding(binding);
+      this.untrackBinding(binding.id);
+    }
+  }
+
+  private async releaseOwnedBindingsByTokenAsync(token: RegistryKey): Promise<void> {
+    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
+    if (ownedBindings === undefined) {
+      return;
+    }
+    for (const binding of ownedBindings) {
+      await this.ownScopeManager.releaseBindingAsync(binding);
+      this.untrackBinding(binding.id);
+    }
+  }
+
+  private prepareRegistryMutation(): void {
+    this.flushPendingBindings();
+    this.invalidateDevValidationState();
+  }
+
+  private completeLoadMutation(): void {
+    this.flushPendingBindings();
+    this.maybeRunDevValidationOnce();
+  }
+
+  private getLoadedBindingIdsOrThrow(module: ModuleLike): readonly BindingIdentifier[] {
+    const ownedBindingIds = this.loadedModules.get(module);
+    if (ownedBindingIds === undefined) {
+      throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
+    }
+    return ownedBindingIds;
+  }
+
+  private unloadLoadedModuleSync(module: ModuleLike): void {
+    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
+    for (const bindingId of [...ownedBindingIds].reverse()) {
+      this.removeOwnedBindingById(bindingId);
+    }
+    this.loadedModules.delete(module);
+  }
+
+  private async unloadLoadedModuleAsync(module: ModuleLike): Promise<void> {
+    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
+    for (const bindingId of [...ownedBindingIds].reverse()) {
+      await this.removeOwnedBindingByIdAsync(bindingId);
+    }
+    this.loadedModules.delete(module);
+  }
+
+  private registerOwnedBinding(
+    token: Token<unknown> | Constructor<unknown>,
+    nextBinding: Binding<unknown>,
+  ): void {
+    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
+    const trackedToken = this.tokenByBindingId.get(nextBinding.id);
+    if (trackedToken !== undefined) {
+      this.removeOwnedBindingById(nextBinding.id);
+    }
+    this.ownRegistry.add(token, nextBinding);
+    this.tokenByBindingId.set(nextBinding.id, token);
+    if (slotKey !== undefined) {
+      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
+    } else {
+      this.slotKeyByBindingId.delete(nextBinding.id);
+    }
+  }
+
+  private updateOwnedBinding(
+    token: Token<unknown> | Constructor<unknown>,
+    nextBinding: Binding<unknown>,
+  ): void {
+    this.clearReservedLastWinsSlot(token, nextBinding.id);
+    this.ownRegistry.replaceById(nextBinding.id, nextBinding);
+    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
+    if (slotKey !== undefined) {
+      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
+    } else {
+      this.slotKeyByBindingId.delete(nextBinding.id);
+    }
+    this.tokenByBindingId.set(nextBinding.id, token);
+  }
+
+  private tryFastResolve<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint: ResolveHint | undefined,
+  ): Value | typeof NOT_FOUND {
+    const registryKey = token as RegistryKey;
+    if (
+      this.parent !== undefined &&
+      hint === undefined &&
+      this.inheritedConstantCache.has(registryKey)
+    ) {
+      return this.inheritedConstantCache.get(registryKey) as Value;
+    }
+    const binding = this.getSingleBindingInHierarchy(token, hint);
+    if (binding === undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.constraint !== undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.onActivation !== undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.onDeactivation !== undefined) {
+      return NOT_FOUND;
+    }
+    if (binding.kind === "async-dynamic") {
+      return NOT_FOUND;
+    }
+    if (binding.kind === "constant") {
+      if (this.parent !== undefined && hint === undefined) {
+        const own = this.ownRegistry.get(registryKey as Token<unknown> | Constructor<unknown>);
+        if (own === undefined || own.length === 0) {
+          this.inheritedConstantCache.set(registryKey, binding.value);
+        }
+      }
+      return binding.value as Value;
+    }
+    if (this.ownScopeManager.isBindingCached(binding)) {
+      return this.ownScopeManager.getOrCreate(binding, () => {
+        throw new InternalError("Expected cached value for binding");
+      }) as Value;
+    }
+    return NOT_FOUND;
+  }
+
+  private getSingleBindingInHierarchy(
+    token: Token<unknown> | Constructor<unknown>,
+    hint: ResolveHint | undefined,
+  ): Binding<unknown> | undefined {
+    const key = token as RegistryKey;
+    const own = this.ownRegistry.get(key);
+    if (own !== undefined && own.length > 0) {
+      return this.ownRegistry.getSingleBinding(key, hint);
+    }
+    return this.parent?.getSingleBindingInHierarchy(token, hint) ?? undefined;
+  }
+
+  /**
+   * Marks the dev/test one-shot validation as stale so the next resolve or load triggers it again.
+   * Called on every registry mutation (bind, unbind, rebind, load, unload).
+   */
+  private invalidateDevValidationState(): void {
+    this.inheritedConstantCache.clear();
+    this.hasDevValidationRun = false;
+  }
+
+  /**
+   * Runs scope validation at most once per registry epoch when `NODE_ENV` is not `"production"`.
+   * Guards against repeated validation on successive resolves without intervening mutations.
+   */
+  private maybeRunDevValidationOnce(): void {
+    if (!this.isDevEnv) {
+      return;
+    }
+    if (this.hasDevValidationRun) {
+      return;
+    }
+    this.hasDevValidationRun = true;
+    this.validate();
+  }
+
+  /**
    * Constructs a {@link ContainerInspector} wired to this container's full hierarchy.
    */
   private createInspector(): ContainerInspector {
@@ -835,36 +889,6 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * Child inherits parent bindings via lookup fallback and shares singleton instances,
-   * but receives an isolated scoped cache.
-   */
-  createChild(): Container {
-    const childRegistry = new BindingRegistry();
-    const childScope = this.ownScopeManager.createChildScope();
-    const holder: ContainerRef = { current: undefined };
-    const resolver = new DependencyResolver({
-      lookup: (token) => {
-        const current = holder.current;
-        if (current === undefined) {
-          throw new InternalError("child container is not initialized");
-        }
-        return current.lookupBindingsInternal(token);
-      },
-      scopeManager: childScope,
-      metadataReader: this.metadataReader,
-    });
-    const child = new DefaultContainer(
-      childRegistry,
-      childScope,
-      this,
-      resolver,
-      this.metadataReader,
-    );
-    holder.current = child;
-    return child;
-  }
-
-  /**
    * Lookup helper with parent fallback: own bindings take precedence over parent bindings.
    */
   private lookupBindingsInternal(token: RegistryKey): readonly Binding<unknown>[] | undefined {
@@ -878,26 +902,6 @@ class DefaultContainer implements Container {
   private lookupBindingsForDescendant(token: RegistryKey): readonly Binding<unknown>[] | undefined {
     this.flushPendingBindings();
     return this.lookupBindingsInternal(token);
-  }
-
-  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
-    this.flushPendingBindings();
-    return this.lookupBindingsInternal(token);
-  }
-
-  /**
-   * Disposes this container's scope manager and runs async deactivation hooks.
-   */
-  async dispose(): Promise<void> {
-    this.flushPendingBindings();
-    await this.ownScopeManager.disposeAsync();
-  }
-
-  /**
-   * Async-dispose protocol hook used by `await using`.
-   */
-  [Symbol.asyncDispose](): Promise<void> {
-    return this.dispose();
   }
 
   /**
