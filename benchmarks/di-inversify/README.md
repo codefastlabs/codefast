@@ -103,7 +103,10 @@ Currently migrated to the trial harness:
 | `realistic`  | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                          |
 | `fan-out`    | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented) |
 | `async`      | `resolve-async-single-hop`, `dynamic-async-chain-8`                                                                                                                                 |
+| `lifecycle`  | `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`                                                                                                                |
 | `scope`      | `child-depth-2-resolve`, `child-depth-8-stress` (stress)                                                                                                                            |
+| `scale`      | `scale-deep-transient-chain-512`                                                                                                                                                    |
+| `boot`       | `boot-decorated-container-build-and-resolve`                                                                                                                                        |
 | `diagnostic` | `diagnostic-container-create-empty`                                                                                                                                                 |
 
 ### Phase 2 - Fan-out baseline
@@ -133,13 +136,20 @@ Completed on branch `feat/di-bench-fanout-phase2` (pending PR split for async-on
 
 All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures.
 
-Planned but not yet migrated (see the git history for the old single-bench implementations):
+### Phase 4 - Lifecycle, scale, boot migration
 
-- `lifecycle` — `postConstruct` / `preDestroy` hot paths, scope dispose.
-- `scale` — deep module trees, 500+ bindings.
-- `boot` — decorator-driven container construction (each library in its canonical decorator mode).
+Completed in this branch with new scenario modules:
 
-`boot` is intentionally last: it's spawn-heavy and slow; migrating it prematurely would slow the dev inner loop for every other scenario being tuned.
+- `lifecycle-post-construct-singleton`
+- `lifecycle-pre-destroy-unbind`
+- `scale-deep-transient-chain-512`
+- `boot-decorated-container-build-and-resolve`
+
+Validation status:
+
+- `pnpm check-types` passes for both `tsconfig.codefast.json` and `tsconfig.inversify.json`.
+- `pnpm bench:fast` runs head-to-head with no sanity failures on either library.
+- Full-run tuning remains the same recommendation: use `pnpm bench` / `pnpm bench:full` when collecting publishable numbers and stability envelopes.
 
 ## Layout
 
@@ -160,14 +170,20 @@ src/
       realistic.ts
       fan-out.ts
       async.ts
+      lifecycle.ts
       scope.ts
+      scale.ts
+      boot.ts
       diagnostic.ts
     inversify/            # InversifyJS 8 scenario modules (mirror)
       micro.ts
       realistic.ts
       fan-out.ts
       async.ts
+      lifecycle.ts
       scope.ts
+      scale.ts
+      boot.ts
       diagnostic.ts
   fixtures/
     realistic-graph.ts    # shared descriptor (no library imports)
