@@ -3,6 +3,7 @@ import { Container } from "#/container";
 import { injectAll } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import * as environment from "#/environment";
+import { ScopeViolationError } from "#/errors";
 import { Module } from "#/module";
 import { token } from "#/token";
 
@@ -143,5 +144,72 @@ describe("Container", () => {
     expect(builder.id()).toBe(bindingId);
     expect(container.lookupBindings(refineToken)?.length).toBe(1);
     expect(container.resolve(refineToken, { name: "n" })).toBe(10);
+  });
+
+  describe("scope validation", () => {
+    it("does not throw when the registry has no bindings", () => {
+      const container = Container.create();
+      expect(() => container.validate()).not.toThrow();
+    });
+
+    it("throws ScopeViolationError for singleton depending on transient", () => {
+      const transientDependencyToken = token<TransientDependency>(
+        "container-scope-transient-dependency",
+      );
+      const singletonServiceToken = token<SingletonService>("container-scope-singleton-service");
+
+      @injectable()
+      class TransientDependency {}
+
+      @injectable([transientDependencyToken])
+      class SingletonService {
+        constructor(readonly dependency: TransientDependency) {}
+      }
+
+      const container = Container.create();
+      container.bind(transientDependencyToken).to(TransientDependency).transient();
+      container.bind(singletonServiceToken).to(SingletonService).singleton();
+
+      expect(() => container.validate()).toThrow(ScopeViolationError);
+    });
+
+    it("allows singleton depending on constant binding", () => {
+      const configToken = token<string>("container-scope-config");
+      const singletonServiceToken = token<SingletonWithConstantDependency>(
+        "container-scope-singleton-constant",
+      );
+
+      @injectable([configToken])
+      class SingletonWithConstantDependency {
+        constructor(readonly config: string) {}
+      }
+
+      const container = Container.create();
+      container.bind(configToken).toConstantValue("ok");
+      container.bind(singletonServiceToken).to(SingletonWithConstantDependency).singleton();
+
+      expect(() => container.validate()).not.toThrow();
+    });
+
+    it("allows scoped consumer depending on transient", () => {
+      const transientDependencyToken = token<ScopedTransientDependency>(
+        "container-scope-scoped-dependency",
+      );
+      const scopedServiceToken = token<ScopedService>("container-scope-scoped-service");
+
+      @injectable()
+      class ScopedTransientDependency {}
+
+      @injectable([transientDependencyToken])
+      class ScopedService {
+        constructor(readonly dependency: ScopedTransientDependency) {}
+      }
+
+      const container = Container.create();
+      container.bind(transientDependencyToken).to(ScopedTransientDependency).transient();
+      container.bind(scopedServiceToken).to(ScopedService).scoped();
+
+      expect(() => container.validate()).not.toThrow();
+    });
   });
 });
