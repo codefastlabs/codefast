@@ -19,7 +19,7 @@ A consequence: scenarios that would otherwise bake in a per-library decorator se
 
 ### Trials, medians, IQR
 
-Each library runs **N trials** back-to-back (1 with `BENCH_FAST=1`, 2 in the default head-to-head run, 3 with `BENCH_FULL=1`). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS`.
+Each library runs **N trials** back-to-back (minimum 2 trials in normal/fast runs, 3 with `BENCH_FULL=1`). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS` (`>=2`).
 
 The reporter collapses N per-trial results into:
 
@@ -70,6 +70,33 @@ pnpm check-types           # type-check each tsconfig variant
 
 `pnpm bench` defaults to quiet mode (suppresses child stdout spam and keeps the final comparison table readable). Use `BENCH_VERBOSE=1` / `pnpm bench:verbose` when debugging scenario-level subprocess logs.
 
+## Environment configuration
+
+### Runtime baseline (pinned by harness)
+
+| Key                        | Value / behavior                       |
+| -------------------------- | -------------------------------------- |
+| `NODE_ENV`                 | `production`                           |
+| `NODE_OPTIONS`             | Always includes `--no-warnings`        |
+| `NODE_OPTIONS` (full mode) | Adds `--expose-gc` when `BENCH_FULL=1` |
+
+### User-tunable env vars
+
+| Variable        | Values         | Effect                                                                             |
+| --------------- | -------------- | ---------------------------------------------------------------------------------- |
+| `BENCH_FAST`    | `1`            | Quick smoke profile (shorter tinybench sampling windows).                          |
+| `BENCH_FULL`    | `1`            | Slower, publishable profile with GC exposed and longer sampling.                   |
+| `BENCH_TRIALS`  | integer `>= 2` | Overrides trial count; lower/invalid values are rejected and fall back to default. |
+| `BENCH_VERBOSE` | `1`            | Forwards child subprocess stdout/stderr for debugging.                             |
+
+### Recommended presets
+
+| Goal                        | Command                                   |
+| --------------------------- | ----------------------------------------- |
+| Local sanity check          | `BENCH_FAST=1 pnpm bench`                 |
+| Debug noisy/failed scenario | `BENCH_FAST=1 BENCH_VERBOSE=1 pnpm bench` |
+| Publishable comparison      | `BENCH_FULL=1 BENCH_TRIALS=3 pnpm bench`  |
+
 Outputs land in `bench-results/<timestamp>/`:
 
 - `report.md` — rendered markdown table with fingerprint + IQR.
@@ -116,7 +143,7 @@ Currently migrated to the trial harness:
 
 Completed in PR #420 [`feat/di-bench-fanout-phase2`](https://github.com/codefastlabs/codefast/pull/420)
 
-**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1`:
+**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1` (historical run before the min-2 floor):
 
 | Scenario                         | Hz ratio | Mean-ms ratio | Status |
 | -------------------------------- | -------- | ------------- | ------ |
@@ -130,7 +157,7 @@ All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures. IQR 
 
 Completed on branch `feat/di-bench-fanout-phase2` (pending PR split for async-only review)
 
-**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1`:
+**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1` (historical run before the min-2 floor):
 
 | Scenario                   | Hz ratio | Mean-ms ratio | Status |
 | -------------------------- | -------- | ------------- | ------ |
