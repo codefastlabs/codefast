@@ -62,10 +62,13 @@ Or from this package:
 
 ```bash
 pnpm bench                 # full head-to-head
+pnpm bench:verbose         # full run + forward full child subprocess logs (debug mode)
 pnpm bench:codefast        # codefast subprocess only (prints raw JSON payload)
 pnpm bench:inversify       # inversify subprocess only
 pnpm check-types           # type-check each tsconfig variant
 ```
+
+`pnpm bench` defaults to quiet mode (suppresses child stdout spam and keeps the final comparison table readable). Use `BENCH_VERBOSE=1` / `pnpm bench:verbose` when debugging scenario-level subprocess logs.
 
 Outputs land in `bench-results/<timestamp>/`:
 

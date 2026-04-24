@@ -20,6 +20,7 @@
   "scripts": {
     "check-types": "tsgo --noEmit -p tsconfig.codefast.json && tsgo --noEmit -p tsconfig.inversify.json",
     "bench": "tsx src/harness/run.ts",
+    "bench:verbose": "BENCH_VERBOSE=1 tsx src/harness/run.ts",
     "bench:fast": "BENCH_FAST=1 tsx src/harness/run.ts",
     "bench:full": "BENCH_FULL=1 tsx src/harness/run.ts",
     "bench:codefast": "tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
