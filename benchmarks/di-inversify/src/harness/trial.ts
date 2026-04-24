@@ -14,6 +14,14 @@ import type { ScenarioTrialResult, TrialPayload } from "#/harness/protocol";
 const FAST_MODE_ENABLED = process.env["BENCH_FAST"] === "1";
 const FULL_MODE_ENABLED = process.env["BENCH_FULL"] === "1";
 
+/**
+ * In `BENCH_FULL=1` runs, Node runs with `--expose-gc` and the parent toggles
+ * on manual GC. Doing `gc()` on every single tinybench sample explodes wall time
+ * (tens of seconds per subprocess). A larger stride keeps full runs practical;
+ * we still run a full `gc()` between trials (see `runAllTrials`).
+ */
+const FULL_MODE_SAMPLE_GC_STRIDE = 25;
+
 export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
   ? {
       time: 20,
@@ -23,10 +31,14 @@ export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
     }
   : FULL_MODE_ENABLED
     ? {
-        time: 450,
-        iterations: 800,
-        warmupTime: 60,
-        warmupIterations: 60,
+        // Slightly longer sampling than default; same iteration / warmup floor as
+        // default (not 450/800/60). GC is strided in `createBeforeEachGcHook`, so
+        // raising `iterations` no longer explodes wall time the way the old full
+        // profile did.
+        time: 100,
+        iterations: 100,
+        warmupTime: 10,
+        warmupIterations: 10,
       }
     : {
         time: 50,
@@ -45,7 +57,7 @@ export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
  * reduces (does not eliminate) the cross-trial correlation. For cleaner
  * isolation, spawn multiple subprocesses; that is the user's responsibility.
  */
-export const DEFAULT_TRIAL_COUNT = FAST_MODE_ENABLED ? 1 : FULL_MODE_ENABLED ? 5 : 2;
+export const DEFAULT_TRIAL_COUNT = FAST_MODE_ENABLED ? 1 : FULL_MODE_ENABLED ? 3 : 2;
 
 /**
  * Force a full GC between tinybench tasks when `--expose-gc` is available.
@@ -54,13 +66,27 @@ export const DEFAULT_TRIAL_COUNT = FAST_MODE_ENABLED ? 1 : FULL_MODE_ENABLED ? 5
  * the bench becomes "faster" but because GC pauses no longer show up as
  * apparent variance in `latency.p99`.
  */
-function runGarbageCollectionIfExposed(): void {
+function runFullGcIfExposed(): void {
   if (typeof globalThis.gc === "function") {
-    if (FAST_MODE_ENABLED) {
+    globalThis.gc();
+  }
+}
+
+function createBeforeEachGcHook(): () => void {
+  let callIndex = 0;
+  return (): void => {
+    if (typeof globalThis.gc !== "function") {
+      return;
+    }
+    if (FULL_MODE_ENABLED) {
+      if (callIndex++ % FULL_MODE_SAMPLE_GC_STRIDE !== 0) {
+        return;
+      }
+    } else if (FAST_MODE_ENABLED) {
       console.debug("[GC] Manual GC triggered");
     }
     globalThis.gc();
-  }
+  };
 }
 
 type TaskResultWithStatisticsState = Extract<
@@ -81,6 +107,7 @@ async function runOneTrial(
   scenarios: readonly AnyScenario[],
   sanityFailures: readonly string[],
 ): Promise<TrialPayload> {
+  const beforeEachGc = createBeforeEachGcHook();
   const bench = new Bench(DEFAULT_BENCH_OPTIONS);
 
   // Pre-build every scenario's closure before bench.add so tinybench only sees
@@ -101,11 +128,11 @@ async function runOneTrial(
     }
     if (isAsyncScenario(scenario)) {
       bench.add(scenario.id, preBuiltClosure as () => Promise<void>, {
-        beforeEach: runGarbageCollectionIfExposed,
+        beforeEach: beforeEachGc,
       });
     } else {
       bench.add(scenario.id, preBuiltClosure as () => void, {
-        beforeEach: runGarbageCollectionIfExposed,
+        beforeEach: beforeEachGc,
       });
     }
   }
@@ -204,7 +231,7 @@ export async function runAllTrials(
   const trials: TrialPayload[] = [];
   const scenarioStartedAtMs = performance.now();
   for (let trialIndex = 0; trialIndex < trialCount; trialIndex++) {
-    runGarbageCollectionIfExposed();
+    runFullGcIfExposed();
     const trial = await runOneTrial(trialIndex, scenarios, sanityFailures);
     trials.push(trial);
     console.log(`Trial ${String(trialIndex + 1)}/${String(trialCount)} done`);
