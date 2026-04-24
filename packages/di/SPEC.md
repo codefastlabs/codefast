@@ -551,6 +551,9 @@ await requestContainer.dispose();
 ### 5.5 Container interface
 
 ```ts
+/** Tuỳ chọn cho `generateDependencyGraph` — định nghĩa đầy đủ: `GraphOptions` trong `src/inspector.ts`. */
+type GraphOptions = { readonly hideInternals?: boolean };
+
 interface Container {
   // Binding
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
@@ -609,16 +612,17 @@ interface Container {
   lookupBindings(token: Token<unknown> | Constructor): readonly Binding<unknown>[] | undefined;
   // lookupBindings — trả về tất cả bindings đăng ký cho token (kể cả chưa resolved)
   inspect(): ContainerSnapshot;
-  // Overloaded — format quyết định return type (không phải hai method riêng)
-  generateDependencyGraph(options?: DotGraphOptions & { format?: "dot" }): string;
-  generateDependencyGraph(options: DotGraphOptions & { format: "json" }): ContainerGraphJson;
+  /** JSON canonical (nodes + edges phân tích tĩnh). Tuỳ chọn: `GraphOptions` trong `src/inspector.ts`. */
+  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
 
-// ContainerGraphJson — typed, không phải raw string
-interface ContainerGraphJson {
-  nodes: Array<{ id: string; scope: "singleton" | "transient" | "scoped" }>;
-  edges: Array<{ from: string; to: string }>;
-}
+// `GraphOptions`, `ContainerSnapshot`, `ContainerGraphJson` — định nghĩa đầy đủ trong `src/inspector.ts`.
+// `ContainerGraphJson`: `nodes` là các hàng snapshot binding (`registryKeyLabel`, `bindingId`, `kind`,
+// `scope`, `activationStatus`, `hasConditionalConstraint`, `moduleId?`); `edges` là cạnh hướng tới
+// dependency tĩnh (xem `StaticDependencyEdge` trong `src/dependency-graph.ts`).
+//
+// Đồ thị Graphviz (chuỗi DOT): dùng `toDotGraph()` từ subpath `@codefast/di/graph-adapters/dot`
+// trên kết quả `generateDependencyGraph()` — không nằm trên interface `Container`.
 
 interface ResolveOptions {
   name?: string;
@@ -883,7 +887,7 @@ container.bind(Database).to(DatabaseService).singleton();
 
 > **Precedence:** Nếu binding có cả `@postConstruct()` trên class **và** `.onActivation()` tại binding site, thứ tự là: `@postConstruct()` chạy trước → `.onActivation()` chạy sau (nhận instance đã được init). Tương tự, `.onDeactivation()` chạy trước → `@preDestroy()` chạy sau.
 >
-> **Scope:** `@postConstruct()` chạy cho mọi scope (singleton, transient, scoped) — mỗi lần instance mới được tạo. `@preDestroy()` chỉ chạy cho singleton (giống `onDeactivation`), vì transient không có lifecycle tracking.
+> **Scope:** `@postConstruct()` chạy cho mọi scope (singleton, transient, scoped) — mỗi lần instance mới được tạo. `@preDestroy()` chạy khi instance bị evict khỏi cache — với scoped là khi child container dispose, với singleton là khi root dispose hoặc unbind. `onDeactivation` vẫn chỉ khai báo được trên singleton builder. Transient không giữ cache nên không có eviction/deactivation theo kiểu này.
 >
 > **Async:** Cả hai đều hỗ trợ async — method trả về `Promise` sẽ được await. Dùng `@postConstruct()` async trên transient binding đồng nghĩa với resolve luôn trả về `Promise` → bắt buộc dùng `resolveAsync()`.
 
@@ -892,7 +896,7 @@ container.bind(Database).to(DatabaseService).singleton();
 `@injectable()` hỗ trợ option `autoRegister` — khi bật, class tự đăng ký vào một global registry tại thời điểm class được định nghĩa (module load time), không cần `container.bind()` tường minh:
 
 ```ts
-import { injectable, autoRegistered } from "@codefast/di";
+import { injectable } from "@codefast/di";
 
 @injectable([Logger, Config], { autoRegister: true })
 class UserService { ... }
@@ -1172,7 +1176,7 @@ export type { Token, TokenValue } from "#/token";
 
 // Container
 export { Container } from "#/container";
-export type { ContainerGraphJson, ContainerSnapshot } from "#/container";
+export type { ContainerGraphJson, ContainerSnapshot } from "#/inspector";
 
 // Binding — types consumers need when writing modules or typed helpers
 export type {
@@ -1229,7 +1233,7 @@ export type { ScopeViolationDetails } from "#/errors";
 
 ### 9.2 `package.json`
 
-ESM-only, không có `"require"` export — giống InversifyJS v8. Node 20.19+ hỗ trợ `require(esm)` mà không cần flag.
+ESM-only, không có `"require"` export — giống InversifyJS v8. `engines.node` yêu cầu `>=22.0.0` (xem `package.json`).
 
 Ngoài `"."` (public API), package expose từng module nội bộ qua subpath exports cho tooling và advanced consumers. Người dùng thông thường chỉ cần `"."`.
 
@@ -1345,7 +1349,7 @@ TC39 Stage 3 `@injectable(deps?, options?)` với deps array và `autoRegister` 
 - **Constraint bindings đầy đủ:** `when(constraint)` tùy chỉnh, `whenParentIs`, `whenAnyAncestorIs` — export từ `@codefast/di/constraints`
 - **Scope violation detection:** `container.validate()` throw `ScopeViolationError` khi singleton phụ thuộc vào scoped/transient (captive dependency)
 - **Container-level `initializeAsync()`:** warm up tất cả singletons (sync lẫn async) trước khi serve traffic. `initialize()` sync đã bị bỏ
-- **Dependency graph:** `generateDependencyGraph({ format: "dot" })` (Graphviz) và `generateDependencyGraph({ format: "json" })` trả về `ContainerGraphJson` typed — export từ `@codefast/di/dependency-graph`
+- **Dependency graph:** `generateDependencyGraph()` trả về `ContainerGraphJson` (JSON canonical); chuỗi Graphviz DOT qua `toDotGraph()` từ `@codefast/di/graph-adapters/dot`
 - **Builder type narrowing:** `onDeactivation` chỉ compile được trên `SingletonBindingBuilder`
 - **Integration packages:** `@codefast/di-hono`, `@codefast/di-fastify`
 
@@ -1396,7 +1400,7 @@ TC39 Stage 3 `@injectable(deps?, options?)` với deps array và `autoRegister` 
 | Tính năng v8                              | Cách triển khai ở đây                                                                     |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Naming: unqualified=sync, `Async`=async   | Giữ nguyên: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, ...     |
-| ESM-only, Node ≥ 20.19                    | Giống v8                                                                                  |
+| ESM-only, Node ≥ 22 (`engines`)           | Giống v8                                                                                  |
 | `onActivation` / `onDeactivation`         | Giữ, nhưng callback tự infer type — không cần annotate                                    |
 | `toResolvedValue(factory, injectOptions)` | Đổi tên thành `toResolved(factory, deps)` với deps là plain token array — đơn giản hơn    |
 | `toService()` alias                       | Đổi tên thành `toAlias()`                                                                 |
