@@ -38,12 +38,11 @@ type ContainerRef = { current: DefaultContainer | undefined };
 type ModuleLike = Module | AsyncModule;
 
 const NOT_FOUND = Symbol("container-fast-path-not-found");
-// @internal Stable identity for non-serializable tag values used by last-wins slot keys.
+// Stable identity for non-serializable tag values used by last-wins slot keys.
 const lastWinsTagObjectIds = new WeakMap<object, number>();
 let lastWinsTagObjectIdSequence = 1;
 
-// #region Internal container helpers
-// @internal Allocate deterministic object id for non-JSON tag values.
+// Allocate deterministic object id for non-JSON tag values.
 function allocateLastWinsTagObjectId(value: object): number {
   let objectId = lastWinsTagObjectIds.get(value);
   if (objectId === undefined) {
@@ -53,7 +52,7 @@ function allocateLastWinsTagObjectId(value: object): number {
   return objectId;
 }
 
-// @internal Derive resolve hint from binding metadata (name > first tag).
+// Derive resolve hint from binding metadata (name > first tag).
 function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefined {
   if (binding.bindingName !== undefined) {
     return { name: binding.bindingName };
@@ -64,7 +63,7 @@ function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefin
   return undefined;
 }
 
-// @internal Build last-wins slot key for unconstrained bindings.
+// Build last-wins slot key for unconstrained bindings.
 function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
   if (binding.constraint !== undefined) {
     return undefined;
@@ -98,7 +97,6 @@ function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
   const nameKey = binding.bindingName ?? "";
   return `name=${nameKey};tags=${tagsKey}`;
 }
-// #endregion
 
 /**
  * Public contract for an IoC container (registry, modules, resolution, lifecycle).
@@ -211,7 +209,7 @@ export interface Container extends AsyncDisposable {
 
 /**
  * Default IoC container: registry + scoped caches + synchronous / asynchronous resolution.
- * @internal Implementation of {@link Container}; not part of the public package contract.
+ * Implementation of {@link Container}; not part of the public package contract.
  */
 class DefaultContainer implements Container {
   /**
@@ -911,7 +909,7 @@ class DefaultContainer implements Container {
     this.validate();
   }
 
-  // @internal Scope validation used by public Container.validate().
+  // Scope validation used by public Container.validate().
   private validateScopeRules(): void {
     const metadataReader = this.metadataReader;
     const lookupBindings = (registryKey: RegistryKey) => this.lookupBindingsInternal(registryKey);
