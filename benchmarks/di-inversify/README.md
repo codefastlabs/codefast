@@ -19,7 +19,7 @@ A consequence: scenarios that would otherwise bake in a per-library decorator se
 
 ### Trials, medians, IQR
 
-Each library runs **N trials = 5** back-to-back. Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state.
+Each library runs **N trials** back-to-back (1 with `BENCH_FAST=1`, 2 in the default head-to-head run, 3 with `BENCH_FULL=1`). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS`.
 
 The reporter collapses N per-trial results into:
 
