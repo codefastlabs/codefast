@@ -1,7 +1,5 @@
 # Bench guide for newcomers
 
-_Vietnamese: [BENCH_GUIDE.vi.md](./BENCH_GUIDE.vi.md)_
-
 This file sits next to [README.md](./README.md) and explains **how the harness thinks**, **what the words mean**, and **how to read the numbers** without re-reading the whole implementation.
 
 ## What this benchmark is
