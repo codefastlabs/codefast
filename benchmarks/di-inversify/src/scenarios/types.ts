@@ -7,9 +7,7 @@
  */
 
 /**
- * Grouping used by the reporter to decide which block of the table a scenario
- * appears in and how to label it. `diagnostic` and `stress` are emitted into
- * their own subsection so readers do not compare them against the main table.
+ * Grouping used by the reporter to label scenarios in the comparison table.
  */
 export type ScenarioGroup =
   | "micro"
@@ -19,8 +17,7 @@ export type ScenarioGroup =
   | "lifecycle"
   | "scope"
   | "scale"
-  | "boot"
-  | "diagnostic";
+  | "boot";
 
 /**
  * A scenario builder produces the closure tinybench will measure. The closure
@@ -41,10 +38,7 @@ export interface BenchScenario {
    * dominate. Default 1 (closure = one logical operation).
    */
   readonly batch?: number;
-  /**
-   * When true, reporter labels this row as a stress test and excludes it
-   * from the main comparison block.
-   */
+  /** Reserved marker for optional non-headline probes. */
   readonly stress?: boolean;
   /**
    * Optional sanity check — run once before tinybench takes the closure.

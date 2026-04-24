@@ -11,7 +11,6 @@ import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
 import { buildInversifyAsyncScenarios } from "#/scenarios/inversify/async";
 import { buildInversifyBootScenarios } from "#/scenarios/inversify/boot";
-import { buildInversifyDiagnosticScenarios } from "#/scenarios/inversify/diagnostic";
 import { buildInversifyFanOutScenarios } from "#/scenarios/inversify/fan-out";
 import { buildInversifyLifecycleScenarios } from "#/scenarios/inversify/lifecycle";
 import { buildInversifyMicroScenarios } from "#/scenarios/inversify/micro";
@@ -33,7 +32,6 @@ function collectAllInversifyScenarios(): readonly AnyScenario[] {
     ...buildInversifyScopeScenarios(),
     ...buildInversifyScaleScenarios(),
     ...buildInversifyBootScenarios(),
-    ...buildInversifyDiagnosticScenarios(),
   ];
 }
 

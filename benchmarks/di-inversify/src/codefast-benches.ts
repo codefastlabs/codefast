@@ -18,7 +18,6 @@ import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
 import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";
 import { buildCodefastBootScenarios } from "#/scenarios/codefast/boot";
-import { buildCodefastDiagnosticScenarios } from "#/scenarios/codefast/diagnostic";
 import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
 import { buildCodefastLifecycleScenarios } from "#/scenarios/codefast/lifecycle";
 import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
@@ -40,7 +39,6 @@ function collectAllCodefastScenarios(): readonly AnyScenario[] {
     ...buildCodefastScopeScenarios(),
     ...buildCodefastScaleScenarios(),
     ...buildCodefastBootScenarios(),
-    ...buildCodefastDiagnosticScenarios(),
   ];
 }
 

@@ -309,20 +309,12 @@ function renderMarkdownRow(row: ComparisonTableRow): string {
 
 /**
  * Renders the full head-to-head table as GitHub-flavoured markdown.
- *
- * Stress scenarios are split into a second table below the main one so a
- * reader skimming the report doesn't mistake "child-depth-8-stress" for a
- * representative workload. The section headers call out which table is the
- * comparison-you-should-cite.
  */
 export function renderMarkdownReport(
   codefastReport: LibraryReport,
   inversifyReport: LibraryReport,
 ): string {
   const rows = buildComparisonRows(codefastReport, inversifyReport);
-  const comparableRows = rows.filter((row) => !row.stress && row.group !== "diagnostic");
-  const stressRows = rows.filter((row) => row.stress);
-  const diagnosticRows = rows.filter((row) => row.group === "diagnostic" && !row.stress);
 
   const fingerprintLines = [
     `- Node ${codefastReport.fingerprint.nodeVersion} / V8 ${codefastReport.fingerprint.v8Version}`,
@@ -362,32 +354,8 @@ export function renderMarkdownReport(
     "Cite these rows when comparing the libraries. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`). `IQR (cf / inv)` is the interquartile range of the per-trial throughput across the trial loop — treat rows above ~5% as noisy.",
     "",
     MARKDOWN_TABLE_HEADER,
-    ...comparableRows.map(renderMarkdownRow),
+    ...rows.map(renderMarkdownRow),
   ];
-
-  if (stressRows.length > 0) {
-    sections.push(
-      "",
-      "## Stress scenarios (not the headline comparison)",
-      "",
-      "Deep chains and artificially wide fan-outs. Useful as worst-case probes, but **do not** cite these rows as representative performance — real applications almost never wire graphs this shape.",
-      "",
-      MARKDOWN_TABLE_HEADER,
-      ...stressRows.map(renderMarkdownRow),
-    );
-  }
-
-  if (diagnosticRows.length > 0) {
-    sections.push(
-      "",
-      "## Diagnostic scenarios (baselines, not the headline comparison)",
-      "",
-      "Microbenchmarks that isolate a single library primitive (e.g. empty-container construction). Kept because they are useful baselines when comparing against a future third library; skip them when reading for head-to-head performance.",
-      "",
-      MARKDOWN_TABLE_HEADER,
-      ...diagnosticRows.map(renderMarkdownRow),
-    );
-  }
 
   return sections.filter((section) => section !== undefined).join("\n");
 }
@@ -395,18 +363,13 @@ export function renderMarkdownReport(
 const CLI_TABLE_COLUMN_GAP = "  ";
 
 /**
- * Prints the main comparable table to stdout in aligned plain-text form.
- * Stress / diagnostic rows are grouped underneath so `pnpm bench` output
- * stays scannable in a terminal narrower than the markdown version assumes.
+ * Prints the comparison table to stdout in aligned plain-text form.
  */
 export function renderConsoleReport(
   codefastReport: LibraryReport,
   inversifyReport: LibraryReport,
 ): void {
   const rows = buildComparisonRows(codefastReport, inversifyReport);
-  const comparableRows = rows.filter((row) => !row.stress && row.group !== "diagnostic");
-  const stressRows = rows.filter((row) => row.stress);
-  const diagnosticRows = rows.filter((row) => row.group === "diagnostic" && !row.stress);
 
   const scenarioColumnWidth = Math.max(28, ...rows.map((row) => row.id.length));
   const groupColumnWidth = Math.max(10, ...rows.map((row) => row.group.length));
@@ -447,14 +410,10 @@ export function renderConsoleReport(
     }
   }
 
-  printGroup("Comparable scenarios", comparableRows);
-  printGroup("Stress scenarios (not the headline comparison)", stressRows);
-  printGroup("Diagnostic scenarios (baselines, not the headline comparison)", diagnosticRows);
+  printGroup("Comparable scenarios", rows);
 
   console.log("");
-  console.log(
-    "Cite the 'Comparable scenarios' table only. Stress and diagnostic rows are context, not the comparison.",
-  );
+  console.log("Cite the 'Comparable scenarios' table.");
 }
 
 /**
