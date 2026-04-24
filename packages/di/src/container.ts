@@ -1,9 +1,16 @@
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import { BindingBuilder } from "#/binding";
+import { registryKeyLabel } from "#/binding-select";
 import { getAutoRegistered } from "#/decorators/injectable";
+import { listResolvedDependencies } from "#/dependency-graph";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
-import { AsyncModuleLoadError, CircularDependencyError, InternalError } from "#/errors";
+import {
+  AsyncModuleLoadError,
+  CircularDependencyError,
+  InternalError,
+  ScopeViolationError,
+} from "#/errors";
 import type {
   ContainerGraphJson,
   GraphOptions,
@@ -16,7 +23,6 @@ import { AsyncModule, Module } from "#/module";
 import type { RegistryKey } from "#/registry";
 import { BindingRegistry } from "#/registry";
 import { DependencyResolver } from "#/resolver";
-import { validateScopeRules } from "#/scope-validation";
 import { ScopeManager } from "#/scope";
 import type { Token } from "#/token";
 import { isDevelopmentOrTestEnvironment } from "#/environment";
@@ -549,11 +555,7 @@ class DefaultContainer implements Container {
    */
   validate(): void {
     this.flushPendingBindings();
-    validateScopeRules({
-      collectAllRegistryKeys: () => this.collectAllRegistryKeysInHierarchy(),
-      lookupBindings: (registryKey) => this.lookupBindingsInternal(registryKey),
-      getMetadataReader: () => this.metadataReader,
-    });
+    this.validateScopeRules();
   }
 
   /**
@@ -907,6 +909,44 @@ class DefaultContainer implements Container {
     }
     this.hasDevValidationRun = true;
     this.validate();
+  }
+
+  // @internal Scope validation used by public Container.validate().
+  private validateScopeRules(): void {
+    const metadataReader = this.metadataReader;
+    const lookupBindings = (registryKey: RegistryKey) => this.lookupBindingsInternal(registryKey);
+    for (const registryKey of this.collectAllRegistryKeysInHierarchy()) {
+      const bindings = lookupBindings(registryKey);
+      if (bindings === undefined || bindings.length === 0) {
+        continue;
+      }
+      for (const consumer of bindings) {
+        const pathStart = [registryKeyLabel(registryKey)];
+        const dependencies = listResolvedDependencies(
+          consumer,
+          lookupBindings,
+          metadataReader,
+          pathStart,
+        );
+        for (const dependency of dependencies) {
+          if (
+            consumer.scope === "singleton" &&
+            dependency.binding.kind !== "constant" &&
+            (dependency.binding.scope === "transient" || dependency.binding.scope === "scoped")
+          ) {
+            throw new ScopeViolationError({
+              consumerBindingId: consumer.id,
+              consumerKind: consumer.kind,
+              consumerScope: consumer.scope,
+              dependencyBindingId: dependency.binding.id,
+              dependencyKind: dependency.binding.kind,
+              dependencyScope: dependency.binding.scope,
+              resolutionPath: dependency.path,
+            });
+          }
+        }
+      }
+    }
   }
 
   /**
