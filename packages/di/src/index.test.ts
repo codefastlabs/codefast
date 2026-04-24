@@ -7,7 +7,7 @@ import {
   Module,
   AsyncModule,
   TokenNotBoundError,
-} from "./index";
+} from "#/index";
 
 describe("@codefast/di public exports", () => {
   it("performs a complete DI lifecycle using public exports", () => {
