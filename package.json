@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
+    "bench:di": "pnpm --filter @codefast/benchmark-di-inversify bench",
     "build:packages": "turbo run build --filter=@codefast*/*...",
     "check": "turbo run lint format:check check-types",
     "check-types": "turbo run check-types",

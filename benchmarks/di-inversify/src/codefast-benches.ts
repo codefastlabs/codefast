@@ -16,31 +16,10 @@ import { collectFingerprint } from "#/harness/fingerprint";
 import { emitSubprocessPayload } from "#/harness/protocol";
 import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
-import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";
-import { buildCodefastBootScenarios } from "#/scenarios/codefast/boot";
-import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
-import { buildCodefastLifecycleScenarios } from "#/scenarios/codefast/lifecycle";
-import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
-import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
-import { buildCodefastScaleScenarios } from "#/scenarios/codefast/scale";
-import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
-import type { AnyScenario } from "#/scenarios/types";
+import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
 const CODEFAST_LIBRARY_NAME = "@codefast/di";
 const CODEFAST_SCENARIO_NAME = "codefast";
-
-function collectAllCodefastScenarios(): readonly AnyScenario[] {
-  return [
-    ...buildCodefastMicroScenarios(),
-    ...buildCodefastRealisticScenarios(),
-    ...buildCodefastFanOutScenarios(),
-    ...buildCodefastAsyncScenarios(),
-    ...buildCodefastLifecycleScenarios(),
-    ...buildCodefastScopeScenarios(),
-    ...buildCodefastScaleScenarios(),
-    ...buildCodefastBootScenarios(),
-  ];
-}
 
 async function main(): Promise<void> {
   console.log(`Scenario ${CODEFAST_SCENARIO_NAME} started`);
