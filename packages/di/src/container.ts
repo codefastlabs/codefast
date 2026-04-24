@@ -241,8 +241,8 @@ class DefaultContainer implements Container {
 
   /**
    * Starts a fluent {@link BindingBuilder} for the given token or constructor.
-   * The binding is registered into this container's registry immediately when a
-   * `to*()` strategy method is called on the returned builder.
+   * The `to*()` call selects the binding strategy; the first registry commit runs in a
+   * microtask (see {@link BindingBuilder}), then later chain calls update the committed binding.
    */
   bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     return new BindingBuilder<Value>(token, undefined, {

@@ -155,8 +155,8 @@ export type ActivationHandler<Value> = (
 ) => Value | Promise<Value>;
 
 /**
- * Called before a singleton/scoped instance is evicted from the scope cache.
- * Runs after `@preDestroy`. May be async; async deactivation requires `disposeAsync` / `unloadAsync`.
+ * Invoked before `@preDestroy` when the instance is released from the scope cache.
+ * May be async; async deactivation requires `disposeAsync` / `unloadAsync`.
  */
 export type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 

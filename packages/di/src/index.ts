@@ -16,6 +16,7 @@ export type { Token, TokenValue } from "#/token";
 
 // Container
 export { Container } from "#/container";
+export type { ContainerGraphJson, ContainerSnapshot } from "#/inspector";
 
 // Binding — types consumers need when writing modules or typed helpers
 export type {
