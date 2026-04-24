@@ -301,7 +301,7 @@ export type ScopeViolationDetails = {
  *
  * - **Runtime:** each resolution step checks the parent on the materialization stack, so
  *   violations are detected along the actual construction chain.
- * - **`Container.validate()`:** {@link validateScopeRules} walks **direct** static edges from
+ * - **`Container.validate()`:** performs an internal direct-edge check using
  *   {@link listResolvedDependencies} only — it does not recursively expand the whole graph,
  *   so it may miss violations that appear only deeper in the dependency tree.
  *

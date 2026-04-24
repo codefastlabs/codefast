@@ -1260,7 +1260,6 @@ Ngoài `"."` (public API), package expose từng module nội bộ qua subpath e
     "./registry": "./dist/registry.{mjs,d.mts}",
     "./resolver": "./dist/resolver.{mjs,d.mts}",
     "./scope": "./dist/scope.{mjs,d.mts}",
-    "./scope-validation": "./dist/scope-validation.{mjs,d.mts}",
     "./token": "./dist/token.{mjs,d.mts}"
   },
   "files": ["dist"],

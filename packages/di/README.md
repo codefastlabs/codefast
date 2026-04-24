@@ -583,7 +583,6 @@ The root entry re-exports the full public API. Subpath exports are provided for 
 | `@codefast/di/registry`                        | `BindingRegistry`                                                |
 | `@codefast/di/resolver`                        | `DependencyResolver` internals                                   |
 | `@codefast/di/scope`                           | `ScopeManager`                                                   |
-| `@codefast/di/scope-validation`                | `validateScopeRules`                                             |
 | `@codefast/di/lifecycle`                       | Activation/deactivation runners                                  |
 | `@codefast/di/dependency-graph`                | Dependency-edge collection helpers                               |
 | `@codefast/di/graph-adapters/cytoscape`        | Cytoscape adapter for `ContainerGraphJson`                       |

@@ -4,7 +4,7 @@
  * This module walks binding metadata (constructor params, `toResolved` tokens, alias targets)
  * **without performing resolution** to produce typed graph edges. The output drives both
  * the Graphviz DOT renderer in {@link ContainerInspector} and the captive-dependency
- * validation in {@link validateScopeRules}.
+ * validation performed internally by {@link Container.validate()}.
  *
  * "Static" means the graph is derived from declared metadata only — `toDynamic` / `toDynamicAsync`
  * factories have no enumerable keys and produce zero edges.
