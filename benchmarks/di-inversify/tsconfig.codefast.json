@@ -13,6 +13,7 @@
     "src/codefast-benches.ts",
     "src/harness/**/*.ts",
     "src/scenarios/types.ts",
+    "src/scenarios/collect-codefast-scenarios.ts",
     "src/scenarios/codefast/**/*.ts",
     "src/fixtures/realistic-graph.ts",
     "src/fixtures/codefast-adapter.ts"

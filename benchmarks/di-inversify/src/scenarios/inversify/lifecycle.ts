@@ -56,9 +56,12 @@ const preDestroyTrackedServiceIdentifier = Symbol("bench-inv-lifecycle-pre-destr
 
 function buildLifecyclePostConstructSingletonScenario(): BenchScenario {
   const container = new Container();
+  /* Parity with codefast: leaf is a singleton. Only `PostConstructSingletonService`
+   * is the subject of the post-construct hook; the leaf is fixed wiring cost. */
   container
     .bind<LifecycleLeafDependency>(lifecycleLeafDependencyIdentifier)
-    .to(LifecycleLeafDependency);
+    .to(LifecycleLeafDependency)
+    .inSingletonScope();
   container
     .bind<PostConstructSingletonService>(postConstructSingletonServiceIdentifier)
     .to(PostConstructSingletonService)

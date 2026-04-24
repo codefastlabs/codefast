@@ -11,10 +11,10 @@
  *   - `realistic-graph-cold-resolve` — build a fresh container + 10 binds
  *     + resolve root per iteration. Measures cold-start; catches regressions
  *     in registry mutation + first-resolve code paths.
- *   - `realistic-graph-validate` (codefast-only) — call `container.validate()`
- *     hot. Inversify has no equivalent, so the reporter simply shows "—"
- *     on the inversify column. This is included because a shipping feature
- *     of codefast (static scope-rule validation) should appear in its
+ *   - `realistic-graph-validate` (codefast-only) — see
+ *     `realistic-graph-validate.ts`. Inversify has no equivalent, so the reporter
+ *     simply shows "—" on the inversify column. This is included because a shipping
+ *     feature of codefast (static scope-rule validation) should appear in its
  *     benchmark surface even when no comparator has it yet.
  */
 import {
@@ -23,10 +23,10 @@ import {
 } from "#/fixtures/codefast-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
 import { batched } from "#/harness/batched";
+import { buildRealisticGraphValidateScenario } from "#/scenarios/codefast/realistic-graph-validate";
 import type { BenchScenario } from "#/scenarios/types";
 
 const REALISTIC_RESOLVE_BATCH = 20;
-const REALISTIC_VALIDATE_BATCH = 10;
 
 function buildRealisticGraphResolveRootScenario(): BenchScenario {
   const { container, rootToken } = buildCodefastRealisticContainer(REALISTIC_GRAPH);
@@ -60,33 +60,6 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
         container.resolve(rootToken);
       };
     },
-  };
-}
-
-function buildRealisticGraphValidateScenario(): BenchScenario {
-  const { container } = buildCodefastRealisticContainer(REALISTIC_GRAPH);
-  // Warmup — validate memoises internally via `devValidationState`; we want
-  // to measure the path where validation re-runs because someone just
-  // mutated the registry, which is the realistic dev-time story.
-  container.validate();
-
-  return {
-    id: "realistic-graph-validate",
-    group: "realistic",
-    what: "statically validate scope rules over a 10-node graph (codefast-only)",
-    batch: REALISTIC_VALIDATE_BATCH,
-    sanity: () => {
-      try {
-        container.validate();
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    build: () =>
-      batched(REALISTIC_VALIDATE_BATCH, () => {
-        container.validate();
-      }),
   };
 }
 
