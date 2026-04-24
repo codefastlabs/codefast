@@ -17,10 +17,13 @@ import { emitSubprocessPayload } from "#/harness/protocol";
 import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
 import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";
+import { buildCodefastBootScenarios } from "#/scenarios/codefast/boot";
 import { buildCodefastDiagnosticScenarios } from "#/scenarios/codefast/diagnostic";
 import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
+import { buildCodefastLifecycleScenarios } from "#/scenarios/codefast/lifecycle";
 import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
 import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
+import { buildCodefastScaleScenarios } from "#/scenarios/codefast/scale";
 import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
@@ -33,7 +36,10 @@ function collectAllCodefastScenarios(): readonly AnyScenario[] {
     ...buildCodefastRealisticScenarios(),
     ...buildCodefastFanOutScenarios(),
     ...buildCodefastAsyncScenarios(),
+    ...buildCodefastLifecycleScenarios(),
     ...buildCodefastScopeScenarios(),
+    ...buildCodefastScaleScenarios(),
+    ...buildCodefastBootScenarios(),
     ...buildCodefastDiagnosticScenarios(),
   ];
 }

@@ -10,10 +10,13 @@ import { emitSubprocessPayload } from "#/harness/protocol";
 import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
 import { buildInversifyAsyncScenarios } from "#/scenarios/inversify/async";
+import { buildInversifyBootScenarios } from "#/scenarios/inversify/boot";
 import { buildInversifyDiagnosticScenarios } from "#/scenarios/inversify/diagnostic";
 import { buildInversifyFanOutScenarios } from "#/scenarios/inversify/fan-out";
+import { buildInversifyLifecycleScenarios } from "#/scenarios/inversify/lifecycle";
 import { buildInversifyMicroScenarios } from "#/scenarios/inversify/micro";
 import { buildInversifyRealisticScenarios } from "#/scenarios/inversify/realistic";
+import { buildInversifyScaleScenarios } from "#/scenarios/inversify/scale";
 import { buildInversifyScopeScenarios } from "#/scenarios/inversify/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
@@ -26,7 +29,10 @@ function collectAllInversifyScenarios(): readonly AnyScenario[] {
     ...buildInversifyRealisticScenarios(),
     ...buildInversifyFanOutScenarios(),
     ...buildInversifyAsyncScenarios(),
+    ...buildInversifyLifecycleScenarios(),
     ...buildInversifyScopeScenarios(),
+    ...buildInversifyScaleScenarios(),
+    ...buildInversifyBootScenarios(),
     ...buildInversifyDiagnosticScenarios(),
   ];
 }
