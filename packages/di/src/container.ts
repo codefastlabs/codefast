@@ -20,7 +20,6 @@ import { validateScopeRules } from "#/scope-validation";
 import { ScopeManager } from "#/scope";
 import type { Token } from "#/token";
 import { isDevelopmentOrTestEnvironment } from "#/environment";
-import { buildLastWinsSlotKey, resolveHintForBinding } from "#/container-internals";
 
 /**
  * Mutable holder used to break the circular reference between container and resolver at creation time.
@@ -33,6 +32,67 @@ type ContainerRef = { current: DefaultContainer | undefined };
 type ModuleLike = Module | AsyncModule;
 
 const NOT_FOUND = Symbol("container-fast-path-not-found");
+// @internal Stable identity for non-serializable tag values used by last-wins slot keys.
+const lastWinsTagObjectIds = new WeakMap<object, number>();
+let lastWinsTagObjectIdSequence = 1;
+
+// #region Internal container helpers
+// @internal Allocate deterministic object id for non-JSON tag values.
+function allocateLastWinsTagObjectId(value: object): number {
+  let objectId = lastWinsTagObjectIds.get(value);
+  if (objectId === undefined) {
+    objectId = lastWinsTagObjectIdSequence++;
+    lastWinsTagObjectIds.set(value, objectId);
+  }
+  return objectId;
+}
+
+// @internal Derive resolve hint from binding metadata (name > first tag).
+function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefined {
+  if (binding.bindingName !== undefined) {
+    return { name: binding.bindingName };
+  }
+  for (const [tagKey, tagValue] of binding.tags) {
+    return { tag: [tagKey, tagValue] as const };
+  }
+  return undefined;
+}
+
+// @internal Build last-wins slot key for unconstrained bindings.
+function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
+  if (binding.constraint !== undefined) {
+    return undefined;
+  }
+  if (binding.bindingName === undefined && binding.tags.size === 0) {
+    return "default";
+  }
+  if (binding.tags.size === 0) {
+    return `name=${binding.bindingName}`;
+  }
+  const toStableTagValue = (value: unknown): string => {
+    if (typeof value === "bigint") {
+      return `bigint:${value.toString()}n`;
+    }
+    try {
+      const serializedValue = JSON.stringify(value);
+      return serializedValue ?? String(value);
+    } catch {
+      if (typeof value === "object" && value !== null) {
+        return `non-json:object#${String(allocateLastWinsTagObjectId(value))}`;
+      }
+      return String(value);
+    }
+  };
+  const normalizedTagEntries = [...binding.tags.entries()]
+    .sort(([leftTag], [rightTag]) => leftTag.localeCompare(rightTag))
+    .map(([tagKey, tagValue]) => [tagKey, toStableTagValue(tagValue)] as const);
+  const tagsKey = normalizedTagEntries
+    .map(([tagKey, tagValue]) => `${tagKey}:${tagValue}`)
+    .join("|");
+  const nameKey = binding.bindingName ?? "";
+  return `name=${nameKey};tags=${tagsKey}`;
+}
+// #endregion
 
 /**
  * Public contract for an IoC container (registry, modules, resolution, lifecycle).
