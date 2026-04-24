@@ -81,9 +81,9 @@ describe("lifecycle", () => {
     it("returns instance directly if no onActivation handler is set", async () => {
       const binding = createMockBinding();
       const instance = { name: "test" };
-      await expect(
-        runActivationAsync(binding, instance, stubResolutionContext, ["Root"]),
-      ).resolves.toBe(instance);
+      await expect(runActivationAsync(binding, instance, stubResolutionContext)).resolves.toBe(
+        instance,
+      );
     });
 
     it("runs onActivation and resolves its async result", async () => {
@@ -96,9 +96,7 @@ describe("lifecycle", () => {
         return { ...(inst as TestInstance), isActive: true };
       });
       const instance: TestInstance = { name: "test" };
-      const activatedInstance = await runActivationAsync(binding, instance, stubResolutionContext, [
-        "Root",
-      ]);
+      const activatedInstance = await runActivationAsync(binding, instance, stubResolutionContext);
       expect(activatedInstance).toEqual({ name: "test", isActive: true });
     });
 
@@ -112,9 +110,7 @@ describe("lifecycle", () => {
         isActive: true,
       }));
       const instance: TestInstance = { name: "test" };
-      const activatedInstance = await runActivationAsync(binding, instance, stubResolutionContext, [
-        "Root",
-      ]);
+      const activatedInstance = await runActivationAsync(binding, instance, stubResolutionContext);
       expect(activatedInstance).toEqual({ name: "test", isActive: true });
     });
   });

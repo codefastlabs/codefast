@@ -173,7 +173,6 @@ export async function runActivationAsync(
   binding: Binding<unknown>,
   instance: unknown,
   ctx: ResolutionContext,
-  _pathLabels: readonly string[],
 ): Promise<unknown> {
   const handler = binding.onActivation;
   if (handler === undefined) {

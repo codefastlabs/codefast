@@ -142,7 +142,10 @@ export class DependencyResolver {
     if (bindings === undefined || bindings.length === 0) {
       return undefined;
     }
-    const selectionConstraintCtx = this.buildConstraintContext(pathLabels, [], hint);
+    const hasConstraint = bindings.some((binding) => binding.constraint !== undefined);
+    const selectionConstraintCtx = hasConstraint
+      ? this.buildConstraintContext(pathLabels, [], hint)
+      : undefined;
     const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
     if (candidates.length === 0) {
       if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
@@ -157,7 +160,8 @@ export class DependencyResolver {
       pathLabels,
       selectionConstraintCtx,
     );
-    this.assertDependencyScopeAllowed(binding, pathLabels, []);
+    const materializationStack: MaterializationFrame[] = [];
+    this.assertDependencyScopeAllowed(binding, pathLabels, materializationStack);
     if (binding.kind === "async-dynamic") {
       throw new AsyncResolutionError(
         label,
@@ -168,7 +172,14 @@ export class DependencyResolver {
     const visiting = new Set<RegistryKey>();
     visiting.add(registryKey);
     try {
-      return this.instantiateBinding(binding, registryKey, hint, pathLabels, visiting, []) as Value;
+      return this.instantiateBinding(
+        binding,
+        registryKey,
+        hint,
+        pathLabels,
+        visiting,
+        materializationStack,
+      ) as Value;
     } finally {
       visiting.delete(registryKey);
     }
@@ -216,7 +227,7 @@ export class DependencyResolver {
     hint: ResolveHint | undefined,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
-    materializationStack: readonly MaterializationFrame[],
+    materializationStack: MaterializationFrame[],
   ): Value[] {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
@@ -230,11 +241,10 @@ export class DependencyResolver {
       if (bindings === undefined || bindings.length === 0) {
         return [];
       }
-      const selectionConstraintCtx = this.buildConstraintContext(
-        pathLabels,
-        materializationStack,
-        hint,
-      );
+      const hasConstraint = bindings.some((binding) => binding.constraint !== undefined);
+      const selectionConstraintCtx = hasConstraint
+        ? this.buildConstraintContext(pathLabels, materializationStack, hint)
+        : undefined;
       const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
       if (candidates.length === 0) {
         if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
@@ -298,11 +308,10 @@ export class DependencyResolver {
       if (bindings === undefined || bindings.length === 0) {
         return [];
       }
-      const selectionConstraintCtx = this.buildConstraintContext(
-        pathLabels,
-        materializationStack,
-        hint,
-      );
+      const hasConstraint = bindings.some((binding) => binding.constraint !== undefined);
+      const selectionConstraintCtx = hasConstraint
+        ? this.buildConstraintContext(pathLabels, materializationStack, hint)
+        : undefined;
       const candidates = filterMatchingBindings(bindings, hint, selectionConstraintCtx);
       if (candidates.length === 0) {
         if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
@@ -403,12 +412,9 @@ export class DependencyResolver {
    * materialization stack forward so nested calls inherit captive-dependency checks.
    */
   private createContext(
-    /**
-     * Mutable label path accumulated so far; closures snapshot it with spread before extending.
-     */
     pathLabels: readonly string[],
     visiting: Set<RegistryKey>,
-    materializationStack: readonly MaterializationFrame[],
+    materializationStack: MaterializationFrame[],
     currentResolveHint: ResolveHint | undefined,
   ): ResolutionContext {
     const graphContext = this.buildConstraintContext(
@@ -472,7 +478,7 @@ export class DependencyResolver {
     hint: ResolveHint | undefined,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
-    materializationStack: readonly MaterializationFrame[],
+    materializationStack: MaterializationFrame[],
   ): Value {
     const registryKey = key as RegistryKey;
     const label = registryKeyLabel(key);
@@ -598,22 +604,43 @@ export class DependencyResolver {
     hint: ResolveHint | undefined,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
-    materializationStack: readonly MaterializationFrame[],
+    materializationStack: MaterializationFrame[],
   ): unknown {
-    this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
     const cached = this.deps.scopeManager.getCached(binding);
     if (cached !== undefined) {
       return cached;
     }
     return this.deps.scopeManager.getOrCreate(binding, () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
-      const extendedStack = [...materializationStack, frame];
-      const ctx = this.createContext(pathLabels, visiting, extendedStack, hint);
-      const instance = this.materialize(binding, hint, ctx, pathLabels, visiting, extendedStack);
+      materializationStack.push(frame);
+      // Only dynamic factories receive ctx; class/constant/alias/resolved do not.
+      const ctx =
+        binding.kind === "dynamic"
+          ? this.createContext(pathLabels, visiting, materializationStack, hint)
+          : undefined;
+      const instance = this.materialize(
+        binding,
+        hint,
+        ctx,
+        pathLabels,
+        visiting,
+        materializationStack,
+      );
       if (binding.kind === "class") {
         runPostConstruct(binding.implementationClass, instance, pathLabels);
       }
-      return runActivation(binding, instance, ctx, pathLabels);
+      let result: unknown;
+      if (binding.onActivation !== undefined) {
+        const activationCtx =
+          ctx ?? this.createContext(pathLabels, visiting, materializationStack, hint);
+        result = runActivation(binding, instance, activationCtx, pathLabels);
+      } else {
+        result = instance;
+      }
+      // Pop after activation so ctx.resolve inside onActivation sees the correct stack.
+      // If materialize/activation throws, the stack is discarded (fresh per resolveRoot call).
+      materializationStack.pop();
+      return result;
     });
   }
 
@@ -629,7 +656,6 @@ export class DependencyResolver {
     visiting: Set<RegistryKey>,
     materializationStack: readonly MaterializationFrame[],
   ): Promise<unknown> {
-    this.assertCaptiveDependencyFromMaterializationStack(binding, pathLabels, materializationStack);
     if (binding.scope === "transient") {
       const frame = bindingToMaterializationFrame(registryKey, binding);
       const extendedStack = [...materializationStack, frame];
@@ -645,7 +671,7 @@ export class DependencyResolver {
       if (binding.kind === "class") {
         await runPostConstructAsync(binding.implementationClass, instance);
       }
-      return await runActivationAsync(binding, instance, ctx, pathLabels);
+      return await runActivationAsync(binding, instance, ctx);
     }
     return this.deps.scopeManager.getOrCreateAsync(binding, async () => {
       const frame = bindingToMaterializationFrame(registryKey, binding);
@@ -662,45 +688,8 @@ export class DependencyResolver {
       if (binding.kind === "class") {
         await runPostConstructAsync(binding.implementationClass, instance);
       }
-      return await runActivationAsync(binding, instance, ctx, pathLabels);
+      return await runActivationAsync(binding, instance, ctx);
     });
-  }
-
-  /**
-   * Duplicate captive-dependency guard applied at instantiation time (after scope-cache miss),
-   * checking the top of the materialization stack rather than the raw `ConstraintContext`.
-   */
-  private assertCaptiveDependencyFromMaterializationStack(
-    dependencyBinding: Binding<unknown>,
-    resolutionPath: readonly string[],
-    materializationStack: readonly MaterializationFrame[],
-  ): void {
-    const parentFrame = materializationStack[materializationStack.length - 1];
-    if (parentFrame === undefined) {
-      return;
-    }
-    if (parentFrame.scope !== "singleton") {
-      return;
-    }
-    if (dependencyBinding.kind === "constant") {
-      return;
-    }
-    if (dependencyBinding.scope === "scoped" || dependencyBinding.scope === "transient") {
-      const dependencyLabel = resolutionPath[resolutionPath.length - 1];
-      const consumerLabel =
-        resolutionPath.length >= 2 ? resolutionPath[resolutionPath.length - 2] : undefined;
-      throw new ScopeViolationError({
-        consumerBindingId: parentFrame.bindingId,
-        consumerKind: parentFrame.bindingKind,
-        consumerScope: parentFrame.scope,
-        consumerLabel,
-        dependencyBindingId: dependencyBinding.id,
-        dependencyKind: dependencyBinding.kind,
-        dependencyScope: dependencyBinding.scope,
-        dependencyLabel,
-        resolutionPath: [...resolutionPath],
-      });
-    }
   }
 
   /**
@@ -714,10 +703,10 @@ export class DependencyResolver {
   private materialize(
     binding: Binding<unknown>,
     hint: ResolveHint | undefined,
-    ctx: ResolutionContext,
+    ctx: ResolutionContext | undefined,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
-    materializationStack: readonly MaterializationFrame[],
+    materializationStack: MaterializationFrame[],
   ): unknown {
     switch (binding.kind) {
       case "constant":
@@ -725,7 +714,8 @@ export class DependencyResolver {
       case "class":
         return this.instantiateClassBinding(binding, pathLabels, visiting, materializationStack);
       case "dynamic": {
-        const factoryResult = binding.factory(ctx);
+        // ctx is always created for dynamic bindings; the cast is safe.
+        const factoryResult = binding.factory(ctx as ResolutionContext);
         if (isPromiseLike(factoryResult)) {
           throw new AsyncResolutionError(
             pathLabels[pathLabels.length - 1] ?? "(unknown)",
@@ -830,7 +820,7 @@ export class DependencyResolver {
     binding: Extract<Binding<unknown>, { kind: "class" }>,
     pathLabels: string[],
     visiting: Set<RegistryKey>,
-    materializationStack: readonly MaterializationFrame[],
+    materializationStack: MaterializationFrame[],
   ): unknown {
     const reader = this.deps.metadataReader;
     const ImplementationClass = binding.implementationClass as new (...args: unknown[]) => unknown;
