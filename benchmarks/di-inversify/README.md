@@ -2,6 +2,8 @@
 
 Head-to-head performance harness: **InversifyJS 8** vs **@codefast/di**, scenario-by-scenario, reported as per-trial medians with interquartile range.
 
+New to this package? See **[BENCH_GUIDE.md](./BENCH_GUIDE.md)** (English) or **[BENCH_GUIDE.vi.md](./BENCH_GUIDE.vi.md)** (Tiếng Việt) for a newcomer-oriented glossary, mental model (parent → subprocess → tinybench), and how to read `bench-results/latest.md`.
+
 This is the benchmark _for shipping_. It exists so a regression in `@codefast/di` hot paths cannot silently land on main, and so the "@codefast/di is faster than inversify on the graphs you actually wire" claim is something a skeptical reader can re-run in 30 seconds.
 
 ## Philosophy
