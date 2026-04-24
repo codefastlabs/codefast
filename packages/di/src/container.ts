@@ -206,6 +206,40 @@ class DefaultContainer implements Container {
     return created;
   }
 
+  private reserveLastWinsSlot(
+    token: Token<unknown> | Constructor<unknown>,
+    nextBinding: Binding<unknown>,
+  ): string | undefined {
+    const slotKey = buildLastWinsSlotKey(nextBinding);
+    if (slotKey === undefined) {
+      return undefined;
+    }
+    const slotIndex = this.getOrCreateSlotIndexForToken(token);
+    const existingBindingId = slotIndex.get(slotKey);
+    if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
+      this.removeOwnedBindingById(existingBindingId);
+    }
+    slotIndex.set(slotKey, nextBinding.id);
+    return slotKey;
+  }
+
+  private clearReservedLastWinsSlot(
+    token: Token<unknown> | Constructor<unknown>,
+    bindingId: BindingIdentifier,
+  ): void {
+    const previousSlotKey = this.slotKeyByBindingId.get(bindingId);
+    if (previousSlotKey === undefined) {
+      return;
+    }
+    const previousSlotIndex = this.slotIndexByToken.get(token);
+    if (previousSlotIndex?.get(previousSlotKey) === bindingId) {
+      previousSlotIndex.delete(previousSlotKey);
+    }
+    if (previousSlotIndex !== undefined && previousSlotIndex.size === 0) {
+      this.slotIndexByToken.delete(token);
+    }
+  }
+
   private untrackBinding(bindingId: BindingIdentifier): void {
     const token = this.tokenByBindingId.get(bindingId);
     const slotKey = this.slotKeyByBindingId.get(bindingId);
@@ -234,19 +268,33 @@ class DefaultContainer implements Container {
     this.untrackBinding(bindingId);
   }
 
+  private releaseOwnedBindingsByToken(token: RegistryKey): void {
+    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
+    if (ownedBindings === undefined) {
+      return;
+    }
+    for (const binding of ownedBindings) {
+      this.ownScopeManager.releaseBinding(binding);
+      this.untrackBinding(binding.id);
+    }
+  }
+
+  private async releaseOwnedBindingsByTokenAsync(token: RegistryKey): Promise<void> {
+    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
+    if (ownedBindings === undefined) {
+      return;
+    }
+    for (const binding of ownedBindings) {
+      await this.ownScopeManager.releaseBindingAsync(binding);
+      this.untrackBinding(binding.id);
+    }
+  }
+
   private registerOwnedBinding(
     token: Token<unknown> | Constructor<unknown>,
     nextBinding: Binding<unknown>,
   ): void {
-    const slotKey = buildLastWinsSlotKey(nextBinding);
-    if (slotKey !== undefined) {
-      const slotIndex = this.getOrCreateSlotIndexForToken(token);
-      const existingBindingId = slotIndex.get(slotKey);
-      if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
-        this.removeOwnedBindingById(existingBindingId);
-      }
-      slotIndex.set(slotKey, nextBinding.id);
-    }
+    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
     const trackedToken = this.tokenByBindingId.get(nextBinding.id);
     if (trackedToken !== undefined) {
       this.removeOwnedBindingById(nextBinding.id);
@@ -264,25 +312,10 @@ class DefaultContainer implements Container {
     token: Token<unknown> | Constructor<unknown>,
     nextBinding: Binding<unknown>,
   ): void {
-    const previousSlotKey = this.slotKeyByBindingId.get(nextBinding.id);
+    this.clearReservedLastWinsSlot(token, nextBinding.id);
     this.ownRegistry.replaceById(nextBinding.id, nextBinding);
-    if (previousSlotKey !== undefined) {
-      const previousSlotIndex = this.slotIndexByToken.get(token);
-      if (previousSlotIndex?.get(previousSlotKey) === nextBinding.id) {
-        previousSlotIndex.delete(previousSlotKey);
-      }
-      if (previousSlotIndex !== undefined && previousSlotIndex.size === 0) {
-        this.slotIndexByToken.delete(token);
-      }
-    }
-    const slotKey = buildLastWinsSlotKey(nextBinding);
+    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
     if (slotKey !== undefined) {
-      const slotIndex = this.getOrCreateSlotIndexForToken(token);
-      const existingBindingId = slotIndex.get(slotKey);
-      if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
-        this.removeOwnedBindingById(existingBindingId);
-      }
-      slotIndex.set(slotKey, nextBinding.id);
       this.slotKeyByBindingId.set(nextBinding.id, slotKey);
     } else {
       this.slotKeyByBindingId.delete(nextBinding.id);
@@ -418,13 +451,7 @@ class DefaultContainer implements Container {
       this.removeOwnedBindingById(tokenOrId);
       return;
     }
-    const owned = this.ownRegistry.get(tokenOrId as Token<unknown> | Constructor<unknown>);
-    if (owned !== undefined) {
-      for (const binding of owned) {
-        this.ownScopeManager.releaseBinding(binding);
-        this.untrackBinding(binding.id);
-      }
-    }
+    this.releaseOwnedBindingsByToken(tokenOrId);
     this.ownRegistry.remove(tokenOrId);
     this.slotIndexByToken.delete(tokenOrId);
   }
@@ -439,13 +466,7 @@ class DefaultContainer implements Container {
       await this.removeOwnedBindingByIdAsync(tokenOrId);
       return;
     }
-    const owned = this.ownRegistry.get(tokenOrId as Token<unknown> | Constructor<unknown>);
-    if (owned !== undefined) {
-      for (const binding of owned) {
-        await this.ownScopeManager.releaseBindingAsync(binding);
-        this.untrackBinding(binding.id);
-      }
-    }
+    await this.releaseOwnedBindingsByTokenAsync(tokenOrId);
     this.ownRegistry.remove(tokenOrId);
     this.slotIndexByToken.delete(tokenOrId);
   }
@@ -458,13 +479,7 @@ class DefaultContainer implements Container {
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
     this.flushPendingBindings();
     this.invalidateDevValidationState();
-    const owned = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
-    if (owned !== undefined) {
-      for (const binding of owned) {
-        this.ownScopeManager.releaseBinding(binding);
-        this.untrackBinding(binding.id);
-      }
-    }
+    this.releaseOwnedBindingsByToken(token as RegistryKey);
     this.ownRegistry.remove(token as RegistryKey);
     this.slotIndexByToken.delete(token as RegistryKey);
     return this.bind(token);
