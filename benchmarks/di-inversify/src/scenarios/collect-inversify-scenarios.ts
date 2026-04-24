@@ -3,6 +3,7 @@
  */
 import { buildInversifyAsyncScenarios } from "#/scenarios/inversify/async";
 import { buildInversifyBootScenarios } from "#/scenarios/inversify/boot";
+import { buildInversifyFailureScenarios } from "#/scenarios/inversify/failure";
 import { buildInversifyFanOutScenarios } from "#/scenarios/inversify/fan-out";
 import { buildInversifyLifecycleScenarios } from "#/scenarios/inversify/lifecycle";
 import { buildInversifyMicroScenarios } from "#/scenarios/inversify/micro";
@@ -21,5 +22,6 @@ export function collectAllInversifyScenarios(): readonly AnyScenario[] {
     ...buildInversifyScopeScenarios(),
     ...buildInversifyScaleScenarios(),
     ...buildInversifyBootScenarios(),
+    ...buildInversifyFailureScenarios(),
   ];
 }
