@@ -137,10 +137,6 @@
       "types": "./dist/scope.d.mts",
       "import": "./dist/scope.mjs"
     },
-    "./scope-validation": {
-      "types": "./dist/scope-validation.d.mts",
-      "import": "./dist/scope-validation.mjs"
-    },
     "./token": {
       "types": "./dist/token.d.mts",
       "import": "./dist/token.mjs"
