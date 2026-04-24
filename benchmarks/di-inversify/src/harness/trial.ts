@@ -57,7 +57,8 @@ export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
  * reduces (does not eliminate) the cross-trial correlation. For cleaner
  * isolation, spawn multiple subprocesses; that is the user's responsibility.
  */
-export const DEFAULT_TRIAL_COUNT = FAST_MODE_ENABLED ? 1 : FULL_MODE_ENABLED ? 3 : 2;
+export const MIN_TRIAL_COUNT = 2;
+export const DEFAULT_TRIAL_COUNT = FULL_MODE_ENABLED ? 3 : MIN_TRIAL_COUNT;
 
 /**
  * Force a full GC between tinybench tasks when `--expose-gc` is available.
@@ -245,7 +246,7 @@ export async function runAllTrials(
 
 /**
  * Honour `BENCH_TRIALS=<n>` from the environment so CI / smoke-test runs
- * can dial trials down to 1 without editing code. Falls back to
+ * can tune trial count without editing code. Falls back to
  * {@link DEFAULT_TRIAL_COUNT} when the variable is unset or unparseable.
  */
 function resolveTrialCountFromEnvironment(): number {
@@ -254,9 +255,9 @@ function resolveTrialCountFromEnvironment(): number {
     return DEFAULT_TRIAL_COUNT;
   }
   const parsed = Number.parseInt(rawValue, 10);
-  if (!Number.isFinite(parsed) || parsed < 1) {
+  if (!Number.isFinite(parsed) || parsed < MIN_TRIAL_COUNT) {
     console.error(
-      `[trial] BENCH_TRIALS="${rawValue}" is not a positive integer; falling back to default ${String(DEFAULT_TRIAL_COUNT)}.`,
+      `[trial] BENCH_TRIALS="${rawValue}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(DEFAULT_TRIAL_COUNT)}.`,
     );
     return DEFAULT_TRIAL_COUNT;
   }
