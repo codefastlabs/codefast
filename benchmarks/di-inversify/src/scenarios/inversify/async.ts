@@ -4,6 +4,13 @@ import type { ServiceIdentifier } from "inversify";
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;
+const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 32] as const;
+
+function waitForNextImmediateTick(): Promise<void> {
+  return new Promise((resolve) => {
+    setImmediate(resolve);
+  });
+}
 
 function buildResolveAsyncSingleHopScenario(): AsyncBenchScenario {
   const asyncValueIdentifier = Symbol("bench-inv-async-single-hop");
@@ -82,6 +89,65 @@ function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
   };
 }
 
+function buildAsyncFanOutConcurrentScenario(
+  concurrency: (typeof ASYNC_CONCURRENT_FANOUT_COUNTS)[number],
+): AsyncBenchScenario {
+  const dependencyIdentifiers = Array.from({ length: concurrency }, (_value, index) =>
+    Symbol(`bench-inv-async-fanout-${String(concurrency)}-${String(index)}`),
+  ) as ServiceIdentifier<number>[];
+  const container = new Container();
+
+  for (const [index, dependencyIdentifier] of dependencyIdentifiers.entries()) {
+    container
+      .bind<number>(dependencyIdentifier)
+      .toDynamicValue(async () => {
+        await waitForNextImmediateTick();
+        return index;
+      })
+      .inTransientScope();
+  }
+
+  const expectedTotal = ((concurrency - 1) * concurrency) / 2;
+
+  return {
+    id: `async-fanout-concurrent-${String(concurrency)}`,
+    group: "async",
+    kind: "async",
+    what: `resolveAsync ${String(concurrency)} independent async dependencies in parallel via Promise.all`,
+    batch: 1,
+    sanity: async () => {
+      const values = await Promise.all(
+        dependencyIdentifiers.map((dependencyIdentifier) =>
+          container.getAsync<number>(dependencyIdentifier),
+        ),
+      );
+      const total = values.reduce((runningTotal, value) => runningTotal + value, 0);
+      return values.length === concurrency && total === expectedTotal;
+    },
+    build: () => {
+      return async () => {
+        const values = await Promise.all(
+          dependencyIdentifiers.map((dependencyIdentifier) =>
+            container.getAsync<number>(dependencyIdentifier),
+          ),
+        );
+        const total = values.reduce((runningTotal, value) => runningTotal + value, 0);
+        if (values.length !== concurrency || total !== expectedTotal) {
+          throw new Error(
+            `Expected ${String(concurrency)} values with total ${String(expectedTotal)}, received ${String(values.length)} values and total ${String(total)}`,
+          );
+        }
+      };
+    },
+  };
+}
+
 export function buildInversifyAsyncScenarios(): readonly AsyncBenchScenario[] {
-  return [buildResolveAsyncSingleHopScenario(), buildDynamicAsyncChainDepthEightScenario()];
+  return [
+    buildResolveAsyncSingleHopScenario(),
+    buildDynamicAsyncChainDepthEightScenario(),
+    ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) =>
+      buildAsyncFanOutConcurrentScenario(concurrency),
+    ),
+  ];
 }

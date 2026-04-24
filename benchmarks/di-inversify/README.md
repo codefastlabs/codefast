@@ -39,7 +39,7 @@ If you add a new scenario whose `latency.mean` is under 0.5 μs, batch it. If it
 
 ### Production-shaped scenario scope
 
-This harness keeps only scenarios that map to production-shaped usage (container bootstrap, realistic graphs, fan-out, async chains, lifecycle hooks, scope lookup, and scale). The table in the report is the comparison to cite.
+This harness keeps only scenarios that map to production-shaped usage (container bootstrap, realistic graphs, fan-out, async chains, lifecycle hooks, scope lookup, scale, and failure-path fail-fast behavior). The table in the report is the comparison to cite.
 
 ### Subprocess protocol
 
@@ -124,16 +124,17 @@ Three things to check before drawing conclusions:
 
 Currently migrated to the trial harness:
 
-| Group       | Scenarios                                                                                                                                                                           |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `micro`     | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                          |
-| `realistic` | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                          |
-| `fan-out`   | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented) |
-| `async`     | `resolve-async-single-hop`, `dynamic-async-chain-8`                                                                                                                                 |
-| `lifecycle` | `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`                                                                                                                |
-| `scope`     | `child-depth-2-resolve`                                                                                                                                                             |
-| `scale`     | `scale-deep-transient-chain-512`                                                                                                                                                    |
-| `boot`      | `boot-decorated-container-build-and-resolve`                                                                                                                                        |
+| Group       | Scenarios                                                                                                                                                                                                                          |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `micro`     | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                                                                         |
+| `realistic` | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                                                                         |
+| `fan-out`   | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented), `resolve-all-named-8`, `resolve-all-named-32` |
+| `async`     | `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`                                                                                                                     |
+| `lifecycle` | `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`                                                                                                                                                               |
+| `scope`     | `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`                                                                                                                                                          |
+| `scale`     | `scale-deep-transient-chain-512`                                                                                                                                                                                                   |
+| `boot`      | `boot-decorated-container-build-and-resolve`                                                                                                                                                                                       |
+| `failure`   | `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`                                                                                                                                                |
 
 ### Phase 2 - Fan-out baseline
 
@@ -200,6 +201,7 @@ src/
       scope.ts
       scale.ts
       boot.ts
+      failure.ts
     inversify/            # InversifyJS 8 scenario modules (mirror)
       micro.ts
       realistic.ts
@@ -209,6 +211,7 @@ src/
       scope.ts
       scale.ts
       boot.ts
+      failure.ts
   fixtures/
     realistic-graph.ts    # shared descriptor (no library imports)
     fan-out-descriptor.ts # shared fan-out topology + strategy-count fixtures

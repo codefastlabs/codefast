@@ -18,7 +18,8 @@ export type ScenarioGroup =
   | "lifecycle"
   | "scope"
   | "scale"
-  | "boot";
+  | "boot"
+  | "failure";
 
 /**
  * A scenario builder produces the closure tinybench will measure. The closure

@@ -5,6 +5,8 @@ export const FAN_OUT_TREE_BREADTH = 4;
 
 export const RESOLVE_ALL_STRATEGY_COUNTS = [10, 100] as const;
 export type ResolveAllStrategyCount = (typeof RESOLVE_ALL_STRATEGY_COUNTS)[number];
+export const RESOLVE_ALL_NAMED_COUNTS = [8, 32] as const;
+export type ResolveAllNamedCount = (typeof RESOLVE_ALL_NAMED_COUNTS)[number];
 
 function ensureTreeShapeIsValid(depth: number, breadth: number): void {
   if (!Number.isInteger(depth) || depth < 2) {
