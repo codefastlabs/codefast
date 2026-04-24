@@ -35,14 +35,9 @@ Several scenarios run operations that complete in well under one microsecond —
 
 If you add a new scenario whose `latency.mean` is under 0.5 μs, batch it. If it's over 5 μs, don't.
 
-### Stress and diagnostic quarantine
+### Production-shaped scenario scope
 
-Not every row belongs in the headline comparison. Two categories are walled off:
-
-- **Stress** (`stress: true`) — worst-case probes like `child-depth-8-stress`. Useful to catch regressions, but no real app wires 8 nested containers. Rendered as a separate table.
-- **Diagnostic** (`group: "diagnostic"`) — library-internal probes like `diagnostic-container-create-empty`. Kept as baselines for third-library comparisons and regression detection; not a statement about end-to-end performance.
-
-The "Comparable scenarios" table is the one to cite.
+This harness keeps only scenarios that map to production-shaped usage (container bootstrap, realistic graphs, fan-out, async chains, lifecycle hooks, scope lookup, and scale). The table in the report is the comparison to cite.
 
 ### Subprocess protocol
 
@@ -127,17 +122,16 @@ Three things to check before drawing conclusions:
 
 Currently migrated to the trial harness:
 
-| Group        | Scenarios                                                                                                                                                                           |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `micro`      | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                          |
-| `realistic`  | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                          |
-| `fan-out`    | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented) |
-| `async`      | `resolve-async-single-hop`, `dynamic-async-chain-8`                                                                                                                                 |
-| `lifecycle`  | `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`                                                                                                                |
-| `scope`      | `child-depth-2-resolve`, `child-depth-8-stress` (stress)                                                                                                                            |
-| `scale`      | `scale-deep-transient-chain-512`                                                                                                                                                    |
-| `boot`       | `boot-decorated-container-build-and-resolve`                                                                                                                                        |
-| `diagnostic` | `diagnostic-container-create-empty`                                                                                                                                                 |
+| Group       | Scenarios                                                                                                                                                                           |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `micro`     | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                          |
+| `realistic` | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                          |
+| `fan-out`   | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented) |
+| `async`     | `resolve-async-single-hop`, `dynamic-async-chain-8`                                                                                                                                 |
+| `lifecycle` | `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`                                                                                                                |
+| `scope`     | `child-depth-2-resolve`                                                                                                                                                             |
+| `scale`     | `scale-deep-transient-chain-512`                                                                                                                                                    |
+| `boot`      | `boot-decorated-container-build-and-resolve`                                                                                                                                        |
 
 ### Phase 2 - Fan-out baseline
 
@@ -204,7 +198,6 @@ src/
       scope.ts
       scale.ts
       boot.ts
-      diagnostic.ts
     inversify/            # InversifyJS 8 scenario modules (mirror)
       micro.ts
       realistic.ts
@@ -214,7 +207,6 @@ src/
       scope.ts
       scale.ts
       boot.ts
-      diagnostic.ts
   fixtures/
     realistic-graph.ts    # shared descriptor (no library imports)
     fan-out-descriptor.ts # shared fan-out topology + strategy-count fixtures
