@@ -23,7 +23,7 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   return {
     id: `resolve-all-strategies-${String(strategyCount)}`,
     group: "fan-out",
-    what: `resolveAll() across ${String(strategyCount)} strategy bindings once`,
+    what: `getAll() across ${String(strategyCount)} strategy bindings once`,
     batch: 1,
     sanity: () => prewarmedStrategies.length === strategyCount,
     build: () => {
