@@ -290,6 +290,40 @@ class DefaultContainer implements Container {
     }
   }
 
+  private prepareRegistryMutation(): void {
+    this.flushPendingBindings();
+    this.invalidateDevValidationState();
+  }
+
+  private completeLoadMutation(): void {
+    this.flushPendingBindings();
+    this.maybeRunDevValidationOnce();
+  }
+
+  private getLoadedBindingIdsOrThrow(module: ModuleLike): readonly BindingIdentifier[] {
+    const ownedBindingIds = this.loadedModules.get(module);
+    if (ownedBindingIds === undefined) {
+      throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
+    }
+    return ownedBindingIds;
+  }
+
+  private unloadLoadedModuleSync(module: ModuleLike): void {
+    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
+    for (const bindingId of [...ownedBindingIds].reverse()) {
+      this.removeOwnedBindingById(bindingId);
+    }
+    this.loadedModules.delete(module);
+  }
+
+  private async unloadLoadedModuleAsync(module: ModuleLike): Promise<void> {
+    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
+    for (const bindingId of [...ownedBindingIds].reverse()) {
+      await this.removeOwnedBindingByIdAsync(bindingId);
+    }
+    this.loadedModules.delete(module);
+  }
+
   private registerOwnedBinding(
     token: Token<unknown> | Constructor<unknown>,
     nextBinding: Binding<unknown>,
@@ -445,8 +479,7 @@ class DefaultContainer implements Container {
    * - `token` path removes all owned bindings for that key at once.
    */
   unbind(tokenOrId: RegistryKey | BindingIdentifier): void {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     if (typeof tokenOrId === "string") {
       this.removeOwnedBindingById(tokenOrId);
       return;
@@ -460,8 +493,7 @@ class DefaultContainer implements Container {
    * Async counterpart of {@link unbind}; awaits deactivation hooks before registry removal.
    */
   async unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void> {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     if (typeof tokenOrId === "string") {
       await this.removeOwnedBindingByIdAsync(tokenOrId);
       return;
@@ -477,8 +509,7 @@ class DefaultContainer implements Container {
    * Existing cached instances for the removed bindings are synchronously released first.
    */
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     this.releaseOwnedBindingsByToken(token as RegistryKey);
     this.ownRegistry.remove(token as RegistryKey);
     this.slotIndexByToken.delete(token as RegistryKey);
@@ -491,24 +522,21 @@ class DefaultContainer implements Container {
    * is true, runs {@link validate} at most once after the registry changes.
    */
   load(...modules: Module[]): void {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     for (const syncModule of modules) {
       if (syncModule instanceof AsyncModule) {
         throw new AsyncModuleLoadError(syncModule.name);
       }
       this.ensureSyncModuleLoaded(syncModule);
     }
-    this.flushPendingBindings();
-    this.maybeRunDevValidationOnce();
+    this.completeLoadMutation();
   }
 
   /**
    * Like {@link load} but allows async modules. Re-loading is deduplicated the same way.
    */
   async loadAsync(...modules: ModuleLike[]): Promise<void> {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     for (const moduleOrAsync of modules) {
       if (moduleOrAsync instanceof AsyncModule) {
         await this.ensureAsyncModuleLoaded(moduleOrAsync);
@@ -516,37 +544,20 @@ class DefaultContainer implements Container {
         this.ensureSyncModuleLoaded(moduleOrAsync);
       }
     }
-    this.flushPendingBindings();
-    this.maybeRunDevValidationOnce();
+    this.completeLoadMutation();
   }
 
   unload(...modules: ModuleLike[]): void {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     for (const module of modules) {
-      const ownedBindingIds = this.loadedModules.get(module);
-      if (ownedBindingIds === undefined) {
-        throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
-      }
-      for (const bindingId of [...ownedBindingIds].reverse()) {
-        this.removeOwnedBindingById(bindingId);
-      }
-      this.loadedModules.delete(module);
+      this.unloadLoadedModuleSync(module);
     }
   }
 
   async unloadAsync(...modules: ModuleLike[]): Promise<void> {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
+    this.prepareRegistryMutation();
     for (const module of modules) {
-      const ownedBindingIds = this.loadedModules.get(module);
-      if (ownedBindingIds === undefined) {
-        throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
-      }
-      for (const bindingId of [...ownedBindingIds].reverse()) {
-        await this.removeOwnedBindingByIdAsync(bindingId);
-      }
-      this.loadedModules.delete(module);
+      await this.unloadLoadedModuleAsync(module);
     }
   }
 
