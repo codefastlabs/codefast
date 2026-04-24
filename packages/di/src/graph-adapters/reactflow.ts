@@ -1,13 +1,8 @@
 import type { StaticDependencyEdge } from "#/dependency-graph";
 import type { ContainerGraphJson } from "#/inspector";
 import type { ReactFlowEdge, ReactFlowGraphJson, ReactFlowNode } from "#/graph-adapters/types";
-
 const DEFAULT_X_GAP = 240;
 const DEFAULT_Y_GAP = 110;
-
-/**
- * Converts the canonical container graph JSON into React Flow nodes/edges format.
- */
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraphJson {
   const nodes: ReactFlowNode[] = graph.nodes.map((node, index) => ({
     id: node.bindingId,
@@ -25,7 +20,6 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraphJson 
       ...(node.moduleId === undefined ? {} : { moduleId: node.moduleId }),
     },
   }));
-
   const edges: ReactFlowEdge[] = graph.edges.map((edge) => ({
     id: edgeIdForReactFlow(edge),
     source: edge.fromBindingId,
@@ -39,8 +33,6 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraphJson 
       resolutionPath: [...edge.resolutionPath],
     },
   }));
-
-  // Spread nodes on x-axis by module buckets when present.
   const moduleIndex = new Map<string, number>();
   let nextColumn = 1;
   const normalizedNodes = nodes.map((node) => {
@@ -63,10 +55,8 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraphJson 
       position: { ...node.position, x: column * DEFAULT_X_GAP },
     };
   });
-
   return { nodes: normalizedNodes, edges };
 }
-
 function edgeLabelForReactFlow(edge: StaticDependencyEdge): string {
   const parts: string[] = [];
   if (edge.injectHintLabel !== undefined) {
@@ -78,7 +68,6 @@ function edgeLabelForReactFlow(edge: StaticDependencyEdge): string {
   }
   return parts.join(" | ");
 }
-
 function edgeIdForReactFlow(edge: StaticDependencyEdge): string {
   const hint = edge.injectHintLabel ?? "";
   const conditional = edge.isToBindingConditional ? "conditional" : "plain";

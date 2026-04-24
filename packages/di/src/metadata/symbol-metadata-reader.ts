@@ -9,43 +9,17 @@ import type {
   LifecycleMetadata,
   MetadataReader,
 } from "#/metadata/metadata-types";
-
-/**
- * Type guard — returns `true` when `value` has the shape of a {@link ConstructorMetadata} object.
- */
 function isConstructorMetadata(value: unknown): value is ConstructorMetadata {
   if (typeof value !== "object" || value === null || !("params" in value)) {
     return false;
   }
   return Array.isArray((value as ConstructorMetadata).params);
 }
-
-/**
- * Default {@link MetadataReader} implementation backed by TC39 `Symbol.metadata`.
- *
- * Constructor metadata (`@injectable()`) is read with `Object.hasOwn` to prevent
- * a subclass from silently inheriting a parent's dependency list — each class must
- * declare its own `@injectable()` decorator or be constructed with zero arguments.
- *
- * Lifecycle metadata (`@postConstruct` / `@preDestroy`) *is* inherited through the
- * prototype chain, matching the intent that a parent's lifecycle hook applies to children.
- */
 export class SymbolMetadataReader implements MetadataReader {
   private readonly constructorMetadataCache = new WeakMap<
     Constructor<unknown>,
     ConstructorMetadata | null
   >();
-
-  /**
-   * Reads constructor param metadata written by `@injectable()`.
-   * Returns `undefined` if no own metadata is present on the class.
-   *
-   * @remarks
-   * Uses `Object.getOwnPropertyDescriptor` for the class's `Symbol.metadata` slot so a
-   * subclass without its own metadata object does not read through to the parent's bag.
-   * Then `Object.hasOwn` on that own object ensures the constructor bucket is declared on
-   * this class, not inherited inside the metadata record.
-   */
   getConstructorMetadata(
     implementationClass: Constructor<unknown>,
   ): ConstructorMetadata | undefined {
@@ -53,7 +27,6 @@ export class SymbolMetadataReader implements MetadataReader {
     if (cachedMetadata !== undefined) {
       return cachedMetadata === null ? undefined : cachedMetadata;
     }
-
     const metadataSymbol = decoratorMetadataObjectSymbol();
     const ownMetadataDescriptor = Object.getOwnPropertyDescriptor(
       implementationClass as unknown as object,
@@ -69,10 +42,6 @@ export class SymbolMetadataReader implements MetadataReader {
       return undefined;
     }
     const metadataObject = rawMetadata;
-    // CRITICAL: Use Object.hasOwn to prevent reading inherited metadata from parent classes.
-    // TC39 Symbol.metadata prototype-chains from parent → child. Without this guard,
-    // a subclass without @injectable() would silently inherit parent metadata, causing
-    // wrong dep count injection with no compile-time error.
     if (!Object.hasOwn(metadataObject, CODEFAST_DI_CONSTRUCTOR_METADATA)) {
       this.constructorMetadataCache.set(implementationClass, null);
       return undefined;
@@ -87,10 +56,6 @@ export class SymbolMetadataReader implements MetadataReader {
     this.constructorMetadataCache.set(implementationClass, raw);
     return raw;
   }
-
-  /**
-   * Reads lifecycle method names written by `@postConstruct()` / `@preDestroy()`. Inherits from parent classes.
-   */
   getLifecycleMetadata(implementationClass: Constructor<unknown>): LifecycleMetadata | undefined {
     const metadataSymbol = decoratorMetadataObjectSymbol();
     const metadataObject = (implementationClass as unknown as Record<symbol, unknown>)[
@@ -99,7 +64,6 @@ export class SymbolMetadataReader implements MetadataReader {
     if (typeof metadataObject !== "object" || metadataObject === null) {
       return undefined;
     }
-    // Lifecycle metadata CAN be inherited (postConstruct on parent is valid for child)
     const raw = (metadataObject as Record<PropertyKey, unknown>)[CODEFAST_DI_LIFECYCLE_METADATA];
     if (typeof raw !== "object" || raw === null) {
       return undefined;

@@ -6,11 +6,9 @@ import { createBindingIdentifier } from "#/binding";
 import type { Binding, ResolutionContext } from "#/binding";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { AsyncResolutionError, NoMatchingBindingError, MissingMetadataError } from "#/errors";
-
 describe("DependencyResolver", () => {
   const LoggerToken = token<string>("Logger");
   const HttpClientToken = token<string>("HttpClient");
-
   function mockBinding<Value>(options: Partial<Binding<Value>>): Binding<Value> {
     const base = {
       id: createBindingIdentifier(),
@@ -21,7 +19,6 @@ describe("DependencyResolver", () => {
     };
     return { ...base, ...options } as Binding<Value>;
   }
-
   function setup() {
     const scopeManager = ScopeManager.createRoot();
     const lookup = vi.fn();
@@ -36,56 +33,43 @@ describe("DependencyResolver", () => {
     });
     return { resolver, lookup, scopeManager, metadataReader, getConstructorMetadata };
   }
-
   it("resolveOptionalRoot returns value if bound", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({ value: "console-logger" });
     lookup.mockReturnValue([loggerBinding]);
-
     expect(resolver.resolveOptionalRoot(LoggerToken)).toBe("console-logger");
   });
-
   it("resolveOptionalRoot returns undefined if not bound", () => {
     const { resolver, lookup } = setup();
     lookup.mockReturnValue(undefined);
-
     expect(resolver.resolveOptionalRoot(LoggerToken)).toBeUndefined();
   });
-
   it("resolveOptionalRoot throws NoMatchingBindingError if hint doesn't match", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({ bindingName: "console" });
     lookup.mockReturnValue([loggerBinding]);
-
     expect(() => resolver.resolveOptionalRoot(LoggerToken, { name: "file" })).toThrow(
       NoMatchingBindingError,
     );
   });
-
   it("resolveOptionalRoot throws if multiple bindings match", () => {
     const { resolver, lookup } = setup();
     lookup.mockReturnValue([mockBinding({}), mockBinding({})]);
-
     expect(() => resolver.resolveOptionalRoot(LoggerToken)).toThrow(/Ambiguous binding/);
   });
-
   it("resolveAllRoot returns empty array if not bound", () => {
     const { resolver, lookup } = setup();
     lookup.mockReturnValue([]);
-
     expect(resolver.resolveAllRoot(LoggerToken)).toEqual([]);
   });
-
   it("resolveAllRoot throws NoMatchingBindingError if hint doesn't match", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({ bindingName: "console" });
     lookup.mockReturnValue([loggerBinding]);
-
     expect(() => resolver.resolveAllRoot(LoggerToken, { name: "file" })).toThrow(
       NoMatchingBindingError,
     );
   });
-
   it("resolveAllAsyncRoot returns values asynchronously", async () => {
     const { resolver, lookup } = setup();
     const consoleLogger = mockBinding({ value: "console" });
@@ -94,10 +78,8 @@ describe("DependencyResolver", () => {
       factory: async () => "file",
     });
     lookup.mockReturnValue([consoleLogger, fileLogger]);
-
     await expect(resolver.resolveAllAsyncRoot(LoggerToken)).resolves.toEqual(["console", "file"]);
   });
-
   it("throws AsyncResolutionError in resolveAllRoot if encountered async binding", () => {
     const { resolver, lookup } = setup();
     const asyncLogger = mockBinding<string>({
@@ -105,10 +87,8 @@ describe("DependencyResolver", () => {
       factory: async () => "async-log",
     });
     lookup.mockReturnValue([asyncLogger]);
-
     expect(() => resolver.resolveAllRoot(LoggerToken)).toThrow(AsyncResolutionError);
   });
-
   it("resolveOptional in ResolutionContext handles TokenNotBoundError", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({
@@ -116,12 +96,9 @@ describe("DependencyResolver", () => {
       factory: (resolutionContext: ResolutionContext) =>
         resolutionContext.resolveOptional(HttpClientToken),
     });
-    // Logger is bound to a factory that optional-resolves HttpClient, but HttpClient is NOT bound
     lookup.mockImplementation((k) => (k === LoggerToken ? [loggerBinding] : undefined));
-
     expect(resolver.resolveRoot(LoggerToken)).toBeUndefined();
   });
-
   it("resolveOptional in ResolutionContext rethrows other errors", () => {
     const { resolver, lookup } = setup();
     const loggerBinding = mockBinding({
@@ -138,10 +115,8 @@ describe("DependencyResolver", () => {
       }
       return undefined;
     });
-
     expect(() => resolver.resolveRoot(LoggerToken)).toThrow("Boom");
   });
-
   it("materialize dynamic factory returns value", () => {
     const { resolver, lookup } = setup();
     const dynamicBinding = mockBinding<string>({
@@ -149,10 +124,8 @@ describe("DependencyResolver", () => {
       factory: () => "dynamic-log-instance",
     });
     lookup.mockReturnValue([dynamicBinding]);
-
     expect(resolver.resolveRoot(LoggerToken)).toBe("dynamic-log-instance");
   });
-
   it("materialize async dynamic factory returns promise", async () => {
     const { resolver, lookup } = setup();
     const asyncLoggerBinding = mockBinding<string>({
@@ -160,12 +133,10 @@ describe("DependencyResolver", () => {
       factory: async () => "async-log",
     });
     lookup.mockReturnValue([asyncLoggerBinding]);
-
     const promise = resolver.resolveAsyncRoot(LoggerToken);
     expect(promise).toBeInstanceOf(Promise);
     expect(await promise).toBe("async-log");
   });
-
   it("materialize resolved factory returns value", () => {
     const { resolver, lookup } = setup();
     const logBinding = mockBinding<string>({
@@ -174,15 +145,12 @@ describe("DependencyResolver", () => {
       factory: () => "resolved-log",
     });
     lookup.mockReturnValue([logBinding]);
-
     expect(resolver.resolveRoot(LoggerToken)).toBe("resolved-log");
   });
-
   it("materialize alias factory returns target value", () => {
     const { resolver, lookup } = setup();
     const clientBinding = mockBinding<string>({ kind: "constant", value: "http-client-instance" });
     const loggerAlias = mockBinding<string>({ kind: "alias", targetToken: HttpClientToken });
-
     lookup.mockImplementation((k) => {
       if (k === LoggerToken) {
         return [loggerAlias];
@@ -192,10 +160,8 @@ describe("DependencyResolver", () => {
       }
       return undefined;
     });
-
     expect(resolver.resolveRoot(LoggerToken)).toBe("http-client-instance");
   });
-
   it("materialize rethrows circular dependency error with path", () => {
     const { resolver, lookup } = setup();
     const aliasBinding = mockBinding({ kind: "alias", targetToken: HttpClientToken });
@@ -208,10 +174,8 @@ describe("DependencyResolver", () => {
       }
       return undefined;
     });
-
     expect(() => resolver.resolveRoot(LoggerToken)).toThrow("Boom");
   });
-
   it("materialize dynamic factory throws AsyncResolutionError if it returns a promise in sync mode", () => {
     const { resolver, lookup } = setup();
     const asyncDynamicBinding = mockBinding({
@@ -221,10 +185,8 @@ describe("DependencyResolver", () => {
       ) => string,
     });
     lookup.mockReturnValue([asyncDynamicBinding]);
-
     expect(() => resolver.resolveRoot(LoggerToken)).toThrow(AsyncResolutionError);
   });
-
   it("materialize resolved factory throws AsyncResolutionError if it returns a promise in sync mode", () => {
     const { resolver, lookup } = setup();
     const asyncResolvedBinding = mockBinding({
@@ -233,10 +195,8 @@ describe("DependencyResolver", () => {
       factory: (() => Promise.resolve("async")) as unknown as (...args: unknown[]) => string,
     });
     lookup.mockReturnValue([asyncResolvedBinding]);
-
     expect(() => resolver.resolveRoot(LoggerToken)).toThrow(AsyncResolutionError);
   });
-
   it("instantiateClassBinding handles optional parameters", () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class PaymentProcessor {
@@ -246,23 +206,19 @@ describe("DependencyResolver", () => {
       kind: "class",
       implementationClass: PaymentProcessor,
     });
-
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [{ index: 0, token: HttpClientToken, optional: true }],
     });
-
     lookup.mockImplementation((k) => {
       if (k === PaymentProcessor) {
         return [processorBinding];
       }
-      return undefined; // HttpClientToken is not bound
+      return undefined;
     });
-
     const instance = resolver.resolveRoot(PaymentProcessor) as PaymentProcessor;
     expect(instance).toBeInstanceOf(PaymentProcessor);
     expect(instance.client).toBeUndefined();
   });
-
   it("instantiateClassBindingAsync handles optional parameters with missing binding", async () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class AsyncPaymentProcessor {
@@ -272,25 +228,21 @@ describe("DependencyResolver", () => {
       kind: "class",
       implementationClass: AsyncPaymentProcessor,
     });
-
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [{ index: 0, token: HttpClientToken, optional: true }],
     });
-
     lookup.mockImplementation((k) => {
       if (k === AsyncPaymentProcessor) {
         return [processorBinding];
       }
-      return undefined; // HttpClientToken is not bound
+      return undefined;
     });
-
     const instance = (await resolver.resolveAsyncRoot(
       AsyncPaymentProcessor,
     )) as AsyncPaymentProcessor;
     expect(instance).toBeInstanceOf(AsyncPaymentProcessor);
     expect(instance.client).toBeUndefined();
   });
-
   it("instantiateClassBindingAsync rethrows other errors in optional params", async () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class AsyncPaymentProcessor {
@@ -300,11 +252,9 @@ describe("DependencyResolver", () => {
       kind: "class",
       implementationClass: AsyncPaymentProcessor,
     });
-
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [{ index: 0, token: HttpClientToken, optional: true }],
     });
-
     lookup.mockImplementation((k) => {
       if (k === AsyncPaymentProcessor) {
         return [processorBinding];
@@ -314,10 +264,8 @@ describe("DependencyResolver", () => {
       }
       return undefined;
     });
-
     await expect(resolver.resolveAsyncRoot(AsyncPaymentProcessor)).rejects.toThrow("Failure");
   });
-
   it("instantiateClassBinding rethrows other errors in optional params", () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class PaymentProcessor {
@@ -327,11 +275,9 @@ describe("DependencyResolver", () => {
       kind: "class",
       implementationClass: PaymentProcessor,
     });
-
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [{ index: 0, token: HttpClientToken, optional: true }],
     });
-
     lookup.mockImplementation((k) => {
       if (k === PaymentProcessor) {
         return [processorBinding];
@@ -341,28 +287,21 @@ describe("DependencyResolver", () => {
       }
       return undefined;
     });
-
     expect(() => resolver.resolveRoot(PaymentProcessor)).toThrow("Unexpected");
   });
-
   it("instantiateClassBinding throws MissingMetadataError if arity > 0 and no meta", () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class UnmarkedService {
-      constructor(_dep: string) {
-        // _dep is unused
-      }
+      constructor(_dep: string) {}
     }
     const serviceBinding = mockBinding<UnmarkedService>({
       kind: "class",
       implementationClass: UnmarkedService,
     });
-
     vi.mocked(getConstructorMetadata).mockReturnValue(undefined);
     lookup.mockReturnValue([serviceBinding]);
-
     expect(() => resolver.resolveRoot(UnmarkedService)).toThrow(MissingMetadataError);
   });
-
   it("instantiateClassBinding handles classes with no parameters", () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class NoOpService {}
@@ -374,10 +313,8 @@ describe("DependencyResolver", () => {
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [],
     });
-
     expect(resolver.resolveRoot(NoOpService)).toBeInstanceOf(NoOpService);
   });
-
   it("instantiateClassBinding handles undefined metadata reader", () => {
     class BasicService {}
     const serviceBinding = mockBinding<BasicService>({
@@ -390,28 +327,21 @@ describe("DependencyResolver", () => {
       scopeManager: ScopeManager.createRoot(),
       metadataReader: undefined as unknown as MetadataReader,
     });
-
     expect(resolver.resolveRoot(BasicService)).toBeInstanceOf(BasicService);
   });
-
   it("instantiateClassBindingAsync throws MissingMetadataError if arity > 0 and no meta", async () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class AsyncDatabase {
-      constructor(_dep: string) {
-        // _dep is unused
-      }
+      constructor(_dep: string) {}
     }
     const databaseBinding = mockBinding<AsyncDatabase>({
       kind: "class",
       implementationClass: AsyncDatabase,
     });
-
     vi.mocked(getConstructorMetadata).mockReturnValue(undefined);
     lookup.mockReturnValue([databaseBinding]);
-
     await expect(resolver.resolveAsyncRoot(AsyncDatabase)).rejects.toThrow(MissingMetadataError);
   });
-
   it("instantiateClassBindingAsync handles classes with no parameters", async () => {
     const { resolver, lookup, getConstructorMetadata } = setup();
     class AsyncNoOp {}
@@ -420,7 +350,6 @@ describe("DependencyResolver", () => {
     vi.mocked(getConstructorMetadata).mockReturnValue({
       params: [],
     });
-
     expect(await resolver.resolveAsyncRoot(AsyncNoOp)).toBeInstanceOf(AsyncNoOp);
   });
 });

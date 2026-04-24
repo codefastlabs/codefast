@@ -5,11 +5,6 @@ import {
 } from "#/metadata/metadata-keys";
 import type { LifecycleMetadata } from "#/metadata/metadata-types";
 import { AsyncResolutionError } from "#/errors";
-
-/**
- * Duck-typed Promise check: returns `true` when `value` has a `then` method.
- * Used throughout the lifecycle layer to guard against async return values on sync resolution paths.
- */
 export function isPromiseLike(value: unknown): value is Promise<unknown> {
   return (
     typeof value === "object" &&
@@ -18,14 +13,6 @@ export function isPromiseLike(value: unknown): value is Promise<unknown> {
     typeof (value as Promise<unknown>).then === "function"
   );
 }
-
-/**
- * Runs `onActivation` synchronously on a newly constructed instance.
- * If the handler returns a Promise during synchronous resolution, throws
- * {@link AsyncResolutionError} — callers must use `resolveAsync` for async activation handlers.
- *
- * Lifecycle ordering: `construct` → `@postConstruct` → **`onActivation`** → cache.
- */
 export function runActivation(
   binding: Binding<unknown>,
   instance: unknown,
@@ -47,12 +34,6 @@ export function runActivation(
   }
   return activationResult;
 }
-
-/**
- * Reads lifecycle metadata ({@link LifecycleMetadata}) directly from a constructor's
- * `Symbol.metadata` object. Bypasses the {@link MetadataReader} abstraction —
- * used by the scope manager during deactivation when the reader is not available.
- */
 export function readLifecycleMetadataFromCtor(
   implementationClass: Constructor<unknown>,
 ): LifecycleMetadata | undefined {
@@ -66,14 +47,6 @@ export function readLifecycleMetadataFromCtor(
   const raw = (metadataObject as Record<PropertyKey, unknown>)[CODEFAST_DI_LIFECYCLE_METADATA];
   return typeof raw === "object" && raw !== null ? (raw as LifecycleMetadata) : undefined;
 }
-
-/**
- * Runs the `@postConstruct()` method synchronously if present.
- * Throws {@link AsyncResolutionError} if the method returns a Promise — async lifecycle
- * methods require `resolveAsync`.
- *
- * Lifecycle ordering: `construct` → **`@postConstruct`** → `onActivation` → cache.
- */
 export function runPostConstruct(
   implementationClass: Constructor<unknown>,
   instance: unknown,
@@ -99,10 +72,6 @@ export function runPostConstruct(
     );
   }
 }
-
-/**
- * Runs the `@postConstruct()` method, awaiting if it returns a Promise.
- */
 export async function runPostConstructAsync(
   implementationClass: Constructor<unknown>,
   instance: unknown,
@@ -118,13 +87,6 @@ export async function runPostConstructAsync(
   }
   await (lifecycleMethod as () => unknown).call(instance);
 }
-
-/**
- * Runs the `@preDestroy()` method synchronously if present.
- * Throws if the method returns a Promise — use `disposeAsync()` / `unloadAsync()` for async teardown.
- *
- * Lifecycle ordering: `onDeactivation` → **`@preDestroy`**.
- */
 export function runPreDestroy(implementationClass: Constructor<unknown>, instance: unknown): void {
   const meta = readLifecycleMetadataFromCtor(implementationClass);
   if (meta?.preDestroy === undefined) {
@@ -142,12 +104,6 @@ export function runPreDestroy(implementationClass: Constructor<unknown>, instanc
     );
   }
 }
-
-/**
- * Runs the `@preDestroy()` method, awaiting if it returns a Promise.
- *
- * Lifecycle ordering: `onDeactivation` → **`@preDestroy`** (async variant).
- */
 export async function runPreDestroyAsync(
   implementationClass: Constructor<unknown>,
   instance: unknown,
@@ -163,12 +119,6 @@ export async function runPreDestroyAsync(
   }
   await (lifecycleMethod as () => unknown).call(instance);
 }
-
-/**
- * Runs `onActivation`, awaiting if the handler returns a Promise.
- *
- * Lifecycle ordering: `construct` → `@postConstruct` → **`onActivation`** (async variant) → cache.
- */
 export async function runActivationAsync(
   binding: Binding<unknown>,
   instance: unknown,

@@ -12,7 +12,6 @@ import { createBindingIdentifier } from "#/binding";
 import { token } from "#/token";
 import type { Token } from "#/token";
 import type { MetadataReader } from "#/metadata/metadata-types";
-
 function mockConstant(id: string = createBindingIdentifier()): ConstantBinding<unknown> {
   return {
     id: id as BindingIdentifier,
@@ -22,7 +21,6 @@ function mockConstant(id: string = createBindingIdentifier()): ConstantBinding<u
     tags: new Map(),
   };
 }
-
 function mockAlias(
   target: Token<unknown>,
   id: string = createBindingIdentifier(),
@@ -35,7 +33,6 @@ function mockAlias(
     tags: new Map(),
   };
 }
-
 function mockResolved(
   deps: (Token<unknown> | Constructor<unknown>)[],
   id: string = createBindingIdentifier(),
@@ -49,7 +46,6 @@ function mockResolved(
     tags: new Map(),
   };
 }
-
 function mockClass(
   implementationClass: Constructor<unknown>,
   id: string = createBindingIdentifier(),
@@ -62,27 +58,22 @@ function mockClass(
     tags: new Map(),
   };
 }
-
 describe("static dependency graph", () => {
   describe("injectHintLabelFromResolveHint", () => {
     it("returns undefined for undefined hint", () => {
       expect(injectHintLabelFromResolveHint(undefined)).toBeUndefined();
     });
-
     it("formats named hints", () => {
       expect(injectHintLabelFromResolveHint({ name: "primary-db" })).toBe("name: primary-db");
     });
-
     it("formats tagged hints with string values", () => {
       expect(injectHintLabelFromResolveHint({ tag: ["role", "admin"] })).toBe("tag: role=admin");
     });
-
     it("formats tagged hints with object values", () => {
       expect(injectHintLabelFromResolveHint({ tag: ["role", { id: 1 }] })).toBe(
         'tag: role={"id":1}',
       );
     });
-
     it("formats tagged hints with unserializable objects", () => {
       const complexObj = {} as Record<string, unknown>;
       complexObj.self = complexObj;
@@ -91,25 +82,21 @@ describe("static dependency graph", () => {
       );
     });
   });
-
   describe("listResolvedDependencies", () => {
     it("returns [] for constant bindings", () => {
       const constantBinding = mockConstant();
       expect(listResolvedDependencies(constantBinding, () => [], undefined, [])).toEqual([]);
     });
-
     it("returns [] for alias binding if target is missing", () => {
       const missingAliasBinding = mockAlias(token("MissingProvider"));
       expect(listResolvedDependencies(missingAliasBinding, () => undefined, undefined, [])).toEqual(
         [],
       );
     });
-
     it("expands alias chain to real binding", () => {
       const StorageToken = token("Storage");
       const SqliteStorageBinding = mockConstant();
       const storageAlias = mockAlias(StorageToken);
-
       const resolvedDependencies = listResolvedDependencies(
         storageAlias,
         (registryKey) => (registryKey === StorageToken ? [SqliteStorageBinding] : []),
@@ -120,16 +107,13 @@ describe("static dependency graph", () => {
       expect(resolvedDependencies[0]?.binding).toBe(SqliteStorageBinding);
       expect(resolvedDependencies[0]?.path).toEqual(["AppRoot", "Storage"]);
     });
-
     it("throws DiError if resolved factory dependencies are missing", () => {
       const RequiredDepToken = token("RequiredDep");
       const factoryBinding = mockResolved([RequiredDepToken]);
-
       expect(() => {
         listResolvedDependencies(factoryBinding, () => undefined, undefined, ["Root"]);
       }).toThrowError(/Missing binding for dependency "RequiredDep"/);
     });
-
     it("handles class dependencies missing metadata reader", () => {
       class UserRepository {}
       const repositoryBinding = mockClass(UserRepository);
@@ -137,7 +121,6 @@ describe("static dependency graph", () => {
         [],
       );
     });
-
     it("throws DiError on missing required parameter dependencies for class", () => {
       class UserRepository {}
       const DatabaseToken = token("Database");
@@ -147,12 +130,10 @@ describe("static dependency graph", () => {
           params: [{ index: 0, optional: false, token: DatabaseToken }],
         }),
       };
-
       expect(() => {
         listResolvedDependencies(repositoryBinding, () => undefined, reader, ["Root"]);
       }).toThrowError(/Missing binding for constructor parameter "Database"/);
     });
-
     it("ignores missing optional parameter dependencies for class", () => {
       class UserRepository {}
       const LoggerToken = token("Logger");
@@ -162,7 +143,6 @@ describe("static dependency graph", () => {
           params: [{ index: 0, optional: true, token: LoggerToken }],
         }),
       };
-
       const resolvedDependencies = listResolvedDependencies(
         repositoryBinding,
         () => undefined,
@@ -171,22 +151,18 @@ describe("static dependency graph", () => {
       );
       expect(resolvedDependencies).toEqual([]);
     });
-
     it("handles deeply nested aliases breaking gracefully on missing links", () => {
       const PrimaryDatabaseToken = token("PrimaryDB");
       const ReplicaDatabaseToken = token("ReplicaDB");
       const databaseAlias = mockAlias(ReplicaDatabaseToken);
       const rootAlias = mockAlias(PrimaryDatabaseToken);
-
       const lookup = (registryKey: unknown) => {
         if (registryKey === PrimaryDatabaseToken) {
           return [databaseAlias];
         }
-        return undefined; // ReplicaDB is missing
+        return undefined;
       };
-
       const resolvedDependencies = listResolvedDependencies(rootAlias, lookup, undefined, []);
-      // Should resolve to the last known link, which is databaseAlias
       expect(resolvedDependencies.length).toBe(1);
       expect(resolvedDependencies[0]?.binding).toBe(databaseAlias);
     });

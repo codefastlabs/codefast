@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import { isProductionEnvironment, isDevelopmentOrTestEnvironment } from "#/environment";
-
 describe("Node environment detection", () => {
   it("isProductionEnvironment returns false if process is missing", () => {
     const originalProcess = globalThis.process;
@@ -11,7 +10,6 @@ describe("Node environment detection", () => {
       vi.stubGlobal("process", originalProcess);
     }
   });
-
   it("isProductionEnvironment returns false if process is null", () => {
     const originalProcess = globalThis.process;
     vi.stubGlobal("process", null);
@@ -21,7 +19,6 @@ describe("Node environment detection", () => {
       vi.stubGlobal("process", originalProcess);
     }
   });
-
   it("isProductionEnvironment returns true if NODE_ENV is production", () => {
     const originalProcess = globalThis.process;
     vi.stubGlobal("process", { env: { NODE_ENV: "production" } });
@@ -31,7 +28,6 @@ describe("Node environment detection", () => {
       vi.stubGlobal("process", originalProcess);
     }
   });
-
   it("isProductionEnvironment returns false if NODE_ENV is not production", () => {
     const originalProcess = globalThis.process;
     vi.stubGlobal("process", { env: { NODE_ENV: "development" } });
@@ -41,7 +37,6 @@ describe("Node environment detection", () => {
       vi.stubGlobal("process", originalProcess);
     }
   });
-
   it("isDevelopmentOrTestEnvironment is the inverse of isProductionEnvironment", () => {
     const originalProcess = globalThis.process;
     vi.stubGlobal("process", { env: { NODE_ENV: "production" } });

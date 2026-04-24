@@ -1,35 +1,10 @@
 import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
 import type { Token } from "#/token";
-
-/**
- * Key used to group {@link Binding} instances in the registry (reference equality for tokens).
- */
 export type RegistryKey = Token<unknown> | Constructor<unknown>;
-
-/**
- * Flat, in-memory storage for {@link Binding} entries keyed by {@link RegistryKey}.
- * Each key maps to an ordered list of bindings (multi-binding support).
- *
- * The registry is a "dumb" store — it does not perform selection, scope caching, or
- * lifecycle management. Those concerns live in `DependencyResolver` and `ScopeManager`.
- *
- * Mutation styles:
- * - `add` — append-only; never removes existing entries.
- * - `replaceById` — swaps a single binding in place by ID; no removal callback.
- * - `remove` / `removeById` — delete entries **without** notifying callers; the caller
- *   is responsible for draining the scope cache before calling these.
- */
 export class BindingRegistry {
-  /**
-   * Primary index: registry key → ordered binding list.
-   * Reference equality on the key (i.e. the same {@link Token} or {@link Constructor} object).
-   */
   private readonly bindingsByKey = new Map<RegistryKey, Binding<unknown>[]>();
-  // Map<RegistryKey, Map<name, Binding[]>>
   private readonly namedIndexByKey = new Map<RegistryKey, Map<string, Binding<unknown>[]>>();
-  // Map<RegistryKey, Binding[]> — bindings không có name/tag
   private readonly unnamedIndexByKey = new Map<RegistryKey, Binding<unknown>[]>();
-
   private indexInsert(key: RegistryKey, binding: Binding<unknown>): void {
     if (binding.bindingName !== undefined) {
       let namedMap = this.namedIndexByKey.get(key);
@@ -45,7 +20,6 @@ export class BindingRegistry {
       }
       return;
     }
-
     const unnamedList = this.unnamedIndexByKey.get(key);
     if (unnamedList !== undefined) {
       unnamedList.push(binding);
@@ -53,7 +27,6 @@ export class BindingRegistry {
       this.unnamedIndexByKey.set(key, [binding]);
     }
   }
-
   private indexRemove(key: RegistryKey, binding: Binding<unknown>): void {
     if (binding.bindingName !== undefined) {
       const namedMap = this.namedIndexByKey.get(key);
@@ -76,7 +49,6 @@ export class BindingRegistry {
       }
       return;
     }
-
     const unnamedList = this.unnamedIndexByKey.get(key);
     if (unnamedList === undefined) {
       return;
@@ -89,10 +61,6 @@ export class BindingRegistry {
       this.unnamedIndexByKey.delete(key);
     }
   }
-
-  /**
-   * Appends `binding` to the list for `key` (multi-binding: each call adds an entry).
-   */
   add<Value>(key: Token<Value> | Constructor<Value>, binding: Binding<Value>): void {
     const registryKey = key as RegistryKey;
     const nextBinding = binding as Binding<unknown>;
@@ -104,36 +72,21 @@ export class BindingRegistry {
     }
     this.indexInsert(registryKey, nextBinding);
   }
-
-  /**
-   * Returns all bindings registered for `key`, or `undefined` if none exist.
-   */
   get<Value>(key: Token<Value> | Constructor<Value>): readonly Binding<Value>[] | undefined {
     const found = this.bindingsByKey.get(key as RegistryKey);
     return found as readonly Binding<Value>[] | undefined;
   }
-
-  /**
-   * Removes all bindings for `key`. Does **not** invoke any callback — the caller must
-   * drain the scope cache (run deactivation) for the affected bindings before calling this.
-   */
   remove(key: RegistryKey): void {
     this.bindingsByKey.delete(key);
     this.namedIndexByKey.delete(key);
     this.unnamedIndexByKey.delete(key);
   }
-
-  /**
-   * Returns owned registry rows (does not include parent containers).
-   */
-  listEntries(): readonly { key: RegistryKey; bindings: readonly Binding<unknown>[] }[] {
+  listEntries(): readonly {
+    key: RegistryKey;
+    bindings: readonly Binding<unknown>[];
+  }[] {
     return [...this.bindingsByKey.entries()].map(([key, bindings]) => ({ key, bindings }));
   }
-
-  /**
-   * Removes the single binding whose `id` matches, scanning all keys.
-   * Like {@link remove}, does **not** invoke a removal callback.
-   */
   removeById(id: BindingIdentifier): void {
     for (const [registryKey, list] of this.bindingsByKey.entries()) {
       const removeIndex = list.findIndex((binding) => binding.id === id);
@@ -152,10 +105,6 @@ export class BindingRegistry {
       return;
     }
   }
-
-  /**
-   * Swaps the binding with the given `id` in place, preserving its position in the list.
-   */
   replaceById(id: BindingIdentifier, next: Binding<unknown>): void {
     for (const [registryKey, list] of this.bindingsByKey.entries()) {
       const index = list.findIndex((binding) => binding.id === id);
@@ -171,23 +120,19 @@ export class BindingRegistry {
       return;
     }
   }
-
   getSingleBinding<Value>(
     key: Token<Value> | Constructor<Value>,
     hint: ResolveHint | undefined,
   ): Binding<Value> | undefined {
     const registryKey = key as RegistryKey;
-
     if (hint?.name !== undefined) {
       const namedMatches = this.namedIndexByKey.get(registryKey)?.get(hint.name);
       return namedMatches?.length === 1 ? (namedMatches[0] as Binding<Value>) : undefined;
     }
-
     const list = this.bindingsByKey.get(registryKey);
     if (list === undefined) {
       return undefined;
     }
-
     if (hint === undefined || (hint.name === undefined && hint.tag === undefined)) {
       const unnamed = this.unnamedIndexByKey.get(registryKey);
       if (unnamed !== undefined && unnamed.length === 1) {
@@ -198,7 +143,6 @@ export class BindingRegistry {
       }
       return undefined;
     }
-
     const candidates = list.filter((binding) => {
       if (hint.tag !== undefined) {
         const [tagKey, tagValue] = hint.tag;
