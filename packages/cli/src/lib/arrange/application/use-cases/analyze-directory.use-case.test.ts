@@ -34,7 +34,6 @@ describe("analyzeDirectory use case", () => {
     expect(outcome.value.files).toBe(1);
     expect(mockTargetScanner.scanTarget).toHaveBeenCalledWith({
       targetPath: "/src/one.ts",
-      fs: mockFs,
     });
     expect(mockFs.readFileSync).toHaveBeenCalledWith("/src/one.ts", "utf8");
   });
@@ -63,7 +62,6 @@ describe("analyzeDirectory use case", () => {
     expect(outcome.value.files).toBe(2);
     expect(mockTargetScanner.scanTarget).toHaveBeenCalledWith({
       targetPath: "/pkg",
-      fs: mockFs,
     });
   });
 

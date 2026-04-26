@@ -31,6 +31,7 @@ describe("presentArrangeSyncResult", () => {
         totalFound: 0,
         totalChanged: 0,
         hookError: null,
+        previewPlans: [],
       },
       false,
     );
@@ -47,6 +48,7 @@ describe("presentArrangeSyncResult", () => {
         totalFound: 1,
         totalChanged: 1,
         hookError: "hook failed",
+        previewPlans: [],
       },
       true,
     );

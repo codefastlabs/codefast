@@ -4,18 +4,20 @@ import type { Command } from "commander";
 import { Option } from "commander";
 import {
   AnalyzeDirectoryUseCaseToken,
+  GroupFilePreviewPortToken,
   PrepareArrangeWorkspaceUseCaseToken,
   PresentAnalyzeReportPresenterToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/arrange/contracts/tokens";
 import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
-import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 import type {
   AnalyzeDirectoryUseCase,
   RunArrangeSyncUseCase,
   SuggestCnGroupsUseCase,
 } from "#/lib/arrange/contracts/use-cases.contract";
+import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
@@ -48,6 +50,7 @@ function withClassNameOption(): Option {
   inject(RunArrangeSyncUseCaseToken),
   inject(SuggestCnGroupsUseCaseToken),
   inject(PresentAnalyzeReportPresenterToken),
+  inject(GroupFilePreviewPortToken),
 ])
 export class ArrangeCommand implements CliCommand {
   readonly name = "arrange";
@@ -60,6 +63,7 @@ export class ArrangeCommand implements CliCommand {
     private readonly runArrangeSync: RunArrangeSyncUseCase,
     private readonly suggestCnGroups: SuggestCnGroupsUseCase,
     private readonly presentAnalyzeReport: PresentAnalyzeReportPresenter,
+    private readonly groupFilePreview: GroupFilePreviewPort,
   ) {}
 
   register(program: Command): void {
@@ -171,6 +175,13 @@ export class ArrangeCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, outcome)) {
       return;
     }
+
+    if (!write) {
+      for (const plan of outcome.value.previewPlans) {
+        this.groupFilePreview.printGroupFilePreviewFromWork(plan);
+      }
+    }
+
     if (opts.json) {
       this.logger.out(formatArrangeSyncJsonOutput(outcome.value, write));
       process.exitCode = exitCodeForArrangeSyncResult(outcome.value);

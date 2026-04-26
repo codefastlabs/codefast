@@ -3,7 +3,8 @@ import { inject, injectable } from "@codefast/di";
 import { appError } from "#/lib/core/domain/errors.domain";
 import { err, ok } from "#/lib/core/domain/result.model";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
+import type { WorkspaceResolverPort } from "#/lib/arrange/application/ports/workspace-resolver.port";
+import { WorkspaceResolverPortToken } from "#/lib/arrange/contracts/tokens";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/lib/arrange/contracts/models";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
@@ -11,15 +12,7 @@ import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { CliFsToken } from "#/lib/core/operational/contracts/tokens";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 import { LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
-
-// ─── Contract ────────────────────────────────────────────────────────────────
-
-export interface PrepareArrangeWorkspaceUseCase {
-  execute(args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
-}
+import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 
 // ─── Target path resolution ───────────────────────────────────────────────────
 
@@ -66,11 +59,16 @@ export function resolveArrangeTargetPath(args: {
 
 // ─── Implementation ──────────────────────────────────────────────────────────
 
-@injectable([inject(CliFsToken), inject(LoadCodefastConfigUseCaseToken)])
+@injectable([
+  inject(CliFsToken),
+  inject(LoadCodefastConfigUseCaseToken),
+  inject(WorkspaceResolverPortToken),
+])
 export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspaceUseCase {
   constructor(
     private readonly fs: CliFs,
     private readonly loadCodefastConfig: LoadCodefastConfigUseCase,
+    private readonly workspaceResolver: WorkspaceResolverPort,
   ) {}
 
   async execute(args: {
@@ -87,7 +85,7 @@ export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspa
     }
     let rootDir: string;
     try {
-      rootDir = findRepoRoot(this.fs, args.currentWorkingDirectory);
+      rootDir = this.workspaceResolver.findRepoRoot(args.currentWorkingDirectory);
     } catch (caughtError: unknown) {
       return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }

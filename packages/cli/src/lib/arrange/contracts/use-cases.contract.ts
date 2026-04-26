@@ -4,7 +4,10 @@ import type { ArrangeSuggestGroupsRequest } from "#/lib/arrange/application/requ
 import type { AnalyzeReport, ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
-import type { ArrangeSuggestGroupsOutput } from "#/lib/arrange/contracts/models";
+import type {
+  ArrangeSuggestGroupsOutput,
+  ArrangeTargetWorkspaceAndConfig,
+} from "#/lib/arrange/contracts/models";
 
 export interface AnalyzeDirectoryUseCase {
   execute(request: ArrangeAnalyzeDirectoryRequest): Result<AnalyzeReport, AppError>;
@@ -16,4 +19,11 @@ export interface RunArrangeSyncUseCase {
 
 export interface SuggestCnGroupsUseCase {
   execute(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput;
+}
+
+export interface PrepareArrangeWorkspaceUseCase {
+  execute(args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
 }

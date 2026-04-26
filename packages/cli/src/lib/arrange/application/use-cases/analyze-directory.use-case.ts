@@ -39,7 +39,6 @@ export class AnalyzeDirectoryUseCaseImpl implements AnalyzeDirectoryUseCase {
     try {
       const files = this.targetScanner.scanTarget({
         targetPath: request.analyzeRootPath,
-        fs: this.fs,
       });
 
       for (const filePath of files) {

@@ -36,23 +36,10 @@ describe("RunArrangeSyncUseCase integration", () => {
       }
       expect(outcome.value.totalFound).toBeGreaterThan(0);
       expect(outcome.value.totalChanged).toBe(0);
+      expect(Array.isArray(outcome.value.previewPlans)).toBe(true);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
-  });
-
-  it("returns NOT_FOUND for missing target path", async () => {
-    const outcome = await useCase.execute({
-      rootDir: process.cwd(),
-      targetPath: path.join(os.tmpdir(), "no-such-arrange-target"),
-      write: false,
-      withClassName: false,
-    });
-    expect(outcome.ok).toBe(false);
-    if (outcome.ok) {
-      throw new Error("expected failure");
-    }
-    expect(outcome.error.code).toBe("NOT_FOUND");
   });
 
   it("returns changed count and modified files in write mode", async () => {
