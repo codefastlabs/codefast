@@ -23,7 +23,7 @@ const mockVersionResolver: TagSyncUseCaseDeps["versionResolver"] = {
 };
 
 const mockSinceWriter: TagSyncUseCaseDeps["sinceWriter"] = {
-  applySinceTagsToFile: vi.fn((filePath: string) => ({
+  applySinceTagsToFile: vi.fn((filePath: string, _version: string, _write: boolean) => ({
     filePath,
     taggedDeclarations: 1,
     changed: true,

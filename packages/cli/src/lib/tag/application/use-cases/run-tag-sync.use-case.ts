@@ -35,6 +35,10 @@ export interface RunTagSyncUseCase {
   execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
 }
 
+/**
+ * Thin wrapper around {@link TagVersionResolverPort} for tests and scripts that do not use the
+ * DI container. Prefer resolving {@link RunTagSyncUseCase} from the container in production wiring.
+ */
 export function resolveNearestPackageVersion(
   targetPath: string,
   versionResolver: TagVersionResolverPort,
@@ -42,6 +46,11 @@ export function resolveNearestPackageVersion(
   return versionResolver.resolveNearestPackageVersion(targetPath);
 }
 
+/**
+ * Runs the tag pass on one filesystem target. {@link fs} is only used for synchronous layout probes
+ * (`statSync`); file listing and writes go through {@link typeScriptTreeWalk} and {@link sinceWriter},
+ * which receive {@link CliFs} via their own container bindings.
+ */
 export function runTagOnTarget(
   targetPath: string,
   opts: TagRunOptions,
