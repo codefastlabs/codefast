@@ -20,9 +20,9 @@ export const DomainSourceParserPortToken: Token<DomainSourceParserPort> =
   token<DomainSourceParserPort>("DomainSourceParserPort");
 export const GroupFilePreviewPortToken: Token<GroupFilePreviewPort> =
   token<GroupFilePreviewPort>("GroupFilePreviewPort");
-export const ArrangeTargetScannerToken: Token<ArrangeTargetScannerService> =
+export const ArrangeTargetScannerServiceToken: Token<ArrangeTargetScannerService> =
   token<ArrangeTargetScannerService>("ArrangeTargetScannerService");
-export const ArrangeFileProcessorToken: Token<ArrangeFileProcessorService> =
+export const ArrangeFileProcessorServiceToken: Token<ArrangeFileProcessorService> =
   token<ArrangeFileProcessorService>("ArrangeFileProcessorService");
 
 export const AnalyzeDirectoryUseCaseToken: Token<AnalyzeDirectoryUseCase> =

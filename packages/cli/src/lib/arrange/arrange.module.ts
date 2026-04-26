@@ -9,8 +9,8 @@ import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
 import { WorkspaceResolverAdapter } from "#/lib/arrange/infra/workspace-resolver.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
-  ArrangeFileProcessorToken,
-  ArrangeTargetScannerToken,
+  ArrangeFileProcessorServiceToken,
+  ArrangeTargetScannerServiceToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
   PrepareArrangeWorkspaceUseCaseToken,
@@ -50,9 +50,15 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
 
   moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 
-  moduleBuilder.bind(ArrangeTargetScannerToken).to(ArrangeTargetScannerServiceImpl).singleton();
+  moduleBuilder
+    .bind(ArrangeTargetScannerServiceToken)
+    .to(ArrangeTargetScannerServiceImpl)
+    .singleton();
 
-  moduleBuilder.bind(ArrangeFileProcessorToken).to(ArrangeFileProcessorServiceImpl).singleton();
+  moduleBuilder
+    .bind(ArrangeFileProcessorServiceToken)
+    .to(ArrangeFileProcessorServiceImpl)
+    .singleton();
 
   moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
 
