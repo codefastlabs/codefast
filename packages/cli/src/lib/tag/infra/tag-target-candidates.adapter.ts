@@ -4,7 +4,7 @@ import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { TagTargetCandidate } from "#/lib/tag/domain/types.domain";
 
 const PNPM_WORKSPACE_FILE = "pnpm-workspace.yaml";

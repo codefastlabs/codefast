@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 
 /**
  * Resolve the monorepo root (directory containing `pnpm-workspace.yaml`).

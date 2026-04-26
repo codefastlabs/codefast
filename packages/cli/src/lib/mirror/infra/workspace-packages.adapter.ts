@@ -3,7 +3,7 @@ import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { normalizePath } from "#/lib/mirror/infra/path-normalizer.adapter";
 import type {
   FindWorkspacePackagesResult,

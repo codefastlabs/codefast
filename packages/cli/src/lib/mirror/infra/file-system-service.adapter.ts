@@ -1,6 +1,6 @@
 import path from "node:path";
 import { injectable } from "@codefast/di";
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
 import { isDirentList } from "#/lib/mirror/infra/dirent-list.adapter";
 import { normalizePath } from "#/lib/mirror/infra/path-normalizer.adapter";

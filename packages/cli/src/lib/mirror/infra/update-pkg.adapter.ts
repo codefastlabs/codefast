@@ -1,4 +1,4 @@
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import { MirrorError, MirrorErrorCode } from "#/lib/mirror/domain/errors.domain";
 import type {
