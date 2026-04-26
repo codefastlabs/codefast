@@ -1,12 +1,12 @@
 import { Module } from "@codefast/di";
 import {
-  CreateTagProgressListenerPresenterToken,
   PrepareTagOrchestratorToken,
   PresentTagSyncResultPresenterToken,
+  TagSyncProgressListenerToken,
 } from "#/lib/tag/contracts/tokens";
-import { CreateTagProgressListenerPresenterImpl } from "#/lib/tag/presentation/create-tag-progress-listener.presenter";
 import { PrepareTagOrchestrator } from "#/lib/tag/presentation/prepare-tag.orchestrator";
 import { PresentTagSyncResultPresenterImpl } from "#/lib/tag/presentation/present-tag-sync-result.presenter";
+import { TagSyncProgressListener } from "#/lib/tag/presentation/tag-sync-progress-listener.presenter";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 
 export const TagPresentationModule = Module.create("cli-tag-presentation", (moduleBuilder) => {
@@ -16,8 +16,5 @@ export const TagPresentationModule = Module.create("cli-tag-presentation", (modu
     .bind(PresentTagSyncResultPresenterToken)
     .to(PresentTagSyncResultPresenterImpl)
     .singleton();
-  moduleBuilder
-    .bind(CreateTagProgressListenerPresenterToken)
-    .to(CreateTagProgressListenerPresenterImpl)
-    .singleton();
+  moduleBuilder.bind(TagSyncProgressListenerToken).to(TagSyncProgressListener).singleton();
 });

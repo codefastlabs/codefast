@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import {
   TagSinceWriterPortToken,
   TagTargetResolverPortToken,
@@ -37,10 +37,9 @@ export interface RunTagSyncUseCase {
 
 export function resolveNearestPackageVersion(
   targetPath: string,
-  fs: CliFs,
   versionResolver: TagVersionResolverPort,
 ): string {
-  return versionResolver.resolveNearestPackageVersion(targetPath, fs);
+  return versionResolver.resolveNearestPackageVersion(targetPath);
 }
 
 export function runTagOnTarget(
@@ -53,15 +52,15 @@ export function runTagOnTarget(
   typeScriptTreeWalk: TypeScriptTreeWalkPort,
 ): TagRunResult {
   const resolvedTarget = pathService.resolve(targetPath);
-  const version = resolveNearestPackageVersion(resolvedTarget, fs, versionResolver);
+  const version = resolveNearestPackageVersion(resolvedTarget, versionResolver);
 
   const files = fs.statSync(resolvedTarget).isDirectory()
-    ? typeScriptTreeWalk.walkTsxFiles(resolvedTarget, fs)
+    ? typeScriptTreeWalk.walkTsxFiles(resolvedTarget)
     : [resolvedTarget];
   const tsFiles = files.filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
 
   const fileResults = tsFiles.map((filePath) =>
-    sinceWriter.applySinceTagsToFile(filePath, version, fs, opts.write),
+    sinceWriter.applySinceTagsToFile(filePath, version, opts.write),
   );
   const filesChanged = fileResults.filter((result) => result.changed).length;
   const taggedDeclarations = fileResults.reduce(
@@ -245,13 +244,13 @@ async function runOnResolvedTarget(
  * Returns structured execution data; presentation/logging belongs to command layer.
  */
 @injectable([
-  CliFsToken,
-  CliPathToken,
-  TagTargetResolverPortToken,
-  TypeScriptTreeWalkPortToken,
-  TagVersionResolverPortToken,
-  TagSinceWriterPortToken,
-] as const)
+  inject(CliFsToken),
+  inject(CliPathToken),
+  inject(TagTargetResolverPortToken),
+  inject(TypeScriptTreeWalkPortToken),
+  inject(TagVersionResolverPortToken),
+  inject(TagSinceWriterPortToken),
+])
 export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
   constructor(
     private readonly fs: CliFs,
@@ -268,7 +267,6 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
       const targetCandidates = await this.targetResolver.resolveTagTargetCandidates(
         input.rootDir,
         input.targetPath,
-        this.fs,
       );
       const { includedCandidates, skippedPackages } = filterSkippedCandidates(
         targetCandidates,

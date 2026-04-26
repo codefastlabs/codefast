@@ -2,13 +2,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { ArrangeFileProcessorServiceImpl } from "#/lib/arrange/application/services/arrange-file-processor.service";
+import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/lib/infra/node-io.adapter";
-import { domainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { printGroupFilePreviewFromWork } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
 const arrangeFs = new NodeCliFsAdapter();
 const arrangeLogger = new NodeCliLoggerAdapter();
-const service = new ArrangeFileProcessorServiceImpl(arrangeFs, domainSourceParserAdapter);
+const service = new ArrangeFileProcessorServiceImpl(arrangeFs, new DomainSourceParserAdapter());
 
 function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "group-file-"));

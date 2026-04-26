@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import {
   MirrorSyncReporterPortToken,
   SyncWorkspacePackageServiceToken,
@@ -25,12 +25,12 @@ export interface RunMirrorSyncUseCase {
 }
 
 @injectable([
-  CliFsToken,
-  CliLoggerToken,
-  WorkspaceServicePortToken,
-  MirrorSyncReporterPortToken,
-  SyncWorkspacePackageServiceToken,
-] as const)
+  inject(CliFsToken),
+  inject(CliLoggerToken),
+  inject(WorkspaceServicePortToken),
+  inject(MirrorSyncReporterPortToken),
+  inject(SyncWorkspacePackageServiceToken),
+])
 export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
   constructor(
     private readonly fs: CliFs,
@@ -77,7 +77,6 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
       } else {
         const { relPaths, multiSource } = await this.workspaceService.findWorkspacePackageRelPaths(
           request.rootDir,
-          this.fs,
           json
             ? () => {}
             : (message: string) =>

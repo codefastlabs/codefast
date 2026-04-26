@@ -5,10 +5,10 @@ import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-r
 import type { TypeScriptTreeWalkPort } from "#/lib/tag/application/ports/typescript-tree-walk.port";
 import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 import type {
-  CreateTagProgressListenerPresenter,
   PrepareTagOrchestrator,
   PresentTagSyncResultPresenter,
 } from "#/lib/tag/contracts/presentation.contract";
+import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 
 export const TagTargetResolverPortToken: Token<TagTargetResolverPort> =
@@ -26,5 +26,5 @@ export const PrepareTagOrchestratorToken: Token<PrepareTagOrchestrator> =
   token<PrepareTagOrchestrator>("PrepareTagOrchestrator");
 export const PresentTagSyncResultPresenterToken: Token<PresentTagSyncResultPresenter> =
   token<PresentTagSyncResultPresenter>("PresentTagSyncResultPresenter");
-export const CreateTagProgressListenerPresenterToken: Token<CreateTagProgressListenerPresenter> =
-  token<CreateTagProgressListenerPresenter>("CreateTagProgressListenerPresenter");
+export const TagSyncProgressListenerToken: Token<TagProgressListener> =
+  token<TagProgressListener>("TagSyncProgressListener");

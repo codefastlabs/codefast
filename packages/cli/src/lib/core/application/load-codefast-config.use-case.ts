@@ -3,8 +3,8 @@ import { loadCodefastConfig } from "#/lib/config/application/use-cases/load-conf
 import type { ConfigLoaderPort } from "#/lib/config/application/ports/config-loader.port";
 import { ConfigLoaderPortToken } from "#/lib/config/contracts/tokens";
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
-import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
@@ -20,17 +20,16 @@ export interface LoadCodefastConfigUseCase {
 
 // ─── Implementation ──────────────────────────────────────────────────────────
 
-@injectable([inject(CliFsToken), inject(CliLoggerToken), inject(ConfigLoaderPortToken)])
+@injectable([inject(CliLoggerToken), inject(ConfigLoaderPortToken)])
 export class LoadCodefastConfigUseCaseImpl implements LoadCodefastConfigUseCase {
   constructor(
-    private readonly fs: CliFs,
     private readonly logger: CliLogger,
     private readonly configLoader: ConfigLoaderPort,
   ) {}
 
   async execute(rootDir: string): Promise<Result<{ config: CodefastConfig }, AppError>> {
     try {
-      const loadedConfig = await loadCodefastConfig(this.configLoader, this.fs, rootDir);
+      const loadedConfig = await loadCodefastConfig(this.configLoader, rootDir);
       if (!loadedConfig.ok) {
         return loadedConfig;
       }

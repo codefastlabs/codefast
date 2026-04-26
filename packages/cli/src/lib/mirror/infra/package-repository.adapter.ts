@@ -1,5 +1,6 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import { CliFsToken } from "#/lib/core/contracts/tokens";
 import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";
 import type {
   ExportMapData,
@@ -11,14 +12,15 @@ import {
   writePackageJsonExportsAtomic,
 } from "#/lib/mirror/infra/update-pkg.adapter";
 
-@injectable([])
+@injectable([inject(CliFsToken)])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {
+  constructor(private readonly fs: CliFs) {}
+
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string {
     return resolvePackageDisplayName(packageJson, folderBasename);
   }
 
   writePackageJsonExportsAtomic(
-    fs: CliFs,
     packageJsonPath: string,
     mergeInput: {
       generatedExports: ExportMapData;
@@ -26,7 +28,7 @@ export class PackageRepositoryAdapter implements PackageRepositoryPort {
       originalPathBySpecifier: ExportOriginalPathBySpecifier;
     },
   ): Promise<{ prunedKeys: string[] }> {
-    return writePackageJsonExportsAtomic(fs, packageJsonPath, mergeInput);
+    return writePackageJsonExportsAtomic(this.fs, packageJsonPath, mergeInput);
   }
 
   parsePackageJsonShape(rawPackageJson: unknown): PackageJsonShape {

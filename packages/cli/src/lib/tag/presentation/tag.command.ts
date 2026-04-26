@@ -8,16 +8,16 @@ import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.pre
 import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 import {
-  CreateTagProgressListenerPresenterToken,
   PrepareTagOrchestratorToken,
   PresentTagSyncResultPresenterToken,
   RunTagSyncUseCaseToken,
+  TagSyncProgressListenerToken,
 } from "#/lib/tag/contracts/tokens";
 import type {
-  CreateTagProgressListenerPresenter,
   PrepareTagOrchestrator,
   PresentTagSyncResultPresenter,
 } from "#/lib/tag/contracts/presentation.contract";
+import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
@@ -26,7 +26,7 @@ import { CliLoggerToken } from "#/lib/core/contracts/tokens";
   inject(CliLoggerToken),
   inject(PrepareTagOrchestratorToken),
   inject(RunTagSyncUseCaseToken),
-  inject(CreateTagProgressListenerPresenterToken),
+  inject(TagSyncProgressListenerToken),
   inject(PresentTagSyncResultPresenterToken),
 ])
 export class TagCommand implements CliCommand {
@@ -37,7 +37,7 @@ export class TagCommand implements CliCommand {
     private readonly logger: CliLogger,
     private readonly prepareTagSync: PrepareTagOrchestrator,
     private readonly runTagSync: RunTagSyncUseCase,
-    private readonly createProgressListener: CreateTagProgressListenerPresenter,
+    private readonly tagProgressListener: TagProgressListener,
     private readonly presentSyncCliResult: PresentTagSyncResultPresenter,
   ) {}
 
@@ -83,9 +83,7 @@ export class TagCommand implements CliCommand {
     }
     const tagOutcome = await this.runTagSync.execute({
       ...parsed.value,
-      listener: parsed.value.json
-        ? undefined
-        : this.createProgressListener.create((line) => this.logger.out(line)),
+      listener: parsed.value.json ? undefined : this.tagProgressListener,
     });
     if (!consumeCliAppError(this.logger, tagOutcome)) {
       return;

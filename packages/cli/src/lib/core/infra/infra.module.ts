@@ -1,6 +1,6 @@
 import { Module } from "@codefast/di";
 import { ConfigLoaderPortToken } from "#/lib/config/contracts/tokens";
-import { configLoaderAdapter } from "#/lib/config/infra/loader.adapter";
+import { ConfigLoaderAdapterImpl } from "#/lib/config/infra/config-loader.adapter";
 import { CoreModule } from "#/lib/core/core.module";
 import {
   isCliTelemetryEnabled,
@@ -29,5 +29,5 @@ export const InfraModule = Module.create("cli-infra", (moduleBuilder) => {
     })
     .singleton();
 
-  moduleBuilder.bind(ConfigLoaderPortToken).toConstantValue(configLoaderAdapter);
+  moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapterImpl).singleton();
 });

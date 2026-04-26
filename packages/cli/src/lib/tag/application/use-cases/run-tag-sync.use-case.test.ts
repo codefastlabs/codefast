@@ -1,6 +1,6 @@
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { isOk } from "#/lib/core/domain/result.model";
-import { nodeCliPath } from "#/lib/core/infra/path.adapter";
+import { NodeCliPathAdapter } from "#/lib/core/infra/path.adapter";
 import type { TagTargetCandidate } from "#/lib/tag/domain/types.domain";
 import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
@@ -29,6 +29,8 @@ const mockSinceWriter: TagSyncUseCaseDeps["sinceWriter"] = {
     changed: true,
   })),
 };
+
+const testCliPath = new NodeCliPathAdapter();
 
 function toPosix(filePath: string): string {
   return filePath.split("\\").join("/");
@@ -60,7 +62,7 @@ describe("runTagSync use case", () => {
       typeScriptTreeWalk: {
         walkTsxFiles: vi.fn(),
       },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
@@ -85,7 +87,7 @@ describe("runTagSync use case", () => {
         }),
       },
       typeScriptTreeWalk: { walkTsxFiles: vi.fn() },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
@@ -116,7 +118,7 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: vi.fn() },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
@@ -165,7 +167,7 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: vi.fn(() => []) },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
@@ -204,7 +206,7 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: vi.fn(() => []) },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
@@ -236,7 +238,7 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: vi.fn(async () => [candidate]),
       },
       typeScriptTreeWalk: { walkTsxFiles: vi.fn() },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };
@@ -296,7 +298,7 @@ describe("runTagSync use case", () => {
         resolveTagTargetCandidates: vi.fn(async () => [candidateA, candidateB]),
       },
       typeScriptTreeWalk: { walkTsxFiles: vi.fn(() => []) },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: {
         resolveNearestPackageVersion: vi.fn((targetPath: string) =>
           toPosix(targetPath).includes("/repo/a") ? "1.0.0" : "2.0.0",
@@ -353,7 +355,7 @@ describe("runTagSync use case", () => {
       typeScriptTreeWalk: {
         walkTsxFiles: vi.fn((root: string) => [`${toPosix(root)}/x.ts`]),
       },
-      path: nodeCliPath,
+      path: testCliPath,
       versionResolver: mockVersionResolver,
       sinceWriter: mockSinceWriter,
     };

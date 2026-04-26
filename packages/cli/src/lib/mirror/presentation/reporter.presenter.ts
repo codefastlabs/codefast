@@ -40,8 +40,7 @@ export function printMirrorConfigWarnings(logger: CliLogger, warnings: string[])
 }
 
 export function mirrorGlobWarning(logger: CliLogger, message: string): void {
-  const { out } = logger;
-  out(`${Colors.YELLOW}⚠ ${message}${Colors.RESET}`);
+  logger.out(`${Colors.YELLOW}⚠ ${message}${Colors.RESET}`);
 }
 
 export function logSkippedWorkspacePackage(
@@ -51,17 +50,17 @@ export function logSkippedWorkspacePackage(
   displayName: string,
   reason: string,
 ): void {
-  const { out } = logger;
   const progress = `${Colors.DIM}[${index}/${total}]${Colors.RESET}`;
-  out(`${progress} ${Colors.GRAY}○${Colors.RESET} ${Colors.DIM}${displayName}${Colors.RESET}`);
-  out(`  ${Colors.DIM}└─${Colors.RESET} ${Colors.GRAY}Skipped: ${reason}${Colors.RESET}`);
-  out("");
+  logger.out(
+    `${progress} ${Colors.GRAY}○${Colors.RESET} ${Colors.DIM}${displayName}${Colors.RESET}`,
+  );
+  logger.out(`  ${Colors.DIM}└─${Colors.RESET} ${Colors.GRAY}Skipped: ${reason}${Colors.RESET}`);
+  logger.out("");
 }
 
 export function mirrorBanner(logger: CliLogger): void {
-  const { out } = logger;
-  out(`\n${Colors.BOLD}${Colors.CYAN}📦 Mirror — package exports${Colors.RESET}`);
-  out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
+  logger.out(`\n${Colors.BOLD}${Colors.CYAN}📦 Mirror — package exports${Colors.RESET}`);
+  logger.out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 }
 
 export type MirrorProcessingMode =
@@ -69,22 +68,23 @@ export type MirrorProcessingMode =
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
 export function mirrorProcessingMode(logger: CliLogger, mode: MirrorProcessingMode): void {
-  const { out } = logger;
   if (mode.kind === "single") {
-    out(`${Colors.DIM}Processing single package...${Colors.RESET}\n`);
+    logger.out(`${Colors.DIM}Processing single package...${Colors.RESET}\n`);
     return;
   }
   switch (mode.source) {
     case "default-patterns":
-      out(
+      logger.out(
         `${Colors.DIM}Discovering workspace packages using default patterns (packages/*)…${Colors.RESET}\n`,
       );
       break;
     case "pnpm-workspace-yaml":
-      out(`${Colors.DIM}Discovering workspace packages from pnpm-workspace.yaml…${Colors.RESET}\n`);
+      logger.out(
+        `${Colors.DIM}Discovering workspace packages from pnpm-workspace.yaml…${Colors.RESET}\n`,
+      );
       break;
     case "declared-empty":
-      out(
+      logger.out(
         `${Colors.DIM}pnpm-workspace.yaml declares an empty workspace package list.${Colors.RESET}\n`,
       );
       break;
@@ -103,21 +103,20 @@ export function logPackageSuccess(
   generatedDistAssetCounts: { jsCount: number; cssCount: number },
   verbose: boolean,
 ): void {
-  const { out } = logger;
   const progress = `${Colors.DIM}[${index}/${total}]${Colors.RESET}`;
-  out(
+  logger.out(
     `${progress} ${Colors.BRIGHT_GREEN}✓${Colors.RESET} ${Colors.BOLD}${pkgStats.name}${Colors.RESET}`,
   );
 
   if (verbose) {
-    out(`  ${Colors.DIM}├─${Colors.RESET} Path: ${pkgStats.path}`);
+    logger.out(`  ${Colors.DIM}├─${Colors.RESET} Path: ${pkgStats.path}`);
     if (pkgStats.hasTransform) {
-      out(
+      logger.out(
         `  ${Colors.DIM}├─${Colors.RESET} ${Colors.CYAN}Custom path transformation${Colors.RESET}`,
       );
     }
     if (pkgStats.cssConfigStatus) {
-      out(
+      logger.out(
         `  ${Colors.DIM}├─${Colors.RESET} ${Colors.CYAN}${pkgStats.cssConfigStatus === "disabled" ? "CSS disabled" : "CSS configured"}${Colors.RESET}`,
       );
     }
@@ -135,15 +134,15 @@ export function logPackageSuccess(
   }
 
   if (breakdown.length > 0) {
-    out(
+    logger.out(
       `  ${Colors.DIM}└─${Colors.RESET} ${breakdown.join(" + ")} = ${Colors.BRIGHT_CYAN}${pkgStats.totalExports} exports${Colors.RESET}`,
     );
   } else {
-    out(
+    logger.out(
       `  ${Colors.DIM}└─${Colors.RESET} ${Colors.BRIGHT_CYAN}${pkgStats.totalExports} exports${Colors.RESET}`,
     );
   }
-  out("");
+  logger.out("");
 }
 
 export function logPrunedStaleExport(logger: CliLogger, exportSpecifier: string): void {
@@ -160,15 +159,14 @@ export function logPackageError(
   errValue: unknown,
   verbose: boolean,
 ): void {
-  const { out, err: errLine } = logger;
-  out(
+  logger.out(
     `${Colors.DIM}[${index}/${total}]${Colors.RESET} ${Colors.YELLOW}✗${Colors.RESET} ${Colors.BOLD}${displayName}${Colors.RESET}`,
   );
-  out(
+  logger.out(
     `  ${Colors.DIM}└─${Colors.RESET} ${Colors.YELLOW}Error: ${messageFromCaughtUnknown(errValue)}${Colors.RESET}\n`,
   );
   if (verbose) {
-    errLine(
+    logger.err(
       errValue instanceof Error && errValue.stack
         ? errValue.stack
         : messageFromCaughtUnknown(errValue),
@@ -181,45 +179,45 @@ export function mirrorSummarySeparator(logger: CliLogger): void {
 }
 
 export function mirrorSummary(logger: CliLogger, stats: GlobalStats, elapsedSeconds: number): void {
-  const { out } = logger;
-  out(
+  logger.out(
     `${Colors.BOLD}📊 Summary${Colors.RESET} ${Colors.DIM}(completed in ${elapsedSeconds.toFixed(2)}s)${Colors.RESET}\n`,
   );
 
-  out(`  ${Colors.BOLD}Packages:${Colors.RESET}`);
-  out(
+  logger.out(`  ${Colors.BOLD}Packages:${Colors.RESET}`);
+  logger.out(
     `  ${Colors.DIM}├─${Colors.RESET} Processed: ${Colors.GREEN}${stats.packagesProcessed}${Colors.RESET}`,
   );
   if (stats.packagesSkipped > 0) {
-    out(
+    logger.out(
       `  ${Colors.DIM}├─${Colors.RESET} Skipped: ${Colors.GRAY}${stats.packagesSkipped}${Colors.RESET}`,
     );
   }
   if (stats.packagesErrored > 0) {
-    out(
+    logger.out(
       `  ${Colors.DIM}├─${Colors.RESET} Errors: ${Colors.YELLOW}${stats.packagesErrored}${Colors.RESET}`,
     );
   }
-  out(`  ${Colors.DIM}└─${Colors.RESET} Total found: ${stats.packagesFound}\n`);
+  logger.out(`  ${Colors.DIM}└─${Colors.RESET} Total found: ${stats.packagesFound}\n`);
 
-  out(`  ${Colors.BOLD}Exports:${Colors.RESET}`);
-  out(
+  logger.out(`  ${Colors.BOLD}Exports:${Colors.RESET}`);
+  logger.out(
     `  ${Colors.DIM}├─${Colors.RESET} JS Modules: ${Colors.CYAN}${stats.totalJsModules}${Colors.RESET}`,
   );
-  out(
+  logger.out(
     `  ${Colors.DIM}├─${Colors.RESET} CSS Files: ${Colors.MAGENTA}${stats.totalCssExports}${Colors.RESET}`,
   );
-  out(
+  logger.out(
     `  ${Colors.DIM}└─${Colors.RESET} Total: ${Colors.BRIGHT_CYAN}${stats.totalExports}${Colors.RESET}\n`,
   );
 
-  out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
+  logger.out(`${Colors.DIM}${"═".repeat(60)}${Colors.RESET}\n`);
 }
 
 export function mirrorFatalError(logger: CliLogger, caughtError: unknown): void {
-  const { out, err: errLine } = logger;
-  out(`${Colors.YELLOW}Fatal error: ${messageFromCaughtUnknown(caughtError)}${Colors.RESET}`);
-  errLine(
+  logger.out(
+    `${Colors.YELLOW}Fatal error: ${messageFromCaughtUnknown(caughtError)}${Colors.RESET}`,
+  );
+  logger.err(
     caughtError instanceof Error && caughtError.stack
       ? caughtError.stack
       : messageFromCaughtUnknown(caughtError),
