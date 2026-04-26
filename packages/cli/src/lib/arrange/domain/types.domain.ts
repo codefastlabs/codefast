@@ -14,6 +14,7 @@ import type {
   DomainSourceFile,
   DomainTailwindClassLiteral,
 } from "#/lib/arrange/domain/ast/ast-node.model";
+import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
 
 export type Bucket =
   | "existence"
@@ -147,6 +148,8 @@ export type GroupFileResult = {
    * Edits actually written in apply mode; always 0 in preview mode.
    */
   changed: number;
+  /** Populated only in preview mode (write=false) when edits exist. */
+  workPlan?: GroupFileWorkPlan;
 };
 
 export type ArrangeGroupFileOptions = {
@@ -163,4 +166,6 @@ export type ArrangeRunResult = {
   totalFound: number;
   totalChanged: number;
   hookError: string | null;
+  /** Populated in preview mode (write=false); empty in apply mode. */
+  previewPlans: GroupFileWorkPlan[];
 };

@@ -43,15 +43,16 @@ export type ArrangeSyncJsonPayloadV1 = {
   readonly schemaVersion: 1;
   readonly ok: boolean;
   readonly write: boolean;
-  readonly result: ArrangeRunResult;
+  readonly result: Omit<ArrangeRunResult, "previewPlans">;
 };
 
 export function formatArrangeSyncJsonOutput(result: ArrangeRunResult, write: boolean): string {
+  const { previewPlans: _plans, ...serializableResult } = result;
   const payload: ArrangeSyncJsonPayloadV1 = {
     schemaVersion: 1,
     ok: result.hookError === null,
     write,
-    result,
+    result: serializableResult,
   };
   return JSON.stringify(payload);
 }

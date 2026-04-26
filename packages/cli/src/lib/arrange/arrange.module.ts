@@ -6,17 +6,17 @@ import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/r
 import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
-import { GroupFilePreviewPresenterAdapter } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import { WorkspaceResolverAdapter } from "#/lib/arrange/infra/workspace-resolver.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorToken,
   ArrangeTargetScannerToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
-  GroupFilePreviewPortToken,
   PrepareArrangeWorkspaceUseCaseToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
+  WorkspaceResolverPortToken,
 } from "#/lib/arrange/contracts/tokens";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
@@ -46,17 +46,7 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     )
     .singleton();
 
-  moduleBuilder
-    .bind(GroupFilePreviewPortToken)
-    .to(GroupFilePreviewPresenterAdapter)
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "GroupFilePreviewPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    )
-    .singleton();
+  moduleBuilder.bind(WorkspaceResolverPortToken).to(WorkspaceResolverAdapter).singleton();
 
   moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 

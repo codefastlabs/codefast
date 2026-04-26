@@ -34,6 +34,7 @@ describe("arrange JSON formatters", () => {
       totalFound: 0,
       totalChanged: 0,
       hookError: null,
+      previewPlans: [],
     };
     const okParsed = JSON.parse(formatArrangeSyncJsonOutput(result, false)) as { ok: boolean };
     expect(okParsed.ok).toBe(true);
