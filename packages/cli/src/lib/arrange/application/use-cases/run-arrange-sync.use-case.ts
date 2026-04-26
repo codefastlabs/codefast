@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import {
-  ArrangeFileProcessorToken,
-  ArrangeTargetScannerToken,
+  ArrangeFileProcessorServiceToken,
+  ArrangeTargetScannerServiceToken,
 } from "#/lib/arrange/contracts/tokens";
 import type {
   ArrangeFileProcessorService,
@@ -35,7 +35,7 @@ async function runOnAfterWriteHook(
   }
 }
 
-@injectable([inject(ArrangeTargetScannerToken), inject(ArrangeFileProcessorToken)])
+@injectable([inject(ArrangeTargetScannerServiceToken), inject(ArrangeFileProcessorServiceToken)])
 export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {
   constructor(
     private readonly targetScanner: ArrangeTargetScannerService,

@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
 import {
-  ArrangeTargetScannerToken,
+  ArrangeTargetScannerServiceToken,
   DomainSourceParserPortToken,
 } from "#/lib/arrange/contracts/tokens";
 import type { ArrangeTargetScannerService } from "#/lib/arrange/contracts/services.contract";
@@ -24,7 +24,7 @@ import {
  */
 @injectable([
   inject(CliFsToken),
-  inject(ArrangeTargetScannerToken),
+  inject(ArrangeTargetScannerServiceToken),
   inject(DomainSourceParserPortToken),
 ])
 export class AnalyzeDirectoryUseCaseImpl implements AnalyzeDirectoryUseCase {

@@ -1,4 +1,5 @@
+import type { Token } from "@codefast/di";
 import { token } from "@codefast/di";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 
-export const COMMAND_TOKEN = token<CliCommand>("CliCommand");
+export const CliCommandToken: Token<CliCommand> = token<CliCommand>("CliCommand");
