@@ -11,17 +11,13 @@ const PNPM_WORKSPACE_FILE = "pnpm-workspace.yaml";
 const PACKAGE_JSON_FILE = "package.json";
 const DEFAULT_WORKSPACE_PACKAGE_PATTERNS = ["packages/*"];
 
-const pnpmWorkspaceSchema = z
-  .object({
-    packages: z.array(z.string()).optional(),
-  })
-  .passthrough();
+const pnpmWorkspaceSchema = z.looseObject({
+  packages: z.array(z.string()).optional(),
+});
 
-const packageNameSchema = z
-  .object({
-    name: z.string().min(1).optional(),
-  })
-  .passthrough();
+const packageNameSchema = z.looseObject({
+  name: z.string().min(1).optional(),
+});
 
 function toPosix(filePath: string): string {
   return filePath.split(path.sep).join("/");
