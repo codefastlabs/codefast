@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import type { CliLogger } from "#/lib/infra/fs-contract.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
 import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infra/ts-ast-translator.adapter";

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { CliLogger } from "#/lib/infra/fs-contract.port";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
 import {
   findWorkspacePackageRelPaths,

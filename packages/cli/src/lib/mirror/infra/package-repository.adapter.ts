@@ -1,5 +1,5 @@
 import { injectable } from "@codefast/di";
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";
 import type {
   ExportMapData,

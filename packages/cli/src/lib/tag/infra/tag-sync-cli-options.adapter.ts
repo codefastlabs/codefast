@@ -1,5 +1,5 @@
 import type { CodefastTagConfig } from "#/lib/config/domain/schema.domain";
-import type { CliFs } from "#/lib/infra/fs-contract.port";
+import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 
 /**
