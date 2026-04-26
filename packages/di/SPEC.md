@@ -262,6 +262,34 @@ type BindingKind =
   | "alias";
 ```
 
+**`materializationStack` — thứ tự và quan hệ với `parent`/`ancestors` (normative):**
+
+`materializationStack` là snapshot readonly của toàn bộ resolution path **phía trên** token hiện tại — không bao gồm token đang được resolve. Thứ tự: từ root (index 0) đến direct parent (index cuối). Các trường `parent` và `ancestors` là computed views trên cùng dữ liệu:
+
+```ts
+// Quan hệ (normative — implementer phải đảm bảo nhất quán):
+ctx.parent === ctx.materializationStack.at(-1); // frame gần nhất, undefined nếu root
+ctx.ancestors === ctx.materializationStack.slice(0, -1); // tất cả trừ frame gần nhất
+```
+
+Ví dụ: resolve chain `App → Database → Logger` (root `App`, direct parent `Database`, đang resolve `Logger`):
+
+```
+materializationStack = [App_frame, Database_frame]  // index 0 = root
+parent               = Database_frame               // materializationStack.at(-1)
+ancestors            = [App_frame]                  // materializationStack.slice(0, -1)
+```
+
+Khi resolve `App` ở root (không có gì inject `App`):
+
+```
+materializationStack = []
+parent               = undefined
+ancestors            = []
+```
+
+> **`resolutionPath` vs `materializationStack`:** `resolutionPath` là mảng `tokenName` string, đủ để hiển thị trong error message (`"App → Database → Logger"`). `materializationStack` chứa `MaterializationFrame` đầy đủ (scope, bindingId, slot) — dùng cho advanced constraints và validate. Implementer phải maintain hai cấu trúc song song trong resolver: string path (rẻ hơn) và frame stack (đầy đủ hơn).
+
 ### 3.8 `TokenValue`
 
 Helper type để extract `Value` từ `Token<Value>` hoặc `Constructor<Value>`:
@@ -758,6 +786,138 @@ Hai slot key **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined
 
 > **`has(token)` và slot semantics:** `container.has(token)` trả `true` nếu token có **bất kỳ binding nào** (kể cả chỉ named/tagged slots, không có default). `container.resolve(token)` không hint có thể throw `NoMatchingBindingError` ngay cả khi `has(token)` là `true`. Xem section 6.10 để biết cách dùng đúng `has` + `hasOwn`.
 
+### 5.12 `Binding` discriminated union — internal data model
+
+`Binding<Value>` là union type đại diện cho một binding đã được commit vào registry. Implementer phải định nghĩa đây trong `binding.ts`. Tất cả field là `readonly`; mutation chỉ xảy ra qua registry (tạo object mới và replace).
+
+**`SlotKey` — dùng cho slot-aware last-wins và resolution matching:**
+
+```ts
+interface SlotKey {
+  /** undefined = default slot (không có whenNamed). */
+  readonly name: string | undefined;
+  /** [] = không có whenTagged. Thứ tự không ảnh hưởng equality. */
+  readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
+}
+```
+
+Hai `SlotKey` bằng nhau khi `name` equal (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (dùng `Object.is` cho value, thứ tự không quan trọng). Implementer nên cung cấp helper `slotKeyEquals(a: SlotKey, b: SlotKey): boolean`.
+
+**Fields chung cho tất cả binding (trừ ghi chú riêng):**
+
+```ts
+interface BindingBase<Value> {
+  readonly id: BindingIdentifier;
+  readonly token: Token<Value> | Constructor<Value>;
+  readonly slot: SlotKey;
+  /**
+   * Predicate từ .when(predicate) — undefined nếu không có.
+   * Lưu ý: whenNamed / whenTagged lưu vào slot, không lưu vào predicate.
+   * Khi cả slot lẫn predicate được khai báo (.whenNamed("x").when(p)),
+   * cả hai đều phải pass: slot match trước (O(1)), predicate check sau (runtime).
+   */
+  readonly predicate?: (ctx: ConstraintContext) => boolean;
+}
+```
+
+**7 binding kinds:**
+
+```ts
+/** .to(Class) và .toSelf() — container new + inject deps từ @injectable metadata */
+interface ClassBinding<Value> extends BindingBase<Value> {
+  readonly kind: "class";
+  readonly target: Constructor<Value>;
+  readonly scope: BindingScope;
+  readonly onActivation?: ActivationHandler<Value>;
+  /** undefined nếu scope !== "singleton" — enforced bởi builder type, không bởi runtime */
+  readonly onDeactivation?: DeactivationHandler<Value>;
+}
+
+/** .toDynamic(ctx => Value) */
+interface DynamicBinding<Value> extends BindingBase<Value> {
+  readonly kind: "dynamic";
+  readonly factory: (ctx: ResolutionContext) => Value;
+  readonly scope: BindingScope;
+  readonly onActivation?: ActivationHandler<Value>;
+  readonly onDeactivation?: DeactivationHandler<Value>;
+}
+
+/** .toDynamicAsync(ctx => Promise<Value>) */
+interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
+  readonly kind: "dynamic-async";
+  readonly factory: (ctx: ResolutionContext) => Promise<Value>;
+  readonly scope: BindingScope;
+  readonly onActivation?: ActivationHandler<Value>;
+  readonly onDeactivation?: DeactivationHandler<Value>;
+}
+
+/**
+ * .toResolved(factory, deps)
+ * `deps` lưu dưới dạng readonly array của InjectionDescriptor đã normalize:
+ * plain Token/Constructor được wrap thành InjectionDescriptor tương đương.
+ */
+interface ResolvedBinding<Value> extends BindingBase<Value> {
+  readonly kind: "resolved";
+  readonly factory: (...args: unknown[]) => Value;
+  readonly deps: readonly InjectionDescriptor[];
+  readonly scope: BindingScope;
+  readonly onActivation?: ActivationHandler<Value>;
+  readonly onDeactivation?: DeactivationHandler<Value>;
+}
+
+/** .toResolvedAsync(factory, deps) */
+interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
+  readonly kind: "resolved-async";
+  readonly factory: (...args: unknown[]) => Promise<Value>;
+  readonly deps: readonly InjectionDescriptor[];
+  readonly scope: BindingScope;
+  readonly onActivation?: ActivationHandler<Value>;
+  readonly onDeactivation?: DeactivationHandler<Value>;
+}
+
+/**
+ * .toConstantValue(value)
+ * scope luôn là "singleton" — không có scope choice.
+ * onActivation chạy lần đầu tiên value được resolve; kết quả sau activation được cache.
+ */
+interface ConstantBinding<Value> extends BindingBase<Value> {
+  readonly kind: "constant";
+  readonly value: Value;
+  readonly scope: "singleton";
+  readonly onActivation?: ActivationHandler<Value>;
+  readonly onDeactivation?: DeactivationHandler<Value>;
+}
+
+/**
+ * .toAlias(target)
+ * Không có scope riêng — scope quyết định bởi target binding.
+ * Không có lifecycle hooks — chỉ pointer, không cache instance.
+ */
+interface AliasBinding<Value> extends BindingBase<Value> {
+  readonly kind: "alias";
+  readonly target: Token<Value> | Constructor<Value>;
+}
+
+type Binding<Value = unknown> =
+  | ClassBinding<Value>
+  | DynamicBinding<Value>
+  | DynamicAsyncBinding<Value>
+  | ResolvedBinding<Value>
+  | ResolvedAsyncBinding<Value>
+  | ConstantBinding<Value>
+  | AliasBinding<Value>;
+```
+
+**Normalization khi commit (normative):**
+
+- `toSelf()` → `ClassBinding` với `target === token` (token phải là `Constructor<Value>`).
+- Deps array của `toResolved`/`toResolvedAsync`: mỗi element là `Token | Constructor | InjectionDescriptor`. Tại commit-time, plain `Token`/`Constructor` được normalize thành `InjectionDescriptor` với `{ token, optional: false, multi: false }`. `deps` trong `ResolvedBinding`/`ResolvedAsyncBinding` luôn là `readonly InjectionDescriptor[]` — không bao giờ là raw token.
+- `BindingIdentifier` được generate tại commit-time, duy nhất trong toàn bộ container hierarchy (không phải chỉ trong một container). Recommend dùng `crypto.randomUUID()` hoặc monotonic counter.
+
+**Truy cập scope từ `AliasBinding` — tại resolve-time:**
+
+`AliasBinding` không có field `scope`. Khi cần scope (ví dụ để build `MaterializationFrame`), resolver phải follow alias chain đến binding cuối cùng và lấy scope từ đó. Nếu chain kết thúc ở `AliasBinding` khác, tiếp tục follow. Nếu cycle → `CircularDependencyError`.
+
 ---
 
 ## 6. Container API
@@ -887,6 +1047,23 @@ Khi `unbind(token)` hoặc `unbind(bindingId)` được gọi:
 - Binding bị xóa khỏi registry ngay lập tức (không có gap).
 - Nếu binding là singleton và đã cached, `onDeactivation` và `@preDestroy()` **được gọi synchronously** nếu handler là sync.
 - Nếu handler là async, phải dùng `unbindAsync()` — `unbind()` sync trên binding có async deactivation throw `AsyncDeactivationError`.
+
+**`rebind` và async deactivation (normative):**
+
+`rebind(token)` về bản chất là unbind-then-bind nguyên tử. Deactivation của singleton cũ tuân theo cùng quy tắc với `unbind`:
+
+- Nếu binding cũ **không có** `onDeactivation` async (hoặc không có `onDeactivation` nào): `rebind()` sync là an toàn.
+- Nếu binding cũ **có** `onDeactivation` async: `rebind()` sync throw `AsyncDeactivationError` — cùng behavior với `unbind()` sync.
+
+Vì spec không có `rebindAsync()` (xem section 15.4), workaround bắt buộc là:
+
+```ts
+// Khi binding cũ có async onDeactivation:
+await container.unbindAsync(Logger); // deactivate singleton cũ
+container.bind(Logger).to(FileLogger).singleton(); // tạo binding mới
+```
+
+> **Lý do không có `rebindAsync()`:** `rebind` là test/reconfiguration utility — luôn xảy ra khi không có traffic. Nếu binding có async deactivation, tách thành hai bước explicit (`unbindAsync` + `bind`) là rõ ràng hơn về intent.
 
 ### 6.4 Module management
 
@@ -1385,6 +1562,58 @@ interface InjectionDescriptor<Value = unknown> {
 function isInjectionDescriptor(value: unknown): value is InjectionDescriptor;
 ```
 
+**`InjectableDependency` — union type cho một phần tử trong deps array:**
+
+```ts
+/**
+ * Một element hợp lệ trong deps array của @injectable().
+ * - Token<Value>       → plain inject: resolve token, throw nếu không có binding
+ * - Constructor<Value> → plain inject: resolve class, throw nếu không có binding
+ * - InjectionDescriptor → decorated inject: inject(), optional(), injectAll()
+ *                          Dùng khi cần named/tagged/optional/multi inject
+ */
+type InjectableDependency<Value = unknown> =
+  | Token<Value>
+  | Constructor<Value>
+  | InjectionDescriptor<Value>;
+```
+
+Tại metadata-read time, resolver normalize toàn bộ `InjectableDependency[]` thành `InjectionDescriptor[]` trước khi resolve. Rule normalize (normative):
+
+- `Token<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
+- `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
+- `InjectionDescriptor<Value>` → giữ nguyên
+
+`InjectableDependency` được export từ `@codefast/di` (xem section 11.1).
+
+**`InjectableOptions` — options cho `@injectable()`:**
+
+```ts
+interface InjectableOptions {
+  /**
+   * Registry để auto-register class. Nếu undefined, không auto-register.
+   * Xem section 7.7.
+   */
+  autoRegister?: AutoRegisterRegistry;
+  /**
+   * Scope khi auto-register. Bị bỏ qua nếu autoRegister không được cung cấp.
+   * Default: "transient".
+   */
+  scope?: BindingScope;
+}
+```
+
+`InjectableOptions` được export từ `@codefast/di`.
+
+**Signature đầy đủ của `@injectable()`:**
+
+```ts
+function injectable(
+  deps?: readonly InjectableDependency[],
+  options?: InjectableOptions,
+): ClassDecorator;
+```
+
 ### 7.3 Inheritance — explicit, không có magic
 
 Mọi dep phải khai báo tường minh — không có implicit inheritance injection:
@@ -1505,6 +1734,102 @@ const dash = container.resolve(Dashboard);
 **Ngoài container context:**
 
 Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`.
+
+**Cơ chế truyền container context — module-level active container (normative):**
+
+TC39 `context.addInitializer` chạy synchronously ngay sau constructor body, trong cùng call frame với `new`. Container khai thác điều này qua pattern **module-level active container variable**:
+
+```ts
+// environment.ts — exported để inject.ts import
+let _activeContainer: Container | undefined;
+
+/**
+ * Set active container tạm thời trong thời gian chạy fn().
+ * try/finally đảm bảo restore kể cả khi constructor throw.
+ * Stack-safe: gọi lồng nhau (nested construction) restore đúng container trước.
+ */
+export function runWithContainer<Result>(container: Container, fn: () => Result): Result {
+  const prev = _activeContainer;
+  _activeContainer = container;
+  try {
+    return fn();
+  } finally {
+    _activeContainer = prev;
+  }
+}
+
+/** Đọc active container hiện tại — chỉ dùng bên trong addInitializer callback. */
+export function getActiveContainer(): Container | undefined {
+  return _activeContainer;
+}
+```
+
+**Resolver dùng `runWithContainer` khi new class:**
+
+```ts
+// resolver.ts — khi instantiate ClassBinding hoặc class dùng @inject accessor
+const instance = runWithContainer(this.container, () => new target(...constructorArgs));
+```
+
+**`inject()` accessor decorator dùng `getActiveContainer` trong initializer:**
+
+```ts
+// decorators/inject.ts
+function inject<Value>(token: Token<Value> | Constructor<Value>, options?: InjectOptions) {
+  // Dual-role: InjectionDescriptor + ClassAccessorDecorator
+  const descriptor = buildInjectionDescriptor(token, options);
+
+  // Accessor decorator role — chỉ kích hoạt khi dùng trên accessor field
+  const decoratorFn = (
+    _target: ClassAccessorDecoratorTarget<unknown, Value>,
+    context: ClassAccessorDecoratorContext,
+  ): ClassAccessorDecoratorResult<unknown, Value> => {
+    // Ghi token vào Symbol.metadata để MetadataReader đọc được
+    const meta = context.metadata as Record<string | symbol, unknown>;
+    const accessorKey = INJECT_ACCESSOR_KEY;
+    if (!Array.isArray(meta[accessorKey])) meta[accessorKey] = [];
+    (meta[accessorKey] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>).push({
+      key: context.name,
+      descriptor,
+    });
+
+    context.addInitializer(function (this: unknown) {
+      const container = getActiveContainer();
+      if (container === undefined) {
+        throw new MissingContainerContextError(String(context.name));
+      }
+      // Resolve token từ container và set qua accessor setter
+      const value = descriptor.optional
+        ? container.resolveOptional(token, { name: options?.name, tags: options?.tags })
+        : container.resolve(token, { name: options?.name, tags: options?.tags });
+      context.access.set(this, value as Value);
+    });
+
+    return {}; // không override get/set — chỉ thêm initializer
+  };
+
+  // Merge hai roles thành một object callable
+  return Object.assign(decoratorFn, descriptor) as InjectionDescriptor<Value> &
+    ClassAccessorDecorator<unknown, Value>;
+}
+```
+
+**Thứ tự thực tế với `runWithContainer`:**
+
+```
+resolver.resolve(Dashboard)
+  → runWithContainer(container, () => new Dashboard(...args))
+    → Dashboard constructor() chạy                        // _activeContainer đã được set
+    → accessor initializers chạy (addInitializer callbacks)
+      → getActiveContainer() trả về container             // đọc trong cùng call frame
+      → context.access.set(this, container.resolve(...))  // inject giá trị
+    → runWithContainer trả về instance                    // _activeContainer được restore
+  → @postConstruct() chạy (sau runWithContainer)
+```
+
+> **Concurrency safety:** `_activeContainer` là module-level variable. Trong môi trường single-threaded (Node.js event loop), đây an toàn vì JS không có true parallelism. `runWithContainer` với `try/finally` đảm bảo nested construction (A inject B inject C) stack đúng. Nếu trong tương lai library cần hỗ trợ Worker threads, mỗi Worker có module scope riêng — không có shared state.
+
+> **`INJECT_ACCESSOR_KEY`** là `unique symbol` trong `metadata-keys.ts`, không export ra ngoài thư viện. `SymbolMetadataReader` đọc key này qua `getConstructorMetadata` nếu cần expose thông tin accessor fields. Container/resolver đọc trực tiếp từ `Symbol.metadata[INJECT_ACCESSOR_KEY]` khi cần biết class nào có accessor injection.
 
 > **Constructor injection vẫn là cách ưu tiên** — immutable, dễ test, không cần container context. Property injection qua `accessor` hữu ích khi class kế thừa framework không kiểm soát constructor, hoặc cần break circular dependency.
 >
