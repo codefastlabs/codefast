@@ -2,7 +2,7 @@ import { injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
-import { CliFsToken, CliLoggerToken, CliPathToken } from "#/lib/core/operational/contracts/tokens";
+import { CliFsToken, CliLoggerToken, CliPathToken } from "#/lib/core/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import { DIST_DIR, PACKAGE_JSON } from "#/lib/mirror/domain/constants.domain";
 import {

@@ -10,7 +10,7 @@ import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";

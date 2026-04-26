@@ -11,7 +11,7 @@ import type {
   DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
 export function printGroupFilePreview(
   logger: CliLogger,

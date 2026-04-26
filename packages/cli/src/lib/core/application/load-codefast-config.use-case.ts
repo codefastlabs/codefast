@@ -4,7 +4,7 @@ import type { ConfigLoaderPort } from "#/lib/config/application/ports/config-loa
 import { ConfigLoaderPortToken } from "#/lib/config/contracts/tokens";
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";

@@ -9,7 +9,7 @@ import { TagCommand } from "#/lib/tag/presentation/tag.command";
 import { TagModule } from "#/lib/tag/tag.module";
 import { TagPresentationModule } from "#/lib/tag/tag.presentation.module";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
-import { CliCommandToken } from "#/lib/kernel/di/command.token";
+import { CliCommandToken } from "#/lib/kernel/contracts/tokens";
 
 export function createCliRuntimeContainer(): ReturnType<typeof Container.create> {
   const runtimeContainer = Container.create();

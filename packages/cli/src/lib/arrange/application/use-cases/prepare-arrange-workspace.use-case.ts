@@ -9,9 +9,8 @@ import type { ArrangeTargetWorkspaceAndConfig } from "#/lib/arrange/contracts/mo
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import { CliFsToken } from "#/lib/core/operational/contracts/tokens";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
-import { LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
+import { CliFsToken, LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
 import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 
 // ─── Target path resolution ───────────────────────────────────────────────────
