@@ -14,6 +14,10 @@
     },
     "apps/docs": {
       "entry": ["content-collections.ts", "src/router.tsx"]
+    },
+    "packages/cli": {
+      "entry": ["src/bin.ts"],
+      "project": ["src/**/*.ts"]
     }
   },
   "rules": {
