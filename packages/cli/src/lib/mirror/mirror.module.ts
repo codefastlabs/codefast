@@ -13,7 +13,7 @@ import {
   SyncWorkspacePackageServiceToken,
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 

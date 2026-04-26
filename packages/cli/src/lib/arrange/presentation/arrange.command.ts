@@ -30,7 +30,7 @@ import {
   presentArrangeSyncResult,
 } from "#/lib/arrange/presentation/arrange-sync.presenter";
 import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/presentation/arrange-analyze.presenter";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";

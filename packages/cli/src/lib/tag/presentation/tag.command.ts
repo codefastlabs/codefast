@@ -20,7 +20,7 @@ import type {
 } from "#/lib/tag/contracts/presentation.contract";
 import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
 @injectable([
   inject(CliLoggerToken),

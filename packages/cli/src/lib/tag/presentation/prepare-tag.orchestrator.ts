@@ -5,9 +5,12 @@ import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
 import type { PrepareTagOrchestrator as PrepareTagOrchestratorContract } from "#/lib/tag/contracts/presentation.contract";
 import { resolveTagCliTargetPath } from "#/lib/tag/presentation/resolve-tag-cli-target.presenter";
 import { resolveTagWorkspaceRootPath } from "#/lib/tag/presentation/resolve-tag-workspace-root.presenter";
-import { LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
-import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import {
+  CliFsToken,
+  CliLoggerToken,
+  LoadCodefastConfigUseCaseToken,
+} from "#/lib/core/contracts/tokens";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
 @injectable([inject(CliFsToken), inject(CliLoggerToken), inject(LoadCodefastConfigUseCaseToken)])

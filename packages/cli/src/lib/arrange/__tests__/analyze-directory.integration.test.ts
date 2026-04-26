@@ -7,7 +7,7 @@ import { AnalyzeDirectoryUseCaseToken } from "#/lib/arrange/contracts/tokens";
 import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 import { printAnalyzeReport } from "#/lib/arrange/presentation/arrange-analyze.presenter";
 import { CoreModule } from "#/lib/core/core.module";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";

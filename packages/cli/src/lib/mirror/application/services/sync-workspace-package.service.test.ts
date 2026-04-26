@@ -3,7 +3,7 @@ import type { CliPath } from "#/lib/core/application/ports/path.port";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";
-import { SyncWorkspacePackageServiceImpl } from "./sync-workspace-package.service";
+import { SyncWorkspacePackageServiceImpl } from "#/lib/mirror/application/services/sync-workspace-package.service";
 import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
 
 describe("SyncWorkspacePackageServiceImpl", () => {

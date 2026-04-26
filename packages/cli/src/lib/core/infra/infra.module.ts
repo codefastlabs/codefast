@@ -6,8 +6,8 @@ import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
 } from "#/lib/core/infra/logging-decorator.adapter";
-import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
-import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "../../infra/node-io.adapter";
+import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
+import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/lib/infra/node-io.adapter";
 
 export const InfraModule = Module.create("cli-infra", (moduleBuilder) => {
   moduleBuilder.import(CoreModule);

@@ -19,7 +19,7 @@ import {
   WorkspaceResolverPortToken,
 } from "#/lib/arrange/contracts/tokens";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
 

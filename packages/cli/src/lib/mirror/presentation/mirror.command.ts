@@ -10,7 +10,7 @@ import {
 import type { PrepareMirrorOrchestrator } from "#/lib/mirror/contracts/presentation.contract";
 import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
 import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import {
   consumeCliAppError,
   runCliResultAsync,
