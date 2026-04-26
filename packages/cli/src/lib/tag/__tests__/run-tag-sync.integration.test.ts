@@ -15,7 +15,7 @@ import { nodeCliPath } from "#/lib/core/infra/path.adapter";
 import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
 import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
-import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
+import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
 
 const tagFs = new NodeCliFsAdapter();

@@ -1,9 +1,12 @@
 import { injectable } from "@codefast/di";
 import type { ArrangeSuggestGroupsRequest } from "#/lib/arrange/application/requests/suggest-groups.request";
 import type { ArrangeSuggestGroupsOutput } from "#/lib/arrange/contracts/models";
-import type { SuggestCnGroupsUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 import { suggestCnGroups, summarizeGroupBucketLabels } from "#/lib/arrange/domain/grouping.domain";
 import { formatArray, formatCnCall } from "#/lib/arrange/domain/source-text-formatters.formatter";
+
+export interface SuggestCnGroupsUseCase {
+  execute(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput;
+}
 
 @injectable([])
 export class SuggestCnGroupsUseCaseImpl implements SuggestCnGroupsUseCase {

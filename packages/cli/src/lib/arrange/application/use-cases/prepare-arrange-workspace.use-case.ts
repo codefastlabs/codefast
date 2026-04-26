@@ -11,7 +11,6 @@ import type { Result } from "#/lib/core/domain/result.model";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 import { CliFsToken, LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
-import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 
 // ─── Target path resolution ───────────────────────────────────────────────────
 
@@ -54,6 +53,13 @@ export function resolveArrangeTargetPath(args: {
   );
   const resolvedDefaultTarget = nearestPackageDirectory ?? args.currentWorkingDirectory;
   return args.fs.canonicalPathSync(resolvedDefaultTarget);
+}
+
+export interface PrepareArrangeWorkspaceUseCase {
+  execute(args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
 }
 
 // ─── Implementation ──────────────────────────────────────────────────────────

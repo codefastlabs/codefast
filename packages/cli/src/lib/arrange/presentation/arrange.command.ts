@@ -11,12 +11,10 @@ import {
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/arrange/contracts/tokens";
 import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
-import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/contracts/use-cases.contract";
-import type {
-  AnalyzeDirectoryUseCase,
-  RunArrangeSyncUseCase,
-  SuggestCnGroupsUseCase,
-} from "#/lib/arrange/contracts/use-cases.contract";
+import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
+import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCase } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
 import {
   arrangeAnalyzeDirectoryRequestSchema,

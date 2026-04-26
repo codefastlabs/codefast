@@ -6,7 +6,7 @@ import { CoreModule } from "#/lib/core/core.module";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseToken } from "#/lib/mirror/contracts/tokens";
 import { MirrorModule } from "#/lib/mirror/mirror.module";
 

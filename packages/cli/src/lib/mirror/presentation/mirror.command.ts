@@ -8,7 +8,7 @@ import {
   RunMirrorSyncUseCaseToken,
 } from "#/lib/mirror/contracts/tokens";
 import type { PrepareMirrorOrchestrator } from "#/lib/mirror/contracts/presentation.contract";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import {

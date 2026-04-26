@@ -6,7 +6,7 @@ import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/packa
 import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { PrepareMirrorOrchestrator } from "#/lib/mirror/contracts/presentation.contract";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 
 export const WorkspaceServicePortToken: Token<WorkspaceServicePort> =
   token<WorkspaceServicePort>("WorkspaceServicePort");

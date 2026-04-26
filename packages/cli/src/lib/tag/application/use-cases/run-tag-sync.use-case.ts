@@ -6,7 +6,6 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tag/contracts/tokens";
 import type { TagSyncExecutionInput } from "#/lib/tag/contracts/models";
-import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
@@ -31,6 +30,10 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/lib/tag/domain/types.domain";
+
+export interface RunTagSyncUseCase {
+  execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
+}
 
 export function resolveNearestPackageVersion(
   targetPath: string,

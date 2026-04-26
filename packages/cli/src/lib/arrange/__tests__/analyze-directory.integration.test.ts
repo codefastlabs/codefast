@@ -4,7 +4,7 @@ import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/lib/arrange/arrange.module";
 import { AnalyzeDirectoryUseCaseToken } from "#/lib/arrange/contracts/tokens";
-import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/contracts/use-cases.contract";
+import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
 import { printAnalyzeReport } from "#/lib/arrange/presentation/arrange-analyze.presenter";
 import { CoreModule } from "#/lib/core/core.module";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";

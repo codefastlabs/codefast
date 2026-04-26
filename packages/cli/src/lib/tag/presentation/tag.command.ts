@@ -18,7 +18,7 @@ import type {
   PrepareTagOrchestrator,
   PresentTagSyncResultPresenter,
 } from "#/lib/tag/contracts/presentation.contract";
-import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
+import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 

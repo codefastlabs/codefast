@@ -4,7 +4,6 @@ import {
   SyncWorkspacePackageServiceToken,
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
@@ -15,10 +14,15 @@ import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-un
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
 import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
+
 import { formatMirrorSyncJsonOutput } from "#/lib/mirror/application/mirror-sync-json.format";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
+
+export interface RunMirrorSyncUseCase {
+  execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>>;
+}
 
 @injectable([
   CliFsToken,
