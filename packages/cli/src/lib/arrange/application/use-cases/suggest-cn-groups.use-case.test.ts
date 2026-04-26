@@ -1,8 +1,11 @@
 import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { TailwindGroupingServiceImpl } from "#/lib/arrange/domain/tailwind-grouping.service";
 
 describe("suggestCnGroupsForCli use case", () => {
+  const grouping = new TailwindGroupingServiceImpl();
+
   it("formats a cn() call on the happy path", () => {
-    const subject = new SuggestCnGroupsUseCaseImpl();
+    const subject = new SuggestCnGroupsUseCaseImpl(grouping);
     const outcome = subject.execute({
       inlineClasses: "flex gap-2 p-4",
       emitTvStyleArray: false,
@@ -13,7 +16,7 @@ describe("suggestCnGroupsForCli use case", () => {
   });
 
   it("emits tv-style array when requested", () => {
-    const subject = new SuggestCnGroupsUseCaseImpl();
+    const subject = new SuggestCnGroupsUseCaseImpl(grouping);
     const outcome = subject.execute({
       inlineClasses: "flex gap-2",
       emitTvStyleArray: true,
@@ -23,7 +26,7 @@ describe("suggestCnGroupsForCli use case", () => {
   });
 
   it("appends trailing className slot when requested", () => {
-    const subject = new SuggestCnGroupsUseCaseImpl();
+    const subject = new SuggestCnGroupsUseCaseImpl(grouping);
     const outcome = subject.execute({
       inlineClasses: "flex",
       emitTvStyleArray: false,

@@ -1,5 +1,4 @@
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 
@@ -36,7 +35,7 @@ function formatSchemaIssues(issues: readonly SchemaIssue[]): string {
 }
 
 /**
- * Validates `input` with `schema`, returning {@link AppError} with code `VALIDATION_ERROR` on failure.
+ * Validates `input` with `schema`, returning {@link AppError} (code `VALIDATION_ERROR`) on failure.
  */
 export function parseWithSchema<T>(
   schema: SchemaValidator<T>,
@@ -44,7 +43,7 @@ export function parseWithSchema<T>(
 ): Result<T, AppError> {
   const parsed = schema.safeParse(input);
   if (!parsed.success) {
-    return err(appError("VALIDATION_ERROR", formatSchemaIssues(parsed.error.issues)));
+    return err(new AppError("VALIDATION_ERROR", formatSchemaIssues(parsed.error.issues)));
   }
   return ok(parsed.data);
 }

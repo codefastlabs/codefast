@@ -4,8 +4,7 @@ import {
   DomainSourceParserPortToken,
 } from "#/lib/arrange/contracts/tokens";
 import type { ArrangeTargetScannerService } from "#/lib/arrange/contracts/services.contract";
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
@@ -50,7 +49,7 @@ export class AnalyzeDirectoryUseCaseImpl implements AnalyzeDirectoryUseCase {
 
       return ok(report);
     } catch (caughtError: unknown) {
-      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+      return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
   }
 }

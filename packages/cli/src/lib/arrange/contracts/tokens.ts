@@ -13,6 +13,7 @@ import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-case
 import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
 import type { SuggestCnGroupsUseCase } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import type { TailwindGroupingService } from "#/lib/arrange/domain/tailwind-grouping.service";
 export const FileWalkerPortToken: Token<FileWalkerPort> = token<FileWalkerPort>("FileWalkerPort");
 export const DomainSourceParserPortToken: Token<DomainSourceParserPort> =
   token<DomainSourceParserPort>("DomainSourceParserPort");
@@ -35,3 +36,5 @@ export const PresentAnalyzeReportPresenterToken: Token<PresentAnalyzeReportPrese
   token<PresentAnalyzeReportPresenter>("PresentAnalyzeReportPresenter");
 export const WorkspaceResolverPortToken: Token<WorkspaceResolverPort> =
   token<WorkspaceResolverPort>("WorkspaceResolverPort");
+export const TailwindGroupingServiceToken: Token<TailwindGroupingService> =
+  token<TailwindGroupingService>("TailwindGroupingService");

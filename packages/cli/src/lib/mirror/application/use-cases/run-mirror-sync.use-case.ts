@@ -4,8 +4,7 @@ import {
   SyncWorkspacePackageServiceToken,
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
@@ -128,7 +127,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
 
       return ok(stats);
     } catch (caughtError: unknown) {
-      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+      return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
   }
 }

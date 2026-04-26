@@ -1,7 +1,6 @@
 import path from "node:path";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 
@@ -38,7 +37,7 @@ export function resolveMirrorPackageArgToRelative(
     normalized === "."
   ) {
     return err(
-      appError(
+      new AppError(
         "VALIDATION_ERROR",
         `Package path must be a subdirectory under monorepo root: ${rootDir}`,
       ),
