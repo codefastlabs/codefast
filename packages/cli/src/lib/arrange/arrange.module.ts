@@ -4,6 +4,7 @@ import { ArrangeTargetScannerServiceImpl } from "#/lib/arrange/application/servi
 import { AnalyzeDirectoryUseCaseImpl } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
 import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
 import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { TailwindGroupingServiceImpl } from "#/lib/arrange/domain/tailwind-grouping.service";
 import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
 import { WorkspaceResolverAdapter } from "#/lib/arrange/infra/workspace-resolver.adapter";
@@ -16,6 +17,7 @@ import {
   PrepareArrangeWorkspaceUseCaseToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
+  TailwindGroupingServiceToken,
   WorkspaceResolverPortToken,
 } from "#/lib/arrange/contracts/tokens";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
@@ -47,6 +49,8 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .singleton();
 
   moduleBuilder.bind(WorkspaceResolverPortToken).to(WorkspaceResolverAdapter).singleton();
+
+  moduleBuilder.bind(TailwindGroupingServiceToken).to(TailwindGroupingServiceImpl).singleton();
 
   moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 

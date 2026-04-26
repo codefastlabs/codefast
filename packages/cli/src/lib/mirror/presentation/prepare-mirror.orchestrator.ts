@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import { err, ok } from "#/lib/core/domain/result.model";
 import { parseGlobalCliOptions } from "#/lib/core/presentation/global-cli-options.presenter";
 import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
@@ -30,7 +30,7 @@ export class PrepareMirrorOrchestrator implements PrepareMirrorOrchestratorContr
     try {
       rootDir = findRepoRoot(this.fs, args.currentWorkingDirectory);
     } catch (caughtError: unknown) {
-      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+      return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
     const filterOutcome = resolveMirrorPackageArgToRelative({
       fs: this.fs,

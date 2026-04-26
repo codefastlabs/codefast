@@ -6,8 +6,7 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tag/contracts/tokens";
 import type { TagSyncExecutionInput } from "#/lib/tag/contracts/models";
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/lib/config/domain/schema.domain";
@@ -339,7 +338,7 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
         hookError,
       });
     } catch (caughtError: unknown) {
-      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+      return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
   }
 }
