@@ -9,7 +9,7 @@ import type {
   PrepareTagOrchestrator,
   PresentTagSyncResultPresenter,
 } from "#/lib/tag/contracts/presentation.contract";
-import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
+import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 
 export const TagTargetResolverPortToken: Token<TagTargetResolverPort> =
   token<TagTargetResolverPort>("TagTargetResolverPort");

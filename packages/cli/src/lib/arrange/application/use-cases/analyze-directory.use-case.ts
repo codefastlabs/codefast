@@ -4,7 +4,6 @@ import {
   DomainSourceParserPortToken,
 } from "#/lib/arrange/contracts/tokens";
 import type { ArrangeTargetScannerService } from "#/lib/arrange/contracts/services.contract";
-import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import { appError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
@@ -19,9 +18,11 @@ import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
 } from "#/lib/arrange/domain/arrange-analyze.service";
-/**
- * Orchestrates filesystem + parse ports, delegates analysis rules to the domain service.
- */
+
+export interface AnalyzeDirectoryUseCase {
+  execute(request: ArrangeAnalyzeDirectoryRequest): Result<AnalyzeReport, AppError>;
+}
+
 @injectable([
   inject(CliFsToken),
   inject(ArrangeTargetScannerServiceToken),

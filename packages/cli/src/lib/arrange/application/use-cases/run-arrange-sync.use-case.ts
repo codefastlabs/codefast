@@ -7,7 +7,6 @@ import type {
   ArrangeFileProcessorService,
   ArrangeTargetScannerService,
 } from "#/lib/arrange/contracts/services.contract";
-import type { RunArrangeSyncUseCase } from "#/lib/arrange/contracts/use-cases.contract";
 import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
@@ -19,6 +18,10 @@ import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-un
 import type { ArrangeSyncRunRequest } from "#/lib/arrange/application/requests/arrange-sync.request";
 import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
+
+export interface RunArrangeSyncUseCase {
+  execute(request: ArrangeSyncRunRequest): Promise<Result<ArrangeRunResult, AppError>>;
+}
 
 async function runOnAfterWriteHook(
   hook: CodefastAfterWriteHook | undefined,
