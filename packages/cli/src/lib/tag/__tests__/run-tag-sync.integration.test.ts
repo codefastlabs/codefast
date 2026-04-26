@@ -11,7 +11,7 @@ import {
   runTagOnTarget,
 } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { TagModule } from "#/lib/tag/tag.module";
-import { nodeCliPath } from "#/lib/core/infra/path.adapter";
+import { NodeCliPathAdapter } from "#/lib/core/infra/path.adapter";
 import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
 import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
@@ -19,8 +19,9 @@ import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-
 import { RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
 
 const tagFs = new NodeCliFsAdapter();
-const tagSinceWriterAdapter = new TagSinceWriterAdapter();
-const tagTypeScriptTreeWalkAdapter = new TypeScriptTreeWalkAdapter();
+const tagCliPath = new NodeCliPathAdapter();
+const tagSinceWriterAdapter = new TagSinceWriterAdapter(tagFs);
+const tagTypeScriptTreeWalkAdapter = new TypeScriptTreeWalkAdapter(tagFs);
 
 const container = Container.create();
 container.load(CoreModule, InfraModule, PresentationModule, TagModule);
@@ -52,7 +53,7 @@ describe("resolveNearestPackageVersion", () => {
   it("loads version from nearest package.json", () => {
     withTempPackage("index.ts", "export const foo = 1;\n", ({ sourceFile }) => {
       expect(
-        resolveNearestPackageVersion(sourceFile, tagFs, new TagVersionResolverAdapter(nodeCliPath)),
+        resolveNearestPackageVersion(sourceFile, new TagVersionResolverAdapter(tagCliPath, tagFs)),
       ).toBe("1.2.3");
     });
   });
@@ -76,8 +77,8 @@ export { c };
         path.join(rootDir, "src"),
         { write: true },
         tagFs,
-        nodeCliPath,
-        new TagVersionResolverAdapter(nodeCliPath),
+        tagCliPath,
+        new TagVersionResolverAdapter(tagCliPath, tagFs),
         tagSinceWriterAdapter,
         tagTypeScriptTreeWalkAdapter,
       );
@@ -101,8 +102,8 @@ export type TailwindClassBlob = string;
         path.join(rootDir, "src"),
         { write: true },
         tagFs,
-        nodeCliPath,
-        new TagVersionResolverAdapter(nodeCliPath),
+        tagCliPath,
+        new TagVersionResolverAdapter(tagCliPath, tagFs),
         tagSinceWriterAdapter,
         tagTypeScriptTreeWalkAdapter,
       );
@@ -122,8 +123,8 @@ export type TailwindClassBlob = string;
         path.join(rootDir, "src"),
         { write: false },
         tagFs,
-        nodeCliPath,
-        new TagVersionResolverAdapter(nodeCliPath),
+        tagCliPath,
+        new TagVersionResolverAdapter(tagCliPath, tagFs),
         tagSinceWriterAdapter,
         tagTypeScriptTreeWalkAdapter,
       );

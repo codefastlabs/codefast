@@ -3,7 +3,12 @@ import fsPromises from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { injectable } from "@codefast/di";
-import type { CliDirectoryEntry, CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type {
+  CliDirectoryEntry,
+  CliFileEncoding,
+  CliFs,
+  CliLogger,
+} from "#/lib/core/application/ports/cli-io.port";
 
 function canonicalPathSyncNode(inputPath: string): string {
   try {
@@ -21,8 +26,8 @@ export class NodeCliFsAdapter implements CliFs {
   readFileSync = fsSync.readFileSync;
   writeFileSync = fsSync.writeFileSync;
   readdirSync = fsSync.readdirSync;
-  readFile = (p: string, enc: BufferEncoding) => fsPromises.readFile(p, enc);
-  writeFile = (p: string, data: string, enc: BufferEncoding) => fsPromises.writeFile(p, data, enc);
+  readFile = (p: string, enc: CliFileEncoding) => fsPromises.readFile(p, enc);
+  writeFile = (p: string, data: string, enc: CliFileEncoding) => fsPromises.writeFile(p, data, enc);
   readdir = async (p: string, opts?: { withFileTypes?: boolean }) => {
     const raw = await fsPromises.readdir(p, opts as Parameters<typeof fsPromises.readdir>[1]);
     if (!opts?.withFileTypes) {

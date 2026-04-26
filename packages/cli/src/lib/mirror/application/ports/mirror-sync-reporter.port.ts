@@ -12,7 +12,7 @@ export type MirrorProcessingModeInput =
 /**
  * CLI output for mirror sync — implemented in `presentation`, injected here so `application/use-cases/run-mirror-sync` stays clean.
  */
-export type MirrorSyncReporterPort = {
+export interface MirrorSyncReporterPort {
   configureMirrorColors(noColor: boolean): void;
   mirrorBanner(logger: CliLogger): void;
   mirrorProcessingMode(logger: CliLogger, mode: MirrorProcessingModeInput): void;
@@ -44,4 +44,4 @@ export type MirrorSyncReporterPort = {
   ): void;
   mirrorSummarySeparator(logger: CliLogger): void;
   mirrorSummary(logger: CliLogger, stats: GlobalStats, elapsedSeconds: number): void;
-};
+}

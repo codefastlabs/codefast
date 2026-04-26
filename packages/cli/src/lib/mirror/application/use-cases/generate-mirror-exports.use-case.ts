@@ -1,4 +1,3 @@
-import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
@@ -177,7 +176,6 @@ function compareTuples(left: SortTuple, right: SortTuple): number {
 }
 
 async function generateCssExports(
-  fs: CliFs,
   pathService: CliPath,
   fileSystemService: FileSystemServicePort,
   distDir: string,
@@ -193,7 +191,7 @@ async function generateCssExports(
     return {};
   }
 
-  const files = await fileSystemService.listRelativeFilesRecursively(fs, distDir);
+  const files = await fileSystemService.listRelativeFilesRecursively(distDir);
   const cssFiles = files.filter((relativeDistPath) => relativeDistPath.endsWith(".css"));
   if (!cssFiles.length) {
     return {};
@@ -225,7 +223,7 @@ async function generateCssExports(
 
   for (const [dirName, dirFiles] of cssByDir.entries()) {
     if (
-      (await fileSystemService.isDirectoryCssOnly(fs, distDir, dirName)) &&
+      (await fileSystemService.isDirectoryCssOnly(distDir, dirName)) &&
       !(cssConfig as Record<string, unknown>).forceExportFiles
     ) {
       const wildcardExport = `./${dirName}/*`;
@@ -249,7 +247,6 @@ async function generateCssExports(
  * Compute `package.json#exports` from a built `dist/` tree. No logging; no writes.
  */
 export async function generateExports(
-  fs: CliFs,
   pathService: CliPath,
   fileSystemService: FileSystemServicePort,
   distDir: string,
@@ -257,7 +254,7 @@ export async function generateExports(
   cssConfig: Record<string, unknown> | boolean | undefined,
   customExports: Record<string, string>,
 ): Promise<GenerateExportsResult> {
-  const files = await fileSystemService.listRelativeFilesRecursively(fs, distDir);
+  const files = await fileSystemService.listRelativeFilesRecursively(distDir);
   if (!files.length) {
     return {
       // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
@@ -319,7 +316,6 @@ export async function generateExports(
   }
 
   const cssExports = await generateCssExports(
-    fs,
     pathService,
     fileSystemService,
     distDir,

@@ -17,7 +17,7 @@ export class ArrangeTargetScannerServiceImpl implements ArrangeTargetScannerServ
   scanTarget(args: { readonly targetPath: string }): string[] {
     const resolvedTargetPath = this.path.resolve(args.targetPath);
     if (this.fs.statSync(resolvedTargetPath).isDirectory()) {
-      return this.fileWalker.walkTypeScriptFiles(resolvedTargetPath, this.fs);
+      return this.fileWalker.walkTypeScriptFiles(resolvedTargetPath);
     }
     return [resolvedTargetPath];
   }

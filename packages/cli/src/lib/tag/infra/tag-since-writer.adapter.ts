@@ -1,6 +1,7 @@
 import ts from "typescript";
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import { CliFsToken } from "#/lib/core/contracts/tokens";
 import {
   applyEditsDescending,
   indentOfLineContaining,
@@ -193,15 +194,12 @@ function makeDeclarationSinceLine(
   };
 }
 
-@injectable([])
+@injectable([inject(CliFsToken)])
 export class TagSinceWriterAdapter implements TagSinceWriterPort {
-  applySinceTagsToFile(
-    filePath: string,
-    version: string,
-    fs: CliFs,
-    write: boolean,
-  ): TagFileResult {
-    const sourceText = fs.readFileSync(filePath, "utf8");
+  constructor(private readonly fs: CliFs) {}
+
+  applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
+    const sourceText = this.fs.readFileSync(filePath, "utf8");
     const sf = ts.createSourceFile(
       filePath,
       sourceText,
@@ -220,7 +218,7 @@ export class TagSinceWriterAdapter implements TagSinceWriterPort {
 
     if (edits.length > 0 && write) {
       const updated = applyEditsDescending(sourceText, edits);
-      fs.writeFileSync(filePath, updated, "utf8");
+      this.fs.writeFileSync(filePath, updated, "utf8");
     }
 
     return {

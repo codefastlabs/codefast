@@ -2,7 +2,6 @@ import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { CLI_EXIT_GENERAL_ERROR } from "#/lib/core/domain/cli-exit-codes.domain";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 import type {
-  TagProgressListener,
   TagResolvedTarget,
   TagSyncResult,
   TagTargetExecutionResult,
@@ -121,17 +120,4 @@ export function presentTagSyncCliResult(
   }
   logger.out(formatSummary(tagResult));
   return exitCodeForTagSyncResult(tagResult);
-}
-
-export function createTagProgressListener(
-  onProgressLine: (line: string) => void,
-): TagProgressListener {
-  return {
-    onTargetStarted: (target: TagResolvedTarget) => {
-      onProgressLine(formatProgress({ type: "target-started", target }));
-    },
-    onTargetCompleted: (target: TagResolvedTarget, result: TagTargetExecutionResult) => {
-      onProgressLine(formatProgress({ type: "target-completed", target, result }));
-    },
-  };
 }

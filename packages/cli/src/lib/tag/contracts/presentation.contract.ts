@@ -1,6 +1,6 @@
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
-import type { TagProgressListener, TagSyncResult } from "#/lib/tag/domain/types.domain";
+import type { TagSyncResult } from "#/lib/tag/domain/types.domain";
 import type { TagCommandPrelude } from "#/lib/tag/contracts/models";
 
 export interface PrepareTagOrchestrator {
@@ -13,8 +13,4 @@ export interface PrepareTagOrchestrator {
 
 export interface PresentTagSyncResultPresenter {
   present(result: TagSyncResult, rootDir: string): number;
-}
-
-export interface CreateTagProgressListenerPresenter {
-  create(emitLine: (line: string) => void): TagProgressListener;
 }

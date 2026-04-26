@@ -3,10 +3,15 @@ import os from "node:os";
 import path from "node:path";
 import { vi } from "vitest";
 import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
-import { loadConfig, resetConfigLoaderCacheForTests } from "#/lib/config/infra/loader.adapter";
+import {
+  ConfigLoaderAdapterImpl,
+  resetConfigLoaderCacheForTests,
+} from "#/lib/config/infra/config-loader.adapter";
 
-describe("loadConfig", () => {
+describe("ConfigLoaderAdapterImpl", () => {
   const cliFs = new NodeCliFsAdapter();
+
+  const createLoader = (): ConfigLoaderAdapterImpl => new ConfigLoaderAdapterImpl(cliFs);
 
   async function withCwd<T>(cwd: string, fn: () => Promise<T>): Promise<T> {
     const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(cwd);
@@ -38,7 +43,7 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        const { config, warnings } = await loadConfig(cliFs, process.cwd());
+        const { config, warnings } = await createLoader().loadConfig(process.cwd());
         expect(warnings).toEqual([]);
         expect(config.mirror).toEqual({ skipPackages: ["@acme/private"] });
         expect(typeof config.tag?.onAfterWrite).toBe("function");
@@ -59,8 +64,9 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow("Invalid config schema");
-        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow(
+        const loader = createLoader();
+        await expect(loader.loadConfig(process.cwd())).rejects.toThrow("Invalid config schema");
+        await expect(loader.loadConfig(process.cwd())).rejects.toThrow(
           'Unrecognized key: "skipPackages"',
         );
       });
@@ -82,8 +88,9 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow("Invalid config schema");
-        await expect(loadConfig(cliFs, process.cwd())).rejects.toThrow("tag.onAfterWrite");
+        const loader = createLoader();
+        await expect(loader.loadConfig(process.cwd())).rejects.toThrow("Invalid config schema");
+        await expect(loader.loadConfig(process.cwd())).rejects.toThrow("tag.onAfterWrite");
       });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
@@ -102,7 +109,7 @@ describe("loadConfig", () => {
       );
 
       await withCwd(nested, async () => {
-        const { config } = await loadConfig(cliFs, process.cwd());
+        const { config } = await createLoader().loadConfig(process.cwd());
         expect(config.mirror).toEqual({ skipPackages: ["@acme/infra"] });
       });
     } finally {
@@ -120,13 +127,14 @@ describe("loadConfig", () => {
       );
 
       await withCwd(root, async () => {
-        const first = await loadConfig(cliFs, process.cwd());
+        const loader = createLoader();
+        const first = await loader.loadConfig(process.cwd());
         fs.writeFileSync(
           path.join(root, "codefast.config.json"),
           JSON.stringify({ mirror: { skipPackages: ["@acme/two"] } }),
           "utf8",
         );
-        const second = await loadConfig(cliFs, process.cwd());
+        const second = await loader.loadConfig(process.cwd());
         expect(second.config.mirror).toEqual(first.config.mirror);
       });
     } finally {

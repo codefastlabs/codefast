@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
@@ -46,13 +46,13 @@ function isPackageSkipped(
 }
 
 @injectable([
-  CliFsToken,
-  CliPathToken,
-  PackageRepositoryPortToken,
-  FileSystemServicePortToken,
-  CliLoggerToken,
-  MirrorSyncReporterPortToken,
-] as const)
+  inject(CliFsToken),
+  inject(CliPathToken),
+  inject(PackageRepositoryPortToken),
+  inject(FileSystemServicePortToken),
+  inject(CliLoggerToken),
+  inject(MirrorSyncReporterPortToken),
+])
 export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageService {
   constructor(
     private readonly fs: CliFs,
@@ -203,7 +203,6 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
       const customExports = resolvePackageScopedConfig(config.customExports, pkgMeta) || {};
 
       const generatedExports = await generateExports(
-        this.fs,
         this.pathService,
         this.fileSystemService,
         distDir,
@@ -213,7 +212,6 @@ export class SyncWorkspacePackageServiceImpl implements SyncWorkspacePackageServ
       );
 
       const { prunedKeys } = await this.packageRepository.writePackageJsonExportsAtomic(
-        this.fs,
         packageJsonPath,
         {
           generatedExports: generatedExports.exports,

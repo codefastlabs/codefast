@@ -1,10 +1,15 @@
 import path from "node:path";
 import jiti from "jiti";
 import { ZodError } from "zod";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import type { ConfigLoaderPort } from "#/lib/config/application/ports/config-loader.port";
+import type {
+  ConfigLoaderPort,
+  LoadConfigPayload,
+} from "#/lib/config/application/ports/config-loader.port";
 import { codefastConfigSchema } from "#/lib/config/infra/config-schema.adapter";
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
+import { CliFsToken } from "#/lib/core/contracts/tokens";
 
 const CONFIG_JS_PRIORITY = [
   "codefast.config.mjs",
@@ -13,13 +18,7 @@ const CONFIG_JS_PRIORITY = [
 ] as const;
 const CONFIG_JSON = "codefast.config.json";
 
-type LoadConfigResult = {
-  config: CodefastConfig;
-  warnings: string[];
-  configPath?: string;
-};
-
-const cachedLoads = new Map<string, Promise<LoadConfigResult>>();
+const cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
 
 function formatZodError(error: ZodError, filePath: string): string {
   const formatted = error.issues
@@ -91,7 +90,7 @@ async function readConfigFromPath(
   return parseLoadedConfig(unwrappedConfig, filePath);
 }
 
-async function loadOnce(fs: CliFs, startDir: string): Promise<LoadConfigResult> {
+async function loadOnce(fs: CliFs, startDir: string): Promise<LoadConfigPayload> {
   const warnings: string[] = [];
   const configPaths = listConfigCandidates(startDir, fs);
   if (configPaths.length === 0) {
@@ -106,22 +105,23 @@ async function loadOnce(fs: CliFs, startDir: string): Promise<LoadConfigResult> 
   return { config, warnings, configPath };
 }
 
-export async function loadConfig(fs: CliFs, startDir: string): Promise<LoadConfigResult> {
-  const cacheKey = path.resolve(startDir);
-  if (!cachedLoads.has(cacheKey)) {
-    cachedLoads.set(cacheKey, loadOnce(fs, cacheKey));
+@injectable([inject(CliFsToken)])
+export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
+  constructor(private readonly fs: CliFs) {}
+
+  async loadConfig(startDir: string): Promise<LoadConfigPayload> {
+    const cacheKey = path.resolve(startDir);
+    if (!cachedLoads.has(cacheKey)) {
+      cachedLoads.set(cacheKey, loadOnce(this.fs, cacheKey));
+    }
+    const cached = cachedLoads.get(cacheKey);
+    if (cached === undefined) {
+      throw new Error("config loader cache invariant violated");
+    }
+    return cached;
   }
-  const cached = cachedLoads.get(cacheKey);
-  if (cached === undefined) {
-    throw new Error("config loader cache invariant violated");
-  }
-  return cached;
 }
 
 export function resetConfigLoaderCacheForTests(): void {
   cachedLoads.clear();
 }
-
-export const configLoaderAdapter: ConfigLoaderPort = {
-  loadConfig,
-};

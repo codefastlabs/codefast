@@ -1,7 +1,8 @@
 import path from "node:path";
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
+import { CliFsToken } from "#/lib/core/contracts/tokens";
 import { isDirentList } from "#/lib/mirror/infra/dirent-list.adapter";
 import { normalizePath } from "#/lib/mirror/infra/path-normalizer.adapter";
 
@@ -14,11 +15,13 @@ function isKnownReadDirError(caughtError: unknown): boolean {
   );
 }
 
-@injectable([])
+@injectable([inject(CliFsToken)])
 export class FileSystemServiceAdapter implements FileSystemServicePort {
-  async listRelativeFilesRecursively(fs: CliFs, dirPath: string): Promise<string[]> {
+  constructor(private readonly fs: CliFs) {}
+
+  async listRelativeFilesRecursively(dirPath: string): Promise<string[]> {
     try {
-      const raw = await fs.readdir(dirPath, { recursive: true, withFileTypes: true });
+      const raw = await this.fs.readdir(dirPath, { recursive: true, withFileTypes: true });
       if (!isDirentList(raw)) {
         return [];
       }
@@ -37,9 +40,9 @@ export class FileSystemServiceAdapter implements FileSystemServicePort {
     }
   }
 
-  async isDirectoryCssOnly(fs: CliFs, distDir: string, dirPath: string): Promise<boolean> {
+  async isDirectoryCssOnly(distDir: string, dirPath: string): Promise<boolean> {
     try {
-      const raw = await fs.readdir(path.join(distDir, dirPath), { withFileTypes: true });
+      const raw = await this.fs.readdir(path.join(distDir, dirPath), { withFileTypes: true });
       if (!isDirentList(raw)) {
         return false;
       }
