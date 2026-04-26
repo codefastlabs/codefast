@@ -1,3 +1,7 @@
+/**
+ * Integration Test: covers AnalyzeDirectoryUseCase (via ArrangeModule + DI), with ArrangeAnalyze
+ * presenter helpers for asserting human-readable output shape.
+ */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

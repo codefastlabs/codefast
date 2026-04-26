@@ -1,3 +1,7 @@
+/**
+ * Integration Test: covers RunMirrorSyncUseCase with MirrorModule and workspace/package/sync
+ * adapters against temporary package layouts on disk.
+ */
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";

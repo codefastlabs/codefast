@@ -1,3 +1,7 @@
+/**
+ * Integration Test: covers ArrangeFileProcessorServiceImpl, DomainSourceParserAdapter, and
+ * group-file preview presentation (printGroupFilePreviewFromWork) against real filesystem fixtures.
+ */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

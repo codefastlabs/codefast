@@ -6,6 +6,10 @@ import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
 import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infra/ts-ast-translator.adapter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
+/**
+ * {@link CliLogger} is optional for manual construction (e.g. integration tests); the container
+ * always injects {@link CliLoggerToken}.
+ */
 @injectable([inject(CliLoggerToken)])
 export class DomainSourceParserAdapter implements DomainSourceParserPort {
   constructor(private readonly logger?: CliLogger) {}

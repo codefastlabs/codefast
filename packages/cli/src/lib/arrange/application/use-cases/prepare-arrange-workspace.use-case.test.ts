@@ -6,7 +6,7 @@ import { resolveArrangeTargetPath as resolveArrangeCliTargetPath } from "#/lib/a
 
 const cliFs = new NodeCliFsAdapter();
 
-describe("resolveArrangeCliTargetPath", () => {
+describe("resolveArrangeTargetPath", () => {
   it("returns canonical explicit target resolved from cwd", () => {
     const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "arrange-explicit-"));
     const sourceDir = path.join(rootDir, "src");

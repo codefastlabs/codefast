@@ -1,3 +1,7 @@
+/**
+ * Integration Test: covers RunTagSyncUseCase (TagModule + DI) and free-function helpers
+ * runTagOnTarget / resolveNearestPackageVersion with concrete tag infra adapters.
+ */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

@@ -1,58 +1,35 @@
-import { describe, expect, it, vi } from "vitest";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { presentArrangeSyncResult } from "#/lib/arrange/presentation/arrange-sync.presenter";
+import { describe, expect, it } from "vitest";
+import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
+import {
+  formatArrangeGroupJsonOutput,
+  formatArrangeSyncJsonOutput,
+} from "#/lib/arrange/presentation/arrange-sync.presenter";
 
-function createCapturingLogger(): { logger: CliLogger; outs: string[]; errs: string[] } {
-  const outs: string[] = [];
-  const errs: string[] = [];
-  return {
-    logger: {
-      out: vi.fn((line: string) => {
-        outs.push(line);
-      }),
-      err: vi.fn((line: string) => {
-        errs.push(line);
-      }),
-    },
-    outs,
-    errs,
-  };
-}
-
-describe("presentArrangeSyncResult", () => {
-  it("returns success when hook completes without error", () => {
-    const { logger } = createCapturingLogger();
-    const code = presentArrangeSyncResult(
-      logger,
-      {
-        filePaths: [],
-        modifiedFiles: [],
-        totalFound: 0,
-        totalChanged: 0,
-        hookError: null,
-        previewPlans: [],
-      },
-      false,
-    );
-    expect(code).toBe(CLI_EXIT_SUCCESS);
+describe("formatArrangeSyncJsonOutput", () => {
+  it("sets ok from hookError", () => {
+    const result: ArrangeRunResult = {
+      filePaths: [],
+      modifiedFiles: [],
+      totalFound: 0,
+      totalChanged: 0,
+      hookError: null,
+      previewPlans: [],
+    };
+    const okParsed = JSON.parse(formatArrangeSyncJsonOutput(result, false)) as { ok: boolean };
+    expect(okParsed.ok).toBe(true);
+    const errParsed = JSON.parse(
+      formatArrangeSyncJsonOutput({ ...result, hookError: "e" }, true),
+    ) as { ok: boolean };
+    expect(errParsed.ok).toBe(false);
   });
+});
 
-  it("returns general error when onAfterWrite hook fails", () => {
-    const { logger, errs } = createCapturingLogger();
-    const code = presentArrangeSyncResult(
-      logger,
-      {
-        filePaths: ["/a.tsx"],
-        modifiedFiles: ["/a.tsx"],
-        totalFound: 1,
-        totalChanged: 1,
-        hookError: "hook failed",
-        previewPlans: [],
-      },
-      true,
-    );
-    expect(code).toBe(CLI_EXIT_GENERAL_ERROR);
-    expect(errs).toContain("hook failed");
+describe("formatArrangeGroupJsonOutput", () => {
+  it("wraps lines", () => {
+    const parsed = JSON.parse(
+      formatArrangeGroupJsonOutput({ primaryLine: 'cn("a")', bucketsCommentLine: "// x" }),
+    ) as { schemaVersion: number; primaryLine: string };
+    expect(parsed.schemaVersion).toBe(1);
+    expect(parsed.primaryLine).toBe('cn("a")');
   });
 });
