@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/application/arrange-analyze-json.format";
-import { formatArrangeGroupJsonOutput } from "#/lib/arrange/application/arrange-group-json.format";
-import { formatArrangeSyncJsonOutput } from "#/lib/arrange/application/arrange-sync-json.format";
+import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/presentation/arrange-analyze.presenter";
+import {
+  formatArrangeGroupJsonOutput,
+  formatArrangeSyncJsonOutput,
+} from "#/lib/arrange/presentation/arrange-sync.presenter";
 import type { AnalyzeReport, ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 
 describe("arrange JSON formatters", () => {

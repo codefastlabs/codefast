@@ -1,6 +1,14 @@
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { exitCodeForArrangeSyncResult } from "#/lib/arrange/application/arrange-sync-cli-result";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
+
+// ─── Exit code ────────────────────────────────────────────────────────────────
+
+export function exitCodeForArrangeSyncResult(result: ArrangeRunResult): number {
+  return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+}
+
+// ─── Human-readable output ────────────────────────────────────────────────────
 
 export function presentArrangeSyncResult(
   logger: CliLogger,
@@ -27,4 +35,43 @@ export function presentArrangeSyncResult(
     logger.err(result.hookError);
   }
   return exitCodeForArrangeSyncResult(result);
+}
+
+// ─── JSON output (sync) ───────────────────────────────────────────────────────
+
+export type ArrangeSyncJsonPayloadV1 = {
+  readonly schemaVersion: 1;
+  readonly ok: boolean;
+  readonly write: boolean;
+  readonly result: ArrangeRunResult;
+};
+
+export function formatArrangeSyncJsonOutput(result: ArrangeRunResult, write: boolean): string {
+  const payload: ArrangeSyncJsonPayloadV1 = {
+    schemaVersion: 1,
+    ok: result.hookError === null,
+    write,
+    result,
+  };
+  return JSON.stringify(payload);
+}
+
+// ─── JSON output (group / suggest) ───────────────────────────────────────────
+
+export type ArrangeGroupJsonPayloadV1 = {
+  readonly schemaVersion: 1;
+  readonly primaryLine: string;
+  readonly bucketsCommentLine: string;
+};
+
+export function formatArrangeGroupJsonOutput(output: {
+  readonly primaryLine: string;
+  readonly bucketsCommentLine: string;
+}): string {
+  const payload: ArrangeGroupJsonPayloadV1 = {
+    schemaVersion: 1,
+    primaryLine: output.primaryLine,
+    bucketsCommentLine: output.bucketsCommentLine,
+  };
+  return JSON.stringify(payload);
 }

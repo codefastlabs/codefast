@@ -1,6 +1,6 @@
 import { Module } from "@codefast/di";
 import type { Container } from "@codefast/di";
-import { TagCommand } from "#/commands/tag";
+import { TagCommand } from "#/lib/tag/presentation/tag.command";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { COMMAND_TOKEN } from "#/lib/kernel/di/command.token";
 import { TagModule } from "#/lib/tag/tag.module";

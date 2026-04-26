@@ -1,10 +1,15 @@
 import path from "node:path";
+import { inject, injectable } from "@codefast/di";
 import {
   LONG_STRING_TOKEN_THRESHOLD,
   MAX_REPORT_LINES,
 } from "#/lib/arrange/domain/constants.domain";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+
+// ─── Human-readable report ───────────────────────────────────────────────────
 
 export function printAnalyzeReport(
   analyzeRootDirectoryPath: string,
@@ -60,4 +65,31 @@ export function printAnalyzeReport(
   if (analyzeReport.cnInsideTvCalls.length > MAX_REPORT_LINES) {
     out(`  … and ${analyzeReport.cnInsideTvCalls.length - MAX_REPORT_LINES} more`);
   }
+}
+
+// ─── Injectable presenter class ───────────────────────────────────────────────
+
+@injectable([inject(CliLoggerToken)])
+export class PresentAnalyzeReportPresenterImpl implements PresentAnalyzeReportPresenter {
+  constructor(private readonly logger: CliLogger) {}
+
+  present(resolvedTargetPath: string, report: AnalyzeReport): void {
+    printAnalyzeReport(resolvedTargetPath, report, this.logger);
+  }
+}
+
+// ─── JSON output ─────────────────────────────────────────────────────────────
+
+export type ArrangeAnalyzeJsonPayloadV1 = {
+  readonly schemaVersion: 1;
+  readonly analyzeRootPath: string;
+  readonly report: AnalyzeReport;
+};
+
+export function formatArrangeAnalyzeJsonOutput(
+  analyzeRootPath: string,
+  report: AnalyzeReport,
+): string {
+  const payload: ArrangeAnalyzeJsonPayloadV1 = { schemaVersion: 1, analyzeRootPath, report };
+  return JSON.stringify(payload);
 }

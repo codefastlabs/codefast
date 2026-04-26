@@ -5,21 +5,17 @@ import { findRepoRoot } from "#/lib/infra/workspace/repo-root.adapter";
 import type { PrepareTagOrchestrator as PrepareTagOrchestratorContract } from "#/lib/tag/contracts/presentation.contract";
 import { resolveTagCliTargetPath } from "#/lib/tag/presentation/resolve-tag-cli-target.presenter";
 import { resolveTagWorkspaceRootPath } from "#/lib/tag/presentation/resolve-tag-workspace-root.presenter";
-import { TryLoadCodefastConfigPresenterToken } from "#/lib/core/contracts/tokens";
-import type { TryLoadCodefastConfigPresenter } from "#/lib/core/contracts/presentation.contract";
+import { LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
+import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
-@injectable([
-  inject(CliFsToken),
-  inject(CliLoggerToken),
-  inject(TryLoadCodefastConfigPresenterToken),
-])
+@injectable([inject(CliFsToken), inject(CliLoggerToken), inject(LoadCodefastConfigUseCaseToken)])
 export class PrepareTagOrchestrator implements PrepareTagOrchestratorContract {
   constructor(
     private readonly fs: CliFs,
     private readonly logger: CliLogger,
-    private readonly tryLoadCodefastConfig: TryLoadCodefastConfigPresenter,
+    private readonly loadCodefastConfig: LoadCodefastConfigUseCase,
   ) {}
 
   async execute(args: {
@@ -36,7 +32,7 @@ export class PrepareTagOrchestrator implements PrepareTagOrchestratorContract {
       logger: this.logger,
       currentWorkingDirectory: args.currentWorkingDirectory,
     });
-    const loadedOutcome = await this.tryLoadCodefastConfig.execute(rootDir);
+    const loadedOutcome = await this.loadCodefastConfig.execute(rootDir);
     if (!loadedOutcome.ok) {
       return loadedOutcome;
     }

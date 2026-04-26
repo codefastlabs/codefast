@@ -14,9 +14,11 @@ import {
   DomainSourceParserPortToken,
   FileWalkerPortToken,
   GroupFilePreviewPortToken,
+  PrepareArrangeWorkspaceUseCaseToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/arrange/contracts/tokens";
+import { PrepareArrangeWorkspaceUseCaseImpl } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import { InfraModule } from "#/lib/core/infra/infra.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
@@ -65,4 +67,9 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
   moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
 
   moduleBuilder.bind(SuggestCnGroupsUseCaseToken).to(SuggestCnGroupsUseCaseImpl).singleton();
+
+  moduleBuilder
+    .bind(PrepareArrangeWorkspaceUseCaseToken)
+    .to(PrepareArrangeWorkspaceUseCaseImpl)
+    .singleton();
 });

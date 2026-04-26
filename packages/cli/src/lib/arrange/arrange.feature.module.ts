@@ -1,6 +1,6 @@
 import { Module } from "@codefast/di";
 import type { Container } from "@codefast/di";
-import { ArrangeCommand } from "#/commands/arrange";
+import { ArrangeCommand } from "#/lib/arrange/presentation/arrange.command";
 import { ArrangeModule } from "#/lib/arrange/arrange.module";
 import { ArrangePresentationModule } from "#/lib/arrange/arrange.presentation.module";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
