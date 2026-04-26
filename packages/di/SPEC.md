@@ -1613,59 +1613,151 @@ class RebindUnboundTokenError extends DiError {
 ```
 packages/di/
 ├── src/
-│   ├── types.ts               BindingScope, BindingIdentifier, BindingKind, Constructor,
-│   │                          ActivationHandler, DeactivationHandler, ResolveOptions,
-│   │                          ResolutionContext, ConstraintContext, MaterializationFrame, TokenValue
-│   ├── token.ts               Token<Value>, token() factory, TOKEN_BRAND
+│   │
+│   ├── __tests__/                             Integration tests — cross-module, end-to-end scenarios
+│   │   ├── async-dispose.integration.test.ts  Container.dispose() với async onDeactivation chain
+│   │   ├── async-scoped-dispose.integration.test.ts  scoped + async deactivation trên child container
+│   │   ├── constraints.integration.test.ts    whenParentIs / whenAnyAncestorIs / when() trong resolve thật
+│   │   ├── container-branches.integration.test.ts  Child container, parent chain, scope ownership
+│   │   ├── decorators.integration.test.ts     @injectable + @inject + @postConstruct end-to-end
+│   │   ├── di.integration.test.ts             Full DI workflow: bind → load → resolve → dispose
+│   │   ├── last-wins-slot.integration.test.ts Slot-aware last-wins ở registration-time
+│   │   ├── metadata-reader-branches.integration.test.ts  SymbolMetadataReader edge cases
+│   │   ├── resolve-all-async.integration.test.ts  resolveAll / resolveAllAsync filter semantics
+│   │   ├── scope-violation.integration.test.ts    validate() + ScopeViolationError detection
+│   │   └── when-predicate-multi.integration.test.ts  when() predicate với nhiều bindings
+│   │
+│   ├── token.ts               Token<Value> branded type, token() factory, TOKEN_BRAND
 │   ├── token.test.ts
-│   ├── binding.ts             Binding discriminated union, BindToBuilder/BindingBuilder fluent API
+│   │
+│   ├── binding.ts             Binding discriminated union (ClassBinding, ConstantBinding, …)
+│   │                          BindToBuilder / BindingBuilder / AliasBindingBuilder fluent API
+│   │                          Tất cả kiểu nền tảng co-located: BindingScope, BindingIdentifier,
+│   │                          BindingKind, Constructor, ActivationHandler, DeactivationHandler,
+│   │                          ResolveOptions, ResolutionContext, ConstraintContext,
+│   │                          MaterializationFrame, TokenValue
 │   ├── binding.test.ts
-│   ├── registry.ts            BindingRegistry — Map<Token, Binding[]>, slot-aware last-wins
+│   │
+│   ├── binding-select.ts      Binding selection — runtime filtering: token + ResolveOptions hint
+│   │                          + when() predicates → candidate binding(s).
+│   │                          Tách khỏi registry (storage) và resolver (graph walk):
+│   │                          registry lưu, binding-select lọc, resolver consume.
+│   ├── binding-select.test.ts
+│   │
+│   ├── registry.ts            BindingRegistry — slot-aware last-wins ở registration-time,
+│   │                          eager commit, Map<tokenKey, Binding[]>
 │   ├── registry.test.ts
+│   │
 │   ├── resolver.ts            DependencyResolver — graph walk, circular detection via Set,
-│   │                          async contamination propagation
+│   │                          async contamination propagation, captive dependency detection
 │   ├── resolver.test.ts
-│   ├── scope.ts               ScopeManager — singleton cache per container, scoped cache per child
+│   │
+│   ├── scope.ts               ScopeManager — singleton cache per container, scoped cache per child,
+│   │                          MissingScopeContextError khi resolve scoped từ root
 │   ├── scope.test.ts
-│   ├── lifecycle.ts           LifecycleManager — per-binding + container-level hooks, ordering
+│   │
+│   ├── lifecycle.ts           LifecycleManager — per-binding + container-level onActivation /
+│   │                          onDeactivation, thứ tự chuẩn, async deactivation chain
 │   ├── lifecycle.test.ts
-│   ├── container.ts           DefaultContainer + Container interface
-│   ├── container.test.ts
-│   ├── module.ts              SyncModule + AsyncModule (branded), reference-count tracking
+│   │
+│   ├── environment.ts         Runtime environment — ResolutionContext implementation,
+│   │                          async contamination tracking, capability checks
+│   │                          (Symbol.metadata, Symbol.asyncDispose availability)
+│   ├── environment.test.ts
+│   │
+│   ├── inspector.ts           Introspection — ContainerSnapshot, BindingSnapshot,
+│   │                          inspect(), lookupBindings(), has(), hasOwn()
+│   ├── inspector.test.ts
+│   │
+│   ├── dependency-graph.ts    Graph building — generateDependencyGraph() → ContainerGraphJson,
+│   │                          nodes + edges với label format chuẩn
+│   ├── dependency-graph.test.ts
+│   │
+│   ├── constraints.ts         Advanced constraints — whenParentIs, whenAnyAncestorIs,
+│   │                          whenNoParentIs, whenNoAncestorIs và Named/Tagged variants.
+│   │                          Export từ subpath @codefast/di/constraints, không từ root index.
+│   ├── constraints.test.ts
+│   │
+│   ├── module.ts              SyncModule + AsyncModule (branded types), reference-count tracking,
+│   │                          additive-only ModuleBuilder / AsyncModuleBuilder
 │   ├── module.test.ts
 │   │
+│   ├── container.ts           DefaultContainer — compose tất cả modules, implement Container interface
+│   ├── container.test.ts
+│   │
+│   ├── errors.ts              DiError abstract base + 10 concrete subclasses + ScopeViolationDetails
+│   ├── errors.test.ts
+│   │
 │   ├── metadata/
-│   │   ├── metadata-keys.ts               Unique Symbol keys trên Symbol.metadata
+│   │   ├── metadata-keys.ts               Unique Symbol keys viết vào Symbol.metadata
 │   │   ├── metadata-types.ts              ConstructorMetadata, ParamMetadata,
-│   │   │                                  LifecycleMetadata, MetadataReader
-│   │   ├── symbol-metadata-reader.ts      SymbolMetadataReader — Object.hasOwn guard
-│   │   ├── symbol-metadata-reader.test.ts
-│   │   └── param-registry.test.ts
+│   │   │                                  LifecycleMetadata, MetadataReader interface
+│   │   ├── param-registry.ts              ParamRegistry — runtime registry cho constructor param
+│   │   │                                  metadata; collect → flush vào Symbol.metadata
+│   │   ├── param-registry.test.ts
+│   │   ├── symbol-metadata-reader.ts      SymbolMetadataReader — Object.hasOwn guard,
+│   │   │                                  chỉ đọc own metadata (không leak từ parent class)
+│   │   └── symbol-metadata-reader.test.ts
 │   │
 │   ├── decorators/
-│   │   ├── injectable.ts                  @injectable(deps?, options?) + autoRegister
-│   │   ├── injectable.test.ts
-│   │   ├── inject.ts                      inject() / optional() / injectAll() — plain fn + accessor
-│   │   ├── inject.test.ts
-│   │   ├── lifecycle-decorators.ts        @postConstruct() + @preDestroy()
-│   │   └── lifecycle-decorators.test.ts
+│   │   ├── injectable.ts                  @injectable(deps?, options?) — ghi param metadata
+│   │   │                                  vào Symbol.metadata; options.autoRegister để đăng ký
+│   │   │                                  vào explicit AutoRegisterRegistry.
+│   │   │                                  createAutoRegisterRegistry() cũng export từ đây.
+│   │   ├── inject.ts                      inject() / optional() / injectAll() — plain fn trả
+│   │   │                                  InjectionDescriptor; đồng thời là accessor decorator
+│   │   └── inject.test.ts
+│   │   └── lifecycle-decorators.ts        @postConstruct() + @preDestroy() — ghi method names
+│   │                                      vào Symbol.metadata; support nhiều method per class
 │   │
-│   ├── auto-register/
-│   │   ├── auto-register-registry.ts      createAutoRegisterRegistry(), AutoRegisterRegistry
-│   │   └── auto-register-registry.test.ts
+│   ├── graph-adapters/
+│   │   ├── types.ts           GraphNode, GraphEdge, ContainerGraphJson — shared types
+│   │   │                      cho tất cả adapters
+│   │   ├── dot.ts             toDotGraph(graph) → DOT language string (Graphviz)
+│   │   ├── cytoscape.ts       toCytoscapeGraph(graph) → Cytoscape.js elements format
+│   │   └── reactflow.ts       toReactFlowGraph(graph) → React Flow nodes/edges format
 │   │
-│   ├── errors.ts              DiError + tất cả subclasses + ScopeViolationDetails
-│   └── index.ts               Public API exports
+│   ├── index.ts               Public API exports (root entrypoint)
+│   └── index.test.ts          Public API smoke tests — kiểm tra mọi export tồn tại và có type đúng
 │
 ├── package.json
 ├── tsconfig.json
 └── tsdown.config.ts
 ```
 
+> **Không có `types.ts` trung tâm:** Kiểu nền tảng (`BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `MaterializationFrame`, `TokenValue`) được khai báo co-located trong `binding.ts` và re-export từ `index.ts`. Tránh tạo một file "dump all types" không có ownership rõ ràng.
+
+> **Không có `auto-register/` directory:** `createAutoRegisterRegistry()` và `AutoRegisterRegistry` được khai báo và export từ `decorators/injectable.ts` — cùng nơi với `@injectable()` vì auto-register là option của `@injectable()`, không phải tính năng độc lập.
+
+> **`__tests__/` vs co-located `.test.ts`:** Unit tests (`*.test.ts` co-located) kiểm tra behavior của từng module trong isolation. Integration tests trong `__tests__/` kiểm tra các scenario cross-module: async dispose chain, slot last-wins end-to-end, constraint + resolution pipeline, v.v. Phân tách này giúp `vitest --reporter=verbose` phân biệt rõ unit vs integration failure.
+
+> **`binding-select.ts` tách khỏi `registry.ts`:** `registry.ts` là storage layer — chỉ quan tâm đến "lưu binding vào đâu" và slot-aware last-wins ở registration-time. `binding-select.ts` là runtime filtering layer — nhận token + `ResolveOptions` hint + `when()` predicates, trả về binding candidates. `resolver.ts` consume kết quả của `binding-select.ts` để walk dependency graph. Phân tách này làm từng layer dễ test và dễ reason về độc lập.
+
+> **`environment.ts`:** Không phải platform detection đơn thuần. File này implement `ResolutionContext` (context được truyền vào `toDynamic` / `toDynamicAsync` factory) và track async contamination trong quá trình resolve. Centralize runtime state của một resolution run, tránh passing nhiều arguments qua resolver call stack.
+
+> **`inspector.ts`:** Tách `inspect()` / `lookupBindings()` / `has()` / `hasOwn()` ra khỏi `container.ts` để giữ `container.ts` tập trung vào orchestration. Inspector nhận read-only view của registry và scope state, không có write access.
+
+---
+
 ### 10.1 Public API (`index.ts`)
 
 ```ts
-// Types nền tảng
+// Token
+export { token } from "#/token";
+export type { Token } from "#/token";
+
+// Binding builders — types only
+export type {
+  AliasBindingBuilder,
+  BindToBuilder,
+  BindingBuilder,
+  ConstantBindingBuilder,
+  ScopedBindingBuilder,
+  SingletonBindingBuilder,
+  TransientBindingBuilder,
+} from "#/binding";
+
+// Foundation types — co-located trong binding.ts, re-export từ đây
 export type {
   ActivationHandler,
   BindingIdentifier,
@@ -1678,33 +1770,21 @@ export type {
   ResolveOptions,
   ResolutionContext,
   TokenValue,
-} from "#/types";
-
-// Token
-export { token } from "#/token";
-export type { Token } from "#/token";
+} from "#/binding";
 
 // Container
 export { Container } from "#/container";
+
+// Introspection types
+export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
+
+// Graph types — shared với graph-adapters
 export type {
-  BindingSnapshot,
   ContainerGraphJson,
-  ContainerSnapshot,
   GraphEdge,
   GraphNode,
   GraphOptions,
-} from "#/container";
-
-// Binding builders
-export type {
-  AliasBindingBuilder,
-  BindToBuilder,
-  BindingBuilder,
-  ConstantBindingBuilder,
-  ScopedBindingBuilder,
-  SingletonBindingBuilder,
-  TransientBindingBuilder,
-} from "#/binding";
+} from "#/graph-adapters/types";
 
 // Module
 export { AsyncModule, SyncModule } from "#/module";
@@ -1717,9 +1797,9 @@ export { injectable } from "#/decorators/injectable";
 export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
 export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
 
-// Auto-register
-export { createAutoRegisterRegistry } from "#/auto-register/auto-register-registry";
-export type { AutoRegisterRegistry } from "#/auto-register/auto-register-registry";
+// Auto-register — co-located với injectable
+export { createAutoRegisterRegistry } from "#/decorators/injectable";
+export type { AutoRegisterRegistry } from "#/decorators/injectable";
 
 // Errors
 export {
@@ -1740,13 +1820,23 @@ export {
 export type { ScopeViolationDetails } from "#/errors";
 
 // Subpath exports (không export từ root index):
-// @codefast/di/constraints  — whenParentIs, whenAnyAncestorIs, whenNoParentIs, whenNoAncestorIs, …
-// @codefast/di/graph-adapters/dot — toDotGraph(graph: ContainerGraphJson): string
-// @codefast/di/metadata/*   — Metadata internals (symbol-metadata-reader, metadata-types, …)
-// @codefast/di/registry     — BindingRegistry (advanced)
-// @codefast/di/resolver     — DependencyResolver (advanced)
-// @codefast/di/scope        — ScopeManager (advanced)
-// @codefast/di/lifecycle    — LifecycleManager (advanced)
+// @codefast/di/constraints
+//   → whenParentIs, whenAnyAncestorIs, whenNoParentIs, whenNoAncestorIs, …và Named/Tagged variants
+// @codefast/di/graph-adapters/dot
+//   → toDotGraph(graph: ContainerGraphJson): string
+// @codefast/di/graph-adapters/cytoscape
+//   → toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements
+// @codefast/di/graph-adapters/reactflow
+//   → toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph
+// @codefast/di/metadata/metadata-keys
+// @codefast/di/metadata/metadata-types
+// @codefast/di/metadata/symbol-metadata-reader
+// @codefast/di/registry         — BindingRegistry (advanced)
+// @codefast/di/resolver         — DependencyResolver (advanced)
+// @codefast/di/scope            — ScopeManager (advanced)
+// @codefast/di/lifecycle        — LifecycleManager (advanced)
+// @codefast/di/binding-select   — BindingSelector (advanced)
+// @codefast/di/inspector        — Inspector (advanced)
 ```
 
 ### 10.2 `package.json`
@@ -1761,9 +1851,13 @@ ESM-only. `engines.node >= 22.0.0`.
     ".": "./dist/index.{mjs,d.mts}",
     "./constraints": "./dist/constraints.{mjs,d.mts}",
     "./graph-adapters/dot": "./dist/graph-adapters/dot.{mjs,d.mts}",
+    "./graph-adapters/cytoscape": "./dist/graph-adapters/cytoscape.{mjs,d.mts}",
+    "./graph-adapters/reactflow": "./dist/graph-adapters/reactflow.{mjs,d.mts}",
     "./metadata/metadata-keys": "./dist/metadata/metadata-keys.{mjs,d.mts}",
     "./metadata/metadata-types": "./dist/metadata/metadata-types.{mjs,d.mts}",
     "./metadata/symbol-metadata-reader": "./dist/metadata/symbol-metadata-reader.{mjs,d.mts}",
+    "./binding-select": "./dist/binding-select.{mjs,d.mts}",
+    "./inspector": "./dist/inspector.{mjs,d.mts}",
     "./registry": "./dist/registry.{mjs,d.mts}",
     "./resolver": "./dist/resolver.{mjs,d.mts}",
     "./scope": "./dist/scope.{mjs,d.mts}",
@@ -1780,7 +1874,7 @@ ESM-only. `engines.node >= 22.0.0`.
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["src/**/*.ts", "!src/**/*.test.ts"],
+  entry: ["src/**/*.ts", "!src/**/*.test.ts", "!src/__tests__/**"],
 });
 ```
 
