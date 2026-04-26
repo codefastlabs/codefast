@@ -1,6 +1,6 @@
 import type { Token } from "@codefast/di";
 import { token } from "@codefast/di";
-import type { TryLoadCodefastConfigPresenter } from "#/lib/core/contracts/presentation.contract";
+import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 
-export const TryLoadCodefastConfigPresenterToken: Token<TryLoadCodefastConfigPresenter> =
-  token<TryLoadCodefastConfigPresenter>("TryLoadCodefastConfigPresenter");
+export const LoadCodefastConfigUseCaseToken: Token<LoadCodefastConfigUseCase> =
+  token<LoadCodefastConfigUseCase>("LoadCodefastConfigUseCase");

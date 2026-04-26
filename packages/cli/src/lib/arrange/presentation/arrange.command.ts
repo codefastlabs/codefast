@@ -2,21 +2,15 @@ import process from "node:process";
 import { inject, injectable } from "@codefast/di";
 import type { Command } from "commander";
 import { Option } from "commander";
-import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/application/arrange-analyze-json.format";
-import { formatArrangeGroupJsonOutput } from "#/lib/arrange/application/arrange-group-json.format";
-import { exitCodeForArrangeSyncResult } from "#/lib/arrange/application/arrange-sync-cli-result";
-import { formatArrangeSyncJsonOutput } from "#/lib/arrange/application/arrange-sync-json.format";
 import {
   AnalyzeDirectoryUseCaseToken,
-  PrepareArrangeOrchestratorToken,
+  PrepareArrangeWorkspaceUseCaseToken,
   PresentAnalyzeReportPresenterToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/arrange/contracts/tokens";
-import type {
-  PrepareArrangeOrchestrator,
-  PresentAnalyzeReportPresenter,
-} from "#/lib/arrange/contracts/presentation.contract";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
+import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import type {
   AnalyzeDirectoryUseCase,
   RunArrangeSyncUseCase,
@@ -27,7 +21,13 @@ import {
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/lib/arrange/presentation/arrange-cli-schema.presenter";
-import { presentArrangeSyncResult } from "#/lib/arrange/presentation/arrange-sync.presenter";
+import {
+  exitCodeForArrangeSyncResult,
+  formatArrangeGroupJsonOutput,
+  formatArrangeSyncJsonOutput,
+  presentArrangeSyncResult,
+} from "#/lib/arrange/presentation/arrange-sync.presenter";
+import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/presentation/arrange-analyze.presenter";
 import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
@@ -43,7 +43,7 @@ function withClassNameOption(): Option {
 
 @injectable([
   inject(CliLoggerToken),
-  inject(PrepareArrangeOrchestratorToken),
+  inject(PrepareArrangeWorkspaceUseCaseToken),
   inject(AnalyzeDirectoryUseCaseToken),
   inject(RunArrangeSyncUseCaseToken),
   inject(SuggestCnGroupsUseCaseToken),
@@ -55,7 +55,7 @@ export class ArrangeCommand implements CliCommand {
 
   constructor(
     private readonly logger: CliLogger,
-    private readonly prepareTargetWorkspaceAndConfig: PrepareArrangeOrchestrator,
+    private readonly prepareWorkspace: PrepareArrangeWorkspaceUseCase,
     private readonly analyzeDirectory: AnalyzeDirectoryUseCase,
     private readonly runArrangeSync: RunArrangeSyncUseCase,
     private readonly suggestCnGroups: SuggestCnGroupsUseCase,
@@ -118,7 +118,7 @@ export class ArrangeCommand implements CliCommand {
     target: string | undefined,
     options?: { json?: boolean },
   ): Promise<void> {
-    const prelude = await this.prepareTargetWorkspaceAndConfig.execute({
+    const prelude = await this.prepareWorkspace.execute({
       currentWorkingDirectory: process.cwd(),
       rawTarget: target,
     });
@@ -128,7 +128,6 @@ export class ArrangeCommand implements CliCommand {
     const { resolvedTarget } = prelude.value;
     const parsed = parseWithCliSchema(arrangeAnalyzeDirectoryRequestSchema, {
       analyzeRootPath: resolvedTarget,
-      json: options?.json,
     });
     if (!consumeCliAppError(this.logger, parsed)) {
       return;
@@ -137,7 +136,7 @@ export class ArrangeCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, outcome)) {
       return;
     }
-    if (parsed.value.json) {
+    if (options?.json) {
       this.logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
     } else {
       this.presentAnalyzeReport.present(resolvedTarget, outcome.value);
@@ -149,7 +148,7 @@ export class ArrangeCommand implements CliCommand {
     target: string | undefined,
     opts: { withClassName?: boolean; cnImport?: string; json?: boolean },
   ): Promise<void> {
-    const prelude = await this.prepareTargetWorkspaceAndConfig.execute({
+    const prelude = await this.prepareWorkspace.execute({
       currentWorkingDirectory: process.cwd(),
       rawTarget: target,
     });
@@ -161,7 +160,6 @@ export class ArrangeCommand implements CliCommand {
       rootDir,
       targetPath: resolvedTarget,
       write,
-      json: opts.json,
       withClassName: opts.withClassName,
       cnImport: opts.cnImport,
       config: config.arrange ?? {},
@@ -173,7 +171,7 @@ export class ArrangeCommand implements CliCommand {
     if (!consumeCliAppError(this.logger, outcome)) {
       return;
     }
-    if (parsed.value.json) {
+    if (opts.json) {
       this.logger.out(formatArrangeSyncJsonOutput(outcome.value, write));
       process.exitCode = exitCodeForArrangeSyncResult(outcome.value);
     } else {
@@ -189,13 +187,12 @@ export class ArrangeCommand implements CliCommand {
       inlineClasses: tokens.join(" ").trim(),
       emitTvStyleArray: !!opts.tv,
       trailingClassName: !!opts.withClassName,
-      json: opts.json,
     });
     if (!consumeCliAppError(this.logger, parsed)) {
       return;
     }
     const output = this.suggestCnGroups.execute(parsed.value);
-    if (parsed.value.json) {
+    if (opts.json) {
       this.logger.out(formatArrangeGroupJsonOutput(output));
     } else {
       this.logger.out(output.primaryLine);

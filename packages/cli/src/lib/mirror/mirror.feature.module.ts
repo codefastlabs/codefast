@@ -1,6 +1,6 @@
 import { Module } from "@codefast/di";
 import type { Container } from "@codefast/di";
-import { MirrorCommand } from "#/commands/mirror";
+import { MirrorCommand } from "#/lib/mirror/presentation/mirror.command";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { COMMAND_TOKEN } from "#/lib/kernel/di/command.token";
 import { MirrorModule } from "#/lib/mirror/mirror.module";
