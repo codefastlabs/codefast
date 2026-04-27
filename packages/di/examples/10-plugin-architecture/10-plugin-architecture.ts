@@ -5,16 +5,14 @@
  * analytics, notifications) is a hot-swappable plugin module.
  *
  * Key architectural insight about multi-binding:
- *   - Module builder.bind() uses "last-wins" semantics per token — correct for
- *     infrastructure (each module owns its capability token: StorageToken,
- *     AnalyticsToken, etc.).
- *   - container.bind() uses "append" semantics — correct for registries where
- *     multiple values share a token (PluginToken, MiddlewareToken, HandlerToken).
+ *   - bind() is slot-aware last-wins for both container and module builders.
+ *   - To keep multiple bindings under one token, register each one in a
+ *     distinct slot (e.g. whenNamed("storage"), whenNamed("analytics")).
  *
  * The pattern therefore is:
  *   1. Each plugin MODULE binds its own capability token (StorageToken, etc.)
  *   2. The PLATFORM registers plugin descriptors via direct container.bind()
- *      after loading modules — this is what enables resolveAll(PluginToken).
+ *      with distinct whenNamed(...) slots, enabling resolveAll(PluginToken).
  *
  * Without DI: hand-wire every plugin's dependencies, track which plugins are
  * active, manually tear down connections on unload.
@@ -41,10 +39,10 @@
  *   │  │ Logger   │  └───────────────┘  └───────────────┘  │
  *   │  └──────────┘                                        │
  *   │                                                      │
- *   │  Direct container.bind() — append per registration:  │
- *   │  PluginToken[0] = S3PluginDescriptor                 │
- *   │  PluginToken[1] = AnalyticsPluginDescriptor          │
- *   │  PluginToken[2] = SlackPluginDescriptor              │
+ *   │  Direct container.bind() + named slots:              │
+ *   │  PluginToken whenNamed("storage")      = S3          │
+ *   │  PluginToken whenNamed("analytics")    = Segment     │
+ *   │  PluginToken whenNamed("notifications")= Slack       │
  *   └──────────────────────────────────────────────────────┘
  */
 
@@ -61,8 +59,7 @@ const AnalyticsToken = token<AnalyticsProvider>("AnalyticsProvider");
 const NotificationToken = token<NotificationProvider>("NotificationProvider");
 const DocumentServiceToken = token<DocumentService>("DocumentService");
 
-// PluginToken is the multi-binding registry populated via container.bind() —
-// NOT via module builder.bind() — to leverage append semantics.
+// PluginToken is a multi-binding registry with one named slot per capability.
 const PluginToken = token<PluginDescriptor>("Plugin");
 
 // ============================================================================
@@ -377,23 +374,31 @@ class Platform {
     await this.container.initializeAsync();
     this.container.validate();
 
-    // Register plugin descriptors directly on the container (not via module api)
-    // so that container.bind()'s append semantics enable multi-binding.
-    this.container.bind(PluginToken).toConstantValue({
-      name: "S3StoragePlugin",
-      version: "2.1.0",
-      capabilities: ["storage"],
-    });
-    this.container.bind(PluginToken).toConstantValue({
-      name: "SegmentAnalyticsPlugin",
-      version: "1.4.2",
-      capabilities: ["analytics"],
-    });
-    this.container.bind(PluginToken).toConstantValue({
-      name: "SlackNotificationPlugin",
-      version: "3.0.1",
-      capabilities: ["notifications"],
-    });
+    // Register plugin descriptors directly on the container with named slots.
+    this.container
+      .bind(PluginToken)
+      .toConstantValue({
+        name: "S3StoragePlugin",
+        version: "2.1.0",
+        capabilities: ["storage"],
+      })
+      .whenNamed("storage");
+    this.container
+      .bind(PluginToken)
+      .toConstantValue({
+        name: "SegmentAnalyticsPlugin",
+        version: "1.4.2",
+        capabilities: ["analytics"],
+      })
+      .whenNamed("analytics");
+    this.container
+      .bind(PluginToken)
+      .toConstantValue({
+        name: "SlackNotificationPlugin",
+        version: "3.0.1",
+        capabilities: ["notifications"],
+      })
+      .whenNamed("notifications");
 
     // Register DocumentService — resolves via async tokens, so use toDynamicAsync
     this.container
@@ -433,7 +438,6 @@ class Platform {
     // Unload old plugin — fires onDeactivation (closes S3 connection pool)
     await this.container.unloadAsync(S3PluginModule);
 
-    // Remove the old S3 plugin descriptor (identified by name)
     // Re-register DocumentService without the old storage singleton
     this.container
       .rebind(DocumentServiceToken)
@@ -450,8 +454,8 @@ class Platform {
     await this.container.loadAsync(newPluginModule);
     await this.container.resolveAsync(StorageToken);
 
-    // Register new descriptor
-    this.container.bind(PluginToken).toConstantValue(newDescriptor);
+    // Register new descriptor in the same named slot to replace old storage descriptor.
+    this.container.bind(PluginToken).toConstantValue(newDescriptor).whenNamed("storage");
 
     const activePlugins = this.container.resolveAll(PluginToken);
     console.log(

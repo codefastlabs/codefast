@@ -1,125 +1,120 @@
-import type { Binding, BindingIdentifier, BindingScope } from "#/binding";
-import { registryKeyLabel } from "#/binding-select";
-import { collectStaticDependencyEdges } from "#/dependency-graph";
-import type { MetadataReader } from "#/metadata/metadata-types";
-import type { RegistryKey } from "#/registry";
-export type BindingActivationStatus = "cached" | "not-cached" | "transient";
-export type ContainerBindingSnapshot = {
-  readonly registryKeyLabel: string;
-  readonly bindingId: BindingIdentifier;
-  readonly kind: Binding<unknown>["kind"];
+import type { Binding } from "#/binding";
+import type { BindingKind, BindingScope, BindingIdentifier, Constructor } from "#/types";
+import type { Token } from "#/token";
+import type { BindingRegistry } from "#/registry";
+import type { ScopeManager } from "#/scope";
+import type { ResolveOptions } from "#/types";
+import { tokenName } from "#/token";
+import { selectBinding } from "#/binding-select";
+
+// ── Public types ──────────────────────────────────────────────────────────────
+
+export interface BindingSnapshot {
+  readonly tokenName: string;
+  readonly kind: BindingKind;
   readonly scope: BindingScope;
-  readonly activationStatus: BindingActivationStatus;
-  readonly hasConditionalConstraint: boolean;
-  readonly moduleId?: string;
-};
-export type ContainerSnapshot = {
-  readonly bindings: readonly ContainerBindingSnapshot[];
-};
-export type ContainerGraphJson = {
-  nodes: ContainerBindingSnapshot[];
-  edges: ReturnType<typeof collectStaticDependencyEdges>[number][];
-};
-export type ContainerInspectorContext = {
-  collectAllRegistryKeys(): readonly RegistryKey[];
-  lookupBindings(key: RegistryKey): readonly Binding<unknown>[] | undefined;
-  isBindingCached(binding: Binding<unknown>): boolean;
-  metadataReader: MetadataReader | undefined;
-};
-export type GraphOptions = {
-  readonly hideInternals?: boolean;
-};
-function activationStatusFor(
-  binding: Binding<unknown>,
-  isCached: (bindingToCheck: Binding<unknown>) => boolean,
-): BindingActivationStatus {
-  if (binding.scope === "transient") {
-    return "transient";
+  readonly slot: {
+    readonly name?: string;
+    readonly tags: ReadonlyArray<readonly [string, unknown]>;
+  };
+  readonly id: BindingIdentifier;
+}
+
+export interface ContainerSnapshot {
+  readonly ownBindings: readonly BindingSnapshot[];
+  readonly bindings: readonly BindingSnapshot[];
+  readonly cachedSingletonCount: number;
+  readonly hasParent: boolean;
+  readonly isDisposed: boolean;
+}
+
+// ── Inspector ─────────────────────────────────────────────────────────────────
+
+export class Inspector {
+  constructor(
+    private readonly _registry: BindingRegistry,
+    private readonly _scope: ScopeManager,
+    private readonly _hasParent: boolean,
+    private readonly _isDisposed: () => boolean,
+  ) {}
+
+  inspect(): ContainerSnapshot {
+    const snapshots = this.allBindingSnapshots();
+    return {
+      ownBindings: snapshots,
+      bindings: snapshots,
+      cachedSingletonCount: this._scope.getAllSingletons().size,
+      hasParent: this._hasParent,
+      isDisposed: this._isDisposed(),
+    };
   }
-  return isCached(binding) ? "cached" : "not-cached";
-}
-function registryKeyLabelIsInternal(label: string): boolean {
-  return label.startsWith("CODEFAST_DI_");
-}
-function isInternalRegistryKey(key: RegistryKey): boolean {
-  return registryKeyLabelIsInternal(registryKeyLabel(key));
-}
-export class ContainerInspector {
-  constructor(private readonly ctx: ContainerInspectorContext) {}
-  getSnapshot(): ContainerSnapshot {
-    const bindings: ContainerBindingSnapshot[] = [];
-    const seen = new Set<BindingIdentifier>();
-    for (const registryKey of this.ctx.collectAllRegistryKeys()) {
-      const list = this.ctx.lookupBindings(registryKey);
-      if (list === undefined || list.length === 0) {
-        continue;
-      }
-      const registryLabel = registryKeyLabel(registryKey);
-      for (const binding of list) {
-        if (seen.has(binding.id)) {
-          continue;
-        }
-        seen.add(binding.id);
-        const row: ContainerBindingSnapshot = {
-          registryKeyLabel: registryLabel,
-          bindingId: binding.id,
-          kind: binding.kind,
-          scope: binding.scope,
-          activationStatus: activationStatusFor(binding, (bindingArg) =>
-            this.ctx.isBindingCached(bindingArg),
-          ),
-          hasConditionalConstraint: binding.constraint !== undefined,
+
+  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): readonly BindingSnapshot[] {
+    const bindings = this._registry.getAll(token);
+    return bindings.map((b) => this._toSnapshot(b));
+  }
+
+  has(
+    token: Token<unknown> | Constructor,
+    hint?: ResolveOptions,
+    parentHas?: () => boolean,
+  ): boolean {
+    const bindings = this._registry.getAll(token);
+    if (bindings.length > 0) {
+      if (hint !== undefined) {
+        const ctx = {
+          resolutionPath: [],
+          materializationStack: [],
+          parent: undefined,
+          ancestors: [],
+          currentResolveHint: hint,
         };
-        bindings.push(
-          binding.moduleId === undefined ? row : { ...row, moduleId: binding.moduleId },
-        );
+        const match = selectBinding(bindings, hint, ctx, tokenName(token));
+        if (match !== undefined) {
+          return true;
+        }
+      } else {
+        return true;
       }
     }
-    return { bindings };
+    return parentHas?.() ?? false;
   }
-  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
-    const hideInternals = options?.hideInternals === true;
-    const snapshot = this.getSnapshot();
-    const visibleNodes = hideInternals
-      ? snapshot.bindings.filter((row) => !registryKeyLabelIsInternal(row.registryKeyLabel))
-      : [...snapshot.bindings];
-    const allowedBindingIds = new Set(visibleNodes.map((row) => row.bindingId));
-    const edges: ReturnType<typeof collectStaticDependencyEdges>[number][] = [];
-    const edgeSeen = new Set<string>();
-    for (const registryKey of this.ctx.collectAllRegistryKeys()) {
-      if (hideInternals && isInternalRegistryKey(registryKey)) {
-        continue;
-      }
-      const list = this.ctx.lookupBindings(registryKey);
-      if (list === undefined) {
-        continue;
-      }
-      const pathStart = [registryKeyLabel(registryKey)];
-      for (const consumerBinding of list) {
-        if (hideInternals && !allowedBindingIds.has(consumerBinding.id)) {
-          continue;
-        }
-        for (const edge of collectStaticDependencyEdges(
-          consumerBinding,
-          (dependencyKey) => this.ctx.lookupBindings(dependencyKey),
-          this.ctx.metadataReader,
-          pathStart,
-        )) {
-          if (
-            hideInternals &&
-            (!allowedBindingIds.has(edge.fromBindingId) || !allowedBindingIds.has(edge.toBindingId))
-          ) {
-            continue;
-          }
-          const edgeKey = `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${edge.injectHintLabel ?? ""}`;
-          if (edgeSeen.has(edgeKey)) {
-            continue;
-          }
-          edgeSeen.add(edgeKey);
-          edges.push(edge);
-        }
-      }
+
+  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean {
+    const bindings = this._registry.getAll(token);
+    if (bindings.length === 0) {
+      return false;
     }
-    return { nodes: visibleNodes, edges };
+    if (hint !== undefined) {
+      const ctx = {
+        resolutionPath: [],
+        materializationStack: [],
+        parent: undefined,
+        ancestors: [],
+        currentResolveHint: hint,
+      };
+      const match = selectBinding(bindings, hint, ctx, tokenName(token));
+      return match !== undefined;
+    }
+    return true;
+  }
+
+  private allBindingSnapshots(): readonly BindingSnapshot[] {
+    return this._registry.allBindings().map((b) => this._toSnapshot(b));
+  }
+
+  private _toSnapshot(b: Binding): BindingSnapshot {
+    const scope: BindingScope =
+      b.kind === "alias" ? "transient" : ((b as { scope: BindingScope }).scope ?? "transient");
+    return {
+      tokenName: tokenName(b.token),
+      kind: b.kind,
+      scope,
+      slot: {
+        name: b.slot.name,
+        tags: b.slot.tags,
+      },
+      id: b.id,
+    };
   }
 }

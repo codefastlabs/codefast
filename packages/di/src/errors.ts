@@ -1,164 +1,190 @@
-import type { Binding, BindingIdentifier, BindingScope, ResolveHint } from "#/binding";
-export function formatResolutionPath(resolutionPath: readonly string[]): string {
-  return resolutionPath.length > 0 ? resolutionPath.join(" -> ") : "(empty)";
-}
-const SCOPE_LABELS: Record<BindingScope, string> = {
-  singleton: "Singleton",
-  scoped: "Scoped",
-  transient: "Transient",
-};
-function safeSerializeHint(hint: ResolveHint): string {
-  if (hint === undefined) {
-    return "(none)";
-  }
-  try {
-    const parts: string[] = [];
-    if (hint.name !== undefined) {
-      parts.push(`name: ${String(hint.name)}`);
-    }
-    if (hint.tag !== undefined) {
-      const [tagKey, tagValue] = hint.tag;
-      parts.push(`tag: [${tagKey}, <${typeof tagValue}>]`);
-    }
-    return `{ ${parts.join(", ")} }`;
-  } catch {
-    return "(unserializable hint)";
-  }
-}
+import type { BindingIdentifier, BindingScope, ResolveOptions } from "#/types";
+
 export abstract class DiError extends Error {
   abstract readonly code: string;
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = new.target.name;
+
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
+
 export class InternalError extends DiError {
   readonly code = "INTERNAL_ERROR";
-}
-export class NoMatchingBindingError extends DiError {
-  readonly code = "NO_MATCHING_BINDING";
-  readonly tokenName: string;
-  readonly hint: ResolveHint;
-  readonly resolutionPath: readonly string[];
-  constructor(
-    tokenName: string,
-    hint: ResolveHint,
-    resolutionPath: readonly string[],
-    options?: ErrorOptions,
-  ) {
-    const pathText = formatResolutionPath(resolutionPath);
-    const hintText = safeSerializeHint(hint);
-    super(
-      `No binding matched resolve options ${hintText} for token "${tokenName}" (resolution path: ${pathText})`,
-      options,
-    );
-    this.tokenName = tokenName;
-    this.hint = hint;
-    this.resolutionPath = resolutionPath;
+
+  constructor(message: string) {
+    super(message);
   }
 }
+
 export class TokenNotBoundError extends DiError {
   readonly code = "TOKEN_NOT_BOUND";
   readonly tokenName: string;
-  readonly resolutionPath: readonly string[];
-  constructor(tokenName: string, resolutionPath: readonly string[], options?: ErrorOptions) {
-    const pathText = formatResolutionPath(resolutionPath);
-    super(`Token not bound: ${tokenName} (resolution path: ${pathText})`, options);
+
+  constructor(tokenName: string) {
+    super(
+      `No binding found for token '${tokenName}'. Did you forget container.bind(${tokenName})?`,
+    );
     this.tokenName = tokenName;
-    this.resolutionPath = resolutionPath;
   }
 }
+
+export class NoMatchingBindingError extends DiError {
+  readonly code = "NO_MATCHING_BINDING";
+  readonly tokenName: string;
+  readonly hint: ResolveOptions;
+  readonly availableSlots: string[];
+
+  constructor(tokenName: string, hint: ResolveOptions, availableSlots: string[]) {
+    const hintStr = JSON.stringify(hint);
+    const slotsStr = availableSlots.join(", ");
+    super(`No binding for '${tokenName}' matching ${hintStr}. Available slots: [${slotsStr}].`);
+    this.tokenName = tokenName;
+    this.hint = hint;
+    this.availableSlots = availableSlots;
+  }
+}
+
+export class AmbiguousBindingError extends DiError {
+  readonly code = "AMBIGUOUS_BINDING";
+  readonly tokenName: string;
+  readonly candidateIds: readonly BindingIdentifier[];
+
+  constructor(tokenName: string, candidateIds: readonly BindingIdentifier[]) {
+    super(
+      `Multiple bindings for '${tokenName}' matched without a clear winner. Candidates: [${candidateIds.join(", ")}]. Ensure when() predicates are mutually exclusive.`,
+    );
+    this.tokenName = tokenName;
+    this.candidateIds = candidateIds;
+  }
+}
+
 export class CircularDependencyError extends DiError {
   readonly code = "CIRCULAR_DEPENDENCY";
-  readonly resolutionPath: readonly string[];
   readonly cycle: string[];
-  constructor(resolutionPath: readonly string[], options?: ErrorOptions) {
-    const pathText = formatResolutionPath(resolutionPath);
-    super(`Circular dependency detected: ${pathText}`, options);
-    this.resolutionPath = resolutionPath;
-    this.cycle = [...resolutionPath];
+
+  constructor(cycle: string[]) {
+    super(`Circular dependency detected: ${cycle.join(" → ")}`);
+    this.cycle = cycle;
   }
 }
-export class MissingMetadataError extends DiError {
-  readonly code = "MISSING_METADATA";
-  readonly className: string;
-  readonly resolutionPath: readonly string[];
-  constructor(className: string, resolutionPath: readonly string[], options?: ErrorOptions) {
-    const pathText = formatResolutionPath(resolutionPath);
-    super(
-      `Missing injectable constructor metadata for class "${className}" (resolution path: ${pathText})`,
-      options,
-    );
-    this.className = className;
-    this.resolutionPath = resolutionPath;
-  }
-}
-export class AsyncModuleLoadError extends DiError {
-  readonly code = "ASYNC_MODULE_LOAD";
-  readonly moduleName: string;
-  constructor(moduleName: string, options?: ErrorOptions) {
-    super(
-      `Cannot load async module "${moduleName}" synchronously; use loadAsync() or Container.fromModulesAsync().`,
-      options,
-    );
-    this.moduleName = moduleName;
-  }
-}
+
 export class AsyncResolutionError extends DiError {
   readonly code = "ASYNC_RESOLUTION";
   readonly tokenName: string;
-  readonly resolutionPath: readonly string[];
-  readonly reason: string;
-  constructor(
-    tokenName: string,
-    resolutionPath: readonly string[],
-    reason: string,
-    options?: ErrorOptions,
-  ) {
-    const pathText = formatResolutionPath(resolutionPath);
+  readonly asyncSourceToken: string;
+
+  constructor(tokenName: string, asyncSourceToken: string) {
     super(
-      `Cannot resolve "${tokenName}" synchronously: ${reason} (resolution path: ${pathText})`,
-      options,
+      `Token '${tokenName}' requires async resolution because '${asyncSourceToken}' in its dependency chain has an async factory. Use container.resolveAsync(${tokenName}).`,
     );
     this.tokenName = tokenName;
-    this.resolutionPath = resolutionPath;
-    this.reason = reason;
+    this.asyncSourceToken = asyncSourceToken;
   }
 }
-export type ScopeViolationDetails = {
-  readonly consumerBindingId: BindingIdentifier;
-  readonly consumerKind: Binding<unknown>["kind"];
+
+export class AsyncDeactivationError extends DiError {
+  readonly code = "ASYNC_DEACTIVATION";
+  readonly tokenName: string;
+
+  constructor(tokenName: string) {
+    super(`Token '${tokenName}' has an async onDeactivation handler. Use unbindAsync() instead.`);
+    this.tokenName = tokenName;
+  }
+}
+
+export interface ScopeViolationDetails {
+  readonly consumerToken: string;
   readonly consumerScope: BindingScope;
-  readonly consumerLabel?: string;
-  readonly dependencyBindingId: BindingIdentifier;
-  readonly dependencyKind: Binding<unknown>["kind"];
+  readonly dependencyToken: string;
   readonly dependencyScope: BindingScope;
-  readonly dependencyLabel?: string;
-  readonly resolutionPath: readonly string[];
-};
+  readonly path: string[];
+}
+
 export class ScopeViolationError extends DiError {
   readonly code = "SCOPE_VIOLATION";
-  readonly consumerBindingId: BindingIdentifier;
-  readonly consumerKind: Binding<unknown>["kind"];
-  readonly consumerScope: BindingScope;
-  readonly dependencyBindingId: BindingIdentifier;
-  readonly dependencyKind: Binding<unknown>["kind"];
-  readonly dependencyScope: BindingScope;
-  readonly resolutionPath: readonly string[];
-  constructor(details: ScopeViolationDetails, options?: ErrorOptions) {
-    const pathText = formatResolutionPath(details.resolutionPath);
-    const consumerLabel = details.consumerLabel ?? String(details.consumerBindingId);
-    const dependencyLabel = details.dependencyLabel ?? String(details.dependencyBindingId);
+  readonly details: ScopeViolationDetails;
+
+  constructor(details: ScopeViolationDetails) {
     super(
-      `Scope Violation: ${SCOPE_LABELS[details.consumerScope]} "${consumerLabel}" cannot depend on ${SCOPE_LABELS[details.dependencyScope]} "${dependencyLabel}" (resolution path: ${pathText})`,
-      options,
+      `Scope violation: '${details.consumerToken}' (${details.consumerScope}) depends on '${details.dependencyToken}' (${details.dependencyScope}). Path: ${details.path.join(" → ")}`,
     );
-    this.consumerBindingId = details.consumerBindingId;
-    this.consumerKind = details.consumerKind;
-    this.consumerScope = details.consumerScope;
-    this.dependencyBindingId = details.dependencyBindingId;
-    this.dependencyKind = details.dependencyKind;
-    this.dependencyScope = details.dependencyScope;
-    this.resolutionPath = details.resolutionPath;
+    this.details = details;
+  }
+}
+
+export class MissingMetadataError extends DiError {
+  readonly code = "MISSING_METADATA";
+  readonly targetName: string;
+
+  constructor(targetName: string) {
+    super(
+      `Class '${targetName}' is missing @injectable() decorator. Add @injectable([...deps]) or use toDynamic()/toResolved() instead.`,
+    );
+    this.targetName = targetName;
+  }
+}
+
+export class AsyncModuleLoadError extends DiError {
+  readonly code = "ASYNC_MODULE_LOAD";
+  readonly moduleName: string;
+
+  constructor(moduleName: string) {
+    super(`Module '${moduleName}' is async. Use container.loadAsync() instead.`);
+    this.moduleName = moduleName;
+  }
+}
+
+export class SyncDisposalNotSupportedError extends DiError {
+  readonly code = "SYNC_DISPOSAL_NOT_SUPPORTED";
+
+  constructor() {
+    super(
+      "Container cannot be disposed synchronously because onDeactivation handlers may be async. Use `await using` or call container.dispose() explicitly.",
+    );
+  }
+}
+
+export class MissingScopeContextError extends DiError {
+  readonly code = "MISSING_SCOPE_CONTEXT";
+  readonly tokenName: string;
+
+  constructor(tokenName: string) {
+    super(
+      `Token '${tokenName}' is scoped but was resolved from a container without a child scope context. Use container.createChild() to create a scoped context.`,
+    );
+    this.tokenName = tokenName;
+  }
+}
+
+export class MissingContainerContextError extends DiError {
+  readonly code = "MISSING_CONTAINER_CONTEXT";
+  readonly targetName: string;
+
+  constructor(targetName: string) {
+    super(
+      `Class '${targetName}' has @inject accessor fields but was instantiated outside a container context. Resolve it via container.resolve(${targetName}) instead.`,
+    );
+    this.targetName = targetName;
+  }
+}
+
+export class RebindUnboundTokenError extends DiError {
+  readonly code = "REBIND_UNBOUND_TOKEN";
+  readonly tokenName: string;
+
+  constructor(tokenName: string) {
+    super(
+      `Cannot rebind token '${tokenName}' because it has no own binding in this container. Use container.bind(${tokenName}) to create a new binding instead.`,
+    );
+    this.tokenName = tokenName;
+  }
+}
+
+export class DisposedContainerError extends DiError {
+  readonly code = "DISPOSED_CONTAINER";
+
+  constructor() {
+    super("Cannot perform operations on a disposed container.");
   }
 }

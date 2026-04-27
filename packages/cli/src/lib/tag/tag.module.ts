@@ -23,46 +23,46 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
   moduleBuilder
     .bind(TagTargetResolverPortToken)
     .to(TagTargetResolverAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "TagTargetResolverPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(TypeScriptTreeWalkPortToken)
     .to(TypeScriptTreeWalkAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "TypeScriptTreeWalkPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(TagSinceWriterPortToken)
     .to(TagSinceWriterAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry("TagSinceWriterPort", implementation, ctx.resolve(CliLoggerToken)),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(TagVersionResolverPortToken)
     .to(TagVersionResolverAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "TagVersionResolverPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder.bind(PrepareTagSyncUseCaseToken).to(PrepareTagSyncUseCaseImpl).singleton();
   moduleBuilder.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();

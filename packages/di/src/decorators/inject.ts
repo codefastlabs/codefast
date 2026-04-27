@@ -1,149 +1,153 @@
-import type { Constructor, ResolveHint } from "#/binding";
-import {
-  CODEFAST_DI_ACCESSOR_INJECTIONS,
-  CODEFAST_DI_INJECT_ACCESSOR_FACTORY,
-} from "#/metadata/metadata-keys";
-import type { AccessorInjectionMetadata, InjectionDescriptor } from "#/metadata/metadata-types";
-import { InternalError } from "#/errors";
+import type { Constructor, ResolveOptions } from "#/types";
 import type { Token } from "#/token";
-export type InjectOptions = ResolveHint;
-function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor["tag"] | undefined {
-  if (tag === undefined) {
-    return undefined;
-  }
-  if (!Array.isArray(tag) || tag.length !== 2) {
-    throw new InternalError(
-      `@inject tag must be a tuple [tagKey, value] with length 2; received ${String(tag)}`,
-    );
-  }
-  const [tagName, value] = tag;
-  if (typeof tagName !== "string") {
-    throw new InternalError(`@inject tag key must be a string; received ${typeof tagName}`);
-  }
-  return [tagName, value];
+import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
+import { MissingContainerContextError } from "#/errors";
+import { getActiveContainer } from "#/environment";
+
+// ── InjectionDescriptor ───────────────────────────────────────────────────────
+
+export interface InjectOptions {
+  name?: string;
+  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
-function toDescriptor<Value>(
-  token: Token<Value> | Constructor<Value>,
-  optional: boolean,
-  options: InjectOptions | undefined,
-): InjectionDescriptor<Value> {
-  const normalizedTag = normalizeTag(options?.tag);
-  if (options?.name !== undefined) {
-    return { token, optional, name: options.name };
-  }
-  if (normalizedTag !== undefined) {
-    return { token, optional, tag: normalizedTag };
-  }
-  return { token, optional };
+
+export interface InjectionDescriptor<Value = unknown> {
+  readonly token: Token<Value> | Constructor<Value>;
+  readonly optional: boolean;
+  readonly multi: boolean;
+  readonly name?: string;
+  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
 }
-function isAccessorDecoratorContext(value: unknown): value is ClassAccessorDecoratorContext {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "kind" in value &&
-    (
-      value as {
-        kind: unknown;
-      }
-    ).kind === "accessor"
-  );
-}
-function pushAccessorInjectionMetadata(
-  token: Token<unknown> | Constructor<unknown>,
-  ctx: ClassAccessorDecoratorContext,
-): void {
-  const metaRecord = ctx.metadata as Record<PropertyKey, unknown>;
-  const key = CODEFAST_DI_ACCESSOR_INJECTIONS;
-  if (!Array.isArray(metaRecord[key])) {
-    metaRecord[key] = [];
-  }
-  (metaRecord[key] as AccessorInjectionMetadata[]).push({
-    name: String(ctx.name),
-    token,
-    optional: false,
-  });
-}
-function withAccessorDecoratorFallback<Value>(
-  token: Token<Value> | Constructor<Value>,
-  descriptor: InjectionDescriptor<Value>,
-): InjectionDescriptor<Value> {
-  const run = (_value: unknown, context: unknown): void => {
-    if (!isAccessorDecoratorContext(context)) {
-      const kind =
-        typeof context === "object" && context !== null && "kind" in context
-          ? String(
-              (
-                context as {
-                  kind: unknown;
-                }
-              ).kind,
-            )
-          : typeof context;
-      throw new InternalError(
-        `inject(...) must be used as an \`accessor\` field decorator when used with one argument, or as an entry in @injectable([...deps]). Received decorator context kind "${kind}".`,
-      );
-    }
-    pushAccessorInjectionMetadata(token as Token<unknown> | Constructor<unknown>, context);
-  };
-  return Object.assign(run, descriptor, {
-    [CODEFAST_DI_INJECT_ACCESSOR_FACTORY]: true as const,
-  }) as InjectionDescriptor<Value>;
-}
-export function inject<Value>(
-  token: Token<Value> | Constructor<Value>,
-  optionsOrContext?: InjectOptions | ClassAccessorDecoratorContext,
-): InjectionDescriptor<Value> {
-  if (isAccessorDecoratorContext(optionsOrContext)) {
-    pushAccessorInjectionMetadata(token as Token<unknown> | Constructor<unknown>, optionsOrContext);
-    return undefined as unknown as InjectionDescriptor<Value>;
-  }
-  if (
-    typeof optionsOrContext === "object" &&
-    optionsOrContext !== null &&
-    "kind" in optionsOrContext
-  ) {
-    const decoratorKind = (
-      optionsOrContext as {
-        kind: unknown;
-      }
-    ).kind;
-    if (decoratorKind !== undefined && !isAccessorDecoratorContext(optionsOrContext)) {
-      const decoratorKindLabel =
-        typeof decoratorKind === "string"
-          ? decoratorKind
-          : typeof decoratorKind === "symbol"
-            ? decoratorKind.toString()
-            : typeof decoratorKind === "number" || typeof decoratorKind === "boolean"
-              ? String(decoratorKind)
-              : decoratorKind === null
-                ? "null"
-                : "object";
-      throw new InternalError(
-        `@inject(...) only supports TC39 \`accessor\` field targets (not plain fields or methods). Received decorator context kind "${decoratorKindLabel}".`,
-      );
-    }
-  }
-  const descriptor = toDescriptor(token, false, optionsOrContext as InjectOptions | undefined);
-  if (optionsOrContext === undefined) {
-    return withAccessorDecoratorFallback(token, descriptor);
-  }
-  return descriptor;
-}
-export function optional<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value> {
-  return toDescriptor(token, true, options);
-}
-export function injectAll<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value> {
-  return { ...toDescriptor(token, false, options), isInjectAllBindings: true as const };
-}
+
+export type InjectableDependency<Value = unknown> =
+  | Token<Value>
+  | Constructor<Value>
+  | InjectionDescriptor<Value>;
+
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
-  if (value === null || (typeof value !== "object" && typeof value !== "function")) {
+  if (value === null || value === undefined) {
     return false;
   }
-  return "token" in value && "optional" in value;
+  const type = typeof value;
+  // inject() returns a function (dual-role), so must check both object and function
+  if (type !== "object" && type !== "function") {
+    return false;
+  }
+  return (
+    "token" in (value as object) &&
+    "optional" in (value as object) &&
+    "multi" in (value as object) &&
+    typeof (value as InjectionDescriptor).optional === "boolean" &&
+    typeof (value as InjectionDescriptor).multi === "boolean"
+  );
+}
+
+export function normalizeToDescriptor(dep: InjectableDependency): InjectionDescriptor {
+  if (isInjectionDescriptor(dep)) {
+    return dep;
+  }
+  return { token: dep as Token<unknown> | Constructor, optional: false, multi: false };
+}
+
+function buildInjectionDescriptor<Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> {
+  return {
+    token: t,
+    optional: false,
+    multi: false,
+    name: options?.name,
+    tags: options?.tags,
+  };
+}
+
+// ── inject() — dual-role ──────────────────────────────────────────────────────
+
+type ClassAccessorDecorator<This, Value> = (
+  target: ClassAccessorDecoratorTarget<This, Value>,
+  context: ClassAccessorDecoratorContext<This, Value>,
+) => ClassAccessorDecoratorResult<This, Value> | void;
+
+export function inject<Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {
+  const descriptor = buildInjectionDescriptor(t, options);
+
+  const decoratorFn = (
+    _target: ClassAccessorDecoratorTarget<unknown, Value>,
+    context: ClassAccessorDecoratorContext<unknown, Value>,
+  ): ClassAccessorDecoratorResult<unknown, Value> => {
+    const meta = context.metadata as Record<string | symbol, unknown>;
+    if (!Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
+      meta[INJECT_ACCESSOR_KEY] = [];
+    }
+    (
+      meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>
+    ).push({
+      key: context.name,
+      descriptor,
+    });
+
+    context.addInitializer(function (this: unknown) {
+      const container = getActiveContainer();
+      if (container === undefined) {
+        throw new MissingContainerContextError(String(context.name));
+      }
+      const hint: ResolveOptions = {};
+      if (options?.name !== undefined) {
+        hint.name = options.name;
+      }
+      if (options?.tags !== undefined) {
+        hint.tags = options.tags;
+      }
+      const value = descriptor.optional
+        ? container.resolveOptional(t, hint)
+        : container.resolve(t, hint);
+      context.access.set(this, value as Value);
+    });
+
+    return {};
+  };
+
+  // Use defineProperties to handle read-only `name` property of functions
+  const props: PropertyDescriptorMap = {};
+  for (const key of Object.keys(descriptor) as Array<keyof typeof descriptor>) {
+    props[key] = { value: descriptor[key], writable: true, enumerable: true, configurable: true };
+  }
+  Object.defineProperties(decoratorFn, props);
+
+  return decoratorFn as unknown as InjectionDescriptor<Value> &
+    ClassAccessorDecorator<unknown, Value>;
+}
+
+// ── optional() ────────────────────────────────────────────────────────────────
+
+export function optional<Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value | undefined> {
+  return {
+    token: t as Token<Value | undefined> | Constructor<Value | undefined>,
+    optional: true,
+    multi: false,
+    name: options?.name,
+    tags: options?.tags,
+  };
+}
+
+// ── injectAll() ───────────────────────────────────────────────────────────────
+
+export function injectAll<Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value[]> {
+  return {
+    token: t as Token<Value[]> | Constructor<Value[]>,
+    optional: false,
+    multi: true,
+    name: options?.name,
+    tags: options?.tags,
+  };
 }

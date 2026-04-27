@@ -1,203 +1,74 @@
-import type { Binding, BindingIdentifier } from "#/binding";
-import { InternalError } from "#/errors";
-import { isPromiseLike, runPreDestroy, runPreDestroyAsync } from "#/lifecycle";
-type CacheEntry = {
-  readonly binding: Binding<unknown>;
-  readonly instance: unknown;
-};
+import type { BindingIdentifier } from "#/types";
+import { MissingScopeContextError } from "#/errors";
+
 export class ScopeManager {
-  private readonly singletonCache: Map<BindingIdentifier, CacheEntry>;
-  private readonly scopedCache: Map<BindingIdentifier, CacheEntry>;
-  private readonly ownsSingletonDisposal: boolean;
-  private readonly singletonPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
-  private readonly scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>;
-  private constructor(
-    singletonCache: Map<BindingIdentifier, CacheEntry>,
-    scopedCache: Map<BindingIdentifier, CacheEntry>,
-    ownsSingletonDisposal: boolean,
-    singletonPendingPromises: Map<BindingIdentifier, Promise<unknown>>,
-    scopedPendingPromises: Map<BindingIdentifier, Promise<unknown>>,
-  ) {
-    this.singletonCache = singletonCache;
-    this.scopedCache = scopedCache;
-    this.ownsSingletonDisposal = ownsSingletonDisposal;
-    this.singletonPendingPromises = singletonPendingPromises;
-    this.scopedPendingPromises = scopedPendingPromises;
+  // Singleton cache: bindingId -> instance
+  private readonly _singletons = new Map<BindingIdentifier, unknown>();
+  // In-flight promises for async singleton creation
+  private readonly _inflight = new Map<BindingIdentifier, Promise<unknown>>();
+  // Scoped cache (for child containers): bindingId -> instance
+  private readonly _scoped = new Map<BindingIdentifier, unknown>();
+
+  readonly isChild: boolean;
+
+  constructor(isChild = false) {
+    this.isChild = isChild;
   }
-  static createRoot(): ScopeManager {
-    return new ScopeManager(new Map(), new Map(), true, new Map(), new Map());
+
+  hasSingleton(id: BindingIdentifier): boolean {
+    return this._singletons.has(id);
   }
-  createChildScope(): ScopeManager {
-    return new ScopeManager(
-      this.singletonCache,
-      new Map(),
-      false,
-      this.singletonPendingPromises,
-      new Map(),
-    );
+
+  getSingleton<Value>(id: BindingIdentifier): Value {
+    return this._singletons.get(id) as Value;
   }
-  isBindingCached(binding: Binding<unknown>): boolean {
-    if (binding.scope === "transient") {
-      return false;
-    }
-    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
-    return cache.has(binding.id);
+
+  setSingleton(id: BindingIdentifier, instance: unknown): void {
+    this._singletons.set(id, instance);
   }
-  getCached(binding: Binding<unknown>): unknown {
-    if (binding.scope === "transient") {
-      return undefined;
-    }
-    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
-    const entry = cache.get(binding.id);
-    return entry?.instance;
+
+  deleteSingleton(id: BindingIdentifier): boolean {
+    return this._singletons.delete(id);
   }
-  getOrCreate(binding: Binding<unknown>, createInstance: () => unknown): unknown {
-    if (binding.scope === "transient") {
-      return createInstance();
-    }
-    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
-    const cached = cache.get(binding.id);
-    if (cached !== undefined) {
-      return cached.instance;
-    }
-    const instance = createInstance();
-    cache.set(binding.id, { binding, instance });
-    return instance;
+
+  getAllSingletons(): ReadonlyMap<BindingIdentifier, unknown> {
+    return this._singletons;
   }
-  async getOrCreateAsync(
-    binding: Binding<unknown>,
-    createInstance: () => Promise<unknown>,
-  ): Promise<unknown> {
-    if (binding.scope === "transient") {
-      return createInstance();
-    }
-    const cache = binding.scope === "singleton" ? this.singletonCache : this.scopedCache;
-    const pendingCreationMap =
-      binding.scope === "singleton" ? this.singletonPendingPromises : this.scopedPendingPromises;
-    const cached = cache.get(binding.id);
-    if (cached !== undefined) {
-      return cached.instance;
-    }
-    let pendingCreation = pendingCreationMap.get(binding.id);
-    if (pendingCreation === undefined) {
-      pendingCreation = (async () => {
-        try {
-          const instance = await createInstance();
-          cache.set(binding.id, { binding, instance });
-          return instance;
-        } finally {
-          pendingCreationMap.delete(binding.id);
-        }
-      })();
-      pendingCreationMap.set(binding.id, pendingCreation);
-    }
-    return pendingCreation;
+
+  getInflight(id: BindingIdentifier): Promise<unknown> | undefined {
+    return this._inflight.get(id);
   }
-  dispose(): void {
-    this.disposeMap(this.scopedCache);
-    if (this.ownsSingletonDisposal) {
-      this.disposeMap(this.singletonCache);
-    }
+
+  setInflight(id: BindingIdentifier, p: Promise<unknown>): void {
+    this._inflight.set(id, p);
   }
-  async disposeAsync(): Promise<void> {
-    await this.disposeMapAsync(this.scopedCache);
-    if (this.ownsSingletonDisposal) {
-      await this.disposeMapAsync(this.singletonCache);
-    }
+
+  clearInflight(id: BindingIdentifier): void {
+    this._inflight.delete(id);
   }
-  releaseByBindingId(bindingId: BindingIdentifier): void {
-    this.releaseFromStore(this.singletonCache, bindingId);
-    this.releaseFromStore(this.scopedCache, bindingId);
+
+  hasScoped(id: BindingIdentifier): boolean {
+    return this._scoped.has(id);
   }
-  async releaseByBindingIdAsync(bindingId: BindingIdentifier): Promise<void> {
-    await this.releaseFromStoreAsync(this.singletonCache, bindingId);
-    await this.releaseFromStoreAsync(this.scopedCache, bindingId);
+
+  getScoped<Value>(id: BindingIdentifier): Value {
+    return this._scoped.get(id) as Value;
   }
-  releaseBinding(binding: Binding<unknown>): void {
-    this.releaseByBindingId(binding.id);
+
+  setScoped(id: BindingIdentifier, instance: unknown): void {
+    if (!this.isChild) {
+      throw new MissingScopeContextError("(unknown)");
+    }
+    this._scoped.set(id, instance);
   }
-  async releaseBindingAsync(binding: Binding<unknown>): Promise<void> {
-    await this.releaseByBindingIdAsync(binding.id);
+
+  getAllScoped(): ReadonlyMap<BindingIdentifier, unknown> {
+    return this._scoped;
   }
-  private releaseFromStore(
-    store: Map<BindingIdentifier, CacheEntry>,
-    bindingId: BindingIdentifier,
-  ): void {
-    const entry = store.get(bindingId);
-    if (entry === undefined) {
-      return;
-    }
-    store.delete(bindingId);
-    const handler = entry.binding.onDeactivation;
-    if (handler !== undefined) {
-      const result = handler(entry.instance);
-      if (isPromiseLike(result)) {
-        throw new InternalError(
-          "onDeactivation returned a Promise during synchronous scope release; use releaseBindingAsync() or unloadAsync().",
-        );
-      }
-    }
-    if (entry.binding.kind === "class") {
-      runPreDestroy(entry.binding.implementationClass, entry.instance);
-    }
-  }
-  private async releaseFromStoreAsync(
-    store: Map<BindingIdentifier, CacheEntry>,
-    bindingId: BindingIdentifier,
-  ): Promise<void> {
-    const entry = store.get(bindingId);
-    if (entry === undefined) {
-      return;
-    }
-    store.delete(bindingId);
-    const handler = entry.binding.onDeactivation;
-    if (handler !== undefined) {
-      await handler(entry.instance);
-    }
-    if (entry.binding.kind === "class") {
-      await runPreDestroyAsync(entry.binding.implementationClass, entry.instance);
-    }
-  }
-  private disposeMap(store: Map<BindingIdentifier, CacheEntry>): void {
-    const entries = [...store.values()];
-    store.clear();
-    for (const entry of entries) {
-      const handler = entry.binding.onDeactivation;
-      if (handler !== undefined) {
-        const result = handler(entry.instance);
-        if (isPromiseLike(result)) {
-          throw new InternalError(
-            "onDeactivation returned a Promise; use disposeAsync() instead of dispose().",
-          );
-        }
-      }
-      if (entry.binding.kind === "class") {
-        runPreDestroy(entry.binding.implementationClass, entry.instance);
-      }
-    }
-  }
-  private async disposeMapAsync(store: Map<BindingIdentifier, CacheEntry>): Promise<void> {
-    const entries = [...store.values()];
-    store.clear();
-    const errors: unknown[] = [];
-    for (const entry of entries) {
-      try {
-        const handler = entry.binding.onDeactivation;
-        if (handler !== undefined) {
-          await handler(entry.instance);
-        }
-        if (entry.binding.kind === "class") {
-          await runPreDestroyAsync(entry.binding.implementationClass, entry.instance);
-        }
-      } catch (error) {
-        errors.push(error);
-      }
-    }
-    if (errors.length === 1) {
-      throw errors[0];
-    }
-    if (errors.length > 1) {
-      throw new AggregateError(errors, "disposeAsync: multiple deactivation handlers failed");
-    }
+
+  clearAll(): void {
+    this._singletons.clear();
+    this._inflight.clear();
+    this._scoped.clear();
   }
 }

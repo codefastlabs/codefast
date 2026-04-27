@@ -1,193 +1,101 @@
-import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
-import {
-  filterMatchingBindings,
-  registryKeyLabel,
-  selectBindingForRegistry,
-} from "#/binding-select";
+import type { BindingRegistry } from "#/registry";
 import type { MetadataReader } from "#/metadata/metadata-types";
-import { InternalError } from "#/errors";
-import type { RegistryKey } from "#/registry";
-import type { Token } from "#/token";
-export type StaticDependencyEdge = {
-  readonly fromBindingId: BindingIdentifier;
-  readonly toBindingId: BindingIdentifier;
-  readonly resolutionPath: readonly string[];
-  readonly edgeKind: "sync" | "async";
-  readonly isToBindingConditional: boolean;
-  readonly injectHintLabel?: string;
-  readonly isAliasEdge: boolean;
-};
-export type ResolvedDependency = {
-  readonly binding: Binding<unknown>;
-  readonly path: readonly string[];
-  readonly injectHintLabel?: string;
-};
-function formatTagValueForGraph(value: unknown): string {
-  if (typeof value === "string") {
-    return value;
-  }
-  try {
-    return JSON.stringify(value);
-  } catch {
-    return String(value);
-  }
+import type { BindingScope, Constructor } from "#/types";
+import { tokenName } from "#/token";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export interface GraphNode {
+  readonly id: string;
+  readonly tokenName: string;
+  readonly kind: string;
+  readonly scope: BindingScope;
+  readonly fromParent: boolean;
 }
-export function injectHintLabelFromResolveHint(hint: ResolveHint | undefined): string | undefined {
-  if (hint === undefined) {
-    return undefined;
-  }
-  if (hint.name !== undefined) {
-    return `name: ${hint.name}`;
-  }
-  if (hint.tag !== undefined) {
-    const [tagKey, tagValue] = hint.tag;
-    return `tag: ${tagKey}=${formatTagValueForGraph(tagValue)}`;
-  }
-  return undefined;
+
+export interface GraphEdge {
+  readonly from: string;
+  readonly to: string;
+  readonly label?: string;
 }
-function edgeKindFor(consumer: Binding<unknown>, dependency: Binding<unknown>): "sync" | "async" {
-  if (consumer.kind === "async-dynamic" || dependency.kind === "async-dynamic") {
-    return "async";
-  }
-  return "sync";
+
+export interface ContainerGraphJson {
+  readonly nodes: readonly GraphNode[];
+  readonly edges: readonly GraphEdge[];
+  readonly includesParent: boolean;
 }
-function resolveDefaultBinding(
-  lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
-  depKey: RegistryKey,
-  pathPrefix: readonly string[],
-): Binding<unknown> | undefined {
-  const label = registryKeyLabel(depKey as Token<unknown> | Constructor<unknown>);
-  const nextPath = [...pathPrefix, label];
-  const list = lookup(depKey);
-  if (list === undefined || list.length === 0) {
-    return undefined;
-  }
-  return selectBindingForRegistry(list, undefined, label, nextPath, undefined);
+
+export interface GraphOptions {
+  readonly includeParent?: boolean;
 }
-function expandAliasChain(
-  lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
-  start: Binding<unknown>,
-  pathPrefix: readonly string[],
-): Binding<unknown> {
-  let current = start;
-  let path = pathPrefix;
-  while (current.kind === "alias") {
-    const next = resolveDefaultBinding(lookup, current.targetToken, path);
-    if (next === undefined) {
-      return current;
-    }
-    const label = registryKeyLabel(current.targetToken as Token<unknown> | Constructor<unknown>);
-    path = [...path, label];
-    current = next;
-  }
-  return current;
-}
-export function listResolvedDependencies(
-  consumer: Binding<unknown>,
-  lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
-  reader: MetadataReader | undefined,
-  pathPrefix: readonly string[],
-): readonly ResolvedDependency[] {
-  switch (consumer.kind) {
-    case "constant":
-    case "dynamic":
-    case "async-dynamic":
-      return [];
-    case "alias": {
-      const binding = resolveDefaultBinding(lookup, consumer.targetToken, pathPrefix);
-      if (binding === undefined) {
-        return [];
-      }
-      const label = registryKeyLabel(consumer.targetToken as Token<unknown> | Constructor<unknown>);
-      const nextPath = [...pathPrefix, label];
-      const effective = expandAliasChain(lookup, binding, nextPath);
-      return [{ binding: effective, path: nextPath, injectHintLabel: undefined }];
-    }
-    case "resolved": {
-      return consumer.dependencyTokens.map((tok) => {
-        const label = registryKeyLabel(tok as Token<unknown> | Constructor<unknown>);
-        const nextPath = [...pathPrefix, label];
-        const binding = resolveDefaultBinding(lookup, tok, pathPrefix);
-        if (binding === undefined) {
-          throw new InternalError(
-            `Missing binding for dependency "${label}" while building dependency graph (resolution path: ${nextPath.join(" -> ")})`,
-          );
-        }
-        const effective = expandAliasChain(lookup, binding, nextPath);
-        return { binding: effective, path: nextPath, injectHintLabel: undefined };
+
+// ── Builder ───────────────────────────────────────────────────────────────────
+
+export function buildDependencyGraph(
+  registry: BindingRegistry,
+  metadataReader: MetadataReader,
+  options: GraphOptions | undefined,
+  parentRegistry?: BindingRegistry,
+): ContainerGraphJson {
+  const nodes: GraphNode[] = [];
+  const edges: GraphEdge[] = [];
+  const includesParent = options?.includeParent === true;
+
+  const addBindings = (reg: BindingRegistry, fromParent: boolean): void => {
+    for (const binding of reg.allBindings()) {
+      const scope: BindingScope =
+        binding.kind === "alias"
+          ? "transient"
+          : ((binding as { scope: BindingScope }).scope ?? "transient");
+      nodes.push({
+        id: binding.id,
+        tokenName: tokenName(binding.token),
+        kind: binding.kind,
+        scope,
+        fromParent,
       });
-    }
-    case "class": {
-      if (reader === undefined) {
-        return [];
-      }
-      const meta = reader.getConstructorMetadata(consumer.implementationClass);
-      if (meta === undefined || meta.params.length === 0) {
-        return [];
-      }
-      return meta.params.flatMap((param) => {
-        const tok = param.token;
-        const label = registryKeyLabel(tok as Token<unknown> | Constructor<unknown>);
-        const nextPath = [...pathPrefix, label];
-        const paramHint: ResolveHint | undefined =
-          param.name !== undefined
-            ? { name: param.name }
-            : param.tag !== undefined
-              ? { tag: param.tag }
-              : undefined;
-        if (param.isInjectAllBindings === true) {
-          const bindings = lookup(tok as RegistryKey);
-          if (bindings === undefined || bindings.length === 0) {
-            return [];
-          }
-          const candidates = filterMatchingBindings(bindings, paramHint, undefined);
-          if (candidates.length === 0) {
-            return [];
-          }
-          return candidates.map((binding) => {
-            const effective = expandAliasChain(lookup, binding, nextPath);
-            return {
-              binding: effective,
-              path: nextPath,
-              injectHintLabel: injectHintLabelFromResolveHint(paramHint),
-            };
+
+      // Build edges
+      if (binding.kind === "class") {
+        const meta = metadataReader.getConstructorMetadata(binding.target as Constructor);
+        if (meta !== undefined) {
+          meta.params.forEach((param, idx) => {
+            const depBinding = reg.getAll(param.token as Constructor)[0];
+            if (depBinding !== undefined) {
+              edges.push({
+                from: binding.id,
+                to: depBinding.id,
+                label: `[${idx}]`,
+              });
+            }
           });
         }
-        const binding = resolveDefaultBinding(lookup, tok, pathPrefix);
-        if (binding === undefined) {
-          if (param.optional) {
-            return [];
+      } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
+        binding.deps.forEach((dep, idx) => {
+          const depBindings = reg.getAll(dep.token as Constructor);
+          if (depBindings.length > 0 && depBindings[0] !== undefined) {
+            const label =
+              dep.name !== undefined
+                ? `name:${dep.name}`
+                : dep.tags !== undefined && dep.tags.length > 0
+                  ? `tag:${dep.tags[0]?.[0]}=${String(dep.tags[0]?.[1])}`
+                  : `[${idx}]`;
+            edges.push({ from: binding.id, to: depBindings[0].id, label });
           }
-          throw new InternalError(
-            `Missing binding for constructor parameter "${label}" while building dependency graph (resolution path: ${nextPath.join(" -> ")})`,
-          );
+        });
+      } else if (binding.kind === "alias") {
+        const targetBindings = reg.getAll(binding.target as Constructor);
+        if (targetBindings.length > 0 && targetBindings[0] !== undefined) {
+          edges.push({ from: binding.id, to: targetBindings[0].id, label: "alias" });
         }
-        const effective = expandAliasChain(lookup, binding, nextPath);
-        const injectHintLabel = injectHintLabelFromResolveHint(paramHint);
-        return [{ binding: effective, path: nextPath, injectHintLabel }];
-      });
+      }
     }
-    default: {
-      const exhaustiveCheck: never = consumer;
-      return exhaustiveCheck;
-    }
+  };
+
+  addBindings(registry, false);
+  if (includesParent && parentRegistry !== undefined) {
+    addBindings(parentRegistry, true);
   }
-}
-export function collectStaticDependencyEdges(
-  consumer: Binding<unknown>,
-  lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
-  reader: MetadataReader | undefined,
-  pathPrefix: readonly string[],
-): readonly StaticDependencyEdge[] {
-  const deps = listResolvedDependencies(consumer, lookup, reader, pathPrefix);
-  const isAliasEdge = consumer.kind === "alias";
-  return deps.map((dep) => ({
-    fromBindingId: consumer.id,
-    toBindingId: dep.binding.id,
-    resolutionPath: dep.path,
-    edgeKind: edgeKindFor(consumer, dep.binding),
-    isToBindingConditional: dep.binding.constraint !== undefined,
-    injectHintLabel: dep.injectHintLabel,
-    isAliasEdge,
-  }));
+
+  return { nodes, edges, includesParent };
 }

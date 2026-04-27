@@ -237,9 +237,9 @@ const ServiceModule = Module.create("Service", (builder) => {
 
 const MiddlewareModule = Module.create("Middleware", (builder) => {
   builder.import(ServiceModule);
-  // Multi-binding: register all middleware under the same token
-  builder.bind(MiddlewareToken).to(LoggingMiddleware);
-  builder.bind(MiddlewareToken).to(AuthMiddleware);
+  // Multi-binding: each middleware uses a distinct slot via whenNamed()
+  builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
+  builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
 });
 
 const ControllerModule = Module.create("Controller", (builder) => {

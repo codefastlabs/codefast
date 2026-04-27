@@ -15,15 +15,15 @@ export function createCliRuntimeContainer(): ReturnType<typeof Container.create>
 
   runtimeContainer.load(ArrangePresentationModule, ArrangeModule);
   runtimeContainer.bind(ArrangeCommand).to(ArrangeCommand).singleton();
-  runtimeContainer.bind(CliCommandToken).to(ArrangeCommand).singleton().whenNamed("arrange");
+  runtimeContainer.bind(CliCommandToken).to(ArrangeCommand).whenNamed("arrange").singleton();
 
   runtimeContainer.load(MirrorModule);
   runtimeContainer.bind(MirrorCommand).to(MirrorCommand).singleton();
-  runtimeContainer.bind(CliCommandToken).to(MirrorCommand).singleton().whenNamed("mirror");
+  runtimeContainer.bind(CliCommandToken).to(MirrorCommand).whenNamed("mirror").singleton();
 
   runtimeContainer.load(TagPresentationModule, TagModule);
   runtimeContainer.bind(TagCommand).to(TagCommand).singleton();
-  runtimeContainer.bind(CliCommandToken).to(TagCommand).singleton().whenNamed("tag");
+  runtimeContainer.bind(CliCommandToken).to(TagCommand).whenNamed("tag").singleton();
 
   return runtimeContainer;
 }

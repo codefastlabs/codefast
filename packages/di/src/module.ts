@@ -1,42 +1,69 @@
-import type { BindingBuilder } from "#/binding";
-import type { Constructor } from "#/binding";
+import type { BindToBuilder } from "#/binding";
+import type { Constructor } from "#/types";
 import type { Token } from "#/token";
-export type ModuleBuilder = {
-  readonly import: (...modules: Module[]) => void;
-  readonly bind: <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value>;
-};
-export type AsyncModuleBuilder = {
-  readonly import: (...modules: (Module | AsyncModule)[]) => void;
-  readonly bind: <Value>(key: Token<Value> | Constructor<Value>) => BindingBuilder<Value>;
-};
-export class Module {
+
+// ── Branded types (runtime symbols for branding) ─────────────────────────────
+
+const SYNC_MODULE_BRAND: unique symbol = Symbol("di:sync-module");
+const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
+
+export interface SyncModule {
   readonly name: string;
-  private readonly syncSetup: (builder: ModuleBuilder) => void;
-  private constructor(name: string, syncSetup: (builder: ModuleBuilder) => void) {
-    this.name = name;
-    this.syncSetup = syncSetup;
-  }
-  static create(name: string, setup: (builder: ModuleBuilder) => void): Module {
-    return new Module(name, setup);
-  }
-  static createAsync(
-    name: string,
-    setup: (builder: AsyncModuleBuilder) => Promise<void>,
-  ): AsyncModule {
-    return new AsyncModule(name, setup);
-  }
-  runSyncSetup(builder: ModuleBuilder): void {
-    this.syncSetup(builder);
-  }
+  readonly [SYNC_MODULE_BRAND]: true;
+  readonly _setup: (builder: ModuleBuilder) => void;
 }
-export class AsyncModule {
+
+export interface AsyncModule {
   readonly name: string;
-  private readonly asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>;
-  constructor(name: string, asyncSetup: (builder: AsyncModuleBuilder) => Promise<void>) {
-    this.name = name;
-    this.asyncSetup = asyncSetup;
-  }
-  async runAsyncSetup(builder: AsyncModuleBuilder): Promise<void> {
-    await this.asyncSetup(builder);
-  }
+  readonly [ASYNC_MODULE_BRAND]: true;
+  readonly _setup: (builder: AsyncModuleBuilder) => Promise<void>;
+}
+
+// ── Builder interfaces ────────────────────────────────────────────────────────
+
+export interface ModuleBuilder {
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  import(...modules: SyncModule[]): void;
+}
+
+export interface AsyncModuleBuilder {
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  import(...modules: Array<SyncModule | AsyncModule>): void;
+}
+
+// ── Static factories ──────────────────────────────────────────────────────────
+
+export const SyncModule = {
+  create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
+    return {
+      name,
+      [SYNC_MODULE_BRAND]: true as const,
+      _setup: setup,
+    } as SyncModule;
+  },
+};
+
+export const AsyncModule = {
+  create(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
+    return {
+      name,
+      [ASYNC_MODULE_BRAND]: true as const,
+      _setup: setup,
+    } as AsyncModule;
+  },
+};
+
+// ── Module — unified API ──────────────────────────────────────────────────────
+
+export const Module = {
+  create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
+    return SyncModule.create(name, setup);
+  },
+  createAsync(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
+    return AsyncModule.create(name, setup);
+  },
+};
+
+export function isSyncModule(m: SyncModule | AsyncModule): m is SyncModule {
+  return (m as SyncModule)[SYNC_MODULE_BRAND] === true;
 }

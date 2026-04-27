@@ -1,91 +1,73 @@
-import { InternalError } from "#/errors";
-import {
-  CODEFAST_DI_CONSTRUCTOR_METADATA,
-  CODEFAST_DI_INJECT_ACCESSOR_FACTORY,
-} from "#/metadata/metadata-keys";
-import type {
-  ConstructorMetadata,
-  InjectionDescriptor,
-  ParamMetadata,
-} from "#/metadata/metadata-types";
-import { isInjectionDescriptor } from "#/decorators/inject";
-import type { BindingScope, Constructor } from "#/binding";
-import type { Token } from "#/token";
-export type InjectableDependency =
-  | Token<unknown>
-  | Constructor<unknown>
-  | InjectionDescriptor<unknown>;
-const AUTO_REGISTER_REGISTRY: Array<{
-  implementationClass: Constructor<unknown>;
-  scope: BindingScope;
-}> = [];
-export function getAutoRegistered(): ReadonlyArray<{
-  implementationClass: Constructor<unknown>;
-  scope: BindingScope;
-}> {
-  return AUTO_REGISTER_REGISTRY;
+import type { BindingScope, Constructor } from "#/types";
+import type { InjectableDependency } from "#/decorators/inject";
+import { normalizeToDescriptor } from "#/decorators/inject";
+import { INJECTABLE_KEY, constructorMetadataMap } from "#/metadata/metadata-keys";
+
+// ── AutoRegisterRegistry ──────────────────────────────────────────────────────
+
+export interface AutoRegisterRegistry {
+  register(target: Constructor, scope: BindingScope): void;
+  entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }>;
 }
-function toParamMetadata(dependency: InjectableDependency, index: number): ParamMetadata {
-  if (isInjectionDescriptor(dependency)) {
-    if (CODEFAST_DI_INJECT_ACCESSOR_FACTORY in dependency) {
+
+export function createAutoRegisterRegistry(): AutoRegisterRegistry {
+  const _entries: Array<{ target: Constructor; scope: BindingScope }> = [];
+  return {
+    register(target: Constructor, scope: BindingScope): void {
+      _entries.push({ target, scope });
+    },
+    entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }> {
+      return _entries;
+    },
+  };
+}
+
+// ── InjectableOptions ─────────────────────────────────────────────────────────
+
+export interface InjectableOptions {
+  autoRegister?: AutoRegisterRegistry;
+  scope?: BindingScope;
+}
+
+// ── @injectable() ─────────────────────────────────────────────────────────────
+
+export function injectable(
+  deps?: readonly InjectableDependency[],
+  options?: InjectableOptions,
+): (target: unknown, context: ClassDecoratorContext) => void {
+  return function (target: unknown, context: ClassDecoratorContext): void {
+    const params = (deps ?? []).map((dep, index) => {
+      const descriptor = normalizeToDescriptor(dep);
       return {
         index,
-        token: dependency.token,
-        optional: dependency.optional,
-        name: undefined,
-        tag: undefined,
-        isInjectAllBindings: undefined,
+        token: descriptor.token,
+        optional: descriptor.optional,
+        multi: descriptor.multi,
+        name: descriptor.name,
+        tags: descriptor.tags,
       };
+    });
+
+    const constructorMeta = { params };
+
+    // Write to WeakMap (works with both SWC and esbuild/tsx)
+    constructorMetadataMap.set(target as object, constructorMeta);
+
+    // Also write to Symbol.metadata if available (for full TC39 Stage 3 compliance)
+    try {
+      const meta = context.metadata as Record<string | symbol, unknown>;
+      if (meta !== null && typeof meta === "object") {
+        meta[INJECTABLE_KEY] = constructorMeta;
+      }
+    } catch {
+      // Ignore if context.metadata is not writable
     }
-    return {
-      index,
-      token: dependency.token,
-      optional: dependency.optional,
-      name: dependency.name,
-      tag: dependency.tag,
-      isInjectAllBindings: dependency.isInjectAllBindings === true ? true : undefined,
-    };
-  }
-  return {
-    index,
-    token: dependency,
-    optional: false,
-  };
-}
-export function injectable(
-  deps: readonly InjectableDependency[] = [],
-  autoRegisterOptions?: {
-    autoRegister?: boolean;
-    scope?: BindingScope;
-  },
-): <Class extends abstract new (...args: never[]) => unknown>(
-  implementationClass: Class,
-  context: ClassDecoratorContext<Class>,
-) => void {
-  return (implementationClass, context) => {
-    const ctorFn = implementationClass as unknown as {
-      readonly length: number;
-    };
-    const declaredArity = ctorFn.length;
-    if (declaredArity !== deps.length) {
-      throw new InternalError(
-        `Class "${String(context.name ?? implementationClass.name)}" declares ${String(declaredArity)} constructor parameters but @injectable(...) received ${String(deps.length)} dependency descriptors.`,
-      );
-    }
-    const params: readonly ParamMetadata[] = deps.map((dependency, index) =>
-      toParamMetadata(dependency, index),
-    );
-    const payload: ConstructorMetadata = { params };
-    const metadataRecord = context.metadata as Record<PropertyKey, unknown>;
-    metadataRecord[CODEFAST_DI_CONSTRUCTOR_METADATA] = payload;
-    if (autoRegisterOptions?.autoRegister === true) {
-      const scope = autoRegisterOptions.scope ?? "transient";
-      context.addInitializer(function (this: unknown) {
-        AUTO_REGISTER_REGISTRY.push({
-          implementationClass: this as Constructor<unknown>,
-          scope,
-        });
-      });
+
+    if (options?.autoRegister !== undefined) {
+      const scope: BindingScope = options.scope ?? "transient";
+      options.autoRegister.register(target as Constructor, scope);
     }
   };
 }
+
+export type { InjectableDependency };

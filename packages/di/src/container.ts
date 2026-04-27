@@ -1,838 +1,1202 @@
-import type { Binding, BindingIdentifier, Constructor, ResolveHint } from "#/binding";
-import { BindingBuilder } from "#/binding";
-import { registryKeyLabel } from "#/binding-select";
-import { getAutoRegistered } from "#/decorators/injectable";
-import { listResolvedDependencies } from "#/dependency-graph";
-import type { MetadataReader } from "#/metadata/metadata-types";
-import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
-import {
-  AsyncModuleLoadError,
-  CircularDependencyError,
-  InternalError,
-  ScopeViolationError,
-} from "#/errors";
 import type {
-  ContainerGraphJson,
-  GraphOptions,
-  ContainerInspectorContext,
-  ContainerSnapshot,
-} from "#/inspector";
-import { ContainerInspector } from "#/inspector";
-import type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
-import { AsyncModule, Module } from "#/module";
-import type { RegistryKey } from "#/registry";
-import { BindingRegistry } from "#/registry";
-import { DependencyResolver } from "#/resolver";
-import { ScopeManager } from "#/scope";
+  ActivationHandler,
+  BindingScope,
+  Constructor,
+  DeactivationHandler,
+  ResolveOptions,
+} from "#/types";
+import type {
+  AliasBindingBuilder,
+  Binding,
+  BindingBuilder,
+  BindToBuilder,
+  ConstantBindingBuilder,
+  ScopedBindingBuilder,
+  SingletonBindingBuilder,
+  SingletonLifecycleBuilder,
+  PartialBinding,
+  SlotKey,
+  TransientBindingBuilder,
+} from "#/binding";
+import type { BindingIdentifier } from "#/types";
 import type { Token } from "#/token";
-import { isDevelopmentOrTestEnvironment } from "#/environment";
-type ContainerRef = {
-  current: DefaultContainer | undefined;
-};
-type ModuleLike = Module | AsyncModule;
-const NOT_FOUND = Symbol("container-fast-path-not-found");
-const lastWinsTagObjectIds = new WeakMap<object, number>();
-let lastWinsTagObjectIdSequence = 1;
-function allocateLastWinsTagObjectId(value: object): number {
-  let objectId = lastWinsTagObjectIds.get(value);
-  if (objectId === undefined) {
-    objectId = lastWinsTagObjectIdSequence++;
-    lastWinsTagObjectIds.set(value, objectId);
-  }
-  return objectId;
-}
-function resolveHintForBinding(binding: Binding<unknown>): ResolveHint | undefined {
-  if (binding.bindingName !== undefined) {
-    return { name: binding.bindingName };
-  }
-  for (const [tagKey, tagValue] of binding.tags) {
-    return { tag: [tagKey, tagValue] as const };
-  }
-  return undefined;
-}
-function buildLastWinsSlotKey(binding: Binding<unknown>): string | undefined {
-  if (binding.constraint !== undefined) {
-    return undefined;
-  }
-  if (binding.bindingName === undefined && binding.tags.size === 0) {
-    return "default";
-  }
-  if (binding.tags.size === 0) {
-    return `name=${binding.bindingName}`;
-  }
-  const toStableTagValue = (value: unknown): string => {
-    if (typeof value === "bigint") {
-      return `bigint:${value.toString()}n`;
-    }
-    try {
-      const serializedValue = JSON.stringify(value);
-      return serializedValue ?? String(value);
-    } catch {
-      if (typeof value === "object" && value !== null) {
-        return `non-json:object#${String(allocateLastWinsTagObjectId(value))}`;
-      }
-      return String(value);
-    }
-  };
-  const normalizedTagEntries = [...binding.tags.entries()]
-    .sort(([leftTag], [rightTag]) => leftTag.localeCompare(rightTag))
-    .map(([tagKey, tagValue]) => [tagKey, toStableTagValue(tagValue)] as const);
-  const tagsKey = normalizedTagEntries
-    .map(([tagKey, tagValue]) => `${tagKey}:${tagValue}`)
-    .join("|");
-  const nameKey = binding.bindingName ?? "";
-  return `name=${nameKey};tags=${tagsKey}`;
-}
-export interface Container extends AsyncDisposable {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
-  rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value>;
-  unbind(tokenOrId: RegistryKey | BindingIdentifier): void;
-  unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void>;
-  has(token: RegistryKey, hint?: ResolveHint): boolean;
-  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value;
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Promise<Value>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[];
+import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
+import type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
+import type { ContainerGraphJson, GraphOptions } from "#/dependency-graph";
+import type { MetadataReader } from "#/metadata/metadata-types";
+import type { AutoRegisterRegistry } from "#/decorators/injectable";
+import type { AsyncModuleBuilder } from "#/module";
+import {
+  DisposedContainerError,
+  RebindUnboundTokenError,
+  ScopeViolationError,
+  SyncDisposalNotSupportedError,
+} from "#/errors";
+import { DEFAULT_SLOT, generateBindingId } from "#/binding";
+import { BindingRegistry } from "#/registry";
+import { ScopeManager } from "#/scope";
+import { LifecycleManager } from "#/lifecycle";
+import { DependencyResolver } from "#/resolver";
+import { Inspector } from "#/inspector";
+import { buildDependencyGraph } from "#/dependency-graph";
+import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
+import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
+import { tokenName } from "#/token";
+import { normalizeToDescriptor } from "#/decorators/inject";
+import { isSyncModule } from "#/module";
+
+// ── Container interface ────────────────────────────────────────────────────────
+
+export interface Container {
+  readonly isDisposed: boolean;
+
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void;
+  unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void>;
+  unbindAll(): void;
+  unbindAllAsync(): Promise<void>;
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+
+  load(...modules: SyncModule[]): void;
+  loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
+  unload(...modules: SyncModule[]): void;
+  unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
+  loadAutoRegistered(registry: AutoRegisterRegistry): number;
+
+  onActivation<Value>(
+    token: Token<Value> | Constructor<Value>,
+    handler: ActivationHandler<Value>,
+  ): void;
+  onDeactivation<Value>(
+    token: Token<Value> | Constructor<Value>,
+    handler: DeactivationHandler<Value>,
+  ): void;
+
+  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
+  resolveAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Promise<Value>;
+  resolveOptional<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Value | undefined;
+  resolveOptionalAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Promise<Value | undefined>;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
   resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
-    hint?: ResolveHint,
+    hint?: ResolveOptions,
   ): Promise<Value[]>;
-  resolveOptional<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveHint,
-  ): Value | undefined;
-  load(...modules: Module[]): void;
-  loadAsync(...modules: ModuleLike[]): Promise<void>;
-  unload(...modules: ModuleLike[]): void;
-  unloadAsync(...modules: ModuleLike[]): Promise<void>;
-  initializeAsync(): Promise<void>;
-  loadAutoRegistered(): number;
-  validate(): void;
-  inspect(): ContainerSnapshot;
-  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
+
   createChild(): Container;
-  [Symbol.dispose](): never;
-  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined;
+
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
+  [Symbol.dispose](): never;
+
+  initializeAsync(): Promise<void>;
+  validate(): void;
+
+  has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
+  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
+  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): readonly BindingSnapshot[];
+  inspect(): ContainerSnapshot;
+  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
+
+export interface ContainerStatic {
+  create(): Container;
+  fromModules(...modules: SyncModule[]): Container;
+  fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
+}
+
+// ── DefaultContainer ──────────────────────────────────────────────────────────
+
 class DefaultContainer implements Container {
-  private readonly syncModuleStack: Module[] = [];
-  private readonly asyncModuleStack: AsyncModule[] = [];
-  private readonly loadedModules = new Map<ModuleLike, BindingIdentifier[]>();
-  private hasDevValidationRun = false;
-  private readonly pendingRegistrationBuilders = new Set<BindingBuilder<unknown>>();
-  private readonly slotIndexByToken = new Map<RegistryKey, Map<string, BindingIdentifier>>();
-  private readonly tokenByBindingId = new Map<BindingIdentifier, RegistryKey>();
-  private readonly slotKeyByBindingId = new Map<BindingIdentifier, string>();
-  private readonly inheritedConstantCache = new Map<RegistryKey, unknown>();
-  private readonly isDevEnv: boolean = isDevelopmentOrTestEnvironment();
-  private constructor(
-    private readonly ownRegistry: BindingRegistry,
-    private readonly ownScopeManager: ScopeManager,
-    private readonly parent: DefaultContainer | undefined,
-    private readonly resolver: DependencyResolver,
-    private readonly metadataReader: MetadataReader,
-  ) {}
-  static create(): Container {
-    const ownRegistry = new BindingRegistry();
-    const ownScopeManager = ScopeManager.createRoot();
-    const metadataReader = new SymbolMetadataReader();
-    const holder: ContainerRef = { current: undefined };
-    const resolver = new DependencyResolver({
-      lookup: (token) => {
-        const current = holder.current;
-        if (current === undefined) {
-          throw new InternalError("container is not initialized");
-        }
-        return current.lookupBindingsInternal(token);
-      },
-      scopeManager: ownScopeManager,
-      metadataReader,
-    });
-    const container = new DefaultContainer(
-      ownRegistry,
-      ownScopeManager,
-      undefined,
-      resolver,
-      metadataReader,
+  private _disposed = false;
+  private readonly _registry: BindingRegistry;
+  private readonly _scope: ScopeManager;
+  private readonly _lifecycle: LifecycleManager;
+  private _resolver!: DependencyResolver;
+  private readonly _inspector: Inspector;
+  private readonly _parent: DefaultContainer | undefined;
+
+  // Module tracking: module -> ref count
+  private readonly _moduleRefs = new Map<object, number>();
+  // Module bindings: module -> array of binding IDs registered by it
+  private readonly _moduleBindingIds = new Map<object, BindingIdentifier[]>();
+
+  constructor(parent?: DefaultContainer) {
+    this._parent = parent;
+    this._registry = new BindingRegistry();
+    this._scope = new ScopeManager(parent !== undefined);
+    this._lifecycle = new LifecycleManager();
+    this._inspector = new Inspector(
+      this._registry,
+      this._scope,
+      parent !== undefined,
+      () => this._disposed,
     );
-    holder.current = container;
-    return container;
+    this._initResolver();
   }
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
-    return new BindingBuilder<Value>(token, undefined, {
-      onPending: (builder) =>
-        this.pendingRegistrationBuilders.add(builder as unknown as BindingBuilder<unknown>),
-      onCommitted: (builder) =>
-        this.pendingRegistrationBuilders.delete(builder as unknown as BindingBuilder<unknown>),
-      register: (built) => {
-        this.invalidateDevValidationState();
-        this.registerOwnedBinding(
-          token as Token<unknown> | Constructor<unknown>,
-          built as Binding<unknown>,
-        );
-      },
-      update: (built) => {
-        this.invalidateDevValidationState();
-        this.updateOwnedBinding(
-          token as Token<unknown> | Constructor<unknown>,
-          built as Binding<unknown>,
-        );
-      },
-    });
+
+  private _initResolver(): void {
+    const metadataReader = this._getMetadataReader();
+    const parentResolver = this._parent?._resolver;
+    this._resolver = new DependencyResolver(
+      this._registry,
+      this._scope,
+      this._lifecycle,
+      metadataReader,
+      this,
+      parentResolver,
+    );
   }
-  has(token: RegistryKey, hint?: ResolveHint): boolean {
-    this.flushPendingBindings();
-    const list = this.lookupBindingsInternal(token);
-    if (list === undefined || list.length === 0) {
-      return false;
-    }
-    if (hint === undefined) {
-      return true;
-    }
-    return list.some((binding) => {
-      if (hint.name !== undefined && binding.bindingName !== hint.name) {
-        return false;
+
+  private _getMetadataReader(): MetadataReader {
+    // Check if a custom MetadataReader has been bound
+    const metaBindings = this._registry.getAll(MetadataReaderToken);
+    if (metaBindings.length > 0) {
+      try {
+        return this._resolver.resolve(MetadataReaderToken, undefined, [], []) as MetadataReader;
+      } catch {
+        // fall through to default
       }
-      if (hint.tag !== undefined) {
-        const tag = hint.tag;
-        if (binding.tags.get(tag[0]) !== tag[1]) {
-          return false;
+    }
+    if (this._parent !== undefined) {
+      return this._parent._getMetadataReader();
+    }
+    return defaultMetadataReader;
+  }
+
+  get isDisposed(): boolean {
+    return this._disposed;
+  }
+
+  // ── Binding ──────────────────────────────────────────────────────────────
+
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
+    this._assertNotDisposed();
+    return this._createBindToBuilder(token);
+  }
+
+  private _createBindToBuilder<Value>(
+    token: Token<Value> | Constructor<Value>,
+    moduleRef?: object,
+  ): BindToBuilder<Value> {
+    const registry = this._registry;
+
+    const commitBinding = (b: Binding, previousId?: BindingIdentifier): BindingIdentifier => {
+      if (previousId !== undefined) {
+        registry.removeById(previousId);
+        if (moduleRef !== undefined) {
+          const ids = this._moduleBindingIds.get(moduleRef);
+          if (ids !== undefined) {
+            const idx = ids.indexOf(previousId);
+            if (idx !== -1) {
+              ids.splice(idx, 1);
+            }
+          }
         }
       }
-      return true;
-    });
+      registry.add(b);
+      if (moduleRef !== undefined) {
+        let ids = this._moduleBindingIds.get(moduleRef);
+        if (ids === undefined) {
+          ids = [];
+          this._moduleBindingIds.set(moduleRef, ids);
+        }
+        ids.push(b.id);
+      }
+      return b.id;
+    };
+
+    return new BindToBuilderImpl<Value>(token, commitBinding);
   }
-  unbind(tokenOrId: RegistryKey | BindingIdentifier): void {
-    this.prepareRegistryMutation();
+
+  unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
+    this._assertNotDisposed();
+    this._unbindSync(tokenOrId);
+  }
+
+  private _unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
+    const bindings = this._getBindingsForTokenOrId(tokenOrId);
+    for (const binding of bindings) {
+      this._registry.removeById(binding.id);
+      if (this._scope.hasSingleton(binding.id)) {
+        const instance = this._scope.getSingleton(binding.id);
+        this._scope.deleteSingleton(binding.id);
+        this._lifecycle.runDeactivationSync(binding, instance, this._getMetadataReader());
+      }
+    }
+  }
+
+  async unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void> {
+    this._assertNotDisposed();
+    const bindings = this._getBindingsForTokenOrId(tokenOrId);
+    for (const binding of bindings) {
+      this._registry.removeById(binding.id);
+      if (this._scope.hasSingleton(binding.id)) {
+        const instance = this._scope.getSingleton(binding.id);
+        this._scope.deleteSingleton(binding.id);
+        await this._lifecycle.runDeactivation(binding, instance, this._getMetadataReader());
+      }
+    }
+  }
+
+  unbindAll(): void {
+    this._assertNotDisposed();
+    const all = this._registry.clear();
+    for (const binding of all) {
+      if (this._scope.hasSingleton(binding.id)) {
+        const instance = this._scope.getSingleton(binding.id);
+        this._scope.deleteSingleton(binding.id);
+        this._lifecycle.runDeactivationSync(binding, instance, this._getMetadataReader());
+      }
+    }
+  }
+
+  async unbindAllAsync(): Promise<void> {
+    this._assertNotDisposed();
+    const all = this._registry.clear();
+    for (const binding of all) {
+      if (this._scope.hasSingleton(binding.id)) {
+        const instance = this._scope.getSingleton(binding.id);
+        this._scope.deleteSingleton(binding.id);
+        await this._lifecycle.runDeactivation(binding, instance, this._getMetadataReader());
+      }
+    }
+  }
+
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
+    this._assertNotDisposed();
+    if (!this._registry.has(token)) {
+      throw new RebindUnboundTokenError(tokenName(token));
+    }
+    // Unbind existing (sync — if async deactivation, will throw AsyncDeactivationError)
+    this._unbindSync(token);
+    return this._createBindToBuilder(token);
+  }
+
+  private _getBindingsForTokenOrId(
+    tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
+  ): Binding[] {
     if (typeof tokenOrId === "string") {
-      this.removeOwnedBindingById(tokenOrId);
-      return;
+      // It's a BindingIdentifier (string)
+      const b = this._registry.getById(tokenOrId as BindingIdentifier);
+      return b !== undefined ? [b] : [];
     }
-    this.releaseOwnedBindingsByToken(tokenOrId);
-    this.ownRegistry.remove(tokenOrId);
-    this.slotIndexByToken.delete(tokenOrId);
+    return [...this._registry.getAll(tokenOrId as Token<unknown> | Constructor)];
   }
-  async unbindAsync(tokenOrId: RegistryKey | BindingIdentifier): Promise<void> {
-    this.prepareRegistryMutation();
-    if (typeof tokenOrId === "string") {
-      await this.removeOwnedBindingByIdAsync(tokenOrId);
-      return;
-    }
-    await this.releaseOwnedBindingsByTokenAsync(tokenOrId);
-    this.ownRegistry.remove(tokenOrId);
-    this.slotIndexByToken.delete(tokenOrId);
+
+  // ── Module ────────────────────────────────────────────────────────────────
+
+  load(...modules: SyncModule[]): void {
+    this._assertNotDisposed();
+    this._loadSyncModules(modules);
   }
-  rebind<Value>(token: Token<Value> | Constructor<Value>): BindingBuilder<Value> {
-    this.prepareRegistryMutation();
-    this.releaseOwnedBindingsByToken(token as RegistryKey);
-    this.ownRegistry.remove(token as RegistryKey);
-    this.slotIndexByToken.delete(token as RegistryKey);
-    return this.bind(token);
-  }
-  load(...modules: Module[]): void {
-    this.prepareRegistryMutation();
-    for (const syncModule of modules) {
-      if (syncModule instanceof AsyncModule) {
-        throw new AsyncModuleLoadError(syncModule.name);
-      }
-      this.ensureSyncModuleLoaded(syncModule);
-    }
-    this.completeLoadMutation();
-  }
-  async loadAsync(...modules: ModuleLike[]): Promise<void> {
-    this.prepareRegistryMutation();
-    for (const moduleOrAsync of modules) {
-      if (moduleOrAsync instanceof AsyncModule) {
-        await this.ensureAsyncModuleLoaded(moduleOrAsync);
-      } else {
-        this.ensureSyncModuleLoaded(moduleOrAsync);
-      }
-    }
-    this.completeLoadMutation();
-  }
-  unload(...modules: ModuleLike[]): void {
-    this.prepareRegistryMutation();
-    for (const module of modules) {
-      this.unloadLoadedModuleSync(module);
-    }
-  }
-  async unloadAsync(...modules: ModuleLike[]): Promise<void> {
-    this.prepareRegistryMutation();
-    for (const module of modules) {
-      await this.unloadLoadedModuleAsync(module);
-    }
-  }
-  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value {
-    this.flushPendingBindings();
-    try {
-      const fastResult = this.tryFastResolve<Value>(token, hint);
-      if (fastResult !== NOT_FOUND) {
-        return fastResult;
-      }
-      return this.resolver.resolveRoot(token, hint);
-    } finally {
-      this.maybeRunDevValidationOnce();
-    }
-  }
-  async resolveAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveHint,
-  ): Promise<Value> {
-    this.flushPendingBindings();
-    try {
-      return await this.resolver.resolveAsyncRoot(token, hint);
-    } finally {
-      this.maybeRunDevValidationOnce();
-    }
-  }
-  resolveOptional<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveHint,
-  ): Value | undefined {
-    this.flushPendingBindings();
-    try {
-      return this.resolver.resolveOptionalRoot(token, hint);
-    } finally {
-      this.maybeRunDevValidationOnce();
-    }
-  }
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveHint): Value[] {
-    this.flushPendingBindings();
-    try {
-      return this.resolver.resolveAllRoot(token, hint);
-    } finally {
-      this.maybeRunDevValidationOnce();
-    }
-  }
-  async resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveHint,
-  ): Promise<Value[]> {
-    this.flushPendingBindings();
-    try {
-      return await this.resolver.resolveAllAsyncRoot<Value>(token, hint);
-    } finally {
-      this.maybeRunDevValidationOnce();
-    }
-  }
-  async initializeAsync(): Promise<void> {
-    this.flushPendingBindings();
-    for (const registryKey of this.collectAllRegistryKeysInHierarchy()) {
-      const list = this.lookupBindings(registryKey);
-      if (list === undefined) {
+
+  private _loadSyncModules(modules: SyncModule[]): void {
+    // Collect all modules in topological order (dedup by identity)
+    const toLoad = this._collectModuleDeps(modules);
+    for (const mod of toLoad) {
+      const ref = mod as object;
+      const existing = this._moduleRefs.get(ref);
+      if (existing !== undefined) {
+        this._moduleRefs.set(ref, existing + 1);
         continue;
       }
-      for (const binding of list) {
-        if (binding.scope !== "singleton") {
-          continue;
-        }
-        const hint = resolveHintForBinding(binding);
-        await this.resolveAsync(registryKey as Token<unknown> | Constructor<unknown>, hint);
+      this._moduleRefs.set(ref, 1);
+      const builder = this._createModuleBuilder(ref);
+      (mod as SyncModule)._setup(builder);
+    }
+  }
+
+  private _collectModuleDeps(
+    modules: Array<SyncModule | AsyncModule>,
+  ): Array<SyncModule | AsyncModule> {
+    const seen = new Set<object>();
+    const result: Array<SyncModule | AsyncModule> = [];
+
+    const visit = (mod: SyncModule | AsyncModule): void => {
+      const ref = mod as object;
+      if (seen.has(ref)) {
+        return;
+      }
+      seen.add(ref);
+      // We'll collect deps during setup via the builder's import()
+      result.push(mod);
+    };
+
+    for (const m of modules) {
+      visit(m);
+    }
+    return result;
+  }
+
+  async loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
+    this._assertNotDisposed();
+    for (const mod of modules) {
+      await this._loadOneModuleAsync(mod);
+    }
+  }
+
+  private async _loadOneModuleAsync(mod: SyncModule | AsyncModule): Promise<void> {
+    const ref = mod as object;
+    const existing = this._moduleRefs.get(ref);
+    if (existing !== undefined) {
+      this._moduleRefs.set(ref, existing + 1);
+      return;
+    }
+    this._moduleRefs.set(ref, 1);
+
+    if (isSyncModule(mod)) {
+      const builder = this._createModuleBuilder(ref);
+      mod._setup(builder);
+    } else {
+      const importPromises: Array<Promise<void>> = [];
+      const builder = this._createAsyncModuleBuilder(ref, importPromises);
+      await (mod as AsyncModule)._setup(builder);
+      // Await nested async imports triggered inside _setup
+      if (importPromises.length > 0) {
+        await Promise.all(importPromises);
       }
     }
   }
-  validate(): void {
-    this.flushPendingBindings();
-    this.validateScopeRules();
-  }
-  inspect(): ContainerSnapshot {
-    this.flushPendingBindings();
-    return this.createInspector().getSnapshot();
-  }
-  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
-    this.flushPendingBindings();
-    return this.createInspector().generateDependencyGraph(options);
-  }
-  loadAutoRegistered(): number {
-    const entries = getAutoRegistered();
-    let count = 0;
-    for (const { implementationClass, scope } of entries) {
-      const builder = this.bind(implementationClass as Constructor<unknown>).toSelf();
-      switch (scope) {
-        case "singleton":
-          (builder as BindingBuilder<unknown>).singleton();
-          break;
-        case "scoped":
-          (builder as BindingBuilder<unknown>).scoped();
-          break;
-        default:
-          (builder as BindingBuilder<unknown>).transient();
-      }
-      count++;
-    }
-    return count;
-  }
-  [Symbol.dispose](): never {
-    throw new InternalError(
-      "Container disposal is async. Use `await using container = Container.create()` or call `await container.dispose()` instead of `using`.",
-    );
-  }
-  createChild(): Container {
-    const childRegistry = new BindingRegistry();
-    const childScope = this.ownScopeManager.createChildScope();
-    const holder: ContainerRef = { current: undefined };
-    const resolver = new DependencyResolver({
-      lookup: (token) => {
-        const current = holder.current;
-        if (current === undefined) {
-          throw new InternalError("child container is not initialized");
-        }
-        return current.lookupBindingsInternal(token);
+
+  private _createModuleBuilder(moduleRef: object): ModuleBuilder {
+    return {
+      bind: <Value>(t: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
+        this._createBindToBuilder(t, moduleRef),
+      import: (...mods: SyncModule[]): void => {
+        this._loadSyncModules(mods);
       },
-      scopeManager: childScope,
-      metadataReader: this.metadataReader,
-    });
-    const child = new DefaultContainer(
-      childRegistry,
-      childScope,
-      this,
-      resolver,
-      this.metadataReader,
-    );
-    holder.current = child;
-    return child;
+    };
   }
-  lookupBindings(token: RegistryKey): readonly Binding<unknown>[] | undefined {
-    this.flushPendingBindings();
-    return this.lookupBindingsInternal(token);
+
+  private _createAsyncModuleBuilder(
+    moduleRef: object,
+    importPromises: Array<Promise<void>>,
+  ): AsyncModuleBuilder {
+    return {
+      bind: <Value>(t: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
+        this._createBindToBuilder(t, moduleRef),
+      import: (...mods: Array<SyncModule | AsyncModule>): void => {
+        for (const mod of mods) {
+          importPromises.push(this._loadOneModuleAsync(mod));
+        }
+      },
+    };
   }
+
+  unload(...modules: SyncModule[]): void {
+    this._assertNotDisposed();
+    for (const mod of modules) {
+      this._unloadModuleSync(mod as object);
+    }
+  }
+
+  private _unloadModuleSync(ref: object): void {
+    const count = this._moduleRefs.get(ref) ?? 0;
+    if (count <= 1) {
+      this._moduleRefs.delete(ref);
+      const ids = this._moduleBindingIds.get(ref) ?? [];
+      this._moduleBindingIds.delete(ref);
+      for (const id of ids) {
+        const binding = this._registry.getById(id);
+        if (binding !== undefined) {
+          this._registry.removeById(id);
+          if (this._scope.hasSingleton(id)) {
+            const instance = this._scope.getSingleton(id);
+            this._scope.deleteSingleton(id);
+            this._lifecycle.runDeactivationSync(binding, instance, this._getMetadataReader());
+          }
+        }
+      }
+    } else {
+      this._moduleRefs.set(ref, count - 1);
+    }
+  }
+
+  async unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
+    this._assertNotDisposed();
+    for (const mod of modules) {
+      await this._unloadModuleAsync(mod as object);
+    }
+  }
+
+  private async _unloadModuleAsync(ref: object): Promise<void> {
+    const count = this._moduleRefs.get(ref) ?? 0;
+    if (count <= 1) {
+      this._moduleRefs.delete(ref);
+      const ids = this._moduleBindingIds.get(ref) ?? [];
+      this._moduleBindingIds.delete(ref);
+      for (const id of ids) {
+        const binding = this._registry.getById(id);
+        if (binding !== undefined) {
+          this._registry.removeById(id);
+          if (this._scope.hasSingleton(id)) {
+            const instance = this._scope.getSingleton(id);
+            this._scope.deleteSingleton(id);
+            await this._lifecycle.runDeactivation(binding, instance, this._getMetadataReader());
+          }
+        }
+      }
+    } else {
+      this._moduleRefs.set(ref, count - 1);
+    }
+  }
+
+  loadAutoRegistered(registry: AutoRegisterRegistry): number {
+    this._assertNotDisposed();
+    const entries = registry.entries();
+    for (const { target, scope } of entries) {
+      const builder = this._createBindToBuilder(target as Constructor);
+      const bb = builder.toSelf();
+      if (scope === "singleton") {
+        bb.singleton();
+      } else if (scope === "scoped") {
+        bb.scoped();
+      } else {
+        bb.transient();
+      }
+    }
+    return entries.length;
+  }
+
+  // ── Lifecycle hooks ────────────────────────────────────────────────────────
+
+  onActivation<Value>(
+    token: Token<Value> | Constructor<Value>,
+    handler: ActivationHandler<Value>,
+  ): void {
+    this._assertNotDisposed();
+    this._lifecycle.registerActivation(token, handler);
+  }
+
+  onDeactivation<Value>(
+    token: Token<Value> | Constructor<Value>,
+    handler: DeactivationHandler<Value>,
+  ): void {
+    this._assertNotDisposed();
+    this._lifecycle.registerDeactivation(token, handler);
+  }
+
+  // ── Resolution ────────────────────────────────────────────────────────────
+
+  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value {
+    this._assertNotDisposed();
+    return this._resolver.resolve(token, hint, [], []);
+  }
+
+  resolveAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Promise<Value> {
+    this._assertNotDisposed();
+    return this._resolver.resolveAsync(token, hint, [], []);
+  }
+
+  resolveOptional<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Value | undefined {
+    this._assertNotDisposed();
+    return this._resolver.resolveOptional(token, hint, [], []);
+  }
+
+  resolveOptionalAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Promise<Value | undefined> {
+    this._assertNotDisposed();
+    return this._resolver.resolveOptionalAsync(token, hint, [], []);
+  }
+
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[] {
+    this._assertNotDisposed();
+    return this._resolver.resolveAll(token, hint, [], []);
+  }
+
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Promise<Value[]> {
+    this._assertNotDisposed();
+    return this._resolver.resolveAllAsync(token, hint, [], []);
+  }
+
+  // ── Child ─────────────────────────────────────────────────────────────────
+
+  createChild(): Container {
+    this._assertNotDisposed();
+    return new DefaultContainer(this);
+  }
+
+  // ── Dispose ───────────────────────────────────────────────────────────────
+
   async dispose(): Promise<void> {
-    this.flushPendingBindings();
-    await this.ownScopeManager.disposeAsync();
+    if (this._disposed) {
+      return;
+    }
+    this._disposed = true;
+
+    // Deactivate all singletons in this container (own only)
+    const reader = this._getMetadataReader();
+    for (const [id, instance] of this._scope.getAllSingletons()) {
+      const binding = this._registry.getById(id);
+      if (binding !== undefined) {
+        await this._lifecycle.runDeactivation(binding, instance, reader);
+      }
+    }
+
+    this._scope.clearAll();
   }
+
   [Symbol.asyncDispose](): Promise<void> {
     return this.dispose();
   }
-  private flushPendingBindings(): void {
-    if (this.pendingRegistrationBuilders.size === 0) {
-      return;
-    }
-    while (this.pendingRegistrationBuilders.size > 0) {
-      const nextPendingBuilder = this.pendingRegistrationBuilders.values().next().value as
-        | BindingBuilder<unknown>
-        | undefined;
-      if (nextPendingBuilder === undefined) {
-        return;
-      }
-      nextPendingBuilder.flushPendingRegistration();
-    }
+
+  [Symbol.dispose](): never {
+    throw new SyncDisposalNotSupportedError();
   }
-  private getOrCreateSlotIndexForToken(token: RegistryKey): Map<string, BindingIdentifier> {
-    const existing = this.slotIndexByToken.get(token);
-    if (existing !== undefined) {
-      return existing;
-    }
-    const created = new Map<string, BindingIdentifier>();
-    this.slotIndexByToken.set(token, created);
-    return created;
-  }
-  private reserveLastWinsSlot(
-    token: Token<unknown> | Constructor<unknown>,
-    nextBinding: Binding<unknown>,
-  ): string | undefined {
-    const slotKey = buildLastWinsSlotKey(nextBinding);
-    if (slotKey === undefined) {
-      return undefined;
-    }
-    const slotIndex = this.getOrCreateSlotIndexForToken(token);
-    const existingBindingId = slotIndex.get(slotKey);
-    if (existingBindingId !== undefined && existingBindingId !== nextBinding.id) {
-      this.removeOwnedBindingById(existingBindingId);
-    }
-    slotIndex.set(slotKey, nextBinding.id);
-    return slotKey;
-  }
-  private clearReservedLastWinsSlot(
-    token: Token<unknown> | Constructor<unknown>,
-    bindingId: BindingIdentifier,
-  ): void {
-    const previousSlotKey = this.slotKeyByBindingId.get(bindingId);
-    if (previousSlotKey === undefined) {
-      return;
-    }
-    const previousSlotIndex = this.slotIndexByToken.get(token);
-    if (previousSlotIndex?.get(previousSlotKey) === bindingId) {
-      previousSlotIndex.delete(previousSlotKey);
-    }
-    if (previousSlotIndex !== undefined && previousSlotIndex.size === 0) {
-      this.slotIndexByToken.delete(token);
-    }
-  }
-  private untrackBinding(bindingId: BindingIdentifier): void {
-    const token = this.tokenByBindingId.get(bindingId);
-    const slotKey = this.slotKeyByBindingId.get(bindingId);
-    if (token !== undefined && slotKey !== undefined) {
-      const slotIndex = this.slotIndexByToken.get(token);
-      if (slotIndex?.get(slotKey) === bindingId) {
-        slotIndex.delete(slotKey);
-      }
-      if (slotIndex !== undefined && slotIndex.size === 0) {
-        this.slotIndexByToken.delete(token);
-      }
-    }
-    this.tokenByBindingId.delete(bindingId);
-    this.slotKeyByBindingId.delete(bindingId);
-  }
-  private removeOwnedBindingById(bindingId: BindingIdentifier): void {
-    this.ownScopeManager.releaseByBindingId(bindingId);
-    this.ownRegistry.removeById(bindingId);
-    this.untrackBinding(bindingId);
-  }
-  private async removeOwnedBindingByIdAsync(bindingId: BindingIdentifier): Promise<void> {
-    await this.ownScopeManager.releaseByBindingIdAsync(bindingId);
-    this.ownRegistry.removeById(bindingId);
-    this.untrackBinding(bindingId);
-  }
-  private releaseOwnedBindingsByToken(token: RegistryKey): void {
-    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
-    if (ownedBindings === undefined) {
-      return;
-    }
-    for (const binding of ownedBindings) {
-      this.ownScopeManager.releaseBinding(binding);
-      this.untrackBinding(binding.id);
-    }
-  }
-  private async releaseOwnedBindingsByTokenAsync(token: RegistryKey): Promise<void> {
-    const ownedBindings = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
-    if (ownedBindings === undefined) {
-      return;
-    }
-    for (const binding of ownedBindings) {
-      await this.ownScopeManager.releaseBindingAsync(binding);
-      this.untrackBinding(binding.id);
-    }
-  }
-  private prepareRegistryMutation(): void {
-    this.flushPendingBindings();
-    this.invalidateDevValidationState();
-  }
-  private completeLoadMutation(): void {
-    this.flushPendingBindings();
-    this.maybeRunDevValidationOnce();
-  }
-  private getLoadedBindingIdsOrThrow(module: ModuleLike): readonly BindingIdentifier[] {
-    const ownedBindingIds = this.loadedModules.get(module);
-    if (ownedBindingIds === undefined) {
-      throw new InternalError(`Module "${module.name}" is not loaded on this container.`);
-    }
-    return ownedBindingIds;
-  }
-  private unloadLoadedModuleSync(module: ModuleLike): void {
-    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
-    for (const bindingId of [...ownedBindingIds].reverse()) {
-      this.removeOwnedBindingById(bindingId);
-    }
-    this.loadedModules.delete(module);
-  }
-  private async unloadLoadedModuleAsync(module: ModuleLike): Promise<void> {
-    const ownedBindingIds = this.getLoadedBindingIdsOrThrow(module);
-    for (const bindingId of [...ownedBindingIds].reverse()) {
-      await this.removeOwnedBindingByIdAsync(bindingId);
-    }
-    this.loadedModules.delete(module);
-  }
-  private registerOwnedBinding(
-    token: Token<unknown> | Constructor<unknown>,
-    nextBinding: Binding<unknown>,
-  ): void {
-    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
-    const trackedToken = this.tokenByBindingId.get(nextBinding.id);
-    if (trackedToken !== undefined) {
-      this.removeOwnedBindingById(nextBinding.id);
-    }
-    this.ownRegistry.add(token, nextBinding);
-    this.tokenByBindingId.set(nextBinding.id, token);
-    if (slotKey !== undefined) {
-      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
-    } else {
-      this.slotKeyByBindingId.delete(nextBinding.id);
-    }
-  }
-  private updateOwnedBinding(
-    token: Token<unknown> | Constructor<unknown>,
-    nextBinding: Binding<unknown>,
-  ): void {
-    this.clearReservedLastWinsSlot(token, nextBinding.id);
-    this.ownRegistry.replaceById(nextBinding.id, nextBinding);
-    const slotKey = this.reserveLastWinsSlot(token, nextBinding);
-    if (slotKey !== undefined) {
-      this.slotKeyByBindingId.set(nextBinding.id, slotKey);
-    } else {
-      this.slotKeyByBindingId.delete(nextBinding.id);
-    }
-    this.tokenByBindingId.set(nextBinding.id, token);
-  }
-  private tryFastResolve<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint: ResolveHint | undefined,
-  ): Value | typeof NOT_FOUND {
-    const registryKey = token as RegistryKey;
-    if (
-      this.parent !== undefined &&
-      hint === undefined &&
-      this.inheritedConstantCache.has(registryKey)
-    ) {
-      return this.inheritedConstantCache.get(registryKey) as Value;
-    }
-    const binding = this.getSingleBindingInHierarchy(token, hint);
-    if (binding === undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.constraint !== undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.onActivation !== undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.onDeactivation !== undefined) {
-      return NOT_FOUND;
-    }
-    if (binding.kind === "async-dynamic") {
-      return NOT_FOUND;
-    }
-    if (binding.kind === "constant") {
-      if (this.parent !== undefined && hint === undefined) {
-        const own = this.ownRegistry.get(registryKey as Token<unknown> | Constructor<unknown>);
-        if (own === undefined || own.length === 0) {
-          this.inheritedConstantCache.set(registryKey, binding.value);
-        }
-      }
-      return binding.value as Value;
-    }
-    if (this.ownScopeManager.isBindingCached(binding)) {
-      return this.ownScopeManager.getOrCreate(binding, () => {
-        throw new InternalError("Expected cached value for binding");
-      }) as Value;
-    }
-    return NOT_FOUND;
-  }
-  private getSingleBindingInHierarchy(
-    token: Token<unknown> | Constructor<unknown>,
-    hint: ResolveHint | undefined,
-  ): Binding<unknown> | undefined {
-    const key = token as RegistryKey;
-    const own = this.ownRegistry.get(key);
-    if (own !== undefined && own.length > 0) {
-      return this.ownRegistry.getSingleBinding(key, hint);
-    }
-    return this.parent?.getSingleBindingInHierarchy(token, hint) ?? undefined;
-  }
-  private invalidateDevValidationState(): void {
-    this.inheritedConstantCache.clear();
-    this.hasDevValidationRun = false;
-  }
-  private maybeRunDevValidationOnce(): void {
-    if (!this.isDevEnv) {
-      return;
-    }
-    if (this.hasDevValidationRun) {
-      return;
-    }
-    this.hasDevValidationRun = true;
-    this.validate();
-  }
-  private validateScopeRules(): void {
-    const metadataReader = this.metadataReader;
-    const lookupBindings = (registryKey: RegistryKey) => this.lookupBindingsInternal(registryKey);
-    for (const registryKey of this.collectAllRegistryKeysInHierarchy()) {
-      const bindings = lookupBindings(registryKey);
-      if (bindings === undefined || bindings.length === 0) {
+
+  // ── Initialization ────────────────────────────────────────────────────────
+
+  async initializeAsync(): Promise<void> {
+    this._assertNotDisposed();
+    const allBindings = this._registry.allBindings();
+    for (const binding of allBindings) {
+      if (binding.kind === "alias") {
         continue;
       }
-      for (const consumer of bindings) {
-        const pathStart = [registryKeyLabel(registryKey)];
-        const dependencies = listResolvedDependencies(
-          consumer,
-          lookupBindings,
-          metadataReader,
-          pathStart,
+      const scope = (binding as { scope: BindingScope }).scope;
+      if (scope === "singleton" && !this._scope.hasSingleton(binding.id)) {
+        if (binding.predicate !== undefined) {
+          continue;
+        }
+        // Has activation — need to resolve
+        if (binding.kind === "constant" && binding.onActivation === undefined) {
+          continue;
+        }
+        const slotHint =
+          binding.slot.name !== undefined || binding.slot.tags.length > 0
+            ? { name: binding.slot.name, tags: binding.slot.tags }
+            : undefined;
+        await this.resolveAsync(binding.token as Token<unknown>, slotHint);
+      }
+    }
+  }
+
+  // ── Validate ──────────────────────────────────────────────────────────────
+
+  validate(): void {
+    this._assertNotDisposed();
+    const reader = this._getMetadataReader();
+    const allBindings = this._registry.allBindings();
+
+    for (const binding of allBindings) {
+      if (
+        binding.kind === "alias" ||
+        binding.kind === "constant" ||
+        binding.kind === "dynamic" ||
+        binding.kind === "dynamic-async"
+      ) {
+        continue;
+      }
+
+      const scope = (binding as { scope: BindingScope }).scope ?? "transient";
+      if (scope !== "singleton") {
+        continue;
+      }
+
+      // Check deps of singleton
+      const deps = this._getDepsForBinding(binding, reader);
+      for (const dep of deps) {
+        this._validateDep(
+          tokenName(binding.token as Token<unknown>),
+          scope,
+          dep,
+          [tokenName(binding.token as Token<unknown>)],
+          reader,
         );
-        for (const dependency of dependencies) {
-          if (
-            consumer.scope === "singleton" &&
-            dependency.binding.kind !== "constant" &&
-            (dependency.binding.scope === "transient" || dependency.binding.scope === "scoped")
-          ) {
-            throw new ScopeViolationError({
-              consumerBindingId: consumer.id,
-              consumerKind: consumer.kind,
-              consumerScope: consumer.scope,
-              dependencyBindingId: dependency.binding.id,
-              dependencyKind: dependency.binding.kind,
-              dependencyScope: dependency.binding.scope,
-              resolutionPath: dependency.path,
+      }
+    }
+  }
+
+  private _getDepsForBinding(
+    binding: Binding,
+    reader: MetadataReader,
+  ): Array<{ token: Token<unknown> | Constructor; scope: BindingScope }> {
+    const result: Array<{ token: Token<unknown> | Constructor; scope: BindingScope }> = [];
+
+    if (binding.kind === "class") {
+      const meta = reader.getConstructorMetadata(binding.target as Constructor);
+      if (meta !== undefined) {
+        for (const param of meta.params) {
+          const depBindings = this._registry.getAll(param.token as Token<unknown>);
+          for (const db of depBindings) {
+            if (db.kind !== "alias") {
+              result.push({
+                token: param.token as Token<unknown>,
+                scope: (db as { scope: BindingScope }).scope ?? "transient",
+              });
+            }
+          }
+        }
+      }
+    } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
+      for (const dep of binding.deps) {
+        const depBindings = this._registry.getAll(dep.token as Token<unknown>);
+        for (const db of depBindings) {
+          if (db.kind !== "alias") {
+            result.push({
+              token: dep.token as Token<unknown>,
+              scope: (db as { scope: BindingScope }).scope ?? "transient",
             });
           }
         }
       }
     }
+
+    return result;
   }
-  private createInspector(): ContainerInspector {
-    const context: ContainerInspectorContext = {
-      collectAllRegistryKeys: () => this.collectAllRegistryKeysInHierarchy(),
-      lookupBindings: (token) => this.lookupBindingsInternal(token),
-      isBindingCached: (binding) => this.ownScopeManager.isBindingCached(binding),
-      metadataReader: this.metadataReader,
-    };
-    return new ContainerInspector(context);
-  }
-  private collectAllRegistryKeysInHierarchy(): RegistryKey[] {
-    const keys = new Set<RegistryKey>();
-    this.accumulateRegistryKeysFromHierarchy(keys, this);
-    return [...keys];
-  }
-  private accumulateRegistryKeysFromHierarchy(
-    keys: Set<RegistryKey>,
-    container: DefaultContainer | undefined,
+
+  private _validateDep(
+    consumerToken: string,
+    consumerScope: BindingScope,
+    dep: { token: Token<unknown> | Constructor; scope: BindingScope },
+    path: string[],
+    _reader: MetadataReader,
   ): void {
-    if (container === undefined) {
-      return;
-    }
-    for (const entry of container.ownRegistry.listEntries()) {
-      keys.add(entry.key);
-    }
-    this.accumulateRegistryKeysFromHierarchy(keys, container.parent);
-  }
-  private lookupBindingsInternal(token: RegistryKey): readonly Binding<unknown>[] | undefined {
-    const own = this.ownRegistry.get(token as Token<unknown> | Constructor<unknown>);
-    if (own !== undefined && own.length > 0) {
-      return own;
-    }
-    return this.parent?.lookupBindingsForDescendant(token);
-  }
-  private lookupBindingsForDescendant(token: RegistryKey): readonly Binding<unknown>[] | undefined {
-    this.flushPendingBindings();
-    return this.lookupBindingsInternal(token);
-  }
-  private bindForModule(
-    owner: ModuleLike,
-  ): <Value>(token: Token<Value> | Constructor<Value>) => BindingBuilder<Value> {
-    return <Value>(token: Token<Value> | Constructor<Value>) =>
-      new BindingBuilder<Value>(token, owner.name, {
-        onPending: (builder) =>
-          this.pendingRegistrationBuilders.add(builder as unknown as BindingBuilder<unknown>),
-        onCommitted: (builder) =>
-          this.pendingRegistrationBuilders.delete(builder as unknown as BindingBuilder<unknown>),
-        register: (built) => {
-          this.invalidateDevValidationState();
-          this.registerOwnedBinding(
-            token as Token<unknown> | Constructor<unknown>,
-            built as Binding<unknown>,
-          );
-          this.recordBindingForModule(owner, built.id);
-        },
-        update: (built) => {
-          this.invalidateDevValidationState();
-          this.updateOwnedBinding(
-            token as Token<unknown> | Constructor<unknown>,
-            built as Binding<unknown>,
-          );
-        },
-      });
-  }
-  private recordBindingForModule(owner: ModuleLike, id: BindingIdentifier): void {
-    const list = this.loadedModules.get(owner);
-    if (list === undefined) {
-      this.loadedModules.set(owner, [id]);
-      return;
-    }
-    list.push(id);
-  }
-  private createSyncModuleBuilder(module: Module): ModuleBuilder {
-    return {
-      import: (...deps: Module[]) => {
-        for (const dep of deps) {
-          if (dep instanceof AsyncModule) {
-            throw new InternalError(
-              `Module "${module.name}" cannot synchronously import async module "${dep.name}".`,
-            );
-          }
-          this.ensureSyncModuleLoaded(dep);
-        }
-      },
-      bind: this.bindForModule(module),
-    };
-  }
-  private createAsyncModuleBuilder(module: AsyncModule): {
-    readonly moduleBuilder: AsyncModuleBuilder;
-    readonly awaitImports: () => Promise<void>;
-  } {
-    const pendingImports: Promise<void>[] = [];
-    return {
-      moduleBuilder: {
-        import: (...deps: ModuleLike[]) => {
-          for (const dep of deps) {
-            if (dep instanceof AsyncModule) {
-              pendingImports.push(this.ensureAsyncModuleLoaded(dep));
-            } else {
-              this.ensureSyncModuleLoaded(dep);
-            }
-          }
-        },
-        bind: this.bindForModule(module),
-      },
-      awaitImports: async () => {
-        if (pendingImports.length === 0) {
-          return;
-        }
-        await Promise.all(pendingImports);
-      },
-    };
-  }
-  private ensureSyncModuleLoaded(module: Module): void {
-    if (this.loadedModules.has(module)) {
-      return;
-    }
-    if (this.syncModuleStack.includes(module)) {
-      throw new CircularDependencyError([
-        ...this.syncModuleStack.map((stackedModule) => stackedModule.name),
-        module.name,
-      ]);
-    }
-    this.syncModuleStack.push(module);
-    try {
-      this.loadedModules.set(module, []);
-      const moduleBuilder = this.createSyncModuleBuilder(module);
-      module.runSyncSetup(moduleBuilder);
-    } finally {
-      this.syncModuleStack.pop();
+    if (consumerScope === "singleton") {
+      if (dep.scope === "scoped" || dep.scope === "transient") {
+        throw new ScopeViolationError({
+          consumerToken,
+          consumerScope,
+          dependencyToken: tokenName(dep.token),
+          dependencyScope: dep.scope,
+          path,
+        });
+      }
     }
   }
-  private async ensureAsyncModuleLoaded(asyncModule: AsyncModule): Promise<void> {
-    if (this.loadedModules.has(asyncModule)) {
-      return;
-    }
-    if (this.asyncModuleStack.includes(asyncModule)) {
-      throw new CircularDependencyError([
-        ...this.asyncModuleStack.map((stackedAsyncModule) => stackedAsyncModule.name),
-        asyncModule.name,
-      ]);
-    }
-    this.asyncModuleStack.push(asyncModule);
-    try {
-      this.loadedModules.set(asyncModule, []);
-      const { moduleBuilder, awaitImports } = this.createAsyncModuleBuilder(asyncModule);
-      await asyncModule.runAsyncSetup(moduleBuilder);
-      await awaitImports();
-    } finally {
-      this.asyncModuleStack.pop();
+
+  // ── Introspection ─────────────────────────────────────────────────────────
+
+  has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean {
+    this._assertNotDisposed();
+    return this._inspector.has(token, hint, () => this._parent?.has(token, hint) ?? false);
+  }
+
+  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean {
+    this._assertNotDisposed();
+    return this._inspector.hasOwn(token, hint);
+  }
+
+  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): readonly BindingSnapshot[] {
+    this._assertNotDisposed();
+    return this._inspector.lookupBindings(token);
+  }
+
+  inspect(): ContainerSnapshot {
+    this._assertNotDisposed();
+    return this._inspector.inspect();
+  }
+
+  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
+    this._assertNotDisposed();
+    return buildDependencyGraph(
+      this._registry,
+      this._getMetadataReader(),
+      options,
+      this._parent?._registry,
+    );
+  }
+
+  // ── Internal ──────────────────────────────────────────────────────────────
+
+  private _assertNotDisposed(): void {
+    if (this._disposed) {
+      throw new DisposedContainerError();
     }
   }
 }
-export namespace Container {
-  export function create(): Container {
-    return DefaultContainer.create();
+
+// ── BindToBuilderImpl ─────────────────────────────────────────────────────────
+
+class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
+  private _pendingSlot: SlotKey = { ...DEFAULT_SLOT, tags: [] };
+  private _pendingPredicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
+
+  constructor(
+    private readonly _token: Token<Value> | Constructor<Value>,
+    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+  ) {}
+
+  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): BindToBuilder<Value> {
+    this._pendingPredicate = predicate;
+    return this;
   }
-  export function fromModules(...modules: Module[]): Container {
-    const container = DefaultContainer.create();
+
+  whenNamed(name: string): BindToBuilder<Value> {
+    this._pendingSlot = { ...this._pendingSlot, name };
+    return this;
+  }
+
+  whenTagged(tag: string, value: unknown): BindToBuilder<Value> {
+    const existing = [...this._pendingSlot.tags];
+    const idx = existing.findIndex(([k]) => k === tag);
+    if (idx !== -1) {
+      existing[idx] = [tag, value];
+    } else {
+      existing.push([tag, value]);
+    }
+    this._pendingSlot = { ...this._pendingSlot, tags: existing };
+    return this;
+  }
+
+  whenDefault(): BindToBuilder<Value> {
+    return this;
+  }
+
+  to(type: Constructor<Value>): BindingBuilder<Value> {
+    return new BindingBuilderImpl<Value>(
+      this._token,
+      { kind: "class", target: type, scope: "transient" },
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toSelf(): BindingBuilder<Value> {
+    if (typeof this._token !== "function") {
+      throw new Error("toSelf() requires token to be a Constructor");
+    }
+    return new BindingBuilderImpl<Value>(
+      this._token,
+      { kind: "class", target: this._token as Constructor<Value>, scope: "transient" },
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toConstantValue(value: Value): ConstantBindingBuilder<Value> {
+    return new ConstantBindingBuilderImpl<Value>(
+      this._token,
+      value,
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toDynamic(factory: (ctx: import("#/types").ResolutionContext) => Value): BindingBuilder<Value> {
+    return new BindingBuilderImpl<Value>(
+      this._token,
+      { kind: "dynamic", factory, scope: "transient" },
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toDynamicAsync(
+    factory: (ctx: import("#/types").ResolutionContext) => Promise<Value>,
+  ): BindingBuilder<Value> {
+    return new BindingBuilderImpl<Value>(
+      this._token,
+      { kind: "dynamic-async", factory, scope: "transient" },
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toResolved<Deps extends readonly (Token<unknown> | Constructor)[]>(
+    factory: (...args: { [K in keyof Deps]: import("#/types").TokenValue<Deps[K]> }) => Value,
+    deps: Deps,
+  ): BindingBuilder<Value> {
+    const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
+    return new BindingBuilderImpl<Value>(
+      this._token,
+      {
+        kind: "resolved",
+        factory: factory as (...args: unknown[]) => Value,
+        deps: normalizedDeps,
+        scope: "transient",
+      },
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toResolvedAsync<Deps extends readonly (Token<unknown> | Constructor)[]>(
+    factory: (
+      ...args: { [K in keyof Deps]: import("#/types").TokenValue<Deps[K]> }
+    ) => Promise<Value>,
+    deps: Deps,
+  ): BindingBuilder<Value> {
+    const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
+    return new BindingBuilderImpl<Value>(
+      this._token,
+      {
+        kind: "resolved-async",
+        factory: factory as (...args: unknown[]) => Promise<Value>,
+        deps: normalizedDeps,
+        scope: "transient",
+      },
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+
+  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
+    return new AliasBindingBuilderImpl<Value>(
+      this._token,
+      target,
+      this._commit,
+      this._pendingSlot,
+      this._pendingPredicate,
+    );
+  }
+}
+
+// ── BindingBuilderImpl ─────────────────────────────────────────────────────────
+
+class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
+  private _slot: SlotKey;
+  private _predicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
+  private _committed: BindingIdentifier | undefined;
+
+  constructor(
+    private readonly _token: Token<Value> | Constructor<Value>,
+    private readonly _partial: PartialBinding<Value>,
+    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    initialSlot?: SlotKey,
+    initialPredicate?: (ctx: import("#/types").ConstraintContext) => boolean,
+  ) {
+    this._slot = initialSlot ?? { ...DEFAULT_SLOT, tags: [] };
+    this._predicate = initialPredicate;
+    this._doCommit();
+  }
+
+  private _doCommit(): void {
+    const previousId = this._committed;
+    const binding: Binding<Value> = {
+      ...(this._partial as unknown as object),
+      id: generateBindingId(),
+      token: this._token,
+      slot: this._slot,
+      predicate: this._predicate,
+    } as Binding<Value>;
+    this._committed = this._commit(binding as Binding<unknown>, previousId);
+  }
+
+  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): this {
+    this._predicate = predicate;
+    this._doCommit();
+    return this;
+  }
+
+  whenNamed(name: string): this {
+    this._slot = { ...this._slot, name };
+    this._doCommit();
+    return this;
+  }
+
+  whenTagged(tag: string, value: unknown): this {
+    const existing = [...this._slot.tags];
+    const idx = existing.findIndex(([k]) => k === tag);
+    if (idx !== -1) {
+      existing[idx] = [tag, value];
+    } else {
+      existing.push([tag, value]);
+    }
+    this._slot = { ...this._slot, tags: existing };
+    this._doCommit();
+    return this;
+  }
+
+  whenDefault(): this {
+    return this;
+  }
+
+  singleton(): SingletonBindingBuilder<Value> {
+    const previousId = this._committed;
+    this._committed = undefined;
+    return new ScopeBuilderImpl<Value, "singleton">(
+      this._token,
+      { ...this._partial, scope: "singleton" } as PartialBinding<Value>,
+      this._slot,
+      this._predicate,
+      this._commit,
+      "singleton",
+      previousId,
+    );
+  }
+
+  transient(): TransientBindingBuilder<Value> {
+    const previousId = this._committed;
+    this._committed = undefined;
+    return new ScopeBuilderImpl<Value, "transient">(
+      this._token,
+      { ...this._partial, scope: "transient" } as PartialBinding<Value>,
+      this._slot,
+      this._predicate,
+      this._commit,
+      "transient",
+      previousId,
+    );
+  }
+
+  scoped(): ScopedBindingBuilder<Value> {
+    const previousId = this._committed;
+    this._committed = undefined;
+    return new ScopeBuilderImpl<Value, "scoped">(
+      this._token,
+      { ...this._partial, scope: "scoped" } as PartialBinding<Value>,
+      this._slot,
+      this._predicate,
+      this._commit,
+      "scoped",
+      previousId,
+    );
+  }
+
+  id(): BindingIdentifier {
+    return this._committed!;
+  }
+}
+
+// ── ScopeBuilderImpl ──────────────────────────────────────────────────────────
+
+class ScopeBuilderImpl<Value, Scope extends BindingScope>
+  implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value>
+{
+  private _onActivation: import("#/types").ActivationHandler<Value> | undefined;
+  private _onDeactivation: import("#/types").DeactivationHandler<Value> | undefined;
+  private _committed: BindingIdentifier | undefined;
+
+  constructor(
+    private readonly _token: Token<Value> | Constructor<Value>,
+    private readonly _partial: PartialBinding<Value>,
+    private readonly _slot: SlotKey,
+    private readonly _predicate:
+      | ((ctx: import("#/types").ConstraintContext) => boolean)
+      | undefined,
+    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    private readonly _scope: Scope,
+    private readonly _initialPreviousId?: BindingIdentifier,
+  ) {
+    this._doCommit();
+  }
+
+  private _doCommit(): void {
+    const previousId = this._committed ?? this._initialPreviousId;
+    const binding = {
+      ...(this._partial as unknown as object),
+      id: generateBindingId(),
+      token: this._token,
+      slot: this._slot,
+      predicate: this._predicate,
+      onActivation: this._onActivation,
+      onDeactivation: this._onDeactivation,
+    } as Binding<Value>;
+    this._committed = this._commit(binding as Binding<unknown>, previousId);
+  }
+
+  onActivation(fn: import("#/types").ActivationHandler<Value>): this {
+    this._onActivation = fn;
+    this._doCommit();
+    return this;
+  }
+
+  onDeactivation(fn: import("#/types").DeactivationHandler<Value>): this {
+    this._onDeactivation = fn;
+    this._doCommit();
+    return this;
+  }
+
+  id(): BindingIdentifier {
+    return this._committed!;
+  }
+}
+
+// ── ConstantBindingBuilderImpl ────────────────────────────────────────────────
+
+class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value> {
+  private _slot: SlotKey;
+  private _predicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
+  private _onActivation: import("#/types").ActivationHandler<Value> | undefined;
+  private _onDeactivation: import("#/types").DeactivationHandler<Value> | undefined;
+  private _committed: BindingIdentifier | undefined;
+
+  constructor(
+    private readonly _token: Token<Value> | Constructor<Value>,
+    private readonly _value: Value,
+    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    initialSlot?: SlotKey,
+    initialPredicate?: (ctx: import("#/types").ConstraintContext) => boolean,
+  ) {
+    this._slot = initialSlot ?? { ...DEFAULT_SLOT, tags: [] };
+    this._predicate = initialPredicate;
+    this._doCommit();
+  }
+
+  private _doCommit(): void {
+    const previousId = this._committed;
+    const binding: Binding<Value> = {
+      kind: "constant",
+      id: generateBindingId(),
+      token: this._token,
+      slot: this._slot,
+      predicate: this._predicate,
+      value: this._value,
+      scope: "singleton",
+      onActivation: this._onActivation,
+      onDeactivation: this._onDeactivation,
+    } as unknown as Binding<Value>;
+    this._committed = this._commit(binding as Binding<unknown>, previousId);
+  }
+
+  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): this {
+    this._predicate = predicate;
+    this._doCommit();
+    return this;
+  }
+
+  whenNamed(name: string): this {
+    this._slot = { ...this._slot, name };
+    this._doCommit();
+    return this;
+  }
+
+  whenTagged(tag: string, value: unknown): this {
+    const existing = [...this._slot.tags];
+    const idx = existing.findIndex(([k]) => k === tag);
+    if (idx !== -1) {
+      existing[idx] = [tag, value];
+    } else {
+      existing.push([tag, value]);
+    }
+    this._slot = { ...this._slot, tags: existing };
+    this._doCommit();
+    return this;
+  }
+
+  whenDefault(): this {
+    return this;
+  }
+
+  onActivation(fn: import("#/types").ActivationHandler<Value>): SingletonLifecycleBuilder<Value> {
+    this._onActivation = fn;
+    this._doCommit();
+    return this as unknown as SingletonLifecycleBuilder<Value>;
+  }
+
+  onDeactivation(
+    fn: import("#/types").DeactivationHandler<Value>,
+  ): SingletonLifecycleBuilder<Value> {
+    this._onDeactivation = fn;
+    this._doCommit();
+    return this as unknown as SingletonLifecycleBuilder<Value>;
+  }
+
+  id(): BindingIdentifier {
+    return this._committed!;
+  }
+}
+
+// ── AliasBindingBuilderImpl ───────────────────────────────────────────────────
+
+class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
+  private _slot: SlotKey;
+  private _predicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
+  private _committed: BindingIdentifier | undefined;
+
+  constructor(
+    private readonly _token: Token<Value> | Constructor<Value>,
+    private readonly _target: Token<Value> | Constructor<Value>,
+    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    initialSlot?: SlotKey,
+    initialPredicate?: (ctx: import("#/types").ConstraintContext) => boolean,
+  ) {
+    this._slot = initialSlot ?? { ...DEFAULT_SLOT, tags: [] };
+    this._predicate = initialPredicate;
+    this._doCommit();
+  }
+
+  private _doCommit(): void {
+    const previousId = this._committed;
+    const binding: Binding<Value> = {
+      kind: "alias",
+      id: generateBindingId(),
+      token: this._token,
+      slot: this._slot,
+      predicate: this._predicate,
+      target: this._target,
+    } as unknown as Binding<Value>;
+    this._committed = this._commit(binding as Binding<unknown>, previousId);
+  }
+
+  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): this {
+    this._predicate = predicate;
+    this._doCommit();
+    return this;
+  }
+
+  whenNamed(name: string): this {
+    this._slot = { ...this._slot, name };
+    this._doCommit();
+    return this;
+  }
+
+  whenTagged(tag: string, value: unknown): this {
+    const existing = [...this._slot.tags];
+    const idx = existing.findIndex(([k]) => k === tag);
+    if (idx !== -1) {
+      existing[idx] = [tag, value];
+    } else {
+      existing.push([tag, value]);
+    }
+    this._slot = { ...this._slot, tags: existing };
+    this._doCommit();
+    return this;
+  }
+
+  whenDefault(): this {
+    return this;
+  }
+
+  id(): BindingIdentifier {
+    return this._committed!;
+  }
+}
+
+// ── Container static ──────────────────────────────────────────────────────────
+
+export const Container: ContainerStatic & { create(): Container } = {
+  create(): Container {
+    return new DefaultContainer();
+  },
+
+  fromModules(...modules: SyncModule[]): Container {
+    const container = new DefaultContainer();
     container.load(...modules);
     return container;
-  }
-  export async function fromModulesAsync(...modules: (Module | AsyncModule)[]): Promise<Container> {
-    const container = DefaultContainer.create();
+  },
+
+  async fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container> {
+    const container = new DefaultContainer();
     await container.loadAsync(...modules);
     return container;
-  }
-}
+  },
+};

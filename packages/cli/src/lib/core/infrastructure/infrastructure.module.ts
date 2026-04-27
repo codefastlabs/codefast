@@ -35,6 +35,7 @@ export const InfrastructureModule = Module.create("cli-infrastructure", (moduleB
   moduleBuilder
     .bind(CliFsToken)
     .to(NodeCliFsAdapter)
+    .singleton()
     .onActivation((ctx, rawFs) => {
       if (!isCliTelemetryEnabled()) {
         return rawFs;
@@ -44,8 +45,7 @@ export const InfrastructureModule = Module.create("cli-infrastructure", (moduleB
         implementation: rawFs,
         logger: ctx.resolve(CliLoggerToken),
       });
-    })
-    .singleton();
+    });
 
   moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapterImpl).singleton();
   moduleBuilder.bind(ConfigWarningReporterPortToken).to(ConfigWarningReporterAdapter).singleton();
