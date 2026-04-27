@@ -44,9 +44,9 @@ class UserService {
   }
 }
 describe("Integration: Application Lifecycle", () => {
-  it("loads async infra then sync app, resolves UserService, enforces sync/async rules, dispose, child last-wins, and Symbol.metadata", async () => {
+  it("loads async infrastructure then sync app, resolves UserService, enforces sync/async rules, dispose, child last-wins, and Symbol.metadata", async () => {
     let deactivationCallCount = 0;
-    const InfraModule = Module.createAsync("infra", async (api) => {
+    const InfrastructureModule = Module.createAsync("infrastructure", async (api) => {
       await Promise.resolve();
       api.bind(ConfigToken).toConstantValue({ databaseUrl: "postgresql://integration:5432/app" });
       api
@@ -72,7 +72,7 @@ describe("Integration: Application Lifecycle", () => {
     const AppModule = Module.create("app", (api) => {
       api.bind(UserService).toSelf().singleton();
     });
-    const container = await Container.fromModulesAsync(InfraModule, AppModule);
+    const container = await Container.fromModulesAsync(InfrastructureModule, AppModule);
     container.validate();
     expect(() => {
       container.resolve(DatabaseToken);

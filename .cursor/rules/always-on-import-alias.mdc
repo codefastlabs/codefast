@@ -1,0 +1,25 @@
+---
+description: Enforce absolute internal imports via #/ alias
+alwaysApply: true
+---
+
+# Internal Imports
+
+- Use absolute internal imports with `#/...` for project code.
+- Do not introduce relative imports (`./`, `../`) between internal modules when `#/...` is possible.
+- For tests, use package test aliases (`#/tests/...`) when available.
+
+## Allowed exception
+
+- Relative imports are allowed only when the target is outside alias-mapped roots
+  (`src/**`, `tests/**`) or when no `#/...` alias exists for that path.
+
+## Alias naming convention
+
+- Preferred test alias key: `#/tests/*` (plural).
+- Keep `package.json` `imports` and `tsconfig.json` `paths` aligned for the same alias keys.
+
+## Refactor rule
+
+- When moving files, normalize imports to `#/...` immediately.
+- Avoid mixed alias styles like `#/test/*` vs `#/tests/*` in the same package.

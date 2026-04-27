@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { CoreModule } from "#/lib/core/core.module";
-import { InfraModule } from "#/lib/core/infra/infra.module";
+import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
 import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
@@ -33,7 +33,7 @@ async function makeTempRoot(): Promise<string> {
 }
 
 const container = Container.create();
-container.load(CoreModule, InfraModule, PresentationModule, MirrorModule);
+container.load(CoreModule, InfrastructureModule, PresentationModule, MirrorModule);
 const runMirrorSyncUseCase = container.resolve(RunMirrorSyncUseCaseToken) as RunMirrorSyncUseCase;
 
 async function runMirrorSyncWithNodeDependencies(request: MirrorSyncRunRequest): Promise<number> {

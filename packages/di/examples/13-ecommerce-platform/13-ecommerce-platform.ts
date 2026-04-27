@@ -42,7 +42,7 @@
  *   ✅ @injectable + @inject decorators throughout
  *   ✅ @postConstruct for cache warm-up
  *   ✅ @preDestroy for resource cleanup
- *   ✅ module.import() diamond-dedup (infra modules imported by many contexts)
+ *   ✅ module.import() diamond-dedup (infrastructure modules imported by many contexts)
  *   ✅ whenParentIs constraint for context-aware logger injection
  *   ✅ toDotGraph(container.generateDependencyGraph(...)) for architecture visualization
  *   ✅ resolveOptional for optional A/B test service
@@ -2423,7 +2423,7 @@ class AbTestManager implements AbTestService {
 
 // ---- Infrastructure (async) -------------------------------------------------
 
-const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
+const InfrastructureModule = Module.createAsync("Infrastructure", async (builder) => {
   const config = await loadAppConfig();
   builder.bind(AppConfigToken).toConstantValue(config);
   builder.bind(LoggerToken).to(EcommerceRootLogger).singleton();
@@ -2565,7 +2565,11 @@ async function bootstrap() {
   console.log("╚══════════════════════════════════════════════════╝\n");
 
   // 1. Build root container from async infrastructure + all domain modules
-  const container = await Container.fromModulesAsync(InfraModule, PaymentModule, AppModule);
+  const container = await Container.fromModulesAsync(
+    InfrastructureModule,
+    PaymentModule,
+    AppModule,
+  );
 
   // 2. Eagerly warm up all singletons (connects DB, Redis, etc.)
   console.log("\n[Bootstrap] Initialising all singletons...");

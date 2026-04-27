@@ -1,0 +1,30 @@
+---
+description: Keep Vitest and tsdown config profiles consistent by package type
+alwaysApply: true
+---
+
+# Vitest + tsdown Profiles
+
+Apply one of two profiles and keep each package consistent:
+
+- **Node/Core packages** (`cli`, `di`, `tailwind-variants` style)
+  - Vitest: `environment: "node"`, `include: ["tests/**/*.test.?(c|m)[jt]s?(x)"]`
+  - Coverage include: `src/**/*.ts`
+  - Coverage exclude: `src/**/*.{test,bench}.?(c|m)[jt]s?(x)` and `**/*.d.ts`
+  - tsdown exclude: `!src/**/*.{test,bench}.{ts,tsx}`
+
+- **React/UI packages** (`ui`, `theme` style)
+  - Vitest: `environment: "jsdom"`, `include: ["tests/**/*.test.?(c|m)[jt]s?(x)"]`
+  - Coverage include: `src/**/*.{ts,tsx}`
+  - Coverage exclude: `src/**/*.{test,stories}.?(c|m)[jt]s?(x)` and `**/*.d.ts`
+  - tsdown exclude: `!src/**/*.{test,bench,stories}.{ts,tsx}`
+
+## Consistency checks
+
+- Keep config patterns aligned across packages of the same profile.
+- Avoid one-off glob variants unless there is a documented package-specific reason.
+
+## Profile selection for new packages
+
+- Use **React/UI profile** when package tests run in `jsdom` or package has React UI surface.
+- Use **Node/Core profile** otherwise (Node runtime libraries, CLIs, infrastructure/core packages).

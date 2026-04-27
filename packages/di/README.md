@@ -492,13 +492,13 @@ Inside module setup, binding semantics depend on whether a disambiguator is pres
 ```typescript
 import { Container, Module } from "@codefast/di";
 
-const InfraModule = Module.create("Infra", (api) => {
+const InfrastructureModule = Module.create("Infra", (api) => {
   api.bind(LoggerToken).toConstantValue(console);
   api.bind(ConfigToken).toConstantValue(loadConfig());
 });
 
 const AppModule = Module.create("App", (api) => {
-  api.import(InfraModule);
+  api.import(InfrastructureModule);
   api.bind(UserRepository).toSelf().singleton();
   api.bind(UserServiceToken).to(UserService).transient();
 });
@@ -520,7 +520,7 @@ const container = await Container.fromModulesAsync(DbModule, AppModule);
 Load and unload on an existing container:
 
 ```typescript
-container.load(InfraModule, AppModule);
+container.load(InfrastructureModule, AppModule);
 await container.loadAsync(DbModule);
 
 container.unload(AppModule);

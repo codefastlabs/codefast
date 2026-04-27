@@ -1,6 +1,6 @@
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { isOk } from "#/lib/core/domain/result.model";
-import { NodeCliPathAdapter } from "#/lib/core/infra/path.adapter";
+import { NodeCliPathAdapter } from "#/lib/core/infrastructure/path.adapter";
 import type { TagTargetCandidate } from "#/lib/tag/domain/types.domain";
 import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";

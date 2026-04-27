@@ -1,10 +1,10 @@
 import { Module } from "@codefast/di";
 import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { PrepareTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
-import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
-import { TagTargetResolverAdapter } from "#/lib/tag/infra/tag-target-resolver.adapter";
-import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
-import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
+import { TagSinceWriterAdapter } from "#/lib/tag/infrastructure/tag-since-writer.adapter";
+import { TagTargetResolverAdapter } from "#/lib/tag/infrastructure/tag-target-resolver.adapter";
+import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infrastructure/typescript-tree-walk.adapter";
+import { TagVersionResolverAdapter } from "#/lib/tag/infrastructure/tag-version-resolver.adapter";
 import {
   PrepareTagSyncUseCaseToken,
   RunTagSyncUseCaseToken,
@@ -14,11 +14,11 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tag/contracts/tokens";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { InfraModule } from "#/lib/core/infra/infra.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
+import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
+import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/logging-decorator.adapter";
 
 export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
-  moduleBuilder.import(InfraModule);
+  moduleBuilder.import(InfrastructureModule);
 
   moduleBuilder
     .bind(TagTargetResolverPortToken)

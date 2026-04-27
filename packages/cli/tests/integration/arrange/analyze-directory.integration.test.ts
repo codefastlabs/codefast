@@ -12,12 +12,12 @@ import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-case
 import { printAnalyzeReport } from "#/lib/arrange/presentation/arrange-analyze.presenter";
 import { CoreModule } from "#/lib/core/core.module";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { InfraModule } from "#/lib/core/infra/infra.module";
+import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
 
 const container = Container.create();
-container.load(CoreModule, InfraModule, PresentationModule, ArrangeModule);
+container.load(CoreModule, InfrastructureModule, PresentationModule, ArrangeModule);
 const analyzeDirectoryUseCase = container.resolve(
   AnalyzeDirectoryUseCaseToken,
 ) as AnalyzeDirectoryUseCase;

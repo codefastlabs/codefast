@@ -1,5 +1,5 @@
 /**
- * Lists `.ts` / `.tsx` files under a directory (implementation may live in another bounded context’s infra).
+ * Lists `.ts` / `.tsx` files under a directory (implementation may live in another bounded context's infrastructure).
  */
 export interface TypeScriptTreeWalkPort {
   walkTsxFiles(rootDirectoryPath: string): string[];

@@ -5,9 +5,9 @@ import { AnalyzeDirectoryUseCaseImpl } from "#/lib/arrange/application/use-cases
 import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
 import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { TailwindGroupingServiceImpl } from "#/lib/arrange/domain/tailwind-grouping.service";
-import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
-import { FileWalkerAdapter } from "#/lib/arrange/infra/file-walker.adapter";
-import { WorkspaceResolverAdapter } from "#/lib/arrange/infra/workspace-resolver.adapter";
+import { DomainSourceParserAdapter } from "#/lib/arrange/infrastructure/domain-source-parser.adapter";
+import { FileWalkerAdapter } from "#/lib/arrange/infrastructure/file-walker.adapter";
+import { WorkspaceResolverAdapter } from "#/lib/arrange/infrastructure/workspace-resolver.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorServiceToken,
@@ -22,11 +22,11 @@ import {
 } from "#/lib/arrange/contracts/tokens";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { InfraModule } from "#/lib/core/infra/infra.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
+import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
+import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/logging-decorator.adapter";
 
 export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
-  moduleBuilder.import(InfraModule);
+  moduleBuilder.import(InfrastructureModule);
 
   moduleBuilder
     .bind(FileWalkerPortToken)
