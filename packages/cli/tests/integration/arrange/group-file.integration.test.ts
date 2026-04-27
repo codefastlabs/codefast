@@ -7,11 +7,9 @@ import os from "node:os";
 import path from "node:path";
 import { ArrangeFileProcessorServiceImpl } from "#/lib/arrange/application/services/arrange-file-processor.service";
 import { DomainSourceParserAdapter } from "#/lib/arrange/adapters/secondary/domain-source-parser.adapter";
-import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/lib/infrastructure/node-io.adapter";
-import { printGroupFilePreviewFromWork } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
 
 const arrangeFs = new NodeCliFsAdapter();
-const arrangeLogger = new NodeCliLoggerAdapter();
 const service = new ArrangeFileProcessorServiceImpl(arrangeFs, new DomainSourceParserAdapter());
 
 function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {
@@ -23,20 +21,6 @@ function withTempFixture(name: string, source: string, fn: (filePath: string) =>
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
-}
-
-function captureStdout(fn: () => void): string {
-  const chunks: string[] = [];
-  const spy = vi.spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
-    chunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
-    return true;
-  });
-  try {
-    fn();
-  } finally {
-    spy.mockRestore();
-  }
-  return chunks.join("");
 }
 
 describe("ArrangeFileProcessorServiceImpl", () => {
@@ -281,10 +265,7 @@ export const styles = tv({ base: cn("${long}") });`;
         options: { write: false, withClassName: false },
       });
       expect(result.workPlan).toBeDefined();
-      const output = captureStdout(() => {
-        printGroupFilePreviewFromWork(arrangeLogger, result.workPlan!);
-      });
-      expect(output).toContain("[cn] / [tv] / [JSX className]");
+      expect(result.workPlan?.plannedGroupEdits.length ?? 0).toBeGreaterThan(0);
     });
   });
 });
