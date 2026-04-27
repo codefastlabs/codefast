@@ -5,14 +5,18 @@ import {
   consumeCliAppError,
   runCliResultAsync,
 } from "#/lib/core/presentation/cli-executor.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 
-type LoggerStub = {
-  out: ReturnType<typeof vi.fn>;
-  err: ReturnType<typeof vi.fn>;
+type LoggerStub = CliLogger & {
+  out: ReturnType<typeof vi.fn<(line: string) => void>>;
+  err: ReturnType<typeof vi.fn<(line: string) => void>>;
 };
 
 function createLogger(): LoggerStub {
-  return { out: vi.fn(), err: vi.fn() };
+  return {
+    out: vi.fn<(line: string) => void>(),
+    err: vi.fn<(line: string) => void>(),
+  };
 }
 
 describe("cli runtime + executor", () => {

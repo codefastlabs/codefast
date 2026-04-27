@@ -10,8 +10,8 @@ describe("WorkspaceServiceAdapter integration", () => {
     const discoverySpy = vi
       .spyOn(workspacePackagesService, "findWorkspacePackageRelPaths")
       .mockResolvedValue({
-        packageRelPaths: ["packages/a"],
-        source: "default-patterns",
+        relPaths: ["packages/a"],
+        multiSource: "default-patterns",
       });
     const fakeFs = { existsSync: vi.fn() };
     const adapter = new WorkspaceServiceAdapter(fakeFs as never);
@@ -23,6 +23,6 @@ describe("WorkspaceServiceAdapter integration", () => {
     expect(resolverSpy).toHaveBeenCalledWith("/tmp/root", "packages/a");
     expect(discoverySpy).toHaveBeenCalledWith("/tmp/root", fakeFs, warningSpy);
     expect(resolved).toBe("/tmp/root/packages/a");
-    expect(discovery.packageRelPaths).toEqual(["packages/a"]);
+    expect(discovery.relPaths).toEqual(["packages/a"]);
   });
 });

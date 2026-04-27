@@ -7,6 +7,35 @@ import {
   formatArrangeSyncJsonOutput,
   presentArrangeSyncResult,
 } from "#/lib/arrange/presentation/arrange-sync.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
+
+function createLoggerMock(): CliLogger & {
+  out: ReturnType<typeof vi.fn<(line: string) => void>>;
+  err: ReturnType<typeof vi.fn<(line: string) => void>>;
+} {
+  return {
+    out: vi.fn<(line: string) => void>(),
+    err: vi.fn<(line: string) => void>(),
+  };
+}
+
+function createPreviewPlan(filePath: string): GroupFileWorkPlan {
+  return {
+    filePath,
+    sourceText: "",
+    textAfterUnwrap: "",
+    domainSfForLineNumbers: { text: "" } as never,
+    domainSfGrouped: { text: "" } as never,
+    cnInTvCalls: [],
+    unwrapReplacementByCall: new Map(),
+    unwrapEdits: [],
+    plannedGroupEdits: [],
+    cnInTvNoReplacement: 0,
+    reportTotal: 0,
+    editSitesCount: 0,
+  };
+}
 
 function createFindings(count: number) {
   return Array.from({ length: count }, (_, index) => ({
@@ -19,7 +48,7 @@ function createFindings(count: number) {
 
 describe("arrange presenters integration", () => {
   it("prints analyze report with truncation markers", () => {
-    const logger = { out: vi.fn(), err: vi.fn() };
+    const logger = createLoggerMock();
     const presenter = new PresentAnalyzeReportPresenterImpl(logger);
     const report = {
       files: 3,
@@ -59,7 +88,7 @@ describe("arrange presenters integration", () => {
         totalFound: 1,
         totalChanged: 1,
         hookError: null,
-        previewPlans: [{ filePath: "a.tsx", plannedGroupEdits: [] }],
+        previewPlans: [createPreviewPlan("a.tsx")],
       },
       true,
     );
@@ -75,7 +104,7 @@ describe("arrange presenters integration", () => {
   });
 
   it("returns non-zero when hook error exists and prints error line", () => {
-    const logger = { out: vi.fn(), err: vi.fn() };
+    const logger = createLoggerMock();
     const exitCode = presentArrangeSyncResult(
       logger,
       {

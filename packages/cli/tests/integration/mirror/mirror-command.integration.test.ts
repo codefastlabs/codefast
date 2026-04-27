@@ -1,20 +1,50 @@
 import { Command } from "commander";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import { MirrorCommand } from "#/lib/mirror/adapters/primary/cli/mirror.command";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
+import type { PrepareMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
+import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
+
+function createLoggerMock(): CliLogger & {
+  out: ReturnType<typeof vi.fn<(line: string) => void>>;
+  err: ReturnType<typeof vi.fn<(line: string) => void>>;
+} {
+  return {
+    out: vi.fn<(line: string) => void>(),
+    err: vi.fn<(line: string) => void>(),
+  };
+}
+
+function createRuntimeMock(): CliRuntime & {
+  cwd: ReturnType<typeof vi.fn<() => string>>;
+  setExitCode: ReturnType<typeof vi.fn<(code: number) => void>>;
+  isStdoutTty: ReturnType<typeof vi.fn<() => boolean>>;
+} {
+  return {
+    cwd: vi.fn<() => string>(() => "/tmp/workspace"),
+    setExitCode: vi.fn<(code: number) => void>(),
+    isStdoutTty: vi.fn<() => boolean>(() => false),
+  };
+}
 
 type MirrorDeps = {
-  logger: { out: ReturnType<typeof vi.fn>; err: ReturnType<typeof vi.fn> };
-  runtime: { cwd: ReturnType<typeof vi.fn> };
-  prepareMirrorSync: { execute: ReturnType<typeof vi.fn> };
-  runMirrorSync: { execute: ReturnType<typeof vi.fn> };
+  logger: ReturnType<typeof createLoggerMock>;
+  runtime: ReturnType<typeof createRuntimeMock>;
+  prepareMirrorSync: PrepareMirrorSyncUseCase & {
+    execute: ReturnType<typeof vi.fn<PrepareMirrorSyncUseCase["execute"]>>;
+  };
+  runMirrorSync: RunMirrorSyncUseCase & {
+    execute: ReturnType<typeof vi.fn<RunMirrorSyncUseCase["execute"]>>;
+  };
 };
 
 function createDeps(): MirrorDeps {
   return {
-    logger: { out: vi.fn(), err: vi.fn() },
-    runtime: { cwd: vi.fn(() => "/tmp/workspace") },
+    logger: createLoggerMock(),
+    runtime: createRuntimeMock(),
     prepareMirrorSync: {
-      execute: vi.fn(async () => ({
+      execute: vi.fn<PrepareMirrorSyncUseCase["execute"]>(async () => ({
         ok: true,
         value: {
           rootDir: "/tmp/workspace",
@@ -25,7 +55,7 @@ function createDeps(): MirrorDeps {
       })),
     },
     runMirrorSync: {
-      execute: vi.fn(async () => ({
+      execute: vi.fn<RunMirrorSyncUseCase["execute"]>(async () => ({
         ok: true,
         value: {
           packagesFound: 1,
@@ -35,7 +65,7 @@ function createDeps(): MirrorDeps {
           totalExports: 1,
           totalJsModules: 1,
           totalCssExports: 0,
-          elapsedSeconds: 0.01,
+          packageDetails: [],
         },
       })),
     },
@@ -100,7 +130,7 @@ describe("MirrorCommand integration", () => {
         totalExports: 0,
         totalJsModules: 0,
         totalCssExports: 0,
-        elapsedSeconds: 0.1,
+        packageDetails: [],
       },
     });
     const { program } = createCommandAndProgram(deps);
