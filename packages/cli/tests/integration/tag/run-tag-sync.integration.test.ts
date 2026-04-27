@@ -10,10 +10,7 @@ import { CoreModule } from "#/lib/core/core.module";
 import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
-import {
-  resolveNearestPackageVersion,
-  runTagOnTarget,
-} from "#/lib/tag/application/services/tag-target-runner.service";
+import { runTagOnTarget } from "#/lib/tag/application/services/tag-target-runner.service";
 import { TagModule } from "#/lib/tag/tag.module";
 import { NodeCliPathAdapter } from "#/lib/core/infrastructure/path.adapter";
 import { TagSinceWriterAdapter } from "#/lib/tag/adapters/secondary/tag-since-writer.adapter";
@@ -57,7 +54,7 @@ describe("resolveNearestPackageVersion", () => {
   it("loads version from nearest package.json", () => {
     withTempPackage("index.ts", "export const foo = 1;\n", ({ sourceFile }) => {
       expect(
-        resolveNearestPackageVersion(sourceFile, new TagVersionResolverAdapter(tagCliPath, tagFs)),
+        new TagVersionResolverAdapter(tagCliPath, tagFs).resolveNearestPackageVersion(sourceFile),
       ).toBe("1.2.3");
     });
   });
