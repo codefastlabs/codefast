@@ -206,7 +206,7 @@ class UserController {
 // Modules
 // ============================================================================
 
-const InfraModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   const config = await loadConfig();
   builder.bind(ConfigToken).toConstantValue(config);
 
@@ -262,7 +262,7 @@ const AppModule = Module.create("App", (builder) => {
 // ============================================================================
 
 async function createServer() {
-  const container = await Container.fromModulesAsync(InfraModule, AppModule);
+  const container = await Container.fromModulesAsync(InfrastructureModule, AppModule);
 
   // Eagerly initialize all singletons before accepting traffic
   await container.initializeAsync();

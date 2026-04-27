@@ -377,7 +377,7 @@ class TenantInviteManager implements InviteService {
 // Root module — shared infrastructure
 // ============================================================================
 
-const InfraModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
     defaultDbUrl: "postgres://localhost:5432/saas",
     redisUrl: "redis://localhost:6379",
@@ -490,7 +490,7 @@ function createTenantContainer(
 // ============================================================================
 
 async function main(): Promise<void> {
-  await using rootContainer = await Container.fromModulesAsync(InfraModule);
+  await using rootContainer = await Container.fromModulesAsync(InfrastructureModule);
 
   // Resolve the shared DB pool once (async) before creating tenant containers.
   // All tenant containers receive it as a plain value — no repeated async resolution.

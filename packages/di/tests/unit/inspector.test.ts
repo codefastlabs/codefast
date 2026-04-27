@@ -24,7 +24,7 @@ describe("ContainerInspector", () => {
     expect(parsed.bindings![0]!.registryKeyLabel).toBe("Logger");
   });
   it("toDotGraph emits digraph, scope colors, and module subgraphs", () => {
-    const InfrastructureModule = Module.create("InfraModule", (api) => {
+    const InfrastructureModule = Module.create("InfrastructureModule", (api) => {
       api.bind(LoggerToken).toConstantValue("console");
       api
         .bind(HttpClientToken)
@@ -35,8 +35,8 @@ describe("ContainerInspector", () => {
     container.load(InfrastructureModule);
     const dot = toDotGraph(container.generateDependencyGraph());
     expect(dot).toContain("digraph codefast_di");
-    expect(dot).toContain("subgraph cluster_InfraModule");
-    expect(dot).toContain('label="InfraModule"');
+    expect(dot).toContain("subgraph cluster_InfrastructureModule");
+    expect(dot).toContain('label="InfrastructureModule"');
     expect(dot).toContain("fillcolor=lightgray");
     expect(dot).toContain('fillcolor="#FFD700"');
     expect(dot).toContain('fillcolor="#ADD8E6"');

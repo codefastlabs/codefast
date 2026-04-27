@@ -6,7 +6,7 @@ description: >-
   search/integration adapters (domain + technology on concrete classes),
   English-only — single source of truth
 globs: "**/*.{ts,tsx}"
-alwaysApply: false
+alwaysApply: true
 ---
 
 # TypeScript naming & clean identifiers
@@ -138,6 +138,8 @@ type Nullable<Value> = Value | null;
 - **English only** for identifiers, comments, and docstrings.
 - Prefer **clear names** over cryptic abbreviations: `maxUserConnectionLimit` over `maxUsrConn`.
 - **No cryptic abbreviations** across boundaries or long-lived fields: `userService` not `userSvc`; `appConfig` not `cfg`; `elasticClient` not `es`.
+- Prefer explicit architectural terms over abbreviations in new names:
+  use full architectural terms (`infrastructure`, `application`) instead of abbreviations (except well-known technical acronyms).
 - **Constructor-injected fields** and **transaction / lifecycle callbacks**: use role-based names — `transactionDatabase`, `redisClient`, not `db` / `fn` unless the scope is a single trivial line.
 - Avoid **generic** names (`data`, `info`, `val`, `temp`, `obj`, `res`, `result` standalone) unless scope is tiny and obvious.
 

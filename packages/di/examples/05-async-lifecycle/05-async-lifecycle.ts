@@ -92,7 +92,7 @@ class App {
 
 // --- AsyncModule ------------------------------------------------------------
 
-const InfraModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   // Async module setup — fetch config from "remote" source
   const config = await fetchConfig();
   builder.bind(ConfigToken).toConstantValue(config);
@@ -144,7 +144,7 @@ const AppModule = Module.create("App", (builder) => {
 async function main(): Promise<void> {
   // await using — container.dispose() is called automatically at scope exit
   await using container = await Container.fromModulesAsync(
-    InfraModule,
+    InfrastructureModule,
     DatabaseModule,
     CacheModule,
     AppModule,

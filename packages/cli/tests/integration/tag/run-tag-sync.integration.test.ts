@@ -1,24 +1,24 @@
 /**
  * Integration Test: covers RunTagSyncUseCase (TagModule + DI) and free-function helpers
- * runTagOnTarget / resolveNearestPackageVersion with concrete tag infra adapters.
+ * runTagOnTarget / resolveNearestPackageVersion with concrete tag infrastructure adapters.
  */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { CoreModule } from "#/lib/core/core.module";
-import { InfraModule } from "#/lib/core/infra/infra.module";
+import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
-import { NodeCliFsAdapter } from "#/lib/infra/node-io.adapter";
+import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
 import {
   resolveNearestPackageVersion,
   runTagOnTarget,
 } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { TagModule } from "#/lib/tag/tag.module";
-import { NodeCliPathAdapter } from "#/lib/core/infra/path.adapter";
-import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
-import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
-import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
+import { NodeCliPathAdapter } from "#/lib/core/infrastructure/path.adapter";
+import { TagSinceWriterAdapter } from "#/lib/tag/infrastructure/tag-since-writer.adapter";
+import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infrastructure/typescript-tree-walk.adapter";
+import { TagVersionResolverAdapter } from "#/lib/tag/infrastructure/tag-version-resolver.adapter";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
 
@@ -28,7 +28,7 @@ const tagSinceWriterAdapter = new TagSinceWriterAdapter(tagFs);
 const tagTypeScriptTreeWalkAdapter = new TypeScriptTreeWalkAdapter(tagFs);
 
 const container = Container.create();
-container.load(CoreModule, InfraModule, PresentationModule, TagModule);
+container.load(CoreModule, InfrastructureModule, PresentationModule, TagModule);
 const runTagSyncUseCase = container.resolve(RunTagSyncUseCaseToken) as RunTagSyncUseCase;
 
 function withTempPackage(

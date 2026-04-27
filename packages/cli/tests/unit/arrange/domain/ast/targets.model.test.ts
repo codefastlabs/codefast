@@ -4,7 +4,7 @@ import {
   formatCnCallReplacement,
   planGroupEditForTarget,
 } from "#/lib/arrange/domain/ast/targets.model";
-import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
 
 describe("formatCnCallReplacement", () => {
   it("keeps multiline trailing comma behavior explicit for multi-arg cn calls", () => {

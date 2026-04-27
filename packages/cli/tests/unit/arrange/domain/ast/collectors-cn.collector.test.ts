@@ -1,11 +1,11 @@
 import { forEachStringLiteralInClassExpression } from "#/lib/arrange/domain/ast/collectors-cn.collector";
-import { mergeCnUnconditionalLiteralPoolForTest } from "#/tests/support/arrange/infra/merge-cn-literal-pool-for-test.test-helper";
+import { mergeCnUnconditionalLiteralPoolForTest } from "#/tests/support/arrange/infrastructure/merge-cn-literal-pool-for-test.test-helper";
 import { MAX_CLASS_EXPR_DEPTH } from "#/lib/arrange/domain/constants.domain";
 import {
   isDomainCallExpression,
   isDomainExpressionStatement,
 } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#/lib/arrange/infra/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
 
 describe("forEachStringLiteralInClassExpression", () => {
   function literalsFromArgSnippet(

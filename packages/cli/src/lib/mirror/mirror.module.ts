@@ -2,10 +2,10 @@ import { Module } from "@codefast/di";
 import { SyncWorkspacePackageServiceImpl } from "#/lib/mirror/application/services/sync-workspace-package.service";
 import { PrepareMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
-import { FileSystemServiceAdapter } from "#/lib/mirror/infra/file-system-service.adapter";
-import { MirrorSyncReporterAdapter } from "#/lib/mirror/infra/mirror-sync-reporter.adapter";
-import { PackageRepositoryAdapter } from "#/lib/mirror/infra/package-repository.adapter";
-import { WorkspaceServiceAdapter } from "#/lib/mirror/infra/workspace-service.adapter";
+import { FileSystemServiceAdapter } from "#/lib/mirror/infrastructure/file-system-service.adapter";
+import { MirrorSyncReporterAdapter } from "#/lib/mirror/infrastructure/mirror-sync-reporter.adapter";
+import { PackageRepositoryAdapter } from "#/lib/mirror/infrastructure/package-repository.adapter";
+import { WorkspaceServiceAdapter } from "#/lib/mirror/infrastructure/workspace-service.adapter";
 import {
   FileSystemServicePortToken,
   PrepareMirrorSyncUseCaseToken,
@@ -16,11 +16,11 @@ import {
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { InfraModule } from "#/lib/core/infra/infra.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infra/logging-decorator.adapter";
+import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
+import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/logging-decorator.adapter";
 
 export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
-  moduleBuilder.import(InfraModule);
+  moduleBuilder.import(InfrastructureModule);
 
   moduleBuilder
     .bind(WorkspaceServicePortToken)

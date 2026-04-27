@@ -6,8 +6,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { ArrangeFileProcessorServiceImpl } from "#/lib/arrange/application/services/arrange-file-processor.service";
-import { DomainSourceParserAdapter } from "#/lib/arrange/infra/domain-source-parser.adapter";
-import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/lib/infra/node-io.adapter";
+import { DomainSourceParserAdapter } from "#/lib/arrange/infrastructure/domain-source-parser.adapter";
+import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/lib/infrastructure/node-io.adapter";
 import { printGroupFilePreviewFromWork } from "#/lib/arrange/presentation/group-file-preview.presenter";
 
 const arrangeFs = new NodeCliFsAdapter();

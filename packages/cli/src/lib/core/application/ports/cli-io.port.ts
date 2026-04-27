@@ -1,5 +1,5 @@
 /**
- * Filesystem surface for CLI use cases — inject in tests. Implementations live in infra.
+ * Filesystem surface for CLI use cases — inject in tests. Implementations live in infrastructure.
  */
 export type CliFileEncoding = "utf8";
 
