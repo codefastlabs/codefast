@@ -9,6 +9,7 @@ import type {
   CliFs,
   CliLogger,
 } from "#/lib/core/application/ports/cli-io.port";
+import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
 
 function canonicalPathSyncNode(inputPath: string): string {
   try {
@@ -46,5 +47,20 @@ export class NodeCliLoggerAdapter implements CliLogger {
   }
   err(line: string): void {
     process.stderr.write(`${line}\n`);
+  }
+}
+
+@injectable([])
+export class NodeCliRuntimeAdapter implements CliRuntime {
+  cwd(): string {
+    return process.cwd();
+  }
+
+  setExitCode(code: number): void {
+    process.exitCode = code;
+  }
+
+  isStdoutTty(): boolean {
+    return !!process.stdout.isTTY;
   }
 }

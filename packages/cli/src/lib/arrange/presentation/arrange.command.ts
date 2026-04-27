@@ -1,4 +1,3 @@
-import process from "node:process";
 import { inject, injectable } from "@codefast/di";
 import type { Command } from "commander";
 import { Option } from "commander";
@@ -33,6 +32,8 @@ import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
+import { CliRuntimeToken } from "#/lib/core/contracts/tokens";
 
 function withClassNameOption(): Option {
   return new Option(
@@ -43,6 +44,7 @@ function withClassNameOption(): Option {
 
 @injectable([
   inject(CliLoggerToken),
+  inject(CliRuntimeToken),
   inject(PrepareArrangeWorkspaceUseCaseToken),
   inject(AnalyzeDirectoryUseCaseToken),
   inject(RunArrangeSyncUseCaseToken),
@@ -56,6 +58,7 @@ export class ArrangeCommand implements CliCommand {
 
   constructor(
     private readonly logger: CliLogger,
+    private readonly runtime: CliRuntime,
     private readonly prepareWorkspace: PrepareArrangeWorkspaceUseCase,
     private readonly analyzeDirectory: AnalyzeDirectoryUseCase,
     private readonly runArrangeSync: RunArrangeSyncUseCase,
@@ -121,7 +124,7 @@ export class ArrangeCommand implements CliCommand {
     options?: { json?: boolean },
   ): Promise<void> {
     const prelude = await this.prepareWorkspace.execute({
-      currentWorkingDirectory: process.cwd(),
+      currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
     });
     if (!consumeCliAppError(this.logger, prelude)) {
@@ -151,7 +154,7 @@ export class ArrangeCommand implements CliCommand {
     opts: { withClassName?: boolean; cnImport?: string; json?: boolean },
   ): Promise<void> {
     const prelude = await this.prepareWorkspace.execute({
-      currentWorkingDirectory: process.cwd(),
+      currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
     });
     if (!consumeCliAppError(this.logger, prelude)) {
@@ -182,9 +185,9 @@ export class ArrangeCommand implements CliCommand {
 
     if (opts.json) {
       this.logger.out(formatArrangeSyncJsonOutput(outcome.value, write));
-      process.exitCode = exitCodeForArrangeSyncResult(outcome.value);
+      this.runtime.setExitCode(exitCodeForArrangeSyncResult(outcome.value));
     } else {
-      process.exitCode = presentArrangeSyncResult(this.logger, outcome.value, write);
+      this.runtime.setExitCode(presentArrangeSyncResult(this.logger, outcome.value, write));
     }
   }
 

@@ -1,7 +1,7 @@
-import process from "node:process";
 import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/core/presentation/command.interface";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
@@ -20,10 +20,11 @@ import type {
 import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
-import { CliLoggerToken } from "#/lib/core/contracts/tokens";
+import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
 
 @injectable([
   inject(CliLoggerToken),
+  inject(CliRuntimeToken),
   inject(PrepareTagOrchestratorToken),
   inject(RunTagSyncUseCaseToken),
   inject(TagSyncProgressListenerToken),
@@ -35,6 +36,7 @@ export class TagCommand implements CliCommand {
 
   constructor(
     private readonly logger: CliLogger,
+    private readonly runtime: CliRuntime,
     private readonly prepareTagSync: PrepareTagOrchestrator,
     private readonly runTagSync: RunTagSyncUseCase,
     private readonly tagProgressListener: TagProgressListener,
@@ -61,7 +63,7 @@ export class TagCommand implements CliCommand {
     command: Command,
   ): Promise<void> {
     const prelude = await this.prepareTagSync.execute({
-      currentWorkingDirectory: process.cwd(),
+      currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
       globalCliRaw: command.optsWithGlobals(),
     });
@@ -90,9 +92,9 @@ export class TagCommand implements CliCommand {
     }
     if (parsed.value.json) {
       this.logger.out(formatTagSyncJsonOutput(tagOutcome.value, rootDir));
-      process.exitCode = exitCodeForTagSyncResult(tagOutcome.value);
+      this.runtime.setExitCode(exitCodeForTagSyncResult(tagOutcome.value));
     } else {
-      process.exitCode = this.presentSyncCliResult.present(tagOutcome.value, rootDir);
+      this.runtime.setExitCode(this.presentSyncCliResult.present(tagOutcome.value, rootDir));
     }
   }
 }
