@@ -7,11 +7,11 @@ import type {
   MirrorConfig,
 } from "#/lib/config/domain/schema.domain";
 
-export const hookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
+const hookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
   message: "Expected a function",
 });
 
-export const mirrorConfigSchema: z.ZodType<MirrorConfig> = z
+const mirrorConfigSchema: z.ZodType<MirrorConfig> = z
   .object({
     skipPackages: z.array(z.string()).optional(),
     pathTransformations: z
@@ -36,14 +36,14 @@ export const mirrorConfigSchema: z.ZodType<MirrorConfig> = z
   })
   .strict();
 
-export const codefastTagConfigSchema: z.ZodType<CodefastTagConfig> = z
+const codefastTagConfigSchema: z.ZodType<CodefastTagConfig> = z
   .object({
     skipPackages: z.array(z.string()).optional(),
     onAfterWrite: hookSchema.optional(),
   })
   .strict();
 
-export const codefastArrangeConfigSchema: z.ZodType<CodefastArrangeConfig> = z
+const codefastArrangeConfigSchema: z.ZodType<CodefastArrangeConfig> = z
   .object({
     onAfterWrite: hookSchema.optional(),
   })

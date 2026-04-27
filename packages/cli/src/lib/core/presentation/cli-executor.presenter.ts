@@ -13,7 +13,7 @@ function assertExhaustiveAppErrorCode(code: never): number {
 /**
  * Maps {@link AppError} codes to `process.exitCode` for CLI commands.
  */
-export function exitCodeForAppError(error: AppError): number {
+function exitCodeForAppError(error: AppError): number {
   const { code } = error;
   switch (code) {
     case "NOT_FOUND":
@@ -56,36 +56,7 @@ export function consumeCliAppError<T>(
 }
 
 /**
- * Awaits a use case and applies the same handling as {@link consumeCliAppError}.
- */
-export async function consumeCliAppErrorAsync<T>(
-  logger: CliLogger,
-  outcomePromise: Promise<Result<T, AppError>>,
-  options?: { readonly successMessage?: string },
-): Promise<Result<T, AppError>> {
-  const outcome = await outcomePromise;
-  consumeCliAppError(logger, outcome, options);
-  return outcome;
-}
-
-/**
- * Completes CLI handling: errors are logged and `process.exitCode` is set; success runs `onSuccess`
- * and assigns `process.exitCode` from its return value (default `0`).
- */
-export function runCliResult<T>(
-  logger: CliLogger,
-  outcome: Result<T, AppError>,
-  onSuccess: (value: T) => number | void,
-): void {
-  if (!consumeCliAppError(logger, outcome)) {
-    return;
-  }
-  const exit = onSuccess(outcome.value);
-  process.exitCode = exit === undefined ? 0 : exit;
-}
-
-/**
- * Async variant of {@link runCliResult}.
+ * Async CLI result handling that sets `process.exitCode` from success/error outcome.
  */
 export async function runCliResultAsync<T>(
   logger: CliLogger,

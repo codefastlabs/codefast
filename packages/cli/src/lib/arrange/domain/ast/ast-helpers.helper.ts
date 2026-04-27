@@ -22,7 +22,7 @@ import type {
 /**
  * Known module specifiers that export `cn` / `tv`.
  */
-export const KNOWN_CN_TV_MODULES = new Set([
+const KNOWN_CN_TV_MODULES = new Set([
   "@codefast/tailwind-variants",
   "clsx",
   "class-variance-authority",
@@ -38,7 +38,7 @@ export const KNOWN_CN_TV_MODULES = new Set([
  * True for typical shadcn-style re-exports: `./utils`, `@/lib/utils`, `…/utils/…`,
  * or a dedicated `cn.ts` / `cn.tsx` module.
  */
-export function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
+function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
   const norm = moduleSpecifier.replace(/\\/g, "/");
   if (/(?:^|[./])utils(?:\/|$)/.test(norm)) {
     return true;
@@ -131,7 +131,7 @@ export function lineOf(sourceFile: DomainSourceFile, node: DomainAstNode): numbe
   return lineOfSourcePosition(sourceFile.text, node.pos);
 }
 
-export { applyEditsDescending, indentOfLineContaining };
+export { applyEditsDescending };
 
 /**
  * Replace `cn(...)` nested in `tv({...})` with a plain string (one arg) or a string

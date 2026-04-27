@@ -33,7 +33,7 @@ export function targetReplaceStart(target: GroupTarget): number {
   return target.valueNode.pos;
 }
 
-export function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): GroupTarget[] {
+function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): GroupTarget[] {
   const results: GroupTarget[] = [];
   const visitTypeScriptSubtree = (tsNode: DomainAstNode): void => {
     if (isDomainJsxAttribute(tsNode)) {
@@ -66,7 +66,7 @@ export function collectGroupTargets(sourceFile: DomainSourceFile, filePath: stri
   return [...cnPart, ...collectLongJsxClassNameTargets(sourceFile)];
 }
 
-export function formatCnCallReplacement(
+function formatCnCallReplacement(
   stringNode: StringNode,
   sourceText: string,
   withClassName: boolean,

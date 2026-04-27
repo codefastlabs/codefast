@@ -3,7 +3,7 @@
  * Does not extend the global `Error` type — instances are carried in `Result` values, not thrown.
  */
 
-export type AppErrorCode = "NOT_FOUND" | "VALIDATION_ERROR" | "INFRA_FAILURE";
+type AppErrorCode = "NOT_FOUND" | "VALIDATION_ERROR" | "INFRA_FAILURE";
 
 export class AppError {
   readonly name = "AppError" as const;

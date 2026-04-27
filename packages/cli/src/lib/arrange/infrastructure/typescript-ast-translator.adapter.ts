@@ -69,11 +69,7 @@ function mapBinaryOperator(operatorToken: ts.Node): DomainBinaryOperator {
   return DomainBinaryOperator.Other;
 }
 
-export function translateNode(
-  n: ts.Node,
-  parent: DomainAstNode | null,
-  sf: ts.SourceFile,
-): DomainAstNode {
+function translateNode(n: ts.Node, parent: DomainAstNode | null, sf: ts.SourceFile): DomainAstNode {
   const pos = n.getStart(sf);
   const end = n.getEnd();
 
@@ -418,7 +414,7 @@ export function translateNode(
   }
 }
 
-export function translateTypeScriptSourceFile(tsSf: ts.SourceFile): DomainSourceFile {
+function translateTypeScriptSourceFile(tsSf: ts.SourceFile): DomainSourceFile {
   const text = tsSf.getFullText();
   const statements = tsSf.statements.map((statement) => translateNode(statement, null, tsSf));
   return {

@@ -9,12 +9,6 @@ import {
 } from "#/lib/arrange/domain/tailwind-token.value-object";
 import type { Bucket } from "#/lib/arrange/domain/types.domain";
 
-export {
-  indexOfFirstVariantColon,
-  stripVariants,
-  tokenizeClassString,
-} from "#/lib/arrange/domain/tailwind-token.value-object";
-
 /**
  * Bare-token classification is **total** (always returns a {@link Bucket}). The `Result` pattern
  * (`isOk` / `isErr`) belongs at arrange use-case / I/O boundaries, not on this hot path.
@@ -211,7 +205,7 @@ export function compositeSecondaryOrder(bareUtility: string): number {
 /**
  * Classify a **bare** utility (no `hover:` / `md:` / … prefixes).
  */
-export function classifyBareUtility(bareUtility: string): Bucket {
+function classifyBareUtility(bareUtility: string): Bucket {
   const b = bareUtility;
 
   // --- Existence: display roots, containment, named groups/peers ---
@@ -380,7 +374,7 @@ export function classifyBareUtility(bareUtility: string): Bucket {
  * and are labeled distinctly from interactive `state` variants (`hover:`, `data-[…]:`, …).
  * Pure arbitrary **properties** (`[--x]:`, `[color:red]`) have no `&` in the leading `[…]` segment.
  */
-export function isArbitraryParentSelectorStateToken(token: string): boolean {
+function isArbitraryParentSelectorStateToken(token: string): boolean {
   if (/^\[&/.test(token)) {
     return true;
   }

@@ -18,8 +18,6 @@ export interface PrepareArrangeWorkspaceUseCase {
   }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
 }
 
-// ─── Implementation ──────────────────────────────────────────────────────────
-
 @injectable([
   inject(CliFsToken),
   inject(LoadCodefastConfigUseCaseToken),

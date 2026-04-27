@@ -1,9 +1,6 @@
 import { z } from "zod";
 import type { ArrangeAnalyzeDirectoryRequest } from "#/lib/arrange/application/requests/analyze-directory.request";
-import type {
-  ArrangeRunTargetRequest,
-  ArrangeSyncRunRequest,
-} from "#/lib/arrange/application/requests/arrange-sync.request";
+import type { ArrangeSyncRunRequest } from "#/lib/arrange/application/requests/arrange-sync.request";
 import type { ArrangeSuggestGroupsRequest } from "#/lib/arrange/application/requests/suggest-groups.request";
 
 export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> =
@@ -18,13 +15,6 @@ export const arrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.o
   withClassName: z.boolean().optional(),
   cnImport: z.string().optional(),
   config: z.unknown().optional(),
-});
-
-export const arrangeRunTargetRequestSchema: z.ZodType<ArrangeRunTargetRequest> = z.object({
-  targetPath: z.string().min(1),
-  write: z.boolean(),
-  withClassName: z.boolean().optional(),
-  cnImport: z.string().optional(),
 });
 
 // CLI-specific error message wraps the base non-empty constraint with a command example

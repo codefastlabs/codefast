@@ -8,7 +8,7 @@ export function escapeTsStringLiteralContent(group: string): string {
  * Multiline fragment for use *inside* an existing `cn(...)` — replaces one
  * string argument with several, without producing `cn(cn(...))`.
  */
-export function formatCnArguments(
+function formatCnArguments(
   groups: string[],
   options?: {
     indent?: string;

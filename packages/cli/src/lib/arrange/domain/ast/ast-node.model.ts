@@ -216,7 +216,7 @@ export function isDomainStringLiteral(node: DomainAstNode): node is DomainString
   return node.kind === DomainSyntaxKind.StringLiteral;
 }
 
-export function isDomainNoSubstitutionTemplateLiteral(
+function isDomainNoSubstitutionTemplateLiteral(
   node: DomainAstNode,
 ): node is DomainNoSubstitutionTemplateLiteral {
   return node.kind === DomainSyntaxKind.NoSubstitutionTemplateLiteral;
@@ -230,10 +230,6 @@ export function isDomainTailwindClassLiteral(
 
 export function isDomainImportDeclaration(node: DomainAstNode): node is DomainImportDeclaration {
   return node.kind === DomainSyntaxKind.ImportDeclaration;
-}
-
-export function isDomainImportClause(node: DomainAstNode | undefined): node is DomainImportClause {
-  return node !== undefined && node.kind === DomainSyntaxKind.ImportClause;
 }
 
 export function isDomainNamedImports(node: DomainAstNode): node is DomainNamedImports {
@@ -280,12 +276,6 @@ export function isDomainJsxAttribute(node: DomainAstNode): node is DomainJsxAttr
 
 export function isDomainJsxExpression(node: DomainAstNode): node is DomainJsxExpression {
   return node.kind === DomainSyntaxKind.JsxExpression;
-}
-
-export function isDomainExpressionStatement(
-  node: DomainAstNode,
-): node is DomainExpressionStatement {
-  return node.kind === DomainSyntaxKind.ExpressionStatement;
 }
 
 export function forEachDomainChild(
@@ -385,36 +375,6 @@ export function forEachDomainChild(
     default:
       return;
   }
-}
-
-export function forEachDomainDescendant(
-  node: DomainAstNode,
-  visit: (n: DomainAstNode) => void,
-): void {
-  visit(node);
-  forEachDomainChild(node, (child) => forEachDomainDescendant(child, visit));
-}
-
-export function forEachDomainDescendantFromSourceFile(
-  sourceFile: DomainSourceFile,
-  visit: (n: DomainAstNode) => void,
-): void {
-  for (const statement of sourceFile.statements) {
-    forEachDomainDescendant(statement, visit);
-  }
-}
-
-export function findFirstDomainDescendantWhere(
-  sourceFile: DomainSourceFile,
-  predicate: (n: DomainAstNode) => boolean,
-): DomainAstNode | undefined {
-  let found: DomainAstNode | undefined;
-  forEachDomainDescendantFromSourceFile(sourceFile, (n) => {
-    if (found === undefined && predicate(n)) {
-      found = n;
-    }
-  });
-  return found;
 }
 
 export function lineOfSourcePosition(sourceText: string, pos: number): number {

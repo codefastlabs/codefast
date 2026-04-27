@@ -2,13 +2,9 @@ import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 
-// ─── Exit code ────────────────────────────────────────────────────────────────
-
 export function exitCodeForArrangeSyncResult(result: ArrangeRunResult): number {
   return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
 }
-
-// ─── Human-readable output ────────────────────────────────────────────────────
 
 export function presentArrangeSyncResult(
   logger: CliLogger,
@@ -37,9 +33,7 @@ export function presentArrangeSyncResult(
   return exitCodeForArrangeSyncResult(result);
 }
 
-// ─── JSON output (sync) ───────────────────────────────────────────────────────
-
-export type ArrangeSyncJsonPayloadV1 = {
+type ArrangeSyncJsonPayloadV1 = {
   readonly schemaVersion: 1;
   readonly ok: boolean;
   readonly write: boolean;
@@ -57,9 +51,7 @@ export function formatArrangeSyncJsonOutput(result: ArrangeRunResult, write: boo
   return JSON.stringify(payload);
 }
 
-// ─── JSON output (group / suggest) ───────────────────────────────────────────
-
-export type ArrangeGroupJsonPayloadV1 = {
+type ArrangeGroupJsonPayloadV1 = {
   readonly schemaVersion: 1;
   readonly primaryLine: string;
   readonly bucketsCommentLine: string;

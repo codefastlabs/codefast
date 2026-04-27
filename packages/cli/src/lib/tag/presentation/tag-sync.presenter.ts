@@ -8,12 +8,20 @@ import type {
 } from "#/lib/tag/domain/types.domain";
 import { TAG_COLORS, withTagColor } from "#/lib/tag/presentation/colors.presenter";
 
-export type TagProgressEvent =
+type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }
   | { type: "target-completed"; target: TagResolvedTarget; result: TagTargetExecutionResult };
 
 function targetDisplayName(target: TagResolvedTarget): string {
   return target.packageName ?? target.rootRelativeTargetPath;
+}
+
+export function formatProgress(event: TagProgressEvent): string {
+  if (event.type === "target-started") {
+    return `[tag] Processing ${targetDisplayName(event.target)}...`;
+  }
+  const changedFiles = event.result.result?.filesChanged ?? 0;
+  return `[tag] Done ${targetDisplayName(event.target)} (${changedFiles} changes)`;
 }
 
 function warningsAndErrorsFromResult(result: TagSyncResult): string[] {
@@ -29,15 +37,7 @@ function warningsAndErrorsFromResult(result: TagSyncResult): string[] {
   return entries;
 }
 
-export function formatProgress(event: TagProgressEvent): string {
-  if (event.type === "target-started") {
-    return `[tag] Processing ${targetDisplayName(event.target)}...`;
-  }
-  const changedFiles = event.result.result?.filesChanged ?? 0;
-  return `[tag] Done ${targetDisplayName(event.target)} (${changedFiles} changes)`;
-}
-
-export function formatTargetTable(targets: TagResolvedTarget[], rootDir: string): string {
+function formatTargetTable(targets: TagResolvedTarget[], rootDir: string): string {
   const packageColumnWidth = Math.max(
     "package".length,
     ...targets.map((target) => (target.packageName ?? "-").length),
@@ -64,7 +64,7 @@ export function formatTargetTable(targets: TagResolvedTarget[], rootDir: string)
   return lines.join("\n");
 }
 
-export function formatWarningsAndErrors(result: TagSyncResult): string | null {
+function formatWarningsAndErrors(result: TagSyncResult): string | null {
   const entries = warningsAndErrorsFromResult(result);
   if (entries.length === 0) {
     return null;
@@ -76,7 +76,7 @@ export function formatWarningsAndErrors(result: TagSyncResult): string | null {
   return lines.join("\n");
 }
 
-export function formatSummary(result: TagSyncResult): string {
+function formatSummary(result: TagSyncResult): string {
   const isDryRun = result.mode === "dry-run";
   const summaryPrefix = isDryRun ? "[tag:dry-run]" : "[tag]";
   const versionSuffix =

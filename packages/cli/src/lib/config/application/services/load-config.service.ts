@@ -5,7 +5,7 @@ import { err, ok } from "#/lib/core/domain/result.model";
 import type { ConfigLoaderPort } from "#/lib/config/application/ports/config-loader.port";
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
 
-export type LoadCodefastConfigResult = {
+type LoadCodefastConfigResult = {
   config: CodefastConfig;
   warnings: string[];
 };

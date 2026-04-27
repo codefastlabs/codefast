@@ -32,7 +32,7 @@ export function configureMirrorColors(noColor: boolean, isStdoutTty: boolean): v
   colorsEnabled = isStdoutTty && !noColor;
 }
 
-export type MirrorProcessingMode =
+type MirrorProcessingMode =
   | { kind: "single" }
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 

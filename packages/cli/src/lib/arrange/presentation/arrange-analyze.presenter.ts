@@ -9,9 +9,7 @@ import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/anal
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
-// ─── Human-readable report ───────────────────────────────────────────────────
-
-export function printAnalyzeReport(
+function printAnalyzeReport(
   analyzeRootDirectoryPath: string,
   analyzeReport: AnalyzeReport,
   logger: CliLogger,
@@ -66,8 +64,6 @@ export function printAnalyzeReport(
   }
 }
 
-// ─── Injectable presenter class ───────────────────────────────────────────────
-
 @injectable([inject(CliLoggerToken)])
 export class PresentAnalyzeReportPresenterImpl implements PresentAnalyzeReportPresenter {
   constructor(private readonly logger: CliLogger) {}
@@ -77,9 +73,7 @@ export class PresentAnalyzeReportPresenterImpl implements PresentAnalyzeReportPr
   }
 }
 
-// ─── JSON output ─────────────────────────────────────────────────────────────
-
-export type ArrangeAnalyzeJsonPayloadV1 = {
+type ArrangeAnalyzeJsonPayloadV1 = {
   readonly schemaVersion: 1;
   readonly analyzeRootPath: string;
   readonly report: AnalyzeReport;

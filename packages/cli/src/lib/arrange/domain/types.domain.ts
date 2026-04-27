@@ -158,8 +158,6 @@ export type ArrangeGroupFileOptions = {
   cnImport?: string;
 };
 
-export type ArrangeRunOnTargetOptions = ArrangeGroupFileOptions;
-
 export type ArrangeRunResult = {
   filePaths: string[];
   modifiedFiles: string[];
