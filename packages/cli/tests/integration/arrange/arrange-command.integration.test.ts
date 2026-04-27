@@ -1,6 +1,54 @@
 import { Command } from "commander";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import { ArrangeCommand } from "#/lib/arrange/adapters/primary/cli/arrange.command";
+import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
+import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCase } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/analyze-report-presenter.contract";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
+import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
+
+function createLoggerMock(): CliLogger & {
+  out: ReturnType<typeof vi.fn<(line: string) => void>>;
+  err: ReturnType<typeof vi.fn<(line: string) => void>>;
+} {
+  return {
+    out: vi.fn<(line: string) => void>(),
+    err: vi.fn<(line: string) => void>(),
+  };
+}
+
+function createPreviewPlan(filePath: string): GroupFileWorkPlan {
+  return {
+    filePath,
+    sourceText: "",
+    textAfterUnwrap: "",
+    domainSfForLineNumbers: { text: "" } as never,
+    domainSfGrouped: { text: "" } as never,
+    cnInTvCalls: [],
+    unwrapReplacementByCall: new Map(),
+    unwrapEdits: [],
+    plannedGroupEdits: [],
+    cnInTvNoReplacement: 0,
+    reportTotal: 0,
+    editSitesCount: 0,
+  };
+}
+
+function createRuntimeMock(): CliRuntime & {
+  cwd: ReturnType<typeof vi.fn<() => string>>;
+  setExitCode: ReturnType<typeof vi.fn<(code: number) => void>>;
+  isStdoutTty: ReturnType<typeof vi.fn<() => boolean>>;
+} {
+  return {
+    cwd: vi.fn<() => string>(() => "/tmp/workspace"),
+    setExitCode: vi.fn<(code: number) => void>(),
+    isStdoutTty: vi.fn<() => boolean>(() => false),
+  };
+}
 
 function createArrangeRunResult(overrides?: Partial<Record<string, unknown>>) {
   return {
@@ -9,7 +57,7 @@ function createArrangeRunResult(overrides?: Partial<Record<string, unknown>>) {
     totalFound: 2,
     totalChanged: 1,
     hookError: null,
-    previewPlans: [{ filePath: "a.tsx", plannedGroupEdits: [] }],
+    previewPlans: [createPreviewPlan("a.tsx")],
     ...(overrides ?? {}),
   };
 }
@@ -29,36 +77,64 @@ function createArrangeReport() {
 }
 
 type ArrangeDeps = {
-  logger: { out: ReturnType<typeof vi.fn>; err: ReturnType<typeof vi.fn> };
-  runtime: { cwd: ReturnType<typeof vi.fn>; setExitCode: ReturnType<typeof vi.fn> };
-  prepareWorkspace: { execute: ReturnType<typeof vi.fn> };
-  analyzeDirectory: { execute: ReturnType<typeof vi.fn> };
-  runArrangeSync: { execute: ReturnType<typeof vi.fn> };
-  suggestCnGroups: { execute: ReturnType<typeof vi.fn> };
-  presentAnalyzeReport: { present: ReturnType<typeof vi.fn> };
-  groupFilePreview: { printGroupFilePreviewFromWork: ReturnType<typeof vi.fn> };
+  logger: ReturnType<typeof createLoggerMock>;
+  runtime: ReturnType<typeof createRuntimeMock>;
+  prepareWorkspace: PrepareArrangeWorkspaceUseCase & {
+    execute: ReturnType<typeof vi.fn<PrepareArrangeWorkspaceUseCase["execute"]>>;
+  };
+  analyzeDirectory: AnalyzeDirectoryUseCase & {
+    execute: ReturnType<typeof vi.fn<AnalyzeDirectoryUseCase["execute"]>>;
+  };
+  runArrangeSync: RunArrangeSyncUseCase & {
+    execute: ReturnType<typeof vi.fn<RunArrangeSyncUseCase["execute"]>>;
+  };
+  suggestCnGroups: SuggestCnGroupsUseCase & {
+    execute: ReturnType<typeof vi.fn<SuggestCnGroupsUseCase["execute"]>>;
+  };
+  presentAnalyzeReport: PresentAnalyzeReportPresenter & {
+    present: ReturnType<typeof vi.fn<PresentAnalyzeReportPresenter["present"]>>;
+  };
+  groupFilePreview: GroupFilePreviewPort & {
+    printGroupFilePreviewFromWork: ReturnType<
+      typeof vi.fn<GroupFilePreviewPort["printGroupFilePreviewFromWork"]>
+    >;
+  };
 };
 
 function createDeps(): ArrangeDeps {
   return {
-    logger: { out: vi.fn(), err: vi.fn() },
-    runtime: { cwd: vi.fn(() => "/tmp/workspace"), setExitCode: vi.fn() },
+    logger: createLoggerMock(),
+    runtime: createRuntimeMock(),
     prepareWorkspace: {
-      execute: vi.fn(async () => ({
+      execute: vi.fn<PrepareArrangeWorkspaceUseCase["execute"]>(async () => ({
         ok: true,
         value: { resolvedTarget: "/tmp/workspace/src", rootDir: "/tmp/workspace", config: {} },
       })),
     },
-    analyzeDirectory: { execute: vi.fn(() => ({ ok: true, value: createArrangeReport() })) },
-    runArrangeSync: { execute: vi.fn(async () => ({ ok: true, value: createArrangeRunResult() })) },
+    analyzeDirectory: {
+      execute: vi.fn<AnalyzeDirectoryUseCase["execute"]>(() => ({
+        ok: true,
+        value: createArrangeReport(),
+      })),
+    },
+    runArrangeSync: {
+      execute: vi.fn<RunArrangeSyncUseCase["execute"]>(async () => ({
+        ok: true,
+        value: createArrangeRunResult(),
+      })),
+    },
     suggestCnGroups: {
-      execute: vi.fn(() => ({
+      execute: vi.fn<SuggestCnGroupsUseCase["execute"]>(() => ({
         primaryLine: 'cn("flex gap-2", "rounded-md")',
         bucketsCommentLine: "// Buckets: layout | shape",
       })),
     },
-    presentAnalyzeReport: { present: vi.fn() },
-    groupFilePreview: { printGroupFilePreviewFromWork: vi.fn() },
+    presentAnalyzeReport: {
+      present: vi.fn<PresentAnalyzeReportPresenter["present"]>(),
+    },
+    groupFilePreview: {
+      printGroupFilePreviewFromWork: vi.fn<GroupFilePreviewPort["printGroupFilePreviewFromWork"]>(),
+    },
   };
 }
 
@@ -110,10 +186,7 @@ describe("ArrangeCommand integration", () => {
     deps.runArrangeSync.execute.mockResolvedValue({
       ok: true,
       value: createArrangeRunResult({
-        previewPlans: [
-          { filePath: "x.tsx", plannedGroupEdits: [] },
-          { filePath: "y.tsx", plannedGroupEdits: [] },
-        ],
+        previewPlans: [createPreviewPlan("x.tsx"), createPreviewPlan("y.tsx")],
         totalChanged: 0,
       }),
     });

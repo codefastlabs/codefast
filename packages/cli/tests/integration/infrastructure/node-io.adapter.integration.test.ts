@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import type { CliDirectoryEntry } from "#/lib/core/application/ports/cli-io.port";
 import {
   NodeCliFsAdapter,
   NodeCliLoggerAdapter,
@@ -21,7 +22,9 @@ describe("node io adapter integration", () => {
 
       const names = await adapter.readdir(rootDir);
       expect(names).toContain("source.txt");
-      const dirents = await adapter.readdir(rootDir, { withFileTypes: true });
+      const dirents = (await adapter.readdir(rootDir, {
+        withFileTypes: true,
+      })) as CliDirectoryEntry[];
       expect(dirents.some((entry) => entry.name === "source.txt")).toBe(true);
 
       await adapter.rename(sourceFile, renamedFile);

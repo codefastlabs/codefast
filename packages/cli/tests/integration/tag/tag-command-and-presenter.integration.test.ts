@@ -1,9 +1,37 @@
 import { Command } from "commander";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import { TagCommand } from "#/lib/tag/adapters/primary/cli/tag.command";
+import type { PrepareTagSyncUseCase } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
+import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/tag-sync-result-presenter.contract";
 import { formatProgress, presentTagSyncCliResult } from "#/lib/tag/presentation/tag-sync.presenter";
+import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
+import type { TagProgressListener, TagSyncResult } from "#/lib/tag/domain/types.domain";
 
-function createTagResult(overrides?: Partial<Record<string, unknown>>) {
+function createLoggerMock(): CliLogger & {
+  out: ReturnType<typeof vi.fn<(line: string) => void>>;
+  err: ReturnType<typeof vi.fn<(line: string) => void>>;
+} {
+  return {
+    out: vi.fn<(line: string) => void>(),
+    err: vi.fn<(line: string) => void>(),
+  };
+}
+
+function createRuntimeMock(): CliRuntime & {
+  cwd: ReturnType<typeof vi.fn<() => string>>;
+  setExitCode: ReturnType<typeof vi.fn<(code: number) => void>>;
+  isStdoutTty: ReturnType<typeof vi.fn<() => boolean>>;
+} {
+  return {
+    cwd: vi.fn<() => string>(() => "/tmp/workspace"),
+    setExitCode: vi.fn<(code: number) => void>(),
+    isStdoutTty: vi.fn<() => boolean>(() => false),
+  };
+}
+
+function createTagResult(overrides?: Partial<TagSyncResult>): TagSyncResult {
   return {
     mode: "applied",
     selectedTargets: [
@@ -49,23 +77,29 @@ function createTagResult(overrides?: Partial<Record<string, unknown>>) {
 }
 
 type TagDeps = {
-  logger: { out: ReturnType<typeof vi.fn>; err: ReturnType<typeof vi.fn> };
-  runtime: { cwd: ReturnType<typeof vi.fn>; setExitCode: ReturnType<typeof vi.fn> };
-  prepareTagSync: { execute: ReturnType<typeof vi.fn> };
-  runTagSync: { execute: ReturnType<typeof vi.fn> };
-  tagProgressListener: {
-    onTargetStarted: ReturnType<typeof vi.fn>;
-    onTargetCompleted: ReturnType<typeof vi.fn>;
+  logger: ReturnType<typeof createLoggerMock>;
+  runtime: ReturnType<typeof createRuntimeMock>;
+  prepareTagSync: PrepareTagSyncUseCase & {
+    execute: ReturnType<typeof vi.fn<PrepareTagSyncUseCase["execute"]>>;
   };
-  presenter: { present: ReturnType<typeof vi.fn> };
+  runTagSync: RunTagSyncUseCase & {
+    execute: ReturnType<typeof vi.fn<RunTagSyncUseCase["execute"]>>;
+  };
+  tagProgressListener: TagProgressListener & {
+    onTargetStarted: ReturnType<typeof vi.fn<TagProgressListener["onTargetStarted"]>>;
+    onTargetCompleted: ReturnType<typeof vi.fn<TagProgressListener["onTargetCompleted"]>>;
+  };
+  presenter: PresentTagSyncResultPresenter & {
+    present: ReturnType<typeof vi.fn<PresentTagSyncResultPresenter["present"]>>;
+  };
 };
 
 function createDeps(): TagDeps {
   return {
-    logger: { out: vi.fn(), err: vi.fn() },
-    runtime: { cwd: vi.fn(() => "/tmp/workspace"), setExitCode: vi.fn() },
+    logger: createLoggerMock(),
+    runtime: createRuntimeMock(),
     prepareTagSync: {
-      execute: vi.fn(async () => ({
+      execute: vi.fn<PrepareTagSyncUseCase["execute"]>(async () => ({
         ok: true,
         value: {
           rootDir: "/tmp/workspace",
@@ -74,12 +108,19 @@ function createDeps(): TagDeps {
         },
       })),
     },
-    runTagSync: { execute: vi.fn(async () => ({ ok: true, value: createTagResult() })) },
-    tagProgressListener: {
-      onTargetStarted: vi.fn(),
-      onTargetCompleted: vi.fn(),
+    runTagSync: {
+      execute: vi.fn<RunTagSyncUseCase["execute"]>(async () => ({
+        ok: true,
+        value: createTagResult(),
+      })),
     },
-    presenter: { present: vi.fn(() => 0) },
+    tagProgressListener: {
+      onTargetStarted: vi.fn<TagProgressListener["onTargetStarted"]>(),
+      onTargetCompleted: vi.fn<TagProgressListener["onTargetCompleted"]>(),
+    },
+    presenter: {
+      present: vi.fn<PresentTagSyncResultPresenter["present"]>(() => 0),
+    },
   };
 }
 
@@ -190,7 +231,7 @@ describe("TagCommand + tag presenter integration", () => {
   });
 
   it("returns non-zero and warning lines from presenter when result has errors", () => {
-    const logger = { out: vi.fn(), err: vi.fn() };
+    const logger = createLoggerMock();
     const exitCode = presentTagSyncCliResult(
       logger,
       createTagResult({
@@ -219,7 +260,7 @@ describe("TagCommand + tag presenter integration", () => {
   });
 
   it("returns non-zero for empty target list", () => {
-    const logger = { out: vi.fn(), err: vi.fn() };
+    const logger = createLoggerMock();
     const exitCode = presentTagSyncCliResult(
       logger,
       createTagResult({
