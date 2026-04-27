@@ -1,4 +1,3 @@
-import process from "node:process";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import { printConfigSchemaWarnings } from "#/lib/infra/config-reporter.adapter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
@@ -29,8 +28,8 @@ const Colors = {
   },
 };
 
-export function configureMirrorColors(noColor: boolean): void {
-  if (!process.stdout.isTTY || noColor) {
+export function configureMirrorColors(noColor: boolean, isStdoutTty: boolean): void {
+  if (!isStdoutTty || noColor) {
     Colors.disable();
   }
 }
