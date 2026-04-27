@@ -1,7 +1,7 @@
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { GlobalStats, PackageStats } from "#/lib/mirror/domain/types.domain";
 
-export interface SyncWorkspacePackageService {
+export interface SyncWorkspacePackagePort {
   syncExportsForWorkspacePackage(
     rootDir: string,
     packagePathStr: string,

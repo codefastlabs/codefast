@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import {
   MirrorSyncReporterPortToken,
-  SyncWorkspacePackageServiceToken,
+  SyncWorkspacePackagePortToken,
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
 import { AppError } from "#/lib/core/domain/errors.domain";
@@ -17,7 +17,7 @@ import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
 import { formatMirrorSyncJsonOutput } from "#/lib/mirror/application/mirror-sync-json.format";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
-import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
+import type { SyncWorkspacePackagePort } from "#/lib/mirror/application/ports/sync-workspace-package.port";
 
 export interface RunMirrorSyncUseCase {
   execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>>;
@@ -28,7 +28,7 @@ export interface RunMirrorSyncUseCase {
   inject(CliLoggerToken),
   inject(WorkspaceServicePortToken),
   inject(MirrorSyncReporterPortToken),
-  inject(SyncWorkspacePackageServiceToken),
+  inject(SyncWorkspacePackagePortToken),
 ])
 export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
   constructor(
@@ -36,7 +36,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
     private readonly logger: CliLogger,
     private readonly workspaceService: WorkspaceServicePort,
     private readonly mirrorReporter: MirrorSyncReporterPort,
-    private readonly syncWorkspacePackage: SyncWorkspacePackageService,
+    private readonly syncWorkspacePackage: SyncWorkspacePackagePort,
   ) {}
 
   async execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>> {
