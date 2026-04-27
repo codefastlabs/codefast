@@ -8,7 +8,7 @@ import { DIST_DIR, PACKAGE_JSON } from "#/lib/mirror/domain/constants.domain";
 import {
   createPathTransform,
   generateExports,
-} from "#/lib/mirror/application/use-cases/generate-mirror-exports.use-case";
+} from "#/lib/mirror/application/services/generate-mirror-exports.service";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";

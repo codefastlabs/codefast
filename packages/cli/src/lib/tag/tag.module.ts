@@ -1,10 +1,10 @@
 import { Module } from "@codefast/di";
+import { TagSinceWriterAdapter } from "#/lib/tag/adapters/secondary/tag-since-writer.adapter";
+import { TagTargetResolverAdapter } from "#/lib/tag/adapters/secondary/tag-target-resolver.adapter";
+import { TagVersionResolverAdapter } from "#/lib/tag/adapters/secondary/tag-version-resolver.adapter";
+import { TypeScriptTreeWalkAdapter } from "#/lib/tag/adapters/secondary/typescript-tree-walk.adapter";
 import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { PrepareTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
-import { TagSinceWriterAdapter } from "#/lib/tag/infrastructure/tag-since-writer.adapter";
-import { TagTargetResolverAdapter } from "#/lib/tag/infrastructure/tag-target-resolver.adapter";
-import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infrastructure/typescript-tree-walk.adapter";
-import { TagVersionResolverAdapter } from "#/lib/tag/infrastructure/tag-version-resolver.adapter";
 import {
   PrepareTagSyncUseCaseToken,
   RunTagSyncUseCaseToken,

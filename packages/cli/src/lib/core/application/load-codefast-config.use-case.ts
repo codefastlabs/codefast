@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import { loadCodefastConfig } from "#/lib/config/application/use-cases/load-config.use-case";
+import { loadCodefastConfig } from "#/lib/config/application/services/load-config.service";
 import type { ConfigLoaderPort } from "#/lib/config/application/ports/config-loader.port";
 import type { ConfigWarningReporterPort } from "#/lib/config/application/ports/config-warning-reporter.port";
 import {

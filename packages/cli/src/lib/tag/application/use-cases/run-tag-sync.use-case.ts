@@ -6,6 +6,7 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tag/contracts/tokens";
 import type { TagSyncExecutionInput } from "#/lib/tag/contracts/models";
+import { runTagOnTarget } from "#/lib/tag/application/services/tag-target-runner.service";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
@@ -24,65 +25,12 @@ import type {
   TagTargetCandidate,
   TagTargetSource,
   TagResolvedTarget,
-  TagRunOptions,
-  TagRunResult,
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/lib/tag/domain/types.domain";
 
 export interface RunTagSyncUseCase {
   execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
-}
-
-/**
- * Thin wrapper around {@link TagVersionResolverPort} for tests and scripts that do not use the
- * DI container. Prefer resolving {@link RunTagSyncUseCase} from the container in production wiring.
- */
-export function resolveNearestPackageVersion(
-  targetPath: string,
-  versionResolver: TagVersionResolverPort,
-): string {
-  return versionResolver.resolveNearestPackageVersion(targetPath);
-}
-
-/**
- * Runs the tag pass on one filesystem target. {@link fs} is only used for synchronous layout probes
- * (`statSync`); file listing and writes go through {@link typeScriptTreeWalk} and {@link sinceWriter},
- * which receive {@link CliFs} via their own container bindings.
- */
-export function runTagOnTarget(
-  targetPath: string,
-  opts: TagRunOptions,
-  fs: CliFs,
-  pathService: CliPath,
-  versionResolver: TagVersionResolverPort,
-  sinceWriter: TagSinceWriterPort,
-  typeScriptTreeWalk: TypeScriptTreeWalkPort,
-): TagRunResult {
-  const resolvedTarget = pathService.resolve(targetPath);
-  const version = resolveNearestPackageVersion(resolvedTarget, versionResolver);
-
-  const files = fs.statSync(resolvedTarget).isDirectory()
-    ? typeScriptTreeWalk.walkTsxFiles(resolvedTarget)
-    : [resolvedTarget];
-  const tsFiles = files.filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
-
-  const fileResults = tsFiles.map((filePath) =>
-    sinceWriter.applySinceTagsToFile(filePath, version, opts.write),
-  );
-  const filesChanged = fileResults.filter((result) => result.changed).length;
-  const taggedDeclarations = fileResults.reduce(
-    (sum, result) => sum + result.taggedDeclarations,
-    0,
-  );
-
-  return {
-    version,
-    filesScanned: tsFiles.length,
-    filesChanged,
-    taggedDeclarations,
-    fileResults,
-  };
 }
 
 async function runTagOnAfterWriteHook(

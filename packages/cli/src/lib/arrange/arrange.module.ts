@@ -4,10 +4,10 @@ import { ArrangeTargetScannerServiceImpl } from "#/lib/arrange/application/servi
 import { AnalyzeDirectoryUseCaseImpl } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
 import { RunArrangeSyncUseCaseImpl } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
 import { SuggestCnGroupsUseCaseImpl } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { DomainSourceParserAdapter } from "#/lib/arrange/adapters/secondary/domain-source-parser.adapter";
+import { FileWalkerAdapter } from "#/lib/arrange/adapters/secondary/file-walker.adapter";
+import { WorkspaceResolverAdapter } from "#/lib/arrange/adapters/secondary/workspace-resolver.adapter";
 import { TailwindGroupingServiceImpl } from "#/lib/arrange/domain/tailwind-grouping.service";
-import { DomainSourceParserAdapter } from "#/lib/arrange/infrastructure/domain-source-parser.adapter";
-import { FileWalkerAdapter } from "#/lib/arrange/infrastructure/file-walker.adapter";
-import { WorkspaceResolverAdapter } from "#/lib/arrange/infrastructure/workspace-resolver.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorServiceToken,

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
-import { resolveArrangeTargetPath as resolveArrangeCliTargetPath } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import { resolveArrangeTargetPath as resolveArrangeCliTargetPath } from "#/lib/arrange/application/services/arrange-target-path-resolver.service";
 
 const cliFs = new NodeCliFsAdapter();
 

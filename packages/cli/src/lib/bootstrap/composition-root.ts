@@ -1,14 +1,13 @@
 import { Container } from "@codefast/di";
-import { ArrangeCommand } from "#/lib/arrange/presentation/arrange.command";
+import { ArrangeCommand } from "#/lib/arrange/adapters/primary/cli/arrange.command";
+import { ArrangePresentationModule } from "#/lib/arrange/adapters/primary/cli/arrange.presentation.module";
 import { ArrangeModule } from "#/lib/arrange/arrange.module";
-import { ArrangePresentationModule } from "#/lib/arrange/arrange.presentation.module";
-import { MirrorCommand } from "#/lib/mirror/presentation/mirror.command";
+import { MirrorCommand } from "#/lib/mirror/adapters/primary/cli/mirror.command";
 import { MirrorModule } from "#/lib/mirror/mirror.module";
-import { MirrorPresentationModule } from "#/lib/mirror/mirror.presentation.module";
-import { TagCommand } from "#/lib/tag/presentation/tag.command";
+import { TagCommand } from "#/lib/tag/adapters/primary/cli/tag.command";
+import { TagPresentationModule } from "#/lib/tag/adapters/primary/cli/tag.presentation.module";
 import { TagModule } from "#/lib/tag/tag.module";
-import { TagPresentationModule } from "#/lib/tag/tag.presentation.module";
-import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { CliCommandToken } from "#/lib/kernel/contracts/tokens";
 
 export function createCliRuntimeContainer(): ReturnType<typeof Container.create> {
@@ -18,7 +17,7 @@ export function createCliRuntimeContainer(): ReturnType<typeof Container.create>
   runtimeContainer.bind(ArrangeCommand).to(ArrangeCommand).singleton();
   runtimeContainer.bind(CliCommandToken).to(ArrangeCommand).singleton().whenNamed("arrange");
 
-  runtimeContainer.load(MirrorPresentationModule, MirrorModule);
+  runtimeContainer.load(MirrorModule);
   runtimeContainer.bind(MirrorCommand).to(MirrorCommand).singleton();
   runtimeContainer.bind(CliCommandToken).to(MirrorCommand).singleton().whenNamed("mirror");
 

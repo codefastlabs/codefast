@@ -5,7 +5,7 @@ import {
   MAX_REPORT_LINES,
 } from "#/lib/arrange/domain/constants.domain";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
-import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/analyze-report-presenter.contract";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 

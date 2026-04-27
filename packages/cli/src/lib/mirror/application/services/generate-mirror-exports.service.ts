@@ -257,7 +257,6 @@ export async function generateExports(
   const files = await fileSystemService.listRelativeFilesRecursively(distDir);
   if (!files.length) {
     return {
-      // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
       exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       originalPathBySpecifier: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       jsCount: 0,
@@ -272,7 +271,6 @@ export async function generateExports(
 
   if (!validModules.length) {
     return {
-      // Keep "./package.json" self-mapped as the standard Node.js exports fallback for package metadata.
       exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       originalPathBySpecifier: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       jsCount: 0,
