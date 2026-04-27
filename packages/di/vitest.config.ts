@@ -6,28 +6,28 @@ import { defineConfig } from "vitest/config";
  */
 export default defineConfig({
   oxc: false,
+  plugins: [
+    swc.vite({
+      jsc: {
+        parser: { syntax: "typescript", decorators: true },
+        target: "esnext",
+        transform: { decoratorVersion: "2023-11" },
+      },
+    }),
+  ],
   test: {
     benchmark: {
       include: ["src/**/*.bench.?(c|m)[jt]s?(x)"],
     },
     coverage: {
-      provider: "v8",
-      reportsDirectory: "./coverage",
-      reporter: ["text", "html", "lcov"],
-      include: ["src/**/*.ts"],
       exclude: ["src/**/*.{test,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+      include: ["src/**/*.ts"],
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      reportsDirectory: "./coverage",
     },
     environment: "node",
     globals: true,
-    include: ["src/**/*.test.?(c|m)[jt]s?(x)"],
+    include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
   },
-  plugins: [
-    swc.vite({
-      jsc: {
-        parser: { syntax: "typescript", decorators: true },
-        transform: { decoratorVersion: "2023-11" },
-        target: "esnext",
-      },
-    }),
-  ],
 });

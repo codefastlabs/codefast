@@ -5,16 +5,16 @@ import { defineConfig } from "vitest/config";
  */
 export default defineConfig({
   test: {
-    globals: true,
-    environment: "node",
-    include: ["{tests,src}/**/*.test.?(c|m)[jt]s?(x)"],
-    setupFiles: ["./vitest.setup.ts"],
     coverage: {
-      provider: "v8",
-      reportsDirectory: "./coverage",
-      reporter: ["text", "html", "lcov"],
+      exclude: ["src/**/*.{test,bench}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
       include: ["src/**/*.ts"],
-      exclude: ["src/**/*.test.?(c|m)[jt]s?(x)", "tests/**", "**/*.d.ts"],
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      reportsDirectory: "./coverage",
     },
+    environment: "node",
+    globals: true,
+    include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
+    setupFiles: ["./vitest.setup.ts"],
   },
 });

@@ -40,7 +40,8 @@
       "./src/*.tsx",
       "./src/*/index.ts",
       "./src/*/index.tsx"
-    ]
+    ],
+    "#/tests/*": "./tests/*"
   },
   "exports": {
     ".": {
