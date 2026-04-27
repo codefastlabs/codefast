@@ -31,22 +31,22 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
   moduleBuilder
     .bind(FileWalkerPortToken)
     .to(FileWalkerAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry("FileWalkerPort", implementation, ctx.resolve(CliLoggerToken)),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(DomainSourceParserPortToken)
     .to(DomainSourceParserAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "DomainSourceParserPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder.bind(WorkspaceResolverPortToken).to(WorkspaceResolverAdapter).singleton();
 

@@ -54,6 +54,10 @@
       "types": "./dist/constraints.d.mts",
       "import": "./dist/constraints.mjs"
     },
+    "./constructor-type": {
+      "types": "./dist/constructor-type.d.mts",
+      "import": "./dist/constructor-type.mjs"
+    },
     "./container": {
       "types": "./dist/container.d.mts",
       "import": "./dist/container.mjs"
@@ -110,13 +114,13 @@
       "types": "./dist/metadata/metadata-keys.d.mts",
       "import": "./dist/metadata/metadata-keys.mjs"
     },
+    "./metadata/metadata-reader-token": {
+      "types": "./dist/metadata/metadata-reader-token.d.mts",
+      "import": "./dist/metadata/metadata-reader-token.mjs"
+    },
     "./metadata/metadata-types": {
       "types": "./dist/metadata/metadata-types.d.mts",
       "import": "./dist/metadata/metadata-types.mjs"
-    },
-    "./metadata/param-registry": {
-      "types": "./dist/metadata/param-registry.d.mts",
-      "import": "./dist/metadata/param-registry.mjs"
     },
     "./metadata/symbol-metadata-reader": {
       "types": "./dist/metadata/symbol-metadata-reader.d.mts",
@@ -141,6 +145,10 @@
     "./token": {
       "types": "./dist/token.d.mts",
       "import": "./dist/token.mjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
     },
     "./package.json": "./package.json"
   },

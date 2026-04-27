@@ -159,16 +159,19 @@ const pluginContainer = Container.create();
 const logPluginId = pluginContainer
   .bind(PluginToken)
   .toConstantValue({ name: "log", run: () => console.log("[LogPlugin] running") })
+  .whenNamed("log")
   .id();
 
 const metricsPluginId = pluginContainer
   .bind(PluginToken)
   .toConstantValue({ name: "metrics", run: () => console.log("[MetricsPlugin] running") })
+  .whenNamed("metrics")
   .id();
 
 pluginContainer
   .bind(PluginToken)
-  .toConstantValue({ name: "audit", run: () => console.log("[AuditPlugin] running") });
+  .toConstantValue({ name: "audit", run: () => console.log("[AuditPlugin] running") })
+  .whenNamed("audit");
 
 console.log("\n--- All plugins ---");
 const allPlugins = pluginContainer.resolveAll(PluginToken);

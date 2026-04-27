@@ -25,50 +25,50 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
   moduleBuilder
     .bind(WorkspaceServicePortToken)
     .to(WorkspaceServiceAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "WorkspaceServicePort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(PackageRepositoryPortToken)
     .to(PackageRepositoryAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "PackageRepositoryPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(FileSystemServicePortToken)
     .to(FileSystemServiceAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "FileSystemServicePort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder
     .bind(MirrorSyncReporterPortToken)
     .to(MirrorSyncReporterAdapter)
+    .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "MirrorSyncReporterPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),
-    )
-    .singleton();
+    );
 
   moduleBuilder.bind(SyncWorkspacePackagePortToken).to(SyncWorkspacePackageAdapter).singleton();
 

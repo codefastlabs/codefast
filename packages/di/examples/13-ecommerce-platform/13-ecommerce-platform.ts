@@ -72,8 +72,8 @@
 import {
   Container,
   inject,
-  injectAll,
   injectable,
+  injectAll,
   Module,
   optional,
   postConstruct,
@@ -2486,9 +2486,9 @@ const CartModule = Module.create("Cart", (builder) => {
 // ---- Orders -----------------------------------------------------------------
 
 const ShippingModule = Module.create("Shipping", (builder) => {
-  builder.bind(ShippingCarrierToken).whenNamed("fedex").to(FedExCarrier).singleton();
-  builder.bind(ShippingCarrierToken).whenNamed("ups").to(UpsCarrier).singleton();
-  builder.bind(ShippingCarrierToken).whenNamed("dhl").to(DhlCarrier).singleton();
+  builder.bind(ShippingCarrierToken).to(FedExCarrier).whenNamed("fedex").singleton();
+  builder.bind(ShippingCarrierToken).to(UpsCarrier).whenNamed("ups").singleton();
+  builder.bind(ShippingCarrierToken).to(DhlCarrier).whenNamed("dhl").singleton();
 });
 
 const OrderModule = Module.create("Orders", (builder) => {
@@ -2501,9 +2501,9 @@ const OrderModule = Module.create("Orders", (builder) => {
 // ---- Payments ---------------------------------------------------------------
 
 const PaymentModule = Module.create("Payments", (builder) => {
-  builder.bind(PaymentGatewayToken).whenNamed("stripe").to(StripeGateway).singleton();
-  builder.bind(PaymentGatewayToken).whenNamed("paypal").to(PayPalGateway).singleton();
-  builder.bind(PaymentGatewayToken).whenNamed("cod").to(CashOnDeliveryGateway).singleton();
+  builder.bind(PaymentGatewayToken).to(StripeGateway).whenNamed("stripe").singleton();
+  builder.bind(PaymentGatewayToken).to(PayPalGateway).whenNamed("paypal").singleton();
+  builder.bind(PaymentGatewayToken).to(CashOnDeliveryGateway).whenNamed("cod").singleton();
   builder.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 });
 
@@ -2520,9 +2520,9 @@ const UserModule = Module.create("Users", (builder) => {
 // ---- Notifications ----------------------------------------------------------
 
 const NotificationModule = Module.create("Notifications", (builder) => {
-  builder.bind(NotificationChannelToken).whenNamed("email").to(EmailChannel).singleton();
-  builder.bind(NotificationChannelToken).whenNamed("sms").to(SmsChannel).singleton();
-  builder.bind(NotificationChannelToken).whenNamed("push").to(PushChannel).singleton();
+  builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
+  builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
+  builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
   builder.bind(NotificationServiceToken).to(NotificationDispatcher).singleton();
 });
 
@@ -2699,11 +2699,11 @@ async function main(): Promise<void> {
 
   // ── Container snapshot ────────────────────────────────────────────────
   const snapshot = platform.container.inspect();
-  console.log(`[Inspect] Total bindings registered: ${snapshot.bindings.length}`);
+  console.log(`[Inspect] Total bindings registered: ${snapshot.ownBindings.length}`);
 
-  const singletons = snapshot.bindings.filter((b) => b.scope === "singleton").length;
-  const transients = snapshot.bindings.filter((b) => b.scope === "transient").length;
-  const scoped = snapshot.bindings.filter((b) => b.scope === "scoped").length;
+  const singletons = snapshot.ownBindings.filter((b) => b.scope === "singleton").length;
+  const transients = snapshot.ownBindings.filter((b) => b.scope === "transient").length;
+  const scoped = snapshot.ownBindings.filter((b) => b.scope === "scoped").length;
   console.log(`[Inspect] Singletons: ${singletons}, Transients: ${transients}, Scoped: ${scoped}`);
 }
 

@@ -133,4 +133,4 @@ console.log("Module unloaded");
 
 // Introspect: see all active bindings
 const snapshot = container.inspect();
-console.log("Active binding count:", snapshot.bindings.length);
+console.log("Active binding count:", snapshot.ownBindings.length);
