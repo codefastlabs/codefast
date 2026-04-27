@@ -6,7 +6,7 @@ packages:
 catalog:
   "@changesets/changelog-github": ^0.6.0
   "@changesets/cli": ^2.31.0
-  "@commitlint/cli": ^20.5.0
+  "@commitlint/cli": ^20.5.2
   "@commitlint/config-conventional": ^20.5.0
   "@content-collections/core": ^0.15.0
   "@content-collections/vite": ^0.3.0
