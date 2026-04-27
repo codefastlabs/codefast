@@ -1,5 +1,5 @@
 import { cnModuleSpecifierForFile } from "#/lib/arrange/domain/imports.domain";
-import { ensureCnImport } from "#/lib/arrange/infrastructure/ensure-cn-import.util";
+import { ensureCnImport } from "#/lib/arrange/infrastructure/cn-import-injector.adapter";
 
 describe("cnModuleSpecifierForFile", () => {
   it("documents that default module specifier is stable across file paths", () => {

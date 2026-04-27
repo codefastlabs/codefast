@@ -7,7 +7,7 @@ import {
   stateKey,
   stripVariants,
   tokenizeClassString,
-} from "#/lib/arrange/domain/tokenizer.util";
+} from "#/lib/arrange/domain/tailwind-token-classifier.domain-service";
 
 describe("tokenizeClassString", () => {
   it("trims and splits on whitespace runs", () => {

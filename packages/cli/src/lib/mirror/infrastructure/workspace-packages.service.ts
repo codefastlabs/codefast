@@ -2,9 +2,9 @@ import { globSync } from "node:fs";
 import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import { normalizePath } from "#/lib/mirror/infrastructure/path-normalizer.util";
+import { normalizePath } from "#/lib/mirror/domain/path-normalizer.value-object";
 import type {
   FindWorkspacePackagesResult,
   WorkspaceMultiDiscoverySource,

@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type { GlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
+import type { GlobalCliOptions } from "#/lib/core/application/services/global-cli-options-parser.service";
 import type { RepoRootResolverPort } from "#/lib/core/application/ports/repo-root-resolver.port";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 import {
@@ -10,8 +10,8 @@ import type { MirrorSyncCommandPrelude } from "#/lib/mirror/contracts/models";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import { resolveMirrorPackageArgToRelative } from "#/lib/mirror/application/resolve-mirror-package-arg.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
+import { resolveMirrorPackageArgToRelative } from "#/lib/mirror/application/services/mirror-package-arg-resolver.service";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { CliFsToken } from "#/lib/core/contracts/tokens";
 

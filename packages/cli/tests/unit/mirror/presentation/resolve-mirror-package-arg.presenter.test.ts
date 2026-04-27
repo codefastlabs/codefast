@@ -4,7 +4,7 @@ import path from "node:path";
 import process from "node:process";
 import { vi } from "vitest";
 import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
-import { resolveMirrorPackageArgToRelative } from "#/lib/mirror/application/resolve-mirror-package-arg.util";
+import { resolveMirrorPackageArgToRelative } from "#/lib/mirror/application/services/mirror-package-arg-resolver.service";
 
 const cliFs = new NodeCliFsAdapter();
 

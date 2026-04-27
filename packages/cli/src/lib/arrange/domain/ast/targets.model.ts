@@ -10,7 +10,7 @@ import {
   formatJsxCnAttributeValue,
 } from "#/lib/arrange/domain/source-text-formatters.formatter";
 import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
+import { tokenizeClassString } from "#/lib/arrange/domain/tailwind-token.value-object";
 import { isUnsafeLiteralForCnStyleApplySplit } from "#/lib/arrange/domain/ast/collectors-cn.collector";
 import { jsxClassNameStaticLiteral } from "#/lib/arrange/domain/ast/collectors-jsx.collector";
 import {

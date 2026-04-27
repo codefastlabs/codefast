@@ -1,9 +1,9 @@
 import { inject, injectable } from "@codefast/di";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
+import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infrastructure/typescript-ast-translator.adapter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
 /**

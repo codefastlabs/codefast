@@ -23,7 +23,7 @@ import {
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/port-telemetry.util";
+import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/port-telemetry.decorator";
 
 export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
   moduleBuilder.import(InfrastructureModule);

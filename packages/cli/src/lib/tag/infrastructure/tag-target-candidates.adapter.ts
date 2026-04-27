@@ -3,7 +3,7 @@ import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { TagTargetCandidate } from "#/lib/tag/domain/types.domain";
 

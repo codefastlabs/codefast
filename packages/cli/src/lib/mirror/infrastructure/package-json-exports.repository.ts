@@ -1,5 +1,5 @@
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import { MirrorError, MirrorErrorCode } from "#/lib/mirror/domain/errors.domain";
 import type {
   ExportMapData,
@@ -56,36 +56,6 @@ function compareExportSpecifiers(
     return originalPathComparison;
   }
   return leftSpecifier.localeCompare(rightSpecifier);
-}
-
-/**
- * Shared rule: show `package.json#name` when it is a non-empty string; else folder basename.
- */
-export function resolvePackageDisplayName(
-  packageJson: { name?: unknown },
-  folderBasename: string,
-): string {
-  const declaredName = packageJson.name;
-  return typeof declaredName === "string" && declaredName.length > 0
-    ? declaredName
-    : folderBasename;
-}
-
-export async function readPackageJsonDisplayName(
-  fs: CliFs,
-  packageJsonPath: string,
-  folderBasename: string,
-): Promise<string> {
-  if (!fs.existsSync(packageJsonPath)) {
-    return folderBasename;
-  }
-  try {
-    const raw = await fs.readFile(packageJsonPath, "utf8");
-    const parsed = JSON.parse(raw) as { name?: unknown };
-    return resolvePackageDisplayName(parsed, folderBasename);
-  } catch {
-    return folderBasename;
-  }
 }
 
 /**

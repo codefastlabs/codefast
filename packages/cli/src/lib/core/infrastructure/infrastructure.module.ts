@@ -10,7 +10,7 @@ import { CoreModule } from "#/lib/core/core.module";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
-} from "#/lib/core/infrastructure/port-telemetry.util";
+} from "#/lib/core/infrastructure/port-telemetry.decorator";
 import {
   CliFsToken,
   CliLoggerToken,

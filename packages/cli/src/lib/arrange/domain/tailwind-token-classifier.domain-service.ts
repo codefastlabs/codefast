@@ -1,10 +1,19 @@
 import {
   COMPATIBLE_BUCKET_SETS,
-  MAX_STRIP_VARIANT_PASSES,
   RESPONSIVE_PREFIX,
   STATE_PREFIXES,
 } from "#/lib/arrange/domain/constants.domain";
+import {
+  indexOfFirstVariantColon,
+  stripVariants,
+} from "#/lib/arrange/domain/tailwind-token.value-object";
 import type { Bucket } from "#/lib/arrange/domain/types.domain";
+
+export {
+  indexOfFirstVariantColon,
+  stripVariants,
+  tokenizeClassString,
+} from "#/lib/arrange/domain/tailwind-token.value-object";
 
 /**
  * Bare-token classification is **total** (always returns a {@link Bucket}). The `Result` pattern
@@ -49,47 +58,6 @@ function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
     return true;
   }
   return false;
-}
-
-export function tokenizeClassString(classString: string): string[] {
-  return classString.trim().split(/\s+/).filter(Boolean);
-}
-
-/**
- * Index of the first `:` that separates a Tailwind variant segment from the rest.
- * Colons inside `[...]` (at positive bracket depth) are ignored so selectors like
- * `[&_a:hover]:text-red-500` split as `[&_a:hover]:` + `text-red-500`.
- */
-export function indexOfFirstVariantColon(text: string): number {
-  let depth = 0;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (ch === "[") {
-      depth++;
-    } else if (ch === "]") {
-      depth = Math.max(0, depth - 1);
-    } else if (ch === ":" && depth === 0) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-// Strip all variant prefixes to get the bare utility name.
-// e.g. "hover:dark:md:text-sm" → "text-sm"
-// e.g. "@min-[600px]:flex" → "flex"
-// e.g. "[&_a:hover]:text-red-500" → "text-red-500"
-export function stripVariants(token: string): string {
-  let withoutVariants = token;
-  const MAX_PASSES = MAX_STRIP_VARIANT_PASSES;
-  for (let i = 0; i < MAX_PASSES; i++) {
-    const colonIdx = indexOfFirstVariantColon(withoutVariants);
-    if (colonIdx === -1) {
-      break;
-    }
-    withoutVariants = withoutVariants.slice(colonIdx + 1);
-  }
-  return withoutVariants;
 }
 
 /**

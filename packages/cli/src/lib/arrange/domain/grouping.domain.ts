@@ -13,9 +13,11 @@ import {
   compositeSecondaryOrder,
   selectorKey,
   stateKey,
+} from "#/lib/arrange/domain/tailwind-token-classifier.domain-service";
+import {
   stripVariants,
   tokenizeClassString,
-} from "#/lib/arrange/domain/tokenizer.util";
+} from "#/lib/arrange/domain/tailwind-token.value-object";
 
 /**
  * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with

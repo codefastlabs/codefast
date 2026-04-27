@@ -1,5 +1,5 @@
 import { ensureCnImport as ensureCnImportOnDomainSourceFile } from "#/lib/arrange/domain/imports.domain";
-import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/typescript-ast-translator.adapter";
 
 /**
  * Parses source then applies domain cn import injection rules (public CLI-style entry).
