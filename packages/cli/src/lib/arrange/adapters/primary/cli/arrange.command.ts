@@ -5,11 +5,11 @@ import {
   AnalyzeDirectoryUseCaseToken,
   GroupFilePreviewPortToken,
   PrepareArrangeWorkspaceUseCaseToken,
-  PresentAnalyzeReportPresenterToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/arrange/contracts/tokens";
-import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/presentation.contract";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/analyze-report-presenter.contract";
+import { PresentAnalyzeReportPresenterToken } from "#/lib/arrange/adapters/primary/cli/presentation.tokens";
 import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
 import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
@@ -28,7 +28,7 @@ import {
 } from "#/lib/arrange/presentation/arrange-sync.presenter";
 import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/presentation/arrange-analyze.presenter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";

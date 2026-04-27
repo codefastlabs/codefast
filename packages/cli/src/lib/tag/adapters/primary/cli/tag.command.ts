@@ -3,21 +3,20 @@ import { Command } from "commander";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
-import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
 import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
-import {
-  PrepareTagSyncUseCaseToken,
-  PresentTagSyncResultPresenterToken,
-  RunTagSyncUseCaseToken,
-  TagSyncProgressListenerToken,
-} from "#/lib/tag/contracts/tokens";
-import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/presentation.contract";
+import { PrepareTagSyncUseCaseToken, RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
+import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/tag-sync-result-presenter.contract";
 import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 import type { PrepareTagSyncUseCase } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
+import {
+  PresentTagSyncResultPresenterToken,
+  TagSyncProgressListenerToken,
+} from "#/lib/tag/adapters/primary/cli/presentation.tokens";
 import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
 
 @injectable([
@@ -58,12 +57,11 @@ export class TagCommand implements CliCommand {
   async execute(
     target: string | undefined,
     options: { dryRun?: boolean; json?: boolean },
-    command: Command,
+    _command: Command,
   ): Promise<void> {
     const prelude = await this.prepareTagSync.execute({
       currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
-      globalCliRaw: command.optsWithGlobals(),
     });
     if (!consumeCliAppError(this.logger, prelude)) {
       return;

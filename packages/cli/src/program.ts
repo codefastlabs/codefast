@@ -3,11 +3,8 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import {
-  createCliRuntimeContainer,
-  resolveCliCommands,
-} from "#/lib/core/infrastructure/composition-root";
-import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import { createCliRuntimeContainer, resolveCliCommands } from "#/lib/bootstrap/composition-root";
+import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 
 function readVersion(): string {
   try {

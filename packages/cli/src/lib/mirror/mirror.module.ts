@@ -1,11 +1,11 @@
 import { Module } from "@codefast/di";
+import { FileSystemServiceAdapter } from "#/lib/mirror/adapters/secondary/file-system-service.adapter";
+import { MirrorSyncReporterAdapter } from "#/lib/mirror/adapters/secondary/mirror-sync-reporter.adapter";
+import { PackageRepositoryAdapter } from "#/lib/mirror/adapters/secondary/package-repository.adapter";
+import { WorkspaceServiceAdapter } from "#/lib/mirror/adapters/secondary/workspace-service.adapter";
 import { SyncWorkspacePackageServiceImpl } from "#/lib/mirror/application/services/sync-workspace-package.service";
 import { PrepareMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
-import { FileSystemServiceAdapter } from "#/lib/mirror/infrastructure/file-system-service.adapter";
-import { MirrorSyncReporterAdapter } from "#/lib/mirror/infrastructure/mirror-sync-reporter.adapter";
-import { PackageRepositoryAdapter } from "#/lib/mirror/infrastructure/package-repository.adapter";
-import { WorkspaceServiceAdapter } from "#/lib/mirror/infrastructure/workspace-service.adapter";
 import {
   FileSystemServicePortToken,
   PrepareMirrorSyncUseCaseToken,

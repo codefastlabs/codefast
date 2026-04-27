@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import { parseGlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
+import type { GlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
 import type { RepoRootResolverPort } from "#/lib/core/application/ports/repo-root-resolver.port";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 import {
@@ -19,7 +19,7 @@ export interface PrepareMirrorSyncUseCase {
   execute(args: {
     readonly currentWorkingDirectory: string;
     readonly packageArg: string | undefined;
-    readonly globalCliRaw: unknown;
+    readonly globals: GlobalCliOptions;
   }): Promise<Result<MirrorSyncCommandPrelude, AppError>>;
 }
 
@@ -38,13 +38,8 @@ export class PrepareMirrorSyncUseCaseImpl implements PrepareMirrorSyncUseCase {
   async execute(args: {
     readonly currentWorkingDirectory: string;
     readonly packageArg: string | undefined;
-    readonly globalCliRaw: unknown;
+    readonly globals: GlobalCliOptions;
   }): Promise<Result<MirrorSyncCommandPrelude, AppError>> {
-    const globalsOutcome = parseGlobalCliOptions(args.globalCliRaw);
-    if (!globalsOutcome.ok) {
-      return globalsOutcome;
-    }
-
     let rootDir: string;
     try {
       rootDir = this.repoRootResolver.findRepoRoot(args.currentWorkingDirectory);
@@ -68,7 +63,7 @@ export class PrepareMirrorSyncUseCaseImpl implements PrepareMirrorSyncUseCase {
     }
 
     return ok({
-      globals: globalsOutcome.value,
+      globals: args.globals,
       rootDir,
       config: loadedOutcome.value.config,
       packageFilter: filterOutcome.value,

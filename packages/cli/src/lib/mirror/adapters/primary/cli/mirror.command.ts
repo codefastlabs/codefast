@@ -15,8 +15,9 @@ import {
   consumeCliAppError,
   runCliResultAsync,
 } from "#/lib/core/presentation/cli-executor.presenter";
-import type { CliCommand } from "#/lib/core/presentation/command.interface";
+import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { parseGlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
 
 @injectable([
   inject(CliLoggerToken),
@@ -52,10 +53,14 @@ export class MirrorCommand implements CliCommand {
     options: { verbose?: boolean; json?: boolean },
     command: Command,
   ): Promise<void> {
+    const globalOptionsOutcome = parseGlobalCliOptions(command.optsWithGlobals());
+    if (!consumeCliAppError(this.logger, globalOptionsOutcome)) {
+      return;
+    }
     const prelude = await this.prepareMirrorSync.execute({
       currentWorkingDirectory: this.runtime.cwd(),
       packageArg: pkg,
-      globalCliRaw: command.optsWithGlobals(),
+      globals: globalOptionsOutcome.value,
     });
     if (!consumeCliAppError(this.logger, prelude)) {
       return;

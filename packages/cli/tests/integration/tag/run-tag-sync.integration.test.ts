@@ -13,12 +13,12 @@ import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
 import {
   resolveNearestPackageVersion,
   runTagOnTarget,
-} from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
+} from "#/lib/tag/application/services/tag-target-runner.service";
 import { TagModule } from "#/lib/tag/tag.module";
 import { NodeCliPathAdapter } from "#/lib/core/infrastructure/path.adapter";
-import { TagSinceWriterAdapter } from "#/lib/tag/infrastructure/tag-since-writer.adapter";
-import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infrastructure/typescript-tree-walk.adapter";
-import { TagVersionResolverAdapter } from "#/lib/tag/infrastructure/tag-version-resolver.adapter";
+import { TagSinceWriterAdapter } from "#/lib/tag/adapters/secondary/tag-since-writer.adapter";
+import { TypeScriptTreeWalkAdapter } from "#/lib/tag/adapters/secondary/typescript-tree-walk.adapter";
+import { TagVersionResolverAdapter } from "#/lib/tag/adapters/secondary/tag-version-resolver.adapter";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
 
