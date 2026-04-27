@@ -14,8 +14,10 @@ describe("composition root integration", () => {
     const tagModule = { name: "tag-module" };
     const tagPresentationModule = { name: "tag-presentation-module" };
 
-    const singleton = vi.fn(() => ({ whenNamed: vi.fn() }));
-    const to = vi.fn(() => ({ singleton }));
+    const singleton = vi.fn(() => ({}));
+    const whenNamed = vi.fn(() => ({ singleton }));
+    // Mirrors real fluent API: bind().to() may chain .singleton() or .whenNamed().singleton()
+    const to = vi.fn(() => ({ singleton, whenNamed }));
     const bind = vi.fn(() => ({ to }));
     const load = vi.fn();
     const resolve = vi.fn((token: unknown) => ({ token }));

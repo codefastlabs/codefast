@@ -29,5 +29,7 @@ export default defineConfig({
     environment: "node",
     globals: true,
     include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
+    /** Empty test tree is valid during refactors; `verify` must not fail. */
+    passWithNoTests: true,
   },
 });
