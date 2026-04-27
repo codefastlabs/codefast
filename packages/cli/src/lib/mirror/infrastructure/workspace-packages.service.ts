@@ -32,7 +32,7 @@ function isGlobPermissionError(caughtError: unknown): boolean {
 /**
  * Turn a pnpm `packages` glob into a `globSync` pattern that finds `package.json` files.
  */
-export function workspacePatternToPackageJsonGlob(pattern: string): string {
+function workspacePatternToPackageJsonGlob(pattern: string): string {
   const normalizedPattern = toPosix(pattern.trim()).replace(/\/+$/, "");
   if (!normalizedPattern) {
     return "**/package.json";
@@ -40,7 +40,7 @@ export function workspacePatternToPackageJsonGlob(pattern: string): string {
   return `${normalizedPattern}/package.json`;
 }
 
-export function splitWorkspacePackageEntries(raw: unknown): {
+function splitWorkspacePackageEntries(raw: unknown): {
   include: string[];
   exclude: string[];
 } {
@@ -70,7 +70,7 @@ export function splitWorkspacePackageEntries(raw: unknown): {
  * Reads `packages` from a parsed pnpm workspace document.
  * @throws If the document is invalid or `packages` is present but not an array.
  */
-export function parsePnpmWorkspaceDocument(doc: unknown): {
+function parsePnpmWorkspaceDocument(doc: unknown): {
   include: string[];
   exclude: string[];
   hasPackagesKey: boolean;

@@ -18,7 +18,7 @@ function readVersion(): string {
   }
 }
 
-export function createProgram(commands: readonly CliCommand[]): Command {
+function createProgram(commands: readonly CliCommand[]): Command {
   const program = new Command();
   program
     .name("codefast")

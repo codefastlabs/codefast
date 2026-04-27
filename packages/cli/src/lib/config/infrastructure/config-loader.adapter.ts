@@ -121,7 +121,3 @@ export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
     return cached;
   }
 }
-
-export function resetConfigLoaderCacheForTests(): void {
-  cachedLoads.clear();
-}

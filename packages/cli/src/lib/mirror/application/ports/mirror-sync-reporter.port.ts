@@ -5,7 +5,7 @@ import type {
   WorkspaceMultiDiscoverySource,
 } from "#/lib/mirror/domain/types.domain";
 
-export type MirrorProcessingModeInput =
+type MirrorProcessingModeInput =
   | { kind: "single" }
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 

@@ -27,7 +27,7 @@ export type GroupFileUnwrapPlan = {
   readonly call: DomainCallExpression;
 };
 
-export type GroupFileUnwrapState = {
+type GroupFileUnwrapState = {
   readonly cnInTvCalls: readonly DomainCallExpression[];
   readonly unwrapReplacementByCall: ReadonlyMap<DomainCallExpression, string>;
   readonly unwrapEdits: readonly GroupFileUnwrapPlan[];

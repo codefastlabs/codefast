@@ -2,7 +2,7 @@
  * Pure string utilities for applying non-overlapping text edits and reading line indentation.
  */
 
-export type SourceTextEdit = Readonly<{
+type SourceTextEdit = Readonly<{
   start: number;
   end: number;
   replacement: string;

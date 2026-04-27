@@ -28,7 +28,7 @@ function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
 /**
  * Resolve the module specifier used when injecting a `cn` import into a file.
  */
-export function cnModuleSpecifierForFile(filePath: string, override?: string): string {
+function cnModuleSpecifierForFile(filePath: string, override?: string): string {
   void filePath;
   if (override) {
     return override;

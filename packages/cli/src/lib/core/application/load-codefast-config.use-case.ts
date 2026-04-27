@@ -12,13 +12,9 @@ import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 
-// ─── Contract ────────────────────────────────────────────────────────────────
-
 export interface LoadCodefastConfigUseCase {
   execute(rootDir: string): Promise<Result<{ config: CodefastConfig }, AppError>>;
 }
-
-// ─── Implementation ──────────────────────────────────────────────────────────
 
 @injectable([inject(ConfigLoaderPortToken), inject(ConfigWarningReporterPortToken)])
 export class LoadCodefastConfigUseCaseImpl implements LoadCodefastConfigUseCase {

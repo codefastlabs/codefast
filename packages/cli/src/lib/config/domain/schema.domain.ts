@@ -1,10 +1,10 @@
 export type CodefastAfterWriteHook = (ctx: { files: string[] }) => void | Promise<void>;
 
-export type MirrorPathTransformation = {
+type MirrorPathTransformation = {
   removePrefix?: string;
 };
 
-export type MirrorCssExportRule =
+type MirrorCssExportRule =
   | boolean
   | {
       enabled?: boolean;

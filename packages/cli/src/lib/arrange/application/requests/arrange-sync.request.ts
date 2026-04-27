@@ -6,10 +6,3 @@ export type ArrangeSyncRunRequest = {
   cnImport?: string;
   config?: unknown;
 };
-
-export type ArrangeRunTargetRequest = {
-  targetPath: string;
-  write: boolean;
-  withClassName?: boolean;
-  cnImport?: string;
-};

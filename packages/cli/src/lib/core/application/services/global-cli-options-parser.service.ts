@@ -3,7 +3,7 @@ import { parseWithSchema } from "#/lib/core/application/services/schema-validato
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 
-export const globalCliOptionsSchema = z.object({
+const globalCliOptionsSchema = z.object({
   color: z.boolean().optional(),
 });
 

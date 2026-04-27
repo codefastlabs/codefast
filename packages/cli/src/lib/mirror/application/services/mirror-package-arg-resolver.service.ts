@@ -4,7 +4,7 @@ import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 
-export type ResolveMirrorPackageArgInput = {
+type ResolveMirrorPackageArgInput = {
   readonly fs: CliFs;
   readonly rootDir: string;
   readonly packageArg: string | undefined;

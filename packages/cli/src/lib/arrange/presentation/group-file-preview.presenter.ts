@@ -13,7 +13,7 @@ import type {
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
-export function printGroupFilePreview(
+function printGroupFilePreview(
   logger: CliLogger,
   args: {
     filePath: string;
@@ -72,7 +72,7 @@ export function printGroupFilePreview(
   }
 }
 
-export function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFileWorkPlan): void {
+function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFileWorkPlan): void {
   printGroupFilePreview(logger, {
     filePath: work.filePath,
     reportTotal: work.reportTotal,
@@ -84,12 +84,6 @@ export function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFile
     unwrapEdits: work.unwrapEdits,
     plannedGroupEdits: work.plannedGroupEdits,
   });
-}
-
-export function createGroupFilePreviewPresenter(logger: CliLogger): GroupFilePreviewPort {
-  return {
-    printGroupFilePreviewFromWork: (work) => printGroupFilePreviewFromWork(logger, work),
-  };
 }
 
 @injectable([inject(CliLoggerToken)])

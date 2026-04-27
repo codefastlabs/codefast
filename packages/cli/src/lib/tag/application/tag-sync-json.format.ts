@@ -2,7 +2,7 @@ import { CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import type { TagSyncResult } from "#/lib/tag/domain/types.domain";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 
-export type TagSyncJsonPayloadV1 = {
+type TagSyncJsonPayloadV1 = {
   readonly schemaVersion: 1;
   /**
    * `true` when {@link exitCodeForTagSyncResult} would be success.

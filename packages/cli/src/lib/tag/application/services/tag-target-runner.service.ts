@@ -5,7 +5,7 @@ import type { TypeScriptTreeWalkPort } from "#/lib/tag/application/ports/typescr
 import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 import type { TagRunOptions, TagRunResult } from "#/lib/tag/domain/types.domain";
 
-export function resolveNearestPackageVersion(
+function resolveNearestPackageVersion(
   targetPath: string,
   versionResolver: TagVersionResolverPort,
 ): string {
