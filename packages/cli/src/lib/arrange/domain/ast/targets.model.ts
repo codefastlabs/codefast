@@ -7,6 +7,7 @@ import {
 import {
   escapeTsStringLiteralContent,
   formatArray,
+  formatArrayElementsAsSiblingLines,
   formatJsxCnAttributeValue,
 } from "#/lib/arrange/domain/source-text-formatters.formatter";
 import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/lib/arrange/domain/types.domain";
@@ -17,7 +18,11 @@ import {
   collectGroupableStringNodes,
   slotClassString,
 } from "#/lib/arrange/domain/ast/collectors-tv.collector";
-import { indentOfLineContaining } from "#/lib/shared/source-code/domain/text-edit.model";
+import {
+  endAfterOptionalCommaFollowingInSource,
+  indentOfLineContaining,
+  textPrefixFromLineStartToPosition,
+} from "#/lib/shared/source-code/domain/text-edit.model";
 import {
   isDomainArrayLiteralExpression,
   isDomainJsxAttribute,
@@ -169,12 +174,19 @@ export function planGroupEditForTarget(
         ? anchorClassLiteral.parent
         : null;
     const start = parentArray ? parentArray.pos : anchorClassLiteral.pos;
-    const end = parentArray ? parentArray.end : anchorClassLiteral.end;
+    const end = parentArray
+      ? parentArray.end
+      : endAfterOptionalCommaFollowingInSource(textAfterUnwrap, anchorClassLiteral.end);
     const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
-    const replacement = formatArray(groups)
-      .split("\n")
-      .map((line, lineIndex) => (lineIndex === 0 ? line : `${baseIndent}${line}`))
-      .join("\n");
+    const replacement = parentArray
+      ? formatArray(groups)
+          .split("\n")
+          .map((line, lineIndex) => (lineIndex === 0 ? line : `${baseIndent}${line}`))
+          .join("\n")
+      : formatArrayElementsAsSiblingLines(
+          groups,
+          textPrefixFromLineStartToPosition(textAfterUnwrap, start),
+        );
     return {
       start,
       end,
