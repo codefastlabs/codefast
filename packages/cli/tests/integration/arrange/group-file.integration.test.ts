@@ -221,6 +221,27 @@ export function Fixture() {
     });
   });
 
+  it("groups tv base single long string into flat sibling literals (no nested array)", () => {
+    const before = `import { tv } from "@codefast/tailwind-variants";
+export const styles = tv({
+  base: [
+    "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 px-4 py-3 rounded-xl border bg-card text-sm has-[>svg]:grid-cols-[--spacing(4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  ],
+});
+`;
+    withTempFixture("FixtureTvBaseFlat.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.includes("[\n    [")).toBe(false);
+      expect(after).not.toMatch(/",\s*\n\s*,/);
+      expect(after).toMatch(/base:\s*\[\s*\n\s+"[^"]+",\s*\n\s+"/);
+    });
+  });
+
   it("groups compoundVariants class array slots", () => {
     const before = `import { tv } from "@codefast/tailwind-variants";
 export const sheet = tv({

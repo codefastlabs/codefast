@@ -4,6 +4,11 @@ export function escapeTsStringLiteralContent(group: string): string {
   return group.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
 }
 
+/** Trailing comma on multiline Tailwind group lists (matches prior `cn` / `tv` array style). */
+function commaAfterTailwindGroupLine(groupIndex: number, groupCount: number): string {
+  return groupIndex < groupCount - 1 || groupCount > 1 ? "," : "";
+}
+
 /**
  * Multiline fragment for use *inside* an existing `cn(...)` — replaces one
  * string argument with several, without producing `cn(cn(...))`.
@@ -58,11 +63,32 @@ export function formatArray(groups: string[]): string {
     if (group === undefined) {
       throw new Error("invariant: formatArray group missing");
     }
-    const comma = i < groups.length - 1 || groups.length > 1 ? "," : "";
+    const comma = commaAfterTailwindGroupLine(i, groups.length);
     lines.push(`  "${escapeTsStringLiteralContent(group)}"${comma}`);
   }
   lines.push("]");
   return lines.join("\n");
+}
+
+/**
+ * Multiple string literals as sequential lines for insertion **inside** an existing array
+ * (e.g. `tv({ base: [ … ] })` — avoids `[[ "a", "b" ]]` when replacing one long string).
+ */
+export function formatArrayElementsAsSiblingLines(
+  groups: string[],
+  continuationPrefix: string,
+): string {
+  const segments: string[] = [];
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    if (group === undefined) {
+      throw new Error("invariant: formatArrayElementsAsSiblingLines group missing");
+    }
+    const comma = commaAfterTailwindGroupLine(i, groups.length);
+    const segment = `"${escapeTsStringLiteralContent(group)}"${comma}`;
+    segments.push(i === 0 ? segment : `\n${continuationPrefix}${segment}`);
+  }
+  return segments.join("");
 }
 
 export function formatJsxCnAttributeValue(

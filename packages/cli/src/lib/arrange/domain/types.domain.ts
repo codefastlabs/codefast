@@ -71,7 +71,9 @@ export type StringNode = {
   nodes: TailwindClassLiteral[];
   sf: DomainSourceFile;
   /**
-   * String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray`.
+   * String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray` when
+   * replacing a whole array, or `formatArrayElementsAsSiblingLines` when replacing one element
+   * inside an existing array.
    */
   isTvContext: boolean;
   /**
