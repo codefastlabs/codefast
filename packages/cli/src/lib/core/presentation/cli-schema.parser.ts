@@ -1,5 +1,5 @@
-import type { SchemaValidator } from "#/lib/core/application/schema-parse.util";
-import { parseWithSchema } from "#/lib/core/application/schema-parse.util";
+import type { SchemaValidator } from "#/lib/core/application/services/schema-validator.service";
+import { parseWithSchema } from "#/lib/core/application/services/schema-validator.service";
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 

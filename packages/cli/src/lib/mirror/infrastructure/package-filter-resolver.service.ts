@@ -1,6 +1,6 @@
 import { realpathSync } from "node:fs";
 import path from "node:path";
-import { normalizePath } from "#/lib/mirror/infrastructure/path-normalizer.util";
+import { normalizePath } from "#/lib/mirror/domain/path-normalizer.value-object";
 
 function tryRealpath(entryPath: string): string {
   try {

@@ -1,4 +1,4 @@
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type {
   GlobalStats,

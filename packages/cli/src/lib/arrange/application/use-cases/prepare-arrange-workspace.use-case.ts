@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import { err, ok } from "#/lib/core/domain/result.model";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import { resolveArrangeTargetPath } from "#/lib/arrange/application/services/arrange-target-path-resolver.service";
 import type { WorkspaceResolverPort } from "#/lib/arrange/application/ports/workspace-resolver.port";
 import { WorkspaceResolverPortToken } from "#/lib/arrange/contracts/tokens";

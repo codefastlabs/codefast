@@ -9,7 +9,7 @@ import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { CliFsToken } from "#/lib/core/contracts/tokens";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { ArrangeAnalyzeDirectoryRequest } from "#/lib/arrange/application/requests/analyze-directory.request";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";

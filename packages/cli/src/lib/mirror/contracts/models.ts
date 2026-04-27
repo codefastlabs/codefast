@@ -1,5 +1,5 @@
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
-import type { GlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
+import type { GlobalCliOptions } from "#/lib/core/application/services/global-cli-options-parser.service";
 
 export interface MirrorSyncCommandPrelude {
   readonly globals: GlobalCliOptions;

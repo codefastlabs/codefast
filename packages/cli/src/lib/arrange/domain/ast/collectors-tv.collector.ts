@@ -21,7 +21,7 @@ import {
   isUnsafeLiteralForCnStyleApplySplit,
 } from "#/lib/arrange/domain/ast/collectors-cn.collector";
 import type { StringNode, TailwindClassLiteral } from "#/lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
+import { tokenizeClassString } from "#/lib/arrange/domain/tailwind-token.value-object";
 import {
   buildKnownCnTvBindings,
   isCnOrTvIdentifier,

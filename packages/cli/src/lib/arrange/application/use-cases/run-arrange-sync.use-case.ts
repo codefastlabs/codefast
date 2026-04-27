@@ -14,7 +14,7 @@ import type {
 import type { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { ok } from "#/lib/core/domain/result.model";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { ArrangeSyncRunRequest } from "#/lib/arrange/application/requests/arrange-sync.request";
 import type { ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";

@@ -17,7 +17,7 @@ import {
 } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { parseWithCliSchema } from "#/lib/core/presentation/cli-schema.parser";
-import { parseGlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
+import { parseGlobalCliOptions } from "#/lib/core/application/services/global-cli-options-parser.service";
 
 @injectable([
   inject(CliLoggerToken),

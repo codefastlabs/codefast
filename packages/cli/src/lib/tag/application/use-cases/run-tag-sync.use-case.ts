@@ -14,7 +14,7 @@ import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/lib/config/dom
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
 import { CliFsToken, CliPathToken } from "#/lib/core/contracts/tokens";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
 import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-resolver.port";

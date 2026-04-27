@@ -9,7 +9,7 @@ import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
 import type { GlobalStats } from "#/lib/mirror/domain/types.domain";

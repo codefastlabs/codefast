@@ -7,7 +7,7 @@ import {
   ConfigWarningReporterPortToken,
 } from "#/lib/config/contracts/tokens";
 import type { CodefastConfig } from "#/lib/config/domain/schema.domain";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";

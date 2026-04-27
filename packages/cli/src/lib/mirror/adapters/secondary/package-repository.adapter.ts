@@ -7,10 +7,8 @@ import type {
   ExportOriginalPathBySpecifier,
   PackageJsonShape,
 } from "#/lib/mirror/domain/types.domain";
-import {
-  resolvePackageDisplayName,
-  writePackageJsonExportsAtomic,
-} from "#/lib/mirror/infrastructure/package-json-exports.util";
+import { resolvePackageDisplayName } from "#/lib/mirror/domain/package-display-name.policy";
+import { writePackageJsonExportsAtomic } from "#/lib/mirror/infrastructure/package-json-exports.repository";
 
 @injectable([inject(CliFsToken)])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {
