@@ -310,8 +310,8 @@ catalogs:
       specifier: ^19.2.5
       version: 19.2.5
     react-hook-form:
-      specifier: ^7.73.1
-      version: 7.73.1
+      specifier: ^7.74.0
+      version: 7.74.0
     react-resizable-panels:
       specifier: ^4.10.0
       version: 4.10.0
@@ -491,7 +491,7 @@ importers:
         version: link:../../packages/ui
       '@hookform/resolvers':
         specifier: 'catalog:'
-        version: 5.2.2(react-hook-form@7.73.1(react@19.2.5))
+        version: 5.2.2(react-hook-form@7.74.0(react@19.2.5))
       '@shikijs/rehype':
         specifier: 'catalog:'
         version: 4.0.2
@@ -557,7 +557,7 @@ importers:
         version: 19.2.5(react@19.2.5)
       react-hook-form:
         specifier: 'catalog:'
-        version: 7.73.1(react@19.2.5)
+        version: 7.74.0(react@19.2.5)
       recharts:
         specifier: 'catalog:'
         version: 3.8.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-is@18.3.1)(react@19.2.5)(redux@5.0.1)
@@ -1030,7 +1030,7 @@ importers:
         version: 19.2.5(react@19.2.5)
       react-hook-form:
         specifier: 'catalog:'
-        version: 7.73.1(react@19.2.5)
+        version: 7.74.0(react@19.2.5)
       react-resizable-panels:
         specifier: 'catalog:'
         version: 4.10.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -5907,8 +5907,8 @@ packages:
     peerDependencies:
       react: ^19.2.5
 
-  react-hook-form@7.73.1:
-    resolution: {integrity: sha512-VAfVYOPcx3piiEVQy95vyFmBwbVUsP/AUIN+mpFG8h11yshDd444nn0VyfaGWSRnhOLVgiDu7HIuBtAIzxn9dA==}
+  react-hook-form@7.74.0:
+    resolution: {integrity: sha512-yR6wHr99p9wFv686jhRWVSFhUvDvNbdUf2dKlbno8/VKOCuoNobDGC6S+M2dua9A9Yo8vpcrp8assIYbsZCQ9g==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -7620,10 +7620,10 @@ snapshots:
 
   '@fontsource-variable/nunito-sans@5.2.7': {}
 
-  '@hookform/resolvers@5.2.2(react-hook-form@7.73.1(react@19.2.5))':
+  '@hookform/resolvers@5.2.2(react-hook-form@7.74.0(react@19.2.5))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.73.1(react@19.2.5)
+      react-hook-form: 7.74.0(react@19.2.5)
 
   '@inquirer/external-editor@1.0.3(@types/node@25.6.0)':
     dependencies:
@@ -11587,7 +11587,7 @@ snapshots:
       react: 19.2.5
       scheduler: 0.27.0
 
-  react-hook-form@7.73.1(react@19.2.5):
+  react-hook-form@7.74.0(react@19.2.5):
     dependencies:
       react: 19.2.5
 
