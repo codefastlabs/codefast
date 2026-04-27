@@ -8,7 +8,7 @@ import {
   parsePnpmWorkspaceDocument,
   splitWorkspacePackageEntries,
   workspacePatternToPackageJsonGlob,
-} from "#/lib/mirror/infrastructure/workspace-packages.adapter";
+} from "#/lib/mirror/infrastructure/workspace-packages.service";
 
 function createTestLogger(): CliLogger & { lines: string[] } {
   const lines: string[] = [];

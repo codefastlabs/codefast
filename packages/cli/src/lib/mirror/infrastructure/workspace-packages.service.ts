@@ -4,7 +4,7 @@ import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import { normalizePath } from "#/lib/mirror/infrastructure/path-normalizer.adapter";
+import { normalizePath } from "#/lib/mirror/infrastructure/path-normalizer.util";
 import type {
   FindWorkspacePackagesResult,
   WorkspaceMultiDiscoverySource,

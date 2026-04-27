@@ -10,7 +10,7 @@ import type {
 import {
   resolvePackageDisplayName,
   writePackageJsonExportsAtomic,
-} from "#/lib/mirror/infrastructure/update-pkg.adapter";
+} from "#/lib/mirror/infrastructure/package-json-exports.util";
 
 @injectable([inject(CliFsToken)])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {

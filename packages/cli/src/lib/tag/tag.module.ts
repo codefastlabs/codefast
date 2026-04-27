@@ -15,7 +15,7 @@ import {
 } from "#/lib/tag/contracts/tokens";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
-import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/logging-decorator.adapter";
+import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/port-telemetry.util";
 
 export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
   moduleBuilder.import(InfrastructureModule);

@@ -19,7 +19,7 @@ import type {
   DomainObjectLiteralExpression,
   DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
 
 function firstTvConfigObject(domainSf: DomainSourceFile): DomainObjectLiteralExpression {
   const knownBindings = buildKnownCnTvBindings(domainSf);

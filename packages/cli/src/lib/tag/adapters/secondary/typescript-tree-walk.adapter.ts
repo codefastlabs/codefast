@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { CliFsToken } from "#/lib/core/contracts/tokens";
-import { walkTsxFiles } from "#/lib/shared/source-code/infrastructure/tsx-file-walk.adapter";
+import { walkTsxFiles } from "#/lib/shared/source-code/infrastructure/tsx-file-walk.util";
 import type { TypeScriptTreeWalkPort } from "#/lib/tag/application/ports/typescript-tree-walk.port";
 
 @injectable([inject(CliFsToken)])

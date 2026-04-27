@@ -3,8 +3,8 @@ import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { FileSystemServicePort } from "#/lib/mirror/application/ports/file-system-service.port";
 import { CliFsToken } from "#/lib/core/contracts/tokens";
-import { isDirentList } from "#/lib/mirror/infrastructure/dirent-list.adapter";
-import { normalizePath } from "#/lib/mirror/infrastructure/path-normalizer.adapter";
+import { isDirentList } from "#/lib/mirror/infrastructure/dirent-list.guard";
+import { normalizePath } from "#/lib/mirror/infrastructure/path-normalizer.util";
 
 function isKnownReadDirError(caughtError: unknown): boolean {
   return (
