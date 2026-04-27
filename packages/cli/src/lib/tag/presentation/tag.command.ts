@@ -8,16 +8,14 @@ import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.pre
 import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 import {
-  PrepareTagOrchestratorToken,
+  PrepareTagSyncUseCaseToken,
   PresentTagSyncResultPresenterToken,
   RunTagSyncUseCaseToken,
   TagSyncProgressListenerToken,
 } from "#/lib/tag/contracts/tokens";
-import type {
-  PrepareTagOrchestrator,
-  PresentTagSyncResultPresenter,
-} from "#/lib/tag/contracts/presentation.contract";
+import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/presentation.contract";
 import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
+import type { PrepareTagSyncUseCase } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
 import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
 import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
@@ -25,7 +23,7 @@ import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
 @injectable([
   inject(CliLoggerToken),
   inject(CliRuntimeToken),
-  inject(PrepareTagOrchestratorToken),
+  inject(PrepareTagSyncUseCaseToken),
   inject(RunTagSyncUseCaseToken),
   inject(TagSyncProgressListenerToken),
   inject(PresentTagSyncResultPresenterToken),
@@ -37,7 +35,7 @@ export class TagCommand implements CliCommand {
   constructor(
     private readonly logger: CliLogger,
     private readonly runtime: CliRuntime,
-    private readonly prepareTagSync: PrepareTagOrchestrator,
+    private readonly prepareTagSync: PrepareTagSyncUseCase,
     private readonly runTagSync: RunTagSyncUseCase,
     private readonly tagProgressListener: TagProgressListener,
     private readonly presentSyncCliResult: PresentTagSyncResultPresenter,
