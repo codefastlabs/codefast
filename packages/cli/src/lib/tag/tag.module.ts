@@ -1,10 +1,12 @@
 import { Module } from "@codefast/di";
 import { RunTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
+import { PrepareTagSyncUseCaseImpl } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
 import { TagSinceWriterAdapter } from "#/lib/tag/infra/tag-since-writer.adapter";
 import { TagTargetResolverAdapter } from "#/lib/tag/infra/tag-target-resolver.adapter";
 import { TypeScriptTreeWalkAdapter } from "#/lib/tag/infra/typescript-tree-walk.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/infra/tag-version-resolver.adapter";
 import {
+  PrepareTagSyncUseCaseToken,
   RunTagSyncUseCaseToken,
   TagSinceWriterPortToken,
   TagTargetResolverPortToken,
@@ -62,5 +64,6 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
     )
     .singleton();
 
+  moduleBuilder.bind(PrepareTagSyncUseCaseToken).to(PrepareTagSyncUseCaseImpl).singleton();
   moduleBuilder.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();
 });

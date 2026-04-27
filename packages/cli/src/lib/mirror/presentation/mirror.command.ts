@@ -4,10 +4,10 @@ import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import {
-  PrepareMirrorOrchestratorToken,
+  PrepareMirrorSyncUseCaseToken,
   RunMirrorSyncUseCaseToken,
 } from "#/lib/mirror/contracts/tokens";
-import type { PrepareMirrorOrchestrator } from "#/lib/mirror/contracts/presentation.contract";
+import type { PrepareMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
 import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
@@ -21,7 +21,7 @@ import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.pre
 @injectable([
   inject(CliLoggerToken),
   inject(CliRuntimeToken),
-  inject(PrepareMirrorOrchestratorToken),
+  inject(PrepareMirrorSyncUseCaseToken),
   inject(RunMirrorSyncUseCaseToken),
 ])
 export class MirrorCommand implements CliCommand {
@@ -31,7 +31,7 @@ export class MirrorCommand implements CliCommand {
   constructor(
     private readonly logger: CliLogger,
     private readonly runtime: CliRuntime,
-    private readonly prepareMirrorSync: PrepareMirrorOrchestrator,
+    private readonly prepareMirrorSync: PrepareMirrorSyncUseCase,
     private readonly runMirrorSync: RunMirrorSyncUseCase,
   ) {}
 

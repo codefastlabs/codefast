@@ -1,17 +1,14 @@
 import { Module } from "@codefast/di";
 import {
-  PrepareTagOrchestratorToken,
   PresentTagSyncResultPresenterToken,
   TagSyncProgressListenerToken,
 } from "#/lib/tag/contracts/tokens";
-import { PrepareTagOrchestrator } from "#/lib/tag/presentation/prepare-tag.orchestrator";
 import { PresentTagSyncResultPresenterImpl } from "#/lib/tag/presentation/present-tag-sync-result.presenter";
 import { TagSyncProgressListener } from "#/lib/tag/presentation/tag-sync-progress-listener.presenter";
 import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 
 export const TagPresentationModule = Module.create("cli-tag-presentation", (moduleBuilder) => {
   moduleBuilder.import(PresentationModule);
-  moduleBuilder.bind(PrepareTagOrchestratorToken).to(PrepareTagOrchestrator).singleton();
   moduleBuilder
     .bind(PresentTagSyncResultPresenterToken)
     .to(PresentTagSyncResultPresenterImpl)

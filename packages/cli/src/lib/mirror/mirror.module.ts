@@ -1,5 +1,6 @@
 import { Module } from "@codefast/di";
 import { SyncWorkspacePackageServiceImpl } from "#/lib/mirror/application/services/sync-workspace-package.service";
+import { PrepareMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { FileSystemServiceAdapter } from "#/lib/mirror/infra/file-system-service.adapter";
 import { MirrorSyncReporterAdapter } from "#/lib/mirror/infra/mirror-sync-reporter.adapter";
@@ -7,6 +8,7 @@ import { PackageRepositoryAdapter } from "#/lib/mirror/infra/package-repository.
 import { WorkspaceServiceAdapter } from "#/lib/mirror/infra/workspace-service.adapter";
 import {
   FileSystemServicePortToken,
+  PrepareMirrorSyncUseCaseToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
   RunMirrorSyncUseCaseToken,
@@ -73,5 +75,6 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
     .to(SyncWorkspacePackageServiceImpl)
     .singleton();
 
+  moduleBuilder.bind(PrepareMirrorSyncUseCaseToken).to(PrepareMirrorSyncUseCaseImpl).singleton();
   moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCaseImpl).singleton();
 });

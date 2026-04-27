@@ -32,6 +32,10 @@
   ],
   "type": "module",
   "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts"
+    ],
     "#/*": [
       "./src/*",
       "./src/*.ts",

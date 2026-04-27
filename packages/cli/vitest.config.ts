@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["src/**/*.test.?(c|m)[jt]s?(x)"],
+    include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",

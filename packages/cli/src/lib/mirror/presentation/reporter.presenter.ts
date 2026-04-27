@@ -1,5 +1,5 @@
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
-import { printConfigSchemaWarnings } from "#/lib/infra/config-reporter.adapter";
+import { printConfigSchemaWarnings } from "#/lib/core/presentation/config-schema-warnings.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type {
   GlobalStats,

@@ -5,12 +5,20 @@ import {
 } from "#/lib/config/contracts/tokens";
 import { ConfigLoaderAdapterImpl } from "#/lib/config/infra/config-loader.adapter";
 import { ConfigWarningReporterAdapter } from "#/lib/config/infra/config-warning-reporter.adapter";
+import { LoadCodefastConfigUseCaseImpl } from "#/lib/core/application/load-codefast-config.use-case";
 import { CoreModule } from "#/lib/core/core.module";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
 } from "#/lib/core/infra/logging-decorator.adapter";
-import { CliFsToken, CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
+import {
+  CliFsToken,
+  CliLoggerToken,
+  CliRuntimeToken,
+  LoadCodefastConfigUseCaseToken,
+  RepoRootResolverPortToken,
+} from "#/lib/core/contracts/tokens";
+import { RepoRootResolverAdapter } from "#/lib/core/infra/repo-root-resolver.adapter";
 import {
   NodeCliFsAdapter,
   NodeCliLoggerAdapter,
@@ -22,6 +30,7 @@ export const InfraModule = Module.create("cli-infra", (moduleBuilder) => {
 
   moduleBuilder.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
   moduleBuilder.bind(CliRuntimeToken).to(NodeCliRuntimeAdapter).singleton();
+  moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolverAdapter).singleton();
 
   moduleBuilder
     .bind(CliFsToken)
@@ -40,4 +49,5 @@ export const InfraModule = Module.create("cli-infra", (moduleBuilder) => {
 
   moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapterImpl).singleton();
   moduleBuilder.bind(ConfigWarningReporterPortToken).to(ConfigWarningReporterAdapter).singleton();
+  moduleBuilder.bind(LoadCodefastConfigUseCaseToken).to(LoadCodefastConfigUseCaseImpl).singleton();
 });
