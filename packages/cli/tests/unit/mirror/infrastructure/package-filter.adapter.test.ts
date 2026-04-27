@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { vi } from "vitest";
-import { resolvePackageFilterUnderRoot } from "#/lib/mirror/infrastructure/package-filter.adapter";
+import { resolvePackageFilterUnderRoot } from "#/lib/mirror/infrastructure/package-filter.util";
 
 describe("resolvePackageFilterUnderRoot", () => {
   it("normalizes a path relative to rootDir (not cwd)", () => {

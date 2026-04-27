@@ -4,7 +4,7 @@ import {
   isDomainIdentifier,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import { collectUnconditionalTailwindLiteralsFromCnArguments } from "#/lib/arrange/domain/ast/collectors-cn.collector";
-import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
 
 /**
  * Test / REPL helper: parse `callee(<snippet>)` and return merged unconditional literal text.

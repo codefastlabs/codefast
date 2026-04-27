@@ -9,14 +9,14 @@ import {
 } from "#/lib/mirror/contracts/tokens";
 import type { PrepareMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
-import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli-schema.presenter";
+import { mirrorSyncRunRequestSchema } from "#/lib/mirror/presentation/mirror-cli.schema";
 import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
 import {
   consumeCliAppError,
   runCliResultAsync,
 } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
-import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { parseWithCliSchema } from "#/lib/core/presentation/cli-schema.parser";
 import { parseGlobalCliOptions } from "#/lib/core/application/parse-global-cli-options.util";
 
 @injectable([

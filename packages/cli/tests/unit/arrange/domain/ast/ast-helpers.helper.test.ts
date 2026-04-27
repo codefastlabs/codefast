@@ -10,7 +10,7 @@ import {
   isDomainCallExpression,
   isDomainExpressionStatement,
 } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
 
 function parseCallee(source: string) {
   const domainSf = parseDomainSourceFile("x.ts", source);

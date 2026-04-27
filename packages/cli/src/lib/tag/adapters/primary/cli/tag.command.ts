@@ -4,7 +4,7 @@ import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
-import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { parseWithCliSchema } from "#/lib/core/presentation/cli-schema.parser";
 import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
 import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
 import { PrepareTagSyncUseCaseToken, RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
@@ -12,7 +12,7 @@ import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/tag-sync
 import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 import type { PrepareTagSyncUseCase } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
-import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli-schema.presenter";
+import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli.schema";
 import {
   PresentTagSyncResultPresenterToken,
   TagSyncProgressListenerToken,

@@ -1,5 +1,5 @@
 import type { Dirent } from "node:fs";
-import { isDirentList } from "#/lib/mirror/infrastructure/dirent-list.adapter";
+import { isDirentList } from "#/lib/mirror/infrastructure/dirent-list.guard";
 
 describe("isDirentList", () => {
   it("documents that an empty array is intentionally accepted as Dirent[]", () => {

@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { walkTsxFiles } from "#/lib/shared/source-code/infrastructure/tsx-file-walk.adapter";
+import { walkTsxFiles } from "#/lib/shared/source-code/infrastructure/tsx-file-walk.util";
 import type { FileWalkerPort } from "#/lib/arrange/application/ports/file-walker.port";
 import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
 

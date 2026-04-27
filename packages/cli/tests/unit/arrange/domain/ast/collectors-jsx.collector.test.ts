@@ -3,7 +3,7 @@ import {
   findFirstDomainDescendantWhere,
   isDomainJsxAttribute,
 } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
 
 function firstJsxClassAttr(source: string) {
   const domainSf = parseDomainSourceFile("x.tsx", source);

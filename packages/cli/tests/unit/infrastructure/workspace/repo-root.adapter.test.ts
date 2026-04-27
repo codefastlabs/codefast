@@ -1,6 +1,6 @@
 import path from "node:path";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-import { findRepoRoot } from "#/lib/infrastructure/workspace/repo-root.adapter";
+import { findRepoRoot } from "#/lib/infrastructure/workspace/repo-root.util";
 
 function makeFs(existsSync: (targetPath: string) => boolean): CliFs {
   return {

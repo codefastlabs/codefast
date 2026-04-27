@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import { findRepoRoot } from "#/lib/infrastructure/workspace/repo-root.adapter";
+import { findRepoRoot } from "#/lib/infrastructure/workspace/repo-root.util";
 import type { WorkspaceResolverPort } from "#/lib/arrange/application/ports/workspace-resolver.port";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import { CliFsToken } from "#/lib/core/contracts/tokens";

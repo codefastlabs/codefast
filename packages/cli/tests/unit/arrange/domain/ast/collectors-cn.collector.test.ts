@@ -5,7 +5,7 @@ import {
   isDomainCallExpression,
   isDomainExpressionStatement,
 } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
+import { parseDomainSourceFile } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
 
 describe("forEachStringLiteralInClassExpression", () => {
   function literalsFromArgSnippet(

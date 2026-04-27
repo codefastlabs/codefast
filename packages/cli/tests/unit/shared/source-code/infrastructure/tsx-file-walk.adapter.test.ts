@@ -5,7 +5,7 @@ import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
 import {
   DEFAULT_SKIP_DIRS,
   walkTsxFiles,
-} from "#/lib/shared/source-code/infrastructure/tsx-file-walk.adapter";
+} from "#/lib/shared/source-code/infrastructure/tsx-file-walk.util";
 
 const cliFs = new NodeCliFsAdapter();
 

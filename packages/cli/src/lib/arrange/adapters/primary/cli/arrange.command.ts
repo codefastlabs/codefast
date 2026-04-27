@@ -19,7 +19,7 @@ import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
-} from "#/lib/arrange/presentation/arrange-cli-schema.presenter";
+} from "#/lib/arrange/presentation/arrange-cli.schema";
 import {
   exitCodeForArrangeSyncResult,
   formatArrangeGroupJsonOutput,
@@ -29,7 +29,7 @@ import {
 import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/presentation/arrange-analyze.presenter";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
-import { parseWithCliSchema } from "#/lib/core/presentation/parse-cli-schema.presenter";
+import { parseWithCliSchema } from "#/lib/core/presentation/cli-schema.parser";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";

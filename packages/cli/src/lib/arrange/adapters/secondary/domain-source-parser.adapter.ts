@@ -3,7 +3,7 @@ import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-un
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { DomainSourceParserPort } from "#/lib/arrange/application/ports/domain-source-parser.port";
 import type { DomainSourceFile } from "#/lib/arrange/domain/ast/ast-node.model";
-import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infrastructure/ts-ast-translator.adapter";
+import { parseDomainSourceFile as parseDomainSourceFileFromTs } from "#/lib/arrange/infrastructure/ts-ast-translator.util";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
 /**
