@@ -1,10 +1,14 @@
 import type {
   ActivationHandler,
+  BindingIdentifier,
   BindingScope,
+  ConstraintContext,
   Constructor,
   DeactivationHandler,
   DependencyKey,
+  ResolutionContext,
   ResolveOptions,
+  TokenValue,
 } from "#/types";
 import type {
   AliasBindingBuilder,
@@ -19,7 +23,6 @@ import type {
   SlotKey,
   TransientBindingBuilder,
 } from "#/binding";
-import type { BindingIdentifier } from "#/types";
 import type { Token } from "#/token";
 import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
 import type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
@@ -768,7 +771,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     return new ConstantBindingBuilderImpl<Value>(this._token, value, this._commit);
   }
 
-  toDynamic(factory: (ctx: import("#/types").ResolutionContext) => Value): BindingBuilder<Value> {
+  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
     return new BindingBuilderImpl<Value>(
       this._token,
       { kind: "dynamic", factory, scope: "transient" },
@@ -776,9 +779,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     );
   }
 
-  toDynamicAsync(
-    factory: (ctx: import("#/types").ResolutionContext) => Promise<Value>,
-  ): BindingBuilder<Value> {
+  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
     return new BindingBuilderImpl<Value>(
       this._token,
       { kind: "dynamic-async", factory, scope: "transient" },
@@ -787,9 +788,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
   }
 
   toResolved<const Deps extends readonly DependencyKey[]>(
-    factory: (
-      ...args: { [K in keyof Deps]: import("#/types").TokenValue<NoInfer<Deps>[K]> }
-    ) => Value,
+    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
@@ -806,9 +805,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
   }
 
   toResolvedAsync<const Deps extends readonly DependencyKey[]>(
-    factory: (
-      ...args: { [K in keyof Deps]: import("#/types").TokenValue<NoInfer<Deps>[K]> }
-    ) => Promise<Value>,
+    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
@@ -833,7 +830,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
 
 class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
   private _slot: SlotKey;
-  private _predicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
+  private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _committed: BindingIdentifier | undefined;
 
   constructor(
@@ -857,7 +854,7 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
     this._committed = this._commit(binding as Binding<unknown>, previousId);
   }
 
-  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): this {
+  when(predicate: (ctx: ConstraintContext) => boolean): this {
     this._predicate = predicate;
     this._doCommit();
     return this;
@@ -938,17 +935,15 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
 class ScopeBuilderImpl<Value, Scope extends BindingScope>
   implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value>
 {
-  private _onActivation: import("#/types").ActivationHandler<Value> | undefined;
-  private _onDeactivation: import("#/types").DeactivationHandler<Value> | undefined;
+  private _onActivation: ActivationHandler<Value> | undefined;
+  private _onDeactivation: DeactivationHandler<Value> | undefined;
   private _committed: BindingIdentifier | undefined;
 
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _partial: PartialBinding<Value>,
     private readonly _slot: SlotKey,
-    private readonly _predicate:
-      | ((ctx: import("#/types").ConstraintContext) => boolean)
-      | undefined,
+    private readonly _predicate: ((ctx: ConstraintContext) => boolean) | undefined,
     private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
     private readonly _scope: Scope,
     private readonly _initialPreviousId?: BindingIdentifier,
@@ -970,13 +965,13 @@ class ScopeBuilderImpl<Value, Scope extends BindingScope>
     this._committed = this._commit(binding as Binding<unknown>, previousId);
   }
 
-  onActivation(fn: import("#/types").ActivationHandler<Value>): this {
+  onActivation(fn: ActivationHandler<Value>): this {
     this._onActivation = fn;
     this._doCommit();
     return this;
   }
 
-  onDeactivation(fn: import("#/types").DeactivationHandler<Value>): this {
+  onDeactivation(fn: DeactivationHandler<Value>): this {
     this._onDeactivation = fn;
     this._doCommit();
     return this;
@@ -991,9 +986,9 @@ class ScopeBuilderImpl<Value, Scope extends BindingScope>
 
 class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value> {
   private _slot: SlotKey;
-  private _predicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
-  private _onActivation: import("#/types").ActivationHandler<Value> | undefined;
-  private _onDeactivation: import("#/types").DeactivationHandler<Value> | undefined;
+  private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
+  private _onActivation: ActivationHandler<Value> | undefined;
+  private _onDeactivation: DeactivationHandler<Value> | undefined;
   private _committed: BindingIdentifier | undefined;
 
   constructor(
@@ -1021,7 +1016,7 @@ class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value>
     this._committed = this._commit(binding as Binding<unknown>, previousId);
   }
 
-  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): this {
+  when(predicate: (ctx: ConstraintContext) => boolean): this {
     this._predicate = predicate;
     this._doCommit();
     return this;
@@ -1050,15 +1045,13 @@ class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value>
     return this;
   }
 
-  onActivation(fn: import("#/types").ActivationHandler<Value>): SingletonLifecycleBuilder<Value> {
+  onActivation(fn: ActivationHandler<Value>): SingletonLifecycleBuilder<Value> {
     this._onActivation = fn;
     this._doCommit();
     return this as unknown as SingletonLifecycleBuilder<Value>;
   }
 
-  onDeactivation(
-    fn: import("#/types").DeactivationHandler<Value>,
-  ): SingletonLifecycleBuilder<Value> {
+  onDeactivation(fn: DeactivationHandler<Value>): SingletonLifecycleBuilder<Value> {
     this._onDeactivation = fn;
     this._doCommit();
     return this as unknown as SingletonLifecycleBuilder<Value>;
@@ -1073,7 +1066,7 @@ class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value>
 
 class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
   private _slot: SlotKey;
-  private _predicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
+  private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _committed: BindingIdentifier | undefined;
 
   constructor(
@@ -1098,7 +1091,7 @@ class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
     this._committed = this._commit(binding as Binding<unknown>, previousId);
   }
 
-  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): this {
+  when(predicate: (ctx: ConstraintContext) => boolean): this {
     this._predicate = predicate;
     this._doCommit();
     return this;
