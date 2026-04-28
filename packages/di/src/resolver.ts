@@ -38,6 +38,8 @@ type BindingWithScope = Binding & { scope: BindingScope };
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionPathWithSet = string[] & { [RESOLUTION_SET_KEY]?: Set<string> };
+const BINDING_CYCLE_KEY: unique symbol = Symbol("di:binding-cycle");
+type ResolutionPathWithCycleSet = string[] & { [BINDING_CYCLE_KEY]?: Set<BindingIdentifier> };
 const EMPTY_STRING_LIST: readonly string[] = [];
 const EMPTY_FRAME_LIST: readonly MaterializationFrame[] = [];
 const ROOT_CONSTRAINT_CONTEXT = {
@@ -1313,19 +1315,22 @@ export class DependencyResolver {
   ): Value {
     const frame = this._getMaterializationFrame(binding);
     const tName = frame.tokenName;
-    const pathWithSet = resolutionPath as ResolutionPathWithSet;
-    let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
-      resolutionSet = new Set<string>(resolutionPath);
-      pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
+    const pathWithCycleSet = resolutionPath as ResolutionPathWithCycleSet;
+    let cycleSet = pathWithCycleSet[BINDING_CYCLE_KEY];
+    if (cycleSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
+      cycleSet = new Set<BindingIdentifier>();
+      for (const stackFrame of materializationStack) {
+        cycleSet.add(stackFrame.bindingId);
+      }
+      pathWithCycleSet[BINDING_CYCLE_KEY] = cycleSet;
     }
 
-    if (resolutionSet !== undefined ? resolutionSet.has(tName) : resolutionPath.includes(tName)) {
+    if (cycleSet !== undefined ? cycleSet.has(binding.id) : resolutionPath.includes(tName)) {
       throw new CircularDependencyError([...resolutionPath, tName]);
     }
 
     resolutionPath.push(tName);
-    resolutionSet?.add(tName);
+    cycleSet?.add(binding.id);
     materializationStack.push(frame);
     const resolutionCtx = this._acquireSyncResolutionContext(
       resolutionPath,
@@ -1341,7 +1346,7 @@ export class DependencyResolver {
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tName);
+      cycleSet?.delete(binding.id);
     }
   }
 
