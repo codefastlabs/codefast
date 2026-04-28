@@ -36,6 +36,9 @@ export class LifecycleManager {
   }
 
   hasActivationHandlers<Value>(t: Token<Value> | Constructor<Value>): boolean {
+    if (this._activationHooks.size === 0) {
+      return false;
+    }
     const list = this._activationHooks.get(t as Token<unknown> | Constructor);
     return list !== undefined && list.length > 0;
   }
