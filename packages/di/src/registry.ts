@@ -1,23 +1,21 @@
 import type { Binding } from "#/binding";
-import type { Constructor } from "#/types";
+import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 import type { Token } from "#/token";
-import type { BindingIdentifier } from "#/types";
 import { slotKeyEquals } from "#/binding";
-type TokenKey = Token<unknown> | Constructor;
 
 export class BindingRegistry {
   // Map from token key -> array of bindings (order matters for last-wins)
-  private readonly _bindings = new Map<TokenKey, Binding[]>();
+  private readonly _bindings = new Map<DependencyKey, Binding[]>();
   // Fast lookup by binding ID
   private readonly _byId = new Map<BindingIdentifier, Binding>();
   // Fast lookup for slot { name, tags: [] }
-  private readonly _simpleNamed = new Map<TokenKey, Map<string, Binding>>();
+  private readonly _simpleNamed = new Map<DependencyKey, Map<string, Binding>>();
   // Fast path for one default slot binding with no predicate
-  private readonly _fastDefault = new Map<TokenKey, Binding>();
+  private readonly _fastDefault = new Map<DependencyKey, Binding>();
 
   /** Add or replace binding using slot-aware last-wins. */
   add(binding: Binding): void {
-    const key = binding.token as TokenKey;
+    const key = binding.token as DependencyKey;
     let list = this._bindings.get(key);
     if (list === undefined) {
       list = [];
@@ -44,7 +42,7 @@ export class BindingRegistry {
 
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(t: Token<unknown> | Constructor): Binding[] {
-    const key = t as TokenKey;
+    const key = t as DependencyKey;
     const list = this._bindings.get(key) ?? [];
     this._bindings.delete(key);
     this._simpleNamed.delete(key);
@@ -62,7 +60,7 @@ export class BindingRegistry {
       return undefined;
     }
     this._byId.delete(id);
-    const key = binding.token as TokenKey;
+    const key = binding.token as DependencyKey;
     const list = this._bindings.get(key);
     if (list !== undefined) {
       const idx = list.findIndex((b) => b.id === id);
@@ -83,7 +81,7 @@ export class BindingRegistry {
 
   /** Get all bindings for a token. */
   getAll(t: Token<unknown> | Constructor): readonly Binding[] {
-    return this._bindings.get(t as TokenKey) ?? [];
+    return this._bindings.get(t as DependencyKey) ?? [];
   }
 
   /** Get binding by ID. */
@@ -93,7 +91,7 @@ export class BindingRegistry {
 
   /** Check if any binding exists for token. */
   has(t: Token<unknown> | Constructor): boolean {
-    const key = t as TokenKey;
+    const key = t as DependencyKey;
     const list = this._bindings.get(key);
     return list !== undefined && list.length > 0;
   }
@@ -108,8 +106,8 @@ export class BindingRegistry {
   }
 
   /** Remove all bindings. Returns all removed. */
-  clear(): Binding[] {
-    const all = this.allBindings() as Binding[];
+  clear(): readonly Binding[] {
+    const all = this.allBindings();
     this._bindings.clear();
     this._byId.clear();
     this._simpleNamed.clear();
@@ -118,24 +116,16 @@ export class BindingRegistry {
   }
 
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
-    return this._simpleNamed.get(token as TokenKey)?.get(name);
+    return this._simpleNamed.get(token as DependencyKey)?.get(name);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
-    return this._fastDefault.get(token as TokenKey);
-  }
-
-  private _isPurePredicateBinding(binding: Binding): boolean {
-    const slot = binding.slot;
-    const hasPredicate = binding.predicate !== undefined;
-    const hasConstraint = slot.name !== undefined || slot.tags.length > 0;
-    // Pure predicate = has predicate but no slot constraint (name/tags)
-    return hasPredicate && !hasConstraint;
+    return this._fastDefault.get(token as DependencyKey);
   }
 
   /** Summarize available slot strings for a token (for error messages). */
   availableSlotStrings(t: Token<unknown> | Constructor): string[] {
-    const list = this._bindings.get(t as TokenKey) ?? [];
+    const list = this._bindings.get(t as DependencyKey) ?? [];
     return list.map((b) => {
       const s = b.slot;
       if (s.name === undefined && s.tags.length === 0) {
@@ -152,7 +142,15 @@ export class BindingRegistry {
     });
   }
 
-  private _indexSimpleNamedBinding(tokenKeyValue: TokenKey, binding: Binding): void {
+  private _isPurePredicateBinding(binding: Binding): boolean {
+    const slot = binding.slot;
+    const hasPredicate = binding.predicate !== undefined;
+    const hasConstraint = slot.name !== undefined || slot.tags.length > 0;
+    // Pure predicate = has predicate but no slot constraint (name/tags)
+    return hasPredicate && !hasConstraint;
+  }
+
+  private _indexSimpleNamedBinding(tokenKeyValue: DependencyKey, binding: Binding): void {
     const slot = binding.slot;
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
@@ -165,7 +163,7 @@ export class BindingRegistry {
     byName.set(slot.name, binding);
   }
 
-  private _deindexSimpleNamedBinding(tokenKeyValue: TokenKey, binding: Binding): void {
+  private _deindexSimpleNamedBinding(tokenKeyValue: DependencyKey, binding: Binding): void {
     const slot = binding.slot;
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
@@ -183,7 +181,7 @@ export class BindingRegistry {
     }
   }
 
-  private _refreshFastDefaultForToken(tokenKeyValue: TokenKey): void {
+  private _refreshFastDefaultForToken(tokenKeyValue: DependencyKey): void {
     const list = this._bindings.get(tokenKeyValue);
     if (list === undefined || list.length !== 1) {
       this._fastDefault.delete(tokenKeyValue);
