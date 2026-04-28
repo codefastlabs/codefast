@@ -45,6 +45,8 @@ import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 import { tokenName } from "#/token";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import { isSyncModule } from "#/module";
+import { effectiveBindingScope } from "#/binding-scope";
+import { slotKeyToResolveOptions } from "#/resolve-options";
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -583,7 +585,7 @@ class DefaultContainer implements Container {
       if (binding.kind === "alias") {
         continue;
       }
-      const scope = (binding as { scope: BindingScope }).scope;
+      const scope = effectiveBindingScope(binding);
       if (scope === "singleton" && !this._scope.hasSingleton(binding.id)) {
         if (binding.predicate !== undefined) {
           continue;
@@ -592,10 +594,7 @@ class DefaultContainer implements Container {
         if (binding.kind === "constant" && binding.onActivation === undefined) {
           continue;
         }
-        const slotHint =
-          binding.slot.name !== undefined || binding.slot.tags.length > 0
-            ? { name: binding.slot.name, tags: binding.slot.tags }
-            : undefined;
+        const slotHint = slotKeyToResolveOptions(binding.slot);
         await this.resolveAsync(binding.token as Token<unknown>, slotHint);
       }
     }
@@ -618,7 +617,7 @@ class DefaultContainer implements Container {
         continue;
       }
 
-      const scope = (binding as { scope: BindingScope }).scope ?? "transient";
+      const scope = effectiveBindingScope(binding);
       if (scope !== "singleton") {
         continue;
       }
@@ -652,7 +651,7 @@ class DefaultContainer implements Container {
             if (db.kind !== "alias") {
               result.push({
                 token: param.token as Token<unknown>,
-                scope: (db as { scope: BindingScope }).scope ?? "transient",
+                scope: effectiveBindingScope(db),
               });
             }
           }
@@ -665,7 +664,7 @@ class DefaultContainer implements Container {
           if (db.kind !== "alias") {
             result.push({
               token: dep.token as Token<unknown>,
-              scope: (db as { scope: BindingScope }).scope ?? "transient",
+              scope: effectiveBindingScope(db),
             });
           }
         }

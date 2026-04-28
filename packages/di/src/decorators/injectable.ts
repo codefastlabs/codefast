@@ -1,4 +1,5 @@
 import type { BindingScope, Constructor } from "#/types";
+import type { ParamMetadata } from "#/metadata/metadata-types";
 import type { InjectableDependency } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import { INJECTABLE_KEY, constructorMetadataMap } from "#/metadata/metadata-keys";
@@ -36,16 +37,24 @@ export function injectable(
   options?: InjectableOptions,
 ): (target: unknown, context: ClassDecoratorContext) => void {
   return function (target: unknown, context: ClassDecoratorContext): void {
-    const params = (deps ?? []).map((dep, index) => {
+    const params: ParamMetadata[] = (deps ?? []).map((dep, index) => {
       const descriptor = normalizeToDescriptor(dep);
-      return {
+      const base: Pick<ParamMetadata, "index" | "token" | "optional" | "multi"> = {
         index,
         token: descriptor.token,
         optional: descriptor.optional,
         multi: descriptor.multi,
-        name: descriptor.name,
-        tags: descriptor.tags,
       };
+      if (descriptor.name !== undefined && descriptor.tags !== undefined) {
+        return { ...base, name: descriptor.name, tags: descriptor.tags };
+      }
+      if (descriptor.name !== undefined) {
+        return { ...base, name: descriptor.name };
+      }
+      if (descriptor.tags !== undefined) {
+        return { ...base, tags: descriptor.tags };
+      }
+      return base;
     });
 
     const constructorMeta = { params };

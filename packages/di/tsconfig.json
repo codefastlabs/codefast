@@ -3,6 +3,8 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "experimentalDecorators": false,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
     "types": ["node", "vitest/globals"],
     "paths": {
       "#/*": ["./src/*"],
