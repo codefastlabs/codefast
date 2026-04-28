@@ -38,8 +38,6 @@ type BindingWithScope = Binding & { scope: BindingScope };
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionPathWithSet = string[] & { [RESOLUTION_SET_KEY]?: Set<string> };
-const BINDING_CYCLE_KEY: unique symbol = Symbol("di:binding-cycle");
-type ResolutionPathWithCycleSet = string[] & { [BINDING_CYCLE_KEY]?: Set<BindingIdentifier> };
 const EMPTY_STRING_LIST: readonly string[] = [];
 const EMPTY_FRAME_LIST: readonly MaterializationFrame[] = [];
 const ROOT_CONSTRAINT_CONTEXT = {
@@ -53,6 +51,12 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver {
   private readonly _frameByBindingId = new Map<BindingIdentifier, MaterializationFrame>();
   private readonly _syncResolutionContextPool: DefaultResolutionContext[] = [];
+  // Fast-path state for _resolveTransientDynamicSyncFromContext:
+  // class-level cycle Set (avoids per-call symbol reads and threshold logic),
+  // plus a single reused context per root chain (avoids per-depth pool resets).
+  private readonly _fastCycleIds = new Set<BindingIdentifier>();
+  private _fastSyncCtx: DefaultResolutionContext | undefined;
+  private _fastSyncCtxPath: string[] | undefined;
   private readonly _classHasPostConstruct = new WeakMap<Constructor, boolean>();
   private readonly _classNeedsActiveContainer = new WeakMap<Constructor, boolean>();
   private readonly _classConstructorMetadata = new WeakMap<
@@ -1313,24 +1317,86 @@ export class DependencyResolver {
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
   ): Value {
-    const frame = this._getMaterializationFrame(binding);
-    const tName = frame.tokenName;
-    const pathWithCycleSet = resolutionPath as ResolutionPathWithCycleSet;
-    let cycleSet = pathWithCycleSet[BINDING_CYCLE_KEY];
-    if (cycleSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
-      cycleSet = new Set<BindingIdentifier>();
-      for (const stackFrame of materializationStack) {
-        cycleSet.add(stackFrame.bindingId);
-      }
-      pathWithCycleSet[BINDING_CYCLE_KEY] = cycleSet;
+    const id = binding.id;
+
+    // If a different root chain is active (factory called container.resolve() directly),
+    // fall back to the full implementation to avoid cross-chain cycle-set pollution.
+    if (this._fastSyncCtxPath !== undefined && this._fastSyncCtxPath !== resolutionPath) {
+      return this._resolveTransientDynamicSyncSlow(binding, resolutionPath, materializationStack);
     }
 
-    if (cycleSet !== undefined ? cycleSet.has(binding.id) : resolutionPath.includes(tName)) {
+    // O(1) cycle detection via class-level Set — no symbol reads, no threshold, no array scan.
+    if (this._fastCycleIds.has(id)) {
+      throw new CircularDependencyError([...resolutionPath, tokenName(binding.token)]);
+    }
+
+    // Reuse a single context for the entire chain — materializationStack is NOT pushed here,
+    // so depth never changes and all levels can share pool[0]. We only reset when the root
+    // resolutionPath array changes (i.e. at the start of a new root call).
+    // Trade-off: ctx.graph.materializationStack / ctx.graph.parent will not reflect the
+    // intermediate transient-dynamic frames; code relying on those in a dynamic factory
+    // should use singleton/scoped bindings or access the parent via the outer binding chain.
+    let ctx = this._fastSyncCtx;
+    if (ctx === undefined || this._fastSyncCtxPath !== resolutionPath) {
+      if (ctx === undefined) {
+        ctx = new DefaultResolutionContext(
+          this as unknown as ResolverCallbacks,
+          resolutionPath,
+          materializationStack,
+          undefined,
+        );
+        this._fastSyncCtx = ctx;
+      } else {
+        ctx.reset(
+          this as unknown as ResolverCallbacks,
+          resolutionPath,
+          materializationStack,
+          undefined,
+        );
+      }
+      this._fastSyncCtxPath = resolutionPath;
+    }
+
+    const tName = tokenName(binding.token);
+    this._fastCycleIds.add(id);
+    resolutionPath.push(tName);
+
+    try {
+      const dynamicResult = binding.factory(ctx);
+      if (dynamicResult instanceof Promise) {
+        throw new AsyncResolutionError(tName, tName);
+      }
+      return dynamicResult;
+    } finally {
+      resolutionPath.pop();
+      this._fastCycleIds.delete(id);
+      if (this._fastCycleIds.size === 0) {
+        // End of the root chain — signal so the next root call triggers a reset.
+        this._fastSyncCtxPath = undefined;
+      }
+    }
+  }
+
+  private _resolveTransientDynamicSyncSlow<const Value>(
+    binding: Binding<Value> & { kind: "dynamic" },
+    resolutionPath: string[],
+    materializationStack: MaterializationFrame[],
+  ): Value {
+    const frame = this._getMaterializationFrame(binding);
+    const tName = frame.tokenName;
+    const pathWithSet = resolutionPath as ResolutionPathWithSet;
+    let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
+    if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
+      resolutionSet = new Set<string>(resolutionPath);
+      pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
+    }
+
+    if (resolutionSet !== undefined ? resolutionSet.has(tName) : resolutionPath.includes(tName)) {
       throw new CircularDependencyError([...resolutionPath, tName]);
     }
 
     resolutionPath.push(tName);
-    cycleSet?.add(binding.id);
+    resolutionSet?.add(tName);
     materializationStack.push(frame);
     const resolutionCtx = this._acquireSyncResolutionContext(
       resolutionPath,
@@ -1340,13 +1406,13 @@ export class DependencyResolver {
     try {
       const dynamicResult = binding.factory(resolutionCtx);
       if (dynamicResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+        throw new AsyncResolutionError(tName, tName);
       }
       return dynamicResult;
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      cycleSet?.delete(binding.id);
+      resolutionSet?.delete(tName);
     }
   }
 
