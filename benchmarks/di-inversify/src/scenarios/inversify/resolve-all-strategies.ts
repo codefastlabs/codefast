@@ -18,7 +18,10 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   const strategyIdentifier = Symbol("bench-inv-fanout-resolve-all-strategy");
   const container = new Container();
   for (let index = 0; index < strategyCount; index++) {
-    container.bind<number>(strategyIdentifier).toConstantValue(index);
+    container
+      .bind<number>(strategyIdentifier)
+      .toConstantValue(index)
+      .when(() => true);
   }
   const prewarmedStrategies = container.getAll<number>(strategyIdentifier);
 

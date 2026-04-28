@@ -3,8 +3,8 @@
  * registrations for the same service id, **without** a name or tag (no disambiguation
  * qualifier in the hot path for `getAll` on the Inversify side).
  *
- * Inversify: N plain `.bind(TOKEN).toConstantValue(i)` on the same identifier; `getAll`
- * returns all N.
+ * Inversify: N `.bind(TOKEN).toConstantValue(i).when(() => true)` registrations on the
+ * same identifier; `getAll` returns all N.
  *
  * @codefast/di: the default (unnamed) slot is **last-wins**, so you cannot model N
  * unqualified `toConstantValue` the same way as Inversify without a different
@@ -23,9 +23,9 @@ import {
 import type { BenchScenario } from "#/scenarios/types";
 
 /**
- * Inversify: multiple plain binds to the same `Symbol` (no `whenNamed`).
- * Codefast: N distinct predicate-only registrations so `resolveAll` still returns N
- * values (parities Inversify `getAll` for this test).
+ * Both libraries use predicate-only registrations (`when(() => true)`) so the
+ * `resolveAll/getAll` rows exercise the same "constraint-filtered multi-binding"
+ * shape instead of mixing constrained and unconstrained binding paths.
  */
 function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
   const strategyToken = token<number>("bench-cf-fanout-resolve-all-strategy");

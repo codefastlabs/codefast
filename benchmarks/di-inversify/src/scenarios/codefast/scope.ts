@@ -67,10 +67,8 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
 
     const resolvedPayload = secondLevelChildContainer.resolve(resolvedPayloadToken);
 
-    firstLevelChildContainer.unbind(resolvedPayloadToken);
-    firstLevelChildContainer.unbind(childRequestServiceToken);
-    void secondLevelChildContainer.dispose();
-    void firstLevelChildContainer.dispose();
+    firstLevelChildContainer.unbindAll();
+    secondLevelChildContainer.unbindAll();
 
     return resolvedPayload;
   }
