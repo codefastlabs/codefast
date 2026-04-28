@@ -49,7 +49,7 @@ export function normalizeToDescriptor(dep: InjectableDependency): InjectionDescr
   return { token: dep as Token<unknown> | Constructor, optional: false, multi: false };
 }
 
-function buildInjectionDescriptor<Value>(
+function buildInjectionDescriptor<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> {
@@ -69,7 +69,7 @@ type ClassAccessorDecorator<This, Value> = (
   context: ClassAccessorDecoratorContext<This, Value>,
 ) => ClassAccessorDecoratorResult<This, Value> | void;
 
-export function inject<Value>(
+export function inject<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {
@@ -124,7 +124,7 @@ export function inject<Value>(
 
 // ── optional() ────────────────────────────────────────────────────────────────
 
-export function optional<Value>(
+export function optional<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value | undefined> {
@@ -139,7 +139,7 @@ export function optional<Value>(
 
 // ── injectAll() ───────────────────────────────────────────────────────────────
 
-export function injectAll<Value>(
+export function injectAll<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value[]> {

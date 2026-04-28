@@ -120,7 +120,7 @@ export class DependencyResolver {
 
   // ── Sync resolve ───────────────────────────────────────────────────────────
 
-  resolveFromContext<Value>(
+  resolveFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
@@ -169,7 +169,7 @@ export class DependencyResolver {
     return this.resolve(token, undefined, resolutionPath, materializationStack);
   }
 
-  resolve<Value>(
+  resolve<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -222,7 +222,7 @@ export class DependencyResolver {
     );
   }
 
-  private _resolveBinding<Value>(
+  private _resolveBinding<const Value>(
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -345,7 +345,7 @@ export class DependencyResolver {
     }
   }
 
-  private _instantiateSync<Value>(
+  private _instantiateSync<const Value>(
     binding: Binding<Value>,
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: string[],
@@ -547,7 +547,7 @@ export class DependencyResolver {
     return resolved;
   }
 
-  resolveOptional<Value>(
+  resolveOptional<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -563,7 +563,7 @@ export class DependencyResolver {
     }
   }
 
-  resolveAll<Value>(
+  resolveAll<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -608,7 +608,7 @@ export class DependencyResolver {
 
   // ── Async resolve ──────────────────────────────────────────────────────────
 
-  resolveAsyncFromContext<Value>(
+  resolveAsyncFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
@@ -659,7 +659,7 @@ export class DependencyResolver {
     return this.resolveAsync(token, undefined, resolutionPath, materializationStack);
   }
 
-  async resolveAsync<Value>(
+  async resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -709,7 +709,7 @@ export class DependencyResolver {
     );
   }
 
-  private async _resolveBindingAsync<Value>(
+  private async _resolveBindingAsync<const Value>(
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -880,7 +880,7 @@ export class DependencyResolver {
     }
   }
 
-  private async _instantiateAsync<Value>(
+  private async _instantiateAsync<const Value>(
     binding: Binding<Value>,
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: string[],
@@ -1091,7 +1091,7 @@ export class DependencyResolver {
     return Promise.all(pending);
   }
 
-  async resolveOptionalAsync<Value>(
+  async resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -1107,7 +1107,7 @@ export class DependencyResolver {
     }
   }
 
-  async resolveAllAsync<Value>(
+  async resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -1323,7 +1323,7 @@ export class DependencyResolver {
     return false;
   }
 
-  private _resolveTransientDynamicSyncFromContext<Value>(
+  private _resolveTransientDynamicSyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
@@ -1362,7 +1362,7 @@ export class DependencyResolver {
     }
   }
 
-  private async _resolveTransientDynamicAsyncFromContext<Value>(
+  private async _resolveTransientDynamicAsyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
@@ -1402,7 +1402,7 @@ export class DependencyResolver {
     }
   }
 
-  private _resolveCandidateSync<Value>(
+  private _resolveCandidateSync<const Value>(
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -1438,7 +1438,7 @@ export class DependencyResolver {
     return this._resolveBinding(binding, hint, resolutionPath, materializationStack);
   }
 
-  private _resolveCandidateAsync<Value>(
+  private _resolveCandidateAsync<const Value>(
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: string[],
@@ -1476,7 +1476,7 @@ export class DependencyResolver {
     return this._resolveBindingAsync(binding, hint, isolatedPath, isolatedStack);
   }
 
-  private _getMaterializationFrame<Value>(binding: Binding<Value>): MaterializationFrame {
+  private _getMaterializationFrame<const Value>(binding: Binding<Value>): MaterializationFrame {
     const existing = this._frameByBindingId.get(binding.id);
     if (existing !== undefined) {
       return existing;
@@ -1493,7 +1493,7 @@ export class DependencyResolver {
     return frame;
   }
 
-  private _needsActivation<Value>(binding: Binding<Value>): boolean {
+  private _needsActivation<const Value>(binding: Binding<Value>): boolean {
     const lifecycleVersion = this._lifecycle.activationVersion;
     if (
       lifecycleVersion === 0 &&
@@ -1547,7 +1547,7 @@ export class DependencyResolver {
     this._classHasPostConstruct.set(target, hasPostConstruct);
   }
 
-  private _requiresResolutionContext<Value>(binding: Binding<Value>): boolean {
+  private _requiresResolutionContext<const Value>(binding: Binding<Value>): boolean {
     return binding.kind === "dynamic" || binding.kind === "dynamic-async";
   }
 

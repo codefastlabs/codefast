@@ -4,6 +4,9 @@ import type { Constructor } from "#/constructor-type";
 // Re-export for consumers that import from `#/types`
 export type { Constructor } from "#/constructor-type";
 
+/** Token or class constructor used as a binding / injection / resolve key. */
+export type DependencyKey = Token<unknown> | Constructor;
+
 // ── BindingScope ────────────────────────────────────────────────────────────
 
 export type BindingScope = "singleton" | "transient" | "scoped";
@@ -67,21 +70,21 @@ export interface ConstraintContext {
 // ── ResolutionContext ─────────────────────────────────────────────────────────
 
 export interface ResolutionContext {
-  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<Value>(
+  resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
+  resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value>;
-  resolveOptional<Value>(
+  resolveOptional<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Value | undefined;
-  resolveOptionalAsync<Value>(
+  resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
-  resolveAllAsync<Value>(
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
+  resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value[]>;
