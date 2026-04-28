@@ -3,8 +3,8 @@
   "compilerOptions": {
     "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
-      "#/*": ["./src/*"],
-      "#/tests/*": ["./tests/*"]
+      "#/tests/*": ["./tests/*"],
+      "#/*": ["./src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

@@ -7,8 +7,8 @@
     "noImplicitOverride": true,
     "types": ["node", "vitest/globals"],
     "paths": {
-      "#/*": ["./src/*"],
-      "#/tests/*": ["./tests/*"]
+      "#/tests/*": ["./tests/*"],
+      "#/*": ["./src/*"]
     }
   },
   "include": ["**/*.ts"],
