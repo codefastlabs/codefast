@@ -470,18 +470,9 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
     <button type="button" id="chart-pan-later" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Later runs (→)">Later →</button>
     <button type="button" id="chart-reset-zoom" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80">Reset zoom</button>
     <button type="button" id="chart-download-png" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80">Download PNG</button>
-    <span class="text-xs text-zinc-500">Default shows recent portion (offset eases edges) · Reset zoom for full range · drag / wheel · legend toggles series</span>
+    <span class="text-xs text-zinc-500">Default shows recent portion (offset eases edges) · Reset zoom for full range · <kbd class="rounded border border-zinc-700 bg-zinc-800 px-1 font-mono text-zinc-300">Ctrl</kbd>+scroll wheel to zoom · drag to pan · legend toggles series</span>
   </div>
   <div id="chart-host" class="relative h-[min(440px,64vh)] w-full min-h-[280px]"><canvas id="bench-chart" aria-label="Throughput over time chart" class="block h-full w-full"></canvas></div>
-  <hr class="my-8 border-zinc-800" />
-  <section class="mb-8" aria-labelledby="latest-bars-heading">
-    <h2 id="latest-bars-heading" class="mb-2 text-xl font-semibold text-zinc-100">Latest run — throughput by scenario</h2>
-    <p id="latest-bars-meta" class="mb-3 text-sm leading-relaxed text-zinc-300"></p>
-    <p id="latest-bars-empty" class="mb-3 hidden text-sm text-zinc-500"></p>
-    <div id="latest-bars-host" class="relative w-full rounded-lg border border-zinc-800/80 bg-zinc-900/30 p-2" style="min-height:220px;">
-      <canvas id="bench-latest-bars" aria-label="Latest run bar chart comparing libraries per scenario" class="block h-full w-full"></canvas>
-    </div>
-  </section>
   <p class="mt-3 text-[0.78rem] text-zinc-500">Generated locally — <code class="rounded bg-zinc-900 px-1 py-px font-mono text-[0.85em] text-indigo-200">pnpm bench:history</code> · ${escapeHtml(runCount)} runs · ${escapeHtml(scenarioCount)} scenarios</p>
   </div>
   <script type="application/json" id="bench-history-data">${json}</script>
@@ -503,9 +494,6 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
   const btnZoomOut = document.getElementById("chart-zoom-out");
   const btnPanEarlier = document.getElementById("chart-pan-earlier");
   const btnPanLater = document.getElementById("chart-pan-later");
-  const latestBarsMetaEl = document.getElementById("latest-bars-meta");
-  const latestBarsEmptyEl = document.getElementById("latest-bars-empty");
-  const latestBarsHostEl = document.getElementById("latest-bars-host");
 
   var ZOOM_STEP_X = 1.15;
   var PAN_PIXELS_X = 120;
@@ -513,64 +501,14 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
     Chart.register(ChartZoom);
   }
 
-  /**
-   * Horizontal grouped bars: anchor tooltip to the category row (vertical axis), not to pointer X on the value axis.
-   */
-  if (typeof Chart !== "undefined" && Chart.Tooltip && Chart.Tooltip.positioners) {
-    Chart.Tooltip.positioners.latestBarRowAligned = function latestBarRowAlignedTooltip(
-      elements,
-      eventPosition,
-    ) {
-      var tooltip = this;
-      var chart = tooltip && tooltip.chart;
-      var area = chart && chart.chartArea;
-      if (!area) {
-        if (!eventPosition) return false;
-        return { x: eventPosition.x, y: eventPosition.y };
-      }
-      var y =
-        eventPosition && typeof eventPosition.y === "number"
-          ? eventPosition.y
-          : (area.top + area.bottom) / 2;
-      if (elements && elements.length > 0) {
-        var ySum = 0;
-        var yCount = 0;
-        for (var ei = 0; ei < elements.length; ei++) {
-          var raw = elements[ei] && elements[ei].element;
-          if (!raw) continue;
-          var vy;
-          if (typeof raw.getCenterPoint === "function") {
-            var center = raw.getCenterPoint();
-            if (center && typeof center.y === "number") {
-              vy = center.y;
-            }
-          } else if (typeof raw.y === "number" && typeof raw.height === "number") {
-            vy = raw.y + raw.height / 2;
-          }
-          if (typeof vy === "number") {
-            ySum += vy;
-            yCount++;
-          }
-        }
-        if (yCount > 0) {
-          y = ySum / yCount;
-        }
-      }
-      var x = area.left + area.width / 2;
-      return { x: x, y: y, xAlign: "center", yAlign: "center" };
-    };
-  }
-
   let chart = null;
-  let latestBarsChart = null;
   let resizeScheduled = false;
   function scheduleChartResize() {
-    if ((!chart && !latestBarsChart) || resizeScheduled) return;
+    if (!chart || resizeScheduled) return;
     resizeScheduled = true;
     requestAnimationFrame(function () {
       resizeScheduled = false;
       if (chart) chart.resize();
-      if (latestBarsChart) latestBarsChart.resize();
     });
   }
   window.addEventListener("resize", scheduleChartResize);
@@ -657,194 +595,6 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
       dateStyle: "short",
       timeStyle: "short",
     });
-  }
-
-  function renderLatestBarSnapshot() {
-    var canvas = document.getElementById("bench-latest-bars");
-    if (!canvas || !latestBarsMetaEl || !latestBarsEmptyEl || !latestBarsHostEl) {
-      return;
-    }
-    if (latestBarsChart) {
-      latestBarsChart.destroy();
-      latestBarsChart = null;
-    }
-    var lastIx = data.runs.length > 0 ? data.runs.length - 1 : -1;
-    if (lastIx < 0) {
-      latestBarsMetaEl.textContent = "";
-      latestBarsEmptyEl.classList.remove("hidden");
-      latestBarsEmptyEl.textContent = "No runs in history.";
-      latestBarsHostEl.style.display = "none";
-      return;
-    }
-    var runInfo = data.runs[lastIx];
-
-    var paired = [];
-    var sList = data.scenarios;
-    for (var si = 0; si < sList.length; si++) {
-      var s = sList[si];
-      var cf = s.codefast[lastIx];
-      var iv = s.inversify[lastIx];
-      var hasCf = typeof cf === "number" && cf > 0;
-      var hasIv = typeof iv === "number" && iv > 0;
-      if (!hasCf && !hasIv) continue;
-      paired.push({
-        label: "[" + s.group + "] " + s.id,
-        group: s.group,
-        scenarioId: s.id,
-        codefast: hasCf ? cf : null,
-        inversify: hasIv ? iv : null,
-      });
-    }
-    paired.sort(function (a, b) {
-      var g = a.group.localeCompare(b.group);
-      if (g !== 0) return g;
-      return a.scenarioId.localeCompare(b.scenarioId);
-    });
-
-    var metaLine =
-      "Latest saved run · " +
-      formatBenchRunInstantLocal(runInfo.timestampIso, runInfo.folder) +
-      " (local) · " +
-      runInfo.envLabel +
-      " · Node " +
-      runInfo.nodeVersion +
-      " · @codefast/di " +
-      runInfo.codefastVersion +
-      " · inversify " +
-      runInfo.inversifyVersion;
-    latestBarsMetaEl.textContent = metaLine;
-
-    if (paired.length === 0) {
-      latestBarsEmptyEl.classList.remove("hidden");
-      latestBarsEmptyEl.textContent =
-        "No scenario throughput data for the latest saved run.";
-      latestBarsHostEl.style.display = "";
-      latestBarsHostEl.style.height = "180px";
-      return;
-    }
-
-    latestBarsEmptyEl.classList.add("hidden");
-    latestBarsEmptyEl.textContent = "";
-    latestBarsHostEl.style.display = "";
-    var labels = paired.map(function (r) {
-      return r.label;
-    });
-    var cfs = paired.map(function (r) {
-      return r.codefast;
-    });
-    var invs = paired.map(function (r) {
-      return r.inversify;
-    });
-    var pxPerRow = paired.length <= 12 ? 42 : paired.length <= 24 ? 34 : 28;
-    latestBarsHostEl.style.height = Math.min(1120, paired.length * pxPerRow + 120) + "px";
-
-    latestBarsChart = new Chart(canvas, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: "@codefast/di hz/op (median)",
-            data: cfs,
-            backgroundColor: "rgba(110,231,197,0.55)",
-            borderColor: "#6ee7c5",
-            borderWidth: 1,
-            borderRadius: 3,
-          },
-          {
-            label: "inversify hz/op (median)",
-            data: invs,
-            backgroundColor: "rgba(147,180,255,0.48)",
-            borderColor: "#93b4ff",
-            borderWidth: 1,
-            borderRadius: 3,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: "y",
-        layout: { padding: { left: 6, right: 8, bottom: 4 } },
-        interaction: { mode: "index", intersect: false, axis: "y" },
-        datasets: {
-          bar: { categoryPercentage: 0.78, barPercentage: 0.9 },
-        },
-        scales: {
-          x: {
-            type: "logarithmic",
-            title: {
-              display: true,
-              text: "Throughput hz/op (median) — log axis",
-              color: "#bdbdbd",
-              font: { size: 14, weight: "600" },
-            },
-            grid: { color: "#2c2c36" },
-            ticks: {
-              color: "#bdbdbd",
-              font: { size: 13 },
-              callback: function (v) {
-                if (typeof v !== "number" || v <= 0) return "";
-                if (v >= 1e12) return Number(v).toExponential(1);
-                return v.toLocaleString("en-US", { maximumFractionDigits: 0 });
-              },
-            },
-          },
-          y: {
-            ticks: {
-              color: "#d4d4d8",
-              font: { size: 13 },
-              autoSkip: false,
-              maxRotation: 0,
-            },
-            grid: { color: "#25252d" },
-          },
-        },
-        plugins: {
-          legend: {
-            labels: {
-              color: "#e4e4e7",
-              boxWidth: 16,
-              padding: 14,
-              font: { size: 14 },
-            },
-          },
-          tooltip: {
-            position:
-              Chart.Tooltip && Chart.Tooltip.positioners && Chart.Tooltip.positioners.latestBarRowAligned
-                ? "latestBarRowAligned"
-                : "nearest",
-            titleFont: { size: 15, weight: "600" },
-            bodyFont: { size: 14 },
-            footerFont: { size: 13 },
-            padding: 12,
-            caretPadding: 4,
-            callbacks: {
-              title: function (tipItems) {
-                if (!tipItems.length) return "";
-                var row = paired[tipItems[0].dataIndex];
-                return row ? row.scenarioId : "";
-              },
-              label: function (ctx) {
-                var v = ctx.raw;
-                var piece =
-                  v === null || v === undefined ? "—" : v.toLocaleString("en-US", { maximumFractionDigits: 0 });
-                return (ctx.dataset.label || "").replace(" (median)", "") + ": " + piece;
-              },
-              footer: function (tipItems) {
-                if (!tipItems.length) return "";
-                var ix = tipItems[0].dataIndex;
-                var a = cfs[ix];
-                var b = invs[ix];
-                if (typeof a !== "number" || typeof b !== "number" || a <= 0 || b <= 0) return "";
-                return "@codefast/di ÷ inversify throughput ratio: " + (a / b).toFixed(3) + "×";
-              },
-            },
-          },
-        },
-      },
-    });
-    scheduleChartResize();
   }
 
   function fmtHz(n) {
@@ -1111,7 +861,7 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
       pluginsMerged.zoom = {
         pan: { enabled: true, mode: "x" },
         zoom: {
-          wheel: { enabled: true },
+          wheel: { enabled: true, modifierKey: "ctrl" },
           pinch: { enabled: true },
           mode: "x",
           drag: { enabled: false },
@@ -1223,7 +973,6 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
   showBands.addEventListener("change", render);
   logScale.addEventListener("change", render);
   showRatio.addEventListener("change", render);
-  renderLatestBarSnapshot();
   render();
 })();
   </script>
