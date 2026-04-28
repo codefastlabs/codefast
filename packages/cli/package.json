@@ -34,7 +34,10 @@
   "imports": {
     "#/tests/*": [
       "./tests/*",
-      "./tests/*.ts"
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
     ],
     "#/*": [
       "./src/*",

@@ -39,14 +39,20 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
     "#/*": [
       "./src/*",
       "./src/*.ts",
       "./src/*.tsx",
       "./src/*/index.ts",
       "./src/*/index.tsx"
-    ],
-    "#/tests/*": "./tests/*"
+    ]
   },
   "exports": {
     ".": {
