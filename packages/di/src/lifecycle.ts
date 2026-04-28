@@ -22,7 +22,7 @@ export class LifecycleManager {
   >();
   private _activationVersion = 0;
 
-  registerActivation<Value>(
+  registerActivation<const Value>(
     t: Token<Value> | Constructor<Value>,
     handler: ActivationHandler<Value>,
   ): void {
@@ -35,7 +35,7 @@ export class LifecycleManager {
     list.push(handler as ActivationHandler<unknown>);
   }
 
-  hasActivationHandlers<Value>(t: Token<Value> | Constructor<Value>): boolean {
+  hasActivationHandlers<const Value>(t: Token<Value> | Constructor<Value>): boolean {
     if (this._activationHooks.size === 0) {
       return false;
     }
@@ -47,7 +47,7 @@ export class LifecycleManager {
     return this._activationVersion;
   }
 
-  registerDeactivation<Value>(
+  registerDeactivation<const Value>(
     t: Token<Value> | Constructor<Value>,
     handler: DeactivationHandler<Value>,
   ): void {
@@ -59,7 +59,7 @@ export class LifecycleManager {
     list.push(handler as DeactivationHandler<unknown>);
   }
 
-  async runActivation<Value>(
+  async runActivation<const Value>(
     ctx: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
@@ -101,7 +101,7 @@ export class LifecycleManager {
     return result;
   }
 
-  runActivationSync<Value>(
+  runActivationSync<const Value>(
     ctx: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
@@ -156,7 +156,7 @@ export class LifecycleManager {
     return result;
   }
 
-  async runDeactivation<Value>(
+  async runDeactivation<const Value>(
     binding: Binding<Value>,
     instance: Value,
     metadataReader: MetadataReader,
@@ -199,7 +199,7 @@ export class LifecycleManager {
     }
   }
 
-  runDeactivationSync<Value>(
+  runDeactivationSync<const Value>(
     binding: Binding<Value>,
     instance: Value,
     metadataReader: MetadataReader,
@@ -243,7 +243,7 @@ export class LifecycleManager {
     }
   }
 
-  hasAsyncDeactivation<Value>(
+  hasAsyncDeactivation<const Value>(
     binding: Binding<Value>,
     instance: Value,
     _metadataReader: MetadataReader,

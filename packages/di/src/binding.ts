@@ -4,6 +4,7 @@ import type {
   BindingScope,
   Constructor,
   DeactivationHandler,
+  DependencyKey,
   ResolutionContext,
   TokenValue,
 } from "#/types";
@@ -149,12 +150,12 @@ export interface BindToBuilder<Value> {
   toConstantValue(value: Value): ConstantBindingBuilder<Value>;
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
-  toResolved<Deps extends readonly (Token<unknown> | Constructor)[]>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<Deps[K]> }) => Value,
+  toResolved<const Deps extends readonly DependencyKey[]>(
+    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value>;
-  toResolvedAsync<Deps extends readonly (Token<unknown> | Constructor)[]>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<Deps[K]> }) => Promise<Value>,
+  toResolvedAsync<const Deps extends readonly DependencyKey[]>(
+    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value>;
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;

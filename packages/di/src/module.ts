@@ -22,12 +22,12 @@ export interface AsyncModule {
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
 export interface ModuleBuilder {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   import(...modules: SyncModule[]): void;
 }
 
 export interface AsyncModuleBuilder {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   import(...modules: Array<SyncModule | AsyncModule>): void;
 }
 

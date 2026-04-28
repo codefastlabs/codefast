@@ -6,6 +6,7 @@ export type {
   BindingScope,
   ConstraintContext,
   Constructor,
+  DependencyKey,
   DeactivationHandler,
   MaterializationFrame,
   ResolveOptions,
