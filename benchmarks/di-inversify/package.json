@@ -20,7 +20,6 @@
   "scripts": {
     "bench": "pnpm exec tsx src/harness/run.ts",
     "bench:codefast": "pnpm exec tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
-    "bench:di": "pnpm exec tsx src/harness/run.ts",
     "bench:fast": "BENCH_FAST=1 pnpm exec tsx src/harness/run.ts",
     "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
     "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts",
