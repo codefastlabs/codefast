@@ -4,18 +4,13 @@
  * codefast's own factory-binding API, so the same shape of work appears
  * on both sides of the table.
  *
- * Three variants here:
+ * Two head-to-head variants here:
  *   - `realistic-graph-resolve-root` — build once, resolve root hot. The
  *     root is transient, so singletons cache but the top-level factory
  *     chain fires each call; measures steady-state per-request cost.
  *   - `realistic-graph-cold-resolve` — build a fresh container + 10 binds
  *     + resolve root per iteration. Measures cold-start; catches regressions
  *     in registry mutation + first-resolve code paths.
- *   - `realistic-graph-validate` (codefast-only) — see
- *     `realistic-graph-validate.ts`. Inversify has no equivalent, so the reporter
- *     simply shows "—" on the inversify column. This is included because a shipping
- *     feature of codefast (static scope-rule validation) should appear in its
- *     benchmark surface even when no comparator has it yet.
  */
 import {
   buildCodefastRealisticContainer,
@@ -23,7 +18,6 @@ import {
 } from "#/fixtures/codefast-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
 import { batched } from "#/harness/batched";
-import { buildRealisticGraphValidateScenario } from "#/scenarios/codefast/realistic-graph-validate";
 import type { BenchScenario } from "#/scenarios/types";
 
 const REALISTIC_RESOLVE_BATCH = 20;
@@ -64,9 +58,5 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
 }
 
 export function buildCodefastRealisticScenarios(): readonly BenchScenario[] {
-  return [
-    buildRealisticGraphResolveRootScenario(),
-    buildRealisticGraphColdResolveScenario(),
-    buildRealisticGraphValidateScenario(),
-  ];
+  return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];
 }
