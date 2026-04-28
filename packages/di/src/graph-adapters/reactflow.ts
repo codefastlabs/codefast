@@ -30,12 +30,17 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
     position: { x: (idx % 5) * 200, y: Math.floor(idx / 5) * 100 },
   }));
 
-  const edges: ReactFlowEdge[] = graph.edges.map((edge, idx) => ({
-    id: `edge-${idx}`,
-    source: edge.from,
-    target: edge.to,
-    label: edge.label,
-  }));
+  const edges: ReactFlowEdge[] = graph.edges.map((edge, idx) => {
+    const reactFlowEdge: ReactFlowEdge = {
+      id: `edge-${idx}`,
+      source: edge.from,
+      target: edge.to,
+    };
+    if (edge.label !== undefined) {
+      reactFlowEdge.label = edge.label;
+    }
+    return reactFlowEdge;
+  });
 
   return { nodes, edges };
 }

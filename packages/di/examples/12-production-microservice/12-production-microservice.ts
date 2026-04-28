@@ -188,10 +188,10 @@ class StubRedisClient implements RedisClient {
   }
 
   async set(key: string, value: string, exSeconds?: number): Promise<void> {
-    this.store.set(key, {
-      value,
-      expiresAt: exSeconds ? Date.now() + exSeconds * 1000 : undefined,
-    });
+    this.store.set(
+      key,
+      exSeconds !== undefined ? { value, expiresAt: Date.now() + exSeconds * 1000 } : { value },
+    );
   }
 
   async del(key: string): Promise<void> {

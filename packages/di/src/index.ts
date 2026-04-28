@@ -34,6 +34,9 @@ export type {
 export { Container } from "#/container";
 export type { Container as ContainerInterface, ContainerStatic } from "#/container";
 
+export { effectiveBindingScope } from "#/binding-scope";
+export { injectableSlotToResolveOptions, slotKeyToResolveOptions } from "#/resolve-options";
+
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
 
@@ -62,7 +65,7 @@ export type { AutoRegisterRegistry } from "#/decorators/injectable";
 
 // MetadataReader
 export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
-export type { MetadataReader } from "#/metadata/metadata-types";
+export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metadata-types";
 
 // Errors
 export {

@@ -2,6 +2,7 @@ import type { BindingRegistry } from "#/registry";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import type { BindingScope, Constructor } from "#/types";
 import { tokenName } from "#/token";
+import { effectiveBindingScope } from "#/binding-scope";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -43,10 +44,7 @@ export function buildDependencyGraph(
 
   const addBindings = (reg: BindingRegistry, fromParent: boolean): void => {
     for (const binding of reg.allBindings()) {
-      const scope: BindingScope =
-        binding.kind === "alias"
-          ? "transient"
-          : ((binding as { scope: BindingScope }).scope ?? "transient");
+      const scope = effectiveBindingScope(binding);
       nodes.push({
         id: binding.id,
         tokenName: tokenName(binding.token),

@@ -19,6 +19,12 @@ export interface LifecycleMetadata {
   readonly preDestroy: readonly string[];
 }
 
+/** Mutable buckets used while aggregating decorator metadata (same keys as {@link LifecycleMetadata}). */
+export interface MutableLifecycleMetadata {
+  postConstruct: string[];
+  preDestroy: string[];
+}
+
 export interface MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;

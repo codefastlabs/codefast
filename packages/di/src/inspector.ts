@@ -6,6 +6,7 @@ import type { ScopeManager } from "#/scope";
 import type { ResolveOptions } from "#/types";
 import { tokenName } from "#/token";
 import { selectBinding } from "#/binding-select";
+import { effectiveBindingScope } from "#/binding-scope";
 
 // ── Public types ──────────────────────────────────────────────────────────────
 
@@ -104,16 +105,14 @@ export class Inspector {
   }
 
   private _toSnapshot(b: Binding): BindingSnapshot {
-    const scope: BindingScope =
-      b.kind === "alias" ? "transient" : ((b as { scope: BindingScope }).scope ?? "transient");
+    const scope = effectiveBindingScope(b);
+    const slot: BindingSnapshot["slot"] =
+      b.slot.name !== undefined ? { name: b.slot.name, tags: b.slot.tags } : { tags: b.slot.tags };
     return {
       tokenName: tokenName(b.token),
       kind: b.kind,
       scope,
-      slot: {
-        name: b.slot.name,
-        tags: b.slot.tags,
-      },
+      slot,
       id: b.id,
     };
   }

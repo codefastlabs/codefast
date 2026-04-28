@@ -1,8 +1,9 @@
-import type { Constructor, ResolveOptions } from "#/types";
+import type { Constructor } from "#/types";
 import type { Token } from "#/token";
 import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
 import { MissingContainerContextError } from "#/errors";
 import { getActiveContainer } from "#/environment";
+import { injectableSlotToResolveOptions } from "#/resolve-options";
 
 // ── InjectionDescriptor ───────────────────────────────────────────────────────
 
@@ -44,22 +45,68 @@ export function isInjectionDescriptor(value: unknown): value is InjectionDescrip
 
 export function normalizeToDescriptor(dep: InjectableDependency): InjectionDescriptor {
   if (isInjectionDescriptor(dep)) {
-    return dep;
+    return materializeInjectionDescriptor(dep);
   }
   return { token: dep as Token<unknown> | Constructor, optional: false, multi: false };
+}
+
+/**
+ * Dual-role `inject()` values are functions: [[Function]].name must not be treated as a DI slot name.
+ * Only enumerable own `name` / `tags` from `Object.defineProperties` are real injection options.
+ */
+function materializeInjectionDescriptor(dep: InjectionDescriptor): InjectionDescriptor {
+  if (typeof dep !== "function") {
+    return dep;
+  }
+  const dualRole = dep as InjectionDescriptor & ((...args: unknown[]) => unknown);
+  const base: Pick<InjectionDescriptor<unknown>, "token" | "optional" | "multi"> = {
+    token: dualRole.token,
+    optional: dualRole.optional,
+    multi: dualRole.multi,
+  };
+  const nameDesc = Object.getOwnPropertyDescriptor(dualRole, "name");
+  const tagsDesc = Object.getOwnPropertyDescriptor(dualRole, "tags");
+  const explicitName =
+    nameDesc?.enumerable === true && typeof nameDesc.value === "string"
+      ? nameDesc.value
+      : undefined;
+  const explicitTags = tagsDesc?.enumerable === true ? tagsDesc.value : undefined;
+
+  if (explicitName !== undefined && explicitTags !== undefined) {
+    return {
+      ...base,
+      name: explicitName,
+      tags: explicitTags as NonNullable<InjectionDescriptor["tags"]>,
+    };
+  }
+  if (explicitName !== undefined) {
+    return { ...base, name: explicitName };
+  }
+  if (explicitTags !== undefined) {
+    return { ...base, tags: explicitTags as NonNullable<InjectionDescriptor["tags"]> };
+  }
+  return base;
 }
 
 function buildInjectionDescriptor<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> {
-  return {
+  const base: Pick<InjectionDescriptor<Value>, "token" | "optional" | "multi"> = {
     token: t,
     optional: false,
     multi: false,
-    name: options?.name,
-    tags: options?.tags,
   };
+  if (options?.name !== undefined && options.tags !== undefined) {
+    return { ...base, name: options.name, tags: options.tags };
+  }
+  if (options?.name !== undefined) {
+    return { ...base, name: options.name };
+  }
+  if (options?.tags !== undefined) {
+    return { ...base, tags: options.tags };
+  }
+  return base;
 }
 
 // ── inject() — dual-role ──────────────────────────────────────────────────────
@@ -95,13 +142,13 @@ export function inject<const Value>(
       if (container === undefined) {
         throw new MissingContainerContextError(String(context.name));
       }
-      const hint: ResolveOptions = {};
-      if (options?.name !== undefined) {
-        hint.name = options.name;
-      }
-      if (options?.tags !== undefined) {
-        hint.tags = options.tags;
-      }
+      const hint =
+        options === undefined
+          ? undefined
+          : injectableSlotToResolveOptions({
+              ...(options.name !== undefined ? { name: options.name } : {}),
+              ...(options.tags !== undefined ? { tags: options.tags } : {}),
+            });
       const value = descriptor.optional
         ? container.resolveOptional(t, hint)
         : container.resolve(t, hint);
@@ -128,13 +175,21 @@ export function optional<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value | undefined> {
-  return {
+  const base: Pick<InjectionDescriptor<Value | undefined>, "token" | "optional" | "multi"> = {
     token: t as Token<Value | undefined> | Constructor<Value | undefined>,
     optional: true,
     multi: false,
-    name: options?.name,
-    tags: options?.tags,
   };
+  if (options?.name !== undefined && options.tags !== undefined) {
+    return { ...base, name: options.name, tags: options.tags };
+  }
+  if (options?.name !== undefined) {
+    return { ...base, name: options.name };
+  }
+  if (options?.tags !== undefined) {
+    return { ...base, tags: options.tags };
+  }
+  return base;
 }
 
 // ── injectAll() ───────────────────────────────────────────────────────────────
@@ -143,11 +198,19 @@ export function injectAll<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value[]> {
-  return {
+  const base: Pick<InjectionDescriptor<Value[]>, "token" | "optional" | "multi"> = {
     token: t as Token<Value[]> | Constructor<Value[]>,
     optional: false,
     multi: true,
-    name: options?.name,
-    tags: options?.tags,
   };
+  if (options?.name !== undefined && options.tags !== undefined) {
+    return { ...base, name: options.name, tags: options.tags };
+  }
+  if (options?.name !== undefined) {
+    return { ...base, name: options.name };
+  }
+  if (options?.tags !== undefined) {
+    return { ...base, tags: options.tags };
+  }
+  return base;
 }

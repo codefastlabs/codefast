@@ -579,10 +579,10 @@ class MockRedis implements RedisClient {
   }
 
   async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
-    this.store.set(key, {
-      value,
-      expiresAt: ttlSeconds ? Date.now() + ttlSeconds * 1000 : undefined,
-    });
+    this.store.set(
+      key,
+      ttlSeconds !== undefined ? { value, expiresAt: Date.now() + ttlSeconds * 1000 } : { value },
+    );
   }
 
   async del(key: string): Promise<void> {
@@ -2084,7 +2084,7 @@ class NotificationDispatcher implements NotificationService {
     await this.send({
       userId: user.id,
       email: user.email,
-      phone: user.phone ?? undefined,
+      ...(user.phone != null ? { phone: user.phone } : {}),
       template: "order_confirmation",
       data: {
         orderId: order.id,
@@ -2105,7 +2105,7 @@ class NotificationDispatcher implements NotificationService {
     await this.send({
       userId: user.id,
       email: user.email,
-      phone: user.phone ?? undefined,
+      ...(user.phone != null ? { phone: user.phone } : {}),
       template: "shipping_update",
       data: {
         orderId: order.id,

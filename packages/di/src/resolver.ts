@@ -31,6 +31,7 @@ import {
   DefaultResolutionContext,
   runWithContainer,
 } from "#/environment";
+import { injectableSlotToResolveOptions } from "#/resolve-options";
 import { selectAllBindings, selectBinding } from "#/binding-select";
 
 type BindingWithScope = Binding & { scope: BindingScope };
@@ -415,10 +416,7 @@ export class DependencyResolver {
     }
     if (meta.params.length === 1) {
       const param = meta.params[0]!;
-      const paramHint =
-        param.name !== undefined || param.tags !== undefined
-          ? { name: param.name, tags: param.tags }
-          : undefined;
+      const paramHint = injectableSlotToResolveOptions(param);
       if (param.multi) {
         return [
           this.resolveAll(
@@ -460,10 +458,7 @@ export class DependencyResolver {
     const deps = new Array<unknown>(meta.params.length);
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
-      const paramHint =
-        param.name !== undefined || param.tags !== undefined
-          ? { name: param.name, tags: param.tags }
-          : undefined;
+      const paramHint = injectableSlotToResolveOptions(param);
       if (param.multi) {
         deps[index] = this.resolveAll(
           param.token as Token<unknown> | Constructor,
@@ -508,10 +503,7 @@ export class DependencyResolver {
     const resolved = new Array<unknown>(deps.length);
     for (let index = 0; index < deps.length; index += 1) {
       const dep = deps[index]!;
-      const depHint =
-        dep.name !== undefined || dep.tags !== undefined
-          ? { name: dep.name, tags: dep.tags }
-          : undefined;
+      const depHint = injectableSlotToResolveOptions(dep);
       if (dep.multi) {
         resolved[index] = this.resolveAll(
           dep.token as Token<unknown> | Constructor,
@@ -961,10 +953,7 @@ export class DependencyResolver {
     }
     if (meta.params.length === 1) {
       const param = meta.params[0]!;
-      const paramHint =
-        param.name !== undefined || param.tags !== undefined
-          ? { name: param.name, tags: param.tags }
-          : undefined;
+      const paramHint = injectableSlotToResolveOptions(param);
       if (param.multi) {
         return [
           await this.resolveAllAsync(
@@ -1007,10 +996,7 @@ export class DependencyResolver {
     const shouldCloneContext = meta.params.length > 1;
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
-      const paramHint =
-        param.name !== undefined || param.tags !== undefined
-          ? { name: param.name, tags: param.tags }
-          : undefined;
+      const paramHint = injectableSlotToResolveOptions(param);
       if (param.multi) {
         pending[index] = this.resolveAllAsync(
           param.token as Token<unknown> | Constructor,
@@ -1054,10 +1040,7 @@ export class DependencyResolver {
     const shouldCloneContext = deps.length > 1;
     for (let index = 0; index < deps.length; index += 1) {
       const dep = deps[index]!;
-      const depHint =
-        dep.name !== undefined || dep.tags !== undefined
-          ? { name: dep.name, tags: dep.tags }
-          : undefined;
+      const depHint = injectableSlotToResolveOptions(dep);
       if (dep.multi) {
         pending[index] = this.resolveAllAsync(
           dep.token as Token<unknown> | Constructor,

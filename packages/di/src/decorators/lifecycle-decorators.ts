@@ -1,13 +1,9 @@
+import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
 import {
   LIFECYCLE_KEY,
   lifecycleByConstructorMetadataMap,
   lifecycleMetadataMap,
 } from "#/metadata/metadata-keys";
-
-interface MutableLifecycleMetadata {
-  postConstruct: string[];
-  preDestroy: string[];
-}
 
 function appendUniqueMethod(
   metadata: MutableLifecycleMetadata,
@@ -41,9 +37,7 @@ function registerByConstructor(
   if (ctor === undefined) {
     return;
   }
-  const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor) as
-    | MutableLifecycleMetadata
-    | undefined;
+  const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
   if (ctorExisting !== undefined) {
     appendUniqueMethod(ctorExisting, phase, methodName);
   } else {
@@ -58,9 +52,7 @@ export function postConstruct(): (target: unknown, context: ClassMethodDecorator
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
     const methodName = String(context.name);
     registerByConstructor(target, "postConstruct", methodName);
-    const existing = lifecycleMetadataMap.get(context.metadata as object) as
-      | MutableLifecycleMetadata
-      | undefined;
+    const existing = lifecycleMetadataMap.get(context.metadata as object);
 
     if (existing !== undefined) {
       appendUniqueMethod(existing, "postConstruct", methodName);
@@ -77,9 +69,7 @@ export function postConstruct(): (target: unknown, context: ClassMethodDecorator
         typeof targetOrInstance === "function"
           ? (targetOrInstance as object)
           : ((targetOrInstance as { constructor: object }).constructor as object);
-      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor) as
-        | MutableLifecycleMetadata
-        | undefined;
+      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
       if (ctorExisting !== undefined) {
         appendUniqueMethod(ctorExisting, "postConstruct", methodName);
       } else {
@@ -110,9 +100,7 @@ export function preDestroy(): (target: unknown, context: ClassMethodDecoratorCon
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
     const methodName = String(context.name);
     registerByConstructor(target, "preDestroy", methodName);
-    const existing = lifecycleMetadataMap.get(context.metadata as object) as
-      | MutableLifecycleMetadata
-      | undefined;
+    const existing = lifecycleMetadataMap.get(context.metadata as object);
 
     if (existing !== undefined) {
       appendUniqueMethod(existing, "preDestroy", methodName);
@@ -129,9 +117,7 @@ export function preDestroy(): (target: unknown, context: ClassMethodDecoratorCon
         typeof targetOrInstance === "function"
           ? (targetOrInstance as object)
           : ((targetOrInstance as { constructor: object }).constructor as object);
-      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor) as
-        | MutableLifecycleMetadata
-        | undefined;
+      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
       if (ctorExisting !== undefined) {
         appendUniqueMethod(ctorExisting, "preDestroy", methodName);
       } else {

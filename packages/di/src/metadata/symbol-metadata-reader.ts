@@ -19,7 +19,7 @@ export class SymbolMetadataReader implements MetadataReader {
     // WeakMap approach (works with esbuild/tsx)
     const fromWeakMap = constructorMetadataMap.get(target);
     if (fromWeakMap !== undefined) {
-      return fromWeakMap as ConstructorMetadata;
+      return fromWeakMap;
     }
 
     // Symbol.metadata approach (works with SWC/vitest)
@@ -37,7 +37,7 @@ export class SymbolMetadataReader implements MetadataReader {
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined {
     const byConstructor = lifecycleByConstructorMetadataMap.get(target);
     if (byConstructor !== undefined) {
-      return byConstructor as LifecycleMetadata;
+      return byConstructor;
     }
 
     // Try Symbol.metadata first (SWC)
@@ -60,7 +60,7 @@ export class SymbolMetadataReader implements MetadataReader {
     if (classMeta !== undefined) {
       const fromWeakMap = lifecycleMetadataMap.get(classMeta);
       if (fromWeakMap !== undefined) {
-        return fromWeakMap as LifecycleMetadata;
+        return fromWeakMap;
       }
     }
 

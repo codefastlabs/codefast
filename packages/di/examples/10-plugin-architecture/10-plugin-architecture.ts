@@ -193,7 +193,7 @@ class SegmentAnalyticsProvider implements AnalyticsProvider {
   ) {}
 
   track(event: string, properties?: Record<string, unknown>): void {
-    this.eventQueue.push({ event, properties });
+    this.eventQueue.push(properties !== undefined ? { event, properties } : { event });
     this.logger.info(`[Segment] queued "${event}" (queue: ${this.eventQueue.length})`);
   }
 

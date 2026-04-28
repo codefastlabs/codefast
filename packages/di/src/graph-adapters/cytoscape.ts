@@ -26,14 +26,15 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
   }
 
   graph.edges.forEach((edge, idx) => {
-    elements.push({
-      data: {
-        id: `edge-${idx}`,
-        source: edge.from,
-        target: edge.to,
-        label: edge.label,
-      },
-    });
+    const data: CytoscapeEdge["data"] = {
+      id: `edge-${idx}`,
+      source: edge.from,
+      target: edge.to,
+    };
+    if (edge.label !== undefined) {
+      data.label = edge.label;
+    }
+    elements.push({ data });
   });
 
   return elements;
