@@ -430,50 +430,209 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>@codefast/di vs inversify — bench history</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style id="bh-ui-styles">
+    .bh-metrics { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); }
+    @media (min-width: 640px) { .bh-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .bh-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .bh-card { border-radius: 0.75rem; border: 1px solid rgba(63, 63, 70, 0.85); background: rgba(24, 24, 27, 0.72); padding: 0.8rem 1rem; backdrop-filter: blur(6px); }
+    .bh-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgb(161, 161, 170); margin-bottom: 0.35rem; }
+    .bh-val { font-variant-numeric: tabular-nums; font-size: 1.05rem; font-weight: 600; line-height: 1.3; word-break: break-word; }
+    .bh-chip { display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.15rem 0.65rem; font-size: 0.7rem; font-weight: 500; }
+    .bh-chip-warn { background: rgba(234, 179, 8, 0.14); border: 1px solid rgba(234, 179, 8, 0.35); color: rgb(253 230 138); }
+    .bh-chip-ok { background: rgba(16, 185, 129, 0.11); border: 1px solid rgba(16, 185, 129, 0.35); color: rgb(167 243 208); }
+    .bh-table-wrap { overflow-x: auto; border-radius: 0.5rem; border: 1px solid rgba(63, 63, 70, 0.6); }
+    .bh-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .bh-table th,
+    .bh-table td { border-bottom: 1px solid rgb(39, 39, 42); padding: 0.45rem 0.65rem; text-align: left; }
+    .bh-table th { color: rgb(161, 161, 170); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .bh-table tbody tr:hover { background: rgba(63, 63, 70, 0.18); }
+    .bh-num { font-variant-numeric: tabular-nums; text-align: right; font-variant-ligatures: none; }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js" crossorigin="anonymous"></script>
 </head>
-<body class="min-h-screen bg-zinc-950 font-sans text-zinc-200 antialiased">
-  <div class="mx-auto max-w-7xl px-4 pb-12 pt-5">
-    <h1 class="mb-1.5 text-xl font-semibold text-zinc-100">Benchmark history — hz/op median per run</h1>
-    <p class="max-w-3xl text-[0.95rem] leading-relaxed text-zinc-300/90">Medians and P25–P75 bands use the same quantile rules as <code class="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[0.88em] text-indigo-200">report.ts</code> (across trials). Shaded bands show spread of per-trial hz/op; use IQR% in the tooltip to spot noisy runs. Filter by environment when you mixed machines or Node versions. The X axis and tooltips show each run’s time in <strong class="font-medium text-zinc-200">your browser’s local timezone</strong> (stored runs use UTC <code class="font-mono text-indigo-200/90">timestampIso</code>).</p>
-    <div class="mt-5 mb-4 flex flex-wrap items-end gap-x-6 gap-y-4">
-    <label class="block shrink-0">
-      <span class="mb-1 block text-[0.82rem] text-zinc-400">Search scenario</span>
-      <input type="search" id="scenario-search" placeholder="Filter by name…" autocomplete="off" class="min-w-48 max-w-xs rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-200 placeholder:text-zinc-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-    </label>
-    <label class="block shrink-0">
-      <span class="mb-1 block text-[0.82rem] text-zinc-400">Scenario</span>
-      <select id="scenario-select" aria-label="Benchmark scenario" class="min-w-72 max-w-full rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"></select>
-    </label>
-    <label class="block shrink-0">
-      <span class="mb-1 block text-[0.82rem] text-zinc-400">Group</span>
-      <select id="group-filter" aria-label="Filter by group" class="min-w-[10rem] rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"><option value="">All groups</option></select>
-    </label>
-    <label class="block shrink-0">
-      <span class="mb-1 block text-[0.82rem] text-zinc-400">Environment</span>
-      <select id="env-filter" aria-label="Filter runs by CPU and Node" class="max-w-[22rem] min-w-[14rem] rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"><option value="">All runs</option></select>
-    </label>
-  </div>
-  <div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-3 text-[0.88rem] text-zinc-300">
-    <label class="inline-flex cursor-pointer items-center gap-2"><input type="checkbox" id="show-bands" checked class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500" /> P25–P75 band (per-trial hz/op)</label>
-    <label class="inline-flex cursor-pointer items-center gap-2"><input type="checkbox" id="log-scale" class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500" /> Logarithmic Y axis</label>
-    <label class="inline-flex cursor-pointer items-center gap-2"><input type="checkbox" id="show-ratio" class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500" /> codefast ÷ inversify (right axis)</label>
-  </div>
-  <div id="summary" aria-live="polite" class="mb-4 rounded-lg border border-zinc-700/90 bg-zinc-900/80 px-3.5 py-2.5 text-sm leading-snug text-zinc-200 [&_strong]:font-semibold [&_strong]:text-zinc-100"></div>
-  <div class="mb-2 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
-    <span class="text-zinc-500">Chart:</span>
-    <button type="button" id="chart-zoom-in" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Zoom in (time axis)">Zoom +</button>
-    <button type="button" id="chart-zoom-out" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Zoom out (time axis)">Zoom −</button>
-    <button type="button" id="chart-pan-earlier" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Earlier runs (←)">← Earlier</button>
-    <button type="button" id="chart-pan-later" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Later runs (→)">Later →</button>
-    <button type="button" id="chart-reset-zoom" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80">Reset zoom</button>
-    <button type="button" id="chart-download-png" class="rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1 text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80">Download PNG</button>
-    <span class="text-xs text-zinc-500">Default shows recent portion (offset eases edges) · Reset zoom for full range · <kbd class="rounded border border-zinc-700 bg-zinc-800 px-1 font-mono text-zinc-300">Ctrl</kbd>+scroll wheel to zoom · drag to pan · legend toggles series</span>
-  </div>
-  <div id="chart-host" class="relative h-[min(440px,64vh)] w-full min-h-[280px]"><canvas id="bench-chart" aria-label="Throughput over time chart" class="block h-full w-full"></canvas></div>
-  <p class="mt-3 text-[0.78rem] text-zinc-500">Generated locally — <code class="rounded bg-zinc-900 px-1 py-px font-mono text-[0.85em] text-indigo-200">pnpm bench:history</code> · ${escapeHtml(runCount)} runs · ${escapeHtml(scenarioCount)} scenarios</p>
+<body class="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-950 to-zinc-900 font-sans text-zinc-200 antialiased">
+  <div class="mx-auto max-w-7xl px-4 pb-14 pt-6 sm:pt-8">
+    <header class="mb-8 max-w-3xl border-b border-zinc-800/80 pb-6">
+      <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-emerald-500/95">Bench history viewer</p>
+      <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl">
+        Benchmark history<span class="font-normal text-zinc-400"> · hz/op median per run</span>
+      </h1>
+      <p class="mt-3 max-w-prose text-sm leading-relaxed text-zinc-400">
+        Quantiles mirror <code class="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[0.88em] text-indigo-200">report.ts</code> across trials. Bands are per‑trial hz/op spread; tooltip IQR%
+        surfaces noisy runs.
+        Axis labels show each point in your <strong class="font-medium text-zinc-300">local time</strong> (UTC stored as
+        <code class="font-mono text-indigo-200/95">timestampIso</code>).
+      </p>
+    </header>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="History overview">
+      <div class="bh-card hover:border-emerald-500/20">
+        <div class="bh-lbl">Saved runs</div>
+        <div id="kpi-run-count" class="bh-val text-zinc-100">—</div>
+      </div>
+      <div class="bh-card hover:border-sky-500/15">
+        <div class="bh-lbl">Scenarios tracked</div>
+        <div id="kpi-scenario-count" class="bh-val text-zinc-100">—</div>
+      </div>
+      <div class="bh-card sm:col-span-2 xl:col-span-1">
+        <div class="bh-lbl">Newest saved run · local clock</div>
+        <div id="kpi-latest-clock" class="bh-val text-sm text-zinc-200">—</div>
+      </div>
+      <div class="bh-card xl:col-span-1">
+        <div class="bh-lbl">Library builds (latest run)</div>
+        <div id="kpi-lib-versions" class="bh-val text-xs font-normal leading-snug text-zinc-400">—</div>
+      </div>
+    </div>
+
+    <div
+      id="multi-env-banner"
+      role="status"
+      class="mt-4 hidden rounded-lg border border-amber-500/25 bg-amber-950/35 px-3 py-2.5 text-sm text-amber-100/95"
+    >
+      <strong class="font-semibold text-amber-200">Multiple environments in history.</strong>
+      Prefer an Environment filter before comparing regimes (CPU × Node fingerprints differ across machines).
+    </div>
+
+    <div
+      class="sticky top-0 z-40 mb-7 mt-8 flex flex-wrap items-center gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/90 px-3 py-2.5 shadow-lg shadow-black/35 backdrop-blur-md sm:-mx-2 sm:px-4"
+    >
+      <span class="hidden sm:inline text-[0.65rem] font-semibold uppercase tracking-wider text-zinc-500">Focus</span>
+      <label class="min-w-[min(100%,220px)] flex-1 sm:min-w-[14rem] sm:max-w-md">
+        <span class="mb-1 block text-[0.75rem] text-zinc-500">Scenario</span>
+        <select
+          id="scenario-select"
+          aria-label="Benchmark scenario"
+          class="w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 py-2 text-sm text-zinc-100 shadow-inner focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+        ></select>
+      </label>
+      <label class="min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem]">
+        <span class="mb-1 block text-[0.75rem] text-zinc-500">Environment</span>
+        <select
+          id="env-filter"
+          aria-label="Filter runs by CPU and Node"
+          class="w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 py-2 text-sm text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+        >
+          <option value="">All runs</option>
+        </select>
+      </label>
+      <button
+        type="button"
+        id="chart-download-png"
+        title="Capture current chart view as PNG"
+        class="ml-auto shrink-0 rounded-lg border border-indigo-500/40 bg-indigo-950/50 px-3.5 py-2 text-sm font-medium text-indigo-200 hover:bg-indigo-900/50 focus:outline-none focus:ring-2 focus:ring-indigo-400/70"
+      >
+        Download PNG
+      </button>
+    </div>
+
+    <section class="mb-8 rounded-xl border border-zinc-800/75 bg-zinc-900/25 px-4 py-4 shadow-sm shadow-black/20 sm:px-5">
+      <h2 class="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-zinc-500">Discovery</h2>
+      <div class="mt-4 flex flex-wrap items-end gap-x-6 gap-y-4">
+        <label class="block shrink-0">
+          <span class="mb-1 block text-[0.82rem] text-zinc-500">Search</span>
+          <input
+            type="search"
+            id="scenario-search"
+            placeholder="Filter by scenario, group…"
+            autocomplete="off"
+            class="min-w-48 max-w-xs rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+          />
+        </label>
+        <label class="block shrink-0">
+          <span class="mb-1 block text-[0.82rem] text-zinc-500">Group</span>
+          <select
+            id="group-filter"
+            aria-label="Filter by group"
+            class="min-w-[10.5rem] rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+          >
+            <option value="">All groups</option></select>
+        </label>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-zinc-800/80 pt-4 text-[0.9rem] text-zinc-300">
+        <span class="text-[0.7rem] font-semibold uppercase tracking-wider text-zinc-600">Chart</span>
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input type="checkbox" id="show-bands" checked class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500" />
+          P25–P75 band
+        </label>
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input type="checkbox" id="log-scale" class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500" />
+          Log Y axis
+        </label>
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input type="checkbox" id="show-ratio" class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500" />
+          codefast ÷ inversify
+        </label>
+      </div>
+    </section>
+
+    <section
+      id="summary"
+      aria-live="polite"
+      class="mb-6 rounded-xl border border-zinc-800/80 bg-gradient-to-br from-zinc-900/50 to-zinc-950/50 px-4 py-4 sm:px-5"
+    >
+      <div class="flex flex-wrap items-baseline gap-2 gap-y-1">
+        <h2 id="metrics-heading" class="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-zinc-500">Selected scenario metrics</h2>
+        <span id="metrics-scenario-chip" class="bh-chip bh-chip-ok"></span>
+      </div>
+      <p id="scenario-what-line" class="mt-2 text-sm leading-relaxed text-zinc-400"></p>
+      <div id="metrics-cards" class="mt-5"></div>
+      <p id="metrics-footnote" class="mt-3 text-xs leading-relaxed text-zinc-500"></p>
+    </section>
+
+    <section aria-labelledby="chart-section-title" class="rounded-xl border border-zinc-800/75 bg-zinc-900/20 px-4 py-4 sm:px-5">
+      <div class="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-800/70 pb-3">
+        <div>
+          <h2 id="chart-section-title" class="text-sm font-semibold text-zinc-100">Throughput over filtered runs</h2>
+          <p id="chart-subtitle-line" class="mt-1 text-[0.8rem] text-zinc-500">—</p>
+        </div>
+      </div>
+      <div class="mb-2 mt-4 flex flex-wrap items-center gap-2">
+        <span class="text-[0.7rem] uppercase tracking-wide text-zinc-600">View</span>
+        <button type="button" id="chart-zoom-in" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Zoom in on time axis">Zoom +</button>
+        <button type="button" id="chart-zoom-out" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Zoom out on time axis">Zoom −</button>
+        <button type="button" id="chart-pan-earlier" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Pan to earlier runs">← Earlier</button>
+        <button type="button" id="chart-pan-later" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80" title="Pan to later runs">Later →</button>
+        <button type="button" id="chart-reset-zoom" class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/80">Reset zoom</button>
+      </div>
+      <p class="text-xs leading-relaxed text-zinc-500">
+        Opens on the newest portion of history; Reset zoom restores the whole filtered range.&nbsp;<kbd class="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">Ctrl</kbd>+wheel zooms · drag pans · legend hides series.
+      </p>
+      <div id="chart-host" class="relative mt-4 h-[min(440px,58vh)] w-full min-h-[280px] rounded-lg bg-zinc-950/40 ring-1 ring-zinc-800/70">
+        <canvas id="bench-chart" aria-label="Throughput over time chart" class="block h-full w-full"></canvas>
+      </div>
+    </section>
+
+    <details class="mt-8 rounded-xl border border-zinc-800/75 bg-zinc-900/15 px-4 py-3 open:bg-zinc-900/35 sm:px-5">
+      <summary class="cursor-pointer py-2 text-sm font-semibold leading-snug text-zinc-200 [&::-webkit-details-marker]:text-indigo-400">
+        Snapshot of <span class="text-indigo-200/95">globally newest</span> bench folder — throughput by scenario (table)
+      </summary>
+      <p class="mb-3 text-xs leading-relaxed text-zinc-500">
+        Rows use the chronologically last run directory (${escapeHtml(runCount)} total), independent of the Environment selector above — useful against the line chart filtered view.
+      </p>
+      <div class="bh-table-wrap">
+        <table class="bh-table" aria-label="Latest run throughput by scenario">
+          <thead>
+            <tr>
+              <th scope="col">Scenario</th>
+              <th scope="col">Group</th>
+              <th scope="col" class="bh-num text-emerald-200">@codefast/di</th>
+              <th scope="col" class="bh-num text-sky-300">inversify</th>
+              <th scope="col" class="bh-num text-amber-200">Ratio</th>
+            </tr>
+          </thead>
+          <tbody id="snapshot-latest-tbody"></tbody>
+        </table>
+      </div>
+      <div id="snapshot-latest-meta" class="mt-2 text-xs text-zinc-600"></div>
+    </details>
+
+    <p class="mt-8 border-t border-zinc-800/80 pt-5 text-[0.78rem] text-zinc-500">
+      Generated locally — <code class="rounded bg-zinc-900 px-1 py-px font-mono text-[0.85em] text-indigo-200">pnpm bench:history</code> ·
+      ${escapeHtml(runCount)} runs · ${escapeHtml(scenarioCount)} scenarios
+    </p>
   </div>
   <script type="application/json" id="bench-history-data">${json}</script>
   <script>
@@ -487,7 +646,13 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
   const showBands = document.getElementById("show-bands");
   const logScale = document.getElementById("log-scale");
   const showRatio = document.getElementById("show-ratio");
-  const summaryEl = document.getElementById("summary");
+  const chartSubtitleLine = document.getElementById("chart-subtitle-line");
+  const metricsScenarioChip = document.getElementById("metrics-scenario-chip");
+  const scenarioWhatLineEl = document.getElementById("scenario-what-line");
+  const metricsCardsEl = document.getElementById("metrics-cards");
+  const metricsFootnoteEl = document.getElementById("metrics-footnote");
+  const multiEnvBanner = document.getElementById("multi-env-banner");
+
   const btnResetZoom = document.getElementById("chart-reset-zoom");
   const btnDownload = document.getElementById("chart-download-png");
   const btnZoomIn = document.getElementById("chart-zoom-in");
@@ -609,29 +774,264 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
     return sign + pct.toFixed(1) + "%";
   }
 
-  function updateSummary(row, indices) {
+  /** Client-side escaping for interpolated markup (scenario identifiers in tables). */
+  function esc(unsafe) {
+    return String(unsafe)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function medianNumeric(values) {
+    const a = values.filter(function (v) {
+      return typeof v === "number" && Number.isFinite(v);
+    }).sort(function (x, y) {
+      return x - y;
+    });
+    if (a.length === 0) {
+      return null;
+    }
+    var m = Math.floor(a.length / 2);
+    if (a.length % 2 === 1) {
+      return a[m];
+    }
+    return ((a[m - 1] ?? 0) + (a[m] ?? 0)) / 2;
+  }
+
+  var DISPERSION_IQR_ALERT = 0.25;
+
+  function updateMetricsPanel(row, indices) {
+    var chipEl = metricsScenarioChip;
+    var whatEl = scenarioWhatLineEl;
+    var cardsEl = metricsCardsEl;
+    var footEl = metricsFootnoteEl;
+    if (!chipEl || !whatEl || !cardsEl || !footEl) return;
     if (!row || indices.length < 1) {
-      summaryEl.textContent = "";
+      chipEl.textContent = "";
+      chipEl.className = "bh-chip bh-chip-ok";
+      whatEl.textContent = "";
+      whatEl.style.display = "none";
+      cardsEl.innerHTML = "";
+      footEl.textContent = "";
       return;
     }
-    const cf = indices.map(function (i) { return row.codefast[i]; }).filter(function (v) { return typeof v === "number" && v > 0; });
-    const iv = indices.map(function (i) { return row.inversify[i]; }).filter(function (v) { return typeof v === "number" && v > 0; });
-    const parts = [];
-    if (row.what) parts.push("<strong>" + row.id + "</strong> — " + row.what);
-    else parts.push("<strong>" + row.id + "</strong>");
-    if (cf.length >= 2) {
-      parts.push("@codefast/di: first " + fmtHz(cf[0]) + " → last " + fmtHz(cf[cf.length - 1]) + " hz/op (" + fmtPctChange(cf[0], cf[cf.length - 1]) + " vs first visible point)");
-    } else if (cf.length === 1) {
-      parts.push("@codefast/di: " + fmtHz(cf[0]) + " hz/op (single visible point)");
+
+    chipEl.textContent = "[" + row.group + "] " + row.id;
+    chipEl.className = "bh-chip bh-chip-ok";
+    whatEl.style.display = row.what ? "block" : "none";
+    whatEl.textContent = row.what || "";
+
+    var cfOrdered = indices
+      .map(function (gx) {
+        var v = row.codefast[gx];
+        return typeof v === "number" && v > 0 ? v : null;
+      })
+      .filter(function (x) {
+        return x !== null && x !== undefined;
+      });
+    var ivOrdered = indices
+      .map(function (gx) {
+        var v = row.inversify[gx];
+        return typeof v === "number" && v > 0 ? v : null;
+      })
+      .filter(function (x) {
+        return x !== null && x !== undefined;
+      });
+
+    var cfMedian = medianNumeric(
+      indices.map(function (gx) {
+        return row.codefast[gx];
+      }).filter(function (v) {
+        return typeof v === "number" && v > 0;
+      }),
+    );
+    var ivMedian = medianNumeric(
+      indices.map(function (gx) {
+        return row.inversify[gx];
+      }).filter(function (v) {
+        return typeof v === "number" && v > 0;
+      }),
+    );
+
+    var cfLo = cfOrdered.length ? Math.min.apply(Math, cfOrdered) : null;
+    var cfHi = cfOrdered.length ? Math.max.apply(Math, cfOrdered) : null;
+    var ivLo = ivOrdered.length ? Math.min.apply(Math, ivOrdered) : null;
+    var ivHi = ivOrdered.length ? Math.max.apply(Math, ivOrdered) : null;
+
+    var cfFirstLast =
+      cfOrdered.length >= 2
+        ? fmtPctChange(cfOrdered[0], cfOrdered[cfOrdered.length - 1]) + ", newest vs oldest visible"
+        : "—";
+    var ivFirstLast =
+      ivOrdered.length >= 2
+        ? fmtPctChange(ivOrdered[0], ivOrdered[ivOrdered.length - 1]) + ", newest vs oldest visible"
+        : "—";
+
+    var ratiosMedian = medianNumeric(
+      indices
+        .map(function (gx) {
+          var r = ratioFrom(row.codefast[gx], row.inversify[gx]);
+          return r !== null && r !== undefined ? r : null;
+        })
+        .filter(function (v) {
+          return v !== null && v !== undefined;
+        }),
+    );
+
+    var maxCfIqr = 0;
+    var maxIvIqr = 0;
+    indices.forEach(function (gx) {
+      var fracCf = row.codefastIqrFraction[gx];
+      if (typeof fracCf === "number" && Number.isFinite(fracCf)) {
+        maxCfIqr = Math.max(maxCfIqr, fracCf);
+      }
+      var fracIv = row.inversifyIqrFraction[gx];
+      if (typeof fracIv === "number" && Number.isFinite(fracIv)) {
+        maxIvIqr = Math.max(maxIvIqr, fracIv);
+      }
+    });
+
+    var html = "";
+    html += '<div class="bh-metrics">';
+    html += '<div class="bh-card"><div class="bh-lbl" style="color:rgb(167 243 208)">@codefast/di median hz/op</div>';
+    html += '<div class="bh-val" style="color:rgb(167 243 208)">';
+    html += cfMedian !== null ? fmtHz(cfMedian) + " Hz/op" : "—";
+    html += '</div>';
+    html += '<div class="mt-1 font-mono text-[0.72rem]" style="color:rgb(161 161 170)">';
+    html += cfLo !== null && cfHi !== null ? "Range " + fmtHz(cfLo) + " … " + fmtHz(cfHi) : "";
+    html += "</div></div>";
+
+    html += '<div class="bh-card"><div class="bh-lbl" style="color:rgb(186 213 254)">inversify median hz/op</div>';
+    html += '<div class="bh-val" style="color:rgb(186 213 254)">';
+    html += ivMedian !== null ? fmtHz(ivMedian) + " Hz/op" : "—";
+    html += '</div>';
+    html += '<div class="mt-1 font-mono text-[0.72rem]" style="color:rgb(161 161 170)">';
+    html += ivLo !== null && ivHi !== null ? "Range " + fmtHz(ivLo) + " … " + fmtHz(ivHi) : "";
+    html += "</div></div>";
+
+    html += '<div class="bh-card"><div class="bh-lbl" style="color:rgb(253 224 169)">Median paired ratio · codefast ÷ inversify</div>';
+    html += '<div class="bh-val" style="color:rgb(253 224 169)">';
+    html += ratiosMedian !== null ? ratiosMedian.toFixed(3) + "×" : "—";
+    html += '</div>';
+    html += "</div>";
+
+    html += '<div class="bh-card"><div class="bh-lbl">Δ along plotted timeline</div>';
+    html += '<div class="text-[0.78rem] leading-snug" style="color:rgb(212 212 216)">';
+    html += '<div>@codefast/di: ' + cfFirstLast + "</div>";
+    html += '<div class="mt-1">inversify: ' + ivFirstLast + "</div>";
+    html += "</div></div>";
+
+    html += '<div class="bh-card">';
+    html += '<div class="bh-lbl">Worst IQR÷median · per plotted run</div>';
+    html += '<div class="text-[0.78rem] leading-snug" style="color:rgb(212 212 216)">';
+    html +=
+      "codefast: " +
+      (maxCfIqr ? (maxCfIqr * 100).toFixed(1) + "%" : "—") +
+      " · inversify: " +
+      (maxIvIqr ? (maxIvIqr * 100).toFixed(1) + "%" : "—");
+    html += "</div></div>";
+
+    html += "</div>";
+
+    cardsEl.innerHTML = html;
+
+    var worst = Math.max(maxCfIqr, maxIvIqr);
+    var footPieces = [];
+    footPieces.push(
+      indices.length +
+        " plotted point(s)" +
+        (envFilter.value ? ", environment filter on" : ", all environments"),
+    );
+    if (worst > DISPERSION_IQR_ALERT) {
+      footPieces.push(
+        "elevated per-trial dispersion (IQR above " +
+          DISPERSION_IQR_ALERT * 100 +
+          "% of median) on ≥1 plotted run—inspect tooltip IQR%",
+      );
+      chipEl.className = "bh-chip bh-chip-warn";
+    } else {
+      chipEl.className = "bh-chip bh-chip-ok";
     }
-    if (iv.length >= 2) {
-      parts.push("inversify: first " + fmtHz(iv[0]) + " → last " + fmtHz(iv[iv.length - 1]) + " hz/op (" + fmtPctChange(iv[0], iv[iv.length - 1]) + ")");
-    } else if (iv.length === 1) {
-      parts.push("inversify: " + fmtHz(iv[0]) + " hz/op (single visible point)");
-    }
-    parts.push("Visible runs: " + indices.length + (envFilter.value ? " (environment filter on)" : "") + ".");
-    summaryEl.innerHTML = parts.join("<br/>");
+    footEl.textContent = footPieces.join(". ") + ".";
   }
+
+  function refreshEnvironmentBannerVisibility() {
+    if (!multiEnvBanner) return;
+    var keys = [...new Set(data.runs.map(function (r) { return r.envKey; }))];
+    multiEnvBanner.classList.toggle("hidden", keys.length <= 1 || !!envFilter.value);
+  }
+
+  function applyKpis() {
+    var runCountEl = document.getElementById("kpi-run-count");
+    var scenCountEl = document.getElementById("kpi-scenario-count");
+    var clockEl = document.getElementById("kpi-latest-clock");
+    var verEl = document.getElementById("kpi-lib-versions");
+    if (!runCountEl || !scenCountEl || !clockEl || !verEl) return;
+    runCountEl.textContent = String(data.runs.length);
+    scenCountEl.textContent = String(data.scenarios.length);
+    if (data.runs.length === 0) {
+      clockEl.textContent = "—";
+      verEl.textContent = "—";
+      return;
+    }
+    var lr = data.runs[data.runs.length - 1];
+    var clock = formatBenchRunInstantLocal(lr.timestampIso, lr.folder);
+    clockEl.textContent = clock ? clock + " · folder " + lr.folder : lr.folder;
+    verEl.innerHTML =
+      '<div style="line-height:1.45;"><span style="color:#a3a3a8">@codefast/di</span> <span>' +
+      esc(lr.codefastVersion) +
+      '</span></div><div style="line-height:1.45;margin-top:4px;"><span style="color:#a3a3a8">inversify</span> <span>' +
+      esc(lr.inversifyVersion) +
+      "</span></div>";
+  }
+
+  function populateLatestSnapshotTableBody() {
+    var tbody = document.getElementById("snapshot-latest-tbody");
+    var metaEl = document.getElementById("snapshot-latest-meta");
+    if (!tbody || !metaEl) return;
+    tbody.innerHTML = "";
+    if (data.runs.length === 0) {
+      metaEl.textContent = "";
+      return;
+    }
+    var lastIx = data.runs.length - 1;
+    data.scenarios.forEach(function (s) {
+      var cf = s.codefast[lastIx];
+      var iv = s.inversify[lastIx];
+      var hasCf = typeof cf === "number" && cf > 0;
+      var hasIv = typeof iv === "number" && iv > 0;
+      var r = "—";
+      if (hasCf && hasIv) {
+        r = (cf / iv).toFixed(3) + "×";
+      }
+      var rowEl = document.createElement("tr");
+      rowEl.innerHTML =
+        "<td>" +
+        esc(s.id) +
+        "</td><td>" +
+        esc(s.group) +
+        '</td><td class="bh-num">' +
+        (hasCf ? esc(fmtHz(cf)) : "—") +
+        '</td><td class="bh-num">' +
+        (hasIv ? esc(fmtHz(iv)) : "—") +
+        '</td><td class="bh-num">' +
+        esc(r) +
+        "</td>";
+      tbody.appendChild(rowEl);
+    });
+    var runMeta = data.runs[lastIx];
+    metaEl.textContent =
+      "Folder " +
+      runMeta.folder +
+      " · " +
+      formatBenchRunInstantLocal(runMeta.timestampIso, runMeta.folder) +
+      " (local)";
+  }
+
+  applyKpis();
+  populateLatestSnapshotTableBody();
+  refreshEnvironmentBannerVisibility();
 
   function render() {
     const id = scenarioSelect.value;
@@ -640,10 +1040,31 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
     if (!row || indices.length === 0) {
       if (chart) chart.destroy();
       chart = null;
-      summaryEl.textContent = "No runs match the environment filter.";
+      updateMetricsPanel(null, []);
+      if (chartSubtitleLine) {
+        if (indices.length === 0 && data.runs.length > 0) {
+          chartSubtitleLine.textContent =
+            "No saved runs match the current Environment filter.";
+        } else if (!row) {
+          chartSubtitleLine.textContent = "No scenario is available for these filters.";
+        } else {
+          chartSubtitleLine.textContent = "";
+        }
+      }
       return;
     }
 
+    if (chartSubtitleLine) {
+      chartSubtitleLine.textContent =
+        "[" +
+        row.group +
+        "] " +
+        row.id +
+        " · " +
+        indices.length +
+        " plotted point(s)" +
+        (envFilter.value ? " · environment filter on" : "");
+    }
     const labels = indices.map(function (i) {
       var run = data.runs[i];
       return formatBenchRunInstantLocal(run.timestampIso, run.folder);
@@ -779,7 +1200,7 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
       };
     }
 
-    updateSummary(row, indices);
+    updateMetricsPanel(row, indices);
 
     var pluginsMerged = {
       legend: {
@@ -969,7 +1390,10 @@ function renderHtml(payload: EmbeddedViewerPayload): string {
     fillScenarioOptions();
     render();
   });
-  envFilter.addEventListener("change", render);
+  envFilter.addEventListener("change", function () {
+    refreshEnvironmentBannerVisibility();
+    render();
+  });
   showBands.addEventListener("change", render);
   logScale.addEventListener("change", render);
   showRatio.addEventListener("change", render);
