@@ -489,6 +489,9 @@ class DefaultContainer implements Container {
 
   resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value {
     this._assertNotDisposed();
+    if (hint === undefined) {
+      return this._resolver.resolveFromContext(token, [], []);
+    }
     return this._resolver.resolve(token, hint, [], []);
   }
 
@@ -497,6 +500,9 @@ class DefaultContainer implements Container {
     hint?: ResolveOptions,
   ): Promise<Value> {
     this._assertNotDisposed();
+    if (hint === undefined) {
+      return this._resolver.resolveAsyncFromContext(token, [], []);
+    }
     return this._resolver.resolveAsync(token, hint, [], []);
   }
 

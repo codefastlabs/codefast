@@ -135,17 +135,6 @@ export class DependencyResolver {
         );
       }
       const scope = (fastBinding as BindingWithScope).scope ?? "transient";
-      if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
-        return this._scope.getSingleton<Value>(fastBinding.id);
-      }
-      if (scope === "scoped") {
-        if (!this._scope.isChild) {
-          throw new MissingScopeContextError(this._getTokenName(fastBinding.token));
-        }
-        if (this._scope.hasScoped(fastBinding.id)) {
-          return this._scope.getScoped<Value>(fastBinding.id);
-        }
-      }
       if (
         scope === "transient" &&
         fastBinding.kind === "dynamic" &&
@@ -157,6 +146,17 @@ export class DependencyResolver {
           resolutionPath,
           materializationStack,
         );
+      }
+      if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
+        return this._scope.getSingleton<Value>(fastBinding.id);
+      }
+      if (scope === "scoped") {
+        if (!this._scope.isChild) {
+          throw new MissingScopeContextError(this._getTokenName(fastBinding.token));
+        }
+        if (this._scope.hasScoped(fastBinding.id)) {
+          return this._scope.getScoped<Value>(fastBinding.id);
+        }
       }
       return this._resolveBinding(
         fastBinding as Binding<Value>,
@@ -623,6 +623,18 @@ export class DependencyResolver {
         );
       }
       const scope = (fastBinding as BindingWithScope).scope ?? "transient";
+      if (
+        scope === "transient" &&
+        (fastBinding.kind === "dynamic" || fastBinding.kind === "dynamic-async") &&
+        fastBinding.onActivation === undefined &&
+        !this._lifecycle.hasActivationHandlers(fastBinding.token)
+      ) {
+        return this._resolveTransientDynamicAsyncFromContext(
+          fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
+          resolutionPath,
+          materializationStack,
+        );
+      }
       if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
         return Promise.resolve(this._scope.getSingleton<Value>(fastBinding.id));
       }
@@ -635,18 +647,6 @@ export class DependencyResolver {
         if (this._scope.hasScoped(fastBinding.id)) {
           return Promise.resolve(this._scope.getScoped<Value>(fastBinding.id));
         }
-      }
-      if (
-        scope === "transient" &&
-        (fastBinding.kind === "dynamic" || fastBinding.kind === "dynamic-async") &&
-        fastBinding.onActivation === undefined &&
-        !this._lifecycle.hasActivationHandlers(fastBinding.token)
-      ) {
-        return this._resolveTransientDynamicAsyncFromContext(
-          fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
-          resolutionPath,
-          materializationStack,
-        );
       }
       return this._resolveBindingAsync(
         fastBinding as Binding<Value>,
