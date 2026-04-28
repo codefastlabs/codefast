@@ -775,9 +775,9 @@ Hai slot key **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined
 | --- | ------------------------------------------------------------------- | --------------------- | ------------------------------------------- | ----------------------- |
 | 1   | `bind(T).to*(A)`                                                    | Default               | A                                           | `[A]`                   |
 | 2   | `bind(T).to*(A)` rồi `bind(T).to*(B)`                               | Default last-wins     | B                                           | `[B]`                   |
-| 3   | `whenNamed("a").to*(A)` rồi `whenNamed("a").to*(B)`                 | Named "a" last-wins   | `NoMatchingBindingError` (không có default) | Hint `{name:"a"}` → B   |
-| 4   | `whenNamed("a").to*(A)` và `whenNamed("b").to*(B)`                  | Named "a" + Named "b" | `NoMatchingBindingError`                    | `resolveAll` → `[A, B]` |
-| 5   | `to*(A)` và `whenNamed("x").to*(B)`                                 | Default + Named "x"   | A                                           | `resolveAll` → `[A, B]` |
+| 3   | `to*(A).whenNamed("a")` rồi `to*(B).whenNamed("a")`                 | Named "a" last-wins   | `NoMatchingBindingError` (không có default) | Hint `{name:"a"}` → B   |
+| 4   | `to*(A).whenNamed("a")` và `to*(B).whenNamed("b")`                  | Named "a" + Named "b" | `NoMatchingBindingError`                    | `resolveAll` → `[A, B]` |
+| 5   | `to*(A)` và `to*(B).whenNamed("x")`                                 | Default + Named "x"   | A                                           | `resolveAll` → `[A, B]` |
 | 6   | `rebind(T).to*(C)`                                                  | Explicit reset        | C                                           | `[C]`                   |
 | 7   | Tags `{fuel:petrol, size:v8}.to*(A)` rồi cùng tags `.to*(B)`        | Tag-set last-wins     | Hint `{tags:[...]}` → B                     | Hint → B                |
 | 8   | Tags `{fuel:petrol}.to*(A)` và tags `{fuel:petrol, size:v8}.to*(B)` | Hai tag-set khác nhau | Hint cụ thể                                 | `resolveAll` → `[A, B]` |

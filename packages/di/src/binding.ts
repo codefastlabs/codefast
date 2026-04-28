@@ -159,12 +159,6 @@ export interface BindToBuilder<Value> {
     deps: Deps,
   ): BindingBuilder<Value>;
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;
-
-  // Pre-to() constraints — allows bind(X).whenNamed(n).to(Y) ordering
-  when(predicate: (ctx: ConstraintContext) => boolean): BindToBuilder<Value>;
-  whenNamed(name: string): BindToBuilder<Value>;
-  whenTagged(tag: string, value: unknown): BindToBuilder<Value>;
-  whenDefault(): BindToBuilder<Value>;
 }
 
 export interface BindingBuilder<Value> {

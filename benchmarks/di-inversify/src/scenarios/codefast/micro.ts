@@ -124,9 +124,9 @@ function buildTransientClassOneDepScenario(): BenchScenario {
 function buildNamedConstantGetScenario(): BenchScenario {
   const wideNamedBindingToken = token<number>("bench-cf-micro-named");
   const container = Container.create();
-  container.bind(wideNamedBindingToken).whenNamed("slot-5").toConstantValue(5);
-  container.bind(wideNamedBindingToken).whenNamed("slot-12").toConstantValue(12);
-  container.bind(wideNamedBindingToken).whenNamed("slot-20").toConstantValue(20);
+  container.bind(wideNamedBindingToken).toConstantValue(5).whenNamed("slot-5");
+  container.bind(wideNamedBindingToken).toConstantValue(12).whenNamed("slot-12");
+  container.bind(wideNamedBindingToken).toConstantValue(20).whenNamed("slot-20");
   container.resolve(wideNamedBindingToken, { name: "slot-12" });
 
   return {

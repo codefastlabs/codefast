@@ -64,8 +64,8 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
   for (let index = 0; index < namedCount; index++) {
     container
       .bind(strategyToken)
-      .whenNamed(`strategy-${String(index)}`)
-      .toConstantValue(index);
+      .toConstantValue(index)
+      .whenNamed(`strategy-${String(index)}`);
   }
   const prewarmedStrategies = container.resolveAll(strategyToken, { name: targetName });
 

@@ -740,47 +740,16 @@ class DefaultContainer implements Container {
 // ── BindToBuilderImpl ─────────────────────────────────────────────────────────
 
 class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
-  private _pendingSlot: SlotKey = { ...DEFAULT_SLOT, tags: [] };
-  private _pendingPredicate: ((ctx: import("#/types").ConstraintContext) => boolean) | undefined;
-
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
   ) {}
-
-  when(predicate: (ctx: import("#/types").ConstraintContext) => boolean): BindToBuilder<Value> {
-    this._pendingPredicate = predicate;
-    return this;
-  }
-
-  whenNamed(name: string): BindToBuilder<Value> {
-    this._pendingSlot = { ...this._pendingSlot, name };
-    return this;
-  }
-
-  whenTagged(tag: string, value: unknown): BindToBuilder<Value> {
-    const existing = [...this._pendingSlot.tags];
-    const idx = existing.findIndex(([k]) => k === tag);
-    if (idx !== -1) {
-      existing[idx] = [tag, value];
-    } else {
-      existing.push([tag, value]);
-    }
-    this._pendingSlot = { ...this._pendingSlot, tags: existing };
-    return this;
-  }
-
-  whenDefault(): BindToBuilder<Value> {
-    return this;
-  }
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
     return new BindingBuilderImpl<Value>(
       this._token,
       { kind: "class", target: type, scope: "transient" },
       this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
     );
   }
 
@@ -792,19 +761,11 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
       this._token,
       { kind: "class", target: this._token as Constructor<Value>, scope: "transient" },
       this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
     );
   }
 
   toConstantValue(value: Value): ConstantBindingBuilder<Value> {
-    return new ConstantBindingBuilderImpl<Value>(
-      this._token,
-      value,
-      this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
-    );
+    return new ConstantBindingBuilderImpl<Value>(this._token, value, this._commit);
   }
 
   toDynamic(factory: (ctx: import("#/types").ResolutionContext) => Value): BindingBuilder<Value> {
@@ -812,8 +773,6 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
       this._token,
       { kind: "dynamic", factory, scope: "transient" },
       this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
     );
   }
 
@@ -824,8 +783,6 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
       this._token,
       { kind: "dynamic-async", factory, scope: "transient" },
       this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
     );
   }
 
@@ -845,8 +802,6 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
         scope: "transient",
       },
       this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
     );
   }
 
@@ -866,19 +821,11 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
         scope: "transient",
       },
       this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
     );
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return new AliasBindingBuilderImpl<Value>(
-      this._token,
-      target,
-      this._commit,
-      this._pendingSlot,
-      this._pendingPredicate,
-    );
+    return new AliasBindingBuilderImpl<Value>(this._token, target, this._commit);
   }
 }
 
@@ -893,11 +840,8 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _partial: PartialBinding<Value>,
     private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
-    initialSlot?: SlotKey,
-    initialPredicate?: (ctx: import("#/types").ConstraintContext) => boolean,
   ) {
-    this._slot = initialSlot ?? { ...DEFAULT_SLOT, tags: [] };
-    this._predicate = initialPredicate;
+    this._slot = { ...DEFAULT_SLOT, tags: [] };
     this._doCommit();
   }
 
@@ -1056,11 +1000,8 @@ class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value>
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _value: Value,
     private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
-    initialSlot?: SlotKey,
-    initialPredicate?: (ctx: import("#/types").ConstraintContext) => boolean,
   ) {
-    this._slot = initialSlot ?? { ...DEFAULT_SLOT, tags: [] };
-    this._predicate = initialPredicate;
+    this._slot = { ...DEFAULT_SLOT, tags: [] };
     this._doCommit();
   }
 
@@ -1139,11 +1080,8 @@ class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _target: Token<Value> | Constructor<Value>,
     private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
-    initialSlot?: SlotKey,
-    initialPredicate?: (ctx: import("#/types").ConstraintContext) => boolean,
   ) {
-    this._slot = initialSlot ?? { ...DEFAULT_SLOT, tags: [] };
-    this._predicate = initialPredicate;
+    this._slot = { ...DEFAULT_SLOT, tags: [] };
     this._doCommit();
   }
 
