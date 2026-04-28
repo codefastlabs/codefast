@@ -37,6 +37,7 @@
  */
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
+import { randomBytes } from "node:crypto";
 
 // ============================================================================
 // Global types
@@ -322,7 +323,7 @@ class TenantUserManager implements UserService {
       throw new Error(`[${this.tenant.tenantId}] API quota exhausted`);
     }
 
-    const newUser: User = { id: `usr_${Math.random().toString(36).slice(2, 9)}`, email, role };
+    const newUser: User = { id: `usr_${randomBytes(8).toString("hex")}`, email, role };
     await this.database.query("INSERT INTO users (id, email, role) VALUES ($1, $2, $3)", [
       newUser.id,
       newUser.email,
@@ -361,7 +362,7 @@ class TenantInviteManager implements InviteService {
       );
     }
 
-    const inviteId = `inv_${Math.random().toString(36).slice(2, 9)}`;
+    const inviteId = `inv_${randomBytes(8).toString("hex")}`;
     await this.database.query("INSERT INTO invites (id, email, tenant_id) VALUES ($1, $2, $3)", [
       inviteId,
       email,
