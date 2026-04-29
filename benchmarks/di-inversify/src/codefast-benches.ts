@@ -12,14 +12,17 @@
  * `Symbol.metadata`. The parent spawns it with `NODE_OPTIONS=--expose-gc
  * --no-warnings NODE_ENV=production`.
  */
-import { collectFingerprint } from "#/harness/fingerprint";
-import { emitSubprocessPayload } from "#/harness/protocol";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { collectFingerprint } from "@codefast/benchmark-harness/fingerprint";
+import { emitSubprocessPayload } from "@codefast/benchmark-harness/protocol";
 import { runSanityChecks } from "#/harness/sanity";
 import { runAllTrials } from "#/harness/trial";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
 const CODEFAST_LIBRARY_NAME = "@codefast/di";
 const CODEFAST_SCENARIO_NAME = "codefast";
+const benchmarkPackageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 async function main(): Promise<void> {
   console.log(`Scenario ${CODEFAST_SCENARIO_NAME} started`);
@@ -28,7 +31,7 @@ async function main(): Promise<void> {
   const trials = await runAllTrials(scenarios, sanityFailures);
 
   emitSubprocessPayload({
-    fingerprint: collectFingerprint(CODEFAST_LIBRARY_NAME),
+    fingerprint: collectFingerprint(CODEFAST_LIBRARY_NAME, benchmarkPackageRootDirectory),
     trials,
     sanityFailures,
   });

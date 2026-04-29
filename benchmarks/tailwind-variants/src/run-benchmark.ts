@@ -7,6 +7,13 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  formatLatencyMeanMilliseconds,
+  formatThroughputOpsPerSecond,
+  formatThroughputRatio,
+} from "@codefast/benchmark-harness/presentation/format";
+import { Bench, Task, type TaskResult } from "tinybench";
+import { BENCH_OPTIONS } from "#/bench-options";
+import {
   createComplexWithMergeBenchmark,
   createComplexWithoutMergeBenchmark,
   createCompoundSlotsWithMergeBenchmark,
@@ -24,8 +31,6 @@ import {
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
 } from "#/benchmarks/index";
-import { BENCH_OPTIONS } from "#/bench-options";
-import { Bench, Task, type TaskResult } from "tinybench";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -107,17 +112,6 @@ function buildCodefastTailwindVariantsPackage(): void {
   );
 }
 
-function formatRatio(numeratorHz: number, denominatorHz: number): string {
-  if (!denominatorHz) {
-    return "—";
-  }
-  return `${(numeratorHz / denominatorHz).toFixed(2)}×`;
-}
-
-function formatHz(value: number): string {
-  return Math.round(value).toLocaleString("en-US");
-}
-
 function shortTaskLabel(taskName: string): string {
   if (taskName === TASK_UPSTREAM) {
     return "tv";
@@ -147,12 +141,12 @@ function formatMeanTriplet(
   upstream: TaskMetrics,
   cva: TaskMetrics | null,
 ): string {
-  const a = codefast.meanMs.toFixed(4);
-  const b = upstream.meanMs.toFixed(4);
+  const a = formatLatencyMeanMilliseconds(codefast.meanMs);
+  const b = formatLatencyMeanMilliseconds(upstream.meanMs);
   if (!cva) {
     return `${a} → ${b}`;
   }
-  const c = cva.meanMs.toFixed(4);
+  const c = formatLatencyMeanMilliseconds(cva.meanMs);
   return `${a} → ${b} → ${c}`;
 }
 
@@ -189,11 +183,11 @@ function printComparisonTable(rows: ScenarioRow[]): void {
 
   const cells = rows.map((row) => ({
     scenario: row.scenarioId,
-    codefast: formatHz(row.codefast.hz),
-    upstream: formatHz(row.upstream.hz),
-    cva: row.cva !== null ? formatHz(row.cva.hz) : "—",
-    ratioTv: formatRatio(row.codefast.hz, row.upstream.hz),
-    ratioCva: row.cva !== null ? formatRatio(row.codefast.hz, row.cva.hz) : "—",
+    codefast: formatThroughputOpsPerSecond(row.codefast.hz),
+    upstream: formatThroughputOpsPerSecond(row.upstream.hz),
+    cva: row.cva !== null ? formatThroughputOpsPerSecond(row.cva.hz) : "—",
+    ratioTv: formatThroughputRatio(row.codefast.hz, row.upstream.hz),
+    ratioCva: row.cva !== null ? formatThroughputRatio(row.codefast.hz, row.cva.hz) : "—",
     mean: formatMeanTriplet(row.codefast, row.upstream, row.cva),
   }));
 

@@ -6,39 +6,17 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { LibraryReport } from "#/harness/report";
-import { buildLibraryReport } from "#/harness/report";
-import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/harness/protocol";
+import type { JsonlBenchObservationRow, LibraryReport } from "@codefast/benchmark-harness/report";
+import { buildLibraryReport } from "@codefast/benchmark-harness/report";
+import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harness/protocol";
+import { quantile, sortAscending } from "@codefast/benchmark-harness/stats/quantiles";
+import {
+  jsonlBenchObservationRowToFingerprint,
+  jsonlBenchObservationRowToScenarioTrialResult,
+} from "@codefast/benchmark-harness/jsonl";
 
 const CODEFAST_LIBRARY = "@codefast/di";
 const INVERSIFY_LIBRARY = "inversify";
-
-interface BenchObservationLine {
-  readonly timestampIso: string;
-  readonly libraryName: string;
-  readonly libraryVersion: string;
-  readonly nodeVersion: string;
-  readonly v8Version: string;
-  readonly platform: string;
-  readonly arch: string;
-  readonly cpuModel: string;
-  readonly cpuCount: number;
-  readonly nodeOptions: string;
-  readonly gcExposed: boolean;
-  readonly trialIndex: number;
-  readonly scenarioId: string;
-  readonly group: string;
-  readonly stress: boolean;
-  readonly batch: number;
-  readonly what: string;
-  readonly hzPerIteration: number;
-  readonly hzPerOp: number;
-  readonly meanMs: number;
-  readonly p75Ms: number;
-  readonly p99Ms: number;
-  readonly p999Ms: number;
-  readonly samples: number;
-}
 
 interface RunPayload {
   readonly folderName: string;
@@ -87,32 +65,6 @@ interface EmbeddedViewerPayload {
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-function sortAscending(values: readonly number[]): number[] {
-  return [...values].sort((left, right) => left - right);
-}
-
-/**
- * Matches `report.ts` (NumPy linear default) so P25–P75 bands match the harness.
- */
-function quantile(sortedValues: readonly number[], q: number): number {
-  if (sortedValues.length === 0) {
-    return 0;
-  }
-  if (sortedValues.length === 1) {
-    return sortedValues[0] ?? 0;
-  }
-  const position = q * (sortedValues.length - 1);
-  const lowerIndex = Math.floor(position);
-  const upperIndex = Math.ceil(position);
-  const lower = sortedValues[lowerIndex] ?? 0;
-  const upper = sortedValues[upperIndex] ?? 0;
-  if (lowerIndex === upperIndex) {
-    return lower;
-  }
-  const fraction = position - lowerIndex;
-  return lower + (upper - lower) * fraction;
-}
-
 function hzTrialSpreadForScenario(
   lines: readonly string[],
   libraryName: string,
@@ -123,7 +75,7 @@ function hzTrialSpreadForScenario(
     if (line.trim().length === 0) {
       continue;
     }
-    const observation = JSON.parse(line) as BenchObservationLine;
+    const observation = JSON.parse(line) as JsonlBenchObservationRow;
     if (
       observation.libraryName !== libraryName ||
       observation.scenarioId !== scenarioId ||
@@ -144,49 +96,16 @@ function hzTrialSpreadForScenario(
   };
 }
 
-function observationToFingerprint(observation: BenchObservationLine): Fingerprint {
-  return {
-    nodeVersion: observation.nodeVersion,
-    v8Version: observation.v8Version,
-    platform: observation.platform,
-    arch: observation.arch,
-    cpuModel: observation.cpuModel,
-    cpuCount: observation.cpuCount,
-    nodeOptions: observation.nodeOptions,
-    gcExposed: observation.gcExposed,
-    libraryName: observation.libraryName,
-    libraryVersion: observation.libraryVersion,
-    timestampIso: observation.timestampIso,
-  };
-}
-
-function observationToScenarioResult(observation: BenchObservationLine): ScenarioTrialResult {
-  return {
-    id: observation.scenarioId,
-    group: observation.group,
-    stress: observation.stress,
-    batch: observation.batch,
-    what: observation.what,
-    hzPerIteration: observation.hzPerIteration,
-    hzPerOp: observation.hzPerOp,
-    meanMs: observation.meanMs,
-    p75Ms: observation.p75Ms,
-    p99Ms: observation.p99Ms,
-    p999Ms: observation.p999Ms,
-    samples: observation.samples,
-  };
-}
-
 function jsonlToLibraryReport(
   lines: readonly string[],
   libraryName: string,
 ): LibraryReport | undefined {
-  const observations: BenchObservationLine[] = [];
+  const observations: JsonlBenchObservationRow[] = [];
   for (const line of lines) {
     if (line.trim().length === 0) {
       continue;
     }
-    const parsed = JSON.parse(line) as BenchObservationLine;
+    const parsed = JSON.parse(line) as JsonlBenchObservationRow;
     if (parsed.libraryName === libraryName) {
       observations.push(parsed);
     }
@@ -194,10 +113,10 @@ function jsonlToLibraryReport(
   if (observations.length === 0) {
     return undefined;
   }
-  const fingerprint = observationToFingerprint(observations[0]!);
+  const fingerprint = jsonlBenchObservationRowToFingerprint(observations[0]!);
   const byTrialIndex = new Map<number, ScenarioTrialResult[]>();
   for (const observation of observations) {
-    const result = observationToScenarioResult(observation);
+    const result = jsonlBenchObservationRowToScenarioTrialResult(observation);
     const list = byTrialIndex.get(observation.trialIndex);
     if (list === undefined) {
       byTrialIndex.set(observation.trialIndex, [result]);
@@ -212,13 +131,13 @@ function jsonlToLibraryReport(
 }
 
 function extractRunMeta(folderName: string, lines: readonly string[]): EmbeddedRun | undefined {
-  let codefastObservation: BenchObservationLine | undefined;
-  let inversifyObservation: BenchObservationLine | undefined;
+  let codefastObservation: JsonlBenchObservationRow | undefined;
+  let inversifyObservation: JsonlBenchObservationRow | undefined;
   for (const line of lines) {
     if (line.trim().length === 0) {
       continue;
     }
-    const observation = JSON.parse(line) as BenchObservationLine;
+    const observation = JSON.parse(line) as JsonlBenchObservationRow;
     if (observation.libraryName === CODEFAST_LIBRARY && codefastObservation === undefined) {
       codefastObservation = observation;
     }
