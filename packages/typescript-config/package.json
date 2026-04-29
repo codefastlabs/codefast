@@ -1,6 +1,6 @@
 {
   "name": "@codefast/typescript-config",
-  "version": "0.3.14-canary.2",
+  "version": "0.3.14",
   "description": "Shared TypeScript configuration for the monorepo",
   "keywords": [
     "browser",
