@@ -1,5 +1,13 @@
 # @codefast/typescript-config
 
+## 0.3.14
+
+### Patch Changes
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
+- [`8c918c3`](https://github.com/codefastlabs/codefast/commit/8c918c36a19e5f25e8b267c6d20af9b882306236) Thanks [@thevuong](https://github.com/thevuong)! - docs(typescript-config): enhance README.md for clarity and structure
+
 ## 0.3.14-canary.2
 
 ## 0.3.14-canary.1
