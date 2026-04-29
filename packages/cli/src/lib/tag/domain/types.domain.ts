@@ -16,10 +16,7 @@ export type TagRunOptions = {
   write: boolean;
 };
 
-export type TagTargetCandidateSource =
-  | "explicit-target"
-  | "workspace-package"
-  | "repo-src-fallback";
+type TagTargetCandidateSource = "explicit-target" | "workspace-package" | "repo-src-fallback";
 
 export type TagTargetSource =
   | "explicit-target"

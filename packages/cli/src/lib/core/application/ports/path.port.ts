@@ -1,4 +1,4 @@
-export type CliPath = {
+export interface CliPath {
   resolve(...paths: string[]): string;
   join(...paths: string[]): string;
   relative(from: string, to: string): string;
@@ -6,4 +6,4 @@ export type CliPath = {
   basename(pathValue: string): string;
   extname(pathValue: string): string;
   readonly separator: string;
-};
+}

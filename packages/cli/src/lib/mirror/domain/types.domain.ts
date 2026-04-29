@@ -10,12 +10,7 @@ export interface ExportEntry {
 export type ExportMapData = Record<string, ExportEntry | string>;
 export type ExportOriginalPathBySpecifier = Record<string, string>;
 
-/**
- * Alias for the exports object shape produced by the mirror engine.
- */
-export type ExportMap = ExportMapData;
-
-export interface ModuleFiles {
+interface ModuleFiles {
   js: string | null;
   mjs: string | null;
   cjs: string | null;

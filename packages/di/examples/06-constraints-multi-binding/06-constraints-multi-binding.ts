@@ -178,9 +178,9 @@ appContainer.bind(OrderServiceToken).to(OrderManager).singleton();
 appContainer.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 
 // Multi-binding: three handlers under the same token
-appContainer.bind(EventHandlerToken).to(LogEventHandler);
-appContainer.bind(EventHandlerToken).to(MetricsEventHandler);
-appContainer.bind(EventHandlerToken).to(AlertEventHandler);
+appContainer.bind(EventHandlerToken).to(LogEventHandler).whenNamed("log");
+appContainer.bind(EventHandlerToken).to(MetricsEventHandler).whenNamed("metrics");
+appContainer.bind(EventHandlerToken).to(AlertEventHandler).whenNamed("alert");
 
 // --- Usage ------------------------------------------------------------------
 
@@ -191,8 +191,8 @@ consoleLoggerInstance.log("hello from console");
 fileLoggerInstance.log("hello from file");
 
 console.log("\n=== Tagged bindings ===");
-const s3Storage = appContainer.resolve(StorageToken, { tag: ["provider", "s3"] });
-const localStorageInstance = appContainer.resolve(StorageToken, { tag: ["provider", "local"] });
+const s3Storage = appContainer.resolve(StorageToken, { tags: [["provider", "s3"]] });
+const localStorageInstance = appContainer.resolve(StorageToken, { tags: [["provider", "local"]] });
 console.log("s3Storage.provider:", s3Storage.provider);
 console.log("localStorage.provider:", localStorageInstance.provider);
 

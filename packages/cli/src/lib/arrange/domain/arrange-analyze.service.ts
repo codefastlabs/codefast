@@ -5,7 +5,7 @@
 
 import { LONG_STRING_TOKEN_THRESHOLD } from "#/lib/arrange/domain/constants.domain";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
+import { tokenizeClassString } from "#/lib/arrange/domain/tailwind-token.value-object";
 import { forEachStringLiteralInClassExpression } from "#/lib/arrange/domain/ast/collectors-cn.collector";
 import { jsxClassNameStaticLiteral } from "#/lib/arrange/domain/ast/collectors-jsx.collector";
 import {

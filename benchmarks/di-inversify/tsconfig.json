@@ -3,7 +3,11 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "noEmit": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
     "types": ["node"]
   },
+  "comment": "Editor-default only. Only includes library-agnostic files so decorator-mode conflicts never surface here. check-types uses the two explicit tsconfigs (codefast / inversify).",
   "include": ["src"]
 }

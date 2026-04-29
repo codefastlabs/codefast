@@ -1,62 +1,144 @@
-import { CODEFAST_DI_LIFECYCLE_METADATA } from "#/metadata/metadata-keys";
-import type { LifecycleMetadata } from "#/metadata/metadata-types";
+import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
+import {
+  LIFECYCLE_KEY,
+  lifecycleByConstructorMetadataMap,
+  lifecycleMetadataMap,
+} from "#/metadata/metadata-keys";
 
-/**
- * Stage 3 method decorator: marks a method to be called after the class is instantiated
- * by the container and before the `onActivation` hook runs.
- *
- * Lifecycle order: `new Class(…)` → **`@postConstruct()`** → `onActivation()` → scope cache.
- *
- * Only one method per class may carry this decorator; a second application throws.
- * If the decorated method returns a `Promise` during synchronous resolution,
- * {@link AsyncResolutionError} is thrown — use `Container.resolveAsync()` instead.
- */
-export function postConstruct(): (
-  target: () => unknown,
-  context: ClassMethodDecoratorContext,
-) => void {
-  return (_target, context) => {
-    const metaRecord = context.metadata as Record<PropertyKey, unknown>;
-    const existing =
-      (metaRecord[CODEFAST_DI_LIFECYCLE_METADATA] as LifecycleMetadata | undefined) ?? {};
-    if (existing.postConstruct !== undefined) {
-      throw new Error(
-        `@postConstruct() is already defined as "${existing.postConstruct}" on this class.`,
-      );
+function appendUniqueMethod(
+  metadata: MutableLifecycleMetadata,
+  phase: "postConstruct" | "preDestroy",
+  methodName: string,
+): void {
+  if (!metadata[phase].includes(methodName)) {
+    metadata[phase].push(methodName);
+  }
+}
+
+function resolveConstructorFromDecoratorTarget(target: unknown): object | undefined {
+  if (typeof target === "function") {
+    return target as object;
+  }
+  if (typeof target === "object" && target !== null) {
+    const ctor = (target as { constructor?: unknown }).constructor;
+    if (typeof ctor === "function") {
+      return ctor as object;
     }
-    metaRecord[CODEFAST_DI_LIFECYCLE_METADATA] = {
-      ...existing,
-      postConstruct: String(context.name),
-    } satisfies Partial<LifecycleMetadata>;
+  }
+  return undefined;
+}
+
+function registerByConstructor(
+  target: unknown,
+  phase: "postConstruct" | "preDestroy",
+  methodName: string,
+): void {
+  const ctor = resolveConstructorFromDecoratorTarget(target);
+  if (ctor === undefined) {
+    return;
+  }
+  const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
+  if (ctorExisting !== undefined) {
+    appendUniqueMethod(ctorExisting, phase, methodName);
+  } else {
+    lifecycleByConstructorMetadataMap.set(ctor, {
+      postConstruct: phase === "postConstruct" ? [methodName] : [],
+      preDestroy: phase === "preDestroy" ? [methodName] : [],
+    });
+  }
+}
+
+export function postConstruct(): (target: unknown, context: ClassMethodDecoratorContext) => void {
+  return function (target: unknown, context: ClassMethodDecoratorContext): void {
+    const methodName = String(context.name);
+    registerByConstructor(target, "postConstruct", methodName);
+    const existing = lifecycleMetadataMap.get(context.metadata as object);
+
+    if (existing !== undefined) {
+      appendUniqueMethod(existing, "postConstruct", methodName);
+    } else {
+      lifecycleMetadataMap.set(context.metadata as object, {
+        postConstruct: [methodName],
+        preDestroy: [],
+      });
+    }
+
+    context.addInitializer(function () {
+      const targetOrInstance = this as object | Function;
+      const ctor =
+        typeof targetOrInstance === "function"
+          ? (targetOrInstance as object)
+          : ((targetOrInstance as { constructor: object }).constructor as object);
+      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
+      if (ctorExisting !== undefined) {
+        appendUniqueMethod(ctorExisting, "postConstruct", methodName);
+      } else {
+        lifecycleByConstructorMetadataMap.set(ctor, {
+          postConstruct: [methodName],
+          preDestroy: [],
+        });
+      }
+    });
+
+    // Also try Symbol.metadata approach
+    try {
+      const meta = context.metadata as Record<string | symbol, unknown>;
+      if (meta !== null && typeof meta === "object") {
+        if (!meta[LIFECYCLE_KEY]) {
+          meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
+        }
+        const lifecycle = meta[LIFECYCLE_KEY] as MutableLifecycleMetadata;
+        appendUniqueMethod(lifecycle, "postConstruct", methodName);
+      }
+    } catch {
+      // ignore
+    }
   };
 }
 
-/**
- * Stage 3 method decorator: marks a method to be called when the container disposes or
- * unloads the owning binding.
- *
- * Lifecycle order: `onDeactivation()` → **`@preDestroy()`**.
- *
- * Only one method per class may carry this decorator; a second application throws.
- * If the decorated method returns a `Promise` during synchronous disposal,
- * an error is thrown — use `Container.disposeAsync()` instead.
- */
-export function preDestroy(): (
-  target: () => unknown,
-  context: ClassMethodDecoratorContext,
-) => void {
-  return (_target, context) => {
-    const metaRecord = context.metadata as Record<PropertyKey, unknown>;
-    const existing =
-      (metaRecord[CODEFAST_DI_LIFECYCLE_METADATA] as LifecycleMetadata | undefined) ?? {};
-    if (existing.preDestroy !== undefined) {
-      throw new Error(
-        `@preDestroy() is already defined as "${existing.preDestroy}" on this class.`,
-      );
+export function preDestroy(): (target: unknown, context: ClassMethodDecoratorContext) => void {
+  return function (target: unknown, context: ClassMethodDecoratorContext): void {
+    const methodName = String(context.name);
+    registerByConstructor(target, "preDestroy", methodName);
+    const existing = lifecycleMetadataMap.get(context.metadata as object);
+
+    if (existing !== undefined) {
+      appendUniqueMethod(existing, "preDestroy", methodName);
+    } else {
+      lifecycleMetadataMap.set(context.metadata as object, {
+        postConstruct: [],
+        preDestroy: [methodName],
+      });
     }
-    metaRecord[CODEFAST_DI_LIFECYCLE_METADATA] = {
-      ...existing,
-      preDestroy: String(context.name),
-    } satisfies Partial<LifecycleMetadata>;
+
+    context.addInitializer(function () {
+      const targetOrInstance = this as object | Function;
+      const ctor =
+        typeof targetOrInstance === "function"
+          ? (targetOrInstance as object)
+          : ((targetOrInstance as { constructor: object }).constructor as object);
+      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
+      if (ctorExisting !== undefined) {
+        appendUniqueMethod(ctorExisting, "preDestroy", methodName);
+      } else {
+        lifecycleByConstructorMetadataMap.set(ctor, {
+          postConstruct: [],
+          preDestroy: [methodName],
+        });
+      }
+    });
+
+    try {
+      const meta = context.metadata as Record<string | symbol, unknown>;
+      if (meta !== null && typeof meta === "object") {
+        if (!meta[LIFECYCLE_KEY]) {
+          meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
+        }
+        const lifecycle = meta[LIFECYCLE_KEY] as MutableLifecycleMetadata;
+        appendUniqueMethod(lifecycle, "preDestroy", methodName);
+      }
+    } catch {
+      // ignore
+    }
   };
 }

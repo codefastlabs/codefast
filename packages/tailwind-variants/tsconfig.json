@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["node", "vitest/globals"],
     "paths": {
-      "#/test/*": ["./tests/*"],
+      "#/tests/*": ["./tests/*"],
       "#/*": ["./src/*"]
     }
   },

@@ -13,9 +13,11 @@ import {
   compositeSecondaryOrder,
   selectorKey,
   stateKey,
+} from "#/lib/arrange/domain/tailwind-token-classifier.domain-service";
+import {
   stripVariants,
   tokenizeClassString,
-} from "#/lib/arrange/domain/tokenizer.util";
+} from "#/lib/arrange/domain/tailwind-token.value-object";
 
 /**
  * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with
@@ -191,7 +193,7 @@ function dynamicMaxGroups(tokenCount: number): number {
  * via `changed = false`. Two mutually-incompatible singletons both hit
  * `continue` and `changed` stays false, so the loop exits without spinning.
  */
-export function mergeSingletons(groups: string[]): string[] {
+function mergeSingletons(groups: string[]): string[] {
   if (groups.length <= 1) {
     return groups;
   }
@@ -273,7 +275,7 @@ function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
  * are well below that, so this is not a concern for the current usage pattern. If this ever
  * runs in a high-throughput batch mode, consider a priority-queue approach.
  */
-export function capGroups(groups: string[], maxGroups: number): string[] {
+function capGroups(groups: string[], maxGroups: number): string[] {
   const result = [...groups];
   const lengths = result.map((groupStr) => tokenizeClassString(groupStr).length);
 
@@ -348,7 +350,7 @@ export function capGroups(groups: string[], maxGroups: number): string[] {
  * skipping intermediate `state` chunks (`sm:…`, `group-data-[…]:…`, etc.) that sit between
  * `ease-ui` and `data-open:animate-*`. If no such chunk exists, the ease chunk is left as-is.
  */
-export function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): string[] {
+function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): string[] {
   const result = [...groups];
   let changed = true;
   while (changed) {

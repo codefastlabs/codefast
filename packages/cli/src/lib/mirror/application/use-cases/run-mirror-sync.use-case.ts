@@ -1,39 +1,42 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import {
   MirrorSyncReporterPortToken,
-  SyncWorkspacePackageServiceToken,
+  SyncWorkspacePackagePortToken,
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/contracts/use-cases.contract";
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CliFs, CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import { CliFsToken, CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { CliFsToken, CliLoggerToken } from "#/lib/core/contracts/tokens";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
 import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
+
 import { formatMirrorSyncJsonOutput } from "#/lib/mirror/application/mirror-sync-json.format";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
-import type { SyncWorkspacePackageService } from "#/lib/mirror/application/ports/sync-workspace-package.port";
+import type { SyncWorkspacePackagePort } from "#/lib/mirror/application/ports/sync-workspace-package.port";
+
+export interface RunMirrorSyncUseCase {
+  execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>>;
+}
 
 @injectable([
-  CliFsToken,
-  CliLoggerToken,
-  WorkspaceServicePortToken,
-  MirrorSyncReporterPortToken,
-  SyncWorkspacePackageServiceToken,
-] as const)
+  inject(CliFsToken),
+  inject(CliLoggerToken),
+  inject(WorkspaceServicePortToken),
+  inject(MirrorSyncReporterPortToken),
+  inject(SyncWorkspacePackagePortToken),
+])
 export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
   constructor(
     private readonly fs: CliFs,
     private readonly logger: CliLogger,
     private readonly workspaceService: WorkspaceServicePort,
     private readonly mirrorReporter: MirrorSyncReporterPort,
-    private readonly syncWorkspacePackage: SyncWorkspacePackageService,
+    private readonly syncWorkspacePackage: SyncWorkspacePackagePort,
   ) {}
 
   async execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>> {
@@ -73,7 +76,6 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
       } else {
         const { relPaths, multiSource } = await this.workspaceService.findWorkspacePackageRelPaths(
           request.rootDir,
-          this.fs,
           json
             ? () => {}
             : (message: string) =>
@@ -125,7 +127,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
 
       return ok(stats);
     } catch (caughtError: unknown) {
-      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+      return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
   }
 }

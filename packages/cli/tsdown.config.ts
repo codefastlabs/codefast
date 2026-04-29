@@ -2,7 +2,7 @@ import swc from "unplugin-swc";
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["src/**/*.ts", "!src/**/*.test.ts"],
+  entry: ["src/**/*.{ts,tsx}", "!src/**/*.{test,bench}.{ts,tsx}"],
   unbundle: true,
   plugins: [
     swc.rollup({

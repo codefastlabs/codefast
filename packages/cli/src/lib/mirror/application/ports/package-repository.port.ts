@@ -1,4 +1,3 @@
-import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,
@@ -8,7 +7,6 @@ import type {
 export interface PackageRepositoryPort {
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string;
   writePackageJsonExportsAtomic(
-    fs: CliFs,
     packageJsonPath: string,
     mergeInput: {
       generatedExports: ExportMapData;

@@ -1,201 +1,216 @@
-import type { Constructor, ResolveHint } from "#/binding";
-import {
-  CODEFAST_DI_ACCESSOR_INJECTIONS,
-  CODEFAST_DI_INJECT_ACCESSOR_FACTORY,
-} from "#/metadata/metadata-keys";
-import type { AccessorInjectionMetadata, InjectionDescriptor } from "#/metadata/metadata-types";
-import { InternalError } from "#/errors";
+import type { Constructor } from "#/types";
 import type { Token } from "#/token";
+import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
+import { MissingContainerContextError } from "#/errors";
+import { getActiveContainer } from "#/environment";
+import { injectableSlotToResolveOptions } from "#/resolve-options";
 
-/**
- * Name/tag hint forwarded to the container when resolving an injected dependency.
- * Alias for {@link ResolveHint}; used as the second parameter of {@link inject} and {@link optional}.
- */
-export type InjectOptions = ResolveHint;
+// ── InjectionDescriptor ───────────────────────────────────────────────────────
 
-/**
- * Validates and normalises the `tag` option from {@link InjectOptions}; throws {@link InternalError} on bad input.
- */
-function normalizeTag(tag: ResolveHint["tag"] | undefined): InjectionDescriptor["tag"] | undefined {
-  if (tag === undefined) {
-    return undefined;
-  }
-  if (!Array.isArray(tag) || tag.length !== 2) {
-    throw new InternalError(
-      `@inject tag must be a tuple [tagKey, value] with length 2; received ${String(tag)}`,
-    );
-  }
-  const [tagName, value] = tag;
-  if (typeof tagName !== "string") {
-    throw new InternalError(`@inject tag key must be a string; received ${typeof tagName}`);
-  }
-  return [tagName, value];
+export interface InjectOptions {
+  name?: string;
+  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
 
-/**
- * Builds an {@link InjectionDescriptor} from a token, optional flag, and raw inject options.
- */
-function toDescriptor<Value>(
-  token: Token<Value> | Constructor<Value>,
-  optional: boolean,
-  options: InjectOptions | undefined,
-): InjectionDescriptor<Value> {
-  const normalizedTag = normalizeTag(options?.tag);
-  if (options?.name !== undefined) {
-    return { token, optional, name: options.name };
-  }
-  if (normalizedTag !== undefined) {
-    return { token, optional, tag: normalizedTag };
-  }
-  return { token, optional };
+export interface InjectionDescriptor<Value = unknown> {
+  readonly token: Token<Value> | Constructor<Value>;
+  readonly optional: boolean;
+  readonly multi: boolean;
+  readonly name?: string;
+  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
 }
 
-/**
- * Type guard — returns `true` when `value` is a TC39 `ClassAccessorDecoratorContext` (accessor field).
- */
-function isAccessorDecoratorContext(value: unknown): value is ClassAccessorDecoratorContext {
+export type InjectableDependency<Value = unknown> =
+  | Token<Value>
+  | Constructor<Value>
+  | InjectionDescriptor<Value>;
+
+export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
+  if (value === null || value === undefined) {
+    return false;
+  }
+  const type = typeof value;
+  // inject() returns a function (dual-role), so must check both object and function
+  if (type !== "object" && type !== "function") {
+    return false;
+  }
   return (
-    typeof value === "object" &&
-    value !== null &&
-    "kind" in value &&
-    (value as { kind: unknown }).kind === "accessor"
+    "token" in (value as object) &&
+    "optional" in (value as object) &&
+    "multi" in (value as object) &&
+    typeof (value as InjectionDescriptor).optional === "boolean" &&
+    typeof (value as InjectionDescriptor).multi === "boolean"
   );
 }
 
-function pushAccessorInjectionMetadata(
-  token: Token<unknown> | Constructor<unknown>,
-  ctx: ClassAccessorDecoratorContext,
-): void {
-  const metaRecord = ctx.metadata as Record<PropertyKey, unknown>;
-  const key = CODEFAST_DI_ACCESSOR_INJECTIONS;
-  if (!Array.isArray(metaRecord[key])) {
-    metaRecord[key] = [];
+export function normalizeToDescriptor(dep: InjectableDependency): InjectionDescriptor {
+  if (isInjectionDescriptor(dep)) {
+    return materializeInjectionDescriptor(dep);
   }
-  (metaRecord[key] as AccessorInjectionMetadata[]).push({
-    name: String(ctx.name),
-    token,
-    optional: false,
-  });
+  return { token: dep as Token<unknown> | Constructor, optional: false, multi: false };
 }
 
 /**
- * SWC / TS emit `@inject(token) accessor` as `inject(token)(initial, context)` — the one-arg
- * `inject(token)` path therefore returns a callable merged with the deps-array descriptor shape.
+ * Dual-role `inject()` values are functions: [[Function]].name must not be treated as a DI slot name.
+ * Only enumerable own `name` / `tags` from `Object.defineProperties` are real injection options.
  */
-function withAccessorDecoratorFallback<Value>(
-  token: Token<Value> | Constructor<Value>,
-  descriptor: InjectionDescriptor<Value>,
-): InjectionDescriptor<Value> {
-  const run = (_value: unknown, context: unknown): void => {
-    if (!isAccessorDecoratorContext(context)) {
-      const kind =
-        typeof context === "object" && context !== null && "kind" in context
-          ? String((context as { kind: unknown }).kind)
-          : typeof context;
-      throw new InternalError(
-        `inject(...) must be used as an \`accessor\` field decorator when used with one argument, or as an entry in @injectable([...deps]). Received decorator context kind "${kind}".`,
-      );
-    }
-    pushAccessorInjectionMetadata(token as Token<unknown> | Constructor<unknown>, context);
+function materializeInjectionDescriptor(dep: InjectionDescriptor): InjectionDescriptor {
+  if (typeof dep !== "function") {
+    return dep;
+  }
+  const dualRole = dep as InjectionDescriptor & ((...args: unknown[]) => unknown);
+  const base: Pick<InjectionDescriptor<unknown>, "token" | "optional" | "multi"> = {
+    token: dualRole.token,
+    optional: dualRole.optional,
+    multi: dualRole.multi,
   };
-  return Object.assign(run, descriptor, {
-    [CODEFAST_DI_INJECT_ACCESSOR_FACTORY]: true as const,
-  }) as InjectionDescriptor<Value>;
+  const nameDesc = Object.getOwnPropertyDescriptor(dualRole, "name");
+  const tagsDesc = Object.getOwnPropertyDescriptor(dualRole, "tags");
+  const explicitName =
+    nameDesc?.enumerable === true && typeof nameDesc.value === "string"
+      ? nameDesc.value
+      : undefined;
+  const explicitTags = tagsDesc?.enumerable === true ? tagsDesc.value : undefined;
+
+  if (explicitName !== undefined && explicitTags !== undefined) {
+    return {
+      ...base,
+      name: explicitName,
+      tags: explicitTags as NonNullable<InjectionDescriptor["tags"]>,
+    };
+  }
+  if (explicitName !== undefined) {
+    return { ...base, name: explicitName };
+  }
+  if (explicitTags !== undefined) {
+    return { ...base, tags: explicitTags as NonNullable<InjectionDescriptor["tags"]> };
+  }
+  return base;
 }
 
-/**
- * Dual-purpose injection helper:
- *
- * **1. As a deps-array entry** — returns an {@link InjectionDescriptor} carrying the token,
- * optional flag (`false`), and any name/tag hint. Used inside `@injectable([...deps])`.
- *
- * ```ts
- * @injectable([inject(Logger, { name: 'file' })])
- * class UserService { constructor(log: Logger) {} }
- * ```
- *
- * **2. As a Stage 3 accessor decorator** — writes accessor-injection metadata into
- * `Symbol.metadata` and returns a no-op sentinel. The container performs the actual
- * injection after construction.
- *
- * ```ts
- * @inject(Logger) accessor logger!: LoggerService;
- * ```
- *
- * @param token - The injection key (token or constructor) to resolve.
- * @param optionsOrContext - Either an {@link InjectOptions} hint or the TC39
- *   `ClassAccessorDecoratorContext` automatically supplied by the runtime.
- */
-export function inject<Value>(
-  token: Token<Value> | Constructor<Value>,
-  optionsOrContext?: InjectOptions | ClassAccessorDecoratorContext,
+function buildInjectionDescriptor<const Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
 ): InjectionDescriptor<Value> {
-  if (isAccessorDecoratorContext(optionsOrContext)) {
-    pushAccessorInjectionMetadata(token as Token<unknown> | Constructor<unknown>, optionsOrContext);
-    return undefined as unknown as InjectionDescriptor<Value>;
+  const base: Pick<InjectionDescriptor<Value>, "token" | "optional" | "multi"> = {
+    token: t,
+    optional: false,
+    multi: false,
+  };
+  if (options?.name !== undefined && options.tags !== undefined) {
+    return { ...base, name: options.name, tags: options.tags };
   }
-  if (
-    typeof optionsOrContext === "object" &&
-    optionsOrContext !== null &&
-    "kind" in optionsOrContext
-  ) {
-    const decoratorKind = (optionsOrContext as { kind: unknown }).kind;
-    if (decoratorKind !== undefined && !isAccessorDecoratorContext(optionsOrContext)) {
-      const decoratorKindLabel =
-        typeof decoratorKind === "string"
-          ? decoratorKind
-          : typeof decoratorKind === "symbol"
-            ? decoratorKind.toString()
-            : typeof decoratorKind === "number" || typeof decoratorKind === "boolean"
-              ? String(decoratorKind)
-              : decoratorKind === null
-                ? "null"
-                : "object";
-      throw new InternalError(
-        `@inject(...) only supports TC39 \`accessor\` field targets (not plain fields or methods). Received decorator context kind "${decoratorKindLabel}".`,
-      );
+  if (options?.name !== undefined) {
+    return { ...base, name: options.name };
+  }
+  if (options?.tags !== undefined) {
+    return { ...base, tags: options.tags };
+  }
+  return base;
+}
+
+// ── inject() — dual-role ──────────────────────────────────────────────────────
+
+type ClassAccessorDecorator<This, Value> = (
+  target: ClassAccessorDecoratorTarget<This, Value>,
+  context: ClassAccessorDecoratorContext<This, Value>,
+) => ClassAccessorDecoratorResult<This, Value> | void;
+
+export function inject<const Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {
+  const descriptor = buildInjectionDescriptor(t, options);
+
+  const decoratorFn = (
+    _target: ClassAccessorDecoratorTarget<unknown, Value>,
+    context: ClassAccessorDecoratorContext<unknown, Value>,
+  ): ClassAccessorDecoratorResult<unknown, Value> => {
+    const meta = context.metadata as Record<string | symbol, unknown>;
+    if (!Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
+      meta[INJECT_ACCESSOR_KEY] = [];
     }
+    (
+      meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>
+    ).push({
+      key: context.name,
+      descriptor,
+    });
+
+    context.addInitializer(function (this: unknown) {
+      const container = getActiveContainer();
+      if (container === undefined) {
+        throw new MissingContainerContextError(String(context.name));
+      }
+      const hint =
+        options === undefined
+          ? undefined
+          : injectableSlotToResolveOptions({
+              ...(options.name !== undefined ? { name: options.name } : {}),
+              ...(options.tags !== undefined ? { tags: options.tags } : {}),
+            });
+      const value = descriptor.optional
+        ? container.resolveOptional(t, hint)
+        : container.resolve(t, hint);
+      context.access.set(this, value as Value);
+    });
+
+    return {};
+  };
+
+  // Use defineProperties to handle read-only `name` property of functions
+  const props: PropertyDescriptorMap = {};
+  for (const key of Object.keys(descriptor) as Array<keyof typeof descriptor>) {
+    props[key] = { value: descriptor[key], writable: true, enumerable: true, configurable: true };
   }
-  const descriptor = toDescriptor(token, false, optionsOrContext as InjectOptions | undefined);
-  if (optionsOrContext === undefined) {
-    return withAccessorDecoratorFallback(token, descriptor);
-  }
-  return descriptor;
+  Object.defineProperties(decoratorFn, props);
+
+  return decoratorFn as unknown as InjectionDescriptor<Value> &
+    ClassAccessorDecorator<unknown, Value>;
 }
 
-/**
- * Same as {@link inject} but marks the dependency as optional (`InjectionDescriptor.optional = true`).
- * During resolution, an unbound token resolves to `undefined` instead of throwing
- * {@link TokenNotBoundError}. Only usable as a deps-array entry (not as an accessor decorator).
- */
-export function optional<Value>(
-  token: Token<Value> | Constructor<Value>,
+// ── optional() ────────────────────────────────────────────────────────────────
+
+export function optional<const Value>(
+  t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
-): InjectionDescriptor<Value> {
-  return toDescriptor(token, true, options);
-}
-
-/**
- * Deps-array helper for `@injectable()`: injects **all** bindings registered for `token`
- * (same semantics as {@link Container.resolveAll} / {@link ResolutionContext.resolveAll}).
- * Use for multi-binding — constructor parameter type should be `T[]` (or a readonly array).
- *
- * Optional {@link InjectOptions.name} / `tag` narrow which bindings are collected (unusual; most
- * callers omit options and register disambiguators on each binding instead).
- */
-export function injectAll<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value> {
-  return { ...toDescriptor(token, false, options), isInjectAllBindings: true as const };
-}
-
-/**
- * Type-guard — returns `true` when `value` is an {@link InjectionDescriptor}.
- */
-export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
-  if (value === null || (typeof value !== "object" && typeof value !== "function")) {
-    return false;
+): InjectionDescriptor<Value | undefined> {
+  const base: Pick<InjectionDescriptor<Value | undefined>, "token" | "optional" | "multi"> = {
+    token: t as Token<Value | undefined> | Constructor<Value | undefined>,
+    optional: true,
+    multi: false,
+  };
+  if (options?.name !== undefined && options.tags !== undefined) {
+    return { ...base, name: options.name, tags: options.tags };
   }
-  return "token" in value && "optional" in value;
+  if (options?.name !== undefined) {
+    return { ...base, name: options.name };
+  }
+  if (options?.tags !== undefined) {
+    return { ...base, tags: options.tags };
+  }
+  return base;
+}
+
+// ── injectAll() ───────────────────────────────────────────────────────────────
+
+export function injectAll<const Value>(
+  t: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value[]> {
+  const base: Pick<InjectionDescriptor<Value[]>, "token" | "optional" | "multi"> = {
+    token: t as Token<Value[]> | Constructor<Value[]>,
+    optional: false,
+    multi: true,
+  };
+  if (options?.name !== undefined && options.tags !== undefined) {
+    return { ...base, name: options.name, tags: options.tags };
+  }
+  if (options?.name !== undefined) {
+    return { ...base, name: options.name };
+  }
+  if (options?.tags !== undefined) {
+    return { ...base, tags: options.tags };
+  }
+  return base;
 }

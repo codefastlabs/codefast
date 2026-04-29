@@ -1,52 +1,41 @@
-import type { ContainerGraphJson } from "#/inspector";
-import type { StaticDependencyEdge } from "#/dependency-graph";
-import type { CytoscapeEdge, CytoscapeGraphJson, CytoscapeNode } from "#/graph-adapters/types";
+import type { ContainerGraphJson } from "#/dependency-graph";
 
-/**
- * Converts the canonical container graph JSON into Cytoscape elements format.
- */
-export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeGraphJson {
-  const nodes: CytoscapeNode[] = graph.nodes.map((node) => ({
-    data: {
-      id: node.bindingId,
-      label: node.registryKeyLabel,
-      bindingId: node.bindingId,
-      kind: node.kind,
-      scope: node.scope,
-      activationStatus: node.activationStatus,
-      hasConditionalConstraint: node.hasConditionalConstraint,
-      ...(node.moduleId === undefined ? {} : { moduleId: node.moduleId }),
-    },
-  }));
-
-  const edges: CytoscapeEdge[] = graph.edges.map((edge) => ({
-    data: {
-      id: edgeIdForCytoscape(edge),
-      source: edge.fromBindingId,
-      target: edge.toBindingId,
-      edgeKind: edge.edgeKind,
-      ...(edge.injectHintLabel === undefined ? {} : { injectHintLabel: edge.injectHintLabel }),
-      isToBindingConditional: edge.isToBindingConditional,
-      isAliasEdge: edge.isAliasEdge,
-      resolutionPath: [...edge.resolutionPath],
-    },
-  }));
-
-  return {
-    elements: {
-      nodes,
-      edges,
-    },
-  };
+export interface CytoscapeNode {
+  data: { id: string; label: string; kind: string; scope: string; fromParent: boolean };
 }
 
-/**
- * Produces a stable Cytoscape edge id from edge metadata.
- */
-function edgeIdForCytoscape(edge: StaticDependencyEdge): string {
-  const hint = edge.injectHintLabel ?? "";
-  const conditional = edge.isToBindingConditional ? "conditional" : "plain";
-  const alias = edge.isAliasEdge ? "alias" : "direct";
-  const path = edge.resolutionPath.join("->");
-  return `${edge.fromBindingId}->${edge.toBindingId}:${edge.edgeKind}:${hint}:${conditional}:${alias}:${path}`;
+export interface CytoscapeEdge {
+  data: { id: string; source: string; target: string; label?: string };
+}
+
+export type CytoscapeElements = Array<CytoscapeNode | CytoscapeEdge>;
+
+export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
+  const elements: CytoscapeElements = [];
+
+  for (const node of graph.nodes) {
+    elements.push({
+      data: {
+        id: node.id,
+        label: node.tokenName,
+        kind: node.kind,
+        scope: node.scope,
+        fromParent: node.fromParent,
+      },
+    });
+  }
+
+  graph.edges.forEach((edge, idx) => {
+    const data: CytoscapeEdge["data"] = {
+      id: `edge-${idx}`,
+      source: edge.from,
+      target: edge.to,
+    };
+    if (edge.label !== undefined) {
+      data.label = edge.label;
+    }
+    elements.push({ data });
+  });
+
+  return elements;
 }

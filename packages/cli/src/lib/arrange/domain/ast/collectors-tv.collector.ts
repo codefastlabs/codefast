@@ -21,7 +21,7 @@ import {
   isUnsafeLiteralForCnStyleApplySplit,
 } from "#/lib/arrange/domain/ast/collectors-cn.collector";
 import type { StringNode, TailwindClassLiteral } from "#/lib/arrange/domain/types.domain";
-import { tokenizeClassString } from "#/lib/arrange/domain/tokenizer.util";
+import { tokenizeClassString } from "#/lib/arrange/domain/tailwind-token.value-object";
 import {
   buildKnownCnTvBindings,
   isCnOrTvIdentifier,
@@ -197,7 +197,7 @@ export function listAllCnCallsInsideTvInSourceFile(
   return calls;
 }
 
-export function makeStringNode(
+function makeStringNode(
   nodes: TailwindClassLiteral[],
   sourceFile: DomainSourceFile,
   isTvContext: boolean,
@@ -222,7 +222,7 @@ export function slotClassString(stringNode: StringNode): string {
   return stringNode.nodes.map((literal) => literal.text).join(" ");
 }
 
-export function emitTvSlot(
+function emitTvSlot(
   lits: TailwindClassLiteral[],
   sourceFile: DomainSourceFile,
   cnCall: DomainCallExpression | undefined,
@@ -253,7 +253,7 @@ export function emitTvSlot(
   results.push(makeStringNode(lits, sourceFile, true, cnCall));
 }
 
-export function collectTvSlots(
+function collectTvSlots(
   sourceFile: DomainSourceFile,
   obj: DomainObjectLiteralExpression,
   knownBindings: Set<string>,

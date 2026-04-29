@@ -17,7 +17,7 @@ The example answers: _“How do I organize a non-trivial product into modules, l
 
 `bootstrap()` builds **one** root container from **three sibling modules** (none of them `import`s the others at module level—merge happens in `fromModulesAsync`):
 
-- **InfraModule** (`Module.createAsync`): config + logger + id generator + DB/Redis/S3/ES/EventBus.
+- **InfrastructureModule** (`Module.createAsync`): config + logger + id generator + DB/Redis/S3/ES/EventBus.
 - **PaymentModule** (`Module.create`): named gateways + `PaymentProcessor` / `PaymentServiceToken`.
 - **AppModule** (`Module.create`): imports domain modules below, binds placeholder `SessionToken`, registers **scoped** `CheckoutOrchestrator`.
 
@@ -25,7 +25,7 @@ The example answers: _“How do I organize a non-trivial product into modules, l
 flowchart TB
   subgraph Merge["One root container = merge of three modules"]
     direction LR
-    Infra[InfraModule async]
+    Infra[InfrastructureModule async]
     Pay[PaymentModule]
     App[AppModule]
   end
@@ -47,7 +47,7 @@ flowchart TB
   ORD -->|builder.import| SHP
 ```
 
-`InfraModule`, `PaymentModule`, and `AppModule` are **not** linked by `builder.import` to each other; the container **merges** their binding tables. Domain services and `CheckoutOrchestrator` then **resolve** tokens that were registered in `InfraModule` (e.g. `DatabaseToken`, `LoggerToken`, `RedisToken`, `EventBusToken`) or `PaymentModule` (`PaymentServiceToken`, gateways) alongside tokens from the `AppModule` subtree.
+`InfrastructureModule`, `PaymentModule`, and `AppModule` are **not** linked by `builder.import` to each other; the container **merges** their binding tables. Domain services and `CheckoutOrchestrator` then **resolve** tokens that were registered in `InfrastructureModule` (e.g. `DatabaseToken`, `LoggerToken`, `RedisToken`, `EventBusToken`) or `PaymentModule` (`PaymentServiceToken`, gateways) alongside tokens from the `AppModule` subtree.
 
 ## 2. Bootstrap sequence
 
@@ -60,11 +60,11 @@ sequenceDiagram
   participant DB as MockDatabase
   participant R as MockRedis
 
-  Main->>C: await fromModulesAsync(InfraModule, PaymentModule, AppModule)
+  Main->>C: await fromModulesAsync(InfrastructureModule, PaymentModule, AppModule)
   Note right of C: Infra async builder: loadAppConfig + register binds<br/>Payment + App sync builders: register binds<br/>No checkout request yet
 
   Main->>C: await initializeAsync()
-  Note over C,DB: First touch of infra singletons runs hooks
+  Note over C,DB: First touch of infrastructure singletons runs hooks
   C->>DB: onActivation → connect()
   C->>R: onActivation → connect()
   Note right of C: Other singletons resolve too e.g. PricingManager @postConstruct warm-up
@@ -144,7 +144,7 @@ Each concurrent “request” in `main()` calls `rootContainer.createChild()`, r
 
 | Feature                                                  | Where it shows up                                   |
 | -------------------------------------------------------- | --------------------------------------------------- |
-| `Module.createAsync` + `onActivation` / `onDeactivation` | `InfraModule` for DB/Redis lifecycle                |
+| `Module.createAsync` + `onActivation` / `onDeactivation` | `InfrastructureModule` for DB/Redis lifecycle       |
 | `Module.create` + `builder.import`                       | Catalog/Cart diamond (Cart imports Catalog)         |
 | Named multi-bindings + `injectAll`                       | Payments, shipping, notifications                   |
 | Scoped services + `createChild`                          | `CheckoutOrchestrator` + per-request `SessionToken` |

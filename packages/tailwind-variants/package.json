@@ -36,7 +36,7 @@
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "imports": {
-    "#/test/*": [
+    "#/tests/*": [
       "./tests/*",
       "./tests/*.ts",
       "./tests/*.tsx",
