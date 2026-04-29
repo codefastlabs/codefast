@@ -1,5 +1,14 @@
 # @codefast/ui
 
+## 0.3.14-canary.2
+
+### Patch Changes
+
+- [`4957e0e`](https://github.com/codefastlabs/codefast/commit/4957e0e8b4b2428447ef11380397b03deef0b092) Thanks [@thevuong](https://github.com/thevuong)! - fix(vitest): update test file patterns to use .test extension
+
+- Updated dependencies [[`4957e0e`](https://github.com/codefastlabs/codefast/commit/4957e0e8b4b2428447ef11380397b03deef0b092)]:
+  - @codefast/tailwind-variants@0.3.14-canary.2
+
 ## 0.3.14-canary.1
 
 ### Patch Changes
