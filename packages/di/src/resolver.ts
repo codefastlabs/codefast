@@ -52,18 +52,28 @@ export class DependencyResolver {
   private readonly _frameByBindingId = new Map<BindingIdentifier, MaterializationFrame>();
   private readonly _syncResolutionContextPool: DefaultResolutionContext[] = [];
   // Deep-path state for _resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
-  // - _deepCycleIds: class-level Set replaces BINDING_CYCLE_KEY symbol-on-array, saving per-call
-  //   symbol reads and nullable-Set patterns. Populated from materializationStack at the threshold
-  //   boundary; cleared when _deepActiveLevels returns to 0.
-  // - _deepActiveLevels: tracks how many deep levels are currently on the call stack so we know
-  //   when the deep portion has fully unwound and can clear _deepCycleIds / _deepSyncCtxPath.
-  // - _deepSyncCtx / _deepSyncCtxPath: single shared context for the deep chain; avoids one
+  //
+  // Cycle detection — generation-based marking (replaces Set<BindingIdentifier>):
+  //   _deepCycleMarks: Map<BindingIdentifier, generation> records which bindings are "in flight"
+  //     during the current deep chain.  A binding is considered "active" when its recorded
+  //     generation matches _deepCycleGen.
+  //   _deepCycleGen: monotonically incremented at the start of each new deep chain.  This acts
+  //     as an implicit bulk-clear: old marks from a previous chain have a stale generation number
+  //     and are treated as absent — no explicit Map.delete or Map.clear is needed at all.
+  //     Eliminating the per-level Map.delete call (was ~10 ns × 480 levels) is the primary
+  //     motivation for this design.
+  //
+  // _deepActiveLevels: tracks how many deep levels are currently on the call stack so we know
+  //   when the deep portion has fully unwound and can reset _deepSyncCtxPath.
+  //
+  // _deepSyncCtx / _deepSyncCtxPath: single shared context for the deep chain; avoids one
   //   per-depth pool reset (5 property writes) for every level beyond the threshold.
   //   materializationStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
   //   Trade-off: ctx.graph.materializationStack only reflects the first RESOLUTION_SET_THRESHOLD
   //   frames; code relying on ctx.graph.parent inside a deep transient-dynamic factory will see
   //   the frame at the threshold boundary, not the current depth.
-  private readonly _deepCycleIds = new Set<BindingIdentifier>();
+  private readonly _deepCycleMarks = new Map<BindingIdentifier, number>();
+  private _deepCycleGen = 0;
   private _deepActiveLevels = 0;
   private _deepSyncCtx: DefaultResolutionContext | undefined;
   private _deepSyncCtxPath: string[] | undefined;
@@ -1381,12 +1391,14 @@ export class DependencyResolver {
       return this._resolveTransientDynamicSyncSlow(binding, resolutionPath, materializationStack);
     }
 
-    // First deep level: seed the cycle Set from the shallow-path frames already on the
+    // First deep level: bump the generation (implicitly clearing all stale cycle marks from
+    // previous chains), seed the marks with the shallow-path frames already on the
     // materialization stack, then initialise (or reset) the shared context once for the
     // whole deep chain.
     if (this._deepActiveLevels === 0) {
+      const gen = ++this._deepCycleGen;
       for (const stackFrame of materializationStack) {
-        this._deepCycleIds.add(stackFrame.bindingId);
+        this._deepCycleMarks.set(stackFrame.bindingId, gen);
       }
       let ctx = this._deepSyncCtx;
       if (ctx === undefined) {
@@ -1408,11 +1420,11 @@ export class DependencyResolver {
       this._deepSyncCtxPath = resolutionPath;
     }
 
-    if (this._deepCycleIds.has(binding.id)) {
+    if (this._deepCycleMarks.get(binding.id) === this._deepCycleGen) {
       throw new CircularDependencyError([...resolutionPath, tokenName(binding.token)]);
     }
 
-    this._deepCycleIds.add(binding.id);
+    this._deepCycleMarks.set(binding.id, this._deepCycleGen);
     this._deepActiveLevels++;
 
     try {
@@ -1423,11 +1435,9 @@ export class DependencyResolver {
       }
       return dynamicResult;
     } finally {
-      this._deepCycleIds.delete(binding.id);
+      // No Map.delete needed: the generation counter makes old marks invisible.
+      // Only reset the path pointer when the last deep level unwinds.
       if (--this._deepActiveLevels === 0) {
-        // Deep portion fully unwound — clear Set and path pointer so the next root call
-        // (which creates a fresh resolutionPath array) triggers a clean re-initialisation.
-        this._deepCycleIds.clear();
         this._deepSyncCtxPath = undefined;
       }
     }
