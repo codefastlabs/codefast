@@ -1,4 +1,4 @@
-import { injectable } from "@codefast/di";
+import { inject, injectable } from "@codefast/di";
 import {
   TagSinceWriterPortToken,
   TagTargetResolverPortToken,
@@ -6,16 +6,15 @@ import {
   TypeScriptTreeWalkPortToken,
 } from "#/lib/tag/contracts/tokens";
 import type { TagSyncExecutionInput } from "#/lib/tag/contracts/models";
-import type { RunTagSyncUseCase } from "#/lib/tag/contracts/use-cases.contract";
-import type { AppError } from "#/lib/core/domain/errors.domain";
-import { appError } from "#/lib/core/domain/errors.domain";
+import { runTagOnTarget } from "#/lib/tag/application/services/tag-target-runner.service";
+import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/lib/config/domain/schema.domain";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
-import { CliFsToken, CliPathToken } from "#/lib/core/operational/contracts/tokens";
-import { messageFromCaughtUnknown } from "#/lib/core/application/utils/caught-unknown-message.util";
+import { CliFsToken, CliPathToken } from "#/lib/core/contracts/tokens";
+import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
 import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-resolver.port";
@@ -26,53 +25,12 @@ import type {
   TagTargetCandidate,
   TagTargetSource,
   TagResolvedTarget,
-  TagRunOptions,
-  TagRunResult,
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/lib/tag/domain/types.domain";
 
-export function resolveNearestPackageVersion(
-  targetPath: string,
-  fs: CliFs,
-  versionResolver: TagVersionResolverPort,
-): string {
-  return versionResolver.resolveNearestPackageVersion(targetPath, fs);
-}
-
-export function runTagOnTarget(
-  targetPath: string,
-  opts: TagRunOptions,
-  fs: CliFs,
-  pathService: CliPath,
-  versionResolver: TagVersionResolverPort,
-  sinceWriter: TagSinceWriterPort,
-  typeScriptTreeWalk: TypeScriptTreeWalkPort,
-): TagRunResult {
-  const resolvedTarget = pathService.resolve(targetPath);
-  const version = resolveNearestPackageVersion(resolvedTarget, fs, versionResolver);
-
-  const files = fs.statSync(resolvedTarget).isDirectory()
-    ? typeScriptTreeWalk.walkTsxFiles(resolvedTarget, fs)
-    : [resolvedTarget];
-  const tsFiles = files.filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
-
-  const fileResults = tsFiles.map((filePath) =>
-    sinceWriter.applySinceTagsToFile(filePath, version, fs, opts.write),
-  );
-  const filesChanged = fileResults.filter((result) => result.changed).length;
-  const taggedDeclarations = fileResults.reduce(
-    (sum, result) => sum + result.taggedDeclarations,
-    0,
-  );
-
-  return {
-    version,
-    filesScanned: tsFiles.length,
-    filesChanged,
-    taggedDeclarations,
-    fileResults,
-  };
+export interface RunTagSyncUseCase {
+  execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
 }
 
 async function runTagOnAfterWriteHook(
@@ -242,13 +200,13 @@ async function runOnResolvedTarget(
  * Returns structured execution data; presentation/logging belongs to command layer.
  */
 @injectable([
-  CliFsToken,
-  CliPathToken,
-  TagTargetResolverPortToken,
-  TypeScriptTreeWalkPortToken,
-  TagVersionResolverPortToken,
-  TagSinceWriterPortToken,
-] as const)
+  inject(CliFsToken),
+  inject(CliPathToken),
+  inject(TagTargetResolverPortToken),
+  inject(TypeScriptTreeWalkPortToken),
+  inject(TagVersionResolverPortToken),
+  inject(TagSinceWriterPortToken),
+])
 export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
   constructor(
     private readonly fs: CliFs,
@@ -265,7 +223,6 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
       const targetCandidates = await this.targetResolver.resolveTagTargetCandidates(
         input.rootDir,
         input.targetPath,
-        this.fs,
       );
       const { includedCandidates, skippedPackages } = filterSkippedCandidates(
         targetCandidates,
@@ -329,7 +286,7 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
         hookError,
       });
     } catch (caughtError: unknown) {
-      return err(appError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+      return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
   }
 }

@@ -1,55 +1,89 @@
-/**
- * `@codefast/di` — Lightweight dependency-injection primitives for TypeScript.
- *
- * Start with {@link Container.create} to build a root container, register bindings via
- * {@link Container.bind} or {@link Module}, and resolve values with {@link Container.resolve}.
- *
- * This barrel re-exports every public symbol; individual subpath exports
- * (e.g. `@codefast/di/token`, `@codefast/di/errors`) are also available for tree-shaking.
- *
- * @packageDocumentation
- */
-
-// Token
-export { token } from "#/token";
-export type { Token, TokenValue } from "#/token";
-
-// Container
-export { Container } from "#/container";
-
-// Binding — types consumers need when writing modules or typed helpers
+// Foundation types
 export type {
   ActivationHandler,
-  BindingBuilder,
   BindingIdentifier,
+  BindingKind,
   BindingScope,
   ConstraintContext,
   Constructor,
+  DependencyKey,
   DeactivationHandler,
+  MaterializationFrame,
   ResolveOptions,
+  ResolutionContext,
+  TokenValue,
+} from "#/types";
+
+// Token
+export { token } from "#/token";
+export type { Token } from "#/token";
+
+// Binding builders — types only
+export type {
+  AliasBindingBuilder,
+  BindToBuilder,
+  BindingBuilder,
+  ConstantBindingBuilder,
+  ScopedBindingBuilder,
+  SingletonBindingBuilder,
+  SingletonLifecycleBuilder,
+  TransientBindingBuilder,
 } from "#/binding";
 
+// Container
+export { Container } from "#/container";
+export type { Container as ContainerInterface, ContainerStatic } from "#/container";
+
+export { effectiveBindingScope } from "#/binding-scope";
+export { injectableSlotToResolveOptions, slotKeyToResolveOptions } from "#/resolve-options";
+
+// Introspection types
+export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
+
+// Graph types
+export type {
+  ContainerGraphJson,
+  GraphEdge,
+  GraphNode,
+  GraphOptions,
+} from "#/graph-adapters/types";
+
 // Module
-export { AsyncModule, Module } from "#/module";
+export { AsyncModule, Module, SyncModule } from "#/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
 
 // Decorators
 export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
-export type { InjectOptions } from "#/decorators/inject";
-export { getAutoRegistered, injectable } from "#/decorators/injectable";
-export type { InjectableDependency } from "#/decorators/injectable";
+export type { InjectionDescriptor, InjectOptions } from "#/decorators/inject";
+export { injectable } from "#/decorators/injectable";
+export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
 export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
+
+// Auto-register
+export { createAutoRegisterRegistry } from "#/decorators/injectable";
+export type { AutoRegisterRegistry } from "#/decorators/injectable";
+
+// MetadataReader
+export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
+export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metadata-types";
 
 // Errors
 export {
+  AmbiguousBindingError,
+  AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,
   CircularDependencyError,
   DiError,
+  DisposedContainerError,
   InternalError,
+  MissingContainerContextError,
   MissingMetadataError,
+  MissingScopeContextError,
   NoMatchingBindingError,
+  RebindUnboundTokenError,
   ScopeViolationError,
+  SyncDisposalNotSupportedError,
   TokenNotBoundError,
 } from "#/errors";
 export type { ScopeViolationDetails } from "#/errors";

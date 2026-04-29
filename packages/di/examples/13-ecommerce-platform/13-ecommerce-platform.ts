@@ -42,7 +42,7 @@
  *   ✅ @injectable + @inject decorators throughout
  *   ✅ @postConstruct for cache warm-up
  *   ✅ @preDestroy for resource cleanup
- *   ✅ module.import() diamond-dedup (infra modules imported by many contexts)
+ *   ✅ module.import() diamond-dedup (infrastructure modules imported by many contexts)
  *   ✅ whenParentIs constraint for context-aware logger injection
  *   ✅ toDotGraph(container.generateDependencyGraph(...)) for architecture visualization
  *   ✅ resolveOptional for optional A/B test service
@@ -72,8 +72,8 @@
 import {
   Container,
   inject,
-  injectAll,
   injectable,
+  injectAll,
   Module,
   optional,
   postConstruct,
@@ -579,10 +579,10 @@ class MockRedis implements RedisClient {
   }
 
   async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
-    this.store.set(key, {
-      value,
-      expiresAt: ttlSeconds ? Date.now() + ttlSeconds * 1000 : undefined,
-    });
+    this.store.set(
+      key,
+      ttlSeconds !== undefined ? { value, expiresAt: Date.now() + ttlSeconds * 1000 } : { value },
+    );
   }
 
   async del(key: string): Promise<void> {
@@ -2084,7 +2084,7 @@ class NotificationDispatcher implements NotificationService {
     await this.send({
       userId: user.id,
       email: user.email,
-      phone: user.phone ?? undefined,
+      ...(user.phone != null ? { phone: user.phone } : {}),
       template: "order_confirmation",
       data: {
         orderId: order.id,
@@ -2105,7 +2105,7 @@ class NotificationDispatcher implements NotificationService {
     await this.send({
       userId: user.id,
       email: user.email,
-      phone: user.phone ?? undefined,
+      ...(user.phone != null ? { phone: user.phone } : {}),
       template: "shipping_update",
       data: {
         orderId: order.id,
@@ -2423,7 +2423,7 @@ class AbTestManager implements AbTestService {
 
 // ---- Infrastructure (async) -------------------------------------------------
 
-const InfraModule = Module.createAsync("Infrastructure", async (builder) => {
+const InfrastructureModule = Module.createAsync("Infrastructure", async (builder) => {
   const config = await loadAppConfig();
   builder.bind(AppConfigToken).toConstantValue(config);
   builder.bind(LoggerToken).to(EcommerceRootLogger).singleton();
@@ -2486,9 +2486,9 @@ const CartModule = Module.create("Cart", (builder) => {
 // ---- Orders -----------------------------------------------------------------
 
 const ShippingModule = Module.create("Shipping", (builder) => {
-  builder.bind(ShippingCarrierToken).whenNamed("fedex").to(FedExCarrier).singleton();
-  builder.bind(ShippingCarrierToken).whenNamed("ups").to(UpsCarrier).singleton();
-  builder.bind(ShippingCarrierToken).whenNamed("dhl").to(DhlCarrier).singleton();
+  builder.bind(ShippingCarrierToken).to(FedExCarrier).whenNamed("fedex").singleton();
+  builder.bind(ShippingCarrierToken).to(UpsCarrier).whenNamed("ups").singleton();
+  builder.bind(ShippingCarrierToken).to(DhlCarrier).whenNamed("dhl").singleton();
 });
 
 const OrderModule = Module.create("Orders", (builder) => {
@@ -2501,9 +2501,9 @@ const OrderModule = Module.create("Orders", (builder) => {
 // ---- Payments ---------------------------------------------------------------
 
 const PaymentModule = Module.create("Payments", (builder) => {
-  builder.bind(PaymentGatewayToken).whenNamed("stripe").to(StripeGateway).singleton();
-  builder.bind(PaymentGatewayToken).whenNamed("paypal").to(PayPalGateway).singleton();
-  builder.bind(PaymentGatewayToken).whenNamed("cod").to(CashOnDeliveryGateway).singleton();
+  builder.bind(PaymentGatewayToken).to(StripeGateway).whenNamed("stripe").singleton();
+  builder.bind(PaymentGatewayToken).to(PayPalGateway).whenNamed("paypal").singleton();
+  builder.bind(PaymentGatewayToken).to(CashOnDeliveryGateway).whenNamed("cod").singleton();
   builder.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 });
 
@@ -2520,9 +2520,9 @@ const UserModule = Module.create("Users", (builder) => {
 // ---- Notifications ----------------------------------------------------------
 
 const NotificationModule = Module.create("Notifications", (builder) => {
-  builder.bind(NotificationChannelToken).whenNamed("email").to(EmailChannel).singleton();
-  builder.bind(NotificationChannelToken).whenNamed("sms").to(SmsChannel).singleton();
-  builder.bind(NotificationChannelToken).whenNamed("push").to(PushChannel).singleton();
+  builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
+  builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
+  builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
   builder.bind(NotificationServiceToken).to(NotificationDispatcher).singleton();
 });
 
@@ -2565,7 +2565,11 @@ async function bootstrap() {
   console.log("╚══════════════════════════════════════════════════╝\n");
 
   // 1. Build root container from async infrastructure + all domain modules
-  const container = await Container.fromModulesAsync(InfraModule, PaymentModule, AppModule);
+  const container = await Container.fromModulesAsync(
+    InfrastructureModule,
+    PaymentModule,
+    AppModule,
+  );
 
   // 2. Eagerly warm up all singletons (connects DB, Redis, etc.)
   console.log("\n[Bootstrap] Initialising all singletons...");
@@ -2695,11 +2699,11 @@ async function main(): Promise<void> {
 
   // ── Container snapshot ────────────────────────────────────────────────
   const snapshot = platform.container.inspect();
-  console.log(`[Inspect] Total bindings registered: ${snapshot.bindings.length}`);
+  console.log(`[Inspect] Total bindings registered: ${snapshot.ownBindings.length}`);
 
-  const singletons = snapshot.bindings.filter((b) => b.scope === "singleton").length;
-  const transients = snapshot.bindings.filter((b) => b.scope === "transient").length;
-  const scoped = snapshot.bindings.filter((b) => b.scope === "scoped").length;
+  const singletons = snapshot.ownBindings.filter((b) => b.scope === "singleton").length;
+  const transients = snapshot.ownBindings.filter((b) => b.scope === "transient").length;
+  const scoped = snapshot.ownBindings.filter((b) => b.scope === "scoped").length;
   console.log(`[Inspect] Singletons: ${singletons}, Transients: ${transients}, Scoped: ${scoped}`);
 }
 

@@ -1,110 +1,161 @@
-import type { Binding, ConstraintContext, Constructor, ResolveHint } from "#/binding";
-import type { RegistryKey } from "#/registry";
-import type { Token } from "#/token";
-import { InternalError, NoMatchingBindingError, TokenNotBoundError } from "#/errors";
+import type { Binding } from "#/binding";
+import type { ConstraintContext, ResolveOptions } from "#/types";
+import { AmbiguousBindingError } from "#/errors";
 
 /**
- * Returns a human-readable label for a token or constructor (used in error messages and graph output).
+ * Select a single candidate from a list of bindings using slot matching + predicates.
+ * Returns undefined if no match, throws AmbiguousBindingError if multiple match.
  */
-export function registryKeyLabel(key: Token<unknown> | Constructor<unknown>): string {
-  if (typeof key === "function") {
-    return key.name.length > 0 ? key.name : "(anonymous class)";
-  }
-  return key.name.trim().length > 0 ? key.name : "(anonymous token)";
-}
-
-/**
- * Narrows a binding list by applying name/tag hints and `when()` constraint predicates.
- *
- * Filtering order: name filter → tag filter → constraint predicate. Bindings without a
- * constraint predicate always pass the constraint stage. Returns the surviving candidates
- * (may be empty).
- */
-export function filterMatchingBindings(
-  bindings: readonly Binding<unknown>[],
-  hint: ResolveHint | undefined,
-  constraintCtx: ConstraintContext | undefined,
-): readonly Binding<unknown>[] {
-  let candidates: readonly Binding<unknown>[] = bindings;
-  if (hint?.name !== undefined) {
-    candidates = candidates.filter((binding) => binding.bindingName === hint.name);
-  }
-  if (hint?.tag !== undefined) {
-    const [tagKey, tagValue] = hint.tag;
-    candidates = candidates.filter((binding) => Object.is(binding.tags.get(tagKey), tagValue));
-  }
-  if (constraintCtx !== undefined) {
-    candidates = candidates.filter(
-      (binding) => binding.constraint === undefined || binding.constraint(constraintCtx),
-    );
-  }
-  return candidates;
-}
-
-/**
- * Selects exactly one binding from the provided list, applying hint and constraint filtering.
- *
- * @throws {@link TokenNotBoundError} — `bindings` list is empty, or no candidate survives
- *   filtering without a name/tag hint.
- * @throws {@link NoMatchingBindingError} — a name/tag hint was provided but no candidate matched.
- * @throws {@link InternalError} — multiple candidates survive filtering (ambiguous binding).
- */
-export function selectBindingForRegistry(
-  bindings: readonly Binding<unknown>[],
-  hint: ResolveHint | undefined,
-  tokenLabel: string,
-  pathLabels: readonly string[],
-  constraintCtx: ConstraintContext | undefined,
-): Binding<unknown> {
-  if (bindings.length === 0) {
-    throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
-  }
-
-  const allCandidates = filterMatchingBindings(bindings, hint, constraintCtx);
-  let candidates = allCandidates;
-  if (hint === undefined || (hint.name === undefined && hint.tag === undefined)) {
-    const defaultCandidates = allCandidates.filter(
-      (binding) => binding.bindingName === undefined && binding.tags.size === 0,
-    );
-    if (defaultCandidates.length > 0) {
-      candidates = defaultCandidates;
-    }
-  }
-
-  if (candidates.length === 1) {
-    const [only] = candidates;
-    if (only === undefined) {
-      throw new InternalError(
-        `Internal: expected binding candidate for "${tokenLabel}" (resolution path: ${pathLabels.join(" -> ")})`,
-      );
-    }
-    return only;
-  }
+export function selectBinding(
+  bindings: readonly Binding[],
+  hint: ResolveOptions | undefined,
+  ctx: ConstraintContext,
+  tName: string,
+): Binding | undefined {
+  const candidates = filterBindings(bindings, hint, ctx);
   if (candidates.length === 0) {
-    if (hint !== undefined && (hint.name !== undefined || hint.tag !== undefined)) {
-      throw new NoMatchingBindingError(tokenLabel, hint, [...pathLabels]);
-    }
-    throw new TokenNotBoundError(tokenLabel, [...pathLabels]);
+    return undefined;
   }
-  throw new InternalError(
-    `Ambiguous binding for "${tokenLabel}": ${String(candidates.length)} candidates matched after applying ResolveHint (resolution path: ${pathLabels.join(" -> ")})`,
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
+  // Multiple candidates — check if any is unambiguous (slot-based selection)
+  // Slot-based bindings already have last-wins applied in registry, so
+  // multiple candidates here means ambiguous predicate-only bindings
+  throw new AmbiguousBindingError(
+    tName,
+    candidates.map((c) => c.id),
   );
 }
 
 /**
- * Convenience wrapper: looks up bindings for `key` and selects the default (no-hint,
- * no-constraint) binding. Throws {@link TokenNotBoundError} if the key is unregistered.
+ * Select all candidates matching hint + predicates.
  */
-export function selectDefaultBindingForKey(
-  lookup: (key: RegistryKey) => readonly Binding<unknown>[] | undefined,
-  key: RegistryKey,
-  pathPrefix: readonly string[],
-): Binding<unknown> {
-  const label = registryKeyLabel(key as Token<unknown> | Constructor<unknown>);
-  const nextPath = [...pathPrefix, label];
-  const bindings = lookup(key);
-  if (bindings === undefined || bindings.length === 0) {
-    throw new TokenNotBoundError(label, nextPath);
+export function selectAllBindings(
+  bindings: readonly Binding[],
+  hint: ResolveOptions | undefined,
+  ctx: ConstraintContext,
+): Binding[] {
+  return filterBindings(bindings, hint, ctx, "all");
+}
+
+function filterBindings(
+  bindings: readonly Binding[],
+  hint: ResolveOptions | undefined,
+  ctx: ConstraintContext,
+  mode: "single" | "all" = "single",
+): Binding[] {
+  if (hint === undefined) {
+    const resultWithoutHint: Binding[] = [];
+    if (mode === "all") {
+      for (const binding of bindings) {
+        if (matchesPredicate(binding, ctx)) {
+          resultWithoutHint.push(binding);
+        }
+      }
+    } else {
+      for (const binding of bindings) {
+        const slot = binding.slot;
+        if (slot.name === undefined && slot.tags.length === 0 && matchesPredicate(binding, ctx)) {
+          resultWithoutHint.push(binding);
+        }
+      }
+    }
+    return resultWithoutHint;
   }
-  return selectBindingForRegistry(bindings, undefined, label, nextPath, undefined);
+
+  const result: Binding[] = [];
+  for (const binding of bindings) {
+    const slotMatched =
+      mode === "all" ? matchesSlotForResolveAll(binding, hint) : matchesSlot(binding, hint);
+    if (slotMatched && matchesPredicate(binding, ctx)) {
+      result.push(binding);
+    }
+  }
+  return result;
+}
+
+function matchesSlotForResolveAll(binding: Binding, hint: ResolveOptions | undefined): boolean {
+  const hasExplicitSlotFilter =
+    hint !== undefined &&
+    (hint.name !== undefined ||
+      (hint.tags !== undefined && hint.tags.length > 0) ||
+      hint.tag !== undefined);
+  if (!hasExplicitSlotFilter) {
+    return true;
+  }
+  return matchesSlot(binding, hint);
+}
+
+function matchesSlot(binding: Binding, hint: ResolveOptions | undefined): boolean {
+  const slot = binding.slot;
+  const hintName = hint?.name;
+  const hintTags = hint?.tags;
+  const singleHintTag = hint?.tag;
+  const hasHintTags = (hintTags?.length ?? 0) > 0 || singleHintTag !== undefined;
+
+  // Match by name
+  if (slot.name !== undefined) {
+    if (hintName === undefined) {
+      return false;
+    }
+    if (slot.name !== hintName) {
+      return false;
+    }
+  } else if (hintName !== undefined) {
+    // Binding has no name but hint requests a specific name — no match
+    return false;
+  }
+
+  // Match by tags — binding's tags must all be present in hint
+  if (slot.tags.length > 0) {
+    if (!hasHintTags) {
+      return false;
+    }
+    for (const [tagKey, tagValue] of slot.tags) {
+      if (!matchHintTag(tagKey, tagValue, hintTags, singleHintTag)) {
+        return false;
+      }
+    }
+  } else if (hasHintTags) {
+    // Binding has no tags but hint requires tags — no match for tagged slots
+    // But: default slot (no tags, no name) can match when hint has tags if there are no tag-slotted bindings
+    // Actually per spec: resolveAll with tags only returns bindings that have those tags
+    // and resolve with tags requires exact match
+    return false;
+  }
+
+  return true;
+}
+
+function matchHintTag(
+  tagKey: string,
+  tagValue: unknown,
+  hintTags: ReadonlyArray<readonly [string, unknown]> | undefined,
+  singleHintTag: readonly [string, unknown] | undefined,
+): boolean {
+  if (
+    singleHintTag !== undefined &&
+    singleHintTag[0] === tagKey &&
+    Object.is(singleHintTag[1], tagValue)
+  ) {
+    return true;
+  }
+  if (hintTags === undefined || hintTags.length === 0) {
+    return false;
+  }
+  for (let index = 0; index < hintTags.length; index += 1) {
+    const hintTag = hintTags[index]!;
+    if (hintTag[0] === tagKey && Object.is(hintTag[1], tagValue)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function matchesPredicate(binding: Binding, ctx: ConstraintContext): boolean {
+  if (binding.predicate === undefined) {
+    return true;
+  }
+  return binding.predicate(ctx);
 }

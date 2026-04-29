@@ -28,6 +28,13 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
     "#/*": [
       "./src/*",
       "./src/*.ts",
@@ -45,6 +52,10 @@
       "types": "./dist/binding.d.mts",
       "import": "./dist/binding.mjs"
     },
+    "./binding-scope": {
+      "types": "./dist/binding-scope.d.mts",
+      "import": "./dist/binding-scope.mjs"
+    },
     "./binding-select": {
       "types": "./dist/binding-select.d.mts",
       "import": "./dist/binding-select.mjs"
@@ -52,6 +63,10 @@
     "./constraints": {
       "types": "./dist/constraints.d.mts",
       "import": "./dist/constraints.mjs"
+    },
+    "./constructor-type": {
+      "types": "./dist/constructor-type.d.mts",
+      "import": "./dist/constructor-type.mjs"
     },
     "./container": {
       "types": "./dist/container.d.mts",
@@ -109,13 +124,13 @@
       "types": "./dist/metadata/metadata-keys.d.mts",
       "import": "./dist/metadata/metadata-keys.mjs"
     },
+    "./metadata/metadata-reader-token": {
+      "types": "./dist/metadata/metadata-reader-token.d.mts",
+      "import": "./dist/metadata/metadata-reader-token.mjs"
+    },
     "./metadata/metadata-types": {
       "types": "./dist/metadata/metadata-types.d.mts",
       "import": "./dist/metadata/metadata-types.mjs"
-    },
-    "./metadata/param-registry": {
-      "types": "./dist/metadata/param-registry.d.mts",
-      "import": "./dist/metadata/param-registry.mjs"
     },
     "./metadata/symbol-metadata-reader": {
       "types": "./dist/metadata/symbol-metadata-reader.d.mts",
@@ -129,6 +144,10 @@
       "types": "./dist/registry.d.mts",
       "import": "./dist/registry.mjs"
     },
+    "./resolve-options": {
+      "types": "./dist/resolve-options.d.mts",
+      "import": "./dist/resolve-options.mjs"
+    },
     "./resolver": {
       "types": "./dist/resolver.d.mts",
       "import": "./dist/resolver.mjs"
@@ -137,13 +156,13 @@
       "types": "./dist/scope.d.mts",
       "import": "./dist/scope.mjs"
     },
-    "./scope-validation": {
-      "types": "./dist/scope-validation.d.mts",
-      "import": "./dist/scope-validation.mjs"
-    },
     "./token": {
       "types": "./dist/token.d.mts",
       "import": "./dist/token.mjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -165,6 +184,7 @@
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "expect-type": "catalog:",
     "typescript": "catalog:",
     "unplugin-swc": "catalog:",
     "vitest": "catalog:"

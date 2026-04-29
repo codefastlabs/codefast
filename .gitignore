@@ -76,6 +76,9 @@ codecov.*
 # scripts
 .exports-analysis
 
+# benchmark artifacts (generated)
+benchmarks/**/bench-results/
+
 # python cache
 __pycache__/
 *.py[cod]

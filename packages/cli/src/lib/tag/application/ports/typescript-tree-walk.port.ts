@@ -1,8 +1,6 @@
-import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
-
 /**
- * Lists `.ts` / `.tsx` files under a directory (implementation may live in another bounded context’s infra).
+ * Lists `.ts` / `.tsx` files under a directory (implementation may live in another bounded context's infrastructure).
  */
-export type TypeScriptTreeWalkPort = {
-  walkTsxFiles(rootDirectoryPath: string, fs: CliFs): string[];
-};
+export interface TypeScriptTreeWalkPort {
+  walkTsxFiles(rootDirectoryPath: string): string[];
+}

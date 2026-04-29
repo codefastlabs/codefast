@@ -206,7 +206,7 @@ class UserController {
 // Modules
 // ============================================================================
 
-const InfraModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   const config = await loadConfig();
   builder.bind(ConfigToken).toConstantValue(config);
 
@@ -237,9 +237,9 @@ const ServiceModule = Module.create("Service", (builder) => {
 
 const MiddlewareModule = Module.create("Middleware", (builder) => {
   builder.import(ServiceModule);
-  // Multi-binding: register all middleware under the same token
-  builder.bind(MiddlewareToken).to(LoggingMiddleware);
-  builder.bind(MiddlewareToken).to(AuthMiddleware);
+  // Multi-binding: each middleware uses a distinct slot via whenNamed()
+  builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
+  builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
 });
 
 const ControllerModule = Module.create("Controller", (builder) => {
@@ -262,7 +262,7 @@ const AppModule = Module.create("App", (builder) => {
 // ============================================================================
 
 async function createServer() {
-  const container = await Container.fromModulesAsync(InfraModule, AppModule);
+  const container = await Container.fromModulesAsync(InfrastructureModule, AppModule);
 
   // Eagerly initialize all singletons before accepting traffic
   await container.initializeAsync();

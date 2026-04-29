@@ -11,9 +11,9 @@ import type {
   DomainSourceFile,
 } from "#/lib/arrange/domain/ast/ast-node.model";
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
-import { CliLoggerToken } from "#/lib/core/operational/contracts/tokens";
+import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
-export function printGroupFilePreview(
+function printGroupFilePreview(
   logger: CliLogger,
   args: {
     filePath: string;
@@ -27,7 +27,6 @@ export function printGroupFilePreview(
     plannedGroupEdits: readonly PlannedGroupEdit[];
   },
 ): void {
-  const { out } = logger;
   const {
     filePath,
     reportTotal,
@@ -45,12 +44,12 @@ export function printGroupFilePreview(
     header += `; plus ${cnInTvNoReplacement} cn() inside tv left unchanged (0 args)`;
   }
   header += `) ──`;
-  out(header);
+  logger.out(header);
 
   for (const call of cnInTvCalls) {
     const replacement = unwrapReplacementByCall.get(call);
     if (replacement === undefined) {
-      out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn]: cn(...) has no arguments — skipped`);
+      logger.out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn]: cn(...) has no arguments — skipped`);
       continue;
     }
     const start = call.pos;
@@ -58,22 +57,22 @@ export function printGroupFilePreview(
     if (sourceText.slice(start, end) === replacement) {
       continue;
     }
-    out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn → string/array]:`);
-    out(`  ${replacement.split("\n").join("\n  ")}`);
+    logger.out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn → string/array]:`);
+    logger.out(`  ${replacement.split("\n").join("\n  ")}`);
   }
   if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
-    out(
+    logger.out(
       "  ([cn] / [tv] / [JSX className] lines below reflect content after unwrap of cn inside tv.)",
     );
   }
   for (const plan of plannedGroupEdits) {
-    out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
-    out(`  ${plan.replacement.split("\n").join("\n  ")}`);
-    out(`  // Buckets: ${JSON.stringify(plan.bucketSummary)}`);
+    logger.out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
+    logger.out(`  ${plan.replacement.split("\n").join("\n  ")}`);
+    logger.out(`  // Buckets: ${JSON.stringify(plan.bucketSummary)}`);
   }
 }
 
-export function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFileWorkPlan): void {
+function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFileWorkPlan): void {
   printGroupFilePreview(logger, {
     filePath: work.filePath,
     reportTotal: work.reportTotal,
@@ -85,12 +84,6 @@ export function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFile
     unwrapEdits: work.unwrapEdits,
     plannedGroupEdits: work.plannedGroupEdits,
   });
-}
-
-export function createGroupFilePreviewPresenter(logger: CliLogger): GroupFilePreviewPort {
-  return {
-    printGroupFilePreviewFromWork: (work) => printGroupFilePreviewFromWork(logger, work),
-  };
 }
 
 @injectable([inject(CliLoggerToken)])

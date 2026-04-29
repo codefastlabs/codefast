@@ -227,8 +227,8 @@ Multiple bindings can share the same token. A constraint picks the right one at 
 **Named**
 
 ```typescript
-container.bind(LoggerToken).whenNamed("file").toConstantValue(fileLogger);
-container.bind(LoggerToken).whenNamed("console").toConstantValue(consoleLogger);
+container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
+container.bind(LoggerToken).toConstantValue(consoleLogger).whenNamed("console");
 
 container.resolve(LoggerToken, { name: "file" });
 ```
@@ -236,8 +236,8 @@ container.resolve(LoggerToken, { name: "file" });
 **Tagged** — the hint is a tuple `[tag, value]`:
 
 ```typescript
-container.bind(StorageToken).whenTagged("provider", "s3").to(S3Storage);
-container.bind(StorageToken).whenTagged("provider", "local").to(LocalStorage);
+container.bind(StorageToken).to(S3Storage).whenTagged("provider", "s3");
+container.bind(StorageToken).to(LocalStorage).whenTagged("provider", "local");
 
 container.resolve(StorageToken, { tag: ["provider", "s3"] });
 ```
@@ -245,9 +245,9 @@ container.resolve(StorageToken, { tag: ["provider", "s3"] });
 **Predicate** — inspect the full resolution graph:
 
 ```typescript
-import { whenAnyAncestorIs, whenParentIs, whenParentTagged } from "@codefast/di";
+import { whenAnyAncestorIs, whenParentIs, whenParentTagged } from "@codefast/di/constraints";
 
-container.bind(LoggerToken).when(whenParentIs(DiagnosticsService)).toConstantValue(verboseLogger);
+container.bind(LoggerToken).toConstantValue(verboseLogger).when(whenParentIs(DiagnosticsService));
 ```
 
 Built-in predicates:
@@ -483,22 +483,21 @@ Sync `using` is intentionally rejected: calling `Symbol.dispose` throws. Use `aw
 
 Modules bundle related bindings into reusable units. A module holds no runtime state and can be loaded into any number of containers.
 
-Inside module setup, binding semantics depend on whether a disambiguator is present before `to*()`:
+Use the same fluent order everywhere (including inside modules): `bind(token).to*(…).when*(…).scope()…`.
 
-- `api.bind(Token).to*(...)` uses last-wins for that token.
-- `api.bind(Token).whenNamed(...)` / `.whenTagged(...)` / `.when(...)` **before** `to*()` appends another multi-binding entry.
-- `api.bind(Token).to*(...).whenNamed(...)` updates only that single built binding; it does not switch later lines into append mode.
+- Register **multiple** implementations for one token with separate chains, e.g. `api.bind(T).to(A).whenNamed("a")` and `api.bind(T).to(B).whenNamed("b")`.
+- **Last-wins** applies per slot (default vs named vs tag-set), as in the main container API.
 
 ```typescript
 import { Container, Module } from "@codefast/di";
 
-const InfraModule = Module.create("Infra", (api) => {
+const InfrastructureModule = Module.create("Infra", (api) => {
   api.bind(LoggerToken).toConstantValue(console);
   api.bind(ConfigToken).toConstantValue(loadConfig());
 });
 
 const AppModule = Module.create("App", (api) => {
-  api.import(InfraModule);
+  api.import(InfrastructureModule);
   api.bind(UserRepository).toSelf().singleton();
   api.bind(UserServiceToken).to(UserService).transient();
 });
@@ -520,7 +519,7 @@ const container = await Container.fromModulesAsync(DbModule, AppModule);
 Load and unload on an existing container:
 
 ```typescript
-container.load(InfraModule, AppModule);
+container.load(InfrastructureModule, AppModule);
 await container.loadAsync(DbModule);
 
 container.unload(AppModule);
@@ -583,7 +582,6 @@ The root entry re-exports the full public API. Subpath exports are provided for 
 | `@codefast/di/registry`                        | `BindingRegistry`                                                |
 | `@codefast/di/resolver`                        | `DependencyResolver` internals                                   |
 | `@codefast/di/scope`                           | `ScopeManager`                                                   |
-| `@codefast/di/scope-validation`                | `validateScopeRules`                                             |
 | `@codefast/di/lifecycle`                       | Activation/deactivation runners                                  |
 | `@codefast/di/dependency-graph`                | Dependency-edge collection helpers                               |
 | `@codefast/di/graph-adapters/cytoscape`        | Cytoscape adapter for `ContainerGraphJson`                       |

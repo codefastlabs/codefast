@@ -5,6 +5,7 @@
     "types": ["node", "vitest/globals"],
     "jsx": "react-jsx",
     "paths": {
+      "#/tests/*": ["./tests/*"],
       "#/*": ["./src/*"]
     }
   },

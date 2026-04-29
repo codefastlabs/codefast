@@ -18,10 +18,14 @@
   },
   "type": "module",
   "scripts": {
-    "check-types": "tsgo --noEmit",
-    "bench": "pnpm exec tsx src/run-benchmark.ts",
+    "bench": "pnpm exec tsx src/harness/run.ts",
     "bench:codefast": "pnpm exec tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
-    "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts"
+    "bench:fast": "BENCH_FAST=1 pnpm exec tsx src/harness/run.ts",
+    "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
+    "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts",
+    "bench:history": "pnpm exec tsx src/harness/generate-history-html.ts",
+    "bench:verbose": "BENCH_VERBOSE=1 tsx src/harness/run.ts",
+    "check-types": "tsgo --noEmit"
   },
   "dependencies": {
     "@codefast/di": "workspace:*",

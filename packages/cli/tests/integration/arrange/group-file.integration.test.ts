@@ -1,0 +1,292 @@
+/**
+ * Integration Test: covers ArrangeFileProcessorServiceImpl, DomainSourceParserAdapter, and
+ * group-file preview presentation (printGroupFilePreviewFromWork) against real filesystem fixtures.
+ */
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { ArrangeFileProcessorServiceImpl } from "#/lib/arrange/application/services/arrange-file-processor.service";
+import { DomainSourceParserAdapter } from "#/lib/arrange/adapters/secondary/domain-source-parser.adapter";
+import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
+
+const arrangeFs = new NodeCliFsAdapter();
+const service = new ArrangeFileProcessorServiceImpl(arrangeFs, new DomainSourceParserAdapter());
+
+function withTempFixture(name: string, source: string, fn: (filePath: string) => void): void {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "group-file-"));
+  const filePath = path.join(dir, name);
+  try {
+    fs.writeFileSync(filePath, source, "utf8");
+    fn(filePath);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+describe("ArrangeFileProcessorServiceImpl", () => {
+  it("unwraps cn() inside tv base into string/array form", () => {
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
+
+export const styles = tv({
+  base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium"),
+});
+`;
+    withTempFixture("FixtureTv.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(result.changed).toBeGreaterThan(0);
+      expect(after.includes("base: cn(")).toBe(false);
+      expect(after).toMatch(/base:\s*(\[|"[^"]+)/);
+    });
+  });
+
+  it("converts long JSX className and inserts cn import after use client", () => {
+    const before = `"use client";
+
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}
+`;
+    withTempFixture("FixtureUseClient.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(result.changed).toBeGreaterThan(0);
+      expect(after.startsWith(`"use client";\n\nimport { cn }`)).toBe(true);
+      expect(after).toContain("className={cn(");
+    });
+  });
+
+  it("supports namespace imports for tw.tv / tw.cn and rewrites tw.cn usage", () => {
+    const before = `import * as tw from "@codefast/tailwind-variants";
+
+export const styles = tw.tv({
+  base: tw.cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureNamespace.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(result.changed).toBeGreaterThan(0);
+      expect(after).toContain("tw.tv(");
+      expect(after.includes("tw.cn(")).toBe(false);
+      expect(after).toMatch(/base:\s*(\[|"[^"]+)/);
+    });
+  });
+
+  it("supports namespace imports from legacy tailwind-variants package (backward compat)", () => {
+    const before = `import * as tw from "tailwind-variants";
+
+export const styles = tw.tv({
+  base: tw.cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent"),
+});
+`;
+    withTempFixture("FixtureNamespaceLegacy.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(result.changed).toBeGreaterThan(0);
+      expect(after).toContain("tw.tv(");
+      expect(after.includes("tw.cn(")).toBe(false);
+      expect(after).toMatch(/base:\s*(\[|"[^"]+)/);
+    });
+  });
+
+  it("recognizes cn/tv imports from local ./utils re-export", () => {
+    const before = `import { cn, tv } from "./utils";
+export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent") });`;
+    withTempFixture("FixtureLocalUtils.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("recognizes cn/tv imports from modules containing /utils/", () => {
+    const before = `import { cn, tv } from "pkg/utils/cn";
+export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent") });`;
+    withTempFixture("FixtureUtilsPath.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("recognizes cn/tv imports from ./cn.ts shim", () => {
+    const before = `import { cn, tv } from "./cn.ts";
+export const styles = tv({ base: cn("flex gap-2 text-sm rounded-md border px-3 font-medium hover:bg-accent") });`;
+    withTempFixture("FixtureCnTs.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+    });
+  });
+
+  it("returns totalFound 0 for files without cn/tv/long class targets", () => {
+    withTempFixture("FixtureEmpty.tsx", "export const only = 1;\n", (filePath) => {
+      expect(
+        service.processFile({ filePath, options: { write: false, withClassName: false } }),
+      ).toEqual({ filePath, totalFound: 0, changed: 0 });
+    });
+  });
+
+  it("dry-run returns totalFound 0 when cn partition is already idempotent", () => {
+    const before = `import { cn } from "@codefast/tailwind-variants";
+cn("flex gap-2", "text-sm");`;
+    withTempFixture("FixturePartitionEq.tsx", before, (filePath) => {
+      expect(
+        service.processFile({ filePath, options: { write: false, withClassName: false } }),
+      ).toEqual({ filePath, totalFound: 0, changed: 0 });
+    });
+  });
+
+  it("counts cn() inside tv with zero args as found but unchanged", () => {
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
+export const broken = tv({ base: cn() });`;
+    withTempFixture("FixtureZeroArg.tsx", before, (filePath) => {
+      const dry = service.processFile({
+        filePath,
+        options: { write: false, withClassName: false },
+      });
+      expect(dry.filePath).toBe(filePath);
+      expect(dry.totalFound).toBe(1);
+      expect(dry.changed).toBe(0);
+      const wet = service.processFile({ filePath, options: { write: true, withClassName: false } });
+      expect(wet).toEqual({ filePath, totalFound: 1, changed: 0 });
+    });
+  });
+
+  it("inserts cn import before first existing import", () => {
+    const before = `import React from "react";
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}`;
+    withTempFixture("FixtureImportOrder.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.indexOf("import { cn }")).toBeLessThan(after.indexOf("import React"));
+    });
+  });
+
+  it("passes withClassName option through cn replacement", () => {
+    const before = `import { cn } from "@codefast/tailwind-variants";
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}`;
+    withTempFixture("FixtureWithClassName.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: true },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after).toContain("className={cn(");
+      expect(after).toContain("className");
+    });
+  });
+
+  it("merges cn into existing named import when cnImport override matches", () => {
+    const before = `import { tv } from "clsx";
+export function Fixture() {
+  return <div className="flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card" />;
+}`;
+    withTempFixture("FixtureMergeImport.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false, cnImport: "clsx" },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after).toContain('import { cn, tv } from "clsx"');
+    });
+  });
+
+  it("groups tv base single long string into flat sibling literals (no nested array)", () => {
+    const before = `import { tv } from "@codefast/tailwind-variants";
+export const styles = tv({
+  base: [
+    "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 px-4 py-3 rounded-xl border bg-card text-sm has-[>svg]:grid-cols-[--spacing(4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  ],
+});
+`;
+    withTempFixture("FixtureTvBaseFlat.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after.includes("[\n    [")).toBe(false);
+      expect(after).not.toMatch(/",\s*\n\s*,/);
+      expect(after).toMatch(/base:\s*\[\s*\n\s+"[^"]+",\s*\n\s+"/);
+    });
+  });
+
+  it("groups compoundVariants class array slots", () => {
+    const before = `import { tv } from "@codefast/tailwind-variants";
+export const sheet = tv({
+  compoundVariants: [{ className: ["flex gap-2 text-sm rounded-md border px-3 font-medium", "shadow-xs"] }],
+});`;
+    withTempFixture("FixtureCvClassArray.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after).toContain("compoundVariants");
+    });
+  });
+
+  it("groups compoundVariants mixed class array slot with cn(...) and plain strings", () => {
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
+export const sheet = tv({
+  compoundVariants: [{ class: ["py-1", cn("flex gap-2 text-sm rounded-md border px-3 font-medium shadow-xs")] }],
+});`;
+    withTempFixture("FixtureCvClassCn.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: true, withClassName: false },
+      });
+      expect(result.changed).toBeGreaterThan(0);
+      const after = fs.readFileSync(filePath, "utf8");
+      expect(after).toContain("class:");
+    });
+  });
+
+  it("dry-run returns workPlan with combined unwrap + grouping edits", () => {
+    const long =
+      "flex items-center gap-2 px-4 py-2 text-sm rounded-md border bg-card font-medium shadow-xs";
+    const before = `import { cn, tv } from "@codefast/tailwind-variants";
+cn("${long}");
+export const styles = tv({ base: cn("${long}") });`;
+    withTempFixture("FixtureDryCombined.tsx", before, (filePath) => {
+      const result = service.processFile({
+        filePath,
+        options: { write: false, withClassName: false },
+      });
+      expect(result.workPlan).toBeDefined();
+      expect(result.workPlan?.plannedGroupEdits.length ?? 0).toBeGreaterThan(0);
+    });
+  });
+});
