@@ -1,5 +1,20 @@
 # @codefast/ui
 
+## 0.3.14
+
+### Patch Changes
+
+- [`4957e0e`](https://github.com/codefastlabs/codefast/commit/4957e0e8b4b2428447ef11380397b03deef0b092) Thanks [@thevuong](https://github.com/thevuong)! - fix(vitest): update test file patterns to use .test extension
+
+- [`b44597c`](https://github.com/codefastlabs/codefast/commit/b44597c9ec3a121a707aa269d7f68550ae1da72a) Thanks [@thevuong](https://github.com/thevuong)! - docs: enhance type annotations and comments for clarity across multiple files
+
+- [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef) Thanks [@thevuong](https://github.com/thevuong)! - docs: update README.md files across packages for consistency and clarity
+
+- [`ab6bf8d`](https://github.com/codefastlabs/codefast/commit/ab6bf8d5b1c421930e391724cbbdcaf63b9bc263) Thanks [@thevuong](https://github.com/thevuong)! - docs(ui): update README.md for clarity and structure
+
+- Updated dependencies [[`85e5ac1`](https://github.com/codefastlabs/codefast/commit/85e5ac122d7a75f756ae4c03b5ab5e9489823b59), [`4957e0e`](https://github.com/codefastlabs/codefast/commit/4957e0e8b4b2428447ef11380397b03deef0b092), [`8109f4e`](https://github.com/codefastlabs/codefast/commit/8109f4e1f8186b91c296d25d640594b43493cdef)]:
+  - @codefast/tailwind-variants@0.3.14
+
 ## 0.3.14-canary.2
 
 ### Patch Changes
