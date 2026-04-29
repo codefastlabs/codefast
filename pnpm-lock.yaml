@@ -667,6 +667,9 @@ importers:
 
   benchmarks/di-inversify:
     dependencies:
+      '@codefast/benchmark-harness':
+        specifier: workspace:*
+        version: link:../../packages/benchmark-harness
       '@codefast/di':
         specifier: workspace:*
         version: link:../../packages/di
@@ -698,6 +701,9 @@ importers:
 
   benchmarks/tailwind-variants:
     dependencies:
+      '@codefast/benchmark-harness':
+        specifier: workspace:*
+        version: link:../../packages/benchmark-harness
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../../packages/tailwind-variants
@@ -720,6 +726,21 @@ importers:
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260422.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  packages/benchmark-harness:
+    devDependencies:
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.6.0
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260422.1

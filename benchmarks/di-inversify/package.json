@@ -28,6 +28,7 @@
     "check-types": "tsgo --noEmit"
   },
   "dependencies": {
+    "@codefast/benchmark-harness": "workspace:*",
     "@codefast/di": "workspace:*",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",

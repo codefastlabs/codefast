@@ -30,21 +30,3 @@ export function batched(factor: number, operation: () => void): () => void {
     }
   };
 }
-
-/**
- * Same as {@link batched} for async closures. Awaits each iteration so we
- * measure serial throughput, not concurrent throughput.
- */
-export function batchedAsync(factor: number, operation: () => Promise<void>): () => Promise<void> {
-  if (!Number.isInteger(factor) || factor < 1) {
-    throw new Error(`batchedAsync() factor must be a positive integer, received ${String(factor)}`);
-  }
-  if (factor === 1) {
-    return operation;
-  }
-  return async () => {
-    for (let iterationIndex = 0; iterationIndex < factor; iterationIndex++) {
-      await operation();
-    }
-  };
-}

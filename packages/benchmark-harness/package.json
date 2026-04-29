@@ -1,0 +1,46 @@
+{
+  "name": "@codefast/benchmark-harness",
+  "version": "0.3.14",
+  "private": true,
+  "description": "Shared tinybench harness utilities (subprocess protocol, fingerprinting, two-way reports) for Codefast benchmark packages",
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/benchmark-harness"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./protocol": "./src/protocol.ts",
+    "./fingerprint": "./src/fingerprint.ts",
+    "./report": "./src/report.ts",
+    "./stats/quantiles": "./src/stats/quantiles.ts",
+    "./presentation/format": "./src/presentation/format.ts",
+    "./jsonl": "./src/jsonl-observations.ts",
+    "./subprocess": "./src/subprocess/run-bench-subprocess.ts"
+  },
+  "scripts": {
+    "check-types": "tsgo --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

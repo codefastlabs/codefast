@@ -8,6 +8,7 @@ import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
 import { buildCodefastLifecycleScenarios } from "#/scenarios/codefast/lifecycle";
 import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
 import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
+import { buildCodefastRealisticGraphValidateScenarios } from "#/scenarios/codefast/realistic-graph-validate";
 import { buildCodefastScaleScenarios } from "#/scenarios/codefast/scale";
 import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
 import type { AnyScenario } from "#/scenarios/types";
@@ -16,6 +17,7 @@ export function collectAllCodefastScenarios(): readonly AnyScenario[] {
   return [
     ...buildCodefastMicroScenarios(),
     ...buildCodefastRealisticScenarios(),
+    ...buildCodefastRealisticGraphValidateScenarios(),
     ...buildCodefastFanOutScenarios(),
     ...buildCodefastAsyncScenarios(),
     ...buildCodefastLifecycleScenarios(),

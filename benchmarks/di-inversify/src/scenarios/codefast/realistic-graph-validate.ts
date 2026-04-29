@@ -12,9 +12,9 @@ import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-export const REALISTIC_VALIDATE_BATCH = 10;
+const REALISTIC_VALIDATE_BATCH = 10;
 
-export function buildRealisticGraphValidateScenario(): BenchScenario {
+function buildRealisticGraphValidateScenario(): BenchScenario {
   const { container } = buildCodefastRealisticContainer(REALISTIC_GRAPH);
   /* Warm a single `validate()` before measurement so the bench closure is the steady
    * path (same as other scenarios that pre-resolve in `build()`). */
@@ -38,4 +38,8 @@ export function buildRealisticGraphValidateScenario(): BenchScenario {
         container.validate();
       }),
   };
+}
+
+export function buildCodefastRealisticGraphValidateScenarios(): readonly BenchScenario[] {
+  return [buildRealisticGraphValidateScenario()];
 }

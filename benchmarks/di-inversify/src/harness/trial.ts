@@ -2,7 +2,7 @@ import { Bench } from "tinybench";
 import type { TaskResult } from "tinybench";
 import { isAsyncScenario } from "#/scenarios/types";
 import type { AnyScenario } from "#/scenarios/types";
-import type { ScenarioTrialResult, TrialPayload } from "#/harness/protocol";
+import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harness/protocol";
 
 /**
  * tinybench options shared across every scenario. Kept as a single block so the
@@ -22,7 +22,7 @@ const FULL_MODE_ENABLED = process.env["BENCH_FULL"] === "1";
  */
 const FULL_MODE_SAMPLE_GC_STRIDE = 25;
 
-export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
+const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
   ? {
       time: 20,
       iterations: 50,
@@ -57,8 +57,8 @@ export const DEFAULT_BENCH_OPTIONS = FAST_MODE_ENABLED
  * reduces (does not eliminate) the cross-trial correlation. For cleaner
  * isolation, spawn multiple subprocesses; that is the user's responsibility.
  */
-export const MIN_TRIAL_COUNT = 2;
-export const DEFAULT_TRIAL_COUNT = FULL_MODE_ENABLED ? 3 : MIN_TRIAL_COUNT;
+const MIN_TRIAL_COUNT = 2;
+const DEFAULT_TRIAL_COUNT = FULL_MODE_ENABLED ? 3 : MIN_TRIAL_COUNT;
 
 /**
  * Force a full GC between tinybench tasks when `--expose-gc` is available.

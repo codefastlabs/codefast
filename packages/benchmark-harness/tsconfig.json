@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}

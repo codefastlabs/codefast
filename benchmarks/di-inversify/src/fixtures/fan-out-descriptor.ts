@@ -1,7 +1,7 @@
 import type { GraphDescriptor, NodeDescriptor } from "#/fixtures/realistic-graph";
 
-export const FAN_OUT_TREE_DEPTH = 3;
-export const FAN_OUT_TREE_BREADTH = 4;
+const FAN_OUT_TREE_DEPTH = 3;
+const FAN_OUT_TREE_BREADTH = 4;
 
 export const RESOLVE_ALL_STRATEGY_COUNTS = [10, 100] as const;
 export type ResolveAllStrategyCount = (typeof RESOLVE_ALL_STRATEGY_COUNTS)[number];
@@ -30,7 +30,7 @@ function buildNodeId(level: number, slot: number): string {
  * - level 2: 16 leaf nodes
  * => 21 total nodes.
  */
-export function buildFanOutTreeDescriptor(depth: number, breadth: number): GraphDescriptor {
+function buildFanOutTreeDescriptor(depth: number, breadth: number): GraphDescriptor {
   ensureTreeShapeIsValid(depth, breadth);
 
   const nodes: NodeDescriptor[] = [];
