@@ -1,14 +1,16 @@
-import { buildCodefastRealisticContainer } from "#/fixtures/codefast-adapter";
+import "reflect-metadata";
+import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
 import { FAN_OUT_TREE_DEPTH_3_BREADTH_4 } from "#/fixtures/fan-out-descriptor";
 import { batched } from "#/harness/batched";
-import { buildCodefastResolveAllStrategiesScenarios } from "#/scenarios/codefast/resolve-all-strategies";
 import type { BenchScenario } from "#/scenarios/types";
 
 const FAN_OUT_TREE_BATCH = 20;
 
 function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
-  const { container, rootToken } = buildCodefastRealisticContainer(FAN_OUT_TREE_DEPTH_3_BREADTH_4);
-  const firstResolution = container.resolve(rootToken);
+  const { container, rootIdentifier } = buildInversifyRealisticContainer(
+    FAN_OUT_TREE_DEPTH_3_BREADTH_4,
+  );
+  const firstResolution = container.get(rootIdentifier);
 
   return {
     id: "fan-out-tree-depth-3-breadth-4",
@@ -20,14 +22,11 @@ function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
       firstResolution.resolvedDependencies.length === 4,
     build: () =>
       batched(FAN_OUT_TREE_BATCH, () => {
-        container.resolve(rootToken);
+        container.get(rootIdentifier);
       }),
   };
 }
 
-export function buildCodefastFanOutScenarios(): readonly BenchScenario[] {
-  return [
-    buildFanOutTreeDepthThreeBreadthFourScenario(),
-    ...buildCodefastResolveAllStrategiesScenarios(),
-  ];
+export function buildInversifyFanOutTreeScenarios(): readonly BenchScenario[] {
+  return [buildFanOutTreeDepthThreeBreadthFourScenario()];
 }

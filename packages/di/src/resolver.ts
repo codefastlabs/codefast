@@ -51,6 +51,64 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver {
   private readonly _frameByBindingId = new Map<BindingIdentifier, MaterializationFrame>();
   private readonly _syncResolutionContextPool: DefaultResolutionContext[] = [];
+  // Deep-path state for _resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
+  //
+  // Cycle detection — generation-based marking (replaces Set<BindingIdentifier>):
+  //   _deepCycleMarks: Map<BindingIdentifier, generation> records which bindings are "in flight"
+  //     during the current deep chain.  A binding is considered "active" when its recorded
+  //     generation matches _deepCycleGen.
+  //   _deepCycleGen: monotonically incremented at the start of each new deep chain.  This acts
+  //     as an implicit bulk-clear: old marks from a previous chain have a stale generation number
+  //     and are treated as absent — no explicit Map.delete or Map.clear is needed at all.
+  //     Eliminating the per-level Map.delete call (was ~10 ns × 480 levels) is the primary
+  //     motivation for this design.
+  //
+  // _deepActiveLevels: tracks how many deep levels are currently on the call stack so we know
+  //   when the deep portion has fully unwound and can reset _deepSyncCtxPath.
+  //
+  // _deepSyncCtx / _deepSyncCtxPath: single shared context for the deep chain; avoids one
+  //   per-depth pool reset (5 property writes) for every level beyond the threshold.
+  //   materializationStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
+  //   Trade-off: ctx.graph.materializationStack only reflects the first RESOLUTION_SET_THRESHOLD
+  //   frames; code relying on ctx.graph.parent inside a deep transient-dynamic factory will see
+  //   the frame at the threshold boundary, not the current depth.
+  private readonly _deepCycleMarks = new Map<BindingIdentifier, number>();
+  private _deepCycleGen = 0;
+  private _deepActiveLevels = 0;
+  private _deepSyncCtx: DefaultResolutionContext | undefined;
+  private _deepSyncCtxPath: string[] | undefined;
+  // Async shared-context state for _resolveTransientDynamicAsyncFromContext (shallow path):
+  //
+  // For a SEQUENTIAL async chain (depth < RESOLUTION_SET_THRESHOLD), all levels share the same
+  // resolutionPath and materializationStack arrays (passed by reference through ctx.resolveAsync).
+  // Because the context stores references rather than snapshots, a single DefaultResolutionContext
+  // can serve the entire chain without any per-level allocation or reset — the arrays reflect the
+  // current chain state automatically as we push/pop.
+  //
+  // _deepAsyncCtx: the shared context, lazily created on the first chain entry and reset
+  //   (5 property writes) at the start of each new root call.  Levels 2-N of the same chain
+  //   reuse it with ZERO setup cost.
+  //
+  // _deepAsyncCtxPath: identity pointer of the resolutionPath array that "owns" the shared
+  //   context.  Used to distinguish two cases:
+  //     • same reference → inner level of the owning chain → reuse ctx with no setup
+  //     • different reference → concurrent chain (e.g. Promise.all) → fall back to a fresh
+  //       DefaultResolutionContext allocation for that call
+  //
+  // _deepAsyncActiveLevels: counts active levels of the OWNING chain so we know when to
+  //   release the path pointer (set _deepAsyncCtxPath = undefined).
+  //   Concurrent fallback calls are NOT counted — they don't interfere with the owner.
+  //
+  // materializationStack is NOT pushed in this path (same trade-off as the deep sync path):
+  //   ctx.graph.materializationStack will always be empty for async transient-dynamic chains.
+  //   Factories that inspect ctx.graph.parent should use the conventional sync binding approach.
+  //
+  // The function is NOT declared async so that V8 does not create an AsyncGeneratorObject and
+  // an implicit Promise on every invocation; instead each level calls factoryPromise.then(cleanup)
+  // which chains natively without the extra async state-machine overhead.
+  private _deepAsyncCtx: DefaultResolutionContext | undefined;
+  private _deepAsyncCtxPath: string[] | undefined;
+  private _deepAsyncActiveLevels = 0;
   private readonly _classHasPostConstruct = new WeakMap<Constructor, boolean>();
   private readonly _classNeedsActiveContainer = new WeakMap<Constructor, boolean>();
   private readonly _classConstructorMetadata = new WeakMap<
@@ -140,7 +198,8 @@ export class DependencyResolver {
         scope === "transient" &&
         fastBinding.kind === "dynamic" &&
         fastBinding.onActivation === undefined &&
-        !this._lifecycle.hasActivationHandlers(fastBinding.token)
+        (this._lifecycle.activationVersion === 0 ||
+          !this._lifecycle.hasActivationHandlers(fastBinding.token))
       ) {
         return this._resolveTransientDynamicSyncFromContext(
           fastBinding as Binding<Value> & { kind: "dynamic" },
@@ -619,7 +678,8 @@ export class DependencyResolver {
         scope === "transient" &&
         (fastBinding.kind === "dynamic" || fastBinding.kind === "dynamic-async") &&
         fastBinding.onActivation === undefined &&
-        !this._lifecycle.hasActivationHandlers(fastBinding.token)
+        (this._lifecycle.activationVersion === 0 ||
+          !this._lifecycle.hasActivationHandlers(fastBinding.token))
       ) {
         return this._resolveTransientDynamicAsyncFromContext(
           fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
@@ -1311,21 +1371,130 @@ export class DependencyResolver {
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
   ): Value {
+    // ── Shallow path (depth < RESOLUTION_SET_THRESHOLD) ──────────────────────────────────
+    // Use resolutionPath.includes for cycle detection: for tiny arrays (depth 0–31) this is
+    // faster than a Set lookup. Keep materializationStack push/pop and the per-depth pool so
+    // ctx.graph reflects correct state for shallow-chain factories.
+    if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
+      const frame = this._getMaterializationFrame(binding);
+      const tName = frame.tokenName;
+      if (resolutionPath.includes(tName)) {
+        throw new CircularDependencyError([...resolutionPath, tName]);
+      }
+      resolutionPath.push(tName);
+      materializationStack.push(frame);
+      const resolutionCtx = this._acquireSyncResolutionContext(
+        resolutionPath,
+        materializationStack,
+        undefined,
+      );
+      try {
+        const dynamicResult = binding.factory(resolutionCtx);
+        if (dynamicResult instanceof Promise) {
+          throw new AsyncResolutionError(tName, tName);
+        }
+        return dynamicResult;
+      } finally {
+        materializationStack.pop();
+        resolutionPath.pop();
+      }
+    }
+
+    // ── Deep path (depth >= RESOLUTION_SET_THRESHOLD) ────────────────────────────────────
+    // At this depth the O(N) array scan becomes expensive.  Switch to a class-level
+    // Set<BindingIdentifier> for O(1) cycle detection.
+    //
+    // Performance decisions vs. shallow path:
+    //  1. _getMaterializationFrame is NOT called: tName is only needed for resolutionPath.push
+    //     and error messages.  Both are handled below without the frame Map lookup.
+    //  2. resolutionPath.push / pop is SKIPPED: cycle detection uses _deepCycleIds (binding IDs),
+    //     so path membership tracking through the string array is unnecessary.  Eliminating
+    //     ~480 array writes per 512-chain avoids GC write-barriers on every level.
+    //     Trade-off: CircularDependencyError thrown for a deep cycle (depth > 32) will only
+    //     include the first 32 path elements in its message; levels 32+ are omitted.
+    //  3. The shared context is set up ONCE (when _deepActiveLevels === 0) rather than
+    //     re-checked on every level — saves two property reads + a reference comparison
+    //     for each of the ~480 subsequent deep-chain levels.
+    //
+    // Reentrancy: if a *different* deep chain is currently active (factory called
+    // container.resolve() internally and that inner chain also reached the threshold),
+    // fall back to the slow path to avoid cross-chain Set pollution.
+    if (this._deepActiveLevels > 0 && this._deepSyncCtxPath !== resolutionPath) {
+      return this._resolveTransientDynamicSyncSlow(binding, resolutionPath, materializationStack);
+    }
+
+    // First deep level: bump the generation (implicitly clearing all stale cycle marks from
+    // previous chains), seed the marks with the shallow-path frames already on the
+    // materialization stack, then initialise (or reset) the shared context once for the
+    // whole deep chain.
+    if (this._deepActiveLevels === 0) {
+      const gen = ++this._deepCycleGen;
+      for (const stackFrame of materializationStack) {
+        this._deepCycleMarks.set(stackFrame.bindingId, gen);
+      }
+      let ctx = this._deepSyncCtx;
+      if (ctx === undefined) {
+        ctx = new DefaultResolutionContext(
+          this as unknown as ResolverCallbacks,
+          resolutionPath,
+          materializationStack,
+          undefined,
+        );
+        this._deepSyncCtx = ctx;
+      } else {
+        ctx.reset(
+          this as unknown as ResolverCallbacks,
+          resolutionPath,
+          materializationStack,
+          undefined,
+        );
+      }
+      this._deepSyncCtxPath = resolutionPath;
+    }
+
+    if (this._deepCycleMarks.get(binding.id) === this._deepCycleGen) {
+      throw new CircularDependencyError([...resolutionPath, tokenName(binding.token)]);
+    }
+
+    this._deepCycleMarks.set(binding.id, this._deepCycleGen);
+    this._deepActiveLevels++;
+
+    try {
+      // Use the pre-initialised context directly — no local variable needed.
+      const dynamicResult = binding.factory(this._deepSyncCtx!);
+      if (dynamicResult instanceof Promise) {
+        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+      }
+      return dynamicResult;
+    } finally {
+      // No Map.delete needed: the generation counter makes old marks invisible.
+      // Only reset the path pointer when the last deep level unwinds.
+      if (--this._deepActiveLevels === 0) {
+        this._deepSyncCtxPath = undefined;
+      }
+    }
+  }
+
+  private _resolveTransientDynamicSyncSlow<const Value>(
+    binding: Binding<Value> & { kind: "dynamic" },
+    resolutionPath: string[],
+    materializationStack: MaterializationFrame[],
+  ): Value {
+    // Rare fallback used when deep-chain reentrancy is detected (a factory called
+    // container.resolve() directly and the resulting chain also reached the threshold).
     const frame = this._getMaterializationFrame(binding);
     const tName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
+    if (resolutionSet === undefined) {
       resolutionSet = new Set<string>(resolutionPath);
       pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
     }
-
-    if (resolutionSet !== undefined ? resolutionSet.has(tName) : resolutionPath.includes(tName)) {
+    if (resolutionSet.has(tName)) {
       throw new CircularDependencyError([...resolutionPath, tName]);
     }
-
     resolutionPath.push(tName);
-    resolutionSet?.add(tName);
+    resolutionSet.add(tName);
     materializationStack.push(frame);
     const resolutionCtx = this._acquireSyncResolutionContext(
       resolutionPath,
@@ -1335,17 +1504,130 @@ export class DependencyResolver {
     try {
       const dynamicResult = binding.factory(resolutionCtx);
       if (dynamicResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+        throw new AsyncResolutionError(tName, tName);
       }
       return dynamicResult;
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tName);
+      resolutionSet.delete(tName);
     }
   }
 
-  private async _resolveTransientDynamicAsyncFromContext<const Value>(
+  // NOT declared `async` — avoids creating a JSAsyncGeneratorObject + implicit Promise wrapper on
+  // every invocation.  Cleanup is handled via .then(onFulfilled, onRejected) so the behaviour is
+  // identical to a try/finally but without the async machinery overhead.
+  private _resolveTransientDynamicAsyncFromContext<const Value>(
+    binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
+    resolutionPath: string[],
+    materializationStack: MaterializationFrame[],
+  ): Promise<Value> {
+    // ── Shallow async path (depth < RESOLUTION_SET_THRESHOLD) ─────────────────────────────
+    // For the common case of a sequential async chain (each factory awaits one dependency at a
+    // time), all levels share the same resolutionPath/materializationStack arrays.  A single
+    // DefaultResolutionContext can therefore serve the entire chain:
+    //   • levels 2-N of the owning chain: zero allocation, zero reset writes
+    //   • concurrent chains (Promise.all roots): detected by path-identity mismatch → fallback
+    //     to a fresh DefaultResolutionContext for that level only
+    // materializationStack is NOT pushed here — see class-level comment for the trade-off.
+    if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
+      const tName = tokenName(binding.token);
+      if (resolutionPath.includes(tName)) {
+        return Promise.reject(new CircularDependencyError([...resolutionPath, tName]));
+      }
+
+      resolutionPath.push(tName);
+
+      // Determine which context to use and whether this level owns the shared context.
+      let ctx: DefaultResolutionContext;
+      let isOwnerLevel: boolean;
+      if (this._deepAsyncCtxPath === resolutionPath) {
+        // Inner level of the owning chain — reuse the shared context with NO setup overhead.
+        ctx = this._deepAsyncCtx!;
+        isOwnerLevel = true;
+      } else if (this._deepAsyncCtxPath === undefined) {
+        // Root of a new chain — take ownership and initialise (or reset) the shared context.
+        const existing = this._deepAsyncCtx;
+        if (existing === undefined) {
+          ctx = new DefaultResolutionContext(
+            this as unknown as ResolverCallbacks,
+            resolutionPath,
+            materializationStack,
+            undefined,
+          );
+          this._deepAsyncCtx = ctx;
+        } else {
+          existing.reset(
+            this as unknown as ResolverCallbacks,
+            resolutionPath,
+            materializationStack,
+            undefined,
+          );
+          ctx = existing;
+        }
+        this._deepAsyncCtxPath = resolutionPath;
+        isOwnerLevel = true;
+      } else {
+        // Concurrent chain (e.g. Promise.all) — allocate a dedicated context and do NOT
+        // interfere with the owning chain's state.
+        ctx = new DefaultResolutionContext(
+          this as unknown as ResolverCallbacks,
+          resolutionPath,
+          materializationStack,
+          undefined,
+        );
+        isOwnerLevel = false;
+      }
+
+      if (isOwnerLevel) {
+        this._deepAsyncActiveLevels++;
+      }
+
+      // Invoke the factory synchronously to get its Promise (or a resolved value for "dynamic").
+      let factoryPromise: Promise<Value>;
+      try {
+        if (binding.kind === "dynamic-async") {
+          factoryPromise = binding.factory(ctx);
+        } else {
+          const r = binding.factory(ctx);
+          factoryPromise = r instanceof Promise ? (r as Promise<Value>) : Promise.resolve(r);
+        }
+      } catch (err) {
+        // Synchronous throw from the factory (rare) — clean up immediately.
+        resolutionPath.pop();
+        if (isOwnerLevel && --this._deepAsyncActiveLevels === 0) {
+          this._deepAsyncCtxPath = undefined;
+        }
+        return Promise.reject(err);
+      }
+
+      // Chain cleanup onto the Promise so it runs whether the factory resolves or rejects.
+      return factoryPromise.then(
+        (value) => {
+          resolutionPath.pop();
+          if (isOwnerLevel && --this._deepAsyncActiveLevels === 0) {
+            this._deepAsyncCtxPath = undefined;
+          }
+          return value;
+        },
+        (err: unknown) => {
+          resolutionPath.pop();
+          if (isOwnerLevel && --this._deepAsyncActiveLevels === 0) {
+            this._deepAsyncCtxPath = undefined;
+          }
+          // Re-throw as the rejected value; the `never` cast suppresses the TS return-type
+          // mismatch that arises because `throw` has type `never` in an expression context.
+          throw err as never;
+        },
+      );
+    }
+
+    // ── Deep async path (depth ≥ RESOLUTION_SET_THRESHOLD) ────────────────────────────────
+    // Fall back to the fully-correct slow implementation.
+    return this._resolveTransientDynamicAsyncSlow(binding, resolutionPath, materializationStack);
+  }
+
+  private async _resolveTransientDynamicAsyncSlow<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
@@ -1354,17 +1636,15 @@ export class DependencyResolver {
     const tName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
+    if (resolutionSet === undefined) {
       resolutionSet = new Set<string>(resolutionPath);
       pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
     }
-
-    if (resolutionSet !== undefined ? resolutionSet.has(tName) : resolutionPath.includes(tName)) {
+    if (resolutionSet.has(tName)) {
       throw new CircularDependencyError([...resolutionPath, tName]);
     }
-
     resolutionPath.push(tName);
-    resolutionSet?.add(tName);
+    resolutionSet.add(tName);
     materializationStack.push(frame);
     const resolutionCtx = new DefaultResolutionContext(
       this as unknown as ResolverCallbacks,
@@ -1381,7 +1661,7 @@ export class DependencyResolver {
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tName);
+      resolutionSet.delete(tName);
     }
   }
 
