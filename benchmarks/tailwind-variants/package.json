@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-tailwind-variants",
-  "version": "0.0.1",
+  "version": "0.3.14",
   "private": true,
   "description": "Performance benchmark for Tailwind CSS variant libraries",
   "keywords": [
