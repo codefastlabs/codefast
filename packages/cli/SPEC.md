@@ -1,5 +1,9 @@
 # `@codefast/cli` — đặc tả thiết kế (làm mới từ đầu)
 
+<a id="opening-workflow-old-snapshot"></a>
+
+**Quy trình nền (bắt buộc — đọc trước khi triển khai cây `src/` mới):** đặc tả này **không** khuyến khích refactor “tại chỗ” kéo dài trong cùng một `src/` mà không snapshot. **Chuẩn triển khai** là: (1) **chuyển toàn bộ** `packages/cli/src/` → `packages/cli/old/src/` **và** `packages/cli/tests/` → `packages/cli/old/tests/` để giữ bản chỉ đọc của mã và test cũ; (2) **làm lại** `src/` và `tests/` ở gốc gói như **cây hoàn toàn mới** theo [mục 7](#7-src-directory-layout) và các phần EA/DI — chi tiết thứ tự file, ràng buộc CI và xoá `old/` khi xong: [mục 9.1](#9-1-old-snapshot), [Bước 0](#step-0-section-10-import-boundaries). Mục đích của `old/` là **đối chiếu hành vi**, **port thuật toán** và **oracle test**, không phải nguồn import trong `src/` mới ([mục 2.3](#2-3-import-boundary-enforcement)).
+
 > `Commander` · **Kiến trúc tường minh (Explicit Architecture)** · `@codefast/di` · Tổ chức theo miền · Ưu tiên lớp — **mục 3** là hợp đồng _hành vi_ đối với người dùng (WHAT). **Cây `src/` mới** cố ý khác snapshot ở _cách wiring và ranh giới_ (HOW): một miền rõ ràng, một policy DI, không sao chép lỗi thiết kế cũ — xem [mục 1.4](#1-4-behavior-parity-not-code-parity). Snapshot `old/` chỉ để đối chiếu và trích thuật toán.
 
 **Phạm vi “đã chốt” vs “cổng trước code miền”:** toàn bộ tài liệu là **đặc tả làm việc**: **hành vi** [mục 3](#3-product-behavior) và quy tắc **EA / DI / cây `src/`** ở [mục 4](#4-explicit-architecture)–[7](#7-src-directory-layout) là chuẩn triển khai. **[Mục 10](#10-open-decisions)** ghi **hai quyết định kiến trúc đã chốt** (chia sẻ AST giữa `arrange`/`tag`; chính sách `index.ts` barrel) — không cần họp thêm để “mở” §10. **[Bước 0](#step-0-section-10-import-boundaries)** vẫn là cổng **trước PR đầu có `src/domains/**`**: bật [mục 2.3](#2-3-import-boundary-enforcement) trên CI và dựng khung `src/` tuân SPEC; từ chối merge nếu thiếu.
@@ -80,6 +84,7 @@ Mã hiện tại đã theo hướng phân lớp và đảo ngược phụ thuộ
 
 ### 1.2 Mục tiêu khi viết lại
 
+- **Quy trình repo:** trước khi gắn mã mới vào cây `src/` theo SPEC, **ưu tiên** hoàn tất [mục 9.1](#9-1-old-snapshot) (snapshot `src/` + `tests/` vào `old/`) rồi mới coi `src/` / `tests/` ở gốc gói là **làm mới hoàn toàn** theo layout §7 — tránh hai “nguồn sự thật” trong cùng một cây làm việc.
 - **Giữ nguyên** môi trường chạy: `Commander`, `@codefast/di`, Node ESM, `bin` `codefast`, và **toàn bộ tương đương hành vi** ở [mục 3](#3-product-behavior), trừ khi ghi rõ thay đổi phá vỡ tương thích trong đặc tả hoặc `CHANGELOG.md`.
 - **Căn cứ kiến trúc**: áp dụng các quy tắc đã **chốt** ở [mục 4](#4-explicit-architecture) (tổng hợp từ Graça: Ports & Adapters, Onion, Clean, thành phần theo miền).
 - **Cây theo miền**: `domains/arrange`, `domains/mirror`, `domains/tag`, `domains/config` (tải `codefast.config` và prelude chung), cùng `bootstrap/` và `shell/` (nhân chung tối thiểu — tương tự shared kernel trong bài gốc; giữ nhỏ).
@@ -1011,7 +1016,7 @@ Các nhánh `mirror/` và `tag/` dùng **cùng khung** với `arrange`: có `pre
 
 ### 9.1 Lưu trữ mã và kiểm thử cũ trong `old/`
 
-Trước khi triển khai `src/` và `tests/` **mới** theo đặc tả:
+Đây là bước **cụ thể hoá** quy trình đã nhấn mạnh [ngay đầu đặc tả](#opening-workflow-old-snapshot) (snapshot `src/` + `tests/` rồi mới làm cây mới). Trước khi triển khai `src/` và `tests/` **mới** theo đặc tả:
 
 1. Di chuyển toàn bộ **`src/`** hiện tại → **`old/src/`**, và **`tests/`** → **`old/tests/`** (cấu trúc gợi ý dưới đây).
 2. Mục đích **chỉ để tham chiếu**: đối chiếu hành vi (mục 3), so sánh khi sửa lỗi, sao chép đoạn thuật toán khi cần — **không** coi đây là nền để “vá” hay tiếp tục phát triển.
