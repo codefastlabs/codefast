@@ -8,26 +8,34 @@
     "@codefast/tailwind-variants": "0.3.13",
     "@codefast/theme": "0.3.13",
     "@codefast/typescript-config": "0.3.13",
-    "@codefast/ui": "0.3.13"
+    "@codefast/ui": "0.3.13",
+    "@codefast/benchmark-di-inversify": "0.0.1"
   },
   "changesets": [
     "afraid-spoons-glow",
+    "blue-singers-invite",
     "brown-dragons-slide",
+    "calm-rivers-try",
     "chatty-dragons-bet",
     "clever-rivers-pull",
     "cool-colts-retire",
+    "cozy-deer-boil",
     "curvy-roses-smell",
     "dirty-bags-draw",
     "dry-singers-cut",
+    "dry-tools-hope",
     "late-mails-notice",
+    "light-pears-invite",
     "plain-lines-grin",
     "shiny-moose-read",
     "smooth-guests-warn",
     "tasty-maps-learn",
     "ten-cases-knock",
+    "thirty-roses-show",
     "vast-aliens-jog",
     "wacky-beds-act",
     "warm-heads-hang",
+    "warm-pianos-stop",
     "wild-apes-study"
   ]
 }
