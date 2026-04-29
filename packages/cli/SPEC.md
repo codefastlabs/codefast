@@ -1,12 +1,14 @@
 # `@codefast/cli` — đặc tả thiết kế (làm mới từ đầu)
 
-> `Commander` · **Kiến trúc tường minh (Explicit Architecture)** · `@codefast/di` · Tổ chức theo miền · Ưu tiên lập trình hướng lớp — viết lại `packages/cli` để **giữ đầy đủ hành vi** đã có (tham chiếu snapshot trong `old/src/` sau bước lưu trữ mục 9.1), nhưng tổ chức mã nguồn nhất quán và dễ đọc hơn.
+> `Commander` · **Kiến trúc tường minh (Explicit Architecture)** · `@codefast/di` · Tổ chức theo miền · Ưu tiên lớp — **mục 3** là hợp đồng _hành vi_ đối với người dùng (WHAT). **Cây `src/` mới** cố ý khác snapshot ở _cách wiring và ranh giới_ (HOW): một miền rõ ràng, một policy DI, không sao chép lỗi thiết kế cũ — xem [mục 1.4](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ). Snapshot `old/` chỉ để đối chiếu và trích thuật toán.
 
 ---
 
 ## Mục lục
 
 1. [Bối cảnh và mục tiêu](#1-bối-cảnh-và-mục-tiêu)
+   - [1.3 Phạm vi không làm](#13-phạm-vi-không-làm)
+   - [1.4 Thiết kế mới: parity hành vi, không parity mã cũ](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ)
 2. [Nền tảng kỹ thuật và ràng buộc monorepo](#2-nền-tảng-kỹ-thuật-và-ràng-buộc-monorepo)
    - [2.1 Gói `@codefast/di` — API dùng cho CLI](#21-gói-codefastdi--api-dùng-cho-cli)
 3. [Hành vi sản phẩm — tương đương bắt buộc](#3-hành-vi-sản-phẩm--tương-đương-bắt-buộc)
@@ -38,8 +40,11 @@
    - [6.4 Đăng ký nhiều `CliCommand` (multi-binding — đã hỗ trợ sẵn)](#64-đăng-ký-nhiều-clicommand-multi-binding--đã-hỗ-trợ-sẵn)
    - [6.5 Scope mặc định](#65-scope-mặc-định)
    - [6.6 Vòng đời theo môi trường](#66-vòng-đời-theo-môi-trường)
-7. [Cấu trúc thư mục `src/` mục tiêu](#7-cấu-trúc-thư-mục-src-mục-tiêu)
-   - [7.1 Bố cục `shell/`](#71-bố-cục-shell)
+7. [Cấu trúc thư mục `src/` — package by domain + Explicit Architecture](#7-cấu-trúc-thư-mục-src--package-by-domain--explicit-architecture)
+   - [7.1 Trục domains: một thư mục con = một miền](#71-trục-domains-một-thư-mục-con--một-miền)
+   - [7.2 Bốn tầng trong mỗi miền (cùng một “lát cắt”)](#72-bốn-tầng-trong-mỗi-miền-cùng-một-lát-cắt)
+   - [7.3 Cây src đầy đủ và chỗ đặt module DI](#73-cây-src-đầy-đủ-và-chỗ-đặt-module-di)
+   - [7.4 Bố cục shell](#74-bố-cục-shell)
 8. [Chiến lược kiểm thử](#8-chiến-lược-kiểm-thử)
 9. [Kế hoạch chuyển đổi](#9-kế-hoạch-chuyển-đổi)
    - [9.1 Lưu trữ mã và kiểm thử cũ trong `old/`](#91-lưu-trữ-mã-và-kiểm-thử-cũ-trong-old)
@@ -65,12 +70,36 @@ Mã hiện tại đã theo hướng phân lớp và đảo ngược phụ thuộ
 - **Cây theo miền**: `domains/arrange`, `domains/mirror`, `domains/tag`, `domains/config` (tải `codefast.config` và prelude chung), cùng `bootstrap/` và `shell/` (nhân chung tối thiểu — tương tự shared kernel trong bài gốc; giữ nhỏ).
 - **Ưu tiên lớp** cho mọi thành phần tham gia đồ thị DI và điều phối; hàm chỉ dùng cho tiện ích thuần, phạm vi nhỏ, đặt cạnh lớp sở hữu.
 - **Một gốc composition mỏng**, ràng buộc theo module từng miền.
+- **Thiết kế mới có chủ đích** — không nhằm “dời thư mục rồi giữ nguyên mọi quyết định wiring” của mã cũ. Các khác biệt **cố ý** so với snapshot (đồ thị DI, miền `config`, `shell/` mỏng, v.v.) được gom ở [mục 1.4](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ).
 
 ### 1.3 Phạm vi không làm
 
 - Thay `Commander` hoặc dùng bộ chứa DI khác.
 - Hỗ trợ môi trường không phải Node.
 - Đổi tên gói hoặc diễn giải quy ước phiên bản (kiểu semver) ngoài những gì đã thống nhất hướng người dùng ở mục 3.
+
+### 1.4 Thiết kế mới: parity hành vi, không parity mã cũ
+
+**Phân tách hai lớp đặc tả**
+
+| Lớp                                 | Nội dung                                | Ràng buộc                                                            |
+| ----------------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
+| **Hành vi (mục 3)**                 | Lệnh, cờ, thoát mã, JSON, config, hook… | **Bắt buộc** tương đương trừ khi ghi `CHANGELOG` / đặc tả            |
+| **Kiến trúc & wiring (mục 4–7, 6)** | Đường dẫn, port, module, bind           | **Được** và **nên** tốt hơn snapshot — chỉ cần vẫn thỏa mục 3 + test |
+
+**Đột phá / quyết định mới (không có trong “chỉ dịch sang `@codefast/di` giữ nguyên bố cục cũ”)**
+
+1. **Miền `config` tách khỏi “kernel/core”** — prelude tải `codefast.config` là bounded context riêng ([mục 4.4](#44-thành-phần-component-và-gói-theo-miền), [mục 7](#7-cấu-trúc-thư-mục-src--package-by-domain--explicit-architecture)), thay vì logic cấu hình trải rác dưới tên kỹ thuật chung.
+2. **`shell/` chỉ nhân chung: hợp đồng + token** — không `shell/application/`; mọi ca nghiệp vụ nằm trong `domains/*` ([mục 4.4](#44-thành-phần-component-và-gói-theo-miền), [mục 7.4](#74-bố-cục-shell)).
+3. **Đồ thị DI một nghĩa cho lệnh** — snapshot cũ dễ tạo **hai singleton** cho cùng một `*Command` (bind class + bind `CliCommandToken` + `whenNamed`). Thiết kế mới **ưu tiên một instance / lệnh**: ví dụ một bind chính + **`toAlias`** cho token có tên, hoặc một chiến lược resolve duy nhất ([mục 6.4](#64-đăng-ký-nhiều-clicommand-multi-binding--đã-hỗ-trợ-sẵn), hướng (1)). Đây là thay đổi **cố ý** so với copy-paste composition-root cũ.
+4. **Ranh giới Port → Adapter có tên và kiểm chứng được** — mọi IO (fs, workspace, TS AST…) đi qua port trong `application/` với adapter trong `infrastructure/`; presentation không “với tay” vào chi tiết fs ngoài DTO đã chốt ([mục 4](#4-kiến-trúc-tường-minh-explicit-architecture)).
+5. **Quy ước tệp một-một** — bỏ “hoặc” mơ hồ giữa pattern đặt tên; giảm quyết định lúc gõ máy ([mục 4.8](#48-quy-ước-đặt-tên-tệp)).
+6. **Cây test là bằng chứng thiết kế** — checklist parity ([3.10](#310-checklist-kịch-bản-kiểm-thử-parity)) + độ phủ ([mục 8](#8-chiến-lược-kiểm-thử)) biện minh rằng kiến trúc mới vẫn cố định hành vi, không chỉ “đẹp trên giấy”.
+
+**Điều không coi là đột phá (giữ nguyên có chủ đích)**
+
+- **Công cụ**: `Commander`, `@codefast/di`, ESM — đã chốt; không đổi framework chỉ để “mới”.
+- **Mục 3** — không “cải tiến hành vi” ngầm; mọi thay đổi facing-user phải tài liệu hoá.
 
 ---
 
@@ -147,7 +176,7 @@ Tham chiếu mã: `packages/di/src/` (bản trong monorepo). Dưới đây dùng
 
 ## 3. Hành vi sản phẩm — tương đương bắt buộc
 
-Đây là **hợp đồng hành vi** rút từ `packages/cli/src` và từ `README.md` (phần mô tả cho người dùng). Bản triển khai mới phải tương đương.
+Đây là **hợp đồng hành vi** (WHAT) rút từ `packages/cli/src` và từ `README.md` (phần mô tả cho người dùng). Bản triển khai mới phải tương đương. **Cách tổ chức mã và DI** không bắt buộc trùng snapshot — các đột phá cố ý nằm ở [mục 1.4](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ).
 
 ### 3.1 Điểm vào, chương trình `Commander`, vòng đời container
 
@@ -410,7 +439,7 @@ Các mục dưới đây **chốt** cách hiểu và áp dụng bài tổng hợ
 **Bố cục `shell/` (đã chốt trong đặc tả này):**
 
 - **`shell/contracts/`:** hợp đồng và token DI dùng chung giữa miền (`CliCommand`, token logger/runtime nếu chung, …). Đây là nơi **đặt port/token xuyên miền**, không phải logic dài.
-- **Không** có `shell/application/`: tải `codefast.config`, cảnh báo schema và mọi ca prelude thuộc **`domains/config/`** ([mục 7](#7-cấu-trúc-thư-mục-src-mục-tiêu)). **Cấm** đặt use case thuộc bounded context `arrange` / `mirror` / `tag` dưới `shell/`.
+- **Không** có `shell/application/`: tải `codefast.config`, cảnh báo schema và mọi ca prelude thuộc **`domains/config/`** ([mục 7](#7-cấu-trúc-thư-mục-src--package-by-domain--explicit-architecture)). **Cấm** đặt use case thuộc bounded context `arrange` / `mirror` / `tag` dưới `shell/`.
 
 ### 4.5 Đảo ngược phụ thuộc và gốc composition
 
@@ -435,6 +464,8 @@ Các mục dưới đây **chốt** cách hiểu và áp dụng bài tổng hợ
 | Mô hình & dịch vụ miền               | `domains/<miền>/domain/`                                        |
 | Bộ thích ứng thứ hai (fs, TS, …)     | `domains/<miền>/infrastructure/`                                |
 
+**Cây con trong từng tầng** (ví dụ `presentation/cli/`, `application/{ports,use-cases}/`, `infrastructure/adapters/`) được chốt trong [mục 7.3](#73-cây-src-đầy-đủ-và-chỗ-đặt-module-di).
+
 **Quy tắc import lớp (cô đọng):**
 
 - `domain` → không `application` / `infrastructure` / `presentation`.
@@ -442,24 +473,24 @@ Các mục dưới đây **chốt** cách hiểu và áp dụng bài tổng hợ
 - `infrastructure` → hiện thực port của `application` (và có thể dùng kiểu từ `domain`).
 - `presentation` → gọi `application`; được dùng `Commander` và kiểu DTO/parse biên.
 
-Chi tiết cây mẫu: [mục 7](#7-cấu-trúc-thư-mục-src-mục-tiêu).
+Chi tiết **hai trục** (ưu tiên tên miền rồi mới tầng kỹ thuật): [mục 7](#7-cấu-trúc-thư-mục-src--package-by-domain--explicit-architecture).
 
 ### 4.8 Quy ước đặt tên tệp
 
-| Loại                                                    | Pattern (bắt buộc trong `src/` mới)                            | Ví dụ                                         |
-| ------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------- |
-| Port (hợp đồng ứng dụng)                                | `*.port.ts`                                                    | `file-writer.port.ts`                         |
-| Ca nghiệp vụ                                            | `*.use-case.ts`                                                | `run-arrange-sync.use-case.ts`                |
-| Dịch vụ miền                                            | `*.domain-service.ts`                                          | `tailwind-token-classifier.domain-service.ts` |
-| Bộ thích ứng thứ hai                                    | `*.adapter.ts`                                                 | `config-loader.adapter.ts`                    |
-| Lược đồ Zod gắn CLI (argv, request đi vào use case)     | `*-cli.schema.ts`                                              | `arrange-cli.schema.ts`                       |
-| Lược đồ Zod thuần miền (không phụ thuộc hình dạng argv) | `*.schema.ts`                                                  | `mirror-sync-run-request.schema.ts`           |
-| Presenter (đầu ra cho người, stderr/stdout có màu)      | `*.presenter.ts`                                               | `arrange-sync.presenter.ts`                   |
-| Định dạng JSON thuần (stringify / shape payload)        | `*-json.format.ts`                                             | `arrange-sync-json.format.ts`                 |
-| Mô hình / lỗi / hằng miền                               | `*.domain.ts` (hoặc `errors.domain.ts`, `constants.domain.ts`) | `types.domain.ts`                             |
-| Module DI                                               | `<miền>.module.ts`                                             | `arrange.module.ts`                           |
+| Loại                                                    | Pattern (bắt buộc trong `src/` mới)                                             | Ví dụ                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------- |
+| Port (hợp đồng ứng dụng)                                | `*.port.ts`                                                                     | `file-writer.port.ts`                         |
+| Ca nghiệp vụ                                            | `*.use-case.ts`                                                                 | `run-arrange-sync.use-case.ts`                |
+| Dịch vụ miền                                            | `*.domain-service.ts`                                                           | `tailwind-token-classifier.domain-service.ts` |
+| Bộ thích ứng thứ hai                                    | `*.adapter.ts`                                                                  | `config-loader.adapter.ts`                    |
+| Lược đồ Zod gắn CLI (argv, request đi vào use case)     | `*-cli.schema.ts`                                                               | `arrange-cli.schema.ts`                       |
+| Lược đồ Zod thuần miền (không phụ thuộc hình dạng argv) | `*.schema.ts`                                                                   | `mirror-sync-run-request.schema.ts`           |
+| Presenter (đầu ra cho người, stderr/stdout có màu)      | `*.presenter.ts`                                                                | `arrange-sync.presenter.ts`                   |
+| Định dạng JSON thuần (stringify / shape payload)        | `*-json.format.ts`                                                              | `arrange-sync-json.format.ts`                 |
+| Mô hình / lỗi / hằng miền                               | `*.domain.ts` (hoặc `errors.domain.ts`, `constants.domain.ts`)                  | `types.domain.ts`                             |
+| Module DI                                               | **`{miền}.module.ts`** — **nhiều nhất một** tệp này trong mỗi `domains/<miền>/` | `arrange.module.ts`                           |
 
-**Lưu ý:** không dùng `*.interface.ts` làm tên chuẩn; port là `*.port.ts`. Lớp trùng tên với port có thể đặt cùng stem (ví dụ `file-writer.port.ts` export `FileWriterPort`). **Token DI:** tệp **`*.tokens.ts`** trong **cùng thư mục `application/`** của miền đó, gom token gắn với các port/use case của miền; token và hợp đồng xuyên miền nằm trong `shell/contracts/` ([mục 7.1](#71-bố-cục-shell)).
+**Lưu ý:** không dùng `*.interface.ts` làm tên chuẩn; port là `*.port.ts`. Lớp trùng tên với port có thể đặt cùng stem (ví dụ `file-writer.port.ts` export `FileWriterPort`). **Token DI:** tệp **`*.tokens.ts`** trong **cùng thư mục `application/`** của miền đó, gom token gắn với các port/use case của miền; token và hợp đồng xuyên miền nằm trong `shell/contracts/` ([mục 7.4](#74-bố-cục-shell)).
 
 ---
 
@@ -474,19 +505,23 @@ Chi tiết cây mẫu: [mục 7](#7-cấu-trúc-thư-mục-src-mục-tiêu).
 
 ## 6. Quy ước `@codefast/di`
 
-Căn cứ [mục 2.1](#21-gói-codefastdi--api-dùng-cho-cli). **Không** đặt logic nghiệp vụ `arrange` / `mirror` / `tag` trong `bootstrap/` — chỉ nạp module và bind rìa (lệnh, glue).
+Căn cứ [mục 2.1](#21-gói-codefastdi--api-dùng-cho-cli) và **định hướng thiết kế mới** ([mục 1.4](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ)). **Không** đặt logic nghiệp vụ `arrange` / `mirror` / `tag` trong `bootstrap/` — chỉ nạp module và bind rìa (lệnh, glue).
 
 ### 6.1 Module theo miền
 
-Mỗi miền có thể xuất **một module lõi** (`<miền>.module.ts`) và **thêm module presentation** khi tách rời (ví dụ `ArrangePresentationModule` + `ArrangeModule` trong snapshot) — không mâu thuẫn với “một miền”: đó là **một bounded context**, nhiều **module DI** để gói bind. Trong `Module.create`, dùng `builder.bind(PortToken).to(AdapterClass).singleton()` (hoặc `transient` khi có lý do). **Không** dùng `.scoped()` trên cây CLI (root). Module presentation nên `builder.import(LõiMiền)` **trước** bind `*Command` để port đã có.
+Mỗi miền có **nhiều nhất một** tệp `Module` tại gốc `domains/<miền>/`, tên **`{miền}.module.ts`** (ví dụ `arrange.module.ts`). **Mọi** bind DI của miền đó — port → adapter, `*Command`, v.v. — gom trong **`Module.create` của tệp đó**; **cấm** thêm tệp `*.module.ts` thứ hai trong cùng thư mục miền (kể cả `*.presentation.module.ts`). Tách “lõi / presentation” bằng tầng thư mục EA (`application/`, `presentation/cli/`, …), không bằng nhiều file module.
+
+Trong `Module.create`, dùng `builder.bind(PortToken).to(AdapterClass).singleton()` (hoặc `transient` khi có lý do). **Không** dùng `.scoped()` trên cây CLI (root). Thứ tự bind trong tệp: ưu tiên bind port/adapter **trước** `*Command` để lệnh resolve được phụ thuộc.
+
+**Đối chiếu:** snapshot trong `old/` có thể tách `*PresentationModule` + module lõi — đó **không** là mẫu cho `src/` mới ([mục 1.4](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ)).
 
 Nạp không topological toàn cục — thứ tự `import` / `load` phải phản ánh phụ thuộc ([mục 2.1](#21-gói-codefastdi--api-dùng-cho-cli)).
 
 ### 6.2 Gốc composition (bootstrap)
 
 - `const container = Container.create()` (hoặc `Container.fromModules(...)` nếu toàn bộ cấu hình nằm trong module).
-- `container.load(ConfigModule, ArrangePresentationModule, ArrangeModule, …)` — **thứ tự có ý nghĩa**: module phụ thuộc binding từ module khác phải được nạp **sau** (hoặc đã được `import` đúng thứ tự bên trong). Với cây mới: nạp **`domains/config`** (hoặc `ConfigModule`) khi các miền cần port tải cấu hình trước khi bind lệnh phụ thuộc prelude.
-- `container.load(MirrorModule)`, `container.load(TagPresentationModule, TagModule)`, … — tương tự.
+- `container.load(ConfigModule, ArrangeModule, MirrorModule, TagModule, …)` — **thứ tự có ý nghĩa**: module phụ thuộc binding từ module khác phải được nạp **sau** (hoặc đã được `import` đúng thứ tự bên trong `Module.create`). Với cây mới: nạp **`ConfigModule`** (hoặc tên tương đương của `domains/config`) trước nếu các miền khác cần port prelude/ cấu hình.
+- Mỗi tên trong `load(...)` tương ứng **một** tệp `{miền}.module.ts` — không cặp “presentation + lõi” cho cùng một miền.
 - Bind thêm ở gốc glue không thuộc một module đơn (lệnh + alias token nếu có).
 
 ### 6.3 Bind port → bộ thích ứng
@@ -515,13 +550,13 @@ Singleton cache theo **`binding.id`** (`scope.ts`), không gộp theo class → 
 
 **Chốt cho `src/` mới (chọn một và ghi rõ trong PR):**
 
-1. **Một singleton mỗi lệnh:** bỏ bind trùng hoặc thay bằng **`toAlias`** từ `CliCommandToken` + `whenNamed` sang token/class đã bind sẵn, **hoặc**
-2. **Giữ hai binding có chủ đích:** toàn bộ mã thống nhất **một** cách resolve (chỉ class **hoặc** chỉ token có tên), không trộn.
+1. **Ưu tiên đặc tả — một singleton mỗi lệnh:** bỏ bind trùng hoặc thay bằng **`toAlias`** từ `CliCommandToken` + `whenNamed` sang token/class đã bind sẵn. Đây là **đột phá wiring** so với snapshot ([mục 1.4](#14-thiết-kế-mới-parity-hành-vi-không-parity-mã-cũ)) — vẫn parity hành vi, nhưng loại hai instance ẩn.
+2. **Chỉ khi có lý do đo được (test kép, extension point):** giữ hai binding — toàn bộ code base thống nhất **một** cách resolve (chỉ class **hoặc** chỉ token có tên), không trộn.
 
-**Mẫu parity (snapshot — đối chiếu hành vi):**
+**Mẫu parity (snapshot — đối chiếu hành vi):** trong `old/` có thể thấy `load(ArrangePresentationModule, ArrangeModule)`; **`src/` mới** chỉ `load(ArrangeModule)` (một tệp module mỗi miền — [6.1](#61-module-theo-miền)).
 
 ```typescript
-runtimeContainer.load(ArrangePresentationModule, ArrangeModule);
+runtimeContainer.load(ArrangeModule);
 runtimeContainer.bind(ArrangeCommand).to(ArrangeCommand).singleton();
 runtimeContainer.bind(CliCommandToken).to(ArrangeCommand).whenNamed("arrange").singleton();
 // … mirror, tag tương tự
@@ -547,7 +582,75 @@ Nếu sau `.to(Class)` **không** gọi `.singleton()` / `.transient()` / `.scop
 
 ---
 
-## 7. Cấu trúc thư mục `src/` mục tiêu
+## 7. Cấu trúc thư mục `src/` — package by domain + Explicit Architecture
+
+Cây `src/` **không** bố trí kiểu một bộ `controllers/` · `services/` · `repositories/` dùng chung cho mọi tính năng. Thay vào đó có **hai trục** luôn đọc cùng nhau:
+
+1. **Trục thứ nhất — package by domain:** bậc ngay dưới `domains/` là **tên năng lực nghiệp vụ** (`config`, `arrange`, `mirror`, `tag`). Mỗi thư mục là một **bounded context** (“screaming architecture”): từ đường dẫn đoán được _khả năng_ sản phẩm, không chỉ lớp kỹ thuật.
+2. **Trục thứ hai — Explicit Architecture trong từng lát cắt:** _trong cùng một_ `domains/<miền>/` luôn có **bốn tầng** lặp lại: `presentation/` · `application/` · `domain/` · `infrastructure/`, ánh xạ trực tiếp [mục 4.2–4.3](#42-port-và-bộ-thích-ứng-lục-giác--vành) và bảng [4.7](#47-ánh-xạ-vào-cây-thư-mục-trong-gói).
+
+**Quy tắc gói**
+
+- Luật nghiệp vụ và điều phối **thuộc** một tính năng phải nằm **trong** `domains/<tên-miền>/`. Không thêm `arrange/` hay `services/` song song ở gốc `src/` (ngoại trừ `shell/`, `bootstrap/`, `bin`).
+- Hai miền **không** import lớp triển khai cụ thể của nhau; chỉ qua `shell/contracts` hoặc do `bootstrap/` nạp nhiều module — [mục 4.4](#44-thành-phần-component-và-gói-theo-miền).
+
+```mermaid
+flowchart TB
+  subgraph slice["Mỗi domains / miền / — một lát cắt"]
+    P["presentation\nCommander, *Command"]
+    A["application\nuse case, port, tokens"]
+    D["domain\nquy tắc, mô hình"]
+    I["infrastructure\nadapter"]
+  end
+  P --> A
+  A --> D
+  I -.->|implements port| A
+```
+
+### 7.1 Trục domains: một thư mục con = một miền
+
+| Thư mục            | Bounded context                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| `domains/config/`  | Tải / kiểm tra `codefast.config`, prelude, cảnh báo — **không** gói “core/kernel” mơ hồ |
+| `domains/arrange/` | Phân tích / sắp xếp / nhóm class trong `cn()` · `tv()`                                  |
+| `domains/mirror/`  | Đồng bộ trường `exports` sau build                                                      |
+| `domains/tag/`     | `annotate`, `@since`, quy ước workspace                                                 |
+
+Một miền là **một** cây `domains/<miền>/` và **nhiều nhất một** tệp **`{miền}.module.ts`** gắn với miền đó — xem [6.1](#61-module-theo-miền).
+
+### 7.2 Bốn tầng trong mỗi miền (cùng một lát cắt)
+
+| Tầng              | Vai trò EA                          | Nội dung điển hình                                                       |
+| ----------------- | ----------------------------------- | ------------------------------------------------------------------------ |
+| `presentation/`   | Bộ thích ứng **thứ nhất** (driving) | `*Command`, `register(Commander)`, argv → DTO; **được** dùng `commander` |
+| `application/`    | Ca nghiệp vụ + **định nghĩa port**  | `*.use-case.ts`, `*.port.ts`, `*.tokens.ts`                              |
+| `domain/`         | Mô hình & luật **không** biết IO    | `*.domain.ts`, `*.domain-service.ts`                                     |
+| `infrastructure/` | Bộ thích ứng **thứ hai** (driven)   | `*.adapter.ts` — fs, TS API, pnpm workspace, jiti…                       |
+
+Chiều phụ thuộc: `presentation` → `application` → `domain`; `infrastructure` hiện thực port mà `application` khai báo — [mục 4.7](#47-ánh-xạ-vào-cây-thư-mục-trong-gói).
+
+### 7.3 Cây src đầy đủ và chỗ đặt module DI
+
+- **`bin.ts`:** điểm vào process — ủy quyền cho `bootstrap/run-cli.ts`.
+- **`bootstrap/`:** **composition root** — `cli-composition-root.ts` tạo container, `load` module, bind lệnh / alias; **không** chứa quy tắc miền ([mục 4.5](#45-đảo-ngược-phụ-thuộc-và-gốc-composition)).
+- **`shell/contracts/`:** hợp đồng & token **xuyên** miền; không đặt use case dài tại đây.
+- **`domains/<miền>/`:** mỗi miền có **đúng một** tệp **`{miền}.module.ts`** ở gốc (cạnh bốn tầng), gom toàn bộ bind DI của miền; **không** tệp `*.module.ts` thứ hai. File module **không** thay thế tầng `application` / `domain`.
+
+**Cây con chuẩn trong mỗi tầng (Explicit Architecture — bắt buộc áp dụng trong `src/` mới)**
+
+Các thư mục con dưới đây là **quy ước gói** để nhìn đường dẫn là biết vai trò EA; tệp vẫn tuân [mục 4.8](#48-quy-ước-đặt-tên-tệp) (hậu tố `.use-case.ts`, `.port.ts`, …).
+
+| Tầng              | Thư mục con             | Vai trò                                                                                                                                                                          |
+| ----------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `presentation/`   | `cli/`                  | Lớp `*Command`, đăng ký `Commander`, ánh xạ argv (bộ thích ứng thứ nhất).                                                                                                        |
+| `presentation/`   | `presenters/`           | `*.presenter.ts`, `*-json.format.ts` (đầu ra người / JSON). Có thể bỏ qua nếu miền chỉ có `cli` mỏng.                                                                            |
+| `application/`    | `use-cases/`            | `*.use-case.ts`.                                                                                                                                                                 |
+| `application/`    | `ports/`                | `*.port.ts` (hợp đồng do application sở hữu).                                                                                                                                    |
+| `application/`    | _(gốc `application/`)_  | `*.tokens.ts` (hoặc một tệp `tokens.ts` / `<miền>.tokens.ts` tại gốc tầng này — xem [4.8](#48-quy-ước-đặt-tên-tệp)); `*-cli.schema.ts` nếu đặt schema argv ở application.        |
+| `domain/`         | _(phẳng hoặc nhóm nhỏ)_ | `*.domain.ts`, `errors.domain.ts`, `constants.domain.ts`. Tuỳ độ lớn có thể thêm `services/` cho `*.domain-service.ts`.                                                          |
+| `infrastructure/` | `adapters/`             | `*.adapter.ts` hiện thực port (fs, workspace, TS AST, jiti, …). Có thể nhóm thêm một cấp theo công nghệ (`adapters/fs/`, `adapters/workspace/`) khi số tệp lớn — không bắt buộc. |
+
+**Cây tổng thể (shell + bootstrap + một lát cắt `arrange` mở đầy đủ; các miền khác lặp cùng bốn tầng)**
 
 ```text
 src/
@@ -557,28 +660,74 @@ src/
     cli-composition-root.ts
   shell/
     contracts/
+      cli-command.contract.ts
+      tokens.ts
   domains/
     config/
       config.module.ts
       domain/
+        errors.domain.ts
+        schema.domain.ts
       application/
+        config.tokens.ts
+        ports/
+          config-warning-reporter.port.ts
+        use-cases/
+          load-codefast-config.use-case.ts
       infrastructure/
+        adapters/
+          config-loader.adapter.ts
+          config-schema.adapter.ts
       presentation/
+        cli/
     arrange/
       arrange.module.ts
       domain/
+        constants.domain.ts
+        types.domain.ts
+        grouping.domain.ts
+        tailwind-token-classifier.domain-service.ts
       application/
+        arrange.tokens.ts
+        ports/
+          file-writer.port.ts
+        use-cases/
+          run-arrange-sync.use-case.ts
       infrastructure/
+        adapters/
+          fs-file-writer.adapter.ts
       presentation/
+        cli/
+          arrange.command.ts
+        presenters/
+          arrange-sync.presenter.ts
+          arrange-sync-json.format.ts
     mirror/
       mirror.module.ts
-      ...
+      domain/ ...
+      application/
+        ports/ ...
+        use-cases/ ...
+      infrastructure/
+        adapters/ ...
+      presentation/
+        cli/ ...
     tag/
       tag.module.ts
-      ...
+      domain/ ...
+      application/ ...
+      infrastructure/
+        adapters/ ...
+      presentation/
+        cli/ ...
+        presenters/ ...
 ```
 
-### 7.1 Bố cục `shell/`
+Các nhánh `mirror/` và `tag/` dùng **cùng khung** `presentation/{cli,presenters?}` · `application/{ports,use-cases}` · `domain/` · `infrastructure/adapters/` — không liệt kê hết tệm để tránh trùng lặp. Miền `config` có thể có `presentation/cli/` rỗng hoặc rất mỏng nếu không có lệnh Commander riêng.
+
+**Lưu ý:** tên tệp trong ví dụ mang tính minh hoạ; khi triển khai phải khớp hành vi [mục 3](#3-hành-vi-sản-phẩm--tương-đương-bắt-buộc) và quy tắc đặt tên [4.8](#48-quy-ước-đặt-tên-tệp).
+
+### 7.4 Bố cục shell
 
 - **`shell/contracts/`:** port, token và kiểu dùng chung giữa miền (`CliCommand`, …). Giữ **mỏng**; mọi ca nghiệp vụ (kể cả tải cấu hình) nằm dưới `domains/`, không dưới `shell/`.
 - **Tên thư mục `shell/`** đã chốt trong đặc tả này (tương đương **shared kernel** trong bài Graça). **Không** dùng `kernel/` làm tên cây trong gói — tránh đổi tên hàng loạt và mâu thuẫn tài liệu.
