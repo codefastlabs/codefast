@@ -18,7 +18,7 @@ const INVERSIFY_SCENARIO_NAME = "inversify";
 const benchmarkPackageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 async function main(): Promise<void> {
-  console.log(`Scenario ${INVERSIFY_SCENARIO_NAME} started`);
+  console.error(`[bench] subprocess ${INVERSIFY_SCENARIO_NAME} started`);
   const scenarios = collectAllInversifyScenarios();
   const sanityFailures = await runSanityChecks(scenarios);
   const trials = await runAllTrials(scenarios, sanityFailures);
@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     trials,
     sanityFailures,
   });
-  console.log(`Scenario ${INVERSIFY_SCENARIO_NAME} completed`);
+  console.error(`[bench] subprocess ${INVERSIFY_SCENARIO_NAME} completed`);
 }
 
 main().catch((error: unknown) => {

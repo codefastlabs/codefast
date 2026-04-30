@@ -1,4 +1,4 @@
-import { Bench } from "tinybench";
+import { Bench, type BenchEvent } from "tinybench";
 import type { TaskResult } from "tinybench";
 import { isAsyncScenario } from "#/scenarios/types";
 import type { AnyScenario } from "#/scenarios/types";
@@ -105,11 +105,16 @@ function hasStatistics(result: TaskResult): result is TaskResultWithStatisticsSt
  */
 async function runOneTrial(
   trialIndex: number,
+  trialCount: number,
   scenarios: readonly AnyScenario[],
   sanityFailures: readonly string[],
 ): Promise<TrialPayload> {
   const beforeEachGc = createBeforeEachGcHook();
   const bench = new Bench(DEFAULT_BENCH_OPTIONS);
+  const runnableScenarioCount = scenarios.filter(
+    (scenario) => !sanityFailures.includes(scenario.id),
+  ).length;
+  let completedScenarioCount = 0;
 
   // Pre-build every scenario's closure before bench.add so tinybench only sees
   // pre-warmed functions. Build-time cost (container creation, binding
@@ -137,6 +142,18 @@ async function runOneTrial(
       });
     }
   }
+
+  bench.addEventListener("cycle", (event: Event) => {
+    const benchEvent = event as BenchEvent<"cycle">;
+    const task = benchEvent.task;
+    if (task === undefined) {
+      return;
+    }
+    completedScenarioCount += 1;
+    console.error(
+      `[bench] trial ${String(trialIndex + 1)}/${String(trialCount)} scenario ${String(completedScenarioCount)}/${String(runnableScenarioCount)} done: ${task.name}`,
+    );
+  });
 
   await bench.run();
 
@@ -233,12 +250,14 @@ export async function runAllTrials(
   const scenarioStartedAtMs = performance.now();
   for (let trialIndex = 0; trialIndex < trialCount; trialIndex++) {
     runFullGcIfExposed();
-    const trial = await runOneTrial(trialIndex, scenarios, sanityFailures);
+    const trial = await runOneTrial(trialIndex, trialCount, scenarios, sanityFailures);
     trials.push(trial);
-    console.log(`Trial ${String(trialIndex + 1)}/${String(trialCount)} done`);
+    console.error(
+      `[bench] trial ${String(trialIndex + 1)}/${String(trialCount)} all scenarios finished`,
+    );
     if (trialIndex === trialCount - 1) {
       const scenarioElapsedMs = performance.now() - scenarioStartedAtMs;
-      console.log(`Scenario total: ${scenarioElapsedMs.toFixed(0)}ms`);
+      console.error(`[bench] all scenarios wall time: ${scenarioElapsedMs.toFixed(0)}ms`);
     }
   }
   return trials;

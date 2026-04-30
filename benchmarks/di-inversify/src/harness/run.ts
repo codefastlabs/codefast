@@ -97,7 +97,7 @@ async function main(): Promise<void> {
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
-      "[bench] Quiet mode: subprocess stdout is suppressed. Use `BENCH_VERBOSE=1` (or `pnpm bench:verbose`) for full child logs.\n",
+      "[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed `[codefast]` / `[inversify]`). Use `BENCH_VERBOSE=1` (or `pnpm bench:verbose`) for full child stdout.\n",
     );
   }
 

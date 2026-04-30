@@ -25,7 +25,7 @@ const CODEFAST_SCENARIO_NAME = "codefast";
 const benchmarkPackageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 async function main(): Promise<void> {
-  console.log(`Scenario ${CODEFAST_SCENARIO_NAME} started`);
+  console.error(`[bench] subprocess ${CODEFAST_SCENARIO_NAME} started`);
   const scenarios = collectAllCodefastScenarios();
   const sanityFailures = await runSanityChecks(scenarios);
   const trials = await runAllTrials(scenarios, sanityFailures);
@@ -35,7 +35,7 @@ async function main(): Promise<void> {
     trials,
     sanityFailures,
   });
-  console.log(`Scenario ${CODEFAST_SCENARIO_NAME} completed`);
+  console.error(`[bench] subprocess ${CODEFAST_SCENARIO_NAME} completed`);
 }
 
 main().catch((error: unknown) => {
