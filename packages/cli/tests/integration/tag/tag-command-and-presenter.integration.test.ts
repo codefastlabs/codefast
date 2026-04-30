@@ -127,7 +127,10 @@ function createDeps(): TagDeps {
   };
 }
 
+import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
+
 function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program: Command } {
+  const shell = createShellCliTestGraph(deps.logger);
   const command = new TagCommand(
     deps.logger,
     deps.runtime,
@@ -135,6 +138,8 @@ function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program:
     deps.runTagSync,
     deps.tagProgressListener,
     deps.presenter,
+    shell.schemaValidation,
+    shell.cliExecutor,
   );
   const program = new Command();
   command.register(program);

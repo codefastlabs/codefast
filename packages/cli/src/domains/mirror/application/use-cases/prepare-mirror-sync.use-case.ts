@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type { GlobalCliOptions } from "#/shell/application/services/global-cli-options-parser.service";
+import type { GlobalCliOptions } from "#/shell/application/global-cli-options.model";
 import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
 import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
 import {

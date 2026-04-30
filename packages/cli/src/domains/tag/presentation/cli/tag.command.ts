@@ -1,11 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
+import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
+import type { SchemaValidationPort } from "#/shell/application/ports/schema-validation.port";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 import type { CliRuntime } from "#/shell/application/ports/runtime.port";
-import { CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
-import { consumeCliAppError } from "#/shell/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
-import { parseWithCliSchema } from "#/shell/presentation/cli-schema.parser";
 import type { PrepareTagSyncUseCase } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
@@ -18,7 +17,12 @@ import {
 } from "#/domains/tag/contracts/tokens";
 import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
 import { tagSyncRunRequestSchema } from "#/domains/tag/presentation/presenters/tag-cli.schema";
-import { CliLoggerToken, CliRuntimeToken } from "#/shell/application/cli-runtime.tokens";
+import {
+  CliExecutorPortToken,
+  CliLoggerToken,
+  CliRuntimeToken,
+  SchemaValidationPortToken,
+} from "#/shell/application/cli-runtime.tokens";
 
 @injectable([
   inject(CliLoggerToken),
@@ -27,6 +31,8 @@ import { CliLoggerToken, CliRuntimeToken } from "#/shell/application/cli-runtime
   inject(RunTagSyncUseCaseToken),
   inject(TagSyncProgressListenerToken),
   inject(PresentTagSyncResultPresenterToken),
+  inject(SchemaValidationPortToken),
+  inject(CliExecutorPortToken),
 ])
 export class TagCommand implements CliCommand {
   readonly name = "tag";
@@ -39,6 +45,8 @@ export class TagCommand implements CliCommand {
     private readonly runTagSync: RunTagSyncUseCase,
     private readonly tagProgressListener: TagProgressListener,
     private readonly presentSyncCliResult: PresentTagSyncResultPresenter,
+    private readonly schemaValidation: SchemaValidationPort,
+    private readonly cliExecutor: CliExecutorPort,
   ) {}
 
   register(program: Command): void {
@@ -64,12 +72,12 @@ export class TagCommand implements CliCommand {
       currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
     });
-    if (!consumeCliAppError(this.logger, prelude)) {
+    if (!this.cliExecutor.consumeCliAppError(prelude)) {
       return;
     }
     const { rootDir, config, resolvedTargetPath } = prelude.value;
     const tagConfig = config.tag ?? {};
-    const parsed = parseWithCliSchema(tagSyncRunRequestSchema, {
+    const parsed = this.schemaValidation.parseWithSchema(tagSyncRunRequestSchema, {
       rootDir,
       write: !options.dryRun,
       json: options.json,
@@ -77,14 +85,14 @@ export class TagCommand implements CliCommand {
       skipPackages: tagConfig.skipPackages,
       config: tagConfig,
     });
-    if (!consumeCliAppError(this.logger, parsed)) {
+    if (!this.cliExecutor.consumeCliAppError(parsed)) {
       return;
     }
     const tagOutcome = await this.runTagSync.execute({
       ...parsed.value,
       listener: parsed.value.json ? undefined : this.tagProgressListener,
     });
-    if (!consumeCliAppError(this.logger, tagOutcome)) {
+    if (!this.cliExecutor.consumeCliAppError(tagOutcome)) {
       return;
     }
     if (parsed.value.json) {
@@ -95,12 +103,12 @@ export class TagCommand implements CliCommand {
     }
   }
 
-  private formatTagSyncJsonOutput(tagResult: TagSyncResult, rootDir: string): string {
+  private formatTagSyncJsonOutput(result: TagSyncResult, rootDir: string): string {
     return JSON.stringify({
       schemaVersion: 1 as const,
-      ok: exitCodeForTagSyncResult(tagResult) === CLI_EXIT_SUCCESS,
-      rootDir,
-      result: tagResult,
+      ok: result.hookError === null,
+      cwd: rootDir,
+      result,
     });
   }
 }

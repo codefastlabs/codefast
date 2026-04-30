@@ -25,7 +25,7 @@ type TaggableDeclaration =
 
 @injectable([inject(CliFsToken)])
 export class TagSinceWriterAdapter implements TagSinceWriterPort {
-  private static readonly versionTag = "@since";
+  private readonly sinceDocumentationTag = "@since";
 
   constructor(private readonly fs: CliFs) {}
 
@@ -194,13 +194,13 @@ export class TagSinceWriterAdapter implements TagSinceWriterPort {
       normalizedBodyLines.length > 0
         ? `${normalizedBodyLines.map((line) => `${baseIndent} * ${line}`).join("\n")}\n${baseIndent} *\n`
         : "";
-    const tag = TagSinceWriterAdapter.versionTag;
+    const tag = this.sinceDocumentationTag;
     const replacement = `/**\n${formattedBody}${baseIndent} * ${tag} ${version}\n${baseIndent} */`;
     return { start: existingComment.pos, end: existingComment.end, replacement };
   }
 
   private makeSinceOnlyJSDocBlock(declarationIndent: string, version: string): string {
-    const tag = TagSinceWriterAdapter.versionTag;
+    const tag = this.sinceDocumentationTag;
     return `/**\n${declarationIndent} * ${tag} ${version}\n${declarationIndent} */`;
   }
 

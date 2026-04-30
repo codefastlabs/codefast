@@ -7,7 +7,7 @@ import { MirrorPackageArgResolverImpl } from "#/domains/mirror/application/servi
 import { PrepareMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
 import { PackageFilterPathResolver } from "#/domains/mirror/infrastructure/package-filter-resolver.service";
-import { WorkspacePackageDiscovery } from "#/domains/mirror/infrastructure/workspace-packages.service";
+import { WorkspacePackageDiscoveryAdapter } from "#/domains/mirror/infrastructure/workspace-package-discovery.adapter";
 import {
   FileSystemServicePortToken,
   MirrorPackageArgResolverPortToken,
@@ -40,7 +40,7 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
 
   moduleBuilder
     .bind(WorkspacePackageDiscoveryPortToken)
-    .to(WorkspacePackageDiscovery)
+    .to(WorkspacePackageDiscoveryAdapter)
     .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(

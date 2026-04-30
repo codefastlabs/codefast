@@ -1,5 +1,8 @@
 import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
+import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
+import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/global-cli-options-parse.port";
+import type { SchemaValidationPort } from "#/shell/application/ports/schema-validation.port";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 import type { CliRuntime } from "#/shell/application/ports/runtime.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
@@ -10,17 +13,23 @@ import {
 import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
 import { mirrorSyncRunRequestSchema } from "#/domains/mirror/presentation/presenters/mirror-cli.schema";
-import { CliLoggerToken, CliRuntimeToken } from "#/shell/application/cli-runtime.tokens";
-import { consumeCliAppError, runCliResultAsync } from "#/shell/presentation/cli-executor.presenter";
+import {
+  CliExecutorPortToken,
+  CliLoggerToken,
+  CliRuntimeToken,
+  GlobalCliOptionsParsePortToken,
+  SchemaValidationPortToken,
+} from "#/shell/application/cli-runtime.tokens";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
-import { parseWithCliSchema } from "#/shell/presentation/cli-schema.parser";
-import { parseGlobalCliOptions } from "#/shell/application/services/global-cli-options-parser.service";
 
 @injectable([
   inject(CliLoggerToken),
   inject(CliRuntimeToken),
   inject(PrepareMirrorSyncUseCaseToken),
   inject(RunMirrorSyncUseCaseToken),
+  inject(GlobalCliOptionsParsePortToken),
+  inject(SchemaValidationPortToken),
+  inject(CliExecutorPortToken),
 ])
 export class MirrorCommand implements CliCommand {
   readonly name = "mirror";
@@ -31,6 +40,9 @@ export class MirrorCommand implements CliCommand {
     private readonly runtime: CliRuntime,
     private readonly prepareMirrorSync: PrepareMirrorSyncUseCase,
     private readonly runMirrorSync: RunMirrorSyncUseCase,
+    private readonly globalCliOptions: GlobalCliOptionsParsePort,
+    private readonly schemaValidation: SchemaValidationPort,
+    private readonly cliExecutor: CliExecutorPort,
   ) {}
 
   register(program: Command): void {
@@ -50,8 +62,10 @@ export class MirrorCommand implements CliCommand {
     options: { verbose?: boolean; json?: boolean },
     command: Command,
   ): Promise<void> {
-    const globalOptionsOutcome = parseGlobalCliOptions(command.optsWithGlobals());
-    if (!consumeCliAppError(this.logger, globalOptionsOutcome)) {
+    const globalOptionsOutcome = this.globalCliOptions.parseGlobalCliOptions(
+      command.optsWithGlobals(),
+    );
+    if (!this.cliExecutor.consumeCliAppError(globalOptionsOutcome)) {
       return;
     }
     const prelude = await this.prepareMirrorSync.execute({
@@ -59,11 +73,11 @@ export class MirrorCommand implements CliCommand {
       packageArg: pkg,
       globals: globalOptionsOutcome.value,
     });
-    if (!consumeCliAppError(this.logger, prelude)) {
+    if (!this.cliExecutor.consumeCliAppError(prelude)) {
       return;
     }
     const { rootDir, config, packageFilter, globals } = prelude.value;
-    const parsed = parseWithCliSchema(mirrorSyncRunRequestSchema, {
+    const parsed = this.schemaValidation.parseWithSchema(mirrorSyncRunRequestSchema, {
       rootDir,
       config: config.mirror ?? {},
       verbose: options.verbose,
@@ -71,10 +85,10 @@ export class MirrorCommand implements CliCommand {
       noColor: globals.color === false,
       packageFilter,
     });
-    if (!consumeCliAppError(this.logger, parsed)) {
+    if (!this.cliExecutor.consumeCliAppError(parsed)) {
       return;
     }
-    await runCliResultAsync(this.logger, this.runMirrorSync.execute(parsed.value), (stats) =>
+    await this.cliExecutor.runCliResultAsync(this.runMirrorSync.execute(parsed.value), (stats) =>
       stats.packagesErrored > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS,
     );
   }

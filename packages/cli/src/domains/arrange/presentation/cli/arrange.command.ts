@@ -27,11 +27,16 @@ import {
   presentArrangeSyncResult,
 } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
-import { parseWithCliSchema } from "#/shell/presentation/cli-schema.parser";
-import { consumeCliAppError } from "#/shell/presentation/cli-executor.presenter";
+import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
+import type { SchemaValidationPort } from "#/shell/application/ports/schema-validation.port";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 import type { CliRuntime } from "#/shell/application/ports/runtime.port";
-import { CliLoggerToken, CliRuntimeToken } from "#/shell/application/cli-runtime.tokens";
+import {
+  CliExecutorPortToken,
+  CliLoggerToken,
+  CliRuntimeToken,
+  SchemaValidationPortToken,
+} from "#/shell/application/cli-runtime.tokens";
 
 @injectable([
   inject(CliLoggerToken),
@@ -42,6 +47,8 @@ import { CliLoggerToken, CliRuntimeToken } from "#/shell/application/cli-runtime
   inject(SuggestCnGroupsUseCaseToken),
   inject(PresentAnalyzeReportPresenterToken),
   inject(GroupFilePreviewPortToken),
+  inject(SchemaValidationPortToken),
+  inject(CliExecutorPortToken),
 ])
 export class ArrangeCommand implements CliCommand {
   readonly name = "arrange";
@@ -56,6 +63,8 @@ export class ArrangeCommand implements CliCommand {
     private readonly suggestCnGroups: SuggestCnGroupsUseCase,
     private readonly presentAnalyzeReport: PresentAnalyzeReportPresenter,
     private readonly groupFilePreview: GroupFilePreviewPort,
+    private readonly schemaValidation: SchemaValidationPort,
+    private readonly cliExecutor: CliExecutorPort,
   ) {}
 
   private withClassNameOption(): Option {
@@ -125,18 +134,18 @@ export class ArrangeCommand implements CliCommand {
       currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
     });
-    if (!consumeCliAppError(this.logger, prelude)) {
+    if (!this.cliExecutor.consumeCliAppError(prelude)) {
       return;
     }
     const { resolvedTarget } = prelude.value;
-    const parsed = parseWithCliSchema(arrangeAnalyzeDirectoryRequestSchema, {
+    const parsed = this.schemaValidation.parseWithSchema(arrangeAnalyzeDirectoryRequestSchema, {
       analyzeRootPath: resolvedTarget,
     });
-    if (!consumeCliAppError(this.logger, parsed)) {
+    if (!this.cliExecutor.consumeCliAppError(parsed)) {
       return;
     }
     const outcome = this.analyzeDirectory.execute(parsed.value);
-    if (!consumeCliAppError(this.logger, outcome)) {
+    if (!this.cliExecutor.consumeCliAppError(outcome)) {
       return;
     }
     if (options?.json) {
@@ -155,11 +164,11 @@ export class ArrangeCommand implements CliCommand {
       currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: target,
     });
-    if (!consumeCliAppError(this.logger, prelude)) {
+    if (!this.cliExecutor.consumeCliAppError(prelude)) {
       return;
     }
     const { resolvedTarget, rootDir, config } = prelude.value;
-    const parsed = parseWithCliSchema(arrangeSyncRunRequestSchema, {
+    const parsed = this.schemaValidation.parseWithSchema(arrangeSyncRunRequestSchema, {
       rootDir,
       targetPath: resolvedTarget,
       write,
@@ -167,11 +176,11 @@ export class ArrangeCommand implements CliCommand {
       cnImport: opts.cnImport,
       config: config.arrange ?? {},
     });
-    if (!consumeCliAppError(this.logger, parsed)) {
+    if (!this.cliExecutor.consumeCliAppError(parsed)) {
       return;
     }
     const outcome = await this.runArrangeSync.execute(parsed.value);
-    if (!consumeCliAppError(this.logger, outcome)) {
+    if (!this.cliExecutor.consumeCliAppError(outcome)) {
       return;
     }
 
@@ -193,12 +202,12 @@ export class ArrangeCommand implements CliCommand {
     tokens: string[],
     opts: { tv?: boolean; withClassName?: boolean; json?: boolean },
   ): Promise<void> {
-    const parsed = parseWithCliSchema(arrangeSuggestGroupsRequestSchema, {
+    const parsed = this.schemaValidation.parseWithSchema(arrangeSuggestGroupsRequestSchema, {
       inlineClasses: tokens.join(" ").trim(),
       emitTvStyleArray: !!opts.tv,
       trailingClassName: !!opts.withClassName,
     });
-    if (!consumeCliAppError(this.logger, parsed)) {
+    if (!this.cliExecutor.consumeCliAppError(parsed)) {
       return;
     }
     const output = this.suggestCnGroups.execute(parsed.value);
