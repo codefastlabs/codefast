@@ -1,15 +1,18 @@
 import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/shell/application/ports/cli-io.port";
 import type { CliPath } from "#/shell/application/ports/path.port";
-import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
+import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/typescript-source-file-walker.port";
+import {
+  CliFsToken,
+  CliPathToken,
+  TypeScriptSourceFileWalkerPortToken,
+} from "#/shell/application/cli-runtime.tokens";
 import type { TagSinceWriterPort } from "#/domains/tag/application/ports/tag-since-writer.port";
-import type { TypeScriptTreeWalkPort } from "#/domains/tag/application/ports/typescript-tree-walk.port";
 import type { TagVersionResolverPort } from "#/domains/tag/application/ports/tag-version-resolver.port";
 import type { TagTargetRunnerService } from "#/domains/tag/contracts/services.contract";
 import {
   TagSinceWriterPortToken,
   TagVersionResolverPortToken,
-  TypeScriptTreeWalkPortToken,
 } from "#/domains/tag/contracts/tokens";
 import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.domain";
 
@@ -18,7 +21,7 @@ import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.dom
   inject(CliPathToken),
   inject(TagVersionResolverPortToken),
   inject(TagSinceWriterPortToken),
-  inject(TypeScriptTreeWalkPortToken),
+  inject(TypeScriptSourceFileWalkerPortToken),
 ])
 export class TagTargetRunnerServiceImpl implements TagTargetRunnerService {
   constructor(
@@ -26,7 +29,7 @@ export class TagTargetRunnerServiceImpl implements TagTargetRunnerService {
     private readonly pathService: CliPath,
     private readonly versionResolver: TagVersionResolverPort,
     private readonly sinceWriter: TagSinceWriterPort,
-    private readonly typeScriptTreeWalk: TypeScriptTreeWalkPort,
+    private readonly sourceFileWalker: TypeScriptSourceFileWalkerPort,
   ) {}
 
   runOnTarget(targetPath: string, opts: TagRunOptions): TagRunResult {
@@ -34,7 +37,7 @@ export class TagTargetRunnerServiceImpl implements TagTargetRunnerService {
     const version = this.versionResolver.resolveNearestPackageVersion(resolvedTarget);
 
     const files = this.fs.statSync(resolvedTarget).isDirectory()
-      ? this.typeScriptTreeWalk.walkTsxFiles(resolvedTarget)
+      ? this.sourceFileWalker.walkTsxFiles(resolvedTarget)
       : [resolvedTarget];
     const tsFiles = files.filter(
       (filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"),

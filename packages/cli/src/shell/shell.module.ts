@@ -18,6 +18,7 @@ import {
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
+  withOptionalPortTelemetry,
 } from "#/shell/infrastructure/port-telemetry.decorator";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/path.adapter";
 import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
@@ -59,7 +60,14 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
   moduleBuilder
     .bind(TypeScriptSourceFileWalkerPortToken)
     .to(TypeScriptSourceFileWalker)
-    .singleton();
+    .singleton()
+    .onActivation((ctx, implementation) =>
+      withOptionalPortTelemetry(
+        "TypeScriptSourceFileWalkerPort",
+        implementation,
+        ctx.resolve(CliLoggerToken),
+      ),
+    );
 
   moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapterImpl).singleton();
   moduleBuilder.bind(ConfigWarningReporterPortToken).to(ConfigWarningReporterAdapter).singleton();

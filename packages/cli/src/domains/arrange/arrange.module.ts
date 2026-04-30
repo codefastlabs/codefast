@@ -8,7 +8,6 @@ import { RunArrangeSyncUseCaseImpl } from "#/domains/arrange/application/use-cas
 import { SuggestCnGroupsUseCaseImpl } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
 import { FileWalkerAdapter } from "#/domains/arrange/infrastructure/adapters/file-walker.adapter";
-import { WorkspaceResolverAdapter } from "#/domains/arrange/infrastructure/adapters/workspace-resolver.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorServiceToken,
@@ -22,7 +21,6 @@ import {
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
   TailwindGroupingServiceToken,
-  WorkspaceResolverPortToken,
 } from "#/domains/arrange/contracts/tokens";
 import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.service";
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
@@ -53,8 +51,6 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
         ctx.resolve(CliLoggerToken),
       ),
     );
-
-  moduleBuilder.bind(WorkspaceResolverPortToken).to(WorkspaceResolverAdapter).singleton();
 
   moduleBuilder.bind(ArrangeTargetPathResolverPortToken).to(ArrangeTargetPathResolver).singleton();
 

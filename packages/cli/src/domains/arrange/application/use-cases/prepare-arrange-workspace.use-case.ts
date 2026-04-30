@@ -4,15 +4,16 @@ import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/arrange-target-path-resolver.port";
-import type { WorkspaceResolverPort } from "#/domains/arrange/application/ports/workspace-resolver.port";
-import {
-  ArrangeTargetPathResolverPortToken,
-  WorkspaceResolverPortToken,
-} from "#/domains/arrange/contracts/tokens";
+import { ArrangeTargetPathResolverPortToken } from "#/domains/arrange/contracts/tokens";
+import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contracts/models";
 import type { CliFs } from "#/shell/application/ports/cli-io.port";
 import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
-import { CliFsToken, LoadCodefastConfigUseCaseToken } from "#/shell/application/cli-runtime.tokens";
+import {
+  CliFsToken,
+  LoadCodefastConfigUseCaseToken,
+  RepoRootResolverPortToken,
+} from "#/shell/application/cli-runtime.tokens";
 
 export interface PrepareArrangeWorkspaceUseCase {
   execute(args: {
@@ -25,14 +26,14 @@ export interface PrepareArrangeWorkspaceUseCase {
   inject(ArrangeTargetPathResolverPortToken),
   inject(CliFsToken),
   inject(LoadCodefastConfigUseCaseToken),
-  inject(WorkspaceResolverPortToken),
+  inject(RepoRootResolverPortToken),
 ])
 export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspaceUseCase {
   constructor(
     private readonly arrangeTargetPathResolver: ArrangeTargetPathResolverPort,
     private readonly fs: CliFs,
     private readonly loadCodefastConfig: LoadCodefastConfigUseCase,
-    private readonly workspaceResolver: WorkspaceResolverPort,
+    private readonly repoRootResolver: RepoRootResolverPort,
   ) {}
 
   async execute(args: {
@@ -48,7 +49,7 @@ export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspa
     }
     let rootDir: string;
     try {
-      rootDir = this.workspaceResolver.findRepoRoot(args.currentWorkingDirectory);
+      rootDir = this.repoRootResolver.findRepoRoot(args.currentWorkingDirectory);
     } catch (caughtError: unknown) {
       return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
