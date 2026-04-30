@@ -8,6 +8,8 @@ A drop-in, type-safe replacement for `tailwind-variants` with significantly fast
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@codefast/tailwind-variants)](https://bundlephobia.com/package/@codefast/tailwind-variants)
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+---
+
 ## Table of Contents
 
 - [Why @codefast/tailwind-variants](#why-codefasttailwind-variants)
@@ -30,6 +32,8 @@ A drop-in, type-safe replacement for `tailwind-variants` with significantly fast
 - [Contributing](#contributing)
 - [License](#license)
 - [Changelog](#changelog)
+
+---
 
 ## Why @codefast/tailwind-variants
 
