@@ -3,6 +3,7 @@ import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/applicatio
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/domain-source-parser.port";
 import type { FileWalkerPort } from "#/domains/arrange/application/ports/file-walker.port";
 import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/group-file-preview.port";
+import type { TypeScriptToDomainAstPort } from "#/domains/arrange/application/ports/typescript-to-domain-ast.port";
 import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
 import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
@@ -16,6 +17,9 @@ import type { TailwindGroupingService } from "#/domains/arrange/domain/tailwind-
 
 export const FileWalkerPortToken = token<FileWalkerPort>("FileWalkerPort");
 export const DomainSourceParserPortToken = token<DomainSourceParserPort>("DomainSourceParserPort");
+export const TypeScriptToDomainAstPortToken = token<TypeScriptToDomainAstPort>(
+  "TypeScriptToDomainAstPort",
+);
 export const GroupFilePreviewPortToken = token<GroupFilePreviewPort>("GroupFilePreviewPort");
 export const PresentAnalyzeReportPresenterToken = token<PresentAnalyzeReportPresenter>(
   "PresentAnalyzeReportPresenter",

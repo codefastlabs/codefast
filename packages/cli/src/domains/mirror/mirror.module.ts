@@ -3,7 +3,6 @@ import { FileSystemServiceAdapter } from "#/domains/mirror/infrastructure/adapte
 import { MirrorSyncReporterAdapter } from "#/domains/mirror/infrastructure/adapters/mirror-sync-reporter.adapter";
 import { PackageRepositoryAdapter } from "#/domains/mirror/infrastructure/adapters/package-repository.adapter";
 import { SyncWorkspacePackageAdapter } from "#/domains/mirror/infrastructure/adapters/sync-workspace-package.adapter";
-import { WorkspaceServiceAdapter } from "#/domains/mirror/infrastructure/adapters/workspace-service.adapter";
 import { MirrorPackageArgResolverImpl } from "#/domains/mirror/application/services/mirror-package-arg-resolver.service";
 import { PrepareMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
@@ -19,7 +18,6 @@ import {
   RunMirrorSyncUseCaseToken,
   SyncWorkspacePackagePortToken,
   WorkspacePackageDiscoveryPortToken,
-  WorkspaceServicePortToken,
 } from "#/domains/mirror/contracts/tokens";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
@@ -28,17 +26,25 @@ import { withOptionalPortTelemetry } from "#/shell/infrastructure/port-telemetry
 export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
   moduleBuilder.import(ShellInfrastructureModule);
 
-  moduleBuilder.bind(PackageFilterPathResolverPortToken).to(PackageFilterPathResolver).singleton();
-
-  moduleBuilder.bind(WorkspacePackageDiscoveryPortToken).to(WorkspacePackageDiscovery).singleton();
-
   moduleBuilder
-    .bind(WorkspaceServicePortToken)
-    .to(WorkspaceServiceAdapter)
+    .bind(PackageFilterPathResolverPortToken)
+    .to(PackageFilterPathResolver)
     .singleton()
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
-        "WorkspaceServicePort",
+        "PackageFilterPathResolverPort",
+        implementation,
+        ctx.resolve(CliLoggerToken),
+      ),
+    );
+
+  moduleBuilder
+    .bind(WorkspacePackageDiscoveryPortToken)
+    .to(WorkspacePackageDiscovery)
+    .singleton()
+    .onActivation((ctx, implementation) =>
+      withOptionalPortTelemetry(
+        "WorkspacePackageDiscoveryPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),

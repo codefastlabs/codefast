@@ -6,11 +6,9 @@ import type { PackageFilterPathResolverPort } from "#/domains/mirror/application
 import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/package-repository.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/sync-workspace-package.port";
 import type { WorkspacePackageDiscoveryPort } from "#/domains/mirror/application/ports/workspace-package-discovery.port";
-import type { WorkspaceServicePort } from "#/domains/mirror/application/ports/workspace-service.port";
 import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
 
-export const WorkspaceServicePortToken = token<WorkspaceServicePort>("WorkspaceServicePort");
 export const PackageRepositoryPortToken = token<PackageRepositoryPort>("PackageRepositoryPort");
 export const PackageFilterPathResolverPortToken = token<PackageFilterPathResolverPort>(
   "PackageFilterPathResolverPort",
