@@ -7,10 +7,10 @@ import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
 } from "#/lib/core/contracts/tokens";
+import type { Result } from "#/lib/core/domain/result.model";
 import { ok } from "#/lib/core/domain/result.model";
 import type { TagCommandPrelude } from "#/lib/tag/contracts/models";
 import type { AppError } from "#/lib/core/domain/errors.domain";
-import type { Result } from "#/lib/core/domain/result.model";
 import { resolveTagCliTargetPath } from "#/lib/tag/application/services/tag-cli-target-path-resolver.service";
 
 export interface PrepareTagSyncUseCase {

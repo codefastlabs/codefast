@@ -14,15 +14,12 @@ export function createCliRuntimeContainer(): ReturnType<typeof Container.create>
   const runtimeContainer = Container.create();
 
   runtimeContainer.load(ArrangePresentationModule, ArrangeModule);
-  runtimeContainer.bind(ArrangeCommand).to(ArrangeCommand).singleton();
   runtimeContainer.bind(CliCommandToken).to(ArrangeCommand).whenNamed("arrange").singleton();
 
   runtimeContainer.load(MirrorModule);
-  runtimeContainer.bind(MirrorCommand).to(MirrorCommand).singleton();
   runtimeContainer.bind(CliCommandToken).to(MirrorCommand).whenNamed("mirror").singleton();
 
   runtimeContainer.load(TagPresentationModule, TagModule);
-  runtimeContainer.bind(TagCommand).to(TagCommand).singleton();
   runtimeContainer.bind(CliCommandToken).to(TagCommand).whenNamed("tag").singleton();
 
   return runtimeContainer;
@@ -31,9 +28,6 @@ export function createCliRuntimeContainer(): ReturnType<typeof Container.create>
 export function resolveCliCommands(
   runtimeContainer: ReturnType<typeof Container.create>,
 ): readonly CliCommand[] {
-  return [
-    runtimeContainer.resolve(ArrangeCommand),
-    runtimeContainer.resolve(MirrorCommand),
-    runtimeContainer.resolve(TagCommand),
-  ];
+  const cliCommands = runtimeContainer.resolveAll(CliCommandToken);
+  return [...cliCommands].sort((left, right) => left.name.localeCompare(right.name));
 }
