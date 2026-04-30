@@ -2,7 +2,6 @@ import { Module } from "@codefast/di";
 import { TagSinceWriterAdapter } from "#/domains/tag/infrastructure/adapters/tag-since-writer.adapter";
 import { TagTargetResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-resolver.adapter";
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
-import { TypeScriptTreeWalkAdapter } from "#/domains/tag/infrastructure/adapters/typescript-tree-walk.adapter";
 import { TagCliTargetPathResolverServiceImpl } from "#/domains/tag/application/services/tag-cli-target-path-resolver.service";
 import { TagTargetRunnerServiceImpl } from "#/domains/tag/application/services/tag-target-runner.service";
 import { PrepareTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
@@ -17,7 +16,6 @@ import {
   TagTargetResolverPortToken,
   TagTargetRunnerServiceToken,
   TagVersionResolverPortToken,
-  TypeScriptTreeWalkPortToken,
 } from "#/domains/tag/contracts/tokens";
 import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
 import { TagSyncProgressListener } from "#/domains/tag/presentation/presenters/tag-sync-progress-listener.presenter";
@@ -35,18 +33,6 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry(
         "TagTargetResolverPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
-
-  moduleBuilder
-    .bind(TypeScriptTreeWalkPortToken)
-    .to(TypeScriptTreeWalkAdapter)
-    .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "TypeScriptTreeWalkPort",
         implementation,
         ctx.resolve(CliLoggerToken),
       ),

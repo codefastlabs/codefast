@@ -3,7 +3,6 @@ import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/applicatio
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/domain-source-parser.port";
 import type { FileWalkerPort } from "#/domains/arrange/application/ports/file-walker.port";
 import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/group-file-preview.port";
-import type { WorkspaceResolverPort } from "#/domains/arrange/application/ports/workspace-resolver.port";
 import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
 import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
@@ -38,6 +37,5 @@ export const SuggestCnGroupsUseCaseToken = token<SuggestCnGroupsUseCase>("Sugges
 export const PrepareArrangeWorkspaceUseCaseToken = token<PrepareArrangeWorkspaceUseCase>(
   "PrepareArrangeWorkspaceUseCase",
 );
-export const WorkspaceResolverPortToken = token<WorkspaceResolverPort>("WorkspaceResolverPort");
 export const TailwindGroupingServiceToken =
   token<TailwindGroupingService>("TailwindGroupingService");
