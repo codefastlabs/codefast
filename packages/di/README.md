@@ -7,6 +7,8 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 [![npm downloads](https://img.shields.io/npm/dm/@codefast/di.svg)](https://www.npmjs.com/package/@codefast/di)
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+---
+
 ## Table of Contents
 
 - [Why @codefast/di](#why-codefastdi)
@@ -29,6 +31,7 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 - [Container](#container)
   - [Resolution](#resolution)
   - [Async resolution](#async-resolution)
+  - [Container API surface](#container-api-surface)
   - [Rebinding and unbinding](#rebinding-and-unbinding)
   - [Child containers](#child-containers)
   - [Validation](#validation)
@@ -48,21 +51,19 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 `@codefast/di` is a small IoC container designed for applications that compile to ESM and want strong typing without metadata reflection tricks.
 
 - **Typed tokens.** `Token<Value>` flows through every `bind → resolve` path; the return type of `resolve()` is the one you registered.
-- **Native Stage 3 decorators.** `@injectable`, `inject`, `optional`, `@postConstruct`, `@preDestroy` write to `Symbol.metadata`. No `reflect-metadata`, no `experimentalDecorators`.
-- **Fluent binding API.** Constants, classes, sync/async factories, aliases, named/tagged/predicate constraints, activation + deactivation hooks.
-- **Module system.** `Module` and `AsyncModule` bundle bindings into reusable units that can be loaded, unloaded, and re-used across containers.
-- **Scope safety.** Detects captive dependencies (a singleton depending on a scoped or transient binding) during development and test.
-- **Async-first.** Dedupes in-flight async singleton construction and supports `await using` for automatic cleanup.
+- **Native Stage 3 decorators.** `@injectable`, `inject`, `optional`, `@postConstruct`, `@preDestroy` record metadata for the resolver. Implementations use a `WeakMap` and mirror into `Symbol.metadata` when the decorator runtime supplies it — no `reflect-metadata`, no `experimentalDecorators`.
+- **Fluent binding API.** Constants, classes, sync/async factories, resolved factories, aliases, named/tagged/predicate constraints, activation + deactivation hooks.
+- **Module system.** `Module` / `AsyncModule` bundle bindings into reusable units that can be loaded, unloaded, and re-used across containers.
+- **Scope checks.** Call `validate()` to detect captive dependencies (for example a `singleton` depending on a `scoped` or `transient` binding).
+- **Async resolution.** Dedupes in-flight async singleton construction and supports `await using` for automatic cleanup.
 - **Tree-shakeable subpaths.** Import only the surface you need.
 
 ---
 
 ## Requirements
 
-| Dependency | Version                       |
-| ---------- | ----------------------------- |
-| Node.js    | `>= 22.0.0`                   |
-| TypeScript | `>= 5.2` (Stage 3 decorators) |
+- Node.js `>= 22.0.0` (see `package.json` → `engines`)
+- TypeScript `>= 5.2` with native Stage 3 decorators (TypeScript `5.9+` recommended for best inference, consistent with other Codefast packages)
 
 Enable native decorators in `tsconfig.json` — do **not** enable `experimentalDecorators`:
 
@@ -128,7 +129,7 @@ container.rebind(LoggerToken).toConstantValue({
 container.resolve(CheckoutService).complete("ORD-1002");
 ```
 
-`@injectable([...])` lists constructor dependencies in order. The key idea: business classes (`CheckoutService`) stay unchanged while behavior swaps by rebinding infrastructure (`LoggerToken`) per environment.
+`@injectable([...])` lists constructor dependencies in parameter order. Business classes (`CheckoutService`) stay unchanged while infrastructure (`LoggerToken`) swaps per environment.
 
 ---
 
@@ -141,7 +142,7 @@ container.resolve(CheckoutService).complete("ORD-1002");
 | **Container** | Holds a `BindingRegistry` and a `ScopeManager`; resolves bindings through the `DependencyResolver`. Supports child containers and async disposal.      |
 | **Scope**     | Instance lifetime: `singleton` (one per root container, shared with children), `scoped` (one per child container), `transient` (new on every resolve). |
 | **Module**    | Reusable bundle of bindings. Loaded once per container; loading the same module twice is a no-op.                                                      |
-| **Metadata**  | `@injectable([...])` writes constructor descriptors into `Symbol.metadata`, which the container reads at resolution time.                              |
+| **Metadata**  | `@injectable([...])` stores constructor parameter descriptors so the resolver knows what to inject at each index.                                      |
 
 ---
 
@@ -155,7 +156,7 @@ const CacheToken = token<Cache>("Cache");
 ```
 
 - The type parameter flows through the binding and resolution chain.
-- Tokens use reference equality; two tokens with the same name are two distinct keys.
+- Tokens use reference equality; two tokens with the same name string are still two distinct keys.
 - A class constructor can itself be a key:
 
 ```typescript
@@ -167,19 +168,20 @@ container.resolve(UserService); // returns UserService
 
 ## Bindings
 
-Start with `container.bind(key)` and chain a strategy, then optionally a scope, constraints, and hooks.
+Start with `container.bind(key)` and chain a strategy, then optional constraints and hooks. For strategies that support it, call `.singleton()`, `.scoped()`, or `.transient()` after constraints.
 
 ### Strategies
 
-| Method                       | Description                                                                 |
-| ---------------------------- | --------------------------------------------------------------------------- |
-| `.toConstantValue(value)`    | Bind to a fixed value. Always treated as a singleton.                       |
-| `.toSelf()`                  | Bind a constructor to itself. Reads `@injectable()` metadata.               |
-| `.to(Constructor)`           | Bind a token to a class constructor.                                        |
-| `.toDynamic(factory)`        | Bind to a sync factory `(ctx: ResolutionContext) => Value`.                 |
-| `.toDynamicAsync(factory)`   | Bind to an async factory `(ctx: ResolutionContext) => Promise<Value>`.      |
-| `.toResolved(factory, deps)` | Bind to a factory whose dependency array is checked against the deps types. |
-| `.toAlias(targetToken)`      | Redirect resolution to another token; the alias adopts the target's scope.  |
+| Method                            | Description                                                                                                 |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `.toConstantValue(value)`         | Fixed value. Stored as a `constant` binding with scope `singleton` (no `.scoped()` / `.transient()` chain). |
+| `.toSelf()`                       | Bind a constructor to itself. Uses `@injectable()` metadata.                                                |
+| `.to(Constructor)`                | Bind a token to a class constructor.                                                                        |
+| `.toDynamic(factory)`             | Sync factory `(ctx: ResolutionContext) => Value`.                                                           |
+| `.toDynamicAsync(factory)`        | Async factory `(ctx: ResolutionContext) => Promise<Value>`.                                                 |
+| `.toResolved(factory, deps)`      | Factory with a typed dependency tuple; dependencies are resolved in order.                                  |
+| `.toResolvedAsync(factory, deps)` | Like `toResolved`, but the factory returns a `Promise`.                                                     |
+| `.toAlias(targetToken)`           | Redirect resolution to another token; the alias follows the target’s materialization.                       |
 
 ```typescript
 container.bind(AppConfigToken).toConstantValue({ port: 3000 });
@@ -203,6 +205,10 @@ container
   .bind(UserServiceToken)
   .toResolved((repo, cfg) => new UserService(repo, cfg), [UserRepository, AppConfigToken] as const);
 
+container
+  .bind(MetricsToken)
+  .toResolvedAsync(async (db) => new MetricsCollector(db), [DbToken] as const);
+
 container.bind(LegacyServiceToken).toAlias(NewServiceToken);
 ```
 
@@ -213,6 +219,8 @@ container.bind(LegacyServiceToken).toAlias(NewServiceToken);
 | `.singleton()` | One instance per root container, shared with descendants.                  |
 | `.scoped()`    | One instance per child container. Useful for request-scoped services.      |
 | `.transient()` | New instance on every resolution. Default when no scope method is chained. |
+
+`toConstantValue` does not expose scope chaining: constants are always treated as singletons internally.
 
 ```typescript
 container.bind(DatabaseToken).toDynamic(createDb).singleton();
@@ -242,6 +250,10 @@ container.bind(StorageToken).to(LocalStorage).whenTagged("provider", "local");
 container.resolve(StorageToken, { tag: ["provider", "s3"] });
 ```
 
+**Default slot**
+
+Use `.whenDefault()` so the binding participates in resolution when no `name` / `tag` hint is provided (subject to multi-binding selection rules).
+
 **Predicate** — inspect the full resolution graph:
 
 ```typescript
@@ -250,13 +262,18 @@ import { whenAnyAncestorIs, whenParentIs, whenParentTagged } from "@codefast/di/
 container.bind(LoggerToken).toConstantValue(verboseLogger).when(whenParentIs(DiagnosticsService));
 ```
 
-Built-in predicates:
+Built-in predicates (all from `@codefast/di/constraints`):
 
-| Helper                         | Matches when …                                                              |
-| ------------------------------ | --------------------------------------------------------------------------- |
-| `whenParentIs(key)`            | the direct parent binding was registered for `key`.                         |
-| `whenAnyAncestorIs(key)`       | any ancestor binding on the materialization stack was registered for `key`. |
-| `whenParentTagged(tag, value)` | the immediate parent binding carries `tag` with `value`.                    |
+| Helper                              | Matches when …                                                             |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| `whenParentIs(key)`                 | The direct parent binding was registered for `key`.                        |
+| `whenNoParentIs(key)`               | There is no parent, or the parent is not registered for `key`.             |
+| `whenAnyAncestorIs(key)`            | Any ancestor on the materialization stack was registered for `key`.        |
+| `whenNoAncestorIs(key)`             | No ancestor was registered for `key`.                                      |
+| `whenParentNamed(name)`             | The immediate parent binding’s slot name is `name`.                        |
+| `whenAnyAncestorNamed(name)`        | Some ancestor’s slot name is `name`.                                       |
+| `whenParentTagged(tag, value)`      | The immediate parent binding carries `tag` with `value` (via `Object.is`). |
+| `whenAnyAncestorTagged(tag, value)` | Some ancestor carries `tag` with `value`.                                  |
 
 For anything else, pass a custom `(ctx: ConstraintContext) => boolean` to `.when(predicate)`.
 
@@ -276,18 +293,18 @@ container
   });
 ```
 
-- `onActivation(ctx, instance)` runs after construction (and after `@postConstruct`). It must return the instance (possibly wrapped).
-- `onDeactivation(instance)` runs when the instance is evicted: `container.dispose()`, `unbind`, `rebind`, or `unload`.
+- `onActivation(ctx, instance)` on the **binding** runs after `@postConstruct` and before **container-level** `onActivation` handlers registered with `container.onActivation(token, …)`. See `LifecycleManager.runActivation`.
+- `onDeactivation(instance)` on the **binding** runs after **container-level** `onDeactivation` hooks and before `@preDestroy`. See `LifecycleManager.runDeactivation`.
 
 ---
 
 ## Decorators
 
-All decorators use TC39 Stage 3 syntax and write to `Symbol.metadata`.
+All decorators use TC39 Stage 3 syntax. Metadata is stored for resolution as described in [Core Concepts](#core-concepts).
 
 ### `@injectable`
 
-Registers constructor dependencies. The array length must match the constructor arity; a mismatch throws `InternalError` at class-definition time.
+Registers constructor dependencies in **parameter order** (index `0` → first constructor parameter). Each entry is either a `Token` / `Constructor` or an `InjectionDescriptor` from `inject()` / `optional()` / `injectAll()`.
 
 ```typescript
 import { inject, injectable, optional, token } from "@codefast/di";
@@ -304,7 +321,7 @@ class AppService {
 }
 ```
 
-Each entry is either a plain `Token` / `Constructor` or an `InjectionDescriptor` produced by `inject()` / `optional()` / `injectAll()`.
+Keep the metadata array aligned with the constructor parameter list. Too few entries means `new` receives `undefined` for missing positions; too many adds unused metadata entries.
 
 ### `inject` / `optional` / `injectAll`
 
@@ -315,9 +332,9 @@ optional(CacheToken);
 injectAll(PluginToken);
 ```
 
-- `inject(token, options?)` — required. Throws `TokenNotBoundError` if the dependency is missing.
+- `inject(token, options?)` — required. Throws `TokenNotBoundError` when the dependency cannot be resolved.
 - `optional(token, options?)` — optional. Resolves to `undefined` when unbound.
-- `injectAll(token, options?)` — resolves every matching binding into an array (`Value[]`), applying `name`/`tag` filters when provided.
+- `injectAll(token, options?)` — resolves every matching binding into an array (`Value[]`), applying `name` / `tag` filters when provided.
 
 ### Accessor injection
 
@@ -330,12 +347,15 @@ class Controller {
 }
 ```
 
-The container injects the accessor after construction, so it does not count toward the constructor arity declared in `@injectable([])`.
+The container injects the accessor after construction, so accessor fields do not use slots in the `@injectable([...])` arity list.
 
 ### `@postConstruct` / `@preDestroy`
 
-Method decorators that hook into the instance lifecycle. Order:
-`construct → @postConstruct → onActivation → cache … onDeactivation → @preDestroy`.
+Method decorators that hook into the instance lifecycle.
+
+**Activation** (after `new`): `@postConstruct` → binding `onActivation` → `container.onActivation(token)` hooks (in registration order).
+
+**Deactivation** (on eviction): `container.onDeactivation(token)` hooks → binding `onDeactivation` → `@preDestroy`.
 
 ```typescript
 import { postConstruct, preDestroy } from "@codefast/di";
@@ -360,19 +380,24 @@ Only one of each decorator is allowed per class.
 
 ### Auto-registration
 
-Pass `autoRegister` to `@injectable` to have the class register itself in a module-scoped list:
+Pass an `AutoRegisterRegistry` from `createAutoRegisterRegistry()` into `@injectable` options. Each decorated class registers itself with an optional `scope` (`"transient"` by default).
 
 ```typescript
-@injectable([DbToken], { autoRegister: true, scope: "singleton" })
+import { Container, createAutoRegisterRegistry, injectable, token } from "@codefast/di";
+
+const DbToken = token<Database>("Database");
+const autoRegister = createAutoRegisterRegistry();
+
+@injectable([DbToken], { autoRegister, scope: "singleton" })
 class UserRepository {
   constructor(private readonly db: Database) {}
 }
 
-// Bind every auto-registered class at once
-container.loadAutoRegistered();
+const container = Container.create();
+container.loadAutoRegistered(autoRegister);
 ```
 
-`scope` defaults to `"transient"`. `getAutoRegistered()` returns the list if you prefer to iterate manually.
+To bind manually, iterate `autoRegister.entries()` and call `container.bind(entry.target).toSelf()` (and apply the desired scope).
 
 ---
 
@@ -392,55 +417,74 @@ container.resolve(StorageToken, { tag: ["provider", "s3"] });
 
 container.has(CacheToken);
 container.has(LoggerToken, { name: "console" });
+container.hasOwn(LoggerToken, { name: "console" });
 ```
 
 `resolveAll()` and `ctx.resolveAll()` preserve the current resolution context (path + parent/ancestors stack), so `when(...)` predicates and scope checks behave the same as `resolve()`.
 
 ### Async resolution
 
-Use the `*Async` variants when any binding in the resolution chain uses `toDynamicAsync`, async `onActivation`, or async `@postConstruct`. Mixing async into a sync resolve throws `AsyncResolutionError`.
+Use the `*Async` variants when any binding in the resolution chain uses `toDynamicAsync`, `toResolvedAsync`, async `onActivation`, or async `@postConstruct`. Mixing async into a sync resolve throws `AsyncResolutionError`.
 
 ```typescript
 const db = await container.resolveAsync(DbToken);
 const handlers = await container.resolveAllAsync(HandlerToken);
-// resolveOptional is sync-only — for async optional lookups, check `has` then `resolveAsync`
-const cache = container.has(CacheToken) ? await container.resolveAsync(CacheToken) : undefined;
+const cache = await container.resolveOptionalAsync(CacheToken);
 
-// Eagerly construct every singleton binding
+// Eagerly construct eligible singleton bindings
 await container.initializeAsync();
 ```
+
+### Container API surface
+
+| Area               | Methods / properties                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------- |
+| **Lifecycle**      | `dispose()`, `[Symbol.asyncDispose]()`, `[Symbol.dispose]()` (throws `SyncDisposalNotSupportedError`) |
+| **Bindings**       | `bind`, `rebind`, `unbind`, `unbindAsync`, `unbindAll`, `unbindAllAsync`                              |
+| **Modules**        | `load`, `loadAsync`, `unload`, `unloadAsync`, `loadAutoRegistered`                                    |
+| **Global hooks**   | `onActivation`, `onDeactivation`                                                                      |
+| **Resolve**        | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
+| **Scopes / graph** | `createChild`, `validate`, `initializeAsync`                                                          |
+| **Introspection**  | `has`, `hasOwn`, `lookupBindings`, `inspect`, `generateDependencyGraph`                               |
+| **State**          | `isDisposed`                                                                                          |
 
 ### Rebinding and unbinding
 
 ```typescript
 container.rebind(LoggerToken).toConstantValue(testLogger);
 
-container.unbind(CacheToken); // sync deactivation hooks only
+container.unbind(CacheToken); // sync deactivation only
 await container.unbindAsync(CacheToken); // awaits async deactivation
+
+container.unbindAll();
+await container.unbindAllAsync();
 ```
 
 ### Child containers
 
-Child containers fall through to the parent's bindings and share the parent's singleton cache, but have their own scoped cache.
+Child containers fall through to the parent’s bindings and share the parent’s singleton cache, but maintain their own scoped cache.
 
 ```typescript
 const requestContainer = container.createChild();
 
-requestContainer.bind(RequestContextToken).toConstantValue(req).scoped();
+requestContainer
+  .bind(RequestContextToken)
+  .toDynamic(() => req)
+  .scoped();
 const service = requestContainer.resolve(RequestScopedService);
 
-await requestContainer.dispose(); // releases scoped instances
+await requestContainer.dispose(); // releases scoped instances owned by this child
 ```
 
 ### Validation
 
-`validate()` statically checks that no singleton binding depends on a `scoped` or `transient` binding (a captive dependency). In development and test environments the container runs `validate()` at most once after registry changes, so most scope violations surface without an explicit call.
+`validate()` walks singleton bindings and fails fast when a captive dependency is detected (for example `singleton` → `scoped` / `transient`).
 
 ```typescript
 container.validate(); // throws ScopeViolationError on the first violation
 ```
 
-Control the environment heuristic via `NODE_ENV` — see `isDevelopmentOrTestEnvironment` in `@codefast/di/environment`.
+Call it after meaningful registry changes (or in tests) — the container does **not** auto-invoke `validate()` based on `NODE_ENV`.
 
 ### Introspection
 
@@ -450,16 +494,14 @@ import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 import { toReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
 
 const snapshot = container.inspect();
-const json = container.generateDependencyGraph({ hideInternals: true });
+const json = container.generateDependencyGraph({ includeParent: true });
 const dot = toDotGraph(json);
 
-// Adapters are pure converters from the canonical JSON graph.
 const cytoscape = toCytoscapeGraph(json);
 const reactflow = toReactFlowGraph(json);
 ```
 
-`generateDependencyGraph` always returns the canonical typed `ContainerGraphJson` (`nodes` + `edges`).
-Keep visualization adapters (`toDotGraph`, `toCytoscapeGraph`, `toReactFlowGraph`, or your own converters) outside container/inspector core APIs and import them from direct subpaths under `@codefast/di/graph-adapters/*`.
+`generateDependencyGraph` returns the canonical `ContainerGraphJson` (`nodes`, `edges`, `includesParent`). Adapters are pure converters; import them from `@codefast/di/graph-adapters/*`.
 
 ### Disposal
 
@@ -472,10 +514,10 @@ Keep visualization adapters (`toDotGraph`, `toCytoscapeGraph`, `toReactFlowGraph
 
   const db = await container.resolveAsync(DbToken);
   // …
-} // dispose() runs all deactivation hooks
+} // dispose() runs deactivation hooks for owned singletons
 ```
 
-Sync `using` is intentionally rejected: calling `Symbol.dispose` throws. Use `await using` or `await container.dispose()`.
+Synchronous `using` is rejected: `[Symbol.dispose]()` throws `SyncDisposalNotSupportedError`. Use `await using` or `await container.dispose()`.
 
 ---
 
@@ -483,10 +525,10 @@ Sync `using` is intentionally rejected: calling `Symbol.dispose` throws. Use `aw
 
 Modules bundle related bindings into reusable units. A module holds no runtime state and can be loaded into any number of containers.
 
-Use the same fluent order everywhere (including inside modules): `bind(token).to*(…).when*(…).scope()…`.
+Use the same fluent order everywhere (including inside modules): `bind(token).to*(…).when*(…)` then, when supported, `.singleton()` / `.scoped()` / `.transient()`.
 
 - Register **multiple** implementations for one token with separate chains, e.g. `api.bind(T).to(A).whenNamed("a")` and `api.bind(T).to(B).whenNamed("b")`.
-- **Last-wins** applies per slot (default vs named vs tag-set), as in the main container API.
+- **Last-wins** applies per slot (default vs named vs tag-set), matching the container API.
 
 ```typescript
 import { Container, Module } from "@codefast/di";
@@ -505,7 +547,9 @@ const AppModule = Module.create("App", (api) => {
 const container = Container.fromModules(AppModule);
 ```
 
-Async modules may `await` during setup (e.g. dynamic config):
+`Module.create` returns a `SyncModule`. `Module.createAsync` returns an `AsyncModule` (same as `AsyncModule.create`). `SyncModule`, `AsyncModule`, and `isSyncModule()` are available from `@codefast/di/module`.
+
+Async modules may `await` during setup (for example remote config):
 
 ```typescript
 const DbModule = Module.createAsync("Database", async (api) => {
@@ -526,7 +570,7 @@ container.unload(AppModule);
 await container.unloadAsync(DbModule);
 ```
 
-Re-loading a module already present is a no-op. Circular imports between modules throw `CircularDependencyError`.
+Re-loading a module that is already loaded is a no-op. Circular imports between modules throw `CircularDependencyError`.
 
 ---
 
@@ -534,19 +578,31 @@ Re-loading a module already present is a no-op. Circular imports between modules
 
 All errors extend `DiError` and expose a stable `code` property.
 
-| Error class               | `code`                  | Thrown when                                                 |
-| ------------------------- | ----------------------- | ----------------------------------------------------------- |
-| `TokenNotBoundError`      | `"TOKEN_NOT_BOUND"`     | A required token has no binding                             |
-| `NoMatchingBindingError`  | `"NO_MATCHING_BINDING"` | A name/tag/predicate hint matches no registered binding     |
-| `CircularDependencyError` | `"CIRCULAR_DEPENDENCY"` | A cycle is detected in dependency or module resolution      |
-| `MissingMetadataError`    | `"MISSING_METADATA"`    | A class binding is missing `@injectable()` metadata         |
-| `AsyncModuleLoadError`    | `"ASYNC_MODULE_LOAD"`   | Sync `load()` is called with an `AsyncModule`               |
-| `AsyncResolutionError`    | `"ASYNC_RESOLUTION"`    | An async binding is reached during a sync `resolve()`       |
-| `ScopeViolationError`     | `"SCOPE_VIOLATION"`     | A singleton depends on a scoped or transient binding        |
-| `InternalError`           | `"INTERNAL"`            | Invariant violations (should never surface in correct code) |
+| Error class                     | `code`                          | Thrown when                                                             |
+| ------------------------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| `AmbiguousBindingError`         | `"AMBIGUOUS_BINDING"`           | Multiple bindings matched without a single decisive constraint winner   |
+| `AsyncDeactivationError`        | `"ASYNC_DEACTIVATION"`          | Async `onDeactivation` reached through `unbind` / sync paths            |
+| `AsyncModuleLoadError`          | `"ASYNC_MODULE_LOAD"`           | Sync `load()` used with an `AsyncModule`                                |
+| `AsyncResolutionError`          | `"ASYNC_RESOLUTION"`            | Async work required during a sync `resolve()`                           |
+| `CircularDependencyError`       | `"CIRCULAR_DEPENDENCY"`         | Cycle in dependency or module graph                                     |
+| `DisposedContainerError`        | `"DISPOSED_CONTAINER"`          | Operation after `dispose()`                                             |
+| `InternalError`                 | `"INTERNAL_ERROR"`              | Invariant violations (should not surface in correct consumer code)      |
+| `MissingContainerContextError`  | `"MISSING_CONTAINER_CONTEXT"`   | `@inject` accessor resolved without an active container                 |
+| `MissingMetadataError`          | `"MISSING_METADATA"`            | Class resolution missing `@injectable()` metadata                       |
+| `MissingScopeContextError`      | `"MISSING_SCOPE_CONTEXT"`       | `scoped` binding resolved without a child container context             |
+| `NoMatchingBindingError`        | `"NO_MATCHING_BINDING"`         | Hint matches no registered binding                                      |
+| `RebindUnboundTokenError`       | `"REBIND_UNBOUND_TOKEN"`        | `rebind` targets a token with no binding owned by this container        |
+| `ScopeViolationError`           | `"SCOPE_VIOLATION"`             | Captive dependency found by `validate()` (`details` describes the path) |
+| `SyncDisposalNotSupportedError` | `"SYNC_DISPOSAL_NOT_SUPPORTED"` | Sync `using` / `[Symbol.dispose]` on the container                      |
+| `TokenNotBoundError`            | `"TOKEN_NOT_BOUND"`             | Required token has no binding                                           |
 
 ```typescript
-import { DiError, ScopeViolationError, TokenNotBoundError } from "@codefast/di";
+import {
+  AmbiguousBindingError,
+  DiError,
+  ScopeViolationError,
+  TokenNotBoundError,
+} from "@codefast/di";
 
 try {
   container.resolve(ServiceToken);
@@ -554,7 +610,11 @@ try {
   if (error instanceof TokenNotBoundError) {
     console.error(`Not registered: ${error.tokenName}`);
   } else if (error instanceof ScopeViolationError) {
-    console.error(`Scope violation: ${error.message}`);
+    console.error(
+      `Scope violation: ${error.details.consumerToken} → ${error.details.dependencyToken}`,
+    );
+  } else if (error instanceof AmbiguousBindingError) {
+    console.error(`Ambiguous: ${error.tokenName}`, error.candidateIds);
   } else if (error instanceof DiError) {
     console.error(`DI error [${error.code}]: ${error.message}`);
   }
@@ -565,39 +625,41 @@ try {
 
 ## Package exports
 
-The root entry re-exports the full public API. Subpath exports are provided for fine-grained imports and bundler tree-shaking.
+The root entry re-exports the full façade (`package.json` → `"."`). Subpaths mirror `package.json` → `exports` for tree-shaking.
 
-| Subpath                                        | Contents                                                         |
-| ---------------------------------------------- | ---------------------------------------------------------------- |
-| `@codefast/di`                                 | Public façade — tokens, `Container`, modules, decorators, errors |
-| `@codefast/di/container`                       | `Container` interface and related types                          |
-| `@codefast/di/token`                           | `token()`, `Token<Value>`, `TokenValue`                          |
-| `@codefast/di/binding`                         | `BindingBuilder`, binding type definitions                       |
-| `@codefast/di/binding-select`                  | Binding selection internals (`filterMatchingBindings`, …)        |
-| `@codefast/di/module`                          | `Module`, `AsyncModule`, module builders                         |
-| `@codefast/di/decorators/inject`               | `inject`, `optional`, `injectAll`, `isInjectionDescriptor`       |
-| `@codefast/di/decorators/injectable`           | `@injectable`, `getAutoRegistered`                               |
-| `@codefast/di/decorators/lifecycle-decorators` | `@postConstruct`, `@preDestroy`                                  |
-| `@codefast/di/constraints`                     | `whenParentIs`, `whenAnyAncestorIs`, `whenParentTagged`          |
-| `@codefast/di/registry`                        | `BindingRegistry`                                                |
-| `@codefast/di/resolver`                        | `DependencyResolver` internals                                   |
-| `@codefast/di/scope`                           | `ScopeManager`                                                   |
-| `@codefast/di/lifecycle`                       | Activation/deactivation runners                                  |
-| `@codefast/di/dependency-graph`                | Dependency-edge collection helpers                               |
-| `@codefast/di/graph-adapters/cytoscape`        | Cytoscape adapter for `ContainerGraphJson`                       |
-| `@codefast/di/graph-adapters/dot`              | DOT adapter for `ContainerGraphJson`                             |
-| `@codefast/di/graph-adapters/reactflow`        | React Flow adapter for `ContainerGraphJson`                      |
-| `@codefast/di/graph-adapters/types`            | Shared graph adapter type definitions                            |
-| `@codefast/di/inspector`                       | `ContainerInspector`, snapshot + graph types                     |
-| `@codefast/di/errors`                          | Full `DiError` hierarchy                                         |
-| `@codefast/di/environment`                     | `isDevelopmentOrTestEnvironment`, `isProductionEnvironment`      |
-| `@codefast/di/metadata/metadata-keys`          | Metadata symbol keys                                             |
-| `@codefast/di/metadata/metadata-types`         | Metadata type definitions                                        |
-| `@codefast/di/metadata/param-registry`         | Constructor parameter metadata registry                          |
-| `@codefast/di/metadata/symbol-metadata-reader` | Symbol metadata reader utilities                                 |
-| `@codefast/di/package.json`                    | Package metadata                                                 |
-
-See `package.json → exports` for the authoritative list.
+| Subpath                                        | Primary contents                                                                                                                                                     |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@codefast/di`                                 | Tokens, `Container`, modules, decorators, errors, graph types, `MetadataReaderToken`, helpers from `binding-scope` / `resolve-options`, `createAutoRegisterRegistry` |
+| `@codefast/di/binding`                         | `BindingBuilder` surface and binding model types                                                                                                                     |
+| `@codefast/di/binding-scope`                   | `effectiveBindingScope`                                                                                                                                              |
+| `@codefast/di/binding-select`                  | `selectBinding`, `selectAllBindings`                                                                                                                                 |
+| `@codefast/di/constraints`                     | `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`, `whenNoAncestorIs`, `whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenAnyAncestorTagged`    |
+| `@codefast/di/constructor-type`                | `Constructor`, `ConstructorInvocation`                                                                                                                               |
+| `@codefast/di/container`                       | `Container`, `ContainerStatic`                                                                                                                                       |
+| `@codefast/di/decorators/inject`               | `inject`, `optional`, `injectAll`, `isInjectionDescriptor`, descriptor types                                                                                         |
+| `@codefast/di/decorators/injectable`           | `injectable`, `createAutoRegisterRegistry`, `AutoRegisterRegistry`                                                                                                   |
+| `@codefast/di/decorators/lifecycle-decorators` | `postConstruct`, `preDestroy`                                                                                                                                        |
+| `@codefast/di/dependency-graph`                | `buildDependencyGraph`, `ContainerGraphJson`, `GraphOptions`, …                                                                                                      |
+| `@codefast/di/environment`                     | `runWithContainer`, `getActiveContainer`, `DefaultResolutionContext`, `ResolverCallbacks`, `buildMaterializationFrame`                                               |
+| `@codefast/di/errors`                          | Full `DiError` hierarchy                                                                                                                                             |
+| `@codefast/di/graph-adapters/cytoscape`        | `toCytoscapeGraph`                                                                                                                                                   |
+| `@codefast/di/graph-adapters/dot`              | `toDotGraph`                                                                                                                                                         |
+| `@codefast/di/graph-adapters/reactflow`        | `toReactFlowGraph`                                                                                                                                                   |
+| `@codefast/di/graph-adapters/types`            | Re-exports graph JSON types from `dependency-graph`                                                                                                                  |
+| `@codefast/di/inspector`                       | `Inspector`, `BindingSnapshot`, `ContainerSnapshot`                                                                                                                  |
+| `@codefast/di/lifecycle`                       | `LifecycleManager`                                                                                                                                                   |
+| `@codefast/di/metadata/metadata-keys`          | Metadata keys + `WeakMap` registries                                                                                                                                 |
+| `@codefast/di/metadata/metadata-reader-token`  | `MetadataReaderToken`                                                                                                                                                |
+| `@codefast/di/metadata/metadata-types`         | `MetadataReader`, lifecycle metadata types                                                                                                                           |
+| `@codefast/di/metadata/symbol-metadata-reader` | `SymbolMetadataReader`, `defaultMetadataReader`                                                                                                                      |
+| `@codefast/di/module`                          | `Module`, `AsyncModule`, `SyncModule`, `isSyncModule`, builders                                                                                                      |
+| `@codefast/di/registry`                        | `BindingRegistry`                                                                                                                                                    |
+| `@codefast/di/resolve-options`                 | `injectableSlotToResolveOptions`, `slotKeyToResolveOptions`                                                                                                          |
+| `@codefast/di/resolver`                        | `DependencyResolver`                                                                                                                                                 |
+| `@codefast/di/scope`                           | `ScopeManager`                                                                                                                                                       |
+| `@codefast/di/token`                           | `token`, `Token`, `tokenName`, …                                                                                                                                     |
+| `@codefast/di/types`                           | Core DI types (`BindingScope`, `ResolutionContext`, `ResolveOptions`, …)                                                                                             |
+| `@codefast/di/package.json`                    | Package manifest                                                                                                                                                     |
 
 ---
 
