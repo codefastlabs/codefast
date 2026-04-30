@@ -2,7 +2,7 @@ import { EMPTY_CN_TV_BINDINGS } from "#/domains/arrange/domain/constants.domain"
 import {
   applyEditsDescending,
   indentOfLineContaining,
-} from "#/shell/infrastructure/source-code/domain/text-edit.model";
+} from "#/shell/domain/source-text-edit.support";
 import {
   isDomainIdentifier,
   isDomainImportDeclaration,

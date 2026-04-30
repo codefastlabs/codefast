@@ -27,9 +27,8 @@ import {
 import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.service";
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
 import { GroupFilePreviewPresenterAdapter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
-import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
-import { withOptionalPortTelemetry } from "#/shell/infrastructure/port-telemetry.decorator";
+import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 
 export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
   moduleBuilder.import(ShellInfrastructureModule);
@@ -38,9 +37,7 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .bind(FileWalkerPortToken)
     .to(FileWalkerAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry("FileWalkerPort", implementation, ctx.resolve(CliLoggerToken)),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(FileWalkerPortToken));
 
   moduleBuilder.bind(TypeScriptToDomainAstPortToken).to(TypeScriptAstTranslator).singleton();
 
@@ -48,13 +45,7 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .bind(DomainSourceParserPortToken)
     .to(DomainSourceParserAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "DomainSourceParserPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(DomainSourceParserPortToken));
 
   moduleBuilder.bind(ArrangeTargetPathResolverPortToken).to(ArrangeTargetPathResolver).singleton();
 

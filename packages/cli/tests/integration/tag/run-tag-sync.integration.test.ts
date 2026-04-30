@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/path.adapter";
-import { NodeCliFsAdapter } from "#/shell/infrastructure/node-io.adapter";
+import { NodeCliFsAdapter } from "#/shell/infrastructure/node-cli-fs.adapter";
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
 import {
   RunTagSyncUseCaseToken,

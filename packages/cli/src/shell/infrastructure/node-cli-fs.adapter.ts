@@ -1,17 +1,14 @@
 import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
-import process from "node:process";
 import { injectable } from "@codefast/di";
 import type {
   CliDirectoryEntry,
   CliFileEncoding,
   CliFs,
-  CliLogger,
 } from "#/shell/application/ports/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/runtime.port";
 
-@injectable()
+@injectable([])
 export class NodeCliFsAdapter implements CliFs {
   private canonicalPathSyncNode(inputPath: string): string {
     try {
@@ -38,29 +35,4 @@ export class NodeCliFsAdapter implements CliFs {
   };
   rename = (oldPath: string, newPath: string) => fsPromises.rename(oldPath, newPath);
   unlink = (p: string) => fsPromises.unlink(p);
-}
-
-@injectable()
-export class NodeCliLoggerAdapter implements CliLogger {
-  out(line: string): void {
-    process.stdout.write(`${line}\n`);
-  }
-  err(line: string): void {
-    process.stderr.write(`${line}\n`);
-  }
-}
-
-@injectable()
-export class NodeCliRuntimeAdapter implements CliRuntime {
-  cwd(): string {
-    return process.cwd();
-  }
-
-  setExitCode(code: number): void {
-    process.exitCode = code;
-  }
-
-  isStdoutTty(): boolean {
-    return !!process.stdout.isTTY;
-  }
 }

@@ -67,10 +67,6 @@ export function mirrorNoPackages(logger: CliLogger): void {
   logger.out(color("⚠ No packages found", COLORS.yellow));
 }
 
-export function mirrorGlobWarning(logger: CliLogger, message: string): void {
-  logger.out(color(`⚠ ${message}`, COLORS.yellow));
-}
-
 export function logSkippedWorkspacePackage(
   logger: CliLogger,
   index: number,

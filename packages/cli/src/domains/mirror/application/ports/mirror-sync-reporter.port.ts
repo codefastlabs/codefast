@@ -17,7 +17,6 @@ export interface MirrorSyncReporterPort {
   mirrorBanner(logger: CliLogger): void;
   mirrorProcessingMode(logger: CliLogger, mode: MirrorProcessingModeInput): void;
   mirrorNoPackages(logger: CliLogger): void;
-  logWorkspaceGlobWarning(logger: CliLogger, message: string): void;
   logSkippedWorkspacePackage(
     logger: CliLogger,
     index: number,

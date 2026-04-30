@@ -1,4 +1,4 @@
-import { indentOfLineContaining } from "#/shell/infrastructure/source-code/domain/text-edit.model";
+import { indentOfLineContaining } from "#/shell/domain/source-text-edit.support";
 
 export function escapeTsStringLiteralContent(group: string): string {
   return group.replaceAll("\\", "\\\\").replaceAll('"', '\\"');

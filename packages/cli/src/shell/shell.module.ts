@@ -13,6 +13,7 @@ import {
   CliFsToken,
   CliLoggerToken,
   CliPathToken,
+  CliPortTelemetryPortToken,
   CliRuntimeToken,
   CliVerboseDiagnosticsPortToken,
   FormatAppErrorPortToken,
@@ -28,18 +29,13 @@ import { CliVerboseDiagnosticsService } from "#/shell/application/services/cli-v
 import { FormatAppErrorService } from "#/shell/application/services/format-app-error.service";
 import { GlobalCliOptionsParser } from "#/shell/application/services/global-cli-options-parser.service";
 import { SchemaValidationService } from "#/shell/application/services/schema-validator.service";
-import {
-  isCliTelemetryEnabled,
-  withCliPortTelemetry,
-  withOptionalPortTelemetry,
-} from "#/shell/infrastructure/port-telemetry.decorator";
+import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
+import { CliPortTelemetryService } from "#/shell/infrastructure/cli-port-telemetry.service";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/path.adapter";
 import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
-import {
-  NodeCliFsAdapter,
-  NodeCliLoggerAdapter,
-  NodeCliRuntimeAdapter,
-} from "#/shell/infrastructure/node-io.adapter";
+import { NodeCliFsAdapter } from "#/shell/infrastructure/node-cli-fs.adapter";
+import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node-cli-logger.adapter";
+import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node-cli-runtime.adapter";
 import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
 import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/source-code/infrastructure/typescript-source-file-walker.service";
 
@@ -53,6 +49,7 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
   moduleBuilder.import(ShellPathModule);
 
   moduleBuilder.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
+  moduleBuilder.bind(CliPortTelemetryPortToken).to(CliPortTelemetryService).singleton();
   moduleBuilder.bind(CliRuntimeToken).to(NodeCliRuntimeAdapter).singleton();
   moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolver).singleton();
 
@@ -60,16 +57,7 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
     .bind(CliFsToken)
     .to(NodeCliFsAdapter)
     .singleton()
-    .onActivation((ctx, rawFs) => {
-      if (!isCliTelemetryEnabled()) {
-        return rawFs;
-      }
-      return withCliPortTelemetry({
-        portName: "CliFs",
-        implementation: rawFs,
-        logger: ctx.resolve(CliLoggerToken),
-      });
-    });
+    .onActivation(createOptionalCliPortTelemetryActivation(CliFsToken));
 
   moduleBuilder.bind(CodefastConfigSchemaPortToken).to(ZodCodefastConfigSchemaAdapter).singleton();
 
@@ -88,13 +76,7 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
     .bind(TypeScriptSourceFileWalkerPortToken)
     .to(TypeScriptSourceFileWalker)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "TypeScriptSourceFileWalkerPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(TypeScriptSourceFileWalkerPortToken));
 
   moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapterImpl).singleton();
   moduleBuilder.bind(ConfigWarningReporterPortToken).to(ConfigWarningReporterAdapter).singleton();

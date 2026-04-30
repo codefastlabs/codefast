@@ -20,8 +20,12 @@ export type WorkspacePackageLayoutOutcome = {
  * patterns (with `!` excludes) and glob of `…/package.json`.
  */
 export interface WorkspacePackageLayoutPort {
+  /**
+   * When `suppressGlobPermissionDiagnostics` is true (e.g. `--json`), EACCES/EPERM during workspace
+   * globs are skipped silently; otherwise a line is logged via injected `CliLogger`.
+   */
   listPackageDirectoryPathsAbsolute(
     rootDirectoryPathAbsolute: string,
-    onGlobPermissionIssue: (diagnosticLine: string) => void,
+    suppressGlobPermissionDiagnostics?: boolean,
   ): Promise<WorkspacePackageLayoutOutcome>;
 }

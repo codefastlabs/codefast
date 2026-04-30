@@ -19,9 +19,8 @@ import {
 } from "#/domains/tag/contracts/tokens";
 import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
 import { TagSyncProgressListener } from "#/domains/tag/presentation/presenters/tag-sync-progress-listener.presenter";
-import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
-import { withOptionalPortTelemetry } from "#/shell/infrastructure/port-telemetry.decorator";
+import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 
 export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
   moduleBuilder.import(ShellInfrastructureModule);
@@ -30,57 +29,31 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
     .bind(TagTargetResolverPortToken)
     .to(TagTargetResolverAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "TagTargetResolverPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(TagTargetResolverPortToken));
 
   moduleBuilder
     .bind(TagSinceWriterPortToken)
     .to(TagSinceWriterAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry("TagSinceWriterPort", implementation, ctx.resolve(CliLoggerToken)),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(TagSinceWriterPortToken));
 
   moduleBuilder
     .bind(TagVersionResolverPortToken)
     .to(TagVersionResolverAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "TagVersionResolverPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(TagVersionResolverPortToken));
 
   moduleBuilder
     .bind(TagTargetRunnerServiceToken)
     .to(TagTargetRunnerServiceImpl)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "TagTargetRunnerService",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(TagTargetRunnerServiceToken));
 
   moduleBuilder
     .bind(TagCliTargetPathResolverServiceToken)
     .to(TagCliTargetPathResolverServiceImpl)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "TagCliTargetPathResolverService",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(TagCliTargetPathResolverServiceToken));
 
   moduleBuilder.bind(PrepareTagSyncUseCaseToken).to(PrepareTagSyncUseCaseImpl).singleton();
   moduleBuilder.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();

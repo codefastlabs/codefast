@@ -19,9 +19,8 @@ import {
   SyncWorkspacePackagePortToken,
   WorkspacePackageDiscoveryPortToken,
 } from "#/domains/mirror/contracts/tokens";
-import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
-import { withOptionalPortTelemetry } from "#/shell/infrastructure/port-telemetry.decorator";
+import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 
 export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
   moduleBuilder.import(ShellInfrastructureModule);
@@ -30,61 +29,31 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
     .bind(PackageFilterPathResolverPortToken)
     .to(PackageFilterPathResolver)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "PackageFilterPathResolverPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(PackageFilterPathResolverPortToken));
 
   moduleBuilder
     .bind(WorkspacePackageDiscoveryPortToken)
     .to(WorkspacePackageDiscoveryAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "WorkspacePackageDiscoveryPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(WorkspacePackageDiscoveryPortToken));
 
   moduleBuilder
     .bind(PackageRepositoryPortToken)
     .to(PackageRepositoryAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "PackageRepositoryPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(PackageRepositoryPortToken));
 
   moduleBuilder
     .bind(FileSystemServicePortToken)
     .to(FileSystemServiceAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "FileSystemServicePort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(FileSystemServicePortToken));
 
   moduleBuilder
     .bind(MirrorSyncReporterPortToken)
     .to(MirrorSyncReporterAdapter)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "MirrorSyncReporterPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(MirrorSyncReporterPortToken));
 
   moduleBuilder.bind(SyncWorkspacePackagePortToken).to(SyncWorkspacePackageAdapter).singleton();
 
@@ -92,13 +61,7 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
     .bind(MirrorPackageArgResolverPortToken)
     .to(MirrorPackageArgResolverImpl)
     .singleton()
-    .onActivation((ctx, implementation) =>
-      withOptionalPortTelemetry(
-        "MirrorPackageArgResolverPort",
-        implementation,
-        ctx.resolve(CliLoggerToken),
-      ),
-    );
+    .onActivation(createOptionalCliPortTelemetryActivation(MirrorPackageArgResolverPortToken));
 
   moduleBuilder.bind(PrepareMirrorSyncUseCaseToken).to(PrepareMirrorSyncUseCaseImpl).singleton();
   moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCaseImpl).singleton();

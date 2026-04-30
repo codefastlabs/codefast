@@ -27,6 +27,7 @@ import {
   presentArrangeSyncResult,
 } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
+import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
 import type { SchemaValidationPort } from "#/shell/application/ports/schema-validation.port";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
@@ -51,7 +52,7 @@ import {
   inject(CliExecutorPortToken),
 ])
 export class ArrangeCommand implements CliCommand {
-  readonly name = "arrange";
+  readonly name = CLI_COMMAND_SLOT_NAME.arrange;
   readonly description = "Analyze and regroup Tailwind classes in cn() / tv() calls (Tailwind v4)";
 
   constructor(

@@ -8,7 +8,8 @@ import path from "node:path";
 import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
 import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
 import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/adapters/typescript-ast-translator.adapter";
-import { NodeCliFsAdapter, NodeCliLoggerAdapter } from "#/shell/infrastructure/node-io.adapter";
+import { NodeCliFsAdapter } from "#/shell/infrastructure/node-cli-fs.adapter";
+import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node-cli-logger.adapter";
 
 const arrangeFs = new NodeCliFsAdapter();
 const service = new ArrangeFileProcessorServiceImpl(

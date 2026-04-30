@@ -18,11 +18,11 @@ export class WorkspacePackageDiscoveryAdapter implements WorkspacePackageDiscove
 
   async findWorkspacePackageRelPaths(
     rootDir: string,
-    onGlobWarning: (message: string) => void,
+    suppressGlobPermissionDiagnostics?: boolean,
   ): Promise<FindWorkspacePackagesResult> {
     const outcome = await this.workspacePackageLayout.listPackageDirectoryPathsAbsolute(
       rootDir,
-      onGlobWarning,
+      suppressGlobPermissionDiagnostics,
     );
 
     if (outcome.layoutSource === "declared-empty") {

@@ -26,7 +26,7 @@ import {
   endAfterOptionalCommaFollowingInSource,
   indentOfLineContaining,
   textPrefixFromLineStartToPosition,
-} from "#/shell/infrastructure/source-code/domain/text-edit.model";
+} from "#/shell/domain/source-text-edit.support";
 import {
   isDomainArrayLiteralExpression,
   isDomainJsxAttribute,

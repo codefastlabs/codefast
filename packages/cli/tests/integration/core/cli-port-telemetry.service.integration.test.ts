@@ -1,13 +1,12 @@
-import {
-  isCliTelemetryEnabled,
-  withCliPortTelemetry,
-  withOptionalPortTelemetry,
-} from "#/shell/infrastructure/port-telemetry.decorator";
+import { CliPortTelemetryService } from "#/shell/infrastructure/cli-port-telemetry.service";
 
-describe("port telemetry decorator integration", () => {
+describe("CliPortTelemetryService integration", () => {
+  let telemetry: CliPortTelemetryService;
+
   beforeEach(() => {
     vi.clearAllMocks();
     delete process.env.ENABLE_TELEMETRY;
+    telemetry = new CliPortTelemetryService();
   });
 
   it("logs sync call timing and summarized args", () => {
@@ -19,7 +18,7 @@ describe("port telemetry decorator integration", () => {
       version: "1.0.0",
     };
 
-    const wrapped = withCliPortTelemetry({
+    const wrapped = telemetry.withCliPortTelemetry({
       portName: "demoPort",
       implementation: port,
       logger,
@@ -36,7 +35,7 @@ describe("port telemetry decorator integration", () => {
 
   it("logs async ok and async err branches", async () => {
     const logger = { out: vi.fn(), err: vi.fn() };
-    const wrapped = withCliPortTelemetry({
+    const wrapped = telemetry.withCliPortTelemetry({
       portName: "asyncPort",
       implementation: {
         okAsync: async () => "ok",
@@ -57,7 +56,7 @@ describe("port telemetry decorator integration", () => {
 
   it("logs sync throw branch", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
-    const wrapped = withCliPortTelemetry({
+    const wrapped = telemetry.withCliPortTelemetry({
       portName: "syncPort",
       implementation: {
         explode: () => {
@@ -76,11 +75,11 @@ describe("port telemetry decorator integration", () => {
     const impl = { run: () => "ok" };
 
     process.env.ENABLE_TELEMETRY = "false";
-    const disabled = withOptionalPortTelemetry("optional", impl, logger);
+    const disabled = telemetry.withOptionalPortTelemetry("optional", impl, logger);
     expect(disabled).toBe(impl);
 
     process.env.ENABLE_TELEMETRY = "true";
-    const enabled = withOptionalPortTelemetry("optional", impl, logger);
+    const enabled = telemetry.withOptionalPortTelemetry("optional", impl, logger);
     expect(enabled).not.toBe(impl);
     expect(enabled.run()).toBe("ok");
     expect(logger.out).toHaveBeenCalled();
@@ -88,10 +87,10 @@ describe("port telemetry decorator integration", () => {
 
   it("detects telemetry env variants", () => {
     process.env.ENABLE_TELEMETRY = "1";
-    expect(isCliTelemetryEnabled()).toBe(true);
+    expect(telemetry.isCliTelemetryEnabled()).toBe(true);
     process.env.ENABLE_TELEMETRY = "true";
-    expect(isCliTelemetryEnabled()).toBe(true);
+    expect(telemetry.isCliTelemetryEnabled()).toBe(true);
     process.env.ENABLE_TELEMETRY = "0";
-    expect(isCliTelemetryEnabled()).toBe(false);
+    expect(telemetry.isCliTelemetryEnabled()).toBe(false);
   });
 });
