@@ -3,9 +3,12 @@ import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import { resolveArrangeTargetPath } from "#/domains/arrange/application/services/arrange-target-path-resolver.service";
+import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/arrange-target-path-resolver.port";
 import type { WorkspaceResolverPort } from "#/domains/arrange/application/ports/workspace-resolver.port";
-import { WorkspaceResolverPortToken } from "#/domains/arrange/contracts/tokens";
+import {
+  ArrangeTargetPathResolverPortToken,
+  WorkspaceResolverPortToken,
+} from "#/domains/arrange/contracts/tokens";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contracts/models";
 import type { CliFs } from "#/shell/application/ports/cli-io.port";
 import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
@@ -19,12 +22,14 @@ export interface PrepareArrangeWorkspaceUseCase {
 }
 
 @injectable([
+  inject(ArrangeTargetPathResolverPortToken),
   inject(CliFsToken),
   inject(LoadCodefastConfigUseCaseToken),
   inject(WorkspaceResolverPortToken),
 ])
 export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspaceUseCase {
   constructor(
+    private readonly arrangeTargetPathResolver: ArrangeTargetPathResolverPort,
     private readonly fs: CliFs,
     private readonly loadCodefastConfig: LoadCodefastConfigUseCase,
     private readonly workspaceResolver: WorkspaceResolverPort,
@@ -34,8 +39,7 @@ export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspa
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;
   }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>> {
-    const resolvedTarget = resolveArrangeTargetPath({
-      fs: this.fs,
+    const resolvedTarget = this.arrangeTargetPathResolver.resolveTargetPath({
       currentWorkingDirectory: args.currentWorkingDirectory,
       rawTarget: args.rawTarget,
     });

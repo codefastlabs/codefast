@@ -9,7 +9,7 @@ export interface TailwindGroupingService {
   summarizeBucketLabels(groups: string[]): string[];
 }
 
-@injectable([])
+@injectable()
 export class TailwindGroupingServiceImpl implements TailwindGroupingService {
   suggestGroups(classString: string): string[] {
     return suggestCnGroups(classString);

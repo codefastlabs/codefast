@@ -7,14 +7,18 @@ import { WorkspaceServiceAdapter } from "#/domains/mirror/infrastructure/adapter
 import { MirrorPackageArgResolverImpl } from "#/domains/mirror/application/services/mirror-package-arg-resolver.service";
 import { PrepareMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
+import { PackageFilterPathResolver } from "#/domains/mirror/infrastructure/package-filter-resolver.service";
+import { WorkspacePackageDiscovery } from "#/domains/mirror/infrastructure/workspace-packages.service";
 import {
   FileSystemServicePortToken,
   MirrorPackageArgResolverPortToken,
+  PackageFilterPathResolverPortToken,
   PrepareMirrorSyncUseCaseToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
   RunMirrorSyncUseCaseToken,
   SyncWorkspacePackagePortToken,
+  WorkspacePackageDiscoveryPortToken,
   WorkspaceServicePortToken,
 } from "#/domains/mirror/contracts/tokens";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
@@ -23,6 +27,10 @@ import { withOptionalPortTelemetry } from "#/shell/infrastructure/port-telemetry
 
 export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
   moduleBuilder.import(ShellInfrastructureModule);
+
+  moduleBuilder.bind(PackageFilterPathResolverPortToken).to(PackageFilterPathResolver).singleton();
+
+  moduleBuilder.bind(WorkspacePackageDiscoveryPortToken).to(WorkspacePackageDiscovery).singleton();
 
   moduleBuilder
     .bind(WorkspaceServicePortToken)

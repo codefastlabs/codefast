@@ -13,18 +13,20 @@ import {
   CliRuntimeToken,
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
+  TypeScriptSourceFileWalkerPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
 } from "#/shell/infrastructure/port-telemetry.decorator";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/path.adapter";
-import { RepoRootResolverAdapter } from "#/shell/infrastructure/repo-root-resolver.adapter";
+import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
 import {
   NodeCliFsAdapter,
   NodeCliLoggerAdapter,
   NodeCliRuntimeAdapter,
 } from "#/shell/infrastructure/node-io.adapter";
+import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/source-code/infrastructure/typescript-source-file-walker.service";
 
 /** Binds path abstraction only (minimal graph for dependents that need resolution before broader IO). */
 export const ShellPathModule = Module.create("shell-path", (moduleBuilder) => {
@@ -37,7 +39,7 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
 
   moduleBuilder.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
   moduleBuilder.bind(CliRuntimeToken).to(NodeCliRuntimeAdapter).singleton();
-  moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolverAdapter).singleton();
+  moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolver).singleton();
 
   moduleBuilder
     .bind(CliFsToken)
@@ -53,6 +55,11 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
         logger: ctx.resolve(CliLoggerToken),
       });
     });
+
+  moduleBuilder
+    .bind(TypeScriptSourceFileWalkerPortToken)
+    .to(TypeScriptSourceFileWalker)
+    .singleton();
 
   moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapterImpl).singleton();
   moduleBuilder.bind(ConfigWarningReporterPortToken).to(ConfigWarningReporterAdapter).singleton();

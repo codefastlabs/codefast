@@ -1,23 +1,31 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { PackageFilterPathResolverPort } from "#/domains/mirror/application/ports/package-filter-path-resolver.port";
+import type { WorkspacePackageDiscoveryPort } from "#/domains/mirror/application/ports/workspace-package-discovery.port";
 import type { WorkspaceServicePort } from "#/domains/mirror/application/ports/workspace-service.port";
+import {
+  PackageFilterPathResolverPortToken,
+  WorkspacePackageDiscoveryPortToken,
+} from "#/domains/mirror/contracts/tokens";
 import type { FindWorkspacePackagesResult } from "#/domains/mirror/domain/types.domain";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
-import { resolvePackageFilterUnderRoot } from "#/domains/mirror/infrastructure/package-filter-resolver.service";
-import { findWorkspacePackageRelPaths } from "#/domains/mirror/infrastructure/workspace-packages.service";
 
-@injectable([inject(CliFsToken)])
+@injectable([
+  inject(PackageFilterPathResolverPortToken),
+  inject(WorkspacePackageDiscoveryPortToken),
+])
 export class WorkspaceServiceAdapter implements WorkspaceServicePort {
-  constructor(private readonly fs: CliFs) {}
+  constructor(
+    private readonly packageFilterPathResolver: PackageFilterPathResolverPort,
+    private readonly workspacePackageDiscovery: WorkspacePackageDiscoveryPort,
+  ) {}
 
   resolvePackageFilterUnderRoot(rootDir: string, packageFilter: string): string {
-    return resolvePackageFilterUnderRoot(rootDir, packageFilter);
+    return this.packageFilterPathResolver.resolvePackageFilterUnderRoot(rootDir, packageFilter);
   }
 
   findWorkspacePackageRelPaths(
     rootDir: string,
     onGlobWarning: (message: string) => void,
   ): Promise<FindWorkspacePackagesResult> {
-    return findWorkspacePackageRelPaths(rootDir, this.fs, onGlobWarning);
+    return this.workspacePackageDiscovery.findWorkspacePackageRelPaths(rootDir, onGlobWarning);
   }
 }

@@ -341,7 +341,7 @@ injectAll(PluginToken);
 `inject` doubles as a TC39 accessor-field decorator for post-construction property injection:
 
 ```typescript
-@injectable([])
+@injectable()
 class Controller {
   @inject(LoggerToken) accessor logger!: Logger;
 }

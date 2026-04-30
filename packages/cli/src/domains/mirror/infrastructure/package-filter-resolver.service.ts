@@ -1,5 +1,7 @@
 import { realpathSync } from "node:fs";
 import path from "node:path";
+import { injectable } from "@codefast/di";
+import type { PackageFilterPathResolverPort } from "#/domains/mirror/application/ports/package-filter-path-resolver.port";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
 
 function tryRealpath(entryPath: string): string {
@@ -10,13 +12,7 @@ function tryRealpath(entryPath: string): string {
   }
 }
 
-/**
- * Resolve `packageFilter` to a POSIX-ish path relative to `rootDir`, without using
- * `process.cwd()`. Use for programmatic `runMirrorSync` calls.
- *
- * @throws If the resolved path is not a strict subdirectory of `rootDir`.
- */
-export function resolvePackageFilterUnderRoot(rootDir: string, packageFilter: string): string {
+function resolvePackageFilterUnderRootImpl(rootDir: string, packageFilter: string): string {
   const rootResolved = path.resolve(rootDir);
   const rootReal = tryRealpath(rootResolved);
   const resolved = path.isAbsolute(packageFilter)
@@ -33,4 +29,17 @@ export function resolvePackageFilterUnderRoot(rootDir: string, packageFilter: st
     throw new Error(`Package path must be a subdirectory under monorepo root: ${rootDir}`);
   }
   return normalized;
+}
+
+/**
+ * Resolve `packageFilter` to a POSIX-ish path relative to `rootDir`, without using
+ * `process.cwd()`. Use for programmatic `runMirrorSync` calls.
+ *
+ * @throws If the resolved path is not a strict subdirectory of `rootDir`.
+ */
+@injectable()
+export class PackageFilterPathResolver implements PackageFilterPathResolverPort {
+  resolvePackageFilterUnderRoot(rootDir: string, packageFilter: string): string {
+    return resolvePackageFilterUnderRootImpl(rootDir, packageFilter);
+  }
 }
