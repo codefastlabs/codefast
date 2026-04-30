@@ -339,7 +339,7 @@ Contract:
 
 Adjacent buckets may be merged into a single string literal when declared _compatible_ (e.g. Layout + Sizing), which keeps `cn()` calls readable without flattening unrelated concerns.
 
-To change placement, edit `classifyBareUtility` in `src/lib/arrange/domain/tokenizer.util.ts` and add a matching case in `tokenizer.util.test.ts`.
+To change placement, extend `classifyBareUtility` in `src/domains/arrange/domain/tailwind-token-classifier.domain-service.ts` (and cover the new rule with arrange tests if you introduce a new bucket).
 
 ---
 

@@ -1,6 +1,6 @@
-import { PresentTagSyncResultPresenterImpl } from "#/lib/tag/presentation/present-tag-sync-result.presenter";
-import { TagSyncProgressListener } from "#/lib/tag/presentation/tag-sync-progress-listener.presenter";
-import { presentTagSyncCliResult } from "#/lib/tag/presentation/tag-sync.presenter";
+import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
+import { TagSyncProgressListener } from "#/domains/tag/presentation/presenters/tag-sync-progress-listener.presenter";
+import { presentTagSyncCliResult } from "#/domains/tag/presentation/presenters/tag-sync.presenter";
 
 function createResult() {
   return {

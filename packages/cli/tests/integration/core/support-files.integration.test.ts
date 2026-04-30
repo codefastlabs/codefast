@@ -1,10 +1,10 @@
-import { PresentAnalyzeReportPresenterToken } from "#/lib/arrange/contracts/tokens";
-import { loadCodefastConfig } from "#/lib/config/application/services/load-config.service";
-import { CliCommandToken } from "#/lib/kernel/contracts/tokens";
+import { PresentAnalyzeReportPresenterToken } from "#/domains/arrange/contracts/tokens";
+import { loadCodefastConfig } from "#/domains/config/application/services/load-config.service";
+import { CliCommandToken } from "#/shell/contracts/tokens";
 import {
   PresentTagSyncResultPresenterToken,
   TagSyncProgressListenerToken,
-} from "#/lib/tag/contracts/tokens";
+} from "#/domains/tag/contracts/tokens";
 
 describe("support files integration", () => {
   it("loads config via loader port", async () => {

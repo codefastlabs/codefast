@@ -1,7 +1,7 @@
-import { PresentAnalyzeReportPresenterImpl } from "#/lib/arrange/presentation/arrange-analyze.presenter";
-import { presentArrangeSyncResult } from "#/lib/arrange/presentation/arrange-sync.presenter";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
+import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
+import { presentArrangeSyncResult } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
 
 function createLoggerMock(): CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;

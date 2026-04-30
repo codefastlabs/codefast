@@ -1,0 +1,106 @@
+import { inject, injectable } from "@codefast/di";
+import { Command } from "commander";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import { CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
+import { consumeCliAppError } from "#/shell/presentation/cli-executor.presenter";
+import type { CliCommand } from "#/shell/contracts/cli-command.contract";
+import { parseWithCliSchema } from "#/shell/presentation/cli-schema.parser";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
+import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
+import type { PresentTagSyncResultPresenter } from "#/domains/tag/contracts/tag-sync-result-presenter.contract";
+import {
+  PrepareTagSyncUseCaseToken,
+  PresentTagSyncResultPresenterToken,
+  RunTagSyncUseCaseToken,
+  TagSyncProgressListenerToken,
+} from "#/domains/tag/contracts/tokens";
+import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
+import { tagSyncRunRequestSchema } from "#/domains/tag/presentation/presenters/tag-cli.schema";
+import { CliLoggerToken, CliRuntimeToken } from "#/shell/application/cli-runtime.tokens";
+
+@injectable([
+  inject(CliLoggerToken),
+  inject(CliRuntimeToken),
+  inject(PrepareTagSyncUseCaseToken),
+  inject(RunTagSyncUseCaseToken),
+  inject(TagSyncProgressListenerToken),
+  inject(PresentTagSyncResultPresenterToken),
+])
+export class TagCommand implements CliCommand {
+  readonly name = "tag";
+  readonly description = "Add @since <version> JSDoc tags to exported declarations";
+
+  constructor(
+    private readonly logger: CliLogger,
+    private readonly runtime: CliRuntime,
+    private readonly prepareTagSync: PrepareTagSyncUseCase,
+    private readonly runTagSync: RunTagSyncUseCase,
+    private readonly tagProgressListener: TagProgressListener,
+    private readonly presentSyncCliResult: PresentTagSyncResultPresenter,
+  ) {}
+
+  register(program: Command): void {
+    program
+      .command(this.name)
+      .alias("annotate")
+      .description(this.description)
+      .argument(
+        "[target]",
+        "Directory or file to annotate (default: auto-discover workspace packages)",
+      )
+      .option("--dry-run", "Show summary without writing files", false)
+      .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
+      .action(this.execute.bind(this));
+  }
+
+  async execute(
+    target: string | undefined,
+    options: { dryRun?: boolean; json?: boolean },
+    _command: Command,
+  ): Promise<void> {
+    const prelude = await this.prepareTagSync.execute({
+      currentWorkingDirectory: this.runtime.cwd(),
+      rawTarget: target,
+    });
+    if (!consumeCliAppError(this.logger, prelude)) {
+      return;
+    }
+    const { rootDir, config, resolvedTargetPath } = prelude.value;
+    const tagConfig = config.tag ?? {};
+    const parsed = parseWithCliSchema(tagSyncRunRequestSchema, {
+      rootDir,
+      write: !options.dryRun,
+      json: options.json,
+      targetPath: resolvedTargetPath,
+      skipPackages: tagConfig.skipPackages,
+      config: tagConfig,
+    });
+    if (!consumeCliAppError(this.logger, parsed)) {
+      return;
+    }
+    const tagOutcome = await this.runTagSync.execute({
+      ...parsed.value,
+      listener: parsed.value.json ? undefined : this.tagProgressListener,
+    });
+    if (!consumeCliAppError(this.logger, tagOutcome)) {
+      return;
+    }
+    if (parsed.value.json) {
+      this.logger.out(this.formatTagSyncJsonOutput(tagOutcome.value, rootDir));
+      this.runtime.setExitCode(exitCodeForTagSyncResult(tagOutcome.value));
+    } else {
+      this.runtime.setExitCode(this.presentSyncCliResult.present(tagOutcome.value, rootDir));
+    }
+  }
+
+  private formatTagSyncJsonOutput(tagResult: TagSyncResult, rootDir: string): string {
+    return JSON.stringify({
+      schemaVersion: 1 as const,
+      ok: exitCodeForTagSyncResult(tagResult) === CLI_EXIT_SUCCESS,
+      rootDir,
+      result: tagResult,
+    });
+  }
+}

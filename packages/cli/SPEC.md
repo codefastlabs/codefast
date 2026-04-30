@@ -75,9 +75,9 @@ _Liên kết cùng tệp dùng fragment `#` **tiếng Anh**; ngay trên mỗi ti
 
 ### 1.1 Vấn đề với cấu trúc hiện tại (`src/lib/**`)
 
-Mã hiện tại đã theo hướng phân lớp và đảo ngược phụ thuộc, nhưng **chưa** hiển thị rõ mô hình **kiến trúc tường minh** (gói theo thành phần + port/bộ thích ứng) như tổng hợp trong [mục 4](#4-explicit-architecture). Hệ quả:
+**Hiện trạng mã nguồn:** gói không còn `src/lib/**`; cây làm việc theo [mục 7.3](#7-3-full-src-tree-di-modules) (`src/domains/**`, `src/shell/**`, `src/bootstrap/**`). Phần dưới ghi lại **động lực** của đợt refactor: trước đó mã đã phân lớp và đảo phụ thuộc phần nào, nhưng cây `lib/` **chưa** phản chiếu rõ **kiến trúc tường minh** (gói theo thành phần + port/bộ thích ứng) như [mục 4](#4-explicit-architecture). Hệ quả điển hình:
 
-- Cây `lib/` trộn `arrange`, `mirror`, `tag`, `core`, `config`, `kernel`, `shared`, `infrastructure` — khó biết một tính năng thuộc về đâu chỉ nhìn đường dẫn.
+- Cây `lib/` từng trộn `arrange`, `mirror`, `tag`, `core`, `config`, `kernel`, `shared`, `infrastructure` — khó biết một tính năng thuộc về đâu chỉ nhìn đường dẫn.
 - Trộn **lớp** (`@injectable`) với **hàm** ở nhiều lớp (hiển thị, dịch vụ, nạp cấu hình) nên khó có một quy ước thống nhất.
 
 <a id="1-2-rewrite-goals"></a>

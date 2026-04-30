@@ -24,24 +24,24 @@ describe("composition root integration", () => {
     const create = vi.fn(() => runtimeContainer);
 
     vi.doMock("@codefast/di", () => ({ Container: { create } }));
-    vi.doMock("#/lib/arrange/adapters/primary/cli/arrange.command", () => ({
+    vi.doMock("#/domains/arrange/presentation/cli/arrange.command", () => ({
       ArrangeCommand: ArrangeCommandMock,
     }));
-    vi.doMock("#/lib/mirror/adapters/primary/cli/mirror.command", () => ({
+    vi.doMock("#/domains/mirror/presentation/cli/mirror.command", () => ({
       MirrorCommand: MirrorCommandMock,
     }));
-    vi.doMock("#/lib/tag/adapters/primary/cli/tag.command", () => ({
+    vi.doMock("#/domains/tag/presentation/cli/tag.command", () => ({
       TagCommand: TagCommandMock,
     }));
-    vi.doMock("#/lib/arrange/arrange.module", () => ({ ArrangeModule: arrangeModule }));
-    vi.doMock("#/lib/mirror/mirror.module", () => ({ MirrorModule: mirrorModule }));
-    vi.doMock("#/lib/tag/tag.module", () => ({ TagModule: tagModule }));
-    vi.doMock("#/lib/kernel/contracts/tokens", () => ({
+    vi.doMock("#/domains/arrange/arrange.module", () => ({ ArrangeModule: arrangeModule }));
+    vi.doMock("#/domains/mirror/mirror.module", () => ({ MirrorModule: mirrorModule }));
+    vi.doMock("#/domains/tag/tag.module", () => ({ TagModule: tagModule }));
+    vi.doMock("#/shell/contracts/tokens", () => ({
       CliCommandToken: cliCommandTokenStub,
     }));
 
     const { createCliRuntimeContainer, resolveCliCommands } =
-      await import("#/lib/bootstrap/composition-root");
+      await import("#/bootstrap/composition-root");
     const container = createCliRuntimeContainer();
     const commands = resolveCliCommands(container);
 

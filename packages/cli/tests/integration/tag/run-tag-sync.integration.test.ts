@@ -6,11 +6,14 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { NodeCliPathAdapter } from "#/lib/core/infrastructure/path.adapter";
-import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
-import { TagVersionResolverAdapter } from "#/lib/tag/adapters/secondary/tag-version-resolver.adapter";
-import { RunTagSyncUseCaseToken, TagTargetRunnerServiceToken } from "#/lib/tag/contracts/tokens";
-import { TagModule } from "#/lib/tag/tag.module";
+import { NodeCliPathAdapter } from "#/shell/infrastructure/path.adapter";
+import { NodeCliFsAdapter } from "#/shell/infrastructure/node-io.adapter";
+import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
+import {
+  RunTagSyncUseCaseToken,
+  TagTargetRunnerServiceToken,
+} from "#/domains/tag/contracts/tokens";
+import { TagModule } from "#/domains/tag/tag.module";
 
 const tagFs = new NodeCliFsAdapter();
 const tagCliPath = new NodeCliPathAdapter();

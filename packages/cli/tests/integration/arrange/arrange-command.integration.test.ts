@@ -1,15 +1,15 @@
 import { Command } from "commander";
-import { AppError } from "#/lib/core/domain/errors.domain";
-import { ArrangeCommand } from "#/lib/arrange/adapters/primary/cli/arrange.command";
-import type { GroupFilePreviewPort } from "#/lib/arrange/application/ports/group-file-preview.port";
-import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
-import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
-import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCase } from "#/lib/arrange/application/use-cases/suggest-cn-groups.use-case";
-import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/analyze-report-presenter.contract";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
-import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
+import { AppError } from "#/shell/domain/errors.domain";
+import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
+import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/group-file-preview.port";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
+import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/contracts/analyze-report-presenter.contract";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
 
 function createLoggerMock(): CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;

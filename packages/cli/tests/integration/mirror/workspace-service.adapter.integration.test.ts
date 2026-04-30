@@ -1,6 +1,6 @@
-import { WorkspaceServiceAdapter } from "#/lib/mirror/adapters/secondary/workspace-service.adapter";
-import * as packageFilterResolver from "#/lib/mirror/infrastructure/package-filter-resolver.service";
-import * as workspacePackagesService from "#/lib/mirror/infrastructure/workspace-packages.service";
+import { WorkspaceServiceAdapter } from "#/domains/mirror/infrastructure/adapters/workspace-service.adapter";
+import * as packageFilterResolver from "#/domains/mirror/infrastructure/package-filter-resolver.service";
+import * as workspacePackagesService from "#/domains/mirror/infrastructure/workspace-packages.service";
 
 describe("WorkspaceServiceAdapter integration", () => {
   it("delegates package filter resolve and package discovery", async () => {
