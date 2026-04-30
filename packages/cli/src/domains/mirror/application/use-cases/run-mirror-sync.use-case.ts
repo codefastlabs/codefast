@@ -75,13 +75,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
         }
       } else {
         const { relPaths, multiSource } =
-          await this.workspacePackageDiscovery.findWorkspacePackageRelPaths(
-            request.rootDir,
-            json
-              ? () => {}
-              : (message: string) =>
-                  this.mirrorReporter.logWorkspaceGlobWarning(this.logger, message),
-          );
+          await this.workspacePackageDiscovery.findWorkspacePackageRelPaths(request.rootDir, json);
         targetPackages = relPaths;
         if (!json) {
           this.mirrorReporter.mirrorProcessingMode(this.logger, {

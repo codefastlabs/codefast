@@ -15,7 +15,6 @@ export class MirrorSyncReporterAdapter implements MirrorSyncReporterPort {
   mirrorBanner = mirrorReporter.mirrorBanner;
   mirrorProcessingMode = mirrorReporter.mirrorProcessingMode;
   mirrorNoPackages = mirrorReporter.mirrorNoPackages;
-  logWorkspaceGlobWarning = mirrorReporter.mirrorGlobWarning;
   logSkippedWorkspacePackage = mirrorReporter.logSkippedWorkspacePackage;
   logPackageSuccess = mirrorReporter.logPackageSuccess;
   logPrunedStaleExport = mirrorReporter.logPrunedStaleExport;

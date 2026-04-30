@@ -43,7 +43,7 @@ export function indentOfLineContaining(source: string, pos: number): string {
  */
 export function textPrefixFromLineStartToPosition(source: string, pos: number): string {
   const searchPos = Math.max(0, Math.min(pos, source.length));
-  return source.slice(lineStartIndexContaining(source, pos), searchPos);
+  return source.slice(lineStartIndexContaining(source, searchPos), searchPos);
 }
 
 /**

@@ -4,30 +4,33 @@ import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CliFs, CliLogger } from "#/shell/application/ports/cli-io.port";
 import type {
   WorkspacePackageLayoutOutcome,
   WorkspacePackageLayoutPort,
   WorkspacePackageLayoutSource,
 } from "#/shell/application/ports/workspace-package-layout.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import { CliFsToken, CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 
 /**
  * Node/pnpm implementation: read `pnpm-workspace.yaml`, expand globs to package dirs.
  */
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFsToken), inject(CliLoggerToken)])
 export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLayoutPort {
   private readonly workspaceYamlFileName = "pnpm-workspace.yaml";
   private readonly defaultIncludePatterns = ["packages/*"];
   private readonly packageJsonFileName = "package.json";
 
-  constructor(private readonly fs: CliFs) {}
+  constructor(
+    private readonly fs: CliFs,
+    private readonly logger: CliLogger,
+  ) {}
 
   async listPackageDirectoryPathsAbsolute(
     rootDirectoryPathAbsolute: string,
-    onGlobPermissionIssue: (diagnosticLine: string) => void,
+    suppressGlobPermissionDiagnostics?: boolean,
   ): Promise<WorkspacePackageLayoutOutcome> {
-    return this.listImpl(rootDirectoryPathAbsolute, onGlobPermissionIssue);
+    return this.listImpl(rootDirectoryPathAbsolute, !!suppressGlobPermissionDiagnostics);
   }
 
   private toPosix(filePath: string): string {
@@ -132,7 +135,7 @@ export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLa
 
   private async listImpl(
     rootDir: string,
-    onGlobPermissionIssue: (diagnosticLine: string) => void,
+    suppressGlobPermissionDiagnostics: boolean,
   ): Promise<WorkspacePackageLayoutOutcome> {
     const workspaceYaml = await this.readWorkspaceYaml(rootDir);
     const defInc = this.defaultIncludePatterns;
@@ -179,9 +182,11 @@ export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLa
         matches = globSync(globPat, globOpts);
       } catch (caughtGlobError: unknown) {
         if (this.isGlobPermissionError(caughtGlobError)) {
-          onGlobPermissionIssue(
-            `Skipping workspace glob "${pattern}" (${messageFromCaughtUnknown(caughtGlobError)})`,
-          );
+          if (!suppressGlobPermissionDiagnostics) {
+            this.logger.out(
+              `⚠ Skipping workspace glob "${pattern}" (${messageFromCaughtUnknown(caughtGlobError)})`,
+            );
+          }
           continue;
         }
         throw new Error(

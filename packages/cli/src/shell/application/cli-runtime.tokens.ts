@@ -1,5 +1,6 @@
 import { token } from "@codefast/di";
 import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
+import type { CliPortTelemetryPort } from "#/shell/application/ports/cli-port-telemetry.port";
 import type { CliVerboseDiagnosticsPort } from "#/shell/application/ports/cli-verbose-diagnostics.port";
 import type { FormatAppErrorPort } from "#/shell/application/ports/format-app-error.port";
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/global-cli-options-parse.port";
@@ -11,6 +12,8 @@ import type { CliRuntime } from "#/shell/application/ports/runtime.port";
 import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/typescript-source-file-walker.port";
 import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
 import type { WorkspacePackageLayoutPort } from "#/shell/application/ports/workspace-package-layout.port";
+
+export const CliPortTelemetryPortToken = token<CliPortTelemetryPort>("CliPortTelemetryPort");
 
 export const CliFsToken = token<CliFs>("CliFs");
 export const CliLoggerToken = token<CliLogger>("CliLogger");

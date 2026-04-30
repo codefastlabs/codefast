@@ -5,7 +5,7 @@ import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import {
   applyEditsDescending,
   indentOfLineContaining,
-} from "#/shell/infrastructure/source-code/domain/text-edit.model";
+} from "#/shell/domain/source-text-edit.support";
 import type { TagSinceWriterPort } from "#/domains/tag/application/ports/tag-since-writer.port";
 import type { TagFileResult } from "#/domains/tag/domain/types.domain";
 

@@ -21,6 +21,7 @@ import {
   SchemaValidationPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
+import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 
 @injectable([
   inject(CliLoggerToken),
@@ -32,7 +33,7 @@ import type { CliCommand } from "#/shell/contracts/cli-command.contract";
   inject(CliExecutorPortToken),
 ])
 export class MirrorCommand implements CliCommand {
-  readonly name = "mirror";
+  readonly name = CLI_COMMAND_SLOT_NAME.mirror;
   readonly description = "Keep package manifests aligned with what you ship";
 
   constructor(

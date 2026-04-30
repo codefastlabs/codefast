@@ -5,6 +5,7 @@ import type { SchemaValidationPort } from "#/shell/application/ports/schema-vali
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 import type { CliRuntime } from "#/shell/application/ports/runtime.port";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
+import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import type { PrepareTagSyncUseCase } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
@@ -35,7 +36,7 @@ import {
   inject(CliExecutorPortToken),
 ])
 export class TagCommand implements CliCommand {
-  readonly name = "tag";
+  readonly name = CLI_COMMAND_SLOT_NAME.tag;
   readonly description = "Add @since <version> JSDoc tags to exported declarations";
 
   constructor(

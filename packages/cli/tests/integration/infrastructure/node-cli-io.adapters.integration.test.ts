@@ -2,11 +2,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { CliDirectoryEntry } from "#/shell/application/ports/cli-io.port";
-import {
-  NodeCliFsAdapter,
-  NodeCliLoggerAdapter,
-  NodeCliRuntimeAdapter,
-} from "#/shell/infrastructure/node-io.adapter";
+import { NodeCliFsAdapter } from "#/shell/infrastructure/node-cli-fs.adapter";
+import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node-cli-logger.adapter";
+import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node-cli-runtime.adapter";
 
 describe("node io adapter integration", () => {
   it("supports fs operations including async readdir variants", async () => {

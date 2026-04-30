@@ -42,9 +42,10 @@ export class TagTargetResolverAdapter implements TagTargetResolverPort {
     hasWorkspaceFile: boolean;
     declaredEmptyPackages: boolean;
   }> {
+    /** Tag does not surface workspace glob permission diagnostics on stdout. */
     const outcome = await this.workspacePackageLayout.listPackageDirectoryPathsAbsolute(
       rootDir,
-      () => {},
+      true,
     );
     return {
       packageDirs: [...outcome.packageDirectoryPathsAbsolute],
