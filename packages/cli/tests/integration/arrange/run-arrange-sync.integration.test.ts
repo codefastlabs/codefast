@@ -5,8 +5,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { ArrangeModule } from "#/lib/arrange/arrange.module";
-import { RunArrangeSyncUseCaseToken } from "#/lib/arrange/contracts/tokens";
+import { ArrangeModule } from "#/domains/arrange/arrange.module";
+import { RunArrangeSyncUseCaseToken } from "#/domains/arrange/contracts/tokens";
 
 describe("RunArrangeSyncUseCase integration", () => {
   const container = Container.create();

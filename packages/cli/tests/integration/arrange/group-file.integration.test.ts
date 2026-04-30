@@ -5,9 +5,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { ArrangeFileProcessorServiceImpl } from "#/lib/arrange/application/services/arrange-file-processor.service";
-import { DomainSourceParserAdapter } from "#/lib/arrange/adapters/secondary/domain-source-parser.adapter";
-import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
+import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
+import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
+import { NodeCliFsAdapter } from "#/shell/infrastructure/node-io.adapter";
 
 const arrangeFs = new NodeCliFsAdapter();
 const service = new ArrangeFileProcessorServiceImpl(arrangeFs, new DomainSourceParserAdapter());

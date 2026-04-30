@@ -1,13 +1,16 @@
 import { Command } from "commander";
-import { AppError } from "#/lib/core/domain/errors.domain";
-import { TagCommand } from "#/lib/tag/adapters/primary/cli/tag.command";
-import type { PrepareTagSyncUseCase } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
-import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
-import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/tag-sync-result-presenter.contract";
-import { formatProgress, presentTagSyncCliResult } from "#/lib/tag/presentation/tag-sync.presenter";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
-import type { TagProgressListener, TagSyncResult } from "#/lib/tag/domain/types.domain";
+import { AppError } from "#/shell/domain/errors.domain";
+import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
+import type { PresentTagSyncResultPresenter } from "#/domains/tag/contracts/tag-sync-result-presenter.contract";
+import {
+  formatProgress,
+  presentTagSyncCliResult,
+} from "#/domains/tag/presentation/presenters/tag-sync.presenter";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
 
 function createLoggerMock(): CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;

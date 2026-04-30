@@ -1,10 +1,10 @@
 import { Command } from "commander";
-import { AppError } from "#/lib/core/domain/errors.domain";
-import { MirrorCommand } from "#/lib/mirror/adapters/primary/cli/mirror.command";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
-import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
-import type { PrepareMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
+import { AppError } from "#/shell/domain/errors.domain";
+import { MirrorCommand } from "#/domains/mirror/presentation/cli/mirror.command";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
 
 function createLoggerMock(): CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;

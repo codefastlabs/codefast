@@ -1,4 +1,4 @@
-import { GroupFilePreviewPresenterAdapter } from "#/lib/arrange/presentation/group-file-preview.presenter";
+import { GroupFilePreviewPresenterAdapter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
 
 describe("GroupFilePreviewPresenterAdapter integration", () => {
   it("prints unwrap and grouped preview sections", () => {

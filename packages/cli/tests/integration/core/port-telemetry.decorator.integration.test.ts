@@ -2,7 +2,7 @@ import {
   isCliTelemetryEnabled,
   withCliPortTelemetry,
   withOptionalPortTelemetry,
-} from "#/lib/core/infrastructure/port-telemetry.decorator";
+} from "#/shell/infrastructure/port-telemetry.decorator";
 
 describe("port telemetry decorator integration", () => {
   beforeEach(() => {

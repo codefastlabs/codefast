@@ -6,10 +6,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { ArrangeModule } from "#/lib/arrange/arrange.module";
-import { AnalyzeDirectoryUseCaseToken } from "#/lib/arrange/contracts/tokens";
-import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
+import { ArrangeModule } from "#/domains/arrange/arrange.module";
+import { AnalyzeDirectoryUseCaseToken } from "#/domains/arrange/contracts/tokens";
+import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
+import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
 
 const container = Container.create();
 container.load(ArrangeModule);

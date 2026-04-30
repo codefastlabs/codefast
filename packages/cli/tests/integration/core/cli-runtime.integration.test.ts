@@ -1,11 +1,8 @@
 import { Command } from "commander";
-import { AppError } from "#/lib/core/domain/errors.domain";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/lib/core/domain/cli-exit-codes.domain";
-import {
-  consumeCliAppError,
-  runCliResultAsync,
-} from "#/lib/core/presentation/cli-executor.presenter";
-import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
+import { AppError } from "#/shell/domain/errors.domain";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/shell/domain/cli-exit-codes.domain";
+import { consumeCliAppError, runCliResultAsync } from "#/shell/presentation/cli-executor.presenter";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 
 type LoggerStub = CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -86,7 +83,7 @@ describe("cli runtime + executor", () => {
       });
     });
 
-    vi.doMock("#/lib/bootstrap/composition-root", () => ({
+    vi.doMock("#/bootstrap/composition-root", () => ({
       createCliRuntimeContainer: () => ({ validate, initializeAsync, dispose }),
       resolveCliCommands: () => [{ register }],
     }));
@@ -107,13 +104,18 @@ describe("cli runtime + executor", () => {
     const initializeAsync = vi.fn(async () => undefined);
     const dispose = vi.fn(async () => undefined);
 
-    vi.doMock("#/lib/bootstrap/composition-root", () => ({
+    vi.doMock("#/bootstrap/composition-root", () => ({
       createCliRuntimeContainer: () => ({ validate, initializeAsync, dispose }),
       resolveCliCommands: () => [],
     }));
 
-    const { runCli } = await import("#/program");
-    await expect(runCli(["node", "codefast", "unknown-command"])).rejects.toBeInstanceOf(Error);
+    const stderrWrite = vi.spyOn(process.stderr, "write").mockImplementation(() => true);
+    try {
+      const { runCli } = await import("#/program");
+      await expect(runCli(["node", "codefast", "unknown-command"])).rejects.toBeInstanceOf(Error);
+    } finally {
+      stderrWrite.mockRestore();
+    }
 
     expect(validate).not.toHaveBeenCalled();
     expect(initializeAsync).not.toHaveBeenCalled();
