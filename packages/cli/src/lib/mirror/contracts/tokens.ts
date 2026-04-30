@@ -4,6 +4,7 @@ import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirr
 import type { PackageRepositoryPort } from "#/lib/mirror/application/ports/package-repository.port";
 import type { SyncWorkspacePackagePort } from "#/lib/mirror/application/ports/sync-workspace-package.port";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
+import type { MirrorPackageArgResolverPort } from "#/lib/mirror/application/ports/mirror-package-arg-resolver.port";
 import type { PrepareMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 
@@ -18,4 +19,8 @@ export const SyncWorkspacePackagePortToken = token<SyncWorkspacePackagePort>(
 export const RunMirrorSyncUseCaseToken = token<RunMirrorSyncUseCase>("RunMirrorSyncUseCase");
 export const PrepareMirrorSyncUseCaseToken = token<PrepareMirrorSyncUseCase>(
   "PrepareMirrorSyncUseCase",
+);
+
+export const MirrorPackageArgResolverPortToken = token<MirrorPackageArgResolverPort>(
+  "MirrorPackageArgResolverPort",
 );

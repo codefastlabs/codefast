@@ -13,8 +13,6 @@ import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-messa
 import type { MirrorConfig } from "#/lib/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
 import type { GlobalStats } from "#/lib/mirror/domain/types.domain";
-
-import { formatMirrorSyncJsonOutput } from "#/lib/mirror/application/mirror-sync-json.format";
 import type { WorkspaceServicePort } from "#/lib/mirror/application/ports/workspace-service.port";
 import type { MirrorSyncReporterPort } from "#/lib/mirror/application/ports/mirror-sync-reporter.port";
 import type { SyncWorkspacePackagePort } from "#/lib/mirror/application/ports/sync-workspace-package.port";
@@ -97,7 +95,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
         }
         const elapsedEmpty = (performance.now() - startTime) / 1000;
         if (json) {
-          this.logger.out(formatMirrorSyncJsonOutput(stats, elapsedEmpty));
+          this.logger.out(this.formatMirrorSyncJsonOutput(stats, elapsedEmpty));
         }
         return ok(stats);
       }
@@ -122,12 +120,21 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
         this.mirrorReporter.mirrorSummarySeparator(this.logger);
         this.mirrorReporter.mirrorSummary(this.logger, stats, elapsed);
       } else {
-        this.logger.out(formatMirrorSyncJsonOutput(stats, elapsed));
+        this.logger.out(this.formatMirrorSyncJsonOutput(stats, elapsed));
       }
 
       return ok(stats);
     } catch (caughtError: unknown) {
       return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
+  }
+
+  private formatMirrorSyncJsonOutput(stats: GlobalStats, elapsedSeconds: number): string {
+    return JSON.stringify({
+      schemaVersion: 1 as const,
+      ok: stats.packagesErrored === 0,
+      elapsedSeconds,
+      stats,
+    });
   }
 }

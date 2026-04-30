@@ -32,39 +32,3 @@ export function presentArrangeSyncResult(
   }
   return exitCodeForArrangeSyncResult(result);
 }
-
-type ArrangeSyncJsonPayloadV1 = {
-  readonly schemaVersion: 1;
-  readonly ok: boolean;
-  readonly write: boolean;
-  readonly result: Omit<ArrangeRunResult, "previewPlans">;
-};
-
-export function formatArrangeSyncJsonOutput(result: ArrangeRunResult, write: boolean): string {
-  const { previewPlans: _plans, ...serializableResult } = result;
-  const payload: ArrangeSyncJsonPayloadV1 = {
-    schemaVersion: 1,
-    ok: result.hookError === null,
-    write,
-    result: serializableResult,
-  };
-  return JSON.stringify(payload);
-}
-
-type ArrangeGroupJsonPayloadV1 = {
-  readonly schemaVersion: 1;
-  readonly primaryLine: string;
-  readonly bucketsCommentLine: string;
-};
-
-export function formatArrangeGroupJsonOutput(output: {
-  readonly primaryLine: string;
-  readonly bucketsCommentLine: string;
-}): string {
-  const payload: ArrangeGroupJsonPayloadV1 = {
-    schemaVersion: 1,
-    primaryLine: output.primaryLine,
-    bucketsCommentLine: output.bucketsCommentLine,
-  };
-  return JSON.stringify(payload);
-}

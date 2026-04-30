@@ -8,18 +8,12 @@ import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/lib/arrange/arrange.module";
 import { AnalyzeDirectoryUseCaseToken } from "#/lib/arrange/contracts/tokens";
-import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
-import { CoreModule } from "#/lib/core/core.module";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
-import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { AnalyzeReport } from "#/lib/arrange/domain/types.domain";
 
 const container = Container.create();
-container.load(CoreModule, InfrastructureModule, PresentationModule, ArrangeModule);
-const analyzeDirectoryUseCase = container.resolve(
-  AnalyzeDirectoryUseCaseToken,
-) as AnalyzeDirectoryUseCase;
+container.load(ArrangeModule);
+const analyzeDirectoryUseCase = container.resolve(AnalyzeDirectoryUseCaseToken);
 void container.resolve(CliLoggerToken);
 
 function analyzeReportOrThrow(rootPath: string): AnalyzeReport {

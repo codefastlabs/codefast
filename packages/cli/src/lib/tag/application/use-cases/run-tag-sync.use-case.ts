@@ -1,12 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import {
-  TagSinceWriterPortToken,
   TagTargetResolverPortToken,
-  TagVersionResolverPortToken,
-  TypeScriptTreeWalkPortToken,
+  TagTargetRunnerServiceToken,
 } from "#/lib/tag/contracts/tokens";
 import type { TagSyncExecutionInput } from "#/lib/tag/contracts/models";
-import { runTagOnTarget } from "#/lib/tag/application/services/tag-target-runner.service";
+import type { TagTargetRunnerService } from "#/lib/tag/contracts/services.contract";
 import { AppError } from "#/lib/core/domain/errors.domain";
 import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
@@ -15,10 +13,7 @@ import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { CliPath } from "#/lib/core/application/ports/path.port";
 import { CliFsToken, CliPathToken } from "#/lib/core/contracts/tokens";
 import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
-import type { TagSinceWriterPort } from "#/lib/tag/application/ports/tag-since-writer.port";
-import type { TagVersionResolverPort } from "#/lib/tag/application/ports/tag-version-resolver.port";
 import type { TagTargetResolverPort } from "#/lib/tag/application/ports/target-resolver.port";
-import type { TypeScriptTreeWalkPort } from "#/lib/tag/application/ports/typescript-tree-walk.port";
 import type {
   TagFileResult,
   TagProgressListener,
@@ -33,168 +28,6 @@ export interface RunTagSyncUseCase {
   execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
 }
 
-async function runTagOnAfterWriteHook(
-  hook: CodefastAfterWriteHook | undefined,
-  modifiedFiles: string[],
-): Promise<string | null> {
-  if (!hook || modifiedFiles.length === 0) {
-    return null;
-  }
-  try {
-    await hook({ files: modifiedFiles });
-    return null;
-  } catch (caughtHookError: unknown) {
-    return `[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`;
-  }
-}
-
-function summarizeVersions(targetResults: TagTargetExecutionResult[]): string {
-  const distinctVersions = extractDistinctVersions(targetResults);
-  if (distinctVersions.size === 0) {
-    return "none";
-  }
-  if (distinctVersions.size > 1) {
-    return "mixed";
-  }
-  for (const version of distinctVersions) {
-    return version;
-  }
-  return "none";
-}
-
-function extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set<string> {
-  return new Set(
-    targetResults
-      .map((targetResult) => targetResult.result?.version)
-      .filter((version): version is string => typeof version === "string" && version.length > 0),
-  );
-}
-
-function chooseWorkspacePackageTargetPath(
-  candidate: TagTargetCandidate,
-  pathService: CliPath,
-  fs: CliFs,
-): { targetPath: string; source: TagTargetSource } {
-  if (candidate.source !== "workspace-package") {
-    return {
-      targetPath: candidate.candidatePath,
-      source: candidate.source,
-    };
-  }
-
-  const preferredSourceDir = pathService.join(candidate.candidatePath, "src");
-  if (fs.existsSync(preferredSourceDir) && fs.statSync(preferredSourceDir).isDirectory()) {
-    return {
-      targetPath: preferredSourceDir,
-      source: "workspace-package-selected-src",
-    };
-  }
-
-  return {
-    targetPath: candidate.candidatePath,
-    source: "workspace-package-selected-root",
-  };
-}
-
-function resolveTargetSelection(
-  candidate: TagTargetCandidate,
-  rootDir: string,
-  pathService: CliPath,
-  fs: CliFs,
-): TagResolvedTarget {
-  const selectedTarget = chooseWorkspacePackageTargetPath(candidate, pathService, fs);
-  const rootRelativeTargetPath = pathService
-    .relative(rootDir, selectedTarget.targetPath)
-    .split(pathService.separator)
-    .join("/");
-  return {
-    targetPath: selectedTarget.targetPath,
-    rootRelativeTargetPath: rootRelativeTargetPath || ".",
-    source: selectedTarget.source,
-    packageDir: candidate.packageDir,
-    packageName: candidate.packageName,
-  };
-}
-
-function filterSkippedCandidates(
-  targetCandidates: TagTargetCandidate[],
-  skipPackages: readonly string[] | undefined,
-): { includedCandidates: TagTargetCandidate[]; skippedPackages: string[] } {
-  if (!skipPackages || skipPackages.length === 0) {
-    return {
-      includedCandidates: targetCandidates,
-      skippedPackages: [],
-    };
-  }
-
-  const skipPackageSet = new Set(skipPackages);
-  const includedCandidates: TagTargetCandidate[] = [];
-  const skippedPackages: string[] = [];
-  for (const candidate of targetCandidates) {
-    const packageName = candidate.packageName;
-    if (packageName && skipPackageSet.has(packageName)) {
-      skippedPackages.push(packageName);
-      continue;
-    }
-    includedCandidates.push(candidate);
-  }
-
-  return { includedCandidates, skippedPackages };
-}
-
-async function runOnResolvedTarget(
-  resolvedTarget: TagResolvedTarget,
-  write: boolean,
-  fs: CliFs,
-  pathService: CliPath,
-  versionResolver: TagVersionResolverPort,
-  sinceWriter: TagSinceWriterPort,
-  typeScriptTreeWalk: TypeScriptTreeWalkPort,
-  listener: TagProgressListener | undefined,
-): Promise<TagTargetExecutionResult> {
-  listener?.onTargetStarted(resolvedTarget);
-  const absoluteTargetPath = pathService.resolve(resolvedTarget.targetPath);
-  if (!fs.existsSync(absoluteTargetPath)) {
-    const missingTargetResult: TagTargetExecutionResult = {
-      target: resolvedTarget,
-      targetExists: false,
-      runError: `Not found: ${absoluteTargetPath}`,
-      result: null,
-    };
-    listener?.onTargetCompleted(resolvedTarget, missingTargetResult);
-    return missingTargetResult;
-  }
-
-  try {
-    const runResult = runTagOnTarget(
-      absoluteTargetPath,
-      { write },
-      fs,
-      pathService,
-      versionResolver,
-      sinceWriter,
-      typeScriptTreeWalk,
-    );
-    const targetRunResult: TagTargetExecutionResult = {
-      target: resolvedTarget,
-      targetExists: true,
-      runError: null,
-      result: runResult,
-    };
-    listener?.onTargetCompleted(resolvedTarget, targetRunResult);
-    return targetRunResult;
-  } catch (caughtRunError: unknown) {
-    const failedTargetRunResult: TagTargetExecutionResult = {
-      target: resolvedTarget,
-      targetExists: true,
-      runError: messageFromCaughtUnknown(caughtRunError),
-      result: null,
-    };
-    listener?.onTargetCompleted(resolvedTarget, failedTargetRunResult);
-    return failedTargetRunResult;
-  }
-}
-
 /**
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
  * Returns structured execution data; presentation/logging belongs to command layer.
@@ -203,18 +36,14 @@ async function runOnResolvedTarget(
   inject(CliFsToken),
   inject(CliPathToken),
   inject(TagTargetResolverPortToken),
-  inject(TypeScriptTreeWalkPortToken),
-  inject(TagVersionResolverPortToken),
-  inject(TagSinceWriterPortToken),
+  inject(TagTargetRunnerServiceToken),
 ])
 export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
   constructor(
     private readonly fs: CliFs,
     private readonly path: CliPath,
     private readonly targetResolver: TagTargetResolverPort,
-    private readonly typeScriptTreeWalk: TypeScriptTreeWalkPort,
-    private readonly versionResolver: TagVersionResolverPort,
-    private readonly sinceWriter: TagSinceWriterPort,
+    private readonly tagTargetRunner: TagTargetRunnerService,
   ) {}
 
   async execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>> {
@@ -224,25 +53,16 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
         input.rootDir,
         input.targetPath,
       );
-      const { includedCandidates, skippedPackages } = filterSkippedCandidates(
+      const { includedCandidates, skippedPackages } = this.filterSkippedCandidates(
         targetCandidates,
         input.skipPackages,
       );
       const selectedTargets = includedCandidates.map((candidate) =>
-        resolveTargetSelection(candidate, input.rootDir, this.path, this.fs),
+        this.resolveTargetSelection(candidate, input.rootDir),
       );
       const targetExecutionResults = await Promise.all(
         selectedTargets.map((resolvedTarget) =>
-          runOnResolvedTarget(
-            resolvedTarget,
-            input.write,
-            this.fs,
-            this.path,
-            this.versionResolver,
-            this.sinceWriter,
-            this.typeScriptTreeWalk,
-            input.listener,
-          ),
+          this.runOnResolvedTarget(resolvedTarget, input.write, input.listener),
         ),
       );
       const allFileResults: TagFileResult[] = targetExecutionResults.flatMap(
@@ -265,9 +85,9 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
         .map((entry) => entry.filePath);
       const hookError =
         input.write && modifiedFiles.length > 0
-          ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
+          ? await this.runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
           : null;
-      const distinctVersions = [...extractDistinctVersions(targetExecutionResults)].sort(
+      const distinctVersions = [...this.extractDistinctVersions(targetExecutionResults)].sort(
         (left, right) => left.localeCompare(right),
       );
 
@@ -280,13 +100,162 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
         filesScanned,
         filesChanged,
         taggedDeclarations,
-        versionSummary: summarizeVersions(targetExecutionResults),
+        versionSummary: this.summarizeVersions(targetExecutionResults),
         distinctVersions,
         modifiedFiles,
         hookError,
       });
     } catch (caughtError: unknown) {
       return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
+    }
+  }
+
+  private async runTagOnAfterWriteHook(
+    hook: CodefastAfterWriteHook | undefined,
+    modifiedFiles: string[],
+  ): Promise<string | null> {
+    if (!hook || modifiedFiles.length === 0) {
+      return null;
+    }
+    try {
+      await hook({ files: modifiedFiles });
+      return null;
+    } catch (caughtHookError: unknown) {
+      return `[tag] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`;
+    }
+  }
+
+  private summarizeVersions(targetResults: TagTargetExecutionResult[]): string {
+    const distinctVersions = this.extractDistinctVersions(targetResults);
+    if (distinctVersions.size === 0) {
+      return "none";
+    }
+    if (distinctVersions.size > 1) {
+      return "mixed";
+    }
+    for (const version of distinctVersions) {
+      return version;
+    }
+    return "none";
+  }
+
+  private extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set<string> {
+    return new Set(
+      targetResults
+        .map((targetResult) => targetResult.result?.version)
+        .filter((version): version is string => typeof version === "string" && version.length > 0),
+    );
+  }
+
+  private chooseWorkspacePackageTargetPath(candidate: TagTargetCandidate): {
+    targetPath: string;
+    source: TagTargetSource;
+  } {
+    if (candidate.source !== "workspace-package") {
+      return {
+        targetPath: candidate.candidatePath,
+        source: candidate.source,
+      };
+    }
+
+    const preferredSourceDir = this.path.join(candidate.candidatePath, "src");
+    if (
+      this.fs.existsSync(preferredSourceDir) &&
+      this.fs.statSync(preferredSourceDir).isDirectory()
+    ) {
+      return {
+        targetPath: preferredSourceDir,
+        source: "workspace-package-selected-src",
+      };
+    }
+
+    return {
+      targetPath: candidate.candidatePath,
+      source: "workspace-package-selected-root",
+    };
+  }
+
+  private resolveTargetSelection(
+    candidate: TagTargetCandidate,
+    rootDir: string,
+  ): TagResolvedTarget {
+    const selectedTarget = this.chooseWorkspacePackageTargetPath(candidate);
+    const rootRelativeTargetPath = this.path
+      .relative(rootDir, selectedTarget.targetPath)
+      .split(this.path.separator)
+      .join("/");
+    return {
+      targetPath: selectedTarget.targetPath,
+      rootRelativeTargetPath: rootRelativeTargetPath || ".",
+      source: selectedTarget.source,
+      packageDir: candidate.packageDir,
+      packageName: candidate.packageName,
+    };
+  }
+
+  private filterSkippedCandidates(
+    targetCandidates: TagTargetCandidate[],
+    skipPackages: readonly string[] | undefined,
+  ): { includedCandidates: TagTargetCandidate[]; skippedPackages: string[] } {
+    if (!skipPackages || skipPackages.length === 0) {
+      return {
+        includedCandidates: targetCandidates,
+        skippedPackages: [],
+      };
+    }
+
+    const skipPackageSet = new Set(skipPackages);
+    const includedCandidates: TagTargetCandidate[] = [];
+    const skippedPackages: string[] = [];
+    for (const candidate of targetCandidates) {
+      const packageName = candidate.packageName;
+      if (packageName && skipPackageSet.has(packageName)) {
+        skippedPackages.push(packageName);
+        continue;
+      }
+      includedCandidates.push(candidate);
+    }
+
+    return { includedCandidates, skippedPackages };
+  }
+
+  private async runOnResolvedTarget(
+    resolvedTarget: TagResolvedTarget,
+    write: boolean,
+    listener: TagProgressListener | undefined,
+  ): Promise<TagTargetExecutionResult> {
+    listener?.onTargetStarted(resolvedTarget);
+    const absoluteTargetPath = this.path.resolve(resolvedTarget.targetPath);
+    if (!this.fs.existsSync(absoluteTargetPath)) {
+      const missingTargetResult: TagTargetExecutionResult = {
+        target: resolvedTarget,
+        targetExists: false,
+        runError: `Not found: ${absoluteTargetPath}`,
+        result: null,
+      };
+      listener?.onTargetCompleted(resolvedTarget, missingTargetResult);
+      return missingTargetResult;
+    }
+
+    try {
+      const runResult = this.tagTargetRunner.runOnTarget(absoluteTargetPath, { write });
+      const targetRunResult: TagTargetExecutionResult = {
+        target: resolvedTarget,
+        targetExists: true,
+        runError: null,
+        result: runResult,
+      };
+      listener?.onTargetCompleted(resolvedTarget, targetRunResult);
+      return targetRunResult;
+    } catch (caughtRunError: unknown) {
+      const failedTargetRunResult: TagTargetExecutionResult = {
+        target: resolvedTarget,
+        targetExists: true,
+        runError: messageFromCaughtUnknown(caughtRunError),
+        result: null,
+      };
+      listener?.onTargetCompleted(resolvedTarget, failedTargetRunResult);
+      return failedTargetRunResult;
     }
   }
 }

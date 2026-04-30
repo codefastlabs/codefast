@@ -9,10 +9,8 @@ describe("composition root integration", () => {
     class MirrorCommandMock {}
     class TagCommandMock {}
     const arrangeModule = { name: "arrange-module" };
-    const arrangePresentationModule = { name: "arrange-presentation-module" };
     const mirrorModule = { name: "mirror-module" };
     const tagModule = { name: "tag-module" };
-    const tagPresentationModule = { name: "tag-presentation-module" };
     const cliCommandTokenStub = Symbol("CliCommandToken");
 
     const singleton = vi.fn(() => ({}));
@@ -35,14 +33,8 @@ describe("composition root integration", () => {
     vi.doMock("#/lib/tag/adapters/primary/cli/tag.command", () => ({
       TagCommand: TagCommandMock,
     }));
-    vi.doMock("#/lib/arrange/adapters/primary/cli/arrange.presentation.module", () => ({
-      ArrangePresentationModule: arrangePresentationModule,
-    }));
     vi.doMock("#/lib/arrange/arrange.module", () => ({ ArrangeModule: arrangeModule }));
     vi.doMock("#/lib/mirror/mirror.module", () => ({ MirrorModule: mirrorModule }));
-    vi.doMock("#/lib/tag/adapters/primary/cli/tag.presentation.module", () => ({
-      TagPresentationModule: tagPresentationModule,
-    }));
     vi.doMock("#/lib/tag/tag.module", () => ({ TagModule: tagModule }));
     vi.doMock("#/lib/kernel/contracts/tokens", () => ({
       CliCommandToken: cliCommandTokenStub,
@@ -51,12 +43,12 @@ describe("composition root integration", () => {
     const { createCliRuntimeContainer, resolveCliCommands } =
       await import("#/lib/bootstrap/composition-root");
     const container = createCliRuntimeContainer();
-    const commands = resolveCliCommands(container as never);
+    const commands = resolveCliCommands(container);
 
     expect(create).toHaveBeenCalledTimes(1);
-    expect(load).toHaveBeenCalledWith(arrangePresentationModule, arrangeModule);
+    expect(load).toHaveBeenCalledWith(arrangeModule);
     expect(load).toHaveBeenCalledWith(mirrorModule);
-    expect(load).toHaveBeenCalledWith(tagPresentationModule, tagModule);
+    expect(load).toHaveBeenCalledWith(tagModule);
     expect(bind).toHaveBeenCalledTimes(3);
     expect(resolveAll).toHaveBeenCalledTimes(1);
     expect(resolveAll).toHaveBeenCalledWith(cliCommandTokenStub);
