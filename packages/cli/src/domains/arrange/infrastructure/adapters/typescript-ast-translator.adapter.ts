@@ -3,7 +3,9 @@
  * This module is the only place that imports `typescript` for arrange AST translation.
  */
 
+import { injectable } from "@codefast/di";
 import ts from "typescript";
+import type { TypeScriptToDomainAstPort } from "#/domains/arrange/application/ports/typescript-to-domain-ast.port";
 import {
   DomainBinaryOperator,
   DomainSyntaxKind,
@@ -427,8 +429,15 @@ function translateTypeScriptSourceFile(tsSf: ts.SourceFile): DomainSourceFile {
   } satisfies DomainSourceFile;
 }
 
-export function parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
+function parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
   const scriptKind = filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
   const tsSf = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true, scriptKind);
   return translateTypeScriptSourceFile(tsSf);
+}
+
+@injectable()
+export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
+  translateSourceFile(filePath: string, sourceText: string): DomainSourceFile {
+    return parseDomainSourceFile(filePath, sourceText);
+  }
 }

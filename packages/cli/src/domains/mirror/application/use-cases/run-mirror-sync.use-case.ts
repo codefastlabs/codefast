@@ -1,19 +1,21 @@
 import { inject, injectable } from "@codefast/di";
 import {
   MirrorSyncReporterPortToken,
+  PackageFilterPathResolverPortToken,
   SyncWorkspacePackagePortToken,
-  WorkspaceServicePortToken,
+  WorkspacePackageDiscoveryPortToken,
 } from "#/domains/mirror/contracts/tokens";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { CliFs, CliLogger } from "#/shell/application/ports/cli-io.port";
-import { CliFsToken, CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/domains/mirror/application/requests/mirror-sync.request";
 import type { GlobalStats } from "#/domains/mirror/domain/types.domain";
-import type { WorkspaceServicePort } from "#/domains/mirror/application/ports/workspace-service.port";
+import type { PackageFilterPathResolverPort } from "#/domains/mirror/application/ports/package-filter-path-resolver.port";
+import type { WorkspacePackageDiscoveryPort } from "#/domains/mirror/application/ports/workspace-package-discovery.port";
 import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/mirror-sync-reporter.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/sync-workspace-package.port";
 
@@ -22,17 +24,17 @@ export interface RunMirrorSyncUseCase {
 }
 
 @injectable([
-  inject(CliFsToken),
   inject(CliLoggerToken),
-  inject(WorkspaceServicePortToken),
+  inject(PackageFilterPathResolverPortToken),
+  inject(WorkspacePackageDiscoveryPortToken),
   inject(MirrorSyncReporterPortToken),
   inject(SyncWorkspacePackagePortToken),
 ])
 export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
   constructor(
-    private readonly fs: CliFs,
     private readonly logger: CliLogger,
-    private readonly workspaceService: WorkspaceServicePort,
+    private readonly packageFilterPathResolver: PackageFilterPathResolverPort,
+    private readonly workspacePackageDiscovery: WorkspacePackageDiscoveryPort,
     private readonly mirrorReporter: MirrorSyncReporterPort,
     private readonly syncWorkspacePackage: SyncWorkspacePackagePort,
   ) {}
@@ -63,7 +65,7 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
 
       let targetPackages: string[] = [];
       if (request.packageFilter) {
-        const safe = this.workspaceService.resolvePackageFilterUnderRoot(
+        const safe = this.packageFilterPathResolver.resolvePackageFilterUnderRoot(
           request.rootDir,
           request.packageFilter,
         );
@@ -72,13 +74,14 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
           this.mirrorReporter.mirrorProcessingMode(this.logger, { kind: "single" });
         }
       } else {
-        const { relPaths, multiSource } = await this.workspaceService.findWorkspacePackageRelPaths(
-          request.rootDir,
-          json
-            ? () => {}
-            : (message: string) =>
-                this.mirrorReporter.logWorkspaceGlobWarning(this.logger, message),
-        );
+        const { relPaths, multiSource } =
+          await this.workspacePackageDiscovery.findWorkspacePackageRelPaths(
+            request.rootDir,
+            json
+              ? () => {}
+              : (message: string) =>
+                  this.mirrorReporter.logWorkspaceGlobWarning(this.logger, message),
+          );
         targetPackages = relPaths;
         if (!json) {
           this.mirrorReporter.mirrorProcessingMode(this.logger, {

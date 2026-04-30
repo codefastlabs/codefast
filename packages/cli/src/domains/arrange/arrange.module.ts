@@ -7,6 +7,7 @@ import { PrepareArrangeWorkspaceUseCaseImpl } from "#/domains/arrange/applicatio
 import { RunArrangeSyncUseCaseImpl } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
 import { SuggestCnGroupsUseCaseImpl } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
+import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/adapters/typescript-ast-translator.adapter";
 import { FileWalkerAdapter } from "#/domains/arrange/infrastructure/adapters/file-walker.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
@@ -21,6 +22,7 @@ import {
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
   TailwindGroupingServiceToken,
+  TypeScriptToDomainAstPortToken,
 } from "#/domains/arrange/contracts/tokens";
 import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.service";
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
@@ -39,6 +41,8 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .onActivation((ctx, implementation) =>
       withOptionalPortTelemetry("FileWalkerPort", implementation, ctx.resolve(CliLoggerToken)),
     );
+
+  moduleBuilder.bind(TypeScriptToDomainAstPortToken).to(TypeScriptAstTranslator).singleton();
 
   moduleBuilder
     .bind(DomainSourceParserPortToken)
