@@ -2,8 +2,11 @@ import { globSync } from "node:fs";
 import path from "node:path";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
+import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { WorkspacePackageDiscoveryPort } from "#/domains/mirror/application/ports/workspace-package-discovery.port";
+import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
 import type {
   FindWorkspacePackagesResult,
@@ -134,12 +137,7 @@ async function readWorkspaceYaml(rootDir: string, fs: CliFs): Promise<ReadWorksp
   return { exists: true, doc };
 }
 
-/**
- * Workspace package directories relative to `rootDir` (POSIX slashes), sorted.
- * Reads `pnpm-workspace.yaml` when present; otherwise uses `packages/*`.
- * Only paths with a `package.json` are returned (same practical rule as pnpm).
- */
-export async function findWorkspacePackageRelPaths(
+async function findWorkspacePackageRelPathsWithFs(
   rootDir: string,
   fs: CliFs,
   onGlobWarning: (message: string) => void,
@@ -210,4 +208,21 @@ export async function findWorkspacePackageRelPaths(
   const relPaths = [...found].filter((rel) => !excludeMatchers.some((isMatch) => isMatch(rel)));
   relPaths.sort((a, b) => a.localeCompare(b));
   return { relPaths, multiSource };
+}
+
+/**
+ * Workspace package directories relative to `rootDir` (POSIX slashes), sorted.
+ * Reads `pnpm-workspace.yaml` when present; otherwise uses `packages/*`.
+ * Only paths with a `package.json` are returned (same practical rule as pnpm).
+ */
+@injectable([inject(CliFsToken)])
+export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort {
+  constructor(private readonly fs: CliFs) {}
+
+  findWorkspacePackageRelPaths(
+    rootDir: string,
+    onGlobWarning: (message: string) => void,
+  ): Promise<FindWorkspacePackagesResult> {
+    return findWorkspacePackageRelPathsWithFs(rootDir, this.fs, onGlobWarning);
+  }
 }

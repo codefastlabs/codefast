@@ -1,4 +1,5 @@
 import { token } from "@codefast/di";
+import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/arrange-target-path-resolver.port";
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/domain-source-parser.port";
 import type { FileWalkerPort } from "#/domains/arrange/application/ports/file-walker.port";
 import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/group-file-preview.port";
@@ -29,6 +30,9 @@ export const ArrangeFileProcessorServiceToken = token<ArrangeFileProcessorServic
 
 export const AnalyzeDirectoryUseCaseToken =
   token<AnalyzeDirectoryUseCase>("AnalyzeDirectoryUseCase");
+export const ArrangeTargetPathResolverPortToken = token<ArrangeTargetPathResolverPort>(
+  "ArrangeTargetPathResolverPort",
+);
 export const RunArrangeSyncUseCaseToken = token<RunArrangeSyncUseCase>("RunArrangeSyncUseCase");
 export const SuggestCnGroupsUseCaseToken = token<SuggestCnGroupsUseCase>("SuggestCnGroupsUseCase");
 export const PrepareArrangeWorkspaceUseCaseToken = token<PrepareArrangeWorkspaceUseCase>(

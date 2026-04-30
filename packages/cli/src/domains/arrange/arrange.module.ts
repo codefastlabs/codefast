@@ -1,5 +1,6 @@
 import { Module } from "@codefast/di";
 import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
+import { ArrangeTargetPathResolver } from "#/domains/arrange/application/services/arrange-target-path-resolver.service";
 import { ArrangeTargetScannerServiceImpl } from "#/domains/arrange/application/services/arrange-target-scanner.service";
 import { AnalyzeDirectoryUseCaseImpl } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
@@ -11,6 +12,7 @@ import { WorkspaceResolverAdapter } from "#/domains/arrange/infrastructure/adapt
 import {
   AnalyzeDirectoryUseCaseToken,
   ArrangeFileProcessorServiceToken,
+  ArrangeTargetPathResolverPortToken,
   ArrangeTargetScannerServiceToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
@@ -53,6 +55,8 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     );
 
   moduleBuilder.bind(WorkspaceResolverPortToken).to(WorkspaceResolverAdapter).singleton();
+
+  moduleBuilder.bind(ArrangeTargetPathResolverPortToken).to(ArrangeTargetPathResolver).singleton();
 
   moduleBuilder.bind(TailwindGroupingServiceToken).to(TailwindGroupingServiceImpl).singleton();
 

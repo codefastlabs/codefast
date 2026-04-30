@@ -1,14 +1,13 @@
 import { inject, injectable } from "@codefast/di";
-import { findRepoRoot } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
+import { RepoRootResolverPortToken } from "#/shell/application/cli-runtime.tokens";
+import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
 import type { WorkspaceResolverPort } from "#/domains/arrange/application/ports/workspace-resolver.port";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
-@injectable([inject(CliFsToken)])
+@injectable([inject(RepoRootResolverPortToken)])
 export class WorkspaceResolverAdapter implements WorkspaceResolverPort {
-  constructor(private readonly fs: CliFs) {}
+  constructor(private readonly repoRootResolver: RepoRootResolverPort) {}
 
   findRepoRoot(fromDirectory: string): string {
-    return findRepoRoot(this.fs, fromDirectory);
+    return this.repoRootResolver.findRepoRoot(fromDirectory);
   }
 }

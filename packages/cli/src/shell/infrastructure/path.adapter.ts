@@ -2,7 +2,7 @@ import path from "node:path";
 import { injectable } from "@codefast/di";
 import type { CliPath } from "#/shell/application/ports/path.port";
 
-@injectable([])
+@injectable()
 export class NodeCliPathAdapter implements CliPath {
   resolve(...paths: string[]): string {
     return path.resolve(...paths);

@@ -19,7 +19,7 @@ function canonicalPathSyncNode(inputPath: string): string {
   }
 }
 
-@injectable([])
+@injectable()
 export class NodeCliFsAdapter implements CliFs {
   existsSync = fsSync.existsSync;
   canonicalPathSync = canonicalPathSyncNode;
@@ -40,7 +40,7 @@ export class NodeCliFsAdapter implements CliFs {
   unlink = (p: string) => fsPromises.unlink(p);
 }
 
-@injectable([])
+@injectable()
 export class NodeCliLoggerAdapter implements CliLogger {
   out(line: string): void {
     process.stdout.write(`${line}\n`);
@@ -50,7 +50,7 @@ export class NodeCliLoggerAdapter implements CliLogger {
   }
 }
 
-@injectable([])
+@injectable()
 export class NodeCliRuntimeAdapter implements CliRuntime {
   cwd(): string {
     return process.cwd();

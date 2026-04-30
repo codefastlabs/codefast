@@ -1,29 +1,37 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
+import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
 /**
  * Resolve the monorepo root (directory containing `pnpm-workspace.yaml`).
  * Tries the compiled package location first, then the provided `startDir`.
  */
-export function findRepoRoot(fs: CliFs, startDir: string): string {
-  const candidates = [path.dirname(fileURLToPath(import.meta.url)), startDir];
+@injectable([inject(CliFsToken)])
+export class RepoRootResolver implements RepoRootResolverPort {
+  constructor(private readonly fs: CliFs) {}
 
-  for (const start of candidates) {
-    let dir = path.resolve(start);
-    for (;;) {
-      if (fs.existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
-        return dir;
+  findRepoRoot(fromDirectory: string): string {
+    const candidates = [path.dirname(fileURLToPath(import.meta.url)), fromDirectory];
+
+    for (const start of candidates) {
+      let dir = path.resolve(start);
+      for (;;) {
+        if (this.fs.existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
+          return dir;
+        }
+        const parent = path.dirname(dir);
+        if (parent === dir) {
+          break;
+        }
+        dir = parent;
       }
-      const parent = path.dirname(dir);
-      if (parent === dir) {
-        break;
-      }
-      dir = parent;
     }
-  }
 
-  throw new Error(
-    `Could not locate monorepo root (missing pnpm-workspace.yaml). Searched from: ${candidates.join(", ")}`,
-  );
+    throw new Error(
+      `Could not locate monorepo root (missing pnpm-workspace.yaml). Searched from: ${candidates.join(", ")}`,
+    );
+  }
 }
