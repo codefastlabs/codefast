@@ -72,12 +72,18 @@ function createDeps(): MirrorDeps {
   };
 }
 
+import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
+
 function createCommandAndProgram(deps: MirrorDeps): { command: MirrorCommand; program: Command } {
+  const shell = createShellCliTestGraph(deps.logger);
   const command = new MirrorCommand(
     deps.logger,
     deps.runtime,
     deps.prepareMirrorSync,
     deps.runMirrorSync,
+    shell.globalCliOptions,
+    shell.schemaValidation,
+    shell.cliExecutor,
   );
   const program = new Command();
   program.option("--no-color", "Disable ANSI color output");

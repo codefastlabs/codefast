@@ -49,10 +49,10 @@ type WritableDomainAst<T extends DomainAstNode> = {
 @injectable()
 export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
   translateSourceFile(filePath: string, sourceText: string): DomainSourceFile {
-    return TypeScriptAstTranslator.parseDomainSourceFile(filePath, sourceText);
+    return this.parseDomainSourceFile(filePath, sourceText);
   }
 
-  private static translateUnknown(
+  private translateUnknown(
     n: ts.Node,
     parent: DomainAstNode | null,
     sf: ts.SourceFile,
@@ -68,21 +68,19 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
     };
     const childList: DomainAstNode[] = [];
     ts.forEachChild(n, (child) => {
-      childList.push(
-        TypeScriptAstTranslator.translateNode(child, self as DomainUnknownAstNode, sf),
-      );
+      childList.push(this.translateNode(child, self as DomainUnknownAstNode, sf));
     });
     return { ...self, children: childList } as DomainUnknownAstNode;
   }
 
-  private static mapBinaryOperator(operatorToken: ts.Node): DomainBinaryOperator {
+  private mapBinaryOperator(operatorToken: ts.Node): DomainBinaryOperator {
     if (operatorToken.kind === ts.SyntaxKind.PlusToken) {
       return DomainBinaryOperator.Plus;
     }
     return DomainBinaryOperator.Other;
   }
 
-  private static translateNode(
+  private translateNode(
     n: ts.Node,
     parent: DomainAstNode | null,
     sf: ts.SourceFile,
@@ -132,13 +130,13 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           moduleSpecifier: undefined as unknown as DomainAstNode,
         };
         if (decl.importClause) {
-          self.importClause = TypeScriptAstTranslator.translateNode(
+          self.importClause = this.translateNode(
             decl.importClause,
             self as DomainImportDeclaration,
             sf,
           ) as DomainImportClause;
         }
-        self.moduleSpecifier = TypeScriptAstTranslator.translateNode(
+        self.moduleSpecifier = this.translateNode(
           decl.moduleSpecifier,
           self as DomainImportDeclaration,
           sf,
@@ -157,14 +155,14 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           namedBindings: undefined,
         };
         if (clause.name) {
-          self.name = TypeScriptAstTranslator.translateNode(
+          self.name = this.translateNode(
             clause.name,
             self as DomainImportClause,
             sf,
           ) as DomainIdentifier;
         }
         if (clause.namedBindings) {
-          self.namedBindings = TypeScriptAstTranslator.translateNode(
+          self.namedBindings = this.translateNode(
             clause.namedBindings,
             self as DomainImportClause,
             sf,
@@ -184,11 +182,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
         const elements: DomainImportSpecifier[] = [];
         for (const element of named.elements) {
           elements.push(
-            TypeScriptAstTranslator.translateNode(
-              element,
-              self as DomainNamedImports,
-              sf,
-            ) as DomainImportSpecifier,
+            this.translateNode(element, self as DomainNamedImports, sf) as DomainImportSpecifier,
           );
         }
         return { ...self, elements } as DomainNamedImports;
@@ -202,7 +196,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           name: undefined as unknown as DomainIdentifier,
         };
-        self.name = TypeScriptAstTranslator.translateNode(
+        self.name = this.translateNode(
           ns.name,
           self as DomainNamespaceImport,
           sf,
@@ -220,13 +214,13 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           name: undefined as unknown as DomainIdentifier,
         };
         if (spec.propertyName) {
-          self.propertyName = TypeScriptAstTranslator.translateNode(
+          self.propertyName = this.translateNode(
             spec.propertyName,
             self as DomainImportSpecifier,
             sf,
           ) as DomainIdentifier;
         }
-        self.name = TypeScriptAstTranslator.translateNode(
+        self.name = this.translateNode(
           spec.name,
           self as DomainImportSpecifier,
           sf,
@@ -243,13 +237,9 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           expression: undefined as unknown as DomainAstNode,
           arguments: [],
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
-          call.expression,
-          self as DomainCallExpression,
-          sf,
-        );
+        self.expression = this.translateNode(call.expression, self as DomainCallExpression, sf);
         self.arguments = call.arguments.map((arg) =>
-          TypeScriptAstTranslator.translateNode(arg, self as DomainCallExpression, sf),
+          this.translateNode(arg, self as DomainCallExpression, sf),
         );
         return self as DomainCallExpression;
       }
@@ -263,12 +253,12 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           expression: undefined as unknown as DomainAstNode,
           name: undefined as unknown as DomainIdentifier,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
+        self.expression = this.translateNode(
           pa.expression,
           self as DomainPropertyAccessExpression,
           sf,
         );
-        self.name = TypeScriptAstTranslator.translateNode(
+        self.name = this.translateNode(
           pa.name,
           self as DomainPropertyAccessExpression,
           sf,
@@ -286,9 +276,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
         };
         const properties: DomainAstNode[] = [];
         for (const prop of obj.properties) {
-          properties.push(
-            TypeScriptAstTranslator.translateNode(prop, self as DomainObjectLiteralExpression, sf),
-          );
+          properties.push(this.translateNode(prop, self as DomainObjectLiteralExpression, sf));
         }
         return { ...self, properties } as DomainObjectLiteralExpression;
       }
@@ -302,12 +290,8 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           name: undefined as unknown as DomainAstNode,
           initializer: undefined as unknown as DomainAstNode,
         };
-        self.name = TypeScriptAstTranslator.translateNode(
-          prop.name,
-          self as DomainPropertyAssignment,
-          sf,
-        );
-        self.initializer = TypeScriptAstTranslator.translateNode(
+        self.name = this.translateNode(prop.name, self as DomainPropertyAssignment, sf);
+        self.initializer = this.translateNode(
           prop.initializer,
           self as DomainPropertyAssignment,
           sf,
@@ -325,13 +309,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
         };
         const elements: DomainAstNode[] = [];
         for (const element of arr.elements) {
-          elements.push(
-            TypeScriptAstTranslator.translateNode(
-              element,
-              self as DomainArrayLiteralExpression,
-              sf,
-            ),
-          );
+          elements.push(this.translateNode(element, self as DomainArrayLiteralExpression, sf));
         }
         return { ...self, elements } as DomainArrayLiteralExpression;
       }
@@ -344,11 +322,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
-          sp.expression,
-          self as DomainSpreadElement,
-          sf,
-        );
+        self.expression = this.translateNode(sp.expression, self as DomainSpreadElement, sf);
         return self as DomainSpreadElement;
       }
       case ts.SyntaxKind.ParenthesizedExpression: {
@@ -360,7 +334,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
+        self.expression = this.translateNode(
           pe.expression,
           self as DomainParenthesizedExpression,
           sf,
@@ -376,11 +350,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
-          ae.expression,
-          self as DomainAsExpression,
-          sf,
-        );
+        self.expression = this.translateNode(ae.expression, self as DomainAsExpression, sf);
         return self as DomainAsExpression;
       }
       case ts.SyntaxKind.SatisfiesExpression: {
@@ -392,11 +362,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
-          se.expression,
-          self as DomainSatisfiesExpression,
-          sf,
-        );
+        self.expression = this.translateNode(se.expression, self as DomainSatisfiesExpression, sf);
         return self as DomainSatisfiesExpression;
       }
       case ts.SyntaxKind.NonNullExpression: {
@@ -408,11 +374,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
-          nn.expression,
-          self as DomainNonNullExpression,
-          sf,
-        );
+        self.expression = this.translateNode(nn.expression, self as DomainNonNullExpression, sf);
         return self as DomainNonNullExpression;
       }
       case ts.SyntaxKind.ConditionalExpression: {
@@ -426,21 +388,9 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           whenTrue: undefined as unknown as DomainAstNode,
           whenFalse: undefined as unknown as DomainAstNode,
         };
-        self.condition = TypeScriptAstTranslator.translateNode(
-          ce.condition,
-          self as DomainConditionalExpression,
-          sf,
-        );
-        self.whenTrue = TypeScriptAstTranslator.translateNode(
-          ce.whenTrue,
-          self as DomainConditionalExpression,
-          sf,
-        );
-        self.whenFalse = TypeScriptAstTranslator.translateNode(
-          ce.whenFalse,
-          self as DomainConditionalExpression,
-          sf,
-        );
+        self.condition = this.translateNode(ce.condition, self as DomainConditionalExpression, sf);
+        self.whenTrue = this.translateNode(ce.whenTrue, self as DomainConditionalExpression, sf);
+        self.whenFalse = this.translateNode(ce.whenFalse, self as DomainConditionalExpression, sf);
         return self as DomainConditionalExpression;
       }
       case ts.SyntaxKind.BinaryExpression: {
@@ -451,19 +401,11 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           end,
           parent,
           left: undefined as unknown as DomainAstNode,
-          operator: TypeScriptAstTranslator.mapBinaryOperator(be.operatorToken),
+          operator: this.mapBinaryOperator(be.operatorToken),
           right: undefined as unknown as DomainAstNode,
         };
-        self.left = TypeScriptAstTranslator.translateNode(
-          be.left,
-          self as DomainBinaryExpression,
-          sf,
-        );
-        self.right = TypeScriptAstTranslator.translateNode(
-          be.right,
-          self as DomainBinaryExpression,
-          sf,
-        );
+        self.left = this.translateNode(be.left, self as DomainBinaryExpression, sf);
+        self.right = this.translateNode(be.right, self as DomainBinaryExpression, sf);
         return self as DomainBinaryExpression;
       }
       case ts.SyntaxKind.ExpressionStatement: {
@@ -475,11 +417,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = TypeScriptAstTranslator.translateNode(
-          es.expression,
-          self as DomainExpressionStatement,
-          sf,
-        );
+        self.expression = this.translateNode(es.expression, self as DomainExpressionStatement, sf);
         return self as DomainExpressionStatement;
       }
       case ts.SyntaxKind.JsxAttribute: {
@@ -492,13 +430,9 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           name: undefined as unknown as DomainAstNode,
           initializer: undefined,
         };
-        self.name = TypeScriptAstTranslator.translateNode(ja.name, self as DomainJsxAttribute, sf);
+        self.name = this.translateNode(ja.name, self as DomainJsxAttribute, sf);
         if (ja.initializer) {
-          self.initializer = TypeScriptAstTranslator.translateNode(
-            ja.initializer,
-            self as DomainJsxAttribute,
-            sf,
-          );
+          self.initializer = this.translateNode(ja.initializer, self as DomainJsxAttribute, sf);
         }
         return self as DomainJsxAttribute;
       }
@@ -512,23 +446,19 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
           expression: undefined,
         };
         if (je.expression) {
-          self.expression = TypeScriptAstTranslator.translateNode(
-            je.expression,
-            self as DomainJsxExpression,
-            sf,
-          );
+          self.expression = this.translateNode(je.expression, self as DomainJsxExpression, sf);
         }
         return self as DomainJsxExpression;
       }
       default:
-        return TypeScriptAstTranslator.translateUnknown(n, parent, sf);
+        return this.translateUnknown(n, parent, sf);
     }
   }
 
-  private static translateTypeScriptSourceFile(tsSf: ts.SourceFile): DomainSourceFile {
+  private translateTypeScriptSourceFile(tsSf: ts.SourceFile): DomainSourceFile {
     const text = tsSf.getFullText();
     const statements = tsSf.statements.map((statement) =>
-      TypeScriptAstTranslator.translateNode(statement, null, tsSf),
+      this.translateNode(statement, null, tsSf),
     );
     return {
       fileName: tsSf.fileName,
@@ -537,7 +467,7 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
     } satisfies DomainSourceFile;
   }
 
-  private static parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
+  private parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
     const scriptKind = filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
     const tsSf = ts.createSourceFile(
       filePath,
@@ -546,6 +476,6 @@ export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
       true,
       scriptKind,
     );
-    return TypeScriptAstTranslator.translateTypeScriptSourceFile(tsSf);
+    return this.translateTypeScriptSourceFile(tsSf);
   }
 }

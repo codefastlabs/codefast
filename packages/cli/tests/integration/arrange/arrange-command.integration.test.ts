@@ -138,7 +138,10 @@ function createDeps(): ArrangeDeps {
   };
 }
 
+import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
+
 function createCommandAndProgram(deps: ArrangeDeps): { command: ArrangeCommand; program: Command } {
+  const shell = createShellCliTestGraph(deps.logger);
   const command = new ArrangeCommand(
     deps.logger,
     deps.runtime,
@@ -148,6 +151,8 @@ function createCommandAndProgram(deps: ArrangeDeps): { command: ArrangeCommand; 
     deps.suggestCnGroups,
     deps.presentAnalyzeReport,
     deps.groupFilePreview,
+    shell.schemaValidation,
+    shell.cliExecutor,
   );
   const program = new Command();
   command.register(program);

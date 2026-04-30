@@ -5,33 +5,36 @@ import { parse as parseYaml } from "yaml";
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { WorkspacePackageDiscoveryPort } from "#/domains/mirror/application/ports/workspace-package-discovery.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
-import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
 import type {
-  FindWorkspacePackagesResult,
-  WorkspaceMultiDiscoverySource,
-} from "#/domains/mirror/domain/types.domain";
+  WorkspacePackageLayoutOutcome,
+  WorkspacePackageLayoutPort,
+  WorkspacePackageLayoutSource,
+} from "#/shell/application/ports/workspace-package-layout.port";
+import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
+/**
+ * Node/pnpm implementation: read `pnpm-workspace.yaml`, expand globs to package dirs.
+ */
 @injectable([inject(CliFsToken)])
-export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort {
-  private static readonly workspaceFile = "pnpm-workspace.yaml";
-  private static readonly defaultInclude = ["packages/*"];
+export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLayoutPort {
+  private readonly workspaceYamlFileName = "pnpm-workspace.yaml";
+  private readonly defaultIncludePatterns = ["packages/*"];
+  private readonly packageJsonFileName = "package.json";
 
   constructor(private readonly fs: CliFs) {}
 
-  findWorkspacePackageRelPaths(
-    rootDir: string,
-    onGlobWarning: (message: string) => void,
-  ): Promise<FindWorkspacePackagesResult> {
-    return this.findWorkspacePackageRelPathsImpl(rootDir, onGlobWarning);
+  async listPackageDirectoryPathsAbsolute(
+    rootDirectoryPathAbsolute: string,
+    onGlobPermissionIssue: (diagnosticLine: string) => void,
+  ): Promise<WorkspacePackageLayoutOutcome> {
+    return this.listImpl(rootDirectoryPathAbsolute, onGlobPermissionIssue);
   }
 
-  private static toPosix(filePath: string): string {
+  private toPosix(filePath: string): string {
     return filePath.split(path.sep).join("/");
   }
 
-  private static isGlobPermissionError(caughtError: unknown): boolean {
+  private isGlobPermissionError(caughtError: unknown): boolean {
     if (typeof caughtError !== "object" || caughtError === null || !("code" in caughtError)) {
       return false;
     }
@@ -39,18 +42,15 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
     return code === "EACCES" || code === "EPERM";
   }
 
-  private static workspacePatternToPackageJsonGlob(pattern: string): string {
-    const normalizedPattern = WorkspacePackageDiscovery.toPosix(pattern.trim()).replace(/\/+$/, "");
+  private workspacePatternToPackageJsonGlob(pattern: string): string {
+    const normalizedPattern = this.toPosix(pattern.trim()).replace(/\/+$/, "");
     if (!normalizedPattern) {
-      return "**/package.json";
+      return `**/${this.packageJsonFileName}`;
     }
-    return `${normalizedPattern}/package.json`;
+    return `${normalizedPattern}/${this.packageJsonFileName}`;
   }
 
-  private static splitWorkspacePackageEntries(raw: unknown): {
-    include: string[];
-    exclude: string[];
-  } {
+  private splitPnpmWorkspacePackagesArray(raw: unknown): { include: string[]; exclude: string[] } {
     const include: string[] = [];
     const exclude: string[] = [];
     if (!Array.isArray(raw)) {
@@ -73,13 +73,13 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
     return { include, exclude };
   }
 
-  private static parsePnpmWorkspaceDocument(doc: unknown): {
+  private parsePnpmWorkspaceDocument(doc: unknown): {
     include: string[];
     exclude: string[];
     hasPackagesKey: boolean;
     isEmptyPackagesArray: boolean;
   } {
-    const wf = WorkspacePackageDiscovery.workspaceFile;
+    const wf = this.workspaceYamlFileName;
     if (doc === null || doc === undefined) {
       throw new Error(`${wf} root document must be an object (got empty or null)`);
     }
@@ -98,7 +98,7 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
       return { include: [], exclude: [], hasPackagesKey: true, isEmptyPackagesArray: true };
     }
     return {
-      ...WorkspacePackageDiscovery.splitWorkspacePackageEntries(pkgs),
+      ...this.splitPnpmWorkspacePackagesArray(pkgs),
       hasPackagesKey: true,
       isEmptyPackagesArray: false,
     };
@@ -107,7 +107,7 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
   private async readWorkspaceYaml(
     rootDir: string,
   ): Promise<{ exists: false } | { exists: true; doc: unknown }> {
-    const wf = WorkspacePackageDiscovery.workspaceFile;
+    const wf = this.workspaceYamlFileName;
     const workspaceYamlPath = path.join(rootDir, wf);
     if (!this.fs.existsSync(workspaceYamlPath)) {
       return { exists: false };
@@ -130,37 +130,42 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
     return { exists: true, doc };
   }
 
-  private async findWorkspacePackageRelPathsImpl(
+  private async listImpl(
     rootDir: string,
-    onGlobWarning: (message: string) => void,
-  ): Promise<FindWorkspacePackagesResult> {
+    onGlobPermissionIssue: (diagnosticLine: string) => void,
+  ): Promise<WorkspacePackageLayoutOutcome> {
     const workspaceYaml = await this.readWorkspaceYaml(rootDir);
-    const defInc = WorkspacePackageDiscovery.defaultInclude;
+    const defInc = this.defaultIncludePatterns;
 
     let include: string[];
     let exclude: string[];
-    let multiSource: WorkspaceMultiDiscoverySource;
+    let layoutSource: WorkspacePackageLayoutSource;
+    const hasPnpmWorkspaceYamlFile = workspaceYaml.exists;
 
     if (!workspaceYaml.exists) {
       include = [...defInc];
       exclude = [];
-      multiSource = "default-patterns";
+      layoutSource = "default-patterns";
     } else {
-      const parsed = WorkspacePackageDiscovery.parsePnpmWorkspaceDocument(workspaceYaml.doc);
+      const parsed = this.parsePnpmWorkspaceDocument(workspaceYaml.doc);
       if (!parsed.hasPackagesKey) {
         include = [...defInc];
         exclude = [];
-        multiSource = "default-patterns";
+        layoutSource = "default-patterns";
       } else if (parsed.isEmptyPackagesArray) {
-        return { relPaths: [], multiSource: "declared-empty" };
+        return {
+          packageDirectoryPathsAbsolute: [],
+          layoutSource: "declared-empty",
+          hasPnpmWorkspaceYamlFile: true,
+        };
       } else {
         include = parsed.include;
         exclude = parsed.exclude;
-        multiSource = "pnpm-workspace-yaml";
+        layoutSource = "pnpm-workspace-yaml";
       }
     }
 
-    const found = new Set<string>();
+    const foundRelativePosixPackageRoots = new Set<string>();
     const globOpts = {
       cwd: rootDir,
       posix: true as const,
@@ -168,13 +173,13 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
     };
 
     for (const pattern of include) {
-      const globPat = WorkspacePackageDiscovery.workspacePatternToPackageJsonGlob(pattern);
+      const globPat = this.workspacePatternToPackageJsonGlob(pattern);
       let matches: string[];
       try {
         matches = globSync(globPat, globOpts);
       } catch (caughtGlobError: unknown) {
-        if (WorkspacePackageDiscovery.isGlobPermissionError(caughtGlobError)) {
-          onGlobWarning(
+        if (this.isGlobPermissionError(caughtGlobError)) {
+          onGlobPermissionIssue(
             `Skipping workspace glob "${pattern}" (${messageFromCaughtUnknown(caughtGlobError)})`,
           );
           continue;
@@ -184,22 +189,34 @@ export class WorkspacePackageDiscovery implements WorkspacePackageDiscoveryPort 
         );
       }
       for (const matchedPath of matches) {
-        const posix = WorkspacePackageDiscovery.toPosix(matchedPath);
-        if (!posix.endsWith("/package.json")) {
+        const posix = this.toPosix(matchedPath);
+        const suffix = `/${this.packageJsonFileName}`;
+        if (!posix.endsWith(suffix)) {
           continue;
         }
-        const rel = posix.slice(0, -"/package.json".length);
+        const rel = posix.slice(0, -suffix.length);
         if (!rel) {
           continue;
         }
-        found.add(normalizePath(rel));
+        foundRelativePosixPackageRoots.add(rel);
       }
     }
 
     const excludeMatchers = exclude.map((pat) => picomatch(pat, { dot: true }));
 
-    const relPaths = [...found].filter((rel) => !excludeMatchers.some((isMatch) => isMatch(rel)));
-    relPaths.sort((a, b) => a.localeCompare(b));
-    return { relPaths, multiSource };
+    const filteredRelative = [...foundRelativePosixPackageRoots].filter(
+      (rel) => !excludeMatchers.some((isMatch) => isMatch(rel)),
+    );
+    filteredRelative.sort((a, b) => a.localeCompare(b));
+
+    const packageDirectoryPathsAbsolute = filteredRelative.map((rel) =>
+      path.resolve(rootDir, rel.split("/").join(path.sep)),
+    );
+
+    return {
+      packageDirectoryPathsAbsolute,
+      layoutSource,
+      hasPnpmWorkspaceYamlFile,
+    };
   }
 }

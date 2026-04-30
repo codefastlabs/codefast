@@ -1,35 +1,39 @@
 import path from "node:path";
 import jiti from "jiti";
-import { ZodError } from "zod";
+import type { ZodError } from "zod";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CodefastConfigSchemaPort } from "#/domains/config/application/ports/codefast-config-schema.port";
 import type {
   ConfigLoaderPort,
   LoadConfigPayload,
 } from "#/domains/config/application/ports/config-loader.port";
-import { codefastConfigSchema } from "#/domains/config/infrastructure/adapters/config-schema.adapter";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
+import { CodefastConfigSchemaPortToken } from "#/domains/config/contracts/tokens";
+import type { CliFs } from "#/shell/application/ports/cli-io.port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
-const CONFIG_JS_PRIORITY = [
-  "codefast.config.mjs",
-  "codefast.config.js",
-  "codefast.config.cjs",
-] as const;
-const CONFIG_JSON = "codefast.config.json";
-
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFsToken), inject(CodefastConfigSchemaPortToken)])
 export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
-  private static readonly cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
+  private readonly configJsPriority = [
+    "codefast.config.mjs",
+    "codefast.config.js",
+    "codefast.config.cjs",
+  ] as const;
+  private readonly configJson = "codefast.config.json";
 
-  constructor(private readonly fs: CliFs) {}
+  private readonly cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
+
+  constructor(
+    private readonly fs: CliFs,
+    private readonly configSchema: CodefastConfigSchemaPort,
+  ) {}
 
   async loadConfig(startDir: string): Promise<LoadConfigPayload> {
     const cacheKey = path.resolve(startDir);
-    if (!ConfigLoaderAdapterImpl.cachedLoads.has(cacheKey)) {
-      ConfigLoaderAdapterImpl.cachedLoads.set(cacheKey, this.loadOnce(cacheKey));
+    if (!this.cachedLoads.has(cacheKey)) {
+      this.cachedLoads.set(cacheKey, this.loadOnce(cacheKey));
     }
-    const cached = ConfigLoaderAdapterImpl.cachedLoads.get(cacheKey);
+    const cached = this.cachedLoads.get(cacheKey);
     if (cached === undefined) {
       throw new Error("config loader cache invariant violated");
     }
@@ -48,28 +52,25 @@ export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
   }
 
   private parseLoadedConfig(raw: unknown, filePath: string): CodefastConfig {
-    try {
-      return codefastConfigSchema.parse(raw);
-    } catch (caughtError: unknown) {
-      if (caughtError instanceof ZodError) {
-        throw new Error(this.formatZodError(caughtError, filePath));
-      }
-      throw caughtError;
+    const outcome = this.configSchema.safeParseLoadedConfig(raw);
+    if (outcome.kind === "invalid_schema") {
+      throw new Error(this.formatZodError(outcome.zodError, filePath));
     }
+    return outcome.config;
   }
 
   private listConfigCandidates(startDir: string): string[] {
     const candidates: string[] = [];
     let current = path.resolve(startDir);
     while (true) {
-      for (const name of CONFIG_JS_PRIORITY) {
+      for (const name of this.configJsPriority) {
         const candidate = path.join(current, name);
         if (this.fs.existsSync(candidate)) {
           candidates.push(candidate);
         }
       }
 
-      const jsonCandidate = path.join(current, CONFIG_JSON);
+      const jsonCandidate = path.join(current, this.configJson);
       if (this.fs.existsSync(jsonCandidate)) {
         candidates.push(jsonCandidate);
       }

@@ -1,35 +1,11 @@
-export type CodefastAfterWriteHook = (ctx: { files: string[] }) => void | Promise<void>;
-
-type MirrorPathTransformation = {
-  removePrefix?: string;
-};
-
-type MirrorCssExportRule =
-  | boolean
-  | {
-      enabled?: boolean;
-      customExports?: Record<string, string>;
-      forceExportFiles?: boolean;
-    };
-
-export type MirrorConfig = {
-  skipPackages?: string[];
-  pathTransformations?: Record<string, MirrorPathTransformation>;
-  customExports?: Record<string, Record<string, string>>;
-  cssExports?: Record<string, MirrorCssExportRule>;
-};
-
-export type CodefastTagConfig = {
-  skipPackages?: string[];
-  onAfterWrite?: CodefastAfterWriteHook;
-};
-
-export type CodefastArrangeConfig = {
-  onAfterWrite?: CodefastAfterWriteHook;
-};
-
-export type CodefastConfig = {
-  mirror?: MirrorConfig;
-  tag?: CodefastTagConfig;
-  arrange?: CodefastArrangeConfig;
-};
+/**
+ * Public type surface for `codefast.config`.
+ * Canonical definitions (Zod + inferred types): `codefast-config.schema.ts`.
+ */
+export type {
+  CodefastAfterWriteHook,
+  CodefastArrangeConfig,
+  CodefastConfig,
+  CodefastTagConfig,
+  MirrorConfig,
+} from "#/domains/config/domain/codefast-config.schema";

@@ -6,7 +6,7 @@ import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFsToken)])
 export class TypeScriptSourceFileWalker implements TypeScriptSourceFileWalkerPort {
-  private static readonly defaultSkipDirs = new Set([
+  private readonly defaultSkipDirectoryNames = new Set([
     "node_modules",
     "dist",
     ".git",
@@ -32,7 +32,7 @@ export class TypeScriptSourceFileWalker implements TypeScriptSourceFileWalkerPor
     const entryStats = this.fs.statSync(entryPath);
     if (entryStats.isDirectory()) {
       for (const childName of this.fs.readdirSync(entryPath)) {
-        if (TypeScriptSourceFileWalker.defaultSkipDirs.has(childName)) {
+        if (this.defaultSkipDirectoryNames.has(childName)) {
           continue;
         }
         this.visitTsxPaths(result, path.join(entryPath, childName));

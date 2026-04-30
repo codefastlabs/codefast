@@ -11,18 +11,18 @@ import type {
 } from "#/shell/application/ports/cli-io.port";
 import type { CliRuntime } from "#/shell/application/ports/runtime.port";
 
-function canonicalPathSyncNode(inputPath: string): string {
-  try {
-    return fsSync.realpathSync.native(inputPath);
-  } catch {
-    return path.resolve(inputPath);
-  }
-}
-
 @injectable()
 export class NodeCliFsAdapter implements CliFs {
+  private canonicalPathSyncNode(inputPath: string): string {
+    try {
+      return fsSync.realpathSync.native(inputPath);
+    } catch {
+      return path.resolve(inputPath);
+    }
+  }
+
   existsSync = fsSync.existsSync;
-  canonicalPathSync = canonicalPathSyncNode;
+  canonicalPathSync = (inputPath: string) => this.canonicalPathSyncNode(inputPath);
   statSync = fsSync.statSync;
   readFileSync = fsSync.readFileSync;
   writeFileSync = fsSync.writeFileSync;

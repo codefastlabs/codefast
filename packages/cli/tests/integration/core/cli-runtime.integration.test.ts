@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/shell/domain/cli-exit-codes.domain";
-import { consumeCliAppError, runCliResultAsync } from "#/shell/presentation/cli-executor.presenter";
+import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 
 type LoggerStub = CliLogger & {
@@ -27,8 +27,8 @@ describe("cli runtime + executor", () => {
 
   it("consumes validation errors with usage exit code", () => {
     const logger = createLogger();
-    const result = consumeCliAppError(
-      logger,
+    const { cliExecutor } = createShellCliTestGraph(logger);
+    const result = cliExecutor.consumeCliAppError(
       { ok: false, error: new AppError("VALIDATION_ERROR", "invalid args") },
       { successMessage: "ok" },
     );
@@ -45,7 +45,8 @@ describe("cli runtime + executor", () => {
     cause.stack = "stack-trace";
 
     process.env.CODEFAST_VERBOSE = "1";
-    consumeCliAppError(logger, {
+    const { cliExecutor } = createShellCliTestGraph(logger);
+    cliExecutor.consumeCliAppError({
       ok: false,
       error: new AppError("INFRA_FAILURE", "infra broken", cause),
     });
@@ -57,8 +58,8 @@ describe("cli runtime + executor", () => {
 
   it("sets success exit code from async result handler", async () => {
     const logger = createLogger();
-    await runCliResultAsync(
-      logger,
+    const { cliExecutor } = createShellCliTestGraph(logger);
+    await cliExecutor.runCliResultAsync(
       Promise.resolve({ ok: true, value: { total: 3 } }),
       async ({ total }) => total,
     );
@@ -69,7 +70,11 @@ describe("cli runtime + executor", () => {
 
   it("returns 0 when success callback does not return code", async () => {
     const logger = createLogger();
-    await runCliResultAsync(logger, Promise.resolve({ ok: true, value: { done: true } }), () => {});
+    const { cliExecutor } = createShellCliTestGraph(logger);
+    await cliExecutor.runCliResultAsync(
+      Promise.resolve({ ok: true, value: { done: true } }),
+      () => {},
+    );
     expect(process.exitCode).toBe(0);
   });
 

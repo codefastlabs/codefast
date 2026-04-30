@@ -3,16 +3,16 @@ import type { ConfigWarningReporterPort } from "#/domains/config/application/por
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 
-const YELLOW = "\x1b[33m";
-const RESET = "\x1b[0m";
-
 @injectable([inject(CliLoggerToken)])
 export class ConfigWarningReporterAdapter implements ConfigWarningReporterPort {
+  private readonly yellowAnsi = "\x1b[33m";
+  private readonly resetAnsi = "\x1b[0m";
+
   constructor(private readonly logger: CliLogger) {}
 
   reportSchemaWarnings(warnings: readonly string[]): void {
     for (const warningMessage of warnings) {
-      this.logger.out(`${YELLOW}⚠ ${warningMessage}${RESET}`);
+      this.logger.out(`${this.yellowAnsi}⚠ ${warningMessage}${this.resetAnsi}`);
     }
   }
 }
