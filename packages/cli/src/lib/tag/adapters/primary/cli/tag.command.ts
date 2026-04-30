@@ -2,21 +2,22 @@ import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
+import { CLI_EXIT_SUCCESS } from "#/lib/core/domain/cli-exit-codes.domain";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { parseWithCliSchema } from "#/lib/core/presentation/cli-schema.parser";
-import { formatTagSyncJsonOutput } from "#/lib/tag/application/tag-sync-json.format";
-import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
-import { PrepareTagSyncUseCaseToken, RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
-import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/tag-sync-result-presenter.contract";
-import type { TagProgressListener } from "#/lib/tag/domain/types.domain";
 import type { PrepareTagSyncUseCase } from "#/lib/tag/application/use-cases/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
-import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli.schema";
+import { exitCodeForTagSyncResult } from "#/lib/tag/application/tag-sync-cli-result";
+import type { PresentTagSyncResultPresenter } from "#/lib/tag/contracts/tag-sync-result-presenter.contract";
 import {
+  PrepareTagSyncUseCaseToken,
   PresentTagSyncResultPresenterToken,
+  RunTagSyncUseCaseToken,
   TagSyncProgressListenerToken,
-} from "#/lib/tag/adapters/primary/cli/presentation.tokens";
+} from "#/lib/tag/contracts/tokens";
+import type { TagProgressListener, TagSyncResult } from "#/lib/tag/domain/types.domain";
+import { tagSyncRunRequestSchema } from "#/lib/tag/presentation/tag-cli.schema";
 import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
 
 @injectable([
@@ -87,10 +88,19 @@ export class TagCommand implements CliCommand {
       return;
     }
     if (parsed.value.json) {
-      this.logger.out(formatTagSyncJsonOutput(tagOutcome.value, rootDir));
+      this.logger.out(this.formatTagSyncJsonOutput(tagOutcome.value, rootDir));
       this.runtime.setExitCode(exitCodeForTagSyncResult(tagOutcome.value));
     } else {
       this.runtime.setExitCode(this.presentSyncCliResult.present(tagOutcome.value, rootDir));
     }
+  }
+
+  private formatTagSyncJsonOutput(tagResult: TagSyncResult, rootDir: string): string {
+    return JSON.stringify({
+      schemaVersion: 1 as const,
+      ok: exitCodeForTagSyncResult(tagResult) === CLI_EXIT_SUCCESS,
+      rootDir,
+      result: tagResult,
+    });
   }
 }

@@ -25,26 +25,6 @@ import {
   PackageRepositoryPortToken,
 } from "#/lib/mirror/contracts/tokens";
 
-function resolvePackageScopedConfig<Value>(
-  configMap: Record<string, Value> | undefined,
-  packageMeta: MirrorPackageMeta,
-): Value | undefined {
-  if (!configMap) {
-    return undefined;
-  }
-  return configMap[packageMeta.packageName];
-}
-
-function isPackageSkipped(
-  skipPackagesList: string[] | undefined,
-  packageMeta: MirrorPackageMeta,
-): boolean {
-  if (!skipPackagesList) {
-    return false;
-  }
-  return skipPackagesList.includes(packageMeta.packageName);
-}
-
 @injectable([
   inject(CliFsToken),
   inject(CliPathToken),
@@ -62,6 +42,26 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
     private readonly logger: CliLogger,
     private readonly mirrorReporter: MirrorSyncReporterPort,
   ) {}
+
+  private resolvePackageScopedConfig<Value>(
+    configMap: Record<string, Value> | undefined,
+    packageMeta: MirrorPackageMeta,
+  ): Value | undefined {
+    if (!configMap) {
+      return undefined;
+    }
+    return configMap[packageMeta.packageName];
+  }
+
+  private isPackageSkipped(
+    skipPackagesList: string[] | undefined,
+    packageMeta: MirrorPackageMeta,
+  ): boolean {
+    if (!skipPackagesList) {
+      return false;
+    }
+    return skipPackagesList.includes(packageMeta.packageName);
+  }
 
   async syncExportsForWorkspacePackage(
     rootDir: string,
@@ -126,7 +126,7 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
 
     const packageMeta: MirrorPackageMeta = { packageName: pkgStats.name };
 
-    if (isPackageSkipped(config.skipPackages, packageMeta)) {
+    if (this.isPackageSkipped(config.skipPackages, packageMeta)) {
       pkgStats.skipped = true;
       pkgStats.skipReason = "configured to skip";
       stats.packagesSkipped++;
@@ -193,14 +193,15 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
       const pathTransform = createPathTransform(config, packageMeta);
       pkgStats.hasTransform = !!pathTransform;
 
-      const cssConfig = resolvePackageScopedConfig(config.cssExports, packageMeta);
+      const cssConfig = this.resolvePackageScopedConfig(config.cssExports, packageMeta);
       if (cssConfig === false) {
         pkgStats.cssConfigStatus = "disabled";
       } else if (cssConfig !== undefined) {
         pkgStats.cssConfigStatus = "configured";
       }
 
-      const customExports = resolvePackageScopedConfig(config.customExports, packageMeta) || {};
+      const customExports =
+        this.resolvePackageScopedConfig(config.customExports, packageMeta) || {};
 
       const generatedExports = await generateExports(
         this.pathService,

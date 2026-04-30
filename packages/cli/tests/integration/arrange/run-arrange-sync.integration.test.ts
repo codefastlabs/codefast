@@ -1,22 +1,17 @@
 /**
- * Integration Test: covers RunArrangeSyncUseCase end-to-end with ArrangeModule, CoreModule,
- * InfrastructureModule, and PresentationModule loaded in a Container.
+ * Integration Test: covers RunArrangeSyncUseCase end-to-end via ArrangeModule (imports infrastructure).
  */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/lib/arrange/arrange.module";
-import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
 import { RunArrangeSyncUseCaseToken } from "#/lib/arrange/contracts/tokens";
-import { CoreModule } from "#/lib/core/core.module";
-import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
-import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 
 describe("RunArrangeSyncUseCase integration", () => {
   const container = Container.create();
-  container.load(CoreModule, InfrastructureModule, PresentationModule, ArrangeModule);
-  const useCase = container.resolve(RunArrangeSyncUseCaseToken) as RunArrangeSyncUseCase;
+  container.load(ArrangeModule);
+  const useCase = container.resolve(RunArrangeSyncUseCaseToken);
 
   it("returns found sites for directory targets (dry-run)", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "arr-run-dry-"));

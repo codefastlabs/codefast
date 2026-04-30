@@ -1,32 +1,24 @@
 /**
- * Integration Test: covers RunTagSyncUseCase (TagModule + DI) and free-function helpers
- * runTagOnTarget / resolveNearestPackageVersion with concrete tag infrastructure adapters.
+ * Integration Test: covers RunTagSyncUseCase (TagModule + DI) and TagTargetRunnerService
+ * with concrete tag infrastructure adapters.
  */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { CoreModule } from "#/lib/core/core.module";
-import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
-import { PresentationModule } from "#/lib/core/presentation/presentation.module";
-import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
-import { runTagOnTarget } from "#/lib/tag/application/services/tag-target-runner.service";
-import { TagModule } from "#/lib/tag/tag.module";
 import { NodeCliPathAdapter } from "#/lib/core/infrastructure/path.adapter";
-import { TagSinceWriterAdapter } from "#/lib/tag/adapters/secondary/tag-since-writer.adapter";
-import { TypeScriptTreeWalkAdapter } from "#/lib/tag/adapters/secondary/typescript-tree-walk.adapter";
+import { NodeCliFsAdapter } from "#/lib/infrastructure/node-io.adapter";
 import { TagVersionResolverAdapter } from "#/lib/tag/adapters/secondary/tag-version-resolver.adapter";
-import type { RunTagSyncUseCase } from "#/lib/tag/application/use-cases/run-tag-sync.use-case";
-import { RunTagSyncUseCaseToken } from "#/lib/tag/contracts/tokens";
+import { RunTagSyncUseCaseToken, TagTargetRunnerServiceToken } from "#/lib/tag/contracts/tokens";
+import { TagModule } from "#/lib/tag/tag.module";
 
 const tagFs = new NodeCliFsAdapter();
 const tagCliPath = new NodeCliPathAdapter();
-const tagSinceWriterAdapter = new TagSinceWriterAdapter(tagFs);
-const tagTypeScriptTreeWalkAdapter = new TypeScriptTreeWalkAdapter(tagFs);
 
 const container = Container.create();
-container.load(CoreModule, InfrastructureModule, PresentationModule, TagModule);
-const runTagSyncUseCase = container.resolve(RunTagSyncUseCaseToken) as RunTagSyncUseCase;
+container.load(TagModule);
+const runTagSyncUseCase = container.resolve(RunTagSyncUseCaseToken);
+const tagTargetRunner = container.resolve(TagTargetRunnerServiceToken);
 
 function withTempPackage(
   fileName: string,
@@ -74,15 +66,7 @@ const c = 3;
 export { c };
 `;
     withTempPackage("index.ts", before, ({ sourceFile, rootDir }) => {
-      const result = runTagOnTarget(
-        path.join(rootDir, "src"),
-        { write: true },
-        tagFs,
-        tagCliPath,
-        new TagVersionResolverAdapter(tagCliPath, tagFs),
-        tagSinceWriterAdapter,
-        tagTypeScriptTreeWalkAdapter,
-      );
+      const result = tagTargetRunner.runOnTarget(path.join(rootDir, "src"), { write: true });
       const after = fs.readFileSync(sourceFile, "utf8");
 
       expect(result.version).toBe("1.2.3");
@@ -99,15 +83,7 @@ export { c };
 export type TailwindClassBlob = string;
 `;
     withTempPackage("types.ts", before, ({ sourceFile, rootDir }) => {
-      runTagOnTarget(
-        path.join(rootDir, "src"),
-        { write: true },
-        tagFs,
-        tagCliPath,
-        new TagVersionResolverAdapter(tagCliPath, tagFs),
-        tagSinceWriterAdapter,
-        tagTypeScriptTreeWalkAdapter,
-      );
+      tagTargetRunner.runOnTarget(path.join(rootDir, "src"), { write: true });
       const after = fs.readFileSync(sourceFile, "utf8");
       expect(after).toContain(`/**
  * String or no-substitution template literal used as a Tailwind class blob.
@@ -120,15 +96,7 @@ export type TailwindClassBlob = string;
   it("supports dry-run mode without changing files", () => {
     const before = "export interface User { id: string }\n";
     withTempPackage("types.ts", before, ({ sourceFile, rootDir }) => {
-      const result = runTagOnTarget(
-        path.join(rootDir, "src"),
-        { write: false },
-        tagFs,
-        tagCliPath,
-        new TagVersionResolverAdapter(tagCliPath, tagFs),
-        tagSinceWriterAdapter,
-        tagTypeScriptTreeWalkAdapter,
-      );
+      const result = tagTargetRunner.runOnTarget(path.join(rootDir, "src"), { write: false });
       const after = fs.readFileSync(sourceFile, "utf8");
 
       expect(result.filesChanged).toBe(1);

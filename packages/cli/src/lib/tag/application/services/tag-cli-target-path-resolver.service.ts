@@ -1,18 +1,23 @@
 import path from "node:path";
+import { inject, injectable } from "@codefast/di";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
+import { CliFsToken } from "#/lib/core/contracts/tokens";
+import type { TagCliTargetPathResolverService } from "#/lib/tag/contracts/services.contract";
 
-type ResolveTagCliTargetPathInput = {
-  readonly fs: CliFs;
-  readonly currentWorkingDirectory: string;
-  readonly rawTarget: string | undefined;
-};
+@injectable([inject(CliFsToken)])
+export class TagCliTargetPathResolverServiceImpl implements TagCliTargetPathResolverService {
+  constructor(private readonly fs: CliFs) {}
 
-export function resolveTagCliTargetPath(input: ResolveTagCliTargetPathInput): string | undefined {
-  if (input.rawTarget === undefined) {
-    return undefined;
+  resolveCliTargetPath(args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  }): string | undefined {
+    if (args.rawTarget === undefined) {
+      return undefined;
+    }
+    const candidate = path.isAbsolute(args.rawTarget)
+      ? path.resolve(args.rawTarget)
+      : path.resolve(args.currentWorkingDirectory, args.rawTarget);
+    return this.fs.canonicalPathSync(candidate);
   }
-  const candidate = path.isAbsolute(input.rawTarget)
-    ? path.resolve(input.rawTarget)
-    : path.resolve(input.currentWorkingDirectory, input.rawTarget);
-  return input.fs.canonicalPathSync(candidate);
 }

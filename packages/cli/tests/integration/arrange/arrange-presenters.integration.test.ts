@@ -1,12 +1,5 @@
-import {
-  formatArrangeAnalyzeJsonOutput,
-  PresentAnalyzeReportPresenterImpl,
-} from "#/lib/arrange/presentation/arrange-analyze.presenter";
-import {
-  formatArrangeGroupJsonOutput,
-  formatArrangeSyncJsonOutput,
-  presentArrangeSyncResult,
-} from "#/lib/arrange/presentation/arrange-sync.presenter";
+import { PresentAnalyzeReportPresenterImpl } from "#/lib/arrange/presentation/arrange-analyze.presenter";
+import { presentArrangeSyncResult } from "#/lib/arrange/presentation/arrange-sync.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { GroupFileWorkPlan } from "#/lib/arrange/domain/arrange-grouping.service";
 
@@ -72,7 +65,7 @@ describe("arrange presenters integration", () => {
   });
 
   it("formats analyze and sync JSON payloads", () => {
-    const analyzeJson = formatArrangeAnalyzeJsonOutput("/tmp/app", {
+    const report = {
       files: 1,
       cnCallExpressions: 1,
       tvCallExpressions: 1,
@@ -80,19 +73,29 @@ describe("arrange presenters integration", () => {
       longCnStringLiterals: [],
       longTvStringLiterals: [],
       longJsxClassNameLiterals: [],
+    };
+    const analyzeJson = JSON.stringify({
+      schemaVersion: 1,
+      analyzeRootPath: "/tmp/app",
+      report,
     });
-    const syncJson = formatArrangeSyncJsonOutput(
-      {
-        filePaths: ["a.tsx"],
-        modifiedFiles: ["a.tsx"],
-        totalFound: 1,
-        totalChanged: 1,
-        hookError: null,
-        previewPlans: [createPreviewPlan("a.tsx")],
-      },
-      true,
-    );
-    const groupJson = formatArrangeGroupJsonOutput({
+    const arrangeRunResult = {
+      filePaths: ["a.tsx"],
+      modifiedFiles: ["a.tsx"],
+      totalFound: 1,
+      totalChanged: 1,
+      hookError: null,
+      previewPlans: [createPreviewPlan("a.tsx")],
+    };
+    const { previewPlans: _plans, ...serializableResult } = arrangeRunResult;
+    const syncJson = JSON.stringify({
+      schemaVersion: 1,
+      ok: true,
+      write: true,
+      result: serializableResult,
+    });
+    const groupJson = JSON.stringify({
+      schemaVersion: 1,
       primaryLine: 'cn("flex", "gap-2")',
       bucketsCommentLine: "// Buckets: layout | spacing",
     });

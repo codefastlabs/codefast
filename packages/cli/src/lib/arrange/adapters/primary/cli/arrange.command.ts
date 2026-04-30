@@ -1,15 +1,15 @@
 import { inject, injectable } from "@codefast/di";
 import type { Command } from "commander";
 import { Option } from "commander";
+import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/analyze-report-presenter.contract";
 import {
   AnalyzeDirectoryUseCaseToken,
   GroupFilePreviewPortToken,
   PrepareArrangeWorkspaceUseCaseToken,
+  PresentAnalyzeReportPresenterToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/lib/arrange/contracts/tokens";
-import type { PresentAnalyzeReportPresenter } from "#/lib/arrange/contracts/analyze-report-presenter.contract";
-import { PresentAnalyzeReportPresenterToken } from "#/lib/arrange/adapters/primary/cli/presentation.tokens";
 import type { PrepareArrangeWorkspaceUseCase } from "#/lib/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import type { AnalyzeDirectoryUseCase } from "#/lib/arrange/application/use-cases/analyze-directory.use-case";
 import type { RunArrangeSyncUseCase } from "#/lib/arrange/application/use-cases/run-arrange-sync.use-case";
@@ -20,27 +20,18 @@ import {
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/lib/arrange/presentation/arrange-cli.schema";
+import type { ArrangeSuggestGroupsOutput } from "#/lib/arrange/contracts/models";
+import type { AnalyzeReport, ArrangeRunResult } from "#/lib/arrange/domain/types.domain";
 import {
   exitCodeForArrangeSyncResult,
-  formatArrangeGroupJsonOutput,
-  formatArrangeSyncJsonOutput,
   presentArrangeSyncResult,
 } from "#/lib/arrange/presentation/arrange-sync.presenter";
-import { formatArrangeAnalyzeJsonOutput } from "#/lib/arrange/presentation/arrange-analyze.presenter";
-import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 import type { CliCommand } from "#/lib/kernel/contracts/cli-command.contract";
 import { parseWithCliSchema } from "#/lib/core/presentation/cli-schema.parser";
 import { consumeCliAppError } from "#/lib/core/presentation/cli-executor.presenter";
 import type { CliLogger } from "#/lib/core/application/ports/cli-io.port";
 import type { CliRuntime } from "#/lib/core/application/ports/runtime.port";
-import { CliRuntimeToken } from "#/lib/core/contracts/tokens";
-
-function withClassNameOption(): Option {
-  return new Option(
-    "--with-classname, --with-class-name",
-    "Append className as final cn() argument",
-  ).default(false);
-}
+import { CliLoggerToken, CliRuntimeToken } from "#/lib/core/contracts/tokens";
 
 @injectable([
   inject(CliLoggerToken),
@@ -67,6 +58,13 @@ export class ArrangeCommand implements CliCommand {
     private readonly groupFilePreview: GroupFilePreviewPort,
   ) {}
 
+  private withClassNameOption(): Option {
+    return new Option(
+      "--with-classname, --with-class-name",
+      "Append className as final cn() argument",
+    ).default(false);
+  }
+
   register(program: Command): void {
     const arrange = program.command(this.name).description(this.description);
 
@@ -83,7 +81,7 @@ export class ArrangeCommand implements CliCommand {
       .command("preview")
       .description("Dry-run: print suggested replacements without writing files")
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-      .addOption(withClassNameOption())
+      .addOption(this.withClassNameOption())
       .option("--cn-import <spec>", "Override module specifier when adding cn import")
       .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
       .action(
@@ -97,7 +95,7 @@ export class ArrangeCommand implements CliCommand {
       .command("apply")
       .description("Apply grouping and cn-in-tv unwrap edits to files")
       .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-      .addOption(withClassNameOption())
+      .addOption(this.withClassNameOption())
       .option("--cn-import <spec>", "Override module specifier when adding cn import")
       .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
       .action(
@@ -112,7 +110,7 @@ export class ArrangeCommand implements CliCommand {
       .description("Try grouping on a pasted class string (stdout: cn(...) or tv array with --tv)")
       .argument("[tokens...]", "Class tokens (quote a single string if it contains spaces)")
       .option("--tv", "Emit tv()-style array instead of cn() call", false)
-      .addOption(withClassNameOption())
+      .addOption(this.withClassNameOption())
       .option("--json", "Print one JSON object on stdout instead of plain lines", false)
       .action((tokens: string[], opts: { tv?: boolean; withClassName?: boolean; json?: boolean }) =>
         this.executeGroup(tokens, opts),
@@ -142,7 +140,7 @@ export class ArrangeCommand implements CliCommand {
       return;
     }
     if (options?.json) {
-      this.logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
+      this.logger.out(this.formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
     } else {
       this.presentAnalyzeReport.present(resolvedTarget, outcome.value);
     }
@@ -184,7 +182,7 @@ export class ArrangeCommand implements CliCommand {
     }
 
     if (opts.json) {
-      this.logger.out(formatArrangeSyncJsonOutput(outcome.value, write));
+      this.logger.out(this.formatArrangeSyncJsonOutput(outcome.value, write));
       this.runtime.setExitCode(exitCodeForArrangeSyncResult(outcome.value));
     } else {
       this.runtime.setExitCode(presentArrangeSyncResult(this.logger, outcome.value, write));
@@ -205,10 +203,32 @@ export class ArrangeCommand implements CliCommand {
     }
     const output = this.suggestCnGroups.execute(parsed.value);
     if (opts.json) {
-      this.logger.out(formatArrangeGroupJsonOutput(output));
+      this.logger.out(this.formatArrangeGroupJsonOutput(output));
     } else {
       this.logger.out(output.primaryLine);
       this.logger.out(output.bucketsCommentLine);
     }
+  }
+
+  private formatArrangeAnalyzeJsonOutput(analyzeRootPath: string, report: AnalyzeReport): string {
+    return JSON.stringify({ schemaVersion: 1 as const, analyzeRootPath, report });
+  }
+
+  private formatArrangeSyncJsonOutput(result: ArrangeRunResult, write: boolean): string {
+    const { previewPlans: _plans, ...serializableResult } = result;
+    return JSON.stringify({
+      schemaVersion: 1 as const,
+      ok: result.hookError === null,
+      write,
+      result: serializableResult,
+    });
+  }
+
+  private formatArrangeGroupJsonOutput(output: ArrangeSuggestGroupsOutput): string {
+    return JSON.stringify({
+      schemaVersion: 1 as const,
+      primaryLine: output.primaryLine,
+      bucketsCommentLine: output.bucketsCommentLine,
+    });
   }
 }

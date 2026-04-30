@@ -23,27 +23,27 @@ export interface RunArrangeSyncUseCase {
   execute(request: ArrangeSyncRunRequest): Promise<Result<ArrangeRunResult, AppError>>;
 }
 
-async function runOnAfterWriteHook(
-  hook: CodefastAfterWriteHook | undefined,
-  modifiedFiles: string[],
-): Promise<string | null> {
-  if (!hook || modifiedFiles.length === 0) {
-    return null;
-  }
-  try {
-    await hook({ files: modifiedFiles });
-    return null;
-  } catch (caughtHookError: unknown) {
-    return `[arrange] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`;
-  }
-}
-
 @injectable([inject(ArrangeTargetScannerServiceToken), inject(ArrangeFileProcessorServiceToken)])
 export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {
   constructor(
     private readonly targetScanner: ArrangeTargetScannerService,
     private readonly fileProcessor: ArrangeFileProcessorService,
   ) {}
+
+  private async runOnAfterWriteHook(
+    hook: CodefastAfterWriteHook | undefined,
+    modifiedFiles: string[],
+  ): Promise<string | null> {
+    if (!hook || modifiedFiles.length === 0) {
+      return null;
+    }
+    try {
+      await hook({ files: modifiedFiles });
+      return null;
+    } catch (caughtHookError: unknown) {
+      return `[arrange] onAfterWrite hook failed: ${messageFromCaughtUnknown(caughtHookError)}`;
+    }
+  }
 
   async execute(request: ArrangeSyncRunRequest): Promise<Result<ArrangeRunResult, AppError>> {
     const filePaths = this.targetScanner.scanTarget({ targetPath: request.targetPath });
@@ -73,7 +73,7 @@ export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {
     const arrangeConfig = request.config as CodefastArrangeConfig | undefined;
     const hookError =
       request.write && modifiedFiles.length > 0
-        ? await runOnAfterWriteHook(arrangeConfig?.onAfterWrite, modifiedFiles)
+        ? await this.runOnAfterWriteHook(arrangeConfig?.onAfterWrite, modifiedFiles)
         : null;
 
     return ok({ filePaths, modifiedFiles, totalFound, totalChanged, hookError, previewPlans });

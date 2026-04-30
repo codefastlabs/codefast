@@ -6,11 +6,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
-import { CoreModule } from "#/lib/core/core.module";
-import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
-import { PresentationModule } from "#/lib/core/presentation/presentation.module";
 import type { MirrorSyncRunRequest } from "#/lib/mirror/application/requests/mirror-sync.request";
-import type { RunMirrorSyncUseCase } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseToken } from "#/lib/mirror/contracts/tokens";
 import { MirrorModule } from "#/lib/mirror/mirror.module";
 
@@ -33,8 +29,8 @@ async function makeTempRoot(): Promise<string> {
 }
 
 const container = Container.create();
-container.load(CoreModule, InfrastructureModule, PresentationModule, MirrorModule);
-const runMirrorSyncUseCase = container.resolve(RunMirrorSyncUseCaseToken) as RunMirrorSyncUseCase;
+container.load(MirrorModule);
+const runMirrorSyncUseCase = container.resolve(RunMirrorSyncUseCaseToken);
 
 async function runMirrorSyncWithNodeDependencies(request: MirrorSyncRunRequest): Promise<number> {
   const outcome = await runMirrorSyncUseCase.execute(request);

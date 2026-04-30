@@ -4,10 +4,12 @@ import { MirrorSyncReporterAdapter } from "#/lib/mirror/adapters/secondary/mirro
 import { PackageRepositoryAdapter } from "#/lib/mirror/adapters/secondary/package-repository.adapter";
 import { SyncWorkspacePackageAdapter } from "#/lib/mirror/adapters/secondary/sync-workspace-package.adapter";
 import { WorkspaceServiceAdapter } from "#/lib/mirror/adapters/secondary/workspace-service.adapter";
+import { MirrorPackageArgResolverImpl } from "#/lib/mirror/application/services/mirror-package-arg-resolver.service";
 import { PrepareMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/lib/mirror/application/use-cases/run-mirror-sync.use-case";
 import {
   FileSystemServicePortToken,
+  MirrorPackageArgResolverPortToken,
   PrepareMirrorSyncUseCaseToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
@@ -16,7 +18,7 @@ import {
   WorkspaceServicePortToken,
 } from "#/lib/mirror/contracts/tokens";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
-import { InfrastructureModule } from "#/lib/core/infrastructure/infrastructure.module";
+import { InfrastructureModule } from "#/lib/core/core.module";
 import { withOptionalPortTelemetry } from "#/lib/core/infrastructure/port-telemetry.decorator";
 
 export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
@@ -71,6 +73,18 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
     );
 
   moduleBuilder.bind(SyncWorkspacePackagePortToken).to(SyncWorkspacePackageAdapter).singleton();
+
+  moduleBuilder
+    .bind(MirrorPackageArgResolverPortToken)
+    .to(MirrorPackageArgResolverImpl)
+    .singleton()
+    .onActivation((ctx, implementation) =>
+      withOptionalPortTelemetry(
+        "MirrorPackageArgResolverPort",
+        implementation,
+        ctx.resolve(CliLoggerToken),
+      ),
+    );
 
   moduleBuilder.bind(PrepareMirrorSyncUseCaseToken).to(PrepareMirrorSyncUseCaseImpl).singleton();
   moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCaseImpl).singleton();

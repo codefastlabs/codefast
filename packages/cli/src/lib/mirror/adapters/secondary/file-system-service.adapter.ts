@@ -6,18 +6,18 @@ import { CliFsToken } from "#/lib/core/contracts/tokens";
 import { isDirentList } from "#/lib/mirror/infrastructure/dirent-list.guard";
 import { normalizePath } from "#/lib/mirror/domain/path-normalizer.value-object";
 
-function isKnownReadDirError(caughtError: unknown): boolean {
-  return (
-    typeof caughtError === "object" &&
-    caughtError !== null &&
-    "code" in caughtError &&
-    (caughtError.code === "ENOENT" || caughtError.code === "EACCES")
-  );
-}
-
 @injectable([inject(CliFsToken)])
 export class FileSystemServiceAdapter implements FileSystemServicePort {
   constructor(private readonly fs: CliFs) {}
+
+  private isKnownReadDirError(caughtError: unknown): boolean {
+    return (
+      typeof caughtError === "object" &&
+      caughtError !== null &&
+      "code" in caughtError &&
+      (caughtError.code === "ENOENT" || caughtError.code === "EACCES")
+    );
+  }
 
   async listRelativeFilesRecursively(dirPath: string): Promise<string[]> {
     try {
@@ -33,7 +33,7 @@ export class FileSystemServiceAdapter implements FileSystemServicePort {
           return normalizePath(relPath);
         });
     } catch (caughtError: unknown) {
-      if (isKnownReadDirError(caughtError)) {
+      if (this.isKnownReadDirError(caughtError)) {
         return [];
       }
       throw caughtError;

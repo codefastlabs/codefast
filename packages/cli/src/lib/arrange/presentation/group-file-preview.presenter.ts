@@ -13,9 +13,29 @@ import type {
 import type { PlannedGroupEdit } from "#/lib/arrange/domain/types.domain";
 import { CliLoggerToken } from "#/lib/core/contracts/tokens";
 
-function printGroupFilePreview(
-  logger: CliLogger,
-  args: {
+@injectable([inject(CliLoggerToken)])
+export class GroupFilePreviewPresenterAdapter implements GroupFilePreviewPort {
+  constructor(private readonly logger: CliLogger) {}
+
+  printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
+    this.printGroupFilePreviewFromPlan(work);
+  }
+
+  private printGroupFilePreviewFromPlan(work: GroupFileWorkPlan): void {
+    this.printGroupFilePreviewBody({
+      filePath: work.filePath,
+      reportTotal: work.reportTotal,
+      cnInTvNoReplacement: work.cnInTvNoReplacement,
+      cnInTvCalls: work.cnInTvCalls,
+      unwrapReplacementByCall: work.unwrapReplacementByCall,
+      sourceText: work.sourceText,
+      domainSf: work.domainSfForLineNumbers,
+      unwrapEdits: work.unwrapEdits,
+      plannedGroupEdits: work.plannedGroupEdits,
+    });
+  }
+
+  private printGroupFilePreviewBody(args: {
     filePath: string;
     reportTotal: number;
     cnInTvNoReplacement: number;
@@ -25,72 +45,51 @@ function printGroupFilePreview(
     domainSf: DomainSourceFile;
     unwrapEdits: readonly GroupFileUnwrapPlan[];
     plannedGroupEdits: readonly PlannedGroupEdit[];
-  },
-): void {
-  const {
-    filePath,
-    reportTotal,
-    cnInTvNoReplacement,
-    cnInTvCalls,
-    unwrapReplacementByCall,
-    sourceText,
-    domainSf,
-    unwrapEdits,
-    plannedGroupEdits,
-  } = args;
+  }): void {
+    const {
+      filePath,
+      reportTotal,
+      cnInTvNoReplacement,
+      cnInTvCalls,
+      unwrapReplacementByCall,
+      sourceText,
+      domainSf,
+      unwrapEdits,
+      plannedGroupEdits,
+    } = args;
 
-  let header = `\n── ${filePath} (${reportTotal} site(s)`;
-  if (cnInTvNoReplacement > 0) {
-    header += `; plus ${cnInTvNoReplacement} cn() inside tv left unchanged (0 args)`;
-  }
-  header += `) ──`;
-  logger.out(header);
-
-  for (const call of cnInTvCalls) {
-    const replacement = unwrapReplacementByCall.get(call);
-    if (replacement === undefined) {
-      logger.out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn]: cn(...) has no arguments — skipped`);
-      continue;
+    let header = `\n── ${filePath} (${reportTotal} site(s)`;
+    if (cnInTvNoReplacement > 0) {
+      header += `; plus ${cnInTvNoReplacement} cn() inside tv left unchanged (0 args)`;
     }
-    const start = call.pos;
-    const end = call.end;
-    if (sourceText.slice(start, end) === replacement) {
-      continue;
+    header += `) ──`;
+    this.logger.out(header);
+
+    for (const call of cnInTvCalls) {
+      const replacement = unwrapReplacementByCall.get(call);
+      if (replacement === undefined) {
+        this.logger.out(
+          `  Line ${lineOf(domainSf, call)} [tv ⊃ cn]: cn(...) has no arguments — skipped`,
+        );
+        continue;
+      }
+      const start = call.pos;
+      const end = call.end;
+      if (sourceText.slice(start, end) === replacement) {
+        continue;
+      }
+      this.logger.out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn → string/array]:`);
+      this.logger.out(`  ${replacement.split("\n").join("\n  ")}`);
     }
-    logger.out(`  Line ${lineOf(domainSf, call)} [tv ⊃ cn → string/array]:`);
-    logger.out(`  ${replacement.split("\n").join("\n  ")}`);
-  }
-  if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
-    logger.out(
-      "  ([cn] / [tv] / [JSX className] lines below reflect content after unwrap of cn inside tv.)",
-    );
-  }
-  for (const plan of plannedGroupEdits) {
-    logger.out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
-    logger.out(`  ${plan.replacement.split("\n").join("\n  ")}`);
-    logger.out(`  // Buckets: ${JSON.stringify(plan.bucketSummary)}`);
-  }
-}
-
-function printGroupFilePreviewFromWork(logger: CliLogger, work: GroupFileWorkPlan): void {
-  printGroupFilePreview(logger, {
-    filePath: work.filePath,
-    reportTotal: work.reportTotal,
-    cnInTvNoReplacement: work.cnInTvNoReplacement,
-    cnInTvCalls: work.cnInTvCalls,
-    unwrapReplacementByCall: work.unwrapReplacementByCall,
-    sourceText: work.sourceText,
-    domainSf: work.domainSfForLineNumbers,
-    unwrapEdits: work.unwrapEdits,
-    plannedGroupEdits: work.plannedGroupEdits,
-  });
-}
-
-@injectable([inject(CliLoggerToken)])
-export class GroupFilePreviewPresenterAdapter implements GroupFilePreviewPort {
-  constructor(private readonly logger: CliLogger) {}
-
-  printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
-    printGroupFilePreviewFromWork(this.logger, work);
+    if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
+      this.logger.out(
+        "  ([cn] / [tv] / [JSX className] lines below reflect content after unwrap of cn inside tv.)",
+      );
+    }
+    for (const plan of plannedGroupEdits) {
+      this.logger.out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);
+      this.logger.out(`  ${plan.replacement.split("\n").join("\n  ")}`);
+      this.logger.out(`  // Buckets: ${JSON.stringify(plan.bucketSummary)}`);
+    }
   }
 }
