@@ -13,15 +13,16 @@ describe("composition root integration", () => {
     const mirrorModule = { name: "mirror-module" };
     const tagModule = { name: "tag-module" };
     const tagPresentationModule = { name: "tag-presentation-module" };
+    const cliCommandTokenStub = Symbol("CliCommandToken");
 
     const singleton = vi.fn(() => ({}));
     const whenNamed = vi.fn(() => ({ singleton }));
-    // Mirrors real fluent API: bind().to() may chain .singleton() or .whenNamed().singleton()
-    const to = vi.fn(() => ({ singleton, whenNamed }));
+    // Mirrors real fluent API: bind().to() chains .whenNamed().singleton()
+    const to = vi.fn(() => ({ whenNamed }));
     const bind = vi.fn(() => ({ to }));
     const load = vi.fn();
-    const resolve = vi.fn((token: unknown) => ({ token }));
-    const runtimeContainer = { bind, load, resolve };
+    const resolveAll = vi.fn(() => [{ name: "mirror" }, { name: "arrange" }, { name: "tag" }]);
+    const runtimeContainer = { bind, load, resolveAll };
     const create = vi.fn(() => runtimeContainer);
 
     vi.doMock("@codefast/di", () => ({ Container: { create } }));
@@ -44,7 +45,7 @@ describe("composition root integration", () => {
     }));
     vi.doMock("#/lib/tag/tag.module", () => ({ TagModule: tagModule }));
     vi.doMock("#/lib/kernel/contracts/tokens", () => ({
-      CliCommandToken: Symbol("CliCommandToken"),
+      CliCommandToken: cliCommandTokenStub,
     }));
 
     const { createCliRuntimeContainer, resolveCliCommands } =
@@ -56,10 +57,9 @@ describe("composition root integration", () => {
     expect(load).toHaveBeenCalledWith(arrangePresentationModule, arrangeModule);
     expect(load).toHaveBeenCalledWith(mirrorModule);
     expect(load).toHaveBeenCalledWith(tagPresentationModule, tagModule);
-    expect(bind).toHaveBeenCalled();
-    expect(commands).toHaveLength(3);
-    expect(resolve).toHaveBeenNthCalledWith(1, ArrangeCommandMock);
-    expect(resolve).toHaveBeenNthCalledWith(2, MirrorCommandMock);
-    expect(resolve).toHaveBeenNthCalledWith(3, TagCommandMock);
+    expect(bind).toHaveBeenCalledTimes(3);
+    expect(resolveAll).toHaveBeenCalledTimes(1);
+    expect(resolveAll).toHaveBeenCalledWith(cliCommandTokenStub);
+    expect(commands.map((command) => command.name)).toEqual(["arrange", "mirror", "tag"]);
   });
 });

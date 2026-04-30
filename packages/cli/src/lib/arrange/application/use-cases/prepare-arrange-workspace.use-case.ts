@@ -1,12 +1,12 @@
 import { inject, injectable } from "@codefast/di";
 import { AppError } from "#/lib/core/domain/errors.domain";
+import type { Result } from "#/lib/core/domain/result.model";
 import { err, ok } from "#/lib/core/domain/result.model";
 import { messageFromCaughtUnknown } from "#/lib/core/domain/caught-unknown-message.value-object";
 import { resolveArrangeTargetPath } from "#/lib/arrange/application/services/arrange-target-path-resolver.service";
 import type { WorkspaceResolverPort } from "#/lib/arrange/application/ports/workspace-resolver.port";
 import { WorkspaceResolverPortToken } from "#/lib/arrange/contracts/tokens";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/lib/arrange/contracts/models";
-import type { Result } from "#/lib/core/domain/result.model";
 import type { CliFs } from "#/lib/core/application/ports/cli-io.port";
 import type { LoadCodefastConfigUseCase } from "#/lib/core/application/load-codefast-config.use-case";
 import { CliFsToken, LoadCodefastConfigUseCaseToken } from "#/lib/core/contracts/tokens";
