@@ -6,24 +6,6 @@ import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
 const PACKAGE_JSON_FILE = "package.json";
 
-function findNearestPackageDirectory(
-  currentWorkingDirectory: string,
-  fs: CliFs,
-): string | undefined {
-  let currentDir = path.resolve(currentWorkingDirectory);
-  while (true) {
-    const packageJsonPath = path.join(currentDir, PACKAGE_JSON_FILE);
-    if (fs.existsSync(packageJsonPath)) {
-      return currentDir;
-    }
-    const parentDirectory = path.dirname(currentDir);
-    if (parentDirectory === currentDir) {
-      return undefined;
-    }
-    currentDir = parentDirectory;
-  }
-}
-
 @injectable([inject(CliFsToken)])
 export class ArrangeTargetPathResolver implements ArrangeTargetPathResolverPort {
   constructor(private readonly fs: CliFs) {}
@@ -40,11 +22,23 @@ export class ArrangeTargetPathResolver implements ArrangeTargetPathResolverPort 
     if (explicitTargetPath) {
       return this.fs.canonicalPathSync(explicitTargetPath);
     }
-    const nearestPackageDirectory = findNearestPackageDirectory(
-      args.currentWorkingDirectory,
-      this.fs,
-    );
+    const nearestPackageDirectory = this.findNearestPackageDirectory(args.currentWorkingDirectory);
     const resolvedDefaultTarget = nearestPackageDirectory ?? args.currentWorkingDirectory;
     return this.fs.canonicalPathSync(resolvedDefaultTarget);
+  }
+
+  private findNearestPackageDirectory(currentWorkingDirectory: string): string | undefined {
+    let currentDir = path.resolve(currentWorkingDirectory);
+    while (true) {
+      const packageJsonPath = path.join(currentDir, PACKAGE_JSON_FILE);
+      if (this.fs.existsSync(packageJsonPath)) {
+        return currentDir;
+      }
+      const parentDirectory = path.dirname(currentDir);
+      if (parentDirectory === currentDir) {
+        return undefined;
+      }
+      currentDir = parentDirectory;
+    }
   }
 }
