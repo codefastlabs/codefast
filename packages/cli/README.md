@@ -2,6 +2,11 @@
 
 A small developer CLI for maintenance tasks in a TypeScript monorepo — Tailwind class arranging, `package.json` `exports` mirroring, and `@since` JSDoc tagging.
 
+[![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
+[![npm version](https://img.shields.io/npm/v/@codefast/cli.svg)](https://www.npmjs.com/package/@codefast/cli)
+[![npm downloads](https://img.shields.io/npm/dm/@codefast/cli.svg)](https://www.npmjs.com/package/@codefast/cli)
+[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ---
 
 ## Table of Contents
@@ -9,7 +14,7 @@ A small developer CLI for maintenance tasks in a TypeScript monorepo — Tailwin
 - [Why @codefast/cli](#why-codefastcli)
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Quick start](#quick-start)
+- [Quick Start](#quick-start)
 - [Global options](#global-options)
 - [Exit codes](#exit-codes)
 - [`arrange`](#arrange)
@@ -75,7 +80,7 @@ npx @codefast/cli --help
 
 ---
 
-## Quick start
+## Quick Start
 
 ```bash
 # Analyze Tailwind classes in the nearest package

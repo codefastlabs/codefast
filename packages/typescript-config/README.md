@@ -7,6 +7,8 @@ Shared TypeScript compiler configurations for the `codefast` ecosystem — one s
 [![npm downloads](https://img.shields.io/npm/dm/@codefast/typescript-config.svg)](https://www.npmjs.com/package/@codefast/typescript-config)
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+---
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -25,6 +27,8 @@ Shared TypeScript compiler configurations for the `codefast` ecosystem — one s
 - [Contributing](#contributing)
 - [License](#license)
 - [Changelog](#changelog)
+
+---
 
 ## Overview
 
