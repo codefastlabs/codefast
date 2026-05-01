@@ -1,7 +1,7 @@
 import { Module } from "@codefast/di";
 import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
 import { ArrangeTargetPathResolver } from "#/domains/arrange/application/services/arrange-target-path-resolver.service";
-import { ArrangeTargetScannerServiceImpl } from "#/domains/arrange/application/services/arrange-target-scanner.service";
+import { ArrangeTargetScannerServiceImpl } from "#/domains/arrange/infrastructure/filesystem/arrange-target-scanner.adapter";
 import { AnalyzeDirectoryUseCaseImpl } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { RunArrangeSyncUseCaseImpl } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
@@ -16,16 +16,18 @@ import {
   ArrangeTargetScannerPortToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
-  GroupFilePreviewPortToken,
+  PresentGroupFilePreviewPresenterToken,
   PresentAnalyzeReportPresenterToken,
+  PresentArrangeSyncResultPresenterToken,
   PrepareArrangeWorkspaceUseCaseToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
   TailwindGroupingServiceToken,
 } from "#/domains/arrange/composition/tokens";
-import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.service";
+import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.domain-service";
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
-import { GroupFilePreviewPresenterAdapter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
+import { PresentGroupFilePreviewPresenterImpl } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
+import { PresentArrangeSyncResultPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
 import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 
@@ -74,5 +76,13 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .to(PresentAnalyzeReportPresenterImpl)
     .singleton();
 
-  moduleBuilder.bind(GroupFilePreviewPortToken).to(GroupFilePreviewPresenterAdapter).singleton();
+  moduleBuilder
+    .bind(PresentGroupFilePreviewPresenterToken)
+    .to(PresentGroupFilePreviewPresenterImpl)
+    .singleton();
+
+  moduleBuilder
+    .bind(PresentArrangeSyncResultPresenterToken)
+    .to(PresentArrangeSyncResultPresenterImpl)
+    .singleton();
 });

@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import { loadCodefastConfig } from "#/domains/config/application/services/load-config.service";
+import { loadCodefastConfig } from "#/domains/config/application/services/load-config";
 import type { ConfigLoaderPort } from "#/domains/config/application/ports/outbound/config-loader.port";
 import type { ConfigWarningReporterPort } from "#/domains/config/application/ports/outbound/config-warning-reporter.port";
 import {

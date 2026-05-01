@@ -1,10 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
-import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
+import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
 import type {
   GroupFileUnwrapPlan,
   GroupFileWorkPlan,
-} from "#/domains/arrange/domain/arrange-grouping.service";
+} from "#/domains/arrange/domain/arrange-grouping.domain-service";
 import { lineOf } from "#/domains/arrange/domain/ast/ast-helpers.helper";
 import type {
   DomainCallExpression,
@@ -14,7 +14,7 @@ import type { PlannedGroupEdit } from "#/domains/arrange/domain/types.domain";
 import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliLoggerPortToken)])
-export class GroupFilePreviewPresenterAdapter implements GroupFilePreviewPort {
+export class PresentGroupFilePreviewPresenterImpl implements PresentGroupFilePreviewPresenter {
   constructor(private readonly logger: CliLoggerPort) {}
 
   printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {

@@ -2,7 +2,7 @@ import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exi
 import type { TagSyncResult } from "#/domains/tag/domain/types.domain";
 
 /**
- * Exit code for `codefast tag` / `annotate`, aligned with {@link presentTagSyncCliResult}
+ * Exit code for `codefast tag` / `annotate`, aligned with {@link PresentTagSyncResultPresenterImpl.present}
  * (empty workspace, run errors, or hook failure → non-zero).
  */
 export function exitCodeForTagSyncResult(result: TagSyncResult): number {

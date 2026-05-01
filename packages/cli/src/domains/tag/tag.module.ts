@@ -3,7 +3,7 @@ import { TagEligibleWorkspacePathsAdapter } from "#/domains/tag/infrastructure/a
 import { TagSinceWriterAdapter } from "#/domains/tag/infrastructure/adapters/tag-since-writer.adapter";
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
 import { TagTargetPathResolverService } from "#/domains/tag/application/services/tag-target-path-resolver.service";
-import { TagTargetRunnerServiceImpl } from "#/domains/tag/application/services/tag-target-runner.service";
+import { TagTargetRunnerServiceImpl } from "#/domains/tag/infrastructure/filesystem/tag-target-runner.adapter";
 import { PrepareTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
 import { RunTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
 import {

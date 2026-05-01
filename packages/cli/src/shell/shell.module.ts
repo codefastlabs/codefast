@@ -35,9 +35,9 @@ import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node/node-cli-logge
 import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
 import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node/node-cli-runtime.adapter";
 import { CliTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
-import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/typescript-source-file-walker.service";
+import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/typescript-source-file-walker.adapter";
 import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
-import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
+import { RepoRootResolver } from "#/shell/infrastructure/repo-root-resolver.adapter";
 
 /** Cross-cutting CLI IO, repo root discovery, telemetry, and `codefast.config` loading. */
 export const ShellInfrastructureModule = Module.create("shell-infrastructure", (moduleBuilder) => {

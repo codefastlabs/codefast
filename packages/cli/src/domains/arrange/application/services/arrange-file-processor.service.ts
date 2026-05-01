@@ -17,7 +17,7 @@ import {
   groupFileWorkHasNothingToReport,
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
-} from "#/domains/arrange/domain/arrange-grouping.service";
+} from "#/domains/arrange/domain/arrange-grouping.domain-service";
 import { ensureCnImport } from "#/domains/arrange/domain/imports.domain";
 
 @injectable([inject(CliFilesystemPortToken), inject(DomainSourceParserPortToken)])

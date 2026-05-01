@@ -15,7 +15,7 @@ import { ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { ArrangeSyncRunRequest } from "#/domains/arrange/application/requests/arrange-sync.request";
 import type { ArrangeRunResult } from "#/domains/arrange/domain/types.domain";
-import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
+import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.domain-service";
 import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
 
 @injectable([inject(ArrangeTargetScannerPortToken), inject(ArrangeFileProcessorPortToken)])

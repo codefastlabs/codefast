@@ -14,7 +14,7 @@ import type {
   DomainSourceFile,
   DomainTailwindClassLiteral,
 } from "#/domains/arrange/domain/ast/ast-node.model";
-import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
+import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.domain-service";
 
 export type Bucket =
   | "existence"

@@ -1,5 +1,5 @@
 import { PresentAnalyzeReportPresenterToken } from "#/domains/arrange/composition/tokens";
-import { loadCodefastConfig } from "#/domains/config/application/services/load-config.service";
+import { loadCodefastConfig } from "#/domains/config/application/services/load-config";
 import { CliCommandPortToken } from "#/shell/composition/tokens";
 import {
   PresentTagSyncResultPresenterToken,

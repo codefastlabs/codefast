@@ -4,10 +4,8 @@ import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
 import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
 import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
-import {
-  formatProgress,
-  presentTagSyncCliResult,
-} from "#/domains/tag/presentation/presenters/tag-sync.presenter";
+import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
+import { formatProgress } from "#/domains/tag/presentation/presenters/tag-sync.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
@@ -241,8 +239,8 @@ describe("TagCommand + tag presenter integration", () => {
 
   it("returns non-zero and warning lines from presenter when result has errors", () => {
     const logger = createLoggerMock();
-    const exitCode = presentTagSyncCliResult(
-      logger,
+    const presenter = new PresentTagSyncResultPresenterImpl(logger);
+    const exitCode = presenter.present(
       createTagResult({
         targetResults: [
           {
@@ -270,8 +268,8 @@ describe("TagCommand + tag presenter integration", () => {
 
   it("returns non-zero for empty target list", () => {
     const logger = createLoggerMock();
-    const exitCode = presentTagSyncCliResult(
-      logger,
+    const presenter = new PresentTagSyncResultPresenterImpl(logger);
+    const exitCode = presenter.present(
       createTagResult({
         selectedTargets: [],
         targetResults: [],

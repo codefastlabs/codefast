@@ -1,6 +1,6 @@
+import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
 import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
 import { TagSyncProgressListener } from "#/domains/tag/presentation/presenters/tag-sync-progress-listener.presenter";
-import { presentTagSyncCliResult } from "#/domains/tag/presentation/presenters/tag-sync.presenter";
 
 function createResult() {
   return {
@@ -51,7 +51,7 @@ describe("tag presenter wrappers integration", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
     const presenter = new PresentTagSyncResultPresenterImpl(logger);
     const result = createResult();
-    const expected = presentTagSyncCliResult(logger, result as never, "/tmp/workspace");
+    const expected = exitCodeForTagSyncResult(result as never);
     const actual = presenter.present(result as never, "/tmp/workspace");
     expect(actual).toBe(expected);
   });
