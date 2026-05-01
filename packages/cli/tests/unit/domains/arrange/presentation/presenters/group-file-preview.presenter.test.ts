@@ -1,6 +1,6 @@
 import { PresentGroupFilePreviewPresenter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
 
-describe("PresentGroupFilePreviewPresenter integration", () => {
+describe("PresentGroupFilePreviewPresenter", () => {
   it("prints unwrap and grouped preview sections", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
     const presenter = new PresentGroupFilePreviewPresenter(logger);

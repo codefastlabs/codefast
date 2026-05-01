@@ -6,7 +6,7 @@ import {
   PresentTagSyncResultPresenterToken,
 } from "#/domains/tag/composition/tokens";
 
-describe("support files integration", () => {
+describe("support files", () => {
   it("loads config via loader port", async () => {
     const reportSchemaWarnings = vi.fn();
     const useCase = new LoadCodefastConfigUseCase(

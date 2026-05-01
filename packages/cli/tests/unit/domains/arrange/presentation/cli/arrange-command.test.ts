@@ -169,7 +169,7 @@ function createCommandAndProgram(deps: ArrangeDeps): { command: ArrangeCommand; 
   return { command, program };
 }
 
-describe("ArrangeCommand integration", () => {
+describe("ArrangeCommand", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.exitCode = undefined;

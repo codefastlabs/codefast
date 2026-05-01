@@ -46,7 +46,7 @@ function createResult() {
   };
 }
 
-describe("tag presenter wrappers integration", () => {
+describe("tag presenter wrappers", () => {
   it("delegates final result presentation", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
     const presenter = new PresentTagSyncResultPresenter(logger);
