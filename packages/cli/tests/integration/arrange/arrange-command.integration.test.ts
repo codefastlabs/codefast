@@ -1,15 +1,16 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
-import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
+import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
 import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
 import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
 import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
 import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
+import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
-import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
+import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.domain-service";
 
 function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -94,10 +95,13 @@ type ArrangeDeps = {
   presentAnalyzeReport: PresentAnalyzeReportPresenter & {
     present: ReturnType<typeof vi.fn<PresentAnalyzeReportPresenter["present"]>>;
   };
-  groupFilePreview: GroupFilePreviewPort & {
+  groupFilePreview: PresentGroupFilePreviewPresenter & {
     printGroupFilePreviewFromWork: ReturnType<
-      typeof vi.fn<GroupFilePreviewPort["printGroupFilePreviewFromWork"]>
+      typeof vi.fn<PresentGroupFilePreviewPresenter["printGroupFilePreviewFromWork"]>
     >;
+  };
+  presentArrangeSyncResult: PresentArrangeSyncResultPresenter & {
+    present: ReturnType<typeof vi.fn<PresentArrangeSyncResultPresenter["present"]>>;
   };
 };
 
@@ -133,7 +137,11 @@ function createDeps(): ArrangeDeps {
       present: vi.fn<PresentAnalyzeReportPresenter["present"]>(),
     },
     groupFilePreview: {
-      printGroupFilePreviewFromWork: vi.fn<GroupFilePreviewPort["printGroupFilePreviewFromWork"]>(),
+      printGroupFilePreviewFromWork:
+        vi.fn<PresentGroupFilePreviewPresenter["printGroupFilePreviewFromWork"]>(),
+    },
+    presentArrangeSyncResult: {
+      present: vi.fn<PresentArrangeSyncResultPresenter["present"]>(),
     },
   };
 }
@@ -152,6 +160,7 @@ function createCommandAndProgram(deps: ArrangeDeps): { command: ArrangeCommand; 
     deps.suggestCnGroups,
     deps.presentAnalyzeReport,
     deps.groupFilePreview,
+    deps.presentArrangeSyncResult,
     shell.schemaValidation,
     shell.cliExecutor,
   );

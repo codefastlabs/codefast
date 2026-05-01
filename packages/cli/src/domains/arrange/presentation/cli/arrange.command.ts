@@ -3,14 +3,16 @@ import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/port
 import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
 import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
 import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
-import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
+import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
+import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
 import type { ArrangeSuggestGroupsOutput } from "#/domains/arrange/contracts/models";
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import {
   AnalyzeDirectoryUseCaseToken,
-  GroupFilePreviewPortToken,
+  PresentGroupFilePreviewPresenterToken,
   PrepareArrangeWorkspaceUseCaseToken,
   PresentAnalyzeReportPresenterToken,
+  PresentArrangeSyncResultPresenterToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/domains/arrange/composition/tokens";
@@ -20,10 +22,7 @@ import {
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/domains/arrange/presentation/presenters/arrange-cli.schema";
-import {
-  exitCodeForArrangeSyncResult,
-  presentArrangeSyncResult,
-} from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
+import { exitCodeForArrangeSyncResult } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
@@ -48,7 +47,8 @@ import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
   inject(RunArrangeSyncUseCaseToken),
   inject(SuggestCnGroupsUseCaseToken),
   inject(PresentAnalyzeReportPresenterToken),
-  inject(GroupFilePreviewPortToken),
+  inject(PresentGroupFilePreviewPresenterToken),
+  inject(PresentArrangeSyncResultPresenterToken),
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
 ])
@@ -61,7 +61,8 @@ export class ArrangeCommand implements CliCommandPort {
     private readonly runArrangeSync: RunArrangeSyncUseCase,
     private readonly suggestCnGroups: SuggestCnGroupsUseCase,
     private readonly presentAnalyzeReport: PresentAnalyzeReportPresenter,
-    private readonly groupFilePreview: GroupFilePreviewPort,
+    private readonly presentGroupFilePreview: PresentGroupFilePreviewPresenter,
+    private readonly presentArrangeSyncResult: PresentArrangeSyncResultPresenter,
     private readonly schemaValidation: CliSchemaParsing,
     private readonly cliExecutor: CliExecutor,
   ) {}
@@ -277,7 +278,7 @@ export class ArrangeCommand implements CliCommandPort {
 
     if (!writeCandidate) {
       for (const plan of outcome.value.previewPlans) {
-        this.groupFilePreview.printGroupFilePreviewFromWork(plan);
+        this.presentGroupFilePreview.printGroupFilePreviewFromWork(plan);
       }
     }
 
@@ -285,9 +286,8 @@ export class ArrangeCommand implements CliCommandPort {
       this.logger.out(this.formatArrangeSyncJsonOutput(outcome.value, writeCandidate));
       this.runtime.setExitCode(exitCodeForArrangeSyncResult(outcome.value));
     } else {
-      this.runtime.setExitCode(
-        presentArrangeSyncResult(this.logger, outcome.value, writeCandidate),
-      );
+      this.presentArrangeSyncResult.present(outcome.value, writeCandidate);
+      this.runtime.setExitCode(exitCodeForArrangeSyncResult(outcome.value));
     }
   }
 

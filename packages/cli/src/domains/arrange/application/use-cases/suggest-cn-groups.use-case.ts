@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import type { ArrangeSuggestGroupsRequest } from "#/domains/arrange/application/requests/suggest-groups.request";
 import type { ArrangeSuggestGroupsOutput } from "#/domains/arrange/contracts/models";
-import type { TailwindGroupingService } from "#/domains/arrange/domain/tailwind-grouping.service";
+import type { TailwindGroupingService } from "#/domains/arrange/domain/tailwind-grouping.domain-service";
 import { TailwindGroupingServiceToken } from "#/domains/arrange/composition/tokens";
 import {
   formatArray,

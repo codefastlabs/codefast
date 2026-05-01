@@ -1,7 +1,10 @@
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
-import { presentArrangeSyncResult } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
+import {
+  exitCodeForArrangeSyncResult,
+  PresentArrangeSyncResultPresenterImpl,
+} from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
-import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
+import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.domain-service";
 
 function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -108,8 +111,8 @@ describe("arrange presenters integration", () => {
 
   it("returns non-zero when hook error exists and prints error line", () => {
     const logger = createLoggerMock();
-    const exitCode = presentArrangeSyncResult(
-      logger,
+    const presenter = new PresentArrangeSyncResultPresenterImpl(logger);
+    presenter.present(
       {
         filePaths: ["a.tsx"],
         modifiedFiles: [],
@@ -121,7 +124,16 @@ describe("arrange presenters integration", () => {
       false,
     );
 
-    expect(exitCode).toBe(1);
+    expect(
+      exitCodeForArrangeSyncResult({
+        filePaths: ["a.tsx"],
+        modifiedFiles: [],
+        totalFound: 2,
+        totalChanged: 0,
+        hookError: "hook failed",
+        previewPlans: [],
+      }),
+    ).toBe(1);
     expect(logger.err).toHaveBeenCalledWith("hook failed");
   });
 });
