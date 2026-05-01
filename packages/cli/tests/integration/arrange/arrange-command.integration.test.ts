@@ -2,10 +2,10 @@ import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
 import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
+import type { AnalyzeDirectoryUseCasePort } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCasePort } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCasePort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCasePort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
@@ -80,17 +80,17 @@ function createArrangeReport() {
 type ArrangeDeps = {
   logger: ReturnType<typeof createLoggerMock>;
   runtime: ReturnType<typeof createRuntimeMock>;
-  prepareWorkspace: PrepareArrangeWorkspaceUseCase & {
-    execute: ReturnType<typeof vi.fn<PrepareArrangeWorkspaceUseCase["execute"]>>;
+  prepareWorkspace: PrepareArrangeWorkspaceUseCasePort & {
+    execute: ReturnType<typeof vi.fn<PrepareArrangeWorkspaceUseCasePort["execute"]>>;
   };
-  analyzeDirectory: AnalyzeDirectoryUseCase & {
-    execute: ReturnType<typeof vi.fn<AnalyzeDirectoryUseCase["execute"]>>;
+  analyzeDirectory: AnalyzeDirectoryUseCasePort & {
+    execute: ReturnType<typeof vi.fn<AnalyzeDirectoryUseCasePort["execute"]>>;
   };
-  runArrangeSync: RunArrangeSyncUseCase & {
-    execute: ReturnType<typeof vi.fn<RunArrangeSyncUseCase["execute"]>>;
+  runArrangeSync: RunArrangeSyncUseCasePort & {
+    execute: ReturnType<typeof vi.fn<RunArrangeSyncUseCasePort["execute"]>>;
   };
-  suggestCnGroups: SuggestCnGroupsUseCase & {
-    execute: ReturnType<typeof vi.fn<SuggestCnGroupsUseCase["execute"]>>;
+  suggestCnGroups: SuggestCnGroupsUseCasePort & {
+    execute: ReturnType<typeof vi.fn<SuggestCnGroupsUseCasePort["execute"]>>;
   };
   presentAnalyzeReport: PresentAnalyzeReportPresenter & {
     present: ReturnType<typeof vi.fn<PresentAnalyzeReportPresenter["present"]>>;
@@ -110,25 +110,25 @@ function createDeps(): ArrangeDeps {
     logger: createLoggerMock(),
     runtime: createRuntimeMock(),
     prepareWorkspace: {
-      execute: vi.fn<PrepareArrangeWorkspaceUseCase["execute"]>(async () => ({
+      execute: vi.fn<PrepareArrangeWorkspaceUseCasePort["execute"]>(async () => ({
         ok: true,
         value: { resolvedTarget: "/tmp/workspace/src", rootDir: "/tmp/workspace", config: {} },
       })),
     },
     analyzeDirectory: {
-      execute: vi.fn<AnalyzeDirectoryUseCase["execute"]>(() => ({
+      execute: vi.fn<AnalyzeDirectoryUseCasePort["execute"]>(() => ({
         ok: true,
         value: createArrangeReport(),
       })),
     },
     runArrangeSync: {
-      execute: vi.fn<RunArrangeSyncUseCase["execute"]>(async () => ({
+      execute: vi.fn<RunArrangeSyncUseCasePort["execute"]>(async () => ({
         ok: true,
         value: createArrangeRunResult(),
       })),
     },
     suggestCnGroups: {
-      execute: vi.fn<SuggestCnGroupsUseCase["execute"]>(() => ({
+      execute: vi.fn<SuggestCnGroupsUseCasePort["execute"]>(() => ({
         primaryLine: 'cn("flex gap-2", "rounded-md")',
         bucketsCommentLine: "// Buckets: layout | shape",
       })),

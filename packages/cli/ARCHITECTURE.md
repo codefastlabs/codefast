@@ -2,7 +2,7 @@
 
 ## Hexagonal boundaries
 
-- **`shell/application/ports/inbound/`** — application use-case ports (what the app can do).
+- **`shell/application/ports/inbound/`** — inbound ports for application use cases: interfaces are named `*UseCasePort`; concrete classes live under `application/use-cases/` as `*UseCase` (no `Impl`).
 - **`shell/application/ports/primary/`** — driver ports for how the CLI is invoked (Commander trees, argv-shaped dispatch). Driving adapters (e.g. `CommanderCliHostAdapter`) depend on these; they complement, not replace, `ports/inbound`.
 - **`application/ports/outbound/`** — outbound ports implemented in `infrastructure/adapters/`.
 - **`presentation/`** — presenters and command bindings; presenters implement `application/ports/presenting/` interfaces.

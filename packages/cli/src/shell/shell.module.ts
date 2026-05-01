@@ -7,7 +7,7 @@ import {
 import { ZodCodefastConfigSchemaAdapter } from "#/domains/config/infrastructure/adapters/zod-codefast-config-schema.adapter";
 import { ConfigLoaderAdapter } from "#/domains/config/infrastructure/adapters/config-loader.adapter";
 import { ConfigWarningReporterAdapter } from "#/domains/config/infrastructure/adapters/config-warning-reporter.adapter";
-import { LoadCodefastConfigUseCaseImpl } from "#/shell/application/use-cases/load-codefast-config.use-case";
+import { LoadCodefastConfigUseCase } from "#/shell/application/use-cases/load-codefast-config.use-case";
 import {
   CliExecutorToken,
   CliFilesystemPortToken,
@@ -75,5 +75,5 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
 
   moduleBuilder.bind(ConfigLoaderPortToken).to(ConfigLoaderAdapter).singleton();
   moduleBuilder.bind(ConfigWarningReporterPortToken).to(ConfigWarningReporterAdapter).singleton();
-  moduleBuilder.bind(LoadCodefastConfigUseCaseToken).to(LoadCodefastConfigUseCaseImpl).singleton();
+  moduleBuilder.bind(LoadCodefastConfigUseCaseToken).to(LoadCodefastConfigUseCase).singleton();
 });

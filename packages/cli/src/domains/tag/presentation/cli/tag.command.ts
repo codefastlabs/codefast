@@ -7,8 +7,8 @@ import type { CliExecutor } from "#/shell/application/coordination/cli-executor.
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
-import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
+import type { PrepareTagSyncUseCasePort } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCasePort } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
 import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
 import type { PresentTagSyncProgressPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
@@ -42,8 +42,8 @@ export class TagCommand implements CliCommandPort {
   constructor(
     private readonly logger: CliLoggerPort,
     private readonly runtime: CliRuntimePort,
-    private readonly prepareTagSync: PrepareTagSyncUseCase,
-    private readonly runTagSync: RunTagSyncUseCase,
+    private readonly prepareTagSync: PrepareTagSyncUseCasePort,
+    private readonly runTagSync: RunTagSyncUseCasePort,
     private readonly tagProgressPresenter: PresentTagSyncProgressPresenter,
     private readonly presentSyncCliResult: PresentTagSyncResultPresenter,
     private readonly schemaValidation: CliSchemaParsing,

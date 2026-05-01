@@ -4,8 +4,8 @@ import { MirrorSyncReporterAdapter } from "#/domains/mirror/infrastructure/adapt
 import { PackageRepositoryAdapter } from "#/domains/mirror/infrastructure/adapters/package-repository.adapter";
 import { SyncWorkspacePackageAdapter } from "#/domains/mirror/infrastructure/adapters/sync-workspace-package.adapter";
 import { MirrorPackagePathResolverAdapter } from "#/domains/mirror/infrastructure/adapters/mirror-package-path-resolver.adapter";
-import { PrepareMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
-import { RunMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
+import { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
+import { RunMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
 import {
   FileSystemServicePortToken,
   MirrorPackagePathPortToken,
@@ -47,6 +47,6 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
 
   moduleBuilder.bind(SyncWorkspacePackagePortToken).to(SyncWorkspacePackageAdapter).singleton();
 
-  moduleBuilder.bind(PrepareMirrorSyncUseCaseToken).to(PrepareMirrorSyncUseCaseImpl).singleton();
-  moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCaseImpl).singleton();
+  moduleBuilder.bind(PrepareMirrorSyncUseCaseToken).to(PrepareMirrorSyncUseCase).singleton();
+  moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCase).singleton();
 });

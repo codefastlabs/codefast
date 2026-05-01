@@ -2,7 +2,7 @@ import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contract
 import type { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 
-export interface PrepareArrangeWorkspaceUseCase {
+export interface PrepareArrangeWorkspaceUseCasePort {
   execute(args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;
