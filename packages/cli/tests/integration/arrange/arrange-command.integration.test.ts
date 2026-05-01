@@ -2,10 +2,10 @@ import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
 import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
-import type { AnalyzeDirectoryUseCasePort } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
-import type { PrepareArrangeWorkspaceUseCasePort } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
-import type { RunArrangeSyncUseCasePort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCasePort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
+import type { AnalyzeDirectoryPort } from "#/domains/arrange/application/ports/inbound/analyze-directory.port";
+import type { PrepareArrangeWorkspacePort } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.port";
+import type { RunArrangeSyncPort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.port";
+import type { SuggestCnGroupsPort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.port";
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
@@ -80,17 +80,17 @@ function createArrangeReport() {
 type ArrangeDeps = {
   logger: ReturnType<typeof createLoggerMock>;
   runtime: ReturnType<typeof createRuntimeMock>;
-  prepareWorkspace: PrepareArrangeWorkspaceUseCasePort & {
-    execute: ReturnType<typeof vi.fn<PrepareArrangeWorkspaceUseCasePort["execute"]>>;
+  prepareWorkspace: PrepareArrangeWorkspacePort & {
+    execute: ReturnType<typeof vi.fn<PrepareArrangeWorkspacePort["execute"]>>;
   };
-  analyzeDirectory: AnalyzeDirectoryUseCasePort & {
-    execute: ReturnType<typeof vi.fn<AnalyzeDirectoryUseCasePort["execute"]>>;
+  analyzeDirectory: AnalyzeDirectoryPort & {
+    execute: ReturnType<typeof vi.fn<AnalyzeDirectoryPort["execute"]>>;
   };
-  runArrangeSync: RunArrangeSyncUseCasePort & {
-    execute: ReturnType<typeof vi.fn<RunArrangeSyncUseCasePort["execute"]>>;
+  runArrangeSync: RunArrangeSyncPort & {
+    execute: ReturnType<typeof vi.fn<RunArrangeSyncPort["execute"]>>;
   };
-  suggestCnGroups: SuggestCnGroupsUseCasePort & {
-    execute: ReturnType<typeof vi.fn<SuggestCnGroupsUseCasePort["execute"]>>;
+  suggestCnGroups: SuggestCnGroupsPort & {
+    execute: ReturnType<typeof vi.fn<SuggestCnGroupsPort["execute"]>>;
   };
   presentAnalyzeReport: PresentAnalyzeReportPresenter & {
     present: ReturnType<typeof vi.fn<PresentAnalyzeReportPresenter["present"]>>;
@@ -110,25 +110,25 @@ function createDeps(): ArrangeDeps {
     logger: createLoggerMock(),
     runtime: createRuntimeMock(),
     prepareWorkspace: {
-      execute: vi.fn<PrepareArrangeWorkspaceUseCasePort["execute"]>(async () => ({
+      execute: vi.fn<PrepareArrangeWorkspacePort["execute"]>(async () => ({
         ok: true,
         value: { resolvedTarget: "/tmp/workspace/src", rootDir: "/tmp/workspace", config: {} },
       })),
     },
     analyzeDirectory: {
-      execute: vi.fn<AnalyzeDirectoryUseCasePort["execute"]>(() => ({
+      execute: vi.fn<AnalyzeDirectoryPort["execute"]>(() => ({
         ok: true,
         value: createArrangeReport(),
       })),
     },
     runArrangeSync: {
-      execute: vi.fn<RunArrangeSyncUseCasePort["execute"]>(async () => ({
+      execute: vi.fn<RunArrangeSyncPort["execute"]>(async () => ({
         ok: true,
         value: createArrangeRunResult(),
       })),
     },
     suggestCnGroups: {
-      execute: vi.fn<SuggestCnGroupsUseCasePort["execute"]>(() => ({
+      execute: vi.fn<SuggestCnGroupsPort["execute"]>(() => ({
         primaryLine: 'cn("flex gap-2", "rounded-md")',
         bucketsCommentLine: "// Buckets: layout | shape",
       })),

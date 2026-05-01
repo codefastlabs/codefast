@@ -12,8 +12,8 @@ import {
   PrepareMirrorSyncUseCaseToken,
   RunMirrorSyncUseCaseToken,
 } from "#/domains/mirror/composition/tokens";
-import type { PrepareMirrorSyncUseCasePort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
-import type { RunMirrorSyncUseCasePort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
+import type { PrepareMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
+import type { RunMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
 import { mirrorSyncRunRequestSchema } from "#/domains/mirror/presentation/presenters/mirror-cli.schema";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import {
@@ -34,8 +34,8 @@ import {
 export class MirrorCommand implements CliCommandPort {
   constructor(
     private readonly runtime: CliRuntimePort,
-    private readonly prepareMirrorSync: PrepareMirrorSyncUseCasePort,
-    private readonly runMirrorSync: RunMirrorSyncUseCasePort,
+    private readonly prepareMirrorSync: PrepareMirrorSyncPort,
+    private readonly runMirrorSync: RunMirrorSyncPort,
     private readonly globalCliOptions: GlobalCliOptionsParsePort,
     private readonly schemaValidation: CliSchemaParsing,
     private readonly cliExecutor: CliExecutor,

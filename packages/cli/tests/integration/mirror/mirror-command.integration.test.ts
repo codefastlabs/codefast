@@ -4,8 +4,8 @@ import { CommanderCliHostAdapter } from "#/shell/infrastructure/commander/comman
 import { MirrorCommand } from "#/domains/mirror/presentation/cli/mirror.command";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
-import type { PrepareMirrorSyncUseCasePort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
-import type { RunMirrorSyncUseCasePort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
+import type { PrepareMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
+import type { RunMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
 import { err } from "#/shell/domain/result.model";
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
 
@@ -34,11 +34,11 @@ function createRuntimeMock(): CliRuntimePort & {
 type MirrorDeps = {
   logger: ReturnType<typeof createLoggerMock>;
   runtime: ReturnType<typeof createRuntimeMock>;
-  prepareMirrorSync: PrepareMirrorSyncUseCasePort & {
-    execute: ReturnType<typeof vi.fn<PrepareMirrorSyncUseCasePort["execute"]>>;
+  prepareMirrorSync: PrepareMirrorSyncPort & {
+    execute: ReturnType<typeof vi.fn<PrepareMirrorSyncPort["execute"]>>;
   };
-  runMirrorSync: RunMirrorSyncUseCasePort & {
-    execute: ReturnType<typeof vi.fn<RunMirrorSyncUseCasePort["execute"]>>;
+  runMirrorSync: RunMirrorSyncPort & {
+    execute: ReturnType<typeof vi.fn<RunMirrorSyncPort["execute"]>>;
   };
 };
 
@@ -47,7 +47,7 @@ function createDeps(): MirrorDeps {
     logger: createLoggerMock(),
     runtime: createRuntimeMock(),
     prepareMirrorSync: {
-      execute: vi.fn<PrepareMirrorSyncUseCasePort["execute"]>(async () => ({
+      execute: vi.fn<PrepareMirrorSyncPort["execute"]>(async () => ({
         ok: true,
         value: {
           rootDir: "/tmp/workspace",
@@ -58,7 +58,7 @@ function createDeps(): MirrorDeps {
       })),
     },
     runMirrorSync: {
-      execute: vi.fn<RunMirrorSyncUseCasePort["execute"]>(async () => ({
+      execute: vi.fn<RunMirrorSyncPort["execute"]>(async () => ({
         ok: true,
         value: {
           packagesFound: 1,

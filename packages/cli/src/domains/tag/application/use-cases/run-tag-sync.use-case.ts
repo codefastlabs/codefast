@@ -26,7 +26,7 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/domains/tag/domain/types.domain";
-import type { RunTagSyncUseCasePort } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
+import type { RunTagSyncPort } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
 
 /**
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
@@ -38,7 +38,7 @@ import type { RunTagSyncUseCasePort } from "#/domains/tag/application/ports/inbo
   inject(TagEligibleWorkspacePathsPortToken),
   inject(TagTargetRunnerPortToken),
 ])
-export class RunTagSyncUseCase implements RunTagSyncUseCasePort {
+export class RunTagSyncUseCase implements RunTagSyncPort {
   constructor(
     private readonly fs: CliFilesystemPort,
     private readonly path: CliPathPort,

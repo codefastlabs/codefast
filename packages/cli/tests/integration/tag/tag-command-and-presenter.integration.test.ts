@@ -1,8 +1,8 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
-import type { PrepareTagSyncUseCasePort } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
-import type { RunTagSyncUseCasePort } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
+import type { PrepareTagSyncPort } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.port";
+import type { RunTagSyncPort } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
 import type { PresentTagSyncResultPresenter as PresentTagSyncResultPresenterPort } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
 import type { PresentTagSyncProgressPresenter as PresentTagSyncProgressPresenterPort } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
 import { PresentTagSyncResultPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
@@ -81,11 +81,11 @@ function createTagResult(overrides?: Partial<TagSyncResult>): TagSyncResult {
 type TagDeps = {
   logger: ReturnType<typeof createLoggerMock>;
   runtime: ReturnType<typeof createRuntimeMock>;
-  prepareTagSync: PrepareTagSyncUseCasePort & {
-    execute: ReturnType<typeof vi.fn<PrepareTagSyncUseCasePort["execute"]>>;
+  prepareTagSync: PrepareTagSyncPort & {
+    execute: ReturnType<typeof vi.fn<PrepareTagSyncPort["execute"]>>;
   };
-  runTagSync: RunTagSyncUseCasePort & {
-    execute: ReturnType<typeof vi.fn<RunTagSyncUseCasePort["execute"]>>;
+  runTagSync: RunTagSyncPort & {
+    execute: ReturnType<typeof vi.fn<RunTagSyncPort["execute"]>>;
   };
   tagProgressPresenter: PresentTagSyncProgressPresenterPort & {
     onTargetStarted: ReturnType<
@@ -105,7 +105,7 @@ function createDeps(): TagDeps {
     logger: createLoggerMock(),
     runtime: createRuntimeMock(),
     prepareTagSync: {
-      execute: vi.fn<PrepareTagSyncUseCasePort["execute"]>(async () => ({
+      execute: vi.fn<PrepareTagSyncPort["execute"]>(async () => ({
         ok: true,
         value: {
           rootDir: "/tmp/workspace",
@@ -115,7 +115,7 @@ function createDeps(): TagDeps {
       })),
     },
     runTagSync: {
-      execute: vi.fn<RunTagSyncUseCasePort["execute"]>(async () => ({
+      execute: vi.fn<RunTagSyncPort["execute"]>(async () => ({
         ok: true,
         value: createTagResult(),
       })),

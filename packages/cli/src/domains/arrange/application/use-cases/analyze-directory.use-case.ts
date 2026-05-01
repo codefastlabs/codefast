@@ -17,14 +17,14 @@ import {
   createEmptyAnalyzeReport,
 } from "#/domains/arrange/domain/arrange-analyze.domain-service";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
-import type { AnalyzeDirectoryUseCasePort } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
+import type { AnalyzeDirectoryPort } from "#/domains/arrange/application/ports/inbound/analyze-directory.port";
 
 @injectable([
   inject(CliFilesystemPortToken),
   inject(ArrangeTargetScannerPortToken),
   inject(DomainSourceParserPortToken),
 ])
-export class AnalyzeDirectoryUseCase implements AnalyzeDirectoryUseCasePort {
+export class AnalyzeDirectoryUseCase implements AnalyzeDirectoryPort {
   constructor(
     private readonly fs: CliFilesystemPort,
     private readonly targetScanner: ArrangeTargetScannerPort,
