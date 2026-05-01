@@ -1,5 +1,5 @@
 import { tokenName, type Constructor, type ResolutionContext, type Token } from "@codefast/di";
-import { CliLoggerToken, CliPortTelemetryPortToken } from "#/shell/application/cli-runtime.tokens";
+import { CliLoggerPortToken, CliTelemetryPortToken } from "#/shell/application/cli-runtime.tokens";
 
 /**
  * DI `onActivation` handler: optional port call telemetry, labeled via {@link tokenName}
@@ -12,6 +12,6 @@ export function createOptionalCliPortTelemetryActivation<Value extends object>(
   const portName = tokenName(portKey);
   return (context, implementation) =>
     context
-      .resolve(CliPortTelemetryPortToken)
-      .withOptionalPortTelemetry(portName, implementation, context.resolve(CliLoggerToken));
+      .resolve(CliTelemetryPortToken)
+      .withOptionalPortTelemetry(portName, implementation, context.resolve(CliLoggerPortToken));
 }

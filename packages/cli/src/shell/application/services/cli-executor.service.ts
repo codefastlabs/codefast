@@ -3,12 +3,12 @@ import { inject, injectable } from "@codefast/di";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/shell/domain/cli-exit-codes.domain";
 import type { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliVerboseDiagnosticsPort } from "#/shell/application/ports/outbound/cli-verbose-diagnostics.port";
 import type { FormatAppErrorPort } from "#/shell/application/ports/outbound/format-app-error.port";
 import {
-  CliLoggerToken,
+  CliLoggerPortToken,
   CliVerboseDiagnosticsPortToken,
   FormatAppErrorPortToken,
 } from "#/shell/application/cli-runtime.tokens";
@@ -16,13 +16,13 @@ import {
 @injectable([
   inject(FormatAppErrorPortToken),
   inject(CliVerboseDiagnosticsPortToken),
-  inject(CliLoggerToken),
+  inject(CliLoggerPortToken),
 ])
 export class CliExecutorService implements CliExecutor {
   constructor(
     private readonly formatAppError: FormatAppErrorPort,
     private readonly verboseDiagnostics: CliVerboseDiagnosticsPort,
-    private readonly logger: CliLogger,
+    private readonly logger: CliLoggerPort,
   ) {}
 
   private assertExhaustiveAppErrorCode(code: never): number {

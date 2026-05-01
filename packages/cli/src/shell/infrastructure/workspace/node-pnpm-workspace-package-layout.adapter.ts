@@ -4,26 +4,27 @@ import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { CliFs, CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type {
   WorkspacePackageLayoutOutcome,
   WorkspacePackageLayoutPort,
   WorkspacePackageLayoutSource,
 } from "#/shell/application/ports/outbound/workspace-package-layout.port";
-import { CliFsToken, CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
+import { CliFilesystemPortToken, CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 
 /**
  * Node/pnpm implementation: read `pnpm-workspace.yaml`, expand globs to package dirs.
  */
-@injectable([inject(CliFsToken), inject(CliLoggerToken)])
+@injectable([inject(CliFilesystemPortToken), inject(CliLoggerPortToken)])
 export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLayoutPort {
   private readonly workspaceYamlFileName = "pnpm-workspace.yaml";
   private readonly defaultIncludePatterns = ["packages/*"];
   private readonly packageJsonFileName = "package.json";
 
   constructor(
-    private readonly fs: CliFs,
-    private readonly logger: CliLogger,
+    private readonly fs: CliFilesystemPort,
+    private readonly logger: CliLoggerPort,
   ) {}
 
   async listPackageDirectoryPathsAbsolute(

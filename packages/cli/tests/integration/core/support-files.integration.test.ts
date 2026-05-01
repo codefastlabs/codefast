@@ -1,6 +1,6 @@
 import { PresentAnalyzeReportPresenterToken } from "#/domains/arrange/composition/tokens";
 import { loadCodefastConfig } from "#/domains/config/application/services/load-config.service";
-import { CliCommandToken } from "#/shell/composition/tokens";
+import { CliCommandPortToken } from "#/shell/composition/tokens";
 import {
   PresentTagSyncResultPresenterToken,
   TagSyncProgressListenerToken,
@@ -47,6 +47,6 @@ describe("support files integration", () => {
     expect(PresentAnalyzeReportPresenterToken).toBeDefined();
     expect(PresentTagSyncResultPresenterToken).toBeDefined();
     expect(TagSyncProgressListenerToken).toBeDefined();
-    expect(CliCommandToken).toBeDefined();
+    expect(CliCommandPortToken).toBeDefined();
   });
 });

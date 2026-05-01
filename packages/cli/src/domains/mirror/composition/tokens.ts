@@ -4,8 +4,8 @@ import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/o
 import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
 import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/outbound/sync-workspace-package.port";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
 
 export const PackageRepositoryPortToken = token<PackageRepositoryPort>("PackageRepositoryPort");
 export const MirrorPackagePathPortToken = token<MirrorPackagePathPort>("MirrorPackagePathPort");

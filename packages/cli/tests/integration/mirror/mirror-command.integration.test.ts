@@ -2,14 +2,14 @@ import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
 import { MirrorCommand } from "#/domains/mirror/presentation/cli/mirror.command";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
 import { err } from "#/shell/domain/result.model";
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
 
-function createLoggerMock(): CliLogger & {
+function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
   err: ReturnType<typeof vi.fn<(line: string) => void>>;
 } {
@@ -19,7 +19,7 @@ function createLoggerMock(): CliLogger & {
   };
 }
 
-function createRuntimeMock(): CliRuntime & {
+function createRuntimeMock(): CliRuntimePort & {
   cwd: ReturnType<typeof vi.fn<() => string>>;
   setExitCode: ReturnType<typeof vi.fn<(code: number) => void>>;
   isStdoutTty: ReturnType<typeof vi.fn<() => boolean>>;

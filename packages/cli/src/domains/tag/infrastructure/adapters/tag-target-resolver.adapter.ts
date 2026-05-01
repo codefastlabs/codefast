@@ -1,10 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import path from "node:path";
 import { z } from "zod";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { WorkspacePackageLayoutPort } from "#/shell/application/ports/outbound/workspace-package-layout.port";
 import {
-  CliFsToken,
+  CliFilesystemPortToken,
   WorkspacePackageLayoutPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { TagEligibleWorkspacePathsPort } from "#/domains/tag/application/ports/outbound/tag-eligible-workspace-paths.port";
@@ -13,7 +13,7 @@ import type { TagTargetCandidate } from "#/domains/tag/domain/types.domain";
 /**
  * Finds eligible workspace tagging targets via {@link WorkspacePackageLayoutPort}, explicit paths, or `src/` fallback.
  */
-@injectable([inject(CliFsToken), inject(WorkspacePackageLayoutPortToken)])
+@injectable([inject(CliFilesystemPortToken), inject(WorkspacePackageLayoutPortToken)])
 export class TagEligibleWorkspacePathsAdapter implements TagEligibleWorkspacePathsPort {
   private readonly packageJsonFileName = "package.json";
 
@@ -22,7 +22,7 @@ export class TagEligibleWorkspacePathsAdapter implements TagEligibleWorkspacePat
   });
 
   constructor(
-    private readonly fs: CliFs,
+    private readonly fs: CliFilesystemPort,
     private readonly workspacePackageLayout: WorkspacePackageLayoutPort,
   ) {}
 

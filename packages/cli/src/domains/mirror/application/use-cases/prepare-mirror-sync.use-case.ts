@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import type { GlobalCliOptions } from "#/shell/application/global-cli-options.model";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
 import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
@@ -13,7 +13,7 @@ import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
 
 @injectable([
   inject(MirrorPackagePathPortToken),

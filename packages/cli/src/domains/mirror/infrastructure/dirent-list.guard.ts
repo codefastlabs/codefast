@@ -1,4 +1,4 @@
-import type { CliDirectoryEntry } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliDirectoryEntry } from "#/shell/application/ports/outbound/cli-fs.port";
 
 /**
  * Narrow `fs.promises.readdir` overload result to `Dirent[]` when `withFileTypes: true`.

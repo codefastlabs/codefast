@@ -5,13 +5,13 @@ import {
   MAX_REPORT_LINES,
 } from "#/domains/arrange/domain/constants.domain";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
-import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.port";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
+import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 
-@injectable([inject(CliLoggerToken)])
+@injectable([inject(CliLoggerPortToken)])
 export class PresentAnalyzeReportPresenterImpl implements PresentAnalyzeReportPresenter {
-  constructor(private readonly logger: CliLogger) {}
+  constructor(private readonly logger: CliLoggerPort) {}
 
   present(resolvedTargetPath: string, report: AnalyzeReport): void {
     this.printAnalyzeReport(resolvedTargetPath, report);

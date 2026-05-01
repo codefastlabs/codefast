@@ -4,7 +4,7 @@ import type {
   CliCommandTree,
 } from "#/shell/application/ports/primary/cli-command.port";
 import type {
-  CliGlobalOptionsBridge,
+  CliGlobalOptionsBridgePort,
   CliLeafDispatchHandler,
 } from "#/shell/application/ports/primary/cli-host.port";
 
@@ -59,7 +59,7 @@ function wireLeafDispatch(leafCommand: Command, dispatch: CliLeafDispatchHandler
   void leafCommand.action(async (...passedArguments: unknown[]) => {
     const { positionalArguments, localOptionRecord, commandLeaf } =
       extractDispatchParts(passedArguments);
-    const globalBridge: CliGlobalOptionsBridge = {
+    const globalBridge: CliGlobalOptionsBridgePort = {
       readMergedGlobalsOptionRecords: (): Readonly<Record<string, unknown>> => {
         const bridgeCommand = commandLeaf as Command & {
           optsWithGlobals?: () => Record<string, unknown>;

@@ -1,8 +1,13 @@
 import { inject, injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
-import type { CliFs, CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
-import { CliFsToken, CliLoggerToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
+import {
+  CliFilesystemPortToken,
+  CliLoggerPortToken,
+  CliPathPortToken,
+} from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import {
   createPathTransform,
@@ -26,20 +31,20 @@ import {
 } from "#/domains/mirror/composition/tokens";
 
 @injectable([
-  inject(CliFsToken),
-  inject(CliPathToken),
+  inject(CliFilesystemPortToken),
+  inject(CliPathPortToken),
   inject(PackageRepositoryPortToken),
   inject(FileSystemServicePortToken),
-  inject(CliLoggerToken),
+  inject(CliLoggerPortToken),
   inject(MirrorSyncReporterPortToken),
 ])
 export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
   constructor(
-    private readonly fs: CliFs,
-    private readonly pathService: CliPath,
+    private readonly fs: CliFilesystemPort,
+    private readonly pathService: CliPathPort,
     private readonly packageRepository: PackageRepositoryPort,
     private readonly fileSystemService: FileSystemServicePort,
-    private readonly logger: CliLogger,
+    private readonly logger: CliLoggerPort,
     private readonly mirrorReporter: MirrorSyncReporterPort,
   ) {}
 

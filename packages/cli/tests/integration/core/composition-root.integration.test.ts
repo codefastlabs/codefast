@@ -6,7 +6,7 @@ describe("composition root integration", () => {
 
   it("builds runtime container and resolves CLI commands in order", async () => {
     const cliApplicationModule = { name: "cli-application-module" };
-    const cliCommandTokenStub = Symbol("CliCommandToken");
+    const cliCommandTokenStub = Symbol("CliCommandPortToken");
 
     const load = vi.fn();
     const resolveAll = vi.fn(() => [
@@ -22,7 +22,7 @@ describe("composition root integration", () => {
       CliApplicationModule: cliApplicationModule,
     }));
     vi.doMock("#/shell/composition/tokens", () => ({
-      CliCommandToken: cliCommandTokenStub,
+      CliCommandPortToken: cliCommandTokenStub,
     }));
 
     const { createCliRuntimeContainer, resolveCliCommands } =

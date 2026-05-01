@@ -1,9 +1,9 @@
 import { AppError } from "#/shell/domain/errors.domain";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/shell/domain/cli-exit-codes.domain";
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 
-type LoggerStub = CliLogger & {
+type LoggerStub = CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
   err: ReturnType<typeof vi.fn<(line: string) => void>>;
 };

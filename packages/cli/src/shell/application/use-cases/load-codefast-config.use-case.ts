@@ -7,7 +7,7 @@ import {
   ConfigWarningReporterPortToken,
 } from "#/domains/config/composition/tokens";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";

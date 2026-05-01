@@ -1,16 +1,16 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
-import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
+import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { TagVersionResolverPort } from "#/domains/tag/application/ports/outbound/tag-version-resolver.port";
 
-@injectable([inject(CliPathToken), inject(CliFsToken)])
+@injectable([inject(CliPathPortToken), inject(CliFilesystemPortToken)])
 export class TagVersionResolverAdapter implements TagVersionResolverPort {
   private readonly packageJsonFileName = "package.json";
 
   constructor(
-    private readonly path: CliPath,
-    private readonly fs: CliFs,
+    private readonly path: CliPathPort,
+    private readonly fs: CliFilesystemPort,
   ) {}
 
   resolveNearestPackageVersion(targetPath: string): string {

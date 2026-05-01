@@ -1,4 +1,4 @@
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import { CLI_EXIT_GENERAL_ERROR } from "#/shell/domain/cli-exit-codes.domain";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
 import type {
@@ -103,7 +103,7 @@ function formatSummary(result: TagSyncResult): string {
  * Prints tag sync output and returns a process exit code (0 success, 1 when empty targets or hook/run errors).
  */
 export function presentTagSyncCliResult(
-  logger: CliLogger,
+  logger: CliLoggerPort,
   tagResult: TagSyncResult,
   rootDir: string,
 ): number {
