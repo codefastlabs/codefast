@@ -12,5 +12,6 @@ Composition roots: domain `*.module.ts`, `bootstrap/cli-application.module.ts`, 
 ## File naming
 
 - Outbound port implementations: `*.adapter.ts`, class suffix `*Adapter`.
+- Prefer grouping shell outbound adapters under `shell/infrastructure/adapters/`; technology-specific folders (`node/`, `workspace/`, `telemetry/`, `commander/`) remain for non-generic or driver-specific wiring.
 - Presenters: class name matches the presenting port (use a type alias in the presenter file when the interface and class share a name).
-- Domain orchestration: `*.domain-service.ts` under `domain/`.
+- Domain orchestration: `*.domain-service.ts` under `domain/`; avoid `*Impl` on domain classes — use a role name such as `*DomainService` when the module already defines a `*Service` interface.

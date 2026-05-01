@@ -10,7 +10,7 @@ export interface TailwindGroupingService {
 }
 
 @injectable()
-export class TailwindGroupingServiceImpl implements TailwindGroupingService {
+export class TailwindGroupingDomainService implements TailwindGroupingService {
   suggestGroups(classString: string): string[] {
     return suggestCnGroups(classString);
   }

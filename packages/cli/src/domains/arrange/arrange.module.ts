@@ -24,7 +24,7 @@ import {
   SuggestCnGroupsUseCaseToken,
   TailwindGroupingServiceToken,
 } from "#/domains/arrange/composition/tokens";
-import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.domain-service";
+import { TailwindGroupingDomainService } from "#/domains/arrange/domain/tailwind-grouping.domain-service";
 import { PresentAnalyzeReportPresenter } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
 import { PresentGroupFilePreviewPresenter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
 import { PresentArrangeSyncResultPresenter } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
@@ -57,7 +57,7 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .to(ArrangeTargetPathResolverAdapter)
     .singleton();
 
-  moduleBuilder.bind(TailwindGroupingServiceToken).to(TailwindGroupingServiceImpl).singleton();
+  moduleBuilder.bind(TailwindGroupingServiceToken).to(TailwindGroupingDomainService).singleton();
 
   moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 
