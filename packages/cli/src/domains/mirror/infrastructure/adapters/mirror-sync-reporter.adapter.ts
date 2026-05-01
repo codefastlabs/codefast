@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import { CliRuntimeToken } from "#/shell/application/cli-runtime.tokens";
 import type {
   MirrorProcessingModeInput,
@@ -34,18 +34,18 @@ const ANSI = {
 export class MirrorSyncReporterAdapter implements MirrorSyncReporterPort {
   private colorsAreEnabled = true;
 
-  constructor(private readonly runtime: CliRuntime) {}
+  constructor(private readonly runtime: CliRuntimePort) {}
 
   configureMirrorColors(noColor: boolean): void {
     this.colorsAreEnabled = this.runtime.isStdoutTty() && !noColor;
   }
 
-  mirrorBanner(logger: CliLogger): void {
+  mirrorBanner(logger: CliLoggerPort): void {
     logger.out(`\n${this.paint("📦 Mirror — package exports", ANSI.bold + ANSI.cyan)}`);
     logger.out(`${this.paint("═".repeat(60), ANSI.dim)}\n`);
   }
 
-  mirrorProcessingMode(logger: CliLogger, mode: MirrorProcessingModeInput): void {
+  mirrorProcessingMode(logger: CliLoggerPort, mode: MirrorProcessingModeInput): void {
     if (mode.kind === "single") {
       logger.out(`${this.paint("Processing single package...", ANSI.dim)}\n`);
       return;
@@ -70,12 +70,12 @@ export class MirrorSyncReporterAdapter implements MirrorSyncReporterPort {
     );
   }
 
-  mirrorNoPackages(logger: CliLogger): void {
+  mirrorNoPackages(logger: CliLoggerPort): void {
     logger.out(this.paint("⚠ No packages found", ANSI.yellow));
   }
 
   logSkippedWorkspacePackage(
-    logger: CliLogger,
+    logger: CliLoggerPort,
     index: number,
     total: number,
     displayName: string,
@@ -88,7 +88,7 @@ export class MirrorSyncReporterAdapter implements MirrorSyncReporterPort {
   }
 
   logPackageSuccess(
-    logger: CliLogger,
+    logger: CliLoggerPort,
     index: number,
     total: number,
     pkgStats: PackageStats,
@@ -133,14 +133,14 @@ export class MirrorSyncReporterAdapter implements MirrorSyncReporterPort {
     logger.out("");
   }
 
-  logPrunedStaleExport(logger: CliLogger, exportSpecifier: string): void {
+  logPrunedStaleExport(logger: CliLoggerPort, exportSpecifier: string): void {
     logger.out(
       `  ${this.paint("└─", ANSI.dim)} ${this.paint(`Pruned stale export: ${exportSpecifier}`, ANSI.gray)}`,
     );
   }
 
   logPackageError(
-    logger: CliLogger,
+    logger: CliLoggerPort,
     index: number,
     total: number,
     displayName: string,
@@ -162,11 +162,11 @@ export class MirrorSyncReporterAdapter implements MirrorSyncReporterPort {
     }
   }
 
-  mirrorSummarySeparator(logger: CliLogger): void {
+  mirrorSummarySeparator(logger: CliLoggerPort): void {
     logger.out(this.paint("═".repeat(60), ANSI.dim));
   }
 
-  mirrorSummary(logger: CliLogger, stats: GlobalStats, elapsedSeconds: number): void {
+  mirrorSummary(logger: CliLoggerPort, stats: GlobalStats, elapsedSeconds: number): void {
     logger.out(
       `${this.paint("📊 Summary", ANSI.bold)} ${this.paint(`(completed in ${elapsedSeconds.toFixed(2)}s)`, ANSI.dim)}\n`,
     );

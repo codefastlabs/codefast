@@ -3,7 +3,7 @@ import {
   TagEligibleWorkspacePathsPortToken,
   TagTargetRunnerPortToken,
 } from "#/domains/tag/composition/tokens";
-import type { TagSyncExecutionInput } from "#/domains/tag/application/ports/inbound/tag-sync.request";
+import type { TagSyncExecutionInput } from "#/domains/tag/application/requests/tag-sync-execution-input";
 import type { TagTargetRunnerPort } from "#/domains/tag/application/ports/outbound/tag-target-runner.port";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
@@ -12,9 +12,9 @@ import type {
   CodefastAfterWriteHook,
   CodefastTagConfig,
 } from "#/domains/config/domain/schema.domain";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
-import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
+import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { TagEligibleWorkspacePathsPort } from "#/domains/tag/application/ports/outbound/tag-eligible-workspace-paths.port";
 import type {
@@ -26,22 +26,22 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/domains/tag/domain/types.domain";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
 
 /**
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
  * Returns structured execution data; presentation/logging belongs to command layer.
  */
 @injectable([
-  inject(CliFsToken),
-  inject(CliPathToken),
+  inject(CliFilesystemPortToken),
+  inject(CliPathPortToken),
   inject(TagEligibleWorkspacePathsPortToken),
   inject(TagTargetRunnerPortToken),
 ])
 export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
   constructor(
-    private readonly fs: CliFs,
-    private readonly path: CliPath,
+    private readonly fs: CliFilesystemPort,
+    private readonly path: CliPathPort,
     private readonly targetResolver: TagEligibleWorkspacePathsPort,
     private readonly tagTargetRunner: TagTargetRunnerPort,
   ) {}

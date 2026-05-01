@@ -1,14 +1,14 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import { isDirentList } from "#/domains/mirror/infrastructure/dirent-list.guard";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
 
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFilesystemPortToken)])
 export class FileSystemServiceAdapter implements FileSystemServicePort {
-  constructor(private readonly fs: CliFs) {}
+  constructor(private readonly fs: CliFilesystemPort) {}
 
   private isKnownReadDirError(caughtError: unknown): boolean {
     return (

@@ -1,19 +1,19 @@
 import { inject, injectable } from "@codefast/di";
 import type {
-  CliCommand,
+  CliCommandPort,
   CliCommandTree,
 } from "#/shell/application/ports/primary/cli-command.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import {
   PrepareMirrorSyncUseCaseToken,
   RunMirrorSyncUseCaseToken,
 } from "#/domains/mirror/composition/tokens";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
 import { mirrorSyncRunRequestSchema } from "#/domains/mirror/presentation/presenters/mirror-cli.schema";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import {
@@ -31,9 +31,9 @@ import {
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
 ])
-export class MirrorCommand implements CliCommand {
+export class MirrorCommand implements CliCommandPort {
   constructor(
-    private readonly runtime: CliRuntime,
+    private readonly runtime: CliRuntimePort,
     private readonly prepareMirrorSync: PrepareMirrorSyncUseCase,
     private readonly runMirrorSync: RunMirrorSyncUseCase,
     private readonly globalCliOptions: GlobalCliOptionsParsePort,

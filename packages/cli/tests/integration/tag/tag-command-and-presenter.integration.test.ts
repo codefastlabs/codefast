@@ -1,18 +1,18 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
-import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.port";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
-import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.port";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
+import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
 import {
   formatProgress,
   presentTagSyncCliResult,
 } from "#/domains/tag/presentation/presenters/tag-sync.presenter";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
 
-function createLoggerMock(): CliLogger & {
+function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
   err: ReturnType<typeof vi.fn<(line: string) => void>>;
 } {
@@ -22,7 +22,7 @@ function createLoggerMock(): CliLogger & {
   };
 }
 
-function createRuntimeMock(): CliRuntime & {
+function createRuntimeMock(): CliRuntimePort & {
   cwd: ReturnType<typeof vi.fn<() => string>>;
   setExitCode: ReturnType<typeof vi.fn<(code: number) => void>>;
   isStdoutTty: ReturnType<typeof vi.fn<() => boolean>>;

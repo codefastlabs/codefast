@@ -9,10 +9,10 @@ import type {
 } from "#/domains/config/application/ports/outbound/config-loader.port";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
 import { CodefastConfigSchemaPortToken } from "#/domains/config/composition/tokens";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
-@injectable([inject(CliFsToken), inject(CodefastConfigSchemaPortToken)])
+@injectable([inject(CliFilesystemPortToken), inject(CodefastConfigSchemaPortToken)])
 export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
   private readonly configJsPriority = [
     "codefast.config.mjs",
@@ -24,7 +24,7 @@ export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
   private readonly cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
 
   constructor(
-    private readonly fs: CliFs,
+    private readonly fs: CliFilesystemPort,
     private readonly configSchema: CodefastConfigSchemaPort,
   ) {}
 

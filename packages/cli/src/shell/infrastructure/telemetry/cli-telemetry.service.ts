@@ -1,9 +1,9 @@
 import { injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliPortTelemetryPort } from "#/shell/application/ports/outbound/cli-telemetry.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliTelemetryPort } from "#/shell/application/ports/outbound/cli-port-telemetry.port";
 
 @injectable([])
-export class CliPortTelemetryService implements CliPortTelemetryPort {
+export class CliTelemetryService implements CliTelemetryPort {
   isCliTelemetryEnabled(): boolean {
     const raw = process.env.ENABLE_TELEMETRY;
     return raw === "1" || raw === "true";
@@ -12,7 +12,7 @@ export class CliPortTelemetryService implements CliPortTelemetryPort {
   withCliPortTelemetry<T extends object>(args: {
     readonly portName: string;
     readonly implementation: T;
-    readonly logger: CliLogger;
+    readonly logger: CliLoggerPort;
   }): T {
     const { portName, implementation, logger } = args;
     return new Proxy(implementation, {
@@ -65,7 +65,7 @@ export class CliPortTelemetryService implements CliPortTelemetryPort {
   withOptionalPortTelemetry<T extends object>(
     portName: string,
     implementation: T,
-    logger: CliLogger,
+    logger: CliLoggerPort,
   ): T {
     if (!this.isCliTelemetryEnabled()) {
       return implementation;

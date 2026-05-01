@@ -1,16 +1,16 @@
 import { inject, injectable } from "@codefast/di";
 import type {
-  CliCommand,
+  CliCommandPort,
   CliCommandTree,
 } from "#/shell/application/ports/primary/cli-command.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
-import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.port";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
-import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.port";
+import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
 import {
   PrepareTagSyncUseCaseToken,
   PresentTagSyncResultPresenterToken,
@@ -22,13 +22,13 @@ import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/ty
 import { tagSyncRunRequestSchema } from "#/domains/tag/presentation/presenters/tag-cli.schema";
 import {
   CliExecutorToken,
-  CliLoggerToken,
+  CliLoggerPortToken,
   CliRuntimeToken,
   CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([
-  inject(CliLoggerToken),
+  inject(CliLoggerPortToken),
   inject(CliRuntimeToken),
   inject(PrepareTagSyncUseCaseToken),
   inject(RunTagSyncUseCaseToken),
@@ -37,10 +37,10 @@ import {
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
 ])
-export class TagCommand implements CliCommand {
+export class TagCommand implements CliCommandPort {
   constructor(
-    private readonly logger: CliLogger,
-    private readonly runtime: CliRuntime,
+    private readonly logger: CliLoggerPort,
+    private readonly runtime: CliRuntimePort,
     private readonly prepareTagSync: PrepareTagSyncUseCase,
     private readonly runTagSync: RunTagSyncUseCase,
     private readonly tagProgressListener: TagProgressListener,

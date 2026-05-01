@@ -1,7 +1,7 @@
 import ts from "typescript";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import {
   applyEditsDescending,
   indentOfLineContaining,
@@ -23,11 +23,11 @@ type TaggableDeclaration =
   | ts.EnumDeclaration
   | ts.VariableStatement;
 
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFilesystemPortToken)])
 export class TagSinceWriterAdapter implements TagSinceWriterPort {
   private readonly sinceDocumentationTag = "@since";
 
-  constructor(private readonly fs: CliFs) {}
+  constructor(private readonly fs: CliFilesystemPort) {}
 
   applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
     const sourceText = this.fs.readFileSync(filePath, "utf8");

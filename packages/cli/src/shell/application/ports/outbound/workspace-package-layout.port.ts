@@ -22,7 +22,7 @@ export type WorkspacePackageLayoutOutcome = {
 export interface WorkspacePackageLayoutPort {
   /**
    * When `suppressGlobPermissionDiagnostics` is true (e.g. `--json`), EACCES/EPERM during workspace
-   * globs are skipped silently; otherwise a line is logged via injected `CliLogger`.
+   * globs are skipped silently; otherwise a line is logged via injected `CliLoggerPort`.
    */
   listPackageDirectoryPathsAbsolute(
     rootDirectoryPathAbsolute: string,

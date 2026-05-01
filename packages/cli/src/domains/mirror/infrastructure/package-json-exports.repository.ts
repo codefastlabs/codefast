@@ -1,4 +1,4 @@
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import { MirrorError, MirrorErrorCode } from "#/domains/mirror/domain/errors.domain";
 import type {
@@ -63,7 +63,7 @@ function compareExportSpecifiers(
  * Preserves a trailing newline after JSON.
  */
 export async function writePackageJsonExportsAtomic(
-  fs: CliFs,
+  fs: CliFilesystemPort,
   packageJsonPath: string,
   mergeInput: {
     generatedExports: ExportMapData;

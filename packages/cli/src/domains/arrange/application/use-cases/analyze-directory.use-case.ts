@@ -7,8 +7,8 @@ import type { ArrangeTargetScannerPort } from "#/domains/arrange/application/por
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/outbound/domain-source-parser.port";
 import type { ArrangeAnalyzeDirectoryRequest } from "#/domains/arrange/application/requests/analyze-directory.request";
@@ -17,16 +17,16 @@ import {
   createEmptyAnalyzeReport,
 } from "#/domains/arrange/domain/arrange-analyze.service";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.port";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
 
 @injectable([
-  inject(CliFsToken),
+  inject(CliFilesystemPortToken),
   inject(ArrangeTargetScannerPortToken),
   inject(DomainSourceParserPortToken),
 ])
 export class AnalyzeDirectoryUseCaseImpl implements AnalyzeDirectoryUseCase {
   constructor(
-    private readonly fs: CliFs,
+    private readonly fs: CliFilesystemPort,
     private readonly targetScanner: ArrangeTargetScannerPort,
     private readonly domainSourceParser: DomainSourceParserPort,
   ) {}

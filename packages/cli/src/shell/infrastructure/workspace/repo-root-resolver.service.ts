@@ -1,17 +1,17 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
 /**
  * Resolve the monorepo root (directory containing `pnpm-workspace.yaml`).
  * Tries the compiled package location first, then the provided `startDir`.
  */
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFilesystemPortToken)])
 export class RepoRootResolver implements RepoRootResolverPort {
-  constructor(private readonly fs: CliFs) {}
+  constructor(private readonly fs: CliFilesystemPort) {}
 
   findRepoRoot(fromDirectory: string): string {
     const candidates = [path.dirname(fileURLToPath(import.meta.url)), fromDirectory];

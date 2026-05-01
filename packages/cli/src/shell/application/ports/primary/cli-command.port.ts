@@ -33,6 +33,6 @@ export type CliCommandTree = Readonly<{
 }>;
 
 /** Primary facade: exposes a declarative Commander route tree built at runtime */
-export interface CliCommand {
+export interface CliCommandPort {
   readonly definition: CliCommandTree;
 }

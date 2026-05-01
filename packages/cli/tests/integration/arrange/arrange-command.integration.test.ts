@@ -2,16 +2,16 @@ import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
 import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.port";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.port";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.port";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.port";
-import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.port";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
+import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
 
-function createLoggerMock(): CliLogger & {
+function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
   err: ReturnType<typeof vi.fn<(line: string) => void>>;
 } {
@@ -38,7 +38,7 @@ function createPreviewPlan(filePath: string): GroupFileWorkPlan {
   };
 }
 
-function createRuntimeMock(): CliRuntime & {
+function createRuntimeMock(): CliRuntimePort & {
   cwd: ReturnType<typeof vi.fn<() => string>>;
   setExitCode: ReturnType<typeof vi.fn<(code: number) => void>>;
   isStdoutTty: ReturnType<typeof vi.fn<() => boolean>>;

@@ -1,10 +1,10 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/outbound/typescript-source-file-walker.port";
 import {
-  CliFsToken,
-  CliPathToken,
+  CliFilesystemPortToken,
+  CliPathPortToken,
   TypeScriptSourceFileWalkerPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { TagSinceWriterPort } from "#/domains/tag/application/ports/outbound/tag-since-writer.port";
@@ -17,16 +17,16 @@ import {
 import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.domain";
 
 @injectable([
-  inject(CliFsToken),
-  inject(CliPathToken),
+  inject(CliFilesystemPortToken),
+  inject(CliPathPortToken),
   inject(TagVersionResolverPortToken),
   inject(TagSinceWriterPortToken),
   inject(TypeScriptSourceFileWalkerPortToken),
 ])
 export class TagTargetRunnerServiceImpl implements TagTargetRunnerPort {
   constructor(
-    private readonly fs: CliFs,
-    private readonly pathService: CliPath,
+    private readonly fs: CliFilesystemPort,
+    private readonly pathService: CliPathPort,
     private readonly versionResolver: TagVersionResolverPort,
     private readonly sinceWriter: TagSinceWriterPort,
     private readonly sourceFileWalker: TypeScriptSourceFileWalkerPort,

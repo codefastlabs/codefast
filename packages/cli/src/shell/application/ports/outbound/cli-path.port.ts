@@ -1,4 +1,4 @@
-export interface CliPath {
+export interface CliPathPort {
   resolve(...paths: string[]): string;
   join(...paths: string[]): string;
   relative(from: string, to: string): string;

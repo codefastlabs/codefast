@@ -1,4 +1,4 @@
-import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
+import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
 import {
@@ -24,7 +24,7 @@ function resolvePackageScopedConfig<T>(
   return configMap[pkgMeta.packageName];
 }
 
-function groupFilesByModule(files: string[], pathService: CliPath): Map<string, Module> {
+function groupFilesByModule(files: string[], pathService: CliPathPort): Map<string, Module> {
   const modules = new Map<string, Module>();
 
   for (const file of files) {
@@ -176,7 +176,7 @@ function compareTuples(left: SortTuple, right: SortTuple): number {
 }
 
 async function generateCssExports(
-  pathService: CliPath,
+  pathService: CliPathPort,
   fileSystemService: FileSystemServicePort,
   distDir: string,
   cssConfig: Record<string, unknown> | boolean | undefined,
@@ -247,7 +247,7 @@ async function generateCssExports(
  * Compute `package.json#exports` from a built `dist/` tree. No logging; no writes.
  */
 export async function generateExports(
-  pathService: CliPath,
+  pathService: CliPathPort,
   fileSystemService: FileSystemServicePort,
   distDir: string,
   pathTransform: ((pathString: string) => string) | null,

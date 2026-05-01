@@ -10,7 +10,7 @@ export interface CliDirectoryEntry {
   isDirectory(): boolean;
 }
 
-export interface CliFs {
+export interface CliFilesystemPort {
   existsSync(path: string): boolean;
   /**
    * Resolve symlinks when possible; fall back to normalizing `inputPath` to an absolute path.
@@ -28,9 +28,4 @@ export interface CliFs {
   ): Promise<string[] | CliDirectoryEntry[]>;
   rename(oldPath: string, newPath: string): Promise<void>;
   unlink(path: string): Promise<void>;
-}
-
-export interface CliLogger {
-  out(line: string): void;
-  err(line: string): void;
 }

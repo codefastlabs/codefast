@@ -1,12 +1,12 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { TagTargetPathResolverPort } from "#/domains/tag/application/ports/outbound/tag-target-path-resolver.port";
 
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFilesystemPortToken)])
 export class TagTargetPathResolverService implements TagTargetPathResolverPort {
-  constructor(private readonly fs: CliFs) {}
+  constructor(private readonly fs: CliFilesystemPort) {}
 
   resolveProvidedTargetPath(args: {
     readonly currentWorkingDirectory: string;

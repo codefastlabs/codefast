@@ -8,13 +8,13 @@ import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/domains/arrange/arrange.module";
 import { AnalyzeDirectoryUseCaseToken } from "#/domains/arrange/composition/tokens";
-import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
+import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
 
 const container = Container.create();
 container.load(ArrangeModule);
 const analyzeDirectoryUseCase = container.resolve(AnalyzeDirectoryUseCaseToken);
-void container.resolve(CliLoggerToken);
+void container.resolve(CliLoggerPortToken);
 
 function analyzeReportOrThrow(rootPath: string): AnalyzeReport {
   const outcome = analyzeDirectoryUseCase.execute({ analyzeRootPath: rootPath });

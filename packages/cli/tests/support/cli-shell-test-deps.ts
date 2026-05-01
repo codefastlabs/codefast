@@ -1,4 +1,4 @@
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import { CliExecutorService } from "#/shell/application/services/cli-executor.service";
 import { CliVerboseDiagnosticsService } from "#/shell/application/services/cli-verbose-diagnostics.service";
 import { FormatAppErrorService } from "#/shell/application/services/format-app-error.service";
@@ -8,7 +8,7 @@ import type { CliExecutor } from "#/shell/application/coordination/cli-executor.
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
 
-export function createShellCliTestGraph(logger: CliLogger): {
+export function createShellCliTestGraph(logger: CliLoggerPort): {
   readonly schemaValidation: CliSchemaParsing;
   readonly globalCliOptions: GlobalCliOptionsParsePort;
   readonly cliExecutor: CliExecutor;

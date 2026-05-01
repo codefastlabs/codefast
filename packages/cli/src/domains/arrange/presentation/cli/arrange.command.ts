@@ -1,11 +1,11 @@
 import { inject, injectable } from "@codefast/di";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.port";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.port";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.port";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.port";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
 import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
 import type { ArrangeSuggestGroupsOutput } from "#/domains/arrange/contracts/models";
-import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.port";
+import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import {
   AnalyzeDirectoryUseCaseToken,
   GroupFilePreviewPortToken,
@@ -26,22 +26,22 @@ import {
 } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import {
   CliExecutorToken,
-  CliLoggerToken,
+  CliLoggerPortToken,
   CliRuntimeToken,
   CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type {
-  CliCommand,
+  CliCommandPort,
   CliCommandTree,
 } from "#/shell/application/ports/primary/cli-command.port";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 
 @injectable([
-  inject(CliLoggerToken),
+  inject(CliLoggerPortToken),
   inject(CliRuntimeToken),
   inject(PrepareArrangeWorkspaceUseCaseToken),
   inject(AnalyzeDirectoryUseCaseToken),
@@ -52,10 +52,10 @@ import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
 ])
-export class ArrangeCommand implements CliCommand {
+export class ArrangeCommand implements CliCommandPort {
   constructor(
-    private readonly logger: CliLogger,
-    private readonly runtime: CliRuntime,
+    private readonly logger: CliLoggerPort,
+    private readonly runtime: CliRuntimePort,
     private readonly prepareWorkspace: PrepareArrangeWorkspaceUseCase,
     private readonly analyzeDirectory: AnalyzeDirectoryUseCase,
     private readonly runArrangeSync: RunArrangeSyncUseCase,

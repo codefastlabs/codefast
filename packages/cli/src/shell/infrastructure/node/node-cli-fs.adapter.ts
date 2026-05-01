@@ -5,11 +5,11 @@ import { injectable } from "@codefast/di";
 import type {
   CliDirectoryEntry,
   CliFileEncoding,
-  CliFs,
-} from "#/shell/application/ports/outbound/cli-io.port";
+  CliFilesystemPort,
+} from "#/shell/application/ports/outbound/cli-fs.port";
 
 @injectable([])
-export class NodeCliFsAdapter implements CliFs {
+export class NodeCliFsAdapter implements CliFilesystemPort {
   private canonicalPathSyncNode(inputPath: string): string {
     try {
       return fsSync.realpathSync.native(inputPath);

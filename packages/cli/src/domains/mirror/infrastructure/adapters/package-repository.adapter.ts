@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
-import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
+import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
 import type {
   ExportMapData,
@@ -10,9 +10,9 @@ import type {
 import { resolvePackageDisplayName } from "#/domains/mirror/domain/package-display-name.policy";
 import { writePackageJsonExportsAtomic } from "#/domains/mirror/infrastructure/package-json-exports.repository";
 
-@injectable([inject(CliFsToken)])
+@injectable([inject(CliFilesystemPortToken)])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {
-  constructor(private readonly fs: CliFs) {}
+  constructor(private readonly fs: CliFilesystemPort) {}
 
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string {
     return resolvePackageDisplayName(packageJson, folderBasename);

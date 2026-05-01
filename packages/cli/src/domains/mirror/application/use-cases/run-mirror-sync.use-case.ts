@@ -8,9 +8,9 @@ import {
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import {
-  CliLoggerToken,
+  CliLoggerPortToken,
   WorkspacePackageLayoutPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type {
@@ -29,10 +29,10 @@ import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-obj
 import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/outbound/mirror-package-path.port";
 import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/outbound/sync-workspace-package.port";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
 
 @injectable([
-  inject(CliLoggerToken),
+  inject(CliLoggerPortToken),
   inject(MirrorPackagePathPortToken),
   inject(WorkspacePackageLayoutPortToken),
   inject(MirrorSyncReporterPortToken),
@@ -40,7 +40,7 @@ import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/in
 ])
 export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
   constructor(
-    private readonly logger: CliLogger,
+    private readonly logger: CliLoggerPort,
     private readonly mirrorPackagePath: MirrorPackagePathPort,
     private readonly workspacePackageLayout: WorkspacePackageLayoutPort,
     private readonly mirrorReporter: MirrorSyncReporterPort,

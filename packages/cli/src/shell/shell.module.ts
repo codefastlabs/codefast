@@ -10,10 +10,10 @@ import { ConfigWarningReporterAdapter } from "#/domains/config/infrastructure/ad
 import { LoadCodefastConfigUseCaseImpl } from "#/shell/application/use-cases/load-codefast-config.use-case";
 import {
   CliExecutorToken,
-  CliFsToken,
-  CliLoggerToken,
-  CliPathToken,
-  CliPortTelemetryPortToken,
+  CliFilesystemPortToken,
+  CliLoggerPortToken,
+  CliPathPortToken,
+  CliTelemetryPortToken,
   CliRuntimeToken,
   CliVerboseDiagnosticsPortToken,
   FormatAppErrorPortToken,
@@ -34,25 +34,25 @@ import { NodeCliFsAdapter } from "#/shell/infrastructure/node/node-cli-fs.adapte
 import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node/node-cli-logger.adapter";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
 import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node/node-cli-runtime.adapter";
-import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
+import { CliTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
 import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/typescript-source-file-walker.service";
 import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
 import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
 
 /** Cross-cutting CLI IO, repo root discovery, telemetry, and `codefast.config` loading. */
 export const ShellInfrastructureModule = Module.create("shell-infrastructure", (moduleBuilder) => {
-  moduleBuilder.bind(CliPathToken).to(NodeCliPathAdapter).singleton();
+  moduleBuilder.bind(CliPathPortToken).to(NodeCliPathAdapter).singleton();
 
-  moduleBuilder.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
-  moduleBuilder.bind(CliPortTelemetryPortToken).to(CliPortTelemetryService).singleton();
+  moduleBuilder.bind(CliLoggerPortToken).to(NodeCliLoggerAdapter).singleton();
+  moduleBuilder.bind(CliTelemetryPortToken).to(CliTelemetryService).singleton();
   moduleBuilder.bind(CliRuntimeToken).to(NodeCliRuntimeAdapter).singleton();
   moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolver).singleton();
 
   moduleBuilder
-    .bind(CliFsToken)
+    .bind(CliFilesystemPortToken)
     .to(NodeCliFsAdapter)
     .singleton()
-    .onActivation(createOptionalCliPortTelemetryActivation(CliFsToken));
+    .onActivation(createOptionalCliPortTelemetryActivation(CliFilesystemPortToken));
 
   moduleBuilder.bind(CodefastConfigSchemaPortToken).to(ZodCodefastConfigSchemaAdapter).singleton();
 

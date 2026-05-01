@@ -1,4 +1,4 @@
-import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import type { ArrangeRunResult } from "#/domains/arrange/domain/types.domain";
 
@@ -7,7 +7,7 @@ export function exitCodeForArrangeSyncResult(result: ArrangeRunResult): number {
 }
 
 export function presentArrangeSyncResult(
-  logger: CliLogger,
+  logger: CliLoggerPort,
   result: ArrangeRunResult,
   write: boolean,
 ): number {
