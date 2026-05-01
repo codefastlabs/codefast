@@ -3,7 +3,7 @@ import { inject, injectable } from "@codefast/di";
 import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
-import { isDirentList } from "#/domains/mirror/infrastructure/dirent-list.guard";
+import { isDirentList } from "#/domains/mirror/infrastructure/adapters/dirent-list.guard";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
 
 @injectable([inject(CliFilesystemPortToken)])

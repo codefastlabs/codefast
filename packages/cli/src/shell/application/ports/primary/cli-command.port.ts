@@ -20,7 +20,7 @@ export type CliCommandRouteWire =
     }>
   | Readonly<{ kind: "synonymousBooleanAliases"; commaJoinedFlags: string; helpBlurb: string }>;
 
-/** Declarative command tree consumed by `#/shell/adapters/commander/...`. */
+/** Declarative command tree consumed by `#/shell/infrastructure/commander/...`. */
 export type CliCommandTree = Readonly<{
   name: string;
   description: string;

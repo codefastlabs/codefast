@@ -34,19 +34,19 @@ import { NodeCliFsAdapter } from "#/shell/infrastructure/node/node-cli-fs.adapte
 import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node/node-cli-logger.adapter";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
 import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node/node-cli-runtime.adapter";
-import { CliTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
-import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/typescript-source-file-walker.adapter";
+import { CliTelemetryAdapter } from "#/shell/infrastructure/telemetry/cli-telemetry.adapter";
+import { TypeScriptSourceFileWalkerAdapter } from "#/shell/infrastructure/typescript-source-file-walker.adapter";
 import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
-import { RepoRootResolver } from "#/shell/infrastructure/repo-root-resolver.adapter";
+import { RepoRootResolverAdapter } from "#/shell/infrastructure/repo-root-resolver.adapter";
 
 /** Cross-cutting CLI IO, repo root discovery, telemetry, and `codefast.config` loading. */
 export const ShellInfrastructureModule = Module.create("shell-infrastructure", (moduleBuilder) => {
   moduleBuilder.bind(CliPathPortToken).to(NodeCliPathAdapter).singleton();
 
   moduleBuilder.bind(CliLoggerPortToken).to(NodeCliLoggerAdapter).singleton();
-  moduleBuilder.bind(CliTelemetryPortToken).to(CliTelemetryService).singleton();
+  moduleBuilder.bind(CliTelemetryPortToken).to(CliTelemetryAdapter).singleton();
   moduleBuilder.bind(CliRuntimeToken).to(NodeCliRuntimeAdapter).singleton();
-  moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolver).singleton();
+  moduleBuilder.bind(RepoRootResolverPortToken).to(RepoRootResolverAdapter).singleton();
 
   moduleBuilder
     .bind(CliFilesystemPortToken)
@@ -69,7 +69,7 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
 
   moduleBuilder
     .bind(TypeScriptSourceFileWalkerPortToken)
-    .to(TypeScriptSourceFileWalker)
+    .to(TypeScriptSourceFileWalkerAdapter)
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(TypeScriptSourceFileWalkerPortToken));
 

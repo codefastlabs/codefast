@@ -8,7 +8,7 @@ import type {
   PackageJsonShape,
 } from "#/domains/mirror/domain/types.domain";
 import { resolvePackageDisplayName } from "#/domains/mirror/domain/package-display-name.policy";
-import { writePackageJsonExportsAtomic } from "#/domains/mirror/infrastructure/package-json-exports.repository";
+import { writePackageJsonExportsAtomic } from "#/domains/mirror/infrastructure/adapters/package-json-exports.repository";
 
 @injectable([inject(CliFilesystemPortToken)])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {

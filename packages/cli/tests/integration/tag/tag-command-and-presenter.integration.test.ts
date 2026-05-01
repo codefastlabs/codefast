@@ -126,7 +126,7 @@ function createDeps(): TagDeps {
 }
 
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
-import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
+import { CommanderCliHostAdapter } from "#/shell/infrastructure/commander/commander-cli-host.adapter";
 
 function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program: Command } {
   const shell = createShellCliTestGraph(deps.logger);

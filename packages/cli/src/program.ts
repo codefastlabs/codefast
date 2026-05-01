@@ -4,7 +4,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { createCliRuntimeContainer, resolveCliCommands } from "#/bootstrap/composition-root";
-import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
+import { CommanderCliHostAdapter } from "#/shell/infrastructure/commander/commander-cli-host.adapter";
 import type { CliCommandPort } from "#/shell/application/ports/primary/cli-command.port";
 
 function readVersion(): string {

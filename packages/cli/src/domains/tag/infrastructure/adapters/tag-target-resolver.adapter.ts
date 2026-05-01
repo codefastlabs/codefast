@@ -14,7 +14,7 @@ import type { TagTargetCandidate } from "#/domains/tag/domain/types.domain";
  * Finds eligible workspace tagging targets via {@link WorkspacePackageLayoutPort}, explicit paths, or `src/` fallback.
  */
 @injectable([inject(CliFilesystemPortToken), inject(WorkspacePackageLayoutPortToken)])
-export class TagEligibleWorkspacePathsAdapter implements TagEligibleWorkspacePathsPort {
+export class TagTargetResolverAdapter implements TagEligibleWorkspacePathsPort {
   private readonly packageJsonFileName = "package.json";
 
   private readonly packageJsonNameSchema = z.looseObject({

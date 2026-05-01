@@ -1,9 +1,9 @@
 import { Module } from "@codefast/di";
-import { TagEligibleWorkspacePathsAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-resolver.adapter";
+import { TagTargetResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-resolver.adapter";
 import { TagSinceWriterAdapter } from "#/domains/tag/infrastructure/adapters/tag-since-writer.adapter";
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
 import { TagTargetPathResolverService } from "#/domains/tag/application/services/tag-target-path-resolver.service";
-import { TagTargetRunnerServiceImpl } from "#/domains/tag/infrastructure/filesystem/tag-target-runner.adapter";
+import { TagTargetRunnerServiceImpl } from "#/domains/tag/infrastructure/adapters/tag-target-runner.adapter";
 import { PrepareTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
 import { RunTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
 import {
@@ -27,7 +27,7 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
 
   moduleBuilder
     .bind(TagEligibleWorkspacePathsPortToken)
-    .to(TagEligibleWorkspacePathsAdapter)
+    .to(TagTargetResolverAdapter)
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(TagEligibleWorkspacePathsPortToken));
 
