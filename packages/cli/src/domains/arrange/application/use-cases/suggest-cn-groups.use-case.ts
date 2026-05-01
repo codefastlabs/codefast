@@ -7,10 +7,10 @@ import {
   formatArray,
   formatCnCall,
 } from "#/domains/arrange/domain/source-text-formatters.formatter";
-import type { SuggestCnGroupsUseCasePort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
+import type { SuggestCnGroupsPort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.port";
 
 @injectable([inject(TailwindGroupingServiceToken)])
-export class SuggestCnGroupsUseCase implements SuggestCnGroupsUseCasePort {
+export class SuggestCnGroupsUseCase implements SuggestCnGroupsPort {
   constructor(private readonly grouping: TailwindGroupingService) {}
 
   execute(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput {

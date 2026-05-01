@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
-import type { LoadCodefastConfigUseCasePort } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
+import type { LoadCodefastConfigPort } from "#/shell/application/ports/inbound/load-codefast-config.port";
 import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
@@ -11,18 +11,18 @@ import type { TagCommandPrelude } from "#/domains/tag/contracts/models";
 import type { AppError } from "#/shell/domain/errors.domain";
 import type { TagTargetPathResolverPort } from "#/domains/tag/application/ports/outbound/tag-target-path-resolver.port";
 import { TagTargetPathResolverPortToken } from "#/domains/tag/composition/tokens";
-import type { PrepareTagSyncUseCasePort } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
+import type { PrepareTagSyncPort } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.port";
 
 @injectable([
   inject(TagTargetPathResolverPortToken),
   inject(RepoRootResolverPortToken),
   inject(LoadCodefastConfigUseCaseToken),
 ])
-export class PrepareTagSyncUseCase implements PrepareTagSyncUseCasePort {
+export class PrepareTagSyncUseCase implements PrepareTagSyncPort {
   constructor(
     private readonly tagInvocationTargetResolver: TagTargetPathResolverPort,
     private readonly repoRootResolver: RepoRootResolverPort,
-    private readonly loadCodefastConfig: LoadCodefastConfigUseCasePort,
+    private readonly loadCodefastConfig: LoadCodefastConfigPort,
   ) {}
 
   private resolveTagWorkspaceRootPath(currentWorkingDirectory: string): string {

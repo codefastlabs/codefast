@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import type { GlobalCliOptions } from "#/shell/application/global-cli-options.model";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
-import type { LoadCodefastConfigUseCasePort } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
+import type { LoadCodefastConfigPort } from "#/shell/application/ports/inbound/load-codefast-config.port";
 import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
@@ -13,18 +13,18 @@ import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { PrepareMirrorSyncUseCasePort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.use-case";
+import type { PrepareMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
 
 @injectable([
   inject(MirrorPackagePathPortToken),
   inject(RepoRootResolverPortToken),
   inject(LoadCodefastConfigUseCaseToken),
 ])
-export class PrepareMirrorSyncUseCase implements PrepareMirrorSyncUseCasePort {
+export class PrepareMirrorSyncUseCase implements PrepareMirrorSyncPort {
   constructor(
     private readonly mirrorPackagePath: MirrorPackagePathPort,
     private readonly repoRootResolver: RepoRootResolverPort,
-    private readonly loadCodefastConfig: LoadCodefastConfigUseCasePort,
+    private readonly loadCodefastConfig: LoadCodefastConfigPort,
   ) {}
 
   async execute(args: {

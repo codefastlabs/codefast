@@ -29,7 +29,7 @@ import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-obj
 import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/outbound/mirror-package-path.port";
 import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/outbound/sync-workspace-package.port";
-import type { RunMirrorSyncUseCasePort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.use-case";
+import type { RunMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
 
 @injectable([
   inject(CliLoggerPortToken),
@@ -38,7 +38,7 @@ import type { RunMirrorSyncUseCasePort } from "#/domains/mirror/application/port
   inject(MirrorSyncReporterPortToken),
   inject(SyncWorkspacePackagePortToken),
 ])
-export class RunMirrorSyncUseCase implements RunMirrorSyncUseCasePort {
+export class RunMirrorSyncUseCase implements RunMirrorSyncPort {
   constructor(
     private readonly logger: CliLoggerPort,
     private readonly mirrorPackagePath: MirrorPackagePathPort,

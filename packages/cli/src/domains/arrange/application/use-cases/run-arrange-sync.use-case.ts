@@ -16,10 +16,10 @@ import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.
 import type { ArrangeSyncRunRequest } from "#/domains/arrange/application/requests/arrange-sync.request";
 import type { ArrangeRunResult } from "#/domains/arrange/domain/types.domain";
 import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.domain-service";
-import type { RunArrangeSyncUseCasePort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
+import type { RunArrangeSyncPort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.port";
 
 @injectable([inject(ArrangeTargetScannerPortToken), inject(ArrangeFileProcessorPortToken)])
-export class RunArrangeSyncUseCase implements RunArrangeSyncUseCasePort {
+export class RunArrangeSyncUseCase implements RunArrangeSyncPort {
   constructor(
     private readonly targetScanner: ArrangeTargetScannerPort,
     private readonly fileProcessor: ArrangeFileProcessorPort,
