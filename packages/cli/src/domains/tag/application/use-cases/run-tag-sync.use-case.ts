@@ -12,11 +12,11 @@ import type {
   CodefastAfterWriteHook,
   CodefastTagConfig,
 } from "#/domains/config/domain/schema.domain";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/path.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
 import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { TagTargetResolverPort } from "#/domains/tag/application/ports/target-resolver.port";
+import type { TagTargetResolverPort } from "#/domains/tag/application/outbound/target-resolver.outbound-port";
 import type {
   TagFileResult,
   TagProgressListener,
@@ -26,10 +26,7 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/domains/tag/domain/types.domain";
-
-export interface RunTagSyncUseCase {
-  execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>>;
-}
+import type { RunTagSyncUseCase } from "#/domains/tag/application/inbound/run-tag-sync.use-case";
 
 /**
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.

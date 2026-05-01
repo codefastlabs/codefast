@@ -1,13 +1,13 @@
 import { inject, injectable } from "@codefast/di";
 import path from "node:path";
 import { z } from "zod";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { WorkspacePackageLayoutPort } from "#/shell/application/ports/workspace-package-layout.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { WorkspacePackageLayoutPort } from "#/shell/application/outbound/workspace-package-layout.outbound-port";
 import {
   CliFsToken,
   WorkspacePackageLayoutPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { TagTargetResolverPort } from "#/domains/tag/application/ports/target-resolver.port";
+import type { TagTargetResolverPort } from "#/domains/tag/application/outbound/target-resolver.outbound-port";
 import type { TagTargetCandidate } from "#/domains/tag/domain/types.domain";
 
 /**

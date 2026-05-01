@@ -1,26 +1,19 @@
 import { inject, injectable } from "@codefast/di";
 import type { GlobalCliOptions } from "#/shell/application/global-cli-options.model";
-import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
+import type { RepoRootResolverPort } from "#/shell/application/outbound/repo-root-resolver.outbound-port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/inbound/load-codefast-config.use-case";
 import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { MirrorSyncCommandPrelude } from "#/domains/mirror/contracts/models";
-import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/mirror-package-path.port";
+import type { MirrorPackagePathPort } from "#/domains/mirror/application/outbound/mirror-package-path.outbound-port";
 import { MirrorPackagePathPortToken } from "#/domains/mirror/contracts/tokens";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-
-export interface PrepareMirrorSyncUseCase {
-  execute(args: {
-    readonly currentWorkingDirectory: string;
-    readonly packageArg: string | undefined;
-    readonly globals: GlobalCliOptions;
-  }): Promise<Result<MirrorSyncCommandPrelude, AppError>>;
-}
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/inbound/prepare-mirror-sync.use-case";
 
 @injectable([
   inject(MirrorPackagePathPortToken),

@@ -2,7 +2,7 @@ import type { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 
 /**
- * Application port: resolve mirror package paths strictly under the monorepo root.
+ * Resolve mirror package paths strictly under the monorepo root.
  * Covers CLI prelude arguments and programmatic single-package sync filters.
  */
 export interface MirrorPackagePathPort {

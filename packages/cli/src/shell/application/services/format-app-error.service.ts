@@ -1,6 +1,6 @@
 import { injectable } from "@codefast/di";
 import type { AppError } from "#/shell/domain/errors.domain";
-import type { FormatAppErrorPort } from "#/shell/application/ports/format-app-error.port";
+import type { FormatAppErrorPort } from "#/shell/application/outbound/format-app-error.outbound-port";
 
 @injectable()
 export class FormatAppErrorService implements FormatAppErrorPort {

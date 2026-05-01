@@ -1,7 +1,7 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/typescript-source-file-walker.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/outbound/typescript-source-file-walker.outbound-port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFsToken)])

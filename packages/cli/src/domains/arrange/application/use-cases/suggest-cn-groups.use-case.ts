@@ -7,10 +7,7 @@ import {
   formatArray,
   formatCnCall,
 } from "#/domains/arrange/domain/source-text-formatters.formatter";
-
-export interface SuggestCnGroupsUseCase {
-  execute(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput;
-}
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/inbound/suggest-cn-groups.use-case";
 
 @injectable([inject(TailwindGroupingServiceToken)])
 export class SuggestCnGroupsUseCaseImpl implements SuggestCnGroupsUseCase {

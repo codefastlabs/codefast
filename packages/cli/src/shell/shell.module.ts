@@ -7,9 +7,9 @@ import {
 import { ZodCodefastConfigSchemaAdapter } from "#/domains/config/infrastructure/adapters/zod-codefast-config-schema.adapter";
 import { ConfigLoaderAdapterImpl } from "#/domains/config/infrastructure/adapters/config-loader.adapter";
 import { ConfigWarningReporterAdapter } from "#/domains/config/infrastructure/adapters/config-warning-reporter.adapter";
-import { LoadCodefastConfigUseCaseImpl } from "#/shell/application/load-codefast-config.use-case";
+import { LoadCodefastConfigUseCaseImpl } from "#/shell/application/use-cases/load-codefast-config.use-case";
 import {
-  CliExecutorPortToken,
+  CliExecutorToken,
   CliFsToken,
   CliLoggerToken,
   CliPathToken,
@@ -20,7 +20,7 @@ import {
   GlobalCliOptionsParsePortToken,
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
-  SchemaValidationPortToken,
+  CliSchemaParsingToken,
   TypeScriptSourceFileWalkerPortToken,
   WorkspacePackageLayoutPortToken,
 } from "#/shell/application/cli-runtime.tokens";
@@ -56,10 +56,10 @@ export const ShellInfrastructureModule = Module.create("shell-infrastructure", (
 
   moduleBuilder.bind(CodefastConfigSchemaPortToken).to(ZodCodefastConfigSchemaAdapter).singleton();
 
-  moduleBuilder.bind(SchemaValidationPortToken).to(SchemaValidationService).singleton();
+  moduleBuilder.bind(CliSchemaParsingToken).to(SchemaValidationService).singleton();
   moduleBuilder.bind(FormatAppErrorPortToken).to(FormatAppErrorService).singleton();
   moduleBuilder.bind(CliVerboseDiagnosticsPortToken).to(CliVerboseDiagnosticsService).singleton();
-  moduleBuilder.bind(CliExecutorPortToken).to(CliExecutorService).singleton();
+  moduleBuilder.bind(CliExecutorToken).to(CliExecutorService).singleton();
   moduleBuilder.bind(GlobalCliOptionsParsePortToken).to(GlobalCliOptionsParser).singleton();
 
   moduleBuilder

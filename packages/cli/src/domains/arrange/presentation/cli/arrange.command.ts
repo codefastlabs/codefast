@@ -10,11 +10,11 @@ import {
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/domains/arrange/contracts/tokens";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
-import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/group-file-preview.port";
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/inbound/prepare-arrange-workspace.use-case";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/inbound/analyze-directory.use-case";
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/inbound/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/inbound/suggest-cn-groups.use-case";
+import type { GroupFilePreviewPort } from "#/domains/arrange/application/outbound/group-file-preview.outbound-port";
 import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
@@ -28,15 +28,15 @@ import {
 } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
-import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
-import type { SchemaValidationPort } from "#/shell/application/ports/schema-validation.port";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
+import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
 import {
-  CliExecutorPortToken,
+  CliExecutorToken,
   CliLoggerToken,
   CliRuntimeToken,
-  SchemaValidationPortToken,
+  CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([
@@ -48,8 +48,8 @@ import {
   inject(SuggestCnGroupsUseCaseToken),
   inject(PresentAnalyzeReportPresenterToken),
   inject(GroupFilePreviewPortToken),
-  inject(SchemaValidationPortToken),
-  inject(CliExecutorPortToken),
+  inject(CliSchemaParsingToken),
+  inject(CliExecutorToken),
 ])
 export class ArrangeCommand implements CliCommand {
   readonly name = CLI_COMMAND_SLOT_NAME.arrange;
@@ -64,8 +64,8 @@ export class ArrangeCommand implements CliCommand {
     private readonly suggestCnGroups: SuggestCnGroupsUseCase,
     private readonly presentAnalyzeReport: PresentAnalyzeReportPresenter,
     private readonly groupFilePreview: GroupFilePreviewPort,
-    private readonly schemaValidation: SchemaValidationPort,
-    private readonly cliExecutor: CliExecutorPort,
+    private readonly schemaValidation: CliSchemaParsing,
+    private readonly cliExecutor: CliExecutor,
   ) {}
 
   private withClassNameOption(): Option {

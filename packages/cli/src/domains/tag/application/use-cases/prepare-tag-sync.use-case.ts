@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
-import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
+import type { RepoRootResolverPort } from "#/shell/application/outbound/repo-root-resolver.outbound-port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/inbound/load-codefast-config.use-case";
 import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
@@ -11,13 +11,7 @@ import type { TagCommandPrelude } from "#/domains/tag/contracts/models";
 import type { AppError } from "#/shell/domain/errors.domain";
 import type { TagCliTargetPathResolverService } from "#/domains/tag/contracts/services.contract";
 import { TagCliTargetPathResolverServiceToken } from "#/domains/tag/contracts/tokens";
-
-export interface PrepareTagSyncUseCase {
-  execute(args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  }): Promise<Result<TagCommandPrelude, AppError>>;
-}
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/inbound/prepare-tag-sync.use-case";
 
 @injectable([
   inject(TagCliTargetPathResolverServiceToken),

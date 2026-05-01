@@ -1,12 +1,12 @@
 import ts from "typescript";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import {
   applyEditsDescending,
   indentOfLineContaining,
 } from "#/shell/domain/source-text-edit.support";
-import type { TagSinceWriterPort } from "#/domains/tag/application/ports/tag-since-writer.port";
+import type { TagSinceWriterPort } from "#/domains/tag/application/outbound/tag-since-writer.outbound-port";
 import type { TagFileResult } from "#/domains/tag/domain/types.domain";
 
 type TextEdit = {

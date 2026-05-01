@@ -1,4 +1,4 @@
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CLI_EXIT_GENERAL_ERROR } from "#/shell/domain/cli-exit-codes.domain";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
 import type {

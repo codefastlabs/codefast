@@ -1,4 +1,4 @@
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import { MirrorError, MirrorErrorCode } from "#/domains/mirror/domain/errors.domain";
 import type {

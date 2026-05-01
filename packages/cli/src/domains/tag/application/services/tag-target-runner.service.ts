@@ -1,14 +1,14 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/path.port";
-import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/typescript-source-file-walker.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
+import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/outbound/typescript-source-file-walker.outbound-port";
 import {
   CliFsToken,
   CliPathToken,
   TypeScriptSourceFileWalkerPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { TagSinceWriterPort } from "#/domains/tag/application/ports/tag-since-writer.port";
-import type { TagVersionResolverPort } from "#/domains/tag/application/ports/tag-version-resolver.port";
+import type { TagSinceWriterPort } from "#/domains/tag/application/outbound/tag-since-writer.outbound-port";
+import type { TagVersionResolverPort } from "#/domains/tag/application/outbound/tag-version-resolver.outbound-port";
 import type { TagTargetRunnerService } from "#/domains/tag/contracts/services.contract";
 import {
   TagSinceWriterPortToken,

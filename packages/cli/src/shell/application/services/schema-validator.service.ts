@@ -3,9 +3,11 @@ import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import type {
-  SchemaValidationPort,
+  CliSchemaParsing,
   SchemaValidator,
-} from "#/shell/application/ports/schema-validation.port";
+} from "#/shell/application/coordination/cli-schema-parsing.coordination";
+
+/** Implements {@link CliSchemaParsing} — driving-adapter coordination, not outbound to IO. */
 
 type SchemaIssue = {
   readonly path: readonly PropertyKey[];
@@ -13,7 +15,7 @@ type SchemaIssue = {
 };
 
 @injectable()
-export class SchemaValidationService implements SchemaValidationPort {
+export class SchemaValidationService implements CliSchemaParsing {
   private formatSchemaIssues(issues: readonly SchemaIssue[]): string {
     return issues
       .map((issue) => {
