@@ -26,7 +26,14 @@ export default defineConfig({
     },
     environment: "node",
     globals: true,
-    include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
+    /**
+     * Split layout matches monorepo convention (`test:unit` / `test:integration` in package.json).
+     * Default `pnpm test` still runs both via this array.
+     */
+    include: [
+      "tests/unit/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/integration/**/*.test.?(c|m)[jt]s?(x)",
+    ],
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
   },

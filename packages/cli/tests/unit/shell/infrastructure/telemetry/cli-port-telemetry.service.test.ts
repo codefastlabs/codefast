@@ -1,6 +1,6 @@
 import { CliTelemetryAdapter } from "#/shell/infrastructure/telemetry/cli-telemetry.adapter";
 
-describe("CliTelemetryAdapter integration", () => {
+describe("CliTelemetryAdapter", () => {
   let telemetry: CliTelemetryAdapter;
 
   beforeEach(() => {

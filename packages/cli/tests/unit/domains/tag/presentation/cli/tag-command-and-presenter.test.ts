@@ -150,7 +150,7 @@ function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program:
   return { command, program };
 }
 
-describe("TagCommand + tag presenter integration", () => {
+describe("TagCommand + tag presenter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.exitCode = undefined;

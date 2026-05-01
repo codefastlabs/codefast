@@ -91,7 +91,7 @@ function createCommandAndProgram(deps: MirrorDeps): { command: MirrorCommand; pr
   return { command, program };
 }
 
-describe("MirrorCommand integration", () => {
+describe("MirrorCommand", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.exitCode = undefined;

@@ -44,7 +44,7 @@ function exitCodeForArrangeSyncResultForTest(result: { hookError: string | null 
   return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
 }
 
-describe("arrange presenters integration", () => {
+describe("arrange presenters", () => {
   it("prints analyze report with truncation markers", () => {
     const logger = createLoggerMock();
     const presenter = new PresentAnalyzeReportPresenter(logger);
