@@ -15,7 +15,7 @@ type SchemaIssue = {
 };
 
 @injectable()
-export class SchemaValidationService implements CliSchemaParsing {
+export class SchemaValidatorService implements CliSchemaParsing {
   private formatSchemaIssues(issues: readonly SchemaIssue[]): string {
     return issues
       .map((issue) => {

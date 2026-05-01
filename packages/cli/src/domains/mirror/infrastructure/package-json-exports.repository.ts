@@ -8,56 +8,6 @@ import type {
 } from "#/domains/mirror/domain/types.domain";
 import { PACKAGE_JSON_EXPORT } from "#/domains/mirror/domain/constants.domain";
 
-function containsDistTarget(value: unknown): boolean {
-  if (typeof value === "string") {
-    return value.startsWith("./dist/");
-  }
-  if (Array.isArray(value)) {
-    return value.some((entryValue) => containsDistTarget(entryValue));
-  }
-  if (value && typeof value === "object") {
-    return Object.values(value).some((entryValue) => containsDistTarget(entryValue));
-  }
-  return false;
-}
-
-/**
- * Keep `./package.json` at the very end for aesthetics by default.
- * If a catch-all `./*` exists, move `./package.json` before wildcards so it remains reachable.
- */
-function exportSpecifierRank(exportSpecifier: string, hasCatchAllWildcard: boolean): number {
-  if (exportSpecifier === ".") {
-    return 0;
-  }
-  if (exportSpecifier === PACKAGE_JSON_EXPORT) {
-    return hasCatchAllWildcard ? 2 : 4;
-  }
-  if (exportSpecifier.includes("*")) {
-    return 3;
-  }
-  return 1;
-}
-
-function compareExportSpecifiers(
-  leftSpecifier: string,
-  rightSpecifier: string,
-  originalPathBySpecifier: ExportOriginalPathBySpecifier,
-  hasCatchAllWildcard: boolean,
-): number {
-  const leftRank = exportSpecifierRank(leftSpecifier, hasCatchAllWildcard);
-  const rightRank = exportSpecifierRank(rightSpecifier, hasCatchAllWildcard);
-  if (leftRank !== rightRank) {
-    return leftRank - rightRank;
-  }
-  const leftOriginalPath = originalPathBySpecifier[leftSpecifier] ?? leftSpecifier;
-  const rightOriginalPath = originalPathBySpecifier[rightSpecifier] ?? rightSpecifier;
-  const originalPathComparison = leftOriginalPath.localeCompare(rightOriginalPath);
-  if (originalPathComparison !== 0) {
-    return originalPathComparison;
-  }
-  return leftSpecifier.localeCompare(rightSpecifier);
-}
-
 /**
  * Writes `exports` into `package.json` via a temp file + rename (atomic on same volume).
  * Preserves a trailing newline after JSON.
@@ -71,6 +21,56 @@ export async function writePackageJsonExportsAtomic(
     originalPathBySpecifier: ExportOriginalPathBySpecifier;
   },
 ): Promise<{ prunedKeys: string[] }> {
+  function containsDistTarget(value: unknown): boolean {
+    if (typeof value === "string") {
+      return value.startsWith("./dist/");
+    }
+    if (Array.isArray(value)) {
+      return value.some((entryValue) => containsDistTarget(entryValue));
+    }
+    if (value && typeof value === "object") {
+      return Object.values(value).some((entryValue) => containsDistTarget(entryValue));
+    }
+    return false;
+  }
+
+  /**
+   * Keep `./package.json` at the very end for aesthetics by default.
+   * If a catch-all `./*` exists, move `./package.json` before wildcards so it remains reachable.
+   */
+  function exportSpecifierRank(exportSpecifier: string, hasCatchAllWildcard: boolean): number {
+    if (exportSpecifier === ".") {
+      return 0;
+    }
+    if (exportSpecifier === PACKAGE_JSON_EXPORT) {
+      return hasCatchAllWildcard ? 2 : 4;
+    }
+    if (exportSpecifier.includes("*")) {
+      return 3;
+    }
+    return 1;
+  }
+
+  function compareExportSpecifiers(
+    leftSpecifier: string,
+    rightSpecifier: string,
+    pathBySpecifier: ExportOriginalPathBySpecifier,
+    hasCatchAllWildcard: boolean,
+  ): number {
+    const leftRank = exportSpecifierRank(leftSpecifier, hasCatchAllWildcard);
+    const rightRank = exportSpecifierRank(rightSpecifier, hasCatchAllWildcard);
+    if (leftRank !== rightRank) {
+      return leftRank - rightRank;
+    }
+    const leftOriginalPath = pathBySpecifier[leftSpecifier] ?? leftSpecifier;
+    const rightOriginalPath = pathBySpecifier[rightSpecifier] ?? rightSpecifier;
+    const originalPathComparison = leftOriginalPath.localeCompare(rightOriginalPath);
+    if (originalPathComparison !== 0) {
+      return originalPathComparison;
+    }
+    return leftSpecifier.localeCompare(rightSpecifier);
+  }
+
   const raw = await fs.readFile(packageJsonPath, "utf8");
   const packageJson = JSON.parse(raw) as PackageJsonShape;
 

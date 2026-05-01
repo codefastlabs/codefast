@@ -7,7 +7,7 @@ import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/
 import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
 import type { TagTargetPathResolverPort } from "#/domains/tag/application/ports/outbound/tag-target-path-resolver.port";
 import type { TagTargetRunnerPort } from "#/domains/tag/application/ports/outbound/tag-target-runner.port";
-import type { TagProgressListener } from "#/domains/tag/domain/types.domain";
+import type { PresentTagSyncProgressPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
 
 export const TagEligibleWorkspacePathsPortToken = token<TagEligibleWorkspacePathsPort>(
   "TagEligibleWorkspacePathsPort",
@@ -30,4 +30,6 @@ export const PresentTagSyncResultPresenterToken = token<PresentTagSyncResultPres
   "PresentTagSyncResultPresenter",
 );
 
-export const TagSyncProgressListenerToken = token<TagProgressListener>("TagSyncProgressListener");
+export const PresentTagSyncProgressPresenterToken = token<PresentTagSyncProgressPresenter>(
+  "PresentTagSyncProgressPresenter",
+);

@@ -15,7 +15,7 @@ import type { ArrangeAnalyzeDirectoryRequest } from "#/domains/arrange/applicati
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
-} from "#/domains/arrange/domain/arrange-analyze.service";
+} from "#/domains/arrange/domain/arrange-analyze.domain-service";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
 import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
 

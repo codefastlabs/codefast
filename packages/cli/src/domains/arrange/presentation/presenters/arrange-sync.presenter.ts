@@ -1,16 +1,11 @@
 import { inject, injectable } from "@codefast/di";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
-import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
+import type { PresentArrangeSyncResultPresenter as PresentArrangeSyncResultPresenterContract } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
 import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import type { ArrangeRunResult } from "#/domains/arrange/domain/types.domain";
 
-export function exitCodeForArrangeSyncResult(result: ArrangeRunResult): number {
-  return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
-}
-
 @injectable([inject(CliLoggerPortToken)])
-export class PresentArrangeSyncResultPresenterImpl implements PresentArrangeSyncResultPresenter {
+export class PresentArrangeSyncResultPresenter implements PresentArrangeSyncResultPresenterContract {
   constructor(private readonly logger: CliLoggerPort) {}
 
   present(result: ArrangeRunResult, write: boolean): void {

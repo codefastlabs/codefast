@@ -1,13 +1,13 @@
 import { Module } from "@codefast/di";
-import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
-import { ArrangeTargetPathResolver } from "#/domains/arrange/application/services/arrange-target-path-resolver.service";
-import { ArrangeTargetScannerServiceImpl } from "#/domains/arrange/infrastructure/adapters/arrange-target-scanner.adapter";
+import { ArrangeFileProcessorAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-file-processor.adapter";
+import { ArrangeTargetPathResolverAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-target-path-resolver.adapter";
+import { ArrangeTargetScannerAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-target-scanner.adapter";
 import { AnalyzeDirectoryUseCaseImpl } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { RunArrangeSyncUseCaseImpl } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
 import { SuggestCnGroupsUseCaseImpl } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
-import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/adapters/typescript-ast-translator.adapter";
+import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/typescript-ast-translator";
 import { FileWalkerAdapter } from "#/domains/arrange/infrastructure/adapters/file-walker.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
@@ -25,9 +25,9 @@ import {
   TailwindGroupingServiceToken,
 } from "#/domains/arrange/composition/tokens";
 import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.domain-service";
-import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
-import { PresentGroupFilePreviewPresenterImpl } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
-import { PresentArrangeSyncResultPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
+import { PresentAnalyzeReportPresenter } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
+import { PresentGroupFilePreviewPresenter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
+import { PresentArrangeSyncResultPresenter } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
 import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 
@@ -52,15 +52,18 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(DomainSourceParserPortToken));
 
-  moduleBuilder.bind(ArrangeTargetPathResolverPortToken).to(ArrangeTargetPathResolver).singleton();
+  moduleBuilder
+    .bind(ArrangeTargetPathResolverPortToken)
+    .to(ArrangeTargetPathResolverAdapter)
+    .singleton();
 
   moduleBuilder.bind(TailwindGroupingServiceToken).to(TailwindGroupingServiceImpl).singleton();
 
   moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 
-  moduleBuilder.bind(ArrangeTargetScannerPortToken).to(ArrangeTargetScannerServiceImpl).singleton();
+  moduleBuilder.bind(ArrangeTargetScannerPortToken).to(ArrangeTargetScannerAdapter).singleton();
 
-  moduleBuilder.bind(ArrangeFileProcessorPortToken).to(ArrangeFileProcessorServiceImpl).singleton();
+  moduleBuilder.bind(ArrangeFileProcessorPortToken).to(ArrangeFileProcessorAdapter).singleton();
 
   moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
 
@@ -73,16 +76,16 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
 
   moduleBuilder
     .bind(PresentAnalyzeReportPresenterToken)
-    .to(PresentAnalyzeReportPresenterImpl)
+    .to(PresentAnalyzeReportPresenter)
     .singleton();
 
   moduleBuilder
     .bind(PresentGroupFilePreviewPresenterToken)
-    .to(PresentGroupFilePreviewPresenterImpl)
+    .to(PresentGroupFilePreviewPresenter)
     .singleton();
 
   moduleBuilder
     .bind(PresentArrangeSyncResultPresenterToken)
-    .to(PresentArrangeSyncResultPresenterImpl)
+    .to(PresentArrangeSyncResultPresenter)
     .singleton();
 });

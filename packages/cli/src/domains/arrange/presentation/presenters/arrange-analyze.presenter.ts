@@ -5,12 +5,12 @@ import {
   MAX_REPORT_LINES,
 } from "#/domains/arrange/domain/constants.domain";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
-import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
+import type { PresentAnalyzeReportPresenter as PresentAnalyzeReportPresenterContract } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliLoggerPortToken)])
-export class PresentAnalyzeReportPresenterImpl implements PresentAnalyzeReportPresenter {
+export class PresentAnalyzeReportPresenter implements PresentAnalyzeReportPresenterContract {
   constructor(private readonly logger: CliLoggerPort) {}
 
   present(resolvedTargetPath: string, report: AnalyzeReport): void {

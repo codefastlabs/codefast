@@ -5,7 +5,7 @@ import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { TagTargetPathResolverPort } from "#/domains/tag/application/ports/outbound/tag-target-path-resolver.port";
 
 @injectable([inject(CliFilesystemPortToken)])
-export class TagTargetPathResolverService implements TagTargetPathResolverPort {
+export class TagTargetPathResolverAdapter implements TagTargetPathResolverPort {
   constructor(private readonly fs: CliFilesystemPort) {}
 
   resolveProvidedTargetPath(args: {

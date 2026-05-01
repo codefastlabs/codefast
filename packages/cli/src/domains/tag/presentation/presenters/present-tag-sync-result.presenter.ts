@@ -1,14 +1,20 @@
 import { inject, injectable } from "@codefast/di";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
-import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
+import type { PresentTagSyncResultPresenter as PresentTagSyncResultPresenterContract } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
 import type { TagResolvedTarget, TagSyncResult } from "#/domains/tag/domain/types.domain";
-import { TAG_COLORS, withTagColor } from "#/domains/tag/presentation/presenters/colors.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 import { CLI_EXIT_GENERAL_ERROR } from "#/shell/domain/cli-exit-codes.domain";
 
 @injectable([inject(CliLoggerPortToken)])
-export class PresentTagSyncResultPresenterImpl implements PresentTagSyncResultPresenter {
+export class PresentTagSyncResultPresenter implements PresentTagSyncResultPresenterContract {
+  private static readonly colorReset = "\x1b[0m";
+  private static readonly colors = {
+    red: "\x1b[31m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+  } as const;
+
   constructor(private readonly logger: CliLoggerPort) {}
 
   present(result: TagSyncResult, rootDir: string): number {
@@ -25,6 +31,10 @@ export class PresentTagSyncResultPresenterImpl implements PresentTagSyncResultPr
     }
     this.logger.out(this.formatSummary(result));
     return exitCodeForTagSyncResult(result);
+  }
+
+  private withColorizedLine(line: string, colorCode: string): string {
+    return `${colorCode}${line}${PresentTagSyncResultPresenter.colorReset}`;
   }
 
   private warningsAndErrorsFromResult(result: TagSyncResult): string[] {
@@ -72,9 +82,11 @@ export class PresentTagSyncResultPresenterImpl implements PresentTagSyncResultPr
     if (entries.length === 0) {
       return null;
     }
-    const lines = [withTagColor("⚠️ Warnings & Errors", TAG_COLORS.YELLOW)];
+    const lines = [
+      this.withColorizedLine("⚠️ Warnings & Errors", PresentTagSyncResultPresenter.colors.yellow),
+    ];
     for (const entry of entries) {
-      lines.push(withTagColor(`- ${entry}`, TAG_COLORS.RED));
+      lines.push(this.withColorizedLine(`- ${entry}`, PresentTagSyncResultPresenter.colors.red));
     }
     return lines.join("\n");
   }
@@ -90,12 +102,12 @@ export class PresentTagSyncResultPresenterImpl implements PresentTagSyncResultPr
       result.targetResults.some((targetResult) => targetResult.runError !== null) ||
       result.hookError !== null;
     const summaryColor = hasError
-      ? TAG_COLORS.RED
+      ? PresentTagSyncResultPresenter.colors.red
       : isDryRun
-        ? TAG_COLORS.YELLOW
-        : TAG_COLORS.GREEN;
+        ? PresentTagSyncResultPresenter.colors.yellow
+        : PresentTagSyncResultPresenter.colors.green;
     const lines = [
-      withTagColor(
+      this.withColorizedLine(
         `${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}`,
         summaryColor,
       ),

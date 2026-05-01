@@ -1,9 +1,9 @@
-import { PresentGroupFilePreviewPresenterImpl } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
+import { PresentGroupFilePreviewPresenter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
 
-describe("PresentGroupFilePreviewPresenterImpl integration", () => {
+describe("PresentGroupFilePreviewPresenter integration", () => {
   it("prints unwrap and grouped preview sections", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
-    const presenter = new PresentGroupFilePreviewPresenterImpl(logger);
+    const presenter = new PresentGroupFilePreviewPresenter(logger);
     const callWithReplacement = { pos: 0, end: 8, arguments: [{}, {}] };
     const skippedCall = { pos: 10, end: 18, arguments: [] };
 

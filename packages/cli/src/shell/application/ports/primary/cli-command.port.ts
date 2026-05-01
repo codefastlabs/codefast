@@ -1,8 +1,10 @@
 import type { CliLeafDispatchHandler } from "#/shell/application/ports/primary/cli-host.port";
 
 /**
- * Ordered Commander wiring for a leaf (`argument` / `option` sequences).
- * Omit when the leaf resolves to a zero-argument/zero-option entrypoint.
+ * Driver-side (inbound / primary) ports for the CLI shell: how the application is invoked from
+ * the outside world (Commander). In hexagonal terms these are the ports your driving adapters
+ * (e.g. `CommanderCliHostAdapter`) depend on — distinct from application `ports/inbound/*` use-case
+ * facades, which describe application capabilities rather than argv/Commander wiring.
  */
 export type CliCommandRouteWire =
   | Readonly<{ kind: "optionalPositional"; argumentTemplate: string; helpBlurb: string }>

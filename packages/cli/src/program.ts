@@ -3,8 +3,8 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
+import { registerCliCommandTreesOnProgram } from "#/bootstrap/register-cli-command-trees";
 import { createCliRuntimeContainer, resolveCliCommands } from "#/bootstrap/composition-root";
-import { CommanderCliHostAdapter } from "#/shell/infrastructure/commander/commander-cli-host.adapter";
 import type { CliCommandPort } from "#/shell/application/ports/primary/cli-command.port";
 
 function readVersion(): string {
@@ -29,10 +29,7 @@ function createProgram(commands: readonly CliCommandPort[]): Command {
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 
-  CommanderCliHostAdapter.registerTrees(
-    program,
-    commands.map((cliEntry) => cliEntry.definition),
-  );
+  registerCliCommandTreesOnProgram(program, commands);
 
   return program;
 }

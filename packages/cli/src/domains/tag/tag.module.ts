@@ -2,8 +2,8 @@ import { Module } from "@codefast/di";
 import { TagTargetResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-resolver.adapter";
 import { TagSinceWriterAdapter } from "#/domains/tag/infrastructure/adapters/tag-since-writer.adapter";
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
-import { TagTargetPathResolverService } from "#/domains/tag/application/services/tag-target-path-resolver.service";
-import { TagTargetRunnerServiceImpl } from "#/domains/tag/infrastructure/adapters/tag-target-runner.adapter";
+import { TagTargetPathResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-path-resolver.adapter";
+import { TagTargetRunnerAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-runner.adapter";
 import { PrepareTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
 import { RunTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
 import {
@@ -12,13 +12,13 @@ import {
   RunTagSyncUseCaseToken,
   TagEligibleWorkspacePathsPortToken,
   TagSinceWriterPortToken,
-  TagSyncProgressListenerToken,
+  PresentTagSyncProgressPresenterToken,
   TagTargetPathResolverPortToken,
   TagTargetRunnerPortToken,
   TagVersionResolverPortToken,
 } from "#/domains/tag/composition/tokens";
-import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
-import { TagSyncProgressListener } from "#/domains/tag/presentation/presenters/tag-sync-progress-listener.presenter";
+import { PresentTagSyncResultPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
+import { PresentTagSyncProgressPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-progress.presenter";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
 import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 
@@ -45,13 +45,13 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
 
   moduleBuilder
     .bind(TagTargetRunnerPortToken)
-    .to(TagTargetRunnerServiceImpl)
+    .to(TagTargetRunnerAdapter)
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(TagTargetRunnerPortToken));
 
   moduleBuilder
     .bind(TagTargetPathResolverPortToken)
-    .to(TagTargetPathResolverService)
+    .to(TagTargetPathResolverAdapter)
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(TagTargetPathResolverPortToken));
 
@@ -60,7 +60,10 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
 
   moduleBuilder
     .bind(PresentTagSyncResultPresenterToken)
-    .to(PresentTagSyncResultPresenterImpl)
+    .to(PresentTagSyncResultPresenter)
     .singleton();
-  moduleBuilder.bind(TagSyncProgressListenerToken).to(TagSyncProgressListener).singleton();
+  moduleBuilder
+    .bind(PresentTagSyncProgressPresenterToken)
+    .to(PresentTagSyncProgressPresenter)
+    .singleton();
 });

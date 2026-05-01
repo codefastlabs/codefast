@@ -11,14 +11,15 @@ import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbo
 import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
 import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
+import type { PresentTagSyncProgressPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
 import {
   PrepareTagSyncUseCaseToken,
+  PresentTagSyncProgressPresenterToken,
   PresentTagSyncResultPresenterToken,
   RunTagSyncUseCaseToken,
-  TagSyncProgressListenerToken,
 } from "#/domains/tag/composition/tokens";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
-import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
+import type { TagSyncResult } from "#/domains/tag/domain/types.domain";
 import { tagSyncRunRequestSchema } from "#/domains/tag/presentation/presenters/tag-cli.schema";
 import {
   CliExecutorToken,
@@ -32,7 +33,7 @@ import {
   inject(CliRuntimeToken),
   inject(PrepareTagSyncUseCaseToken),
   inject(RunTagSyncUseCaseToken),
-  inject(TagSyncProgressListenerToken),
+  inject(PresentTagSyncProgressPresenterToken),
   inject(PresentTagSyncResultPresenterToken),
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
@@ -43,7 +44,7 @@ export class TagCommand implements CliCommandPort {
     private readonly runtime: CliRuntimePort,
     private readonly prepareTagSync: PrepareTagSyncUseCase,
     private readonly runTagSync: RunTagSyncUseCase,
-    private readonly tagProgressListener: TagProgressListener,
+    private readonly tagProgressPresenter: PresentTagSyncProgressPresenter,
     private readonly presentSyncCliResult: PresentTagSyncResultPresenter,
     private readonly schemaValidation: CliSchemaParsing,
     private readonly cliExecutor: CliExecutor,
@@ -114,7 +115,7 @@ export class TagCommand implements CliCommandPort {
     }
     const tagOutcome = await this.runTagSync.execute({
       ...parsed.value,
-      listener: parsed.value.json ? undefined : this.tagProgressListener,
+      listener: parsed.value.json ? undefined : this.tagProgressPresenter,
     });
     if (!this.cliExecutor.consumeCliAppError(tagOutcome)) {
       return;

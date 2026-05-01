@@ -13,7 +13,7 @@ import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-f
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFilesystemPortToken), inject(CodefastConfigSchemaPortToken)])
-export class ConfigLoaderAdapterImpl implements ConfigLoaderPort {
+export class ConfigLoaderAdapter implements ConfigLoaderPort {
   private readonly configJsPriority = [
     "codefast.config.mjs",
     "codefast.config.js",

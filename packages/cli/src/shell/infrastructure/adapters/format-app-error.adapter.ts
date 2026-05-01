@@ -3,7 +3,7 @@ import type { AppError } from "#/shell/domain/errors.domain";
 import type { FormatAppErrorPort } from "#/shell/application/ports/outbound/format-app-error.port";
 
 @injectable()
-export class FormatAppErrorService implements FormatAppErrorPort {
+export class FormatAppErrorAdapter implements FormatAppErrorPort {
   private assertExhaustiveAppErrorCode(code: never): string {
     return `Unhandled error code: ${String(code)}`;
   }

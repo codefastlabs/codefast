@@ -1,6 +1,6 @@
 import type { TagSyncRunRequest } from "#/domains/tag/application/requests/tag-sync.request";
-import type { TagProgressListener } from "#/domains/tag/domain/types.domain";
+import type { PresentTagSyncProgressPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
 
 export type TagSyncExecutionInput = TagSyncRunRequest & {
-  readonly listener?: TagProgressListener | undefined;
+  readonly listener?: PresentTagSyncProgressPresenter | undefined;
 };

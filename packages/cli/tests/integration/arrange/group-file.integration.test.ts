@@ -1,18 +1,18 @@
 /**
- * Integration Test: covers ArrangeFileProcessorServiceImpl, DomainSourceParserAdapter, and
+ * Integration Test: covers ArrangeFileProcessorAdapter, DomainSourceParserAdapter, and
  * group-file preview presentation (printGroupFilePreviewFromWork) against real filesystem fixtures.
  */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
+import { ArrangeFileProcessorAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-file-processor.adapter";
 import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
-import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/adapters/typescript-ast-translator.adapter";
+import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/typescript-ast-translator";
 import { NodeCliFsAdapter } from "#/shell/infrastructure/node/node-cli-fs.adapter";
 import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node/node-cli-logger.adapter";
 
 const arrangeFs = new NodeCliFsAdapter();
-const service = new ArrangeFileProcessorServiceImpl(
+const service = new ArrangeFileProcessorAdapter(
   arrangeFs,
   new DomainSourceParserAdapter(new TypeScriptAstTranslator(), new NodeCliLoggerAdapter()),
 );
@@ -28,7 +28,7 @@ function withTempFixture(name: string, source: string, fn: (filePath: string) =>
   }
 }
 
-describe("ArrangeFileProcessorServiceImpl", () => {
+describe("ArrangeFileProcessorAdapter", () => {
   it("unwraps cn() inside tv base into string/array form", () => {
     const before = `import { cn, tv } from "@codefast/tailwind-variants";
 

@@ -8,73 +8,6 @@ import type {
   CliLeafDispatchHandler,
 } from "#/shell/application/ports/primary/cli-host.port";
 
-function isLikelyPlainOptionsRecord(candidate: unknown): candidate is Record<string, unknown> {
-  return typeof candidate === "object" && candidate !== null && !Array.isArray(candidate);
-}
-
-function extractDispatchParts(args: unknown[]): {
-  positionalArguments: unknown[];
-  localOptionRecord: Readonly<Record<string, unknown>>;
-  commandLeaf: Command;
-} {
-  if (args.length < 2) {
-    throw new Error("[internal] Commander action invoked with too few arguments");
-  }
-  const commandLeafCandidate = args[args.length - 1];
-  if (!(commandLeafCandidate instanceof Command)) {
-    throw new Error("[internal] Commander action trailing argument must be Command");
-  }
-  const candidateOptions = args[args.length - 2];
-  const positionalArguments =
-    typeof candidateOptions !== "undefined" && isLikelyPlainOptionsRecord(candidateOptions)
-      ? args.slice(0, -2)
-      : args.slice(0, -1);
-  const localOptionRecord = isLikelyPlainOptionsRecord(candidateOptions) ? candidateOptions : {};
-  return { positionalArguments, localOptionRecord, commandLeaf: commandLeafCandidate };
-}
-
-function applyRouteWire(leafCommand: Command, wire: CliCommandRouteWire): Command {
-  switch (wire.kind) {
-    case "optionalPositional": {
-      return leafCommand.argument(wire.argumentTemplate, wire.helpBlurb);
-    }
-    case "greedyPositional": {
-      return leafCommand.argument(wire.argumentTemplate, wire.helpBlurb);
-    }
-    case "booleanFlag": {
-      return leafCommand.option(wire.flagPhrase, wire.helpBlurb, wire.whenUnsetUses);
-    }
-    case "stringPlaceholderFlag": {
-      return leafCommand.option(wire.flagPhraseWithPlaceholder, wire.helpBlurb);
-    }
-    case "synonymousBooleanAliases": {
-      return leafCommand.addOption(
-        new Option(wire.commaJoinedFlags, wire.helpBlurb).default(false),
-      );
-    }
-  }
-}
-
-function wireLeafDispatch(leafCommand: Command, dispatch: CliLeafDispatchHandler): void {
-  void leafCommand.action(async (...passedArguments: unknown[]) => {
-    const { positionalArguments, localOptionRecord, commandLeaf } =
-      extractDispatchParts(passedArguments);
-    const globalBridge: CliGlobalOptionsBridgePort = {
-      readMergedGlobalsOptionRecords: (): Readonly<Record<string, unknown>> => {
-        const bridgeCommand = commandLeaf as Command & {
-          optsWithGlobals?: () => Record<string, unknown>;
-        };
-        const mergedViaGlobalsBridge = bridgeCommand.optsWithGlobals?.();
-        if (mergedViaGlobalsBridge) {
-          return mergedViaGlobalsBridge;
-        }
-        return bridgeCommand.opts() as Record<string, unknown>;
-      },
-    };
-    await dispatch(positionalArguments, localOptionRecord, globalBridge);
-  });
-}
-
 /** Traverses {@link CliCommandTree} onto a Commander {@link Command} node. */
 export class CommanderCliHostAdapter {
   constructor(private readonly rootProgram: Command) {}
@@ -89,6 +22,78 @@ export class CommanderCliHostAdapter {
     for (const subtree of trees) {
       adapter.registerRoot(subtree);
     }
+  }
+
+  private static isLikelyPlainOptionsRecord(
+    candidate: unknown,
+  ): candidate is Record<string, unknown> {
+    return typeof candidate === "object" && candidate !== null && !Array.isArray(candidate);
+  }
+
+  private static extractDispatchParts(args: unknown[]): {
+    positionalArguments: unknown[];
+    localOptionRecord: Readonly<Record<string, unknown>>;
+    commandLeaf: Command;
+  } {
+    if (args.length < 2) {
+      throw new Error("[internal] Commander action invoked with too few arguments");
+    }
+    const commandLeafCandidate = args[args.length - 1];
+    if (!(commandLeafCandidate instanceof Command)) {
+      throw new Error("[internal] Commander action trailing argument must be Command");
+    }
+    const candidateOptions = args[args.length - 2];
+    const positionalArguments =
+      typeof candidateOptions !== "undefined" &&
+      CommanderCliHostAdapter.isLikelyPlainOptionsRecord(candidateOptions)
+        ? args.slice(0, -2)
+        : args.slice(0, -1);
+    const localOptionRecord = CommanderCliHostAdapter.isLikelyPlainOptionsRecord(candidateOptions)
+      ? candidateOptions
+      : {};
+    return { positionalArguments, localOptionRecord, commandLeaf: commandLeafCandidate };
+  }
+
+  private static applyRouteWire(leafCommand: Command, wire: CliCommandRouteWire): Command {
+    switch (wire.kind) {
+      case "optionalPositional": {
+        return leafCommand.argument(wire.argumentTemplate, wire.helpBlurb);
+      }
+      case "greedyPositional": {
+        return leafCommand.argument(wire.argumentTemplate, wire.helpBlurb);
+      }
+      case "booleanFlag": {
+        return leafCommand.option(wire.flagPhrase, wire.helpBlurb, wire.whenUnsetUses);
+      }
+      case "stringPlaceholderFlag": {
+        return leafCommand.option(wire.flagPhraseWithPlaceholder, wire.helpBlurb);
+      }
+      case "synonymousBooleanAliases": {
+        return leafCommand.addOption(
+          new Option(wire.commaJoinedFlags, wire.helpBlurb).default(false),
+        );
+      }
+    }
+  }
+
+  private static wireLeafDispatch(leafCommand: Command, dispatch: CliLeafDispatchHandler): void {
+    void leafCommand.action(async (...passedArguments: unknown[]) => {
+      const { positionalArguments, localOptionRecord, commandLeaf } =
+        CommanderCliHostAdapter.extractDispatchParts(passedArguments);
+      const globalBridge: CliGlobalOptionsBridgePort = {
+        readMergedGlobalsOptionRecords: (): Readonly<Record<string, unknown>> => {
+          const bridgeCommand = commandLeaf as Command & {
+            optsWithGlobals?: () => Record<string, unknown>;
+          };
+          const mergedViaGlobalsBridge = bridgeCommand.optsWithGlobals?.();
+          if (mergedViaGlobalsBridge) {
+            return mergedViaGlobalsBridge;
+          }
+          return bridgeCommand.opts() as Record<string, unknown>;
+        },
+      };
+      await dispatch(positionalArguments, localOptionRecord, globalBridge);
+    });
   }
 
   private static attachSubtree(parentBridge: Command, node: CliCommandTree): void {
@@ -119,9 +124,9 @@ export class CommanderCliHostAdapter {
       let leafConfigured = branchCommand;
       const routePieces = node.route ?? [];
       for (const segment of routePieces) {
-        leafConfigured = applyRouteWire(leafConfigured, segment);
+        leafConfigured = CommanderCliHostAdapter.applyRouteWire(leafConfigured, segment);
       }
-      wireLeafDispatch(leafConfigured, node.action);
+      CommanderCliHostAdapter.wireLeafDispatch(leafConfigured, node.action);
       return;
     }
 

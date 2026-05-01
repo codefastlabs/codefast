@@ -12,7 +12,7 @@ import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.
 import {
   createPathTransform,
   generateExports,
-} from "#/domains/mirror/application/services/generate-mirror-exports.service";
+} from "#/domains/mirror/domain/generate-mirror-exports.domain-service";
 import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
 import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
 import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
