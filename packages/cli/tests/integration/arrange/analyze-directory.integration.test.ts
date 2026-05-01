@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/domains/arrange/arrange.module";
-import { AnalyzeDirectoryUseCaseToken } from "#/domains/arrange/contracts/tokens";
+import { AnalyzeDirectoryUseCaseToken } from "#/domains/arrange/composition/tokens";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
 

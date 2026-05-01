@@ -1,8 +1,8 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { MirrorPackagePathPort } from "#/domains/mirror/application/outbound/mirror-package-path.outbound-port";
+import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/outbound/mirror-package-path.port";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";

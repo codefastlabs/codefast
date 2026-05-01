@@ -1,5 +1,5 @@
 /**
- * Integration Test: covers RunTagSyncUseCase (TagModule + DI) and TagTargetRunnerService
+ * Integration Test: covers RunTagSyncUseCase (TagModule + DI) and TagTargetRunnerPort
  * with concrete tag infrastructure adapters.
  */
 import fs from "node:fs";
@@ -9,10 +9,7 @@ import { Container } from "@codefast/di";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
 import { NodeCliFsAdapter } from "#/shell/infrastructure/node/node-cli-fs.adapter";
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
-import {
-  RunTagSyncUseCaseToken,
-  TagTargetRunnerServiceToken,
-} from "#/domains/tag/contracts/tokens";
+import { RunTagSyncUseCaseToken, TagTargetRunnerPortToken } from "#/domains/tag/composition/tokens";
 import { TagModule } from "#/domains/tag/tag.module";
 
 const tagFs = new NodeCliFsAdapter();
@@ -21,7 +18,7 @@ const tagCliPath = new NodeCliPathAdapter();
 const container = Container.create();
 container.load(TagModule);
 const runTagSyncUseCase = container.resolve(RunTagSyncUseCaseToken);
-const tagTargetRunner = container.resolve(TagTargetRunnerServiceToken);
+const tagTargetRunner = container.resolve(TagTargetRunnerPortToken);
 
 function withTempPackage(
   fileName: string,

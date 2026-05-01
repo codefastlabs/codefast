@@ -1,12 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import {
-  ArrangeFileProcessorServiceToken,
-  ArrangeTargetScannerServiceToken,
-} from "#/domains/arrange/contracts/tokens";
-import type {
-  ArrangeFileProcessorService,
-  ArrangeTargetScannerService,
-} from "#/domains/arrange/contracts/services.contract";
+  ArrangeFileProcessorPortToken,
+  ArrangeTargetScannerPortToken,
+} from "#/domains/arrange/composition/tokens";
+import type { ArrangeFileProcessorPort } from "#/domains/arrange/application/ports/outbound/arrange-file-processor.port";
+import type { ArrangeTargetScannerPort } from "#/domains/arrange/application/ports/outbound/arrange-target-scanner.port";
 import type {
   CodefastAfterWriteHook,
   CodefastArrangeConfig,
@@ -18,13 +16,13 @@ import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.
 import type { ArrangeSyncRunRequest } from "#/domains/arrange/application/requests/arrange-sync.request";
 import type { ArrangeRunResult } from "#/domains/arrange/domain/types.domain";
 import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/inbound/run-arrange-sync.use-case";
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.port";
 
-@injectable([inject(ArrangeTargetScannerServiceToken), inject(ArrangeFileProcessorServiceToken)])
+@injectable([inject(ArrangeTargetScannerPortToken), inject(ArrangeFileProcessorPortToken)])
 export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {
   constructor(
-    private readonly targetScanner: ArrangeTargetScannerService,
-    private readonly fileProcessor: ArrangeFileProcessorService,
+    private readonly targetScanner: ArrangeTargetScannerPort,
+    private readonly fileProcessor: ArrangeFileProcessorPort,
   ) {}
 
   private async runOnAfterWriteHook(

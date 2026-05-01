@@ -1,7 +1,7 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/outbound/arrange-target-path-resolver.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/outbound/arrange-target-path-resolver.port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFsToken)])

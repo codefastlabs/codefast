@@ -1,30 +1,29 @@
 import { inject, injectable } from "@codefast/di";
-import { Command } from "commander";
+import type {
+  CliCommand,
+  CliCommandTree,
+} from "#/shell/application/ports/primary/cli-command.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
-import type { GlobalCliOptionsParsePort } from "#/shell/application/outbound/global-cli-options-parse.outbound-port";
+import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
+import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import {
   PrepareMirrorSyncUseCaseToken,
   RunMirrorSyncUseCaseToken,
-} from "#/domains/mirror/contracts/tokens";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/inbound/prepare-mirror-sync.use-case";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/inbound/run-mirror-sync.use-case";
+} from "#/domains/mirror/composition/tokens";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
 import { mirrorSyncRunRequestSchema } from "#/domains/mirror/presentation/presenters/mirror-cli.schema";
+import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import {
   CliExecutorToken,
-  CliLoggerToken,
   CliRuntimeToken,
   GlobalCliOptionsParsePortToken,
   CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { CliCommand } from "#/shell/contracts/cli-command.contract";
-import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 
 @injectable([
-  inject(CliLoggerToken),
   inject(CliRuntimeToken),
   inject(PrepareMirrorSyncUseCaseToken),
   inject(RunMirrorSyncUseCaseToken),
@@ -33,11 +32,7 @@ import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
   inject(CliExecutorToken),
 ])
 export class MirrorCommand implements CliCommand {
-  readonly name = CLI_COMMAND_SLOT_NAME.mirror;
-  readonly description = "Keep package manifests aligned with what you ship";
-
   constructor(
-    private readonly logger: CliLogger,
     private readonly runtime: CliRuntime,
     private readonly prepareMirrorSync: PrepareMirrorSyncUseCase,
     private readonly runMirrorSync: RunMirrorSyncUseCase,
@@ -46,32 +41,86 @@ export class MirrorCommand implements CliCommand {
     private readonly cliExecutor: CliExecutor,
   ) {}
 
-  register(program: Command): void {
-    const mirror = program.command(this.name).description(this.description);
-
-    mirror
-      .command("sync")
-      .description("Write package.json exports from dist/ for workspace packages")
-      .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
-      .option("-v, --verbose", "Print extra diagnostics", false)
-      .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
-      .action(this.execute.bind(this));
+  get definition(): CliCommandTree {
+    return {
+      name: CLI_COMMAND_SLOT_NAME.mirror,
+      description: "Keep package manifests aligned with what you ship",
+      children: [
+        {
+          name: "sync",
+          description: "Write package.json exports from dist/ for workspace packages",
+          route: [
+            {
+              kind: "optionalPositional",
+              argumentTemplate: "[package]",
+              helpBlurb: "Optional package path relative to repo root (e.g. packages/ui)",
+            },
+            {
+              kind: "booleanFlag",
+              flagPhrase: "-v, --verbose",
+              helpBlurb: "Print extra diagnostics",
+              whenUnsetUses: false,
+            },
+            {
+              kind: "booleanFlag",
+              flagPhrase: "--json",
+              helpBlurb: "Print one JSON summary on stdout (suppresses human progress)",
+              whenUnsetUses: false,
+            },
+          ],
+          action: async (_positionalPieces, typedLocalOptionsCarrier, globalsBridge) => {
+            await this.runSynchronizedMirrorLeaf(
+              this.readOptionalPackagePiece(_positionalPieces[0]),
+              {
+                verbose: typedLocalOptionsCarrier.verbose as boolean | undefined,
+                json: typedLocalOptionsCarrier.json as boolean | undefined,
+              },
+              globalsBridge.readMergedGlobalsOptionRecords(),
+            );
+          },
+        },
+      ],
+    };
   }
 
-  async execute(
-    pkg: string | undefined,
-    options: { verbose?: boolean; json?: boolean },
-    command: Command,
+  private readOptionalPackagePiece(candidate: unknown): string | undefined {
+    if (typeof candidate === "string") {
+      return candidate;
+    }
+    if (candidate === undefined) {
+      return undefined;
+    }
+    if (candidate === null) {
+      return "null";
+    }
+    if (
+      typeof candidate === "number" ||
+      typeof candidate === "boolean" ||
+      typeof candidate === "bigint"
+    ) {
+      return String(candidate);
+    }
+    if (typeof candidate === "symbol") {
+      return candidate.toString();
+    }
+    return undefined;
+  }
+
+  private async runSynchronizedMirrorLeaf(
+    packageRelativePathPiece: string | undefined,
+    branchOptionsCarrier: {
+      readonly verbose?: boolean | undefined;
+      readonly json?: boolean | undefined;
+    },
+    globalsOptionCarrier: Readonly<Record<string, unknown>>,
   ): Promise<void> {
-    const globalOptionsOutcome = this.globalCliOptions.parseGlobalCliOptions(
-      command.optsWithGlobals(),
-    );
+    const globalOptionsOutcome = this.globalCliOptions.parseGlobalCliOptions(globalsOptionCarrier);
     if (!this.cliExecutor.consumeCliAppError(globalOptionsOutcome)) {
       return;
     }
     const prelude = await this.prepareMirrorSync.execute({
       currentWorkingDirectory: this.runtime.cwd(),
-      packageArg: pkg,
+      packageArg: packageRelativePathPiece,
       globals: globalOptionsOutcome.value,
     });
     if (!this.cliExecutor.consumeCliAppError(prelude)) {
@@ -81,8 +130,8 @@ export class MirrorCommand implements CliCommand {
     const parsed = this.schemaValidation.parseWithSchema(mirrorSyncRunRequestSchema, {
       rootDir,
       config: config.mirror ?? {},
-      verbose: options.verbose,
-      json: options.json,
+      verbose: branchOptionsCarrier.verbose,
+      json: branchOptionsCarrier.json,
       noColor: globals.color === false,
       packageFilter,
     });

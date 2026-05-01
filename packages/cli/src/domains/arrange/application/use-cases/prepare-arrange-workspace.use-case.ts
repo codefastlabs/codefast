@@ -3,18 +3,18 @@ import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/outbound/arrange-target-path-resolver.outbound-port";
-import { ArrangeTargetPathResolverPortToken } from "#/domains/arrange/contracts/tokens";
-import type { RepoRootResolverPort } from "#/shell/application/outbound/repo-root-resolver.outbound-port";
+import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/outbound/arrange-target-path-resolver.port";
+import { ArrangeTargetPathResolverPortToken } from "#/domains/arrange/composition/tokens";
+import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contracts/models";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/inbound/load-codefast-config.use-case";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.port";
 import {
   CliFsToken,
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/inbound/prepare-arrange-workspace.use-case";
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.port";
 
 @injectable([
   inject(ArrangeTargetPathResolverPortToken),

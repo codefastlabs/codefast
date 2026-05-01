@@ -6,7 +6,7 @@ import type {
   CliDirectoryEntry,
   CliFileEncoding,
   CliFs,
-} from "#/shell/application/outbound/cli-io.outbound-port";
+} from "#/shell/application/ports/outbound/cli-io.port";
 
 @injectable([])
 export class NodeCliFsAdapter implements CliFs {

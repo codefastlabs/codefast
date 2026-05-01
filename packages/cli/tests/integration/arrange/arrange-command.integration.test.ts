@@ -1,14 +1,14 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
-import type { GroupFilePreviewPort } from "#/domains/arrange/application/outbound/group-file-preview.outbound-port";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/inbound/analyze-directory.use-case";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/inbound/prepare-arrange-workspace.use-case";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/inbound/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/inbound/suggest-cn-groups.use-case";
-import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/contracts/analyze-report-presenter.contract";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
+import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.port";
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.port";
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.port";
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.port";
+import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
 
 function createLoggerMock(): CliLogger & {
@@ -139,6 +139,7 @@ function createDeps(): ArrangeDeps {
 }
 
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
+import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
 
 function createCommandAndProgram(deps: ArrangeDeps): { command: ArrangeCommand; program: Command } {
   const shell = createShellCliTestGraph(deps.logger);
@@ -155,7 +156,7 @@ function createCommandAndProgram(deps: ArrangeDeps): { command: ArrangeCommand; 
     shell.cliExecutor,
   );
   const program = new Command();
-  command.register(program);
+  new CommanderCliHostAdapter(program).registerRoot(command.definition);
   return { command, program };
 }
 

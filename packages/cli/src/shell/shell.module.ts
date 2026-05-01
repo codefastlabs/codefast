@@ -3,7 +3,7 @@ import {
   CodefastConfigSchemaPortToken,
   ConfigLoaderPortToken,
   ConfigWarningReporterPortToken,
-} from "#/domains/config/contracts/tokens";
+} from "#/domains/config/composition/tokens";
 import { ZodCodefastConfigSchemaAdapter } from "#/domains/config/infrastructure/adapters/zod-codefast-config-schema.adapter";
 import { ConfigLoaderAdapterImpl } from "#/domains/config/infrastructure/adapters/config-loader.adapter";
 import { ConfigWarningReporterAdapter } from "#/domains/config/infrastructure/adapters/config-warning-reporter.adapter";
@@ -34,7 +34,7 @@ import { NodeCliFsAdapter } from "#/shell/infrastructure/node/node-cli-fs.adapte
 import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node/node-cli-logger.adapter";
 import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
 import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node/node-cli-runtime.adapter";
-import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-port-telemetry.service";
+import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
 import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/typescript-source-file-walker.service";
 import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
 import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";

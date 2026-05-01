@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import { ArrangeModule } from "#/domains/arrange/arrange.module";
-import { RunArrangeSyncUseCaseToken } from "#/domains/arrange/contracts/tokens";
+import { RunArrangeSyncUseCaseToken } from "#/domains/arrange/composition/tokens";
 
 describe("RunArrangeSyncUseCase integration", () => {
   const container = Container.create();

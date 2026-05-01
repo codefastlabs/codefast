@@ -1,21 +1,23 @@
 import { inject, injectable } from "@codefast/di";
-import { Command } from "commander";
+import type {
+  CliCommand,
+  CliCommandTree,
+} from "#/shell/application/ports/primary/cli-command.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
-import type { CliCommand } from "#/shell/contracts/cli-command.contract";
-import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
-import type { PrepareTagSyncUseCase } from "#/domains/tag/application/inbound/prepare-tag-sync.use-case";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/inbound/run-tag-sync.use-case";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.port";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
-import type { PresentTagSyncResultPresenter } from "#/domains/tag/contracts/tag-sync-result-presenter.contract";
+import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.port";
 import {
   PrepareTagSyncUseCaseToken,
   PresentTagSyncResultPresenterToken,
   RunTagSyncUseCaseToken,
   TagSyncProgressListenerToken,
-} from "#/domains/tag/contracts/tokens";
+} from "#/domains/tag/composition/tokens";
+import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
 import { tagSyncRunRequestSchema } from "#/domains/tag/presentation/presenters/tag-cli.schema";
 import {
@@ -36,9 +38,6 @@ import {
   inject(CliExecutorToken),
 ])
 export class TagCommand implements CliCommand {
-  readonly name = CLI_COMMAND_SLOT_NAME.tag;
-  readonly description = "Add @since <version> JSDoc tags to exported declarations";
-
   constructor(
     private readonly logger: CliLogger,
     private readonly runtime: CliRuntime,
@@ -50,28 +49,52 @@ export class TagCommand implements CliCommand {
     private readonly cliExecutor: CliExecutor,
   ) {}
 
-  register(program: Command): void {
-    program
-      .command(this.name)
-      .alias("annotate")
-      .description(this.description)
-      .argument(
-        "[target]",
-        "Directory or file to annotate (default: auto-discover workspace packages)",
-      )
-      .option("--dry-run", "Show summary without writing files", false)
-      .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
-      .action(this.execute.bind(this));
+  get definition(): CliCommandTree {
+    return {
+      name: CLI_COMMAND_SLOT_NAME.tag,
+      description: "Add @since <version> JSDoc tags to exported declarations",
+      aliases: ["annotate"],
+      route: [
+        {
+          kind: "optionalPositional",
+          argumentTemplate: "[target]",
+          helpBlurb: "Directory or file to annotate (default: auto-discover workspace packages)",
+        },
+        {
+          kind: "booleanFlag",
+          flagPhrase: "--dry-run",
+          helpBlurb: "Show summary without writing files",
+          whenUnsetUses: false,
+        },
+        {
+          kind: "booleanFlag",
+          flagPhrase: "--json",
+          helpBlurb: "Print one JSON summary on stdout (suppresses human progress)",
+          whenUnsetUses: false,
+        },
+      ],
+      action: async (positionalArguments, localOptionRecord) => {
+        const maybeTargetSlice = positionalArguments[0];
+        const targetPiece = typeof maybeTargetSlice === "string" ? maybeTargetSlice : undefined;
+        const typedOptionsCarrier = localOptionRecord as {
+          readonly dryRun?: boolean;
+          readonly json?: boolean;
+        };
+        await this.runAnnotatedTagVerb(targetPiece, {
+          dryRun: typedOptionsCarrier.dryRun,
+          json: typedOptionsCarrier.json,
+        });
+      },
+    };
   }
 
-  async execute(
-    target: string | undefined,
-    options: { dryRun?: boolean; json?: boolean },
-    _command: Command,
+  private async runAnnotatedTagVerb(
+    rawTargetPiece: string | undefined,
+    options: { readonly dryRun?: boolean; readonly json?: boolean },
   ): Promise<void> {
     const prelude = await this.prepareTagSync.execute({
       currentWorkingDirectory: this.runtime.cwd(),
-      rawTarget: target,
+      rawTarget: rawTargetPiece,
     });
     if (!this.cliExecutor.consumeCliAppError(prelude)) {
       return;

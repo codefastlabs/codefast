@@ -1,19 +1,19 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
-import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/outbound/typescript-source-file-walker.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
+import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/outbound/typescript-source-file-walker.port";
 import {
   CliFsToken,
   CliPathToken,
   TypeScriptSourceFileWalkerPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { TagSinceWriterPort } from "#/domains/tag/application/outbound/tag-since-writer.outbound-port";
-import type { TagVersionResolverPort } from "#/domains/tag/application/outbound/tag-version-resolver.outbound-port";
-import type { TagTargetRunnerService } from "#/domains/tag/contracts/services.contract";
+import type { TagSinceWriterPort } from "#/domains/tag/application/ports/outbound/tag-since-writer.port";
+import type { TagVersionResolverPort } from "#/domains/tag/application/ports/outbound/tag-version-resolver.port";
+import type { TagTargetRunnerPort } from "#/domains/tag/application/ports/outbound/tag-target-runner.port";
 import {
   TagSinceWriterPortToken,
   TagVersionResolverPortToken,
-} from "#/domains/tag/contracts/tokens";
+} from "#/domains/tag/composition/tokens";
 import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.domain";
 
 @injectable([
@@ -23,7 +23,7 @@ import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.dom
   inject(TagSinceWriterPortToken),
   inject(TypeScriptSourceFileWalkerPortToken),
 ])
-export class TagTargetRunnerServiceImpl implements TagTargetRunnerService {
+export class TagTargetRunnerServiceImpl implements TagTargetRunnerPort {
   constructor(
     private readonly fs: CliFs,
     private readonly pathService: CliPath,

@@ -3,7 +3,7 @@ import { codefastConfigRootSchema } from "#/domains/config/domain/codefast-confi
 import type {
   CodefastConfigSchemaParseOutcome,
   CodefastConfigSchemaPort,
-} from "#/domains/config/application/outbound/codefast-config-schema.outbound-port";
+} from "#/domains/config/application/ports/outbound/codefast-config-schema.port";
 
 /**
  * Driven adapter: Zod implementation of the config file schema port.

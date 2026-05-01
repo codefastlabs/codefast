@@ -1,4 +1,4 @@
-import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-port-telemetry.service";
+import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
 
 describe("CliPortTelemetryService integration", () => {
   let telemetry: CliPortTelemetryService;

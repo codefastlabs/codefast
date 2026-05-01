@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
-import type { PackageRepositoryPort } from "#/domains/mirror/application/outbound/package-repository.outbound-port";
+import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
 import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,

@@ -1,10 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import {
-  TagTargetResolverPortToken,
-  TagTargetRunnerServiceToken,
-} from "#/domains/tag/contracts/tokens";
-import type { TagSyncExecutionInput } from "#/domains/tag/contracts/models";
-import type { TagTargetRunnerService } from "#/domains/tag/contracts/services.contract";
+  TagEligibleWorkspacePathsPortToken,
+  TagTargetRunnerPortToken,
+} from "#/domains/tag/composition/tokens";
+import type { TagSyncExecutionInput } from "#/domains/tag/application/ports/inbound/tag-sync.request";
+import type { TagTargetRunnerPort } from "#/domains/tag/application/ports/outbound/tag-target-runner.port";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
@@ -12,11 +12,11 @@ import type {
   CodefastAfterWriteHook,
   CodefastTagConfig,
 } from "#/domains/config/domain/schema.domain";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
 import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { TagTargetResolverPort } from "#/domains/tag/application/outbound/target-resolver.outbound-port";
+import type { TagEligibleWorkspacePathsPort } from "#/domains/tag/application/ports/outbound/tag-eligible-workspace-paths.port";
 import type {
   TagFileResult,
   TagProgressListener,
@@ -26,7 +26,7 @@ import type {
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/domains/tag/domain/types.domain";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/inbound/run-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
 
 /**
  * CLI entry: run tagging and optional `onAfterWrite` using config injected by the command layer.
@@ -35,15 +35,15 @@ import type { RunTagSyncUseCase } from "#/domains/tag/application/inbound/run-ta
 @injectable([
   inject(CliFsToken),
   inject(CliPathToken),
-  inject(TagTargetResolverPortToken),
-  inject(TagTargetRunnerServiceToken),
+  inject(TagEligibleWorkspacePathsPortToken),
+  inject(TagTargetRunnerPortToken),
 ])
 export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
   constructor(
     private readonly fs: CliFs,
     private readonly path: CliPath,
-    private readonly targetResolver: TagTargetResolverPort,
-    private readonly tagTargetRunner: TagTargetRunnerService,
+    private readonly targetResolver: TagEligibleWorkspacePathsPort,
+    private readonly tagTargetRunner: TagTargetRunnerPort,
   ) {}
 
   async execute(input: TagSyncExecutionInput): Promise<Result<TagSyncResult, AppError>> {

@@ -1,17 +1,17 @@
 import { inject, injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
-import type { CliFs, CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
+import type { CliFs, CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliPath } from "#/shell/application/ports/outbound/cli-path.port";
 import { CliFsToken, CliLoggerToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import {
   createPathTransform,
   generateExports,
 } from "#/domains/mirror/application/services/generate-mirror-exports.service";
-import type { FileSystemServicePort } from "#/domains/mirror/application/outbound/file-system-service.outbound-port";
-import type { MirrorSyncReporterPort } from "#/domains/mirror/application/outbound/mirror-sync-reporter.outbound-port";
-import type { PackageRepositoryPort } from "#/domains/mirror/application/outbound/package-repository.outbound-port";
-import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/outbound/sync-workspace-package.outbound-port";
+import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
+import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
+import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
+import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/outbound/sync-workspace-package.port";
 import { DIST_DIR, PACKAGE_JSON } from "#/domains/mirror/domain/constants.domain";
 import type {
   GlobalStats,
@@ -23,7 +23,7 @@ import {
   FileSystemServicePortToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
-} from "#/domains/mirror/contracts/tokens";
+} from "#/domains/mirror/composition/tokens";
 
 @injectable([
   inject(CliFsToken),

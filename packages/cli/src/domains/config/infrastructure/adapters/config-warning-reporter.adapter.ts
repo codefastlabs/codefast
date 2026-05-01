@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
-import type { ConfigWarningReporterPort } from "#/domains/config/application/outbound/config-warning-reporter.outbound-port";
+import type { ConfigWarningReporterPort } from "#/domains/config/application/ports/outbound/config-warning-reporter.port";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
 
 @injectable([inject(CliLoggerToken)])
 export class ConfigWarningReporterAdapter implements ConfigWarningReporterPort {

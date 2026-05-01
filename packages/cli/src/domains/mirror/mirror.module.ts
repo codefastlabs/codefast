@@ -14,7 +14,7 @@ import {
   PackageRepositoryPortToken,
   RunMirrorSyncUseCaseToken,
   SyncWorkspacePackagePortToken,
-} from "#/domains/mirror/contracts/tokens";
+} from "#/domains/mirror/composition/tokens";
 import { ShellInfrastructureModule } from "#/shell/shell.module";
 import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
 

@@ -1,7 +1,7 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { FileSystemServicePort } from "#/domains/mirror/application/outbound/file-system-service.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import { isDirentList } from "#/domains/mirror/infrastructure/dirent-list.guard";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
