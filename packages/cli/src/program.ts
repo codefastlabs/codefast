@@ -4,7 +4,8 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { createCliRuntimeContainer, resolveCliCommands } from "#/bootstrap/composition-root";
-import type { CliCommand } from "#/shell/contracts/cli-command.contract";
+import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
+import type { CliCommand } from "#/shell/application/ports/primary/cli-command.port";
 
 function readVersion(): string {
   try {
@@ -28,9 +29,10 @@ function createProgram(commands: readonly CliCommand[]): Command {
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 
-  for (const cliCommand of commands) {
-    cliCommand.register(program);
-  }
+  CommanderCliHostAdapter.registerTrees(
+    program,
+    commands.map((cliEntry) => cliEntry.definition),
+  );
 
   return program;
 }

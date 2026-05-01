@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import type { MirrorSyncRunRequest } from "#/domains/mirror/application/requests/mirror-sync.request";
-import { RunMirrorSyncUseCaseToken } from "#/domains/mirror/contracts/tokens";
+import { RunMirrorSyncUseCaseToken } from "#/domains/mirror/composition/tokens";
 import { MirrorModule } from "#/domains/mirror/mirror.module";
 
 async function mkdirp(filePath: string): Promise<void> {

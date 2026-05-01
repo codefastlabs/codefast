@@ -2,14 +2,14 @@ import path from "node:path";
 import jiti from "jiti";
 import type { ZodError } from "zod";
 import { inject, injectable } from "@codefast/di";
-import type { CodefastConfigSchemaPort } from "#/domains/config/application/outbound/codefast-config-schema.outbound-port";
+import type { CodefastConfigSchemaPort } from "#/domains/config/application/ports/outbound/codefast-config-schema.port";
 import type {
   ConfigLoaderPort,
   LoadConfigPayload,
-} from "#/domains/config/application/outbound/config-loader.outbound-port";
+} from "#/domains/config/application/ports/outbound/config-loader.port";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
-import { CodefastConfigSchemaPortToken } from "#/domains/config/contracts/tokens";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import { CodefastConfigSchemaPortToken } from "#/domains/config/composition/tokens";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFsToken), inject(CodefastConfigSchemaPortToken)])

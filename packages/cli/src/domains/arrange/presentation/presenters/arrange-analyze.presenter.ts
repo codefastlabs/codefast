@@ -5,8 +5,8 @@ import {
   MAX_REPORT_LINES,
 } from "#/domains/arrange/domain/constants.domain";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
-import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/contracts/analyze-report-presenter.contract";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliLoggerToken)])

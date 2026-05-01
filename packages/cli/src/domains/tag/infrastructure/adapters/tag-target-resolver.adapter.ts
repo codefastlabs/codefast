@@ -1,20 +1,20 @@
 import { inject, injectable } from "@codefast/di";
 import path from "node:path";
 import { z } from "zod";
-import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { WorkspacePackageLayoutPort } from "#/shell/application/outbound/workspace-package-layout.outbound-port";
+import type { CliFs } from "#/shell/application/ports/outbound/cli-io.port";
+import type { WorkspacePackageLayoutPort } from "#/shell/application/ports/outbound/workspace-package-layout.port";
 import {
   CliFsToken,
   WorkspacePackageLayoutPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { TagTargetResolverPort } from "#/domains/tag/application/outbound/target-resolver.outbound-port";
+import type { TagEligibleWorkspacePathsPort } from "#/domains/tag/application/ports/outbound/tag-eligible-workspace-paths.port";
 import type { TagTargetCandidate } from "#/domains/tag/domain/types.domain";
 
 /**
- * Resolves tag targets: explicit path, workspace packages via {@link WorkspacePackageLayoutPort}, or `src/` fallback.
+ * Finds eligible workspace tagging targets via {@link WorkspacePackageLayoutPort}, explicit paths, or `src/` fallback.
  */
 @injectable([inject(CliFsToken), inject(WorkspacePackageLayoutPortToken)])
-export class TagTargetResolverAdapter implements TagTargetResolverPort {
+export class TagEligibleWorkspacePathsAdapter implements TagEligibleWorkspacePathsPort {
   private readonly packageJsonFileName = "package.json";
 
   private readonly packageJsonNameSchema = z.looseObject({

@@ -9,7 +9,11 @@ describe("composition root integration", () => {
     const cliCommandTokenStub = Symbol("CliCommandToken");
 
     const load = vi.fn();
-    const resolveAll = vi.fn(() => [{ name: "mirror" }, { name: "arrange" }, { name: "tag" }]);
+    const resolveAll = vi.fn(() => [
+      { definition: { name: "mirror", description: "" } },
+      { definition: { name: "arrange", description: "" } },
+      { definition: { name: "tag", description: "" } },
+    ]);
     const runtimeContainer = { load, resolveAll };
     const create = vi.fn(() => runtimeContainer);
 
@@ -17,7 +21,7 @@ describe("composition root integration", () => {
     vi.doMock("#/bootstrap/cli-application.module", () => ({
       CliApplicationModule: cliApplicationModule,
     }));
-    vi.doMock("#/shell/contracts/tokens", () => ({
+    vi.doMock("#/shell/composition/tokens", () => ({
       CliCommandToken: cliCommandTokenStub,
     }));
 
@@ -31,6 +35,10 @@ describe("composition root integration", () => {
     expect(load).toHaveBeenCalledWith(cliApplicationModule);
     expect(resolveAll).toHaveBeenCalledTimes(1);
     expect(resolveAll).toHaveBeenCalledWith(cliCommandTokenStub);
-    expect(commands.map((command) => command.name)).toEqual(["arrange", "mirror", "tag"]);
+    expect(commands.map((command) => command.definition.name)).toEqual([
+      "arrange",
+      "mirror",
+      "tag",
+    ]);
   });
 });

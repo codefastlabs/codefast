@@ -1,13 +1,13 @@
 import { inject, injectable } from "@codefast/di";
 import { loadCodefastConfig } from "#/domains/config/application/services/load-config.service";
-import type { ConfigLoaderPort } from "#/domains/config/application/outbound/config-loader.outbound-port";
-import type { ConfigWarningReporterPort } from "#/domains/config/application/outbound/config-warning-reporter.outbound-port";
+import type { ConfigLoaderPort } from "#/domains/config/application/ports/outbound/config-loader.port";
+import type { ConfigWarningReporterPort } from "#/domains/config/application/ports/outbound/config-warning-reporter.port";
 import {
   ConfigLoaderPortToken,
   ConfigWarningReporterPortToken,
-} from "#/domains/config/contracts/tokens";
+} from "#/domains/config/composition/tokens";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/inbound/load-codefast-config.use-case";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.port";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";

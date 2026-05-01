@@ -2,12 +2,12 @@ import { inject, injectable } from "@codefast/di";
 import type { ArrangeSuggestGroupsRequest } from "#/domains/arrange/application/requests/suggest-groups.request";
 import type { ArrangeSuggestGroupsOutput } from "#/domains/arrange/contracts/models";
 import type { TailwindGroupingService } from "#/domains/arrange/domain/tailwind-grouping.service";
-import { TailwindGroupingServiceToken } from "#/domains/arrange/contracts/tokens";
+import { TailwindGroupingServiceToken } from "#/domains/arrange/composition/tokens";
 import {
   formatArray,
   formatCnCall,
 } from "#/domains/arrange/domain/source-text-formatters.formatter";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/inbound/suggest-cn-groups.use-case";
+import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.port";
 
 @injectable([inject(TailwindGroupingServiceToken)])
 export class SuggestCnGroupsUseCaseImpl implements SuggestCnGroupsUseCase {

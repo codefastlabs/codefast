@@ -2,7 +2,7 @@ import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { ConfigLoaderPort } from "#/domains/config/application/outbound/config-loader.outbound-port";
+import type { ConfigLoaderPort } from "#/domains/config/application/ports/outbound/config-loader.port";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
 
 type LoadCodefastConfigResult = {

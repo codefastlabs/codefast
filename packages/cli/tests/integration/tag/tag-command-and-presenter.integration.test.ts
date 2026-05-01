@@ -1,15 +1,15 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
-import type { PrepareTagSyncUseCase } from "#/domains/tag/application/inbound/prepare-tag-sync.use-case";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/inbound/run-tag-sync.use-case";
-import type { PresentTagSyncResultPresenter } from "#/domains/tag/contracts/tag-sync-result-presenter.contract";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.port";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
+import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.port";
 import {
   formatProgress,
   presentTagSyncCliResult,
 } from "#/domains/tag/presentation/presenters/tag-sync.presenter";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
 
 function createLoggerMock(): CliLogger & {
@@ -128,6 +128,7 @@ function createDeps(): TagDeps {
 }
 
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
+import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
 
 function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program: Command } {
   const shell = createShellCliTestGraph(deps.logger);
@@ -142,7 +143,7 @@ function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program:
     shell.cliExecutor,
   );
   const program = new Command();
-  command.register(program);
+  new CommanderCliHostAdapter(program).registerRoot(command.definition);
   return { command, program };
 }
 

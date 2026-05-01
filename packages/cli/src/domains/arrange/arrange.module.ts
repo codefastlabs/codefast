@@ -11,9 +11,9 @@ import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/adapte
 import { FileWalkerAdapter } from "#/domains/arrange/infrastructure/adapters/file-walker.adapter";
 import {
   AnalyzeDirectoryUseCaseToken,
-  ArrangeFileProcessorServiceToken,
+  ArrangeFileProcessorPortToken,
   ArrangeTargetPathResolverPortToken,
-  ArrangeTargetScannerServiceToken,
+  ArrangeTargetScannerPortToken,
   DomainSourceParserPortToken,
   FileWalkerPortToken,
   GroupFilePreviewPortToken,
@@ -22,7 +22,7 @@ import {
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
   TailwindGroupingServiceToken,
-} from "#/domains/arrange/contracts/tokens";
+} from "#/domains/arrange/composition/tokens";
 import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.service";
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
 import { GroupFilePreviewPresenterAdapter } from "#/domains/arrange/presentation/presenters/group-file-preview.presenter";
@@ -56,15 +56,9 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
 
   moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
 
-  moduleBuilder
-    .bind(ArrangeTargetScannerServiceToken)
-    .to(ArrangeTargetScannerServiceImpl)
-    .singleton();
+  moduleBuilder.bind(ArrangeTargetScannerPortToken).to(ArrangeTargetScannerServiceImpl).singleton();
 
-  moduleBuilder
-    .bind(ArrangeFileProcessorServiceToken)
-    .to(ArrangeFileProcessorServiceImpl)
-    .singleton();
+  moduleBuilder.bind(ArrangeFileProcessorPortToken).to(ArrangeFileProcessorServiceImpl).singleton();
 
   moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
 

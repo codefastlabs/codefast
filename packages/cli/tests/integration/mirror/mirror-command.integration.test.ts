@@ -1,10 +1,13 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
+import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
 import { MirrorCommand } from "#/domains/mirror/presentation/cli/mirror.command";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/inbound/prepare-mirror-sync.use-case";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/inbound/run-mirror-sync.use-case";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import { err } from "#/shell/domain/result.model";
+import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
 
 function createLoggerMock(): CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -72,12 +75,9 @@ function createDeps(): MirrorDeps {
   };
 }
 
-import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
-
 function createCommandAndProgram(deps: MirrorDeps): { command: MirrorCommand; program: Command } {
   const shell = createShellCliTestGraph(deps.logger);
   const command = new MirrorCommand(
-    deps.logger,
     deps.runtime,
     deps.prepareMirrorSync,
     deps.runMirrorSync,
@@ -87,7 +87,7 @@ function createCommandAndProgram(deps: MirrorDeps): { command: MirrorCommand; pr
   );
   const program = new Command();
   program.option("--no-color", "Disable ANSI color output");
-  command.register(program);
+  new CommanderCliHostAdapter(program).registerRoot(command.definition);
   return { command, program };
 }
 
@@ -147,11 +147,26 @@ describe("MirrorCommand integration", () => {
 
   it("stops before prelude when global option shape is invalid", async () => {
     const deps = createDeps();
-    const { command } = createCommandAndProgram(deps);
+    const shell = createShellCliTestGraph(deps.logger);
 
-    await command.execute(undefined, {}, {
-      optsWithGlobals: () => ({ color: "invalid" }),
-    } as unknown as Command);
+    vi.spyOn(shell.globalCliOptions, "parseGlobalCliOptions").mockReturnValue(
+      err(new AppError("VALIDATION_ERROR", "invalid global options")),
+    );
+
+    const command = new MirrorCommand(
+      deps.runtime,
+      deps.prepareMirrorSync,
+      deps.runMirrorSync,
+      shell.globalCliOptions,
+      shell.schemaValidation,
+      shell.cliExecutor,
+    );
+
+    const program = new Command();
+    program.option("--no-color", "Disable ANSI color output");
+    new CommanderCliHostAdapter(program).registerRoot(command.definition);
+
+    await program.parseAsync(["node", "codefast", "mirror", "sync"], { from: "node" });
 
     expect(deps.prepareMirrorSync.execute).not.toHaveBeenCalled();
     expect(deps.logger.err).toHaveBeenCalledWith(expect.stringContaining("[VALIDATION_ERROR]"));

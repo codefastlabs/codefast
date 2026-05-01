@@ -1,8 +1,7 @@
-import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/shell/domain/cli-exit-codes.domain";
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
 
 type LoggerStub = CliLogger & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -82,15 +81,21 @@ describe("cli runtime + executor", () => {
     const validate = vi.fn();
     const initializeAsync = vi.fn(async () => undefined);
     const dispose = vi.fn(async () => undefined);
-    const register = vi.fn((program: Command) => {
-      program.command("ok").action(() => {
-        process.exitCode = "7" as unknown as number;
-      });
+    const leafDispatch = vi.fn(async () => {
+      process.exitCode = "7" as unknown as number;
     });
 
     vi.doMock("#/bootstrap/composition-root", () => ({
       createCliRuntimeContainer: () => ({ validate, initializeAsync, dispose }),
-      resolveCliCommands: () => [{ register }],
+      resolveCliCommands: () => [
+        {
+          definition: {
+            name: "ok",
+            description: "",
+            action: leafDispatch,
+          },
+        },
+      ],
     }));
 
     const { runCli } = await import("#/program");
@@ -99,7 +104,7 @@ describe("cli runtime + executor", () => {
     expect(exitCode).toBe(7);
     expect(validate).toHaveBeenCalledTimes(1);
     expect(initializeAsync).toHaveBeenCalledTimes(1);
-    expect(register).toHaveBeenCalledTimes(1);
+    expect(leafDispatch).toHaveBeenCalledTimes(1);
     expect(dispose).toHaveBeenCalledTimes(1);
   });
 

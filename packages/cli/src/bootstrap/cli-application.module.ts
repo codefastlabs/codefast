@@ -5,7 +5,7 @@ import { TagModule } from "#/domains/tag/tag.module";
 import { ArrangeCommand } from "#/domains/arrange/presentation/cli/arrange.command";
 import { MirrorCommand } from "#/domains/mirror/presentation/cli/mirror.command";
 import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
-import { CliCommandToken } from "#/shell/contracts/tokens";
+import { CliCommandToken } from "#/shell/composition/tokens";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 
 /** Root module: domain wiring plus `CliCommandToken` slots (single place for command registration). */

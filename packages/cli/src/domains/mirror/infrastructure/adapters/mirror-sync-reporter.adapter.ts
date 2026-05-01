@@ -1,11 +1,11 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { CliRuntime } from "#/shell/application/ports/outbound/cli-runtime.port";
 import { CliRuntimeToken } from "#/shell/application/cli-runtime.tokens";
 import type {
   MirrorProcessingModeInput,
   MirrorSyncReporterPort,
-} from "#/domains/mirror/application/outbound/mirror-sync-reporter.outbound-port";
+} from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
 import type {
   GlobalStats,
   MirrorDistAssetCounts,

@@ -1,19 +1,19 @@
 import { inject, injectable } from "@codefast/di";
 import type { GlobalCliOptions } from "#/shell/application/global-cli-options.model";
-import type { RepoRootResolverPort } from "#/shell/application/outbound/repo-root-resolver.outbound-port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/inbound/load-codefast-config.use-case";
+import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.port";
 import {
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { MirrorSyncCommandPrelude } from "#/domains/mirror/contracts/models";
-import type { MirrorPackagePathPort } from "#/domains/mirror/application/outbound/mirror-package-path.outbound-port";
-import { MirrorPackagePathPortToken } from "#/domains/mirror/contracts/tokens";
+import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/outbound/mirror-package-path.port";
+import { MirrorPackagePathPortToken } from "#/domains/mirror/composition/tokens";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/inbound/prepare-mirror-sync.use-case";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
 
 @injectable([
   inject(MirrorPackagePathPortToken),

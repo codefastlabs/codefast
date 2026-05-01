@@ -3,10 +3,10 @@ import { inject, injectable } from "@codefast/di";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/shell/domain/cli-exit-codes.domain";
 import type { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
-import type { CliVerboseDiagnosticsPort } from "#/shell/application/outbound/cli-verbose-diagnostics.outbound-port";
-import type { FormatAppErrorPort } from "#/shell/application/outbound/format-app-error.outbound-port";
+import type { CliVerboseDiagnosticsPort } from "#/shell/application/ports/outbound/cli-verbose-diagnostics.port";
+import type { FormatAppErrorPort } from "#/shell/application/ports/outbound/format-app-error.port";
 import {
   CliLoggerToken,
   CliVerboseDiagnosticsPortToken,

@@ -4,12 +4,12 @@ import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { CliFs, CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliFs, CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
 import type {
   WorkspacePackageLayoutOutcome,
   WorkspacePackageLayoutPort,
   WorkspacePackageLayoutSource,
-} from "#/shell/application/outbound/workspace-package-layout.outbound-port";
+} from "#/shell/application/ports/outbound/workspace-package-layout.port";
 import { CliFsToken, CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 
 /**

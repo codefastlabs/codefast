@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
-import type { GroupFilePreviewPort } from "#/domains/arrange/application/outbound/group-file-preview.outbound-port";
+import type { CliLogger } from "#/shell/application/ports/outbound/cli-io.port";
+import type { GroupFilePreviewPort } from "#/domains/arrange/application/ports/outbound/group-file-preview.port";
 import type {
   GroupFileUnwrapPlan,
   GroupFileWorkPlan,
