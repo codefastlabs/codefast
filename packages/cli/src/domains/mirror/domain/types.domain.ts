@@ -56,6 +56,12 @@ export interface PackageStats {
   error: string | null;
 }
 
+/** Built dist assets tallied for one package (reporter / progress output). */
+export interface MirrorDistAssetCounts {
+  jsCount: number;
+  cssCount: number;
+}
+
 export interface GlobalStats {
   packagesFound: number;
   packagesProcessed: number;
