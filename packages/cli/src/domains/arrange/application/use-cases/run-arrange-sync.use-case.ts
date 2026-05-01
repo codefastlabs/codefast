@@ -18,10 +18,7 @@ import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.
 import type { ArrangeSyncRunRequest } from "#/domains/arrange/application/requests/arrange-sync.request";
 import type { ArrangeRunResult } from "#/domains/arrange/domain/types.domain";
 import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.service";
-
-export interface RunArrangeSyncUseCase {
-  execute(request: ArrangeSyncRunRequest): Promise<Result<ArrangeRunResult, AppError>>;
-}
+import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/inbound/run-arrange-sync.use-case";
 
 @injectable([inject(ArrangeTargetScannerServiceToken), inject(ArrangeFileProcessorServiceToken)])
 export class RunArrangeSyncUseCaseImpl implements RunArrangeSyncUseCase {

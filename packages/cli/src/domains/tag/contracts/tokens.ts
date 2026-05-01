@@ -1,9 +1,9 @@
 import { token } from "@codefast/di";
-import type { TagSinceWriterPort } from "#/domains/tag/application/ports/tag-since-writer.port";
-import type { TagTargetResolverPort } from "#/domains/tag/application/ports/target-resolver.port";
-import type { TagVersionResolverPort } from "#/domains/tag/application/ports/tag-version-resolver.port";
-import type { PrepareTagSyncUseCase } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
-import type { RunTagSyncUseCase } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
+import type { TagSinceWriterPort } from "#/domains/tag/application/outbound/tag-since-writer.outbound-port";
+import type { TagTargetResolverPort } from "#/domains/tag/application/outbound/target-resolver.outbound-port";
+import type { TagVersionResolverPort } from "#/domains/tag/application/outbound/tag-version-resolver.outbound-port";
+import type { PrepareTagSyncUseCase } from "#/domains/tag/application/inbound/prepare-tag-sync.use-case";
+import type { RunTagSyncUseCase } from "#/domains/tag/application/inbound/run-tag-sync.use-case";
 import type { PresentTagSyncResultPresenter } from "#/domains/tag/contracts/tag-sync-result-presenter.contract";
 import type {
   TagCliTargetPathResolverService,

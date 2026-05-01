@@ -1,4 +1,4 @@
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 import type {
   GlobalStats,
   MirrorDistAssetCounts,
@@ -11,8 +11,7 @@ export type MirrorProcessingModeInput =
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
 /**
- * Driven port: progress and summary lines for mirror sync.
- * Implemented by a CLI adapter in infrastructure; use cases depend only on this contract.
+ * Outbound sink: progress and summary lines for mirror sync.
  */
 export interface MirrorSyncReporterPort {
   configureMirrorColors(noColor: boolean): void;

@@ -1,6 +1,6 @@
 import process from "node:process";
 import { injectable } from "@codefast/di";
-import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
 
 @injectable([])
 export class NodeCliRuntimeAdapter implements CliRuntime {

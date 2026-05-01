@@ -1,6 +1,6 @@
 import process from "node:process";
 import { injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 
 @injectable([])
 export class NodeCliLoggerAdapter implements CliLogger {

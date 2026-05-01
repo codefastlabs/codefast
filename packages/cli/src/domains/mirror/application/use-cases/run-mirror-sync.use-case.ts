@@ -8,7 +8,7 @@ import {
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 import {
   CliLoggerToken,
   WorkspacePackageLayoutPortToken,
@@ -16,7 +16,7 @@ import {
 import type {
   WorkspacePackageLayoutOutcome,
   WorkspacePackageLayoutPort,
-} from "#/shell/application/ports/workspace-package-layout.port";
+} from "#/shell/application/outbound/workspace-package-layout.outbound-port";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/domains/mirror/application/requests/mirror-sync.request";
@@ -26,13 +26,10 @@ import type {
   WorkspaceMultiDiscoverySource,
 } from "#/domains/mirror/domain/types.domain";
 import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
-import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/mirror-package-path.port";
-import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/mirror-sync-reporter.port";
-import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/sync-workspace-package.port";
-
-export interface RunMirrorSyncUseCase {
-  execute(request: MirrorSyncRunRequest): Promise<Result<GlobalStats, AppError>>;
-}
+import type { MirrorPackagePathPort } from "#/domains/mirror/application/outbound/mirror-package-path.outbound-port";
+import type { MirrorSyncReporterPort } from "#/domains/mirror/application/outbound/mirror-sync-reporter.outbound-port";
+import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/outbound/sync-workspace-package.outbound-port";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/inbound/run-mirror-sync.use-case";
 
 @injectable([
   inject(CliLoggerToken),

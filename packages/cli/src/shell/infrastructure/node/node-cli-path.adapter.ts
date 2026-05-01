@@ -1,6 +1,6 @@
 import path from "node:path";
 import { injectable } from "@codefast/di";
-import type { CliPath } from "#/shell/application/ports/path.port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
 
 @injectable([])
 export class NodeCliPathAdapter implements CliPath {

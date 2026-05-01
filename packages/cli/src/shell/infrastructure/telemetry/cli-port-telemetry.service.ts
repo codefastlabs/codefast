@@ -1,6 +1,6 @@
 import { injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
-import type { CliPortTelemetryPort } from "#/shell/application/ports/cli-port-telemetry.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliPortTelemetryPort } from "#/shell/application/outbound/cli-port-telemetry.outbound-port";
 
 @injectable([])
 export class CliPortTelemetryService implements CliPortTelemetryPort {

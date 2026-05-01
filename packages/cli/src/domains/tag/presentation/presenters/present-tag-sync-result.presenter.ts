@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 import type { PresentTagSyncResultPresenter } from "#/domains/tag/contracts/tag-sync-result-presenter.contract";
 import type { TagSyncResult } from "#/domains/tag/domain/types.domain";

@@ -6,7 +6,7 @@ import {
 } from "#/domains/arrange/domain/constants.domain";
 import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/contracts/analyze-report-presenter.contract";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliLoggerToken)])

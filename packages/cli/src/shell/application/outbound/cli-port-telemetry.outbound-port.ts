@@ -1,4 +1,4 @@
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
 
 /** Optional call logging around port-shaped objects (wrap at composition / `onActivation` only). */
 export interface CliPortTelemetryPort {

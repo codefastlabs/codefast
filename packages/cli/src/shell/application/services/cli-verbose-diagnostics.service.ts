@@ -1,5 +1,5 @@
 import { injectable } from "@codefast/di";
-import type { CliVerboseDiagnosticsPort } from "#/shell/application/ports/cli-verbose-diagnostics.port";
+import type { CliVerboseDiagnosticsPort } from "#/shell/application/outbound/cli-verbose-diagnostics.outbound-port";
 
 @injectable()
 export class CliVerboseDiagnosticsService implements CliVerboseDiagnosticsPort {

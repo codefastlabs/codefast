@@ -1,5 +1,5 @@
-import type { CliPath } from "#/shell/application/ports/path.port";
-import type { FileSystemServicePort } from "#/domains/mirror/application/ports/file-system-service.port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
+import type { FileSystemServicePort } from "#/domains/mirror/application/outbound/file-system-service.outbound-port";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
 import {
   PACKAGE_JSON_EXPORT,

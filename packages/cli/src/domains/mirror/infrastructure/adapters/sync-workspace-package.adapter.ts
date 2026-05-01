@@ -1,17 +1,17 @@
 import { inject, injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
-import type { CliFs, CliLogger } from "#/shell/application/ports/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/path.port";
+import type { CliFs, CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
 import { CliFsToken, CliLoggerToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import {
   createPathTransform,
   generateExports,
 } from "#/domains/mirror/application/services/generate-mirror-exports.service";
-import type { FileSystemServicePort } from "#/domains/mirror/application/ports/file-system-service.port";
-import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/mirror-sync-reporter.port";
-import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/package-repository.port";
-import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/sync-workspace-package.port";
+import type { FileSystemServicePort } from "#/domains/mirror/application/outbound/file-system-service.outbound-port";
+import type { MirrorSyncReporterPort } from "#/domains/mirror/application/outbound/mirror-sync-reporter.outbound-port";
+import type { PackageRepositoryPort } from "#/domains/mirror/application/outbound/package-repository.outbound-port";
+import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/outbound/sync-workspace-package.outbound-port";
 import { DIST_DIR, PACKAGE_JSON } from "#/domains/mirror/domain/constants.domain";
 import type {
   GlobalStats,

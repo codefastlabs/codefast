@@ -1,6 +1,6 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import type { TagCliTargetPathResolverService } from "#/domains/tag/contracts/services.contract";
 

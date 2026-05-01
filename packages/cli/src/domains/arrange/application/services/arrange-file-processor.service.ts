@@ -1,9 +1,9 @@
 import { inject, injectable } from "@codefast/di";
 import { DomainSourceParserPortToken } from "#/domains/arrange/contracts/tokens";
 import type { ArrangeFileProcessorService } from "#/domains/arrange/contracts/services.contract";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
-import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/domain-source-parser.port";
+import type { DomainSourceParserPort } from "#/domains/arrange/application/outbound/domain-source-parser.outbound-port";
 import type {
   ArrangeGroupFileOptions,
   GroupFileResult,

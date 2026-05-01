@@ -7,20 +7,17 @@ import type { ArrangeTargetScannerService } from "#/domains/arrange/contracts/se
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
 import { CliFsToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/domain-source-parser.port";
+import type { DomainSourceParserPort } from "#/domains/arrange/application/outbound/domain-source-parser.outbound-port";
 import type { ArrangeAnalyzeDirectoryRequest } from "#/domains/arrange/application/requests/analyze-directory.request";
-import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
 } from "#/domains/arrange/domain/arrange-analyze.service";
-
-export interface AnalyzeDirectoryUseCase {
-  execute(request: ArrangeAnalyzeDirectoryRequest): Result<AnalyzeReport, AppError>;
-}
+import type { AnalyzeReport } from "#/domains/arrange/domain/types.domain";
+import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/inbound/analyze-directory.use-case";
 
 @injectable([
   inject(CliFsToken),

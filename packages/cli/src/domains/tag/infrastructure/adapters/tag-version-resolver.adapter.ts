@@ -1,8 +1,8 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/path.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
 import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
-import type { TagVersionResolverPort } from "#/domains/tag/application/ports/tag-version-resolver.port";
+import type { TagVersionResolverPort } from "#/domains/tag/application/outbound/tag-version-resolver.outbound-port";
 
 @injectable([inject(CliPathToken), inject(CliFsToken)])
 export class TagVersionResolverAdapter implements TagVersionResolverPort {

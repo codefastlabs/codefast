@@ -1,24 +1,24 @@
 import { inject, injectable } from "@codefast/di";
 import { Command } from "commander";
-import type { CliExecutorPort } from "#/shell/application/ports/cli-executor.port";
-import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/global-cli-options-parse.port";
-import type { SchemaValidationPort } from "#/shell/application/ports/schema-validation.port";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
-import type { CliRuntime } from "#/shell/application/ports/runtime.port";
+import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
+import type { GlobalCliOptionsParsePort } from "#/shell/application/outbound/global-cli-options-parse.outbound-port";
+import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliRuntime } from "#/shell/application/outbound/cli-runtime.outbound-port";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import {
   PrepareMirrorSyncUseCaseToken,
   RunMirrorSyncUseCaseToken,
 } from "#/domains/mirror/contracts/tokens";
-import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
-import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
+import type { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/inbound/prepare-mirror-sync.use-case";
+import type { RunMirrorSyncUseCase } from "#/domains/mirror/application/inbound/run-mirror-sync.use-case";
 import { mirrorSyncRunRequestSchema } from "#/domains/mirror/presentation/presenters/mirror-cli.schema";
 import {
-  CliExecutorPortToken,
+  CliExecutorToken,
   CliLoggerToken,
   CliRuntimeToken,
   GlobalCliOptionsParsePortToken,
-  SchemaValidationPortToken,
+  CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { CliCommand } from "#/shell/contracts/cli-command.contract";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
@@ -29,8 +29,8 @@ import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
   inject(PrepareMirrorSyncUseCaseToken),
   inject(RunMirrorSyncUseCaseToken),
   inject(GlobalCliOptionsParsePortToken),
-  inject(SchemaValidationPortToken),
-  inject(CliExecutorPortToken),
+  inject(CliSchemaParsingToken),
+  inject(CliExecutorToken),
 ])
 export class MirrorCommand implements CliCommand {
   readonly name = CLI_COMMAND_SLOT_NAME.mirror;
@@ -42,8 +42,8 @@ export class MirrorCommand implements CliCommand {
     private readonly prepareMirrorSync: PrepareMirrorSyncUseCase,
     private readonly runMirrorSync: RunMirrorSyncUseCase,
     private readonly globalCliOptions: GlobalCliOptionsParsePort,
-    private readonly schemaValidation: SchemaValidationPort,
-    private readonly cliExecutor: CliExecutorPort,
+    private readonly schemaValidation: CliSchemaParsing,
+    private readonly cliExecutor: CliExecutor,
   ) {}
 
   register(program: Command): void {

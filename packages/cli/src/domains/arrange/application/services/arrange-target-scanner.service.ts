@@ -1,10 +1,10 @@
 import { inject, injectable } from "@codefast/di";
 import type { ArrangeTargetScannerService } from "#/domains/arrange/contracts/services.contract";
 import { FileWalkerPortToken } from "#/domains/arrange/contracts/tokens";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { CliPath } from "#/shell/application/ports/path.port";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { CliPath } from "#/shell/application/outbound/cli-path.outbound-port";
 import { CliFsToken, CliPathToken } from "#/shell/application/cli-runtime.tokens";
-import type { FileWalkerPort } from "#/domains/arrange/application/ports/file-walker.port";
+import type { FileWalkerPort } from "#/domains/arrange/application/outbound/file-walker.outbound-port";
 
 @injectable([inject(FileWalkerPortToken), inject(CliPathToken), inject(CliFsToken)])
 export class ArrangeTargetScannerServiceImpl implements ArrangeTargetScannerService {

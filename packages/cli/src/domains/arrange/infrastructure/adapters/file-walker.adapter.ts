@@ -1,8 +1,8 @@
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { CliLogger } from "#/shell/application/ports/cli-io.port";
-import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/typescript-source-file-walker.port";
-import type { FileWalkerPort } from "#/domains/arrange/application/ports/file-walker.port";
+import type { CliLogger } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/outbound/typescript-source-file-walker.outbound-port";
+import type { FileWalkerPort } from "#/domains/arrange/application/outbound/file-walker.outbound-port";
 import {
   CliLoggerToken,
   TypeScriptSourceFileWalkerPortToken,

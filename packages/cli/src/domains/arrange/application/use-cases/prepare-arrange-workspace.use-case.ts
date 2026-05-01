@@ -3,24 +3,18 @@ import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/arrange-target-path-resolver.port";
+import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/outbound/arrange-target-path-resolver.outbound-port";
 import { ArrangeTargetPathResolverPortToken } from "#/domains/arrange/contracts/tokens";
-import type { RepoRootResolverPort } from "#/shell/application/ports/repo-root-resolver.port";
+import type { RepoRootResolverPort } from "#/shell/application/outbound/repo-root-resolver.outbound-port";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contracts/models";
-import type { CliFs } from "#/shell/application/ports/cli-io.port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/load-codefast-config.use-case";
+import type { CliFs } from "#/shell/application/outbound/cli-io.outbound-port";
+import type { LoadCodefastConfigUseCase } from "#/shell/application/inbound/load-codefast-config.use-case";
 import {
   CliFsToken,
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-
-export interface PrepareArrangeWorkspaceUseCase {
-  execute(args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  }): Promise<Result<ArrangeTargetWorkspaceAndConfig, AppError>>;
-}
+import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/inbound/prepare-arrange-workspace.use-case";
 
 @injectable([
   inject(ArrangeTargetPathResolverPortToken),
