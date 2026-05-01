@@ -7,6 +7,7 @@ import { buildCodefastFailureScenarios } from "#/scenarios/codefast/failure";
 import { buildCodefastFanOutScenarios } from "#/scenarios/codefast/fan-out";
 import { buildCodefastLifecycleScenarios } from "#/scenarios/codefast/lifecycle";
 import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
+import { buildCodefastProductionScenarios } from "#/scenarios/codefast/production";
 import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
 import { buildCodefastRealisticGraphValidateScenarios } from "#/scenarios/codefast/realistic-graph-validate";
 import { buildCodefastScaleScenarios } from "#/scenarios/codefast/scale";
@@ -25,5 +26,6 @@ export function collectAllCodefastScenarios(): readonly AnyScenario[] {
     ...buildCodefastScaleScenarios(),
     ...buildCodefastBootScenarios(),
     ...buildCodefastFailureScenarios(),
+    ...buildCodefastProductionScenarios(),
   ];
 }
