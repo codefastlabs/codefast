@@ -17,9 +17,9 @@ import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.po
 import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { TagEligibleWorkspacePathsPort } from "#/domains/tag/application/ports/outbound/tag-eligible-workspace-paths.port";
+import type { PresentTagSyncProgressPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
 import type {
   TagFileResult,
-  TagProgressListener,
   TagTargetCandidate,
   TagTargetSource,
   TagResolvedTarget,
@@ -222,7 +222,7 @@ export class RunTagSyncUseCaseImpl implements RunTagSyncUseCase {
   private async runOnResolvedTarget(
     resolvedTarget: TagResolvedTarget,
     write: boolean,
-    listener: TagProgressListener | undefined,
+    listener: PresentTagSyncProgressPresenter | undefined,
   ): Promise<TagTargetExecutionResult> {
     listener?.onTargetStarted(resolvedTarget);
     const absoluteTargetPath = this.path.resolve(resolvedTarget.targetPath);

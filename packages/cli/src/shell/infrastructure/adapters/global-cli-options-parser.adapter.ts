@@ -8,7 +8,7 @@ import type { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 
 @injectable([inject(CliSchemaParsingToken)])
-export class GlobalCliOptionsParser implements GlobalCliOptionsParsePort {
+export class GlobalCliOptionsParserAdapter implements GlobalCliOptionsParsePort {
   constructor(private readonly schemaValidation: CliSchemaParsing) {}
 
   parseGlobalCliOptions(raw: unknown): Result<GlobalCliOptions, AppError> {

@@ -3,12 +3,13 @@ import { AppError } from "#/shell/domain/errors.domain";
 import { TagCommand } from "#/domains/tag/presentation/cli/tag.command";
 import type { PrepareTagSyncUseCase } from "#/domains/tag/application/ports/inbound/prepare-tag-sync.use-case";
 import type { RunTagSyncUseCase } from "#/domains/tag/application/ports/inbound/run-tag-sync.use-case";
-import type { PresentTagSyncResultPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
-import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
-import { formatProgress } from "#/domains/tag/presentation/presenters/tag-sync.presenter";
+import type { PresentTagSyncResultPresenter as PresentTagSyncResultPresenterPort } from "#/domains/tag/application/ports/presenting/present-tag-sync-result.presenter";
+import type { PresentTagSyncProgressPresenter as PresentTagSyncProgressPresenterPort } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
+import { PresentTagSyncResultPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
+import { PresentTagSyncProgressPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-progress.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
-import type { TagProgressListener, TagSyncResult } from "#/domains/tag/domain/types.domain";
+import type { TagSyncResult } from "#/domains/tag/domain/types.domain";
 
 function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -86,12 +87,16 @@ type TagDeps = {
   runTagSync: RunTagSyncUseCase & {
     execute: ReturnType<typeof vi.fn<RunTagSyncUseCase["execute"]>>;
   };
-  tagProgressListener: TagProgressListener & {
-    onTargetStarted: ReturnType<typeof vi.fn<TagProgressListener["onTargetStarted"]>>;
-    onTargetCompleted: ReturnType<typeof vi.fn<TagProgressListener["onTargetCompleted"]>>;
+  tagProgressPresenter: PresentTagSyncProgressPresenterPort & {
+    onTargetStarted: ReturnType<
+      typeof vi.fn<PresentTagSyncProgressPresenterPort["onTargetStarted"]>
+    >;
+    onTargetCompleted: ReturnType<
+      typeof vi.fn<PresentTagSyncProgressPresenterPort["onTargetCompleted"]>
+    >;
   };
-  presenter: PresentTagSyncResultPresenter & {
-    present: ReturnType<typeof vi.fn<PresentTagSyncResultPresenter["present"]>>;
+  presenter: PresentTagSyncResultPresenterPort & {
+    present: ReturnType<typeof vi.fn<PresentTagSyncResultPresenterPort["present"]>>;
   };
 };
 
@@ -115,12 +120,12 @@ function createDeps(): TagDeps {
         value: createTagResult(),
       })),
     },
-    tagProgressListener: {
-      onTargetStarted: vi.fn<TagProgressListener["onTargetStarted"]>(),
-      onTargetCompleted: vi.fn<TagProgressListener["onTargetCompleted"]>(),
+    tagProgressPresenter: {
+      onTargetStarted: vi.fn<PresentTagSyncProgressPresenterPort["onTargetStarted"]>(),
+      onTargetCompleted: vi.fn<PresentTagSyncProgressPresenterPort["onTargetCompleted"]>(),
     },
     presenter: {
-      present: vi.fn<PresentTagSyncResultPresenter["present"]>(() => 0),
+      present: vi.fn<PresentTagSyncResultPresenterPort["present"]>(() => 0),
     },
   };
 }
@@ -135,7 +140,7 @@ function createCommandAndProgram(deps: TagDeps): { command: TagCommand; program:
     deps.runtime,
     deps.prepareTagSync,
     deps.runTagSync,
-    deps.tagProgressListener,
+    deps.tagProgressPresenter,
     deps.presenter,
     shell.schemaValidation,
     shell.cliExecutor,
@@ -173,7 +178,7 @@ describe("TagCommand + tag presenter integration", () => {
     await program.parseAsync(["node", "codefast", "annotate", "packages/a/src"], { from: "node" });
 
     expect(deps.runTagSync.execute).toHaveBeenCalledWith(
-      expect.objectContaining({ write: true, json: false, listener: deps.tagProgressListener }),
+      expect.objectContaining({ write: true, json: false, listener: deps.tagProgressPresenter }),
     );
     expect(deps.presenter.present).toHaveBeenCalledTimes(1);
     expect(deps.runtime.setExitCode).toHaveBeenCalledWith(0);
@@ -194,52 +199,39 @@ describe("TagCommand + tag presenter integration", () => {
   });
 
   it("formats progress events for started and completed states", () => {
-    const started = formatProgress({
-      type: "target-started",
-      target: {
-        targetPath: "/tmp/workspace/a",
-        rootRelativeTargetPath: "packages/a/src",
-        source: "workspace-package-selected-src",
-        packageDir: null,
-        packageName: "@scope/a",
-      },
-    });
-    const completed = formatProgress({
-      type: "target-completed",
-      target: {
-        targetPath: "/tmp/workspace/a",
-        rootRelativeTargetPath: "packages/a/src",
-        source: "workspace-package-selected-src",
-        packageDir: null,
-        packageName: "@scope/a",
-      },
+    const logger = createLoggerMock();
+    const progress = new PresentTagSyncProgressPresenter(logger);
+    const target = {
+      targetPath: "/tmp/workspace/a",
+      rootRelativeTargetPath: "packages/a/src",
+      source: "workspace-package-selected-src" as const,
+      packageDir: null,
+      packageName: "@scope/a",
+    };
+    progress.onTargetStarted(target);
+    progress.onTargetCompleted(target, {
+      target,
+      targetExists: true,
+      runError: null,
       result: {
-        target: {
-          targetPath: "/tmp/workspace/a",
-          rootRelativeTargetPath: "packages/a/src",
-          source: "workspace-package-selected-src",
-          packageDir: null,
-          packageName: "@scope/a",
-        },
-        targetExists: true,
-        runError: null,
-        result: {
-          version: "1.0.0",
-          filesScanned: 1,
-          filesChanged: 2,
-          taggedDeclarations: 3,
-          fileResults: [],
-        },
+        version: "1.0.0",
+        filesScanned: 1,
+        filesChanged: 2,
+        taggedDeclarations: 3,
+        fileResults: [],
       },
     });
 
-    expect(started).toContain("Processing @scope/a");
-    expect(completed).toContain("Done @scope/a (2 changes)");
+    expect(logger.out).toHaveBeenNthCalledWith(1, expect.stringContaining("Processing @scope/a"));
+    expect(logger.out).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("Done @scope/a (2 changes)"),
+    );
   });
 
   it("returns non-zero and warning lines from presenter when result has errors", () => {
     const logger = createLoggerMock();
-    const presenter = new PresentTagSyncResultPresenterImpl(logger);
+    const presenter = new PresentTagSyncResultPresenter(logger);
     const exitCode = presenter.present(
       createTagResult({
         targetResults: [
@@ -268,7 +260,7 @@ describe("TagCommand + tag presenter integration", () => {
 
   it("returns non-zero for empty target list", () => {
     const logger = createLoggerMock();
-    const presenter = new PresentTagSyncResultPresenterImpl(logger);
+    const presenter = new PresentTagSyncResultPresenter(logger);
     const exitCode = presenter.present(
       createTagResult({
         selectedTargets: [],

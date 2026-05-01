@@ -1,6 +1,6 @@
 import { exitCodeForTagSyncResult } from "#/domains/tag/application/tag-sync-cli-result";
-import { PresentTagSyncResultPresenterImpl } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
-import { TagSyncProgressListener } from "#/domains/tag/presentation/presenters/tag-sync-progress-listener.presenter";
+import { PresentTagSyncResultPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-result.presenter";
+import { PresentTagSyncProgressPresenter } from "#/domains/tag/presentation/presenters/present-tag-sync-progress.presenter";
 
 function createResult() {
   return {
@@ -49,7 +49,7 @@ function createResult() {
 describe("tag presenter wrappers integration", () => {
   it("delegates final result presentation", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
-    const presenter = new PresentTagSyncResultPresenterImpl(logger);
+    const presenter = new PresentTagSyncResultPresenter(logger);
     const result = createResult();
     const expected = exitCodeForTagSyncResult(result as never);
     const actual = presenter.present(result as never, "/tmp/workspace");
@@ -58,7 +58,7 @@ describe("tag presenter wrappers integration", () => {
 
   it("emits target started/completed logs via progress listener", () => {
     const logger = { out: vi.fn(), err: vi.fn() };
-    const listener = new TagSyncProgressListener(logger);
+    const listener = new PresentTagSyncProgressPresenter(logger);
     const result = createResult();
     const target = result.selectedTargets[0] as never;
     const executionResult = result.targetResults[0] as never;

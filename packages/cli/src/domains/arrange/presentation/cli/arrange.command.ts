@@ -22,7 +22,6 @@ import {
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/domains/arrange/presentation/presenters/arrange-cli.schema";
-import { exitCodeForArrangeSyncResult } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
@@ -38,6 +37,7 @@ import type {
   CliCommandTree,
 } from "#/shell/application/ports/primary/cli-command.port";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 
 @injectable([
   inject(CliLoggerPortToken),
@@ -284,10 +284,10 @@ export class ArrangeCommand implements CliCommandPort {
 
     if (typedLocalCarrier.json) {
       this.logger.out(this.formatArrangeSyncJsonOutput(outcome.value, writeCandidate));
-      this.runtime.setExitCode(exitCodeForArrangeSyncResult(outcome.value));
+      this.runtime.setExitCode(this.exitCodeForArrangeSyncResult(outcome.value));
     } else {
       this.presentArrangeSyncResult.present(outcome.value, writeCandidate);
-      this.runtime.setExitCode(exitCodeForArrangeSyncResult(outcome.value));
+      this.runtime.setExitCode(this.exitCodeForArrangeSyncResult(outcome.value));
     }
   }
 
@@ -332,5 +332,9 @@ export class ArrangeCommand implements CliCommandPort {
       primaryLine: output.primaryLine,
       bucketsCommentLine: output.bucketsCommentLine,
     });
+  }
+
+  private exitCodeForArrangeSyncResult(result: ArrangeRunResult): number {
+    return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
   }
 }

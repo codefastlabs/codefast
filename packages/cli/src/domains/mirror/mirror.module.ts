@@ -3,7 +3,7 @@ import { FileSystemServiceAdapter } from "#/domains/mirror/infrastructure/adapte
 import { MirrorSyncReporterAdapter } from "#/domains/mirror/infrastructure/adapters/mirror-sync-reporter.adapter";
 import { PackageRepositoryAdapter } from "#/domains/mirror/infrastructure/adapters/package-repository.adapter";
 import { SyncWorkspacePackageAdapter } from "#/domains/mirror/infrastructure/adapters/sync-workspace-package.adapter";
-import { MirrorPackagePathResolver } from "#/domains/mirror/application/services/mirror-package-path-resolver.service";
+import { MirrorPackagePathResolverAdapter } from "#/domains/mirror/infrastructure/adapters/mirror-package-path-resolver.adapter";
 import { PrepareMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCaseImpl } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
 import {
@@ -23,7 +23,7 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
 
   moduleBuilder
     .bind(MirrorPackagePathPortToken)
-    .to(MirrorPackagePathResolver)
+    .to(MirrorPackagePathResolverAdapter)
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(MirrorPackagePathPortToken));
 

@@ -1,7 +1,7 @@
 import { token } from "@codefast/di";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
-import type { CliTelemetryPort } from "#/shell/application/ports/outbound/cli-port-telemetry.port";
+import type { CliTelemetryPort } from "#/shell/application/ports/outbound/cli-telemetry.port";
 import type { CliVerboseDiagnosticsPort } from "#/shell/application/ports/outbound/cli-verbose-diagnostics.port";
 import type { FormatAppErrorPort } from "#/shell/application/ports/outbound/format-app-error.port";
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";

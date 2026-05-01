@@ -9,7 +9,7 @@ import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 
 @injectable([inject(CliFilesystemPortToken)])
-export class MirrorPackagePathResolver implements MirrorPackagePathPort {
+export class MirrorPackagePathResolverAdapter implements MirrorPackagePathPort {
   constructor(private readonly fileSystem: CliFilesystemPort) {}
 
   resolveFromCliArg(args: {

@@ -1,9 +1,7 @@
-import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
-import {
-  exitCodeForArrangeSyncResult,
-  PresentArrangeSyncResultPresenterImpl,
-} from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
+import { PresentAnalyzeReportPresenter } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
+import { PresentArrangeSyncResultPresenter } from "#/domains/arrange/presentation/presenters/arrange-sync.presenter";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import type { GroupFileWorkPlan } from "#/domains/arrange/domain/arrange-grouping.domain-service";
 
 function createLoggerMock(): CliLoggerPort & {
@@ -42,10 +40,14 @@ function createFindings(count: number) {
   }));
 }
 
+function exitCodeForArrangeSyncResultForTest(result: { hookError: string | null }): number {
+  return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+}
+
 describe("arrange presenters integration", () => {
   it("prints analyze report with truncation markers", () => {
     const logger = createLoggerMock();
-    const presenter = new PresentAnalyzeReportPresenterImpl(logger);
+    const presenter = new PresentAnalyzeReportPresenter(logger);
     const report = {
       files: 3,
       cnCallExpressions: 4,
@@ -111,7 +113,7 @@ describe("arrange presenters integration", () => {
 
   it("returns non-zero when hook error exists and prints error line", () => {
     const logger = createLoggerMock();
-    const presenter = new PresentArrangeSyncResultPresenterImpl(logger);
+    const presenter = new PresentArrangeSyncResultPresenter(logger);
     presenter.present(
       {
         filePaths: ["a.tsx"],
@@ -125,15 +127,10 @@ describe("arrange presenters integration", () => {
     );
 
     expect(
-      exitCodeForArrangeSyncResult({
-        filePaths: ["a.tsx"],
-        modifiedFiles: [],
-        totalFound: 2,
-        totalChanged: 0,
+      exitCodeForArrangeSyncResultForTest({
         hookError: "hook failed",
-        previewPlans: [],
       }),
-    ).toBe(1);
+    ).toBe(CLI_EXIT_GENERAL_ERROR);
     expect(logger.err).toHaveBeenCalledWith("hook failed");
   });
 });

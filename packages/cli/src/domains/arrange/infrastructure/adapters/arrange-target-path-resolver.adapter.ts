@@ -5,7 +5,7 @@ import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/applicatio
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFilesystemPortToken)])
-export class ArrangeTargetPathResolver implements ArrangeTargetPathResolverPort {
+export class ArrangeTargetPathResolverAdapter implements ArrangeTargetPathResolverPort {
   private readonly packageJsonFileName = "package.json";
 
   constructor(private readonly fs: CliFilesystemPort) {}

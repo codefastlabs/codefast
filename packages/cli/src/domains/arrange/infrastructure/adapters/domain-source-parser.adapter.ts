@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/outbound/domain-source-parser.port";
-import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/adapters/typescript-ast-translator.adapter";
+import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/typescript-ast-translator";
 import type { DomainSourceFile } from "#/domains/arrange/domain/ast/ast-node.model";
 import { CliLoggerPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";

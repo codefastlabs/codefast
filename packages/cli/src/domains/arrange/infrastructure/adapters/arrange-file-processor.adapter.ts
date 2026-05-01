@@ -21,7 +21,7 @@ import {
 import { ensureCnImport } from "#/domains/arrange/domain/imports.domain";
 
 @injectable([inject(CliFilesystemPortToken), inject(DomainSourceParserPortToken)])
-export class ArrangeFileProcessorServiceImpl implements ArrangeFileProcessorPort {
+export class ArrangeFileProcessorAdapter implements ArrangeFileProcessorPort {
   constructor(
     private readonly fs: CliFilesystemPort,
     private readonly domainSourceParser: DomainSourceParserPort,

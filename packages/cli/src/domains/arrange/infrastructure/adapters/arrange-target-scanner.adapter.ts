@@ -7,7 +7,7 @@ import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cl
 import type { FileWalkerPort } from "#/domains/arrange/application/ports/outbound/file-walker.port";
 
 @injectable([inject(FileWalkerPortToken), inject(CliPathPortToken), inject(CliFilesystemPortToken)])
-export class ArrangeTargetScannerServiceImpl implements ArrangeTargetScannerPort {
+export class ArrangeTargetScannerAdapter implements ArrangeTargetScannerPort {
   constructor(
     private readonly fileWalker: FileWalkerPort,
     private readonly path: CliPathPort,

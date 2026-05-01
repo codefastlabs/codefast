@@ -23,7 +23,7 @@ import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.dom
   inject(TagSinceWriterPortToken),
   inject(TypeScriptSourceFileWalkerPortToken),
 ])
-export class TagTargetRunnerServiceImpl implements TagTargetRunnerPort {
+export class TagTargetRunnerAdapter implements TagTargetRunnerPort {
   constructor(
     private readonly fs: CliFilesystemPort,
     private readonly pathService: CliPathPort,

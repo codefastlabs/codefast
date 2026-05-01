@@ -1,5 +1,4 @@
 import { inject, injectable } from "@codefast/di";
-import { loadCodefastConfig } from "#/domains/config/application/services/load-config";
 import type { ConfigLoaderPort } from "#/domains/config/application/ports/outbound/config-loader.port";
 import type { ConfigWarningReporterPort } from "#/domains/config/application/ports/outbound/config-warning-reporter.port";
 import {
@@ -22,12 +21,9 @@ export class LoadCodefastConfigUseCaseImpl implements LoadCodefastConfigUseCase 
 
   async execute(rootDir: string): Promise<Result<{ config: CodefastConfig }, AppError>> {
     try {
-      const loadedConfig = await loadCodefastConfig(this.configLoader, rootDir);
-      if (!loadedConfig.ok) {
-        return loadedConfig;
-      }
-      this.warningReporter.reportSchemaWarnings(loadedConfig.value.warnings);
-      return ok({ config: loadedConfig.value.config });
+      const { config, warnings } = await this.configLoader.loadConfig(rootDir);
+      this.warningReporter.reportSchemaWarnings(warnings);
+      return ok({ config });
     } catch (caughtError: unknown) {
       return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
