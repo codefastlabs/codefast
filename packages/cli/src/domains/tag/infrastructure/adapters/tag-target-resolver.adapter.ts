@@ -30,7 +30,7 @@ export class TagTargetResolverAdapter implements TagEligibleWorkspacePathsPort {
     rootDir: string,
     explicitTarget: string | undefined,
   ): Promise<TagTargetCandidate[]> {
-    return this.resolveTagTargetCandidatesImpl(rootDir, explicitTarget);
+    return this.collectTagTargetCandidates(rootDir, explicitTarget);
   }
 
   private toPosix(filePath: string): string {
@@ -89,7 +89,7 @@ export class TagTargetResolverAdapter implements TagEligibleWorkspacePathsPort {
     };
   }
 
-  private async resolveTagTargetCandidatesImpl(
+  private async collectTagTargetCandidates(
     rootDir: string,
     explicitTarget: string | undefined,
   ): Promise<TagTargetCandidate[]> {

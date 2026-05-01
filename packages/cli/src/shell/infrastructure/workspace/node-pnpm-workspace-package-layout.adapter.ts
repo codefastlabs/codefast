@@ -31,7 +31,10 @@ export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLa
     rootDirectoryPathAbsolute: string,
     suppressGlobPermissionDiagnostics?: boolean,
   ): Promise<WorkspacePackageLayoutOutcome> {
-    return this.listImpl(rootDirectoryPathAbsolute, !!suppressGlobPermissionDiagnostics);
+    return this.collectPackageDirectoryPathsAbsolute(
+      rootDirectoryPathAbsolute,
+      !!suppressGlobPermissionDiagnostics,
+    );
   }
 
   private toPosix(filePath: string): string {
@@ -134,7 +137,7 @@ export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLa
     return { exists: true, doc };
   }
 
-  private async listImpl(
+  private async collectPackageDirectoryPathsAbsolute(
     rootDir: string,
     suppressGlobPermissionDiagnostics: boolean,
   ): Promise<WorkspacePackageLayoutOutcome> {
