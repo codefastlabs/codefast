@@ -7,8 +7,8 @@ import {
   RepoRootResolverPortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import type { MirrorSyncCommandPrelude } from "#/domains/mirror/contracts/models";
-import type { MirrorPackageArgResolverPort } from "#/domains/mirror/application/ports/mirror-package-arg-resolver.port";
-import { MirrorPackageArgResolverPortToken } from "#/domains/mirror/contracts/tokens";
+import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/mirror-package-path.port";
+import { MirrorPackagePathPortToken } from "#/domains/mirror/contracts/tokens";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
@@ -23,13 +23,13 @@ export interface PrepareMirrorSyncUseCase {
 }
 
 @injectable([
-  inject(MirrorPackageArgResolverPortToken),
+  inject(MirrorPackagePathPortToken),
   inject(RepoRootResolverPortToken),
   inject(LoadCodefastConfigUseCaseToken),
 ])
 export class PrepareMirrorSyncUseCaseImpl implements PrepareMirrorSyncUseCase {
   constructor(
-    private readonly mirrorPackageArgResolver: MirrorPackageArgResolverPort,
+    private readonly mirrorPackagePath: MirrorPackagePathPort,
     private readonly repoRootResolver: RepoRootResolverPort,
     private readonly loadCodefastConfig: LoadCodefastConfigUseCase,
   ) {}
@@ -46,7 +46,7 @@ export class PrepareMirrorSyncUseCaseImpl implements PrepareMirrorSyncUseCase {
       return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
 
-    const filterOutcome = this.mirrorPackageArgResolver.resolveFromCliArg({
+    const filterOutcome = this.mirrorPackagePath.resolveFromCliArg({
       rootDir,
       packageArg: args.packageArg,
       currentWorkingDirectory: args.currentWorkingDirectory,

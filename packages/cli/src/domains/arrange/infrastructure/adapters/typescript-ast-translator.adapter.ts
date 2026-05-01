@@ -5,7 +5,6 @@
 
 import { injectable } from "@codefast/di";
 import ts from "typescript";
-import type { TypeScriptToDomainAstPort } from "#/domains/arrange/application/ports/typescript-to-domain-ast.port";
 import {
   DomainBinaryOperator,
   DomainSyntaxKind,
@@ -47,7 +46,7 @@ type WritableDomainAst<T extends DomainAstNode> = {
 };
 
 @injectable()
-export class TypeScriptAstTranslator implements TypeScriptToDomainAstPort {
+export class TypeScriptAstTranslator {
   translateSourceFile(filePath: string, sourceText: string): DomainSourceFile {
     return this.parseDomainSourceFile(filePath, sourceText);
   }
