@@ -1,4 +1,4 @@
-import { LoadCodefastConfigUseCaseImpl } from "#/shell/application/use-cases/load-codefast-config.use-case";
+import { LoadCodefastConfigUseCase } from "#/shell/application/use-cases/load-codefast-config.use-case";
 import { PresentAnalyzeReportPresenterToken } from "#/domains/arrange/composition/tokens";
 import { CliCommandPortToken } from "#/shell/composition/tokens";
 import {
@@ -9,7 +9,7 @@ import {
 describe("support files integration", () => {
   it("loads config via loader port", async () => {
     const reportSchemaWarnings = vi.fn();
-    const useCase = new LoadCodefastConfigUseCaseImpl(
+    const useCase = new LoadCodefastConfigUseCase(
       {
         loadConfig: vi.fn(async () => ({
           config: { mirror: { skipPackages: [] } },
@@ -28,7 +28,7 @@ describe("support files integration", () => {
   });
 
   it("maps loader errors to INFRA_FAILURE", async () => {
-    const useCase = new LoadCodefastConfigUseCaseImpl(
+    const useCase = new LoadCodefastConfigUseCase(
       {
         loadConfig: vi.fn(async () => {
           throw new Error("broken config");

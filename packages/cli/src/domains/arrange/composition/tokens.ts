@@ -2,10 +2,10 @@ import { token } from "@codefast/di";
 import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/outbound/arrange-target-path-resolver.port";
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/outbound/domain-source-parser.port";
 import type { FileWalkerPort } from "#/domains/arrange/application/ports/outbound/file-walker.port";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
+import type { AnalyzeDirectoryUseCasePort } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCasePort } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCasePort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCasePort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
 import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
@@ -32,13 +32,14 @@ export const ArrangeFileProcessorPortToken = token<ArrangeFileProcessorPort>(
 );
 
 export const AnalyzeDirectoryUseCaseToken =
-  token<AnalyzeDirectoryUseCase>("AnalyzeDirectoryUseCase");
+  token<AnalyzeDirectoryUseCasePort>("AnalyzeDirectoryUseCase");
 export const ArrangeTargetPathResolverPortToken = token<ArrangeTargetPathResolverPort>(
   "ArrangeTargetPathResolverPort",
 );
-export const RunArrangeSyncUseCaseToken = token<RunArrangeSyncUseCase>("RunArrangeSyncUseCase");
-export const SuggestCnGroupsUseCaseToken = token<SuggestCnGroupsUseCase>("SuggestCnGroupsUseCase");
-export const PrepareArrangeWorkspaceUseCaseToken = token<PrepareArrangeWorkspaceUseCase>(
+export const RunArrangeSyncUseCaseToken = token<RunArrangeSyncUseCasePort>("RunArrangeSyncUseCase");
+export const SuggestCnGroupsUseCaseToken =
+  token<SuggestCnGroupsUseCasePort>("SuggestCnGroupsUseCase");
+export const PrepareArrangeWorkspaceUseCaseToken = token<PrepareArrangeWorkspaceUseCasePort>(
   "PrepareArrangeWorkspaceUseCase",
 );
 export const TailwindGroupingServiceToken =

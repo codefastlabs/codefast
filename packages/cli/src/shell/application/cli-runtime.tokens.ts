@@ -12,7 +12,7 @@ import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/re
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/outbound/typescript-source-file-walker.port";
 import type { WorkspacePackageLayoutPort } from "#/shell/application/ports/outbound/workspace-package-layout.port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
+import type { LoadCodefastConfigUseCasePort } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
 
 export const CliTelemetryPortToken = token<CliTelemetryPort>("CliTelemetryPort");
 
@@ -25,7 +25,7 @@ export const TypeScriptSourceFileWalkerPortToken = token<TypeScriptSourceFileWal
 );
 export const CliRuntimeToken = token<CliRuntimePort>("CliRuntimePort");
 
-export const LoadCodefastConfigUseCaseToken = token<LoadCodefastConfigUseCase>(
+export const LoadCodefastConfigUseCaseToken = token<LoadCodefastConfigUseCasePort>(
   "LoadCodefastConfigUseCase",
 );
 

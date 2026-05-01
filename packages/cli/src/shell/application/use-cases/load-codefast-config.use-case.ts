@@ -6,14 +6,14 @@ import {
   ConfigWarningReporterPortToken,
 } from "#/domains/config/composition/tokens";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
+import type { LoadCodefastConfigUseCasePort } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 
 @injectable([inject(ConfigLoaderPortToken), inject(ConfigWarningReporterPortToken)])
-export class LoadCodefastConfigUseCaseImpl implements LoadCodefastConfigUseCase {
+export class LoadCodefastConfigUseCase implements LoadCodefastConfigUseCasePort {
   constructor(
     private readonly configLoader: ConfigLoaderPort,
     private readonly warningReporter: ConfigWarningReporterPort,

@@ -8,13 +8,13 @@ import { ArrangeTargetPathResolverPortToken } from "#/domains/arrange/compositio
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contracts/models";
 import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
-import type { LoadCodefastConfigUseCase } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
+import type { LoadCodefastConfigUseCasePort } from "#/shell/application/ports/inbound/load-codefast-config.use-case";
 import {
   CliFilesystemPortToken,
   LoadCodefastConfigUseCaseToken,
   RepoRootResolverPortToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
+import type { PrepareArrangeWorkspaceUseCasePort } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
 
 @injectable([
   inject(ArrangeTargetPathResolverPortToken),
@@ -22,11 +22,11 @@ import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/applicati
   inject(LoadCodefastConfigUseCaseToken),
   inject(RepoRootResolverPortToken),
 ])
-export class PrepareArrangeWorkspaceUseCaseImpl implements PrepareArrangeWorkspaceUseCase {
+export class PrepareArrangeWorkspaceUseCase implements PrepareArrangeWorkspaceUseCasePort {
   constructor(
     private readonly arrangeTargetPathResolver: ArrangeTargetPathResolverPort,
     private readonly fs: CliFilesystemPort,
-    private readonly loadCodefastConfig: LoadCodefastConfigUseCase,
+    private readonly loadCodefastConfig: LoadCodefastConfigUseCasePort,
     private readonly repoRootResolver: RepoRootResolverPort,
   ) {}
 

@@ -4,8 +4,8 @@ import { TagSinceWriterAdapter } from "#/domains/tag/infrastructure/adapters/tag
 import { TagVersionResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-version-resolver.adapter";
 import { TagTargetPathResolverAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-path-resolver.adapter";
 import { TagTargetRunnerAdapter } from "#/domains/tag/infrastructure/adapters/tag-target-runner.adapter";
-import { PrepareTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
-import { RunTagSyncUseCaseImpl } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
+import { PrepareTagSyncUseCase } from "#/domains/tag/application/use-cases/prepare-tag-sync.use-case";
+import { RunTagSyncUseCase } from "#/domains/tag/application/use-cases/run-tag-sync.use-case";
 import {
   PrepareTagSyncUseCaseToken,
   PresentTagSyncResultPresenterToken,
@@ -55,8 +55,8 @@ export const TagModule = Module.create("cli-tag", (moduleBuilder) => {
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(TagTargetPathResolverPortToken));
 
-  moduleBuilder.bind(PrepareTagSyncUseCaseToken).to(PrepareTagSyncUseCaseImpl).singleton();
-  moduleBuilder.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCaseImpl).singleton();
+  moduleBuilder.bind(PrepareTagSyncUseCaseToken).to(PrepareTagSyncUseCase).singleton();
+  moduleBuilder.bind(RunTagSyncUseCaseToken).to(RunTagSyncUseCase).singleton();
 
   moduleBuilder
     .bind(PresentTagSyncResultPresenterToken)

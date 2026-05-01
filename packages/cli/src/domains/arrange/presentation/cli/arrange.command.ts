@@ -1,8 +1,8 @@
 import { inject, injectable } from "@codefast/di";
-import type { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
-import type { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
-import type { RunArrangeSyncUseCase } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
-import type { SuggestCnGroupsUseCase } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
+import type { AnalyzeDirectoryUseCasePort } from "#/domains/arrange/application/ports/inbound/analyze-directory.use-case";
+import type { PrepareArrangeWorkspaceUseCasePort } from "#/domains/arrange/application/ports/inbound/prepare-arrange-workspace.use-case";
+import type { RunArrangeSyncUseCasePort } from "#/domains/arrange/application/ports/inbound/run-arrange-sync.use-case";
+import type { SuggestCnGroupsUseCasePort } from "#/domains/arrange/application/ports/inbound/suggest-cn-groups.use-case";
 import type { PresentGroupFilePreviewPresenter } from "#/domains/arrange/application/ports/presenting/present-group-file-preview.presenter";
 import type { PresentArrangeSyncResultPresenter } from "#/domains/arrange/application/ports/presenting/present-arrange-sync-result.presenter";
 import type { ArrangeSuggestGroupsOutput } from "#/domains/arrange/contracts/models";
@@ -56,10 +56,10 @@ export class ArrangeCommand implements CliCommandPort {
   constructor(
     private readonly logger: CliLoggerPort,
     private readonly runtime: CliRuntimePort,
-    private readonly prepareWorkspace: PrepareArrangeWorkspaceUseCase,
-    private readonly analyzeDirectory: AnalyzeDirectoryUseCase,
-    private readonly runArrangeSync: RunArrangeSyncUseCase,
-    private readonly suggestCnGroups: SuggestCnGroupsUseCase,
+    private readonly prepareWorkspace: PrepareArrangeWorkspaceUseCasePort,
+    private readonly analyzeDirectory: AnalyzeDirectoryUseCasePort,
+    private readonly runArrangeSync: RunArrangeSyncUseCasePort,
+    private readonly suggestCnGroups: SuggestCnGroupsUseCasePort,
     private readonly presentAnalyzeReport: PresentAnalyzeReportPresenter,
     private readonly presentGroupFilePreview: PresentGroupFilePreviewPresenter,
     private readonly presentArrangeSyncResult: PresentArrangeSyncResultPresenter,

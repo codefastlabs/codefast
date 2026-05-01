@@ -2,10 +2,10 @@ import { Module } from "@codefast/di";
 import { ArrangeFileProcessorAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-file-processor.adapter";
 import { ArrangeTargetPathResolverAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-target-path-resolver.adapter";
 import { ArrangeTargetScannerAdapter } from "#/domains/arrange/infrastructure/adapters/arrange-target-scanner.adapter";
-import { AnalyzeDirectoryUseCaseImpl } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
-import { PrepareArrangeWorkspaceUseCaseImpl } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
-import { RunArrangeSyncUseCaseImpl } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
-import { SuggestCnGroupsUseCaseImpl } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
+import { AnalyzeDirectoryUseCase } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
+import { PrepareArrangeWorkspaceUseCase } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
+import { RunArrangeSyncUseCase } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";
+import { SuggestCnGroupsUseCase } from "#/domains/arrange/application/use-cases/suggest-cn-groups.use-case";
 import { DomainSourceParserAdapter } from "#/domains/arrange/infrastructure/adapters/domain-source-parser.adapter";
 import { TypeScriptAstTranslator } from "#/domains/arrange/infrastructure/typescript-ast-translator";
 import { FileWalkerAdapter } from "#/domains/arrange/infrastructure/adapters/file-walker.adapter";
@@ -59,19 +59,19 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
 
   moduleBuilder.bind(TailwindGroupingServiceToken).to(TailwindGroupingDomainService).singleton();
 
-  moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCaseImpl).singleton();
+  moduleBuilder.bind(AnalyzeDirectoryUseCaseToken).to(AnalyzeDirectoryUseCase).singleton();
 
   moduleBuilder.bind(ArrangeTargetScannerPortToken).to(ArrangeTargetScannerAdapter).singleton();
 
   moduleBuilder.bind(ArrangeFileProcessorPortToken).to(ArrangeFileProcessorAdapter).singleton();
 
-  moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCaseImpl).singleton();
+  moduleBuilder.bind(RunArrangeSyncUseCaseToken).to(RunArrangeSyncUseCase).singleton();
 
-  moduleBuilder.bind(SuggestCnGroupsUseCaseToken).to(SuggestCnGroupsUseCaseImpl).singleton();
+  moduleBuilder.bind(SuggestCnGroupsUseCaseToken).to(SuggestCnGroupsUseCase).singleton();
 
   moduleBuilder
     .bind(PrepareArrangeWorkspaceUseCaseToken)
-    .to(PrepareArrangeWorkspaceUseCaseImpl)
+    .to(PrepareArrangeWorkspaceUseCase)
     .singleton();
 
   moduleBuilder
