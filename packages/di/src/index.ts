@@ -15,7 +15,7 @@ export type {
 } from "#/types";
 
 // Token
-export { token } from "#/token";
+export { token, tokenName, isToken } from "#/token";
 export type { Token } from "#/token";
 
 // Binding builders — types only
