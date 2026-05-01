@@ -1,16 +1,18 @@
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
 import type {
   GlobalStats,
+  MirrorDistAssetCounts,
   PackageStats,
   WorkspaceMultiDiscoverySource,
 } from "#/domains/mirror/domain/types.domain";
 
-type MirrorProcessingModeInput =
+export type MirrorProcessingModeInput =
   | { kind: "single" }
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
 /**
- * CLI output for mirror sync — implemented in `presentation`, injected here so `application/use-cases/run-mirror-sync` stays clean.
+ * Driven port: progress and summary lines for mirror sync.
+ * Implemented by a CLI adapter in infrastructure; use cases depend only on this contract.
  */
 export interface MirrorSyncReporterPort {
   configureMirrorColors(noColor: boolean): void;
@@ -29,7 +31,7 @@ export interface MirrorSyncReporterPort {
     index: number,
     total: number,
     pkgStats: PackageStats,
-    generatedDistAssetCounts: { jsCount: number; cssCount: number },
+    generatedDistAssetCounts: MirrorDistAssetCounts,
     verbose: boolean,
   ): void;
   logPrunedStaleExport(logger: CliLogger, exportSpecifier: string): void;
