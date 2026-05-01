@@ -30,23 +30,18 @@ import { FormatAppErrorService } from "#/shell/application/services/format-app-e
 import { GlobalCliOptionsParser } from "#/shell/application/services/global-cli-options-parser.service";
 import { SchemaValidationService } from "#/shell/application/services/schema-validator.service";
 import { createOptionalCliPortTelemetryActivation } from "#/shell/wiring/optional-cli-port-telemetry-activation";
-import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-port-telemetry.service";
-import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
-import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
 import { NodeCliFsAdapter } from "#/shell/infrastructure/node/node-cli-fs.adapter";
 import { NodeCliLoggerAdapter } from "#/shell/infrastructure/node/node-cli-logger.adapter";
+import { NodeCliPathAdapter } from "#/shell/infrastructure/node/node-cli-path.adapter";
 import { NodeCliRuntimeAdapter } from "#/shell/infrastructure/node/node-cli-runtime.adapter";
-import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
+import { CliPortTelemetryService } from "#/shell/infrastructure/telemetry/cli-port-telemetry.service";
 import { TypeScriptSourceFileWalker } from "#/shell/infrastructure/typescript-source-file-walker.service";
-
-/** Binds path abstraction only (minimal graph for dependents that need resolution before broader IO). */
-export const ShellPathModule = Module.create("shell-path", (moduleBuilder) => {
-  moduleBuilder.bind(CliPathToken).to(NodeCliPathAdapter).singleton();
-});
+import { NodePnpmWorkspacePackageLayoutAdapter } from "#/shell/infrastructure/workspace/node-pnpm-workspace-package-layout.adapter";
+import { RepoRootResolver } from "#/shell/infrastructure/workspace/repo-root-resolver.service";
 
 /** Cross-cutting CLI IO, repo root discovery, telemetry, and `codefast.config` loading. */
 export const ShellInfrastructureModule = Module.create("shell-infrastructure", (moduleBuilder) => {
-  moduleBuilder.import(ShellPathModule);
+  moduleBuilder.bind(CliPathToken).to(NodeCliPathAdapter).singleton();
 
   moduleBuilder.bind(CliLoggerToken).to(NodeCliLoggerAdapter).singleton();
   moduleBuilder.bind(CliPortTelemetryPortToken).to(CliPortTelemetryService).singleton();

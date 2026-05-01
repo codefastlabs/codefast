@@ -22,7 +22,6 @@ import {
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
   TailwindGroupingServiceToken,
-  TypeScriptToDomainAstPortToken,
 } from "#/domains/arrange/contracts/tokens";
 import { TailwindGroupingServiceImpl } from "#/domains/arrange/domain/tailwind-grouping.service";
 import { PresentAnalyzeReportPresenterImpl } from "#/domains/arrange/presentation/presenters/arrange-analyze.presenter";
@@ -39,7 +38,11 @@ export const ArrangeModule = Module.create("cli-arrange", (moduleBuilder) => {
     .singleton()
     .onActivation(createOptionalCliPortTelemetryActivation(FileWalkerPortToken));
 
-  moduleBuilder.bind(TypeScriptToDomainAstPortToken).to(TypeScriptAstTranslator).singleton();
+  moduleBuilder
+    .bind(TypeScriptAstTranslator)
+    .toSelf()
+    .singleton()
+    .onActivation(createOptionalCliPortTelemetryActivation(TypeScriptAstTranslator));
 
   moduleBuilder
     .bind(DomainSourceParserPortToken)

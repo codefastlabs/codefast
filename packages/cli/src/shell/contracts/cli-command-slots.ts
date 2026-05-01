@@ -7,5 +7,3 @@ export const CLI_COMMAND_SLOT_NAME = {
   mirror: "mirror",
   tag: "tag",
 } as const;
-
-export type CliCommandSlotName = (typeof CLI_COMMAND_SLOT_NAME)[keyof typeof CLI_COMMAND_SLOT_NAME];

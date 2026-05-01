@@ -7,8 +7,6 @@ import { SchemaValidationPortToken } from "#/shell/application/cli-runtime.token
 import type { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 
-export type { GlobalCliOptions } from "#/shell/application/global-cli-options.model";
-
 @injectable([inject(SchemaValidationPortToken)])
 export class GlobalCliOptionsParser implements GlobalCliOptionsParsePort {
   constructor(private readonly schemaValidation: SchemaValidationPort) {}

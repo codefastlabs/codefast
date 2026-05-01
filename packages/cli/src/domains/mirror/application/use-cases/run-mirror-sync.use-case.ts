@@ -1,21 +1,32 @@
+import path from "node:path";
 import { inject, injectable } from "@codefast/di";
 import {
+  MirrorPackagePathPortToken,
   MirrorSyncReporterPortToken,
-  PackageFilterPathResolverPortToken,
   SyncWorkspacePackagePortToken,
-  WorkspacePackageDiscoveryPortToken,
 } from "#/domains/mirror/contracts/tokens";
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
 import type { CliLogger } from "#/shell/application/ports/cli-io.port";
-import { CliLoggerToken } from "#/shell/application/cli-runtime.tokens";
+import {
+  CliLoggerToken,
+  WorkspacePackageLayoutPortToken,
+} from "#/shell/application/cli-runtime.tokens";
+import type {
+  WorkspacePackageLayoutOutcome,
+  WorkspacePackageLayoutPort,
+} from "#/shell/application/ports/workspace-package-layout.port";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
 import type { MirrorSyncRunRequest } from "#/domains/mirror/application/requests/mirror-sync.request";
-import type { GlobalStats } from "#/domains/mirror/domain/types.domain";
-import type { PackageFilterPathResolverPort } from "#/domains/mirror/application/ports/package-filter-path-resolver.port";
-import type { WorkspacePackageDiscoveryPort } from "#/domains/mirror/application/ports/workspace-package-discovery.port";
+import type {
+  FindWorkspacePackagesResult,
+  GlobalStats,
+  WorkspaceMultiDiscoverySource,
+} from "#/domains/mirror/domain/types.domain";
+import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-object";
+import type { MirrorPackagePathPort } from "#/domains/mirror/application/ports/mirror-package-path.port";
 import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/mirror-sync-reporter.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/sync-workspace-package.port";
 
@@ -25,16 +36,16 @@ export interface RunMirrorSyncUseCase {
 
 @injectable([
   inject(CliLoggerToken),
-  inject(PackageFilterPathResolverPortToken),
-  inject(WorkspacePackageDiscoveryPortToken),
+  inject(MirrorPackagePathPortToken),
+  inject(WorkspacePackageLayoutPortToken),
   inject(MirrorSyncReporterPortToken),
   inject(SyncWorkspacePackagePortToken),
 ])
 export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
   constructor(
     private readonly logger: CliLogger,
-    private readonly packageFilterPathResolver: PackageFilterPathResolverPort,
-    private readonly workspacePackageDiscovery: WorkspacePackageDiscoveryPort,
+    private readonly mirrorPackagePath: MirrorPackagePathPort,
+    private readonly workspacePackageLayout: WorkspacePackageLayoutPort,
     private readonly mirrorReporter: MirrorSyncReporterPort,
     private readonly syncWorkspacePackage: SyncWorkspacePackagePort,
   ) {}
@@ -65,17 +76,26 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
 
       let targetPackages: string[] = [];
       if (request.packageFilter) {
-        const safe = this.packageFilterPathResolver.resolvePackageFilterUnderRoot(
+        const filterOutcome = this.mirrorPackagePath.resolvePackageFilterUnderRoot(
           request.rootDir,
           request.packageFilter,
         );
-        targetPackages = [safe];
+        if (!filterOutcome.ok) {
+          return filterOutcome;
+        }
+        targetPackages = [filterOutcome.value];
         if (!json) {
           this.mirrorReporter.mirrorProcessingMode(this.logger, { kind: "single" });
         }
       } else {
-        const { relPaths, multiSource } =
-          await this.workspacePackageDiscovery.findWorkspacePackageRelPaths(request.rootDir, json);
+        const layoutOutcome = await this.workspacePackageLayout.listPackageDirectoryPathsAbsolute(
+          request.rootDir,
+          json,
+        );
+        const { relPaths, multiSource } = this.mirrorTargetsFromWorkspaceLayout(
+          request.rootDir,
+          layoutOutcome,
+        );
         targetPackages = relPaths;
         if (!json) {
           this.mirrorReporter.mirrorProcessingMode(this.logger, {
@@ -124,6 +144,24 @@ export class RunMirrorSyncUseCaseImpl implements RunMirrorSyncUseCase {
     } catch (caughtError: unknown) {
       return err(new AppError("INFRA_FAILURE", messageFromCaughtUnknown(caughtError), caughtError));
     }
+  }
+
+  private mirrorTargetsFromWorkspaceLayout(
+    rootDir: string,
+    layoutOutcome: WorkspacePackageLayoutOutcome,
+  ): FindWorkspacePackagesResult {
+    if (layoutOutcome.layoutSource === "declared-empty") {
+      return { relPaths: [], multiSource: "declared-empty" };
+    }
+
+    const multiSource: WorkspaceMultiDiscoverySource = layoutOutcome.layoutSource;
+
+    const relPaths = layoutOutcome.packageDirectoryPathsAbsolute
+      .map((absolutePath) => normalizePath(path.relative(rootDir, absolutePath)))
+      .filter((relativePath) => relativePath.length > 0);
+
+    relPaths.sort((left, right) => left.localeCompare(right));
+    return { relPaths, multiSource };
   }
 
   private formatMirrorSyncJsonOutput(stats: GlobalStats, elapsedSeconds: number): string {
