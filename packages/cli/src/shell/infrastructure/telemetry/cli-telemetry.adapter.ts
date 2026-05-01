@@ -3,7 +3,7 @@ import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logge
 import type { CliTelemetryPort } from "#/shell/application/ports/outbound/cli-port-telemetry.port";
 
 @injectable([])
-export class CliTelemetryService implements CliTelemetryPort {
+export class CliTelemetryAdapter implements CliTelemetryPort {
   isCliTelemetryEnabled(): boolean {
     const raw = process.env.ENABLE_TELEMETRY;
     return raw === "1" || raw === "true";

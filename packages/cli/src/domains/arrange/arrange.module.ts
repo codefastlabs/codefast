@@ -1,7 +1,7 @@
 import { Module } from "@codefast/di";
 import { ArrangeFileProcessorServiceImpl } from "#/domains/arrange/application/services/arrange-file-processor.service";
 import { ArrangeTargetPathResolver } from "#/domains/arrange/application/services/arrange-target-path-resolver.service";
-import { ArrangeTargetScannerServiceImpl } from "#/domains/arrange/infrastructure/filesystem/arrange-target-scanner.adapter";
+import { ArrangeTargetScannerServiceImpl } from "#/domains/arrange/infrastructure/adapters/arrange-target-scanner.adapter";
 import { AnalyzeDirectoryUseCaseImpl } from "#/domains/arrange/application/use-cases/analyze-directory.use-case";
 import { PrepareArrangeWorkspaceUseCaseImpl } from "#/domains/arrange/application/use-cases/prepare-arrange-workspace.use-case";
 import { RunArrangeSyncUseCaseImpl } from "#/domains/arrange/application/use-cases/run-arrange-sync.use-case";

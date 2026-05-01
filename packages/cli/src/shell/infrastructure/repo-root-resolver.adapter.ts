@@ -10,7 +10,7 @@ import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
  * Tries the compiled package location first, then the provided `startDir`.
  */
 @injectable([inject(CliFilesystemPortToken)])
-export class RepoRootResolver implements RepoRootResolverPort {
+export class RepoRootResolverAdapter implements RepoRootResolverPort {
   constructor(private readonly fs: CliFilesystemPort) {}
 
   findRepoRoot(fromDirectory: string): string {

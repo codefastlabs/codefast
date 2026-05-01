@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { AppError } from "#/shell/domain/errors.domain";
-import { CommanderCliHostAdapter } from "#/shell/adapters/commander/commander-cli-host.adapter";
+import { CommanderCliHostAdapter } from "#/shell/infrastructure/commander/commander-cli-host.adapter";
 import { MirrorCommand } from "#/domains/mirror/presentation/cli/mirror.command";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";

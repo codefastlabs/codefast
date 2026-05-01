@@ -1,12 +1,12 @@
-import { CliTelemetryService } from "#/shell/infrastructure/telemetry/cli-telemetry.service";
+import { CliTelemetryAdapter } from "#/shell/infrastructure/telemetry/cli-telemetry.adapter";
 
-describe("CliTelemetryService integration", () => {
-  let telemetry: CliTelemetryService;
+describe("CliTelemetryAdapter integration", () => {
+  let telemetry: CliTelemetryAdapter;
 
   beforeEach(() => {
     vi.clearAllMocks();
     delete process.env.ENABLE_TELEMETRY;
-    telemetry = new CliTelemetryService();
+    telemetry = new CliTelemetryAdapter();
   });
 
   it("logs sync call timing and summarized args", () => {

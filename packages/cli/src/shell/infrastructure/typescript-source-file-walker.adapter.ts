@@ -5,7 +5,7 @@ import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/o
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFilesystemPortToken)])
-export class TypeScriptSourceFileWalker implements TypeScriptSourceFileWalkerPort {
+export class TypeScriptSourceFileWalkerAdapter implements TypeScriptSourceFileWalkerPort {
   private readonly defaultSkipDirectoryNames = new Set([
     "node_modules",
     "dist",
