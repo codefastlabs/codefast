@@ -152,6 +152,19 @@ export class DependencyResolver {
       }
     }
 
+    if (
+      hint !== undefined &&
+      hint.name === undefined &&
+      hint.tag === undefined &&
+      (hint.tags?.length ?? 0) === 1
+    ) {
+      const [tagKey, tagValue] = hint.tags![0]!;
+      const tagged = this._registry.getSimpleTagged(token, tagKey, tagValue);
+      if (tagged !== undefined) {
+        return { binding: tagged, owner: this };
+      }
+    }
+
     const bindings = this._registry.getAll(token);
     if (bindings.length > 0) {
       if (bindings.length === 1) {
@@ -604,14 +617,10 @@ export class DependencyResolver {
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
   ): Value | undefined {
-    try {
-      return this.resolve(token, hint, resolutionPath, materializationStack);
-    } catch (e) {
-      if (e instanceof TokenNotBoundError || e instanceof NoMatchingBindingError) {
-        return undefined;
-      }
-      throw e;
+    if (this._findBinding(token, hint, resolutionPath, materializationStack) === undefined) {
+      return undefined;
     }
+    return this.resolve(token, hint, resolutionPath, materializationStack);
   }
 
   resolveAll<const Value>(
@@ -1140,14 +1149,10 @@ export class DependencyResolver {
     resolutionPath: string[],
     materializationStack: MaterializationFrame[],
   ): Promise<Value | undefined> {
-    try {
-      return await this.resolveAsync(token, hint, resolutionPath, materializationStack);
-    } catch (e) {
-      if (e instanceof TokenNotBoundError || e instanceof NoMatchingBindingError) {
-        return undefined;
-      }
-      throw e;
+    if (this._findBinding(token, hint, resolutionPath, materializationStack) === undefined) {
+      return undefined;
     }
+    return this.resolveAsync(token, hint, resolutionPath, materializationStack);
   }
 
   async resolveAllAsync<const Value>(
