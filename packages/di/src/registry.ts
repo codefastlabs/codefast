@@ -12,6 +12,8 @@ export class BindingRegistry {
   private readonly _simpleNamed = new Map<DependencyKey, Map<string, Binding>>();
   // Fast path for one default slot binding with no predicate
   private readonly _fastDefault = new Map<DependencyKey, Binding>();
+  // Fast lookup for slot { name: undefined, tags: [[key, value]] } with no predicate
+  private readonly _simpleTagged = new Map<DependencyKey, Map<string, Map<unknown, Binding>>>();
 
   /** Add or replace binding using slot-aware last-wins. */
   add(binding: Binding): void {
@@ -37,6 +39,7 @@ export class BindingRegistry {
     list.push(binding);
     this._byId.set(binding.id, binding);
     this._indexSimpleNamedBinding(key, binding);
+    this._indexSimpleTaggedBinding(key, binding);
     this._refreshFastDefaultForToken(key);
   }
 
@@ -46,6 +49,7 @@ export class BindingRegistry {
     const list = this._bindings.get(key) ?? [];
     this._bindings.delete(key);
     this._simpleNamed.delete(key);
+    this._simpleTagged.delete(key);
     this._fastDefault.delete(key);
     for (const b of list) {
       this._byId.delete(b.id);
@@ -68,9 +72,11 @@ export class BindingRegistry {
         list.splice(idx, 1);
       }
       this._deindexSimpleNamedBinding(key, binding);
+      this._deindexSimpleTaggedBinding(key, binding);
       if (list.length === 0) {
         this._bindings.delete(key);
         this._simpleNamed.delete(key);
+        this._simpleTagged.delete(key);
         this._fastDefault.delete(key);
       } else {
         this._refreshFastDefaultForToken(key);
@@ -111,12 +117,24 @@ export class BindingRegistry {
     this._bindings.clear();
     this._byId.clear();
     this._simpleNamed.clear();
+    this._simpleTagged.clear();
     this._fastDefault.clear();
     return all;
   }
 
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
     return this._simpleNamed.get(token as DependencyKey)?.get(name);
+  }
+
+  getSimpleTagged(
+    token: Token<unknown> | Constructor,
+    tagKey: string,
+    tagValue: unknown,
+  ): Binding | undefined {
+    return this._simpleTagged
+      .get(token as DependencyKey)
+      ?.get(tagKey)
+      ?.get(tagValue);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
@@ -140,6 +158,51 @@ export class BindingRegistry {
       }
       return parts.join(",");
     });
+  }
+
+  private _indexSimpleTaggedBinding(tokenKeyValue: DependencyKey, binding: Binding): void {
+    const slot = binding.slot;
+    if (slot.name !== undefined || slot.tags.length !== 1 || binding.predicate !== undefined) {
+      return;
+    }
+    const [tagKey, tagValue] = slot.tags[0]!;
+    let byTagKey = this._simpleTagged.get(tokenKeyValue);
+    if (byTagKey === undefined) {
+      byTagKey = new Map<string, Map<unknown, Binding>>();
+      this._simpleTagged.set(tokenKeyValue, byTagKey);
+    }
+    let byTagValue = byTagKey.get(tagKey);
+    if (byTagValue === undefined) {
+      byTagValue = new Map<unknown, Binding>();
+      byTagKey.set(tagKey, byTagValue);
+    }
+    byTagValue.set(tagValue, binding);
+  }
+
+  private _deindexSimpleTaggedBinding(tokenKeyValue: DependencyKey, binding: Binding): void {
+    const slot = binding.slot;
+    if (slot.name !== undefined || slot.tags.length !== 1 || binding.predicate !== undefined) {
+      return;
+    }
+    const [tagKey, tagValue] = slot.tags[0]!;
+    const byTagKey = this._simpleTagged.get(tokenKeyValue);
+    if (byTagKey === undefined) {
+      return;
+    }
+    const byTagValue = byTagKey.get(tagKey);
+    if (byTagValue === undefined) {
+      return;
+    }
+    const current = byTagValue.get(tagValue);
+    if (current?.id === binding.id) {
+      byTagValue.delete(tagValue);
+      if (byTagValue.size === 0) {
+        byTagKey.delete(tagKey);
+        if (byTagKey.size === 0) {
+          this._simpleTagged.delete(tokenKeyValue);
+        }
+      }
+    }
   }
 
   private _isPurePredicateBinding(binding: Binding): boolean {
