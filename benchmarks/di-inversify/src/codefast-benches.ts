@@ -24,10 +24,9 @@ const CODEFAST_LIBRARY_NAME = "@codefast/di";
 const CODEFAST_SCENARIO_NAME = "codefast";
 
 void runBenchmarkChildMain({
-  libraryNameForFingerprint: CODEFAST_LIBRARY_NAME,
-  libraryDisplayNameForErrors: CODEFAST_LIBRARY_NAME,
-  scenarioLogLabel: CODEFAST_SCENARIO_NAME,
-  benchmarkPackageRootDirectory: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
+  libraryName: CODEFAST_LIBRARY_NAME,
+  scenarioName: CODEFAST_SCENARIO_NAME,
+  packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllCodefastScenarios,
-  defaultBenchOptions: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
+  benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
 }).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(CODEFAST_LIBRARY_NAME, error));
