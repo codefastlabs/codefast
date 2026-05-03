@@ -9,10 +9,10 @@ import type { ArrangeSuggestGroupsOutput } from "#/domains/arrange/contracts/mod
 import type { PresentAnalyzeReportPresenter } from "#/domains/arrange/application/ports/presenting/present-analyze-report.presenter";
 import {
   AnalyzeDirectoryUseCaseToken,
-  PresentGroupFilePreviewPresenterToken,
   PrepareArrangeWorkspaceUseCaseToken,
   PresentAnalyzeReportPresenterToken,
   PresentArrangeSyncResultPresenterToken,
+  PresentGroupFilePreviewPresenterToken,
   RunArrangeSyncUseCaseToken,
   SuggestCnGroupsUseCaseToken,
 } from "#/domains/arrange/composition/tokens";
@@ -32,10 +32,7 @@ import {
   CliRuntimeToken,
   CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
-import type {
-  CliCommandPort,
-  CliCommandTree,
-} from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort, CommandTree } from "#/shell/application/ports/primary/command.port";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.value-object";
@@ -53,7 +50,7 @@ import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.val
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
 ])
-export class ArrangeCommand implements CliCommandPort {
+export class ArrangeCommand implements CommandPort {
   constructor(
     private readonly logger: CliLoggerPort,
     private readonly runtime: CliRuntimePort,
@@ -68,7 +65,7 @@ export class ArrangeCommand implements CliCommandPort {
     private readonly cliExecutor: CliExecutor,
   ) {}
 
-  get definition(): CliCommandTree {
+  get definition(): CommandTree {
     return {
       name: CLI_COMMAND_SLOT_NAME.arrange,
       description: "Analyze and regroup Tailwind classes in cn() / tv() calls (Tailwind v4)",

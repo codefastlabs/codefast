@@ -1,23 +1,16 @@
 import { Command, Option } from "commander";
+import type { CommandRouteWire, CommandTree } from "#/shell/application/ports/primary/command.port";
 import type {
-  CliCommandRouteWire,
-  CliCommandTree,
-} from "#/shell/application/ports/primary/cli-command.port";
-import type {
-  CliGlobalOptionsBridgePort,
-  CliLeafDispatchHandler,
+  GlobalOptionsBridgePort,
+  LeafDispatchHandler,
 } from "#/shell/application/ports/primary/cli-host.port";
 
-/** Traverses {@link CliCommandTree} onto a Commander {@link Command} node. */
+/** Traverses {@link CommandTree} onto a Commander {@link Command} node. */
 export class CommanderCliHostAdapter {
   constructor(private readonly rootProgram: Command) {}
 
-  registerRoot(treeRoot: CliCommandTree): void {
-    CommanderCliHostAdapter.attachSubtree(this.rootProgram, treeRoot);
-  }
-
   /** Attaches every top-level CLI root command subtree under one program root. */
-  static registerTrees(programRoot: Command, trees: readonly CliCommandTree[]): void {
+  static registerTrees(programRoot: Command, trees: readonly CommandTree[]): void {
     const adapter = new CommanderCliHostAdapter(programRoot);
     for (const subtree of trees) {
       adapter.registerRoot(subtree);
@@ -54,7 +47,7 @@ export class CommanderCliHostAdapter {
     return { positionalArguments, localOptionRecord, commandLeaf: commandLeafCandidate };
   }
 
-  private static applyRouteWire(leafCommand: Command, wire: CliCommandRouteWire): Command {
+  private static applyRouteWire(leafCommand: Command, wire: CommandRouteWire): Command {
     switch (wire.kind) {
       case "optionalPositional": {
         return leafCommand.argument(wire.argumentTemplate, wire.helpBlurb);
@@ -76,11 +69,11 @@ export class CommanderCliHostAdapter {
     }
   }
 
-  private static wireLeafDispatch(leafCommand: Command, dispatch: CliLeafDispatchHandler): void {
+  private static wireLeafDispatch(leafCommand: Command, dispatch: LeafDispatchHandler): void {
     void leafCommand.action(async (...passedArguments: unknown[]) => {
       const { positionalArguments, localOptionRecord, commandLeaf } =
         CommanderCliHostAdapter.extractDispatchParts(passedArguments);
-      const globalBridge: CliGlobalOptionsBridgePort = {
+      const globalBridge: GlobalOptionsBridgePort = {
         readMergedGlobalsOptionRecords: (): Readonly<Record<string, unknown>> => {
           const bridgeCommand = commandLeaf as Command & {
             optsWithGlobals?: () => Record<string, unknown>;
@@ -96,7 +89,7 @@ export class CommanderCliHostAdapter {
     });
   }
 
-  private static attachSubtree(parentBridge: Command, node: CliCommandTree): void {
+  private static attachSubtree(parentBridge: Command, node: CommandTree): void {
     let branchCommand = parentBridge.command(node.name).description(node.description);
     if (node.aliases !== undefined) {
       for (const aliasPiece of node.aliases) {
@@ -134,5 +127,9 @@ export class CommanderCliHostAdapter {
      * Routing-only stubs (composition tests) may omit both children and action;
      * Commander exposes an empty-named sub-command without behavior beyond help.
      */
+  }
+
+  registerRoot(treeRoot: CommandTree): void {
+    CommanderCliHostAdapter.attachSubtree(this.rootProgram, treeRoot);
   }
 }

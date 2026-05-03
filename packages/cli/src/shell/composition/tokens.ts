@@ -1,4 +1,4 @@
 import { token } from "@codefast/di";
-import type { CliCommandPort } from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort } from "#/shell/application/ports/primary/command.port";
 
-export const CommandPortToken = token<CliCommandPort>("CliCommandPort");
+export const CommandPortToken = token<CommandPort>("CommandPort");
