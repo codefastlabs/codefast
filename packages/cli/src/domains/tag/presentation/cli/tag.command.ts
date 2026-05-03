@@ -27,6 +27,7 @@ import {
   CliRuntimeToken,
   CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
+import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.value-object";
 
 @injectable([
   inject(CliLoggerPortToken),
@@ -75,13 +76,11 @@ export class TagCommand implements CliCommandPort {
         },
       ],
       action: async (positionalArguments, localOptionRecord) => {
-        const maybeTargetSlice = positionalArguments[0];
-        const targetPiece = typeof maybeTargetSlice === "string" ? maybeTargetSlice : undefined;
         const typedOptionsCarrier = localOptionRecord as {
           readonly dryRun?: boolean;
           readonly json?: boolean;
         };
-        await this.runAnnotatedTagVerb(targetPiece, {
+        await this.runAnnotatedTagVerb(readOptionalPositionalArg(positionalArguments[0]), {
           dryRun: typedOptionsCarrier.dryRun,
           json: typedOptionsCarrier.json,
         });

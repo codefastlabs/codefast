@@ -14,7 +14,6 @@ function createResult() {
         packageName: "@scope/a",
       },
     ],
-    resolvedTargets: [],
     skippedPackages: [],
     targetResults: [
       {

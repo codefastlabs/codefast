@@ -38,6 +38,7 @@ import type {
 } from "#/shell/application/ports/primary/cli-command.port";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
+import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.value-object";
 
 @injectable([
   inject(CliLoggerPortToken),
@@ -89,7 +90,7 @@ export class ArrangeCommand implements CliCommandPort {
             },
           ],
           action: async (positionalPieces, typedLocalCarrier) => {
-            await this.performAnalyzeSubtree(this.readOptionalTargetSlice(positionalPieces[0]), {
+            await this.performAnalyzeSubtree(readOptionalPositionalArg(positionalPieces[0]), {
               jsonCandidate: typedLocalCarrier.json as boolean | undefined,
             });
           },
@@ -121,7 +122,11 @@ export class ArrangeCommand implements CliCommandPort {
             },
           ],
           action: async (positionalPieces, typedLocalCarrier) => {
-            await this.performApplyOrPreviewSubtree(false, positionalPieces[0], typedLocalCarrier);
+            await this.performApplyOrPreviewSubtree(
+              false,
+              readOptionalPositionalArg(positionalPieces[0]),
+              typedLocalCarrier,
+            );
           },
         },
         {
@@ -151,7 +156,11 @@ export class ArrangeCommand implements CliCommandPort {
             },
           ],
           action: async (positionalPieces, typedLocalCarrier) => {
-            await this.performApplyOrPreviewSubtree(true, positionalPieces[0], typedLocalCarrier);
+            await this.performApplyOrPreviewSubtree(
+              true,
+              readOptionalPositionalArg(positionalPieces[0]),
+              typedLocalCarrier,
+            );
           },
         },
         {
@@ -194,29 +203,6 @@ export class ArrangeCommand implements CliCommandPort {
     };
   }
 
-  private readOptionalTargetSlice(candidate: unknown): string | undefined {
-    if (typeof candidate === "string") {
-      return candidate;
-    }
-    if (candidate === undefined) {
-      return undefined;
-    }
-    if (candidate === null) {
-      return "null";
-    }
-    if (
-      typeof candidate === "number" ||
-      typeof candidate === "boolean" ||
-      typeof candidate === "bigint"
-    ) {
-      return String(candidate);
-    }
-    if (typeof candidate === "symbol") {
-      return candidate.toString();
-    }
-    return undefined;
-  }
-
   private async performAnalyzeSubtree(
     targetSlice: string | undefined,
     optionCarrier: { readonly jsonCandidate: boolean | undefined },
@@ -248,10 +234,9 @@ export class ArrangeCommand implements CliCommandPort {
 
   private async performApplyOrPreviewSubtree(
     writeCandidate: boolean,
-    targetPiece: unknown,
+    targetSlice: string | undefined,
     typedLocalCarrier: Readonly<Record<string, unknown>>,
   ): Promise<void> {
-    const targetSlice = this.readOptionalTargetSlice(targetPiece);
     const prelude = await this.prepareWorkspace.execute({
       currentWorkingDirectory: this.runtime.cwd(),
       rawTarget: targetSlice,

@@ -87,20 +87,18 @@ export class RunTagSyncUseCase implements RunTagSyncPort {
         input.write && modifiedFiles.length > 0
           ? await this.runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
           : null;
-      const distinctVersions = [...this.extractDistinctVersions(targetExecutionResults)].sort(
-        (left, right) => left.localeCompare(right),
-      );
+      const versionsSet = this.extractDistinctVersions(targetExecutionResults);
+      const distinctVersions = [...versionsSet].sort((left, right) => left.localeCompare(right));
 
       return ok({
         mode: input.write ? "applied" : "dry-run",
         selectedTargets,
-        resolvedTargets: selectedTargets,
         skippedPackages,
         targetResults: targetExecutionResults,
         filesScanned,
         filesChanged,
         taggedDeclarations,
-        versionSummary: this.summarizeVersions(targetExecutionResults),
+        versionSummary: this.summarizeVersions(versionsSet),
         distinctVersions,
         modifiedFiles,
         hookError,
@@ -125,18 +123,14 @@ export class RunTagSyncUseCase implements RunTagSyncPort {
     }
   }
 
-  private summarizeVersions(targetResults: TagTargetExecutionResult[]): string {
-    const distinctVersions = this.extractDistinctVersions(targetResults);
+  private summarizeVersions(distinctVersions: Set<string>): string {
     if (distinctVersions.size === 0) {
       return "none";
     }
     if (distinctVersions.size > 1) {
       return "mixed";
     }
-    for (const version of distinctVersions) {
-      return version;
-    }
-    return "none";
+    return distinctVersions.values().next().value ?? "none";
   }
 
   private extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set<string> {
@@ -159,14 +153,12 @@ export class RunTagSyncUseCase implements RunTagSyncPort {
     }
 
     const preferredSourceDir = this.path.join(candidate.candidatePath, "src");
-    if (
-      this.fs.existsSync(preferredSourceDir) &&
-      this.fs.statSync(preferredSourceDir).isDirectory()
-    ) {
-      return {
-        targetPath: preferredSourceDir,
-        source: "workspace-package-selected-src",
-      };
+    try {
+      if (this.fs.statSync(preferredSourceDir).isDirectory()) {
+        return { targetPath: preferredSourceDir, source: "workspace-package-selected-src" };
+      }
+    } catch {
+      // preferredSourceDir does not exist; fall through to package root
     }
 
     return {
