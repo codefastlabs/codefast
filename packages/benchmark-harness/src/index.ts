@@ -57,6 +57,8 @@ export {
   runBenchSubprocess,
 } from "#/parent/run-bench-subprocess";
 
+export type { JsonlBenchObservationRow } from "#/report/jsonl";
+
 export {
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
