@@ -45,8 +45,8 @@ function hasStatistics(result: TaskResult): result is TaskResultWithStatisticsSt
 
 export type CreateRunAllTrialsParameters = Readonly<{
   /**
-   * Baseline tinybench options when neither `BENCH_FAST` nor `BENCH_FULL` is set
-   * (fast/full branches override in `resolveBenchOptions`).
+   * Tinybench settings for each `Bench` when neither `BENCH_FAST` nor `BENCH_FULL` is set.
+   * When either flag is set, the harness uses its built-in fast or full profile instead.
    */
   readonly benchDefaults: BenchOptions;
 }>;
@@ -91,8 +91,8 @@ function resolveTrialCountFromEnvironment(): number {
 }
 
 /**
- * Returns a `runAllTrials` function closed over the given baseline bench profile
- * (used when `BENCH_FAST` and `BENCH_FULL` are unset).
+ * Returns `runAllTrials` backed by tinybench options derived from `benchDefaults` and
+ * the subprocess env (`BENCH_FAST`, `BENCH_FULL`).
  */
 export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   runAllTrials: RunAllTrials;

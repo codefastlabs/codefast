@@ -1,5 +1,7 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
+export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/benchmark-suite-default-bench-options";
+
 export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/bench-scenario";
 export { isAsyncScenario } from "#/bench-scenario";
 
