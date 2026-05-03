@@ -34,7 +34,8 @@
     "./stats/quantiles": "./src/stats/quantiles.ts",
     "./presentation/format": "./src/presentation/format.ts",
     "./jsonl": "./src/report/jsonl.ts",
-    "./subprocess": "./src/parent/run-bench-subprocess.ts"
+    "./subprocess": "./src/parent/run-bench-subprocess.ts",
+    "./server": "./src/server/create-bench-server.ts"
   },
   "scripts": {
     "check-types": "tsgo --noEmit"

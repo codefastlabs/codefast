@@ -72,3 +72,16 @@ export {
   formatThroughputOpsPerSecond,
   formatThroughputRatio,
 } from "#/presentation/format";
+
+export type {
+  BenchLibraryConfig,
+  BenchServerOptions,
+  EmbeddedLibraryMeta,
+  EmbeddedLibraryRunData,
+  EmbeddedRun,
+  EmbeddedRunLibraryVersion,
+  EmbeddedScenarioSeries,
+  EmbeddedViewerPayload,
+} from "#/server/server-types";
+
+export { createBenchServer } from "#/server/create-bench-server";
