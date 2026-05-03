@@ -4,7 +4,7 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
-import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/harness/tinybench-default-options";
+import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness";
 import { collectAllTailwindVariantsNpmScenarios } from "#/scenarios/collect-tailwind-variants-scenarios";
 
 const LIBRARY_NAME = "tailwind-variants";

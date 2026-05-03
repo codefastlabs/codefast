@@ -145,8 +145,7 @@ benchmarks/tailwind-variants/
   src/
     harness/
       run.ts                 # parent: rebuild, spawn 3 children, two two-way reports + JSONL
-      tinybench-default-options.ts  # default profile when BENCH_FAST / BENCH_FULL unset
-      bench-options.ts        # TV_MERGE_ENABLED / TV_MERGE_DISABLED
+      bench-options.ts       # TV_MERGE_ENABLED / TV_MERGE_DISABLED
       tv-presentation.ts     # markdown + console labels for each pairwise report
     lib/
       tv-shims.ts            # widened entry points for tv / createTV / cva (benchmark-only)
@@ -166,6 +165,8 @@ benchmarks/tailwind-variants/
   tsconfig.json
   README.md
 ```
+
+For a plain run (no `BENCH_FAST` / `BENCH_FULL`), subprocesses use `BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS` from `@codefast/benchmark-harness`.
 
 **Import boundaries (same discipline as DI):**
 

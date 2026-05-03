@@ -4,7 +4,7 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
-import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/harness/tinybench-default-options";
+import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness";
 import { collectAllClassVarianceAuthorityScenarios } from "#/scenarios/collect-class-variance-authority-scenarios";
 
 const LIBRARY_NAME = "class-variance-authority";
