@@ -54,6 +54,7 @@ export interface PackageStats {
   skipped: boolean;
   skipReason: string;
   error: string | null;
+  prunedExportKeys: string[];
 }
 
 /** Built dist assets tallied for one package (reporter / progress output). */

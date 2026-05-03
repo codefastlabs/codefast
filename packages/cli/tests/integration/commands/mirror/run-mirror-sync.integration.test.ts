@@ -7,7 +7,10 @@ import os from "node:os";
 import path from "node:path";
 import { Container } from "@codefast/di";
 import type { MirrorSyncRunRequest } from "#/domains/mirror/application/requests/mirror-sync.request";
-import { RunMirrorSyncUseCaseToken } from "#/domains/mirror/composition/tokens";
+import {
+  PresentMirrorSyncProgressPresenterToken,
+  RunMirrorSyncUseCaseToken,
+} from "#/domains/mirror/composition/tokens";
 import { MirrorModule } from "#/domains/mirror/mirror.module";
 
 async function mkdirp(filePath: string): Promise<void> {
@@ -31,9 +34,17 @@ async function makeTempRoot(): Promise<string> {
 const container = Container.create();
 container.load(MirrorModule);
 const runMirrorSyncUseCase = container.resolve(RunMirrorSyncUseCaseToken);
+const mirrorPresenter = container.resolve(PresentMirrorSyncProgressPresenterToken);
 
-async function runMirrorSyncWithNodeDependencies(request: MirrorSyncRunRequest): Promise<number> {
-  const outcome = await runMirrorSyncUseCase.execute(request);
+type TestRunRequest = MirrorSyncRunRequest & {
+  readonly noColor?: boolean;
+  readonly verbose?: boolean;
+};
+
+async function runMirrorSyncWithNodeDependencies(request: TestRunRequest): Promise<number> {
+  const { noColor = false, verbose = false, ...syncRequest } = request;
+  mirrorPresenter.configure({ noColor, verbose });
+  const outcome = await runMirrorSyncUseCase.execute({ ...syncRequest, listener: mirrorPresenter });
   expect(outcome.ok).toBe(true);
   if (!outcome.ok) {
     throw new Error(outcome.error.message);
@@ -97,7 +108,7 @@ describe("runMirrorSync (integration)", () => {
     expect(joinedStdout().includes(String.fromCharCode(27))).toBe(false);
   });
 
-  it("prints a single JSON payload on stdout when json is true", async () => {
+  it("produces no human output when no listener is provided (JSON mode)", async () => {
     const root = await makeTempRoot();
     const rel = "packages/widget";
     const pkgDir = path.join(root, rel);
@@ -108,26 +119,14 @@ describe("runMirrorSync (integration)", () => {
     await writeText(path.join(pkgDir, "dist/index.js"), "export {};\n");
     await writeText(path.join(pkgDir, "dist/index.d.ts"), "export {};\n");
 
-    const code = await runMirrorSyncWithNodeDependencies({
-      rootDir: root,
-      noColor: true,
-      packageFilter: rel,
-      json: true,
-    });
-    expect(code).toBe(0);
-
-    const trimmed = joinedStdout().trim();
-    const parsed = JSON.parse(trimmed) as {
-      schemaVersion: number;
-      ok: boolean;
-      elapsedSeconds: number;
-      stats: { packagesFound: number; packagesProcessed: number; packagesErrored: number };
-    };
-    expect(parsed.schemaVersion).toBe(1);
-    expect(parsed.ok).toBe(true);
-    expect(parsed.stats.packagesFound).toBe(1);
-    expect(parsed.stats.packagesErrored).toBe(0);
-    expect(joinedStdout().includes("Mirror —")).toBe(false);
+    const outcome = await runMirrorSyncUseCase.execute({ rootDir: root, packageFilter: rel });
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) {
+      throw new Error(outcome.error.message);
+    }
+    expect(outcome.value.packagesFound).toBe(1);
+    expect(outcome.value.packagesErrored).toBe(0);
+    expect(joinedStdout()).toBe("");
   });
 
   it("applies pathTransformations from injected config", async () => {
@@ -715,10 +714,7 @@ describe("runMirrorSync (integration)", () => {
   it("fails fast when pnpm-workspace.yaml exists but is invalid YAML", async () => {
     const root = await makeTempRoot();
     await writeText(path.join(root, "pnpm-workspace.yaml"), "packages:\n  - [\n");
-    const outcome = await runMirrorSyncUseCase.execute({
-      rootDir: root,
-      noColor: true,
-    });
+    const outcome = await runMirrorSyncUseCase.execute({ rootDir: root });
     expect(outcome.ok).toBe(false);
     if (outcome.ok) {
       throw new Error("expected mirror failure");
@@ -743,10 +739,7 @@ describe("runMirrorSync (integration)", () => {
       `packages: "oops"
 `,
     );
-    const outcome = await runMirrorSyncUseCase.execute({
-      rootDir: root,
-      noColor: true,
-    });
+    const outcome = await runMirrorSyncUseCase.execute({ rootDir: root });
     expect(outcome.ok).toBe(false);
     if (outcome.ok) {
       throw new Error("expected mirror failure");

@@ -6,12 +6,14 @@ import { SyncWorkspacePackageAdapter } from "#/domains/mirror/infrastructure/ada
 import { MirrorPackagePathResolverAdapter } from "#/domains/mirror/infrastructure/adapters/mirror-package-path-resolver.adapter";
 import { PrepareMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/prepare-mirror-sync.use-case";
 import { RunMirrorSyncUseCase } from "#/domains/mirror/application/use-cases/run-mirror-sync.use-case";
+import { PresentMirrorSyncPresenter } from "#/domains/mirror/presentation/presenters/present-mirror-sync-progress.presenter";
 import {
   FileSystemServicePortToken,
   MirrorPackagePathPortToken,
   PrepareMirrorSyncUseCaseToken,
   MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
+  PresentMirrorSyncProgressPresenterToken,
   RunMirrorSyncUseCaseToken,
   SyncWorkspacePackagePortToken,
 } from "#/domains/mirror/composition/tokens";
@@ -46,6 +48,11 @@ export const MirrorModule = Module.create("cli-mirror", (moduleBuilder) => {
     .onActivation(createOptionalCliPortTelemetryActivation(MirrorSyncReporterPortToken));
 
   moduleBuilder.bind(SyncWorkspacePackagePortToken).to(SyncWorkspacePackageAdapter).singleton();
+
+  moduleBuilder
+    .bind(PresentMirrorSyncProgressPresenterToken)
+    .to(PresentMirrorSyncPresenter)
+    .singleton();
 
   moduleBuilder.bind(PrepareMirrorSyncUseCaseToken).to(PrepareMirrorSyncUseCase).singleton();
   moduleBuilder.bind(RunMirrorSyncUseCaseToken).to(RunMirrorSyncUseCase).singleton();

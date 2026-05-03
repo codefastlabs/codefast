@@ -6,8 +6,20 @@ import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logge
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
 import type { PrepareMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
 import type { RunMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import type { MirrorSyncProgressListener } from "#/domains/mirror/application/ports/presenting/present-mirror-sync-progress.presenter";
 import { err } from "#/shell/domain/result.model";
 import { createShellCliTestGraph } from "#/tests/support/cli-shell-test-deps";
+
+function createMirrorProgressPresenterMock(): MirrorSyncProgressListener {
+  return {
+    configure: vi.fn(),
+    onBanner: vi.fn(),
+    onProcessingMode: vi.fn(),
+    onNoPackages: vi.fn(),
+    onPackageComplete: vi.fn(),
+    onComplete: vi.fn(),
+  };
+}
 
 function createLoggerMock(): CliLoggerPort & {
   out: ReturnType<typeof vi.fn<(line: string) => void>>;
@@ -78,12 +90,14 @@ function createDeps(): MirrorDeps {
 function createCommandAndProgram(deps: MirrorDeps): { command: MirrorCommand; program: Command } {
   const shell = createShellCliTestGraph(deps.logger);
   const command = new MirrorCommand(
+    deps.logger,
     deps.runtime,
     deps.prepareMirrorSync,
     deps.runMirrorSync,
     shell.globalCliOptions,
     shell.schemaValidation,
     shell.cliExecutor,
+    createMirrorProgressPresenterMock(),
   );
   const program = new Command();
   program.option("--no-color", "Disable ANSI color output");
@@ -116,12 +130,9 @@ describe("MirrorCommand", () => {
       expect.objectContaining({
         rootDir: "/tmp/workspace",
         packageFilter: "packages/a",
-        json: true,
-        verbose: true,
-        noColor: true,
       }),
     );
-    expect(process.exitCode).toBe(0);
+    expect(deps.runtime.setExitCode).toHaveBeenCalledWith(0);
   });
 
   it("maps package processing errors to non-zero exit code", async () => {
@@ -142,7 +153,7 @@ describe("MirrorCommand", () => {
     const { program } = createCommandAndProgram(deps);
 
     await program.parseAsync(["node", "codefast", "mirror", "sync"], { from: "node" });
-    expect(process.exitCode).toBe(1);
+    expect(deps.runtime.setExitCode).toHaveBeenCalledWith(1);
   });
 
   it("stops before prelude when global option shape is invalid", async () => {
@@ -154,12 +165,14 @@ describe("MirrorCommand", () => {
     );
 
     const command = new MirrorCommand(
+      deps.logger,
       deps.runtime,
       deps.prepareMirrorSync,
       deps.runMirrorSync,
       shell.globalCliOptions,
       shell.schemaValidation,
       shell.cliExecutor,
+      createMirrorProgressPresenterMock(),
     );
 
     const program = new Command();

@@ -3,9 +3,6 @@ import type { MirrorSyncRunRequest } from "#/domains/mirror/application/requests
 
 export const mirrorSyncRunRequestSchema: z.ZodType<MirrorSyncRunRequest> = z.object({
   rootDir: z.string().min(1),
-  verbose: z.boolean().optional(),
-  noColor: z.boolean().optional(),
-  json: z.boolean().optional(),
   packageFilter: z.string().optional(),
   config: z.unknown().optional(),
 });
