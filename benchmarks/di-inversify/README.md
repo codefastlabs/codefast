@@ -39,13 +39,13 @@ If you add a new scenario whose `latency.mean` is under 0.5 μs, batch it. If it
 
 ### Production-shaped scenario scope
 
-This harness keeps only scenarios that map to production-shaped usage (container bootstrap, realistic graphs, fan-out, async chains, lifecycle hooks, scope lookup, scale, and failure-path fail-fast behavior). The table in the report is the comparison to cite.
+This harness keeps scenarios that map to production-shaped usage: micro resolves, realistic graphs, fan-out (`resolveAll` / named strategies / tree depth), async chains and concurrent fan-out, lifecycle and scope, scale, boot and module load, failure-path fail-fast behaviour, **production-shaped handlers** (`production/*`), binding and resolution variants, registry operations, and codefast-only **initialize / inspect** paths. The report table is the comparison to cite.
 
 ### Subprocess protocol
 
 Each library's bench runs in its own subprocess so neither side contaminates the other's V8 state. Each subprocess writes a single `SubprocessPayload` JSON to stdout, delimited by `BENCH_RESULT_JSON_START` / `BENCH_RESULT_JSON_END`. The parent reads only between those markers — Node deprecation warnings, tsx banners, or stray `console.log`s never break parsing.
 
-Environment is pinned: `NODE_ENV=production`, `NODE_OPTIONS='--expose-gc --no-warnings'`. The `--expose-gc` flag unlocks the `beforeEach` GC hook that stabilises allocation-heavy scenarios.
+Environment is pinned: `NODE_ENV=production`, `NODE_OPTIONS` always includes `--no-warnings`. When `BENCH_FULL=1`, the parent subprocess launcher also adds **`--expose-gc`**, which unlocks the strided `beforeEach` GC hook in `src/harness/trial.ts` for allocation-heavy scenarios. In default / fast runs, GC is not exposed unless your outer environment already sets it.
 
 ## Running
 
@@ -62,6 +62,7 @@ pnpm bench                 # full head-to-head
 pnpm bench:verbose         # full run + forward full child subprocess logs (debug mode)
 pnpm bench:codefast        # codefast subprocess only (prints raw JSON payload)
 pnpm bench:inversify       # inversify subprocess only
+pnpm bench:history         # rebuild HTML history viewer from bench-results JSONL
 pnpm check-types           # type-check each tsconfig variant
 ```
 
@@ -103,6 +104,8 @@ And in `bench-results/`:
 
 - `latest.md`, `latest.jsonl` — mirrors of the most recent run, for stable CI paths.
 
+`pnpm bench:history` reads historical runs and writes `bench-results/history-viewer.html` (open locally; see `src/harness/generate-history-html.ts`).
+
 ## Reading the output
 
 The terminal table looks roughly like:
@@ -122,19 +125,16 @@ Three things to check before drawing conclusions:
 
 ## Scenario inventory
 
-Currently migrated to the trial harness:
+**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side.
 
-| Group       | Scenarios                                                                                                                                                                                                                          |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `micro`     | `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`                                                                                                                                         |
-| `realistic` | `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `realistic-graph-validate` (codefast-only)                                                                                                                         |
-| `fan-out`   | `fan-out-tree-depth-3-breadth-4` (batch=20, throughput-oriented), `resolve-all-strategies-10` (batch=1, latency-oriented), `resolve-all-strategies-100` (batch=1, latency-oriented), `resolve-all-named-8`, `resolve-all-named-32` |
-| `async`     | `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`                                                                                                                     |
-| `lifecycle` | `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`                                                                                                                                                               |
-| `scope`     | `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`                                                                                                                                                          |
-| `scale`     | `scale-deep-transient-chain-512`                                                                                                                                                                                                   |
-| `boot`      | `boot-decorated-container-build-and-resolve`                                                                                                                                                                                       |
-| `failure`   | `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`                                                                                                                                                |
+| Area                                    | `codefast/` / `inversify/` modules                                                                      | Notes                                                                                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Core                                    | `micro.ts`, `realistic.ts`, `async.ts`, `lifecycle.ts`, `scope.ts`, `scale.ts`, `boot.ts`, `failure.ts` | Shared ids; `realistic-graph-validate` lives only in `codefast/realistic-graph-validate.ts`.                                                                   |
+| Fan-out                                 | `fan-out/index.ts` → `tree.ts`, `resolve-all-strategies.ts`                                             | Tree scenario uses `batch=20`; `resolve-all-strategies-{10,100}`, `resolve-all-named-{8,32}` use `batch=1` (counts from `src/fixtures/fan-out-descriptor.ts`). |
+| Production / wiring                     | `production.ts`, `binding-variants.ts`, `resolution-patterns.ts`, `registry-ops.ts`, `module.ts`        | Extra micro-style rows in binding/resolution modules; `registry-ops.ts` mixes `lifecycle`, `introspection`, and `scope` **group** labels per row.              |
+| Introspection & startup (codefast-only) | `initialize-inspect.ts`                                                                                 | `initialize-async-warmup` (**`boot`** group), `inspect-snapshot`, `lookup-bindings` (**`introspection`**). Inversify column shows "—" for these ids.           |
+
+Representative **stable ids** (not exhaustive of every `group` value): `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`, `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `fan-out-tree-depth-3-breadth-4`, `resolve-all-strategies-10`, `resolve-all-strategies-100`, `resolve-all-named-8`, `resolve-all-named-32`, `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`, `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`, `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`, `scale-deep-transient-chain-512`, `boot-decorated-container-build-and-resolve`, `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`, plus production / binding / resolution / registry / module / initialize-inspect ids defined in those modules.
 
 ### Phase 2 - Fan-out baseline
 
@@ -181,44 +181,76 @@ Validation status:
 ## Layout
 
 ```
-src/
-  harness/                # library-agnostic bench infrastructure
-    run.ts                # parent: spawns subprocesses, renders reports
-    trial.ts              # per-subprocess: N-trial loop around tinybench
-    protocol.ts           # START/END-framed subprocess wire format
-    report.ts             # aggregate → markdown + console + JSONL
-    sanity.ts             # pre-bench sanity checks
-    fingerprint.ts        # Node/V8/platform/library stamps
-    batched.ts            # inner-loop wrapper for sub-μs scenarios
-  scenarios/
-    types.ts              # shared BenchScenario interface
-    codefast/             # @codefast/di scenario modules
-      micro.ts
-      realistic.ts
-      fan-out.ts
-      async.ts
-      lifecycle.ts
-      scope.ts
-      scale.ts
-      boot.ts
-      failure.ts
-    inversify/            # InversifyJS 8 scenario modules (mirror)
-      micro.ts
-      realistic.ts
-      fan-out.ts
-      async.ts
-      lifecycle.ts
-      scope.ts
-      scale.ts
-      boot.ts
-      failure.ts
-  fixtures/
-    realistic-graph.ts    # shared descriptor (no library imports)
-    fan-out-descriptor.ts # shared fan-out topology + strategy-count fixtures
-    codefast-adapter.ts   # descriptor → codefast Container
-    inversify-adapter.ts  # descriptor → inversify Container
-  codefast-benches.ts     # subprocess entry — codefast
-  inversify-benches.ts    # subprocess entry — inversify
+benchmarks/di-inversify/
+  src/
+    harness/                         # this package’s bench driver (uses @codefast/benchmark-harness for wire + reports)
+      run.ts                         # parent: rebuild @codefast/di, spawn both subprocesses, write report.md + JSONL + console
+      trial.ts                       # per-subprocess: N trials, tinybench, extract per-scenario stats
+      sanity.ts                      # optional per-scenario sanity hooks
+      batched.ts                     # inner-loop helper for sub-μs scenarios (throughput × batch)
+      di-two-way-presentation.ts     # markdown + console column copy for the two-way report
+      generate-history-html.ts       # optional: aggregate bench-results → history-viewer.html
+    scenarios/
+      types.ts                       # BenchScenario / AsyncBenchScenario / ScenarioGroup
+      collect-codefast-scenarios.ts  # ordered list of codefast scenario builders
+      collect-inversify-scenarios.ts # ordered list of inversify scenario builders (ids must align with codefast)
+      codefast/                      # @codefast/di scenario implementations
+        micro.ts
+        realistic.ts
+        realistic-graph-validate.ts
+        async.ts
+        lifecycle.ts
+        scope.ts
+        scale.ts
+        boot.ts
+        failure.ts
+        production.ts
+        binding-variants.ts
+        resolution-patterns.ts
+        registry-ops.ts
+        module.ts
+        initialize-inspect.ts
+        fan-out/
+          index.ts                   # exports buildCodefastFanOutScenarios
+          tree.ts
+          resolve-all-strategies.ts
+      inversify/                     # InversifyJS 8 mirrors (same ids; library-specific wiring)
+        micro.ts
+        realistic.ts
+        async.ts
+        lifecycle.ts
+        scope.ts
+        scale.ts
+        boot.ts
+        failure.ts
+        production.ts
+        binding-variants.ts
+        resolution-patterns.ts
+        registry-ops.ts
+        module.ts
+        fan-out/
+          index.ts
+          tree.ts
+          resolve-all-strategies.ts
+    fixtures/
+      realistic-graph.ts             # graph descriptor (no DI imports)
+      fan-out-descriptor.ts          # fan-out counts + tree shape helpers
+      codefast-adapter.ts            # descriptor → @codefast/di Container
+      inversify-adapter.ts           # descriptor → inversify Container
+    codefast-benches.ts              # subprocess entry — tsconfig.codefast.json
+    inversify-benches.ts             # subprocess entry — tsconfig.inversify.json (+ reflect-metadata)
+  tsconfig.json
+  tsconfig.codefast.json
+  tsconfig.inversify.json
+  package.json
+  README.md
+  BENCH_GUIDE.md
 ```
 
-Only `fixtures/codefast-adapter.ts` and `scenarios/codefast/*.ts` may import `@codefast/di`. Only `fixtures/inversify-adapter.ts` and `scenarios/inversify/*.ts` may import `inversify`. The harness never sees either library.
+**Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess`, `buildLibraryReport`, markdown + JSONL writers, and the two-way comparison row builder. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
+
+**Import boundaries**
+
+- Only `src/fixtures/codefast-adapter.ts` and `src/scenarios/codefast/**` may import `@codefast/di`.
+- Only `src/fixtures/inversify-adapter.ts` and `src/scenarios/inversify/**` may import `inversify` (and `inversify-benches.ts` imports `reflect-metadata`).
+- `src/harness/**` and `src/fixtures/{realistic-graph,fan-out-descriptor}.ts` stay library-agnostic (they import `@codefast/benchmark-harness`, `tinybench`, and local `#/…` modules only).
