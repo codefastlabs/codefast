@@ -2,7 +2,7 @@
   "name": "@codefast/benchmark-tailwind-variants",
   "version": "0.3.14",
   "private": true,
-  "description": "Performance benchmark for Tailwind CSS variant libraries",
+  "description": "Subprocess tinybench harness: @codefast/tailwind-variants vs tailwind-variants and vs class-variance-authority (pairwise reports)",
   "keywords": [
     "benchmark",
     "css",
@@ -28,7 +28,13 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "bench": "pnpm exec tsx src/run-benchmark.ts",
+    "bench": "pnpm exec tsx src/harness/run.ts",
+    "bench:class-variance-authority": "pnpm exec tsx src/class-variance-authority-benches.ts",
+    "bench:codefast": "pnpm exec tsx src/codefast-benches.ts",
+    "bench:fast": "BENCH_FAST=1 pnpm exec tsx src/harness/run.ts",
+    "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
+    "bench:tailwind-variants": "pnpm exec tsx src/tailwind-variants-benches.ts",
+    "bench:verbose": "BENCH_VERBOSE=1 pnpm exec tsx src/harness/run.ts",
     "check-types": "tsgo --noEmit"
   },
   "dependencies": {
@@ -42,7 +48,11 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
