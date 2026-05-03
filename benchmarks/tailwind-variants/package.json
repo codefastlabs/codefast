@@ -34,6 +34,7 @@
     "bench:fast": "BENCH_FAST=1 pnpm exec tsx src/harness/run.ts",
     "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
     "bench:tailwind-variants": "pnpm exec tsx src/tailwind-variants-benches.ts",
+    "bench:serve": "pnpm exec tsx src/harness/serve.ts",
     "bench:verbose": "BENCH_VERBOSE=1 pnpm exec tsx src/harness/run.ts",
     "check-types": "tsgo --noEmit"
   },

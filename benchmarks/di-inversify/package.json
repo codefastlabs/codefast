@@ -24,6 +24,7 @@
     "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
     "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts",
     "bench:history": "pnpm exec tsx src/harness/generate-history-html.ts",
+    "bench:serve": "pnpm exec tsx src/harness/serve.ts",
     "bench:verbose": "BENCH_VERBOSE=1 tsx src/harness/run.ts",
     "check-types": "tsgo --noEmit"
   },
