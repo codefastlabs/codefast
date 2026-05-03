@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import type { JsonlBenchObservationRow } from "#/jsonl-observations";
+import type { JsonlBenchObservationRow } from "#/report/jsonl";
 import {
   formatIqrThroughputFraction,
   formatLatencyMeanMilliseconds,

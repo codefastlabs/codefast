@@ -1,11 +1,11 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { BenchOptions } from "tinybench";
-import type { AnyBenchScenario } from "#/bench-scenario";
-import { collectFingerprint } from "#/fingerprint";
-import { createRunAllTrials } from "#/create-run-all-trials";
+import type { AnyBenchScenario } from "#/child/bench-scenario";
+import { collectFingerprint } from "#/child/fingerprint";
+import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { emitSubprocessPayload } from "#/protocol";
-import { runSanityChecks } from "#/run-sanity-checks";
+import { runSanityChecks } from "#/child/run-sanity-checks";
 
 export type RunBenchmarkChildMainParameters = Readonly<{
   /** Library id stored on the fingerprint (e.g. `@codefast/di`, `inversify`). */

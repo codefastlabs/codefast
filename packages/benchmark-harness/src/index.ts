@@ -1,23 +1,23 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
-export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/benchmark-suite-default-bench-options";
+export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 
-export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/bench-scenario";
-export { isAsyncScenario } from "#/bench-scenario";
+export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";
+export { isAsyncScenario } from "#/child/bench-scenario";
 
-export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/create-run-all-trials";
-export { createRunAllTrials } from "#/create-run-all-trials";
+export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
+export { createRunAllTrials } from "#/child/create-run-all-trials";
 
-export { runSanityChecks } from "#/run-sanity-checks";
+export { runSanityChecks } from "#/child/run-sanity-checks";
 
-export type { RunBenchmarkChildMainParameters } from "#/run-benchmark-child-main";
+export type { RunBenchmarkChildMainParameters } from "#/child/run-benchmark-child-main";
 export {
   exitBenchmarkChildProcessOnFailure,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
-} from "#/run-benchmark-child-main";
+} from "#/child/run-benchmark-child-main";
 
-export { resolveBenchParentExitCode } from "#/resolve-bench-parent-exit-code";
+export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
 
 export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/protocol";
 
@@ -28,7 +28,7 @@ export {
   extractSubprocessPayload,
 } from "#/protocol";
 
-export { collectFingerprint } from "#/fingerprint";
+export { collectFingerprint } from "#/child/fingerprint";
 
 export type {
   AggregatedScenarioResult,
@@ -38,7 +38,7 @@ export type {
   TwoWayScenarioComparisonRow,
   TwoWayConsoleColumnLabels,
   TwoWayConsoleReportOptions,
-} from "#/report";
+} from "#/report/index";
 
 export {
   buildLibraryReport,
@@ -47,20 +47,20 @@ export {
   renderTwoWayMarkdownReport,
   writeJsonlRun,
   writeMarkdownFile,
-} from "#/report";
+} from "#/report/index";
 
-export type { RunBenchSubprocessParameters } from "#/subprocess/run-bench-subprocess";
+export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
 
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
   runBenchSubprocess,
-} from "#/subprocess/run-bench-subprocess";
+} from "#/parent/run-bench-subprocess";
 
 export {
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
-} from "#/jsonl-observations";
+} from "#/report/jsonl";
 
 export { quantile, sortAscending } from "#/stats/quantiles";
 
