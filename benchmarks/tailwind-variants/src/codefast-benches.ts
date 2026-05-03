@@ -1,10 +1,10 @@
 /** @codefast/tailwind-variants bench subprocess (see `src/harness/run.ts`). */
 import {
+  BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
   exitBenchmarkChildProcessOnFailure,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
-import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
 const LIBRARY_NAME = "@codefast/tailwind-variants";

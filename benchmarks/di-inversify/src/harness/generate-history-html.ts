@@ -6,7 +6,8 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { JsonlBenchObservationRow, LibraryReport } from "@codefast/benchmark-harness/report";
+import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/jsonl";
+import type { LibraryReport } from "@codefast/benchmark-harness/report";
 import { buildLibraryReport } from "@codefast/benchmark-harness/report";
 import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harness/protocol";
 import { quantile, sortAscending } from "@codefast/benchmark-harness/stats/quantiles";

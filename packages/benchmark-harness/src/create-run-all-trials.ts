@@ -18,17 +18,16 @@ function runFullGcIfExposed(): void {
 }
 
 function createBeforeEachGcHook(): () => void {
+  if (!FULL_MODE_ENABLED) {
+    return (): void => {};
+  }
   let callIndex = 0;
   return (): void => {
     if (typeof globalThis.gc !== "function") {
       return;
     }
-    if (FULL_MODE_ENABLED) {
-      if (callIndex++ % FULL_MODE_SAMPLE_GC_STRIDE !== 0) {
-        return;
-      }
-    } else if (FAST_MODE_ENABLED) {
-      console.debug("[GC] Manual GC triggered");
+    if (callIndex++ % FULL_MODE_SAMPLE_GC_STRIDE !== 0) {
+      return;
     }
     globalThis.gc();
   };
@@ -108,14 +107,15 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   ): Promise<TrialPayload> {
     const beforeEachGc = createBeforeEachGcHook();
     const bench = new Bench(benchOptions);
+    const sanityFailureSet = new Set(sanityFailures);
     const runnableScenarioCount = scenarios.filter(
-      (scenario) => !sanityFailures.includes(scenario.id),
+      (scenario) => !sanityFailureSet.has(scenario.id),
     ).length;
     let completedScenarioCount = 0;
 
     const preBuiltClosuresByScenarioId = new Map<string, () => void | Promise<void>>();
     for (const scenario of scenarios) {
-      if (sanityFailures.includes(scenario.id)) {
+      if (sanityFailureSet.has(scenario.id)) {
         continue;
       }
       preBuiltClosuresByScenarioId.set(scenario.id, scenario.build());
@@ -205,10 +205,6 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
       }
       const batch = scenario.batch ?? 1;
       const hzPerIteration = result.throughput.mean;
-      const meanSeconds = result.latency.mean;
-      const p75Seconds = result.latency.p75;
-      const p99Seconds = result.latency.p99;
-      const p999Seconds = result.latency.p999;
       trialScenarioResults.push({
         id: scenario.id,
         group: scenario.group,
@@ -217,10 +213,10 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
         what: scenario.what,
         hzPerIteration,
         hzPerOp: hzPerIteration * batch,
-        meanMs: meanSeconds * 1000,
-        p75Ms: p75Seconds * 1000,
-        p99Ms: p99Seconds * 1000,
-        p999Ms: p999Seconds * 1000,
+        meanMs: result.latency.mean,
+        p75Ms: result.latency.p75,
+        p99Ms: result.latency.p99,
+        p999Ms: result.latency.p999,
         samples: result.latency.samplesCount,
       });
     }

@@ -51,27 +51,25 @@ function createStreamLineForwarder(
   prefix: string,
   write: (chunk: string) => void,
   onOutput: () => void,
-): (chunk: string) => void {
-  let bufferedLineRemainder = "";
-  return (chunk: string): void => {
-    onOutput();
-    bufferedLineRemainder += chunk;
-    const lines = bufferedLineRemainder.split("\n");
-    bufferedLineRemainder = lines.pop() ?? "";
-    for (const line of lines) {
-      write(`${prefix}${line}\n`);
-    }
+): { feed: (chunk: string) => void; flush: () => void } {
+  let bufferedRemainder = "";
+  return {
+    feed: (chunk: string): void => {
+      onOutput();
+      bufferedRemainder += chunk;
+      const lines = bufferedRemainder.split("\n");
+      bufferedRemainder = lines.pop() ?? "";
+      for (const line of lines) {
+        write(`${prefix}${line}\n`);
+      }
+    },
+    flush: (): void => {
+      if (bufferedRemainder.length > 0) {
+        write(`${prefix}${bufferedRemainder}\n`);
+        bufferedRemainder = "";
+      }
+    },
   };
-}
-
-function flushStreamLineForwarder(
-  prefix: string,
-  write: (chunk: string) => void,
-  remainder: string,
-): void {
-  if (remainder.length > 0) {
-    write(`${prefix}${remainder}\n`);
-  }
 }
 
 export type RunBenchSubprocessParameters = Readonly<{
@@ -135,8 +133,6 @@ export async function runBenchSubprocess(
     let stderr = "";
     let lastOutputAtMs = performance.now();
     let lastHeartbeatAtMs = startedAtMs;
-    let stdoutRemainder = "";
-    let stderrRemainder = "";
 
     const refreshOutputTimestamp = (): void => {
       lastOutputAtMs = performance.now();
@@ -155,56 +151,38 @@ export async function runBenchSubprocess(
       }
     }, 1000);
 
-    const cleanupTimers = (): void => {
-      clearInterval(heartbeatTimer);
-    };
-
     childProcess.stdout?.setEncoding("utf8");
     childProcess.stderr?.setEncoding("utf8");
 
-    const forwardStdoutLine = createStreamLineForwarder(
+    const stdoutForwarder = createStreamLineForwarder(
       childOutputPrefix,
       (chunk) => (forwardChildStdoutVerbose ? process.stdout.write(chunk) : undefined),
       refreshOutputTimestamp,
     );
-    const forwardStderrLine = createStreamLineForwarder(
+    const stderrForwarder = createStreamLineForwarder(
       childOutputPrefix,
-      (chunk) => {
-        process.stderr.write(chunk);
-      },
+      (chunk) => process.stderr.write(chunk),
       refreshOutputTimestamp,
     );
 
     childProcess.stdout?.on("data", (chunk: string) => {
       stdout += chunk;
-      forwardStdoutLine(chunk);
-      const splitLines = stdoutRemainder.concat(chunk).split("\n");
-      stdoutRemainder = splitLines.pop() ?? "";
+      stdoutForwarder.feed(chunk);
     });
     childProcess.stderr?.on("data", (chunk: string) => {
       stderr += chunk;
-      forwardStderrLine(chunk);
-      const splitLines = stderrRemainder.concat(chunk).split("\n");
-      stderrRemainder = splitLines.pop() ?? "";
+      stderrForwarder.feed(chunk);
     });
 
     childProcess.on("error", (error) => {
-      cleanupTimers();
+      clearInterval(heartbeatTimer);
       reject(error);
     });
 
     childProcess.on("close", (exitCode, signal) => {
-      cleanupTimers();
-      flushStreamLineForwarder(
-        childOutputPrefix,
-        (chunk) => process.stdout.write(chunk),
-        stdoutRemainder,
-      );
-      flushStreamLineForwarder(
-        childOutputPrefix,
-        (chunk) => process.stderr.write(chunk),
-        stderrRemainder,
-      );
+      clearInterval(heartbeatTimer);
+      stdoutForwarder.flush();
+      stderrForwarder.flush();
       resolve({
         stdout,
         stderr,

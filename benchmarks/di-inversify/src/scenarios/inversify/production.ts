@@ -174,7 +174,7 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
           commit: () => undefined,
         };
       })
-      .inTransientScope();
+      .inSingletonScope();
 
     operationChild
       .bind<UserRepository>(userRepositoryId)

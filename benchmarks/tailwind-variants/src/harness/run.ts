@@ -5,7 +5,6 @@
  * pairwise reports vs @codefast/tailwind-variants for tailwind-variants and for cva.
  */
 import { spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -17,7 +16,7 @@ import {
   runBenchSubprocess,
   type SubprocessPayload,
   writeJsonlRun,
-  writeTwoWayMarkdownReport,
+  writeMarkdownFile,
 } from "@codefast/benchmark-harness";
 import {
   CODEFAST_VS_CVA_CONSOLE,
@@ -161,53 +160,27 @@ async function main(): Promise<void> {
     },
   ];
 
-  const outputPaths = buildOutputPaths();
-  mkdirSync(outputPaths.runDirectory, { recursive: true });
-
-  writeTwoWayMarkdownReport(
-    outputPaths.vsTailwindVariantsMarkdownPath,
+  const vsTailwindVariantsMarkdown = renderTwoWayMarkdownReport(
     codefastReport,
     tailwindVariantsReport,
     CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
   );
-  writeTwoWayMarkdownReport(
-    outputPaths.vsClassVarianceAuthorityMarkdownPath,
+  const vsCvaMarkdown = renderTwoWayMarkdownReport(
     codefastReport,
     classVarianceAuthorityReport,
     CODEFAST_VS_CVA_MARKDOWN,
   );
+  const combinedMarkdown = `${vsTailwindVariantsMarkdown}\n\n---\n\n${vsCvaMarkdown}\n`;
 
-  const combinedMarkdown = [
-    renderTwoWayMarkdownReport(
-      codefastReport,
-      tailwindVariantsReport,
-      CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
-    ),
-    "\n\n---\n\n",
-    renderTwoWayMarkdownReport(
-      codefastReport,
-      classVarianceAuthorityReport,
-      CODEFAST_VS_CVA_MARKDOWN,
-    ),
-    "\n",
-  ].join("");
-  writeFileSync(outputPaths.combinedMarkdownPath, combinedMarkdown, "utf8");
-
+  const outputPaths = buildOutputPaths();
+  writeMarkdownFile(outputPaths.vsTailwindVariantsMarkdownPath, vsTailwindVariantsMarkdown);
+  writeMarkdownFile(outputPaths.vsClassVarianceAuthorityMarkdownPath, vsCvaMarkdown);
+  writeMarkdownFile(outputPaths.combinedMarkdownPath, combinedMarkdown);
   writeJsonlRun(outputPaths.jsonlPath, librariesForJsonl);
 
-  writeTwoWayMarkdownReport(
-    outputPaths.latestVsTailwindVariantsMarkdownPath,
-    codefastReport,
-    tailwindVariantsReport,
-    CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
-  );
-  writeTwoWayMarkdownReport(
-    outputPaths.latestVsCvaMarkdownPath,
-    codefastReport,
-    classVarianceAuthorityReport,
-    CODEFAST_VS_CVA_MARKDOWN,
-  );
-  writeFileSync(outputPaths.latestCombinedMarkdownPath, combinedMarkdown, "utf8");
+  writeMarkdownFile(outputPaths.latestVsTailwindVariantsMarkdownPath, vsTailwindVariantsMarkdown);
+  writeMarkdownFile(outputPaths.latestVsCvaMarkdownPath, vsCvaMarkdown);
+  writeMarkdownFile(outputPaths.latestCombinedMarkdownPath, combinedMarkdown);
   writeJsonlRun(outputPaths.latestJsonlPath, librariesForJsonl);
 
   console.log(`Run directory: ${outputPaths.runDirectory}`);

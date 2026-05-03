@@ -7,7 +7,7 @@ import type {
  * Stable copy for Markdown / console output for `@codefast/di` vs InversifyJS 8.
  * Keeps `run.ts` free of duplicated prose.
  */
-export const DI_INVERTERSIFY_MARKDOWN = {
+export const DI_INVERSIFY_MARKDOWN = {
   documentHeading: "# @codefast/di vs InversifyJS 8 — benchmark report",
   columnTitles: {
     leftThroughput: "codefast hz/op",
@@ -34,7 +34,7 @@ export const DI_INVERTERSIFY_MARKDOWN = {
   },
 } as const satisfies TwoWayMarkdownReportOptions;
 
-export const DI_INVERTERSIFY_CONSOLE: TwoWayConsoleColumnLabels = {
+export const DI_INVERSIFY_CONSOLE: TwoWayConsoleColumnLabels = {
   sectionHeading: "Comparable scenarios",
   leftThroughputHeader: "codefast hz/op",
   rightThroughputHeader: "inversify hz/op",
