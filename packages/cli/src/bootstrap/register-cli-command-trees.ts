@@ -1,11 +1,11 @@
 import type { Command } from "commander";
-import type { CliCommandPort } from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort } from "#/shell/application/ports/primary/command.port";
 import { CommanderCliHostAdapter } from "#/shell/infrastructure/commander/commander-cli-host.adapter";
 
 /** Composition root: attach declarative CLI trees from the container onto the Commander program. */
 export function registerCliCommandTreesOnProgram(
   programRoot: Command,
-  commands: readonly CliCommandPort[],
+  commands: readonly CommandPort[],
 ): void {
   CommanderCliHostAdapter.registerTrees(
     programRoot,

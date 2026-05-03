@@ -1,6 +1,6 @@
 import { Container, type ContainerInterface } from "@codefast/di";
 import { CliApplicationModule } from "#/bootstrap/cli-application.module";
-import type { CliCommandPort } from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort } from "#/shell/application/ports/primary/command.port";
 import { CommandPortToken } from "#/shell/composition/tokens";
 
 export function createCliRuntimeContainer(): ContainerInterface {
@@ -11,7 +11,7 @@ export function createCliRuntimeContainer(): ContainerInterface {
 
 export function resolveCliCommands(
   runtimeContainer: Pick<ContainerInterface, "resolveAll">,
-): readonly CliCommandPort[] {
+): readonly CommandPort[] {
   const cliCommands = runtimeContainer.resolveAll(CommandPortToken);
   return [...cliCommands].sort((left, right) =>
     left.definition.name.localeCompare(right.definition.name),

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { registerCliCommandTreesOnProgram } from "#/bootstrap/register-cli-command-trees";
 import { createCliRuntimeContainer, resolveCliCommands } from "#/bootstrap/composition-root";
-import type { CliCommandPort } from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort } from "#/shell/application/ports/primary/command.port";
 
 function readVersion(): string {
   try {
@@ -19,7 +19,7 @@ function readVersion(): string {
   }
 }
 
-function createProgram(commands: readonly CliCommandPort[]): Command {
+function createProgram(commands: readonly CommandPort[]): Command {
   const program = new Command();
   program
     .name("codefast")

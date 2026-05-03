@@ -1,8 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type {
-  CliCommandPort,
-  CliCommandTree,
-} from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort, CommandTree } from "#/shell/application/ports/primary/command.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
@@ -39,7 +36,7 @@ import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.val
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
 ])
-export class TagCommand implements CliCommandPort {
+export class TagCommand implements CommandPort {
   constructor(
     private readonly logger: CliLoggerPort,
     private readonly runtime: CliRuntimePort,
@@ -51,7 +48,7 @@ export class TagCommand implements CliCommandPort {
     private readonly cliExecutor: CliExecutor,
   ) {}
 
-  get definition(): CliCommandTree {
+  get definition(): CommandTree {
     return {
       name: CLI_COMMAND_SLOT_NAME.tag,
       description: "Add @since <version> JSDoc tags to exported declarations",

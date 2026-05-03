@@ -1,8 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type {
-  CliCommandPort,
-  CliCommandTree,
-} from "#/shell/application/ports/primary/cli-command.port";
+import type { CommandPort, CommandTree } from "#/shell/application/ports/primary/command.port";
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
@@ -26,8 +23,8 @@ import {
   CliExecutorToken,
   CliLoggerPortToken,
   CliRuntimeToken,
-  GlobalCliOptionsParsePortToken,
   CliSchemaParsingToken,
+  GlobalCliOptionsParsePortToken,
 } from "#/shell/application/cli-runtime.tokens";
 import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.value-object";
 
@@ -41,7 +38,7 @@ import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.val
   inject(CliExecutorToken),
   inject(PresentMirrorSyncProgressPresenterToken),
 ])
-export class MirrorCommand implements CliCommandPort {
+export class MirrorCommand implements CommandPort {
   constructor(
     private readonly logger: CliLoggerPort,
     private readonly runtime: CliRuntimePort,
@@ -53,7 +50,7 @@ export class MirrorCommand implements CliCommandPort {
     private readonly mirrorProgressPresenter: MirrorSyncProgressListener,
   ) {}
 
-  get definition(): CliCommandTree {
+  get definition(): CommandTree {
     return {
       name: CLI_COMMAND_SLOT_NAME.mirror,
       description: "Keep package manifests aligned with what you ship",
