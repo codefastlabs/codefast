@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import type { ArrangeTargetScannerPort } from "#/domains/arrange/application/ports/outbound/arrange-target-scanner.port";
 import { FileWalkerPortToken } from "#/domains/arrange/composition/tokens";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { FileWalkerPort } from "#/domains/arrange/application/ports/outbound/file-walker.port";
@@ -11,7 +11,7 @@ export class ArrangeTargetScannerAdapter implements ArrangeTargetScannerPort {
   constructor(
     private readonly fileWalker: FileWalkerPort,
     private readonly path: CliPathPort,
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
   ) {}
 
   scanTarget(args: { readonly targetPath: string }): string[] {

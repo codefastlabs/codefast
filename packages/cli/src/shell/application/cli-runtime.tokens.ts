@@ -5,7 +5,7 @@ import type { CliTelemetryPort } from "#/shell/application/ports/outbound/cli-te
 import type { CliVerboseDiagnosticsPort } from "#/shell/application/ports/outbound/cli-verbose-diagnostics.port";
 import type { FormatAppErrorPort } from "#/shell/application/ports/outbound/format-app-error.port";
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
@@ -16,7 +16,7 @@ import type { LoadCodefastConfigPort } from "#/shell/application/ports/inbound/l
 
 export const CliTelemetryPortToken = token<CliTelemetryPort>("CliTelemetryPort");
 
-export const CliFilesystemPortToken = token<CliFilesystemPort>("CliFilesystemPort");
+export const CliFilesystemPortToken = token<FilesystemPort>("FilesystemPort");
 export const CliLoggerPortToken = token<CliLoggerPort>("CliLoggerPort");
 export const CliPathPortToken = token<CliPathPort>("CliPathPort");
 export const RepoRootResolverPortToken = token<RepoRootResolverPort>("RepoRootResolverPort");

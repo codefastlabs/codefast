@@ -9,7 +9,7 @@ import type {
 } from "#/domains/config/application/ports/outbound/config-loader.port";
 import type { CodefastConfig } from "#/domains/config/domain/schema.domain";
 import { CodefastConfigSchemaPortToken } from "#/domains/config/composition/tokens";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
 @injectable([inject(CliFilesystemPortToken), inject(CodefastConfigSchemaPortToken)])
@@ -24,7 +24,7 @@ export class ConfigLoaderAdapter implements ConfigLoaderPort {
   private readonly cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
 
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly configSchema: CodefastConfigSchemaPort,
   ) {}
 

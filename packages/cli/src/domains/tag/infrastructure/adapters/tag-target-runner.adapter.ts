@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/outbound/typescript-source-file-walker.port";
 import {
@@ -25,7 +25,7 @@ import type { TagRunOptions, TagRunResult } from "#/domains/tag/domain/types.dom
 ])
 export class TagTargetRunnerAdapter implements TagTargetRunnerPort {
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly pathService: CliPathPort,
     private readonly versionResolver: TagVersionResolverPort,
     private readonly sinceWriter: TagSinceWriterPort,
