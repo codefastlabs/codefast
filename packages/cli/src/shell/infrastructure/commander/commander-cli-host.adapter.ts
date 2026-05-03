@@ -1,9 +1,10 @@
 import { Command, Option } from "commander";
-import type { CommandRouteWire, CommandTree } from "#/shell/application/ports/primary/command.port";
 import type {
+  CommandRouteWire,
+  CommandTree,
   GlobalOptionsBridgePort,
   LeafDispatchHandler,
-} from "#/shell/application/ports/primary/cli-host.port";
+} from "#/shell/application/ports/primary/command.port";
 
 /** Traverses {@link CommandTree} onto a Commander {@link Command} node. */
 export class CommanderCliHostAdapter {

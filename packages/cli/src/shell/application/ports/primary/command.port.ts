@@ -1,11 +1,20 @@
-import type { LeafDispatchHandler } from "#/shell/application/ports/primary/cli-host.port";
-
 /**
  * Driver-side (inbound / primary) ports for the CLI shell: how the application is invoked from
  * the outside world (Commander). In hexagonal terms these are the ports your driving adapters
  * (e.g. `CommanderCliHostAdapter`) depend on — distinct from application `ports/inbound/*` use-case
  * facades, which describe application capabilities rather than argv/Commander wiring.
  */
+
+/** Driver-side host bridge: merged global CLI options from Commander (`optsWithGlobals`) for leaf handlers. */
+export interface GlobalOptionsBridgePort {
+  readMergedGlobalsOptionRecords(): Readonly<Record<string, unknown>>;
+}
+
+export type LeafDispatchHandler = (
+  positionalArguments: readonly unknown[],
+  localOptionRecord: Readonly<Record<string, unknown>>,
+  globalBridge: GlobalOptionsBridgePort,
+) => void | Promise<void>;
 export type CommandRouteWire =
   | Readonly<{ kind: "optionalPositional"; argumentTemplate: string; helpBlurb: string }>
   | Readonly<{ kind: "greedyPositional"; argumentTemplate: string; helpBlurb: string }>
