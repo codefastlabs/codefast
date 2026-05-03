@@ -252,7 +252,7 @@ container.resolve(StorageToken, { tag: ["provider", "s3"] });
 
 **Default slot**
 
-Use `.whenDefault()` so the binding participates in resolution when no `name` / `tag` hint is provided (subject to multi-binding selection rules).
+`.whenDefault()` is a documentation-only marker — it is a no-op at runtime. A binding without any constraint already participates in resolution when no `name` / `tag` hint is provided. Use it to signal intent when mixing constrained and unconstrained bindings for the same token.
 
 **Predicate** — inspect the full resolution graph:
 
@@ -486,6 +486,8 @@ container.validate(); // throws ScopeViolationError on the first violation
 
 Call it after meaningful registry changes (or in tests) — the container does **not** auto-invoke `validate()` based on `NODE_ENV`.
 
+> **Scope of checks.** Only `class`, `toResolved`, and `toResolvedAsync` bindings are inspected, because their dependency lists are statically declared. `toDynamic` and `toDynamicAsync` bindings are skipped — their factories have no declared deps and cannot be checked statically.
+
 ### Introspection
 
 ```typescript
@@ -570,7 +572,7 @@ container.unload(AppModule);
 await container.unloadAsync(DbModule);
 ```
 
-Re-loading a module that is already loaded is a no-op. Circular imports between modules throw `CircularDependencyError`.
+Re-loading a module that is already loaded increments an internal ref-count and does not re-register bindings; unloading decrements it and only removes bindings when the count reaches zero. Circular imports between modules are silently deduplicated — `CircularDependencyError` is only thrown for cycles in the dependency resolution graph (e.g. service A depends on service B which depends on A).
 
 ---
 
