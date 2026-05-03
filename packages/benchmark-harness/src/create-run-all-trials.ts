@@ -45,10 +45,10 @@ function hasStatistics(result: TaskResult): result is TaskResultWithStatisticsSt
 
 export type CreateRunAllTrialsParameters = Readonly<{
   /**
-   * Default tinybench options when neither `BENCH_FAST` nor `BENCH_FULL` is set,
-   * plus the fast and full branches (see implementation).
+   * Baseline tinybench options when neither `BENCH_FAST` nor `BENCH_FULL` is set
+   * (fast/full branches override in `resolveBenchOptions`).
    */
-  readonly defaultBenchOptions: BenchOptions;
+  readonly benchDefaults: BenchOptions;
 }>;
 
 export type RunAllTrials = (
@@ -57,7 +57,7 @@ export type RunAllTrials = (
   trialCount?: number,
 ) => Promise<TrialPayload[]>;
 
-function resolveBenchOptions(defaultBenchOptions: BenchOptions): BenchOptions {
+function resolveBenchOptions(benchDefaults: BenchOptions): BenchOptions {
   return FAST_MODE_ENABLED
     ? {
         time: 20,
@@ -72,7 +72,7 @@ function resolveBenchOptions(defaultBenchOptions: BenchOptions): BenchOptions {
           warmupTime: 10,
           warmupIterations: 10,
         }
-      : defaultBenchOptions;
+      : benchDefaults;
 }
 
 function resolveTrialCountFromEnvironment(): number {
@@ -91,14 +91,14 @@ function resolveTrialCountFromEnvironment(): number {
 }
 
 /**
- * Returns a `runAllTrials` function closed over the given default bench profile
+ * Returns a `runAllTrials` function closed over the given baseline bench profile
  * (used when `BENCH_FAST` and `BENCH_FULL` are unset).
  */
 export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   runAllTrials: RunAllTrials;
 } {
-  const { defaultBenchOptions } = parameters;
-  const benchOptions = resolveBenchOptions(defaultBenchOptions);
+  const { benchDefaults } = parameters;
+  const benchOptions = resolveBenchOptions(benchDefaults);
 
   async function runOneTrial(
     trialIndex: number,

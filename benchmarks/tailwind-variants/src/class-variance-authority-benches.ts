@@ -11,10 +11,9 @@ const LIBRARY_NAME = "class-variance-authority";
 const SCENARIO_LOG_NAME = "cva";
 
 void runBenchmarkChildMain({
-  libraryNameForFingerprint: LIBRARY_NAME,
-  libraryDisplayNameForErrors: LIBRARY_NAME,
-  scenarioLogLabel: SCENARIO_LOG_NAME,
-  benchmarkPackageRootDirectory: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
+  libraryName: LIBRARY_NAME,
+  scenarioName: SCENARIO_LOG_NAME,
+  packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllClassVarianceAuthorityScenarios,
-  defaultBenchOptions: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
+  benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
 }).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(LIBRARY_NAME, error));

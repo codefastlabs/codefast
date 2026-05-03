@@ -17,10 +17,9 @@ const INVERSIFY_LIBRARY_NAME = "inversify";
 const INVERSIFY_SCENARIO_NAME = "inversify";
 
 void runBenchmarkChildMain({
-  libraryNameForFingerprint: INVERSIFY_LIBRARY_NAME,
-  libraryDisplayNameForErrors: INVERSIFY_LIBRARY_NAME,
-  scenarioLogLabel: INVERSIFY_SCENARIO_NAME,
-  benchmarkPackageRootDirectory: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
+  libraryName: INVERSIFY_LIBRARY_NAME,
+  scenarioName: INVERSIFY_SCENARIO_NAME,
+  packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllInversifyScenarios,
-  defaultBenchOptions: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
+  benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
 }).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(INVERSIFY_LIBRARY_NAME, error));

@@ -8,17 +8,15 @@ import { emitSubprocessPayload } from "#/protocol";
 import { runSanityChecks } from "#/run-sanity-checks";
 
 export type RunBenchmarkChildMainParameters = Readonly<{
-  readonly libraryNameForFingerprint: string;
-  /** Used in stderr when the subprocess fails (may differ from fingerprint name). */
-  readonly libraryDisplayNameForErrors: string;
-  readonly scenarioLogLabel: string;
-  /**
-   * Directory passed to `collectFingerprint` — typically the benchmark package root
-   * (parent of `package.json`), i.e. `join(dirname(fileURLToPath(import.meta.url)), "..")`.
-   */
-  readonly benchmarkPackageRootDirectory: string;
+  /** Library id stored on the fingerprint (e.g. `@codefast/di`, `inversify`). */
+  readonly libraryName: string;
+  /** Subprocess tag in stderr lines (matches parent `scenarioName` / harness prefixes). */
+  readonly scenarioName: string;
+  /** Benchmark package root passed to `collectFingerprint` (directory with that package's `package.json`). */
+  readonly packageRoot: string;
   readonly collectScenarios: () => readonly AnyBenchScenario[];
-  readonly defaultBenchOptions: BenchOptions;
+  /** Baseline tinybench options when `BENCH_FAST` / `BENCH_FULL` are unset. */
+  readonly benchDefaults: BenchOptions;
 }>;
 
 /**
@@ -27,38 +25,28 @@ export type RunBenchmarkChildMainParameters = Readonly<{
 export async function runBenchmarkChildMain(
   parameters: RunBenchmarkChildMainParameters,
 ): Promise<void> {
-  const {
-    libraryNameForFingerprint,
-    libraryDisplayNameForErrors: _libraryDisplayNameForErrors,
-    scenarioLogLabel,
-    benchmarkPackageRootDirectory,
-    collectScenarios,
-    defaultBenchOptions,
-  } = parameters;
+  const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults } = parameters;
 
-  console.error(`[bench] subprocess ${scenarioLogLabel} started`);
+  console.error(`[bench] subprocess ${scenarioName} started`);
   const scenarios = collectScenarios();
   const sanityFailures = await runSanityChecks(scenarios);
-  const { runAllTrials } = createRunAllTrials({ defaultBenchOptions });
+  const { runAllTrials } = createRunAllTrials({ benchDefaults });
   const trials = await runAllTrials(scenarios, sanityFailures);
 
   emitSubprocessPayload({
-    fingerprint: collectFingerprint(libraryNameForFingerprint, benchmarkPackageRootDirectory),
+    fingerprint: collectFingerprint(libraryName, packageRoot),
     trials,
     sanityFailures,
   });
-  console.error(`[bench] subprocess ${scenarioLogLabel} completed`);
+  console.error(`[bench] subprocess ${scenarioName} completed`);
 }
 
 /**
  * Standard `main().catch` handler for bench entry files (exits 1, logs stack).
  */
-export function exitBenchmarkChildProcessOnFailure(
-  libraryDisplayNameForErrors: string,
-  error: unknown,
-): void {
+export function exitBenchmarkChildProcessOnFailure(libraryName: string, error: unknown): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
-  console.error(`[${libraryDisplayNameForErrors}] bench subprocess failed: ${errorMessage}`);
+  console.error(`[${libraryName}] bench subprocess failed: ${errorMessage}`);
   if (error instanceof Error && error.stack !== undefined) {
     console.error(error.stack);
   }
