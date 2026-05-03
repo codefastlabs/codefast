@@ -1,32 +1,24 @@
 import { inject, injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
 import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
-import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
-import {
-  CliFilesystemPortToken,
-  CliLoggerPortToken,
-  CliPathPortToken,
-} from "#/shell/application/cli-runtime.tokens";
+import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import {
   createPathTransform,
   generateExports,
 } from "#/domains/mirror/domain/generate-mirror-exports.domain-service";
 import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
-import type { MirrorSyncReporterPort } from "#/domains/mirror/application/ports/outbound/mirror-sync-reporter.port";
 import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
 import type { SyncWorkspacePackagePort } from "#/domains/mirror/application/ports/outbound/sync-workspace-package.port";
 import { DIST_DIR, PACKAGE_JSON } from "#/domains/mirror/domain/constants.domain";
 import type {
-  GlobalStats,
   MirrorPackageMeta,
   PackageJsonShape,
   PackageStats,
 } from "#/domains/mirror/domain/types.domain";
 import {
   FileSystemServicePortToken,
-  MirrorSyncReporterPortToken,
   PackageRepositoryPortToken,
 } from "#/domains/mirror/composition/tokens";
 
@@ -35,8 +27,6 @@ import {
   inject(CliPathPortToken),
   inject(PackageRepositoryPortToken),
   inject(FileSystemServicePortToken),
-  inject(CliLoggerPortToken),
-  inject(MirrorSyncReporterPortToken),
 ])
 export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
   constructor(
@@ -44,8 +34,6 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
     private readonly pathService: CliPathPort,
     private readonly packageRepository: PackageRepositoryPort,
     private readonly fileSystemService: FileSystemServicePort,
-    private readonly logger: CliLoggerPort,
-    private readonly mirrorReporter: MirrorSyncReporterPort,
   ) {}
 
   private resolvePackageScopedConfig<Value>(
@@ -62,21 +50,13 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
     skipPackagesList: string[] | undefined,
     packageMeta: MirrorPackageMeta,
   ): boolean {
-    if (!skipPackagesList) {
-      return false;
-    }
-    return skipPackagesList.includes(packageMeta.packageName);
+    return !!skipPackagesList?.includes(packageMeta.packageName);
   }
 
   async syncExportsForWorkspacePackage(
     rootDir: string,
     packagePathStr: string,
-    index: number,
-    total: number,
     config: MirrorConfig,
-    verbose: boolean,
-    stats: GlobalStats,
-    suppressMirrorLogs = false,
   ): Promise<PackageStats> {
     const packageDir = this.pathService.resolve(rootDir, packagePathStr);
     const distDir = this.pathService.join(packageDir, DIST_DIR);
@@ -95,21 +75,12 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
       skipped: false,
       skipReason: "",
       error: null,
+      prunedExportKeys: [],
     };
 
     if (!this.fs.existsSync(packageJsonPath)) {
       pkgStats.skipped = true;
       pkgStats.skipReason = "package.json not found";
-      stats.packagesSkipped++;
-      if (!suppressMirrorLogs) {
-        this.mirrorReporter.logSkippedWorkspacePackage(
-          this.logger,
-          index,
-          total,
-          folderBasename,
-          pkgStats.skipReason,
-        );
-      }
       return pkgStats;
     }
 
@@ -134,16 +105,6 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
     if (this.isPackageSkipped(config.skipPackages, packageMeta)) {
       pkgStats.skipped = true;
       pkgStats.skipReason = "configured to skip";
-      stats.packagesSkipped++;
-      if (!suppressMirrorLogs) {
-        this.mirrorReporter.logSkippedWorkspacePackage(
-          this.logger,
-          index,
-          total,
-          pkgStats.name,
-          pkgStats.skipReason,
-        );
-      }
       return pkgStats;
     }
 
@@ -151,46 +112,15 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
       if (!this.fs.existsSync(distDir)) {
         pkgStats.skipped = true;
         pkgStats.skipReason = "dist/ not found";
-        stats.packagesSkipped++;
-        if (!suppressMirrorLogs) {
-          this.mirrorReporter.logSkippedWorkspacePackage(
-            this.logger,
-            index,
-            total,
-            pkgStats.name,
-            pkgStats.skipReason,
-          );
-        }
         return pkgStats;
       }
       pkgStats.error = messageFromCaughtUnknown(packageJsonParseError);
-      stats.packagesErrored++;
-      if (!suppressMirrorLogs) {
-        this.mirrorReporter.logPackageError(
-          this.logger,
-          index,
-          total,
-          pkgStats.name,
-          packageJsonParseError,
-          verbose,
-        );
-      }
       return pkgStats;
     }
 
     if (!this.fs.existsSync(distDir)) {
       pkgStats.skipped = true;
       pkgStats.skipReason = "dist/ not found";
-      stats.packagesSkipped++;
-      if (!suppressMirrorLogs) {
-        this.mirrorReporter.logSkippedWorkspacePackage(
-          this.logger,
-          index,
-          total,
-          pkgStats.name,
-          pkgStats.skipReason,
-        );
-      }
       return pkgStats;
     }
 
@@ -225,46 +155,16 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
           originalPathBySpecifier: generatedExports.originalPathBySpecifier,
         },
       );
-      for (const exportSpecifier of prunedKeys) {
-        if (!suppressMirrorLogs) {
-          this.mirrorReporter.logPrunedStaleExport(this.logger, exportSpecifier);
-        }
-      }
 
       pkgStats.jsModules = generatedExports.jsCount;
       pkgStats.cssExports = generatedExports.cssCount;
       pkgStats.customExports = Object.keys(customExports).length;
       pkgStats.totalExports = Object.keys(generatedExports.exports).length;
-
-      stats.packagesProcessed++;
-      stats.totalExports += pkgStats.totalExports;
-      stats.totalJsModules += pkgStats.jsModules;
-      stats.totalCssExports += pkgStats.cssExports;
-
-      if (!suppressMirrorLogs) {
-        this.mirrorReporter.logPackageSuccess(
-          this.logger,
-          index,
-          total,
-          pkgStats,
-          generatedExports,
-          verbose,
-        );
-      }
+      pkgStats.prunedExportKeys = prunedKeys;
     } catch (caughtError: unknown) {
       pkgStats.error = messageFromCaughtUnknown(caughtError);
-      stats.packagesErrored++;
-      if (!suppressMirrorLogs) {
-        this.mirrorReporter.logPackageError(
-          this.logger,
-          index,
-          total,
-          pkgStats.name,
-          caughtError,
-          verbose,
-        );
-      }
     }
+
     return pkgStats;
   }
 }

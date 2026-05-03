@@ -6,18 +6,25 @@ import type {
 import type { CliExecutor } from "#/shell/application/coordination/cli-executor.coordination";
 import type { GlobalCliOptionsParsePort } from "#/shell/application/ports/outbound/global-cli-options-parse.port";
 import type { CliSchemaParsing } from "#/shell/application/coordination/cli-schema-parsing.coordination";
+import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type { CliRuntimePort } from "#/shell/application/ports/outbound/cli-runtime.port";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/shell/domain/cli-exit-codes.domain";
 import {
   PrepareMirrorSyncUseCaseToken,
+  PresentMirrorSyncProgressPresenterToken,
   RunMirrorSyncUseCaseToken,
 } from "#/domains/mirror/composition/tokens";
 import type { PrepareMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/prepare-mirror-sync.port";
 import type { RunMirrorSyncPort } from "#/domains/mirror/application/ports/inbound/run-mirror-sync.port";
+import type { MirrorSyncProgressListener } from "#/domains/mirror/application/ports/presenting/present-mirror-sync-progress.presenter";
+import {
+  exitCodeForMirrorSyncResult,
+  formatMirrorSyncJsonOutput,
+} from "#/domains/mirror/application/mirror-sync-cli-result";
 import { mirrorSyncRunRequestSchema } from "#/domains/mirror/presentation/presenters/mirror-cli.schema";
 import { CLI_COMMAND_SLOT_NAME } from "#/shell/contracts/cli-command-slots";
 import {
   CliExecutorToken,
+  CliLoggerPortToken,
   CliRuntimeToken,
   GlobalCliOptionsParsePortToken,
   CliSchemaParsingToken,
@@ -25,21 +32,25 @@ import {
 import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.value-object";
 
 @injectable([
+  inject(CliLoggerPortToken),
   inject(CliRuntimeToken),
   inject(PrepareMirrorSyncUseCaseToken),
   inject(RunMirrorSyncUseCaseToken),
   inject(GlobalCliOptionsParsePortToken),
   inject(CliSchemaParsingToken),
   inject(CliExecutorToken),
+  inject(PresentMirrorSyncProgressPresenterToken),
 ])
 export class MirrorCommand implements CliCommandPort {
   constructor(
+    private readonly logger: CliLoggerPort,
     private readonly runtime: CliRuntimePort,
     private readonly prepareMirrorSync: PrepareMirrorSyncPort,
     private readonly runMirrorSync: RunMirrorSyncPort,
     private readonly globalCliOptions: GlobalCliOptionsParsePort,
     private readonly schemaValidation: CliSchemaParsing,
     private readonly cliExecutor: CliExecutor,
+    private readonly mirrorProgressPresenter: MirrorSyncProgressListener,
   ) {}
 
   get definition(): CliCommandTree {
@@ -104,20 +115,36 @@ export class MirrorCommand implements CliCommandPort {
     if (!this.cliExecutor.consumeCliAppError(prelude)) {
       return;
     }
-    const { rootDir, config, packageFilter, globals } = prelude.value;
+    const { rootDir, config, packageFilter } = prelude.value;
     const parsed = this.schemaValidation.parseWithSchema(mirrorSyncRunRequestSchema, {
       rootDir,
       config: config.mirror ?? {},
-      verbose: branchOptionsCarrier.verbose,
-      json: branchOptionsCarrier.json,
-      noColor: globals.color === false,
       packageFilter,
     });
     if (!this.cliExecutor.consumeCliAppError(parsed)) {
       return;
     }
-    await this.cliExecutor.runCliResultAsync(this.runMirrorSync.execute(parsed.value), (stats) =>
-      stats.packagesErrored > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS,
-    );
+
+    const json = !!branchOptionsCarrier.json;
+    const noColor = globalOptionsOutcome.value.color === false;
+    const verbose = !!branchOptionsCarrier.verbose;
+
+    let listener: MirrorSyncProgressListener | undefined;
+    if (!json) {
+      this.mirrorProgressPresenter.configure({ noColor, verbose });
+      listener = this.mirrorProgressPresenter;
+    }
+
+    const startTime = performance.now();
+    const outcome = await this.runMirrorSync.execute({ ...parsed.value, listener });
+    if (!this.cliExecutor.consumeCliAppError(outcome)) {
+      return;
+    }
+    if (json) {
+      this.logger.out(
+        formatMirrorSyncJsonOutput(outcome.value, (performance.now() - startTime) / 1000),
+      );
+    }
+    this.runtime.setExitCode(exitCodeForMirrorSyncResult(outcome.value));
   }
 }
