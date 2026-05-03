@@ -30,7 +30,7 @@
       "cache": false
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.bench.config.*", "vitest.setup.*"]
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:coverage": {
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"],
@@ -39,6 +39,11 @@
     "test:watch": {
       "cache": false,
       "persistent": true
+    },
+    "bench": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_FAST", "BENCH_FULL", "BENCH_VERBOSE", "BENCH_TRIALS"]
     }
   }
 }

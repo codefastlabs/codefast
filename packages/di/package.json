@@ -174,7 +174,6 @@
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "examples": "for file in examples/*/*.ts; do echo \"=== Running $file ===\"; tsx \"$file\"; echo \"\n\" || exit 1; done",
-    "bench": "vitest bench --run",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
