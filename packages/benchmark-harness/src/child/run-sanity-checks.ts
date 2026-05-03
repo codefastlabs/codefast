@@ -1,4 +1,4 @@
-import type { AnyBenchScenario } from "#/bench-scenario";
+import type { AnyBenchScenario } from "#/child/bench-scenario";
 
 /**
  * Runs each scenario's optional `sanity` hook once before measurement.

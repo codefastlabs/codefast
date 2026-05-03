@@ -1,6 +1,6 @@
 import { Bench, type BenchEvent } from "tinybench";
 import type { BenchOptions, TaskResult } from "tinybench";
-import { isAsyncScenario, type AnyBenchScenario } from "#/bench-scenario";
+import { isAsyncScenario, type AnyBenchScenario } from "#/child/bench-scenario";
 import type { ScenarioTrialResult, TrialPayload } from "#/protocol";
 
 const FAST_MODE_ENABLED = process.env["BENCH_FAST"] === "1";

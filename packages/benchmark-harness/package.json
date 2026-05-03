@@ -23,12 +23,12 @@
   "exports": {
     ".": "./src/index.ts",
     "./protocol": "./src/protocol.ts",
-    "./fingerprint": "./src/fingerprint.ts",
-    "./report": "./src/report.ts",
+    "./fingerprint": "./src/child/fingerprint.ts",
+    "./report": "./src/report/index.ts",
     "./stats/quantiles": "./src/stats/quantiles.ts",
     "./presentation/format": "./src/presentation/format.ts",
-    "./jsonl": "./src/jsonl-observations.ts",
-    "./subprocess": "./src/subprocess/run-bench-subprocess.ts"
+    "./jsonl": "./src/report/jsonl.ts",
+    "./subprocess": "./src/parent/run-bench-subprocess.ts"
   },
   "scripts": {
     "check-types": "tsgo --noEmit"

@@ -1,4 +1,4 @@
-import { SubprocessExecutionError } from "#/subprocess/run-bench-subprocess";
+import { SubprocessExecutionError } from "#/parent/run-bench-subprocess";
 
 export function resolveBenchParentExitCode(candidate: unknown): number {
   if (candidate instanceof SubprocessExecutionError) {
