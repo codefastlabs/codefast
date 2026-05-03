@@ -65,14 +65,14 @@ Each library runs in the mode it is **meant to ship with** (Stage 3 decorators +
 
 ## Where to look in code
 
-| Topic                                   | Location                  |
-| --------------------------------------- | ------------------------- |
-| Wire format, field definitions          | `src/harness/protocol.ts` |
-| Trial loop, tinybench options, GC hooks | `src/harness/trial.ts`    |
-| Medians, IQR, markdown / JSONL          | `src/harness/report.ts`   |
-| Spawning children, writing `latest.*`   | `src/harness/run.ts`      |
-| Scenario list / types                   | `src/scenarios/types.ts`  |
-| Shared graphs / fixtures                | `src/fixtures/`           |
+| Topic                                   | Location                                             |
+| --------------------------------------- | ---------------------------------------------------- |
+| Wire format, field definitions          | `src/harness/protocol.ts`                            |
+| Trial loop, tinybench options, GC hooks | `@codefast/benchmark-harness` (`createRunAllTrials`) |
+| Medians, IQR, markdown / JSONL          | `src/harness/report.ts`                              |
+| Spawning children, writing `latest.*`   | `src/harness/run.ts`                                 |
+| Scenario list / types                   | `src/scenarios/types.ts`                             |
+| Shared graphs / fixtures                | `src/fixtures/`                                      |
 
 ## Commands (reminder)
 

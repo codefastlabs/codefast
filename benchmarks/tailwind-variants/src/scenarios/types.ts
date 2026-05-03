@@ -5,6 +5,12 @@
  * Matching `id` values align rows in each two-way comparison report.
  */
 
+import type {
+  AsyncBenchScenario as HarnessAsyncBenchScenario,
+  BenchScenario as HarnessBenchScenario,
+} from "@codefast/benchmark-harness";
+export { isAsyncScenario } from "@codefast/benchmark-harness";
+
 export type ScenarioGroup =
   | "simple"
   | "complex"
@@ -15,23 +21,6 @@ export type ScenarioGroup =
   | "extreme"
   | "extreme-slots";
 
-export interface BenchScenario {
-  readonly id: string;
-  readonly what: string;
-  readonly group: ScenarioGroup;
-  readonly batch?: number;
-  readonly stress?: boolean;
-  readonly sanity?: () => boolean | Promise<boolean>;
-  readonly build: () => () => void;
-}
-
-export interface AsyncBenchScenario extends Omit<BenchScenario, "build"> {
-  readonly kind: "async";
-  readonly build: () => () => Promise<void>;
-}
-
+export type BenchScenario = HarnessBenchScenario & { readonly group: ScenarioGroup };
+export type AsyncBenchScenario = HarnessAsyncBenchScenario & { readonly group: ScenarioGroup };
 export type AnyScenario = BenchScenario | AsyncBenchScenario;
-
-export function isAsyncScenario(scenario: AnyScenario): scenario is AsyncBenchScenario {
-  return (scenario as AsyncBenchScenario).kind === "async";
-}

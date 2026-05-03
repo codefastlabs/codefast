@@ -13,25 +13,18 @@ import {
   type LibraryReport,
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
+  resolveBenchParentExitCode,
   runBenchSubprocess,
   type SubprocessPayload,
   writeJsonlRun,
   writeTwoWayMarkdownReport,
 } from "@codefast/benchmark-harness";
-import { SubprocessExecutionError } from "@codefast/benchmark-harness/subprocess";
 import {
   CODEFAST_VS_CVA_CONSOLE,
   CODEFAST_VS_CVA_MARKDOWN,
   CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE,
   CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
 } from "#/harness/tv-presentation";
-
-function resolveBenchParentExitCode(candidate: unknown): number {
-  if (candidate instanceof SubprocessExecutionError) {
-    return candidate.exitCode ?? 1;
-  }
-  return 1;
-}
 
 const CODEFAST_DISPLAY = "@codefast/tailwind-variants";
 const CODEFAST_PACKAGE_FILTER = "@codefast/tailwind-variants";

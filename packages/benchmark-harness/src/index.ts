@@ -1,5 +1,22 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
+export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/bench-scenario";
+export { isAsyncScenario } from "#/bench-scenario";
+
+export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/create-run-all-trials";
+export { createRunAllTrials } from "#/create-run-all-trials";
+
+export { runSanityChecks } from "#/run-sanity-checks";
+
+export type { RunBenchmarkChildMainParameters } from "#/run-benchmark-child-main";
+export {
+  exitBenchmarkChildProcessOnFailure,
+  resolveBenchmarkPackageRootFromImportMetaUrl,
+  runBenchmarkChildMain,
+} from "#/run-benchmark-child-main";
+
+export { resolveBenchParentExitCode } from "#/resolve-bench-parent-exit-code";
+
 export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/protocol";
 
 export {

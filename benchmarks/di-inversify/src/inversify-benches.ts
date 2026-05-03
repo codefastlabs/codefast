@@ -5,37 +5,22 @@
  * — legacy experimental decorators + `reflect-metadata`.
  */
 import "reflect-metadata";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { collectFingerprint } from "@codefast/benchmark-harness/fingerprint";
-import { emitSubprocessPayload } from "@codefast/benchmark-harness/protocol";
-import { runSanityChecks } from "#/harness/sanity";
-import { runAllTrials } from "#/harness/trial";
+import {
+  exitBenchmarkChildProcessOnFailure,
+  resolveBenchmarkPackageRootFromImportMetaUrl,
+  runBenchmarkChildMain,
+} from "@codefast/benchmark-harness";
+import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/harness/tinybench-default-options";
 import { collectAllInversifyScenarios } from "#/scenarios/collect-inversify-scenarios";
 
 const INVERSIFY_LIBRARY_NAME = "inversify";
 const INVERSIFY_SCENARIO_NAME = "inversify";
-const benchmarkPackageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-async function main(): Promise<void> {
-  console.error(`[bench] subprocess ${INVERSIFY_SCENARIO_NAME} started`);
-  const scenarios = collectAllInversifyScenarios();
-  const sanityFailures = await runSanityChecks(scenarios);
-  const trials = await runAllTrials(scenarios, sanityFailures);
-
-  emitSubprocessPayload({
-    fingerprint: collectFingerprint(INVERSIFY_LIBRARY_NAME, benchmarkPackageRootDirectory),
-    trials,
-    sanityFailures,
-  });
-  console.error(`[bench] subprocess ${INVERSIFY_SCENARIO_NAME} completed`);
-}
-
-main().catch((error: unknown) => {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  console.error(`[${INVERSIFY_LIBRARY_NAME}] bench subprocess failed: ${errorMessage}`);
-  if (error instanceof Error && error.stack !== undefined) {
-    console.error(error.stack);
-  }
-  process.exit(1);
-});
+void runBenchmarkChildMain({
+  libraryNameForFingerprint: INVERSIFY_LIBRARY_NAME,
+  libraryDisplayNameForErrors: INVERSIFY_LIBRARY_NAME,
+  scenarioLogLabel: INVERSIFY_SCENARIO_NAME,
+  benchmarkPackageRootDirectory: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
+  collectScenarios: collectAllInversifyScenarios,
+  defaultBenchOptions: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(INVERSIFY_LIBRARY_NAME, error));
