@@ -188,7 +188,7 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
           commit: () => undefined,
         };
       })
-      .transient();
+      .singleton();
 
     operationChild
       .bind(userRepositoryToken)

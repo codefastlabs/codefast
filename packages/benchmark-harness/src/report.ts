@@ -107,24 +107,16 @@ export function buildLibraryReport(
   };
 }
 
-function orderedScenarioIds(
-  baselineOrder: readonly string[],
-  aggregatedByLibrary: ReadonlyMap<string, LibraryReport>,
-): string[] {
+function orderedScenarioIds(leftReport: LibraryReport, rightReport: LibraryReport): string[] {
   const seen = new Set<string>();
   const ordered: string[] = [];
-  for (const id of baselineOrder) {
-    if (!seen.has(id)) {
-      seen.add(id);
-      ordered.push(id);
-    }
+  for (const scenario of leftReport.scenarios) {
+    seen.add(scenario.id);
+    ordered.push(scenario.id);
   }
-  for (const report of aggregatedByLibrary.values()) {
-    for (const scenario of report.scenarios) {
-      if (!seen.has(scenario.id)) {
-        seen.add(scenario.id);
-        ordered.push(scenario.id);
-      }
+  for (const scenario of rightReport.scenarios) {
+    if (!seen.has(scenario.id)) {
+      ordered.push(scenario.id);
     }
   }
   return ordered;
@@ -157,14 +149,7 @@ export function buildTwoWayComparisonRows(
   const rightByScenarioId = new Map(
     rightLibraryReport.scenarios.map((scenario) => [scenario.id, scenario]),
   );
-  const baselineOrder = leftLibraryReport.scenarios.map((scenario) => scenario.id);
-  const displayOrder = orderedScenarioIds(
-    baselineOrder,
-    new Map([
-      ["left", leftLibraryReport],
-      ["right", rightLibraryReport],
-    ]),
-  );
+  const displayOrder = orderedScenarioIds(leftLibraryReport, rightLibraryReport);
 
   const rows: TwoWayScenarioComparisonRow[] = [];
   for (const scenarioId of displayOrder) {
@@ -258,10 +243,7 @@ function renderMarkdownDataRow(row: TwoWayScenarioComparisonRow): string {
     formatLatencyMeanMilliseconds(row.rightP99Ms),
     `${formatIqrThroughputFraction(row.leftIqrFraction)} / ${formatIqrThroughputFraction(row.rightIqrFraction)}`,
   ];
-  return cells
-    .map((cell) => `| ${cell} `)
-    .join("")
-    .concat("|");
+  return `| ${cells.join(" | ")} |`;
 }
 
 function formatEnvironmentBulletsMarkdown(
@@ -396,13 +378,8 @@ export function renderTwoWayConsoleReport(
   console.log("");
 }
 
-export function writeTwoWayMarkdownReport(
-  outputPath: string,
-  leftReport: LibraryReport,
-  rightReport: LibraryReport,
-  options: TwoWayMarkdownReportOptions,
-): void {
-  const markdown = renderTwoWayMarkdownReport(leftReport, rightReport, options);
+/** Writes a pre-rendered markdown string to `outputPath`, creating parent directories as needed. */
+export function writeMarkdownFile(outputPath: string, markdown: string): void {
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${markdown}\n`, "utf8");
 }
@@ -457,5 +434,3 @@ export function writeJsonlRun(
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${serialised}\n`, "utf8");
 }
-
-export type { JsonlBenchObservationRow };

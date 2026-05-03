@@ -19,18 +19,16 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildLibraryReport,
+  type LibraryReport,
   renderTwoWayConsoleReport,
+  renderTwoWayMarkdownReport,
   resolveBenchParentExitCode,
   runBenchSubprocess,
-  writeJsonlRun,
-  writeTwoWayMarkdownReport,
-  type LibraryReport,
   type SubprocessPayload,
+  writeJsonlRun,
+  writeMarkdownFile,
 } from "@codefast/benchmark-harness";
-import {
-  DI_INVERTERSIFY_CONSOLE,
-  DI_INVERTERSIFY_MARKDOWN,
-} from "#/harness/di-two-way-presentation";
+import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/di-two-way-presentation";
 
 const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";
@@ -124,7 +122,7 @@ async function main(): Promise<void> {
     inversifyPayload.sanityFailures,
   );
 
-  renderTwoWayConsoleReport(codefastReport, inversifyReport, DI_INVERTERSIFY_CONSOLE, {
+  renderTwoWayConsoleReport(codefastReport, inversifyReport, DI_INVERSIFY_CONSOLE, {
     footerHintLine: `Cite the 'Comparable scenarios' table.`,
   });
 
@@ -133,20 +131,17 @@ async function main(): Promise<void> {
     { fingerprint: inversifyPayload.fingerprint, trials: inversifyPayload.trials },
   ];
 
+  const markdown = renderTwoWayMarkdownReport(
+    codefastReport,
+    inversifyReport,
+    DI_INVERSIFY_MARKDOWN,
+  );
+
   const outputPaths = buildOutputPaths();
-  writeTwoWayMarkdownReport(
-    outputPaths.markdownPath,
-    codefastReport,
-    inversifyReport,
-    DI_INVERTERSIFY_MARKDOWN,
-  );
+  writeMarkdownFile(outputPaths.markdownPath, markdown);
   writeJsonlRun(outputPaths.jsonlPath, librariesForJsonl);
-  writeTwoWayMarkdownReport(
-    outputPaths.latestMarkdownPath,
-    codefastReport,
-    inversifyReport,
-    DI_INVERTERSIFY_MARKDOWN,
-  );
+
+  writeMarkdownFile(outputPaths.latestMarkdownPath, markdown);
   writeJsonlRun(outputPaths.latestJsonlPath, librariesForJsonl);
 
   console.log(`Markdown report: ${outputPaths.markdownPath}`);

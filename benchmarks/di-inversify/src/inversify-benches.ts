@@ -6,11 +6,11 @@
  */
 import "reflect-metadata";
 import {
+  BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
   exitBenchmarkChildProcessOnFailure,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
-import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness";
 import { collectAllInversifyScenarios } from "#/scenarios/collect-inversify-scenarios";
 
 const INVERSIFY_LIBRARY_NAME = "inversify";

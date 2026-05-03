@@ -32,7 +32,6 @@ export { collectFingerprint } from "#/fingerprint";
 
 export type {
   AggregatedScenarioResult,
-  JsonlBenchObservationRow,
   LibraryReport,
   TwoWayMarkdownColumnTitles,
   TwoWayMarkdownReportOptions,
@@ -47,7 +46,7 @@ export {
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
   writeJsonlRun,
-  writeTwoWayMarkdownReport,
+  writeMarkdownFile,
 } from "#/report";
 
 export type { RunBenchSubprocessParameters } from "#/subprocess/run-bench-subprocess";

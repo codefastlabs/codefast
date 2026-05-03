@@ -4,6 +4,7 @@
  */
 
 export interface BenchScenario {
+  readonly kind?: never;
   readonly id: string;
   readonly what: string;
   readonly group: string;
@@ -13,7 +14,7 @@ export interface BenchScenario {
   readonly build: () => () => void;
 }
 
-export interface AsyncBenchScenario extends Omit<BenchScenario, "build"> {
+export interface AsyncBenchScenario extends Omit<BenchScenario, "kind" | "build"> {
   readonly kind: "async";
   readonly build: () => () => Promise<void>;
 }
@@ -21,5 +22,5 @@ export interface AsyncBenchScenario extends Omit<BenchScenario, "build"> {
 export type AnyBenchScenario = BenchScenario | AsyncBenchScenario;
 
 export function isAsyncScenario(scenario: AnyBenchScenario): scenario is AsyncBenchScenario {
-  return (scenario as AsyncBenchScenario).kind === "async";
+  return scenario.kind === "async";
 }

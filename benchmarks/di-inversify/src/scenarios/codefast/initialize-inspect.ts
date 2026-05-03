@@ -21,13 +21,13 @@
  */
 import { Container, token } from "@codefast/di";
 import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import type { AsyncBenchScenario, BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: initializeAsync warm-up ─────────────────────────────────────
 
 const ASYNC_SINGLETON_COUNT = 4;
 
-function buildInitializeAsyncWarmupScenario(): BenchScenario {
+function buildInitializeAsyncWarmupScenario(): AsyncBenchScenario {
   const tokens = Array.from({ length: ASYNC_SINGLETON_COUNT }, (_v, i) =>
     token<number>(`bench-cf-ii-async-${String(i)}`),
   );
@@ -48,6 +48,7 @@ function buildInitializeAsyncWarmupScenario(): BenchScenario {
 
   return {
     id: "initialize-async-warmup",
+    kind: "async",
     group: "boot",
     what: `fresh container + ${String(ASYNC_SINGLETON_COUNT)} async singletons + initializeAsync() (codefast-only)`,
     batch: 1,
@@ -55,11 +56,7 @@ function buildInitializeAsyncWarmupScenario(): BenchScenario {
       await runOneColdStart();
       return true;
     },
-    build: () => {
-      return () => {
-        void runOneColdStart();
-      };
-    },
+    build: () => runOneColdStart,
   };
 }
 
@@ -132,7 +129,10 @@ function buildLookupBindingsScenario(): BenchScenario {
   };
 }
 
-export function buildCodefastInitializeInspectScenarios(): readonly BenchScenario[] {
+export function buildCodefastInitializeInspectScenarios(): readonly (
+  | AsyncBenchScenario
+  | BenchScenario
+)[] {
   return [
     buildInitializeAsyncWarmupScenario(),
     buildInspectSnapshotScenario(),

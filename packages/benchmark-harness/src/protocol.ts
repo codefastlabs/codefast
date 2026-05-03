@@ -79,20 +79,34 @@ export function emitSubprocessPayload(payload: SubprocessPayload): void {
   );
 }
 
+function isSubprocessPayload(value: unknown): value is SubprocessPayload {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate["fingerprint"] === "object" &&
+    candidate["fingerprint"] !== null &&
+    Array.isArray(candidate["trials"]) &&
+    Array.isArray(candidate["sanityFailures"])
+  );
+}
+
 /**
  * Extracts the JSON payload from captured child stdout. Returns `undefined`
- * when markers are missing or content between them fails to parse.
+ * when markers are missing, content fails to parse, or the shape is invalid.
  */
 export function extractSubprocessPayload(stdout: string): SubprocessPayload | undefined {
   const startIndex = stdout.indexOf(BENCH_RESULT_JSON_START);
-  const endIndex = stdout.indexOf(BENCH_RESULT_JSON_END);
-  if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+  const endIndex = stdout.indexOf(BENCH_RESULT_JSON_END, startIndex);
+  if (startIndex === -1 || endIndex === -1) {
     return undefined;
   }
   const jsonSliceStart = startIndex + BENCH_RESULT_JSON_START.length;
   const raw = stdout.slice(jsonSliceStart, endIndex).trim();
   try {
-    return JSON.parse(raw) as SubprocessPayload;
+    const parsed: unknown = JSON.parse(raw);
+    return isSubprocessPayload(parsed) ? parsed : undefined;
   } catch {
     return undefined;
   }
