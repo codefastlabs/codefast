@@ -145,8 +145,7 @@ benchmarks/tailwind-variants/
   src/
     harness/
       run.ts                 # parent: rebuild, spawn 3 children, two two-way reports + JSONL
-      trial.ts               # per-subprocess: N trials, tinybench, extract stats
-      sanity.ts              # optional per-scenario sanity
+      tinybench-default-options.ts  # default profile when BENCH_FAST / BENCH_FULL unset
       bench-options.ts        # TV_MERGE_ENABLED / TV_MERGE_DISABLED
       tv-presentation.ts     # markdown + console labels for each pairwise report
     lib/

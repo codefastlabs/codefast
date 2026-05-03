@@ -45,7 +45,7 @@ This harness keeps scenarios that map to production-shaped usage: micro resolves
 
 Each library's bench runs in its own subprocess so neither side contaminates the other's V8 state. Each subprocess writes a single `SubprocessPayload` JSON to stdout, delimited by `BENCH_RESULT_JSON_START` / `BENCH_RESULT_JSON_END`. The parent reads only between those markers — Node deprecation warnings, tsx banners, or stray `console.log`s never break parsing.
 
-Environment is pinned: `NODE_ENV=production`, `NODE_OPTIONS` always includes `--no-warnings`. When `BENCH_FULL=1`, the parent subprocess launcher also adds **`--expose-gc`**, which unlocks the strided `beforeEach` GC hook in `src/harness/trial.ts` for allocation-heavy scenarios. In default / fast runs, GC is not exposed unless your outer environment already sets it.
+Environment is pinned: `NODE_ENV=production`, `NODE_OPTIONS` always includes `--no-warnings`. When `BENCH_FULL=1`, the parent subprocess launcher also adds **`--expose-gc`**, which unlocks the strided `beforeEach` GC hook in `@codefast/benchmark-harness` (`createRunAllTrials`) for allocation-heavy scenarios. In default / fast runs, GC is not exposed unless your outer environment already sets it.
 
 ## Running
 

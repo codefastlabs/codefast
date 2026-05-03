@@ -20,24 +20,17 @@ import { fileURLToPath } from "node:url";
 import {
   buildLibraryReport,
   renderTwoWayConsoleReport,
+  resolveBenchParentExitCode,
   runBenchSubprocess,
   writeJsonlRun,
   writeTwoWayMarkdownReport,
   type LibraryReport,
   type SubprocessPayload,
 } from "@codefast/benchmark-harness";
-import { SubprocessExecutionError } from "@codefast/benchmark-harness/subprocess";
 import {
   DI_INVERTERSIFY_CONSOLE,
   DI_INVERTERSIFY_MARKDOWN,
 } from "#/harness/di-two-way-presentation";
-
-function resolveBenchParentExitCode(candidate: unknown): number {
-  if (candidate instanceof SubprocessExecutionError) {
-    return candidate.exitCode ?? 1;
-  }
-  return 1;
-}
 
 const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";

@@ -33,7 +33,9 @@
   "scripts": {
     "check-types": "tsgo --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tinybench": "catalog:"
+  },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:",

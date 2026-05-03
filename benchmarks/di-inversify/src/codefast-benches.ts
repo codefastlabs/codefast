@@ -12,37 +12,22 @@
  * `Symbol.metadata`. The parent spawns it with `NODE_OPTIONS=--expose-gc
  * --no-warnings NODE_ENV=production`.
  */
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { collectFingerprint } from "@codefast/benchmark-harness/fingerprint";
-import { emitSubprocessPayload } from "@codefast/benchmark-harness/protocol";
-import { runSanityChecks } from "#/harness/sanity";
-import { runAllTrials } from "#/harness/trial";
+import {
+  exitBenchmarkChildProcessOnFailure,
+  resolveBenchmarkPackageRootFromImportMetaUrl,
+  runBenchmarkChildMain,
+} from "@codefast/benchmark-harness";
+import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/harness/tinybench-default-options";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
 const CODEFAST_LIBRARY_NAME = "@codefast/di";
 const CODEFAST_SCENARIO_NAME = "codefast";
-const benchmarkPackageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-async function main(): Promise<void> {
-  console.error(`[bench] subprocess ${CODEFAST_SCENARIO_NAME} started`);
-  const scenarios = collectAllCodefastScenarios();
-  const sanityFailures = await runSanityChecks(scenarios);
-  const trials = await runAllTrials(scenarios, sanityFailures);
-
-  emitSubprocessPayload({
-    fingerprint: collectFingerprint(CODEFAST_LIBRARY_NAME, benchmarkPackageRootDirectory),
-    trials,
-    sanityFailures,
-  });
-  console.error(`[bench] subprocess ${CODEFAST_SCENARIO_NAME} completed`);
-}
-
-main().catch((error: unknown) => {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  console.error(`[${CODEFAST_LIBRARY_NAME}] bench subprocess failed: ${errorMessage}`);
-  if (error instanceof Error && error.stack !== undefined) {
-    console.error(error.stack);
-  }
-  process.exit(1);
-});
+void runBenchmarkChildMain({
+  libraryNameForFingerprint: CODEFAST_LIBRARY_NAME,
+  libraryDisplayNameForErrors: CODEFAST_LIBRARY_NAME,
+  scenarioLogLabel: CODEFAST_SCENARIO_NAME,
+  benchmarkPackageRootDirectory: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
+  collectScenarios: collectAllCodefastScenarios,
+  defaultBenchOptions: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(CODEFAST_LIBRARY_NAME, error));
