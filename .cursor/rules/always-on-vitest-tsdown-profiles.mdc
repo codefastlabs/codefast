@@ -10,14 +10,14 @@ Apply one of two profiles and keep each package consistent:
 - **Node/Core packages** (`cli`, `di`, `tailwind-variants` style)
   - Vitest: `environment: "node"`, `include: ["tests/**/*.test.?(c|m)[jt]s?(x)"]`, `passWithNoTests: true` (so `pnpm run verify` does not fail when the test tree is temporarily empty)
   - Coverage include: `src/**/*.ts`
-  - Coverage exclude: `src/**/*.{test,bench}.?(c|m)[jt]s?(x)` and `**/*.d.ts`
-  - tsdown exclude: `!src/**/*.{test,bench}.{ts,tsx}`
+  - Coverage exclude: `src/**/*.test.?(c|m)[jt]s?(x)` and `**/*.d.ts`
+  - tsdown exclude: `!src/**/*.test.{ts,tsx}`
 
 - **React/UI packages** (`ui`, `theme` style)
   - Vitest: `environment: "jsdom"`, `include: ["tests/**/*.test.?(c|m)[jt]s?(x)"]`, `passWithNoTests: true` (same reason as Node profile)
   - Coverage include: `src/**/*.{ts,tsx}`
   - Coverage exclude: `src/**/*.{test,stories}.?(c|m)[jt]s?(x)` and `**/*.d.ts`
-  - tsdown exclude: `!src/**/*.{test,bench,stories}.{ts,tsx}`
+  - tsdown exclude: `!src/**/*.{test,stories}.{ts,tsx}`
 
 ## Consistency checks
 
