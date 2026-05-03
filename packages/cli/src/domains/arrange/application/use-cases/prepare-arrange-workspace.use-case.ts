@@ -7,7 +7,7 @@ import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/applicatio
 import { ArrangeTargetPathResolverPortToken } from "#/domains/arrange/composition/tokens";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/domains/arrange/contracts/models";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { LoadCodefastConfigPort } from "#/shell/application/ports/inbound/load-codefast-config.port";
 import {
   CliFilesystemPortToken,
@@ -25,7 +25,7 @@ import type { PrepareArrangeWorkspacePort } from "#/domains/arrange/application/
 export class PrepareArrangeWorkspaceUseCase implements PrepareArrangeWorkspacePort {
   constructor(
     private readonly arrangeTargetPathResolver: ArrangeTargetPathResolverPort,
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly loadCodefastConfig: LoadCodefastConfigPort,
     private readonly repoRootResolver: RepoRootResolverPort,
   ) {}

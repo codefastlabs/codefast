@@ -3,14 +3,14 @@
  */
 export type CliFileEncoding = "utf8";
 
-export interface CliDirectoryEntry {
+export interface DirectoryEntry {
   readonly name: string;
   readonly parentPath: string;
   isFile(): boolean;
   isDirectory(): boolean;
 }
 
-export interface CliFilesystemPort {
+export interface FilesystemPort {
   existsSync(path: string): boolean;
   /**
    * Resolve symlinks when possible; fall back to normalizing `inputPath` to an absolute path.
@@ -25,7 +25,7 @@ export interface CliFilesystemPort {
   readdir(
     path: string,
     options?: { recursive?: boolean; withFileTypes?: boolean },
-  ): Promise<string[] | CliDirectoryEntry[]>;
+  ): Promise<string[] | DirectoryEntry[]>;
   rename(oldPath: string, newPath: string): Promise<void>;
   unlink(path: string): Promise<void>;
 }

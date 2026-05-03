@@ -12,7 +12,7 @@ import type {
   CodefastAfterWriteHook,
   CodefastTagConfig,
 } from "#/domains/config/domain/schema.domain";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
@@ -20,11 +20,11 @@ import type { TagEligibleWorkspacePathsPort } from "#/domains/tag/application/po
 import type { PresentTagSyncProgressPresenter } from "#/domains/tag/application/ports/presenting/present-tag-sync-progress.presenter";
 import type {
   TagFileResult,
-  TagTargetCandidate,
-  TagTargetSource,
   TagResolvedTarget,
   TagSyncResult,
+  TagTargetCandidate,
   TagTargetExecutionResult,
+  TagTargetSource,
 } from "#/domains/tag/domain/types.domain";
 import type { RunTagSyncPort } from "#/domains/tag/application/ports/inbound/run-tag-sync.port";
 
@@ -40,7 +40,7 @@ import type { RunTagSyncPort } from "#/domains/tag/application/ports/inbound/run
 ])
 export class RunTagSyncUseCase implements RunTagSyncPort {
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly path: CliPathPort,
     private readonly targetResolver: TagEligibleWorkspacePathsPort,
     private readonly tagTargetRunner: TagTargetRunnerPort,

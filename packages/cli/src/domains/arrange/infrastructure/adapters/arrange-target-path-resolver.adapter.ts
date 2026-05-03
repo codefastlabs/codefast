@@ -1,6 +1,6 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { ArrangeTargetPathResolverPort } from "#/domains/arrange/application/ports/outbound/arrange-target-path-resolver.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
@@ -8,7 +8,7 @@ import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 export class ArrangeTargetPathResolverAdapter implements ArrangeTargetPathResolverPort {
   private readonly packageJsonFileName = "package.json";
 
-  constructor(private readonly fs: CliFilesystemPort) {}
+  constructor(private readonly fs: FilesystemPort) {}
 
   resolveTargetPath(args: {
     readonly currentWorkingDirectory: string;

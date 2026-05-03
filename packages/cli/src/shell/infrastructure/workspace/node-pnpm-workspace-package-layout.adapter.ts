@@ -4,7 +4,7 @@ import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 import { inject, injectable } from "@codefast/di";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { CliLoggerPort } from "#/shell/application/ports/outbound/cli-logger.port";
 import type {
   WorkspacePackageLayoutOutcome,
@@ -23,7 +23,7 @@ export class NodePnpmWorkspacePackageLayoutAdapter implements WorkspacePackageLa
   private readonly packageJsonFileName = "package.json";
 
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly logger: CliLoggerPort,
   ) {}
 

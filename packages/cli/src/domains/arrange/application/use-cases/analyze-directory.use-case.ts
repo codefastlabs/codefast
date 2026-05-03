@@ -7,7 +7,7 @@ import type { ArrangeTargetScannerPort } from "#/domains/arrange/application/por
 import { AppError } from "#/shell/domain/errors.domain";
 import type { Result } from "#/shell/domain/result.model";
 import { err, ok } from "#/shell/domain/result.model";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/outbound/domain-source-parser.port";
@@ -26,7 +26,7 @@ import type { AnalyzeDirectoryPort } from "#/domains/arrange/application/ports/i
 ])
 export class AnalyzeDirectoryUseCase implements AnalyzeDirectoryPort {
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly targetScanner: ArrangeTargetScannerPort,
     private readonly domainSourceParser: DomainSourceParserPort,
   ) {}

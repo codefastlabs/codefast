@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import path from "node:path";
 import { z } from "zod";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { WorkspacePackageLayoutPort } from "#/shell/application/ports/outbound/workspace-package-layout.port";
 import {
   CliFilesystemPortToken,
@@ -22,7 +22,7 @@ export class TagTargetResolverAdapter implements TagEligibleWorkspacePathsPort {
   });
 
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly workspacePackageLayout: WorkspacePackageLayoutPort,
   ) {}
 

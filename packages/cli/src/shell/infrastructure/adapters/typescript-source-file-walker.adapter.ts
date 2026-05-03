@@ -1,6 +1,6 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { TypeScriptSourceFileWalkerPort } from "#/shell/application/ports/outbound/typescript-source-file-walker.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
@@ -20,7 +20,7 @@ export class TypeScriptSourceFileWalkerAdapter implements TypeScriptSourceFileWa
     ".output",
   ]);
 
-  constructor(private readonly fs: CliFilesystemPort) {}
+  constructor(private readonly fs: FilesystemPort) {}
 
   walkTsxFiles(rootDirectoryPath: string): string[] {
     const result: string[] = [];

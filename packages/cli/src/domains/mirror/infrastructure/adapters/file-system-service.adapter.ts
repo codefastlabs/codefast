@@ -1,6 +1,6 @@
 import path from "node:path";
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { FileSystemServicePort } from "#/domains/mirror/application/ports/outbound/file-system-service.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import { isDirentList } from "#/domains/mirror/infrastructure/guards/dirent-list.guard";
@@ -8,16 +8,7 @@ import { normalizePath } from "#/domains/mirror/domain/path-normalizer.value-obj
 
 @injectable([inject(CliFilesystemPortToken)])
 export class FileSystemServiceAdapter implements FileSystemServicePort {
-  constructor(private readonly fs: CliFilesystemPort) {}
-
-  private isKnownReadDirError(caughtError: unknown): boolean {
-    return (
-      typeof caughtError === "object" &&
-      caughtError !== null &&
-      "code" in caughtError &&
-      (caughtError.code === "ENOENT" || caughtError.code === "EACCES")
-    );
-  }
+  constructor(private readonly fs: FilesystemPort) {}
 
   async listRelativeFilesRecursively(dirPath: string): Promise<string[]> {
     try {
@@ -53,5 +44,14 @@ export class FileSystemServiceAdapter implements FileSystemServicePort {
     } catch {
       return false;
     }
+  }
+
+  private isKnownReadDirError(caughtError: unknown): boolean {
+    return (
+      typeof caughtError === "object" &&
+      caughtError !== null &&
+      "code" in caughtError &&
+      (caughtError.code === "ENOENT" || caughtError.code === "EACCES")
+    );
   }
 }

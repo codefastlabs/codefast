@@ -1,5 +1,5 @@
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { PackageRepositoryPort } from "#/domains/mirror/application/ports/outbound/package-repository.port";
 import type {
@@ -12,7 +12,7 @@ import { writePackageJsonExportsAtomic } from "#/domains/mirror/infrastructure/p
 
 @injectable([inject(CliFilesystemPortToken)])
 export class PackageRepositoryAdapter implements PackageRepositoryPort {
-  constructor(private readonly fs: CliFilesystemPort) {}
+  constructor(private readonly fs: FilesystemPort) {}
 
   resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string {
     return resolvePackageDisplayName(packageJson, folderBasename);

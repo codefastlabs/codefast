@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { RepoRootResolverPort } from "#/shell/application/ports/outbound/repo-root-resolver.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 
@@ -11,7 +11,7 @@ import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
  */
 @injectable([inject(CliFilesystemPortToken)])
 export class RepoRootResolverAdapter implements RepoRootResolverPort {
-  constructor(private readonly fs: CliFilesystemPort) {}
+  constructor(private readonly fs: FilesystemPort) {}
 
   findRepoRoot(fromDirectory: string): string {
     const candidates = [path.dirname(fileURLToPath(import.meta.url)), fromDirectory];

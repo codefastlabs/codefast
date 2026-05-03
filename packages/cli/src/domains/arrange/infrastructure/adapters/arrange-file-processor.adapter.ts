@@ -1,7 +1,7 @@
 import { inject, injectable } from "@codefast/di";
 import { DomainSourceParserPortToken } from "#/domains/arrange/composition/tokens";
 import type { ArrangeFileProcessorPort } from "#/domains/arrange/application/ports/outbound/arrange-file-processor.port";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import type { DomainSourceParserPort } from "#/domains/arrange/application/ports/outbound/domain-source-parser.port";
 import type {
@@ -23,7 +23,7 @@ import { ensureCnImport } from "#/domains/arrange/domain/imports.domain";
 @injectable([inject(CliFilesystemPortToken), inject(DomainSourceParserPortToken)])
 export class ArrangeFileProcessorAdapter implements ArrangeFileProcessorPort {
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly domainSourceParser: DomainSourceParserPort,
   ) {}
 

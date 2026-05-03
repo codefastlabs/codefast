@@ -1,6 +1,6 @@
 import ts from "typescript";
 import { inject, injectable } from "@codefast/di";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import { CliFilesystemPortToken } from "#/shell/application/cli-runtime.tokens";
 import {
   applyEditsDescending,
@@ -27,7 +27,7 @@ type TaggableDeclaration =
 export class TagSinceWriterAdapter implements TagSinceWriterPort {
   private readonly sinceDocumentationTag = "@since";
 
-  constructor(private readonly fs: CliFilesystemPort) {}
+  constructor(private readonly fs: FilesystemPort) {}
 
   applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
     const sourceText = this.fs.readFileSync(filePath, "utf8");

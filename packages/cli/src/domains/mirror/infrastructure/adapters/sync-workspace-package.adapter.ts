@@ -1,6 +1,6 @@
 import { inject, injectable } from "@codefast/di";
 import type { MirrorConfig } from "#/domains/config/domain/schema.domain";
-import type { CliFilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
+import type { FilesystemPort } from "#/shell/application/ports/outbound/cli-fs.port";
 import type { CliPathPort } from "#/shell/application/ports/outbound/cli-path.port";
 import { CliFilesystemPortToken, CliPathPortToken } from "#/shell/application/cli-runtime.tokens";
 import { messageFromCaughtUnknown } from "#/shell/domain/caught-unknown-message.value-object";
@@ -30,28 +30,11 @@ import {
 ])
 export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
   constructor(
-    private readonly fs: CliFilesystemPort,
+    private readonly fs: FilesystemPort,
     private readonly pathService: CliPathPort,
     private readonly packageRepository: PackageRepositoryPort,
     private readonly fileSystemService: FileSystemServicePort,
   ) {}
-
-  private resolvePackageScopedConfig<Value>(
-    configMap: Record<string, Value> | undefined,
-    packageMeta: MirrorPackageMeta,
-  ): Value | undefined {
-    if (!configMap) {
-      return undefined;
-    }
-    return configMap[packageMeta.packageName];
-  }
-
-  private isPackageSkipped(
-    skipPackagesList: string[] | undefined,
-    packageMeta: MirrorPackageMeta,
-  ): boolean {
-    return !!skipPackagesList?.includes(packageMeta.packageName);
-  }
 
   async syncExportsForWorkspacePackage(
     rootDir: string,
@@ -166,5 +149,22 @@ export class SyncWorkspacePackageAdapter implements SyncWorkspacePackagePort {
     }
 
     return pkgStats;
+  }
+
+  private resolvePackageScopedConfig<Value>(
+    configMap: Record<string, Value> | undefined,
+    packageMeta: MirrorPackageMeta,
+  ): Value | undefined {
+    if (!configMap) {
+      return undefined;
+    }
+    return configMap[packageMeta.packageName];
+  }
+
+  private isPackageSkipped(
+    skipPackagesList: string[] | undefined,
+    packageMeta: MirrorPackageMeta,
+  ): boolean {
+    return !!skipPackagesList?.includes(packageMeta.packageName);
   }
 }
