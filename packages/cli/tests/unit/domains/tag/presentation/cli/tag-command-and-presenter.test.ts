@@ -45,7 +45,6 @@ function createTagResult(overrides?: Partial<TagSyncResult>): TagSyncResult {
         packageName: "@scope/a",
       },
     ],
-    resolvedTargets: [],
     skippedPackages: [],
     targetResults: [
       {

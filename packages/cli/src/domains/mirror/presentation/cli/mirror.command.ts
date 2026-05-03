@@ -22,6 +22,7 @@ import {
   GlobalCliOptionsParsePortToken,
   CliSchemaParsingToken,
 } from "#/shell/application/cli-runtime.tokens";
+import { readOptionalPositionalArg } from "#/shell/domain/cli-positional-arg.value-object";
 
 @injectable([
   inject(CliRuntimeToken),
@@ -70,7 +71,7 @@ export class MirrorCommand implements CliCommandPort {
           ],
           action: async (_positionalPieces, typedLocalOptionsCarrier, globalsBridge) => {
             await this.runSynchronizedMirrorLeaf(
-              this.readOptionalPackagePiece(_positionalPieces[0]),
+              readOptionalPositionalArg(_positionalPieces[0]),
               {
                 verbose: typedLocalOptionsCarrier.verbose as boolean | undefined,
                 json: typedLocalOptionsCarrier.json as boolean | undefined,
@@ -81,29 +82,6 @@ export class MirrorCommand implements CliCommandPort {
         },
       ],
     };
-  }
-
-  private readOptionalPackagePiece(candidate: unknown): string | undefined {
-    if (typeof candidate === "string") {
-      return candidate;
-    }
-    if (candidate === undefined) {
-      return undefined;
-    }
-    if (candidate === null) {
-      return "null";
-    }
-    if (
-      typeof candidate === "number" ||
-      typeof candidate === "boolean" ||
-      typeof candidate === "bigint"
-    ) {
-      return String(candidate);
-    }
-    if (typeof candidate === "symbol") {
-      return candidate.toString();
-    }
-    return undefined;
   }
 
   private async runSynchronizedMirrorLeaf(

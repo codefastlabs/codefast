@@ -55,7 +55,6 @@ export interface TagProgressListener {
 export type TagSyncResult = {
   mode: "applied" | "dry-run";
   selectedTargets: TagResolvedTarget[];
-  resolvedTargets: TagResolvedTarget[];
   skippedPackages: string[];
   targetResults: TagTargetExecutionResult[];
   filesScanned: number;
