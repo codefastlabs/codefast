@@ -85,3 +85,6 @@ export type {
 } from "#/server/server-types";
 
 export { createBenchServer } from "#/server/create-bench-server";
+export { findAvailablePort } from "#/server/find-available-port";
+export type { StartBenchServerOptions } from "#/server/start-bench-server";
+export { startBenchServer } from "#/server/start-bench-server";
