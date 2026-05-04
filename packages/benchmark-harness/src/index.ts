@@ -47,24 +47,23 @@ export {
 
 export { collectFingerprint } from "#/child/fingerprint";
 
+export type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
+export { buildLibraryReport } from "#/report/aggregate";
+
 export type {
-  AggregatedScenarioResult,
-  LibraryReport,
+  TwoWayConsoleColumnLabels,
+  TwoWayConsoleReportOptions,
   TwoWayMarkdownColumnTitles,
   TwoWayMarkdownReportOptions,
   TwoWayScenarioComparisonRow,
-  TwoWayConsoleColumnLabels,
-  TwoWayConsoleReportOptions,
-} from "#/report/index";
-
+} from "#/report/two-way";
 export {
-  buildLibraryReport,
   buildTwoWayComparisonRows,
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
-  writeJsonlRun,
-  writeMarkdownFile,
-} from "#/report/index";
+} from "#/report/two-way";
+
+export { writeJsonlRun, writeMarkdownFile } from "#/report/write";
 
 export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
 
@@ -102,6 +101,11 @@ export type {
 } from "#/server/server-types";
 
 export { createBenchServer } from "#/server/create-bench-server";
+export { buildEmbeddedPayload } from "#/server/build-payload";
 export { findAvailablePort } from "#/server/find-available-port";
+
+export type { RunLines } from "#/server/read-runs";
+export { listRawRuns } from "#/server/read-runs";
+
 export type { StartBenchServerOptions } from "#/server/start-bench-server";
 export { startBenchServer } from "#/server/start-bench-server";
