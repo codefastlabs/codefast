@@ -2,6 +2,7 @@ import type {
   TwoWayConsoleColumnLabels,
   TwoWayMarkdownReportOptions,
 } from "@codefast/benchmark-harness";
+import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 
 export const CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN = {
   documentHeading: "# @codefast/tailwind-variants vs tailwind-variants — benchmark report",
@@ -21,8 +22,8 @@ export const CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN = {
     "`hz/op` is operations per second per logical operation (throughput.mean × batch). `IQR (cf / tv)` is the interquartile range of per-trial throughput across the trial loop.",
   ],
   fingerprintLibraryVersionLabels: {
-    left: "@codefast/tailwind-variants",
-    right: "tailwind-variants",
+    left: CODEFAST_TV.libraryName,
+    right: TAILWIND_VARIANTS.libraryName,
   },
   sanityBulletMarkdownLabels: {
     left: "**@codefast/tailwind-variants**",
@@ -59,8 +60,8 @@ export const CODEFAST_VS_CVA_MARKDOWN = {
     "cva “with merge” uses `tailwind-merge` after `cva()` — the usual production pairing — not identical to `tv`’s internal merge, but stable across runs.",
   ],
   fingerprintLibraryVersionLabels: {
-    left: "@codefast/tailwind-variants",
-    right: "class-variance-authority",
+    left: CODEFAST_TV.libraryName,
+    right: CVA.libraryName,
   },
   sanityBulletMarkdownLabels: {
     left: "**@codefast/tailwind-variants**",

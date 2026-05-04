@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import type { Dirent } from "node:fs";
 import { join } from "node:path";
+import { OBSERVATIONS_FILE_NAME } from "#/env-keys";
 
 export interface RunLines {
   readonly folderName: string;
@@ -8,7 +9,7 @@ export interface RunLines {
 }
 
 function readRunDirectory(runDirPath: string, folderName: string): RunLines | undefined {
-  const jsonlPath = join(runDirPath, "observations.jsonl");
+  const jsonlPath = join(runDirPath, OBSERVATIONS_FILE_NAME);
   let content: string;
   try {
     content = readFileSync(jsonlPath, "utf8");

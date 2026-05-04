@@ -2,6 +2,7 @@ import type {
   TwoWayConsoleColumnLabels,
   TwoWayMarkdownReportOptions,
 } from "@codefast/benchmark-harness";
+import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 
 /**
  * Stable copy for Markdown / console output for `@codefast/di` vs InversifyJS 8.
@@ -25,8 +26,8 @@ export const DI_INVERSIFY_MARKDOWN = {
     "Cite these rows when comparing the libraries. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`). `IQR (cf / inv)` is the interquartile range of the per-trial throughput across the trial loop — treat rows above ~5% as noisy.",
   ],
   fingerprintLibraryVersionLabels: {
-    left: "@codefast/di",
-    right: "inversify",
+    left: CODEFAST_DI.libraryName,
+    right: INVERSIFY.libraryName,
   },
   sanityBulletMarkdownLabels: {
     left: "**@codefast/di**",

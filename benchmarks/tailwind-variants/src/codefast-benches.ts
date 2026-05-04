@@ -5,15 +5,13 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
+import { CODEFAST_TV } from "#/harness/config";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
-const LIBRARY_NAME = "@codefast/tailwind-variants";
-const SCENARIO_LOG_NAME = "codefast";
-
 void runBenchmarkChildMain({
-  libraryName: LIBRARY_NAME,
-  scenarioName: SCENARIO_LOG_NAME,
+  libraryName: CODEFAST_TV.libraryName,
+  scenarioName: CODEFAST_TV.scenarioName,
   packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllCodefastScenarios,
   benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
-}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(LIBRARY_NAME, error));
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(CODEFAST_TV.libraryName, error));

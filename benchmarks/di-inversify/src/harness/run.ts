@@ -18,8 +18,11 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  BENCH_RESULTS_DIR_NAME,
+  BENCH_VERBOSE_ENV_KEY,
   buildLibraryReport,
   type LibraryReport,
+  OBSERVATIONS_FILE_NAME,
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
   resolveBenchParentExitCode,
@@ -28,19 +31,18 @@ import {
   writeJsonlRun,
   writeMarkdownFile,
 } from "@codefast/benchmark-harness";
+import { resolveDisplayName } from "@codefast/benchmark-harness";
+import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/presentation";
 
-const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
-const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";
-const CODEFAST_DI_PACKAGE_FILTER = "@codefast/di";
-const VERBOSE_MODE_ENABLED = process.env["BENCH_VERBOSE"] === "1";
+const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 function rebuildCodefastDiPackage(): void {
-  console.log(`Rebuilding ${CODEFAST_DI_LIBRARY_DISPLAY_NAME} before bench…`);
+  console.log(`Rebuilding ${CODEFAST_DI.libraryName} before bench…`);
   const startedAtMs = performance.now();
-  const result = spawnSync("pnpm", ["--filter", CODEFAST_DI_PACKAGE_FILTER, "build"], {
+  const result = spawnSync("pnpm", ["--filter", CODEFAST_DI.libraryName, "build"], {
     cwd: packageRootDirectory,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
@@ -48,13 +50,11 @@ function rebuildCodefastDiPackage(): void {
   });
   if (result.status !== 0) {
     console.error(result.stderr || result.stdout);
-    throw new Error(
-      `Build failed for ${CODEFAST_DI_LIBRARY_DISPLAY_NAME}, exit ${String(result.status)}`,
-    );
+    throw new Error(`Build failed for ${CODEFAST_DI.libraryName}, exit ${String(result.status)}`);
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(
-    `Finished rebuild of ${CODEFAST_DI_LIBRARY_DISPLAY_NAME} (${elapsedSeconds.toFixed(1)}s wall).`,
+    `Finished rebuild of ${CODEFAST_DI.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`,
   );
 }
 
@@ -70,12 +70,13 @@ function buildOutputPaths(): {
   latestJsonlPath: string;
 } {
   const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
-  const runDirectory = join(packageRootDirectory, "bench-results", timestamp);
+  const benchResultsRoot = join(packageRootDirectory, BENCH_RESULTS_DIR_NAME);
+  const runDirectory = join(benchResultsRoot, timestamp);
   return {
     markdownPath: join(runDirectory, "report.md"),
-    jsonlPath: join(runDirectory, "observations.jsonl"),
-    latestMarkdownPath: join(packageRootDirectory, "bench-results", "latest.md"),
-    latestJsonlPath: join(packageRootDirectory, "bench-results", "latest.jsonl"),
+    jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME),
+    latestMarkdownPath: join(benchResultsRoot, "latest.md"),
+    latestJsonlPath: join(benchResultsRoot, "latest.jsonl"),
   };
 }
 
@@ -83,12 +84,14 @@ async function main(): Promise<void> {
   console.log(
     "\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.",
   );
-  console.log("  @codefast/di  : TC39 Stage 3 decorators + Symbol.metadata");
-  console.log("  InversifyJS 8 : legacy experimental decorators + reflect-metadata");
+  console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
+  console.log(
+    `  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`,
+  );
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
-      "[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed `[codefast]` / `[inversify]`). Use `BENCH_VERBOSE=1` (or `pnpm bench:verbose`) for full child stdout.\n",
+      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed \`[${CODEFAST_DI.scenarioName}]\` / \`[${INVERSIFY.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=1\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
     );
   }
 
@@ -96,18 +99,18 @@ async function main(): Promise<void> {
 
   const codefastPayload: SubprocessPayload = await runBenchSubprocess({
     packageRootDirectory,
-    tsconfigFileName: "tsconfig.codefast.json",
-    benchEntryFileNameUnderSrc: "codefast-benches.ts",
-    harnessLabel: CODEFAST_DI_LIBRARY_DISPLAY_NAME,
-    scenarioName: "codefast",
+    tsconfigFileName: CODEFAST_DI.tsconfigFileName,
+    benchEntryFileNameUnderSrc: CODEFAST_DI.benchEntryFileName,
+    harnessLabel: CODEFAST_DI.libraryName,
+    scenarioName: CODEFAST_DI.scenarioName,
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   });
   const inversifyPayload: SubprocessPayload = await runBenchSubprocess({
     packageRootDirectory,
-    tsconfigFileName: "tsconfig.inversify.json",
-    benchEntryFileNameUnderSrc: "inversify-benches.ts",
-    harnessLabel: INVERSIFY_LIBRARY_DISPLAY_NAME,
-    scenarioName: "inversify",
+    tsconfigFileName: INVERSIFY.tsconfigFileName,
+    benchEntryFileNameUnderSrc: INVERSIFY.benchEntryFileName,
+    harnessLabel: resolveDisplayName(INVERSIFY),
+    scenarioName: INVERSIFY.scenarioName,
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   });
 
