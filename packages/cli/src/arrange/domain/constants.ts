@@ -86,7 +86,7 @@ export const EMPTY_CN_TV_BINDINGS = new Set<string>();
 
 /**
  * Bucket sort order — **render pipeline** (lower → earlier in `cn()` output).
- * 
+ *
  * Matches README: Existence → Position → Layout → Sizing → Spacing → Shape → Background
  * → Shadow → Typography → Composite → Motion → Starting → Behavior → State → Selector,
  * then `other` and `arbitrary` as sort tails for unknown utilities and arbitrary properties.
@@ -157,7 +157,7 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
 
 /**
  * Responsive / variant prefix — Tailwind v4 aware.
- * 
+ *
  * v3: sm: md: … — v4: @sm:, @min-[600px]:, @[480px]:, named @md/sidebar:,
  * viewport md/sidebar:, min-[100px]: / max-[100px]:, …
  *

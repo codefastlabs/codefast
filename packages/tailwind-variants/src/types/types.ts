@@ -11,7 +11,7 @@ import type { ConfigExtension } from "tailwind-merge";
 
 /**
  * Convert string boolean values to actual boolean types.
- * 
+ *
  * This utility type converts string representations of booleans ("true", "false")
  * to actual boolean types, while preserving existing boolean types.
  *
@@ -25,7 +25,7 @@ export type StringToBooleanType<T> = T extends "false" | "true"
 
 /**
  * Check if a variant group supports boolean values.
- * 
+ *
  * This utility type determines whether a variant group has boolean keys
  * ("true" or "false"), indicating it supports boolean variant values.
  *
@@ -39,7 +39,7 @@ export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" ex
 
 /**
  * Extract variant props from a component or variant function.
- * 
+ *
  * This utility type extracts the variant properties from a component or
  * variant function, including className and class properties, while
  * allowing for specific keys to be omitted.
@@ -55,7 +55,7 @@ export type VariantProps<Component> =
 
 /**
  * Base configuration schema for variant groups.
- * 
+ *
  * This type defines the structure of variant configurations where each
  * variant group maps variant values to CSS class values.
  *
@@ -65,7 +65,7 @@ export type ConfigurationSchema = Record<string, Record<string, ClassValue>>;
 
 /**
  * Configuration schema for component slots.
- * 
+ *
  * This type defines the structure of slot configurations where each
  * slot name maps to CSS class values.
  *
@@ -75,7 +75,7 @@ export type SlotConfigurationSchema = Record<string, ClassValue>;
 
 /**
  * Variant properties for a configuration schema.
- * 
+ *
  * This type defines the properties that can be passed to variant functions,
  * including variant values and optional className/class properties.
  *
@@ -92,7 +92,7 @@ export type ConfigurationVariants<T extends ConfigurationSchema> = {
 
 /**
  * Properties for slot-based components.
- * 
+ *
  * This type defines the properties that can be passed to slot functions,
  * allowing each slot to receive custom CSS classes.
  *
@@ -104,7 +104,7 @@ export type SlotProperties<S extends SlotConfigurationSchema> = {
 
 /**
  * Type for compound variant definitions.
- * 
+ *
  * This type defines the structure of compound variants, which apply
  * additional classes when multiple variant conditions are met.
  *
@@ -124,7 +124,7 @@ export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
 
 /**
  * Type for compound variants that support slots.
- * 
+ *
  * This type extends compound variants to support slot-based class definitions,
  * allowing different classes to be applied to different slots.
  *
@@ -147,7 +147,7 @@ export type CompoundVariantWithSlotsType<
 
 /**
  * Type for compound slot definitions.
- * 
+ *
  * This type defines compound slots that apply classes to specific slots
  * when certain variant conditions are met.
  *
@@ -172,7 +172,7 @@ export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfig
 
 /**
  * Base configuration interface for variant functions.
- * 
+ *
  * This interface defines the structure of variant configurations,
  * including base classes, variants, default values, and compound variants.
  *
@@ -187,7 +187,7 @@ export interface Configuration<T extends ConfigurationSchema> {
 
 /**
  * Configuration interface for slot-based components.
- * 
+ *
  * This interface extends the base configuration to include slot definitions
  * and slot-specific compound variants.
  *
@@ -207,7 +207,7 @@ export interface ConfigurationWithSlots<
 
 /**
  * Configuration options for Tailwind Variants.
- * 
+ *
  * This interface defines global configuration options that affect
  * how Tailwind Variants processes and merges CSS classes.
  *
@@ -220,7 +220,7 @@ export interface TailwindVariantsConfiguration {
 
 /**
  * Type for individual slot functions.
- * 
+ *
  * This type defines the signature of functions that generate CSS classes
  * for individual component slots.
  *
@@ -232,7 +232,7 @@ export type SlotFunctionType<T extends ConfigurationSchema> = (
 
 /**
  * Properties that can be passed to slot functions.
- * 
+ *
  * This type defines the properties that can be passed to individual
  * slot functions, including variant props and class properties.
  *
@@ -250,7 +250,7 @@ export type SlotFunctionProperties<T extends ConfigurationSchema> =
 
 /**
  * Return type for variant functions.
- * 
+ *
  * This type defines the return type of variant functions, which can be
  * either a single function (for non-slot components) or an object with
  * slot functions (for slot-based components).
@@ -270,7 +270,7 @@ export type TailwindVariantsReturnType<
 
 /**
  * Main variant function type.
- * 
+ *
  * This interface defines the structure of variant functions created by the tv function.
  * It includes the configuration and the function signature for generating CSS classes.
  *
@@ -289,7 +289,7 @@ export interface VariantFunctionType<
 
 /**
  * Factory function interface for creating variant functions.
- * 
+ *
  * This interface defines the overloaded factory function that can create
  * variant functions with different configuration types and options.
  *
@@ -324,7 +324,7 @@ export interface TailwindVariantsFactory {
 
 /**
  * Result interface for the createTV factory function.
- * 
+ *
  * This interface defines the object returned by createTV, which includes
  * both the tv factory function and the cn utility function.
  *
@@ -337,7 +337,7 @@ export interface TailwindVariantsFactoryResult {
 
 /**
  * Type for merged configuration schemas.
- * 
+ *
  * This utility type merges two configuration schemas into a single type,
  * combining all variant groups from both schemas.
  *
@@ -350,7 +350,7 @@ export type MergedSchemas<
 
 /**
  * Type for merged slot configuration schemas.
- * 
+ *
  * This utility type merges two slot configuration schemas into a single type,
  * combining all slot definitions from both schemas.
  *
@@ -363,7 +363,7 @@ export type MergedSlotSchemas<
 
 /**
  * Configuration interface for extending existing configurations.
- * 
+ *
  * This interface allows extending an existing variant configuration with
  * additional variants and slots, while maintaining type safety.
  *

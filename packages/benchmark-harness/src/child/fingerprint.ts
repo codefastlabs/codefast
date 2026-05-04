@@ -23,7 +23,7 @@ function readLibraryVersion(libraryName: string, workspacePackageRoot: string): 
 /**
  * Collects Node / V8 / platform / library information to stamp on every
  * subprocess payload. Called once at the start of each bench subprocess.
- * 
+ *
  * @param libraryName Dependency name keys `node_modules` (e.g. `@codefast/di`, `inversify`).
  * @param workspacePackageRoot Absolute path to the benchmark package root (directory with `package.json`).
  *

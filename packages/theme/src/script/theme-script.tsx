@@ -19,19 +19,19 @@ interface ThemeScriptProps {
 
 /**
  * Inline script that prevents Flash of Unstyled Content (FOUC).
- * 
+ *
  * **Why this is needed:**
  * React hydration occurs after the browser has already painted the page.
  * Without this script, users would briefly see the wrong theme before
  * React takes over and applies the correct one.
- * 
+ *
  * **How it works:**
  * This script runs synchronously in the `<head>` before first paint:
  * 1. Resolves 'system' to 'light' or 'dark' using `matchMedia()`
  * 2. Removes prior `light` / `dark` / `system` classes on `<html>` (SSR may
  *    have applied the wrong resolved class for `system`, e.g. default `dark`)
  * 3. Adds the resolved theme class and sets `color-scheme` for native controls
- * 
+ *
  * @example
  * ```tsx
  * // In __root.tsx (TanStack Start)

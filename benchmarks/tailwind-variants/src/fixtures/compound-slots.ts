@@ -1,6 +1,6 @@
 /**
  * Compound Slots Benchmark Data
- * 
+ *
  * Data specific to compound slots variant benchmarks
  *
  * @since 0.3.16-canary.0
