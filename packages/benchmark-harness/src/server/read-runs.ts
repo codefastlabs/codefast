@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import type { Dirent } from "node:fs";
 import { join } from "node:path";
-import { OBSERVATIONS_FILE_NAME } from "#/env-keys";
+import { OBSERVATIONS_FILE_NAME } from "#/shared/env-keys";
 
 export interface RunLines {
   readonly folderName: string;

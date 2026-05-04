@@ -4,7 +4,7 @@ import type { BenchOptions } from "tinybench";
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { collectFingerprint } from "#/child/fingerprint";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
-import { emitSubprocessPayload } from "#/protocol";
+import { emitSubprocessPayload } from "#/shared/protocol";
 import { runSanityChecks } from "#/child/run-sanity-checks";
 
 export type RunBenchmarkChildMainParameters = Readonly<{

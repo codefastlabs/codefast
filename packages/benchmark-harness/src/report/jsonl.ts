@@ -1,4 +1,4 @@
-import type { Fingerprint, ScenarioTrialResult } from "#/protocol";
+import type { Fingerprint, ScenarioTrialResult } from "#/shared/protocol";
 
 /**
  * One serialised observation line in bench `observations.jsonl` ({@link writeBenchJsonlRun} output).

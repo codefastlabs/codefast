@@ -1,4 +1,4 @@
-import type { ScenarioTrialResult, TrialPayload } from "#/protocol";
+import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 import type { JsonlBenchObservationRow } from "#/report/jsonl";
 import {
   jsonlBenchObservationRowToFingerprint,
@@ -6,7 +6,7 @@ import {
 } from "#/report/jsonl";
 import type { LibraryReport } from "#/report/aggregate";
 import { buildLibraryReport } from "#/report/aggregate";
-import { quantile, sortAscending } from "#/stats/quantiles";
+import { quantile, sortAscending } from "#/report/quantiles";
 import type {
   BenchServerOptions,
   EmbeddedLibraryMeta,
