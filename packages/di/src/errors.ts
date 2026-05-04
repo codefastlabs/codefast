@@ -1,5 +1,8 @@
 import type { BindingIdentifier, BindingScope, ResolveOptions } from "#/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export abstract class DiError extends Error {
   abstract readonly code: string;
 
@@ -9,6 +12,9 @@ export abstract class DiError extends Error {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class InternalError extends DiError {
   readonly code = "INTERNAL_ERROR";
 
@@ -17,6 +23,9 @@ export class InternalError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class TokenNotBoundError extends DiError {
   readonly code = "TOKEN_NOT_BOUND";
   readonly tokenName: string;
@@ -29,6 +38,9 @@ export class TokenNotBoundError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class NoMatchingBindingError extends DiError {
   readonly code = "NO_MATCHING_BINDING";
   readonly tokenName: string;
@@ -45,6 +57,9 @@ export class NoMatchingBindingError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class AmbiguousBindingError extends DiError {
   readonly code = "AMBIGUOUS_BINDING";
   readonly tokenName: string;
@@ -59,6 +74,9 @@ export class AmbiguousBindingError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class CircularDependencyError extends DiError {
   readonly code = "CIRCULAR_DEPENDENCY";
   readonly cycle: string[];
@@ -69,6 +87,9 @@ export class CircularDependencyError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class AsyncResolutionError extends DiError {
   readonly code = "ASYNC_RESOLUTION";
   readonly tokenName: string;
@@ -83,6 +104,9 @@ export class AsyncResolutionError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class AsyncDeactivationError extends DiError {
   readonly code = "ASYNC_DEACTIVATION";
   readonly tokenName: string;
@@ -93,6 +117,9 @@ export class AsyncDeactivationError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ScopeViolationDetails {
   readonly consumerToken: string;
   readonly consumerScope: BindingScope;
@@ -101,6 +128,9 @@ export interface ScopeViolationDetails {
   readonly path: string[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class ScopeViolationError extends DiError {
   readonly code = "SCOPE_VIOLATION";
   readonly details: ScopeViolationDetails;
@@ -113,6 +143,9 @@ export class ScopeViolationError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class MissingMetadataError extends DiError {
   readonly code = "MISSING_METADATA";
   readonly targetName: string;
@@ -125,6 +158,9 @@ export class MissingMetadataError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class AsyncModuleLoadError extends DiError {
   readonly code = "ASYNC_MODULE_LOAD";
   readonly moduleName: string;
@@ -135,6 +171,9 @@ export class AsyncModuleLoadError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class SyncDisposalNotSupportedError extends DiError {
   readonly code = "SYNC_DISPOSAL_NOT_SUPPORTED";
 
@@ -145,6 +184,9 @@ export class SyncDisposalNotSupportedError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class MissingScopeContextError extends DiError {
   readonly code = "MISSING_SCOPE_CONTEXT";
   readonly tokenName: string;
@@ -157,6 +199,9 @@ export class MissingScopeContextError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class MissingContainerContextError extends DiError {
   readonly code = "MISSING_CONTAINER_CONTEXT";
   readonly targetName: string;
@@ -169,6 +214,9 @@ export class MissingContainerContextError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class RebindUnboundTokenError extends DiError {
   readonly code = "REBIND_UNBOUND_TOKEN";
   readonly tokenName: string;
@@ -181,6 +229,9 @@ export class RebindUnboundTokenError extends DiError {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class DisposedContainerError extends DiError {
   readonly code = "DISPOSED_CONTAINER";
 

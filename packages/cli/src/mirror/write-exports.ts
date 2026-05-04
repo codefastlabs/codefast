@@ -11,6 +11,8 @@ import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants";
 /**
  * Writes `exports` into `package.json` via a temp file + rename (atomic on same volume).
  * Preserves a trailing newline after JSON.
+ *
+ * @since 0.3.16-canary.0
  */
 export async function writePackageJsonExportsAtomic(
   fs: FilesystemPort,

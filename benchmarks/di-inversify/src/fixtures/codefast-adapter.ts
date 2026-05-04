@@ -23,6 +23,8 @@ import {
  * A built container plus every token, retained so scenarios can resolve
  * any node (not just the root). Scenarios typically only touch `rootToken`
  * and `container`, but having the full map is useful for sanity asserts.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface CodefastRealisticBuild {
   readonly container: CodefastContainer;
@@ -73,6 +75,8 @@ function bindOneNode(
  * Builds a fresh container from the descriptor. Sub-millisecond on a warm
  * process; call this per iteration for `realistic-graph-cold-resolve`, or
  * once in scenario setup for hot-path scenarios.
+ *
+ * @since 0.3.16-canary.0
  */
 export function buildCodefastRealisticContainer(graph: GraphDescriptor): CodefastRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -96,6 +100,8 @@ export function buildCodefastRealisticContainer(graph: GraphDescriptor): Codefas
  * Sanity helper: resolves the root and asserts the expected shape. Used
  * by scenarios as their sanity check so bench measurement never starts
  * against a silently-broken graph.
+ *
+ * @since 0.3.16-canary.0
  */
 export function sanityCheckCodefastRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootToken } = buildCodefastRealisticContainer(graph);

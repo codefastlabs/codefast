@@ -6,6 +6,9 @@ import {
 import type { DomainJsxAttribute } from "#/arrange/domain/ast/ast-node";
 import type { JsxClassNameStatic } from "#/arrange/domain/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function jsxClassNameStaticLiteral(
   jsxClassNameAttribute: DomainJsxAttribute,
 ): JsxClassNameStatic | undefined {

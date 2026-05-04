@@ -17,6 +17,9 @@ function formatSchemaIssues(issues: readonly SchemaIssue[]): string {
     .join("; ");
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function parseWithSchema<Value>(
   schema: ZodType<Value>,
   input: unknown,

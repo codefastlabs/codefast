@@ -2,6 +2,8 @@ import type { Fingerprint, ScenarioTrialResult } from "#/shared/protocol";
 
 /**
  * One serialised observation line in bench `observations.jsonl` ({@link writeBenchJsonlRun} output).
+ *
+ * @since 0.3.16-canary.0
  */
 export interface JsonlBenchObservationRow {
   readonly timestampIso: string;
@@ -30,7 +32,11 @@ export interface JsonlBenchObservationRow {
   readonly samples: number;
 }
 
-/** Maps JSONL flattened fields onto a {@link Fingerprint}. */
+/**
+ * Maps JSONL flattened fields onto a {@link Fingerprint}.
+ *
+ * @since 0.3.16-canary.0
+ */
 export function jsonlBenchObservationRowToFingerprint(row: JsonlBenchObservationRow): Fingerprint {
   return {
     nodeVersion: row.nodeVersion,
@@ -47,6 +53,9 @@ export function jsonlBenchObservationRowToFingerprint(row: JsonlBenchObservation
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function jsonlBenchObservationRowToScenarioTrialResult(
   row: JsonlBenchObservationRow,
 ): ScenarioTrialResult {

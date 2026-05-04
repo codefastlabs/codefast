@@ -4,20 +4,22 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Produce a smoothly animated numeric value in response to changes.
- *
+ * 
  * Applies a time-based easing (easeOutQuad) between the current and target values
  * over the specified duration. When disabled, the value updates immediately.
- *
+ * 
  * @param targetValue - Target number to animate toward; null resolves to 0.
  * @param duration - Animation duration in milliseconds.
  * @param animate - When false, bypasses animation and sets the value directly.
  * @returns The current (rounded) animated value.
- *
+ * 
  * @example
  * ```tsx
  * const value = useAnimatedValue(75, 1000, true);
  * return <div>{value}%</div>;
  * ```
+ *
+ * @since 0.3.16-canary.0
  */
 export function useAnimatedValue(
   targetValue: null | number,

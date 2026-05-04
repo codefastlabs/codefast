@@ -1,6 +1,9 @@
 import path from "node:path";
 import type { FilesystemPort } from "#/core/filesystem/port";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function resolveProvidedTagTargetPath(
   fs: FilesystemPort,
   args: {

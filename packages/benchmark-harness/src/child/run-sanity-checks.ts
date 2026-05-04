@@ -3,6 +3,8 @@ import type { AnyBenchScenario } from "#/child/bench-scenario";
 /**
  * Runs each scenario's optional `sanity` hook once before measurement.
  * Failures are non-fatal: their IDs are returned so the trial runner can skip them.
+ *
+ * @since 0.3.16-canary.0
  */
 export async function runSanityChecks(scenarios: readonly AnyBenchScenario[]): Promise<string[]> {
   const sanityFailures: string[] = [];

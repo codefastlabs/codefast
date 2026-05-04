@@ -11,6 +11,9 @@ import type { AnalyzeReport } from "#/arrange/domain/types";
 import { scanArrangeTargets } from "#/arrange/scan-target";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function analyzeDirectory(
   fs: FilesystemPort,
   analyzeRootPath: string,

@@ -1,10 +1,15 @@
 /**
  * Cross-context application errors for Result-based flows.
  * Does not extend the global `Error` type — instances are carried in `Result` values, not thrown.
+ *
+ * @since 0.3.16-canary.0
  */
 
 export type AppErrorCode = "NOT_FOUND" | "VALIDATION_ERROR" | "INFRA_FAILURE";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class AppError {
   readonly name = "AppError" as const;
   readonly code: AppErrorCode;
@@ -22,6 +27,8 @@ export class AppError {
 
 /**
  * Stable, user-facing text for values caught as `unknown`.
+ *
+ * @since 0.3.16-canary.0
  */
 export function messageFrom(value: unknown): string {
   if (value instanceof Error) {

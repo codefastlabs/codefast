@@ -1,7 +1,9 @@
 /**
  * Compound Slots Benchmark Data
- *
+ * 
  * Data specific to compound slots variant benchmarks
+ *
+ * @since 0.3.16-canary.0
  */
 
 export const compoundSlotsVariants = {
@@ -258,6 +260,9 @@ export const compoundSlotsVariants = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const compoundSlotsTestProps = [
   {},
   { color: "primary", size: "xs" },

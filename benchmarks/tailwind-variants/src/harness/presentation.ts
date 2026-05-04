@@ -4,6 +4,9 @@ import type {
 } from "@codefast/benchmark-harness";
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN = {
   documentHeading: "# @codefast/tailwind-variants vs tailwind-variants — benchmark report",
   columnTitles: {
@@ -31,6 +34,9 @@ export const CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN = {
   },
 } as const satisfies TwoWayMarkdownReportOptions;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE: TwoWayConsoleColumnLabels = {
   sectionHeading: "@codefast/tailwind-variants vs tailwind-variants",
   leftThroughputHeader: "cf tv hz/op",
@@ -42,6 +48,9 @@ export const CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE: TwoWayConsoleColumnLabels = 
   rightP99Header: "tv p99 ms",
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CODEFAST_VS_CVA_MARKDOWN = {
   documentHeading: "# @codefast/tailwind-variants vs class-variance-authority — benchmark report",
   columnTitles: {
@@ -69,6 +78,9 @@ export const CODEFAST_VS_CVA_MARKDOWN = {
   },
 } as const satisfies TwoWayMarkdownReportOptions;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CODEFAST_VS_CVA_CONSOLE: TwoWayConsoleColumnLabels = {
   sectionHeading: "@codefast/tailwind-variants vs class-variance-authority",
   leftThroughputHeader: "cf tv hz/op",

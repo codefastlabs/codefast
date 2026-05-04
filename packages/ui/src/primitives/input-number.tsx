@@ -151,6 +151,8 @@ const [InputNumberContextProvider, useInputNumberContext] =
 
 /**
  * Props for the main InputNumber component.
+ *
+ * @since 0.3.16-canary.0
  */
 interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
   /**
@@ -209,6 +211,9 @@ interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
   value?: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Element {
   const {
     __scopeInputNumber,
@@ -393,6 +398,8 @@ const NUMBER_INPUT_FIELD_NAME = "InputNumberField";
 
 /**
  * Defines the props for the `InputNumberField` component.
+ *
+ * @since 0.3.16-canary.0
  */
 type InputNumberFieldProps = Omit<
   ComponentProps<typeof InputPrimitive.Field>,
@@ -408,6 +415,9 @@ type InputNumberFieldProps = Omit<
   | "value"
 >;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputNumberField({
   __scopeInputNumber,
   onBlur,
@@ -816,11 +826,17 @@ function NumberStepperButton({
  * Component: InputNumberIncrementButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputNumberIncrementButtonProps = Omit<
   ComponentProps<typeof NumberStepperButton>,
   "operation"
 >;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="increment" {...props} />;
 }
@@ -829,11 +845,17 @@ function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX
  * Component: InputNumberDecrementButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputNumberDecrementButtonProps = Omit<
   ComponentProps<typeof NumberStepperButton>,
   "operation"
 >;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="decrement" {...props} />;
 }

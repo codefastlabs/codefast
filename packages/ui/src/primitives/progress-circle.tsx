@@ -120,6 +120,9 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
  * Component: ProgressCircleProvider
  * --------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ProgressCircleProviderProps {
   /**
    * React children to be rendered inside the progress circle
@@ -174,10 +177,10 @@ interface ProgressCircleProviderProps {
 
 /**
  * Provides context for the ProgressCircle component
- *
+ * 
  * Manages calculations for rendering the circular progress indicator,
  * including value clamping, sizing, thresholds, and indeterminate state.
- *
+ * 
  * @example
  * ```tsx
  * <ProgressCircleProvider
@@ -198,6 +201,8 @@ interface ProgressCircleProviderProps {
  *   <ProgressCircleValue />
  * </ProgressCircleProvider>
  * ```
+ *
+ * @since 0.3.16-canary.0
  */
 function ProgressCircleProvider({
   __scopeProgressCircle,
@@ -297,12 +302,17 @@ function ProgressCircleProvider({
  * Component: ProgressCircle
  * --------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ProgressCircleProps = ComponentProps<"div">;
 
 /**
  * Root component for the progress circle
- *
+ * 
  * Serves as a wrapper for other progress circle components.
+ *
+ * @since 0.3.16-canary.0
  */
 function ProgressCircle({
   __scopeProgressCircle,
@@ -317,12 +327,17 @@ function ProgressCircle({
 
 const PROGRESS_CIRCLE_SVG_NAME = "ProgressCircleSVG";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ProgressCircleSVGProps = ComponentProps<"svg">;
 
 /**
  * SVG container for the progress circle
- *
+ * 
  * Renders the SVG with accessibility attributes and supports indeterminate state.
+ *
+ * @since 0.3.16-canary.0
  */
 function ProgressCircleSVG({
   __scopeProgressCircle,
@@ -356,12 +371,17 @@ function ProgressCircleSVG({
 
 const PROGRESS_CIRCLE_TRACK_NAME = "ProgressCircleTrack";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ProgressCircleTrackProps = ComponentProps<"circle">;
 
 /**
  * Background circle for the progress indicator
- *
+ * 
  * Renders the static track of the progress circle.
+ *
+ * @since 0.3.16-canary.0
  */
 function ProgressCircleTrack({
   __scopeProgressCircle,
@@ -391,12 +411,17 @@ function ProgressCircleTrack({
 
 const PROGRESS_CIRCLE_INDICATOR_NAME = "ProgressCircleIndicator";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ProgressCircleIndicatorProps = ComponentProps<"circle">;
 
 /**
  * Foreground circle showing progress
- *
+ * 
  * Renders the dynamic progress indicator with stroke dash properties.
+ *
+ * @since 0.3.16-canary.0
  */
 function ProgressCircleIndicator({
   __scopeProgressCircle,
@@ -435,14 +460,19 @@ function ProgressCircleIndicator({
 
 const PROGRESS_CIRCLE_VALUE_NAME = "ProgressCircleValue";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ProgressCircleValueProps extends Omit<ComponentProps<"div">, "children"> {
   children?: ((context: { value: number | undefined; valueText: string }) => ReactNode) | ReactNode;
 }
 
 /**
  * Displays the current progress value
- *
+ * 
  * Supports custom content or default value text rendering.
+ *
+ * @since 0.3.16-canary.0
  */
 function ProgressCircleValue({
   __scopeProgressCircle,

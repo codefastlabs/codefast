@@ -7,6 +7,9 @@ import type { AppError } from "#/core/errors";
 import type { TagCommandPrelude } from "#/tag/domain/types";
 import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function prepareTagSync(
   fs: FilesystemPort,
   args: {

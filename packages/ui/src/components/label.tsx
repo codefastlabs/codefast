@@ -9,8 +9,14 @@ import * as LabelPrimitive from "@radix-ui/react-label";
  * Component: Label
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type LabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Label({ className, ...props }: LabelProps): JSX.Element {
   return (
     <LabelPrimitive.Root

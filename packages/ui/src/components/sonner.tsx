@@ -11,8 +11,14 @@ import { Toaster as Sonner } from "sonner";
  * Component: Sonner
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ToasterProps = SonnerToasterProps;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Toaster({ ...props }: ToasterProps): JSX.Element {
   const { theme = "system" } = useTheme();
 

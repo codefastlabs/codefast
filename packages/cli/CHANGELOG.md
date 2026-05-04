@@ -1,5 +1,11 @@
 # @codefast/cli
 
+## 0.3.16-canary.0
+
+### Patch Changes
+
+- [`22d68b5`](https://github.com/codefastlabs/codefast/commit/22d68b5a11f3f7c2b2ebb59e02ce29ffc8878b2d) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): reorganize imports for better modularity and clarity
+
 ## 0.3.15
 
 ### Patch Changes

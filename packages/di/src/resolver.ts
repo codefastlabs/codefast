@@ -48,6 +48,9 @@ const ROOT_CONSTRAINT_CONTEXT = {
   currentResolveHint: undefined,
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class DependencyResolver {
   private readonly _frameByBindingId = new Map<BindingIdentifier, MaterializationFrame>();
   private readonly _syncResolutionContextPool: DefaultResolutionContext[] = [];

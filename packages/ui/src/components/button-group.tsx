@@ -12,6 +12,9 @@ import { Separator } from "#/components/separator";
  * Variants: ButtonGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const buttonGroupVariants = tv({
   base: [
     "flex w-fit items-stretch",
@@ -43,8 +46,14 @@ const buttonGroupVariants = tv({
  * Component: ButtonGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ButtonGroupProps = ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ButtonGroup({ className, orientation, ...props }: ButtonGroupProps): JSX.Element {
   return (
     <div
@@ -61,10 +70,16 @@ function ButtonGroup({ className, orientation, ...props }: ButtonGroupProps): JS
  * Component: ButtonGroupText
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ButtonGroupTextProps extends ComponentProps<"div"> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ButtonGroupText({
   asChild = false,
   className,
@@ -92,8 +107,14 @@ function ButtonGroupText({
  * Component: ButtonGroupSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ButtonGroupSeparatorProps = ComponentProps<typeof Separator>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ButtonGroupSeparator({
   className,
   orientation = "vertical",

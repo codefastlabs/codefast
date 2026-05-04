@@ -6,6 +6,9 @@ import { complexTestProps, complexVariants } from "#/fixtures/complex";
 const npmNoMerge = tailwindVariantsTv(complexVariants, TV_MERGE_DISABLED);
 const npmWithMerge = tailwindVariantsTv(complexVariants, TV_MERGE_ENABLED);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildTailwindVariantsNpmComplexScenarios(): readonly BenchScenario[] {
   return [
     {

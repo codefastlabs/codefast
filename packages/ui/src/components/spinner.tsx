@@ -11,10 +11,16 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const SPINNER_COUNT = 8;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SpinnerProps extends ComponentProps<"span"> {
   loading?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Spinner({ children, className, loading = true, ...props }: SpinnerProps): ReactNode {
   if (!loading) {
     return children;

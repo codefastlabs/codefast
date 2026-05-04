@@ -104,9 +104,14 @@ interface InputBehaviorProps {
 
 /**
  * Combined props for the Input component
+ *
+ * @since 0.3.16-canary.0
  */
 type InputProps = PropsWithChildren<InputBehaviorProps & InputVisualProps>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   const {
     __scopeInput,
@@ -205,9 +210,14 @@ const INPUT_FIELD_NAME = "InputField";
 
 /**
  * Props for the InputField component
+ *
+ * @since 0.3.16-canary.0
  */
 type InputFieldProps = ComponentProps<"input">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): JSX.Element {
   /**
    * Context values from parent Input component

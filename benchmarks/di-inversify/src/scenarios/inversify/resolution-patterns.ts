@@ -101,6 +101,9 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildInversifyResolutionPatternScenarios(): readonly BenchScenario[] {
   return [
     buildGetOptionalHitScenario(),

@@ -9,6 +9,8 @@ import { logger } from "#/core/logger";
 
 /**
  * Resolve the monorepo root (directory containing `pnpm-workspace.yaml`).
+ *
+ * @since 0.3.16-canary.0
  */
 export function findRepoRoot(fromDirectory: string, fs: FilesystemPort): string {
   const candidates = [path.dirname(fileURLToPath(import.meta.url)), fromDirectory];
@@ -32,11 +34,17 @@ export function findRepoRoot(fromDirectory: string, fs: FilesystemPort): string 
   );
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type WorkspacePackageLayoutSource =
   | "pnpm-workspace-yaml"
   | "default-patterns"
   | "declared-empty";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type WorkspacePackageLayoutOutcome = {
   readonly packageDirectoryPathsAbsolute: string[];
   readonly layoutSource: WorkspacePackageLayoutSource;
@@ -148,6 +156,9 @@ async function readWorkspaceYaml(
   return { exists: true, doc };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function listWorkspacePackageDirectories(
   rootDirectoryPathAbsolute: string,
   fs: FilesystemPort,

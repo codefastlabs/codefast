@@ -19,6 +19,9 @@ function readVersion(): string {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function runCli(argv: string[]): Promise<number> {
   const program = new Command();
   program

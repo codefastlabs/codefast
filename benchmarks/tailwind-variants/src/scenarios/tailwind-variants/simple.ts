@@ -6,6 +6,9 @@ import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
 const npmNoMerge = tailwindVariantsTv(buttonVariants, TV_MERGE_DISABLED);
 const npmWithMerge = tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildTailwindVariantsNpmSimpleScenarios(): readonly BenchScenario[] {
   return [
     {

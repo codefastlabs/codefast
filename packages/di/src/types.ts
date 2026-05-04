@@ -4,20 +4,33 @@ import type { Constructor } from "#/constructor-type";
 // Re-export for consumers that import from `#/types`
 export type { Constructor } from "#/constructor-type";
 
-/** Token or class constructor used as a binding / injection / resolve key. */
+/**
+ * Token or class constructor used as a binding / injection / resolve key.
+ *
+ * @since 0.3.16-canary.0
+ */
 export type DependencyKey = Token<unknown> | Constructor;
 
 // ── BindingScope ────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type BindingScope = "singleton" | "transient" | "scoped";
 
 // ── BindingIdentifier ────────────────────────────────────────────────────────
 
 declare const BINDING_ID_BRAND: unique symbol;
+/**
+ * @since 0.3.16-canary.0
+ */
 export type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
 
 // ── BindingKind ───────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type BindingKind =
   | "class"
   | "dynamic"
@@ -29,15 +42,24 @@ export type BindingKind =
 
 // ── Handlers ─────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ActivationHandler<Value> = (
   ctx: ResolutionContext,
   instance: Value,
 ) => Value | Promise<Value>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 
 // ── ResolveOptions ────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ResolveOptions {
   name?: string;
   tag?: readonly [tag: string, value: unknown];
@@ -46,6 +68,9 @@ export interface ResolveOptions {
 
 // ── MaterializationFrame ──────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface MaterializationFrame {
   readonly tokenName: string;
   readonly scope: BindingScope;
@@ -59,6 +84,9 @@ export interface MaterializationFrame {
 
 // ── ConstraintContext ─────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ConstraintContext {
   readonly resolutionPath: readonly string[];
   readonly materializationStack: readonly MaterializationFrame[];
@@ -69,6 +97,9 @@ export interface ConstraintContext {
 
 // ── ResolutionContext ─────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ResolutionContext {
   resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
   resolveAsync<const Value>(
@@ -93,5 +124,8 @@ export interface ResolutionContext {
 
 // ── TokenValue ────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TokenValue<Type> =
   Type extends Token<infer Value> ? Value : Type extends Constructor<infer Value> ? Value : never;

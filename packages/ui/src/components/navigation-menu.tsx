@@ -10,6 +10,9 @@ import { buttonVariants } from "#/components/button";
  * Style: NavigationMenuTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const navigationMenuTriggerVariants = tv({
   base: buttonVariants({
     className:
@@ -22,10 +25,16 @@ const navigationMenuTriggerVariants = tv({
  * Component: NavigationMenu
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface NavigationMenuProps extends ComponentProps<typeof NavigationMenuPrimitive.Root> {
   viewport?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NavigationMenu({
   children,
   className,
@@ -52,8 +61,14 @@ function NavigationMenu({
  * Component: NavigationMenuList
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NavigationMenuListProps = ComponentProps<typeof NavigationMenuPrimitive.List>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NavigationMenuList({
   children,
   className,
@@ -75,8 +90,14 @@ function NavigationMenuList({
  * Component: NavigationMenuItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NavigationMenuItemProps = ComponentProps<typeof NavigationMenuPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NavigationMenuItem({ className, ...props }: NavigationMenuItemProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Item
@@ -91,8 +112,14 @@ function NavigationMenuItem({ className, ...props }: NavigationMenuItemProps): J
  * Component: NavigationMenuTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NavigationMenuTriggerProps = ComponentProps<typeof NavigationMenuPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NavigationMenuTrigger({
   children,
   className,
@@ -122,8 +149,14 @@ function NavigationMenuTrigger({
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NavigationMenuContentProps = ComponentProps<typeof NavigationMenuPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NavigationMenuContent({ className, ...props }: NavigationMenuContentProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Content
@@ -153,8 +186,14 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
  * Component: NavigationMenuLink
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NavigationMenuLinkProps = ComponentProps<typeof NavigationMenuPrimitive.Link>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Link

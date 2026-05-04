@@ -9,8 +9,14 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
  * Component: Avatar
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AvatarProps = ComponentProps<typeof AvatarPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Avatar({ className, ...props }: AvatarProps): JSX.Element {
   return (
     <AvatarPrimitive.Root
@@ -25,8 +31,14 @@ function Avatar({ className, ...props }: AvatarProps): JSX.Element {
  * Component: AvatarImage
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AvatarImageProps = ComponentProps<typeof AvatarPrimitive.Image>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
   return (
     <AvatarPrimitive.Image
@@ -41,8 +53,14 @@ function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
  * Component: AvatarFallback
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AvatarFallbackProps = ComponentProps<typeof AvatarPrimitive.Fallback>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Element {
   return (
     <AvatarPrimitive.Fallback

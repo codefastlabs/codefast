@@ -1,15 +1,27 @@
 import type { ContainerGraphJson } from "#/dependency-graph";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface CytoscapeNode {
   data: { id: string; label: string; kind: string; scope: string; fromParent: boolean };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface CytoscapeEdge {
   data: { id: string; source: string; target: string; label?: string };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type CytoscapeElements = Array<CytoscapeNode | CytoscapeEdge>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
   const elements: CytoscapeElements = [];
 

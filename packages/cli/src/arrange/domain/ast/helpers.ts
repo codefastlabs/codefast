@@ -52,6 +52,8 @@ function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
 /**
  * Build a set of local binding names that are imported from a known cn/tv
  * module in `sourceFile`.
+ *
+ * @since 0.3.16-canary.0
  */
 export function buildKnownCnTvBindings(sourceFile: DomainSourceFile): Set<string> {
   const bindings = new Set<string>();
@@ -96,6 +98,8 @@ export function buildKnownCnTvBindings(sourceFile: DomainSourceFile): Set<string
 /**
  * Returns true when `expr` is an identifier whose name matches `name` AND
  * that name is listed in `knownBindings` from a recognized import.
+ *
+ * @since 0.3.16-canary.0
  */
 export function isCnOrTvIdentifier(
   expr: DomainAstNode,
@@ -114,6 +118,9 @@ export function isCnOrTvIdentifier(
   return false;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function propertyAssignmentNameText(prop: DomainPropertyAssignment): string | undefined {
   if (isDomainIdentifier(prop.name)) {
     return prop.name.text;
@@ -124,6 +131,9 @@ export function propertyAssignmentNameText(prop: DomainPropertyAssignment): stri
   return undefined;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function lineOf(sourceFile: DomainSourceFile, node: DomainAstNode): number {
   return lineOfSourcePosition(sourceFile.text, node.pos);
 }
@@ -133,6 +143,8 @@ export { applyEditsDescending };
 /**
  * Replace `cn(...)` nested in `tv({...})` with a plain string (one arg) or a string
  * array (multiple args). Returns undefined when there are zero arguments.
+ *
+ * @since 0.3.16-canary.0
  */
 export function unwrapCnInsideTvCallReplacement(
   call: DomainCallExpression,

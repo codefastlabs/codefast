@@ -6,6 +6,9 @@ import { extremeTestProps, extremeVariants } from "#/fixtures/extreme";
 const codefastNoMerge = codefastTvFn(extremeVariants, TV_MERGE_DISABLED);
 const codefastWithMerge = codefastTvFn(extremeVariants, TV_MERGE_ENABLED);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildCodefastExtremeScenarios(): readonly BenchScenario[] {
   return [
     {

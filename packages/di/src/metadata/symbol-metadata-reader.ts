@@ -14,6 +14,9 @@ import {
   lifecycleMetadataMap,
 } from "#/metadata/metadata-keys";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class SymbolMetadataReader implements MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
     // WeakMap approach (works with esbuild/tsx)
@@ -88,4 +91,7 @@ export class SymbolMetadataReader implements MetadataReader {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const defaultMetadataReader = new SymbolMetadataReader();

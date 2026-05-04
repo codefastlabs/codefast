@@ -11,8 +11,14 @@ import { Label } from "#/components/label";
  * Component: RadioCards
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type RadioCardsProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function RadioCards(props: RadioCardsProps): JSX.Element {
   return <RadioGroupPrimitive.Root data-slot="radio-cards" {...props} />;
 }
@@ -21,8 +27,14 @@ function RadioCards(props: RadioCardsProps): JSX.Element {
  * Component: RadioCardsItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type RadioCardsItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function RadioCardsItem({ children, className, ...props }: RadioCardsItemProps): JSX.Element {
   return (
     <Label

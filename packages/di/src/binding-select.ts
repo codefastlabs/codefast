@@ -5,6 +5,8 @@ import { AmbiguousBindingError } from "#/errors";
 /**
  * Select a single candidate from a list of bindings using slot matching + predicates.
  * Returns undefined if no match, throws AmbiguousBindingError if multiple match.
+ *
+ * @since 0.3.16-canary.0
  */
 export function selectBinding(
   bindings: readonly Binding[],
@@ -30,6 +32,8 @@ export function selectBinding(
 
 /**
  * Select all candidates matching hint + predicates.
+ *
+ * @since 0.3.16-canary.0
  */
 export function selectAllBindings(
   bindings: readonly Binding[],

@@ -17,6 +17,9 @@ import {
  * Component: InputSearch
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface InputSearchProps extends Omit<
   ComponentProps<typeof InputGroupInput>,
   "defaultValue" | "onChange" | "type" | "value"
@@ -26,6 +29,9 @@ interface InputSearchProps extends Omit<
   value?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputSearch({
   className,
   defaultValue,

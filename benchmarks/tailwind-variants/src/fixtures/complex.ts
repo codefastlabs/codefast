@@ -1,7 +1,9 @@
 /**
  * Complex Benchmark Data
- *
+ * 
  * Data specific to complex variant benchmarks
+ *
+ * @since 0.3.16-canary.0
  */
 
 export const complexVariants = {
@@ -123,6 +125,9 @@ export const complexVariants = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const complexTestProps = [
   {},
   { size: "lg", variant: "destructive" },

@@ -12,8 +12,14 @@ import { buttonVariants } from "#/components/button";
  * Component: AlertDialog
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogProps = ComponentProps<typeof AlertDialogPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
@@ -22,8 +28,14 @@ function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
  * Component: AlertDialogTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogTriggerProps = ComponentProps<typeof AlertDialogPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element {
   return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
@@ -32,6 +44,9 @@ function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element 
  * Component: AlertDialogContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface AlertDialogContentProps extends ComponentProps<typeof AlertDialogPrimitive.Content> {
   classNames?: {
     content?: string;
@@ -40,6 +55,9 @@ interface AlertDialogContentProps extends ComponentProps<typeof AlertDialogPrimi
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogContent({
   children,
   className,
@@ -90,8 +108,14 @@ function AlertDialogContent({
  * Component: AlertDialogHeader
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX.Element {
   return (
     <div
@@ -110,8 +134,14 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogBodyProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
   return (
     <main
@@ -126,8 +156,14 @@ function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Ele
  * Component: AlertDialogFooter
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogFooterProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX.Element {
   return (
     <div
@@ -146,8 +182,14 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
  * Component: AlertDialogTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogTitleProps = ComponentProps<typeof AlertDialogPrimitive.Title>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Title
@@ -162,8 +204,14 @@ function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.E
  * Component: AlertDialogDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDialogDescriptionProps = ComponentProps<typeof AlertDialogPrimitive.Description>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Description
@@ -178,11 +226,17 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
  * Component: AlertDialogAction
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface AlertDialogActionProps extends ComponentProps<typeof AlertDialogPrimitive.Action> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogAction({
   className,
   size,
@@ -202,11 +256,17 @@ function AlertDialogAction({
  * Component: AlertDialogCancel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface AlertDialogCancelProps extends ComponentProps<typeof AlertDialogPrimitive.Cancel> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDialogCancel({
   className,
   size,

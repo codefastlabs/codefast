@@ -3,6 +3,9 @@ import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 import type { Token } from "#/token";
 import { slotKeyEquals } from "#/binding";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class BindingRegistry {
   // Map from token key -> array of bindings (order matters for last-wins)
   private readonly _bindings = new Map<DependencyKey, Binding[]>();

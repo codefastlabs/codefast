@@ -9,10 +9,16 @@ import { composeEventHandlers } from "@radix-ui/primitive";
  * Component: Radio
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface RadioProps extends Omit<ComponentProps<"input">, "type"> {
   onValueChange?: (value: string) => void;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JSX.Element {
   return (
     <input

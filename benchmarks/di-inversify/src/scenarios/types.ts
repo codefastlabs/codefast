@@ -15,6 +15,8 @@ export { isAsyncScenario } from "@codefast/benchmark-harness";
 
 /**
  * Grouping used by the reporter to label scenarios in the comparison table.
+ *
+ * @since 0.3.16-canary.0
  */
 export type ScenarioGroup =
   | "micro"
@@ -29,8 +31,17 @@ export type ScenarioGroup =
   | "production"
   | "introspection";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type BenchScenario = HarnessBenchScenario & { readonly group: ScenarioGroup };
+/**
+ * @since 0.3.16-canary.0
+ */
 export type AsyncBenchScenario = HarnessAsyncBenchScenario & { readonly group: ScenarioGroup };
+/**
+ * @since 0.3.16-canary.0
+ */
 export type AnyScenario = BenchScenario | AsyncBenchScenario;
 
 /**
@@ -40,6 +51,8 @@ export type AnyScenario = BenchScenario | AsyncBenchScenario;
  * only one side, that row still appears with the missing side formatted as 0/“—”
  * (e.g. codefast-only `realistic-graph-validate`); the reporter does **not** drop
  * the row.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface ScenarioModule {
   readonly codefast: readonly AnyScenario[];

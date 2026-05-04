@@ -1,4 +1,8 @@
-/** Shape that every per-library subprocess config object must satisfy. */
+/**
+ * Shape that every per-library subprocess config object must satisfy.
+ *
+ * @since 0.3.16-canary.0
+ */
 export interface BenchSubprocessConfig {
   readonly libraryName: string;
   readonly scenarioName: string;
@@ -8,6 +12,9 @@ export interface BenchSubprocessConfig {
   readonly displayName?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function resolveDisplayName(config: BenchSubprocessConfig): string {
   return config.displayName ?? config.libraryName;
 }

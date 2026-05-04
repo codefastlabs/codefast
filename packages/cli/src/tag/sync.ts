@@ -16,6 +16,9 @@ import type {
 import { resolveTagTargetCandidates } from "#/tag/target-candidates";
 import { runTagOnTarget } from "#/tag/target-runner";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagSyncRunRequest = {
   rootDir: string;
   write: boolean;
@@ -25,10 +28,16 @@ export type TagSyncRunRequest = {
   config?: unknown;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagSyncExecutionInput = TagSyncRunRequest & {
   readonly listener?: TagProgressListener | undefined;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function runTagSync(
   fs: FilesystemPort,
   input: TagSyncExecutionInput,

@@ -6,6 +6,9 @@ import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
 const codefastNoMerge = codefastTvFn(buttonVariants, TV_MERGE_DISABLED);
 const codefastWithMerge = codefastTvFn(buttonVariants, TV_MERGE_ENABLED);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildCodefastSimpleScenarios(): readonly BenchScenario[] {
   return [
     {

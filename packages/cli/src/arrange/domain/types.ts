@@ -17,6 +17,9 @@ import type {
 import type { CodefastConfig } from "#/core/config/schema";
 import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type Bucket =
   | "existence"
   | "position"
@@ -41,9 +44,14 @@ export type Bucket =
 
 /**
  * String or no-substitution template literal used as a Tailwind class blob.
+ *
+ * @since 0.3.16-canary.0
  */
 export type TailwindClassLiteral = DomainTailwindClassLiteral;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ForEachStringLiteralInClassExpressionOptions = {
   /**
    * When `false`, do not visit literals inside `cond ? "a" : "b"`. Used when
@@ -53,6 +61,9 @@ export type ForEachStringLiteralInClassExpressionOptions = {
   descendIntoConditional?: boolean;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type JsxClassNameStatic = {
   lit: TailwindClassLiteral;
   /**
@@ -64,6 +75,8 @@ export type JsxClassNameStatic = {
 /**
  * A StringNode represents a single "grouping slot" — the full set of static
  * string literals that belong to one logical class surface.
+ *
+ * @since 0.3.16-canary.0
  */
 export type StringNode = {
   /**
@@ -87,6 +100,9 @@ export type StringNode = {
   get primaryClassLiteral(): TailwindClassLiteral;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type GroupTarget =
   | { kind: "cnArg"; item: StringNode }
   | {
@@ -96,6 +112,9 @@ export type GroupTarget =
       valueNode: DomainAstNode;
     };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type PlannedGroupEdit = {
   start: number;
   end: number;
@@ -110,6 +129,9 @@ export type PlannedGroupEdit = {
   label: string;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type AnalyzeReport = {
   files: number;
   cnCallExpressions: number;
@@ -140,6 +162,9 @@ export type AnalyzeReport = {
   }>;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type GroupFileResult = {
   filePath: string;
   /**
@@ -155,12 +180,18 @@ export type GroupFileResult = {
   workPlan?: GroupFileWorkPlan;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ArrangeGroupFileOptions = {
   write: boolean;
   withClassName: boolean;
   cnImport?: string;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ArrangeRunResult = {
   filePaths: string[];
   modifiedFiles: string[];
@@ -171,11 +202,17 @@ export type ArrangeRunResult = {
   previewPlans: GroupFileWorkPlan[];
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ArrangeSuggestGroupsOutput = {
   readonly primaryLine: string;
   readonly bucketsCommentLine: string;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ArrangeTargetWorkspaceAndConfig = {
   readonly resolvedTarget: string;
   readonly rootDir: string;

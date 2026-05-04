@@ -8,6 +8,9 @@ import { findRepoRoot } from "#/core/workspace/resolver";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types";
 import { resolveArrangeTargetPath } from "#/arrange/resolve-target";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function prepareArrangeWorkspace(
   fs: FilesystemPort,
   args: {

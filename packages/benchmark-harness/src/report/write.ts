@@ -3,7 +3,11 @@ import { dirname } from "node:path";
 import type { JsonlBenchObservationRow } from "#/report/jsonl";
 import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 
-/** Writes a pre-rendered markdown string to `outputPath`, creating parent directories as needed. */
+/**
+ * Writes a pre-rendered markdown string to `outputPath`, creating parent directories as needed.
+ *
+ * @since 0.3.16-canary.0
+ */
 export function writeMarkdownFile(outputPath: string, markdown: string): void {
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${markdown}\n`, "utf8");
@@ -47,7 +51,11 @@ function flattenLibraryToJsonl(
   return observations;
 }
 
-/** Writes one JSONL file containing flattened observations from one or more libraries. */
+/**
+ * Writes one JSONL file containing flattened observations from one or more libraries.
+ *
+ * @since 0.3.16-canary.0
+ */
 export function writeJsonlRun(
   outputPath: string,
   libraries: readonly { fingerprint: Fingerprint; trials: readonly TrialPayload[] }[],

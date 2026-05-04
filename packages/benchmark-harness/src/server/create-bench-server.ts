@@ -11,6 +11,9 @@ const clientDir = join(dirname(fileURLToPath(import.meta.url)), "client");
 const indexHtml = readFileSync(join(clientDir, "index.html"), "utf8");
 const appJs = readFileSync(join(clientDir, "app.js"), "utf8");
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createBenchServer(options: BenchServerOptions): Server {
   return createServer((req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost");

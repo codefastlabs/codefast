@@ -6,6 +6,9 @@ import type { GroupFileUnwrapPlan, GroupFileWorkPlan } from "#/arrange/domain/gr
 import { lineOf } from "#/arrange/domain/ast/helpers";
 import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeReport): void {
   logger.out(`Path: ${path.resolve(resolvedTargetPath)}`);
   logger.out(`.ts/.tsx files: ${report.files}`);
@@ -57,6 +60,9 @@ export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeRe
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function printSyncResult(result: ArrangeRunResult, write: boolean): void {
   logger.out(
     `\nTotal: ${result.filePaths.length} file(s), ${result.totalFound} site(s) (cn/tv/JSX className) to review.`,
@@ -79,6 +85,9 @@ export function printSyncResult(result: ArrangeRunResult, write: boolean): void 
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
   printGroupFilePreviewBody({
     filePath: work.filePath,

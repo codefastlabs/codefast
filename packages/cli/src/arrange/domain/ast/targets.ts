@@ -28,6 +28,9 @@ import {
 } from "#/arrange/domain/ast/ast-node";
 import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function targetReplaceStart(target: GroupTarget): number {
   if (target.kind === "cnArg") {
     return target.item.cnCall ? target.item.cnCall.pos : target.item.primaryClassLiteral.pos;
@@ -57,6 +60,9 @@ function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): GroupTarg
   return results;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectGroupTargets(sourceFile: DomainSourceFile, filePath: string): GroupTarget[] {
   const cnPart = collectGroupableStringNodes(sourceFile).map((stringNode) => ({
     kind: "cnArg" as const,
@@ -122,6 +128,9 @@ function formatCnCallReplacement(
   return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function planGroupEditForTarget(
   target: GroupTarget,
   textAfterUnwrap: string,

@@ -11,17 +11,19 @@ type MediaQueryChangeHandler = (event: MediaQueryListEvent) => void;
 
 /**
  * Subscribe to a CSS media query and receive its match state.
- *
+ * 
  * Evaluates the query immediately (when supported) and updates on changes
  * via an event listener.
- *
+ * 
  * @param query - A valid media query string (e.g., "(max-width: 768px)").
  * @returns true when the media query currently matches; otherwise false.
- *
+ * 
  * @example
  * ```tsx
  * const isNarrow = useMediaQuery("(max-width: 768px)");
  * ```
+ *
+ * @since 0.3.16-canary.0
  */
 export function useMediaQuery(query: string): boolean {
   /**

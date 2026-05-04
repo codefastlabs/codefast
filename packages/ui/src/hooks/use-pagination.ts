@@ -2,6 +2,9 @@
 
 import { useMemo } from "react";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface UsePaginationProps {
   /**
    * Current active page number.
@@ -24,6 +27,8 @@ export interface UsePaginationProps {
 
 /**
  * Ellipsis marker used to collapse ranges in pagination output.
+ *
+ * @since 0.3.16-canary.0
  */
 export const ELLIPSIS = "•••";
 
@@ -42,14 +47,14 @@ const createRange = (start: number, end: number): number[] => {
 
 /**
  * Compute a pagination structure for result sets.
- *
+ * 
  * Returns a mixed array of page numbers and the `ELLIPSIS` marker representing
  * collapsed ranges. The shape adapts to the total pages and the requested
  * sibling window around the current page.
- *
+ * 
  * @param props - Pagination options. See {@link UsePaginationProps}.
  * @returns Array of page numbers and `ELLIPSIS` representing the pagination model.
- *
+ * 
  * @example
  * ```tsx
  * const paginationRange = usePagination({
@@ -59,6 +64,8 @@ const createRange = (start: number, end: number): number[] => {
  *   totalResults: 100
  * });
  * ```
+ *
+ * @since 0.3.16-canary.0
  */
 export function usePagination({
   currentPage,

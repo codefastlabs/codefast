@@ -1,11 +1,17 @@
 import type { ContainerGraphJson } from "#/dependency-graph";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ReactFlowNode {
   id: string;
   data: { label: string; kind: string; scope: string; fromParent: boolean };
   position: { x: number; y: number };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ReactFlowEdge {
   id: string;
   source: string;
@@ -13,11 +19,17 @@ export interface ReactFlowEdge {
   label?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ReactFlowGraph {
   nodes: ReactFlowNode[];
   edges: ReactFlowEdge[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
   const nodes: ReactFlowNode[] = graph.nodes.map((node, idx) => ({
     id: node.id,

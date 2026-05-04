@@ -23,6 +23,9 @@ import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createArrangeCommand(): Command {
   const cmd = new Command("arrange").description(
     "Analyze and regroup Tailwind classes in cn() / tv() calls (Tailwind v4)",
