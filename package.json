@@ -32,7 +32,7 @@
     "release": "changeset",
     "release:canary:enter": "changeset pre enter canary",
     "release:canary:exit": "changeset pre exit",
-    "version-packages": "changeset version && codefast tag",
+    "version-packages": "changeset version && pnpm exec codefast tag",
     "start": "turbo run start",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
