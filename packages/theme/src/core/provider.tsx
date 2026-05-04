@@ -100,12 +100,12 @@ interface ThemeProviderProps {
 
 /**
  * Provider component for theme state management.
- * 
+ *
  * **React 19 Features Used:**
  * - `useOptimistic` - Immediate UI feedback while persisting theme
  * - `useSyncExternalStore` - SSR-safe subscription to OS theme preference
  * - `useEffectEvent` - Stable callback for cross-tab sync without effect re-runs
- * 
+ *
  * @param props - Component props
  * @param props.children - React tree to provide context for
  * @param props.theme - Initial preference from the server (cookie, loader, etc.)
@@ -118,7 +118,7 @@ interface ThemeProviderProps {
  * @param props.disableTransitionOnChange - Temporarily disable CSS transitions on theme change
  * @param props.nonce - CSP nonce for inline transition-blocking styles when `disableTransitionOnChange` is set
  * @returns Provider element wrapping `children`
- * 
+ *
  * @example
  * ```tsx
  * // In your root layout

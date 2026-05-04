@@ -2,12 +2,12 @@
  * Wraps a sub-μs closure in a fixed-size inner loop so tinybench's
  * `performance.now()` timing (μs resolution) samples a non-trivial amount of
  * work per iteration.
- * 
+ *
  * Use with any scenario whose single operation completes in well under 1 μs
  * (constant-resolve, rotate-constants, named-constant-get). The scenario
  * declaration must set `batch` to the same factor so the reporter can multiply
  * tinybench's throughput by this number to get the per-operation rate.
- * 
+ *
  * @example
  * {
  *   id: "constant-resolve",

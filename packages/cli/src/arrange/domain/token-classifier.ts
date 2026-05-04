@@ -460,7 +460,7 @@ function inDataAttributeStem(token: string): string {
  * Uses the **full variant stack** (every `:` segment outside `[…]`), not only the
  * outermost prefix, so `@md/foo:[&>*]:w-auto` and `@md/foo:has-[…]:mt-px` stay in
  * separate groups while `hover:opacity` still keys as `hover` + `opacity`…
- * 
+ *
  * `data-[…]` / `aria-[…]` normalize the first segment via {@link dataAttributeStem} /
  * {@link ariaAttributeStem} (full token required for bracket capture).
  *

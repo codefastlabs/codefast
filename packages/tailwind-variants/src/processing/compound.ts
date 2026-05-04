@@ -17,11 +17,11 @@ import type {
 
 /**
  * Apply compound variant classes based on variant conditions.
- * 
+ *
  * This function processes compound variants and applies their classes when
  * all specified variant conditions are met. It merges by default and provides
  * variant props to determine which compound variants should be applied.
- * 
+ *
  * @typeParam T - The configuration schema type
  * @param compoundVariantGroups - Array of compound variant definitions
  * @param variantProps - Variant properties passed to the component
@@ -108,11 +108,11 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
 
 /**
  * Apply compound slot classes based on variant conditions.
- * 
+ *
  * This function processes compound slots and applies their classes to
  * specific slots when all specified variant conditions are met.
  * It returns a mapping of slot names to their applied classes.
- * 
+ *
  * @typeParam T - The configuration schema type
  * @typeParam S - The slot configuration schema type
  * @param compoundSlotDefinitions - Array of compound slot definitions

@@ -64,7 +64,7 @@ export interface RootThemeLoaderData {
 
 /**
  * Everything needed for the root shell in **one** server call (fewer loader awaits).
- * 
+ *
  * In your shell: `resolveTheme(theme, ssrSystemTheme)` on `<html>`, plus `ThemeScript` and `ThemeProvider`.
  *
  * @since 0.3.16-canary.0
@@ -78,12 +78,12 @@ export const getRootThemeServerFn = createServerFn().handler(
 
 /**
  * Read the user's theme preference from cookies.
- * 
+ *
  * Validates the cookie value using Zod schema for type safety.
  * Returns {@link DEFAULT_THEME} if cookie is missing or invalid.
- * 
+ *
  * @returns User's stored theme preference or default
- * 
+ *
  * @example
  * ```tsx
  * const theme = await getThemeServerFn();
@@ -95,10 +95,10 @@ export const getThemeServerFn = createServerFn().handler((): Theme => readThemeF
 
 /**
  * Resolved OS theme for SSR / hydration, from Client Hints when the browser sends them.
- * 
+ *
  * Mirrors client `matchMedia("(prefers-color-scheme: dark)")` when hints are present.
  * Prefer {@link getRootThemeServerFn} for root loaders.
- * 
+ *
  * Send `Accept-CH: Sec-CH-Prefers-Color-Scheme` (and `Vary`) so navigations include the hint.
  *
  * @since 0.3.16-canary.0
@@ -109,18 +109,18 @@ export const getSsrSystemThemeServerFn = createServerFn().handler(
 
 /**
  * Persist theme preference to an HTTP-only cookie.
- * 
+ *
  * **Security:**
  * - `httpOnly: true` - Cookie cannot be accessed from JavaScript (XSS protection)
  * - `secure: true` in production - Cookie only sent over HTTPS
  * - `sameSite: 'lax'` - Prevents CSRF while allowing navigation
- * 
+ *
  * **Cookie Settings:**
  * - `maxAge: 1 year` - Preference persists across sessions
  * - `path: '/'` - Available to all routes
- * 
+ *
  * @param data - Theme to persist ('light', 'dark', or 'system')
- * 
+ *
  * @see [TanStack Start Server Functions](https://tanstack.com/start/latest/docs/framework/react/server-functions)
  *
  * @since 0.3.16-canary.0

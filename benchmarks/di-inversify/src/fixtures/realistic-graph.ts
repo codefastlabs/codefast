@@ -4,13 +4,13 @@
  * shared leaf infrastructure services (config, metrics, cache, http client),
  * two repositories that depend on the infra, two services built on those
  * repositories, and a top-level controller that composes the services.
- * 
+ *
  * This descriptor is deliberately library-agnostic — the only thing that
  * touches `@codefast/di` or `inversify` is the per-library adapter. That
  * keeps the shape of work identical across the two harnesses; any
  * measured difference comes from the resolution engine, not from
  * accidentally wiring more work on one side than the other.
- * 
+ *
  * Scenarios consuming this descriptor:
  * - `realistic-graph-resolve-root` (hot path, singleton cache warm)
  * - `realistic-graph-cold-resolve` (first resolve after bind)
@@ -25,7 +25,7 @@ export type NodeLifetime = "singleton" | "transient";
  * One constructable in the graph. `dependencies` lists *other `id`s in this
  * descriptor* — the adapter turns those into library-specific tokens and
  * wires them as factory dependencies. Leaf services have an empty array.
- * 
+ *
  * We intentionally avoid using real `@injectable` classes here because the
  * two libraries have incompatible decorator runtimes; reusing the same
  * class across both would force us to pick one runtime and disadvantage
