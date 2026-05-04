@@ -1,5 +1,16 @@
 # @codefast/cli
 
+## 0.3.15
+
+### Patch Changes
+
+- [`4b20c62`](https://github.com/codefastlabs/codefast/commit/4b20c62510d42dfb5e9abca36b4d87a99422e4f0) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): streamline TypeScript handling and enhance mirror module structure
+
+- [`4df6e65`](https://github.com/codefastlabs/codefast/commit/4df6e6579faf21c6dc7622eb424ad213b120dabb) Thanks [@thevuong](https://github.com/thevuong)! - chore(tsdown): remove bench exclusions and streamline configuration files
+
+- Updated dependencies [[`8492085`](https://github.com/codefastlabs/codefast/commit/849208521571b18a3af1f36566c3111a5af01b7c), [`4df6e65`](https://github.com/codefastlabs/codefast/commit/4df6e6579faf21c6dc7622eb424ad213b120dabb)]:
+  - @codefast/di@0.3.15
+
 ## 0.3.14
 
 ### Patch Changes
