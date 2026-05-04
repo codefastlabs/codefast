@@ -1,0 +1,30 @@
+import { AppError } from "#/core/errors";
+import { messageFrom } from "#/core/errors";
+import type { FilesystemPort } from "#/core/filesystem";
+import type { Result } from "#/core/result";
+import { err, ok } from "#/core/result";
+import {
+  accumulateAnalyzeReportForSourceFile,
+  createEmptyAnalyzeReport,
+} from "#/arrange/domain/arrange-analyze.domain-service";
+import type { AnalyzeReport } from "#/arrange/domain/types.domain";
+import { scanArrangeTargets } from "#/arrange/scan-target";
+import { parseDomainSourceFile } from "#/arrange/source-parse";
+
+export function analyzeDirectory(
+  fs: FilesystemPort,
+  analyzeRootPath: string,
+): Result<AnalyzeReport, AppError> {
+  const report = createEmptyAnalyzeReport();
+  try {
+    const files = scanArrangeTargets(fs, analyzeRootPath);
+    for (const filePath of files) {
+      const sourceText = fs.readFileSync(filePath, "utf8");
+      const domainSf = parseDomainSourceFile(filePath, sourceText);
+      accumulateAnalyzeReportForSourceFile(report, domainSf, sourceText, filePath);
+    }
+    return ok(report);
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  }
+}

@@ -61,7 +61,6 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@codefast/di": "workspace:*",
     "commander": "catalog:",
     "jiti": "catalog:",
     "picomatch": "catalog:",
@@ -75,8 +74,6 @@
     "@types/picomatch": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "esbuild": "catalog:",
-    "unplugin-swc": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
