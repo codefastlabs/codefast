@@ -13,9 +13,9 @@ import type {
   DomainCallExpression,
   DomainSourceFile,
   DomainTailwindClassLiteral,
-} from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
 import type { CodefastConfig } from "#/config/schema";
-import type { GroupFileWorkPlan } from "#/arrange/domain/arrange-grouping.domain-service";
+import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
 
 export type Bucket =
   | "existence"

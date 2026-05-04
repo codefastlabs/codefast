@@ -1,4 +1,4 @@
-import { EMPTY_CN_TV_BINDINGS } from "#/arrange/domain/constants.domain";
+import { EMPTY_CN_TV_BINDINGS } from "#/arrange/domain/constants";
 import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
 import {
   isDomainIdentifier,
@@ -8,13 +8,13 @@ import {
   isDomainPropertyAccessExpression,
   isDomainStringLiteral,
   lineOfSourcePosition,
-} from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
 import type {
   DomainAstNode,
   DomainCallExpression,
   DomainPropertyAssignment,
   DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
 
 /**
  * Known module specifiers that export `cn` / `tv`.

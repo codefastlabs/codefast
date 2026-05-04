@@ -4,7 +4,7 @@ import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 import { findRepoRoot } from "#/core/workspace";
 import type { AppError } from "#/core/errors";
-import type { TagCommandPrelude } from "#/tag/domain/types.domain";
+import type { TagCommandPrelude } from "#/tag/domain/types";
 import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";
 
 export async function prepareTagSync(

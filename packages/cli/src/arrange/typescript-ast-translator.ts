@@ -4,7 +4,7 @@
  */
 
 import ts from "typescript";
-import { DomainBinaryOperator, DomainSyntaxKind } from "#/arrange/domain/ast/ast-node.model";
+import { DomainBinaryOperator, DomainSyntaxKind } from "#/arrange/domain/ast/ast-node";
 import type {
   DomainArrayLiteralExpression,
   DomainAsExpression,
@@ -32,7 +32,7 @@ import type {
   DomainSpreadElement,
   DomainStringLiteral,
   DomainUnknownAstNode,
-} from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
 
 /**
  * Mutable build view for wiring `parent` links; results satisfy readonly domain types.

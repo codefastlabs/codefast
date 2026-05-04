@@ -10,8 +10,8 @@ import type {
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#/mirror/domain/types.domain";
-import { normalizePath } from "#/mirror/domain/path-normalizer.value-object";
+} from "#/mirror/domain/types";
+import { normalizePath } from "#/mirror/domain/path-normalizer";
 import {
   listWorkspacePackageDirectories,
   type WorkspacePackageLayoutOutcome,

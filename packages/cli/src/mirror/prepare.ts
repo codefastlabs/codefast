@@ -6,7 +6,7 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { findRepoRoot } from "#/core/workspace";
 import type { GlobalCliOptions } from "#/core/global-cli-options";
-import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types.domain";
+import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types";
 import { resolveMirrorPackageFromCliArg } from "#/mirror/mirror-package-path";
 
 export async function prepareMirrorSync(

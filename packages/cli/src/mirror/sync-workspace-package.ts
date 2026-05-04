@@ -2,17 +2,10 @@ import path from "node:path";
 import type { FilesystemPort } from "#/core/filesystem";
 import { messageFrom } from "#/core/errors";
 import type { MirrorConfig } from "#/config/schema";
-import {
-  createPathTransform,
-  generateExports,
-} from "#/mirror/domain/generate-mirror-exports.domain-service";
-import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants.domain";
-import type {
-  MirrorPackageMeta,
-  PackageJsonShape,
-  PackageStats,
-} from "#/mirror/domain/types.domain";
-import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name.policy";
+import { createPathTransform, generateExports } from "#/mirror/domain/exports";
+import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
+import type { MirrorPackageMeta, PackageJsonShape, PackageStats } from "#/mirror/domain/types";
+import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import { writePackageJsonExportsAtomic } from "#/mirror/package-json-exports.repository";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
 

@@ -1,7 +1,7 @@
 import ts from "typescript";
 import type { FilesystemPort } from "#/core/filesystem";
 import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
-import type { TagFileResult } from "#/tag/domain/types.domain";
+import type { TagFileResult } from "#/tag/domain/types";
 
 type TextEdit = {
   start: number;

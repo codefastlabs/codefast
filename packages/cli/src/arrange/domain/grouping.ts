@@ -4,8 +4,8 @@ import {
   MAX_GROUPS_CAP,
   MAX_GROUPS_HEADROOM,
   MIN_GROUP_TOKENS,
-} from "#/arrange/domain/constants.domain";
-import type { Bucket } from "#/arrange/domain/types.domain";
+} from "#/arrange/domain/constants";
+import type { Bucket } from "#/arrange/domain/types";
 import {
   bucketsCompatible,
   bucketsMergeCompatible,
@@ -13,8 +13,8 @@ import {
   compositeSecondaryOrder,
   selectorKey,
   stateKey,
-} from "#/arrange/domain/tailwind-token-classifier.domain-service";
-import { stripVariants, tokenizeClassString } from "#/arrange/domain/tailwind-token.value-object";
+} from "#/arrange/domain/token-classifier";
+import { stripVariants, tokenizeClassString } from "#/arrange/domain/tailwind-token";
 
 /**
  * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with

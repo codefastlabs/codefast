@@ -1,4 +1,4 @@
-import { MAX_STRIP_VARIANT_PASSES } from "#/arrange/domain/constants.domain";
+import { MAX_STRIP_VARIANT_PASSES } from "#/arrange/domain/constants";
 
 export function tokenizeClassString(classString: string): string[] {
   return classString.trim().split(/\s+/).filter(Boolean);

@@ -2,7 +2,7 @@ import path from "node:path";
 import { z } from "zod";
 import type { FilesystemPort } from "#/core/filesystem";
 import { listWorkspacePackageDirectories } from "#/core/workspace";
-import type { TagTargetCandidate } from "#/tag/domain/types.domain";
+import type { TagTargetCandidate } from "#/tag/domain/types";
 
 const packageJsonFileName = "package.json";
 

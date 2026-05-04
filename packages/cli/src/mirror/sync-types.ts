@@ -2,7 +2,7 @@ import type {
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#/mirror/domain/types.domain";
+} from "#/mirror/domain/types";
 
 export type MirrorSyncRunRequest = {
   rootDir: string;

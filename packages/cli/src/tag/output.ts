@@ -5,7 +5,7 @@ import type {
   TagResolvedTarget,
   TagSyncResult,
   TagTargetExecutionResult,
-} from "#/tag/domain/types.domain";
+} from "#/tag/domain/types";
 import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 
 type TagProgressEvent =

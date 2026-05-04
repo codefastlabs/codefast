@@ -3,7 +3,7 @@ import type { FilesystemPort } from "#/core/filesystem";
 import { AppError } from "#/core/errors";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import { normalizePath } from "#/mirror/domain/path-normalizer.value-object";
+import { normalizePath } from "#/mirror/domain/path-normalizer";
 
 export function resolveMirrorPackageFromCliArg(
   fs: FilesystemPort,

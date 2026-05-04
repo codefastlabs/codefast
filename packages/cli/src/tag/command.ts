@@ -9,7 +9,7 @@ import { prepareTagSync } from "#/tag/prepare";
 import { runTagSync } from "#/tag/sync";
 import { tagSyncRunRequestSchema } from "#/tag/cli-schema";
 import { presentTagSyncResult, TagSyncProgressPresenter } from "#/tag/output";
-import type { TagSyncResult } from "#/tag/domain/types.domain";
+import type { TagSyncResult } from "#/tag/domain/types";
 import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 
 export function createTagCommand(): Command {

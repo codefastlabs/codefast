@@ -5,14 +5,14 @@ import {
   PACKAGE_JSON_EXPORT,
   VALID_DTS_EXTENSIONS,
   VALID_JS_EXTENSIONS,
-} from "#/mirror/domain/constants.domain";
+} from "#/mirror/domain/constants";
 import type {
   ExportEntry,
   ExportOriginalPathBySpecifier,
   GenerateExportsResult,
   MirrorPackageMeta,
   Module,
-} from "#/mirror/domain/types.domain";
+} from "#/mirror/domain/types";
 
 function resolvePackageScopedConfig<T>(
   configMap: Record<string, T> | undefined,
