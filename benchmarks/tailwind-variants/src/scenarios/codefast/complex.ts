@@ -6,6 +6,9 @@ import { complexTestProps, complexVariants } from "#/fixtures/complex";
 const codefastNoMerge = codefastTvFn(complexVariants, TV_MERGE_DISABLED);
 const codefastWithMerge = codefastTvFn(complexVariants, TV_MERGE_ENABLED);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildCodefastComplexScenarios(): readonly BenchScenario[] {
   return [
     {

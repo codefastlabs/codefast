@@ -4,17 +4,19 @@
  * shared leaf infrastructure services (config, metrics, cache, http client),
  * two repositories that depend on the infra, two services built on those
  * repositories, and a top-level controller that composes the services.
- *
+ * 
  * This descriptor is deliberately library-agnostic — the only thing that
  * touches `@codefast/di` or `inversify` is the per-library adapter. That
  * keeps the shape of work identical across the two harnesses; any
  * measured difference comes from the resolution engine, not from
  * accidentally wiring more work on one side than the other.
- *
+ * 
  * Scenarios consuming this descriptor:
  * - `realistic-graph-resolve-root` (hot path, singleton cache warm)
  * - `realistic-graph-cold-resolve` (first resolve after bind)
  * - `realistic-graph-validate` (codefast-only: static scope validation)
+ *
+ * @since 0.3.16-canary.0
  */
 
 export type NodeLifetime = "singleton" | "transient";
@@ -23,13 +25,15 @@ export type NodeLifetime = "singleton" | "transient";
  * One constructable in the graph. `dependencies` lists *other `id`s in this
  * descriptor* — the adapter turns those into library-specific tokens and
  * wires them as factory dependencies. Leaf services have an empty array.
- *
+ * 
  * We intentionally avoid using real `@injectable` classes here because the
  * two libraries have incompatible decorator runtimes; reusing the same
  * class across both would force us to pick one runtime and disadvantage
  * the other. The adapters emit factory bindings that produce a small
  * value object — we care about the resolver engine, not constructor
  * semantics.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface NodeDescriptor {
   readonly id: string;
@@ -37,6 +41,9 @@ export interface NodeDescriptor {
   readonly dependencies: readonly string[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface GraphDescriptor {
   readonly nodes: readonly NodeDescriptor[];
   readonly rootId: string;
@@ -47,6 +54,8 @@ export interface GraphDescriptor {
  * Aligns with what a small-to-medium real app looks like, with enough
  * reuse that resolver cache behaviour matters and enough depth that
  * factory-chain call overhead is visible.
+ *
+ * @since 0.3.16-canary.0
  */
 export const REALISTIC_GRAPH: GraphDescriptor = {
   rootId: "ApiController",
@@ -99,6 +108,8 @@ export const REALISTIC_GRAPH: GraphDescriptor = {
  * free-ish to allocate, large enough that we're not just measuring
  * `Object.create`. Adapters should use this exact shape so cross-library
  * sanity checks can deep-equal the resolved root.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface RealisticNode {
   readonly __id: string;
@@ -111,6 +122,8 @@ export interface RealisticNode {
  * particular needs no special care, but codefast's `validate()` runs
  * checks independent of declaration order — sorting keeps the two
  * adapters trivially comparable).
+ *
+ * @since 0.3.16-canary.0
  */
 export function topologicallyOrderedNodeIds(graph: GraphDescriptor): readonly string[] {
   const nodesById = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -141,6 +154,8 @@ export function topologicallyOrderedNodeIds(graph: GraphDescriptor): readonly st
 /**
  * Cheap consistency check. Run at adapter-build time to catch descriptor
  * typos before tinybench starts measuring noise.
+ *
+ * @since 0.3.16-canary.0
  */
 export function assertGraphIsWellFormed(graph: GraphDescriptor): void {
   const nodeIds = new Set(graph.nodes.map((node) => node.id));

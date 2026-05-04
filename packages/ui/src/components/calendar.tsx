@@ -14,10 +14,16 @@ import { Button, buttonVariants } from "#/components/button";
  * Component: Calendar
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CalendarProps = ComponentProps<typeof DayPicker> & {
   buttonVariant?: ComponentProps<typeof Button>["variant"];
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Calendar({
   buttonVariant = "ghost",
   captionLayout = "label",
@@ -206,8 +212,14 @@ function CalendarWeekNumber({
  * Component: CalendarDayButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CalendarDayButtonProps = ComponentProps<typeof DayButton>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CalendarDayButton({
   className,
   day,

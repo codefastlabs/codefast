@@ -17,8 +17,14 @@ import { Label } from "#/components/label";
  * Component: Form
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormProps = ComponentProps<typeof FormProvider>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const Form = FormProvider;
 
 /* -----------------------------------------------------------------------------
@@ -76,11 +82,17 @@ function useFormItem(
  * Component: FormField
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormFieldProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = ControllerProps<TFieldValues, TName>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -111,8 +123,14 @@ const [FormItemContextProvider, useFormItemContext] =
  * Component: FormItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormItemProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FormItem({
   __scopeFormField,
   className,
@@ -133,8 +151,14 @@ function FormItem({
 
 const FORM_LABEL_NAME = "FormLabel";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
   const { error, formItemId } = useFormItem(FORM_LABEL_NAME, __scopeFormField);
 
@@ -154,8 +178,14 @@ function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>):
 
 const FORM_CONTROL_NAME = "FormControl";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormControlProps = ComponentProps<typeof Slot>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
   const { error, formDescriptionId, formItemId, formMessageId } = useFormItem(
     FORM_CONTROL_NAME,
@@ -177,8 +207,14 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
  * Component: FormDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormDescriptionProps = ComponentProps<"p">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FormDescription({
   __scopeFormField,
   className,
@@ -202,8 +238,14 @@ function FormDescription({
 
 const FORM_MESSAGE_NAME = "FormMessage";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FormMessageProps = ComponentProps<"p">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FormMessage({
   __scopeFormField,
   children,

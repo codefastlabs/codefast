@@ -13,8 +13,14 @@ import { buttonVariants } from "#/components/button";
  * Component: Dialog
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogProps = ComponentProps<typeof DialogPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Dialog({ ...props }: DialogProps): JSX.Element {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
@@ -23,8 +29,14 @@ function Dialog({ ...props }: DialogProps): JSX.Element {
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogTriggerProps = ComponentProps<typeof DialogPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
@@ -33,6 +45,9 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Content> {
   classNames?: {
     close?: string;
@@ -42,6 +57,9 @@ interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Conte
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogContent({
   children,
   className,
@@ -108,8 +126,14 @@ function DialogContent({
  * Component: DialogHeader
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
@@ -128,8 +152,14 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogBodyProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
     <main
@@ -144,8 +174,14 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
  * Component: DialogFooter
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogFooterProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
@@ -164,8 +200,14 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
  * Component: DialogTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
     <DialogPrimitive.Title
@@ -180,8 +222,14 @@ function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DialogDescriptionProps = ComponentProps<typeof DialogPrimitive.Description>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX.Element {
   return (
     <DialogPrimitive.Description
@@ -196,11 +244,17 @@ function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX
  * Component: DialogClose
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DialogCloseProps extends Omit<ComponentProps<typeof DialogPrimitive.Close>, "ref"> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DialogClose({
   className,
   size,

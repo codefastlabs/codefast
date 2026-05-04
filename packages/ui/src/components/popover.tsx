@@ -9,8 +9,14 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
  * Component: Popover
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PopoverProps = ComponentProps<typeof PopoverPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Popover({ ...props }: PopoverProps): JSX.Element {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
@@ -19,8 +25,14 @@ function Popover({ ...props }: PopoverProps): JSX.Element {
  * Component: PopoverTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PopoverTriggerProps = ComponentProps<typeof PopoverPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PopoverTrigger({ ...props }: PopoverTriggerProps): JSX.Element {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
@@ -29,8 +41,14 @@ function PopoverTrigger({ ...props }: PopoverTriggerProps): JSX.Element {
  * Component: PopoverAnchor
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PopoverAnchorProps = ComponentProps<typeof PopoverPrimitive.Anchor>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PopoverAnchor({ ...props }: PopoverAnchorProps): JSX.Element {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
 }
@@ -39,8 +57,14 @@ function PopoverAnchor({ ...props }: PopoverAnchorProps): JSX.Element {
  * Component: PopoverContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PopoverContent({
   align = "center",
   className,
@@ -82,8 +106,14 @@ function PopoverContent({
  * Component: PopoverArrow
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PopoverArrowProps = ComponentProps<typeof PopoverPrimitive.Arrow>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PopoverArrow({ className, ...props }: PopoverArrowProps): JSX.Element {
   return (
     <PopoverPrimitive.Arrow

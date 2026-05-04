@@ -19,6 +19,9 @@ import { buildCodefastScaleScenarios } from "#/scenarios/codefast/scale";
 import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectAllCodefastScenarios(): readonly AnyScenario[] {
   return [
     ...buildCodefastMicroScenarios(),

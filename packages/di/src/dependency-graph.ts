@@ -6,6 +6,9 @@ import { effectiveBindingScope } from "#/binding-scope";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface GraphNode {
   readonly id: string;
   readonly tokenName: string;
@@ -14,24 +17,36 @@ export interface GraphNode {
   readonly fromParent: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface GraphEdge {
   readonly from: string;
   readonly to: string;
   readonly label?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ContainerGraphJson {
   readonly nodes: readonly GraphNode[];
   readonly edges: readonly GraphEdge[];
   readonly includesParent: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface GraphOptions {
   readonly includeParent?: boolean;
 }
 
 // ── Builder ───────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildDependencyGraph(
   registry: BindingRegistry,
   metadataReader: MetadataReader,

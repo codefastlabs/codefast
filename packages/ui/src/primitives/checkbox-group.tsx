@@ -131,11 +131,15 @@ interface CheckboxGroupBaseProps {
 
 /**
  * Props for the CheckboxGroup component
+ *
+ * @since 0.3.16-canary.0
  */
 type CheckboxGroupProps = CheckboxGroupBaseProps & ComponentProps<"div">;
 
 /**
  * CheckboxGroup component that manages a group of checkboxes with roving focus
+ *
+ * @since 0.3.16-canary.0
  */
 function CheckboxGroup({
   __scopeCheckboxGroup,
@@ -231,6 +235,8 @@ const ITEM_NAME = "CheckboxGroupItem";
 
 /**
  * Props for the CheckboxGroupItem component
+ *
+ * @since 0.3.16-canary.0
  */
 interface CheckboxGroupItemProps extends Omit<
   ComponentProps<typeof CheckboxPrimitive.Root>,
@@ -249,6 +255,8 @@ interface CheckboxGroupItemProps extends Omit<
 
 /**
  * Individual checkbox item within a CheckboxGroup
+ *
+ * @since 0.3.16-canary.0
  */
 function CheckboxGroupItem({
   __scopeCheckboxGroup,
@@ -313,11 +321,15 @@ function CheckboxGroupItem({
 
 /**
  * Props for the CheckboxGroupIndicator component
+ *
+ * @since 0.3.16-canary.0
  */
 type CheckboxGroupIndicatorProps = ComponentProps<typeof CheckboxPrimitive.Indicator>;
 
 /**
  * Visual indicator component for a CheckboxGroupItem
+ *
+ * @since 0.3.16-canary.0
  */
 function CheckboxGroupIndicator({
   __scopeCheckboxGroup,

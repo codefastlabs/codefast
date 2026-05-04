@@ -7,12 +7,18 @@ import type { Token } from "#/token";
 const SYNC_MODULE_BRAND: unique symbol = Symbol("di:sync-module");
 const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface SyncModule {
   readonly name: string;
   readonly [SYNC_MODULE_BRAND]: true;
   readonly _setup: (builder: ModuleBuilder) => void;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface AsyncModule {
   readonly name: string;
   readonly [ASYNC_MODULE_BRAND]: true;
@@ -21,11 +27,17 @@ export interface AsyncModule {
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ModuleBuilder {
   bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   import(...modules: SyncModule[]): void;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface AsyncModuleBuilder {
   bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   import(...modules: Array<SyncModule | AsyncModule>): void;
@@ -33,6 +45,9 @@ export interface AsyncModuleBuilder {
 
 // ── Static factories ──────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const SyncModule = {
   create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
     return {
@@ -43,6 +58,9 @@ export const SyncModule = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const AsyncModule = {
   create(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
     return {
@@ -55,6 +73,9 @@ export const AsyncModule = {
 
 // ── Module — unified API ──────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const Module = {
   create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
     return SyncModule.create(name, setup);
@@ -64,6 +85,9 @@ export const Module = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isSyncModule(m: SyncModule | AsyncModule): m is SyncModule {
   return (m as SyncModule)[SYNC_MODULE_BRAND] === true;
 }

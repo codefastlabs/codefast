@@ -29,6 +29,9 @@ function previewText(text: string): string {
   return text.length > PREVIEW_MAX_LENGTH ? `${text.slice(0, PREVIEW_MAX_LENGTH)}…` : text;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createEmptyAnalyzeReport(): AnalyzeReport {
   return {
     files: 0,
@@ -140,6 +143,8 @@ function visitJsxAttributeForArrangeAnalyze(
 
 /**
  * Accumulates findings for one parsed source file into `report` (mutates report).
+ *
+ * @since 0.3.16-canary.0
  */
 export function accumulateAnalyzeReportForSourceFile(
   report: AnalyzeReport,

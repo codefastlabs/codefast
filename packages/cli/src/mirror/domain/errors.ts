@@ -1,10 +1,19 @@
+/**
+ * @since 0.3.16-canary.0
+ */
 export const MirrorErrorCode = {
   FATAL: "FATAL",
   PACKAGE_WRITE: "PACKAGE_WRITE",
 } as const;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type MirrorErrorCode = (typeof MirrorErrorCode)[keyof typeof MirrorErrorCode];
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class MirrorError extends Error {
   readonly code: MirrorErrorCode;
 

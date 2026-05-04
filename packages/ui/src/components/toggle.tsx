@@ -10,6 +10,9 @@ import * as TogglePrimitive from "@radix-ui/react-toggle";
  * Variant: Toggle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const toggleVariants = tv({
   base: [
     "inline-flex items-center justify-center gap-2",
@@ -45,14 +48,23 @@ const toggleVariants = tv({
   },
 });
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ToggleVariants = VariantProps<typeof toggleVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ToggleProps extends ComponentProps<typeof TogglePrimitive.Root>, ToggleVariants {}
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Toggle({ children, className, size, variant, ...props }: ToggleProps): JSX.Element {
   return (
     <TogglePrimitive.Root

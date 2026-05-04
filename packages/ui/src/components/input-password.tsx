@@ -12,8 +12,14 @@ import { InputGroup, InputGroupButton, InputGroupInput } from "#/components/inpu
  * Component: InputPassword
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputPasswordProps = Omit<ComponentProps<typeof InputGroupInput>, "type">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputPassword({
   className,
   disabled,

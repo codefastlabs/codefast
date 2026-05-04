@@ -3,9 +3,21 @@ import type { GraphDescriptor, NodeDescriptor } from "#/fixtures/realistic-graph
 const FAN_OUT_TREE_DEPTH = 3;
 const FAN_OUT_TREE_BREADTH = 4;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const RESOLVE_ALL_STRATEGY_COUNTS = [10, 100] as const;
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ResolveAllStrategyCount = (typeof RESOLVE_ALL_STRATEGY_COUNTS)[number];
+/**
+ * @since 0.3.16-canary.0
+ */
 export const RESOLVE_ALL_NAMED_COUNTS = [8, 32] as const;
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ResolveAllNamedCount = (typeof RESOLVE_ALL_NAMED_COUNTS)[number];
 
 function ensureTreeShapeIsValid(depth: number, breadth: number): void {
@@ -62,6 +74,9 @@ function buildFanOutTreeDescriptor(depth: number, breadth: number): GraphDescrip
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const FAN_OUT_TREE_DEPTH_3_BREADTH_4 = buildFanOutTreeDescriptor(
   FAN_OUT_TREE_DEPTH,
   FAN_OUT_TREE_BREADTH,

@@ -1,6 +1,9 @@
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function findAvailablePort(preferred: number): Promise<number> {
   return new Promise((resolve, reject) => {
     const server = createServer();

@@ -10,6 +10,9 @@ import { Slot } from "@radix-ui/react-slot";
  * Variant: Badge
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const badgeVariants = tv({
   base: [
     "inline-flex w-fit shrink-0 items-center justify-center gap-2 px-1.5 py-0.5",
@@ -58,10 +61,16 @@ const badgeVariants = tv({
  * Component: Badge
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface BadgeProps extends ComponentProps<"span">, VariantProps<typeof badgeVariants> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Badge({ asChild, className, variant, ...props }: BadgeProps): JSX.Element {
   const Component = asChild ? Slot : "span";
 

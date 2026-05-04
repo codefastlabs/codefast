@@ -9,8 +9,14 @@ import * as ProgressPrimitive from "@radix-ui/react-progress";
  * Component: Progress
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ProgressProps = ComponentProps<typeof ProgressPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
   return (
     <ProgressPrimitive.Root

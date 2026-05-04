@@ -6,8 +6,14 @@ import { cn } from "#/lib/utils";
  * Component: Kbd
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type KbdProps = ComponentProps<"kbd">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Kbd({ className, ...props }: KbdProps): JSX.Element {
   return (
     <kbd
@@ -27,8 +33,14 @@ function Kbd({ className, ...props }: KbdProps): JSX.Element {
   );
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type KbdGroupProps = ComponentProps<"kbd">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function KbdGroup({ className, ...props }: KbdGroupProps): JSX.Element {
   return (
     <kbd

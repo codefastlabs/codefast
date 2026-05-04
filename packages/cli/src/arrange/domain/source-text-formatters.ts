@@ -1,5 +1,8 @@
 import { indentOfLineContaining } from "#/core/source-text-edit";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function escapeTsStringLiteralContent(group: string): string {
   return group.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
 }
@@ -38,6 +41,9 @@ function formatCnArguments(
   return lines.join("\n");
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function formatCnCall(groups: string[], options?: { trailingClassName?: boolean }): string {
   const lines: string[] = ["cn("];
   const commaOnEachStringLine = groups.length > 1 || Boolean(options?.trailingClassName);
@@ -56,6 +62,9 @@ export function formatCnCall(groups: string[], options?: { trailingClassName?: b
   return lines.join("\n");
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function formatArray(groups: string[]): string {
   const lines: string[] = ["["];
   for (let i = 0; i < groups.length; i++) {
@@ -73,6 +82,8 @@ export function formatArray(groups: string[]): string {
 /**
  * Multiple string literals as sequential lines for insertion **inside** an existing array
  * (e.g. `tv({ base: [ … ] })` — avoids `[[ "a", "b" ]]` when replacing one long string).
+ *
+ * @since 0.3.16-canary.0
  */
 export function formatArrayElementsAsSiblingLines(
   groups: string[],
@@ -91,6 +102,9 @@ export function formatArrayElementsAsSiblingLines(
   return segments.join("");
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function formatJsxCnAttributeValue(
   groups: string[],
   source: string,

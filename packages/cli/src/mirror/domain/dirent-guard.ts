@@ -5,6 +5,8 @@ import type { DirectoryEntry } from "#/core/filesystem/port";
  * Accepts both historical checks (`isFile` / `isDirectory`) in one guard.
  * Returning `true` for an empty array is intentional: callers treat empty lists
  * the same regardless of the element type, so `[]` is safely accepted as `Dirent[]`.
+ *
+ * @since 0.3.16-canary.0
  */
 export function isDirentList(x: string[] | DirectoryEntry[]): x is DirectoryEntry[] {
   if (x.length === 0) {

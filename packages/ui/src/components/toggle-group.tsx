@@ -34,11 +34,17 @@ const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
  * Component: ToggleGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> &
   ToggleVariants & {
     spacing?: number;
   };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ToggleGroup({
   __scopeToggleGroup,
   children,
@@ -79,8 +85,14 @@ function ToggleGroup({
 
 const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ToggleGroupItemProps = ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Item>>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ToggleGroupItem({
   __scopeToggleGroup,
   children,

@@ -14,11 +14,17 @@ import type { ConstraintContext } from "#/types";
 
 // ── SlotKey ───────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface SlotKey {
   readonly name: string | undefined;
   readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function slotKeyEquals(a: SlotKey, b: SlotKey): boolean {
   if (a.name !== b.name) {
     return false;
@@ -34,8 +40,14 @@ export function slotKeyEquals(a: SlotKey, b: SlotKey): boolean {
   return true;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const DEFAULT_SLOT: SlotKey = { name: undefined, tags: [] };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function slotKeyToString(slot: SlotKey): string {
   if (slot.name === undefined && slot.tags.length === 0) {
     return "default";
@@ -61,6 +73,9 @@ interface BindingBase<Value> {
 
 // ── Binding kinds ─────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ClassBinding<Value> extends BindingBase<Value> {
   readonly kind: "class";
   readonly target: Constructor<Value>;
@@ -69,6 +84,9 @@ export interface ClassBinding<Value> extends BindingBase<Value> {
   readonly onDeactivation?: DeactivationHandler<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DynamicBinding<Value> extends BindingBase<Value> {
   readonly kind: "dynamic";
   readonly factory: (ctx: ResolutionContext) => Value;
@@ -77,6 +95,9 @@ export interface DynamicBinding<Value> extends BindingBase<Value> {
   readonly onDeactivation?: DeactivationHandler<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
   readonly kind: "dynamic-async";
   readonly factory: (ctx: ResolutionContext) => Promise<Value>;
@@ -85,6 +106,9 @@ export interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
   readonly onDeactivation?: DeactivationHandler<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ResolvedBinding<Value> extends BindingBase<Value> {
   readonly kind: "resolved";
   readonly factory: (...args: unknown[]) => Value;
@@ -94,6 +118,9 @@ export interface ResolvedBinding<Value> extends BindingBase<Value> {
   readonly onDeactivation?: DeactivationHandler<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
   readonly kind: "resolved-async";
   readonly factory: (...args: unknown[]) => Promise<Value>;
@@ -103,6 +130,9 @@ export interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
   readonly onDeactivation?: DeactivationHandler<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ConstantBinding<Value> extends BindingBase<Value> {
   readonly kind: "constant";
   readonly value: Value;
@@ -111,11 +141,17 @@ export interface ConstantBinding<Value> extends BindingBase<Value> {
   readonly onDeactivation?: DeactivationHandler<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface AliasBinding<Value> extends BindingBase<Value> {
   readonly kind: "alias";
   readonly target: Token<Value> | Constructor<Value>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type Binding<Value = unknown> =
   | ClassBinding<Value>
   | DynamicBinding<Value>
@@ -125,7 +161,11 @@ export type Binding<Value = unknown> =
   | ConstantBinding<Value>
   | AliasBinding<Value>;
 
-/** Builder-only payload before `id`, `token`, `slot`, and `predicate` are applied. */
+/**
+ * Builder-only payload before `id`, `token`, `slot`, and `predicate` are applied.
+ *
+ * @since 0.3.16-canary.0
+ */
 export type PartialBinding<Value> =
   | Omit<ClassBinding<Value>, "id" | "token" | "slot" | "predicate">
   | Omit<DynamicBinding<Value>, "id" | "token" | "slot" | "predicate">
@@ -138,12 +178,18 @@ export type PartialBinding<Value> =
 // ── ID generation ─────────────────────────────────────────────────────────────
 
 let _idCounter = 0;
+/**
+ * @since 0.3.16-canary.0
+ */
 export function generateBindingId(): BindingIdentifier {
   return String(++_idCounter) as BindingIdentifier;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface BindToBuilder<Value> {
   to(type: Constructor<Value>): BindingBuilder<Value>;
   toSelf(): BindingBuilder<Value>;
@@ -161,6 +207,9 @@ export interface BindToBuilder<Value> {
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface BindingBuilder<Value> {
   when(predicate: (ctx: ConstraintContext) => boolean): this;
   whenNamed(name: string): this;
@@ -172,6 +221,9 @@ export interface BindingBuilder<Value> {
   id(): BindingIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ConstantBindingBuilder<Value> {
   when(predicate: (ctx: ConstraintContext) => boolean): this;
   whenNamed(name: string): this;
@@ -182,6 +234,9 @@ export interface ConstantBindingBuilder<Value> {
   id(): BindingIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface AliasBindingBuilder {
   when(predicate: (ctx: ConstraintContext) => boolean): this;
   whenNamed(name: string): this;
@@ -190,19 +245,31 @@ export interface AliasBindingBuilder {
   id(): BindingIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface SingletonBindingBuilder<Value> {
   onActivation(fn: ActivationHandler<Value>): this;
   onDeactivation(fn: DeactivationHandler<Value>): this;
   id(): BindingIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface TransientBindingBuilder<Value> {
   onActivation(fn: ActivationHandler<Value>): this;
   id(): BindingIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ScopedBindingBuilder<Value> extends TransientBindingBuilder<Value> {}
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface SingletonLifecycleBuilder<Value> {
   onActivation(fn: ActivationHandler<Value>): this;
   onDeactivation(fn: DeactivationHandler<Value>): this;

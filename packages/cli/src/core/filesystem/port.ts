@@ -1,8 +1,13 @@
 /**
  * Filesystem surface for CLI flows (real implementation: {@link nodeFilesystem}).
+ *
+ * @since 0.3.16-canary.0
  */
 export type CliFileEncoding = "utf8";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DirectoryEntry {
   readonly name: string;
   readonly parentPath: string;
@@ -10,6 +15,9 @@ export interface DirectoryEntry {
   isDirectory(): boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface FilesystemPort {
   existsSync(filePath: string): boolean;
   canonicalPathSync(inputPath: string): string;

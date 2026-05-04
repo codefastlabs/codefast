@@ -9,8 +9,14 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
   return (
     <RadioGroupPrimitive.Root
@@ -25,8 +31,14 @@ function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type RadioGroupItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Element {
   return (
     <RadioGroupPrimitive.Item

@@ -22,6 +22,9 @@ type ScopedProps<P> = P & { __scopeCarousel?: Scope };
 
 const [createCarouselContext, createCarouselScope] = createContextScope(CAROUSEL_NAME);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
 type CarouselOptions = UseCarouselParameters[0];
@@ -50,8 +53,14 @@ const [CarouselContextProvider, useCarouselContext] =
  * Component: Carousel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface CarouselProps extends BaseCarouselProps, ComponentProps<"div"> {}
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Carousel({
   __scopeCarousel,
   children,
@@ -158,6 +167,9 @@ function Carousel({
 
 const CAROUSEL_CONTENT_NAME = "CarouselContent";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface CarouselContentProps extends ComponentProps<"div"> {
   classNames?: {
     content?: string;
@@ -165,6 +177,9 @@ interface CarouselContentProps extends ComponentProps<"div"> {
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CarouselContent({
   __scopeCarousel,
   className,
@@ -198,8 +213,14 @@ function CarouselContent({
 
 const CAROUSEL_ITEM_NAME = "CarouselItem";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CarouselItemProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CarouselItem({
   __scopeCarousel,
   className,
@@ -228,8 +249,14 @@ function CarouselItem({
 
 const CAROUSEL_PREVIOUS_NAME = "CarouselPrevious";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CarouselPreviousProps = ComponentProps<typeof Button>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CarouselPrevious({
   __scopeCarousel,
   className,
@@ -273,8 +300,14 @@ function CarouselPrevious({
 
 const CAROUSEL_NEXT_NAME = "CarouselNext";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CarouselNextProps = ComponentProps<typeof Button>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CarouselNext({
   __scopeCarousel,
   className,

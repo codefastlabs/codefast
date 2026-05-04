@@ -13,6 +13,9 @@ import { buttonVariants } from "#/components/button";
  * Variant: SheetContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const sheetContentVariants = tv({
   base: [
     "fixed z-50 flex flex-col overflow-auto",
@@ -63,8 +66,14 @@ const sheetContentVariants = tv({
  * Component: Sheet
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetProps = ComponentProps<typeof SheetPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Sheet({ children, ...props }: SheetProps): JSX.Element {
   return (
     <SheetPrimitive.Root data-slot="sheet" {...props}>
@@ -77,8 +86,14 @@ function Sheet({ children, ...props }: SheetProps): JSX.Element {
  * Component: SheetTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetTriggerProps = ComponentProps<typeof SheetPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
@@ -87,6 +102,9 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SheetContentProps
   extends ComponentProps<typeof SheetPrimitive.Content>, VariantProps<typeof sheetContentVariants> {
   classNames?: {
@@ -96,6 +114,9 @@ interface SheetContentProps
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetContent({
   children,
   className,
@@ -141,8 +162,14 @@ function SheetContent({
  * Component: SheetHeader
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
@@ -161,8 +188,14 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
  * Component: SheetBody
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetBodyProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
   return (
     <main
@@ -177,8 +210,14 @@ function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
  * Component: SheetFooter
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetFooterProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
@@ -197,8 +236,14 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
  * Component: SheetTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   return (
     <SheetPrimitive.Title
@@ -213,8 +258,14 @@ function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
  * Component: SheetDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SheetDescriptionProps = ComponentProps<typeof SheetPrimitive.Description>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.Element {
   return (
     <SheetPrimitive.Description
@@ -229,11 +280,17 @@ function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.E
  * Component: SheetClose
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SheetClose({
   className,
   size,

@@ -1,4 +1,8 @@
-/** Configuration for the dynamic bench history server. */
+/**
+ * Configuration for the dynamic bench history server.
+ *
+ * @since 0.3.16-canary.0
+ */
 export interface BenchLibraryConfig {
   /** Must match the `libraryName` field written to JSONL by the child process. */
   readonly name: string;
@@ -8,6 +12,9 @@ export interface BenchLibraryConfig {
   readonly isPrimary?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface BenchServerOptions {
   /** Absolute path to the directory containing `<timestamp>/observations.jsonl` subdirs. */
   readonly benchResultsDir: string;
@@ -23,18 +30,27 @@ export interface BenchServerOptions {
 // Payload types — serialised as JSON and consumed by the browser client.
 // ---------------------------------------------------------------------------
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface EmbeddedLibraryMeta {
   readonly key: string;
   readonly displayName: string;
   readonly isPrimary: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface EmbeddedRunLibraryVersion {
   readonly key: string;
   readonly version: string;
   readonly gcExposed: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface EmbeddedRun {
   readonly folder: string;
   /** Stable key for same-machine + same-Node filtering. */
@@ -50,7 +66,11 @@ export interface EmbeddedRun {
   readonly libraryVersions: readonly EmbeddedRunLibraryVersion[];
 }
 
-/** Per-library time-series arrays aligned to `EmbeddedViewerPayload.runs`. */
+/**
+ * Per-library time-series arrays aligned to `EmbeddedViewerPayload.runs`.
+ *
+ * @since 0.3.16-canary.0
+ */
 export interface EmbeddedLibraryRunData {
   readonly hz: readonly (number | null)[];
   readonly p25: readonly (number | null)[];
@@ -58,6 +78,9 @@ export interface EmbeddedLibraryRunData {
   readonly iqrFraction: readonly (number | null)[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface EmbeddedScenarioSeries {
   readonly id: string;
   readonly group: string;
@@ -66,6 +89,9 @@ export interface EmbeddedScenarioSeries {
   readonly libraries: Readonly<Record<string, EmbeddedLibraryRunData>>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface EmbeddedViewerPayload {
   readonly title: string;
   readonly primaryLibraryKey: string;

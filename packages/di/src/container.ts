@@ -53,6 +53,9 @@ import { slotKeyToResolveOptions } from "#/resolve-options";
 
 // ── Container interface ────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface Container {
   readonly isDisposed: boolean;
 
@@ -113,6 +116,9 @@ export interface Container {
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ContainerStatic {
   create(): Container;
   fromModules(...modules: SyncModule[]): Container;
@@ -1127,6 +1133,9 @@ class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
 
 // ── Container static ──────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const Container: ContainerStatic & { create(): Container } = {
   create(): Container {
     return new DefaultContainer();

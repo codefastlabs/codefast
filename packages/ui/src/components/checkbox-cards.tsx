@@ -12,8 +12,14 @@ import * as CheckboxGroupPrimitive from "#/primitives/checkbox-group";
  * Component: CheckboxCards
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CheckboxCardsProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
   return <CheckboxGroupPrimitive.Root data-slot="checkbox-cards" {...props} />;
 }
@@ -22,10 +28,16 @@ function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
  * Component: CheckboxCardsItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrimitive.Item> {
   checkboxClassName?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CheckboxCardsItem({
   checkboxClassName,
   children,

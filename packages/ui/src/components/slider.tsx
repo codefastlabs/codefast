@@ -10,8 +10,14 @@ import { useMemo } from "react";
  * Component: Slider
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Slider({
   className,
   defaultValue,

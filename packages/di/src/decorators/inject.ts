@@ -7,11 +7,17 @@ import { injectableSlotToResolveOptions } from "#/resolve-options";
 
 // ── InjectionDescriptor ───────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface InjectOptions {
   name?: string;
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface InjectionDescriptor<Value = unknown> {
   readonly token: Token<Value> | Constructor<Value>;
   readonly optional: boolean;
@@ -20,11 +26,17 @@ export interface InjectionDescriptor<Value = unknown> {
   readonly tags?: ReadonlyArray<readonly [string, unknown]>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type InjectableDependency<Value = unknown> =
   | Token<Value>
   | Constructor<Value>
   | InjectionDescriptor<Value>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
   if (value === null || value === undefined) {
     return false;
@@ -43,6 +55,9 @@ export function isInjectionDescriptor(value: unknown): value is InjectionDescrip
   );
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function normalizeToDescriptor(dep: InjectableDependency): InjectionDescriptor {
   if (isInjectionDescriptor(dep)) {
     return materializeInjectionDescriptor(dep);
@@ -116,6 +131,9 @@ type ClassAccessorDecorator<This, Value> = (
   context: ClassAccessorDecoratorContext<This, Value>,
 ) => ClassAccessorDecoratorResult<This, Value> | void;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function inject<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
@@ -171,6 +189,9 @@ export function inject<const Value>(
 
 // ── optional() ────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function optional<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
@@ -194,6 +215,9 @@ export function optional<const Value>(
 
 // ── injectAll() ───────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function injectAll<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,

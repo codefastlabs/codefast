@@ -3,6 +3,8 @@ import { quantile, sortAscending } from "#/report/quantiles";
 
 /**
  * One (library, scenario) row after collapsing the per-trial payloads.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface AggregatedScenarioResult {
   readonly id: string;
@@ -19,6 +21,9 @@ export interface AggregatedScenarioResult {
   readonly p999MsMedian: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface LibraryReport {
   readonly fingerprint: Fingerprint;
   readonly trialCount: number;
@@ -65,6 +70,9 @@ function aggregateTrialsForScenario(
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildLibraryReport(
   fingerprint: Fingerprint,
   trials: readonly TrialPayload[],

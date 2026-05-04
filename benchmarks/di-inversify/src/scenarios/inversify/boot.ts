@@ -143,6 +143,9 @@ function buildBootDecoratedContainerScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildInversifyBootScenarios(): readonly BenchScenario[] {
   return [buildBootDecoratedContainerScenario()];
 }

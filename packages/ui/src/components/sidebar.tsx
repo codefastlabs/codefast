@@ -21,6 +21,9 @@ import { useIsMobile } from "#/hooks/use-is-mobile";
  * Variant: SidebarMenuButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const sidebarMenuButtonVariants = tv({
   base: [
     "peer/menu-button flex w-full items-center gap-2 overflow-hidden p-2",
@@ -91,12 +94,18 @@ const [SidebarContextProvider, useSidebar] =
  * Component: SidebarProvider
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarProviderProps extends ComponentProps<"div"> {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarProvider({
   children,
   className,
@@ -198,12 +207,18 @@ function SidebarProvider({
 
 const SIDEBAR_NAME = "Sidebar";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarProps extends ComponentProps<"div"> {
   collapsible?: "icon" | "none" | "offcanvas";
   side?: "left" | "right";
   variant?: "floating" | "inset" | "sidebar";
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Sidebar({
   children,
   className,
@@ -322,8 +337,14 @@ function Sidebar({
 
 const SIDEBAR_TRIGGER_NAME = "SidebarTrigger";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarTriggerProps = ComponentProps<typeof Button>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): JSX.Element {
   const { toggleSidebar } = useSidebar(SIDEBAR_TRIGGER_NAME);
 
@@ -352,8 +373,14 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): 
 
 const SIDEBAR_RAIL_NAME = "SidebarRail";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarRailProps = ComponentProps<"button">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
   const { toggleSidebar } = useSidebar(SIDEBAR_RAIL_NAME);
 
@@ -392,8 +419,14 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
  * Component: SidebarInset
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarInsetProps = ComponentProps<"main">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
   return (
     <main
@@ -414,8 +447,14 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
  * Component: SidebarInput
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarInputProps = ComponentProps<typeof Input>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
   return (
     <Input
@@ -431,8 +470,14 @@ function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
  * Component: SidebarHeader
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element {
   return (
     <div
@@ -448,8 +493,14 @@ function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element
  * Component: SidebarFooter
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarFooterProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element {
   return (
     <div
@@ -465,8 +516,14 @@ function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element
  * Component: SidebarSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarSeparatorProps = ComponentProps<typeof Separator>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarSeparator({ className, ...props }: SidebarSeparatorProps): JSX.Element {
   return (
     <Separator
@@ -482,8 +539,14 @@ function SidebarSeparator({ className, ...props }: SidebarSeparatorProps): JSX.E
  * Component: SidebarContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarContentProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Element {
   return (
     <div
@@ -503,8 +566,14 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
  * Component: SidebarGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
   return (
     <div
@@ -520,10 +589,16 @@ function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
  * Component: SidebarGroupLabel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarGroupLabelProps extends ComponentProps<"div"> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarGroupLabel({
   asChild = false,
   className,
@@ -554,10 +629,16 @@ function SidebarGroupLabel({
  * Component: SidebarGroupAction
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarGroupActionProps extends ComponentProps<"button"> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarGroupAction({
   asChild = false,
   className,
@@ -591,8 +672,14 @@ function SidebarGroupAction({
  * Component: SidebarGroupContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarGroupContentProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps): JSX.Element {
   return (
     <div
@@ -608,8 +695,14 @@ function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps):
  * Component: SidebarMenu
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarMenuProps = ComponentProps<"ul">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
   return (
     <ul
@@ -625,8 +718,14 @@ function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
  * Component: SidebarMenuItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarMenuItemProps = ComponentProps<"li">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuItem({ className, ...props }: SidebarMenuItemProps): JSX.Element {
   return (
     <li
@@ -644,6 +743,9 @@ function SidebarMenuItem({ className, ...props }: SidebarMenuItemProps): JSX.Ele
 
 const SIDEBAR_MENU_BUTTON_NAME = "SidebarMenuButton";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarMenuButtonProps
   extends ComponentProps<"button">, VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean;
@@ -651,6 +753,9 @@ interface SidebarMenuButtonProps
   tooltip?: ComponentProps<typeof TooltipContent> | string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuButton({
   asChild = false,
   className,
@@ -701,11 +806,17 @@ function SidebarMenuButton({
  * Component: SidebarMenuAction
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarMenuActionProps extends ComponentProps<"button"> {
   asChild?: boolean;
   showOnHover?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuAction({
   asChild = false,
   className,
@@ -746,8 +857,14 @@ function SidebarMenuAction({
  * Component: SidebarMenuBadge
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarMenuBadgeProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.Element {
   return (
     <div
@@ -775,10 +892,16 @@ function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.E
  * Component: SidebarMenuSkeleton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
   showIcon?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuSkeleton({
   className,
   showIcon = false,
@@ -814,8 +937,14 @@ function SidebarMenuSkeleton({
  * Component: SidebarMenuSub
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarMenuSubProps = ComponentProps<"ul">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Element {
   return (
     <ul
@@ -837,8 +966,14 @@ function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Eleme
  * Component: SidebarMenuSubItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SidebarMenuSubItemProps = ComponentProps<"li">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuSubItem({ className, ...props }: SidebarMenuSubItemProps): JSX.Element {
   return (
     <li
@@ -854,12 +989,18 @@ function SidebarMenuSubItem({ className, ...props }: SidebarMenuSubItemProps): J
  * Component: SidebarMenuSubButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SidebarMenuSubButtonProps extends ComponentProps<"a"> {
   asChild?: boolean;
   isActive?: boolean;
   size?: "md" | "sm";
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SidebarMenuSubButton({
   asChild = false,
   className,

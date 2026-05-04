@@ -34,6 +34,9 @@ type StringNodeVisitor = (
   cnCall?: DomainCallExpression,
 ) => void;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function traverseTvObject(
   sourceFile: DomainSourceFile,
   obj: DomainObjectLiteralExpression,
@@ -117,6 +120,9 @@ export function traverseTvObject(
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectCnCallsInsideTv(
   sourceFile: DomainSourceFile,
   obj: DomainObjectLiteralExpression,
@@ -174,6 +180,9 @@ export function collectCnCallsInsideTv(
   return calls;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function listAllCnCallsInsideTvInSourceFile(
   sourceFile: DomainSourceFile,
   knownBindings: Set<string>,
@@ -218,6 +227,9 @@ function makeStringNode(
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function slotClassString(stringNode: StringNode): string {
   return stringNode.nodes.map((literal) => literal.text).join(" ");
 }
@@ -375,6 +387,9 @@ function collectTvSlots(
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectGroupableStringNodes(sourceFile: DomainSourceFile): StringNode[] {
   const results: StringNode[] = [];
   const seenNodePos = new Set<number>();

@@ -43,6 +43,9 @@ function hasStatistics(result: TaskResult): result is TaskResultWithStatisticsSt
   return "throughput" in result && "latency" in result;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type CreateRunAllTrialsParameters = Readonly<{
   /**
    * Tinybench settings for each `Bench` when neither `BENCH_FAST` nor `BENCH_FULL` is set.
@@ -51,6 +54,9 @@ export type CreateRunAllTrialsParameters = Readonly<{
   readonly benchDefaults: BenchOptions;
 }>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type RunAllTrials = (
   scenarios: readonly AnyBenchScenario[],
   sanityFailures: readonly string[],
@@ -93,6 +99,8 @@ function resolveTrialCountFromEnvironment(): number {
 /**
  * Returns `runAllTrials` backed by tinybench options derived from `benchDefaults` and
  * the subprocess env (`BENCH_FAST`, `BENCH_FULL`).
+ *
+ * @since 0.3.16-canary.0
  */
 export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   runAllTrials: RunAllTrials;

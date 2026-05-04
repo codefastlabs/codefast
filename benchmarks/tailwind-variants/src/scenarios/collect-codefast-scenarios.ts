@@ -8,6 +8,9 @@ import { buildCodefastSimpleScenarios } from "#/scenarios/codefast/simple";
 import { buildCodefastSlotsScenarios } from "#/scenarios/codefast/slots";
 import type { AnyScenario } from "#/scenarios/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectAllCodefastScenarios(): readonly AnyScenario[] {
   return [
     ...buildCodefastSimpleScenarios(),

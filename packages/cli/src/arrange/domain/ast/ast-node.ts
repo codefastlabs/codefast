@@ -1,6 +1,8 @@
 /**
  * Pure-domain AST shapes for arrange analysis. No TypeScript compiler types.
  * Positions mirror `getStart(sourceFile)` / `getEnd()` semantics from translation.
+ *
+ * @since 0.3.16-canary.0
  */
 
 export enum DomainSyntaxKind {
@@ -30,11 +32,17 @@ export enum DomainSyntaxKind {
   JsxExpression,
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export enum DomainBinaryOperator {
   Plus,
   Other,
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainSourceFile {
   readonly fileName: string;
   readonly text: string;
@@ -48,32 +56,50 @@ interface DomainNodeBase {
   readonly parent: DomainAstNode | null;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainUnknownAstNode extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.Unknown;
   readonly children: readonly DomainAstNode[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainIdentifier extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.Identifier;
   readonly text: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainStringLiteral extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.StringLiteral;
   readonly text: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainNoSubstitutionTemplateLiteral extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.NoSubstitutionTemplateLiteral;
   readonly text: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainImportDeclaration extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ImportDeclaration;
   readonly importClause: DomainImportClause | undefined;
   readonly moduleSpecifier: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainImportClause extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ImportClause;
   readonly isTypeOnly: boolean;
@@ -81,75 +107,117 @@ export interface DomainImportClause extends DomainNodeBase {
   readonly namedBindings: DomainNamedImports | DomainNamespaceImport | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainNamedImports extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.NamedImports;
   readonly elements: readonly DomainImportSpecifier[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainNamespaceImport extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.NamespaceImport;
   readonly name: DomainIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainImportSpecifier extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ImportSpecifier;
   readonly name: DomainIdentifier;
   readonly propertyName: DomainIdentifier | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainCallExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.CallExpression;
   readonly expression: DomainAstNode;
   readonly arguments: readonly DomainAstNode[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainPropertyAccessExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.PropertyAccessExpression;
   readonly expression: DomainAstNode;
   readonly name: DomainIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainObjectLiteralExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ObjectLiteralExpression;
   readonly properties: readonly DomainAstNode[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainPropertyAssignment extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.PropertyAssignment;
   readonly name: DomainAstNode;
   readonly initializer: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainArrayLiteralExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ArrayLiteralExpression;
   readonly elements: readonly DomainAstNode[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainSpreadElement extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.SpreadElement;
   readonly expression: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainParenthesizedExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ParenthesizedExpression;
   readonly expression: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainAsExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.AsExpression;
   readonly expression: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainSatisfiesExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.SatisfiesExpression;
   readonly expression: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainNonNullExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.NonNullExpression;
   readonly expression: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainConditionalExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ConditionalExpression;
   readonly condition: DomainAstNode;
@@ -157,6 +225,9 @@ export interface DomainConditionalExpression extends DomainNodeBase {
   readonly whenFalse: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainBinaryExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.BinaryExpression;
   readonly left: DomainAstNode;
@@ -164,22 +235,34 @@ export interface DomainBinaryExpression extends DomainNodeBase {
   readonly right: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainExpressionStatement extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ExpressionStatement;
   readonly expression: DomainAstNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainJsxAttribute extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.JsxAttribute;
   readonly name: DomainAstNode;
   readonly initializer: DomainAstNode | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface DomainJsxExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.JsxExpression;
   readonly expression: DomainAstNode | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type DomainAstNode =
   | DomainUnknownAstNode
   | DomainIdentifier
@@ -206,12 +289,21 @@ export type DomainAstNode =
   | DomainJsxAttribute
   | DomainJsxExpression;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type DomainTailwindClassLiteral = DomainStringLiteral | DomainNoSubstitutionTemplateLiteral;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainIdentifier(node: DomainAstNode): node is DomainIdentifier {
   return node.kind === DomainSyntaxKind.Identifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainStringLiteral(node: DomainAstNode): node is DomainStringLiteral {
   return node.kind === DomainSyntaxKind.StringLiteral;
 }
@@ -222,62 +314,101 @@ function isDomainNoSubstitutionTemplateLiteral(
   return node.kind === DomainSyntaxKind.NoSubstitutionTemplateLiteral;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainTailwindClassLiteral(
   node: DomainAstNode,
 ): node is DomainTailwindClassLiteral {
   return isDomainStringLiteral(node) || isDomainNoSubstitutionTemplateLiteral(node);
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainImportDeclaration(node: DomainAstNode): node is DomainImportDeclaration {
   return node.kind === DomainSyntaxKind.ImportDeclaration;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainNamedImports(node: DomainAstNode): node is DomainNamedImports {
   return node.kind === DomainSyntaxKind.NamedImports;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainNamespaceImport(node: DomainAstNode): node is DomainNamespaceImport {
   return node.kind === DomainSyntaxKind.NamespaceImport;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainCallExpression(node: DomainAstNode): node is DomainCallExpression {
   return node.kind === DomainSyntaxKind.CallExpression;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainObjectLiteralExpression(
   node: DomainAstNode,
 ): node is DomainObjectLiteralExpression {
   return node.kind === DomainSyntaxKind.ObjectLiteralExpression;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainPropertyAssignment(node: DomainAstNode): node is DomainPropertyAssignment {
   return node.kind === DomainSyntaxKind.PropertyAssignment;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainArrayLiteralExpression(
   node: DomainAstNode,
 ): node is DomainArrayLiteralExpression {
   return node.kind === DomainSyntaxKind.ArrayLiteralExpression;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainSpreadElement(node: DomainAstNode): node is DomainSpreadElement {
   return node.kind === DomainSyntaxKind.SpreadElement;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainPropertyAccessExpression(
   node: DomainAstNode,
 ): node is DomainPropertyAccessExpression {
   return node.kind === DomainSyntaxKind.PropertyAccessExpression;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainJsxAttribute(node: DomainAstNode): node is DomainJsxAttribute {
   return node.kind === DomainSyntaxKind.JsxAttribute;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isDomainJsxExpression(node: DomainAstNode): node is DomainJsxExpression {
   return node.kind === DomainSyntaxKind.JsxExpression;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function forEachDomainChild(
   node: DomainAstNode,
   visit: (child: DomainAstNode) => void,
@@ -377,6 +508,9 @@ export function forEachDomainChild(
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function lineOfSourcePosition(sourceText: string, pos: number): number {
   const boundedPos = Math.max(0, Math.min(pos, sourceText.length));
   let line = 1;

@@ -2,6 +2,9 @@ import { buildInversifyResolveAllStrategiesScenarios } from "#/scenarios/inversi
 import { buildInversifyFanOutTreeScenarios } from "#/scenarios/inversify/fan-out/tree";
 import type { BenchScenario } from "#/scenarios/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildInversifyFanOutScenarios(): readonly BenchScenario[] {
   return [...buildInversifyFanOutTreeScenarios(), ...buildInversifyResolveAllStrategiesScenarios()];
 }

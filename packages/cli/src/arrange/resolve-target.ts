@@ -3,6 +3,9 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 
 const packageJsonFileName = "package.json";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function resolveArrangeTargetPath(
   fs: FilesystemPort,
   args: {

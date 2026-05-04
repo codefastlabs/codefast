@@ -12,6 +12,9 @@ import { presentTagSyncResult, TagSyncProgressPresenter } from "#/tag/output";
 import type { TagSyncResult } from "#/tag/domain/types";
 import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createTagCommand(): Command {
   const cmd = new Command("tag")
     .description("Add @since <version> JSDoc tags to exported declarations")

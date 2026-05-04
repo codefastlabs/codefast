@@ -124,6 +124,9 @@ function getExportGroup(
   return [group, subpath, GROUP_ORDER[group] ?? 700, 1];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createPathTransform(
   config: MirrorConfig | undefined,
   pkgMeta: MirrorPackageMeta,
@@ -244,6 +247,8 @@ async function generateCssExports(
 
 /**
  * Compute `package.json#exports` from a built `dist/` tree. No logging; no writes.
+ *
+ * @since 0.3.16-canary.0
  */
 export async function generateExports(
   fileSystemService: DistFilesystem,

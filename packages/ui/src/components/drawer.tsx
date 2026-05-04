@@ -12,8 +12,14 @@ import { buttonVariants } from "#/components/button";
  * Component: Drawer
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerProps = ComponentProps<typeof DrawerPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.Element {
   return (
     <DrawerPrimitive.Root
@@ -28,8 +34,14 @@ function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.El
  * Component: DrawerTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerTriggerProps = ComponentProps<typeof DrawerPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
 }
@@ -38,6 +50,9 @@ function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
  * Component: DrawerContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DrawerContentProps extends ComponentProps<typeof DrawerPrimitive.Content> {
   classNames?: {
     content?: string;
@@ -46,6 +61,9 @@ interface DrawerContentProps extends ComponentProps<typeof DrawerPrimitive.Conte
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerContent({
   children,
   className,
@@ -94,8 +112,14 @@ function DrawerContent({
  * Component: DrawerHeader
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
   return (
     <div
@@ -110,8 +134,14 @@ function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
  * Component: DrawerBody
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerBodyProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
   return (
     <main
@@ -126,8 +156,14 @@ function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
  * Component: DrawerFooter
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerFooterProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
   return (
     <div
@@ -142,8 +178,14 @@ function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
  * Component: DrawerTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
   return (
     <DrawerPrimitive.Title
@@ -158,8 +200,14 @@ function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
  * Component: DrawerDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DrawerDescriptionProps = ComponentProps<typeof DrawerPrimitive.Description>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerDescription({ className, ...props }: DrawerDescriptionProps): JSX.Element {
   return (
     <DrawerPrimitive.Description
@@ -174,11 +222,17 @@ function DrawerDescription({ className, ...props }: DrawerDescriptionProps): JSX
  * Component: DrawerClose
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DrawerCloseProps extends ComponentProps<typeof DrawerPrimitive.Close> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DrawerClose({
   className,
   size,

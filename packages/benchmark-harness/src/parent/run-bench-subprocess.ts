@@ -10,6 +10,9 @@ import type { SubprocessPayload } from "#/shared/protocol";
 
 const HEARTBEAT_SILENCE_MS = 10_000;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class SubprocessExecutionError extends Error {
   readonly exitCode: number | undefined;
 
@@ -23,6 +26,8 @@ export class SubprocessExecutionError extends Error {
 /**
  * Environment pinned across bench subprocesses. Uses `NODE_OPTIONS` for
  * `--expose-gc` when `BENCH_FULL=1`, and `--no-warnings` to keep stdout parsable.
+ *
+ * @since 0.3.16-canary.0
  */
 export function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   const parentEnvironment = process.env;
@@ -73,6 +78,9 @@ function createStreamLineForwarder(
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type RunBenchSubprocessParameters = Readonly<{
   /** Benchmark package directory (directory that contains package.json used for `pnpm exec`). */
   readonly packageRootDirectory: string;
@@ -86,6 +94,8 @@ export type RunBenchSubprocessParameters = Readonly<{
 
 /**
  * Runs one tsx subprocess and returns the framed {@link SubprocessPayload}.
+ *
+ * @since 0.3.16-canary.0
  */
 export async function runBenchSubprocess(
   parameters: RunBenchSubprocessParameters,

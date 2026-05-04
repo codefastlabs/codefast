@@ -13,8 +13,14 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "#/compone
  * Component: Command
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandProps = ComponentProps<typeof CommandPrimitive>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
@@ -34,8 +40,14 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
  * Component: CommandDialog
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandDialogProps = ComponentProps<typeof Dialog>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element {
   return (
     <Dialog data-slot="command-dialog" {...props}>
@@ -67,8 +79,14 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
  * Component: CommandInput
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
     <div
@@ -98,8 +116,14 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
  * Component: CommandList
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandList({ className, ...props }: CommandListProps): JSX.Element {
   return (
     <CommandPrimitive.List
@@ -114,8 +138,14 @@ function CommandList({ className, ...props }: CommandListProps): JSX.Element {
  * Component: CommandEmpty
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandEmptyProps = ComponentProps<typeof CommandPrimitive.Empty>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandEmpty({ className, ...props }: CommandEmptyProps): JSX.Element {
   return (
     <CommandPrimitive.Empty
@@ -130,8 +160,14 @@ function CommandEmpty({ className, ...props }: CommandEmptyProps): JSX.Element {
  * Component: CommandGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandGroupProps = ComponentProps<typeof CommandPrimitive.Group>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
   return (
     <CommandPrimitive.Group
@@ -150,8 +186,14 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
  * Component: CommandSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
   return (
     <CommandPrimitive.Separator
@@ -166,8 +208,14 @@ function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.E
  * Component: CommandItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandItemProps = ComponentProps<typeof CommandPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
   return (
     <CommandPrimitive.Item
@@ -193,8 +241,14 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
  * Component: CommandLoading
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandLoadingProps = ComponentProps<typeof CommandPrimitive.Loading>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Element {
   return (
     <CommandPrimitive.Loading
@@ -209,8 +263,14 @@ function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Eleme
  * Component: CommandShortcut
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CommandShortcutProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
   return (
     <span

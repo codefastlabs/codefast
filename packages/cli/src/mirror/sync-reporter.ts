@@ -7,15 +7,24 @@ import type {
   WorkspaceMultiDiscoverySource,
 } from "#/mirror/domain/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type MirrorProcessingModeInput =
   | { kind: "single" }
   | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type CliLoggerLike = {
   out(line: string): void;
   err(line: string): void;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface MirrorSyncReporterPort {
   configureMirrorColors(noColor: boolean): void;
   mirrorBanner(logger: CliLoggerLike): void;
@@ -62,7 +71,11 @@ const ANSI = {
   brightCyan: "\x1b[96m",
 } as const;
 
-/** Console implementation: ANSI styling and layout for mirror sync. */
+/**
+ * Console implementation: ANSI styling and layout for mirror sync.
+ *
+ * @since 0.3.16-canary.0
+ */
 export class MirrorSyncReporter implements MirrorSyncReporterPort {
   private colorsAreEnabled = true;
 

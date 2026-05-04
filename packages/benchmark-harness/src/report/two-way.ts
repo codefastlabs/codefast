@@ -6,7 +6,11 @@ import {
   formatThroughputRatio,
 } from "#/report/format";
 
-/** One zipped row for Markdown and console two-way comparisons. */
+/**
+ * One zipped row for Markdown and console two-way comparisons.
+ *
+ * @since 0.3.16-canary.0
+ */
 export interface TwoWayScenarioComparisonRow {
   readonly id: string;
   readonly group: string;
@@ -23,7 +27,11 @@ export interface TwoWayScenarioComparisonRow {
   readonly rightP99Ms: number;
 }
 
-/** Column titles for GitHub-flavoured Markdown throughput tables (12 columns incl. separators). */
+/**
+ * Column titles for GitHub-flavoured Markdown throughput tables (12 columns incl. separators).
+ *
+ * @since 0.3.16-canary.0
+ */
 export type TwoWayMarkdownColumnTitles = {
   readonly leftThroughput: string;
   readonly rightThroughput: string;
@@ -35,6 +43,9 @@ export type TwoWayMarkdownColumnTitles = {
   readonly iqrCombinedHeading: string;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TwoWayMarkdownReportOptions = {
   readonly columnTitles: TwoWayMarkdownColumnTitles;
   readonly documentHeading: string;
@@ -52,6 +63,9 @@ export type TwoWayMarkdownReportOptions = {
   };
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TwoWayConsoleColumnLabels = {
   readonly leftThroughputHeader: string;
   readonly rightThroughputHeader: string;
@@ -63,6 +77,9 @@ export type TwoWayConsoleColumnLabels = {
   readonly sectionHeading: string;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TwoWayConsoleReportOptions = {
   readonly footerHintLine?: string;
 };
@@ -82,6 +99,9 @@ function orderedScenarioIds(leftReport: LibraryReport, rightReport: LibraryRepor
   return ordered;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildTwoWayComparisonRows(
   leftLibraryReport: LibraryReport,
   rightLibraryReport: LibraryReport,
@@ -176,7 +196,11 @@ function formatEnvironmentBulletsMarkdown(
   ];
 }
 
-/** Renders a full Markdown report for side-by-side two-library aggregates. */
+/**
+ * Renders a full Markdown report for side-by-side two-library aggregates.
+ *
+ * @since 0.3.16-canary.0
+ */
 export function renderTwoWayMarkdownReport(
   leftReport: LibraryReport,
   rightReport: LibraryReport,
@@ -228,7 +252,11 @@ export function renderTwoWayMarkdownReport(
 
 const CLI_TABLE_COLUMN_GAP = "  ";
 
-/** Prints a two-way comparison table to stdout with aligned ASCII columns. */
+/**
+ * Prints a two-way comparison table to stdout with aligned ASCII columns.
+ *
+ * @since 0.3.16-canary.0
+ */
 export function renderTwoWayConsoleReport(
   leftReport: LibraryReport,
   rightReport: LibraryReport,

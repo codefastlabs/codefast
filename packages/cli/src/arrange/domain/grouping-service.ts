@@ -17,6 +17,9 @@ import {
 } from "#/arrange/domain/ast/targets";
 import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type GroupFileUnwrapPlan = {
   readonly start: number;
   readonly end: number;
@@ -32,6 +35,9 @@ type GroupFileUnwrapState = {
   readonly cnInTvNoReplacement: number;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type GroupFileWorkPlan = {
   readonly filePath: string;
   readonly sourceText: string;
@@ -62,6 +68,9 @@ function toUnwrapPlans(
     .filter((plan): plan is GroupFileUnwrapPlan => plan !== undefined);
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildGroupFileUnwrapState(
   domainSfInitial: DomainSourceFile,
   sourceText: string,
@@ -90,6 +99,8 @@ export function buildGroupFileUnwrapState(
 /**
  * `domainSfGrouped` must be a parse of `unwrap.textAfterUnwrap` (same `text` as source).
  * Returns `null` when there is no cn-in-tv and no grouping targets.
+ *
+ * @since 0.3.16-canary.0
  */
 export function tryBuildGroupFileWorkPlan(input: {
   readonly filePath: string;
@@ -147,10 +158,16 @@ export function tryBuildGroupFileWorkPlan(input: {
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function groupFileDryRunNoEdits(filePath: string): GroupFileResult {
   return { filePath, totalFound: 0, changed: 0 };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function groupFilePreviewTotals(work: GroupFileWorkPlan): GroupFileResult {
   return {
     filePath: work.filePath,
@@ -159,6 +176,9 @@ export function groupFilePreviewTotals(work: GroupFileWorkPlan): GroupFileResult
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function mergeGroupFileBodyText(work: GroupFileWorkPlan): string {
   const groupEdits = work.plannedGroupEdits.map((plannedEdit) => ({
     start: plannedEdit.start,
@@ -172,14 +192,23 @@ export function mergeGroupFileBodyText(work: GroupFileWorkPlan): string {
     : work.textAfterUnwrap;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function groupFileEditsTouchJsxCn(work: GroupFileWorkPlan): boolean {
   return work.plannedGroupEdits.some((plannedEdit) => plannedEdit.jsxCn);
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function countPersistedGroupFileEdits(work: GroupFileWorkPlan): number {
   return work.unwrapEdits.length + work.plannedGroupEdits.length;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function groupFileWorkHasNothingToReport(work: GroupFileWorkPlan): boolean {
   return work.editSitesCount === 0 && work.cnInTvNoReplacement === 0;
 }
