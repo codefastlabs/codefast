@@ -1,6 +1,9 @@
 import type { BindingIdentifier } from "#/types";
 import { MissingScopeContextError } from "#/errors";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class ScopeManager {
   // Singleton cache: bindingId -> instance
   private readonly _singletons = new Map<BindingIdentifier, unknown>();

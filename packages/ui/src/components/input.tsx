@@ -8,8 +8,14 @@ import { cn } from "#/lib/utils";
  * Component: Input
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputProps = ComponentProps<"input">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Input({ className, type, ...props }: InputProps): JSX.Element {
   return (
     <input

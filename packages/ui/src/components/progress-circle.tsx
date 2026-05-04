@@ -13,6 +13,9 @@ import * as ProgressCirclePrimitive from "#/primitives/progress-circle";
  * Variant: ProgressCircle
  * ----------------------------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const progressCircleVariants = tv({
   defaultVariants: { size: "md", thickness: "regular", variant: "default" },
   slots: {
@@ -46,6 +49,9 @@ const progressCircleVariants = tv({
  * Component: ProgressCircle
  * ----------------------------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ProgressCircleProps
   extends
     Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size">,
@@ -114,6 +120,9 @@ interface ProgressCircleProps
   sizeInPixels?: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ProgressCircle({
   animate = true,
   animationDuration = 1000,

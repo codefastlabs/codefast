@@ -8,6 +8,9 @@ import { Slot } from "@radix-ui/react-slot";
  * Variant: Button
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const buttonVariants = tv({
   base: [
     "inline-flex shrink-0 items-center justify-center gap-2",
@@ -91,12 +94,18 @@ const buttonVariants = tv({
  * Component: Button
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ButtonProps = ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     type?: ComponentProps<"button">["type"];
   };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Button({
   asChild = false,
   children,

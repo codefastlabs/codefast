@@ -9,6 +9,9 @@ const cvaInstance = cva(complexVariants.base, {
   variants: complexVariants.variants,
 });
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildClassVarianceAuthorityComplexScenarios(): readonly BenchScenario[] {
   return [
     {

@@ -13,6 +13,9 @@ import { Separator } from "#/components/separator";
  * Variants: Field
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const fieldVariants = tv({
   base: ["group/field flex w-full gap-3", "data-[invalid=true]:text-destructive"],
   defaultVariants: {
@@ -45,8 +48,14 @@ const fieldVariants = tv({
  * Component: FieldSet
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldSetProps = ComponentProps<"fieldset">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldSet({ className, ...props }: FieldSetProps): JSX.Element {
   return (
     <fieldset
@@ -66,10 +75,16 @@ function FieldSet({ className, ...props }: FieldSetProps): JSX.Element {
  * Component: FieldLegend
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldLegendProps = ComponentProps<"legend"> & {
   variant?: "label" | "legend";
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): JSX.Element {
   return (
     <legend
@@ -85,8 +100,14 @@ function FieldLegend({ className, variant = "legend", ...props }: FieldLegendPro
  * Component: FieldGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
   return (
     <div
@@ -106,8 +127,14 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
  * Component: Field
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldProps = ComponentProps<"div"> & VariantProps<typeof fieldVariants>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Field({ className, orientation = "vertical", ...props }: FieldProps): JSX.Element {
   return (
     <div
@@ -124,8 +151,14 @@ function Field({ className, orientation = "vertical", ...props }: FieldProps): J
  * Component: FieldContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldContentProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldContent({ className, ...props }: FieldContentProps): JSX.Element {
   return (
     <div
@@ -140,8 +173,14 @@ function FieldContent({ className, ...props }: FieldContentProps): JSX.Element {
  * Component: FieldLabel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldLabelProps = ComponentProps<typeof Label>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
   return (
     <Label
@@ -164,8 +203,14 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
  * Component: FieldTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldTitleProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldTitle({ className, ...props }: FieldTitleProps): JSX.Element {
   return (
     <div
@@ -184,8 +229,14 @@ function FieldTitle({ className, ...props }: FieldTitleProps): JSX.Element {
  * Component: FieldDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldDescriptionProps = ComponentProps<"p">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.Element {
   return (
     <p
@@ -209,10 +260,16 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.E
  * Component: FieldSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type FieldSeparatorProps = ComponentProps<"div"> & {
   children?: ComponentProps<"span">["children"];
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldSeparator({ children, className, ...props }: FieldSeparatorProps): JSX.Element {
   const hasContent = Boolean(children);
 
@@ -253,10 +310,16 @@ interface FieldErrorMessage {
   message?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface FieldErrorProps extends ComponentProps<"div"> {
   errors?: (FieldErrorMessage | undefined)[];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function FieldError({
   children,
   className,

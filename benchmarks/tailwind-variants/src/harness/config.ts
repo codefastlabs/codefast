@@ -4,6 +4,9 @@ import type { BenchSubprocessConfig } from "@codefast/benchmark-harness";
 
 const TSCONFIG_FILE_NAME = "tsconfig.json";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CODEFAST_TV = {
   libraryName: "@codefast/tailwind-variants",
   scenarioName: "codefast",
@@ -12,6 +15,9 @@ export const CODEFAST_TV = {
   displayName: "@codefast/tv",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const TAILWIND_VARIANTS = {
   libraryName: "tailwind-variants",
   scenarioName: "tailwind-variants",
@@ -19,6 +25,9 @@ export const TAILWIND_VARIANTS = {
   benchEntryFileName: "tailwind-variants-benches.ts",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CVA = {
   libraryName: "class-variance-authority",
   scenarioName: "cva",
@@ -27,4 +36,7 @@ export const CVA = {
   displayName: "cva",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const SERVE_TITLE = "@codefast/tailwind-variants vs tailwind-variants & cva — bench history";

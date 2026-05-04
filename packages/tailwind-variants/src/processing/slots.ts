@@ -20,11 +20,11 @@ import { cx, isSlotObjectType } from "#/utilities/utils";
 
 /**
  * Resolve CSS classes for a specific slot.
- *
+ * 
  * This function processes variant configurations and resolves the appropriate
  * CSS classes for a specific slot, including base classes, variant classes,
  * compound variant classes, and compound slot classes.
- *
+ * 
  * @typeParam T - The configuration schema type
  * @typeParam S - The slot configuration schema type
  * @param targetSlotKey - The slot key to resolve classes for
@@ -36,6 +36,8 @@ import { cx, isSlotObjectType } from "#/utilities/utils";
  * @param compoundVariantGroups - Compound variant configurations with slots
  * @param compoundSlotClasses - Pre-computed compound slot classes
  * @returns Array of resolved CSS classes for the slot
+ *
+ * @since 0.3.16-canary.0
  */
 export const resolveSlotClasses = <
   T extends ConfigurationSchema,
@@ -203,11 +205,11 @@ export const resolveSlotClasses = <
 
 /**
  * Create a factory for slot functions.
- *
+ * 
  * This function creates individual slot functions that can generate CSS classes
  * for each slot in a component. It handles base slots and named slots,
  * processing variants, compound variants, and compound slots.
- *
+ * 
  * @typeParam T - The configuration schema type
  * @typeParam S - The slot configuration schema type
  * @param mergedSlotDefinitions - The merged slot definitions
@@ -220,6 +222,8 @@ export const resolveSlotClasses = <
  * @param shouldMergeClasses - Whether to merge conflicting classes
  * @param tailwindMergeService - The Tailwind merge service function
  * @returns Object containing slot functions for each slot
+ *
+ * @since 0.3.16-canary.0
  */
 export const createSlotFunctionFactory = <
   T extends ConfigurationSchema,

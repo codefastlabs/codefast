@@ -4,6 +4,9 @@ import type { ZodError } from "zod";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { codefastConfigRootSchema, type CodefastConfig } from "#/core/config/schema";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type LoadConfigPayload = {
   readonly config: CodefastConfig;
   readonly warnings: string[];
@@ -101,6 +104,9 @@ async function loadOnce(startDir: string, fs: FilesystemPort): Promise<LoadConfi
   return { config, warnings, configPath };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function loadConfigPayload(
   startDir: string,
   fs: FilesystemPort,

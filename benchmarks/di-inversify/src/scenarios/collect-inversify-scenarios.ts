@@ -17,6 +17,9 @@ import { buildInversifyScaleScenarios } from "#/scenarios/inversify/scale";
 import { buildInversifyScopeScenarios } from "#/scenarios/inversify/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectAllInversifyScenarios(): readonly AnyScenario[] {
   return [
     ...buildInversifyMicroScenarios(),

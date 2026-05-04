@@ -52,6 +52,9 @@ function toPackageTargetCandidate(
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function resolveTagTargetCandidates(
   fs: FilesystemPort,
   rootDir: string,

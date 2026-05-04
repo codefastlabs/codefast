@@ -16,16 +16,18 @@ const defaultOptions: MutationObserverInit = {
 
 /**
  * Observe DOM mutations on a referenced element and invoke a callback.
- *
+ * 
  * Attaches a MutationObserver to the provided element reference with the given
  * options and calls the callback whenever mutations occur.
- *
+ * 
  * @param ref - Ref to the target HTMLElement to observe.
  * @param callback - Mutation callback invoked with observed records.
  * @param options - Observer configuration. Defaults watch attributes, characterData, childList, subtree.
  * @returns void
- *
+ * 
  * @see [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
+ *
+ * @since 0.3.16-canary.0
  */
 export function useMutationObserver(
   ref: RefObject<HTMLElement | null>,

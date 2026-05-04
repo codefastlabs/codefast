@@ -130,6 +130,9 @@ function hzIqrFractionLookup(report: LibraryReport, scenarioId: string): number 
   return Number.isFinite(f) && f > 0 ? f : null;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildEmbeddedPayload(
   rawRuns: readonly RunLines[],
   options: BenchServerOptions,

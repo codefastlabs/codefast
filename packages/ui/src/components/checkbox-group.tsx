@@ -11,8 +11,14 @@ import * as CheckboxGroupPrimitive from "#/primitives/checkbox-group";
  * Component: CheckboxGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
   return (
     <CheckboxGroupPrimitive.Root
@@ -27,8 +33,14 @@ function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element
  * Component: CheckboxGroupItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CheckboxGroupItemProps = ComponentProps<typeof CheckboxGroupPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX.Element {
   return (
     <CheckboxGroupPrimitive.Item

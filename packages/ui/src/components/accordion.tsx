@@ -11,8 +11,14 @@ import { ChevronDownIcon } from "lucide-react";
  * Component: Accordion
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AccordionProps = ComponentProps<typeof AccordionPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Accordion({ ...props }: AccordionProps): JSX.Element {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
 }
@@ -21,8 +27,14 @@ function Accordion({ ...props }: AccordionProps): JSX.Element {
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element {
   return (
     <AccordionPrimitive.Item
@@ -37,11 +49,17 @@ function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element
  * Component: AccordionIcon
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface AccordionIconProps extends ComponentProps<typeof Slot> {
   asChild?: boolean;
   className?: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JSX.Element {
   const Component = (asChild ? Slot : ChevronDownIcon) as typeof Slot;
 
@@ -63,8 +81,14 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AccordionTriggerProps = ComponentProps<typeof AccordionPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AccordionTrigger({ children, className, ...props }: AccordionTriggerProps): JSX.Element {
   return (
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
@@ -92,8 +116,14 @@ function AccordionTrigger({ children, className, ...props }: AccordionTriggerPro
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
   return (
     <AccordionPrimitive.Content

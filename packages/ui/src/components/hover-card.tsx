@@ -9,8 +9,14 @@ import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
  * Component: HoverCard
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type HoverCardProps = ComponentProps<typeof HoverCardPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function HoverCard({ ...props }: HoverCardProps): JSX.Element {
   return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
@@ -19,8 +25,14 @@ function HoverCard({ ...props }: HoverCardProps): JSX.Element {
  * Component: HoverCardTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type HoverCardTriggerProps = ComponentProps<typeof HoverCardPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
   return <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />;
 }
@@ -29,8 +41,14 @@ function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
  * Component: HoverCardContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type HoverCardContentProps = ComponentProps<typeof HoverCardPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function HoverCardContent({
   align = "center",
   className,
@@ -71,8 +89,14 @@ function HoverCardContent({
  * Component: HoverCardArrow
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
   return (
     <HoverCardPrimitive.Arrow

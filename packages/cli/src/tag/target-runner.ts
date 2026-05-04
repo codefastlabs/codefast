@@ -5,6 +5,9 @@ import type { TagRunOptions, TagRunResult } from "#/tag/domain/types";
 import { resolveNearestPackageVersion } from "#/tag/version-resolver";
 import { TagSinceWriter } from "#/tag/since-writer";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function runTagOnTarget(
   fs: FilesystemPort,
   targetPath: string,

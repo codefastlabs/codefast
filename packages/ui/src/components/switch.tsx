@@ -9,8 +9,14 @@ import * as SwitchPrimitives from "@radix-ui/react-switch";
  * Component: Switch
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SwitchProps = ComponentProps<typeof SwitchPrimitives.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root

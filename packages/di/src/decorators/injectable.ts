@@ -6,11 +6,17 @@ import { INJECTABLE_KEY, constructorMetadataMap } from "#/metadata/metadata-keys
 
 // ── AutoRegisterRegistry ──────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface AutoRegisterRegistry {
   register(target: Constructor, scope: BindingScope): void;
   entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createAutoRegisterRegistry(): AutoRegisterRegistry {
   const _entries: Array<{ target: Constructor; scope: BindingScope }> = [];
   return {
@@ -25,6 +31,9 @@ export function createAutoRegisterRegistry(): AutoRegisterRegistry {
 
 // ── InjectableOptions ─────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface InjectableOptions {
   autoRegister?: AutoRegisterRegistry;
   scope?: BindingScope;
@@ -32,6 +41,9 @@ export interface InjectableOptions {
 
 // ── @injectable() ─────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function injectable(
   deps?: readonly InjectableDependency[],
   options?: InjectableOptions,

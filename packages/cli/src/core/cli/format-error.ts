@@ -1,5 +1,8 @@
 import type { AppError } from "#/core/errors";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function formatAppError(error: AppError): string {
   const { code, message } = error;
   switch (code) {

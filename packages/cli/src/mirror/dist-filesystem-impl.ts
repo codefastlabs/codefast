@@ -4,6 +4,9 @@ import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { isDirentList } from "#/mirror/domain/dirent-guard";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createMirrorDistFilesystem(fs: FilesystemPort): DistFilesystem {
   return {
     async listRelativeFilesRecursively(dirPath: string): Promise<string[]> {

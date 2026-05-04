@@ -11,8 +11,14 @@ import { use } from "react";
  * Component: InputOtp
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputOTPProps = ComponentProps<typeof OTPInput>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputOTP({ className, containerClassName, ...props }: InputOTPProps): JSX.Element {
   return (
     <OTPInput
@@ -33,8 +39,14 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
  * Component: InputOTPGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputOTPGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
   return (
     <div
@@ -50,10 +62,16 @@ function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element
  * Component: InputOTPSlot
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface InputOTPSlotProps extends ComponentProps<"div"> {
   index: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.Element {
   const inputOTPContext = use(OTPInputContext);
   const slot = inputOTPContext.slots[index];
@@ -106,8 +124,14 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
  * Component: InputOTPSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputOTPSeparatorProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
   return (
     <div data-slot="input-otp-separator" {...props}>

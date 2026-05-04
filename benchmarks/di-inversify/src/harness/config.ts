@@ -1,6 +1,10 @@
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness";
 
-/** Single source of truth for all benchmark-specific constants across run, serve, and subprocesses. */
+/**
+ * Single source of truth for all benchmark-specific constants across run, serve, and subprocesses.
+ *
+ * @since 0.3.16-canary.0
+ */
 
 export const CODEFAST_DI = {
   libraryName: "@codefast/di",
@@ -9,6 +13,9 @@ export const CODEFAST_DI = {
   benchEntryFileName: "codefast-benches.ts",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const INVERSIFY = {
   libraryName: "inversify",
   scenarioName: "inversify",
@@ -17,4 +24,7 @@ export const INVERSIFY = {
   displayName: "InversifyJS 8",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const SERVE_TITLE = "@codefast/di vs inversify — bench history";

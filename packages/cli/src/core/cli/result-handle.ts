@@ -21,6 +21,9 @@ function exitCodeForAppError(error: AppError): number {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function handleResult<Value>(
   outcome: Result<Value, AppError>,
   onSuccess: (value: Value) => void,
@@ -42,6 +45,9 @@ export function handleResult<Value>(
   return true;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function consumeCliAppError<Value>(
   outcome: Result<Value, AppError>,
   options?: { readonly successMessage?: string },
@@ -65,6 +71,9 @@ export function consumeCliAppError<Value>(
   return true;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function runCliResultAsync<Value>(
   outcomePromise: Promise<Result<Value, AppError>>,
   onSuccess: (value: Value) => number | void | Promise<number | void>,

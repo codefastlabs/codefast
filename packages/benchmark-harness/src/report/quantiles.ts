@@ -1,5 +1,7 @@
 /**
  * Matches NumPy's default (`linear`) so external tooling agrees with reporter output.
+ *
+ * @since 0.3.16-canary.0
  */
 
 export function sortAscending(values: readonly number[]): number[] {
@@ -9,6 +11,8 @@ export function sortAscending(values: readonly number[]): number[] {
 /**
  * Linear-interpolation quantile. `quantileProbability` ∈ [0, 1].
  * Returns `0` for empty input (callers aggregate before meaningless quantiles otherwise).
+ *
+ * @since 0.3.16-canary.0
  */
 export function quantile(sortedValues: readonly number[], quantileProbability: number): number {
   if (sortedValues.length === 0) {

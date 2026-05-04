@@ -13,6 +13,9 @@ import {
 import { ensureCnImport } from "#/arrange/domain/imports";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function processArrangeGroupFile(
   fs: FilesystemPort,
   args: {

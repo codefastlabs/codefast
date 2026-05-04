@@ -13,11 +13,17 @@ import * as InputNumberPrimitive from "#/primitives/input-number";
  * Component: InputNumber
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface InputNumberProps
   extends
     ComponentProps<typeof InputNumberPrimitive.Field>,
     ComponentProps<typeof InputNumberPrimitive.Root> {}
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputNumber({
   ariaDecrementLabel,
   ariaIncrementLabel,

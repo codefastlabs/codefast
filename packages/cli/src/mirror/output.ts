@@ -9,6 +9,9 @@ import {
 
 const cliLogger: CliLoggerLike = logger;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {
   private readonly reporter = new MirrorSyncReporter();
   private verbose = false;

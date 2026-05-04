@@ -26,6 +26,9 @@ export type {
   MirrorSyncRunRequest,
 } from "#/mirror/sync-types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function runMirrorSync(
   fs: FilesystemPort,
   input: MirrorSyncExecutionInput,

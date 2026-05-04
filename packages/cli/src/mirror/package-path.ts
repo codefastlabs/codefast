@@ -5,6 +5,9 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function resolveMirrorPackageFromCliArg(
   fs: FilesystemPort,
   args: {
@@ -41,6 +44,9 @@ export function resolveMirrorPackageFromCliArg(
   return ok(normalized);
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function resolvePackageFilterUnderRoot(
   fs: FilesystemPort,
   rootDir: string,

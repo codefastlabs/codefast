@@ -25,13 +25,15 @@ import {
 
 /**
  * Merge two variant groups.
- *
+ * 
  * This function combines variant groups from base and extension configurations.
  * It handles slot object merging for complex variant definitions.
- *
+ * 
  * @param baseVariantGroup - The base variant group to merge into
  * @param extensionVariantGroup - The extension variant group to merge
  * @returns The merged variant group
+ *
+ * @since 0.3.16-canary.0
  */
 export const mergeVariantGroups = (
   baseVariantGroup: Record<string, ClassValue>,
@@ -63,14 +65,16 @@ export const mergeVariantGroups = (
 
 /**
  * Merge configuration schemas.
- *
+ * 
  * This function combines base and extension configurations, handling
  * recursive extension resolution, variant merging, slot merging,
  * and compound variant/slot combination.
- *
+ * 
  * @param baseConfiguration - The base configuration to merge into
  * @param extensionConfiguration - The extension configuration to merge
  * @returns The merged configuration schema
+ *
+ * @since 0.3.16-canary.0
  */
 export const mergeConfigurationSchemas = (
   baseConfiguration:

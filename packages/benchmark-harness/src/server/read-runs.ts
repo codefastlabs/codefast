@@ -3,6 +3,9 @@ import type { Dirent } from "node:fs";
 import { join } from "node:path";
 import { OBSERVATIONS_FILE_NAME } from "#/shared/env-keys";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface RunLines {
   readonly folderName: string;
   readonly lines: readonly string[];
@@ -23,6 +26,9 @@ function readRunDirectory(runDirPath: string, folderName: string): RunLines | un
   return { folderName, lines };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function listRawRuns(benchResultsDir: string): RunLines[] {
   let entries: Dirent<string>[];
   try {

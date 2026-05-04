@@ -90,6 +90,9 @@ const generateCompoundVariants = () => {
   return compounds;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const extremeVariants = {
   base: "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background select-none cursor-pointer antialiased transform-gpu backface-hidden will-change-transform font-sans tracking-tight leading-none whitespace-nowrap overflow-hidden text-ellipsis relative isolate",
   compoundVariants: generateCompoundVariants(),
@@ -199,6 +202,9 @@ export const extremeVariants = {
 };
 
 // Generate extreme test props covering many combinations
+/**
+ * @since 0.3.16-canary.0
+ */
 export const extremeTestProps = [
   {},
   { color: "red-500", size: "size-1" },
@@ -244,6 +250,9 @@ export const extremeTestProps = [
 ];
 
 // Slots variant for extreme testing
+/**
+ * @since 0.3.16-canary.0
+ */
 export const extremeSlotsVariants = {
   compoundSlots: [
     {
@@ -454,6 +463,9 @@ export const extremeSlotsVariants = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const extremeSlotsTestProps = [
   {},
   { size: "xs", variant: "default" },

@@ -7,6 +7,9 @@ import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { emitSubprocessPayload } from "#/shared/protocol";
 import { runSanityChecks } from "#/child/run-sanity-checks";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type RunBenchmarkChildMainParameters = Readonly<{
   /** Library id stored on the fingerprint (e.g. `@codefast/di`, `inversify`). */
   readonly libraryName: string;
@@ -21,6 +24,8 @@ export type RunBenchmarkChildMainParameters = Readonly<{
 
 /**
  * Shared bench subprocess flow: sanity → trials → framed JSON payload on stdout.
+ *
+ * @since 0.3.16-canary.0
  */
 export async function runBenchmarkChildMain(
   parameters: RunBenchmarkChildMainParameters,
@@ -43,6 +48,8 @@ export async function runBenchmarkChildMain(
 
 /**
  * Standard `main().catch` handler for bench entry files (exits 1, logs stack).
+ *
+ * @since 0.3.16-canary.0
  */
 export function exitBenchmarkChildProcessOnFailure(libraryName: string, error: unknown): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
@@ -55,6 +62,8 @@ export function exitBenchmarkChildProcessOnFailure(libraryName: string, error: u
 
 /**
  * Resolves the benchmark package root one directory above a file URL (typical `*-benches.ts` layout).
+ *
+ * @since 0.3.16-canary.0
  */
 export function resolveBenchmarkPackageRootFromImportMetaUrl(importMetaUrl: string): string {
   return join(dirname(fileURLToPath(importMetaUrl)), "..");

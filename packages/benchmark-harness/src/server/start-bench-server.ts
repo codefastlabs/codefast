@@ -2,10 +2,16 @@ import { createBenchServer } from "#/server/create-bench-server";
 import { findAvailablePort } from "#/server/find-available-port";
 import type { BenchServerOptions } from "#/server/server-types";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface StartBenchServerOptions extends BenchServerOptions {
   readonly preferredPort: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function startBenchServer({
   preferredPort,
   ...serverOptions

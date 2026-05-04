@@ -12,6 +12,9 @@ import { mirrorSyncRunRequestSchema } from "#/mirror/cli-schema";
 import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#/mirror/cli-result";
 import { MirrorSyncProgressPresenter } from "#/mirror/output";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function createMirrorCommand(): Command {
   const cmd = new Command("mirror").description(
     "Keep package manifests aligned with what you ship",

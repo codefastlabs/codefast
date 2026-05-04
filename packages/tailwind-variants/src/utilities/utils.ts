@@ -22,13 +22,15 @@ import type {
 
 /**
  * Combine CSS classes using clsx.
- *
+ * 
  * This function provides a simple interface for combining CSS classes
  * using the clsx library, which handles conditional classes and arrays.
  * Optimized with fast paths for common cases.
- *
+ * 
  * @param classes - CSS classes to combine
  * @returns Combined CSS class string
+ *
+ * @since 0.3.16-canary.0
  */
 export const cx = (...classes: ClassValue[]): string => {
   const length = classes.length;
@@ -81,13 +83,15 @@ export const cx = (...classes: ClassValue[]): string => {
 
 /**
  * Combine and merge CSS classes using Tailwind merge.
- *
+ * 
  * This function combines CSS classes and then merges them using
  * tailwind-merge to resolve conflicts and remove duplicates.
  * Optimized with fast paths for common cases.
- *
+ * 
  * @param classes - CSS classes to combine and merge
  * @returns Merged CSS class string
+ *
+ * @since 0.3.16-canary.0
  */
 export const cn = (...classes: ClassValue[]): string => {
   const length = classes.length;
@@ -136,12 +140,14 @@ export const cn = (...classes: ClassValue[]): string => {
 
 /**
  * Create a Tailwind merge service with optional configuration.
- *
+ * 
  * This function creates a Tailwind merge service that can be configured
  * with custom extensions for handling additional class patterns.
- *
+ * 
  * @param configuration - Optional Tailwind merge configuration
  * @returns Configured Tailwind merge function
+ *
+ * @since 0.3.16-canary.0
  */
 export const createTailwindMergeService = (
   configuration?: ConfigExtension<string, string>,
@@ -151,12 +157,14 @@ export const createTailwindMergeService = (
 
 /**
  * Check if a value is a slot object type.
- *
+ * 
  * This function determines whether a ClassValue is an object that can
  * contain slot-specific class definitions.
- *
+ * 
  * @param value - The value to check
  * @returns True if the value is a slot object
+ *
+ * @since 0.3.16-canary.0
  */
 export const isSlotObjectType = (value: ClassValue): value is Record<string, ClassValue> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -164,12 +172,14 @@ export const isSlotObjectType = (value: ClassValue): value is Record<string, Cla
 
 /**
  * Check if a variant group supports boolean values.
- *
+ * 
  * This function determines whether a variant group has boolean keys
  * ("true" or "false"), indicating it can accept boolean variant values.
- *
+ * 
  * @param variantGroup - The variant group to check
  * @returns True if the variant group supports boolean values
+ *
+ * @since 0.3.16-canary.0
  */
 export const isBooleanVariantType = <T extends Record<string, unknown>>(
   variantGroup: T,
@@ -179,12 +189,14 @@ export const isBooleanVariantType = <T extends Record<string, unknown>>(
 
 /**
  * Check if a value is a boolean type.
- *
+ * 
  * This function provides a type guard to determine if a value
  * is specifically a boolean type.
- *
+ * 
  * @param value - The value to check
  * @returns True if the value is a boolean
+ *
+ * @since 0.3.16-canary.0
  */
 export const isBooleanValueType = (value: unknown): value is boolean => {
   return typeof value === "boolean";
@@ -192,12 +204,14 @@ export const isBooleanValueType = (value: unknown): value is boolean => {
 
 /**
  * Check if a configuration has slot definitions.
- *
+ * 
  * This function provides a type guard to determine if a configuration
  * object includes slot definitions, enabling type-safe slot handling.
- *
+ * 
  * @param configuration - The configuration to check
  * @returns True if the configuration has slots
+ *
+ * @since 0.3.16-canary.0
  */
 export const hasSlotConfiguration = <
   T extends ConfigurationSchema,
@@ -210,13 +224,15 @@ export const hasSlotConfiguration = <
 
 /**
  * Check if a configuration has extension definitions.
- *
+ * 
  * This function provides a type guard to determine if a configuration
  * object includes extension definitions, enabling type-safe configuration
  * merging and inheritance.
- *
+ * 
  * @param configuration - The configuration to check
  * @returns True if the configuration has extensions
+ *
+ * @since 0.3.16-canary.0
  */
 export const hasExtensionConfiguration = <
   T extends ConfigurationSchema,

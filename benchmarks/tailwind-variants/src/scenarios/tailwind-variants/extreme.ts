@@ -6,6 +6,9 @@ import { extremeTestProps, extremeVariants } from "#/fixtures/extreme";
 const npmNoMerge = tailwindVariantsTv(extremeVariants, TV_MERGE_DISABLED);
 const npmWithMerge = tailwindVariantsTv(extremeVariants, TV_MERGE_ENABLED);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildTailwindVariantsNpmExtremeScenarios(): readonly BenchScenario[] {
   return [
     {

@@ -119,6 +119,8 @@ function compareClassifiedTailwindTokensForCnGrouping(
  * True when `staticLiteralTexts` carries the **same partition** of Tailwind tokens as
  * `suggestedGroups` from {@link suggestCnGroups}, ignoring order of arguments and
  * order of tokens within each chunk.
+ *
+ * @since 0.3.16-canary.0
  */
 export function areCnTailwindPartitionsEquivalent(
   staticLiteralTexts: string[],
@@ -404,6 +406,9 @@ function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
   );
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function suggestCnGroups(classString: string): string[] {
   const tokens = tokenizeClassString(classString);
   if (tokens.length === 0) {
@@ -501,6 +506,8 @@ export function suggestCnGroups(classString: string): string[] {
 /**
  * One label per suggested group: a single bucket name, or `mixed:a+b` when that chunk
  * spans multiple Tailwind buckets (matches `codefast arrange group` stdout).
+ *
+ * @since 0.3.16-canary.0
  */
 export function summarizeGroupBucketLabels(groups: string[]): string[] {
   return groups.map((g) => {

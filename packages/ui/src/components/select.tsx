@@ -12,8 +12,14 @@ import { buttonVariants } from "#/components/button";
  * Component: Select
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectProps = ComponentProps<typeof SelectPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Select({ ...props }: SelectProps): JSX.Element {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
@@ -22,8 +28,14 @@ function Select({ ...props }: SelectProps): JSX.Element {
  * Component: SelectGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectGroupProps = ComponentProps<typeof SelectPrimitive.Group>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectGroup({ ...props }: SelectGroupProps): JSX.Element {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
@@ -32,8 +44,14 @@ function SelectGroup({ ...props }: SelectGroupProps): JSX.Element {
  * Component: SelectValue
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectValueProps = ComponentProps<typeof SelectPrimitive.Value>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectValue({ ...props }: SelectValueProps): JSX.Element {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
@@ -42,10 +60,16 @@ function SelectValue({ ...props }: SelectValueProps): JSX.Element {
  * Component: SelectTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SelectTriggerProps extends ComponentProps<typeof SelectPrimitive.Trigger> {
   size?: VariantProps<typeof buttonVariants>["size"];
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectTrigger({ children, className, size, ...props }: SelectTriggerProps): JSX.Element {
   return (
     <SelectPrimitive.Trigger
@@ -73,8 +97,14 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
  * Component: SelectScrollUpButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectScrollUpButtonProps = ComponentProps<typeof SelectPrimitive.ScrollUpButton>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollUpButton
@@ -91,8 +121,14 @@ function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps
  * Component: SelectScrollDownButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectScrollDownButtonProps = ComponentProps<typeof SelectPrimitive.ScrollDownButton>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollDownButton
@@ -109,8 +145,14 @@ function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonP
  * Component: SelectContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectContentProps = ComponentProps<typeof SelectPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectContent({
   children,
   className,
@@ -164,8 +206,14 @@ function SelectContent({
  * Component: SelectLabel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectLabelProps = ComponentProps<typeof SelectPrimitive.Label>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectLabel({ className, ...props }: SelectLabelProps): JSX.Element {
   return (
     <SelectPrimitive.Label
@@ -180,8 +228,14 @@ function SelectLabel({ className, ...props }: SelectLabelProps): JSX.Element {
  * Component: SelectItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectItemProps = ComponentProps<typeof SelectPrimitive.Item>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Element {
   return (
     <SelectPrimitive.Item
@@ -215,8 +269,14 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
  * Component: SelectSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SelectSeparatorProps = ComponentProps<typeof SelectPrimitive.Separator>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SelectSeparator({ className, ...props }: SelectSeparatorProps): JSX.Element {
   return (
     <SelectPrimitive.Separator
