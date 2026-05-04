@@ -5,6 +5,7 @@
   "scripts": {
     "build": "turbo run build",
     "bench": "turbo run bench --concurrency=1",
+    "bench:serve": "turbo run bench:serve",
     "build:packages": "turbo run build --filter=@codefast*/*...",
     "check": "turbo run lint format:check check-types",
     "check-types": "turbo run check-types",
