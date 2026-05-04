@@ -55,7 +55,7 @@ jobs:
       - name: Version and publish
         uses: changesets/action@v1.7.0
         with:
-          version: npx changeset version
+          version: npx changeset version && npx codefast tag
           publish: npx changeset publish
           commit: "chore: update versions for release"
           title: "chore: release new version"
