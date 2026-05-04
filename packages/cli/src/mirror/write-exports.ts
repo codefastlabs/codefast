@@ -1,4 +1,4 @@
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import { messageFrom } from "#/core/errors";
 import { MirrorError, MirrorErrorCode } from "#/mirror/domain/errors";
 import type {

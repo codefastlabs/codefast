@@ -1,6 +1,6 @@
 import * as nodePath from "node:path";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import type { MirrorConfig } from "#/config/schema";
+import type { MirrorConfig } from "#/core/config/schema";
 import {
   PACKAGE_JSON_EXPORT,
   VALID_DTS_EXTENSIONS,

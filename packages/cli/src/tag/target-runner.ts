@@ -1,9 +1,9 @@
 import path from "node:path";
-import type { FilesystemPort } from "#/core/filesystem";
-import { walkTsxFiles } from "#/core/typescript-walk";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 import type { TagRunOptions, TagRunResult } from "#/tag/domain/types";
-import { resolveNearestPackageVersion } from "#/tag/tag-version-resolver";
-import { TagSinceWriter } from "#/tag/tag-since-writer";
+import { resolveNearestPackageVersion } from "#/tag/version-resolver";
+import { TagSinceWriter } from "#/tag/since-writer";
 
 export function runTagOnTarget(
   fs: FilesystemPort,

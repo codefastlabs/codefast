@@ -1,4 +1,4 @@
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types";
 import {
   buildGroupFileUnwrapState,

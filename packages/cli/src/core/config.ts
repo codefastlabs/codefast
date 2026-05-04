@@ -1,8 +1,8 @@
-import { loadConfigPayload } from "#/config/loader";
-import { reportSchemaWarnings } from "#/config/warnings";
-import type { CodefastConfig } from "#/config/schema";
+import { loadConfigPayload } from "#/core/config/loader";
+import { reportSchemaWarnings } from "#/core/config/warnings";
+import type { CodefastConfig } from "#/core/config/schema";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 

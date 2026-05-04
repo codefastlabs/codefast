@@ -1,6 +1,6 @@
 import process from "node:process";
 import type { AppError } from "#/core/errors";
-import { formatAppError } from "#/core/format-app-error";
+import { formatAppError } from "#/core/cli/format-error";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
 import type { Result } from "#/core/result";

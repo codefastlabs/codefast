@@ -1,6 +1,6 @@
 import path from "node:path";
-import type { FilesystemPort } from "#/core/filesystem";
-import { walkTsxFiles } from "#/core/typescript-walk";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 import { logger } from "#/core/logger";
 import { messageFrom } from "#/core/errors";
 

@@ -1,9 +1,9 @@
 import process from "node:process";
 import { Command } from "commander";
 import { parseWithSchema } from "#/core/schema-parse";
-import { consumeCliAppError, runCliResultAsync } from "#/core/result-handle";
+import { consumeCliAppError, runCliResultAsync } from "#/core/cli/result-handle";
 import { logger } from "#/core/logger";
-import { nodeFilesystem } from "#/core/node-filesystem";
+import { nodeFilesystem } from "#/core/filesystem/node";
 import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
@@ -21,7 +21,7 @@ import {
 import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types";
 import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
-import { readOptionalPositionalArg } from "#/core/cli-positional";
+import { readOptionalPositionalArg } from "#/core/cli/positional";
 
 export function createArrangeCommand(): Command {
   const cmd = new Command("arrange").description(

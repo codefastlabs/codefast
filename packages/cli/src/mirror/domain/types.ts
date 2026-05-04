@@ -1,5 +1,5 @@
-import type { CodefastConfig } from "#/config/schema";
-import type { GlobalCliOptions } from "#/core/global-cli-options";
+import type { CodefastConfig } from "#/core/config/schema";
+import type { GlobalCliOptions } from "#/core/cli/global-options";
 
 export interface ExportEntry {
   types: string;

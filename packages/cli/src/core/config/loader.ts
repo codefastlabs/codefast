@@ -1,8 +1,8 @@
 import path from "node:path";
 import jiti from "jiti";
 import type { ZodError } from "zod";
-import type { FilesystemPort } from "#/core/filesystem";
-import { codefastConfigRootSchema, type CodefastConfig } from "#/config/schema";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import { codefastConfigRootSchema, type CodefastConfig } from "#/core/config/schema";
 
 export type LoadConfigPayload = {
   readonly config: CodefastConfig;

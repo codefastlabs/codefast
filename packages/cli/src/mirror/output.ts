@@ -5,7 +5,7 @@ import {
   MirrorSyncReporter,
   type CliLoggerLike,
   type MirrorProcessingModeInput,
-} from "#/mirror/mirror-sync-reporter";
+} from "#/mirror/sync-reporter";
 
 const cliLogger: CliLoggerLike = logger;
 

@@ -1,7 +1,7 @@
 import path from "node:path";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import { isDirentList } from "#/mirror/guards/dirent-list";
+import { isDirentList } from "#/mirror/domain/dirent-guard";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
 export function createMirrorDistFilesystem(fs: FilesystemPort): DistFilesystem {

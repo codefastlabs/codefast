@@ -1,10 +1,10 @@
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import { loadCodefastConfig } from "#/core/config";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import { findRepoRoot } from "#/core/workspace";
+import { findRepoRoot } from "#/core/workspace/resolver";
 import type { ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types";
 import { resolveArrangeTargetPath } from "#/arrange/resolve-target";
 
