@@ -22,7 +22,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./protocol": "./src/protocol.ts",
+    "./protocol": "./src/shared/protocol.ts",
     "./fingerprint": "./src/child/fingerprint.ts",
     "./bench-options": "./src/child/bench-options.ts",
     "./bench-scenario": "./src/child/bench-scenario.ts",
@@ -31,8 +31,8 @@
     "./run-benchmark-child-main": "./src/child/run-benchmark-child-main.ts",
     "./resolve-bench-parent-exit-code": "./src/parent/resolve-bench-parent-exit-code.ts",
     "./report": "./src/report/index.ts",
-    "./stats/quantiles": "./src/stats/quantiles.ts",
-    "./presentation/format": "./src/presentation/format.ts",
+    "./report/quantiles": "./src/report/quantiles.ts",
+    "./report/format": "./src/report/format.ts",
     "./jsonl": "./src/report/jsonl.ts",
     "./subprocess": "./src/parent/run-bench-subprocess.ts",
     "./server": "./src/server/create-bench-server.ts"

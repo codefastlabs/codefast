@@ -4,7 +4,7 @@ import {
   formatLatencyMeanMilliseconds,
   formatThroughputOpsPerSecond,
   formatThroughputRatio,
-} from "#/presentation/format";
+} from "#/report/format";
 
 /** One zipped row for Markdown and console two-way comparisons. */
 export interface TwoWayScenarioComparisonRow {

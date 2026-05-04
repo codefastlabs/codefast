@@ -1,5 +1,5 @@
 /**
- * Matches NumPy’s default (`linear`) so external tooling agrees with reporter output.
+ * Matches NumPy's default (`linear`) so external tooling agrees with reporter output.
  */
 
 export function sortAscending(values: readonly number[]): number[] {

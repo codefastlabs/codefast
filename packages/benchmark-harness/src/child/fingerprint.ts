@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { arch as osArch, cpus, platform as osPlatform } from "node:os";
 import { join } from "node:path";
 
-import type { Fingerprint } from "#/protocol";
+import type { Fingerprint } from "#/shared/protocol";
 
 /**
  * Reads the version of a dependency from `<workspacePackageRoot>/node_modules/<name>/package.json`.

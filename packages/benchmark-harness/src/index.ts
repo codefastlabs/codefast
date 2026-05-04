@@ -1,7 +1,7 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
-export type { BenchSubprocessConfig } from "#/bench-subprocess-config";
-export { resolveDisplayName } from "#/bench-subprocess-config";
+export type { BenchSubprocessConfig } from "#/shared/config";
+export { resolveDisplayName } from "#/shared/config";
 
 export {
   BENCH_FAST_ENV_KEY,
@@ -10,7 +10,7 @@ export {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
   OBSERVATIONS_FILE_NAME,
-} from "#/env-keys";
+} from "#/shared/env-keys";
 
 export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 
@@ -31,14 +31,19 @@ export {
 
 export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
 
-export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/protocol";
+export type {
+  Fingerprint,
+  ScenarioTrialResult,
+  SubprocessPayload,
+  TrialPayload,
+} from "#/shared/protocol";
 
 export {
   BENCH_RESULT_JSON_END,
   BENCH_RESULT_JSON_START,
   emitSubprocessPayload,
   extractSubprocessPayload,
-} from "#/protocol";
+} from "#/shared/protocol";
 
 export { collectFingerprint } from "#/child/fingerprint";
 
@@ -76,14 +81,14 @@ export {
   jsonlBenchObservationRowToScenarioTrialResult,
 } from "#/report/jsonl";
 
-export { quantile, sortAscending } from "#/stats/quantiles";
+export { quantile, sortAscending } from "#/report/quantiles";
 
 export {
   formatIqrThroughputFraction,
   formatLatencyMeanMilliseconds,
   formatThroughputOpsPerSecond,
   formatThroughputRatio,
-} from "#/presentation/format";
+} from "#/report/format";
 
 export type {
   BenchLibraryConfig,

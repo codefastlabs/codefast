@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { JsonlBenchObservationRow } from "#/report/jsonl";
-import type { Fingerprint, TrialPayload } from "#/protocol";
+import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 
 /** Writes a pre-rendered markdown string to `outputPath`, creating parent directories as needed. */
 export function writeMarkdownFile(outputPath: string, markdown: string): void {

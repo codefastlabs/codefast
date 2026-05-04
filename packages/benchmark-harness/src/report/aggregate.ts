@@ -1,5 +1,5 @@
-import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/protocol";
-import { quantile, sortAscending } from "#/stats/quantiles";
+import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
+import { quantile, sortAscending } from "#/report/quantiles";
 
 /**
  * One (library, scenario) row after collapsing the per-trial payloads.
