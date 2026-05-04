@@ -1,23 +1,20 @@
-import { APPLY_MIN_TOKENS } from "#/arrange/domain/constants.domain";
+import { APPLY_MIN_TOKENS } from "#/arrange/domain/constants";
 import {
   areCnTailwindPartitionsEquivalent,
   suggestCnGroups,
   summarizeGroupBucketLabels,
-} from "#/arrange/domain/grouping.domain";
+} from "#/arrange/domain/grouping";
 import {
   escapeTsStringLiteralContent,
   formatArray,
   formatArrayElementsAsSiblingLines,
   formatJsxCnAttributeValue,
-} from "#/arrange/domain/source-text-formatters.formatter";
-import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types.domain";
-import { tokenizeClassString } from "#/arrange/domain/tailwind-token.value-object";
-import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn.collector";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx.collector";
-import {
-  collectGroupableStringNodes,
-  slotClassString,
-} from "#/arrange/domain/ast/collectors-tv.collector";
+} from "#/arrange/domain/source-text-formatters";
+import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types";
+import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
+import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
+import { collectGroupableStringNodes, slotClassString } from "#/arrange/domain/ast/collectors-tv";
 import {
   endAfterOptionalCommaFollowingInSource,
   indentOfLineContaining,
@@ -28,8 +25,8 @@ import {
   isDomainJsxAttribute,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
-} from "#/arrange/domain/ast/ast-node.model";
-import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
+import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
 export function targetReplaceStart(target: GroupTarget): number {
   if (target.kind === "cnArg") {

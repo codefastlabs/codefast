@@ -1,12 +1,12 @@
 import type { FilesystemPort } from "#/core/filesystem";
 import { messageFrom } from "#/core/errors";
-import { MirrorError, MirrorErrorCode } from "#/mirror/domain/errors.domain";
+import { MirrorError, MirrorErrorCode } from "#/mirror/domain/errors";
 import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,
   PackageJsonShape,
-} from "#/mirror/domain/types.domain";
-import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants.domain";
+} from "#/mirror/domain/types";
+import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants";
 
 /**
  * Writes `exports` into `package.json` via a temp file + rename (atomic on same volume).

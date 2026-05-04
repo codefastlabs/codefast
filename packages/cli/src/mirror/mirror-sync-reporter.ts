@@ -5,7 +5,7 @@ import type {
   MirrorDistAssetCounts,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#/mirror/domain/types.domain";
+} from "#/mirror/domain/types";
 
 export type MirrorProcessingModeInput =
   | { kind: "single" }

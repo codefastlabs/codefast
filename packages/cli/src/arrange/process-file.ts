@@ -1,5 +1,5 @@
 import type { FilesystemPort } from "#/core/filesystem";
-import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types.domain";
+import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types";
 import {
   buildGroupFileUnwrapState,
   countPersistedGroupFileEdits,
@@ -9,8 +9,8 @@ import {
   groupFileWorkHasNothingToReport,
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
-} from "#/arrange/domain/arrange-grouping.domain-service";
-import { ensureCnImport } from "#/arrange/domain/imports.domain";
+} from "#/arrange/domain/grouping-service";
+import { ensureCnImport } from "#/arrange/domain/imports";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
 
 export function processArrangeGroupFile(

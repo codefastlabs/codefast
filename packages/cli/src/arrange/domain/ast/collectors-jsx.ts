@@ -2,9 +2,9 @@ import {
   isDomainIdentifier,
   isDomainJsxExpression,
   isDomainTailwindClassLiteral,
-} from "#/arrange/domain/ast/ast-node.model";
-import type { DomainJsxAttribute } from "#/arrange/domain/ast/ast-node.model";
-import type { JsxClassNameStatic } from "#/arrange/domain/types.domain";
+} from "#/arrange/domain/ast/ast-node";
+import type { DomainJsxAttribute } from "#/arrange/domain/ast/ast-node";
+import type { JsxClassNameStatic } from "#/arrange/domain/types";
 
 export function jsxClassNameStaticLiteral(
   jsxClassNameAttribute: DomainJsxAttribute,

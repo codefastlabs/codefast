@@ -1,17 +1,10 @@
 import path from "node:path";
 import { logger } from "#/core/logger";
-import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#/arrange/domain/constants.domain";
-import type {
-  AnalyzeReport,
-  ArrangeRunResult,
-  PlannedGroupEdit,
-} from "#/arrange/domain/types.domain";
-import type {
-  GroupFileUnwrapPlan,
-  GroupFileWorkPlan,
-} from "#/arrange/domain/arrange-grouping.domain-service";
-import { lineOf } from "#/arrange/domain/ast/ast-helpers.helper";
-import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node.model";
+import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#/arrange/domain/constants";
+import type { AnalyzeReport, ArrangeRunResult, PlannedGroupEdit } from "#/arrange/domain/types";
+import type { GroupFileUnwrapPlan, GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
+import { lineOf } from "#/arrange/domain/ast/helpers";
+import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
 export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeReport): void {
   logger.out(`Path: ${path.resolve(resolvedTargetPath)}`);

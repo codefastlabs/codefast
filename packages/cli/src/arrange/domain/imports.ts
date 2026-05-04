@@ -2,8 +2,8 @@ import {
   isDomainImportDeclaration,
   isDomainNamedImports,
   isDomainStringLiteral,
-} from "#/arrange/domain/ast/ast-node.model";
-import type { DomainSourceFile } from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
+import type { DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
 function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
   for (const statement of sourceFile.statements) {

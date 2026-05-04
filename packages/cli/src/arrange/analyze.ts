@@ -6,8 +6,8 @@ import { err, ok } from "#/core/result";
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
-} from "#/arrange/domain/arrange-analyze.domain-service";
-import type { AnalyzeReport } from "#/arrange/domain/types.domain";
+} from "#/arrange/domain/analyze-service";
+import type { AnalyzeReport } from "#/arrange/domain/types";
 import { scanArrangeTargets } from "#/arrange/scan-target";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
 

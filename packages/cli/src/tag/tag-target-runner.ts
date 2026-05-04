@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { FilesystemPort } from "#/core/filesystem";
 import { walkTsxFiles } from "#/core/typescript-walk";
-import type { TagRunOptions, TagRunResult } from "#/tag/domain/types.domain";
+import type { TagRunOptions, TagRunResult } from "#/tag/domain/types";
 import { resolveNearestPackageVersion } from "#/tag/tag-version-resolver";
 import { TagSinceWriter } from "#/tag/tag-since-writer";
 

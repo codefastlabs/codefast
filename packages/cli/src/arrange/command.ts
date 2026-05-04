@@ -18,8 +18,8 @@ import {
   printGroupFilePreviewFromWork,
   printSyncResult,
 } from "#/arrange/output";
-import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types.domain";
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types.domain";
+import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types";
+import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { readOptionalPositionalArg } from "#/core/cli-positional";
 

@@ -3,32 +3,25 @@
  * Pure orchestration of domain collectors and invariants — no I/O.
  */
 
-import { LONG_STRING_TOKEN_THRESHOLD } from "#/arrange/domain/constants.domain";
-import type { AnalyzeReport } from "#/arrange/domain/types.domain";
-import { tokenizeClassString } from "#/arrange/domain/tailwind-token.value-object";
-import { forEachStringLiteralInClassExpression } from "#/arrange/domain/ast/collectors-cn.collector";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx.collector";
-import {
-  collectCnCallsInsideTv,
-  traverseTvObject,
-} from "#/arrange/domain/ast/collectors-tv.collector";
-import {
-  buildKnownCnTvBindings,
-  isCnOrTvIdentifier,
-  lineOf,
-} from "#/arrange/domain/ast/ast-helpers.helper";
+import { LONG_STRING_TOKEN_THRESHOLD } from "#/arrange/domain/constants";
+import type { AnalyzeReport } from "#/arrange/domain/types";
+import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
+import { forEachStringLiteralInClassExpression } from "#/arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
+import { collectCnCallsInsideTv, traverseTvObject } from "#/arrange/domain/ast/collectors-tv";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier, lineOf } from "#/arrange/domain/ast/helpers";
 import {
   isDomainCallExpression,
   isDomainJsxAttribute,
   isDomainObjectLiteralExpression,
   forEachDomainChild,
-} from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
 import type {
   DomainAstNode,
   DomainCallExpression,
   DomainJsxAttribute,
   DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/ast-node";
 
 const PREVIEW_MAX_LENGTH = 72;
 

@@ -5,8 +5,8 @@ import type { FilesystemPort } from "#/core/filesystem";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 import type { ArrangeSyncRunRequest } from "#/arrange/cli-schema";
-import type { ArrangeRunResult } from "#/arrange/domain/types.domain";
-import type { GroupFileWorkPlan } from "#/arrange/domain/arrange-grouping.domain-service";
+import type { ArrangeRunResult } from "#/arrange/domain/types";
+import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
 import { scanArrangeTargets } from "#/arrange/scan-target";
 import { processArrangeGroupFile } from "#/arrange/process-file";
 

@@ -1,7 +1,7 @@
 import type { ArrangeSuggestGroupsRequest } from "#/arrange/cli-schema";
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types.domain";
-import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatters.formatter";
-import { suggestCnGroups, summarizeGroupBucketLabels } from "#/arrange/domain/grouping.domain";
+import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
+import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatters";
+import { suggestCnGroups, summarizeGroupBucketLabels } from "#/arrange/domain/grouping";
 
 export function suggestCnGroupsFromCli(
   request: ArrangeSuggestGroupsRequest,

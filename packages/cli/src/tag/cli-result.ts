@@ -1,5 +1,5 @@
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
-import type { TagSyncResult } from "#/tag/domain/types.domain";
+import type { TagSyncResult } from "#/tag/domain/types";
 
 export function exitCodeForTagSyncResult(result: TagSyncResult): number {
   if (result.selectedTargets.length === 0) {

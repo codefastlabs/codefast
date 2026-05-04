@@ -12,7 +12,7 @@ import type {
   TagSyncResult,
   TagTargetCandidate,
   TagTargetExecutionResult,
-} from "#/tag/domain/types.domain";
+} from "#/tag/domain/types";
 import { resolveTagTargetCandidates } from "#/tag/target-candidates";
 import { runTagOnTarget } from "#/tag/tag-target-runner";
 

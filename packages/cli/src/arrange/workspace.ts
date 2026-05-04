@@ -5,7 +5,7 @@ import type { FilesystemPort } from "#/core/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { findRepoRoot } from "#/core/workspace";
-import type { ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types.domain";
+import type { ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types";
 import { resolveArrangeTargetPath } from "#/arrange/resolve-target";
 
 export async function prepareArrangeWorkspace(

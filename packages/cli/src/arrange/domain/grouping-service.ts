@@ -3,19 +3,19 @@
  * Pure: only DomainSourceFile, source strings, and options — no I/O.
  */
 
-import type { GroupFileResult, PlannedGroupEdit } from "#/arrange/domain/types.domain";
+import type { GroupFileResult, PlannedGroupEdit } from "#/arrange/domain/types";
 import {
   applyEditsDescending,
   buildKnownCnTvBindings,
   unwrapCnInsideTvCallReplacement,
-} from "#/arrange/domain/ast/ast-helpers.helper";
-import { listAllCnCallsInsideTvInSourceFile } from "#/arrange/domain/ast/collectors-tv.collector";
+} from "#/arrange/domain/ast/helpers";
+import { listAllCnCallsInsideTvInSourceFile } from "#/arrange/domain/ast/collectors-tv";
 import {
   collectGroupTargets,
   planGroupEditForTarget,
   targetReplaceStart,
-} from "#/arrange/domain/ast/targets.model";
-import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node.model";
+} from "#/arrange/domain/ast/targets";
+import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
 export type GroupFileUnwrapPlan = {
   readonly start: number;
