@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-harness",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "private": true,
   "description": "Shared tinybench harness utilities (subprocess protocol, fingerprinting, two-way reports) for Codefast benchmark packages",
   "license": "MIT",
