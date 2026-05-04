@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-tailwind-variants",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "private": true,
   "description": "Subprocess tinybench harness: @codefast/tailwind-variants vs tailwind-variants and vs class-variance-authority (pairwise reports)",
   "keywords": [
