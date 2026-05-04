@@ -188,7 +188,9 @@ export class TagSinceWriter {
 
     const formattedBody =
       normalizedBodyLines.length > 0
-        ? `${normalizedBodyLines.map((line) => `${baseIndent} * ${line}`).join("\n")}\n${baseIndent} *\n`
+        ? `${normalizedBodyLines
+            .map((line) => (line.length > 0 ? `${baseIndent} * ${line}` : `${baseIndent} *`))
+            .join("\n")}\n${baseIndent} *\n`
         : "";
     const tag = this.sinceDocumentationTag;
     const replacement = `/**\n${formattedBody}${baseIndent} * ${tag} ${version}\n${baseIndent} */`;
