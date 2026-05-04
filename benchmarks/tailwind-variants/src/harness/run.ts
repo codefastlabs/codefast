@@ -23,7 +23,7 @@ import {
   CODEFAST_VS_CVA_MARKDOWN,
   CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE,
   CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
-} from "#/harness/tv-presentation";
+} from "#/harness/presentation";
 
 const CODEFAST_DISPLAY = "@codefast/tailwind-variants";
 const CODEFAST_PACKAGE_FILTER = "@codefast/tailwind-variants";

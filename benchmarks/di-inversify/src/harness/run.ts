@@ -28,7 +28,7 @@ import {
   writeJsonlRun,
   writeMarkdownFile,
 } from "@codefast/benchmark-harness";
-import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/di-two-way-presentation";
+import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/presentation";
 
 const INVERSIFY_LIBRARY_DISPLAY_NAME = "InversifyJS 8";
 const CODEFAST_DI_LIBRARY_DISPLAY_NAME = "@codefast/di";

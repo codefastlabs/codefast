@@ -13,12 +13,12 @@ export const CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN = {
     rightMeanMs: "tailwind-variants mean ms",
     leftP99Ms: "@codefast/tailwind-variants p99 ms",
     rightP99Ms: "tailwind-variants p99 ms",
-    iqrCombinedHeading: "IQR (cf / npm)",
+    iqrCombinedHeading: "IQR (cf / tv)",
   },
   comparableScenarioIntroLines: [
     "Each library runs in its own subprocess with identical tinybench budgets and shared fixtures.",
     "",
-    "`hz/op` is operations per second per logical operation (throughput.mean × batch). `IQR (cf / npm)` is the interquartile range of per-trial throughput across the trial loop.",
+    "`hz/op` is operations per second per logical operation (throughput.mean × batch). `IQR (cf / tv)` is the interquartile range of per-trial throughput across the trial loop.",
   ],
   fingerprintLibraryVersionLabels: {
     left: "@codefast/tailwind-variants",
@@ -33,12 +33,12 @@ export const CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN = {
 export const CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE: TwoWayConsoleColumnLabels = {
   sectionHeading: "@codefast/tailwind-variants vs tailwind-variants",
   leftThroughputHeader: "cf tv hz/op",
-  rightThroughputHeader: "npm tv hz/op",
-  ratioHeader: "cf/npm",
+  rightThroughputHeader: "tv tv hz/op",
+  ratioHeader: "cf/tv",
   leftMeanHeader: "cf mean ms",
-  rightMeanHeader: "npm mean ms",
+  rightMeanHeader: "tv mean ms",
   leftP99Header: "cf p99 ms",
-  rightP99Header: "npm p99 ms",
+  rightP99Header: "tv p99 ms",
 };
 
 export const CODEFAST_VS_CVA_MARKDOWN = {
