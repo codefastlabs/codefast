@@ -147,6 +147,8 @@ function isStateToken(token: string): boolean {
 /**
  * Secondary sort inside the **composite** bucket: opacity / blend / isolation →
  * 3D context → 3D transforms → 2D transforms → filters → will-change.
+ *
+ * @since 0.3.16-canary.0
  */
 export function compositeSecondaryOrder(bareUtility: string): number {
   const b = bareUtility;
@@ -386,6 +388,9 @@ function isArbitraryParentSelectorStateToken(token: string): boolean {
   return selector.includes("&");
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function classifyToken(token: string): Bucket {
   // Before `[` arbitrary-property handling and `isStateToken`, parent-selector tokens must
   // be `selector` so they flush into their own chunk after unconditional utilities.
@@ -455,9 +460,11 @@ function inDataAttributeStem(token: string): string {
  * Uses the **full variant stack** (every `:` segment outside `[…]`), not only the
  * outermost prefix, so `@md/foo:[&>*]:w-auto` and `@md/foo:has-[…]:mt-px` stay in
  * separate groups while `hover:opacity` still keys as `hover` + `opacity`…
- *
+ * 
  * `data-[…]` / `aria-[…]` normalize the first segment via {@link dataAttributeStem} /
  * {@link ariaAttributeStem} (full token required for bracket capture).
+ *
+ * @since 0.3.16-canary.0
  */
 export function stateKey(token: string): string {
   const layers: string[] = [];
@@ -493,6 +500,8 @@ const SELECTOR_KEY_SEP = "\u001f";
  * Variant key for {@link Bucket} `"selector"` tokens in {@link suggestCnGroups}.
  * Reuses {@link stateKey} layer splitting, then normalizes common shadcn/Radix SVG patterns so
  * `[&_svg]:…` and `[&_svg:not([class*='size-'])]:…` stay in one chunk.
+ *
+ * @since 0.3.16-canary.0
  */
 export function selectorKey(token: string): string {
   return stateKey(token)
@@ -508,6 +517,9 @@ function normalizeSelectorVariantLayer(layer: string): string {
   return layer;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
   if (a === b) {
     return true;
@@ -517,6 +529,8 @@ export function bucketsCompatible(a: Bucket, b: Bucket): boolean {
 
 /**
  * Like {@link bucketsCompatible}, but never merge two distinct state / starting / selector variant blobs.
+ *
+ * @since 0.3.16-canary.0
  */
 export function bucketsMergeCompatible(a: Bucket, b: Bucket): boolean {
   if (a === "state" && b === "state") {

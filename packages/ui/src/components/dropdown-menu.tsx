@@ -10,8 +10,14 @@ import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
  * Component: DropdownMenu
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuProps = ComponentProps<typeof DropdownMenuPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
@@ -20,8 +26,14 @@ function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
  * Component: DropdownMenuTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuTriggerProps = ComponentProps<typeof DropdownMenuPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Element {
   return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
@@ -30,8 +42,14 @@ function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Elemen
  * Component: DropdownMenuGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuGroupProps = ComponentProps<typeof DropdownMenuPrimitive.Group>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
   return <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
 }
@@ -40,8 +58,14 @@ function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
  * Component: DropdownMenuSub
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuSubProps = ComponentProps<typeof DropdownMenuPrimitive.Sub>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
   return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />;
 }
@@ -50,8 +74,14 @@ function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuRadioGroupProps = ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.Element {
   return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
@@ -60,12 +90,18 @@ function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DropdownMenuSubTriggerProps extends ComponentProps<
   typeof DropdownMenuPrimitive.SubTrigger
 > {
   inset?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuSubTrigger({
   children,
   className,
@@ -99,8 +135,14 @@ function DropdownMenuSubTrigger({
  * Component: DropdownMenuSubContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuSubContentProps = ComponentProps<typeof DropdownMenuPrimitive.SubContent>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal">
@@ -134,8 +176,14 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
  * Component: DropdownMenuContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuContentProps = ComponentProps<typeof DropdownMenuPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuContent({
   className,
   sideOffset = 4,
@@ -174,11 +222,17 @@ function DropdownMenuContent({
  * Component: DropdownMenuItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DropdownMenuItemProps extends ComponentProps<typeof DropdownMenuPrimitive.Item> {
   inset?: boolean;
   variant?: "default" | "destructive";
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuItem({
   className,
   inset,
@@ -216,8 +270,14 @@ function DropdownMenuItem({
  * Component: DropdownMenuCheckboxItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuCheckboxItemProps = ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuCheckboxItem({
   checked,
   children,
@@ -255,8 +315,14 @@ function DropdownMenuCheckboxItem({
  * Component: DropdownMenuRadioItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuRadioItemProps = ComponentProps<typeof DropdownMenuPrimitive.RadioItem>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuRadioItem({
   children,
   className,
@@ -292,10 +358,16 @@ function DropdownMenuRadioItem({
  * Component: DropdownMenuLabel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface DropdownMenuLabelProps extends ComponentProps<typeof DropdownMenuPrimitive.Label> {
   inset?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
@@ -317,8 +389,14 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
  * Component: DropdownMenuSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuPrimitive.Separator>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Separator
@@ -333,8 +411,14 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
  * Component: DropdownMenuShortcut
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuShortcutProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps): JSX.Element {
   return (
     <span
@@ -354,8 +438,14 @@ function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps
  * Component: DropdownMenuArrow
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type DropdownMenuArrowProps = ComponentProps<typeof DropdownMenuPrimitive.Arrow>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function DropdownMenuArrow({ className, ...props }: DropdownMenuArrowProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Arrow

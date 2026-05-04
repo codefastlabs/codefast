@@ -12,6 +12,9 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
  * Variant: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const scrollAreaScrollbarVariants = tv({
   base: ["flex", "p-px", "touch-none transition-colors select-none"],
   compoundVariants: [
@@ -86,10 +89,16 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
  * Component: ScrollArea
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ScrollAreaProps = ScopedProps<
   ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue
 >;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ScrollArea({
   __scopeScrollArea,
   children,
@@ -127,8 +136,14 @@ function ScrollArea({
  * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ScrollAreaScrollbarProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ScrollAreaScrollbar({
   __scopeScrollArea,
   className,

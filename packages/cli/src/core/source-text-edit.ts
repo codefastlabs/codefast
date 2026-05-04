@@ -17,6 +17,9 @@ function lineStartIndexContaining(source: string, pos: number): number {
   return prevLineBreak === -1 ? 0 : prevLineBreak + 1;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function indentOfLineContaining(source: string, pos: number): string {
   const lineStart = lineStartIndexContaining(source, pos);
 
@@ -34,11 +37,17 @@ export function indentOfLineContaining(source: string, pos: number): string {
   return indentMatch?.[0] ?? "";
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function textPrefixFromLineStartToPosition(source: string, pos: number): string {
   const searchPos = Math.max(0, Math.min(pos, source.length));
   return source.slice(lineStartIndexContaining(source, searchPos), searchPos);
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd: number): number {
   let index = tokenEnd;
   while (index < source.length) {
@@ -55,6 +64,9 @@ export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd:
   return tokenEnd;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function applyEditsDescending(
   sourceText: string,
   edits: ReadonlyArray<SourceTextEdit>,

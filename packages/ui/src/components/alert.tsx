@@ -7,6 +7,9 @@ import { cn, tv } from "#/lib/utils";
  * Variant: Alert
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const alertVariants = tv({
   base: [
     "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 px-4 py-3",
@@ -34,8 +37,14 @@ const alertVariants = tv({
  * Component: Alert
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface AlertProps extends ComponentProps<"div">, VariantProps<typeof alertVariants> {}
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
   return (
     <div
@@ -51,8 +60,14 @@ function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
  * Component: AlertTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertTitleProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Element {
   return (
     <div
@@ -69,8 +84,14 @@ function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Ele
  * Component: AlertDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type AlertDescriptionProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.Element {
   return (
     <div

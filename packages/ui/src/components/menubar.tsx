@@ -10,8 +10,14 @@ import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
  * Component: Menubar
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarProps = ComponentProps<typeof MenubarPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Menubar({ className, ...props }: MenubarProps): JSX.Element {
   return (
     <MenubarPrimitive.Root
@@ -32,8 +38,14 @@ function Menubar({ className, ...props }: MenubarProps): JSX.Element {
  * Component: MenubarMenu
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarMenuProps = ComponentProps<typeof MenubarPrimitive.Menu>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarMenu({ ...props }: MenubarMenuProps): JSX.Element {
   return <MenubarPrimitive.Menu data-slot="menubar-menu" {...props} />;
 }
@@ -42,8 +54,14 @@ function MenubarMenu({ ...props }: MenubarMenuProps): JSX.Element {
  * Component: MenubarGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarGroupProps = ComponentProps<typeof MenubarPrimitive.Group>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarGroup({ ...props }: MenubarGroupProps): JSX.Element {
   return <MenubarPrimitive.Group data-slot="menubar-group" {...props} />;
 }
@@ -52,8 +70,14 @@ function MenubarGroup({ ...props }: MenubarGroupProps): JSX.Element {
  * Component: MenubarSub
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarSubProps = ComponentProps<typeof MenubarPrimitive.Sub>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarSub({ ...props }: MenubarSubProps): JSX.Element {
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />;
 }
@@ -62,8 +86,14 @@ function MenubarSub({ ...props }: MenubarSubProps): JSX.Element {
  * Component: MenubarRadioGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarRadioGroupProps = ComponentProps<typeof MenubarPrimitive.RadioGroup>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarRadioGroup({ ...props }: MenubarRadioGroupProps): JSX.Element {
   return <MenubarPrimitive.RadioGroup data-slot="menubar-radio-group" {...props} />;
 }
@@ -72,8 +102,14 @@ function MenubarRadioGroup({ ...props }: MenubarRadioGroupProps): JSX.Element {
  * Component: MenubarTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarTriggerProps = ComponentProps<typeof MenubarPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Element {
   return (
     <MenubarPrimitive.Trigger
@@ -97,10 +133,16 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Eleme
  * Component: MenubarSubTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface MenubarSubTriggerProps extends ComponentProps<typeof MenubarPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarSubTrigger({
   children,
   className,
@@ -134,8 +176,14 @@ function MenubarSubTrigger({
  * Component: MenubarSubContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarSubContentProps = ComponentProps<typeof MenubarPrimitive.SubContent>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX.Element {
   return (
     <MenubarPrimitive.Portal>
@@ -169,8 +217,14 @@ function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX
  * Component: MenubarContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarContentProps = ComponentProps<typeof MenubarPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarContent({
   align = "start",
   alignOffset = -4,
@@ -208,11 +262,17 @@ function MenubarContent({
  * Component: MenubarItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface MenubarItemProps extends ComponentProps<typeof MenubarPrimitive.Item> {
   inset?: boolean;
   variant?: "default" | "destructive";
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps): JSX.Element {
   return (
     <MenubarPrimitive.Item
@@ -245,8 +305,14 @@ function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps):
  * Component: MenubarCheckboxItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarCheckboxItemProps = ComponentProps<typeof MenubarPrimitive.CheckboxItem>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarCheckboxItem({
   checked,
   children,
@@ -284,8 +350,14 @@ function MenubarCheckboxItem({
  * Component: MenubarRadioItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarRadioItemProps = ComponentProps<typeof MenubarPrimitive.RadioItem>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemProps): JSX.Element {
   return (
     <MenubarPrimitive.RadioItem
@@ -317,10 +389,16 @@ function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemPro
  * Component: MenubarLabel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label> {
   inset?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
@@ -342,8 +420,14 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.El
  * Component: MenubarSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarSeparatorProps = ComponentProps<typeof MenubarPrimitive.Separator>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.Element {
   return (
     <MenubarPrimitive.Separator
@@ -358,8 +442,14 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.E
  * Component: MenubarShortcut
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarShortcutProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Element {
   return (
     <span
@@ -379,8 +469,14 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Ele
  * Component: MenubarArrow
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type MenubarArrowProps = ComponentProps<typeof MenubarPrimitive.Arrow>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function MenubarArrow({ className, ...props }: MenubarArrowProps): JSX.Element {
   return (
     <MenubarPrimitive.Arrow

@@ -1,6 +1,9 @@
 import type { CodefastConfig } from "#/core/config/schema";
 import type { GlobalCliOptions } from "#/core/cli/global-options";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ExportEntry {
   types: string;
   import?: string;
@@ -9,8 +12,13 @@ export interface ExportEntry {
 
 /**
  * Final `package.json#exports` map (conditional exports + string shims + `./package.json`).
+ *
+ * @since 0.3.16-canary.0
  */
 export type ExportMapData = Record<string, ExportEntry | string>;
+/**
+ * @since 0.3.16-canary.0
+ */
 export type ExportOriginalPathBySpecifier = Record<string, string>;
 
 interface ModuleFiles {
@@ -20,17 +28,25 @@ interface ModuleFiles {
   dts: string | null;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface Module {
   path: string;
   files: ModuleFiles;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface MirrorPackageMeta {
   packageName: string;
 }
 
 /**
  * Parsed `package.json` — only fields mirror reads/writes are typed strictly.
+ *
+ * @since 0.3.16-canary.0
  */
 export type PackageJsonShape = {
   name?: unknown;
@@ -38,6 +54,9 @@ export type PackageJsonShape = {
   [key: string]: unknown;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface GenerateExportsResult {
   exports: ExportMapData;
   originalPathBySpecifier: ExportOriginalPathBySpecifier;
@@ -45,6 +64,9 @@ export interface GenerateExportsResult {
   cssCount: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface PackageStats {
   name: string;
   path: string;
@@ -60,12 +82,19 @@ export interface PackageStats {
   prunedExportKeys: string[];
 }
 
-/** Built dist assets tallied for one package (reporter / progress output). */
+/**
+ * Built dist assets tallied for one package (reporter / progress output).
+ *
+ * @since 0.3.16-canary.0
+ */
 export interface MirrorDistAssetCounts {
   jsCount: number;
   cssCount: number;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface GlobalStats {
   packagesFound: number;
   packagesProcessed: number;
@@ -79,17 +108,25 @@ export interface GlobalStats {
 
 /**
  * How workspace packages were resolved when scanning the repo (for logging / UX).
+ *
+ * @since 0.3.16-canary.0
  */
 export type WorkspaceMultiDiscoverySource =
   | "default-patterns"
   | "pnpm-workspace-yaml"
   | "declared-empty";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type FindWorkspacePackagesResult = {
   relPaths: string[];
   multiSource: WorkspaceMultiDiscoverySource;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface MirrorSyncCommandPrelude {
   readonly globals: GlobalCliOptions;
   readonly rootDir: string;

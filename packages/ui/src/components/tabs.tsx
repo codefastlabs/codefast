@@ -9,8 +9,14 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
  * Component: Tabs
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type TabsProps = ComponentProps<typeof TabsPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Tabs({ className, ...props }: TabsProps): JSX.Element {
   return (
     <TabsPrimitive.Root
@@ -25,8 +31,14 @@ function Tabs({ className, ...props }: TabsProps): JSX.Element {
  * Component: TabsList
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type TabsListProps = ComponentProps<typeof TabsPrimitive.List>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function TabsList({ className, ...props }: TabsListProps): JSX.Element {
   return (
     <TabsPrimitive.List
@@ -46,8 +58,14 @@ function TabsList({ className, ...props }: TabsListProps): JSX.Element {
  * Component: TabsTrigger
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type TabsTriggerProps = ComponentProps<typeof TabsPrimitive.Trigger>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
   return (
     <TabsPrimitive.Trigger
@@ -78,8 +96,14 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
  * Component: TabsContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type TabsContentProps = ComponentProps<typeof TabsPrimitive.Content>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content

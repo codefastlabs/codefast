@@ -17,6 +17,9 @@ import { Textarea } from "#/components/textarea";
  * Variants: InputGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const inputGroupVariants = tv({
   base: [
     "group/input-group relative flex h-9 w-full min-w-0 items-center",
@@ -40,6 +43,9 @@ const inputGroupVariants = tv({
  * Variants: InputGroupAddon
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const inputGroupAddonVariants = tv({
   base: [
     "flex h-auto items-center justify-center gap-2 py-1.5",
@@ -84,6 +90,9 @@ const inputGroupAddonVariants = tv({
  * Variants: InputGroupButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const inputGroupButtonVariants = tv({
   base: [
     "flex items-center gap-2",
@@ -113,8 +122,14 @@ const inputGroupButtonVariants = tv({
  * Component: InputGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputGroup({ className, ...props }: InputGroupProps): JSX.Element {
   return (
     <div
@@ -130,8 +145,14 @@ function InputGroup({ className, ...props }: InputGroupProps): JSX.Element {
  * Component: InputGroupAddon
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputGroupAddonProps = ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputGroupAddon({
   align = "inline-start",
   className,
@@ -165,9 +186,15 @@ function InputGroupAddon({
  * Component: InputGroupButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputGroupButtonProps = Omit<ButtonProps, "size"> &
   VariantProps<typeof inputGroupButtonVariants>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputGroupButton({
   className,
   size = "xs",
@@ -191,8 +218,14 @@ function InputGroupButton({
  * Component: InputGroupText
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputGroupTextProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputGroupText({ className, ...props }: InputGroupTextProps): JSX.Element {
   return (
     <span
@@ -211,8 +244,14 @@ function InputGroupText({ className, ...props }: InputGroupTextProps): JSX.Eleme
  * Component: InputGroupInput
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputGroupInputProps = InputProps;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputGroupInput({ className, ...props }: InputGroupInputProps): JSX.Element {
   return (
     <Input
@@ -235,8 +274,14 @@ function InputGroupInput({ className, ...props }: InputGroupInputProps): JSX.Ele
  * Component: InputGroupTextarea
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type InputGroupTextareaProps = TextareaProps;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): JSX.Element {
   return (
     <Textarea

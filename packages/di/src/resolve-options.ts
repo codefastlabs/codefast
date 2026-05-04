@@ -4,6 +4,8 @@ import type { ResolveOptions } from "#/types";
 /**
  * Builds a {@link ResolveOptions} safe for `exactOptionalPropertyTypes`:
  * omits keys instead of assigning `undefined`.
+ *
+ * @since 0.3.16-canary.0
  */
 export function injectableSlotToResolveOptions(slot: {
   readonly name?: string;
@@ -21,6 +23,8 @@ export function injectableSlotToResolveOptions(slot: {
 
 /**
  * Hint from a binding {@link SlotKey} (tags may be empty; omits when nothing to match).
+ *
+ * @since 0.3.16-canary.0
  */
 export function slotKeyToResolveOptions(slot: SlotKey): ResolveOptions | undefined {
   const options: ResolveOptions = {};

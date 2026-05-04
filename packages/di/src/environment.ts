@@ -15,6 +15,9 @@ import type { Container } from "#/container";
 
 let _activeContainer: Container | undefined;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function runWithContainer<Result>(container: Container, fn: () => Result): Result {
   const prev = _activeContainer;
   _activeContainer = container;
@@ -25,12 +28,18 @@ export function runWithContainer<Result>(container: Container, fn: () => Result)
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function getActiveContainer(): Container | undefined {
   return _activeContainer;
 }
 
 // ── ResolutionContext implementation ──────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ResolverCallbacks {
   resolveFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
@@ -80,6 +89,9 @@ export interface ResolverCallbacks {
   ): Promise<Value[]>;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class DefaultResolutionContext implements ResolutionContext {
   private _resolver: ResolverCallbacks;
   private _resolutionPath: string[];
@@ -226,6 +238,9 @@ class DefaultConstraintContext implements ConstraintContext {
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildMaterializationFrame(
   tokenName: string,
   scope: BindingScope,

@@ -133,6 +133,9 @@ function buildNamedConstantGetScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildInversifyMicroScenarios(): readonly BenchScenario[] {
   return [
     buildConstantResolveScenario(),

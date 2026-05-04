@@ -1,5 +1,8 @@
 import { MAX_STRIP_VARIANT_PASSES } from "#/arrange/domain/constants";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function tokenizeClassString(classString: string): string[] {
   return classString.trim().split(/\s+/).filter(Boolean);
 }
@@ -8,6 +11,8 @@ export function tokenizeClassString(classString: string): string[] {
  * Index of the first `:` that separates a Tailwind variant segment from the rest.
  * Colons inside `[...]` (at positive bracket depth) are ignored so selectors like
  * `[&_a:hover]:text-red-500` split as `[&_a:hover]:` + `text-red-500`.
+ *
+ * @since 0.3.16-canary.0
  */
 export function indexOfFirstVariantColon(text: string): number {
   let depth = 0;
@@ -28,6 +33,9 @@ export function indexOfFirstVariantColon(text: string): number {
 // e.g. "hover:dark:md:text-sm" → "text-sm"
 // e.g. "@min-[600px]:flex" → "flex"
 // e.g. "[&_a:hover]:text-red-500" → "text-red-500"
+/**
+ * @since 0.3.16-canary.0
+ */
 export function stripVariants(token: string): string {
   let withoutVariants = token;
   const maxStripVariantPasses = MAX_STRIP_VARIANT_PASSES;

@@ -5,6 +5,9 @@ import { messageFrom } from "#/core/errors";
 
 const translator = new TypeScriptAstTranslator();
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
   try {
     return translator.translateSourceFile(filePath, sourceText);

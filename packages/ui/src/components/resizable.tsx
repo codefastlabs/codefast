@@ -10,8 +10,14 @@ import * as ResizablePrimitive from "react-resizable-panels";
  * Component: ResizableGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ResizableGroupProps = ComponentProps<typeof ResizablePrimitive.Group>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ResizableGroup({ className, ...props }: ResizableGroupProps): JSX.Element {
   return (
     <ResizablePrimitive.Group
@@ -26,8 +32,14 @@ function ResizableGroup({ className, ...props }: ResizableGroupProps): JSX.Eleme
  * Component: ResizablePanel
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ResizablePanelProps = ComponentProps<typeof ResizablePrimitive.Panel>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ResizablePanel({ ...props }: ResizablePanelProps): JSX.Element {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
 }
@@ -36,10 +48,16 @@ function ResizablePanel({ ...props }: ResizablePanelProps): JSX.Element {
  * Component: ResizableSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ResizableSeparatorProps extends ComponentProps<typeof ResizablePrimitive.Separator> {
   withHandle?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ResizableSeparator({
   className,
   withHandle,

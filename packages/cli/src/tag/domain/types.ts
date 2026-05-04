@@ -1,11 +1,17 @@
 import type { CodefastConfig } from "#/core/config/schema";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagFileResult = {
   filePath: string;
   taggedDeclarations: number;
   changed: boolean;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagRunResult = {
   version: string;
   filesScanned: number;
@@ -14,18 +20,27 @@ export type TagRunResult = {
   fileResults: TagFileResult[];
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagRunOptions = {
   write: boolean;
 };
 
 type TagTargetCandidateSource = "explicit-target" | "workspace-package" | "repo-src-fallback";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagTargetSource =
   | "explicit-target"
   | "workspace-package-selected-src"
   | "workspace-package-selected-root"
   | "repo-src-fallback";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagTargetCandidate = {
   candidatePath: string;
   rootRelativeCandidatePath: string;
@@ -34,6 +49,9 @@ export type TagTargetCandidate = {
   packageName: string | null;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagResolvedTarget = {
   targetPath: string;
   rootRelativeTargetPath: string;
@@ -42,6 +60,9 @@ export type TagResolvedTarget = {
   packageName: string | null;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagTargetExecutionResult = {
   target: TagResolvedTarget;
   targetExists: boolean;
@@ -49,11 +70,17 @@ export type TagTargetExecutionResult = {
   result: TagRunResult | null;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface TagProgressListener {
   onTargetStarted: (target: TagResolvedTarget) => void;
   onTargetCompleted: (target: TagResolvedTarget, result: TagTargetExecutionResult) => void;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export type TagSyncResult = {
   mode: "applied" | "dry-run";
   selectedTargets: TagResolvedTarget[];
@@ -68,6 +95,9 @@ export type TagSyncResult = {
   hookError: string | null;
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface TagCommandPrelude {
   readonly rootDir: string;
   readonly config: CodefastConfig;

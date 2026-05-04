@@ -19,6 +19,9 @@ const npmExtendsWithMerge = tailwindVariantsTv(
   TV_MERGE_ENABLED,
 );
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildTailwindVariantsNpmExtendsScenarios(): readonly BenchScenario[] {
   return [
     {

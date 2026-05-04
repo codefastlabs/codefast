@@ -135,6 +135,9 @@ function buildAsyncFanOutConcurrentScenario(
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildCodefastAsyncScenarios(): readonly AsyncBenchScenario[] {
   return [
     buildResolveAsyncSingleHopScenario(),

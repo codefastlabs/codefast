@@ -10,6 +10,9 @@ import { effectiveBindingScope } from "#/binding-scope";
 
 // ── Public types ──────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface BindingSnapshot {
   readonly tokenName: string;
   readonly kind: BindingKind;
@@ -21,6 +24,9 @@ export interface BindingSnapshot {
   readonly id: BindingIdentifier;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface ContainerSnapshot {
   readonly ownBindings: readonly BindingSnapshot[];
   readonly bindings: readonly BindingSnapshot[];
@@ -31,6 +37,9 @@ export interface ContainerSnapshot {
 
 // ── Inspector ─────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class Inspector {
   constructor(
     private readonly _registry: BindingRegistry,

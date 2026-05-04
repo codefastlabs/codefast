@@ -6,6 +6,9 @@ import { buttonVariants, simpleTestProps } from "#/fixtures/create-tv";
 const npmButtonNoMerge = tailwindVariantsCreateTV(TV_MERGE_DISABLED)(buttonVariants);
 const npmButtonWithMerge = tailwindVariantsCreateTV(TV_MERGE_ENABLED)(buttonVariants);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildTailwindVariantsNpmCreateTvScenarios(): readonly BenchScenario[] {
   return [
     {

@@ -1,7 +1,9 @@
 /**
  * Extends Benchmark Data
- *
+ * 
  * Data specific to extends variant benchmarks
+ *
+ * @since 0.3.16-canary.0
  */
 
 export const extendsBaseVariants = {
@@ -37,6 +39,9 @@ export const extendsBaseVariants = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const extendsExtensionVariants = {
   base: "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-offset-background transform-gpu",
   defaultVariants: {
@@ -96,6 +101,9 @@ export const extendsExtensionVariants = {
   },
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const extendsTestProps = [
   {},
   { variant: "destructive" },

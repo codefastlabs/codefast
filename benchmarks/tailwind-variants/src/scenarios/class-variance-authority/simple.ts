@@ -8,6 +8,9 @@ const cvaInstance = cva(buttonVariants.base, {
   variants: buttonVariants.variants,
 });
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildClassVarianceAuthoritySimpleScenarios(): readonly BenchScenario[] {
   return [
     {

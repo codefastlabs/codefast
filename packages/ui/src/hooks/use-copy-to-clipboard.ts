@@ -4,20 +4,22 @@ import { useState } from "react";
 
 /**
  * Provide clipboard copy capability with a transient copied state.
- *
+ * 
  * Internally uses the Clipboard API when available and sets a temporary
  * `isCopied` flag for UI feedback. A custom callback may be invoked upon copy.
- *
+ * 
  * @param options - Configuration options.
  *   - onCopy: Callback invoked after a successful copy.
  *   - timeout: Duration in milliseconds to keep `isCopied` true. Defaults to 2000.
  * @returns An object with a `copyToClipboard` function and an `isCopied` flag.
- *
+ * 
  * @example
  * ```tsx
  * const { copyToClipboard, isCopied } = useCopyToClipboard({ timeout: 1500 });
  * <button onClick={() => copyToClipboard("Hello")}>{isCopied ? "Copied" : "Copy"}</button>
  * ```
+ *
+ * @since 0.3.16-canary.0
  */
 export function useCopyToClipboard({
   onCopy,

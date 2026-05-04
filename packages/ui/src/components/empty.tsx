@@ -7,6 +7,9 @@ import { cn, tv } from "#/lib/utils";
  * Variants: Empty
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const emptyMediaVariants = tv({
   base: [
     "mb-2 flex shrink-0 items-center justify-center",
@@ -32,8 +35,14 @@ const emptyMediaVariants = tv({
  * Component: Empty
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type EmptyProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Empty({ className, ...props }: EmptyProps): JSX.Element {
   return (
     <div
@@ -54,8 +63,14 @@ function Empty({ className, ...props }: EmptyProps): JSX.Element {
  * Component: EmptyHeader
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type EmptyHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function EmptyHeader({ className, ...props }: EmptyHeaderProps): JSX.Element {
   return (
     <div
@@ -70,8 +85,14 @@ function EmptyHeader({ className, ...props }: EmptyHeaderProps): JSX.Element {
  * Component: EmptyMedia
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type EmptyMediaProps = ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function EmptyMedia({ className, variant = "default", ...props }: EmptyMediaProps): JSX.Element {
   return (
     <div
@@ -87,8 +108,14 @@ function EmptyMedia({ className, variant = "default", ...props }: EmptyMediaProp
  * Component: EmptyTitle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type EmptyTitleProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function EmptyTitle({ className, ...props }: EmptyTitleProps): JSX.Element {
   return (
     <div
@@ -103,8 +130,14 @@ function EmptyTitle({ className, ...props }: EmptyTitleProps): JSX.Element {
  * Component: EmptyDescription
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type EmptyDescriptionProps = ComponentProps<"p">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function EmptyDescription({ className, ...props }: EmptyDescriptionProps): JSX.Element {
   return (
     <p
@@ -124,8 +157,14 @@ function EmptyDescription({ className, ...props }: EmptyDescriptionProps): JSX.E
  * Component: EmptyContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type EmptyContentProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function EmptyContent({ className, ...props }: EmptyContentProps): JSX.Element {
   return (
     <div

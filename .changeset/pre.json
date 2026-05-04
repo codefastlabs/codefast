@@ -12,5 +12,7 @@
     "@codefast/typescript-config": "0.3.15",
     "@codefast/ui": "0.3.15"
   },
-  "changesets": []
+  "changesets": [
+    "eight-turtles-run"
+  ]
 }

@@ -2,6 +2,8 @@ import type { Bucket } from "#/arrange/domain/types";
 
 /**
  * Analyze report: long literal threshold (token count).
+ *
+ * @since 0.3.16-canary.0
  */
 export const LONG_STRING_TOKEN_THRESHOLD = 18;
 
@@ -9,43 +11,59 @@ export const LONG_STRING_TOKEN_THRESHOLD = 18;
  * Minimum token count for a string to be considered a candidate for grouping
  * in the apply/preview pipeline. Intentionally much lower than
  * {@link LONG_STRING_TOKEN_THRESHOLD} (analyze only).
+ *
+ * @since 0.3.16-canary.0
  */
 export const APPLY_MIN_TOKENS = 2;
 
 /**
  * Minimum tokens a group must have to stand alone before singleton-merging.
  * Set to 2 so single-token groups are not collapsed into unrelated buckets by the merger.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MIN_GROUP_TOKENS = 2;
 
 /**
  * Dynamic max groups clamp: base bound.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_GROUPS_BASE = 4;
 
 /**
  * Dynamic max groups clamp: upper cap.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_GROUPS_CAP = 24;
 
 /**
  * Extra slots so a few state / aria groups do not force `capGroups` to merge
  * unrelated buckets (e.g. `bg-border` + `outline-hidden`).
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_GROUPS_HEADROOM = 2;
 
 /**
  * Maximum findings printed per category in the analyze report.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_REPORT_LINES = 40;
 
 /**
  * Maximum recursion depth when traversing `tv()` object literals.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_OBJECT_DEPTH = 12;
 
 /**
  * Maximum depth when peeling conditional / parens / arrays inside `cn(...)` args.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_CLASS_EXPR_DEPTH = 12;
 
@@ -53,21 +71,27 @@ export const MAX_CLASS_EXPR_DEPTH = 12;
  * Maximum variant-stripping passes in {@link stripVariants}.
  * Real-world Tailwind stacks rarely exceed 4–5 segments (e.g. `@md/sidebar:group-hover:dark:focus-visible:`);
  * 12 is a conservative safety cap that prevents runaway loops on malformed input.
+ *
+ * @since 0.3.16-canary.0
  */
 export const MAX_STRIP_VARIANT_PASSES = 12;
 
 /**
  * Passed when optional `knownBindings` is missing — size 0 disables matching
  * for `cn` / `tv` identifier resolution.
+ *
+ * @since 0.3.16-canary.0
  */
 export const EMPTY_CN_TV_BINDINGS = new Set<string>();
 
 /**
  * Bucket sort order — **render pipeline** (lower → earlier in `cn()` output).
- *
+ * 
  * Matches README: Existence → Position → Layout → Sizing → Spacing → Shape → Background
  * → Shadow → Typography → Composite → Motion → Starting → Behavior → State → Selector,
  * then `other` and `arbitrary` as sort tails for unknown utilities and arbitrary properties.
+ *
+ * @since 0.3.16-canary.0
  */
 export const BUCKET_ORDER: Record<Bucket, number> = {
   existence: 0,
@@ -97,6 +121,8 @@ export const BUCKET_ORDER: Record<Bucket, number> = {
  * `position↔layout` and `layout↔sizing` each justify one hop and the whole “box in flow”
  * (place + tracks + scrollport) stays in one chunk — co-located because they jointly define
  * stacking and scroll behavior for the same surface.
+ *
+ * @since 0.3.16-canary.0
  */
 export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
   // existence + position: named container / group / peer context edited next to inset & z-index.
@@ -131,15 +157,19 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
 
 /**
  * Responsive / variant prefix — Tailwind v4 aware.
- *
+ * 
  * v3: sm: md: … — v4: @sm:, @min-[600px]:, @[480px]:, named @md/sidebar:,
  * viewport md/sidebar:, min-[100px]: / max-[100px]:, …
+ *
+ * @since 0.3.16-canary.0
  */
 export const RESPONSIVE_PREFIX =
   /^(?:@(?:min|max)-\[[^\]]+\]:|@\[[^\]]+\]:|@(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)\[[^\]]+\]:)/;
 
 /**
  * State variant stems — hoisted to module scope (not recreated per call).
+ *
+ * @since 0.3.16-canary.0
  */
 export const STATE_PREFIXES = new Set([
   "hover",

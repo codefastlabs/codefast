@@ -24,6 +24,9 @@ type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 const THEMES = { dark: ".dark", light: "" } as const;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ChartConfig = Record<
   string,
   {
@@ -62,11 +65,17 @@ const [ChartContextProvider, useChartContext] =
  * Component: Chart
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ChartContainerProps extends ComponentProps<"div"> {
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"];
   config: ChartConfig;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ChartContainer({
   __scopeChart,
   children,
@@ -112,11 +121,17 @@ function ChartContainer({
  * Component: ChartStyle
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface ChartStyleProps {
   config: ChartConfig;
   id: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
   const colorConfig = Object.entries(config).filter(
     ([, itemConfig]) => itemConfig.theme ?? itemConfig.color,
@@ -139,11 +154,17 @@ function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
  * Component: ChartTooltip
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = TooltipProps<
   TValue,
   TName
 >;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
 /* -----------------------------------------------------------------------------
@@ -152,6 +173,9 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
 
 const CHART_TOOLTIP_CONTENT_NAME = "ChartTooltipContent";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> = Omit<
   MakeOptional<
     TooltipContentProps<TValue, TName>,
@@ -169,6 +193,9 @@ type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> 
   payload?: Payload<TValue, TName>[];
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
   __scopeChart,
   active,
@@ -321,8 +348,14 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
  * Component: ChartLegend
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ChartLegendProps = ComponentProps<typeof RechartsPrimitive.Legend>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const ChartLegend = RechartsPrimitive.Legend;
 
 /* -----------------------------------------------------------------------------
@@ -331,12 +364,18 @@ const ChartLegend = RechartsPrimitive.Legend;
 
 const CHART_LEGEND_CONTENT_NAME = "ChartLegendContent";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type ChartLegendContentProps = ComponentProps<"div"> &
   ExtractProps<RechartsPrimitive.LegendProps["content"]> & {
     hideIcon?: boolean;
     nameKey?: string;
   };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function ChartLegendContent({
   __scopeChart,
   className,

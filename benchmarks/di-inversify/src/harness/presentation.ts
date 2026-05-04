@@ -7,6 +7,8 @@ import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 /**
  * Stable copy for Markdown / console output for `@codefast/di` vs InversifyJS 8.
  * Keeps `run.ts` free of duplicated prose.
+ *
+ * @since 0.3.16-canary.0
  */
 export const DI_INVERSIFY_MARKDOWN = {
   documentHeading: "# @codefast/di vs InversifyJS 8 — benchmark report",
@@ -35,6 +37,9 @@ export const DI_INVERSIFY_MARKDOWN = {
   },
 } as const satisfies TwoWayMarkdownReportOptions;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const DI_INVERSIFY_CONSOLE: TwoWayConsoleColumnLabels = {
   sectionHeading: "Comparable scenarios",
   leftThroughputHeader: "codefast hz/op",

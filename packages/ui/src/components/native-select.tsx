@@ -7,8 +7,14 @@ import { ChevronDownIcon } from "lucide-react";
  * Component: NativeSelect
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NativeSelectProps = ComponentProps<"select">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NativeSelect({ className, ...props }: NativeSelectProps): JSX.Element {
   return (
     <div
@@ -53,8 +59,14 @@ function NativeSelect({ className, ...props }: NativeSelectProps): JSX.Element {
  * Component: NativeSelectOption
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NativeSelectOptionProps = ComponentProps<"option">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NativeSelectOption({ ...props }: NativeSelectOptionProps): JSX.Element {
   return <option data-slot="native-select-option" {...props} />;
 }
@@ -63,8 +75,14 @@ function NativeSelectOption({ ...props }: NativeSelectOptionProps): JSX.Element 
  * Component: NativeSelectOptGroup
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type NativeSelectOptGroupProps = ComponentProps<"optgroup">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function NativeSelectOptGroup({ className, ...props }: NativeSelectOptGroupProps): JSX.Element {
   return <optgroup className={cn(className)} data-slot="native-select-optgroup" {...props} />;
 }

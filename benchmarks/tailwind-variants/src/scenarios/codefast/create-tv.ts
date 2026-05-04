@@ -9,6 +9,9 @@ const { tv: codefastFactoryWithMerge } = codefastCreateTV(TV_MERGE_ENABLED);
 const codefastButtonNoMerge = codefastFactoryNoMerge(buttonVariants);
 const codefastButtonWithMerge = codefastFactoryWithMerge(buttonVariants);
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildCodefastCreateTvScenarios(): readonly BenchScenario[] {
   return [
     {

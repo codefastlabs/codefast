@@ -10,8 +10,14 @@ import { CheckIcon } from "lucide-react";
  * Component: Checkbox
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type CheckboxProps = ComponentProps<typeof CheckboxPrimitive.Root>;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
   return (
     <CheckboxPrimitive.Root

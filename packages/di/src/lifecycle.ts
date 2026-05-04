@@ -10,6 +10,9 @@ import type { MetadataReader } from "#/metadata/metadata-types";
 import { AsyncDeactivationError } from "#/errors";
 import { tokenName } from "#/token";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class LifecycleManager {
   // Container-level activation/deactivation hooks per token
   private readonly _activationHooks = new Map<

@@ -107,6 +107,9 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildCodefastResolutionPatternScenarios(): readonly BenchScenario[] {
   return [
     buildResolveOptionalHitScenario(),

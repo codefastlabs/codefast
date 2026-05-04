@@ -12,6 +12,9 @@ type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }
   | { type: "target-completed"; target: TagResolvedTarget; result: TagTargetExecutionResult };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class TagSyncProgressPresenter implements TagProgressListener {
   onTargetStarted(target: TagResolvedTarget): void {
     logger.out(TagSyncProgressPresenter.formatProgress({ type: "target-started", target }));
@@ -42,6 +45,9 @@ const colors = {
   yellow: "\x1b[33m",
 } as const;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function presentTagSyncResult(result: TagSyncResult, rootDir: string): number {
   logger.out(formatTargetTable(result.selectedTargets, rootDir));
   if (result.selectedTargets.length === 0) {

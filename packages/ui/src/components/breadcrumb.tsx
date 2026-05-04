@@ -10,10 +10,16 @@ import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
  * Component: Breadcrumb
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface BreadcrumbProps extends ComponentProps<"nav"> {
   separator?: ReactNode;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
@@ -22,8 +28,14 @@ function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
  * Component: BreadcrumbList
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type BreadcrumbListProps = ComponentProps<"ol">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Element {
   return (
     <ol
@@ -42,8 +54,14 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
  * Component: BreadcrumbItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type BreadcrumbItemProps = ComponentProps<"li">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
   return (
     <li
@@ -58,10 +76,16 @@ function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Eleme
  * Component: BreadcrumbLink
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface BreadcrumbLinkProps extends ComponentProps<"a"> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): JSX.Element {
   const Component = asChild ? Slot : "a";
 
@@ -78,8 +102,14 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
  * Component: BreadcrumbPage
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type BreadcrumbPageProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Element {
   return (
     <span
@@ -96,8 +126,14 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
  * Component: BreadcrumbSeparator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type BreadcrumbSeparatorProps = ComponentProps<"li">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
     <li aria-hidden="true" data-slot="breadcrumb-separator" role="presentation" {...props}>
@@ -110,8 +146,14 @@ function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): 
  * Component: BreadcrumbEllipsis
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type BreadcrumbEllipsisProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): JSX.Element {
   return (
     <span

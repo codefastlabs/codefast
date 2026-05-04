@@ -11,6 +11,9 @@ import {
 } from "#/arrange/domain/ast/ast-node";
 import type { DomainAstNode } from "#/arrange/domain/ast/ast-node";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function forEachStringLiteralInClassExpression(
   expr: DomainAstNode,
   sink: (classLiteral: TailwindClassLiteral) => void,
@@ -72,14 +75,23 @@ export function forEachStringLiteralInClassExpression(
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function isUnsafeLiteralForCnStyleApplySplit(classLiteral: TailwindClassLiteral): boolean {
   return classLiteral.parent !== null && isDomainArrayLiteralExpression(classLiteral.parent);
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOptions = {
   descendIntoConditional: false,
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function collectUnconditionalTailwindLiteralsFromCnArguments(
   args: readonly DomainAstNode[],
 ): TailwindClassLiteral[] {

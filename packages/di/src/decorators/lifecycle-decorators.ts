@@ -48,6 +48,9 @@ function registerByConstructor(
   }
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function postConstruct(): (target: unknown, context: ClassMethodDecoratorContext) => void {
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
     const methodName = String(context.name);
@@ -96,6 +99,9 @@ export function postConstruct(): (target: unknown, context: ClassMethodDecorator
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function preDestroy(): (target: unknown, context: ClassMethodDecoratorContext) => void {
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
     const methodName = String(context.name);

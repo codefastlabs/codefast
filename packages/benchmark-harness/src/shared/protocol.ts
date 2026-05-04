@@ -1,24 +1,31 @@
 /**
  * Wire protocol between per-library bench subprocesses and the parent runner.
- *
+ * 
  * Each library's bench file prints one JSON payload delimited by explicit
  * START/END markers. The parent looks *only* for content between those markers,
  * so Node deprecation warnings, tsx banners, or stray `console.log`s never
  * contaminate parsing. This replaces the previous fragile "last non-empty
  * stdout line" heuristic.
+ *
+ * @since 0.3.16-canary.0
  */
 
 export const BENCH_RESULT_JSON_START = "BENCH_RESULT_JSON_START";
+/**
+ * @since 0.3.16-canary.0
+ */
 export const BENCH_RESULT_JSON_END = "BENCH_RESULT_JSON_END";
 
 /**
  * A single tinybench task result after aggregation across trials. All durations
  * are reported in milliseconds to avoid floating-point ambiguity at the μs level.
- *
+ * 
  * `hzPerOp` is tinybench's `throughput.mean` multiplied by `batch` — i.e. operations
  * per second per *logical* operation, not per bench-closure invocation. Use this
  * for reading the table; use `hzPerIteration` when debugging the raw tinybench
  * data.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface ScenarioTrialResult {
   readonly id: string;
@@ -38,6 +45,8 @@ export interface ScenarioTrialResult {
 /**
  * One per (library, trial) pair. Parent collects N trials per library and
  * aggregates into a `LibraryReport`.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface TrialPayload {
   readonly trialIndex: number;
@@ -47,6 +56,8 @@ export interface TrialPayload {
 /**
  * Fingerprint of the environment the subprocess ran in — part of every
  * JSONL record so regressions can be correlated with Node / platform / CPU.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface Fingerprint {
   readonly nodeVersion: string;
@@ -62,6 +73,9 @@ export interface Fingerprint {
   readonly timestampIso: string;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export interface SubprocessPayload {
   readonly fingerprint: Fingerprint;
   readonly trials: readonly TrialPayload[];
@@ -72,6 +86,8 @@ export interface SubprocessPayload {
 /**
  * Serialises a subprocess payload with the mandatory framing markers.
  * Child processes must call this exactly once after finishing all trials.
+ *
+ * @since 0.3.16-canary.0
  */
 export function emitSubprocessPayload(payload: SubprocessPayload): void {
   process.stdout.write(
@@ -95,6 +111,8 @@ function isSubprocessPayload(value: unknown): value is SubprocessPayload {
 /**
  * Extracts the JSON payload from captured child stdout. Returns `undefined`
  * when markers are missing, content fails to parse, or the shape is invalid.
+ *
+ * @since 0.3.16-canary.0
  */
 export function extractSubprocessPayload(stdout: string): SubprocessPayload | undefined {
   const startIndex = stdout.indexOf(BENCH_RESULT_JSON_START);

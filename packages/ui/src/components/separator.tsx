@@ -10,6 +10,9 @@ import * as SeparatorPrimitive from "@radix-ui/react-separator";
  * Variant: Separator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 const separatorVariants = tv({
   base: ["relative flex shrink-0 items-center", "bg-border"],
   defaultVariants: {
@@ -33,11 +36,17 @@ const separatorVariants = tv({
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface SeparatorProps
   extends
     ComponentProps<typeof SeparatorPrimitive.Root>,
     Omit<VariantProps<typeof separatorVariants>, "orientation"> {}
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Separator({
   align,
   className,
@@ -60,8 +69,14 @@ function Separator({
  * Component: SeparatorItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type SeparatorItemProps = ComponentProps<"div">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
   return (
     <div

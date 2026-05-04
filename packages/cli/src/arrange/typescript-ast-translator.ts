@@ -41,6 +41,9 @@ type WritableDomainAst<T extends DomainAstNode> = {
   -readonly [K in keyof T]: T[K] extends ReadonlyArray<infer U> ? U[] : T[K];
 };
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export class TypeScriptAstTranslator {
   translateSourceFile(filePath: string, sourceText: string): DomainSourceFile {
     return this.parseDomainSourceFile(filePath, sourceText);

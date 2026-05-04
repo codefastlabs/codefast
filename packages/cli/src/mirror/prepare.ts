@@ -9,6 +9,9 @@ import type { GlobalCliOptions } from "#/core/cli/global-options";
 import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types";
 import { resolveMirrorPackageFromCliArg } from "#/mirror/package-path";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function prepareMirrorSync(
   fs: FilesystemPort,
   args: {

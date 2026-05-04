@@ -9,6 +9,9 @@ import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name"
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export async function syncExportsForWorkspacePackage(
   fs: FilesystemPort,
   rootDir: string,

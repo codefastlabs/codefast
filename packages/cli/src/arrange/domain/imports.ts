@@ -49,6 +49,9 @@ function findImportDeclarationFromModule(sourceFile: DomainSourceFile, moduleSpe
   return undefined;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function ensureCnImport(sourceFile: DomainSourceFile, cnImportOverride?: string): string {
   const sourceText = sourceFile.text;
   if (sourceFileImportsCn(sourceFile)) {

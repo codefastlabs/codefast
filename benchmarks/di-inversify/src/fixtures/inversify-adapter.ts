@@ -21,6 +21,8 @@ import {
  * A built container plus every service identifier, retained so sanity
  * checks can resolve any node. Scenarios typically only need
  * `rootIdentifier` + `container`.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface InversifyRealisticBuild {
   readonly container: InversifyContainerType;
@@ -71,6 +73,8 @@ function bindOneNode(
  * Builds a fresh inversify container from the descriptor. Use
  * per-iteration for `realistic-graph-cold-resolve`, or once in scenario
  * setup for hot-path scenarios.
+ *
+ * @since 0.3.16-canary.0
  */
 export function buildInversifyRealisticContainer(graph: GraphDescriptor): InversifyRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -95,6 +99,8 @@ export function buildInversifyRealisticContainer(graph: GraphDescriptor): Invers
 
 /**
  * Sanity helper: resolves the root and asserts the expected shape.
+ *
+ * @since 0.3.16-canary.0
  */
 export function sanityCheckInversifyRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootIdentifier } = buildInversifyRealisticContainer(graph);

@@ -1,5 +1,13 @@
 # @codefast/benchmark-di-inversify
 
+## 0.3.16-canary.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @codefast/benchmark-harness@0.3.16-canary.0
+  - @codefast/di@0.3.16-canary.0
+
 ## 0.3.15
 
 ### Patch Changes

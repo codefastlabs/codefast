@@ -10,8 +10,14 @@ import { buttonVariants } from "#/components/button";
  * Component: Pagination
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PaginationProps = ComponentProps<"nav">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Pagination({ className, ...props }: PaginationProps): JSX.Element {
   return (
     <nav
@@ -27,8 +33,14 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
  * Component: PaginationContent
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PaginationContentProps = ComponentProps<"ul">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
   return (
     <ul
@@ -43,8 +55,14 @@ function PaginationContent({ className, ...props }: PaginationContentProps): JSX
  * Component: PaginationItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PaginationItemProps = ComponentProps<"li">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PaginationItem(props: PaginationItemProps): JSX.Element {
   return <li data-slot="pagination-item" {...props} />;
 }
@@ -53,11 +71,17 @@ function PaginationItem(props: PaginationItemProps): JSX.Element {
  * Component: PaginationLink
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface PaginationLinkProps
   extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PaginationLink({
   children,
   className,
@@ -81,11 +105,17 @@ function PaginationLink({
  * Component: PaginationPrevious
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface PaginationPreviousProps
   extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element {
   return (
     <PaginationLink
@@ -104,11 +134,17 @@ function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element 
  * Component: PaginationNext
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 interface PaginationNextProps
   extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
   return (
     <PaginationLink aria-label="Go to next page" data-slot="pagination-next" size="md" {...props}>
@@ -122,8 +158,14 @@ function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
  * Component: PaginationEllipsis
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type PaginationEllipsisProps = ComponentProps<"span">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (
     <span

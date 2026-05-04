@@ -75,6 +75,9 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
   };
 }
 
+/**
+ * @since 0.3.16-canary.0
+ */
 export function buildInversifyResolveAllStrategiesScenarios(): readonly BenchScenario[] {
   return [
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) =>

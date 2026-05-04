@@ -6,8 +6,14 @@ import { cn } from "#/lib/utils";
  * Component: Textarea
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.0
+ */
 type TextareaProps = ComponentProps<"textarea">;
 
+/**
+ * @since 0.3.16-canary.0
+ */
 function Textarea({ className, ...props }: TextareaProps): JSX.Element {
   return (
     <textarea
