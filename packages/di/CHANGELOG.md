@@ -1,5 +1,13 @@
 # @codefast/di
 
+## 0.3.15
+
+### Patch Changes
+
+- [`8492085`](https://github.com/codefastlabs/codefast/commit/849208521571b18a3af1f36566c3111a5af01b7c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(di): enhance token exports for improved usability
+
+- [`4df6e65`](https://github.com/codefastlabs/codefast/commit/4df6e6579faf21c6dc7622eb424ad213b120dabb) Thanks [@thevuong](https://github.com/thevuong)! - chore(tsdown): remove bench exclusions and streamline configuration files
+
 ## 0.3.14
 
 ### Patch Changes

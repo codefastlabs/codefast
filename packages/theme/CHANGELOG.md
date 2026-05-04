@@ -1,5 +1,11 @@
 # @codefast/theme
 
+## 0.3.15
+
+### Patch Changes
+
+- [`4df6e65`](https://github.com/codefastlabs/codefast/commit/4df6e6579faf21c6dc7622eb424ad213b120dabb) Thanks [@thevuong](https://github.com/thevuong)! - chore(tsdown): remove bench exclusions and streamline configuration files
+
 ## 0.3.14
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@codefast/di",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "description": "Lightweight dependency injection primitives for Codefast",
   "keywords": [
     "codefast",
