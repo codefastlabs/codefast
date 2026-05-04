@@ -375,9 +375,6 @@ catalogs:
     tw-animate-css:
       specifier: ^1.4.0
       version: 1.4.0
-    typescript:
-      specifier: ^6.0.3
-      version: 6.0.3
     unified:
       specifier: ^11.0.5
       version: 11.0.5
@@ -469,7 +466,7 @@ importers:
         specifier: 'catalog:'
         version: 2.9.8
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       unplugin-swc:
         specifier: 'catalog:'
@@ -656,7 +653,7 @@ importers:
         specifier: 'catalog:'
         version: 29.1.1
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       vite:
         specifier: 'catalog:'
@@ -696,7 +693,7 @@ importers:
         specifier: 'catalog:'
         version: 7.0.0-dev.20260504.1
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
 
   benchmarks/tailwind-variants:
@@ -733,7 +730,7 @@ importers:
         specifier: 'catalog:'
         version: 7.0.0-dev.20260504.1
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
 
   packages/benchmark-harness:
@@ -752,7 +749,7 @@ importers:
         specifier: 'catalog:'
         version: 7.0.0-dev.20260504.1
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
 
   packages/cli:
@@ -767,7 +764,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.4
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       yaml:
         specifier: 'catalog:'
@@ -816,7 +813,7 @@ importers:
         specifier: 'catalog:'
         version: 1.3.0
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       unplugin-swc:
         specifier: 'catalog:'
@@ -850,7 +847,7 @@ importers:
         specifier: 'catalog:'
         version: 1.3.0
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       vitest:
         specifier: 'catalog:'
@@ -908,7 +905,7 @@ importers:
         specifier: 'catalog:'
         version: 29.1.1
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       vitest:
         specifier: 'catalog:'
@@ -1115,7 +1112,7 @@ importers:
         specifier: 'catalog:'
         version: 4.2.4
       typescript:
-        specifier: 'catalog:'
+        specifier: ^6.0.3
         version: 6.0.3
       vitest:
         specifier: 'catalog:'
