@@ -40,5 +40,5 @@ jobs:
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: codefastlabs/codefast
+          slug: ${{ github.repository }}
           fail_ci_if_error: false

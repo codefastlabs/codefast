@@ -1,9 +1,9 @@
-# Dependabot configuration file for automatic dependency updates
+# Dependabot — pnpm workspace + catalog (pnpm-workspace.yaml).
+# Single root directory: Dependabot resolves the whole workspace and updates pnpm-lock.yaml.
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
-  # Configure updates for pnpm packages in the root directory
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -18,55 +18,86 @@ updates:
       prefix-development: "chore(dev)"
       include: "scope"
     ignore:
-      # Ignore major updates for these core packages
-      - dependency-name: "next"
-        update-types: ["version-update:semver-major"]
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-major"]
+      # Zod is shared via catalog across apps/docs, packages/cli, packages/theme; bump majors deliberately.
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
     groups:
-      # Group React-related updates together
-      react:
+      # Order matters: first matching group wins (see react vs typescript @types).
+      react-core:
         patterns:
-          - "react*"
-          - "@types/react*"
-      # Group TypeScript-related updates together
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
       typescript:
         patterns:
           - "typescript"
+          - "@typescript/*"
           - "@types/*"
-      # Group testing libraries together
       testing:
         patterns:
-          - "jest"
           - "@testing-library/*"
-          - "@swc/jest"
+          - "jest-axe"
+          - "@types/jest-axe"
+          - "vitest"
+          - "@vitest/*"
+          - "jsdom"
+          - "expect-type"
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "tailwind-merge"
+          - "tailwind-variants"
+          - "@tailwindcss/*"
+          - "tw-animate-css"
+      remark-rehype:
+        patterns:
+          - "remark-*"
+          - "rehype-*"
+          - "unified"
+          - "unist-*"
+          - "hast-*"
+      content-collections:
+        patterns:
+          - "@content-collections/*"
+      shiki:
+        patterns:
+          - "shiki"
+          - "@shikijs/*"
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "@rolldown/*"
+          - "babel-plugin-react-compiler"
+      repo-tooling:
+        patterns:
+          - "turbo"
+          - "tsdown"
+          - "esbuild"
+          - "tsx"
+          - "jiti"
+          - "ts-node"
+          - "@changesets/*"
+          - "@commitlint/*"
+          - "knip"
+          - "lint-staged"
+          - "simple-git-hooks"
+          - "oxlint*"
+          - "oxfmt"
+          - "unplugin-swc"
           - "@swc/core"
-          - "@jest/*"
 
-  # Configuration for app/docs (using a Zod stable version)
-  - package-ecosystem: "npm"
-    directory: "/app/docs"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-      - "docs"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-    # Only stable version updates are allowed for Zod.
-    ignore:
-      - dependency-name: "zod"
-        update-types:
-          [
-            "version-update:semver-major",
-            "version-update:semver-minor",
-            "version-update:semver-patch",
-          ]
-
-  # Configure updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
