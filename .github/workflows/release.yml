@@ -9,6 +9,10 @@ on:
       - ".github/workflows/release.yml"
       - ".github/workflows/reusable-verify-packages.yml"
       - ".github/actions/**"
+      - "package.json"
+      - "pnpm-workspace.yaml"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
       - "packages/**"
       - ".changeset/**"
 

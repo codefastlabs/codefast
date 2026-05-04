@@ -68,10 +68,10 @@ runs:
       env:
         SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
 
-    - name: "Verify Turborepo Remote Caching Setup"
+    - name: "Log Turborepo remote cache context"
       id: turbo-remote-cache
       shell: bash
       if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' && env.TURBO_TEAM != '' }}
       run: |
-        echo "Turborepo Remote Caching is enabled for team: $TURBO_TEAM"
+        echo "Turborepo remote cache credentials are present for team: $TURBO_TEAM"
         npx turbo --version
