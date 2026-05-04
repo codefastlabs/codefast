@@ -6,7 +6,7 @@ import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
 import type { MirrorPackageMeta, PackageJsonShape, PackageStats } from "#/mirror/domain/types";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
-import { writePackageJsonExportsAtomic } from "#/mirror/package-json-exports.repository";
+import { writePackageJsonExportsAtomic } from "#/mirror/write-package-json-exports";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
 
 export async function syncExportsForWorkspacePackage(
