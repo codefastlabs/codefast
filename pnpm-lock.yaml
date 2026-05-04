@@ -5027,8 +5027,8 @@ packages:
   immer@10.2.0:
     resolution: {integrity: sha512-d/+XTN3zfODyjr89gM3mPq1WNX2B8pYsu7eORitdwyA2sBubnTl3laYlBk4sXY5FUa5qTZGBDPJICVbvqzjlbw==}
 
-  immer@11.1.5:
-    resolution: {integrity: sha512-3fsh0NseNqMdOT8Qn4yv+JQRPpROG9xB6h3dnfqpktU9sHBuUYHfRHA0Uxk5ctqi7CdpR7Lv0DBr90pzv9jpBg==}
+  immer@11.1.6:
+    resolution: {integrity: sha512-uwrF08UBQfxk49i9WcUeCx045wjB1zXEHNJmbYHPVVspxmjwSeWCoKbB8DEIvs3XkBJV6lcRAyLaWJ2+u3MMCw==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -8498,7 +8498,7 @@ snapshots:
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
-      immer: 11.1.5
+      immer: 11.1.6
       redux: 5.0.1
       redux-thunk: 3.1.0(redux@5.0.1)
       reselect: 5.1.1
@@ -10325,7 +10325,7 @@ snapshots:
 
   immer@10.2.0: {}
 
-  immer@11.1.5: {}
+  immer@11.1.6: {}
 
   import-fresh@3.3.1:
     dependencies:
