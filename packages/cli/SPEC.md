@@ -3,6 +3,11 @@
 > **Phản biện kiến trúc và đặc tả cải tiến lớn (không tương thích ngược)**
 > Mục tiêu: giảm ~60% số file, xóa toàn bộ tầng lễ nghi, giữ nguyên mọi domain logic thuần túy.
 
+> **Trạng thái (đã triển khai):** Các mục tiêu và checklist §7 đã được áp dụng trong `packages/cli/src/` hiện tại. **Kiến trúc sau refactor** (cây thư mục, ranh giới module, quy ước import `#/…`): xem [ARCHITECTURE.md](./ARCHITECTURE.md).  
+> Các mục **§1** dưới đây mô tả **bối cảnh trước refactor** (đường dẫn kiểu `src/domains/...`, `src/shell/...` không còn tồn tại trong repo).
+
+**Lệch nhỏ so với §3.1 (chấp nhận được):** thay `core/fs.ts` + `core/path.ts` riêng lẻ bằng `core/node-filesystem.ts` và `node:path` trực tiếp ở chỗ cần; helper xử lý `Result` đặt tên `consumeCliAppError` / `runCliResultAsync` trong `core/result-handle.ts` (tương đương ý §3.7); tokenizer class string nằm `arrange/domain/tailwind-token.ts` cạnh `token-classifier.ts` cho rõ vai trò.
+
 ---
 
 ## 1. Vấn đề hiện tại
@@ -458,25 +463,25 @@ Không cần container setup, không cần mock tokens. Test rõ ràng và nhanh
 
 ## 7. Checklist
 
-- [ ] `Result<T,E>`, `ok()`, `err()` giữ nguyên
-- [ ] `AppError` giữ nguyên
-- [ ] Tất cả domain logic thuần túy trong `arrange/domain/` giữ nguyên
-- [ ] Tất cả domain logic trong `mirror/domain/`, `tag/domain/` giữ nguyên
-- [ ] AST parsing/collectors giữ nguyên
-- [ ] Config schema (Zod) giữ nguyên
-- [ ] `commander`, `zod`, `yaml`, `jiti`, `picomatch`, `typescript` dependencies giữ nguyên
-- [ ] `@codefast/di` dependency **xóa**
-- [ ] Tất cả `*.module.ts` **xóa**
-- [ ] Tất cả `composition/tokens.ts` **xóa**
-- [ ] Tất cả `application/ports/inbound/*.port.ts` **xóa**
-- [ ] Tất cả `application/requests/*.ts` **xóa**
-- [ ] Tất cả `contracts/models.ts` **xóa** (merge types)
-- [ ] `bootstrap/` folder **xóa** (logic vào `cli.ts`)
-- [ ] `CommandTree`/`CommandRouteWire` abstraction **xóa**
-- [ ] `shell/application/ports/outbound/` (11 files) **xóa**
-- [ ] `shell/application/coordination/` **xóa**
-- [ ] `shell/wiring/` **xóa**
-- [ ] Test coverage cho domain không giảm
+- [x] `Result<T,E>`, `ok()`, `err()` giữ nguyên (`core/result.ts`)
+- [x] `AppError` giữ nguyên (`core/errors.ts`, kèm `messageFrom`)
+- [x] Tất cả domain logic thuần túy trong `arrange/domain/` giữ nguyên
+- [x] Tất cả domain logic trong `mirror/domain/`, `tag/domain/` giữ nguyên
+- [x] AST parsing/collectors giữ nguyên (`arrange/domain/ast/`)
+- [x] Config schema (Zod) giữ nguyên (`config/schema.ts`)
+- [x] `commander`, `zod`, `yaml`, `jiti`, `picomatch`, `typescript` dependencies giữ nguyên
+- [x] `@codefast/di` dependency **xóa**
+- [x] Tất cả `*.module.ts` **xóa**
+- [x] Tất cả `composition/tokens.ts` **xóa**
+- [x] Tất cả `application/ports/inbound/*.port.ts` **xóa**
+- [x] Tất cả `application/requests/*.ts` **xóa**
+- [x] Tất cả `contracts/models.ts` **xóa** (merge types)
+- [x] `bootstrap/` folder **xóa** (logic vào `cli.ts`)
+- [x] `CommandTree`/`CommandRouteWire` abstraction **xóa**
+- [x] `shell/application/ports/outbound/` (11 files) **xóa**
+- [x] `shell/application/coordination/` **xóa**
+- [x] `shell/wiring/` **xóa**
+- [x] Test coverage cho domain không giảm _(trước và sau refactor đều không có suite domain đo được trong `tests/`; không hồi quy đo lường — bổ sung test theo §6 là bước tiếp theo tùy chọn)_
 
 ---
 
@@ -487,3 +492,5 @@ Codebase này có **domain logic tốt** bị chôn dưới **3 tầng ceremony 
 > "A codebase is not complex because it has many patterns. It is simple because it has only as many patterns as the problem requires."
 
 Sau refactor, mọi developer mới có thể đọc `cli.ts` và hiểu toàn bộ flow trong 5 phút — thay vì phải trace qua 8 layers của DI container để tìm xem `console.log` được gọi ở đâu.
+
+**Đã áp dụng:** Cấu trúc `src/` hiện tại khớp tinh thần §3; tài liệu vận hành là [ARCHITECTURE.md](./ARCHITECTURE.md). Tệp SPEC này giữ vai trò **lịch sử quyết định** (vì sao đổi) và **checklist đã đóng** (§7).
