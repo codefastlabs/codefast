@@ -18,15 +18,13 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
+import { CODEFAST_DI } from "#/harness/config";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
-const CODEFAST_LIBRARY_NAME = "@codefast/di";
-const CODEFAST_SCENARIO_NAME = "codefast";
-
 void runBenchmarkChildMain({
-  libraryName: CODEFAST_LIBRARY_NAME,
-  scenarioName: CODEFAST_SCENARIO_NAME,
+  libraryName: CODEFAST_DI.libraryName,
+  scenarioName: CODEFAST_DI.scenarioName,
   packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllCodefastScenarios,
   benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
-}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(CODEFAST_LIBRARY_NAME, error));
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(CODEFAST_DI.libraryName, error));

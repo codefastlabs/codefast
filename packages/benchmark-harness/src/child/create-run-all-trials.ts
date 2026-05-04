@@ -1,10 +1,11 @@
 import { Bench, type BenchEvent } from "tinybench";
 import type { BenchOptions, TaskResult } from "tinybench";
 import { isAsyncScenario, type AnyBenchScenario } from "#/child/bench-scenario";
+import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/protocol";
 
-const FAST_MODE_ENABLED = process.env["BENCH_FAST"] === "1";
-const FULL_MODE_ENABLED = process.env["BENCH_FULL"] === "1";
+const FAST_MODE_ENABLED = process.env[BENCH_FAST_ENV_KEY] === "1";
+const FULL_MODE_ENABLED = process.env[BENCH_FULL_ENV_KEY] === "1";
 
 const FULL_MODE_SAMPLE_GC_STRIDE = 25;
 

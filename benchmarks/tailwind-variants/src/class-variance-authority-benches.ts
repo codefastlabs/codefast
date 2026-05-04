@@ -5,15 +5,13 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
+import { CVA } from "#/harness/config";
 import { collectAllClassVarianceAuthorityScenarios } from "#/scenarios/collect-class-variance-authority-scenarios";
 
-const LIBRARY_NAME = "class-variance-authority";
-const SCENARIO_LOG_NAME = "cva";
-
 void runBenchmarkChildMain({
-  libraryName: LIBRARY_NAME,
-  scenarioName: SCENARIO_LOG_NAME,
+  libraryName: CVA.libraryName,
+  scenarioName: CVA.scenarioName,
   packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllClassVarianceAuthorityScenarios,
   benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
-}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(LIBRARY_NAME, error));
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(CVA.libraryName, error));

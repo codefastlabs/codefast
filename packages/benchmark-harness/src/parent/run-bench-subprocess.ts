@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
+import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/env-keys";
 import {
   BENCH_RESULT_JSON_END,
   BENCH_RESULT_JSON_START,
@@ -26,8 +27,8 @@ export class SubprocessExecutionError extends Error {
 export function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   const parentEnvironment = process.env;
   const existingNodeOptions = parentEnvironment["NODE_OPTIONS"] ?? "";
-  const fastModeEnabled = parentEnvironment["BENCH_FAST"] === "1";
-  const fullModeEnabled = parentEnvironment["BENCH_FULL"] === "1";
+  const fastModeEnabled = parentEnvironment[BENCH_FAST_ENV_KEY] === "1";
+  const fullModeEnabled = parentEnvironment[BENCH_FULL_ENV_KEY] === "1";
   const requiredFlags =
     fastModeEnabled || !fullModeEnabled ? ["--no-warnings"] : ["--expose-gc", "--no-warnings"];
   const hasInspectFlag =
@@ -99,8 +100,8 @@ export async function runBenchSubprocess(
   } = parameters;
 
   console.log(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileNameUnderSrc}…`);
-  const fastModeEnabled = process.env["BENCH_FAST"] === "1";
-  const fullModeEnabled = process.env["BENCH_FULL"] === "1";
+  const fastModeEnabled = process.env[BENCH_FAST_ENV_KEY] === "1";
+  const fullModeEnabled = process.env[BENCH_FULL_ENV_KEY] === "1";
   if (fullModeEnabled) {
     console.log(
       "[bench] Running benchmark with --expose-gc (BENCH_FULL=1). This mode is slower and may hit timeout on macOS.",

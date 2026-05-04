@@ -1,5 +1,17 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
+export type { BenchSubprocessConfig } from "#/bench-subprocess-config";
+export { resolveDisplayName } from "#/bench-subprocess-config";
+
+export {
+  BENCH_FAST_ENV_KEY,
+  BENCH_FULL_ENV_KEY,
+  BENCH_PORT_ENV_KEY,
+  BENCH_RESULTS_DIR_NAME,
+  BENCH_VERBOSE_ENV_KEY,
+  OBSERVATIONS_FILE_NAME,
+} from "#/env-keys";
+
 export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 
 export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";

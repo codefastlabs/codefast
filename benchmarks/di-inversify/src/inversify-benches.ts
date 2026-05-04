@@ -11,15 +11,13 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness";
+import { INVERSIFY } from "#/harness/config";
 import { collectAllInversifyScenarios } from "#/scenarios/collect-inversify-scenarios";
 
-const INVERSIFY_LIBRARY_NAME = "inversify";
-const INVERSIFY_SCENARIO_NAME = "inversify";
-
 void runBenchmarkChildMain({
-  libraryName: INVERSIFY_LIBRARY_NAME,
-  scenarioName: INVERSIFY_SCENARIO_NAME,
+  libraryName: INVERSIFY.libraryName,
+  scenarioName: INVERSIFY.scenarioName,
   packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllInversifyScenarios,
   benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
-}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(INVERSIFY_LIBRARY_NAME, error));
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(INVERSIFY.libraryName, error));
