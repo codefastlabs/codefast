@@ -1,12 +1,12 @@
 import path from "node:path";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import { messageFrom } from "#/core/errors";
-import type { MirrorConfig } from "#/config/schema";
+import type { MirrorConfig } from "#/core/config/schema";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
 import type { MirrorPackageMeta, PackageJsonShape, PackageStats } from "#/mirror/domain/types";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
-import { writePackageJsonExportsAtomic } from "#/mirror/write-package-json-exports";
+import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
 
 export async function syncExportsForWorkspacePackage(

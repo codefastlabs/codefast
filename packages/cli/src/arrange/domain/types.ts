@@ -14,7 +14,7 @@ import type {
   DomainSourceFile,
   DomainTailwindClassLiteral,
 } from "#/arrange/domain/ast/ast-node";
-import type { CodefastConfig } from "#/config/schema";
+import type { CodefastConfig } from "#/core/config/schema";
 import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
 
 export type Bucket =

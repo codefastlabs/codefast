@@ -1,10 +1,10 @@
 import process from "node:process";
 import { Command } from "commander";
 import { parseWithSchema } from "#/core/schema-parse";
-import { consumeCliAppError } from "#/core/result-handle";
+import { consumeCliAppError } from "#/core/cli/result-handle";
 import { logger } from "#/core/logger";
-import { nodeFilesystem } from "#/core/node-filesystem";
-import { readOptionalPositionalArg } from "#/core/cli-positional";
+import { nodeFilesystem } from "#/core/filesystem/node";
+import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { prepareTagSync } from "#/tag/prepare";
 import { runTagSync } from "#/tag/sync";
 import { tagSyncRunRequestSchema } from "#/tag/cli-schema";

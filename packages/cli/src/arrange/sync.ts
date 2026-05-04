@@ -1,7 +1,7 @@
-import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/config/schema";
+import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 import type { ArrangeSyncRunRequest } from "#/arrange/cli-schema";

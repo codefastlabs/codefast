@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 
 const defaultSkipDirectoryNames = new Set([
   "node_modules",

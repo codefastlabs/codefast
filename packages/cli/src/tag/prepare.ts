@@ -1,8 +1,8 @@
 import { loadCodefastConfig } from "#/core/config";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
-import { findRepoRoot } from "#/core/workspace";
+import { findRepoRoot } from "#/core/workspace/resolver";
 import type { AppError } from "#/core/errors";
 import type { TagCommandPrelude } from "#/tag/domain/types";
 import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";

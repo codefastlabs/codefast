@@ -1,11 +1,11 @@
 import process from "node:process";
 import { Command } from "commander";
 import { parseWithSchema } from "#/core/schema-parse";
-import { consumeCliAppError } from "#/core/result-handle";
-import { globalCliCommanderOptionsSchema } from "#/core/global-cli-options";
-import { readOptionalPositionalArg } from "#/core/cli-positional";
+import { consumeCliAppError } from "#/core/cli/result-handle";
+import { globalCliCommanderOptionsSchema } from "#/core/cli/global-options";
+import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { logger } from "#/core/logger";
-import { nodeFilesystem } from "#/core/node-filesystem";
+import { nodeFilesystem } from "#/core/filesystem/node";
 import { prepareMirrorSync } from "#/mirror/prepare";
 import { runMirrorSync } from "#/mirror/sync";
 import { mirrorSyncRunRequestSchema } from "#/mirror/cli-schema";

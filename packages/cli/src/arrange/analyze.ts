@@ -1,6 +1,6 @@
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import {

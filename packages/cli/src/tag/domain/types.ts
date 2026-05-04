@@ -1,4 +1,4 @@
-import type { CodefastConfig } from "#/config/schema";
+import type { CodefastConfig } from "#/core/config/schema";
 
 export type TagFileResult = {
   filePath: string;

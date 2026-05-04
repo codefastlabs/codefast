@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import { messageFrom } from "#/core/errors";
 import { logger } from "#/core/logger";
 

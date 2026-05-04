@@ -1,8 +1,8 @@
 import path from "node:path";
-import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/config/schema";
+import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import type {
@@ -14,7 +14,7 @@ import type {
   TagTargetExecutionResult,
 } from "#/tag/domain/types";
 import { resolveTagTargetCandidates } from "#/tag/target-candidates";
-import { runTagOnTarget } from "#/tag/tag-target-runner";
+import { runTagOnTarget } from "#/tag/target-runner";
 
 export type TagSyncRunRequest = {
   rootDir: string;

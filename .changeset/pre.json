@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "@codefast/benchmark-di-inversify": "0.3.15",
+    "@codefast/benchmark-tailwind-variants": "0.3.15",
+    "@codefast/benchmark-harness": "0.3.15",
+    "@codefast/cli": "0.3.15",
+    "@codefast/di": "0.3.15",
+    "@codefast/tailwind-variants": "0.3.15",
+    "@codefast/theme": "0.3.15",
+    "@codefast/typescript-config": "0.3.15",
+    "@codefast/ui": "0.3.15"
+  },
+  "changesets": []
+}

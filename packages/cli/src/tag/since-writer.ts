@@ -1,5 +1,5 @@
 import ts from "typescript";
-import type { FilesystemPort } from "#/core/filesystem";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
 import type { TagFileResult } from "#/tag/domain/types";
 
