@@ -639,7 +639,7 @@
       var runsPlotted = indices.length;
       var coverageHint =
         runsWithData < runsPlotted
-          ? '<div class="mt-1 text-[0.68rem] bh-muted">' +
+          ? '<div class="bh-metric-meta bh-metric-meta--fine">' +
             esc(String(runsWithData)) +
             " of " +
             esc(String(runsPlotted)) +
@@ -663,10 +663,14 @@
         '<div class="bh-val bh-tint-val">' +
         (median !== null ? fmtHz(median) + " Hz/op" : "—") +
         "</div>" +
-        '<div class="mt-1 font-mono text-[0.72rem] bh-muted">' +
-        (lo !== null && hi !== null ? "Range " + fmtHz(lo) + " … " + fmtHz(hi) : "") +
-        "</div>" +
-        '<div class="mt-1 text-[0.72rem] bh-muted">Δ ' +
+        (lo !== null && hi !== null
+          ? '<div class="bh-metric-meta bh-metric-meta--mono">Range ' +
+            fmtHz(lo) +
+            " … " +
+            fmtHz(hi) +
+            "</div>"
+          : "") +
+        '<div class="bh-metric-meta">Δ ' +
         trend +
         "</div>" +
         coverageHint +
@@ -715,14 +719,13 @@
         cmpLib.displayName +
         ", median hz/op divided by median hz/op";
       var ratioCaptionLine =
-        '<div class="mt-1 text-[0.72rem] leading-snug bh-muted">' +
+        '<div class="bh-metric-meta">' +
         "Median ÷ median for this filter; each side uses runs with hz/op for that library." +
         "</div>";
       var ratioPairedLine = showPairedMedian
-        ? '<div class="mt-1 text-[0.72rem] leading-snug bh-muted">' +
-          "Median of per-run ratios · " +
+        ? '<div class="bh-metric-meta">Median of per-run ratios · <span class="bh-metric-fig">' +
           medianOfRunRatios.toFixed(3) +
-          "×</div>"
+          "×</span></div>"
         : "";
       html +=
         '<div class="bh-card" role="group" aria-label="' +
@@ -741,16 +744,11 @@
         "</div>";
     });
 
-    html +=
-      '<div class="bh-card" role="group" aria-label="Worst IQR divided by median, per plotted run">' +
-      '<div class="bh-lbl">Worst IQR÷median · per plotted run</div>' +
-      '<div class="text-[0.78rem] leading-snug bh-body-muted">' +
-      orderedLibraries
-        .map(function (lib) {
-          var libData = scenarioRow.libraries[lib.key];
-          if (!libData) {
-            return esc(lib.displayName) + ": —";
-          }
+    var iqrRowHtml = orderedLibraries
+      .map(function (lib) {
+        var libData = scenarioRow.libraries[lib.key];
+        var fig = "—";
+        if (libData) {
           var maxF = 0;
           indices.forEach(function (gx) {
             var f = libData.iqrFraction[gx];
@@ -758,9 +756,26 @@
               maxF = Math.max(maxF, f);
             }
           });
-          return esc(lib.displayName) + ": " + (maxF > 0 ? (maxF * 100).toFixed(1) + "%" : "—");
-        })
-        .join(" · ") +
+          if (maxF > 0) {
+            fig = (maxF * 100).toFixed(1) + "%";
+          }
+        }
+        return (
+          '<div class="bh-metric-row">' +
+          '<span class="bh-metric-row__name">' +
+          esc(lib.displayName) +
+          "</span>" +
+          '<span class="bh-metric-row__fig">' +
+          fig +
+          "</span></div>"
+        );
+      })
+      .join("");
+    html +=
+      '<div class="bh-card" role="group" aria-label="Worst IQR divided by median, per plotted run">' +
+      '<div class="bh-lbl">Worst IQR÷median · per plotted run</div>' +
+      '<div class="bh-metric-iqr">' +
+      iqrRowHtml +
       "</div></div>";
 
     html += "</div>";
