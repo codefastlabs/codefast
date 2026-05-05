@@ -16,6 +16,8 @@
   var PAN_PIXELS_X = 120;
   var DISPERSION_IQR_ALERT = 0.25;
 
+  var toastHideTimer = null;
+
   // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
@@ -82,6 +84,201 @@
     });
   }
 
+  function isMacLikePlatform() {
+    return (
+      /Mac|iPhone|iPod|iPad/i.test(navigator.platform || "") ||
+      (typeof navigator.userAgentData !== "undefined" &&
+        navigator.userAgentData &&
+        navigator.userAgentData.platform === "macOS")
+    );
+  }
+
+  function chartWheelModifierKbdHtml() {
+    var kbdClass =
+      "rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300";
+    if (isMacLikePlatform()) {
+      return "<kbd class='" + kbdClass + "'>⌃ Control</kbd>";
+    }
+    return "<kbd class='" + kbdClass + "'>Ctrl</kbd>";
+  }
+
+  function applyChartWheelHint() {
+    var el = document.getElementById("chart-wheel-hint");
+    if (!el) {
+      return;
+    }
+    el.innerHTML = "&nbsp;" + chartWheelModifierKbdHtml() + "+wheel zooms ·";
+  }
+
+  function showToast(message) {
+    var t = document.getElementById("bh-toast");
+    if (!t) {
+      return;
+    }
+    t.textContent = message;
+    t.classList.add("is-visible");
+    if (toastHideTimer) {
+      clearTimeout(toastHideTimer);
+    }
+    toastHideTimer = setTimeout(function () {
+      t.classList.remove("is-visible");
+      toastHideTimer = null;
+    }, 3500);
+  }
+
+  function wireDetailsPersistence() {
+    [
+      { id: "intro-howto-details", key: "bh-howto-open" },
+      { id: "chart-data-details", key: "bh-chartdata-open" },
+      { id: "snapshot-details", key: "bh-snapshot-open" },
+    ].forEach(function (cfg) {
+      var el = document.getElementById(cfg.id);
+      if (!el) {
+        return;
+      }
+      try {
+        if (localStorage.getItem(cfg.key) === "1") {
+          el.open = true;
+        }
+      } catch {
+        /* ignore */
+      }
+      el.addEventListener("toggle", function () {
+        try {
+          localStorage.setItem(cfg.key, el.open ? "1" : "0");
+        } catch {
+          /* ignore */
+        }
+      });
+    });
+  }
+
+  function clearChartDataTable() {
+    var thead = document.getElementById("chart-data-thead");
+    var tbody = document.getElementById("chart-data-tbody");
+    if (thead) {
+      thead.innerHTML = "";
+    }
+    if (tbody) {
+      tbody.innerHTML = "";
+    }
+  }
+
+  function updateChartDataTable(scenarioRow, indices, runsSlice) {
+    var thead = document.getElementById("chart-data-thead");
+    var tbody = document.getElementById("chart-data-tbody");
+    if (!thead || !tbody || !scenarioRow || !indices.length) {
+      clearChartDataTable();
+      return;
+    }
+    var primaryLib =
+      orderedLibraries.find(function (l) {
+        return l.isPrimary;
+      }) || orderedLibraries[0];
+    var compareLibs = orderedLibraries.filter(function (l) {
+      return !l.isPrimary;
+    });
+
+    var hr = "<tr><th scope='col'>Run (local)</th><th scope='col'>Folder</th>";
+    orderedLibraries.forEach(function (lib) {
+      hr +=
+        "<th scope='col' class='bh-num' style='color:" +
+        esc(paletteMap[lib.key].text) +
+        "'>" +
+        esc(lib.displayName) +
+        " hz/op</th>";
+    });
+    compareLibs.forEach(function (cmp) {
+      hr +=
+        "<th scope='col' class='bh-num' style='color:rgb(253,224,169)'>÷ " +
+        esc(cmp.displayName) +
+        "</th>";
+    });
+    hr += "</tr>";
+    thead.innerHTML = hr;
+
+    var bodyHtml = "";
+    for (var j = indices.length - 1; j >= 0; j--) {
+      var globalIx = indices[j];
+      var run = runsSlice[j];
+      var row =
+        "<td>" +
+        esc(formatLocal(run.timestampIso, run.folder)) +
+        "</td><td>" +
+        esc(run.folder) +
+        "</td>";
+      orderedLibraries.forEach(function (lib) {
+        var ld = scenarioRow.libraries[lib.key];
+        var hz = ld ? ld.hz[globalIx] : null;
+        var has = typeof hz === "number" && hz > 0;
+        row += "<td class='bh-num'>" + (has ? esc(fmtHz(hz)) : "—") + "</td>";
+      });
+      var primLibData = scenarioRow.libraries[primaryLib ? primaryLib.key : ""];
+      var primaryHz = primLibData ? primLibData.hz[globalIx] : null;
+      compareLibs.forEach(function (cmp) {
+        var cmpLd = scenarioRow.libraries[cmp.key];
+        var cmpHz = cmpLd ? cmpLd.hz[globalIx] : null;
+        var r = ratioFrom(
+          typeof primaryHz === "number" && primaryHz > 0 ? primaryHz : null,
+          typeof cmpHz === "number" && cmpHz > 0 ? cmpHz : null,
+        );
+        row += "<td class='bh-num'>" + (r !== null ? r.toFixed(3) + "×" : "—") + "</td>";
+      });
+      bodyHtml += "<tr>" + row + "</tr>";
+    }
+    tbody.innerHTML = bodyHtml;
+  }
+
+  function updateChartEmptyState(scenarioRow, indices) {
+    var overlay = document.getElementById("chart-empty-state");
+    var msgEl = document.getElementById("chart-empty-message");
+    var btnEnv = document.getElementById("empty-btn-clear-env");
+    var btnSearch = document.getElementById("empty-btn-clear-search");
+    var btnGroups = document.getElementById("empty-btn-all-groups");
+    if (!overlay || !msgEl || !data) {
+      return;
+    }
+
+    var hasChart = !!(scenarioRow && indices.length > 0);
+    if (hasChart) {
+      overlay.classList.remove("is-visible");
+      return;
+    }
+
+    overlay.classList.add("is-visible");
+
+    var msg = "";
+    if (data.runs.length === 0) {
+      msg =
+        "No benchmark runs are in this history yet. Generate data with your bench command, then refresh this page.";
+    } else if (indices.length === 0) {
+      msg = "No runs match the selected environment. Widen the filter to see the chart again.";
+    } else if (!scenarioRow) {
+      var vis = visibleScenarios();
+      if (vis.length === 0) {
+        msg = "No scenarios match the current search or group. Loosen filters to continue.";
+      } else {
+        msg = "Pick a scenario from the Scenario list above.";
+      }
+    } else {
+      msg = "Nothing to plot for this selection.";
+    }
+    msgEl.textContent = msg;
+
+    function toggleBtn(el, isVisible) {
+      if (!el) {
+        return;
+      }
+      el.classList.toggle("hidden", !isVisible);
+    }
+
+    toggleBtn(btnEnv, data.runs.length > 0 && indices.length === 0 && !!envFilter.value);
+    var q = searchNorm(scenarioSearch.value).trim();
+    var visEmpty = visibleScenarios().length === 0;
+    toggleBtn(btnSearch, visEmpty && q !== "");
+    toggleBtn(btnGroups, visEmpty && !!groupFilter.value);
+  }
+
   // ---------------------------------------------------------------------------
   // DOM refs
   // ---------------------------------------------------------------------------
@@ -116,12 +313,18 @@
 
   var chart = null;
   var resizeScheduled = false;
-  /** @type {{ title: string, primaryLibraryKey: string, libraries: any[], runs: any[], scenarios: any[] } | null} */
+  /** @type {{ title: string, primaryLibraryKey: string, libraries: any[], runs: any[], scenarios: any[], generatedAtIso?: string } | null} */
   var data = null;
   /** Libraries sorted so primary is first, then compares in order. */
   var orderedLibraries = [];
   /** Map: libraryKey → palette entry */
   var paletteMap = {};
+
+  var sessionPageOpenedAt = null;
+  var chartZoomRegistered = false;
+  var wireControlsApplied = false;
+  var detailsPersistenceApplied = false;
+  var chartWheelHintApplied = false;
 
   // ---------------------------------------------------------------------------
   // Chart resize helper
@@ -177,6 +380,46 @@
     });
   }
 
+  function refreshScenarioNavButtons() {
+    var prevBtn = document.getElementById("scenario-prev");
+    var nextBtn = document.getElementById("scenario-next");
+    if (!prevBtn || !nextBtn || !scenarioSelect) {
+      return;
+    }
+    var count = scenarioSelect.options.length;
+    if (count === 0) {
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+    var i = scenarioSelect.selectedIndex;
+    if (i < 0) {
+      i = 0;
+    }
+    prevBtn.disabled = i <= 0;
+    nextBtn.disabled = i >= count - 1;
+  }
+
+  function stepScenarioNav(delta) {
+    if (!scenarioSelect) {
+      return;
+    }
+    var count = scenarioSelect.options.length;
+    if (count < 2) {
+      return;
+    }
+    var i = scenarioSelect.selectedIndex;
+    if (i < 0) {
+      i = 0;
+    }
+    var next = i + delta;
+    if (next < 0 || next >= count) {
+      return;
+    }
+    scenarioSelect.selectedIndex = next;
+    render();
+  }
+
   // ---------------------------------------------------------------------------
   // KPI cards
   // ---------------------------------------------------------------------------
@@ -201,13 +444,11 @@
     var versionLines = (lr.libraryVersions || [])
       .map(function (lv) {
         return (
-          '<div style="line-height:1.45;margin-top:2px"><span style="color:#a3a3a8">' +
+          '<div class="bh-lib-version-row"><span class="bh-lib-version-key">' +
           esc(lv.key) +
           "</span> " +
           esc(lv.version) +
-          (lv.gcExposed
-            ? ' <span style="color:#fbbf24" title="--expose-gc active">[gc]</span>'
-            : "") +
+          (lv.gcExposed ? ' <span class="bh-gc-tag" title="--expose-gc active">[gc]</span>' : "") +
           "</div>"
         );
       })
@@ -239,8 +480,8 @@
     if (!snapshotTheadRow || !snapshotTbody || !snapshotMeta) {
       return;
     }
-    // Header
-    var ths = "<th scope='col'>Scenario</th><th scope='col'>Group</th>";
+    var ths =
+      "<th scope='col' class='bh-sticky-1'>Scenario</th><th scope='col' class='bh-sticky-2'>Group</th>";
     for (var li = 0; li < orderedLibraries.length; li++) {
       var lib = orderedLibraries[li];
       ths +=
@@ -250,7 +491,6 @@
         esc(lib.displayName) +
         "</th>";
     }
-    // Ratio columns: primary ÷ each compare
     var primaryLib =
       orderedLibraries.find(function (l) {
         return l.isPrimary;
@@ -273,7 +513,12 @@
     }
     var lastIx = data.runs.length - 1;
     data.scenarios.forEach(function (s) {
-      var tds = "<td>" + esc(s.id) + "</td><td>" + esc(s.group) + "</td>";
+      var tds =
+        "<td class='bh-sticky-1'>" +
+        esc(s.id) +
+        "</td><td class='bh-sticky-2'>" +
+        esc(s.group) +
+        "</td>";
       var libHzValues = {};
       for (var li2 = 0; li2 < orderedLibraries.length; li2++) {
         var libKey = orderedLibraries[li2].key;
@@ -356,8 +601,7 @@
       return !l.isPrimary;
     });
 
-    var html =
-      '<div style="display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr))">';
+    var html = '<div class="bh-metrics-grid">';
 
     var worstIqr = 0;
     orderedLibraries.forEach(function (lib) {
@@ -386,27 +630,24 @@
         }
       });
       html +=
-        '<div class="bh-card">' +
-        '<div class="bh-lbl" style="color:' +
-        color +
+        '<div class="bh-card" style="--bh-accent:' +
+        esc(color) +
         '">' +
+        '<div class="bh-lbl bh-tint-lbl">' +
         esc(lib.displayName) +
         " median hz/op</div>" +
-        '<div class="bh-val" style="color:' +
-        color +
-        '">' +
+        '<div class="bh-val bh-tint-val">' +
         (median !== null ? fmtHz(median) + " Hz/op" : "—") +
         "</div>" +
-        '<div class="mt-1 font-mono text-[0.72rem]" style="color:rgb(161,161,170)">' +
+        '<div class="mt-1 font-mono text-[0.72rem] bh-muted">' +
         (lo !== null && hi !== null ? "Range " + fmtHz(lo) + " … " + fmtHz(hi) : "") +
         "</div>" +
-        '<div class="mt-1 text-[0.72rem]" style="color:rgb(161,161,170)">Δ ' +
+        '<div class="mt-1 text-[0.72rem] bh-muted">Δ ' +
         trend +
         "</div>" +
         "</div>";
     });
 
-    // Ratio cards
     compareLibs.forEach(function (cmpLib) {
       var primData = scenarioRow.libraries[primaryLib ? primaryLib.key : ""];
       var cmpData = scenarioRow.libraries[cmpLib.key];
@@ -422,22 +663,21 @@
         });
       var medianRatio = medianNumeric(ratios);
       html +=
-        '<div class="bh-card">' +
-        '<div class="bh-lbl" style="color:rgb(253,224,169)">Ratio · ' +
+        '<div class="bh-card" style="--bh-accent:rgb(253,224,169)">' +
+        '<div class="bh-lbl bh-tint-lbl">Ratio · ' +
         esc((primaryLib || orderedLibraries[0]).displayName) +
         " ÷ " +
         esc(cmpLib.displayName) +
         "</div>" +
-        '<div class="bh-val" style="color:rgb(253,224,169)">' +
+        '<div class="bh-val bh-tint-val">' +
         (medianRatio !== null ? medianRatio.toFixed(3) + "×" : "—") +
         "</div></div>";
     });
 
-    // IQR card
     html +=
       '<div class="bh-card">' +
       '<div class="bh-lbl">Worst IQR÷median · per plotted run</div>' +
-      '<div class="text-[0.78rem] leading-snug" style="color:rgb(212,212,216)">' +
+      '<div class="text-[0.78rem] leading-snug bh-body-muted">' +
       orderedLibraries
         .map(function (lib) {
           var libData = scenarioRow.libraries[lib.key];
@@ -487,12 +727,15 @@
     });
     var indices = filteredRunIndices();
 
+    updateChartEmptyState(scenarioRow, indices);
+
     if (!scenarioRow || indices.length === 0) {
       if (chart) {
         chart.destroy();
         chart = null;
       }
       updateMetricsPanel(null, []);
+      clearChartDataTable();
       if (chartSubtitleLine) {
         if (indices.length === 0 && data.runs.length > 0) {
           chartSubtitleLine.textContent = "No saved runs match the current Environment filter.";
@@ -502,6 +745,7 @@
           chartSubtitleLine.textContent = "";
         }
       }
+      refreshScenarioNavButtons();
       return;
     }
 
@@ -525,11 +769,12 @@
       return data.runs[i];
     });
 
+    updateChartDataTable(scenarioRow, indices, runsSlice);
+
     var datasets = [];
     var bandOn = showBands.checked;
     var ratioOn = showRatio.checked;
 
-    // Bands and main hz lines per library.
     orderedLibraries.forEach(function (lib) {
       var libData = scenarioRow.libraries[lib.key];
       if (!libData) {
@@ -576,7 +821,6 @@
       });
     });
 
-    // Ratio lines: primary ÷ each compare.
     var primaryLib =
       orderedLibraries.find(function (l) {
         return l.isPrimary;
@@ -702,7 +946,6 @@
             if (ctx.dataset.yAxisID === "y1") {
               return lbl + ": " + Number(v).toFixed(3) + "×";
             }
-            // Find which library this dataset belongs to for IQR annotation.
             var matchedLib = orderedLibraries.find(function (lib) {
               return lbl.startsWith(lib.displayName);
             });
@@ -754,7 +997,6 @@
       },
     });
 
-    // Focus on newest portion.
     (function applyInitialFocus() {
       if (!chart || typeof chart.zoomScale !== "function") {
         return;
@@ -768,13 +1010,59 @@
       chart.zoomScale("x", { min: Math.max(0, lastIx - span + 1), max: lastIx }, "none");
     })();
     scheduleChartResize();
+    refreshScenarioNavButtons();
   }
 
   // ---------------------------------------------------------------------------
   // Wire up controls
   // ---------------------------------------------------------------------------
+  function wireEmptyStateButtons() {
+    var btnEnv = document.getElementById("empty-btn-clear-env");
+    var btnSearch = document.getElementById("empty-btn-clear-search");
+    var btnGroups = document.getElementById("empty-btn-all-groups");
+    if (btnEnv) {
+      btnEnv.addEventListener("click", function () {
+        envFilter.value = "";
+        refreshEnvBanner();
+        render();
+      });
+    }
+    if (btnSearch) {
+      btnSearch.addEventListener("click", function () {
+        scenarioSearch.value = "";
+        fillScenarioOptions();
+        render();
+      });
+    }
+    if (btnGroups) {
+      btnGroups.addEventListener("click", function () {
+        groupFilter.value = "";
+        fillScenarioOptions();
+        render();
+      });
+    }
+  }
+
   function wireControls() {
+    var btnReloadData = document.getElementById("reload-data-btn");
+    if (btnReloadData) {
+      btnReloadData.addEventListener("click", function () {
+        void loadBenchData({ isReload: true });
+      });
+    }
     scenarioSelect.addEventListener("change", render);
+    var btnScenarioPrev = document.getElementById("scenario-prev");
+    var btnScenarioNext = document.getElementById("scenario-next");
+    if (btnScenarioPrev) {
+      btnScenarioPrev.addEventListener("click", function () {
+        stepScenarioNav(-1);
+      });
+    }
+    if (btnScenarioNext) {
+      btnScenarioNext.addEventListener("click", function () {
+        stepScenarioNav(1);
+      });
+    }
     scenarioSearch.addEventListener("input", function () {
       fillScenarioOptions();
       render();
@@ -790,6 +1078,8 @@
     showBands.addEventListener("change", render);
     logScale.addEventListener("change", render);
     showRatio.addEventListener("change", render);
+
+    wireEmptyStateButtons();
 
     if (btnZoomIn) {
       btnZoomIn.addEventListener("click", function () {
@@ -834,45 +1124,56 @@
     if (btnDownload) {
       btnDownload.addEventListener("click", function () {
         if (!chart || !chart.toBase64Image) {
+          showToast("Nothing to export yet — select a scenario with plotted runs.");
           return;
         }
         var sid = String(scenarioSelect.value || "chart").replace(/[^a-zA-Z0-9_.-]+/g, "_");
+        var filename = "bench-history-" + sid + ".png";
         var a = document.createElement("a");
-        a.download = "bench-history-" + sid + ".png";
+        a.download = filename;
         a.href = chart.toBase64Image("image/png", 1);
         a.click();
+        showToast("Saved " + filename);
       });
     }
   }
 
   // ---------------------------------------------------------------------------
-  // Bootstrap: fetch payload then initialise
+  // Payload load + bootstrap
   // ---------------------------------------------------------------------------
-  async function init() {
-    try {
-      var res = await fetch("/api/payload");
-      if (!res.ok) {
-        throw new Error("HTTP " + res.status);
+  function selectHasValue(selectEl, value) {
+    for (var i = 0; i < selectEl.options.length; i++) {
+      if (selectEl.options[i].value === value) {
+        return true;
       }
-      data = await res.json();
-    } catch (err) {
-      if (loadingOverlay) {
-        loadingOverlay.innerHTML =
-          '<div class="text-center"><p class="text-red-400 text-sm">Failed to load bench data.</p>' +
-          '<p class="mt-1 text-xs text-zinc-500">' +
-          String(err) +
-          "</p>" +
-          '<p class="mt-3 text-xs text-zinc-600">Run <code class="text-indigo-400">pnpm bench</code> first to generate data.</p></div>';
-      }
+    }
+    return false;
+  }
+
+  function updatePageFooter() {
+    if (!pageFooter || !data || !sessionPageOpenedAt) {
       return;
     }
-
-    // Register zoom plugin.
-    if (typeof Chart !== "undefined" && typeof ChartZoom !== "undefined") {
-      Chart.register(ChartZoom);
+    var genPart = "";
+    if (data.generatedAtIso) {
+      genPart =
+        " Data snapshot " +
+        esc(formatLocal(data.generatedAtIso, data.generatedAtIso)) +
+        " (server clock).";
     }
+    pageFooter.innerHTML =
+      "Reload data from the header or refresh the page for the latest snapshot · " +
+      esc(String(data.runs.length)) +
+      " runs · " +
+      esc(String(data.scenarios.length)) +
+      " scenarios." +
+      genPart +
+      " Page opened " +
+      esc(formatLocal(sessionPageOpenedAt.toISOString(), "")) +
+      " (local).";
+  }
 
-    // Build ordered libraries list and palette map.
+  function applyLoadedPayload() {
     var primary =
       data.libraries.find(function (l) {
         return l.isPrimary;
@@ -885,14 +1186,12 @@
       paletteMap[lib.key] = PALETTE[idx % PALETTE.length];
     });
 
-    // Set page title.
     if (pageTitleEl) {
       pageTitleEl.innerHTML =
         esc(data.title) + '<span class="font-normal text-zinc-400"> · hz/op median per run</span>';
     }
     document.title = data.title + " — bench history";
 
-    // Ratio toggle label.
     if (ratioLabel && primary && compares.length > 0) {
       ratioLabel.textContent =
         compares.length === 1
@@ -900,7 +1199,10 @@
           : "Primary ratios";
     }
 
-    // Populate environment filter.
+    var savedEnv = envFilter.value;
+    while (envFilter.options.length > 1) {
+      envFilter.remove(1);
+    }
     var envKeys = [
       ...new Set(
         data.runs.map(function (r) {
@@ -922,8 +1224,16 @@
       opt.textContent = sample.envLabel;
       envFilter.appendChild(opt);
     });
+    if (selectHasValue(envFilter, savedEnv)) {
+      envFilter.value = savedEnv;
+    } else {
+      envFilter.selectedIndex = 0;
+    }
 
-    // Populate group filter.
+    var savedGroup = groupFilter.value;
+    while (groupFilter.options.length > 1) {
+      groupFilter.remove(1);
+    }
     var groups = [
       ...new Set(
         data.scenarios.map(function (s) {
@@ -939,18 +1249,14 @@
       opt.textContent = g;
       groupFilter.appendChild(opt);
     });
-
-    // Page footer.
-    if (pageFooter) {
-      pageFooter.innerHTML =
-        "Dynamic server — refresh page for latest data · " +
-        esc(String(data.runs.length)) +
-        " runs · " +
-        esc(String(data.scenarios.length)) +
-        " scenarios";
+    if (selectHasValue(groupFilter, savedGroup)) {
+      groupFilter.value = savedGroup;
+    } else {
+      groupFilter.selectedIndex = 0;
     }
 
-    // Snapshot description.
+    updatePageFooter();
+
     if (snapshotDesc) {
       snapshotDesc.textContent =
         "Rows use the chronologically last run directory (" +
@@ -962,17 +1268,85 @@
     buildSnapshotTable();
     refreshEnvBanner();
     fillScenarioOptions();
-    wireControls();
+  }
 
-    // Show app.
-    if (loadingOverlay) {
-      loadingOverlay.classList.add("hidden");
+  /**
+   * @param {{ isReload?: boolean }} opts
+   */
+  async function loadBenchData(opts) {
+    var isReload = !!(opts && opts.isReload);
+    var btnReload = document.getElementById("reload-data-btn");
+    if (isReload && btnReload) {
+      btnReload.disabled = true;
+      btnReload.setAttribute("aria-busy", "true");
     }
-    if (appEl) {
-      appEl.style.display = "";
+    try {
+      var res = await fetch("/api/payload", { cache: "no-store" });
+      if (!res.ok) {
+        throw new Error("HTTP " + res.status);
+      }
+      data = await res.json();
+    } catch (err) {
+      if (isReload) {
+        showToast("Could not reload data: " + String(err));
+      } else if (loadingOverlay) {
+        loadingOverlay.innerHTML =
+          '<div class="text-center"><p class="text-red-400 text-sm">Failed to load bench data.</p>' +
+          '<p class="mt-1 text-xs text-zinc-500">' +
+          String(err) +
+          "</p>" +
+          '<p class="mt-3 text-xs text-zinc-600">Run <code class="text-indigo-400">pnpm bench</code> first to generate data.</p></div>';
+      }
+      return false;
+    } finally {
+      if (isReload && btnReload) {
+        btnReload.disabled = false;
+        btnReload.removeAttribute("aria-busy");
+      }
+    }
+
+    if (!chartZoomRegistered && typeof Chart !== "undefined" && typeof ChartZoom !== "undefined") {
+      Chart.register(ChartZoom);
+      chartZoomRegistered = true;
+    }
+
+    if (sessionPageOpenedAt === null) {
+      sessionPageOpenedAt = new Date();
+    }
+
+    applyLoadedPayload();
+
+    if (!wireControlsApplied) {
+      wireControls();
+      wireControlsApplied = true;
+    }
+    if (!detailsPersistenceApplied) {
+      wireDetailsPersistence();
+      detailsPersistenceApplied = true;
+    }
+    if (!chartWheelHintApplied) {
+      applyChartWheelHint();
+      chartWheelHintApplied = true;
+    }
+
+    if (!isReload) {
+      if (loadingOverlay) {
+        loadingOverlay.classList.add("hidden");
+      }
+      if (appEl) {
+        appEl.style.display = "";
+      }
     }
 
     render();
+    if (isReload) {
+      showToast("Bench data reloaded.");
+    }
+    return true;
+  }
+
+  async function init() {
+    await loadBenchData({ isReload: false });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
