@@ -117,6 +117,67 @@
           0 10px 32px rgba(0, 0, 0, 0.32);
       }
 
+      /**
+       * Metric cards — secondary lines like SF Pro + SF Mono for figures
+       * (Health / Wallet–style hierarchy).
+       */
+      .bh-val + .bh-metric-meta {
+        margin-top: 0.38rem;
+      }
+      .bh-metric-meta {
+        margin-top: 0.24rem;
+        font-size: 0.72rem;
+        line-height: 1.42;
+        font-weight: 400;
+        letter-spacing: -0.014em;
+        color: var(--bh-label);
+      }
+      .bh-metric-meta + .bh-metric-meta {
+        margin-top: 0.22rem;
+      }
+      .bh-metric-meta--mono {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+      }
+      .bh-metric-meta--fine {
+        font-size: 0.6875rem;
+        line-height: 1.45;
+        opacity: 0.9;
+      }
+      .bh-metric-fig {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+        color: rgba(244, 244, 248, 0.94);
+      }
+      .bh-metric-iqr {
+        margin-top: 0.28rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.42rem;
+      }
+      .bh-metric-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        font-size: 0.72rem;
+        line-height: 1.35;
+        letter-spacing: -0.012em;
+      }
+      .bh-metric-row__name {
+        min-width: 0;
+        color: var(--bh-label);
+      }
+      .bh-metric-row__fig {
+        flex-shrink: 0;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+        color: rgba(244, 244, 248, 0.93);
+      }
+
       .bh-lbl {
         font-size: 0.625rem;
         font-weight: 600;
@@ -129,6 +190,7 @@
         font-size: 1.05rem;
         font-weight: 600;
         line-height: 1.3;
+        letter-spacing: -0.028em;
         word-break: break-word;
         font-variant-numeric: tabular-nums;
       }
