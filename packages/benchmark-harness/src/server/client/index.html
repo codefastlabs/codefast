@@ -6,19 +6,124 @@
     <title>Bench history viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style id="bh-ui-styles">
-      .bh-card {
-        padding: 0.8rem 1rem;
-        border: 1px solid rgba(63, 63, 70, 0.85);
-        border-radius: 0.75rem;
-        background: rgba(24, 24, 27, 0.72);
-        backdrop-filter: blur(6px);
+      /**
+       * Apple-inspired dark UI: system font stack, glass surfaces, system-blue accents,
+       * soft borders (white @ low alpha), ambient background depth.
+       */
+      :root {
+        --bh-font:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui,
+          sans-serif;
+        --bh-blue: #0a84ff;
+        --bh-blue-hover: #409cff;
+        --bh-border: rgba(255, 255, 255, 0.065);
+        --bh-border-strong: rgba(255, 255, 255, 0.1);
+        --bh-label: rgb(152, 152, 157);
+        --bh-surface: rgba(30, 30, 34, 0.55);
+        --bh-surface-elevated: rgba(36, 36, 40, 0.72);
       }
-      .bh-lbl {
+
+      .bh-app-body {
+        font-family: var(--bh-font);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        background-color: #09090b;
+        background-image:
+          radial-gradient(ellipse 130% 70% at 50% -25%, rgba(10, 132, 255, 0.11), transparent 52%),
+          radial-gradient(ellipse 70% 45% at 95% 35%, rgba(52, 199, 89, 0.055), transparent 42%),
+          linear-gradient(180deg, #0c0c0f 0%, #09090b 45%, #08080a 100%);
+        background-attachment: fixed;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .bh-app-body {
+          scroll-behavior: smooth;
+        }
+      }
+
+      .bh-glass {
+        border: 1px solid var(--bh-border);
+        border-radius: 1.25rem;
+        background: var(--bh-surface);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+          0 12px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      .bh-glass-tight {
+        border-radius: 1rem;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+      }
+
+      /** Sticky command surface — stronger blur + legibility (cf. macOS header materials). */
+      .bh-glass-sticky {
+        border: 1px solid var(--bh-border);
+        border-radius: 1.25rem;
+        background: rgba(16, 16, 20, 0.78);
+        -webkit-backdrop-filter: blur(36px) saturate(200%);
+        backdrop-filter: blur(36px) saturate(200%);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+          0 12px 40px rgba(0, 0, 0, 0.42);
+      }
+
+      .bh-section-title {
         font-size: 0.65rem;
-        margin-bottom: 0.35rem;
-        letter-spacing: 0.08em;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        color: var(--bh-label);
         text-transform: uppercase;
-        color: rgb(161, 161, 170);
+      }
+
+      .bh-section-title--inline {
+        font-size: 0.62rem;
+        letter-spacing: 0.12em;
+        color: rgb(113, 113, 118);
+      }
+
+      .bh-focus:focus-visible {
+        outline: 2px solid var(--bh-blue);
+        outline-offset: 2px;
+      }
+
+      .bh-card {
+        padding: 0.85rem 1.05rem;
+        border: 1px solid var(--bh-border);
+        border-radius: 1rem;
+        background: var(--bh-surface-elevated);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        backdrop-filter: blur(16px) saturate(160%);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.05) inset,
+          0 8px 28px rgba(0, 0, 0, 0.28);
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .bh-card {
+          transition: none;
+        }
+      }
+
+      .bh-card:hover {
+        border-color: var(--bh-border-strong);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+          0 10px 32px rgba(0, 0, 0, 0.32);
+      }
+
+      .bh-lbl {
+        font-size: 0.625rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--bh-label);
       }
       .bh-val {
         font-size: 1.05rem;
@@ -36,19 +141,20 @@
         border-radius: 9999px;
       }
       .bh-chip-warn {
-        color: rgb(253, 230, 138);
-        border: 1px solid rgba(234, 179, 8, 0.35);
-        background: rgba(234, 179, 8, 0.14);
+        color: rgb(255, 214, 170);
+        border: 1px solid rgba(255, 159, 10, 0.4);
+        background: rgba(255, 159, 10, 0.12);
       }
       .bh-chip-ok {
-        color: rgb(167, 243, 208);
-        border: 1px solid rgba(16, 185, 129, 0.35);
-        background: rgba(16, 185, 129, 0.11);
+        color: rgb(185, 244, 205);
+        border: 1px solid rgba(52, 199, 89, 0.38);
+        background: rgba(52, 199, 89, 0.11);
       }
       .bh-table-wrap {
         overflow-x: auto;
-        border: 1px solid rgba(63, 63, 70, 0.6);
-        border-radius: 0.5rem;
+        border: 1px solid var(--bh-border);
+        border-radius: 0.75rem;
+        background: rgba(0, 0, 0, 0.2);
       }
       .bh-table {
         font-size: 0.8rem;
@@ -65,16 +171,16 @@
         border-bottom: 1px solid rgb(39, 39, 42);
       }
       .bh-table th {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         font-weight: 600;
         white-space: nowrap;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
-        color: rgb(161, 161, 170);
+        color: var(--bh-label);
       }
       .bh-table thead th {
         z-index: 3;
-        background: rgb(24, 24, 27);
+        background: rgba(20, 20, 24, 0.95);
       }
       .bh-table tbody tr:hover {
         background: rgba(63, 63, 70, 0.18);
@@ -93,8 +199,8 @@
         left: 0;
         min-width: 7.5rem;
         max-width: 14rem;
-        background: rgb(24, 24, 27);
-        box-shadow: 1px 0 0 rgba(63, 63, 70, 0.55);
+        background: rgba(20, 20, 24, 0.97);
+        box-shadow: 1px 0 0 var(--bh-border-strong);
       }
       .bh-table th.bh-sticky-2,
       .bh-table td.bh-sticky-2 {
@@ -102,8 +208,8 @@
         z-index: 2;
         left: 7.5rem;
         min-width: 5rem;
-        background: rgb(24, 24, 27);
-        box-shadow: 1px 0 0 rgba(63, 63, 70, 0.55);
+        background: rgba(20, 20, 24, 0.97);
+        box-shadow: 1px 0 0 var(--bh-border-strong);
       }
       .bh-metrics-grid {
         display: grid;
@@ -115,7 +221,7 @@
         color: var(--bh-accent, rgb(161, 161, 170));
       }
       .bh-muted {
-        color: rgb(161, 161, 170);
+        color: var(--bh-label);
       }
       .bh-body-muted {
         color: rgb(212, 212, 216);
@@ -134,9 +240,12 @@
         display: inline-flex;
         overflow: hidden;
         flex-wrap: wrap;
-        border: 1px solid rgba(63, 63, 70, 0.85);
-        border-radius: 0.5rem;
-        background: rgba(24, 24, 27, 0.5);
+        border: 1px solid var(--bh-border);
+        border-radius: 0.75rem;
+        background: rgba(44, 44, 48, 0.55);
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+        backdrop-filter: blur(12px) saturate(150%);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
       }
       /** Same outer height as Tailwind `h-10` selects in Chart data (2.5rem incl. border, border-box). */
       .bh-chart-toolbar.bh-chart-toolbar--match-field {
@@ -154,26 +263,30 @@
         padding: 0 0.625rem;
       }
       .bh-seg-btn {
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
         line-height: 1.25rem;
         margin: 0;
         padding: 0.35rem 0.75rem;
-        color: rgb(228, 228, 231);
+        color: rgb(235, 235, 245);
         border: none;
-        border-right: 1px solid rgba(63, 63, 70, 0.85);
+        border-right: 1px solid var(--bh-border);
         border-radius: 0;
-        background: rgb(39, 39, 42);
+        background: rgba(58, 58, 62, 0.5);
       }
       .bh-seg-btn:last-child {
         border-right: none;
       }
       .bh-seg-btn:hover {
-        background: rgb(63, 63, 70);
+        background: rgba(72, 72, 78, 0.65);
       }
       .bh-seg-btn:focus {
         z-index: 1;
         outline: none;
-        box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.55);
+      }
+      .bh-seg-btn:focus-visible {
+        z-index: 1;
+        box-shadow: inset 0 0 0 2px var(--bh-blue);
       }
       .bh-seg-btn:disabled {
         cursor: not-allowed;
@@ -188,7 +301,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgb(9, 9, 11);
+        background: rgba(8, 8, 10, 0.92);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
         inset: 0;
       }
       #loading-overlay.hidden {
@@ -205,7 +320,7 @@
       @media (prefers-reduced-motion: reduce) {
         .bh-loading-spinner {
           animation: none;
-          border-top-color: rgb(16, 185, 129);
+          border-top-color: var(--bh-blue);
         }
       }
       #chart-empty-state {
@@ -217,8 +332,10 @@
         justify-content: center;
         padding: 1.5rem;
         text-align: center;
-        border-radius: 0.5rem;
-        background: rgba(9, 9, 11, 0.92);
+        border-radius: 1rem;
+        background: rgba(8, 8, 10, 0.88);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
         inset: 0;
         gap: 1rem;
       }
@@ -233,32 +350,40 @@
       }
       #bh-toast {
         font-size: 0.8125rem;
+        font-weight: 500;
         position: fixed;
         z-index: 200;
         right: 1rem;
         bottom: 1rem;
         max-width: min(20rem, calc(100vw - 2rem));
-        padding: 0.65rem 1rem;
+        padding: 0.7rem 1.05rem;
         transition:
-          opacity 0.2s ease,
-          transform 0.2s ease;
-        transform: translateY(0.35rem);
+          opacity 0.22s ease,
+          transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transform: translateY(0.5rem) scale(0.98);
         pointer-events: none;
         opacity: 0;
-        color: rgb(224, 231, 255);
-        border: 1px solid rgba(99, 102, 241, 0.35);
-        border-radius: 0.5rem;
-        background: rgba(24, 24, 27, 0.95);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        color: rgb(240, 244, 255);
+        border: 1px solid rgba(10, 132, 255, 0.35);
+        border-radius: 0.875rem;
+        background: rgba(34, 36, 42, 0.88);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        backdrop-filter: blur(20px) saturate(180%);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+          0 16px 48px rgba(0, 0, 0, 0.45);
       }
       #bh-toast.is-visible {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
         pointer-events: auto;
         opacity: 1;
       }
       @media (prefers-reduced-motion: reduce) {
         #bh-toast {
           transition: none;
+        }
+        #bh-toast.is-visible {
+          transform: translateY(0);
         }
       }
     </style>
@@ -275,31 +400,33 @@
       src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@latest/dist/chartjs-plugin-zoom.min.js"
     ></script>
   </head>
-  <body
-    class="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-950 to-zinc-900 font-sans text-zinc-200 antialiased"
-  >
+  <body class="bh-app-body min-h-screen text-zinc-200">
     <div id="loading-overlay" aria-live="polite" role="status">
       <div class="text-center">
         <div
-          class="bh-loading-spinner mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-700 border-t-emerald-500"
+          class="bh-loading-spinner mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-600/80 border-t-[#0a84ff]"
         ></div>
         <p class="text-sm text-zinc-400">Loading bench data…</p>
       </div>
     </div>
 
-    <div class="mx-auto max-w-7xl px-4 pt-6 pb-14 sm:pt-8" id="app" style="display: none">
-      <header class="mb-8 max-w-4xl border-b border-zinc-800/80 pb-6">
-        <p class="text-[0.7rem] font-semibold tracking-[0.2em] text-emerald-500/95 uppercase">
+    <div
+      class="mx-auto max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20"
+      id="app"
+      style="display: none"
+    >
+      <header class="mb-10 max-w-4xl border-b border-white/[0.06] pb-8">
+        <p class="text-[0.6875rem] font-semibold tracking-[0.22em] text-cyan-300/90 uppercase">
           Bench history viewer
         </p>
         <h1
-          class="mt-2 text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl"
+          class="mt-3 text-2xl font-semibold tracking-[-0.02em] text-zinc-50 sm:text-[1.75rem] sm:leading-tight"
           id="page-title"
         ></h1>
         <div
           class="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between"
         >
-          <p class="max-w-prose text-sm leading-relaxed text-zinc-400">
+          <p class="max-w-prose text-[0.9375rem] leading-relaxed text-zinc-400/95">
             Compare saved benchmark runs: median hz/op per run, optional uncertainty bands, and
             primary-vs-compare ratios. Timestamps use your device clock.
           </p>
@@ -308,25 +435,25 @@
             id="reload-data-btn"
             aria-label="Reload benchmark data from server"
             title="Fetch the latest runs from the server without refreshing the page"
-            class="inline-flex shrink-0 items-center justify-center rounded-lg border border-zinc-600 bg-zinc-800 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none disabled:cursor-not-allowed disabled:opacity-45 aria-busy:cursor-wait aria-busy:opacity-60"
+            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[0.08] px-4 py-2.5 text-sm font-semibold text-zinc-100 shadow-sm shadow-black/20 hover:bg-white/[0.13] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090b] disabled:cursor-not-allowed disabled:opacity-45 aria-busy:cursor-wait aria-busy:opacity-60"
           >
             Reload data
           </button>
         </div>
         <details
-          class="mt-4 rounded-lg border border-zinc-800/80 bg-zinc-900/30 px-3 py-2 sm:px-4"
+          class="bh-glass bh-glass-tight mt-5 px-4 py-3 sm:px-5 sm:py-3.5"
           id="intro-howto-details"
         >
           <summary
-            class="cursor-pointer text-sm font-medium text-zinc-200 select-none hover:text-zinc-50"
+            class="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden"
           >
             How to read this viewer
           </summary>
-          <div class="mt-3 border-t border-zinc-800/70 pt-3 text-sm leading-relaxed text-zinc-400">
+          <div class="mt-3 border-t border-white/[0.06] pt-3 text-sm leading-relaxed text-zinc-400">
             <p>
               Quantiles mirror
               <code
-                class="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[0.88em] text-indigo-200"
+                class="rounded-md bg-white/[0.08] px-1.5 py-0.5 font-mono text-[0.88em] text-cyan-200/90"
                 >report.ts</code
               >
               across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% highlights
@@ -340,11 +467,11 @@
       </header>
 
       <div aria-label="History overview" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div class="bh-card hover:border-emerald-500/20">
+        <div class="bh-card">
           <div class="bh-lbl">Saved runs</div>
           <div class="bh-val text-zinc-100" id="kpi-run-count">—</div>
         </div>
-        <div class="bh-card hover:border-sky-500/15">
+        <div class="bh-card">
           <div class="bh-lbl">Scenarios tracked</div>
           <div class="bh-val text-zinc-100" id="kpi-scenario-count">—</div>
         </div>
@@ -361,7 +488,7 @@
       </div>
 
       <div
-        class="mt-4 hidden rounded-lg border border-amber-500/25 bg-amber-950/35 px-3 py-2.5 text-sm text-amber-100/95"
+        class="mt-5 hidden rounded-xl border border-amber-400/20 bg-amber-500/[0.09] px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
         id="multi-env-banner"
         role="status"
       >
@@ -370,29 +497,24 @@
         machines).
       </div>
 
-      <section
-        aria-label="Find scenarios"
-        class="mt-8 rounded-xl border border-zinc-800/75 bg-zinc-900/25 px-4 py-4 shadow-sm shadow-black/20 sm:px-5"
-      >
-        <h2 class="text-[0.7rem] font-semibold tracking-[0.16em] text-zinc-500 uppercase">
-          Find scenarios
-        </h2>
+      <section aria-label="Find scenarios" class="bh-glass bh-glass-tight mt-10 px-5 py-5 sm:px-6">
+        <h2 class="bh-section-title">Find scenarios</h2>
         <div class="mt-4 flex flex-wrap items-end gap-x-6 gap-y-4">
           <label class="block min-w-[min(100%,16rem)] shrink-0">
-            <span class="mb-1 block text-[0.82rem] text-zinc-500">Search</span>
+            <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Search</span>
             <input
               autocomplete="off"
-              class="w-full max-w-xs rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+              class="bh-focus w-full max-w-xs rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] placeholder:text-zinc-500 focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
               id="scenario-search"
               placeholder="Filter by scenario, group…"
               type="search"
             />
           </label>
           <label class="block shrink-0">
-            <span class="mb-1 block text-[0.82rem] text-zinc-500">Group</span>
+            <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Group</span>
             <select
               aria-label="Filter by group"
-              class="min-w-[10.5rem] rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+              class="bh-focus min-w-[10.5rem] rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
               id="group-filter"
             >
               <option value="">All groups</option>
@@ -403,20 +525,18 @@
 
       <div
         aria-label="Chart data selection"
-        class="sticky top-0 z-40 mt-6 flex flex-col gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/90 px-3 py-3 shadow-lg shadow-black/35 backdrop-blur-md sm:-mx-2 sm:px-4"
+        class="bh-glass-sticky sticky top-3 z-40 mt-8 flex flex-col gap-4 px-4 py-4 sm:-mx-2 sm:px-5"
       >
-        <p class="text-[0.65rem] font-semibold tracking-wider text-zinc-500 uppercase">
-          Chart data
-        </p>
+        <p class="bh-section-title">Chart data</p>
         <div class="flex flex-wrap items-end gap-3">
           <div
             class="flex min-w-0 flex-1 flex-wrap items-end gap-2 sm:max-w-none sm:flex-[1_1_20rem]"
           >
             <label class="min-w-0 flex-1 sm:max-w-md sm:min-w-[14rem]">
-              <span class="mb-1 block text-[0.75rem] text-zinc-500">Scenario</span>
+              <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Scenario</span>
               <select
                 aria-label="Benchmark scenario"
-                class="box-border h-10 w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 text-sm leading-normal text-zinc-100 shadow-inner focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+                class="bh-focus box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
                 id="scenario-select"
               ></select>
             </label>
@@ -446,10 +566,10 @@
             </div>
           </div>
           <label class="min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem]">
-            <span class="mb-1 block text-[0.75rem] text-zinc-500">Environment</span>
+            <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Environment</span>
             <select
               aria-label="Filter runs by CPU and Node"
-              class="box-border h-10 w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 text-sm leading-normal text-zinc-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+              class="bh-focus box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
               id="env-filter"
             >
               <option value="">All runs</option>
@@ -457,38 +577,42 @@
           </label>
         </div>
         <div
-          class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-zinc-800/60 pt-3 text-[0.9rem] text-zinc-300"
+          class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4 text-[0.9rem] text-zinc-300"
         >
-          <span class="text-[0.65rem] font-semibold tracking-wider text-zinc-600 uppercase"
-            >Display</span
+          <span class="bh-section-title bh-section-title--inline">Display</span>
+          <label
+            class="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100"
           >
-          <label class="inline-flex cursor-pointer items-center gap-2">
             <input
               checked
-              class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+              class="size-4 rounded border-white/20 bg-black/30 text-[#0a84ff] accent-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/50"
               id="show-bands"
               type="checkbox"
             />
             <span title="Per-trial P25–P75 spread around each run median">P25–P75 band</span>
           </label>
-          <label class="inline-flex cursor-pointer items-center gap-2">
+          <label
+            class="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100"
+          >
             <input
-              class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+              class="size-4 rounded border-white/20 bg-black/30 text-[#0a84ff] accent-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/50"
               id="log-scale"
               type="checkbox"
             />
             Log Y axis
           </label>
-          <label class="inline-flex cursor-pointer items-center gap-2">
+          <label
+            class="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100"
+          >
             <input
-              class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+              class="size-4 rounded border-white/20 bg-black/30 text-[#0a84ff] accent-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/50"
               id="show-ratio"
               type="checkbox"
             />
             <span id="ratio-label">Ratio</span>
           </label>
           <button
-            class="ml-auto shrink-0 rounded-lg border border-indigo-500/40 bg-indigo-950/50 px-3.5 py-2 text-sm font-medium text-indigo-200 hover:bg-indigo-900/50 focus:ring-2 focus:ring-indigo-400/70 focus:outline-none"
+            class="ml-auto shrink-0 rounded-xl bg-[#0a84ff] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-[#409cff] hover:shadow-blue-500/28 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0f]"
             id="chart-download-png"
             title="Capture current chart view as PNG"
             type="button"
@@ -500,13 +624,11 @@
 
       <section
         aria-live="polite"
-        class="mt-8 mb-6 rounded-xl border border-zinc-800/80 bg-gradient-to-br from-zinc-900/50 to-zinc-950/50 px-4 py-4 sm:px-5"
+        class="bh-glass bh-glass-tight mt-10 mb-8 px-5 py-5 sm:px-6"
         id="summary"
       >
         <div class="flex flex-wrap items-baseline gap-2 gap-y-1">
-          <h2 class="text-[0.7rem] font-semibold tracking-[0.16em] text-zinc-500 uppercase">
-            Selected scenario metrics
-          </h2>
+          <h2 class="bh-section-title">Selected scenario metrics</h2>
           <span class="bh-chip bh-chip-ok" id="metrics-scenario-chip"></span>
         </div>
         <p class="mt-2 text-sm leading-relaxed text-zinc-400" id="scenario-what-line"></p>
@@ -516,16 +638,21 @@
 
       <section
         aria-labelledby="chart-section-title"
-        class="rounded-xl border border-zinc-800/75 bg-zinc-900/20 px-4 py-4 sm:px-5"
+        class="bh-glass overflow-hidden px-5 py-5 sm:px-6"
       >
         <div
-          class="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-800/70 pb-3"
+          class="flex flex-wrap items-start justify-between gap-3 border-b border-white/[0.06] pb-4"
         >
           <div>
-            <h2 class="text-sm font-semibold text-zinc-100" id="chart-section-title">
+            <h2
+              class="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50"
+              id="chart-section-title"
+            >
               Throughput over filtered runs
             </h2>
-            <p class="mt-1 text-[0.8rem] text-zinc-500" id="chart-subtitle-line">—</p>
+            <p class="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500" id="chart-subtitle-line">
+              —
+            </p>
           </div>
         </div>
         <div aria-label="Chart pan and zoom" class="bh-chart-toolbar mt-4 mb-2" role="toolbar">
@@ -535,34 +662,34 @@
           <button class="bh-seg-btn" id="chart-pan-later" type="button">Later →</button>
           <button class="bh-seg-btn" id="chart-reset-zoom" type="button">Reset zoom</button>
         </div>
-        <p class="text-xs leading-relaxed text-zinc-500">
+        <p class="text-[0.8125rem] leading-relaxed text-zinc-500">
           Opens on newest portion of history; Reset zoom restores full range.
           <span id="chart-wheel-hint"></span>
           Drag pans on the chart · legend toggles series.
         </p>
         <div
-          class="relative mt-4 h-[min(440px,58vh)] min-h-[280px] w-full rounded-lg bg-zinc-950/40 ring-1 ring-zinc-800/70"
+          class="relative mt-5 h-[min(440px,58vh)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-black/40 shadow-[0_1px_0_rgba(255,255,255,0.05)_inset] ring-1 ring-white/[0.08]"
           id="chart-host"
         >
           <div aria-live="polite" id="chart-empty-state">
             <p id="chart-empty-message"></p>
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
-                class="hidden rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none"
+                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]"
                 id="empty-btn-clear-env"
                 type="button"
               >
                 Show all environments
               </button>
               <button
-                class="hidden rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none"
+                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]"
                 id="empty-btn-clear-search"
                 type="button"
               >
                 Clear search
               </button>
               <button
-                class="hidden rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none"
+                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]"
                 id="empty-btn-all-groups"
                 type="button"
               >
@@ -578,11 +705,11 @@
         </div>
 
         <details
-          class="mt-5 rounded-lg border border-zinc-800/70 bg-zinc-900/25 px-3 py-2 open:bg-zinc-900/40 sm:px-4"
+          class="bh-glass bh-glass-tight mt-6 px-4 py-3 open:bg-[rgba(28,28,32,0.65)] sm:px-5"
           id="chart-data-details"
         >
           <summary
-            class="cursor-pointer text-sm font-medium text-zinc-200 select-none hover:text-zinc-50"
+            class="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden"
           >
             Tabular data for the current chart (accessibility)
           </summary>
@@ -604,13 +731,13 @@
       </section>
 
       <details
-        class="mt-8 rounded-xl border border-zinc-800/75 bg-zinc-900/15 px-4 py-3 open:bg-zinc-900/35 sm:px-5"
+        class="bh-glass mt-10 px-5 py-4 open:bg-[rgba(28,28,32,0.58)] sm:px-6"
         id="snapshot-details"
       >
         <summary
-          class="cursor-pointer py-2 text-sm leading-snug font-semibold text-zinc-200 [&::-webkit-details-marker]:text-indigo-400"
+          class="cursor-pointer list-none py-1 text-sm leading-snug font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden"
         >
-          Snapshot of <span class="text-indigo-200/95">globally newest</span> bench folder —
+          Snapshot of <span class="text-cyan-200/90">globally newest</span> bench folder —
           throughput by scenario (table)
         </summary>
         <p class="mb-3 text-xs leading-relaxed text-zinc-500" id="snapshot-desc"></p>
@@ -626,7 +753,7 @@
       </details>
 
       <p
-        class="mt-8 border-t border-zinc-800/80 pt-5 text-[0.78rem] text-zinc-500"
+        class="mt-10 border-t border-white/[0.06] pt-6 text-[0.8125rem] leading-relaxed text-zinc-500"
         id="page-footer"
       ></p>
     </div>

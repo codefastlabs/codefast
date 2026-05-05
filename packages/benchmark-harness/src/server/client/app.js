@@ -862,24 +862,24 @@
           maxTicksLimit: Math.min(22, Math.max(labels.length || 2, 2)),
           maxRotation: 52,
           minRotation: 0,
-          color: "#999",
+          color: "rgba(235, 235, 245, 0.42)",
         },
-        grid: { color: "#2a2a36", drawOnChartArea: true },
+        grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
       },
       y: {
         type: yType,
         position: "left",
-        title: { display: true, text: "hz/op", color: "#aaa" },
-        ticks: { color: "#999" },
-        grid: { color: "#2a2a36" },
+        title: { display: true, text: "hz/op", color: "rgba(235, 235, 245, 0.5)" },
+        ticks: { color: "rgba(235, 235, 245, 0.42)" },
+        grid: { color: "rgba(255, 255, 255, 0.055)" },
       },
     };
     if (ratioOn) {
       scales.y1 = {
         type: "linear",
         position: "right",
-        title: { display: true, text: "ratio", color: "#aaa" },
-        ticks: { color: "#b98" },
+        title: { display: true, text: "ratio", color: "rgba(235, 235, 245, 0.5)" },
+        ticks: { color: "rgba(255, 200, 150, 0.55)" },
         grid: { drawOnChartArea: false },
       };
     }
@@ -889,7 +889,7 @@
     var plugins = {
       legend: {
         labels: {
-          color: "#ccc",
+          color: "rgba(235, 235, 245, 0.72)",
           filter: function (item) {
             var t = item.text || "";
             return !t.endsWith(" P25") && t.indexOf("P25–P75") < 0;
