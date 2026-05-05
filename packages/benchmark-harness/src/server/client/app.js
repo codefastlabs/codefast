@@ -1190,7 +1190,8 @@
       pageTitleEl.innerHTML =
         esc(data.title) + '<span class="font-normal text-zinc-400"> · hz/op median per run</span>';
     }
-    document.title = data.title + " — bench history";
+    var docTitle = String(data.title || "").trim();
+    document.title = /bench history\s*$/i.test(docTitle) ? docTitle : docTitle + " — bench history";
 
     if (ratioLabel && primary && compares.length > 0) {
       ratioLabel.textContent =
@@ -1332,6 +1333,7 @@
     if (!isReload) {
       if (loadingOverlay) {
         loadingOverlay.classList.add("hidden");
+        loadingOverlay.setAttribute("aria-hidden", "true");
       }
       if (appEl) {
         appEl.style.display = "";
