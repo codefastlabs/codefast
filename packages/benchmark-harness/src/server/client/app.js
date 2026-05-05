@@ -619,10 +619,32 @@
       var median = medianNumeric(hzValues);
       var lo = hzValues.length ? Math.min.apply(Math, hzValues) : null;
       var hi = hzValues.length ? Math.max.apply(Math, hzValues) : null;
-      var trend =
-        hzValues.length >= 2
-          ? fmtPctChange(hzValues[0], hzValues[hzValues.length - 1]) + ", newest vs oldest"
-          : "—";
+
+      var oldestRunIx = indices[0];
+      var newestRunIx = indices[indices.length - 1];
+      var hzAtOldest = oldestRunIx !== undefined ? libData.hz[oldestRunIx] : null;
+      var hzAtNewest = newestRunIx !== undefined ? libData.hz[newestRunIx] : null;
+      var trend = "—";
+      if (
+        indices.length >= 2 &&
+        typeof hzAtOldest === "number" &&
+        hzAtOldest > 0 &&
+        typeof hzAtNewest === "number" &&
+        hzAtNewest > 0
+      ) {
+        trend = fmtPctChange(hzAtOldest, hzAtNewest) + ", oldest → newest run in filter";
+      }
+
+      var runsWithData = hzValues.length;
+      var runsPlotted = indices.length;
+      var coverageHint =
+        runsWithData < runsPlotted
+          ? '<div class="mt-1 text-[0.68rem] bh-muted">' +
+            esc(String(runsWithData)) +
+            " of " +
+            esc(String(runsPlotted)) +
+            " plotted runs have median hz/op</div>"
+          : "";
       indices.forEach(function (gx) {
         var f = libData.iqrFraction[gx];
         if (typeof f === "number" && Number.isFinite(f)) {
@@ -630,7 +652,9 @@
         }
       });
       html +=
-        '<div class="bh-card" style="--bh-accent:' +
+        '<div class="bh-card" role="group" aria-label="' +
+        esc(lib.displayName + " median hz/op over filtered runs with data") +
+        '" style="--bh-accent:' +
         esc(color) +
         '">' +
         '<div class="bh-lbl bh-tint-lbl">' +
@@ -645,15 +669,32 @@
         '<div class="mt-1 text-[0.72rem] bh-muted">Δ ' +
         trend +
         "</div>" +
+        coverageHint +
         "</div>";
     });
 
     compareLibs.forEach(function (cmpLib) {
-      var primData = scenarioRow.libraries[primaryLib ? primaryLib.key : ""];
+      var primKey = primaryLib ? primaryLib.key : "";
+      var primData = scenarioRow.libraries[primKey];
       var cmpData = scenarioRow.libraries[cmpLib.key];
       if (!primData || !cmpData) {
         return;
       }
+      var primHzVals = indices
+        .map(function (gx) {
+          var v = primData.hz[gx];
+          return typeof v === "number" && v > 0 ? v : null;
+        })
+        .filter(Boolean);
+      var cmpHzVals = indices
+        .map(function (gx) {
+          var v = cmpData.hz[gx];
+          return typeof v === "number" && v > 0 ? v : null;
+        })
+        .filter(Boolean);
+      var primMed = medianNumeric(primHzVals);
+      var cmpMed = medianNumeric(cmpHzVals);
+      var ratioMedians = ratioFrom(primMed, cmpMed);
       var ratios = indices
         .map(function (gx) {
           return ratioFrom(primData.hz[gx], cmpData.hz[gx]);
@@ -661,28 +702,54 @@
         .filter(function (v) {
           return v !== null;
         });
-      var medianRatio = medianNumeric(ratios);
+      var medianOfRunRatios = medianNumeric(ratios);
+      var showPairedMedian =
+        medianOfRunRatios !== null &&
+        ratioMedians !== null &&
+        Math.abs(medianOfRunRatios - ratioMedians) / ratioMedians > 0.002;
+      var primaryName = (primaryLib || orderedLibraries[0]).displayName;
+      var ratioAria =
+        "Ratio " +
+        primaryName +
+        " divided by " +
+        cmpLib.displayName +
+        ", median hz/op divided by median hz/op";
+      var ratioCaptionLine =
+        '<div class="mt-1 text-[0.72rem] leading-snug bh-muted">' +
+        "Median ÷ median for this filter; each side uses runs with hz/op for that library." +
+        "</div>";
+      var ratioPairedLine = showPairedMedian
+        ? '<div class="mt-1 text-[0.72rem] leading-snug bh-muted">' +
+          "Median of per-run ratios · " +
+          medianOfRunRatios.toFixed(3) +
+          "×</div>"
+        : "";
       html +=
-        '<div class="bh-card" style="--bh-accent:rgb(253,224,169)">' +
+        '<div class="bh-card" role="group" aria-label="' +
+        esc(ratioAria) +
+        '" style="--bh-accent:rgb(253,224,169)">' +
         '<div class="bh-lbl bh-tint-lbl">Ratio · ' +
-        esc((primaryLib || orderedLibraries[0]).displayName) +
+        esc(primaryName) +
         " ÷ " +
         esc(cmpLib.displayName) +
         "</div>" +
         '<div class="bh-val bh-tint-val">' +
-        (medianRatio !== null ? medianRatio.toFixed(3) + "×" : "—") +
-        "</div></div>";
+        (ratioMedians !== null ? ratioMedians.toFixed(3) + "×" : "—") +
+        "</div>" +
+        ratioCaptionLine +
+        ratioPairedLine +
+        "</div>";
     });
 
     html +=
-      '<div class="bh-card">' +
+      '<div class="bh-card" role="group" aria-label="Worst IQR divided by median, per plotted run">' +
       '<div class="bh-lbl">Worst IQR÷median · per plotted run</div>' +
       '<div class="text-[0.78rem] leading-snug bh-body-muted">' +
       orderedLibraries
         .map(function (lib) {
           var libData = scenarioRow.libraries[lib.key];
           if (!libData) {
-            return lib.displayName + ": —";
+            return esc(lib.displayName) + ": —";
           }
           var maxF = 0;
           indices.forEach(function (gx) {
@@ -691,7 +758,7 @@
               maxF = Math.max(maxF, f);
             }
           });
-          return lib.displayName + ": " + (maxF > 0 ? (maxF * 100).toFixed(1) + "%" : "—");
+          return esc(lib.displayName) + ": " + (maxF > 0 ? (maxF * 100).toFixed(1) + "%" : "—");
         })
         .join(" · ") +
       "</div></div>";
@@ -701,8 +768,9 @@
 
     var footPieces = [
       indices.length +
-        " plotted point(s)" +
-        (envFilter.value ? ", environment filter on" : ", all environments"),
+        " run(s) on the chart" +
+        (envFilter.value ? "; environment filter on" : "; all environments") +
+        ". Median & range: all filtered runs with hz/op. Δ: % change from first → last run in this view when both have data",
     ];
     if (worstIqr > DISPERSION_IQR_ALERT) {
       footPieces.push(
