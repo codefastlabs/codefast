@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Bench history viewer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style id="bh-ui-styles">
       /**
        * Apple-inspired dark UI: system font stack, glass surfaces, system-blue accents,
@@ -25,15 +25,15 @@
 
       .bh-app-body {
         font-family: var(--bh-font);
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
         background-color: #09090b;
         background-image:
           radial-gradient(ellipse 130% 70% at 50% -25%, rgba(10, 132, 255, 0.11), transparent 52%),
           radial-gradient(ellipse 70% 45% at 95% 35%, rgba(52, 199, 89, 0.055), transparent 42%),
           linear-gradient(180deg, #0c0c0f 0%, #09090b 45%, #08080a 100%);
         background-attachment: fixed;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
 
       @media (prefers-reduced-motion: no-preference) {
@@ -46,11 +46,11 @@
         border: 1px solid var(--bh-border);
         border-radius: 1.25rem;
         background: var(--bh-surface);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        backdrop-filter: blur(24px) saturate(180%);
         box-shadow:
           0 0 0 1px rgba(255, 255, 255, 0.04) inset,
           0 12px 40px rgba(0, 0, 0, 0.35);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
       }
 
       .bh-glass-tight {
@@ -63,19 +63,19 @@
         border: 1px solid var(--bh-border);
         border-radius: 1.25rem;
         background: rgba(16, 16, 20, 0.78);
-        -webkit-backdrop-filter: blur(36px) saturate(200%);
-        backdrop-filter: blur(36px) saturate(200%);
         box-shadow:
           0 1px 0 rgba(255, 255, 255, 0.06) inset,
           0 12px 40px rgba(0, 0, 0, 0.42);
+        -webkit-backdrop-filter: blur(36px) saturate(200%);
+        backdrop-filter: blur(36px) saturate(200%);
       }
 
       .bh-section-title {
         font-size: 0.65rem;
         font-weight: 600;
         letter-spacing: 0.14em;
-        color: var(--bh-label);
         text-transform: uppercase;
+        color: var(--bh-label);
       }
 
       .bh-section-title--inline {
@@ -92,39 +92,39 @@
       /** Header — secondary action (Safari / Settings–style, not a big filled CTA). */
       .bh-btn-reload {
         font-family: inherit;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 0.38rem 0.95rem;
-        border-radius: 9999px;
         font-size: 0.8125rem;
         font-weight: 500;
         line-height: 1.25;
-        letter-spacing: -0.015em;
-        color: rgba(244, 244, 248, 0.92);
-        border: 1px solid var(--bh-border);
-        background: rgba(255, 255, 255, 0.04);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        -webkit-backdrop-filter: blur(14px) saturate(160%);
-        backdrop-filter: blur(14px) saturate(160%);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.38rem 0.95rem;
         transition:
           background 0.18s ease,
           border-color 0.18s ease,
           color 0.18s ease;
+        letter-spacing: -0.015em;
+        color: rgba(244, 244, 248, 0.92);
+        border: 1px solid var(--bh-border);
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        gap: 0.4rem;
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
+        backdrop-filter: blur(14px) saturate(160%);
       }
       .bh-btn-reload:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: var(--bh-border-strong);
         color: rgb(250, 250, 252);
+        border-color: var(--bh-border-strong);
+        background: rgba(255, 255, 255, 0.07);
       }
       .bh-btn-reload:focus-visible {
         outline: 2px solid var(--bh-blue);
         outline-offset: 3px;
       }
       .bh-btn-reload:disabled {
-        opacity: 0.4;
         cursor: not-allowed;
+        opacity: 0.4;
       }
       .bh-btn-reload[aria-busy="true"] {
         cursor: wait;
@@ -142,17 +142,17 @@
 
       .bh-card {
         padding: 0.85rem 1.05rem;
-        border: 1px solid var(--bh-border);
-        border-radius: 1rem;
-        background: var(--bh-surface-elevated);
-        -webkit-backdrop-filter: blur(16px) saturate(160%);
-        backdrop-filter: blur(16px) saturate(160%);
-        box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.05) inset,
-          0 8px 28px rgba(0, 0, 0, 0.28);
         transition:
           border-color 0.2s ease,
           box-shadow 0.2s ease;
+        border: 1px solid var(--bh-border);
+        border-radius: 1rem;
+        background: var(--bh-surface-elevated);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.05) inset,
+          0 8px 28px rgba(0, 0, 0, 0.28);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        backdrop-filter: blur(16px) saturate(160%);
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -176,10 +176,10 @@
         margin-top: 0.38rem;
       }
       .bh-metric-meta {
-        margin-top: 0.24rem;
         font-size: 0.72rem;
-        line-height: 1.42;
         font-weight: 400;
+        line-height: 1.42;
+        margin-top: 0.24rem;
         letter-spacing: -0.014em;
         color: var(--bh-label);
       }
@@ -188,8 +188,8 @@
       }
       .bh-metric-meta--mono {
         font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        font-variant-numeric: tabular-nums;
         letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
       }
       .bh-metric-meta--fine {
         font-size: 0.6875rem;
@@ -198,35 +198,35 @@
       }
       .bh-metric-fig {
         font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        font-variant-numeric: tabular-nums;
         letter-spacing: -0.02em;
         color: rgba(244, 244, 248, 0.94);
+        font-variant-numeric: tabular-nums;
       }
       .bh-metric-iqr {
-        margin-top: 0.28rem;
         display: flex;
         flex-direction: column;
+        margin-top: 0.28rem;
         gap: 0.42rem;
       }
       .bh-metric-row {
+        font-size: 0.72rem;
+        line-height: 1.35;
         display: flex;
         align-items: baseline;
         justify-content: space-between;
-        gap: 0.75rem;
-        font-size: 0.72rem;
-        line-height: 1.35;
         letter-spacing: -0.012em;
+        gap: 0.75rem;
       }
       .bh-metric-row__name {
         min-width: 0;
         color: var(--bh-label);
       }
       .bh-metric-row__fig {
-        flex-shrink: 0;
         font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        font-variant-numeric: tabular-nums;
+        flex-shrink: 0;
         letter-spacing: -0.02em;
         color: rgba(244, 244, 248, 0.93);
+        font-variant-numeric: tabular-nums;
       }
 
       .bh-lbl {
@@ -356,9 +356,9 @@
         border: 1px solid var(--bh-border);
         border-radius: 0.75rem;
         background: rgba(44, 44, 48, 0.55);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
         -webkit-backdrop-filter: blur(12px) saturate(150%);
         backdrop-filter: blur(12px) saturate(150%);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
       }
       /** Same outer height as Tailwind `h-10` selects in Chart data (2.5rem incl. border, border-box). */
       .bh-chart-toolbar.bh-chart-toolbar--match-field {
@@ -480,11 +480,11 @@
         border: 1px solid rgba(10, 132, 255, 0.35);
         border-radius: 0.875rem;
         background: rgba(34, 36, 42, 0.88);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        backdrop-filter: blur(20px) saturate(180%);
         box-shadow:
           0 1px 0 rgba(255, 255, 255, 0.06) inset,
           0 16px 48px rgba(0, 0, 0, 0.45);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        backdrop-filter: blur(20px) saturate(180%);
       }
       #bh-toast.is-visible {
         transform: translateY(0) scale(1);
@@ -514,7 +514,7 @@
     ></script>
   </head>
   <body class="bh-app-body min-h-screen text-zinc-200">
-    <div id="loading-overlay" aria-live="polite" role="status">
+    <div aria-live="polite" id="loading-overlay" role="status">
       <div class="text-center">
         <div
           class="bh-loading-spinner mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-600/80 border-t-[#0a84ff]"
@@ -544,27 +544,27 @@
             primary-vs-compare ratios. Timestamps use your device clock.
           </p>
           <button
-            type="button"
-            id="reload-data-btn"
-            class="bh-btn-reload shrink-0"
             aria-label="Reload benchmark data from server"
+            class="bh-btn-reload shrink-0"
+            id="reload-data-btn"
             title="Fetch the latest runs from the server without refreshing the page"
+            type="button"
           >
             <svg
+              aria-hidden="true"
               class="bh-btn-reload__icon"
-              width="14"
+              fill="none"
               height="14"
               viewBox="0 0 24 24"
-              fill="none"
+              width="14"
               xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
             >
               <path
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 stroke="currentColor"
-                stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                stroke-width="2"
               />
             </svg>
             Reload data
