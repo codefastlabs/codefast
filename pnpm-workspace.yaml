@@ -153,3 +153,12 @@ packageExtensions:
 peerDependencyRules:
   allowedVersions:
     "@content-collections/vite>vite": ^8.0.0
+
+allowBuilds:
+  '@swc/core': true
+  '@tailwindcss/oxide': true
+  core-js: true
+  esbuild: true
+  sharp: true
+  simple-git-hooks: true
+  unrs-resolver: true
