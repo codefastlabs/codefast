@@ -66,16 +66,5 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.33.2",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@swc/core",
-      "@tailwindcss/oxide",
-      "core-js",
-      "esbuild",
-      "sharp",
-      "simple-git-hooks",
-      "unrs-resolver"
-    ]
-  }
+  "packageManager": "pnpm@11.0.5"
 }
