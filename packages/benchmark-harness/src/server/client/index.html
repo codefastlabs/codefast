@@ -5,498 +5,374 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Bench history viewer</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style id="bh-ui-styles">
-      /**
-       * Apple-inspired dark UI: system font stack, glass surfaces, system-blue accents,
-       * soft borders (white @ low alpha), ambient background depth.
-       */
-      :root {
-        --bh-font:
+    <style type="text/tailwindcss">
+      /* ─── Design tokens ──────────────────────────────────────────────────────── */
+      @theme {
+        --font-bh:
           -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui,
           sans-serif;
-        --bh-blue: #0a84ff;
-        --bh-blue-hover: #409cff;
-        --bh-border: rgba(255, 255, 255, 0.065);
-        --bh-border-strong: rgba(255, 255, 255, 0.1);
-        --bh-label: rgb(152, 152, 157);
-        --bh-surface: rgba(30, 30, 34, 0.55);
-        --bh-surface-elevated: rgba(36, 36, 40, 0.72);
-      }
 
-      .bh-app-body {
-        font-family: var(--bh-font);
-        background-color: #09090b;
-        background-image:
-          radial-gradient(ellipse 130% 70% at 50% -25%, rgba(10, 132, 255, 0.11), transparent 52%),
-          radial-gradient(ellipse 70% 45% at 95% 35%, rgba(52, 199, 89, 0.055), transparent 42%),
-          linear-gradient(180deg, #0c0c0f 0%, #09090b 45%, #08080a 100%);
-        background-attachment: fixed;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
-      }
+        --color-bh-blue: #0a84ff;
+        --color-bh-blue-hover: #409cff;
+        --color-bh-blue-ring: rgba(10, 132, 255, 0.35);
+        --color-bh-bg: #09090b;
+        --color-bh-bg-gradient-top: #0c0c0f;
+        --color-bh-bg-gradient-bottom: #08080a;
+        --color-bh-glow-blue: rgba(10, 132, 255, 0.11);
+        --color-bh-glow-green: rgba(52, 199, 89, 0.055);
 
-      @media (prefers-reduced-motion: no-preference) {
-        .bh-app-body {
-          scroll-behavior: smooth;
-        }
-      }
+        --color-bh-label: rgb(152, 152, 157);
+        --color-bh-label-muted: rgb(113, 113, 118);
+        --color-bh-border: rgba(255, 255, 255, 0.065);
+        --color-bh-border-strong: rgba(255, 255, 255, 0.1);
+        --color-bh-surface: rgba(30, 30, 34, 0.55);
+        --color-bh-surface-elevated: rgba(36, 36, 40, 0.72);
+        --color-bh-surface-sticky: rgba(16, 16, 20, 0.78);
+        --color-bh-surface-open: rgba(28, 28, 32, 0.65);
+        --color-bh-surface-open-muted: rgba(28, 28, 32, 0.58);
+        --color-bh-surface-toolbar: rgba(44, 44, 48, 0.55);
+        --color-bh-surface-seg: rgba(58, 58, 62, 0.5);
+        --color-bh-surface-seg-hover: rgba(72, 72, 78, 0.65);
+        --color-bh-surface-toast: rgba(34, 36, 42, 0.88);
 
-      .bh-glass {
-        border: 1px solid var(--bh-border);
-        border-radius: 1.25rem;
-        background: var(--bh-surface);
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-          0 12px 40px rgba(0, 0, 0, 0.35);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        backdrop-filter: blur(24px) saturate(180%);
-      }
+        --color-bh-ink: rgba(244, 244, 248, 0.92);
+        --color-bh-ink-strong: rgba(244, 244, 248, 0.94);
+        --color-bh-ink-mid: rgba(244, 244, 248, 0.93);
+        --color-bh-ink-hover: rgb(250, 250, 252);
+        --color-bh-body-muted: rgb(212, 212, 216);
+        --color-bh-meta: rgb(161, 161, 170);
+        --color-bh-ratio-accent: rgb(253, 224, 169);
+        --color-bh-metric-accent: var(--color-bh-meta);
+        --color-bh-toast-ink: rgb(240, 244, 255);
+        --color-bh-seg-ink: rgb(235, 235, 245);
+        --color-bh-lib-key: #a3a3a8;
 
-      .bh-glass-tight {
-        border-radius: 1rem;
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-      }
+        --color-bh-fill-white-4: rgba(255, 255, 255, 0.04);
+        --color-bh-fill-white-7: rgba(255, 255, 255, 0.07);
+        --color-bh-overlay: rgba(8, 8, 10, 0.92);
+        --color-bh-overlay-soft: rgba(8, 8, 10, 0.88);
+        --color-bh-scrim-table: rgba(0, 0, 0, 0.2);
 
-      /** Sticky command surface — stronger blur + legibility (cf. macOS header materials). */
-      .bh-glass-sticky {
-        border: 1px solid var(--bh-border);
-        border-radius: 1.25rem;
-        background: rgba(16, 16, 20, 0.78);
-        box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.06) inset,
-          0 12px 40px rgba(0, 0, 0, 0.42);
-        -webkit-backdrop-filter: blur(36px) saturate(200%);
-        backdrop-filter: blur(36px) saturate(200%);
-      }
+        --color-bh-table-line: rgb(39, 39, 42);
+        --color-bh-table-head: rgba(20, 20, 24, 0.95);
+        --color-bh-table-sticky: rgba(20, 20, 24, 0.97);
+        --color-bh-table-hover: rgba(63, 63, 70, 0.18);
+        --color-bh-table-zebra: rgba(39, 39, 42, 0.35);
+        --color-bh-table-zebra-hover: rgba(63, 63, 70, 0.22);
+        --color-bh-table-seg-disabled: rgb(39, 39, 42);
 
-      .bh-section-title {
-        font-size: 0.65rem;
-        font-weight: 600;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--bh-label);
-      }
+        --color-bh-warn-fg: rgb(255, 214, 170);
+        --color-bh-warn-border: rgba(255, 159, 10, 0.4);
+        --color-bh-warn-bg: rgba(255, 159, 10, 0.12);
+        --color-bh-ok-fg: rgb(185, 244, 205);
+        --color-bh-ok-border: rgba(52, 199, 89, 0.38);
+        --color-bh-ok-bg: rgba(52, 199, 89, 0.11);
 
-      .bh-section-title--inline {
-        font-size: 0.62rem;
-        letter-spacing: 0.12em;
-        color: rgb(113, 113, 118);
-      }
-
-      .bh-focus:focus-visible {
-        outline: 2px solid var(--bh-blue);
-        outline-offset: 2px;
-      }
-
-      /** Header — secondary action (Safari / Settings–style, not a big filled CTA). */
-      .bh-btn-reload {
-        font-family: inherit;
-        font-size: 0.8125rem;
-        font-weight: 500;
-        line-height: 1.25;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.38rem 0.95rem;
-        transition:
-          background 0.18s ease,
-          border-color 0.18s ease,
-          color 0.18s ease;
-        letter-spacing: -0.015em;
-        color: rgba(244, 244, 248, 0.92);
-        border: 1px solid var(--bh-border);
-        border-radius: 9999px;
-        background: rgba(255, 255, 255, 0.04);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        gap: 0.4rem;
-        -webkit-backdrop-filter: blur(14px) saturate(160%);
-        backdrop-filter: blur(14px) saturate(160%);
-      }
-      .bh-btn-reload:hover:not(:disabled) {
-        color: rgb(250, 250, 252);
-        border-color: var(--bh-border-strong);
-        background: rgba(255, 255, 255, 0.07);
-      }
-      .bh-btn-reload:focus-visible {
-        outline: 2px solid var(--bh-blue);
-        outline-offset: 3px;
-      }
-      .bh-btn-reload:disabled {
-        cursor: not-allowed;
-        opacity: 0.4;
-      }
-      .bh-btn-reload[aria-busy="true"] {
-        cursor: wait;
-        opacity: 0.55;
-      }
-      .bh-btn-reload__icon {
-        flex-shrink: 0;
-        opacity: 0.88;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .bh-btn-reload {
-          transition: none;
-        }
-      }
-
-      .bh-card {
-        padding: 0.85rem 1.05rem;
-        transition:
-          border-color 0.2s ease,
-          box-shadow 0.2s ease;
-        border: 1px solid var(--bh-border);
-        border-radius: 1rem;
-        background: var(--bh-surface-elevated);
-        box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.05) inset,
-          0 8px 28px rgba(0, 0, 0, 0.28);
-        -webkit-backdrop-filter: blur(16px) saturate(160%);
-        backdrop-filter: blur(16px) saturate(160%);
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .bh-card {
-          transition: none;
-        }
-      }
-
-      .bh-card:hover {
-        border-color: var(--bh-border-strong);
-        box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+        --shadow-bh-glass: 0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.35);
+        --shadow-bh-glass-tight: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        --shadow-bh-sticky: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 12px 40px rgba(0, 0, 0, 0.42);
+        --shadow-bh-card: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 8px 28px rgba(0, 0, 0, 0.28);
+        --shadow-bh-card-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset,
           0 10px 32px rgba(0, 0, 0, 0.32);
+        --shadow-bh-btn-reload: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        --shadow-bh-toolbar: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        --shadow-bh-field-inset: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+        --shadow-bh-toast: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 16px 48px rgba(0, 0, 0, 0.45);
       }
 
-      /**
-       * Metric cards — secondary lines like SF Pro + SF Mono for figures
-       * (Health / Wallet–style hierarchy).
-       */
-      .bh-val + .bh-metric-meta {
-        margin-top: 0.38rem;
-      }
-      .bh-metric-meta {
-        font-size: 0.72rem;
-        font-weight: 400;
-        line-height: 1.42;
-        margin-top: 0.24rem;
-        letter-spacing: -0.014em;
-        color: var(--bh-label);
-      }
-      .bh-metric-meta + .bh-metric-meta {
-        margin-top: 0.22rem;
-      }
-      .bh-metric-meta--mono {
-        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        letter-spacing: -0.02em;
-        font-variant-numeric: tabular-nums;
-      }
-      .bh-metric-meta--fine {
-        font-size: 0.6875rem;
-        line-height: 1.45;
-        opacity: 0.9;
-      }
-      .bh-metric-fig {
-        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        letter-spacing: -0.02em;
-        color: rgba(244, 244, 248, 0.94);
-        font-variant-numeric: tabular-nums;
-      }
-      .bh-metric-iqr {
-        display: flex;
-        flex-direction: column;
-        margin-top: 0.28rem;
-        gap: 0.42rem;
-      }
-      .bh-metric-row {
-        font-size: 0.72rem;
-        line-height: 1.35;
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        letter-spacing: -0.012em;
-        gap: 0.75rem;
-      }
-      .bh-metric-row__name {
-        min-width: 0;
-        color: var(--bh-label);
-      }
-      .bh-metric-row__fig {
-        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        flex-shrink: 0;
-        letter-spacing: -0.02em;
-        color: rgba(244, 244, 248, 0.93);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .bh-lbl {
-        font-size: 0.625rem;
-        font-weight: 600;
-        margin-bottom: 0.4rem;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        color: var(--bh-label);
-      }
-      .bh-val {
-        font-size: 1.05rem;
-        font-weight: 600;
-        line-height: 1.3;
-        letter-spacing: -0.028em;
-        word-break: break-word;
-        font-variant-numeric: tabular-nums;
-      }
-      .bh-chip {
-        font-size: 0.7rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        padding: 0.15rem 0.65rem;
-        border-radius: 9999px;
-      }
-      .bh-chip-warn {
-        color: rgb(255, 214, 170);
-        border: 1px solid rgba(255, 159, 10, 0.4);
-        background: rgba(255, 159, 10, 0.12);
-      }
-      .bh-chip-ok {
-        color: rgb(185, 244, 205);
-        border: 1px solid rgba(52, 199, 89, 0.38);
-        background: rgba(52, 199, 89, 0.11);
-      }
-      .bh-table-wrap {
-        overflow-x: auto;
-        border: 1px solid var(--bh-border);
-        border-radius: 0.75rem;
-        background: rgba(0, 0, 0, 0.2);
-      }
-      .bh-table {
-        font-size: 0.8rem;
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .bh-table-zebra tbody tr:nth-child(even) {
-        background: rgba(39, 39, 42, 0.35);
-      }
-      .bh-table th,
-      .bh-table td {
-        padding: 0.45rem 0.65rem;
-        text-align: left;
-        border-bottom: 1px solid rgb(39, 39, 42);
-      }
-      .bh-table th {
-        font-size: 0.7rem;
-        font-weight: 600;
-        white-space: nowrap;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--bh-label);
-      }
-      .bh-table thead th {
-        z-index: 3;
-        background: rgba(20, 20, 24, 0.95);
-      }
-      .bh-table tbody tr:hover {
-        background: rgba(63, 63, 70, 0.18);
-      }
-      .bh-table-zebra tbody tr:nth-child(even):hover {
-        background: rgba(63, 63, 70, 0.22);
-      }
-      .bh-num {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-      }
-      .bh-table th.bh-sticky-1,
-      .bh-table td.bh-sticky-1 {
-        position: sticky;
-        z-index: 2;
-        left: 0;
-        min-width: 7.5rem;
-        max-width: 14rem;
-        background: rgba(20, 20, 24, 0.97);
-        box-shadow: 1px 0 0 var(--bh-border-strong);
-      }
-      .bh-table th.bh-sticky-2,
-      .bh-table td.bh-sticky-2 {
-        position: sticky;
-        z-index: 2;
-        left: 7.5rem;
-        min-width: 5rem;
-        background: rgba(20, 20, 24, 0.97);
-        box-shadow: 1px 0 0 var(--bh-border-strong);
-      }
-      .bh-metrics-grid {
-        display: grid;
-        gap: 0.75rem;
-        grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
-      }
-      .bh-tint-lbl,
-      .bh-tint-val {
-        color: var(--bh-accent, rgb(161, 161, 170));
-      }
-      .bh-muted {
-        color: var(--bh-label);
-      }
-      .bh-body-muted {
-        color: rgb(212, 212, 216);
-      }
-      .bh-lib-version-row {
-        line-height: 1.45;
-        margin-top: 2px;
-      }
-      .bh-lib-version-key {
-        color: #a3a3a8;
-      }
-      .bh-gc-tag {
-        color: #fbbf24;
-      }
-      .bh-chart-toolbar {
-        display: inline-flex;
-        overflow: hidden;
-        flex-wrap: wrap;
-        border: 1px solid var(--bh-border);
-        border-radius: 0.75rem;
-        background: rgba(44, 44, 48, 0.55);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        -webkit-backdrop-filter: blur(12px) saturate(150%);
-        backdrop-filter: blur(12px) saturate(150%);
-      }
-      /** Same outer height as Tailwind `h-10` selects in Chart data (2.5rem incl. border, border-box). */
-      .bh-chart-toolbar.bh-chart-toolbar--match-field {
-        align-items: stretch;
-        box-sizing: border-box;
-        height: 2.5rem;
-      }
-      .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
-        display: inline-flex;
-        align-items: center;
-        align-self: stretch;
-        justify-content: center;
-        box-sizing: border-box;
-        min-height: 0;
-        padding: 0 0.625rem;
-      }
-      .bh-seg-btn {
-        font-size: 0.8125rem;
-        font-weight: 500;
-        line-height: 1.25rem;
-        margin: 0;
-        padding: 0.35rem 0.75rem;
-        color: rgb(235, 235, 245);
-        border: none;
-        border-right: 1px solid var(--bh-border);
-        border-radius: 0;
-        background: rgba(58, 58, 62, 0.5);
-      }
-      .bh-seg-btn:last-child {
-        border-right: none;
-      }
-      .bh-seg-btn:hover {
-        background: rgba(72, 72, 78, 0.65);
-      }
-      .bh-seg-btn:focus {
-        z-index: 1;
-        outline: none;
-      }
-      .bh-seg-btn:focus-visible {
-        z-index: 1;
-        box-shadow: inset 0 0 0 2px var(--bh-blue);
-      }
-      .bh-seg-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.4;
-      }
-      .bh-seg-btn:disabled:hover {
-        background: rgb(39, 39, 42);
-      }
-      #loading-overlay {
-        position: fixed;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(8, 8, 10, 0.92);
-        -webkit-backdrop-filter: blur(16px);
-        backdrop-filter: blur(16px);
-        inset: 0;
-      }
-      #loading-overlay.hidden {
-        display: none;
-      }
-      .bh-loading-spinner {
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
+      /* ─── Components ─────────────────────────────────────────────────────────── */
+      @layer components {
+        /* Apple-inspired dark body: ambient depth + system-blue radial glow */
+        .bh-app-body {
+          @apply font-bh antialiased bg-fixed bg-bh-bg [text-rendering:optimizeLegibility] motion-safe:scroll-smooth;
+          background-image:
+            radial-gradient(ellipse 130% 70% at 50% -25%, var(--color-bh-glow-blue), transparent 52%),
+            radial-gradient(ellipse 70% 45% at 95% 35%, var(--color-bh-glow-green), transparent 42%),
+            linear-gradient(
+              180deg,
+              var(--color-bh-bg-gradient-top) 0%,
+              var(--color-bh-bg) 45%,
+              var(--color-bh-bg-gradient-bottom) 100%
+            );
         }
-      }
-      @media (prefers-reduced-motion: reduce) {
+
+        .bh-glass {
+          @apply
+            border border-bh-border rounded-[1.25rem] bg-bh-surface backdrop-blur-[24px] backdrop-saturate-[180%]
+            shadow-bh-glass;
+        }
+
+        .bh-glass-tight {
+          @apply rounded-[1rem] shadow-bh-glass-tight;
+        }
+
+        /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
+        .bh-glass-sticky {
+          @apply
+            border border-bh-border rounded-[1.25rem] bg-bh-surface-sticky backdrop-blur-[36px] backdrop-saturate-[200%]
+            shadow-bh-sticky;
+        }
+
+        .bh-section-title {
+          @apply text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-bh-label;
+        }
+
+        .bh-section-title--inline {
+          @apply text-[0.62rem] tracking-[0.12em] text-bh-label-muted;
+        }
+
+        .bh-focus {
+          @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-bh-blue focus-visible:outline-offset-2;
+        }
+
+        /* Header — secondary action (Safari / Settings-style, not a filled CTA) */
+        .bh-btn-reload {
+          @apply
+            [font-family:inherit] text-[0.8125rem] font-medium leading-[1.25]
+            inline-flex items-center justify-center rounded-full
+            px-[0.95rem] py-[0.38rem] gap-[0.4rem] tracking-[-0.015em]
+            text-bh-ink border border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload
+            backdrop-blur-[14px] backdrop-saturate-[160%]
+            [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease]
+            [&:hover:not(:disabled)]:text-bh-ink-hover
+            [&:hover:not(:disabled)]:border-bh-border-strong
+            [&:hover:not(:disabled)]:bg-bh-fill-white-7
+            focus-visible:outline focus-visible:outline-2
+            focus-visible:outline-bh-blue focus-visible:outline-offset-[3px]
+            disabled:cursor-not-allowed disabled:opacity-40
+            aria-busy:cursor-wait aria-busy:opacity-[0.55]
+            motion-reduce:transition-none;
+        }
+
+        .bh-btn-reload__icon {
+          @apply shrink-0 opacity-[0.88];
+        }
+
+        .bh-card {
+          @apply
+            py-[0.85rem] px-[1.05rem]
+            border border-bh-border rounded-[1rem]
+            bg-bh-surface-elevated backdrop-blur-[16px] backdrop-saturate-[160%]
+            shadow-bh-card
+            [transition:border-color_0.2s_ease,box-shadow_0.2s_ease]
+            hover:border-bh-border-strong
+            hover:shadow-bh-card-hover
+            motion-reduce:transition-none;
+        }
+
+        /* Metric cards — SF Pro + SF Mono hierarchy (Health / Wallet-style) */
+        .bh-val {
+          @apply text-[1.05rem] font-semibold leading-[1.3] tracking-[-0.028em] break-words tabular-nums;
+
+          & + .bh-metric-meta {
+            @apply mt-[0.38rem];
+          }
+        }
+
+        .bh-metric-meta {
+          @apply text-[0.72rem] font-normal leading-[1.42] mt-[0.24rem] tracking-[-0.014em] text-bh-label;
+
+          & + & {
+            @apply mt-[0.22rem];
+          }
+        }
+
+        .bh-metric-meta--mono {
+          @apply font-mono tracking-[-0.02em] tabular-nums;
+        }
+
+        .bh-metric-meta--fine {
+          @apply text-[0.6875rem] leading-[1.45] opacity-90;
+        }
+
+        .bh-metric-fig {
+          @apply font-mono tracking-[-0.02em] text-bh-ink-strong tabular-nums;
+        }
+
+        .bh-metric-iqr {
+          @apply flex flex-col mt-[0.28rem] gap-[0.42rem];
+        }
+
+        .bh-metric-row {
+          @apply text-[0.72rem] leading-[1.35] flex items-baseline justify-between tracking-[-0.012em] gap-3;
+        }
+
+        .bh-metric-row__name {
+          @apply min-w-0 text-bh-label;
+        }
+
+        .bh-metric-row__fig {
+          @apply font-mono shrink-0 tracking-[-0.02em] text-bh-ink-mid tabular-nums;
+        }
+
+        .bh-lbl {
+          @apply text-[0.625rem] font-semibold mb-[0.4rem] tracking-[0.09em] uppercase text-bh-label;
+        }
+
+        .bh-chip {
+          @apply text-[0.7rem] font-medium inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem];
+        }
+
+        .bh-chip-warn {
+          @apply text-bh-warn-fg border border-bh-warn-border bg-bh-warn-bg;
+        }
+
+        .bh-chip-ok {
+          @apply text-bh-ok-fg border border-bh-ok-border bg-bh-ok-bg;
+        }
+
+        .bh-table-wrap {
+          @apply overflow-x-auto border border-bh-border rounded-[0.75rem] bg-bh-scrim-table;
+        }
+
+        .bh-table {
+          @apply text-[0.8rem] w-full border-collapse;
+
+          th,
+          td {
+            @apply px-[0.65rem] py-[0.45rem] text-left border-b border-b-bh-table-line;
+          }
+
+          th {
+            @apply text-[0.7rem] font-semibold whitespace-nowrap tracking-[0.05em] uppercase text-bh-label;
+          }
+
+          thead th {
+            @apply z-[3] bg-bh-table-head;
+          }
+
+          tbody tr {
+            @apply hover:bg-bh-table-hover;
+          }
+        }
+
+        .bh-table-zebra tbody tr {
+          @apply even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover;
+        }
+
+        .bh-num {
+          @apply text-right tabular-nums;
+        }
+
+        .bh-table th.bh-sticky-1,
+        .bh-table td.bh-sticky-1 {
+          @apply sticky z-[2] left-0 min-w-[7.5rem] max-w-[14rem] bg-bh-table-sticky shadow-[1px_0_0_var(--color-bh-border-strong)];
+        }
+
+        .bh-table th.bh-sticky-2,
+        .bh-table td.bh-sticky-2 {
+          @apply sticky z-[2] left-[7.5rem] min-w-[5rem] bg-bh-table-sticky shadow-[1px_0_0_var(--color-bh-border-strong)];
+        }
+
+        .bh-metrics-grid {
+          @apply grid gap-3 grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))];
+        }
+
+        /* Per-card accent: JS sets --color-bh-metric-accent; ratio cards use .bh-metric-accent-ratio */
+        .bh-metric-accent-ratio {
+          --color-bh-metric-accent: var(--color-bh-ratio-accent);
+        }
+
+        .bh-tint-lbl,
+        .bh-tint-val {
+          @apply text-bh-metric-accent;
+        }
+
+        .bh-muted {
+          @apply text-bh-label;
+        }
+
+        .bh-body-muted {
+          @apply text-bh-body-muted;
+        }
+
+        .bh-lib-version-row {
+          @apply leading-[1.45] mt-[2px];
+        }
+
+        .bh-lib-version-key {
+          @apply text-bh-lib-key;
+        }
+
+        .bh-gc-tag {
+          @apply text-amber-400;
+        }
+
+        .bh-chart-toolbar {
+          @apply
+            inline-flex overflow-hidden flex-wrap
+            border border-bh-border rounded-[0.75rem] bg-bh-surface-toolbar backdrop-blur-[12px] backdrop-saturate-[150%]
+            shadow-bh-toolbar;
+
+          /* Same outer height as Tailwind h-10 selects in Chart data (2.5rem incl. border, border-box) */
+          &.bh-chart-toolbar--match-field {
+            @apply items-stretch h-10 box-border;
+
+            .bh-seg-btn {
+              @apply inline-flex items-center self-stretch justify-center box-border min-h-0 px-[0.625rem];
+            }
+          }
+        }
+
+        .bh-seg-btn {
+          @apply
+            text-[0.8125rem] font-medium leading-5
+            m-0 px-3 py-[0.35rem]
+            text-bh-seg-ink
+            border-0 border-r border-r-bh-border rounded-none
+            bg-bh-surface-seg
+            last:border-r-0
+            hover:bg-bh-surface-seg-hover
+            focus:z-[1] focus:outline-none
+            focus-visible:z-[1] focus-visible:shadow-[inset_0_0_0_2px_var(--color-bh-blue)]
+            disabled:cursor-not-allowed disabled:opacity-40
+            disabled:hover:bg-bh-table-seg-disabled;
+        }
+
+        #loading-overlay {
+          @apply fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-[16px] bg-bh-overlay;
+
+          &.hidden {
+            @apply hidden;
+          }
+        }
+
         .bh-loading-spinner {
-          animation: none;
-          border-top-color: var(--bh-blue);
+          @apply animate-spin motion-reduce:animate-none motion-reduce:border-t-bh-blue;
         }
-      }
-      #chart-empty-state {
-        position: absolute;
-        z-index: 10;
-        display: none;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
-        padding: 1.5rem;
-        text-align: center;
-        border-radius: 1rem;
-        background: rgba(8, 8, 10, 0.88);
-        -webkit-backdrop-filter: blur(12px);
-        backdrop-filter: blur(12px);
-        inset: 0;
-        gap: 1rem;
-      }
-      #chart-empty-state.is-visible {
-        display: flex;
-      }
-      #chart-empty-state p {
-        font-size: 0.875rem;
-        line-height: 1.5;
-        max-width: 24rem;
-        color: rgb(161, 161, 170);
-      }
-      #bh-toast {
-        font-size: 0.8125rem;
-        font-weight: 500;
-        position: fixed;
-        z-index: 200;
-        right: 1rem;
-        bottom: 1rem;
-        max-width: min(20rem, calc(100vw - 2rem));
-        padding: 0.7rem 1.05rem;
-        transition:
-          opacity 0.22s ease,
-          transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
-        transform: translateY(0.5rem) scale(0.98);
-        pointer-events: none;
-        opacity: 0;
-        color: rgb(240, 244, 255);
-        border: 1px solid rgba(10, 132, 255, 0.35);
-        border-radius: 0.875rem;
-        background: rgba(34, 36, 42, 0.88);
-        box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.06) inset,
-          0 16px 48px rgba(0, 0, 0, 0.45);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        backdrop-filter: blur(20px) saturate(180%);
-      }
-      #bh-toast.is-visible {
-        transform: translateY(0) scale(1);
-        pointer-events: auto;
-        opacity: 1;
-      }
-      @media (prefers-reduced-motion: reduce) {
+
+        #chart-empty-state {
+          @apply
+            hidden absolute inset-0 z-[10]
+            flex-col items-center justify-center text-center
+            p-6 gap-4 rounded-[1rem] backdrop-blur-[12px] bg-bh-overlay-soft;
+
+          &.is-visible {
+            @apply flex;
+          }
+
+          p {
+            @apply text-sm leading-[1.5] max-w-[24rem] text-bh-meta;
+          }
+        }
+
         #bh-toast {
-          transition: none;
-        }
-        #bh-toast.is-visible {
-          transform: translateY(0);
+          @apply
+            fixed pointer-events-none z-[200] right-4 bottom-4
+            text-[0.8125rem] font-medium py-[0.7rem] px-[1.05rem]
+            max-w-[min(20rem,calc(100vw_-_2rem))]
+            opacity-0 translate-y-2 scale-[0.98]
+            text-bh-toast-ink
+            border border-bh-blue-ring rounded-[0.875rem]
+            bg-bh-surface-toast
+            shadow-bh-toast
+            backdrop-blur-[20px] backdrop-saturate-[180%]
+            [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)]
+            motion-reduce:transition-none;
+
+          &.is-visible {
+            @apply pointer-events-auto opacity-100 translate-y-0 scale-100;
+          }
         }
       }
     </style>
@@ -517,7 +393,7 @@
     <div aria-live="polite" id="loading-overlay" role="status">
       <div class="text-center">
         <div
-          class="bh-loading-spinner mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-600/80 border-t-[#0a84ff]"
+          class="bh-loading-spinner mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-600/80 border-t-bh-blue"
         ></div>
         <p class="text-sm text-zinc-400">Loading bench data…</p>
       </div>
@@ -634,7 +510,7 @@
             <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Search</span>
             <input
               autocomplete="off"
-              class="bh-focus w-full max-w-xs rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] placeholder:text-zinc-500 focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
+              class="bh-focus w-full max-w-xs rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-bh-field-inset placeholder:text-zinc-500 focus:border-bh-blue focus:ring-2 focus:ring-bh-blue/35 focus:outline-none"
               id="scenario-search"
               placeholder="Filter by scenario, group…"
               type="search"
@@ -644,7 +520,7 @@
             <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Group</span>
             <select
               aria-label="Filter by group"
-              class="bh-focus min-w-[10.5rem] rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
+              class="bh-focus min-w-[10.5rem] rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-bh-field-inset focus:border-bh-blue focus:ring-2 focus:ring-bh-blue/35 focus:outline-none"
               id="group-filter"
             >
               <option value="">All groups</option>
@@ -666,7 +542,7 @@
               <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Scenario</span>
               <select
                 aria-label="Benchmark scenario"
-                class="bh-focus box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
+                class="bh-focus box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-bh-field-inset focus:border-bh-blue focus:ring-2 focus:ring-bh-blue/35 focus:outline-none"
                 id="scenario-select"
               ></select>
             </label>
@@ -699,7 +575,7 @@
             <span class="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Environment</span>
             <select
               aria-label="Filter runs by CPU and Node"
-              class="bh-focus box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] focus:border-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/35 focus:outline-none"
+              class="bh-focus box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-bh-field-inset focus:border-bh-blue focus:ring-2 focus:ring-bh-blue/35 focus:outline-none"
               id="env-filter"
             >
               <option value="">All runs</option>
@@ -715,7 +591,7 @@
           >
             <input
               checked
-              class="size-4 rounded border-white/20 bg-black/30 text-[#0a84ff] accent-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/50"
+              class="size-4 rounded border-white/20 bg-black/30 text-bh-blue accent-bh-blue focus:ring-2 focus:ring-bh-blue/50"
               id="show-bands"
               type="checkbox"
             />
@@ -725,7 +601,7 @@
             class="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100"
           >
             <input
-              class="size-4 rounded border-white/20 bg-black/30 text-[#0a84ff] accent-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/50"
+              class="size-4 rounded border-white/20 bg-black/30 text-bh-blue accent-bh-blue focus:ring-2 focus:ring-bh-blue/50"
               id="log-scale"
               type="checkbox"
             />
@@ -735,14 +611,14 @@
             class="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100"
           >
             <input
-              class="size-4 rounded border-white/20 bg-black/30 text-[#0a84ff] accent-[#0a84ff] focus:ring-2 focus:ring-[#0a84ff]/50"
+              class="size-4 rounded border-white/20 bg-black/30 text-bh-blue accent-bh-blue focus:ring-2 focus:ring-bh-blue/50"
               id="show-ratio"
               type="checkbox"
             />
             <span id="ratio-label">Ratio</span>
           </label>
           <button
-            class="ml-auto shrink-0 rounded-xl bg-[#0a84ff] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-[#409cff] hover:shadow-blue-500/28 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0f]"
+            class="ml-auto shrink-0 rounded-xl bg-bh-blue px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-bh-blue-hover hover:shadow-blue-500/28 focus:outline-none focus-visible:ring-2 focus-visible:ring-bh-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bh-bg-gradient-top"
             id="chart-download-png"
             title="Capture current chart view as PNG"
             type="button"
@@ -798,28 +674,28 @@
           Drag pans on the chart · legend toggles series.
         </p>
         <div
-          class="relative mt-5 h-[min(440px,58vh)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-black/40 shadow-[0_1px_0_rgba(255,255,255,0.05)_inset] ring-1 ring-white/[0.08]"
+          class="relative mt-5 h-[min(440px,58vh)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-black/40 shadow-bh-glass-tight ring-1 ring-white/[0.08]"
           id="chart-host"
         >
           <div aria-live="polite" id="chart-empty-state">
             <p id="chart-empty-message"></p>
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
-                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]"
+                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-bh-blue"
                 id="empty-btn-clear-env"
                 type="button"
               >
                 Show all environments
               </button>
               <button
-                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]"
+                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-bh-blue"
                 id="empty-btn-clear-search"
                 type="button"
               >
                 Clear search
               </button>
               <button
-                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]"
+                class="hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-bh-blue"
                 id="empty-btn-all-groups"
                 type="button"
               >
@@ -835,7 +711,7 @@
         </div>
 
         <details
-          class="bh-glass bh-glass-tight mt-6 px-4 py-3 open:bg-[rgba(28,28,32,0.65)] sm:px-5"
+          class="bh-glass bh-glass-tight mt-6 px-4 py-3 open:bg-bh-surface-open sm:px-5"
           id="chart-data-details"
         >
           <summary
@@ -861,7 +737,7 @@
       </section>
 
       <details
-        class="bh-glass mt-10 px-5 py-4 open:bg-[rgba(28,28,32,0.58)] sm:px-6"
+        class="bh-glass mt-10 px-5 py-4 open:bg-bh-surface-open-muted sm:px-6"
         id="snapshot-details"
       >
         <summary
