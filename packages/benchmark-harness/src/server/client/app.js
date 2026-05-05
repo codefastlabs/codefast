@@ -190,9 +190,7 @@
     });
     compareLibs.forEach(function (cmp) {
       hr +=
-        "<th scope='col' class='bh-num' style='color:rgb(253,224,169)'>÷ " +
-        esc(cmp.displayName) +
-        "</th>";
+        "<th scope='col' class='bh-num text-bh-ratio-accent'>÷ " + esc(cmp.displayName) + "</th>";
     });
     hr += "</tr>";
     thead.innerHTML = hr;
@@ -526,7 +524,7 @@
     });
     for (var ci = 0; ci < compareLibs.length; ci++) {
       ths +=
-        "<th scope='col' class='bh-num' style='color:rgb(253,224,169)'>÷ " +
+        "<th scope='col' class='bh-num text-bh-ratio-accent'>÷ " +
         esc(compareLibs[ci].displayName) +
         "</th>";
     }
@@ -680,7 +678,7 @@
       html +=
         '<div class="bh-card" role="group" aria-label="' +
         esc(lib.displayName + " median hz/op over filtered runs with data") +
-        '" style="--bh-accent:' +
+        '" style="--color-bh-metric-accent:' +
         esc(color) +
         '">' +
         '<div class="bh-lbl bh-tint-lbl">' +
@@ -754,9 +752,9 @@
           "×</span></div>"
         : "";
       html +=
-        '<div class="bh-card" role="group" aria-label="' +
+        '<div class="bh-card bh-metric-accent-ratio" role="group" aria-label="' +
         esc(ratioAria) +
-        '" style="--bh-accent:rgb(253,224,169)">' +
+        '">' +
         '<div class="bh-lbl bh-tint-lbl">Ratio · ' +
         esc(primaryName) +
         " ÷ " +
