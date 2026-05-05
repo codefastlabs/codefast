@@ -329,20 +329,29 @@
   // ---------------------------------------------------------------------------
   // Chart resize helper
   // ---------------------------------------------------------------------------
-  function scheduleChartResize() {
+  /**
+   * @param {{ layoutOnly?: boolean }} [opts] If layoutOnly, redraw without animation (resize/zoom).
+   *   Omit after a fresh chart so the initial draw can animate.
+   */
+  function scheduleChartResize(opts) {
     if (!chart || resizeScheduled) {
       return;
     }
+    var layoutOnly = !!(opts && opts.layoutOnly);
     resizeScheduled = true;
     requestAnimationFrame(function () {
       resizeScheduled = false;
       if (chart) {
         chart.resize();
-        chart.update("none");
+        if (layoutOnly) {
+          chart.update("none");
+        }
       }
     });
   }
-  window.addEventListener("resize", scheduleChartResize);
+  window.addEventListener("resize", function () {
+    scheduleChartResize({ layoutOnly: true });
+  });
 
   /**
    * Initial visible index range on the category (time) axis — same math as the old zoomScale call,
@@ -1100,7 +1109,10 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        animation: false,
+        animation: {
+          duration: 380,
+          easing: "easeOutCubic",
+        },
         interaction: { mode: "index", intersect: false },
         scales: scales,
         plugins: plugins,
@@ -1183,7 +1195,7 @@
       btnZoomIn.addEventListener("click", function () {
         if (chart && chart.zoom) {
           chart.zoom({ x: ZOOM_STEP_X }, "none");
-          scheduleChartResize();
+          scheduleChartResize({ layoutOnly: true });
         }
       });
     }
@@ -1191,7 +1203,7 @@
       btnZoomOut.addEventListener("click", function () {
         if (chart && chart.zoom) {
           chart.zoom({ x: 1 / ZOOM_STEP_X }, "none");
-          scheduleChartResize();
+          scheduleChartResize({ layoutOnly: true });
         }
       });
     }
@@ -1199,7 +1211,7 @@
       btnPanEarlier.addEventListener("click", function () {
         if (chart && chart.pan) {
           chart.pan({ x: PAN_PIXELS_X }, undefined, "none");
-          scheduleChartResize();
+          scheduleChartResize({ layoutOnly: true });
         }
       });
     }
@@ -1207,7 +1219,7 @@
       btnPanLater.addEventListener("click", function () {
         if (chart && chart.pan) {
           chart.pan({ x: -PAN_PIXELS_X }, undefined, "none");
-          scheduleChartResize();
+          scheduleChartResize({ layoutOnly: true });
         }
       });
     }
@@ -1215,7 +1227,7 @@
       btnResetZoom.addEventListener("click", function () {
         if (chart && chart.resetZoom) {
           chart.resetZoom();
-          scheduleChartResize();
+          scheduleChartResize({ layoutOnly: true });
         }
       });
     }
