@@ -338,10 +338,27 @@
       resizeScheduled = false;
       if (chart) {
         chart.resize();
+        chart.update("none");
       }
     });
   }
   window.addEventListener("resize", scheduleChartResize);
+
+  /**
+   * Initial visible index range on the category (time) axis — same math as the old zoomScale call,
+   * but applied via scale options so Chart.js measures Y/X together on first layout (avoids axis
+   * ticks drifting after scenario changes when zoom was applied post-construct).
+   * @returns {{ min?: number, max?: number }}
+   */
+  function initialCategoryAxisWindow(labelCount) {
+    var L = labelCount;
+    if (L < 6) {
+      return {};
+    }
+    var lastIx = L - 1;
+    var span = Math.min(Math.max(Math.floor(L * 0.5), 18), Math.min(56, lastIx + 1));
+    return { min: Math.max(0, lastIx - span + 1), max: lastIx };
+  }
 
   // ---------------------------------------------------------------------------
   // Filter helpers
@@ -936,19 +953,23 @@
     }
 
     var yType = logScale.checked ? "logarithmic" : "linear";
+    var xAxisWindow = initialCategoryAxisWindow(labels.length);
     var scales = {
-      x: {
-        type: "category",
-        offset: true,
-        ticks: {
-          autoSkip: true,
-          maxTicksLimit: Math.min(22, Math.max(labels.length || 2, 2)),
-          maxRotation: 52,
-          minRotation: 0,
-          color: "rgba(235, 235, 245, 0.42)",
+      x: Object.assign(
+        {
+          type: "category",
+          offset: true,
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: Math.min(22, Math.max(labels.length || 2, 2)),
+            maxRotation: 52,
+            minRotation: 0,
+            color: "rgba(235, 235, 245, 0.42)",
+          },
+          grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
         },
-        grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
-      },
+        xAxisWindow.min !== undefined ? { min: xAxisWindow.min, max: xAxisWindow.max } : {},
+      ),
       y: {
         type: yType,
         position: "left",
@@ -1064,34 +1085,28 @@
       };
     }
 
-    if (chart) {
+    var canvasEl = document.getElementById("bench-chart");
+    if (canvasEl && typeof Chart.getChart === "function") {
+      var staleChart = Chart.getChart(canvasEl);
+      if (staleChart) {
+        staleChart.destroy();
+      }
+    } else if (chart) {
       chart.destroy();
     }
-    chart = new Chart(document.getElementById("bench-chart"), {
+    chart = new Chart(canvasEl, {
       type: "line",
       data: { labels: labels, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: false,
         interaction: { mode: "index", intersect: false },
         scales: scales,
         plugins: plugins,
         layout: { padding: { top: 4, right: 12 + (ratioOn ? 20 : 0), bottom: 2, left: 12 } },
       },
     });
-
-    (function applyInitialFocus() {
-      if (!chart || typeof chart.zoomScale !== "function") {
-        return;
-      }
-      var L = chart.data.labels ? chart.data.labels.length : 0;
-      if (L < 6) {
-        return;
-      }
-      var lastIx = L - 1;
-      var span = Math.min(Math.max(Math.floor(L * 0.5), 18), Math.min(56, lastIx + 1));
-      chart.zoomScale("x", { min: Math.max(0, lastIx - span + 1), max: lastIx }, "none");
-    })();
     scheduleChartResize();
     refreshScenarioNavButtons();
   }
