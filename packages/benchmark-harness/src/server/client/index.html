@@ -89,6 +89,57 @@
         outline-offset: 2px;
       }
 
+      /** Header — secondary action (Safari / Settings–style, not a big filled CTA). */
+      .bh-btn-reload {
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.38rem 0.95rem;
+        border-radius: 9999px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+        color: rgba(244, 244, 248, 0.92);
+        border: 1px solid var(--bh-border);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
+        backdrop-filter: blur(14px) saturate(160%);
+        transition:
+          background 0.18s ease,
+          border-color 0.18s ease,
+          color 0.18s ease;
+      }
+      .bh-btn-reload:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: var(--bh-border-strong);
+        color: rgb(250, 250, 252);
+      }
+      .bh-btn-reload:focus-visible {
+        outline: 2px solid var(--bh-blue);
+        outline-offset: 3px;
+      }
+      .bh-btn-reload:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .bh-btn-reload[aria-busy="true"] {
+        cursor: wait;
+        opacity: 0.55;
+      }
+      .bh-btn-reload__icon {
+        flex-shrink: 0;
+        opacity: 0.88;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bh-btn-reload {
+          transition: none;
+        }
+      }
+
       .bh-card {
         padding: 0.85rem 1.05rem;
         border: 1px solid var(--bh-border);
@@ -486,7 +537,7 @@
           id="page-title"
         ></h1>
         <div
-          class="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between"
+          class="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
           <p class="max-w-prose text-[0.9375rem] leading-relaxed text-zinc-400/95">
             Compare saved benchmark runs: median hz/op per run, optional uncertainty bands, and
@@ -495,10 +546,27 @@
           <button
             type="button"
             id="reload-data-btn"
+            class="bh-btn-reload shrink-0"
             aria-label="Reload benchmark data from server"
             title="Fetch the latest runs from the server without refreshing the page"
-            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[0.08] px-4 py-2.5 text-sm font-semibold text-zinc-100 shadow-sm shadow-black/20 hover:bg-white/[0.13] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090b] disabled:cursor-not-allowed disabled:opacity-45 aria-busy:cursor-wait aria-busy:opacity-60"
           >
+            <svg
+              class="bh-btn-reload__icon"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
             Reload data
           </button>
         </div>
