@@ -98,4 +98,6 @@ export interface EmbeddedViewerPayload {
   readonly libraries: readonly EmbeddedLibraryMeta[];
   readonly runs: readonly EmbeddedRun[];
   readonly scenarios: readonly EmbeddedScenarioSeries[];
+  /** ISO timestamp when this JSON snapshot was built (server clock). */
+  readonly generatedAtIso: string;
 }

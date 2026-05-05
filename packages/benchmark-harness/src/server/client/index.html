@@ -2,104 +2,277 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Bench history viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style id="bh-ui-styles">
       .bh-card {
-        border-radius: 0.75rem;
-        border: 1px solid rgba(63, 63, 70, 0.85);
-        background: rgba(24, 24, 27, 0.72);
         padding: 0.8rem 1rem;
+        border: 1px solid rgba(63, 63, 70, 0.85);
+        border-radius: 0.75rem;
+        background: rgba(24, 24, 27, 0.72);
         backdrop-filter: blur(6px);
       }
       .bh-lbl {
         font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: rgb(161, 161, 170);
         margin-bottom: 0.35rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgb(161, 161, 170);
       }
       .bh-val {
-        font-variant-numeric: tabular-nums;
         font-size: 1.05rem;
         font-weight: 600;
         line-height: 1.3;
         word-break: break-word;
+        font-variant-numeric: tabular-nums;
       }
       .bh-chip {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 9999px;
-        padding: 0.15rem 0.65rem;
         font-size: 0.7rem;
         font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.65rem;
+        border-radius: 9999px;
       }
       .bh-chip-warn {
-        background: rgba(234, 179, 8, 0.14);
-        border: 1px solid rgba(234, 179, 8, 0.35);
         color: rgb(253, 230, 138);
+        border: 1px solid rgba(234, 179, 8, 0.35);
+        background: rgba(234, 179, 8, 0.14);
       }
       .bh-chip-ok {
-        background: rgba(16, 185, 129, 0.11);
-        border: 1px solid rgba(16, 185, 129, 0.35);
         color: rgb(167, 243, 208);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        background: rgba(16, 185, 129, 0.11);
       }
       .bh-table-wrap {
         overflow-x: auto;
-        border-radius: 0.5rem;
         border: 1px solid rgba(63, 63, 70, 0.6);
+        border-radius: 0.5rem;
       }
       .bh-table {
+        font-size: 0.8rem;
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.8rem;
+      }
+      .bh-table-zebra tbody tr:nth-child(even) {
+        background: rgba(39, 39, 42, 0.35);
       }
       .bh-table th,
       .bh-table td {
-        border-bottom: 1px solid rgb(39, 39, 42);
         padding: 0.45rem 0.65rem;
         text-align: left;
+        border-bottom: 1px solid rgb(39, 39, 42);
       }
       .bh-table th {
-        color: rgb(161, 161, 170);
-        font-weight: 600;
         font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
+        font-weight: 600;
         white-space: nowrap;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgb(161, 161, 170);
+      }
+      .bh-table thead th {
+        z-index: 3;
+        background: rgb(24, 24, 27);
       }
       .bh-table tbody tr:hover {
         background: rgba(63, 63, 70, 0.18);
       }
+      .bh-table-zebra tbody tr:nth-child(even):hover {
+        background: rgba(63, 63, 70, 0.22);
+      }
       .bh-num {
-        font-variant-numeric: tabular-nums;
         text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .bh-table th.bh-sticky-1,
+      .bh-table td.bh-sticky-1 {
+        position: sticky;
+        z-index: 2;
+        left: 0;
+        min-width: 7.5rem;
+        max-width: 14rem;
+        background: rgb(24, 24, 27);
+        box-shadow: 1px 0 0 rgba(63, 63, 70, 0.55);
+      }
+      .bh-table th.bh-sticky-2,
+      .bh-table td.bh-sticky-2 {
+        position: sticky;
+        z-index: 2;
+        left: 7.5rem;
+        min-width: 5rem;
+        background: rgb(24, 24, 27);
+        box-shadow: 1px 0 0 rgba(63, 63, 70, 0.55);
+      }
+      .bh-metrics-grid {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+      }
+      .bh-tint-lbl,
+      .bh-tint-val {
+        color: var(--bh-accent, rgb(161, 161, 170));
+      }
+      .bh-muted {
+        color: rgb(161, 161, 170);
+      }
+      .bh-body-muted {
+        color: rgb(212, 212, 216);
+      }
+      .bh-lib-version-row {
+        line-height: 1.45;
+        margin-top: 2px;
+      }
+      .bh-lib-version-key {
+        color: #a3a3a8;
+      }
+      .bh-gc-tag {
+        color: #fbbf24;
+      }
+      .bh-chart-toolbar {
+        display: inline-flex;
+        overflow: hidden;
+        flex-wrap: wrap;
+        border: 1px solid rgba(63, 63, 70, 0.85);
+        border-radius: 0.5rem;
+        background: rgba(24, 24, 27, 0.5);
+      }
+      /** Same outer height as Tailwind `h-10` selects in Chart data (2.5rem incl. border, border-box). */
+      .bh-chart-toolbar.bh-chart-toolbar--match-field {
+        align-items: stretch;
+        box-sizing: border-box;
+        height: 2.5rem;
+      }
+      .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
+        display: inline-flex;
+        align-items: center;
+        align-self: stretch;
+        justify-content: center;
+        box-sizing: border-box;
+        min-height: 0;
+        padding: 0 0.625rem;
+      }
+      .bh-seg-btn {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        margin: 0;
+        padding: 0.35rem 0.75rem;
+        color: rgb(228, 228, 231);
+        border: none;
+        border-right: 1px solid rgba(63, 63, 70, 0.85);
+        border-radius: 0;
+        background: rgb(39, 39, 42);
+      }
+      .bh-seg-btn:last-child {
+        border-right: none;
+      }
+      .bh-seg-btn:hover {
+        background: rgb(63, 63, 70);
+      }
+      .bh-seg-btn:focus {
+        z-index: 1;
+        outline: none;
+        box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.55);
+      }
+      .bh-seg-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.4;
+      }
+      .bh-seg-btn:disabled:hover {
+        background: rgb(39, 39, 42);
       }
       #loading-overlay {
         position: fixed;
-        inset: 0;
+        z-index: 100;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgb(9, 9, 11);
-        z-index: 100;
+        inset: 0;
       }
       #loading-overlay.hidden {
         display: none;
       }
+      .bh-loading-spinner {
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bh-loading-spinner {
+          animation: none;
+          border-top-color: rgb(16, 185, 129);
+        }
+      }
+      #chart-empty-state {
+        position: absolute;
+        z-index: 10;
+        display: none;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+        border-radius: 0.5rem;
+        background: rgba(9, 9, 11, 0.92);
+        inset: 0;
+        gap: 1rem;
+      }
+      #chart-empty-state.is-visible {
+        display: flex;
+      }
+      #chart-empty-state p {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        max-width: 24rem;
+        color: rgb(161, 161, 170);
+      }
+      #bh-toast {
+        font-size: 0.8125rem;
+        position: fixed;
+        z-index: 200;
+        right: 1rem;
+        bottom: 1rem;
+        max-width: min(20rem, calc(100vw - 2rem));
+        padding: 0.65rem 1rem;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        transform: translateY(0.35rem);
+        pointer-events: none;
+        opacity: 0;
+        color: rgb(224, 231, 255);
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        border-radius: 0.5rem;
+        background: rgba(24, 24, 27, 0.95);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      }
+      #bh-toast.is-visible {
+        transform: translateY(0);
+        pointer-events: auto;
+        opacity: 1;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #bh-toast {
+          transition: none;
+        }
+      }
     </style>
     <script
-      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"
       crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/chart.umd.min.js"
     ></script>
     <script
-      src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"
       crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/hammerjs@latest/hammer.min.js"
     ></script>
     <script
-      src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"
       crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@latest/dist/chartjs-plugin-zoom.min.js"
     ></script>
   </head>
   <body
@@ -108,174 +281,235 @@
     <div id="loading-overlay">
       <div class="text-center">
         <div
-          class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-emerald-500"
+          class="bh-loading-spinner mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-700 border-t-emerald-500"
         ></div>
         <p class="text-sm text-zinc-400">Loading bench data…</p>
       </div>
     </div>
 
-    <div id="app" class="mx-auto max-w-7xl px-4 pt-6 pb-14 sm:pt-8" style="display: none">
-      <header class="mb-8 max-w-3xl border-b border-zinc-800/80 pb-6">
+    <div class="mx-auto max-w-7xl px-4 pt-6 pb-14 sm:pt-8" id="app" style="display: none">
+      <header class="mb-8 max-w-4xl border-b border-zinc-800/80 pb-6">
         <p class="text-[0.7rem] font-semibold tracking-[0.2em] text-emerald-500/95 uppercase">
           Bench history viewer
         </p>
         <h1
-          id="page-title"
           class="mt-2 text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl"
+          id="page-title"
         ></h1>
-        <p class="mt-3 max-w-prose text-sm leading-relaxed text-zinc-400">
-          Quantiles mirror
-          <code class="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[0.88em] text-indigo-200"
-            >report.ts</code
+        <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <p class="max-w-prose text-sm leading-relaxed text-zinc-400">
+            Compare saved benchmark runs: median hz/op per run, optional uncertainty bands, and
+            primary-vs-compare ratios. Timestamps use your device clock.
+          </p>
+          <button
+            type="button"
+            id="reload-data-btn"
+            aria-label="Reload benchmark data from server"
+            title="Fetch the latest runs from the server without refreshing the page"
+            class="inline-flex shrink-0 items-center justify-center rounded-lg border border-zinc-600 bg-zinc-800 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none disabled:cursor-not-allowed disabled:opacity-45 aria-busy:cursor-wait aria-busy:opacity-60"
           >
-          across trials. Bands are per‑trial hz/op spread; tooltip IQR% surfaces noisy runs. Axis
-          labels show each point in your
-          <strong class="font-medium text-zinc-300">local time</strong>.
-        </p>
+            Reload data
+          </button>
+        </div>
+        <details
+          class="mt-4 rounded-lg border border-zinc-800/80 bg-zinc-900/30 px-3 py-2 sm:px-4"
+          id="intro-howto-details"
+        >
+          <summary
+            class="cursor-pointer text-sm font-medium text-zinc-200 select-none hover:text-zinc-50"
+          >
+            How to read this viewer
+          </summary>
+          <div class="mt-3 border-t border-zinc-800/70 pt-3 text-sm leading-relaxed text-zinc-400">
+            <p>
+              Quantiles mirror
+              <code
+                class="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[0.88em] text-indigo-200"
+                >report.ts</code
+              >
+              across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% highlights
+              noisy runs. Axis labels show each point in your
+              <strong class="font-medium text-zinc-300">local time</strong>. Toggle
+              <strong class="font-medium text-zinc-300">Ratio</strong> to overlay primary ÷ compare
+              on the right axis.
+            </p>
+          </div>
+        </details>
       </header>
 
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="History overview">
+      <div aria-label="History overview" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div class="bh-card hover:border-emerald-500/20">
           <div class="bh-lbl">Saved runs</div>
-          <div id="kpi-run-count" class="bh-val text-zinc-100">—</div>
+          <div class="bh-val text-zinc-100" id="kpi-run-count">—</div>
         </div>
         <div class="bh-card hover:border-sky-500/15">
           <div class="bh-lbl">Scenarios tracked</div>
-          <div id="kpi-scenario-count" class="bh-val text-zinc-100">—</div>
+          <div class="bh-val text-zinc-100" id="kpi-scenario-count">—</div>
         </div>
         <div class="bh-card sm:col-span-2 xl:col-span-1">
           <div class="bh-lbl">Newest saved run · local clock</div>
-          <div id="kpi-latest-clock" class="bh-val text-sm text-zinc-200">—</div>
+          <div class="bh-val text-sm text-zinc-200" id="kpi-latest-clock">—</div>
         </div>
         <div class="bh-card xl:col-span-1">
           <div class="bh-lbl">Library builds (latest run)</div>
-          <div id="kpi-lib-versions" class="bh-val text-xs leading-snug font-normal text-zinc-400">
+          <div class="bh-val text-xs leading-snug font-normal text-zinc-400" id="kpi-lib-versions">
             —
           </div>
         </div>
       </div>
 
       <div
+        class="mt-4 hidden rounded-lg border border-amber-500/25 bg-amber-950/35 px-3 py-2.5 text-sm text-amber-100/95"
         id="multi-env-banner"
         role="status"
-        class="mt-4 hidden rounded-lg border border-amber-500/25 bg-amber-950/35 px-3 py-2.5 text-sm text-amber-100/95"
       >
         <strong class="font-semibold text-amber-200">Multiple environments in history.</strong>
         Prefer an Environment filter before comparing regimes (CPU × Node fingerprints differ across
         machines).
       </div>
 
-      <div
-        class="sticky top-0 z-40 mt-8 mb-7 flex flex-wrap items-center gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/90 px-3 py-2.5 shadow-lg shadow-black/35 backdrop-blur-md sm:-mx-2 sm:px-4"
-      >
-        <span
-          class="hidden text-[0.65rem] font-semibold tracking-wider text-zinc-500 uppercase sm:inline"
-          >Focus</span
-        >
-        <label class="min-w-[min(100%,220px)] flex-1 sm:max-w-md sm:min-w-[14rem]">
-          <span class="mb-1 block text-[0.75rem] text-zinc-500">Scenario</span>
-          <select
-            id="scenario-select"
-            aria-label="Benchmark scenario"
-            class="w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 py-2 text-sm text-zinc-100 shadow-inner focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
-          ></select>
-        </label>
-        <label class="min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem]">
-          <span class="mb-1 block text-[0.75rem] text-zinc-500">Environment</span>
-          <select
-            id="env-filter"
-            aria-label="Filter runs by CPU and Node"
-            class="w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 py-2 text-sm text-zinc-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
-          >
-            <option value="">All runs</option>
-          </select>
-        </label>
-        <button
-          type="button"
-          id="chart-download-png"
-          title="Capture current chart view as PNG"
-          class="ml-auto shrink-0 rounded-lg border border-indigo-500/40 bg-indigo-950/50 px-3.5 py-2 text-sm font-medium text-indigo-200 hover:bg-indigo-900/50 focus:ring-2 focus:ring-indigo-400/70 focus:outline-none"
-        >
-          Download PNG
-        </button>
-      </div>
-
       <section
-        class="mb-8 rounded-xl border border-zinc-800/75 bg-zinc-900/25 px-4 py-4 shadow-sm shadow-black/20 sm:px-5"
+        aria-label="Find scenarios"
+        class="mt-8 rounded-xl border border-zinc-800/75 bg-zinc-900/25 px-4 py-4 shadow-sm shadow-black/20 sm:px-5"
       >
         <h2 class="text-[0.7rem] font-semibold tracking-[0.16em] text-zinc-500 uppercase">
-          Discovery
+          Find scenarios
         </h2>
         <div class="mt-4 flex flex-wrap items-end gap-x-6 gap-y-4">
-          <label class="block shrink-0">
+          <label class="block min-w-[min(100%,16rem)] shrink-0">
             <span class="mb-1 block text-[0.82rem] text-zinc-500">Search</span>
             <input
-              type="search"
+              autocomplete="off"
+              class="w-full max-w-xs rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
               id="scenario-search"
               placeholder="Filter by scenario, group…"
-              autocomplete="off"
-              class="max-w-xs min-w-48 rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+              type="search"
             />
           </label>
           <label class="block shrink-0">
             <span class="mb-1 block text-[0.82rem] text-zinc-500">Group</span>
             <select
-              id="group-filter"
               aria-label="Filter by group"
               class="min-w-[10.5rem] rounded-lg border border-zinc-700 bg-zinc-900/80 px-2.5 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+              id="group-filter"
             >
               <option value="">All groups</option>
             </select>
           </label>
         </div>
+      </section>
+
+      <div
+        aria-label="Chart data selection"
+        class="sticky top-0 z-40 mt-6 flex flex-col gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/90 px-3 py-3 shadow-lg shadow-black/35 backdrop-blur-md sm:-mx-2 sm:px-4"
+      >
+        <p class="text-[0.65rem] font-semibold tracking-wider text-zinc-500 uppercase">
+          Chart data
+        </p>
+        <div class="flex flex-wrap items-end gap-3">
+          <div
+            class="flex min-w-0 flex-1 flex-wrap items-end gap-2 sm:max-w-none sm:flex-[1_1_20rem]"
+          >
+            <label class="min-w-0 flex-1 sm:max-w-md sm:min-w-[14rem]">
+              <span class="mb-1 block text-[0.75rem] text-zinc-500">Scenario</span>
+              <select
+                aria-label="Benchmark scenario"
+                class="box-border h-10 w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 text-sm leading-normal text-zinc-100 shadow-inner focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+                id="scenario-select"
+              ></select>
+            </label>
+            <div
+              aria-label="Previous or next scenario in the filtered list"
+              class="bh-chart-toolbar bh-chart-toolbar--match-field shrink-0"
+              role="group"
+            >
+              <button
+                aria-label="Previous scenario"
+                class="bh-seg-btn"
+                id="scenario-prev"
+                title="Previous scenario in filtered list"
+                type="button"
+              >
+                ← Prev
+              </button>
+              <button
+                aria-label="Next scenario"
+                class="bh-seg-btn"
+                id="scenario-next"
+                title="Next scenario in filtered list"
+                type="button"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+          <label class="min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem]">
+            <span class="mb-1 block text-[0.75rem] text-zinc-500">Environment</span>
+            <select
+              aria-label="Filter runs by CPU and Node"
+              class="box-border h-10 w-full rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 text-sm leading-normal text-zinc-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none"
+              id="env-filter"
+            >
+              <option value="">All runs</option>
+            </select>
+          </label>
+        </div>
         <div
-          class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-zinc-800/80 pt-4 text-[0.9rem] text-zinc-300"
+          class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-zinc-800/60 pt-3 text-[0.9rem] text-zinc-300"
         >
-          <span class="text-[0.7rem] font-semibold tracking-wider text-zinc-600 uppercase"
-            >Chart</span
+          <span class="text-[0.65rem] font-semibold tracking-wider text-zinc-600 uppercase"
+            >Display</span
           >
           <label class="inline-flex cursor-pointer items-center gap-2">
             <input
-              type="checkbox"
-              id="show-bands"
               checked
               class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+              id="show-bands"
+              type="checkbox"
             />
-            P25–P75 band
+            <span title="Per-trial P25–P75 spread around each run median">P25–P75 band</span>
           </label>
           <label class="inline-flex cursor-pointer items-center gap-2">
             <input
-              type="checkbox"
-              id="log-scale"
               class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+              id="log-scale"
+              type="checkbox"
             />
             Log Y axis
           </label>
           <label class="inline-flex cursor-pointer items-center gap-2">
             <input
-              type="checkbox"
-              id="show-ratio"
               class="rounded border-zinc-600 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+              id="show-ratio"
+              type="checkbox"
             />
             <span id="ratio-label">Ratio</span>
           </label>
+          <button
+            class="ml-auto shrink-0 rounded-lg border border-indigo-500/40 bg-indigo-950/50 px-3.5 py-2 text-sm font-medium text-indigo-200 hover:bg-indigo-900/50 focus:ring-2 focus:ring-indigo-400/70 focus:outline-none"
+            id="chart-download-png"
+            title="Capture current chart view as PNG"
+            type="button"
+          >
+            Download PNG
+          </button>
         </div>
-      </section>
+      </div>
 
       <section
-        id="summary"
         aria-live="polite"
-        class="mb-6 rounded-xl border border-zinc-800/80 bg-gradient-to-br from-zinc-900/50 to-zinc-950/50 px-4 py-4 sm:px-5"
+        class="mt-8 mb-6 rounded-xl border border-zinc-800/80 bg-gradient-to-br from-zinc-900/50 to-zinc-950/50 px-4 py-4 sm:px-5"
+        id="summary"
       >
         <div class="flex flex-wrap items-baseline gap-2 gap-y-1">
           <h2 class="text-[0.7rem] font-semibold tracking-[0.16em] text-zinc-500 uppercase">
             Selected scenario metrics
           </h2>
-          <span id="metrics-scenario-chip" class="bh-chip bh-chip-ok"></span>
+          <span class="bh-chip bh-chip-ok" id="metrics-scenario-chip"></span>
         </div>
-        <p id="scenario-what-line" class="mt-2 text-sm leading-relaxed text-zinc-400"></p>
-        <div id="metrics-cards" class="mt-5"></div>
-        <p id="metrics-footnote" class="mt-3 text-xs leading-relaxed text-zinc-500"></p>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400" id="scenario-what-line"></p>
+        <div class="mt-5" id="metrics-cards"></div>
+        <p class="mt-3 text-xs leading-relaxed text-zinc-500" id="metrics-footnote"></p>
       </section>
 
       <section
@@ -286,71 +520,90 @@
           class="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-800/70 pb-3"
         >
           <div>
-            <h2 id="chart-section-title" class="text-sm font-semibold text-zinc-100">
+            <h2 class="text-sm font-semibold text-zinc-100" id="chart-section-title">
               Throughput over filtered runs
             </h2>
-            <p id="chart-subtitle-line" class="mt-1 text-[0.8rem] text-zinc-500">—</p>
+            <p class="mt-1 text-[0.8rem] text-zinc-500" id="chart-subtitle-line">—</p>
           </div>
         </div>
-        <div class="mt-4 mb-2 flex flex-wrap items-center gap-2">
-          <span class="text-[0.7rem] tracking-wide text-zinc-600 uppercase">View</span>
-          <button
-            type="button"
-            id="chart-zoom-in"
-            class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/80 focus:outline-none"
-          >
-            Zoom +
-          </button>
-          <button
-            type="button"
-            id="chart-zoom-out"
-            class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/80 focus:outline-none"
-          >
-            Zoom −
-          </button>
-          <button
-            type="button"
-            id="chart-pan-earlier"
-            class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/80 focus:outline-none"
-          >
-            ← Earlier
-          </button>
-          <button
-            type="button"
-            id="chart-pan-later"
-            class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/80 focus:outline-none"
-          >
-            Later →
-          </button>
-          <button
-            type="button"
-            id="chart-reset-zoom"
-            class="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/80 focus:outline-none"
-          >
-            Reset zoom
-          </button>
+        <div aria-label="Chart pan and zoom" class="bh-chart-toolbar mt-4 mb-2" role="toolbar">
+          <button class="bh-seg-btn" id="chart-zoom-in" type="button">Zoom +</button>
+          <button class="bh-seg-btn" id="chart-zoom-out" type="button">Zoom −</button>
+          <button class="bh-seg-btn" id="chart-pan-earlier" type="button">← Earlier</button>
+          <button class="bh-seg-btn" id="chart-pan-later" type="button">Later →</button>
+          <button class="bh-seg-btn" id="chart-reset-zoom" type="button">Reset zoom</button>
         </div>
         <p class="text-xs leading-relaxed text-zinc-500">
-          Opens on newest portion of history; Reset zoom restores full range.&nbsp;
-          <kbd
-            class="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300"
-            >Ctrl</kbd
-          >+wheel zooms · drag pans · legend hides series.
+          Opens on newest portion of history; Reset zoom restores full range.
+          <span id="chart-wheel-hint"></span>
+          Drag pans on the chart · legend toggles series.
         </p>
         <div
-          id="chart-host"
           class="relative mt-4 h-[min(440px,58vh)] min-h-[280px] w-full rounded-lg bg-zinc-950/40 ring-1 ring-zinc-800/70"
+          id="chart-host"
         >
+          <div aria-live="polite" id="chart-empty-state">
+            <p id="chart-empty-message"></p>
+            <div class="flex flex-wrap items-center justify-center gap-2">
+              <button
+                class="hidden rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none"
+                id="empty-btn-clear-env"
+                type="button"
+              >
+                Show all environments
+              </button>
+              <button
+                class="hidden rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none"
+                id="empty-btn-clear-search"
+                type="button"
+              >
+                Clear search
+              </button>
+              <button
+                class="hidden rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 hover:bg-zinc-700 focus:ring-2 focus:ring-indigo-500/70 focus:outline-none"
+                id="empty-btn-all-groups"
+                type="button"
+              >
+                All groups
+              </button>
+            </div>
+          </div>
           <canvas
-            id="bench-chart"
             aria-label="Throughput over time chart"
             class="block h-full w-full"
+            id="bench-chart"
           ></canvas>
         </div>
+
+        <details
+          class="mt-5 rounded-lg border border-zinc-800/70 bg-zinc-900/25 px-3 py-2 open:bg-zinc-900/40 sm:px-4"
+          id="chart-data-details"
+        >
+          <summary
+            class="cursor-pointer text-sm font-medium text-zinc-200 select-none hover:text-zinc-50"
+          >
+            Tabular data for the current chart (accessibility)
+          </summary>
+          <p class="mt-2 text-xs leading-relaxed text-zinc-500">
+            Same points and libraries as the line chart above; newest run first. Useful for screen
+            readers and copy‑paste.
+          </p>
+          <div class="bh-table-wrap mt-3">
+            <table
+              aria-label="Chart series data"
+              class="bh-table bh-table-zebra"
+              id="chart-data-table"
+            >
+              <thead id="chart-data-thead"></thead>
+              <tbody id="chart-data-tbody"></tbody>
+            </table>
+          </div>
+        </details>
       </section>
 
       <details
         class="mt-8 rounded-xl border border-zinc-800/75 bg-zinc-900/15 px-4 py-3 open:bg-zinc-900/35 sm:px-5"
+        id="snapshot-details"
       >
         <summary
           class="cursor-pointer py-2 text-sm leading-snug font-semibold text-zinc-200 [&::-webkit-details-marker]:text-indigo-400"
@@ -358,23 +611,25 @@
           Snapshot of <span class="text-indigo-200/95">globally newest</span> bench folder —
           throughput by scenario (table)
         </summary>
-        <p id="snapshot-desc" class="mb-3 text-xs leading-relaxed text-zinc-500"></p>
+        <p class="mb-3 text-xs leading-relaxed text-zinc-500" id="snapshot-desc"></p>
         <div class="bh-table-wrap">
-          <table class="bh-table" aria-label="Latest run throughput by scenario">
+          <table aria-label="Latest run throughput by scenario" class="bh-table bh-table-zebra">
             <thead>
               <tr id="snapshot-thead-row"></tr>
             </thead>
             <tbody id="snapshot-latest-tbody"></tbody>
           </table>
         </div>
-        <div id="snapshot-latest-meta" class="mt-2 text-xs text-zinc-600"></div>
+        <div class="mt-2 text-xs text-zinc-600" id="snapshot-latest-meta"></div>
       </details>
 
       <p
-        id="page-footer"
         class="mt-8 border-t border-zinc-800/80 pt-5 text-[0.78rem] text-zinc-500"
+        id="page-footer"
       ></p>
     </div>
+
+    <div aria-atomic="true" aria-live="polite" id="bh-toast" role="status"></div>
 
     <script src="/app.js"></script>
   </body>

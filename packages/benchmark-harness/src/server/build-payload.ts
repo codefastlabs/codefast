@@ -229,5 +229,6 @@ export function buildEmbeddedPayload(
     libraries,
     runs: embeddedRuns,
     scenarios,
+    generatedAtIso: new Date().toISOString(),
   };
 }
