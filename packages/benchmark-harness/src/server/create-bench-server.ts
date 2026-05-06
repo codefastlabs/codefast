@@ -8,8 +8,6 @@ import { listRawRuns } from "#/server/read-runs";
 import type { BenchServerOptions } from "#/server/server-types";
 
 const clientDir = join(dirname(fileURLToPath(import.meta.url)), "client");
-const indexHtml = readFileSync(join(clientDir, "index.html"), "utf8");
-const appJs = readFileSync(join(clientDir, "app.js"), "utf8");
 
 /**
  * @since 0.3.16-canary.0
@@ -19,12 +17,14 @@ export function createBenchServer(options: BenchServerOptions): Server {
     const url = new URL(req.url ?? "/", "http://localhost");
 
     if (url.pathname === "/") {
+      const indexHtml = readFileSync(join(clientDir, "index.html"), "utf8");
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(indexHtml);
       return;
     }
 
     if (url.pathname === "/app.js") {
+      const appJs = readFileSync(join(clientDir, "app.js"), "utf8");
       res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
       res.end(appJs);
       return;

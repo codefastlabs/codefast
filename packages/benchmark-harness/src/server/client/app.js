@@ -17,6 +17,10 @@
   var DISPERSION_IQR_ALERT = 0.25;
 
   var toastHideTimer = null;
+  var hashApplyInProgress = false;
+  var viewHashSyncTimer = null;
+  var commandPaletteWired = false;
+  var chartDisplayDetailsMqlWired = false;
 
   // ---------------------------------------------------------------------------
   // Helpers
@@ -98,6 +102,20 @@
       return "<kbd class='bh-kbd'>⌃ Control</kbd>";
     }
     return "<kbd class='bh-kbd'>Ctrl</kbd>";
+  }
+
+  /** Human-readable spread tier from IQR÷median fraction (0–1). */
+  function spreadTierLabel(f) {
+    if (f == null || !Number.isFinite(f)) {
+      return "";
+    }
+    if (f <= 0.1) {
+      return " · spread: low";
+    }
+    if (f <= DISPERSION_IQR_ALERT) {
+      return " · spread: medium";
+    }
+    return " · spread: high";
   }
 
   function applyChartWheelHint() {
@@ -285,6 +303,7 @@
   var scenarioSearch = document.getElementById("scenario-search");
   var groupFilter = document.getElementById("group-filter");
   var envFilter = document.getElementById("env-filter");
+  var runWindowFilter = document.getElementById("run-window-filter");
   var showBands = document.getElementById("show-bands");
   var logScale = document.getElementById("log-scale");
   var showRatio = document.getElementById("show-ratio");
@@ -321,6 +340,8 @@
   var wireControlsApplied = false;
   var detailsPersistenceApplied = false;
   var chartWheelHintApplied = false;
+  var scrollActionsObserverWired = false;
+  var scrollActionsObserver = null;
 
   // ---------------------------------------------------------------------------
   // Chart resize helper
@@ -382,6 +403,26 @@
       }
     }
     return out;
+  }
+
+  /** After Environment (and full run list), optionally keep only the newest N runs. */
+  function effectiveFilteredRunIndices() {
+    var base = filteredRunIndices();
+    if (!runWindowFilter) {
+      return base;
+    }
+    var w = runWindowFilter.value;
+    if (!w || w === "all" || base.length === 0) {
+      return base;
+    }
+    var n = parseInt(w, 10);
+    if (!Number.isFinite(n) || n < 1) {
+      return base;
+    }
+    if (base.length <= n) {
+      return base;
+    }
+    return base.slice(base.length - n);
   }
 
   function visibleScenarios() {
@@ -810,6 +851,18 @@
         (envFilter.value ? "; environment filter on" : "; all environments") +
         ". Median & range: all filtered runs with hz/op. Δ: % change from first → last run in this view when both have data",
     ];
+    if (runWindowFilter && runWindowFilter.value !== "all") {
+      var baseN = filteredRunIndices().length;
+      if (indices.length < baseN) {
+        footPieces.push(
+          "Runs shown: last " +
+            indices.length +
+            " of " +
+            baseN +
+            " runs matching Environment + search/group filters",
+        );
+      }
+    }
     if (worstIqr > DISPERSION_IQR_ALERT) {
       footPieces.push(
         "elevated per-trial dispersion (IQR above " +
@@ -831,7 +884,8 @@
     var scenarioRow = data.scenarios.find(function (s) {
       return s.id === id;
     });
-    var indices = filteredRunIndices();
+    var baseRunIndices = filteredRunIndices();
+    var indices = effectiveFilteredRunIndices();
 
     updateChartEmptyState(scenarioRow, indices);
 
@@ -852,11 +906,12 @@
         }
       }
       refreshScenarioNavButtons();
+      scheduleViewHashSync();
       return;
     }
 
     if (chartSubtitleLine) {
-      chartSubtitleLine.textContent =
+      var sub =
         "[" +
         scenarioRow.group +
         "] " +
@@ -865,6 +920,14 @@
         indices.length +
         " plotted point(s)" +
         (envFilter.value ? " · environment filter on" : "");
+      if (
+        runWindowFilter &&
+        runWindowFilter.value !== "all" &&
+        baseRunIndices.length > indices.length
+      ) {
+        sub += " · last " + indices.length + " of " + baseRunIndices.length + " matching runs";
+      }
+      chartSubtitleLine.textContent = sub;
     }
 
     var labels = indices.map(function (i) {
@@ -1066,7 +1129,7 @@
                 var globalIx = indices[ctx.dataIndex];
                 var f = globalIx !== undefined ? libData2.iqrFraction[globalIx] : null;
                 if (typeof f === "number" && Number.isFinite(f)) {
-                  extra = " · IQR " + (f * 100).toFixed(1) + "%";
+                  extra = " · IQR " + (f * 100).toFixed(1) + "%" + spreadTierLabel(f);
                 }
               }
             }
@@ -1107,7 +1170,7 @@
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-          duration: 380,
+          duration: 300,
           easing: "easeOutCubic",
         },
         interaction: { mode: "index", intersect: false },
@@ -1118,11 +1181,237 @@
     });
     scheduleChartResize();
     refreshScenarioNavButtons();
+    scheduleViewHashSync();
   }
 
   // ---------------------------------------------------------------------------
   // Wire up controls
   // ---------------------------------------------------------------------------
+  function wireScrollActionsAffordance() {
+    if (scrollActionsObserverWired) {
+      return;
+    }
+    var shell = document.getElementById("bh-scroll-actions");
+    var primaryReload = document.getElementById("reload-data-btn");
+    var scrollReload = document.getElementById("reload-data-btn-scroll");
+    var scrollCopy = document.getElementById("copy-view-link-btn-scroll");
+    if (!shell || !primaryReload || typeof IntersectionObserver === "undefined") {
+      return;
+    }
+    scrollActionsObserverWired = true;
+
+    function setScrollActionsVisible(show) {
+      shell.hidden = !show;
+      shell.setAttribute("aria-hidden", show ? "false" : "true");
+      shell.classList.toggle("bh-scroll-actions--visible", show);
+    }
+
+    scrollActionsObserver = new IntersectionObserver(
+      function (entries) {
+        var e = entries[0];
+        if (!e) {
+          return;
+        }
+        setScrollActionsVisible(!e.isIntersecting);
+      },
+      { root: null, threshold: 0 },
+    );
+    scrollActionsObserver.observe(primaryReload);
+
+    if (scrollReload) {
+      scrollReload.addEventListener("click", function () {
+        void loadBenchData({ isReload: true });
+      });
+    }
+    if (scrollCopy) {
+      scrollCopy.addEventListener("click", function () {
+        var url = location.origin + location.pathname;
+        var h = buildViewStateHash();
+        if (h) {
+          url += "#" + h;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          void navigator.clipboard.writeText(url).then(
+            function () {
+              showToast("Link copied");
+            },
+            function () {
+              showToast("Could not copy");
+            },
+          );
+        } else {
+          showToast("Clipboard unavailable");
+        }
+      });
+    }
+  }
+
+  function wireCommandPalette() {
+    if (commandPaletteWired) {
+      return;
+    }
+    var root = document.getElementById("command-palette");
+    var scrim = document.getElementById("command-palette-scrim");
+    var input = document.getElementById("command-palette-input");
+    var list = document.getElementById("command-palette-list");
+    var hint = document.getElementById("command-palette-hint");
+    if (!root || !input || !list) {
+      return;
+    }
+    commandPaletteWired = true;
+    if (hint) {
+      hint.innerHTML = isMacLikePlatform()
+        ? 'Esc closes · <kbd class="bh-kbd">⌘K</kbd> toggles'
+        : 'Esc closes · <kbd class="bh-kbd">Ctrl+K</kbd> toggles';
+    }
+
+    function openPalette() {
+      root.classList.remove("hidden");
+      root.setAttribute("aria-hidden", "false");
+      input.value = "";
+      renderPaletteList("");
+      input.focus();
+    }
+
+    function closePalette() {
+      root.classList.add("hidden");
+      root.setAttribute("aria-hidden", "true");
+    }
+
+    function renderPaletteList(query) {
+      var q = searchNorm(query).trim();
+      var actions = [
+        { id: "reload-data", label: "Reload bench data from server", keys: "refresh sync fetch" },
+        { id: "focus-search", label: "Focus scenario search", keys: "search find filter" },
+        { id: "scenario-next", label: "Next scenario", keys: "forward" },
+        { id: "scenario-prev", label: "Previous scenario", keys: "back" },
+        { id: "toggle-bands", label: "Toggle P25–P75 band", keys: "uncertainty" },
+        { id: "toggle-log", label: "Toggle log Y axis", keys: "scale" },
+        { id: "toggle-ratio", label: "Toggle primary ratios", keys: "compare" },
+        { id: "reset-zoom", label: "Reset chart zoom", keys: "chart" },
+        { id: "download-png", label: "Download chart as PNG", keys: "export image" },
+        { id: "copy-link", label: "Copy link to this view", keys: "url share" },
+      ];
+      var filtered = actions.filter(function (a) {
+        if (!q) {
+          return true;
+        }
+        var hay = searchNorm(a.label + " " + a.keys);
+        return hay.includes(q);
+      });
+      list.innerHTML = "";
+      filtered.forEach(function (a) {
+        var li = document.createElement("li");
+        li.setAttribute("role", "none");
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "bh-focus bh-command-palette__item";
+        btn.setAttribute("role", "option");
+        btn.textContent = a.label;
+        btn.addEventListener("click", function () {
+          runPaletteCommand(a.id);
+          closePalette();
+        });
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    function runPaletteCommand(id) {
+      switch (id) {
+        case "reload-data":
+          void loadBenchData({ isReload: true });
+          break;
+        case "focus-search":
+          if (scenarioSearch) {
+            scenarioSearch.focus();
+          }
+          break;
+        case "scenario-next":
+          stepScenarioNav(1);
+          break;
+        case "scenario-prev":
+          stepScenarioNav(-1);
+          break;
+        case "toggle-bands":
+          if (showBands) {
+            showBands.checked = !showBands.checked;
+            render();
+          }
+          break;
+        case "toggle-log":
+          if (logScale) {
+            logScale.checked = !logScale.checked;
+            render();
+          }
+          break;
+        case "toggle-ratio":
+          if (showRatio) {
+            showRatio.checked = !showRatio.checked;
+            render();
+          }
+          break;
+        case "reset-zoom":
+          if (chart && chart.resetZoom) {
+            chart.resetZoom();
+            scheduleChartResize({ layoutOnly: true });
+          }
+          break;
+        case "download-png":
+          if (btnDownload) {
+            btnDownload.click();
+          }
+          break;
+        case "copy-link": {
+          var url = location.origin + location.pathname;
+          var h = buildViewStateHash();
+          if (h) {
+            url += "#" + h;
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            void navigator.clipboard.writeText(url).then(
+              function () {
+                showToast("Link copied");
+              },
+              function () {
+                showToast("Could not copy");
+              },
+            );
+          } else {
+            showToast("Clipboard unavailable");
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    input.addEventListener("input", function () {
+      renderPaletteList(input.value);
+    });
+
+    if (scrim) {
+      scrim.addEventListener("click", closePalette);
+    }
+
+    document.addEventListener("keydown", function (e) {
+      var metaK = (e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === "k";
+      if (metaK) {
+        e.preventDefault();
+        if (root.classList.contains("hidden")) {
+          openPalette();
+        } else {
+          closePalette();
+        }
+        return;
+      }
+      if (e.key === "Escape" && !root.classList.contains("hidden")) {
+        closePalette();
+      }
+    });
+  }
+
   function wireEmptyStateButtons() {
     var btnEnv = document.getElementById("empty-btn-clear-env");
     var btnSearch = document.getElementById("empty-btn-clear-search");
@@ -1152,6 +1441,28 @@
 
   function wireControls() {
     var btnReloadData = document.getElementById("reload-data-btn");
+    var btnCopyLink = document.getElementById("copy-view-link-btn");
+    if (btnCopyLink) {
+      btnCopyLink.addEventListener("click", function () {
+        var url = location.origin + location.pathname;
+        var h = buildViewStateHash();
+        if (h) {
+          url += "#" + h;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          void navigator.clipboard.writeText(url).then(
+            function () {
+              showToast("Link copied");
+            },
+            function () {
+              showToast("Could not copy");
+            },
+          );
+        } else {
+          showToast("Clipboard unavailable");
+        }
+      });
+    }
     if (btnReloadData) {
       btnReloadData.addEventListener("click", function () {
         void loadBenchData({ isReload: true });
@@ -1182,6 +1493,9 @@
       refreshEnvBanner();
       render();
     });
+    if (runWindowFilter) {
+      runWindowFilter.addEventListener("change", render);
+    }
     showBands.addEventListener("change", render);
     logScale.addEventListener("change", render);
     showRatio.addEventListener("change", render);
@@ -1243,6 +1557,8 @@
         showToast("Saved " + filename);
       });
     }
+
+    wireCommandPalette();
   }
 
   // ---------------------------------------------------------------------------
@@ -1255,6 +1571,108 @@
       }
     }
     return false;
+  }
+
+  function buildViewStateHash() {
+    if (!data || !envFilter) {
+      return "";
+    }
+    var parts = [];
+    if (envFilter.value) {
+      parts.push("env=" + encodeURIComponent(envFilter.value));
+    }
+    if (groupFilter && groupFilter.value) {
+      parts.push("g=" + encodeURIComponent(groupFilter.value));
+    }
+    if (scenarioSearch && scenarioSearch.value.trim()) {
+      parts.push("q=" + encodeURIComponent(scenarioSearch.value.trim()));
+    }
+    if (scenarioSelect && scenarioSelect.value) {
+      parts.push("sc=" + encodeURIComponent(scenarioSelect.value));
+    }
+    if (runWindowFilter && runWindowFilter.value && runWindowFilter.value !== "all") {
+      parts.push("w=" + encodeURIComponent(runWindowFilter.value));
+    }
+    parts.push("b=" + (showBands && showBands.checked ? "1" : "0"));
+    parts.push("l=" + (logScale && logScale.checked ? "1" : "0"));
+    parts.push("r=" + (showRatio && showRatio.checked ? "1" : "0"));
+    return parts.join("&");
+  }
+
+  function scheduleViewHashSync() {
+    if (!data || hashApplyInProgress) {
+      return;
+    }
+    if (viewHashSyncTimer) {
+      clearTimeout(viewHashSyncTimer);
+    }
+    viewHashSyncTimer = setTimeout(function () {
+      viewHashSyncTimer = null;
+      var next = buildViewStateHash();
+      var withHash = next ? "#" + next : "";
+      if (location.hash === withHash) {
+        return;
+      }
+      if (next) {
+        history.replaceState(null, "", location.pathname + location.search + "#" + next);
+      } else {
+        history.replaceState(null, "", location.pathname + location.search);
+      }
+    }, 120);
+  }
+
+  /** Apply `#env=…&sc=…` etc. after payload and option lists are ready. */
+  function applyViewStateFromHash() {
+    if (!data) {
+      fillScenarioOptions();
+      return;
+    }
+    var raw = location.hash;
+    if (!raw || raw.length < 2) {
+      fillScenarioOptions();
+      return;
+    }
+    hashApplyInProgress = true;
+    try {
+      var params = new URLSearchParams(raw.replace(/^#/, ""));
+      var ev = params.get("env");
+      if (ev !== null && envFilter) {
+        if (ev === "" || selectHasValue(envFilter, ev)) {
+          envFilter.value = ev;
+        }
+      }
+      var g = params.get("g");
+      if (g && groupFilter && selectHasValue(groupFilter, g)) {
+        groupFilter.value = g;
+      }
+      var q = params.get("q");
+      if (q != null && scenarioSearch) {
+        scenarioSearch.value = q;
+      }
+      var w = params.get("w");
+      if (w && runWindowFilter && (w === "all" || w === "10" || w === "20")) {
+        runWindowFilter.value = w;
+      }
+      if (params.has("b") && showBands) {
+        showBands.checked = params.get("b") === "1";
+      }
+      if (params.has("l") && logScale) {
+        logScale.checked = params.get("l") === "1";
+      }
+      if (params.has("r") && showRatio) {
+        showRatio.checked = params.get("r") === "1";
+      }
+      fillScenarioOptions();
+      var sc = params.get("sc");
+      if (sc && scenarioSelect && selectHasValue(scenarioSelect, sc)) {
+        scenarioSelect.value = sc;
+      }
+      refreshEnvBanner();
+    } catch {
+      fillScenarioOptions();
+    } finally {
+      hashApplyInProgress = false;
+    }
   }
 
   function updatePageFooter() {
@@ -1303,7 +1721,7 @@
     if (ratioLabel && primary && compares.length > 0) {
       ratioLabel.textContent =
         compares.length === 1
-          ? primary.displayName + " ÷ " + compares[0].displayName
+          ? "Primary ratio (" + primary.displayName + " ÷ " + compares[0].displayName + ")"
           : "Primary ratios";
     }
 
@@ -1375,7 +1793,7 @@
     applyKpis();
     buildSnapshotTable();
     refreshEnvBanner();
-    fillScenarioOptions();
+    applyViewStateFromHash();
   }
 
   /**
@@ -1384,9 +1802,14 @@
   async function loadBenchData(opts) {
     var isReload = !!(opts && opts.isReload);
     var btnReload = document.getElementById("reload-data-btn");
+    var btnReloadScroll = document.getElementById("reload-data-btn-scroll");
     if (isReload && btnReload) {
       btnReload.disabled = true;
       btnReload.setAttribute("aria-busy", "true");
+    }
+    if (isReload && btnReloadScroll) {
+      btnReloadScroll.disabled = true;
+      btnReloadScroll.setAttribute("aria-busy", "true");
     }
     try {
       var res = await fetch("/api/payload", { cache: "no-store" });
@@ -1410,6 +1833,10 @@
       if (isReload && btnReload) {
         btnReload.disabled = false;
         btnReload.removeAttribute("aria-busy");
+      }
+      if (isReload && btnReloadScroll) {
+        btnReloadScroll.disabled = false;
+        btnReloadScroll.removeAttribute("aria-busy");
       }
     }
 
@@ -1448,6 +1875,11 @@
     }
 
     render();
+    if (!scrollActionsObserverWired) {
+      requestAnimationFrame(function () {
+        wireScrollActionsAffordance();
+      });
+    }
     if (isReload) {
       showToast("Bench data reloaded.");
     }
@@ -1458,7 +1890,26 @@
     await loadBenchData({ isReload: false });
   }
 
+  /** Chart data: desktop keeps Display expanded; mobile starts collapsed (disclosure). */
+  function syncChartDisplayDetailsOpen() {
+    var el = document.getElementById("chart-display-details");
+    if (!el) {
+      return;
+    }
+    var mql = window.matchMedia("(min-width: 640px)");
+    if (mql.matches) {
+      el.open = true;
+    }
+    if (!chartDisplayDetailsMqlWired) {
+      chartDisplayDetailsMqlWired = true;
+      mql.addEventListener("change", function (e) {
+        el.open = !!e.matches;
+      });
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    syncChartDisplayDetailsOpen();
     void init();
   });
 })();
