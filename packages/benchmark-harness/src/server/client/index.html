@@ -68,14 +68,11 @@
         --color-bh-ok-border: rgba(52, 199, 89, 0.38);
         --color-bh-ok-bg: rgba(52, 199, 89, 0.11);
 
-        --shadow-bh-glass:
-          0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.35);
+        --shadow-bh-glass: 0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.35);
         --shadow-bh-glass-tight: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        --shadow-bh-sticky:
-          0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 12px 40px rgba(0, 0, 0, 0.42);
+        --shadow-bh-sticky: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 12px 40px rgba(0, 0, 0, 0.42);
         --shadow-bh-card: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 8px 28px rgba(0, 0, 0, 0.28);
-        --shadow-bh-card-hover:
-          0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 10px 32px rgba(0, 0, 0, 0.32);
+        --shadow-bh-card-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 10px 32px rgba(0, 0, 0, 0.32);
         --shadow-bh-btn-reload: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
         --shadow-bh-toolbar: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
         --shadow-bh-field-inset: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
@@ -123,12 +120,13 @@
           @apply border-bh-border bg-bh-surface shadow-bh-glass rounded-[1.25rem] border backdrop-blur-xl backdrop-saturate-180;
         }
 
-        .bh-glass-tight {
+        /* Tighter inset shadow — applied alongside .bh-glass for compact panels */
+        .bh-glass--tight {
           @apply shadow-bh-glass-tight rounded-2xl;
         }
 
         /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
-        .bh-glass-sticky {
+        .bh-glass--sticky {
           @apply border-bh-border bg-bh-surface-sticky shadow-bh-sticky rounded-[1.25rem] border backdrop-blur-[36px] backdrop-saturate-200;
         }
 
@@ -156,13 +154,13 @@
         }
 
         /* <details> panels — open state via v4 `open` variant */
-        .bh-details-surface-open {
+        .bh-details--open {
           @variant open {
             @apply bg-bh-surface-open;
           }
         }
 
-        .bh-details-surface-open-muted {
+        .bh-details--open-muted {
           @variant open {
             @apply bg-bh-surface-open-muted;
           }
@@ -172,7 +170,7 @@
           @apply cursor-pointer list-none text-sm font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden;
         }
 
-        .bh-details-summary-prominent {
+        .bh-details-summary--prominent {
           @apply select-none;
 
           @variant hover {
@@ -180,11 +178,11 @@
           }
         }
 
-        .bh-details-summary-dense {
+        .bh-details-summary--dense {
           @apply py-1 leading-snug;
         }
 
-        .bh-toggle-label {
+        .bh-toggle__label {
           @apply inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5;
 
           @variant hover {
@@ -192,7 +190,7 @@
           }
         }
 
-        .bh-toggle-input {
+        .bh-toggle__input {
           @apply text-bh-blue accent-bh-blue size-4 rounded border-white/20 bg-black/30;
 
           @variant focus {
@@ -252,7 +250,12 @@
           @apply max-w-prose text-[0.9375rem] leading-relaxed text-zinc-400/95;
         }
 
-        .bh-intro-prose {
+        /* How-to panel — collapsible intro details (cf. Apple disclosure rows) */
+        .bh-howto {
+          @apply mt-5 px-4 py-3 sm:px-5 sm:py-3.5;
+        }
+
+        .bh-howto__prose {
           @apply mt-3 border-t border-white/[0.06] pt-3 text-sm leading-relaxed text-zinc-400;
         }
 
@@ -280,23 +283,23 @@
           @apply mb-1.5 block text-[0.8125rem] font-medium text-zinc-400;
         }
 
-        .bh-label-wrap-search {
+        .bh-label-wrap--search {
           @apply block min-w-[min(100%,16rem)] shrink-0;
         }
 
-        .bh-label-wrap-group {
+        .bh-label-wrap--group {
           @apply block shrink-0;
         }
 
-        .bh-label-wrap-scenario {
+        .bh-label-wrap--scenario {
           @apply min-w-0 flex-1 sm:max-w-md sm:min-w-56;
         }
 
-        .bh-label-wrap-env {
+        .bh-label-wrap--env {
           @apply min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem];
         }
 
-        .bh-find-row {
+        .bh-find-panel__row {
           @apply mt-4 flex flex-wrap items-end gap-x-6 gap-y-4;
         }
 
@@ -308,15 +311,15 @@
           @apply sticky top-3 z-40 mt-8 flex flex-col gap-4 px-4 py-4 sm:-mx-2 sm:px-5;
         }
 
-        .bh-chart-scenario-row {
+        .bh-chart-control-panel__scenario {
           @apply flex min-w-0 flex-1 flex-wrap items-end gap-2 sm:max-w-none sm:flex-[1_1_20rem];
         }
 
-        .bh-display-toolbar-row {
+        .bh-chart-control-panel__display {
           @apply flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4 text-[0.9rem] text-zinc-300;
         }
 
-        .bh-metrics-head-row {
+        .bh-metrics-section__head {
           @apply flex flex-wrap items-baseline gap-2 gap-y-1;
         }
 
@@ -324,11 +327,11 @@
           @apply mt-10 mb-8 px-5 py-5 sm:px-6;
         }
 
-        .bh-scenario-what {
+        .bh-metrics-section__what {
           @apply mt-2 text-sm leading-relaxed text-zinc-400;
         }
 
-        .bh-metrics-footnote {
+        .bh-metrics-section__footnote {
           @apply mt-3 text-xs leading-relaxed text-zinc-500;
         }
 
@@ -336,47 +339,48 @@
           @apply overflow-hidden px-5 py-5 sm:px-6;
         }
 
-        .bh-section-head {
+        .bh-chart-main-section__head {
           @apply flex flex-wrap items-start justify-between gap-3 border-b border-white/[0.06] pb-4;
         }
 
-        .bh-chart-heading {
+        .bh-chart__heading {
           @apply text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50;
         }
 
-        .bh-chart-tagline {
+        .bh-chart__tagline {
           @apply mt-1.5 text-[0.8125rem] leading-snug text-zinc-500;
         }
 
-        .bh-chart-toolbar-row {
+        /* Modifier: toolbar row within chart section — adds vertical rhythm */
+        .bh-chart-toolbar--row {
           @apply mt-4 mb-2;
         }
 
-        .bh-chart-hint {
+        .bh-chart__hint {
           @apply text-[0.8125rem] leading-relaxed text-zinc-500;
         }
 
-        .bh-chart-host {
+        .bh-chart__host {
           @apply shadow-bh-glass-tight relative mt-5 h-[min(440px,58vh)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.08];
         }
 
-        .bh-chart-empty-actions {
+        .bh-chart__empty-actions {
           @apply flex flex-wrap items-center justify-center gap-2;
         }
 
-        .bh-details-chart-prose {
+        .bh-chart__prose {
           @apply mt-2 text-xs leading-relaxed text-zinc-500;
         }
 
-        .bh-snapshot-accent {
+        .bh-snapshot__accent {
           @apply text-cyan-200/90;
         }
 
-        .bh-snapshot-desc {
+        .bh-snapshot__desc {
           @apply mb-3 text-xs leading-relaxed text-zinc-500;
         }
 
-        .bh-snapshot-meta {
+        .bh-snapshot__meta {
           @apply mt-2 text-xs text-zinc-600;
         }
 
@@ -384,39 +388,36 @@
           @apply mt-10 border-t border-white/[0.06] pt-6 text-[0.8125rem] leading-relaxed text-zinc-500;
         }
 
-        .bh-loading-text {
+        .bh-loading__text {
           @apply text-sm text-zinc-400;
         }
 
-        .bh-loading-stack {
+        .bh-loading__stack {
           @apply text-center;
         }
 
-        .bh-loading-spinner-ring {
+        /* Spinner ring — visual circle track; pair with .bh-spinner for animation */
+        .bh-spinner--ring {
           @apply border-t-bh-blue mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-600/80;
         }
 
-        .bh-intro-details {
-          @apply mt-5 px-4 py-3 sm:px-5 sm:py-3.5;
-        }
-
-        .bh-chart-fields-row {
+        .bh-chart-control-panel__fields {
           @apply flex flex-wrap items-end gap-3;
         }
 
-        .bh-kpi-val-primary {
+        .bh-kpi-val--primary {
           @apply text-zinc-100;
         }
 
-        .bh-kpi-val-secondary {
+        .bh-kpi-val--secondary {
           @apply text-sm text-zinc-200;
         }
 
-        .bh-kpi-val-meta {
+        .bh-kpi-val--meta {
           @apply text-xs leading-snug font-normal text-zinc-400;
         }
 
-        .bh-metrics-cards-host {
+        .bh-metrics-section__cards {
           @apply mt-5;
         }
 
@@ -428,23 +429,24 @@
           @apply font-normal text-zinc-400;
         }
 
-        .bh-error-panel {
+        /* Error state — centered feedback panel */
+        .bh-error {
           @apply text-center;
         }
 
-        .bh-error-title {
+        .bh-error__title {
           @apply text-sm text-red-400;
         }
 
-        .bh-error-detail {
+        .bh-error__detail {
           @apply mt-1 text-xs text-zinc-500;
         }
 
-        .bh-error-hint {
+        .bh-error__hint {
           @apply mt-3 text-xs text-zinc-600;
         }
 
-        .bh-error-code {
+        .bh-error__code {
           @apply text-indigo-400;
         }
 
@@ -493,12 +495,12 @@
         .bh-val {
           @apply text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] break-words tabular-nums;
 
-          & + .bh-metric-meta {
+          & + .bh-metric__meta {
             @apply mt-[0.38rem];
           }
         }
 
-        .bh-metric-meta {
+        .bh-metric__meta {
           @apply text-bh-label mt-[0.24rem] text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em];
 
           & + & {
@@ -506,19 +508,19 @@
           }
         }
 
-        .bh-metric-meta--mono {
+        .bh-metric__meta--mono {
           @apply font-mono tracking-[-0.02em] tabular-nums;
         }
 
-        .bh-metric-meta--fine {
+        .bh-metric__meta--fine {
           @apply text-[0.6875rem] leading-[1.45] opacity-90;
         }
 
-        .bh-metric-fig {
+        .bh-metric__fig {
           @apply text-bh-ink-strong font-mono tracking-[-0.02em] tabular-nums;
         }
 
-        .bh-metric-iqr {
+        .bh-metric__iqr {
           @apply mt-[0.28rem] flex flex-col gap-[0.42rem];
         }
 
@@ -542,11 +544,11 @@
           @apply inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem] text-[0.7rem] font-medium;
         }
 
-        .bh-chip-warn {
+        .bh-chip--warn {
           @apply text-bh-warn-fg border-bh-warn-border bg-bh-warn-bg border;
         }
 
-        .bh-chip-ok {
+        .bh-chip--ok {
           @apply text-bh-ok-fg border-bh-ok-border bg-bh-ok-bg border;
         }
 
@@ -577,7 +579,7 @@
           }
         }
 
-        .bh-table-zebra tbody tr {
+        .bh-table--zebra tbody tr {
           @variant even {
             @apply bg-bh-table-zebra;
 
@@ -605,8 +607,8 @@
           @apply grid grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))] gap-3;
         }
 
-        /* Per-card accent: JS sets --color-bh-metric-accent; ratio cards use .bh-metric-accent-ratio */
-        .bh-metric-accent-ratio {
+        /* Per-card accent: JS sets --color-bh-metric-accent; ratio cards use .bh-metric--accent-ratio */
+        .bh-metric--accent-ratio {
           --color-bh-metric-accent: var(--color-bh-ratio-accent);
         }
 
@@ -623,11 +625,11 @@
           @apply text-bh-body-muted;
         }
 
-        .bh-lib-version-row {
+        .bh-lib-version__row {
           @apply mt-0.5 leading-[1.45];
         }
 
-        .bh-lib-version-key {
+        .bh-lib-version__key {
           @apply text-bh-lib-key;
         }
 
@@ -680,7 +682,7 @@
           }
         }
 
-        .bh-loading-spinner {
+        .bh-spinner {
           @apply animate-spin;
 
           @variant motion-reduce {
@@ -728,9 +730,9 @@
   </head>
   <body class="bh-app-body min-h-screen text-zinc-200">
     <div aria-live="polite" id="loading-overlay" role="status">
-      <div class="bh-loading-stack">
-        <div class="bh-loading-spinner bh-loading-spinner-ring"></div>
-        <p class="bh-loading-text">Loading bench data…</p>
+      <div class="bh-loading__stack">
+        <div class="bh-spinner bh-spinner--ring"></div>
+        <p class="bh-loading__text">Loading bench data…</p>
       </div>
     </div>
 
@@ -770,11 +772,11 @@
             Reload data
           </button>
         </div>
-        <details class="bh-glass bh-glass-tight bh-intro-details" id="intro-howto-details">
-          <summary class="bh-details-summary bh-details-summary-prominent">
+        <details class="bh-glass bh-glass--tight bh-howto" id="intro-howto-details">
+          <summary class="bh-details-summary bh-details-summary--prominent">
             How to read this viewer
           </summary>
-          <div class="bh-intro-prose">
+          <div class="bh-howto__prose">
             <p>
               Quantiles mirror
               <code class="bh-inline-code">report.ts</code>
@@ -791,19 +793,19 @@
       <div aria-label="History overview" class="bh-kpi-grid">
         <div class="bh-card">
           <div class="bh-lbl">Saved runs</div>
-          <div class="bh-val bh-kpi-val-primary" id="kpi-run-count">—</div>
+          <div class="bh-val bh-kpi-val--primary" id="kpi-run-count">—</div>
         </div>
         <div class="bh-card">
           <div class="bh-lbl">Scenarios tracked</div>
-          <div class="bh-val bh-kpi-val-primary" id="kpi-scenario-count">—</div>
+          <div class="bh-val bh-kpi-val--primary" id="kpi-scenario-count">—</div>
         </div>
         <div class="bh-card sm:col-span-2 xl:col-span-1">
           <div class="bh-lbl">Newest saved run · local clock</div>
-          <div class="bh-val bh-kpi-val-secondary" id="kpi-latest-clock">—</div>
+          <div class="bh-val bh-kpi-val--secondary" id="kpi-latest-clock">—</div>
         </div>
         <div class="bh-card xl:col-span-1">
           <div class="bh-lbl">Library builds (latest run)</div>
-          <div class="bh-val bh-kpi-val-meta" id="kpi-lib-versions">—</div>
+          <div class="bh-val bh-kpi-val--meta" id="kpi-lib-versions">—</div>
         </div>
       </div>
 
@@ -813,10 +815,10 @@
         machines).
       </div>
 
-      <section aria-label="Find scenarios" class="bh-find-panel bh-glass bh-glass-tight">
+      <section aria-label="Find scenarios" class="bh-find-panel bh-glass bh-glass--tight">
         <h2 class="bh-section-title">Find scenarios</h2>
-        <div class="bh-find-row">
-          <label class="bh-label-wrap-search">
+        <div class="bh-find-panel__row">
+          <label class="bh-label-wrap--search">
             <span class="bh-field-label">Search</span>
             <input
               autocomplete="off"
@@ -826,7 +828,7 @@
               type="search"
             />
           </label>
-          <label class="bh-label-wrap-group">
+          <label class="bh-label-wrap--group">
             <span class="bh-field-label">Group</span>
             <select
               aria-label="Filter by group"
@@ -839,11 +841,11 @@
         </div>
       </section>
 
-      <div aria-label="Chart data selection" class="bh-chart-control-panel bh-glass-sticky">
+      <div aria-label="Chart data selection" class="bh-chart-control-panel bh-glass--sticky">
         <p class="bh-section-title">Chart data</p>
-        <div class="bh-chart-fields-row">
-          <div class="bh-chart-scenario-row">
-            <label class="bh-label-wrap-scenario">
+        <div class="bh-chart-control-panel__fields">
+          <div class="bh-chart-control-panel__scenario">
+            <label class="bh-label-wrap--scenario">
               <span class="bh-field-label">Scenario</span>
               <select
                 aria-label="Benchmark scenario"
@@ -876,7 +878,7 @@
               </button>
             </div>
           </div>
-          <label class="bh-label-wrap-env">
+          <label class="bh-label-wrap--env">
             <span class="bh-field-label">Environment</span>
             <select
               aria-label="Filter runs by CPU and Node"
@@ -887,18 +889,18 @@
             </select>
           </label>
         </div>
-        <div class="bh-display-toolbar-row">
+        <div class="bh-chart-control-panel__display">
           <span class="bh-section-title bh-section-title--inline">Display</span>
-          <label class="bh-toggle-label">
-            <input checked class="bh-toggle-input" id="show-bands" type="checkbox" />
+          <label class="bh-toggle__label">
+            <input checked class="bh-toggle__input" id="show-bands" type="checkbox" />
             <span title="Per-trial P25–P75 spread around each run median">P25–P75 band</span>
           </label>
-          <label class="bh-toggle-label">
-            <input class="bh-toggle-input" id="log-scale" type="checkbox" />
+          <label class="bh-toggle__label">
+            <input class="bh-toggle__input" id="log-scale" type="checkbox" />
             Log Y axis
           </label>
-          <label class="bh-toggle-label">
-            <input class="bh-toggle-input" id="show-ratio" type="checkbox" />
+          <label class="bh-toggle__label">
+            <input class="bh-toggle__input" id="show-ratio" type="checkbox" />
             <span id="ratio-label">Ratio</span>
           </label>
           <button
@@ -912,26 +914,28 @@
         </div>
       </div>
 
-      <section aria-live="polite" class="bh-metrics-section bh-glass bh-glass-tight" id="summary">
-        <div class="bh-metrics-head-row">
+      <section aria-live="polite" class="bh-metrics-section bh-glass bh-glass--tight" id="summary">
+        <div class="bh-metrics-section__head">
           <h2 class="bh-section-title">Selected scenario metrics</h2>
-          <span class="bh-chip bh-chip-ok" id="metrics-scenario-chip"></span>
+          <span class="bh-chip bh-chip--ok" id="metrics-scenario-chip"></span>
         </div>
-        <p class="bh-scenario-what" id="scenario-what-line"></p>
-        <div class="bh-metrics-cards-host" id="metrics-cards"></div>
-        <p class="bh-metrics-footnote" id="metrics-footnote"></p>
+        <p class="bh-metrics-section__what" id="scenario-what-line"></p>
+        <div class="bh-metrics-section__cards" id="metrics-cards"></div>
+        <p class="bh-metrics-section__footnote" id="metrics-footnote"></p>
       </section>
 
       <section aria-labelledby="chart-section-title" class="bh-chart-main-section bh-glass">
-        <div class="bh-section-head">
+        <div class="bh-chart-main-section__head">
           <div>
-            <h2 class="bh-chart-heading" id="chart-section-title">Throughput over filtered runs</h2>
-            <p class="bh-chart-tagline" id="chart-subtitle-line">—</p>
+            <h2 class="bh-chart__heading" id="chart-section-title">
+              Throughput over filtered runs
+            </h2>
+            <p class="bh-chart__tagline" id="chart-subtitle-line">—</p>
           </div>
         </div>
         <div
           aria-label="Chart pan and zoom"
-          class="bh-chart-toolbar bh-chart-toolbar-row"
+          class="bh-chart-toolbar bh-chart-toolbar--row"
           role="toolbar"
         >
           <button class="bh-seg-btn" id="chart-zoom-in" type="button">Zoom +</button>
@@ -940,15 +944,15 @@
           <button class="bh-seg-btn" id="chart-pan-later" type="button">Later →</button>
           <button class="bh-seg-btn" id="chart-reset-zoom" type="button">Reset zoom</button>
         </div>
-        <p class="bh-chart-hint">
+        <p class="bh-chart__hint">
           Opens on newest portion of history; Reset zoom restores full range.
           <span id="chart-wheel-hint"></span>
           Drag pans on the chart · legend toggles series.
         </p>
-        <div class="bh-chart-host" id="chart-host">
+        <div class="bh-chart__host" id="chart-host">
           <div aria-live="polite" id="chart-empty-state">
             <p id="chart-empty-message"></p>
-            <div class="bh-chart-empty-actions">
+            <div class="bh-chart__empty-actions">
               <button class="bh-empty-action-btn" id="empty-btn-clear-env" type="button">
                 Show all environments
               </button>
@@ -968,20 +972,20 @@
         </div>
 
         <details
-          class="bh-details-surface-open bh-glass bh-glass-tight mt-6 px-4 py-3 sm:px-5"
+          class="bh-details--open bh-glass bh-glass--tight mt-6 px-4 py-3 sm:px-5"
           id="chart-data-details"
         >
-          <summary class="bh-details-summary bh-details-summary-prominent">
+          <summary class="bh-details-summary bh-details-summary--prominent">
             Tabular data for the current chart (accessibility)
           </summary>
-          <p class="bh-details-chart-prose">
+          <p class="bh-chart__prose">
             Same points and libraries as the line chart above; newest run first. Useful for screen
             readers and copy‑paste.
           </p>
           <div class="bh-table-wrap mt-3">
             <table
               aria-label="Chart series data"
-              class="bh-table bh-table-zebra"
+              class="bh-table bh-table--zebra"
               id="chart-data-table"
             >
               <thead id="chart-data-thead"></thead>
@@ -992,23 +996,23 @@
       </section>
 
       <details
-        class="bh-details-surface-open-muted bh-glass mt-10 px-5 py-4 sm:px-6"
+        class="bh-details--open-muted bh-glass mt-10 px-5 py-4 sm:px-6"
         id="snapshot-details"
       >
-        <summary class="bh-details-summary bh-details-summary-dense">
-          Snapshot of <span class="bh-snapshot-accent">globally newest</span> bench folder —
+        <summary class="bh-details-summary bh-details-summary--dense">
+          Snapshot of <span class="bh-snapshot__accent">globally newest</span> bench folder —
           throughput by scenario (table)
         </summary>
-        <p class="bh-snapshot-desc" id="snapshot-desc"></p>
+        <p class="bh-snapshot__desc" id="snapshot-desc"></p>
         <div class="bh-table-wrap">
-          <table aria-label="Latest run throughput by scenario" class="bh-table bh-table-zebra">
+          <table aria-label="Latest run throughput by scenario" class="bh-table bh-table--zebra">
             <thead>
               <tr id="snapshot-thead-row"></tr>
             </thead>
             <tbody id="snapshot-latest-tbody"></tbody>
           </table>
         </div>
-        <div class="bh-snapshot-meta" id="snapshot-latest-meta"></div>
+        <div class="bh-snapshot__meta" id="snapshot-latest-meta"></div>
       </details>
 
       <p class="bh-page-footer" id="page-footer"></p>

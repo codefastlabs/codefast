@@ -466,7 +466,7 @@
     var versionLines = (lr.libraryVersions || [])
       .map(function (lv) {
         return (
-          '<div class="bh-lib-version-row"><span class="bh-lib-version-key">' +
+          '<div class="bh-lib-version__row"><span class="bh-lib-version__key">' +
           esc(lv.key) +
           "</span> " +
           esc(lv.version) +
@@ -602,7 +602,7 @@
     }
     if (!scenarioRow || indices.length === 0) {
       metricsScenarioChip.textContent = "";
-      metricsScenarioChip.className = "bh-chip bh-chip-ok";
+      metricsScenarioChip.className = "bh-chip bh-chip--ok";
       scenarioWhatLineEl.textContent = "";
       scenarioWhatLineEl.style.display = "none";
       metricsCardsEl.innerHTML = "";
@@ -611,7 +611,7 @@
     }
 
     metricsScenarioChip.textContent = "[" + scenarioRow.group + "] " + scenarioRow.id;
-    metricsScenarioChip.className = "bh-chip bh-chip-ok";
+    metricsScenarioChip.className = "bh-chip bh-chip--ok";
     scenarioWhatLineEl.style.display = scenarioRow.what ? "block" : "none";
     scenarioWhatLineEl.textContent = scenarioRow.what || "";
 
@@ -661,12 +661,13 @@
       var runsPlotted = indices.length;
       var coverageHint =
         runsWithData < runsPlotted
-          ? '<div class="bh-metric-meta bh-metric-meta--fine">' +
+          ? '<div class="bh-metric__meta bh-metric__meta--fine">' +
             esc(String(runsWithData)) +
             " of " +
             esc(String(runsPlotted)) +
             " plotted runs have median hz/op</div>"
           : "";
+
       indices.forEach(function (gx) {
         var f = libData.iqrFraction[gx];
         if (typeof f === "number" && Number.isFinite(f)) {
@@ -686,13 +687,13 @@
         (median !== null ? fmtHz(median) + " Hz/op" : "—") +
         "</div>" +
         (lo !== null && hi !== null
-          ? '<div class="bh-metric-meta bh-metric-meta--mono">Range ' +
+          ? '<div class="bh-metric__meta bh-metric__meta--mono">Range ' +
             fmtHz(lo) +
             " … " +
             fmtHz(hi) +
             "</div>"
           : "") +
-        '<div class="bh-metric-meta">Δ ' +
+        '<div class="bh-metric__meta">Δ ' +
         trend +
         "</div>" +
         coverageHint +
@@ -741,16 +742,16 @@
         cmpLib.displayName +
         ", median hz/op divided by median hz/op";
       var ratioCaptionLine =
-        '<div class="bh-metric-meta">' +
+        '<div class="bh-metric__meta">' +
         "Median ÷ median for this filter; each side uses runs with hz/op for that library." +
         "</div>";
       var ratioPairedLine = showPairedMedian
-        ? '<div class="bh-metric-meta">Median of per-run ratios · <span class="bh-metric-fig">' +
+        ? '<div class="bh-metric__meta">Median of per-run ratios · <span class="bh-metric__fig">' +
           medianOfRunRatios.toFixed(3) +
           "×</span></div>"
         : "";
       html +=
-        '<div class="bh-card bh-metric-accent-ratio" role="group" aria-label="' +
+        '<div class="bh-card bh-metric--accent-ratio" role="group" aria-label="' +
         esc(ratioAria) +
         '">' +
         '<div class="bh-lbl bh-tint-lbl">Ratio · ' +
@@ -796,7 +797,7 @@
     html +=
       '<div class="bh-card" role="group" aria-label="Worst IQR divided by median, per plotted run">' +
       '<div class="bh-lbl">Worst IQR÷median · per plotted run</div>' +
-      '<div class="bh-metric-iqr">' +
+      '<div class="bh-metric__iqr">' +
       iqrRowHtml +
       "</div></div>";
 
@@ -815,9 +816,9 @@
           DISPERSION_IQR_ALERT * 100 +
           "% of median) on ≥1 plotted run — inspect tooltip IQR%",
       );
-      metricsScenarioChip.className = "bh-chip bh-chip-warn";
+      metricsScenarioChip.className = "bh-chip bh-chip--warn";
     } else {
-      metricsScenarioChip.className = "bh-chip bh-chip-ok";
+      metricsScenarioChip.className = "bh-chip bh-chip--ok";
     }
     metricsFootnoteEl.textContent = footPieces.join(". ") + ".";
   }
@@ -1398,11 +1399,11 @@
         showToast("Could not reload data: " + String(err));
       } else if (loadingOverlay) {
         loadingOverlay.innerHTML =
-          '<div class="bh-error-panel"><p class="bh-error-title">Failed to load bench data.</p>' +
-          '<p class="bh-error-detail">' +
+          '<div class="bh-error"><p class="bh-error__title">Failed to load bench data.</p>' +
+          '<p class="bh-error__detail">' +
           esc(err) +
           "</p>" +
-          '<p class="bh-error-hint">Run <code class="bh-error-code">pnpm bench</code> first to generate data.</p></div>';
+          '<p class="bh-error__hint">Run <code class="bh-error__code">pnpm bench</code> first to generate data.</p></div>';
       }
       return false;
     } finally {
