@@ -120,16 +120,16 @@
         }
 
         .bh-glass {
-          @apply border-bh-border bg-bh-surface shadow-bh-glass rounded-[1.25rem] border backdrop-blur-[24px] backdrop-saturate-[180%];
+          @apply border-bh-border bg-bh-surface shadow-bh-glass rounded-[1.25rem] border backdrop-blur-xl backdrop-saturate-180;
         }
 
         .bh-glass-tight {
-          @apply shadow-bh-glass-tight rounded-[1rem];
+          @apply shadow-bh-glass-tight rounded-2xl;
         }
 
         /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
         .bh-glass-sticky {
-          @apply border-bh-border bg-bh-surface-sticky shadow-bh-sticky rounded-[1.25rem] border backdrop-blur-[36px] backdrop-saturate-[200%];
+          @apply border-bh-border bg-bh-surface-sticky shadow-bh-sticky rounded-[1.25rem] border backdrop-blur-[36px] backdrop-saturate-200;
         }
 
         .bh-section-title {
@@ -213,14 +213,14 @@
         }
 
         .bh-empty-action-btn {
-          @apply hidden rounded-xl border border-white/12 bg-white/[0.08] px-3.5 py-2 text-sm font-medium text-zinc-100;
+          @apply hidden rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100;
 
           @variant focus-visible {
             @apply ring-bh-blue ring-2 outline-none;
           }
 
           @variant hover {
-            @apply bg-white/[0.14];
+            @apply bg-white/14;
           }
         }
 
@@ -257,7 +257,7 @@
         }
 
         .bh-inline-code {
-          @apply rounded-md bg-white/[0.08] px-1.5 py-0.5 font-mono text-[0.88em] text-cyan-200/90;
+          @apply rounded-md bg-white/8 px-1.5 py-0.5 font-mono text-[0.88em] text-cyan-200/90;
         }
 
         .bh-prose-emphasis {
@@ -289,11 +289,11 @@
         }
 
         .bh-label-wrap-scenario {
-          @apply min-w-0 flex-1 sm:max-w-md sm:min-w-[14rem];
+          @apply min-w-0 flex-1 sm:max-w-md sm:min-w-56;
         }
 
         .bh-label-wrap-env {
-          @apply min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem];
+          @apply min-w-[min(100%,260px)] flex-1.1 sm:max-w-[22rem];
         }
 
         .bh-find-row {
@@ -450,7 +450,7 @@
 
         /* Header — secondary action (Safari / Settings-style, not a filled CTA) */
         .bh-btn-reload {
-          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] [font-family:inherit] text-[0.8125rem] leading-[1.25] font-medium tracking-[-0.015em] backdrop-blur-[14px] backdrop-saturate-[160%] [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
+          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload inline-flex items-center justify-center gap-1.6 rounded-full border px-3.8 py-1.52 [font-family:inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[14px] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
 
           @variant bh-hover-ready {
             @apply text-bh-ink-hover border-bh-border-strong bg-bh-fill-white-7;
@@ -465,7 +465,7 @@
           }
 
           @variant bh-aria-busy {
-            @apply cursor-wait opacity-[0.55];
+            @apply cursor-wait opacity-55;
           }
 
           @variant motion-reduce {
@@ -474,11 +474,11 @@
         }
 
         .bh-btn-reload__icon {
-          @apply shrink-0 opacity-[0.88];
+          @apply shrink-0 opacity-88;
         }
 
         .bh-card {
-          @apply border-bh-border bg-bh-surface-elevated shadow-bh-card rounded-[1rem] border px-[1.05rem] py-[0.85rem] backdrop-blur-[16px] backdrop-saturate-[160%] [transition:border-color_0.2s_ease,box-shadow_0.2s_ease];
+          @apply border-bh-border bg-bh-surface-elevated shadow-bh-card rounded-2xl border px-4.2 py-3.4 backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease];
 
           @variant hover {
             @apply border-bh-border-strong shadow-bh-card-hover;
@@ -494,15 +494,15 @@
           @apply text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] break-words tabular-nums;
 
           & + .bh-metric-meta {
-            @apply mt-[0.38rem];
+            @apply mt-1.52;
           }
         }
 
         .bh-metric-meta {
-          @apply text-bh-label mt-[0.24rem] text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em];
+          @apply text-bh-label mt-0.96 text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em];
 
           & + & {
-            @apply mt-[0.22rem];
+            @apply mt-0.88;
           }
         }
 
@@ -519,7 +519,7 @@
         }
 
         .bh-metric-iqr {
-          @apply mt-[0.28rem] flex flex-col gap-[0.42rem];
+          @apply mt-1.12 flex flex-col gap-1.68;
         }
 
         .bh-metric-row {
@@ -535,11 +535,11 @@
         }
 
         .bh-lbl {
-          @apply text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase;
+          @apply text-bh-label mb-1.6 text-[0.625rem] font-semibold tracking-[0.09em] uppercase;
         }
 
         .bh-chip {
-          @apply inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem] text-[0.7rem] font-medium;
+          @apply inline-flex items-center rounded-full px-2.6 py-0.6 text-[0.7rem] font-medium;
         }
 
         .bh-chip-warn {
@@ -551,7 +551,7 @@
         }
 
         .bh-table-wrap {
-          @apply border-bh-border bg-bh-scrim-table overflow-x-auto rounded-[0.75rem] border;
+          @apply border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border;
         }
 
         .bh-table {
@@ -559,7 +559,7 @@
 
           th,
           td {
-            @apply border-b-bh-table-line border-b px-[0.65rem] py-[0.45rem] text-left;
+            @apply border-b-bh-table-line border-b px-2.6 py-1.8 text-left;
           }
 
           th {
@@ -567,7 +567,7 @@
           }
 
           thead th {
-            @apply bg-bh-table-head z-[3];
+            @apply bg-bh-table-head z-3;
           }
 
           tbody tr {
@@ -593,12 +593,12 @@
 
         .bh-table th.bh-sticky-1,
         .bh-table td.bh-sticky-1 {
-          @apply bg-bh-table-sticky sticky left-0 z-[2] max-w-[14rem] min-w-[7.5rem] shadow-[1px_0_0_var(--color-bh-border-strong)];
+          @apply bg-bh-table-sticky sticky left-0 z-2 max-w-[14rem] min-w-30 shadow-[1px_0_0_var(--color-bh-border-strong)];
         }
 
         .bh-table th.bh-sticky-2,
         .bh-table td.bh-sticky-2 {
-          @apply bg-bh-table-sticky sticky left-[7.5rem] z-[2] min-w-[5rem] shadow-[1px_0_0_var(--color-bh-border-strong)];
+          @apply bg-bh-table-sticky sticky left-[7.5rem] z-2 min-w-[5rem] shadow-[1px_0_0_var(--color-bh-border-strong)];
         }
 
         .bh-metrics-grid {
@@ -624,7 +624,7 @@
         }
 
         .bh-lib-version-row {
-          @apply mt-[2px] leading-[1.45];
+          @apply mt-0.5 leading-[1.45];
         }
 
         .bh-lib-version-key {
@@ -636,14 +636,14 @@
         }
 
         .bh-chart-toolbar {
-          @apply border-bh-border bg-bh-surface-toolbar shadow-bh-toolbar inline-flex flex-wrap overflow-hidden rounded-[0.75rem] border backdrop-blur-[12px] backdrop-saturate-[150%];
+          @apply border-bh-border bg-bh-surface-toolbar shadow-bh-toolbar inline-flex flex-wrap overflow-hidden rounded-xl border backdrop-blur-md backdrop-saturate-150;
 
           /* Same outer height as Tailwind h-10 selects in Chart data (2.5rem incl. border, border-box) */
           @variant bh-toolbar-match-field {
             @apply box-border h-10 items-stretch;
 
             .bh-seg-btn {
-              @apply box-border inline-flex min-h-0 items-center justify-center self-stretch px-[0.625rem];
+              @apply box-border inline-flex min-h-0 items-center justify-center self-stretch px-2.5;
             }
           }
         }
@@ -656,11 +656,11 @@
           }
 
           @variant focus {
-            @apply z-[1] outline-none;
+            @apply z-1 outline-none;
           }
 
           @variant focus-visible {
-            @apply z-[1] shadow-[inset_0_0_0_2px_var(--color-bh-blue)];
+            @apply z-1 shadow-[inset_0_0_0_2px_var(--color-bh-blue)];
           }
 
           @variant disabled {
@@ -673,7 +673,7 @@
         }
 
         #loading-overlay {
-          @apply bg-bh-overlay fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-[16px];
+          @apply bg-bh-overlay fixed inset-0 z-100 flex items-center justify-center backdrop-blur-lg;
 
           @variant bh-overlay-hidden {
             @apply hidden;
@@ -689,7 +689,7 @@
         }
 
         #chart-empty-state {
-          @apply bg-bh-overlay-soft absolute inset-0 z-[10] hidden flex-col items-center justify-center gap-4 rounded-[1rem] p-6 text-center backdrop-blur-[12px];
+          @apply bg-bh-overlay-soft absolute inset-0 z-10 hidden flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md;
 
           @variant bh-empty-visible {
             @apply flex;
@@ -701,7 +701,7 @@
         }
 
         #bh-toast {
-          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-[200] max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[20px] backdrop-saturate-[180%] [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
+          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-4.2 py-2.8 text-[0.8125rem] font-medium opacity-0 backdrop-blur-[20px] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
 
           @variant motion-reduce {
             @apply transition-none;
