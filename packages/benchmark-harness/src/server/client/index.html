@@ -293,7 +293,7 @@
         }
 
         .bh-label-wrap-env {
-          @apply min-w-[min(100%,260px)] flex-1.1 sm:max-w-[22rem];
+          @apply min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem];
         }
 
         .bh-find-row {
@@ -450,7 +450,7 @@
 
         /* Header — secondary action (Safari / Settings-style, not a filled CTA) */
         .bh-btn-reload {
-          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload inline-flex items-center justify-center gap-1.6 rounded-full border px-3.8 py-1.52 [font-family:inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[14px] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
+          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] [font-family:inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[14px] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
 
           @variant bh-hover-ready {
             @apply text-bh-ink-hover border-bh-border-strong bg-bh-fill-white-7;
@@ -478,7 +478,7 @@
         }
 
         .bh-card {
-          @apply border-bh-border bg-bh-surface-elevated shadow-bh-card rounded-2xl border px-4.2 py-3.4 backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease];
+          @apply border-bh-border bg-bh-surface-elevated shadow-bh-card rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease];
 
           @variant hover {
             @apply border-bh-border-strong shadow-bh-card-hover;
@@ -494,15 +494,15 @@
           @apply text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] break-words tabular-nums;
 
           & + .bh-metric-meta {
-            @apply mt-1.52;
+            @apply mt-[0.38rem];
           }
         }
 
         .bh-metric-meta {
-          @apply text-bh-label mt-0.96 text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em];
+          @apply text-bh-label mt-[0.24rem] text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em];
 
           & + & {
-            @apply mt-0.88;
+            @apply mt-[0.22rem];
           }
         }
 
@@ -519,7 +519,7 @@
         }
 
         .bh-metric-iqr {
-          @apply mt-1.12 flex flex-col gap-1.68;
+          @apply mt-[0.28rem] flex flex-col gap-[0.42rem];
         }
 
         .bh-metric-row {
@@ -535,11 +535,11 @@
         }
 
         .bh-lbl {
-          @apply text-bh-label mb-1.6 text-[0.625rem] font-semibold tracking-[0.09em] uppercase;
+          @apply text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase;
         }
 
         .bh-chip {
-          @apply inline-flex items-center rounded-full px-2.6 py-0.6 text-[0.7rem] font-medium;
+          @apply inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem] text-[0.7rem] font-medium;
         }
 
         .bh-chip-warn {
@@ -559,7 +559,7 @@
 
           th,
           td {
-            @apply border-b-bh-table-line border-b px-2.6 py-1.8 text-left;
+            @apply border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left;
           }
 
           th {
@@ -701,7 +701,7 @@
         }
 
         #bh-toast {
-          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-4.2 py-2.8 text-[0.8125rem] font-medium opacity-0 backdrop-blur-[20px] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
+          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[20px] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
 
           @variant motion-reduce {
             @apply transition-none;
