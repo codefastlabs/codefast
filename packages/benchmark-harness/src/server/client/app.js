@@ -94,12 +94,10 @@
   }
 
   function chartWheelModifierKbdHtml() {
-    var kbdClass =
-      "rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300";
     if (isMacLikePlatform()) {
-      return "<kbd class='" + kbdClass + "'>⌃ Control</kbd>";
+      return "<kbd class='bh-kbd'>⌃ Control</kbd>";
     }
-    return "<kbd class='" + kbdClass + "'>Ctrl</kbd>";
+    return "<kbd class='bh-kbd'>Ctrl</kbd>";
   }
 
   function applyChartWheelHint() {
@@ -1296,7 +1294,7 @@
 
     if (pageTitleEl) {
       pageTitleEl.innerHTML =
-        esc(data.title) + '<span class="font-normal text-zinc-400"> · hz/op median per run</span>';
+        esc(data.title) + '<span class="bh-title-suffix"> · hz/op median per run</span>';
     }
     var docTitle = String(data.title || "").trim();
     document.title = /bench history\s*$/i.test(docTitle) ? docTitle : docTitle + " — bench history";
@@ -1400,11 +1398,11 @@
         showToast("Could not reload data: " + String(err));
       } else if (loadingOverlay) {
         loadingOverlay.innerHTML =
-          '<div class="text-center"><p class="text-red-400 text-sm">Failed to load bench data.</p>' +
-          '<p class="mt-1 text-xs text-zinc-500">' +
-          String(err) +
+          '<div class="bh-error-panel"><p class="bh-error-title">Failed to load bench data.</p>' +
+          '<p class="bh-error-detail">' +
+          esc(err) +
           "</p>" +
-          '<p class="mt-3 text-xs text-zinc-600">Run <code class="text-indigo-400">pnpm bench</code> first to generate data.</p></div>';
+          '<p class="bh-error-hint">Run <code class="bh-error-code">pnpm bench</code> first to generate data.</p></div>';
       }
       return false;
     } finally {
