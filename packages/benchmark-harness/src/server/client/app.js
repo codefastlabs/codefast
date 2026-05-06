@@ -340,8 +340,6 @@
   var wireControlsApplied = false;
   var detailsPersistenceApplied = false;
   var chartWheelHintApplied = false;
-  var scrollActionsObserverWired = false;
-  var scrollActionsObserver = null;
 
   // ---------------------------------------------------------------------------
   // Chart resize helper
@@ -1187,65 +1185,6 @@
   // ---------------------------------------------------------------------------
   // Wire up controls
   // ---------------------------------------------------------------------------
-  function wireScrollActionsAffordance() {
-    if (scrollActionsObserverWired) {
-      return;
-    }
-    var shell = document.getElementById("bh-scroll-actions");
-    var primaryReload = document.getElementById("reload-data-btn");
-    var scrollReload = document.getElementById("reload-data-btn-scroll");
-    var scrollCopy = document.getElementById("copy-view-link-btn-scroll");
-    if (!shell || !primaryReload || typeof IntersectionObserver === "undefined") {
-      return;
-    }
-    scrollActionsObserverWired = true;
-
-    function setScrollActionsVisible(show) {
-      shell.hidden = !show;
-      shell.setAttribute("aria-hidden", show ? "false" : "true");
-      shell.classList.toggle("bh-scroll-actions--visible", show);
-    }
-
-    scrollActionsObserver = new IntersectionObserver(
-      function (entries) {
-        var e = entries[0];
-        if (!e) {
-          return;
-        }
-        setScrollActionsVisible(!e.isIntersecting);
-      },
-      { root: null, threshold: 0 },
-    );
-    scrollActionsObserver.observe(primaryReload);
-
-    if (scrollReload) {
-      scrollReload.addEventListener("click", function () {
-        void loadBenchData({ isReload: true });
-      });
-    }
-    if (scrollCopy) {
-      scrollCopy.addEventListener("click", function () {
-        var url = location.origin + location.pathname;
-        var h = buildViewStateHash();
-        if (h) {
-          url += "#" + h;
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          void navigator.clipboard.writeText(url).then(
-            function () {
-              showToast("Link copied");
-            },
-            function () {
-              showToast("Could not copy");
-            },
-          );
-        } else {
-          showToast("Clipboard unavailable");
-        }
-      });
-    }
-  }
-
   function wireCommandPalette() {
     if (commandPaletteWired) {
       return;
@@ -1687,7 +1626,7 @@
         " (server clock).";
     }
     pageFooter.innerHTML =
-      "Reload data from the header or refresh the page for the latest snapshot · " +
+      "Reload data from Chart data or refresh the page for the latest snapshot · " +
       esc(String(data.runs.length)) +
       " runs · " +
       esc(String(data.scenarios.length)) +
@@ -1802,14 +1741,9 @@
   async function loadBenchData(opts) {
     var isReload = !!(opts && opts.isReload);
     var btnReload = document.getElementById("reload-data-btn");
-    var btnReloadScroll = document.getElementById("reload-data-btn-scroll");
     if (isReload && btnReload) {
       btnReload.disabled = true;
       btnReload.setAttribute("aria-busy", "true");
-    }
-    if (isReload && btnReloadScroll) {
-      btnReloadScroll.disabled = true;
-      btnReloadScroll.setAttribute("aria-busy", "true");
     }
     try {
       var res = await fetch("/api/payload", { cache: "no-store" });
@@ -1833,10 +1767,6 @@
       if (isReload && btnReload) {
         btnReload.disabled = false;
         btnReload.removeAttribute("aria-busy");
-      }
-      if (isReload && btnReloadScroll) {
-        btnReloadScroll.disabled = false;
-        btnReloadScroll.removeAttribute("aria-busy");
       }
     }
 
@@ -1875,11 +1805,6 @@
     }
 
     render();
-    if (!scrollActionsObserverWired) {
-      requestAnimationFrame(function () {
-        wireScrollActionsAffordance();
-      });
-    }
     if (isReload) {
       showToast("Bench data reloaded.");
     }
