@@ -68,15 +68,20 @@
         --color-bh-ok-border: rgba(52, 199, 89, 0.38);
         --color-bh-ok-bg: rgba(52, 199, 89, 0.11);
 
-        --shadow-bh-glass: 0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.35);
-        --shadow-bh-glass-tight: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        --shadow-bh-sticky: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 12px 40px rgba(0, 0, 0, 0.42);
-        --shadow-bh-card: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 8px 28px rgba(0, 0, 0, 0.28);
-        --shadow-bh-card-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 10px 32px rgba(0, 0, 0, 0.32);
-        --shadow-bh-btn-reload: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        --shadow-bh-toolbar: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        --shadow-bh-field-inset: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-        --shadow-bh-toast: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 16px 48px rgba(0, 0, 0, 0.45);
+        --shadow-bh-glass:
+          0 0 0 0.0625rem rgba(255, 255, 255, 0.04) inset, 0 0.75rem 2.5rem rgba(0, 0, 0, 0.35);
+        --shadow-bh-glass-tight: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset;
+        --shadow-bh-sticky:
+          0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 0.75rem 2.5rem rgba(0, 0, 0, 0.42);
+        --shadow-bh-card:
+          0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset, 0 0.5rem 1.75rem rgba(0, 0, 0, 0.28);
+        --shadow-bh-card-hover:
+          0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 0.625rem 2rem rgba(0, 0, 0, 0.32);
+        --shadow-bh-btn-reload: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset;
+        --shadow-bh-toolbar: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset;
+        --shadow-bh-field-inset: 0 0.0625rem 0 rgba(255, 255, 255, 0.04) inset;
+        --shadow-bh-toast:
+          0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 1rem 3rem rgba(0, 0, 0, 0.45);
       }
 
       /* ─── v4: named variants for repeated selectors (use with @variant + @apply) ─ */
@@ -127,7 +132,7 @@
 
         /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
         .bh-glass--sticky {
-          @apply border-bh-border bg-bh-surface-sticky shadow-bh-sticky rounded-[1.25rem] border backdrop-blur-[36px] backdrop-saturate-200;
+          @apply border-bh-border bg-bh-surface-sticky shadow-bh-sticky rounded-[1.25rem] border backdrop-blur-[2.25rem] backdrop-saturate-200;
         }
 
         .bh-section-title {
@@ -296,7 +301,7 @@
         }
 
         .bh-label-wrap--env {
-          @apply min-w-[min(100%,260px)] flex-[1.1] sm:max-w-[22rem];
+          @apply min-w-[min(100%,16.25rem)] flex-[1.1] sm:max-w-[22rem];
         }
 
         .bh-find-panel__row {
@@ -361,7 +366,7 @@
         }
 
         .bh-chart__host {
-          @apply shadow-bh-glass-tight relative mt-5 h-[min(440px,58vh)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.08];
+          @apply shadow-bh-glass-tight relative mt-5 h-[min(27.5rem,58vh)] min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.08];
         }
 
         .bh-chart__empty-actions {
@@ -452,14 +457,14 @@
 
         /* Header — secondary action (Safari / Settings-style, not a filled CTA) */
         .bh-btn-reload {
-          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] [font-family:inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[14px] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
+          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] [font-family:inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
 
           @variant bh-hover-ready {
             @apply text-bh-ink-hover border-bh-border-strong bg-bh-fill-white-7;
           }
 
           @variant focus-visible {
-            @apply outline-bh-blue outline outline-2 outline-offset-[3px];
+            @apply outline-bh-blue outline outline-2 outline-offset-[0.1875rem];
           }
 
           @variant disabled {
@@ -595,12 +600,12 @@
 
         .bh-table th.bh-sticky-1,
         .bh-table td.bh-sticky-1 {
-          @apply bg-bh-table-sticky sticky left-0 z-2 max-w-[14rem] min-w-30 shadow-[1px_0_0_var(--color-bh-border-strong)];
+          @apply bg-bh-table-sticky sticky left-0 z-2 max-w-[14rem] min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)];
         }
 
         .bh-table th.bh-sticky-2,
         .bh-table td.bh-sticky-2 {
-          @apply bg-bh-table-sticky sticky left-[7.5rem] z-2 min-w-[5rem] shadow-[1px_0_0_var(--color-bh-border-strong)];
+          @apply bg-bh-table-sticky sticky left-[7.5rem] z-2 min-w-[5rem] shadow-[0.0625rem_0_0_var(--color-bh-border-strong)];
         }
 
         .bh-metrics-grid {
@@ -662,7 +667,7 @@
           }
 
           @variant focus-visible {
-            @apply z-1 shadow-[inset_0_0_0_2px_var(--color-bh-blue)];
+            @apply z-1 shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)];
           }
 
           @variant disabled {
@@ -703,7 +708,7 @@
         }
 
         #bh-toast {
-          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[20px] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
+          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
 
           @variant motion-reduce {
             @apply transition-none;
