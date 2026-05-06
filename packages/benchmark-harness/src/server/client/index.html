@@ -210,15 +210,16 @@
           }
         }
 
+        /* Export — secondary chrome (same family as .bh-btn-reload), not a primary blue CTA */
         .bh-btn-download-png {
-          @apply bg-bh-blue order-last w-full shrink-0 justify-center rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 sm:order-none sm:ml-auto sm:w-auto sm:py-2.5;
+          @apply text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 [font-family:inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 sm:order-none sm:ml-auto sm:w-auto sm:py-2 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease];
 
           @variant hover {
-            @apply bg-bh-blue-hover shadow-blue-500/28;
+            @apply text-bh-ink-hover border-bh-border-strong bg-bh-fill-white-7;
           }
 
           @variant focus-visible {
-            @apply ring-bh-blue ring-offset-bh-bg-gradient-top ring-2 ring-offset-2 outline-none;
+            @apply outline-bh-blue outline outline-2 outline-offset-[0.1875rem];
           }
         }
 
@@ -236,7 +237,7 @@
 
         .bh-app-shell {
           @apply mx-auto max-w-7xl px-3 pt-6 sm:px-6 sm:pt-10;
-          padding-bottom: max(7rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
+          padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
 
           @variant sm {
             padding-bottom: max(
@@ -336,6 +337,18 @@
           }
         }
 
+        .bh-chart-control-panel__head {
+          @apply flex flex-wrap items-center justify-between gap-2 gap-y-1;
+        }
+
+        .bh-chart-control-panel__head .bh-section-title {
+          @apply mb-0;
+        }
+
+        .bh-chart-control-panel__head .bh-btn-reload {
+          @apply shrink-0;
+        }
+
         .bh-chart-control-panel__fields {
           @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-3;
         }
@@ -389,7 +402,7 @@
           }
 
           .bh-chart-display-details__body .bh-btn-download-png {
-            @apply mt-0 rounded-none border-0;
+            @apply mt-0 min-h-11 rounded-none border-0 py-3;
           }
         }
 
@@ -413,8 +426,8 @@
             @apply gap-2 px-3 py-2.5;
           }
 
-          .bh-chart-control-panel .bh-section-title:first-child {
-            @apply mb-0.5;
+          .bh-chart-control-panel__head {
+            @apply gap-x-2 gap-y-2;
           }
 
           .bh-chart-control-panel .bh-field-label {
@@ -912,7 +925,7 @@
         }
 
         .bh-header-actions > .bh-btn-reload {
-          @apply min-h-11 flex-1 justify-center sm:min-h-0 sm:flex-none;
+          @apply min-h-11 justify-center sm:min-h-0;
         }
 
         /* Command palette (⌘K / Ctrl+K) */
@@ -964,44 +977,6 @@
         .bh-command-palette__hint {
           @apply border-t border-white/[0.06] px-3 py-2 text-[0.6875rem] text-zinc-500;
         }
-
-        /* When header reload controls scroll off-screen, mirror them here (fixed). */
-        .bh-scroll-actions {
-          @apply pointer-events-none fixed z-[120] opacity-0;
-          top: auto;
-          right: max(0.75rem, env(safe-area-inset-right, 0px));
-          bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
-          left: max(0.75rem, env(safe-area-inset-left, 0px));
-          transform: translateY(0.35rem);
-          transition:
-            opacity 0.2s ease,
-            transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-
-          @variant motion-reduce {
-            @apply transition-none;
-          }
-
-          @variant sm {
-            top: max(0.75rem, env(safe-area-inset-top, 0px));
-            right: max(0.75rem, env(safe-area-inset-right, 0px));
-            bottom: auto;
-            left: auto;
-            transform: translateY(-0.25rem);
-          }
-        }
-
-        .bh-scroll-actions.bh-scroll-actions--visible {
-          @apply pointer-events-auto opacity-100;
-          transform: translateY(0);
-        }
-
-        .bh-scroll-actions__inner {
-          @apply flex w-full flex-wrap items-stretch justify-stretch gap-2 px-2.5 py-2 sm:w-auto sm:items-center sm:justify-end;
-        }
-
-        .bh-scroll-actions__inner > .bh-btn-reload {
-          @apply min-h-11 flex-1 justify-center sm:min-h-0 sm:flex-none;
-        }
       }
     </style>
     <script
@@ -1027,51 +1002,6 @@
     </div>
 
     <main class="bh-app-shell" id="app" role="main" style="display: none">
-      <div
-        aria-hidden="true"
-        class="bh-scroll-actions"
-        hidden
-        id="bh-scroll-actions"
-      >
-        <div class="bh-glass bh-glass--tight bh-scroll-actions__inner">
-          <button
-            aria-label="Copy link to this view"
-            class="bh-btn-reload"
-            id="copy-view-link-btn-scroll"
-            title="Copies URL including filters, scenario, and display toggles"
-            type="button"
-          >
-            Copy link
-          </button>
-          <button
-            aria-label="Reload benchmark data from server"
-            class="bh-btn-reload"
-            id="reload-data-btn-scroll"
-            title="Fetch the latest runs from the server without scrolling to the header"
-            type="button"
-          >
-            <svg
-              aria-hidden="true"
-              class="bh-btn-reload__icon"
-              fill="none"
-              height="14"
-              viewBox="0 0 24 24"
-              width="14"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
-            Reload data
-          </button>
-        </div>
-      </div>
-
       <header class="bh-page-header">
         <p class="bh-eyebrow">Bench history viewer</p>
         <h1 class="bh-page-title" id="page-title"></h1>
@@ -1093,32 +1023,6 @@
               type="button"
             >
               Copy link
-            </button>
-            <button
-              aria-label="Reload benchmark data from server"
-              class="bh-btn-reload"
-              id="reload-data-btn"
-              title="Fetch the latest runs from the server without refreshing the page"
-              type="button"
-            >
-              <svg
-                aria-hidden="true"
-                class="bh-btn-reload__icon"
-                fill="none"
-                height="14"
-                viewBox="0 0 24 24"
-                width="14"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                />
-              </svg>
-              Reload data
             </button>
           </div>
         </div>
@@ -1174,7 +1078,35 @@
       </section>
 
       <div aria-label="Chart data selection" class="bh-chart-control-panel bh-glass--sticky">
-        <p class="bh-section-title">Chart data</p>
+        <div class="bh-chart-control-panel__head">
+          <p class="bh-section-title">Chart data</p>
+          <button
+            aria-label="Reload benchmark data from server"
+            class="bh-btn-reload"
+            id="reload-data-btn"
+            title="Fetch the latest runs from the server without refreshing the page"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="bh-btn-reload__icon"
+              fill="none"
+              height="14"
+              viewBox="0 0 24 24"
+              width="14"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+            Reload data
+          </button>
+        </div>
         <div class="bh-chart-control-panel__fields">
           <div class="bh-chart-control-panel__scenario">
             <label class="bh-label-wrap--scenario">
