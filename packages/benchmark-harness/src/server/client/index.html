@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      name="viewport"
+    />
     <title>Bench history viewer</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
@@ -84,7 +87,8 @@
           0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 1rem 3rem rgba(0, 0, 0, 0.45);
       }
 
-      /* ─── v4: named variants for repeated selectors (use with @variant + @apply) ─ */
+      /* ─── v4: custom variants (@custom-variant). Use @variant only *inside* a rule block
+          (e.g. .foo { … @variant sm { … } }), never as a wrapper around .foo. ─ */
       @custom-variant bh-hover-ready (&:hover:not(:disabled));
       @custom-variant bh-aria-busy (&[aria-busy="true"]);
       @custom-variant bh-toast-visible (&.is-visible);
@@ -96,7 +100,7 @@
       @layer components {
         /* Apple-inspired dark body: ambient depth + system-blue radial glow */
         .bh-app-body {
-          @apply font-bh bg-bh-bg bg-fixed antialiased [text-rendering:optimizeLegibility];
+          @apply font-bh overflow-x-clip bg-bh-bg bg-fixed antialiased [text-rendering:optimizeLegibility];
 
           @variant motion-safe {
             @apply scroll-smooth;
@@ -121,13 +125,16 @@
             );
         }
 
+        /* Avoid @apply shadow-bh-glass — some @tailwindcss/browser builds mis-resolve it as utility `bh-glass`. */
         .bh-glass {
-          @apply border-bh-border bg-bh-surface shadow-bh-glass rounded-[1.25rem] border backdrop-blur-xl backdrop-saturate-180;
+          @apply border-bh-border bg-bh-surface rounded-[1.25rem] border backdrop-blur-xl backdrop-saturate-180;
+          box-shadow: var(--shadow-bh-glass);
         }
 
         /* Tighter inset shadow — applied alongside .bh-glass for compact panels */
         .bh-glass--tight {
-          @apply shadow-bh-glass-tight rounded-2xl;
+          @apply rounded-2xl;
+          box-shadow: var(--shadow-bh-glass-tight);
         }
 
         /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
@@ -204,7 +211,7 @@
         }
 
         .bh-btn-download-png {
-          @apply bg-bh-blue ml-auto shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20;
+          @apply bg-bh-blue order-last w-full shrink-0 justify-center rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 sm:order-none sm:ml-auto sm:w-auto sm:py-2.5;
 
           @variant hover {
             @apply bg-bh-blue-hover shadow-blue-500/28;
@@ -228,11 +235,19 @@
         }
 
         .bh-app-shell {
-          @apply mx-auto max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20;
+          @apply mx-auto max-w-7xl px-3 pt-6 sm:px-6 sm:pt-10;
+          padding-bottom: max(7rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
+
+          @variant sm {
+            padding-bottom: max(
+              5rem,
+              calc(env(safe-area-inset-bottom, 0px) + 3.5rem)
+            );
+          }
         }
 
         .bh-page-header {
-          @apply mb-10 max-w-4xl border-b border-white/[0.06] pb-8;
+          @apply mb-8 max-w-4xl border-b border-white/[0.06] pb-6 sm:mb-10 sm:pb-8;
         }
 
         .bh-eyebrow {
@@ -240,7 +255,7 @@
         }
 
         .bh-page-title {
-          @apply mt-3 text-2xl font-semibold tracking-[-0.02em] text-zinc-50;
+          @apply mt-3 break-words text-2xl font-semibold tracking-[-0.02em] text-zinc-50;
 
           @variant sm {
             @apply text-[1.75rem] leading-tight;
@@ -252,7 +267,7 @@
         }
 
         .bh-lede {
-          @apply max-w-prose text-[0.9375rem] leading-relaxed text-zinc-400/95;
+          @apply max-w-prose text-pretty break-words text-[0.9375rem] leading-relaxed text-zinc-400/95;
         }
 
         /* How-to panel — collapsible intro details (cf. Apple disclosure rows) */
@@ -289,39 +304,157 @@
         }
 
         .bh-label-wrap--search {
-          @apply block min-w-[min(100%,16rem)] shrink-0;
+          @apply block w-full min-w-0 shrink-0 sm:min-w-[min(100%,16rem)] sm:w-auto;
         }
 
         .bh-label-wrap--group {
-          @apply block shrink-0;
+          @apply block w-full shrink-0 sm:w-auto;
         }
 
         .bh-label-wrap--scenario {
-          @apply min-w-0 flex-1 sm:max-w-md sm:min-w-56;
+          @apply min-w-0 w-full flex-1 sm:w-auto sm:min-w-56 sm:max-w-md;
         }
 
         .bh-label-wrap--env {
-          @apply min-w-[min(100%,16.25rem)] flex-[1.1] sm:max-w-[22rem];
+          @apply min-w-0 w-full sm:w-auto sm:min-w-[min(100%,16.25rem)] sm:flex-[1.1] sm:max-w-[22rem];
         }
 
         .bh-find-panel__row {
-          @apply mt-4 flex flex-wrap items-end gap-x-6 gap-y-4;
+          @apply mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6 sm:gap-y-4;
         }
 
         .bh-find-panel {
-          @apply mt-10 px-5 py-5 sm:px-6;
+          @apply mt-8 px-4 py-4 sm:mt-10 sm:px-6 sm:py-5;
         }
 
         .bh-chart-control-panel {
-          @apply sticky top-3 z-40 mt-8 flex flex-col gap-4 px-4 py-4 sm:-mx-2 sm:px-5;
+          @apply sticky z-40 mt-6 mb-5 flex flex-col gap-3 px-3 py-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4;
+          top: max(0.5rem, env(safe-area-inset-top, 0px));
+
+          @variant sm {
+            top: 0.75rem;
+          }
+        }
+
+        .bh-chart-control-panel__fields {
+          @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-3;
         }
 
         .bh-chart-control-panel__scenario {
-          @apply flex min-w-0 flex-1 flex-wrap items-end gap-2 sm:max-w-none sm:flex-[1_1_20rem];
+          @apply flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end;
         }
 
-        .bh-chart-control-panel__display {
-          @apply flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] pt-4 text-[0.9rem] text-zinc-300;
+        /* Display & export — desktop: flat toolbar; mobile: disclosure (Settings-style) */
+        .bh-chart-display-details {
+          @apply mt-1 border-t border-white/[0.06] sm:mt-0 sm:border-t-0;
+        }
+
+        .bh-chart-display-details__summary {
+          @apply flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none;
+
+          @apply marker:content-[''] [&::-webkit-details-marker]:hidden;
+        }
+
+        .bh-chart-display-details__summary-text {
+          @apply text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase;
+        }
+
+        .bh-chart-display-details__chevron {
+          @apply text-zinc-500 transition-transform duration-200 ease-out;
+        }
+
+        .bh-chart-display-details[open] .bh-chart-display-details__chevron {
+          transform: rotate(180deg);
+        }
+
+        .bh-chart-display-details__body {
+          @apply flex flex-col gap-3 text-[0.9rem] text-zinc-300 sm:divide-y-0 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:border-t sm:border-white/[0.06] sm:pt-4;
+        }
+
+        .bh-chart-display-details__desk-label {
+          @apply hidden sm:inline;
+        }
+
+        @media (max-width: 639px) {
+          .bh-chart-display-details__summary {
+            @apply -mx-0.5 px-1 active:bg-white/[0.04];
+          }
+
+          .bh-chart-display-details__body {
+            @apply gap-0 divide-y divide-white/[0.06] overflow-hidden rounded-xl bg-black/22 py-0 ring-1 ring-white/[0.06];
+          }
+
+          .bh-chart-display-details__body .bh-toggle__label {
+            @apply min-h-11 justify-between gap-3 border-0 px-3 py-2.5;
+          }
+
+          .bh-chart-display-details__body .bh-btn-download-png {
+            @apply mt-0 rounded-none border-0;
+          }
+        }
+
+        @media (min-width: 640px) {
+          .bh-chart-display-details__summary {
+            @apply hidden;
+          }
+
+          .bh-chart-display-details__chevron {
+            @apply hidden;
+          }
+
+          .bh-chart-display-details {
+            @apply mt-0 border-t-0;
+          }
+        }
+
+        /* Mobile: compact “Chart data” — grouped fields, no trapped scroll; chart stays hero */
+        @media (max-width: 639px) {
+          .bh-chart-control-panel {
+            @apply gap-2 px-3 py-2.5;
+          }
+
+          .bh-chart-control-panel .bh-section-title:first-child {
+            @apply mb-0.5;
+          }
+
+          .bh-chart-control-panel .bh-field-label {
+            margin-bottom: 0.2rem;
+            font-size: 0.6875rem;
+            line-height: 1.2;
+          }
+
+          .bh-chart-control-panel__fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 0.5rem;
+            border-radius: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.22);
+            padding: 0.5rem;
+            box-shadow:
+              inset 0 0.0625rem 0 rgba(255, 255, 255, 0.05),
+              0 0 0 0.0625rem rgba(255, 255, 255, 0.06);
+          }
+
+          .bh-chart-control-panel__scenario {
+            grid-column: 1 / -1;
+            gap: 0.375rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 0.125rem;
+            padding-bottom: 0.5rem;
+          }
+
+          .bh-chart-control-panel select.bh-field {
+            height: 2.25rem;
+            min-height: 2.25rem;
+          }
+
+          .bh-chart-control-panel .bh-chart-toolbar.bh-chart-toolbar--match-field {
+            min-height: 2.5rem;
+          }
+
+          .bh-chart-control-panel .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
+            min-height: 2.5rem;
+          }
         }
 
         .bh-metrics-section__head {
@@ -329,7 +462,7 @@
         }
 
         .bh-metrics-section {
-          @apply mt-10 mb-8 px-5 py-5 sm:px-6;
+          @apply mt-8 mb-8 px-4 py-4 sm:mt-10 sm:px-6 sm:py-5;
         }
 
         .bh-metrics-section__what {
@@ -341,7 +474,7 @@
         }
 
         .bh-chart-main-section {
-          @apply overflow-hidden px-5 py-5 sm:px-6;
+          @apply overflow-x-clip px-4 py-4 sm:px-6 sm:py-5;
         }
 
         .bh-chart-main-section__head {
@@ -366,7 +499,10 @@
         }
 
         .bh-chart__host {
-          @apply shadow-bh-glass-tight relative mt-5 h-[min(27.5rem,58vh)] min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.08];
+          @apply relative mt-5 min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.08];
+          box-shadow: var(--shadow-bh-glass-tight);
+          height: min(27.5rem, 58vh);
+          height: min(27.5rem, 58dvh);
         }
 
         .bh-chart__empty-actions {
@@ -404,10 +540,6 @@
         /* Spinner ring — visual circle track; pair with .bh-spinner for animation */
         .bh-spinner--ring {
           @apply border-t-bh-blue mx-auto mb-4 h-8 w-8 rounded-full border-2 border-zinc-600/80;
-        }
-
-        .bh-chart-control-panel__fields {
-          @apply flex flex-wrap items-end gap-3;
         }
 
         .bh-kpi-val--primary {
@@ -559,6 +691,7 @@
 
         .bh-table-wrap {
           @apply border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border;
+          -webkit-overflow-scrolling: touch;
         }
 
         .bh-table {
@@ -609,7 +742,12 @@
         }
 
         .bh-metrics-grid {
-          @apply grid grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))] gap-3;
+          @apply grid gap-3;
+          grid-template-columns: 1fr;
+
+          @variant sm {
+            grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+          }
         }
 
         /* Per-card accent: JS sets --color-bh-metric-accent; ratio cards use .bh-metric--accent-ratio */
@@ -679,6 +817,21 @@
           }
         }
 
+        @media (max-width: 639px) {
+          .bh-chart-toolbar.bh-chart-toolbar--match-field {
+            height: auto;
+            min-height: 2.75rem;
+            width: 100%;
+          }
+
+          .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
+            min-height: 2.75rem;
+            flex: 1 1 0;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+          }
+        }
+
         #loading-overlay {
           @apply bg-bh-overlay fixed inset-0 z-100 flex items-center justify-center backdrop-blur-lg;
 
@@ -708,7 +861,9 @@
         }
 
         #bh-toast {
-          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed right-4 bottom-4 z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
+          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
+          right: max(1rem, env(safe-area-inset-right, 0px));
+          bottom: max(1rem, env(safe-area-inset-bottom, 0px));
 
           @variant motion-reduce {
             @apply transition-none;
@@ -717,6 +872,135 @@
           @variant bh-toast-visible {
             @apply pointer-events-auto translate-y-0 scale-100 opacity-100;
           }
+        }
+
+        /* Skip link — visible on keyboard focus only */
+        .bh-skip-link {
+          @apply outline-bh-blue fixed z-[500] -translate-y-[120%] rounded-xl border border-white/12 bg-bh-surface-sticky px-3.5 py-2 text-sm font-medium text-zinc-100 shadow-bh-sticky backdrop-blur-xl focus:translate-y-0 focus:outline focus:outline-2 focus:outline-offset-2;
+          top: max(0.75rem, env(safe-area-inset-top, 0px));
+          left: max(0.75rem, env(safe-area-inset-left, 0px));
+        }
+
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border-width: 0;
+        }
+
+        .bh-label-wrap--window {
+          @apply w-full min-w-0 shrink-0 sm:w-auto sm:min-w-[min(100%,10rem)] sm:max-w-[11rem];
+        }
+
+        .bh-chart__host--hero {
+          @apply min-h-[20rem];
+          height: min(32rem, 70vh);
+          height: min(32rem, 70dvh);
+        }
+
+        .bh-metrics-section--after-chart {
+          @apply mt-8 mb-8;
+        }
+
+        .bh-header-actions {
+          @apply flex w-full shrink-0 flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end;
+        }
+
+        .bh-header-actions > .bh-btn-reload {
+          @apply min-h-11 flex-1 justify-center sm:min-h-0 sm:flex-none;
+        }
+
+        /* Command palette (⌘K / Ctrl+K) */
+        .bh-command-palette {
+          @apply fixed inset-0 z-[400] flex items-start justify-center px-3 sm:px-4;
+          padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+
+          @variant sm {
+            padding-top: min(20vh, 10rem);
+          }
+        }
+
+        .bh-command-palette__scrim {
+          @apply absolute inset-0 bg-bh-overlay/75 backdrop-blur-[0.35rem];
+        }
+
+        .bh-command-palette__panel {
+          @apply relative z-[1] mt-2 w-full max-w-lg overflow-hidden p-0 sm:mt-0;
+          max-height: min(85vh, calc(100vh - 2.5rem));
+          max-height: min(85dvh, calc(100dvh - 2.5rem));
+
+          @variant sm {
+            max-height: none;
+          }
+        }
+
+        .bh-command-palette__input {
+          @apply w-full rounded-none border-0 border-b border-white/[0.08] bg-black/25 px-4 py-3 text-sm;
+        }
+
+        .bh-command-palette__list {
+          @apply list-none overflow-y-auto overscroll-contain p-2;
+          max-height: min(50vh, 17.5rem);
+          max-height: min(50dvh, 17.5rem);
+
+          @variant sm {
+            max-height: min(48vh, 17.5rem);
+          }
+        }
+
+        .bh-command-palette__item {
+          @apply mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-zinc-200;
+
+          @variant hover {
+            @apply bg-white/[0.06];
+          }
+        }
+
+        .bh-command-palette__hint {
+          @apply border-t border-white/[0.06] px-3 py-2 text-[0.6875rem] text-zinc-500;
+        }
+
+        /* When header reload controls scroll off-screen, mirror them here (fixed). */
+        .bh-scroll-actions {
+          @apply pointer-events-none fixed z-[120] opacity-0;
+          top: auto;
+          right: max(0.75rem, env(safe-area-inset-right, 0px));
+          bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+          left: max(0.75rem, env(safe-area-inset-left, 0px));
+          transform: translateY(0.35rem);
+          transition:
+            opacity 0.2s ease,
+            transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+          @variant motion-reduce {
+            @apply transition-none;
+          }
+
+          @variant sm {
+            top: max(0.75rem, env(safe-area-inset-top, 0px));
+            right: max(0.75rem, env(safe-area-inset-right, 0px));
+            bottom: auto;
+            left: auto;
+            transform: translateY(-0.25rem);
+          }
+        }
+
+        .bh-scroll-actions.bh-scroll-actions--visible {
+          @apply pointer-events-auto opacity-100;
+          transform: translateY(0);
+        }
+
+        .bh-scroll-actions__inner {
+          @apply flex w-full flex-wrap items-stretch justify-stretch gap-2 px-2.5 py-2 sm:w-auto sm:items-center sm:justify-end;
+        }
+
+        .bh-scroll-actions__inner > .bh-btn-reload {
+          @apply min-h-11 flex-1 justify-center sm:min-h-0 sm:flex-none;
         }
       }
     </style>
@@ -734,6 +1018,7 @@
     ></script>
   </head>
   <body class="bh-app-body min-h-screen text-zinc-200">
+    <a class="bh-skip-link" href="#bench-chart-host">Skip to chart</a>
     <div aria-live="polite" id="loading-overlay" role="status">
       <div class="bh-loading__stack">
         <div class="bh-spinner bh-spinner--ring"></div>
@@ -741,20 +1026,28 @@
       </div>
     </div>
 
-    <div class="bh-app-shell" id="app" style="display: none">
-      <header class="bh-page-header">
-        <p class="bh-eyebrow">Bench history viewer</p>
-        <h1 class="bh-page-title" id="page-title"></h1>
-        <div class="bh-header-lede-row">
-          <p class="bh-lede">
-            Compare saved benchmark runs: median hz/op per run, optional uncertainty bands, and
-            primary-vs-compare ratios. Timestamps use your device clock.
-          </p>
+    <main class="bh-app-shell" id="app" role="main" style="display: none">
+      <div
+        aria-hidden="true"
+        class="bh-scroll-actions"
+        hidden
+        id="bh-scroll-actions"
+      >
+        <div class="bh-glass bh-glass--tight bh-scroll-actions__inner">
+          <button
+            aria-label="Copy link to this view"
+            class="bh-btn-reload"
+            id="copy-view-link-btn-scroll"
+            title="Copies URL including filters, scenario, and display toggles"
+            type="button"
+          >
+            Copy link
+          </button>
           <button
             aria-label="Reload benchmark data from server"
-            class="bh-btn-reload shrink-0"
-            id="reload-data-btn"
-            title="Fetch the latest runs from the server without refreshing the page"
+            class="bh-btn-reload"
+            id="reload-data-btn-scroll"
+            title="Fetch the latest runs from the server without scrolling to the header"
             type="button"
           >
             <svg
@@ -777,6 +1070,58 @@
             Reload data
           </button>
         </div>
+      </div>
+
+      <header class="bh-page-header">
+        <p class="bh-eyebrow">Bench history viewer</p>
+        <h1 class="bh-page-title" id="page-title"></h1>
+        <div class="bh-header-lede-row">
+          <p class="bh-lede">
+            Median hz/op per saved run, optional P25–P75 bands, and primary-vs-compare ratios.
+            <span class="text-zinc-500">Press</span>
+            <kbd class="bh-kbd">⌘K</kbd>
+            <span class="text-zinc-500">or</span>
+            <kbd class="bh-kbd">Ctrl+K</kbd>
+            <span class="text-zinc-500">for quick actions.</span>
+          </p>
+          <div class="bh-header-actions">
+            <button
+              aria-label="Copy link to this view"
+              class="bh-btn-reload"
+              id="copy-view-link-btn"
+              title="Copies URL including filters, scenario, and display toggles"
+              type="button"
+            >
+              Copy link
+            </button>
+            <button
+              aria-label="Reload benchmark data from server"
+              class="bh-btn-reload"
+              id="reload-data-btn"
+              title="Fetch the latest runs from the server without refreshing the page"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="bh-btn-reload__icon"
+                fill="none"
+                height="14"
+                viewBox="0 0 24 24"
+                width="14"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+              Reload data
+            </button>
+          </div>
+        </div>
         <details class="bh-glass bh-glass--tight bh-howto" id="intro-howto-details">
           <summary class="bh-details-summary bh-details-summary--prominent">
             How to read this viewer
@@ -785,34 +1130,16 @@
             <p>
               Quantiles mirror
               <code class="bh-inline-code">report.ts</code>
-              across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% highlights
-              noisy runs. Axis labels show each point in your
+              across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% and a
+              dispersion hint highlight noisy runs. Axis labels use your
               <strong class="bh-prose-emphasis">local time</strong>. Toggle
-              <strong class="bh-prose-emphasis">Ratio</strong> to overlay primary ÷ compare on the
-              right axis.
+              <strong class="bh-prose-emphasis">Primary ratios</strong> to overlay primary ÷ compare on
+              the right axis. Use <strong class="bh-prose-emphasis">Runs shown</strong> to focus on
+              the most recent history window.
             </p>
           </div>
         </details>
       </header>
-
-      <div aria-label="History overview" class="bh-kpi-grid">
-        <div class="bh-card">
-          <div class="bh-lbl">Saved runs</div>
-          <div class="bh-val bh-kpi-val--primary" id="kpi-run-count">—</div>
-        </div>
-        <div class="bh-card">
-          <div class="bh-lbl">Scenarios tracked</div>
-          <div class="bh-val bh-kpi-val--primary" id="kpi-scenario-count">—</div>
-        </div>
-        <div class="bh-card sm:col-span-2 xl:col-span-1">
-          <div class="bh-lbl">Newest saved run · local clock</div>
-          <div class="bh-val bh-kpi-val--secondary" id="kpi-latest-clock">—</div>
-        </div>
-        <div class="bh-card xl:col-span-1">
-          <div class="bh-lbl">Library builds (latest run)</div>
-          <div class="bh-val bh-kpi-val--meta" id="kpi-lib-versions">—</div>
-        </div>
-      </div>
 
       <div class="bh-env-banner" id="multi-env-banner" role="status">
         <strong class="bh-env-banner__title">Multiple environments in history.</strong>
@@ -827,7 +1154,7 @@
             <span class="bh-field-label">Search</span>
             <input
               autocomplete="off"
-              class="bh-focus bh-field w-full max-w-xs px-3 py-2"
+              class="bh-focus bh-field w-full px-3 py-2 sm:max-w-xs"
               id="scenario-search"
               placeholder="Filter by scenario, group…"
               type="search"
@@ -837,7 +1164,7 @@
             <span class="bh-field-label">Group</span>
             <select
               aria-label="Filter by group"
-              class="bh-focus bh-field min-w-[10.5rem] px-3 py-2"
+              class="bh-focus bh-field w-full min-w-0 px-3 py-2 sm:w-auto sm:min-w-[10.5rem]"
               id="group-filter"
             >
               <option value="">All groups</option>
@@ -860,7 +1187,7 @@
             </label>
             <div
               aria-label="Previous or next scenario in the filtered list"
-              class="bh-chart-toolbar bh-chart-toolbar--match-field shrink-0"
+              class="bh-chart-toolbar bh-chart-toolbar--match-field w-full shrink-0 sm:w-auto"
               role="group"
             >
               <button
@@ -893,41 +1220,63 @@
               <option value="">All runs</option>
             </select>
           </label>
+          <label class="bh-label-wrap--window">
+            <span class="bh-field-label">Runs shown</span>
+            <select
+              aria-label="Limit chart to the most recent runs"
+              class="bh-focus bh-field box-border h-10 w-full px-3 text-sm leading-normal"
+              id="run-window-filter"
+              title="After Environment filter, only the newest N runs are plotted"
+            >
+              <option value="all">All matching runs</option>
+              <option value="20">Last 20 runs</option>
+              <option value="10">Last 10 runs</option>
+            </select>
+          </label>
         </div>
-        <div class="bh-chart-control-panel__display">
-          <span class="bh-section-title bh-section-title--inline">Display</span>
-          <label class="bh-toggle__label">
-            <input checked class="bh-toggle__input" id="show-bands" type="checkbox" />
-            <span title="Per-trial P25–P75 spread around each run median">P25–P75 band</span>
-          </label>
-          <label class="bh-toggle__label">
-            <input class="bh-toggle__input" id="log-scale" type="checkbox" />
-            Log Y axis
-          </label>
-          <label class="bh-toggle__label">
-            <input class="bh-toggle__input" id="show-ratio" type="checkbox" />
-            <span id="ratio-label">Ratio</span>
-          </label>
-          <button
-            class="bh-btn-download-png"
-            id="chart-download-png"
-            title="Capture current chart view as PNG"
-            type="button"
-          >
-            Download PNG
-          </button>
-        </div>
+        <details class="bh-chart-display-details" id="chart-display-details">
+          <summary class="bh-focus bh-chart-display-details__summary rounded-xl">
+            <span class="bh-chart-display-details__summary-text">Display &amp; export</span>
+            <svg
+              aria-hidden="true"
+              class="bh-chart-display-details__chevron size-4 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </summary>
+          <div class="bh-chart-display-details__body">
+            <span class="bh-chart-display-details__desk-label bh-section-title bh-section-title--inline"
+              >Display</span
+            >
+            <label class="bh-toggle__label">
+              <input checked class="bh-toggle__input" id="show-bands" type="checkbox" />
+              <span title="Per-trial P25–P75 spread around each run median">P25–P75 band</span>
+            </label>
+            <label class="bh-toggle__label">
+              <input class="bh-toggle__input" id="log-scale" type="checkbox" />
+              Log Y axis
+            </label>
+            <label class="bh-toggle__label">
+              <input class="bh-toggle__input" id="show-ratio" type="checkbox" />
+              <span id="ratio-label">Primary ratios</span>
+            </label>
+            <button
+              class="bh-btn-download-png"
+              id="chart-download-png"
+              title="Capture current chart view as PNG"
+              type="button"
+            >
+              Download PNG
+            </button>
+          </div>
+        </details>
       </div>
-
-      <section aria-live="polite" class="bh-metrics-section bh-glass bh-glass--tight" id="summary">
-        <div class="bh-metrics-section__head">
-          <h2 class="bh-section-title">Selected scenario metrics</h2>
-          <span class="bh-chip bh-chip--ok" id="metrics-scenario-chip"></span>
-        </div>
-        <p class="bh-metrics-section__what" id="scenario-what-line"></p>
-        <div class="bh-metrics-section__cards" id="metrics-cards"></div>
-        <p class="bh-metrics-section__footnote" id="metrics-footnote"></p>
-      </section>
 
       <section aria-labelledby="chart-section-title" class="bh-chart-main-section bh-glass">
         <div class="bh-chart-main-section__head">
@@ -954,7 +1303,7 @@
           <span id="chart-wheel-hint"></span>
           Drag pans on the chart · legend toggles series.
         </p>
-        <div class="bh-chart__host" id="chart-host">
+        <div class="bh-chart__host bh-chart__host--hero" id="bench-chart-host">
           <div aria-live="polite" id="chart-empty-state">
             <p id="chart-empty-message"></p>
             <div class="bh-chart__empty-actions">
@@ -1000,6 +1349,35 @@
         </details>
       </section>
 
+      <section aria-live="polite" class="bh-metrics-section bh-metrics-section--after-chart bh-glass bh-glass--tight" id="summary">
+        <div class="bh-metrics-section__head">
+          <h2 class="bh-section-title">Selected scenario metrics</h2>
+          <span class="bh-chip bh-chip--ok" id="metrics-scenario-chip"></span>
+        </div>
+        <p class="bh-metrics-section__what" id="scenario-what-line"></p>
+        <div class="bh-metrics-section__cards" id="metrics-cards"></div>
+        <p class="bh-metrics-section__footnote" id="metrics-footnote"></p>
+      </section>
+
+      <div aria-label="History overview" class="bh-kpi-grid">
+        <div class="bh-card">
+          <div class="bh-lbl">Saved runs</div>
+          <div class="bh-val bh-kpi-val--primary" id="kpi-run-count">—</div>
+        </div>
+        <div class="bh-card">
+          <div class="bh-lbl">Scenarios tracked</div>
+          <div class="bh-val bh-kpi-val--primary" id="kpi-scenario-count">—</div>
+        </div>
+        <div class="bh-card sm:col-span-2 xl:col-span-1">
+          <div class="bh-lbl">Newest saved run · local clock</div>
+          <div class="bh-val bh-kpi-val--secondary" id="kpi-latest-clock">—</div>
+        </div>
+        <div class="bh-card xl:col-span-1">
+          <div class="bh-lbl">Library builds (latest run)</div>
+          <div class="bh-val bh-kpi-val--meta" id="kpi-lib-versions">—</div>
+        </div>
+      </div>
+
       <details
         class="bh-details--open-muted bh-glass mt-10 px-5 py-4 sm:px-6"
         id="snapshot-details"
@@ -1021,6 +1399,31 @@
       </details>
 
       <p class="bh-page-footer" id="page-footer"></p>
+    </main>
+
+    <div
+      aria-hidden="true"
+      class="bh-command-palette hidden"
+      id="command-palette"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="command-palette-title"
+    >
+      <div class="bh-command-palette__scrim" id="command-palette-scrim" tabindex="-1"></div>
+      <div class="bh-glass bh-command-palette__panel">
+        <p class="sr-only" id="command-palette-title">Command palette</p>
+        <input
+          aria-autocomplete="list"
+          aria-controls="command-palette-list"
+          autocomplete="off"
+          class="bh-focus bh-field bh-command-palette__input"
+          id="command-palette-input"
+          placeholder="Search actions…"
+          type="search"
+        />
+        <ul class="bh-command-palette__list" id="command-palette-list" role="listbox"></ul>
+        <p class="bh-command-palette__hint" id="command-palette-hint"></p>
+      </div>
     </div>
 
     <div aria-atomic="true" aria-live="polite" id="bh-toast" role="status"></div>
