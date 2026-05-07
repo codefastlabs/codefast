@@ -57,7 +57,6 @@
     "oxlint-tsgolint": "catalog:",
     "simple-git-hooks": "catalog:",
     "ts-node": "catalog:",
-    "tsdown": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
     "unplugin-swc": "catalog:",

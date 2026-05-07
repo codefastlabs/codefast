@@ -10,7 +10,14 @@
     "url": "git+https://github.com/codefastlabs/codefast.git",
     "directory": "packages/benchmark-harness"
   },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "imports": {
     "#/*": [
       "./src/*",
@@ -47,15 +54,32 @@
     "./shared/protocol": "./src/shared/protocol.ts"
   },
   "scripts": {
-    "check-types": "tsgo --noEmit"
+    "build": "tsdown",
+    "check-types": "tsgo --noEmit",
+    "clean": "rm -rf dist",
+    "dev": "tsdown --watch"
   },
   "dependencies": {
+    "chart.js": "catalog:",
+    "chartjs-plugin-zoom": "catalog:",
+    "hammerjs": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "tinybench": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@tsdown/css": "catalog:",
+    "@types/hammerjs": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "postcss": "catalog:",
+    "postcss-import": "catalog:",
+    "tailwindcss": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {
