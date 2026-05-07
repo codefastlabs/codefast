@@ -95,37 +95,17 @@
       @layer components {
         /* Apple-inspired dark body: ambient depth + system-blue radial glow */
         .bh-app-body {
-          @apply font-bh bg-bh-bg overflow-x-clip bg-fixed antialiased [text-rendering:optimizeLegibility] motion-safe:scroll-smooth;
-
-          background-image:
-            radial-gradient(
-              ellipse 130% 70% at 50% -25%,
-              var(--color-bh-glow-blue),
-              transparent 52%
-            ),
-            radial-gradient(
-              ellipse 70% 45% at 95% 35%,
-              var(--color-bh-glow-green),
-              transparent 42%
-            ),
-            linear-gradient(
-              180deg,
-              var(--color-bh-bg-gradient-top) 0%,
-              var(--color-bh-bg) 45%,
-              var(--color-bh-bg-gradient-bottom) 100%
-            );
+          @apply font-bh bg-bh-bg overflow-x-clip [background-image:radial-gradient(ellipse_130%_70%_at_50%_-25%,var(--color-bh-glow-blue),transparent_52%),radial-gradient(ellipse_70%_45%_at_95%_35%,var(--color-bh-glow-green),transparent_42%),linear-gradient(180deg,var(--color-bh-bg-gradient-top)_0%,var(--color-bh-bg)_45%,var(--color-bh-bg-gradient-bottom)_100%)] bg-fixed antialiased [text-rendering:optimizeLegibility] motion-safe:scroll-smooth;
         }
 
         /* Avoid @apply shadow-bh-glass — some @tailwindcss/browser builds mis-resolve it as utility `bh-glass`. */
         .bh-glass {
-          @apply border-bh-border bg-bh-surface rounded-[1.25rem] border backdrop-blur-xl backdrop-saturate-180;
-          box-shadow: var(--shadow-bh-glass);
+          @apply border-bh-border bg-bh-surface rounded-[1.25rem] border [box-shadow:var(--shadow-bh-glass)] backdrop-blur-xl backdrop-saturate-180;
         }
 
         /* Tighter inset shadow — applied alongside .bh-glass for compact panels */
         .bh-glass--tight {
-          @apply rounded-2xl;
-          box-shadow: var(--shadow-bh-glass-tight);
+          @apply rounded-2xl [box-shadow:var(--shadow-bh-glass-tight)];
         }
 
         /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
@@ -189,14 +169,7 @@
         }
 
         .bh-app-shell {
-          @apply mx-auto max-w-7xl px-3 pt-6 sm:px-6 sm:pt-10;
-          padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
-        }
-
-        @media (min-width: 640px) {
-          .bh-app-shell {
-            padding-bottom: max(5rem, calc(env(safe-area-inset-bottom, 0px) + 3.5rem));
-          }
+          @apply mx-auto max-w-7xl px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))];
         }
 
         .bh-page-header {
@@ -277,18 +250,11 @@
         }
 
         .bh-chart-control-panel {
-          @apply sticky z-40 mt-6 mb-5 flex flex-col gap-3 px-3 py-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4;
-          top: max(0.5rem, env(safe-area-inset-top, 0px));
-        }
-
-        @media (min-width: 640px) {
-          .bh-chart-control-panel {
-            top: 0.75rem;
-          }
+          @apply sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 mt-6 mb-5 flex flex-col gap-3 px-3 py-3 max-sm:gap-2 max-sm:py-2.5 sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4;
         }
 
         .bh-chart-control-panel__head {
-          @apply flex flex-wrap items-center justify-between gap-2 gap-y-1;
+          @apply flex flex-wrap items-center justify-between gap-2 gap-y-2 sm:gap-y-1;
         }
 
         .bh-chart-control-panel__head .bh-section-title {
@@ -300,11 +266,11 @@
         }
 
         .bh-chart-control-panel__fields {
-          @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-3;
+          @apply flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)] sm:flex-row sm:flex-wrap sm:items-end sm:gap-3;
         }
 
         .bh-chart-control-panel__scenario {
-          @apply flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end;
+          @apply flex w-full min-w-0 flex-col gap-2 max-sm:col-[1_/_-1] max-sm:mb-0.5 max-sm:gap-1.5 max-sm:border-b max-sm:border-white/[0.06] max-sm:pb-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end;
         }
 
         /* Display & export — desktop: flat toolbar; mobile: disclosure (Settings-style) */
@@ -313,7 +279,7 @@
         }
 
         .bh-chart-display-details__summary {
-          @apply flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none marker:content-[''] [&::-webkit-details-marker]:hidden;
+          @apply flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none marker:content-[''] max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/[0.04] sm:hidden [&::-webkit-details-marker]:hidden;
         }
 
         .bh-chart-display-details__summary-text {
@@ -321,101 +287,44 @@
         }
 
         .bh-chart-display-details__chevron {
-          @apply text-zinc-500 transition-transform duration-200 ease-out;
+          @apply text-zinc-500 transition-transform duration-200 ease-out sm:hidden;
         }
 
         .bh-chart-display-details[open] .bh-chart-display-details__chevron {
-          transform: rotate(180deg);
+          @apply rotate-180;
         }
 
         .bh-chart-display-details__body {
-          @apply flex flex-col gap-3 text-[0.9rem] text-zinc-300 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:border-t sm:border-white/[0.06] sm:pt-4;
+          @apply flex flex-col gap-3 text-[0.9rem] text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/[0.06] max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/[0.06] sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:border-t sm:border-white/[0.06] sm:pt-4;
         }
 
         .bh-chart-display-details__desk-label {
           @apply hidden sm:inline;
         }
 
-        @media (max-width: 639px) {
-          .bh-chart-display-details__summary {
-            @apply -mx-0.5 px-1 active:bg-white/[0.04];
-          }
-
-          .bh-chart-display-details__body {
-            @apply gap-0 divide-y divide-white/[0.06] overflow-hidden rounded-xl bg-black/22 py-0 ring-1 ring-white/[0.06];
-          }
-
-          .bh-chart-display-details__body .bh-toggle__label {
-            @apply min-h-11 justify-between gap-3 border-0 px-3 py-2.5;
-          }
-
-          .bh-chart-display-details__body .bh-btn-download-png {
-            @apply mt-0 min-h-11 rounded-none border-0 py-3;
-          }
+        .bh-chart-display-details__body .bh-toggle__label {
+          @apply max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5;
         }
 
-        @media (min-width: 640px) {
-          .bh-chart-display-details__summary {
-            @apply hidden;
-          }
+        .bh-chart-display-details__body .bh-btn-download-png {
+          @apply max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3;
+        }
 
-          .bh-chart-display-details__chevron {
-            @apply hidden;
-          }
+        .bh-chart-control-panel .bh-field-label {
+          @apply max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2];
+        }
 
-          .bh-chart-display-details {
-            @apply mt-0 border-t-0;
-          }
+        .bh-chart-control-panel select.bh-field {
+          @apply max-sm:h-9 max-sm:min-h-9;
         }
 
         /* Mobile: compact “Chart data” — grouped fields, no trapped scroll; chart stays hero */
-        @media (max-width: 639px) {
-          .bh-chart-control-panel {
-            @apply gap-2 px-3 py-2.5;
-          }
+        .bh-chart-control-panel .bh-chart-toolbar.bh-chart-toolbar--match-field {
+          @apply max-sm:min-h-10;
+        }
 
-          .bh-chart-control-panel__head {
-            @apply gap-x-2 gap-y-2;
-          }
-
-          .bh-chart-control-panel .bh-field-label {
-            margin-bottom: 0.2rem;
-            font-size: 0.6875rem;
-            line-height: 1.2;
-          }
-
-          .bh-chart-control-panel__fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem 0.5rem;
-            border-radius: 0.75rem;
-            background-color: rgba(0, 0, 0, 0.22);
-            padding: 0.5rem;
-            box-shadow:
-              inset 0 0.0625rem 0 rgba(255, 255, 255, 0.05),
-              0 0 0 0.0625rem rgba(255, 255, 255, 0.06);
-          }
-
-          .bh-chart-control-panel__scenario {
-            grid-column: 1 / -1;
-            gap: 0.375rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            margin-bottom: 0.125rem;
-            padding-bottom: 0.5rem;
-          }
-
-          .bh-chart-control-panel select.bh-field {
-            height: 2.25rem;
-            min-height: 2.25rem;
-          }
-
-          .bh-chart-control-panel .bh-chart-toolbar.bh-chart-toolbar--match-field {
-            min-height: 2.5rem;
-          }
-
-          .bh-chart-control-panel .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
-            min-height: 2.5rem;
-          }
+        .bh-chart-control-panel .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
+          @apply max-sm:min-h-10;
         }
 
         .bh-metrics-section__head {
@@ -460,10 +369,7 @@
         }
 
         .bh-chart__host {
-          @apply relative mt-5 min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.08];
-          box-shadow: var(--shadow-bh-glass-tight);
-          height: min(27.5rem, 58vh);
-          height: min(27.5rem, 58dvh);
+          @apply relative mt-5 h-[min(27.5rem,58dvh)] h-[min(27.5rem,58vh)] min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 [box-shadow:var(--shadow-bh-glass-tight)] ring-white/[0.08];
         }
 
         .bh-chart__empty-actions {
@@ -564,18 +470,18 @@
         /* Metric cards — SF Pro + SF Mono hierarchy (Health / Wallet-style) */
         .bh-val {
           @apply text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] break-words tabular-nums;
-
-          & + .bh-metric__meta {
-            @apply mt-[0.38rem];
-          }
         }
 
         .bh-metric__meta {
           @apply text-bh-label mt-[0.24rem] text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em];
+        }
 
-          & + & {
-            @apply mt-[0.22rem];
-          }
+        .bh-val + .bh-metric__meta {
+          @apply mt-[0.38rem];
+        }
+
+        .bh-metric__meta + .bh-metric__meta {
+          @apply mt-[0.22rem];
         }
 
         .bh-metric__meta--mono {
@@ -623,29 +529,28 @@
         }
 
         .bh-table-wrap {
-          @apply border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border;
-          -webkit-overflow-scrolling: touch;
+          @apply border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch];
         }
 
         .bh-table {
           @apply w-full border-collapse text-[0.8rem];
+        }
 
-          th,
-          td {
-            @apply border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left;
-          }
+        .bh-table th,
+        .bh-table td {
+          @apply border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left;
+        }
 
-          th {
-            @apply text-bh-label text-[0.7rem] font-semibold tracking-[0.05em] whitespace-nowrap uppercase;
-          }
+        .bh-table th {
+          @apply text-bh-label text-[0.7rem] font-semibold tracking-[0.05em] whitespace-nowrap uppercase;
+        }
 
-          thead th {
-            @apply bg-bh-table-head z-3;
-          }
+        .bh-table thead th {
+          @apply bg-bh-table-head z-3;
+        }
 
-          tbody tr {
-            @apply hover:bg-bh-table-hover;
-          }
+        .bh-table tbody tr {
+          @apply hover:bg-bh-table-hover;
         }
 
         .bh-table--zebra tbody tr {
@@ -667,19 +572,12 @@
         }
 
         .bh-metrics-grid {
-          @apply grid gap-3;
-          grid-template-columns: 1fr;
-        }
-
-        @media (min-width: 640px) {
-          .bh-metrics-grid {
-            grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
-          }
+          @apply grid grid-cols-[1fr] gap-3 sm:grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))];
         }
 
         /* Per-card accent: JS sets --color-bh-metric-accent; ratio cards use .bh-metric--accent-ratio */
         .bh-metric--accent-ratio {
-          --color-bh-metric-accent: var(--color-bh-ratio-accent);
+          @apply [--color-bh-metric-accent:var(--color-bh-ratio-accent)];
         }
 
         .bh-tint-lbl,
@@ -713,30 +611,15 @@
 
         /* Same outer height as Tailwind h-10 selects in Chart data (2.5rem incl. border, border-box) */
         .bh-chart-toolbar--match-field {
-          @apply box-border h-10 items-stretch;
+          @apply box-border h-10 items-stretch max-sm:h-auto max-sm:min-h-11 max-sm:w-full;
         }
 
         .bh-chart-toolbar--match-field .bh-seg-btn {
-          @apply box-border inline-flex min-h-0 items-center justify-center self-stretch px-2.5;
+          @apply box-border inline-flex min-h-0 items-center justify-center self-stretch px-2.5 max-sm:min-h-11 max-sm:flex-[1_1_0] max-sm:px-3;
         }
 
         .bh-seg-btn {
           @apply text-bh-seg-ink border-r-bh-border bg-bh-surface-seg hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-r px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40;
-        }
-
-        @media (max-width: 639px) {
-          .bh-chart-toolbar.bh-chart-toolbar--match-field {
-            height: auto;
-            min-height: 2.75rem;
-            width: 100%;
-          }
-
-          .bh-chart-toolbar.bh-chart-toolbar--match-field .bh-seg-btn {
-            min-height: 2.75rem;
-            flex: 1 1 0;
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-          }
         }
 
         #loading-overlay {
@@ -749,36 +632,23 @@
 
         #chart-empty-state {
           @apply bg-bh-overlay-soft bh-empty-visible:flex absolute inset-0 z-10 hidden flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md;
+        }
 
-          p {
-            @apply text-bh-meta max-w-[24rem] text-sm leading-[1.5];
-          }
+        #chart-empty-state p {
+          @apply text-bh-meta max-w-[24rem] text-sm leading-[1.5];
         }
 
         #bh-toast {
-          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast pointer-events-none fixed z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)];
-          right: max(1rem, env(safe-area-inset-right, 0px));
-          bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-          @apply bh-toast-visible:pointer-events-auto bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:opacity-100 motion-reduce:transition-none;
+          @apply text-bh-toast-ink border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast bh-toast-visible:pointer-events-auto bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:opacity-100 pointer-events-none fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw_-_2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none;
         }
 
         /* Skip link — visible on keyboard focus only */
         .bh-skip-link {
-          @apply outline-bh-blue bg-bh-surface-sticky shadow-bh-sticky fixed z-[500] -translate-y-[120%] rounded-xl border border-white/12 px-3.5 py-2 text-sm font-medium text-zinc-100 backdrop-blur-xl focus:translate-y-0 focus:outline focus:outline-2 focus:outline-offset-2;
-          top: max(0.75rem, env(safe-area-inset-top, 0px));
-          left: max(0.75rem, env(safe-area-inset-left, 0px));
+          @apply outline-bh-blue bg-bh-surface-sticky shadow-bh-sticky fixed top-[max(0.75rem,env(safe-area-inset-top,0px))] left-[max(0.75rem,env(safe-area-inset-left,0px))] z-[500] -translate-y-[120%] rounded-xl border border-white/12 px-3.5 py-2 text-sm font-medium text-zinc-100 backdrop-blur-xl focus:translate-y-0 focus:outline focus:outline-2 focus:outline-offset-2;
         }
 
         .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border-width: 0;
+          @apply absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0,0,0,0)];
         }
 
         .bh-label-wrap--window {
@@ -786,9 +656,7 @@
         }
 
         .bh-chart__host--hero {
-          @apply min-h-[20rem];
-          height: min(32rem, 70vh);
-          height: min(32rem, 70dvh);
+          @apply h-[min(32rem,70dvh)] h-[min(32rem,70vh)] min-h-[20rem];
         }
 
         .bh-metrics-section--after-chart {
@@ -805,14 +673,7 @@
 
         /* Command palette (⌘K / Ctrl+K) */
         .bh-command-palette {
-          @apply fixed inset-0 z-[400] flex items-start justify-center px-3 sm:px-4;
-          padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
-        }
-
-        @media (min-width: 640px) {
-          .bh-command-palette {
-            padding-top: min(20vh, 10rem);
-          }
+          @apply fixed inset-0 z-[400] flex items-start justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:px-4 sm:pt-[min(20vh,10rem)];
         }
 
         .bh-command-palette__scrim {
@@ -820,15 +681,7 @@
         }
 
         .bh-command-palette__panel {
-          @apply relative z-[1] mt-2 w-full max-w-lg overflow-hidden p-0 sm:mt-0;
-          max-height: min(85vh, calc(100vh - 2.5rem));
-          max-height: min(85dvh, calc(100dvh - 2.5rem));
-        }
-
-        @media (min-width: 640px) {
-          .bh-command-palette__panel {
-            max-height: none;
-          }
+          @apply relative z-[1] mt-2 max-h-[min(85dvh,calc(100dvh-2.5rem))] max-h-[min(85vh,calc(100vh-2.5rem))] w-full max-w-lg overflow-hidden p-0 sm:mt-0 sm:max-h-none;
         }
 
         .bh-command-palette__input {
@@ -836,15 +689,7 @@
         }
 
         .bh-command-palette__list {
-          @apply list-none overflow-y-auto overscroll-contain p-2;
-          max-height: min(50vh, 17.5rem);
-          max-height: min(50dvh, 17.5rem);
-        }
-
-        @media (min-width: 640px) {
-          .bh-command-palette__list {
-            max-height: min(48vh, 17.5rem);
-          }
+          @apply max-h-[min(50dvh,17.5rem)] max-h-[min(50vh,17.5rem)] list-none overflow-y-auto overscroll-contain p-2 sm:max-h-[min(48vh,17.5rem)];
         }
 
         .bh-command-palette__item {
