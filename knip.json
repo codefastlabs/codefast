@@ -3,14 +3,7 @@
   "workspaces": {
     ".": {
       "entry": ["package.json", "codefast.config.js"],
-      "ignoreDependencies": [
-        "@typescript/native-preview",
-        "@vitest/coverage-v8",
-        "jsdom",
-        "ts-node",
-        "unplugin-swc",
-        "vitest"
-      ]
+      "ignoreDependencies": ["jsdom"]
     },
     "apps/docs": {
       "entry": ["content-collections.ts", "src/router.tsx"]

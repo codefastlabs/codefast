@@ -30,7 +30,7 @@ export default defineConfig({
       },
     },
   ],
-  plugins: ["import", "react", "jest", "vitest", "jsx-a11y", "typescript"],
+  plugins: ["import", "react", "vitest", "jsx-a11y", "typescript"],
   rules: {
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "warn",

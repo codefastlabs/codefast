@@ -43,24 +43,15 @@
   "devDependencies": {
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
-    "@codefast/cli": "workspace:*",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
-    "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
-    "jsdom": "catalog:",
     "knip": "catalog:",
     "lint-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "simple-git-hooks": "catalog:",
-    "ts-node": "catalog:",
-    "turbo": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-swc": "catalog:",
-    "vitest": "catalog:"
+    "turbo": "catalog:"
   },
   "engines": {
     "node": ">=22.0.0"

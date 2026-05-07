@@ -115,7 +115,6 @@ function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framewor
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           aria-controls={listId}
           className={cn("w-full justify-between", "md:max-w-50")}
@@ -176,7 +175,6 @@ function UserCombobox({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           aria-controls={listId}
           className={cn("w-full justify-between px-2", "md:max-w-50")}
@@ -329,7 +327,6 @@ function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Frame
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           aria-controls={listId}
           className="w-fit min-w-70 justify-between"
