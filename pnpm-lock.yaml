@@ -145,8 +145,8 @@ catalogs:
       specifier: ^4.0.2
       version: 4.0.2
     '@tabler/icons-react':
-      specifier: ^3.41.1
-      version: 3.42.0
+      specifier: ^3.43.0
+      version: 3.43.0
     '@tailwindcss/postcss':
       specifier: ^4.2.4
       version: 4.2.4
@@ -479,7 +479,7 @@ importers:
         version: 4.0.2
       '@tabler/icons-react':
         specifier: 'catalog:'
-        version: 3.42.0(react@19.2.5)
+        version: 3.43.0(react@19.2.5)
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.2.4(vite@8.0.10(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.4))
@@ -3582,13 +3582,13 @@ packages:
     resolution: {integrity: sha512-r5bClKrcIusDoo049dSL8CawnHR6mRdDwhlQuIgZRNty68q0x8k3Lf1BtPAMxRf/GgnHBnIO4ujd3+GQdLWzxQ==}
     engines: {node: '>=16.0.0'}
 
-  '@tabler/icons-react@3.42.0':
-    resolution: {integrity: sha512-WvKhHYLdJaZbiY4Jm31fmTbzIwxokXcE1HM/m9rmXvh7UoHG4mM8n+9NOB6xEwB5SZQ+G/Z102eMj1F3NqDMVg==}
+  '@tabler/icons-react@3.43.0':
+    resolution: {integrity: sha512-rXUuCQEeRbEk3lJxs3gwzdtaaITSwc/JUbp+AkqsGff5uBpzZw7eKPDk53xKoKLyjrbj82Ai4GuVG0kO89Jf5g==}
     peerDependencies:
       react: '>= 16'
 
-  '@tabler/icons@3.42.0':
-    resolution: {integrity: sha512-h0nFIRgwrE/9iVgN+GuLijbiLIBWJ3chNvIWhqUZhy4D9fv3tkoQ3EYFAvxvfdvQUNNVAhJhj+ar54y6t016Vg==}
+  '@tabler/icons@3.43.0':
+    resolution: {integrity: sha512-qXwS17Op9jqr3Asvu31fejyw8+OnRDKH7oR8nQXyUgW1pI44ET8OKG9kssy+XIvvAIyej6gZdGmviNUn1VMfPw==}
 
   '@tailwindcss/node@4.2.4':
     resolution: {integrity: sha512-Ai7+yQPxz3ddrDQzFfBKdHEVBg0w3Zl83jnjuwxnZOsnH9pGn93QHQtpU0p/8rYWxvbFZHneni6p1BSLK4DkGA==}
@@ -8877,12 +8877,12 @@ snapshots:
 
   '@tabby_ai/hijri-converter@1.0.5': {}
 
-  '@tabler/icons-react@3.42.0(react@19.2.5)':
+  '@tabler/icons-react@3.43.0(react@19.2.5)':
     dependencies:
-      '@tabler/icons': 3.42.0
+      '@tabler/icons': 3.43.0
       react: 19.2.5
 
-  '@tabler/icons@3.42.0': {}
+  '@tabler/icons@3.43.0': {}
 
   '@tailwindcss/node@4.2.4':
     dependencies:

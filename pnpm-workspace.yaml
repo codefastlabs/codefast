@@ -55,7 +55,7 @@ catalog:
   "@radix-ui/react-visually-hidden": ^1.2.4
   "@rolldown/plugin-babel": ^0.2.3
   "@shikijs/rehype": ^4.0.2
-  "@tabler/icons-react": ^3.41.1
+  "@tabler/icons-react": ^3.43.0
   "@tailwindcss/cli": ^4.2.4
   "@tailwindcss/postcss": ^4.2.4
   "@tailwindcss/vite": ^4.2.4
