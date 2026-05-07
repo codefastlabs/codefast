@@ -128,7 +128,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@tanstack/react-start": "^1.0",
+    "@tanstack/react-start": "^1.167.65",
     "@types/react": "^19.0",
     "@types/react-dom": "^19.0",
     "react": "^19.0",
@@ -144,5 +144,8 @@
     "@types/react-dom": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
