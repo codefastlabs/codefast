@@ -430,6 +430,7 @@
     "jsdom": "catalog:",
     "postcss": "catalog:",
     "tailwindcss": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

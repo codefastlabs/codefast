@@ -3,6 +3,11 @@ packages:
   - packages/**
   - benchmarks/*
 
+allowBuilds:
+  '@swc/core': true
+  esbuild: true
+  simple-git-hooks: true
+
 catalog:
   "@changesets/changelog-github": ^0.6.0
   "@changesets/cli": ^2.31.0
@@ -51,6 +56,7 @@ catalog:
   "@rolldown/plugin-babel": ^0.2.3
   "@shikijs/rehype": ^4.0.2
   "@tabler/icons-react": ^3.41.1
+  "@tailwindcss/cli": ^4.2.4
   "@tailwindcss/postcss": ^4.2.4
   "@tailwindcss/vite": ^4.2.4
   "@tanstack/devtools-vite": ^0.6.0
@@ -67,6 +73,8 @@ catalog:
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
   "@testing-library/user-event": ^14.6.1
+  "@tsdown/css": ^0.21.10
+  "@types/hammerjs": ^2.0.46
   "@types/hast": ^3.0.4
   "@types/jest-axe": ^3.5.9
   "@types/node": ^25.6.0
@@ -78,6 +86,8 @@ catalog:
   "@vitejs/plugin-react": ^6.0.1
   "@vitest/coverage-v8": ^4.1.5
   babel-plugin-react-compiler: ^1.0.0
+  chart.js: ^4.5.1
+  chartjs-plugin-zoom: ^2.2.0
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
   cmdk: ^1.1.1
@@ -86,6 +96,7 @@ catalog:
   embla-carousel-react: ^8.6.0
   esbuild: ^0.28.0
   expect-type: ^1.3.0
+  hammerjs: ^2.0.8
   hast-util-to-string: ^3.0.1
   input-otp: ^1.4.2
   inversify: ^8.1.0
@@ -102,6 +113,7 @@ catalog:
   oxlint-tsgolint: ^0.22.1
   picomatch: ^4.0.4
   postcss: ^8.5.13
+  postcss-import: ^16.1.1
   react: ^19.2.5
   react-day-picker: ^9.14.0
   react-dom: ^19.2.5
@@ -153,12 +165,3 @@ packageExtensions:
 peerDependencyRules:
   allowedVersions:
     "@content-collections/vite>vite": ^8.0.0
-
-allowBuilds:
-  "@swc/core": true
-  "@tailwindcss/oxide": true
-  core-js: true
-  esbuild: true
-  sharp: true
-  simple-git-hooks: true
-  unrs-resolver: true
