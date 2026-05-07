@@ -87,7 +87,6 @@ updates:
           - "esbuild"
           - "tsx"
           - "jiti"
-          - "ts-node"
           - "@changesets/*"
           - "@commitlint/*"
           - "knip"
