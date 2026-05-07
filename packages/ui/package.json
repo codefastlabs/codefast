@@ -447,5 +447,8 @@
     "@types/react-dom": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
