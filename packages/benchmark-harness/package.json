@@ -19,6 +19,13 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
     "#/*": [
       "./src/*",
       "./src/*.ts",
@@ -57,7 +64,9 @@
     "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
-    "dev": "tsdown --watch"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "chart.js": "catalog:",
@@ -76,11 +85,13 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "postcss": "catalog:",
     "postcss-import": "catalog:",
     "tailwindcss": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=22.0.0"
