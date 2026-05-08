@@ -332,7 +332,7 @@ export class DependencyResolver {
     }
 
     const frame = this._getMaterializationFrame(binding);
-    const tName = frame.tokenName;
+    const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
     if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
@@ -341,13 +341,17 @@ export class DependencyResolver {
     }
 
     // Circular dependency detection
-    if (resolutionSet !== undefined ? resolutionSet.has(tName) : resolutionPath.includes(tName)) {
-      const cycle = [...resolutionPath, tName];
+    if (
+      resolutionSet !== undefined
+        ? resolutionSet.has(tokenDisplayName)
+        : resolutionPath.includes(tokenDisplayName)
+    ) {
+      const cycle = [...resolutionPath, tokenDisplayName];
       throw new CircularDependencyError(cycle);
     }
 
-    resolutionPath.push(tName);
-    resolutionSet?.add(tName);
+    resolutionPath.push(tokenDisplayName);
+    resolutionSet?.add(tokenDisplayName);
     materializationStack.push(frame);
     const needsActivation = this._needsActivation(binding);
     if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
@@ -363,12 +367,12 @@ export class DependencyResolver {
         }
         materializationStack.pop();
         resolutionPath.pop();
-        resolutionSet?.delete(tName);
+        resolutionSet?.delete(tokenDisplayName);
         return dynamicResult;
       } catch (error) {
         materializationStack.pop();
         resolutionPath.pop();
-        resolutionSet?.delete(tName);
+        resolutionSet?.delete(tokenDisplayName);
         throw error;
       }
     }
@@ -417,7 +421,7 @@ export class DependencyResolver {
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tName);
+      resolutionSet?.delete(tokenDisplayName);
     }
   }
 
@@ -436,11 +440,11 @@ export class DependencyResolver {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const r = binding.factory(ctx);
-        if (r instanceof Promise) {
+        const factoryResult = binding.factory(ctx);
+        if (factoryResult instanceof Promise) {
           throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
         }
-        return r;
+        return factoryResult;
       }
 
       case "dynamic-async":
@@ -897,12 +901,12 @@ export class DependencyResolver {
           return activated;
         };
 
-        const p = createSingletonPromise().catch((err: unknown) => {
+        const singletonPromise = createSingletonPromise().catch((err: unknown) => {
           this._scope.clearInflight(binding.id);
           throw err;
         });
-        this._scope.setInflight(binding.id, p as Promise<unknown>);
-        return await p;
+        this._scope.setInflight(binding.id, singletonPromise as Promise<unknown>);
+        return await singletonPromise;
       }
 
       const instance = await this._instantiateAsync(
@@ -1385,11 +1389,11 @@ export class DependencyResolver {
     // ctx.graph reflects correct state for shallow-chain factories.
     if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
       const frame = this._getMaterializationFrame(binding);
-      const tName = frame.tokenName;
-      if (resolutionPath.includes(tName)) {
-        throw new CircularDependencyError([...resolutionPath, tName]);
+      const tokenDisplayName = frame.tokenName;
+      if (resolutionPath.includes(tokenDisplayName)) {
+        throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
       }
-      resolutionPath.push(tName);
+      resolutionPath.push(tokenDisplayName);
       materializationStack.push(frame);
       const resolutionCtx = this._acquireSyncResolutionContext(
         resolutionPath,
@@ -1399,7 +1403,7 @@ export class DependencyResolver {
       try {
         const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
-          throw new AsyncResolutionError(tName, tName);
+          throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
         }
         return dynamicResult;
       } finally {
@@ -1491,18 +1495,18 @@ export class DependencyResolver {
     // Rare fallback used when deep-chain reentrancy is detected (a factory called
     // container.resolve() directly and the resulting chain also reached the threshold).
     const frame = this._getMaterializationFrame(binding);
-    const tName = frame.tokenName;
+    const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
     if (resolutionSet === undefined) {
       resolutionSet = new Set<string>(resolutionPath);
       pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
     }
-    if (resolutionSet.has(tName)) {
-      throw new CircularDependencyError([...resolutionPath, tName]);
+    if (resolutionSet.has(tokenDisplayName)) {
+      throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
     }
-    resolutionPath.push(tName);
-    resolutionSet.add(tName);
+    resolutionPath.push(tokenDisplayName);
+    resolutionSet.add(tokenDisplayName);
     materializationStack.push(frame);
     const resolutionCtx = this._acquireSyncResolutionContext(
       resolutionPath,
@@ -1512,13 +1516,13 @@ export class DependencyResolver {
     try {
       const dynamicResult = binding.factory(resolutionCtx);
       if (dynamicResult instanceof Promise) {
-        throw new AsyncResolutionError(tName, tName);
+        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
       }
       return dynamicResult;
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet.delete(tName);
+      resolutionSet.delete(tokenDisplayName);
     }
   }
 
@@ -1539,12 +1543,12 @@ export class DependencyResolver {
     //     to a fresh DefaultResolutionContext for that level only
     // materializationStack is NOT pushed here — see class-level comment for the trade-off.
     if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
-      const tName = tokenName(binding.token);
-      if (resolutionPath.includes(tName)) {
-        return Promise.reject(new CircularDependencyError([...resolutionPath, tName]));
+      const tokenDisplayName = tokenName(binding.token);
+      if (resolutionPath.includes(tokenDisplayName)) {
+        return Promise.reject(new CircularDependencyError([...resolutionPath, tokenDisplayName]));
       }
 
-      resolutionPath.push(tName);
+      resolutionPath.push(tokenDisplayName);
 
       // Determine which context to use and whether this level owns the shared context.
       let ctx: DefaultResolutionContext;
@@ -1597,8 +1601,11 @@ export class DependencyResolver {
         if (binding.kind === "dynamic-async") {
           factoryPromise = binding.factory(ctx);
         } else {
-          const r = binding.factory(ctx);
-          factoryPromise = r instanceof Promise ? (r as Promise<Value>) : Promise.resolve(r);
+          const factoryResult = binding.factory(ctx);
+          factoryPromise =
+            factoryResult instanceof Promise
+              ? (factoryResult as Promise<Value>)
+              : Promise.resolve(factoryResult);
         }
       } catch (err) {
         // Synchronous throw from the factory (rare) — clean up immediately.
@@ -1641,18 +1648,18 @@ export class DependencyResolver {
     materializationStack: Array<MaterializationFrame>,
   ): Promise<Value> {
     const frame = this._getMaterializationFrame(binding);
-    const tName = frame.tokenName;
+    const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
     if (resolutionSet === undefined) {
       resolutionSet = new Set<string>(resolutionPath);
       pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
     }
-    if (resolutionSet.has(tName)) {
-      throw new CircularDependencyError([...resolutionPath, tName]);
+    if (resolutionSet.has(tokenDisplayName)) {
+      throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
     }
-    resolutionPath.push(tName);
-    resolutionSet.add(tName);
+    resolutionPath.push(tokenDisplayName);
+    resolutionSet.add(tokenDisplayName);
     materializationStack.push(frame);
     const resolutionCtx = new DefaultResolutionContext(
       this as unknown as ResolverCallbacks,
@@ -1669,7 +1676,7 @@ export class DependencyResolver {
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet.delete(tName);
+      resolutionSet.delete(tokenDisplayName);
     }
   }
 

@@ -373,7 +373,7 @@ Binding mô tả cách tạo ra một value từ một token. API theo kiểu fl
 | -------------------------------------- | --------------------------------- | ------------------------------------ |
 | `.to(Class)`                           | `.to(Class)`                      | Container tự `new` và inject deps    |
 | `.toSelf()`                            | `.toSelf()`                       | Token chính là class                 |
-| `.toConstantValue(v)`                  | `.toConstantValue(v)`             | Constant — config, primitive         |
+| `.toConstantValue(value)`              | `.toConstantValue(value)`         | Constant — config, primitive         |
 | `.toDynamic(ctx => ...)`               | `.toDynamicValue(ctx => ...)`     | Factory sync với `ctx.resolve()`     |
 | `.toDynamicAsync(ctx => Promise)`      | (dùng `toDynamicValue` async)     | I/O khi khởi tạo                     |
 | `.toResolved(factory, deps)`           | `.toResolvedValue(factory, deps)` | Explicit deps sync, không cần `ctx`  |
@@ -412,7 +412,7 @@ Scope **luôn** đứng sau `when*` trong chain (xem 2.4). Default khi không kh
 
 ### 5.3 `toConstantValue` — semantics
 
-`toConstantValue(v)` tạo binding luôn trả về cùng một value. Treat as singleton — không có scope choice. Lifecycle:
+`toConstantValue(value)` tạo binding luôn trả về cùng một value. Treat as singleton — không có scope choice. Lifecycle:
 
 - `onActivation` có thể được đăng ký và **sẽ được gọi** lần đầu tiên value được resolve. Kết quả sau activation được cache; activation không chạy lại ở lần resolve tiếp theo.
 - Nếu `onActivation` trả `Promise`, resolve phải dùng `resolveAsync()`.
@@ -724,8 +724,8 @@ container
 container
   .bind(Database)
   .toDynamicAsync(async (ctx) => {
-    const cfg = ctx.resolve(Config);
-    const db = new PostgresDatabase(cfg.dbUrl);
+    const config = ctx.resolve(Config);
+    const db = new PostgresDatabase(config.dbUrl);
     await db.connect();
     return db;
   })
@@ -1240,7 +1240,7 @@ Duyệt dependency graph và throw `ScopeViolationError` cho vi phạm theo scop
 | `toAlias(target)`                | ✅ Trace đến target — transitive check |
 | `toDynamic(ctx => ...)`          | ❌ Opaque — bỏ qua                     |
 | `toDynamicAsync(ctx => ...)`     | ❌ Opaque — bỏ qua                     |
-| `toConstantValue(v)`             | ✅ Không có deps — luôn OK             |
+| `toConstantValue(value)`         | ✅ Không có deps — luôn OK             |
 
 **`validate()` và alias chain:** Khi trace alias (`toAlias(target)`), `validate()` follow chain đến binding cuối cùng. Nếu consumer `singleton` alias sang target `scoped`, đây là scope violation. `validate()` check transitively — không chỉ check direct dependency.
 

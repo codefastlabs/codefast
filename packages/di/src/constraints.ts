@@ -2,69 +2,90 @@ import type { ConstraintContext, Constructor } from "#/types";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 
-function tokenNameOf(t: Token<unknown> | Constructor): string {
-  return tokenName(t);
+function tokenNameOf(token: Token<unknown> | Constructor): string {
+  return tokenName(token);
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentIs(t: Token<unknown> | Constructor): (ctx: ConstraintContext) => boolean {
-  const name = tokenNameOf(t);
-  return (ctx) => ctx.parent !== undefined && ctx.parent.tokenName === name;
+export function whenParentIs(
+  token: Token<unknown> | Constructor,
+): (constraintContext: ConstraintContext) => boolean {
+  const tokenDisplayName = tokenNameOf(token);
+  return (constraintContext) =>
+    constraintContext.parent !== undefined &&
+    constraintContext.parent.tokenName === tokenDisplayName;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export function whenNoParentIs(
-  t: Token<unknown> | Constructor,
-): (ctx: ConstraintContext) => boolean {
-  const name = tokenNameOf(t);
-  return (ctx) => ctx.parent === undefined || ctx.parent.tokenName !== name;
+  token: Token<unknown> | Constructor,
+): (constraintContext: ConstraintContext) => boolean {
+  const tokenDisplayName = tokenNameOf(token);
+  return (constraintContext) =>
+    constraintContext.parent === undefined ||
+    constraintContext.parent.tokenName !== tokenDisplayName;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export function whenAnyAncestorIs(
-  t: Token<unknown> | Constructor,
-): (ctx: ConstraintContext) => boolean {
-  const name = tokenNameOf(t);
-  return (ctx) => ctx.ancestors.some((f) => f.tokenName === name);
+  token: Token<unknown> | Constructor,
+): (constraintContext: ConstraintContext) => boolean {
+  const tokenDisplayName = tokenNameOf(token);
+  return (constraintContext) =>
+    constraintContext.ancestors.some(
+      (ancestorFrame) => ancestorFrame.tokenName === tokenDisplayName,
+    );
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export function whenNoAncestorIs(
-  t: Token<unknown> | Constructor,
-): (ctx: ConstraintContext) => boolean {
-  const name = tokenNameOf(t);
-  return (ctx) => ctx.ancestors.every((f) => f.tokenName !== name);
+  token: Token<unknown> | Constructor,
+): (constraintContext: ConstraintContext) => boolean {
+  const tokenDisplayName = tokenNameOf(token);
+  return (constraintContext) =>
+    constraintContext.ancestors.every(
+      (ancestorFrame) => ancestorFrame.tokenName !== tokenDisplayName,
+    );
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentNamed(name: string): (ctx: ConstraintContext) => boolean {
-  return (ctx) => ctx.parent !== undefined && ctx.parent.slot.name === name;
+export function whenParentNamed(name: string): (constraintContext: ConstraintContext) => boolean {
+  return (constraintContext) =>
+    constraintContext.parent !== undefined && constraintContext.parent.slot.name === name;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenAnyAncestorNamed(name: string): (ctx: ConstraintContext) => boolean {
-  return (ctx) => ctx.ancestors.some((f) => f.slot.name === name);
+export function whenAnyAncestorNamed(
+  name: string,
+): (constraintContext: ConstraintContext) => boolean {
+  return (constraintContext) =>
+    constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.slot.name === name);
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentTagged(tag: string, value: unknown): (ctx: ConstraintContext) => boolean {
-  return (ctx) =>
-    ctx.parent !== undefined &&
-    ctx.parent.slot.tags.some(([t, v]) => t === tag && Object.is(v, value));
+export function whenParentTagged(
+  tag: string,
+  value: unknown,
+): (constraintContext: ConstraintContext) => boolean {
+  return (constraintContext) =>
+    constraintContext.parent !== undefined &&
+    constraintContext.parent.slot.tags.some(
+      ([tagKey, tagValue]) => tagKey === tag && Object.is(tagValue, value),
+    );
 }
 
 /**
@@ -73,7 +94,11 @@ export function whenParentTagged(tag: string, value: unknown): (ctx: ConstraintC
 export function whenAnyAncestorTagged(
   tag: string,
   value: unknown,
-): (ctx: ConstraintContext) => boolean {
-  return (ctx) =>
-    ctx.ancestors.some((f) => f.slot.tags.some(([t, v]) => t === tag && Object.is(v, value)));
+): (constraintContext: ConstraintContext) => boolean {
+  return (constraintContext) =>
+    constraintContext.ancestors.some((ancestorFrame) =>
+      ancestorFrame.slot.tags.some(
+        ([tagKey, tagValue]) => tagKey === tag && Object.is(tagValue, value),
+      ),
+    );
 }
