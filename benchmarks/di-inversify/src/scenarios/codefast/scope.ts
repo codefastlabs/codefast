@@ -92,7 +92,7 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastScopeScenarios(): readonly BenchScenario[] {
+export function buildCodefastScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildChildDepthTwoResolveScenario(),
     buildChildRequestLifecycleCreateResolveDisposeScenario(),

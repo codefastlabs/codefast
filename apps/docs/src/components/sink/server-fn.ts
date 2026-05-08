@@ -4,7 +4,7 @@ import { exampleFormSchema } from "#/components/sink/schema";
 
 export type FormState = {
   values: z.infer<typeof exampleFormSchema>;
-  errors: null | Partial<Record<keyof z.infer<typeof exampleFormSchema>, string[]>>;
+  errors: null | Partial<Record<keyof z.infer<typeof exampleFormSchema>, Array<string>>>;
   success: boolean;
 };
 
@@ -19,7 +19,7 @@ export const subscriptionAction = createServerFn({ method: "POST" })
       email: formData.get("email") as string,
       plan: formData.get("plan") as "basic" | "pro",
       billingPeriod: formData.get("billingPeriod") as string,
-      addons: formData.getAll("addons") as string[],
+      addons: formData.getAll("addons") as Array<string>,
       teamSize: parseInt(formData.get("teamSize") as string) || 1,
       emailNotifications: formData.get("emailNotifications") === "on",
       startDate: formData.get("startDate")
@@ -37,7 +37,7 @@ export const subscriptionAction = createServerFn({ method: "POST" })
         values,
         success: false,
         errors: result.error.flatten().fieldErrors as Partial<
-          Record<keyof z.infer<typeof exampleFormSchema>, string[]>
+          Record<keyof z.infer<typeof exampleFormSchema>, Array<string>>
         >,
       };
     }

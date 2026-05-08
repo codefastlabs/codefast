@@ -79,7 +79,7 @@ export interface PackageStats {
   skipped: boolean;
   skipReason: string;
   error: string | null;
-  prunedExportKeys: string[];
+  prunedExportKeys: Array<string>;
 }
 
 /**
@@ -103,7 +103,7 @@ export interface GlobalStats {
   totalExports: number;
   totalJsModules: number;
   totalCssExports: number;
-  packageDetails: PackageStats[];
+  packageDetails: Array<PackageStats>;
 }
 
 /**
@@ -120,7 +120,7 @@ export type WorkspaceMultiDiscoverySource =
  * @since 0.3.16-canary.0
  */
 export type FindWorkspacePackagesResult = {
-  relPaths: string[];
+  relPaths: Array<string>;
   multiSource: WorkspaceMultiDiscoverySource;
 };
 

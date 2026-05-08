@@ -57,17 +57,17 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
   mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
   mergedDefaultVariantProps: ConfigurationVariants<T>,
-  mergedCompoundVariantGroups: readonly CompoundVariantType<T>[] | undefined,
+  mergedCompoundVariantGroups: ReadonlyArray<CompoundVariantType<T>> | undefined,
   variantProps: ConfigurationVariants<T>,
   customClassName: ClassValue,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
-  cachedVariantKeys: (keyof T)[],
+  cachedVariantKeys: Array<keyof T>,
   precomputedDefaults: Record<string, string>,
 ): string | undefined => {
   // Pre-allocate array with estimated size for better performance
   const estimatedSize = cachedVariantKeys.length + (mergedCompoundVariantGroups?.length ?? 0) + 2;
-  const resolvedClasses: ClassValue[] = new Array(estimatedSize);
+  const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
   let classIndex = 0;
 
   // Add base classes if they exist
@@ -292,7 +292,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
   const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
 
   // Pre-compute variant keys to avoid Object.keys() on every invocation
-  const cachedVariantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
+  const cachedVariantKeys = Object.keys(mergedVariantGroups) as Array<keyof T>;
 
   // Pre-compute default variant values including boolean defaults
   // This moves work from the hot path to initialization time
@@ -353,7 +353,9 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         mergedVariantGroups,
         mergedDefaultVariantProps as ConfigurationVariants<ConfigurationSchema>,
         mergedCompoundVariantGroups as
-          | readonly CompoundVariantWithSlotsType<ConfigurationSchema, SlotConfigurationSchema>[]
+          | ReadonlyArray<
+              CompoundVariantWithSlotsType<ConfigurationSchema, SlotConfigurationSchema>
+            >
           | undefined,
         compoundSlotClasses,
         resolvedVariantProps as ConfigurationVariants<ConfigurationSchema>,
@@ -369,13 +371,13 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         mergedVariantGroups,
         mergedDefaultVariantProps as ConfigurationVariants<ConfigurationSchema>,
         mergedCompoundVariantGroups as
-          | readonly CompoundVariantType<ConfigurationSchema>[]
+          | ReadonlyArray<CompoundVariantType<ConfigurationSchema>>
           | undefined,
         resolvedVariantProps as ConfigurationVariants<ConfigurationSchema>,
         className ?? classProperty,
         shouldMergeClasses,
         tailwindMergeService,
-        cachedVariantKeys as (keyof ConfigurationSchema)[],
+        cachedVariantKeys as Array<keyof ConfigurationSchema>,
         precomputedDefaults,
       ) as unknown as S extends Record<string, never>
         ? string | undefined
@@ -514,7 +516,7 @@ export function createTV(
    * @param classes - The CSS classes to combine
    * @returns The combined and optionally merged class string
    */
-  const cnFunction = (...classes: ClassValue[]): string => {
+  const cnFunction = (...classes: Array<ClassValue>): string => {
     return shouldMergeClasses ? tailwindMergeService(cx(...classes)) : cx(...classes);
   };
 

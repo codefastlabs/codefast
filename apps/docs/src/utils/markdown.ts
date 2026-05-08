@@ -19,7 +19,7 @@ type MarkdownHeading = {
 
 type MarkdownResult = {
   html: string;
-  headings: MarkdownHeading[];
+  headings: Array<MarkdownHeading>;
 };
 
 /**
@@ -27,7 +27,7 @@ type MarkdownResult = {
  * Designed to be called at build-time in content-collections transform.
  */
 export async function renderMarkdown(content: string): Promise<MarkdownResult> {
-  const headings: MarkdownHeading[] = [];
+  const headings: Array<MarkdownHeading> = [];
 
   const result = await unified()
     .use(remarkParse)

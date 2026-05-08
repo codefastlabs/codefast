@@ -14,7 +14,7 @@ const SCALE_CHAIN_SIZE = 512;
 function buildScaleDeepTransientChainScenario(): BenchScenario {
   const chainIdentifiers = Array.from({ length: SCALE_CHAIN_SIZE }, (_value, chainIndex) =>
     Symbol(`bench-inv-scale-chain-${String(chainIndex)}`),
-  ) as ServiceIdentifier<number>[];
+  ) as Array<ServiceIdentifier<number>>;
   const container = new Container();
   container.bind<number>(chainIdentifiers[0]!).toConstantValue(0);
 
@@ -50,6 +50,6 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyScaleScenarios(): readonly BenchScenario[] {
+export function buildInversifyScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildScaleDeepTransientChainScenario()];
 }

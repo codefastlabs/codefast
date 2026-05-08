@@ -1,5 +1,5 @@
 import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/core/config/schema";
-import { AppError } from "#/core/errors";
+import type { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
@@ -12,7 +12,7 @@ import { processArrangeGroupFile } from "#/arrange/process-file";
 
 async function runOnAfterWriteHook(
   hook: CodefastAfterWriteHook | undefined,
-  modifiedFiles: string[],
+  modifiedFiles: Array<string>,
 ): Promise<string | null> {
   if (!hook || modifiedFiles.length === 0) {
     return null;
@@ -33,8 +33,8 @@ export async function runArrangeSync(
   request: ArrangeSyncRunRequest,
 ): Promise<Result<ArrangeRunResult, AppError>> {
   const filePaths = scanArrangeTargets(fs, request.targetPath);
-  const modifiedFiles: string[] = [];
-  const previewPlans: GroupFileWorkPlan[] = [];
+  const modifiedFiles: Array<string> = [];
+  const previewPlans: Array<GroupFileWorkPlan> = [];
   let totalFound = 0;
   let totalChanged = 0;
 

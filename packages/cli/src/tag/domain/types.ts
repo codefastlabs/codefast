@@ -17,7 +17,7 @@ export type TagRunResult = {
   filesScanned: number;
   filesChanged: number;
   taggedDeclarations: number;
-  fileResults: TagFileResult[];
+  fileResults: Array<TagFileResult>;
 };
 
 /**
@@ -83,15 +83,15 @@ export interface TagProgressListener {
  */
 export type TagSyncResult = {
   mode: "applied" | "dry-run";
-  selectedTargets: TagResolvedTarget[];
-  skippedPackages: string[];
-  targetResults: TagTargetExecutionResult[];
+  selectedTargets: Array<TagResolvedTarget>;
+  skippedPackages: Array<string>;
+  targetResults: Array<TagTargetExecutionResult>;
   filesScanned: number;
   filesChanged: number;
   taggedDeclarations: number;
   versionSummary: string;
-  distinctVersions: string[];
-  modifiedFiles: string[];
+  distinctVersions: Array<string>;
+  modifiedFiles: Array<string>;
   hookError: string | null;
 };
 

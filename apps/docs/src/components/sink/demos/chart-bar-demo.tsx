@@ -18,7 +18,7 @@ interface ChartDataItem {
   mobile: number;
 }
 
-const chartData: ChartDataItem[] = [
+const chartData: Array<ChartDataItem> = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
   { month: "March", desktop: 237, mobile: 120 },

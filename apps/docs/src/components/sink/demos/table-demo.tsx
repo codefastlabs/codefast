@@ -16,7 +16,7 @@ interface Invoice {
   paymentMethod: string;
 }
 
-const invoices: Invoice[] = [
+const invoices: Array<Invoice> = [
   {
     invoice: "INV001",
     paymentStatus: "Paid",

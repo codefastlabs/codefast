@@ -38,7 +38,7 @@ import type {
  * Mutable build view for wiring `parent` links; results satisfy readonly domain types.
  */
 type WritableDomainAst<T extends DomainAstNode> = {
-  -readonly [K in keyof T]: T[K] extends ReadonlyArray<infer U> ? U[] : T[K];
+  -readonly [K in keyof T]: T[K] extends ReadonlyArray<infer U> ? Array<U> : T[K];
 };
 
 /**
@@ -63,7 +63,7 @@ export class TypeScriptAstTranslator {
       parent,
       children: [],
     };
-    const childList: DomainAstNode[] = [];
+    const childList: Array<DomainAstNode> = [];
     ts.forEachChild(n, (child) => {
       childList.push(this.translateNode(child, self as DomainUnknownAstNode, sf));
     });
@@ -176,7 +176,7 @@ export class TypeScriptAstTranslator {
           parent,
           elements: [],
         };
-        const elements: DomainImportSpecifier[] = [];
+        const elements: Array<DomainImportSpecifier> = [];
         for (const element of named.elements) {
           elements.push(
             this.translateNode(element, self as DomainNamedImports, sf) as DomainImportSpecifier,
@@ -271,7 +271,7 @@ export class TypeScriptAstTranslator {
           parent,
           properties: [],
         };
-        const properties: DomainAstNode[] = [];
+        const properties: Array<DomainAstNode> = [];
         for (const prop of obj.properties) {
           properties.push(this.translateNode(prop, self as DomainObjectLiteralExpression, sf));
         }
@@ -304,7 +304,7 @@ export class TypeScriptAstTranslator {
           parent,
           elements: [],
         };
-        const elements: DomainAstNode[] = [];
+        const elements: Array<DomainAstNode> = [];
         for (const element of arr.elements) {
           elements.push(this.translateNode(element, self as DomainArrayLiteralExpression, sf));
         }

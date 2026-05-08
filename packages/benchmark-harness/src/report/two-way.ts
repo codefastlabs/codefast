@@ -50,7 +50,7 @@ export type TwoWayMarkdownReportOptions = {
   readonly columnTitles: TwoWayMarkdownColumnTitles;
   readonly documentHeading: string;
   /** Bullets printed under "## Comparable scenarios" before the table. */
-  readonly comparableScenarioIntroLines: readonly string[];
+  readonly comparableScenarioIntroLines: ReadonlyArray<string>;
   /** Short names for the "## Environment › Library versions" bullet. */
   readonly fingerprintLibraryVersionLabels: {
     readonly left: string;
@@ -84,9 +84,9 @@ export type TwoWayConsoleReportOptions = {
   readonly footerHintLine?: string;
 };
 
-function orderedScenarioIds(leftReport: LibraryReport, rightReport: LibraryReport): string[] {
+function orderedScenarioIds(leftReport: LibraryReport, rightReport: LibraryReport): Array<string> {
   const seen = new Set<string>();
-  const ordered: string[] = [];
+  const ordered: Array<string> = [];
   for (const scenario of leftReport.scenarios) {
     seen.add(scenario.id);
     ordered.push(scenario.id);
@@ -105,7 +105,7 @@ function orderedScenarioIds(leftReport: LibraryReport, rightReport: LibraryRepor
 export function buildTwoWayComparisonRows(
   leftLibraryReport: LibraryReport,
   rightLibraryReport: LibraryReport,
-): TwoWayScenarioComparisonRow[] {
+): Array<TwoWayScenarioComparisonRow> {
   const leftByScenarioId = new Map(
     leftLibraryReport.scenarios.map((scenario) => [scenario.id, scenario]),
   );
@@ -114,7 +114,7 @@ export function buildTwoWayComparisonRows(
   );
   const displayOrder = orderedScenarioIds(leftLibraryReport, rightLibraryReport);
 
-  const rows: TwoWayScenarioComparisonRow[] = [];
+  const rows: Array<TwoWayScenarioComparisonRow> = [];
   for (const scenarioId of displayOrder) {
     const left = leftByScenarioId.get(scenarioId);
     const right = rightByScenarioId.get(scenarioId);
@@ -184,7 +184,7 @@ function formatEnvironmentBulletsMarkdown(
   leftReport: LibraryReport,
   rightReport: LibraryReport,
   versionLabels: TwoWayMarkdownReportOptions["fingerprintLibraryVersionLabels"],
-): string[] {
+): Array<string> {
   return [
     `- Node ${leftReport.fingerprint.nodeVersion} / V8 ${leftReport.fingerprint.v8Version}`,
     `- ${leftReport.fingerprint.platform}/${leftReport.fingerprint.arch} · ${leftReport.fingerprint.cpuModel} × ${String(leftReport.fingerprint.cpuCount)}`,
@@ -230,7 +230,7 @@ export function renderTwoWayMarkdownReport(
           ),
         ].join("\n");
 
-  const sections: string[] = [
+  const sections: Array<string> = [
     options.documentHeading,
     "",
     "## Environment",

@@ -9,7 +9,7 @@ const npmWithMerge = tailwindVariantsTv(extremeVariants, TV_MERGE_ENABLED);
 /**
  * @since 0.3.16-canary.0
  */
-export function buildTailwindVariantsNpmExtremeScenarios(): readonly BenchScenario[] {
+export function buildTailwindVariantsNpmExtremeScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "extreme-without-merge",

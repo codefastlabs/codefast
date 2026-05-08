@@ -110,7 +110,7 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastResolutionPatternScenarios(): readonly BenchScenario[] {
+export function buildCodefastResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildResolveOptionalHitScenario(),
     buildResolveOptionalMissScenario(),

@@ -675,7 +675,7 @@ function TanStackThemeSetupCollapsible() {
   );
 }
 
-const TOKEN_SWATCHES: { label: string; varName: string; note?: string }[] = [
+const TOKEN_SWATCHES: Array<{ label: string; varName: string; note?: string }> = [
   { label: "Background", varName: "--background" },
   { label: "Foreground", varName: "--foreground" },
   { label: "Primary", varName: "--primary" },

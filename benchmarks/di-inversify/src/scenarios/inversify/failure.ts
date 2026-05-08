@@ -139,7 +139,7 @@ function buildAmbiguousMultiBindingScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyFailureScenarios(): readonly BenchScenario[] {
+export function buildInversifyFailureScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildMisconfiguredMissingBindingScenario(),
     buildCircularDependencyThreeScenario(),

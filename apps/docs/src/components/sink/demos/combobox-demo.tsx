@@ -105,7 +105,7 @@ export function ComboboxDemo() {
   );
 }
 
-function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
+function FrameworkCombobox({ frameworks: frameworkList }: { frameworks: Array<Framework> }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const listId = useId();
@@ -161,7 +161,7 @@ function UserCombobox({
   users: userList,
   selectedUserId,
 }: {
-  users: User[];
+  users: Array<User>;
   selectedUserId: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -242,7 +242,7 @@ function TimezoneCombobox({
   timezones: timezoneList,
   selectedTimezone,
 }: {
-  timezones: Timezone[];
+  timezones: Array<Timezone>;
   selectedTimezone?: TimezoneItem;
 }) {
   const [open, setOpen] = useState(false);
@@ -317,9 +317,9 @@ function TimezoneCombobox({
   );
 }
 
-function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Framework[] }) {
+function ComboboxWithCheckbox({ frameworks: frameworkList }: { frameworks: Array<Framework> }) {
   const [open, setOpen] = useState(false);
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Framework[]>([]);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Array<Framework>>([]);
   const listId = useId();
 
   return (

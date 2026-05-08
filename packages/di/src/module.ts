@@ -32,7 +32,7 @@ export interface AsyncModule {
  */
 export interface ModuleBuilder {
   bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
-  import(...modules: SyncModule[]): void;
+  import(...modules: Array<SyncModule>): void;
 }
 
 /**

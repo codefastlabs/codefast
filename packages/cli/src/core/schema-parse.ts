@@ -4,11 +4,11 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 
 type SchemaIssue = {
-  readonly path: readonly PropertyKey[];
+  readonly path: ReadonlyArray<PropertyKey>;
   readonly message: string;
 };
 
-function formatSchemaIssues(issues: readonly SchemaIssue[]): string {
+function formatSchemaIssues(issues: ReadonlyArray<SchemaIssue>): string {
   return issues
     .map((issue) => {
       const pathLabel = issue.path.length > 0 ? `${issue.path.join(".")}: ` : "";

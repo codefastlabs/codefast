@@ -5,6 +5,6 @@ import type { BenchScenario } from "#/scenarios/types";
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyFanOutScenarios(): readonly BenchScenario[] {
+export function buildInversifyFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [...buildInversifyFanOutTreeScenarios(), ...buildInversifyResolveAllStrategiesScenarios()];
 }

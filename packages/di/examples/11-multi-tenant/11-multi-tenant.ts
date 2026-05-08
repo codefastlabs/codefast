@@ -52,12 +52,12 @@ interface TenantContext {
 }
 
 interface DatabasePool {
-  query<T>(schema: string, sql: string, params?: unknown[]): Promise<T[]>;
+  query<T>(schema: string, sql: string, params?: Array<unknown>): Promise<Array<T>>;
   stats(): { activeConnections: number; idleConnections: number };
 }
 
 interface TenantDatabase {
-  query<T>(sql: string, params?: unknown[]): Promise<T[]>;
+  query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
 }
 
 interface TenantCache {
@@ -74,7 +74,7 @@ interface TenantLogger {
 
 interface FeatureFlags {
   isEnabled(flag: string): boolean;
-  enabledFlags(): string[];
+  enabledFlags(): Array<string>;
 }
 
 interface RateLimiter {
@@ -89,7 +89,7 @@ interface User {
 }
 
 interface UserService {
-  listUsers(): Promise<User[]>;
+  listUsers(): Promise<Array<User>>;
   createUser(email: string, role: User["role"]): Promise<User>;
 }
 
@@ -143,12 +143,12 @@ class PostgresConnectionPool implements DatabasePool {
     console.log(`    [Pool] initialised (max ${maxConnections} connections) → ${connectionString}`);
   }
 
-  async query<T>(schema: string, sql: string, params?: unknown[]): Promise<T[]> {
+  async query<T>(schema: string, sql: string, params?: Array<unknown>): Promise<Array<T>> {
     this.totalQueriesExecuted++;
     await delay(5);
     // Stub: return empty result with a log entry
     console.log(`    [Pool] schema=${schema} sql="${sql}" params=${JSON.stringify(params ?? [])}`);
-    return [] as T[];
+    return [] as Array<T>;
   }
 
   stats(): { activeConnections: number; idleConnections: number } {
@@ -172,7 +172,7 @@ class TenantDatabaseConnection implements TenantDatabase {
     private readonly tenantLogger: TenantLogger,
   ) {}
 
-  async query<T>(sql: string, params?: unknown[]): Promise<T[]> {
+  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
     this.tenantLogger.info(`db.query`, { sql, params });
     return this.pool.query<T>(this.schema, sql, params);
   }
@@ -218,7 +218,7 @@ class NamespacedRedisCache implements TenantCache {
 }
 
 class PlanFeatureFlags implements FeatureFlags {
-  private static readonly PLAN_FLAGS: Record<TenantPlan, string[]> = {
+  private static readonly PLAN_FLAGS: Record<TenantPlan, Array<string>> = {
     free: ["basic_auth", "file_upload"],
     pro: ["basic_auth", "file_upload", "api_access", "webhooks", "advanced_analytics"],
     enterprise: [
@@ -240,7 +240,7 @@ class PlanFeatureFlags implements FeatureFlags {
     return PlanFeatureFlags.PLAN_FLAGS[this.plan].includes(flag);
   }
 
-  enabledFlags(): string[] {
+  enabledFlags(): Array<string> {
     return PlanFeatureFlags.PLAN_FLAGS[this.plan];
   }
 }
@@ -299,13 +299,13 @@ class TenantUserManager implements UserService {
     private readonly tenant: TenantContext,
   ) {}
 
-  async listUsers(): Promise<User[]> {
+  async listUsers(): Promise<Array<User>> {
     if (!this.rateLimiter.checkQuota("api_call")) {
       throw new Error(`[${this.tenant.tenantId}] API quota exhausted`);
     }
 
     const cacheKey = "users:list";
-    const cachedUsers = await this.cache.get<User[]>(cacheKey);
+    const cachedUsers = await this.cache.get<Array<User>>(cacheKey);
     if (cachedUsers) {
       return cachedUsers;
     }

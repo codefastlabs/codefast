@@ -46,7 +46,7 @@ export enum DomainBinaryOperator {
 export interface DomainSourceFile {
   readonly fileName: string;
   readonly text: string;
-  readonly statements: readonly DomainAstNode[];
+  readonly statements: ReadonlyArray<DomainAstNode>;
 }
 
 interface DomainNodeBase {
@@ -61,7 +61,7 @@ interface DomainNodeBase {
  */
 export interface DomainUnknownAstNode extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.Unknown;
-  readonly children: readonly DomainAstNode[];
+  readonly children: ReadonlyArray<DomainAstNode>;
 }
 
 /**
@@ -112,7 +112,7 @@ export interface DomainImportClause extends DomainNodeBase {
  */
 export interface DomainNamedImports extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.NamedImports;
-  readonly elements: readonly DomainImportSpecifier[];
+  readonly elements: ReadonlyArray<DomainImportSpecifier>;
 }
 
 /**
@@ -138,7 +138,7 @@ export interface DomainImportSpecifier extends DomainNodeBase {
 export interface DomainCallExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.CallExpression;
   readonly expression: DomainAstNode;
-  readonly arguments: readonly DomainAstNode[];
+  readonly arguments: ReadonlyArray<DomainAstNode>;
 }
 
 /**
@@ -155,7 +155,7 @@ export interface DomainPropertyAccessExpression extends DomainNodeBase {
  */
 export interface DomainObjectLiteralExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ObjectLiteralExpression;
-  readonly properties: readonly DomainAstNode[];
+  readonly properties: ReadonlyArray<DomainAstNode>;
 }
 
 /**
@@ -172,7 +172,7 @@ export interface DomainPropertyAssignment extends DomainNodeBase {
  */
 export interface DomainArrayLiteralExpression extends DomainNodeBase {
   readonly kind: DomainSyntaxKind.ArrayLiteralExpression;
-  readonly elements: readonly DomainAstNode[];
+  readonly elements: ReadonlyArray<DomainAstNode>;
 }
 
 /**

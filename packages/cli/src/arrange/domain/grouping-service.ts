@@ -28,9 +28,9 @@ export type GroupFileUnwrapPlan = {
 };
 
 type GroupFileUnwrapState = {
-  readonly cnInTvCalls: readonly DomainCallExpression[];
+  readonly cnInTvCalls: ReadonlyArray<DomainCallExpression>;
   readonly unwrapReplacementByCall: ReadonlyMap<DomainCallExpression, string>;
-  readonly unwrapEdits: readonly GroupFileUnwrapPlan[];
+  readonly unwrapEdits: ReadonlyArray<GroupFileUnwrapPlan>;
   readonly textAfterUnwrap: string;
   readonly cnInTvNoReplacement: number;
 };
@@ -44,19 +44,19 @@ export type GroupFileWorkPlan = {
   readonly textAfterUnwrap: string;
   readonly domainSfForLineNumbers: DomainSourceFile;
   readonly domainSfGrouped: DomainSourceFile;
-  readonly cnInTvCalls: readonly DomainCallExpression[];
+  readonly cnInTvCalls: ReadonlyArray<DomainCallExpression>;
   readonly unwrapReplacementByCall: ReadonlyMap<DomainCallExpression, string>;
-  readonly unwrapEdits: readonly GroupFileUnwrapPlan[];
-  readonly plannedGroupEdits: readonly PlannedGroupEdit[];
+  readonly unwrapEdits: ReadonlyArray<GroupFileUnwrapPlan>;
+  readonly plannedGroupEdits: ReadonlyArray<PlannedGroupEdit>;
   readonly cnInTvNoReplacement: number;
   readonly reportTotal: number;
   readonly editSitesCount: number;
 };
 
 function toUnwrapPlans(
-  cnInTvCalls: readonly DomainCallExpression[],
+  cnInTvCalls: ReadonlyArray<DomainCallExpression>,
   sourceText: string,
-): GroupFileUnwrapPlan[] {
+): Array<GroupFileUnwrapPlan> {
   return cnInTvCalls
     .map((call): GroupFileUnwrapPlan | undefined => {
       const replacement = unwrapCnInsideTvCallReplacement(call, sourceText);
@@ -127,7 +127,7 @@ export function tryBuildGroupFileWorkPlan(input: {
   const sortedTargets = [...groupTargets].sort(
     (leftTarget, rightTarget) => targetReplaceStart(rightTarget) - targetReplaceStart(leftTarget),
   );
-  const plannedGroupEdits: PlannedGroupEdit[] = [];
+  const plannedGroupEdits: Array<PlannedGroupEdit> = [];
   for (const groupTarget of sortedTargets) {
     const plan = planGroupEditForTarget(groupTarget, unwrap.textAfterUnwrap, withClassName);
     if (plan === undefined) {

@@ -95,7 +95,7 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyScopeScenarios(): readonly BenchScenario[] {
+export function buildInversifyScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildChildDepthTwoResolveScenario(),
     buildChildRequestLifecycleCreateResolveDisposeScenario(),

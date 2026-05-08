@@ -123,7 +123,7 @@ export function createArrangeCommand(): Command {
     .option("--tv", "Emit tv()-style array instead of cn() call", false)
     .option("--with-classname, --with-class-name", "Append className as final cn() argument", false)
     .option("--json", "Print one JSON object on stdout instead of plain lines", false)
-    .action(async (classTokenSeries: string[], opts: Record<string, unknown>) => {
+    .action(async (classTokenSeries: Array<string>, opts: Record<string, unknown>) => {
       const parsed = parseWithSchema(arrangeSuggestGroupsRequestSchema, {
         inlineClasses: classTokenSeries.join(" ").trim(),
         emitTvStyleArray: !!opts.tv,

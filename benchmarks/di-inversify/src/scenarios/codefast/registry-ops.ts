@@ -215,7 +215,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastRegistryOpsScenarios(): readonly BenchScenario[] {
+export function buildCodefastRegistryOpsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildRebindHotSwapScenario(),
     buildHasBoundCheckScenario(),

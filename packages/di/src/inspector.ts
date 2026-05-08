@@ -28,8 +28,8 @@ export interface BindingSnapshot {
  * @since 0.3.16-canary.0
  */
 export interface ContainerSnapshot {
-  readonly ownBindings: readonly BindingSnapshot[];
-  readonly bindings: readonly BindingSnapshot[];
+  readonly ownBindings: ReadonlyArray<BindingSnapshot>;
+  readonly bindings: ReadonlyArray<BindingSnapshot>;
   readonly cachedSingletonCount: number;
   readonly hasParent: boolean;
   readonly isDisposed: boolean;
@@ -59,7 +59,7 @@ export class Inspector {
     };
   }
 
-  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): readonly BindingSnapshot[] {
+  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     const bindings = this._registry.getAll(token);
     return bindings.map((b) => this._toSnapshot(b));
   }
@@ -109,7 +109,7 @@ export class Inspector {
     return true;
   }
 
-  private allBindingSnapshots(): readonly BindingSnapshot[] {
+  private allBindingSnapshots(): ReadonlyArray<BindingSnapshot> {
     return this._registry.allBindings().map((b) => this._toSnapshot(b));
   }
 

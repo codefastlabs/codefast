@@ -9,7 +9,7 @@ import { codefastConfigRootSchema, type CodefastConfig } from "#/core/config/sch
  */
 export type LoadConfigPayload = {
   readonly config: CodefastConfig;
-  readonly warnings: string[];
+  readonly warnings: Array<string>;
   readonly configPath?: string;
 };
 
@@ -41,8 +41,8 @@ const configJson = "codefast.config.json";
 
 const cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
 
-function listConfigCandidates(startDir: string, fs: FilesystemPort): string[] {
-  const candidates: string[] = [];
+function listConfigCandidates(startDir: string, fs: FilesystemPort): Array<string> {
+  const candidates: Array<string> = [];
   let current = path.resolve(startDir);
   while (true) {
     for (const name of configJsPriority) {
@@ -90,7 +90,7 @@ async function readConfigFromPath(
 }
 
 async function loadOnce(startDir: string, fs: FilesystemPort): Promise<LoadConfigPayload> {
-  const warnings: string[] = [];
+  const warnings: Array<string> = [];
   const configPaths = listConfigCandidates(startDir, fs);
   if (configPaths.length === 0) {
     return { config: {}, warnings };

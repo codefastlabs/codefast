@@ -93,9 +93,9 @@ export const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOp
  * @since 0.3.16-canary.0
  */
 export function collectUnconditionalTailwindLiteralsFromCnArguments(
-  args: readonly DomainAstNode[],
-): TailwindClassLiteral[] {
-  const staticLits: TailwindClassLiteral[] = [];
+  args: ReadonlyArray<DomainAstNode>,
+): Array<TailwindClassLiteral> {
+  const staticLits: Array<TailwindClassLiteral> = [];
   for (const arg of args) {
     if (isDomainTailwindClassLiteral(arg)) {
       if (!isUnsafeLiteralForCnStyleApplySplit(arg)) {

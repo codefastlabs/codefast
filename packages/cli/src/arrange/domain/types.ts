@@ -82,7 +82,7 @@ export type StringNode = {
   /**
    * All static string literals belonging to this slot, in source order.
    */
-  nodes: TailwindClassLiteral[];
+  nodes: Array<TailwindClassLiteral>;
   sf: DomainSourceFile;
   /**
    * String slots in `tv({ ... })` that are not `cn(...)` arguments — use `formatArray` when
@@ -122,7 +122,7 @@ export type PlannedGroupEdit = {
   /**
    * Per-chunk bucket labels (same as `arrange group` trailing `// Buckets:` line).
    */
-  bucketSummary: string[];
+  bucketSummary: Array<string>;
   jsxCn: boolean;
   lineSf: DomainSourceFile;
   reportNode: DomainAstNode;
@@ -193,13 +193,13 @@ export type ArrangeGroupFileOptions = {
  * @since 0.3.16-canary.0
  */
 export type ArrangeRunResult = {
-  filePaths: string[];
-  modifiedFiles: string[];
+  filePaths: Array<string>;
+  modifiedFiles: Array<string>;
   totalFound: number;
   totalChanged: number;
   hookError: string | null;
   /** Populated in preview mode (write=false); empty in apply mode. */
-  previewPlans: GroupFileWorkPlan[];
+  previewPlans: Array<GroupFileWorkPlan>;
 };
 
 /**

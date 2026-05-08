@@ -45,9 +45,9 @@ export class NoMatchingBindingError extends DiError {
   readonly code = "NO_MATCHING_BINDING";
   readonly tokenName: string;
   readonly hint: ResolveOptions;
-  readonly availableSlots: string[];
+  readonly availableSlots: Array<string>;
 
-  constructor(tokenName: string, hint: ResolveOptions, availableSlots: string[]) {
+  constructor(tokenName: string, hint: ResolveOptions, availableSlots: Array<string>) {
     const hintStr = JSON.stringify(hint);
     const slotsStr = availableSlots.join(", ");
     super(`No binding for '${tokenName}' matching ${hintStr}. Available slots: [${slotsStr}].`);
@@ -63,9 +63,9 @@ export class NoMatchingBindingError extends DiError {
 export class AmbiguousBindingError extends DiError {
   readonly code = "AMBIGUOUS_BINDING";
   readonly tokenName: string;
-  readonly candidateIds: readonly BindingIdentifier[];
+  readonly candidateIds: ReadonlyArray<BindingIdentifier>;
 
-  constructor(tokenName: string, candidateIds: readonly BindingIdentifier[]) {
+  constructor(tokenName: string, candidateIds: ReadonlyArray<BindingIdentifier>) {
     super(
       `Multiple bindings for '${tokenName}' matched without a clear winner. Candidates: [${candidateIds.join(", ")}]. Ensure when() predicates are mutually exclusive.`,
     );
@@ -79,9 +79,9 @@ export class AmbiguousBindingError extends DiError {
  */
 export class CircularDependencyError extends DiError {
   readonly code = "CIRCULAR_DEPENDENCY";
-  readonly cycle: string[];
+  readonly cycle: Array<string>;
 
-  constructor(cycle: string[]) {
+  constructor(cycle: Array<string>) {
     super(`Circular dependency detected: ${cycle.join(" → ")}`);
     this.cycle = cycle;
   }
@@ -125,7 +125,7 @@ export interface ScopeViolationDetails {
   readonly consumerScope: BindingScope;
   readonly dependencyToken: string;
   readonly dependencyScope: BindingScope;
-  readonly path: string[];
+  readonly path: Array<string>;
 }
 
 /**

@@ -9,7 +9,7 @@ const npmButtonWithMerge = tailwindVariantsCreateTV(TV_MERGE_ENABLED)(buttonVari
 /**
  * @since 0.3.16-canary.0
  */
-export function buildTailwindVariantsNpmCreateTvScenarios(): readonly BenchScenario[] {
+export function buildTailwindVariantsNpmCreateTvScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "create-tv-without-merge",

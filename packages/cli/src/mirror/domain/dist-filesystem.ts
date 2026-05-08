@@ -4,6 +4,6 @@
  * @since 0.3.16-canary.0
  */
 export interface DistFilesystem {
-  listRelativeFilesRecursively(dirPath: string): Promise<string[]>;
+  listRelativeFilesRecursively(dirPath: string): Promise<Array<string>>;
   isDirectoryCssOnly(distDir: string, dirPath: string): Promise<boolean>;
 }

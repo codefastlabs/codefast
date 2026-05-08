@@ -9,7 +9,7 @@ import { normalizePath } from "#/mirror/domain/path-normalizer";
  */
 export function createMirrorDistFilesystem(fs: FilesystemPort): DistFilesystem {
   return {
-    async listRelativeFilesRecursively(dirPath: string): Promise<string[]> {
+    async listRelativeFilesRecursively(dirPath: string): Promise<Array<string>> {
       try {
         const raw = await fs.readdir(dirPath, { recursive: true, withFileTypes: true });
         if (!isDirentList(raw)) {

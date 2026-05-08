@@ -58,7 +58,7 @@ function compareClassTokensCanonically(left: string, right: string): number {
  * in {@link suggestCnGroups} without reordering unrelated variant blocks by alphabet alone.
  */
 function buildFirstVariantKeySourceIndex(
-  classified: readonly ClassifiedTailwindToken[],
+  classified: ReadonlyArray<ClassifiedTailwindToken>,
 ): Map<string, number> {
   const firstVariantKeySourceIndex = new Map<string, number>();
   for (const item of classified) {
@@ -123,10 +123,10 @@ function compareClassifiedTailwindTokensForCnGrouping(
  * @since 0.3.16-canary.0
  */
 export function areCnTailwindPartitionsEquivalent(
-  staticLiteralTexts: string[],
-  suggestedGroups: string[],
+  staticLiteralTexts: Array<string>,
+  suggestedGroups: Array<string>,
 ): boolean {
-  const partitionSignatures = (chunks: string[]): string[] =>
+  const partitionSignatures = (chunks: Array<string>): Array<string> =>
     chunks
       .map((chunk) => {
         const classTokens = tokenizeClassString(chunk);
@@ -192,7 +192,7 @@ function dynamicMaxGroups(tokenCount: number): number {
  * via `changed = false`. Two mutually-incompatible singletons both hit
  * `continue` and `changed` stays false, so the loop exits without spinning.
  */
-function mergeSingletons(groups: string[]): string[] {
+function mergeSingletons(groups: Array<string>): Array<string> {
   if (groups.length <= 1) {
     return groups;
   }
@@ -274,13 +274,13 @@ function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
  * are well below that, so this is not a concern for the current usage pattern. If this ever
  * runs in a high-throughput batch mode, consider a priority-queue approach.
  */
-function capGroups(groups: string[], maxGroups: number): string[] {
+function capGroups(groups: Array<string>, maxGroups: number): Array<string> {
   const result = [...groups];
   const lengths = result.map((groupStr) => tokenizeClassString(groupStr).length);
 
   while (result.length > maxGroups) {
     type MergePairCandidate = { i: number; size: number; penalty: number };
-    const mergePairCandidates: MergePairCandidate[] = [];
+    const mergePairCandidates: Array<MergePairCandidate> = [];
     for (let i = 0; i < result.length - 1; i++) {
       const leftGroup = result[i];
       const rightGroup = result[i + 1];
@@ -349,7 +349,7 @@ function capGroups(groups: string[], maxGroups: number): string[] {
  * skipping intermediate `state` chunks (`sm:…`, `group-data-[…]:…`, etc.) that sit between
  * `ease-ui` and `data-open:animate-*`. If no such chunk exists, the ease chunk is left as-is.
  */
-function mergeEaseTimingIntoFollowingAnimatedState(groups: string[]): string[] {
+function mergeEaseTimingIntoFollowingAnimatedState(groups: Array<string>): Array<string> {
   const result = [...groups];
   let changed = true;
   while (changed) {
@@ -409,7 +409,7 @@ function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
 /**
  * @since 0.3.16-canary.0
  */
-export function suggestCnGroups(classString: string): string[] {
+export function suggestCnGroups(classString: string): Array<string> {
   const tokens = tokenizeClassString(classString);
   if (tokens.length === 0) {
     return [];
@@ -423,7 +423,7 @@ export function suggestCnGroups(classString: string): string[] {
    * states keep document order; within a key, `classToken` order is lexicographic for
    * idempotency.
    */
-  const classified: ClassifiedTailwindToken[] = tokens.map((classToken, index) => ({
+  const classified: Array<ClassifiedTailwindToken> = tokens.map((classToken, index) => ({
     classToken,
     bucket: classifyToken(classToken),
     index,
@@ -434,13 +434,13 @@ export function suggestCnGroups(classString: string): string[] {
     compareClassifiedTailwindTokensForCnGrouping(left, right, firstVariantKeySourceIndex),
   );
 
-  const rawGroups: string[] = [];
+  const rawGroups: Array<string> = [];
   /**
    * Bucket of the last token already placed in the current run (pairwise compat with `COMPATIBLE_BUCKET_SETS`).
    */
   let lastBucketInRun: Bucket | null = null;
   let currentStateKey: string | null = null;
-  let currentTokens: string[] = [];
+  let currentTokens: Array<string> = [];
 
   const flush = (): void => {
     if (currentTokens.length > 0) {
@@ -509,7 +509,7 @@ export function suggestCnGroups(classString: string): string[] {
  *
  * @since 0.3.16-canary.0
  */
-export function summarizeGroupBucketLabels(groups: string[]): string[] {
+export function summarizeGroupBucketLabels(groups: Array<string>): Array<string> {
   return groups.map((g) => {
     const uniq = new Set(tokenizeClassString(g).map(classifyToken));
     if (uniq.size !== 1) {

@@ -34,6 +34,19 @@ export default defineConfig({
   rules: {
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "warn",
+    "typescript/array-type": [
+      "error",
+      {
+        default: "generic",
+      },
+    ],
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        prefer: "type-imports",
+        fixStyle: "separate-type-imports",
+      },
+    ],
     "typescript/no-explicit-any": "warn",
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",

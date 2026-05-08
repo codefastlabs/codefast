@@ -52,7 +52,7 @@ export function slotKeyToString(slot: SlotKey): string {
   if (slot.name === undefined && slot.tags.length === 0) {
     return "default";
   }
-  const parts: string[] = [];
+  const parts: Array<string> = [];
   if (slot.name !== undefined) {
     parts.push(`name:${slot.name}`);
   }
@@ -111,8 +111,8 @@ export interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
  */
 export interface ResolvedBinding<Value> extends BindingBase<Value> {
   readonly kind: "resolved";
-  readonly factory: (...args: unknown[]) => Value;
-  readonly deps: readonly InjectionDescriptor[];
+  readonly factory: (...args: Array<unknown>) => Value;
+  readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
   readonly onActivation?: ActivationHandler<Value>;
   readonly onDeactivation?: DeactivationHandler<Value>;
@@ -123,8 +123,8 @@ export interface ResolvedBinding<Value> extends BindingBase<Value> {
  */
 export interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
   readonly kind: "resolved-async";
-  readonly factory: (...args: unknown[]) => Promise<Value>;
-  readonly deps: readonly InjectionDescriptor[];
+  readonly factory: (...args: Array<unknown>) => Promise<Value>;
+  readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
   readonly onActivation?: ActivationHandler<Value>;
   readonly onDeactivation?: DeactivationHandler<Value>;
@@ -196,11 +196,11 @@ export interface BindToBuilder<Value> {
   toConstantValue(value: Value): ConstantBindingBuilder<Value>;
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
-  toResolved<const Deps extends readonly DependencyKey[]>(
+  toResolved<const Deps extends ReadonlyArray<DependencyKey>>(
     factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value>;
-  toResolvedAsync<const Deps extends readonly DependencyKey[]>(
+  toResolvedAsync<const Deps extends ReadonlyArray<DependencyKey>>(
     factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value>;

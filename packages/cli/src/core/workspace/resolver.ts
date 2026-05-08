@@ -46,7 +46,7 @@ export type WorkspacePackageLayoutSource =
  * @since 0.3.16-canary.0
  */
 export type WorkspacePackageLayoutOutcome = {
-  readonly packageDirectoryPathsAbsolute: string[];
+  readonly packageDirectoryPathsAbsolute: Array<string>;
   readonly layoutSource: WorkspacePackageLayoutSource;
   readonly hasPnpmWorkspaceYamlFile: boolean;
 };
@@ -75,9 +75,12 @@ function workspacePatternToPackageJsonGlob(pattern: string): string {
   return `${normalizedPattern}/${packageJsonFileName}`;
 }
 
-function splitPnpmWorkspacePackagesArray(raw: unknown): { include: string[]; exclude: string[] } {
-  const include: string[] = [];
-  const exclude: string[] = [];
+function splitPnpmWorkspacePackagesArray(raw: unknown): {
+  include: Array<string>;
+  exclude: Array<string>;
+} {
+  const include: Array<string> = [];
+  const exclude: Array<string> = [];
   if (!Array.isArray(raw)) {
     return { include, exclude };
   }
@@ -99,8 +102,8 @@ function splitPnpmWorkspacePackagesArray(raw: unknown): { include: string[]; exc
 }
 
 function parsePnpmWorkspaceDocument(doc: unknown): {
-  include: string[];
-  exclude: string[];
+  include: Array<string>;
+  exclude: Array<string>;
   hasPackagesKey: boolean;
   isEmptyPackagesArray: boolean;
 } {
@@ -167,8 +170,8 @@ export async function listWorkspacePackageDirectories(
   const workspaceYaml = await readWorkspaceYaml(rootDirectoryPathAbsolute, fs);
   const defInc = defaultIncludePatterns;
 
-  let include: string[];
-  let exclude: string[];
+  let include: Array<string>;
+  let exclude: Array<string>;
   let layoutSource: WorkspacePackageLayoutSource;
   const hasPnpmWorkspaceYamlFile = workspaceYaml.exists;
 
@@ -204,7 +207,7 @@ export async function listWorkspacePackageDirectories(
 
   for (const pattern of include) {
     const globPat = workspacePatternToPackageJsonGlob(pattern);
-    let matches: string[];
+    let matches: Array<string>;
     try {
       matches = globSync(globPat, globOpts);
     } catch (caughtGlobError: unknown) {

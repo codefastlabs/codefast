@@ -40,7 +40,7 @@ function runExtremeSlotsLoop(renderer: ExtremeSlotsRenderer): void {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastExtremeSlotsScenarios(): readonly BenchScenario[] {
+export function buildCodefastExtremeSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "extreme-slots-without-merge",

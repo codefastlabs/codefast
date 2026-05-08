@@ -190,7 +190,7 @@ type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> 
   nameKey?: string;
   color?: string | undefined;
   className?: string | undefined;
-  payload?: Payload<TValue, TName>[];
+  payload?: Array<Payload<TValue, TName>>;
 };
 
 /**
@@ -540,7 +540,7 @@ function generateThemeStyles(
   theme: string,
   prefix: string,
   id: string,
-  colorConfig: [string, ChartConfig[string]][],
+  colorConfig: Array<[string, ChartConfig[string]]>,
 ): string {
   const cssVariables = colorConfig
     .map(([key, itemConfig]) => generateCssVariable(key, itemConfig, theme))
@@ -553,7 +553,10 @@ function generateThemeStyles(
 /**
  * Generates complete CSS styles for all themes
  */
-function generateChartStyles(id: string, colorConfig: [string, ChartConfig[string]][]): string {
+function generateChartStyles(
+  id: string,
+  colorConfig: Array<[string, ChartConfig[string]]>,
+): string {
   return Object.entries(THEMES)
     .map(([theme, prefix]) => generateThemeStyles(theme, prefix, id, colorConfig))
     .join("\n\n");

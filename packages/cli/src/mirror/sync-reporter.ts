@@ -156,7 +156,7 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
       }
     }
 
-    const breakdown: string[] = [];
+    const breakdown: Array<string> = [];
     if (generatedDistAssetCounts.jsCount > 0) {
       breakdown.push(this.paint(`${generatedDistAssetCounts.jsCount} modules`, ANSI.green));
     }

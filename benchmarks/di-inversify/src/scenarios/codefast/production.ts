@@ -280,7 +280,7 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastProductionScenarios(): readonly BenchScenario[] {
+export function buildCodefastProductionScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildProductionHttpHandlerScenario(),
     buildProductionUnitOfWorkScenario(),

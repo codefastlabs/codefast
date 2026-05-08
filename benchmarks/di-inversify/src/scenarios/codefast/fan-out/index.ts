@@ -5,6 +5,6 @@ import type { BenchScenario } from "#/scenarios/types";
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastFanOutScenarios(): readonly BenchScenario[] {
+export function buildCodefastFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [...buildCodefastFanOutTreeScenarios(), ...buildCodefastResolveAllStrategiesScenarios()];
 }

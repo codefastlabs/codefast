@@ -4,7 +4,7 @@ import type { ContainerGraphJson } from "#/dependency-graph";
  * @since 0.3.16-canary.0
  */
 export function toDotGraph(graph: ContainerGraphJson): string {
-  const lines: string[] = ["digraph DI {", "  rankdir=TB;"];
+  const lines: Array<string> = ["digraph DI {", "  rankdir=TB;"];
 
   for (const node of graph.nodes) {
     const label = `${node.tokenName}\\n[${node.kind}/${node.scope}]`;

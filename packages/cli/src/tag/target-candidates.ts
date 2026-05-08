@@ -59,7 +59,7 @@ export async function resolveTagTargetCandidates(
   fs: FilesystemPort,
   rootDir: string,
   explicitTarget: string | undefined,
-): Promise<TagTargetCandidate[]> {
+): Promise<Array<TagTargetCandidate>> {
   if (explicitTarget) {
     const resolvedExplicitTarget = path.resolve(explicitTarget);
     return [

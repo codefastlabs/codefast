@@ -19,10 +19,10 @@ export async function writePackageJsonExportsAtomic(
   packageJsonPath: string,
   mergeInput: {
     generatedExports: ExportMapData;
-    managedExportSpecifiers: string[];
+    managedExportSpecifiers: Array<string>;
     originalPathBySpecifier: ExportOriginalPathBySpecifier;
   },
-): Promise<{ prunedKeys: string[] }> {
+): Promise<{ prunedKeys: Array<string> }> {
   function containsDistTarget(value: unknown): boolean {
     if (typeof value === "string") {
       return value.startsWith("./dist/");
@@ -87,7 +87,7 @@ export async function writePackageJsonExportsAtomic(
     ...mergeInput.originalPathBySpecifier,
   };
   const mergedExportMap: Record<string, unknown> = {};
-  const prunedKeys: string[] = [];
+  const prunedKeys: Array<string> = [];
 
   // Preserve unmanaged manual entries; drop unmanaged stale entries targeting dist/.
   for (const [exportSpecifier, exportValue] of Object.entries(existingExportMap)) {

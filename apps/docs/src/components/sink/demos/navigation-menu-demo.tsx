@@ -18,7 +18,7 @@ interface ComponentItem {
   description: string;
 }
 
-const components: ComponentItem[] = [
+const components: Array<ComponentItem> = [
   {
     title: "Alert Dialog",
     href: "/docs/primitives/alert-dialog",

@@ -19,7 +19,7 @@ interface GoalItem {
   goal: number;
 }
 
-const data: GoalItem[] = [
+const data: Array<GoalItem> = [
   {
     goal: 400,
   },

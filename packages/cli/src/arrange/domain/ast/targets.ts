@@ -38,8 +38,8 @@ export function targetReplaceStart(target: GroupTarget): number {
   return target.valueNode.pos;
 }
 
-function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): GroupTarget[] {
-  const results: GroupTarget[] = [];
+function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): Array<GroupTarget> {
+  const results: Array<GroupTarget> = [];
   const visitTypeScriptSubtree = (tsNode: DomainAstNode): void => {
     if (isDomainJsxAttribute(tsNode)) {
       const parsed = jsxClassNameStaticLiteral(tsNode);
@@ -63,7 +63,10 @@ function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): GroupTarg
 /**
  * @since 0.3.16-canary.0
  */
-export function collectGroupTargets(sourceFile: DomainSourceFile, filePath: string): GroupTarget[] {
+export function collectGroupTargets(
+  sourceFile: DomainSourceFile,
+  filePath: string,
+): Array<GroupTarget> {
   const cnPart = collectGroupableStringNodes(sourceFile).map((stringNode) => ({
     kind: "cnArg" as const,
     item: stringNode,
@@ -86,7 +89,7 @@ function formatCnCallReplacement(
   const baseIndent = indentOfLineContaining(sourceText, call.pos);
   const argIndent = `${baseIndent}  `;
 
-  const dynamicArgTexts: string[] = [];
+  const dynamicArgTexts: Array<string> = [];
   for (const arg of call.arguments) {
     const isSimpleStatic =
       isDomainTailwindClassLiteral(arg) && !isUnsafeLiteralForCnStyleApplySplit(arg);
@@ -98,7 +101,7 @@ function formatCnCallReplacement(
   const pool = slotClassString(stringNode);
   const groups = pool.trim() ? suggestCnGroups(pool) : [];
 
-  const allArgs: string[] = [];
+  const allArgs: Array<string> = [];
 
   if (groups.length > 1) {
     for (const group of groups) {

@@ -8,7 +8,7 @@ import type { DirectoryEntry } from "#/core/filesystem/port";
  *
  * @since 0.3.16-canary.0
  */
-export function isDirentList(x: string[] | DirectoryEntry[]): x is DirectoryEntry[] {
+export function isDirentList(x: Array<string> | Array<DirectoryEntry>): x is Array<DirectoryEntry> {
   if (x.length === 0) {
     return true;
   }

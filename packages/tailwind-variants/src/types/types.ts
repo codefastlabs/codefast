@@ -114,9 +114,9 @@ export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
   readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
     ?
         | boolean
-        | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[]
+        | ReadonlyArray<boolean | StringToBooleanType<keyof T[Variant]>>
         | StringToBooleanType<keyof T[Variant]>
-    : readonly StringToBooleanType<keyof T[Variant]>[] | StringToBooleanType<keyof T[Variant]>;
+    : ReadonlyArray<StringToBooleanType<keyof T[Variant]>> | StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue;
   class?: ClassValue;
@@ -137,9 +137,9 @@ export type CompoundVariantWithSlotsType<
   readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
     ?
         | boolean
-        | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[]
+        | ReadonlyArray<boolean | StringToBooleanType<keyof T[Variant]>>
         | StringToBooleanType<keyof T[Variant]>
-    : readonly StringToBooleanType<keyof T[Variant]>[] | StringToBooleanType<keyof T[Variant]>;
+    : ReadonlyArray<StringToBooleanType<keyof T[Variant]>> | StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue | SlotProperties<S>;
   class?: ClassValue | SlotProperties<S>;
@@ -156,12 +156,12 @@ export type CompoundVariantWithSlotsType<
 export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfigurationSchema> =
   T extends Record<string, never>
     ? {
-        readonly slots: readonly (keyof S)[];
+        readonly slots: ReadonlyArray<keyof S>;
         className?: ClassValue;
         class?: ClassValue;
       }
     : {
-        readonly slots: readonly (keyof S)[];
+        readonly slots: ReadonlyArray<keyof S>;
         className?: ClassValue;
         class?: ClassValue;
       } & {
@@ -180,7 +180,7 @@ export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfig
  */
 export interface Configuration<T extends ConfigurationSchema> {
   readonly base?: ClassValue;
-  readonly compoundVariants?: readonly CompoundVariantType<T>[];
+  readonly compoundVariants?: ReadonlyArray<CompoundVariantType<T>>;
   readonly defaultVariants?: ConfigurationVariants<T>;
   readonly variants?: T;
 }
@@ -198,8 +198,8 @@ export interface ConfigurationWithSlots<
   S extends SlotConfigurationSchema,
 > {
   readonly base?: ClassValue;
-  readonly compoundSlots?: readonly CompoundSlotType<T, S>[];
-  readonly compoundVariants?: readonly CompoundVariantWithSlotsType<T, S>[];
+  readonly compoundSlots?: ReadonlyArray<CompoundSlotType<T, S>>;
+  readonly compoundVariants?: ReadonlyArray<CompoundVariantWithSlotsType<T, S>>;
   readonly defaultVariants?: ConfigurationVariants<T>;
   readonly slots?: S;
   readonly variants?: T;
@@ -331,7 +331,7 @@ export interface TailwindVariantsFactory {
  * @since 0.3.16-canary.0
  */
 export interface TailwindVariantsFactoryResult {
-  cn: (...classes: ClassValue[]) => string;
+  cn: (...classes: Array<ClassValue>) => string;
   tv: TailwindVariantsFactory;
 }
 
@@ -376,14 +376,15 @@ export interface ExtendedConfiguration<
   SExtension extends SlotConfigurationSchema,
 > {
   readonly base?: ClassValue;
-  readonly compoundSlots?: readonly CompoundSlotType<
-    MergedSchemas<TBase, TExtension>,
-    MergedSlotSchemas<SBase, SExtension>
-  >[];
-  readonly compoundVariants?: readonly CompoundVariantWithSlotsType<
-    MergedSchemas<TBase, TExtension>,
-    MergedSlotSchemas<SBase, SExtension>
-  >[];
+  readonly compoundSlots?: ReadonlyArray<
+    CompoundSlotType<MergedSchemas<TBase, TExtension>, MergedSlotSchemas<SBase, SExtension>>
+  >;
+  readonly compoundVariants?: ReadonlyArray<
+    CompoundVariantWithSlotsType<
+      MergedSchemas<TBase, TExtension>,
+      MergedSlotSchemas<SBase, SExtension>
+    >
+  >;
   readonly defaultVariants?: ConfigurationVariants<MergedSchemas<TBase, TExtension>>;
   readonly extend?: VariantFunctionType<TBase, SBase>;
   readonly slots?: SExtension;

@@ -66,9 +66,9 @@ export interface Container {
   unbindAllAsync(): Promise<void>;
   rebind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
 
-  load(...modules: SyncModule[]): void;
+  load(...modules: Array<SyncModule>): void;
   loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
-  unload(...modules: SyncModule[]): void;
+  unload(...modules: Array<SyncModule>): void;
   unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
   loadAutoRegistered(registry: AutoRegisterRegistry): number;
 
@@ -94,11 +94,14 @@ export interface Container {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
+  resolveAll<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Array<Value>;
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
-  ): Promise<Value[]>;
+  ): Promise<Array<Value>>;
 
   createChild(): Container;
 
@@ -111,7 +114,9 @@ export interface Container {
 
   has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
   hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
-  lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): readonly BindingSnapshot[];
+  lookupBindings<const Value>(
+    token: Token<Value> | Constructor<Value>,
+  ): ReadonlyArray<BindingSnapshot>;
   inspect(): ContainerSnapshot;
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
@@ -121,7 +126,7 @@ export interface Container {
  */
 export interface ContainerStatic {
   create(): Container;
-  fromModules(...modules: SyncModule[]): Container;
+  fromModules(...modules: Array<SyncModule>): Container;
   fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
 }
 
@@ -139,7 +144,7 @@ class DefaultContainer implements Container {
   // Module tracking: module -> ref count
   private readonly _moduleRefs = new Map<object, number>();
   // Module bindings: module -> array of binding IDs registered by it
-  private readonly _moduleBindingIds = new Map<object, BindingIdentifier[]>();
+  private readonly _moduleBindingIds = new Map<object, Array<BindingIdentifier>>();
 
   constructor(parent?: DefaultContainer) {
     this._parent = parent;
@@ -295,7 +300,7 @@ class DefaultContainer implements Container {
 
   private _getBindingsForTokenOrId(
     tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
-  ): Binding[] {
+  ): Array<Binding> {
     if (typeof tokenOrId === "string") {
       // It's a BindingIdentifier (string)
       const b = this._registry.getById(tokenOrId as BindingIdentifier);
@@ -306,12 +311,12 @@ class DefaultContainer implements Container {
 
   // ── Module ────────────────────────────────────────────────────────────────
 
-  load(...modules: SyncModule[]): void {
+  load(...modules: Array<SyncModule>): void {
     this._assertNotDisposed();
     this._loadSyncModules(modules);
   }
 
-  private _loadSyncModules(modules: SyncModule[]): void {
+  private _loadSyncModules(modules: Array<SyncModule>): void {
     // Collect all modules in topological order (dedup by identity)
     const toLoad = this._collectModuleDeps(modules);
     for (const mod of toLoad) {
@@ -383,7 +388,7 @@ class DefaultContainer implements Container {
     return {
       bind: <const Value>(t: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
         this._createBindToBuilder(t, moduleRef),
-      import: (...mods: SyncModule[]): void => {
+      import: (...mods: Array<SyncModule>): void => {
         this._loadSyncModules(mods);
       },
     };
@@ -404,7 +409,7 @@ class DefaultContainer implements Container {
     };
   }
 
-  unload(...modules: SyncModule[]): void {
+  unload(...modules: Array<SyncModule>): void {
     this._assertNotDisposed();
     for (const mod of modules) {
       this._unloadModuleSync(mod as object);
@@ -537,7 +542,7 @@ class DefaultContainer implements Container {
   resolveAll<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
-  ): Value[] {
+  ): Array<Value> {
     this._assertNotDisposed();
     return this._resolver.resolveAll(token, hint, [], []);
   }
@@ -545,7 +550,7 @@ class DefaultContainer implements Container {
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
-  ): Promise<Value[]> {
+  ): Promise<Array<Value>> {
     this._assertNotDisposed();
     return this._resolver.resolveAllAsync(token, hint, [], []);
   }
@@ -687,7 +692,7 @@ class DefaultContainer implements Container {
     consumerToken: string,
     consumerScope: BindingScope,
     dep: { token: Token<unknown> | Constructor; scope: BindingScope },
-    path: string[],
+    path: Array<string>,
     _reader: MetadataReader,
   ): void {
     if (consumerScope === "singleton") {
@@ -717,7 +722,7 @@ class DefaultContainer implements Container {
 
   lookupBindings<const Value>(
     token: Token<Value> | Constructor<Value>,
-  ): readonly BindingSnapshot[] {
+  ): ReadonlyArray<BindingSnapshot> {
     this._assertNotDisposed();
     return this._inspector.lookupBindings(token);
   }
@@ -793,7 +798,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     );
   }
 
-  toResolved<const Deps extends readonly DependencyKey[]>(
+  toResolved<const Deps extends ReadonlyArray<DependencyKey>>(
     factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value> {
@@ -802,7 +807,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
       this._token,
       {
         kind: "resolved",
-        factory: factory as (...args: unknown[]) => Value,
+        factory: factory as (...args: Array<unknown>) => Value,
         deps: normalizedDeps,
         scope: "transient",
       },
@@ -810,7 +815,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     );
   }
 
-  toResolvedAsync<const Deps extends readonly DependencyKey[]>(
+  toResolvedAsync<const Deps extends ReadonlyArray<DependencyKey>>(
     factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value> {
@@ -819,7 +824,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
       this._token,
       {
         kind: "resolved-async",
-        factory: factory as (...args: unknown[]) => Promise<Value>,
+        factory: factory as (...args: Array<unknown>) => Promise<Value>,
         deps: normalizedDeps,
         scope: "transient",
       },
@@ -1141,7 +1146,7 @@ export const Container: ContainerStatic & { create(): Container } = {
     return new DefaultContainer();
   },
 
-  fromModules(...modules: SyncModule[]): Container {
+  fromModules(...modules: Array<SyncModule>): Container {
     const container = new DefaultContainer();
     container.load(...modules);
     return container;

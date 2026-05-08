@@ -24,13 +24,13 @@ export interface FilesystemPort {
   statSync(filePath: string): { isDirectory(): boolean; isFile(): boolean };
   readFileSync(filePath: string, encoding: CliFileEncoding): string;
   writeFileSync(filePath: string, data: string, encoding: CliFileEncoding): void;
-  readdirSync(filePath: string): string[];
+  readdirSync(filePath: string): Array<string>;
   readFile(filePath: string, encoding: CliFileEncoding): Promise<string>;
   writeFile(filePath: string, data: string, encoding: CliFileEncoding): Promise<void>;
   readdir(
     filePath: string,
     options?: { recursive?: boolean; withFileTypes?: boolean },
-  ): Promise<string[] | DirectoryEntry[]>;
+  ): Promise<Array<string> | Array<DirectoryEntry>>;
   rename(oldPath: string, newPath: string): Promise<void>;
   unlink(filePath: string): Promise<void>;
 }

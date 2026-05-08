@@ -156,7 +156,7 @@ function buildToSelfSingletonScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastBindingVariantScenarios(): readonly BenchScenario[] {
+export function buildCodefastBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildToResolvedThreeDepsScenario(),
     buildToAliasRedirectScenario(),

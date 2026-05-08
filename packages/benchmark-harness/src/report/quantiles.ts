@@ -4,7 +4,7 @@
  * @since 0.3.16-canary.0
  */
 
-export function sortAscending(values: readonly number[]): number[] {
+export function sortAscending(values: ReadonlyArray<number>): Array<number> {
   return [...values].sort((left, right) => left - right);
 }
 
@@ -14,7 +14,7 @@ export function sortAscending(values: readonly number[]): number[] {
  *
  * @since 0.3.16-canary.0
  */
-export function quantile(sortedValues: readonly number[], quantileProbability: number): number {
+export function quantile(sortedValues: ReadonlyArray<number>, quantileProbability: number): number {
   if (sortedValues.length === 0) {
     return 0;
   }

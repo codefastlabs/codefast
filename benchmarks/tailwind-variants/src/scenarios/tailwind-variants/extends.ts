@@ -22,7 +22,7 @@ const npmExtendsWithMerge = tailwindVariantsTv(
 /**
  * @since 0.3.16-canary.0
  */
-export function buildTailwindVariantsNpmExtendsScenarios(): readonly BenchScenario[] {
+export function buildTailwindVariantsNpmExtendsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "extends-without-merge",

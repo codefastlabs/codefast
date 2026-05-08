@@ -17,11 +17,11 @@ export class LifecycleManager {
   // Container-level activation/deactivation hooks per token
   private readonly _activationHooks = new Map<
     Token<unknown> | Constructor,
-    ActivationHandler<unknown>[]
+    Array<ActivationHandler<unknown>>
   >();
   private readonly _deactivationHooks = new Map<
     Token<unknown> | Constructor,
-    DeactivationHandler<unknown>[]
+    Array<DeactivationHandler<unknown>>
   >();
   private _activationVersion = 0;
 

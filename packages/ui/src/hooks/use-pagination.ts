@@ -39,7 +39,7 @@ export const ELLIPSIS = "•••";
  * @param end - Ending number (inclusive).
  * @returns Array of numbers from start to end.
  */
-const createRange = (start: number, end: number): number[] => {
+const createRange = (start: number, end: number): Array<number> => {
   const length = end - start + 1;
 
   return Array.from({ length }, (_, index) => start + index);
@@ -72,8 +72,8 @@ export function usePagination({
   resultsPerPage,
   siblingPagesCount = 1,
   totalResults,
-}: UsePaginationProps): (number | string)[] {
-  return useMemo<(number | string)[]>(() => {
+}: UsePaginationProps): Array<number | string> {
+  return useMemo<Array<number | string>>(() => {
     // Total pages derived from results and page size
     const totalPages = Math.ceil(totalResults / Math.floor(resultsPerPage));
 

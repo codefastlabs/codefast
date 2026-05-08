@@ -9,7 +9,7 @@ const codefastWithMerge = codefastTvFn(complexVariants, TV_MERGE_ENABLED);
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastComplexScenarios(): readonly BenchScenario[] {
+export function buildCodefastComplexScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "complex-without-merge",

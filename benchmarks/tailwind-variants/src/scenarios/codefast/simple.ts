@@ -9,7 +9,7 @@ const codefastWithMerge = codefastTvFn(buttonVariants, TV_MERGE_ENABLED);
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastSimpleScenarios(): readonly BenchScenario[] {
+export function buildCodefastSimpleScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "simple-without-merge",

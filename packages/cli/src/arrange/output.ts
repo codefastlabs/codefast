@@ -106,12 +106,12 @@ function printGroupFilePreviewBody(args: {
   filePath: string;
   reportTotal: number;
   cnInTvNoReplacement: number;
-  cnInTvCalls: readonly DomainCallExpression[];
+  cnInTvCalls: ReadonlyArray<DomainCallExpression>;
   unwrapReplacementByCall: ReadonlyMap<DomainCallExpression, string>;
   sourceText: string;
   domainSf: DomainSourceFile;
-  unwrapEdits: readonly GroupFileUnwrapPlan[];
-  plannedGroupEdits: readonly PlannedGroupEdit[];
+  unwrapEdits: ReadonlyArray<GroupFileUnwrapPlan>;
+  plannedGroupEdits: ReadonlyArray<PlannedGroupEdit>;
 }): void {
   const {
     filePath,

@@ -96,6 +96,6 @@ function buildModuleLoadUnloadScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyModuleScenarios(): readonly BenchScenario[] {
+export function buildInversifyModuleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildModuleLoadUnloadScenario()];
 }

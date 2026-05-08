@@ -17,7 +17,7 @@ interface ChartDataItem {
   desktop: number;
 }
 
-const chartData: ChartDataItem[] = [
+const chartData: Array<ChartDataItem> = [
   { month: "January", desktop: 186 },
   { month: "February", desktop: 305 },
   { month: "March", desktop: 237 },

@@ -27,7 +27,7 @@ interface PersonItem {
   message: string;
 }
 
-const people: PersonItem[] = [
+const people: Array<PersonItem> = [
   {
     username: "codefast",
     avatar: "https://github.com/codefastlabs.png",
@@ -57,7 +57,7 @@ interface MusicItem {
   duration: string;
 }
 
-const music: MusicItem[] = [
+const music: Array<MusicItem> = [
   {
     title: "Midnight City Lights",
     artist: "Neon Dreams",
@@ -115,7 +115,7 @@ interface IssueItem {
   description: string;
 }
 
-const issues: IssueItem[] = [
+const issues: Array<IssueItem> = [
   {
     number: 1247,
     date: "March 15, 2024",

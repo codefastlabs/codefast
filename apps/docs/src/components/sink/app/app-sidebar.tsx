@@ -95,7 +95,7 @@ function NavHomeSection(): JSX.Element {
  * -------------------------------------------------------------------------------------------------*/
 
 interface NavMainSectionProps {
-  items: NavItem[];
+  items: Array<NavItem>;
 }
 
 function NavMainSection({ items }: NavMainSectionProps): JSX.Element {
@@ -155,10 +155,10 @@ interface ComponentsSectionProps {
 
 function ComponentsSection({ pathname }: ComponentsSectionProps): JSX.Element {
   const registrySections = useMemo(() => {
-    const sections: {
+    const sections: Array<{
       type: RegistryType;
-      components: [string, { name: string; href: string; label?: string }][];
-    }[] = [];
+      components: Array<[string, { name: string; href: string; label?: string }]>;
+    }> = [];
 
     for (const type of REGISTRY_TYPES) {
       const components = componentsByType[type];

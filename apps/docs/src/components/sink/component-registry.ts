@@ -510,7 +510,7 @@ export const componentRegistry: Record<string, ComponentConfig> = {
  * Export: Components By Type (Pre-grouped for performance)
  * -------------------------------------------------------------------------------------------------*/
 
-export const componentsByType: Record<RegistryType, [string, ComponentConfig][]> = {
+export const componentsByType: Record<RegistryType, Array<[string, ComponentConfig]>> = {
   "registry:ui": Object.entries(buildRegistry(uiComponents, "registry:ui")),
   "registry:page": Object.entries(buildRegistry(pageComponents, "registry:page")),
   "registry:block": [],

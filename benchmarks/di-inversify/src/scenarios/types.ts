@@ -55,6 +55,6 @@ export type AnyScenario = BenchScenario | AsyncBenchScenario;
  * @since 0.3.16-canary.0
  */
 export interface ScenarioModule {
-  readonly codefast: readonly AnyScenario[];
-  readonly inversify: readonly AnyScenario[];
+  readonly codefast: ReadonlyArray<AnyScenario>;
+  readonly inversify: ReadonlyArray<AnyScenario>;
 }

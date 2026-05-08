@@ -12,7 +12,7 @@ const cvaInstance = cva(complexVariants.base, {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildClassVarianceAuthorityComplexScenarios(): readonly BenchScenario[] {
+export function buildClassVarianceAuthorityComplexScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "complex-without-merge",

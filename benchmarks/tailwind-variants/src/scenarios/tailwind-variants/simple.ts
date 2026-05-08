@@ -9,7 +9,7 @@ const npmWithMerge = tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED);
 /**
  * @since 0.3.16-canary.0
  */
-export function buildTailwindVariantsNpmSimpleScenarios(): readonly BenchScenario[] {
+export function buildTailwindVariantsNpmSimpleScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "simple-without-merge",

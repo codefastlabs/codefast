@@ -17,7 +17,7 @@ export type RunBenchmarkChildMainParameters = Readonly<{
   readonly scenarioName: string;
   /** Benchmark package root passed to `collectFingerprint` (directory with that package's `package.json`). */
   readonly packageRoot: string;
-  readonly collectScenarios: () => readonly AnyBenchScenario[];
+  readonly collectScenarios: () => ReadonlyArray<AnyBenchScenario>;
   /** Default tinybench `Bench` timing; overridden when `BENCH_FAST` or `BENCH_FULL` is set. */
   readonly benchDefaults: BenchOptions;
 }>;

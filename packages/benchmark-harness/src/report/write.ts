@@ -15,9 +15,9 @@ export function writeMarkdownFile(outputPath: string, markdown: string): void {
 
 function flattenLibraryToJsonl(
   fingerprint: Fingerprint,
-  trials: readonly TrialPayload[],
-): JsonlBenchObservationRow[] {
-  const observations: JsonlBenchObservationRow[] = [];
+  trials: ReadonlyArray<TrialPayload>,
+): Array<JsonlBenchObservationRow> {
+  const observations: Array<JsonlBenchObservationRow> = [];
   for (const trial of trials) {
     for (const scenarioResult of trial.scenarios) {
       observations.push({
@@ -58,7 +58,7 @@ function flattenLibraryToJsonl(
  */
 export function writeJsonlRun(
   outputPath: string,
-  libraries: readonly { fingerprint: Fingerprint; trials: readonly TrialPayload[] }[],
+  libraries: ReadonlyArray<{ fingerprint: Fingerprint; trials: ReadonlyArray<TrialPayload> }>,
 ): void {
   const allObservations = libraries.flatMap((library) =>
     flattenLibraryToJsonl(library.fingerprint, library.trials),

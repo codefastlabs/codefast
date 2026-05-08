@@ -11,7 +11,7 @@ const cvaInstance = cva(buttonVariants.base, {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildClassVarianceAuthoritySimpleScenarios(): readonly BenchScenario[] {
+export function buildClassVarianceAuthoritySimpleScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "simple-without-merge",

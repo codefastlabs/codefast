@@ -24,7 +24,7 @@ function resolvePackageScopedConfig<T>(
   return configMap[pkgMeta.packageName];
 }
 
-function groupFilesByModule(files: string[]): Map<string, Module> {
+function groupFilesByModule(files: Array<string>): Map<string, Module> {
   const modules = new Map<string, Module>();
 
   for (const file of files) {
@@ -202,8 +202,8 @@ async function generateCssExports(
   const cssExports: Record<string, string> = {
     ...((cssConfig as Record<string, unknown>).customExports as Record<string, string>),
   };
-  const cssByDir = new Map<string, string[]>();
-  const rootCss: string[] = [];
+  const cssByDir = new Map<string, Array<string>>();
+  const rootCss: Array<string> = [];
 
   for (const file of cssFiles) {
     const dirName = nodePath.dirname(file).split(nodePath.sep).join("/");

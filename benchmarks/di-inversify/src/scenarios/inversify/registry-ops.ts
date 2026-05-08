@@ -229,7 +229,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyRegistryOpsScenarios(): readonly BenchScenario[] {
+export function buildInversifyRegistryOpsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildRebindHotSwapScenario(),
     buildIsBoundCheckScenario(),

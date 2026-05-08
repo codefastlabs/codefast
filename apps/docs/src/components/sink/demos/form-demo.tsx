@@ -29,7 +29,7 @@ interface SidebarItem {
   label: string;
 }
 
-const items: SidebarItem[] = [
+const items: Array<SidebarItem> = [
   {
     id: "recents",
     label: "Recents",

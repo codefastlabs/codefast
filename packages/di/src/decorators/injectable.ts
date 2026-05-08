@@ -45,11 +45,11 @@ export interface InjectableOptions {
  * @since 0.3.16-canary.0
  */
 export function injectable(
-  deps?: readonly InjectableDependency[],
+  deps?: ReadonlyArray<InjectableDependency>,
   options?: InjectableOptions,
 ): (target: unknown, context: ClassDecoratorContext) => void {
   return function (target: unknown, context: ClassDecoratorContext): void {
-    const params: ParamMetadata[] = (deps ?? []).map((dep, index) => {
+    const params: Array<ParamMetadata> = (deps ?? []).map((dep, index) => {
       const descriptor = normalizeToDescriptor(dep);
       const base: Pick<ParamMetadata, "index" | "token" | "optional" | "multi"> = {
         index,
