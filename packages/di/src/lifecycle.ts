@@ -26,23 +26,23 @@ export class LifecycleManager {
   private _activationVersion = 0;
 
   registerActivation<const Value>(
-    t: Token<Value> | Constructor<Value>,
+    token: Token<Value> | Constructor<Value>,
     handler: ActivationHandler<Value>,
   ): void {
     this._activationVersion += 1;
-    let list = this._activationHooks.get(t as Token<unknown> | Constructor);
+    let list = this._activationHooks.get(token as Token<unknown> | Constructor);
     if (list === undefined) {
       list = [];
-      this._activationHooks.set(t as Token<unknown> | Constructor, list);
+      this._activationHooks.set(token as Token<unknown> | Constructor, list);
     }
     list.push(handler as ActivationHandler<unknown>);
   }
 
-  hasActivationHandlers<const Value>(t: Token<Value> | Constructor<Value>): boolean {
+  hasActivationHandlers<const Value>(token: Token<Value> | Constructor<Value>): boolean {
     if (this._activationHooks.size === 0) {
       return false;
     }
-    const list = this._activationHooks.get(t as Token<unknown> | Constructor);
+    const list = this._activationHooks.get(token as Token<unknown> | Constructor);
     return list !== undefined && list.length > 0;
   }
 
@@ -51,35 +51,35 @@ export class LifecycleManager {
   }
 
   registerDeactivation<const Value>(
-    t: Token<Value> | Constructor<Value>,
+    token: Token<Value> | Constructor<Value>,
     handler: DeactivationHandler<Value>,
   ): void {
-    let list = this._deactivationHooks.get(t as Token<unknown> | Constructor);
+    let list = this._deactivationHooks.get(token as Token<unknown> | Constructor);
     if (list === undefined) {
       list = [];
-      this._deactivationHooks.set(t as Token<unknown> | Constructor, list);
+      this._deactivationHooks.set(token as Token<unknown> | Constructor, list);
     }
     list.push(handler as DeactivationHandler<unknown>);
   }
 
   async runActivation<const Value>(
-    ctx: ResolutionContext,
+    resolutionContext: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
     metadataReader: MetadataReader,
   ): Promise<Value> {
-    let result: Value = instance;
+    let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — all methods in declaration order
     if (binding.kind === "class") {
       const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
       if (lifecycle?.postConstruct && lifecycle.postConstruct.length > 0) {
         for (const methodName of lifecycle.postConstruct) {
-          const method = (result as Record<string, unknown>)[methodName];
+          const method = (activatedInstance as Record<string, unknown>)[methodName];
           if (typeof method === "function") {
-            const r = (method as () => unknown).call(result);
-            if (r instanceof Promise) {
-              await r;
+            const hookResult = (method as () => unknown).call(activatedInstance);
+            if (hookResult instanceof Promise) {
+              await hookResult;
             }
           }
         }
@@ -88,39 +88,42 @@ export class LifecycleManager {
 
     // 2. per-binding onActivation
     if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      const activated = binding.onActivation(ctx, result);
-      result = activated instanceof Promise ? await activated : activated;
+      const activationResult = binding.onActivation(resolutionContext, activatedInstance);
+      activatedInstance =
+        activationResult instanceof Promise ? await activationResult : activationResult;
     }
 
     // 3. container-level onActivation
     const containerHooks = this._activationHooks.get(binding.token as Token<unknown> | Constructor);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
-        const activated = hook(ctx, result);
-        result = (activated instanceof Promise ? await activated : activated) as Value;
+        const activationResult = hook(resolutionContext, activatedInstance);
+        activatedInstance = (
+          activationResult instanceof Promise ? await activationResult : activationResult
+        ) as Value;
       }
     }
 
-    return result;
+    return activatedInstance;
   }
 
   runActivationSync<const Value>(
-    ctx: ResolutionContext,
+    resolutionContext: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
     metadataReader: MetadataReader,
   ): Value {
-    let result: Value = instance;
+    let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — must be sync
     if (binding.kind === "class") {
       const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
       if (lifecycle?.postConstruct && lifecycle.postConstruct.length > 0) {
         for (const methodName of lifecycle.postConstruct) {
-          const method = (result as Record<string, unknown>)[methodName];
+          const method = (activatedInstance as Record<string, unknown>)[methodName];
           if (typeof method === "function") {
-            const r = (method as () => unknown).call(result);
-            if (r instanceof Promise) {
+            const hookResult = (method as () => unknown).call(activatedInstance);
+            if (hookResult instanceof Promise) {
               throw new Error(
                 `@postConstruct method '${methodName}' returned a Promise. Use resolveAsync() instead.`,
               );
@@ -132,13 +135,13 @@ export class LifecycleManager {
 
     // 2. per-binding onActivation (must be sync)
     if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      const activated = binding.onActivation(ctx, result);
-      if (activated instanceof Promise) {
+      const activationResult = binding.onActivation(resolutionContext, activatedInstance);
+      if (activationResult instanceof Promise) {
         throw new Error(
           `onActivation for '${tokenName(binding.token)}' returned a Promise. Use resolveAsync() instead.`,
         );
       }
-      result = activated;
+      activatedInstance = activationResult;
     }
 
     // 3. container-level onActivation (must be sync)
@@ -146,17 +149,17 @@ export class LifecycleManager {
     const containerHooks = this._activationHooks.get(binding.token as Token<unknown> | Constructor);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
-        const activated = hook(ctx, result);
-        if (activated instanceof Promise) {
+        const activationResult = hook(resolutionContext, activatedInstance);
+        if (activationResult instanceof Promise) {
           throw new Error(
             `Container-level onActivation for '${key}' returned a Promise. Use resolveAsync() instead.`,
           );
         }
-        result = activated as Value;
+        activatedInstance = activationResult as Value;
       }
     }
 
-    return result;
+    return activatedInstance;
   }
 
   async runDeactivation<const Value>(
@@ -164,24 +167,24 @@ export class LifecycleManager {
     instance: Value,
     metadataReader: MetadataReader,
   ): Promise<void> {
-    const key = binding.token as Token<unknown> | Constructor;
+    const tokenKey = binding.token as Token<unknown> | Constructor;
 
     // 1. container-level onDeactivation
-    const containerHooks = this._deactivationHooks.get(key);
+    const containerHooks = this._deactivationHooks.get(tokenKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
-        const r = hook(instance);
-        if (r instanceof Promise) {
-          await r;
+        const hookResult = hook(instance);
+        if (hookResult instanceof Promise) {
+          await hookResult;
         }
       }
     }
 
     // 2. per-binding onDeactivation
     if (binding.kind !== "alias" && binding.onDeactivation !== undefined) {
-      const r = binding.onDeactivation(instance);
-      if (r instanceof Promise) {
-        await r;
+      const hookResult = binding.onDeactivation(instance);
+      if (hookResult instanceof Promise) {
+        await hookResult;
       }
     }
 
@@ -192,9 +195,9 @@ export class LifecycleManager {
         for (const methodName of lifecycle.preDestroy) {
           const method = (instance as Record<string, unknown>)[methodName];
           if (typeof method === "function") {
-            const r = (method as () => unknown).call(instance);
-            if (r instanceof Promise) {
-              await r;
+            const hookResult = (method as () => unknown).call(instance);
+            if (hookResult instanceof Promise) {
+              await hookResult;
             }
           }
         }
@@ -207,25 +210,25 @@ export class LifecycleManager {
     instance: Value,
     metadataReader: MetadataReader,
   ): void {
-    const tName = tokenName(binding.token);
-    const key = binding.token as Token<unknown> | Constructor;
+    const tokenDisplayName = tokenName(binding.token);
+    const tokenKey = binding.token as Token<unknown> | Constructor;
 
     // 1. container-level onDeactivation
-    const containerHooks = this._deactivationHooks.get(key);
+    const containerHooks = this._deactivationHooks.get(tokenKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
-        const r = hook(instance);
-        if (r instanceof Promise) {
-          throw new AsyncDeactivationError(tName);
+        const hookResult = hook(instance);
+        if (hookResult instanceof Promise) {
+          throw new AsyncDeactivationError(tokenDisplayName);
         }
       }
     }
 
     // 2. per-binding onDeactivation
     if (binding.kind !== "alias" && binding.onDeactivation !== undefined) {
-      const r = binding.onDeactivation(instance);
-      if (r instanceof Promise) {
-        throw new AsyncDeactivationError(tName);
+      const hookResult = binding.onDeactivation(instance);
+      if (hookResult instanceof Promise) {
+        throw new AsyncDeactivationError(tokenDisplayName);
       }
     }
 
@@ -236,9 +239,9 @@ export class LifecycleManager {
         for (const methodName of lifecycle.preDestroy) {
           const method = (instance as Record<string, unknown>)[methodName];
           if (typeof method === "function") {
-            const r = (method as () => unknown).call(instance);
-            if (r instanceof Promise) {
-              throw new AsyncDeactivationError(tName);
+            const hookResult = (method as () => unknown).call(instance);
+            if (hookResult instanceof Promise) {
+              throw new AsyncDeactivationError(tokenDisplayName);
             }
           }
         }
@@ -255,10 +258,10 @@ export class LifecycleManager {
       return false;
     }
     if (binding.onDeactivation !== undefined) {
-      const r = binding.onDeactivation(instance);
-      if (r instanceof Promise) {
+      const hookResult = binding.onDeactivation(instance);
+      if (hookResult instanceof Promise) {
         // Need to handle this promise though — just return true here
-        void r;
+        void hookResult;
         return true;
       }
     }

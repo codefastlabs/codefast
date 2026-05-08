@@ -21,25 +21,25 @@ export class BindingRegistry {
   /** Add or replace binding using slot-aware last-wins. */
   add(binding: Binding): void {
     const key = binding.token as DependencyKey;
-    let list = this._bindings.get(key);
-    if (list === undefined) {
-      list = [];
-      this._bindings.set(key, list);
+    let bindingsForToken = this._bindings.get(key);
+    if (bindingsForToken === undefined) {
+      bindingsForToken = [];
+      this._bindings.set(key, bindingsForToken);
     }
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
     if (!this._isPurePredicateBinding(binding)) {
-      const existingIndex = list.findIndex(
+      const existingIndex = bindingsForToken.findIndex(
         (b) => !this._isPurePredicateBinding(b) && slotKeyEquals(b.slot, binding.slot),
       );
       if (existingIndex !== -1) {
-        const old = list[existingIndex]!;
-        this._byId.delete(old.id);
-        list.splice(existingIndex, 1);
+        const replacedBinding = bindingsForToken[existingIndex]!;
+        this._byId.delete(replacedBinding.id);
+        bindingsForToken.splice(existingIndex, 1);
       }
     }
 
-    list.push(binding);
+    bindingsForToken.push(binding);
     this._byId.set(binding.id, binding);
     this._indexSimpleNamedBinding(key, binding);
     this._indexSimpleTaggedBinding(key, binding);
@@ -49,15 +49,15 @@ export class BindingRegistry {
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(t: Token<unknown> | Constructor): Array<Binding> {
     const key = t as DependencyKey;
-    const list = this._bindings.get(key) ?? [];
+    const bindingsForToken = this._bindings.get(key) ?? [];
     this._bindings.delete(key);
     this._simpleNamed.delete(key);
     this._simpleTagged.delete(key);
     this._fastDefault.delete(key);
-    for (const b of list) {
-      this._byId.delete(b.id);
+    for (const binding of bindingsForToken) {
+      this._byId.delete(binding.id);
     }
-    return list;
+    return bindingsForToken;
   }
 
   /** Remove a specific binding by ID. Returns the removed binding or undefined. */
@@ -68,15 +68,15 @@ export class BindingRegistry {
     }
     this._byId.delete(id);
     const key = binding.token as DependencyKey;
-    const list = this._bindings.get(key);
-    if (list !== undefined) {
-      const idx = list.findIndex((b) => b.id === id);
-      if (idx !== -1) {
-        list.splice(idx, 1);
+    const bindingsForToken = this._bindings.get(key);
+    if (bindingsForToken !== undefined) {
+      const bindingIndex = bindingsForToken.findIndex((candidate) => candidate.id === id);
+      if (bindingIndex !== -1) {
+        bindingsForToken.splice(bindingIndex, 1);
       }
       this._deindexSimpleNamedBinding(key, binding);
       this._deindexSimpleTaggedBinding(key, binding);
-      if (list.length === 0) {
+      if (bindingsForToken.length === 0) {
         this._bindings.delete(key);
         this._simpleNamed.delete(key);
         this._simpleTagged.delete(key);
@@ -107,11 +107,11 @@ export class BindingRegistry {
 
   /** All bindings in the registry. */
   allBindings(): ReadonlyArray<Binding> {
-    const result: Array<Binding> = [];
-    for (const list of this._bindings.values()) {
-      result.push(...list);
+    const allBindings: Array<Binding> = [];
+    for (const bindingsForToken of this._bindings.values()) {
+      allBindings.push(...bindingsForToken);
     }
-    return result;
+    return allBindings;
   }
 
   /** Remove all bindings. Returns all removed. */
@@ -146,20 +146,20 @@ export class BindingRegistry {
 
   /** Summarize available slot strings for a token (for error messages). */
   availableSlotStrings(t: Token<unknown> | Constructor): Array<string> {
-    const list = this._bindings.get(t as DependencyKey) ?? [];
-    return list.map((b) => {
-      const s = b.slot;
-      if (s.name === undefined && s.tags.length === 0) {
+    const bindingsForToken = this._bindings.get(t as DependencyKey) ?? [];
+    return bindingsForToken.map((binding) => {
+      const slot = binding.slot;
+      if (slot.name === undefined && slot.tags.length === 0) {
         return "default";
       }
-      const parts: Array<string> = [];
-      if (s.name !== undefined) {
-        parts.push(`name:${s.name}`);
+      const slotSegments: Array<string> = [];
+      if (slot.name !== undefined) {
+        slotSegments.push(`name:${slot.name}`);
       }
-      for (const [k, v] of s.tags) {
-        parts.push(`tag:${k}=${String(v)}`);
+      for (const [tagKey, tagValue] of slot.tags) {
+        slotSegments.push(`tag:${tagKey}=${String(tagValue)}`);
       }
-      return parts.join(",");
+      return slotSegments.join(",");
     });
   }
 
@@ -221,12 +221,12 @@ export class BindingRegistry {
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    let byName = this._simpleNamed.get(tokenKeyValue);
-    if (byName === undefined) {
-      byName = new Map<string, Binding>();
-      this._simpleNamed.set(tokenKeyValue, byName);
+    let bindingsByName = this._simpleNamed.get(tokenKeyValue);
+    if (bindingsByName === undefined) {
+      bindingsByName = new Map<string, Binding>();
+      this._simpleNamed.set(tokenKeyValue, bindingsByName);
     }
-    byName.set(slot.name, binding);
+    bindingsByName.set(slot.name, binding);
   }
 
   private _deindexSimpleNamedBinding(tokenKeyValue: DependencyKey, binding: Binding): void {
@@ -234,26 +234,26 @@ export class BindingRegistry {
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    const byName = this._simpleNamed.get(tokenKeyValue);
-    if (byName === undefined) {
+    const bindingsByName = this._simpleNamed.get(tokenKeyValue);
+    if (bindingsByName === undefined) {
       return;
     }
-    const current = byName.get(slot.name);
-    if (current?.id === binding.id) {
-      byName.delete(slot.name);
-      if (byName.size === 0) {
+    const currentBinding = bindingsByName.get(slot.name);
+    if (currentBinding?.id === binding.id) {
+      bindingsByName.delete(slot.name);
+      if (bindingsByName.size === 0) {
         this._simpleNamed.delete(tokenKeyValue);
       }
     }
   }
 
   private _refreshFastDefaultForToken(tokenKeyValue: DependencyKey): void {
-    const list = this._bindings.get(tokenKeyValue);
-    if (list === undefined || list.length !== 1) {
+    const bindingsForToken = this._bindings.get(tokenKeyValue);
+    if (bindingsForToken === undefined || bindingsForToken.length !== 1) {
       this._fastDefault.delete(tokenKeyValue);
       return;
     }
-    const onlyBinding = list[0]!;
+    const onlyBinding = bindingsForToken[0]!;
     const isDefaultSlot = onlyBinding.slot.name === undefined && onlyBinding.slot.tags.length === 0;
     if (!isDefaultSlot || onlyBinding.predicate !== undefined) {
       this._fastDefault.delete(tokenKeyValue);

@@ -203,7 +203,10 @@ container.bind(DbToken).toDynamicAsync(async (ctx) => {
 
 container
   .bind(UserServiceToken)
-  .toResolved((repo, cfg) => new UserService(repo, cfg), [UserRepository, AppConfigToken] as const);
+  .toResolved((repository, config) => new UserService(repository, config), [
+    UserRepository,
+    AppConfigToken,
+  ] as const);
 
 container
   .bind(MetricsToken)

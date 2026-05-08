@@ -18,13 +18,13 @@ export interface AutoRegisterRegistry {
  * @since 0.3.16-canary.0
  */
 export function createAutoRegisterRegistry(): AutoRegisterRegistry {
-  const _entries: Array<{ target: Constructor; scope: BindingScope }> = [];
+  const _registeredEntries: Array<{ target: Constructor; scope: BindingScope }> = [];
   return {
     register(target: Constructor, scope: BindingScope): void {
-      _entries.push({ target, scope });
+      _registeredEntries.push({ target, scope });
     },
     entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }> {
-      return _entries;
+      return _registeredEntries;
     },
   };
 }
@@ -49,36 +49,36 @@ export function injectable(
   options?: InjectableOptions,
 ): (target: unknown, context: ClassDecoratorContext) => void {
   return function (target: unknown, context: ClassDecoratorContext): void {
-    const params: Array<ParamMetadata> = (deps ?? []).map((dep, index) => {
-      const descriptor = normalizeToDescriptor(dep);
-      const base: Pick<ParamMetadata, "index" | "token" | "optional" | "multi"> = {
+    const parameterMetadataList: Array<ParamMetadata> = (deps ?? []).map((dependency, index) => {
+      const descriptor = normalizeToDescriptor(dependency);
+      const baseParameterMetadata: Pick<ParamMetadata, "index" | "token" | "optional" | "multi"> = {
         index,
         token: descriptor.token,
         optional: descriptor.optional,
         multi: descriptor.multi,
       };
       if (descriptor.name !== undefined && descriptor.tags !== undefined) {
-        return { ...base, name: descriptor.name, tags: descriptor.tags };
+        return { ...baseParameterMetadata, name: descriptor.name, tags: descriptor.tags };
       }
       if (descriptor.name !== undefined) {
-        return { ...base, name: descriptor.name };
+        return { ...baseParameterMetadata, name: descriptor.name };
       }
       if (descriptor.tags !== undefined) {
-        return { ...base, tags: descriptor.tags };
+        return { ...baseParameterMetadata, tags: descriptor.tags };
       }
-      return base;
+      return baseParameterMetadata;
     });
 
-    const constructorMeta = { params };
+    const constructorMetadata = { params: parameterMetadataList };
 
     // Write to WeakMap (works with both SWC and esbuild/tsx)
-    constructorMetadataMap.set(target as object, constructorMeta);
+    constructorMetadataMap.set(target as object, constructorMetadata);
 
     // Also write to Symbol.metadata if available (for full TC39 Stage 3 compliance)
     try {
-      const meta = context.metadata as Record<string | symbol, unknown>;
-      if (meta !== null && typeof meta === "object") {
-        meta[INJECTABLE_KEY] = constructorMeta;
+      const metadata = context.metadata as Record<string | symbol, unknown>;
+      if (metadata !== null && typeof metadata === "object") {
+        metadata[INJECTABLE_KEY] = constructorMetadata;
       }
     } catch {
       // Ignore if context.metadata is not writable

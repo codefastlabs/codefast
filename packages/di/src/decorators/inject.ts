@@ -104,11 +104,11 @@ function materializeInjectionDescriptor(dep: InjectionDescriptor): InjectionDesc
 }
 
 function buildInjectionDescriptor<const Value>(
-  t: Token<Value> | Constructor<Value>,
+  token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> {
   const base: Pick<InjectionDescriptor<Value>, "token" | "optional" | "multi"> = {
-    token: t,
+    token,
     optional: false,
     multi: false,
   };
@@ -135,10 +135,10 @@ type ClassAccessorDecorator<This, Value> = (
  * @since 0.3.16-canary.0
  */
 export function inject<const Value>(
-  t: Token<Value> | Constructor<Value>,
+  token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {
-  const descriptor = buildInjectionDescriptor(t, options);
+  const descriptor = buildInjectionDescriptor(token, options);
 
   const decoratorFn = (
     _target: ClassAccessorDecoratorTarget<unknown, Value>,
@@ -168,8 +168,8 @@ export function inject<const Value>(
               ...(options.tags !== undefined ? { tags: options.tags } : {}),
             });
       const value = descriptor.optional
-        ? container.resolveOptional(t, hint)
-        : container.resolve(t, hint);
+        ? container.resolveOptional(token, hint)
+        : container.resolve(token, hint);
       context.access.set(this, value as Value);
     });
 
@@ -193,11 +193,11 @@ export function inject<const Value>(
  * @since 0.3.16-canary.0
  */
 export function optional<const Value>(
-  t: Token<Value> | Constructor<Value>,
+  token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value | undefined> {
   const base: Pick<InjectionDescriptor<Value | undefined>, "token" | "optional" | "multi"> = {
-    token: t as Token<Value | undefined> | Constructor<Value | undefined>,
+    token: token as Token<Value | undefined> | Constructor<Value | undefined>,
     optional: true,
     multi: false,
   };
@@ -219,11 +219,11 @@ export function optional<const Value>(
  * @since 0.3.16-canary.0
  */
 export function injectAll<const Value>(
-  t: Token<Value> | Constructor<Value>,
+  token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Array<Value>> {
   const base: Pick<InjectionDescriptor<Array<Value>>, "token" | "optional" | "multi"> = {
-    token: t as Token<Array<Value>> | Constructor<Array<Value>>,
+    token: token as Token<Array<Value>> | Constructor<Array<Value>>,
     optional: false,
     multi: true,
   };
