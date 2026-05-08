@@ -393,7 +393,8 @@ The returned function also exposes a read-only `config` property carrying the fu
 Extracts variant props from a variant function for use in component props. `class` and `className` are stripped.
 
 ```typescript
-import { tv, type VariantProps } from "@codefast/tailwind-variants";
+import { tv } from "@codefast/tailwind-variants";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 const button = tv({
   /* ... */
@@ -413,7 +414,8 @@ The following types are exported for advanced/library use:
 ### Component props
 
 ```typescript
-import { tv, type VariantProps } from "@codefast/tailwind-variants";
+import { tv } from "@codefast/tailwind-variants";
+import type { VariantProps } from "@codefast/tailwind-variants";
 import type { ComponentProps } from "react";
 
 const button = tv({
@@ -498,8 +500,10 @@ function Button({ variant, className, ...props }) {
 Replace the import. No other code changes required.
 
 ```diff
-- import { tv, createTV, cn, cx, type VariantProps } from "tailwind-variants";
-+ import { tv, createTV, cn, cx, type VariantProps } from "@codefast/tailwind-variants";
+- import { tv, createTV, cn, cx } from "tailwind-variants";
+- import type { VariantProps } from "tailwind-variants";
++ import { tv, createTV, cn, cx } from "@codefast/tailwind-variants";
++ import type { VariantProps } from "@codefast/tailwind-variants";
 ```
 
 ### From `class-variance-authority`
