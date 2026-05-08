@@ -489,7 +489,8 @@ const className = button({ variant: "primary" });
 
 ```typescript
 import React from "react";
- import { tv, type VariantProps } from "@codefast/tailwind-variants";
+import { tv } from "@codefast/tailwind-variants";
+import type { VariantProps } from "@codefast/tailwind-variants";
 
 const button = tv({...});
 

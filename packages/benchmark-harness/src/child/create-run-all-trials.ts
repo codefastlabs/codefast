@@ -1,6 +1,8 @@
-import { Bench, type BenchEvent } from "tinybench";
+import { Bench } from "tinybench";
+import type { BenchEvent } from "tinybench";
 import type { BenchOptions, TaskResult } from "tinybench";
-import { isAsyncScenario, type AnyBenchScenario } from "#/child/bench-scenario";
+import { isAsyncScenario } from "#/child/bench-scenario";
+import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
