@@ -45,14 +45,14 @@ function buildNodeId(level: number, slot: number): string {
 function buildFanOutTreeDescriptor(depth: number, breadth: number): GraphDescriptor {
   ensureTreeShapeIsValid(depth, breadth);
 
-  const nodes: NodeDescriptor[] = [];
-  const levelSlots: number[] = [1];
+  const nodes: Array<NodeDescriptor> = [];
+  const levelSlots: Array<number> = [1];
   for (let level = 0; level < depth; level++) {
     const currentLevelSlotCount = levelSlots[level] ?? 0;
     const isLeafLevel = level === depth - 1;
     for (let slot = 0; slot < currentLevelSlotCount; slot++) {
       const nodeId = buildNodeId(level, slot);
-      const dependencyIds: string[] = [];
+      const dependencyIds: Array<string> = [];
       if (!isLeafLevel) {
         const nextLevelStartSlot = slot * breadth;
         for (let childOffset = 0; childOffset < breadth; childOffset++) {

@@ -9,7 +9,7 @@ const npmWithMerge = tailwindVariantsTv(complexVariants, TV_MERGE_ENABLED);
 /**
  * @since 0.3.16-canary.0
  */
-export function buildTailwindVariantsNpmComplexScenarios(): readonly BenchScenario[] {
+export function buildTailwindVariantsNpmComplexScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "complex-without-merge",

@@ -145,7 +145,7 @@ function buildNamedConstantGetScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastMicroScenarios(): readonly BenchScenario[] {
+export function buildCodefastMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildConstantResolveScenario(),
     buildSingletonClassOneDepScenario(),

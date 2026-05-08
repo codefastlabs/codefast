@@ -20,7 +20,7 @@ import type { AnyScenario } from "#/scenarios/types";
 /**
  * @since 0.3.16-canary.0
  */
-export function collectAllInversifyScenarios(): readonly AnyScenario[] {
+export function collectAllInversifyScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildInversifyMicroScenarios(),
     ...buildInversifyRealisticScenarios(),

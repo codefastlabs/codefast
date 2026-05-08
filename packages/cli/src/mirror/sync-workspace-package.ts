@@ -143,7 +143,7 @@ function resolvePackageScopedConfig<Value>(
 }
 
 function isPackageSkipped(
-  skipPackagesList: string[] | undefined,
+  skipPackagesList: Array<string> | undefined,
   packageMeta: MirrorPackageMeta,
 ): boolean {
   return !!skipPackagesList?.includes(packageMeta.packageName);

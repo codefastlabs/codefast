@@ -3,7 +3,7 @@ import { MAX_STRIP_VARIANT_PASSES } from "#/arrange/domain/constants";
 /**
  * @since 0.3.16-canary.0
  */
-export function tokenizeClassString(classString: string): string[] {
+export function tokenizeClassString(classString: string): Array<string> {
   return classString.trim().split(/\s+/).filter(Boolean);
 }
 

@@ -10,7 +10,7 @@ interface ToastDemoItem {
   action: () => void;
 }
 
-const allTypes: ToastDemoItem[] = [
+const allTypes: Array<ToastDemoItem> = [
   {
     name: "Default",
     snippet: `toast('Event has been created')`,

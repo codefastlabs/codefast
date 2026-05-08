@@ -46,6 +46,6 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastScaleScenarios(): readonly BenchScenario[] {
+export function buildCodefastScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildScaleDeepTransientChainScenario()];
 }

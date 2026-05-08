@@ -26,11 +26,11 @@ export interface NavItem {
   url: string;
   icon: LucideIcon;
   isActive?: boolean;
-  items: NavSubItem[];
+  items: Array<NavSubItem>;
 }
 
 export interface AppSidebarData {
   user: User;
-  teams: Team[];
-  navMain: NavItem[];
+  teams: Array<Team>;
+  navMain: Array<NavItem>;
 }

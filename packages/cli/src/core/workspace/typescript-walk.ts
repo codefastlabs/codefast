@@ -18,13 +18,13 @@ const defaultSkipDirectoryNames = new Set([
 /**
  * @since 0.3.16-canary.0
  */
-export function walkTsxFiles(rootDirectoryPath: string, fs: FilesystemPort): string[] {
-  const result: string[] = [];
+export function walkTsxFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {
+  const result: Array<string> = [];
   visitTsxPaths(result, rootDirectoryPath, fs);
   return result;
 }
 
-function visitTsxPaths(result: string[], entryPath: string, fs: FilesystemPort): void {
+function visitTsxPaths(result: Array<string>, entryPath: string, fs: FilesystemPort): void {
   const entryStats = fs.statSync(entryPath);
   if (entryStats.isDirectory()) {
     for (const childName of fs.readdirSync(entryPath)) {

@@ -35,7 +35,7 @@ export class TagSinceWriter {
       filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
     );
 
-    const edits: TextEdit[] = [];
+    const edits: Array<TextEdit> = [];
     for (const declaration of this.collectExportedDeclarations(sf)) {
       const edit = this.makeDeclarationSinceLine(declaration, sf, sourceText, version);
       if (edit) {

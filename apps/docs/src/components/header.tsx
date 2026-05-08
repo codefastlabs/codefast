@@ -23,7 +23,7 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const NAV_ITEMS: Array<NavItem> = [
   { to: "/", label: "Home", icon: HomeIcon },
   { to: "/theme", label: "Appearance", icon: PaletteIcon },
   { to: "/sink", label: "Components", icon: CodeIcon },

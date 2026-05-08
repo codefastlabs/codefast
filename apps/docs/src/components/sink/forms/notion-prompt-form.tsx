@@ -63,8 +63,8 @@ interface ModelItem {
 }
 
 interface SampleData {
-  mentionable: MentionableItem[];
-  models: ModelItem[];
+  mentionable: Array<MentionableItem>;
+  models: Array<ModelItem>;
 }
 
 const SAMPLE_DATA: SampleData = {
@@ -168,7 +168,7 @@ function MentionableIcon({ item }: { item: MentionableItem }) {
 }
 
 export function NotionPromptForm() {
-  const [mentions, setMentions] = useState<string[]>([]);
+  const [mentions, setMentions] = useState<Array<string>>([]);
   const [mentionPopoverOpen, setMentionPopoverOpen] = useState(false);
   const [modelPopoverOpen, setModelPopoverOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<ModelItem>(
@@ -191,7 +191,7 @@ export function NotionPromptForm() {
 
         return acc;
       },
-      {} as Record<string, MentionableItem[]>,
+      {} as Record<string, Array<MentionableItem>>,
     );
   }, [mentions]);
 

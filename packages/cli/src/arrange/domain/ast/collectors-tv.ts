@@ -128,11 +128,11 @@ export function collectCnCallsInsideTv(
   obj: DomainObjectLiteralExpression,
   knownBindings: Set<string>,
   depth = 0,
-): DomainCallExpression[] {
+): Array<DomainCallExpression> {
   if (depth > MAX_OBJECT_DEPTH) {
     return [];
   }
-  const calls: DomainCallExpression[] = [];
+  const calls: Array<DomainCallExpression> = [];
   for (const prop of obj.properties) {
     if (!isDomainPropertyAssignment(prop)) {
       continue;
@@ -186,8 +186,8 @@ export function collectCnCallsInsideTv(
 export function listAllCnCallsInsideTvInSourceFile(
   sourceFile: DomainSourceFile,
   knownBindings: Set<string>,
-): DomainCallExpression[] {
-  const calls: DomainCallExpression[] = [];
+): Array<DomainCallExpression> {
+  const calls: Array<DomainCallExpression> = [];
   const visitSubtree = (tsNode: DomainAstNode): void => {
     if (
       isDomainCallExpression(tsNode) &&
@@ -207,7 +207,7 @@ export function listAllCnCallsInsideTvInSourceFile(
 }
 
 function makeStringNode(
-  nodes: TailwindClassLiteral[],
+  nodes: Array<TailwindClassLiteral>,
   sourceFile: DomainSourceFile,
   isTvContext: boolean,
   cnCall?: DomainCallExpression,
@@ -235,10 +235,10 @@ export function slotClassString(stringNode: StringNode): string {
 }
 
 function emitTvSlot(
-  lits: TailwindClassLiteral[],
+  lits: Array<TailwindClassLiteral>,
   sourceFile: DomainSourceFile,
   cnCall: DomainCallExpression | undefined,
-  results: StringNode[],
+  results: Array<StringNode>,
   seenNodePos: Set<number>,
 ): void {
   if (lits.length === 0) {
@@ -269,7 +269,7 @@ function collectTvSlots(
   sourceFile: DomainSourceFile,
   obj: DomainObjectLiteralExpression,
   knownBindings: Set<string>,
-  results: StringNode[],
+  results: Array<StringNode>,
   seenNodePos: Set<number>,
   depth = 0,
 ): void {
@@ -292,7 +292,7 @@ function collectTvSlots(
       }
       seenNodePos.add(arrayPos);
 
-      const staticLits: TailwindClassLiteral[] = [];
+      const staticLits: Array<TailwindClassLiteral> = [];
       for (const arrayElement of init.elements) {
         if (isDomainSpreadElement(arrayElement)) {
           continue;
@@ -328,7 +328,7 @@ function collectTvSlots(
             if (isDomainTailwindClassLiteral(innerInit)) {
               emitTvSlot([innerInit], sourceFile, undefined, results, seenNodePos);
             } else if (isDomainArrayLiteralExpression(innerInit)) {
-              const innerLits: TailwindClassLiteral[] = [];
+              const innerLits: Array<TailwindClassLiteral> = [];
               for (const nestedArrayElement of innerInit.elements) {
                 if (
                   !isDomainSpreadElement(nestedArrayElement) &&
@@ -342,7 +342,7 @@ function collectTvSlots(
               isDomainCallExpression(innerInit) &&
               isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
             ) {
-              const cnLits: TailwindClassLiteral[] = [];
+              const cnLits: Array<TailwindClassLiteral> = [];
               for (const arg of innerInit.arguments) {
                 forEachStringLiteralInClassExpression(
                   arg,
@@ -369,7 +369,7 @@ function collectTvSlots(
       isDomainCallExpression(init) &&
       isCnOrTvIdentifier(init.expression, "cn", knownBindings)
     ) {
-      const cnLits: TailwindClassLiteral[] = [];
+      const cnLits: Array<TailwindClassLiteral> = [];
       for (const arg of init.arguments) {
         forEachStringLiteralInClassExpression(
           arg,
@@ -390,8 +390,8 @@ function collectTvSlots(
 /**
  * @since 0.3.16-canary.0
  */
-export function collectGroupableStringNodes(sourceFile: DomainSourceFile): StringNode[] {
-  const results: StringNode[] = [];
+export function collectGroupableStringNodes(sourceFile: DomainSourceFile): Array<StringNode> {
+  const results: Array<StringNode> = [];
   const seenNodePos = new Set<number>();
   const knownBindings = buildKnownCnTvBindings(sourceFile);
 

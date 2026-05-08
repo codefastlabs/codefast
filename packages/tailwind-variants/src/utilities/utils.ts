@@ -32,7 +32,7 @@ import type {
  *
  * @since 0.3.16-canary.0
  */
-export const cx = (...classes: ClassValue[]): string => {
+export const cx = (...classes: Array<ClassValue>): string => {
   const length = classes.length;
 
   if (length === 0) {
@@ -93,7 +93,7 @@ export const cx = (...classes: ClassValue[]): string => {
  *
  * @since 0.3.16-canary.0
  */
-export const cn = (...classes: ClassValue[]): string => {
+export const cn = (...classes: Array<ClassValue>): string => {
   const length = classes.length;
 
   if (length === 0) {

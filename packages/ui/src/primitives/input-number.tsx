@@ -89,7 +89,7 @@ interface InputNumberContextValue {
   /**
    * Function to parse a value into a number
    */
-  parseValue: (value: number | readonly string[] | string | undefined) => number;
+  parseValue: (value: number | ReadonlyArray<string> | string | undefined) => number;
 
   /**
    * Accessible label for the decrement button
@@ -280,7 +280,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
    * @returns The parsed number value, clamped between min and max
    */
   const parseValue = useCallback(
-    (inputValue: number | readonly string[] | string | undefined): number => {
+    (inputValue: number | ReadonlyArray<string> | string | undefined): number => {
       if (typeof inputValue === "number") {
         return clamp(inputValue, min, max);
       }
@@ -870,7 +870,9 @@ function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX
  * @param callbacks - Array of callback functions that will be executed in order
  * @returns A single function that executes all callbacks
  */
-function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
+function chain<T extends Array<unknown>>(
+  ...callbacks: Array<(...args: T) => void>
+): (...args: T) => void {
   return (...args: T) => {
     for (const callback of callbacks) {
       callback(...args);

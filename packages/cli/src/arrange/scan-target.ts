@@ -7,7 +7,7 @@ import { messageFrom } from "#/core/errors";
 /**
  * @since 0.3.16-canary.0
  */
-export function scanArrangeTargets(fs: FilesystemPort, targetPath: string): string[] {
+export function scanArrangeTargets(fs: FilesystemPort, targetPath: string): Array<string> {
   const resolvedTargetPath = path.resolve(targetPath);
   if (fs.statSync(resolvedTargetPath).isDirectory()) {
     try {

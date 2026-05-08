@@ -9,7 +9,7 @@ import { AmbiguousBindingError } from "#/errors";
  * @since 0.3.16-canary.0
  */
 export function selectBinding(
-  bindings: readonly Binding[],
+  bindings: ReadonlyArray<Binding>,
   hint: ResolveOptions | undefined,
   ctx: ConstraintContext,
   tName: string,
@@ -36,21 +36,21 @@ export function selectBinding(
  * @since 0.3.16-canary.0
  */
 export function selectAllBindings(
-  bindings: readonly Binding[],
+  bindings: ReadonlyArray<Binding>,
   hint: ResolveOptions | undefined,
   ctx: ConstraintContext,
-): Binding[] {
+): Array<Binding> {
   return filterBindings(bindings, hint, ctx, "all");
 }
 
 function filterBindings(
-  bindings: readonly Binding[],
+  bindings: ReadonlyArray<Binding>,
   hint: ResolveOptions | undefined,
   ctx: ConstraintContext,
   mode: "single" | "all" = "single",
-): Binding[] {
+): Array<Binding> {
   if (hint === undefined) {
-    const resultWithoutHint: Binding[] = [];
+    const resultWithoutHint: Array<Binding> = [];
     if (mode === "all") {
       for (const binding of bindings) {
         if (matchesPredicate(binding, ctx)) {
@@ -68,7 +68,7 @@ function filterBindings(
     return resultWithoutHint;
   }
 
-  const result: Binding[] = [];
+  const result: Array<Binding> = [];
   for (const binding of bindings) {
     const slotMatched =
       mode === "all" ? matchesSlotForResolveAll(binding, hint) : matchesSlot(binding, hint);

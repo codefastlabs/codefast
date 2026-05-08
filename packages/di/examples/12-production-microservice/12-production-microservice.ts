@@ -93,7 +93,7 @@ interface Job {
 // ============================================================================
 
 interface DatabasePool {
-  query<T>(sql: string, params?: unknown[]): Promise<T[]>;
+  query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
   healthCheck(): Promise<HealthCheckResult>;
   close(): Promise<void>;
 }
@@ -120,7 +120,7 @@ class PostgresDatabasePool implements DatabasePool {
     return pool;
   }
 
-  async query<T>(sql: string, params?: unknown[]): Promise<T[]> {
+  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
     if (!this.connected) {
       throw new Error("Database pool is closed");
     }
@@ -128,7 +128,7 @@ class PostgresDatabasePool implements DatabasePool {
     await delay(5);
     const paramInfo = params?.length ? ` [$${params.join(", $")}]` : "";
     console.log(`    [DB] query #${this.queryCount}: ${sql.slice(0, 60)}${paramInfo}`);
-    return [] as T[];
+    return [] as Array<T>;
   }
 
   async healthCheck(): Promise<HealthCheckResult> {
@@ -233,7 +233,7 @@ type JobHandler = (job: Job) => Promise<void>;
 
 class InMemoryJobQueue implements JobQueue {
   private readonly jobs = new Map<string, Job>();
-  private readonly pending: Job[] = [];
+  private readonly pending: Array<Job> = [];
   private readonly handlers = new Map<string, JobHandler>();
 
   registerHandler(type: string, handler: JobHandler): void {

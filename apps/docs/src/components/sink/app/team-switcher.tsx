@@ -16,11 +16,11 @@ import type { ElementType } from "react";
 export function TeamSwitcher({
   teams,
 }: {
-  teams: {
+  teams: Array<{
     name: string;
     logo: ElementType;
     plan: string;
-  }[];
+  }>;
 }) {
   const { isMobile } = useSidebar("TeamSwitcher");
   const [activeTeam, setActiveTeam] = useState(teams[0]);

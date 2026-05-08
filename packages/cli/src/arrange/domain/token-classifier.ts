@@ -467,7 +467,7 @@ function inDataAttributeStem(token: string): string {
  * @since 0.3.16-canary.0
  */
 export function stateKey(token: string): string {
-  const layers: string[] = [];
+  const layers: Array<string> = [];
   let rest = token;
   while (rest.length > 0) {
     const colonIdx = indexOfFirstVariantColon(rest);

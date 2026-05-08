@@ -52,7 +52,7 @@ function bindOneNode(
   const binding = container
     .bind<RealisticNode>(nodeIdentifier)
     .toDynamicValue((resolutionContext): RealisticNode => {
-      const resolvedDependencies: RealisticNode[] = [];
+      const resolvedDependencies: Array<RealisticNode> = [];
       for (const dependencyIdentifier of dependencyIdentifiers) {
         resolvedDependencies.push(resolutionContext.get<RealisticNode>(dependencyIdentifier));
       }

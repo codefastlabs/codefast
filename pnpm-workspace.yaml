@@ -5,6 +5,7 @@ packages:
 
 allowBuilds:
   "@swc/core": true
+  "@tailwindcss/oxide": set this to true or false
   esbuild: true
   simple-git-hooks: true
 

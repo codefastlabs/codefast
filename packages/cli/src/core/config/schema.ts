@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const afterWriteHookSchema = z.custom<(ctx: { files: string[] }) => void | Promise<void>>(
+const afterWriteHookSchema = z.custom<(ctx: { files: Array<string> }) => void | Promise<void>>(
   (value) => typeof value === "function",
   {
     message: "Expected a function",

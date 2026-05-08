@@ -101,7 +101,7 @@ interface NotificationProvider {
 interface PluginDescriptor {
   readonly name: string;
   readonly version: string;
-  readonly capabilities: string[];
+  readonly capabilities: Array<string>;
 }
 
 // ============================================================================

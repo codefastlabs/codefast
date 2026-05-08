@@ -30,7 +30,7 @@ function runCompoundSlotLoop(renderer: CompoundSlotsRenderer): void {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastCompoundSlotsScenarios(): readonly BenchScenario[] {
+export function buildCodefastCompoundSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "compound-slots-without-merge",

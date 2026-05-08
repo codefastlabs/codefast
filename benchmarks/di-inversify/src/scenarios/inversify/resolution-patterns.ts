@@ -104,7 +104,7 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyResolutionPatternScenarios(): readonly BenchScenario[] {
+export function buildInversifyResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildGetOptionalHitScenario(),
     buildGetOptionalMissScenario(),

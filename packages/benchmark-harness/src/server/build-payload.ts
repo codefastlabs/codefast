@@ -18,10 +18,10 @@ import type {
 import type { RunLines } from "#/server/read-runs";
 
 function jsonlToLibraryReport(
-  lines: readonly string[],
+  lines: ReadonlyArray<string>,
   libraryName: string,
 ): LibraryReport | undefined {
-  const observations: JsonlBenchObservationRow[] = [];
+  const observations: Array<JsonlBenchObservationRow> = [];
   for (const line of lines) {
     const parsed = JSON.parse(line) as JsonlBenchObservationRow;
     if (parsed.libraryName === libraryName) {
@@ -32,7 +32,7 @@ function jsonlToLibraryReport(
     return undefined;
   }
   const fingerprint = jsonlBenchObservationRowToFingerprint(observations[0]!);
-  const byTrialIndex = new Map<number, ScenarioTrialResult[]>();
+  const byTrialIndex = new Map<number, Array<ScenarioTrialResult>>();
   for (const obs of observations) {
     const result = jsonlBenchObservationRowToScenarioTrialResult(obs);
     const list = byTrialIndex.get(obs.trialIndex);
@@ -42,14 +42,14 @@ function jsonlToLibraryReport(
       list.push(result);
     }
   }
-  const trialPayloads: TrialPayload[] = [...byTrialIndex.entries()]
+  const trialPayloads: Array<TrialPayload> = [...byTrialIndex.entries()]
     .sort((left, right) => left[0] - right[0])
     .map(([trialIndex, scenarios]) => ({ trialIndex, scenarios }));
   return buildLibraryReport(fingerprint, trialPayloads, []);
 }
 
 function hzTrialSpread(
-  lines: readonly string[],
+  lines: ReadonlyArray<string>,
   libraryName: string,
   scenarioId: string,
 ): { p25Hz: number; medianHz: number; p75Hz: number } | null {
@@ -74,8 +74,8 @@ function hzTrialSpread(
 
 function extractRunMeta(
   folderName: string,
-  lines: readonly string[],
-  libraryNames: readonly string[],
+  lines: ReadonlyArray<string>,
+  libraryNames: ReadonlyArray<string>,
 ): EmbeddedRun | undefined {
   const firstObsByLibrary = new Map<string, JsonlBenchObservationRow>();
   for (const line of lines) {
@@ -134,7 +134,7 @@ function hzIqrFractionLookup(report: LibraryReport, scenarioId: string): number 
  * @since 0.3.16-canary.0
  */
 export function buildEmbeddedPayload(
-  rawRuns: readonly RunLines[],
+  rawRuns: ReadonlyArray<RunLines>,
   options: BenchServerOptions,
 ): EmbeddedViewerPayload {
   const libraryNames = options.libraries.map((lib) => lib.name);
@@ -144,11 +144,11 @@ export function buildEmbeddedPayload(
 
   interface RunData {
     readonly folderName: string;
-    readonly lines: readonly string[];
+    readonly lines: ReadonlyArray<string>;
     readonly reports: Map<string, LibraryReport>;
   }
 
-  const runs: RunData[] = [];
+  const runs: Array<RunData> = [];
   for (const raw of rawRuns) {
     const reports = new Map<string, LibraryReport>();
     for (const libName of libraryNames) {
@@ -183,7 +183,7 @@ export function buildEmbeddedPayload(
   });
 
   // Build embedded runs.
-  const embeddedRuns: EmbeddedRun[] = runs.map((run) => {
+  const embeddedRuns: Array<EmbeddedRun> = runs.map((run) => {
     const meta = extractRunMeta(run.folderName, run.lines, libraryNames);
     if (meta === undefined) {
       throw new Error(`build-payload: could not parse run metadata for ${run.folderName}`);
@@ -192,7 +192,7 @@ export function buildEmbeddedPayload(
   });
 
   // Build per-scenario series.
-  const scenarios: EmbeddedScenarioSeries[] = scenarioIds.map((scenarioId) => {
+  const scenarios: Array<EmbeddedScenarioSeries> = scenarioIds.map((scenarioId) => {
     const libraryData: Record<string, EmbeddedLibraryRunData> = {};
     for (const libName of libraryNames) {
       const hz: Array<number | null> = [];
@@ -217,7 +217,7 @@ export function buildEmbeddedPayload(
     };
   });
 
-  const libraries: EmbeddedLibraryMeta[] = options.libraries.map((lib) => ({
+  const libraries: Array<EmbeddedLibraryMeta> = options.libraries.map((lib) => ({
     key: lib.name,
     displayName: lib.displayName ?? lib.name,
     isPrimary: lib.isPrimary ?? false,

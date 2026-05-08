@@ -22,7 +22,7 @@ const codefastExtendsWithMerge = codefastTvFn(
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastExtendsScenarios(): readonly BenchScenario[] {
+export function buildCodefastExtendsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "extends-without-merge",

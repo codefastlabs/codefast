@@ -18,7 +18,7 @@ interface ChartDataItem {
   fill: string;
 }
 
-const chartData: ChartDataItem[] = [
+const chartData: Array<ChartDataItem> = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
   { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
   { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },

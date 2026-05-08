@@ -43,6 +43,6 @@ function buildRealisticGraphValidateScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastRealisticGraphValidateScenarios(): readonly BenchScenario[] {
+export function buildCodefastRealisticGraphValidateScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRealisticGraphValidateScenario()];
 }

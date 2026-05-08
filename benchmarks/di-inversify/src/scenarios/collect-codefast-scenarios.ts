@@ -22,7 +22,7 @@ import type { AnyScenario } from "#/scenarios/types";
 /**
  * @since 0.3.16-canary.0
  */
-export function collectAllCodefastScenarios(): readonly AnyScenario[] {
+export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildCodefastMicroScenarios(),
     ...buildCodefastRealisticScenarios(),

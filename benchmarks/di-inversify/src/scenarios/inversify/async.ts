@@ -47,7 +47,7 @@ function buildResolveAsyncSingleHopScenario(): AsyncBenchScenario {
 function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
   const chainIdentifiers = Array.from({ length: ASYNC_CHAIN_DEPTH }, (_value, depthIndex) =>
     Symbol(`bench-inv-async-chain-${String(depthIndex)}`),
-  ) as ServiceIdentifier<number>[];
+  ) as Array<ServiceIdentifier<number>>;
   const container = new Container();
 
   container.bind<number>(chainIdentifiers[0]!).toConstantValue(0);
@@ -94,7 +94,7 @@ function buildAsyncFanOutConcurrentScenario(
 ): AsyncBenchScenario {
   const dependencyIdentifiers = Array.from({ length: concurrency }, (_value, index) =>
     Symbol(`bench-inv-async-fanout-${String(concurrency)}-${String(index)}`),
-  ) as ServiceIdentifier<number>[];
+  ) as Array<ServiceIdentifier<number>>;
   const container = new Container();
 
   for (const [index, dependencyIdentifier] of dependencyIdentifiers.entries()) {
@@ -145,7 +145,7 @@ function buildAsyncFanOutConcurrentScenario(
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyAsyncScenarios(): readonly AsyncBenchScenario[] {
+export function buildInversifyAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [
     buildResolveAsyncSingleHopScenario(),
     buildDynamicAsyncChainDepthEightScenario(),

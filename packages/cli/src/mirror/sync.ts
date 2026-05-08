@@ -41,7 +41,7 @@ export async function runMirrorSync(
   const startTime = performance.now();
 
   try {
-    let targetPackages: string[] = [];
+    let targetPackages: Array<string> = [];
     if (input.packageFilter) {
       const filterOutcome = resolvePackageFilterUnderRoot(fs, input.rootDir, input.packageFilter);
       if (!filterOutcome.ok) {

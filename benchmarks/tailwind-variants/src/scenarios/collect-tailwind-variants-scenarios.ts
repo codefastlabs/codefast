@@ -11,7 +11,7 @@ import type { AnyScenario } from "#/scenarios/types";
 /**
  * @since 0.3.16-canary.0
  */
-export function collectAllTailwindVariantsNpmScenarios(): readonly AnyScenario[] {
+export function collectAllTailwindVariantsNpmScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildTailwindVariantsNpmSimpleScenarios(),
     ...buildTailwindVariantsNpmComplexScenarios(),

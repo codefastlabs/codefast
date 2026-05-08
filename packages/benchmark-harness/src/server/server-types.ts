@@ -23,7 +23,7 @@ export interface BenchServerOptions {
   /** Page title shown in the browser. */
   readonly title?: string;
   /** Libraries to track. The one with `isPrimary: true` is used for ratio calculations. */
-  readonly libraries: readonly BenchLibraryConfig[];
+  readonly libraries: ReadonlyArray<BenchLibraryConfig>;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,7 +63,7 @@ export interface EmbeddedRun {
   readonly cpuModel: string;
   readonly nodeOptions: string;
   readonly timestampIso: string;
-  readonly libraryVersions: readonly EmbeddedRunLibraryVersion[];
+  readonly libraryVersions: ReadonlyArray<EmbeddedRunLibraryVersion>;
 }
 
 /**
@@ -72,10 +72,10 @@ export interface EmbeddedRun {
  * @since 0.3.16-canary.0
  */
 export interface EmbeddedLibraryRunData {
-  readonly hz: readonly (number | null)[];
-  readonly p25: readonly (number | null)[];
-  readonly p75: readonly (number | null)[];
-  readonly iqrFraction: readonly (number | null)[];
+  readonly hz: ReadonlyArray<number | null>;
+  readonly p25: ReadonlyArray<number | null>;
+  readonly p75: ReadonlyArray<number | null>;
+  readonly iqrFraction: ReadonlyArray<number | null>;
 }
 
 /**
@@ -95,9 +95,9 @@ export interface EmbeddedScenarioSeries {
 export interface EmbeddedViewerPayload {
   readonly title: string;
   readonly primaryLibraryKey: string;
-  readonly libraries: readonly EmbeddedLibraryMeta[];
-  readonly runs: readonly EmbeddedRun[];
-  readonly scenarios: readonly EmbeddedScenarioSeries[];
+  readonly libraries: ReadonlyArray<EmbeddedLibraryMeta>;
+  readonly runs: ReadonlyArray<EmbeddedRun>;
+  readonly scenarios: ReadonlyArray<EmbeddedScenarioSeries>;
   /** ISO timestamp when this JSON snapshot was built (server clock). */
   readonly generatedAtIso: string;
 }

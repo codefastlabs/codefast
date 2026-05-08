@@ -1,9 +1,9 @@
-function parseClasses(result: string | string[]): string[] {
+function parseClasses(result: string | Array<string>): Array<string> {
   return [...(typeof result === "string" ? result.split(" ") : result)].toSorted();
 }
 
 expect.extend({
-  toHaveClassName(received: string | string[], expected: string | string[]) {
+  toHaveClassName(received: string | Array<string>, expected: string | Array<string>) {
     const parsedExpected = parseClasses(expected);
     const parsedReceived = parseClasses(received);
 

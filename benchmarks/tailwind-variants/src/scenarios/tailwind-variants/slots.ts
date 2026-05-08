@@ -25,7 +25,7 @@ function runSlotLoop(renderer: SlotsRenderer): void {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildTailwindVariantsNpmSlotsScenarios(): readonly BenchScenario[] {
+export function buildTailwindVariantsNpmSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "slots-without-merge",

@@ -314,7 +314,7 @@ interface FieldErrorMessage {
  * @since 0.3.16-canary.0
  */
 interface FieldErrorProps extends ComponentProps<"div"> {
-  errors?: (FieldErrorMessage | undefined)[];
+  errors?: Array<FieldErrorMessage | undefined>;
 }
 
 /**

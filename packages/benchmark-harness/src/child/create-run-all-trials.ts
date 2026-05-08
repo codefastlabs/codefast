@@ -58,10 +58,10 @@ export type CreateRunAllTrialsParameters = Readonly<{
  * @since 0.3.16-canary.0
  */
 export type RunAllTrials = (
-  scenarios: readonly AnyBenchScenario[],
-  sanityFailures: readonly string[],
+  scenarios: ReadonlyArray<AnyBenchScenario>,
+  sanityFailures: ReadonlyArray<string>,
   trialCount?: number,
-) => Promise<TrialPayload[]>;
+) => Promise<Array<TrialPayload>>;
 
 function resolveBenchOptions(benchDefaults: BenchOptions): BenchOptions {
   return FAST_MODE_ENABLED
@@ -111,8 +111,8 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   async function runOneTrial(
     trialIndex: number,
     trialCount: number,
-    scenarios: readonly AnyBenchScenario[],
-    sanityFailures: readonly string[],
+    scenarios: ReadonlyArray<AnyBenchScenario>,
+    sanityFailures: ReadonlyArray<string>,
   ): Promise<TrialPayload> {
     const beforeEachGc = createBeforeEachGcHook();
     const bench = new Bench(benchOptions);
@@ -160,7 +160,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
 
     await bench.run();
 
-    const trialScenarioResults: ScenarioTrialResult[] = [];
+    const trialScenarioResults: Array<ScenarioTrialResult> = [];
     const scenarioById = new Map<string, AnyBenchScenario>(
       scenarios.map((scenario) => [scenario.id, scenario]),
     );
@@ -237,11 +237,11 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   }
 
   async function runAllTrials(
-    scenarios: readonly AnyBenchScenario[],
-    sanityFailures: readonly string[],
+    scenarios: ReadonlyArray<AnyBenchScenario>,
+    sanityFailures: ReadonlyArray<string>,
     trialCount: number = resolveTrialCountFromEnvironment(),
-  ): Promise<TrialPayload[]> {
-    const trials: TrialPayload[] = [];
+  ): Promise<Array<TrialPayload>> {
+    const trials: Array<TrialPayload> = [];
     const scenarioStartedAtMs = performance.now();
     for (let trialIndex = 0; trialIndex < trialCount; trialIndex++) {
       runFullGcIfExposed();

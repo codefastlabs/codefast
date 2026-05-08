@@ -27,6 +27,6 @@ function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastFanOutTreeScenarios(): readonly BenchScenario[] {
+export function buildCodefastFanOutTreeScenarios(): ReadonlyArray<BenchScenario> {
   return [buildFanOutTreeDepthThreeBreadthFourScenario()];
 }

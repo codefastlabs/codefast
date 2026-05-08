@@ -9,7 +9,7 @@ interface PlanItem {
   price: string;
 }
 
-const plans: PlanItem[] = [
+const plans: Array<PlanItem> = [
   {
     id: "starter",
     name: "Starter Plan",

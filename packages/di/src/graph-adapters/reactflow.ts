@@ -23,15 +23,15 @@ export interface ReactFlowEdge {
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowGraph {
-  nodes: ReactFlowNode[];
-  edges: ReactFlowEdge[];
+  nodes: Array<ReactFlowNode>;
+  edges: Array<ReactFlowEdge>;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
-  const nodes: ReactFlowNode[] = graph.nodes.map((node, idx) => ({
+  const nodes: Array<ReactFlowNode> = graph.nodes.map((node, idx) => ({
     id: node.id,
     data: {
       label: node.tokenName,
@@ -42,7 +42,7 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
     position: { x: (idx % 5) * 200, y: Math.floor(idx / 5) * 100 },
   }));
 
-  const edges: ReactFlowEdge[] = graph.edges.map((edge, idx) => {
+  const edges: Array<ReactFlowEdge> = graph.edges.map((edge, idx) => {
     const reactFlowEdge: ReactFlowEdge = {
       id: `edge-${idx}`,
       source: edge.from,

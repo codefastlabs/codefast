@@ -68,8 +68,8 @@ function withColorizedLine(line: string, colorCode: string): string {
   return `${colorCode}${line}${colorReset}`;
 }
 
-function warningsAndErrorsFromResult(result: TagSyncResult): string[] {
-  const entries: string[] = [];
+function warningsAndErrorsFromResult(result: TagSyncResult): Array<string> {
+  const entries: Array<string> = [];
   for (const targetResult of result.targetResults) {
     if (targetResult.runError) {
       entries.push(targetResult.runError);
@@ -81,7 +81,7 @@ function warningsAndErrorsFromResult(result: TagSyncResult): string[] {
   return entries;
 }
 
-function formatTargetTable(targets: TagResolvedTarget[], rootDir: string): string {
+function formatTargetTable(targets: Array<TagResolvedTarget>, rootDir: string): string {
   const packageColumnWidth = Math.max(
     "package".length,
     ...targets.map((target) => (target.packageName ?? "-").length),
@@ -90,7 +90,7 @@ function formatTargetTable(targets: TagResolvedTarget[], rootDir: string): strin
     "path".length,
     ...targets.map((target) => target.rootRelativeTargetPath.length),
   );
-  const lines: string[] = [];
+  const lines: Array<string> = [];
   lines.push(`[tag] Root: ${rootDir}`);
   lines.push(`[tag] Resolved targets: ${targets.length}`);
   lines.push("[tag] Targets:");

@@ -70,13 +70,13 @@ class Database {
     console.log(`[DB] disconnected`);
   }
 
-  async query<T>(sql: string, params?: unknown[]): Promise<T[]> {
+  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
     if (!this.connected) {
       throw new Error("Database not connected");
     }
     await tick();
     console.log(`  [DB] ${sql}${params?.length ? ` (${params.length} params)` : ""}`);
-    return [] as T[];
+    return [] as Array<T>;
   }
 }
 

@@ -60,6 +60,6 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastRealisticScenarios(): readonly BenchScenario[] {
+export function buildCodefastRealisticScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];
 }

@@ -32,9 +32,9 @@ export const nodeFilesystem: FilesystemPort = {
       opts as Parameters<typeof fsPromises.readdir>[1],
     );
     if (!opts?.withFileTypes) {
-      return raw as unknown as string[];
+      return raw as unknown as Array<string>;
     }
-    return raw as unknown as DirectoryEntry[];
+    return raw as unknown as Array<DirectoryEntry>;
   },
 
   rename: (oldPath: string, newPath: string) => fsPromises.rename(oldPath, newPath),

@@ -53,7 +53,7 @@ describe("compile-time API inference", () => {
   it("injectAll marks multi with array value type", () => {
     const T = token<string>("s");
     const d = injectAll(T);
-    expectTypeOf(d).toExtend<InjectionDescriptor<string[]>>();
+    expectTypeOf(d).toExtend<InjectionDescriptor<Array<string>>>();
   });
 
   it("dual-role inject does not use Function#name as slot name", () => {

@@ -173,9 +173,9 @@ interface Product {
   basePrice: number; // cents
   currency: string;
   description: string;
-  imageKeys: string[];
+  imageKeys: Array<string>;
   attributes: Record<string, string>; // { color, size, brand, … }
-  tags: string[];
+  tags: Array<string>;
   isActive: boolean;
 }
 
@@ -198,7 +198,7 @@ interface PriceResult {
   originalPrice: number;
   finalPrice: number;
   discountPercent: number;
-  appliedRules: string[];
+  appliedRules: Array<string>;
 }
 
 // ---- Cart -------------------------------------------------------------------
@@ -215,7 +215,7 @@ interface CartItem {
 interface Cart {
   id: string;
   userId: string | null; // null = guest
-  items: CartItem[];
+  items: Array<CartItem>;
   couponCode: string | null;
   discountAmount: number;
   subtotal: number;
@@ -265,7 +265,7 @@ interface ShippingAddress {
 interface Order {
   id: string;
   userId: string;
-  items: OrderItem[];
+  items: Array<OrderItem>;
   shippingAddress: ShippingAddress;
   status: OrderStatus;
   subtotal: number;
@@ -437,7 +437,7 @@ interface EventBus {
 
 @injectable([inject(LoggerToken)])
 class InMemoryEventBus implements EventBus {
-  private readonly handlers = new Map<string, EventHandler[]>();
+  private readonly handlers = new Map<string, Array<EventHandler>>();
   private readonly log: Logger;
 
   constructor(logger: Logger) {
@@ -462,8 +462,8 @@ class InMemoryEventBus implements EventBus {
 
 interface Database {
   connect(): Promise<void>;
-  query<T>(sql: string, params?: unknown[]): Promise<T[]>;
-  execute(sql: string, params?: unknown[]): Promise<{ rowCount: number }>;
+  query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
+  execute(sql: string, params?: Array<unknown>): Promise<{ rowCount: number }>;
   transaction<T>(fn: (db: Database) => Promise<T>): Promise<T>;
   healthCheck(): Promise<boolean>;
   close(): Promise<void>;
@@ -493,15 +493,15 @@ class MockDatabase implements Database {
     this.log.info("connection pool closed");
   }
 
-  async query<T>(sql: string, params?: unknown[]): Promise<T[]> {
+  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
     this.ensureConnected();
     await delay(2);
     this.queryCount++;
     this.log.info("query", { sql: sql.substring(0, 60), paramCount: params?.length ?? 0 });
-    return [] as T[];
+    return [] as Array<T>;
   }
 
-  async execute(sql: string, params?: unknown[]): Promise<{ rowCount: number }> {
+  async execute(sql: string, params?: Array<unknown>): Promise<{ rowCount: number }> {
     this.ensureConnected();
     await delay(2);
     this.log.info("execute", { sql: sql.substring(0, 60), paramCount: params?.length ?? 0 });
@@ -635,7 +635,7 @@ class MockS3 implements S3Client {
 
 interface ElasticClient {
   index(indexName: string, id: string, document: unknown): Promise<void>;
-  search<T>(indexName: string, searchQuery: unknown): Promise<T[]>;
+  search<T>(indexName: string, searchQuery: unknown): Promise<Array<T>>;
   healthCheck(): Promise<boolean>;
 }
 
@@ -655,10 +655,10 @@ class MockElastic implements ElasticClient {
     this.indices.get(indexName)!.set(id, document);
   }
 
-  async search<T>(indexName: string, searchQuery: unknown): Promise<T[]> {
+  async search<T>(indexName: string, searchQuery: unknown): Promise<Array<T>> {
     this.log.info("search", { index: indexName, query: searchQuery });
     await delay(5);
-    return [] as T[];
+    return [] as Array<T>;
   }
 
   async healthCheck(): Promise<boolean> {
@@ -673,10 +673,10 @@ class MockElastic implements ElasticClient {
 interface ProductRepository {
   findById(id: string): Promise<Product | undefined>;
   findBySku(sku: string): Promise<Product | undefined>;
-  findByCategory(categoryId: string, limit?: number): Promise<Product[]>;
-  search(query: string, filters?: Partial<Product["attributes"]>): Promise<Product[]>;
+  findByCategory(categoryId: string, limit?: number): Promise<Array<Product>>;
+  search(query: string, filters?: Partial<Product["attributes"]>): Promise<Array<Product>>;
   save(product: Product): Promise<Product>;
-  listActive(limit?: number, offset?: number): Promise<Product[]>;
+  listActive(limit?: number, offset?: number): Promise<Array<Product>>;
 }
 
 @injectable([inject(DatabaseToken), inject(LoggerToken)])
@@ -703,7 +703,7 @@ class ProductPostgresRepository implements ProductRepository {
     return rows[0] ?? makeFakeProduct(`prod-sku-${sku}`);
   }
 
-  async findByCategory(categoryId: string, limit = 20): Promise<Product[]> {
+  async findByCategory(categoryId: string, limit = 20): Promise<Array<Product>> {
     await this.db.query("SELECT * FROM products WHERE category_id=$1 LIMIT $2", [
       categoryId,
       limit,
@@ -711,7 +711,7 @@ class ProductPostgresRepository implements ProductRepository {
     return [makeFakeProduct("p1"), makeFakeProduct("p2")];
   }
 
-  async search(query: string): Promise<Product[]> {
+  async search(query: string): Promise<Array<Product>> {
     this.log.info("db search", { query });
     await this.db.query("SELECT * FROM products WHERE to_tsvector(name) @@ plainto_tsquery($1)", [
       query,
@@ -727,7 +727,7 @@ class ProductPostgresRepository implements ProductRepository {
     return product;
   }
 
-  async listActive(limit = 50, offset = 0): Promise<Product[]> {
+  async listActive(limit = 50, offset = 0): Promise<Array<Product>> {
     await this.db.query("SELECT * FROM products WHERE active=true LIMIT $1 OFFSET $2", [
       limit,
       offset,
@@ -743,7 +743,7 @@ class ProductPostgresRepository implements ProductRepository {
 interface CategoryRepository {
   findById(id: string): Promise<Category | undefined>;
   findBySlug(slug: string): Promise<Category | undefined>;
-  listAll(): Promise<Category[]>;
+  listAll(): Promise<Array<Category>>;
 }
 
 @injectable([inject(DatabaseToken)])
@@ -760,7 +760,7 @@ class CategoryPostgresRepository implements CategoryRepository {
     return { id: "cat-001", name: slug, slug, parentId: null };
   }
 
-  async listAll(): Promise<Category[]> {
+  async listAll(): Promise<Array<Category>> {
     await this.db.query("SELECT * FROM categories ORDER BY name");
     return [
       { id: "cat-sports", name: "Sports", slug: "sports", parentId: null },
@@ -798,7 +798,7 @@ class InventoryManager implements InventoryService {
       [productId],
     );
     // Simulate stock spread across multiple warehouses, then derive availability.
-    const inventoryEntries: InventoryEntry[] = [
+    const inventoryEntries: Array<InventoryEntry> = [
       { productId, warehouseId: "wh-hcm", quantity: 20, reserved: 4 },
       { productId, warehouseId: "wh-hn", quantity: 18, reserved: 3 },
       { productId, warehouseId: "wh-dn", quantity: 12, reserved: 1 },
@@ -836,7 +836,7 @@ class InventoryManager implements InventoryService {
 
 interface PricingService {
   getPrice(productId: string, userId?: string): Promise<PriceResult>;
-  getBulkPrices(productIds: string[], userId?: string): Promise<Map<string, PriceResult>>;
+  getBulkPrices(productIds: Array<string>, userId?: string): Promise<Map<string, PriceResult>>;
   applyCoupon(cart: Cart, couponCode: string): Promise<CouponResult>;
 }
 
@@ -894,7 +894,10 @@ class PricingManager implements PricingService {
     return result;
   }
 
-  async getBulkPrices(productIds: string[], userId?: string): Promise<Map<string, PriceResult>> {
+  async getBulkPrices(
+    productIds: Array<string>,
+    userId?: string,
+  ): Promise<Map<string, PriceResult>> {
     const prices = new Map<string, PriceResult>();
     await Promise.all(
       productIds.map(async (productId) => {
@@ -926,7 +929,7 @@ interface CatalogService {
   getProductById(productId: string): Promise<Product | undefined>;
   listFeaturedProducts(): Promise<Array<Product & { price: PriceResult }>>;
   getCategoryBySlug(categorySlug: string): Promise<Category | undefined>;
-  listAllCategories(): Promise<Category[]>;
+  listAllCategories(): Promise<Array<Category>>;
 }
 
 @injectable([
@@ -968,7 +971,7 @@ class CatalogManager implements CatalogService {
     return this.categories.findBySlug(categorySlug);
   }
 
-  async listAllCategories(): Promise<Category[]> {
+  async listAllCategories(): Promise<Array<Category>> {
     return this.categories.listAll();
   }
 }
@@ -978,7 +981,7 @@ class CatalogManager implements CatalogService {
 // then infrastructure** — e.g. `ProductPostgresRepository` and
 // `ProductElasticsearchSearchService` both name the aggregate/capability, then the store/index.
 interface SearchService {
-  search(query: string, filters?: Record<string, string>): Promise<Product[]>;
+  search(query: string, filters?: Record<string, string>): Promise<Array<Product>>;
   indexProduct(product: Product): Promise<void>;
 }
 
@@ -994,7 +997,7 @@ class ProductElasticsearchSearchService implements SearchService {
     this.log = logger.child({ service: "SearchService" });
   }
 
-  async search(query: string, filters?: Record<string, string>): Promise<Product[]> {
+  async search(query: string, filters?: Record<string, string>): Promise<Array<Product>> {
     this.log.info("searching products", { query, filters });
     const esQuery = {
       multi_match: { query, fields: ["name^3", "description", "tags"] },
@@ -1162,7 +1165,7 @@ class CartManager implements CartService {
     const priceResult = await this.pricing.getPrice(productId, cart.userId ?? undefined);
     const existingCartLine = cart.items.find((cartLine) => cartLine.productId === productId);
 
-    let updatedItems: CartItem[];
+    let updatedItems: Array<CartItem>;
     if (existingCartLine) {
       updatedItems = cart.items.map((cartLine) =>
         cartLine.productId === productId
@@ -1289,7 +1292,7 @@ class CouponManager implements CouponService {
 
 interface OrderRepository {
   findById(id: string): Promise<Order | undefined>;
-  findByUserId(userId: string): Promise<Order[]>;
+  findByUserId(userId: string): Promise<Array<Order>>;
   save(order: Order): Promise<Order>;
   updateStatus(id: string, status: OrderStatus, meta?: Partial<Order>): Promise<Order>;
 }
@@ -1310,7 +1313,7 @@ class OrderPostgresRepository implements OrderRepository {
     return makeFakeOrder(id);
   }
 
-  async findByUserId(userId: string): Promise<Order[]> {
+  async findByUserId(userId: string): Promise<Array<Order>> {
     await this.db.query("SELECT * FROM orders WHERE user_id=$1 ORDER BY created_at DESC", [userId]);
     return [makeFakeOrder("ord-001")];
   }
@@ -1347,7 +1350,7 @@ class OrderPostgresRepository implements OrderRepository {
 interface ShippingCarrier {
   carrierId: string;
   carrierName: string;
-  getQuote(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote>;
+  getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote>;
   createShipment(orderId: string, address: ShippingAddress): Promise<string>; // trackingNumber
 }
 
@@ -1357,7 +1360,7 @@ class FedExCarrier implements ShippingCarrier {
   carrierId = "fedex";
   carrierName = "FedEx";
 
-  async getQuote(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote> {
+  async getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
     const weight = items.reduce(
       (totalQuantity, orderItem) => totalQuantity + orderItem.quantity,
@@ -1384,7 +1387,7 @@ class UpsCarrier implements ShippingCarrier {
   carrierId = "ups";
   carrierName = "UPS";
 
-  async getQuote(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote> {
+  async getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
     const weight = items.reduce(
       (totalQuantity, orderItem) => totalQuantity + orderItem.quantity,
@@ -1411,7 +1414,7 @@ class DhlCarrier implements ShippingCarrier {
   carrierId = "dhl";
   carrierName = "DHL Express";
 
-  async getQuote(_address: ShippingAddress, _items: OrderItem[]): Promise<ShippingQuote> {
+  async getQuote(_address: ShippingAddress, _items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
     return {
       carrierId: this.carrierId,
@@ -1430,7 +1433,10 @@ class DhlCarrier implements ShippingCarrier {
 
 interface FulfillmentService {
   fulfill(order: Order): Promise<Order>;
-  listShippingQuotes(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote[]>;
+  listShippingQuotes(
+    address: ShippingAddress,
+    items: Array<OrderItem>,
+  ): Promise<Array<ShippingQuote>>;
   createShipment(orderId: string, carrierId: string, address: ShippingAddress): Promise<string>;
 }
 
@@ -1440,7 +1446,7 @@ class ShippingFulfillmentService implements FulfillmentService {
 
   constructor(
     private readonly orderRepo: OrderRepository,
-    private readonly carriers: ShippingCarrier[], // resolveAll — all registered carriers
+    private readonly carriers: Array<ShippingCarrier>, // resolveAll — all registered carriers
     logger: Logger,
   ) {
     this.log = logger.child({ service: "FulfillmentService" });
@@ -1451,7 +1457,10 @@ class ShippingFulfillmentService implements FulfillmentService {
     return this.orderRepo.updateStatus(order.id, "processing");
   }
 
-  async listShippingQuotes(address: ShippingAddress, items: OrderItem[]): Promise<ShippingQuote[]> {
+  async listShippingQuotes(
+    address: ShippingAddress,
+    items: Array<OrderItem>,
+  ): Promise<Array<ShippingQuote>> {
     const shippingQuotes = await Promise.all(
       this.carriers.map((carrier) => carrier.getQuote(address, items)),
     );
@@ -1482,7 +1491,7 @@ interface OrderService {
     shippingCost: number,
   ): Promise<Order>;
   getOrder(id: string): Promise<Order | undefined>;
-  getUserOrders(userId: string): Promise<Order[]>;
+  getUserOrders(userId: string): Promise<Array<Order>>;
   cancelOrder(id: string): Promise<Order>;
 }
 
@@ -1541,7 +1550,7 @@ class OrderManager implements OrderService {
     return this.orderRepo.findById(id);
   }
 
-  async getUserOrders(userId: string): Promise<Order[]> {
+  async getUserOrders(userId: string): Promise<Array<Order>> {
     return this.orderRepo.findByUserId(userId);
   }
 
@@ -1674,7 +1683,7 @@ class CashOnDeliveryGateway implements PaymentGateway {
 interface PaymentService {
   capturePayment(order: Order, gatewayId: string): Promise<PaymentIntent>;
   refundPayment(paymentId: string, gatewayId: string, amount?: number): Promise<boolean>;
-  listSupportedGateways(currency: string): PaymentGateway[];
+  listSupportedGateways(currency: string): Array<PaymentGateway>;
 }
 
 @injectable([
@@ -1687,7 +1696,7 @@ class PaymentProcessor implements PaymentService {
   private readonly log: Logger;
 
   constructor(
-    private readonly gateways: PaymentGateway[], // resolveAll — all gateways
+    private readonly gateways: Array<PaymentGateway>, // resolveAll — all gateways
     private readonly orderRepo: OrderRepository,
     private readonly eventBus: EventBus,
     logger: Logger,
@@ -1695,7 +1704,7 @@ class PaymentProcessor implements PaymentService {
     this.log = logger.child({ service: "PaymentService" });
   }
 
-  listSupportedGateways(currency: string): PaymentGateway[] {
+  listSupportedGateways(currency: string): Array<PaymentGateway> {
     return this.gateways.filter((gateway) => gateway.supports(currency));
   }
 
@@ -1812,7 +1821,7 @@ class UserPostgresRepository implements UserRepository {
 }
 
 interface AddressRepository {
-  findByUserId(userId: string): Promise<Address[]>;
+  findByUserId(userId: string): Promise<Array<Address>>;
   save(address: Address): Promise<Address>;
   setDefault(addressId: string, userId: string): Promise<void>;
 }
@@ -1821,7 +1830,7 @@ interface AddressRepository {
 class AddressPostgresRepository implements AddressRepository {
   constructor(private readonly db: Database) {}
 
-  async findByUserId(userId: string): Promise<Address[]> {
+  async findByUserId(userId: string): Promise<Array<Address>> {
     await this.db.query("SELECT * FROM addresses WHERE user_id=$1", [userId]);
     return [makeFakeAddress("addr-001", userId)];
   }
@@ -1894,7 +1903,7 @@ interface UserService {
   register(email: string, fullName: string): Promise<User>;
   authenticate(email: string): Promise<User | undefined>;
   getUserProfile(userId: string): Promise<User | undefined>;
-  listUserAddresses(userId: string): Promise<Address[]>;
+  listUserAddresses(userId: string): Promise<Array<Address>>;
   addUserAddress(
     userId: string,
     addressInput: Omit<Address, "id" | "userId" | "isDefault">,
@@ -1950,7 +1959,7 @@ class UserAccountService implements UserService {
     return this.users.findById(userId);
   }
 
-  async listUserAddresses(userId: string): Promise<Address[]> {
+  async listUserAddresses(userId: string): Promise<Array<Address>> {
     return this.addresses.findByUserId(userId);
   }
 
@@ -2055,7 +2064,7 @@ class PushChannel implements NotificationChannel {
 }
 
 interface NotificationService {
-  send(payload: NotificationPayload): Promise<NotificationResult[]>;
+  send(payload: NotificationPayload): Promise<Array<NotificationResult>>;
   sendOrderConfirmationNotification(order: Order, user: User): Promise<void>;
   sendShippingUpdateNotification(order: Order, user: User, trackingNumber: string): Promise<void>;
 }
@@ -2065,13 +2074,13 @@ class NotificationDispatcher implements NotificationService {
   private readonly log: Logger;
 
   constructor(
-    private readonly channels: NotificationChannel[], // resolveAll — all channels
+    private readonly channels: Array<NotificationChannel>, // resolveAll — all channels
     logger: Logger,
   ) {
     this.log = logger.child({ service: "NotificationService" });
   }
 
-  async send(payload: NotificationPayload): Promise<NotificationResult[]> {
+  async send(payload: NotificationPayload): Promise<Array<NotificationResult>> {
     const applicableChannels = this.channels.filter((channel) => channel.canHandle(payload));
     this.log.info("dispatching notification", {
       template: payload.template,
@@ -2245,7 +2254,7 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
     const reservedCart = await this.cartService.reserveInventoryForCheckout(cart.id);
     const shippingQuotes = await this.fulfillmentService.listShippingQuotes(
       shippingAddress,
-      reservedCart.items as OrderItem[],
+      reservedCart.items as Array<OrderItem>,
     );
     checkoutLog.info("shipping quotes received", {
       carriers: shippingQuotes.map(
@@ -2662,7 +2671,7 @@ async function main(): Promise<void> {
   });
 
   // Simulate 3 concurrent requests (different users)
-  const sessions: UserSession[] = [
+  const sessions: Array<UserSession> = [
     { userId: alice.id, email: alice.email, tier: "bronze", cartId: null, requestId: "req-001" },
     {
       userId: "usr-bob",

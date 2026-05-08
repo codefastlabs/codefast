@@ -88,10 +88,10 @@ export interface MaterializationFrame {
  * @since 0.3.16-canary.0
  */
 export interface ConstraintContext {
-  readonly resolutionPath: readonly string[];
-  readonly materializationStack: readonly MaterializationFrame[];
+  readonly resolutionPath: ReadonlyArray<string>;
+  readonly materializationStack: ReadonlyArray<MaterializationFrame>;
   readonly parent: MaterializationFrame | undefined;
-  readonly ancestors: readonly MaterializationFrame[];
+  readonly ancestors: ReadonlyArray<MaterializationFrame>;
   readonly currentResolveHint: ResolveOptions | undefined;
 }
 
@@ -114,11 +114,14 @@ export interface ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
+  resolveAll<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    hint?: ResolveOptions,
+  ): Array<Value>;
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
-  ): Promise<Value[]>;
+  ): Promise<Array<Value>>;
   readonly graph: ConstraintContext;
 }
 

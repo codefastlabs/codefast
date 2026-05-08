@@ -27,13 +27,13 @@ export interface AggregatedScenarioResult {
 export interface LibraryReport {
   readonly fingerprint: Fingerprint;
   readonly trialCount: number;
-  readonly sanityFailures: readonly string[];
-  readonly scenarios: readonly AggregatedScenarioResult[];
+  readonly sanityFailures: ReadonlyArray<string>;
+  readonly scenarios: ReadonlyArray<AggregatedScenarioResult>;
 }
 
 function aggregateTrialsForScenario(
   scenarioId: string,
-  perTrialResults: readonly ScenarioTrialResult[],
+  perTrialResults: ReadonlyArray<ScenarioTrialResult>,
 ): AggregatedScenarioResult | undefined {
   const successfulTrials = perTrialResults.filter((trial) => trial.samples > 0);
   if (successfulTrials.length === 0) {
@@ -75,10 +75,10 @@ function aggregateTrialsForScenario(
  */
 export function buildLibraryReport(
   fingerprint: Fingerprint,
-  trials: readonly TrialPayload[],
-  sanityFailures: readonly string[],
+  trials: ReadonlyArray<TrialPayload>,
+  sanityFailures: ReadonlyArray<string>,
 ): LibraryReport {
-  const perScenarioTrials = new Map<string, ScenarioTrialResult[]>();
+  const perScenarioTrials = new Map<string, Array<ScenarioTrialResult>>();
   for (const trial of trials) {
     for (const scenarioResult of trial.scenarios) {
       const list = perScenarioTrials.get(scenarioResult.id);
@@ -90,7 +90,7 @@ export function buildLibraryReport(
     }
   }
 
-  const aggregated: AggregatedScenarioResult[] = [];
+  const aggregated: Array<AggregatedScenarioResult> = [];
   for (const [scenarioId, perTrialResults] of perScenarioTrials) {
     const row = aggregateTrialsForScenario(scenarioId, perTrialResults);
     if (row !== undefined) {

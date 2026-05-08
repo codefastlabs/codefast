@@ -150,7 +150,7 @@ function buildToSelfSingletonScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildInversifyBindingVariantScenarios(): readonly BenchScenario[] {
+export function buildInversifyBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildToResolvedThreeDepsScenario(),
     buildToServiceRedirectScenario(),

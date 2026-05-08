@@ -145,29 +145,25 @@ export const mergeConfigurationSchemas = (
   // Handle slot-based configuration merging
   if (hasSlotConfigurationResult) {
     // Extract compound slot definitions from base configuration
-    const baseCompoundSlotDefinitions: readonly CompoundSlotType<
-      ConfigurationSchema,
-      SlotConfigurationSchema
-    >[] =
+    const baseCompoundSlotDefinitions: ReadonlyArray<
+      CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
+    > =
       hasSlotConfiguration(resolvedBaseConfiguration) &&
       Array.isArray(resolvedBaseConfiguration.compoundSlots)
-        ? (resolvedBaseConfiguration.compoundSlots as readonly CompoundSlotType<
-            ConfigurationSchema,
-            SlotConfigurationSchema
-          >[])
+        ? (resolvedBaseConfiguration.compoundSlots as ReadonlyArray<
+            CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
+          >)
         : [];
 
     // Extract compound slot definitions from the extension configuration
-    const extensionCompoundSlotDefinitions: readonly CompoundSlotType<
-      ConfigurationSchema,
-      SlotConfigurationSchema
-    >[] =
+    const extensionCompoundSlotDefinitions: ReadonlyArray<
+      CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
+    > =
       hasSlotConfiguration(extensionConfiguration) &&
       Array.isArray(extensionConfiguration.compoundSlots)
-        ? (extensionConfiguration.compoundSlots as readonly CompoundSlotType<
-            ConfigurationSchema,
-            SlotConfigurationSchema
-          >[])
+        ? (extensionConfiguration.compoundSlots as ReadonlyArray<
+            CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
+          >)
         : [];
 
     // Return slot-based configuration

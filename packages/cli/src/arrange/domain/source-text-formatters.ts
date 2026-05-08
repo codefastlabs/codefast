@@ -17,7 +17,7 @@ function commaAfterTailwindGroupLine(groupIndex: number, groupCount: number): st
  * string argument with several, without producing `cn(cn(...))`.
  */
 function formatCnArguments(
-  groups: string[],
+  groups: Array<string>,
   options?: {
     indent?: string;
     commaAfterLastGroup?: boolean;
@@ -26,7 +26,7 @@ function formatCnArguments(
 ): string {
   const indent = options?.indent ?? "  ";
   const commaAfterLast = options?.commaAfterLastGroup ?? options?.trailingClassName ?? false;
-  const lines: string[] = [];
+  const lines: Array<string> = [];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
     if (group === undefined) {
@@ -44,8 +44,11 @@ function formatCnArguments(
 /**
  * @since 0.3.16-canary.0
  */
-export function formatCnCall(groups: string[], options?: { trailingClassName?: boolean }): string {
-  const lines: string[] = ["cn("];
+export function formatCnCall(
+  groups: Array<string>,
+  options?: { trailingClassName?: boolean },
+): string {
+  const lines: Array<string> = ["cn("];
   const commaOnEachStringLine = groups.length > 1 || Boolean(options?.trailingClassName);
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
@@ -65,8 +68,8 @@ export function formatCnCall(groups: string[], options?: { trailingClassName?: b
 /**
  * @since 0.3.16-canary.0
  */
-export function formatArray(groups: string[]): string {
-  const lines: string[] = ["["];
+export function formatArray(groups: Array<string>): string {
+  const lines: Array<string> = ["["];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
     if (group === undefined) {
@@ -86,10 +89,10 @@ export function formatArray(groups: string[]): string {
  * @since 0.3.16-canary.0
  */
 export function formatArrayElementsAsSiblingLines(
-  groups: string[],
+  groups: Array<string>,
   continuationPrefix: string,
 ): string {
-  const segments: string[] = [];
+  const segments: Array<string> = [];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
     if (group === undefined) {
@@ -106,7 +109,7 @@ export function formatArrayElementsAsSiblingLines(
  * @since 0.3.16-canary.0
  */
 export function formatJsxCnAttributeValue(
-  groups: string[],
+  groups: Array<string>,
   source: string,
   valueNodeStart: number,
 ): string {

@@ -8,7 +8,7 @@ import { OBSERVATIONS_FILE_NAME } from "#/shared/env-keys";
  */
 export interface RunLines {
   readonly folderName: string;
-  readonly lines: readonly string[];
+  readonly lines: ReadonlyArray<string>;
 }
 
 function readRunDirectory(runDirPath: string, folderName: string): RunLines | undefined {
@@ -29,14 +29,14 @@ function readRunDirectory(runDirPath: string, folderName: string): RunLines | un
 /**
  * @since 0.3.16-canary.0
  */
-export function listRawRuns(benchResultsDir: string): RunLines[] {
-  let entries: Dirent<string>[];
+export function listRawRuns(benchResultsDir: string): Array<RunLines> {
+  let entries: Array<Dirent<string>>;
   try {
     entries = readdirSync(benchResultsDir, { withFileTypes: true });
   } catch {
     return [];
   }
-  const runs: RunLines[] = [];
+  const runs: Array<RunLines> = [];
   for (const entry of entries) {
     if (!entry.isDirectory()) {
       continue;

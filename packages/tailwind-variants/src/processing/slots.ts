@@ -49,13 +49,13 @@ export const resolveSlotClasses = <
   slotProps: ConfigurationVariants<T>,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
-  compoundVariantGroups: readonly CompoundVariantWithSlotsType<T, S>[] | undefined,
-  compoundSlotClasses: ClassValue[],
-): ClassValue[] => {
+  compoundVariantGroups: ReadonlyArray<CompoundVariantWithSlotsType<T, S>> | undefined,
+  compoundSlotClasses: Array<ClassValue>,
+): Array<ClassValue> => {
   // Pre-allocate with estimated size
   const estimatedSize =
     (variantGroups ? Object.keys(variantGroups).length : 0) + compoundSlotClasses.length + 5;
-  const resolvedClasses: ClassValue[] = new Array(estimatedSize);
+  const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
   let classIndex = 0;
 
   // Start with base slot classes (only if truthy)
@@ -233,8 +233,8 @@ export const createSlotFunctionFactory = <
   mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
   mergedDefaultVariantProps: ConfigurationVariants<T>,
-  mergedCompoundVariantGroups: readonly CompoundVariantWithSlotsType<T, S>[] | undefined,
-  compoundSlotClasses: Partial<Record<keyof S, ClassValue[]>>,
+  mergedCompoundVariantGroups: ReadonlyArray<CompoundVariantWithSlotsType<T, S>> | undefined,
+  compoundSlotClasses: Partial<Record<keyof S, Array<ClassValue>>>,
   variantProps: ConfigurationVariants<T>,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
@@ -282,7 +282,7 @@ export const createSlotFunctionFactory = <
     }
 
     // Pre-allocate array with exact size
-    const allClasses: ClassValue[] = new Array(totalLength);
+    const allClasses: Array<ClassValue> = new Array(totalLength);
     let classIndex = 0;
 
     for (let index = 0, length = baseClasses.length; index < length; index++) {
@@ -349,7 +349,7 @@ export const createSlotFunctionFactory = <
         }
 
         // Pre-allocate array with exact size
-        const allClasses: ClassValue[] = new Array(totalLength);
+        const allClasses: Array<ClassValue> = new Array(totalLength);
         let classIndex = 0;
 
         for (

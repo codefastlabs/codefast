@@ -163,7 +163,7 @@ export function unwrapCnInsideTvCallReplacement(
     }
     return sourceText.slice(firstArg.pos, firstArg.end);
   }
-  const lines: string[] = ["["];
+  const lines: Array<string> = ["["];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === undefined) {

@@ -73,7 +73,7 @@ function materializeInjectionDescriptor(dep: InjectionDescriptor): InjectionDesc
   if (typeof dep !== "function") {
     return dep;
   }
-  const dualRole = dep as InjectionDescriptor & ((...args: unknown[]) => unknown);
+  const dualRole = dep as InjectionDescriptor & ((...args: Array<unknown>) => unknown);
   const base: Pick<InjectionDescriptor<unknown>, "token" | "optional" | "multi"> = {
     token: dualRole.token,
     optional: dualRole.optional,
@@ -221,9 +221,9 @@ export function optional<const Value>(
 export function injectAll<const Value>(
   t: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
-): InjectionDescriptor<Value[]> {
-  const base: Pick<InjectionDescriptor<Value[]>, "token" | "optional" | "multi"> = {
-    token: t as Token<Value[]> | Constructor<Value[]>,
+): InjectionDescriptor<Array<Value>> {
+  const base: Pick<InjectionDescriptor<Array<Value>>, "token" | "optional" | "multi"> = {
+    token: t as Token<Array<Value>> | Constructor<Array<Value>>,
     optional: false,
     multi: true,
   };

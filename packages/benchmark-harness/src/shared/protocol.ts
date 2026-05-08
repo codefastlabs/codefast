@@ -50,7 +50,7 @@ export interface ScenarioTrialResult {
  */
 export interface TrialPayload {
   readonly trialIndex: number;
-  readonly scenarios: readonly ScenarioTrialResult[];
+  readonly scenarios: ReadonlyArray<ScenarioTrialResult>;
 }
 
 /**
@@ -78,9 +78,9 @@ export interface Fingerprint {
  */
 export interface SubprocessPayload {
   readonly fingerprint: Fingerprint;
-  readonly trials: readonly TrialPayload[];
+  readonly trials: ReadonlyArray<TrialPayload>;
   /** When non-empty, the harness failed sanity checks for these scenario IDs. */
-  readonly sanityFailures: readonly string[];
+  readonly sanityFailures: ReadonlyArray<string>;
 }
 
 /**

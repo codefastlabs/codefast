@@ -38,14 +38,14 @@ export type NodeLifetime = "singleton" | "transient";
 export interface NodeDescriptor {
   readonly id: string;
   readonly lifetime: NodeLifetime;
-  readonly dependencies: readonly string[];
+  readonly dependencies: ReadonlyArray<string>;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export interface GraphDescriptor {
-  readonly nodes: readonly NodeDescriptor[];
+  readonly nodes: ReadonlyArray<NodeDescriptor>;
   readonly rootId: string;
 }
 
@@ -113,7 +113,7 @@ export const REALISTIC_GRAPH: GraphDescriptor = {
  */
 export interface RealisticNode {
   readonly __id: string;
-  readonly resolvedDependencies: readonly RealisticNode[];
+  readonly resolvedDependencies: ReadonlyArray<RealisticNode>;
 }
 
 /**
@@ -125,10 +125,10 @@ export interface RealisticNode {
  *
  * @since 0.3.16-canary.0
  */
-export function topologicallyOrderedNodeIds(graph: GraphDescriptor): readonly string[] {
+export function topologicallyOrderedNodeIds(graph: GraphDescriptor): ReadonlyArray<string> {
   const nodesById = new Map(graph.nodes.map((node) => [node.id, node]));
   const visited = new Set<string>();
-  const ordered: string[] = [];
+  const ordered: Array<string> = [];
 
   function visit(nodeId: string): void {
     if (visited.has(nodeId)) {

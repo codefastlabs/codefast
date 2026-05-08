@@ -68,7 +68,7 @@ interface CheckboxGroupContextValue {
   /**
    * Array of currently selected checkbox values
    */
-  value?: string[];
+  value?: Array<string>;
 }
 
 const [CheckboxGroupContextProvider, useCheckboxGroupContext] =
@@ -85,7 +85,7 @@ interface CheckboxGroupBaseProps {
   /**
    * Default values for the checkbox group when uncontrolled
    */
-  defaultValue?: string[];
+  defaultValue?: Array<string>;
 
   /**
    * Direction for roving focus navigation
@@ -111,7 +111,7 @@ interface CheckboxGroupBaseProps {
    * Callback fired when the selected values change
    * @param value - The new array of selected values
    */
-  onValueChange?: (value?: string[]) => void;
+  onValueChange?: (value?: Array<string>) => void;
 
   /**
    * Orientation of the checkbox group (horizontal or vertical)
@@ -167,7 +167,7 @@ function CheckboxGroup({
   /**
    * State for managing selected checkbox values
    */
-  const [value = [], setValue] = useControllableState<string[] | undefined>({
+  const [value = [], setValue] = useControllableState<Array<string> | undefined>({
     defaultProp: defaultValue,
     onChange: onValueChange,
     prop: valueProperty,

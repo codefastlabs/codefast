@@ -17,15 +17,15 @@ export interface ParamMetadata {
  * @since 0.3.16-canary.0
  */
 export interface ConstructorMetadata {
-  readonly params: readonly ParamMetadata[];
+  readonly params: ReadonlyArray<ParamMetadata>;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export interface LifecycleMetadata {
-  readonly postConstruct: readonly string[];
-  readonly preDestroy: readonly string[];
+  readonly postConstruct: ReadonlyArray<string>;
+  readonly preDestroy: ReadonlyArray<string>;
 }
 
 /**
@@ -34,8 +34,8 @@ export interface LifecycleMetadata {
  * @since 0.3.16-canary.0
  */
 export interface MutableLifecycleMetadata {
-  postConstruct: string[];
-  preDestroy: string[];
+  postConstruct: Array<string>;
+  preDestroy: Array<string>;
 }
 
 /**

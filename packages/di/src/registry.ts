@@ -8,7 +8,7 @@ import { slotKeyEquals } from "#/binding";
  */
 export class BindingRegistry {
   // Map from token key -> array of bindings (order matters for last-wins)
-  private readonly _bindings = new Map<DependencyKey, Binding[]>();
+  private readonly _bindings = new Map<DependencyKey, Array<Binding>>();
   // Fast lookup by binding ID
   private readonly _byId = new Map<BindingIdentifier, Binding>();
   // Fast lookup for slot { name, tags: [] }
@@ -47,7 +47,7 @@ export class BindingRegistry {
   }
 
   /** Remove all bindings for a token. Returns removed bindings. */
-  removeByToken(t: Token<unknown> | Constructor): Binding[] {
+  removeByToken(t: Token<unknown> | Constructor): Array<Binding> {
     const key = t as DependencyKey;
     const list = this._bindings.get(key) ?? [];
     this._bindings.delete(key);
@@ -89,7 +89,7 @@ export class BindingRegistry {
   }
 
   /** Get all bindings for a token. */
-  getAll(t: Token<unknown> | Constructor): readonly Binding[] {
+  getAll(t: Token<unknown> | Constructor): ReadonlyArray<Binding> {
     return this._bindings.get(t as DependencyKey) ?? [];
   }
 
@@ -106,8 +106,8 @@ export class BindingRegistry {
   }
 
   /** All bindings in the registry. */
-  allBindings(): readonly Binding[] {
-    const result: Binding[] = [];
+  allBindings(): ReadonlyArray<Binding> {
+    const result: Array<Binding> = [];
     for (const list of this._bindings.values()) {
       result.push(...list);
     }
@@ -115,7 +115,7 @@ export class BindingRegistry {
   }
 
   /** Remove all bindings. Returns all removed. */
-  clear(): readonly Binding[] {
+  clear(): ReadonlyArray<Binding> {
     const all = this.allBindings();
     this._bindings.clear();
     this._byId.clear();
@@ -145,14 +145,14 @@ export class BindingRegistry {
   }
 
   /** Summarize available slot strings for a token (for error messages). */
-  availableSlotStrings(t: Token<unknown> | Constructor): string[] {
+  availableSlotStrings(t: Token<unknown> | Constructor): Array<string> {
     const list = this._bindings.get(t as DependencyKey) ?? [];
     return list.map((b) => {
       const s = b.slot;
       if (s.name === undefined && s.tags.length === 0) {
         return "default";
       }
-      const parts: string[] = [];
+      const parts: Array<string> = [];
       if (s.name !== undefined) {
         parts.push(`name:${s.name}`);
       }

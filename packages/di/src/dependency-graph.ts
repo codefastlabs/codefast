@@ -30,8 +30,8 @@ export interface GraphEdge {
  * @since 0.3.16-canary.0
  */
 export interface ContainerGraphJson {
-  readonly nodes: readonly GraphNode[];
-  readonly edges: readonly GraphEdge[];
+  readonly nodes: ReadonlyArray<GraphNode>;
+  readonly edges: ReadonlyArray<GraphEdge>;
   readonly includesParent: boolean;
 }
 
@@ -53,8 +53,8 @@ export function buildDependencyGraph(
   options: GraphOptions | undefined,
   parentRegistry?: BindingRegistry,
 ): ContainerGraphJson {
-  const nodes: GraphNode[] = [];
-  const edges: GraphEdge[] = [];
+  const nodes: Array<GraphNode> = [];
+  const edges: Array<GraphEdge> = [];
   const includesParent = options?.includeParent === true;
 
   const addBindings = (reg: BindingRegistry, fromParent: boolean): void => {

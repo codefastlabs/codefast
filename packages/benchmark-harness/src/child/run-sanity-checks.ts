@@ -6,8 +6,10 @@ import type { AnyBenchScenario } from "#/child/bench-scenario";
  *
  * @since 0.3.16-canary.0
  */
-export async function runSanityChecks(scenarios: readonly AnyBenchScenario[]): Promise<string[]> {
-  const sanityFailures: string[] = [];
+export async function runSanityChecks(
+  scenarios: ReadonlyArray<AnyBenchScenario>,
+): Promise<Array<string>> {
+  const sanityFailures: Array<string> = [];
   for (const scenario of scenarios) {
     if (scenario.sanity === undefined) {
       continue;

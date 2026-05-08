@@ -24,7 +24,7 @@ export type TagSyncRunRequest = {
   write: boolean;
   json?: boolean;
   targetPath?: string;
-  skipPackages?: string[];
+  skipPackages?: Array<string>;
   config?: unknown;
 };
 
@@ -57,7 +57,7 @@ export async function runTagSync(
         runOnResolvedTarget(fs, resolvedTarget, input.write, input.listener),
       ),
     );
-    const allFileResults: TagFileResult[] = targetExecutionResults.flatMap(
+    const allFileResults: Array<TagFileResult> = targetExecutionResults.flatMap(
       (targetResult) => targetResult.result?.fileResults ?? [],
     );
     const filesScanned = targetExecutionResults.reduce(
@@ -102,7 +102,7 @@ export async function runTagSync(
 
 async function runTagOnAfterWriteHook(
   hook: CodefastAfterWriteHook | undefined,
-  modifiedFiles: string[],
+  modifiedFiles: Array<string>,
 ): Promise<string | null> {
   if (!hook || modifiedFiles.length === 0) {
     return null;
@@ -125,7 +125,7 @@ function summarizeVersions(distinctVersions: Set<string>): string {
   return distinctVersions.values().next().value ?? "none";
 }
 
-function extractDistinctVersions(targetResults: TagTargetExecutionResult[]): Set<string> {
+function extractDistinctVersions(targetResults: Array<TagTargetExecutionResult>): Set<string> {
   return new Set(
     targetResults
       .map((targetResult) => targetResult.result?.version)
@@ -182,9 +182,9 @@ function resolveTargetSelection(
 }
 
 function filterSkippedCandidates(
-  targetCandidates: TagTargetCandidate[],
-  skipPackages: readonly string[] | undefined,
-): { includedCandidates: TagTargetCandidate[]; skippedPackages: string[] } {
+  targetCandidates: Array<TagTargetCandidate>,
+  skipPackages: ReadonlyArray<string> | undefined,
+): { includedCandidates: Array<TagTargetCandidate>; skippedPackages: Array<string> } {
   if (!skipPackages || skipPackages.length === 0) {
     return {
       includedCandidates: targetCandidates,
@@ -193,8 +193,8 @@ function filterSkippedCandidates(
   }
 
   const skipPackageSet = new Set(skipPackages);
-  const includedCandidates: TagTargetCandidate[] = [];
-  const skippedPackages: string[] = [];
+  const includedCandidates: Array<TagTargetCandidate> = [];
+  const skippedPackages: Array<string> = [];
   for (const candidate of targetCandidates) {
     const packageName = candidate.packageName;
     if (packageName && skipPackageSet.has(packageName)) {

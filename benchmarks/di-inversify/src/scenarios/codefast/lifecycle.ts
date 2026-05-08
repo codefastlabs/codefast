@@ -117,6 +117,6 @@ function buildLifecyclePreDestroyUnbindScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastLifecycleScenarios(): readonly BenchScenario[] {
+export function buildCodefastLifecycleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildLifecyclePostConstructSingletonScenario(), buildLifecyclePreDestroyUnbindScenario()];
 }

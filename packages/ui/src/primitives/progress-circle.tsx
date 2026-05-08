@@ -167,7 +167,7 @@ interface ProgressCircleProviderProps {
   /**
    * Array of threshold configurations for different value ranges
    */
-  thresholds?: Threshold[];
+  thresholds?: Array<Threshold>;
 
   /**
    * Current progress value (null for indeterminate state)

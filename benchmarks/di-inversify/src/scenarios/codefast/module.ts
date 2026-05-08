@@ -153,6 +153,6 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastModuleScenarios(): readonly BenchScenario[] {
+export function buildCodefastModuleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildModuleLoadUnloadScenario(), buildModuleColdFromModulesScenario()];
 }

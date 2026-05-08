@@ -9,7 +9,7 @@ const codefastWithMerge = codefastTvFn(extremeVariants, TV_MERGE_ENABLED);
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastExtremeScenarios(): readonly BenchScenario[] {
+export function buildCodefastExtremeScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       id: "extreme-without-merge",

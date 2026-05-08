@@ -31,10 +31,10 @@ import type {
  * @since 0.3.16-canary.0
  */
 export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
-  compoundVariantGroups: readonly CompoundVariantType<T>[],
+  compoundVariantGroups: ReadonlyArray<CompoundVariantType<T>>,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
-): ClassValue[] => {
+): Array<ClassValue> => {
   const groupLength = compoundVariantGroups.length;
 
   // Early return for empty or no compound variants
@@ -43,7 +43,7 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
   }
 
   // Pre-allocate with reasonable estimate
-  const resolvedClasses: ClassValue[] = [];
+  const resolvedClasses: Array<ClassValue> = [];
 
   // Process each compound variant
   for (let index = 0; index < groupLength; index++) {
@@ -126,16 +126,16 @@ export const applyCompoundSlotClasses = <
   T extends ConfigurationSchema,
   S extends SlotConfigurationSchema,
 >(
-  compoundSlotDefinitions: readonly CompoundSlotType<T, S>[] | undefined,
+  compoundSlotDefinitions: ReadonlyArray<CompoundSlotType<T, S>> | undefined,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
-): Partial<Record<keyof S, ClassValue[]>> => {
+): Partial<Record<keyof S, Array<ClassValue>>> => {
   // Return an empty object if no compound slot definitions
   if (!compoundSlotDefinitions || compoundSlotDefinitions.length === 0) {
-    return {} as Partial<Record<keyof S, ClassValue[]>>;
+    return {} as Partial<Record<keyof S, Array<ClassValue>>>;
   }
 
-  const resolvedSlotClasses = {} as Partial<Record<keyof S, ClassValue[]>>;
+  const resolvedSlotClasses = {} as Partial<Record<keyof S, Array<ClassValue>>>;
 
   // Process each compound slot definition
   const definitionLength = compoundSlotDefinitions.length;

@@ -24,7 +24,7 @@ describe("Container public API inference", () => {
     const container = Container.create();
     container.bind(T).toConstantValue(1).whenNamed("a");
     container.bind(T).toConstantValue(2).whenNamed("b");
-    expectTypeOf(container.resolveAll(T)).toEqualTypeOf<number[]>();
+    expectTypeOf(container.resolveAll(T)).toEqualTypeOf<Array<number>>();
     expect(container.resolveAll(T).length).toBe(2);
   });
 
