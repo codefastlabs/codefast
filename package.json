@@ -22,7 +22,7 @@
     "deps:install": "pnpm install && pnpm build:packages",
     "deps:outdated": "pnpm outdated --recursive",
     "deps:reinstall": "pnpm clean && pnpm clean:modules && pnpm install && pnpm build:packages",
-    "deps:update:interactive": "pnpm dlx taze@latest latest --recursive --interactive --write --install && pnpm build:packages",
+    "deps:update": "pnpm dlx taze@latest latest --recursive --interactive --write --install && pnpm build:packages",
     "dev": "turbo run dev",
     "format": "oxfmt",
     "format:check": "oxfmt --check",

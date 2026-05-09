@@ -153,16 +153,4 @@ catalog:
 catalogMode: strict
 
 overrides:
-  h3: ^2.0.1-rc.22
-  h3-v2: npm:h3@^2.0.1-rc.22
   "@types/node": ^24.0.0
-  typescript: ^6.0.3
-
-packageExtensions:
-  "@content-collections/core@*":
-    peerDependencies:
-      typescript: ">=5.0.2 <7.0.0"
-
-peerDependencyRules:
-  allowedVersions:
-    "@content-collections/vite>vite": ^8.0.0
