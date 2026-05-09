@@ -76,8 +76,10 @@
     "chart.js": "catalog:",
     "chartjs-plugin-zoom": "catalog:",
     "hammerjs": "catalog:",
+    "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "tailwindcss": "catalog:",
     "tinybench": "catalog:"
   },
   "devDependencies": {
@@ -90,9 +92,6 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "postcss": "catalog:",
-    "postcss-import": "catalog:",
-    "tailwindcss": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
