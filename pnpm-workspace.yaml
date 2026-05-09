@@ -78,7 +78,7 @@ catalog:
   "@types/hammerjs": ^2.0.46
   "@types/hast": ^3.0.4
   "@types/jest-axe": ^3.5.9
-  "@types/node": 24.1.0
+  "@types/node": ^24.0.0
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
@@ -155,7 +155,7 @@ catalogMode: strict
 overrides:
   h3: ^2.0.1-rc.22
   h3-v2: npm:h3@^2.0.1-rc.22
-  "@types/node": 24.1.0
+  "@types/node": ^24.0.0
   typescript: ^6.0.3
 
 packageExtensions:
