@@ -2,7 +2,12 @@ import type { BindingScope, Constructor } from "#/types";
 import type { ParamMetadata } from "#/metadata/metadata-types";
 import type { InjectableDependency } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
-import { INJECTABLE_KEY, constructorMetadataMap } from "#/metadata/metadata-keys";
+import {
+  INJECT_ACCESSOR_KEY,
+  INJECTABLE_KEY,
+  accessorMetadataByConstructorMap,
+  constructorMetadataMap,
+} from "#/metadata/metadata-keys";
 
 // ── AutoRegisterRegistry ──────────────────────────────────────────────────────
 
@@ -74,14 +79,18 @@ export function injectable(
     // Write to WeakMap (works with both SWC and esbuild/tsx)
     constructorMetadataMap.set(target as object, constructorMetadata);
 
-    // Also write to Symbol.metadata if available (for full TC39 Stage 3 compliance)
+    // Field decorators run before the class decorator — accessor @inject entries are already on context.metadata
     try {
       const metadata = context.metadata as Record<string | symbol, unknown>;
       if (metadata !== null && typeof metadata === "object") {
+        const accessorList = metadata[INJECT_ACCESSOR_KEY];
+        if (Array.isArray(accessorList) && accessorList.length > 0) {
+          accessorMetadataByConstructorMap.set(target as object, accessorList);
+        }
         metadata[INJECTABLE_KEY] = constructorMetadata;
       }
     } catch {
-      // Ignore if context.metadata is not writable
+      // Ignore if context.metadata is not readable/writable
     }
 
     if (options?.autoRegister !== undefined) {

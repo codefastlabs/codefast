@@ -1,4 +1,5 @@
 import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
+import { InternalError } from "#/errors";
 import {
   LIFECYCLE_KEY,
   lifecycleByConstructorMetadataMap,
@@ -53,6 +54,11 @@ function registerByConstructor(
  */
 export function postConstruct(): (target: unknown, context: ClassMethodDecoratorContext) => void {
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
+    if (context.static === true) {
+      throw new InternalError(
+        "@postConstruct() applies to instance methods only; static methods are not invoked during instance lifecycle.",
+      );
+    }
     const methodName = String(context.name);
     registerByConstructor(target, "postConstruct", methodName);
     const existing = lifecycleMetadataMap.get(context.metadata as object);
@@ -104,6 +110,11 @@ export function postConstruct(): (target: unknown, context: ClassMethodDecorator
  */
 export function preDestroy(): (target: unknown, context: ClassMethodDecoratorContext) => void {
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
+    if (context.static === true) {
+      throw new InternalError(
+        "@preDestroy() applies to instance methods only; static methods are not invoked during instance teardown.",
+      );
+    }
     const methodName = String(context.name);
     registerByConstructor(target, "preDestroy", methodName);
     const existing = lifecycleMetadataMap.get(context.metadata as object);
