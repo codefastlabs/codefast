@@ -31,7 +31,10 @@ import type { MetadataReader } from "#/metadata/metadata-types";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
 import type { AsyncModuleBuilder } from "#/module";
 import {
+  AsyncModuleLoadError,
+  CircularDependencyError,
   DisposedContainerError,
+  InternalError,
   RebindUnboundTokenError,
   ScopeViolationError,
   SyncDisposalNotSupportedError,
@@ -49,7 +52,7 @@ import { tokenName } from "#/token";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import { isSyncModule } from "#/module";
 import { effectiveBindingScope } from "#/binding-scope";
-import { slotKeyToResolveOptions } from "#/resolve-options";
+import { injectableSlotToResolveOptions, slotKeyToResolveOptions } from "#/resolve-options";
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -320,6 +323,9 @@ class DefaultContainer implements Container {
     // Collect all modules in topological order (dedup by identity)
     const toLoad = this._collectModuleDeps(modules);
     for (const mod of toLoad) {
+      if (!isSyncModule(mod)) {
+        throw new AsyncModuleLoadError((mod as AsyncModule).name);
+      }
       const ref = mod as object;
       const existing = this._moduleRefs.get(ref);
       if (existing !== undefined) {
@@ -622,90 +628,185 @@ class DefaultContainer implements Container {
     const allBindings = this._registry.allBindings();
 
     for (const binding of allBindings) {
-      if (
-        binding.kind === "alias" ||
-        binding.kind === "constant" ||
-        binding.kind === "dynamic" ||
-        binding.kind === "dynamic-async"
-      ) {
+      if (!this._isSingletonStaticAnalyzableBinding(binding)) {
         continue;
       }
+      this._validateSingletonBindingGraph(binding, reader);
+    }
+  }
 
-      const scope = effectiveBindingScope(binding);
-      if (scope !== "singleton") {
-        continue;
+  private _isSingletonStaticAnalyzableBinding(binding: Binding): boolean {
+    if (effectiveBindingScope(binding) !== "singleton") {
+      return false;
+    }
+    return (
+      binding.kind === "class" || binding.kind === "resolved" || binding.kind === "resolved-async"
+    );
+  }
+
+  /**
+   * DFS over explicit constructor / `toResolved*` dependency edges. Follows `toAlias` chains to the
+   * terminal binding for scope checks (SPEC §6.9). Skips `toDynamic*` subtrees (opaque).
+   */
+  private _validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
+    const rootName = tokenName(root.token as Token<unknown>);
+
+    const dfs = (
+      current: Binding,
+      pathNames: Array<string>,
+      pathBindingIds: Set<BindingIdentifier>,
+    ): void => {
+      if (pathBindingIds.has(current.id)) {
+        return;
       }
+      const extendedPathIds = new Set(pathBindingIds);
+      extendedPathIds.add(current.id);
 
-      // Check deps of singleton
-      const deps = this._getDepsForBinding(binding, reader);
-      for (const dep of deps) {
-        this._validateDep(
-          tokenName(binding.token as Token<unknown>),
-          scope,
-          dep,
-          [tokenName(binding.token as Token<unknown>)],
-          reader,
-        );
+      for (const edge of this._collectStaticDependencyEdges(current, reader)) {
+        const { terminal, depTokenName } = edge;
+        const depScope = this._validationScopeFromTerminal(terminal);
+        if (depScope === "opaque") {
+          continue;
+        }
+        if (depScope === "scoped" || depScope === "transient") {
+          throw new ScopeViolationError({
+            consumerToken: rootName,
+            consumerScope: "singleton",
+            dependencyToken: depTokenName,
+            dependencyScope: depScope,
+            path: [...pathNames, depTokenName],
+          });
+        }
+        if (
+          terminal.kind === "class" ||
+          terminal.kind === "resolved" ||
+          terminal.kind === "resolved-async"
+        ) {
+          dfs(terminal, [...pathNames, depTokenName], extendedPathIds);
+        }
+      }
+    };
+
+    dfs(root, [rootName], new Set());
+  }
+
+  private _validationScopeFromTerminal(terminal: Binding): BindingScope | "opaque" {
+    switch (terminal.kind) {
+      case "constant":
+        return "singleton";
+      case "dynamic":
+      case "dynamic-async":
+        return "opaque";
+      case "class":
+      case "resolved":
+      case "resolved-async":
+        return terminal.scope;
+      case "alias":
+        throw new InternalError("validate: expected terminal binding after alias resolution");
+      default: {
+        const exhaustive: never = terminal;
+        return exhaustive;
       }
     }
   }
 
-  private _getDepsForBinding(
+  private _followAliasChainToTerminal(
+    binding: Binding,
+    hint: ResolveOptions | undefined,
+  ): Binding | undefined {
+    const cyclePath: Array<string> = [];
+    const seenAliasIds = new Set<BindingIdentifier>();
+    let current: Binding | undefined = binding;
+
+    while (current !== undefined && current.kind === "alias") {
+      if (seenAliasIds.has(current.id)) {
+        throw new CircularDependencyError(cyclePath);
+      }
+      seenAliasIds.add(current.id);
+      cyclePath.push(tokenName(current.token as Token<unknown>));
+      const nextToken = current.target as Token<unknown> | Constructor;
+      const next = this._resolver.peekBindingForValidate(nextToken, hint);
+      if (next === undefined) {
+        return undefined;
+      }
+      current = next.binding;
+    }
+    return current;
+  }
+
+  private _collectStaticDependencyEdges(
     binding: Binding,
     reader: MetadataReader,
-  ): Array<{ token: Token<unknown> | Constructor; scope: BindingScope }> {
-    const result: Array<{ token: Token<unknown> | Constructor; scope: BindingScope }> = [];
+  ): Array<{ terminal: Binding; depTokenName: string }> {
+    const edges: Array<{ terminal: Binding; depTokenName: string }> = [];
+
+    const pushTerminal = (terminal: Binding | undefined, displayName: string): void => {
+      if (terminal === undefined) {
+        return;
+      }
+      edges.push({ terminal, depTokenName: displayName });
+    };
 
     if (binding.kind === "class") {
       const meta = reader.getConstructorMetadata(binding.target as Constructor);
-      if (meta !== undefined) {
-        for (const param of meta.params) {
-          const depBindings = this._registry.getAll(param.token as Token<unknown>);
-          for (const db of depBindings) {
-            if (db.kind !== "alias") {
-              result.push({
-                token: param.token as Token<unknown>,
-                scope: effectiveBindingScope(db),
-              });
-            }
-          }
-        }
+      if (meta === undefined) {
+        return edges;
       }
-    } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
+      for (const param of meta.params) {
+        const paramHint = injectableSlotToResolveOptions(param);
+        if (param.optional) {
+          continue;
+        }
+        const tokenRef = param.token as Token<unknown> | Constructor;
+        if (param.multi) {
+          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, paramHint);
+          for (const cand of candidates) {
+            const term = this._followAliasChainToTerminal(cand, paramHint);
+            pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
+          }
+          continue;
+        }
+        const found =
+          paramHint === undefined
+            ? this._resolver.peekBindingForValidate(tokenRef, undefined)
+            : this._resolver.peekBindingForValidate(tokenRef, paramHint);
+        if (found === undefined) {
+          continue;
+        }
+        const term = this._followAliasChainToTerminal(found.binding, paramHint);
+        pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
+      }
+      return edges;
+    }
+
+    if (binding.kind === "resolved" || binding.kind === "resolved-async") {
       for (const dep of binding.deps) {
-        const depBindings = this._registry.getAll(dep.token as Token<unknown>);
-        for (const db of depBindings) {
-          if (db.kind !== "alias") {
-            result.push({
-              token: dep.token as Token<unknown>,
-              scope: effectiveBindingScope(db),
-            });
-          }
+        const depHint = injectableSlotToResolveOptions(dep);
+        if (dep.optional) {
+          continue;
         }
+        const tokenRef = dep.token as Token<unknown> | Constructor;
+        if (dep.multi) {
+          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, depHint);
+          for (const cand of candidates) {
+            const term = this._followAliasChainToTerminal(cand, depHint);
+            pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
+          }
+          continue;
+        }
+        const found =
+          depHint === undefined
+            ? this._resolver.peekBindingForValidate(tokenRef, undefined)
+            : this._resolver.peekBindingForValidate(tokenRef, depHint);
+        if (found === undefined) {
+          continue;
+        }
+        const term = this._followAliasChainToTerminal(found.binding, depHint);
+        pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
       }
     }
 
-    return result;
-  }
-
-  private _validateDep(
-    consumerToken: string,
-    consumerScope: BindingScope,
-    dep: { token: Token<unknown> | Constructor; scope: BindingScope },
-    path: Array<string>,
-    _reader: MetadataReader,
-  ): void {
-    if (consumerScope === "singleton") {
-      if (dep.scope === "scoped" || dep.scope === "transient") {
-        throw new ScopeViolationError({
-          consumerToken,
-          consumerScope,
-          dependencyToken: tokenName(dep.token),
-          dependencyScope: dep.scope,
-          path,
-        });
-      }
-    }
+    return edges;
   }
 
   // ── Introspection ─────────────────────────────────────────────────────────

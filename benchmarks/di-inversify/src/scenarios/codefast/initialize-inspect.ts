@@ -85,7 +85,7 @@ function buildInspectSnapshotScenario(): BenchScenario {
     batch: INSPECT_BATCH,
     sanity: () => {
       const snapshot = container.inspect();
-      return snapshot.bindings.length === INSPECT_BINDING_COUNT;
+      return snapshot.ownBindings.length === INSPECT_BINDING_COUNT;
     },
     build: () =>
       batched(INSPECT_BATCH, () => {

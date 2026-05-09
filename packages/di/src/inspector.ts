@@ -29,7 +29,6 @@ export interface BindingSnapshot {
  */
 export interface ContainerSnapshot {
   readonly ownBindings: ReadonlyArray<BindingSnapshot>;
-  readonly bindings: ReadonlyArray<BindingSnapshot>;
   readonly cachedSingletonCount: number;
   readonly hasParent: boolean;
   readonly isDisposed: boolean;
@@ -52,7 +51,6 @@ export class Inspector {
     const snapshots = this.allBindingSnapshots();
     return {
       ownBindings: snapshots,
-      bindings: snapshots,
       cachedSingletonCount: this._scope.getAllSingletons().size,
       hasParent: this._hasParent,
       isDisposed: this._isDisposed(),
