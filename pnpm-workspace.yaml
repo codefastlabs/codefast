@@ -151,6 +151,3 @@ catalog:
   zod: ^4.4.3
 
 catalogMode: strict
-
-overrides:
-  "@types/node": ^25.6.2
