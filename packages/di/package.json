@@ -189,6 +189,7 @@
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
     "tsdown": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "unplugin-swc": "catalog:",
     "vitest": "catalog:"
