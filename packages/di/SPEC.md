@@ -173,6 +173,11 @@ interface ResolveOptions {
   name?: string;
   /** Match binding có tất cả các tag trong array này. */
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
+  /**
+   * Tuỳ chọn — shorthand một cặp `[tagKey, value]` tương đương một phần tử trong `tags`.
+   * Implementation có fast-path cho form gọn này (cùng semantics với `tags`).
+   */
+  tag?: readonly [tag: string, value: unknown];
 }
 ```
 

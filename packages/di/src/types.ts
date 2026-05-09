@@ -62,6 +62,10 @@ export type DeactivationHandler<Value> = (instance: Value) => void | Promise<voi
  */
 export interface ResolveOptions {
   name?: string;
+  /**
+   * Single-tag shorthand — semantics match including one pair in `tags`.
+   * Enables fast-path lookup alongside `tags`.
+   */
   tag?: readonly [tag: string, value: unknown];
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }

@@ -193,6 +193,34 @@ export class DependencyResolver {
     return undefined;
   }
 
+  /**
+   * Binding lookup aligned with `resolve` — used by `Container.validate` without instantiating.
+   */
+  peekBindingForValidate(
+    token: Token<unknown> | Constructor,
+    hint: ResolveOptions | undefined,
+  ): { binding: Binding; owner: DependencyResolver } | undefined {
+    return this._findBinding(token, hint, [], []);
+  }
+
+  /**
+   * Mirrors {@link DependencyResolver.resolveAll} candidate selection only (no instantiation).
+   */
+  peekCandidateBindingsForValidate(
+    token: Token<unknown> | Constructor,
+    hint: ResolveOptions | undefined,
+  ): Array<Binding> {
+    if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
+      return this._getSimpleNamedBindingsFromChain(token, hint.name);
+    }
+    const allBindings = this._getAllBindingsFromChain(token);
+    if (allBindings.length === 0) {
+      return [];
+    }
+    const ctx = this._makeConstraintContext([], [], hint);
+    return selectAllBindings(allBindings, hint, ctx);
+  }
+
   // ── Sync resolve ───────────────────────────────────────────────────────────
 
   resolveFromContext<const Value>(
