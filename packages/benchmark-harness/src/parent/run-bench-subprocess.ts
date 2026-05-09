@@ -114,11 +114,11 @@ export async function runBenchSubprocess(
   const fullModeEnabled = process.env[BENCH_FULL_ENV_KEY] === "1";
   if (fullModeEnabled) {
     console.log(
-      "[bench] Running benchmark with --expose-gc (BENCH_FULL=1). This mode is slower and may hit timeout on macOS.",
+      "[bench] Running benchmark with --expose-gc (BENCH_FULL=1). This profile prioritizes stability and may still run significantly longer on large suites.",
     );
   } else if (!fastModeEnabled) {
     console.log(
-      "[bench] Running benchmark without --expose-gc. Expected ~15-25s per scenario. Use BENCH_FULL=1 for GC-enabled runs",
+      "[bench] Running benchmark without --expose-gc (default profile). Use BENCH_FAST=1 for smoke checks or BENCH_FULL=1 for GC-enabled stability runs.",
     );
   }
   const startedAtMs = performance.now();
