@@ -21,6 +21,16 @@
   var viewHashSyncTimer = null;
   var commandPaletteWired = false;
   var chartDisplayDetailsMqlWired = false;
+  var VIEW_HASH_KEYS = {
+    environment: "environment",
+    group: "group",
+    search: "search",
+    scenario: "scenario",
+    runWindow: "run-window",
+    showBands: "show-bands",
+    useLogScale: "use-log-scale",
+    showRatio: "show-ratio",
+  };
 
   // ---------------------------------------------------------------------------
   // Helpers
@@ -1518,23 +1528,23 @@
     }
     var parts = [];
     if (envFilter.value) {
-      parts.push("env=" + encodeURIComponent(envFilter.value));
+      parts.push(VIEW_HASH_KEYS.environment + "=" + encodeURIComponent(envFilter.value));
     }
     if (groupFilter && groupFilter.value) {
-      parts.push("g=" + encodeURIComponent(groupFilter.value));
+      parts.push(VIEW_HASH_KEYS.group + "=" + encodeURIComponent(groupFilter.value));
     }
     if (scenarioSearch && scenarioSearch.value.trim()) {
-      parts.push("q=" + encodeURIComponent(scenarioSearch.value.trim()));
+      parts.push(VIEW_HASH_KEYS.search + "=" + encodeURIComponent(scenarioSearch.value.trim()));
     }
     if (scenarioSelect && scenarioSelect.value) {
-      parts.push("sc=" + encodeURIComponent(scenarioSelect.value));
+      parts.push(VIEW_HASH_KEYS.scenario + "=" + encodeURIComponent(scenarioSelect.value));
     }
     if (runWindowFilter && runWindowFilter.value && runWindowFilter.value !== "all") {
-      parts.push("w=" + encodeURIComponent(runWindowFilter.value));
+      parts.push(VIEW_HASH_KEYS.runWindow + "=" + encodeURIComponent(runWindowFilter.value));
     }
-    parts.push("b=" + (showBands && showBands.checked ? "1" : "0"));
-    parts.push("l=" + (logScale && logScale.checked ? "1" : "0"));
-    parts.push("r=" + (showRatio && showRatio.checked ? "1" : "0"));
+    parts.push(VIEW_HASH_KEYS.showBands + "=" + (showBands && showBands.checked ? "1" : "0"));
+    parts.push(VIEW_HASH_KEYS.useLogScale + "=" + (logScale && logScale.checked ? "1" : "0"));
+    parts.push(VIEW_HASH_KEYS.showRatio + "=" + (showRatio && showRatio.checked ? "1" : "0"));
     return parts.join("&");
   }
 
@@ -1560,7 +1570,7 @@
     }, 120);
   }
 
-  /** Apply `#env=…&sc=…` etc. after payload and option lists are ready. */
+  /** Apply hash view state after payload and option lists are ready. */
   function applyViewStateFromHash() {
     if (!data) {
       fillScenarioOptions();
@@ -1574,35 +1584,35 @@
     hashApplyInProgress = true;
     try {
       var params = new URLSearchParams(raw.replace(/^#/, ""));
-      var ev = params.get("env");
+      var ev = params.get(VIEW_HASH_KEYS.environment);
       if (ev !== null && envFilter) {
         if (ev === "" || selectHasValue(envFilter, ev)) {
           envFilter.value = ev;
         }
       }
-      var g = params.get("g");
+      var g = params.get(VIEW_HASH_KEYS.group);
       if (g && groupFilter && selectHasValue(groupFilter, g)) {
         groupFilter.value = g;
       }
-      var q = params.get("q");
+      var q = params.get(VIEW_HASH_KEYS.search);
       if (q != null && scenarioSearch) {
         scenarioSearch.value = q;
       }
-      var w = params.get("w");
+      var w = params.get(VIEW_HASH_KEYS.runWindow);
       if (w && runWindowFilter && (w === "all" || w === "10" || w === "20")) {
         runWindowFilter.value = w;
       }
-      if (params.has("b") && showBands) {
-        showBands.checked = params.get("b") === "1";
+      if (params.has(VIEW_HASH_KEYS.showBands) && showBands) {
+        showBands.checked = params.get(VIEW_HASH_KEYS.showBands) === "1";
       }
-      if (params.has("l") && logScale) {
-        logScale.checked = params.get("l") === "1";
+      if (params.has(VIEW_HASH_KEYS.useLogScale) && logScale) {
+        logScale.checked = params.get(VIEW_HASH_KEYS.useLogScale) === "1";
       }
-      if (params.has("r") && showRatio) {
-        showRatio.checked = params.get("r") === "1";
+      if (params.has(VIEW_HASH_KEYS.showRatio) && showRatio) {
+        showRatio.checked = params.get(VIEW_HASH_KEYS.showRatio) === "1";
       }
       fillScenarioOptions();
-      var sc = params.get("sc");
+      var sc = params.get(VIEW_HASH_KEYS.scenario);
       if (sc && scenarioSelect && selectHasValue(scenarioSelect, sc)) {
         scenarioSelect.value = sc;
       }
