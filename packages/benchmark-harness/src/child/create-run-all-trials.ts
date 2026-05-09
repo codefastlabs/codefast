@@ -1,18 +1,39 @@
+import type { BenchEvent, BenchOptions, TaskResult } from "tinybench";
 import { Bench } from "tinybench";
-import type { BenchEvent } from "tinybench";
-import type { BenchOptions, TaskResult } from "tinybench";
-import { isAsyncScenario } from "#/child/bench-scenario";
 import type { AnyBenchScenario } from "#/child/bench-scenario";
+import { isAsyncScenario } from "#/child/bench-scenario";
 import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 const FAST_MODE_ENABLED = process.env[BENCH_FAST_ENV_KEY] === "1";
 const FULL_MODE_ENABLED = process.env[BENCH_FULL_ENV_KEY] === "1";
+const BENCH_TRIALS_ENV_KEY = "BENCH_TRIALS";
 
-const FULL_MODE_SAMPLE_GC_STRIDE = 25;
-
+/**
+ * Keep GC sampling in full mode, but reduce forced collection pressure so
+ * long-running suites do not balloon due to GC-heavy beforeEach hooks.
+ */
+const FULL_MODE_SAMPLE_GC_STRIDE = 100;
 const MIN_TRIAL_COUNT = 2;
 const DEFAULT_TRIAL_COUNT = FULL_MODE_ENABLED ? 3 : MIN_TRIAL_COUNT;
+const FAST_MODE_BENCH_OPTIONS = {
+  time: 20,
+  iterations: 50,
+  warmupTime: 5,
+  warmupIterations: 5,
+} satisfies BenchOptions;
+const FULL_MODE_BENCH_OPTIONS = {
+  /**
+   * Balanced full profile:
+   * - keeps longer sampling than fast mode
+   * - avoids very high minimum iteration counts that make slow scenarios
+   *   take disproportionately long
+   */
+  time: 40,
+  iterations: 20,
+  warmupTime: 5,
+  warmupIterations: 3,
+} satisfies BenchOptions;
 
 function runFullGcIfExposed(): void {
   if (typeof globalThis.gc === "function") {
@@ -45,6 +66,27 @@ function hasStatistics(result: TaskResult): result is TaskResultWithStatisticsSt
   return "throughput" in result && "latency" in result;
 }
 
+function createZeroedScenarioTrialResult(
+  scenario: AnyBenchScenario,
+  hzPerIteration: number = 0,
+): ScenarioTrialResult {
+  const batch = scenario.batch ?? 1;
+  return {
+    id: scenario.id,
+    group: scenario.group,
+    stress: scenario.stress === true,
+    batch,
+    what: scenario.what,
+    hzPerIteration,
+    hzPerOp: hzPerIteration * batch,
+    meanMs: 0,
+    p75Ms: 0,
+    p99Ms: 0,
+    p999Ms: 0,
+    samples: 0,
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
@@ -66,32 +108,24 @@ export type RunAllTrials = (
 ) => Promise<Array<TrialPayload>>;
 
 function resolveBenchOptions(benchDefaults: BenchOptions): BenchOptions {
-  return FAST_MODE_ENABLED
-    ? {
-        time: 20,
-        iterations: 50,
-        warmupTime: 5,
-        warmupIterations: 5,
-      }
-    : FULL_MODE_ENABLED
-      ? {
-          time: 100,
-          iterations: 100,
-          warmupTime: 10,
-          warmupIterations: 10,
-        }
-      : benchDefaults;
+  if (FAST_MODE_ENABLED) {
+    return FAST_MODE_BENCH_OPTIONS;
+  }
+  if (FULL_MODE_ENABLED) {
+    return FULL_MODE_BENCH_OPTIONS;
+  }
+  return benchDefaults;
 }
 
 function resolveTrialCountFromEnvironment(): number {
-  const rawValue = process.env["BENCH_TRIALS"];
+  const rawValue = process.env[BENCH_TRIALS_ENV_KEY];
   if (rawValue === undefined || rawValue.trim() === "") {
     return DEFAULT_TRIAL_COUNT;
   }
   const parsed = Number.parseInt(rawValue, 10);
   if (!Number.isFinite(parsed) || parsed < MIN_TRIAL_COUNT) {
     console.error(
-      `[trial] BENCH_TRIALS="${rawValue}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(DEFAULT_TRIAL_COUNT)}.`,
+      `[trial] ${BENCH_TRIALS_ENV_KEY}="${rawValue}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(DEFAULT_TRIAL_COUNT)}.`,
     );
     return DEFAULT_TRIAL_COUNT;
   }
@@ -178,40 +212,14 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
         console.error(
           `[trial ${String(trialIndex)}] scenario ${scenario.id} errored: ${errorMessage}`,
         );
-        trialScenarioResults.push({
-          id: scenario.id,
-          group: scenario.group,
-          stress: scenario.stress === true,
-          batch: scenario.batch ?? 1,
-          what: scenario.what,
-          hzPerIteration: 0,
-          hzPerOp: 0,
-          meanMs: 0,
-          p75Ms: 0,
-          p99Ms: 0,
-          p999Ms: 0,
-          samples: 0,
-        });
+        trialScenarioResults.push(createZeroedScenarioTrialResult(scenario));
         continue;
       }
       if (!hasStatistics(result)) {
         console.error(
           `[trial ${String(trialIndex)}] scenario ${scenario.id} ended in non-statistical state "${result.state}"`,
         );
-        trialScenarioResults.push({
-          id: scenario.id,
-          group: scenario.group,
-          stress: scenario.stress === true,
-          batch: scenario.batch ?? 1,
-          what: scenario.what,
-          hzPerIteration: 0,
-          hzPerOp: 0,
-          meanMs: 0,
-          p75Ms: 0,
-          p99Ms: 0,
-          p999Ms: 0,
-          samples: 0,
-        });
+        trialScenarioResults.push(createZeroedScenarioTrialResult(scenario));
         continue;
       }
       const batch = scenario.batch ?? 1;
