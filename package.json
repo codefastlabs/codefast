@@ -38,6 +38,10 @@
     "start": "turbo run start",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
+    "test:e2e": "turbo run test:e2e",
+    "test:integration": "turbo run test:integration",
+    "test:type": "turbo run test:type",
+    "test:unit": "turbo run test:unit",
     "test:watch": "turbo run test:watch",
     "verify": "pnpm build:packages && turbo run lint:fix && turbo run format && turbo run check-types test:coverage"
   },

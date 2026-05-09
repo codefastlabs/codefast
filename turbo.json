@@ -36,6 +36,18 @@
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"],
       "outputs": ["coverage/**"]
     },
+    "test:e2e": {
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
+    },
+    "test:integration": {
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
+    },
+    "test:type": {
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
+    },
+    "test:unit": {
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
+    },
     "test:watch": {
       "cache": false,
       "persistent": true

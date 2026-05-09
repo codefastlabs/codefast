@@ -1,5 +1,5 @@
 import { tv } from "#/index";
-import { twMergeConfig } from "#/tests/fixtures/tailwind-merge-config";
+import { twMergeConfig } from "#/tests/unit/fixtures/tailwind-merge-config";
 
 describe("Tailwind Variants (TV) - Slots", () => {
   test("should work with slots -- default variants", () => {
