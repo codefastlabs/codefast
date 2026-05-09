@@ -9,6 +9,8 @@ import {
   INJECT_ACCESSOR_KEY,
   INJECTABLE_KEY,
   LIFECYCLE_KEY,
+  accessorMetadataByConstructorMap,
+  accessorMetadataByMetadataObjectMap,
   constructorMetadataMap,
   lifecycleByConstructorMetadataMap,
   lifecycleMetadataMap,
@@ -87,6 +89,19 @@ export class SymbolMetadataReader implements MetadataReader {
   getAccessorMetadata(
     target: Constructor,
   ): Array<{ key: string | symbol; descriptor: InjectionDescriptor }> | undefined {
+    const byConstructor = accessorMetadataByConstructorMap.get(target);
+    if (byConstructor !== undefined) {
+      return byConstructor as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>;
+    }
+
+    const metadataObject = (target as { [Symbol.metadata]?: object })[Symbol.metadata];
+    if (metadataObject !== undefined) {
+      const fromWeakMap = accessorMetadataByMetadataObjectMap.get(metadataObject);
+      if (fromWeakMap !== undefined) {
+        return fromWeakMap as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>;
+      }
+    }
+
     const metadataDescriptor = Object.getOwnPropertyDescriptor(target, Symbol.metadata);
     if (metadataDescriptor === undefined) {
       return undefined;

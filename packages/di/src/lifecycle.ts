@@ -70,7 +70,7 @@ export class LifecycleManager {
   ): Promise<Value> {
     let activatedInstance: Value = instance;
 
-    // 1. @postConstruct() — all methods in declaration order
+    // 1. @postConstruct() — after TC39 construction (constructor + accessor addInitializer callbacks)
     if (binding.kind === "class") {
       const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
       if (lifecycle?.postConstruct && lifecycle.postConstruct.length > 0) {
@@ -115,7 +115,7 @@ export class LifecycleManager {
   ): Value {
     let activatedInstance: Value = instance;
 
-    // 1. @postConstruct() — must be sync
+    // 1. @postConstruct() — must be sync (instance fully constructed per TC39 order)
     if (binding.kind === "class") {
       const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
       if (lifecycle?.postConstruct && lifecycle.postConstruct.length > 0) {

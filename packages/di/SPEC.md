@@ -149,7 +149,7 @@ type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 
 ```ts
 /**
- * Chạy sau khi construct và sau @postConstruct(), trước khi cache vào scope.
+ * Chạy sau @postConstruct(), trước khi cache vào scope. Instance đã qua `new` đầy đủ, gồm accessor initializers (`addInitializer`).
  * Phải return instance (có thể là instance gốc hoặc Proxy wrap).
  * Nếu return Promise, resolve() phải là resolveAsync().
  */
@@ -664,11 +664,14 @@ container
 **Thứ tự lifecycle đầy đủ:**
 
 ```
-Activation:
-  1. @postConstruct() — tất cả method theo thứ tự khai báo
-  2. property injection accessor initializers (nếu có @inject accessor)
-  3. per-binding onActivation()
-  4. container-level onActivation()
+Construction (trong một lần `new`, thường bọc `runWithContainer` khi class có @inject accessor):
+  1. Thân constructor
+  2. Accessor initializers — property injection qua @inject accessor (`context.addInitializer`), cùng call frame với `new`, trước khi `new` return
+
+Activation (sau khi instance đã được tạo):
+  3. @postConstruct() — LifecycleManager (sync/async tùy resolve path)
+  4. per-binding onActivation()
+  5. container-level onActivation()
 
 Deactivation (ngược):
   1. container-level onDeactivation()
@@ -676,7 +679,7 @@ Deactivation (ngược):
   3. @preDestroy() — tất cả method theo thứ tự khai báo
 ```
 
-> **Property injection sau `@postConstruct()`:** `@inject accessor` field được inject bởi `context.addInitializer` — chạy sau constructor nhưng trước `@postConstruct()`. Thứ tự thực tế: constructor → accessor initializers → `@postConstruct()`. Điều này đảm bảo `@postConstruct()` có thể truy cập property injected fields.
+> **Construction và hooks:** `context.addInitializer` chạy ngay sau thân constructor, trước khi biểu thức `new` trả về. Sau đó resolver gọi `@postConstruct()` rồi `onActivation`. Tóm lại: constructor → accessor initializers (`@inject accessor`) → `@postConstruct()` → `onActivation`. `@postConstruct()` luôn chạy sau khi các field accessor đã được inject.
 
 **Type inference — không cần annotate:**
 
@@ -1133,7 +1136,7 @@ container.onDeactivation(Database, async (db) => {
 
 > **Child container không kế thừa container-level hooks:** Hook đăng ký trên container nào thì chỉ fire cho binding của container đó. Khi child resolve token từ parent (leo lên parent chain), parent's hooks fire vì binding thuộc parent.
 
-> **Thứ tự:** `@postConstruct()` → accessor initializers → per-binding `onActivation()` → container-level `onActivation()`. Deactivation ngược lại: container-level `onDeactivation()` → per-binding `onDeactivation()` → `@preDestroy()`.
+> **Thứ tự:** accessor initializers (trong `new`) → `@postConstruct()` → per-binding `onActivation()` → container-level `onActivation()`. Deactivation theo thứ tự ngược: container-level `onDeactivation()` → per-binding `onDeactivation()` → `@preDestroy()`.
 
 ### 6.6 Child container
 
@@ -1611,7 +1614,7 @@ interface InjectableOptions {
 function injectable(
   deps?: readonly InjectableDependency[],
   options?: InjectableOptions,
-): ClassDecorator;
+): (target: unknown, context: ClassDecoratorContext) => void;
 ```
 
 ### 7.3 Inheritance — explicit, không có magic
@@ -1686,10 +1689,15 @@ testContainer.bind(MetadataReaderToken).toConstantValue(customReader);
 
 `MetadataReaderToken` có type `Token<MetadataReader>` và được export từ `@codefast/di`.
 
-**`SymbolMetadataReader` — implementation:**
+**`SymbolMetadataReader` — đọc metadata**
+
+Implementation mặc định đọc `Symbol.metadata` khi descriptor tồn tại; đồng thời giữ mirror trong WeakMap (ví dụ `constructorMetadataMap`) để metadata vẫn khả dụng khi bundle hoặc transform không populate `Symbol.metadata` đầy đủ. Danh sách field `@inject accessor` lấy bằng `getAccessorMetadata(target)`. `getConstructorMetadata(target)` chỉ mô tả dependency của constructor, không thay cho accessor fields.
 
 ```ts
 getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
+  const weakMapMetadata = constructorMetadataMap.get(target);
+  if (weakMapMetadata !== undefined) return weakMapMetadata;
+
   const own = Object.getOwnPropertyDescriptor(target, Symbol.metadata);
   if (own === undefined) return undefined;
   const meta = own.value;
@@ -1704,7 +1712,7 @@ Nếu child kế thừa parent nhưng không có `@injectable()` → `getConstru
 
 ### 7.5 Property injection qua `accessor` field decorator
 
-TC39 Stage 3 hỗ trợ `accessor` keyword. `@inject(token)` có thể dùng như **field decorator** trên `accessor`:
+TC39 Stage 3 hỗ trợ `accessor`. `@inject(token)` là **field decorator** trên **instance `accessor`**. **`static accessor` không được hỗ trợ:** initializer của static chạy khi định nghĩa class, ngoài phạm vi `runWithContainer` và `new`. Decorator **throw** khi `context.static === true`. Trên toolchain không invoke decorator cho field static, lỗi chỉ xuất hiện nếu decorator thực sự được gọi:
 
 ```ts
 @injectable()
@@ -1734,6 +1742,8 @@ const dash = container.resolve(Dashboard);
 **Ngoài container context:**
 
 Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`.
+
+**Construction (TC39) và activation (container):** Một lần resolve gồm (1) **construction** — thân constructor rồi `addInitializer` (inject accessor tại đây, trước khi `new` return; xem [decorators proposal](https://github.com/tc39/proposal-decorators)); (2) **activation** — `@postConstruct()` rồi `onActivation()`, do resolver/lifecycle gọi sau khi (1) đã hoàn tất.
 
 **Cơ chế truyền container context — module-level active container (normative):**
 
@@ -1784,6 +1794,9 @@ function inject<Value>(token: Token<Value> | Constructor<Value>, options?: Injec
     _target: ClassAccessorDecoratorTarget<unknown, Value>,
     context: ClassAccessorDecoratorContext,
   ): ClassAccessorDecoratorResult<unknown, Value> => {
+    if (context.static === true) {
+      throw new InternalError("static accessor not supported");
+    }
     // Ghi token vào Symbol.metadata để MetadataReader đọc được
     const meta = context.metadata as Record<string | symbol, unknown>;
     const accessorKey = INJECT_ACCESSOR_KEY;
@@ -1792,6 +1805,10 @@ function inject<Value>(token: Token<Value> | Constructor<Value>, options?: Injec
       key: context.name,
       descriptor,
     });
+    accessorMetadataByMetadataObjectMap.set(
+      context.metadata as object,
+      meta[accessorKey] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>,
+    );
 
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
@@ -1808,13 +1825,17 @@ function inject<Value>(token: Token<Value> | Constructor<Value>, options?: Injec
     return {}; // không override get/set — chỉ thêm initializer
   };
 
-  // Merge hai roles thành một object callable
-  return Object.assign(decoratorFn, descriptor) as InjectionDescriptor<Value> &
-    ClassAccessorDecorator<unknown, Value>;
+  // Gắn descriptor lên function (defineProperties) để tương thích dual-role
+  const props: PropertyDescriptorMap = {};
+  for (const key of Object.keys(descriptor) as Array<keyof typeof descriptor>) {
+    props[key] = { value: descriptor[key], writable: true, enumerable: true, configurable: true };
+  }
+  Object.defineProperties(decoratorFn, props);
+  return decoratorFn as InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
 }
 ```
 
-**Thứ tự thực tế với `runWithContainer`:**
+**Luồng với `runWithContainer`:**
 
 ```
 resolver.resolve(Dashboard)
@@ -1829,21 +1850,25 @@ resolver.resolve(Dashboard)
 
 > **Concurrency safety:** `_activeContainer` là module-level variable. Trong môi trường single-threaded (Node.js event loop), đây an toàn vì JS không có true parallelism. `runWithContainer` với `try/finally` đảm bảo nested construction (A inject B inject C) stack đúng. Nếu trong tương lai library cần hỗ trợ Worker threads, mỗi Worker có module scope riêng — không có shared state.
 
-> **`INJECT_ACCESSOR_KEY`** là `unique symbol` trong `metadata-keys.ts`, không export ra ngoài thư viện. `SymbolMetadataReader` đọc key này qua `getConstructorMetadata` nếu cần expose thông tin accessor fields. Container/resolver đọc trực tiếp từ `Symbol.metadata[INJECT_ACCESSOR_KEY]` khi cần biết class nào có accessor injection.
+> **`INJECT_ACCESSOR_KEY`:** `unique symbol` trong `metadata-keys.ts`, không export. `SymbolMetadataReader` đọc qua `getAccessorMetadata(target)` và WeakMap mirror theo `context.metadata`. Resolver dùng `getAccessorMetadata` để phát hiện accessor injection và bọc `new` trong `runWithContainer` khi class cần active container trong initializer.
 
 > **Constructor injection vẫn là cách ưu tiên** — immutable, dễ test, không cần container context. Property injection qua `accessor` hữu ích khi class kế thừa framework không kiểm soát constructor, hoặc cần break circular dependency.
 >
-> **Không hỗ trợ plain field** (`@inject(Logger) logger!`) — plain field decorator trong TC39 Stage 3 không có getter/setter để intercept.
+> **Không hỗ trợ `@inject` trên plain field** (`@inject(Logger) logger!`). Property injection chỉ qua `accessor` (`@inject(Logger) accessor logger`, …). Stage 3 field decorator có `context.access`; giới hạn chỉ `accessor` là **lựa chọn API** (surface thu hẹp), không phải bất khả thi của proposal.
 
 **`inject()` dual-role:**
 
 `inject()` hoạt động như cả plain function (trong deps array) lẫn accessor decorator. Return type là intersection:
 
 ```ts
-function inject<Value>(
+function inject<const Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
-): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
+): InjectionDescriptor<Value> &
+  ((
+    target: ClassAccessorDecoratorTarget<unknown, Value>,
+    context: ClassAccessorDecoratorContext<unknown, Value>,
+  ) => ClassAccessorDecoratorResult<unknown, Value> | void);
 ```
 
 Khi dùng trong deps array, TypeScript match `InjectionDescriptor<Value>`. Khi dùng làm decorator, TypeScript match `ClassAccessorDecorator<unknown, Value>`. Cả hai roles hoạt động với cùng một function — không cần import khác nhau.
@@ -1852,7 +1877,7 @@ Khi dùng trong deps array, TypeScript match `InjectionDescriptor<Value>`. Khi d
 
 ### 7.6 Method lifecycle decorators
 
-`@postConstruct()` và `@preDestroy()` là method decorators, ghi method names vào `Symbol.metadata`:
+`@postConstruct()` và `@preDestroy()` là method decorators trên **instance methods**; tên method được ghi vào `Symbol.metadata` và mirror WeakMap tương ứng. **Static methods** không được hỗ trợ — lifecycle manager chỉ gọi hooks trên instance.
 
 ```ts
 @injectable([Config])
