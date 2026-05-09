@@ -104,12 +104,12 @@
 
         /* Avoid @apply shadow-bh-glass — some @tailwindcss/browser builds mis-resolve it as utility `bh-glass`. */
         .bh-glass {
-          @apply border-bh-border bg-bh-surface rounded-[1.25rem] border [box-shadow:var(--shadow-bh-glass)] backdrop-blur-xl backdrop-saturate-180;
+          @apply border-bh-border bg-bh-surface rounded-[1.25rem] border shadow-(--shadow-bh-glass) backdrop-blur-xl backdrop-saturate-180;
         }
 
         /* Tighter inset shadow — applied alongside .bh-glass for compact panels */
         .bh-glass--tight {
-          @apply rounded-2xl [box-shadow:var(--shadow-bh-glass-tight)];
+          @apply rounded-2xl shadow-(--shadow-bh-glass-tight);
         }
 
         /* Sticky command surface — stronger blur + legibility (cf. macOS header materials) */
@@ -389,7 +389,7 @@
         }
 
         .bh-chart__host {
-          @apply relative mt-5 h-[min(27.5rem,58dvh)] h-[min(27.5rem,58vh)] min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 [box-shadow:var(--shadow-bh-glass-tight)] ring-white/[0.08];
+          @apply relative mt-5 h-[min(27.5rem,58dvh)] h-[min(27.5rem,58vh)] min-h-[17.5rem] w-full overflow-hidden rounded-2xl bg-black/40 ring-1 shadow-(--shadow-bh-glass-tight) ring-white/[0.08];
         }
 
         .bh-chart__empty-actions {
@@ -700,7 +700,7 @@
         }
 
         .bh-chart-data-details {
-          @apply mt-6 rounded-2xl border border-bh-border bg-bh-surface px-4 py-3 [box-shadow:var(--shadow-bh-glass-tight)] backdrop-blur-xl backdrop-saturate-180 open:bg-bh-surface-open sm:px-5;
+          @apply mt-6 rounded-2xl border border-bh-border bg-bh-surface px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 open:bg-bh-surface-open sm:px-5;
         }
 
         .bh-chart-data-table-wrap {
