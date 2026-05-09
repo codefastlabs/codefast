@@ -176,6 +176,10 @@
     "examples": "for file in examples/*/*.ts; do echo \"=== Running $file ===\"; tsx \"$file\"; echo \"\n\" || exit 1; done",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run tests/e2e",
+    "test:integration": "vitest run tests/integration",
+    "test:type": "vitest run tests/types",
+    "test:unit": "vitest run tests/unit",
     "test:watch": "vitest"
   },
   "devDependencies": {

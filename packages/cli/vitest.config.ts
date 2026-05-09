@@ -2,6 +2,12 @@ import { defineConfig } from "vitest/config";
 
 /**
  * CLI: Node profile (no DI decorators).
+ *
+ * Test taxonomy (see TESTING.md):
+ *   tests/unit/**         — unit tests
+ *   tests/integration/**  — pre-wired (no integration tests yet)
+ *   tests/e2e/**          — pre-wired (none yet)
+ *   tests/types/**        — pre-wired (none yet)
  */
 export default defineConfig({
   test: {
@@ -17,6 +23,8 @@ export default defineConfig({
     include: [
       "tests/unit/**/*.test.?(c|m)[jt]s?(x)",
       "tests/integration/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/e2e/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/types/**/*.test.?(c|m)[jt]s?(x)",
     ],
     passWithNoTests: true,
   },

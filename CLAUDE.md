@@ -85,14 +85,20 @@ Relative imports are allowed only when the target is outside alias-mapped roots 
 - All tests go under `tests/**` only:
   - Unit: `tests/unit/**`
   - Integration: `tests/integration/**`
-  - Helpers/fixtures: `tests/support/**` or `tests/fixtures/**`
+  - E2E: `tests/e2e/**` (subprocess / real network / cross-process)
+  - Type: `tests/types/**` (`expectTypeOf` static type tests)
+  - Helpers/fixtures: `tests/support/**` or `tests/fixtures/**` (NOT named `*.test.*` / `*.spec.*`)
 - Mirror the `src/` path structure for discoverability.
+- Full taxonomy reference + commands: see [`TESTING.md`](./TESTING.md).
 
 ### Required when creating/moving tests
 
 1. Keep `src/**` test-free.
-2. Vitest include glob: `tests/**/*.test.?(c|m)[jt]s?(x)`.
+2. Vitest include glob is the union of categories:
+   `tests/{unit,integration,e2e,types}/**/*.test.?(c|m)[jt]s?(x)`.
+   Tests outside those four categories are unmatched and will not run.
 3. Coverage scope on `src/**` only.
+4. Run `pnpm verify` to validate placement workspace-wide.
 
 ---
 

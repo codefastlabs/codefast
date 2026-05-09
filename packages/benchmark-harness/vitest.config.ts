@@ -1,7 +1,13 @@
 import { defineConfig } from "vitest/config";
 
 /**
- * benchmark-harness: pure Node package; tests live under `tests/`.
+ * benchmark-harness: pure Node package. Tests are organized by taxonomy:
+ *   tests/unit/**         — fast, isolated unit tests (this package only ships these today)
+ *   tests/integration/**  — multi-module / real-IO tests (none yet, pre-wired)
+ *   tests/e2e/**          — end-to-end / subprocess tests (none yet, pre-wired)
+ *   tests/types/**        — static type-only tests (none yet, pre-wired)
+ *
+ * See TESTING.md at the repo root for the full taxonomy.
  */
 export default defineConfig({
   test: {
@@ -14,7 +20,12 @@ export default defineConfig({
     },
     environment: "node",
     globals: true,
-    include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
+    include: [
+      "tests/unit/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/integration/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/e2e/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/types/**/*.test.?(c|m)[jt]s?(x)",
+    ],
     passWithNoTests: true,
   },
 });

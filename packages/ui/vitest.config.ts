@@ -3,6 +3,12 @@ import { defineConfig } from "vitest/config";
 
 /**
  * UI: React 19 + Testing Library; jsdom + Vite React plugin (Vitest 4 + JSX refresh/transform).
+ *
+ * Test taxonomy (see TESTING.md):
+ *   tests/unit/**         — primitives + hooks unit tests
+ *   tests/integration/**  — pre-wired (none yet)
+ *   tests/e2e/**          — pre-wired (none yet)
+ *   tests/types/**        — pre-wired (none yet)
  */
 export default defineConfig({
   plugins: [react()],
@@ -16,7 +22,12 @@ export default defineConfig({
     },
     environment: "jsdom",
     globals: true,
-    include: ["tests/**/*.test.?(c|m)[jt]s?(x)"],
+    include: [
+      "tests/unit/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/integration/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/e2e/**/*.test.?(c|m)[jt]s?(x)",
+      "tests/types/**/*.test.?(c|m)[jt]s?(x)",
+    ],
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
     setupFiles: ["./vitest.setup.ts"],

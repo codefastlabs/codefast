@@ -55,9 +55,11 @@
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
-    "test:integration": "vitest run tests/integration",
-    "test:unit": "vitest run tests/unit",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run tests/e2e",
+    "test:integration": "vitest run tests/integration",
+    "test:type": "vitest run tests/types",
+    "test:unit": "vitest run tests/unit",
     "test:watch": "vitest"
   },
   "dependencies": {
