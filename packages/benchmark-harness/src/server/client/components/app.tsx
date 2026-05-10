@@ -749,7 +749,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       <div
         aria-atomic="true"
         aria-live="polite"
-        className={`pointer-events-none fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-[200] max-w-[min(20rem,calc(100vw-2rem))] rounded-[0.875rem] border border-[rgba(10,132,255,0.35)] bg-[rgba(34,36,42,0.88)] px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium text-[rgb(240,244,255)] shadow-[0_0.0625rem_0_rgba(255,255,255,0.06)_inset,0_1rem_3rem_rgba(0,0,0,0.45)] backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none ${toastMsg ? "pointer-events-auto translate-y-0 scale-100 opacity-100" : "translate-y-2 scale-[0.98] opacity-0"}`}
+        className={toastMsg ? "is-visible" : undefined}
         id="bh-toast"
         role="status"
       >
