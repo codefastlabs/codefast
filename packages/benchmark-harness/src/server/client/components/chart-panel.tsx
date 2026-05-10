@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useMemo, useRef } from "react";
+import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   EmbeddedLibraryMeta,
   EmbeddedRun,
@@ -10,6 +10,12 @@ import {
   RATIO_COLORS,
   ZOOM_STEP_X,
 } from "#/server/client/lib/colors";
+import {
+  type ChartToolbarDisabled,
+  categoryXScaleWindow,
+  computeChartToolbarDisabled,
+  computeInitialCategoryWindow,
+} from "#/server/client/lib/chart-category-view";
 import { formatLocal, spreadTierLabel } from "#/server/client/lib/format";
 import { ratioFrom } from "#/server/client/lib/metrics";
 
@@ -82,6 +88,16 @@ export function ChartPanel({
 }: ChartPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<ChartInstance | null>(null);
+  const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
+  const syncToolbarRef = useRef<(() => void) | undefined>(undefined);
+
+  const [toolbarDisabled, setToolbarDisabled] = useState<ChartToolbarDisabled>({
+    earlier: true,
+    later: true,
+    reset: true,
+    zoomIn: true,
+    zoomOut: true,
+  });
 
   const primaryLib = useMemo(
     () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
@@ -94,6 +110,25 @@ export function ChartPanel({
 
   const hasData = scenario !== null && runIndices.length > 0;
   const emptyReason = getEmptyReason(scenario, runIndices, runs, envKey);
+
+  const syncToolbarFromChart = useCallback(() => {
+    const chart = chartRef.current;
+    const initial = initialCategoryViewRef.current;
+    const n = runIndices.length;
+    if (!chart || !hasData || !initial || n < 2) {
+      setToolbarDisabled({
+        earlier: true,
+        later: true,
+        reset: true,
+        zoomIn: true,
+        zoomOut: true,
+      });
+      return;
+    }
+    setToolbarDisabled(computeChartToolbarDisabled(chart, initial, n));
+  }, [hasData, runIndices.length]);
+
+  syncToolbarRef.current = syncToolbarFromChart;
 
   // Build and update chart imperatively
   useEffect(() => {
@@ -109,6 +144,14 @@ export function ChartPanel({
     if (!scenario || runIndices.length === 0) {
       chartRef.current?.destroy();
       chartRef.current = null;
+      initialCategoryViewRef.current = null;
+      setToolbarDisabled({
+        earlier: true,
+        later: true,
+        reset: true,
+        zoomIn: true,
+        zoomOut: true,
+      });
       return;
     }
 
@@ -203,9 +246,8 @@ export function ChartPanel({
       }
 
       const L = labels.length;
-      const lastIx = L - 1;
-      const span = Math.min(Math.max(Math.floor(L * 0.5), 18), Math.min(56, lastIx + 1));
-      const xWindow = L >= 6 ? { min: Math.max(0, lastIx - span + 1), max: lastIx } : {};
+      initialCategoryViewRef.current = computeInitialCategoryWindow(L);
+      const xWindow = categoryXScaleWindow(L);
 
       const scales: Record<string, object> = {
         x: {
@@ -219,7 +261,7 @@ export function ChartPanel({
             color: "rgba(235, 235, 245, 0.42)",
           },
           grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
-          ...xWindow,
+          ...(xWindow ?? {}),
         },
         y: {
           type: useLogScale ? "logarithmic" : "linear",
@@ -322,28 +364,48 @@ export function ChartPanel({
               },
             },
             zoom: {
-              pan: { enabled: true, mode: "x" },
+              pan: {
+                enabled: true,
+                mode: "x",
+                onPanComplete: ({ chart: panChart }) => {
+                  chartRef.current = panChart as ChartInstance;
+                  queueMicrotask(() => syncToolbarRef.current?.());
+                },
+              },
               zoom: {
                 wheel: { enabled: true, modifierKey: "ctrl" },
                 pinch: { enabled: true },
                 mode: "x",
                 drag: { enabled: false },
+                onZoomComplete: ({ chart: zoomChart }) => {
+                  chartRef.current = zoomChart as ChartInstance;
+                  queueMicrotask(() => syncToolbarRef.current?.());
+                },
               },
               limits: {},
             },
           },
           layout: { padding: { top: 4, right: 12 + (showRatio ? 20 : 0), bottom: 2, left: 12 } },
         },
-      });
+      }) as ChartInstance;
 
       requestAnimationFrame(() => {
         chartRef.current?.resize();
+        syncToolbarRef.current?.();
       });
     })();
 
     return () => {
       chartRef.current?.destroy();
       chartRef.current = null;
+      initialCategoryViewRef.current = null;
+      setToolbarDisabled({
+        earlier: true,
+        later: true,
+        reset: true,
+        zoomIn: true,
+        zoomOut: true,
+      });
     };
   }, [
     scenario,
@@ -373,6 +435,7 @@ export function ChartPanel({
         scheduled = false;
         chartRef.current?.resize();
         chartRef.current?.update("none");
+        syncToolbarRef.current?.();
       });
     };
     window.addEventListener("resize", onResize);
@@ -401,33 +464,58 @@ export function ChartPanel({
   }, []);
 
   function handleZoomIn() {
-    chartRef.current?.zoom({ x: ZOOM_STEP_X }, "none");
-    chartRef.current?.resize();
-    chartRef.current?.update("none");
+    const c = chartRef.current;
+    if (!c || toolbarDisabled.zoomIn) {
+      return;
+    }
+    c.zoom({ x: ZOOM_STEP_X }, "none");
+    c.resize();
+    c.update("none");
+    requestAnimationFrame(() => syncToolbarFromChart());
   }
 
   function handleZoomOut() {
-    chartRef.current?.zoom({ x: 1 / ZOOM_STEP_X }, "none");
-    chartRef.current?.resize();
-    chartRef.current?.update("none");
+    const c = chartRef.current;
+    if (!c || toolbarDisabled.zoomOut) {
+      return;
+    }
+    c.zoom({ x: 1 / ZOOM_STEP_X }, "none");
+    c.resize();
+    c.update("none");
+    requestAnimationFrame(() => syncToolbarFromChart());
   }
 
   function handlePanEarlier() {
-    chartRef.current?.pan({ x: PAN_PIXELS_X }, undefined, "none");
-    chartRef.current?.resize();
-    chartRef.current?.update("none");
+    const c = chartRef.current;
+    if (!c || toolbarDisabled.earlier) {
+      return;
+    }
+    c.pan({ x: PAN_PIXELS_X }, undefined, "none");
+    c.resize();
+    c.update("none");
+    requestAnimationFrame(() => syncToolbarFromChart());
   }
 
   function handlePanLater() {
-    chartRef.current?.pan({ x: -PAN_PIXELS_X }, undefined, "none");
-    chartRef.current?.resize();
-    chartRef.current?.update("none");
+    const c = chartRef.current;
+    if (!c || toolbarDisabled.later) {
+      return;
+    }
+    c.pan({ x: -PAN_PIXELS_X }, undefined, "none");
+    c.resize();
+    c.update("none");
+    requestAnimationFrame(() => syncToolbarFromChart());
   }
 
   function handleResetZoom() {
-    chartRef.current?.resetZoom();
-    chartRef.current?.resize();
-    chartRef.current?.update("none");
+    const c = chartRef.current;
+    if (!c || toolbarDisabled.reset) {
+      return;
+    }
+    c.resetZoom();
+    c.resize();
+    c.update("none");
+    requestAnimationFrame(() => syncToolbarFromChart());
   }
 
   // Tabular data for accessibility
@@ -453,22 +541,48 @@ export function ChartPanel({
         className="bh-chart-toolbar bh-chart-toolbar--row"
         role="toolbar"
       >
-        <button className="bh-seg-btn" onClick={handleZoomIn} type="button">
+        <button
+          className="bh-seg-btn"
+          disabled={toolbarDisabled.zoomIn}
+          onClick={handleZoomIn}
+          title={toolbarDisabled.zoomIn ? "Already at maximum zoom for this range" : undefined}
+          type="button"
+        >
           Zoom +
         </button>
-        <button className="bh-seg-btn" onClick={handleZoomOut} type="button">
+        <button
+          className="bh-seg-btn"
+          disabled={toolbarDisabled.zoomOut}
+          onClick={handleZoomOut}
+          title={toolbarDisabled.zoomOut ? "Showing the full run history on the chart" : undefined}
+          type="button"
+        >
           Zoom −
         </button>
-        <button className="bh-seg-btn" onClick={handlePanEarlier} type="button">
+        <button
+          className="bh-seg-btn"
+          disabled={toolbarDisabled.earlier}
+          onClick={handlePanEarlier}
+          title={toolbarDisabled.earlier ? "Already showing the earliest runs" : undefined}
+          type="button"
+        >
           ← Earlier
         </button>
-        <button className="bh-seg-btn" onClick={handlePanLater} type="button">
+        <button
+          className="bh-seg-btn"
+          disabled={toolbarDisabled.later}
+          onClick={handlePanLater}
+          title={toolbarDisabled.later ? "Already showing the newest runs" : undefined}
+          type="button"
+        >
           Later →
         </button>
         <button
           className="bh-seg-btn"
+          disabled={toolbarDisabled.reset}
           id="chart-reset-zoom-btn"
           onClick={handleResetZoom}
+          title={toolbarDisabled.reset ? "Chart is already at the default time window" : undefined}
           type="button"
         >
           Reset zoom
