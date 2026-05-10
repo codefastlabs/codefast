@@ -1,0 +1,28 @@
+---
+description: Codefast monorepo map, boundaries, and agent workflow
+alwaysApply: true
+---
+
+# Codefast monorepo
+
+- **Stack:** pnpm workspace, Turborepo, Node ≥ 22, ESM. Shared dependency versions: `pnpm-workspace.yaml` **catalog** (strict).
+- **Docs:** Root **[`ARCHITECTURE.md`](ARCHITECTURE.md)** and **[`AGENTS.md`](AGENTS.md)** — read before large or cross-cutting changes.
+
+## Packages (concise)
+
+- **`packages/ui`** — React component library (Radix + Tailwind); depends on `@codefast/tailwind-variants`.
+- **`packages/tailwind-variants`** — Tailwind variant utilities.
+- **`packages/theme`** — Theme provider / SSR-friendly theme.
+- **`packages/cli`** — CLI (`arrange`, `mirror`, `tag`). Architecture: **`packages/cli/ARCHITECTURE.md`**. Not hexagonal/DI-heavy by design.
+- **`packages/di`** — DI primitives; **do not** assume CLI or UI use this unless already wired there.
+- **`packages/typescript-config`** — Shared TS configs.
+- **`apps/docs`** — Vite + TanStack Start; consumes workspace UI/theme packages.
+
+**Dependency flow:** `tailwind-variants` → `ui` → `apps/docs`. CLI is standalone tooling.
+
+## Rules of thumb
+
+1. **Search first** — grep/semantic search for an existing component, hook, or CLI path before adding duplicates.
+2. **Put shared UI in `packages/ui`**, not in `apps/docs`, unless it is strictly app-specific.
+3. **Match existing patterns** — exports in `package.json`, `#/` imports per package, tests under each package’s `tests/` (see that package).
+4. **Verify:** `pnpm check` from root when touching multiple areas.
