@@ -35,30 +35,128 @@
     ]
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./child/bench-options": "./src/child/bench-options.ts",
-    "./child/bench-scenario": "./src/child/bench-scenario.ts",
-    "./child/create-run-all-trials": "./src/child/create-run-all-trials.ts",
-    "./child/fingerprint": "./src/child/fingerprint.ts",
-    "./child/run-benchmark-child-main": "./src/child/run-benchmark-child-main.ts",
-    "./child/run-sanity-checks": "./src/child/run-sanity-checks.ts",
-    "./parent/resolve-bench-parent-exit-code": "./src/parent/resolve-bench-parent-exit-code.ts",
-    "./parent/run-bench-subprocess": "./src/parent/run-bench-subprocess.ts",
-    "./report/aggregate": "./src/report/aggregate.ts",
-    "./report/format": "./src/report/format.ts",
-    "./report/jsonl": "./src/report/jsonl.ts",
-    "./report/quantiles": "./src/report/quantiles.ts",
-    "./report/two-way": "./src/report/two-way.ts",
-    "./report/write": "./src/report/write.ts",
-    "./server/build-payload": "./src/server/build-payload.ts",
-    "./server/create-bench-server": "./src/server/create-bench-server.ts",
-    "./server/find-available-port": "./src/server/find-available-port.ts",
-    "./server/read-runs": "./src/server/read-runs.ts",
-    "./server/server-types": "./src/server/server-types.ts",
-    "./server/start-bench-server": "./src/server/start-bench-server.ts",
-    "./shared/config": "./src/shared/config.ts",
-    "./shared/env-keys": "./src/shared/env-keys.ts",
-    "./shared/protocol": "./src/shared/protocol.ts"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./child/bench-options": {
+      "types": "./dist/child/bench-options.d.mts",
+      "import": "./dist/child/bench-options.mjs"
+    },
+    "./child/bench-scenario": {
+      "types": "./dist/child/bench-scenario.d.mts",
+      "import": "./dist/child/bench-scenario.mjs"
+    },
+    "./child/create-run-all-trials": {
+      "types": "./dist/child/create-run-all-trials.d.mts",
+      "import": "./dist/child/create-run-all-trials.mjs"
+    },
+    "./child/fingerprint": {
+      "types": "./dist/child/fingerprint.d.mts",
+      "import": "./dist/child/fingerprint.mjs"
+    },
+    "./child/run-benchmark-child-main": {
+      "types": "./dist/child/run-benchmark-child-main.d.mts",
+      "import": "./dist/child/run-benchmark-child-main.mjs"
+    },
+    "./child/run-sanity-checks": {
+      "types": "./dist/child/run-sanity-checks.d.mts",
+      "import": "./dist/child/run-sanity-checks.mjs"
+    },
+    "./parent/resolve-bench-parent-exit-code": {
+      "types": "./dist/parent/resolve-bench-parent-exit-code.d.mts",
+      "import": "./dist/parent/resolve-bench-parent-exit-code.mjs"
+    },
+    "./parent/run-bench-subprocess": {
+      "types": "./dist/parent/run-bench-subprocess.d.mts",
+      "import": "./dist/parent/run-bench-subprocess.mjs"
+    },
+    "./report/aggregate": {
+      "types": "./dist/report/aggregate.d.mts",
+      "import": "./dist/report/aggregate.mjs"
+    },
+    "./report/format": {
+      "types": "./dist/report/format.d.mts",
+      "import": "./dist/report/format.mjs"
+    },
+    "./report/jsonl": {
+      "types": "./dist/report/jsonl.d.mts",
+      "import": "./dist/report/jsonl.mjs"
+    },
+    "./report/quantiles": {
+      "types": "./dist/report/quantiles.d.mts",
+      "import": "./dist/report/quantiles.mjs"
+    },
+    "./report/two-way": {
+      "types": "./dist/report/two-way.d.mts",
+      "import": "./dist/report/two-way.mjs"
+    },
+    "./report/write": {
+      "types": "./dist/report/write.d.mts",
+      "import": "./dist/report/write.mjs"
+    },
+    "./server/build-payload": {
+      "types": "./dist/server/build-payload.d.mts",
+      "import": "./dist/server/build-payload.mjs"
+    },
+    "./server/client/components/app": {
+      "types": "./dist/server/client/components/app.d.mts",
+      "import": "./dist/server/client/components/app.mjs"
+    },
+    "./server/client/components/chart-panel": {
+      "types": "./dist/server/client/components/chart-panel.d.mts",
+      "import": "./dist/server/client/components/chart-panel.mjs"
+    },
+    "./server/client/entry-server": {
+      "types": "./dist/server/client/entry-server.d.mts",
+      "import": "./dist/server/client/entry-server.mjs"
+    },
+    "./server/client/lib/colors": {
+      "types": "./dist/server/client/lib/colors.d.mts",
+      "import": "./dist/server/client/lib/colors.mjs"
+    },
+    "./server/client/lib/format": {
+      "types": "./dist/server/client/lib/format.d.mts",
+      "import": "./dist/server/client/lib/format.mjs"
+    },
+    "./server/client/lib/metrics": {
+      "types": "./dist/server/client/lib/metrics.d.mts",
+      "import": "./dist/server/client/lib/metrics.mjs"
+    },
+    "./server/client/styles.css": "./dist/server/client/styles.css",
+    "./server/create-bench-server": {
+      "types": "./dist/server/create-bench-server.d.mts",
+      "import": "./dist/server/create-bench-server.mjs"
+    },
+    "./server/find-available-port": {
+      "types": "./dist/server/find-available-port.d.mts",
+      "import": "./dist/server/find-available-port.mjs"
+    },
+    "./server/read-runs": {
+      "types": "./dist/server/read-runs.d.mts",
+      "import": "./dist/server/read-runs.mjs"
+    },
+    "./server/server-types": {
+      "types": "./dist/server/server-types.d.mts",
+      "import": "./dist/server/server-types.mjs"
+    },
+    "./server/start-bench-server": {
+      "types": "./dist/server/start-bench-server.d.mts",
+      "import": "./dist/server/start-bench-server.mjs"
+    },
+    "./shared/config": {
+      "types": "./dist/shared/config.d.mts",
+      "import": "./dist/shared/config.mjs"
+    },
+    "./shared/env-keys": {
+      "types": "./dist/shared/env-keys.d.mts",
+      "import": "./dist/shared/env-keys.mjs"
+    },
+    "./shared/protocol": {
+      "types": "./dist/shared/protocol.d.mts",
+      "import": "./dist/shared/protocol.mjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsdown",
@@ -92,6 +190,7 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "postcss-import": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

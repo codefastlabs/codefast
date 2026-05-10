@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildEmbeddedPayload } from "#/server/build-payload";
+import { renderDocument } from "#/server/client/entry-server";
 import { listRawRuns } from "#/server/read-runs";
 import type { BenchServerOptions } from "#/server/server-types";
 
@@ -17,16 +18,28 @@ export function createBenchServer(options: BenchServerOptions): Server {
     const url = new URL(req.url ?? "/", "http://localhost");
 
     if (url.pathname === "/") {
-      const indexHtml = readFileSync(join(clientDir, "index.html"), "utf8");
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(indexHtml);
+      try {
+        const rawRuns = listRawRuns(options.benchResultsDir);
+        const payload = buildEmbeddedPayload(rawRuns, options);
+        renderDocument(payload, res);
+      } catch (err) {
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end(String(err));
+      }
       return;
     }
 
-    if (url.pathname === "/app.js") {
-      const appJs = readFileSync(join(clientDir, "app.js"), "utf8");
+    if (url.pathname === "/client.js") {
+      const js = readFileSync(join(clientDir, "client.js"));
       res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
-      res.end(appJs);
+      res.end(js);
+      return;
+    }
+
+    if (url.pathname === "/styles.css") {
+      const css = readFileSync(join(clientDir, "styles.css"));
+      res.writeHead(200, { "Content-Type": "text/css; charset=utf-8" });
+      res.end(css);
       return;
     }
 
@@ -34,12 +47,11 @@ export function createBenchServer(options: BenchServerOptions): Server {
       try {
         const rawRuns = listRawRuns(options.benchResultsDir);
         const payload = buildEmbeddedPayload(rawRuns, options);
-        const json = JSON.stringify(payload);
         res.writeHead(200, {
           "Content-Type": "application/json; charset=utf-8",
           "Cache-Control": "no-store",
         });
-        res.end(json);
+        res.end(JSON.stringify(payload));
       } catch (err) {
         res.writeHead(500, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: String(err) }));
