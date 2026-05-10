@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildEmbeddedPayload } from "#/server/build-payload";
 import { renderDocument } from "#/server/client/entry-server";
@@ -36,14 +36,37 @@ export function createBenchServer(options: BenchServerOptions): Server {
 
     if (url.pathname === "/client.js") {
       const js = readFileSync(join(clientDir, "client.js"));
-      res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
+      res.writeHead(200, {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Cache-Control": "no-cache",
+      });
+      res.end(js);
+      return;
+    }
+
+    const chunkMatch = /^\/chunks\/([^/]+\.js)$/.exec(url.pathname);
+    if (chunkMatch) {
+      const chunkPath = resolve(clientDir, "chunks", chunkMatch[1]!);
+      if (!chunkPath.startsWith(resolve(clientDir, "chunks") + "/")) {
+        res.writeHead(400);
+        res.end("Bad request");
+        return;
+      }
+      const js = readFileSync(chunkPath);
+      res.writeHead(200, {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      });
       res.end(js);
       return;
     }
 
     if (url.pathname === "/styles.css") {
       const css = readFileSync(join(clientDir, "styles.css"));
-      res.writeHead(200, { "Content-Type": "text/css; charset=utf-8" });
+      res.writeHead(200, {
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "no-cache",
+      });
       res.end(css);
       return;
     }

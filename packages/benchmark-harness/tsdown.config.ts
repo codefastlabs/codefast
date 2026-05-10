@@ -3,23 +3,36 @@ import { defineConfig } from "tsdown";
 export default defineConfig([
   // ① Library — unbundled ESM for Node (includes SSR server components)
   {
-    entry: [
-      "src/**/*.{ts,tsx}",
-      "!src/**/*.test.{ts,tsx}",
-      "!src/server/client/entry-client.tsx", // browser-only hydration entry
-    ],
+    entry: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/server/client/entry-client.tsx"],
     unbundle: true,
     platform: "node",
   },
-  // ② Browser viewer — bundled IIFE + PostCSS (Tailwind v4)
+  // ② Browser viewer — ESM + code splitting + PostCSS (Tailwind v4)
+  //    React → chunks/react-vendor-[hash].js  (static import, immutable cache)
+  //    chart.js + chartjs-plugin-zoom → chunks/*-[hash].js  (lazy import)
   {
-    entry: { client: "src/server/client/entry-client.tsx" },
+    entry: {
+      client: "src/server/client/entry-client.tsx",
+    },
     platform: "browser",
-    format: "iife",
+    format: "esm",
     outDir: "dist/server/client",
-    deps: { alwaysBundle: [/./] },
+    deps: {
+      alwaysBundle: [/./],
+      onlyBundle: false,
+    },
     outputOptions: {
       entryFileNames: "[name].js",
+      chunkFileNames: "chunks/[name]-[hash].js",
+      codeSplitting: {
+        groups: [
+          {
+            name: "react-vendor",
+            test: /node_modules[\\/](react|react-dom|scheduler)/,
+            priority: 10,
+          },
+        ],
+      },
     },
     css: {
       transformer: "postcss",
