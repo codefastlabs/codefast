@@ -1,15 +1,16 @@
-import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import type { ChartInstance } from "#/server/client/components/chart-panel";
 import { ChartPanel } from "#/server/client/components/chart-panel";
-import { DISPERSION_IQR_ALERT, PALETTE, type PaletteEntry } from "#/server/client/lib/colors";
-import {
-  formatLocal,
-  fmtHz,
-  fmtPctChange,
-  isMacLikePlatform,
-  searchNorm,
-} from "#/server/client/lib/format";
-import { medianNumeric, ratioFrom } from "#/server/client/lib/metrics";
+import { CommandPalette } from "#/server/client/components/command-palette";
+import { FindPanel } from "#/server/client/components/find-panel";
+import { MetricsPanel } from "#/server/client/components/metrics-panel";
+import { useBenchPayload } from "#/server/client/hooks/use-bench-payload";
+import { useHashSync } from "#/server/client/hooks/use-hash-sync";
+import { useViewState } from "#/server/client/hooks/use-view-state";
+import { PALETTE, type PaletteEntry } from "#/server/client/lib/colors";
+import { formatLocal, isMacLikePlatform, searchNorm } from "#/server/client/lib/format";
+import { buildHash, type ViewState } from "#/server/client/lib/hash";
+import { buildMetrics, buildSnapshotRow } from "#/server/client/lib/metrics";
 import type {
   EmbeddedLibraryMeta,
   EmbeddedRun,
@@ -17,132 +18,16 @@ import type {
   EmbeddedViewerPayload,
 } from "#/server/server-types";
 
-// ─── View state ───────────────────────────────────────────────────────────────
-
-interface ViewState {
-  scenarioId: string;
-  envKey: string;
-  group: string;
-  search: string;
-  runWindow: "all" | "10" | "20";
-  showBands: boolean;
-  useLogScale: boolean;
-  showRatio: boolean;
-}
-
-const HASH_KEYS = {
-  environment: "environment",
-  group: "group",
-  search: "search",
-  scenario: "scenario",
-  runWindow: "run-window",
-  showBands: "show-bands",
-  useLogScale: "use-log-scale",
-  showRatio: "show-ratio",
-};
-
-function buildHash(view: ViewState): string {
-  const parts: Array<string> = [];
-  if (view.envKey) {
-    parts.push(`${HASH_KEYS.environment}=${encodeURIComponent(view.envKey)}`);
-  }
-  if (view.group) {
-    parts.push(`${HASH_KEYS.group}=${encodeURIComponent(view.group)}`);
-  }
-  if (view.search.trim()) {
-    parts.push(`${HASH_KEYS.search}=${encodeURIComponent(view.search.trim())}`);
-  }
-  if (view.scenarioId) {
-    parts.push(`${HASH_KEYS.scenario}=${encodeURIComponent(view.scenarioId)}`);
-  }
-  if (view.runWindow !== "all") {
-    parts.push(`${HASH_KEYS.runWindow}=${encodeURIComponent(view.runWindow)}`);
-  }
-  parts.push(`${HASH_KEYS.showBands}=${view.showBands ? "1" : "0"}`);
-  parts.push(`${HASH_KEYS.useLogScale}=${view.useLogScale ? "1" : "0"}`);
-  parts.push(`${HASH_KEYS.showRatio}=${view.showRatio ? "1" : "0"}`);
-  return parts.join("&");
-}
-
-function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<ViewState> {
-  if (!raw || raw.length < 2) {
-    return {};
-  }
-  const params = new URLSearchParams(raw.replace(/^#/, ""));
-  const patch: Partial<ViewState> = {};
-
-  const ev = params.get(HASH_KEYS.environment);
-  if (ev !== null) {
-    const validEnvKeys = new Set(payload.runs.map((r) => r.envKey));
-    if (ev === "" || validEnvKeys.has(ev)) {
-      patch.envKey = ev;
-    }
-  }
-
-  const g = params.get(HASH_KEYS.group);
-  const validGroups = new Set(payload.scenarios.map((s) => s.group));
-  if (g && validGroups.has(g)) {
-    patch.group = g;
-  }
-
-  const q = params.get(HASH_KEYS.search);
-  if (q !== null) {
-    patch.search = q;
-  }
-
-  const w = params.get(HASH_KEYS.runWindow);
-  if (w === "all" || w === "10" || w === "20") {
-    patch.runWindow = w;
-  }
-
-  if (params.has(HASH_KEYS.showBands)) {
-    patch.showBands = params.get(HASH_KEYS.showBands) === "1";
-  }
-  if (params.has(HASH_KEYS.useLogScale)) {
-    patch.useLogScale = params.get(HASH_KEYS.useLogScale) === "1";
-  }
-  if (params.has(HASH_KEYS.showRatio)) {
-    patch.showRatio = params.get(HASH_KEYS.showRatio) === "1";
-  }
-
-  const sc = params.get(HASH_KEYS.scenario);
-  if (sc && payload.scenarios.some((s) => s.id === sc)) {
-    patch.scenarioId = sc;
-  }
-
-  return patch;
-}
-
 // ─── App ─────────────────────────────────────────────────────────────────────
 
 export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload }) {
-  const [payload, setPayload] = useState<EmbeddedViewerPayload | null>(initialPayload ?? null);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [isReloading, setIsReloading] = useState(false);
+  const { view, patchView } = useViewState(initialPayload);
   const [pageOpenedAt] = useState<Date>(() => new Date());
-
-  const [view, setView] = useState<ViewState>(() => ({
-    scenarioId: initialPayload?.scenarios[0]?.id ?? "",
-    envKey: "",
-    group: "",
-    search: "",
-    runWindow: "all",
-    showBands: true,
-    useLogScale: false,
-    showRatio: false,
-  }));
-
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hashSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hashApplyingRef = useRef(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [paletteQuery, setPaletteQuery] = useState("");
   const paletteInputRef = useRef<HTMLInputElement>(null);
-
-  const patchView = useCallback((patch: Partial<ViewState>) => {
-    setView((v) => ({ ...v, ...patch }));
-  }, []);
 
   function showToast(message: string) {
     setToastMsg(message);
@@ -151,6 +36,13 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     }
     toastTimerRef.current = setTimeout(() => setToastMsg(null), 3500);
   }
+
+  const { payload, loadError, isReloading, loadData } = useBenchPayload({
+    initialPayload,
+    onReloadError: showToast,
+  });
+
+  useHashSync({ payload, view, patchView });
 
   // ─── Derived state ──────────────────────────────────────────────────────────
 
@@ -246,8 +138,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     return uniqueEnvKeys.length > 1 && !view.envKey;
   }, [uniqueEnvKeys, view.envKey]);
 
-  const primaryLib = orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0];
-  const compareLibs = orderedLibraries.filter((l) => !l.isPrimary);
+  const primaryLib = useMemo(
+    () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
+    [orderedLibraries],
+  );
+  const compareLibs = useMemo(
+    () => orderedLibraries.filter((l) => !l.isPrimary),
+    [orderedLibraries],
+  );
 
   // ─── Auto-select first visible scenario when filters change ────────────────
 
@@ -260,50 +158,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       patchView({ scenarioId: visibleScenarios[0]?.id ?? "" });
     }
   }, [payload, visibleScenarios, view.scenarioId, patchView]);
-
-  // ─── Apply URL hash on payload load ────────────────────────────────────────
-
-  useEffect(() => {
-    if (!payload || typeof window === "undefined") {
-      return;
-    }
-    const raw = window.location.hash;
-    if (!raw || raw.length < 2) {
-      return;
-    }
-    hashApplyingRef.current = true;
-    try {
-      const patch = parseHash(raw, payload);
-      if (Object.keys(patch).length > 0) {
-        patchView(patch);
-      }
-    } finally {
-      hashApplyingRef.current = false;
-    }
-  }, [payload, patchView]);
-
-  // ─── Sync URL hash on view change (debounced 120 ms) ──────────────────────
-
-  useEffect(() => {
-    if (!payload || typeof window === "undefined" || hashApplyingRef.current) {
-      return;
-    }
-    if (hashSyncTimerRef.current) {
-      clearTimeout(hashSyncTimerRef.current);
-    }
-    hashSyncTimerRef.current = setTimeout(() => {
-      const next = buildHash(view);
-      const withHash = next ? `#${next}` : "";
-      if (window.location.hash === withHash) {
-        return;
-      }
-      window.history.replaceState(
-        null,
-        "",
-        window.location.pathname + window.location.search + withHash,
-      );
-    }, 120);
-  }, [view, payload]);
 
   // ─── details persistence via localStorage ──────────────────────────────────
 
@@ -372,36 +226,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       paletteInputRef.current?.focus();
     }
   }, [commandPaletteOpen]);
-
-  // ─── Data loading ───────────────────────────────────────────────────────────
-
-  async function loadData(isReload = false) {
-    if (isReload) {
-      setIsReloading(true);
-    }
-    try {
-      const res = await fetch("/api/payload", { cache: "no-store" });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const data = (await res.json()) as EmbeddedViewerPayload;
-      setPayload(data);
-      setLoadError(null);
-      if (!view.scenarioId && data.scenarios[0]) {
-        patchView({ scenarioId: data.scenarios[0].id });
-      }
-    } catch (err) {
-      if (isReload) {
-        showToast(`Could not reload data: ${String(err)}`);
-      } else {
-        setLoadError(String(err));
-      }
-    } finally {
-      if (isReload) {
-        setIsReloading(false);
-      }
-    }
-  }
 
   // ─── PNG export ─────────────────────────────────────────────────────────────
 
@@ -493,13 +317,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     { id: "download-png", label: "Download chart as PNG" },
     { id: "copy-link", label: "Copy link to this view" },
   ];
-
-  const filteredPaletteActions = paletteActions.filter((a) => {
-    if (!paletteQuery.trim()) {
-      return true;
-    }
-    return a.label.toLowerCase().includes(paletteQuery.toLowerCase());
-  });
 
   // ─── Metrics ────────────────────────────────────────────────────────────────
 
@@ -639,39 +456,13 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         )}
 
         {/* Scenario finder */}
-        <section aria-label="Find scenarios" className="bh-find-panel bh-glass bh-glass--tight">
-          <h2 className="bh-section-title">Find scenarios</h2>
-          <div className="bh-find-panel__row">
-            <label className="bh-label-wrap--search">
-              <span className="bh-field-label">Search</span>
-              <input
-                autoComplete="off"
-                className="bh-focus bh-field bh-field--search"
-                id="scenario-search"
-                onChange={(e) => patchView({ search: e.target.value })}
-                placeholder="Filter by scenario, group…"
-                type="search"
-                value={view.search}
-              />
-            </label>
-            <label className="bh-label-wrap--group">
-              <span className="bh-field-label">Group</span>
-              <select
-                aria-label="Filter by group"
-                className="bh-focus bh-field bh-field--group"
-                onChange={(e) => patchView({ group: e.target.value })}
-                value={view.group}
-              >
-                <option value="">All groups</option>
-                {uniqueGroups.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </section>
+        <FindPanel
+          group={view.group}
+          onGroupChange={(v) => patchView({ group: v })}
+          onSearchChange={(v) => patchView({ search: v })}
+          search={view.search}
+          uniqueGroups={uniqueGroups}
+        />
 
         {/* Chart control panel */}
         <div aria-label="Chart data selection" className="bh-chart-control-panel bh-glass--sticky">
@@ -817,33 +608,11 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         {/* Metrics panel */}
-        <section
-          aria-live="polite"
-          className="bh-metrics-section bh-metrics-section--after-chart bh-glass bh-glass--tight"
-          id="summary"
-        >
-          <div className="bh-metrics-section__head">
-            <h2 className="bh-section-title">Selected scenario metrics</h2>
-            {currentScenario && runIndices.length > 0 && (
-              <span
-                className={`bh-chip ${metricsData?.hasHighDispersion ? "bh-chip--warn" : "bh-chip--ok"}`}
-              >
-                [{currentScenario.group}] {currentScenario.id}
-              </span>
-            )}
-          </div>
-          {currentScenario?.what && (
-            <p className="bh-metrics-section__what">{currentScenario.what}</p>
-          )}
-          <div className="bh-metrics-section__cards bh-metrics-grid">
-            {metricsData?.cards.map((card, i) => (
-              <MetricCard key={i} {...card} />
-            ))}
-          </div>
-          {metricsData?.footnote && (
-            <p className="bh-metrics-section__footnote">{metricsData.footnote}</p>
-          )}
-        </section>
+        <MetricsPanel
+          currentScenario={currentScenario}
+          metricsData={metricsData}
+          runIndices={runIndices}
+        />
 
         {/* History KPIs */}
         <div aria-label="History overview" className="bh-kpi-grid">
@@ -966,60 +735,15 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       </main>
 
       {/* Command palette */}
-      <div
-        aria-hidden={!commandPaletteOpen}
-        aria-labelledby="command-palette-title"
-        aria-modal="true"
-        className={`bh-command-palette ${commandPaletteOpen ? "" : "bh-command-palette--hidden"}`}
-        id="command-palette"
-        role="dialog"
-      >
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- scrim dismisses dialog on click/Escape; Escape is handled by the parent dialog keydown */}
-        <div className="bh-command-palette__scrim" onClick={() => setCommandPaletteOpen(false)} />
-        <div className="bh-glass bh-command-palette__panel">
-          <p className="sr-only" id="command-palette-title">
-            Command palette
-          </p>
-          <input
-            aria-autocomplete="list"
-            aria-controls="command-palette-list"
-            autoComplete="off"
-            className="bh-focus bh-field bh-command-palette__input"
-            onChange={(e) => setPaletteQuery(e.target.value)}
-            placeholder="Search actions…"
-            ref={paletteInputRef}
-            type="search"
-            value={paletteQuery}
-          />
-          {/* eslint-disable-next-line jsx-a11y/prefer-tag-over-role -- command palette is not a native <select>; listbox/option is the correct ARIA pattern here */}
-          <ul className="bh-command-palette__list" id="command-palette-list" role="listbox">
-            {filteredPaletteActions.map((a) => (
-              <li key={a.id} role="none">
-                <button
-                  aria-selected={false}
-                  className="bh-focus bh-command-palette__item"
-                  onClick={() => runPaletteCommand(a.id)}
-                  role="option"
-                  type="button"
-                >
-                  {a.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="bh-command-palette__hint" suppressHydrationWarning>
-            {typeof window !== "undefined" && isMacLikePlatform() ? (
-              <>
-                Esc closes · <kbd className="bh-kbd">⌘K</kbd> toggles
-              </>
-            ) : (
-              <>
-                Esc closes · <kbd className="bh-kbd">Ctrl+K</kbd> toggles
-              </>
-            )}
-          </p>
-        </div>
-      </div>
+      <CommandPalette
+        actions={paletteActions}
+        inputRef={paletteInputRef}
+        isOpen={commandPaletteOpen}
+        onAction={runPaletteCommand}
+        onClose={() => setCommandPaletteOpen(false)}
+        onQueryChange={setPaletteQuery}
+        query={paletteQuery}
+      />
 
       {/* Toast */}
       <div
@@ -1033,243 +757,4 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       </div>
     </>
   );
-}
-
-// ─── Metric card ──────────────────────────────────────────────────────────────
-
-interface MetricCardProps {
-  label: string;
-  value: string;
-  meta: Array<string>;
-  accentColor?: string;
-  isRatio?: boolean;
-}
-
-function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProps) {
-  return (
-    <div
-      aria-label={label}
-      className={`bh-card${isRatio ? " bh-metric--accent-ratio" : ""}`}
-      role="group"
-      style={
-        accentColor
-          ? ({ "--color-bh-metric-accent": accentColor } as React.CSSProperties)
-          : undefined
-      }
-    >
-      <div className="bh-lbl bh-tint-lbl">{label}</div>
-      <div className="bh-val bh-tint-val">{value}</div>
-      {meta.map((m, i) => (
-        <div className="bh-metric__meta" dangerouslySetInnerHTML={{ __html: m }} key={i} />
-      ))}
-    </div>
-  );
-}
-
-// ─── Metrics computation ──────────────────────────────────────────────────────
-
-interface MetricsResult {
-  cards: Array<MetricCardProps>;
-  hasHighDispersion: boolean;
-  footnote: string;
-}
-
-function buildMetrics(
-  scenario: EmbeddedScenarioSeries,
-  runIndices: Array<number>,
-  orderedLibraries: Array<EmbeddedLibraryMeta>,
-  paletteMap: Record<string, PaletteEntry>,
-  primaryLib: EmbeddedLibraryMeta | undefined,
-  compareLibs: Array<EmbeddedLibraryMeta>,
-  baseRunIndices: Array<number>,
-  envKey: string,
-  runWindow: string,
-): MetricsResult {
-  const cards: Array<MetricCardProps> = [];
-  let worstIqr = 0;
-
-  for (const lib of orderedLibraries) {
-    const libData = scenario.libraries[lib.key];
-    if (!libData) {
-      continue;
-    }
-    const color = paletteMap[lib.key]?.text;
-    const hzValues = runIndices
-      .map((gx) => libData.hz[gx])
-      .filter((v): v is number => typeof v === "number" && v > 0);
-
-    const median = medianNumeric(hzValues);
-    const lo = hzValues.length ? Math.min(...hzValues) : null;
-    const hi = hzValues.length ? Math.max(...hzValues) : null;
-
-    const hzAtOldest = runIndices[0] !== undefined ? (libData.hz[runIndices[0]] ?? null) : null;
-    const hzAtNewest =
-      runIndices[runIndices.length - 1] !== undefined
-        ? (libData.hz[runIndices[runIndices.length - 1]!] ?? null)
-        : null;
-
-    let trend = "—";
-    if (
-      runIndices.length >= 2 &&
-      typeof hzAtOldest === "number" &&
-      hzAtOldest > 0 &&
-      typeof hzAtNewest === "number" &&
-      hzAtNewest > 0
-    ) {
-      trend = fmtPctChange(hzAtOldest, hzAtNewest) + ", oldest → newest run in filter";
-    }
-
-    const runsWithData = hzValues.length;
-    const runsPlotted = runIndices.length;
-
-    for (const gx of runIndices) {
-      const f = libData.iqrFraction[gx];
-      if (typeof f === "number" && Number.isFinite(f)) {
-        worstIqr = Math.max(worstIqr, f);
-      }
-    }
-
-    const meta: Array<string> = [];
-    if (lo !== null && hi !== null) {
-      meta.push(`<span class="bh-metric__meta--mono">Range ${fmtHz(lo)} … ${fmtHz(hi)}</span>`);
-    }
-    meta.push(`Δ ${trend}`);
-    if (runsWithData < runsPlotted) {
-      meta.push(
-        `<span class="bh-metric__meta--fine">${runsWithData} of ${runsPlotted} plotted runs have median hz/op</span>`,
-      );
-    }
-
-    cards.push({
-      label: `${lib.displayName} median hz/op`,
-      value: median !== null ? `${fmtHz(median)} Hz/op` : "—",
-      meta,
-      accentColor: color,
-    });
-  }
-
-  // Ratio cards
-  if (primaryLib) {
-    for (const cmpLib of compareLibs) {
-      const primData = scenario.libraries[primaryLib.key];
-      const cmpData = scenario.libraries[cmpLib.key];
-      if (!primData || !cmpData) {
-        continue;
-      }
-
-      const primHzVals = runIndices
-        .map((gx) => primData.hz[gx])
-        .filter((v): v is number => typeof v === "number" && v > 0);
-      const cmpHzVals = runIndices
-        .map((gx) => cmpData.hz[gx])
-        .filter((v): v is number => typeof v === "number" && v > 0);
-      const primMed = medianNumeric(primHzVals);
-      const cmpMed = medianNumeric(cmpHzVals);
-      const ratioMedians = ratioFrom(primMed, cmpMed);
-      const runRatios = runIndices
-        .map((gx) => ratioFrom(primData.hz[gx], cmpData.hz[gx]))
-        .filter((v): v is number => v !== null);
-      const medianOfRunRatios = medianNumeric(runRatios);
-      const showPaired =
-        medianOfRunRatios !== null &&
-        ratioMedians !== null &&
-        Math.abs(medianOfRunRatios - ratioMedians) / ratioMedians > 0.002;
-
-      const meta = [
-        "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
-      ];
-      if (showPaired) {
-        meta.push(
-          `Median of per-run ratios · <span class="bh-metric__fig">${medianOfRunRatios!.toFixed(3)}×</span>`,
-        );
-      }
-
-      cards.push({
-        label: `Ratio · ${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
-        value: ratioMedians !== null ? `${ratioMedians.toFixed(3)}×` : "—",
-        meta,
-        isRatio: true,
-      });
-    }
-  }
-
-  // IQR card
-  const iqrRows = orderedLibraries.map((lib) => {
-    const libData = scenario.libraries[lib.key];
-    let fig = "—";
-    if (libData) {
-      let maxF = 0;
-      for (const gx of runIndices) {
-        const f = libData.iqrFraction[gx];
-        if (typeof f === "number" && Number.isFinite(f)) {
-          maxF = Math.max(maxF, f);
-        }
-      }
-      if (maxF > 0) {
-        fig = `${(maxF * 100).toFixed(1)}%`;
-      }
-    }
-    return `<div class="bh-metric-row"><span class="bh-metric-row__name">${lib.displayName}</span><span class="bh-metric-row__fig">${fig}</span></div>`;
-  });
-
-  cards.push({
-    label: "Worst IQR÷median · per plotted run",
-    value: "",
-    meta: [`<div class="bh-metric__iqr">${iqrRows.join("")}</div>`],
-  });
-
-  const footPieces: Array<string> = [
-    `${runIndices.length} run(s) on the chart${envKey ? "; environment filter on" : "; all environments"}. Median & range: all filtered runs with hz/op. Δ: % change from first → last run in this view when both have data`,
-  ];
-  if (runWindow !== "all" && runIndices.length < baseRunIndices.length) {
-    footPieces.push(
-      `Runs shown: last ${runIndices.length} of ${baseRunIndices.length} runs matching Environment + search/group filters`,
-    );
-  }
-  if (worstIqr > DISPERSION_IQR_ALERT) {
-    footPieces.push(
-      `elevated per-trial dispersion (IQR above ${DISPERSION_IQR_ALERT * 100}% of median) on ≥1 plotted run — inspect tooltip IQR%`,
-    );
-  }
-
-  return {
-    cards,
-    hasHighDispersion: worstIqr > DISPERSION_IQR_ALERT,
-    footnote: footPieces.join(". ") + ".",
-  };
-}
-
-// ─── Snapshot row ─────────────────────────────────────────────────────────────
-
-interface SnapshotRow {
-  id: string;
-  group: string;
-  hzCells: Array<string>;
-  ratioCells: Array<string>;
-}
-
-function buildSnapshotRow(
-  s: EmbeddedScenarioSeries,
-  lastIx: number,
-  orderedLibraries: Array<EmbeddedLibraryMeta>,
-  paletteMap: Record<string, PaletteEntry>,
-  primaryLib: EmbeddedLibraryMeta | undefined,
-  compareLibs: Array<EmbeddedLibraryMeta>,
-): SnapshotRow {
-  const libHzMap: Record<string, number | null> = {};
-  const hzCells: Array<string> = [];
-  for (const lib of orderedLibraries) {
-    const hz = s.libraries[lib.key]?.hz[lastIx] ?? null;
-    const val = typeof hz === "number" && hz > 0 ? hz : null;
-    libHzMap[lib.key] = val;
-    hzCells.push(val !== null ? fmtHz(val) : "—");
-  }
-
-  const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
-  const ratioCells: Array<string> = compareLibs.map((cmp) => {
-    const ratio = ratioFrom(primaryHz, libHzMap[cmp.key] ?? null);
-    return ratio !== null ? `${ratio.toFixed(3)}×` : "—";
-  });
-
-  return { id: s.id, group: s.group, hzCells, ratioCells };
 }
