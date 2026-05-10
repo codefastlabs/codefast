@@ -1,0 +1,15 @@
+---
+description: @codefast/ui component library conventions
+globs: packages/ui/**/*
+alwaysApply: false
+---
+
+# @codefast/ui
+
+- **Purpose:** Shared React components and hooks for the design system. Consumers (e.g. `apps/docs`) should import from `@codefast/ui` subpaths — avoid copying components into the app.
+- **Exports:** New public surface must be reflected in **`packages/ui/package.json`** `exports` (and build output via existing `tsdown` setup).
+- **Imports:** Use **`#/`…`** aliases from this package’s `imports` field.
+- **Styling:** Uses `@codefast/tailwind-variants` and Tailwind v4 patterns already in the package; align with existing components before introducing new styling approaches.
+- **Tests:** Colocate under **`packages/ui/tests/`** following existing Vitest layout (`unit`, `e2e`, etc.).
+
+Before adding a component, **search** `packages/ui/src` for an existing primitive or pattern to extend.

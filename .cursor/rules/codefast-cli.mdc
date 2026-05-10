@@ -1,0 +1,14 @@
+---
+description: CLI package layout and conventions (@codefast/cli)
+globs: packages/cli/**/*
+alwaysApply: false
+---
+
+# @codefast/cli
+
+- **Canonical doc:** **[`packages/cli/ARCHITECTURE.md`](packages/cli/ARCHITECTURE.md)** — layout (`bin`, `cli`, `core`, `config`, `arrange`, `mirror`, `tag`), boundaries, `#/` imports, naming (`SPEC.md`).
+- **Style:** Commander argv, `Result` / `AppError`, plain functions — avoid introducing DI containers or hexagonal ceremony here.
+- **Domain:** Keep **`*/domain/**`** pure (no Commander, `process`, or ad hoc logging); I/O at edges or in `core/`.
+- **Tests:** Under **`packages/cli/tests/`** only (Vitest, Node).
+
+When editing CLI, open or `@`-mention **`packages/cli/ARCHITECTURE.md`** at the start of the task.
