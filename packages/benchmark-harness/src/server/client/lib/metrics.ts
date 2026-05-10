@@ -1,3 +1,8 @@
+import type { PaletteEntry } from "#/server/client/lib/colors";
+import { DISPERSION_IQR_ALERT } from "#/server/client/lib/constants";
+import { fmtHz, fmtPctChange } from "#/server/client/lib/format";
+import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/server/server-types";
+
 export function medianNumeric(values: Array<number | null | undefined>): number | null {
   const sorted = values
     .filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v > 0)
@@ -16,4 +21,216 @@ export function ratioFrom(
   b: number | null | undefined,
 ): number | null {
   return typeof a === "number" && typeof b === "number" && a > 0 && b > 0 ? a / b : null;
+}
+
+export interface MetricCardProps {
+  label: string;
+  value: string;
+  meta: Array<string>;
+  accentColor?: string;
+  isRatio?: boolean;
+}
+
+export interface MetricsResult {
+  cards: Array<MetricCardProps>;
+  hasHighDispersion: boolean;
+  footnote: string;
+}
+
+export interface SnapshotRow {
+  id: string;
+  group: string;
+  hzCells: Array<string>;
+  ratioCells: Array<string>;
+}
+
+export function buildMetrics(
+  scenario: EmbeddedScenarioSeries,
+  runIndices: Array<number>,
+  orderedLibraries: Array<EmbeddedLibraryMeta>,
+  paletteMap: Record<string, PaletteEntry>,
+  primaryLib: EmbeddedLibraryMeta | undefined,
+  compareLibs: Array<EmbeddedLibraryMeta>,
+  baseRunIndices: Array<number>,
+  envKey: string,
+  runWindow: string,
+): MetricsResult {
+  const cards: Array<MetricCardProps> = [];
+  let worstIqr = 0;
+
+  for (const lib of orderedLibraries) {
+    const libData = scenario.libraries[lib.key];
+    if (!libData) {
+      continue;
+    }
+    const color = paletteMap[lib.key]?.text;
+    const hzValues = runIndices
+      .map((gx) => libData.hz[gx])
+      .filter((v): v is number => typeof v === "number" && v > 0);
+
+    const median = medianNumeric(hzValues);
+    const lo = hzValues.length ? Math.min(...hzValues) : null;
+    const hi = hzValues.length ? Math.max(...hzValues) : null;
+
+    const hzAtOldest = runIndices[0] !== undefined ? (libData.hz[runIndices[0]] ?? null) : null;
+    const hzAtNewest =
+      runIndices[runIndices.length - 1] !== undefined
+        ? (libData.hz[runIndices[runIndices.length - 1]!] ?? null)
+        : null;
+
+    let trend = "—";
+    if (
+      runIndices.length >= 2 &&
+      typeof hzAtOldest === "number" &&
+      hzAtOldest > 0 &&
+      typeof hzAtNewest === "number" &&
+      hzAtNewest > 0
+    ) {
+      trend = fmtPctChange(hzAtOldest, hzAtNewest) + ", oldest → newest run in filter";
+    }
+
+    const runsWithData = hzValues.length;
+    const runsPlotted = runIndices.length;
+
+    for (const gx of runIndices) {
+      const f = libData.iqrFraction[gx];
+      if (typeof f === "number" && Number.isFinite(f)) {
+        worstIqr = Math.max(worstIqr, f);
+      }
+    }
+
+    const meta: Array<string> = [];
+    if (lo !== null && hi !== null) {
+      meta.push(`<span class="bh-metric__meta--mono">Range ${fmtHz(lo)} … ${fmtHz(hi)}</span>`);
+    }
+    meta.push(`Δ ${trend}`);
+    if (runsWithData < runsPlotted) {
+      meta.push(
+        `<span class="bh-metric__meta--fine">${runsWithData} of ${runsPlotted} plotted runs have median hz/op</span>`,
+      );
+    }
+
+    cards.push({
+      label: `${lib.displayName} median hz/op`,
+      value: median !== null ? `${fmtHz(median)} Hz/op` : "—",
+      meta,
+      accentColor: color,
+    });
+  }
+
+  // Ratio cards
+  if (primaryLib) {
+    for (const cmpLib of compareLibs) {
+      const primData = scenario.libraries[primaryLib.key];
+      const cmpData = scenario.libraries[cmpLib.key];
+      if (!primData || !cmpData) {
+        continue;
+      }
+
+      const primHzVals = runIndices
+        .map((gx) => primData.hz[gx])
+        .filter((v): v is number => typeof v === "number" && v > 0);
+      const cmpHzVals = runIndices
+        .map((gx) => cmpData.hz[gx])
+        .filter((v): v is number => typeof v === "number" && v > 0);
+      const primMed = medianNumeric(primHzVals);
+      const cmpMed = medianNumeric(cmpHzVals);
+      const ratioMedians = ratioFrom(primMed, cmpMed);
+      const runRatios = runIndices
+        .map((gx) => ratioFrom(primData.hz[gx], cmpData.hz[gx]))
+        .filter((v): v is number => v !== null);
+      const medianOfRunRatios = medianNumeric(runRatios);
+      const showPaired =
+        medianOfRunRatios !== null &&
+        ratioMedians !== null &&
+        Math.abs(medianOfRunRatios - ratioMedians) / ratioMedians > 0.002;
+
+      const meta = [
+        "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
+      ];
+      if (showPaired) {
+        meta.push(
+          `Median of per-run ratios · <span class="bh-metric__fig">${medianOfRunRatios!.toFixed(3)}×</span>`,
+        );
+      }
+
+      cards.push({
+        label: `Ratio · ${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
+        value: ratioMedians !== null ? `${ratioMedians.toFixed(3)}×` : "—",
+        meta,
+        isRatio: true,
+      });
+    }
+  }
+
+  // IQR card
+  const iqrRows = orderedLibraries.map((lib) => {
+    const libData = scenario.libraries[lib.key];
+    let fig = "—";
+    if (libData) {
+      let maxF = 0;
+      for (const gx of runIndices) {
+        const f = libData.iqrFraction[gx];
+        if (typeof f === "number" && Number.isFinite(f)) {
+          maxF = Math.max(maxF, f);
+        }
+      }
+      if (maxF > 0) {
+        fig = `${(maxF * 100).toFixed(1)}%`;
+      }
+    }
+    return `<div class="bh-metric-row"><span class="bh-metric-row__name">${lib.displayName}</span><span class="bh-metric-row__fig">${fig}</span></div>`;
+  });
+
+  cards.push({
+    label: "Worst IQR÷median · per plotted run",
+    value: "",
+    meta: [`<div class="bh-metric__iqr">${iqrRows.join("")}</div>`],
+  });
+
+  const footPieces: Array<string> = [
+    `${runIndices.length} run(s) on the chart${envKey ? "; environment filter on" : "; all environments"}. Median & range: all filtered runs with hz/op. Δ: % change from first → last run in this view when both have data`,
+  ];
+  if (runWindow !== "all" && runIndices.length < baseRunIndices.length) {
+    footPieces.push(
+      `Runs shown: last ${runIndices.length} of ${baseRunIndices.length} runs matching Environment + search/group filters`,
+    );
+  }
+  if (worstIqr > DISPERSION_IQR_ALERT) {
+    footPieces.push(
+      `elevated per-trial dispersion (IQR above ${DISPERSION_IQR_ALERT * 100}% of median) on ≥1 plotted run — inspect tooltip IQR%`,
+    );
+  }
+
+  return {
+    cards,
+    hasHighDispersion: worstIqr > DISPERSION_IQR_ALERT,
+    footnote: footPieces.join(". ") + ".",
+  };
+}
+
+export function buildSnapshotRow(
+  s: EmbeddedScenarioSeries,
+  lastIx: number,
+  orderedLibraries: Array<EmbeddedLibraryMeta>,
+  paletteMap: Record<string, PaletteEntry>,
+  primaryLib: EmbeddedLibraryMeta | undefined,
+  compareLibs: Array<EmbeddedLibraryMeta>,
+): SnapshotRow {
+  const libHzMap: Record<string, number | null> = {};
+  const hzCells: Array<string> = [];
+  for (const lib of orderedLibraries) {
+    const hz = s.libraries[lib.key]?.hz[lastIx] ?? null;
+    const val = typeof hz === "number" && hz > 0 ? hz : null;
+    libHzMap[lib.key] = val;
+    hzCells.push(val !== null ? fmtHz(val) : "—");
+  }
+
+  const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
+  const ratioCells: Array<string> = compareLibs.map((cmp) => {
+    const ratio = ratioFrom(primaryHz, libHzMap[cmp.key] ?? null);
+    return ratio !== null ? `${ratio.toFixed(3)}×` : "—";
+  });
+
+  return { id: s.id, group: s.group, hzCells, ratioCells };
 }

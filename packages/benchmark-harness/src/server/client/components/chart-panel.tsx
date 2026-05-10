@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useRef } from "react";
+import { type RefObject, useEffect, useMemo, useRef } from "react";
 import type {
   EmbeddedLibraryMeta,
   EmbeddedRun,
@@ -83,8 +83,14 @@ export function ChartPanel({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<ChartInstance | null>(null);
 
-  const primaryLib = orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0];
-  const compareLibs = orderedLibraries.filter((l) => !l.isPrimary);
+  const primaryLib = useMemo(
+    () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
+    [orderedLibraries],
+  );
+  const compareLibs = useMemo(
+    () => orderedLibraries.filter((l) => !l.isPrimary),
+    [orderedLibraries],
+  );
 
   const hasData = scenario !== null && runIndices.length > 0;
   const emptyReason = getEmptyReason(scenario, runIndices, runs, envKey);

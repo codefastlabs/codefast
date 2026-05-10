@@ -14,6 +14,4 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
 
 export const RATIO_COLORS = ["#fbbf77", "#f472b6", "#a78bfa", "#34d399"] as const;
 
-export const ZOOM_STEP_X = 1.15;
-export const PAN_PIXELS_X = 120;
-export const DISPERSION_IQR_ALERT = 0.25;
+export { DISPERSION_IQR_ALERT, PAN_PIXELS_X, ZOOM_STEP_X } from "#/server/client/lib/constants";
