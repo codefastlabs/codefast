@@ -1,9 +1,27 @@
 import type { RefObject } from "react";
+import { useEffect, useState } from "react";
 import { isMacLikePlatform } from "#/server/client/lib/format";
 
 interface PaletteAction {
   id: string;
   label: string;
+}
+
+/** Matches SSR (no navigator): Ctrl+K until mount, then ⌘K on mac-like clients. */
+function PaletteShortcutHint() {
+  const [useMacKeys, setUseMacKeys] = useState(false);
+
+  useEffect(() => {
+    setUseMacKeys(isMacLikePlatform());
+  }, []);
+
+  const label = useMacKeys ? "⌘K" : "Ctrl+K";
+
+  return (
+    <>
+      Esc closes · <kbd className="bh-kbd">{label}</kbd> toggles
+    </>
+  );
 }
 
 interface CommandPaletteProps {
@@ -71,16 +89,8 @@ export function CommandPalette({
             </li>
           ))}
         </ul>
-        <p className="bh-command-palette__hint" suppressHydrationWarning>
-          {typeof window !== "undefined" && isMacLikePlatform() ? (
-            <>
-              Esc closes · <kbd className="bh-kbd">⌘K</kbd> toggles
-            </>
-          ) : (
-            <>
-              Esc closes · <kbd className="bh-kbd">Ctrl+K</kbd> toggles
-            </>
-          )}
+        <p className="bh-command-palette__hint">
+          <PaletteShortcutHint />
         </p>
       </div>
     </div>

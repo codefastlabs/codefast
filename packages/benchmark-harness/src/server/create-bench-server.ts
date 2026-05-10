@@ -11,6 +11,11 @@ import type { BenchServerOptions } from "#/server/server-types";
 const clientDir = join(dirname(fileURLToPath(import.meta.url)), "client");
 
 /**
+ * Creates an HTTP server for the benchmark history viewer.
+ *
+ * Bind to loopback (`127.0.0.1`) unless you intend to expose benchmark results on the network:
+ * routes stream JSON and HTML derived from {@link BenchServerOptions.benchResultsDir}.
+ *
  * @since 0.3.16-canary.0
  */
 export function createBenchServer(options: BenchServerOptions): Server {
@@ -19,9 +24,9 @@ export function createBenchServer(options: BenchServerOptions): Server {
 
     if (url.pathname === "/") {
       try {
-        const rawRuns = listRawRuns(options.benchResultsDir);
-        const payload = buildEmbeddedPayload(rawRuns, options);
-        renderDocument(payload, res);
+        const { runs: rawRuns, warning } = listRawRuns(options.benchResultsDir);
+        const payload = buildEmbeddedPayload(rawRuns, options, warning);
+        renderDocument(payload, res, req);
       } catch (err) {
         res.writeHead(500, { "Content-Type": "text/plain" });
         res.end(String(err));
@@ -45,8 +50,8 @@ export function createBenchServer(options: BenchServerOptions): Server {
 
     if (url.pathname === "/api/payload") {
       try {
-        const rawRuns = listRawRuns(options.benchResultsDir);
-        const payload = buildEmbeddedPayload(rawRuns, options);
+        const { runs: rawRuns, warning } = listRawRuns(options.benchResultsDir);
+        const payload = buildEmbeddedPayload(rawRuns, options, warning);
         res.writeHead(200, {
           "Content-Type": "application/json; charset=utf-8",
           "Cache-Control": "no-store",

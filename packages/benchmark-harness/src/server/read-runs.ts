@@ -11,6 +11,17 @@ export interface RunLines {
   readonly lines: ReadonlyArray<string>;
 }
 
+/**
+ * Result of scanning `benchResultsDir` for run folders.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface ListRawRunsResult {
+  readonly runs: ReadonlyArray<RunLines>;
+  /** When set, the bench results directory could not be read (missing path, permissions, etc.). */
+  readonly warning: string | undefined;
+}
+
 function readRunDirectory(runDirPath: string, folderName: string): RunLines | undefined {
   const jsonlPath = join(runDirPath, OBSERVATIONS_FILE_NAME);
   let content: string;
@@ -29,12 +40,16 @@ function readRunDirectory(runDirPath: string, folderName: string): RunLines | un
 /**
  * @since 0.3.16-canary.0
  */
-export function listRawRuns(benchResultsDir: string): Array<RunLines> {
+export function listRawRuns(benchResultsDir: string): ListRawRunsResult {
   let entries: Array<Dirent<string>>;
   try {
     entries = readdirSync(benchResultsDir, { withFileTypes: true });
-  } catch {
-    return [];
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    return {
+      runs: [],
+      warning: `Could not read bench results directory (${benchResultsDir}): ${detail}`,
+    };
   }
   const runs: Array<RunLines> = [];
   for (const entry of entries) {
@@ -47,5 +62,5 @@ export function listRawRuns(benchResultsDir: string): Array<RunLines> {
     }
   }
   runs.sort((left, right) => left.folderName.localeCompare(right.folderName));
-  return runs;
+  return { runs, warning: undefined };
 }

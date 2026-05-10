@@ -104,7 +104,7 @@ export { createBenchServer } from "#/server/create-bench-server";
 export { buildEmbeddedPayload } from "#/server/build-payload";
 export { findAvailablePort } from "#/server/find-available-port";
 
-export type { RunLines } from "#/server/read-runs";
+export type { ListRawRunsResult, RunLines } from "#/server/read-runs";
 export { listRawRuns } from "#/server/read-runs";
 
 export type { StartBenchServerOptions } from "#/server/start-bench-server";

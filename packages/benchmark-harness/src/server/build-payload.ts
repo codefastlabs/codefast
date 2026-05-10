@@ -23,7 +23,12 @@ function jsonlToLibraryReport(
 ): LibraryReport | undefined {
   const observations: Array<JsonlBenchObservationRow> = [];
   for (const line of lines) {
-    const parsed = JSON.parse(line) as JsonlBenchObservationRow;
+    let parsed: JsonlBenchObservationRow;
+    try {
+      parsed = JSON.parse(line) as JsonlBenchObservationRow;
+    } catch {
+      continue;
+    }
     if (parsed.libraryName === libraryName) {
       observations.push(parsed);
     }
@@ -55,7 +60,12 @@ function hzTrialSpread(
 ): { p25Hz: number; medianHz: number; p75Hz: number } | null {
   const perTrialHz = new Map<number, number>();
   for (const line of lines) {
-    const obs = JSON.parse(line) as JsonlBenchObservationRow;
+    let obs: JsonlBenchObservationRow;
+    try {
+      obs = JSON.parse(line) as JsonlBenchObservationRow;
+    } catch {
+      continue;
+    }
     if (obs.libraryName !== libraryName || obs.scenarioId !== scenarioId || obs.samples <= 0) {
       continue;
     }
@@ -76,10 +86,17 @@ function extractRunMeta(
   folderName: string,
   lines: ReadonlyArray<string>,
   libraryNames: ReadonlyArray<string>,
+  /** Env metadata (CPU, Node, timestamp, …) follows the primary library’s observations. */
+  canonicalLibraryKey: string,
 ): EmbeddedRun | undefined {
   const firstObsByLibrary = new Map<string, JsonlBenchObservationRow>();
   for (const line of lines) {
-    const obs = JSON.parse(line) as JsonlBenchObservationRow;
+    let obs: JsonlBenchObservationRow;
+    try {
+      obs = JSON.parse(line) as JsonlBenchObservationRow;
+    } catch {
+      continue;
+    }
     if (!firstObsByLibrary.has(obs.libraryName) && libraryNames.includes(obs.libraryName)) {
       firstObsByLibrary.set(obs.libraryName, obs);
     }
@@ -87,8 +104,7 @@ function extractRunMeta(
       break;
     }
   }
-  // Require at least the first configured library to have observations.
-  const canonical = firstObsByLibrary.get(libraryNames[0]!);
+  const canonical = firstObsByLibrary.get(canonicalLibraryKey);
   if (canonical === undefined) {
     return undefined;
   }
@@ -136,6 +152,7 @@ function hzIqrFractionLookup(report: LibraryReport, scenarioId: string): number 
 export function buildEmbeddedPayload(
   rawRuns: ReadonlyArray<RunLines>,
   options: BenchServerOptions,
+  benchResultsWarning?: string,
 ): EmbeddedViewerPayload {
   const libraryNames = options.libraries.map((lib) => lib.name);
 
@@ -184,7 +201,7 @@ export function buildEmbeddedPayload(
 
   // Build embedded runs.
   const embeddedRuns: Array<EmbeddedRun> = runs.map((run) => {
-    const meta = extractRunMeta(run.folderName, run.lines, libraryNames);
+    const meta = extractRunMeta(run.folderName, run.lines, libraryNames, primaryName);
     if (meta === undefined) {
       throw new Error(`build-payload: could not parse run metadata for ${run.folderName}`);
     }
@@ -230,5 +247,6 @@ export function buildEmbeddedPayload(
     runs: embeddedRuns,
     scenarios,
     generatedAtIso: new Date().toISOString(),
+    ...(benchResultsWarning !== undefined ? { benchResultsWarning } : {}),
   };
 }

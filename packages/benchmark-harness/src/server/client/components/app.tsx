@@ -4,6 +4,10 @@ import { ChartPanel } from "#/server/client/components/chart-panel";
 import { CommandPalette } from "#/server/client/components/command-palette";
 import { FindPanel } from "#/server/client/components/find-panel";
 import { MetricsPanel } from "#/server/client/components/metrics-panel";
+import {
+  ClientPageOpenedClock,
+  ClientSnapshotClock,
+} from "#/server/client/components/page-footer-clocks";
 import { useBenchPayload } from "#/server/client/hooks/use-bench-payload";
 import { useHashSync } from "#/server/client/hooks/use-hash-sync";
 import { useViewState } from "#/server/client/hooks/use-view-state";
@@ -22,7 +26,6 @@ import type {
 
 export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload }) {
   const { view, patchView } = useViewState(initialPayload);
-  const [pageOpenedAt] = useState<Date>(() => new Date());
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -446,6 +449,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           </details>
         </header>
 
+        {/* Bench results dir diagnostic */}
+        {payload.benchResultsWarning !== undefined && payload.benchResultsWarning.length > 0 && (
+          <div className="bh-env-banner" role="alert" style={{ display: "block" }}>
+            <strong className="bh-env-banner__title">Bench results directory.</strong>{" "}
+            {payload.benchResultsWarning}
+          </div>
+        )}
+
         {/* Multi-env banner */}
         {showMultiEnvBanner && (
           <div className="bh-env-banner" role="status" style={{ display: "block" }}>
@@ -724,13 +735,16 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         </details>
 
         {/* Footer */}
-        <p className="bh-page-footer" suppressHydrationWarning>
+        <p className="bh-page-footer">
           Reload data from Chart data or refresh the page for the latest snapshot ·{" "}
           {payload.runs.length} runs · {payload.scenarios.length} scenarios.
-          {payload.generatedAtIso
-            ? ` Data snapshot ${formatLocal(payload.generatedAtIso, payload.generatedAtIso)} (server clock).`
-            : ""}
-          {` Page opened ${formatLocal(pageOpenedAt.toISOString(), "")} (local).`}
+          {payload.generatedAtIso ? (
+            <>
+              {" "}
+              <ClientSnapshotClock iso={payload.generatedAtIso} />
+            </>
+          ) : null}{" "}
+          <ClientPageOpenedClock />
         </p>
       </main>
 

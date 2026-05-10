@@ -16,7 +16,8 @@ export function findAvailablePort(preferred: number): Promise<number> {
       }
     });
 
-    server.listen(preferred, () => {
+    // Match `startBenchServer` / production bind — probing `0.0.0.0`/`::` can disagree with loopback.
+    server.listen(preferred, "127.0.0.1", () => {
       const { port } = server.address() as AddressInfo;
       server.close(() => resolve(port));
     });

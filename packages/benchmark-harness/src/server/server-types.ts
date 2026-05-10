@@ -100,4 +100,9 @@ export interface EmbeddedViewerPayload {
   readonly scenarios: ReadonlyArray<EmbeddedScenarioSeries>;
   /** ISO timestamp when this JSON snapshot was built (server clock). */
   readonly generatedAtIso: string;
+  /**
+   * When the bench results directory could not be read, a short diagnostic for the UI.
+   * Omitted when the directory was read successfully (even if it contained no runs).
+   */
+  readonly benchResultsWarning?: string;
 }

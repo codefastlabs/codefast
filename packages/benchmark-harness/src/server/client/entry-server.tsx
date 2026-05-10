@@ -1,4 +1,4 @@
-import type { ServerResponse } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { Transform } from "node:stream";
 import { StrictMode } from "react";
 import { renderToPipeableStream } from "react-dom/server";
@@ -26,14 +26,33 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <div id="root">`;
 }
 
-export function renderDocument(payload: EmbeddedViewerPayload, res: ServerResponse): void {
+function safeEndHtmlSuffix(res: ServerResponse): void {
+  if (res.writableEnded || res.destroyed) {
+    return;
+  }
+  try {
+    res.end(HTML_SUFFIX);
+  } catch {
+    try {
+      res.destroy();
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+export function renderDocument(
+  payload: EmbeddedViewerPayload,
+  res: ServerResponse,
+  req: IncomingMessage,
+): void {
   const payloadJson = JSON.stringify(payload).replace(/</g, "\\u003c");
   const pageTitle = payload.title.trim();
 
   res.setHeader("content-type", "text/html; charset=utf-8");
   res.write(buildHtmlPrefix(payloadJson, pageTitle));
 
-  const { pipe } = renderToPipeableStream(
+  const { pipe, abort } = renderToPipeableStream(
     <StrictMode>
       <App initialPayload={payload} />
     </StrictMode>,
@@ -47,16 +66,46 @@ export function renderDocument(payload: EmbeddedViewerPayload, res: ServerRespon
             callback(null, HTML_SUFFIX);
           },
         });
+
+        appendSuffix.once("error", (err: Error) => {
+          console.error("[bench-server] SSR transform error:", err);
+          abort(err);
+        });
+
         appendSuffix.pipe(res);
+
+        res.once("error", (err: Error) => {
+          console.error("[bench-server] response stream error:", err);
+          abort(err);
+        });
+
         pipe(appendSuffix);
       },
       onShellError(error) {
         console.error("[bench-server] SSR shell error:", error);
-        res.end(HTML_SUFFIX);
+        abort(error);
+        safeEndHtmlSuffix(res);
       },
       onError(error) {
         console.error("[bench-server] SSR error:", error);
       },
     },
   );
+
+  function disconnectAbort(): void {
+    if (!res.writableEnded && !res.destroyed) {
+      abort(new DOMException("Client disconnected", "AbortError"));
+    }
+  }
+
+  req.once("aborted", disconnectAbort);
+
+  const { socket } = req;
+  if (socket !== null && !socket.destroyed) {
+    socket.once("close", () => {
+      if (!res.writableEnded && !res.destroyed) {
+        disconnectAbort();
+      }
+    });
+  }
 }
