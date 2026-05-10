@@ -17,7 +17,7 @@ export default defineConfig([
     platform: "browser",
     format: "iife",
     outDir: "dist/server/client",
-    noExternal: [/./],
+    deps: { alwaysBundle: [/./] },
     outputOptions: {
       entryFileNames: "[name].js",
     },
