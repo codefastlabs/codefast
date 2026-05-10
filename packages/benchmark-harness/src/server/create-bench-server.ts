@@ -12,6 +12,7 @@ import type { BenchServerOptions } from "#/server/server-types";
 const clientDir = join(dirname(fileURLToPath(import.meta.url)), "client");
 
 const IMMUTABLE = "public, max-age=31536000, immutable";
+const NO_CACHE = "no-cache";
 const NO_STORE = "no-store";
 
 interface CachedAsset {
@@ -19,6 +20,14 @@ interface CachedAsset {
   contentType: string;
   cacheControl: string;
   etag: string;
+}
+
+interface ServerState {
+  clientJs: CachedAsset;
+  stylesCss: CachedAsset;
+  chunksDir: string;
+  chunkCache: Map<string, CachedAsset>;
+  options: BenchServerOptions;
 }
 
 function computeEtag(data: Buffer | string): string {
@@ -44,6 +53,74 @@ function serveAsset(asset: CachedAsset, req: IncomingMessage, res: ServerRespons
   res.end(asset.content);
 }
 
+function initState(options: BenchServerOptions): ServerState {
+  return {
+    clientJs: loadAsset(
+      join(clientDir, "client.js"),
+      "application/javascript; charset=utf-8",
+      NO_CACHE,
+    ),
+    stylesCss: loadAsset(join(clientDir, "styles.css"), "text/css; charset=utf-8", NO_CACHE),
+    chunksDir: resolve(clientDir, "chunks"),
+    chunkCache: new Map(),
+    options,
+  };
+}
+
+function handleRoot(state: ServerState, req: IncomingMessage, res: ServerResponse): void {
+  try {
+    const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
+    const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
+    const etag = computeEtag(JSON.stringify(payload));
+    if (req.headers["if-none-match"] === etag) {
+      res.writeHead(304);
+      res.end();
+      return;
+    }
+    res.setHeader("Cache-Control", NO_CACHE);
+    res.setHeader("ETag", etag);
+    renderDocument(payload, res, req);
+  } catch (err) {
+    res.writeHead(500, { "Content-Type": "text/plain" });
+    res.end(String(err));
+  }
+}
+
+function handleChunk(
+  state: ServerState,
+  req: IncomingMessage,
+  res: ServerResponse,
+  name: string,
+): void {
+  const chunkPath = resolve(state.chunksDir, name);
+  if (!chunkPath.startsWith(state.chunksDir + "/")) {
+    res.writeHead(400);
+    res.end("Bad request");
+    return;
+  }
+  let chunk = state.chunkCache.get(name);
+  if (!chunk) {
+    chunk = loadAsset(chunkPath, "application/javascript; charset=utf-8", IMMUTABLE);
+    state.chunkCache.set(name, chunk);
+  }
+  serveAsset(chunk, req, res);
+}
+
+function handleApiPayload(state: ServerState, req: IncomingMessage, res: ServerResponse): void {
+  try {
+    const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
+    const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
+    res.writeHead(200, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": NO_STORE,
+    });
+    res.end(JSON.stringify(payload));
+  } catch (err) {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: String(err) }));
+  }
+}
+
 /**
  * Creates an HTTP server for the benchmark history viewer.
  *
@@ -53,81 +130,28 @@ function serveAsset(asset: CachedAsset, req: IncomingMessage, res: ServerRespons
  * @since 0.3.16-canary.0
  */
 export function createBenchServer(options: BenchServerOptions): Server {
-  const clientJs = loadAsset(
-    join(clientDir, "client.js"),
-    "application/javascript; charset=utf-8",
-    IMMUTABLE,
-  );
-  const stylesCss = loadAsset(join(clientDir, "styles.css"), "text/css; charset=utf-8", IMMUTABLE);
-
-  const chunksDir = resolve(clientDir, "chunks");
-  const chunkCache = new Map<string, CachedAsset>();
+  const state = initState(options);
 
   return createServer((req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost");
 
     if (url.pathname === "/") {
-      try {
-        const { runs: rawRuns, warning } = listRawRuns(options.benchResultsDir);
-        const payload = buildEmbeddedPayload(rawRuns, options, warning);
-        const etag = computeEtag(JSON.stringify(payload));
-        if (req.headers["if-none-match"] === etag) {
-          res.writeHead(304);
-          res.end();
-          return;
-        }
-        res.setHeader("Cache-Control", IMMUTABLE);
-        res.setHeader("ETag", etag);
-        renderDocument(payload, res, req);
-      } catch (err) {
-        res.writeHead(500, { "Content-Type": "text/plain" });
-        res.end(String(err));
-      }
-      return;
+      return handleRoot(state, req, res);
     }
-
     if (url.pathname === "/client.js") {
-      serveAsset(clientJs, req, res);
-      return;
+      return serveAsset(state.clientJs, req, res);
     }
-
     if (url.pathname === "/styles.css") {
-      serveAsset(stylesCss, req, res);
-      return;
+      return serveAsset(state.stylesCss, req, res);
     }
 
     const chunkMatch = /^\/chunks\/([^/]+\.js)$/.exec(url.pathname);
     if (chunkMatch) {
-      const name = chunkMatch[1]!;
-      const chunkPath = resolve(chunksDir, name);
-      if (!chunkPath.startsWith(chunksDir + "/")) {
-        res.writeHead(400);
-        res.end("Bad request");
-        return;
-      }
-      let chunk = chunkCache.get(name);
-      if (!chunk) {
-        chunk = loadAsset(chunkPath, "application/javascript; charset=utf-8", IMMUTABLE);
-        chunkCache.set(name, chunk);
-      }
-      serveAsset(chunk, req, res);
-      return;
+      return handleChunk(state, req, res, chunkMatch[1]!);
     }
 
     if (url.pathname === "/api/payload") {
-      try {
-        const { runs: rawRuns, warning } = listRawRuns(options.benchResultsDir);
-        const payload = buildEmbeddedPayload(rawRuns, options, warning);
-        res.writeHead(200, {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": NO_STORE,
-        });
-        res.end(JSON.stringify(payload));
-      } catch (err) {
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: String(err) }));
-      }
-      return;
+      return handleApiPayload(state, req, res);
     }
 
     res.writeHead(404);
