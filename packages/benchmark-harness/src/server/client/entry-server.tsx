@@ -17,7 +17,7 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <title>${escHtml(title)}</title>
 <link href="/styles.css" rel="stylesheet" />
 <script>window.__BENCH_PAYLOAD__=${payloadJson};</script>
-<script defer src="/client.js"></script>
+<script type="module" src="/client.js"></script>
 </head>
 <body class="bh-app-body bh-app-body--viewer">
 <div id="root">`;
