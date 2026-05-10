@@ -18,6 +18,9 @@ export default defineConfig([
     format: "iife",
     outDir: "dist/server/client",
     noExternal: [/./],
+    outputOptions: {
+      entryFileNames: "[name].js",
+    },
     css: {
       transformer: "postcss",
       fileName: "styles.css",

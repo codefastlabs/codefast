@@ -13,9 +13,10 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <head>
 <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
-<title>${title} — bench history</title>
+<title>${title}</title>
 <link href="/styles.css" rel="stylesheet" />
 <script>window.__BENCH_PAYLOAD__=${payloadJson};</script>
+<script defer src="/client.js"></script>
 </head>
 <body class="bh-app-body bh-app-body--viewer">
 <div id="root">`;
@@ -23,8 +24,7 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 
 export function renderDocument(payload: EmbeddedViewerPayload, res: ServerResponse): void {
   const payloadJson = JSON.stringify(payload).replace(/</g, "\\u003c");
-  const docTitle = payload.title.trim();
-  const pageTitle = /bench history\s*$/i.test(docTitle) ? docTitle : docTitle;
+  const pageTitle = payload.title.trim();
 
   res.setHeader("content-type", "text/html; charset=utf-8");
   res.write(buildHtmlPrefix(payloadJson, pageTitle));
