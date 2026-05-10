@@ -29,6 +29,13 @@ export default defineConfig({
         "vitest/require-mock-type-parameters": "off",
       },
     },
+    {
+      // Command palette uses combobox + listbox ARIA roles (not native <select>).
+      files: ["packages/benchmark-harness/src/server/client/components/command-palette.tsx"],
+      rules: {
+        "jsx-a11y/prefer-tag-over-role": "off",
+      },
+    },
   ],
   plugins: ["import", "react", "vitest", "jsx-a11y", "typescript"],
   rules: {

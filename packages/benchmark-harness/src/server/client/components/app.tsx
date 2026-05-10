@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { type RefObject, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import type { ChartInstance } from "#/server/client/components/chart-panel";
 import { ChartPanel } from "#/server/client/components/chart-panel";
 import { CommandPalette } from "#/server/client/components/command-palette";
@@ -201,28 +201,29 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
   // ─── Command palette keyboard shortcut ─────────────────────────────────────
 
+  const onBenchGlobalKeydown = useEffectEvent((e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      setCommandPaletteOpen((open) => {
+        if (!open) {
+          setPaletteQuery("");
+        }
+        return !open;
+      });
+      return;
+    }
+    if (e.key === "Escape" && commandPaletteOpen) {
+      setCommandPaletteOpen(false);
+    }
+  });
+
   useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setCommandPaletteOpen((open) => {
-          if (!open) {
-            setPaletteQuery("");
-          }
-          return !open;
-        });
-        return;
-      }
-      if (e.key === "Escape" && commandPaletteOpen) {
-        setCommandPaletteOpen(false);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [commandPaletteOpen]);
+    window.addEventListener("keydown", onBenchGlobalKeydown);
+    return () => window.removeEventListener("keydown", onBenchGlobalKeydown);
+  }, []);
 
   useEffect(() => {
     if (commandPaletteOpen) {
@@ -308,18 +309,21 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     }
   }
 
-  const paletteActions = [
-    { id: "reload-data", label: "Reload bench data from server" },
-    { id: "focus-search", label: "Focus scenario search" },
-    { id: "scenario-next", label: "Next scenario" },
-    { id: "scenario-prev", label: "Previous scenario" },
-    { id: "toggle-bands", label: "Toggle P25–P75 band" },
-    { id: "toggle-log", label: "Toggle log Y axis" },
-    { id: "toggle-ratio", label: "Toggle primary ratios" },
-    { id: "reset-zoom", label: "Reset chart zoom" },
-    { id: "download-png", label: "Download chart as PNG" },
-    { id: "copy-link", label: "Copy link to this view" },
-  ];
+  const paletteActions = useMemo(
+    () => [
+      { id: "reload-data", label: "Reload bench data from server" },
+      { id: "focus-search", label: "Focus scenario search" },
+      { id: "scenario-next", label: "Next scenario" },
+      { id: "scenario-prev", label: "Previous scenario" },
+      { id: "toggle-bands", label: "Toggle P25–P75 band" },
+      { id: "toggle-log", label: "Toggle log Y axis" },
+      { id: "toggle-ratio", label: "Toggle primary ratios" },
+      { id: "reset-zoom", label: "Reset chart zoom" },
+      { id: "download-png", label: "Download chart as PNG" },
+      { id: "copy-link", label: "Copy link to this view" },
+    ],
+    [],
+  );
 
   // ─── Metrics ────────────────────────────────────────────────────────────────
 

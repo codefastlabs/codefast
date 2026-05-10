@@ -722,6 +722,14 @@
     @apply mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-zinc-200 hover:bg-white/6;
   }
 
+  .bh-command-palette__item--active {
+    @apply bg-white/10 text-white;
+  }
+
+  .bh-command-palette__empty {
+    @apply px-3 py-6 text-center text-sm text-zinc-500;
+  }
+
   .bh-command-palette__hint {
     @apply border-t border-white/6 px-3 py-2 text-[0.6875rem] text-zinc-500;
   }
