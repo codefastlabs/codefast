@@ -25,8 +25,9 @@ import {
 } from "#/server/client/lib/format";
 import { ratioFrom } from "#/server/client/lib/metrics";
 
-// Chart.js is browser-only; import types separately to keep SSR safe.
-// The actual module is only evaluated in the browser bundle.
+// Type-only import — no runtime cost, safe for SSR.
+// chart.js and chartjs-plugin-zoom are statically imported in entry-client.tsx
+// so the dynamic import() below resolves from the already-bundled module (no lazy chunk).
 import type { Chart as ChartInstance } from "chart.js";
 
 export interface ChartPanelProps {
