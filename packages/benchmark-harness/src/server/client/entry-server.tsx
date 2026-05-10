@@ -3,13 +3,10 @@ import { Transform } from "node:stream";
 import { StrictMode } from "react";
 import { renderToPipeableStream } from "react-dom/server";
 import { App } from "#/server/client/components/app";
+import { escHtml } from "#/server/client/lib/format";
 import type { EmbeddedViewerPayload } from "#/server/server-types";
 
 const HTML_SUFFIX = Buffer.from("</div></body></html>");
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
 
 function buildHtmlPrefix(payloadJson: string, title: string): string {
   return `<!DOCTYPE html>
@@ -17,7 +14,7 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <head>
 <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
-<title>${escapeHtml(title)}</title>
+<title>${escHtml(title)}</title>
 <link href="/styles.css" rel="stylesheet" />
 <script>window.__BENCH_PAYLOAD__=${payloadJson};</script>
 <script defer src="/client.js"></script>

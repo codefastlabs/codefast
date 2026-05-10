@@ -17,7 +17,7 @@ export interface ChartToolbarDisabled {
   zoomOut: boolean;
 }
 
-const ALL_TOOLBAR_DISABLED: ChartToolbarDisabled = {
+export const ALL_TOOLBAR_DISABLED: ChartToolbarDisabled = {
   earlier: true,
   later: true,
   reset: true,

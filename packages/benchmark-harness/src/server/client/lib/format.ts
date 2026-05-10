@@ -41,6 +41,14 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
   return " · spread: high";
 }
 
+export function escHtml(s: string): string {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export function isMacLikePlatform(): boolean {
   if (typeof navigator === "undefined") {
     return false;

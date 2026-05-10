@@ -11,12 +11,18 @@ import {
   ZOOM_STEP_X,
 } from "#/server/client/lib/colors";
 import {
+  ALL_TOOLBAR_DISABLED,
   type ChartToolbarDisabled,
   categoryXScaleWindow,
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/server/client/lib/chart-category-view";
-import { formatLocal, spreadTierLabel } from "#/server/client/lib/format";
+import {
+  escHtml,
+  formatLocal,
+  isMacLikePlatform,
+  spreadTierLabel,
+} from "#/server/client/lib/format";
 import { ratioFrom } from "#/server/client/lib/metrics";
 
 // Chart.js is browser-only; import types separately to keep SSR safe.
@@ -41,7 +47,6 @@ export interface ChartPanelProps {
   showBandsChange: (value: boolean) => void;
   logScaleChange: (value: boolean) => void;
   showRatioChange: (value: boolean) => void;
-  subtitle: string;
 }
 
 function buildChartSubtitle(
@@ -49,19 +54,18 @@ function buildChartSubtitle(
   runIndices: Array<number>,
   baseRunIndices: Array<number>,
   envKey: string,
-  runWindow: string,
 ): string {
-  if (!scenario || runIndices.length === 0) {
-    if (runIndices.length === 0) {
-      return "No saved runs match the current Environment filter.";
-    }
+  if (runIndices.length === 0) {
+    return "No saved runs match the current Environment filter.";
+  }
+  if (!scenario) {
     return "No scenario available for these filters.";
   }
   let sub = `[${scenario.group}] ${scenario.id} · ${runIndices.length} plotted point(s)`;
   if (envKey) {
     sub += " · environment filter on";
   }
-  if (runWindow !== "all" && baseRunIndices.length > runIndices.length) {
+  if (baseRunIndices.length > runIndices.length) {
     sub += ` · last ${runIndices.length} of ${baseRunIndices.length} matching runs`;
   }
   return sub;
@@ -91,13 +95,8 @@ export function ChartPanel({
   const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
   const syncToolbarRef = useRef<(() => void) | undefined>(undefined);
 
-  const [toolbarDisabled, setToolbarDisabled] = useState<ChartToolbarDisabled>({
-    earlier: true,
-    later: true,
-    reset: true,
-    zoomIn: true,
-    zoomOut: true,
-  });
+  const [toolbarDisabled, setToolbarDisabled] =
+    useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
 
   const primaryLib = useMemo(
     () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
@@ -116,13 +115,7 @@ export function ChartPanel({
     const initial = initialCategoryViewRef.current;
     const n = runIndices.length;
     if (!chart || !hasData || !initial || n < 2) {
-      setToolbarDisabled({
-        earlier: true,
-        later: true,
-        reset: true,
-        zoomIn: true,
-        zoomOut: true,
-      });
+      setToolbarDisabled(ALL_TOOLBAR_DISABLED);
       return;
     }
     setToolbarDisabled(computeChartToolbarDisabled(chart, initial, n));
@@ -145,13 +138,7 @@ export function ChartPanel({
       chartRef.current?.destroy();
       chartRef.current = null;
       initialCategoryViewRef.current = null;
-      setToolbarDisabled({
-        earlier: true,
-        later: true,
-        reset: true,
-        zoomIn: true,
-        zoomOut: true,
-      });
+      setToolbarDisabled(ALL_TOOLBAR_DISABLED);
       return;
     }
 
@@ -399,13 +386,7 @@ export function ChartPanel({
       chartRef.current?.destroy();
       chartRef.current = null;
       initialCategoryViewRef.current = null;
-      setToolbarDisabled({
-        earlier: true,
-        later: true,
-        reset: true,
-        zoomIn: true,
-        zoomOut: true,
-      });
+      setToolbarDisabled(ALL_TOOLBAR_DISABLED);
     };
   }, [
     scenario,
@@ -463,59 +444,38 @@ export function ChartPanel({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  function handleZoomIn() {
+  function applyChartAction(
+    disabledKey: keyof ChartToolbarDisabled,
+    act: (c: ChartInstance) => void,
+  ) {
     const c = chartRef.current;
-    if (!c || toolbarDisabled.zoomIn) {
+    if (!c || toolbarDisabled[disabledKey]) {
       return;
     }
-    c.zoom({ x: ZOOM_STEP_X }, "none");
+    act(c);
     c.resize();
     c.update("none");
     requestAnimationFrame(() => syncToolbarFromChart());
+  }
+
+  function handleZoomIn() {
+    applyChartAction("zoomIn", (c) => c.zoom({ x: ZOOM_STEP_X }, "none"));
   }
 
   function handleZoomOut() {
-    const c = chartRef.current;
-    if (!c || toolbarDisabled.zoomOut) {
-      return;
-    }
-    c.zoom({ x: 1 / ZOOM_STEP_X }, "none");
-    c.resize();
-    c.update("none");
-    requestAnimationFrame(() => syncToolbarFromChart());
+    applyChartAction("zoomOut", (c) => c.zoom({ x: 1 / ZOOM_STEP_X }, "none"));
   }
 
   function handlePanEarlier() {
-    const c = chartRef.current;
-    if (!c || toolbarDisabled.earlier) {
-      return;
-    }
-    c.pan({ x: PAN_PIXELS_X }, undefined, "none");
-    c.resize();
-    c.update("none");
-    requestAnimationFrame(() => syncToolbarFromChart());
+    applyChartAction("earlier", (c) => c.pan({ x: PAN_PIXELS_X }, undefined, "none"));
   }
 
   function handlePanLater() {
-    const c = chartRef.current;
-    if (!c || toolbarDisabled.later) {
-      return;
-    }
-    c.pan({ x: -PAN_PIXELS_X }, undefined, "none");
-    c.resize();
-    c.update("none");
-    requestAnimationFrame(() => syncToolbarFromChart());
+    applyChartAction("later", (c) => c.pan({ x: -PAN_PIXELS_X }, undefined, "none"));
   }
 
   function handleResetZoom() {
-    const c = chartRef.current;
-    if (!c || toolbarDisabled.reset) {
-      return;
-    }
-    c.resetZoom();
-    c.resize();
-    c.update("none");
-    requestAnimationFrame(() => syncToolbarFromChart());
+    applyChartAction("reset", (c) => c.resetZoom());
   }
 
   // Tabular data for accessibility
@@ -529,9 +489,7 @@ export function ChartPanel({
             Throughput over filtered runs
           </h2>
           <p className="bh-chart__tagline">
-            {hasData
-              ? buildChartSubtitle(scenario, runIndices, baseRunIndices, envKey, "all")
-              : "—"}
+            {hasData ? buildChartSubtitle(scenario, runIndices, baseRunIndices, envKey) : "—"}
           </p>
         </div>
       </div>
@@ -683,10 +641,8 @@ export function ChartPanel({
               onChange={(e) => showRatioChange(e.target.checked)}
               type="checkbox"
             />
-            {primaryLib && compareLibs.length > 0
-              ? compareLibs.length === 1
-                ? `Primary ratio (${primaryLib.displayName} ÷ ${compareLibs[0]!.displayName})`
-                : "Primary ratios"
+            {primaryLib && compareLibs.length === 1
+              ? `Primary ratio (${primaryLib.displayName} ÷ ${compareLibs[0]!.displayName})`
               : "Primary ratios"}
           </label>
           <button
@@ -730,14 +686,13 @@ export function ChartPanel({
 }
 
 function WheelHint() {
-  const isMac =
-    typeof navigator !== "undefined" &&
-    (/Mac|iPhone|iPod|iPad/i.test(navigator.platform ?? "") ||
-      (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData
-        ?.platform === "macOS");
   return (
     <span suppressHydrationWarning>
-      {isMac ? <kbd className="bh-kbd">⌃ Control</kbd> : <kbd className="bh-kbd">Ctrl</kbd>}
+      {isMacLikePlatform() ? (
+        <kbd className="bh-kbd">⌃ Control</kbd>
+      ) : (
+        <kbd className="bh-kbd">Ctrl</kbd>
+      )}
       +wheel zooms ·
     </span>
   );
@@ -764,14 +719,6 @@ function getEmptyReason(
 interface TableRows {
   header: string;
   body: Array<string>;
-}
-
-function escHtml(s: string): string {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
 
 function buildTableRows(

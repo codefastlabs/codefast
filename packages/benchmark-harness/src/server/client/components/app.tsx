@@ -12,7 +12,7 @@ import { useBenchPayload } from "#/server/client/hooks/use-bench-payload";
 import { useHashSync } from "#/server/client/hooks/use-hash-sync";
 import { useViewState } from "#/server/client/hooks/use-view-state";
 import { PALETTE, type PaletteEntry } from "#/server/client/lib/colors";
-import { formatLocal, isMacLikePlatform, searchNorm } from "#/server/client/lib/format";
+import { formatLocal, searchNorm } from "#/server/client/lib/format";
 import { buildHash, type ViewState } from "#/server/client/lib/hash";
 import { buildMetrics, buildSnapshotRow } from "#/server/client/lib/metrics";
 import type {
@@ -137,9 +137,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     return [...new Set(payload.scenarios.map((s) => s.group))].sort((a, b) => a.localeCompare(b));
   }, [payload]);
 
-  const showMultiEnvBanner = useMemo(() => {
-    return uniqueEnvKeys.length > 1 && !view.envKey;
-  }, [uniqueEnvKeys, view.envKey]);
+  const showMultiEnvBanner = uniqueEnvKeys.length > 1 && !view.envKey;
 
   const primaryLib = useMemo(
     () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
@@ -415,10 +413,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           <div className="bh-header-lede-row">
             <p className="bh-lede">
               Median hz/op per saved run, optional P25–P75 bands, and primary-vs-compare ratios.{" "}
-              <span className="bh-lede__muted">Press</span>{" "}
-              <kbd className="bh-kbd">
-                {typeof window !== "undefined" && isMacLikePlatform() ? "⌘K" : "⌘K"}
-              </kbd>{" "}
+              <span className="bh-lede__muted">Press</span> <kbd className="bh-kbd">⌘K</kbd>{" "}
               <span className="bh-lede__muted">or</span> <kbd className="bh-kbd">Ctrl+K</kbd>{" "}
               <span className="bh-lede__muted">for quick actions.</span>
             </p>
@@ -618,7 +613,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           showBandsChange={(v) => patchView({ showBands: v })}
           showRatio={view.showRatio}
           showRatioChange={(v) => patchView({ showRatio: v })}
-          subtitle=""
           useLogScale={view.useLogScale}
         />
 
