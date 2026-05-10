@@ -198,9 +198,6 @@ catalogs:
     '@tsdown/css':
       specifier: ^0.22.0
       version: 0.22.0
-    '@types/hammerjs':
-      specifier: ^2.0.46
-      version: 2.0.46
     '@types/hast':
       specifier: ^3.0.4
       version: 3.0.4
@@ -261,9 +258,6 @@ catalogs:
     expect-type:
       specifier: ^1.3.0
       version: 1.3.0
-    hammerjs:
-      specifier: ^2.0.8
-      version: 2.0.8
     hast-util-to-string:
       specifier: ^3.0.1
       version: 3.0.1
@@ -722,9 +716,6 @@ importers:
       chartjs-plugin-zoom:
         specifier: 'catalog:'
         version: 2.2.0(chart.js@4.5.1)
-      hammerjs:
-        specifier: 'catalog:'
-        version: 2.0.8
       postcss:
         specifier: 'catalog:'
         version: 8.5.14
@@ -750,9 +741,6 @@ importers:
       '@tsdown/css':
         specifier: 'catalog:'
         version: 0.22.0(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.14))(postcss@8.5.14)(tsdown@0.22.0)(tsx@4.21.0)(yaml@2.8.4)
-      '@types/hammerjs':
-        specifier: 'catalog:'
-        version: 2.0.46
       '@types/node':
         specifier: 'catalog:'
         version: 25.6.2

@@ -173,7 +173,6 @@
   "dependencies": {
     "chart.js": "catalog:",
     "chartjs-plugin-zoom": "catalog:",
-    "hammerjs": "catalog:",
     "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -184,7 +183,6 @@
     "@codefast/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tsdown/css": "catalog:",
-    "@types/hammerjs": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
