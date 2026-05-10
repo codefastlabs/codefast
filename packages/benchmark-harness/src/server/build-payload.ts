@@ -17,28 +17,49 @@ import type {
 } from "#/server/server-types";
 import type { RunLines } from "#/server/read-runs";
 
-function jsonlToLibraryReport(
-  lines: ReadonlyArray<string>,
-  libraryName: string,
-): LibraryReport | undefined {
-  const observations: Array<JsonlBenchObservationRow> = [];
+interface SpreadResult {
+  p25Hz: number;
+  medianHz: number;
+  p75Hz: number;
+}
+
+interface LibraryRunData {
+  readonly report: LibraryReport;
+  readonly spreads: Map<string, SpreadResult | null>;
+}
+
+interface RunData {
+  readonly meta: EmbeddedRun;
+  readonly reports: Map<string, LibraryReport>;
+  readonly spreadsPerLib: Map<string, Map<string, SpreadResult | null>>;
+}
+
+function parseJsonlLines(lines: ReadonlyArray<string>): Array<JsonlBenchObservationRow> {
+  const result: Array<JsonlBenchObservationRow> = [];
   for (const line of lines) {
-    let parsed: JsonlBenchObservationRow;
     try {
-      parsed = JSON.parse(line) as JsonlBenchObservationRow;
+      result.push(JSON.parse(line) as JsonlBenchObservationRow);
     } catch {
-      continue;
-    }
-    if (parsed.libraryName === libraryName) {
-      observations.push(parsed);
+      // skip malformed lines
     }
   }
-  if (observations.length === 0) {
+  return result;
+}
+
+function buildLibraryRunData(
+  observations: ReadonlyArray<JsonlBenchObservationRow>,
+  libraryName: string,
+): LibraryRunData | undefined {
+  const libObs = observations.filter((o) => o.libraryName === libraryName);
+  if (libObs.length === 0) {
     return undefined;
   }
-  const fingerprint = jsonlBenchObservationRowToFingerprint(observations[0]!);
+
+  const fingerprint = jsonlBenchObservationRowToFingerprint(libObs[0]!);
   const byTrialIndex = new Map<number, Array<ScenarioTrialResult>>();
-  for (const obs of observations) {
+  const trialHzByScenario = new Map<string, Map<number, number>>();
+
+  for (const obs of libObs) {
     const result = jsonlBenchObservationRowToScenarioTrialResult(obs);
     const list = byTrialIndex.get(obs.trialIndex);
     if (list === undefined) {
@@ -46,58 +67,49 @@ function jsonlToLibraryReport(
     } else {
       list.push(result);
     }
+    if (obs.samples > 0) {
+      let scenarioTrials = trialHzByScenario.get(obs.scenarioId);
+      if (scenarioTrials === undefined) {
+        scenarioTrials = new Map();
+        trialHzByScenario.set(obs.scenarioId, scenarioTrials);
+      }
+      scenarioTrials.set(obs.trialIndex, obs.hzPerOp);
+    }
   }
+
   const trialPayloads: Array<TrialPayload> = [...byTrialIndex.entries()]
     .sort((left, right) => left[0] - right[0])
     .map(([trialIndex, scenarios]) => ({ trialIndex, scenarios }));
-  return buildLibraryReport(fingerprint, trialPayloads, []);
-}
+  const report = buildLibraryReport(fingerprint, trialPayloads, []);
 
-function hzTrialSpread(
-  lines: ReadonlyArray<string>,
-  libraryName: string,
-  scenarioId: string,
-): { p25Hz: number; medianHz: number; p75Hz: number } | null {
-  const perTrialHz = new Map<number, number>();
-  for (const line of lines) {
-    let obs: JsonlBenchObservationRow;
-    try {
-      obs = JSON.parse(line) as JsonlBenchObservationRow;
-    } catch {
-      continue;
-    }
-    if (obs.libraryName !== libraryName || obs.scenarioId !== scenarioId || obs.samples <= 0) {
-      continue;
-    }
-    perTrialHz.set(obs.trialIndex, obs.hzPerOp);
+  const spreads = new Map<string, SpreadResult | null>();
+  for (const [scenarioId, trialHz] of trialHzByScenario) {
+    const sorted = sortAscending([...trialHz.values()]);
+    spreads.set(
+      scenarioId,
+      sorted.length === 0
+        ? null
+        : {
+            p25Hz: quantile(sorted, 0.25),
+            medianHz: quantile(sorted, 0.5),
+            p75Hz: quantile(sorted, 0.75),
+          },
+    );
   }
-  const sorted = sortAscending([...perTrialHz.values()]);
-  if (sorted.length === 0) {
-    return null;
-  }
-  return {
-    p25Hz: quantile(sorted, 0.25),
-    medianHz: quantile(sorted, 0.5),
-    p75Hz: quantile(sorted, 0.75),
-  };
+
+  return { report, spreads };
 }
 
 function extractRunMeta(
   folderName: string,
-  lines: ReadonlyArray<string>,
+  observations: ReadonlyArray<JsonlBenchObservationRow>,
   libraryNames: ReadonlyArray<string>,
-  /** Env metadata (CPU, Node, timestamp, …) follows the primary library’s observations. */
   canonicalLibraryKey: string,
 ): EmbeddedRun | undefined {
+  const libraryNameSet = new Set(libraryNames);
   const firstObsByLibrary = new Map<string, JsonlBenchObservationRow>();
-  for (const line of lines) {
-    let obs: JsonlBenchObservationRow;
-    try {
-      obs = JSON.parse(line) as JsonlBenchObservationRow;
-    } catch {
-      continue;
-    }
-    if (!firstObsByLibrary.has(obs.libraryName) && libraryNames.includes(obs.libraryName)) {
+  for (const obs of observations) {
+    if (!firstObsByLibrary.has(obs.libraryName) && libraryNameSet.has(obs.libraryName)) {
       firstObsByLibrary.set(obs.libraryName, obs);
     }
     if (firstObsByLibrary.size === libraryNames.length) {
@@ -155,27 +167,29 @@ export function buildEmbeddedPayload(
   benchResultsWarning?: string,
 ): EmbeddedViewerPayload {
   const libraryNames = options.libraries.map((lib) => lib.name);
-
-  // Filter runs that have data for at least the primary library.
   const primaryName = options.libraries.find((l) => l.isPrimary)?.name ?? libraryNames[0] ?? "";
-
-  interface RunData {
-    readonly folderName: string;
-    readonly lines: ReadonlyArray<string>;
-    readonly reports: Map<string, LibraryReport>;
-  }
 
   const runs: Array<RunData> = [];
   for (const raw of rawRuns) {
+    const observations = parseJsonlLines(raw.lines);
     const reports = new Map<string, LibraryReport>();
+    const spreadsPerLib = new Map<string, Map<string, SpreadResult | null>>();
+
     for (const libName of libraryNames) {
-      const report = jsonlToLibraryReport(raw.lines, libName);
-      if (report !== undefined) {
-        reports.set(libName, report);
+      const libData = buildLibraryRunData(observations, libName);
+      if (libData !== undefined) {
+        reports.set(libName, libData.report);
+        spreadsPerLib.set(libName, libData.spreads);
       }
     }
-    if (reports.has(primaryName)) {
-      runs.push({ folderName: raw.folderName, lines: raw.lines, reports });
+
+    if (!reports.has(primaryName)) {
+      continue;
+    }
+
+    const meta = extractRunMeta(raw.folderName, observations, libraryNames, primaryName);
+    if (meta !== undefined) {
+      runs.push({ meta, reports, spreadsPerLib });
     }
   }
 
@@ -199,16 +213,8 @@ export function buildEmbeddedPayload(
     return groupCompare !== 0 ? groupCompare : left.localeCompare(right);
   });
 
-  // Build embedded runs.
-  const embeddedRuns: Array<EmbeddedRun> = runs.map((run) => {
-    const meta = extractRunMeta(run.folderName, run.lines, libraryNames, primaryName);
-    if (meta === undefined) {
-      throw new Error(`build-payload: could not parse run metadata for ${run.folderName}`);
-    }
-    return meta;
-  });
+  const embeddedRuns: Array<EmbeddedRun> = runs.map((run) => run.meta);
 
-  // Build per-scenario series.
   const scenarios: Array<EmbeddedScenarioSeries> = scenarioIds.map((scenarioId) => {
     const libraryData: Record<string, EmbeddedLibraryRunData> = {};
     for (const libName of libraryNames) {
@@ -220,7 +226,7 @@ export function buildEmbeddedPayload(
         const report = run.reports.get(libName);
         hz.push(report !== undefined ? hzLookup(report, scenarioId) : null);
         iqrFraction.push(report !== undefined ? hzIqrFractionLookup(report, scenarioId) : null);
-        const spread = report !== undefined ? hzTrialSpread(run.lines, libName, scenarioId) : null;
+        const spread = run.spreadsPerLib.get(libName)?.get(scenarioId) ?? null;
         p25.push(spread !== null && spread.p25Hz > 0 ? spread.p25Hz : null);
         p75.push(spread !== null && spread.p75Hz > 0 ? spread.p75Hz : null);
       }

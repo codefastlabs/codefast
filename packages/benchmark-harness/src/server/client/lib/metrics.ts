@@ -23,6 +23,27 @@ export function ratioFrom(
   return typeof a === "number" && typeof b === "number" && a > 0 && b > 0 ? a / b : null;
 }
 
+function collectHzValues(
+  hz: ReadonlyArray<number | null>,
+  indices: ReadonlyArray<number>,
+): Array<number> {
+  return indices.map((gx) => hz[gx]).filter((v): v is number => typeof v === "number" && v > 0);
+}
+
+function maxIqrFraction(
+  iqrFraction: ReadonlyArray<number | null>,
+  indices: ReadonlyArray<number>,
+): number {
+  let max = 0;
+  for (const gx of indices) {
+    const f = iqrFraction[gx];
+    if (typeof f === "number" && Number.isFinite(f)) {
+      max = Math.max(max, f);
+    }
+  }
+  return max;
+}
+
 export interface MetricCardProps {
   label: string;
   value: string;
@@ -64,13 +85,11 @@ export function buildMetrics(
       continue;
     }
     const color = paletteMap[lib.key]?.text;
-    const hzValues = runIndices
-      .map((gx) => libData.hz[gx])
-      .filter((v): v is number => typeof v === "number" && v > 0);
+    const hzValues = collectHzValues(libData.hz, runIndices);
 
     const median = medianNumeric(hzValues);
-    const lo = hzValues.length ? Math.min(...hzValues) : null;
-    const hi = hzValues.length ? Math.max(...hzValues) : null;
+    const lo = hzValues.length ? hzValues.reduce((a, b) => (a < b ? a : b)) : null;
+    const hi = hzValues.length ? hzValues.reduce((a, b) => (a > b ? a : b)) : null;
 
     const hzAtOldest = runIndices[0] !== undefined ? (libData.hz[runIndices[0]] ?? null) : null;
     const hzAtNewest =
@@ -92,12 +111,7 @@ export function buildMetrics(
     const runsWithData = hzValues.length;
     const runsPlotted = runIndices.length;
 
-    for (const gx of runIndices) {
-      const f = libData.iqrFraction[gx];
-      if (typeof f === "number" && Number.isFinite(f)) {
-        worstIqr = Math.max(worstIqr, f);
-      }
-    }
+    worstIqr = Math.max(worstIqr, maxIqrFraction(libData.iqrFraction, runIndices));
 
     const meta: Array<string> = [];
     if (lo !== null && hi !== null) {
@@ -127,12 +141,8 @@ export function buildMetrics(
         continue;
       }
 
-      const primHzVals = runIndices
-        .map((gx) => primData.hz[gx])
-        .filter((v): v is number => typeof v === "number" && v > 0);
-      const cmpHzVals = runIndices
-        .map((gx) => cmpData.hz[gx])
-        .filter((v): v is number => typeof v === "number" && v > 0);
+      const primHzVals = collectHzValues(primData.hz, runIndices);
+      const cmpHzVals = collectHzValues(cmpData.hz, runIndices);
       const primMed = medianNumeric(primHzVals);
       const cmpMed = medianNumeric(cmpHzVals);
       const ratioMedians = ratioFrom(primMed, cmpMed);
@@ -168,13 +178,7 @@ export function buildMetrics(
     const libData = scenario.libraries[lib.key];
     let fig = "—";
     if (libData) {
-      let maxF = 0;
-      for (const gx of runIndices) {
-        const f = libData.iqrFraction[gx];
-        if (typeof f === "number" && Number.isFinite(f)) {
-          maxF = Math.max(maxF, f);
-        }
-      }
+      const maxF = maxIqrFraction(libData.iqrFraction, runIndices);
       if (maxF > 0) {
         fig = `${(maxF * 100).toFixed(1)}%`;
       }
