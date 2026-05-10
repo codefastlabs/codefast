@@ -1,4 +1,5 @@
 import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Chart } from "chart.js";
 import type {
   EmbeddedLibraryMeta,
   EmbeddedRun,
@@ -25,11 +26,6 @@ import {
 } from "#/server/client/lib/format";
 import { ratioFrom } from "#/server/client/lib/metrics";
 
-// Type-only import — no runtime cost, safe for SSR.
-// chart.js and chartjs-plugin-zoom are statically imported in entry-client.tsx
-// so the dynamic import() below resolves from the already-bundled module (no lazy chunk).
-import type { Chart as ChartInstance } from "chart.js";
-
 export interface ChartPanelProps {
   scenario: EmbeddedScenarioSeries | null;
   runIndices: Array<number>;
@@ -44,7 +40,7 @@ export interface ChartPanelProps {
   onClearEnv: () => void;
   onClearSearch: () => void;
   onClearGroup: () => void;
-  onDownloadPng: (chartRef: RefObject<ChartInstance | null>) => void;
+  onDownloadPng: (chartRef: RefObject<Chart | null>) => void;
   showBandsChange: (value: boolean) => void;
   logScaleChange: (value: boolean) => void;
   showRatioChange: (value: boolean) => void;
@@ -92,7 +88,7 @@ export function ChartPanel({
   showRatioChange,
 }: ChartPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const chartRef = useRef<ChartInstance | null>(null);
+  const chartRef = useRef<Chart | null>(null);
   const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
   const syncToolbarRef = useRef<(() => void) | undefined>(undefined);
 
@@ -143,245 +139,235 @@ export function ChartPanel({
       return;
     }
 
-    void (async () => {
-      const [{ Chart, registerables }, { default: zoomPlugin }] = await Promise.all([
-        import("chart.js"),
-        import("chartjs-plugin-zoom"),
-      ]);
-      Chart.register(...registerables, zoomPlugin);
+    const existing = Chart.getChart(canvas);
+    existing?.destroy();
 
-      const existing = Chart.getChart(canvas);
-      existing?.destroy();
+    const labels = runIndices.map((i) => {
+      const run = runs[i];
+      return run ? formatLocal(run.timestampIso, run.folder) : "";
+    });
+    const runsSlice = runIndices.map((i) => runs[i]!);
 
-      const labels = runIndices.map((i) => {
-        const run = runs[i];
-        return run ? formatLocal(run.timestampIso, run.folder) : "";
-      });
-      const runsSlice = runIndices.map((i) => runs[i]!);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const datasets: Array<any> = [];
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const datasets: Array<any> = [];
-
-      for (const lib of orderedLibraries) {
-        const libData = scenario.libraries[lib.key];
-        if (!libData) {
-          continue;
-        }
-        const pal = paletteMap[lib.key]!;
-        const hz = runIndices.map((i) => libData.hz[i] ?? null);
-
-        if (showBands) {
-          const p25 = runIndices.map((i) => libData.p25[i] ?? null);
-          const p75 = runIndices.map((i) => libData.p75[i] ?? null);
-          datasets.push(
-            {
-              label: `${lib.displayName} P25`,
-              data: p25,
-              borderWidth: 0,
-              pointRadius: 0,
-              borderColor: "transparent",
-              backgroundColor: "transparent",
-              spanGaps: false,
-              yAxisID: "y",
-              order: 10,
-            },
-            {
-              label: `${lib.displayName} P25–P75`,
-              data: p75,
-              borderWidth: 0,
-              pointRadius: 0,
-              fill: "-1",
-              borderColor: "transparent",
-              backgroundColor: pal.band,
-              spanGaps: false,
-              yAxisID: "y",
-              order: 10,
-            },
-          );
-        }
-
-        datasets.push({
-          label: `${lib.displayName} hz/op (median)`,
-          data: hz,
-          borderColor: pal.border,
-          backgroundColor: pal.band.replace(/[\d.]+\)$/, "0.08)"),
-          spanGaps: false,
-          yAxisID: "y",
-          tension: 0.12,
-          order: 5,
-        });
+    for (const lib of orderedLibraries) {
+      const libData = scenario.libraries[lib.key];
+      if (!libData) {
+        continue;
       }
+      const pal = paletteMap[lib.key]!;
+      const hz = runIndices.map((i) => libData.hz[i] ?? null);
 
-      if (showRatio && primaryLib) {
-        compareLibs.forEach((cmpLib, ci) => {
-          const primData = scenario.libraries[primaryLib.key];
-          const cmpData = scenario.libraries[cmpLib.key];
-          if (!primData || !cmpData) {
-            return;
-          }
-          const ratioData = runIndices.map((i) => ratioFrom(primData.hz[i], cmpData.hz[i]));
-          datasets.push({
-            label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
-            data: ratioData,
-            borderColor: RATIO_COLORS[ci % RATIO_COLORS.length],
-            backgroundColor: "rgba(251,191,119,0.08)",
-            spanGaps: true,
-            yAxisID: "y1",
-            tension: 0.12,
-            order: 3,
-          });
-        });
-      }
-
-      const L = labels.length;
-      initialCategoryViewRef.current = computeInitialCategoryWindow(L);
-      const xWindow = categoryXScaleWindow(L);
-
-      const scales: Record<string, object> = {
-        x: {
-          type: "category",
-          offset: true,
-          ticks: {
-            autoSkip: true,
-            maxTicksLimit: Math.min(22, Math.max(L || 2, 2)),
-            maxRotation: 52,
-            minRotation: 0,
-            color: "rgba(235, 235, 245, 0.42)",
+      if (showBands) {
+        const p25 = runIndices.map((i) => libData.p25[i] ?? null);
+        const p75 = runIndices.map((i) => libData.p75[i] ?? null);
+        datasets.push(
+          {
+            label: `${lib.displayName} P25`,
+            data: p25,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "transparent",
+            backgroundColor: "transparent",
+            spanGaps: false,
+            yAxisID: "y",
+            order: 10,
           },
-          grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
-          ...(xWindow ?? {}),
-        },
-        y: {
-          type: useLogScale ? "logarithmic" : "linear",
-          position: "left",
-          title: { display: true, text: "hz/op", color: "rgba(235, 235, 245, 0.5)" },
-          ticks: { color: "rgba(235, 235, 245, 0.42)" },
-          grid: { color: "rgba(255, 255, 255, 0.055)" },
-        },
-      };
-
-      if (showRatio) {
-        scales["y1"] = {
-          type: "linear",
-          position: "right",
-          title: { display: true, text: "ratio", color: "rgba(235, 235, 245, 0.5)" },
-          ticks: { color: "rgba(255, 200, 150, 0.55)" },
-          grid: { drawOnChartArea: false },
-        };
+          {
+            label: `${lib.displayName} P25–P75`,
+            data: p75,
+            borderWidth: 0,
+            pointRadius: 0,
+            fill: "-1",
+            borderColor: "transparent",
+            backgroundColor: pal.band,
+            spanGaps: false,
+            yAxisID: "y",
+            order: 10,
+          },
+        );
       }
 
-      chartRef.current = new Chart(canvas, {
-        type: "line",
-        data: { labels, datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: { duration: 300, easing: "easeOutCubic" },
-          interaction: { mode: "index", intersect: false },
-          scales,
-          plugins: {
-            legend: {
-              labels: {
-                color: "rgba(235, 235, 245, 0.72)",
-                filter: (item) => {
-                  const t = item.text ?? "";
-                  return !t.endsWith(" P25") && !t.includes("P25–P75");
-                },
-              },
-            },
-            tooltip: {
+      datasets.push({
+        label: `${lib.displayName} hz/op (median)`,
+        data: hz,
+        borderColor: pal.border,
+        backgroundColor: pal.band.replace(/[\d.]+\)$/, "0.08)"),
+        spanGaps: false,
+        yAxisID: "y",
+        tension: 0.12,
+        order: 5,
+      });
+    }
+
+    if (showRatio && primaryLib) {
+      compareLibs.forEach((cmpLib, ci) => {
+        const primData = scenario.libraries[primaryLib.key];
+        const cmpData = scenario.libraries[cmpLib.key];
+        if (!primData || !cmpData) {
+          return;
+        }
+        const ratioData = runIndices.map((i) => ratioFrom(primData.hz[i], cmpData.hz[i]));
+        datasets.push({
+          label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
+          data: ratioData,
+          borderColor: RATIO_COLORS[ci % RATIO_COLORS.length],
+          backgroundColor: "rgba(251,191,119,0.08)",
+          spanGaps: true,
+          yAxisID: "y1",
+          tension: 0.12,
+          order: 3,
+        });
+      });
+    }
+
+    const L = labels.length;
+    initialCategoryViewRef.current = computeInitialCategoryWindow(L);
+    const xWindow = categoryXScaleWindow(L);
+
+    const scales: Record<string, object> = {
+      x: {
+        type: "category",
+        offset: true,
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: Math.min(22, Math.max(L || 2, 2)),
+          maxRotation: 52,
+          minRotation: 0,
+          color: "rgba(235, 235, 245, 0.42)",
+        },
+        grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
+        ...(xWindow ?? {}),
+      },
+      y: {
+        type: useLogScale ? "logarithmic" : "linear",
+        position: "left",
+        title: { display: true, text: "hz/op", color: "rgba(235, 235, 245, 0.5)" },
+        ticks: { color: "rgba(235, 235, 245, 0.42)" },
+        grid: { color: "rgba(255, 255, 255, 0.055)" },
+      },
+    };
+
+    if (showRatio) {
+      scales["y1"] = {
+        type: "linear",
+        position: "right",
+        title: { display: true, text: "ratio", color: "rgba(235, 235, 245, 0.5)" },
+        ticks: { color: "rgba(255, 200, 150, 0.55)" },
+        grid: { drawOnChartArea: false },
+      };
+    }
+
+    chartRef.current = new Chart(canvas, {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 300, easing: "easeOutCubic" },
+        interaction: { mode: "index", intersect: false },
+        scales,
+        plugins: {
+          legend: {
+            labels: {
+              color: "rgba(235, 235, 245, 0.72)",
               filter: (item) => {
-                const t = item.dataset.label ?? "";
+                const t = item.text ?? "";
                 return !t.endsWith(" P25") && !t.includes("P25–P75");
               },
-              callbacks: {
-                title: (items) => {
-                  if (!items.length) {
-                    return "";
+            },
+          },
+          tooltip: {
+            filter: (item) => {
+              const t = item.dataset.label ?? "";
+              return !t.endsWith(" P25") && !t.includes("P25–P75");
+            },
+            callbacks: {
+              title: (items) => {
+                if (!items.length) {
+                  return "";
+                }
+                const run = runsSlice[items[0]!.dataIndex];
+                if (!run) {
+                  return "";
+                }
+                const clock = formatLocal(run.timestampIso, run.folder);
+                return clock ? `${clock} (local)\n${run.folder}` : run.folder;
+              },
+              afterTitle: (items) => {
+                if (!items.length) {
+                  return "";
+                }
+                const run = runsSlice[items[0]!.dataIndex];
+                if (!run) {
+                  return "";
+                }
+                const verLine = (run.libraryVersions ?? [])
+                  .map((lv) => `${lv.key} ${lv.version}${lv.gcExposed ? " [gc]" : ""}`)
+                  .join(" · ");
+                return [
+                  `${run.cpuModel} · ${run.platform}/${run.arch}`,
+                  `Node ${run.nodeVersion} · V8 ${run.v8Version}`,
+                  verLine,
+                ].join("\n");
+              },
+              label: (ctx) => {
+                const v = ctx.raw as number | null;
+                const lbl = ctx.dataset.label ?? "";
+                if (lbl.includes("P25–P75") || lbl.endsWith(" P25")) {
+                  return undefined;
+                }
+                if (v === null || v === undefined) {
+                  return `${lbl}: —`;
+                }
+                if (ctx.dataset.yAxisID === "y1") {
+                  return `${lbl}: ${Number(v).toFixed(3)}×`;
+                }
+                const matchedLib = orderedLibraries.find((lib) => lbl.startsWith(lib.displayName));
+                let extra = "";
+                if (matchedLib) {
+                  const libData = scenario.libraries[matchedLib.key];
+                  const globalIx = runIndices[ctx.dataIndex];
+                  const f = globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
+                  if (typeof f === "number" && Number.isFinite(f)) {
+                    extra = ` · IQR ${(f * 100).toFixed(1)}%${spreadTierLabel(f)}`;
                   }
-                  const run = runsSlice[items[0]!.dataIndex];
-                  if (!run) {
-                    return "";
-                  }
-                  const clock = formatLocal(run.timestampIso, run.folder);
-                  return clock ? `${clock} (local)\n${run.folder}` : run.folder;
-                },
-                afterTitle: (items) => {
-                  if (!items.length) {
-                    return "";
-                  }
-                  const run = runsSlice[items[0]!.dataIndex];
-                  if (!run) {
-                    return "";
-                  }
-                  const verLine = (run.libraryVersions ?? [])
-                    .map((lv) => `${lv.key} ${lv.version}${lv.gcExposed ? " [gc]" : ""}`)
-                    .join(" · ");
-                  return [
-                    `${run.cpuModel} · ${run.platform}/${run.arch}`,
-                    `Node ${run.nodeVersion} · V8 ${run.v8Version}`,
-                    verLine,
-                  ].join("\n");
-                },
-                label: (ctx) => {
-                  const v = ctx.raw as number | null;
-                  const lbl = ctx.dataset.label ?? "";
-                  if (lbl.includes("P25–P75") || lbl.endsWith(" P25")) {
-                    return undefined;
-                  }
-                  if (v === null || v === undefined) {
-                    return `${lbl}: —`;
-                  }
-                  if (ctx.dataset.yAxisID === "y1") {
-                    return `${lbl}: ${Number(v).toFixed(3)}×`;
-                  }
-                  const matchedLib = orderedLibraries.find((lib) =>
-                    lbl.startsWith(lib.displayName),
-                  );
-                  let extra = "";
-                  if (matchedLib) {
-                    const libData = scenario.libraries[matchedLib.key];
-                    const globalIx = runIndices[ctx.dataIndex];
-                    const f = globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
-                    if (typeof f === "number" && Number.isFinite(f)) {
-                      extra = ` · IQR ${(f * 100).toFixed(1)}%${spreadTierLabel(f)}`;
-                    }
-                  }
-                  return `${lbl}: ${Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 })}${extra}`;
-                },
+                }
+                return `${lbl}: ${Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 })}${extra}`;
+              },
+            },
+          },
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: "x",
+              onPanComplete: ({ chart: panChart }) => {
+                chartRef.current = panChart as Chart;
+                queueMicrotask(() => syncToolbarRef.current?.());
               },
             },
             zoom: {
-              pan: {
-                enabled: true,
-                mode: "x",
-                onPanComplete: ({ chart: panChart }) => {
-                  chartRef.current = panChart as ChartInstance;
-                  queueMicrotask(() => syncToolbarRef.current?.());
-                },
+              wheel: { enabled: true, modifierKey: "ctrl" },
+              pinch: { enabled: true },
+              mode: "x",
+              drag: { enabled: false },
+              onZoomComplete: ({ chart: zoomChart }) => {
+                chartRef.current = zoomChart as Chart;
+                queueMicrotask(() => syncToolbarRef.current?.());
               },
-              zoom: {
-                wheel: { enabled: true, modifierKey: "ctrl" },
-                pinch: { enabled: true },
-                mode: "x",
-                drag: { enabled: false },
-                onZoomComplete: ({ chart: zoomChart }) => {
-                  chartRef.current = zoomChart as ChartInstance;
-                  queueMicrotask(() => syncToolbarRef.current?.());
-                },
-              },
-              limits: {},
             },
+            limits: {},
           },
-          layout: { padding: { top: 4, right: 12 + (showRatio ? 20 : 0), bottom: 2, left: 12 } },
         },
-      }) as ChartInstance;
+        layout: { padding: { top: 4, right: 12 + (showRatio ? 20 : 0), bottom: 2, left: 12 } },
+      },
+    });
 
-      requestAnimationFrame(() => {
-        chartRef.current?.resize();
-        syncToolbarRef.current?.();
-      });
-    })();
+    requestAnimationFrame(() => {
+      chartRef.current?.resize();
+      syncToolbarRef.current?.();
+    });
 
     return () => {
       chartRef.current?.destroy();
@@ -445,10 +431,7 @@ export function ChartPanel({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  function applyChartAction(
-    disabledKey: keyof ChartToolbarDisabled,
-    act: (c: ChartInstance) => void,
-  ) {
+  function applyChartAction(disabledKey: keyof ChartToolbarDisabled, act: (c: Chart) => void) {
     const c = chartRef.current;
     if (!c || toolbarDisabled[disabledKey]) {
       return;
@@ -775,4 +758,4 @@ function buildTableRows(
 }
 
 export type { RefObject };
-export type { ChartInstance };
+export type { Chart as ChartInstance };
