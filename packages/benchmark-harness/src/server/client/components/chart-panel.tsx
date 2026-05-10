@@ -465,7 +465,12 @@ export function ChartPanel({
         <button className="bh-seg-btn" onClick={handlePanLater} type="button">
           Later →
         </button>
-        <button className="bh-seg-btn" onClick={handleResetZoom} type="button">
+        <button
+          className="bh-seg-btn"
+          id="chart-reset-zoom-btn"
+          onClick={handleResetZoom}
+          type="button"
+        >
           Reset zoom
         </button>
       </div>
@@ -477,15 +482,9 @@ export function ChartPanel({
 
       <div className="bh-chart__host bh-chart__host--hero" id="bench-chart-host">
         {!hasData && (
-          <div
-            aria-live="polite"
-            className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-[rgba(8,8,10,0.88)] p-6 text-center backdrop-blur-md`}
-            id="chart-empty-state"
-          >
-            <p className="max-w-[24rem] text-sm leading-[1.5] text-[rgb(161,161,170)]">
-              {emptyReason}
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
+          <div aria-live="polite" className="is-visible" id="chart-empty-state">
+            <p>{emptyReason}</p>
+            <div className="bh-chart__empty-actions">
               {envKey && (
                 <button
                   className="bh-empty-action-btn"
@@ -578,6 +577,7 @@ export function ChartPanel({
           </label>
           <button
             className="bh-btn-download-png"
+            id="chart-download-png-btn"
             onClick={() => onDownloadPng(chartRef)}
             title="Capture current chart view as PNG"
             type="button"
