@@ -8,8 +8,8 @@
 import type {
   AsyncBenchScenario as HarnessAsyncBenchScenario,
   BenchScenario as HarnessBenchScenario,
-} from "@codefast/benchmark-harness";
-export { isAsyncScenario } from "@codefast/benchmark-harness";
+} from "@codefast/benchmark-harness/child/bench-scenario";
+export { isAsyncScenario } from "@codefast/benchmark-harness/child/bench-scenario";
 
 /**
  * @since 0.3.16-canary.0

@@ -10,17 +10,20 @@ import { fileURLToPath } from "node:url";
 import {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
+  OBSERVATIONS_FILE_NAME,
+} from "@codefast/benchmark-harness/shared/env-keys";
+import {
   buildLibraryReport,
   type LibraryReport,
-  OBSERVATIONS_FILE_NAME,
+} from "@codefast/benchmark-harness/report/aggregate";
+import {
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
-  resolveBenchParentExitCode,
-  runBenchSubprocess,
-  type SubprocessPayload,
-  writeJsonlRun,
-  writeMarkdownFile,
-} from "@codefast/benchmark-harness";
+} from "@codefast/benchmark-harness/report/two-way";
+import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
+import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import {
   CODEFAST_VS_CVA_CONSOLE,
   CODEFAST_VS_CVA_MARKDOWN,

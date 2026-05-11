@@ -1,7 +1,7 @@
 import type {
   TwoWayConsoleColumnLabels,
   TwoWayMarkdownReportOptions,
-} from "@codefast/benchmark-harness";
+} from "@codefast/benchmark-harness/report/two-way";
 import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 
 /**

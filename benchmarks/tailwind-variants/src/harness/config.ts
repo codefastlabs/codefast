@@ -1,4 +1,4 @@
-import type { BenchSubprocessConfig } from "@codefast/benchmark-harness";
+import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 
 /** Single source of truth for all benchmark-specific constants across run, serve, and subprocesses. */
 
