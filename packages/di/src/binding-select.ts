@@ -12,7 +12,7 @@ export function selectBinding(
   bindings: ReadonlyArray<Binding>,
   hint: ResolveOptions | undefined,
   ctx: ConstraintContext,
-  tName: string,
+  tokenDisplayName: string,
 ): Binding | undefined {
   const candidates = filterBindings(bindings, hint, ctx);
   if (candidates.length === 0) {
@@ -25,7 +25,7 @@ export function selectBinding(
   // Slot-based bindings already have last-wins applied in registry, so
   // multiple candidates here means ambiguous predicate-only bindings
   throw new AmbiguousBindingError(
-    tName,
+    tokenDisplayName,
     candidates.map((c) => c.id),
   );
 }
@@ -47,11 +47,11 @@ function filterBindings(
   bindings: ReadonlyArray<Binding>,
   hint: ResolveOptions | undefined,
   ctx: ConstraintContext,
-  mode: "single" | "all" = "single",
+  selectionMode: "single" | "all" = "single",
 ): Array<Binding> {
   if (hint === undefined) {
     const resultWithoutHint: Array<Binding> = [];
-    if (mode === "all") {
+    if (selectionMode === "all") {
       for (const binding of bindings) {
         if (matchesPredicate(binding, ctx)) {
           resultWithoutHint.push(binding);
@@ -71,7 +71,9 @@ function filterBindings(
   const result: Array<Binding> = [];
   for (const binding of bindings) {
     const slotMatched =
-      mode === "all" ? matchesSlotForResolveAll(binding, hint) : matchesSlot(binding, hint);
+      selectionMode === "all"
+        ? matchesSlotForResolveAll(binding, hint)
+        : matchesSlot(binding, hint);
     if (slotMatched && matchesPredicate(binding, ctx)) {
       result.push(binding);
     }

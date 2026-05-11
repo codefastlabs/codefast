@@ -120,16 +120,18 @@ class SegmentAnalytics implements Analytics {
 
 // ── Modules ───────────────────────────────────────────────────────────────────
 
-const InfraModule = Module.create("Infra", (c) => {
-  c.bind(LoggerToken).to(ConsoleLogger).singleton();
-  c.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", env: "development" });
-  c.bind(CacheToken).to(RedisCache).singleton();
-  c.bind(DatabaseToken).to(PostgresDatabase).singleton();
+const InfraModule = Module.create("Infra", (builder) => {
+  builder.bind(LoggerToken).to(ConsoleLogger).singleton();
+  builder
+    .bind(ConfigToken)
+    .toConstantValue({ dbUrl: "postgres://localhost/app", env: "development" });
+  builder.bind(CacheToken).to(RedisCache).singleton();
+  builder.bind(DatabaseToken).to(PostgresDatabase).singleton();
 });
 
-const AppModule = Module.create("App", (c) => {
-  c.bind(UserServiceToken).to(UserManager).singleton();
-  c.bind(AnalyticsToken).to(SegmentAnalytics).singleton();
+const AppModule = Module.create("App", (builder) => {
+  builder.bind(UserServiceToken).to(UserManager).singleton();
+  builder.bind(AnalyticsToken).to(SegmentAnalytics).singleton();
 });
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
@@ -171,8 +173,8 @@ for (const binding of snapshot.ownBindings) {
 
 console.log("\n=== lookupBindings for LoggerToken ===");
 const loggerBindings = container.lookupBindings(LoggerToken);
-for (const b of loggerBindings) {
-  console.log(`  kind=${b.kind}, scope=${b.scope}, id=${b.id}`);
+for (const binding of loggerBindings) {
+  console.log(`  kind=${binding.kind}, scope=${binding.scope}, id=${binding.id}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -235,15 +237,17 @@ console.log("\n" + dot);
 
 console.log("\n=== Dependency graph (Cytoscape.js) ===");
 const cytoscapeElements = toCytoscapeGraph(graph);
-const nodeElements = cytoscapeElements.filter((el) => !("source" in el.data));
-const edgeElements = cytoscapeElements.filter((el) => "source" in el.data);
+const nodeElements = cytoscapeElements.filter((element) => !("source" in element.data));
+const edgeElements = cytoscapeElements.filter((element) => "source" in element.data);
 console.log(`Cytoscape nodes: ${nodeElements.length}, edges: ${edgeElements.length}`);
 
 // Print a few sample nodes so the output is readable.
 console.log("\nSample nodes:");
-for (const el of nodeElements.slice(0, 3)) {
-  const d = el.data as { id: string; label: string; kind: string; scope: string };
-  console.log(`  id=${d.id.slice(0, 8)}… label="${d.label}" kind=${d.kind} scope=${d.scope}`);
+for (const element of nodeElements.slice(0, 3)) {
+  const nodeData = element.data as { id: string; label: string; kind: string; scope: string };
+  console.log(
+    `  id=${nodeData.id.slice(0, 8)}… label="${nodeData.label}" kind=${nodeData.kind} scope=${nodeData.scope}`,
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -254,15 +258,15 @@ for (const el of nodeElements.slice(0, 3)) {
 console.log("\n=== Startup audit ===");
 
 function auditContainer(
-  c: typeof container,
+  targetContainer: typeof container,
   requiredTokens: Array<ReturnType<typeof token>>,
 ): void {
-  const missing = requiredTokens.filter((t) => !c.has(t));
+  const missing = requiredTokens.filter((tok) => !targetContainer.has(tok));
   if (missing.length === 0) {
     console.log("All required tokens are bound ✓");
   } else {
-    for (const t of missing) {
-      console.warn(`Missing binding for token: ${tokenName(t)}`);
+    for (const tok of missing) {
+      console.warn(`Missing binding for token: ${tokenName(tok)}`);
     }
   }
 }

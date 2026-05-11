@@ -33,7 +33,11 @@ export function slotKeyEquals(a: SlotKey, b: SlotKey): boolean {
     return false;
   }
   for (const [tagKey, tagValue] of a.tags) {
-    if (!b.tags.some(([k, v]) => k === tagKey && Object.is(v, tagValue))) {
+    if (
+      !b.tags.some(
+        ([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue),
+      )
+    ) {
       return false;
     }
   }
@@ -56,8 +60,8 @@ export function slotKeyToString(slot: SlotKey): string {
   if (slot.name !== undefined) {
     parts.push(`name:${slot.name}`);
   }
-  for (const [k, v] of slot.tags) {
-    parts.push(`tag:${k}=${String(v)}`);
+  for (const [tagKey, tagValue] of slot.tags) {
+    parts.push(`tag:${tagKey}=${String(tagValue)}`);
   }
   return parts.join(",");
 }

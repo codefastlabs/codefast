@@ -488,11 +488,11 @@ export class DependencyResolver {
           resolutionPath,
           materializationStack,
         );
-        const r = binding.factory(...deps);
-        if (r instanceof Promise) {
+        const factoryResult = binding.factory(...deps);
+        if (factoryResult instanceof Promise) {
           throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
         }
-        return r;
+        return factoryResult;
       }
 
       case "resolved-async":
@@ -840,7 +840,7 @@ export class DependencyResolver {
     }
 
     const frame = this._getMaterializationFrame(binding);
-    const tName = frame.tokenName;
+    const frameName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
     if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
@@ -848,12 +848,16 @@ export class DependencyResolver {
       pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
     }
 
-    if (resolutionSet !== undefined ? resolutionSet.has(tName) : resolutionPath.includes(tName)) {
-      throw new CircularDependencyError([...resolutionPath, tName]);
+    if (
+      resolutionSet !== undefined
+        ? resolutionSet.has(frameName)
+        : resolutionPath.includes(frameName)
+    ) {
+      throw new CircularDependencyError([...resolutionPath, frameName]);
     }
 
-    resolutionPath.push(tName);
-    resolutionSet?.add(tName);
+    resolutionPath.push(frameName);
+    resolutionSet?.add(frameName);
     materializationStack.push(frame);
     const needsActivation = this._needsActivation(binding);
     if (
@@ -876,7 +880,7 @@ export class DependencyResolver {
       } finally {
         materializationStack.pop();
         resolutionPath.pop();
-        resolutionSet?.delete(tName);
+        resolutionSet?.delete(frameName);
       }
     }
 
@@ -966,7 +970,7 @@ export class DependencyResolver {
     } finally {
       materializationStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tName);
+      resolutionSet?.delete(frameName);
     }
   }
 
@@ -984,8 +988,8 @@ export class DependencyResolver {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const r = binding.factory(ctx);
-        return r instanceof Promise ? r : Promise.resolve(r);
+        const factoryResult = binding.factory(ctx);
+        return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
       }
 
       case "dynamic-async":
@@ -1013,8 +1017,8 @@ export class DependencyResolver {
           resolutionPath,
           materializationStack,
         );
-        const r = binding.factory(...deps);
-        return r instanceof Promise ? r : Promise.resolve(r);
+        const factoryResult = binding.factory(...deps);
+        return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
       }
 
       case "resolved-async": {
@@ -1435,7 +1439,7 @@ export class DependencyResolver {
     // Set<BindingIdentifier> for O(1) cycle detection.
     //
     // Performance decisions vs. shallow path:
-    //  1. _getMaterializationFrame is NOT called: tName is only needed for resolutionPath.push
+    //  1. _getMaterializationFrame is NOT called: frameName is only needed for resolutionPath.push
     //     and error messages.  Both are handled below without the frame Map lookup.
     //  2. resolutionPath.push / pop is SKIPPED: cycle detection uses _deepCycleIds (binding IDs),
     //     so path membership tracking through the string array is unnecessary.  Eliminating

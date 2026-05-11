@@ -151,7 +151,7 @@ class SqlOrderRepository implements OrderRepository {
 
   findByUserId(userId: string): Array<{ id: string; userId: string; total: number }> {
     this.db.query(`SELECT * FROM orders WHERE user_id = '${userId}'`);
-    return this.orders.filter((o) => o.userId === userId);
+    return this.orders.filter((order) => order.userId === userId);
   }
 
   save(order: { id: string; userId: string; total: number }): void {
@@ -274,15 +274,15 @@ console.log(`Alice has ${aliceOrders.length} order(s)`);
 console.log("\n=== Registry entries ===");
 console.log(
   "Infrastructure:",
-  infrastructureRegistry.entries().map((e) => `${e.target.name}(${e.scope})`),
+  infrastructureRegistry.entries().map((entry) => `${entry.target.name}(${entry.scope})`),
 );
 console.log(
   "Domain:",
-  domainRegistry.entries().map((e) => `${e.target.name}(${e.scope})`),
+  domainRegistry.entries().map((entry) => `${entry.target.name}(${entry.scope})`),
 );
 console.log(
   "Application:",
-  applicationRegistry.entries().map((e) => `${e.target.name}(${e.scope})`),
+  applicationRegistry.entries().map((entry) => `${entry.target.name}(${entry.scope})`),
 );
 
 // ── Conditional registration ──────────────────────────────────────────────────

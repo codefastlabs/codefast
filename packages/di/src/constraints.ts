@@ -120,7 +120,9 @@ export function whenParentTaggedAll(
     }
     const { tags: parentTags } = parent.slot;
     return tags.every(([tagKey, tagValue]) =>
-      parentTags.some(([k, v]) => k === tagKey && Object.is(v, tagValue)),
+      parentTags.some(
+        ([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue),
+      ),
     );
   };
 }
@@ -139,7 +141,9 @@ export function whenAnyAncestorTaggedAll(
     constraintContext.ancestors.some((frame) => {
       const { tags: frameTags } = frame.slot;
       return tags.every(([tagKey, tagValue]) =>
-        frameTags.some(([k, v]) => k === tagKey && Object.is(v, tagValue)),
+        frameTags.some(
+          ([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue),
+        ),
       );
     });
 }
