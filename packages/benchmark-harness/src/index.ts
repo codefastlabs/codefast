@@ -12,6 +12,19 @@ export {
   OBSERVATIONS_FILE_NAME,
 } from "#/shared/env-keys";
 
+export type {
+  Fingerprint,
+  ScenarioTrialResult,
+  SubprocessPayload,
+  TrialPayload,
+} from "#/shared/protocol";
+export {
+  BENCH_RESULT_JSON_END,
+  BENCH_RESULT_JSON_START,
+  emitSubprocessPayload,
+  extractSubprocessPayload,
+} from "#/shared/protocol";
+
 export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 
 export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";
@@ -20,7 +33,7 @@ export { isAsyncScenario } from "#/child/bench-scenario";
 export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
 export { createRunAllTrials } from "#/child/create-run-all-trials";
 
-export { runSanityChecks } from "#/child/run-sanity-checks";
+export { collectFingerprint } from "#/child/fingerprint";
 
 export type { RunBenchmarkChildMainParameters } from "#/child/run-benchmark-child-main";
 export {
@@ -29,26 +42,34 @@ export {
   runBenchmarkChildMain,
 } from "#/child/run-benchmark-child-main";
 
+export { runSanityChecks } from "#/child/run-sanity-checks";
+
 export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
 
-export type {
-  Fingerprint,
-  ScenarioTrialResult,
-  SubprocessPayload,
-  TrialPayload,
-} from "#/shared/protocol";
-
+export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
 export {
-  BENCH_RESULT_JSON_END,
-  BENCH_RESULT_JSON_START,
-  emitSubprocessPayload,
-  extractSubprocessPayload,
-} from "#/shared/protocol";
-
-export { collectFingerprint } from "#/child/fingerprint";
+  SubprocessExecutionError,
+  buildSubprocessEnvironment,
+  runBenchSubprocess,
+} from "#/parent/run-bench-subprocess";
 
 export type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 export { buildLibraryReport } from "#/report/aggregate";
+
+export {
+  formatIqrThroughputFraction,
+  formatLatencyMeanMilliseconds,
+  formatThroughputOpsPerSecond,
+  formatThroughputRatio,
+} from "#/report/format";
+
+export type { JsonlBenchObservationRow } from "#/report/jsonl";
+export {
+  jsonlBenchObservationRowToFingerprint,
+  jsonlBenchObservationRowToScenarioTrialResult,
+} from "#/report/jsonl";
+
+export { quantile, sortAscending } from "#/report/quantiles";
 
 export type {
   TwoWayConsoleColumnLabels,
@@ -64,48 +85,3 @@ export {
 } from "#/report/two-way";
 
 export { writeJsonlRun, writeMarkdownFile } from "#/report/write";
-
-export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
-
-export {
-  SubprocessExecutionError,
-  buildSubprocessEnvironment,
-  runBenchSubprocess,
-} from "#/parent/run-bench-subprocess";
-
-export type { JsonlBenchObservationRow } from "#/report/jsonl";
-
-export {
-  jsonlBenchObservationRowToFingerprint,
-  jsonlBenchObservationRowToScenarioTrialResult,
-} from "#/report/jsonl";
-
-export { quantile, sortAscending } from "#/report/quantiles";
-
-export {
-  formatIqrThroughputFraction,
-  formatLatencyMeanMilliseconds,
-  formatThroughputOpsPerSecond,
-  formatThroughputRatio,
-} from "#/report/format";
-
-export type {
-  BenchLibraryConfig,
-  BenchServerOptions,
-  EmbeddedLibraryMeta,
-  EmbeddedLibraryRunData,
-  EmbeddedRun,
-  EmbeddedRunLibraryVersion,
-  EmbeddedScenarioSeries,
-  EmbeddedViewerPayload,
-} from "#/server/server-types";
-
-export { createBenchServer } from "#/server/create-bench-server";
-export { buildEmbeddedPayload } from "#/server/build-payload";
-export { findAvailablePort } from "#/server/find-available-port";
-
-export type { ListRawRunsResult, RunLines } from "#/server/read-runs";
-export { listRawRuns } from "#/server/read-runs";
-
-export type { StartBenchServerOptions } from "#/server/start-bench-server";
-export { startBenchServer } from "#/server/start-bench-server";
