@@ -49,7 +49,7 @@ export type {
 } from "#/graph-adapters/types";
 
 // Module
-export { AsyncModule, Module, SyncModule } from "#/module";
+export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
 
 // Decorators
@@ -67,18 +67,18 @@ export type { AutoRegisterRegistry } from "#/decorators/injectable";
 export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metadata-types";
 
-// Constraints
+// Constraints — contextual injection predicates for .when()
 export {
-  whenParentIs,
-  whenNoParentIs,
   whenAnyAncestorIs,
-  whenNoAncestorIs,
-  whenParentNamed,
   whenAnyAncestorNamed,
-  whenParentTagged,
   whenAnyAncestorTagged,
-  whenParentTaggedAll,
   whenAnyAncestorTaggedAll,
+  whenNoAncestorIs,
+  whenNoParentIs,
+  whenParentIs,
+  whenParentNamed,
+  whenParentTagged,
+  whenParentTaggedAll,
 } from "#/constraints";
 
 // Errors
