@@ -339,7 +339,7 @@ async function main(): Promise<void> {
 // ============================================================================
 
 function tick(): Promise<void> {
-  return new Promise((r) => setTimeout(r, 5));
+  return new Promise((resolve) => setTimeout(resolve, 5));
 }
 
 async function loadConfig(): Promise<AppConfig> {

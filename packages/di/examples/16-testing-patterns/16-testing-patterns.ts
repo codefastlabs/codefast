@@ -198,12 +198,12 @@ class StubPaymentGateway implements PaymentGateway {
 
 // ── Shared module (real infra) ────────────────────────────────────────────────
 
-const CoreModule = Module.create("Core", (c) => {
-  c.bind(LoggerToken).to(RealLogger).singleton();
-  c.bind(UserServiceToken).to(DatabaseUserService).singleton();
-  c.bind(PaymentGatewayToken).to(StripePaymentGateway).singleton();
-  c.bind(EmailServiceToken).to(SmtpEmailService).singleton();
-  c.bind(OrderServiceToken).to(OrderProcessor).singleton();
+const CoreModule = Module.create("Core", (builder) => {
+  builder.bind(LoggerToken).to(RealLogger).singleton();
+  builder.bind(UserServiceToken).to(DatabaseUserService).singleton();
+  builder.bind(PaymentGatewayToken).to(StripePaymentGateway).singleton();
+  builder.bind(EmailServiceToken).to(SmtpEmailService).singleton();
+  builder.bind(OrderServiceToken).to(OrderProcessor).singleton();
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -415,7 +415,7 @@ await test("incomplete container is detected by inspect() before validate()", as
 
 // ── Summary ───────────────────────────────────────────────────────────────────
 
-const passed = results.filter((r) => r.passed).length;
+const passed = results.filter((testResult) => testResult.passed).length;
 const failed = results.filter((r) => !r.passed).length;
 console.log(`\n${passed + failed} tests: ${passed} passed, ${failed} failed`);
 if (failed > 0) {

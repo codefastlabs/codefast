@@ -358,7 +358,7 @@ class ServiceHealthRegistry implements HealthRegistry {
       }),
     );
 
-    const statuses = Object.values(results).map((r) => r.status);
+    const statuses = Object.values(results).map((check) => check.status);
     const overallStatus = statuses.includes("unhealthy")
       ? "unhealthy"
       : statuses.includes("degraded")

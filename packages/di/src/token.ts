@@ -35,7 +35,6 @@ export function isToken(value: unknown): value is Token<unknown> {
     typeof value === "object" &&
     value !== null &&
     "name" in value &&
-    typeof (value as Record<string, unknown>)["name"] === "string" &&
-    typeof value !== "function"
+    typeof (value as Record<string, unknown>)["name"] === "string"
   );
 }

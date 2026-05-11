@@ -72,19 +72,19 @@ export function buildDependencyGraph(
       if (binding.kind === "class") {
         const meta = metadataReader.getConstructorMetadata(binding.target as Constructor);
         if (meta !== undefined) {
-          meta.params.forEach((param, idx) => {
+          meta.params.forEach((param, index) => {
             const depBinding = reg.getAll(param.token as Constructor)[0];
             if (depBinding !== undefined) {
               edges.push({
                 from: binding.id,
                 to: depBinding.id,
-                label: `[${idx}]`,
+                label: `[${index}]`,
               });
             }
           });
         }
       } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-        binding.deps.forEach((dep, idx) => {
+        binding.deps.forEach((dep, index) => {
           const depBindings = reg.getAll(dep.token as Constructor);
           if (depBindings.length > 0 && depBindings[0] !== undefined) {
             const label =
@@ -92,7 +92,7 @@ export function buildDependencyGraph(
                 ? `name:${dep.name}`
                 : dep.tags !== undefined && dep.tags.length > 0
                   ? `tag:${dep.tags[0]?.[0]}=${String(dep.tags[0]?.[1])}`
-                  : `[${idx}]`;
+                  : `[${index}]`;
             edges.push({ from: binding.id, to: depBindings[0].id, label });
           }
         });

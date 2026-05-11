@@ -65,9 +65,9 @@ const emptyContainer = Container.create();
 
 try {
   emptyContainer.resolve(LoggerToken);
-} catch (e) {
-  caught("resolve unbound token", e);
-  console.log("  Is TokenNotBoundError:", e instanceof TokenNotBoundError);
+} catch (error) {
+  caught("resolve unbound token", error);
+  console.log("  Is TokenNotBoundError:", error instanceof TokenNotBoundError);
 }
 
 // resolveOptional never throws — returns undefined instead
@@ -83,15 +83,15 @@ section("2. NoMatchingBindingError");
 const namedBindingContainer = Container.create();
 namedBindingContainer
   .bind(LoggerToken)
-  .toConstantValue({ log: (m: string) => console.log(m) })
+  .toConstantValue({ log: (message: string) => console.log(message) })
   .whenNamed("console");
 
 try {
   // Binding exists for name "console" but not "file"
   namedBindingContainer.resolve(LoggerToken, { name: "file" });
-} catch (e) {
-  caught("resolve with non-matching name hint", e);
-  console.log("  Is NoMatchingBindingError:", e instanceof NoMatchingBindingError);
+} catch (error) {
+  caught("resolve with non-matching name hint", error);
+  console.log("  Is NoMatchingBindingError:", error instanceof NoMatchingBindingError);
 }
 
 // ============================================================================
@@ -117,9 +117,9 @@ asyncBindingContainer
 try {
   // resolve() is sync — cannot await the async factory
   asyncBindingContainer.resolve(DbToken);
-} catch (e) {
-  caught("sync resolve on async binding", e);
-  console.log("  Is AsyncResolutionError:", e instanceof AsyncResolutionError);
+} catch (error) {
+  caught("sync resolve on async binding", error);
+  console.log("  Is AsyncResolutionError:", error instanceof AsyncResolutionError);
 }
 
 // Correct: use resolveAsync()
@@ -146,13 +146,13 @@ circularContainer.bind(ServiceBToken).toDynamic((ctx) => new ServiceB(ctx.resolv
 
 try {
   circularContainer.resolve(ServiceAToken);
-} catch (e) {
-  caught("circular dependency A → B → A", e);
-  console.log("  Is CircularDependencyError:", e instanceof CircularDependencyError);
+} catch (error) {
+  caught("circular dependency A → B → A", error);
+  console.log("  Is CircularDependencyError:", error instanceof CircularDependencyError);
 
-  if (e instanceof CircularDependencyError) {
+  if (error instanceof CircularDependencyError) {
     // .cycle shows the full dependency path
-    console.log("  Cycle path:", e.cycle?.join(" → "));
+    console.log("  Cycle path:", error.cycle?.join(" → "));
   }
 }
 
@@ -174,9 +174,9 @@ missingMetadataContainer.bind(UnmarkedToken).to(UnmarkedService); // no @injecta
 
 try {
   missingMetadataContainer.resolve(UnmarkedToken);
-} catch (e) {
-  caught("resolve class without @injectable", e);
-  console.log("  Is MissingMetadataError:", e instanceof MissingMetadataError);
+} catch (error) {
+  caught("resolve class without @injectable", error);
+  console.log("  Is MissingMetadataError:", error instanceof MissingMetadataError);
 }
 
 // Fix: add @injectable, or use toDynamic / toResolved instead
@@ -216,9 +216,9 @@ scopeViolationContainer.bind(SingletonConsumerToken).to(SingletonConsumer).singl
 try {
   // validate() checks the dependency graph for scope violations
   scopeViolationContainer.validate();
-} catch (e) {
-  caught("singleton depends on scoped (captive dependency)", e);
-  console.log("  Is ScopeViolationError:", e instanceof ScopeViolationError);
+} catch (error) {
+  caught("singleton depends on scoped (captive dependency)", error);
+  console.log("  Is ScopeViolationError:", error instanceof ScopeViolationError);
 }
 
 // ============================================================================
@@ -237,9 +237,9 @@ const asyncModuleContainer = Container.create();
 try {
   // load() only accepts sync modules — must use loadAsync() for AsyncModule
   asyncModuleContainer.load(AsyncDbModule as never);
-} catch (e) {
-  caught("load() called with AsyncModule", e);
-  console.log("  Is AsyncModuleLoadError:", e instanceof AsyncModuleLoadError);
+} catch (error) {
+  caught("load() called with AsyncModule", error);
+  console.log("  Is AsyncModuleLoadError:", error instanceof AsyncModuleLoadError);
 }
 
 // Correct: use loadAsync()
