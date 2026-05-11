@@ -416,7 +416,6 @@ export class DependencyResolver {
         resolutionCtx,
         resolutionPath,
         materializationStack,
-        hint,
       );
 
       let shouldActivate = needsActivation;
@@ -458,7 +457,6 @@ export class DependencyResolver {
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
     materializationStack: Array<MaterializationFrame>,
-    _hint: ResolveOptions | undefined,
   ): Value {
     switch (binding.kind) {
       case "constant":
@@ -900,7 +898,6 @@ export class DependencyResolver {
             resolutionCtx,
             resolutionPath,
             materializationStack,
-            hint,
           );
 
           let shouldActivate = needsActivation;
@@ -940,7 +937,6 @@ export class DependencyResolver {
         resolutionCtx,
         resolutionPath,
         materializationStack,
-        hint,
       );
 
       let shouldActivate = needsActivation;
@@ -979,7 +975,6 @@ export class DependencyResolver {
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
     materializationStack: Array<MaterializationFrame>,
-    _hint: ResolveOptions | undefined,
   ): Promise<Value> {
     switch (binding.kind) {
       case "constant":
