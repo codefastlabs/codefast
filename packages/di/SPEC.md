@@ -226,19 +226,19 @@ interface ConstraintContext {
   readonly resolutionPath: readonly string[];
   /**
    * Stack frames đầy đủ trên construction chain.
-   * Khác với `resolutionPath` (chỉ là string label), `materializationStack`
+   * Khác với `resolutionPath` (chỉ là string label), `resolutionStack`
    * chứa metadata đầy đủ để detect captive dependency.
    */
-  readonly materializationStack: readonly MaterializationFrame[];
+  readonly resolutionStack: readonly ResolutionFrame[];
   /** Frame ngay trên (direct parent), hoặc `undefined` ở root. */
-  readonly parent: MaterializationFrame | undefined;
+  readonly parent: ResolutionFrame | undefined;
   /** Tất cả frame trên direct parent. */
-  readonly ancestors: readonly MaterializationFrame[];
+  readonly ancestors: readonly ResolutionFrame[];
   /** Hint được truyền vào lần resolve hiện tại, hoặc `undefined` nếu không có. */
   readonly currentResolveHint: ResolveOptions | undefined;
 }
 
-interface MaterializationFrame {
+interface ResolutionFrame {
   /** Token name dùng để hiển thị trong error message. */
   readonly tokenName: string;
   readonly scope: BindingScope;
@@ -267,33 +267,33 @@ type BindingKind =
   | "alias";
 ```
 
-**`materializationStack` — thứ tự và quan hệ với `parent`/`ancestors` (normative):**
+**`resolutionStack` — thứ tự và quan hệ với `parent`/`ancestors` (normative):**
 
-`materializationStack` là snapshot readonly của toàn bộ resolution path **phía trên** token hiện tại — không bao gồm token đang được resolve. Thứ tự: từ root (index 0) đến direct parent (index cuối). Các trường `parent` và `ancestors` là computed views trên cùng dữ liệu:
+`resolutionStack` là snapshot readonly của toàn bộ resolution path **phía trên** token hiện tại — không bao gồm token đang được resolve. Thứ tự: từ root (index 0) đến direct parent (index cuối). Các trường `parent` và `ancestors` là computed views trên cùng dữ liệu:
 
 ```ts
 // Quan hệ (normative — implementer phải đảm bảo nhất quán):
-ctx.parent === ctx.materializationStack.at(-1); // frame gần nhất, undefined nếu root
-ctx.ancestors === ctx.materializationStack.slice(0, -1); // tất cả trừ frame gần nhất
+ctx.parent === ctx.resolutionStack.at(-1); // frame gần nhất, undefined nếu root
+ctx.ancestors === ctx.resolutionStack.slice(0, -1); // tất cả trừ frame gần nhất
 ```
 
 Ví dụ: resolve chain `App → Database → Logger` (root `App`, direct parent `Database`, đang resolve `Logger`):
 
 ```
-materializationStack = [App_frame, Database_frame]  // index 0 = root
-parent               = Database_frame               // materializationStack.at(-1)
-ancestors            = [App_frame]                  // materializationStack.slice(0, -1)
+resolutionStack = [App_frame, Database_frame]  // index 0 = root
+parent               = Database_frame               // resolutionStack.at(-1)
+ancestors            = [App_frame]                  // resolutionStack.slice(0, -1)
 ```
 
 Khi resolve `App` ở root (không có gì inject `App`):
 
 ```
-materializationStack = []
+resolutionStack = []
 parent               = undefined
 ancestors            = []
 ```
 
-> **`resolutionPath` vs `materializationStack`:** `resolutionPath` là mảng `tokenName` string, đủ để hiển thị trong error message (`"App → Database → Logger"`). `materializationStack` chứa `MaterializationFrame` đầy đủ (scope, bindingId, slot) — dùng cho advanced constraints và validate. Implementer phải maintain hai cấu trúc song song trong resolver: string path (rẻ hơn) và frame stack (đầy đủ hơn).
+> **`resolutionPath` vs `resolutionStack`:** `resolutionPath` là mảng `tokenName` string, đủ để hiển thị trong error message (`"App → Database → Logger"`). `resolutionStack` chứa `ResolutionFrame` đầy đủ (scope, bindingId, slot) — dùng cho advanced constraints và validate. Implementer phải maintain hai cấu trúc song song trong resolver: string path (rẻ hơn) và frame stack (đầy đủ hơn).
 
 ### 3.8 `TokenValue`
 
@@ -762,18 +762,18 @@ container.bind(AuditLogger).toAlias(Logger).whenNamed("audit");
 
 **Từ vựng (normative):**
 
-**Slot key** là khóa định danh duy nhất một slot trong registry, tính từ constraint của binding:
+**Binding slot** là khóa định danh duy nhất một slot trong registry, tính từ constraint của binding:
 
 ```
-SlotKey = {
+BindingSlot = {
   name: string | undefined,            // từ whenNamed() — undefined nếu không có
   tags: ReadonlySet<[string, unknown]>, // từ TẤT CẢ whenTagged() trên binding này
 }
 ```
 
-Hai slot key **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (thứ tự không quan trọng). Slot `default` là `{ name: undefined, tags: new Set() }`.
+Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (thứ tự không quan trọng). Slot `default` là `{ name: undefined, tags: new Set() }`.
 
-**Predicate-only `when()`:** Binding chỉ có `.when(predicate)` (không kèm `whenNamed`/`whenTagged`) **không tham gia slot last-wins** — nhiều binding cùng token có thể tồn tại song song với slot key giống nhau. Nếu sau lọc runtime vẫn còn ≥ 2 candidates, `resolve`/`resolveAsync` throw `AmbiguousBindingError` (không phải `InternalError` — đây là lỗi của người dùng, không phải lỗi internal).
+**Predicate-only `when()`:** Binding chỉ có `.when(predicate)` (không kèm `whenNamed`/`whenTagged`) **không tham gia slot last-wins** — nhiều binding cùng token có thể tồn tại song song với binding slot giống nhau. Nếu sau lọc runtime vẫn còn ≥ 2 candidates, `resolve`/`resolveAsync` throw `AmbiguousBindingError` (không phải `InternalError` — đây là lỗi của người dùng, không phải lỗi internal).
 
 **Candidate:** Binding vượt qua lọc `ResolveOptions` (name/tags) và tất cả `when(ctx)` predicates.
 
@@ -798,10 +798,10 @@ Hai slot key **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined
 
 `Binding<Value>` là union type đại diện cho một binding đã được commit vào registry. Implementer phải định nghĩa đây trong `binding.ts`. Tất cả field là `readonly`; mutation chỉ xảy ra qua registry (tạo object mới và replace).
 
-**`SlotKey` — dùng cho slot-aware last-wins và resolution matching:**
+**`BindingSlot` — dùng cho slot-aware last-wins và resolution matching:**
 
 ```ts
-interface SlotKey {
+interface BindingSlot {
   /** undefined = default slot (không có whenNamed). */
   readonly name: string | undefined;
   /** [] = không có whenTagged. Thứ tự không ảnh hưởng equality. */
@@ -809,7 +809,7 @@ interface SlotKey {
 }
 ```
 
-Hai `SlotKey` bằng nhau khi `name` equal (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (dùng `Object.is` cho value, thứ tự không quan trọng). Implementer nên cung cấp helper `slotKeyEquals(a: SlotKey, b: SlotKey): boolean`.
+Hai `BindingSlot` bằng nhau khi `name` equal (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (dùng `Object.is` cho value, thứ tự không quan trọng). Implementer nên cung cấp helper `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean`.
 
 **Fields chung cho tất cả binding (trừ ghi chú riêng):**
 
@@ -817,7 +817,7 @@ Hai `SlotKey` bằng nhau khi `name` equal (hoặc cả hai `undefined`) **và**
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
   readonly token: Token<Value> | Constructor<Value>;
-  readonly slot: SlotKey;
+  readonly slot: BindingSlot;
   /**
    * Predicate từ .when(predicate) — undefined nếu không có.
    * Lưu ý: whenNamed / whenTagged lưu vào slot, không lưu vào predicate.
@@ -924,7 +924,7 @@ type Binding<Value = unknown> =
 
 **Truy cập scope từ `AliasBinding` — tại resolve-time:**
 
-`AliasBinding` không có field `scope`. Khi cần scope (ví dụ để build `MaterializationFrame`), resolver phải follow alias chain đến binding cuối cùng và lấy scope từ đó. Nếu chain kết thúc ở `AliasBinding` khác, tiếp tục follow. Nếu cycle → `CircularDependencyError`.
+`AliasBinding` không có field `scope`. Khi cần scope (ví dụ để build `ResolutionFrame`), resolver phải follow alias chain đến binding cuối cùng và lấy scope từ đó. Nếu chain kết thúc ở `AliasBinding` khác, tiếp tục follow. Nếu cycle → `CircularDependencyError`.
 
 ---
 
@@ -1992,12 +1992,12 @@ Advanced constraints export từ cả root `@codefast/di` lẫn subpath `@codefa
 
 ### 8.1 Token name resolution
 
-Tất cả constraint function nhận `Token<unknown> | Constructor` và resolve thành chuỗi `tokenName` để so sánh với `MaterializationFrame.tokenName`. Quy tắc:
+Tất cả constraint function nhận `Token<unknown> | Constructor` và resolve thành chuỗi `tokenName` để so sánh với `ResolutionFrame.tokenName`. Quy tắc:
 
 - `Token<Value>` → dùng `token.name` (chuỗi khai báo lúc gọi `token("Logger")`)
 - `Constructor` → dùng `Constructor.name` (tên class JavaScript)
 
-> **Unique name:** `MaterializationFrame.tokenName` là `string`, không phải branded type. Nếu hai token khác nhau có cùng `name` — ví dụ `token<A>("Config")` và `token<B>("Config")` — constraint không phân biệt được. Đặt tên token unique (namespace prefix, ví dụ `"@myapp/Config"`) để tránh false match.
+> **Unique name:** `ResolutionFrame.tokenName` là `string`, không phải branded type. Nếu hai token khác nhau có cùng `name` — ví dụ `token<A>("Config")` và `token<B>("Config")` — constraint không phân biệt được. Đặt tên token unique (namespace prefix, ví dụ `"@myapp/Config"`) để tránh false match.
 
 ### 8.2 Type signatures
 
@@ -2086,7 +2086,7 @@ function whenAnyAncestorTaggedAll(
 
 ### 8.3 Semantics
 
-`ctx.parent` là `MaterializationFrame` của binding ngay trên trong stack (binding đang inject token hiện tại). `ctx.ancestors` là tất cả frame phía trên `ctx.parent`, theo thứ tự từ trực tiếp đến xa nhất — không bao gồm `ctx.parent`.
+`ctx.parent` là `ResolutionFrame` của binding ngay trên trong stack (binding đang inject token hiện tại). `ctx.ancestors` là tất cả frame phía trên `ctx.parent`, theo thứ tự từ trực tiếp đến xa nhất — không bao gồm `ctx.parent`.
 
 **Bảng implementation chuẩn (normative):**
 
@@ -2579,13 +2579,13 @@ packages/di/
 │   │                          constructor-type.ts, định nghĩa thêm:
 │   │                          DependencyKey, BindingScope, BindingIdentifier, BindingKind,
 │   │                          ActivationHandler, DeactivationHandler, ResolveOptions,
-│   │                          MaterializationFrame, ConstraintContext, ResolutionContext, TokenValue
+│   │                          ResolutionFrame, ConstraintContext, ResolutionContext, TokenValue
 │   │
 │   ├── token.ts               Token<Value> branded type (TOKEN_BRAND symbol);
 │   │                          token(), tokenName(), isToken()
 │   │
-│   ├── binding.ts             SlotKey interface, slotKeyEquals(), DEFAULT_SLOT, slotKeyToString()
-│   │                          — slot key utilities (internal, exported via subpath).
+│   ├── binding.ts             BindingSlot interface, bindingSlotEquals(), DEFAULT_BINDING_SLOT, bindingSlotToString()
+│   │                          — binding slot utilities (internal, exported via subpath).
 │   │                          Binding discriminated union:
 │   │                            ClassBinding, DynamicBinding, DynamicAsyncBinding,
 │   │                            ResolvedBinding, ResolvedAsyncBinding, ConstantBinding, AliasBinding
@@ -2619,7 +2619,7 @@ packages/di/
 │   │
 │   ├── environment.ts         runWithContainer(), getActiveContainer() — container context
 │   │                          for inject() accessor decorator; DefaultResolutionContext impl;
-│   │                          buildMaterializationFrame() — internal frame builder
+│   │                          buildResolutionFrame() — internal frame builder
 │   │                          (public helpers re-exported from root; impl internals không export)
 │   │
 │   ├── inspector.ts           Inspector class — implement inspect(), lookupBindings(), has(), hasOwn()
@@ -2630,7 +2630,7 @@ packages/di/
 │   │                          buildDependencyGraph() — build ContainerGraphJson từ container
 │   │                          (types re-export qua graph-adapters/types.ts; hàm internal)
 │   │
-│   ├── resolve-options.ts     injectableSlotToResolveOptions(), slotKeyToResolveOptions()
+│   ├── resolve-options.ts     injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
 │   │                          (public, root index)
 │   │
 │   ├── constraints.ts         whenParentIs, whenNoParentIs, whenAnyAncestorIs, whenNoAncestorIs,
@@ -2714,7 +2714,7 @@ packages/di/
 └── tsdown.config.ts
 ```
 
-**Ownership của `types.ts`:** Kiểu nền tảng (`BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `MaterializationFrame`, `TokenValue`) được khai báo trong `types.ts` — file có single responsibility, không phụ thuộc bất kỳ file nào khác trong package. `binding.ts`, `resolver.ts`, `scope.ts`... đều import từ `types.ts`. Re-export từ `index.ts`.
+**Ownership của `types.ts`:** Kiểu nền tảng (`BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `ResolutionFrame`, `TokenValue`) được khai báo trong `types.ts` — file có single responsibility, không phụ thuộc bất kỳ file nào khác trong package. `binding.ts`, `resolver.ts`, `scope.ts`... đều import từ `types.ts`. Re-export từ `index.ts`.
 
 **Phân tách `binding-select.ts` khỏi `registry.ts`:** `registry.ts` là storage layer — lưu binding và xử lý slot-aware last-wins. `binding-select.ts` là runtime filtering layer — nhận token + `ResolveOptions` + `when()` predicates, trả candidates. `resolver.ts` consume kết quả của `binding-select.ts`. Phân tách này làm từng layer dễ test độc lập.
 
@@ -2733,7 +2733,7 @@ export type {
   Constructor,
   DependencyKey,
   DeactivationHandler,
-  MaterializationFrame,
+  ResolutionFrame,
   ResolveOptions,
   ResolutionContext,
   TokenValue,
@@ -2760,7 +2760,7 @@ export { Container } from "#/container";
 export type { Container as ContainerInterface, ContainerStatic } from "#/container";
 
 export { effectiveBindingScope } from "#/binding-scope";
-export { injectableSlotToResolveOptions, slotKeyToResolveOptions } from "#/resolve-options";
+export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
@@ -2929,7 +2929,7 @@ export default defineConfig({
 
 ### Core container
 
-- `types.ts` — tất cả kiểu nền tảng: `BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `MaterializationFrame`, `TokenValue`
+- `types.ts` — tất cả kiểu nền tảng: `BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `ResolutionFrame`, `TokenValue`
 - `Token<Value>` branded type, `token()` factory, `TOKEN_BRAND`
 - `Binding` discriminated union: `ClassBinding`, `ConstantBinding`, `DynamicBinding`, `DynamicAsyncBinding`, `ResolvedBinding`, `ResolvedAsyncBinding`, `AliasBinding`
 - Builder interfaces với chain enforcement: `BindingBuilder` không expose `on*()` — buộc scope trước lifecycle

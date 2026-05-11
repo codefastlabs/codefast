@@ -3,7 +3,7 @@ import type { Token } from "#/token";
 import { INJECT_ACCESSOR_KEY, accessorMetadataByMetadataObjectMap } from "#/metadata/metadata-keys";
 import { InternalError, MissingContainerContextError } from "#/errors";
 import { getActiveContainer } from "#/environment";
-import { injectableSlotToResolveOptions } from "#/resolve-options";
+import { injectionSlotToResolveOptions } from "#/resolve-options";
 
 // ── InjectionDescriptor ───────────────────────────────────────────────────────
 
@@ -58,22 +58,22 @@ export function isInjectionDescriptor(value: unknown): value is InjectionDescrip
 /**
  * @since 0.3.16-canary.0
  */
-export function normalizeToDescriptor(dep: InjectableDependency): InjectionDescriptor {
-  if (isInjectionDescriptor(dep)) {
-    return materializeInjectionDescriptor(dep);
+export function normalizeToDescriptor(dependency: InjectableDependency): InjectionDescriptor {
+  if (isInjectionDescriptor(dependency)) {
+    return materializeInjectionDescriptor(dependency);
   }
-  return { token: dep as Token<unknown> | Constructor, optional: false, multi: false };
+  return { token: dependency as Token<unknown> | Constructor, optional: false, multi: false };
 }
 
 /**
  * Dual-role `inject()` values are functions: [[Function]].name must not be treated as a DI slot name.
  * Only enumerable own `name` / `tags` from `Object.defineProperties` are real injection options.
  */
-function materializeInjectionDescriptor(dep: InjectionDescriptor): InjectionDescriptor {
-  if (typeof dep !== "function") {
-    return dep;
+function materializeInjectionDescriptor(dependency: InjectionDescriptor): InjectionDescriptor {
+  if (typeof dependency !== "function") {
+    return dependency;
   }
-  const dualRole = dep as InjectionDescriptor & ((...args: Array<unknown>) => unknown);
+  const dualRole = dependency as InjectionDescriptor & ((...args: Array<unknown>) => unknown);
   const base: Pick<InjectionDescriptor<unknown>, "token" | "optional" | "multi"> = {
     token: dualRole.token,
     optional: dualRole.optional,
@@ -172,7 +172,7 @@ export function inject<const Value>(
       const hint =
         options === undefined
           ? undefined
-          : injectableSlotToResolveOptions({
+          : injectionSlotToResolveOptions({
               ...(options.name !== undefined ? { name: options.name } : {}),
               ...(options.tags !== undefined ? { tags: options.tags } : {}),
             });

@@ -57,8 +57,8 @@ export function buildDependencyGraph(
   const edges: Array<GraphEdge> = [];
   const includesParent = options?.includeParent === true;
 
-  const addBindings = (reg: BindingRegistry, fromParent: boolean): void => {
-    for (const binding of reg.allBindings()) {
+  const addBindings = (sourceRegistry: BindingRegistry, fromParent: boolean): void => {
+    for (const binding of sourceRegistry.allBindings()) {
       const scope = effectiveBindingScope(binding);
       nodes.push({
         id: binding.id,
@@ -73,31 +73,31 @@ export function buildDependencyGraph(
         const meta = metadataReader.getConstructorMetadata(binding.target as Constructor);
         if (meta !== undefined) {
           meta.params.forEach((param, index) => {
-            const depBinding = reg.getAll(param.token as Constructor)[0];
-            if (depBinding !== undefined) {
+            const dependencyBinding = sourceRegistry.getAll(param.token as Constructor)[0];
+            if (dependencyBinding !== undefined) {
               edges.push({
                 from: binding.id,
-                to: depBinding.id,
+                to: dependencyBinding.id,
                 label: `[${index}]`,
               });
             }
           });
         }
       } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-        binding.deps.forEach((dep, index) => {
-          const depBindings = reg.getAll(dep.token as Constructor);
-          if (depBindings.length > 0 && depBindings[0] !== undefined) {
+        binding.deps.forEach((dependency, index) => {
+          const dependencyBindings = sourceRegistry.getAll(dependency.token as Constructor);
+          if (dependencyBindings.length > 0 && dependencyBindings[0] !== undefined) {
             const label =
-              dep.name !== undefined
-                ? `name:${dep.name}`
-                : dep.tags !== undefined && dep.tags.length > 0
-                  ? `tag:${dep.tags[0]?.[0]}=${String(dep.tags[0]?.[1])}`
+              dependency.name !== undefined
+                ? `name:${dependency.name}`
+                : dependency.tags !== undefined && dependency.tags.length > 0
+                  ? `tag:${dependency.tags[0]?.[0]}=${String(dependency.tags[0]?.[1])}`
                   : `[${index}]`;
-            edges.push({ from: binding.id, to: depBindings[0].id, label });
+            edges.push({ from: binding.id, to: dependencyBindings[0].id, label });
           }
         });
       } else if (binding.kind === "alias") {
-        const targetBindings = reg.getAll(binding.target as Constructor);
+        const targetBindings = sourceRegistry.getAll(binding.target as Constructor);
         if (targetBindings.length > 0 && targetBindings[0] !== undefined) {
           edges.push({ from: binding.id, to: targetBindings[0].id, label: "alias" });
         }

@@ -83,9 +83,9 @@ rootContainer.bind(RequestLoggerToken).to(RequestLogger).scoped();
 rootContainer
   .bind(HandlerToken)
   .toDynamic((ctx) => {
-    const db = ctx.resolve(AppDbToken);
+    const database = ctx.resolve(AppDbToken);
     const logger = ctx.resolve(RequestLoggerToken);
-    return new RequestHandler(db, logger);
+    return new RequestHandler(database, logger);
   })
   .transient();
 
@@ -103,11 +103,11 @@ function handleRequest(requestId: string, userId: string, query: string): void {
   console.log("Result:", result);
 
   // Re-resolve within the same request scope — scoped instances are reused
-  const handler2 = requestContainer.resolve(HandlerToken);
-  console.log("Same Handler instance:", handler === handler2); // true
-  const logger1 = requestContainer.resolve(RequestLoggerToken);
-  const logger2 = requestContainer.resolve(RequestLoggerToken);
-  console.log("Same RequestLogger instance:", logger1 === logger2); // true
+  const secondHandlerResolve = requestContainer.resolve(HandlerToken);
+  console.log("Same Handler instance:", handler === secondHandlerResolve); // true
+  const firstLoggerResolve = requestContainer.resolve(RequestLoggerToken);
+  const secondLoggerResolve = requestContainer.resolve(RequestLoggerToken);
+  console.log("Same RequestLogger instance:", firstLoggerResolve === secondLoggerResolve); // true
 }
 
 console.log("=== Request A ===");

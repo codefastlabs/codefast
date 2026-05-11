@@ -12,12 +12,12 @@ import type { Token } from "#/token";
 import type { InjectionDescriptor } from "#/decorators/inject";
 import type { ConstraintContext } from "#/types";
 
-// ── SlotKey ───────────────────────────────────────────────────────────────────
+// ── BindingSlot ───────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface SlotKey {
+export interface BindingSlot {
   readonly name: string | undefined;
   readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
@@ -25,16 +25,16 @@ export interface SlotKey {
 /**
  * @since 0.3.16-canary.0
  */
-export function slotKeyEquals(a: SlotKey, b: SlotKey): boolean {
-  if (a.name !== b.name) {
+export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean {
+  if (left.name !== right.name) {
     return false;
   }
-  if (a.tags.length !== b.tags.length) {
+  if (left.tags.length !== right.tags.length) {
     return false;
   }
-  for (const [tagKey, tagValue] of a.tags) {
+  for (const [tagKey, tagValue] of left.tags) {
     if (
-      !b.tags.some(
+      !right.tags.some(
         ([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue),
       )
     ) {
@@ -47,12 +47,12 @@ export function slotKeyEquals(a: SlotKey, b: SlotKey): boolean {
 /**
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_SLOT: SlotKey = { name: undefined, tags: [] };
+export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [] };
 
 /**
  * @since 0.3.16-canary.0
  */
-export function slotKeyToString(slot: SlotKey): string {
+export function bindingSlotToString(slot: BindingSlot): string {
   if (slot.name === undefined && slot.tags.length === 0) {
     return "default";
   }
@@ -71,7 +71,7 @@ export function slotKeyToString(slot: SlotKey): string {
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
   readonly token: Token<Value> | Constructor<Value>;
-  readonly slot: SlotKey;
+  readonly slot: BindingSlot;
   readonly predicate?: (ctx: ConstraintContext) => boolean;
 }
 

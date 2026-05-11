@@ -197,17 +197,17 @@ console.log("s3Storage.provider:", s3Storage.provider);
 console.log("localStorage.provider:", localStorageInstance.provider);
 
 console.log("\n=== Constraint-based (parent-aware) ===");
-const orders = appContainer.resolve(OrderServiceToken);
-orders.createOrder("ORD-1");
+const orderService = appContainer.resolve(OrderServiceToken);
+orderService.createOrder("ORD-1");
 
-const payments = appContainer.resolve(PaymentServiceToken);
-payments.processPayment("ORD-1");
+const paymentService = appContainer.resolve(PaymentServiceToken);
+paymentService.processPayment("ORD-1");
 
 console.log("\n=== Multi-binding ===");
-const handlers = appContainer.resolveAll(EventHandlerToken);
-console.log(`Resolved ${handlers.length} handlers`);
+const eventHandlers = appContainer.resolveAll(EventHandlerToken);
+console.log(`Resolved ${eventHandlers.length} handlers`);
 
-const testEvent = "order.created";
-for (const handler of handlers) {
-  handler.handle(testEvent);
+const eventName = "order.created";
+for (const eventHandler of eventHandlers) {
+  eventHandler.handle(eventName);
 }

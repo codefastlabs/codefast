@@ -4,7 +4,7 @@ import type {
   BindingScope,
   ConstraintContext,
   Constructor,
-  MaterializationFrame,
+  ResolutionFrame,
   ResolutionContext,
   ResolveOptions,
 } from "#/types";
@@ -43,49 +43,49 @@ export function getActiveContainer(): Container | undefined {
 export interface ResolverCallbacks {
   resolveFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value;
   resolve<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value;
   resolveAsyncFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value>;
   resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value>;
   resolveOptional<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined;
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value | undefined>;
   resolveAll<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Array<Value>;
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
-    path: Array<string>,
-    stack: Array<MaterializationFrame>,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<Value>>;
 }
 
@@ -95,18 +95,18 @@ export interface ResolverCallbacks {
 export class DefaultResolutionContext implements ResolutionContext {
   private _resolver: ResolverCallbacks;
   private _resolutionPath: Array<string>;
-  private _materializationStack: Array<MaterializationFrame>;
+  private _resolutionStack: Array<ResolutionFrame>;
   private _currentHint: ResolveOptions | undefined;
 
   constructor(
     resolver: ResolverCallbacks,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
     currentHint: ResolveOptions | undefined,
   ) {
     this._resolver = resolver;
     this._resolutionPath = resolutionPath;
-    this._materializationStack = materializationStack;
+    this._resolutionStack = resolutionStack;
     this._currentHint = currentHint;
   }
 
@@ -116,7 +116,7 @@ export class DefaultResolutionContext implements ResolutionContext {
     if (this._graph === undefined) {
       this._graph = new DefaultConstraintContext(
         this._resolutionPath,
-        this._materializationStack,
+        this._resolutionStack,
         this._currentHint,
       );
     }
@@ -126,25 +126,21 @@ export class DefaultResolutionContext implements ResolutionContext {
   reset(
     resolver: ResolverCallbacks,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
     currentHint: ResolveOptions | undefined,
   ): void {
     this._resolver = resolver;
     this._resolutionPath = resolutionPath;
-    this._materializationStack = materializationStack;
+    this._resolutionStack = resolutionStack;
     this._currentHint = currentHint;
     this._graph = undefined;
   }
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value {
     if (hint === undefined) {
-      return this._resolver.resolveFromContext(
-        token,
-        this._resolutionPath,
-        this._materializationStack,
-      );
+      return this._resolver.resolveFromContext(token, this._resolutionPath, this._resolutionStack);
     }
-    return this._resolver.resolve(token, hint, this._resolutionPath, this._materializationStack);
+    return this._resolver.resolve(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
   resolveAsync<const Value>(
@@ -155,27 +151,17 @@ export class DefaultResolutionContext implements ResolutionContext {
       return this._resolver.resolveAsyncFromContext(
         token,
         this._resolutionPath,
-        this._materializationStack,
+        this._resolutionStack,
       );
     }
-    return this._resolver.resolveAsync(
-      token,
-      hint,
-      this._resolutionPath,
-      this._materializationStack,
-    );
+    return this._resolver.resolveAsync(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
   resolveOptional<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Value | undefined {
-    return this._resolver.resolveOptional(
-      token,
-      hint,
-      this._resolutionPath,
-      this._materializationStack,
-    );
+    return this._resolver.resolveOptional(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
   resolveOptionalAsync<const Value>(
@@ -186,7 +172,7 @@ export class DefaultResolutionContext implements ResolutionContext {
       token,
       hint,
       this._resolutionPath,
-      this._materializationStack,
+      this._resolutionStack,
     );
   }
 
@@ -194,45 +180,39 @@ export class DefaultResolutionContext implements ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Array<Value> {
-    return this._resolver.resolveAll(token, hint, this._resolutionPath, this._materializationStack);
+    return this._resolver.resolveAll(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Array<Value>> {
-    return this._resolver.resolveAllAsync(
-      token,
-      hint,
-      this._resolutionPath,
-      this._materializationStack,
-    );
+    return this._resolver.resolveAllAsync(token, hint, this._resolutionPath, this._resolutionStack);
   }
 }
 
 class DefaultConstraintContext implements ConstraintContext {
   readonly resolutionPath: ReadonlyArray<string>;
-  readonly materializationStack: ReadonlyArray<MaterializationFrame>;
-  readonly parent: MaterializationFrame | undefined;
+  readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
+  readonly parent: ResolutionFrame | undefined;
   readonly currentResolveHint: ResolveOptions | undefined;
 
   constructor(
     resolutionPath: ReadonlyArray<string>,
-    materializationStack: ReadonlyArray<MaterializationFrame>,
+    resolutionStack: ReadonlyArray<ResolutionFrame>,
     currentResolveHint: ResolveOptions | undefined,
   ) {
     this.resolutionPath = resolutionPath;
-    this.materializationStack = materializationStack;
-    this.parent = materializationStack.at(-1);
+    this.resolutionStack = resolutionStack;
+    this.parent = resolutionStack.at(-1);
     this.currentResolveHint = currentResolveHint;
   }
 
-  private _ancestors: ReadonlyArray<MaterializationFrame> | undefined;
+  private _ancestors: ReadonlyArray<ResolutionFrame> | undefined;
 
-  get ancestors(): ReadonlyArray<MaterializationFrame> {
+  get ancestors(): ReadonlyArray<ResolutionFrame> {
     if (this._ancestors === undefined) {
-      this._ancestors =
-        this.materializationStack.length > 1 ? this.materializationStack.slice(0, -1) : [];
+      this._ancestors = this.resolutionStack.length > 1 ? this.resolutionStack.slice(0, -1) : [];
     }
     return this._ancestors;
   }
@@ -241,12 +221,12 @@ class DefaultConstraintContext implements ConstraintContext {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildMaterializationFrame(
+export function buildResolutionFrame(
   tokenName: string,
   scope: BindingScope,
   bindingId: BindingIdentifier,
   kind: BindingKind,
   slot: { name: string | undefined; tags: ReadonlyArray<readonly [string, unknown]> },
-): MaterializationFrame {
+): ResolutionFrame {
   return { tokenName, scope, bindingId, kind, slot };
 }

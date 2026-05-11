@@ -20,11 +20,11 @@ export function token<Value>(name: string): Token<Value> {
 /**
  * @since 0.3.16-canary.0
  */
-export function tokenName(t: Token<unknown> | Constructor): string {
-  if (typeof t === "function") {
-    return t.name;
+export function tokenName(dependency: Token<unknown> | Constructor): string {
+  if (typeof dependency === "function") {
+    return dependency.name;
   }
-  return (t as Token<unknown>).name;
+  return (dependency as Token<unknown>).name;
 }
 
 /**

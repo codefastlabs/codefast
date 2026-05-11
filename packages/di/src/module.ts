@@ -88,6 +88,6 @@ export const Module = {
 /**
  * @since 0.3.16-canary.0
  */
-export function isSyncModule(m: SyncModule | AsyncModule): m is SyncModule {
-  return (m as SyncModule)[SYNC_MODULE_BRAND] === true;
+export function isSyncModule(module: SyncModule | AsyncModule): module is SyncModule {
+  return (module as SyncModule)[SYNC_MODULE_BRAND] === true;
 }

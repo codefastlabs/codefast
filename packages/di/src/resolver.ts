@@ -3,11 +3,11 @@ import type {
   BindingIdentifier,
   BindingScope,
   Constructor,
-  MaterializationFrame,
+  ResolutionFrame,
   ResolveOptions,
 } from "#/types";
 import type { Token } from "#/token";
-import type { Binding, SlotKey } from "#/binding";
+import type { Binding, BindingSlot } from "#/binding";
 import type { BindingRegistry } from "#/registry";
 import type { ScopeManager } from "#/scope";
 import type { LifecycleManager } from "#/lifecycle";
@@ -26,12 +26,8 @@ import {
 } from "#/errors";
 import { tokenName } from "#/token";
 import type { ResolverCallbacks } from "#/environment";
-import {
-  buildMaterializationFrame,
-  DefaultResolutionContext,
-  runWithContainer,
-} from "#/environment";
-import { injectableSlotToResolveOptions } from "#/resolve-options";
+import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/environment";
+import { injectionSlotToResolveOptions } from "#/resolve-options";
 import { selectAllBindings, selectBinding } from "#/binding-select";
 
 type BindingWithScope = Binding & { scope: BindingScope };
@@ -39,10 +35,10 @@ const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
-const EMPTY_FRAME_LIST: ReadonlyArray<MaterializationFrame> = [];
+const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 const ROOT_CONSTRAINT_CONTEXT = {
   resolutionPath: EMPTY_STRING_LIST,
-  materializationStack: EMPTY_FRAME_LIST,
+  resolutionStack: EMPTY_FRAME_LIST,
   parent: undefined,
   ancestors: EMPTY_FRAME_LIST,
   currentResolveHint: undefined,
@@ -52,7 +48,7 @@ const ROOT_CONSTRAINT_CONTEXT = {
  * @since 0.3.16-canary.0
  */
 export class DependencyResolver {
-  private readonly _frameByBindingId = new Map<BindingIdentifier, MaterializationFrame>();
+  private readonly _frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
   private readonly _syncResolutionContextPool: Array<DefaultResolutionContext> = [];
   // Deep-path state for _resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
   //
@@ -71,8 +67,8 @@ export class DependencyResolver {
   //
   // _deepSyncCtx / _deepSyncCtxPath: single shared context for the deep chain; avoids one
   //   per-depth pool reset (5 property writes) for every level beyond the threshold.
-  //   materializationStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
-  //   Trade-off: ctx.graph.materializationStack only reflects the first RESOLUTION_SET_THRESHOLD
+  //   resolutionStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
+  //   Trade-off: ctx.graph.resolutionStack only reflects the first RESOLUTION_SET_THRESHOLD
   //   frames; code relying on ctx.graph.parent inside a deep transient-dynamic factory will see
   //   the frame at the threshold boundary, not the current depth.
   private readonly _deepCycleMarks = new Map<BindingIdentifier, number>();
@@ -83,7 +79,7 @@ export class DependencyResolver {
   // Async shared-context state for _resolveTransientDynamicAsyncFromContext (shallow path):
   //
   // For a SEQUENTIAL async chain (depth < RESOLUTION_SET_THRESHOLD), all levels share the same
-  // resolutionPath and materializationStack arrays (passed by reference through ctx.resolveAsync).
+  // resolutionPath and resolutionStack arrays (passed by reference through ctx.resolveAsync).
   // Because the context stores references rather than snapshots, a single DefaultResolutionContext
   // can serve the entire chain without any per-level allocation or reset — the arrays reflect the
   // current chain state automatically as we push/pop.
@@ -102,8 +98,8 @@ export class DependencyResolver {
   //   release the path pointer (set _deepAsyncCtxPath = undefined).
   //   Concurrent fallback calls are NOT counted — they don't interfere with the owner.
   //
-  // materializationStack is NOT pushed in this path (same trade-off as the deep sync path):
-  //   ctx.graph.materializationStack will always be empty for async transient-dynamic chains.
+  // resolutionStack is NOT pushed in this path (same trade-off as the deep sync path):
+  //   ctx.graph.resolutionStack will always be empty for async transient-dynamic chains.
   //   Factories that inspect ctx.graph.parent should use the conventional sync binding approach.
   //
   // The function is NOT declared async so that V8 does not create an AsyncGeneratorObject and
@@ -136,7 +132,7 @@ export class DependencyResolver {
     token: Token<unknown> | Constructor,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): { binding: Binding; owner: DependencyResolver } | undefined {
     if (hint === undefined) {
       const fastDefaultBinding = this._registry.getFastDefault(token);
@@ -149,7 +145,7 @@ export class DependencyResolver {
       const namedBinding = this._registry.getSimpleNamed(token, hint.name);
       if (
         namedBinding !== undefined &&
-        this._matchesBindingFast(namedBinding, hint, resolutionPath, materializationStack)
+        this._matchesBindingFast(namedBinding, hint, resolutionPath, resolutionStack)
       ) {
         return { binding: namedBinding, owner: this };
       }
@@ -177,18 +173,18 @@ export class DependencyResolver {
         if (hint === undefined && isDefaultSlot && onlyBinding.predicate === undefined) {
           return { binding: onlyBinding, owner: this };
         }
-        if (this._matchesBindingFast(onlyBinding, hint, resolutionPath, materializationStack)) {
+        if (this._matchesBindingFast(onlyBinding, hint, resolutionPath, resolutionStack)) {
           return { binding: onlyBinding, owner: this };
         }
       }
-      const ctx = this._makeConstraintContext(resolutionPath, materializationStack, hint);
+      const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
       const binding = selectBinding(bindings, hint, ctx, this._getTokenName(token));
       if (binding !== undefined) {
         return { binding, owner: this };
       }
     }
     if (this._parent !== undefined) {
-      return this._parent._findBinding(token, hint, resolutionPath, materializationStack);
+      return this._parent._findBinding(token, hint, resolutionPath, resolutionStack);
     }
     return undefined;
   }
@@ -226,7 +222,7 @@ export class DependencyResolver {
   resolveFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
     const fastBinding = this._registry.getFastDefault(token);
     if (fastBinding !== undefined) {
@@ -234,7 +230,7 @@ export class DependencyResolver {
         return this.resolveFromContext(
           fastBinding.target as Token<Value> | Constructor<Value>,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
       }
       const scope = (fastBinding as BindingWithScope).scope ?? "transient";
@@ -248,7 +244,7 @@ export class DependencyResolver {
         return this._resolveTransientDynamicSyncFromContext(
           fastBinding as Binding<Value> & { kind: "dynamic" },
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
       }
       if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
@@ -266,20 +262,20 @@ export class DependencyResolver {
         fastBinding as Binding<Value>,
         undefined,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
 
-    return this.resolve(token, undefined, resolutionPath, materializationStack);
+    return this.resolve(token, undefined, resolutionPath, resolutionStack);
   }
 
   resolve<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
-    const found = this._findBinding(token, hint, resolutionPath, materializationStack);
+    const found = this._findBinding(token, hint, resolutionPath, resolutionStack);
 
     if (found === undefined) {
       const ownBindings = this._registry.getAll(token);
@@ -301,7 +297,7 @@ export class DependencyResolver {
         binding.target as Token<Value> | Constructor<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
 
@@ -313,24 +309,19 @@ export class DependencyResolver {
         binding as Binding<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
 
     // Scoped/transient (or own singleton): resolve with this resolver's container/scope
-    return this._resolveBinding(
-      binding as Binding<Value>,
-      hint,
-      resolutionPath,
-      materializationStack,
-    );
+    return this._resolveBinding(binding as Binding<Value>, hint, resolutionPath, resolutionStack);
   }
 
   private _resolveBinding<const Value>(
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
     if (
       binding.kind === "constant" &&
@@ -359,7 +350,7 @@ export class DependencyResolver {
       }
     }
 
-    const frame = this._getMaterializationFrame(binding);
+    const frame = this._getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -380,12 +371,12 @@ export class DependencyResolver {
 
     resolutionPath.push(tokenDisplayName);
     resolutionSet?.add(tokenDisplayName);
-    materializationStack.push(frame);
+    resolutionStack.push(frame);
     const needsActivation = this._needsActivation(binding);
     if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
       const resolutionCtx = this._acquireSyncResolutionContext(
         resolutionPath,
-        materializationStack,
+        resolutionStack,
         hint,
       );
       try {
@@ -393,12 +384,12 @@ export class DependencyResolver {
         if (dynamicResult instanceof Promise) {
           throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
         }
-        materializationStack.pop();
+        resolutionStack.pop();
         resolutionPath.pop();
         resolutionSet?.delete(tokenDisplayName);
         return dynamicResult;
       } catch (error) {
-        materializationStack.pop();
+        resolutionStack.pop();
         resolutionPath.pop();
         resolutionSet?.delete(tokenDisplayName);
         throw error;
@@ -408,14 +399,14 @@ export class DependencyResolver {
     try {
       const needsResolutionContext = needsActivation || this._requiresResolutionContext(binding);
       const resolutionCtx = needsResolutionContext
-        ? this._acquireSyncResolutionContext(resolutionPath, materializationStack, hint)
+        ? this._acquireSyncResolutionContext(resolutionPath, resolutionStack, hint)
         : undefined;
 
       const instance = this._instantiateSync(
         binding,
         resolutionCtx,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
 
       let shouldActivate = needsActivation;
@@ -446,7 +437,7 @@ export class DependencyResolver {
 
       return activated;
     } finally {
-      materializationStack.pop();
+      resolutionStack.pop();
       resolutionPath.pop();
       resolutionSet?.delete(tokenDisplayName);
     }
@@ -456,7 +447,7 @@ export class DependencyResolver {
     binding: Binding<Value>,
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
     switch (binding.kind) {
       case "constant":
@@ -477,17 +468,13 @@ export class DependencyResolver {
         throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
 
       case "class": {
-        const deps = this._resolveClassDeps(binding.target, resolutionPath, materializationStack);
+        const deps = this._resolveClassDeps(binding.target, resolutionPath, resolutionStack);
         const instance = this._instantiateClass(binding.target, deps);
         return instance as Value;
       }
 
       case "resolved": {
-        const deps = this._resolveDescriptorDeps(
-          binding.deps,
-          resolutionPath,
-          materializationStack,
-        );
+        const deps = this._resolveDescriptorDeps(binding.deps, resolutionPath, resolutionStack);
         const factoryResult = binding.factory(...deps);
         if (factoryResult instanceof Promise) {
           throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
@@ -506,7 +493,7 @@ export class DependencyResolver {
   private _resolveClassDeps(
     target: Constructor,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Array<unknown> {
     const meta = this._getConstructorMetadata(target);
     if (meta === undefined) {
@@ -520,14 +507,14 @@ export class DependencyResolver {
     }
     if (meta.params.length === 1) {
       const param = meta.params[0]!;
-      const paramHint = injectableSlotToResolveOptions(param);
+      const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
         return [
           this.resolveAll(
             param.token as Token<unknown> | Constructor,
             paramHint,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           ),
         ];
       }
@@ -537,7 +524,7 @@ export class DependencyResolver {
             param.token as Token<unknown> | Constructor,
             paramHint,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           ),
         ];
       }
@@ -546,7 +533,7 @@ export class DependencyResolver {
           this.resolveFromContext(
             param.token as Token<unknown> | Constructor,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           ),
         ];
       }
@@ -555,20 +542,20 @@ export class DependencyResolver {
           param.token as Token<unknown> | Constructor,
           paramHint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         ),
       ];
     }
     const deps = new Array<unknown>(meta.params.length);
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
-      const paramHint = injectableSlotToResolveOptions(param);
+      const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
         deps[index] = this.resolveAll(
           param.token as Token<unknown> | Constructor,
           paramHint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         continue;
       }
@@ -577,7 +564,7 @@ export class DependencyResolver {
           param.token as Token<unknown> | Constructor,
           paramHint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         continue;
       }
@@ -586,13 +573,13 @@ export class DependencyResolver {
           ? this.resolveFromContext(
               param.token as Token<unknown> | Constructor,
               resolutionPath,
-              materializationStack,
+              resolutionStack,
             )
           : this.resolve(
               param.token as Token<unknown> | Constructor,
               paramHint,
               resolutionPath,
-              materializationStack,
+              resolutionStack,
             );
     }
     return deps;
@@ -601,18 +588,18 @@ export class DependencyResolver {
   private _resolveDescriptorDeps(
     deps: ReadonlyArray<InjectionDescriptor>,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Array<unknown> {
     const resolved = new Array<unknown>(deps.length);
     for (let index = 0; index < deps.length; index += 1) {
       const dep = deps[index]!;
-      const depHint = injectableSlotToResolveOptions(dep);
+      const depHint = injectionSlotToResolveOptions(dep);
       if (dep.multi) {
         resolved[index] = this.resolveAll(
           dep.token as Token<unknown> | Constructor,
           depHint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         continue;
       }
@@ -621,7 +608,7 @@ export class DependencyResolver {
           dep.token as Token<unknown> | Constructor,
           depHint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         continue;
       }
@@ -630,13 +617,13 @@ export class DependencyResolver {
           ? this.resolveFromContext(
               dep.token as Token<unknown> | Constructor,
               resolutionPath,
-              materializationStack,
+              resolutionStack,
             )
           : this.resolve(
               dep.token as Token<unknown> | Constructor,
               depHint,
               resolutionPath,
-              materializationStack,
+              resolutionStack,
             );
     }
     return resolved;
@@ -646,19 +633,19 @@ export class DependencyResolver {
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined {
-    if (this._findBinding(token, hint, resolutionPath, materializationStack) === undefined) {
+    if (this._findBinding(token, hint, resolutionPath, resolutionStack) === undefined) {
       return undefined;
     }
-    return this.resolve(token, hint, resolutionPath, materializationStack);
+    return this.resolve(token, hint, resolutionPath, resolutionStack);
   }
 
   resolveAll<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Array<Value> {
     if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
       const namedCandidates = this._getSimpleNamedBindingsFromChain(token, hint.name);
@@ -671,7 +658,7 @@ export class DependencyResolver {
           namedCandidates[index] as Binding<Value>,
           hint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
       }
       return resolved;
@@ -682,7 +669,7 @@ export class DependencyResolver {
       return [];
     }
 
-    const ctx = this._makeConstraintContext(resolutionPath, materializationStack, hint);
+    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
     const candidates = selectAllBindings(allBindings, hint, ctx);
 
     const resolved = new Array<Value>(candidates.length);
@@ -691,7 +678,7 @@ export class DependencyResolver {
         candidates[index] as Binding<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
     return resolved;
@@ -702,7 +689,7 @@ export class DependencyResolver {
   resolveAsyncFromContext<const Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
     const fastBinding = this._registry.getFastDefault(token);
     if (fastBinding !== undefined) {
@@ -710,7 +697,7 @@ export class DependencyResolver {
         return this.resolveAsyncFromContext(
           fastBinding.target as Token<Value> | Constructor<Value>,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
       }
       const scope = (fastBinding as BindingWithScope).scope ?? "transient";
@@ -724,7 +711,7 @@ export class DependencyResolver {
         return this._resolveTransientDynamicAsyncFromContext(
           fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
       }
       if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
@@ -744,20 +731,20 @@ export class DependencyResolver {
         fastBinding as Binding<Value>,
         undefined,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
 
-    return this.resolveAsync(token, undefined, resolutionPath, materializationStack);
+    return this.resolveAsync(token, undefined, resolutionPath, resolutionStack);
   }
 
   async resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    const found = this._findBinding(token, hint, resolutionPath, materializationStack);
+    const found = this._findBinding(token, hint, resolutionPath, resolutionStack);
 
     if (found === undefined) {
       const ownBindings = this._registry.getAll(token);
@@ -778,7 +765,7 @@ export class DependencyResolver {
         binding.target as Token<Value> | Constructor<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
 
@@ -789,7 +776,7 @@ export class DependencyResolver {
         binding as Binding<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
 
@@ -797,7 +784,7 @@ export class DependencyResolver {
       binding as Binding<Value>,
       hint,
       resolutionPath,
-      materializationStack,
+      resolutionStack,
     );
   }
 
@@ -805,7 +792,7 @@ export class DependencyResolver {
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
     if (
       binding.kind === "constant" &&
@@ -839,7 +826,7 @@ export class DependencyResolver {
       }
     }
 
-    const frame = this._getMaterializationFrame(binding);
+    const frame = this._getResolutionFrame(binding);
     const frameName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -858,7 +845,7 @@ export class DependencyResolver {
 
     resolutionPath.push(frameName);
     resolutionSet?.add(frameName);
-    materializationStack.push(frame);
+    resolutionStack.push(frame);
     const needsActivation = this._needsActivation(binding);
     if (
       !needsActivation &&
@@ -868,7 +855,7 @@ export class DependencyResolver {
       const resolutionCtx = new DefaultResolutionContext(
         this as unknown as ResolverCallbacks,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
         hint,
       );
       try {
@@ -878,7 +865,7 @@ export class DependencyResolver {
         const dynamicResult = binding.factory(resolutionCtx);
         return dynamicResult instanceof Promise ? await dynamicResult : dynamicResult;
       } finally {
-        materializationStack.pop();
+        resolutionStack.pop();
         resolutionPath.pop();
         resolutionSet?.delete(frameName);
       }
@@ -889,7 +876,7 @@ export class DependencyResolver {
       ? new DefaultResolutionContext(
           this as unknown as ResolverCallbacks,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
           hint,
         )
       : undefined;
@@ -901,7 +888,7 @@ export class DependencyResolver {
             binding,
             resolutionCtx,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           );
 
           let shouldActivate = needsActivation;
@@ -940,7 +927,7 @@ export class DependencyResolver {
         binding,
         resolutionCtx,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
 
       let shouldActivate = needsActivation;
@@ -968,7 +955,7 @@ export class DependencyResolver {
 
       return activated;
     } finally {
-      materializationStack.pop();
+      resolutionStack.pop();
       resolutionPath.pop();
       resolutionSet?.delete(frameName);
     }
@@ -978,7 +965,7 @@ export class DependencyResolver {
     binding: Binding<Value>,
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
     switch (binding.kind) {
       case "constant":
@@ -1002,7 +989,7 @@ export class DependencyResolver {
         const deps = await this._resolveClassDepsAsync(
           binding.target,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         const instance = this._instantiateClass(binding.target, deps);
         return instance as Value;
@@ -1015,7 +1002,7 @@ export class DependencyResolver {
         const deps = await this._resolveDescriptorDepsAsync(
           binding.deps,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         const factoryResult = binding.factory(...deps);
         return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
@@ -1025,7 +1012,7 @@ export class DependencyResolver {
         const deps = await this._resolveDescriptorDepsAsync(
           binding.deps,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
         return binding.factory(...deps);
       }
@@ -1038,7 +1025,7 @@ export class DependencyResolver {
   private async _resolveClassDepsAsync(
     target: Constructor,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<unknown>> {
     const meta = this._getConstructorMetadata(target);
     if (meta === undefined) {
@@ -1052,14 +1039,14 @@ export class DependencyResolver {
     }
     if (meta.params.length === 1) {
       const param = meta.params[0]!;
-      const paramHint = injectableSlotToResolveOptions(param);
+      const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
         return [
           await this.resolveAllAsync(
             param.token as Token<unknown> | Constructor,
             paramHint,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           ),
         ];
       }
@@ -1069,7 +1056,7 @@ export class DependencyResolver {
             param.token as Token<unknown> | Constructor,
             paramHint,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           ),
         ];
       }
@@ -1078,7 +1065,7 @@ export class DependencyResolver {
           await this.resolveAsyncFromContext(
             param.token as Token<unknown> | Constructor,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
           ),
         ];
       }
@@ -1087,7 +1074,7 @@ export class DependencyResolver {
           param.token as Token<unknown> | Constructor,
           paramHint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         ),
       ];
     }
@@ -1095,20 +1082,20 @@ export class DependencyResolver {
     const shouldCloneContext = meta.params.length > 1;
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
-      const paramHint = injectableSlotToResolveOptions(param);
+      const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
         pending[index] = this.resolveAllAsync(
           param.token as Token<unknown> | Constructor,
           paramHint,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
-          shouldCloneContext ? [...materializationStack] : materializationStack,
+          shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else if (param.optional) {
         pending[index] = this.resolveOptionalAsync(
           param.token as Token<unknown> | Constructor,
           paramHint,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
-          shouldCloneContext ? [...materializationStack] : materializationStack,
+          shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else {
         pending[index] =
@@ -1116,13 +1103,13 @@ export class DependencyResolver {
             ? this.resolveAsyncFromContext(
                 param.token as Token<unknown> | Constructor,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
-                shouldCloneContext ? [...materializationStack] : materializationStack,
+                shouldCloneContext ? [...resolutionStack] : resolutionStack,
               )
             : this.resolveAsync(
                 param.token as Token<unknown> | Constructor,
                 paramHint,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
-                shouldCloneContext ? [...materializationStack] : materializationStack,
+                shouldCloneContext ? [...resolutionStack] : resolutionStack,
               );
       }
     }
@@ -1132,26 +1119,26 @@ export class DependencyResolver {
   private async _resolveDescriptorDepsAsync(
     deps: ReadonlyArray<InjectionDescriptor>,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<unknown>> {
     const pending = new Array<Promise<unknown>>(deps.length);
     const shouldCloneContext = deps.length > 1;
     for (let index = 0; index < deps.length; index += 1) {
       const dep = deps[index]!;
-      const depHint = injectableSlotToResolveOptions(dep);
+      const depHint = injectionSlotToResolveOptions(dep);
       if (dep.multi) {
         pending[index] = this.resolveAllAsync(
           dep.token as Token<unknown> | Constructor,
           depHint,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
-          shouldCloneContext ? [...materializationStack] : materializationStack,
+          shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else if (dep.optional) {
         pending[index] = this.resolveOptionalAsync(
           dep.token as Token<unknown> | Constructor,
           depHint,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
-          shouldCloneContext ? [...materializationStack] : materializationStack,
+          shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else {
         pending[index] =
@@ -1159,13 +1146,13 @@ export class DependencyResolver {
             ? this.resolveAsyncFromContext(
                 dep.token as Token<unknown> | Constructor,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
-                shouldCloneContext ? [...materializationStack] : materializationStack,
+                shouldCloneContext ? [...resolutionStack] : resolutionStack,
               )
             : this.resolveAsync(
                 dep.token as Token<unknown> | Constructor,
                 depHint,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
-                shouldCloneContext ? [...materializationStack] : materializationStack,
+                shouldCloneContext ? [...resolutionStack] : resolutionStack,
               );
       }
     }
@@ -1176,19 +1163,19 @@ export class DependencyResolver {
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value | undefined> {
-    if (this._findBinding(token, hint, resolutionPath, materializationStack) === undefined) {
+    if (this._findBinding(token, hint, resolutionPath, resolutionStack) === undefined) {
       return undefined;
     }
-    return this.resolveAsync(token, hint, resolutionPath, materializationStack);
+    return this.resolveAsync(token, hint, resolutionPath, resolutionStack);
   }
 
   async resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<Value>> {
     if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
       const namedCandidates = this._getSimpleNamedBindingsFromChain(token, hint.name);
@@ -1201,7 +1188,7 @@ export class DependencyResolver {
           namedCandidates[index] as Binding<Value>,
           hint,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
         );
       }
       return Promise.all(pending);
@@ -1212,7 +1199,7 @@ export class DependencyResolver {
       return [];
     }
 
-    const ctx = this._makeConstraintContext(resolutionPath, materializationStack, hint);
+    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
     const candidates = selectAllBindings(allBindings, hint, ctx);
 
     const pending = new Array<Promise<Value>>(candidates.length);
@@ -1221,7 +1208,7 @@ export class DependencyResolver {
         candidates[index] as Binding<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
     return Promise.all(pending);
@@ -1275,20 +1262,18 @@ export class DependencyResolver {
 
   private _makeConstraintContext(
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
     hint: ResolveOptions | undefined,
   ) {
-    if (hint === undefined && resolutionPath.length === 0 && materializationStack.length === 0) {
+    if (hint === undefined && resolutionPath.length === 0 && resolutionStack.length === 0) {
       return ROOT_CONSTRAINT_CONTEXT;
     }
-    const parent = materializationStack.at(-1);
+    const parent = resolutionStack.at(-1);
     const ancestors =
-      materializationStack.length > 1
-        ? materializationStack.slice(0, -1)
-        : ([] as Array<MaterializationFrame>);
+      resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : ([] as Array<ResolutionFrame>);
     return {
       resolutionPath,
-      materializationStack,
+      resolutionStack,
       parent,
       ancestors,
       currentResolveHint: hint,
@@ -1299,7 +1284,7 @@ export class DependencyResolver {
     binding: Binding,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): boolean {
     if (!this._matchesSlotFast(binding.slot, hint)) {
       return false;
@@ -1307,11 +1292,11 @@ export class DependencyResolver {
     if (binding.predicate === undefined) {
       return true;
     }
-    const ctx = this._makeConstraintContext(resolutionPath, materializationStack, hint);
+    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
     return binding.predicate(ctx);
   }
 
-  private _matchesSlotFast(slot: SlotKey, hint: ResolveOptions | undefined): boolean {
+  private _matchesSlotFast(slot: BindingSlot, hint: ResolveOptions | undefined): boolean {
     const hintName = hint?.name;
     const hintTags = hint?.tags;
     const singleHintTag = hint?.tag;
@@ -1403,23 +1388,23 @@ export class DependencyResolver {
   private _resolveTransientDynamicSyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
     // ── Shallow path (depth < RESOLUTION_SET_THRESHOLD) ──────────────────────────────────
     // Use resolutionPath.includes for cycle detection: for tiny arrays (depth 0–31) this is
-    // faster than a Set lookup. Keep materializationStack push/pop and the per-depth pool so
+    // faster than a Set lookup. Keep resolutionStack push/pop and the per-depth pool so
     // ctx.graph reflects correct state for shallow-chain factories.
     if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
-      const frame = this._getMaterializationFrame(binding);
+      const frame = this._getResolutionFrame(binding);
       const tokenDisplayName = frame.tokenName;
       if (resolutionPath.includes(tokenDisplayName)) {
         throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
       }
       resolutionPath.push(tokenDisplayName);
-      materializationStack.push(frame);
+      resolutionStack.push(frame);
       const resolutionCtx = this._acquireSyncResolutionContext(
         resolutionPath,
-        materializationStack,
+        resolutionStack,
         undefined,
       );
       try {
@@ -1429,7 +1414,7 @@ export class DependencyResolver {
         }
         return dynamicResult;
       } finally {
-        materializationStack.pop();
+        resolutionStack.pop();
         resolutionPath.pop();
       }
     }
@@ -1439,7 +1424,7 @@ export class DependencyResolver {
     // Set<BindingIdentifier> for O(1) cycle detection.
     //
     // Performance decisions vs. shallow path:
-    //  1. _getMaterializationFrame is NOT called: frameName is only needed for resolutionPath.push
+    //  1. _getResolutionFrame is NOT called: frameName is only needed for resolutionPath.push
     //     and error messages.  Both are handled below without the frame Map lookup.
     //  2. resolutionPath.push / pop is SKIPPED: cycle detection uses _deepCycleIds (binding IDs),
     //     so path membership tracking through the string array is unnecessary.  Eliminating
@@ -1454,16 +1439,16 @@ export class DependencyResolver {
     // container.resolve() internally and that inner chain also reached the threshold),
     // fall back to the slow path to avoid cross-chain Set pollution.
     if (this._deepActiveLevels > 0 && this._deepSyncCtxPath !== resolutionPath) {
-      return this._resolveTransientDynamicSyncSlow(binding, resolutionPath, materializationStack);
+      return this._resolveTransientDynamicSyncSlow(binding, resolutionPath, resolutionStack);
     }
 
     // First deep level: bump the generation (implicitly clearing all stale cycle marks from
     // previous chains), seed the marks with the shallow-path frames already on the
-    // materialization stack, then initialise (or reset) the shared context once for the
+    // resolution stack, then initialise (or reset) the shared context once for the
     // whole deep chain.
     if (this._deepActiveLevels === 0) {
       const gen = ++this._deepCycleGen;
-      for (const stackFrame of materializationStack) {
+      for (const stackFrame of resolutionStack) {
         this._deepCycleMarks.set(stackFrame.bindingId, gen);
       }
       let ctx = this._deepSyncCtx;
@@ -1471,17 +1456,12 @@ export class DependencyResolver {
         ctx = new DefaultResolutionContext(
           this as unknown as ResolverCallbacks,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
           undefined,
         );
         this._deepSyncCtx = ctx;
       } else {
-        ctx.reset(
-          this as unknown as ResolverCallbacks,
-          resolutionPath,
-          materializationStack,
-          undefined,
-        );
+        ctx.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, undefined);
       }
       this._deepSyncCtxPath = resolutionPath;
     }
@@ -1512,11 +1492,11 @@ export class DependencyResolver {
   private _resolveTransientDynamicSyncSlow<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
     // Rare fallback used when deep-chain reentrancy is detected (a factory called
     // container.resolve() directly and the resulting chain also reached the threshold).
-    const frame = this._getMaterializationFrame(binding);
+    const frame = this._getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -1529,10 +1509,10 @@ export class DependencyResolver {
     }
     resolutionPath.push(tokenDisplayName);
     resolutionSet.add(tokenDisplayName);
-    materializationStack.push(frame);
+    resolutionStack.push(frame);
     const resolutionCtx = this._acquireSyncResolutionContext(
       resolutionPath,
-      materializationStack,
+      resolutionStack,
       undefined,
     );
     try {
@@ -1542,7 +1522,7 @@ export class DependencyResolver {
       }
       return dynamicResult;
     } finally {
-      materializationStack.pop();
+      resolutionStack.pop();
       resolutionPath.pop();
       resolutionSet.delete(tokenDisplayName);
     }
@@ -1554,16 +1534,16 @@ export class DependencyResolver {
   private _resolveTransientDynamicAsyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
     // ── Shallow async path (depth < RESOLUTION_SET_THRESHOLD) ─────────────────────────────
     // For the common case of a sequential async chain (each factory awaits one dependency at a
-    // time), all levels share the same resolutionPath/materializationStack arrays.  A single
+    // time), all levels share the same resolutionPath/resolutionStack arrays.  A single
     // DefaultResolutionContext can therefore serve the entire chain:
     //   • levels 2-N of the owning chain: zero allocation, zero reset writes
     //   • concurrent chains (Promise.all roots): detected by path-identity mismatch → fallback
     //     to a fresh DefaultResolutionContext for that level only
-    // materializationStack is NOT pushed here — see class-level comment for the trade-off.
+    // resolutionStack is NOT pushed here — see class-level comment for the trade-off.
     if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
       const tokenDisplayName = tokenName(binding.token);
       if (resolutionPath.includes(tokenDisplayName)) {
@@ -1586,7 +1566,7 @@ export class DependencyResolver {
           ctx = new DefaultResolutionContext(
             this as unknown as ResolverCallbacks,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
             undefined,
           );
           this._deepAsyncCtx = ctx;
@@ -1594,7 +1574,7 @@ export class DependencyResolver {
           existing.reset(
             this as unknown as ResolverCallbacks,
             resolutionPath,
-            materializationStack,
+            resolutionStack,
             undefined,
           );
           ctx = existing;
@@ -1607,7 +1587,7 @@ export class DependencyResolver {
         ctx = new DefaultResolutionContext(
           this as unknown as ResolverCallbacks,
           resolutionPath,
-          materializationStack,
+          resolutionStack,
           undefined,
         );
         isOwnerLevel = false;
@@ -1661,15 +1641,15 @@ export class DependencyResolver {
 
     // ── Deep async path (depth ≥ RESOLUTION_SET_THRESHOLD) ────────────────────────────────
     // Fall back to the fully-correct slow implementation.
-    return this._resolveTransientDynamicAsyncSlow(binding, resolutionPath, materializationStack);
+    return this._resolveTransientDynamicAsyncSlow(binding, resolutionPath, resolutionStack);
   }
 
   private async _resolveTransientDynamicAsyncSlow<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    const frame = this._getMaterializationFrame(binding);
+    const frame = this._getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -1682,11 +1662,11 @@ export class DependencyResolver {
     }
     resolutionPath.push(tokenDisplayName);
     resolutionSet.add(tokenDisplayName);
-    materializationStack.push(frame);
+    resolutionStack.push(frame);
     const resolutionCtx = new DefaultResolutionContext(
       this as unknown as ResolverCallbacks,
       resolutionPath,
-      materializationStack,
+      resolutionStack,
       undefined,
     );
     try {
@@ -1696,7 +1676,7 @@ export class DependencyResolver {
       const dynamicResult = binding.factory(resolutionCtx);
       return dynamicResult instanceof Promise ? await dynamicResult : dynamicResult;
     } finally {
-      materializationStack.pop();
+      resolutionStack.pop();
       resolutionPath.pop();
       resolutionSet.delete(tokenDisplayName);
     }
@@ -1706,7 +1686,7 @@ export class DependencyResolver {
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Value {
     if (
       binding.kind === "constant" &&
@@ -1720,7 +1700,7 @@ export class DependencyResolver {
         binding.target as Token<Value> | Constructor<Value>,
         hint,
         resolutionPath,
-        materializationStack,
+        resolutionStack,
       );
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
@@ -1735,14 +1715,14 @@ export class DependencyResolver {
         return this._scope.getScoped<Value>(binding.id);
       }
     }
-    return this._resolveBinding(binding, hint, resolutionPath, materializationStack);
+    return this._resolveBinding(binding, hint, resolutionPath, resolutionStack);
   }
 
   private _resolveCandidateAsync<const Value>(
     binding: Binding<Value>,
     hint: ResolveOptions | undefined,
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
     if (
       binding.kind === "constant" &&
@@ -1752,7 +1732,7 @@ export class DependencyResolver {
       return Promise.resolve(binding.value);
     }
     const isolatedPath = [...resolutionPath];
-    const isolatedStack = [...materializationStack];
+    const isolatedStack = [...resolutionStack];
     if (binding.kind === "alias") {
       return this.resolveAsync(
         binding.target as Token<Value> | Constructor<Value>,
@@ -1776,13 +1756,13 @@ export class DependencyResolver {
     return this._resolveBindingAsync(binding, hint, isolatedPath, isolatedStack);
   }
 
-  private _getMaterializationFrame<const Value>(binding: Binding<Value>): MaterializationFrame {
+  private _getResolutionFrame<const Value>(binding: Binding<Value>): ResolutionFrame {
     const existing = this._frameByBindingId.get(binding.id);
     if (existing !== undefined) {
       return existing;
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
-    const frame = buildMaterializationFrame(
+    const frame = buildResolutionFrame(
       tokenName(binding.token),
       scope,
       binding.id,
@@ -1853,24 +1833,19 @@ export class DependencyResolver {
 
   private _acquireSyncResolutionContext(
     resolutionPath: Array<string>,
-    materializationStack: Array<MaterializationFrame>,
+    resolutionStack: Array<ResolutionFrame>,
     hint: ResolveOptions | undefined,
   ): DefaultResolutionContext {
-    const depth = materializationStack.length;
+    const depth = resolutionStack.length;
     const existing = this._syncResolutionContextPool[depth];
     if (existing !== undefined) {
-      existing.reset(
-        this as unknown as ResolverCallbacks,
-        resolutionPath,
-        materializationStack,
-        hint,
-      );
+      existing.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, hint);
       return existing;
     }
     const created = new DefaultResolutionContext(
       this as unknown as ResolverCallbacks,
       resolutionPath,
-      materializationStack,
+      resolutionStack,
       hint,
     );
     this._syncResolutionContextPool[depth] = created;

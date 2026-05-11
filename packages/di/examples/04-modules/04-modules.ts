@@ -107,17 +107,17 @@ const AppModule = Module.create("App", (builder) => {
 const container = Container.fromModules(AppModule);
 
 const app = container.resolve(AppToken);
-const jwt = app.register("user-1", "alice@example.com");
-console.log("JWT:", jwt);
+const jwtToken = app.register("user-1", "alice@example.com");
+console.log("JWT:", jwtToken);
 
 // EmailService and AuthService share the SAME Logger singleton
-const email = container.resolve(EmailServiceToken);
-const auth = container.resolve(AuthServiceToken);
-email.send("bob@example.com", "Welcome");
-auth.issueToken("user-2");
-const logger1 = container.resolve(LoggerToken);
-const logger2 = container.resolve(LoggerToken);
-console.log("Shared Logger:", logger1 === logger2); // true
+const emailService = container.resolve(EmailServiceToken);
+const authService = container.resolve(AuthServiceToken);
+emailService.send("bob@example.com", "Welcome");
+authService.issueToken("user-2");
+const firstLoggerResolve = container.resolve(LoggerToken);
+const secondLoggerResolve = container.resolve(LoggerToken);
+console.log("Shared Logger:", firstLoggerResolve === secondLoggerResolve); // true
 
 // You can also load/unload modules dynamically after container creation
 const ExtraModule = Module.create("Extra", (builder) => {
@@ -132,5 +132,5 @@ container.unload(ExtraModule);
 console.log("Module unloaded");
 
 // Introspect: see all active bindings
-const snapshot = container.inspect();
-console.log("Active binding count:", snapshot.ownBindings.length);
+const containerSnapshot = container.inspect();
+console.log("Active binding count:", containerSnapshot.ownBindings.length);

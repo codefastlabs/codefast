@@ -59,7 +59,7 @@ export class Inspector {
 
   lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     const bindings = this._registry.getAll(token);
-    return bindings.map((b) => this._toSnapshot(b));
+    return bindings.map((binding) => this._toSnapshot(binding));
   }
 
   has(
@@ -72,7 +72,7 @@ export class Inspector {
       if (hint !== undefined) {
         const ctx = {
           resolutionPath: [],
-          materializationStack: [],
+          resolutionStack: [],
           parent: undefined,
           ancestors: [],
           currentResolveHint: hint,
@@ -96,7 +96,7 @@ export class Inspector {
     if (hint !== undefined) {
       const ctx = {
         resolutionPath: [],
-        materializationStack: [],
+        resolutionStack: [],
         parent: undefined,
         ancestors: [],
         currentResolveHint: hint,
@@ -108,19 +108,21 @@ export class Inspector {
   }
 
   private allBindingSnapshots(): ReadonlyArray<BindingSnapshot> {
-    return this._registry.allBindings().map((b) => this._toSnapshot(b));
+    return this._registry.allBindings().map((binding) => this._toSnapshot(binding));
   }
 
-  private _toSnapshot(b: Binding): BindingSnapshot {
-    const scope = effectiveBindingScope(b);
+  private _toSnapshot(binding: Binding): BindingSnapshot {
+    const scope = effectiveBindingScope(binding);
     const slot: BindingSnapshot["slot"] =
-      b.slot.name !== undefined ? { name: b.slot.name, tags: b.slot.tags } : { tags: b.slot.tags };
+      binding.slot.name !== undefined
+        ? { name: binding.slot.name, tags: binding.slot.tags }
+        : { tags: binding.slot.tags };
     return {
-      tokenName: tokenName(b.token),
-      kind: b.kind,
+      tokenName: tokenName(binding.token),
+      kind: binding.kind,
       scope,
       slot,
-      id: b.id,
+      id: binding.id,
     };
   }
 }

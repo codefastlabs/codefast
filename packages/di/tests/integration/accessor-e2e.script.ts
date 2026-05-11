@@ -9,26 +9,26 @@ import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
 import { token } from "#/token";
 
-const Dep = token<{ tag: "dep" }>("accessor-e2e.dep");
+const AccessorDepToken = token<{ tag: "dep" }>("accessor-e2e.dep");
 const container = Container.create();
-container.bind(Dep).toConstantValue({ tag: "dep" });
+container.bind(AccessorDepToken).toConstantValue({ tag: "dep" });
 
 @injectable([])
-class Consumer {
+class AccessorConsumer {
   sawUndefinedInPostConstruct = false;
 
-  @inject(Dep) accessor dep!: { tag: "dep" };
+  @inject(AccessorDepToken) accessor dep!: { tag: "dep" };
 
   @postConstruct()
-  post(): void {
+  checkInjectedAccessor(): void {
     if (this.dep === undefined) {
       this.sawUndefinedInPostConstruct = true;
     }
   }
 }
 
-container.bind(Consumer).toSelf().transient();
-const instance = container.resolve(Consumer);
+container.bind(AccessorConsumer).toSelf().transient();
+const instance = container.resolve(AccessorConsumer);
 if (instance.sawUndefinedInPostConstruct || instance.dep.tag !== "dep") {
   process.exit(1);
 }

@@ -8,7 +8,7 @@ export type {
   Constructor,
   DependencyKey,
   DeactivationHandler,
-  MaterializationFrame,
+  ResolutionFrame,
   ResolveOptions,
   ResolutionContext,
   TokenValue,
@@ -35,7 +35,7 @@ export { Container } from "#/container";
 export type { Container as ContainerInterface, ContainerStatic } from "#/container";
 
 export { effectiveBindingScope } from "#/binding-scope";
-export { injectableSlotToResolveOptions, slotKeyToResolveOptions } from "#/resolve-options";
+export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";

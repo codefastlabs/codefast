@@ -240,11 +240,13 @@ container.bind(DatabaseToken).to(PostgresDatabase).singleton();
 
 // loadAutoRegistered: binds each entry as `container.bind(Constructor).to(Constructor).scope()`
 // The returned number is how many bindings were added.
-const infraCount = container.loadAutoRegistered(infrastructureRegistry);
+const infrastructureCount = container.loadAutoRegistered(infrastructureRegistry);
 const domainCount = container.loadAutoRegistered(domainRegistry);
-const appCount = container.loadAutoRegistered(applicationRegistry);
+const applicationCount = container.loadAutoRegistered(applicationRegistry);
 
-console.log(`Auto-registered: ${infraCount} infra + ${domainCount} domain + ${appCount} app`);
+console.log(
+  `Auto-registered: ${infrastructureCount} infra + ${domainCount} domain + ${applicationCount} app`,
+);
 
 // Alias interface tokens → concrete singletons (already bound by loadAutoRegistered).
 container.bind(UserRepositoryToken).to(SqlUserRepository).singleton();
@@ -318,13 +320,13 @@ envContainer.bind(LoggerToken).to(ConsoleLogger).singleton();
 envContainer.loadAutoRegistered(envRegistry);
 
 // Bind the interface token to whichever concrete class was auto-registered.
-const NotificationImpl = isProduction ? ProdNotificationService : DevNotificationService;
-envContainer.bind(NotificationServiceToken).to(NotificationImpl).singleton();
+const NotificationServiceImpl = isProduction ? ProdNotificationService : DevNotificationService;
+envContainer.bind(NotificationServiceToken).to(NotificationServiceImpl).singleton();
 
 console.log("\n=== Conditional (env-based) registry ===");
 console.log(
   "Env registry entries:",
-  envRegistry.entries().map((e) => `${e.target.name}`),
+  envRegistry.entries().map((entry) => `${entry.target.name}`),
 );
 
 const envNotifier = envContainer.resolve(NotificationServiceToken);
