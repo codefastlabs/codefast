@@ -12,12 +12,12 @@
  * `Symbol.metadata`. The parent spawns it with `NODE_OPTIONS=--expose-gc
  * --no-warnings NODE_ENV=production`.
  */
+import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness/child/bench-options";
 import {
-  BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
   exitBenchmarkChildProcessOnFailure,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
-} from "@codefast/benchmark-harness";
+} from "@codefast/benchmark-harness/child/run-benchmark-child-main";
 import { CODEFAST_DI } from "#/harness/config";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 

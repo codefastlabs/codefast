@@ -20,18 +20,21 @@ import { fileURLToPath } from "node:url";
 import {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
+  OBSERVATIONS_FILE_NAME,
+} from "@codefast/benchmark-harness/shared/env-keys";
+import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+import {
   buildLibraryReport,
   type LibraryReport,
-  OBSERVATIONS_FILE_NAME,
+} from "@codefast/benchmark-harness/report/aggregate";
+import {
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
-  resolveBenchParentExitCode,
-  runBenchSubprocess,
-  type SubprocessPayload,
-  writeJsonlRun,
-  writeMarkdownFile,
-} from "@codefast/benchmark-harness";
-import { resolveDisplayName } from "@codefast/benchmark-harness";
+} from "@codefast/benchmark-harness/report/two-way";
+import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
+import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/presentation";
 

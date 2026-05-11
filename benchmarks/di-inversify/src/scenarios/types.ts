@@ -10,8 +10,8 @@
 import type {
   AsyncBenchScenario as HarnessAsyncBenchScenario,
   BenchScenario as HarnessBenchScenario,
-} from "@codefast/benchmark-harness";
-export { isAsyncScenario } from "@codefast/benchmark-harness";
+} from "@codefast/benchmark-harness/child/bench-scenario";
+export { isAsyncScenario } from "@codefast/benchmark-harness/child/bench-scenario";
 
 /**
  * Grouping used by the reporter to label scenarios in the comparison table.
