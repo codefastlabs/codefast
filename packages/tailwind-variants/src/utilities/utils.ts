@@ -171,38 +171,6 @@ export const isSlotObjectType = (value: ClassValue): value is Record<string, Cla
 };
 
 /**
- * Check if a variant group supports boolean values.
- *
- * This function determines whether a variant group has boolean keys
- * ("true" or "false"), indicating it can accept boolean variant values.
- *
- * @param variantGroup - The variant group to check
- * @returns True if the variant group supports boolean values
- *
- * @since 0.3.16-canary.0
- */
-export const isBooleanVariantType = <T extends Record<string, unknown>>(
-  variantGroup: T,
-): variantGroup is T => {
-  return "true" in variantGroup || "false" in variantGroup;
-};
-
-/**
- * Check if a value is a boolean type.
- *
- * This function provides a type guard to determine if a value
- * is specifically a boolean type.
- *
- * @param value - The value to check
- * @returns True if the value is a boolean
- *
- * @since 0.3.16-canary.0
- */
-export const isBooleanValueType = (value: unknown): value is boolean => {
-  return typeof value === "boolean";
-};
-
-/**
  * Check if a configuration has slot definitions.
  *
  * This function provides a type guard to determine if a configuration
