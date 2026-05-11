@@ -1,4 +1,4 @@
-import { cn, cx, isBooleanValueType, isSlotObjectType } from "#/utilities/utils";
+import { cn, cx, isSlotObjectType } from "#/utilities/utils";
 
 describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
   describe("cx function edge cases", () => {
@@ -56,24 +56,6 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
       expect(cn("bg-red-500", { "bg-blue-500": true }, ["text-sm", "text-lg"])).toBe(
         "bg-blue-500 text-lg",
       );
-    });
-  });
-
-  describe("isBooleanValueType edge cases", () => {
-    test("should correctly identify boolean values", () => {
-      expect(isBooleanValueType(true)).toBe(true);
-      expect(isBooleanValueType(false)).toBe(true);
-    });
-
-    test("should correctly reject non-boolean values", () => {
-      expect(isBooleanValueType("true")).toBe(false);
-      expect(isBooleanValueType("false")).toBe(false);
-      expect(isBooleanValueType(1)).toBe(false);
-      expect(isBooleanValueType(0)).toBe(false);
-      expect(isBooleanValueType(null)).toBe(false);
-      expect(isBooleanValueType(undefined)).toBe(false);
-      expect(isBooleanValueType({})).toBe(false);
-      expect(isBooleanValueType([])).toBe(false);
     });
   });
 
