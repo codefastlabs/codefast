@@ -2,6 +2,9 @@ import { useCallback, useState } from "react";
 import type { ViewState } from "#/server/client/lib/hash";
 import type { EmbeddedViewerPayload } from "#/server/server-types";
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) {
   const [view, setView] = useState<ViewState>(() => ({
     scenarioId: initialPayload?.scenarios[0]?.id ?? "",

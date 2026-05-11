@@ -6,6 +6,9 @@ interface FindPanelProps {
   onGroupChange: (value: string) => void;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function FindPanel({
   search,
   group,

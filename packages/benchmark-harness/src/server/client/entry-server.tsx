@@ -38,6 +38,9 @@ function safeEndHtmlSuffix(res: ServerResponse): void {
   }
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function renderDocument(
   payload: EmbeddedViewerPayload,
   res: ServerResponse,

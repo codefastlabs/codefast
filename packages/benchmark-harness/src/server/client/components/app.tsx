@@ -24,6 +24,9 @@ import type {
 
 // ─── App ─────────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload }) {
   const { view, patchView } = useViewState(initialPayload);
   const [toastMsg, setToastMsg] = useState<string | null>(null);

@@ -34,6 +34,9 @@ interface CommandPaletteProps {
   onAction: (id: string) => void;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function CommandPalette({
   isOpen,
   query,
