@@ -22,7 +22,7 @@ A drop-in, type-safe replacement for `tailwind-variants` with significantly fast
   - [Boolean Variants](#boolean-variants)
   - [Compound Slots](#compound-slots)
   - [Extending Configurations](#extending-configurations)
-  - [Global Configuration with `createTV`](#global-configuration-with-createtv)
+  - [Global VariantConfig with `createTV`](#global-configuration-with-createtv)
 - [Class Utilities](#class-utilities)
 - [API Reference](#api-reference)
 - [TypeScript Integration](#typescript-integration)
@@ -307,7 +307,7 @@ iconButton({ variant: "outline", size: "sm" });
 
 Both variant schemas and slot schemas merge; TypeScript reflects the union in `VariantProps`.
 
-### Global Configuration with `createTV`
+### Global VariantConfig with `createTV`
 
 `createTV` builds a factory that pre-applies `twMerge` / `twMergeConfig` to every variant function and `cn` invocation produced by it:
 
@@ -363,10 +363,10 @@ cx("px-4 py-2", "px-6 py-3");
 
 Creates a variant function from a configuration.
 
-| Parameter | Type                                                                   | Description                                                                                                       |
-| --------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `config`  | `Configuration` \| `ConfigurationWithSlots` \| `ExtendedConfiguration` | Object with any of `base`, `variants`, `slots`, `compoundVariants`, `compoundSlots`, `defaultVariants`, `extend`. |
-| `options` | `TailwindVariantsConfiguration`                                        | Optional: `twMerge?: boolean` (default `true`), `twMergeConfig?: ConfigExtension` (see `tailwind-merge`).         |
+| Parameter | Type                                                              | Description                                                                                                       |
+| --------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `config`  | `VariantConfig` \| `SlotVariantConfig` \| `ExtendedVariantConfig` | Object with any of `base`, `variants`, `slots`, `compoundVariants`, `compoundSlots`, `defaultVariants`, `extend`. |
+| `options` | `TailwindVariantsOptions`                                         | Optional: `twMerge?: boolean` (default `true`), `twMergeConfig?: ConfigExtension` (see `tailwind-merge`).         |
 
 **Returns** — a callable variant function. Without `slots`, it returns `string \| undefined`. With `slots`, it returns an object of slot functions (including an implicit `base`).
 
@@ -374,9 +374,9 @@ The returned function also exposes a read-only `config` property carrying the fu
 
 ### `createTV(globalConfig?)`
 
-| Parameter      | Type                            | Description                                            |
-| -------------- | ------------------------------- | ------------------------------------------------------ |
-| `globalConfig` | `TailwindVariantsConfiguration` | Shared `twMerge` / `twMergeConfig` applied to outputs. |
+| Parameter      | Type                      | Description                                            |
+| -------------- | ------------------------- | ------------------------------------------------------ |
+| `globalConfig` | `TailwindVariantsOptions` | Shared `twMerge` / `twMergeConfig` applied to outputs. |
 
 **Returns** `{ tv, cn }`. Local `options` given to `tv(config, options)` override the factory's globals.
 
@@ -407,7 +407,7 @@ type ButtonVariantProps = VariantProps<typeof button>;
 
 The following types are exported for advanced/library use:
 
-`ClassValue`, `Configuration`, `ConfigurationWithSlots`, `ConfigurationSchema`, `ConfigurationVariants`, `ExtendedConfiguration`, `CompoundVariantType`, `CompoundVariantWithSlotsType`, `CompoundSlotType`, `MergedSchemas`, `MergedSlotSchemas`, `SlotConfigurationSchema`, `SlotProperties`, `SlotFunctionType`, `SlotFunctionProperties`, `BooleanVariantChecker`, `StringToBooleanType`, `TailwindVariantsConfiguration`, `TailwindVariantsFactory`, `TailwindVariantsFactoryResult`, `TailwindVariantsReturnType`, `VariantFunctionType`, `VariantProps`.
+`ClassValue`, `VariantConfig`, `SlotVariantConfig`, `VariantSchema`, `VariantSelection`, `ExtendedVariantConfig`, `CompoundVariant`, `SlotCompoundVariant`, `CompoundSlot`, `MergedVariantSchema`, `MergedSlotSchema`, `SlotSchema`, `SlotClassMap`, `SlotClassResolver`, `SlotResolverProps`, `HasBooleanVariant`, `VariantValue`, `TailwindVariantsOptions`, `TailwindVariantsFactory`, `TailwindVariantsApi`, `VariantResolverResult`, `VariantResolver`, `VariantProps`.
 
 ## TypeScript Integration
 

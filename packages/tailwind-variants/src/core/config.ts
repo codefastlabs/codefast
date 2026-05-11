@@ -1,5 +1,5 @@
 /**
- * Configuration Management Module
+ * Variant Configuration Management Module
  *
  * This module handles the merging and processing of variant configurations.
  * It provides utilities for combining base configurations with extensions,
@@ -8,20 +8,15 @@
 
 import type {
   ClassValue,
-  CompoundSlotType,
-  Configuration,
-  ConfigurationSchema,
-  ConfigurationWithSlots,
-  ExtendedConfiguration,
-  SlotConfigurationSchema,
-} from "#/types/types";
+  CompoundSlot,
+  VariantConfig,
+  VariantSchema,
+  SlotVariantConfig,
+  ExtendedVariantConfig,
+  SlotSchema,
+} from "#/types/api";
 
-import {
-  cx,
-  hasExtensionConfiguration,
-  hasSlotConfiguration,
-  isSlotObjectType,
-} from "#/utilities/utils";
+import { cx, hasExtendConfig, hasSlotsConfig, isSlotClassMap } from "#/utilities/utils";
 
 /**
  * Merge two variant groups.
@@ -35,7 +30,7 @@ import {
  *
  * @since 0.3.16-canary.0
  */
-export const mergeVariantGroups = (
+export const mergeVariantClassGroup = (
   baseVariantGroup: Record<string, ClassValue>,
   extensionVariantGroup: Record<string, ClassValue>,
 ): Record<string, ClassValue> => {
@@ -54,7 +49,7 @@ export const mergeVariantGroups = (
     } else {
       // Merge slot objects or replace with an extension value
       mergedVariantGroup[extensionKey] =
-        isSlotObjectType(baseValue) && isSlotObjectType(extensionValue)
+        isSlotClassMap(baseValue) && isSlotClassMap(extensionValue)
           ? { ...baseValue, ...extensionValue }
           : extensionValue;
     }
@@ -64,7 +59,7 @@ export const mergeVariantGroups = (
 };
 
 /**
- * Merge configuration schemas.
+ * Merge variant configurations.
  *
  * This function combines base and extension configurations, handling
  * recursive extension resolution, variant merging, slot merging,
@@ -72,29 +67,20 @@ export const mergeVariantGroups = (
  *
  * @param baseConfiguration - The base configuration to merge into
  * @param extensionConfiguration - The extension configuration to merge
- * @returns The merged configuration schema
+ * @returns The merged variant configuration
  *
  * @since 0.3.16-canary.0
  */
-export const mergeConfigurationSchemas = (
-  baseConfiguration:
-    | Configuration<ConfigurationSchema>
-    | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>,
+export const mergeVariantConfigs = (
+  baseConfiguration: VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema>,
   extensionConfiguration:
-    | Configuration<ConfigurationSchema>
-    | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>
-    | ExtendedConfiguration<
-        ConfigurationSchema,
-        ConfigurationSchema,
-        SlotConfigurationSchema,
-        SlotConfigurationSchema
-      >,
-):
-  | Configuration<ConfigurationSchema>
-  | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> => {
+    | VariantConfig<VariantSchema>
+    | SlotVariantConfig<VariantSchema, SlotSchema>
+    | ExtendedVariantConfig<VariantSchema, VariantSchema, SlotSchema, SlotSchema>,
+): VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema> => {
   // Resolve recursive extensions in the base configuration
-  const resolvedBaseConfiguration = hasExtensionConfiguration(baseConfiguration)
-    ? mergeConfigurationSchemas(baseConfiguration.extend.config, baseConfiguration)
+  const resolvedBaseConfiguration = hasExtendConfig(baseConfiguration)
+    ? mergeVariantConfigs(baseConfiguration.extend.config, baseConfiguration)
     : baseConfiguration;
 
   // Merge base classes from both configurations
@@ -105,7 +91,7 @@ export const mergeConfigurationSchemas = (
     : resolvedBaseConfiguration.base;
 
   // Start with base variant groups and merge extensions
-  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants } as ConfigurationSchema;
+  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants } as VariantSchema;
 
   if (extensionConfiguration.variants) {
     const extensionKeys = Object.keys(extensionConfiguration.variants);
@@ -119,7 +105,7 @@ export const mergeConfigurationSchemas = (
       // Merge variant groups or add new ones
       const existingVariantGroup = mergedVariantGroups[extensionKey];
       if (existingVariantGroup !== undefined) {
-        mergedVariantGroups[extensionKey] = mergeVariantGroups(
+        mergedVariantGroups[extensionKey] = mergeVariantClassGroup(
           existingVariantGroup,
           extensionVariantGroup,
         );
@@ -130,10 +116,10 @@ export const mergeConfigurationSchemas = (
   }
 
   // Merge slot definitions from both configurations
-  const resolvedSlotDefinitions = hasSlotConfiguration(resolvedBaseConfiguration)
+  const resolvedSlotDefinitions = hasSlotsConfig(resolvedBaseConfiguration)
     ? resolvedBaseConfiguration.slots
     : {};
-  const extensionSlotDefinitions = hasSlotConfiguration(extensionConfiguration)
+  const extensionSlotDefinitions = hasSlotsConfig(extensionConfiguration)
     ? extensionConfiguration.slots
     : {};
   const mergedSlotDefinitions = { ...resolvedSlotDefinitions, ...extensionSlotDefinitions };
@@ -144,24 +130,19 @@ export const mergeConfigurationSchemas = (
   // Handle slot-based configuration merging
   if (hasSlotConfigurationResult) {
     // Extract compound slot definitions from base configuration
-    const baseCompoundSlotDefinitions: ReadonlyArray<
-      CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
-    > =
-      hasSlotConfiguration(resolvedBaseConfiguration) &&
+    const baseCompoundSlotDefinitions: ReadonlyArray<CompoundSlot<VariantSchema, SlotSchema>> =
+      hasSlotsConfig(resolvedBaseConfiguration) &&
       Array.isArray(resolvedBaseConfiguration.compoundSlots)
         ? (resolvedBaseConfiguration.compoundSlots as ReadonlyArray<
-            CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
+            CompoundSlot<VariantSchema, SlotSchema>
           >)
         : [];
 
     // Extract compound slot definitions from the extension configuration
-    const extensionCompoundSlotDefinitions: ReadonlyArray<
-      CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
-    > =
-      hasSlotConfiguration(extensionConfiguration) &&
-      Array.isArray(extensionConfiguration.compoundSlots)
+    const extensionCompoundSlotDefinitions: ReadonlyArray<CompoundSlot<VariantSchema, SlotSchema>> =
+      hasSlotsConfig(extensionConfiguration) && Array.isArray(extensionConfiguration.compoundSlots)
         ? (extensionConfiguration.compoundSlots as ReadonlyArray<
-            CompoundSlotType<ConfigurationSchema, SlotConfigurationSchema>
+            CompoundSlot<VariantSchema, SlotSchema>
           >)
         : [];
 

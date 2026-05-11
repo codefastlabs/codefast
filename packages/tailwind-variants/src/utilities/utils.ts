@@ -13,13 +13,13 @@ import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 import type {
   ClassValue,
-  Configuration,
-  ConfigurationSchema,
-  ConfigurationWithSlots,
-  ExtendedConfiguration,
-  SlotConfigurationSchema,
-  VariantFunctionType,
-} from "#/types/types";
+  VariantConfig,
+  VariantSchema,
+  SlotVariantConfig,
+  ExtendedVariantConfig,
+  SlotSchema,
+  VariantResolver,
+} from "#/types/api";
 
 /**
  * Combine CSS classes using clsx.
@@ -57,13 +57,13 @@ export const cx = (...classes: Array<ClassValue>): string => {
   let result = "";
 
   for (let index = 0; index < length; index++) {
-    const cls = classes[index];
+    const classValue = classes[index];
 
-    if (typeof cls === "string") {
-      if (cls) {
-        result = result ? result + " " + cls : cls;
+    if (typeof classValue === "string") {
+      if (classValue) {
+        result = result ? result + " " + classValue : classValue;
       }
-    } else if (cls) {
+    } else if (classValue) {
       return clsx(classes);
     }
   }
@@ -107,13 +107,13 @@ export const cn = (...classes: Array<ClassValue>): string => {
   let result = "";
 
   for (let index = 0; index < length; index++) {
-    const cls = classes[index];
+    const classValue = classes[index];
 
-    if (typeof cls === "string") {
-      if (cls) {
-        result = result ? result + " " + cls : cls;
+    if (typeof classValue === "string") {
+      if (classValue) {
+        result = result ? result + " " + classValue : classValue;
       }
-    } else if (cls) {
+    } else if (classValue) {
       return twMerge(clsx(classes));
     }
   }
@@ -122,9 +122,9 @@ export const cn = (...classes: Array<ClassValue>): string => {
 };
 
 /**
- * Create a Tailwind merge service with optional configuration.
+ * Create a Tailwind merge function with optional configuration.
  *
- * This function creates a Tailwind merge service that can be configured
+ * This function creates a Tailwind merge function that can be configured
  * with custom extensions for handling additional class patterns.
  *
  * @param configuration - Optional Tailwind merge configuration
@@ -132,24 +132,24 @@ export const cn = (...classes: Array<ClassValue>): string => {
  *
  * @since 0.3.16-canary.0
  */
-export const createTailwindMergeService = (
+export const createTailwindMergeFn = (
   configuration?: ConfigExtension<string, string>,
 ): ((classes: string) => string) => {
   return configuration ? extendTailwindMerge(configuration) : twMerge;
 };
 
 /**
- * Check if a value is a slot object type.
+ * Check if a class value is a slot class map.
  *
  * This function determines whether a ClassValue is an object that can
  * contain slot-specific class definitions.
  *
  * @param value - The value to check
- * @returns True if the value is a slot object
+ * @returns True if the value is a slot class map
  *
  * @since 0.3.16-canary.0
  */
-export const isSlotObjectType = (value: ClassValue): value is Record<string, ClassValue> => {
+export const isSlotClassMap = (value: ClassValue): value is Record<string, ClassValue> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 };
 
@@ -164,14 +164,14 @@ export const isSlotObjectType = (value: ClassValue): value is Record<string, Cla
  *
  * @since 0.3.16-canary.0
  */
-export const isBooleanVariantType = <T extends Record<string, unknown>>(
+export const hasBooleanVariantValues = <T extends Record<string, unknown>>(
   variantGroup: T,
 ): variantGroup is T => {
   return "true" in variantGroup || "false" in variantGroup;
 };
 
 /**
- * Check if a configuration has slot definitions.
+ * Check if a variant configuration has slot definitions.
  *
  * This function provides a type guard to determine if a configuration
  * object includes slot definitions, enabling type-safe slot handling.
@@ -181,17 +181,14 @@ export const isBooleanVariantType = <T extends Record<string, unknown>>(
  *
  * @since 0.3.16-canary.0
  */
-export const hasSlotConfiguration = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
-  configuration: Configuration<T> | ConfigurationWithSlots<T, S>,
-): configuration is ConfigurationWithSlots<T, S> => {
+export const hasSlotsConfig = <T extends VariantSchema, S extends SlotSchema>(
+  configuration: VariantConfig<T> | SlotVariantConfig<T, S>,
+): configuration is SlotVariantConfig<T, S> => {
   return "slots" in configuration && configuration.slots !== undefined;
 };
 
 /**
- * Check if a configuration has extension definitions.
+ * Check if a variant configuration has extension definitions.
  *
  * This function provides a type guard to determine if a configuration
  * object includes extension definitions, enabling type-safe configuration
@@ -202,16 +199,13 @@ export const hasSlotConfiguration = <
  *
  * @since 0.3.16-canary.0
  */
-export const hasExtensionConfiguration = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
   configuration:
-    | Configuration<T>
-    | ConfigurationWithSlots<T, S>
-    | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
-): configuration is ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S> & {
-  readonly extend: VariantFunctionType<ConfigurationSchema, SlotConfigurationSchema>;
+    | VariantConfig<T>
+    | SlotVariantConfig<T, S>
+    | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
+): configuration is ExtendedVariantConfig<VariantSchema, T, SlotSchema, S> & {
+  readonly extend: VariantResolver<VariantSchema, SlotSchema>;
 } => {
   return "extend" in configuration && configuration.extend !== undefined;
 };
