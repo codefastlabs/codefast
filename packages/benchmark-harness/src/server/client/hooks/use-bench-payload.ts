@@ -6,6 +6,9 @@ interface BenchPayloadOptions {
   onReloadError: (message: string) => void;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadOptions) {
   const [payload, setPayload] = useState<EmbeddedViewerPayload | null>(initialPayload ?? null);
   const [loadError, setLoadError] = useState<string | null>(null);

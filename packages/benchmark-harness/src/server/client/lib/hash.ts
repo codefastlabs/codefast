@@ -1,5 +1,8 @@
 import type { EmbeddedViewerPayload } from "#/server/server-types";
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface ViewState {
   scenarioId: string;
   envKey: string;
@@ -11,6 +14,9 @@ export interface ViewState {
   showRatio: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export const HASH_KEYS = {
   environment: "environment",
   group: "group",
@@ -22,6 +28,9 @@ export const HASH_KEYS = {
   showRatio: "show-ratio",
 };
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function buildHash(view: ViewState): string {
   const parts: Array<string> = [];
   if (view.envKey) {
@@ -45,6 +54,9 @@ export function buildHash(view: ViewState): string {
   return parts.join("&");
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<ViewState> {
   if (!raw || raw.length < 2) {
     return {};

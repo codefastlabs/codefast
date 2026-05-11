@@ -1,9 +1,15 @@
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface PaletteEntry {
   border: string;
   band: string;
   text: string;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export const PALETTE: ReadonlyArray<PaletteEntry> = [
   { border: "#6ee7c5", band: "rgba(110,231,197,0.18)", text: "rgb(167,243,208)" },
   { border: "#93b4ff", band: "rgba(147,180,255,0.16)", text: "rgb(186,213,254)" },
@@ -12,6 +18,9 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
   { border: "#a78bfa", band: "rgba(167,139,250,0.16)", text: "rgb(196,181,253)" },
 ];
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export const RATIO_COLORS = ["#fbbf77", "#f472b6", "#a78bfa", "#34d399"] as const;
 
 export { DISPERSION_IQR_ALERT, PAN_PIXELS_X, ZOOM_STEP_X } from "#/server/client/lib/constants";

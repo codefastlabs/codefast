@@ -8,6 +8,9 @@ interface HashSyncOptions {
   patchView: (patch: Partial<ViewState>) => void;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
   const hashSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hashApplyingRef = useRef(false);
