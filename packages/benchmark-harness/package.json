@@ -99,6 +99,10 @@
       "types": "./dist/server/build-payload.d.mts",
       "import": "./dist/server/build-payload.mjs"
     },
+    "./server/client/client": {
+      "types": "./dist/server/client/client.d.ts",
+      "import": "./dist/server/client/client.js"
+    },
     "./server/client/components/app": {
       "types": "./dist/server/client/components/app.d.mts",
       "import": "./dist/server/client/components/app.mjs"
@@ -107,17 +111,57 @@
       "types": "./dist/server/client/components/chart-panel.d.mts",
       "import": "./dist/server/client/components/chart-panel.mjs"
     },
+    "./server/client/components/command-palette": {
+      "types": "./dist/server/client/components/command-palette.d.mts",
+      "import": "./dist/server/client/components/command-palette.mjs"
+    },
+    "./server/client/components/find-panel": {
+      "types": "./dist/server/client/components/find-panel.d.mts",
+      "import": "./dist/server/client/components/find-panel.mjs"
+    },
+    "./server/client/components/metrics-panel": {
+      "types": "./dist/server/client/components/metrics-panel.d.mts",
+      "import": "./dist/server/client/components/metrics-panel.mjs"
+    },
+    "./server/client/components/page-footer-clocks": {
+      "types": "./dist/server/client/components/page-footer-clocks.d.mts",
+      "import": "./dist/server/client/components/page-footer-clocks.mjs"
+    },
     "./server/client/entry-server": {
       "types": "./dist/server/client/entry-server.d.mts",
       "import": "./dist/server/client/entry-server.mjs"
+    },
+    "./server/client/hooks/use-bench-payload": {
+      "types": "./dist/server/client/hooks/use-bench-payload.d.mts",
+      "import": "./dist/server/client/hooks/use-bench-payload.mjs"
+    },
+    "./server/client/hooks/use-hash-sync": {
+      "types": "./dist/server/client/hooks/use-hash-sync.d.mts",
+      "import": "./dist/server/client/hooks/use-hash-sync.mjs"
+    },
+    "./server/client/hooks/use-view-state": {
+      "types": "./dist/server/client/hooks/use-view-state.d.mts",
+      "import": "./dist/server/client/hooks/use-view-state.mjs"
+    },
+    "./server/client/lib/chart-category-view": {
+      "types": "./dist/server/client/lib/chart-category-view.d.mts",
+      "import": "./dist/server/client/lib/chart-category-view.mjs"
     },
     "./server/client/lib/colors": {
       "types": "./dist/server/client/lib/colors.d.mts",
       "import": "./dist/server/client/lib/colors.mjs"
     },
+    "./server/client/lib/constants": {
+      "types": "./dist/server/client/lib/constants.d.mts",
+      "import": "./dist/server/client/lib/constants.mjs"
+    },
     "./server/client/lib/format": {
       "types": "./dist/server/client/lib/format.d.mts",
       "import": "./dist/server/client/lib/format.mjs"
+    },
+    "./server/client/lib/hash": {
+      "types": "./dist/server/client/lib/hash.d.mts",
+      "import": "./dist/server/client/lib/hash.mjs"
     },
     "./server/client/lib/metrics": {
       "types": "./dist/server/client/lib/metrics.d.mts",
