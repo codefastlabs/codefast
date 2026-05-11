@@ -10,6 +10,7 @@ import { buildCodefastInitializeInspectScenarios } from "#/scenarios/codefast/in
 import { buildCodefastLifecycleScenarios } from "#/scenarios/codefast/lifecycle";
 import { buildCodefastMicroScenarios } from "#/scenarios/codefast/micro";
 import { buildCodefastModuleScenarios } from "#/scenarios/codefast/module";
+import { buildCodefastMultiTagScenarios } from "#/scenarios/codefast/multi-tag-constraint";
 import { buildCodefastProductionScenarios } from "#/scenarios/codefast/production";
 import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
 import { buildCodefastRealisticGraphValidateScenarios } from "#/scenarios/codefast/realistic-graph-validate";
@@ -40,5 +41,6 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
     ...buildCodefastRegistryOpsScenarios(),
     ...buildCodefastModuleScenarios(),
     ...buildCodefastInitializeInspectScenarios(),
+    ...buildCodefastMultiTagScenarios(),
   ];
 }

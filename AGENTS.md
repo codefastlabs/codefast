@@ -22,3 +22,9 @@ Use this file plus repo-root **[`ARCHITECTURE.md`](ARCHITECTURE.md)** to stay al
 ## Verify locally
 
 From repo root: `pnpm check` after substantive edits; run targeted `pnpm test` or package scripts as needed.
+
+# Documentation Comments
+
+- Do not add `@since` tags to new or modified code comments.
+- `@since` is release metadata and must only be added during the release process.
+- If existing code already has `@since`, preserve it unless explicitly asked to change it.

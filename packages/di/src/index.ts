@@ -67,6 +67,20 @@ export type { AutoRegisterRegistry } from "#/decorators/injectable";
 export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metadata-types";
 
+// Constraints
+export {
+  whenParentIs,
+  whenNoParentIs,
+  whenAnyAncestorIs,
+  whenNoAncestorIs,
+  whenParentNamed,
+  whenAnyAncestorNamed,
+  whenParentTagged,
+  whenAnyAncestorTagged,
+  whenParentTaggedAll,
+  whenAnyAncestorTaggedAll,
+} from "#/constraints";
+
 // Errors
 export {
   AmbiguousBindingError,
