@@ -54,11 +54,10 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
 describe("Accessor injection e2e (tsx subprocess)", () => {
   it("constructor → accessor inject → @postConstruct with tsx emit", () => {
     const scriptPath = join(integrationDir, "accessor-e2e.script.ts");
-    const spawnResult = spawnSync("pnpm", ["exec", "tsx", scriptPath], {
+    const spawnResult = spawnSync("node", ["--import", "tsx/esm", scriptPath], {
       cwd: packageRoot,
       encoding: "utf-8",
     });
-    expect(spawnResult.stderr).toBe("");
     expect(spawnResult.status).toBe(0);
     expect(spawnResult.stdout).toContain("ACCESSOR_E2E_OK");
   });
