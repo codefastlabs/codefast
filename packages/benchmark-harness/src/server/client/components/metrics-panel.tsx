@@ -7,6 +7,9 @@ interface MetricsPanelProps {
   metricsData: MetricsResult | null;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function MetricsPanel({ currentScenario, runIndices, metricsData }: MetricsPanelProps) {
   return (
     <section

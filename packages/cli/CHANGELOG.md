@@ -1,5 +1,11 @@
 # @codefast/cli
 
+## 0.3.16-canary.1
+
+### Patch Changes
+
+- [`127632c`](https://github.com/codefastlabs/codefast/commit/127632cf8eada31e3015a4f43f6131d684f82050) Thanks [@thevuong](https://github.com/thevuong)! - fix(tag): prevent trailing spaces on blank JSDoc continuation lines
+
 ## 0.3.16-canary.0
 
 ### Patch Changes

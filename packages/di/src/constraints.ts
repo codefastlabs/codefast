@@ -107,6 +107,8 @@ export function whenAnyAncestorTagged(
  * Matches when the direct parent slot carries **all** of the given tag pairs.
  * Equivalent to AND-composing multiple `whenParentTagged` calls but evaluates
  * in a single predicate invocation — no intermediate closure allocations.
+ *
+ * @since 0.3.16-canary.1
  */
 export function whenParentTaggedAll(
   tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
@@ -127,6 +129,8 @@ export function whenParentTaggedAll(
  * Matches when at least one ancestor slot carries **all** of the given tag pairs.
  * Equivalent to AND-composing multiple `whenAnyAncestorTagged` calls but evaluates
  * in a single predicate invocation — no intermediate closure allocations.
+ *
+ * @since 0.3.16-canary.1
  */
 export function whenAnyAncestorTaggedAll(
   tags: ReadonlyArray<readonly [tag: string, value: unknown]>,

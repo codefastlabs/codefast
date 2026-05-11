@@ -1,3 +1,6 @@
+/**
+ * @since 0.3.16-canary.1
+ */
 export function formatLocal(timestampIso: string | undefined, fallbackFolder: string): string {
   if (!timestampIso) {
     return fallbackFolder;
@@ -9,6 +12,9 @@ export function formatLocal(timestampIso: string | undefined, fallbackFolder: st
   return d.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function fmtHz(n: number | null | undefined): string {
   if (n === null || n === undefined || !Number.isFinite(n)) {
     return "—";
@@ -16,6 +22,9 @@ export function fmtHz(n: number | null | undefined): string {
   return Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function fmtPctChange(from: number | null, to: number | null): string {
   if (from === null || to === null || from <= 0 || to <= 0) {
     return "—";
@@ -24,10 +33,16 @@ export function fmtPctChange(from: number | null, to: number | null): string {
   return (pct >= 0 ? "+" : "") + pct.toFixed(1) + "%";
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function searchNorm(s: string): string {
   return String(s || "").toLowerCase();
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function spreadTierLabel(fraction: number | null | undefined): string {
   if (fraction == null || !Number.isFinite(fraction)) {
     return "";
@@ -41,6 +56,9 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
   return " · spread: high";
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function escHtml(s: string): string {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -49,6 +67,9 @@ export function escHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function isMacLikePlatform(): boolean {
   if (typeof navigator === "undefined") {
     return false;
