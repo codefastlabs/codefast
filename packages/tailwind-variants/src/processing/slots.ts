@@ -8,23 +8,23 @@
 
 import type {
   ClassValue,
-  CompoundVariantWithSlotsType,
-  ConfigurationSchema,
-  ConfigurationVariants,
-  SlotConfigurationSchema,
-  SlotFunctionProperties,
-  SlotFunctionType,
-} from "#/types/types";
+  SlotCompoundVariant,
+  VariantSchema,
+  VariantSelection,
+  SlotSchema,
+  SlotResolverProps,
+  SlotClassResolver,
+} from "#/types/api";
 
-import { cx, isSlotObjectType } from "#/utilities/utils";
+import { cx, isSlotClassMap } from "#/utilities/utils";
 
-import { getCompoundClassValue, matchesCompoundConditions } from "./compound";
+import { getCompoundClass, matchesCompoundDefinition } from "./compound";
 
-const finalizeSlotClasses = <T extends ConfigurationSchema>(
+const composeSlotClassName = <T extends VariantSchema>(
   classes: Array<ClassValue>,
-  slotProps: SlotFunctionProperties<T>,
+  slotProps: SlotResolverProps<T>,
   shouldMergeClasses: boolean,
-  tailwindMergeService: (classes: string) => string,
+  tailwindMergeFn: (classes: string) => string,
 ): string | undefined => {
   const slotClassName = slotProps.className;
   const slotClass = slotProps.class;
@@ -38,7 +38,7 @@ const finalizeSlotClasses = <T extends ConfigurationSchema>(
   if (extraCount === 0) {
     const classString = cx(...classes);
 
-    return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
+    return shouldMergeClasses ? tailwindMergeFn(classString) : classString || undefined;
   }
 
   const allClasses: Array<ClassValue> = new Array(totalLength);
@@ -60,7 +60,7 @@ const finalizeSlotClasses = <T extends ConfigurationSchema>(
 
   const classString = cx(...allClasses);
 
-  return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
+  return shouldMergeClasses ? tailwindMergeFn(classString) : classString || undefined;
 };
 
 /**
@@ -86,19 +86,16 @@ const finalizeSlotClasses = <T extends ConfigurationSchema>(
  *
  * @since 0.3.16-canary.0
  */
-export const resolveSlotClasses = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const resolveSlotClasses = <T extends VariantSchema, S extends SlotSchema>(
   targetSlotKey: keyof S,
   baseSlotClasses: ClassValue,
   variantGroups: T | undefined,
   variantKeys: Array<keyof T>,
-  slotProps: ConfigurationVariants<T>,
-  variantProps: ConfigurationVariants<T>,
-  defaultVariantProps: ConfigurationVariants<T>,
+  slotProps: VariantSelection<T>,
+  variantProps: VariantSelection<T>,
+  defaultVariantProps: VariantSelection<T>,
   precomputedDefaults: Record<string, string>,
-  compoundVariantGroups: ReadonlyArray<CompoundVariantWithSlotsType<T, S>> | undefined,
+  compoundVariantGroups: ReadonlyArray<SlotCompoundVariant<T, S>> | undefined,
   compoundSlotClasses: Array<ClassValue>,
 ): Array<ClassValue> => {
   const estimatedSize =
@@ -146,7 +143,7 @@ export const resolveSlotClasses = <
         const variantConfiguration = variantGroup[resolvedValue];
 
         if (variantConfiguration) {
-          if (isSlotObjectType(variantConfiguration)) {
+          if (isSlotClassMap(variantConfiguration)) {
             const slotVariantClass = variantConfiguration[targetSlotKey as string];
 
             if (slotVariantClass !== undefined) {
@@ -173,16 +170,16 @@ export const resolveSlotClasses = <
       }
 
       if (
-        matchesCompoundConditions(
+        matchesCompoundDefinition(
           compoundVariant as Record<string, unknown>,
           variantProps as Record<string, unknown>,
           defaultVariantProps as Record<string, unknown>,
           compoundMatchOptions,
         )
       ) {
-        const compoundClassName = getCompoundClassValue(compoundVariant);
+        const compoundClassName = getCompoundClass(compoundVariant);
 
-        if (isSlotObjectType(compoundClassName)) {
+        if (isSlotClassMap(compoundClassName)) {
           const slotClass = compoundClassName[targetSlotKey as string];
 
           if (slotClass !== undefined) {
@@ -208,7 +205,7 @@ export const resolveSlotClasses = <
 };
 
 /**
- * Create a factory for slot functions.
+ * Create slot class resolvers.
  *
  * This function creates individual slot functions that can generate CSS classes
  * for each slot in a component. It handles base slots and named slots,
@@ -224,32 +221,31 @@ export const resolveSlotClasses = <
  * @param compoundSlotClasses - Pre-computed compound slot classes
  * @param variantProps - Variant properties passed to the component
  * @param shouldMergeClasses - Whether to merge conflicting classes
- * @param tailwindMergeService - The Tailwind merge service function
+ * @param tailwindMergeFn - The Tailwind merge function function
  * @returns Object containing slot functions for each slot
  *
  * @since 0.3.16-canary.0
  */
-export const createSlotFunctionFactory = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
+export const createSlotResolvers = <T extends VariantSchema, S extends SlotSchema>(
   mergedSlotDefinitions: S,
   mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
   cachedVariantKeys: Array<keyof T>,
-  mergedDefaultVariantProps: ConfigurationVariants<T>,
+  mergedDefaultVariantProps: VariantSelection<T>,
   precomputedDefaults: Record<string, string>,
-  mergedCompoundVariantGroups: ReadonlyArray<CompoundVariantWithSlotsType<T, S>> | undefined,
+  mergedCompoundVariantGroups: ReadonlyArray<SlotCompoundVariant<T, S>> | undefined,
   compoundSlotClasses: Partial<Record<keyof S, Array<ClassValue>>>,
-  variantProps: ConfigurationVariants<T>,
+  variantProps: VariantSelection<T>,
   shouldMergeClasses: boolean,
-  tailwindMergeService: (classes: string) => string,
-): Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> } => {
-  const slotFunctions = {} as Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> };
+  tailwindMergeFn: (classes: string) => string,
+): Record<keyof S, SlotClassResolver<T>> & { base: SlotClassResolver<T> } => {
+  const slotFunctions = {} as Record<keyof S, SlotClassResolver<T>> & {
+    base: SlotClassResolver<T>;
+  };
   const baseCompoundSlotClasses = compoundSlotClasses.base ?? [];
 
   slotFunctions.base = (
-    slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
+    slotProps: SlotResolverProps<T> = {} as SlotResolverProps<T>,
   ): string | undefined => {
     const baseSlotClass =
       mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
@@ -259,7 +255,7 @@ export const createSlotFunctionFactory = <
       baseSlotClass,
       mergedVariantGroups,
       cachedVariantKeys,
-      slotProps as ConfigurationVariants<T>,
+      slotProps as VariantSelection<T>,
       variantProps,
       mergedDefaultVariantProps,
       precomputedDefaults,
@@ -267,7 +263,7 @@ export const createSlotFunctionFactory = <
       baseCompoundSlotClasses,
     );
 
-    return finalizeSlotClasses(baseClasses, slotProps, shouldMergeClasses, tailwindMergeService);
+    return composeSlotClassName(baseClasses, slotProps, shouldMergeClasses, tailwindMergeFn);
   };
 
   const slotKeys = Object.keys(mergedSlotDefinitions);
@@ -283,15 +279,15 @@ export const createSlotFunctionFactory = <
       const slotDefinition = mergedSlotDefinitions[slotKey];
       const slotCompoundClasses = compoundSlotClasses[slotKey] ?? [];
 
-      (slotFunctions as Record<keyof S, SlotFunctionType<T>>)[slotKey] = (
-        slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
+      (slotFunctions as Record<keyof S, SlotClassResolver<T>>)[slotKey] = (
+        slotProps: SlotResolverProps<T> = {} as SlotResolverProps<T>,
       ): string | undefined => {
         const slotClasses = resolveSlotClasses(
           slotKey,
           slotDefinition,
           mergedVariantGroups,
           cachedVariantKeys,
-          slotProps as ConfigurationVariants<T>,
+          slotProps as VariantSelection<T>,
           variantProps,
           mergedDefaultVariantProps,
           precomputedDefaults,
@@ -299,12 +295,7 @@ export const createSlotFunctionFactory = <
           slotCompoundClasses,
         );
 
-        return finalizeSlotClasses(
-          slotClasses,
-          slotProps,
-          shouldMergeClasses,
-          tailwindMergeService,
-        );
+        return composeSlotClassName(slotClasses, slotProps, shouldMergeClasses, tailwindMergeFn);
       };
     }
   }

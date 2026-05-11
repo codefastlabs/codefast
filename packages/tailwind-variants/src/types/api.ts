@@ -17,11 +17,7 @@ import type { ConfigExtension } from "tailwind-merge";
  *
  * @since 0.3.16-canary.0
  */
-export type StringToBooleanType<T> = T extends "false" | "true"
-  ? boolean
-  : T extends boolean
-    ? T
-    : T;
+export type VariantValue<T> = T extends "false" | "true" ? boolean : T extends boolean ? T : T;
 
 /**
  * Check if a variant group supports boolean values.
@@ -31,7 +27,7 @@ export type StringToBooleanType<T> = T extends "false" | "true"
  *
  * @since 0.3.16-canary.0
  */
-export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" extends keyof T
+export type HasBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof T
   ? true
   : "false" extends keyof T
     ? true
@@ -47,10 +43,10 @@ export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" ex
  * @since 0.3.16-canary.0
  */
 export type VariantProps<Component> =
-  Component extends VariantFunctionType<infer T>
+  Component extends VariantResolver<infer T>
     ? T extends Record<string, never>
       ? object
-      : Omit<ConfigurationVariants<T>, "class" | "className">
+      : Omit<VariantSelection<T>, "class" | "className">
     : never;
 
 /**
@@ -61,7 +57,7 @@ export type VariantProps<Component> =
  *
  * @since 0.3.16-canary.0
  */
-export type ConfigurationSchema = Record<string, Record<string, ClassValue>>;
+export type VariantSchema = Record<string, Record<string, ClassValue>>;
 
 /**
  * Configuration schema for component slots.
@@ -71,7 +67,7 @@ export type ConfigurationSchema = Record<string, Record<string, ClassValue>>;
  *
  * @since 0.3.16-canary.0
  */
-export type SlotConfigurationSchema = Record<string, ClassValue>;
+export type SlotSchema = Record<string, ClassValue>;
 
 /**
  * Variant properties for a configuration schema.
@@ -81,10 +77,10 @@ export type SlotConfigurationSchema = Record<string, ClassValue>;
  *
  * @since 0.3.16-canary.0
  */
-export type ConfigurationVariants<T extends ConfigurationSchema> = {
-  readonly [Variant in keyof T]?: BooleanVariantChecker<T[Variant]> extends true
-    ? boolean | StringToBooleanType<keyof T[Variant]>
-    : StringToBooleanType<keyof T[Variant]>;
+export type VariantSelection<T extends VariantSchema> = {
+  readonly [Variant in keyof T]?: HasBooleanVariant<T[Variant]> extends true
+    ? boolean | VariantValue<keyof T[Variant]>
+    : VariantValue<keyof T[Variant]>;
 } & {
   className?: ClassValue;
   class?: ClassValue;
@@ -98,7 +94,7 @@ export type ConfigurationVariants<T extends ConfigurationSchema> = {
  *
  * @since 0.3.16-canary.0
  */
-export type SlotProperties<S extends SlotConfigurationSchema> = {
+export type SlotClassMap<S extends SlotSchema> = {
   readonly [Slot in keyof S]?: ClassValue;
 };
 
@@ -110,13 +106,13 @@ export type SlotProperties<S extends SlotConfigurationSchema> = {
  *
  * @since 0.3.16-canary.0
  */
-export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
-  readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
+export type CompoundVariant<T extends VariantSchema> = Partial<{
+  readonly [Variant in keyof T]: HasBooleanVariant<T[Variant]> extends true
     ?
         | boolean
-        | ReadonlyArray<boolean | StringToBooleanType<keyof T[Variant]>>
-        | StringToBooleanType<keyof T[Variant]>
-    : ReadonlyArray<StringToBooleanType<keyof T[Variant]>> | StringToBooleanType<keyof T[Variant]>;
+        | ReadonlyArray<boolean | VariantValue<keyof T[Variant]>>
+        | VariantValue<keyof T[Variant]>
+    : ReadonlyArray<VariantValue<keyof T[Variant]>> | VariantValue<keyof T[Variant]>;
 }> & {
   className?: ClassValue;
   class?: ClassValue;
@@ -130,19 +126,16 @@ export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
  *
  * @since 0.3.16-canary.0
  */
-export type CompoundVariantWithSlotsType<
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
-> = Partial<{
-  readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
+export type SlotCompoundVariant<T extends VariantSchema, S extends SlotSchema> = Partial<{
+  readonly [Variant in keyof T]: HasBooleanVariant<T[Variant]> extends true
     ?
         | boolean
-        | ReadonlyArray<boolean | StringToBooleanType<keyof T[Variant]>>
-        | StringToBooleanType<keyof T[Variant]>
-    : ReadonlyArray<StringToBooleanType<keyof T[Variant]>> | StringToBooleanType<keyof T[Variant]>;
+        | ReadonlyArray<boolean | VariantValue<keyof T[Variant]>>
+        | VariantValue<keyof T[Variant]>
+    : ReadonlyArray<VariantValue<keyof T[Variant]>> | VariantValue<keyof T[Variant]>;
 }> & {
-  className?: ClassValue | SlotProperties<S>;
-  class?: ClassValue | SlotProperties<S>;
+  className?: ClassValue | SlotClassMap<S>;
+  class?: ClassValue | SlotClassMap<S>;
 };
 
 /**
@@ -153,7 +146,7 @@ export type CompoundVariantWithSlotsType<
  *
  * @since 0.3.16-canary.0
  */
-export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfigurationSchema> =
+export type CompoundSlot<T extends VariantSchema, S extends SlotSchema> =
   T extends Record<string, never>
     ? {
         readonly slots: ReadonlyArray<keyof S>;
@@ -165,9 +158,9 @@ export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfig
         className?: ClassValue;
         class?: ClassValue;
       } & {
-        readonly [K in keyof T]?: BooleanVariantChecker<T[K]> extends true
-          ? boolean | StringToBooleanType<keyof T[K]>
-          : StringToBooleanType<keyof T[K]>;
+        readonly [K in keyof T]?: HasBooleanVariant<T[K]> extends true
+          ? boolean | VariantValue<keyof T[K]>
+          : VariantValue<keyof T[K]>;
       };
 
 /**
@@ -178,10 +171,10 @@ export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfig
  *
  * @since 0.3.16-canary.0
  */
-export interface Configuration<T extends ConfigurationSchema> {
+export interface VariantConfig<T extends VariantSchema> {
   readonly base?: ClassValue;
-  readonly compoundVariants?: ReadonlyArray<CompoundVariantType<T>>;
-  readonly defaultVariants?: ConfigurationVariants<T>;
+  readonly compoundVariants?: ReadonlyArray<CompoundVariant<T>>;
+  readonly defaultVariants?: VariantSelection<T>;
   readonly variants?: T;
 }
 
@@ -193,27 +186,24 @@ export interface Configuration<T extends ConfigurationSchema> {
  *
  * @since 0.3.16-canary.0
  */
-export interface ConfigurationWithSlots<
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
-> {
+export interface SlotVariantConfig<T extends VariantSchema, S extends SlotSchema> {
   readonly base?: ClassValue;
-  readonly compoundSlots?: ReadonlyArray<CompoundSlotType<T, S>>;
-  readonly compoundVariants?: ReadonlyArray<CompoundVariantWithSlotsType<T, S>>;
-  readonly defaultVariants?: ConfigurationVariants<T>;
+  readonly compoundSlots?: ReadonlyArray<CompoundSlot<T, S>>;
+  readonly compoundVariants?: ReadonlyArray<SlotCompoundVariant<T, S>>;
+  readonly defaultVariants?: VariantSelection<T>;
   readonly slots?: S;
   readonly variants?: T;
 }
 
 /**
- * Configuration options for Tailwind Variants.
+ * Runtime options for Tailwind Variants.
  *
  * This interface defines global configuration options that affect
  * how Tailwind Variants processes and merges CSS classes.
  *
  * @since 0.3.16-canary.0
  */
-export interface TailwindVariantsConfiguration {
+export interface TailwindVariantsOptions {
   readonly twMerge?: boolean;
   readonly twMergeConfig?: ConfigExtension<string, string>;
 }
@@ -226,8 +216,8 @@ export interface TailwindVariantsConfiguration {
  *
  * @since 0.3.16-canary.0
  */
-export type SlotFunctionType<T extends ConfigurationSchema> = (
-  props?: SlotFunctionProperties<T>,
+export type SlotClassResolver<T extends VariantSchema> = (
+  props?: SlotResolverProps<T>,
 ) => string | undefined;
 
 /**
@@ -238,14 +228,14 @@ export type SlotFunctionType<T extends ConfigurationSchema> = (
  *
  * @since 0.3.16-canary.0
  */
-export type SlotFunctionProperties<T extends ConfigurationSchema> =
+export type SlotResolverProps<T extends VariantSchema> =
   T extends Record<string, never>
     ? {
         className?: ClassValue;
         class?: ClassValue;
       }
     : {
-        readonly [K in keyof ConfigurationVariants<T>]?: ConfigurationVariants<T>[K];
+        readonly [K in keyof VariantSelection<T>]?: VariantSelection<T>[K];
       };
 
 /**
@@ -257,15 +247,15 @@ export type SlotFunctionProperties<T extends ConfigurationSchema> =
  *
  * @since 0.3.16-canary.0
  */
-export type TailwindVariantsReturnType<
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
+export type VariantResolverResult<
+  T extends VariantSchema,
+  S extends SlotSchema,
 > = keyof S extends never
-  ? SlotFunctionType<T>
+  ? SlotClassResolver<T>
   : {
-      readonly [K in keyof S]: SlotFunctionType<T>;
+      readonly [K in keyof S]: SlotClassResolver<T>;
     } & {
-      readonly base: SlotFunctionType<T>;
+      readonly base: SlotClassResolver<T>;
     };
 
 /**
@@ -276,15 +266,12 @@ export type TailwindVariantsReturnType<
  *
  * @since 0.3.16-canary.0
  */
-export interface VariantFunctionType<
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema = SlotConfigurationSchema,
-> {
-  config: Configuration<T> | ConfigurationWithSlots<T, S>;
+export interface VariantResolver<T extends VariantSchema, S extends SlotSchema = SlotSchema> {
+  config: VariantConfig<T> | SlotVariantConfig<T, S>;
 
   (
-    props?: ConfigurationVariants<T>,
-  ): S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S>;
+    props?: VariantSelection<T>,
+  ): S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
 }
 
 /**
@@ -296,30 +283,30 @@ export interface VariantFunctionType<
  * @since 0.3.16-canary.0
  */
 export interface TailwindVariantsFactory {
-  <T extends ConfigurationSchema>(
-    config: Configuration<T>,
-    localConfig?: TailwindVariantsConfiguration,
-  ): VariantFunctionType<T, Record<string, never>>;
+  <T extends VariantSchema>(
+    config: VariantConfig<T>,
+    localConfig?: TailwindVariantsOptions,
+  ): VariantResolver<T, Record<string, never>>;
 
-  <S extends SlotConfigurationSchema>(
-    config: ConfigurationWithSlots<Record<string, never>, S>,
-    localConfig?: TailwindVariantsConfiguration,
-  ): VariantFunctionType<Record<string, never>, S>;
+  <S extends SlotSchema>(
+    config: SlotVariantConfig<Record<string, never>, S>,
+    localConfig?: TailwindVariantsOptions,
+  ): VariantResolver<Record<string, never>, S>;
 
-  <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
-    config: ConfigurationWithSlots<T, S>,
-    localConfig?: TailwindVariantsConfiguration,
-  ): VariantFunctionType<T, S>;
+  <T extends VariantSchema, S extends SlotSchema>(
+    config: SlotVariantConfig<T, S>,
+    localConfig?: TailwindVariantsOptions,
+  ): VariantResolver<T, S>;
 
   <
-    TBase extends ConfigurationSchema,
-    TExtension extends ConfigurationSchema,
-    SBase extends SlotConfigurationSchema,
-    SExtension extends SlotConfigurationSchema,
+    TBase extends VariantSchema,
+    TExtension extends VariantSchema,
+    SBase extends SlotSchema,
+    SExtension extends SlotSchema,
   >(
-    config: ExtendedConfiguration<TBase, TExtension, SBase, SExtension>,
-    localConfig?: TailwindVariantsConfiguration,
-  ): VariantFunctionType<MergedSchemas<TBase, TExtension>, MergedSlotSchemas<SBase, SExtension>>;
+    config: ExtendedVariantConfig<TBase, TExtension, SBase, SExtension>,
+    localConfig?: TailwindVariantsOptions,
+  ): VariantResolver<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>;
 }
 
 /**
@@ -330,7 +317,7 @@ export interface TailwindVariantsFactory {
  *
  * @since 0.3.16-canary.0
  */
-export interface TailwindVariantsFactoryResult {
+export interface TailwindVariantsApi {
   cn: (...classes: Array<ClassValue>) => string;
   tv: TailwindVariantsFactory;
 }
@@ -343,9 +330,9 @@ export interface TailwindVariantsFactoryResult {
  *
  * @since 0.3.16-canary.0
  */
-export type MergedSchemas<
-  TBase extends ConfigurationSchema,
-  TExtension extends ConfigurationSchema,
+export type MergedVariantSchema<
+  TBase extends VariantSchema,
+  TExtension extends VariantSchema,
 > = TBase & TExtension;
 
 /**
@@ -356,37 +343,32 @@ export type MergedSchemas<
  *
  * @since 0.3.16-canary.0
  */
-export type MergedSlotSchemas<
-  SBase extends SlotConfigurationSchema,
-  SExtension extends SlotConfigurationSchema,
-> = SBase & SExtension;
+export type MergedSlotSchema<SBase extends SlotSchema, SExtension extends SlotSchema> = SBase &
+  SExtension;
 
 /**
- * Configuration interface for extending existing configurations.
+ * Configuration interface for extending existing variant resolvers.
  *
  * This interface allows extending an existing variant configuration with
  * additional variants and slots, while maintaining type safety.
  *
  * @since 0.3.16-canary.0
  */
-export interface ExtendedConfiguration<
-  TBase extends ConfigurationSchema,
-  TExtension extends ConfigurationSchema,
-  SBase extends SlotConfigurationSchema,
-  SExtension extends SlotConfigurationSchema,
+export interface ExtendedVariantConfig<
+  TBase extends VariantSchema,
+  TExtension extends VariantSchema,
+  SBase extends SlotSchema,
+  SExtension extends SlotSchema,
 > {
   readonly base?: ClassValue;
   readonly compoundSlots?: ReadonlyArray<
-    CompoundSlotType<MergedSchemas<TBase, TExtension>, MergedSlotSchemas<SBase, SExtension>>
+    CompoundSlot<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>
   >;
   readonly compoundVariants?: ReadonlyArray<
-    CompoundVariantWithSlotsType<
-      MergedSchemas<TBase, TExtension>,
-      MergedSlotSchemas<SBase, SExtension>
-    >
+    SlotCompoundVariant<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>
   >;
-  readonly defaultVariants?: ConfigurationVariants<MergedSchemas<TBase, TExtension>>;
-  readonly extend?: VariantFunctionType<TBase, SBase>;
+  readonly defaultVariants?: VariantSelection<MergedVariantSchema<TBase, TExtension>>;
+  readonly extend?: VariantResolver<TBase, SBase>;
   readonly slots?: SExtension;
   readonly variants?: TExtension;
 }

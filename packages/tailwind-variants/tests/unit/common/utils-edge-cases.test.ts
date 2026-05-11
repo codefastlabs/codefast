@@ -1,4 +1,4 @@
-import { cn, cx, isSlotObjectType } from "#/utilities/utils";
+import { cn, cx, isSlotClassMap } from "#/utilities/utils";
 
 describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
   describe("cx function edge cases", () => {
@@ -59,23 +59,23 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
     });
   });
 
-  describe("isSlotObjectType edge cases", () => {
+  describe("isSlotClassMap edge cases", () => {
     test("should correctly identify slot objects", () => {
-      expect(isSlotObjectType({ base: "class1", item: "class2" })).toBe(true);
-      expect(isSlotObjectType({ singleSlot: "class" })).toBe(true);
-      expect(isSlotObjectType({})).toBe(true); // Empty object is still an object
+      expect(isSlotClassMap({ base: "class1", item: "class2" })).toBe(true);
+      expect(isSlotClassMap({ singleSlot: "class" })).toBe(true);
+      expect(isSlotClassMap({})).toBe(true); // Empty object is still an object
     });
 
     test("should correctly reject non-slot-object values", () => {
-      expect(isSlotObjectType("string")).toBe(false);
-      expect(isSlotObjectType(123)).toBe(false);
-      expect(isSlotObjectType(true)).toBe(false);
-      expect(isSlotObjectType(false)).toBe(false);
-      expect(isSlotObjectType(null)).toBe(false);
-      expect(isSlotObjectType(undefined)).toBe(false);
-      expect(isSlotObjectType([])).toBe(false);
+      expect(isSlotClassMap("string")).toBe(false);
+      expect(isSlotClassMap(123)).toBe(false);
+      expect(isSlotClassMap(true)).toBe(false);
+      expect(isSlotClassMap(false)).toBe(false);
+      expect(isSlotClassMap(null)).toBe(false);
+      expect(isSlotClassMap(undefined)).toBe(false);
+      expect(isSlotClassMap([])).toBe(false);
       expect(
-        isSlotObjectType(() => {
+        isSlotClassMap(() => {
           /* empty function for test */
         }),
       ).toBe(false);
@@ -84,7 +84,7 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
     test("should handle complex object structures", () => {
       // Objects with string values should be considered slot objects
       expect(
-        isSlotObjectType({
+        isSlotClassMap({
           nested: { deep: "value" },
           simple: "class",
         }),
@@ -93,7 +93,7 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
       // Objects with non-string values should still be considered slot objects
       // as the type guard only checks if it's an object
       expect(
-        isSlotObjectType({
+        isSlotClassMap({
           array: ["item"],
           boolean: true,
           number: 123,
@@ -105,7 +105,7 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
       const object = Object.create({ inherited: "value" }) as Record<string, unknown>;
 
       object.own = "property";
-      expect(isSlotObjectType(object)).toBe(true);
+      expect(isSlotClassMap(object)).toBe(true);
     });
   });
 });

@@ -8,14 +8,14 @@
 
 import type {
   ClassValue,
-  CompoundSlotType,
-  CompoundVariantType,
-  ConfigurationSchema,
-  ConfigurationVariants,
-  SlotConfigurationSchema,
-} from "#/types/types";
+  CompoundSlot,
+  CompoundVariant,
+  VariantSchema,
+  VariantSelection,
+  SlotSchema,
+} from "#/types/api";
 
-type CompoundConditionSource = Record<string, unknown>;
+type CompoundDefinition = Record<string, unknown>;
 
 type CompoundMatchOptions = {
   readonly coerceMissingBoolean?: boolean;
@@ -23,8 +23,8 @@ type CompoundMatchOptions = {
   readonly skipSlots?: boolean;
 };
 
-export const matchesCompoundConditions = (
-  compoundDefinition: CompoundConditionSource,
+export const matchesCompoundDefinition = (
+  compoundDefinition: CompoundDefinition,
   variantProps: Record<string, unknown>,
   defaultVariantProps: Record<string, unknown>,
   options?: CompoundMatchOptions,
@@ -72,7 +72,7 @@ export const matchesCompoundConditions = (
   return true;
 };
 
-export const getCompoundClassValue = (compoundDefinition: {
+export const getCompoundClass = (compoundDefinition: {
   readonly class?: ClassValue;
   readonly className?: ClassValue;
 }): ClassValue => {
@@ -96,10 +96,10 @@ export const getCompoundClassValue = (compoundDefinition: {
  *
  * @since 0.3.16-canary.0
  */
-export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
-  compoundVariantGroups: ReadonlyArray<CompoundVariantType<T>>,
-  variantProps: ConfigurationVariants<T>,
-  defaultVariantProps: ConfigurationVariants<T>,
+export const resolveCompoundVariantClasses = <T extends VariantSchema>(
+  compoundVariantGroups: ReadonlyArray<CompoundVariant<T>>,
+  variantProps: VariantSelection<T>,
+  defaultVariantProps: VariantSelection<T>,
 ): Array<ClassValue> => {
   const groupLength = compoundVariantGroups.length;
 
@@ -116,13 +116,13 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
     }
 
     if (
-      matchesCompoundConditions(
-        compoundVariant as CompoundConditionSource,
+      matchesCompoundDefinition(
+        compoundVariant as CompoundDefinition,
         variantProps as Record<string, unknown>,
         defaultVariantProps as Record<string, unknown>,
       )
     ) {
-      resolvedClasses.push(getCompoundClassValue(compoundVariant));
+      resolvedClasses.push(getCompoundClass(compoundVariant));
     }
   }
 
@@ -145,13 +145,10 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
  *
  * @since 0.3.16-canary.0
  */
-export const applyCompoundSlotClasses = <
-  T extends ConfigurationSchema,
-  S extends SlotConfigurationSchema,
->(
-  compoundSlotDefinitions: ReadonlyArray<CompoundSlotType<T, S>> | undefined,
-  variantProps: ConfigurationVariants<T>,
-  defaultVariantProps: ConfigurationVariants<T>,
+export const resolveCompoundSlotClasses = <T extends VariantSchema, S extends SlotSchema>(
+  compoundSlotDefinitions: ReadonlyArray<CompoundSlot<T, S>> | undefined,
+  variantProps: VariantSelection<T>,
+  defaultVariantProps: VariantSelection<T>,
 ): Partial<Record<keyof S, Array<ClassValue>>> => {
   if (!compoundSlotDefinitions || compoundSlotDefinitions.length === 0) {
     return {} as Partial<Record<keyof S, Array<ClassValue>>>;
@@ -166,14 +163,14 @@ export const applyCompoundSlotClasses = <
     }
 
     if (
-      matchesCompoundConditions(
-        compoundSlot as CompoundConditionSource,
+      matchesCompoundDefinition(
+        compoundSlot as CompoundDefinition,
         variantProps as Record<string, unknown>,
         defaultVariantProps as Record<string, unknown>,
         { skipSlots: true },
       )
     ) {
-      const cls = getCompoundClassValue(compoundSlot);
+      const compoundClass = getCompoundClass(compoundSlot);
 
       const slots = compoundSlot.slots;
 
@@ -185,9 +182,9 @@ export const applyCompoundSlotClasses = <
         const existing = resolvedSlotClasses[slotKey];
 
         if (existing) {
-          existing.push(cls);
+          existing.push(compoundClass);
         } else {
-          resolvedSlotClasses[slotKey] = [cls];
+          resolvedSlotClasses[slotKey] = [compoundClass];
         }
       }
     }
