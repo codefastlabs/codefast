@@ -234,7 +234,7 @@ class DefaultContainer implements Container {
       return b.id;
     };
 
-    return new BindToBuilderImpl<Value>(token, commitBinding);
+    return new BindingEntry<Value>(token, commitBinding);
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
@@ -865,16 +865,16 @@ function updateSlotTag(slot: SlotKey, tag: string, value: unknown): SlotKey {
   return { ...slot, tags: existing };
 }
 
-// ── BindToBuilderImpl ─────────────────────────────────────────────────────────
+// ── BindingEntry ──────────────────────────────────────────────────────────────
 
-class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
+class BindingEntry<Value> implements BindToBuilder<Value> {
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
   ) {}
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
-    return new BindingBuilderImpl<Value>(
+    return new ConstraintBuilder<Value>(
       this._token,
       { kind: "class", target: type, scope: "transient" },
       this._commit,
@@ -885,7 +885,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     if (typeof this._token !== "function") {
       throw new Error("toSelf() requires token to be a Constructor");
     }
-    return new BindingBuilderImpl<Value>(
+    return new ConstraintBuilder<Value>(
       this._token,
       { kind: "class", target: this._token as Constructor<Value>, scope: "transient" },
       this._commit,
@@ -893,11 +893,11 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
   }
 
   toConstantValue(value: Value): ConstantBindingBuilder<Value> {
-    return new ConstantBindingBuilderImpl<Value>(this._token, value, this._commit);
+    return new ConstantBuilder<Value>(this._token, value, this._commit);
   }
 
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
-    return new BindingBuilderImpl<Value>(
+    return new ConstraintBuilder<Value>(
       this._token,
       { kind: "dynamic", factory, scope: "transient" },
       this._commit,
@@ -905,7 +905,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
   }
 
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
-    return new BindingBuilderImpl<Value>(
+    return new ConstraintBuilder<Value>(
       this._token,
       { kind: "dynamic-async", factory, scope: "transient" },
       this._commit,
@@ -917,7 +917,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     deps: Deps,
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
-    return new BindingBuilderImpl<Value>(
+    return new ConstraintBuilder<Value>(
       this._token,
       {
         kind: "resolved",
@@ -934,7 +934,7 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
     deps: Deps,
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
-    return new BindingBuilderImpl<Value>(
+    return new ConstraintBuilder<Value>(
       this._token,
       {
         kind: "resolved-async",
@@ -947,13 +947,13 @@ class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return new AliasBindingBuilderImpl<Value>(this._token, target, this._commit);
+    return new AliasBuilder<Value>(this._token, target, this._commit);
   }
 }
 
-// ── BindingBuilderImpl ─────────────────────────────────────────────────────────
+// ── ConstraintBuilder ─────────────────────────────────────────────────────────
 
-class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
+class ConstraintBuilder<Value> implements BindingBuilder<Value> {
   private _slot: SlotKey;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _committed: BindingIdentifier | undefined;
@@ -1004,7 +1004,7 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
   singleton(): SingletonBindingBuilder<Value> {
     const previousId = this._committed;
     this._committed = undefined;
-    return new ScopeBuilderImpl<Value, "singleton">(
+    return new ScopeBuilder<Value, "singleton">(
       this._token,
       { ...this._partial, scope: "singleton" } as PartialBinding<Value>,
       this._slot,
@@ -1018,7 +1018,7 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
   transient(): TransientBindingBuilder<Value> {
     const previousId = this._committed;
     this._committed = undefined;
-    return new ScopeBuilderImpl<Value, "transient">(
+    return new ScopeBuilder<Value, "transient">(
       this._token,
       { ...this._partial, scope: "transient" } as PartialBinding<Value>,
       this._slot,
@@ -1032,7 +1032,7 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
   scoped(): ScopedBindingBuilder<Value> {
     const previousId = this._committed;
     this._committed = undefined;
-    return new ScopeBuilderImpl<Value, "scoped">(
+    return new ScopeBuilder<Value, "scoped">(
       this._token,
       { ...this._partial, scope: "scoped" } as PartialBinding<Value>,
       this._slot,
@@ -1048,9 +1048,9 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
   }
 }
 
-// ── ScopeBuilderImpl ──────────────────────────────────────────────────────────
+// ── ScopeBuilder ─────────────────────────────────────────────────────────────
 
-class ScopeBuilderImpl<Value, Scope extends BindingScope>
+class ScopeBuilder<Value, Scope extends BindingScope>
   implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value>
 {
   private _onActivation: ActivationHandler<Value> | undefined;
@@ -1100,9 +1100,9 @@ class ScopeBuilderImpl<Value, Scope extends BindingScope>
   }
 }
 
-// ── ConstantBindingBuilderImpl ────────────────────────────────────────────────
+// ── ConstantBuilder ───────────────────────────────────────────────────────────
 
-class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value> {
+class ConstantBuilder<Value> implements ConstantBindingBuilder<Value> {
   private _slot: SlotKey;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _onActivation: ActivationHandler<Value> | undefined;
@@ -1173,9 +1173,9 @@ class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value>
   }
 }
 
-// ── AliasBindingBuilderImpl ───────────────────────────────────────────────────
+// ── AliasBuilder ──────────────────────────────────────────────────────────────
 
-class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
+class AliasBuilder<Value> implements AliasBindingBuilder {
   private _slot: SlotKey;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _committed: BindingIdentifier | undefined;
