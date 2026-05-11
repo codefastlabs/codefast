@@ -77,6 +77,10 @@ function toExportPath(distPath: string): string {
   return `./${distPath}`;
 }
 
+function isInternalChunkPath(distPath: string): boolean {
+  return distPath.split("/").includes("chunks");
+}
+
 const GROUP_ORDER: Record<string, number> = {
   components: 100,
   hooks: 200,
@@ -269,7 +273,8 @@ export async function generateExports(
 
   const modules = groupFilesByModule(files);
   const validModules = Array.from(modules.values()).filter(
-    (moduleEntry) => (moduleEntry.files.js || moduleEntry.files.mjs) && moduleEntry.files.dts,
+    (moduleEntry) =>
+      (moduleEntry.files.js || moduleEntry.files.mjs) && !isInternalChunkPath(moduleEntry.path),
   );
 
   if (!validModules.length) {
@@ -290,11 +295,11 @@ export async function generateExports(
       exportPath = pathTransform(exportPath);
     }
 
+    const entry: ExportEntry = {};
     const dtsFile = distModuleEntry.files.dts;
-    if (dtsFile === undefined) {
-      throw new Error(`mirror exports: missing .d.ts for ${distModuleEntry.path}`);
+    if (dtsFile) {
+      entry.types = `./dist/${dtsFile}`;
     }
-    const entry: ExportEntry = { types: `./dist/${dtsFile}` };
     if (distModuleEntry.files.mjs) {
       entry.import = `./dist/${distModuleEntry.files.mjs}`;
     } else if (distModuleEntry.files.js) {
