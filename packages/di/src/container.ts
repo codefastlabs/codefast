@@ -852,6 +852,19 @@ class DefaultContainer implements Container {
   }
 }
 
+// ── Shared builder helpers ────────────────────────────────────────────────────
+
+function updateSlotTag(slot: SlotKey, tag: string, value: unknown): SlotKey {
+  const existing = [...slot.tags];
+  const idx = existing.findIndex(([k]) => k === tag);
+  if (idx !== -1) {
+    existing[idx] = [tag, value];
+  } else {
+    existing.push([tag, value]);
+  }
+  return { ...slot, tags: existing };
+}
+
 // ── BindToBuilderImpl ─────────────────────────────────────────────────────────
 
 class BindToBuilderImpl<Value> implements BindToBuilder<Value> {
@@ -979,14 +992,7 @@ class BindingBuilderImpl<Value> implements BindingBuilder<Value> {
   }
 
   whenTagged(tag: string, value: unknown): this {
-    const existing = [...this._slot.tags];
-    const idx = existing.findIndex(([k]) => k === tag);
-    if (idx !== -1) {
-      existing[idx] = [tag, value];
-    } else {
-      existing.push([tag, value]);
-    }
-    this._slot = { ...this._slot, tags: existing };
+    this._slot = updateSlotTag(this._slot, tag, value);
     this._doCommit();
     return this;
   }
@@ -1141,14 +1147,7 @@ class ConstantBindingBuilderImpl<Value> implements ConstantBindingBuilder<Value>
   }
 
   whenTagged(tag: string, value: unknown): this {
-    const existing = [...this._slot.tags];
-    const idx = existing.findIndex(([k]) => k === tag);
-    if (idx !== -1) {
-      existing[idx] = [tag, value];
-    } else {
-      existing.push([tag, value]);
-    }
-    this._slot = { ...this._slot, tags: existing };
+    this._slot = updateSlotTag(this._slot, tag, value);
     this._doCommit();
     return this;
   }
@@ -1216,14 +1215,7 @@ class AliasBindingBuilderImpl<Value> implements AliasBindingBuilder {
   }
 
   whenTagged(tag: string, value: unknown): this {
-    const existing = [...this._slot.tags];
-    const idx = existing.findIndex(([k]) => k === tag);
-    if (idx !== -1) {
-      existing[idx] = [tag, value];
-    } else {
-      existing.push([tag, value]);
-    }
-    this._slot = { ...this._slot, tags: existing };
+    this._slot = updateSlotTag(this._slot, tag, value);
     this._doCommit();
     return this;
   }

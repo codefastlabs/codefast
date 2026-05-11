@@ -7,7 +7,7 @@ import type {
 import type { Token } from "#/token";
 import type { Binding } from "#/binding";
 import type { MetadataReader } from "#/metadata/metadata-types";
-import { AsyncDeactivationError } from "#/errors";
+import { AsyncActivationError, AsyncDeactivationError } from "#/errors";
 import { tokenName } from "#/token";
 
 /**
@@ -124,9 +124,7 @@ export class LifecycleManager {
           if (typeof method === "function") {
             const hookResult = (method as () => unknown).call(activatedInstance);
             if (hookResult instanceof Promise) {
-              throw new Error(
-                `@postConstruct method '${methodName}' returned a Promise. Use resolveAsync() instead.`,
-              );
+              throw new AsyncActivationError(tokenName(binding.token), "postConstruct", methodName);
             }
           }
         }
@@ -137,23 +135,19 @@ export class LifecycleManager {
     if (binding.kind !== "alias" && binding.onActivation !== undefined) {
       const activationResult = binding.onActivation(resolutionContext, activatedInstance);
       if (activationResult instanceof Promise) {
-        throw new Error(
-          `onActivation for '${tokenName(binding.token)}' returned a Promise. Use resolveAsync() instead.`,
-        );
+        throw new AsyncActivationError(tokenName(binding.token), "onActivation");
       }
       activatedInstance = activationResult;
     }
 
     // 3. container-level onActivation (must be sync)
-    const key = tokenName(binding.token);
+    const tokenDisplayName = tokenName(binding.token);
     const containerHooks = this._activationHooks.get(binding.token as Token<unknown> | Constructor);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
         if (activationResult instanceof Promise) {
-          throw new Error(
-            `Container-level onActivation for '${key}' returned a Promise. Use resolveAsync() instead.`,
-          );
+          throw new AsyncActivationError(tokenDisplayName, "onActivation");
         }
         activatedInstance = activationResult as Value;
       }
@@ -247,24 +241,5 @@ export class LifecycleManager {
         }
       }
     }
-  }
-
-  hasAsyncDeactivation<const Value>(
-    binding: Binding<Value>,
-    instance: Value,
-    _metadataReader: MetadataReader,
-  ): boolean {
-    if (binding.kind === "alias") {
-      return false;
-    }
-    if (binding.onDeactivation !== undefined) {
-      const hookResult = binding.onDeactivation(instance);
-      if (hookResult instanceof Promise) {
-        // Need to handle this promise though — just return true here
-        void hookResult;
-        return true;
-      }
-    }
-    return false;
   }
 }
