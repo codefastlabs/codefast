@@ -205,18 +205,18 @@ console.log("has(PluginToken, {name:'gamma'}):", container.has(PluginToken, { na
 console.log("\n=== Child container inspection ===");
 
 const RequestScopedToken = token<{ requestId: string }>("RequestScoped");
-const child = container.createChild();
-child.bind(RequestScopedToken).toConstantValue({ requestId: "req-42" });
+const childContainer = container.createChild();
+childContainer.bind(RequestScopedToken).toConstantValue({ requestId: "req-42" });
 
-const childSnapshot = child.inspect();
+const childSnapshot = childContainer.inspect();
 console.log("child hasParent:         ", childSnapshot.hasParent);
 console.log("child ownBindings count: ", childSnapshot.ownBindings.length);
 
 // has() finds tokens in parent; hasOwn() does not.
-console.log("child.has(LoggerToken):    ", child.has(LoggerToken)); // true (from parent)
-console.log("child.hasOwn(LoggerToken): ", child.hasOwn(LoggerToken)); // false (not in child)
-console.log("child.has(RequestScopedToken):    ", child.has(RequestScopedToken)); // true
-console.log("child.hasOwn(RequestScopedToken): ", child.hasOwn(RequestScopedToken)); // true
+console.log("child.has(LoggerToken):    ", childContainer.has(LoggerToken)); // true (from parent)
+console.log("child.hasOwn(LoggerToken): ", childContainer.hasOwn(LoggerToken)); // false (not in child)
+console.log("child.has(RequestScopedToken):    ", childContainer.has(RequestScopedToken)); // true
+console.log("child.hasOwn(RequestScopedToken): ", childContainer.hasOwn(RequestScopedToken)); // true
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. generateDependencyGraph() + toDotGraph()
@@ -261,12 +261,14 @@ function auditContainer(
   targetContainer: typeof container,
   requiredTokens: Array<ReturnType<typeof token>>,
 ): void {
-  const missing = requiredTokens.filter((tok) => !targetContainer.has(tok));
-  if (missing.length === 0) {
+  const missingTokens = requiredTokens.filter(
+    (requiredToken) => !targetContainer.has(requiredToken),
+  );
+  if (missingTokens.length === 0) {
     console.log("All required tokens are bound ✓");
   } else {
-    for (const tok of missing) {
-      console.warn(`Missing binding for token: ${tokenName(tok)}`);
+    for (const missingToken of missingTokens) {
+      console.warn(`Missing binding for token: ${tokenName(missingToken)}`);
     }
   }
 }

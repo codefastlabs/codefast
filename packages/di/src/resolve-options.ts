@@ -1,4 +1,4 @@
-import type { SlotKey } from "#/binding";
+import type { BindingSlot } from "#/binding";
 import type { ResolveOptions } from "#/types";
 
 /**
@@ -7,32 +7,32 @@ import type { ResolveOptions } from "#/types";
  *
  * @since 0.3.16-canary.0
  */
-export function injectableSlotToResolveOptions(slot: {
+export function injectionSlotToResolveOptions(injectionSlot: {
   readonly name?: string;
   readonly tags?: ReadonlyArray<readonly [string, unknown]>;
 }): ResolveOptions | undefined {
   const options: ResolveOptions = {};
-  if (slot.name !== undefined) {
-    options.name = slot.name;
+  if (injectionSlot.name !== undefined) {
+    options.name = injectionSlot.name;
   }
-  if (slot.tags !== undefined) {
-    options.tags = slot.tags;
+  if (injectionSlot.tags !== undefined) {
+    options.tags = injectionSlot.tags;
   }
   return options.name !== undefined || options.tags !== undefined ? options : undefined;
 }
 
 /**
- * Hint from a binding {@link SlotKey} (tags may be empty; omits when nothing to match).
+ * Hint from a binding {@link BindingSlot} (tags may be empty; omits when nothing to match).
  *
  * @since 0.3.16-canary.0
  */
-export function slotKeyToResolveOptions(slot: SlotKey): ResolveOptions | undefined {
+export function bindingSlotToResolveOptions(bindingSlot: BindingSlot): ResolveOptions | undefined {
   const options: ResolveOptions = {};
-  if (slot.name !== undefined) {
-    options.name = slot.name;
+  if (bindingSlot.name !== undefined) {
+    options.name = bindingSlot.name;
   }
-  if (slot.tags.length > 0) {
-    options.tags = slot.tags;
+  if (bindingSlot.tags.length > 0) {
+    options.tags = bindingSlot.tags;
   }
   return options.name !== undefined || options.tags !== undefined ? options : undefined;
 }

@@ -220,18 +220,18 @@ await test("places order and sends confirmation email", async () => {
   const stubPayment = new StubPaymentGateway();
   const stubEmail = new StubEmailService();
 
-  const c = Container.create();
-  c.bind(LoggerToken).to(StubLogger).singleton();
-  c.bind(UserServiceToken).toConstantValue(stubUser);
-  c.bind(PaymentGatewayToken).toConstantValue(stubPayment);
-  c.bind(EmailServiceToken).toConstantValue(stubEmail);
-  c.bind(OrderServiceToken).to(OrderProcessor).singleton();
+  const testContainer = Container.create();
+  testContainer.bind(LoggerToken).to(StubLogger).singleton();
+  testContainer.bind(UserServiceToken).toConstantValue(stubUser);
+  testContainer.bind(PaymentGatewayToken).toConstantValue(stubPayment);
+  testContainer.bind(EmailServiceToken).toConstantValue(stubEmail);
+  testContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
 
-  const orders = c.resolve(OrderServiceToken);
-  const result = orders.placeOrder("u1", 49.99);
+  const orderService = testContainer.resolve(OrderServiceToken);
+  const orderResult = orderService.placeOrder("u1", 49.99);
 
-  assert(result.orderId.startsWith("ord-"), "orderId should have ord- prefix");
-  assert(result.transactionId.startsWith("stub-txn-"), "transactionId should come from stub");
+  assert(orderResult.orderId.startsWith("ord-"), "orderId should have ord- prefix");
+  assert(orderResult.transactionId.startsWith("stub-txn-"), "transactionId should come from stub");
   assert(stubPayment.capturedPayments.length === 1, "payment captured once");
   assert(stubPayment.capturedPayments[0]?.amount === 49.99, "correct amount charged");
   assert(stubEmail.sentEmails.length === 1, "one email sent");
@@ -239,18 +239,18 @@ await test("places order and sends confirmation email", async () => {
 });
 
 await test("throws when user is not found", async () => {
-  const c = Container.create();
-  c.bind(LoggerToken).to(StubLogger).singleton();
-  c.bind(UserServiceToken).toConstantValue(new StubUserService()); // empty — no users
-  c.bind(PaymentGatewayToken).toConstantValue(new StubPaymentGateway());
-  c.bind(EmailServiceToken).toConstantValue(new StubEmailService());
-  c.bind(OrderServiceToken).to(OrderProcessor).singleton();
+  const testContainer = Container.create();
+  testContainer.bind(LoggerToken).to(StubLogger).singleton();
+  testContainer.bind(UserServiceToken).toConstantValue(new StubUserService()); // empty — no users
+  testContainer.bind(PaymentGatewayToken).toConstantValue(new StubPaymentGateway());
+  testContainer.bind(EmailServiceToken).toConstantValue(new StubEmailService());
+  testContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
 
-  const orders = c.resolve(OrderServiceToken);
+  const orderService = testContainer.resolve(OrderServiceToken);
 
   let threw = false;
   try {
-    orders.placeOrder("unknown", 10);
+    orderService.placeOrder("unknown", 10);
   } catch {
     threw = true;
   }
@@ -268,18 +268,20 @@ await test("throws when user is not found", async () => {
 console.log("\n=== Pattern B: rebind() for targeted override ===");
 
 await test("payment failure causes placeOrder to throw", async () => {
-  const c = Container.fromModules(CoreModule);
+  const testContainer = Container.fromModules(CoreModule);
 
   // Swap only the payment gateway — everything else stays real.
   const stubPayment = new StubPaymentGateway().failNextCharge();
-  c.rebind(PaymentGatewayToken).toConstantValue(stubPayment);
-  c.rebind(UserServiceToken).toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
+  testContainer.rebind(PaymentGatewayToken).toConstantValue(stubPayment);
+  testContainer
+    .rebind(UserServiceToken)
+    .toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
 
-  const orders = c.resolve(OrderServiceToken);
+  const orderService = testContainer.resolve(OrderServiceToken);
 
   let threw = false;
   try {
-    orders.placeOrder("u1", 99);
+    orderService.placeOrder("u1", 99);
   } catch {
     threw = true;
   }
@@ -304,14 +306,14 @@ await test("child container shadows PaymentGateway without mutating parent", asy
   const stubUser = new StubUserService().seed("u2", "bob@example.com");
   const stubEmail = new StubEmailService();
 
-  const testChild = productionContainer.createChild();
-  testChild.bind(UserServiceToken).toConstantValue(stubUser);
-  testChild.bind(PaymentGatewayToken).toConstantValue(stubPayment);
-  testChild.bind(EmailServiceToken).toConstantValue(stubEmail);
-  testChild.bind(OrderServiceToken).to(OrderProcessor).singleton();
+  const testChildContainer = productionContainer.createChild();
+  testChildContainer.bind(UserServiceToken).toConstantValue(stubUser);
+  testChildContainer.bind(PaymentGatewayToken).toConstantValue(stubPayment);
+  testChildContainer.bind(EmailServiceToken).toConstantValue(stubEmail);
+  testChildContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
 
-  const orders = testChild.resolve(OrderServiceToken);
-  orders.placeOrder("u2", 25.0);
+  const orderService = testChildContainer.resolve(OrderServiceToken);
+  orderService.placeOrder("u2", 25.0);
 
   assert(stubPayment.capturedPayments.length === 1, "child stub captured payment");
 
@@ -321,32 +323,32 @@ await test("child container shadows PaymentGateway without mutating parent", asy
 });
 
 await test("two independent child containers do not share state", async () => {
-  const stubA = new StubPaymentGateway();
-  const stubB = new StubPaymentGateway();
+  const childAPayment = new StubPaymentGateway();
+  const childBPayment = new StubPaymentGateway();
 
-  const childA = productionContainer.createChild();
-  childA
+  const childAContainer = productionContainer.createChild();
+  childAContainer
     .bind(UserServiceToken)
     .toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
-  childA.bind(PaymentGatewayToken).toConstantValue(stubA);
-  childA.bind(EmailServiceToken).toConstantValue(new StubEmailService());
-  childA.bind(OrderServiceToken).to(OrderProcessor).singleton();
+  childAContainer.bind(PaymentGatewayToken).toConstantValue(childAPayment);
+  childAContainer.bind(EmailServiceToken).toConstantValue(new StubEmailService());
+  childAContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
 
-  const childB = productionContainer.createChild();
-  childB
+  const childBContainer = productionContainer.createChild();
+  childBContainer
     .bind(UserServiceToken)
     .toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
-  childB.bind(PaymentGatewayToken).toConstantValue(stubB);
-  childB.bind(EmailServiceToken).toConstantValue(new StubEmailService());
-  childB.bind(OrderServiceToken).to(OrderProcessor).singleton();
+  childBContainer.bind(PaymentGatewayToken).toConstantValue(childBPayment);
+  childBContainer.bind(EmailServiceToken).toConstantValue(new StubEmailService());
+  childBContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
 
-  childA.resolve(OrderServiceToken).placeOrder("u1", 10);
-  childB.resolve(OrderServiceToken).placeOrder("u1", 20);
+  childAContainer.resolve(OrderServiceToken).placeOrder("u1", 10);
+  childBContainer.resolve(OrderServiceToken).placeOrder("u1", 20);
 
-  assert(stubA.capturedPayments.length === 1, "child A has 1 payment");
-  assert(stubB.capturedPayments.length === 1, "child B has 1 payment");
-  assert(stubA.capturedPayments[0]?.amount === 10, "child A charged correct amount");
-  assert(stubB.capturedPayments[0]?.amount === 20, "child B charged correct amount");
+  assert(childAPayment.capturedPayments.length === 1, "child A has 1 payment");
+  assert(childBPayment.capturedPayments.length === 1, "child B has 1 payment");
+  assert(childAPayment.capturedPayments[0]?.amount === 10, "child A charged correct amount");
+  assert(childBPayment.capturedPayments[0]?.amount === 20, "child B charged correct amount");
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -364,20 +366,20 @@ function buildTestContainer(
   stubPayment: StubPaymentGateway,
 ): { container: ReturnType<typeof Container.create>; stubEmail: StubEmailService } {
   const stubEmail = new StubEmailService();
-  const c = Container.fromModules(CoreModule);
-  c.rebind(UserServiceToken).toConstantValue(stubUser);
-  c.rebind(PaymentGatewayToken).toConstantValue(stubPayment);
-  c.rebind(EmailServiceToken).toConstantValue(stubEmail);
-  return { container: c, stubEmail };
+  const testContainer = Container.fromModules(CoreModule);
+  testContainer.rebind(UserServiceToken).toConstantValue(stubUser);
+  testContainer.rebind(PaymentGatewayToken).toConstantValue(stubPayment);
+  testContainer.rebind(EmailServiceToken).toConstantValue(stubEmail);
+  return { container: testContainer, stubEmail };
 }
 
 await test("module override replaces all three stubs", async () => {
   const stubUser = new StubUserService().seed("u1", "alice@example.com");
   const stubPayment = new StubPaymentGateway();
-  const { container: c, stubEmail } = buildTestContainer(stubUser, stubPayment);
+  const { container: testContainer, stubEmail } = buildTestContainer(stubUser, stubPayment);
 
-  const orders = c.resolve(OrderServiceToken);
-  orders.placeOrder("u1", 75);
+  const orderService = testContainer.resolve(OrderServiceToken);
+  orderService.placeOrder("u1", 75);
 
   assert(stubPayment.capturedPayments[0]?.amount === 75, "correct amount charged via stub");
   assert(stubEmail.sentEmails[0]?.to === "alice@example.com", "email sent via stub");
@@ -394,19 +396,19 @@ await test("module override replaces all three stubs", async () => {
 console.log("\n=== Pattern E: validate() for wiring checks ===");
 
 await test("validate passes on a correctly wired container", async () => {
-  const c = Container.fromModules(CoreModule);
-  c.validate(); // throws if any binding is broken
+  const testContainer = Container.fromModules(CoreModule);
+  testContainer.validate(); // throws if any binding is broken
   assert(true, "validate() passed without throwing");
 });
 
 await test("incomplete container is detected by inspect() before validate()", async () => {
-  const c = Container.create();
-  c.bind(OrderServiceToken).to(OrderProcessor).singleton();
+  const testContainer = Container.create();
+  testContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
   // Intentionally missing: Logger, UserService, PaymentGateway, EmailService
 
-  const snapshot = c.inspect();
-  const hasLogger = c.has(LoggerToken);
-  const hasUser = c.has(UserServiceToken);
+  const snapshot = testContainer.inspect();
+  const hasLogger = testContainer.has(LoggerToken);
+  const hasUser = testContainer.has(UserServiceToken);
 
   assert(!hasLogger, "LoggerToken should be missing");
   assert(!hasUser, "UserServiceToken should be missing");
@@ -416,7 +418,7 @@ await test("incomplete container is detected by inspect() before validate()", as
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 const passed = results.filter((testResult) => testResult.passed).length;
-const failed = results.filter((r) => !r.passed).length;
+const failed = results.filter((testResult) => !testResult.passed).length;
 console.log(`\n${passed + failed} tests: ${passed} passed, ${failed} failed`);
 if (failed > 0) {
   process.exit(1);

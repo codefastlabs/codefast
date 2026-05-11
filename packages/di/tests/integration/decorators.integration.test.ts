@@ -15,51 +15,51 @@ const packageRoot = join(integrationDir, "..", "..");
 
 describe("Stage 3 decorators — metadata & lifecycle", () => {
   it("registers accessor metadata via @injectable + getAccessorMetadata", () => {
-    const Dep = token<string>("decorators.meta");
+    const MetadataDepToken = token<string>("decorators.meta");
     const container = Container.create();
-    container.bind(Dep).toConstantValue("ok");
+    container.bind(MetadataDepToken).toConstantValue("ok");
 
     @injectable([])
-    class MetaProbe {
-      @inject(Dep) accessor s!: string;
+    class AccessorMetadataProbe {
+      @inject(MetadataDepToken) accessor value!: string;
     }
 
-    container.bind(MetaProbe).toSelf().transient();
-    const meta = defaultMetadataReader.getAccessorMetadata(MetaProbe);
-    expect(meta?.length).toBe(1);
-    expect(meta?.[0]?.descriptor.token).toBe(Dep);
+    container.bind(AccessorMetadataProbe).toSelf().transient();
+    const accessorMetadata = defaultMetadataReader.getAccessorMetadata(AccessorMetadataProbe);
+    expect(accessorMetadata?.length).toBe(1);
+    expect(accessorMetadata?.[0]?.descriptor.token).toBe(MetadataDepToken);
   });
 
   it("rejects @postConstruct on static method at class evaluation time", () => {
     expect(() => {
-      class Bad {
+      class StaticPostConstructTarget {
         @postConstruct()
         static init(): void {}
       }
-      void Bad;
+      void StaticPostConstructTarget;
     }).toThrow(InternalError);
   });
 
   it("rejects @preDestroy on static method at class evaluation time", () => {
     expect(() => {
-      class Bad {
+      class StaticPreDestroyTarget {
         @preDestroy()
         static cleanup(): void {}
       }
-      void Bad;
+      void StaticPreDestroyTarget;
     }).toThrow(InternalError);
   });
 });
 
 describe("Accessor injection e2e (tsx subprocess)", () => {
   it("constructor → accessor inject → @postConstruct with tsx emit", () => {
-    const script = join(integrationDir, "accessor-e2e.script.ts");
-    const result = spawnSync("pnpm", ["exec", "tsx", script], {
+    const scriptPath = join(integrationDir, "accessor-e2e.script.ts");
+    const spawnResult = spawnSync("pnpm", ["exec", "tsx", scriptPath], {
       cwd: packageRoot,
       encoding: "utf-8",
     });
-    expect(result.stderr).toBe("");
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain("ACCESSOR_E2E_OK");
+    expect(spawnResult.stderr).toBe("");
+    expect(spawnResult.status).toBe(0);
+    expect(spawnResult.stdout).toContain("ACCESSOR_E2E_OK");
   });
 });

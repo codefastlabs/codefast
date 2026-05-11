@@ -70,12 +70,12 @@ export interface ResolveOptions {
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
 
-// ── MaterializationFrame ──────────────────────────────────────────────────────
+// ── ResolutionFrame ──────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface MaterializationFrame {
+export interface ResolutionFrame {
   readonly tokenName: string;
   readonly scope: BindingScope;
   readonly bindingId: BindingIdentifier;
@@ -93,9 +93,9 @@ export interface MaterializationFrame {
  */
 export interface ConstraintContext {
   readonly resolutionPath: ReadonlyArray<string>;
-  readonly materializationStack: ReadonlyArray<MaterializationFrame>;
-  readonly parent: MaterializationFrame | undefined;
-  readonly ancestors: ReadonlyArray<MaterializationFrame>;
+  readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
+  readonly parent: ResolutionFrame | undefined;
+  readonly ancestors: ReadonlyArray<ResolutionFrame>;
   readonly currentResolveHint: ResolveOptions | undefined;
 }
 

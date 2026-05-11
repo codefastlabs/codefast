@@ -181,7 +181,7 @@ Start with `container.bind(key)` and chain a strategy, then optional constraints
 | `.toDynamicAsync(factory)`        | Async factory `(ctx: ResolutionContext) => Promise<Value>`.                                                 |
 | `.toResolved(factory, deps)`      | Factory with a typed dependency tuple; dependencies are resolved in order.                                  |
 | `.toResolvedAsync(factory, deps)` | Like `toResolved`, but the factory returns a `Promise`.                                                     |
-| `.toAlias(targetToken)`           | Redirect resolution to another token; the alias follows the target’s materialization.                       |
+| `.toAlias(targetToken)`           | Redirect resolution to another token; the alias follows the target’s resolution.                            |
 
 ```typescript
 container.bind(AppConfigToken).toConstantValue({ port: 3000 });
@@ -271,7 +271,7 @@ Built-in predicates (all from `@codefast/di/constraints`):
 | ----------------------------------- | -------------------------------------------------------------------------- |
 | `whenParentIs(key)`                 | The direct parent binding was registered for `key`.                        |
 | `whenNoParentIs(key)`               | There is no parent, or the parent is not registered for `key`.             |
-| `whenAnyAncestorIs(key)`            | Any ancestor on the materialization stack was registered for `key`.        |
+| `whenAnyAncestorIs(key)`            | Any ancestor on the resolution stack was registered for `key`.             |
 | `whenNoAncestorIs(key)`             | No ancestor was registered for `key`.                                      |
 | `whenParentNamed(name)`             | The immediate parent binding’s slot name is `name`.                        |
 | `whenAnyAncestorNamed(name)`        | Some ancestor’s slot name is `name`.                                       |
@@ -645,7 +645,7 @@ The root entry re-exports the full façade (`package.json` → `"."`). Subpaths 
 | `@codefast/di/decorators/injectable`           | `injectable`, `createAutoRegisterRegistry`, `AutoRegisterRegistry`                                                                                                   |
 | `@codefast/di/decorators/lifecycle-decorators` | `postConstruct`, `preDestroy`                                                                                                                                        |
 | `@codefast/di/dependency-graph`                | `buildDependencyGraph`, `ContainerGraphJson`, `GraphOptions`, …                                                                                                      |
-| `@codefast/di/environment`                     | `runWithContainer`, `getActiveContainer`, `DefaultResolutionContext`, `ResolverCallbacks`, `buildMaterializationFrame`                                               |
+| `@codefast/di/environment`                     | `runWithContainer`, `getActiveContainer`, `DefaultResolutionContext`, `ResolverCallbacks`, `buildResolutionFrame`                                                    |
 | `@codefast/di/errors`                          | Full `DiError` hierarchy                                                                                                                                             |
 | `@codefast/di/graph-adapters/cytoscape`        | `toCytoscapeGraph`                                                                                                                                                   |
 | `@codefast/di/graph-adapters/dot`              | `toDotGraph`                                                                                                                                                         |
@@ -659,7 +659,7 @@ The root entry re-exports the full façade (`package.json` → `"."`). Subpaths 
 | `@codefast/di/metadata/symbol-metadata-reader` | `SymbolMetadataReader`, `defaultMetadataReader`                                                                                                                      |
 | `@codefast/di/module`                          | `Module`, `AsyncModule`, `SyncModule`, `isSyncModule`, builders                                                                                                      |
 | `@codefast/di/registry`                        | `BindingRegistry`                                                                                                                                                    |
-| `@codefast/di/resolve-options`                 | `injectableSlotToResolveOptions`, `slotKeyToResolveOptions`                                                                                                          |
+| `@codefast/di/resolve-options`                 | `injectionSlotToResolveOptions`, `bindingSlotToResolveOptions`                                                                                                       |
 | `@codefast/di/resolver`                        | `DependencyResolver`                                                                                                                                                 |
 | `@codefast/di/scope`                           | `ScopeManager`                                                                                                                                                       |
 | `@codefast/di/token`                           | `token`, `Token`, `tokenName`, …                                                                                                                                     |

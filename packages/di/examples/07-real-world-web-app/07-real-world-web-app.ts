@@ -237,7 +237,7 @@ const ServiceModule = Module.create("Service", (builder) => {
 
 const MiddlewareModule = Module.create("Middleware", (builder) => {
   builder.import(ServiceModule);
-  // Multi-binding: each middleware uses a distinct slot via whenNamed()
+  // Multi-binding: each middleware uses a distinct binding slot via whenNamed()
   builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
   builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
 });
@@ -278,18 +278,18 @@ async function createServer() {
     requestContainer.bind(RequestContextToken).toConstantValue(req);
 
     // Collect middleware pipeline
-    const middlewares = requestContainer.resolveAll(MiddlewareToken);
+    const middlewarePipeline = requestContainer.resolveAll(MiddlewareToken);
 
     // Build next() chain
     const dispatch = (index: number): (() => Promise<HttpResponse>) => {
       return async () => {
-        if (index >= middlewares.length) {
+        if (index >= middlewarePipeline.length) {
           // Reached end of middleware: resolve and call controller
           const controller = requestContainer.resolve(UserControllerToken);
           return controller.getProfile();
         }
 
-        return middlewares[index]!.process(req, dispatch(index + 1));
+        return middlewarePipeline[index]!.process(req, dispatch(index + 1));
       };
     };
 
@@ -313,25 +313,25 @@ async function main(): Promise<void> {
   };
 
   // Simulate requests
-  const res1 = await server.handleRequest({
+  const authorizedResponse = await server.handleRequest({
     requestId: "req-001",
     method: "GET",
     path: "/profile",
     headers: { authorization: "bearer-42" },
   });
-  console.log("Response 1:", JSON.stringify(res1));
+  console.log("Response 1:", JSON.stringify(authorizedResponse));
 
-  const res2 = await server.handleRequest({
+  const unauthorizedResponse = await server.handleRequest({
     requestId: "req-002",
     method: "GET",
     path: "/profile",
     headers: {}, // no auth
   });
-  console.log("Response 2:", JSON.stringify(res2));
+  console.log("Response 2:", JSON.stringify(unauthorizedResponse));
 
   // Introspect dependency graph
-  const dot = toDotGraph(server.container.generateDependencyGraph());
-  console.log(`\nDOT graph (${dot.split("\n").length} lines, paste at graphviz.org)`);
+  const dotGraph = toDotGraph(server.container.generateDependencyGraph());
+  console.log(`\nDOT graph (${dotGraph.split("\n").length} lines, paste at graphviz.org)`);
 }
 
 // ============================================================================

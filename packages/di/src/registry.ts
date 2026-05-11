@@ -1,7 +1,7 @@
 import type { Binding } from "#/binding";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 import type { Token } from "#/token";
-import { slotKeyEquals, slotKeyToString } from "#/binding";
+import { bindingSlotEquals, bindingSlotToString } from "#/binding";
 
 /**
  * @since 0.3.16-canary.0
@@ -30,7 +30,9 @@ export class BindingRegistry {
     // Only apply last-wins for slot-based bindings (not predicate-only)
     if (!this._isPurePredicateBinding(binding)) {
       const existingIndex = bindingsForToken.findIndex(
-        (b) => !this._isPurePredicateBinding(b) && slotKeyEquals(b.slot, binding.slot),
+        (candidate) =>
+          !this._isPurePredicateBinding(candidate) &&
+          bindingSlotEquals(candidate.slot, binding.slot),
       );
       if (existingIndex !== -1) {
         const replacedBinding = bindingsForToken[existingIndex]!;
@@ -47,8 +49,8 @@ export class BindingRegistry {
   }
 
   /** Remove all bindings for a token. Returns removed bindings. */
-  removeByToken(t: Token<unknown> | Constructor): Array<Binding> {
-    const key = t as DependencyKey;
+  removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
+    const key = token as DependencyKey;
     const bindingsForToken = this._bindings.get(key) ?? [];
     this._bindings.delete(key);
     this._simpleNamed.delete(key);
@@ -89,8 +91,8 @@ export class BindingRegistry {
   }
 
   /** Get all bindings for a token. */
-  getAll(t: Token<unknown> | Constructor): ReadonlyArray<Binding> {
-    return this._bindings.get(t as DependencyKey) ?? [];
+  getAll(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
+    return this._bindings.get(token as DependencyKey) ?? [];
   }
 
   /** Get binding by ID. */
@@ -99,8 +101,8 @@ export class BindingRegistry {
   }
 
   /** Check if any binding exists for token. */
-  has(t: Token<unknown> | Constructor): boolean {
-    const key = t as DependencyKey;
+  has(token: Token<unknown> | Constructor): boolean {
+    const key = token as DependencyKey;
     const list = this._bindings.get(key);
     return list !== undefined && list.length > 0;
   }
@@ -145,9 +147,9 @@ export class BindingRegistry {
   }
 
   /** Summarize available slot strings for a token (for error messages). */
-  availableSlotStrings(t: Token<unknown> | Constructor): Array<string> {
-    const bindingsForToken = this._bindings.get(t as DependencyKey) ?? [];
-    return bindingsForToken.map((binding) => slotKeyToString(binding.slot));
+  availableSlotStrings(token: Token<unknown> | Constructor): Array<string> {
+    const bindingsForToken = this._bindings.get(token as DependencyKey) ?? [];
+    return bindingsForToken.map((binding) => bindingSlotToString(binding.slot));
   }
 
   private _indexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {

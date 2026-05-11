@@ -2591,7 +2591,7 @@ async function bootstrap() {
   // 4. Register event handlers (cross-cutting concerns via EventBus)
   const eventBus = container.resolve(EventBusToken);
   const loyalty = container.resolve(LoyaltyServiceToken);
-  const notif = container.resolve(NotificationServiceToken);
+  const notificationService = container.resolve(NotificationServiceToken);
   const userService = container.resolve(UserServiceToken);
 
   eventBus.subscribe<{ orderId: string; userId: string; total: number }>(
@@ -2610,7 +2610,7 @@ async function bootstrap() {
         userService.getUserProfile(userId),
       ]);
       if (order && user) {
-        await notif.sendOrderConfirmationNotification(order, user);
+        await notificationService.sendOrderConfirmationNotification(order, user);
       }
     },
   );
@@ -2690,7 +2690,11 @@ async function main(): Promise<void> {
   ];
 
   console.log("\n[Server] Processing 3 concurrent checkout requests...\n");
-  await Promise.all(sessions.map((s) => handleCheckoutRequest(platform.container, s.requestId, s)));
+  await Promise.all(
+    sessions.map((session) =>
+      handleCheckoutRequest(platform.container, session.requestId, session),
+    ),
+  );
 
   // ── Browse catalog ─────────────────────────────────────────────────────
 
@@ -2710,10 +2714,18 @@ async function main(): Promise<void> {
   const snapshot = platform.container.inspect();
   console.log(`[Inspect] Total bindings registered: ${snapshot.ownBindings.length}`);
 
-  const singletons = snapshot.ownBindings.filter((b) => b.scope === "singleton").length;
-  const transients = snapshot.ownBindings.filter((b) => b.scope === "transient").length;
-  const scoped = snapshot.ownBindings.filter((b) => b.scope === "scoped").length;
-  console.log(`[Inspect] Singletons: ${singletons}, Transients: ${transients}, Scoped: ${scoped}`);
+  const singletonBindings = snapshot.ownBindings.filter(
+    (binding) => binding.scope === "singleton",
+  ).length;
+  const transientBindings = snapshot.ownBindings.filter(
+    (binding) => binding.scope === "transient",
+  ).length;
+  const scopedBindings = snapshot.ownBindings.filter(
+    (binding) => binding.scope === "scoped",
+  ).length;
+  console.log(
+    `[Inspect] Singletons: ${singletonBindings}, Transients: ${transientBindings}, Scoped: ${scopedBindings}`,
+  );
 }
 
 main().catch(console.error);

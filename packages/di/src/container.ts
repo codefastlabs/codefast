@@ -20,7 +20,7 @@ import type {
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
   PartialBinding,
-  SlotKey,
+  BindingSlot,
   TransientBindingBuilder,
 } from "#/binding";
 import type { Token } from "#/token";
@@ -39,7 +39,7 @@ import {
   ScopeViolationError,
   SyncDisposalNotSupportedError,
 } from "#/errors";
-import { DEFAULT_SLOT, generateBindingId } from "#/binding";
+import { DEFAULT_BINDING_SLOT, generateBindingId } from "#/binding";
 import { BindingRegistry } from "#/registry";
 import { ScopeManager } from "#/scope";
 import { LifecycleManager } from "#/lifecycle";
@@ -52,7 +52,7 @@ import { tokenName } from "#/token";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import { isSyncModule } from "#/module";
 import { effectiveBindingScope } from "#/binding-scope";
-import { injectableSlotToResolveOptions, slotKeyToResolveOptions } from "#/resolve-options";
+import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -209,7 +209,7 @@ class DefaultContainer implements Container {
   ): BindToBuilder<Value> {
     const registry = this._registry;
 
-    const commitBinding = (b: Binding, previousId?: BindingIdentifier): BindingIdentifier => {
+    const commitBinding = (binding: Binding, previousId?: BindingIdentifier): BindingIdentifier => {
       if (previousId !== undefined) {
         registry.removeById(previousId);
         if (moduleRef !== undefined) {
@@ -222,16 +222,16 @@ class DefaultContainer implements Container {
           }
         }
       }
-      registry.add(b);
+      registry.add(binding);
       if (moduleRef !== undefined) {
         let ids = this._moduleBindingIds.get(moduleRef);
         if (ids === undefined) {
           ids = [];
           this._moduleBindingIds.set(moduleRef, ids);
         }
-        ids.push(b.id);
+        ids.push(binding.id);
       }
-      return b.id;
+      return binding.id;
     };
 
     return new BindingEntry<Value>(token, commitBinding);
@@ -306,8 +306,8 @@ class DefaultContainer implements Container {
   ): Array<Binding> {
     if (typeof tokenOrId === "string") {
       // It's a BindingIdentifier (string)
-      const b = this._registry.getById(tokenOrId as BindingIdentifier);
-      return b !== undefined ? [b] : [];
+      const binding = this._registry.getById(tokenOrId as BindingIdentifier);
+      return binding !== undefined ? [binding] : [];
     }
     return [...this._registry.getAll(tokenOrId as Token<unknown> | Constructor)];
   }
@@ -322,19 +322,19 @@ class DefaultContainer implements Container {
   private _loadSyncModules(modules: Array<SyncModule>): void {
     // Collect all modules in topological order (dedup by identity)
     const toLoad = this._collectModuleDeps(modules);
-    for (const mod of toLoad) {
-      if (!isSyncModule(mod)) {
-        throw new AsyncModuleLoadError((mod as AsyncModule).name);
+    for (const module of toLoad) {
+      if (!isSyncModule(module)) {
+        throw new AsyncModuleLoadError((module as AsyncModule).name);
       }
-      const ref = mod as object;
-      const existing = this._moduleRefs.get(ref);
+      const moduleRef = module as object;
+      const existing = this._moduleRefs.get(moduleRef);
       if (existing !== undefined) {
-        this._moduleRefs.set(ref, existing + 1);
+        this._moduleRefs.set(moduleRef, existing + 1);
         continue;
       }
-      this._moduleRefs.set(ref, 1);
-      const builder = this._createModuleBuilder(ref);
-      (mod as SyncModule)._setup(builder);
+      this._moduleRefs.set(moduleRef, 1);
+      const builder = this._createModuleBuilder(moduleRef);
+      (module as SyncModule)._setup(builder);
     }
   }
 
@@ -344,45 +344,45 @@ class DefaultContainer implements Container {
     const seen = new Set<object>();
     const result: Array<SyncModule | AsyncModule> = [];
 
-    const visit = (mod: SyncModule | AsyncModule): void => {
-      const ref = mod as object;
-      if (seen.has(ref)) {
+    const visit = (module: SyncModule | AsyncModule): void => {
+      const moduleRef = module as object;
+      if (seen.has(moduleRef)) {
         return;
       }
-      seen.add(ref);
+      seen.add(moduleRef);
       // We'll collect deps during setup via the builder's import()
-      result.push(mod);
+      result.push(module);
     };
 
-    for (const m of modules) {
-      visit(m);
+    for (const module of modules) {
+      visit(module);
     }
     return result;
   }
 
   async loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
     this._assertNotDisposed();
-    for (const mod of modules) {
-      await this._loadOneModuleAsync(mod);
+    for (const module of modules) {
+      await this._loadOneModuleAsync(module);
     }
   }
 
-  private async _loadOneModuleAsync(mod: SyncModule | AsyncModule): Promise<void> {
-    const ref = mod as object;
-    const existing = this._moduleRefs.get(ref);
+  private async _loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
+    const moduleRef = module as object;
+    const existing = this._moduleRefs.get(moduleRef);
     if (existing !== undefined) {
-      this._moduleRefs.set(ref, existing + 1);
+      this._moduleRefs.set(moduleRef, existing + 1);
       return;
     }
-    this._moduleRefs.set(ref, 1);
+    this._moduleRefs.set(moduleRef, 1);
 
-    if (isSyncModule(mod)) {
-      const builder = this._createModuleBuilder(ref);
-      mod._setup(builder);
+    if (isSyncModule(module)) {
+      const builder = this._createModuleBuilder(moduleRef);
+      module._setup(builder);
     } else {
       const importPromises: Array<Promise<void>> = [];
-      const builder = this._createAsyncModuleBuilder(ref, importPromises);
-      await (mod as AsyncModule)._setup(builder);
+      const builder = this._createAsyncModuleBuilder(moduleRef, importPromises);
+      await (module as AsyncModule)._setup(builder);
       // Await nested async imports triggered inside _setup
       if (importPromises.length > 0) {
         await Promise.all(importPromises);
@@ -392,10 +392,10 @@ class DefaultContainer implements Container {
 
   private _createModuleBuilder(moduleRef: object): ModuleBuilder {
     return {
-      bind: <const Value>(t: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this._createBindToBuilder(t, moduleRef),
-      import: (...mods: Array<SyncModule>): void => {
-        this._loadSyncModules(mods);
+      bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
+        this._createBindToBuilder(token, moduleRef),
+      import: (...modules: Array<SyncModule>): void => {
+        this._loadSyncModules(modules);
       },
     };
   }
@@ -405,11 +405,11 @@ class DefaultContainer implements Container {
     importPromises: Array<Promise<void>>,
   ): AsyncModuleBuilder {
     return {
-      bind: <const Value>(t: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this._createBindToBuilder(t, moduleRef),
-      import: (...mods: Array<SyncModule | AsyncModule>): void => {
-        for (const mod of mods) {
-          importPromises.push(this._loadOneModuleAsync(mod));
+      bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
+        this._createBindToBuilder(token, moduleRef),
+      import: (...modules: Array<SyncModule | AsyncModule>): void => {
+        for (const module of modules) {
+          importPromises.push(this._loadOneModuleAsync(module));
         }
       },
     };
@@ -417,8 +417,8 @@ class DefaultContainer implements Container {
 
   unload(...modules: Array<SyncModule>): void {
     this._assertNotDisposed();
-    for (const mod of modules) {
-      this._unloadModuleSync(mod as object);
+    for (const module of modules) {
+      this._unloadModuleSync(module as object);
     }
   }
 
@@ -446,8 +446,8 @@ class DefaultContainer implements Container {
 
   async unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
     this._assertNotDisposed();
-    for (const mod of modules) {
-      await this._unloadModuleAsync(mod as object);
+    for (const module of modules) {
+      await this._unloadModuleAsync(module as object);
     }
   }
 
@@ -478,13 +478,13 @@ class DefaultContainer implements Container {
     const entries = registry.entries();
     for (const { target, scope } of entries) {
       const builder = this._createBindToBuilder(target as Constructor);
-      const bb = builder.toSelf();
+      const bindingBuilder = builder.toSelf();
       if (scope === "singleton") {
-        bb.singleton();
+        bindingBuilder.singleton();
       } else if (scope === "scoped") {
-        bb.scoped();
+        bindingBuilder.scoped();
       } else {
-        bb.transient();
+        bindingBuilder.transient();
       }
     }
     return entries.length;
@@ -614,7 +614,7 @@ class DefaultContainer implements Container {
         if (binding.kind === "constant" && binding.onActivation === undefined) {
           continue;
         }
-        const slotHint = slotKeyToResolveOptions(binding.slot);
+        const slotHint = bindingSlotToResolveOptions(binding.slot);
         await this.resolveAsync(binding.token as Token<unknown>, slotHint);
       }
     }
@@ -753,7 +753,7 @@ class DefaultContainer implements Container {
         return edges;
       }
       for (const param of meta.params) {
-        const paramHint = injectableSlotToResolveOptions(param);
+        const paramHint = injectionSlotToResolveOptions(param);
         if (param.optional) {
           continue;
         }
@@ -781,7 +781,7 @@ class DefaultContainer implements Container {
 
     if (binding.kind === "resolved" || binding.kind === "resolved-async") {
       for (const dep of binding.deps) {
-        const depHint = injectableSlotToResolveOptions(dep);
+        const depHint = injectionSlotToResolveOptions(dep);
         if (dep.optional) {
           continue;
         }
@@ -854,7 +854,7 @@ class DefaultContainer implements Container {
 
 // ── Shared builder helpers ────────────────────────────────────────────────────
 
-function updateSlotTag(slot: SlotKey, tag: string, value: unknown): SlotKey {
+function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
   const existing = [...slot.tags];
   const idx = existing.findIndex(([k]) => k === tag);
   if (idx !== -1) {
@@ -870,7 +870,10 @@ function updateSlotTag(slot: SlotKey, tag: string, value: unknown): SlotKey {
 class BindingEntry<Value> implements BindToBuilder<Value> {
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    private readonly _commit: (
+      binding: Binding,
+      previousId?: BindingIdentifier,
+    ) => BindingIdentifier,
   ) {}
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
@@ -916,7 +919,7 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
     factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value> {
-    const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
+    const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
     return new ConstraintBuilder<Value>(
       this._token,
       {
@@ -933,7 +936,7 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
     factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value> {
-    const normalizedDeps = deps.map((d) => normalizeToDescriptor(d));
+    const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
     return new ConstraintBuilder<Value>(
       this._token,
       {
@@ -954,16 +957,19 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
 // ── ConstraintBuilder ─────────────────────────────────────────────────────────
 
 class ConstraintBuilder<Value> implements BindingBuilder<Value> {
-  private _slot: SlotKey;
+  private _slot: BindingSlot;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _committed: BindingIdentifier | undefined;
 
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _partial: PartialBinding<Value>,
-    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    private readonly _commit: (
+      binding: Binding,
+      previousId?: BindingIdentifier,
+    ) => BindingIdentifier,
   ) {
-    this._slot = { ...DEFAULT_SLOT, tags: [] };
+    this._slot = { ...DEFAULT_BINDING_SLOT, tags: [] };
     this._doCommit();
   }
 
@@ -1060,9 +1066,12 @@ class ScopeBuilder<Value, Scope extends BindingScope>
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _partial: PartialBinding<Value>,
-    private readonly _slot: SlotKey,
+    private readonly _slot: BindingSlot,
     private readonly _predicate: ((ctx: ConstraintContext) => boolean) | undefined,
-    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    private readonly _commit: (
+      binding: Binding,
+      previousId?: BindingIdentifier,
+    ) => BindingIdentifier,
     private readonly _scope: Scope,
     private readonly _initialPreviousId?: BindingIdentifier,
   ) {
@@ -1103,7 +1112,7 @@ class ScopeBuilder<Value, Scope extends BindingScope>
 // ── ConstantBuilder ───────────────────────────────────────────────────────────
 
 class ConstantBuilder<Value> implements ConstantBindingBuilder<Value> {
-  private _slot: SlotKey;
+  private _slot: BindingSlot;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _onActivation: ActivationHandler<Value> | undefined;
   private _onDeactivation: DeactivationHandler<Value> | undefined;
@@ -1112,9 +1121,12 @@ class ConstantBuilder<Value> implements ConstantBindingBuilder<Value> {
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _value: Value,
-    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    private readonly _commit: (
+      binding: Binding,
+      previousId?: BindingIdentifier,
+    ) => BindingIdentifier,
   ) {
-    this._slot = { ...DEFAULT_SLOT, tags: [] };
+    this._slot = { ...DEFAULT_BINDING_SLOT, tags: [] };
     this._doCommit();
   }
 
@@ -1176,16 +1188,19 @@ class ConstantBuilder<Value> implements ConstantBindingBuilder<Value> {
 // ── AliasBuilder ──────────────────────────────────────────────────────────────
 
 class AliasBuilder<Value> implements AliasBindingBuilder {
-  private _slot: SlotKey;
+  private _slot: BindingSlot;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _committed: BindingIdentifier | undefined;
 
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _target: Token<Value> | Constructor<Value>,
-    private readonly _commit: (b: Binding, previousId?: BindingIdentifier) => BindingIdentifier,
+    private readonly _commit: (
+      binding: Binding,
+      previousId?: BindingIdentifier,
+    ) => BindingIdentifier,
   ) {
-    this._slot = { ...DEFAULT_SLOT, tags: [] };
+    this._slot = { ...DEFAULT_BINDING_SLOT, tags: [] };
     this._doCommit();
   }
 

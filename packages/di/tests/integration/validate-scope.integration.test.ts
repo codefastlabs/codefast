@@ -14,14 +14,14 @@ describe("container.validate() — transitive scope + alias chain (SPEC §6.9)",
 
     @injectable([ScopedLeaf])
     class MidService {
-      constructor(_leaf: ScopedService) {}
+      constructor(_scopedLeaf: ScopedService) {}
     }
 
     const Mid = token<MidService>("Mid");
 
     @injectable([Mid])
     class RootService {
-      constructor(_mid: MidService) {}
+      constructor(_midService: MidService) {}
     }
 
     const Root = token<RootService>("Root");
@@ -47,18 +47,18 @@ describe("container.validate() — transitive scope + alias chain (SPEC §6.9)",
 
   it("follows toAlias to the terminal binding and detects singleton → scoped", () => {
     @injectable([])
-    class LeafSvc {}
+    class LeafService {}
 
-    const Leaf = token<LeafSvc>("Leaf");
-    const Alias = token<LeafSvc>("Alias");
+    const Leaf = token<LeafService>("Leaf");
+    const Alias = token<LeafService>("Alias");
 
     @injectable([Alias])
     class RootViaAlias {
-      constructor(_a: LeafSvc) {}
+      constructor(_leaf: LeafService) {}
     }
 
     const container = Container.create();
-    container.bind(Leaf).to(LeafSvc).scoped();
+    container.bind(Leaf).to(LeafService).scoped();
     container.bind(Alias).toAlias(Leaf);
     container.bind(RootViaAlias).toSelf().singleton();
 
@@ -67,40 +67,40 @@ describe("container.validate() — transitive scope + alias chain (SPEC §6.9)",
 
   it("follows a multi-hop alias chain before checking scope", () => {
     @injectable([])
-    class LeafSvc {}
+    class LeafService {}
 
-    const Leaf = token<LeafSvc>("Leaf");
-    const HopB = token<LeafSvc>("HopB");
-    const HopA = token<LeafSvc>("HopA");
+    const Leaf = token<LeafService>("Leaf");
+    const AliasHopB = token<LeafService>("HopB");
+    const AliasHopA = token<LeafService>("HopA");
 
-    @injectable([HopA])
-    class Consumer {
-      constructor(_h: LeafSvc) {}
+    @injectable([AliasHopA])
+    class AliasConsumer {
+      constructor(_leaf: LeafService) {}
     }
 
     const container = Container.create();
-    container.bind(Leaf).to(LeafSvc).scoped();
-    container.bind(HopB).toAlias(Leaf);
-    container.bind(HopA).toAlias(HopB);
-    container.bind(Consumer).toSelf().singleton();
+    container.bind(Leaf).to(LeafService).scoped();
+    container.bind(AliasHopB).toAlias(Leaf);
+    container.bind(AliasHopA).toAlias(AliasHopB);
+    container.bind(AliasConsumer).toSelf().singleton();
 
     expect(() => container.validate()).toThrow(ScopeViolationError);
   });
 
   it("throws CircularDependencyError when an alias chain cycles during validation", () => {
-    const A = token<unknown>("AliasCycleA");
-    const B = token<unknown>("AliasCycleB");
+    const CycleAliasA = token<unknown>("AliasCycleA");
+    const CycleAliasB = token<unknown>("AliasCycleB");
 
     const container = Container.create();
-    container.bind(A).toAlias(B);
-    container.bind(B).toAlias(A);
+    container.bind(CycleAliasA).toAlias(CycleAliasB);
+    container.bind(CycleAliasB).toAlias(CycleAliasA);
 
-    @injectable([A])
-    class Root {
-      constructor(_x: unknown) {}
+    @injectable([CycleAliasA])
+    class CycleRoot {
+      constructor(_dependency: unknown) {}
     }
 
-    container.bind(Root).toSelf().singleton();
+    container.bind(CycleRoot).toSelf().singleton();
 
     expect(() => container.validate()).toThrow(CircularDependencyError);
   });
@@ -108,8 +108,8 @@ describe("container.validate() — transitive scope + alias chain (SPEC §6.9)",
 
 describe("AsyncModuleLoadError", () => {
   it("throws when sync load receives an async module at runtime", () => {
-    const asyncMod = Module.createAsync("async-mod", async () => {});
+    const asyncModule = Module.createAsync("async-mod", async () => {});
     const container = Container.create();
-    expect(() => container.load(asyncMod as never)).toThrow(AsyncModuleLoadError);
+    expect(() => container.load(asyncModule as never)).toThrow(AsyncModuleLoadError);
   });
 });

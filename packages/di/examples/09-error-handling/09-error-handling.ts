@@ -37,7 +37,7 @@ function section(title: string): void {
   console.log("=".repeat(60));
 }
 
-function caught(label: string, error: unknown): void {
+function logCaughtError(label: string, error: unknown): void {
   if (error instanceof Error) {
     const code = "code" in error ? ` [${String(error.code)}]` : "";
     console.log(`✓ ${label}${code}: ${error.message}`);
@@ -47,9 +47,9 @@ function caught(label: string, error: unknown): void {
 // --- Tokens -----------------------------------------------------------------
 
 const LoggerToken = token<Logger>("Logger");
-const ServiceAToken = token<ServiceA>("ServiceA");
-const ServiceBToken = token<ServiceB>("ServiceB");
-const DbToken = token<Database>("Database");
+const ServiceAToken = token<CircularServiceA>("ServiceA");
+const ServiceBToken = token<CircularServiceB>("ServiceB");
+const DatabaseToken = token<Database>("Database");
 
 interface Logger {
   log(msg: string): void;
@@ -66,7 +66,7 @@ const emptyContainer = Container.create();
 try {
   emptyContainer.resolve(LoggerToken);
 } catch (error) {
-  caught("resolve unbound token", error);
+  logCaughtError("resolve unbound token", error);
   console.log("  Is TokenNotBoundError:", error instanceof TokenNotBoundError);
 }
 
@@ -90,7 +90,7 @@ try {
   // Binding exists for name "console" but not "file"
   namedBindingContainer.resolve(LoggerToken, { name: "file" });
 } catch (error) {
-  caught("resolve with non-matching name hint", error);
+  logCaughtError("resolve with non-matching name hint", error);
   console.log("  Is NoMatchingBindingError:", error instanceof NoMatchingBindingError);
 }
 
@@ -106,7 +106,7 @@ class Database {
 
 const asyncBindingContainer = Container.create();
 asyncBindingContainer
-  .bind(DbToken)
+  .bind(DatabaseToken)
   .toDynamicAsync(async () => {
     const database = new Database();
     await database.connect();
@@ -116,14 +116,14 @@ asyncBindingContainer
 
 try {
   // resolve() is sync — cannot await the async factory
-  asyncBindingContainer.resolve(DbToken);
+  asyncBindingContainer.resolve(DatabaseToken);
 } catch (error) {
-  caught("sync resolve on async binding", error);
+  logCaughtError("sync resolve on async binding", error);
   console.log("  Is AsyncResolutionError:", error instanceof AsyncResolutionError);
 }
 
 // Correct: use resolveAsync()
-const asyncDatabase = await asyncBindingContainer.resolveAsync(DbToken);
+const asyncDatabase = await asyncBindingContainer.resolveAsync(DatabaseToken);
 console.log("resolveAsync succeeded:", asyncDatabase instanceof Database);
 
 // ============================================================================
@@ -133,21 +133,25 @@ console.log("resolveAsync succeeded:", asyncDatabase instanceof Database);
 section("4. CircularDependencyError");
 
 // ServiceA → ServiceB → ServiceA (cycle)
-class ServiceA {
-  constructor(public b: ServiceB) {}
+class CircularServiceA {
+  constructor(public dependencyB: CircularServiceB) {}
 }
-class ServiceB {
-  constructor(public a: ServiceA) {}
+class CircularServiceB {
+  constructor(public dependencyA: CircularServiceA) {}
 }
 
 const circularContainer = Container.create();
-circularContainer.bind(ServiceAToken).toDynamic((ctx) => new ServiceA(ctx.resolve(ServiceBToken)));
-circularContainer.bind(ServiceBToken).toDynamic((ctx) => new ServiceB(ctx.resolve(ServiceAToken)));
+circularContainer
+  .bind(ServiceAToken)
+  .toDynamic((ctx) => new CircularServiceA(ctx.resolve(ServiceBToken)));
+circularContainer
+  .bind(ServiceBToken)
+  .toDynamic((ctx) => new CircularServiceB(ctx.resolve(ServiceAToken)));
 
 try {
   circularContainer.resolve(ServiceAToken);
 } catch (error) {
-  caught("circular dependency A → B → A", error);
+  logCaughtError("circular dependency A → B → A", error);
   console.log("  Is CircularDependencyError:", error instanceof CircularDependencyError);
 
   if (error instanceof CircularDependencyError) {
@@ -175,7 +179,7 @@ missingMetadataContainer.bind(UnmarkedToken).to(UnmarkedService); // no @injecta
 try {
   missingMetadataContainer.resolve(UnmarkedToken);
 } catch (error) {
-  caught("resolve class without @injectable", error);
+  logCaughtError("resolve class without @injectable", error);
   console.log("  Is MissingMetadataError:", error instanceof MissingMetadataError);
 }
 
@@ -217,7 +221,7 @@ try {
   // validate() checks the dependency graph for scope violations
   scopeViolationContainer.validate();
 } catch (error) {
-  caught("singleton depends on scoped (captive dependency)", error);
+  logCaughtError("singleton depends on scoped (captive dependency)", error);
   console.log("  Is ScopeViolationError:", error instanceof ScopeViolationError);
 }
 
@@ -227,21 +231,21 @@ try {
 
 section("7. AsyncModuleLoadError");
 
-const AsyncDbModule = Module.createAsync("Database", async (builder) => {
-  const DbSetupToken = token<string>("DbSetup");
-  builder.bind(DbSetupToken).toConstantValue("connected");
+const AsyncDatabaseModule = Module.createAsync("Database", async (builder) => {
+  const DatabaseSetupToken = token<string>("DbSetup");
+  builder.bind(DatabaseSetupToken).toConstantValue("connected");
 });
 
 const asyncModuleContainer = Container.create();
 
 try {
   // load() only accepts sync modules — must use loadAsync() for AsyncModule
-  asyncModuleContainer.load(AsyncDbModule as never);
+  asyncModuleContainer.load(AsyncDatabaseModule as never);
 } catch (error) {
-  caught("load() called with AsyncModule", error);
+  logCaughtError("load() called with AsyncModule", error);
   console.log("  Is AsyncModuleLoadError:", error instanceof AsyncModuleLoadError);
 }
 
 // Correct: use loadAsync()
-await asyncModuleContainer.loadAsync(AsyncDbModule);
+await asyncModuleContainer.loadAsync(AsyncDatabaseModule);
 console.log("loadAsync succeeded");
