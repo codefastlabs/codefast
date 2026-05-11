@@ -239,3 +239,24 @@ export class DisposedContainerError extends DiError {
     super("Cannot perform operations on a disposed container.");
   }
 }
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export class AsyncActivationError extends DiError {
+  readonly code = "ASYNC_ACTIVATION";
+  readonly tokenName: string;
+  readonly hookKind: "postConstruct" | "onActivation";
+  readonly methodName: string | undefined;
+
+  constructor(tokenName: string, hookKind: "postConstruct" | "onActivation", methodName?: string) {
+    const detail =
+      hookKind === "postConstruct"
+        ? `@postConstruct method '${methodName ?? ""}' returned a Promise`
+        : `onActivation for '${tokenName}' returned a Promise`;
+    super(`${detail}. Use resolveAsync() instead.`);
+    this.tokenName = tokenName;
+    this.hookKind = hookKind;
+    this.methodName = methodName;
+  }
+}

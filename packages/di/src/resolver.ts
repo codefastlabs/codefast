@@ -458,7 +458,7 @@ export class DependencyResolver {
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
     materializationStack: Array<MaterializationFrame>,
-    hint: ResolveOptions | undefined,
+    _hint: ResolveOptions | undefined,
   ): Value {
     switch (binding.kind) {
       case "constant":
@@ -489,7 +489,6 @@ export class DependencyResolver {
           binding.deps,
           resolutionPath,
           materializationStack,
-          hint,
         );
         const r = binding.factory(...deps);
         if (r instanceof Promise) {
@@ -605,7 +604,6 @@ export class DependencyResolver {
     deps: ReadonlyArray<InjectionDescriptor>,
     resolutionPath: Array<string>,
     materializationStack: Array<MaterializationFrame>,
-    _hint: ResolveOptions | undefined,
   ): Array<unknown> {
     const resolved = new Array<unknown>(deps.length);
     for (let index = 0; index < deps.length; index += 1) {
@@ -981,7 +979,7 @@ export class DependencyResolver {
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
     materializationStack: Array<MaterializationFrame>,
-    hint: ResolveOptions | undefined,
+    _hint: ResolveOptions | undefined,
   ): Promise<Value> {
     switch (binding.kind) {
       case "constant":
@@ -1019,7 +1017,6 @@ export class DependencyResolver {
           binding.deps,
           resolutionPath,
           materializationStack,
-          hint,
         );
         const r = binding.factory(...deps);
         return r instanceof Promise ? r : Promise.resolve(r);
@@ -1030,7 +1027,6 @@ export class DependencyResolver {
           binding.deps,
           resolutionPath,
           materializationStack,
-          hint,
         );
         return binding.factory(...deps);
       }
@@ -1138,7 +1134,6 @@ export class DependencyResolver {
     deps: ReadonlyArray<InjectionDescriptor>,
     resolutionPath: Array<string>,
     materializationStack: Array<MaterializationFrame>,
-    _hint: ResolveOptions | undefined,
   ): Promise<Array<unknown>> {
     const pending = new Array<Promise<unknown>>(deps.length);
     const shouldCloneContext = deps.length > 1;

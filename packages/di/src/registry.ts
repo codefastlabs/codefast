@@ -1,7 +1,7 @@
 import type { Binding } from "#/binding";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 import type { Token } from "#/token";
-import { slotKeyEquals } from "#/binding";
+import { slotKeyEquals, slotKeyToString } from "#/binding";
 
 /**
  * @since 0.3.16-canary.0
@@ -147,20 +147,7 @@ export class BindingRegistry {
   /** Summarize available slot strings for a token (for error messages). */
   availableSlotStrings(t: Token<unknown> | Constructor): Array<string> {
     const bindingsForToken = this._bindings.get(t as DependencyKey) ?? [];
-    return bindingsForToken.map((binding) => {
-      const slot = binding.slot;
-      if (slot.name === undefined && slot.tags.length === 0) {
-        return "default";
-      }
-      const slotSegments: Array<string> = [];
-      if (slot.name !== undefined) {
-        slotSegments.push(`name:${slot.name}`);
-      }
-      for (const [tagKey, tagValue] of slot.tags) {
-        slotSegments.push(`tag:${tagKey}=${String(tagValue)}`);
-      }
-      return slotSegments.join(",");
-    });
+    return bindingsForToken.map((binding) => slotKeyToString(binding.slot));
   }
 
   private _indexSimpleTaggedBinding(tokenKeyValue: DependencyKey, binding: Binding): void {

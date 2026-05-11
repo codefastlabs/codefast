@@ -70,6 +70,7 @@ export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metada
 // Errors
 export {
   AmbiguousBindingError,
+  AsyncActivationError,
   AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,

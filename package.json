@@ -7,6 +7,7 @@
     "bench": "turbo run bench --concurrency=1",
     "bench:di": "turbo run bench --filter=@codefast/benchmark-di-inversify",
     "bench:serve": "turbo run bench:serve",
+    "bench:serve:id": "turbo run bench:serve --filter=@codefast/benchmark-di-inversify",
     "build:packages": "turbo run build --filter=@codefast*/*...",
     "check": "turbo run lint format:check check-types",
     "check-types": "turbo run check-types",
