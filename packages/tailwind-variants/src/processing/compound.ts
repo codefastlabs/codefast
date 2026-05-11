@@ -15,6 +15,72 @@ import type {
   SlotConfigurationSchema,
 } from "#/types/types";
 
+type CompoundConditionSource = Record<string, unknown>;
+
+type CompoundMatchOptions = {
+  readonly coerceMissingBoolean?: boolean;
+  readonly slotProps?: Record<string, unknown>;
+  readonly skipSlots?: boolean;
+};
+
+export const matchesCompoundConditions = (
+  compoundDefinition: CompoundConditionSource,
+  variantProps: Record<string, unknown>,
+  defaultVariantProps: Record<string, unknown>,
+  options?: CompoundMatchOptions,
+): boolean => {
+  const skipSlots = options?.skipSlots ?? false;
+  const slotProps = options?.slotProps;
+  const coerceMissingBoolean = options?.coerceMissingBoolean ?? true;
+  const compoundKeys = Object.keys(compoundDefinition);
+
+  for (let index = 0, length = compoundKeys.length; index < length; index++) {
+    const compoundKey = compoundKeys[index];
+    if (compoundKey === undefined) {
+      continue;
+    }
+
+    if (
+      compoundKey === "className" ||
+      compoundKey === "class" ||
+      (skipSlots && compoundKey === "slots")
+    ) {
+      continue;
+    }
+
+    const slotValue = slotProps?.[compoundKey];
+    const propValue = slotValue === undefined ? variantProps[compoundKey] : slotValue;
+    const propertyValue = propValue === undefined ? defaultVariantProps[compoundKey] : propValue;
+    const compoundValue = compoundDefinition[compoundKey];
+
+    if (typeof compoundValue === "boolean") {
+      const resolvedValue =
+        propertyValue === undefined && coerceMissingBoolean ? false : propertyValue;
+
+      if (resolvedValue !== compoundValue) {
+        return false;
+      }
+    } else if (Array.isArray(compoundValue)) {
+      if (!compoundValue.includes(propertyValue)) {
+        return false;
+      }
+    } else if (propertyValue !== compoundValue) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const getCompoundClassValue = (compoundDefinition: {
+  readonly class?: ClassValue;
+  readonly className?: ClassValue;
+}): ClassValue => {
+  return compoundDefinition.className === undefined
+    ? compoundDefinition.class
+    : compoundDefinition.className;
+};
+
 /**
  * Apply compound variant classes based on variant conditions.
  *
@@ -37,69 +103,26 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
 ): Array<ClassValue> => {
   const groupLength = compoundVariantGroups.length;
 
-  // Early return for empty or no compound variants
   if (groupLength === 0) {
     return [];
   }
 
-  // Pre-allocate with reasonable estimate
   const resolvedClasses: Array<ClassValue> = [];
 
-  // Process each compound variant
   for (let index = 0; index < groupLength; index++) {
     const compoundVariant = compoundVariantGroups[index];
     if (compoundVariant === undefined) {
       continue;
     }
-    let isMatching = true;
 
-    const compoundKeys = Object.keys(compoundVariant);
-
-    // Check each variant condition
-    for (let keyIndex = 0, keyLength = compoundKeys.length; keyIndex < keyLength; keyIndex++) {
-      const rawKey = compoundKeys[keyIndex];
-      if (rawKey === undefined) {
-        continue;
-      }
-      const compoundKey = rawKey as keyof typeof compoundVariant;
-
-      // Skip class properties
-      if (compoundKey === "className" || compoundKey === "class") {
-        continue;
-      }
-
-      // Get property value - use nullish coalescing (faster than ternary)
-      const propertyInput = variantProps[compoundKey];
-      const propertyValue = propertyInput ?? defaultVariantProps[compoundKey];
-
-      const compoundValue = compoundVariant[compoundKey];
-
-      // Inline boolean check - avoid function call overhead
-      if (typeof compoundValue === "boolean") {
-        const resolvedValue = propertyValue ?? false;
-
-        if (resolvedValue !== compoundValue) {
-          isMatching = false;
-          break;
-        }
-      } else if (Array.isArray(compoundValue)) {
-        // Handle array variant values - check if propertyValue is included in the array
-        if (!compoundValue.includes(propertyValue as string)) {
-          isMatching = false;
-          break;
-        }
-      } else if (propertyValue !== compoundValue) {
-        // Handle string/number variant values
-        isMatching = false;
-        break;
-      }
-    }
-
-    // Add classes if all conditions are met
-    if (isMatching) {
-      const cls = compoundVariant.className;
-
-      resolvedClasses.push(cls === undefined ? compoundVariant.class : cls);
+    if (
+      matchesCompoundConditions(
+        compoundVariant as CompoundConditionSource,
+        variantProps as Record<string, unknown>,
+        defaultVariantProps as Record<string, unknown>,
+      )
+    ) {
+      resolvedClasses.push(getCompoundClassValue(compoundVariant));
     }
   }
 
@@ -130,76 +153,31 @@ export const applyCompoundSlotClasses = <
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
 ): Partial<Record<keyof S, Array<ClassValue>>> => {
-  // Return an empty object if no compound slot definitions
   if (!compoundSlotDefinitions || compoundSlotDefinitions.length === 0) {
     return {} as Partial<Record<keyof S, Array<ClassValue>>>;
   }
 
   const resolvedSlotClasses = {} as Partial<Record<keyof S, Array<ClassValue>>>;
 
-  // Process each compound slot definition
-  const definitionLength = compoundSlotDefinitions.length;
-
-  for (let index = 0; index < definitionLength; index++) {
+  for (let index = 0, length = compoundSlotDefinitions.length; index < length; index++) {
     const compoundSlot = compoundSlotDefinitions[index];
     if (compoundSlot === undefined) {
       continue;
     }
-    let isMatching = true;
 
-    const keys = Object.keys(compoundSlot);
-    const keyLength = keys.length;
+    if (
+      matchesCompoundConditions(
+        compoundSlot as CompoundConditionSource,
+        variantProps as Record<string, unknown>,
+        defaultVariantProps as Record<string, unknown>,
+        { skipSlots: true },
+      )
+    ) {
+      const cls = getCompoundClassValue(compoundSlot);
 
-    // Check each variant condition
-    for (let keyIndex = 0; keyIndex < keyLength; keyIndex++) {
-      const compoundKey = keys[keyIndex];
-      if (compoundKey === undefined) {
-        continue;
-      }
-
-      // Skip class and slot properties
-      if (compoundKey === "className" || compoundKey === "class" || compoundKey === "slots") {
-        continue;
-      }
-
-      // Lookup without object spread - check variantProps first, then defaultVariantProps
-      const propsValue = (variantProps as Record<string, unknown>)[compoundKey];
-      const propertyValue =
-        propsValue === undefined
-          ? (defaultVariantProps as Record<string, unknown>)[compoundKey]
-          : propsValue;
-
-      const compoundValue = (compoundSlot as Record<string, unknown>)[compoundKey];
-
-      // Inline boolean check - avoid function call overhead
-      if (typeof compoundValue === "boolean") {
-        const resolvedValue = propertyValue === undefined ? false : propertyValue;
-
-        if (resolvedValue !== compoundValue) {
-          isMatching = false;
-          break;
-        }
-      } else if (Array.isArray(compoundValue)) {
-        // Handle array variant values - check if propertyValue is included in the array
-        if (!compoundValue.includes(propertyValue as string)) {
-          isMatching = false;
-          break;
-        }
-      } else if (propertyValue !== compoundValue) {
-        // Handle string/number variant values
-        isMatching = false;
-        break;
-      }
-    }
-
-    // Apply classes to specified slots if all conditions are met
-    if (isMatching) {
       const slots = compoundSlot.slots;
-      const slotLength = slots.length;
-      const cls =
-        compoundSlot.className === undefined ? compoundSlot.class : compoundSlot.className;
 
-      for (let slotIndex = 0; slotIndex < slotLength; slotIndex++) {
+      for (let slotIndex = 0, slotLength = slots.length; slotIndex < slotLength; slotIndex++) {
         const slotKey = slots[slotIndex];
         if (slotKey === undefined) {
           continue;

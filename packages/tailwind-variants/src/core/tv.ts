@@ -32,6 +32,7 @@ import {
   cx,
   hasExtensionConfiguration,
   hasSlotConfiguration,
+  isBooleanVariantType,
 } from "#/utilities/utils";
 
 /**
@@ -65,17 +66,14 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
   cachedVariantKeys: Array<keyof T>,
   precomputedDefaults: Record<string, string>,
 ): string | undefined => {
-  // Pre-allocate array with estimated size for better performance
   const estimatedSize = cachedVariantKeys.length + (mergedCompoundVariantGroups?.length ?? 0) + 2;
   const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
   let classIndex = 0;
 
-  // Add base classes if they exist
   if (mergedBaseClasses) {
     resolvedClasses[classIndex++] = mergedBaseClasses;
   }
 
-  // Process each variant group using cached keys
   for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
     const variantKey = cachedVariantKeys[index];
     if (variantKey === undefined) {
@@ -114,7 +112,6 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
     }
   }
 
-  // Apply compound variant classes if they exist
   if (mergedCompoundVariantGroups) {
     const compoundVariantClasses = applyCompoundVariantClasses(
       mergedCompoundVariantGroups,
@@ -122,7 +119,6 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
       mergedDefaultVariantProps,
     );
 
-    // Use for loop instead of spread for better performance
     for (let index = 0, length = compoundVariantClasses.length; index < length; index++) {
       const compoundClass = compoundVariantClasses[index];
       if (compoundClass !== undefined) {
@@ -131,23 +127,18 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
     }
   }
 
-  // Add custom classes if provided
   if (customClassName) {
     resolvedClasses[classIndex++] = customClassName;
   }
 
-  // Return early if no classes to process
   if (classIndex === 0) {
     return;
   }
 
-  // Trim array to actual size
   resolvedClasses.length = classIndex;
 
-  // Combine all classes into a single string
   const classString = cx(...resolvedClasses);
 
-  // Apply Tailwind merge if enabled, otherwise return the raw class string
   return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
 };
 
@@ -256,32 +247,23 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
     | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
   tvConfiguration: TailwindVariantsConfiguration = {},
 ): VariantFunctionType<T, S> {
-  // Ensure type safety for the configuration
-  const configurationWithType = configuration satisfies
-    | Configuration<T>
-    | ConfigurationWithSlots<T, S>
-    | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>;
-
-  // Extract Tailwind merge configuration
   const { twMerge: shouldMergeClasses = true, twMergeConfig } = tvConfiguration;
   const tailwindMergeService = createTailwindMergeService(twMergeConfig);
 
-  // Merge configurations if the extension is present
   const mergedConfiguration:
     | Configuration<ConfigurationSchema>
     | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> =
-    hasExtensionConfiguration(configurationWithType) && configurationWithType.extend
+    hasExtensionConfiguration(configuration)
       ? mergeConfigurationSchemas(
-          configurationWithType.extend.config,
-          configurationWithType as
+          configuration.extend.config,
+          configuration as
             | Configuration<ConfigurationSchema>
             | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>,
         )
-      : (configurationWithType as
+      : (configuration as
           | Configuration<ConfigurationSchema>
           | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>);
 
-  // Extract merged configuration properties
   const mergedBaseClasses = mergedConfiguration.base;
   const mergedSlotDefinitions = hasSlotConfiguration(mergedConfiguration)
     ? mergedConfiguration.slots
@@ -291,11 +273,8 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
     mergedConfiguration.defaultVariants ?? ({} as ConfigurationVariants<T>);
   const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
 
-  // Pre-compute variant keys to avoid Object.keys() on every invocation
   const cachedVariantKeys = Object.keys(mergedVariantGroups) as Array<keyof T>;
 
-  // Pre-compute default variant values including boolean defaults
-  // This moves work from the hot path to initialization time
   const precomputedDefaults: Record<string, string> = {};
 
   for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
@@ -316,13 +295,11 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
           : defaultValue === false
             ? "false"
             : (defaultValue as string);
-    } else if (variantGroup !== undefined && ("true" in variantGroup || "false" in variantGroup)) {
-      // Boolean variant default
+    } else if (variantGroup !== undefined && isBooleanVariantType(variantGroup)) {
       precomputedDefaults[keyString] = "false";
     }
   }
 
-  // Validate compound variants configuration once at creation time
   if (
     mergedConfiguration.compoundVariants &&
     !Array.isArray(mergedConfiguration.compoundVariants)
@@ -330,16 +307,13 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
     throw new Error("compoundVariants must be an array");
   }
 
-  // Create the main variant resolver function
   const variantResolverFunction = (
     variantProps: ConfigurationVariants<T> = {},
   ): S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S> => {
-    // Extract class properties and variant props
     const classProperty = variantProps.class;
     const className = variantProps.className;
     const resolvedVariantProps = variantProps;
 
-    // Handle slot-based components
     if (mergedSlotDefinitions) {
       const compoundSlotClasses = applyCompoundSlotClasses(
         hasSlotConfiguration(mergedConfiguration) ? mergedConfiguration.compoundSlots : undefined,
@@ -351,7 +325,9 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         mergedSlotDefinitions,
         mergedBaseClasses,
         mergedVariantGroups,
+        cachedVariantKeys as Array<keyof ConfigurationSchema>,
         mergedDefaultVariantProps as ConfigurationVariants<ConfigurationSchema>,
+        precomputedDefaults,
         mergedCompoundVariantGroups as
           | ReadonlyArray<
               CompoundVariantWithSlotsType<ConfigurationSchema, SlotConfigurationSchema>
@@ -365,7 +341,6 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
         ? string | undefined
         : TailwindVariantsReturnType<T, S>;
     } else {
-      // Handle regular components without slots
       return handleRegularVariantResolution(
         mergedBaseClasses,
         mergedVariantGroups,
@@ -385,10 +360,8 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
     }
   };
 
-  // Create the final configured variant resolver
   const configuredVariantResolver = variantResolverFunction as VariantFunctionType<T, S>;
 
-  // Attach the configuration to the function for introspection
   Object.defineProperty(configuredVariantResolver, "config", {
     configurable: false,
     enumerable: false,
@@ -414,7 +387,6 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
 export function createTV(
   globalConfiguration: TailwindVariantsConfiguration = {},
 ): TailwindVariantsFactoryResult {
-  // Extract global configuration
   const { twMerge: shouldMergeClasses = true, twMergeConfig } = globalConfiguration;
   const tailwindMergeService = createTailwindMergeService(twMergeConfig);
 
@@ -498,16 +470,9 @@ export function createTV(
       | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
     localConfiguration?: TailwindVariantsConfiguration,
   ): VariantFunctionType<T, S> {
-    // Merge global and local configurations
     const mergedConfiguration = { ...globalConfiguration, ...localConfiguration };
 
-    return tv(
-      configuration satisfies
-        | Configuration<T>
-        | ConfigurationWithSlots<T, S>
-        | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
-      mergedConfiguration,
-    ) as VariantFunctionType<T, S>;
+    return tv(configuration, mergedConfiguration) as VariantFunctionType<T, S>;
   }
 
   /**
@@ -520,7 +485,6 @@ export function createTV(
     return shouldMergeClasses ? tailwindMergeService(cx(...classes)) : cx(...classes);
   };
 
-  // Return the factory object with `tv` and `cn` functions
   return {
     cn: cnFunction,
     tv: tvFactory,

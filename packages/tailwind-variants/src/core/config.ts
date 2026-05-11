@@ -93,10 +93,9 @@ export const mergeConfigurationSchemas = (
   | Configuration<ConfigurationSchema>
   | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> => {
   // Resolve recursive extensions in the base configuration
-  const resolvedBaseConfiguration =
-    hasExtensionConfiguration(baseConfiguration) && baseConfiguration.extend
-      ? mergeConfigurationSchemas(baseConfiguration.extend.config, baseConfiguration)
-      : baseConfiguration;
+  const resolvedBaseConfiguration = hasExtensionConfiguration(baseConfiguration)
+    ? mergeConfigurationSchemas(baseConfiguration.extend.config, baseConfiguration)
+    : baseConfiguration;
 
   // Merge base classes from both configurations
   const mergedBaseClasses = extensionConfiguration.base

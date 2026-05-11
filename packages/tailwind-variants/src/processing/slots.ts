@@ -18,6 +18,51 @@ import type {
 
 import { cx, isSlotObjectType } from "#/utilities/utils";
 
+import { getCompoundClassValue, matchesCompoundConditions } from "./compound";
+
+const finalizeSlotClasses = <T extends ConfigurationSchema>(
+  classes: Array<ClassValue>,
+  slotProps: SlotFunctionProperties<T>,
+  shouldMergeClasses: boolean,
+  tailwindMergeService: (classes: string) => string,
+): string | undefined => {
+  const slotClassName = slotProps.className;
+  const slotClass = slotProps.class;
+  const extraCount = (slotClassName ? 1 : 0) + (slotClass ? 1 : 0);
+  const totalLength = classes.length + extraCount;
+
+  if (totalLength === 0) {
+    return;
+  }
+
+  if (extraCount === 0) {
+    const classString = cx(...classes);
+
+    return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
+  }
+
+  const allClasses: Array<ClassValue> = new Array(totalLength);
+  let classIndex = 0;
+
+  for (let index = 0, length = classes.length; index < length; index++) {
+    allClasses[classIndex++] = classes[index];
+  }
+
+  if (slotClassName) {
+    allClasses[classIndex++] = slotClassName;
+  }
+
+  if (slotClass) {
+    allClasses[classIndex++] = slotClass;
+  }
+
+  allClasses.length = classIndex;
+
+  const classString = cx(...allClasses);
+
+  return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
+};
+
 /**
  * Resolve CSS classes for a specific slot.
  *
@@ -30,9 +75,11 @@ import { cx, isSlotObjectType } from "#/utilities/utils";
  * @param targetSlotKey - The slot key to resolve classes for
  * @param baseSlotClasses - Base CSS classes for the slot
  * @param variantGroups - Variant group configurations
+ * @param variantKeys - Cached variant keys from the variant configuration
  * @param slotProps - The slot properties passed to the component
  * @param variantProps - Variant properties passed to the component
  * @param defaultVariantProps - Default variant properties from configuration
+ * @param precomputedDefaults - Pre-computed default variant values
  * @param compoundVariantGroups - Compound variant configurations with slots
  * @param compoundSlotClasses - Pre-computed compound slot classes
  * @returns Array of resolved CSS classes for the slot
@@ -46,79 +93,66 @@ export const resolveSlotClasses = <
   targetSlotKey: keyof S,
   baseSlotClasses: ClassValue,
   variantGroups: T | undefined,
+  variantKeys: Array<keyof T>,
   slotProps: ConfigurationVariants<T>,
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
+  precomputedDefaults: Record<string, string>,
   compoundVariantGroups: ReadonlyArray<CompoundVariantWithSlotsType<T, S>> | undefined,
   compoundSlotClasses: Array<ClassValue>,
 ): Array<ClassValue> => {
-  // Pre-allocate with estimated size
   const estimatedSize =
-    (variantGroups ? Object.keys(variantGroups).length : 0) + compoundSlotClasses.length + 5;
+    variantKeys.length + compoundSlotClasses.length + (compoundVariantGroups?.length ?? 0) + 5;
   const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
   let classIndex = 0;
 
-  // Start with base slot classes (only if truthy)
   if (baseSlotClasses) {
     resolvedClasses[classIndex++] = baseSlotClasses;
   }
 
-  // Process variant groups if they exist
-  if (variantGroups) {
-    const variantKeys = Object.keys(variantGroups);
+  if (variantGroups && variantKeys.length > 0) {
+    const slotPropsRecord = slotProps as Record<string, unknown>;
+    const variantPropsRecord = variantProps as Record<string, unknown>;
 
     for (let index = 0, length = variantKeys.length; index < length; index++) {
       const variantKey = variantKeys[index];
       if (variantKey === undefined) {
         continue;
       }
-      const variantGroup = (variantGroups as Record<string, Record<string, ClassValue>>)[
-        variantKey
-      ];
+      const variantGroup = variantGroups[variantKey] as Record<string, ClassValue> | undefined;
       if (variantGroup === undefined) {
         continue;
       }
 
-      // Priority: slotProps > variantProps > defaultVariantProps (no object spread needed)
-      const slotValue = (slotProps as Record<string, unknown>)[variantKey];
-      const variantPropertyValue = (variantProps as Record<string, unknown>)[variantKey];
-      const defaultValue = (defaultVariantProps as Record<string, unknown>)[variantKey];
-      const variantValue =
-        slotValue === undefined
-          ? variantPropertyValue === undefined
-            ? defaultValue
-            : variantPropertyValue
-          : slotValue;
-
-      let resolvedValue: string | undefined;
-
-      // Resolve variant value with priority
-      if (variantValue !== undefined) {
-        resolvedValue =
-          variantValue === true
+      const variantKeyString = variantKey as string;
+      const slotValue = slotPropsRecord[variantKeyString];
+      const variantValue = variantPropsRecord[variantKeyString];
+      const resolvedValue =
+        slotValue !== undefined
+          ? slotValue === true
             ? "true"
-            : variantValue === false
+            : slotValue === false
               ? "false"
-              : (variantValue as string);
-      } else if ("true" in variantGroup || "false" in variantGroup) {
-        // Boolean variant default
-        resolvedValue = "false";
-      }
+              : (slotValue as string)
+          : variantValue === undefined
+            ? precomputedDefaults[variantKeyString]
+            : variantValue === true
+              ? "true"
+              : variantValue === false
+                ? "false"
+                : (variantValue as string);
 
-      // Apply variant classes if resolved
       if (resolvedValue && resolvedValue in variantGroup) {
         const variantConfiguration = variantGroup[resolvedValue];
 
         if (variantConfiguration) {
           if (isSlotObjectType(variantConfiguration)) {
-            // Handle slot-specific variant classes
             const slotVariantClass = variantConfiguration[targetSlotKey as string];
 
             if (slotVariantClass !== undefined) {
               resolvedClasses[classIndex++] = slotVariantClass;
             }
           } else if (targetSlotKey === "base") {
-            // Handle base slot with non-object variant classes
             resolvedClasses[classIndex++] = variantConfiguration;
           }
         }
@@ -126,70 +160,41 @@ export const resolveSlotClasses = <
     }
   }
 
-  // Process compound variants with slots if they exist
   if (compoundVariantGroups && compoundVariantGroups.length > 0) {
+    const compoundMatchOptions = {
+      coerceMissingBoolean: false,
+      slotProps: slotProps as Record<string, unknown>,
+    };
+
     for (let index = 0, length = compoundVariantGroups.length; index < length; index++) {
-      const compoundVariantRaw = compoundVariantGroups[index];
-      if (compoundVariantRaw === undefined) {
+      const compoundVariant = compoundVariantGroups[index];
+      if (compoundVariant === undefined) {
         continue;
       }
-      const compoundVariant: CompoundVariantWithSlotsType<T, S> = compoundVariantRaw;
-      let isMatching = true;
 
-      const compoundKeys = Object.keys(compoundVariant);
-
-      // Check each compound variant condition
-      for (let keyIndex = 0, keyLength = compoundKeys.length; keyIndex < keyLength; keyIndex++) {
-        const compoundKey = compoundKeys[keyIndex];
-        if (compoundKey === undefined) {
-          continue;
-        }
-
-        // Skip class properties
-        if (compoundKey === "className" || compoundKey === "class") {
-          continue;
-        }
-
-        // Priority: slotProps > variantProps > defaultVariantProps (no object spread needed)
-        const slotValue = (slotProps as Record<string, unknown>)[compoundKey];
-        const variantPropertyValue = (variantProps as Record<string, unknown>)[compoundKey];
-        const defaultValue = (defaultVariantProps as Record<string, unknown>)[compoundKey];
-        const mergedPropertyValue =
-          slotValue === undefined
-            ? variantPropertyValue === undefined
-              ? defaultValue
-              : variantPropertyValue
-            : slotValue;
-
-        if (mergedPropertyValue !== (compoundVariant as Record<string, unknown>)[compoundKey]) {
-          isMatching = false;
-          break;
-        }
-      }
-
-      // Apply compound variant classes if all conditions are met
-      if (isMatching) {
-        const compoundClassName =
-          compoundVariant.className === undefined
-            ? compoundVariant.class
-            : compoundVariant.className;
+      if (
+        matchesCompoundConditions(
+          compoundVariant as Record<string, unknown>,
+          variantProps as Record<string, unknown>,
+          defaultVariantProps as Record<string, unknown>,
+          compoundMatchOptions,
+        )
+      ) {
+        const compoundClassName = getCompoundClassValue(compoundVariant);
 
         if (isSlotObjectType(compoundClassName)) {
-          // Handle slot-specific compound variant classes
           const slotClass = compoundClassName[targetSlotKey as string];
 
           if (slotClass !== undefined) {
             resolvedClasses[classIndex++] = slotClass;
           }
         } else if (targetSlotKey === "base") {
-          // Handle base slot with non-object compound variant classes
           resolvedClasses[classIndex++] = compoundClassName;
         }
       }
     }
   }
 
-  // Add pre-computed compound slot classes using for loop
   for (let index = 0, length = compoundSlotClasses.length; index < length; index++) {
     const slotClass = compoundSlotClasses[index];
     if (slotClass !== undefined) {
@@ -197,7 +202,6 @@ export const resolveSlotClasses = <
     }
   }
 
-  // Trim array to actual size
   resolvedClasses.length = classIndex;
 
   return resolvedClasses;
@@ -232,77 +236,40 @@ export const createSlotFunctionFactory = <
   mergedSlotDefinitions: S,
   mergedBaseClasses: ClassValue,
   mergedVariantGroups: T,
+  cachedVariantKeys: Array<keyof T>,
   mergedDefaultVariantProps: ConfigurationVariants<T>,
+  precomputedDefaults: Record<string, string>,
   mergedCompoundVariantGroups: ReadonlyArray<CompoundVariantWithSlotsType<T, S>> | undefined,
   compoundSlotClasses: Partial<Record<keyof S, Array<ClassValue>>>,
   variantProps: ConfigurationVariants<T>,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
 ): Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> } => {
-  // Initialize the slot functions object
   const slotFunctions = {} as Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> };
-
-  // Pre-cache compound slot classes for base
   const baseCompoundSlotClasses = compoundSlotClasses.base ?? [];
 
-  // Create the base slot function
   slotFunctions.base = (
     slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
   ): string | undefined => {
     const baseSlotClass =
       mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
 
-    // Pass variantProps and slotProps separately to avoid object spread
     const baseClasses = resolveSlotClasses(
       "base",
       baseSlotClass,
       mergedVariantGroups,
+      cachedVariantKeys,
       slotProps as ConfigurationVariants<T>,
       variantProps,
       mergedDefaultVariantProps,
+      precomputedDefaults,
       mergedCompoundVariantGroups,
       baseCompoundSlotClasses,
     );
 
-    // Build classes array without filter(Boolean)
-    const slotClassName = slotProps.className;
-    const slotClass = slotProps.class;
-    const extraCount = (slotClassName ? 1 : 0) + (slotClass ? 1 : 0);
-    const totalLength = baseClasses.length + extraCount;
-
-    if (totalLength === 0) {
-      return;
-    }
-
-    // Combine classes directly
-    if (extraCount === 0) {
-      const classString = cx(...baseClasses);
-
-      return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
-    }
-
-    // Pre-allocate array with exact size
-    const allClasses: Array<ClassValue> = new Array(totalLength);
-    let classIndex = 0;
-
-    for (let index = 0, length = baseClasses.length; index < length; index++) {
-      allClasses[classIndex++] = baseClasses[index];
-    }
-
-    if (slotClassName) {
-      allClasses[classIndex++] = slotClassName;
-    }
-
-    if (slotClass) {
-      allClasses[classIndex++] = slotClass;
-    }
-
-    const classString = cx(...allClasses);
-
-    return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
+    return finalizeSlotClasses(baseClasses, slotProps, shouldMergeClasses, tailwindMergeService);
   };
 
-  // Pre-cache slot keys and create functions for named slots
   const slotKeys = Object.keys(mergedSlotDefinitions);
 
   for (let index = 0, length = slotKeys.length; index < length; index++) {
@@ -313,7 +280,6 @@ export const createSlotFunctionFactory = <
     const slotKey = rawSlotKey as keyof S;
 
     if (slotKey !== "base") {
-      // Pre-cache slot-specific values
       const slotDefinition = mergedSlotDefinitions[slotKey];
       const slotCompoundClasses = compoundSlotClasses[slotKey] ?? [];
 
@@ -324,53 +290,21 @@ export const createSlotFunctionFactory = <
           slotKey,
           slotDefinition,
           mergedVariantGroups,
+          cachedVariantKeys,
           slotProps as ConfigurationVariants<T>,
           variantProps,
           mergedDefaultVariantProps,
+          precomputedDefaults,
           mergedCompoundVariantGroups,
           slotCompoundClasses,
         );
 
-        // Build classes array without filter(Boolean)
-        const slotClassName = slotProps.className;
-        const slotClass = slotProps.class;
-        const extraCount = (slotClassName ? 1 : 0) + (slotClass ? 1 : 0);
-        const totalLength = slotClasses.length + extraCount;
-
-        if (totalLength === 0) {
-          return;
-        }
-
-        // Combine classes directly
-        if (extraCount === 0) {
-          const classString = cx(...slotClasses);
-
-          return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
-        }
-
-        // Pre-allocate array with exact size
-        const allClasses: Array<ClassValue> = new Array(totalLength);
-        let classIndex = 0;
-
-        for (
-          let slotIndex = 0, slotLength = slotClasses.length;
-          slotIndex < slotLength;
-          slotIndex++
-        ) {
-          allClasses[classIndex++] = slotClasses[slotIndex];
-        }
-
-        if (slotClassName) {
-          allClasses[classIndex++] = slotClassName;
-        }
-
-        if (slotClass) {
-          allClasses[classIndex++] = slotClass;
-        }
-
-        const classString = cx(...allClasses);
-
-        return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
+        return finalizeSlotClasses(
+          slotClasses,
+          slotProps,
+          shouldMergeClasses,
+          tailwindMergeService,
+        );
       };
     }
   }

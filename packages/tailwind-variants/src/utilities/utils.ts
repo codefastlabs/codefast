@@ -18,6 +18,7 @@ import type {
   ConfigurationWithSlots,
   ExtendedConfiguration,
   SlotConfigurationSchema,
+  VariantFunctionType,
 } from "#/types/types";
 
 /**
@@ -53,9 +54,6 @@ export const cx = (...classes: Array<ClassValue>): string => {
     return clsx(single);
   }
 
-  // Fast path: check if all items are simple strings or falsy
-  // This avoids clsx overhead for the common case
-  let allSimple = true;
   let result = "";
 
   for (let index = 0; index < length; index++) {
@@ -66,19 +64,11 @@ export const cx = (...classes: Array<ClassValue>): string => {
         result = result ? result + " " + cls : cls;
       }
     } else if (cls) {
-      // Complex value found (array, object), fall back to clsx
-      allSimple = false;
-      break;
+      return clsx(classes);
     }
-    // falsy values are skipped
   }
 
-  if (allSimple) {
-    return result;
-  }
-
-  // Fallback to clsx for complex cases
-  return clsx(classes);
+  return result;
 };
 
 /**
@@ -114,8 +104,6 @@ export const cn = (...classes: Array<ClassValue>): string => {
     return twMerge(clsx(single));
   }
 
-  // Fast path: check if all items are simple strings or falsy
-  let allSimple = true;
   let result = "";
 
   for (let index = 0; index < length; index++) {
@@ -126,16 +114,11 @@ export const cn = (...classes: Array<ClassValue>): string => {
         result = result ? result + " " + cls : cls;
       }
     } else if (cls) {
-      allSimple = false;
-      break;
+      return twMerge(clsx(classes));
     }
   }
 
-  if (allSimple) {
-    return twMerge(result);
-  }
-
-  return twMerge(clsx(classes));
+  return twMerge(result);
 };
 
 /**
@@ -168,6 +151,23 @@ export const createTailwindMergeService = (
  */
 export const isSlotObjectType = (value: ClassValue): value is Record<string, ClassValue> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+};
+
+/**
+ * Check if a variant group supports boolean values.
+ *
+ * This function determines whether a variant group has boolean keys
+ * ("true" or "false"), indicating it can accept boolean variant values.
+ *
+ * @param variantGroup - The variant group to check
+ * @returns True if the variant group supports boolean values
+ *
+ * @since 0.3.16-canary.0
+ */
+export const isBooleanVariantType = <T extends Record<string, unknown>>(
+  variantGroup: T,
+): variantGroup is T => {
+  return "true" in variantGroup || "false" in variantGroup;
 };
 
 /**
@@ -210,6 +210,8 @@ export const hasExtensionConfiguration = <
     | Configuration<T>
     | ConfigurationWithSlots<T, S>
     | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
-): configuration is ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S> => {
+): configuration is ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S> & {
+  readonly extend: VariantFunctionType<ConfigurationSchema, SlotConfigurationSchema>;
+} => {
   return "extend" in configuration && configuration.extend !== undefined;
 };
