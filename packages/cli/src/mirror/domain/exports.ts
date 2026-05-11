@@ -7,11 +7,11 @@ import {
   VALID_JS_EXTENSIONS,
 } from "#/mirror/domain/constants";
 import type {
+  DistModule,
   ExportEntry,
   ExportOriginalPathBySpecifier,
   GenerateExportsResult,
   MirrorPackageMeta,
-  Module,
 } from "#/mirror/domain/types";
 
 function resolvePackageScopedConfig<T>(
@@ -24,47 +24,49 @@ function resolvePackageScopedConfig<T>(
   return configMap[pkgMeta.packageName];
 }
 
-function groupFilesByModule(files: Array<string>): Map<string, Module> {
-  const modules = new Map<string, Module>();
+function groupDistFilesByModule(relativeDistFiles: Array<string>): Map<string, DistModule> {
+  const distModulesByPath = new Map<string, DistModule>();
 
-  for (const file of files) {
-    let ext: string;
+  for (const relativeDistFile of relativeDistFiles) {
+    let fileExt: string;
     let modulePath: string;
 
-    const dtsExt = Array.from(VALID_DTS_EXTENSIONS).find((candidate) => file.endsWith(candidate));
-    if (dtsExt) {
-      ext = dtsExt;
-      modulePath = file.slice(0, -dtsExt.length);
+    const declarationExt = Array.from(VALID_DTS_EXTENSIONS).find((candidate) =>
+      relativeDistFile.endsWith(candidate),
+    );
+    if (declarationExt) {
+      fileExt = declarationExt;
+      modulePath = relativeDistFile.slice(0, -declarationExt.length);
     } else {
-      ext = nodePath.extname(file);
-      if (!VALID_JS_EXTENSIONS.has(ext)) {
+      fileExt = nodePath.extname(relativeDistFile);
+      if (!VALID_JS_EXTENSIONS.has(fileExt)) {
         continue;
       }
-      modulePath = file.slice(0, -ext.length);
+      modulePath = relativeDistFile.slice(0, -fileExt.length);
     }
 
     if (!nodePath.basename(modulePath)) {
       continue;
     }
 
-    let distModule = modules.get(modulePath);
+    let distModule = distModulesByPath.get(modulePath);
     if (!distModule) {
       distModule = { path: modulePath, files: { js: null, mjs: null, cjs: null, dts: null } };
-      modules.set(modulePath, distModule);
+      distModulesByPath.set(modulePath, distModule);
     }
 
-    if (ext === ".js") {
-      distModule.files.js = file;
-    } else if (ext === ".mjs") {
-      distModule.files.mjs = file;
-    } else if (ext === ".cjs") {
-      distModule.files.cjs = file;
-    } else if (VALID_DTS_EXTENSIONS.has(ext)) {
-      distModule.files.dts = file;
+    if (fileExt === ".js") {
+      distModule.files.js = relativeDistFile;
+    } else if (fileExt === ".mjs") {
+      distModule.files.mjs = relativeDistFile;
+    } else if (fileExt === ".cjs") {
+      distModule.files.cjs = relativeDistFile;
+    } else if (VALID_DTS_EXTENSIONS.has(fileExt)) {
+      distModule.files.dts = relativeDistFile;
     }
   }
 
-  return modules;
+  return distModulesByPath;
 }
 
 function toExportPath(distPath: string): string {
@@ -77,11 +79,11 @@ function toExportPath(distPath: string): string {
   return `./${distPath}`;
 }
 
-function isInternalChunkPath(distPath: string): boolean {
+function isBundlerChunkPath(distPath: string): boolean {
   return distPath.split("/").includes("chunks");
 }
 
-const GROUP_ORDER: Record<string, number> = {
+const EXPORT_GROUP_ORDER: Record<string, number> = {
   components: 100,
   hooks: 200,
   primitives: 300,
@@ -93,29 +95,32 @@ const GROUP_ORDER: Record<string, number> = {
   css: 900,
 };
 
-function getExportGroup(
+type ExportSortGroup = [groupName: string, subpath: string, groupOrder: number, indexRank: number];
+type ExportSortKey = [groupOrder: number, groupName: string, indexRank: number, subpath: string];
+
+function getExportSortGroup(
   exportPath: string,
   pathTransform: ((pathString: string) => string) | null,
-): [string, string, number, number] {
+): ExportSortGroup {
   if (exportPath === ".") {
     return [".", "", 0, 0];
   }
 
-  const cleanPath = exportPath.startsWith("./") ? exportPath.slice(2) : exportPath;
+  const specifierPath = exportPath.startsWith("./") ? exportPath.slice(2) : exportPath;
 
-  if (cleanPath.endsWith("/*")) {
-    const dirName = cleanPath.slice(0, -2);
+  if (specifierPath.endsWith("/*")) {
+    const dirName = specifierPath.slice(0, -2);
     return [dirName, "", dirName === "css" ? 900 : 100, 0];
   }
 
-  const parts = cleanPath.split("/");
+  const parts = specifierPath.split("/");
   if (parts.length === 1) {
     const name = parts[0];
     if (name === undefined) {
       throw new Error("invariant: export path segment missing");
     }
-    if (name in GROUP_ORDER) {
-      return [name, "", GROUP_ORDER[name] ?? 0, 0];
+    if (name in EXPORT_GROUP_ORDER) {
+      return [name, "", EXPORT_GROUP_ORDER[name] ?? 0, 0];
     }
     if (pathTransform) {
       return ["components", name, 100, 1];
@@ -125,7 +130,7 @@ function getExportGroup(
 
   const group = parts[0] ?? "";
   const subpath = parts.slice(1).join("/");
-  return [group, subpath, GROUP_ORDER[group] ?? 700, 1];
+  return [group, subpath, EXPORT_GROUP_ORDER[group] ?? 700, 1];
 }
 
 /**
@@ -148,25 +153,23 @@ export function createPathTransform(
     if (!exportPath.startsWith(removePrefix)) {
       return exportPath;
     }
-    const result = exportPath.slice(removePrefix.length);
-    if (result && result !== "." && !result.startsWith("./")) {
-      return `./${result}`;
+    const trimmedExportPath = exportPath.slice(removePrefix.length);
+    if (trimmedExportPath && trimmedExportPath !== "." && !trimmedExportPath.startsWith("./")) {
+      return `./${trimmedExportPath}`;
     }
-    return result;
+    return trimmedExportPath;
   };
 }
 
-type SortTuple = [number, string, number, string];
-
-function getSortTuple(
+function getExportSortKey(
   exportPath: string,
   pathTransform: ((pathString: string) => string) | null,
-): SortTuple {
-  const [group, subpath, order, isIndex] = getExportGroup(exportPath, pathTransform);
-  return [order, group, isIndex, subpath];
+): ExportSortKey {
+  const [groupName, subpath, groupOrder, indexRank] = getExportSortGroup(exportPath, pathTransform);
+  return [groupOrder, groupName, indexRank, subpath];
 }
 
-function compareTuples(left: SortTuple, right: SortTuple): number {
+function compareExportSortKeys(left: ExportSortKey, right: ExportSortKey): number {
   if (left[0] !== right[0]) {
     return left[0] - right[0];
   }
@@ -197,8 +200,10 @@ async function generateCssExports(
     return {};
   }
 
-  const files = await fileSystemService.listRelativeFilesRecursively(distDir);
-  const cssFiles = files.filter((relativeDistPath) => relativeDistPath.endsWith(".css"));
+  const relativeDistFiles = await fileSystemService.listRelativeFilesRecursively(distDir);
+  const cssFiles = relativeDistFiles.filter((relativeDistPath) =>
+    relativeDistPath.endsWith(".css"),
+  );
   if (!cssFiles.length) {
     return {};
   }
@@ -206,28 +211,28 @@ async function generateCssExports(
   const cssExports: Record<string, string> = {
     ...((cssConfig as Record<string, unknown>).customExports as Record<string, string>),
   };
-  const cssByDir = new Map<string, Array<string>>();
-  const rootCss: Array<string> = [];
+  const cssFilesByDir = new Map<string, Array<string>>();
+  const rootCssFiles: Array<string> = [];
 
-  for (const file of cssFiles) {
-    const dirName = nodePath.dirname(file).split(nodePath.sep).join("/");
+  for (const cssFile of cssFiles) {
+    const dirName = nodePath.dirname(cssFile).split(nodePath.sep).join("/");
     if (dirName === ".") {
-      rootCss.push(file);
+      rootCssFiles.push(cssFile);
     } else {
-      const arr = cssByDir.get(dirName) || [];
-      arr.push(file);
-      cssByDir.set(dirName, arr);
+      const dirCssFiles = cssFilesByDir.get(dirName) || [];
+      dirCssFiles.push(cssFile);
+      cssFilesByDir.set(dirName, dirCssFiles);
     }
   }
 
-  for (const file of rootCss) {
-    const exportPath = `./${file}`;
+  for (const cssFile of rootCssFiles) {
+    const exportPath = `./${cssFile}`;
     if (!(exportPath in cssExports)) {
-      cssExports[exportPath] = `./dist/${file}`;
+      cssExports[exportPath] = `./dist/${cssFile}`;
     }
   }
 
-  for (const [dirName, dirFiles] of cssByDir.entries()) {
+  for (const [dirName, dirCssFiles] of cssFilesByDir.entries()) {
     if (
       (await fileSystemService.isDirectoryCssOnly(distDir, dirName)) &&
       !(cssConfig as Record<string, unknown>).forceExportFiles
@@ -237,10 +242,10 @@ async function generateCssExports(
         cssExports[wildcardExport] = `./dist/${dirName}/*`;
       }
     } else {
-      for (const file of dirFiles) {
-        const exportPath = `./${file}`;
+      for (const cssFile of dirCssFiles) {
+        const exportPath = `./${cssFile}`;
         if (!(exportPath in cssExports)) {
-          cssExports[exportPath] = `./dist/${file}`;
+          cssExports[exportPath] = `./dist/${cssFile}`;
         }
       }
     }
@@ -261,8 +266,8 @@ export async function generateExports(
   cssConfig: Record<string, unknown> | boolean | undefined,
   customExports: Record<string, string>,
 ): Promise<GenerateExportsResult> {
-  const files = await fileSystemService.listRelativeFilesRecursively(distDir);
-  if (!files.length) {
+  const relativeDistFiles = await fileSystemService.listRelativeFilesRecursively(distDir);
+  if (!relativeDistFiles.length) {
     return {
       exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       originalPathBySpecifier: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
@@ -271,13 +276,13 @@ export async function generateExports(
     };
   }
 
-  const modules = groupFilesByModule(files);
-  const validModules = Array.from(modules.values()).filter(
+  const distModulesByPath = groupDistFilesByModule(relativeDistFiles);
+  const exportableModules = Array.from(distModulesByPath.values()).filter(
     (moduleEntry) =>
-      (moduleEntry.files.js || moduleEntry.files.mjs) && !isInternalChunkPath(moduleEntry.path),
+      (moduleEntry.files.js || moduleEntry.files.mjs) && !isBundlerChunkPath(moduleEntry.path),
   );
 
-  if (!validModules.length) {
+  if (!exportableModules.length) {
     return {
       exports: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
       originalPathBySpecifier: { [PACKAGE_JSON_EXPORT]: PACKAGE_JSON_EXPORT },
@@ -286,39 +291,43 @@ export async function generateExports(
     };
   }
 
-  const exportsObj: Record<string, ExportEntry> = {};
+  const moduleExportsBySpecifier: Record<string, ExportEntry> = {};
   const originalPathBySpecifier: ExportOriginalPathBySpecifier = {};
-  for (const distModuleEntry of validModules) {
+  for (const distModuleEntry of exportableModules) {
     const originalExportPath = toExportPath(distModuleEntry.path);
     let exportPath = originalExportPath;
     if (pathTransform) {
       exportPath = pathTransform(exportPath);
     }
 
-    const entry: ExportEntry = {};
-    const dtsFile = distModuleEntry.files.dts;
-    if (dtsFile) {
-      entry.types = `./dist/${dtsFile}`;
+    const exportEntry: ExportEntry = {};
+    const declarationFile = distModuleEntry.files.dts;
+    if (declarationFile) {
+      exportEntry.types = `./dist/${declarationFile}`;
     }
     if (distModuleEntry.files.mjs) {
-      entry.import = `./dist/${distModuleEntry.files.mjs}`;
+      exportEntry.import = `./dist/${distModuleEntry.files.mjs}`;
     } else if (distModuleEntry.files.js) {
-      entry.import = `./dist/${distModuleEntry.files.js}`;
+      exportEntry.import = `./dist/${distModuleEntry.files.js}`;
     }
     if (distModuleEntry.files.cjs) {
-      entry.require = `./dist/${distModuleEntry.files.cjs}`;
+      exportEntry.require = `./dist/${distModuleEntry.files.cjs}`;
     }
 
-    exportsObj[exportPath] = entry;
+    moduleExportsBySpecifier[exportPath] = exportEntry;
     originalPathBySpecifier[exportPath] = originalExportPath;
   }
 
-  let sortedKeys = Object.keys(exportsObj).sort((pathA, pathB) =>
-    compareTuples(getSortTuple(pathA, pathTransform), getSortTuple(pathB, pathTransform)),
+  let sortedSpecifiers = Object.keys(moduleExportsBySpecifier).sort(
+    (leftSpecifier, rightSpecifier) =>
+      compareExportSortKeys(
+        getExportSortKey(leftSpecifier, pathTransform),
+        getExportSortKey(rightSpecifier, pathTransform),
+      ),
   );
   const sortedExports: Record<string, ExportEntry | string> = {};
-  for (const exportKey of sortedKeys) {
-    sortedExports[exportKey] = exportsObj[exportKey] as ExportEntry;
+  for (const exportKey of sortedSpecifiers) {
+    sortedExports[exportKey] = moduleExportsBySpecifier[exportKey] as ExportEntry;
   }
 
   const cssExports = await generateCssExports(
@@ -345,14 +354,17 @@ export async function generateExports(
     }
   }
 
-  sortedKeys = Object.keys(sortedExports)
+  sortedSpecifiers = Object.keys(sortedExports)
     .filter((exportKey) => exportKey !== PACKAGE_JSON_EXPORT)
-    .sort((pathA, pathB) =>
-      compareTuples(getSortTuple(pathA, pathTransform), getSortTuple(pathB, pathTransform)),
+    .sort((leftSpecifier, rightSpecifier) =>
+      compareExportSortKeys(
+        getExportSortKey(leftSpecifier, pathTransform),
+        getExportSortKey(rightSpecifier, pathTransform),
+      ),
     );
 
   const finalExports: Record<string, ExportEntry | string> = {};
-  for (const exportKey of sortedKeys) {
+  for (const exportKey of sortedSpecifiers) {
     finalExports[exportKey] = sortedExports[exportKey] as ExportEntry | string;
   }
   finalExports[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT;
@@ -361,7 +373,7 @@ export async function generateExports(
   return {
     exports: finalExports,
     originalPathBySpecifier,
-    jsCount: Object.keys(exportsObj).length,
+    jsCount: Object.keys(moduleExportsBySpecifier).length,
     cssCount: Object.keys(cssExports).length,
   };
 }

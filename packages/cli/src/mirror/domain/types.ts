@@ -21,7 +21,7 @@ export type ExportMapData = Record<string, ExportEntry | string>;
  */
 export type ExportOriginalPathBySpecifier = Record<string, string>;
 
-interface ModuleFiles {
+interface DistModuleFiles {
   js: string | null;
   mjs: string | null;
   cjs: string | null;
@@ -31,9 +31,9 @@ interface ModuleFiles {
 /**
  * @since 0.3.16-canary.0
  */
-export interface Module {
+export interface DistModule {
   path: string;
-  files: ModuleFiles;
+  files: DistModuleFiles;
 }
 
 /**

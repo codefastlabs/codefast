@@ -4,7 +4,7 @@ import { generateExports } from "#/mirror/domain/exports";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
 
-function createDistFilesystem(files: Array<string>): DistFilesystem {
+function createDistFilesystemStub(files: Array<string>): DistFilesystem {
   return {
     async listRelativeFilesRecursively() {
       return files;
@@ -15,19 +15,19 @@ function createDistFilesystem(files: Array<string>): DistFilesystem {
   };
 }
 
-function createPackageJsonFilesystem(initialPackageJson: Record<string, unknown>): {
-  fs: FilesystemPort;
+function createPackageJsonFilesystemHarness(initialPackageJson: Record<string, unknown>): {
+  filesystem: FilesystemPort;
   readPackageJson(): Record<string, unknown>;
 } {
   const packageJsonPath = "/virtual/package.json";
-  const files = new Map<string, string>([
+  const virtualFiles = new Map<string, string>([
     [packageJsonPath, JSON.stringify(initialPackageJson, null, 2) + "\n"],
   ]);
 
   return {
-    fs: {
+    filesystem: {
       existsSync(filePath) {
-        return files.has(filePath);
+        return virtualFiles.has(filePath);
       },
       canonicalPathSync(inputPath) {
         return inputPath;
@@ -39,45 +39,45 @@ function createPackageJsonFilesystem(initialPackageJson: Record<string, unknown>
         };
       },
       readFileSync(filePath) {
-        return files.get(filePath) ?? "";
+        return virtualFiles.get(filePath) ?? "";
       },
       writeFileSync(filePath, data) {
-        files.set(filePath, data);
+        virtualFiles.set(filePath, data);
       },
       readdirSync() {
         return [];
       },
       async readFile(filePath) {
-        return files.get(filePath) ?? "";
+        return virtualFiles.get(filePath) ?? "";
       },
       async writeFile(filePath, data, _encoding: CliFileEncoding) {
-        files.set(filePath, data);
+        virtualFiles.set(filePath, data);
       },
       async readdir() {
         return [];
       },
       async rename(oldPath, newPath) {
-        const data = files.get(oldPath);
+        const data = virtualFiles.get(oldPath);
         if (data === undefined) {
           throw new Error(`Missing temp file: ${oldPath}`);
         }
-        files.set(newPath, data);
-        files.delete(oldPath);
+        virtualFiles.set(newPath, data);
+        virtualFiles.delete(oldPath);
       },
       async unlink(filePath) {
-        files.delete(filePath);
+        virtualFiles.delete(filePath);
       },
     },
     readPackageJson() {
-      return JSON.parse(files.get(packageJsonPath) ?? "{}") as Record<string, unknown>;
+      return JSON.parse(virtualFiles.get(packageJsonPath) ?? "{}") as Record<string, unknown>;
     },
   };
 }
 
 describe("mirror export generation", () => {
   it("generates import entries for JavaScript modules without declarations", async () => {
-    const result = await generateExports(
-      createDistFilesystem([
+    const generatedExports = await generateExports(
+      createDistFilesystemStub([
         "index.mjs",
         "child/fingerprint.mjs",
         "server/client/chunks/react-vendor-abc123.js",
@@ -88,8 +88,8 @@ describe("mirror export generation", () => {
       {},
     );
 
-    expect(result.jsCount).toBe(2);
-    expect(result.exports).toEqual({
+    expect(generatedExports.jsCount).toBe(2);
+    expect(generatedExports.exports).toEqual({
       ".": {
         import: "./dist/index.mjs",
       },
@@ -98,26 +98,28 @@ describe("mirror export generation", () => {
       },
       "./package.json": "./package.json",
     });
-    expect(result.exports).not.toHaveProperty("./server/client/chunks/react-vendor-abc123");
+    expect(generatedExports.exports).not.toHaveProperty(
+      "./server/client/chunks/react-vendor-abc123",
+    );
   });
 
   it("adds types conditions when declaration files exist", async () => {
-    const result = await generateExports(
-      createDistFilesystem(["index.mjs", "index.d.mts"]),
+    const generatedExports = await generateExports(
+      createDistFilesystemStub(["index.mjs", "index.d.mts"]),
       "/virtual/dist",
       null,
       false,
       {},
     );
 
-    expect(result.exports["."]).toEqual({
+    expect(generatedExports.exports["."]).toEqual({
       types: "./dist/index.d.mts",
       import: "./dist/index.mjs",
     });
   });
 
   it("preserves top-level types when generated root export has no types condition", async () => {
-    const packageJsonFilesystem = createPackageJsonFilesystem({
+    const packageJsonHarness = createPackageJsonFilesystemHarness({
       name: "virtual-package",
       type: "module",
       types: "./dist/index.d.mts",
@@ -126,7 +128,7 @@ describe("mirror export generation", () => {
       },
     });
 
-    await writePackageJsonExportsAtomic(packageJsonFilesystem.fs, "/virtual/package.json", {
+    await writePackageJsonExportsAtomic(packageJsonHarness.filesystem, "/virtual/package.json", {
       generatedExports: {
         ".": {
           import: "./dist/index.mjs",
@@ -140,7 +142,7 @@ describe("mirror export generation", () => {
       },
     });
 
-    const packageJson = packageJsonFilesystem.readPackageJson();
+    const packageJson = packageJsonHarness.readPackageJson();
     expect(packageJson.types).toBe("./dist/index.d.mts");
     expect(packageJson.main).toBe("./dist/index.mjs");
     expect(packageJson.module).toBe("./dist/index.mjs");
