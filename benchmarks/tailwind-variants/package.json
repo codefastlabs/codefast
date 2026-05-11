@@ -28,14 +28,14 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "bench": "pnpm exec tsx src/harness/run.ts",
-    "bench:class-variance-authority": "pnpm exec tsx src/class-variance-authority-benches.ts",
-    "bench:codefast": "pnpm exec tsx src/codefast-benches.ts",
-    "bench:fast": "BENCH_FAST=1 pnpm exec tsx src/harness/run.ts",
-    "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
-    "bench:tailwind-variants": "pnpm exec tsx src/tailwind-variants-benches.ts",
-    "bench:serve": "pnpm exec tsx src/harness/serve.ts",
-    "bench:verbose": "BENCH_VERBOSE=1 pnpm exec tsx src/harness/run.ts",
+    "bench": "node --import tsx/esm src/harness/run.ts",
+    "bench:class-variance-authority": "node --import tsx/esm src/class-variance-authority-benches.ts",
+    "bench:codefast": "node --import tsx/esm src/codefast-benches.ts",
+    "bench:fast": "BENCH_FAST=1 node --import tsx/esm src/harness/run.ts",
+    "bench:full": "BENCH_FULL=1 node --import tsx/esm src/harness/run.ts",
+    "bench:tailwind-variants": "node --import tsx/esm src/tailwind-variants-benches.ts",
+    "bench:serve": "node --import tsx/esm src/harness/serve.ts",
+    "bench:verbose": "BENCH_VERBOSE=1 node --import tsx/esm src/harness/run.ts",
     "check-types": "tsgo --noEmit"
   },
   "dependencies": {

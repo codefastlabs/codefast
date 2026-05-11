@@ -18,13 +18,13 @@
   },
   "type": "module",
   "scripts": {
-    "bench": "pnpm exec tsx src/harness/run.ts",
-    "bench:codefast": "pnpm exec tsx --tsconfig tsconfig.codefast.json src/codefast-benches.ts",
-    "bench:fast": "BENCH_FAST=1 pnpm exec tsx src/harness/run.ts",
-    "bench:full": "BENCH_FULL=1 pnpm exec tsx src/harness/run.ts",
-    "bench:inversify": "pnpm exec tsx --tsconfig tsconfig.inversify.json src/inversify-benches.ts",
-    "bench:serve": "pnpm exec tsx src/harness/serve.ts",
-    "bench:verbose": "BENCH_VERBOSE=1 tsx src/harness/run.ts",
+    "bench": "node --import tsx/esm src/harness/run.ts",
+    "bench:codefast": "TSX_TSCONFIG_PATH=tsconfig.codefast.json node --import tsx/esm src/codefast-benches.ts",
+    "bench:fast": "BENCH_FAST=1 node --import tsx/esm src/harness/run.ts",
+    "bench:full": "BENCH_FULL=1 node --import tsx/esm src/harness/run.ts",
+    "bench:inversify": "TSX_TSCONFIG_PATH=tsconfig.inversify.json node --import tsx/esm src/inversify-benches.ts",
+    "bench:serve": "node --import tsx/esm src/harness/serve.ts",
+    "bench:verbose": "BENCH_VERBOSE=1 node --import tsx/esm src/harness/run.ts",
     "check-types": "tsgo --noEmit"
   },
   "dependencies": {
