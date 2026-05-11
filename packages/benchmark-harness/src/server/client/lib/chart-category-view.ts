@@ -9,6 +9,9 @@ import {
   CHART_MIN_X_SPAN_FOR_ZOOM_IN,
 } from "#/server/client/lib/constants";
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface ChartToolbarDisabled {
   earlier: boolean;
   later: boolean;
@@ -17,6 +20,9 @@ export interface ChartToolbarDisabled {
   zoomOut: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export const ALL_TOOLBAR_DISABLED: ChartToolbarDisabled = {
   earlier: true,
   later: true,
@@ -28,6 +34,8 @@ export const ALL_TOOLBAR_DISABLED: ChartToolbarDisabled = {
 /**
  * Numeric window matching what Chart shows after mount (including implicit full range when there
  * are fewer than six points). Used for Reset zoom comparison and {@link categoryXScaleWindow}.
+ *
+ * @since 0.3.16-canary.1
  */
 export function computeInitialCategoryWindow(pointCount: number): { max: number; min: number } {
   const lastIx = pointCount - 1;
@@ -44,6 +52,8 @@ export function computeInitialCategoryWindow(pointCount: number): { max: number;
 /**
  * Optional `{ min, max }` for Chart category x-scale when we crop to the newest slice (L≥6).
  * When undefined, Chart defaults to the full label range — equivalent to {@link computeInitialCategoryWindow} for short series.
+ *
+ * @since 0.3.16-canary.1
  */
 export function categoryXScaleWindow(pointCount: number): { max: number; min: number } | undefined {
   if (pointCount < 6) {
@@ -52,6 +62,9 @@ export function categoryXScaleWindow(pointCount: number): { max: number; min: nu
   return computeInitialCategoryWindow(pointCount);
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function computeChartToolbarDisabled(
   chart: Chart,
   initial: { max: number; min: number },

@@ -3,6 +3,9 @@ import { DISPERSION_IQR_ALERT } from "#/server/client/lib/constants";
 import { fmtHz, fmtPctChange } from "#/server/client/lib/format";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/server/server-types";
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function medianNumeric(values: Array<number | null | undefined>): number | null {
   const sorted = values
     .filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v > 0)
@@ -16,6 +19,9 @@ export function medianNumeric(values: Array<number | null | undefined>): number 
     : ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function ratioFrom(
   a: number | null | undefined,
   b: number | null | undefined,
@@ -44,6 +50,9 @@ function maxIqrFraction(
   return max;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface MetricCardProps {
   label: string;
   value: string;
@@ -52,12 +61,18 @@ export interface MetricCardProps {
   isRatio?: boolean;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface MetricsResult {
   cards: Array<MetricCardProps>;
   hasHighDispersion: boolean;
   footnote: string;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface SnapshotRow {
   id: string;
   group: string;
@@ -65,6 +80,9 @@ export interface SnapshotRow {
   ratioCells: Array<string>;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function buildMetrics(
   scenario: EmbeddedScenarioSeries,
   runIndices: Array<number>,
@@ -213,6 +231,9 @@ export function buildMetrics(
   };
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function buildSnapshotRow(
   s: EmbeddedScenarioSeries,
   lastIx: number,

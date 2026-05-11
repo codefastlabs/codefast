@@ -26,6 +26,9 @@ import {
 } from "#/server/client/lib/format";
 import { ratioFrom } from "#/server/client/lib/metrics";
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export interface ChartPanelProps {
   scenario: EmbeddedScenarioSeries | null;
   runIndices: Array<number>;
@@ -68,6 +71,9 @@ function buildChartSubtitle(
   return sub;
 }
 
+/**
+ * @since 0.3.16-canary.1
+ */
 export function ChartPanel({
   scenario,
   runIndices,
