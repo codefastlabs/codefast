@@ -102,3 +102,40 @@ export function whenAnyAncestorTagged(
       ),
     );
 }
+
+/**
+ * Matches when the direct parent slot carries **all** of the given tag pairs.
+ * Equivalent to AND-composing multiple `whenParentTagged` calls but evaluates
+ * in a single predicate invocation — no intermediate closure allocations.
+ */
+export function whenParentTaggedAll(
+  tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
+): (constraintContext: ConstraintContext) => boolean {
+  return (constraintContext) => {
+    const { parent } = constraintContext;
+    if (parent === undefined) {
+      return false;
+    }
+    const { tags: parentTags } = parent.slot;
+    return tags.every(([tagKey, tagValue]) =>
+      parentTags.some(([k, v]) => k === tagKey && Object.is(v, tagValue)),
+    );
+  };
+}
+
+/**
+ * Matches when at least one ancestor slot carries **all** of the given tag pairs.
+ * Equivalent to AND-composing multiple `whenAnyAncestorTagged` calls but evaluates
+ * in a single predicate invocation — no intermediate closure allocations.
+ */
+export function whenAnyAncestorTaggedAll(
+  tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
+): (constraintContext: ConstraintContext) => boolean {
+  return (constraintContext) =>
+    constraintContext.ancestors.some((frame) => {
+      const { tags: frameTags } = frame.slot;
+      return tags.every(([tagKey, tagValue]) =>
+        frameTags.some(([k, v]) => k === tagKey && Object.is(v, tagValue)),
+      );
+    });
+}
