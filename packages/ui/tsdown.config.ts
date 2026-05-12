@@ -1,6 +1,6 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["src/**/*.{ts,tsx}", "!src/**/*.{test,stories}.{ts,tsx}"],
+  entry: ["src/**/*.ts?(x)", "!src/**/*.{test,stories}.ts?(x)"],
   unbundle: true,
 });

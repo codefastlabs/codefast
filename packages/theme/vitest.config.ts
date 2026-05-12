@@ -22,12 +22,7 @@ export default defineConfig({
     },
     environment: "jsdom",
     globals: true,
-    include: [
-      "tests/unit/**/*.test.?(c|m)[jt]s?(x)",
-      "tests/integration/**/*.test.?(c|m)[jt]s?(x)",
-      "tests/e2e/**/*.test.?(c|m)[jt]s?(x)",
-      "tests/types/**/*.test.?(c|m)[jt]s?(x)",
-    ],
+    include: ["tests/{unit,integration,e2e,types}/**/*.test.ts?(x)"],
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
     setupFiles: ["./vitest.setup.ts"],

@@ -20,12 +20,7 @@ export default defineConfig({
     },
     environment: "node",
     globals: true,
-    include: [
-      "tests/unit/**/*.test.?(c|m)[jt]s?(x)",
-      "tests/integration/**/*.test.?(c|m)[jt]s?(x)",
-      "tests/e2e/**/*.test.?(c|m)[jt]s?(x)",
-      "tests/types/**/*.test.?(c|m)[jt]s?(x)",
-    ],
+    include: ["tests/{unit,integration,e2e,types}/**/*.test.ts"],
     passWithNoTests: true,
   },
 });
