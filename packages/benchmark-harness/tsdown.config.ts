@@ -3,7 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig([
   // ① Library — unbundled ESM for Node (includes SSR server components)
   {
-    entry: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/server/client/entry-client.tsx"],
+    entry: ["src/**/*.ts?(x)", "!src/**/*.test.ts?(x)", "!src/server/client/entry-client.tsx"],
     unbundle: true,
     platform: "node",
   },
