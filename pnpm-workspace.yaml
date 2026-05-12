@@ -142,7 +142,7 @@ catalog:
   unified: ^11.0.5
   unist-util-visit: ^5.1.0
   vaul: ^1.1.2
-  vite: ^8.0.11
+  vite: ^8.0.12
   vitest: ^4.1.5
   yaml: ^2.8.4
   zod: ^4.4.3
