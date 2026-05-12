@@ -1,8 +1,8 @@
-import swc from "unplugin-swc";
+import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
- * DI: Node + decorators; same SWC + coverage layout as CLI.
+ * DI: Node + Stage 3 decorators.
  *
  * Test taxonomy (see TESTING.md):
  *   tests/unit/**         — unit tests (api, types)
@@ -14,14 +14,16 @@ import { defineConfig } from "vitest/config";
  *   tests/types/**        — pre-wired (none yet)
  */
 export default defineConfig({
-  oxc: false,
   plugins: [
-    swc.vite({
-      jsc: {
-        parser: { syntax: "typescript", decorators: true },
-        target: "esnext",
-        transform: { decoratorVersion: "2023-11" },
-      },
+    babel({
+      plugins: [
+        [
+          "@babel/plugin-proposal-decorators",
+          {
+            version: "2023-11",
+          },
+        ],
+      ],
     }),
   ],
   test: {

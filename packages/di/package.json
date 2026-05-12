@@ -183,7 +183,9 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "catalog:",
     "@codefast/typescript-config": "workspace:*",
+    "@rolldown/plugin-babel": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
@@ -191,7 +193,6 @@
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "unplugin-swc": "catalog:",
     "vitest": "catalog:"
   },
   "engines": {

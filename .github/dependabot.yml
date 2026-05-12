@@ -94,8 +94,6 @@ updates:
           - "simple-git-hooks"
           - "oxlint*"
           - "oxfmt"
-          - "unplugin-swc"
-          - "@swc/core"
 
   - package-ecosystem: "github-actions"
     directory: "/"
