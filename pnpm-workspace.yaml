@@ -84,7 +84,7 @@ catalog:
   "@typescript/native-preview": 7.0.0-dev.20260509.2
   "@unpic/react": ^1.0.2
   "@vitejs/plugin-react": ^6.0.1
-  "@vitest/coverage-v8": ^4.1.5
+  "@vitest/coverage-v8": ^4.1.6
   babel-plugin-react-compiler: ^1.0.0
   chart.js: ^4.5.1
   chartjs-plugin-zoom: ^2.2.0
@@ -143,7 +143,7 @@ catalog:
   unist-util-visit: ^5.1.0
   vaul: ^1.1.2
   vite: ^8.0.11
-  vitest: ^4.1.5
+  vitest: ^4.1.6
   yaml: ^2.8.4
   zod: ^4.4.3
 
