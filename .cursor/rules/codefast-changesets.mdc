@@ -1,0 +1,24 @@
+---
+description: Changeset workflow for release-impacting package commits
+alwaysApply: true
+---
+
+# Changesets for release impact
+
+- When committing code changes that affect a published package, public API, CLI behavior, UI behavior, or other user-facing behavior, create and stage a Changeset with the code.
+- Do not add a Changeset for docs-only, tests-only, formatting-only, config-only, or internal refactors with no release impact unless requested.
+- Do not run `pnpm release` non-interactively. It maps to interactive `changeset`; manually create `.changeset/<short-random-name>.md` instead.
+- Infer affected package(s) from changed files and use exact names from each package's `package.json`.
+- Choose bumps conservatively: `patch` for fixes/small behavior changes, `minor` for features/API additions, `major` for breaking changes.
+- Ask the user when package, bump type, or changelog wording is ambiguous.
+- Include the Changeset file in staging/commit when making release-impacting commits.
+
+Example:
+
+```md
+---
+"@codefast/ui": patch
+---
+
+Fix button disabled state styling.
+```
