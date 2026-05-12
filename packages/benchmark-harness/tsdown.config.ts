@@ -1,3 +1,4 @@
+import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "tsdown";
 
 export default defineConfig([
@@ -17,6 +18,11 @@ export default defineConfig([
     platform: "browser",
     format: "esm",
     outDir: "dist/server/client",
+    plugins: [
+      babel({
+        plugins: ["babel-plugin-react-compiler"],
+      }),
+    ],
     deps: {
       alwaysBundle: [/./],
       onlyBundle: false,

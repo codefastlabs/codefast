@@ -225,6 +225,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
+    "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@tsdown/css": "catalog:",
     "@types/node": "catalog:",
@@ -232,6 +233,7 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "babel-plugin-react-compiler": "catalog:",
     "postcss-import": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
