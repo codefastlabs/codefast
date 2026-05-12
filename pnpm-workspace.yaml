@@ -4,12 +4,12 @@ packages:
   - benchmarks/*
 
 allowBuilds:
-  "@swc/core": true
   "@tailwindcss/oxide": set this to true or false
   esbuild: true
   simple-git-hooks: true
 
 catalog:
+  "@babel/plugin-proposal-decorators": ^7.29.0
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.0
   "@commitlint/cli": ^21.0.0
@@ -141,7 +141,6 @@ catalog:
   typescript: ^6.0.3
   unified: ^11.0.5
   unist-util-visit: ^5.1.0
-  unplugin-swc: ^1.5.9
   vaul: ^1.1.2
   vite: ^8.0.11
   vitest: ^4.1.5

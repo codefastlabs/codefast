@@ -1878,7 +1878,7 @@ function inject<const Value>(
 
 Khi dùng trong deps array, TypeScript match `InjectionDescriptor<Value>`. Khi dùng làm decorator, TypeScript match `ClassAccessorDecorator<unknown, Value>`. Cả hai roles hoạt động với cùng một function — không cần import khác nhau.
 
-> **Compatibility note:** Một số transform tools (esbuild, SWC) có thể không preserve callable objects trong metadata. Nếu gặp vấn đề, dùng `isInjectionDescriptor(value)` để kiểm tra trước khi xử lý deps array.
+> **Toolchain decorator:** Vitest dùng transform mặc định của nó (OXC). Các đoạn test cần Stage 3 decorators đi qua `@rolldown/plugin-babel` với `@babel/plugin-proposal-decorators` (`version: "2023-11"`). Transform quanh decorator metadata phải giữ `inject()` là callable object; dùng `isInjectionDescriptor(value)` trước khi xử lý deps array.
 
 ### 7.6 Method lifecycle decorators
 
@@ -2991,14 +2991,15 @@ Fully spec'd in section 8. Export từ root `@codefast/di` và subpath `@codefas
 
 ## 13. Stack kỹ thuật
 
-| Công cụ                 | Vai trò                                             |
-| ----------------------- | --------------------------------------------------- |
-| TypeScript 5.9+         | Decorator Stage 3, `Symbol.metadata` stable, strict |
-| tsdown                  | Bundle ESM, `.d.ts`                                 |
-| Vitest                  | Unit test và integration test                       |
-| publint                 | Kiểm tra package exports correctness                |
-| `@arethetypeswrong/cli` | Kiểm tra type resolution correctness                |
-| pnpm                    | Package manager (workspace monorepo)                |
+| Công cụ                 | Vai trò                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| TypeScript 5.9+         | Decorator Stage 3, `Symbol.metadata` stable, strict                                   |
+| tsdown                  | Bundle ESM, `.d.ts`                                                                   |
+| Vitest (OXC mặc định)   | Unit test và integration test                                                         |
+| Babel decorators        | `@rolldown/plugin-babel` + `@babel/plugin-proposal-decorators` (`version: "2023-11"`) |
+| publint                 | Kiểm tra package exports correctness                                                  |
+| `@arethetypeswrong/cli` | Kiểm tra type resolution correctness                                                  |
+| pnpm                    | Package manager (workspace monorepo)                                                  |
 
 ### tsconfig
 
