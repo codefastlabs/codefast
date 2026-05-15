@@ -1,5 +1,15 @@
 # @codefast/tailwind-variants
 
+## 0.3.16-canary.2
+
+### Patch Changes
+
+- [`1ad2cb7`](https://github.com/codefastlabs/codefast/commit/1ad2cb73a3f6f8bff2b001e9df2f2492efd89aa2) Thanks [@thevuong](https://github.com/thevuong)! - chore: align package config globs
+
+- [`ac54aa0`](https://github.com/codefastlabs/codefast/commit/ac54aa0d3b53acba2f5f75f7ad11b506b249f524) Thanks [@thevuong](https://github.com/thevuong)! - refactor(tailwind-variants): clarify variant API names
+
+- [`7d74f8b`](https://github.com/codefastlabs/codefast/commit/7d74f8bf357a59fa0ff8f6eb388af5d4a538e171) Thanks [@thevuong](https://github.com/thevuong)! - refactor(tailwind-variants): streamline variant resolution
+
 ## 0.3.16-canary.1
 
 ## 0.3.16-canary.0
