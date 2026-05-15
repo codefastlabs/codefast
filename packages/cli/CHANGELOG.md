@@ -1,5 +1,15 @@
 # @codefast/cli
 
+## 0.3.16-canary.2
+
+### Patch Changes
+
+- [`1ad2cb7`](https://github.com/codefastlabs/codefast/commit/1ad2cb73a3f6f8bff2b001e9df2f2492efd89aa2) Thanks [@thevuong](https://github.com/thevuong)! - chore: align package config globs
+
+- [`4fda78b`](https://github.com/codefastlabs/codefast/commit/4fda78b20f98646d114cfddb09e66af609a625a2) Thanks [@thevuong](https://github.com/thevuong)! - fix: support Node 26 mirror export verification
+
+- [`a16f9d7`](https://github.com/codefastlabs/codefast/commit/a16f9d7b3e21dd0d5cdeb601f9a1ccda5288350a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): clarify mirror export naming
+
 ## 0.3.16-canary.1
 
 ### Patch Changes

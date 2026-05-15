@@ -23,6 +23,9 @@ type CompoundMatchOptions = {
   readonly skipSlots?: boolean;
 };
 
+/**
+ * @since 0.3.16-canary.2
+ */
 export const matchesCompoundDefinition = (
   compoundDefinition: CompoundDefinition,
   variantProps: Record<string, unknown>,
@@ -72,6 +75,9 @@ export const matchesCompoundDefinition = (
   return true;
 };
 
+/**
+ * @since 0.3.16-canary.2
+ */
 export const getCompoundClass = (compoundDefinition: {
   readonly class?: ClassValue;
   readonly className?: ClassValue;
