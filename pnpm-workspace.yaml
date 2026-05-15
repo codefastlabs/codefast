@@ -83,7 +83,7 @@ catalog:
   "@types/react-dom": ^19.2.3
   "@typescript/native-preview": 7.0.0-dev.20260514.1
   "@unpic/react": ^1.0.2
-  "@vitejs/plugin-react": ^6.0.1
+  "@vitejs/plugin-react": ^6.0.2
   "@vitest/coverage-v8": ^4.1.6
   babel-plugin-react-compiler: ^1.0.0
   chart.js: ^4.5.1
