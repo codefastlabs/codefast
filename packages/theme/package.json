@@ -1,6 +1,6 @@
 {
   "name": "@codefast/theme",
-  "version": "0.3.16-canary.1",
+  "version": "0.3.16-canary.2",
   "description": "Theme management with React 19 features - optimistic updates, cross-tab sync, and SSR support",
   "keywords": [
     "dark-mode",
