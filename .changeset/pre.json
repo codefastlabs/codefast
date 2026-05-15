@@ -12,5 +12,15 @@
     "@codefast/typescript-config": "0.3.15",
     "@codefast/ui": "0.3.15"
   },
-  "changesets": ["afraid-items-hide", "eight-turtles-run"]
+  "changesets": [
+    "afraid-items-hide",
+    "better-nights-smoke",
+    "eight-turtles-run",
+    "late-queens-stand",
+    "lazy-rockets-fall",
+    "perky-dots-smile",
+    "short-donkeys-create",
+    "silver-frogs-search",
+    "slimy-kings-rush"
+  ]
 }
