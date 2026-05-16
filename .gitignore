@@ -76,6 +76,9 @@ codecov.*
 # scripts
 .exports-analysis
 
+# Claude Code worktrees (temporary git worktrees, never committed)
+.claude/worktrees/
+
 # benchmark artifacts (generated)
 benchmarks/**/bench-results/
 
