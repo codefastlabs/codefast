@@ -8,42 +8,37 @@ interface HashSyncOptions {
   patchView: (patch: Partial<ViewState>) => void;
 }
 
-/**
- * @since 0.3.16-canary.1
- */
 export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
-  const hashSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hashApplyingRef = useRef(false);
+  const initializedRef = useRef(false);
 
-  // Apply URL hash on payload load
+  // Parse URL hash once on first payload load.
+  // Using initializedRef instead of the old hashApplyingRef pattern: the previous
+  // approach cleared the flag synchronously before setState flushed, allowing the
+  // view-sync effect below to race and overwrite the hash with defaults on the same
+  // render cycle. One-shot initialization is simpler and correct.
   useEffect(() => {
-    if (!payload || typeof window === "undefined") {
+    if (!payload || initializedRef.current) {
       return;
     }
+    initializedRef.current = true;
     const raw = window.location.hash;
     if (!raw || raw.length < 2) {
       return;
     }
-    hashApplyingRef.current = true;
-    try {
-      const patch = parseHash(raw, payload);
-      if (Object.keys(patch).length > 0) {
-        patchView(patch);
-      }
-    } finally {
-      hashApplyingRef.current = false;
+    const patch = parseHash(raw, payload);
+    if (Object.keys(patch).length > 0) {
+      patchView(patch);
     }
   }, [payload, patchView]);
 
-  // Sync URL hash on view change (debounced 120 ms)
+  // Sync URL hash on view change (debounced 120 ms).
+  // Returning the cleanup cancels any in-flight timer on unmount or before the next
+  // run — previously the timer was stored in a ref and never cancelled on unmount.
   useEffect(() => {
-    if (!payload || typeof window === "undefined" || hashApplyingRef.current) {
+    if (!payload) {
       return;
     }
-    if (hashSyncTimerRef.current) {
-      clearTimeout(hashSyncTimerRef.current);
-    }
-    hashSyncTimerRef.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       const next = buildHash(view);
       const withHash = next ? `#${next}` : "";
       if (window.location.hash === withHash) {
@@ -55,5 +50,6 @@ export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
         window.location.pathname + window.location.search + withHash,
       );
     }, 120);
+    return () => clearTimeout(timer);
   }, [view, payload]);
 }

@@ -1,6 +1,6 @@
 import type { PaletteEntry } from "#/app/lib/colors";
 import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
-import { fmtHz, fmtPctChange } from "#/app/lib/format";
+import { escHtml, fmtHz, fmtPctChange } from "#/app/lib/format";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
 
 /**
@@ -201,7 +201,7 @@ export function buildMetrics(
         fig = `${(maxF * 100).toFixed(1)}%`;
       }
     }
-    return `<div class="bh-metric-row"><span class="bh-metric-row__name">${lib.displayName}</span><span class="bh-metric-row__fig">${fig}</span></div>`;
+    return `<div class="bh-metric-row"><span class="bh-metric-row__name">${escHtml(lib.displayName)}</span><span class="bh-metric-row__fig">${fig}</span></div>`;
   });
 
   cards.push({

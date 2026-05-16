@@ -1,5 +1,5 @@
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { isMacLikePlatform } from "#/app/lib/format";
 
 interface PaletteAction {
@@ -72,7 +72,10 @@ export function CommandPalette({
     setHighlightedIndex(filtered.length === 0 ? -1 : 0);
   }, [filterEpoch, filtered.length, isOpen]);
 
-  useLayoutEffect(() => {
+  // useEffect is sufficient here — scrollIntoView is a visual side effect that
+  // does not need to run synchronously before the browser paints, and useLayoutEffect
+  // would emit an SSR warning because its output cannot be serialised by the server.
+  useEffect(() => {
     if (!isOpen || highlightedIndex < 0) {
       return;
     }
