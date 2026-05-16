@@ -63,25 +63,6 @@ function initState(options: BenchServerOptions): ServerState {
   };
 }
 
-function handleRoot(state: ServerState, req: IncomingMessage, res: ServerResponse): void {
-  try {
-    const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
-    const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
-    const etag = computeEtag(JSON.stringify(payload));
-    if (req.headers["if-none-match"] === etag) {
-      res.writeHead(304);
-      res.end();
-      return;
-    }
-    res.setHeader("Cache-Control", NO_CACHE);
-    res.setHeader("ETag", etag);
-    renderDocument(payload, res, req);
-  } catch (err) {
-    res.writeHead(500, { "Content-Type": "text/plain" });
-    res.end(String(err));
-  }
-}
-
 function handleChunk(
   state: ServerState,
   req: IncomingMessage,
@@ -100,6 +81,25 @@ function handleChunk(
     state.chunkCache.set(name, chunk);
   }
   serveAsset(chunk, req, res);
+}
+
+function handleRoot(state: ServerState, req: IncomingMessage, res: ServerResponse): void {
+  try {
+    const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
+    const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
+    const etag = computeEtag(JSON.stringify(payload));
+    if (req.headers["if-none-match"] === etag) {
+      res.writeHead(304);
+      res.end();
+      return;
+    }
+    res.setHeader("Cache-Control", NO_CACHE);
+    res.setHeader("ETag", etag);
+    renderDocument(payload, res, req);
+  } catch (err) {
+    res.writeHead(500, { "Content-Type": "text/plain" });
+    res.end(String(err));
+  }
 }
 
 function handleApiPayload(state: ServerState, req: IncomingMessage, res: ServerResponse): void {

@@ -8,10 +8,9 @@ export default defineConfig([
     unbundle: true,
     platform: "node",
   },
-  // ② Browser app — ESM with fine-grained code splitting + PostCSS (Tailwind v4)
-  //    react-vendor  → chunks/react-vendor-[hash].js   (immutable, ~900 kB)
-  //    chart-vendor  → chunks/chart-vendor-[hash].js   (immutable, ~600 kB)
-  //    app code      → entry.js                         (no-cache, small)
+  // ② Browser app — ESM with automatic vendor splitting
+  //    vendor → chunks/vendor-[hash].js   (immutable, all node_modules)
+  //    app code → entry.js                (no-cache, small)
   {
     entry: {
       entry: "src/app/entry.tsx",
@@ -34,14 +33,8 @@ export default defineConfig([
       codeSplitting: {
         groups: [
           {
-            name: "react-vendor",
-            test: /node_modules[\\/](react|react-dom|scheduler)/,
-            priority: 10,
-          },
-          {
-            name: "chart-vendor",
-            test: /node_modules[\\/](chart\.js|chartjs-plugin-zoom|hammerjs)/,
-            priority: 9,
+            name: "vendor",
+            test: /node_modules/,
           },
         ],
       },
