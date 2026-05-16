@@ -1,5 +1,6 @@
 import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Chart } from "chart.js";
+import { ChevronDownIcon } from "#/app/components/icons";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
 import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import {
@@ -609,18 +610,7 @@ export function ChartPanel({
           <span className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
             Display &amp; export
           </span>
-          <svg
-            aria-hidden="true"
-            className="size-4 shrink-0 text-zinc-500 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
+          <ChevronDownIcon className="size-4 shrink-0 text-zinc-500 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden" />
         </summary>
         <div className="flex flex-col gap-3 text-[0.9rem] text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4">
           <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">
