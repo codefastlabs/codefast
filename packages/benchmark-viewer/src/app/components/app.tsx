@@ -1,16 +1,20 @@
 import { type RefObject, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import type { ChartInstance } from "#/app/components/chart";
 import { ChartPanel } from "#/app/components/chart";
+import { ChartControlPanel } from "#/app/components/controls";
+import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
+import { PageHeader } from "#/app/components/header";
+import { KpiGrid } from "#/app/components/kpi";
+import { MetricsPanel } from "#/app/components/metrics";
 import { CommandPalette } from "#/app/components/palette";
 import { FindPanel } from "#/app/components/finder";
-import { MetricsPanel } from "#/app/components/metrics";
-import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
+import { SnapshotSection } from "#/app/components/snapshot";
 import { useBenchPayload } from "#/app/hooks/use-payload";
 import { useHashSync } from "#/app/hooks/use-hash";
 import { useViewState } from "#/app/hooks/use-view";
 import { PALETTE, type PaletteEntry } from "#/app/lib/colors";
-import { formatLocal, searchNorm } from "#/app/lib/format";
-import { buildHash, type ViewState } from "#/app/lib/hash";
+import { searchNorm } from "#/app/lib/format";
+import { buildHash } from "#/app/lib/hash";
 import { buildMetrics, buildSnapshotRow } from "#/app/lib/metrics";
 import type {
   EmbeddedLibraryMeta,
@@ -374,17 +378,17 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         </a>
         <div aria-live="polite" id="loading-overlay" role="status">
           {loadError ? (
-            <div className="bh-error">
-              <p className="bh-error__title">Failed to load bench data.</p>
-              <p className="bh-error__detail">{loadError}</p>
-              <p className="bh-error__hint">
-                Run <code className="bh-error__code">pnpm bench</code> first to generate data.
+            <div className="text-center">
+              <p className="text-sm text-red-400">Failed to load bench data.</p>
+              <p className="mt-1 text-xs text-zinc-500">{loadError}</p>
+              <p className="mt-3 text-xs text-zinc-600">
+                Run <code className="text-indigo-400">pnpm bench</code> first to generate data.
               </p>
             </div>
           ) : (
-            <div className="bh-loading__stack">
-              <div className="bh-spinner bh-spinner--ring" />
-              <p className="bh-loading__text">Loading bench data…</p>
+            <div className="text-center">
+              <div className="border-t-bh-blue mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-zinc-600/80 motion-reduce:animate-none" />
+              <p className="text-sm text-zinc-400">Loading bench data…</p>
             </div>
           )}
         </div>
@@ -402,64 +406,32 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         Skip to chart
       </a>
 
-      <main className="bh-app-shell" id="app">
-        {/* Header */}
-        <header className="bh-page-header">
-          <p className="bh-eyebrow">Bench history viewer</p>
-          <h1 className="bh-page-title">
-            {payload.title}
-            <span className="bh-title-suffix"> · hz/op median per run</span>
-          </h1>
-          <div className="bh-header-lede-row">
-            <p className="bh-lede">
-              Median hz/op per saved run, optional P25–P75 bands, and primary-vs-compare ratios.{" "}
-              <span className="bh-lede__muted">Press</span> <kbd className="bh-kbd">⌘K</kbd>{" "}
-              <span className="bh-lede__muted">or</span> <kbd className="bh-kbd">Ctrl+K</kbd>{" "}
-              <span className="bh-lede__muted">for quick actions.</span>
-            </p>
-            <div className="bh-header-actions">
-              <button
-                aria-label="Copy link to this view"
-                className="bh-btn-reload"
-                onClick={copyViewLink}
-                title="Copies URL including filters, scenario, and display toggles"
-                type="button"
-              >
-                Copy link
-              </button>
-            </div>
-          </div>
-          <details className="bh-glass bh-glass--tight bh-howto" id="intro-howto-details">
-            <summary className="bh-details-summary bh-details-summary--prominent">
-              How to read this viewer
-            </summary>
-            <div className="bh-howto__prose">
-              <p>
-                Quantiles mirror <code className="bh-inline-code">report.ts</code> across trials.
-                Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% and a dispersion hint
-                highlight noisy runs. Axis labels use your{" "}
-                <strong className="bh-prose-emphasis">local time</strong>. Toggle{" "}
-                <strong className="bh-prose-emphasis">Primary ratios</strong> to overlay primary ÷
-                compare on the right axis. Use{" "}
-                <strong className="bh-prose-emphasis">Runs shown</strong> to focus on the most
-                recent history window.
-              </p>
-            </div>
-          </details>
-        </header>
+      <main
+        className="mx-auto max-w-7xl px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]"
+        id="app"
+      >
+        <PageHeader title={payload.title} onCopyLink={copyViewLink} />
 
         {/* Bench results dir diagnostic */}
         {payload.benchResultsWarning !== undefined && payload.benchResultsWarning.length > 0 && (
-          <div className="bh-env-banner" role="alert" style={{ display: "block" }}>
-            <strong className="bh-env-banner__title">Bench results directory.</strong>{" "}
+          <div
+            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            role="alert"
+          >
+            <strong className="font-semibold text-amber-200">Bench results directory.</strong>{" "}
             {payload.benchResultsWarning}
           </div>
         )}
 
         {/* Multi-env banner */}
         {showMultiEnvBanner && (
-          <div className="bh-env-banner" role="status" style={{ display: "block" }}>
-            <strong className="bh-env-banner__title">Multiple environments in history.</strong>{" "}
+          <div
+            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            role="status"
+          >
+            <strong className="font-semibold text-amber-200">
+              Multiple environments in history.
+            </strong>{" "}
             Prefer an Environment filter before comparing regimes (CPU × Node fingerprints differ
             across machines).
           </div>
@@ -475,125 +447,30 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         {/* Chart control panel */}
-        <div aria-label="Chart data selection" className="bh-chart-control-panel bh-glass--sticky">
-          <div className="bh-chart-control-panel__head">
-            <p className="bh-section-title">Chart data</p>
-            <button
-              aria-busy={isReloading}
-              aria-label="Reload benchmark data from server"
-              className="bh-btn-reload"
-              disabled={isReloading}
-              onClick={() => void loadData(true)}
-              title="Fetch the latest runs from the server without refreshing the page"
-              type="button"
-            >
-              <svg
-                aria-hidden="true"
-                className="bh-btn-reload__icon"
-                fill="none"
-                height="14"
-                viewBox="0 0 24 24"
-                width="14"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                />
-              </svg>
-              Reload data
-            </button>
-          </div>
-          <div className="bh-chart-control-panel__fields">
-            <div className="bh-chart-control-panel__scenario">
-              <label className="bh-label-wrap--scenario">
-                <span className="bh-field-label">Scenario</span>
-                <select
-                  aria-label="Benchmark scenario"
-                  className="bh-focus bh-field bh-field--chart-select"
-                  onChange={(e) => patchView({ scenarioId: e.target.value })}
-                  value={view.scenarioId}
-                >
-                  {visibleScenarios.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      [{s.group}] {s.id}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div
-                aria-label="Previous or next scenario in the filtered list"
-                className="bh-chart-toolbar bh-chart-toolbar--match-field bh-chart-toolbar--scenario-nav"
-                role="group"
-              >
-                <button
-                  aria-label="Previous scenario"
-                  className="bh-seg-btn"
-                  disabled={scenarioIndex <= 0}
-                  onClick={() => {
-                    if (scenarioIndex > 0) {
-                      patchView({ scenarioId: visibleScenarios[scenarioIndex - 1]!.id });
-                    }
-                  }}
-                  title="Previous scenario in filtered list"
-                  type="button"
-                >
-                  ← Prev
-                </button>
-                <button
-                  aria-label="Next scenario"
-                  className="bh-seg-btn"
-                  disabled={scenarioIndex >= visibleScenarios.length - 1}
-                  onClick={() => {
-                    if (scenarioIndex < visibleScenarios.length - 1) {
-                      patchView({ scenarioId: visibleScenarios[scenarioIndex + 1]!.id });
-                    }
-                  }}
-                  title="Next scenario in filtered list"
-                  type="button"
-                >
-                  Next →
-                </button>
-              </div>
-            </div>
-            <label className="bh-label-wrap--env">
-              <span className="bh-field-label">Environment</span>
-              <select
-                aria-label="Filter runs by CPU and Node"
-                className="bh-focus bh-field bh-field--chart-select"
-                onChange={(e) => patchView({ envKey: e.target.value })}
-                value={view.envKey}
-              >
-                <option value="">All runs</option>
-                {uniqueEnvKeys.map((key) => {
-                  const sample = payload.runs.find((r) => r.envKey === key);
-                  return (
-                    <option key={key} value={key}>
-                      {sample?.envLabel ?? key}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-            <label className="bh-label-wrap--window">
-              <span className="bh-field-label">Runs shown</span>
-              <select
-                aria-label="Limit chart to the most recent runs"
-                className="bh-focus bh-field bh-field--chart-select"
-                onChange={(e) => patchView({ runWindow: e.target.value as ViewState["runWindow"] })}
-                title="After Environment filter, only the newest N runs are plotted"
-                value={view.runWindow}
-              >
-                <option value="all">All matching runs</option>
-                <option value="20">Last 20 runs</option>
-                <option value="10">Last 10 runs</option>
-              </select>
-            </label>
-          </div>
-        </div>
+        <ChartControlPanel
+          envKey={view.envKey}
+          isReloading={isReloading}
+          onEnvChange={(v) => patchView({ envKey: v })}
+          onReload={() => void loadData(true)}
+          onRunWindowChange={(v) => patchView({ runWindow: v })}
+          onScenarioChange={(v) => patchView({ scenarioId: v })}
+          onScenarioNext={() => {
+            if (scenarioIndex < visibleScenarios.length - 1) {
+              patchView({ scenarioId: visibleScenarios[scenarioIndex + 1]!.id });
+            }
+          }}
+          onScenarioPrev={() => {
+            if (scenarioIndex > 0) {
+              patchView({ scenarioId: visibleScenarios[scenarioIndex - 1]!.id });
+            }
+          }}
+          runWindow={view.runWindow}
+          runs={payload.runs}
+          scenarioId={view.scenarioId}
+          scenarioIndex={scenarioIndex}
+          uniqueEnvKeys={uniqueEnvKeys}
+          visibleScenarios={visibleScenarios}
+        />
 
         {/* Chart section */}
         <ChartPanel
@@ -624,116 +501,24 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         {/* History KPIs */}
-        <div aria-label="History overview" className="bh-kpi-grid">
-          <div className="bh-card">
-            <div className="bh-lbl">Saved runs</div>
-            <div className="bh-val bh-kpi-val--primary">{payload.runs.length}</div>
-          </div>
-          <div className="bh-card">
-            <div className="bh-lbl">Scenarios tracked</div>
-            <div className="bh-val bh-kpi-val--primary">{payload.scenarios.length}</div>
-          </div>
-          <div className="bh-card bh-kpi-card--wide-sm">
-            <div className="bh-lbl">Newest saved run · local clock</div>
-            <div className="bh-val bh-kpi-val--secondary" suppressHydrationWarning>
-              {latestRun
-                ? (() => {
-                    const clock = formatLocal(latestRun.timestampIso, latestRun.folder);
-                    return clock ? `${clock} · folder ${latestRun.folder}` : latestRun.folder;
-                  })()
-                : "—"}
-            </div>
-          </div>
-          <div className="bh-card bh-kpi-card--standard-xl">
-            <div className="bh-lbl">Library builds (latest run)</div>
-            <div className="bh-val bh-kpi-val--meta">
-              {latestRun?.libraryVersions?.length
-                ? latestRun.libraryVersions.map((lv) => (
-                    <div className="bh-lib-version__row" key={lv.key}>
-                      <span className="bh-lib-version__key">{lv.key}</span> {lv.version}
-                      {lv.gcExposed && (
-                        <span className="bh-gc-tag" title="--expose-gc active">
-                          {" "}
-                          [gc]
-                        </span>
-                      )}
-                    </div>
-                  ))
-                : "—"}
-            </div>
-          </div>
-        </div>
+        <KpiGrid
+          latestRun={latestRun}
+          runCount={payload.runs.length}
+          scenarioCount={payload.scenarios.length}
+        />
 
         {/* Snapshot table */}
-        <details className="bh-snapshot-details" id="snapshot-details">
-          <summary className="bh-details-summary bh-details-summary--dense">
-            Snapshot of <span className="bh-snapshot__accent">globally newest</span> bench folder —
-            throughput by scenario (table)
-          </summary>
-          <p className="bh-snapshot__desc" id="snapshot-desc">
-            Rows use the chronologically last run directory ({payload.runs.length} total),
-            independent of the Environment selector.
-          </p>
-          <div className="bh-table-wrap">
-            <table
-              aria-label="Latest run throughput by scenario"
-              className="bh-table bh-table--zebra"
-            >
-              <thead>
-                <tr>
-                  <th className="bh-sticky-1" scope="col">
-                    Scenario
-                  </th>
-                  <th className="bh-sticky-2" scope="col">
-                    Group
-                  </th>
-                  {orderedLibraries.map((lib) => (
-                    <th
-                      className="bh-num"
-                      key={lib.key}
-                      scope="col"
-                      style={{ color: paletteMap[lib.key]?.text }}
-                    >
-                      {lib.displayName}
-                    </th>
-                  ))}
-                  {compareLibs.map((cmp) => (
-                    <th className="bh-num text-bh-ratio-accent" key={cmp.key} scope="col">
-                      ÷ {cmp.displayName}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {snapshotRows.map((row) => (
-                  <tr key={row.id}>
-                    <td className="bh-sticky-1">{row.id}</td>
-                    <td className="bh-sticky-2">{row.group}</td>
-                    {row.hzCells.map((cell, i) => (
-                      <td className="bh-num" key={i}>
-                        {cell}
-                      </td>
-                    ))}
-                    {row.ratioCells.map((cell, i) => (
-                      <td className="bh-num" key={i}>
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {latestRun && (
-            <div className="bh-snapshot__meta" suppressHydrationWarning>
-              Folder {latestRun.folder} · {formatLocal(latestRun.timestampIso, latestRun.folder)}{" "}
-              (local)
-            </div>
-          )}
-        </details>
+        <SnapshotSection
+          compareLibs={compareLibs}
+          latestRun={latestRun}
+          orderedLibraries={orderedLibraries}
+          paletteMap={paletteMap}
+          runCount={payload.runs.length}
+          snapshotRows={snapshotRows}
+        />
 
         {/* Footer */}
-        <p className="bh-page-footer">
+        <p className="mt-10 border-t border-white/6 pt-6 text-[0.8125rem] leading-relaxed text-zinc-500">
           Reload data from Chart data or refresh the page for the latest snapshot ·{" "}
           {payload.runs.length} runs · {payload.scenarios.length} scenarios.
           {payload.generatedAtIso ? (
