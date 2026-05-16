@@ -1,11 +1,21 @@
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { tv } from "@codefast/tailwind-variants";
 import { isMacLikePlatform } from "#/app/lib/format";
 
 interface PaletteAction {
   id: string;
   label: string;
 }
+
+const paletteItem = tv({
+  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
+  variants: {
+    active: {
+      true: "bg-white/10 text-white",
+    },
+  },
+});
 
 /** Matches SSR (no navigator): Ctrl+K until mount, then ⌘K on mac-like clients. */
 function PaletteShortcutHint() {
@@ -19,7 +29,11 @@ function PaletteShortcutHint() {
 
   return (
     <>
-      Esc closes · <kbd className="bh-kbd">{label}</kbd> toggles · ↑↓ navigate · Enter runs
+      Esc closes ·{" "}
+      <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
+        {label}
+      </kbd>{" "}
+      toggles · ↑↓ navigate · Enter runs
     </>
   );
 }
@@ -145,15 +159,21 @@ export function CommandPalette({
       aria-hidden={!isOpen}
       aria-labelledby="command-palette-title"
       aria-modal="true"
-      className={`bh-command-palette ${isOpen ? "" : "bh-command-palette--hidden"}`}
+      className={`fixed inset-0 z-400 flex items-start justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:px-4 sm:pt-[min(20vh,10rem)]${isOpen ? "" : " hidden"}`}
       id="command-palette"
       onKeyDownCapture={handleDialogKeyDownCapture}
       role="dialog"
     >
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- scrim dismisses on click; Escape handled on dialog capture */}
-      <div className="bh-command-palette__scrim" onClick={onClose} />
-      <div className="bh-glass bh-command-palette__panel">
-        <p className="sr-only" id="command-palette-title">
+      <div
+        className="bg-bh-overlay/75 absolute inset-0 backdrop-blur-[0.35rem]"
+        onClick={onClose}
+      />
+      <div className="border-bh-border bg-bh-surface relative z-1 mt-2 max-h-[min(85dvh,calc(100dvh-2.5rem))] w-full max-w-lg overflow-hidden rounded-[1.25rem] border p-0 shadow-(--shadow-bh-glass) backdrop-blur-xl backdrop-saturate-180 sm:mt-0 sm:max-h-none">
+        <p
+          className="absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0,0,0,0)]"
+          id="command-palette-title"
+        >
           Command palette
         </p>
         <input
@@ -163,7 +183,7 @@ export function CommandPalette({
           aria-expanded={isOpen}
           aria-haspopup="listbox"
           autoComplete="off"
-          className="bh-focus bh-field bh-command-palette__input"
+          className="focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue w-full rounded-none border-0 border-b border-white/8 bg-black/25 px-4 py-3 text-sm text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2"
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search actions…"
           ref={inputRef}
@@ -172,12 +192,12 @@ export function CommandPalette({
         />
         <ul
           aria-multiselectable={false}
-          className="bh-command-palette__list"
+          className="max-h-[min(50dvh,17.5rem)] list-none overflow-y-auto overscroll-contain p-2 sm:max-h-[min(48vh,17.5rem)]"
           id="command-palette-list"
           role="listbox"
         >
           {filtered.length === 0 ? (
-            <li className="bh-command-palette__empty" role="presentation">
+            <li className="px-3 py-6 text-center text-sm text-zinc-500" role="presentation">
               No matching actions
             </li>
           ) : (
@@ -185,7 +205,7 @@ export function CommandPalette({
               <li key={a.id} role="none">
                 <button
                   aria-selected={i === highlightedIndex}
-                  className={`bh-focus bh-command-palette__item ${i === highlightedIndex ? "bh-command-palette__item--active" : ""}`}
+                  className={paletteItem({ active: i === highlightedIndex })}
                   id={`command-palette-opt-${a.id}`}
                   onClick={() => onAction(a.id)}
                   onMouseEnter={() => setHighlightedIndex(i)}
@@ -202,7 +222,7 @@ export function CommandPalette({
             ))
           )}
         </ul>
-        <p className="bh-command-palette__hint">
+        <p className="border-t border-white/6 px-3 py-2 text-[0.6875rem] text-zinc-500">
           <PaletteShortcutHint />
         </p>
       </div>

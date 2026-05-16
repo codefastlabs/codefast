@@ -3,6 +3,15 @@ import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
 import { escHtml, fmtHz, fmtPctChange } from "#/app/lib/format";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
 
+const META_MONO = "font-mono tracking-[-0.02em] tabular-nums";
+const META_FINE = "text-[0.6875rem] leading-[1.45] opacity-90";
+const METRIC_FIG = "text-bh-ink-strong font-mono tracking-[-0.02em] tabular-nums";
+const METRIC_IQR = "mt-[0.28rem] flex flex-col gap-[0.42rem]";
+const METRIC_ROW =
+  "flex items-baseline justify-between gap-3 text-[0.72rem] leading-[1.35] tracking-[-0.012em]";
+const METRIC_ROW_NAME = "text-bh-label min-w-0";
+const METRIC_ROW_FIG = "text-bh-ink-mid shrink-0 font-mono tracking-[-0.02em] tabular-nums";
+
 /**
  * @since 0.3.16-canary.1
  */
@@ -133,12 +142,12 @@ export function buildMetrics(
 
     const meta: Array<string> = [];
     if (lo !== null && hi !== null) {
-      meta.push(`<span class="bh-metric__meta--mono">Range ${fmtHz(lo)} … ${fmtHz(hi)}</span>`);
+      meta.push(`<span class="${META_MONO}">Range ${fmtHz(lo)} … ${fmtHz(hi)}</span>`);
     }
     meta.push(`Δ ${trend}`);
     if (runsWithData < runsPlotted) {
       meta.push(
-        `<span class="bh-metric__meta--fine">${runsWithData} of ${runsPlotted} plotted runs have median hz/op</span>`,
+        `<span class="${META_FINE}">${runsWithData} of ${runsPlotted} plotted runs have median hz/op</span>`,
       );
     }
 
@@ -178,7 +187,7 @@ export function buildMetrics(
       ];
       if (showPaired) {
         meta.push(
-          `Median of per-run ratios · <span class="bh-metric__fig">${medianOfRunRatios!.toFixed(3)}×</span>`,
+          `Median of per-run ratios · <span class="${METRIC_FIG}">${medianOfRunRatios!.toFixed(3)}×</span>`,
         );
       }
 
@@ -201,13 +210,13 @@ export function buildMetrics(
         fig = `${(maxF * 100).toFixed(1)}%`;
       }
     }
-    return `<div class="bh-metric-row"><span class="bh-metric-row__name">${escHtml(lib.displayName)}</span><span class="bh-metric-row__fig">${fig}</span></div>`;
+    return `<div class="${METRIC_ROW}"><span class="${METRIC_ROW_NAME}">${escHtml(lib.displayName)}</span><span class="${METRIC_ROW_FIG}">${fig}</span></div>`;
   });
 
   cards.push({
     label: "Worst IQR÷median · per plotted run",
     value: "",
-    meta: [`<div class="bh-metric__iqr">${iqrRows.join("")}</div>`],
+    meta: [`<div class="${METRIC_IQR}">${iqrRows.join("")}</div>`],
   });
 
   const footPieces: Array<string> = [

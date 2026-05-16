@@ -747,6 +747,9 @@ importers:
       '@codefast/benchmark-harness':
         specifier: workspace:*
         version: link:../benchmark-harness
+      '@codefast/tailwind-variants':
+        specifier: workspace:*
+        version: link:../tailwind-variants
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1
