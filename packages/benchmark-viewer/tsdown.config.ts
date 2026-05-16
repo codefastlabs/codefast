@@ -40,8 +40,8 @@ export default defineConfig([
             name(moduleId) {
               const parts = moduleId.split(/node_modules[\\/]/);
               const last = parts[parts.length - 1] ?? "";
-              const match = /^(@[^\\/]+[\\/][^\\/]+|[^\\/]+)/.exec(last);
-              return match ? `vendor-${match[1].replace("@", "").replace("/", "-")}` : "vendor";
+              const pkg = /^(@[^\\/]+[\\/][^\\/]+|[^\\/]+)/.exec(last)?.[1];
+              return pkg ? `vendor-${pkg.replace("@", "").replace("/", "-")}` : "vendor";
             },
           },
         ],
