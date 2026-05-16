@@ -27,7 +27,7 @@ function PaletteShortcutHint() {
 interface CommandPaletteProps {
   isOpen: boolean;
   query: string;
-  actions: Array<PaletteAction>;
+  actions: ReadonlyArray<PaletteAction>;
   inputRef: RefObject<HTMLInputElement | null>;
   onQueryChange: (q: string) => void;
   onClose: () => void;
