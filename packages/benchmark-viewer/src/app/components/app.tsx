@@ -42,6 +42,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     runIndices,
     currentScenario,
     uniqueEnvKeys,
+    envLabelMap,
     uniqueGroups,
     compareLibs,
     scenarioIndex,
@@ -189,8 +190,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
               patchView({ scenarioId: visibleScenarios[scenarioIndex - 1]!.id });
             }
           }}
+          envLabelMap={envLabelMap}
           runWindow={view.runWindow}
-          runs={payload.runs}
           scenarioId={view.scenarioId}
           scenarioIndex={scenarioIndex}
           uniqueEnvKeys={uniqueEnvKeys}

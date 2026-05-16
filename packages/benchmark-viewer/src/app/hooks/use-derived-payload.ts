@@ -29,6 +29,7 @@ export interface DerivedPayload {
   runIndices: Array<number>;
   currentScenario: EmbeddedScenarioSeries | null;
   uniqueEnvKeys: Array<string>;
+  envLabelMap: Record<string, string>;
   uniqueGroups: Array<string>;
   primaryLib: EmbeddedLibraryMeta | undefined;
   compareLibs: Array<EmbeddedLibraryMeta>;
@@ -127,6 +128,19 @@ export function useDerivedPayload({
     );
   }, [payload]);
 
+  const envLabelMap = useMemo<Record<string, string>>(() => {
+    if (!payload) {
+      return {};
+    }
+    const map: Record<string, string> = {};
+    for (const run of payload.runs) {
+      if (!(run.envKey in map)) {
+        map[run.envKey] = run.envLabel ?? run.envKey;
+      }
+    }
+    return map;
+  }, [payload]);
+
   const uniqueGroups = useMemo<Array<string>>(() => {
     if (!payload) {
       return [];
@@ -207,6 +221,7 @@ export function useDerivedPayload({
     runIndices,
     currentScenario,
     uniqueEnvKeys,
+    envLabelMap,
     uniqueGroups,
     primaryLib,
     compareLibs,
