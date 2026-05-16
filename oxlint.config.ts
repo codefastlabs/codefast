@@ -30,6 +30,15 @@ export default defineConfig({
       },
     },
     {
+      // UI primitives and docs use intentional ARIA roles (role="group", role="progressbar",
+      // role="status", role="list") that have no semantic-equivalent HTML tag in these contexts.
+      // E.g. role="progressbar" on <svg>, role="group" on layout divs in component library.
+      files: ["packages/ui/src/**/*.{ts,tsx}", "apps/docs/src/**/*.{ts,tsx}"],
+      rules: {
+        "jsx-a11y/prefer-tag-over-role": "off",
+      },
+    },
+    {
       // Command palette uses combobox + listbox ARIA roles (not native <select>/<datalist>/<dialog>).
       // The input carries aria-expanded as part of the combobox pattern (textbox + popup).
       files: ["packages/benchmark-viewer/src/app/components/palette.tsx"],
