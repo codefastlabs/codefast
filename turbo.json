@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
-  "ui": "tui",
+  "cacheMaxAge": "7d",
   "tasks": {
     "//#format": {
       "cache": false
