@@ -111,16 +111,30 @@ interface RunData {
   readonly scenarioIndices: Map<string, Map<string, AggregatedScenarioResult>>;
 }
 
-function parseJsonlLines(lines: ReadonlyArray<string>): Array<JsonlBenchObservationRow> {
+interface ParsedLines {
+  observations: Array<JsonlBenchObservationRow>;
+  skippedCount: number;
+}
+
+// Mutable accumulator for a single (scenario, library) series built across runs.
+interface LibSeriesAccum {
+  hz: Array<number | null>;
+  p25: Array<number | null>;
+  p75: Array<number | null>;
+  iqrFraction: Array<number | null>;
+}
+
+function parseJsonlLines(lines: ReadonlyArray<string>): ParsedLines {
   const observations: Array<JsonlBenchObservationRow> = [];
+  let skippedCount = 0;
   for (const line of lines) {
     try {
       observations.push(JSON.parse(line) as JsonlBenchObservationRow);
     } catch {
-      // skip malformed lines
+      skippedCount++;
     }
   }
-  return observations;
+  return { observations, skippedCount };
 }
 
 function buildLibraryRunData(
@@ -212,17 +226,12 @@ function extractRunMeta(
     cpuModel: canonical.cpuModel,
     nodeOptions: canonical.nodeOptions,
     timestampIso: canonical.timestampIso,
-    libraryVersions: libraryNames
-      .map((name) => {
-        const obs = firstObsByLibrary.get(name);
-        return obs !== undefined
-          ? { key: name, version: obs.libraryVersion, gcExposed: obs.gcExposed }
-          : null;
-      })
-      .filter(
-        (libraryVersion): libraryVersion is NonNullable<typeof libraryVersion> =>
-          libraryVersion !== null,
-      ),
+    libraryVersions: libraryNames.flatMap((name) => {
+      const obs = firstObsByLibrary.get(name);
+      return obs !== undefined
+        ? [{ key: name, version: obs.libraryVersion, gcExposed: obs.gcExposed }]
+        : [];
+    }),
   };
 }
 
@@ -257,9 +266,27 @@ export function buildEmbeddedPayload(
   const libraryNames = options.libraries.map((lib) => lib.name);
   const primaryName = options.libraries.find((lib) => lib.isPrimary)?.name ?? libraryNames[0] ?? "";
 
+  if (libraryNames.length === 0) {
+    return {
+      title: options.title ?? "Benchmark history",
+      primaryLibraryKey: "",
+      libraries: [],
+      runs: [],
+      scenarios: [],
+      generatedAtIso: new Date().toISOString(),
+      ...(benchResultsWarning !== undefined && { benchResultsWarning }),
+    };
+  }
+
   const runs: Array<RunData> = [];
   for (const raw of rawRuns) {
-    const observations = parseJsonlLines(raw.lines);
+    const { observations, skippedCount } = parseJsonlLines(raw.lines);
+    if (skippedCount > 0) {
+      console.warn(
+        `[bench-payload] ${raw.folderName}: skipped ${skippedCount} malformed JSONL line(s)`,
+      );
+    }
+
     const reports = new Map<string, LibraryReport>();
     const spreadsPerLib = new Map<string, Map<string, SpreadResult | null>>();
 
@@ -290,12 +317,15 @@ export function buildEmbeddedPayload(
     }
   }
 
+  // Collect scenario metadata in forward order so the oldest run's values take precedence.
   const scenarioGroup = new Map<string, string>();
   const scenarioWhat = new Map<string, string>();
-  for (const run of [...runs].reverse()) {
+  for (const run of runs) {
     for (const [, report] of run.reports) {
       for (const scenario of report.scenarios) {
-        scenarioGroup.set(scenario.id, scenario.group);
+        if (!scenarioGroup.has(scenario.id)) {
+          scenarioGroup.set(scenario.id, scenario.group);
+        }
         if (scenario.what.length > 0 && !scenarioWhat.has(scenario.id)) {
           scenarioWhat.set(scenario.id, scenario.what);
         }
@@ -311,22 +341,40 @@ export function buildEmbeddedPayload(
 
   const embeddedRuns: Array<EmbeddedRun> = runs.map((run) => run.meta);
 
+  // Pre-allocate series accumulators keyed by scenarioId → libName.
+  const seriesAccum = new Map<string, Map<string, LibSeriesAccum>>();
+  for (const scenarioId of scenarioIds) {
+    const perLib = new Map<string, LibSeriesAccum>();
+    for (const libName of libraryNames) {
+      perLib.set(libName, { hz: [], p25: [], p75: [], iqrFraction: [] });
+    }
+    seriesAccum.set(scenarioId, perLib);
+  }
+
+  // Fill arrays in (run → lib → scenario) order so the outer Map lookups for
+  // scenarioIndices and spreadsPerLib are amortised across all scenarios per run.
+  for (const run of runs) {
+    for (const libName of libraryNames) {
+      const libIndex = run.scenarioIndices.get(libName);
+      const libSpreads = run.spreadsPerLib.get(libName);
+      for (const scenarioId of scenarioIds) {
+        const accum = seriesAccum.get(scenarioId)!.get(libName)!;
+        accum.hz.push(libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null);
+        accum.iqrFraction.push(
+          libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null,
+        );
+        const spread = libSpreads?.get(scenarioId) ?? null;
+        accum.p25.push(spread !== null && spread.p25Hz > 0 ? spread.p25Hz : null);
+        accum.p75.push(spread !== null && spread.p75Hz > 0 ? spread.p75Hz : null);
+      }
+    }
+  }
+
   const scenarios: Array<EmbeddedScenarioSeries> = scenarioIds.map((scenarioId) => {
     const libraryData: Record<string, EmbeddedLibraryRunData> = {};
+    const perLib = seriesAccum.get(scenarioId)!;
     for (const libName of libraryNames) {
-      const hz: Array<number | null> = [];
-      const p25: Array<number | null> = [];
-      const p75: Array<number | null> = [];
-      const iqrFraction: Array<number | null> = [];
-      for (const run of runs) {
-        const libIndex = run.scenarioIndices.get(libName);
-        hz.push(libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null);
-        iqrFraction.push(libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null);
-        const spread = run.spreadsPerLib.get(libName)?.get(scenarioId) ?? null;
-        p25.push(spread !== null && spread.p25Hz > 0 ? spread.p25Hz : null);
-        p75.push(spread !== null && spread.p75Hz > 0 ? spread.p75Hz : null);
-      }
-      libraryData[libName] = { hz, p25, p75, iqrFraction };
+      libraryData[libName] = perLib.get(libName)! as EmbeddedLibraryRunData;
     }
     return {
       id: scenarioId,
@@ -349,6 +397,6 @@ export function buildEmbeddedPayload(
     runs: embeddedRuns,
     scenarios,
     generatedAtIso: new Date().toISOString(),
-    ...(benchResultsWarning !== undefined ? { benchResultsWarning } : {}),
+    ...(benchResultsWarning !== undefined && { benchResultsWarning }),
   };
 }
