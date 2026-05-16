@@ -1,16 +1,16 @@
 import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Chart } from "chart.js";
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/server-types";
-import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/client/lib/colors";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
+import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import {
   ALL_TOOLBAR_DISABLED,
   type ChartToolbarDisabled,
   categoryXScaleWindow,
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
-} from "#/client/lib/chart-category-view";
-import { escHtml, formatLocal, isMacLikePlatform, spreadTierLabel } from "#/client/lib/format";
-import { ratioFrom } from "#/client/lib/metrics";
+} from "#/app/lib/chart-view";
+import { escHtml, formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
+import { ratioFrom } from "#/app/lib/metrics";
 
 /**
  * @since 0.3.16-canary.1

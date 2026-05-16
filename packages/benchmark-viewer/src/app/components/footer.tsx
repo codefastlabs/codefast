@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { formatLocal } from "#/client/lib/format";
+import { formatLocal } from "#/app/lib/format";
 
 /**
  * Formats `generatedAtIso` with the viewer's locale/TZ after mount only,

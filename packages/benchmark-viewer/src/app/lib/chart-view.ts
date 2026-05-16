@@ -4,7 +4,7 @@
  */
 import type { Chart } from "chart.js";
 
-import { CHART_CATEGORY_VIEW_EPS, CHART_MIN_X_SPAN_FOR_ZOOM_IN } from "#/client/lib/constants";
+import { CHART_CATEGORY_VIEW_EPS, CHART_MIN_X_SPAN_FOR_ZOOM_IN } from "#/app/lib/constants";
 
 /**
  * @since 0.3.16-canary.1

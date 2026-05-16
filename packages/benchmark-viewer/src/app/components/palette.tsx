@@ -1,6 +1,6 @@
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { isMacLikePlatform } from "#/client/lib/format";
+import { isMacLikePlatform } from "#/app/lib/format";
 
 interface PaletteAction {
   id: string;

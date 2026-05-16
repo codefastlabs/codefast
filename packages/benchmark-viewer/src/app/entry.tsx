@@ -3,8 +3,8 @@ import { Chart, registerables } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
-import { App } from "#/client/components/app";
-import type { EmbeddedViewerPayload } from "#/server-types";
+import { App } from "#/app/components/app";
+import type { EmbeddedViewerPayload } from "#/types";
 
 Chart.register(...registerables, zoomPlugin);
 

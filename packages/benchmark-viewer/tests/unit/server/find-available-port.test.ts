@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { findAvailablePort } from "#/find-available-port";
+import { findAvailablePort } from "#/server/port";
 
 function bindLoopback(
   port = 0,

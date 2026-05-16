@@ -1,3 +1,6 @@
+import { readdirSync, readFileSync } from "node:fs";
+import type { Dirent } from "node:fs";
+import { join } from "node:path";
 import type {
   ScenarioTrialResult,
   TrialPayload,
@@ -10,6 +13,7 @@ import {
 import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
+import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
 import type {
   BenchServerOptions,
   EmbeddedLibraryMeta,
@@ -17,8 +21,74 @@ import type {
   EmbeddedRun,
   EmbeddedScenarioSeries,
   EmbeddedViewerPayload,
-} from "#/server-types";
-import type { RunLines } from "#/read-runs";
+} from "#/types";
+
+// ---------------------------------------------------------------------------
+// Run scanning
+// ---------------------------------------------------------------------------
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export interface RunLines {
+  readonly folderName: string;
+  readonly lines: ReadonlyArray<string>;
+}
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export interface ListRawRunsResult {
+  readonly runs: ReadonlyArray<RunLines>;
+  readonly warning: string | undefined;
+}
+
+function readRunDirectory(runDirPath: string, folderName: string): RunLines | undefined {
+  const jsonlPath = join(runDirPath, OBSERVATIONS_FILE_NAME);
+  let content: string;
+  try {
+    content = readFileSync(jsonlPath, "utf8");
+  } catch {
+    return undefined;
+  }
+  const lines = content.split("\n").filter((line) => line.trim().length > 0);
+  if (lines.length === 0) {
+    return undefined;
+  }
+  return { folderName, lines };
+}
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export function listRawRuns(benchResultsDir: string): ListRawRunsResult {
+  let entries: Array<Dirent<string>>;
+  try {
+    entries = readdirSync(benchResultsDir, { withFileTypes: true });
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    return {
+      runs: [],
+      warning: `Could not read bench results directory (${benchResultsDir}): ${detail}`,
+    };
+  }
+  const runs: Array<RunLines> = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    const run = readRunDirectory(join(benchResultsDir, entry.name), entry.name);
+    if (run !== undefined) {
+      runs.push(run);
+    }
+  }
+  runs.sort((left, right) => left.folderName.localeCompare(right.folderName));
+  return { runs, warning: undefined };
+}
+
+// ---------------------------------------------------------------------------
+// Payload building
+// ---------------------------------------------------------------------------
 
 interface SpreadResult {
   p25Hz: number;
@@ -196,7 +266,6 @@ export function buildEmbeddedPayload(
     }
   }
 
-  // Collect all scenario IDs and metadata across all runs.
   const scenarioGroup = new Map<string, string>();
   const scenarioWhat = new Map<string, string>();
   for (const run of [...runs].reverse()) {

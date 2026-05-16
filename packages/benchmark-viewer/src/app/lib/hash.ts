@@ -1,4 +1,4 @@
-import type { EmbeddedViewerPayload } from "#/server-types";
+import type { EmbeddedViewerPayload } from "#/types";
 
 /**
  * @since 0.3.16-canary.1

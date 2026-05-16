@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { listRawRuns } from "#/read-runs";
+import { listRawRuns } from "#/server/payload";
 
 describe("listRawRuns", () => {
   it("returns a warning when the directory does not exist", () => {

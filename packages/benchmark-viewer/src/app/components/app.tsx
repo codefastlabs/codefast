@@ -1,23 +1,23 @@
 import { type RefObject, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
-import type { ChartInstance } from "#/client/components/chart-panel";
-import { ChartPanel } from "#/client/components/chart-panel";
-import { CommandPalette } from "#/client/components/command-palette";
-import { FindPanel } from "#/client/components/find-panel";
-import { MetricsPanel } from "#/client/components/metrics-panel";
-import { ClientPageOpenedClock, ClientSnapshotClock } from "#/client/components/page-footer-clocks";
-import { useBenchPayload } from "#/client/hooks/use-bench-payload";
-import { useHashSync } from "#/client/hooks/use-hash-sync";
-import { useViewState } from "#/client/hooks/use-view-state";
-import { PALETTE, type PaletteEntry } from "#/client/lib/colors";
-import { formatLocal, searchNorm } from "#/client/lib/format";
-import { buildHash, type ViewState } from "#/client/lib/hash";
-import { buildMetrics, buildSnapshotRow } from "#/client/lib/metrics";
+import type { ChartInstance } from "#/app/components/chart";
+import { ChartPanel } from "#/app/components/chart";
+import { CommandPalette } from "#/app/components/palette";
+import { FindPanel } from "#/app/components/finder";
+import { MetricsPanel } from "#/app/components/metrics";
+import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
+import { useBenchPayload } from "#/app/hooks/use-payload";
+import { useHashSync } from "#/app/hooks/use-hash";
+import { useViewState } from "#/app/hooks/use-view";
+import { PALETTE, type PaletteEntry } from "#/app/lib/colors";
+import { formatLocal, searchNorm } from "#/app/lib/format";
+import { buildHash, type ViewState } from "#/app/lib/hash";
+import { buildMetrics, buildSnapshotRow } from "#/app/lib/metrics";
 import type {
   EmbeddedLibraryMeta,
   EmbeddedRun,
   EmbeddedScenarioSeries,
   EmbeddedViewerPayload,
-} from "#/server-types";
+} from "#/types";
 
 // ─── App ─────────────────────────────────────────────────────────────────────
 
