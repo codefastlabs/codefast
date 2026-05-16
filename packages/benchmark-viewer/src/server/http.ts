@@ -95,7 +95,7 @@ function handleRoot(state: ServerState, req: IncomingMessage, res: ServerRespons
     }
     res.setHeader("Cache-Control", NO_CACHE);
     res.setHeader("ETag", etag);
-    renderDocument(payload, rawJson.replace(/</g, "\\u003c"), res, req);
+    renderDocument(req, res, payload, rawJson);
   } catch (err) {
     res.writeHead(500, { "Content-Type": "text/plain" });
     res.end(String(err));
