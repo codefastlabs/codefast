@@ -1,16 +1,7 @@
 import type { PaletteEntry } from "#/app/lib/colors";
 import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
-import { escHtml, fmtHz, fmtPctChange } from "#/app/lib/format";
+import { fmtHz, fmtPctChange } from "#/app/lib/format";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
-
-const META_MONO = "font-mono tracking-[-0.02em] tabular-nums";
-const META_FINE = "text-[0.6875rem] leading-[1.45] opacity-90";
-const METRIC_FIG = "text-bh-ink-strong font-mono tracking-[-0.02em] tabular-nums";
-const METRIC_IQR = "mt-[0.28rem] flex flex-col gap-[0.42rem]";
-const METRIC_ROW =
-  "flex items-baseline justify-between gap-3 text-[0.72rem] leading-[1.35] tracking-[-0.012em]";
-const METRIC_ROW_NAME = "text-bh-label min-w-0";
-const METRIC_ROW_FIG = "text-bh-ink-mid shrink-0 font-mono tracking-[-0.02em] tabular-nums";
 
 /**
  * @since 0.3.16-canary.1
@@ -69,12 +60,25 @@ function maxIqrFraction(
 }
 
 /**
+ * Discriminated union describing one line inside a MetricCard.
+ * Components in the presentation layer switch on `type` to render each variant.
+ *
+ * @since 0.3.16-canary.1
+ */
+export type MetaItem =
+  | { type: "range"; minHz: number; maxHz: number }
+  | { type: "text"; value: string }
+  | { type: "fine-text"; value: string }
+  | { type: "ratio-paired"; value: string }
+  | { type: "iqr-table"; rows: Array<{ libName: string; iqrLabel: string }> };
+
+/**
  * @since 0.3.16-canary.1
  */
 export interface MetricCardProps {
   label: string;
   value: string;
-  meta: Array<string>;
+  meta: Array<MetaItem>;
   accentColor?: string;
   isRatio?: boolean;
 }
@@ -98,20 +102,32 @@ export interface SnapshotRow {
   ratioCells: Array<string>;
 }
 
+export interface BuildMetricsOptions {
+  scenario: EmbeddedScenarioSeries;
+  runIndices: Array<number>;
+  orderedLibraries: Array<EmbeddedLibraryMeta>;
+  paletteMap: Record<string, PaletteEntry>;
+  primaryLib: EmbeddedLibraryMeta | undefined;
+  compareLibs: Array<EmbeddedLibraryMeta>;
+  baseRunIndices: Array<number>;
+  envKey: string;
+  runWindow: string;
+}
+
 /**
  * @since 0.3.16-canary.1
  */
-export function buildMetrics(
-  scenario: EmbeddedScenarioSeries,
-  runIndices: Array<number>,
-  orderedLibraries: Array<EmbeddedLibraryMeta>,
-  paletteMap: Record<string, PaletteEntry>,
-  primaryLib: EmbeddedLibraryMeta | undefined,
-  compareLibs: Array<EmbeddedLibraryMeta>,
-  baseRunIndices: Array<number>,
-  envKey: string,
-  runWindow: string,
-): MetricsResult {
+export function buildMetrics({
+  scenario,
+  runIndices,
+  orderedLibraries,
+  paletteMap,
+  primaryLib,
+  compareLibs,
+  baseRunIndices,
+  envKey,
+  runWindow,
+}: BuildMetricsOptions): MetricsResult {
   const cards: Array<MetricCardProps> = [];
   let worstIqr = 0;
 
@@ -149,15 +165,16 @@ export function buildMetrics(
 
     worstIqr = Math.max(worstIqr, maxIqrFraction(libData.iqrFraction, runIndices));
 
-    const meta: Array<string> = [];
+    const meta: Array<MetaItem> = [];
     if (minHz !== null && maxHz !== null) {
-      meta.push(`<span class="${META_MONO}">Range ${fmtHz(minHz)} … ${fmtHz(maxHz)}</span>`);
+      meta.push({ type: "range", minHz, maxHz });
     }
-    meta.push(`Δ ${trend}`);
+    meta.push({ type: "text", value: `Δ ${trend}` });
     if (runsWithData < runsPlotted) {
-      meta.push(
-        `<span class="${META_FINE}">${runsWithData} of ${runsPlotted} plotted runs have median hz/op</span>`,
-      );
+      meta.push({
+        type: "fine-text",
+        value: `${runsWithData} of ${runsPlotted} plotted runs have median hz/op`,
+      });
     }
 
     cards.push({
@@ -191,13 +208,15 @@ export function buildMetrics(
         ratioMedians !== null &&
         Math.abs(medianOfRunRatios - ratioMedians) / ratioMedians > 0.002;
 
-      const meta = [
-        "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
+      const meta: Array<MetaItem> = [
+        {
+          type: "text",
+          value:
+            "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
+        },
       ];
-      if (showPaired) {
-        meta.push(
-          `Median of per-run ratios · <span class="${METRIC_FIG}">${medianOfRunRatios!.toFixed(3)}×</span>`,
-        );
+      if (showPaired && medianOfRunRatios !== null) {
+        meta.push({ type: "ratio-paired", value: medianOfRunRatios.toFixed(3) });
       }
 
       cards.push({
@@ -212,20 +231,20 @@ export function buildMetrics(
   // IQR card
   const iqrRows = orderedLibraries.map((lib) => {
     const libData = scenario.libraries[lib.key];
-    let iqrPercentLabel = "—";
+    let iqrLabel = "—";
     if (libData) {
       const maxIqr = maxIqrFraction(libData.iqrFraction, runIndices);
       if (maxIqr > 0) {
-        iqrPercentLabel = `${(maxIqr * 100).toFixed(1)}%`;
+        iqrLabel = `${(maxIqr * 100).toFixed(1)}%`;
       }
     }
-    return `<div class="${METRIC_ROW}"><span class="${METRIC_ROW_NAME}">${escHtml(lib.displayName)}</span><span class="${METRIC_ROW_FIG}">${iqrPercentLabel}</span></div>`;
+    return { libName: lib.displayName, iqrLabel };
   });
 
   cards.push({
     label: "Worst IQR÷median · per plotted run",
     value: "",
-    meta: [`<div class="${METRIC_IQR}">${iqrRows.join("")}</div>`],
+    meta: [{ type: "iqr-table", rows: iqrRows }],
   });
 
   const footPieces: Array<string> = [

@@ -86,7 +86,9 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     downloadLink.href = (
       chart as ChartInstance & { toBase64Image: (type: string, quality: number) => string }
     ).toBase64Image("image/png", 1);
+    document.body.appendChild(downloadLink);
     downloadLink.click();
+    document.body.removeChild(downloadLink);
     showToast(`Saved ${filename}`);
   }
 
