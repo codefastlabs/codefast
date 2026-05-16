@@ -26,7 +26,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
   const { view, patchView } = useViewState(initialPayload);
   const { toastMsg, showToast } = useToast();
 
-  const { payload, loadError, isReloading, loadData } = useBenchPayload({
+  const { payload, loadError, isReloading, loadData, loadOlderRuns } = useBenchPayload({
     initialPayload,
     onReloadError: showToast,
   });
@@ -175,8 +175,10 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         <ChartControlPanel
           envKey={view.envKey}
+          hasMore={payload?.hasMore ?? false}
           isReloading={isReloading}
           onEnvChange={(envKey) => patchView({ envKey })}
+          onLoadOlderRuns={loadOlderRuns}
           onReload={() => loadData(true)}
           onRunWindowChange={(runWindow) => patchView({ runWindow })}
           onScenarioChange={(scenarioId) => patchView({ scenarioId })}

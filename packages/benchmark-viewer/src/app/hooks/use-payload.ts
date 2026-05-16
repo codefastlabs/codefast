@@ -1,4 +1,5 @@
 import { useCallback, useState, useTransition } from "react";
+import { DEFAULT_MAX_RUNS } from "#/server/payload";
 import type { EmbeddedViewerPayload } from "#/types";
 
 interface BenchPayloadOptions {
@@ -6,26 +7,31 @@ interface BenchPayloadOptions {
   onReloadError: (message: string) => void;
 }
 
+async function fetchPayload(limit: number): Promise<EmbeddedViewerPayload> {
+  const url = `/api/payload?limit=${String(limit)}`;
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`HTTP ${String(response.status)}`);
+  }
+  return response.json() as Promise<EmbeddedViewerPayload>;
+}
+
 export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadOptions) {
   const [payload, setPayload] = useState<EmbeddedViewerPayload | null>(initialPayload ?? null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [activeLimit, setActiveLimit] = useState(
+    initialPayload?.effectiveLimit ?? DEFAULT_MAX_RUNS,
+  );
 
-  // React 19 async transitions: startReload accepts an async action and keeps
-  // isReloading true for the entire duration, including async work (awaits).
-  // This replaces the previous manual setIsReloading(true/false) pattern and
-  // the separate isReloading state variable.
   const [isReloading, startReload] = useTransition();
 
   const loadData = useCallback(
-    (isReload = false) => {
+    (isReload = false, limit = activeLimit) => {
       startReload(async () => {
         try {
-          const response = await fetch("/api/payload", { cache: "no-store" });
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-          const embeddedPayload = (await response.json()) as EmbeddedViewerPayload;
-          setPayload(embeddedPayload);
+          const data = await fetchPayload(limit);
+          setPayload(data);
+          setActiveLimit(data.effectiveLimit);
           setLoadError(null);
         } catch (err) {
           if (isReload) {
@@ -36,8 +42,12 @@ export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadO
         }
       });
     },
-    [onReloadError],
+    [activeLimit, onReloadError],
   );
 
-  return { payload, loadError, isReloading, loadData };
+  const loadOlderRuns = useCallback(() => {
+    loadData(false, activeLimit * 2);
+  }, [loadData, activeLimit]);
+
+  return { payload, loadError, isReloading, loadData, loadOlderRuns };
 }

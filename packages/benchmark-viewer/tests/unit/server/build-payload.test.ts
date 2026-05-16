@@ -56,7 +56,7 @@ describe("buildEmbeddedPayload", () => {
 
     const rawRuns: Array<RunLines> = [{ folderName: "run-1", lines }];
 
-    const payload = buildEmbeddedPayload(rawRuns, options);
+    const payload = buildEmbeddedPayload(rawRuns, options, false, 200);
     expect(payload.runs).toHaveLength(1);
     expect(payload.runs[0]?.cpuModel).toBe("From-B");
   });
@@ -71,7 +71,7 @@ describe("buildEmbeddedPayload", () => {
 
     const rawRuns: Array<RunLines> = [{ folderName: "run-1", lines }];
 
-    const payload = buildEmbeddedPayload(rawRuns, options);
+    const payload = buildEmbeddedPayload(rawRuns, options, false, 200);
     expect(payload.runs).toHaveLength(1);
     expect(payload.scenarios.length).toBeGreaterThan(0);
   });
@@ -81,7 +81,17 @@ describe("buildEmbeddedPayload", () => {
       benchResultsDir: "/tmp",
       libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
     };
-    const payload = buildEmbeddedPayload([], options, "could not read dir");
+    const payload = buildEmbeddedPayload([], options, false, 200, "could not read dir");
     expect(payload.benchResultsWarning).toBe("could not read dir");
+  });
+
+  it("sets hasMore and effectiveLimit from arguments", () => {
+    const options: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+    };
+    const payload = buildEmbeddedPayload([], options, true, 50);
+    expect(payload.hasMore).toBe(true);
+    expect(payload.effectiveLimit).toBe(50);
   });
 });

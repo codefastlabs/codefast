@@ -66,5 +66,5 @@ export async function startBenchServer({
 
   console.log(`Bench history server: http://localhost:${String(port)}`);
   console.log(`  bench-results: ${serverOptions.benchResultsDir}`);
-  console.log("  Data is read fresh on every page load. Ctrl+C to stop.");
+  console.log("  Payload cached in memory; invalidated automatically on new run. Ctrl+C to stop.");
 }

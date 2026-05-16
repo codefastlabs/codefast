@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { readdir, readFile } from "node:fs/promises";
 import type { Dirent } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -26,6 +26,8 @@ import type {
   EmbeddedViewerPayload,
 } from "#/types";
 
+export const DEFAULT_MAX_RUNS = 200;
+
 // ---------------------------------------------------------------------------
 // Run scanning
 // ---------------------------------------------------------------------------
@@ -43,14 +45,19 @@ export interface RunLines {
  */
 export interface ListRawRunsResult {
   readonly runs: ReadonlyArray<RunLines>;
+  /** True when older directories exist beyond the maxRuns cap. */
+  readonly hasMore: boolean;
   readonly warning: string | undefined;
 }
 
-function readRunDirectory(runDirPath: string, folderName: string): RunLines | undefined {
+async function readRunDirectory(
+  runDirPath: string,
+  folderName: string,
+): Promise<RunLines | undefined> {
   const jsonlPath = join(runDirPath, OBSERVATIONS_FILE_NAME);
   let content: string;
   try {
-    content = readFileSync(jsonlPath, "utf8");
+    content = await readFile(jsonlPath, "utf8");
   } catch {
     return undefined;
   }
@@ -64,29 +71,38 @@ function readRunDirectory(runDirPath: string, folderName: string): RunLines | un
 /**
  * @since 0.3.16-canary.0
  */
-export function listRawRuns(benchResultsDir: string): ListRawRunsResult {
+export async function listRawRuns(
+  benchResultsDir: string,
+  maxRuns?: number,
+): Promise<ListRawRunsResult> {
   let entries: Array<Dirent<string>>;
   try {
-    entries = readdirSync(benchResultsDir, { withFileTypes: true });
+    entries = await readdir(benchResultsDir, { withFileTypes: true });
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     return {
       runs: [],
+      hasMore: false,
       warning: `Could not read bench results directory (${benchResultsDir}): ${detail}`,
     };
   }
-  const runs: Array<RunLines> = [];
-  for (const entry of entries) {
-    if (!entry.isDirectory()) {
-      continue;
-    }
-    const run = readRunDirectory(join(benchResultsDir, entry.name), entry.name);
-    if (run !== undefined) {
-      runs.push(run);
-    }
-  }
-  runs.sort((left, right) => left.folderName.localeCompare(right.folderName));
-  return { runs, warning: undefined };
+
+  const dirNames = entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort((left, right) => left.localeCompare(right));
+
+  const totalDirs = dirNames.length;
+  const cap = maxRuns ?? DEFAULT_MAX_RUNS;
+  const hasMore = totalDirs > cap;
+  const toRead = hasMore ? dirNames.slice(-cap) : dirNames;
+
+  const results = await Promise.all(
+    toRead.map((name) => readRunDirectory(join(benchResultsDir, name), name)),
+  );
+
+  const runs = results.filter((run): run is RunLines => run !== undefined);
+  return { runs, hasMore, warning: undefined };
 }
 
 // ---------------------------------------------------------------------------
@@ -261,6 +277,8 @@ function hzIqrFractionLookup(
 export function buildEmbeddedPayload(
   rawRuns: ReadonlyArray<RunLines>,
   options: BenchServerOptions,
+  hasMore: boolean,
+  effectiveLimit: number,
   benchResultsWarning?: string,
 ): EmbeddedViewerPayload {
   const libraryNames = options.libraries.map((lib) => lib.name);
@@ -274,6 +292,8 @@ export function buildEmbeddedPayload(
       runs: [],
       scenarios: [],
       generatedAtIso: new Date().toISOString(),
+      effectiveLimit,
+      hasMore,
       ...(benchResultsWarning !== undefined && { benchResultsWarning }),
     };
   }
@@ -397,6 +417,8 @@ export function buildEmbeddedPayload(
     runs: embeddedRuns,
     scenarios,
     generatedAtIso: new Date().toISOString(),
+    effectiveLimit,
+    hasMore,
     ...(benchResultsWarning !== undefined && { benchResultsWarning }),
   };
 }
