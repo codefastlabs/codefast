@@ -105,13 +105,13 @@ export function CommandPalette({
 
   function moveHighlight(delta: number) {
     setHighlightedIndex((prev) => {
-      const n = filtered.length;
-      if (n === 0) {
+      const actionCount = filtered.length;
+      if (actionCount === 0) {
         return -1;
       }
       const cur = prev < 0 ? 0 : prev;
       let next = cur + delta;
-      next = ((next % n) + n) % n;
+      next = ((next % actionCount) + actionCount) % actionCount;
       return next;
     });
   }

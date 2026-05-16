@@ -108,15 +108,15 @@ interface RunData {
 }
 
 function parseJsonlLines(lines: ReadonlyArray<string>): Array<JsonlBenchObservationRow> {
-  const result: Array<JsonlBenchObservationRow> = [];
+  const observations: Array<JsonlBenchObservationRow> = [];
   for (const line of lines) {
     try {
-      result.push(JSON.parse(line) as JsonlBenchObservationRow);
+      observations.push(JSON.parse(line) as JsonlBenchObservationRow);
     } catch {
       // skip malformed lines
     }
   }
-  return result;
+  return observations;
 }
 
 function buildLibraryRunData(
@@ -133,12 +133,12 @@ function buildLibraryRunData(
   const trialHzByScenario = new Map<string, Map<number, number>>();
 
   for (const obs of libObs) {
-    const result = jsonlBenchObservationRowToScenarioTrialResult(obs);
-    const list = byTrialIndex.get(obs.trialIndex);
-    if (list === undefined) {
-      byTrialIndex.set(obs.trialIndex, [result]);
+    const trialResult = jsonlBenchObservationRowToScenarioTrialResult(obs);
+    const trialScenarios = byTrialIndex.get(obs.trialIndex);
+    if (trialScenarios === undefined) {
+      byTrialIndex.set(obs.trialIndex, [trialResult]);
     } else {
-      list.push(result);
+      trialScenarios.push(trialResult);
     }
     if (obs.samples > 0) {
       let scenarioTrials = trialHzByScenario.get(obs.scenarioId);
@@ -218,17 +218,19 @@ function extractRunMeta(
 }
 
 function hzLookup(report: LibraryReport, scenarioId: string): number | null {
-  const row = report.scenarios.find((s) => s.id === scenarioId);
-  return row !== undefined && row.hzPerOpMedian > 0 ? row.hzPerOpMedian : null;
+  const scenarioRow = report.scenarios.find((scenario) => scenario.id === scenarioId);
+  return scenarioRow !== undefined && scenarioRow.hzPerOpMedian > 0
+    ? scenarioRow.hzPerOpMedian
+    : null;
 }
 
 function hzIqrFractionLookup(report: LibraryReport, scenarioId: string): number | null {
-  const row = report.scenarios.find((s) => s.id === scenarioId);
-  if (row === undefined || row.hzPerOpMedian <= 0) {
+  const scenarioRow = report.scenarios.find((scenario) => scenario.id === scenarioId);
+  if (scenarioRow === undefined || scenarioRow.hzPerOpMedian <= 0) {
     return null;
   }
-  const f = row.hzPerOpIqrFraction;
-  return Number.isFinite(f) && f > 0 ? f : null;
+  const iqrFraction = scenarioRow.hzPerOpIqrFraction;
+  return Number.isFinite(iqrFraction) && iqrFraction > 0 ? iqrFraction : null;
 }
 
 /**
@@ -270,10 +272,10 @@ export function buildEmbeddedPayload(
   const scenarioWhat = new Map<string, string>();
   for (const run of [...runs].reverse()) {
     for (const [, report] of run.reports) {
-      for (const s of report.scenarios) {
-        scenarioGroup.set(s.id, s.group);
-        if (s.what.length > 0 && !scenarioWhat.has(s.id)) {
-          scenarioWhat.set(s.id, s.what);
+      for (const scenario of report.scenarios) {
+        scenarioGroup.set(scenario.id, scenario.group);
+        if (scenario.what.length > 0 && !scenarioWhat.has(scenario.id)) {
+          scenarioWhat.set(scenario.id, scenario.what);
         }
       }
     }

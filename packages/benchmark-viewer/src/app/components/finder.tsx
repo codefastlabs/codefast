@@ -46,9 +46,9 @@ export function FindPanel({
             value={group}
           >
             <option value="">All groups</option>
-            {uniqueGroups.map((g) => (
-              <option key={g} value={g}>
-                {g}
+            {uniqueGroups.map((groupName) => (
+              <option key={groupName} value={groupName}>
+                {groupName}
               </option>
             ))}
           </select>

@@ -5,11 +5,11 @@ export function formatLocal(timestampIso: string | undefined, fallbackFolder: st
   if (!timestampIso) {
     return fallbackFolder;
   }
-  const d = new Date(timestampIso);
-  if (Number.isNaN(d.getTime())) {
+  const runDate = new Date(timestampIso);
+  if (Number.isNaN(runDate.getTime())) {
     return fallbackFolder;
   }
-  return d.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
+  return runDate.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
 }
 
 /**

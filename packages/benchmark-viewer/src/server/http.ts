@@ -30,8 +30,8 @@ interface ServerState {
   options: BenchServerOptions;
 }
 
-function computeEtag(data: Buffer | string): string {
-  return `"${createHash("sha1").update(data).digest("hex").slice(0, 16)}"`;
+function computeEtag(content: Buffer | string): string {
+  return `"${createHash("sha1").update(content).digest("hex").slice(0, 16)}"`;
 }
 
 function loadAsset(filePath: string, contentType: string, cacheControl: string): CachedAsset {

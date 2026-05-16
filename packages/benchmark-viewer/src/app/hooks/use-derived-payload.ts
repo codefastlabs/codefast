@@ -56,29 +56,29 @@ export function useDerivedPayload({
     const ordered: Array<EmbeddedLibraryMeta> = primary
       ? [primary, ...compares]
       : [...payload.libraries];
-    const map: Record<string, PaletteEntry> = {};
-    ordered.forEach((lib, i) => {
-      map[lib.key] = PALETTE[i % PALETTE.length]!;
+    const paletteMap: Record<string, PaletteEntry> = {};
+    ordered.forEach((lib, paletteIndex) => {
+      paletteMap[lib.key] = PALETTE[paletteIndex % PALETTE.length]!;
     });
-    return { orderedLibraries: ordered, paletteMap: map };
+    return { orderedLibraries: ordered, paletteMap };
   }, [payload]);
 
   const visibleScenarios = useMemo<Array<EmbeddedScenarioSeries>>(() => {
     if (!payload) {
       return [];
     }
-    const q = searchNorm(view.search).trim();
-    return payload.scenarios.filter((s) => {
-      if (view.group && s.group !== view.group) {
+    const normalizedQuery = searchNorm(view.search).trim();
+    return payload.scenarios.filter((scenario) => {
+      if (view.group && scenario.group !== view.group) {
         return false;
       }
-      if (!q) {
+      if (!normalizedQuery) {
         return true;
       }
       return (
-        searchNorm(s.id).includes(q) ||
-        searchNorm(s.group).includes(q) ||
-        searchNorm(s.what).includes(q)
+        searchNorm(scenario.id).includes(normalizedQuery) ||
+        searchNorm(scenario.group).includes(normalizedQuery) ||
+        searchNorm(scenario.what).includes(normalizedQuery)
       );
     });
   }, [payload, view.group, view.search]);
@@ -102,34 +102,38 @@ export function useDerivedPayload({
     if (view.runWindow === "all" || baseRunIndices.length === 0) {
       return baseRunIndices;
     }
-    const n = parseInt(view.runWindow, 10);
-    if (!Number.isFinite(n) || n < 1) {
+    const runWindowLimit = parseInt(view.runWindow, 10);
+    if (!Number.isFinite(runWindowLimit) || runWindowLimit < 1) {
       return baseRunIndices;
     }
-    return baseRunIndices.length <= n
+    return baseRunIndices.length <= runWindowLimit
       ? baseRunIndices
-      : baseRunIndices.slice(baseRunIndices.length - n);
+      : baseRunIndices.slice(baseRunIndices.length - runWindowLimit);
   }, [baseRunIndices, view.runWindow]);
 
   const currentScenario = useMemo<EmbeddedScenarioSeries | null>(() => {
     if (!payload) {
       return null;
     }
-    return payload.scenarios.find((s) => s.id === view.scenarioId) ?? null;
+    return payload.scenarios.find((scenario) => scenario.id === view.scenarioId) ?? null;
   }, [payload, view.scenarioId]);
 
   const uniqueEnvKeys = useMemo<Array<string>>(() => {
     if (!payload) {
       return [];
     }
-    return [...new Set(payload.runs.map((r) => r.envKey))].sort((a, b) => a.localeCompare(b));
+    return [...new Set(payload.runs.map((run) => run.envKey))].sort((left, right) =>
+      left.localeCompare(right),
+    );
   }, [payload]);
 
   const uniqueGroups = useMemo<Array<string>>(() => {
     if (!payload) {
       return [];
     }
-    return [...new Set(payload.scenarios.map((s) => s.group))].sort((a, b) => a.localeCompare(b));
+    return [...new Set(payload.scenarios.map((scenario) => scenario.group))].sort((a, b) =>
+      a.localeCompare(b),
+    );
   }, [payload]);
 
   const primaryLib = useMemo(
@@ -142,7 +146,7 @@ export function useDerivedPayload({
     [orderedLibraries],
   );
 
-  const scenarioIndex = visibleScenarios.findIndex((s) => s.id === view.scenarioId);
+  const scenarioIndex = visibleScenarios.findIndex((scenario) => scenario.id === view.scenarioId);
   const showMultiEnvBanner = uniqueEnvKeys.length > 1 && !view.envKey;
 
   // Auto-select first visible scenario when filters change.
@@ -150,7 +154,7 @@ export function useDerivedPayload({
     if (!payload || visibleScenarios.length === 0) {
       return;
     }
-    const isVisible = visibleScenarios.some((s) => s.id === view.scenarioId);
+    const isVisible = visibleScenarios.some((scenario) => scenario.id === view.scenarioId);
     if (!isVisible) {
       patchView({ scenarioId: visibleScenarios[0]?.id ?? "" });
     }
@@ -188,8 +192,8 @@ export function useDerivedPayload({
       return [];
     }
     const lastIx = payload.runs.length - 1;
-    return payload.scenarios.map((s) =>
-      buildSnapshotRow(s, lastIx, orderedLibraries, paletteMap, primaryLib, compareLibs),
+    return payload.scenarios.map((scenario) =>
+      buildSnapshotRow(scenario, lastIx, orderedLibraries, paletteMap, primaryLib, compareLibs),
     );
   }, [payload, orderedLibraries, paletteMap, primaryLib, compareLibs]);
 

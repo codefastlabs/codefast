@@ -56,14 +56,14 @@ function buildChartSubtitle(
   if (!scenario) {
     return "No scenario available for these filters.";
   }
-  let sub = `[${scenario.group}] ${scenario.id} · ${runIndices.length} plotted point(s)`;
+  let subtitle = `[${scenario.group}] ${scenario.id} · ${runIndices.length} plotted point(s)`;
   if (envKey) {
-    sub += " · environment filter on";
+    subtitle += " · environment filter on";
   }
   if (baseRunIndices.length > runIndices.length) {
-    sub += ` · last ${runIndices.length} of ${baseRunIndices.length} matching runs`;
+    subtitle += ` · last ${runIndices.length} of ${baseRunIndices.length} matching runs`;
   }
-  return sub;
+  return subtitle;
 }
 
 /**
@@ -111,12 +111,12 @@ export function ChartPanel({
   const syncToolbarFromChart = useCallback(() => {
     const chart = chartRef.current;
     const initial = initialCategoryViewRef.current;
-    const n = runIndices.length;
-    if (!chart || !hasData || !initial || n < 2) {
+    const plottedRunCount = runIndices.length;
+    if (!chart || !hasData || !initial || plottedRunCount < 2) {
       setToolbarDisabled(ALL_TOOLBAR_DISABLED);
       return;
     }
-    setToolbarDisabled(computeChartToolbarDisabled(chart, initial, n));
+    setToolbarDisabled(computeChartToolbarDisabled(chart, initial, plottedRunCount));
   }, [hasData, runIndices.length]);
 
   syncToolbarRef.current = syncToolbarFromChart;
@@ -143,11 +143,11 @@ export function ChartPanel({
     const existing = Chart.getChart(canvas);
     existing?.destroy();
 
-    const labels = runIndices.map((i) => {
-      const run = runs[i];
+    const labels = runIndices.map((globalIx) => {
+      const run = runs[globalIx];
       return run ? formatLocal(run.timestampIso, run.folder) : "";
     });
-    const runsSlice = runIndices.map((i) => runs[i]!);
+    const runsSlice = runIndices.map((globalIx) => runs[globalIx]!);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const datasets: Array<any> = [];
@@ -157,12 +157,12 @@ export function ChartPanel({
       if (!libData) {
         continue;
       }
-      const pal = paletteMap[lib.key]!;
-      const hz = runIndices.map((i) => libData.hz[i] ?? null);
+      const paletteEntry = paletteMap[lib.key]!;
+      const hz = runIndices.map((globalIx) => libData.hz[globalIx] ?? null);
 
       if (showBands) {
-        const p25 = runIndices.map((i) => libData.p25[i] ?? null);
-        const p75 = runIndices.map((i) => libData.p75[i] ?? null);
+        const p25 = runIndices.map((globalIx) => libData.p25[globalIx] ?? null);
+        const p75 = runIndices.map((globalIx) => libData.p75[globalIx] ?? null);
         datasets.push(
           {
             label: `${lib.displayName} P25`,
@@ -182,7 +182,7 @@ export function ChartPanel({
             pointRadius: 0,
             fill: "-1",
             borderColor: "transparent",
-            backgroundColor: pal.band,
+            backgroundColor: paletteEntry.band,
             spanGaps: false,
             yAxisID: "y",
             order: 10,
@@ -193,8 +193,8 @@ export function ChartPanel({
       datasets.push({
         label: `${lib.displayName} hz/op (median)`,
         data: hz,
-        borderColor: pal.border,
-        backgroundColor: pal.band.replace(/[\d.]+\)$/, "0.08)"),
+        borderColor: paletteEntry.border,
+        backgroundColor: paletteEntry.band.replace(/[\d.]+\)$/, "0.08)"),
         spanGaps: false,
         yAxisID: "y",
         tension: 0.12,
@@ -203,17 +203,19 @@ export function ChartPanel({
     }
 
     if (showRatio && primaryLib) {
-      compareLibs.forEach((cmpLib, ci) => {
+      compareLibs.forEach((cmpLib, compareIndex) => {
         const primData = scenario.libraries[primaryLib.key];
         const cmpData = scenario.libraries[cmpLib.key];
         if (!primData || !cmpData) {
           return;
         }
-        const ratioData = runIndices.map((i) => ratioFrom(primData.hz[i], cmpData.hz[i]));
+        const ratioData = runIndices.map((globalIx) =>
+          ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]),
+        );
         datasets.push({
           label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
           data: ratioData,
-          borderColor: RATIO_COLORS[ci % RATIO_COLORS.length],
+          borderColor: RATIO_COLORS[compareIndex % RATIO_COLORS.length],
           backgroundColor: "rgba(251,191,119,0.08)",
           spanGaps: true,
           yAxisID: "y1",
@@ -223,9 +225,9 @@ export function ChartPanel({
       });
     }
 
-    const L = labels.length;
-    initialCategoryViewRef.current = computeInitialCategoryWindow(L);
-    const xWindow = categoryXScaleWindow(L);
+    const pointCount = labels.length;
+    initialCategoryViewRef.current = computeInitialCategoryWindow(pointCount);
+    const xWindow = categoryXScaleWindow(pointCount);
 
     const scales: Record<string, object> = {
       x: {
@@ -233,7 +235,7 @@ export function ChartPanel({
         offset: true,
         ticks: {
           autoSkip: true,
-          maxTicksLimit: Math.min(22, Math.max(L || 2, 2)),
+          maxTicksLimit: Math.min(22, Math.max(pointCount || 2, 2)),
           maxRotation: 52,
           minRotation: 0,
           color: "rgba(235, 235, 245, 0.42)",
@@ -274,15 +276,15 @@ export function ChartPanel({
             labels: {
               color: "rgba(235, 235, 245, 0.72)",
               filter: (item) => {
-                const t = item.text ?? "";
-                return !t.endsWith(" P25") && !t.includes("P25–P75");
+                const legendText = item.text ?? "";
+                return !legendText.endsWith(" P25") && !legendText.includes("P25–P75");
               },
             },
           },
           tooltip: {
             filter: (item) => {
-              const t = item.dataset.label ?? "";
-              return !t.endsWith(" P25") && !t.includes("P25–P75");
+              const datasetLabel = item.dataset.label ?? "";
+              return !datasetLabel.endsWith(" P25") && !datasetLabel.includes("P25–P75");
             },
             callbacks: {
               title: (items) => {
@@ -314,28 +316,31 @@ export function ChartPanel({
                 ].join("\n");
               },
               label: (ctx) => {
-                const v = ctx.raw as number | null;
-                const lbl = ctx.dataset.label ?? "";
-                if (lbl.includes("P25–P75") || lbl.endsWith(" P25")) {
+                const rawHz = ctx.raw as number | null;
+                const datasetLabel = ctx.dataset.label ?? "";
+                if (datasetLabel.includes("P25–P75") || datasetLabel.endsWith(" P25")) {
                   return undefined;
                 }
-                if (v === null || v === undefined) {
-                  return `${lbl}: —`;
+                if (rawHz === null || rawHz === undefined) {
+                  return `${datasetLabel}: —`;
                 }
                 if (ctx.dataset.yAxisID === "y1") {
-                  return `${lbl}: ${Number(v).toFixed(3)}×`;
+                  return `${datasetLabel}: ${Number(rawHz).toFixed(3)}×`;
                 }
-                const matchedLib = orderedLibraries.find((lib) => lbl.startsWith(lib.displayName));
+                const matchedLib = orderedLibraries.find((lib) =>
+                  datasetLabel.startsWith(lib.displayName),
+                );
                 let extra = "";
                 if (matchedLib) {
                   const libData = scenario.libraries[matchedLib.key];
                   const globalIx = runIndices[ctx.dataIndex];
-                  const f = globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
-                  if (typeof f === "number" && Number.isFinite(f)) {
-                    extra = ` · IQR ${(f * 100).toFixed(1)}%${spreadTierLabel(f)}`;
+                  const iqrFraction =
+                    globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
+                  if (typeof iqrFraction === "number" && Number.isFinite(iqrFraction)) {
+                    extra = ` · IQR ${(iqrFraction * 100).toFixed(1)}%${spreadTierLabel(iqrFraction)}`;
                   }
                 }
-                return `${lbl}: ${Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 })}${extra}`;
+                return `${datasetLabel}: ${Number(rawHz).toLocaleString("en-US", { maximumFractionDigits: 0 })}${extra}`;
               },
             },
           },
@@ -432,35 +437,38 @@ export function ChartPanel({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  function applyChartAction(disabledKey: keyof ChartToolbarDisabled, act: (c: Chart) => void) {
-    const c = chartRef.current;
-    if (!c || toolbarDisabled[disabledKey]) {
+  function applyChartAction(
+    disabledKey: keyof ChartToolbarDisabled,
+    chartAction: (chart: Chart) => void,
+  ) {
+    const chart = chartRef.current;
+    if (!chart || toolbarDisabled[disabledKey]) {
       return;
     }
-    act(c);
-    c.resize();
-    c.update("none");
+    chartAction(chart);
+    chart.resize();
+    chart.update("none");
     requestAnimationFrame(() => syncToolbarFromChart());
   }
 
   function handleZoomIn() {
-    applyChartAction("zoomIn", (c) => c.zoom({ x: ZOOM_STEP_X }, "none"));
+    applyChartAction("zoomIn", (chart) => chart.zoom({ x: ZOOM_STEP_X }, "none"));
   }
 
   function handleZoomOut() {
-    applyChartAction("zoomOut", (c) => c.zoom({ x: 1 / ZOOM_STEP_X }, "none"));
+    applyChartAction("zoomOut", (chart) => chart.zoom({ x: 1 / ZOOM_STEP_X }, "none"));
   }
 
   function handlePanEarlier() {
-    applyChartAction("earlier", (c) => c.pan({ x: PAN_PIXELS_X }, undefined, "none"));
+    applyChartAction("earlier", (chart) => chart.pan({ x: PAN_PIXELS_X }, undefined, "none"));
   }
 
   function handlePanLater() {
-    applyChartAction("later", (c) => c.pan({ x: -PAN_PIXELS_X }, undefined, "none"));
+    applyChartAction("later", (chart) => chart.pan({ x: -PAN_PIXELS_X }, undefined, "none"));
   }
 
   function handleResetZoom() {
-    applyChartAction("reset", (c) => c.resetZoom());
+    applyChartAction("reset", (chart) => chart.resetZoom());
   }
 
   // Tabular data for accessibility
@@ -766,9 +774,9 @@ function buildTableRows(
     const libHzMap: Record<string, number | null> = {};
     for (const lib of orderedLibraries) {
       const hz = scenario.libraries[lib.key]?.hz[globalIx] ?? null;
-      libHzMap[lib.key] = typeof hz === "number" && hz > 0 ? hz : null;
-      const val = libHzMap[lib.key];
-      row += `<td class='${TD_STR} ${NUM_STR}'>${val !== null ? escHtml(Number(val).toLocaleString("en-US", { maximumFractionDigits: 0 })) : "—"}</td>`;
+      const positiveHz = typeof hz === "number" && hz > 0 ? hz : null;
+      libHzMap[lib.key] = positiveHz;
+      row += `<td class='${TD_STR} ${NUM_STR}'>${positiveHz !== null ? escHtml(Number(positiveHz).toLocaleString("en-US", { maximumFractionDigits: 0 })) : "—"}</td>`;
     }
 
     const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;

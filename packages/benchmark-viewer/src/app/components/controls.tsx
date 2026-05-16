@@ -98,9 +98,9 @@ export function ChartControlPanel({
               onChange={(e) => onScenarioChange(e.target.value)}
               value={scenarioId}
             >
-              {visibleScenarios.map((s) => (
-                <option key={s.id} value={s.id}>
-                  [{s.group}] {s.id}
+              {visibleScenarios.map((scenario) => (
+                <option key={scenario.id} value={scenario.id}>
+                  [{scenario.group}] {scenario.id}
                 </option>
               ))}
             </select>

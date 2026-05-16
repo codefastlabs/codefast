@@ -32,17 +32,24 @@ export function medianNumeric(values: Array<number | null | undefined>): number 
  * @since 0.3.16-canary.1
  */
 export function ratioFrom(
-  a: number | null | undefined,
-  b: number | null | undefined,
+  numeratorHz: number | null | undefined,
+  denominatorHz: number | null | undefined,
 ): number | null {
-  return typeof a === "number" && typeof b === "number" && a > 0 && b > 0 ? a / b : null;
+  return typeof numeratorHz === "number" &&
+    typeof denominatorHz === "number" &&
+    numeratorHz > 0 &&
+    denominatorHz > 0
+    ? numeratorHz / denominatorHz
+    : null;
 }
 
 function collectHzValues(
   hz: ReadonlyArray<number | null>,
   indices: ReadonlyArray<number>,
 ): Array<number> {
-  return indices.map((gx) => hz[gx]).filter((v): v is number => typeof v === "number" && v > 0);
+  return indices
+    .map((globalIx) => hz[globalIx])
+    .filter((hzValue): hzValue is number => typeof hzValue === "number" && hzValue > 0);
 }
 
 function maxIqrFraction(
@@ -50,10 +57,10 @@ function maxIqrFraction(
   indices: ReadonlyArray<number>,
 ): number {
   let max = 0;
-  for (const gx of indices) {
-    const f = iqrFraction[gx];
-    if (typeof f === "number" && Number.isFinite(f)) {
-      max = Math.max(max, f);
+  for (const globalIx of indices) {
+    const iqrFractionAtRun = iqrFraction[globalIx];
+    if (typeof iqrFractionAtRun === "number" && Number.isFinite(iqrFractionAtRun)) {
+      max = Math.max(max, iqrFractionAtRun);
     }
   }
   return max;
@@ -115,8 +122,8 @@ export function buildMetrics(
     const hzValues = collectHzValues(libData.hz, runIndices);
 
     const median = medianNumeric(hzValues);
-    const lo = hzValues.length ? hzValues.reduce((a, b) => (a < b ? a : b)) : null;
-    const hi = hzValues.length ? hzValues.reduce((a, b) => (a > b ? a : b)) : null;
+    const minHz = hzValues.length ? hzValues.reduce((min, hz) => (hz < min ? hz : min)) : null;
+    const maxHz = hzValues.length ? hzValues.reduce((max, hz) => (hz > max ? hz : max)) : null;
 
     const hzAtOldest = runIndices[0] !== undefined ? (libData.hz[runIndices[0]] ?? null) : null;
     const hzAtNewest =
@@ -141,8 +148,8 @@ export function buildMetrics(
     worstIqr = Math.max(worstIqr, maxIqrFraction(libData.iqrFraction, runIndices));
 
     const meta: Array<string> = [];
-    if (lo !== null && hi !== null) {
-      meta.push(`<span class="${META_MONO}">Range ${fmtHz(lo)} … ${fmtHz(hi)}</span>`);
+    if (minHz !== null && maxHz !== null) {
+      meta.push(`<span class="${META_MONO}">Range ${fmtHz(minHz)} … ${fmtHz(maxHz)}</span>`);
     }
     meta.push(`Δ ${trend}`);
     if (runsWithData < runsPlotted) {
@@ -175,7 +182,7 @@ export function buildMetrics(
       const ratioMedians = ratioFrom(primMed, cmpMed);
       const runRatios = runIndices
         .map((gx) => ratioFrom(primData.hz[gx], cmpData.hz[gx]))
-        .filter((v): v is number => v !== null);
+        .filter((ratio): ratio is number => ratio !== null);
       const medianOfRunRatios = medianNumeric(runRatios);
       const showPaired =
         medianOfRunRatios !== null &&
@@ -205,9 +212,9 @@ export function buildMetrics(
     const libData = scenario.libraries[lib.key];
     let fig = "—";
     if (libData) {
-      const maxF = maxIqrFraction(libData.iqrFraction, runIndices);
-      if (maxF > 0) {
-        fig = `${(maxF * 100).toFixed(1)}%`;
+      const maxIqr = maxIqrFraction(libData.iqrFraction, runIndices);
+      if (maxIqr > 0) {
+        fig = `${(maxIqr * 100).toFixed(1)}%`;
       }
     }
     return `<div class="${METRIC_ROW}"><span class="${METRIC_ROW_NAME}">${escHtml(lib.displayName)}</span><span class="${METRIC_ROW_FIG}">${fig}</span></div>`;
@@ -244,7 +251,7 @@ export function buildMetrics(
  * @since 0.3.16-canary.1
  */
 export function buildSnapshotRow(
-  s: EmbeddedScenarioSeries,
+  scenario: EmbeddedScenarioSeries,
   lastIx: number,
   orderedLibraries: Array<EmbeddedLibraryMeta>,
   paletteMap: Record<string, PaletteEntry>,
@@ -254,10 +261,10 @@ export function buildSnapshotRow(
   const libHzMap: Record<string, number | null> = {};
   const hzCells: Array<string> = [];
   for (const lib of orderedLibraries) {
-    const hz = s.libraries[lib.key]?.hz[lastIx] ?? null;
-    const val = typeof hz === "number" && hz > 0 ? hz : null;
-    libHzMap[lib.key] = val;
-    hzCells.push(val !== null ? fmtHz(val) : "—");
+    const hz = scenario.libraries[lib.key]?.hz[lastIx] ?? null;
+    const positiveHz = typeof hz === "number" && hz > 0 ? hz : null;
+    libHzMap[lib.key] = positiveHz;
+    hzCells.push(positiveHz !== null ? fmtHz(positiveHz) : "—");
   }
 
   const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
@@ -266,5 +273,5 @@ export function buildSnapshotRow(
     return ratio !== null ? `${ratio.toFixed(3)}×` : "—";
   });
 
-  return { id: s.id, group: s.group, hzCells, ratioCells };
+  return { id: scenario.id, group: scenario.group, hzCells, ratioCells };
 }

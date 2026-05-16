@@ -20,12 +20,12 @@ export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadO
     (isReload = false) => {
       startReload(async () => {
         try {
-          const res = await fetch("/api/payload", { cache: "no-store" });
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
+          const response = await fetch("/api/payload", { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
           }
-          const data = (await res.json()) as EmbeddedViewerPayload;
-          setPayload(data);
+          const embeddedPayload = (await response.json()) as EmbeddedViewerPayload;
+          setPayload(embeddedPayload);
           setLoadError(null);
         } catch (err) {
           if (isReload) {
