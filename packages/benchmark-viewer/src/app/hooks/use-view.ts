@@ -18,7 +18,7 @@ export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) 
   }));
 
   const patchView = useCallback((patch: Partial<ViewState>) => {
-    setView((v) => ({ ...v, ...patch }));
+    setView((currentView) => ({ ...currentView, ...patch }));
   }, []);
 
   return { view, patchView };

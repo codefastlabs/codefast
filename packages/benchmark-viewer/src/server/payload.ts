@@ -123,16 +123,18 @@ function buildLibraryRunData(
   observations: ReadonlyArray<JsonlBenchObservationRow>,
   libraryName: string,
 ): LibraryRunData | undefined {
-  const libObs = observations.filter((o) => o.libraryName === libraryName);
-  if (libObs.length === 0) {
+  const libraryObservations = observations.filter(
+    (observation) => observation.libraryName === libraryName,
+  );
+  if (libraryObservations.length === 0) {
     return undefined;
   }
 
-  const fingerprint = jsonlBenchObservationRowToFingerprint(libObs[0]!);
+  const fingerprint = jsonlBenchObservationRowToFingerprint(libraryObservations[0]!);
   const byTrialIndex = new Map<number, Array<ScenarioTrialResult>>();
   const trialHzByScenario = new Map<string, Map<number, number>>();
 
-  for (const obs of libObs) {
+  for (const obs of libraryObservations) {
     const trialResult = jsonlBenchObservationRowToScenarioTrialResult(obs);
     const trialScenarios = byTrialIndex.get(obs.trialIndex);
     if (trialScenarios === undefined) {
@@ -213,7 +215,10 @@ function extractRunMeta(
           ? { key: name, version: obs.libraryVersion, gcExposed: obs.gcExposed }
           : null;
       })
-      .filter((v): v is NonNullable<typeof v> => v !== null),
+      .filter(
+        (libraryVersion): libraryVersion is NonNullable<typeof libraryVersion> =>
+          libraryVersion !== null,
+      ),
   };
 }
 
@@ -242,7 +247,7 @@ export function buildEmbeddedPayload(
   benchResultsWarning?: string,
 ): EmbeddedViewerPayload {
   const libraryNames = options.libraries.map((lib) => lib.name);
-  const primaryName = options.libraries.find((l) => l.isPrimary)?.name ?? libraryNames[0] ?? "";
+  const primaryName = options.libraries.find((lib) => lib.isPrimary)?.name ?? libraryNames[0] ?? "";
 
   const runs: Array<RunData> = [];
   for (const raw of rawRuns) {

@@ -51,8 +51,8 @@ export function useDerivedPayload({
     if (!payload) {
       return { orderedLibraries: [], paletteMap: {} };
     }
-    const primary = payload.libraries.find((l) => l.isPrimary) ?? payload.libraries[0];
-    const compares = payload.libraries.filter((l) => !l.isPrimary);
+    const primary = payload.libraries.find((lib) => lib.isPrimary) ?? payload.libraries[0];
+    const compares = payload.libraries.filter((lib) => !lib.isPrimary);
     const ordered: Array<EmbeddedLibraryMeta> = primary
       ? [primary, ...compares]
       : [...payload.libraries];
@@ -88,7 +88,7 @@ export function useDerivedPayload({
       return [];
     }
     if (!view.envKey) {
-      return payload.runs.map((_, i) => i);
+      return payload.runs.map((_, runIndex) => runIndex);
     }
     return payload.runs.reduce<Array<number>>((acc, r, i) => {
       if (r.envKey === view.envKey) {
@@ -137,12 +137,12 @@ export function useDerivedPayload({
   }, [payload]);
 
   const primaryLib = useMemo(
-    () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
+    () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
     [orderedLibraries],
   );
 
   const compareLibs = useMemo(
-    () => orderedLibraries.filter((l) => !l.isPrimary),
+    () => orderedLibraries.filter((lib) => !lib.isPrimary),
     [orderedLibraries],
   );
 

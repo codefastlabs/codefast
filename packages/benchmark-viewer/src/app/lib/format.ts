@@ -15,11 +15,11 @@ export function formatLocal(timestampIso: string | undefined, fallbackFolder: st
 /**
  * @since 0.3.16-canary.1
  */
-export function fmtHz(n: number | null | undefined): string {
-  if (n === null || n === undefined || !Number.isFinite(n)) {
+export function fmtHz(hz: number | null | undefined): string {
+  if (hz === null || hz === undefined || !Number.isFinite(hz)) {
     return "—";
   }
-  return Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
+  return Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
 /**
@@ -36,8 +36,8 @@ export function fmtPctChange(from: number | null, to: number | null): string {
 /**
  * @since 0.3.16-canary.1
  */
-export function searchNorm(s: string): string {
-  return String(s || "").toLowerCase();
+export function searchNorm(text: string): string {
+  return String(text || "").toLowerCase();
 }
 
 /**
@@ -59,8 +59,8 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
 /**
  * @since 0.3.16-canary.1
  */
-export function escHtml(s: string): string {
-  return String(s)
+export function escHtml(text: string): string {
+  return String(text)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")

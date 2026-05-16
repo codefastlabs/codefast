@@ -9,14 +9,14 @@ const ITEMS = [
 
 export function useDetailsPersist(payload: EmbeddedViewerPayload | null): void {
   useEffect(() => {
-    for (const cfg of ITEMS) {
-      const el = document.getElementById(cfg.id) as HTMLDetailsElement | null;
-      if (!el) {
+    for (const detailsItem of ITEMS) {
+      const detailsElement = document.getElementById(detailsItem.id) as HTMLDetailsElement | null;
+      if (!detailsElement) {
         continue;
       }
       try {
-        if (localStorage.getItem(cfg.key) === "1") {
-          el.open = true;
+        if (localStorage.getItem(detailsItem.key) === "1") {
+          detailsElement.open = true;
         }
       } catch {
         /* ignore */
@@ -29,21 +29,21 @@ export function useDetailsPersist(payload: EmbeddedViewerPayload | null): void {
       return;
     }
     const cleanups: Array<() => void> = [];
-    for (const cfg of ITEMS) {
-      const el = document.getElementById(cfg.id) as HTMLDetailsElement | null;
-      if (!el) {
+    for (const detailsItem of ITEMS) {
+      const detailsElement = document.getElementById(detailsItem.id) as HTMLDetailsElement | null;
+      if (!detailsElement) {
         continue;
       }
       const handler = () => {
         try {
-          localStorage.setItem(cfg.key, el.open ? "1" : "0");
+          localStorage.setItem(detailsItem.key, detailsElement.open ? "1" : "0");
         } catch {
           /* ignore */
         }
       };
-      el.addEventListener("toggle", handler);
-      cleanups.push(() => el.removeEventListener("toggle", handler));
+      detailsElement.addEventListener("toggle", handler);
+      cleanups.push(() => detailsElement.removeEventListener("toggle", handler));
     }
-    return () => cleanups.forEach((fn) => fn());
+    return () => cleanups.forEach((removeToggleListener) => removeToggleListener());
   }, [payload]);
 }

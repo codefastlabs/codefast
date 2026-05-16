@@ -37,10 +37,11 @@ export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
         <KpiCardLabel>Library builds (latest run)</KpiCardLabel>
         <KpiCardValue className="text-xs leading-snug font-normal text-zinc-400">
           {latestRun?.libraryVersions?.length
-            ? latestRun.libraryVersions.map((lv) => (
-                <div className="mt-0.5 leading-[1.45]" key={lv.key}>
-                  <span className="text-bh-lib-key">{lv.key}</span> {lv.version}
-                  {lv.gcExposed && (
+            ? latestRun.libraryVersions.map((libraryVersion) => (
+                <div className="mt-0.5 leading-[1.45]" key={libraryVersion.key}>
+                  <span className="text-bh-lib-key">{libraryVersion.key}</span>{" "}
+                  {libraryVersion.version}
+                  {libraryVersion.gcExposed && (
                     <span className="text-amber-400" title="--expose-gc active">
                       {" "}
                       [gc]

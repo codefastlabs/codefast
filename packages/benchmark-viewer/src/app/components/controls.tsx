@@ -146,10 +146,10 @@ export function ChartControlPanel({
           >
             <option value="">All runs</option>
             {uniqueEnvKeys.map((key) => {
-              const sample = runs.find((r) => r.envKey === key);
+              const sampleRun = runs.find((run) => run.envKey === key);
               return (
                 <option key={key} value={key}>
-                  {sample?.envLabel ?? key}
+                  {sampleRun?.envLabel ?? key}
                 </option>
               );
             })}

@@ -28,7 +28,7 @@ export interface CommandPaletteHandle {
   isOpen: boolean;
   query: string;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  setQuery: (q: string) => void;
+  setQuery: (query: string) => void;
   close: () => void;
   handleCommand: (id: string) => void;
 }
