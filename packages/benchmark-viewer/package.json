@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-viewer",
-  "version": "0.0.1",
+  "version": "0.3.16-canary.2",
   "private": true,
   "description": "React SSR benchmark history viewer server for Codefast benchmark packages",
   "license": "MIT",
@@ -39,34 +39,6 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./server": {
-      "types": "./dist/server/index.d.mts",
-      "import": "./dist/server/index.mjs"
-    },
-    "./server/http": {
-      "types": "./dist/server/http.d.mts",
-      "import": "./dist/server/http.mjs"
-    },
-    "./server/payload": {
-      "types": "./dist/server/payload.d.mts",
-      "import": "./dist/server/payload.mjs"
-    },
-    "./server/port": {
-      "types": "./dist/server/port.d.mts",
-      "import": "./dist/server/port.mjs"
-    },
-    "./server/render": {
-      "types": "./dist/server/render.d.mts",
-      "import": "./dist/server/render.mjs"
-    },
-    "./types": {
-      "types": "./dist/types.d.mts",
-      "import": "./dist/types.mjs"
-    },
-    "./app/entry": {
-      "types": "./dist/app/entry.d.ts",
-      "import": "./dist/app/entry.js"
-    },
     "./app/components/app": {
       "types": "./dist/app/components/app.d.mts",
       "import": "./dist/app/components/app.mjs"
@@ -90,6 +62,10 @@
     "./app/components/palette": {
       "types": "./dist/app/components/palette.d.mts",
       "import": "./dist/app/components/palette.mjs"
+    },
+    "./app/entry": {
+      "types": "./dist/app/entry.d.ts",
+      "import": "./dist/app/entry.js"
     },
     "./app/hooks/use-hash": {
       "types": "./dist/app/hooks/use-hash.d.mts",
@@ -128,6 +104,30 @@
       "import": "./dist/app/lib/metrics.mjs"
     },
     "./app/styles.css": "./dist/app/styles.css",
+    "./server": {
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
+    },
+    "./server/http": {
+      "types": "./dist/server/http.d.mts",
+      "import": "./dist/server/http.mjs"
+    },
+    "./server/payload": {
+      "types": "./dist/server/payload.d.mts",
+      "import": "./dist/server/payload.mjs"
+    },
+    "./server/port": {
+      "types": "./dist/server/port.d.mts",
+      "import": "./dist/server/port.mjs"
+    },
+    "./server/render": {
+      "types": "./dist/server/render.d.mts",
+      "import": "./dist/server/render.mjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
