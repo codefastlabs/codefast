@@ -48,6 +48,7 @@ export async function startBenchServer({
         port = await findAvailablePort(port + 1);
         continue;
       }
+      server.close();
       console.error("Bench history server failed to listen:", err);
       throw err;
     }

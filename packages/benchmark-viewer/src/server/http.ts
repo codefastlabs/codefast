@@ -4,9 +4,8 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildEmbeddedPayload } from "#/server/payload";
+import { buildEmbeddedPayload, listRawRuns } from "#/server/payload";
 import { renderDocument } from "#/server/render";
-import { listRawRuns } from "#/server/payload";
 import type { BenchServerOptions } from "#/types";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
@@ -87,7 +86,8 @@ function handleRoot(state: ServerState, req: IncomingMessage, res: ServerRespons
   try {
     const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
     const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
-    const etag = computeEtag(JSON.stringify(payload));
+    const rawJson = JSON.stringify(payload);
+    const etag = computeEtag(rawJson);
     if (req.headers["if-none-match"] === etag) {
       res.writeHead(304);
       res.end();
@@ -95,7 +95,7 @@ function handleRoot(state: ServerState, req: IncomingMessage, res: ServerRespons
     }
     res.setHeader("Cache-Control", NO_CACHE);
     res.setHeader("ETag", etag);
-    renderDocument(payload, res, req);
+    renderDocument(payload, rawJson.replace(/</g, "\\u003c"), res, req);
   } catch (err) {
     res.writeHead(500, { "Content-Type": "text/plain" });
     res.end(String(err));

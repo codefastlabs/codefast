@@ -63,10 +63,10 @@ function safeEndHtmlSuffix(res: ServerResponse): void {
  */
 export function renderDocument(
   payload: EmbeddedViewerPayload,
+  payloadJson: string,
   res: ServerResponse,
   req: IncomingMessage,
 ): void {
-  const payloadJson = JSON.stringify(payload).replace(/</g, "\\u003c");
   const pageTitle = payload.title.trim();
 
   res.setHeader("content-type", "text/html; charset=utf-8");
@@ -117,8 +117,6 @@ export function renderDocument(
       abort(new DOMException("Client disconnected", "AbortError"));
     }
   }
-
-  req.once("aborted", disconnectAbort);
 
   const { socket } = req;
   if (socket !== null && !socket.destroyed) {
