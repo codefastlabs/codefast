@@ -1,4 +1,12 @@
-import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type ComponentProps,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Chart } from "chart.js";
 import { ChevronDownIcon } from "#/app/components/icons";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
@@ -10,17 +18,46 @@ import {
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
-import { escHtml, formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
+import { formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
+import { cn } from "#/app/lib/utils";
 import { ratioFrom } from "#/app/lib/metrics";
 
-// ─── Table HTML-string class constants ───────────────────────────────────────
-const TH_STR =
-  "border-b border-b-bh-table-line bg-bh-table-head z-3 px-[0.65rem] py-[0.15rem] text-left text-bh-label text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase";
-const TD_STR = "border-b border-b-bh-table-line px-[0.65rem] py-[0.15rem] text-left";
-const NUM_STR = "text-right tabular-nums";
+function SegButton({ className, ...props }: ComponentProps<"button">) {
+  return (
+    <button
+      {...props}
+      className={cn(
+        "text-bh-seg-ink border-r-bh-border bg-bh-surface-seg hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-r px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
+        className,
+      )}
+      type="button"
+    />
+  );
+}
 
-const SEG_BTN =
-  "text-bh-seg-ink border-r-bh-border bg-bh-surface-seg hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-r px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40";
+function ChartTh({ className, ...props }: ComponentProps<"th">) {
+  return (
+    <th
+      className={cn(
+        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function ChartTd({ className, ...props }: ComponentProps<"td">) {
+  return (
+    <td
+      className={cn(
+        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 /**
  * @since 0.3.16-canary.1
@@ -107,7 +144,7 @@ export function ChartPanel({
   );
 
   const hasData = scenario !== null && runIndices.length > 0;
-  const emptyReason = getEmptyReason(scenario, runIndices, runs, envKey);
+  const emptyReason = getEmptyReason(scenario, runIndices, runs);
 
   const syncToolbarFromChart = useCallback(() => {
     const chart = chartRef.current;
@@ -148,7 +185,7 @@ export function ChartPanel({
       const run = runs[globalIx];
       return run ? formatLocal(run.timestampIso, run.folder) : "";
     });
-    const runsSlice = runIndices.map((globalIx) => runs[globalIx]!);
+    const runsSlice = runIndices.map((globalIx) => runs[globalIx]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const datasets: Array<any> = [];
@@ -475,9 +512,6 @@ export function ChartPanel({
     applyChartAction("reset", (chart) => chart.resetZoom());
   }
 
-  // Tabular data for accessibility
-  const tableRows = buildTableRows(scenario, runIndices, runs, orderedLibraries, primaryLib);
-
   return (
     <section
       aria-labelledby="chart-section-title"
@@ -502,52 +536,42 @@ export function ChartPanel({
         className="border-bh-border bg-bh-surface-toolbar shadow-bh-toolbar mt-4 mb-2 inline-flex flex-wrap overflow-hidden rounded-xl border backdrop-blur-md backdrop-saturate-150"
         role="toolbar"
       >
-        <button
-          className={SEG_BTN}
+        <SegButton
           disabled={toolbarDisabled.zoomIn}
           onClick={handleZoomIn}
           title={toolbarDisabled.zoomIn ? "Already at maximum zoom for this range" : undefined}
-          type="button"
         >
           Zoom +
-        </button>
-        <button
-          className={SEG_BTN}
+        </SegButton>
+        <SegButton
           disabled={toolbarDisabled.zoomOut}
           onClick={handleZoomOut}
           title={toolbarDisabled.zoomOut ? "Showing the full run history on the chart" : undefined}
-          type="button"
         >
           Zoom −
-        </button>
-        <button
-          className={SEG_BTN}
+        </SegButton>
+        <SegButton
           disabled={toolbarDisabled.earlier}
           onClick={handlePanEarlier}
           title={toolbarDisabled.earlier ? "Already showing the earliest runs" : undefined}
-          type="button"
         >
           ← Earlier
-        </button>
-        <button
-          className={SEG_BTN}
+        </SegButton>
+        <SegButton
           disabled={toolbarDisabled.later}
           onClick={handlePanLater}
           title={toolbarDisabled.later ? "Already showing the newest runs" : undefined}
-          type="button"
         >
           Later →
-        </button>
-        <button
-          className={SEG_BTN}
+        </SegButton>
+        <SegButton
           disabled={toolbarDisabled.reset}
           id="chart-reset-zoom-btn"
           onClick={handleResetZoom}
           title={toolbarDisabled.reset ? "Chart is already at the default time window" : undefined}
-          type="button"
         >
           Reset zoom
-        </button>
+        </SegButton>
       </div>
 
       <p className="text-[0.8125rem] leading-relaxed text-zinc-500">
@@ -672,19 +696,30 @@ export function ChartPanel({
         </p>
         <div className="border-bh-border bg-bh-scrim-table mt-3 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
           <table aria-label="Chart series data" className="w-full border-collapse text-[0.8rem]">
-            {tableRows.header && (
+            {hasData && (
               <thead>
-                <tr dangerouslySetInnerHTML={{ __html: tableRows.header }} />
+                <ChartTableHeader compareLibs={compareLibs} orderedLibraries={orderedLibraries} />
               </thead>
             )}
             <tbody>
-              {tableRows.body.map((rowHtml, rowIndex) => (
-                <tr
-                  className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
-                  dangerouslySetInnerHTML={{ __html: rowHtml }}
-                  key={rowIndex}
-                />
-              ))}
+              {hasData &&
+                runIndices
+                  .slice()
+                  .reverse()
+                  .map((globalIx) => {
+                    const run = runs[globalIx];
+                    return run ? (
+                      <ChartTableRow
+                        compareLibs={compareLibs}
+                        globalIx={globalIx}
+                        key={globalIx}
+                        orderedLibraries={orderedLibraries}
+                        primaryLib={primaryLib}
+                        run={run}
+                        scenario={scenario}
+                      />
+                    ) : null;
+                  })}
             </tbody>
           </table>
         </div>
@@ -714,7 +749,6 @@ function getEmptyReason(
   scenario: EmbeddedScenarioSeries | null,
   runIndices: Array<number>,
   runs: ReadonlyArray<EmbeddedRun>,
-  _envKey: string,
 ): string {
   if (runs.length === 0) {
     return "No benchmark runs are in this history yet. Generate data with your bench command, then refresh this page.";
@@ -728,61 +762,79 @@ function getEmptyReason(
   return "Nothing to plot for this selection.";
 }
 
-interface TableRows {
-  header: string;
-  body: Array<string>;
+interface ChartTableHeaderProps {
+  orderedLibraries: Array<EmbeddedLibraryMeta>;
+  compareLibs: Array<EmbeddedLibraryMeta>;
 }
 
-function buildTableRows(
-  scenario: EmbeddedScenarioSeries | null,
-  runIndices: Array<number>,
-  runs: ReadonlyArray<EmbeddedRun>,
-  orderedLibraries: Array<EmbeddedLibraryMeta>,
-  primaryLib: EmbeddedLibraryMeta | undefined,
-): TableRows {
-  if (!scenario || runIndices.length === 0) {
-    return { header: "", body: [] };
-  }
+function ChartTableHeader({ orderedLibraries, compareLibs }: ChartTableHeaderProps) {
+  return (
+    <tr>
+      <ChartTh scope="col">Run (local)</ChartTh>
+      <ChartTh scope="col">Folder</ChartTh>
+      {orderedLibraries.map((lib) => (
+        <ChartTh className="text-right tabular-nums" key={lib.key} scope="col">
+          {lib.displayName} hz/op
+        </ChartTh>
+      ))}
+      {compareLibs.map((cmp) => (
+        <ChartTh className="text-bh-ratio-accent text-right tabular-nums" key={cmp.key} scope="col">
+          ÷ {cmp.displayName}
+        </ChartTh>
+      ))}
+    </tr>
+  );
+}
 
-  const compareLibs = orderedLibraries.filter((lib) => !lib.isPrimary);
+interface ChartTableRowProps {
+  globalIx: number;
+  run: EmbeddedRun;
+  scenario: EmbeddedScenarioSeries;
+  orderedLibraries: Array<EmbeddedLibraryMeta>;
+  primaryLib: EmbeddedLibraryMeta | undefined;
+  compareLibs: Array<EmbeddedLibraryMeta>;
+}
 
-  let header = `<th scope='col' class='${TH_STR}'>Run (local)</th><th scope='col' class='${TH_STR}'>Folder</th>`;
+function ChartTableRow({
+  globalIx,
+  run,
+  scenario,
+  orderedLibraries,
+  primaryLib,
+  compareLibs,
+}: ChartTableRowProps) {
+  const localClock = formatLocal(run.timestampIso, run.folder);
+
+  const libHzMap: Record<string, number | null> = {};
   for (const lib of orderedLibraries) {
-    header += `<th scope='col' class='${TH_STR} ${NUM_STR}'>${escHtml(lib.displayName)} hz/op</th>`;
-  }
-  for (const cmp of compareLibs) {
-    header += `<th scope='col' class='${TH_STR} ${NUM_STR} text-bh-ratio-accent'>÷ ${escHtml(cmp.displayName)}</th>`;
+    const hz = scenario.libraries[lib.key]?.hz[globalIx] ?? null;
+    libHzMap[lib.key] = typeof hz === "number" && hz > 0 ? hz : null;
   }
 
-  const body: Array<string> = [];
-  for (let reverseIndex = runIndices.length - 1; reverseIndex >= 0; reverseIndex--) {
-    const globalIx = runIndices[reverseIndex]!;
-    const run = runs[globalIx];
-    if (!run) {
-      continue;
-    }
-    const localClock = formatLocal(run.timestampIso, run.folder);
-    let row = `<td class='${TD_STR}'>${escHtml(localClock)}</td><td class='${TD_STR}'>${escHtml(run.folder)}</td>`;
+  const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
 
-    const libHzMap: Record<string, number | null> = {};
-    for (const lib of orderedLibraries) {
-      const hz = scenario.libraries[lib.key]?.hz[globalIx] ?? null;
-      const positiveHz = typeof hz === "number" && hz > 0 ? hz : null;
-      libHzMap[lib.key] = positiveHz;
-      row += `<td class='${TD_STR} ${NUM_STR}'>${positiveHz !== null ? escHtml(Number(positiveHz).toLocaleString("en-US", { maximumFractionDigits: 0 })) : "—"}</td>`;
-    }
-
-    const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
-    for (const cmp of compareLibs) {
-      const cmpHz = libHzMap[cmp.key] ?? null;
-      const ratio = ratioFrom(primaryHz, cmpHz);
-      row += `<td class='${TD_STR} ${NUM_STR}'>${ratio !== null ? ratio.toFixed(3) + "×" : "—"}</td>`;
-    }
-
-    body.push(row);
-  }
-
-  return { header, body };
+  return (
+    <tr className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover">
+      <ChartTd>{localClock}</ChartTd>
+      <ChartTd>{run.folder}</ChartTd>
+      {orderedLibraries.map((lib) => {
+        const hz = libHzMap[lib.key];
+        return (
+          <ChartTd className="text-right tabular-nums" key={lib.key}>
+            {hz !== null ? Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—"}
+          </ChartTd>
+        );
+      })}
+      {compareLibs.map((cmp) => {
+        const ratio = ratioFrom(primaryHz, libHzMap[cmp.key] ?? null);
+        return (
+          <ChartTd className="text-right tabular-nums" key={cmp.key}>
+            {ratio !== null ? `${ratio.toFixed(3)}×` : "—"}
+          </ChartTd>
+        );
+      })}
+    </tr>
+  );
 }
 
 export type { RefObject };

@@ -1,16 +1,33 @@
+import type { ComponentProps } from "react";
 import type { PaletteEntry } from "#/app/lib/colors";
 import { formatLocal } from "#/app/lib/format";
 import type { SnapshotRow } from "#/app/lib/metrics";
+import { cn } from "#/app/lib/utils";
 import type { EmbeddedLibraryMeta, EmbeddedRun } from "#/types";
 
-const TH =
-  "border-b border-b-bh-table-line bg-bh-table-head z-3 px-[0.65rem] py-[0.15rem] text-left text-bh-label text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase";
-const TD = "border-b border-b-bh-table-line px-[0.65rem] py-[0.15rem] text-left";
-const STICKY_1 =
-  "bg-bh-table-sticky sticky left-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]";
-const STICKY_2 =
-  "bg-bh-table-sticky sticky left-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]";
-const NUM = "text-right tabular-nums";
+function Th({ className, ...props }: ComponentProps<"th">) {
+  return (
+    <th
+      className={cn(
+        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function Td({ className, ...props }: ComponentProps<"td">) {
+  return (
+    <td
+      className={cn(
+        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 interface SnapshotSectionProps {
   runCount: number;
@@ -49,26 +66,36 @@ export function SnapshotSection({
         >
           <thead>
             <tr>
-              <th className={`${TH} ${STICKY_1}`} scope="col">
+              <Th
+                className="bg-bh-table-sticky sticky left-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
+                scope="col"
+              >
                 Scenario
-              </th>
-              <th className={`${TH} ${STICKY_2}`} scope="col">
+              </Th>
+              <Th
+                className="bg-bh-table-sticky sticky left-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
+                scope="col"
+              >
                 Group
-              </th>
+              </Th>
               {orderedLibraries.map((lib) => (
-                <th
-                  className={`${TH} ${NUM}`}
+                <Th
+                  className="text-right tabular-nums"
                   key={lib.key}
                   scope="col"
                   style={{ color: paletteMap[lib.key]?.text }}
                 >
                   {lib.displayName}
-                </th>
+                </Th>
               ))}
               {compareLibs.map((cmp) => (
-                <th className={`${TH} ${NUM} text-bh-ratio-accent`} key={cmp.key} scope="col">
+                <Th
+                  className="text-bh-ratio-accent text-right tabular-nums"
+                  key={cmp.key}
+                  scope="col"
+                >
                   ÷ {cmp.displayName}
-                </th>
+                </Th>
               ))}
             </tr>
           </thead>
@@ -78,17 +105,21 @@ export function SnapshotSection({
                 className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
                 key={row.id}
               >
-                <td className={`${TD} ${STICKY_1}`}>{row.id}</td>
-                <td className={`${TD} ${STICKY_2}`}>{row.group}</td>
+                <Td className="bg-bh-table-sticky sticky left-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                  {row.id}
+                </Td>
+                <Td className="bg-bh-table-sticky sticky left-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                  {row.group}
+                </Td>
                 {row.hzCells.map((hzCell, cellIndex) => (
-                  <td className={`${TD} ${NUM}`} key={cellIndex}>
+                  <Td className="text-right tabular-nums" key={cellIndex}>
                     {hzCell}
-                  </td>
+                  </Td>
                 ))}
                 {row.ratioCells.map((ratioCell, cellIndex) => (
-                  <td className={`${TD} ${NUM}`} key={cellIndex}>
+                  <Td className="text-right tabular-nums" key={cellIndex}>
                     {ratioCell}
-                  </td>
+                  </Td>
                 ))}
               </tr>
             ))}

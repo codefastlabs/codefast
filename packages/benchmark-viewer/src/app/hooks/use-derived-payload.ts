@@ -164,17 +164,17 @@ export function useDerivedPayload({
     if (!currentScenario || runIndices.length === 0) {
       return null;
     }
-    return buildMetrics(
-      currentScenario,
+    return buildMetrics({
+      scenario: currentScenario,
       runIndices,
       orderedLibraries,
       paletteMap,
       primaryLib,
       compareLibs,
       baseRunIndices,
-      view.envKey,
-      view.runWindow,
-    );
+      envKey: view.envKey,
+      runWindow: view.runWindow,
+    });
   }, [
     currentScenario,
     runIndices,
