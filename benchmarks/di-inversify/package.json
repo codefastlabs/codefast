@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@codefast/benchmark-harness": "workspace:*",
+    "@codefast/benchmark-viewer": "workspace:*",
     "@codefast/di": "workspace:*",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",

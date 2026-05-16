@@ -1,0 +1,177 @@
+{
+  "name": "@codefast/benchmark-viewer",
+  "version": "0.0.1",
+  "private": true,
+  "description": "React SSR benchmark history viewer server for Codefast benchmark packages",
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/benchmark-viewer"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./build-payload": {
+      "types": "./dist/build-payload.d.mts",
+      "import": "./dist/build-payload.mjs"
+    },
+    "./client/client": {
+      "types": "./dist/client/client.d.ts",
+      "import": "./dist/client/client.js"
+    },
+    "./client/components/app": {
+      "types": "./dist/client/components/app.d.mts",
+      "import": "./dist/client/components/app.mjs"
+    },
+    "./client/components/chart-panel": {
+      "types": "./dist/client/components/chart-panel.d.mts",
+      "import": "./dist/client/components/chart-panel.mjs"
+    },
+    "./client/components/command-palette": {
+      "types": "./dist/client/components/command-palette.d.mts",
+      "import": "./dist/client/components/command-palette.mjs"
+    },
+    "./client/components/find-panel": {
+      "types": "./dist/client/components/find-panel.d.mts",
+      "import": "./dist/client/components/find-panel.mjs"
+    },
+    "./client/components/metrics-panel": {
+      "types": "./dist/client/components/metrics-panel.d.mts",
+      "import": "./dist/client/components/metrics-panel.mjs"
+    },
+    "./client/components/page-footer-clocks": {
+      "types": "./dist/client/components/page-footer-clocks.d.mts",
+      "import": "./dist/client/components/page-footer-clocks.mjs"
+    },
+    "./client/entry-server": {
+      "types": "./dist/client/entry-server.d.mts",
+      "import": "./dist/client/entry-server.mjs"
+    },
+    "./client/hooks/use-bench-payload": {
+      "types": "./dist/client/hooks/use-bench-payload.d.mts",
+      "import": "./dist/client/hooks/use-bench-payload.mjs"
+    },
+    "./client/hooks/use-hash-sync": {
+      "types": "./dist/client/hooks/use-hash-sync.d.mts",
+      "import": "./dist/client/hooks/use-hash-sync.mjs"
+    },
+    "./client/hooks/use-view-state": {
+      "types": "./dist/client/hooks/use-view-state.d.mts",
+      "import": "./dist/client/hooks/use-view-state.mjs"
+    },
+    "./client/lib/chart-category-view": {
+      "types": "./dist/client/lib/chart-category-view.d.mts",
+      "import": "./dist/client/lib/chart-category-view.mjs"
+    },
+    "./client/lib/colors": {
+      "types": "./dist/client/lib/colors.d.mts",
+      "import": "./dist/client/lib/colors.mjs"
+    },
+    "./client/lib/constants": {
+      "types": "./dist/client/lib/constants.d.mts",
+      "import": "./dist/client/lib/constants.mjs"
+    },
+    "./client/lib/format": {
+      "types": "./dist/client/lib/format.d.mts",
+      "import": "./dist/client/lib/format.mjs"
+    },
+    "./client/lib/hash": {
+      "types": "./dist/client/lib/hash.d.mts",
+      "import": "./dist/client/lib/hash.mjs"
+    },
+    "./client/lib/metrics": {
+      "types": "./dist/client/lib/metrics.d.mts",
+      "import": "./dist/client/lib/metrics.mjs"
+    },
+    "./client/styles.css": "./dist/client/styles.css",
+    "./create-bench-server": {
+      "types": "./dist/create-bench-server.d.mts",
+      "import": "./dist/create-bench-server.mjs"
+    },
+    "./find-available-port": {
+      "types": "./dist/find-available-port.d.mts",
+      "import": "./dist/find-available-port.mjs"
+    },
+    "./read-runs": {
+      "types": "./dist/read-runs.d.mts",
+      "import": "./dist/read-runs.mjs"
+    },
+    "./server-types": {
+      "types": "./dist/server-types.d.mts",
+      "import": "./dist/server-types.mjs"
+    },
+    "./start-bench-server": {
+      "types": "./dist/start-bench-server.d.mts",
+      "import": "./dist/start-bench-server.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "check-types": "tsgo --noEmit",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run tests/e2e",
+    "test:integration": "vitest run tests/integration",
+    "test:type": "vitest run tests/types",
+    "test:unit": "vitest run tests/unit",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@codefast/benchmark-harness": "workspace:*",
+    "chart.js": "catalog:",
+    "chartjs-plugin-zoom": "catalog:",
+    "postcss": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
+    "@rolldown/plugin-babel": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
+    "@tsdown/css": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "babel-plugin-react-compiler": "catalog:",
+    "postcss-import": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
