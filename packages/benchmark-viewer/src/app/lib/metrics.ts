@@ -17,8 +17,10 @@ const METRIC_ROW_FIG = "text-bh-ink-mid shrink-0 font-mono tracking-[-0.02em] ta
  */
 export function medianNumeric(values: Array<number | null | undefined>): number | null {
   const sorted = values
-    .filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v > 0)
-    .sort((a, b) => a - b);
+    .filter(
+      (value): value is number => typeof value === "number" && Number.isFinite(value) && value > 0,
+    )
+    .sort((left, right) => left - right);
   if (sorted.length === 0) {
     return null;
   }
@@ -181,7 +183,7 @@ export function buildMetrics(
       const cmpMed = medianNumeric(cmpHzVals);
       const ratioMedians = ratioFrom(primMed, cmpMed);
       const runRatios = runIndices
-        .map((gx) => ratioFrom(primData.hz[gx], cmpData.hz[gx]))
+        .map((globalIx) => ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]))
         .filter((ratio): ratio is number => ratio !== null);
       const medianOfRunRatios = medianNumeric(runRatios);
       const showPaired =
@@ -210,14 +212,14 @@ export function buildMetrics(
   // IQR card
   const iqrRows = orderedLibraries.map((lib) => {
     const libData = scenario.libraries[lib.key];
-    let fig = "—";
+    let iqrPercentLabel = "—";
     if (libData) {
       const maxIqr = maxIqrFraction(libData.iqrFraction, runIndices);
       if (maxIqr > 0) {
-        fig = `${(maxIqr * 100).toFixed(1)}%`;
+        iqrPercentLabel = `${(maxIqr * 100).toFixed(1)}%`;
       }
     }
-    return `<div class="${METRIC_ROW}"><span class="${METRIC_ROW_NAME}">${escHtml(lib.displayName)}</span><span class="${METRIC_ROW_FIG}">${fig}</span></div>`;
+    return `<div class="${METRIC_ROW}"><span class="${METRIC_ROW_NAME}">${escHtml(lib.displayName)}</span><span class="${METRIC_ROW_FIG}">${iqrPercentLabel}</span></div>`;
   });
 
   cards.push({

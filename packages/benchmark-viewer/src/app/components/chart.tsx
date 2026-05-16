@@ -97,11 +97,11 @@ export function ChartPanel({
     useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
 
   const primaryLib = useMemo(
-    () => orderedLibraries.find((l) => l.isPrimary) ?? orderedLibraries[0],
+    () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
     [orderedLibraries],
   );
   const compareLibs = useMemo(
-    () => orderedLibraries.filter((l) => !l.isPrimary),
+    () => orderedLibraries.filter((lib) => !lib.isPrimary),
     [orderedLibraries],
   );
 
@@ -307,7 +307,10 @@ export function ChartPanel({
                   return "";
                 }
                 const verLine = (run.libraryVersions ?? [])
-                  .map((lv) => `${lv.key} ${lv.version}${lv.gcExposed ? " [gc]" : ""}`)
+                  .map(
+                    (libraryVersion) =>
+                      `${libraryVersion.key} ${libraryVersion.version}${libraryVersion.gcExposed ? " [gc]" : ""}`,
+                  )
                   .join(" · ");
                 return [
                   `${run.cpuModel} · ${run.platform}/${run.arch}`,
@@ -422,16 +425,16 @@ export function ChartPanel({
     if (typeof window === "undefined") {
       return;
     }
-    const el = displayDetailsRef.current;
-    if (!el) {
+    const displayDetails = displayDetailsRef.current;
+    if (!displayDetails) {
       return;
     }
     const mql = window.matchMedia("(min-width: 640px)");
     if (mql.matches) {
-      el.open = true;
+      displayDetails.open = true;
     }
-    const onChange = (e: MediaQueryListEvent) => {
-      el.open = e.matches;
+    const onChange = (event: MediaQueryListEvent) => {
+      displayDetails.open = event.matches;
     };
     mql.addEventListener("change", onChange);
     return () => mql.removeEventListener("change", onChange);
@@ -685,11 +688,11 @@ export function ChartPanel({
               </thead>
             )}
             <tbody>
-              {tableRows.body.map((row, i) => (
+              {tableRows.body.map((rowHtml, rowIndex) => (
                 <tr
                   className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
-                  dangerouslySetInnerHTML={{ __html: row }}
-                  key={i}
+                  dangerouslySetInnerHTML={{ __html: rowHtml }}
+                  key={rowIndex}
                 />
               ))}
             </tbody>
@@ -751,7 +754,7 @@ function buildTableRows(
     return { header: "", body: [] };
   }
 
-  const compareLibs = orderedLibraries.filter((l) => !l.isPrimary);
+  const compareLibs = orderedLibraries.filter((lib) => !lib.isPrimary);
 
   let header = `<th scope='col' class='${TH_STR}'>Run (local)</th><th scope='col' class='${TH_STR}'>Folder</th>`;
   for (const lib of orderedLibraries) {
@@ -762,8 +765,8 @@ function buildTableRows(
   }
 
   const body: Array<string> = [];
-  for (let j = runIndices.length - 1; j >= 0; j--) {
-    const globalIx = runIndices[j]!;
+  for (let reverseIndex = runIndices.length - 1; reverseIndex >= 0; reverseIndex--) {
+    const globalIx = runIndices[reverseIndex]!;
     const run = runs[globalIx];
     if (!run) {
       continue;

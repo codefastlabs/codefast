@@ -80,14 +80,14 @@ export function SnapshotSection({
               >
                 <td className={`${TD} ${STICKY_1}`}>{row.id}</td>
                 <td className={`${TD} ${STICKY_2}`}>{row.group}</td>
-                {row.hzCells.map((cell, i) => (
-                  <td className={`${TD} ${NUM}`} key={i}>
-                    {cell}
+                {row.hzCells.map((hzCell, cellIndex) => (
+                  <td className={`${TD} ${NUM}`} key={cellIndex}>
+                    {hzCell}
                   </td>
                 ))}
-                {row.ratioCells.map((cell, i) => (
-                  <td className={`${TD} ${NUM}`} key={i}>
-                    {cell}
+                {row.ratioCells.map((ratioCell, cellIndex) => (
+                  <td className={`${TD} ${NUM}`} key={cellIndex}>
+                    {ratioCell}
                   </td>
                 ))}
               </tr>

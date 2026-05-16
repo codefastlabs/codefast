@@ -42,8 +42,8 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
         <p className="mt-2 text-sm leading-relaxed text-zinc-400">{currentScenario.what}</p>
       )}
       <div className="mt-5 grid grid-cols-[1fr] gap-3 sm:grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))]">
-        {metricsData?.cards.map((card, i) => (
-          <MetricCard key={i} {...card} />
+        {metricsData?.cards.map((card) => (
+          <MetricCard key={card.label} {...card} />
         ))}
       </div>
       {metricsData?.footnote && (
@@ -71,11 +71,11 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
       <div className="text-bh-metric-accent text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums">
         {value}
       </div>
-      {meta.map((m, i) => (
+      {meta.map((metaLine, metaIndex) => (
         <div
-          className={`text-bh-label text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em]${i === 0 ? " mt-[0.38rem]" : " mt-[0.22rem]"}`}
-          dangerouslySetInnerHTML={{ __html: m }}
-          key={i}
+          className={`text-bh-label text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em]${metaIndex === 0 ? " mt-[0.38rem]" : " mt-[0.22rem]"}`}
+          dangerouslySetInnerHTML={{ __html: metaLine }}
+          key={metaIndex}
         />
       ))}
     </div>

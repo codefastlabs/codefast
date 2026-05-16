@@ -47,7 +47,7 @@ export function computeInitialCategoryWindow(pointCount: number): { max: number;
 }
 
 /**
- * Optional `{ min, max }` for Chart category x-scale when we crop to the newest slice (L≥6).
+ * Optional `{ min, max }` for Chart category x-scale when we crop to the newest slice (pointCount≥6).
  * When undefined, Chart defaults to the full label range — equivalent to {@link computeInitialCategoryWindow} for short series.
  *
  * @since 0.3.16-canary.1

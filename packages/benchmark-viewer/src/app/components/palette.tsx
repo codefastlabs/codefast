@@ -68,14 +68,14 @@ export function CommandPalette({
   const filtered = useMemo(
     () =>
       query.trim()
-        ? actions.filter((a) => a.label.toLowerCase().includes(query.toLowerCase()))
+        ? actions.filter((action) => action.label.toLowerCase().includes(query.toLowerCase()))
         : actions,
     [actions, query],
   );
 
   /** When this string changes, the filtered result set changed — reset highlight (not on arrow-key-only updates). */
   const filterEpoch = useMemo(
-    () => `${query}\0${filtered.map((a) => a.id).join("\0")}`,
+    () => `${query}\0${filtered.map((action) => action.id).join("\0")}`,
     [filtered, query],
   );
 
@@ -109,10 +109,10 @@ export function CommandPalette({
       if (actionCount === 0) {
         return -1;
       }
-      const cur = prev < 0 ? 0 : prev;
-      let next = cur + delta;
-      next = ((next % actionCount) + actionCount) % actionCount;
-      return next;
+      const currentIndex = prev < 0 ? 0 : prev;
+      let nextIndex = currentIndex + delta;
+      nextIndex = ((nextIndex % actionCount) + actionCount) % actionCount;
+      return nextIndex;
     });
   }
 
@@ -144,8 +144,8 @@ export function CommandPalette({
         return;
       }
       e.preventDefault();
-      const idx = highlightedIndexRef.current < 0 ? 0 : highlightedIndexRef.current;
-      handleActivateIndex(idx);
+      const activeIndex = highlightedIndexRef.current < 0 ? 0 : highlightedIndexRef.current;
+      handleActivateIndex(activeIndex);
     }
   }
 
@@ -201,22 +201,22 @@ export function CommandPalette({
               No matching actions
             </li>
           ) : (
-            filtered.map((a, i) => (
-              <li key={a.id} role="none">
+            filtered.map((action, actionIndex) => (
+              <li key={action.id} role="none">
                 <button
-                  aria-selected={i === highlightedIndex}
-                  className={paletteItem({ active: i === highlightedIndex })}
-                  id={`command-palette-opt-${a.id}`}
-                  onClick={() => onAction(a.id)}
-                  onMouseEnter={() => setHighlightedIndex(i)}
-                  ref={(el) => {
-                    itemRefs.current[i] = el;
+                  aria-selected={actionIndex === highlightedIndex}
+                  className={paletteItem({ active: actionIndex === highlightedIndex })}
+                  id={`command-palette-opt-${action.id}`}
+                  onClick={() => onAction(action.id)}
+                  onMouseEnter={() => setHighlightedIndex(actionIndex)}
+                  ref={(button) => {
+                    itemRefs.current[actionIndex] = button;
                   }}
                   role="option"
                   tabIndex={-1}
                   type="button"
                 >
-                  {a.label}
+                  {action.label}
                 </button>
               </li>
             ))

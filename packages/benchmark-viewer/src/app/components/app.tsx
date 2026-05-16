@@ -79,14 +79,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       showToast("Nothing to export yet — select a scenario with plotted runs.");
       return;
     }
-    const sid = String(view.scenarioId || "chart").replace(/[^a-zA-Z0-9_.-]+/g, "_");
-    const filename = `bench-history-${sid}.png`;
-    const a = document.createElement("a");
-    a.download = filename;
-    a.href = (
+    const scenarioSlug = String(view.scenarioId || "chart").replace(/[^a-zA-Z0-9_.-]+/g, "_");
+    const filename = `bench-history-${scenarioSlug}.png`;
+    const downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = (
       chart as ChartInstance & { toBase64Image: (type: string, quality: number) => string }
     ).toBase64Image("image/png", 1);
-    a.click();
+    downloadLink.click();
     showToast(`Saved ${filename}`);
   }
 
@@ -164,8 +164,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         <FindPanel
           group={view.group}
-          onGroupChange={(v) => patchView({ group: v })}
-          onSearchChange={(v) => patchView({ search: v })}
+          onGroupChange={(group) => patchView({ group })}
+          onSearchChange={(search) => patchView({ search })}
           search={view.search}
           uniqueGroups={uniqueGroups}
         />
@@ -173,10 +173,10 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         <ChartControlPanel
           envKey={view.envKey}
           isReloading={isReloading}
-          onEnvChange={(v) => patchView({ envKey: v })}
+          onEnvChange={(envKey) => patchView({ envKey })}
           onReload={() => loadData(true)}
-          onRunWindowChange={(v) => patchView({ runWindow: v })}
-          onScenarioChange={(v) => patchView({ scenarioId: v })}
+          onRunWindowChange={(runWindow) => patchView({ runWindow })}
+          onScenarioChange={(scenarioId) => patchView({ scenarioId })}
           onScenarioNext={() => {
             if (scenarioIndex < visibleScenarios.length - 1) {
               patchView({ scenarioId: visibleScenarios[scenarioIndex + 1]!.id });
@@ -198,7 +198,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         <ChartPanel
           baseRunIndices={baseRunIndices}
           envKey={view.envKey}
-          logScaleChange={(v) => patchView({ useLogScale: v })}
+          logScaleChange={(useLogScale) => patchView({ useLogScale })}
           onClearEnv={() => patchView({ envKey: "" })}
           onClearGroup={() => patchView({ group: "" })}
           onClearSearch={() => patchView({ search: "" })}
@@ -209,9 +209,9 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           runs={payload.runs}
           scenario={currentScenario}
           showBands={view.showBands}
-          showBandsChange={(v) => patchView({ showBands: v })}
+          showBandsChange={(showBands) => patchView({ showBands })}
           showRatio={view.showRatio}
-          showRatioChange={(v) => patchView({ showRatio: v })}
+          showRatioChange={(showRatio) => patchView({ showRatio })}
           useLogScale={view.useLogScale}
         />
 
