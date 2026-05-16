@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { buildEmbeddedPayload } from "#/build-payload";
+import { buildEmbeddedPayload } from "#/server/payload";
 import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
-import type { BenchServerOptions } from "#/server-types";
-import type { RunLines } from "#/read-runs";
+import type { BenchServerOptions } from "#/types";
+import type { RunLines } from "#/server/payload";
 
 function observationLine(
   libraryName: string,

@@ -39,99 +39,95 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./build-payload": {
-      "types": "./dist/build-payload.d.mts",
-      "import": "./dist/build-payload.mjs"
+    "./server": {
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
     },
-    "./client/client": {
-      "types": "./dist/client/client.d.ts",
-      "import": "./dist/client/client.js"
+    "./server/http": {
+      "types": "./dist/server/http.d.mts",
+      "import": "./dist/server/http.mjs"
     },
-    "./client/components/app": {
-      "types": "./dist/client/components/app.d.mts",
-      "import": "./dist/client/components/app.mjs"
+    "./server/payload": {
+      "types": "./dist/server/payload.d.mts",
+      "import": "./dist/server/payload.mjs"
     },
-    "./client/components/chart-panel": {
-      "types": "./dist/client/components/chart-panel.d.mts",
-      "import": "./dist/client/components/chart-panel.mjs"
+    "./server/port": {
+      "types": "./dist/server/port.d.mts",
+      "import": "./dist/server/port.mjs"
     },
-    "./client/components/command-palette": {
-      "types": "./dist/client/components/command-palette.d.mts",
-      "import": "./dist/client/components/command-palette.mjs"
+    "./server/render": {
+      "types": "./dist/server/render.d.mts",
+      "import": "./dist/server/render.mjs"
     },
-    "./client/components/find-panel": {
-      "types": "./dist/client/components/find-panel.d.mts",
-      "import": "./dist/client/components/find-panel.mjs"
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
     },
-    "./client/components/metrics-panel": {
-      "types": "./dist/client/components/metrics-panel.d.mts",
-      "import": "./dist/client/components/metrics-panel.mjs"
+    "./app/entry": {
+      "types": "./dist/app/entry.d.ts",
+      "import": "./dist/app/entry.js"
     },
-    "./client/components/page-footer-clocks": {
-      "types": "./dist/client/components/page-footer-clocks.d.mts",
-      "import": "./dist/client/components/page-footer-clocks.mjs"
+    "./app/components/app": {
+      "types": "./dist/app/components/app.d.mts",
+      "import": "./dist/app/components/app.mjs"
     },
-    "./client/entry-server": {
-      "types": "./dist/client/entry-server.d.mts",
-      "import": "./dist/client/entry-server.mjs"
+    "./app/components/chart": {
+      "types": "./dist/app/components/chart.d.mts",
+      "import": "./dist/app/components/chart.mjs"
     },
-    "./client/hooks/use-bench-payload": {
-      "types": "./dist/client/hooks/use-bench-payload.d.mts",
-      "import": "./dist/client/hooks/use-bench-payload.mjs"
+    "./app/components/finder": {
+      "types": "./dist/app/components/finder.d.mts",
+      "import": "./dist/app/components/finder.mjs"
     },
-    "./client/hooks/use-hash-sync": {
-      "types": "./dist/client/hooks/use-hash-sync.d.mts",
-      "import": "./dist/client/hooks/use-hash-sync.mjs"
+    "./app/components/footer": {
+      "types": "./dist/app/components/footer.d.mts",
+      "import": "./dist/app/components/footer.mjs"
     },
-    "./client/hooks/use-view-state": {
-      "types": "./dist/client/hooks/use-view-state.d.mts",
-      "import": "./dist/client/hooks/use-view-state.mjs"
+    "./app/components/metrics": {
+      "types": "./dist/app/components/metrics.d.mts",
+      "import": "./dist/app/components/metrics.mjs"
     },
-    "./client/lib/chart-category-view": {
-      "types": "./dist/client/lib/chart-category-view.d.mts",
-      "import": "./dist/client/lib/chart-category-view.mjs"
+    "./app/components/palette": {
+      "types": "./dist/app/components/palette.d.mts",
+      "import": "./dist/app/components/palette.mjs"
     },
-    "./client/lib/colors": {
-      "types": "./dist/client/lib/colors.d.mts",
-      "import": "./dist/client/lib/colors.mjs"
+    "./app/hooks/use-hash": {
+      "types": "./dist/app/hooks/use-hash.d.mts",
+      "import": "./dist/app/hooks/use-hash.mjs"
     },
-    "./client/lib/constants": {
-      "types": "./dist/client/lib/constants.d.mts",
-      "import": "./dist/client/lib/constants.mjs"
+    "./app/hooks/use-payload": {
+      "types": "./dist/app/hooks/use-payload.d.mts",
+      "import": "./dist/app/hooks/use-payload.mjs"
     },
-    "./client/lib/format": {
-      "types": "./dist/client/lib/format.d.mts",
-      "import": "./dist/client/lib/format.mjs"
+    "./app/hooks/use-view": {
+      "types": "./dist/app/hooks/use-view.d.mts",
+      "import": "./dist/app/hooks/use-view.mjs"
     },
-    "./client/lib/hash": {
-      "types": "./dist/client/lib/hash.d.mts",
-      "import": "./dist/client/lib/hash.mjs"
+    "./app/lib/chart-view": {
+      "types": "./dist/app/lib/chart-view.d.mts",
+      "import": "./dist/app/lib/chart-view.mjs"
     },
-    "./client/lib/metrics": {
-      "types": "./dist/client/lib/metrics.d.mts",
-      "import": "./dist/client/lib/metrics.mjs"
+    "./app/lib/colors": {
+      "types": "./dist/app/lib/colors.d.mts",
+      "import": "./dist/app/lib/colors.mjs"
     },
-    "./client/styles.css": "./dist/client/styles.css",
-    "./create-bench-server": {
-      "types": "./dist/create-bench-server.d.mts",
-      "import": "./dist/create-bench-server.mjs"
+    "./app/lib/constants": {
+      "types": "./dist/app/lib/constants.d.mts",
+      "import": "./dist/app/lib/constants.mjs"
     },
-    "./find-available-port": {
-      "types": "./dist/find-available-port.d.mts",
-      "import": "./dist/find-available-port.mjs"
+    "./app/lib/format": {
+      "types": "./dist/app/lib/format.d.mts",
+      "import": "./dist/app/lib/format.mjs"
     },
-    "./read-runs": {
-      "types": "./dist/read-runs.d.mts",
-      "import": "./dist/read-runs.mjs"
+    "./app/lib/hash": {
+      "types": "./dist/app/lib/hash.d.mts",
+      "import": "./dist/app/lib/hash.mjs"
     },
-    "./server-types": {
-      "types": "./dist/server-types.d.mts",
-      "import": "./dist/server-types.mjs"
+    "./app/lib/metrics": {
+      "types": "./dist/app/lib/metrics.d.mts",
+      "import": "./dist/app/lib/metrics.mjs"
     },
-    "./start-bench-server": {
-      "types": "./dist/start-bench-server.d.mts",
-      "import": "./dist/start-bench-server.mjs"
-    },
+    "./app/styles.css": "./dist/app/styles.css",
     "./package.json": "./package.json"
   },
   "scripts": {

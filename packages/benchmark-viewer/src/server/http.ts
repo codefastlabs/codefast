@@ -4,12 +4,12 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildEmbeddedPayload } from "#/build-payload";
-import { renderDocument } from "#/client/entry-server";
-import { listRawRuns } from "#/read-runs";
-import type { BenchServerOptions } from "#/server-types";
+import { buildEmbeddedPayload } from "#/server/payload";
+import { renderDocument } from "#/server/render";
+import { listRawRuns } from "#/server/payload";
+import type { BenchServerOptions } from "#/types";
 
-const clientDir = join(dirname(fileURLToPath(import.meta.url)), "client");
+const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
 
 const IMMUTABLE = "public, max-age=31536000, immutable";
 const NO_CACHE = "no-cache";
@@ -23,7 +23,7 @@ interface CachedAsset {
 }
 
 interface ServerState {
-  clientJs: CachedAsset;
+  entryJs: CachedAsset;
   stylesCss: CachedAsset;
   chunksDir: string;
   chunkCache: Map<string, CachedAsset>;
@@ -55,13 +55,9 @@ function serveAsset(asset: CachedAsset, req: IncomingMessage, res: ServerRespons
 
 function initState(options: BenchServerOptions): ServerState {
   return {
-    clientJs: loadAsset(
-      join(clientDir, "client.js"),
-      "application/javascript; charset=utf-8",
-      NO_CACHE,
-    ),
-    stylesCss: loadAsset(join(clientDir, "styles.css"), "text/css; charset=utf-8", NO_CACHE),
-    chunksDir: resolve(clientDir, "chunks"),
+    entryJs: loadAsset(join(appDir, "entry.js"), "application/javascript; charset=utf-8", NO_CACHE),
+    stylesCss: loadAsset(join(appDir, "styles.css"), "text/css; charset=utf-8", NO_CACHE),
+    chunksDir: resolve(appDir, "chunks"),
     chunkCache: new Map(),
     options,
   };
@@ -138,8 +134,8 @@ export function createBenchServer(options: BenchServerOptions): Server {
     if (url.pathname === "/") {
       return handleRoot(state, req, res);
     }
-    if (url.pathname === "/client.js") {
-      return serveAsset(state.clientJs, req, res);
+    if (url.pathname === "/entry.js") {
+      return serveAsset(state.entryJs, req, res);
     }
     if (url.pathname === "/styles.css") {
       return serveAsset(state.stylesCss, req, res);

@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
-import { createBenchServer } from "#/create-bench-server";
-import { findAvailablePort } from "#/find-available-port";
-import type { BenchServerOptions } from "#/server-types";
+import { createBenchServer } from "#/server/http";
+import { findAvailablePort } from "#/server/port";
+import type { BenchServerOptions } from "#/types";
 
 const MAX_LISTEN_ATTEMPTS = 32;
 

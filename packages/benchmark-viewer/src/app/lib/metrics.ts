@@ -1,7 +1,7 @@
-import type { PaletteEntry } from "#/client/lib/colors";
-import { DISPERSION_IQR_ALERT } from "#/client/lib/constants";
-import { fmtHz, fmtPctChange } from "#/client/lib/format";
-import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/server-types";
+import type { PaletteEntry } from "#/app/lib/colors";
+import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
+import { fmtHz, fmtPctChange } from "#/app/lib/format";
+import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
 
 /**
  * @since 0.3.16-canary.1

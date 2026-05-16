@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import type { ViewState } from "#/client/lib/hash";
-import type { EmbeddedViewerPayload } from "#/server-types";
+import type { ViewState } from "#/app/lib/hash";
+import type { EmbeddedViewerPayload } from "#/types";
 
 /**
  * @since 0.3.16-canary.1

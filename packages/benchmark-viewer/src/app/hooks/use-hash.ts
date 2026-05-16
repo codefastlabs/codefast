@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { buildHash, parseHash, type ViewState } from "#/client/lib/hash";
-import type { EmbeddedViewerPayload } from "#/server-types";
+import { buildHash, parseHash, type ViewState } from "#/app/lib/hash";
+import type { EmbeddedViewerPayload } from "#/types";
 
 interface HashSyncOptions {
   payload: EmbeddedViewerPayload | null;

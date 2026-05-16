@@ -1,5 +1,5 @@
-import type { MetricCardProps, MetricsResult } from "#/client/lib/metrics";
-import type { EmbeddedScenarioSeries } from "#/server-types";
+import type { MetricCardProps, MetricsResult } from "#/app/lib/metrics";
+import type { EmbeddedScenarioSeries } from "#/types";
 
 interface MetricsPanelProps {
   currentScenario: EmbeddedScenarioSeries | null;

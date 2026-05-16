@@ -2,9 +2,9 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { Transform } from "node:stream";
 import { StrictMode } from "react";
 import { renderToPipeableStream } from "react-dom/server";
-import { App } from "#/client/components/app";
-import { escHtml } from "#/client/lib/format";
-import type { EmbeddedViewerPayload } from "#/server-types";
+import { App } from "#/app/components/app";
+import { escHtml } from "#/app/lib/format";
+import type { EmbeddedViewerPayload } from "#/types";
 
 const HTML_SUFFIX = Buffer.from("</div></body></html>");
 
@@ -17,7 +17,7 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <title>${escHtml(title)}</title>
 <link href="/styles.css" rel="stylesheet" />
 <script>window.__BENCH_PAYLOAD__=${payloadJson};</script>
-<script type="module" src="/client.js"></script>
+<script type="module" src="/entry.js"></script>
 </head>
 <body class="bh-app-body bh-app-body--viewer">
 <div id="root">`;

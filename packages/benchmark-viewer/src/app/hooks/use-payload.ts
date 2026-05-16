@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { EmbeddedViewerPayload } from "#/server-types";
+import type { EmbeddedViewerPayload } from "#/types";
 
 interface BenchPayloadOptions {
   initialPayload: EmbeddedViewerPayload | undefined;

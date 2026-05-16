@@ -32,7 +32,7 @@ export default defineConfig({
     {
       // Command palette uses combobox + listbox ARIA roles (not native <select>/<datalist>/<dialog>).
       // The input carries aria-expanded as part of the combobox pattern (textbox + popup).
-      files: ["packages/benchmark-viewer/src/client/components/command-palette.tsx"],
+      files: ["packages/benchmark-viewer/src/app/components/palette.tsx"],
       rules: {
         "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",
         "jsx-a11y/prefer-tag-over-role": "off",
@@ -43,8 +43,8 @@ export default defineConfig({
       // Viewer components use role="group" (toolbar groups) and role="status" (live regions).
       // These ARIA roles do not have direct semantic HTML equivalents in the rendering contexts used.
       files: [
-        "packages/benchmark-viewer/src/client/components/app.tsx",
-        "packages/benchmark-viewer/src/client/components/metrics-panel.tsx",
+        "packages/benchmark-viewer/src/app/components/app.tsx",
+        "packages/benchmark-viewer/src/app/components/metrics.tsx",
       ],
       rules: {
         "jsx-a11y/prefer-tag-over-role": "off",
