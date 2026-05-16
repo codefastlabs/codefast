@@ -1,12 +1,12 @@
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import { createServer } from "node:http";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, watch } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildEmbeddedPayload, listRawRuns } from "#/server/payload";
+import { buildEmbeddedPayload, DEFAULT_MAX_RUNS, listRawRuns } from "#/server/payload";
 import { renderDocument } from "#/server/render";
-import type { BenchServerOptions } from "#/types";
+import type { BenchServerOptions, EmbeddedViewerPayload } from "#/types";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
 
@@ -21,12 +21,20 @@ interface CachedAsset {
   etag: string;
 }
 
+interface PayloadCache {
+  payload: EmbeddedViewerPayload;
+  rawJson: string;
+  etag: string;
+  limit: number;
+}
+
 interface ServerState {
   entryJs: CachedAsset;
   stylesCss: CachedAsset;
   chunksDir: string;
   chunkCache: Map<string, CachedAsset>;
   options: BenchServerOptions;
+  payloadCache: PayloadCache | null;
 }
 
 function computeEtag(content: Buffer | string): string {
@@ -59,7 +67,33 @@ function initState(options: BenchServerOptions): ServerState {
     chunksDir: resolve(appDir, "chunks"),
     chunkCache: new Map(),
     options,
+    payloadCache: null,
   };
+}
+
+function parseLimitParam(raw: string | null, defaultLimit: number): number {
+  if (raw === null) {
+    return defaultLimit;
+  }
+  const parsed = parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.min(parsed, 10_000) : defaultLimit;
+}
+
+async function getOrBuildCache(state: ServerState, limit: number): Promise<PayloadCache> {
+  if (state.payloadCache !== null && state.payloadCache.limit === limit) {
+    return state.payloadCache;
+  }
+  const {
+    runs: rawRuns,
+    hasMore,
+    warning,
+  } = await listRawRuns(state.options.benchResultsDir, limit);
+  const payload = buildEmbeddedPayload(rawRuns, state.options, hasMore, limit, warning);
+  const rawJson = JSON.stringify(payload);
+  const etag = computeEtag(rawJson);
+  const cache: PayloadCache = { payload, rawJson, etag, limit };
+  state.payloadCache = cache;
+  return cache;
 }
 
 function handleChunk(
@@ -82,57 +116,58 @@ function handleChunk(
   serveAsset(chunk, req, res);
 }
 
-function handleRoot(state: ServerState, req: IncomingMessage, res: ServerResponse): void {
+async function handleRoot(
+  state: ServerState,
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
   try {
-    const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
-    const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
-    const rawJson = JSON.stringify(payload);
-    const etag = computeEtag(rawJson);
-    if (req.headers["if-none-match"] === etag) {
+    const limit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
+    const cache = await getOrBuildCache(state, limit);
+    if (req.headers["if-none-match"] === cache.etag) {
       res.writeHead(304);
       res.end();
       return;
     }
     res.setHeader("Cache-Control", NO_CACHE);
-    res.setHeader("ETag", etag);
-    renderDocument(req, res, payload, rawJson);
+    res.setHeader("ETag", cache.etag);
+    renderDocument(req, res, cache.payload, cache.rawJson);
   } catch (err) {
     res.writeHead(500, { "Content-Type": "text/plain" });
     res.end(String(err));
   }
 }
 
-function handleApiPayload(state: ServerState, req: IncomingMessage, res: ServerResponse): void {
+async function handleApiPayload(
+  state: ServerState,
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
   try {
-    const { runs: rawRuns, warning } = listRawRuns(state.options.benchResultsDir);
-    const payload = buildEmbeddedPayload(rawRuns, state.options, warning);
+    const url = new URL(req.url ?? "/", "http://localhost");
+    const defaultLimit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
+    const limit = parseLimitParam(url.searchParams.get("limit"), defaultLimit);
+    const cache = await getOrBuildCache(state, limit);
     res.writeHead(200, {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": NO_STORE,
     });
-    res.end(JSON.stringify(payload));
+    res.end(cache.rawJson);
   } catch (err) {
     res.writeHead(500, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: String(err) }));
   }
 }
 
-/**
- * Creates an HTTP server for the benchmark history viewer.
- *
- * Bind to loopback (`127.0.0.1`) unless you intend to expose benchmark results on the network:
- * routes stream JSON and HTML derived from {@link BenchServerOptions.benchResultsDir}.
- *
- * @since 0.3.16-canary.0
- */
-export function createBenchServer(options: BenchServerOptions): Server {
-  const state = initState(options);
-
-  return createServer((req, res) => {
+function createRequestHandler(state: ServerState) {
+  return (req: IncomingMessage, res: ServerResponse): void => {
     const url = new URL(req.url ?? "/", "http://localhost");
 
     if (url.pathname === "/") {
-      return handleRoot(state, req, res);
+      handleRoot(state, req, res).catch((err: unknown) => {
+        console.error("[bench-server] handleRoot error:", err);
+      });
+      return;
     }
     if (url.pathname === "/entry.js") {
       return serveAsset(state.entryJs, req, res);
@@ -147,10 +182,40 @@ export function createBenchServer(options: BenchServerOptions): Server {
     }
 
     if (url.pathname === "/api/payload") {
-      return handleApiPayload(state, req, res);
+      handleApiPayload(state, req, res).catch((err: unknown) => {
+        console.error("[bench-server] handleApiPayload error:", err);
+      });
+      return;
     }
 
     res.writeHead(404);
     res.end("Not found");
-  });
+  };
+}
+
+/**
+ * Creates an HTTP server for the benchmark history viewer.
+ *
+ * Bind to loopback (`127.0.0.1`) unless you intend to expose benchmark results on the network:
+ * routes stream JSON and HTML derived from {@link BenchServerOptions.benchResultsDir}.
+ *
+ * @since 0.3.16-canary.0
+ */
+export function createBenchServer(options: BenchServerOptions): Server {
+  const state = initState(options);
+  const server = createServer(createRequestHandler(state));
+
+  // Invalidate the payload cache whenever a new run directory is added.
+  // If benchResultsDir doesn't exist yet, skip the watcher — listRawRuns will
+  // return an empty result with a warning on each request until it appears.
+  try {
+    const watcher = watch(options.benchResultsDir, { persistent: false }, () => {
+      state.payloadCache = null;
+    });
+    server.once("close", () => watcher.close());
+  } catch {
+    // directory not found — watcher unavailable, cache cleared on each miss anyway
+  }
+
+  return server;
 }

@@ -24,6 +24,12 @@ export interface BenchServerOptions {
   readonly title?: string;
   /** Libraries to track. The one with `isPrimary: true` is used for ratio calculations. */
   readonly libraries: ReadonlyArray<BenchLibraryConfig>;
+  /**
+   * Maximum number of run directories to include in the initial payload.
+   * Older runs beyond this cap are omitted but can be fetched on demand via
+   * the "Load older runs" control. Default: 200.
+   */
+  readonly maxRuns?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -100,6 +106,10 @@ export interface EmbeddedViewerPayload {
   readonly scenarios: ReadonlyArray<EmbeddedScenarioSeries>;
   /** ISO timestamp when this JSON snapshot was built (server clock). */
   readonly generatedAtIso: string;
+  /** The maxRuns cap that was applied when building this payload. */
+  readonly effectiveLimit: number;
+  /** True when older run directories exist beyond the effectiveLimit window. */
+  readonly hasMore: boolean;
   /**
    * When the bench results directory could not be read, a short diagnostic for the UI.
    * Omitted when the directory was read successfully (even if it contained no runs).

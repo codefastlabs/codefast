@@ -58,6 +58,8 @@ function SegButton({ className, ...props }: ComponentProps<"button">) {
 interface ChartControlPanelProps {
   isReloading: boolean;
   onReload: () => void;
+  hasMore: boolean;
+  onLoadOlderRuns: () => void;
   scenarioId: string;
   visibleScenarios: Array<EmbeddedScenarioSeries>;
   onScenarioChange: (id: string) => void;
@@ -75,6 +77,8 @@ interface ChartControlPanelProps {
 export function ChartControlPanel({
   isReloading,
   onReload,
+  hasMore,
+  onLoadOlderRuns,
   scenarioId,
   visibleScenarios,
   onScenarioChange,
@@ -97,17 +101,30 @@ export function ChartControlPanel({
         <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
           Chart data
         </p>
-        <ReloadButton
-          aria-busy={isReloading}
-          aria-label="Reload benchmark data from server"
-          className="shrink-0"
-          disabled={isReloading}
-          onClick={onReload}
-          title="Fetch the latest runs from the server without refreshing the page"
-        >
-          <RefreshCwIcon className="size-3.5 shrink-0 opacity-88" />
-          Reload data
-        </ReloadButton>
+        <div className="flex shrink-0 items-center gap-2">
+          {hasMore && (
+            <ReloadButton
+              aria-label="Load older benchmark runs"
+              className="shrink-0"
+              disabled={isReloading}
+              onClick={onLoadOlderRuns}
+              title="Fetch older runs from the server and add them to the chart"
+            >
+              ← Load older runs
+            </ReloadButton>
+          )}
+          <ReloadButton
+            aria-busy={isReloading}
+            aria-label="Reload benchmark data from server"
+            className="shrink-0"
+            disabled={isReloading}
+            onClick={onReload}
+            title="Fetch the latest runs from the server without refreshing the page"
+          >
+            <RefreshCwIcon className="size-3.5 shrink-0 opacity-88" />
+            Reload data
+          </ReloadButton>
+        </div>
       </div>
       <div className="flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)] sm:flex-row sm:flex-wrap sm:items-end sm:gap-3">
         <div className="flex w-full min-w-0 flex-col gap-2 max-sm:col-span-full max-sm:mb-0.5 max-sm:gap-1.5 max-sm:border-b max-sm:border-white/6 max-sm:pb-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end">
