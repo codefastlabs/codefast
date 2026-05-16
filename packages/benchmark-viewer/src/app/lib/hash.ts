@@ -64,28 +64,28 @@ export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<
   const params = new URLSearchParams(raw.replace(/^#/, ""));
   const patch: Partial<ViewState> = {};
 
-  const ev = params.get(HASH_KEYS.environment);
-  if (ev !== null) {
-    const validEnvKeys = new Set(payload.runs.map((r) => r.envKey));
-    if (ev === "" || validEnvKeys.has(ev)) {
-      patch.envKey = ev;
+  const envParam = params.get(HASH_KEYS.environment);
+  if (envParam !== null) {
+    const validEnvKeys = new Set(payload.runs.map((run) => run.envKey));
+    if (envParam === "" || validEnvKeys.has(envParam)) {
+      patch.envKey = envParam;
     }
   }
 
-  const g = params.get(HASH_KEYS.group);
-  const validGroups = new Set(payload.scenarios.map((s) => s.group));
-  if (g && validGroups.has(g)) {
-    patch.group = g;
+  const groupParam = params.get(HASH_KEYS.group);
+  const validGroups = new Set(payload.scenarios.map((scenario) => scenario.group));
+  if (groupParam && validGroups.has(groupParam)) {
+    patch.group = groupParam;
   }
 
-  const q = params.get(HASH_KEYS.search);
-  if (q !== null) {
-    patch.search = q;
+  const searchParam = params.get(HASH_KEYS.search);
+  if (searchParam !== null) {
+    patch.search = searchParam;
   }
 
-  const w = params.get(HASH_KEYS.runWindow);
-  if (w === "all" || w === "10" || w === "20") {
-    patch.runWindow = w;
+  const runWindowParam = params.get(HASH_KEYS.runWindow);
+  if (runWindowParam === "all" || runWindowParam === "10" || runWindowParam === "20") {
+    patch.runWindow = runWindowParam;
   }
 
   if (params.has(HASH_KEYS.showBands)) {
@@ -98,9 +98,9 @@ export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<
     patch.showRatio = params.get(HASH_KEYS.showRatio) === "1";
   }
 
-  const sc = params.get(HASH_KEYS.scenario);
-  if (sc && payload.scenarios.some((s) => s.id === sc)) {
-    patch.scenarioId = sc;
+  const scenarioParam = params.get(HASH_KEYS.scenario);
+  if (scenarioParam && payload.scenarios.some((scenario) => scenario.id === scenarioParam)) {
+    patch.scenarioId = scenarioParam;
   }
 
   return patch;
