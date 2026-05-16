@@ -30,19 +30,21 @@ export default defineConfig([
     outputOptions: {
       entryFileNames: "[name].js",
       chunkFileNames: "chunks/[name]-[hash].js",
-      manualChunks(id) {
-        // pnpm: .../node_modules/.pnpm/react@19/node_modules/react/index.js
-        // npm:  .../node_modules/react/index.js
-        // → take the last node_modules/ segment to get the real package name
-        const parts = id.split(/node_modules[\\/]/);
-        if (parts.length < 2) {
-          return;
-        }
-        const last = parts[parts.length - 1]!;
-        const match = /^(@[^\\/]+[\\/][^\\/]+|[^\\/]+)/.exec(last);
-        if (match) {
-          return `vendor-${match[1].replace("@", "").replace("/", "-")}`;
-        }
+      codeSplitting: {
+        groups: [
+          {
+            test: /node_modules/,
+            // pnpm: .../node_modules/.pnpm/react@19/node_modules/react/index.js
+            // npm:  .../node_modules/react/index.js
+            // → take the last node_modules/ segment to get the real package name
+            name(moduleId) {
+              const parts = moduleId.split(/node_modules[\\/]/);
+              const last = parts[parts.length - 1] ?? "";
+              const match = /^(@[^\\/]+[\\/][^\\/]+|[^\\/]+)/.exec(last);
+              return match ? `vendor-${match[1].replace("@", "").replace("/", "-")}` : "vendor";
+            },
+          },
+        ],
       },
     },
     css: {
