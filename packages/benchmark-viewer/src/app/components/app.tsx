@@ -1,4 +1,12 @@
-import { type RefObject, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { ChartInstance } from "#/app/components/chart";
 import { ChartPanel } from "#/app/components/chart";
 import { ChartControlPanel } from "#/app/components/controls";
@@ -23,6 +31,27 @@ import type {
   EmbeddedViewerPayload,
 } from "#/types";
 
+// ─── Module-level constants ───────────────────────────────────────────────────
+
+const PALETTE_ACTIONS = [
+  { id: "reload-data", label: "Reload bench data from server" },
+  { id: "focus-search", label: "Focus scenario search" },
+  { id: "scenario-next", label: "Next scenario" },
+  { id: "scenario-prev", label: "Previous scenario" },
+  { id: "toggle-bands", label: "Toggle P25–P75 band" },
+  { id: "toggle-log", label: "Toggle log Y axis" },
+  { id: "toggle-ratio", label: "Toggle primary ratios" },
+  { id: "reset-zoom", label: "Reset chart zoom" },
+  { id: "download-png", label: "Download chart as PNG" },
+  { id: "copy-link", label: "Copy link to this view" },
+];
+
+const DETAILS_PERSIST_ITEMS = [
+  { id: "intro-howto-details", key: "bh-howto-open" },
+  { id: "chart-data-details", key: "bh-chartdata-open" },
+  { id: "snapshot-details", key: "bh-snapshot-open" },
+] as const;
+
 // ─── App ─────────────────────────────────────────────────────────────────────
 
 /**
@@ -36,13 +65,24 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
   const [paletteQuery, setPaletteQuery] = useState("");
   const paletteInputRef = useRef<HTMLInputElement>(null);
 
-  function showToast(message: string) {
+  // useCallback: showToast is passed to useBenchPayload as onReloadError — keeping
+  // it stable makes loadData stable across renders (its only dep is onReloadError).
+  const showToast = useCallback((message: string) => {
     setToastMsg(message);
     if (toastTimerRef.current) {
       clearTimeout(toastTimerRef.current);
     }
     toastTimerRef.current = setTimeout(() => setToastMsg(null), 3500);
-  }
+  }, []);
+
+  // Cancel any pending toast timer on unmount to avoid setState after unmount.
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
 
   const { payload, loadError, isReloading, loadData } = useBenchPayload({
     initialPayload,
@@ -166,17 +206,11 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
   // ─── details persistence via localStorage ──────────────────────────────────
 
+  // Read persisted open state once on mount. Separating this from the listener
+  // attachment below fixes a bug where localStorage was re-applied on every reload,
+  // overriding whatever the user had toggled since the page loaded.
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    const items = [
-      { id: "intro-howto-details", key: "bh-howto-open" },
-      { id: "chart-data-details", key: "bh-chartdata-open" },
-      { id: "snapshot-details", key: "bh-snapshot-open" },
-    ];
-    const cleanups: Array<() => void> = [];
-    for (const cfg of items) {
+    for (const cfg of DETAILS_PERSIST_ITEMS) {
       const el = document.getElementById(cfg.id) as HTMLDetailsElement | null;
       if (!el) {
         continue;
@@ -187,6 +221,21 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         }
       } catch {
         /* ignore */
+      }
+    }
+  }, []);
+
+  // Attach toggle → localStorage listeners. Re-runs when payload changes because
+  // elements are re-rendered (and may be replaced in the DOM) after a data reload.
+  useEffect(() => {
+    if (!payload) {
+      return;
+    }
+    const cleanups: Array<() => void> = [];
+    for (const cfg of DETAILS_PERSIST_ITEMS) {
+      const el = document.getElementById(cfg.id) as HTMLDetailsElement | null;
+      if (!el) {
+        continue;
       }
       const handler = () => {
         try {
@@ -220,9 +269,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
   });
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
     window.addEventListener("keydown", onBenchGlobalKeydown);
     return () => window.removeEventListener("keydown", onBenchGlobalKeydown);
   }, []);
@@ -275,7 +321,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     setCommandPaletteOpen(false);
     switch (id) {
       case "reload-data":
-        void loadData(true);
+        loadData(true);
         break;
       case "focus-search":
         document.getElementById("scenario-search")?.focus();
@@ -310,22 +356,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         break;
     }
   }
-
-  const paletteActions = useMemo(
-    () => [
-      { id: "reload-data", label: "Reload bench data from server" },
-      { id: "focus-search", label: "Focus scenario search" },
-      { id: "scenario-next", label: "Next scenario" },
-      { id: "scenario-prev", label: "Previous scenario" },
-      { id: "toggle-bands", label: "Toggle P25–P75 band" },
-      { id: "toggle-log", label: "Toggle log Y axis" },
-      { id: "toggle-ratio", label: "Toggle primary ratios" },
-      { id: "reset-zoom", label: "Reset chart zoom" },
-      { id: "download-png", label: "Download chart as PNG" },
-      { id: "copy-link", label: "Copy link to this view" },
-    ],
-    [],
-  );
 
   // ─── Metrics ────────────────────────────────────────────────────────────────
 
@@ -451,7 +481,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           envKey={view.envKey}
           isReloading={isReloading}
           onEnvChange={(v) => patchView({ envKey: v })}
-          onReload={() => void loadData(true)}
+          onReload={() => loadData(true)}
           onRunWindowChange={(v) => patchView({ runWindow: v })}
           onScenarioChange={(v) => patchView({ scenarioId: v })}
           onScenarioNext={() => {
@@ -533,7 +563,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
       {/* Command palette */}
       <CommandPalette
-        actions={paletteActions}
+        actions={PALETTE_ACTIONS}
         inputRef={paletteInputRef}
         isOpen={commandPaletteOpen}
         onAction={runPaletteCommand}
