@@ -30,8 +30,22 @@ export default defineConfig({
       },
     },
     {
-      // Command palette uses combobox + listbox ARIA roles (not native <select>).
-      files: ["packages/benchmark-harness/src/server/client/components/command-palette.tsx"],
+      // Command palette uses combobox + listbox ARIA roles (not native <select>/<datalist>/<dialog>).
+      // The input carries aria-expanded as part of the combobox pattern (textbox + popup).
+      files: ["packages/benchmark-viewer/src/client/components/command-palette.tsx"],
+      rules: {
+        "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",
+        "jsx-a11y/prefer-tag-over-role": "off",
+        "jsx-a11y/role-supports-aria-props": "off",
+      },
+    },
+    {
+      // Viewer components use role="group" (toolbar groups) and role="status" (live regions).
+      // These ARIA roles do not have direct semantic HTML equivalents in the rendering contexts used.
+      files: [
+        "packages/benchmark-viewer/src/client/components/app.tsx",
+        "packages/benchmark-viewer/src/client/components/metrics-panel.tsx",
+      ],
       rules: {
         "jsx-a11y/prefer-tag-over-role": "off",
       },

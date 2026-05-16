@@ -6,7 +6,7 @@ import {
   BENCH_RESULTS_DIR_NAME,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
-import { startBenchServer } from "@codefast/benchmark-harness/server/start-bench-server";
+import { startBenchServer } from "@codefast/benchmark-viewer/start-bench-server";
 import { CODEFAST_TV, CVA, SERVE_TITLE, TAILWIND_VARIANTS } from "#/harness/config";
 
 await startBenchServer({

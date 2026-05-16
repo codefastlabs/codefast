@@ -642,6 +642,9 @@ importers:
       '@codefast/benchmark-harness':
         specifier: workspace:*
         version: link:../../packages/benchmark-harness
+      '@codefast/benchmark-viewer':
+        specifier: workspace:*
+        version: link:../../packages/benchmark-viewer
       '@codefast/di':
         specifier: workspace:*
         version: link:../../packages/di
@@ -676,6 +679,9 @@ importers:
       '@codefast/benchmark-harness':
         specifier: workspace:*
         version: link:../../packages/benchmark-harness
+      '@codefast/benchmark-viewer':
+        specifier: workspace:*
+        version: link:../../packages/benchmark-viewer
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../../packages/tailwind-variants
@@ -710,6 +716,37 @@ importers:
 
   packages/benchmark-harness:
     dependencies:
+      tinybench:
+        specifier: 'catalog:'
+        version: 6.0.2
+    devDependencies:
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.7.0
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260514.1
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.22.0(@tsdown/css@0.22.0)(@typescript/native-preview@7.0.0-dev.20260514.1)(oxc-resolver@11.19.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(tsx@4.22.0)(typescript@6.0.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@types/node@25.7.0)(@vitest/coverage-v8@4.1.6)(jsdom@29.1.1)(vite@8.0.13(@types/node@25.7.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0))
+
+  packages/benchmark-viewer:
+    dependencies:
+      '@codefast/benchmark-harness':
+        specifier: workspace:*
+        version: link:../benchmark-harness
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1
@@ -728,9 +765,6 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.0
-      tinybench:
-        specifier: 'catalog:'
-        version: 6.0.2
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
