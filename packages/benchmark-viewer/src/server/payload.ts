@@ -10,7 +10,10 @@ import {
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
 } from "@codefast/benchmark-harness/report/jsonl";
-import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import type {
+  AggregatedScenarioResult,
+  LibraryReport,
+} from "@codefast/benchmark-harness/report/aggregate";
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
 import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
@@ -105,6 +108,7 @@ interface RunData {
   readonly meta: EmbeddedRun;
   readonly reports: Map<string, LibraryReport>;
   readonly spreadsPerLib: Map<string, Map<string, SpreadResult | null>>;
+  readonly scenarioIndices: Map<string, Map<string, AggregatedScenarioResult>>;
 }
 
 function parseJsonlLines(lines: ReadonlyArray<string>): Array<JsonlBenchObservationRow> {
@@ -222,19 +226,23 @@ function extractRunMeta(
   };
 }
 
-function hzLookup(report: LibraryReport, scenarioId: string): number | null {
-  const scenarioRow = report.scenarios.find((scenario) => scenario.id === scenarioId);
-  return scenarioRow !== undefined && scenarioRow.hzPerOpMedian > 0
-    ? scenarioRow.hzPerOpMedian
-    : null;
+function hzLookup(
+  index: ReadonlyMap<string, AggregatedScenarioResult>,
+  scenarioId: string,
+): number | null {
+  const row = index.get(scenarioId);
+  return row !== undefined && row.hzPerOpMedian > 0 ? row.hzPerOpMedian : null;
 }
 
-function hzIqrFractionLookup(report: LibraryReport, scenarioId: string): number | null {
-  const scenarioRow = report.scenarios.find((scenario) => scenario.id === scenarioId);
-  if (scenarioRow === undefined || scenarioRow.hzPerOpMedian <= 0) {
+function hzIqrFractionLookup(
+  index: ReadonlyMap<string, AggregatedScenarioResult>,
+  scenarioId: string,
+): number | null {
+  const row = index.get(scenarioId);
+  if (row === undefined || row.hzPerOpMedian <= 0) {
     return null;
   }
-  const iqrFraction = scenarioRow.hzPerOpIqrFraction;
+  const iqrFraction = row.hzPerOpIqrFraction;
   return Number.isFinite(iqrFraction) && iqrFraction > 0 ? iqrFraction : null;
 }
 
@@ -267,9 +275,18 @@ export function buildEmbeddedPayload(
       continue;
     }
 
+    const scenarioIndices = new Map<string, Map<string, AggregatedScenarioResult>>();
+    for (const [libName, report] of reports) {
+      const idx = new Map<string, AggregatedScenarioResult>();
+      for (const row of report.scenarios) {
+        idx.set(row.id, row);
+      }
+      scenarioIndices.set(libName, idx);
+    }
+
     const meta = extractRunMeta(raw.folderName, observations, libraryNames, primaryName);
     if (meta !== undefined) {
-      runs.push({ meta, reports, spreadsPerLib });
+      runs.push({ meta, reports, spreadsPerLib, scenarioIndices });
     }
   }
 
@@ -302,9 +319,9 @@ export function buildEmbeddedPayload(
       const p75: Array<number | null> = [];
       const iqrFraction: Array<number | null> = [];
       for (const run of runs) {
-        const report = run.reports.get(libName);
-        hz.push(report !== undefined ? hzLookup(report, scenarioId) : null);
-        iqrFraction.push(report !== undefined ? hzIqrFractionLookup(report, scenarioId) : null);
+        const libIndex = run.scenarioIndices.get(libName);
+        hz.push(libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null);
+        iqrFraction.push(libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null);
         const spread = run.spreadsPerLib.get(libName)?.get(scenarioId) ?? null;
         p25.push(spread !== null && spread.p25Hz > 0 ? spread.p25Hz : null);
         p75.push(spread !== null && spread.p75Hz > 0 ? spread.p75Hz : null);
