@@ -53,6 +53,7 @@ export default defineConfig({
       // These ARIA roles do not have direct semantic HTML equivalents in the rendering contexts used.
       files: [
         "packages/benchmark-viewer/src/app/components/app.tsx",
+        "packages/benchmark-viewer/src/app/components/controls.tsx",
         "packages/benchmark-viewer/src/app/components/metrics.tsx",
       ],
       rules: {
