@@ -1,4 +1,5 @@
 import { formatLocal } from "#/app/lib/format";
+import { KpiCard, KpiCardLabel, KpiCardValue } from "#/app/components/kpi-card";
 import type { EmbeddedRun } from "#/types";
 
 interface KpiGridProps {
@@ -7,40 +8,34 @@ interface KpiGridProps {
   latestRun: EmbeddedRun | undefined;
 }
 
-const CARD =
-  "border-bh-border bg-bh-surface-elevated shadow-bh-card hover:border-bh-border-strong hover:shadow-bh-card-hover rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease] motion-reduce:transition-none";
-const LBL = "text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase";
-const VAL =
-  "text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums";
-
 export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
   return (
     <div aria-label="History overview" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <div className={CARD}>
-        <div className={LBL}>Saved runs</div>
-        <div className={`${VAL} text-zinc-100`}>{runCount}</div>
-      </div>
+      <KpiCard>
+        <KpiCardLabel>Saved runs</KpiCardLabel>
+        <KpiCardValue className="text-zinc-100">{runCount}</KpiCardValue>
+      </KpiCard>
 
-      <div className={CARD}>
-        <div className={LBL}>Scenarios tracked</div>
-        <div className={`${VAL} text-zinc-100`}>{scenarioCount}</div>
-      </div>
+      <KpiCard>
+        <KpiCardLabel>Scenarios tracked</KpiCardLabel>
+        <KpiCardValue className="text-zinc-100">{scenarioCount}</KpiCardValue>
+      </KpiCard>
 
-      <div className={`${CARD} sm:col-span-2 xl:col-span-1`}>
-        <div className={LBL}>Newest saved run · local clock</div>
-        <div className={`${VAL} text-sm text-zinc-200`} suppressHydrationWarning>
+      <KpiCard className="sm:col-span-2 xl:col-span-1">
+        <KpiCardLabel>Newest saved run · local clock</KpiCardLabel>
+        <KpiCardValue className="text-sm text-zinc-200" suppressHydrationWarning>
           {latestRun
             ? (() => {
                 const clock = formatLocal(latestRun.timestampIso, latestRun.folder);
                 return clock ? `${clock} · folder ${latestRun.folder}` : latestRun.folder;
               })()
             : "—"}
-        </div>
-      </div>
+        </KpiCardValue>
+      </KpiCard>
 
-      <div className={`${CARD} xl:col-span-1`}>
-        <div className={LBL}>Library builds (latest run)</div>
-        <div className={`${VAL} text-xs leading-snug font-normal text-zinc-400`}>
+      <KpiCard className="xl:col-span-1">
+        <KpiCardLabel>Library builds (latest run)</KpiCardLabel>
+        <KpiCardValue className="text-xs leading-snug font-normal text-zinc-400">
           {latestRun?.libraryVersions?.length
             ? latestRun.libraryVersions.map((lv) => (
                 <div className="mt-0.5 leading-[1.45]" key={lv.key}>
@@ -54,8 +49,8 @@ export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
                 </div>
               ))
             : "—"}
-        </div>
-      </div>
+        </KpiCardValue>
+      </KpiCard>
     </div>
   );
 }
