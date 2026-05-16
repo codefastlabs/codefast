@@ -7,20 +7,28 @@ interface KpiGridProps {
   latestRun: EmbeddedRun | undefined;
 }
 
+const CARD =
+  "border-bh-border bg-bh-surface-elevated shadow-bh-card hover:border-bh-border-strong hover:shadow-bh-card-hover rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease] motion-reduce:transition-none";
+const LBL = "text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase";
+const VAL =
+  "text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums";
+
 export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
   return (
     <div aria-label="History overview" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <div className="bh-card">
-        <div className="bh-lbl">Saved runs</div>
-        <div className="bh-val text-zinc-100">{runCount}</div>
+      <div className={CARD}>
+        <div className={LBL}>Saved runs</div>
+        <div className={`${VAL} text-zinc-100`}>{runCount}</div>
       </div>
-      <div className="bh-card">
-        <div className="bh-lbl">Scenarios tracked</div>
-        <div className="bh-val text-zinc-100">{scenarioCount}</div>
+
+      <div className={CARD}>
+        <div className={LBL}>Scenarios tracked</div>
+        <div className={`${VAL} text-zinc-100`}>{scenarioCount}</div>
       </div>
-      <div className="bh-card sm:col-span-2 xl:col-span-1">
-        <div className="bh-lbl">Newest saved run · local clock</div>
-        <div className="bh-val text-sm text-zinc-200" suppressHydrationWarning>
+
+      <div className={`${CARD} sm:col-span-2 xl:col-span-1`}>
+        <div className={LBL}>Newest saved run · local clock</div>
+        <div className={`${VAL} text-sm text-zinc-200`} suppressHydrationWarning>
           {latestRun
             ? (() => {
                 const clock = formatLocal(latestRun.timestampIso, latestRun.folder);
@@ -29,13 +37,14 @@ export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
             : "—"}
         </div>
       </div>
-      <div className="bh-card xl:col-span-1">
-        <div className="bh-lbl">Library builds (latest run)</div>
-        <div className="bh-val text-xs leading-snug font-normal text-zinc-400">
+
+      <div className={`${CARD} xl:col-span-1`}>
+        <div className={LBL}>Library builds (latest run)</div>
+        <div className={`${VAL} text-xs leading-snug font-normal text-zinc-400`}>
           {latestRun?.libraryVersions?.length
             ? latestRun.libraryVersions.map((lv) => (
                 <div className="mt-0.5 leading-[1.45]" key={lv.key}>
-                  <span className="text-[var(--color-bh-lib-key)]">{lv.key}</span> {lv.version}
+                  <span className="text-bh-lib-key">{lv.key}</span> {lv.version}
                   {lv.gcExposed && (
                     <span className="text-amber-400" title="--expose-gc active">
                       {" "}

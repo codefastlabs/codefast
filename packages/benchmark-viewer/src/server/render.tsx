@@ -39,7 +39,7 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <script>window.__BENCH_PAYLOAD__=${payloadJson};</script>
 <script type="module" src="/entry.js"></script>
 </head>
-<body class="bh-app-body bh-app-body--viewer">
+<body class="font-bh bg-bh-bg min-h-screen overflow-x-clip text-zinc-200 bg-[radial-gradient(ellipse_130%_70%_at_50%_-25%,var(--color-bh-glow-blue),transparent_52%),radial-gradient(ellipse_70%_45%_at_95%_35%,var(--color-bh-glow-green),transparent_42%),linear-gradient(180deg,var(--color-bh-bg-gradient-top)_0%,var(--color-bh-bg)_45%,var(--color-bh-bg-gradient-bottom)_100%)] bg-fixed antialiased [text-rendering:optimizeLegibility] motion-safe:scroll-smooth">
 <div id="root">`;
 }
 

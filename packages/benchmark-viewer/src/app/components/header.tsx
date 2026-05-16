@@ -29,7 +29,7 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
         <div className="flex w-full shrink-0 flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
           <button
             aria-label="Copy link to this view"
-            className="bh-btn-reload min-h-11 justify-center sm:min-h-0"
+            className="text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload bh-hover-ready:text-bh-ink-hover bh-hover-ready:border-bh-border-strong bh-hover-ready:bg-bh-fill-white-7 focus-visible:outline-bh-blue bh-aria-busy:cursor-wait bh-aria-busy:opacity-55 inline-flex min-h-11 items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none sm:min-h-0"
             onClick={onCopyLink}
             title="Copies URL including filters, scenario, and display toggles"
             type="button"
@@ -39,10 +39,10 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
         </div>
       </div>
       <details
-        className="bh-glass bh-glass--tight mt-5 px-4 py-3 sm:px-5 sm:py-3.5"
+        className="border-bh-border bg-bh-surface mt-5 rounded-2xl border px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:px-5 sm:py-3.5"
         id="intro-howto-details"
       >
-        <summary className="bh-details-summary bh-details-summary--prominent">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
           How to read this viewer
         </summary>
         <div className="mt-3 border-t border-white/6 pt-3 text-sm leading-relaxed text-zinc-400">

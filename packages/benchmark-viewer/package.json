@@ -144,6 +144,7 @@
   },
   "dependencies": {
     "@codefast/benchmark-harness": "workspace:*",
+    "@codefast/tailwind-variants": "workspace:*",
     "chart.js": "catalog:",
     "chartjs-plugin-zoom": "catalog:",
     "postcss": "catalog:",
