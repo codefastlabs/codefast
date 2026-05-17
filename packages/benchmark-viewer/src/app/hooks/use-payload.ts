@@ -16,6 +16,9 @@ async function fetchPayload(limit: number): Promise<EmbeddedViewerPayload> {
   return response.json() as Promise<EmbeddedViewerPayload>;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadOptions) {
   const [payload, setPayload] = useState<EmbeddedViewerPayload | null>(initialPayload ?? null);
   const [loadError, setLoadError] = useState<string | null>(null);

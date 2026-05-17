@@ -3,6 +3,9 @@ interface PageHeaderProps {
   onCopyLink: () => void;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
   return (
     <header className="mb-8 max-w-4xl border-b border-white/6 pb-6 sm:mb-10 sm:pb-8">

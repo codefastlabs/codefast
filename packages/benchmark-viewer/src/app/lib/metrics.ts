@@ -102,6 +102,9 @@ export interface SnapshotRow {
   ratioCells: Array<string>;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export interface BuildMetricsOptions {
   scenario: EmbeddedScenarioSeries;
   runIndices: Array<number>;

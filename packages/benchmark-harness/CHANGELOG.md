@@ -1,5 +1,7 @@
 # @codefast/benchmark-harness
 
+## 0.3.16-canary.3
+
 ## 0.3.16-canary.2
 
 ### Patch Changes
