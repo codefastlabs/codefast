@@ -48,7 +48,7 @@ Accessible, typed React components built on Radix UI primitives and styled with 
 
 ## Requirements
 
-- React `^19` and `react-dom` (peer; `@types/*` are optional peers)
+- React `>=19.0.0` and `react-dom` (peer; `@types/*` are optional peers)
 - Tailwind CSS `4.x` at build time (only if you use one of the theme CSS imports)
 - TypeScript `>= 5.9` (recommended)
 
