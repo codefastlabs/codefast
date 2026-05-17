@@ -63,6 +63,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
     "@content-collections/core": "catalog:",
     "@content-collections/vite": "catalog:",
     "@fontsource-variable/figtree": "catalog:",

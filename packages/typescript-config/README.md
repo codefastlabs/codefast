@@ -44,7 +44,7 @@ Design goals:
 
 ## Requirements
 
-- TypeScript **>= 5.0** — `moduleResolution: "bundler"` requires TS 5.0+; `verbatimModuleSyntax` awareness works best on 5.2+
+- TypeScript **>= 5.0** — `moduleResolution: "bundler"` requires TS 5.0+ (declared as a `peerDependency`)
 
 No runtime dependency is added to your application — the package is pure JSON.
 
@@ -91,6 +91,7 @@ Sets the strict, modern baseline used by every other preset.
   "compilerOptions": {
     "allowJs": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
@@ -106,20 +107,21 @@ Sets the strict, modern baseline used by every other preset.
 }
 ```
 
-| Option                        | Value                       | Why                                                                                       |
-| ----------------------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
-| `strict`                      | `true`                      | Turns on the full strict family (`strictNullChecks`, `noImplicitAny`, etc.).              |
-| `noUncheckedIndexedAccess`    | `true`                      | `arr[i]` and `obj[key]` are typed `T \| undefined` — forces explicit handling.            |
-| `target`                      | `ESNext`                    | Compile to the newest JavaScript; the bundler / runtime downlevels if needed.             |
-| `module` / `moduleResolution` | `ESNext` / `bundler`        | Native ESM output with bundler-style `exports`/`imports` resolution.                      |
-| `moduleDetection`             | `force`                     | Treats every file as a module — no accidental global script files.                        |
-| `isolatedModules`             | `true`                      | Each file must be transpilable in isolation (required by esbuild, swc, Vite, Babel).      |
-| `lib`                         | `DOM, DOM.Iterable, ESNext` | Browser globals + the current ECMAScript surface.                                         |
-| `noEmit`                      | `true`                      | Type-checking only — emit is handled by tsdown / tsc-on-the-side / bundler.               |
-| `allowJs`                     | `true`                      | Permits mixed `.js`/`.ts` codebases.                                                      |
-| `resolveJsonModule`           | `true`                      | `import data from "./file.json"` works out of the box.                                    |
-| `esModuleInterop`             | `true`                      | Interop with CommonJS default imports.                                                    |
-| `skipLibCheck`                | `true`                      | Skips type-checking of declaration files — faster, and sidesteps noisy third-party types. |
+| Option                             | Value                       | Why                                                                                       |
+| ---------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
+| `strict`                           | `true`                      | Turns on the full strict family (`strictNullChecks`, `noImplicitAny`, etc.).              |
+| `noUncheckedIndexedAccess`         | `true`                      | `arr[i]` and `obj[key]` are typed `T \| undefined` — forces explicit handling.            |
+| `target`                           | `ESNext`                    | Compile to the newest JavaScript; the bundler / runtime downlevels if needed.             |
+| `module` / `moduleResolution`      | `ESNext` / `bundler`        | Native ESM output with bundler-style `exports`/`imports` resolution.                      |
+| `moduleDetection`                  | `force`                     | Treats every file as a module — no accidental global script files.                        |
+| `isolatedModules`                  | `true`                      | Each file must be transpilable in isolation (required by esbuild, swc, Vite, Babel).      |
+| `lib`                              | `DOM, DOM.Iterable, ESNext` | Browser globals + the current ECMAScript surface.                                         |
+| `noEmit`                           | `true`                      | Type-checking only — emit is handled by tsdown / tsc-on-the-side / bundler.               |
+| `allowJs`                          | `true`                      | Permits mixed `.js`/`.ts` codebases.                                                      |
+| `resolveJsonModule`                | `true`                      | `import data from "./file.json"` works out of the box.                                    |
+| `esModuleInterop`                  | `true`                      | Interop with CommonJS default imports.                                                    |
+| `forceConsistentCasingInFileNames` | `true`                      | Catches import-path casing mismatches across macOS / Linux CI.                            |
+| `skipLibCheck`                     | `true`                      | Skips type-checking of declaration files — faster, and sidesteps noisy third-party types. |
 
 ### library.json
 
