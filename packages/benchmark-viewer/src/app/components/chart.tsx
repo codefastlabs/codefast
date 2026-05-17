@@ -7,20 +7,21 @@ import {
   useRef,
   useState,
 } from "react";
-import { Chart } from "chart.js";
+import { Chart, type ChartDataset } from "chart.js";
 import { ChevronDownIcon } from "#/app/components/icons";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
 import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import {
   ALL_TOOLBAR_DISABLED,
-  type ChartToolbarDisabled,
   categoryXScaleWindow,
+  type ChartToolbarDisabled,
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
 import { formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
 import { cn } from "#/app/lib/utils";
 import { ratioFrom } from "#/app/lib/metrics";
+import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
 
 function SegButton({ className, ...props }: ComponentProps<"button">) {
   return (
@@ -187,8 +188,7 @@ export function ChartPanel({
     });
     const runsSlice = runIndices.map((globalIx) => runs[globalIx]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const datasets: Array<any> = [];
+    const datasets: Array<ChartDataset<"line", Array<number | null>>> = [];
 
     for (const lib of orderedLibraries) {
       const libData = scenario.libraries[lib.key];
@@ -579,9 +579,11 @@ export function ChartPanel({
         on the chart · legend toggles series.
       </p>
 
-      <div
-        className="relative mt-5 h-[min(32rem,70dvh)] min-h-80 w-full overflow-hidden rounded-2xl bg-black/40 shadow-(--shadow-bh-glass-tight) ring-1 ring-white/8"
-        id="bench-chart-host"
+      <section
+        aria-label="Throughput over time chart"
+        className="relative mt-5 h-[min(32rem,70dvh)] min-h-80 w-full scroll-mt-[calc(max(0.5rem,env(safe-area-inset-top,0))+7.5rem)] overflow-hidden rounded-2xl bg-black/40 shadow-(--shadow-bh-glass-tight) ring-1 ring-white/8 focus:outline-none"
+        id={CHART_SKIP_TARGET_ID}
+        tabIndex={-1}
       >
         {!hasData && (
           <div
@@ -623,7 +625,7 @@ export function ChartPanel({
           id="bench-chart"
           ref={canvasRef}
         />
-      </div>
+      </section>
 
       {/* Display toggles — `group` enables group-open: chevron rotation */}
       <details

@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
+import { useId } from "react";
 
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { useId } from "react";
 
 import {
   InputNumber,
@@ -736,7 +736,6 @@ describe("input-number", () => {
 
         return (
           <div>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label htmlFor={`${id}-number-input`}>Number Input</label>
             <InputNumber data-testid="input-number" defaultValue={5} id={`${id}-number-input`}>
               <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
