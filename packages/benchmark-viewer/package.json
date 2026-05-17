@@ -47,6 +47,10 @@
       "types": "./dist/app/components/chart.d.mts",
       "import": "./dist/app/components/chart.mjs"
     },
+    "./app/components/controls": {
+      "types": "./dist/app/components/controls.d.mts",
+      "import": "./dist/app/components/controls.mjs"
+    },
     "./app/components/finder": {
       "types": "./dist/app/components/finder.d.mts",
       "import": "./dist/app/components/finder.mjs"
@@ -54,6 +58,22 @@
     "./app/components/footer": {
       "types": "./dist/app/components/footer.d.mts",
       "import": "./dist/app/components/footer.mjs"
+    },
+    "./app/components/header": {
+      "types": "./dist/app/components/header.d.mts",
+      "import": "./dist/app/components/header.mjs"
+    },
+    "./app/components/icons": {
+      "types": "./dist/app/components/icons.d.mts",
+      "import": "./dist/app/components/icons.mjs"
+    },
+    "./app/components/kpi": {
+      "types": "./dist/app/components/kpi.d.mts",
+      "import": "./dist/app/components/kpi.mjs"
+    },
+    "./app/components/kpi-card": {
+      "types": "./dist/app/components/kpi-card.d.mts",
+      "import": "./dist/app/components/kpi-card.mjs"
     },
     "./app/components/metrics": {
       "types": "./dist/app/components/metrics.d.mts",
@@ -63,9 +83,29 @@
       "types": "./dist/app/components/palette.d.mts",
       "import": "./dist/app/components/palette.mjs"
     },
+    "./app/components/skip-to-chart": {
+      "types": "./dist/app/components/skip-to-chart.d.mts",
+      "import": "./dist/app/components/skip-to-chart.mjs"
+    },
+    "./app/components/snapshot": {
+      "types": "./dist/app/components/snapshot.d.mts",
+      "import": "./dist/app/components/snapshot.mjs"
+    },
     "./app/entry": {
       "types": "./dist/app/entry.d.ts",
       "import": "./dist/app/entry.js"
+    },
+    "./app/hooks/use-command-palette": {
+      "types": "./dist/app/hooks/use-command-palette.d.mts",
+      "import": "./dist/app/hooks/use-command-palette.mjs"
+    },
+    "./app/hooks/use-derived-payload": {
+      "types": "./dist/app/hooks/use-derived-payload.d.mts",
+      "import": "./dist/app/hooks/use-derived-payload.mjs"
+    },
+    "./app/hooks/use-details-persist": {
+      "types": "./dist/app/hooks/use-details-persist.d.mts",
+      "import": "./dist/app/hooks/use-details-persist.mjs"
     },
     "./app/hooks/use-hash": {
       "types": "./dist/app/hooks/use-hash.d.mts",
@@ -74,6 +114,10 @@
     "./app/hooks/use-payload": {
       "types": "./dist/app/hooks/use-payload.d.mts",
       "import": "./dist/app/hooks/use-payload.mjs"
+    },
+    "./app/hooks/use-toast": {
+      "types": "./dist/app/hooks/use-toast.d.mts",
+      "import": "./dist/app/hooks/use-toast.mjs"
     },
     "./app/hooks/use-view": {
       "types": "./dist/app/hooks/use-view.d.mts",
@@ -102,6 +146,14 @@
     "./app/lib/metrics": {
       "types": "./dist/app/lib/metrics.d.mts",
       "import": "./dist/app/lib/metrics.mjs"
+    },
+    "./app/lib/skip-chart": {
+      "types": "./dist/app/lib/skip-chart.d.mts",
+      "import": "./dist/app/lib/skip-chart.mjs"
+    },
+    "./app/lib/utils": {
+      "types": "./dist/app/lib/utils.d.mts",
+      "import": "./dist/app/lib/utils.mjs"
     },
     "./app/styles.css": "./dist/app/styles.css",
     "./server": {
