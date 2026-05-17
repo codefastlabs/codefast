@@ -2,6 +2,9 @@ import type { ComponentProps } from "react";
 
 import { cn } from "#/app/lib/utils";
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function KpiCard({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
@@ -14,6 +17,9 @@ export function KpiCard({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function KpiCardLabel({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
@@ -26,6 +32,9 @@ export function KpiCardLabel({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function KpiCardValue({ className, ...props }: ComponentProps<"div">) {
   return (
     <div

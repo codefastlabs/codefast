@@ -1,5 +1,14 @@
 # @codefast/ui
 
+## 0.3.16-canary.3
+
+### Patch Changes
+
+- [`9b94464`](https://github.com/codefastlabs/codefast/commit/9b94464be2247bd5ead32dc3d5c921ae3a52070c) Thanks [@thevuong](https://github.com/thevuong)! - Use minimum `>=` ranges in peerDependencies instead of `^` caret ranges.
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.3.16-canary.3
+
 ## 0.3.16-canary.2
 
 ### Patch Changes

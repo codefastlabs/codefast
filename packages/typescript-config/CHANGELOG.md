@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.3.16-canary.3
+
+### Patch Changes
+
+- [`f5a7a76`](https://github.com/codefastlabs/codefast/commit/f5a7a7607958030562d2051223e3ab39a4e551d7) Thanks [@thevuong](https://github.com/thevuong)! - Ship LICENSE in the published tarball, declare a TypeScript peer dependency, and enable `forceConsistentCasingInFileNames` in the base preset.
+
 ## 0.3.16-canary.2
 
 ## 0.3.16-canary.1

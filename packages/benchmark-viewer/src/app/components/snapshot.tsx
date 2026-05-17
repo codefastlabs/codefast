@@ -38,6 +38,9 @@ interface SnapshotSectionProps {
   latestRun: EmbeddedRun | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function SnapshotSection({
   runCount,
   orderedLibraries,

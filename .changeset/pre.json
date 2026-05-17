@@ -10,7 +10,8 @@
     "@codefast/tailwind-variants": "0.3.15",
     "@codefast/theme": "0.3.15",
     "@codefast/typescript-config": "0.3.15",
-    "@codefast/ui": "0.3.15"
+    "@codefast/ui": "0.3.15",
+    "@codefast/benchmark-viewer": "0.3.16-canary.2"
   },
   "changesets": [
     "afraid-items-hide",
@@ -18,9 +19,11 @@
     "eight-turtles-run",
     "late-queens-stand",
     "lazy-rockets-fall",
+    "peer-deps-minimum-ranges",
     "perky-dots-smile",
     "short-donkeys-create",
     "silver-frogs-search",
-    "slimy-kings-rush"
+    "slimy-kings-rush",
+    "typescript-config-review-fixes"
   ]
 }

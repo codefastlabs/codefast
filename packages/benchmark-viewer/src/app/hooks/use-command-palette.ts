@@ -2,6 +2,9 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { ViewState } from "#/app/lib/hash";
 import type { EmbeddedScenarioSeries } from "#/types";
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export const PALETTE_ACTIONS = [
   { id: "reload-data", label: "Reload bench data from server" },
   { id: "focus-search", label: "Focus scenario search" },
@@ -24,6 +27,9 @@ interface CommandPaletteOptions {
   onCopyLink: () => void;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export interface CommandPaletteHandle {
   isOpen: boolean;
   query: string;
@@ -33,6 +39,9 @@ export interface CommandPaletteHandle {
   handleCommand: (id: string) => void;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function useCommandPalette({
   visibleScenarios,
   scenarioIndex,

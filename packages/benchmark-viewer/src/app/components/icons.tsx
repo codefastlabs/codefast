@@ -23,6 +23,9 @@ function Icon({ children, ...props }: IconProps) {
 
 // ─── Brand ────────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function AppLogoIcon(props: IconProps) {
   const uid = useId();
   const g1 = `${uid}-g1`;
@@ -61,6 +64,9 @@ export function AppLogoIcon(props: IconProps) {
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ChevronDownIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -69,6 +75,9 @@ export function ChevronDownIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ChevronUpIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -77,6 +86,9 @@ export function ChevronUpIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ChevronLeftIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -85,6 +97,9 @@ export function ChevronLeftIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ChevronRightIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -95,6 +110,9 @@ export function ChevronRightIcon(props: IconProps) {
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function RefreshCwIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -104,6 +122,9 @@ export function RefreshCwIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function DownloadIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -114,6 +135,9 @@ export function DownloadIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function LinkIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -123,6 +147,9 @@ export function LinkIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function XIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -132,6 +159,9 @@ export function XIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ZoomResetIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -144,6 +174,9 @@ export function ZoomResetIcon(props: IconProps) {
 
 // ─── Search & filter ──────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function SearchIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -153,6 +186,9 @@ export function SearchIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function FunnelIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -163,6 +199,9 @@ export function FunnelIcon(props: IconProps) {
 
 // ─── Data & metrics ───────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function BarChartIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -176,6 +215,9 @@ export function BarChartIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function GaugeIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -189,6 +231,9 @@ export function GaugeIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function BoltIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -197,6 +242,9 @@ export function BoltIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function TrendingUpIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -206,6 +254,9 @@ export function TrendingUpIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function Grid2x2Icon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -217,6 +268,9 @@ export function Grid2x2Icon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function TableIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -228,6 +282,9 @@ export function TableIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ClockIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -239,6 +296,9 @@ export function ClockIcon(props: IconProps) {
 
 // ─── Status & feedback ────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function TriangleAlertIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -249,6 +309,9 @@ export function TriangleAlertIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function CircleCheckIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -258,6 +321,9 @@ export function CircleCheckIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function InfoIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -270,6 +336,9 @@ export function InfoIcon(props: IconProps) {
 
 // ─── UI chrome ────────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function KeyboardIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -286,6 +355,9 @@ export function KeyboardIcon(props: IconProps) {
   );
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function CommandIcon(props: IconProps) {
   return (
     <Icon {...props}>
