@@ -99,7 +99,10 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
   return (
     <div
       aria-label={label}
-      className={`border-bh-border bg-bh-surface-elevated shadow-bh-card hover:border-bh-border-strong hover:shadow-bh-card-hover rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease] motion-reduce:transition-none${isRatio ? " [--color-bh-metric-accent:var(--color-bh-ratio-accent)]" : ""}`}
+      className={cn(
+        "border-bh-border bg-bh-surface-elevated shadow-bh-card hover:border-bh-border-strong hover:shadow-bh-card-hover rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease] motion-reduce:transition-none",
+        { "[--color-bh-metric-accent:var(--color-bh-ratio-accent)]": isRatio },
+      )}
       role="group"
       style={
         accentColor

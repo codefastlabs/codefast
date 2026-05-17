@@ -2,6 +2,7 @@ import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { tv } from "@codefast/tailwind-variants";
 import { isMacLikePlatform } from "#/app/lib/format";
+import { cn } from "#/app/lib/utils";
 
 interface PaletteAction {
   id: string;
@@ -159,15 +160,21 @@ export function CommandPalette({
       aria-hidden={!isOpen}
       aria-labelledby="command-palette-title"
       aria-modal="true"
-      className={`fixed inset-0 z-400 flex items-start justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:px-4 sm:pt-[min(20vh,10rem)]${isOpen ? "" : " hidden"}`}
+      className={cn(
+        "fixed inset-0 z-400 flex items-start justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:px-4 sm:pt-[min(20vh,10rem)]",
+        { hidden: !isOpen },
+      )}
       id="command-palette"
       onKeyDownCapture={handleDialogKeyDownCapture}
       role="dialog"
     >
-      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- scrim dismisses on click; Escape handled on dialog capture */}
       <div
-        className="bg-bh-overlay/75 absolute inset-0 backdrop-blur-[0.35rem]"
+        aria-label="Close command palette"
+        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-[0.35rem]"
         onClick={onClose}
+        onKeyDown={onClose}
+        role="button"
+        tabIndex={0}
       />
       <div className="border-bh-border bg-bh-surface relative z-1 mt-2 max-h-[min(85dvh,calc(100dvh-2.5rem))] w-full max-w-lg overflow-hidden rounded-[1.25rem] border p-0 shadow-(--shadow-bh-glass) backdrop-blur-xl backdrop-saturate-180 sm:mt-0 sm:max-h-none">
         <p

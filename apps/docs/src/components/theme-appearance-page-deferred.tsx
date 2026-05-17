@@ -12,8 +12,8 @@ import {
 } from "#/components/theme-appearance-constants";
 import { CopySnippetButton } from "#/components/theme-appearance-shared";
 import { cn } from "@codefast/tailwind-variants";
-import { themes } from "@codefast/theme";
 import type { ResolvedTheme, Theme } from "@codefast/theme";
+import { themes } from "@codefast/theme";
 import { Link } from "@tanstack/react-router";
 import {
   CheckCircle2Icon,
@@ -817,7 +817,10 @@ export function ThemeAppearancePageDeferred({
                       onClick={() => {
                         void setTheme(themeOption);
                       }}
-                      className={`h-12 w-full justify-center gap-2 sm:h-11 sm:rounded-xl ${isActive ? "shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                      className={cn(
+                        "h-12 w-full justify-center gap-2 sm:h-11 sm:rounded-xl",
+                        isActive ? "shadow-sm" : "text-muted-foreground hover:text-foreground",
+                      )}
                     >
                       <Icon className="size-4 shrink-0" aria-hidden />
                       <span className="capitalize">{themeOption}</span>
