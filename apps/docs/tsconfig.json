@@ -1,33 +1,11 @@
 {
-  /* Files to include */
+  "extends": "@codefast/typescript-config/react.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    /* Language & Environment */
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "jsx": "react-jsx",
-    "types": ["node", "vite/client"],
-
-    /* Modules */
-    "module": "ESNext",
-    "moduleDetection": "force",
-    "moduleResolution": "Bundler",
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "resolveJsonModule": true,
-    "allowJs": true,
     "allowImportingTsExtensions": true,
+    "types": ["node", "vite/client"],
     "paths": {
       "#/*": ["./src/*"]
-    },
-
-    /* Emit */
-    "noEmit": true,
-
-    /* Type Checking */
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noUncheckedIndexedAccess": true
+    }
   }
 }

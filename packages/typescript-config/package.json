@@ -39,6 +39,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
   "engines": {
     "node": ">=22.0.0"
   }
