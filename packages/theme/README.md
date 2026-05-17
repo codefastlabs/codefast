@@ -51,7 +51,7 @@ Theme management for React 19 — SSR-safe `system` resolution, optimistic updat
 
 ## Requirements
 
-- React `^19` (and `react-dom`)
+- React `>=19.0.0` (and `react-dom`)
 - TypeScript `>= 5.9` (recommended; the published types target ES2022)
 - TanStack Start `^1` — only if you use `@codefast/theme/start`
 
