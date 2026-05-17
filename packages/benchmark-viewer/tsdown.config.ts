@@ -4,7 +4,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig([
   // ① Node server — unbundled ESM (SSR + HTTP server)
   {
-    entry: ["src/**/*.ts?(x)", "!src/**/*.test.ts?(x)", "!src/app/entry.tsx"],
+    entry: ["src/**/*.ts?(x)", "!src/**/*.test.ts?(x)", "!src/app"],
     unbundle: true,
     platform: "node",
   },
