@@ -4,8 +4,9 @@ import { createHash } from "node:crypto";
 import { readFileSync, watch } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildEmbeddedPayload, DEFAULT_MAX_RUNS, listRawRuns } from "#/server/payload";
+import { buildEmbeddedPayload, listRawRuns } from "#/server/payload";
 import { renderDocument } from "#/server/render";
+import { DEFAULT_MAX_RUNS } from "#/constants";
 import type { BenchServerOptions, EmbeddedViewerPayload } from "#/types";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
