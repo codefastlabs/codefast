@@ -1,5 +1,5 @@
 import { useCallback, useState, useTransition } from "react";
-import { DEFAULT_MAX_RUNS } from "#/server/payload";
+import { DEFAULT_MAX_RUNS } from "#/constants";
 import type { EmbeddedViewerPayload } from "#/types";
 
 interface BenchPayloadOptions {

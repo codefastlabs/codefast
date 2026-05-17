@@ -17,6 +17,7 @@ import type {
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
 import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
+import { DEFAULT_MAX_RUNS } from "#/constants";
 import type {
   BenchServerOptions,
   EmbeddedLibraryMeta,
@@ -25,8 +26,6 @@ import type {
   EmbeddedScenarioSeries,
   EmbeddedViewerPayload,
 } from "#/types";
-
-export const DEFAULT_MAX_RUNS = 200;
 
 // ---------------------------------------------------------------------------
 // Run scanning
