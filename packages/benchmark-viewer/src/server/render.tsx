@@ -1,12 +1,8 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-import { Transform } from "node:stream";
 import { StrictMode } from "react";
-import { renderToPipeableStream } from "react-dom/server";
+import { renderToReadableStream } from "react-dom/server";
 import { App } from "#/app/components/app";
 import { escHtml } from "#/app/lib/format";
 import type { EmbeddedViewerPayload } from "#/types";
-
-const HTML_SUFFIX = Buffer.from("</div></body></html>");
 
 const FAVICON_SVG = [
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">',
@@ -42,81 +38,45 @@ function buildHtmlPrefix(payloadJson: string, title: string): string {
 <div id="root">`;
 }
 
-function safeEnd(res: ServerResponse): void {
-  if (res.writableEnded || res.destroyed) {
-    return;
-  }
-  try {
-    res.end(HTML_SUFFIX);
-  } catch {
-    try {
-      res.destroy();
-    } catch {
-      /* ignore */
-    }
-  }
-}
-
 /**
  * @since 0.3.16-canary.1
  */
-export function renderDocument(
-  req: IncomingMessage,
-  res: ServerResponse,
+export async function renderDocument(
   payload: EmbeddedViewerPayload,
   rawJson: string,
-): void {
-  const pageTitle = payload.title.trim();
-  const payloadJson = safeScriptJson(rawJson);
+): Promise<ReadableStream<Uint8Array>> {
+  const encoder = new TextEncoder();
+  const prefix = encoder.encode(buildHtmlPrefix(safeScriptJson(rawJson), payload.title.trim()));
+  const suffix = encoder.encode("</div></body></html>");
 
-  res.setHeader("content-type", "text/html; charset=utf-8");
-  res.write(buildHtmlPrefix(payloadJson, pageTitle));
-
-  const { pipe, abort } = renderToPipeableStream(
+  const abortController = new AbortController();
+  const reactStream = await renderToReadableStream(
     <StrictMode>
       <App initialPayload={payload} />
     </StrictMode>,
-    {
-      onShellReady() {
-        const appendSuffix = new Transform({
-          transform(chunk, _encoding, callback) {
-            callback(null, chunk);
-          },
-          flush(callback) {
-            callback(null, HTML_SUFFIX);
-          },
-        });
-
-        appendSuffix.once("error", (err: Error) => {
-          console.error("[bench-server] SSR transform error:", err);
-          abort(err);
-        });
-
-        appendSuffix.pipe(res);
-
-        res.once("error", (err: Error) => {
-          console.error("[bench-server] response stream error:", err);
-          abort(err);
-        });
-
-        pipe(appendSuffix);
-      },
-      onShellError(error) {
-        console.error("[bench-server] SSR shell error:", error);
-        safeEnd(res);
-      },
-      onError(error) {
-        console.error("[bench-server] SSR error:", error);
-      },
-    },
+    { signal: abortController.signal },
   );
 
-  const { socket } = req;
-  if (socket !== null && !socket.destroyed) {
-    socket.once("close", () => {
-      if (!res.writableEnded && !res.destroyed) {
-        abort(new DOMException("Client disconnected", "AbortError"));
+  return new ReadableStream<Uint8Array>({
+    async start(ctrl) {
+      ctrl.enqueue(prefix);
+      const reader = reactStream.getReader();
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          ctrl.enqueue(value);
+        }
+      } finally {
+        reader.releaseLock();
       }
-    });
-  }
+      ctrl.enqueue(suffix);
+      ctrl.close();
+    },
+    cancel(reason) {
+      abortController.abort(reason);
+    },
+  });
 }

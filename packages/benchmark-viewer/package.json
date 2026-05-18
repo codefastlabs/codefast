@@ -173,8 +173,10 @@
   "dependencies": {
     "@codefast/benchmark-harness": "workspace:*",
     "@codefast/tailwind-variants": "workspace:*",
+    "@hono/node-server": "catalog:",
     "chart.js": "catalog:",
     "chartjs-plugin-zoom": "catalog:",
+    "hono": "catalog:",
     "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

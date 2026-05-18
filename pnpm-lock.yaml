@@ -39,6 +39,9 @@ catalogs:
     '@fontsource-variable/nunito-sans':
       specifier: ^5.2.7
       version: 5.2.7
+    '@hono/node-server':
+      specifier: ^2.0.0
+      version: 2.0.2
     '@hookform/resolvers':
       specifier: ^5.2.2
       version: 5.2.2
@@ -264,6 +267,9 @@ catalogs:
     hast-util-to-string:
       specifier: ^3.0.1
       version: 3.0.1
+    hono:
+      specifier: ^4.12.0
+      version: 4.12.19
     input-otp:
       specifier: ^1.4.2
       version: 1.4.2
@@ -753,12 +759,18 @@ importers:
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../tailwind-variants
+      '@hono/node-server':
+        specifier: 'catalog:'
+        version: 2.0.2(hono@4.12.19)
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1
       chartjs-plugin-zoom:
         specifier: 'catalog:'
         version: 2.2.0(chart.js@4.5.1)
+      hono:
+        specifier: 'catalog:'
+        version: 4.12.19
       postcss:
         specifier: 'catalog:'
         version: 8.5.14
@@ -1948,6 +1960,12 @@ packages:
 
   '@fontsource-variable/nunito-sans@5.2.7':
     resolution: {integrity: sha512-rflH5HeAoNjIkwftStzQvxqCJhIS+usMr/lfslWg/RCa499B5qxyjo+74R/QMM0geQt4AY1URlG7wAR1iq6KPQ==}
+
+  '@hono/node-server@2.0.2':
+    resolution: {integrity: sha512-tXlTi1h/4V7sDe7i97IVP+9re9ZU7wXZZggnR5ucCRclf1+AX6YhGStrR5w8bLj+3Mlyl0pKfBh9gqTqqnGKfQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      hono: ^4
 
   '@hookform/resolvers@5.2.2':
     resolution: {integrity: sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA==}
@@ -5054,6 +5072,10 @@ packages:
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
 
+  hono@4.12.19:
+    resolution: {integrity: sha512-xa3eYXYXx68XTT4hZ7dRzsXBhaq85ToSrlUJNoR0gwz/1Ap/CNwX47wfvV7pc/xWhjKVVkLT7zBJy8chhNguqQ==}
+    engines: {node: '>=16.9.0'}
+
   hookable@6.1.1:
     resolution: {integrity: sha512-U9LYDy1CwhMCnprUfeAZWZGByVbhd54hwepegYTK7Pi5NvqEj63ifz5z+xukznehT7i6NIZRu89Ay1AZmRsLEQ==}
 
@@ -7527,6 +7549,10 @@ snapshots:
   '@fontsource-variable/noto-sans@5.2.10': {}
 
   '@fontsource-variable/nunito-sans@5.2.7': {}
+
+  '@hono/node-server@2.0.2(hono@4.12.19)':
+    dependencies:
+      hono: 4.12.19
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.76.0(react@19.2.6))':
     dependencies:
@@ -10381,6 +10407,8 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
+
+  hono@4.12.19: {}
 
   hookable@6.1.1: {}
 

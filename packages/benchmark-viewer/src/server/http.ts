@@ -1,9 +1,11 @@
-import type { IncomingMessage, Server, ServerResponse } from "node:http";
-import { createServer } from "node:http";
+import type { Server } from "node:http";
 import { createHash } from "node:crypto";
 import { readFileSync, watch } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Hono } from "hono";
+import { stream } from "hono/streaming";
+import { createAdaptorServer } from "@hono/node-server";
 import { buildEmbeddedPayload, listRawRuns } from "#/server/payload";
 import { renderDocument } from "#/server/render";
 import { DEFAULT_MAX_RUNS } from "#/constants";
@@ -14,6 +16,18 @@ const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
 const IMMUTABLE = "public, max-age=31536000, immutable";
 const NO_CACHE = "no-cache";
 const NO_STORE = "no-store";
+
+const CONTENT_TYPES: Record<string, string> = {
+  ".js": "application/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".woff2": "font/woff2",
+  ".woff": "font/woff",
+  ".ttf": "font/ttf",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".ico": "image/x-icon",
+};
 
 interface CachedAsset {
   content: Buffer;
@@ -30,168 +44,62 @@ interface PayloadCache {
 }
 
 interface ServerState {
-  entryJs: CachedAsset;
-  stylesCss: CachedAsset;
-  chunksDir: string;
-  chunkCache: Map<string, CachedAsset>;
+  assetCache: Map<string, CachedAsset>;
   options: BenchServerOptions;
   payloadCache: PayloadCache | null;
 }
 
-function computeEtag(content: Buffer | string): string {
-  return `"${createHash("sha1").update(content).digest("hex").slice(0, 16)}"`;
+function computeEtag(hashInput: Buffer | string): string {
+  return `"${createHash("sha1").update(hashInput).digest("hex").slice(0, 16)}"`;
 }
 
-function loadAsset(filePath: string, contentType: string, cacheControl: string): CachedAsset {
-  const content = readFileSync(filePath);
-  return { content, contentType, cacheControl, etag: computeEtag(content) };
+function asArrayBuffer(nodeBuffer: Buffer): ArrayBuffer {
+  return nodeBuffer.buffer.slice(
+    nodeBuffer.byteOffset,
+    nodeBuffer.byteOffset + nodeBuffer.byteLength,
+  ) as ArrayBuffer;
 }
 
-function serveAsset(asset: CachedAsset, req: IncomingMessage, res: ServerResponse): void {
-  if (req.headers["if-none-match"] === asset.etag) {
-    res.writeHead(304);
-    res.end();
-    return;
-  }
-  res.writeHead(200, {
-    "Content-Type": asset.contentType,
-    "Cache-Control": asset.cacheControl,
-    ETag: asset.etag,
-  });
-  res.end(asset.content);
+function loadAsset(filePath: string, cacheControl: string): CachedAsset {
+  const fileBytes = readFileSync(filePath);
+  const contentType = CONTENT_TYPES[extname(filePath)] ?? "application/octet-stream";
+  return { content: fileBytes, contentType, cacheControl, etag: computeEtag(fileBytes) };
 }
 
-function initState(options: BenchServerOptions): ServerState {
-  return {
-    entryJs: loadAsset(join(appDir, "entry.js"), "application/javascript; charset=utf-8", NO_CACHE),
-    stylesCss: loadAsset(join(appDir, "styles.css"), "text/css; charset=utf-8", NO_CACHE),
-    chunksDir: resolve(appDir, "chunks"),
-    chunkCache: new Map(),
-    options,
-    payloadCache: null,
-  };
+function resolveStaticFile(pathname: string): string | null {
+  const filePath = resolve(appDir, pathname.slice(1));
+  return filePath.startsWith(appDir + "/") ? filePath : null;
 }
 
-function parseLimitParam(raw: string | null, defaultLimit: number): number {
-  if (raw === null) {
+function parseLimitParam(limitParam: string | null, defaultLimit: number): number {
+  if (limitParam === null) {
     return defaultLimit;
   }
-  const parsed = parseInt(raw, 10);
-  return Number.isFinite(parsed) && parsed > 0 ? Math.min(parsed, 10_000) : defaultLimit;
+  const parsedLimit = parseInt(limitParam, 10);
+  return Number.isFinite(parsedLimit) && parsedLimit > 0
+    ? Math.min(parsedLimit, 10_000)
+    : defaultLimit;
 }
 
-async function getOrBuildCache(state: ServerState, limit: number): Promise<PayloadCache> {
-  if (state.payloadCache !== null && state.payloadCache.limit === limit) {
+async function getOrBuildCache(state: ServerState, runLimit: number): Promise<PayloadCache> {
+  if (state.payloadCache !== null && state.payloadCache.limit === runLimit) {
     return state.payloadCache;
   }
   const {
     runs: rawRuns,
     hasMore,
     warning,
-  } = await listRawRuns(state.options.benchResultsDir, limit);
-  const payload = buildEmbeddedPayload(rawRuns, state.options, hasMore, limit, warning);
+  } = await listRawRuns(state.options.benchResultsDir, runLimit);
+  const payload = buildEmbeddedPayload(rawRuns, state.options, hasMore, runLimit, warning);
   const rawJson = JSON.stringify(payload);
-  const etag = computeEtag(rawJson);
-  const cache: PayloadCache = { payload, rawJson, etag, limit };
-  state.payloadCache = cache;
-  return cache;
-}
-
-function handleChunk(
-  state: ServerState,
-  req: IncomingMessage,
-  res: ServerResponse,
-  name: string,
-): void {
-  const chunkPath = resolve(state.chunksDir, name);
-  if (!chunkPath.startsWith(state.chunksDir + "/")) {
-    res.writeHead(400);
-    res.end("Bad request");
-    return;
-  }
-  let chunk = state.chunkCache.get(name);
-  if (!chunk) {
-    chunk = loadAsset(chunkPath, "application/javascript; charset=utf-8", IMMUTABLE);
-    state.chunkCache.set(name, chunk);
-  }
-  serveAsset(chunk, req, res);
-}
-
-async function handleRoot(
-  state: ServerState,
-  req: IncomingMessage,
-  res: ServerResponse,
-): Promise<void> {
-  try {
-    const limit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
-    const cache = await getOrBuildCache(state, limit);
-    if (req.headers["if-none-match"] === cache.etag) {
-      res.writeHead(304);
-      res.end();
-      return;
-    }
-    res.setHeader("Cache-Control", NO_CACHE);
-    res.setHeader("ETag", cache.etag);
-    renderDocument(req, res, cache.payload, cache.rawJson);
-  } catch (err) {
-    res.writeHead(500, { "Content-Type": "text/plain" });
-    res.end(String(err));
-  }
-}
-
-async function handleApiPayload(
-  state: ServerState,
-  req: IncomingMessage,
-  res: ServerResponse,
-): Promise<void> {
-  try {
-    const url = new URL(req.url ?? "/", "http://localhost");
-    const defaultLimit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
-    const limit = parseLimitParam(url.searchParams.get("limit"), defaultLimit);
-    const cache = await getOrBuildCache(state, limit);
-    res.writeHead(200, {
-      "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": NO_STORE,
-    });
-    res.end(cache.rawJson);
-  } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: String(err) }));
-  }
-}
-
-function createRequestHandler(state: ServerState) {
-  return (req: IncomingMessage, res: ServerResponse): void => {
-    const url = new URL(req.url ?? "/", "http://localhost");
-
-    if (url.pathname === "/") {
-      handleRoot(state, req, res).catch((err: unknown) => {
-        console.error("[bench-server] handleRoot error:", err);
-      });
-      return;
-    }
-    if (url.pathname === "/entry.js") {
-      return serveAsset(state.entryJs, req, res);
-    }
-    if (url.pathname === "/styles.css") {
-      return serveAsset(state.stylesCss, req, res);
-    }
-
-    const chunkMatch = /^\/chunks\/([^/]+\.js)$/.exec(url.pathname);
-    if (chunkMatch) {
-      return handleChunk(state, req, res, chunkMatch[1]!);
-    }
-
-    if (url.pathname === "/api/payload") {
-      handleApiPayload(state, req, res).catch((err: unknown) => {
-        console.error("[bench-server] handleApiPayload error:", err);
-      });
-      return;
-    }
-
-    res.writeHead(404);
-    res.end("Not found");
+  const payloadEntry: PayloadCache = {
+    payload,
+    rawJson,
+    etag: computeEtag(rawJson),
+    limit: runLimit,
   };
+  state.payloadCache = payloadEntry;
+  return payloadEntry;
 }
 
 /**
@@ -203,19 +111,72 @@ function createRequestHandler(state: ServerState) {
  * @since 0.3.16-canary.0
  */
 export function createBenchServer(options: BenchServerOptions): Server {
-  const state = initState(options);
-  const server = createServer(createRequestHandler(state));
+  const state: ServerState = { assetCache: new Map(), options, payloadCache: null };
+  const app = new Hono();
 
-  // Invalidate the payload cache whenever a new run directory is added.
-  // If benchResultsDir doesn't exist yet, skip the watcher — listRawRuns will
-  // return an empty result with a warning on each request until it appears.
+  app.onError((err, c) => {
+    console.error("[bench-server] unhandled error:", err);
+    return c.text(String(err), 500);
+  });
+
+  app.get("/", async (c) => {
+    const runLimit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
+    const cachedPayload = await getOrBuildCache(state, runLimit);
+    if (c.req.header("if-none-match") === cachedPayload.etag) {
+      return c.body(null, 304);
+    }
+    c.header("Content-Type", "text/html; charset=utf-8");
+    c.header("Cache-Control", NO_CACHE);
+    c.header("ETag", cachedPayload.etag);
+    return stream(c, async (responseStream) => {
+      const htmlStream = await renderDocument(cachedPayload.payload, cachedPayload.rawJson);
+      await responseStream.pipe(htmlStream);
+    });
+  });
+
+  app.get("/api/payload", async (c) => {
+    const defaultRunLimit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
+    const runLimit = parseLimitParam(c.req.query("limit") ?? null, defaultRunLimit);
+    const cachedPayload = await getOrBuildCache(state, runLimit);
+    c.header("Content-Type", "application/json; charset=utf-8");
+    c.header("Cache-Control", NO_STORE);
+    return c.body(cachedPayload.rawJson);
+  });
+
+  app.get("/*", (c) => {
+    const filePath = resolveStaticFile(c.req.path);
+    if (filePath === null) {
+      return c.text("Forbidden", 403);
+    }
+
+    let staticAsset = state.assetCache.get(c.req.path);
+    if (staticAsset === undefined) {
+      try {
+        staticAsset = loadAsset(filePath, IMMUTABLE);
+        state.assetCache.set(c.req.path, staticAsset);
+      } catch {
+        return c.text("Not found", 404);
+      }
+    }
+
+    if (c.req.header("if-none-match") === staticAsset.etag) {
+      return c.body(null, 304);
+    }
+    c.header("Content-Type", staticAsset.contentType);
+    c.header("Cache-Control", staticAsset.cacheControl);
+    c.header("ETag", staticAsset.etag);
+    return c.body(asArrayBuffer(staticAsset.content));
+  });
+
+  const server = createAdaptorServer(app) as Server;
+
   try {
     const watcher = watch(options.benchResultsDir, { persistent: false }, () => {
       state.payloadCache = null;
     });
     server.once("close", () => watcher.close());
   } catch {
-    // directory not found — watcher unavailable, cache cleared on each miss anyway
+    // directory isn't found — watcher unavailable, cache cleared on each miss anyway
   }
 
   return server;
