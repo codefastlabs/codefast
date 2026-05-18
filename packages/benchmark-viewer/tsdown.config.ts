@@ -16,7 +16,6 @@ export default defineConfig([
       entry: "src/app/entry.tsx",
     },
     platform: "browser",
-    format: "esm",
     outDir: "dist/app",
     plugins: [
       babel({
