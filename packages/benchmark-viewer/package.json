@@ -160,6 +160,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "postbuild": "cp -r public dist/public",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
