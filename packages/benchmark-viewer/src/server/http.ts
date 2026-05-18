@@ -1,6 +1,6 @@
 import type { Server } from "node:http";
 import { createHash } from "node:crypto";
-import { readFileSync, watch } from "node:fs";
+import { existsSync, readFileSync, watch } from "node:fs";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Hono } from "hono";
@@ -12,10 +12,11 @@ import { DEFAULT_MAX_RUNS } from "#/constants";
 import type { BenchServerOptions, EmbeddedViewerPayload } from "#/types";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
+const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 
-const IMMUTABLE = "public, max-age=31536000, immutable";
-const NO_CACHE = "no-cache";
-const NO_STORE = "no-store";
+const HTTP_IMMUTABLE = "public, max-age=31536000, immutable";
+const HTTP_NO_CACHE = "no-cache";
+const HTTP_NO_STORE = "no-store";
 
 const CONTENT_TYPES: Record<string, string> = {
   ".js": "application/javascript; charset=utf-8",
@@ -29,14 +30,14 @@ const CONTENT_TYPES: Record<string, string> = {
   ".ico": "image/x-icon",
 };
 
-interface CachedAsset {
+interface InMemoryAsset {
   content: Buffer;
   contentType: string;
-  cacheControl: string;
+  httpCacheControl: string;
   etag: string;
 }
 
-interface PayloadCache {
+interface InMemoryPayload {
   payload: EmbeddedViewerPayload;
   rawJson: string;
   etag: string;
@@ -44,9 +45,9 @@ interface PayloadCache {
 }
 
 interface ServerState {
-  assetCache: Map<string, CachedAsset>;
+  assetMemoryCache: Map<string, InMemoryAsset>;
   options: BenchServerOptions;
-  payloadCache: PayloadCache | null;
+  payloadMemoryCache: InMemoryPayload | null;
 }
 
 function computeEtag(hashInput: Buffer | string): string {
@@ -60,15 +61,28 @@ function asArrayBuffer(nodeBuffer: Buffer): ArrayBuffer {
   ) as ArrayBuffer;
 }
 
-function loadAsset(filePath: string, cacheControl: string): CachedAsset {
+function loadAsset(filePath: string, httpCacheControl: string): InMemoryAsset {
   const fileBytes = readFileSync(filePath);
   const contentType = CONTENT_TYPES[extname(filePath)] ?? "application/octet-stream";
-  return { content: fileBytes, contentType, cacheControl, etag: computeEtag(fileBytes) };
+  return { content: fileBytes, contentType, httpCacheControl, etag: computeEtag(fileBytes) };
 }
 
-function resolveStaticFile(pathname: string): string | null {
-  const filePath = resolve(appDir, pathname.slice(1));
-  return filePath.startsWith(appDir + "/") ? filePath : null;
+function resolveStaticFile(
+  pathname: string,
+): { filePath: string; httpCacheControl: string } | null {
+  const stripped = pathname.slice(1);
+
+  const appPath = resolve(appDir, stripped);
+  if (appPath.startsWith(appDir + "/") && existsSync(appPath)) {
+    return { filePath: appPath, httpCacheControl: HTTP_IMMUTABLE };
+  }
+
+  const publicPath = resolve(publicDir, stripped);
+  if (publicPath.startsWith(publicDir + "/")) {
+    return { filePath: publicPath, httpCacheControl: HTTP_IMMUTABLE };
+  }
+
+  return null;
 }
 
 function parseLimitParam(limitParam: string | null, defaultLimit: number): number {
@@ -81,9 +95,9 @@ function parseLimitParam(limitParam: string | null, defaultLimit: number): numbe
     : defaultLimit;
 }
 
-async function getOrBuildCache(state: ServerState, runLimit: number): Promise<PayloadCache> {
-  if (state.payloadCache !== null && state.payloadCache.limit === runLimit) {
-    return state.payloadCache;
+async function getOrBuildPayload(state: ServerState, runLimit: number): Promise<InMemoryPayload> {
+  if (state.payloadMemoryCache !== null && state.payloadMemoryCache.limit === runLimit) {
+    return state.payloadMemoryCache;
   }
   const {
     runs: rawRuns,
@@ -92,13 +106,13 @@ async function getOrBuildCache(state: ServerState, runLimit: number): Promise<Pa
   } = await listRawRuns(state.options.benchResultsDir, runLimit);
   const payload = buildEmbeddedPayload(rawRuns, state.options, hasMore, runLimit, warning);
   const rawJson = JSON.stringify(payload);
-  const payloadEntry: PayloadCache = {
+  const payloadEntry: InMemoryPayload = {
     payload,
     rawJson,
     etag: computeEtag(rawJson),
     limit: runLimit,
   };
-  state.payloadCache = payloadEntry;
+  state.payloadMemoryCache = payloadEntry;
   return payloadEntry;
 }
 
@@ -111,7 +125,7 @@ async function getOrBuildCache(state: ServerState, runLimit: number): Promise<Pa
  * @since 0.3.16-canary.0
  */
 export function createBenchServer(options: BenchServerOptions): Server {
-  const state: ServerState = { assetCache: new Map(), options, payloadCache: null };
+  const state: ServerState = { assetMemoryCache: new Map(), options, payloadMemoryCache: null };
   const app = new Hono();
 
   app.onError((err, c) => {
@@ -121,15 +135,19 @@ export function createBenchServer(options: BenchServerOptions): Server {
 
   app.get("/", async (c) => {
     const runLimit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
-    const cachedPayload = await getOrBuildCache(state, runLimit);
+    const cachedPayload = await getOrBuildPayload(state, runLimit);
     if (c.req.header("if-none-match") === cachedPayload.etag) {
       return c.body(null, 304);
     }
     c.header("Content-Type", "text/html; charset=utf-8");
-    c.header("Cache-Control", NO_CACHE);
+    c.header("Cache-Control", HTTP_NO_CACHE);
     c.header("ETag", cachedPayload.etag);
     return stream(c, async (responseStream) => {
-      const htmlStream = await renderDocument(cachedPayload.payload, cachedPayload.rawJson);
+      const htmlStream = await renderDocument(
+        cachedPayload.payload,
+        cachedPayload.rawJson,
+        c.req.raw.signal,
+      );
       await responseStream.pipe(htmlStream);
     });
   });
@@ -137,23 +155,23 @@ export function createBenchServer(options: BenchServerOptions): Server {
   app.get("/api/payload", async (c) => {
     const defaultRunLimit = state.options.maxRuns ?? DEFAULT_MAX_RUNS;
     const runLimit = parseLimitParam(c.req.query("limit") ?? null, defaultRunLimit);
-    const cachedPayload = await getOrBuildCache(state, runLimit);
+    const cachedPayload = await getOrBuildPayload(state, runLimit);
     c.header("Content-Type", "application/json; charset=utf-8");
-    c.header("Cache-Control", NO_STORE);
+    c.header("Cache-Control", HTTP_NO_STORE);
     return c.body(cachedPayload.rawJson);
   });
 
   app.get("/*", (c) => {
-    const filePath = resolveStaticFile(c.req.path);
-    if (filePath === null) {
+    const resolved = resolveStaticFile(c.req.path);
+    if (resolved === null) {
       return c.text("Forbidden", 403);
     }
 
-    let staticAsset = state.assetCache.get(c.req.path);
+    let staticAsset = state.assetMemoryCache.get(c.req.path);
     if (staticAsset === undefined) {
       try {
-        staticAsset = loadAsset(filePath, IMMUTABLE);
-        state.assetCache.set(c.req.path, staticAsset);
+        staticAsset = loadAsset(resolved.filePath, resolved.httpCacheControl);
+        state.assetMemoryCache.set(c.req.path, staticAsset);
       } catch {
         return c.text("Not found", 404);
       }
@@ -163,7 +181,7 @@ export function createBenchServer(options: BenchServerOptions): Server {
       return c.body(null, 304);
     }
     c.header("Content-Type", staticAsset.contentType);
-    c.header("Cache-Control", staticAsset.cacheControl);
+    c.header("Cache-Control", staticAsset.httpCacheControl);
     c.header("ETag", staticAsset.etag);
     return c.body(asArrayBuffer(staticAsset.content));
   });
@@ -172,7 +190,7 @@ export function createBenchServer(options: BenchServerOptions): Server {
 
   try {
     const watcher = watch(options.benchResultsDir, { persistent: false }, () => {
-      state.payloadCache = null;
+      state.payloadMemoryCache = null;
     });
     server.once("close", () => watcher.close());
   } catch {
