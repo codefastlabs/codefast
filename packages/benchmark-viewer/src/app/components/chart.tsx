@@ -644,6 +644,7 @@ export function ChartPanel({
           </span>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
+              aria-label="P25–P75 band"
               checked={showBands}
               className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
               onChange={(e) => showBandsChange(e.target.checked)}
@@ -654,6 +655,7 @@ export function ChartPanel({
           </label>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
+              aria-label="Log Y axis"
               checked={useLogScale}
               className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
               onChange={(e) => logScaleChange(e.target.checked)}
@@ -663,6 +665,7 @@ export function ChartPanel({
           </label>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
+              aria-label="Primary ratios"
               checked={showRatio}
               className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
               onChange={(e) => showRatioChange(e.target.checked)}

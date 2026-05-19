@@ -189,6 +189,7 @@ export function CommandPalette({
           aria-controls="command-palette-list"
           aria-expanded={isOpen}
           aria-haspopup="listbox"
+          aria-label="Search actions"
           autoComplete="off"
           className="focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue w-full rounded-none border-0 border-b border-white/8 bg-black/25 px-4 py-3 text-sm text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2"
           onChange={(e) => onQueryChange(e.target.value)}
