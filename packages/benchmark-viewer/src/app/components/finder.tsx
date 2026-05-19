@@ -28,6 +28,7 @@ export function FindPanel({
         <label className="block w-full min-w-0 shrink-0 sm:w-auto sm:min-w-[min(100%,16rem)]">
           <span className="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Search</span>
           <input
+            aria-label="Search"
             autoComplete="off"
             className="focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2 sm:max-w-xs"
             id="scenario-search"
