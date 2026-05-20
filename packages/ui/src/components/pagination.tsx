@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "#/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
-import { buttonVariants } from "#/components/button";
+import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

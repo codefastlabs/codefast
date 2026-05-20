@@ -1,25 +1,10 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#/lib/utils";
+import { cn } from "#/lib/utils";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { ChevronDownIcon } from "lucide-react";
 
-import { buttonVariants } from "#/components/button";
-
-/* -----------------------------------------------------------------------------
- * Style: NavigationMenuTrigger
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-const navigationMenuTriggerVariants = tv({
-  base: buttonVariants({
-    className:
-      "data-open:bg-secondary/50 data-open:text-secondary-foreground group/navigation-menu-trigger focus-visible:bg-secondary dark:hover:not-disabled:bg-secondary",
-    variant: "ghost",
-  }),
-});
+import { navigationMenuTriggerVariants } from "#/variants/navigation-menu";
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenu
@@ -286,7 +271,6 @@ function NavigationMenuIndicator({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { navigationMenuTriggerVariants };
 export {
   NavigationMenu,
   NavigationMenuContent,

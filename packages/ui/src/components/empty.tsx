@@ -1,35 +1,9 @@
-import type { VariantProps } from "#/lib/utils";
+import type { EmptyMediaVariants } from "#/variants/empty";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#/lib/utils";
+import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variants: Empty
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-const emptyMediaVariants = tv({
-  base: [
-    "mb-2 flex shrink-0 items-center justify-center",
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0",
-  ],
-  defaultVariants: {
-    variant: "default",
-  },
-  variants: {
-    variant: {
-      default: "bg-transparent",
-      icon: [
-        "flex size-10 shrink-0 items-center justify-center",
-        "rounded-xl",
-        "bg-muted text-foreground",
-        "[&_svg:not([class*='size-'])]:size-6",
-      ],
-    },
-  },
-});
+import { emptyMediaVariants } from "#/variants/empty";
 
 /* -----------------------------------------------------------------------------
  * Component: Empty
@@ -88,7 +62,7 @@ function EmptyHeader({ className, ...props }: EmptyHeaderProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type EmptyMediaProps = ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>;
+type EmptyMediaProps = ComponentProps<"div"> & EmptyMediaVariants;
 
 /**
  * @since 0.3.16-canary.0
@@ -183,15 +157,7 @@ function EmptyContent({ className, ...props }: EmptyContentProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  emptyMediaVariants,
-  EmptyTitle,
-};
+export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle };
 
 export type {
   EmptyContentProps,

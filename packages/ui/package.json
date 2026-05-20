@@ -351,6 +351,66 @@
       "types": "./dist/primitives/progress-circle.d.mts",
       "import": "./dist/primitives/progress-circle.mjs"
     },
+    "./variants/alert": {
+      "types": "./dist/variants/alert.d.mts",
+      "import": "./dist/variants/alert.mjs"
+    },
+    "./variants/badge": {
+      "types": "./dist/variants/badge.d.mts",
+      "import": "./dist/variants/badge.mjs"
+    },
+    "./variants/button": {
+      "types": "./dist/variants/button.d.mts",
+      "import": "./dist/variants/button.mjs"
+    },
+    "./variants/button-group": {
+      "types": "./dist/variants/button-group.d.mts",
+      "import": "./dist/variants/button-group.mjs"
+    },
+    "./variants/empty": {
+      "types": "./dist/variants/empty.d.mts",
+      "import": "./dist/variants/empty.mjs"
+    },
+    "./variants/field": {
+      "types": "./dist/variants/field.d.mts",
+      "import": "./dist/variants/field.mjs"
+    },
+    "./variants/input-group": {
+      "types": "./dist/variants/input-group.d.mts",
+      "import": "./dist/variants/input-group.mjs"
+    },
+    "./variants/item": {
+      "types": "./dist/variants/item.d.mts",
+      "import": "./dist/variants/item.mjs"
+    },
+    "./variants/navigation-menu": {
+      "types": "./dist/variants/navigation-menu.d.mts",
+      "import": "./dist/variants/navigation-menu.mjs"
+    },
+    "./variants/progress-circle": {
+      "types": "./dist/variants/progress-circle.d.mts",
+      "import": "./dist/variants/progress-circle.mjs"
+    },
+    "./variants/scroll-area": {
+      "types": "./dist/variants/scroll-area.d.mts",
+      "import": "./dist/variants/scroll-area.mjs"
+    },
+    "./variants/separator": {
+      "types": "./dist/variants/separator.d.mts",
+      "import": "./dist/variants/separator.mjs"
+    },
+    "./variants/sheet": {
+      "types": "./dist/variants/sheet.d.mts",
+      "import": "./dist/variants/sheet.mjs"
+    },
+    "./variants/sidebar": {
+      "types": "./dist/variants/sidebar.d.mts",
+      "import": "./dist/variants/sidebar.mjs"
+    },
+    "./variants/toggle": {
+      "types": "./dist/variants/toggle.d.mts",
+      "import": "./dist/variants/toggle.mjs"
+    },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"
   },

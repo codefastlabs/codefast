@@ -8,9 +8,8 @@ import { createContextScope } from "@radix-ui/react-context";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { createToggleGroupScope } from "@radix-ui/react-toggle-group";
 
-import type { ToggleVariants } from "#/components/toggle";
-
-import { toggleVariants } from "#/components/toggle";
+import { toggleVariants } from "#/variants/toggle";
+import type { VariantProps } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Context: ToggleGroup
@@ -25,7 +24,7 @@ const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [create
 const useToggleGroupScope = createToggleGroupScope();
 
 const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
-  ToggleVariants & {
+  VariantProps<typeof toggleVariants> & {
     spacing?: number;
   }
 >(TOGGLE_GROUP_NAME);
@@ -38,7 +37,7 @@ const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
  * @since 0.3.16-canary.0
  */
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> &
-  ToggleVariants & {
+  VariantProps<typeof toggleVariants> & {
     spacing?: number;
   };
 
