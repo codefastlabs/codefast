@@ -6,7 +6,7 @@ import type { ComponentProps, JSX } from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-import { buttonVariants } from "#/components/button";
+import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Select

@@ -1,66 +1,16 @@
 "use client";
 
-import type { VariantProps } from "#/lib/utils";
+import type { ButtonVariants } from "#/variants/button";
+import type { SheetContentVariants } from "#/variants/sheet";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#/lib/utils";
+import { cn } from "#/lib/utils";
+
+import { sheetContentVariants } from "#/variants/sheet";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
 
-import { buttonVariants } from "#/components/button";
-
-/* -----------------------------------------------------------------------------
- * Variant: SheetContent
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-const sheetContentVariants = tv({
-  base: [
-    "fixed z-50 flex flex-col overflow-auto",
-    "bg-background shadow-lg",
-    "ease-ui data-open:animate-in data-open:animation-duration-500",
-    "data-closed:animate-out data-closed:animation-duration-500",
-  ],
-  defaultVariants: {
-    side: "right",
-  },
-  variants: {
-    side: {
-      bottom: [
-        "max-h-[80vh]",
-        "inset-x-0 bottom-0",
-        "border-t",
-        "data-open:slide-in-from-bottom",
-        "data-closed:slide-out-to-bottom",
-      ],
-      left: [
-        "h-full w-3/4",
-        "inset-y-0 left-0",
-        "border-r",
-        "sm:max-w-sm",
-        "data-open:slide-in-from-left",
-        "data-closed:slide-out-to-left",
-      ],
-      right: [
-        "h-full w-3/4",
-        "inset-y-0 right-0",
-        "border-l",
-        "sm:max-w-sm",
-        "data-open:slide-in-from-right",
-        "data-closed:slide-out-to-right",
-      ],
-      top: [
-        "max-h-[80vh]",
-        "inset-x-0 top-0",
-        "border-b",
-        "data-open:slide-in-from-top",
-        "data-closed:slide-out-to-top",
-      ],
-    },
-  },
-});
+import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -106,7 +56,7 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
  * @since 0.3.16-canary.0
  */
 interface SheetContentProps
-  extends ComponentProps<typeof SheetPrimitive.Content>, VariantProps<typeof sheetContentVariants> {
+  extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
   classNames?: {
     close?: string;
     content?: string;
@@ -284,8 +234,8 @@ function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.E
  * @since 0.3.16-canary.0
  */
 interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
-  size?: VariantProps<typeof buttonVariants>["size"];
-  variant?: VariantProps<typeof buttonVariants>["variant"];
+  size?: ButtonVariants["size"];
+  variant?: ButtonVariants["variant"];
 }
 
 /**
@@ -310,7 +260,6 @@ function SheetClose({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { sheetContentVariants };
 export {
   Sheet,
   SheetBody,

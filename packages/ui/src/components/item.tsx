@@ -1,74 +1,12 @@
-import type { VariantProps } from "#/lib/utils";
+import type { ItemMediaVariants, ItemVariants } from "#/variants/item";
 import type { ComponentProps, JSX } from "react";
 
-import { cn, tv } from "#/lib/utils";
+import { cn } from "#/lib/utils";
+
+import { itemMediaVariants, itemVariants } from "#/variants/item";
 import { Slot } from "@radix-ui/react-slot";
 
 import { Separator } from "#/components/separator";
-
-/* -----------------------------------------------------------------------------
- * Variants: Item
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-const itemVariants = tv({
-  base: [
-    "group/item flex flex-wrap items-center",
-    "rounded-lg border border-transparent outline-hidden",
-    "text-sm",
-    "transition-colors duration-100",
-    "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-    "[a]:transition-colors",
-    "[a]:hover:bg-accent/50",
-  ],
-  defaultVariants: {
-    size: "default",
-    variant: "default",
-  },
-  variants: {
-    size: {
-      default: ["gap-4", "p-4"],
-      sm: ["gap-2.5", "px-4 py-3"],
-    },
-    variant: {
-      default: "bg-transparent",
-      muted: "bg-muted/50",
-      outline: "border-border",
-    },
-  },
-});
-
-/**
- * @since 0.3.16-canary.0
- */
-const itemMediaVariants = tv({
-  base: [
-    "flex shrink-0 items-center justify-center gap-2",
-    "group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start",
-    "[&_svg]:pointer-events-none",
-  ],
-  defaultVariants: {
-    variant: "default",
-  },
-  variants: {
-    variant: {
-      default: "bg-transparent",
-      icon: [
-        "size-8 shrink-0",
-        "rounded-md border",
-        "bg-muted",
-        "[&_svg:not([class*='size-'])]:size-4",
-      ],
-      image: [
-        "size-10 shrink-0 overflow-hidden",
-        "rounded-md",
-        "[&_img]:size-full [&_img]:object-cover",
-      ],
-    },
-  },
-});
 
 /* -----------------------------------------------------------------------------
  * Component: ItemGroup
@@ -124,7 +62,7 @@ function ItemSeparator({ className, ...props }: ItemSeparatorProps): JSX.Element
  * @since 0.3.16-canary.0
  */
 type ItemProps = ComponentProps<"div"> &
-  VariantProps<typeof itemVariants> & {
+  ItemVariants & {
     asChild?: boolean;
   };
 
@@ -158,7 +96,7 @@ function Item({
 /**
  * @since 0.3.16-canary.0
  */
-type ItemMediaProps = ComponentProps<"div"> & VariantProps<typeof itemMediaVariants>;
+type ItemMediaProps = ComponentProps<"div"> & ItemMediaVariants;
 
 /**
  * @since 0.3.16-canary.0
@@ -324,10 +262,8 @@ export {
   ItemGroup,
   ItemHeader,
   ItemMedia,
-  itemMediaVariants,
   ItemSeparator,
   ItemTitle,
-  itemVariants,
 };
 
 export type {
