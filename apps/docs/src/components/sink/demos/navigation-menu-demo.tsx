@@ -6,11 +6,11 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerVariants,
 } from "@codefast/ui/navigation-menu";
 import { Link } from "@tanstack/react-router";
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 import type { ComponentPropsWithoutRef } from "react";
+import { navigationMenuTriggerVariants } from "@codefast/ui/variants/navigation-menu";
 
 interface ComponentItem {
   title: string;
