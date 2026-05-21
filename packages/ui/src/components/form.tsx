@@ -25,7 +25,7 @@ type FormProps = ComponentProps<typeof FormProvider>;
 /**
  * @since 0.3.16-canary.0
  */
-const Form = FormProvider;
+const Form: typeof FormProvider = FormProvider;
 
 /* -----------------------------------------------------------------------------
  * Context: FormField
