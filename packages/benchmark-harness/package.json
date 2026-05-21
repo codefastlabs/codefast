@@ -11,7 +11,8 @@
     "directory": "packages/benchmark-harness"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "type": "module",
   "sideEffects": false,

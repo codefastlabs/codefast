@@ -26,14 +26,14 @@
   },
   "files": [
     "dist",
-    "src/css",
+    "src",
     "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],
   "type": "module",
   "sideEffects": [
-    "./src/css/**/*.css"
+    "*.css"
   ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -510,7 +510,6 @@
     "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
-    "dev": "tsdown --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "vitest run tests/e2e",
