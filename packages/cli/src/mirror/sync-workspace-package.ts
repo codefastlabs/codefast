@@ -8,6 +8,10 @@ import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
+import {
+  buildSourcePathResolver,
+  supplementExportsInPackageJson,
+} from "#/mirror/supplement-exports";
 
 /**
  * @since 0.3.16-canary.0
@@ -95,47 +99,56 @@ export async function syncExportsForWorkspacePackage(
   }
 
   try {
-    const pathTransform = createPathTransform(pkgConfig?.pathTransformations);
-    pkgStats.hasTransform = !!pathTransform;
+    const resolveSourcePath = buildSourcePathResolver(fs, packageDir);
+    const exportOptions = {
+      source: pkgConfig?.source ?? true,
+      types: pkgConfig?.types ?? true,
+      import: pkgConfig?.import ?? true,
+      resolveSourcePath,
+    };
 
-    const cssConfig = pkgConfig?.css;
-    if (cssConfig === false) {
-      pkgStats.cssConfigStatus = "disabled";
-    } else if (cssConfig !== undefined) {
-      pkgStats.cssConfigStatus = "configured";
+    if (pkgConfig?.custom) {
+      const { supplementedSpecifiers } = await supplementExportsInPackageJson(
+        fs,
+        packageJsonPath,
+        packageDir,
+        exportOptions,
+      );
+      pkgStats.totalExports = supplementedSpecifiers.length;
+    } else {
+      const pathTransform = createPathTransform(pkgConfig?.pathTransformations);
+      pkgStats.hasTransform = !!pathTransform;
+
+      const cssConfig = pkgConfig?.css;
+      if (cssConfig === false) {
+        pkgStats.cssConfigStatus = "disabled";
+      } else if (cssConfig !== undefined) {
+        pkgStats.cssConfigStatus = "configured";
+      }
+
+      const customExports = pkgConfig?.customExports ?? {};
+
+      const generatedExports = await generateExports(
+        distFilesystem,
+        distDir,
+        pathTransform,
+        cssConfig,
+        customExports,
+        exportOptions,
+      );
+
+      const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
+        generatedExports: generatedExports.exports,
+        managedExportSpecifiers: Object.keys(generatedExports.exports),
+        originalPathBySpecifier: generatedExports.originalPathBySpecifier,
+      });
+
+      pkgStats.jsModules = generatedExports.jsCount;
+      pkgStats.cssExports = generatedExports.cssCount;
+      pkgStats.customExports = Object.keys(customExports).length;
+      pkgStats.totalExports = Object.keys(generatedExports.exports).length;
+      pkgStats.prunedExportKeys = prunedKeys;
     }
-
-    const customExports = pkgConfig?.customExports ?? {};
-    const srcDir = pathJoin(packageDir, "src");
-
-    const generatedExports = await generateExports(
-      distFilesystem,
-      distDir,
-      pathTransform,
-      cssConfig,
-      customExports,
-      {
-        source: pkgConfig?.source ?? true,
-        types: pkgConfig?.types ?? true,
-        import: pkgConfig?.import ?? true,
-        resolveSourcePath: (modulePath) => {
-          const tsxPath = pathJoin(srcDir, `${modulePath}.tsx`);
-          return fs.existsSync(tsxPath) ? `./src/${modulePath}.tsx` : `./src/${modulePath}.ts`;
-        },
-      },
-    );
-
-    const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
-      generatedExports: generatedExports.exports,
-      managedExportSpecifiers: Object.keys(generatedExports.exports),
-      originalPathBySpecifier: generatedExports.originalPathBySpecifier,
-    });
-
-    pkgStats.jsModules = generatedExports.jsCount;
-    pkgStats.cssExports = generatedExports.cssCount;
-    pkgStats.customExports = Object.keys(customExports).length;
-    pkgStats.totalExports = Object.keys(generatedExports.exports).length;
-    pkgStats.prunedExportKeys = prunedKeys;
   } catch (caughtError: unknown) {
     pkgStats.error = messageFrom(caughtError);
   }
