@@ -13,11 +13,12 @@ const config = {
         "./css/*": "./src/css/*",
       },
     },
-
+    "@codefast/tailwind-variants": {
+      custom: true,
+    },
     "@apps/docs": false,
     "@codefast/cli": false,
     "@codefast/benchmark-tailwind-variants": false,
-    "@codefast/tailwind-variants": false,
     "@codefast/typescript-config": false,
   },
 
