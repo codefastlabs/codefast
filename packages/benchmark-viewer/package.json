@@ -36,123 +36,160 @@
   },
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
     "./app/components/app": {
+      "source": "./src/app/components/app.tsx",
       "import": "./dist/app/components/app.mjs"
     },
     "./app/components/chart": {
+      "source": "./src/app/components/chart.tsx",
       "import": "./dist/app/components/chart.mjs"
     },
     "./app/components/controls": {
+      "source": "./src/app/components/controls.tsx",
       "import": "./dist/app/components/controls.mjs"
     },
     "./app/components/finder": {
+      "source": "./src/app/components/finder.tsx",
       "import": "./dist/app/components/finder.mjs"
     },
     "./app/components/footer": {
+      "source": "./src/app/components/footer.tsx",
       "import": "./dist/app/components/footer.mjs"
     },
     "./app/components/header": {
+      "source": "./src/app/components/header.tsx",
       "import": "./dist/app/components/header.mjs"
     },
     "./app/components/icons": {
+      "source": "./src/app/components/icons.tsx",
       "import": "./dist/app/components/icons.mjs"
     },
     "./app/components/kpi": {
+      "source": "./src/app/components/kpi.tsx",
       "import": "./dist/app/components/kpi.mjs"
     },
     "./app/components/kpi-card": {
+      "source": "./src/app/components/kpi-card.tsx",
       "import": "./dist/app/components/kpi-card.mjs"
     },
     "./app/components/metrics": {
+      "source": "./src/app/components/metrics.tsx",
       "import": "./dist/app/components/metrics.mjs"
     },
     "./app/components/palette": {
+      "source": "./src/app/components/palette.tsx",
       "import": "./dist/app/components/palette.mjs"
     },
     "./app/components/skip-to-chart": {
+      "source": "./src/app/components/skip-to-chart.tsx",
       "import": "./dist/app/components/skip-to-chart.mjs"
     },
     "./app/components/snapshot": {
+      "source": "./src/app/components/snapshot.tsx",
       "import": "./dist/app/components/snapshot.mjs"
     },
     "./app/entry": {
+      "source": "./src/app/entry.tsx",
       "types": "./dist/app/entry.d.ts",
       "import": "./dist/app/entry.js"
     },
     "./app/hooks/use-command-palette": {
+      "source": "./src/app/hooks/use-command-palette.ts",
       "import": "./dist/app/hooks/use-command-palette.mjs"
     },
     "./app/hooks/use-derived-payload": {
+      "source": "./src/app/hooks/use-derived-payload.ts",
       "import": "./dist/app/hooks/use-derived-payload.mjs"
     },
     "./app/hooks/use-details-persist": {
+      "source": "./src/app/hooks/use-details-persist.ts",
       "import": "./dist/app/hooks/use-details-persist.mjs"
     },
     "./app/hooks/use-hash": {
+      "source": "./src/app/hooks/use-hash.ts",
       "import": "./dist/app/hooks/use-hash.mjs"
     },
     "./app/hooks/use-payload": {
+      "source": "./src/app/hooks/use-payload.ts",
       "import": "./dist/app/hooks/use-payload.mjs"
     },
     "./app/hooks/use-toast": {
+      "source": "./src/app/hooks/use-toast.ts",
       "import": "./dist/app/hooks/use-toast.mjs"
     },
     "./app/hooks/use-view": {
+      "source": "./src/app/hooks/use-view.ts",
       "import": "./dist/app/hooks/use-view.mjs"
     },
     "./app/lib/chart-view": {
+      "source": "./src/app/lib/chart-view.ts",
       "import": "./dist/app/lib/chart-view.mjs"
     },
     "./app/lib/colors": {
+      "source": "./src/app/lib/colors.ts",
       "import": "./dist/app/lib/colors.mjs"
     },
     "./app/lib/constants": {
+      "source": "./src/app/lib/constants.ts",
       "import": "./dist/app/lib/constants.mjs"
     },
     "./app/lib/format": {
+      "source": "./src/app/lib/format.ts",
       "import": "./dist/app/lib/format.mjs"
     },
     "./app/lib/hash": {
+      "source": "./src/app/lib/hash.ts",
       "import": "./dist/app/lib/hash.mjs"
     },
     "./app/lib/metrics": {
+      "source": "./src/app/lib/metrics.ts",
       "import": "./dist/app/lib/metrics.mjs"
     },
     "./app/lib/skip-chart": {
+      "source": "./src/app/lib/skip-chart.ts",
       "import": "./dist/app/lib/skip-chart.mjs"
     },
     "./app/lib/utils": {
+      "source": "./src/app/lib/utils.ts",
       "import": "./dist/app/lib/utils.mjs"
     },
     "./app/styles.css": "./dist/app/styles.css",
     "./constants": {
+      "source": "./src/constants.ts",
       "types": "./dist/constants.d.mts",
       "import": "./dist/constants.mjs"
     },
     "./server": {
+      "source": "./src/server/index.ts",
       "types": "./dist/server/index.d.mts",
       "import": "./dist/server/index.mjs"
     },
     "./server/http": {
+      "source": "./src/server/http.ts",
       "types": "./dist/server/http.d.mts",
       "import": "./dist/server/http.mjs"
     },
     "./server/payload": {
+      "source": "./src/server/payload.ts",
       "types": "./dist/server/payload.d.mts",
       "import": "./dist/server/payload.mjs"
     },
     "./server/port": {
+      "source": "./src/server/port.ts",
       "types": "./dist/server/port.d.mts",
       "import": "./dist/server/port.mjs"
     },
     "./server/render": {
+      "source": "./src/server/render.tsx",
       "types": "./dist/server/render.d.mts",
       "import": "./dist/server/render.mjs"
     },
     "./types": {
+      "source": "./src/types.ts",
       "types": "./dist/types.d.mts",
       "import": "./dist/types.mjs"
     },

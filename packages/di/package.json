@@ -45,122 +45,152 @@
   },
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
     "./binding": {
+      "source": "./src/binding.ts",
       "types": "./dist/binding.d.mts",
       "import": "./dist/binding.mjs"
     },
     "./binding-scope": {
+      "source": "./src/binding-scope.ts",
       "types": "./dist/binding-scope.d.mts",
       "import": "./dist/binding-scope.mjs"
     },
     "./binding-select": {
+      "source": "./src/binding-select.ts",
       "types": "./dist/binding-select.d.mts",
       "import": "./dist/binding-select.mjs"
     },
     "./constraints": {
+      "source": "./src/constraints.ts",
       "types": "./dist/constraints.d.mts",
       "import": "./dist/constraints.mjs"
     },
     "./constructor-type": {
+      "source": "./src/constructor-type.ts",
       "types": "./dist/constructor-type.d.mts",
       "import": "./dist/constructor-type.mjs"
     },
     "./container": {
+      "source": "./src/container.ts",
       "types": "./dist/container.d.mts",
       "import": "./dist/container.mjs"
     },
     "./decorators/inject": {
+      "source": "./src/decorators/inject.ts",
       "types": "./dist/decorators/inject.d.mts",
       "import": "./dist/decorators/inject.mjs"
     },
     "./decorators/injectable": {
+      "source": "./src/decorators/injectable.ts",
       "types": "./dist/decorators/injectable.d.mts",
       "import": "./dist/decorators/injectable.mjs"
     },
     "./decorators/lifecycle-decorators": {
+      "source": "./src/decorators/lifecycle-decorators.ts",
       "types": "./dist/decorators/lifecycle-decorators.d.mts",
       "import": "./dist/decorators/lifecycle-decorators.mjs"
     },
     "./dependency-graph": {
+      "source": "./src/dependency-graph.ts",
       "types": "./dist/dependency-graph.d.mts",
       "import": "./dist/dependency-graph.mjs"
     },
     "./environment": {
+      "source": "./src/environment.ts",
       "types": "./dist/environment.d.mts",
       "import": "./dist/environment.mjs"
     },
     "./errors": {
+      "source": "./src/errors.ts",
       "types": "./dist/errors.d.mts",
       "import": "./dist/errors.mjs"
     },
     "./graph-adapters/cytoscape": {
+      "source": "./src/graph-adapters/cytoscape.ts",
       "types": "./dist/graph-adapters/cytoscape.d.mts",
       "import": "./dist/graph-adapters/cytoscape.mjs"
     },
     "./graph-adapters/dot": {
+      "source": "./src/graph-adapters/dot.ts",
       "types": "./dist/graph-adapters/dot.d.mts",
       "import": "./dist/graph-adapters/dot.mjs"
     },
     "./graph-adapters/reactflow": {
+      "source": "./src/graph-adapters/reactflow.ts",
       "types": "./dist/graph-adapters/reactflow.d.mts",
       "import": "./dist/graph-adapters/reactflow.mjs"
     },
     "./graph-adapters/types": {
+      "source": "./src/graph-adapters/types.ts",
       "types": "./dist/graph-adapters/types.d.mts",
       "import": "./dist/graph-adapters/types.mjs"
     },
     "./inspector": {
+      "source": "./src/inspector.ts",
       "types": "./dist/inspector.d.mts",
       "import": "./dist/inspector.mjs"
     },
     "./lifecycle": {
+      "source": "./src/lifecycle.ts",
       "types": "./dist/lifecycle.d.mts",
       "import": "./dist/lifecycle.mjs"
     },
     "./metadata/metadata-keys": {
+      "source": "./src/metadata/metadata-keys.ts",
       "types": "./dist/metadata/metadata-keys.d.mts",
       "import": "./dist/metadata/metadata-keys.mjs"
     },
     "./metadata/metadata-reader-token": {
+      "source": "./src/metadata/metadata-reader-token.ts",
       "types": "./dist/metadata/metadata-reader-token.d.mts",
       "import": "./dist/metadata/metadata-reader-token.mjs"
     },
     "./metadata/metadata-types": {
+      "source": "./src/metadata/metadata-types.ts",
       "types": "./dist/metadata/metadata-types.d.mts",
       "import": "./dist/metadata/metadata-types.mjs"
     },
     "./metadata/symbol-metadata-reader": {
+      "source": "./src/metadata/symbol-metadata-reader.ts",
       "types": "./dist/metadata/symbol-metadata-reader.d.mts",
       "import": "./dist/metadata/symbol-metadata-reader.mjs"
     },
     "./module": {
+      "source": "./src/module.ts",
       "types": "./dist/module.d.mts",
       "import": "./dist/module.mjs"
     },
     "./registry": {
+      "source": "./src/registry.ts",
       "types": "./dist/registry.d.mts",
       "import": "./dist/registry.mjs"
     },
     "./resolve-options": {
+      "source": "./src/resolve-options.ts",
       "types": "./dist/resolve-options.d.mts",
       "import": "./dist/resolve-options.mjs"
     },
     "./resolver": {
+      "source": "./src/resolver.ts",
       "types": "./dist/resolver.d.mts",
       "import": "./dist/resolver.mjs"
     },
     "./scope": {
+      "source": "./src/scope.ts",
       "types": "./dist/scope.d.mts",
       "import": "./dist/scope.mjs"
     },
     "./token": {
+      "source": "./src/token.ts",
       "types": "./dist/token.d.mts",
       "import": "./dist/token.mjs"
     },
     "./types": {
+      "source": "./src/types.ts",
       "types": "./dist/types.d.mts",
       "import": "./dist/types.mjs"
     },

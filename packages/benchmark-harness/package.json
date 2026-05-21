@@ -36,74 +36,92 @@
   },
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
     "./child/bench-options": {
+      "source": "./src/child/bench-options.ts",
       "types": "./dist/child/bench-options.d.mts",
       "import": "./dist/child/bench-options.mjs"
     },
     "./child/bench-scenario": {
+      "source": "./src/child/bench-scenario.ts",
       "types": "./dist/child/bench-scenario.d.mts",
       "import": "./dist/child/bench-scenario.mjs"
     },
     "./child/create-run-all-trials": {
+      "source": "./src/child/create-run-all-trials.ts",
       "types": "./dist/child/create-run-all-trials.d.mts",
       "import": "./dist/child/create-run-all-trials.mjs"
     },
     "./child/fingerprint": {
+      "source": "./src/child/fingerprint.ts",
       "types": "./dist/child/fingerprint.d.mts",
       "import": "./dist/child/fingerprint.mjs"
     },
     "./child/run-benchmark-child-main": {
+      "source": "./src/child/run-benchmark-child-main.ts",
       "types": "./dist/child/run-benchmark-child-main.d.mts",
       "import": "./dist/child/run-benchmark-child-main.mjs"
     },
     "./child/run-sanity-checks": {
+      "source": "./src/child/run-sanity-checks.ts",
       "types": "./dist/child/run-sanity-checks.d.mts",
       "import": "./dist/child/run-sanity-checks.mjs"
     },
     "./parent/resolve-bench-parent-exit-code": {
+      "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.mts",
       "import": "./dist/parent/resolve-bench-parent-exit-code.mjs"
     },
     "./parent/run-bench-subprocess": {
+      "source": "./src/parent/run-bench-subprocess.ts",
       "types": "./dist/parent/run-bench-subprocess.d.mts",
       "import": "./dist/parent/run-bench-subprocess.mjs"
     },
     "./report/aggregate": {
+      "source": "./src/report/aggregate.ts",
       "types": "./dist/report/aggregate.d.mts",
       "import": "./dist/report/aggregate.mjs"
     },
     "./report/format": {
+      "source": "./src/report/format.ts",
       "types": "./dist/report/format.d.mts",
       "import": "./dist/report/format.mjs"
     },
     "./report/jsonl": {
+      "source": "./src/report/jsonl.ts",
       "types": "./dist/report/jsonl.d.mts",
       "import": "./dist/report/jsonl.mjs"
     },
     "./report/quantiles": {
+      "source": "./src/report/quantiles.ts",
       "types": "./dist/report/quantiles.d.mts",
       "import": "./dist/report/quantiles.mjs"
     },
     "./report/two-way": {
+      "source": "./src/report/two-way.ts",
       "types": "./dist/report/two-way.d.mts",
       "import": "./dist/report/two-way.mjs"
     },
     "./report/write": {
+      "source": "./src/report/write.ts",
       "types": "./dist/report/write.d.mts",
       "import": "./dist/report/write.mjs"
     },
     "./shared/config": {
+      "source": "./src/shared/config.ts",
       "types": "./dist/shared/config.d.mts",
       "import": "./dist/shared/config.mjs"
     },
     "./shared/env-keys": {
+      "source": "./src/shared/env-keys.ts",
       "types": "./dist/shared/env-keys.d.mts",
       "import": "./dist/shared/env-keys.mjs"
     },
     "./shared/protocol": {
+      "source": "./src/shared/protocol.ts",
       "types": "./dist/shared/protocol.d.mts",
       "import": "./dist/shared/protocol.mjs"
     },

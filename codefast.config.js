@@ -2,40 +2,31 @@ import { execSync } from "node:child_process";
 
 /**
  * Codefast monorepo tooling — `mirror` is read by `codefast mirror sync`.
- * Legacy `generate-exports.config.js` / `.json` is still supported if absent.
  */
 const config = {
   mirror: {
-    // Packages to skip (relative paths from workspace root)
-    customExports: {
-      "@codefast/ui": {
+    "@codefast/ui": {
+      strip: "./components/",
+      exports: {
         "./css/*": "./src/css/*",
       },
     },
-
-    // Path transformations for specific packages
-    pathTransformations: {
-      "@codefast/ui": {
-        removePrefix: "./components/",
-      },
+    "@codefast/tailwind-variants": {
+      preserve: true,
     },
-
-    // Custom exports that should be preserved/overridden per package
-    skipPackages: [
-      "@apps/docs",
-      "@codefast/cli",
-      "@codefast/benchmark-tailwind-variants",
-      "@codefast/tailwind-variants",
-      "@codefast/typescript-config",
-    ],
+    "@apps/docs": false,
+    "@codefast/cli": false,
+    "@codefast/benchmark-tailwind-variants": false,
+    "@codefast/typescript-config": false,
   },
+
   arrange: {
     onAfterWrite: ({ files }) => {
       execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
     },
   },
+
   tag: {
-    // Custom exports that should be preserved/overridden per package
     skipPackages: ["@apps/docs"],
   },
 };

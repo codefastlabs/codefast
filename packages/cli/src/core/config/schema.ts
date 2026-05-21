@@ -12,33 +12,57 @@ const afterWriteHookSchema = z.custom<(ctx: { files: Array<string> }) => void | 
  */
 export type CodefastAfterWriteHook = z.infer<typeof afterWriteHookSchema>;
 
+const mirrorCssConfigSchema = z.union([
+  z.boolean(),
+  z
+    .object({
+      enabled: z.boolean().optional(),
+      customExports: z.record(z.string(), z.string()).optional(),
+      forceExportFiles: z.boolean().optional(),
+    })
+    .strict(),
+]);
+
+/**
+ * Per-package mirror configuration. Setting a package to `false` skips it entirely.
+ *
+ * - `source` — include a `source` condition pointing to the original `.ts` file (default `true`).
+ *   Pass a string to override the root-export source path explicitly.
+ * - `types` — include the `types` condition when `.d.ts` files exist (default `true`).
+ * - `import` — include the `import` condition (default `true`).
+ * - `css` — CSS export configuration (wildcard or per-file).
+ *
+ * @since 0.3.16-canary.0
+ */
+export const mirrorPackageConfigSchema = z
+  .object({
+    /** Preserve the existing `package.json#exports` map and only add missing conditions
+     *  (`source`, `types`, `import`). No dist/ scan is performed. */
+    preserve: z.boolean().optional(),
+    strip: z.string().optional(),
+    exports: z.record(z.string(), z.string()).optional(),
+    source: z.union([z.boolean(), z.string()]).default(true),
+    types: z.boolean().default(true),
+    import: z.boolean().default(true),
+    css: mirrorCssConfigSchema.optional(),
+  })
+  .strict();
+
 /**
  * @since 0.3.16-canary.0
  */
-export const mirrorConfigSchema = z
-  .object({
-    skipPackages: z.array(z.string()).optional(),
-    pathTransformations: z
-      .record(z.string(), z.object({ removePrefix: z.string().optional() }).strict())
-      .optional(),
-    customExports: z.record(z.string(), z.record(z.string(), z.string())).optional(),
-    cssExports: z
-      .record(
-        z.string(),
-        z.union([
-          z.boolean(),
-          z
-            .object({
-              enabled: z.boolean().optional(),
-              customExports: z.record(z.string(), z.string()).optional(),
-              forceExportFiles: z.boolean().optional(),
-            })
-            .strict(),
-        ]),
-      )
-      .optional(),
-  })
-  .strict();
+export type MirrorPackageConfig = z.infer<typeof mirrorPackageConfigSchema>;
+
+/**
+ * Mirror config: a record keyed by package name. Set a package to `false` to skip it;
+ * omit it entirely to process it with default settings.
+ *
+ * @since 0.3.16-canary.0
+ */
+export const mirrorConfigSchema = z.record(
+  z.string(),
+  z.union([z.literal(false), mirrorPackageConfigSchema]),
+);
 
 /**
  * @since 0.3.16-canary.0
