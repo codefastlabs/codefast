@@ -51,46 +51,57 @@
   },
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
     "./adapters/tanstack-start/server": {
+      "source": "./src/adapters/tanstack-start/server.ts",
       "types": "./dist/adapters/tanstack-start/server.d.mts",
       "import": "./dist/adapters/tanstack-start/server.mjs"
     },
     "./constants": {
+      "source": "./src/constants.ts",
       "types": "./dist/constants.d.mts",
       "import": "./dist/constants.mjs"
     },
     "./core/context": {
+      "source": "./src/core/context.tsx",
       "types": "./dist/core/context.d.mts",
       "import": "./dist/core/context.mjs"
     },
     "./core/provider": {
+      "source": "./src/core/provider.tsx",
       "types": "./dist/core/provider.d.mts",
       "import": "./dist/core/provider.mjs"
     },
     "./core/use-theme": {
+      "source": "./src/core/use-theme.ts",
       "types": "./dist/core/use-theme.d.mts",
       "import": "./dist/core/use-theme.mjs"
     },
     "./script/theme-script": {
+      "source": "./src/script/theme-script.tsx",
       "types": "./dist/script/theme-script.d.mts",
       "import": "./dist/script/theme-script.mjs"
     },
     "./start": {
+      "source": "./src/start.ts",
       "types": "./dist/start.d.mts",
       "import": "./dist/start.mjs"
     },
     "./types": {
+      "source": "./src/types.ts",
       "types": "./dist/types.d.mts",
       "import": "./dist/types.mjs"
     },
     "./utils/dom": {
+      "source": "./src/utils/dom.ts",
       "types": "./dist/utils/dom.d.mts",
       "import": "./dist/utils/dom.mjs"
     },
     "./utils/system": {
+      "source": "./src/utils/system.ts",
       "types": "./dist/utils/system.d.mts",
       "import": "./dist/utils/system.mjs"
     },
