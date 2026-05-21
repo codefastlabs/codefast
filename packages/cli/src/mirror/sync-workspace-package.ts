@@ -4,7 +4,7 @@ import { messageFrom } from "#/core/errors";
 import type { MirrorConfig } from "#/core/config/schema";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
-import type { MirrorPackageMeta, PackageJsonShape, PackageStats } from "#/mirror/domain/types";
+import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
@@ -69,9 +69,10 @@ export async function syncExportsForWorkspacePackage(
     packageJsonParseError = caughtError;
   }
 
-  const packageMeta: MirrorPackageMeta = { packageName: pkgStats.name };
+  const packageName = pkgStats.name;
+  const pkgConfig = config[packageName];
 
-  if (isPackageSkipped(config.skipPackages, packageMeta)) {
+  if (pkgConfig === false) {
     pkgStats.skipped = true;
     pkgStats.skipReason = "configured to skip";
     return pkgStats;
@@ -94,17 +95,17 @@ export async function syncExportsForWorkspacePackage(
   }
 
   try {
-    const pathTransform = createPathTransform(config, packageMeta);
+    const pathTransform = createPathTransform(pkgConfig?.pathTransformations);
     pkgStats.hasTransform = !!pathTransform;
 
-    const cssConfig = resolvePackageScopedConfig(config.cssExports, packageMeta);
+    const cssConfig = pkgConfig?.css;
     if (cssConfig === false) {
       pkgStats.cssConfigStatus = "disabled";
     } else if (cssConfig !== undefined) {
       pkgStats.cssConfigStatus = "configured";
     }
 
-    const customExports = resolvePackageScopedConfig(config.customExports, packageMeta) || {};
+    const customExports = pkgConfig?.customExports ?? {};
 
     const generatedExports = await generateExports(
       distFilesystem,
@@ -112,6 +113,9 @@ export async function syncExportsForWorkspacePackage(
       pathTransform,
       cssConfig,
       customExports,
+      pkgConfig
+        ? { source: pkgConfig.source, types: pkgConfig.types, import: pkgConfig.import }
+        : undefined,
     );
 
     const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
@@ -130,21 +134,4 @@ export async function syncExportsForWorkspacePackage(
   }
 
   return pkgStats;
-}
-
-function resolvePackageScopedConfig<Value>(
-  configMap: Record<string, Value> | undefined,
-  packageMeta: MirrorPackageMeta,
-): Value | undefined {
-  if (!configMap) {
-    return undefined;
-  }
-  return configMap[packageMeta.packageName];
-}
-
-function isPackageSkipped(
-  skipPackagesList: Array<string> | undefined,
-  packageMeta: MirrorPackageMeta,
-): boolean {
-  return !!skipPackagesList?.includes(packageMeta.packageName);
 }

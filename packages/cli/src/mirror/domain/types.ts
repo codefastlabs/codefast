@@ -5,6 +5,7 @@ import type { GlobalCliOptions } from "#/core/cli/global-options";
  * @since 0.3.16-canary.0
  */
 export interface ExportEntry {
+  source?: string;
   types?: string;
   import?: string;
   require?: string;
