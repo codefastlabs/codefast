@@ -23,6 +23,7 @@ const config = defineConfig(({ command }) => ({
     reportCompressedSize: false,
   },
   resolve: {
+    conditions: ["source"],
     tsconfigPaths: true,
   },
   nitro: {

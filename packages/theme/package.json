@@ -24,6 +24,7 @@
   },
   "files": [
     "dist",
+    "src",
     "CHANGELOG.md",
     "README.md",
     "LICENSE"
@@ -114,7 +115,6 @@
     "build": "tsdown",
     "check-types": "tsgo --noEmit",
     "clean": "rm -rf dist",
-    "dev": "tsdown --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "vitest run tests/e2e",
