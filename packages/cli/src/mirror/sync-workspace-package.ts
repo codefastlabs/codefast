@@ -113,9 +113,11 @@ export async function syncExportsForWorkspacePackage(
       pathTransform,
       cssConfig,
       customExports,
-      pkgConfig
-        ? { source: pkgConfig.source, types: pkgConfig.types, import: pkgConfig.import }
-        : undefined,
+      {
+        source: pkgConfig?.source ?? true,
+        types: pkgConfig?.types ?? true,
+        import: pkgConfig?.import ?? true,
+      },
     );
 
     const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
