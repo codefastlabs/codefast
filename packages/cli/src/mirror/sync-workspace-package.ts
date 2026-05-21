@@ -106,6 +106,7 @@ export async function syncExportsForWorkspacePackage(
     }
 
     const customExports = pkgConfig?.customExports ?? {};
+    const srcDir = pathJoin(packageDir, "src");
 
     const generatedExports = await generateExports(
       distFilesystem,
@@ -117,6 +118,10 @@ export async function syncExportsForWorkspacePackage(
         source: pkgConfig?.source ?? true,
         types: pkgConfig?.types ?? true,
         import: pkgConfig?.import ?? true,
+        resolveSourcePath: (modulePath) => {
+          const tsxPath = pathJoin(srcDir, `${modulePath}.tsx`);
+          return fs.existsSync(tsxPath) ? `./src/${modulePath}.tsx` : `./src/${modulePath}.ts`;
+        },
       },
     );
 
