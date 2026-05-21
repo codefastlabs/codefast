@@ -188,7 +188,7 @@ describe("mirror export generation", () => {
     });
   });
 
-  it("adds source condition when source option is true", async () => {
+  it("adds source condition when source option is true — defaults to .ts extension", async () => {
     const generatedExports = await generateExports(
       createDistFilesystemStub(["index.mjs", "index.d.mts", "components/button.mjs"]),
       "/virtual/dist",
@@ -207,6 +207,35 @@ describe("mirror export generation", () => {
       source: "./src/components/button.ts",
       import: "./dist/components/button.mjs",
     });
+  });
+
+  it("uses resolveSourcePath to detect .tsx extension", async () => {
+    const tsxModules = new Set(["components/button", "components/input"]);
+    const resolveSourcePath = (modulePath: string) =>
+      tsxModules.has(modulePath) ? `./src/${modulePath}.tsx` : `./src/${modulePath}.ts`;
+
+    const generatedExports = await generateExports(
+      createDistFilesystemStub([
+        "index.mjs",
+        "components/button.mjs",
+        "components/input.mjs",
+        "utils/cn.mjs",
+      ]),
+      "/virtual/dist",
+      null,
+      false,
+      {},
+      { source: true, resolveSourcePath },
+    );
+
+    expect(generatedExports.exports["."]).toMatchObject({ source: "./src/index.ts" });
+    expect(generatedExports.exports["./components/button"]).toMatchObject({
+      source: "./src/components/button.tsx",
+    });
+    expect(generatedExports.exports["./components/input"]).toMatchObject({
+      source: "./src/components/input.tsx",
+    });
+    expect(generatedExports.exports["./utils/cn"]).toMatchObject({ source: "./src/utils/cn.ts" });
   });
 
   it("uses explicit string path for root source condition", async () => {

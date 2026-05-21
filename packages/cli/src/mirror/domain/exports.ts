@@ -239,14 +239,18 @@ async function generateCssExports(
 }
 
 export interface GenerateExportsOptions {
-  /** Include a `source` condition pointing to the original `.ts` file. Pass `true` to
-   *  auto-derive (`./src/<module>.ts`), or a string to set an explicit path for the
-   *  root export only. */
+  /** Include a `source` condition pointing to the original source file. Pass `true` to
+   *  auto-derive via `resolveSourcePath`, or a string to set an explicit path for the
+   *  root export (`.`) only. */
   source?: boolean | string;
   /** Include the `types` condition when a `.d.ts` file exists (default `true`). */
   types?: boolean;
   /** Include the `import` condition (default `true`). */
   import?: boolean;
+  /** Override the default source path derivation. Receives the module path relative to
+   *  `dist/` (e.g. `"components/button"`) and returns the full source specifier
+   *  (e.g. `"./src/components/button.tsx"`). When omitted, falls back to `./src/<path>.ts`. */
+  resolveSourcePath?: (modulePath: string) => string;
 }
 
 /**
@@ -299,10 +303,12 @@ export async function generateExports(
     const exportEntry: ExportEntry = {};
 
     if (options?.source) {
-      exportEntry.source =
-        typeof options.source === "string" && exportPath === "."
-          ? options.source
-          : `./src/${distModuleEntry.path}.ts`;
+      if (typeof options.source === "string" && exportPath === ".") {
+        exportEntry.source = options.source;
+      } else {
+        const resolver = options.resolveSourcePath ?? ((p) => `./src/${p}.ts`);
+        exportEntry.source = resolver(distModuleEntry.path);
+      }
     }
 
     const declarationFile = distModuleEntry.files.dts;
