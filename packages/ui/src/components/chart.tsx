@@ -356,7 +356,7 @@ type ChartLegendProps = ComponentProps<typeof RechartsPrimitive.Legend>;
 /**
  * @since 0.3.16-canary.0
  */
-const ChartLegend = RechartsPrimitive.Legend;
+const ChartLegend: typeof RechartsPrimitive.Legend = RechartsPrimitive.Legend;
 
 /* -----------------------------------------------------------------------------
  * Component: ChartLegendContent
