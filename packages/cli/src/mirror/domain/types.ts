@@ -73,7 +73,7 @@ export interface PackageStats {
   path: string;
   jsModules: number;
   cssExports: number;
-  customExports: number;
+  extraExports: number;
   totalExports: number;
   hasTransform: boolean;
   cssConfigStatus: "disabled" | "configured" | "";

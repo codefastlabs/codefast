@@ -163,8 +163,8 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
     if (generatedDistAssetCounts.cssCount > 0) {
       breakdown.push(this.paint(`${generatedDistAssetCounts.cssCount} CSS`, ANSI.magenta));
     }
-    if (pkgStats.customExports > 0) {
-      breakdown.push(this.paint(`${pkgStats.customExports} custom`, ANSI.yellow));
+    if (pkgStats.extraExports > 0) {
+      breakdown.push(this.paint(`${pkgStats.extraExports} custom`, ANSI.yellow));
     }
 
     const totalExportsText = this.paint(`${pkgStats.totalExports} exports`, ANSI.brightCyan);

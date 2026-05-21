@@ -38,7 +38,7 @@ export async function syncExportsForWorkspacePackage(
     path: packageDir,
     jsModules: 0,
     cssExports: 0,
-    customExports: 0,
+    extraExports: 0,
     totalExports: 0,
     hasTransform: false,
     cssConfigStatus: "",
@@ -107,7 +107,7 @@ export async function syncExportsForWorkspacePackage(
       resolveSourcePath,
     };
 
-    if (pkgConfig?.custom) {
+    if (pkgConfig?.preserve) {
       const { supplementedSpecifiers } = await supplementExportsInPackageJson(
         fs,
         packageJsonPath,
@@ -116,7 +116,7 @@ export async function syncExportsForWorkspacePackage(
       );
       pkgStats.totalExports = supplementedSpecifiers.length;
     } else {
-      const pathTransform = createPathTransform(pkgConfig?.pathTransformations);
+      const pathTransform = createPathTransform(pkgConfig?.strip);
       pkgStats.hasTransform = !!pathTransform;
 
       const cssConfig = pkgConfig?.css;
@@ -126,14 +126,14 @@ export async function syncExportsForWorkspacePackage(
         pkgStats.cssConfigStatus = "configured";
       }
 
-      const customExports = pkgConfig?.customExports ?? {};
+      const extraExports = pkgConfig?.exports ?? {};
 
       const generatedExports = await generateExports(
         distFilesystem,
         distDir,
         pathTransform,
         cssConfig,
-        customExports,
+        extraExports,
         exportOptions,
       );
 
@@ -145,7 +145,7 @@ export async function syncExportsForWorkspacePackage(
 
       pkgStats.jsModules = generatedExports.jsCount;
       pkgStats.cssExports = generatedExports.cssCount;
-      pkgStats.customExports = Object.keys(customExports).length;
+      pkgStats.extraExports = Object.keys(extraExports).length;
       pkgStats.totalExports = Object.keys(generatedExports.exports).length;
       pkgStats.prunedExportKeys = prunedKeys;
     }

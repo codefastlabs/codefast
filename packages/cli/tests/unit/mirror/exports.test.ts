@@ -79,8 +79,8 @@ describe("mirrorConfigSchema", () => {
   it("parses per-package config with defaults applied", () => {
     const result = mirrorConfigSchema.safeParse({
       "@codefast/ui": {
-        pathTransformations: { removePrefix: "./components/" },
-        customExports: { "./css/*": "./src/css/*" },
+        strip: "./components/",
+        exports: { "./css/*": "./src/css/*" },
       },
       "@apps/docs": false,
     });
@@ -128,16 +128,12 @@ describe("mirrorConfigSchema", () => {
 });
 
 describe("createPathTransform", () => {
-  it("returns null when no config provided", () => {
+  it("returns null when no strip provided", () => {
     expect(createPathTransform(undefined)).toBeNull();
   });
 
-  it("returns null when removePrefix is absent", () => {
-    expect(createPathTransform({})).toBeNull();
-  });
-
   it("strips the configured prefix", () => {
-    const transform = createPathTransform({ removePrefix: "./components/" });
+    const transform = createPathTransform("./components/");
     expect(transform).not.toBeNull();
     expect(transform!("./components/button")).toBe("./button");
     expect(transform!("./utils/math")).toBe("./utils/math");
