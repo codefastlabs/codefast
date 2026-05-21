@@ -1,6 +1,5 @@
 import * as nodePath from "node:path";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import type { MirrorPackageConfig } from "#/core/config/schema";
 import {
   PACKAGE_JSON_EXPORT,
   VALID_DTS_EXTENSIONS,
@@ -126,18 +125,17 @@ function getExportSortGroup(
  * @since 0.3.16-canary.0
  */
 export function createPathTransform(
-  pathTransformConfig: MirrorPackageConfig["pathTransformations"],
+  strip: string | undefined,
 ): ((pathString: string) => string) | null {
-  const removePrefix = pathTransformConfig?.removePrefix;
-  if (!removePrefix) {
+  if (!strip) {
     return null;
   }
 
   return (exportPath: string) => {
-    if (!exportPath.startsWith(removePrefix)) {
+    if (!exportPath.startsWith(strip)) {
       return exportPath;
     }
-    const trimmedExportPath = exportPath.slice(removePrefix.length);
+    const trimmedExportPath = exportPath.slice(strip.length);
     if (trimmedExportPath && trimmedExportPath !== "." && !trimmedExportPath.startsWith("./")) {
       return `./${trimmedExportPath}`;
     }
@@ -263,7 +261,7 @@ export async function generateExports(
   distDir: string,
   pathTransform: ((pathString: string) => string) | null,
   cssConfig: Record<string, unknown> | boolean | undefined,
-  customExports: Record<string, string>,
+  extraExports: Record<string, string>,
   options?: GenerateExportsOptions,
 ): Promise<GenerateExportsResult> {
   const relativeDistFiles = await fileSystemService.listRelativeFilesRecursively(distDir);
@@ -351,7 +349,7 @@ export async function generateExports(
   );
 
   Object.assign(sortedExports, cssExports);
-  for (const [specifier, mappedPath] of Object.entries(customExports || {})) {
+  for (const [specifier, mappedPath] of Object.entries(extraExports || {})) {
     if (specifier !== PACKAGE_JSON_EXPORT) {
       sortedExports[specifier] = mappedPath;
     }
@@ -362,9 +360,9 @@ export async function generateExports(
       originalPathBySpecifier[cssSpecifier] = cssSpecifier;
     }
   }
-  for (const customSpecifier of Object.keys(customExports || {})) {
-    if (customSpecifier !== PACKAGE_JSON_EXPORT && !(customSpecifier in originalPathBySpecifier)) {
-      originalPathBySpecifier[customSpecifier] = customSpecifier;
+  for (const extraSpecifier of Object.keys(extraExports || {})) {
+    if (extraSpecifier !== PACKAGE_JSON_EXPORT && !(extraSpecifier in originalPathBySpecifier)) {
+      originalPathBySpecifier[extraSpecifier] = extraSpecifier;
     }
   }
 

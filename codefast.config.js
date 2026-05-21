@@ -6,15 +6,13 @@ import { execSync } from "node:child_process";
 const config = {
   mirror: {
     "@codefast/ui": {
-      pathTransformations: {
-        removePrefix: "./components/",
-      },
-      customExports: {
+      strip: "./components/",
+      exports: {
         "./css/*": "./src/css/*",
       },
     },
     "@codefast/tailwind-variants": {
-      custom: true,
+      preserve: true,
     },
     "@apps/docs": false,
     "@codefast/cli": false,

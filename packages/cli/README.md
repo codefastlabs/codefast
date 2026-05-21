@@ -260,8 +260,8 @@ export default {
   // Omit a package to process it with default settings.
   mirror: {
     "@acme/ui": {
-      pathTransformations: { removePrefix: "./components/" },
-      customExports: { "./css/*": "./src/css/*" },
+      strip: "./components/",
+      exports: { "./css/*": "./src/css/*" },
       source: true, // default: true
       types: true, // default: true
       import: true, // default: true
@@ -311,43 +311,54 @@ Packages not mentioned in the config are processed with default settings.
 
 Each package entry is an object with the following fields:
 
-| Field                 | Type                       | Default | Description                                                                                                                                                                                                                                |
-| --------------------- | -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `source`              | `boolean \| string`        | `true`  | Add a `source` condition to each export entry pointing to the original `.ts` file. `true` auto-derives the path (`./src/<module>.ts`). Pass a string to set the root-export path explicitly (`"./src/index.tsx"`). Set to `false` to omit. |
-| `types`               | `boolean`                  | `true`  | Include the `types` condition when a `.d.ts` file is present. Set to `false` to omit.                                                                                                                                                      |
-| `import`              | `boolean`                  | `true`  | Include the `import` condition. Set to `false` to omit (useful for CJS-only packages).                                                                                                                                                     |
-| `pathTransformations` | `{ removePrefix: string }` | —       | Strip a leading path segment from generated export specifiers. See below.                                                                                                                                                                  |
-| `customExports`       | `Record<string, string>`   | —       | Add or override specific export specifiers. See below.                                                                                                                                                                                     |
-| `css`                 | `boolean \| CssConfig`     | —       | Enable CSS export detection. See below.                                                                                                                                                                                                    |
+| Field      | Type                     | Default | Description                                                                                                                                                                                                                                |
+| ---------- | ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `source`   | `boolean \| string`      | `true`  | Add a `source` condition to each export entry pointing to the original `.ts` file. `true` auto-derives the path (`./src/<module>.ts`). Pass a string to set the root-export path explicitly (`"./src/index.tsx"`). Set to `false` to omit. |
+| `types`    | `boolean`                | `true`  | Include the `types` condition when a `.d.ts` file is present. Set to `false` to omit.                                                                                                                                                      |
+| `import`   | `boolean`                | `true`  | Include the `import` condition. Set to `false` to omit (useful for CJS-only packages).                                                                                                                                                     |
+| `strip`    | `string`                 | —       | Strip a leading path segment from generated export specifiers. See below.                                                                                                                                                                  |
+| `exports`  | `Record<string, string>` | —       | Add or override specific export specifiers. See below.                                                                                                                                                                                     |
+| `preserve` | `boolean`                | —       | Keep the existing `package.json#exports` and only fill in missing conditions.                                                                                                                                                              |
+| `css`      | `boolean \| CssConfig`   | —       | Enable CSS export detection. See below.                                                                                                                                                                                                    |
 
-#### `pathTransformations`
+#### `strip`
 
 Removes a fixed prefix from every generated export specifier. Use this when a package's `dist/` mirrors deep directory structure that you want to flatten in the public API.
 
 ```javascript
-// Without transformation, dist/components/button.mjs → "./components/button"
-// With removePrefix: "./components/", it becomes → "./button"
+// Without strip, dist/components/button.mjs → "./components/button"
+// With strip: "./components/", it becomes → "./button"
 "@acme/ui": {
-  pathTransformations: { removePrefix: "./components/" },
+  strip: "./components/",
 }
 ```
 
 The original file path is preserved for sorting — only the public specifier changes.
 
-#### `customExports`
+#### `exports`
 
 Adds or overrides specific specifiers in the final export map. Keys and values are the exact strings written into `package.json#exports`.
 
 ```javascript
 "@acme/ui": {
-  customExports: {
+  exports: {
     "./css/*": "./src/css/*",        // wildcard passthrough to sources
     "./tokens": "./dist/tokens.js",  // explicit extra entry
   },
 }
 ```
 
-Custom entries are merged after auto-generation. They win over anything the scanner would produce for the same specifier. `./package.json` cannot be overridden.
+Extra entries are merged after auto-generation. They win over anything the scanner would produce for the same specifier. `./package.json` cannot be overridden.
+
+#### `preserve`
+
+Keeps the existing `package.json#exports` map exactly as-is and only fills in missing conditions (`source`, `types`, `import`) for each entry — no `dist/` scan is performed. Use this when you maintain the exports map by hand and only want the CLI to supplement missing conditions.
+
+```javascript
+"@acme/tailwind-variants": {
+  preserve: true,
+}
+```
 
 #### `css`
 

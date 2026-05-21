@@ -38,9 +38,9 @@ export const mirrorPackageConfigSchema = z
   .object({
     /** Preserve the existing `package.json#exports` map and only add missing conditions
      *  (`source`, `types`, `import`). No dist/ scan is performed. */
-    custom: z.boolean().optional(),
-    pathTransformations: z.object({ removePrefix: z.string().optional() }).strict().optional(),
-    customExports: z.record(z.string(), z.string()).optional(),
+    preserve: z.boolean().optional(),
+    strip: z.string().optional(),
+    exports: z.record(z.string(), z.string()).optional(),
     source: z.union([z.boolean(), z.string()]).default(true),
     types: z.boolean().default(true),
     import: z.boolean().default(true),
