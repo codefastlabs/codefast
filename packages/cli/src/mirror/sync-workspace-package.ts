@@ -4,10 +4,14 @@ import { messageFrom } from "#/core/errors";
 import type { MirrorConfig } from "#/core/config/schema";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
-import type { MirrorPackageMeta, PackageJsonShape, PackageStats } from "#/mirror/domain/types";
+import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
+import {
+  buildSourcePathResolver,
+  supplementExportsInPackageJson,
+} from "#/mirror/supplement-exports";
 
 /**
  * @since 0.3.16-canary.0
@@ -34,7 +38,7 @@ export async function syncExportsForWorkspacePackage(
     path: packageDir,
     jsModules: 0,
     cssExports: 0,
-    customExports: 0,
+    extraExports: 0,
     totalExports: 0,
     hasTransform: false,
     cssConfigStatus: "",
@@ -69,9 +73,10 @@ export async function syncExportsForWorkspacePackage(
     packageJsonParseError = caughtError;
   }
 
-  const packageMeta: MirrorPackageMeta = { packageName: pkgStats.name };
+  const packageName = pkgStats.name;
+  const pkgConfig = config[packageName];
 
-  if (isPackageSkipped(config.skipPackages, packageMeta)) {
+  if (pkgConfig === false) {
     pkgStats.skipped = true;
     pkgStats.skipReason = "configured to skip";
     return pkgStats;
@@ -94,57 +99,59 @@ export async function syncExportsForWorkspacePackage(
   }
 
   try {
-    const pathTransform = createPathTransform(config, packageMeta);
-    pkgStats.hasTransform = !!pathTransform;
+    const resolveSourcePath = buildSourcePathResolver(fs, packageDir);
+    const exportOptions = {
+      source: pkgConfig?.source ?? true,
+      types: pkgConfig?.types ?? true,
+      import: pkgConfig?.import ?? true,
+      resolveSourcePath,
+    };
 
-    const cssConfig = resolvePackageScopedConfig(config.cssExports, packageMeta);
-    if (cssConfig === false) {
-      pkgStats.cssConfigStatus = "disabled";
-    } else if (cssConfig !== undefined) {
-      pkgStats.cssConfigStatus = "configured";
+    if (pkgConfig?.preserve) {
+      const { supplementedSpecifiers } = await supplementExportsInPackageJson(
+        fs,
+        packageJsonPath,
+        packageDir,
+        exportOptions,
+      );
+      pkgStats.totalExports = supplementedSpecifiers.length;
+    } else {
+      const pathTransform = createPathTransform(pkgConfig?.strip);
+      pkgStats.hasTransform = !!pathTransform;
+
+      const cssConfig = pkgConfig?.css;
+      if (cssConfig === false) {
+        pkgStats.cssConfigStatus = "disabled";
+      } else if (cssConfig !== undefined) {
+        pkgStats.cssConfigStatus = "configured";
+      }
+
+      const extraExports = pkgConfig?.exports ?? {};
+
+      const generatedExports = await generateExports(
+        distFilesystem,
+        distDir,
+        pathTransform,
+        cssConfig,
+        extraExports,
+        exportOptions,
+      );
+
+      const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
+        generatedExports: generatedExports.exports,
+        managedExportSpecifiers: Object.keys(generatedExports.exports),
+        originalPathBySpecifier: generatedExports.originalPathBySpecifier,
+      });
+
+      pkgStats.jsModules = generatedExports.jsCount;
+      pkgStats.cssExports = generatedExports.cssCount;
+      pkgStats.extraExports = Object.keys(extraExports).length;
+      pkgStats.totalExports = Object.keys(generatedExports.exports).length;
+      pkgStats.prunedExportKeys = prunedKeys;
     }
-
-    const customExports = resolvePackageScopedConfig(config.customExports, packageMeta) || {};
-
-    const generatedExports = await generateExports(
-      distFilesystem,
-      distDir,
-      pathTransform,
-      cssConfig,
-      customExports,
-    );
-
-    const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
-      generatedExports: generatedExports.exports,
-      managedExportSpecifiers: Object.keys(generatedExports.exports),
-      originalPathBySpecifier: generatedExports.originalPathBySpecifier,
-    });
-
-    pkgStats.jsModules = generatedExports.jsCount;
-    pkgStats.cssExports = generatedExports.cssCount;
-    pkgStats.customExports = Object.keys(customExports).length;
-    pkgStats.totalExports = Object.keys(generatedExports.exports).length;
-    pkgStats.prunedExportKeys = prunedKeys;
   } catch (caughtError: unknown) {
     pkgStats.error = messageFrom(caughtError);
   }
 
   return pkgStats;
-}
-
-function resolvePackageScopedConfig<Value>(
-  configMap: Record<string, Value> | undefined,
-  packageMeta: MirrorPackageMeta,
-): Value | undefined {
-  if (!configMap) {
-    return undefined;
-  }
-  return configMap[packageMeta.packageName];
-}
-
-function isPackageSkipped(
-  skipPackagesList: Array<string> | undefined,
-  packageMeta: MirrorPackageMeta,
-): boolean {
-  return !!skipPackagesList?.includes(packageMeta.packageName);
 }

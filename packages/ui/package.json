@@ -56,358 +56,447 @@
   },
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
     "./accordion": {
+      "source": "./src/components/accordion.tsx",
       "types": "./dist/components/accordion.d.mts",
       "import": "./dist/components/accordion.mjs"
     },
     "./alert": {
+      "source": "./src/components/alert.tsx",
       "types": "./dist/components/alert.d.mts",
       "import": "./dist/components/alert.mjs"
     },
     "./alert-dialog": {
+      "source": "./src/components/alert-dialog.tsx",
       "types": "./dist/components/alert-dialog.d.mts",
       "import": "./dist/components/alert-dialog.mjs"
     },
     "./aspect-ratio": {
+      "source": "./src/components/aspect-ratio.tsx",
       "types": "./dist/components/aspect-ratio.d.mts",
       "import": "./dist/components/aspect-ratio.mjs"
     },
     "./avatar": {
+      "source": "./src/components/avatar.tsx",
       "types": "./dist/components/avatar.d.mts",
       "import": "./dist/components/avatar.mjs"
     },
     "./badge": {
+      "source": "./src/components/badge.tsx",
       "types": "./dist/components/badge.d.mts",
       "import": "./dist/components/badge.mjs"
     },
     "./breadcrumb": {
+      "source": "./src/components/breadcrumb.tsx",
       "types": "./dist/components/breadcrumb.d.mts",
       "import": "./dist/components/breadcrumb.mjs"
     },
     "./button": {
+      "source": "./src/components/button.tsx",
       "types": "./dist/components/button.d.mts",
       "import": "./dist/components/button.mjs"
     },
     "./button-group": {
+      "source": "./src/components/button-group.tsx",
       "types": "./dist/components/button-group.d.mts",
       "import": "./dist/components/button-group.mjs"
     },
     "./calendar": {
+      "source": "./src/components/calendar.tsx",
       "types": "./dist/components/calendar.d.mts",
       "import": "./dist/components/calendar.mjs"
     },
     "./card": {
+      "source": "./src/components/card.tsx",
       "types": "./dist/components/card.d.mts",
       "import": "./dist/components/card.mjs"
     },
     "./carousel": {
+      "source": "./src/components/carousel.tsx",
       "types": "./dist/components/carousel.d.mts",
       "import": "./dist/components/carousel.mjs"
     },
     "./chart": {
+      "source": "./src/components/chart.tsx",
       "types": "./dist/components/chart.d.mts",
       "import": "./dist/components/chart.mjs"
     },
     "./checkbox": {
+      "source": "./src/components/checkbox.tsx",
       "types": "./dist/components/checkbox.d.mts",
       "import": "./dist/components/checkbox.mjs"
     },
     "./checkbox-cards": {
+      "source": "./src/components/checkbox-cards.tsx",
       "types": "./dist/components/checkbox-cards.d.mts",
       "import": "./dist/components/checkbox-cards.mjs"
     },
     "./checkbox-group": {
+      "source": "./src/components/checkbox-group.tsx",
       "types": "./dist/components/checkbox-group.d.mts",
       "import": "./dist/components/checkbox-group.mjs"
     },
     "./collapsible": {
+      "source": "./src/components/collapsible.tsx",
       "types": "./dist/components/collapsible.d.mts",
       "import": "./dist/components/collapsible.mjs"
     },
     "./command": {
+      "source": "./src/components/command.tsx",
       "types": "./dist/components/command.d.mts",
       "import": "./dist/components/command.mjs"
     },
     "./context-menu": {
+      "source": "./src/components/context-menu.tsx",
       "types": "./dist/components/context-menu.d.mts",
       "import": "./dist/components/context-menu.mjs"
     },
     "./dialog": {
+      "source": "./src/components/dialog.tsx",
       "types": "./dist/components/dialog.d.mts",
       "import": "./dist/components/dialog.mjs"
     },
     "./drawer": {
+      "source": "./src/components/drawer.tsx",
       "types": "./dist/components/drawer.d.mts",
       "import": "./dist/components/drawer.mjs"
     },
     "./dropdown-menu": {
+      "source": "./src/components/dropdown-menu.tsx",
       "types": "./dist/components/dropdown-menu.d.mts",
       "import": "./dist/components/dropdown-menu.mjs"
     },
     "./empty": {
+      "source": "./src/components/empty.tsx",
       "types": "./dist/components/empty.d.mts",
       "import": "./dist/components/empty.mjs"
     },
     "./field": {
+      "source": "./src/components/field.tsx",
       "types": "./dist/components/field.d.mts",
       "import": "./dist/components/field.mjs"
     },
     "./form": {
+      "source": "./src/components/form.tsx",
       "types": "./dist/components/form.d.mts",
       "import": "./dist/components/form.mjs"
     },
     "./hover-card": {
+      "source": "./src/components/hover-card.tsx",
       "types": "./dist/components/hover-card.d.mts",
       "import": "./dist/components/hover-card.mjs"
     },
     "./input": {
+      "source": "./src/components/input.tsx",
       "types": "./dist/components/input.d.mts",
       "import": "./dist/components/input.mjs"
     },
     "./input-group": {
+      "source": "./src/components/input-group.tsx",
       "types": "./dist/components/input-group.d.mts",
       "import": "./dist/components/input-group.mjs"
     },
     "./input-number": {
+      "source": "./src/components/input-number.tsx",
       "types": "./dist/components/input-number.d.mts",
       "import": "./dist/components/input-number.mjs"
     },
     "./input-otp": {
+      "source": "./src/components/input-otp.tsx",
       "types": "./dist/components/input-otp.d.mts",
       "import": "./dist/components/input-otp.mjs"
     },
     "./input-password": {
+      "source": "./src/components/input-password.tsx",
       "types": "./dist/components/input-password.d.mts",
       "import": "./dist/components/input-password.mjs"
     },
     "./input-search": {
+      "source": "./src/components/input-search.tsx",
       "types": "./dist/components/input-search.d.mts",
       "import": "./dist/components/input-search.mjs"
     },
     "./item": {
+      "source": "./src/components/item.tsx",
       "types": "./dist/components/item.d.mts",
       "import": "./dist/components/item.mjs"
     },
     "./kbd": {
+      "source": "./src/components/kbd.tsx",
       "types": "./dist/components/kbd.d.mts",
       "import": "./dist/components/kbd.mjs"
     },
     "./label": {
+      "source": "./src/components/label.tsx",
       "types": "./dist/components/label.d.mts",
       "import": "./dist/components/label.mjs"
     },
     "./menubar": {
+      "source": "./src/components/menubar.tsx",
       "types": "./dist/components/menubar.d.mts",
       "import": "./dist/components/menubar.mjs"
     },
     "./native-select": {
+      "source": "./src/components/native-select.tsx",
       "types": "./dist/components/native-select.d.mts",
       "import": "./dist/components/native-select.mjs"
     },
     "./navigation-menu": {
+      "source": "./src/components/navigation-menu.tsx",
       "types": "./dist/components/navigation-menu.d.mts",
       "import": "./dist/components/navigation-menu.mjs"
     },
     "./pagination": {
+      "source": "./src/components/pagination.tsx",
       "types": "./dist/components/pagination.d.mts",
       "import": "./dist/components/pagination.mjs"
     },
     "./popover": {
+      "source": "./src/components/popover.tsx",
       "types": "./dist/components/popover.d.mts",
       "import": "./dist/components/popover.mjs"
     },
     "./progress": {
+      "source": "./src/components/progress.tsx",
       "types": "./dist/components/progress.d.mts",
       "import": "./dist/components/progress.mjs"
     },
     "./progress-circle": {
+      "source": "./src/components/progress-circle.tsx",
       "types": "./dist/components/progress-circle.d.mts",
       "import": "./dist/components/progress-circle.mjs"
     },
     "./radio": {
+      "source": "./src/components/radio.tsx",
       "types": "./dist/components/radio.d.mts",
       "import": "./dist/components/radio.mjs"
     },
     "./radio-cards": {
+      "source": "./src/components/radio-cards.tsx",
       "types": "./dist/components/radio-cards.d.mts",
       "import": "./dist/components/radio-cards.mjs"
     },
     "./radio-group": {
+      "source": "./src/components/radio-group.tsx",
       "types": "./dist/components/radio-group.d.mts",
       "import": "./dist/components/radio-group.mjs"
     },
     "./resizable": {
+      "source": "./src/components/resizable.tsx",
       "types": "./dist/components/resizable.d.mts",
       "import": "./dist/components/resizable.mjs"
     },
     "./scroll-area": {
+      "source": "./src/components/scroll-area.tsx",
       "types": "./dist/components/scroll-area.d.mts",
       "import": "./dist/components/scroll-area.mjs"
     },
     "./select": {
+      "source": "./src/components/select.tsx",
       "types": "./dist/components/select.d.mts",
       "import": "./dist/components/select.mjs"
     },
     "./separator": {
+      "source": "./src/components/separator.tsx",
       "types": "./dist/components/separator.d.mts",
       "import": "./dist/components/separator.mjs"
     },
     "./sheet": {
+      "source": "./src/components/sheet.tsx",
       "types": "./dist/components/sheet.d.mts",
       "import": "./dist/components/sheet.mjs"
     },
     "./sidebar": {
+      "source": "./src/components/sidebar.tsx",
       "types": "./dist/components/sidebar.d.mts",
       "import": "./dist/components/sidebar.mjs"
     },
     "./skeleton": {
+      "source": "./src/components/skeleton.tsx",
       "types": "./dist/components/skeleton.d.mts",
       "import": "./dist/components/skeleton.mjs"
     },
     "./slider": {
+      "source": "./src/components/slider.tsx",
       "types": "./dist/components/slider.d.mts",
       "import": "./dist/components/slider.mjs"
     },
     "./sonner": {
+      "source": "./src/components/sonner.tsx",
       "types": "./dist/components/sonner.d.mts",
       "import": "./dist/components/sonner.mjs"
     },
     "./spinner": {
+      "source": "./src/components/spinner.tsx",
       "types": "./dist/components/spinner.d.mts",
       "import": "./dist/components/spinner.mjs"
     },
     "./switch": {
+      "source": "./src/components/switch.tsx",
       "types": "./dist/components/switch.d.mts",
       "import": "./dist/components/switch.mjs"
     },
     "./table": {
+      "source": "./src/components/table.tsx",
       "types": "./dist/components/table.d.mts",
       "import": "./dist/components/table.mjs"
     },
     "./tabs": {
+      "source": "./src/components/tabs.tsx",
       "types": "./dist/components/tabs.d.mts",
       "import": "./dist/components/tabs.mjs"
     },
     "./textarea": {
+      "source": "./src/components/textarea.tsx",
       "types": "./dist/components/textarea.d.mts",
       "import": "./dist/components/textarea.mjs"
     },
     "./toggle": {
+      "source": "./src/components/toggle.tsx",
       "types": "./dist/components/toggle.d.mts",
       "import": "./dist/components/toggle.mjs"
     },
     "./toggle-group": {
+      "source": "./src/components/toggle-group.tsx",
       "types": "./dist/components/toggle-group.d.mts",
       "import": "./dist/components/toggle-group.mjs"
     },
     "./tooltip": {
+      "source": "./src/components/tooltip.tsx",
       "types": "./dist/components/tooltip.d.mts",
       "import": "./dist/components/tooltip.mjs"
     },
     "./hooks/use-animated-value": {
+      "source": "./src/hooks/use-animated-value.ts",
       "types": "./dist/hooks/use-animated-value.d.mts",
       "import": "./dist/hooks/use-animated-value.mjs"
     },
     "./hooks/use-copy-to-clipboard": {
+      "source": "./src/hooks/use-copy-to-clipboard.ts",
       "types": "./dist/hooks/use-copy-to-clipboard.d.mts",
       "import": "./dist/hooks/use-copy-to-clipboard.mjs"
     },
     "./hooks/use-is-mobile": {
+      "source": "./src/hooks/use-is-mobile.ts",
       "types": "./dist/hooks/use-is-mobile.d.mts",
       "import": "./dist/hooks/use-is-mobile.mjs"
     },
     "./hooks/use-media-query": {
+      "source": "./src/hooks/use-media-query.ts",
       "types": "./dist/hooks/use-media-query.d.mts",
       "import": "./dist/hooks/use-media-query.mjs"
     },
     "./hooks/use-mutation-observer": {
+      "source": "./src/hooks/use-mutation-observer.ts",
       "types": "./dist/hooks/use-mutation-observer.d.mts",
       "import": "./dist/hooks/use-mutation-observer.mjs"
     },
     "./hooks/use-pagination": {
+      "source": "./src/hooks/use-pagination.ts",
       "types": "./dist/hooks/use-pagination.d.mts",
       "import": "./dist/hooks/use-pagination.mjs"
     },
     "./lib/utils": {
+      "source": "./src/lib/utils.ts",
       "types": "./dist/lib/utils.d.mts",
       "import": "./dist/lib/utils.mjs"
     },
     "./primitives/checkbox-group": {
+      "source": "./src/primitives/checkbox-group.tsx",
       "types": "./dist/primitives/checkbox-group.d.mts",
       "import": "./dist/primitives/checkbox-group.mjs"
     },
     "./primitives/input": {
+      "source": "./src/primitives/input.tsx",
       "types": "./dist/primitives/input.d.mts",
       "import": "./dist/primitives/input.mjs"
     },
     "./primitives/input-number": {
+      "source": "./src/primitives/input-number.tsx",
       "types": "./dist/primitives/input-number.d.mts",
       "import": "./dist/primitives/input-number.mjs"
     },
     "./primitives/progress-circle": {
+      "source": "./src/primitives/progress-circle.tsx",
       "types": "./dist/primitives/progress-circle.d.mts",
       "import": "./dist/primitives/progress-circle.mjs"
     },
     "./variants/alert": {
+      "source": "./src/variants/alert.ts",
       "types": "./dist/variants/alert.d.mts",
       "import": "./dist/variants/alert.mjs"
     },
     "./variants/badge": {
+      "source": "./src/variants/badge.ts",
       "types": "./dist/variants/badge.d.mts",
       "import": "./dist/variants/badge.mjs"
     },
     "./variants/button": {
+      "source": "./src/variants/button.ts",
       "types": "./dist/variants/button.d.mts",
       "import": "./dist/variants/button.mjs"
     },
     "./variants/button-group": {
+      "source": "./src/variants/button-group.ts",
       "types": "./dist/variants/button-group.d.mts",
       "import": "./dist/variants/button-group.mjs"
     },
     "./variants/empty": {
+      "source": "./src/variants/empty.ts",
       "types": "./dist/variants/empty.d.mts",
       "import": "./dist/variants/empty.mjs"
     },
     "./variants/field": {
+      "source": "./src/variants/field.ts",
       "types": "./dist/variants/field.d.mts",
       "import": "./dist/variants/field.mjs"
     },
     "./variants/input-group": {
+      "source": "./src/variants/input-group.ts",
       "types": "./dist/variants/input-group.d.mts",
       "import": "./dist/variants/input-group.mjs"
     },
     "./variants/item": {
+      "source": "./src/variants/item.ts",
       "types": "./dist/variants/item.d.mts",
       "import": "./dist/variants/item.mjs"
     },
     "./variants/navigation-menu": {
+      "source": "./src/variants/navigation-menu.ts",
       "types": "./dist/variants/navigation-menu.d.mts",
       "import": "./dist/variants/navigation-menu.mjs"
     },
     "./variants/progress-circle": {
+      "source": "./src/variants/progress-circle.ts",
       "types": "./dist/variants/progress-circle.d.mts",
       "import": "./dist/variants/progress-circle.mjs"
     },
     "./variants/scroll-area": {
+      "source": "./src/variants/scroll-area.ts",
       "types": "./dist/variants/scroll-area.d.mts",
       "import": "./dist/variants/scroll-area.mjs"
     },
     "./variants/separator": {
+      "source": "./src/variants/separator.ts",
       "types": "./dist/variants/separator.d.mts",
       "import": "./dist/variants/separator.mjs"
     },
     "./variants/sheet": {
+      "source": "./src/variants/sheet.ts",
       "types": "./dist/variants/sheet.d.mts",
       "import": "./dist/variants/sheet.mjs"
     },
     "./variants/sidebar": {
+      "source": "./src/variants/sidebar.ts",
       "types": "./dist/variants/sidebar.d.mts",
       "import": "./dist/variants/sidebar.mjs"
     },
     "./variants/toggle": {
+      "source": "./src/variants/toggle.ts",
       "types": "./dist/variants/toggle.d.mts",
       "import": "./dist/variants/toggle.mjs"
     },

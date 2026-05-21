@@ -1,6 +1,5 @@
 import * as nodePath from "node:path";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import type { MirrorConfig } from "#/core/config/schema";
 import {
   PACKAGE_JSON_EXPORT,
   VALID_DTS_EXTENSIONS,
@@ -11,18 +10,7 @@ import type {
   ExportEntry,
   ExportOriginalPathBySpecifier,
   GenerateExportsResult,
-  MirrorPackageMeta,
 } from "#/mirror/domain/types";
-
-function resolvePackageScopedConfig<T>(
-  configMap: Record<string, T> | undefined,
-  pkgMeta: MirrorPackageMeta,
-): T | undefined {
-  if (!configMap) {
-    return undefined;
-  }
-  return configMap[pkgMeta.packageName];
-}
 
 function groupDistFilesByModule(relativeDistFiles: Array<string>): Map<string, DistModule> {
   const distModulesByPath = new Map<string, DistModule>();
@@ -137,23 +125,17 @@ function getExportSortGroup(
  * @since 0.3.16-canary.0
  */
 export function createPathTransform(
-  config: MirrorConfig | undefined,
-  pkgMeta: MirrorPackageMeta,
+  strip: string | undefined,
 ): ((pathString: string) => string) | null {
-  const pathConfig = resolvePackageScopedConfig(config?.pathTransformations, pkgMeta);
-  if (!pathConfig) {
-    return null;
-  }
-  const { removePrefix } = pathConfig;
-  if (!removePrefix) {
+  if (!strip) {
     return null;
   }
 
   return (exportPath: string) => {
-    if (!exportPath.startsWith(removePrefix)) {
+    if (!exportPath.startsWith(strip)) {
       return exportPath;
     }
-    const trimmedExportPath = exportPath.slice(removePrefix.length);
+    const trimmedExportPath = exportPath.slice(strip.length);
     if (trimmedExportPath && trimmedExportPath !== "." && !trimmedExportPath.startsWith("./")) {
       return `./${trimmedExportPath}`;
     }
@@ -254,6 +236,21 @@ async function generateCssExports(
   return cssExports;
 }
 
+export interface GenerateExportsOptions {
+  /** Include a `source` condition pointing to the original source file. Pass `true` to
+   *  auto-derive via `resolveSourcePath`, or a string to set an explicit path for the
+   *  root export (`.`) only. */
+  source?: boolean | string;
+  /** Include the `types` condition when a `.d.ts` file exists (default `true`). */
+  types?: boolean;
+  /** Include the `import` condition (default `true`). */
+  import?: boolean;
+  /** Override the default source path derivation. Receives the module path relative to
+   *  `dist/` (e.g. `"components/button"`) and returns the full source specifier
+   *  (e.g. `"./src/components/button.tsx"`). When omitted, falls back to `./src/<path>.ts`. */
+  resolveSourcePath?: (modulePath: string) => string;
+}
+
 /**
  * Compute `package.json#exports` from a built `dist/` tree. No logging; no writes.
  *
@@ -264,7 +261,8 @@ export async function generateExports(
   distDir: string,
   pathTransform: ((pathString: string) => string) | null,
   cssConfig: Record<string, unknown> | boolean | undefined,
-  customExports: Record<string, string>,
+  extraExports: Record<string, string>,
+  options?: GenerateExportsOptions,
 ): Promise<GenerateExportsResult> {
   const relativeDistFiles = await fileSystemService.listRelativeFilesRecursively(distDir);
   if (!relativeDistFiles.length) {
@@ -301,15 +299,29 @@ export async function generateExports(
     }
 
     const exportEntry: ExportEntry = {};
+
+    if (options?.source) {
+      if (typeof options.source === "string" && exportPath === ".") {
+        exportEntry.source = options.source;
+      } else {
+        const resolver = options.resolveSourcePath ?? ((p) => `./src/${p}.ts`);
+        exportEntry.source = resolver(distModuleEntry.path);
+      }
+    }
+
     const declarationFile = distModuleEntry.files.dts;
-    if (declarationFile) {
+    if (declarationFile && options?.types !== false) {
       exportEntry.types = `./dist/${declarationFile}`;
     }
-    if (distModuleEntry.files.mjs) {
-      exportEntry.import = `./dist/${distModuleEntry.files.mjs}`;
-    } else if (distModuleEntry.files.js) {
-      exportEntry.import = `./dist/${distModuleEntry.files.js}`;
+
+    if (options?.import !== false) {
+      if (distModuleEntry.files.mjs) {
+        exportEntry.import = `./dist/${distModuleEntry.files.mjs}`;
+      } else if (distModuleEntry.files.js) {
+        exportEntry.import = `./dist/${distModuleEntry.files.js}`;
+      }
     }
+
     if (distModuleEntry.files.cjs) {
       exportEntry.require = `./dist/${distModuleEntry.files.cjs}`;
     }
@@ -337,7 +349,7 @@ export async function generateExports(
   );
 
   Object.assign(sortedExports, cssExports);
-  for (const [specifier, mappedPath] of Object.entries(customExports || {})) {
+  for (const [specifier, mappedPath] of Object.entries(extraExports || {})) {
     if (specifier !== PACKAGE_JSON_EXPORT) {
       sortedExports[specifier] = mappedPath;
     }
@@ -348,9 +360,9 @@ export async function generateExports(
       originalPathBySpecifier[cssSpecifier] = cssSpecifier;
     }
   }
-  for (const customSpecifier of Object.keys(customExports || {})) {
-    if (customSpecifier !== PACKAGE_JSON_EXPORT && !(customSpecifier in originalPathBySpecifier)) {
-      originalPathBySpecifier[customSpecifier] = customSpecifier;
+  for (const extraSpecifier of Object.keys(extraExports || {})) {
+    if (extraSpecifier !== PACKAGE_JSON_EXPORT && !(extraSpecifier in originalPathBySpecifier)) {
+      originalPathBySpecifier[extraSpecifier] = extraSpecifier;
     }
   }
 

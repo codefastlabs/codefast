@@ -21,6 +21,10 @@ A small developer CLI for maintenance tasks in a TypeScript monorepo — Tailwin
 - [`mirror sync`](#mirror-sync)
 - [`tag` / `annotate`](#tag--annotate)
 - [Configuration (`codefast.config.*`)](#configuration-codefastconfig)
+  - [Full skeleton](#full-skeleton)
+  - [`mirror` configuration](#mirror-configuration)
+  - [`tag` configuration](#tag-configuration)
+  - [`arrange` configuration](#arrange-configuration)
 - [Lifecycle hooks](#lifecycle-hooks)
 - [Grouping philosophy — Render Pipeline Order](#grouping-philosophy--render-pipeline-order)
 - [Troubleshooting](#troubleshooting)
@@ -228,37 +232,46 @@ What it updates:
 
 ## Configuration (`codefast.config.*`)
 
-Create `codefast.config.js`, `.mjs`, `.cjs`, or `.json` at the repo root. Each command reads its own slice.
+Create a config file at the **monorepo root** (next to `pnpm-workspace.yaml`). Supported names, in priority order:
+
+| File name              | Format                                  |
+| ---------------------- | --------------------------------------- |
+| `codefast.config.mjs`  | ES module — `export default { … }`      |
+| `codefast.config.js`   | ES module (if `"type":"module"`) or CJS |
+| `codefast.config.cjs`  | CommonJS — `module.exports = { … }`     |
+| `codefast.config.json` | Plain JSON (no functions — no hooks)    |
+
+The file is found by walking up from the working directory, so running the CLI from any sub-directory still picks up the root config.
+
+> **Security.** `.js`, `.mjs`, and `.cjs` files are executed via `import()`. Only run `codefast` inside repositories you trust.
+
+---
+
+### Full skeleton
 
 ```javascript
 // codefast.config.mjs
 import { execSync } from "node:child_process";
 
 export default {
+  // ─── mirror ────────────────────────────────────────────────────────────────
+  // Keys are package names (from package.json#name).
+  // Set a package to `false` to skip it entirely.
+  // Omit a package to process it with default settings.
   mirror: {
-    skipPackages: ["@acme/internal"],
-    pathTransformations: {
-      "@acme/ui": { removePrefix: "./components/" },
+    "@acme/ui": {
+      strip: "./components/",
+      exports: { "./css/*": "./src/css/*" },
+      source: true, // default: true
+      types: true, // default: true
+      import: true, // default: true
+      css: true,
     },
-    customExports: {
-      "@acme/ui": {
-        "./css/*": "./src/styles/*",
-      },
-    },
-    cssExports: {
-      // Shorthand: `true` enables default CSS export detection
-      "@acme/theme": true,
-      // Or configure explicitly:
-      "@acme/ui": {
-        enabled: true,
-        forceExportFiles: false,
-        customExports: {
-          "./tokens.css": "./dist/tokens.css",
-        },
-      },
-    },
+    "@acme/internal": false,
+    "@acme/docs": false,
   },
 
+  // ─── tag ───────────────────────────────────────────────────────────────────
   tag: {
     skipPackages: ["@acme/internal"],
     onAfterWrite: ({ files }) => {
@@ -266,6 +279,7 @@ export default {
     },
   },
 
+  // ─── arrange ───────────────────────────────────────────────────────────────
   arrange: {
     onAfterWrite: ({ files }) => {
       execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
@@ -274,31 +288,177 @@ export default {
 };
 ```
 
-Notes:
+---
 
-- Keys in `mirror.skipPackages` / `pathTransformations` / `customExports` / `cssExports` are **package names** from `package.json#name` (e.g. `@acme/ui`). Path-based keys such as `packages/ui` are deprecated and will be removed.
-- `cssExports[pkg]` accepts a boolean shorthand or the full `{ enabled, customExports, forceExportFiles }` object.
-- `tag.skipPackages` lists package names to skip entirely when `codefast tag` is run without an explicit target.
+### `mirror` configuration
 
-> **Security.** `.js`, `.mjs`, and `.cjs` config files are loaded via `import()` — only run `codefast` inside repositories you trust.
+`mirror` is a record keyed by **package name** (the `name` field in the package's `package.json`, e.g. `"@acme/ui"`).
+
+#### Skipping a package
+
+Set a package to `false` to exclude it from `codefast mirror sync` entirely:
+
+```javascript
+mirror: {
+  "@acme/internal": false,
+  "@acme/docs": false,
+}
+```
+
+Packages not mentioned in the config are processed with default settings.
+
+#### Per-package options
+
+Each package entry is an object with the following fields:
+
+| Field      | Type                     | Default | Description                                                                                                                                                                                                                                |
+| ---------- | ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `source`   | `boolean \| string`      | `true`  | Add a `source` condition to each export entry pointing to the original `.ts` file. `true` auto-derives the path (`./src/<module>.ts`). Pass a string to set the root-export path explicitly (`"./src/index.tsx"`). Set to `false` to omit. |
+| `types`    | `boolean`                | `true`  | Include the `types` condition when a `.d.ts` file is present. Set to `false` to omit.                                                                                                                                                      |
+| `import`   | `boolean`                | `true`  | Include the `import` condition. Set to `false` to omit (useful for CJS-only packages).                                                                                                                                                     |
+| `strip`    | `string`                 | —       | Strip a leading path segment from generated export specifiers. See below.                                                                                                                                                                  |
+| `exports`  | `Record<string, string>` | —       | Add or override specific export specifiers. See below.                                                                                                                                                                                     |
+| `preserve` | `boolean`                | —       | Keep the existing `package.json#exports` and only fill in missing conditions.                                                                                                                                                              |
+| `css`      | `boolean \| CssConfig`   | —       | Enable CSS export detection. See below.                                                                                                                                                                                                    |
+
+#### `strip`
+
+Removes a fixed prefix from every generated export specifier. Use this when a package's `dist/` mirrors deep directory structure that you want to flatten in the public API.
+
+```javascript
+// Without strip, dist/components/button.mjs → "./components/button"
+// With strip: "./components/", it becomes → "./button"
+"@acme/ui": {
+  strip: "./components/",
+}
+```
+
+The original file path is preserved for sorting — only the public specifier changes.
+
+#### `exports`
+
+Adds or overrides specific specifiers in the final export map. Keys and values are the exact strings written into `package.json#exports`.
+
+```javascript
+"@acme/ui": {
+  exports: {
+    "./css/*": "./src/css/*",        // wildcard passthrough to sources
+    "./tokens": "./dist/tokens.js",  // explicit extra entry
+  },
+}
+```
+
+Extra entries are merged after auto-generation. They win over anything the scanner would produce for the same specifier. `./package.json` cannot be overridden.
+
+#### `preserve`
+
+Keeps the existing `package.json#exports` map exactly as-is and only fills in missing conditions (`source`, `types`, `import`) for each entry — no `dist/` scan is performed. Use this when you maintain the exports map by hand and only want the CLI to supplement missing conditions.
+
+```javascript
+"@acme/tailwind-variants": {
+  preserve: true,
+}
+```
+
+#### `css`
+
+Controls CSS file export generation. `mirror sync` scans `dist/` for `.css` files and writes wildcard or per-file export entries.
+
+```javascript
+// Shorthand: auto-detect all CSS files in dist/
+"@acme/theme": { css: true }
+
+// Full config:
+"@acme/ui": {
+  css: {
+    enabled: true,
+    // Force individual file entries instead of directory wildcards:
+    forceExportFiles: false,
+    // Manually add or override individual CSS specifiers:
+    customExports: {
+      "./tokens.css": "./dist/tokens.css",
+    },
+  },
+}
+
+// Explicitly disable CSS exports for this package:
+"@acme/legacy": { css: false }
+```
+
+When `css` is omitted, CSS files found in `dist/` are still exported by default.
+
+#### What `mirror sync` writes
+
+For a package with `dist/button.mjs`, `dist/button.d.ts`, and `source: true`, the generated export entry looks like:
+
+```json
+{
+  "./button": {
+    "source": "./src/button.ts",
+    "types": "./dist/button.d.ts",
+    "import": "./dist/button.mjs"
+  }
+}
+```
+
+It also updates the top-level `main`, `module`, and `types` fields from the root (`.`) export, and ensures `"dist"` is listed in `files`.
+
+---
+
+### `tag` configuration
+
+```javascript
+tag: {
+  // Package names to skip when running without an explicit target
+  skipPackages: ["@acme/internal", "@acme/docs"],
+
+  // Called after files are written — use it to format or lint-fix
+  onAfterWrite: ({ files }) => {
+    execSync(`prettier --write ${files.join(" ")}`, { stdio: "inherit" });
+  },
+}
+```
+
+| Field          | Type                                                  | Description                                                                                                                         |
+| -------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `skipPackages` | `string[]`                                            | Package names to skip when `codefast tag` is run without an explicit target. Has no effect when a target path is provided directly. |
+| `onAfterWrite` | `(ctx: { files: string[] }) => void \| Promise<void>` | Lifecycle hook — runs after files are written.                                                                                      |
+
+---
+
+### `arrange` configuration
+
+```javascript
+arrange: {
+  // Called after files are written by `codefast arrange apply`
+  onAfterWrite: ({ files }) => {
+    execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
+  },
+}
+```
+
+| Field          | Type                                                  | Description                                                                                |
+| -------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `onAfterWrite` | `(ctx: { files: string[] }) => void \| Promise<void>` | Lifecycle hook — runs after `arrange apply` writes files. Not called by `arrange preview`. |
 
 ---
 
 ## Lifecycle hooks
 
-Both `tag` and `arrange apply` expose an `onAfterWrite` hook so teams can plug in their own formatter, lint-fix step, or codemod without embedding one in the CLI core.
+Both `tag` and `arrange apply` call `onAfterWrite` immediately after writing files to disk. The hook receives the list of written file paths and can run any synchronous or asynchronous work — formatters, linters, codegen, notifications.
 
 ```javascript
 export default {
   tag: {
     onAfterWrite: async ({ files }) => {
-      console.log(`Formatting ${files.length} files…`);
-      // sync or async work
+      // async is supported
+      await runFormatter(files);
     },
   },
   arrange: {
     onAfterWrite: ({ files }) => {
-      /* … */
+      // sync is fine too
+      execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
     },
   },
 };
@@ -306,10 +466,11 @@ export default {
 
 Contract:
 
-- `tag.onAfterWrite?.({ files })` runs after `codefast tag` writes files.
-- `arrange.onAfterWrite?.({ files })` runs after `codefast arrange apply` writes files.
-- Hooks may be synchronous or asynchronous (`void | Promise<void>`).
-- Hook failures are reported on stderr; both commands exit with code `1` when the hook rejects.
+- `tag.onAfterWrite` fires after `codefast tag` writes JSDoc annotations.
+- `arrange.onAfterWrite` fires after `codefast arrange apply` rewrites class strings.
+- Hook is **not** called on `--dry-run` or `arrange preview`.
+- Hooks may be synchronous or `async` (`void | Promise<void>`).
+- If the hook throws or rejects, the command reports the error on stderr and exits with code `1`.
 
 ---
 
