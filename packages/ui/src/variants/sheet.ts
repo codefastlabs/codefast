@@ -15,6 +15,7 @@ const sheetContentVariants = tv({
     "bg-background shadow-lg",
     "ease-ui data-open:animate-in data-open:animation-duration-500",
     "data-closed:animate-out data-closed:animation-duration-500",
+    "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
   ],
   defaultVariants: {
     side: "right",

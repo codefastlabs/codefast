@@ -35,6 +35,7 @@ function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
           "size-full flex-1",
           "bg-primary",
           "transition-[transform] duration-500 ease-gentle",
+          "motion-reduce:transition-none motion-reduce:duration-0",
         )}
         data-slot="progress-indicator"
         style={{

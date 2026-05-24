@@ -14,6 +14,7 @@ const inputGroupVariants = tv({
     "group/input-group relative flex h-9 w-full min-w-0 items-center",
     "rounded-lg border border-input shadow-xs outline-none",
     "transition-[color,box-shadow]",
+    "motion-reduce:transition-none",
     "dark:bg-input/30",
     "has-[>textarea]:h-auto",
     "has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col",

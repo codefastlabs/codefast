@@ -15,6 +15,7 @@ const sidebarMenuButtonVariants = tv({
     "rounded-md ring-sidebar-ring outline-hidden",
     "text-left text-sm",
     "transition-[width,height,padding]",
+    "motion-reduce:transition-none motion-reduce:duration-0",
     "group-has-data-[sidebar=menu-action]/menu-item:pr-8",
     "group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
     "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",

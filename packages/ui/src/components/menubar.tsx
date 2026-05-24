@@ -203,6 +203,7 @@ function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX
           "data-closed:data-side-right:slide-out-to-left-2",
           "data-closed:data-side-bottom:slide-out-to-top-2",
           "data-closed:data-side-left:slide-out-to-right-2",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
           "origin-(--radix-menubar-content-transform-origin)",
           className,
         )}
@@ -247,6 +248,7 @@ function MenubarContent({
           "data-open:data-side-right:slide-in-from-left-2",
           "data-open:data-side-bottom:slide-in-from-top-2",
           "data-open:data-side-left:slide-in-from-right-2",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
           "origin-(--radix-menubar-content-transform-origin)",
           className,
         )}

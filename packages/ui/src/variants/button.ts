@@ -15,6 +15,7 @@ const buttonVariants = tv({
     "rounded-lg outline-hidden",
     "text-sm font-medium whitespace-nowrap",
     "transition duration-150 ease-snappy select-none",
+    "motion-reduce:transition-none motion-reduce:duration-0",
     "active:not-disabled:translate-y-px",
     "focus-visible:ring-3",
     "disabled:opacity-50",

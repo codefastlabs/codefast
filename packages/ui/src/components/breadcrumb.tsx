@@ -91,7 +91,11 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
 
   return (
     <Component
-      className={cn("transition-colors", "hover:text-foreground", className)}
+      className={cn(
+        "transition-colors motion-reduce:transition-none",
+        "hover:text-foreground",
+        className,
+      )}
       data-slot="breadcrumb-link"
       {...props}
     />

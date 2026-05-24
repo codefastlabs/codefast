@@ -72,6 +72,7 @@ function AlertDialogContent({
           "bg-black/50",
           "ease-ui data-open:animate-in data-open:fade-in-0",
           "data-closed:animate-out data-closed:fade-out-0",
+          "motion-reduce:animate-none motion-reduce:transition-none",
           classNames?.overlay,
         )}
         data-slot="alert-dialog-overlay"
@@ -82,6 +83,7 @@ function AlertDialogContent({
           "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
           "ease-ui data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
           "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "motion-reduce:animate-none motion-reduce:transition-none",
           classNames?.wrapper,
         )}
         data-slot="alert-dialog-content-wrapper"

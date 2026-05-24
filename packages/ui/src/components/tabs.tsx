@@ -75,6 +75,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
         "rounded-lg",
         "text-sm font-medium whitespace-nowrap text-muted-foreground",
         "transition-[color,background-color,box-shadow] duration-150 ease-snappy",
+        "motion-reduce:transition-none motion-reduce:duration-0",
         "not-dark:outline-hidden",
         "hover:not-disabled:text-foreground",
         "focus-visible:ring-3 focus-visible:ring-ring/50",

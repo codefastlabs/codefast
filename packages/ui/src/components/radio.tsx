@@ -27,6 +27,7 @@ function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JS
         "rounded-full border border-input shadow-xs outline-hidden",
         "appearance-none",
         "after:size-full after:rounded-full after:bg-background after:transition-[width,height] after:duration-200 after:ease-spring",
+        "motion-reduce:after:transition-none motion-reduce:after:duration-0",
         "checked:border-primary checked:bg-primary",
         "checked:after:size-1",
         "hover:not-disabled:not-checked:border-ring/60",

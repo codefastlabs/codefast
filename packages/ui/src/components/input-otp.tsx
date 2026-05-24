@@ -87,6 +87,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
         "border border-input outline-hidden",
         "text-sm",
         "transition-all",
+        "motion-reduce:transition-none",
         "not-has-disabled:shadow-xs",
         "first:rounded-l-lg",
         "last:rounded-r-lg",
@@ -112,6 +113,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
               "bg-foreground",
               "animate-caret-blink",
               "animation-duration-1000",
+              "motion-reduce:animate-none motion-reduce:duration-0",
             )}
           />
         </div>

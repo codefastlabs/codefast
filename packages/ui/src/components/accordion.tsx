@@ -69,6 +69,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
       className={cn(
         "size-4 shrink-0 text-muted-foreground",
         "translate-y-0.5 transition-transform duration-300 ease-spring",
+        "motion-reduce:transition-none motion-reduce:duration-0",
         className,
       )}
       data-slot="accordion-icon"
@@ -131,6 +132,7 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
         "overflow-hidden",
         "data-open:animate-collapsible-down data-open:ease-snappy",
         "data-closed:animate-collapsible-up data-closed:ease-snappy",
+        "motion-reduce:animate-none motion-reduce:transition-none",
       )}
       data-slot="accordion-content"
       {...props}

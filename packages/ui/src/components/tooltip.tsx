@@ -89,6 +89,7 @@ function TooltipContent({
           "data-closed:data-side-right:slide-out-to-left-2",
           "data-closed:data-side-bottom:slide-out-to-top-2",
           "data-closed:data-side-left:slide-out-to-right-2",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
           "origin-(--radix-tooltip-content-transform-origin)",
           className,
         )}
