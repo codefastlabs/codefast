@@ -80,8 +80,8 @@ function SheetContent({
         className={cn(
           "fixed inset-0 z-50",
           "bg-black/50",
-          "ease-ui data-open:animate-in data-open:animation-duration-500 data-open:fade-in-0",
-          "data-closed:animate-out data-closed:animation-duration-500 data-closed:fade-out-0",
+          "ease-gentle data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0",
+          "data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"

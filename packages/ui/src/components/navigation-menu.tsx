@@ -122,7 +122,7 @@ function NavigationMenuTrigger({
         className={cn(
           "relative top-px",
           "ml-1 size-3",
-          "transition duration-300",
+          "transition-transform duration-300 ease-spring",
           "group-data-open/navigation-menu-trigger:rotate-180",
         )}
       />
@@ -154,7 +154,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
         "data-[motion=from-start]:slide-in-from-left-52",
         "data-[motion=to-end]:slide-out-to-right-52",
         "data-[motion=to-start]:slide-out-to-left-52",
-        "ease-ui data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0",
+        "ease-snappy data-[motion^=from-]:animate-in data-[motion^=from-]:duration-200 data-[motion^=from-]:fade-in-0",
         "data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0",
         "md:absolute md:w-auto",
         "group-data-[viewport=false]/navigation-menu:data-open:animate-in group-data-[viewport=false]/navigation-menu:data-open:fade-in-0 group-data-[viewport=false]/navigation-menu:data-open:zoom-in-95",
@@ -187,7 +187,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): J
         "p-2",
         "rounded-sm outline-hidden",
         "text-sm",
-        "transition",
+        "transition-colors duration-150 ease-snappy",
         "hover:bg-accent hover:text-accent-foreground",
         "focus:bg-accent focus:text-accent-foreground",
         "data-active:bg-accent/50 data-active:text-accent-foreground",
@@ -219,7 +219,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
           "mt-2 min-h-[calc(var(--radix-navigation-menu-viewport-height)+2px)] w-full overflow-hidden",
           "rounded-lg border",
           "bg-popover text-popover-foreground shadow-lg",
-          "transition-[width,height] ease-ui",
+          "transition-[width,height] duration-300 ease-snappy",
           "sm:min-w-[calc(var(--radix-navigation-menu-viewport-width)+2px)]",
           "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-90",
           "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
@@ -247,7 +247,7 @@ function NavigationMenuIndicator({
     <NavigationMenuPrimitive.Indicator
       className={cn(
         "top-full z-10 flex h-2 items-center justify-center overflow-hidden",
-        "ease-ui data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0",
+        "ease-snappy data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0",
         "data-[state=visible]:animate-in data-[state=visible]:fade-in-0",
         className,
       )}
