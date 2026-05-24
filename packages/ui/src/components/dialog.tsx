@@ -72,8 +72,8 @@ function DialogContent({
         className={cn(
           "fixed inset-0 z-50",
           "bg-black/50",
-          "ease-ui data-open:animate-in data-open:fade-in-0",
-          "data-closed:animate-out data-closed:fade-out-0",
+          "ease-gentle data-open:animate-in data-open:duration-300 data-open:fade-in-0",
+          "data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="dialog-overlay"
@@ -82,11 +82,11 @@ function DialogContent({
         className={cn(
           "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto",
           "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
-          "ease-ui data-open:animate-in",
-          "max-sm:data-open:animation-duration-500 max-sm:data-open:slide-in-from-bottom",
+          "ease-gentle data-open:animate-in data-open:duration-300",
+          "max-sm:data-open:animation-duration-380 max-sm:data-open:slide-in-from-bottom",
           "sm:data-open:fade-in-0 sm:data-open:zoom-in-95",
-          "data-closed:animate-out",
-          "max-sm:data-closed:animation-duration-500 max-sm:data-closed:slide-out-to-bottom",
+          "data-closed:animate-out data-closed:duration-200",
+          "max-sm:data-closed:animation-duration-280 max-sm:data-closed:slide-out-to-bottom",
           "sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
           classNames?.wrapper,
         )}

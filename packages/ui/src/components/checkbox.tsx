@@ -25,7 +25,8 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
         "peer flex size-4 shrink-0 items-center justify-center",
         "rounded-sm border border-input shadow-xs outline-hidden",
         "text-primary-foreground",
-        "transition",
+        "transition duration-150 ease-spring",
+        "active:not-disabled:scale-[0.85]",
         "hover:not-disabled:not-aria-checked:border-ring/60",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:opacity-50",
@@ -43,7 +44,10 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
       {...props}
     >
       <CheckboxPrimitive.Indicator
-        className={cn("flex items-center justify-center text-current", "transition-none")}
+        className={cn(
+          "flex items-center justify-center text-current",
+          "animate-in duration-150 ease-spring zoom-in-50",
+        )}
         data-slot="checkbox-indicator"
       >
         <CheckIcon className="size-3.5" />
