@@ -24,7 +24,7 @@ function Input({ className, type, ...props }: InputProps): JSX.Element {
         "rounded-lg border border-input",
         "bg-transparent shadow-xs outline-none",
         "text-base",
-        "transition-[color,box-shadow]",
+        "transition-[color,box-shadow] duration-150 ease-snappy",
         "selection:bg-primary selection:text-primary-foreground",
         "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
         "placeholder:text-muted-foreground",

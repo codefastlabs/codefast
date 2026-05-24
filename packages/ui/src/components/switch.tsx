@@ -21,9 +21,9 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
-        "peer inline-flex h-5 w-9 shrink-0 items-center p-0.75",
+        "peer group/switch inline-flex h-5 w-9 shrink-0 items-center p-0.75",
         "rounded-full border border-transparent shadow-xs outline-hidden",
-        "transition-all",
+        "transition-[background-color,box-shadow] duration-200 ease-snappy",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
         "focus-visible:not-data-checked:border-ring/60",
         "disabled:opacity-50",
@@ -43,7 +43,9 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
           "size-3.5",
           "rounded-full",
           "bg-background shadow-sm",
-          "pointer-events-none transition-transform",
+          "pointer-events-none",
+          "transition-transform duration-300 ease-spring",
+          "group-active/switch:not-group-disabled/switch:scale-x-[1.2]",
           "dark:not-data-checked:bg-foreground",
           "data-checked:translate-x-3.5",
           "data-unchecked:translate-x-0",

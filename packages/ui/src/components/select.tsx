@@ -156,7 +156,7 @@ type SelectContentProps = ComponentProps<typeof SelectPrimitive.Content>;
 function SelectContent({
   children,
   className,
-  position = "popper",
+  position = "item-aligned",
   ...props
 }: SelectContentProps): JSX.Element {
   return (

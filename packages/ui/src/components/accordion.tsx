@@ -68,7 +68,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
       aria-hidden
       className={cn(
         "size-4 shrink-0 text-muted-foreground",
-        "translate-y-0.5 transition-transform duration-200",
+        "translate-y-0.5 transition-transform duration-300 ease-spring",
         className,
       )}
       data-slot="accordion-icon"
@@ -129,8 +129,8 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
     <AccordionPrimitive.Content
       className={cn(
         "overflow-hidden",
-        "data-open:animate-collapsible-down",
-        "data-closed:animate-collapsible-up",
+        "data-open:animate-collapsible-down data-open:ease-snappy",
+        "data-closed:animate-collapsible-up data-closed:ease-snappy",
       )}
       data-slot="accordion-content"
       {...props}
