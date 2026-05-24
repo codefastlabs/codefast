@@ -20,7 +20,7 @@ catalog:
   "@fontsource-variable/inter": ^5.2.8
   "@fontsource-variable/noto-sans": ^5.2.10
   "@fontsource-variable/nunito-sans": ^5.2.7
-  "@hookform/resolvers": ^5.2.2
+  "@hookform/resolvers": ^5.4.0
   "@radix-ui/primitive": ^1.1.3
   "@radix-ui/react-accordion": ^1.2.12
   "@radix-ui/react-alert-dialog": ^1.1.15
@@ -64,12 +64,12 @@ catalog:
   "@tanstack/react-devtools": ^0.10.5
   "@tanstack/react-form": ^1.32.0
   "@tanstack/react-form-devtools": ^0.2.27
-  "@tanstack/react-query": ^5.100.11
-  "@tanstack/react-query-devtools": ^5.100.11
-  "@tanstack/react-router": ^1.170.5
+  "@tanstack/react-query": ^5.100.13
+  "@tanstack/react-query-devtools": ^5.100.13
+  "@tanstack/react-router": ^1.170.7
   "@tanstack/react-router-devtools": ^1.167.0
   "@tanstack/react-router-ssr-query": ^1.167.0
-  "@tanstack/react-start": ^1.168.7
+  "@tanstack/react-start": ^1.168.10
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
@@ -81,7 +81,7 @@ catalog:
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.15
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260519.1
+  "@typescript/native-preview": 7.0.0-dev.20260523.1
   "@unpic/react": ^1.0.2
   "@vitejs/plugin-react": ^6.0.2
   "@vitest/coverage-v8": ^4.1.7
@@ -92,23 +92,23 @@ catalog:
   clsx: ^2.1.1
   cmdk: ^1.1.1
   commander: ^14.0.3
-  date-fns: ^4.2.1
+  date-fns: ^4.3.0
   embla-carousel-react: ^8.6.0
   esbuild: ^0.28.0
   expect-type: ^1.3.0
   "@hono/node-server": ^2.0.3
   hast-util-to-string: ^3.0.1
-  hono: ^4.12.21
+  hono: ^4.12.22
   input-otp: ^1.4.2
   inversify: ^8.1.0
   jest-axe: ^10.0.0
   jiti: ^2.7.0
   jsdom: ^29.1.1
-  knip: ^6.14.1
+  knip: ^6.14.2
   lint-staged: ^17.0.5
   lucide-react: ^1.16.0
   next-themes: ^0.4.6
-  nitro: 3.0.260429-beta
+  nitro: 3.0.260522-beta
   oxfmt: ^0.51.0
   oxlint: ^1.66.0
   oxlint-tsgolint: ^0.23.0
@@ -118,7 +118,7 @@ catalog:
   react: ^19.2.6
   react-day-picker: ^10.0.1
   react-dom: ^19.2.6
-  react-hook-form: ^7.76.0
+  react-hook-form: ^7.76.1
   react-resizable-panels: ^4.11.1
   recharts: ^3.8.1
   reflect-metadata: ^0.2.2
@@ -144,7 +144,7 @@ catalog:
   unified: ^11.0.5
   unist-util-visit: ^5.1.0
   vaul: ^1.1.2
-  vite: ^8.0.13
+  vite: ^8.0.14
   vitest: ^4.1.7
   yaml: ^2.9.0
   zod: ^4.4.3
