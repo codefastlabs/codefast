@@ -46,6 +46,7 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
         "peer inline-flex size-4 shrink-0 items-center justify-center",
         "rounded-full border border-input shadow-xs outline-hidden",
         "transition-[border-color,background-color,box-shadow] duration-150 ease-spring",
+        "motion-reduce:transition-none motion-reduce:duration-0",
         "hover:not-disabled:not-aria-checked:border-ring/60",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:opacity-50",

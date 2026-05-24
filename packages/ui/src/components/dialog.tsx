@@ -74,6 +74,7 @@ function DialogContent({
           "bg-black/40 backdrop-blur-sm",
           "ease-gentle data-open:animate-in data-open:duration-300 data-open:fade-in-0",
           "data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
           classNames?.overlay,
         )}
         data-slot="dialog-overlay"
@@ -88,6 +89,7 @@ function DialogContent({
           "data-closed:animate-out data-closed:duration-200",
           "max-sm:data-closed:animation-duration-280 max-sm:data-closed:slide-out-to-bottom",
           "sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
           classNames?.wrapper,
         )}
         data-slot="dialog-content-wrapper"

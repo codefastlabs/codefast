@@ -10,7 +10,12 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const scrollAreaScrollbarVariants = tv({
-  base: ["flex", "p-px", "touch-none transition-colors select-none"],
+  base: [
+    "flex",
+    "p-px",
+    "touch-none transition-colors select-none",
+    "motion-reduce:transition-none motion-reduce:duration-0",
+  ],
   compoundVariants: [
     {
       className: "w-1.5",

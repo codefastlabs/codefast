@@ -20,7 +20,7 @@ function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
       className={cn(
         "rounded-lg",
         "bg-gradient-to-r from-muted via-white/15 to-muted bg-[length:400%_100%]",
-        "animate-shimmer",
+        "animate-shimmer motion-reduce:animate-none",
         className,
       )}
       data-slot="skeleton"

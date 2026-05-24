@@ -75,6 +75,7 @@ function Slider({
             "rounded-full border-2 border-primary",
             "bg-primary shadow-sm outline-hidden",
             "after:size-full after:rounded-full after:bg-background after:transition-[width,height] after:duration-200 after:ease-spring",
+            "motion-reduce:after:transition-none motion-reduce:after:duration-0",
             "focus-visible:ring-4 focus-visible:ring-primary/20",
             "active:not-data-disabled:after:size-1",
             "dark:focus-visible:ring-primary/40",

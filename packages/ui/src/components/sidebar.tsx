@@ -245,6 +245,7 @@ function Sidebar({
           "w-(--sidebar-width)",
           "bg-transparent",
           "transition-[width] duration-200 ease-linear",
+          "motion-reduce:transition-none motion-reduce:duration-0",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-side-right:rotate-180",
           variant === "floating" || variant === "inset"
@@ -258,6 +259,7 @@ function Sidebar({
           "fixed inset-y-0 z-10 hidden",
           "h-svh w-(--sidebar-width)",
           "transition-[left,right,width] duration-200 ease-linear",
+          "motion-reduce:transition-none motion-reduce:duration-0",
           "md:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
@@ -344,6 +346,7 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
       className={cn(
         "absolute inset-y-0 z-20 hidden",
         "w-4 -translate-x-1/2 transition-all ease-linear",
+        "motion-reduce:transition-none",
         "in-data-side-right:cursor-e-resize",
         "in-data-side-left:cursor-w-resize",
         "group-data-[collapsible=offcanvas]:translate-x-0",
@@ -568,6 +571,7 @@ function SidebarGroupLabel({
         "rounded-md ring-sidebar-ring outline-hidden",
         "truncate text-xs font-medium text-sidebar-foreground/70",
         "transition-[margin,opacity] duration-200 ease-linear",
+        "motion-reduce:transition-none motion-reduce:duration-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         "focus-visible:ring-3",
         "[&>svg]:size-4 [&>svg]:shrink-0",
@@ -608,6 +612,7 @@ function SidebarGroupAction({
         "rounded-md ring-sidebar-ring outline-hidden",
         "text-sidebar-foreground",
         "transition-transform",
+        "motion-reduce:transition-none",
         "group-data-[collapsible=icon]:hidden",
         "after:absolute after:-inset-2",
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
@@ -786,6 +791,7 @@ function SidebarMenuAction({
         "rounded-md ring-sidebar-ring outline-hidden",
         "text-sidebar-foreground",
         "transition-transform",
+        "motion-reduce:transition-none",
         "group-data-[collapsible=icon]:hidden",
         "peer-hover/menu-button:text-sidebar-accent-foreground",
         "peer-data-[size=default]/menu-button:top-1.5",

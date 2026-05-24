@@ -26,6 +26,7 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
         "rounded-sm border border-input shadow-xs outline-hidden",
         "text-primary-foreground",
         "transition-[border-color,background-color,box-shadow] duration-150 ease-spring",
+        "motion-reduce:transition-none motion-reduce:duration-0",
         "hover:not-disabled:not-aria-checked:border-ring/60",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:opacity-50",
@@ -46,6 +47,7 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
         className={cn(
           "flex items-center justify-center text-current",
           "animate-in duration-150 ease-spring zoom-in-50",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
         )}
         data-slot="checkbox-indicator"
       >

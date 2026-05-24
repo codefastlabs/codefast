@@ -28,6 +28,7 @@ function NativeSelect({ className, ...props }: NativeSelectProps): JSX.Element {
           "bg-transparent shadow-xs outline-none",
           "text-sm",
           "appearance-none transition-[color,box-shadow]",
+          "motion-reduce:transition-none",
           "selection:bg-primary selection:text-primary-foreground",
           "placeholder:text-muted-foreground",
           "disabled:pointer-events-none disabled:cursor-not-allowed",

@@ -177,6 +177,7 @@ function SelectContent({
           "data-closed:data-side-right:slide-out-to-left-2",
           "data-closed:data-side-bottom:slide-out-to-top-2",
           "data-closed:data-side-left:slide-out-to-right-2",
+          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
           "origin-(--radix-select-content-transform-origin)",
           position === "popper" &&
             "data-side-top:-translate-y-1 data-side-right:translate-x-1 data-side-bottom:translate-y-1 data-side-left:-translate-x-1",

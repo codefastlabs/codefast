@@ -15,8 +15,10 @@ const itemVariants = tv({
     "rounded-lg border border-transparent outline-hidden",
     "text-sm",
     "transition-colors duration-100",
+    "motion-reduce:transition-none motion-reduce:duration-0",
     "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
     "[a]:transition-colors",
+    "[a]:motion-reduce:transition-none",
     "[a]:hover:bg-accent/50",
   ],
   defaultVariants: {
