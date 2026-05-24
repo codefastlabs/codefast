@@ -66,11 +66,8 @@ export function disableAnimation(nonce?: string): () => void {
     css.setAttribute("nonce", nonce);
   }
 
-  css.append(
-    document.createTextNode(
-      `*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}`,
-    ),
-  );
+  // P3: Only the unprefixed property is needed — all modern browsers support it
+  css.append(document.createTextNode(`*,*::before,*::after{transition:none!important}`));
 
   document.head.append(css);
 

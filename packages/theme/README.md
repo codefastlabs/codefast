@@ -131,7 +131,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html className={resolved} lang="en" style={{ colorScheme: resolved }} suppressHydrationWarning>
       <head>
         <HeadContent />
-        <ThemeScript theme={theme} />
+        <ThemeScript nonce={cspNonce} theme={theme} />
       </head>
       <body>
         <ThemeProvider
@@ -222,7 +222,7 @@ export function ThemeSelect() {
 
 The script removes any prior `light` / `dark` / `system` class on `<html>`, so it is safe to pre-render the markup with `suppressHydrationWarning`.
 
-> **CSP note.** `<ThemeScript>` currently does not accept a `nonce`. If your CSP forbids inline scripts, either add a specific hash for the generated snippet or serve the same logic from a hashed static file. The `disableTransitionOnChange` option on `<ThemeProvider>` _does_ accept a `nonce` because it injects inline `<style>`.
+> **CSP note.** Pass a `nonce` to `<ThemeScript nonce={...} />` when your policy requires it for inline scripts. The same nonce can also be passed to `<ThemeProvider nonce={...} />` for the temporary inline `<style>` used by `disableTransitionOnChange`.
 
 ---
 
@@ -247,15 +247,16 @@ Root provider that wires together theme state, OS subscription, optimistic updat
 </ThemeProvider>
 ```
 
-| Prop                        | Type                              | Default | Description                                                                                                                    |
-| --------------------------- | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `theme`                     | `Theme`                           | —       | Initial preference (`"light"` / `"dark"` / `"system"`). Required.                                                              |
-| `ssrSystemTheme`            | `ResolvedTheme`                   | —       | `"light"` or `"dark"` from the SSR request (e.g. Client Hints). Used as the server snapshot when preference is `system`.       |
-| `persistTheme`              | `(value: Theme) => Promise<void>` | —       | Runs whenever the user changes the theme. Rejects → optimistic update reverts automatically.                                   |
-| `syncThemeFromServer`       | `() => Promise<Theme>`            | —       | Called once after mount to reconcile with the canonical source (e.g. cookie). Useful for stale HTML / duplicate-tab scenarios. |
-| `disableTransitionOnChange` | `boolean`                         | `false` | Temporarily injects a style rule that disables CSS transitions while the theme swaps. Respects `prefers-reduced-motion`.       |
-| `nonce`                     | `string`                          | —       | CSP nonce attached to the inline `<style>` element when `disableTransitionOnChange` is enabled.                                |
-| `children`                  | `ReactNode`                       | —       | Application content.                                                                                                           |
+| Prop                        | Type                                              | Default | Description                                                                                                                    |
+| --------------------------- | ------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `theme`                     | `Theme`                                           | —       | Initial preference (`"light"` / `"dark"` / `"system"`). Required.                                                              |
+| `ssrSystemTheme`            | `ResolvedTheme`                                   | —       | `"light"` or `"dark"` from the SSR request (e.g. Client Hints). Used as the server snapshot when preference is `system`.       |
+| `persistTheme`              | `(value: Theme) => Promise<void>`                 | —       | Runs whenever the user changes the theme. Rejects → optimistic update reverts automatically.                                   |
+| `onThemePersistError`       | `(error: unknown, attemptedTheme: Theme) => void` | —       | Optional hook called when `persistTheme` rejects; use for custom logging/telemetry/UI feedback.                                |
+| `syncThemeFromServer`       | `() => Promise<Theme>`                            | —       | Called once after mount to reconcile with the canonical source (e.g. cookie). Useful for stale HTML / duplicate-tab scenarios. |
+| `disableTransitionOnChange` | `boolean`                                         | `false` | Temporarily injects a style rule that disables CSS transitions while the theme swaps. Respects `prefers-reduced-motion`.       |
+| `nonce`                     | `string`                                          | —       | CSP nonce attached to the inline `<style>` element when `disableTransitionOnChange` is enabled.                                |
+| `children`                  | `ReactNode`                                       | —       | Application content.                                                                                                           |
 
 `<ThemeProvider>` internally:
 
@@ -284,14 +285,16 @@ Throws if called outside of a `<ThemeProvider>`.
 Inline script for the document head that prevents FOUC.
 
 ```tsx
-<ThemeScript theme={theme} />
+<ThemeScript nonce={cspNonce} theme={theme} />
 ```
 
-| Prop    | Type    | Description                                                                      |
-| ------- | ------- | -------------------------------------------------------------------------------- |
-| `theme` | `Theme` | The preference to apply on initial render. `"system"` resolves via `matchMedia`. |
+| Prop         | Type     | Description                                                                                                                       |
+| ------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `theme`      | `Theme`  | The preference to apply on initial render. `"system"` resolves via `matchMedia`. Acts as fallback when `storageKey` is provided.  |
+| `nonce`      | `string` | Optional CSP nonce attached to the inline `<script>`.                                                                             |
+| `storageKey` | `string` | When set, the script reads `localStorage.getItem(storageKey)` before first paint. Use for client-only apps without an SSR cookie. |
 
-The component only emits a `<script>` with `dangerouslySetInnerHTML`. It does not currently accept a `nonce` — see the [CSP note](#ssr-and-fouc-prevention).
+The component emits a `<script>` with `dangerouslySetInnerHTML` and forwards `nonce` when provided.
 
 ### `resolveTheme()`
 
@@ -321,10 +324,12 @@ Granular helpers from `@codefast/theme/utils/system` and `@codefast/theme/utils/
 import {
   DEFAULT_RESOLVED_THEME, // "dark"
   DEFAULT_THEME, // "system"
-  THEME_STORAGE_KEY, // "ui-theme" — cookie name used by the Start adapter
   themeSchema, // Zod: z.enum(["light", "dark", "system"])
   themes, // readonly ["light", "dark", "system"]
 } from "@codefast/theme";
+
+// THEME_STORAGE_KEY lives in the /constants subpath (intentionally not re-exported from root)
+import { THEME_STORAGE_KEY } from "@codefast/theme/constants"; // "ui-theme"
 ```
 
 ### TanStack Start adapter (`@codefast/theme/start`)
