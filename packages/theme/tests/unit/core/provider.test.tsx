@@ -409,6 +409,122 @@ describe("ThemeProvider", () => {
     });
   });
 
+  describe("theme prop sync after mount", () => {
+    test("re-syncs state when theme prop changes (e.g. loader re-runs)", async () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      const { rerender } = render(
+        <ThemeProvider theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+
+      rerender(
+        <ThemeProvider theme="dark">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("theme-label")).toHaveTextContent("dark");
+      });
+    });
+
+    test("ignores invalid theme prop and falls back to DEFAULT_THEME", () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        // @ts-expect-error test-only invalid value
+        <ThemeProvider theme="invalid-value">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("system");
+    });
+  });
+
+  describe("rapid setTheme (last-write-wins)", () => {
+    test("only the last theme value is committed when called in rapid succession", async () => {
+      const user = userEvent.setup();
+
+      // Slow persist to simulate concurrent in-flight calls
+      let resolveFirst: (() => void) | undefined;
+      const persistTheme = vi
+        .fn()
+        .mockImplementationOnce(
+          () =>
+            new Promise<void>((resolve) => {
+              resolveFirst = resolve;
+            }),
+        )
+        .mockResolvedValue(undefined);
+
+      const TestConsumer = (): React.ReactElement => {
+        const { setTheme, theme } = useTheme();
+
+        return (
+          <>
+            <span data-testid="theme-label">{theme}</span>
+            <button
+              data-testid="go-dark"
+              type="button"
+              onClick={() => {
+                void setTheme("dark");
+              }}
+            >
+              Dark
+            </button>
+            <button
+              data-testid="go-system"
+              type="button"
+              onClick={() => {
+                void setTheme("system");
+              }}
+            >
+              System
+            </button>
+          </>
+        );
+      };
+
+      render(
+        <ThemeProvider persistTheme={persistTheme} theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      // Trigger first call (slow persist)
+      await user.click(screen.getByTestId("go-dark"));
+
+      // Trigger second call before first persists
+      await user.click(screen.getByTestId("go-system"));
+
+      // Resolve the slow first persist
+      await act(async () => {
+        resolveFirst?.();
+        await Promise.resolve();
+      });
+
+      await waitFor(() => {
+        expect(persistTheme).toHaveBeenCalledTimes(2);
+      });
+
+      // Final committed state should be the last intent ("system"), not "dark"
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("system");
+    });
+  });
+
   describe("BroadcastChannel", () => {
     const listenersByName = new Map<string, Set<(event: MessageEvent) => void>>();
     const OriginalBroadcastChannel = globalThis.BroadcastChannel;
@@ -493,6 +609,32 @@ describe("ThemeProvider", () => {
       channel.close();
     });
 
+    test("ignores BroadcastChannel message with invalid theme value", async () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { theme } = useTheme();
+
+        return <span data-testid="theme-label">{theme}</span>;
+      };
+
+      render(
+        <ThemeProvider theme="light">
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      const channel = new BroadcastChannel(THEME_CHANNEL);
+
+      await act(async () => {
+        // Attempt to inject an invalid value — should be ignored
+        channel.postMessage("malicious-payload");
+      });
+
+      // State should remain unchanged
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+
+      channel.close();
+    });
+
     test("ignores BroadcastChannel message when preference matches current", async () => {
       const TestConsumer = (): React.ReactElement => {
         const { theme } = useTheme();
@@ -515,6 +657,48 @@ describe("ThemeProvider", () => {
       expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
 
       channel.close();
+    });
+  });
+
+  describe("BroadcastChannel fallback", () => {
+    const OriginalBroadcastChannel = globalThis.BroadcastChannel;
+
+    afterEach(() => {
+      globalThis.BroadcastChannel = OriginalBroadcastChannel;
+    });
+
+    test("does not crash when BroadcastChannel is unavailable", () => {
+      // Simulate older browsers/runtime environments without BroadcastChannel.
+      // @ts-expect-error test-only override
+      globalThis.BroadcastChannel = undefined;
+
+      expect(() => {
+        render(
+          <ThemeProvider theme="light">
+            <div data-testid="content">content</div>
+          </ThemeProvider>,
+        );
+      }).not.toThrow();
+
+      expect(screen.getByTestId("content")).toBeInTheDocument();
+    });
+
+    test("does not crash when BroadcastChannel constructor throws", () => {
+      globalThis.BroadcastChannel = class BrokenBroadcastChannel {
+        constructor(_name: string) {
+          throw new Error("constructor blocked");
+        }
+      } as unknown as typeof BroadcastChannel;
+
+      expect(() => {
+        render(
+          <ThemeProvider theme="dark">
+            <div data-testid="content">content</div>
+          </ThemeProvider>,
+        );
+      }).not.toThrow();
+
+      expect(screen.getByTestId("content")).toBeInTheDocument();
     });
   });
 
@@ -560,6 +744,52 @@ describe("ThemeProvider", () => {
       expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
 
       consoleSpy.mockRestore();
+    });
+
+    test("calls onThemePersistError with error and attempted theme", async () => {
+      const user = userEvent.setup();
+      const persistError = new Error("persist failed");
+      const persistTheme = vi.fn(async (_theme: Theme) => {
+        throw persistError;
+      });
+      const onThemePersistError = vi.fn();
+
+      const TestConsumer = (): React.ReactElement => {
+        const { setTheme, theme } = useTheme();
+
+        return (
+          <>
+            <span data-testid="theme-label">{theme}</span>
+            <button
+              data-testid="go-dark"
+              type="button"
+              onClick={() => {
+                void setTheme("dark");
+              }}
+            >
+              Dark
+            </button>
+          </>
+        );
+      };
+
+      render(
+        <ThemeProvider
+          onThemePersistError={onThemePersistError}
+          persistTheme={persistTheme}
+          theme="light"
+        >
+          <TestConsumer />
+        </ThemeProvider>,
+      );
+
+      await user.click(screen.getByTestId("go-dark"));
+
+      await waitFor(() => {
+        expect(onThemePersistError).toHaveBeenCalledWith(persistError, "dark");
+      });
+
+      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
     });
   });
 });

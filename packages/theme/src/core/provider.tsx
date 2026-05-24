@@ -14,7 +14,8 @@ import {
 
 import type { ResolvedTheme, Theme, ThemeContextType } from "#/types";
 
-import { DEFAULT_RESOLVED_THEME, MEDIA, THEME_CHANNEL } from "#/constants";
+import { DEFAULT_RESOLVED_THEME, DEFAULT_THEME, MEDIA, THEME_CHANNEL } from "#/constants";
+import { themeSchema } from "#/types";
 import { ThemeContext } from "#/core/context";
 import { applyTheme, disableAnimation } from "#/utils/dom";
 import { getSystemTheme } from "#/utils/system";
@@ -49,11 +50,26 @@ function getSystemThemeSnapshot(): ResolvedTheme {
   return getSystemTheme();
 }
 
+/**
+ * Safely create a theme BroadcastChannel when supported by the environment.
+ */
+function createThemeChannel(): BroadcastChannel | null {
+  if (typeof BroadcastChannel === "undefined") {
+    return null;
+  }
+
+  try {
+    return new BroadcastChannel(THEME_CHANNEL);
+  } catch {
+    return null;
+  }
+}
+
 /* -----------------------------------------------------------------------------
  * Props
  * -------------------------------------------------------------------------- */
 
-interface ThemeProviderProps {
+export interface ThemeProviderProps {
   children: ReactNode;
   /**
    * When true, temporarily disables CSS transitions during theme changes.
@@ -73,7 +89,15 @@ interface ThemeProviderProps {
    */
   persistTheme?: (value: Theme) => Promise<void>;
   /**
-   * Initial theme from server (typically from cookie via loader).
+   * Callback invoked when `persistTheme` rejects.
+   */
+  onThemePersistError?: (error: unknown, attemptedTheme: Theme) => void;
+  /**
+   * Initial theme preference from the server (cookie, loader, etc.).
+   *
+   * After mount, `ThemeProvider` re-syncs whenever this prop changes — for example, when
+   * the router re-runs the root loader after navigation. The server value is authoritative:
+   * a new prop value will override any local optimistic state.
    */
   theme: Theme;
   /**
@@ -115,6 +139,7 @@ interface ThemeProviderProps {
  * and avoids a post-hydration flip. Omit if unavailable; falls back to {@link DEFAULT_RESOLVED_THEME}.
  * @param props.syncThemeFromServer - Optional one-shot RPC after mount to align with the cookie when SSR/HTML was stale.
  * @param props.persistTheme - Optional async handler to persist preference (cookie, server action, …)
+ * @param props.onThemePersistError - Optional callback for persistence failures
  * @param props.disableTransitionOnChange - Temporarily disable CSS transitions on theme change
  * @param props.nonce - CSP nonce for inline transition-blocking styles when `disableTransitionOnChange` is set
  * @returns Provider element wrapping `children`
@@ -136,13 +161,19 @@ export function ThemeProvider({
   children,
   disableTransitionOnChange = false,
   nonce,
+  onThemePersistError,
   persistTheme,
   ssrSystemTheme,
   syncThemeFromServer,
   theme: initialTheme,
 }: ThemeProviderProps): JSX.Element {
+  // F2: Runtime guard against invalid values bypassing TypeScript (e.g. raw API strings)
+  const safeInitialTheme = themeSchema.safeParse(initialTheme).success
+    ? initialTheme
+    : DEFAULT_THEME;
+
   // Actual persisted theme (source of truth after server confirms)
-  const [theme, setThemeState] = useState<Theme>(initialTheme);
+  const [theme, setThemeState] = useState<Theme>(safeInitialTheme);
 
   // Optimistic theme - immediately reflects user's intent while async operation runs
   // Automatically reverts to `theme` if the transition fails
@@ -150,6 +181,27 @@ export function ThemeProvider({
 
   // True when there's a pending theme change (optimistic !== actual)
   const isPending = optimisticTheme !== theme;
+
+  // P1: Stable ref so setTheme does not re-create every time the committed theme changes
+  const committedThemeRef = useRef(theme);
+
+  committedThemeRef.current = theme;
+
+  // P2: Shared BroadcastChannel — reused by setTheme sender instead of opening a new one per call
+  const channelRef = useRef<BroadcastChannel | null>(null);
+
+  // C2: disableAnimation cleanup stored here and called after applyTheme commits to the DOM
+  const enableAnimationRef = useRef<(() => void) | null>(null);
+
+  // C3: Last-write-wins intent — prevents stale async commits from overriding newer setTheme calls
+  const intentRef = useRef<Theme | null>(null);
+
+  // C1: Re-sync state when the server (loader) provides a new theme value after mount
+  useEffect(() => {
+    startTransition(() => {
+      setThemeState((prev) => (prev === safeInitialTheme ? prev : safeInitialTheme));
+    });
+  }, [safeInitialTheme]);
 
   const syncThemeFromServerRef = useRef(syncThemeFromServer);
 
@@ -202,30 +254,45 @@ export function ThemeProvider({
     [optimisticTheme, systemTheme],
   );
 
-  // Apply theme class and color-scheme to <html> when resolved theme changes
+  // C2: Apply theme to DOM then call animation cleanup — ensures enable() fires after
+  // applyTheme has committed, not prematurely in the async persist finally block
   useEffect(() => {
     applyTheme(resolvedTheme);
+
+    const enable = enableAnimationRef.current;
+
+    if (enable) {
+      enableAnimationRef.current = null;
+      enable();
+    }
   }, [resolvedTheme]);
 
-  // Handle cross-tab theme sync via BroadcastChannel
+  // S1: Validate cross-tab message before applying to prevent injection from extensions/scripts
   const handleCrossTabMessage = useEffectEvent((event: MessageEvent) => {
-    const newTheme = event.data as Theme;
+    const result = themeSchema.safeParse(event.data);
 
-    if (newTheme === theme) {
+    if (!result.success || result.data === theme) {
       return;
     }
 
     startTransition(() => {
-      setThemeState(newTheme);
+      setThemeState(result.data);
     });
   });
 
+  // P2: Keep channel in ref so setTheme can broadcast without opening a new channel each time
   useEffect(() => {
-    const channel = new BroadcastChannel(THEME_CHANNEL);
+    const channel = createThemeChannel();
 
+    if (!channel) {
+      return;
+    }
+
+    channelRef.current = channel;
     channel.addEventListener("message", handleCrossTabMessage);
 
     return (): void => {
+      channelRef.current = null;
       channel.removeEventListener("message", handleCrossTabMessage);
       channel.close();
     };
@@ -235,15 +302,20 @@ export function ThemeProvider({
     async (value: Theme): Promise<void> => {
       await Promise.resolve();
 
-      if (value === theme) {
+      // P1: Read from ref so this callback stays stable across theme commits
+      if (value === committedThemeRef.current) {
         return;
       }
 
-      // Optionally disable animations during theme switch
-      const enable = disableTransitionOnChange ? disableAnimation(nonce) : null;
+      // C2: Store cleanup here; it will be called after applyTheme runs in the resolvedTheme effect
+      if (disableTransitionOnChange) {
+        enableAnimationRef.current = disableAnimation(nonce);
+      }
 
-      // Wrap in startTransition for proper concurrent mode handling
       startTransition(async () => {
+        // C3: Track intent; only the latest setTheme call commits its value
+        intentRef.current = value;
+
         // Show new theme immediately (optimistic update)
         setOptimisticTheme(value);
 
@@ -253,24 +325,38 @@ export function ThemeProvider({
             await persistTheme(value);
           }
 
-          // Server confirmed - commit to actual state
-          setThemeState(value);
+          // Only commit if no newer setTheme call has since taken over
+          if (intentRef.current === value) {
+            setThemeState(value);
 
-          // Notify other tabs
-          const channel = new BroadcastChannel(THEME_CHANNEL);
-
-          channel.postMessage(value);
-          channel.close();
+            // P2: Notify other tabs via shared channel
+            channelRef.current?.postMessage(value);
+          }
         } catch (error) {
           // On failure, useOptimistic automatically reverts to `theme`
-          console.error("Failed to set theme:", error);
+          if (onThemePersistError) {
+            try {
+              onThemePersistError(error, value);
+            } catch (callbackError) {
+              console.error("Failed to handle theme persist error:", callbackError);
+            }
+          } else {
+            console.error("Failed to set theme:", error);
+          }
         } finally {
-          // Re-enable animations
-          enable?.();
+          // C2 safety net: fires when resolvedTheme did not change (e.g. system→dark while
+          // OS is already dark) so the applyTheme effect never runs. No-op if the effect
+          // already called enable().
+          const enable = enableAnimationRef.current;
+
+          if (enable) {
+            enableAnimationRef.current = null;
+            enable();
+          }
         }
       });
     },
-    [theme, disableTransitionOnChange, nonce, setOptimisticTheme, persistTheme],
+    [disableTransitionOnChange, nonce, setOptimisticTheme, persistTheme, onThemePersistError],
   );
 
   // Expose optimistic theme so consumers see immediate updates

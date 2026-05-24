@@ -18,10 +18,12 @@ export { DEFAULT_RESOLVED_THEME, DEFAULT_THEME } from "#/constants";
 
 // Core (Provider, Hook — use `@codefast/theme/core` for `ThemeContext`)
 export { ThemeProvider } from "#/core/provider";
+export type { ThemeProviderProps } from "#/core/provider";
 export { useTheme } from "#/core/use-theme";
 
 // Script (FOUC prevention)
 export { ThemeScript } from "#/script/theme-script";
+export type { ThemeScriptProps } from "#/script/theme-script";
 
 // Utilities: DOM + `getSystemTheme` live under `@codefast/theme/utils`
 export { resolveTheme } from "#/utils/system";
