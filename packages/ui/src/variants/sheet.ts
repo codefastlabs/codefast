@@ -22,9 +22,10 @@ const sheetContentVariants = tv({
   variants: {
     side: {
       bottom: [
-        "max-h-[80vh]",
+        "max-h-[80dvh]",
         "inset-x-0 bottom-0",
-        "border-t",
+        "rounded-t-2xl border-t",
+        "pb-[env(safe-area-inset-bottom)]",
         "data-open:slide-in-from-bottom",
         "data-closed:slide-out-to-bottom",
       ],

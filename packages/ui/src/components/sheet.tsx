@@ -1,16 +1,14 @@
 "use client";
 
 import type { ButtonVariants } from "#/variants/button";
+import { buttonVariants } from "#/variants/button";
 import type { SheetContentVariants } from "#/variants/sheet";
+import { sheetContentVariants } from "#/variants/sheet";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-
-import { sheetContentVariants } from "#/variants/sheet";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
-
-import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -79,7 +77,7 @@ function SheetContent({
       <SheetPrimitive.Overlay
         className={cn(
           "fixed inset-0 z-50",
-          "bg-black/50",
+          "bg-black/40 backdrop-blur-sm",
           "ease-gentle data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0",
           "data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
           classNames?.overlay,
