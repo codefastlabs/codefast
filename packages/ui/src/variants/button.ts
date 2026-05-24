@@ -15,7 +15,7 @@ const buttonVariants = tv({
     "rounded-lg outline-hidden",
     "text-sm font-medium whitespace-nowrap",
     "transition duration-150 ease-snappy select-none",
-    "active:not-disabled:scale-[0.97]",
+    "active:not-disabled:translate-y-px",
     "focus-visible:ring-3",
     "disabled:opacity-50",
     "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

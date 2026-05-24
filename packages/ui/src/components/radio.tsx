@@ -26,7 +26,7 @@ function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JS
         "peer inline-flex size-4 shrink-0 items-center justify-center",
         "rounded-full border border-input shadow-xs outline-hidden",
         "appearance-none",
-        "after:size-full after:rounded-full after:bg-background after:transition-[width,height]",
+        "after:size-full after:rounded-full after:bg-background after:transition-[width,height] after:duration-200 after:ease-spring",
         "checked:border-primary checked:bg-primary",
         "checked:after:size-1",
         "hover:not-disabled:not-checked:border-ring/60",

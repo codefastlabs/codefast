@@ -31,7 +31,11 @@ function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
       {...props}
     >
       <ProgressPrimitive.Indicator
-        className={cn("size-full flex-1", "bg-primary", "transition-all")}
+        className={cn(
+          "size-full flex-1",
+          "bg-primary",
+          "transition-[transform] duration-500 ease-gentle",
+        )}
         data-slot="progress-indicator"
         style={{
           transform: `translateX(-${(100 - (value ?? 0)).toString()}%)`,

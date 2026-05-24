@@ -57,7 +57,7 @@ function ScrollArea({
           className={cn(
             "size-full",
             "rounded-[inherit] ring-ring/50 outline-ring",
-            "transition",
+            "transition-[box-shadow] duration-150 ease-snappy",
             "focus-visible:ring-4 focus-visible:outline-1",
           )}
           data-slot="scroll-area-viewport"
