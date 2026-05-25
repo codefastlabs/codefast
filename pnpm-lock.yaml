@@ -40,8 +40,8 @@ catalogs:
       specifier: ^5.2.7
       version: 5.2.7
     '@hono/node-server':
-      specifier: ^2.0.3
-      version: 2.0.3
+      specifier: ^2.0.4
+      version: 2.0.4
     '@hookform/resolvers':
       specifier: ^5.4.0
       version: 5.4.0
@@ -761,7 +761,7 @@ importers:
         version: link:../tailwind-variants
       '@hono/node-server':
         specifier: 'catalog:'
-        version: 2.0.3(hono@4.12.22)
+        version: 2.0.4(hono@4.12.22)
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1
@@ -1961,8 +1961,8 @@ packages:
   '@fontsource-variable/nunito-sans@5.2.7':
     resolution: {integrity: sha512-rflH5HeAoNjIkwftStzQvxqCJhIS+usMr/lfslWg/RCa499B5qxyjo+74R/QMM0geQt4AY1URlG7wAR1iq6KPQ==}
 
-  '@hono/node-server@2.0.3':
-    resolution: {integrity: sha512-a0jV+/HRe3G5zjFID3zObAQFdkl6zpxTuqktdDDXS3MJKcrZIkB8OkLpNBlY/WXFqv2HF4a0takPej+aNFczWA==}
+  '@hono/node-server@2.0.4':
+    resolution: {integrity: sha512-Ut3y0dMMPWy6bZ2kVfx25EOVbZlm15dhF4mOsezMlhpNHy+4MkU1qN9Y6lnruYi4wPmFzimGX2X7LF/FwHli4A==}
     engines: {node: '>=20'}
     peerDependencies:
       hono: ^4
@@ -7535,7 +7535,7 @@ snapshots:
 
   '@fontsource-variable/nunito-sans@5.2.7': {}
 
-  '@hono/node-server@2.0.3(hono@4.12.22)':
+  '@hono/node-server@2.0.4(hono@4.12.22)':
     dependencies:
       hono: 4.12.22
 
