@@ -24,7 +24,10 @@ export const LIFECYCLE_KEY: unique symbol = Symbol("di:lifecycle");
  */
 export const INJECT_ACCESSOR_KEY: unique symbol = Symbol("di:inject-accessor");
 
-// WeakMap fallbacks for runtimes where Symbol.metadata is not wired up (esbuild/tsx)
+// WeakMap fallbacks keyed by constructor — reliable regardless of Symbol.metadata availability.
+// Babel's decorator transform uses Symbol.for("Symbol.metadata") when the native symbol is absent,
+// producing a different symbol than the native Symbol.metadata that the reader looks up.
+// Storing metadata in a WeakMap bypasses that mismatch entirely.
 /**
  * @since 0.3.16-canary.0
  */
