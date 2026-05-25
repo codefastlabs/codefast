@@ -4,27 +4,32 @@ import type { ContainerGraphJson } from "#/dependency-graph";
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowNode {
-  id: string;
-  data: { label: string; kind: string; scope: string; fromParent: boolean };
-  position: { x: number; y: number };
+  readonly id: string;
+  readonly data: {
+    readonly label: string;
+    readonly kind: string;
+    readonly scope: string;
+    readonly fromParent: boolean;
+  };
+  readonly position: { readonly x: number; readonly y: number };
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowEdge {
-  id: string;
-  source: string;
-  target: string;
-  label?: string;
+  readonly id: string;
+  readonly source: string;
+  readonly target: string;
+  readonly label?: string;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowGraph {
-  nodes: Array<ReactFlowNode>;
-  edges: Array<ReactFlowEdge>;
+  readonly nodes: ReadonlyArray<ReactFlowNode>;
+  readonly edges: ReadonlyArray<ReactFlowEdge>;
 }
 
 /**
@@ -42,17 +47,12 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
     position: { x: (idx % 5) * 200, y: Math.floor(idx / 5) * 100 },
   }));
 
-  const edges: Array<ReactFlowEdge> = graph.edges.map((edge, idx) => {
-    const reactFlowEdge: ReactFlowEdge = {
-      id: `edge-${idx}`,
-      source: edge.from,
-      target: edge.to,
-    };
-    if (edge.label !== undefined) {
-      reactFlowEdge.label = edge.label;
-    }
-    return reactFlowEdge;
-  });
+  const edges: Array<ReactFlowEdge> = graph.edges.map((edge, idx) => ({
+    id: `edge-${idx}`,
+    source: edge.from,
+    target: edge.to,
+    ...(edge.label !== undefined ? { label: edge.label } : {}),
+  }));
 
   return { nodes, edges };
 }

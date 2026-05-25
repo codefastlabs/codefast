@@ -72,7 +72,8 @@ export function buildDependencyGraph(
       if (binding.kind === "class") {
         const meta = metadataReader.getConstructorMetadata(binding.target as Constructor);
         if (meta !== undefined) {
-          meta.params.forEach((param, index) => {
+          for (let index = 0; index < meta.params.length; index += 1) {
+            const param = meta.params[index]!;
             const dependencyBinding = sourceRegistry.getAll(param.token as Constructor)[0];
             if (dependencyBinding !== undefined) {
               edges.push({
@@ -81,10 +82,11 @@ export function buildDependencyGraph(
                 label: `[${index}]`,
               });
             }
-          });
+          }
         }
       } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-        binding.deps.forEach((dependency, index) => {
+        for (let index = 0; index < binding.deps.length; index += 1) {
+          const dependency = binding.deps[index]!;
           const dependencyBindings = sourceRegistry.getAll(dependency.token as Constructor);
           if (dependencyBindings.length > 0 && dependencyBindings[0] !== undefined) {
             const label =
@@ -95,7 +97,7 @@ export function buildDependencyGraph(
                   : `[${index}]`;
             edges.push({ from: binding.id, to: dependencyBindings[0].id, label });
           }
-        });
+        }
       } else if (binding.kind === "alias") {
         const targetBindings = sourceRegistry.getAll(binding.target as Constructor);
         if (targetBindings.length > 0 && targetBindings[0] !== undefined) {

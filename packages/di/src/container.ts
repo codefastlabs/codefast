@@ -181,7 +181,7 @@ class DefaultContainer implements Container {
     const metaBindings = this._registry.getAll(MetadataReaderToken);
     if (metaBindings.length > 0) {
       try {
-        return this._resolver.resolve(MetadataReaderToken, undefined, [], []) as MetadataReader;
+        return this._resolver.resolve(MetadataReaderToken, undefined, [], []);
       } catch {
         // fall through to default
       }
@@ -324,7 +324,7 @@ class DefaultContainer implements Container {
     const toLoad = this._collectModuleDeps(modules);
     for (const module of toLoad) {
       if (!isSyncModule(module)) {
-        throw new AsyncModuleLoadError((module as AsyncModule).name);
+        throw new AsyncModuleLoadError(module.name);
       }
       const moduleRef = module as object;
       const existing = this._moduleRefs.get(moduleRef);
@@ -334,7 +334,7 @@ class DefaultContainer implements Container {
       }
       this._moduleRefs.set(moduleRef, 1);
       const builder = this._createModuleBuilder(moduleRef);
-      (module as SyncModule)._setup(builder);
+      module._setup(builder);
     }
   }
 
@@ -1111,7 +1111,9 @@ class ScopeBuilder<Value, Scope extends BindingScope>
 
 // ── ConstantBuilder ───────────────────────────────────────────────────────────
 
-class ConstantBuilder<Value> implements ConstantBindingBuilder<Value> {
+class ConstantBuilder<Value>
+  implements ConstantBindingBuilder<Value>, SingletonLifecycleBuilder<Value>
+{
   private _slot: BindingSlot;
   private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _onActivation: ActivationHandler<Value> | undefined;
@@ -1168,16 +1170,16 @@ class ConstantBuilder<Value> implements ConstantBindingBuilder<Value> {
     return this;
   }
 
-  onActivation(fn: ActivationHandler<Value>): SingletonLifecycleBuilder<Value> {
+  onActivation(fn: ActivationHandler<Value>): this {
     this._onActivation = fn;
     this._doCommit();
-    return this as unknown as SingletonLifecycleBuilder<Value>;
+    return this;
   }
 
-  onDeactivation(fn: DeactivationHandler<Value>): SingletonLifecycleBuilder<Value> {
+  onDeactivation(fn: DeactivationHandler<Value>): this {
     this._onDeactivation = fn;
     this._doCommit();
-    return this as unknown as SingletonLifecycleBuilder<Value>;
+    return this;
   }
 
   id(): BindingIdentifier {
