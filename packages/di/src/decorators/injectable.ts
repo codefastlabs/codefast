@@ -2,12 +2,7 @@ import type { BindingScope, Constructor } from "#/types";
 import type { ParamMetadata } from "#/metadata/metadata-types";
 import type { InjectableDependency } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
-import {
-  INJECT_ACCESSOR_KEY,
-  INJECTABLE_KEY,
-  accessorMetadataByConstructorMap,
-  constructorMetadataMap,
-} from "#/metadata/metadata-keys";
+import { INJECTABLE_KEY } from "#/metadata/metadata-keys";
 
 // ── AutoRegisterRegistry ──────────────────────────────────────────────────────
 
@@ -74,25 +69,11 @@ export function injectable(
       return baseParameterMetadata;
     });
 
-    const constructorMetadata = { params: parameterMetadataList };
-
-    // Write to WeakMap mirror — fallback for when Symbol.metadata is unavailable or when
-    // Babel uses Symbol.for("Symbol.metadata") instead of the native symbol.
-    constructorMetadataMap.set(target as object, constructorMetadata);
-
-    // Field decorators run before the class decorator — accessor @inject entries are already on context.metadata
-    try {
-      const metadata = context.metadata as Record<string | symbol, unknown>;
-      if (metadata !== null && typeof metadata === "object") {
-        const accessorList = metadata[INJECT_ACCESSOR_KEY];
-        if (Array.isArray(accessorList) && accessorList.length > 0) {
-          accessorMetadataByConstructorMap.set(target as object, accessorList);
-        }
-        metadata[INJECTABLE_KEY] = constructorMetadata;
-      }
-    } catch {
-      // Ignore if context.metadata is not readable/writable
-    }
+    // Field decorators run before the class decorator — accessor @inject entries are
+    // already on context.metadata by the time this runs.
+    (context.metadata as Record<string | symbol, unknown>)[INJECTABLE_KEY] = {
+      params: parameterMetadataList,
+    };
 
     if (options?.autoRegister !== undefined) {
       const scope: BindingScope = options.scope ?? "transient";

@@ -1,10 +1,6 @@
 import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
 import { InternalError } from "#/errors";
-import {
-  LIFECYCLE_KEY,
-  lifecycleByConstructorMetadataMap,
-  lifecycleMetadataMap,
-} from "#/metadata/metadata-keys";
+import { LIFECYCLE_KEY } from "#/metadata/metadata-keys";
 
 function appendUniqueMethod(
   metadata: MutableLifecycleMetadata,
@@ -13,39 +9,6 @@ function appendUniqueMethod(
 ): void {
   if (!metadata[phase].includes(methodName)) {
     metadata[phase].push(methodName);
-  }
-}
-
-function resolveConstructorFromDecoratorTarget(target: unknown): object | undefined {
-  if (typeof target === "function") {
-    return target as object;
-  }
-  if (typeof target === "object" && target !== null) {
-    const ctor = (target as { constructor?: unknown }).constructor;
-    if (typeof ctor === "function") {
-      return ctor as object;
-    }
-  }
-  return undefined;
-}
-
-function registerByConstructor(
-  target: unknown,
-  phase: "postConstruct" | "preDestroy",
-  methodName: string,
-): void {
-  const ctor = resolveConstructorFromDecoratorTarget(target);
-  if (ctor === undefined) {
-    return;
-  }
-  const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
-  if (ctorExisting !== undefined) {
-    appendUniqueMethod(ctorExisting, phase, methodName);
-  } else {
-    lifecycleByConstructorMetadataMap.set(ctor, {
-      postConstruct: phase === "postConstruct" ? [methodName] : [],
-      preDestroy: phase === "preDestroy" ? [methodName] : [],
-    });
   }
 }
 
@@ -60,48 +23,15 @@ export function postConstruct(): (target: unknown, context: ClassMethodDecorator
       );
     }
     const methodName = String(context.name);
-    registerByConstructor(target, "postConstruct", methodName);
-    const existing = lifecycleMetadataMap.get(context.metadata as object);
-
-    if (existing !== undefined) {
-      appendUniqueMethod(existing, "postConstruct", methodName);
-    } else {
-      lifecycleMetadataMap.set(context.metadata as object, {
-        postConstruct: [methodName],
-        preDestroy: [],
-      });
+    const meta = context.metadata as Record<string | symbol, unknown>;
+    if (!meta[LIFECYCLE_KEY]) {
+      meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
     }
-
-    context.addInitializer(function () {
-      const targetOrInstance = this as object | Function;
-      const ctor =
-        typeof targetOrInstance === "function"
-          ? (targetOrInstance as object)
-          : ((targetOrInstance as { constructor: object }).constructor as object);
-      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
-      if (ctorExisting !== undefined) {
-        appendUniqueMethod(ctorExisting, "postConstruct", methodName);
-      } else {
-        lifecycleByConstructorMetadataMap.set(ctor, {
-          postConstruct: [methodName],
-          preDestroy: [],
-        });
-      }
-    });
-
-    // Also try Symbol.metadata approach
-    try {
-      const meta = context.metadata as Record<string | symbol, unknown>;
-      if (meta !== null && typeof meta === "object") {
-        if (!meta[LIFECYCLE_KEY]) {
-          meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
-        }
-        const lifecycle = meta[LIFECYCLE_KEY] as MutableLifecycleMetadata;
-        appendUniqueMethod(lifecycle, "postConstruct", methodName);
-      }
-    } catch {
-      // ignore
-    }
+    appendUniqueMethod(
+      meta[LIFECYCLE_KEY] as MutableLifecycleMetadata,
+      "postConstruct",
+      methodName,
+    );
   };
 }
 
@@ -116,46 +46,10 @@ export function preDestroy(): (target: unknown, context: ClassMethodDecoratorCon
       );
     }
     const methodName = String(context.name);
-    registerByConstructor(target, "preDestroy", methodName);
-    const existing = lifecycleMetadataMap.get(context.metadata as object);
-
-    if (existing !== undefined) {
-      appendUniqueMethod(existing, "preDestroy", methodName);
-    } else {
-      lifecycleMetadataMap.set(context.metadata as object, {
-        postConstruct: [],
-        preDestroy: [methodName],
-      });
+    const meta = context.metadata as Record<string | symbol, unknown>;
+    if (!meta[LIFECYCLE_KEY]) {
+      meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
     }
-
-    context.addInitializer(function () {
-      const targetOrInstance = this as object | Function;
-      const ctor =
-        typeof targetOrInstance === "function"
-          ? (targetOrInstance as object)
-          : ((targetOrInstance as { constructor: object }).constructor as object);
-      const ctorExisting = lifecycleByConstructorMetadataMap.get(ctor);
-      if (ctorExisting !== undefined) {
-        appendUniqueMethod(ctorExisting, "preDestroy", methodName);
-      } else {
-        lifecycleByConstructorMetadataMap.set(ctor, {
-          postConstruct: [],
-          preDestroy: [methodName],
-        });
-      }
-    });
-
-    try {
-      const meta = context.metadata as Record<string | symbol, unknown>;
-      if (meta !== null && typeof meta === "object") {
-        if (!meta[LIFECYCLE_KEY]) {
-          meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
-        }
-        const lifecycle = meta[LIFECYCLE_KEY] as MutableLifecycleMetadata;
-        appendUniqueMethod(lifecycle, "preDestroy", methodName);
-      }
-    } catch {
-      // ignore
-    }
+    appendUniqueMethod(meta[LIFECYCLE_KEY] as MutableLifecycleMetadata, "preDestroy", methodName);
   };
 }

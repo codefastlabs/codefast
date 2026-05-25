@@ -1,6 +1,6 @@
 import type { Constructor } from "#/types";
 import type { Token } from "#/token";
-import { INJECT_ACCESSOR_KEY, accessorMetadataByMetadataObjectMap } from "#/metadata/metadata-keys";
+import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
 import { InternalError, MissingContainerContextError } from "#/errors";
 import { getActiveContainer } from "#/environment";
 import { injectionSlotToResolveOptions } from "#/resolve-options";
@@ -159,10 +159,6 @@ export function inject<const Value>(
       key: context.name,
       descriptor,
     });
-    accessorMetadataByMetadataObjectMap.set(
-      context.metadata as object,
-      meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>,
-    );
 
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
