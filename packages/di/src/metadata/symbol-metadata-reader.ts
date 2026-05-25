@@ -21,13 +21,15 @@ import {
  */
 export class SymbolMetadataReader implements MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    // WeakMap approach (works with esbuild/tsx)
+    // Primary path: WeakMap keyed by constructor, written explicitly by @injectable().
+    // Always populated regardless of whether Symbol.metadata is native or a Symbol.for() fallback.
     const weakMapMetadata = constructorMetadataMap.get(target);
     if (weakMapMetadata !== undefined) {
       return weakMapMetadata;
     }
 
-    // Symbol.metadata approach (works with SWC/vitest)
+    // Secondary path: read from native Symbol.metadata when the decorator runtime wired
+    // context.metadata into it (e.g. TypeScript native Stage 3 emit, or Node 22+ native decorators).
     const metadataDescriptor = Object.getOwnPropertyDescriptor(target, Symbol.metadata);
     if (metadataDescriptor === undefined) {
       return undefined;
@@ -52,7 +54,8 @@ export class SymbolMetadataReader implements MetadataReader {
       return lifecycleMetadataByConstructor;
     }
 
-    // Try Symbol.metadata first (SWC)
+    // Try native Symbol.metadata first: lifecycle-decorators also write to context.metadata,
+    // which is wired to Symbol.metadata when the runtime supports it natively.
     const metadataDescriptor = Object.getOwnPropertyDescriptor(target, Symbol.metadata);
     if (metadataDescriptor !== undefined) {
       const metadataRecord = metadataDescriptor.value as
@@ -68,13 +71,12 @@ export class SymbolMetadataReader implements MetadataReader {
       }
     }
 
-    // WeakMap approach: for methods, context.metadata is the class's Symbol.metadata object
-    // When using esbuild, context.metadata for methods is a shared object per class
-    // We need to find the metadata object associated with this class
-    // Since method decorators share context.metadata with class, check via a parent metadata lookup
-    // The lifecycle data was stored in lifecycleMetadataMap keyed by context.metadata
-    // But we need to find the right metadata object for this class
-    // For now: check if the class's own [Symbol.metadata] is in the lifecycleMetadataMap
+    // Fallback via lifecycleMetadataMap: lifecycle-decorators store metadata keyed by
+    // context.metadata (the shared metadata object per class). When native Symbol.metadata
+    // is available, context.metadata === ctor[Symbol.metadata], so the lookup below finds it.
+    // When Babel uses Symbol.for("Symbol.metadata") as fallback, the descriptor read above
+    // finds nothing, but this WeakMap path still works as long as the same object reference
+    // is accessible via ctor[Symbol.metadata].
     const classMetadataObject = (target as { [Symbol.metadata]?: object })[Symbol.metadata];
     if (classMetadataObject !== undefined) {
       const weakMapMetadata = lifecycleMetadataMap.get(classMetadataObject);

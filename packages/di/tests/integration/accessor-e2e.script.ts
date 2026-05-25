@@ -1,7 +1,11 @@
 /**
- * Executed via `pnpm exec tsx` from integration tests — Vitest’s SWC pipeline can emit
- * auto-accessors in a way that breaks `context.access.set(this, …)` private-brand checks;
- * tsx matches typical app transpilation and validates runWithContainer + lifecycle order.
+ * Executed as a `tsx` subprocess from the integration test suite.
+ *
+ * Running outside Vitest’s Babel pipeline verifies that accessor injection and lifecycle
+ * hooks work correctly under tsx’s esbuild-based emit — the transform most application
+ * authors use in their own codebases.  It also avoids private-brand check discrepancies
+ * that can arise when `context.access.set(this, …)` crosses a module boundary inside a
+ * single Vitest worker.
  */
 import { Container } from "#/container";
 import { inject } from "#/decorators/inject";
