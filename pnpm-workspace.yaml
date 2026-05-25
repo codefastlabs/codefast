@@ -9,7 +9,7 @@ allowBuilds:
   simple-git-hooks: true
 
 catalog:
-  "@babel/plugin-proposal-decorators": ^7.29.0
+  "@babel/plugin-proposal-decorators": ^8.0.0-rc.5
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.0
   "@commitlint/cli": ^21.0.1
@@ -64,12 +64,12 @@ catalog:
   "@tanstack/react-devtools": ^0.10.5
   "@tanstack/react-form": ^1.32.0
   "@tanstack/react-form-devtools": ^0.2.27
-  "@tanstack/react-query": ^5.100.13
-  "@tanstack/react-query-devtools": ^5.100.13
-  "@tanstack/react-router": ^1.170.7
+  "@tanstack/react-query": ^5.100.14
+  "@tanstack/react-query-devtools": ^5.100.14
+  "@tanstack/react-router": ^1.170.8
   "@tanstack/react-router-devtools": ^1.167.0
   "@tanstack/react-router-ssr-query": ^1.167.0
-  "@tanstack/react-start": ^1.168.10
+  "@tanstack/react-start": ^1.168.11
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
@@ -81,7 +81,7 @@ catalog:
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.15
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260523.1
+  "@typescript/native-preview": 7.0.0-dev.20260524.1
   "@unpic/react": ^1.0.2
   "@vitejs/plugin-react": ^6.0.2
   "@vitest/coverage-v8": ^4.1.7
@@ -96,7 +96,7 @@ catalog:
   embla-carousel-react: ^8.6.0
   esbuild: ^0.28.0
   expect-type: ^1.3.0
-  "@hono/node-server": ^2.0.3
+  "@hono/node-server": ^2.0.4
   hast-util-to-string: ^3.0.1
   hono: ^4.12.22
   input-otp: ^1.4.2
@@ -119,7 +119,7 @@ catalog:
   react-day-picker: ^10.0.1
   react-dom: ^19.2.6
   react-hook-form: ^7.76.1
-  react-resizable-panels: ^4.11.1
+  react-resizable-panels: ^4.11.2
   recharts: ^3.8.1
   reflect-metadata: ^0.2.2
   rehype-autolink-headings: ^7.1.0
