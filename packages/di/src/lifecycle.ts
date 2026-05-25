@@ -30,11 +30,8 @@ export class LifecycleManager {
     handler: ActivationHandler<Value>,
   ): void {
     this._activationVersion += 1;
-    let list = this._activationHooks.get(token as Token<unknown> | Constructor);
-    if (list === undefined) {
-      list = [];
-      this._activationHooks.set(token as Token<unknown> | Constructor, list);
-    }
+    // ✓ TS6.0: Map.getOrInsert (ES2025)
+    const list = this._activationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
     list.push(handler as ActivationHandler<unknown>);
   }
 
@@ -54,11 +51,7 @@ export class LifecycleManager {
     token: Token<Value> | Constructor<Value>,
     handler: DeactivationHandler<Value>,
   ): void {
-    let list = this._deactivationHooks.get(token as Token<unknown> | Constructor);
-    if (list === undefined) {
-      list = [];
-      this._deactivationHooks.set(token as Token<unknown> | Constructor, list);
-    }
+    const list = this._deactivationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
     list.push(handler as DeactivationHandler<unknown>);
   }
 

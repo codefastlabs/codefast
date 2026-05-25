@@ -24,7 +24,7 @@ export function tokenName(dependency: Token<unknown> | Constructor): string {
   if (typeof dependency === "function") {
     return dependency.name;
   }
-  return (dependency as Token<unknown>).name;
+  return dependency.name;
 }
 
 /**

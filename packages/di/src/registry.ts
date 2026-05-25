@@ -21,11 +21,8 @@ export class BindingRegistry {
   /** Add or replace binding using slot-aware last-wins. */
   add(binding: Binding): void {
     const key = binding.token as DependencyKey;
-    let bindingsForToken = this._bindings.get(key);
-    if (bindingsForToken === undefined) {
-      bindingsForToken = [];
-      this._bindings.set(key, bindingsForToken);
-    }
+    // ✓ TS6.0: Map.getOrInsert (ES2025) replaces the manual get+check+set upsert
+    const bindingsForToken = this._bindings.getOrInsert(key, []);
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
     if (!this._isPurePredicateBinding(binding)) {
@@ -158,16 +155,11 @@ export class BindingRegistry {
       return;
     }
     const [tagKey, tagValue] = slot.tags[0]!;
-    let byTagKey = this._simpleTagged.get(tokenKey);
-    if (byTagKey === undefined) {
-      byTagKey = new Map<string, Map<unknown, Binding>>();
-      this._simpleTagged.set(tokenKey, byTagKey);
-    }
-    let byTagValue = byTagKey.get(tagKey);
-    if (byTagValue === undefined) {
-      byTagValue = new Map<unknown, Binding>();
-      byTagKey.set(tagKey, byTagValue);
-    }
+    const byTagKey = this._simpleTagged.getOrInsert(
+      tokenKey,
+      new Map<string, Map<unknown, Binding>>(),
+    );
+    const byTagValue = byTagKey.getOrInsert(tagKey, new Map<unknown, Binding>());
     byTagValue.set(tagValue, binding);
   }
 
@@ -210,11 +202,7 @@ export class BindingRegistry {
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    let bindingsByName = this._simpleNamed.get(tokenKey);
-    if (bindingsByName === undefined) {
-      bindingsByName = new Map<string, Binding>();
-      this._simpleNamed.set(tokenKey, bindingsByName);
-    }
+    const bindingsByName = this._simpleNamed.getOrInsert(tokenKey, new Map<string, Binding>());
     bindingsByName.set(slot.name, binding);
   }
 

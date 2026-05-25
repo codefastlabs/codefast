@@ -4,26 +4,37 @@ import type { ContainerGraphJson } from "#/dependency-graph";
  * @since 0.3.16-canary.0
  */
 export interface CytoscapeNode {
-  data: { id: string; label: string; kind: string; scope: string; fromParent: boolean };
+  readonly data: {
+    readonly id: string;
+    readonly label: string;
+    readonly kind: string;
+    readonly scope: string;
+    readonly fromParent: boolean;
+  };
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export interface CytoscapeEdge {
-  data: { id: string; source: string; target: string; label?: string };
+  readonly data: {
+    readonly id: string;
+    readonly source: string;
+    readonly target: string;
+    readonly label?: string;
+  };
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export type CytoscapeElements = Array<CytoscapeNode | CytoscapeEdge>;
+export type CytoscapeElements = ReadonlyArray<CytoscapeNode | CytoscapeEdge>;
 
 /**
  * @since 0.3.16-canary.0
  */
 export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
-  const elements: CytoscapeElements = [];
+  const elements: Array<CytoscapeNode | CytoscapeEdge> = [];
 
   for (const node of graph.nodes) {
     elements.push({
@@ -37,17 +48,17 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
     });
   }
 
-  graph.edges.forEach((edge, idx) => {
-    const data: CytoscapeEdge["data"] = {
-      id: `edge-${idx}`,
-      source: edge.from,
-      target: edge.to,
-    };
-    if (edge.label !== undefined) {
-      data.label = edge.label;
-    }
-    elements.push({ data });
-  });
+  for (let idx = 0; idx < graph.edges.length; idx += 1) {
+    const edge = graph.edges[idx]!;
+    elements.push({
+      data: {
+        id: `edge-${idx}`,
+        source: edge.from,
+        target: edge.to,
+        ...(edge.label !== undefined ? { label: edge.label } : {}),
+      },
+    });
+  }
 
   return elements;
 }

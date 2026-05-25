@@ -2,6 +2,7 @@ import type { ConstructorInvocation } from "#/constructor-type";
 import type {
   BindingIdentifier,
   BindingScope,
+  ConstraintContext,
   Constructor,
   ResolutionFrame,
   ResolveOptions,
@@ -1264,13 +1265,12 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
     hint: ResolveOptions | undefined,
-  ) {
+  ): ConstraintContext {
     if (hint === undefined && resolutionPath.length === 0 && resolutionStack.length === 0) {
       return ROOT_CONSTRAINT_CONTEXT;
     }
     const parent = resolutionStack.at(-1);
-    const ancestors =
-      resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : ([] as Array<ResolutionFrame>);
+    const ancestors = resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [];
     return {
       resolutionPath,
       resolutionStack,
@@ -1343,13 +1343,7 @@ export class DependencyResolver {
   private _instantiateClass(target: Constructor, deps: Array<unknown>): unknown {
     let needsActiveContainer = this._classNeedsActiveContainer.get(target);
     if (needsActiveContainer === undefined) {
-      const accessorMetadata = (
-        this._metadataReader as {
-          getAccessorMetadata?: (
-            targetConstructor: Constructor,
-          ) => ReadonlyArray<{ key: string | symbol; descriptor: InjectionDescriptor }> | undefined;
-        }
-      ).getAccessorMetadata?.(target);
+      const accessorMetadata = this._metadataReader.getAccessorMetadata?.(target);
       needsActiveContainer = (accessorMetadata?.length ?? 0) > 0;
       this._classNeedsActiveContainer.set(target, needsActiveContainer);
     }

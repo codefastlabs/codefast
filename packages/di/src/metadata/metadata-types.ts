@@ -1,5 +1,6 @@
 import type { Constructor } from "#/types";
 import type { Token } from "#/token";
+import type { InjectionDescriptor } from "#/decorators/inject";
 
 /**
  * @since 0.3.16-canary.0
@@ -44,4 +45,9 @@ export interface MutableLifecycleMetadata {
 export interface MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;
+  getAccessorMetadata?(
+    target: Constructor,
+  ):
+    | ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }>
+    | undefined;
 }

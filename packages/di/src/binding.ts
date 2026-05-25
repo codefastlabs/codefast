@@ -47,7 +47,7 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
 /**
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [] };
+export const DEFAULT_BINDING_SLOT = { name: undefined, tags: [] } satisfies BindingSlot;
 
 /**
  * @since 0.3.16-canary.0
