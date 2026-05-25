@@ -76,8 +76,8 @@ export function injectable(
 
     const constructorMetadata = { params: parameterMetadataList };
 
-    // Write to WeakMap keyed by constructor — primary storage path, always reliable.
-    // Avoids any dependency on Symbol.metadata availability or its Symbol.for() fallback.
+    // Write to WeakMap mirror — fallback for when Symbol.metadata is unavailable or when
+    // Babel uses Symbol.for("Symbol.metadata") instead of the native symbol.
     constructorMetadataMap.set(target as object, constructorMetadata);
 
     // Field decorators run before the class decorator — accessor @inject entries are already on context.metadata
