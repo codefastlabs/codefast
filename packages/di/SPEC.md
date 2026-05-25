@@ -1696,7 +1696,7 @@ testContainer.bind(MetadataReaderToken).toConstantValue(customReader);
 
 **`SymbolMetadataReader` — đọc metadata**
 
-Implementation mặc định đọc `Symbol.metadata` khi descriptor tồn tại; đồng thời giữ mirror trong WeakMap (ví dụ `constructorMetadataMap`) để metadata vẫn khả dụng khi bundle hoặc transform không populate `Symbol.metadata` đầy đủ. Danh sách field `@inject accessor` lấy bằng `getAccessorMetadata(target)`. `getConstructorMetadata(target)` chỉ mô tả dependency của constructor, không thay cho accessor fields.
+Implementation mặc định đọc `Symbol.metadata` khi descriptor tồn tại; đồng thời giữ mirror trong WeakMap (ví dụ `constructorMetadataMap`) để metadata vẫn khả dụng khi bundle hoặc transform không populate `Symbol.metadata` đầy đủ — ví dụ khi Babel dùng `Symbol.for("Symbol.metadata")` thay vì native symbol. Danh sách field `@inject accessor` lấy bằng `getAccessorMetadata(target)`. `getConstructorMetadata(target)` chỉ mô tả dependency của constructor, không thay cho accessor fields.
 
 ```ts
 getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
