@@ -24,9 +24,7 @@ const createMockMediaQueryList = (matches: boolean, media: string): MockMediaQue
 
 Object.defineProperty(window, "matchMedia", {
   value: vi.fn().mockImplementation((query: string) => {
-    const matches = query === "(prefers-color-scheme: dark)" ? false : false;
-
-    return createMockMediaQueryList(matches, query);
+    return createMockMediaQueryList(false, query);
   }),
   writable: true,
 });

@@ -41,19 +41,19 @@ function readSsrSystemThemeFromHeaders(): ResolvedTheme {
  *
  * @since 0.3.16-canary.0
  */
-export interface RootThemeLoaderData {
+export type RootThemeLoaderData = {
   /**
    * Resolved `light` or `dark` from the incoming request when detectable
    * (e.g. `Sec-CH-Prefers-Color-Scheme`). Pass to `ThemeProvider` as `ssrSystemTheme` and to
    * `resolveTheme(theme, ssrSystemTheme)` on `<html>`. When the hint is absent, matches
    * {@link DEFAULT_RESOLVED_THEME}.
    */
-  ssrSystemTheme: ResolvedTheme;
+  readonly ssrSystemTheme: ResolvedTheme;
   /**
    * User preference from the httpOnly cookie: `light`, `dark`, or `system`.
    */
-  theme: Theme;
-}
+  readonly theme: Theme;
+};
 
 /* -----------------------------------------------------------------------------
  * Server Functions
