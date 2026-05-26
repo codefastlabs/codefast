@@ -82,7 +82,7 @@ describe("mirrorConfigSchema", () => {
         strip: "./components/",
         exports: { "./css/*": "./src/css/*" },
       },
-      "@apps/docs": false,
+      "@apps/web": false,
     });
 
     expect(result.success).toBe(true);
@@ -98,7 +98,7 @@ describe("mirrorConfigSchema", () => {
     expect(ui.source).toBe(true);
     expect(ui.types).toBe(true);
     expect(ui.import).toBe(true);
-    expect(result.data["@apps/docs"]).toBe(false);
+    expect(result.data["@apps/web"]).toBe(false);
   });
 
   it("accepts explicit source path override", () => {
