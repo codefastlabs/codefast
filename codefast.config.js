@@ -14,7 +14,7 @@ const config = {
     "@codefast/tailwind-variants": {
       preserve: true,
     },
-    "@apps/docs": false,
+    "@apps/web": false,
     "@codefast/cli": false,
     "@codefast/benchmark-tailwind-variants": false,
     "@codefast/typescript-config": false,
@@ -27,7 +27,7 @@ const config = {
   },
 
   tag: {
-    skipPackages: ["@apps/docs"],
+    skipPackages: ["@apps/web"],
   },
 };
 
