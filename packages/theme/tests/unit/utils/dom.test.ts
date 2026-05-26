@@ -1,4 +1,5 @@
 import { applyTheme, disableAnimation } from "#/utils/dom";
+import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 
 describe("DOM Utilities", () => {
   describe("applyTheme", () => {
@@ -61,19 +62,7 @@ describe("DOM Utilities", () => {
 
     beforeEach(() => {
       // Mock matchMedia to NOT prefer reduced motion
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation(() => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: false, // prefers-reduced-motion: reduce is FALSE
-          media: "",
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
       // Mock requestAnimationFrame for cleanup testing
       Object.defineProperty(window, "requestAnimationFrame", {
@@ -161,22 +150,9 @@ describe("DOM Utilities", () => {
     });
 
     test("should do nothing when prefers-reduced-motion is enabled", () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation(
-          (query: string) =>
-            ({
-              addEventListener: vi.fn(),
-              addListener: vi.fn(),
-              dispatchEvent: vi.fn(),
-              matches: query === "(prefers-reduced-motion: reduce)", // prefers-reduced-motion is TRUE
-              media: query,
-              onchange: null,
-              removeEventListener: vi.fn(),
-              removeListener: vi.fn(),
-            }) as unknown as MediaQueryList,
-        ),
-        writable: true,
-      });
+      mockMatchMedia((query) =>
+        createMockMediaQueryList(query === "(prefers-reduced-motion: reduce)", query),
+      );
 
       const styleCountBefore = document.querySelectorAll("style").length;
 
