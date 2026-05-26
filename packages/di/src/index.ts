@@ -4,6 +4,7 @@ export type {
   BindingIdentifier,
   BindingKind,
   BindingScope,
+  BindingTag,
   ConstraintContext,
   Constructor,
   DependencyKey,
@@ -27,6 +28,7 @@ export type {
   ScopedBindingBuilder,
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
+  SlotConstrainedBuilder,
   TransientBindingBuilder,
 } from "#/binding";
 

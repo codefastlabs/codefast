@@ -5,10 +5,10 @@ export default defineConfig({
   insertFinalNewline: true,
   printWidth: 100,
   proseWrap: "preserve",
-  sortTailwindcss: {
+  /* sortTailwindcss: {
     stylesheet: "apps/docs/src/styles/globals.css",
     functions: ["cn", "cva", "tv"],
-  },
+  }, */
   overrides: [
     {
       files: ["**/*.{json,jsonc}"],

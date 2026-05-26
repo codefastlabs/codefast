@@ -2,6 +2,7 @@ import type { ConstructorInvocation } from "#/constructor-type";
 import type {
   BindingIdentifier,
   BindingScope,
+  BindingTag,
   ConstraintContext,
   Constructor,
   ResolutionFrame,
@@ -12,8 +13,7 @@ import type { Binding, BindingSlot } from "#/binding";
 import type { BindingRegistry } from "#/registry";
 import type { ScopeManager } from "#/scope";
 import type { LifecycleManager } from "#/lifecycle";
-import type { MetadataReader } from "#/metadata/metadata-types";
-import type { ConstructorMetadata } from "#/metadata/metadata-types";
+import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
 import type { InjectionDescriptor } from "#/decorators/inject";
 import type { Container } from "#/container";
 import {
@@ -410,16 +410,7 @@ export class DependencyResolver {
         resolutionStack,
       );
 
-      let shouldActivate = needsActivation;
-      if (
-        binding.kind === "class" &&
-        this._classHasPostConstruct.get(binding.target) === undefined
-      ) {
-        this._refreshClassPostConstructCache(binding.target);
-        this._activationNeedByBindingId.delete(binding.id);
-        shouldActivate = this._needsActivation(binding);
-      }
-
+      const shouldActivate = this._refreshActivationCacheIfNeeded(binding, needsActivation);
       const activated = shouldActivate
         ? this._lifecycle.runActivationSync(
             resolutionCtx as DefaultResolutionContext,
@@ -892,16 +883,7 @@ export class DependencyResolver {
             resolutionStack,
           );
 
-          let shouldActivate = needsActivation;
-          if (
-            binding.kind === "class" &&
-            this._classHasPostConstruct.get(binding.target) === undefined
-          ) {
-            this._refreshClassPostConstructCache(binding.target);
-            this._activationNeedByBindingId.delete(binding.id);
-            shouldActivate = this._needsActivation(binding);
-          }
-
+          const shouldActivate = this._refreshActivationCacheIfNeeded(binding, needsActivation);
           const activated = shouldActivate
             ? await this._lifecycle.runActivation(
                 resolutionCtx as DefaultResolutionContext,
@@ -931,16 +913,7 @@ export class DependencyResolver {
         resolutionStack,
       );
 
-      let shouldActivate = needsActivation;
-      if (
-        binding.kind === "class" &&
-        this._classHasPostConstruct.get(binding.target) === undefined
-      ) {
-        this._refreshClassPostConstructCache(binding.target);
-        this._activationNeedByBindingId.delete(binding.id);
-        shouldActivate = this._needsActivation(binding);
-      }
-
+      const shouldActivate = this._refreshActivationCacheIfNeeded(binding, needsActivation);
       const activated = shouldActivate
         ? await this._lifecycle.runActivation(
             resolutionCtx as DefaultResolutionContext,
@@ -1357,8 +1330,8 @@ export class DependencyResolver {
   private _matchesHintTag(
     tagKey: string,
     tagValue: unknown,
-    hintTags: ReadonlyArray<readonly [string, unknown]> | undefined,
-    singleHintTag: readonly [string, unknown] | undefined,
+    hintTags: ReadonlyArray<BindingTag> | undefined,
+    singleHintTag: BindingTag | undefined,
   ): boolean {
     if (
       singleHintTag !== undefined &&
@@ -1819,6 +1792,22 @@ export class DependencyResolver {
       lifecycle.postConstruct !== undefined &&
       lifecycle.postConstruct.length > 0;
     this._classHasPostConstruct.set(target, hasPostConstruct);
+  }
+
+  /**
+   * Refreshes the post-construct cache for class bindings on first instantiation and
+   * returns the (possibly updated) shouldActivate flag.
+   */
+  private _refreshActivationCacheIfNeeded<Value>(
+    binding: Binding<Value>,
+    needsActivation: boolean,
+  ): boolean {
+    if (binding.kind === "class" && this._classHasPostConstruct.get(binding.target) === undefined) {
+      this._refreshClassPostConstructCache(binding.target);
+      this._activationNeedByBindingId.delete(binding.id);
+      return this._needsActivation(binding);
+    }
+    return needsActivation;
   }
 
   private _requiresResolutionContext<const Value>(binding: Binding<Value>): boolean {

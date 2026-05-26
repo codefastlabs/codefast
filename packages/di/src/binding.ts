@@ -2,15 +2,16 @@ import type {
   ActivationHandler,
   BindingIdentifier,
   BindingScope,
+  BindingTag,
   Constructor,
   DeactivationHandler,
   DependencyKey,
   ResolutionContext,
   TokenValue,
+  ConstraintContext,
 } from "#/types";
 import type { Token } from "#/token";
 import type { InjectionDescriptor } from "#/decorators/inject";
-import type { ConstraintContext } from "#/types";
 
 // ── BindingSlot ───────────────────────────────────────────────────────────────────
 
@@ -19,7 +20,7 @@ import type { ConstraintContext } from "#/types";
  */
 export interface BindingSlot {
   readonly name: string | undefined;
-  readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
+  readonly tags: ReadonlyArray<BindingTag>;
 }
 
 /**
@@ -74,6 +75,8 @@ interface BindingBase<Value> {
   readonly slot: BindingSlot;
   readonly predicate?: (ctx: ConstraintContext) => boolean;
 }
+
+type BindingBaseKeys = keyof BindingBase<unknown>;
 
 // ── Binding kinds ─────────────────────────────────────────────────────────────
 
@@ -171,13 +174,13 @@ export type Binding<Value = unknown> =
  * @since 0.3.16-canary.0
  */
 export type PartialBinding<Value> =
-  | Omit<ClassBinding<Value>, "id" | "token" | "slot" | "predicate">
-  | Omit<DynamicBinding<Value>, "id" | "token" | "slot" | "predicate">
-  | Omit<DynamicAsyncBinding<Value>, "id" | "token" | "slot" | "predicate">
-  | Omit<ResolvedBinding<Value>, "id" | "token" | "slot" | "predicate">
-  | Omit<ResolvedAsyncBinding<Value>, "id" | "token" | "slot" | "predicate">
-  | Omit<ConstantBinding<Value>, "id" | "token" | "slot" | "predicate">
-  | Omit<AliasBinding<Value>, "id" | "token" | "slot" | "predicate">;
+  | Omit<ClassBinding<Value>, BindingBaseKeys>
+  | Omit<DynamicBinding<Value>, BindingBaseKeys>
+  | Omit<DynamicAsyncBinding<Value>, BindingBaseKeys>
+  | Omit<ResolvedBinding<Value>, BindingBaseKeys>
+  | Omit<ResolvedAsyncBinding<Value>, BindingBaseKeys>
+  | Omit<ConstantBinding<Value>, BindingBaseKeys>
+  | Omit<AliasBinding<Value>, BindingBaseKeys>;
 
 // ── ID generation ─────────────────────────────────────────────────────────────
 
@@ -190,6 +193,19 @@ export function generateBindingId(): BindingIdentifier {
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
+
+/**
+ * Common slot-constraint + id methods shared by all concrete binding builders.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface SlotConstrainedBuilder {
+  when(predicate: (ctx: ConstraintContext) => boolean): this;
+  whenNamed(name: string): this;
+  whenTagged(tag: string, value: unknown): this;
+  whenDefault(): this;
+  id(): BindingIdentifier;
+}
 
 /**
  * @since 0.3.16-canary.0
@@ -214,40 +230,24 @@ export interface BindToBuilder<Value> {
 /**
  * @since 0.3.16-canary.0
  */
-export interface BindingBuilder<Value> {
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
-  whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
-  whenDefault(): this;
+export interface BindingBuilder<Value> extends SlotConstrainedBuilder {
   singleton(): SingletonBindingBuilder<Value>;
   transient(): TransientBindingBuilder<Value>;
   scoped(): ScopedBindingBuilder<Value>;
-  id(): BindingIdentifier;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ConstantBindingBuilder<Value> {
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
-  whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
-  whenDefault(): this;
+export interface ConstantBindingBuilder<Value> extends SlotConstrainedBuilder {
   onActivation(fn: ActivationHandler<Value>): SingletonLifecycleBuilder<Value>;
   onDeactivation(fn: DeactivationHandler<Value>): SingletonLifecycleBuilder<Value>;
-  id(): BindingIdentifier;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface AliasBindingBuilder {
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
-  whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
-  whenDefault(): this;
-  id(): BindingIdentifier;
-}
+export interface AliasBindingBuilder extends SlotConstrainedBuilder {}
 
 /**
  * @since 0.3.16-canary.0
