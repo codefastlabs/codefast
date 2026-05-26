@@ -1,4 +1,4 @@
-import type { ConstraintContext, Constructor } from "#/types";
+import type { BindingTag, ConstraintContext, Constructor } from "#/types";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 
@@ -111,7 +111,7 @@ export function whenAnyAncestorTagged(
  * @since 0.3.16-canary.1
  */
 export function whenParentTaggedAll(
-  tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
+  tags: ReadonlyArray<BindingTag>,
 ): (constraintContext: ConstraintContext) => boolean {
   return (constraintContext) => {
     const { parent } = constraintContext;
@@ -135,7 +135,7 @@ export function whenParentTaggedAll(
  * @since 0.3.16-canary.1
  */
 export function whenAnyAncestorTaggedAll(
-  tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
+  tags: ReadonlyArray<BindingTag>,
 ): (constraintContext: ConstraintContext) => boolean {
   return (constraintContext) =>
     constraintContext.ancestors.some((frame) => {

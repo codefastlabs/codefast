@@ -5,6 +5,13 @@ import type { Constructor } from "#/constructor-type";
 export type { Constructor } from "#/constructor-type";
 
 /**
+ * A single [tag, value] pair used in slot constraints and resolve hints.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type BindingTag = readonly [tag: string, value: unknown];
+
+/**
  * Token or class constructor used as a binding / injection / resolve key.
  *
  * @since 0.3.16-canary.0
@@ -66,8 +73,8 @@ export interface ResolveOptions {
    * Single-tag shorthand — semantics match including one pair in `tags`.
    * Enables fast-path lookup alongside `tags`.
    */
-  tag?: readonly [tag: string, value: unknown];
-  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
+  tag?: BindingTag;
+  tags?: ReadonlyArray<BindingTag>;
 }
 
 // ── ResolutionFrame ──────────────────────────────────────────────────────
@@ -82,7 +89,7 @@ export interface ResolutionFrame {
   readonly kind: BindingKind;
   readonly slot: {
     readonly name: string | undefined;
-    readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
+    readonly tags: ReadonlyArray<BindingTag>;
   };
 }
 

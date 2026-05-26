@@ -1,4 +1,4 @@
-import type { Constructor } from "#/types";
+import type { BindingTag, Constructor } from "#/types";
 import type { Token } from "#/token";
 import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
 import { InternalError, MissingContainerContextError } from "#/errors";
@@ -12,7 +12,7 @@ import { injectionSlotToResolveOptions } from "#/resolve-options";
  */
 export interface InjectOptions {
   name?: string;
-  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
+  tags?: ReadonlyArray<BindingTag>;
 }
 
 /**
@@ -23,7 +23,7 @@ export interface InjectionDescriptor<Value = unknown> {
   readonly optional: boolean;
   readonly multi: boolean;
   readonly name?: string;
-  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
+  readonly tags?: ReadonlyArray<BindingTag>;
 }
 
 /**
@@ -103,15 +103,10 @@ function materializeInjectionDescriptor(dependency: InjectionDescriptor): Inject
   return base;
 }
 
-function buildInjectionDescriptor<const Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value> {
-  const base: Pick<InjectionDescriptor<Value>, "token" | "optional" | "multi"> = {
-    token,
-    optional: false,
-    multi: false,
-  };
+function withOptions<DescValue>(
+  base: Pick<InjectionDescriptor<DescValue>, "token" | "optional" | "multi">,
+  options: InjectOptions | undefined,
+): InjectionDescriptor<DescValue> {
   if (options?.name !== undefined && options.tags !== undefined) {
     return { ...base, name: options.name, tags: options.tags };
   }
@@ -122,6 +117,13 @@ function buildInjectionDescriptor<const Value>(
     return { ...base, tags: options.tags };
   }
   return base;
+}
+
+function buildInjectionDescriptor<const Value>(
+  token: Token<Value> | Constructor<Value>,
+  options?: InjectOptions,
+): InjectionDescriptor<Value> {
+  return withOptions({ token, optional: false, multi: false }, options);
 }
 
 // ── inject() — dual-role ──────────────────────────────────────────────────────
@@ -201,21 +203,14 @@ export function optional<const Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value | undefined> {
-  const base: Pick<InjectionDescriptor<Value | undefined>, "token" | "optional" | "multi"> = {
-    token: token as Token<Value | undefined> | Constructor<Value | undefined>,
-    optional: true,
-    multi: false,
-  };
-  if (options?.name !== undefined && options.tags !== undefined) {
-    return { ...base, name: options.name, tags: options.tags };
-  }
-  if (options?.name !== undefined) {
-    return { ...base, name: options.name };
-  }
-  if (options?.tags !== undefined) {
-    return { ...base, tags: options.tags };
-  }
-  return base;
+  return withOptions(
+    {
+      token: token as Token<Value | undefined> | Constructor<Value | undefined>,
+      optional: true,
+      multi: false,
+    },
+    options,
+  );
 }
 
 // ── injectAll() ───────────────────────────────────────────────────────────────
@@ -227,19 +222,12 @@ export function injectAll<const Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Array<Value>> {
-  const base: Pick<InjectionDescriptor<Array<Value>>, "token" | "optional" | "multi"> = {
-    token: token as Token<Array<Value>> | Constructor<Array<Value>>,
-    optional: false,
-    multi: true,
-  };
-  if (options?.name !== undefined && options.tags !== undefined) {
-    return { ...base, name: options.name, tags: options.tags };
-  }
-  if (options?.name !== undefined) {
-    return { ...base, name: options.name };
-  }
-  if (options?.tags !== undefined) {
-    return { ...base, tags: options.tags };
-  }
-  return base;
+  return withOptions(
+    {
+      token: token as Token<Array<Value>> | Constructor<Array<Value>>,
+      optional: false,
+      multi: true,
+    },
+    options,
+  );
 }

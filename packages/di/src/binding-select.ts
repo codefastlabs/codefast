@@ -1,5 +1,5 @@
 import type { Binding } from "#/binding";
-import type { ConstraintContext, ResolveOptions } from "#/types";
+import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
 import { AmbiguousBindingError } from "#/errors";
 
 /**
@@ -137,8 +137,8 @@ function matchesSlot(binding: Binding, hint: ResolveOptions | undefined): boolea
 function matchHintTag(
   tagKey: string,
   tagValue: unknown,
-  hintTags: ReadonlyArray<readonly [string, unknown]> | undefined,
-  singleHintTag: readonly [string, unknown] | undefined,
+  hintTags: ReadonlyArray<BindingTag> | undefined,
+  singleHintTag: BindingTag | undefined,
 ): boolean {
   if (
     singleHintTag !== undefined &&

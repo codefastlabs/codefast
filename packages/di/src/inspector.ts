@@ -1,9 +1,16 @@
 import type { Binding } from "#/binding";
-import type { BindingKind, BindingScope, BindingIdentifier, Constructor } from "#/types";
+import type {
+  BindingIdentifier,
+  BindingKind,
+  BindingScope,
+  BindingTag,
+  ConstraintContext,
+  Constructor,
+  ResolveOptions,
+} from "#/types";
 import type { Token } from "#/token";
 import type { BindingRegistry } from "#/registry";
 import type { ScopeManager } from "#/scope";
-import type { ResolveOptions } from "#/types";
 import { tokenName } from "#/token";
 import { selectBinding } from "#/binding-select";
 import { effectiveBindingScope } from "#/binding-scope";
@@ -19,7 +26,7 @@ export interface BindingSnapshot {
   readonly scope: BindingScope;
   readonly slot: {
     readonly name?: string;
-    readonly tags: ReadonlyArray<readonly [string, unknown]>;
+    readonly tags: ReadonlyArray<BindingTag>;
   };
   readonly id: BindingIdentifier;
 }
@@ -70,15 +77,9 @@ export class Inspector {
     const bindings = this._registry.getAll(token);
     if (bindings.length > 0) {
       if (hint !== undefined) {
-        const ctx = {
-          resolutionPath: [],
-          resolutionStack: [],
-          parent: undefined,
-          ancestors: [],
-          currentResolveHint: hint,
-        };
-        const match = selectBinding(bindings, hint, ctx, tokenName(token));
-        if (match !== undefined) {
+        if (
+          selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined
+        ) {
           return true;
         }
       } else {
@@ -94,17 +95,21 @@ export class Inspector {
       return false;
     }
     if (hint !== undefined) {
-      const ctx = {
-        resolutionPath: [],
-        resolutionStack: [],
-        parent: undefined,
-        ancestors: [],
-        currentResolveHint: hint,
-      };
-      const match = selectBinding(bindings, hint, ctx, tokenName(token));
-      return match !== undefined;
+      return (
+        selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined
+      );
     }
     return true;
+  }
+
+  private _makeHintContext(hint: ResolveOptions): ConstraintContext {
+    return {
+      resolutionPath: [],
+      resolutionStack: [],
+      parent: undefined,
+      ancestors: [],
+      currentResolveHint: hint,
+    };
   }
 
   private allBindingSnapshots(): ReadonlyArray<BindingSnapshot> {

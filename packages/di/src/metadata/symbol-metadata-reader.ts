@@ -16,66 +16,38 @@ import {
  * @since 0.3.16-canary.0
  */
 export class SymbolMetadataReader implements MetadataReader {
+  private _getMetadataRecord(
+    target: Constructor,
+    key: string | symbol,
+  ): Record<string | symbol, unknown> | undefined {
+    const descriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
+    if (descriptor === undefined) {
+      return undefined;
+    }
+    const record = descriptor.value as Record<string | symbol, unknown> | null | undefined;
+    if (!record || typeof record !== "object" || !Object.hasOwn(record, key)) {
+      return undefined;
+    }
+    return record;
+  }
+
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const metadataDescriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
-    if (metadataDescriptor === undefined) {
-      return undefined;
-    }
-    const metadataRecord = metadataDescriptor.value as
-      | Record<string | symbol, unknown>
-      | null
-      | undefined;
-    if (
-      !metadataRecord ||
-      typeof metadataRecord !== "object" ||
-      !Object.hasOwn(metadataRecord, INJECTABLE_KEY)
-    ) {
-      return undefined;
-    }
-    return metadataRecord[INJECTABLE_KEY] as ConstructorMetadata;
+    const record = this._getMetadataRecord(target, INJECTABLE_KEY);
+    return record?.[INJECTABLE_KEY] as ConstructorMetadata | undefined;
   }
 
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined {
-    const metadataDescriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
-    if (metadataDescriptor === undefined) {
-      return undefined;
-    }
-    const metadataRecord = metadataDescriptor.value as
-      | Record<string | symbol, unknown>
-      | null
-      | undefined;
-    if (
-      !metadataRecord ||
-      typeof metadataRecord !== "object" ||
-      !Object.hasOwn(metadataRecord, LIFECYCLE_KEY)
-    ) {
-      return undefined;
-    }
-    return metadataRecord[LIFECYCLE_KEY] as LifecycleMetadata;
+    const record = this._getMetadataRecord(target, LIFECYCLE_KEY);
+    return record?.[LIFECYCLE_KEY] as LifecycleMetadata | undefined;
   }
 
   getAccessorMetadata(
     target: Constructor,
   ): Array<{ key: string | symbol; descriptor: InjectionDescriptor }> | undefined {
-    const metadataDescriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
-    if (metadataDescriptor === undefined) {
-      return undefined;
-    }
-    const metadataRecord = metadataDescriptor.value as
-      | Record<string | symbol, unknown>
-      | null
+    const record = this._getMetadataRecord(target, INJECT_ACCESSOR_KEY);
+    return record?.[INJECT_ACCESSOR_KEY] as
+      | Array<{ key: string | symbol; descriptor: InjectionDescriptor }>
       | undefined;
-    if (
-      !metadataRecord ||
-      typeof metadataRecord !== "object" ||
-      !Object.hasOwn(metadataRecord, INJECT_ACCESSOR_KEY)
-    ) {
-      return undefined;
-    }
-    return metadataRecord[INJECT_ACCESSOR_KEY] as Array<{
-      key: string | symbol;
-      descriptor: InjectionDescriptor;
-    }>;
   }
 }
 

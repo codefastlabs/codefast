@@ -242,52 +242,61 @@ class DefaultContainer implements Container {
     this._unbindSync(tokenOrId);
   }
 
-  private _unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
-    const bindings = this._getBindingsForTokenOrId(tokenOrId);
-    for (const binding of bindings) {
+  /** Remove bindings from registry + scope and collect [binding, instance] pairs for deactivation. */
+  private _collectDeactivationPairs(
+    tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
+  ): Array<[Binding, unknown]> {
+    const pairs: Array<[Binding, unknown]> = [];
+    for (const binding of this._getBindingsForTokenOrId(tokenOrId)) {
       this._registry.removeById(binding.id);
       if (this._scope.hasSingleton(binding.id)) {
-        const instance = this._scope.getSingleton(binding.id);
+        pairs.push([binding, this._scope.getSingleton(binding.id)]);
         this._scope.deleteSingleton(binding.id);
-        this._lifecycle.runDeactivationSync(binding, instance, this._getMetadataReader());
       }
+    }
+    return pairs;
+  }
+
+  /** Drain singleton scope entries for a set of already-removed bindings. */
+  private _drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
+    const pairs: Array<[Binding, unknown]> = [];
+    for (const binding of bindings) {
+      if (this._scope.hasSingleton(binding.id)) {
+        pairs.push([binding, this._scope.getSingleton(binding.id)]);
+        this._scope.deleteSingleton(binding.id);
+      }
+    }
+    return pairs;
+  }
+
+  private _unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
+    const reader = this._getMetadataReader();
+    for (const [binding, instance] of this._collectDeactivationPairs(tokenOrId)) {
+      this._lifecycle.runDeactivationSync(binding, instance, reader);
     }
   }
 
   async unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void> {
     this._assertNotDisposed();
-    const bindings = this._getBindingsForTokenOrId(tokenOrId);
-    for (const binding of bindings) {
-      this._registry.removeById(binding.id);
-      if (this._scope.hasSingleton(binding.id)) {
-        const instance = this._scope.getSingleton(binding.id);
-        this._scope.deleteSingleton(binding.id);
-        await this._lifecycle.runDeactivation(binding, instance, this._getMetadataReader());
-      }
+    const reader = this._getMetadataReader();
+    for (const [binding, instance] of this._collectDeactivationPairs(tokenOrId)) {
+      await this._lifecycle.runDeactivation(binding, instance, reader);
     }
   }
 
   unbindAll(): void {
     this._assertNotDisposed();
-    const all = this._registry.clear();
-    for (const binding of all) {
-      if (this._scope.hasSingleton(binding.id)) {
-        const instance = this._scope.getSingleton(binding.id);
-        this._scope.deleteSingleton(binding.id);
-        this._lifecycle.runDeactivationSync(binding, instance, this._getMetadataReader());
-      }
+    const reader = this._getMetadataReader();
+    for (const [binding, instance] of this._drainSingletons(this._registry.clear())) {
+      this._lifecycle.runDeactivationSync(binding, instance, reader);
     }
   }
 
   async unbindAllAsync(): Promise<void> {
     this._assertNotDisposed();
-    const all = this._registry.clear();
-    for (const binding of all) {
-      if (this._scope.hasSingleton(binding.id)) {
-        const instance = this._scope.getSingleton(binding.id);
-        this._scope.deleteSingleton(binding.id);
-        await this._lifecycle.runDeactivation(binding, instance, this._getMetadataReader());
-      }
+    const reader = this._getMetadataReader();
+    for (const [binding, instance] of this._drainSingletons(this._registry.clear())) {
+      await this._lifecycle.runDeactivation(binding, instance, reader);
     }
   }
 
@@ -422,22 +431,31 @@ class DefaultContainer implements Container {
     }
   }
 
+  /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
+  private _removeModuleBindings(ref: object): Array<[Binding, unknown]> {
+    this._moduleRefs.delete(ref);
+    const ids = this._moduleBindingIds.get(ref) ?? [];
+    this._moduleBindingIds.delete(ref);
+    const pairs: Array<[Binding, unknown]> = [];
+    for (const id of ids) {
+      const binding = this._registry.getById(id);
+      if (binding !== undefined) {
+        this._registry.removeById(id);
+        if (this._scope.hasSingleton(id)) {
+          pairs.push([binding, this._scope.getSingleton(id)]);
+          this._scope.deleteSingleton(id);
+        }
+      }
+    }
+    return pairs;
+  }
+
   private _unloadModuleSync(ref: object): void {
     const count = this._moduleRefs.get(ref) ?? 0;
     if (count <= 1) {
-      this._moduleRefs.delete(ref);
-      const ids = this._moduleBindingIds.get(ref) ?? [];
-      this._moduleBindingIds.delete(ref);
-      for (const id of ids) {
-        const binding = this._registry.getById(id);
-        if (binding !== undefined) {
-          this._registry.removeById(id);
-          if (this._scope.hasSingleton(id)) {
-            const instance = this._scope.getSingleton(id);
-            this._scope.deleteSingleton(id);
-            this._lifecycle.runDeactivationSync(binding, instance, this._getMetadataReader());
-          }
-        }
+      const reader = this._getMetadataReader();
+      for (const [binding, instance] of this._removeModuleBindings(ref)) {
+        this._lifecycle.runDeactivationSync(binding, instance, reader);
       }
     } else {
       this._moduleRefs.set(ref, count - 1);
@@ -454,19 +472,9 @@ class DefaultContainer implements Container {
   private async _unloadModuleAsync(ref: object): Promise<void> {
     const count = this._moduleRefs.get(ref) ?? 0;
     if (count <= 1) {
-      this._moduleRefs.delete(ref);
-      const ids = this._moduleBindingIds.get(ref) ?? [];
-      this._moduleBindingIds.delete(ref);
-      for (const id of ids) {
-        const binding = this._registry.getById(id);
-        if (binding !== undefined) {
-          this._registry.removeById(id);
-          if (this._scope.hasSingleton(id)) {
-            const instance = this._scope.getSingleton(id);
-            this._scope.deleteSingleton(id);
-            await this._lifecycle.runDeactivation(binding, instance, this._getMetadataReader());
-          }
-        }
+      const reader = this._getMetadataReader();
+      for (const [binding, instance] of this._removeModuleBindings(ref)) {
+        await this._lifecycle.runDeactivation(binding, instance, reader);
       }
     } else {
       this._moduleRefs.set(ref, count - 1);
@@ -854,6 +862,8 @@ class DefaultContainer implements Container {
 
 // ── Shared builder helpers ────────────────────────────────────────────────────
 
+type CommitFn = (binding: Binding, previousId?: BindingIdentifier) => BindingIdentifier;
+
 function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
   const existing = [...slot.tags];
   const idx = existing.findIndex(([k]) => k === tag);
@@ -865,15 +875,48 @@ function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingS
   return { ...slot, tags: existing };
 }
 
+// ── SlotBuilder ───────────────────────────────────────────────────────────────
+
+abstract class SlotBuilder {
+  protected _slot: BindingSlot = DEFAULT_BINDING_SLOT; // ✓ T3-1: no redundant spread
+  protected _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
+  protected _committed: BindingIdentifier | undefined;
+
+  protected abstract _doCommit(): void;
+
+  when(predicate: (ctx: ConstraintContext) => boolean): this {
+    this._predicate = predicate;
+    this._doCommit();
+    return this;
+  }
+
+  whenNamed(name: string): this {
+    this._slot = { ...this._slot, name };
+    this._doCommit();
+    return this;
+  }
+
+  whenTagged(tag: string, value: unknown): this {
+    this._slot = updateSlotTag(this._slot, tag, value);
+    this._doCommit();
+    return this;
+  }
+
+  whenDefault(): this {
+    return this;
+  }
+
+  id(): BindingIdentifier {
+    return this._committed!;
+  }
+}
+
 // ── BindingEntry ──────────────────────────────────────────────────────────────
 
 class BindingEntry<Value> implements BindToBuilder<Value> {
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _commit: (
-      binding: Binding,
-      previousId?: BindingIdentifier,
-    ) => BindingIdentifier,
+    private readonly _commit: CommitFn,
   ) {}
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
@@ -956,24 +999,17 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
 
 // ── ConstraintBuilder ─────────────────────────────────────────────────────────
 
-class ConstraintBuilder<Value> implements BindingBuilder<Value> {
-  private _slot: BindingSlot;
-  private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
-  private _committed: BindingIdentifier | undefined;
-
+class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Value> {
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _partial: PartialBinding<Value>,
-    private readonly _commit: (
-      binding: Binding,
-      previousId?: BindingIdentifier,
-    ) => BindingIdentifier,
+    private readonly _commit: CommitFn,
   ) {
-    this._slot = { ...DEFAULT_BINDING_SLOT, tags: [] };
+    super();
     this._doCommit();
   }
 
-  private _doCommit(): void {
+  protected _doCommit(): void {
     const previousId = this._committed;
     const binding: Binding<Value> = {
       ...(this._partial as unknown as object),
@@ -983,28 +1019,6 @@ class ConstraintBuilder<Value> implements BindingBuilder<Value> {
       predicate: this._predicate,
     } as Binding<Value>;
     this._committed = this._commit(binding as Binding<unknown>, previousId);
-  }
-
-  when(predicate: (ctx: ConstraintContext) => boolean): this {
-    this._predicate = predicate;
-    this._doCommit();
-    return this;
-  }
-
-  whenNamed(name: string): this {
-    this._slot = { ...this._slot, name };
-    this._doCommit();
-    return this;
-  }
-
-  whenTagged(tag: string, value: unknown): this {
-    this._slot = updateSlotTag(this._slot, tag, value);
-    this._doCommit();
-    return this;
-  }
-
-  whenDefault(): this {
-    return this;
   }
 
   singleton(): SingletonBindingBuilder<Value> {
@@ -1048,10 +1062,6 @@ class ConstraintBuilder<Value> implements BindingBuilder<Value> {
       previousId,
     );
   }
-
-  id(): BindingIdentifier {
-    return this._committed!;
-  }
 }
 
 // ── ScopeBuilder ─────────────────────────────────────────────────────────────
@@ -1068,10 +1078,7 @@ class ScopeBuilder<Value, Scope extends BindingScope>
     private readonly _partial: PartialBinding<Value>,
     private readonly _slot: BindingSlot,
     private readonly _predicate: ((ctx: ConstraintContext) => boolean) | undefined,
-    private readonly _commit: (
-      binding: Binding,
-      previousId?: BindingIdentifier,
-    ) => BindingIdentifier,
+    private readonly _commit: CommitFn,
     private readonly _scope: Scope,
     private readonly _initialPreviousId?: BindingIdentifier,
   ) {
@@ -1112,27 +1119,22 @@ class ScopeBuilder<Value, Scope extends BindingScope>
 // ── ConstantBuilder ───────────────────────────────────────────────────────────
 
 class ConstantBuilder<Value>
+  extends SlotBuilder
   implements ConstantBindingBuilder<Value>, SingletonLifecycleBuilder<Value>
 {
-  private _slot: BindingSlot;
-  private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
   private _onActivation: ActivationHandler<Value> | undefined;
   private _onDeactivation: DeactivationHandler<Value> | undefined;
-  private _committed: BindingIdentifier | undefined;
 
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _value: Value,
-    private readonly _commit: (
-      binding: Binding,
-      previousId?: BindingIdentifier,
-    ) => BindingIdentifier,
+    private readonly _commit: CommitFn,
   ) {
-    this._slot = { ...DEFAULT_BINDING_SLOT, tags: [] };
+    super();
     this._doCommit();
   }
 
-  private _doCommit(): void {
+  protected _doCommit(): void {
     const previousId = this._committed;
     const binding: Binding<Value> = {
       kind: "constant",
@@ -1148,28 +1150,6 @@ class ConstantBuilder<Value>
     this._committed = this._commit(binding as Binding<unknown>, previousId);
   }
 
-  when(predicate: (ctx: ConstraintContext) => boolean): this {
-    this._predicate = predicate;
-    this._doCommit();
-    return this;
-  }
-
-  whenNamed(name: string): this {
-    this._slot = { ...this._slot, name };
-    this._doCommit();
-    return this;
-  }
-
-  whenTagged(tag: string, value: unknown): this {
-    this._slot = updateSlotTag(this._slot, tag, value);
-    this._doCommit();
-    return this;
-  }
-
-  whenDefault(): this {
-    return this;
-  }
-
   onActivation(fn: ActivationHandler<Value>): this {
     this._onActivation = fn;
     this._doCommit();
@@ -1181,32 +1161,21 @@ class ConstantBuilder<Value>
     this._doCommit();
     return this;
   }
-
-  id(): BindingIdentifier {
-    return this._committed!;
-  }
 }
 
 // ── AliasBuilder ──────────────────────────────────────────────────────────────
 
-class AliasBuilder<Value> implements AliasBindingBuilder {
-  private _slot: BindingSlot;
-  private _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
-  private _committed: BindingIdentifier | undefined;
-
+class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
   constructor(
     private readonly _token: Token<Value> | Constructor<Value>,
     private readonly _target: Token<Value> | Constructor<Value>,
-    private readonly _commit: (
-      binding: Binding,
-      previousId?: BindingIdentifier,
-    ) => BindingIdentifier,
+    private readonly _commit: CommitFn,
   ) {
-    this._slot = { ...DEFAULT_BINDING_SLOT, tags: [] };
+    super();
     this._doCommit();
   }
 
-  private _doCommit(): void {
+  protected _doCommit(): void {
     const previousId = this._committed;
     const binding: Binding<Value> = {
       kind: "alias",
@@ -1217,32 +1186,6 @@ class AliasBuilder<Value> implements AliasBindingBuilder {
       target: this._target,
     } as unknown as Binding<Value>;
     this._committed = this._commit(binding as Binding<unknown>, previousId);
-  }
-
-  when(predicate: (ctx: ConstraintContext) => boolean): this {
-    this._predicate = predicate;
-    this._doCommit();
-    return this;
-  }
-
-  whenNamed(name: string): this {
-    this._slot = { ...this._slot, name };
-    this._doCommit();
-    return this;
-  }
-
-  whenTagged(tag: string, value: unknown): this {
-    this._slot = updateSlotTag(this._slot, tag, value);
-    this._doCommit();
-    return this;
-  }
-
-  whenDefault(): this {
-    return this;
-  }
-
-  id(): BindingIdentifier {
-    return this._committed!;
   }
 }
 

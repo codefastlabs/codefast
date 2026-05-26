@@ -1,5 +1,23 @@
 import type { BindingSlot } from "#/binding";
-import type { ResolveOptions } from "#/types";
+import type { BindingTag, ResolveOptions } from "#/types";
+
+/** Shared core: build a ResolveOptions from already-normalised name + tags. */
+function buildOptions(
+  name: string | undefined,
+  tags: ReadonlyArray<BindingTag> | undefined,
+): ResolveOptions | undefined {
+  if (name === undefined && tags === undefined) {
+    return undefined;
+  }
+  const options: ResolveOptions = {};
+  if (name !== undefined) {
+    options.name = name;
+  }
+  if (tags !== undefined) {
+    options.tags = tags;
+  }
+  return options;
+}
 
 /**
  * Builds a {@link ResolveOptions} safe for `exactOptionalPropertyTypes`:
@@ -9,16 +27,9 @@ import type { ResolveOptions } from "#/types";
  */
 export function injectionSlotToResolveOptions(injectionSlot: {
   readonly name?: string;
-  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
+  readonly tags?: ReadonlyArray<BindingTag>;
 }): ResolveOptions | undefined {
-  const options: ResolveOptions = {};
-  if (injectionSlot.name !== undefined) {
-    options.name = injectionSlot.name;
-  }
-  if (injectionSlot.tags !== undefined) {
-    options.tags = injectionSlot.tags;
-  }
-  return options.name !== undefined || options.tags !== undefined ? options : undefined;
+  return buildOptions(injectionSlot.name, injectionSlot.tags);
 }
 
 /**
@@ -27,12 +38,5 @@ export function injectionSlotToResolveOptions(injectionSlot: {
  * @since 0.3.16-canary.0
  */
 export function bindingSlotToResolveOptions(bindingSlot: BindingSlot): ResolveOptions | undefined {
-  const options: ResolveOptions = {};
-  if (bindingSlot.name !== undefined) {
-    options.name = bindingSlot.name;
-  }
-  if (bindingSlot.tags.length > 0) {
-    options.tags = bindingSlot.tags;
-  }
-  return options.name !== undefined || options.tags !== undefined ? options : undefined;
+  return buildOptions(bindingSlot.name, bindingSlot.tags.length > 0 ? bindingSlot.tags : undefined);
 }
