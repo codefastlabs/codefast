@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "oxc.oxc-vscode",
-    "TypeScriptTeam.native-preview",
-    "bradlc.vscode-tailwindcss",
-    "EditorConfig.EditorConfig"
-  ]
-}
