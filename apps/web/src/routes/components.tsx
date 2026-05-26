@@ -2,6 +2,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { Badge } from "@codefast/ui/badge";
 import {
   Accordion,
   AccordionContent,
@@ -21,7 +22,6 @@ import {
   AlertDialogTrigger,
 } from "@codefast/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
-import { Badge } from "@codefast/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -77,19 +77,53 @@ import {
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
 import {
-  InfoIcon,
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  TerminalIcon,
   AlertTriangleIcon,
+  BoldIcon,
   ChevronRightIcon,
+  InfoIcon,
+  ItalicIcon,
+  TerminalIcon,
+  UnderlineIcon,
 } from "lucide-react";
+import { PreviewCard } from "#/components/PreviewCard";
 
 export const Route = createFileRoute("/components")({ component: ComponentsPage });
 
 /* -------------------------------------------------------------------------- */
-/* Helpers                                                                     */
+/* Shared section component                                                    */
+/* -------------------------------------------------------------------------- */
+
+interface SectionProps {
+  id: string;
+  label: string;
+  title: string;
+  description: string;
+  count: number;
+  children: React.ReactNode;
+}
+
+function Section({ id, label, title, description, count, children }: SectionProps) {
+  return (
+    <section id={id} className="mb-20">
+      <div className="mb-8 flex flex-col gap-3 border-b border-[var(--line)] pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="island-kicker mb-2">{label}</p>
+          <h2 className="display-title text-2xl font-bold text-[var(--sea-ink)]">{title}</h2>
+          <p className="mt-1.5 max-w-xl text-sm leading-6 text-[var(--sea-ink-soft)]">
+            {description}
+          </p>
+        </div>
+        <span className="w-fit shrink-0 rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--sea-ink-soft)] tabular-nums">
+          {count} components
+        </span>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page                                                                        */
 /* -------------------------------------------------------------------------- */
 
 const CATEGORIES = [
@@ -101,108 +135,175 @@ const CATEGORIES = [
   { id: "layout", label: "Layout" },
 ] as const;
 
-interface PreviewCardProps {
-  name: string;
-  path: string;
-  description: string;
-  children: React.ReactNode;
-  wide?: boolean;
-}
-
-function PreviewCard({ name, path, description, children, wide }: PreviewCardProps) {
-  return (
-    <div
-      className={`flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] ${wide ? "sm:col-span-2" : ""}`}
-    >
-      <div className="flex min-h-40 flex-1 items-center justify-center bg-[var(--chip-bg)] p-6">
-        {children}
-      </div>
-      <div className="border-t border-[var(--line)] px-4 py-3">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-[var(--sea-ink)]">{name}</p>
-          <code className="rounded border border-[var(--line)] bg-[var(--chip-bg)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--sea-ink-soft)]">
-            {path}
-          </code>
-        </div>
-        <p className="mt-0.5 text-xs leading-5 text-[var(--sea-ink-soft)]">{description}</p>
-      </div>
-    </div>
-  );
-}
-
-interface SectionProps {
-  id: string;
-  title: string;
-  description: string;
-  children: React.ReactNode;
-}
-
-function Section({ id, title, description, children }: SectionProps) {
-  return (
-    <section id={id} className="mb-20">
-      <div className="mb-8 border-b border-[var(--line)] pb-6">
-        <p className="island-kicker mb-2">{id}</p>
-        <h2 className="display-title text-2xl font-bold text-[var(--sea-ink)]">{title}</h2>
-        <p className="mt-1.5 text-sm leading-6 text-[var(--sea-ink-soft)]">{description}</p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* Page                                                                        */
-/* -------------------------------------------------------------------------- */
+const ALL_COMPONENTS = [
+  { name: "Accordion", category: "layout" },
+  { name: "Alert", category: "display" },
+  { name: "Alert Dialog", category: "overlay" },
+  { name: "Avatar", category: "display" },
+  { name: "Badge", category: "display" },
+  { name: "Breadcrumb", category: "navigation" },
+  { name: "Button", category: "form" },
+  { name: "Button Group", category: "form" },
+  { name: "Calendar", category: "form" },
+  { name: "Card", category: "layout" },
+  { name: "Carousel", category: "layout" },
+  { name: "Chart", category: "display" },
+  { name: "Checkbox", category: "form" },
+  { name: "Checkbox Cards", category: "form" },
+  { name: "Checkbox Group", category: "form" },
+  { name: "Collapsible", category: "layout" },
+  { name: "Command", category: "overlay" },
+  { name: "Context Menu", category: "overlay" },
+  { name: "Dialog", category: "overlay" },
+  { name: "Drawer", category: "overlay" },
+  { name: "Dropdown Menu", category: "overlay" },
+  { name: "Empty", category: "display" },
+  { name: "Field", category: "form" },
+  { name: "Form", category: "form" },
+  { name: "Hover Card", category: "overlay" },
+  { name: "Input", category: "form" },
+  { name: "Input Group", category: "form" },
+  { name: "Input Number", category: "form" },
+  { name: "Input OTP", category: "form" },
+  { name: "Input Password", category: "form" },
+  { name: "Input Search", category: "form" },
+  { name: "Kbd", category: "display" },
+  { name: "Label", category: "form" },
+  { name: "Menubar", category: "navigation" },
+  { name: "Native Select", category: "form" },
+  { name: "Navigation Menu", category: "navigation" },
+  { name: "Pagination", category: "navigation" },
+  { name: "Popover", category: "overlay" },
+  { name: "Progress", category: "feedback" },
+  { name: "Progress Circle", category: "feedback" },
+  { name: "Radio", category: "form" },
+  { name: "Radio Cards", category: "form" },
+  { name: "Radio Group", category: "form" },
+  { name: "Resizable", category: "layout" },
+  { name: "Scroll Area", category: "layout" },
+  { name: "Select", category: "form" },
+  { name: "Separator", category: "layout" },
+  { name: "Sheet", category: "overlay" },
+  { name: "Sidebar", category: "navigation" },
+  { name: "Skeleton", category: "feedback" },
+  { name: "Slider", category: "form" },
+  { name: "Sonner", category: "feedback" },
+  { name: "Spinner", category: "display" },
+  { name: "Switch", category: "form" },
+  { name: "Table", category: "layout" },
+  { name: "Tabs", category: "navigation" },
+  { name: "Textarea", category: "form" },
+  { name: "Toggle", category: "form" },
+  { name: "Toggle Group", category: "form" },
+  { name: "Tooltip", category: "overlay" },
+] as const;
 
 function ComponentsPage() {
   const [checked, setChecked] = useState(false);
   const [switched, setSwitched] = useState(true);
   const [sliderValue, setSliderValue] = useState([60]);
-  const [progress] = useState(68);
   const [radio, setRadio] = useState("comfortable");
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+
+  const countFor = (cat: string) => ALL_COMPONENTS.filter((c) => c.category === cat).length;
+
+  const filteredAll =
+    activeFilter === "all"
+      ? ALL_COMPONENTS
+      : ALL_COMPONENTS.filter((c) => c.category === activeFilter);
 
   return (
-    <main className="page-wrap px-4 pt-12 pb-24">
-      {/* Header */}
+    <main className="page-wrap px-4 pt-16 pb-32">
+      {/* ── Header ───────────────────────────────────────────────────── */}
       <section className="rise-in mb-16 max-w-2xl">
         <Badge variant="outline" className="mb-5 border-[var(--line)] text-[var(--sea-ink-soft)]">
           Components
         </Badge>
         <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-[var(--sea-ink)]">
-          60+ ready-to-use{" "}
+          {ALL_COMPONENTS.length}+ ready-to-use{" "}
           <span className="bg-gradient-to-br from-[var(--lagoon)] to-[var(--lagoon-deep)] bg-clip-text text-transparent">
             components.
           </span>
         </h1>
         <p className="text-[17px] leading-relaxed text-[var(--sea-ink-soft)]">
-          Built on Radix UI primitives, styled with Tailwind CSS v4. Every component is accessible,
-          composable, and fully typed — copy the source and own it.
+          Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named
+          sub-path import — no barrel files, no tree-shaking surprises, no config required.
         </p>
       </section>
 
-      {/* Category quick-nav */}
+      {/* ── Full component map ───────────────────────────────────────── */}
+      <section className="mb-16 rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)] p-6 sm:p-8">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-[var(--sea-ink)]">
+            All components
+            <span className="ml-2 font-normal text-[var(--sea-ink-soft)]">
+              · {filteredAll.length} shown
+            </span>
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {[{ id: "all", label: "All" }, ...CATEGORIES].map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setActiveFilter(id)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  activeFilter === id
+                    ? "bg-[var(--sea-ink)] text-[var(--bg-base)]"
+                    : "border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {filteredAll.map(({ name, category }) => (
+            <a
+              key={name}
+              href={`#${category}`}
+              className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--sea-ink-soft)] no-underline transition-colors hover:border-[var(--lagoon)] hover:text-[var(--sea-ink)]"
+            >
+              {name}
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Category quick-nav ──────────────────────────────────────── */}
       <nav className="mb-16 flex flex-wrap gap-2" aria-label="Component categories">
         {CATEGORIES.map(({ id, label }) => (
           <a
             key={id}
             href={`#${id}`}
-            className="rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-4 py-1.5 text-xs font-semibold text-[var(--sea-ink-soft)] no-underline transition-colors hover:border-[var(--lagoon)] hover:text-[var(--sea-ink)]"
+            className="flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-4 py-1.5 text-xs font-semibold text-[var(--sea-ink-soft)] no-underline transition-colors hover:border-[var(--lagoon)] hover:text-[var(--sea-ink)]"
           >
             {label}
+            <span className="tabular-nums opacity-60">{countFor(id)}</span>
           </a>
         ))}
       </nav>
 
-      {/* ── Display ─────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* DISPLAY                                                         */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       <Section
         id="display"
+        label="Display"
         title="Display"
-        description="Presentational components for surfacing information and state."
+        description="Presentational atoms for surfacing information, status, and identity. No interactivity required."
+        count={countFor("display")}
       >
         <PreviewCard
           name="Badge"
           path="@codefast/ui/badge"
-          description="Small status indicator with multiple variants."
+          description="Compact label for status, category, or count. Four variants cover most use cases."
+          code={`import { Badge } from "@codefast/ui/badge";
+
+<Badge>Default</Badge>
+<Badge variant="secondary">Secondary</Badge>
+<Badge variant="outline">Outline</Badge>
+<Badge variant="destructive">Destructive</Badge>`}
         >
           <div className="flex flex-wrap justify-center gap-2">
             <Badge>Default</Badge>
@@ -215,19 +316,35 @@ function ComponentsPage() {
         <PreviewCard
           name="Alert"
           path="@codefast/ui/alert"
-          description="Contextual message with icon, title, and description."
+          description="Contextual banner with icon, title, and body. Supports default and destructive variants."
           wide
+          code={`import { Alert, AlertTitle, AlertDescription } from "@codefast/ui/alert";
+import { InfoIcon, AlertTriangleIcon } from "lucide-react";
+
+<Alert>
+  <InfoIcon />
+  <AlertTitle>Heads up</AlertTitle>
+  <AlertDescription>
+    You can add components using the CLI.
+  </AlertDescription>
+</Alert>
+
+<Alert variant="destructive">
+  <AlertTriangleIcon />
+  <AlertTitle>Session expired</AlertTitle>
+  <AlertDescription>Please log in again.</AlertDescription>
+</Alert>`}
         >
           <div className="w-full max-w-sm space-y-3">
             <Alert>
               <InfoIcon />
               <AlertTitle>Heads up</AlertTitle>
-              <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
+              <AlertDescription>You can add components using the CLI.</AlertDescription>
             </Alert>
             <Alert variant="destructive">
               <AlertTriangleIcon />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+              <AlertTitle>Session expired</AlertTitle>
+              <AlertDescription>Please log in again.</AlertDescription>
             </Alert>
           </div>
         </PreviewCard>
@@ -235,17 +352,23 @@ function ComponentsPage() {
         <PreviewCard
           name="Avatar"
           path="@codefast/ui/avatar"
-          description="User avatar with image, fallback initials, and sizing."
+          description="User icon with image support and initials fallback. Compose with AvatarGroup for stacks."
+          code={`import { Avatar, AvatarImage, AvatarFallback } from "@codefast/ui/avatar";
+
+<Avatar>
+  <AvatarImage src="/avatar.png" alt="Vuong Phan" />
+  <AvatarFallback>VP</AvatarFallback>
+</Avatar>`}
         >
           <div className="flex items-center gap-3">
             <Avatar className="size-10">
               <AvatarFallback>VP</AvatarFallback>
             </Avatar>
-            <Avatar className="size-10 bg-[var(--lagoon)] text-white">
-              <AvatarFallback>JD</AvatarFallback>
+            <Avatar className="size-10">
+              <AvatarFallback className="bg-[var(--lagoon)] text-white">JD</AvatarFallback>
             </Avatar>
-            <Avatar className="size-10 bg-[var(--palm)] text-white">
-              <AvatarFallback>AS</AvatarFallback>
+            <Avatar className="size-10">
+              <AvatarFallback className="bg-violet-500 text-white">AS</AvatarFallback>
             </Avatar>
             <Avatar className="size-8">
               <AvatarFallback className="text-xs">SM</AvatarFallback>
@@ -256,23 +379,47 @@ function ComponentsPage() {
         <PreviewCard
           name="Skeleton"
           path="@codefast/ui/skeleton"
-          description="Animated loading placeholder for any content shape."
+          description="Animated shimmer placeholder. Match the shape of content while it loads."
+          code={`import { Skeleton } from "@codefast/ui/skeleton";
+
+// Card skeleton
+<div className="flex gap-3">
+  <Skeleton className="size-10 rounded-full shrink-0" />
+  <div className="flex-1 space-y-2">
+    <Skeleton className="h-3 w-3/4 rounded-full" />
+    <Skeleton className="h-3 w-1/2 rounded-full" />
+  </div>
+</div>`}
         >
-          <div className="flex w-full max-w-xs items-center gap-3">
-            <Skeleton className="size-10 shrink-0 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3 w-3/4 rounded-full" />
-              <Skeleton className="h-3 w-1/2 rounded-full" />
+          <div className="w-full max-w-xs rounded-xl bg-[var(--surface)] p-4 shadow-sm ring-1 ring-[var(--line)]">
+            <div className="mb-3 flex items-center gap-3">
+              <Skeleton className="size-10 shrink-0 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3 w-3/4 rounded-full" />
+                <Skeleton className="h-3 w-1/2 rounded-full" />
+              </div>
             </div>
+            <Skeleton className="h-2.5 w-full rounded-full" />
+            <Skeleton className="mt-2 h-2.5 w-5/6 rounded-full" />
+            <Skeleton className="mt-2 h-2.5 w-4/6 rounded-full" />
           </div>
         </PreviewCard>
 
         <PreviewCard
           name="Spinner"
           path="@codefast/ui/spinner"
-          description="Indeterminate loading indicator with configurable size."
+          description="Indeterminate loading indicator. Wrap children — shown when loading is false."
+          code={`import { Spinner } from "@codefast/ui/spinner";
+
+// Standalone
+<Spinner className="size-5" />
+
+// Wrapping content — hides children while loading
+<Spinner loading={isLoading}>
+  <span>Loaded content</span>
+</Spinner>`}
         >
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-6">
             <Spinner className="size-4" />
             <Spinner className="size-6" />
             <Spinner className="size-8" />
@@ -282,7 +429,22 @@ function ComponentsPage() {
         <PreviewCard
           name="Kbd"
           path="@codefast/ui/kbd"
-          description="Keyboard shortcut display with styled key combos."
+          description="Keyboard shortcut display. Use KbdGroup to compose multi-key combos."
+          code={`import { Kbd, KbdGroup } from "@codefast/ui/kbd";
+
+// Single key
+<Kbd>⌘</Kbd>
+
+// Combo
+<KbdGroup>
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>
+
+// Tooltip integration
+<TooltipContent>
+  Open palette <KbdGroup><Kbd>⌘</Kbd><Kbd>K</Kbd></KbdGroup>
+</TooltipContent>`}
         >
           <div className="flex flex-col items-center gap-3">
             <KbdGroup>
@@ -298,27 +460,62 @@ function ComponentsPage() {
         </PreviewCard>
       </Section>
 
-      {/* ── Form ────────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* FORM                                                            */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       <Section
         id="form"
+        label="Form"
         title="Form"
-        description="Input primitives for collecting user data — all keyboard and screen-reader accessible."
+        description="Input primitives and controls for collecting user data. All keyboard-accessible and screen-reader ready."
+        count={countFor("form")}
       >
         <PreviewCard
           name="Input"
           path="@codefast/ui/input"
-          description="Text input field with focus ring and disabled state."
+          description="Text input with focus ring, disabled state, and file input styling."
+          code={`import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+
+<div className="grid gap-1.5">
+  <Label htmlFor="email">Email address</Label>
+  <Input id="email" type="email" placeholder="you@example.com" />
+</div>
+
+// With error state
+<Input aria-invalid="true" placeholder="Invalid input" />`}
         >
-          <Input placeholder="Enter your email…" className="max-w-xs" type="email" />
+          <div className="w-full max-w-xs space-y-3">
+            <div className="grid gap-1.5">
+              <Label>Email address</Label>
+              <Input type="email" placeholder="you@example.com" />
+            </div>
+            <div className="grid gap-1.5">
+              <Label>Password</Label>
+              <Input type="password" placeholder="••••••••" />
+            </div>
+          </div>
         </PreviewCard>
 
         <PreviewCard
           name="Textarea"
           path="@codefast/ui/textarea"
-          description="Multiline text input with auto-resize support."
+          description="Multiline text input. Pair with Label and field utilities for accessible forms."
+          code={`import { Textarea } from "@codefast/ui/textarea";
+import { Label } from "@codefast/ui/label";
+
+<div className="grid gap-1.5">
+  <Label htmlFor="bio">Bio</Label>
+  <Textarea
+    id="bio"
+    placeholder="Tell us about yourself…"
+    className="resize-none"
+    rows={4}
+  />
+</div>`}
         >
           <Textarea
-            placeholder="Tell us a bit about yourself…"
+            placeholder="Tell us about yourself…"
             className="max-w-xs resize-none"
             rows={3}
           />
@@ -327,11 +524,29 @@ function ComponentsPage() {
         <PreviewCard
           name="Select"
           path="@codefast/ui/select"
-          description="Accessible dropdown selector built on Radix Select."
+          description="Accessible dropdown selector. Supports groups, disabled options, and custom triggers."
+          code={`import {
+  Select, SelectContent, SelectGroup,
+  SelectItem, SelectLabel, SelectTrigger, SelectValue,
+} from "@codefast/ui/select";
+
+<Select>
+  <SelectTrigger className="w-44">
+    <SelectValue placeholder="Choose framework" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectLabel>Frontend</SelectLabel>
+      <SelectItem value="react">React</SelectItem>
+      <SelectItem value="vue">Vue</SelectItem>
+      <SelectItem value="svelte">Svelte</SelectItem>
+    </SelectGroup>
+  </SelectContent>
+</Select>`}
         >
           <Select>
             <SelectTrigger className="w-44">
-              <SelectValue placeholder="Pick a framework" />
+              <SelectValue placeholder="Choose framework" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="react">React</SelectItem>
@@ -345,22 +560,35 @@ function ComponentsPage() {
         <PreviewCard
           name="Checkbox"
           path="@codefast/ui/checkbox"
-          description="Binary on/off control with indeterminate state support."
+          description="Binary control with indeterminate state. Controlled or uncontrolled via onCheckedChange."
+          code={`import { Checkbox } from "@codefast/ui/checkbox";
+import { Label } from "@codefast/ui/label";
+
+// Uncontrolled
+<div className="flex items-center gap-2">
+  <Checkbox id="terms" />
+  <Label htmlFor="terms">Accept terms</Label>
+</div>
+
+// Controlled
+const [checked, setChecked] = useState(false);
+<Checkbox
+  checked={checked}
+  onCheckedChange={(v) => setChecked(!!v)}
+/>`}
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <Checkbox id="terms" checked={checked} onCheckedChange={(v) => setChecked(!!v)} />
-              <Label htmlFor="terms">Accept terms and conditions</Label>
+              <Checkbox id="c1" checked={checked} onCheckedChange={(v) => setChecked(!!v)} />
+              <Label htmlFor="c1">Accept terms and conditions</Label>
             </div>
             <div className="flex items-center gap-2">
-              <Checkbox id="newsletter" defaultChecked />
-              <Label htmlFor="newsletter">Subscribe to newsletter</Label>
+              <Checkbox id="c2" defaultChecked />
+              <Label htmlFor="c2">Subscribe to newsletter</Label>
             </div>
-            <div className="flex items-center gap-2">
-              <Checkbox id="disabled" disabled />
-              <Label htmlFor="disabled" className="opacity-50">
-                Disabled option
-              </Label>
+            <div className="flex items-center gap-2 opacity-50">
+              <Checkbox id="c3" disabled />
+              <Label htmlFor="c3">Disabled option</Label>
             </div>
           </div>
         </PreviewCard>
@@ -368,7 +596,22 @@ function ComponentsPage() {
         <PreviewCard
           name="Radio Group"
           path="@codefast/ui/radio-group"
-          description="Single-selection group built on Radix RadioGroup."
+          description="Single-selection group. Use value + onValueChange for controlled behaviour."
+          code={`import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Label } from "@codefast/ui/label";
+
+<RadioGroup
+  value={density}
+  onValueChange={setDensity}
+  className="gap-3"
+>
+  {["compact", "comfortable", "spacious"].map((v) => (
+    <div key={v} className="flex items-center gap-2">
+      <RadioGroupItem value={v} id={v} />
+      <Label htmlFor={v} className="capitalize">{v}</Label>
+    </div>
+  ))}
+</RadioGroup>`}
         >
           <RadioGroup value={radio} onValueChange={setRadio} className="gap-3">
             {["compact", "comfortable", "spacious"].map((v) => (
@@ -385,16 +628,31 @@ function ComponentsPage() {
         <PreviewCard
           name="Switch"
           path="@codefast/ui/switch"
-          description="Toggle control for boolean settings."
+          description="Toggle control for boolean settings. Fires onCheckedChange with the new boolean value."
+          code={`import { Switch } from "@codefast/ui/switch";
+import { Label } from "@codefast/ui/label";
+
+const [enabled, setEnabled] = useState(true);
+
+<div className="flex items-center gap-3">
+  <Switch
+    id="notifications"
+    checked={enabled}
+    onCheckedChange={setEnabled}
+  />
+  <Label htmlFor="notifications">
+    Notifications {enabled ? "on" : "off"}
+  </Label>
+</div>`}
         >
-          <div className="flex flex-col gap-4">
+          <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Switch id="notifications" checked={switched} onCheckedChange={setSwitched} />
-              <Label htmlFor="notifications">Notifications {switched ? "on" : "off"}</Label>
+              <Switch id="sw1" checked={switched} onCheckedChange={setSwitched} />
+              <Label htmlFor="sw1">Notifications {switched ? "on" : "off"}</Label>
             </div>
             <div className="flex items-center gap-3">
-              <Switch id="dark-mode" defaultChecked />
-              <Label htmlFor="dark-mode">Dark mode</Label>
+              <Switch id="sw2" defaultChecked />
+              <Label htmlFor="sw2">Marketing emails</Label>
             </div>
           </div>
         </PreviewCard>
@@ -402,7 +660,22 @@ function ComponentsPage() {
         <PreviewCard
           name="Slider"
           path="@codefast/ui/slider"
-          description="Range input with keyboard support and custom step."
+          description="Range input with keyboard support. Supports min, max, step, and multiple thumbs."
+          code={`import { Slider } from "@codefast/ui/slider";
+
+const [value, setValue] = useState([60]);
+
+<Slider
+  value={value}
+  onValueChange={setValue}
+  max={100}
+  step={1}
+  className="w-full"
+/>
+<p className="text-sm">{value[0]}%</p>
+
+// Range (two thumbs)
+<Slider defaultValue={[20, 80]} max={100} step={5} />`}
         >
           <div className="w-full max-w-xs space-y-3">
             <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
@@ -415,7 +688,22 @@ function ComponentsPage() {
         <PreviewCard
           name="Toggle"
           path="@codefast/ui/toggle"
-          description="Pressable button that alternates between active and inactive."
+          description="Pressable button with active/inactive state. Use ToggleGroup for exclusive selection."
+          code={`import { Toggle } from "@codefast/ui/toggle";
+import { BoldIcon, ItalicIcon } from "lucide-react";
+
+// Icon toggles
+<div className="flex gap-1">
+  <Toggle aria-label="Bold"><BoldIcon /></Toggle>
+  <Toggle aria-label="Italic" defaultPressed>
+    <ItalicIcon />
+  </Toggle>
+</div>
+
+// With text
+<Toggle variant="outline">
+  <BoldIcon /> Bold
+</Toggle>`}
         >
           <div className="flex gap-1">
             <Toggle aria-label="Bold" size="sm">
@@ -431,17 +719,39 @@ function ComponentsPage() {
         </PreviewCard>
       </Section>
 
-      {/* ── Navigation ──────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* NAVIGATION                                                      */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       <Section
         id="navigation"
+        label="Navigation"
         title="Navigation"
-        description="Components for moving between views, routes, and pages."
+        description="Components for moving between views, routes, and pages. Built for keyboard and screen-reader users."
+        count={countFor("navigation")}
       >
         <PreviewCard
           name="Tabs"
           path="@codefast/ui/tabs"
-          description="Accessible tabbed interface built on Radix Tabs."
+          description="Accessible tabbed interface. Automatic or manual activation via activationMode."
           wide
+          code={`import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+
+<Tabs defaultValue="preview">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+    <TabsTrigger value="docs">Docs</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    Live render goes here.
+  </TabsContent>
+  <TabsContent value="code">
+    <pre><code>{"<Button>Click me</Button>"}</code></pre>
+  </TabsContent>
+  <TabsContent value="docs">
+    API reference.
+  </TabsContent>
+</Tabs>`}
         >
           <Tabs defaultValue="preview" className="w-full max-w-sm">
             <TabsList>
@@ -455,11 +765,10 @@ function ComponentsPage() {
             >
               Live component preview renders here.
             </TabsContent>
-            <TabsContent
-              value="code"
-              className="mt-3 rounded-lg border border-[var(--line)] bg-[var(--code-surface)] p-4 font-mono text-xs text-[#b2e8e4]"
-            >
-              {`<Button variant="outline">Click me</Button>`}
+            <TabsContent value="code" className="mt-3 overflow-hidden rounded-lg">
+              <pre className="bg-[var(--code-surface)] p-4 font-mono text-xs text-[var(--code-text)]">
+                <code>{`<Button variant="outline">Click me</Button>`}</code>
+              </pre>
             </TabsContent>
             <TabsContent
               value="docs"
@@ -473,7 +782,32 @@ function ComponentsPage() {
         <PreviewCard
           name="Breadcrumb"
           path="@codefast/ui/breadcrumb"
-          description="Hierarchical location trail for multi-level navigation."
+          description="Hierarchical location trail. Supports custom separators, ellipsis, and asChild links."
+          code={`import {
+  Breadcrumb, BreadcrumbItem, BreadcrumbLink,
+  BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
+} from "@codefast/ui/breadcrumb";
+import { ChevronRightIcon } from "lucide-react";
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator>
+      <ChevronRightIcon />
+    </BreadcrumbSeparator>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/docs">Docs</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator>
+      <ChevronRightIcon />
+    </BreadcrumbSeparator>
+    <BreadcrumbItem>
+      <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>`}
         >
           <Breadcrumb>
             <BreadcrumbList>
@@ -499,7 +833,32 @@ function ComponentsPage() {
         <PreviewCard
           name="Pagination"
           path="@codefast/ui/pagination"
-          description="Page navigation controls with previous, next, and ellipsis."
+          description="Page navigation with prev/next, ellipsis, and active page. Compose with your router."
+          code={`import {
+  Pagination, PaginationContent, PaginationEllipsis,
+  PaginationItem, PaginationLink,
+  PaginationNext, PaginationPrevious,
+} from "@codefast/ui/pagination";
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="?page=1" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?page=1">1</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?page=2" isActive>2</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationEllipsis />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="?page=3" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>`}
         >
           <Pagination>
             <PaginationContent>
@@ -528,16 +887,47 @@ function ComponentsPage() {
         </PreviewCard>
       </Section>
 
-      {/* ── Overlay ─────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* OVERLAY                                                         */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       <Section
         id="overlay"
+        label="Overlay"
         title="Overlay"
-        description="Floating UI elements — modals, tooltips, popovers, and menus."
+        description="Floating UI: modals, popovers, menus, and tooltips. All trap focus and close on Escape."
+        count={countFor("overlay")}
       >
         <PreviewCard
           name="Dialog"
           path="@codefast/ui/dialog"
-          description="Modal window with focus trap, backdrop, and animation."
+          description="Modal window with focus trap, backdrop blur, and accessible close. Use AlertDialog for destructive confirms."
+          code={`import {
+  Dialog, DialogContent, DialogDescription,
+  DialogHeader, DialogTitle, DialogTrigger,
+} from "@codefast/ui/dialog";
+import { Button } from "@codefast/ui/button";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Edit profile</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Edit profile</DialogTitle>
+      <DialogDescription>
+        Changes are saved automatically.
+      </DialogDescription>
+    </DialogHeader>
+    <div className="grid gap-3 py-2">
+      <div className="grid gap-1.5">
+        <Label htmlFor="name">Name</Label>
+        <Input id="name" defaultValue="Vuong Phan" />
+      </div>
+    </div>
+  </DialogContent>
+</Dialog>`}
         >
           <Dialog>
             <DialogTrigger asChild>
@@ -546,9 +936,7 @@ function ComponentsPage() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Edit profile</DialogTitle>
-                <DialogDescription>
-                  Make changes to your profile here. Click save when you're done.
-                </DialogDescription>
+                <DialogDescription>Make changes here. Click save when done.</DialogDescription>
               </DialogHeader>
               <div className="grid gap-3 py-2">
                 <div className="grid gap-1.5">
@@ -556,11 +944,11 @@ function ComponentsPage() {
                   <Input id="dialog-name" defaultValue="Vuong Phan" />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="dialog-username">Username</Label>
-                  <Input id="dialog-username" defaultValue="@vuongphan" />
+                  <Label htmlFor="dialog-user">Username</Label>
+                  <Input id="dialog-user" defaultValue="@vuongphan" />
                 </div>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-1">
                 <Button variant="outline" size="sm">
                   Cancel
                 </Button>
@@ -573,7 +961,27 @@ function ComponentsPage() {
         <PreviewCard
           name="Tooltip"
           path="@codefast/ui/tooltip"
-          description="Hover label revealing additional context for an element."
+          description="Hover label with delay and side placement control. Supports rich content including Kbd."
+          code={`import {
+  Tooltip, TooltipContent,
+  TooltipProvider, TooltipTrigger,
+} from "@codefast/ui/tooltip";
+import { Kbd, KbdGroup } from "@codefast/ui/kbd";
+
+// Wrap your app (or layout) once
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="outline">Hover me</Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Open command palette</p>
+      <KbdGroup>
+        <Kbd>⌘</Kbd><Kbd>K</Kbd>
+      </KbdGroup>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>`}
         >
           <TooltipProvider>
             <div className="flex gap-3">
@@ -610,20 +1018,34 @@ function ComponentsPage() {
         <PreviewCard
           name="Popover"
           path="@codefast/ui/popover"
-          description="Non-modal floating panel anchored to a trigger element."
+          description="Non-modal floating panel anchored to a trigger. Use for settings panels and pickers."
+          code={`import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { Button } from "@codefast/ui/button";
+
+<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="outline">Open</Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-64">
+    <div className="grid gap-4">
+      <p className="text-sm font-medium">Dimensions</p>
+      <div className="grid gap-2">
+        <div className="grid grid-cols-3 items-center gap-3">
+          <Label>Width</Label>
+          <Input defaultValue="100%" className="col-span-2 h-7 text-xs" />
+        </div>
+      </div>
+    </div>
+  </PopoverContent>
+</Popover>`}
         >
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">Open popover</Button>
             </PopoverTrigger>
-            <PopoverContent className="w-64">
+            <PopoverContent className="w-56">
               <div className="grid gap-3">
-                <div>
-                  <h4 className="text-sm font-semibold text-[var(--sea-ink)]">Dimensions</h4>
-                  <p className="text-xs text-[var(--sea-ink-soft)]">
-                    Set the container dimensions.
-                  </p>
-                </div>
+                <p className="text-sm font-medium text-[var(--sea-ink)]">Dimensions</p>
                 <div className="grid gap-2">
                   <div className="grid grid-cols-3 items-center gap-3">
                     <Label className="text-xs">Width</Label>
@@ -642,7 +1064,30 @@ function ComponentsPage() {
         <PreviewCard
           name="Dropdown Menu"
           path="@codefast/ui/dropdown-menu"
-          description="Contextual action menu with keyboard navigation support."
+          description="Contextual action menu with keyboard navigation, shortcuts, checkboxes, and radio groups."
+          code={`import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuLabel, DropdownMenuSeparator,
+  DropdownMenuShortcut, DropdownMenuTrigger,
+} from "@codefast/ui/dropdown-menu";
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline">Open</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent className="w-48">
+    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>
+      Profile <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+    </DropdownMenuItem>
+    <DropdownMenuItem>Settings</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem className="text-destructive">
+      Log out <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>`}
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -652,40 +1097,59 @@ function ComponentsPage() {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                Profile
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                Profile<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                Settings
-                <DropdownMenuShortcut>⌘,</DropdownMenuShortcut>
+                Settings<DropdownMenuShortcut>⌘,</DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-destructive">
-                Log out
-                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                Log out<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </PreviewCard>
       </Section>
 
-      {/* ── Feedback ────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* FEEDBACK                                                        */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       <Section
         id="feedback"
+        label="Feedback"
         title="Feedback"
-        description="Components that communicate status, confirm actions, and show async state."
+        description="Status indicators, confirmations, and loading states that communicate async operations to users."
+        count={countFor("feedback")}
       >
         <PreviewCard
           name="Progress"
           path="@codefast/ui/progress"
-          description="Determinate progress bar tracking completion percentage."
+          description="Determinate progress bar. Pass value 0–100. Colour via className on the indicator slot."
+          code={`import { Progress } from "@codefast/ui/progress";
+
+// Basic
+<Progress value={68} />
+
+// Custom colour via data-slot
+<Progress
+  value={33}
+  className="[&_[data-slot=progress-indicator]]:bg-amber-500"
+/>
+
+// Success state
+<Progress
+  value={100}
+  className="[&_[data-slot=progress-indicator]]:bg-emerald-500"
+/>`}
         >
           <div className="w-full max-w-xs space-y-3">
-            <Progress value={progress} />
-            <div className="flex justify-between text-xs text-[var(--sea-ink-soft)]">
-              <span>Uploading…</span>
-              <span>{progress}%</span>
+            <div>
+              <div className="mb-1.5 flex justify-between text-xs text-[var(--sea-ink-soft)]">
+                <span>Uploading…</span>
+                <span>68%</span>
+              </div>
+              <Progress value={68} />
             </div>
             <Progress value={33} className="[&_[data-slot=progress-indicator]]:bg-amber-500" />
             <Progress value={100} className="[&_[data-slot=progress-indicator]]:bg-emerald-500" />
@@ -695,7 +1159,31 @@ function ComponentsPage() {
         <PreviewCard
           name="Alert Dialog"
           path="@codefast/ui/alert-dialog"
-          description="Blocking confirmation modal that requires an explicit user decision."
+          description="Blocking confirmation modal requiring an explicit decision. Backs the browser back button."
+          code={`import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader,
+  AlertDialogTitle, AlertDialogTrigger,
+} from "@codefast/ui/alert-dialog";
+
+<AlertDialog>
+  <AlertDialogTrigger asChild>
+    <Button variant="destructive">Delete account</Button>
+  </AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This cannot be undone.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction>Continue</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>`}
         >
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -707,13 +1195,12 @@ function ComponentsPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your account and remove
-                  your data from our servers.
+                  This action cannot be undone. Your account will be permanently deleted.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Continue</AlertDialogAction>
+                <AlertDialogAction>Delete</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -722,34 +1209,73 @@ function ComponentsPage() {
         <PreviewCard
           name="Skeleton"
           path="@codefast/ui/skeleton"
-          description="Shimmer placeholder for content that's still loading."
+          description="Shimmer placeholder for any shape of content — cards, text lines, avatars."
           wide
+          code={`import { Skeleton } from "@codefast/ui/skeleton";
+
+// Article card skeleton
+<div className="grid gap-4 sm:grid-cols-2">
+  {[1, 2].map((i) => (
+    <div key={i} className="space-y-2">
+      <Skeleton className="h-32 w-full rounded-xl" />
+      <Skeleton className="h-3 w-3/4 rounded-full" />
+      <Skeleton className="h-3 w-1/2 rounded-full" />
+    </div>
+  ))}
+</div>`}
         >
-          <div className="grid w-full max-w-sm gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Skeleton className="h-32 w-full rounded-xl" />
-              <Skeleton className="h-3 w-3/4 rounded-full" />
-              <Skeleton className="h-3 w-1/2 rounded-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-32 w-full rounded-xl" />
-              <Skeleton className="h-3 w-2/3 rounded-full" />
-              <Skeleton className="h-3 w-5/6 rounded-full" />
-            </div>
+          <div className="grid w-full max-w-lg gap-4 sm:grid-cols-2">
+            {[0, 1].map((i) => (
+              <div
+                key={i}
+                className="rounded-xl bg-[var(--surface)] p-3 shadow-sm ring-1 ring-[var(--line)]"
+              >
+                <Skeleton className="mb-3 h-24 w-full rounded-lg" />
+                <div className="mb-3 flex items-center gap-2">
+                  <Skeleton className="size-7 shrink-0 rounded-full" />
+                  <Skeleton className="h-2.5 w-24 rounded-full" />
+                </div>
+                <Skeleton className="h-2 w-3/4 rounded-full" />
+                <Skeleton className="mt-1.5 h-2 w-1/2 rounded-full" />
+              </div>
+            ))}
           </div>
         </PreviewCard>
       </Section>
 
-      {/* ── Layout ──────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* LAYOUT                                                          */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       <Section
         id="layout"
+        label="Layout"
         title="Layout"
-        description="Structural components for organizing and containing content."
+        description="Structural components for organising and containing content. Compose freely with any child."
+        count={countFor("layout")}
       >
         <PreviewCard
           name="Card"
           path="@codefast/ui/card"
-          description="Elevated surface grouping related content with header and body."
+          description="Elevated surface for grouping related content. Compose Header, Content, and Footer slots freely."
+          code={`import {
+  Card, CardContent, CardDescription,
+  CardFooter, CardHeader, CardTitle,
+} from "@codefast/ui/card";
+
+<Card>
+  <CardHeader>
+    <CardTitle>Team plan</CardTitle>
+    <CardDescription>Up to 20 seats, unlimited projects.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p className="text-2xl font-bold">
+      $49<span className="text-sm font-normal text-muted-foreground">/mo</span>
+    </p>
+  </CardContent>
+  <CardFooter>
+    <Button className="w-full">Upgrade now</Button>
+  </CardFooter>
+</Card>`}
         >
           <Card className="w-full max-w-xs">
             <CardHeader>
@@ -770,27 +1296,45 @@ function ComponentsPage() {
         <PreviewCard
           name="Accordion"
           path="@codefast/ui/accordion"
-          description="Expandable sections for progressive disclosure of content."
+          description="Expandable sections with smooth animation. Supports single or multiple open items."
           wide
+          code={`import {
+  Accordion, AccordionContent,
+  AccordionItem, AccordionTrigger,
+} from "@codefast/ui/accordion";
+
+// Single open at a time
+<Accordion type="single" collapsible>
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Is it accessible?</AccordionTrigger>
+    <AccordionContent>
+      Yes. Follows the WAI-ARIA disclosure pattern.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+
+// Multiple open simultaneously
+<Accordion type="multiple">
+  ...
+</Accordion>`}
         >
           <Accordion type="single" collapsible className="w-full max-w-sm">
-            <AccordionItem value="item-1">
+            <AccordionItem value="q1">
               <AccordionTrigger>Is it accessible?</AccordionTrigger>
               <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern and supports full keyboard
-                navigation.
+                Yes. It follows the WAI-ARIA design pattern with full keyboard navigation.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-2">
-              <AccordionTrigger>Is it styled?</AccordionTrigger>
+            <AccordionItem value="q2">
+              <AccordionTrigger>Can I customise styles?</AccordionTrigger>
               <AccordionContent>
-                Yes. It comes with default styles that match the rest of the component library.
+                Yes. Every component exposes a className prop and you own the source.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-3">
-              <AccordionTrigger>Can I customise it?</AccordionTrigger>
+            <AccordionItem value="q3">
+              <AccordionTrigger>Does it work with SSR?</AccordionTrigger>
               <AccordionContent>
-                Yes. Every component exposes a <code>className</code> prop and you own the source.
+                Yes. All components render server-side with no hydration issues.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -799,14 +1343,25 @@ function ComponentsPage() {
         <PreviewCard
           name="Separator"
           path="@codefast/ui/separator"
-          description="Horizontal or vertical divider between content regions."
+          description="Semantic horizontal or vertical divider. Renders as hr with role=separator."
+          code={`import { Separator } from "@codefast/ui/separator";
+
+// Horizontal (default)
+<Separator />
+
+// Vertical
+<div className="flex h-5 items-center gap-4 text-sm">
+  <span>Blog</span>
+  <Separator orientation="vertical" />
+  <span>Docs</span>
+  <Separator orientation="vertical" />
+  <span>GitHub</span>
+</div>`}
         >
           <div className="w-full max-w-xs">
             <div className="space-y-1">
-              <h4 className="text-sm font-medium text-[var(--sea-ink)]">@codefast/ui</h4>
-              <p className="text-xs text-[var(--sea-ink-soft)]">
-                An open-source UI component library.
-              </p>
+              <p className="text-sm font-medium text-[var(--sea-ink)]">@codefast/ui</p>
+              <p className="text-xs text-[var(--sea-ink-soft)]">Open-source React components.</p>
             </div>
             <Separator className="my-4" />
             <div className="flex items-center gap-4 text-xs text-[var(--sea-ink-soft)]">
@@ -822,10 +1377,25 @@ function ComponentsPage() {
         <PreviewCard
           name="Scroll Area"
           path="@codefast/ui/scroll-area"
-          description="Custom-styled scrollable container with overflow clipping."
+          description="Custom-styled scrollbar that matches your design system. Hides native OS scrollbars."
+          code={`import { ScrollArea } from "@codefast/ui/scroll-area";
+
+// Fixed-height scrollable list
+<ScrollArea className="h-48 rounded-xl border p-4">
+  {items.map((item) => (
+    <div key={item} className="text-sm py-1">
+      {item}
+    </div>
+  ))}
+</ScrollArea>
+
+// Horizontal scroll
+<ScrollArea className="w-64" orientation="horizontal">
+  <div className="flex gap-4 pb-2">...</div>
+</ScrollArea>`}
         >
           <ScrollArea className="h-36 w-48 rounded-xl border border-[var(--line)] p-3">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {[
                 "Accordion",
                 "Alert",
