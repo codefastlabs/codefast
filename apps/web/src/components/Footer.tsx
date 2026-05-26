@@ -1,41 +1,83 @@
+import { Link } from "@tanstack/react-router";
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t border-[var(--line)] px-4 pt-10 pb-14 text-[var(--sea-ink-soft)]">
-      <div className="page-wrap flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-        <p className="m-0 text-sm">&copy; {year} Your name here. All rights reserved.</p>
-        <p className="island-kicker m-0">Built with TanStack Start</p>
-      </div>
-      <div className="mt-4 flex justify-center gap-4">
-        <a
-          href="https://x.com/tan_stack"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-        >
-          <span className="sr-only">Follow TanStack on X</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-            <path
-              fill="currentColor"
-              d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z"
-            />
-          </svg>
-        </a>
-        <a
-          href="https://github.com/TanStack"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-        >
-          <span className="sr-only">Go to TanStack GitHub</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-            <path
-              fill="currentColor"
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-            />
-          </svg>
-        </a>
+    <footer className="site-footer px-4 py-16">
+      <div className="page-wrap">
+        <div className="mb-10 flex flex-col gap-8 sm:flex-row sm:justify-between">
+          {/* Brand */}
+          <div className="max-w-xs">
+            <p className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              codefast<span className="text-[var(--lagoon)]">/ui</span>
+            </p>
+            <p className="text-sm leading-6 text-[var(--sea-ink-soft)]">
+              Accessible, composable React components built on Radix UI and Tailwind CSS v4.
+            </p>
+          </div>
+
+          {/* Links */}
+          <div className="flex gap-16 text-sm">
+            <div className="flex flex-col gap-3">
+              <p className="text-xs font-semibold tracking-widest text-[var(--sea-ink-soft)] uppercase">
+                Library
+              </p>
+              <Link
+                to="/"
+                className="text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              >
+                Home
+              </Link>
+              <Link
+                to="/components"
+                className="text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              >
+                Components
+              </Link>
+              <Link
+                to="/about"
+                className="text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              >
+                Getting Started
+              </Link>
+            </div>
+            <div className="flex flex-col gap-3">
+              <p className="text-xs font-semibold tracking-widest text-[var(--sea-ink-soft)] uppercase">
+                Resources
+              </p>
+              <a
+                href="https://github.com/codefastlabs/codefast"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://github.com/codefastlabs/codefast/issues"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              >
+                Issues
+              </a>
+              <a
+                href="https://www.npmjs.com/package/@codefast/ui"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              >
+                npm
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1 border-t border-[var(--line)] pt-6 text-xs text-[var(--sea-ink-soft)] sm:flex-row sm:justify-between">
+          <p>&copy; {year} Codefast Labs. Released under the MIT License.</p>
+          <p>Built with TanStack Start · Tailwind CSS v4 · React 19</p>
+        </div>
       </div>
     </footer>
   );
