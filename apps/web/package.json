@@ -13,6 +13,9 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@codefast/tailwind-variants": "workspace:*",
+    "@codefast/theme": "workspace:*",
+    "@codefast/ui": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-devtools": "catalog:",
     "@tanstack/react-router": "catalog:",
@@ -24,9 +27,11 @@
     "nitro": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "catalog:"
   },
   "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "catalog:",
     "@testing-library/dom": "catalog:",

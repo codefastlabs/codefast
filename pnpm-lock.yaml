@@ -377,6 +377,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@codefast/tailwind-variants':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-variants
+      '@codefast/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
+      '@codefast/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.0(vite@8.0.14(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)(yaml@2.9.0))
@@ -413,7 +422,13 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.0
+      tw-animate-css:
+        specifier: 'catalog:'
+        version: 1.4.0
     devDependencies:
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.19(tailwindcss@4.3.0)
