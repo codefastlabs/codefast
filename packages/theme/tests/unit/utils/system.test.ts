@@ -1,5 +1,6 @@
 import { DEFAULT_RESOLVED_THEME } from "#/constants";
 import { getSystemTheme, resolveTheme } from "#/utils/system";
+import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 
 describe("System Theme Detection", () => {
   const originalMatchMedia = window.matchMedia;
@@ -14,37 +15,15 @@ describe("System Theme Detection", () => {
 
   describe("getSystemTheme", () => {
     test('should return "dark" when system prefers dark mode', () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation((query: string) => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: query === "(prefers-color-scheme: dark)",
-          media: query,
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia((query) =>
+        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
+      );
 
       expect(getSystemTheme()).toBe("dark");
     });
 
     test('should return "light" when system prefers light mode', () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation((query: string) => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: false, // prefers-color-scheme: dark does NOT match
-          media: query,
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia((query) => createMockMediaQueryList(false, query));
 
       expect(getSystemTheme()).toBe("light");
     });
@@ -66,37 +45,15 @@ describe("System Theme Detection", () => {
     });
 
     test('should resolve "system" to system preference (light)', () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation(() => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: false, // light mode
-          media: "",
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
       expect(resolveTheme("system")).toBe("light");
     });
 
     test('should resolve "system" to system preference (dark)', () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation((query: string) => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: query === "(prefers-color-scheme: dark)",
-          media: query,
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia((query) =>
+        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
+      );
 
       expect(resolveTheme("system")).toBe("dark");
     });

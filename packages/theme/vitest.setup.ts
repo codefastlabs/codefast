@@ -1,31 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 
-interface MockMediaQueryList {
-  addEventListener: ReturnType<typeof vi.fn>;
-  addListener: ReturnType<typeof vi.fn>;
-  dispatchEvent: ReturnType<typeof vi.fn>;
-  matches: boolean;
-  media: string;
-  onchange: null;
-  removeEventListener: ReturnType<typeof vi.fn>;
-  removeListener: ReturnType<typeof vi.fn>;
-}
-
-const createMockMediaQueryList = (matches: boolean, media: string): MockMediaQueryList => ({
-  addEventListener: vi.fn(),
-  addListener: vi.fn(),
-  dispatchEvent: vi.fn(),
-  matches,
-  media,
-  onchange: null,
-  removeEventListener: vi.fn(),
-  removeListener: vi.fn(),
-});
+import { createMockMediaQueryList } from "#/tests/support/mocks";
 
 Object.defineProperty(window, "matchMedia", {
-  value: vi.fn().mockImplementation((query: string) => {
-    return createMockMediaQueryList(false, query);
-  }),
+  value: vi.fn().mockImplementation((query: string) => createMockMediaQueryList(false, query)),
   writable: true,
 });
 

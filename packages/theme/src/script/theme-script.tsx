@@ -1,6 +1,12 @@
 import type { JSX } from "react";
 
+import { MEDIA } from "#/constants";
+import { themes } from "#/types";
 import type { Theme } from "#/types";
+
+/* Derived once from schema + constants — inline script uses these to stay in sync */
+const THEME_REMOVE_ARGS = themes.map((t) => JSON.stringify(t)).join(",");
+const THEME_VALID_CHECK = themes.map((t) => `s===${JSON.stringify(t)}`).join("||");
 
 /* -----------------------------------------------------------------------------
  * Props
@@ -69,7 +75,7 @@ export function ThemeScript({ nonce, storageKey, theme }: ThemeScriptProps): JSX
   // F1: When storageKey is provided, the script reads localStorage before first paint so
   // client-only apps (no SSR cookie) get the right theme without FOUC.
   // sk=null short-circuits to s=null so theme falls back to fbt — backward-compatible.
-  const themeScript = `(function(){try{var sk=${JSON.stringify(storageKey ?? null)},fbt=${JSON.stringify(theme)},s=sk&&localStorage.getItem(sk),theme=(s==="light"||s==="dark"||s==="system")?s:fbt,resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),document.documentElement.classList.remove("light","dark","system"),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
+  const themeScript = `(function(){try{var sk=${JSON.stringify(storageKey ?? null)},fbt=${JSON.stringify(theme)},s=sk&&localStorage.getItem(sk),theme=(${THEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia(${JSON.stringify(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${THEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
   return (

@@ -8,6 +8,7 @@ import { ThemeProvider } from "#/core/provider";
 import { useTheme } from "#/core/use-theme";
 import { THEME_CHANNEL } from "#/constants";
 import type { Theme } from "#/types";
+import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 
 describe("ThemeProvider", () => {
   const originalMatchMedia = window.matchMedia;
@@ -18,19 +19,7 @@ describe("ThemeProvider", () => {
     document.documentElement.style.colorScheme = "";
 
     // Default matchMedia mock (light mode)
-    Object.defineProperty(window, "matchMedia", {
-      value: vi.fn().mockImplementation((query: string) => ({
-        addEventListener: vi.fn(),
-        addListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-        matches: false,
-        media: query,
-        onchange: null,
-        removeEventListener: vi.fn(),
-        removeListener: vi.fn(),
-      })),
-      writable: true,
-    });
+    mockMatchMedia();
   });
 
   afterEach(() => {
@@ -98,19 +87,7 @@ describe("ThemeProvider", () => {
     });
 
     test('should resolve "system" theme to OS preference (light)', () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation(() => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: false, // light mode
-          media: "",
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
       const TestConsumer = (): React.ReactElement => {
         const { resolvedTheme, theme } = useTheme();
@@ -134,19 +111,9 @@ describe("ThemeProvider", () => {
     });
 
     test('should resolve "system" theme to OS preference (dark)', () => {
-      Object.defineProperty(window, "matchMedia", {
-        value: vi.fn().mockImplementation((query: string) => ({
-          addEventListener: vi.fn(),
-          addListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          matches: query === "(prefers-color-scheme: dark)",
-          media: query,
-          onchange: null,
-          removeEventListener: vi.fn(),
-          removeListener: vi.fn(),
-        })),
-        writable: true,
-      });
+      mockMatchMedia((query) =>
+        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
+      );
 
       const TestConsumer = (): React.ReactElement => {
         const { resolvedTheme } = useTheme();
