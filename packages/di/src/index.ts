@@ -43,12 +43,7 @@ export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/re
 export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
 
 // Graph types
-export type {
-  ContainerGraphJson,
-  GraphEdge,
-  GraphNode,
-  GraphOptions,
-} from "#/graph-adapters/types";
+export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/dependency-graph";
 
 // Module
 export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";
