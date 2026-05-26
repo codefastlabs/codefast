@@ -44,13 +44,6 @@ function subscribeToSystemTheme(callback: () => void): () => void {
 }
 
 /**
- * Get current system theme on the client.
- */
-function getSystemThemeSnapshot(): ResolvedTheme {
-  return getSystemTheme();
-}
-
-/**
  * Safely create a theme BroadcastChannel when supported by the environment.
  */
 function createThemeChannel(): BroadcastChannel | null {
@@ -69,29 +62,29 @@ function createThemeChannel(): BroadcastChannel | null {
  * Props
  * -------------------------------------------------------------------------- */
 
-export interface ThemeProviderProps {
-  children: ReactNode;
+export type ThemeProviderProps = {
+  readonly children: ReactNode;
   /**
    * When true, temporarily disables CSS transitions during theme changes.
    * Prevents jarring color animations when switching themes.
    * Default: false
    */
-  disableTransitionOnChange?: boolean;
+  readonly disableTransitionOnChange?: boolean;
   /**
    * CSP nonce for inline styles when `disableTransitionOnChange` is enabled.
    */
-  nonce?: string;
+  readonly nonce?: string;
   /**
    * Async function to persist theme changes to server/storage.
    *
    * For TanStack Start: use `setThemeServerFn` from `@codefast/theme/start`
    * For Next.js: implement a server action
    */
-  persistTheme?: (value: Theme) => Promise<void>;
+  readonly persistTheme?: (value: Theme) => Promise<void>;
   /**
    * Callback invoked when `persistTheme` rejects.
    */
-  onThemePersistError?: (error: unknown, attemptedTheme: Theme) => void;
+  readonly onThemePersistError?: (error: unknown, attemptedTheme: Theme) => void;
   /**
    * Initial theme preference from the server (cookie, loader, etc.).
    *
@@ -99,7 +92,7 @@ export interface ThemeProviderProps {
    * the router re-runs the root loader after navigation. The server value is authoritative:
    * a new prop value will override any local optimistic state.
    */
-  theme: Theme;
+  readonly theme: Theme;
   /**
    * OS light/dark guess from the SSR request (e.g. `Sec-CH-Prefers-Color-Scheme`).
    *
@@ -107,7 +100,7 @@ export interface ThemeProviderProps {
    * `getServerSnapshot` so the first client snapshot matches `matchMedia` and avoids a
    * dark → light flip after hydration.
    */
-  ssrSystemTheme?: ResolvedTheme;
+  readonly ssrSystemTheme?: ResolvedTheme;
   /**
    * After mount, re-read the canonical theme from the server (e.g. httpOnly cookie).
    *
@@ -115,8 +108,8 @@ export interface ThemeProviderProps {
    * document was saved with an old `ThemeScript` / loader value while the cookie was already updated
    * in another tab. Use a stable reference (e.g. `getThemeServerFn` from `@codefast/theme/start`).
    */
-  syncThemeFromServer?: () => Promise<Theme>;
-}
+  readonly syncThemeFromServer?: () => Promise<Theme>;
+};
 
 /* -----------------------------------------------------------------------------
  * Component
@@ -244,7 +237,7 @@ export function ThemeProvider({
   // Subscribe to OS preference changes (SSR-safe via useSyncExternalStore)
   const systemTheme = useSyncExternalStore(
     subscribeToSystemTheme,
-    getSystemThemeSnapshot,
+    getSystemTheme,
     getServerSnapshot,
   );
 

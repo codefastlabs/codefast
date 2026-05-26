@@ -53,9 +53,9 @@ export const themes = themeSchema.options;
  *
  * @since 0.3.16-canary.0
  */
-export interface ThemeContextType {
-  isPending: boolean;
-  resolvedTheme: ResolvedTheme;
-  setTheme: (value: Theme) => Promise<void>;
-  theme: Theme;
-}
+export type ThemeContextType = {
+  readonly isPending: boolean;
+  readonly resolvedTheme: ResolvedTheme;
+  readonly setTheme: (value: Theme) => Promise<void>;
+  readonly theme: Theme;
+};

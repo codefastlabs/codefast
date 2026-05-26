@@ -1,7 +1,10 @@
 {
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
     "types": ["node", "vitest/globals"],
+    "verbatimModuleSyntax": true,
     "paths": {
       "#/tests/*": ["./tests/*"],
       "#/*": ["./src/*"]

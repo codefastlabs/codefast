@@ -73,7 +73,7 @@ export function disableAnimation(nonce?: string): () => void {
 
   return () => {
     // Force reflow to ensure styles are applied before removing
-    ((): CSSStyleDeclaration => window.getComputedStyle(document.body))();
+    void window.getComputedStyle(document.body);
 
     // Use double RAF to ensure paint happens before removing style
     requestAnimationFrame(() => {

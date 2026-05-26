@@ -6,18 +6,18 @@ import type { Theme } from "#/types";
  * Props
  * -------------------------------------------------------------------------- */
 
-export interface ThemeScriptProps {
+export type ThemeScriptProps = {
   /**
    * Initial theme from server (e.g., from cookie via loader).
    *
    * When `storageKey` is provided, this acts as a fallback if the storage entry is absent
    * or contains an unrecognised value.
    */
-  theme: Theme;
+  readonly theme: Theme;
   /**
    * CSP nonce applied to the inline script element.
    */
-  nonce?: string;
+  readonly nonce?: string;
   /**
    * When provided, the inline script reads `localStorage.getItem(storageKey)` before
    * first paint and uses that value if it is a recognised theme (`"light"`, `"dark"`,
@@ -31,8 +31,8 @@ export interface ThemeScriptProps {
    * <ThemeScript theme="system" storageKey="my-app-theme" />
    * ```
    */
-  storageKey?: string;
-}
+  readonly storageKey?: string;
+};
 
 /* -----------------------------------------------------------------------------
  * Component
