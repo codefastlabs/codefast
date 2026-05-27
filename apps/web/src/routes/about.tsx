@@ -39,16 +39,16 @@ function GettingStarted() {
     <main className="page-wrap px-4 pt-16 pb-32">
       {/* Header */}
       <section className="rise-in mb-16 max-w-2xl">
-        <Badge variant="outline" className="mb-5 border-[var(--line)] text-[var(--sea-ink-soft)]">
+        <Badge variant="outline" className="mb-5 border-(--line) text-(--sea-ink-soft)">
           Getting Started
         </Badge>
-        <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-[var(--sea-ink)]">
+        <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-(--sea-ink)">
           Up and running{" "}
-          <span className="bg-gradient-to-br from-[var(--lagoon)] to-[var(--lagoon-deep)] bg-clip-text text-transparent">
+          <span className="bg-linear-to-br from-(--lagoon) to-(--lagoon-deep) bg-clip-text text-transparent">
             in minutes.
           </span>
         </h1>
-        <p className="text-[17px] leading-relaxed text-[var(--sea-ink-soft)]">
+        <p className="text-[17px] leading-relaxed text-(--sea-ink-soft)">
           @codefast/ui is a collection of copy-friendly React components. Install the package, wire
           up the CSS, and start building — no config files required.
         </p>
@@ -57,11 +57,11 @@ function GettingStarted() {
       {/* Requirements */}
       <section className="mb-16">
         <p className="island-kicker mb-4">Requirements</p>
-        <div className="inline-grid grid-cols-2 gap-x-12 gap-y-5 rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)] p-6 sm:grid-cols-4">
+        <div className="inline-grid grid-cols-2 gap-x-12 gap-y-5 rounded-2xl border border-(--line) bg-(--chip-bg) p-6 sm:grid-cols-4">
           {REQUIREMENTS.map(({ label, value }) => (
             <div key={label}>
-              <p className="mb-0.5 text-xs text-[var(--sea-ink-soft)]">{label}</p>
-              <p className="text-sm font-semibold text-[var(--sea-ink)]">{value}</p>
+              <p className="mb-0.5 text-xs text-(--sea-ink-soft)">{label}</p>
+              <p className="text-sm font-semibold text-(--sea-ink)">{value}</p>
             </div>
           ))}
         </div>
@@ -74,13 +74,13 @@ function GettingStarted() {
         <ol className="flex flex-col gap-10">
           {STEPS.map(({ step, title, description, code }) => (
             <li key={step} className="grid gap-5 sm:grid-cols-[56px_1fr]">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--chip-bg)] font-mono text-xs font-bold text-[var(--sea-ink-soft)]">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-(--line) bg-(--chip-bg) font-mono text-xs font-bold text-(--sea-ink-soft)">
                 {step}
               </div>
               <div>
-                <h3 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">{title}</h3>
-                <p className="mb-4 text-sm leading-6 text-[var(--sea-ink-soft)]">{description}</p>
-                <pre className="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--code-surface)] p-5 text-sm text-[var(--code-text)]">
+                <h3 className="mb-2 text-base font-semibold text-(--sea-ink)">{title}</h3>
+                <p className="mb-4 text-sm leading-6 text-(--sea-ink-soft)">{description}</p>
+                <pre className="overflow-x-auto rounded-xl border border-(--line) bg-(--code-surface) p-5 text-sm text-(--code-text)">
                   <code>{code}</code>
                 </pre>
               </div>
@@ -90,12 +90,12 @@ function GettingStarted() {
       </section>
 
       {/* Component list */}
-      <section className="rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)] p-8 sm:p-10">
+      <section className="rounded-2xl border border-(--line) bg-(--chip-bg) p-8 sm:p-10">
         <p className="island-kicker mb-3">Library</p>
-        <h2 className="display-title mb-3 text-3xl font-bold text-[var(--sea-ink)]">
+        <h2 className="display-title mb-3 text-3xl font-bold text-(--sea-ink)">
           60+ components available
         </h2>
-        <p className="mb-8 text-[var(--sea-ink-soft)]">
+        <p className="mb-8 text-(--sea-ink-soft)">
           From primitives like Button and Badge to complex patterns like Combobox, DataTable, and
           Sidebar — everything follows the same composable API.
         </p>
