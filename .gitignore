@@ -48,6 +48,7 @@ tsconfig.tsbuildinfo
 
 # Vite (config reload temp files, some versions)
 vite.config.*.timestamp-*
+.vite-hooks/
 
 # debug
 npm-debug.log*
