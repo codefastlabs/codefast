@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm run *)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm store prune)",
+      "Bash(pnpm -r *)",
+      "Bash(pnpm exec *)",
+      "Bash(pnpm dlx *)",
+      "Bash(pnpm outdated*)",
+      "Bash(pnpm update*)",
+      "Bash(turbo run *)",
+      "Bash(turbo clean*)",
+      "Bash(oxlint *)",
+      "Bash(oxfmt*)",
+      "Bash(knip*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -z \"$f\" ] && exit 0; pnpm exec oxfmt \"$f\" 2>/dev/null || true; case \"$f\" in *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs) LINT=$(pnpm exec oxlint \"$f\" 2>&1); echo \"$LINT\" | grep -qE 'warning|error' && jq -n --arg ctx \"Lint issues found in $f — fix before finishing:\\n$LINT\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}' || true ;; esac; exit 0",
+            "timeout": 30,
+            "statusMessage": "Formatting & linting..."
+          }
+        ]
+      }
+    ]
+  }
+}

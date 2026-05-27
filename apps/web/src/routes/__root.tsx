@@ -3,10 +3,9 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
 import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@codefast/theme/start";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-
-import appCss from "../styles.css?url";
+import Footer from "#/components/Footer";
+import Header from "#/components/Header";
+import appCss from "#/styles.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -48,7 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ThemeScript theme={theme} />
         <HeadContent />
       </head>
-      <body className="font-sans [overflow-wrap:anywhere] antialiased selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
         <ThemeProvider
           theme={theme}
           ssrSystemTheme={ssrSystemTheme}

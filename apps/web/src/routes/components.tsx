@@ -1,7 +1,6 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { Badge } from "@codefast/ui/badge";
 import {
   Accordion,
@@ -93,27 +92,25 @@ export const Route = createFileRoute("/components")({ component: ComponentsPage 
 /* Shared section component                                                    */
 /* -------------------------------------------------------------------------- */
 
-interface SectionProps {
-  id: string;
-  label: string;
-  title: string;
-  description: string;
-  count: number;
-  children: React.ReactNode;
-}
+type SectionProps = {
+  readonly id: CategoryId;
+  readonly label: string;
+  readonly title: string;
+  readonly description: string;
+  readonly count: number;
+  readonly children: ReactNode;
+};
 
 function Section({ id, label, title, description, count, children }: SectionProps) {
   return (
     <section id={id} className="mb-20">
-      <div className="mb-8 flex flex-col gap-3 border-b border-[var(--line)] pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-8 flex flex-col gap-3 border-b border-(--line) pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="island-kicker mb-2">{label}</p>
-          <h2 className="display-title text-2xl font-bold text-[var(--sea-ink)]">{title}</h2>
-          <p className="mt-1.5 max-w-xl text-sm leading-6 text-[var(--sea-ink-soft)]">
-            {description}
-          </p>
+          <h2 className="display-title text-2xl font-bold text-(--sea-ink)">{title}</h2>
+          <p className="mt-1.5 max-w-xl text-sm leading-6 text-(--sea-ink-soft)">{description}</p>
         </div>
-        <span className="w-fit shrink-0 rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--sea-ink-soft)] tabular-nums">
+        <span className="w-fit shrink-0 rounded-full border border-(--line) bg-(--chip-bg) px-2.5 py-1 text-xs font-semibold text-(--sea-ink-soft) tabular-nums">
           {count} components
         </span>
       </div>
@@ -198,58 +195,80 @@ const ALL_COMPONENTS = [
   { name: "Tooltip", category: "overlay" },
 ] as const;
 
+type CategoryId = (typeof CATEGORIES)[number]["id"];
+type FilterId = "all" | CategoryId;
+
+const CATEGORY_COUNTS = Object.fromEntries(
+  CATEGORIES.map(({ id }): [CategoryId, number] => [
+    id,
+    ALL_COMPONENTS.filter((c) => c.category === id).length,
+  ]),
+) as Record<CategoryId, number>;
+
+type FilterOption = { readonly id: FilterId; readonly label: string };
+
+const FILTER_OPTIONS: ReadonlyArray<FilterOption> = [{ id: "all", label: "All" }, ...CATEGORIES];
+
+const DENSITY_OPTIONS = ["compact", "comfortable", "spacious"] as const;
+type Density = (typeof DENSITY_OPTIONS)[number];
+
+// Type guard for the Radix RadioGroup boundary (onValueChange types as string)
+const DENSITY_SET = new Set<string>(DENSITY_OPTIONS);
+const isDensity = (v: string): v is Density => DENSITY_SET.has(v);
+
 function ComponentsPage() {
   const [checked, setChecked] = useState(false);
   const [switched, setSwitched] = useState(true);
   const [sliderValue, setSliderValue] = useState([60]);
-  const [radio, setRadio] = useState("comfortable");
-  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [radio, setRadio] = useState<Density>("comfortable");
+  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
 
-  const countFor = (cat: string) => ALL_COMPONENTS.filter((c) => c.category === cat).length;
-
-  const filteredAll =
-    activeFilter === "all"
-      ? ALL_COMPONENTS
-      : ALL_COMPONENTS.filter((c) => c.category === activeFilter);
+  const filteredAll = useMemo(
+    () =>
+      activeFilter === "all"
+        ? ALL_COMPONENTS
+        : ALL_COMPONENTS.filter((c) => c.category === activeFilter),
+    [activeFilter],
+  );
 
   return (
     <main className="page-wrap px-4 pt-16 pb-32">
       {/* ── Header ───────────────────────────────────────────────────── */}
       <section className="rise-in mb-16 max-w-2xl">
-        <Badge variant="outline" className="mb-5 border-[var(--line)] text-[var(--sea-ink-soft)]">
+        <Badge variant="outline" className="mb-5 border-(--line) text-(--sea-ink-soft)">
           Components
         </Badge>
-        <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-[var(--sea-ink)]">
+        <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-(--sea-ink)">
           {ALL_COMPONENTS.length}+ ready-to-use{" "}
-          <span className="bg-gradient-to-br from-[var(--lagoon)] to-[var(--lagoon-deep)] bg-clip-text text-transparent">
+          <span className="bg-linear-to-br from-(--lagoon) to-(--lagoon-deep) bg-clip-text text-transparent">
             components.
           </span>
         </h1>
-        <p className="text-[17px] leading-relaxed text-[var(--sea-ink-soft)]">
+        <p className="text-[17px] leading-relaxed text-(--sea-ink-soft)">
           Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named
           sub-path import — no barrel files, no tree-shaking surprises, no config required.
         </p>
       </section>
 
       {/* ── Full component map ───────────────────────────────────────── */}
-      <section className="mb-16 rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)] p-6 sm:p-8">
+      <section className="mb-16 rounded-2xl border border-(--line) bg-(--chip-bg) p-6 sm:p-8">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-semibold text-[var(--sea-ink)]">
+          <p className="text-sm font-semibold text-(--sea-ink)">
             All components
-            <span className="ml-2 font-normal text-[var(--sea-ink-soft)]">
+            <span className="ml-2 font-normal text-(--sea-ink-soft)">
               · {filteredAll.length} shown
             </span>
           </p>
           <div className="flex flex-wrap gap-1.5">
-            {[{ id: "all", label: "All" }, ...CATEGORIES].map(({ id, label }) => (
+            {FILTER_OPTIONS.map(({ id, label }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => setActiveFilter(id)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   activeFilter === id
-                    ? "bg-[var(--sea-ink)] text-[var(--bg-base)]"
-                    : "border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                    ? "bg-(--sea-ink) text-(--bg-base)"
+                    : "border border-(--line) bg-(--surface) text-(--sea-ink-soft) hover:text-(--sea-ink)"
                 }`}
               >
                 {label}
@@ -262,7 +281,7 @@ function ComponentsPage() {
             <a
               key={name}
               href={`#${category}`}
-              className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--sea-ink-soft)] no-underline transition-colors hover:border-[var(--lagoon)] hover:text-[var(--sea-ink)]"
+              className="rounded-full border border-(--line) bg-(--surface) px-3 py-1 text-xs font-medium text-(--sea-ink-soft) no-underline transition-colors hover:border-(--lagoon) hover:text-(--sea-ink)"
             >
               {name}
             </a>
@@ -276,10 +295,10 @@ function ComponentsPage() {
           <a
             key={id}
             href={`#${id}`}
-            className="flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-4 py-1.5 text-xs font-semibold text-[var(--sea-ink-soft)] no-underline transition-colors hover:border-[var(--lagoon)] hover:text-[var(--sea-ink)]"
+            className="flex items-center gap-1.5 rounded-full border border-(--line) bg-(--chip-bg) px-4 py-1.5 text-xs font-semibold text-(--sea-ink-soft) no-underline transition-colors hover:border-(--lagoon) hover:text-(--sea-ink)"
           >
             {label}
-            <span className="tabular-nums opacity-60">{countFor(id)}</span>
+            <span className="tabular-nums opacity-60">{CATEGORY_COUNTS[id]}</span>
           </a>
         ))}
       </nav>
@@ -292,7 +311,7 @@ function ComponentsPage() {
         label="Display"
         title="Display"
         description="Presentational atoms for surfacing information, status, and identity. No interactivity required."
-        count={countFor("display")}
+        count={CATEGORY_COUNTS.display}
       >
         <PreviewCard
           name="Badge"
@@ -365,7 +384,7 @@ import { InfoIcon, AlertTriangleIcon } from "lucide-react";
               <AvatarFallback>VP</AvatarFallback>
             </Avatar>
             <Avatar className="size-10">
-              <AvatarFallback className="bg-[var(--lagoon)] text-white">JD</AvatarFallback>
+              <AvatarFallback className="bg-(--lagoon) text-white">JD</AvatarFallback>
             </Avatar>
             <Avatar className="size-10">
               <AvatarFallback className="bg-violet-500 text-white">AS</AvatarFallback>
@@ -373,35 +392,6 @@ import { InfoIcon, AlertTriangleIcon } from "lucide-react";
             <Avatar className="size-8">
               <AvatarFallback className="text-xs">SM</AvatarFallback>
             </Avatar>
-          </div>
-        </PreviewCard>
-
-        <PreviewCard
-          name="Skeleton"
-          path="@codefast/ui/skeleton"
-          description="Animated shimmer placeholder. Match the shape of content while it loads."
-          code={`import { Skeleton } from "@codefast/ui/skeleton";
-
-// Card skeleton
-<div className="flex gap-3">
-  <Skeleton className="size-10 rounded-full shrink-0" />
-  <div className="flex-1 space-y-2">
-    <Skeleton className="h-3 w-3/4 rounded-full" />
-    <Skeleton className="h-3 w-1/2 rounded-full" />
-  </div>
-</div>`}
-        >
-          <div className="w-full max-w-xs rounded-xl bg-[var(--surface)] p-4 shadow-sm ring-1 ring-[var(--line)]">
-            <div className="mb-3 flex items-center gap-3">
-              <Skeleton className="size-10 shrink-0 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-3 w-3/4 rounded-full" />
-                <Skeleton className="h-3 w-1/2 rounded-full" />
-              </div>
-            </div>
-            <Skeleton className="h-2.5 w-full rounded-full" />
-            <Skeleton className="mt-2 h-2.5 w-5/6 rounded-full" />
-            <Skeleton className="mt-2 h-2.5 w-4/6 rounded-full" />
           </div>
         </PreviewCard>
 
@@ -468,7 +458,7 @@ import { InfoIcon, AlertTriangleIcon } from "lucide-react";
         label="Form"
         title="Form"
         description="Input primitives and controls for collecting user data. All keyboard-accessible and screen-reader ready."
-        count={countFor("form")}
+        count={CATEGORY_COUNTS.form}
       >
         <PreviewCard
           name="Input"
@@ -487,12 +477,12 @@ import { Label } from "@codefast/ui/label";
         >
           <div className="w-full max-w-xs space-y-3">
             <div className="grid gap-1.5">
-              <Label>Email address</Label>
-              <Input type="email" placeholder="you@example.com" />
+              <Label htmlFor="preview-email">Email address</Label>
+              <Input id="preview-email" type="email" placeholder="you@example.com" />
             </div>
             <div className="grid gap-1.5">
-              <Label>Password</Label>
-              <Input type="password" placeholder="••••••••" />
+              <Label htmlFor="preview-password">Password</Label>
+              <Input id="preview-password" type="password" placeholder="••••••••" />
             </div>
           </div>
         </PreviewCard>
@@ -613,8 +603,16 @@ import { Label } from "@codefast/ui/label";
   ))}
 </RadioGroup>`}
         >
-          <RadioGroup value={radio} onValueChange={setRadio} className="gap-3">
-            {["compact", "comfortable", "spacious"].map((v) => (
+          <RadioGroup
+            value={radio}
+            onValueChange={(v) => {
+              if (isDensity(v)) {
+                setRadio(v);
+              }
+            }}
+            className="gap-3"
+          >
+            {DENSITY_OPTIONS.map((v) => (
               <div key={v} className="flex items-center gap-2">
                 <RadioGroupItem value={v} id={`radio-${v}`} />
                 <Label htmlFor={`radio-${v}`} className="capitalize">
@@ -679,9 +677,7 @@ const [value, setValue] = useState([60]);
         >
           <div className="w-full max-w-xs space-y-3">
             <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
-            <p className="text-center text-xs text-[var(--sea-ink-soft)]">
-              Value: {sliderValue[0]}
-            </p>
+            <p className="text-center text-xs text-(--sea-ink-soft)">Value: {sliderValue[0]}</p>
           </div>
         </PreviewCard>
 
@@ -727,7 +723,7 @@ import { BoldIcon, ItalicIcon } from "lucide-react";
         label="Navigation"
         title="Navigation"
         description="Components for moving between views, routes, and pages. Built for keyboard and screen-reader users."
-        count={countFor("navigation")}
+        count={CATEGORY_COUNTS.navigation}
       >
         <PreviewCard
           name="Tabs"
@@ -761,18 +757,18 @@ import { BoldIcon, ItalicIcon } from "lucide-react";
             </TabsList>
             <TabsContent
               value="preview"
-              className="mt-3 rounded-lg border border-[var(--line)] p-4 text-sm text-[var(--sea-ink-soft)]"
+              className="mt-3 rounded-lg border border-(--line) p-4 text-sm text-(--sea-ink-soft)"
             >
               Live component preview renders here.
             </TabsContent>
             <TabsContent value="code" className="mt-3 overflow-hidden rounded-lg">
-              <pre className="bg-[var(--code-surface)] p-4 font-mono text-xs text-[var(--code-text)]">
+              <pre className="bg-(--code-surface) p-4 font-mono text-xs text-(--code-text)">
                 <code>{`<Button variant="outline">Click me</Button>`}</code>
               </pre>
             </TabsContent>
             <TabsContent
               value="docs"
-              className="mt-3 rounded-lg border border-[var(--line)] p-4 text-sm text-[var(--sea-ink-soft)]"
+              className="mt-3 rounded-lg border border-(--line) p-4 text-sm text-(--sea-ink-soft)"
             >
               Full API reference and usage examples.
             </TabsContent>
@@ -895,7 +891,7 @@ import { ChevronRightIcon } from "lucide-react";
         label="Overlay"
         title="Overlay"
         description="Floating UI: modals, popovers, menus, and tooltips. All trap focus and close on Escape."
-        count={countFor("overlay")}
+        count={CATEGORY_COUNTS.overlay}
       >
         <PreviewCard
           name="Dialog"
@@ -1045,7 +1041,7 @@ import { Button } from "@codefast/ui/button";
             </PopoverTrigger>
             <PopoverContent className="w-56">
               <div className="grid gap-3">
-                <p className="text-sm font-medium text-[var(--sea-ink)]">Dimensions</p>
+                <p className="text-sm font-medium text-(--sea-ink)">Dimensions</p>
                 <div className="grid gap-2">
                   <div className="grid grid-cols-3 items-center gap-3">
                     <Label className="text-xs">Width</Label>
@@ -1120,7 +1116,7 @@ import { Button } from "@codefast/ui/button";
         label="Feedback"
         title="Feedback"
         description="Status indicators, confirmations, and loading states that communicate async operations to users."
-        count={countFor("feedback")}
+        count={CATEGORY_COUNTS.feedback}
       >
         <PreviewCard
           name="Progress"
@@ -1134,25 +1130,25 @@ import { Button } from "@codefast/ui/button";
 // Custom colour via data-slot
 <Progress
   value={33}
-  className="[&_[data-slot=progress-indicator]]:bg-amber-500"
+  className="**:data-[slot=progress-indicator]:bg-amber-500"
 />
 
 // Success state
 <Progress
   value={100}
-  className="[&_[data-slot=progress-indicator]]:bg-emerald-500"
+  className="**:data-[slot=progress-indicator]:bg-emerald-500"
 />`}
         >
           <div className="w-full max-w-xs space-y-3">
             <div>
-              <div className="mb-1.5 flex justify-between text-xs text-[var(--sea-ink-soft)]">
+              <div className="mb-1.5 flex justify-between text-xs text-(--sea-ink-soft)">
                 <span>Uploading…</span>
                 <span>68%</span>
               </div>
               <Progress value={68} />
             </div>
-            <Progress value={33} className="[&_[data-slot=progress-indicator]]:bg-amber-500" />
-            <Progress value={100} className="[&_[data-slot=progress-indicator]]:bg-emerald-500" />
+            <Progress value={33} className="**:data-[slot=progress-indicator]:bg-amber-500" />
+            <Progress value={100} className="**:data-[slot=progress-indicator]:bg-emerald-500" />
           </div>
         </PreviewCard>
 
@@ -1226,10 +1222,7 @@ import { Button } from "@codefast/ui/button";
         >
           <div className="grid w-full max-w-lg gap-4 sm:grid-cols-2">
             {[0, 1].map((i) => (
-              <div
-                key={i}
-                className="rounded-xl bg-[var(--surface)] p-3 shadow-sm ring-1 ring-[var(--line)]"
-              >
+              <div key={i} className="rounded-xl bg-(--surface) p-3 shadow-sm ring-1 ring-(--line)">
                 <Skeleton className="mb-3 h-24 w-full rounded-lg" />
                 <div className="mb-3 flex items-center gap-2">
                   <Skeleton className="size-7 shrink-0 rounded-full" />
@@ -1251,7 +1244,7 @@ import { Button } from "@codefast/ui/button";
         label="Layout"
         title="Layout"
         description="Structural components for organising and containing content. Compose freely with any child."
-        count={countFor("layout")}
+        count={CATEGORY_COUNTS.layout}
       >
         <PreviewCard
           name="Card"
@@ -1283,8 +1276,8 @@ import { Button } from "@codefast/ui/button";
               <CardDescription>Up to 20 seats, unlimited projects.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-[var(--sea-ink)]">
-                $49<span className="text-sm font-normal text-[var(--sea-ink-soft)]">/mo</span>
+              <p className="text-2xl font-bold text-(--sea-ink)">
+                $49<span className="text-sm font-normal text-(--sea-ink-soft)">/mo</span>
               </p>
               <Button className="mt-4 w-full" size="sm">
                 Upgrade now
@@ -1360,11 +1353,11 @@ import { Button } from "@codefast/ui/button";
         >
           <div className="w-full max-w-xs">
             <div className="space-y-1">
-              <p className="text-sm font-medium text-[var(--sea-ink)]">@codefast/ui</p>
-              <p className="text-xs text-[var(--sea-ink-soft)]">Open-source React components.</p>
+              <p className="text-sm font-medium text-(--sea-ink)">@codefast/ui</p>
+              <p className="text-xs text-(--sea-ink-soft)">Open-source React components.</p>
             </div>
             <Separator className="my-4" />
-            <div className="flex items-center gap-4 text-xs text-[var(--sea-ink-soft)]">
+            <div className="flex items-center gap-4 text-xs text-(--sea-ink-soft)">
               <span>Blog</span>
               <Separator orientation="vertical" className="h-3" />
               <span>Docs</span>
@@ -1394,7 +1387,7 @@ import { Button } from "@codefast/ui/button";
   <div className="flex gap-4 pb-2">...</div>
 </ScrollArea>`}
         >
-          <ScrollArea className="h-36 w-48 rounded-xl border border-[var(--line)] p-3">
+          <ScrollArea className="h-36 w-48 rounded-xl border border-(--line) p-3">
             <div className="space-y-1.5">
               {[
                 "Accordion",
@@ -1410,7 +1403,7 @@ import { Button } from "@codefast/ui/button";
                 "Dialog",
                 "Drawer",
               ].map((item) => (
-                <p key={item} className="text-xs text-[var(--sea-ink-soft)]">
+                <p key={item} className="text-xs text-(--sea-ink-soft)">
                   {item}
                 </p>
               ))}
