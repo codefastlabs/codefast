@@ -85,6 +85,8 @@ import {
   UnderlineIcon,
 } from "lucide-react";
 import { PreviewCard } from "#/components/PreviewCard";
+import { ALL_COMPONENTS } from "#/data/components";
+import type { CategoryId } from "#/data/components";
 
 export const Route = createFileRoute("/components")({ component: ComponentsPage });
 
@@ -132,70 +134,7 @@ const CATEGORIES = [
   { id: "layout", label: "Layout" },
 ] as const;
 
-const ALL_COMPONENTS = [
-  { name: "Accordion", category: "layout" },
-  { name: "Alert", category: "display" },
-  { name: "Alert Dialog", category: "overlay" },
-  { name: "Avatar", category: "display" },
-  { name: "Badge", category: "display" },
-  { name: "Breadcrumb", category: "navigation" },
-  { name: "Button", category: "form" },
-  { name: "Button Group", category: "form" },
-  { name: "Calendar", category: "form" },
-  { name: "Card", category: "layout" },
-  { name: "Carousel", category: "layout" },
-  { name: "Chart", category: "display" },
-  { name: "Checkbox", category: "form" },
-  { name: "Checkbox Cards", category: "form" },
-  { name: "Checkbox Group", category: "form" },
-  { name: "Collapsible", category: "layout" },
-  { name: "Command", category: "overlay" },
-  { name: "Context Menu", category: "overlay" },
-  { name: "Dialog", category: "overlay" },
-  { name: "Drawer", category: "overlay" },
-  { name: "Dropdown Menu", category: "overlay" },
-  { name: "Empty", category: "display" },
-  { name: "Field", category: "form" },
-  { name: "Form", category: "form" },
-  { name: "Hover Card", category: "overlay" },
-  { name: "Input", category: "form" },
-  { name: "Input Group", category: "form" },
-  { name: "Input Number", category: "form" },
-  { name: "Input OTP", category: "form" },
-  { name: "Input Password", category: "form" },
-  { name: "Input Search", category: "form" },
-  { name: "Kbd", category: "display" },
-  { name: "Label", category: "form" },
-  { name: "Menubar", category: "navigation" },
-  { name: "Native Select", category: "form" },
-  { name: "Navigation Menu", category: "navigation" },
-  { name: "Pagination", category: "navigation" },
-  { name: "Popover", category: "overlay" },
-  { name: "Progress", category: "feedback" },
-  { name: "Progress Circle", category: "feedback" },
-  { name: "Radio", category: "form" },
-  { name: "Radio Cards", category: "form" },
-  { name: "Radio Group", category: "form" },
-  { name: "Resizable", category: "layout" },
-  { name: "Scroll Area", category: "layout" },
-  { name: "Select", category: "form" },
-  { name: "Separator", category: "layout" },
-  { name: "Sheet", category: "overlay" },
-  { name: "Sidebar", category: "navigation" },
-  { name: "Skeleton", category: "feedback" },
-  { name: "Slider", category: "form" },
-  { name: "Sonner", category: "feedback" },
-  { name: "Spinner", category: "display" },
-  { name: "Switch", category: "form" },
-  { name: "Table", category: "layout" },
-  { name: "Tabs", category: "navigation" },
-  { name: "Textarea", category: "form" },
-  { name: "Toggle", category: "form" },
-  { name: "Toggle Group", category: "form" },
-  { name: "Tooltip", category: "overlay" },
-] as const;
-
-type CategoryId = (typeof CATEGORIES)[number]["id"];
+// CategoryId and ALL_COMPONENTS are imported from #/data/components (single source of truth)
 type FilterId = "all" | CategoryId;
 
 const CATEGORY_COUNTS = Object.fromEntries(
