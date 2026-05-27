@@ -6,6 +6,6 @@ coverage:
         threshold: 0%
 
 ignore:
-  - "apps/docs/**"
+  - "apps/web/**"
   - ".changeset/**"
   - ".cursor/**"

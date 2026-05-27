@@ -29,6 +29,6 @@ export default defineConfig({
     "**/.tanstack/**",
     "**/.content-collections/**",
     "**/*.tsbuildinfo",
-    "apps/docs/src/routeTree.gen.ts",
+    "apps/web/src/routeTree.gen.ts",
   ],
 });
