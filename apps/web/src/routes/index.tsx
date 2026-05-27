@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ALL_COMPONENTS } from "#/data/components";
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
@@ -43,54 +43,8 @@ const FEATURES = [
   },
 ] as const;
 
-const COMPONENT_NAMES = [
-  "Accordion",
-  "Alert",
-  "Alert Dialog",
-  "Avatar",
-  "Badge",
-  "Breadcrumb",
-  "Button",
-  "Button Group",
-  "Calendar",
-  "Card",
-  "Carousel",
-  "Checkbox",
-  "Collapsible",
-  "Command",
-  "Context Menu",
-  "Dialog",
-  "Drawer",
-  "Dropdown",
-  "Empty",
-  "Form",
-  "Hover Card",
-  "Input",
-  "Input OTP",
-  "Kbd",
-  "Label",
-  "Menubar",
-  "Navigation Menu",
-  "Pagination",
-  "Popover",
-  "Progress",
-  "Radio Group",
-  "Resizable",
-  "Scroll Area",
-  "Select",
-  "Separator",
-  "Sheet",
-  "Skeleton",
-  "Slider",
-  "Spinner",
-  "Switch",
-  "Table",
-  "Tabs",
-  "Textarea",
-  "Toast",
-  "Toggle",
-  "Tooltip",
-] as const;
+// Derived from ALL_COMPONENTS — single source of truth in src/data/components.ts
+const COMPONENT_NAMES = ALL_COMPONENTS.map((c) => c.name);
 
 /* -------------------------------------------------------------------------- */
 /* Hero visual card                                                             */

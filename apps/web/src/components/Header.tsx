@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import ThemeToggle from "./ThemeToggle";
 
 const NAV_LINKS = [
-  { to: "/", label: "Home", exact: true },
-  { to: "/components", label: "Components", exact: false },
-  { to: "/about", label: "Getting Started", exact: false },
+  { to: "/", label: "Home" },
+  { to: "/components", label: "Components" },
+  { to: "/about", label: "Getting Started" },
 ] as const;
 
 export default function Header() {

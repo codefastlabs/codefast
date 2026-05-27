@@ -10,6 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node .output/server/index.mjs",
+    "check-types": "tsgo --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
@@ -39,6 +40,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "jsdom": "catalog:",
     "typescript": "catalog:",
