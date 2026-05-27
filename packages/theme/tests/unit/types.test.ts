@@ -1,65 +1,66 @@
-import { themes, themeSchema } from "#/types";
+import { colorSchemes, colorSchemeSchema } from "#/types";
 
-describe("Theme Schema Validation", () => {
-  describe("themeSchema", () => {
-    test('should accept "light" as valid theme', () => {
-      const result = themeSchema.safeParse("light");
+describe("Color Scheme Schema Validation", () => {
+  describe("colorSchemeSchema", () => {
+    test('should accept "light" as valid color scheme', () => {
+      const result = colorSchemeSchema.safeParse("light");
 
       expect(result.success).toBe(true);
       expect(result.data).toBe("light");
     });
 
-    test('should accept "dark" as valid theme', () => {
-      const result = themeSchema.safeParse("dark");
+    test('should accept "dark" as valid color scheme', () => {
+      const result = colorSchemeSchema.safeParse("dark");
 
       expect(result.success).toBe(true);
       expect(result.data).toBe("dark");
     });
 
-    test('should accept "system" as valid theme', () => {
-      const result = themeSchema.safeParse("system");
+    test('should accept "automatic" as valid color scheme', () => {
+      const result = colorSchemeSchema.safeParse("automatic");
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe("system");
+      expect(result.data).toBe("automatic");
     });
 
-    test("should reject invalid theme values", () => {
-      expect(themeSchema.safeParse("invalid").success).toBe(false);
-      expect(themeSchema.safeParse("").success).toBe(false);
+    test("should reject invalid color scheme values", () => {
+      expect(colorSchemeSchema.safeParse("invalid").success).toBe(false);
+      expect(colorSchemeSchema.safeParse("").success).toBe(false);
       // Note: safeParse(undefined) would be useless-undefined, but we want to test null and empty string
-      expect(themeSchema.safeParse(null).success).toBe(false);
-      expect(themeSchema.safeParse(123).success).toBe(false);
-      expect(themeSchema.safeParse({}).success).toBe(false);
+      expect(colorSchemeSchema.safeParse(null).success).toBe(false);
+      expect(colorSchemeSchema.safeParse(123).success).toBe(false);
+      expect(colorSchemeSchema.safeParse({}).success).toBe(false);
     });
 
     test("should reject similar but incorrect values", () => {
-      expect(themeSchema.safeParse("Light").success).toBe(false);
-      expect(themeSchema.safeParse("DARK").success).toBe(false);
-      expect(themeSchema.safeParse("System").success).toBe(false);
-      expect(themeSchema.safeParse(" light").success).toBe(false);
-      expect(themeSchema.safeParse("dark ").success).toBe(false);
+      expect(colorSchemeSchema.safeParse("Light").success).toBe(false);
+      expect(colorSchemeSchema.safeParse("DARK").success).toBe(false);
+      expect(colorSchemeSchema.safeParse("Automatic").success).toBe(false);
+      expect(colorSchemeSchema.safeParse("system").success).toBe(false);
+      expect(colorSchemeSchema.safeParse(" light").success).toBe(false);
+      expect(colorSchemeSchema.safeParse("dark ").success).toBe(false);
     });
   });
 
-  describe("themes array", () => {
-    test("should contain all valid theme options", () => {
-      expect(themes).toStrictEqual(["light", "dark", "system"]);
+  describe("colorSchemes array", () => {
+    test("should contain all valid color scheme options", () => {
+      expect(colorSchemes).toStrictEqual(["light", "dark", "automatic"]);
     });
 
     test("should have exactly 3 options", () => {
-      expect(themes).toHaveLength(3);
+      expect(colorSchemes).toHaveLength(3);
     });
 
     test("should include light", () => {
-      expect(themes).toContain("light");
+      expect(colorSchemes).toContain("light");
     });
 
     test("should include dark", () => {
-      expect(themes).toContain("dark");
+      expect(colorSchemes).toContain("dark");
     });
 
-    test("should include system", () => {
-      expect(themes).toContain("system");
+    test("should include automatic", () => {
+      expect(colorSchemes).toContain("automatic");
     });
   });
 });

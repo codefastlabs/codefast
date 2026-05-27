@@ -5,57 +5,57 @@ import { z } from "zod";
  * -------------------------------------------------------------------------- */
 
 /**
- * Zod schema for theme validation.
+ * Zod schema for color scheme validation.
  *
- * Acts as the single source of truth for all theme-related types.
- * Valid values: 'light', 'dark', 'system'.
+ * Acts as the single source of truth for all color-scheme-related types.
+ * Valid values: 'light', 'dark', 'automatic'.
  *
  * @since 0.3.16-canary.0
  */
-export const themeSchema = z.enum(["light", "dark", "system"]);
+export const colorSchemeSchema = z.enum(["light", "dark", "automatic"]);
 
 /**
- * User's theme preference.
+ * User's color scheme preference.
  *
- * - `'light'` - Force light mode
- * - `'dark'` - Force dark mode
- * - `'system'` - Follow OS preference
+ * - `'light'` - Force light appearance
+ * - `'dark'` - Force dark appearance
+ * - `'automatic'` - Follow OS preference
  *
  * @since 0.3.16-canary.0
  */
-export type Theme = z.infer<typeof themeSchema>;
+export type ColorScheme = z.infer<typeof colorSchemeSchema>;
 
 /**
- * Actual theme applied to the UI after resolving 'system'.
+ * Actual color scheme applied to the UI after resolving 'automatic'.
  *
- * When theme is 'system', this reflects the OS preference (light/dark).
+ * When color scheme is 'automatic', this reflects the OS preference (light/dark).
  *
  * @since 0.3.16-canary.0
  */
-export type ResolvedTheme = Exclude<Theme, "system">;
+export type ResolvedColorScheme = Exclude<ColorScheme, "automatic">;
 
 /**
- * Array of all available theme options: `['light', 'dark', 'system']`.
+ * Array of all available color scheme options: `['light', 'dark', 'automatic']`.
  *
- * Useful for rendering theme selectors in UI components.
+ * Useful for rendering appearance selectors in UI components.
  *
  * @since 0.3.16-canary.0
  */
-export const themes = themeSchema.options;
+export const colorSchemes = colorSchemeSchema.options;
 
 /**
- * Shape of the theme context value provided by ThemeProvider.
+ * Shape of the color scheme context value provided by AppearanceProvider.
  *
- * - `theme` - Current theme preference
- * - `resolvedTheme` - Actual theme applied (system resolved to light/dark)
- * - `setTheme` - Async function to update theme (triggers optimistic update)
- * - `isPending` - True while theme change is being persisted
+ * - `colorScheme` - Current color scheme preference
+ * - `resolvedColorScheme` - Actual color scheme applied (automatic resolved to light/dark)
+ * - `setPreferredColorScheme` - Async function to update color scheme (triggers optimistic update)
+ * - `isPending` - True while color scheme change is being persisted
  *
  * @since 0.3.16-canary.0
  */
-export type ThemeContextType = {
+export type ColorSchemeContextType = {
   readonly isPending: boolean;
-  readonly resolvedTheme: ResolvedTheme;
-  readonly setTheme: (value: Theme) => Promise<void>;
-  readonly theme: Theme;
+  readonly resolvedColorScheme: ResolvedColorScheme;
+  readonly setColorScheme: (value: ColorScheme) => Promise<void>;
+  readonly colorScheme: ColorScheme;
 };

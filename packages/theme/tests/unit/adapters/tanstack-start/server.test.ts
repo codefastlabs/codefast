@@ -1,4 +1,4 @@
-import type { ResolvedTheme, Theme } from "#/types";
+import type { ResolvedColorScheme, ColorScheme } from "#/types";
 
 // vi.hoisted ensures these are initialised before the vi.mock factory runs (vi.mock is hoisted)
 const { mockGetCookie, mockGetRequestHeader, mockSetCookie } = vi.hoisted(() => ({
@@ -23,11 +23,11 @@ vi.mock("@tanstack/react-start/server", () => ({
 }));
 
 const {
-  getRootThemeServerFn,
-  getSsrSystemThemeServerFn,
-  getThemeServerFn,
-  persistThemeCookie,
-  setThemeServerFn,
+  getRootColorSchemeServerFn,
+  getSsrColorSchemeServerFn,
+  getColorSchemeServerFn,
+  persistColorSchemeCookie,
+  setColorSchemeServerFn,
 } = await import("#/adapters/tanstack-start/server");
 
 describe("TanStack Start adapter — server functions", () => {
@@ -37,17 +37,17 @@ describe("TanStack Start adapter — server functions", () => {
     mockGetRequestHeader.mockReturnValue(undefined);
   });
 
-  describe("getThemeServerFn", () => {
-    test("returns DEFAULT_THEME ('system') when cookie is absent", () => {
-      const result = (getThemeServerFn as unknown as () => Theme)();
+  describe("getColorSchemeServerFn", () => {
+    test("returns DEFAULT_COLOR_SCHEME ('automatic') when cookie is absent", () => {
+      const result = (getColorSchemeServerFn as unknown as () => ColorScheme)();
 
-      expect(result).toBe("system");
+      expect(result).toBe("automatic");
     });
 
     test("returns 'light' when cookie holds 'light'", () => {
       mockGetCookie.mockReturnValue("light");
 
-      const result = (getThemeServerFn as unknown as () => Theme)();
+      const result = (getColorSchemeServerFn as unknown as () => ColorScheme)();
 
       expect(result).toBe("light");
     });
@@ -55,31 +55,31 @@ describe("TanStack Start adapter — server functions", () => {
     test("returns 'dark' when cookie holds 'dark'", () => {
       mockGetCookie.mockReturnValue("dark");
 
-      const result = (getThemeServerFn as unknown as () => Theme)();
+      const result = (getColorSchemeServerFn as unknown as () => ColorScheme)();
 
       expect(result).toBe("dark");
     });
 
-    test("returns DEFAULT_THEME for an invalid cookie value", () => {
+    test("returns DEFAULT_COLOR_SCHEME for an invalid cookie value", () => {
       mockGetCookie.mockReturnValue("invalid-value");
 
-      const result = (getThemeServerFn as unknown as () => Theme)();
+      const result = (getColorSchemeServerFn as unknown as () => ColorScheme)();
 
-      expect(result).toBe("system");
+      expect(result).toBe("automatic");
     });
 
-    test("returns DEFAULT_THEME for an empty string cookie", () => {
+    test("returns DEFAULT_COLOR_SCHEME for an empty string cookie", () => {
       mockGetCookie.mockReturnValue("");
 
-      const result = (getThemeServerFn as unknown as () => Theme)();
+      const result = (getColorSchemeServerFn as unknown as () => ColorScheme)();
 
-      expect(result).toBe("system");
+      expect(result).toBe("automatic");
     });
   });
 
-  describe("getSsrSystemThemeServerFn", () => {
-    test("returns DEFAULT_RESOLVED_THEME ('dark') when no hint header is present", () => {
-      const result = (getSsrSystemThemeServerFn as unknown as () => ResolvedTheme)();
+  describe("getSsrColorSchemeServerFn", () => {
+    test("returns DEFAULT_RESOLVED_COLOR_SCHEME ('dark') when no hint header is present", () => {
+      const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
       expect(result).toBe("dark");
     });
@@ -89,7 +89,7 @@ describe("TanStack Start adapter — server functions", () => {
         name === "Sec-CH-Prefers-Color-Scheme" ? "dark" : undefined,
       );
 
-      const result = (getSsrSystemThemeServerFn as unknown as () => ResolvedTheme)();
+      const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
       expect(result).toBe("dark");
     });
@@ -99,7 +99,7 @@ describe("TanStack Start adapter — server functions", () => {
         name === "Sec-CH-Prefers-Color-Scheme" ? "light" : undefined,
       );
 
-      const result = (getSsrSystemThemeServerFn as unknown as () => ResolvedTheme)();
+      const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
       expect(result).toBe("light");
     });
@@ -109,46 +109,54 @@ describe("TanStack Start adapter — server functions", () => {
         name === "Prefers-Color-Scheme" ? "light" : undefined,
       );
 
-      const result = (getSsrSystemThemeServerFn as unknown as () => ResolvedTheme)();
+      const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
       expect(result).toBe("light");
     });
 
-    test("returns DEFAULT_RESOLVED_THEME for an unrecognised hint value", () => {
+    test("returns DEFAULT_RESOLVED_COLOR_SCHEME for an unrecognised hint value", () => {
       mockGetRequestHeader.mockReturnValue("unknown");
 
-      const result = (getSsrSystemThemeServerFn as unknown as () => ResolvedTheme)();
+      const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
       expect(result).toBe("dark");
     });
   });
 
-  describe("getRootThemeServerFn", () => {
-    test("returns combined theme and ssrSystemTheme", () => {
+  describe("getRootColorSchemeServerFn", () => {
+    test("returns combined colorScheme and ssrColorScheme", () => {
       mockGetCookie.mockReturnValue("light");
       mockGetRequestHeader.mockImplementation((name) =>
         name === "Sec-CH-Prefers-Color-Scheme" ? "dark" : undefined,
       );
 
       const result = (
-        getRootThemeServerFn as unknown as () => { ssrSystemTheme: ResolvedTheme; theme: Theme }
+        getRootColorSchemeServerFn as unknown as () => {
+          ssrColorScheme: ResolvedColorScheme;
+          colorScheme: ColorScheme;
+        }
       )();
 
-      expect(result).toStrictEqual({ theme: "light", ssrSystemTheme: "dark" });
+      expect(result).toStrictEqual({ colorScheme: "light", ssrColorScheme: "dark" });
     });
 
-    test("returns DEFAULT_THEME and DEFAULT_RESOLVED_THEME when nothing is set", () => {
+    test("returns DEFAULT_COLOR_SCHEME and DEFAULT_RESOLVED_COLOR_SCHEME when nothing is set", () => {
       const result = (
-        getRootThemeServerFn as unknown as () => { ssrSystemTheme: ResolvedTheme; theme: Theme }
+        getRootColorSchemeServerFn as unknown as () => {
+          ssrColorScheme: ResolvedColorScheme;
+          colorScheme: ColorScheme;
+        }
       )();
 
-      expect(result).toStrictEqual({ theme: "system", ssrSystemTheme: "dark" });
+      expect(result).toStrictEqual({ colorScheme: "automatic", ssrColorScheme: "dark" });
     });
   });
 
-  describe("setThemeServerFn", () => {
+  describe("setColorSchemeServerFn", () => {
     test("calls setCookie with the correct cookie name, value, and security options", () => {
-      (setThemeServerFn as unknown as (args: { data: Theme }) => void)({ data: "dark" });
+      (setColorSchemeServerFn as unknown as (args: { data: ColorScheme }) => void)({
+        data: "dark",
+      });
 
       expect(mockSetCookie).toHaveBeenCalledWith("ui-theme", "dark", {
         httpOnly: true,
@@ -159,8 +167,10 @@ describe("TanStack Start adapter — server functions", () => {
       });
     });
 
-    test("persists 'light' theme with correct cookie name", () => {
-      (setThemeServerFn as unknown as (args: { data: Theme }) => void)({ data: "light" });
+    test("persists 'light' color scheme with correct cookie name", () => {
+      (setColorSchemeServerFn as unknown as (args: { data: ColorScheme }) => void)({
+        data: "light",
+      });
 
       expect(mockSetCookie).toHaveBeenCalledWith(
         "ui-theme",
@@ -169,30 +179,32 @@ describe("TanStack Start adapter — server functions", () => {
       );
     });
 
-    test("persists 'system' theme", () => {
-      (setThemeServerFn as unknown as (args: { data: Theme }) => void)({ data: "system" });
+    test("persists 'automatic' color scheme", () => {
+      (setColorSchemeServerFn as unknown as (args: { data: ColorScheme }) => void)({
+        data: "automatic",
+      });
 
       expect(mockSetCookie).toHaveBeenCalledWith(
         "ui-theme",
-        "system",
+        "automatic",
         expect.objectContaining({ httpOnly: true }),
       );
     });
   });
 
-  describe("persistThemeCookie", () => {
-    test("delegates to setThemeServerFn — calls setCookie with the given theme", async () => {
-      await persistThemeCookie("system");
+  describe("persistColorSchemeCookie", () => {
+    test("delegates to setColorSchemeServerFn — calls setCookie with the given color scheme", async () => {
+      await persistColorSchemeCookie("automatic");
 
       expect(mockSetCookie).toHaveBeenCalledWith(
         "ui-theme",
-        "system",
+        "automatic",
         expect.objectContaining({ httpOnly: true }),
       );
     });
 
-    test("delegates 'dark' theme correctly", async () => {
-      await persistThemeCookie("dark");
+    test("delegates 'dark' color scheme correctly", async () => {
+      await persistColorSchemeCookie("dark");
 
       expect(mockSetCookie).toHaveBeenCalledWith("ui-theme", "dark", expect.any(Object));
     });

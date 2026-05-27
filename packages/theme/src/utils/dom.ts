@@ -1,47 +1,47 @@
-import type { ResolvedTheme } from "#/types";
+import type { ResolvedColorScheme } from "#/types";
 
 /* -----------------------------------------------------------------------------
  * DOM Utilities
  * -------------------------------------------------------------------------- */
 
 /**
- * Apply theme to the DOM by updating `<html>` element.
+ * Apply color scheme to the DOM by updating `<html>` element.
  *
  * Updates both:
  * - CSS class (for Tailwind's `dark:` variants)
  * - `color-scheme` style (for native form controls and scrollbars)
  *
- * @param resolved - The resolved theme to apply ('light' or 'dark')
+ * @param resolved - The resolved color scheme to apply ('light' or 'dark')
  *
  * @since 0.3.16-canary.0
  */
-export function applyTheme(resolved: ResolvedTheme): void {
+export function applyColorScheme(resolved: ResolvedColorScheme): void {
   const root = window.document.documentElement;
 
-  root.classList.remove("light", "dark", "system");
+  root.classList.remove("light", "dark", "automatic");
   root.classList.add(resolved);
   root.style.colorScheme = resolved;
 }
 
 /**
- * Temporarily disable all CSS transitions during theme changes.
+ * Temporarily suppress all CSS transitions during color scheme changes.
  *
- * Prevents jarring color animations when switching between light/dark themes.
+ * Prevents jarring color animations when switching between light/dark appearances.
  * Respects user's `prefers-reduced-motion` preference (does nothing if enabled).
  *
  * @param nonce - Optional CSP nonce for the injected style element
- * @returns Cleanup function to re-enable transitions. Call after theme is applied.
+ * @returns Cleanup function to re-enable transitions. Call after color scheme is applied.
  *
  * @example
  * ```tsx
- * const enableTransitions = disableAnimation();
- * applyTheme('dark');
+ * const enableTransitions = suppressTransitions();
+ * applyColorScheme('dark');
  * enableTransitions(); // Re-enables CSS transitions
  * ```
  *
  * @since 0.3.16-canary.0
  */
-export function disableAnimation(nonce?: string): () => void {
+export function suppressTransitions(nonce?: string): () => void {
   if (typeof globalThis.window === "undefined") {
     return () => {
       /* noop */
@@ -59,7 +59,7 @@ export function disableAnimation(nonce?: string): () => void {
     };
   }
 
-  // Inject style to disable all transitions
+  // Inject style to suppress all transitions
   const css = document.createElement("style");
 
   if (nonce) {

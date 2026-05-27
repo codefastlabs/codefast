@@ -4,13 +4,13 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderToString } from "react-dom/server";
 
-import { ThemeProvider } from "#/core/provider";
-import { useTheme } from "#/core/use-theme";
-import { THEME_CHANNEL } from "#/constants";
-import type { Theme } from "#/types";
+import { AppearanceProvider } from "#/core/provider";
+import { useColorScheme } from "#/core/use-theme";
+import { SYNC_CHANNEL } from "#/constants";
+import type { ColorScheme } from "#/types";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 
-describe("ThemeProvider", () => {
+describe("AppearanceProvider", () => {
   const originalMatchMedia = window.matchMedia;
 
   beforeEach(() => {
@@ -32,9 +32,9 @@ describe("ThemeProvider", () => {
   describe("rendering", () => {
     test("should render children", () => {
       render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <div data-testid="child">Child Content</div>
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       expect(screen.getByTestId("child")).toHaveTextContent("Child Content");
@@ -42,10 +42,10 @@ describe("ThemeProvider", () => {
 
     test("should render multiple children", () => {
       render(
-        <ThemeProvider theme="dark">
+        <AppearanceProvider colorScheme="dark">
           <div data-testid="child1">Child 1</div>
           <div data-testid="child2">Child 2</div>
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       expect(screen.getByTestId("child1")).toBeInTheDocument();
@@ -53,78 +53,78 @@ describe("ThemeProvider", () => {
     });
   });
 
-  describe("theme context", () => {
-    test("should provide initial theme via context", () => {
+  describe("color scheme context", () => {
+    test("should provide initial color scheme via context", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme">{theme}</span>;
+        return <span data-testid="colorScheme">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="dark">
+        <AppearanceProvider colorScheme="dark">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("theme")).toHaveTextContent("dark");
+      expect(screen.getByTestId("colorScheme")).toHaveTextContent("dark");
     });
 
-    test("should provide resolved theme for explicit themes", () => {
+    test("should provide resolved color scheme for explicit schemes", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedTheme } = useTheme();
+        const { resolvedColorScheme } = useColorScheme();
 
-        return <span data-testid="resolved">{resolvedTheme}</span>;
+        return <span data-testid="resolved">{resolvedColorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       expect(screen.getByTestId("resolved")).toHaveTextContent("light");
     });
 
-    test('should resolve "system" theme to OS preference (light)', () => {
+    test('should resolve "automatic" color scheme to OS preference (light)', () => {
       mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedTheme, theme } = useTheme();
+        const { resolvedColorScheme, colorScheme } = useColorScheme();
 
         return (
           <>
-            <span data-testid="theme">{theme}</span>
-            <span data-testid="resolved">{resolvedTheme}</span>
+            <span data-testid="colorScheme">{colorScheme}</span>
+            <span data-testid="resolved">{resolvedColorScheme}</span>
           </>
         );
       };
 
       render(
-        <ThemeProvider theme="system">
+        <AppearanceProvider colorScheme="automatic">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("theme")).toHaveTextContent("system");
+      expect(screen.getByTestId("colorScheme")).toHaveTextContent("automatic");
       expect(screen.getByTestId("resolved")).toHaveTextContent("light");
     });
 
-    test('should resolve "system" theme to OS preference (dark)', () => {
+    test('should resolve "automatic" color scheme to OS preference (dark)', () => {
       mockMatchMedia((query) =>
         createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
       );
 
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedTheme } = useTheme();
+        const { resolvedColorScheme } = useColorScheme();
 
-        return <span data-testid="resolved">{resolvedTheme}</span>;
+        return <span data-testid="resolved">{resolvedColorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="system">
+        <AppearanceProvider colorScheme="automatic">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       expect(screen.getByTestId("resolved")).toHaveTextContent("dark");
@@ -132,43 +132,43 @@ describe("ThemeProvider", () => {
 
     test("should provide isPending as false initially", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { isPending } = useTheme();
+        const { isPending } = useColorScheme();
 
         return <span data-testid="pending">{String(isPending)}</span>;
       };
 
       render(
-        <ThemeProvider theme="dark">
+        <AppearanceProvider colorScheme="dark">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       expect(screen.getByTestId("pending")).toHaveTextContent("false");
     });
 
-    test("should provide setTheme function", () => {
+    test("should provide setColorScheme function", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { setTheme } = useTheme();
+        const { setColorScheme } = useColorScheme();
 
-        return <span data-testid="hasSetTheme">{typeof setTheme}</span>;
+        return <span data-testid="hasSetColorScheme">{typeof setColorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="dark">
+        <AppearanceProvider colorScheme="dark">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("hasSetTheme")).toHaveTextContent("function");
+      expect(screen.getByTestId("hasSetColorScheme")).toHaveTextContent("function");
     });
   });
 
   describe("DOM updates", () => {
-    test("should apply theme class to html element on mount", async () => {
+    test("should apply color scheme class to html element on mount", async () => {
       render(
-        <ThemeProvider theme="dark">
+        <AppearanceProvider colorScheme="dark">
           <div>Content</div>
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await waitFor(() => {
@@ -178,9 +178,9 @@ describe("ThemeProvider", () => {
 
     test("should set colorScheme style on html element", async () => {
       render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <div>Content</div>
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await waitFor(() => {
@@ -189,19 +189,19 @@ describe("ThemeProvider", () => {
     });
   });
 
-  describe("setTheme", () => {
-    test("should call persistTheme when provided", async () => {
+  describe("setColorScheme", () => {
+    test("should call persistColorScheme when provided", async () => {
       const user = userEvent.setup();
-      const mockPersistTheme = vi.fn(async (_theme: Theme) => {});
+      const mockPersistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setTheme } = useTheme();
+        const { setColorScheme } = useColorScheme();
 
         return (
           <button
             data-testid="toggle"
             onClick={() => {
-              void setTheme("dark");
+              void setColorScheme("dark");
             }}
           >
             Toggle
@@ -210,30 +210,30 @@ describe("ThemeProvider", () => {
       };
 
       render(
-        <ThemeProvider persistTheme={mockPersistTheme} theme="light">
+        <AppearanceProvider persistColorScheme={mockPersistColorScheme} colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await user.click(screen.getByTestId("toggle"));
 
       await waitFor(() => {
-        expect(mockPersistTheme).toHaveBeenCalledWith("dark");
+        expect(mockPersistColorScheme).toHaveBeenCalledWith("dark");
       });
     });
 
-    test("should not call persistTheme when setting same theme", async () => {
+    test("should not call persistColorScheme when setting same color scheme", async () => {
       const user = userEvent.setup();
-      const mockPersistTheme = vi.fn(async (_theme: Theme) => {});
+      const mockPersistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setTheme, theme } = useTheme();
+        const { setColorScheme, colorScheme } = useColorScheme();
 
         return (
           <button
             data-testid="toggle"
             onClick={() => {
-              void setTheme(theme);
+              void setColorScheme(colorScheme);
             }}
           >
             Toggle
@@ -242,104 +242,104 @@ describe("ThemeProvider", () => {
       };
 
       render(
-        <ThemeProvider persistTheme={mockPersistTheme} theme="dark">
+        <AppearanceProvider persistColorScheme={mockPersistColorScheme} colorScheme="dark">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await user.click(screen.getByTestId("toggle"));
 
-      // Wait a bit and verify persistTheme was not called
+      // Wait a bit and verify persistColorScheme was not called
       await act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       });
 
-      expect(mockPersistTheme).not.toHaveBeenCalled();
+      expect(mockPersistColorScheme).not.toHaveBeenCalled();
     });
   });
 
-  describe("syncThemeFromServer", () => {
-    test("reconciles state when server returns a different theme after mount", async () => {
-      const sync = vi.fn().mockResolvedValue("dark" as Theme);
+  describe("syncFromServer", () => {
+    test("reconciles state when server returns a different color scheme after mount", async () => {
+      const sync = vi.fn().mockResolvedValue("dark" as ColorScheme);
 
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider syncThemeFromServer={sync} theme="light">
+        <AppearanceProvider syncFromServer={sync} colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
       await waitFor(() => {
-        expect(screen.getByTestId("theme-label")).toHaveTextContent("dark");
+        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
       });
 
       expect(sync).toHaveBeenCalledTimes(1);
     });
 
-    test("keeps initial theme when syncThemeFromServer rejects", async () => {
+    test("keeps initial color scheme when syncFromServer rejects", async () => {
       const sync = vi.fn().mockRejectedValue(new Error("network"));
 
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider syncThemeFromServer={sync} theme="light">
+        <AppearanceProvider syncFromServer={sync} colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await waitFor(() => {
         expect(sync).toHaveBeenCalled();
       });
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
     });
 
-    test("does not change preference when server returns the same theme", async () => {
-      const sync = vi.fn().mockResolvedValue("light" as Theme);
+    test("does not change preference when server returns the same color scheme", async () => {
+      const sync = vi.fn().mockResolvedValue("light" as ColorScheme);
 
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider syncThemeFromServer={sync} theme="light">
+        <AppearanceProvider syncFromServer={sync} colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await waitFor(() => {
         expect(sync).toHaveBeenCalled();
       });
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
     });
 
     test("ignores server result after unmount", async () => {
-      let resolveSync: ((value: Theme) => void) | undefined;
+      let resolveSync: ((value: ColorScheme) => void) | undefined;
       const sync = vi.fn(
         () =>
-          new Promise<Theme>((resolve) => {
+          new Promise<ColorScheme>((resolve) => {
             resolveSync = resolve;
           }),
       );
 
       const { unmount } = render(
-        <ThemeProvider syncThemeFromServer={sync} theme="light">
+        <AppearanceProvider syncFromServer={sync} colorScheme="light">
           <span data-testid="x">x</span>
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await waitFor(() => {
@@ -350,7 +350,7 @@ describe("ThemeProvider", () => {
 
       await act(async () => {
         if (resolveSync === undefined) {
-          throw new Error("expected syncThemeFromServer to have started");
+          throw new Error("expected syncFromServer to have started");
         }
         resolveSync("dark");
         await Promise.resolve();
@@ -358,76 +358,76 @@ describe("ThemeProvider", () => {
     });
   });
 
-  describe("ssrSystemTheme", () => {
-    test("uses ssrSystemTheme as resolved system preference during SSR", () => {
+  describe("ssrColorScheme", () => {
+    test("uses ssrColorScheme as resolved system preference during SSR", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedTheme } = useTheme();
+        const { resolvedColorScheme } = useColorScheme();
 
-        return <span data-testid="resolved">{resolvedTheme}</span>;
+        return <span data-testid="resolved">{resolvedColorScheme}</span>;
       };
 
       const html = renderToString(
-        <ThemeProvider ssrSystemTheme="light" theme="system">
+        <AppearanceProvider ssrColorScheme="light" colorScheme="automatic">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       expect(html).toContain("light");
     });
   });
 
-  describe("theme prop sync after mount", () => {
-    test("re-syncs state when theme prop changes (e.g. loader re-runs)", async () => {
+  describe("colorScheme prop sync after mount", () => {
+    test("re-syncs state when colorScheme prop changes (e.g. loader re-runs)", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       const { rerender } = render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
       rerender(
-        <ThemeProvider theme="dark">
+        <AppearanceProvider colorScheme="dark">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId("theme-label")).toHaveTextContent("dark");
+        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
       });
     });
 
-    test("ignores invalid theme prop and falls back to DEFAULT_THEME", () => {
+    test("ignores invalid colorScheme prop and falls back to DEFAULT_COLOR_SCHEME", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
         // @ts-expect-error test-only invalid value
-        <ThemeProvider theme="invalid-value">
+        <AppearanceProvider colorScheme="invalid-value">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("system");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("automatic");
     });
   });
 
-  describe("rapid setTheme (last-write-wins)", () => {
-    test("only the last theme value is committed when called in rapid succession", async () => {
+  describe("rapid setColorScheme (last-write-wins)", () => {
+    test("only the last color scheme value is committed when called in rapid succession", async () => {
       const user = userEvent.setup();
 
       // Slow persist to simulate concurrent in-flight calls
       let resolveFirst: (() => void) | undefined;
-      const persistTheme = vi
+      const persistColorScheme = vi
         .fn()
         .mockImplementationOnce(
           () =>
@@ -438,44 +438,44 @@ describe("ThemeProvider", () => {
         .mockResolvedValue(undefined);
 
       const TestConsumer = (): React.ReactElement => {
-        const { setTheme, theme } = useTheme();
+        const { setColorScheme, colorScheme } = useColorScheme();
 
         return (
           <>
-            <span data-testid="theme-label">{theme}</span>
+            <span data-testid="colorScheme-label">{colorScheme}</span>
             <button
               data-testid="go-dark"
               type="button"
               onClick={() => {
-                void setTheme("dark");
+                void setColorScheme("dark");
               }}
             >
               Dark
             </button>
             <button
-              data-testid="go-system"
+              data-testid="go-automatic"
               type="button"
               onClick={() => {
-                void setTheme("system");
+                void setColorScheme("automatic");
               }}
             >
-              System
+              Automatic
             </button>
           </>
         );
       };
 
       render(
-        <ThemeProvider persistTheme={persistTheme} theme="light">
+        <AppearanceProvider persistColorScheme={persistColorScheme} colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       // Trigger first call (slow persist)
       await user.click(screen.getByTestId("go-dark"));
 
       // Trigger second call before first persists
-      await user.click(screen.getByTestId("go-system"));
+      await user.click(screen.getByTestId("go-automatic"));
 
       // Resolve the slow first persist
       await act(async () => {
@@ -484,11 +484,11 @@ describe("ThemeProvider", () => {
       });
 
       await waitFor(() => {
-        expect(persistTheme).toHaveBeenCalledTimes(2);
+        expect(persistColorScheme).toHaveBeenCalledTimes(2);
       });
 
-      // Final committed state should be the last intent ("system"), not "dark"
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("system");
+      // Final committed state should be the last intent ("automatic"), not "dark"
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("automatic");
     });
   });
 
@@ -548,48 +548,48 @@ describe("ThemeProvider", () => {
       listenersByName.clear();
     });
 
-    test("updates theme when another tab posts a different preference", async () => {
+    test("updates color scheme when another tab posts a different preference", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
-      const channel = new BroadcastChannel(THEME_CHANNEL);
+      const channel = new BroadcastChannel(SYNC_CHANNEL);
 
       await act(async () => {
         channel.postMessage("dark");
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId("theme-label")).toHaveTextContent("dark");
+        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
       });
 
       channel.close();
     });
 
-    test("ignores BroadcastChannel message with invalid theme value", async () => {
+    test("ignores BroadcastChannel message with invalid color scheme value", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      const channel = new BroadcastChannel(THEME_CHANNEL);
+      const channel = new BroadcastChannel(SYNC_CHANNEL);
 
       await act(async () => {
         // Attempt to inject an invalid value — should be ignored
@@ -597,31 +597,31 @@ describe("ThemeProvider", () => {
       });
 
       // State should remain unchanged
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
       channel.close();
     });
 
     test("ignores BroadcastChannel message when preference matches current", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { theme } = useTheme();
+        const { colorScheme } = useColorScheme();
 
-        return <span data-testid="theme-label">{theme}</span>;
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
       render(
-        <ThemeProvider theme="light">
+        <AppearanceProvider colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
-      const channel = new BroadcastChannel(THEME_CHANNEL);
+      const channel = new BroadcastChannel(SYNC_CHANNEL);
 
       await act(async () => {
         channel.postMessage("light");
       });
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
       channel.close();
     });
@@ -641,9 +641,9 @@ describe("ThemeProvider", () => {
 
       expect(() => {
         render(
-          <ThemeProvider theme="light">
+          <AppearanceProvider colorScheme="light">
             <div data-testid="content">content</div>
-          </ThemeProvider>,
+          </AppearanceProvider>,
         );
       }).not.toThrow();
 
@@ -659,9 +659,9 @@ describe("ThemeProvider", () => {
 
       expect(() => {
         render(
-          <ThemeProvider theme="dark">
+          <AppearanceProvider colorScheme="dark">
             <div data-testid="content">content</div>
-          </ThemeProvider>,
+          </AppearanceProvider>,
         );
       }).not.toThrow();
 
@@ -669,25 +669,25 @@ describe("ThemeProvider", () => {
     });
   });
 
-  describe("setTheme errors", () => {
-    test("logs and keeps prior theme when persistTheme rejects", async () => {
+  describe("setColorScheme errors", () => {
+    test("logs and keeps prior color scheme when persistColorScheme rejects", async () => {
       const user = userEvent.setup();
-      const persistTheme = vi.fn(async (_theme: Theme) => {
+      const persistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {
         throw new Error("persist failed");
       });
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setTheme, theme } = useTheme();
+        const { setColorScheme, colorScheme } = useColorScheme();
 
         return (
           <>
-            <span data-testid="theme-label">{theme}</span>
+            <span data-testid="colorScheme-label">{colorScheme}</span>
             <button
               data-testid="go-dark"
               type="button"
               onClick={() => {
-                void setTheme("dark");
+                void setColorScheme("dark");
               }}
             >
               Dark
@@ -697,9 +697,9 @@ describe("ThemeProvider", () => {
       };
 
       render(
-        <ThemeProvider persistTheme={persistTheme} theme="light">
+        <AppearanceProvider persistColorScheme={persistColorScheme} colorScheme="light">
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await user.click(screen.getByTestId("go-dark"));
@@ -708,30 +708,30 @@ describe("ThemeProvider", () => {
         expect(consoleSpy).toHaveBeenCalled();
       });
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
       consoleSpy.mockRestore();
     });
 
-    test("calls onThemePersistError with error and attempted theme", async () => {
+    test("calls onPersistError with error and attempted color scheme", async () => {
       const user = userEvent.setup();
       const persistError = new Error("persist failed");
-      const persistTheme = vi.fn(async (_theme: Theme) => {
+      const persistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {
         throw persistError;
       });
-      const onThemePersistError = vi.fn();
+      const onPersistError = vi.fn();
 
       const TestConsumer = (): React.ReactElement => {
-        const { setTheme, theme } = useTheme();
+        const { setColorScheme, colorScheme } = useColorScheme();
 
         return (
           <>
-            <span data-testid="theme-label">{theme}</span>
+            <span data-testid="colorScheme-label">{colorScheme}</span>
             <button
               data-testid="go-dark"
               type="button"
               onClick={() => {
-                void setTheme("dark");
+                void setColorScheme("dark");
               }}
             >
               Dark
@@ -741,22 +741,22 @@ describe("ThemeProvider", () => {
       };
 
       render(
-        <ThemeProvider
-          onThemePersistError={onThemePersistError}
-          persistTheme={persistTheme}
-          theme="light"
+        <AppearanceProvider
+          onPersistError={onPersistError}
+          persistColorScheme={persistColorScheme}
+          colorScheme="light"
         >
           <TestConsumer />
-        </ThemeProvider>,
+        </AppearanceProvider>,
       );
 
       await user.click(screen.getByTestId("go-dark"));
 
       await waitFor(() => {
-        expect(onThemePersistError).toHaveBeenCalledWith(persistError, "dark");
+        expect(onPersistError).toHaveBeenCalledWith(persistError, "dark");
       });
 
-      expect(screen.getByTestId("theme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
     });
   });
 });

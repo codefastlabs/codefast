@@ -1,40 +1,40 @@
 import type { JSX } from "react";
 
 import { MEDIA } from "#/constants";
-import { themes } from "#/types";
-import type { Theme } from "#/types";
+import { colorSchemes } from "#/types";
+import type { ColorScheme } from "#/types";
 
 /* Derived once from schema + constants — inline script uses these to stay in sync */
-const THEME_REMOVE_ARGS = themes.map((t) => JSON.stringify(t)).join(",");
-const THEME_VALID_CHECK = themes.map((t) => `s===${JSON.stringify(t)}`).join("||");
+const COLOR_SCHEME_REMOVE_ARGS = colorSchemes.map((s) => JSON.stringify(s)).join(",");
+const COLOR_SCHEME_VALID_CHECK = colorSchemes.map((s) => `s===${JSON.stringify(s)}`).join("||");
 
 /* -----------------------------------------------------------------------------
  * Props
  * -------------------------------------------------------------------------- */
 
-export type ThemeScriptProps = {
+export type AppearanceScriptProps = {
   /**
-   * Initial theme from server (e.g., from cookie via loader).
+   * Initial color scheme from server (e.g., from cookie via loader).
    *
    * When `storageKey` is provided, this acts as a fallback if the storage entry is absent
    * or contains an unrecognised value.
    */
-  readonly theme: Theme;
+  readonly colorScheme: ColorScheme;
   /**
    * CSP nonce applied to the inline script element.
    */
   readonly nonce?: string;
   /**
    * When provided, the inline script reads `localStorage.getItem(storageKey)` before
-   * first paint and uses that value if it is a recognised theme (`"light"`, `"dark"`,
-   * or `"system"`). Falls back to `theme` when the key is absent or invalid.
+   * first paint and uses that value if it is a recognised color scheme (`"light"`, `"dark"`,
+   * or `"automatic"`). Falls back to `colorScheme` when the key is absent or invalid.
    *
-   * Use this for client-only React apps that persist the theme in `localStorage` instead
+   * Use this for client-only React apps that persist the color scheme in `localStorage` instead
    * of an HTTP cookie to prevent FOUC.
    *
    * @example
    * ```tsx
-   * <ThemeScript theme="system" storageKey="my-app-theme" />
+   * <AppearanceScript colorScheme="automatic" storageKey="my-app-color-scheme" />
    * ```
    */
   readonly storageKey?: string;
@@ -49,38 +49,42 @@ export type ThemeScriptProps = {
  *
  * **Why this is needed:**
  * React hydration occurs after the browser has already painted the page.
- * Without this script, users would briefly see the wrong theme before
+ * Without this script, users would briefly see the wrong appearance before
  * React takes over and applies the correct one.
  *
  * **How it works:**
  * This script runs synchronously in the `<head>` before first paint:
- * 1. Resolves 'system' to 'light' or 'dark' using `matchMedia()`
- * 2. Removes prior `light` / `dark` / `system` classes on `<html>` (SSR may
- *    have applied the wrong resolved class for `system`, e.g. default `dark`)
- * 3. Adds the resolved theme class and sets `color-scheme` for native controls
+ * 1. Resolves 'automatic' to 'light' or 'dark' using `matchMedia()`
+ * 2. Removes prior `light` / `dark` / `automatic` classes on `<html>` (SSR may
+ *    have applied the wrong resolved class for `automatic`, e.g. default `dark`)
+ * 3. Adds the resolved color scheme class and sets `color-scheme` for native controls
  *
  * @example
  * ```tsx
  * // In __root.tsx (TanStack Start)
  * <head>
- *   <ThemeScript theme={theme} />
+ *   <AppearanceScript colorScheme={colorScheme} />
  * </head>
  * ```
  *
  * @since 0.3.16-canary.0
  */
-export function ThemeScript({ nonce, storageKey, theme }: ThemeScriptProps): JSX.Element {
+export function AppearanceScript({
+  nonce,
+  storageKey,
+  colorScheme,
+}: AppearanceScriptProps): JSX.Element {
   // S2: Use JSON.stringify for safe JS string serialisation — guards against injection if
   // TypeScript's type-narrowing is bypassed (e.g. a raw string from an unvalidated source).
   // F1: When storageKey is provided, the script reads localStorage before first paint so
-  // client-only apps (no SSR cookie) get the right theme without FOUC.
-  // sk=null short-circuits to s=null so theme falls back to fbt — backward-compatible.
-  const themeScript = `(function(){try{var sk=${JSON.stringify(storageKey ?? null)},fbt=${JSON.stringify(theme)},s=sk&&localStorage.getItem(sk),theme=(${THEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"system"===theme&&(resolvedTheme=window.matchMedia(${JSON.stringify(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${THEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
+  // client-only apps (no SSR cookie) get the right color scheme without FOUC.
+  // sk=null short-circuits to s=null so color scheme falls back to fbt — backward-compatible.
+  const appearanceScript = `(function(){try{var sk=${JSON.stringify(storageKey ?? null)},fbt=${JSON.stringify(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${JSON.stringify(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
   return (
     <script
-      dangerouslySetInnerHTML={{ __html: themeScript }}
+      dangerouslySetInnerHTML={{ __html: appearanceScript }}
       suppressHydrationWarning
       {...nonceProps}
     />

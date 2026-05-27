@@ -3,125 +3,125 @@ import type { ReactNode } from "react";
 
 import { render, renderHook, screen } from "@testing-library/react";
 
-import type { Theme, ThemeContextType } from "#/types";
+import type { ColorScheme, ColorSchemeContextType } from "#/types";
 
-import { ThemeContext } from "#/core/context";
-import { useTheme } from "#/core/use-theme";
+import { ColorSchemeContext } from "#/core/context";
+import { useColorScheme } from "#/core/use-theme";
 
 /**
  * Helper to create a wrapper component for renderHook
  */
-const createWrapper = (value: ThemeContextType) => {
-  return function ThemeContextWrapper({ children }: { children: ReactNode }) {
-    return <ThemeContext value={value}>{children}</ThemeContext>;
+const createWrapper = (value: ColorSchemeContextType) => {
+  return function ColorSchemeContextWrapper({ children }: { children: ReactNode }) {
+    return <ColorSchemeContext value={value}>{children}</ColorSchemeContext>;
   };
 };
 
-describe("useTheme Hook", () => {
-  describe("without ThemeProvider", () => {
-    test("should throw error when used outside of ThemeProvider", () => {
+describe("useColorScheme Hook", () => {
+  describe("without AppearanceProvider", () => {
+    test("should throw error when used outside of AppearanceProvider", () => {
       // Suppress console.error for this test since we expect an error
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {
         /* noop */
       });
 
       expect(() => {
-        renderHook(() => useTheme());
-      }).toThrow("useTheme must be used within a ThemeProvider");
+        renderHook(() => useColorScheme());
+      }).toThrow("useColorScheme must be used within an AppearanceProvider");
 
       consoleSpy.mockRestore();
     });
   });
 
-  describe("with ThemeProvider", () => {
-    test("should return theme from context", () => {
-      const mockValue: ThemeContextType = {
+  describe("with AppearanceProvider", () => {
+    test("should return colorScheme from context", () => {
+      const mockValue: ColorSchemeContextType = {
         isPending: false,
-        resolvedTheme: "dark",
-        setTheme: vi.fn(async (_value: Theme) => {}),
-        theme: "dark",
+        resolvedColorScheme: "dark",
+        setColorScheme: vi.fn(async (_value: ColorScheme) => {}),
+        colorScheme: "dark",
       };
 
-      const { result } = renderHook(() => useTheme(), {
+      const { result } = renderHook(() => useColorScheme(), {
         wrapper: createWrapper(mockValue),
       });
 
-      expect(result.current.theme).toBe("dark");
+      expect(result.current.colorScheme).toBe("dark");
     });
 
-    test("should return resolvedTheme from context", () => {
-      const mockValue: ThemeContextType = {
+    test("should return resolvedColorScheme from context", () => {
+      const mockValue: ColorSchemeContextType = {
         isPending: false,
-        resolvedTheme: "light",
-        setTheme: vi.fn(async (_value: Theme) => {}),
-        theme: "system",
+        resolvedColorScheme: "light",
+        setColorScheme: vi.fn(async (_value: ColorScheme) => {}),
+        colorScheme: "automatic",
       };
 
-      const { result } = renderHook(() => useTheme(), {
+      const { result } = renderHook(() => useColorScheme(), {
         wrapper: createWrapper(mockValue),
       });
 
-      expect(result.current.resolvedTheme).toBe("light");
+      expect(result.current.resolvedColorScheme).toBe("light");
     });
 
     test("should return isPending from context", () => {
-      const mockValue: ThemeContextType = {
+      const mockValue: ColorSchemeContextType = {
         isPending: true,
-        resolvedTheme: "dark",
-        setTheme: vi.fn(async (_value: Theme) => {}),
-        theme: "dark",
+        resolvedColorScheme: "dark",
+        setColorScheme: vi.fn(async (_value: ColorScheme) => {}),
+        colorScheme: "dark",
       };
 
-      const { result } = renderHook(() => useTheme(), {
+      const { result } = renderHook(() => useColorScheme(), {
         wrapper: createWrapper(mockValue),
       });
 
       expect(result.current.isPending).toBe(true);
     });
 
-    test("should return setTheme function from context", () => {
-      const mockSetTheme = vi.fn(async (_value: Theme) => {});
-      const mockValue: ThemeContextType = {
+    test("should return setColorScheme function from context", () => {
+      const mockSetColorScheme = vi.fn(async (_value: ColorScheme) => {});
+      const mockValue: ColorSchemeContextType = {
         isPending: false,
-        resolvedTheme: "dark",
-        setTheme: mockSetTheme,
-        theme: "dark",
+        resolvedColorScheme: "dark",
+        setColorScheme: mockSetColorScheme,
+        colorScheme: "dark",
       };
 
-      const { result } = renderHook(() => useTheme(), {
+      const { result } = renderHook(() => useColorScheme(), {
         wrapper: createWrapper(mockValue),
       });
 
-      expect(result.current.setTheme).toBe(mockSetTheme);
+      expect(result.current.setColorScheme).toBe(mockSetColorScheme);
     });
 
     test("should work in a component", () => {
-      const mockValue: ThemeContextType = {
+      const mockValue: ColorSchemeContextType = {
         isPending: false,
-        resolvedTheme: "dark",
-        setTheme: vi.fn(async (_value: Theme) => {}),
-        theme: "dark",
+        resolvedColorScheme: "dark",
+        setColorScheme: vi.fn(async (_value: ColorScheme) => {}),
+        colorScheme: "dark",
       };
 
       const TestComponent = (): React.ReactElement => {
-        const { isPending, resolvedTheme, theme } = useTheme();
+        const { isPending, resolvedColorScheme, colorScheme } = useColorScheme();
 
         return (
           <div>
-            <span data-testid="theme">{theme}</span>
-            <span data-testid="resolved">{resolvedTheme}</span>
+            <span data-testid="colorScheme">{colorScheme}</span>
+            <span data-testid="resolved">{resolvedColorScheme}</span>
             <span data-testid="pending">{String(isPending)}</span>
           </div>
         );
       };
 
       render(
-        <ThemeContext value={mockValue}>
+        <ColorSchemeContext value={mockValue}>
           <TestComponent />
-        </ThemeContext>,
+        </ColorSchemeContext>,
       );
 
-      expect(screen.getByTestId("theme")).toHaveTextContent("dark");
+      expect(screen.getByTestId("colorScheme")).toHaveTextContent("dark");
       expect(screen.getByTestId("resolved")).toHaveTextContent("dark");
       expect(screen.getByTestId("pending")).toHaveTextContent("false");
     });
