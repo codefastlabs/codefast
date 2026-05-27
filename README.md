@@ -69,7 +69,7 @@ CodeFast is a **monorepo** containing a production-ready UI component library an
 ```mermaid
 graph TD
   subgraph apps [Apps]
-    Docs["@apps/docs<br/>Documentation site"]
+    Web["@apps/web<br/>Component showcase"]
   end
 
   subgraph packages [Packages]
@@ -81,8 +81,8 @@ graph TD
     TSConfig["@codefast/typescript-config<br/>TypeScript presets"]
   end
 
-  Docs --> UI
-  Docs --> Theme
+  Web --> UI
+  Web --> Theme
   UI --> TV
   CLI --> DI
   UI -.->|dev dependency| TSConfig
@@ -102,9 +102,9 @@ graph TD
 | [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (arrange, mirror, tag)                        |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                      |
 
-| App                       | Description                                                |
-| ------------------------- | ---------------------------------------------------------- |
-| [`@apps/docs`](apps/docs) | Documentation and component showcase site (TanStack Start) |
+| App                     | Description                              |
+| ----------------------- | ---------------------------------------- |
+| [`@apps/web`](apps/web) | Component showcase site (TanStack Start) |
 
 ## Getting Started
 

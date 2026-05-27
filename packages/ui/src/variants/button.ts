@@ -27,19 +27,13 @@ const buttonVariants = tv({
   },
   variants: {
     size: {
-      // 32px
-      "icon-sm": "size-8",
-      // 36px
-      icon: "size-9",
-      // 40px
-      "icon-lg": "size-10",
+      "icon-sm": "size-8", // 32px
+      icon: "size-9", // 36px
+      "icon-lg": "size-10", // 40px
 
-      // 32px
-      sm: ["h-8 px-3", "has-[>svg]:px-2.5"],
-      // 36px
-      md: ["h-9 px-4", "has-[>svg]:px-3"],
-      // 40px
-      lg: ["h-10 px-6", "has-[>svg]:px-4"],
+      sm: ["h-8 px-3", "has-[>svg]:px-2.5"], // 32px
+      md: ["h-9 px-4", "has-[>svg]:px-3"], // 36px
+      lg: ["h-10 px-6", "has-[>svg]:px-4"], // 40px
     },
     variant: {
       default: [

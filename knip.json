@@ -5,8 +5,8 @@
       "entry": ["package.json", "codefast.config.js"],
       "ignoreDependencies": ["jsdom"]
     },
-    "apps/docs": {
-      "entry": ["content-collections.ts", "src/router.tsx"]
+    "apps/web": {
+      "entry": ["src/router.tsx"]
     },
     "packages/cli": {
       "entry": ["src/bin.ts", "src/program.ts", "tests/integration/**/*.test.ts", "tests/integration/**/*.test.tsx"],

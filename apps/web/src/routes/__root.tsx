@@ -4,8 +4,8 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
 import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@codefast/theme/start";
-import Footer from "#/components/Footer";
-import Header from "#/components/Header";
+import Footer from "#/components/footer";
+import Header from "#/components/header.tsx";
 import appCss from "#/styles.css?url";
 
 export const Route = createRootRoute({

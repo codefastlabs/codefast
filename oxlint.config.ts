@@ -16,12 +16,21 @@ export default defineConfig({
     "**/.tanstack/**",
     "**/.content-collections/**",
     "**/*.tsbuildinfo",
-    "apps/docs/src/routeTree.gen.ts",
+    "apps/web/src/routeTree.gen.ts",
   ],
   options: {
     typeAware: true,
   },
   overrides: [
+    {
+      // Vite's ?raw suffix produces a default-string export that oxlint's import
+      // resolver cannot resolve. All ?raw re-exports are centralised in this one
+      // barrel so the suppression stays in config, not scattered as inline comments.
+      files: ["apps/web/src/components/examples/codes.ts"],
+      rules: {
+        "import/default": "off",
+      },
+    },
     {
       files: ["**/*.test.{ts,tsx,mts,cts,js,jsx,mjs,cjs}"],
       rules: {
@@ -33,7 +42,7 @@ export default defineConfig({
       // UI primitives and docs use intentional ARIA roles (role="group", role="progressbar",
       // role="status", role="list") that have no semantic-equivalent HTML tag in these contexts.
       // E.g. role="progressbar" on <svg>, role="group" on layout divs in component library.
-      files: ["packages/ui/src/**/*.{ts,tsx}", "apps/docs/src/**/*.{ts,tsx}"],
+      files: ["packages/ui/src/**/*.{ts,tsx}", "apps/web/src/**/*.{ts,tsx}"],
       rules: {
         "jsx-a11y/prefer-tag-over-role": "off",
       },

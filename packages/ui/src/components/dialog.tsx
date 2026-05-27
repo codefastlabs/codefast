@@ -257,12 +257,7 @@ interface DialogCloseProps extends Omit<ComponentProps<typeof DialogPrimitive.Cl
 /**
  * @since 0.3.16-canary.0
  */
-function DialogClose({
-  className,
-  size,
-  variant = "outline",
-  ...props
-}: DialogCloseProps): JSX.Element {
+function DialogClose({ className, size, variant, ...props }: DialogCloseProps): JSX.Element {
   return (
     <DialogPrimitive.Close
       className={buttonVariants({ className, size, variant })}

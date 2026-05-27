@@ -1,0 +1,30 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+
+export function TabsDemo() {
+  return (
+    <Tabs defaultValue="preview" className="w-full max-w-sm">
+      <TabsList>
+        <TabsTrigger value="preview">Preview</TabsTrigger>
+        <TabsTrigger value="code">Code</TabsTrigger>
+        <TabsTrigger value="docs">Docs</TabsTrigger>
+      </TabsList>
+      <TabsContent
+        value="preview"
+        className="mt-3 rounded-lg border border-(--line) p-4 text-sm text-(--sea-ink-soft)"
+      >
+        Live component preview renders here.
+      </TabsContent>
+      <TabsContent value="code" className="mt-3 overflow-hidden rounded-lg">
+        <pre className="bg-(--code-surface) p-4 font-mono text-xs text-(--code-text)">
+          <code>{`<Button variant="outline">Click me</Button>`}</code>
+        </pre>
+      </TabsContent>
+      <TabsContent
+        value="docs"
+        className="mt-3 rounded-lg border border-(--line) p-4 text-sm text-(--sea-ink-soft)"
+      >
+        Full API reference and usage examples.
+      </TabsContent>
+    </Tabs>
+  );
+}

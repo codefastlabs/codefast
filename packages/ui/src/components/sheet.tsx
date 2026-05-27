@@ -240,12 +240,7 @@ interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
 /**
  * @since 0.3.16-canary.0
  */
-function SheetClose({
-  className,
-  size,
-  variant = "outline",
-  ...props
-}: SheetCloseProps): JSX.Element {
+function SheetClose({ className, size, variant, ...props }: SheetCloseProps): JSX.Element {
   return (
     <SheetPrimitive.Close
       className={buttonVariants({ className, size, variant })}

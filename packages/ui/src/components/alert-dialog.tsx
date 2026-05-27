@@ -272,7 +272,7 @@ interface AlertDialogCancelProps extends ComponentProps<typeof AlertDialogPrimit
 function AlertDialogCancel({
   className,
   size,
-  variant = "outline",
+  variant,
   ...props
 }: AlertDialogCancelProps): JSX.Element {
   return (

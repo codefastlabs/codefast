@@ -233,12 +233,7 @@ interface DrawerCloseProps extends ComponentProps<typeof DrawerPrimitive.Close> 
 /**
  * @since 0.3.16-canary.0
  */
-function DrawerClose({
-  className,
-  size,
-  variant = "outline",
-  ...props
-}: DrawerCloseProps): JSX.Element {
+function DrawerClose({ className, size, variant, ...props }: DrawerCloseProps): JSX.Element {
   return (
     <DrawerPrimitive.Close
       className={buttonVariants({ className, size, variant })}
