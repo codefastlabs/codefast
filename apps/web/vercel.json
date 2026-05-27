@@ -1,6 +1,6 @@
 {
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm build",
+  "buildCommand": "cd ../.. && turbo run build --filter=@apps/web",
   "outputDirectory": ".vercel/output",
   "framework": null
 }
