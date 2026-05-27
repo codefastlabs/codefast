@@ -1,8 +1,8 @@
-import { DEFAULT_RESOLVED_THEME } from "#/constants";
-import { getSystemTheme, resolveTheme } from "#/utils/system";
+import { DEFAULT_RESOLVED_COLOR_SCHEME } from "#/constants";
+import { getSystemColorScheme, resolveColorScheme } from "#/utils/system";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 
-describe("System Theme Detection", () => {
+describe("System Color Scheme Detection", () => {
   const originalMatchMedia = window.matchMedia;
 
   afterEach(() => {
@@ -13,49 +13,49 @@ describe("System Theme Detection", () => {
     });
   });
 
-  describe("getSystemTheme", () => {
+  describe("getSystemColorScheme", () => {
     test('should return "dark" when system prefers dark mode', () => {
       mockMatchMedia((query) =>
         createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
       );
 
-      expect(getSystemTheme()).toBe("dark");
+      expect(getSystemColorScheme()).toBe("dark");
     });
 
     test('should return "light" when system prefers light mode', () => {
       mockMatchMedia((query) => createMockMediaQueryList(false, query));
 
-      expect(getSystemTheme()).toBe("light");
+      expect(getSystemColorScheme()).toBe("light");
     });
 
-    test("should have DEFAULT_RESOLVED_THEME as fallback for SSR", () => {
-      // In SSR (no window), getSystemTheme returns DEFAULT_RESOLVED_THEME
+    test("should have DEFAULT_RESOLVED_COLOR_SCHEME as fallback for SSR", () => {
+      // In SSR (no window), getSystemColorScheme returns DEFAULT_RESOLVED_COLOR_SCHEME
       // We can't easily test this in jsdom, so we verify the constant is correct
-      expect(DEFAULT_RESOLVED_THEME).toBe("dark");
+      expect(DEFAULT_RESOLVED_COLOR_SCHEME).toBe("dark");
     });
   });
 
-  describe("resolveTheme", () => {
-    test('should return "light" when theme is "light"', () => {
-      expect(resolveTheme("light")).toBe("light");
+  describe("resolveColorScheme", () => {
+    test('should return "light" when color scheme is "light"', () => {
+      expect(resolveColorScheme("light")).toBe("light");
     });
 
-    test('should return "dark" when theme is "dark"', () => {
-      expect(resolveTheme("dark")).toBe("dark");
+    test('should return "dark" when color scheme is "dark"', () => {
+      expect(resolveColorScheme("dark")).toBe("dark");
     });
 
-    test('should resolve "system" to system preference (light)', () => {
+    test('should resolve "automatic" to system preference (light)', () => {
       mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
-      expect(resolveTheme("system")).toBe("light");
+      expect(resolveColorScheme("automatic")).toBe("light");
     });
 
-    test('should resolve "system" to system preference (dark)', () => {
+    test('should resolve "automatic" to system preference (dark)', () => {
       mockMatchMedia((query) =>
         createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
       );
 
-      expect(resolveTheme("system")).toBe("dark");
+      expect(resolveColorScheme("automatic")).toBe("dark");
     });
   });
 });

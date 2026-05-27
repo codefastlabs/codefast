@@ -125,11 +125,6 @@
       "types": "./dist/graph-adapters/reactflow.d.mts",
       "import": "./dist/graph-adapters/reactflow.mjs"
     },
-    "./graph-adapters/types": {
-      "source": "./src/graph-adapters/types.ts",
-      "types": "./dist/graph-adapters/types.d.mts",
-      "import": "./dist/graph-adapters/types.mjs"
-    },
     "./inspector": {
       "source": "./src/inspector.ts",
       "types": "./dist/inspector.d.mts",

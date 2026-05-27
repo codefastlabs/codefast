@@ -1,8 +1,8 @@
-import { applyTheme, disableAnimation } from "#/utils/dom";
+import { applyColorScheme, suppressTransitions } from "#/utils/dom";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 
 describe("DOM Utilities", () => {
-  describe("applyTheme", () => {
+  describe("applyColorScheme", () => {
     beforeEach(() => {
       // Reset documentElement classes and styles before each test
       document.documentElement.className = "";
@@ -10,53 +10,53 @@ describe("DOM Utilities", () => {
     });
 
     test('should add "light" class to html element', () => {
-      applyTheme("light");
+      applyColorScheme("light");
 
       expect(document.documentElement.classList.contains("light")).toBe(true);
       expect(document.documentElement.classList.contains("dark")).toBe(false);
     });
 
     test('should add "dark" class to html element', () => {
-      applyTheme("dark");
+      applyColorScheme("dark");
 
       expect(document.documentElement.classList.contains("dark")).toBe(true);
       expect(document.documentElement.classList.contains("light")).toBe(false);
     });
 
     test('should set colorScheme style to "light"', () => {
-      applyTheme("light");
+      applyColorScheme("light");
 
       expect(document.documentElement.style.colorScheme).toBe("light");
     });
 
     test('should set colorScheme style to "dark"', () => {
-      applyTheme("dark");
+      applyColorScheme("dark");
 
       expect(document.documentElement.style.colorScheme).toBe("dark");
     });
 
-    test("should remove previous theme classes when switching", () => {
-      // Start with light theme
-      applyTheme("light");
+    test("should remove previous color scheme classes when switching", () => {
+      // Start with light
+      applyColorScheme("light");
       expect(document.documentElement.classList.contains("light")).toBe(true);
 
-      // Switch to dark theme
-      applyTheme("dark");
+      // Switch to dark
+      applyColorScheme("dark");
       expect(document.documentElement.classList.contains("dark")).toBe(true);
       expect(document.documentElement.classList.contains("light")).toBe(false);
     });
 
-    test('should remove "system" class when applying theme', () => {
-      document.documentElement.classList.add("system");
+    test('should remove "automatic" class when applying color scheme', () => {
+      document.documentElement.classList.add("automatic");
 
-      applyTheme("dark");
+      applyColorScheme("dark");
 
-      expect(document.documentElement.classList.contains("system")).toBe(false);
+      expect(document.documentElement.classList.contains("automatic")).toBe(false);
       expect(document.documentElement.classList.contains("dark")).toBe(true);
     });
   });
 
-  describe("disableAnimation", () => {
+  describe("suppressTransitions", () => {
     const originalMatchMedia = window.matchMedia;
     const originalRequestAnimationFrame = window.requestAnimationFrame;
 
@@ -91,21 +91,21 @@ describe("DOM Utilities", () => {
       }
     });
 
-    test("should inject style tag that disables transitions", () => {
-      const enable = disableAnimation();
+    test("should inject style tag that suppresses transitions", () => {
+      const enable = suppressTransitions();
 
       const styles = document.querySelectorAll("style");
-      const transitionDisablingStyle = [...styles].find((s) =>
+      const transitionSuppressingStyle = [...styles].find((s) =>
         s.textContent.includes("transition:none"),
       );
 
-      expect(transitionDisablingStyle).toBeTruthy();
+      expect(transitionSuppressingStyle).toBeTruthy();
 
       enable();
     });
 
     test("should return a cleanup function", () => {
-      const enable = disableAnimation();
+      const enable = suppressTransitions();
 
       expect(typeof enable).toBe("function");
 
@@ -113,7 +113,7 @@ describe("DOM Utilities", () => {
     });
 
     test("cleanup function should remove the injected style", async () => {
-      const enable = disableAnimation();
+      const enable = suppressTransitions();
 
       // Verify style exists
       let styles = document.querySelectorAll("style");
@@ -139,7 +139,7 @@ describe("DOM Utilities", () => {
     });
 
     test("should set nonce attribute when provided", () => {
-      const enable = disableAnimation("test-nonce");
+      const enable = suppressTransitions("test-nonce");
 
       const styles = document.querySelectorAll("style");
       const nonceStyle = [...styles].find((s) => s.getAttribute("nonce") === "test-nonce");
@@ -156,7 +156,7 @@ describe("DOM Utilities", () => {
 
       const styleCountBefore = document.querySelectorAll("style").length;
 
-      const enable = disableAnimation();
+      const enable = suppressTransitions();
 
       const styleCountAfter = document.querySelectorAll("style").length;
 

@@ -1,35 +1,35 @@
-import type { ResolvedTheme, Theme } from "#/types";
+import type { ResolvedColorScheme, ColorScheme } from "#/types";
 
 /* -----------------------------------------------------------------------------
  * Public Constants
  * -------------------------------------------------------------------------- */
 
 /**
- * Default theme when no user preference exists.
+ * Default color scheme when no user preference exists.
  *
- * Set to 'system' to respect OS preference by default.
+ * Set to 'automatic' to respect OS preference by default.
  *
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_THEME: Theme = "system";
+export const DEFAULT_COLOR_SCHEME: ColorScheme = "automatic";
 
 /**
- * Fallback theme for SSR when system preference cannot be detected.
+ * Fallback color scheme for SSR when system preference cannot be detected.
  *
  * Used during server-side rendering since `window.matchMedia()` is unavailable.
  *
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_RESOLVED_THEME: ResolvedTheme = "dark";
+export const DEFAULT_RESOLVED_COLOR_SCHEME: ResolvedColorScheme = "dark";
 
 /**
- * Cookie name for the httpOnly theme preference (`@codefast/theme/start`).
+ * Cookie name for the httpOnly color scheme preference (`@codefast/theme/start`).
  *
  * Re-exported only from `@codefast/theme/constants` so custom middleware matches the adapter.
  *
  * @since 0.3.16-canary.0
  */
-export const THEME_STORAGE_KEY = "ui-theme";
+export const STORAGE_KEY = "ui-theme";
 
 /* -----------------------------------------------------------------------------
  * Internal Constants
@@ -44,11 +44,9 @@ export const THEME_STORAGE_KEY = "ui-theme";
 export const MEDIA = "(prefers-color-scheme: dark)";
 
 /**
- * BroadcastChannel name for cross-tab theme synchronization.
- *
- * Enables instant theme updates across all open browser tabs.
+ * BroadcastChannel name for cross-tab color scheme synchronization.
  * @internal
  *
  * @since 0.3.16-canary.0
  */
-export const THEME_CHANNEL = "theme-sync";
+export const SYNC_CHANNEL = "color-scheme-sync";

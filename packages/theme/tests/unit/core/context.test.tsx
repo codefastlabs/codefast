@@ -2,14 +2,14 @@ import type React from "react";
 
 import { render, screen } from "@testing-library/react";
 
-import type { Theme } from "#/types";
+import type { ColorScheme } from "#/types";
 
-import { ThemeContext } from "#/core/context";
+import { ColorSchemeContext } from "#/core/context";
 
-describe("ThemeContext", () => {
+describe("ColorSchemeContext", () => {
   test("should be a valid React context", () => {
-    expect(ThemeContext).toBeDefined();
-    expect(ThemeContext.Provider).toBeDefined();
+    expect(ColorSchemeContext).toBeDefined();
+    expect(ColorSchemeContext.Provider).toBeDefined();
   });
 
   test("should have null as default value", () => {
@@ -17,9 +17,9 @@ describe("ThemeContext", () => {
     // Using React 19's use() would throw, so we test via Provider
     const TestConsumer = (): React.ReactElement => {
       return (
-        <ThemeContext.Consumer>
+        <ColorSchemeContext.Consumer>
           {(value) => <span data-testid="value">{value === null ? "null" : "unexpected"}</span>}
-        </ThemeContext.Consumer>
+        </ColorSchemeContext.Consumer>
       );
     };
 
@@ -31,32 +31,32 @@ describe("ThemeContext", () => {
   test("should provide value through Provider", () => {
     const mockValue = {
       isPending: false,
-      resolvedTheme: "dark" as const,
-      setTheme: vi.fn(async (_value: Theme) => {}),
-      theme: "dark" as const,
+      resolvedColorScheme: "dark" as const,
+      setColorScheme: vi.fn(async (_value: ColorScheme) => {}),
+      colorScheme: "dark" as const,
     };
 
     const TestConsumer = (): React.ReactElement => {
       return (
-        <ThemeContext.Consumer>
+        <ColorSchemeContext.Consumer>
           {(value) => (
             <>
-              <span data-testid="theme">{value?.theme}</span>
-              <span data-testid="resolved">{value?.resolvedTheme}</span>
+              <span data-testid="colorScheme">{value?.colorScheme}</span>
+              <span data-testid="resolved">{value?.resolvedColorScheme}</span>
               <span data-testid="pending">{String(value?.isPending)}</span>
             </>
           )}
-        </ThemeContext.Consumer>
+        </ColorSchemeContext.Consumer>
       );
     };
 
     render(
-      <ThemeContext value={mockValue}>
+      <ColorSchemeContext value={mockValue}>
         <TestConsumer />
-      </ThemeContext>,
+      </ColorSchemeContext>,
     );
 
-    expect(screen.getByTestId("theme")).toHaveTextContent("dark");
+    expect(screen.getByTestId("colorScheme")).toHaveTextContent("dark");
     expect(screen.getByTestId("resolved")).toHaveTextContent("dark");
     expect(screen.getByTestId("pending")).toHaveTextContent("false");
   });

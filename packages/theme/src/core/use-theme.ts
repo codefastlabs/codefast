@@ -1,34 +1,34 @@
 import { use } from "react";
 
-import type { ThemeContextType } from "#/types";
+import type { ColorSchemeContextType } from "#/types";
 
-import { ThemeContext } from "#/core/context";
+import { ColorSchemeContext } from "#/core/context";
 
 /* -----------------------------------------------------------------------------
  * Hook
  * -------------------------------------------------------------------------- */
 
 /**
- * Hook to access theme context.
+ * Hook to access color scheme context.
  *
  * Uses React 19's `use()` API for context consumption, enabling:
  * - Conditional context reading
  * - Better Suspense boundary integration
  *
- * @returns Theme context with `theme`, `resolvedTheme`, `setTheme`, and `isPending`
- * @throws Error if called outside of ThemeProvider
+ * @returns Color scheme context with `colorScheme`, `resolvedColorScheme`, `setPreferredColorScheme`, and `isPending`
+ * @throws Error if called outside of AppearanceProvider
  *
  * @example
  * ```tsx
- * function ThemeToggle() {
- *   const { theme, setTheme, isPending } = useTheme();
+ * function AppearanceToggle() {
+ *   const { colorScheme, setPreferredColorScheme, isPending } = useColorScheme();
  *
  *   return (
  *     <button
- *       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+ *       onClick={() => setPreferredColorScheme(colorScheme === 'dark' ? 'light' : 'dark')}
  *       disabled={isPending}
  *     >
- *       {theme}
+ *       {colorScheme}
  *     </button>
  *   );
  * }
@@ -36,11 +36,11 @@ import { ThemeContext } from "#/core/context";
  *
  * @since 0.3.16-canary.0
  */
-export function useTheme(): ThemeContextType {
-  const value = use(ThemeContext);
+export function useColorScheme(): ColorSchemeContextType {
+  const value = use(ColorSchemeContext);
 
   if (!value) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    throw new Error("useColorScheme must be used within an AppearanceProvider");
   }
 
   return value;

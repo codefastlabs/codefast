@@ -1,29 +1,29 @@
 /**
  * \@codefast/theme
  *
- * React 19 theme management: SSR-friendly `system` resolution, cross-tab sync, optimistic updates.
+ * React 19 color scheme management: SSR-friendly `automatic` resolution, cross-tab sync, optimistic updates.
  *
- * - **Root** (this module): `ThemeProvider`, `useTheme`, `ThemeScript`, `resolveTheme`, types, defaults.
- * - **`@codefast/theme/start`**: TanStack Start server functions + `persistThemeCookie`.
- * - **`@codefast/theme/utils`**: `getSystemTheme`, `applyTheme`, `disableAnimation`.
- * - **`@codefast/theme/core`**: `ThemeContext` for rare custom wiring.
+ * - **Root** (this module): `AppearanceProvider`, `useColorScheme`, `AppearanceScript`, `resolveColorScheme`, types, defaults.
+ * - **`@codefast/theme/start`**: TanStack Start server functions + `persistColorSchemeCookie`.
+ * - **`@codefast/theme/utils`**: `getSystemColorScheme`, `applyColorScheme`, `suppressTransitions`.
+ * - **`@codefast/theme/core`**: `ColorSchemeContext` for rare custom wiring.
  */
 
 // Types & Schema
-export type { ResolvedTheme, Theme, ThemeContextType } from "#/types";
-export { themes, themeSchema } from "#/types";
+export type { ResolvedColorScheme, ColorScheme, ColorSchemeContextType } from "#/types";
+export { colorSchemes, colorSchemeSchema } from "#/types";
 
 // Constants
-export { DEFAULT_RESOLVED_THEME, DEFAULT_THEME } from "#/constants";
+export { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME } from "#/constants";
 
-// Core (Provider, Hook — use `@codefast/theme/core` for `ThemeContext`)
-export { ThemeProvider } from "#/core/provider";
-export type { ThemeProviderProps } from "#/core/provider";
-export { useTheme } from "#/core/use-theme";
+// Core (Provider, Hook — use `@codefast/theme/core` for `ColorSchemeContext`)
+export { AppearanceProvider } from "#/core/provider";
+export type { AppearanceProviderProps } from "#/core/provider";
+export { useColorScheme } from "#/core/use-theme";
 
 // Script (FOUC prevention)
-export { ThemeScript } from "#/script/theme-script";
-export type { ThemeScriptProps } from "#/script/theme-script";
+export { AppearanceScript } from "#/script/theme-script";
+export type { AppearanceScriptProps } from "#/script/theme-script";
 
-// Utilities: DOM + `getSystemTheme` live under `@codefast/theme/utils`
-export { resolveTheme } from "#/utils/system";
+// Utilities: DOM + `getSystemColorScheme` live under `@codefast/theme/utils`
+export { resolveColorScheme } from "#/utils/system";

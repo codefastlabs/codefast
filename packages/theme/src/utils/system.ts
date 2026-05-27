@@ -1,54 +1,57 @@
-import type { ResolvedTheme, Theme } from "#/types";
+import type { ResolvedColorScheme, ColorScheme } from "#/types";
 
-import { DEFAULT_RESOLVED_THEME, MEDIA } from "#/constants";
+import { DEFAULT_RESOLVED_COLOR_SCHEME, MEDIA } from "#/constants";
 
 /* -----------------------------------------------------------------------------
- * System Theme Detection
+ * System Color Scheme Detection
  * -------------------------------------------------------------------------- */
 
 /**
- * Detect the user's OS theme preference.
+ * Detect the user's OS color scheme preference.
  *
  * Uses `matchMedia()` to query the `prefers-color-scheme` media feature.
- * Returns {@link DEFAULT_RESOLVED_THEME} during SSR since `window` is unavailable.
+ * Returns {@link DEFAULT_RESOLVED_COLOR_SCHEME} during SSR since `window` is unavailable.
  *
  * @returns 'light' or 'dark' based on OS preference
  *
  * @since 0.3.16-canary.0
  */
-export function getSystemTheme(): ResolvedTheme {
+export function getSystemColorScheme(): ResolvedColorScheme {
   if (typeof globalThis.window === "undefined") {
-    return DEFAULT_RESOLVED_THEME;
+    return DEFAULT_RESOLVED_COLOR_SCHEME;
   }
 
   return globalThis.window.matchMedia(MEDIA).matches ? "dark" : "light";
 }
 
 /**
- * Resolve theme preference to actual light/dark value.
+ * Resolve color scheme preference to actual light/dark value.
  *
  * - 'light' → 'light'
  * - 'dark' → 'dark'
- * - 'system' → on the client, result of {@link getSystemTheme}; on the server,
- *   `ssrSystemTheme` when provided, otherwise {@link DEFAULT_RESOLVED_THEME}
+ * - 'automatic' → on the client, result of {@link getSystemColorScheme}; on the server,
+ *   `ssrColorScheme` when provided, otherwise {@link DEFAULT_RESOLVED_COLOR_SCHEME}
  *
- * @param theme - User's theme preference (`light`, `dark`, or `system`)
- * @param ssrSystemTheme - When `theme` is `system` and this runs during SSR (no `window`),
+ * @param colorScheme - User's color scheme preference (`light`, `dark`, or `automatic`)
+ * @param ssrColorScheme - When `colorScheme` is `automatic` and this runs during SSR (no `window`),
  *   uses this as the resolved appearance—typically from Client Hints
  *   (`Sec-CH-Prefers-Color-Scheme`) so `<html class>` matches the real OS preference.
- *   Ignored for non-`system` themes and on the client (where {@link getSystemTheme} wins).
- * @returns The resolved theme to apply (`light` or `dark`)
+ *   Ignored for non-`automatic` schemes and on the client (where {@link getSystemColorScheme} wins).
+ * @returns The resolved color scheme to apply (`light` or `dark`)
  *
  * @since 0.3.16-canary.0
  */
-export function resolveTheme(theme: Theme, ssrSystemTheme?: ResolvedTheme): ResolvedTheme {
-  if (theme !== "system") {
-    return theme;
+export function resolveColorScheme(
+  colorScheme: ColorScheme,
+  ssrColorScheme?: ResolvedColorScheme,
+): ResolvedColorScheme {
+  if (colorScheme !== "automatic") {
+    return colorScheme;
   }
 
   if (typeof globalThis.window === "undefined") {
-    return ssrSystemTheme ?? DEFAULT_RESOLVED_THEME;
+    return ssrColorScheme ?? DEFAULT_RESOLVED_COLOR_SCHEME;
   }
 
-  return getSystemTheme();
+  return getSystemColorScheme();
 }

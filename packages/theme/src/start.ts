@@ -1,41 +1,41 @@
 /**
- * TanStack Start integration: HTTP-only theme cookie + server functions.
+ * TanStack Start integration: HTTP-only color scheme cookie + server functions.
  *
  * Peer: `@tanstack/react-start`. The app keeps full control of `<html>`, `<head>`, and `<body>`.
- * Use {@link getRootThemeServerFn} in the root loader, then wire `@codefast/theme` primitives
- * (`ThemeProvider`, `ThemeScript`, `resolveTheme`).
+ * Use {@link getRootColorSchemeServerFn} in the root loader, then wire `@codefast/theme` primitives
+ * (`AppearanceProvider`, `AppearanceScript`, `resolveColorScheme`).
  *
  * @example
  * ```tsx
  * // __root.tsx
  * import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
- * import { getRootThemeServerFn, getThemeServerFn, persistThemeCookie } from "@codefast/theme/start";
- * import { ThemeProvider, ThemeScript, resolveTheme } from "@codefast/theme";
+ * import { getRootColorSchemeServerFn, getColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
+ * import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
  *
  * export const Route = createRootRouteWithContext<RootRouterContext>()({
- *   loader: async () => getRootThemeServerFn(),
+ *   loader: async () => getRootColorSchemeServerFn(),
  *   shellComponent: RootShellComponent,
  * });
  *
  * function RootShellComponent({ children }: PropsWithChildren) {
- *   const { theme, ssrSystemTheme } = Route.useLoaderData();
- *   const resolvedTheme = resolveTheme(theme, ssrSystemTheme);
+ *   const { colorScheme, ssrColorScheme } = Route.useLoaderData();
+ *   const resolvedColorScheme = resolveColorScheme(colorScheme, ssrColorScheme);
  *
  *   return (
- *     <html className={resolvedTheme} lang="en" style={{ colorScheme: resolvedTheme }} suppressHydrationWarning>
+ *     <html className={resolvedColorScheme} lang="en" style={{ colorScheme: resolvedColorScheme }} suppressHydrationWarning>
  *       <head>
  *         <HeadContent />
- *         <ThemeScript theme={theme} />
+ *         <AppearanceScript colorScheme={colorScheme} />
  *       </head>
  *       <body>
- *         <ThemeProvider
- *           theme={theme}
- *           ssrSystemTheme={ssrSystemTheme}
- *           persistTheme={persistThemeCookie}
- *           syncThemeFromServer={getThemeServerFn}
+ *         <AppearanceProvider
+ *           colorScheme={colorScheme}
+ *           ssrColorScheme={ssrColorScheme}
+ *           persistColorScheme={persistColorSchemeCookie}
+ *           syncColorSchemeFromServer={getColorSchemeServerFn}
  *         >
  *           {children}
- *         </ThemeProvider>
+ *         </AppearanceProvider>
  *         <Scripts />
  *       </body>
  *     </html>
@@ -45,10 +45,10 @@
  */
 
 export {
-  getRootThemeServerFn,
-  getSsrSystemThemeServerFn,
-  getThemeServerFn,
-  persistThemeCookie,
-  setThemeServerFn,
-  type RootThemeLoaderData,
+  getRootColorSchemeServerFn,
+  getSsrColorSchemeServerFn,
+  getColorSchemeServerFn,
+  persistColorSchemeCookie,
+  setColorSchemeServerFn,
+  type RootColorSchemeLoaderData,
 } from "#/adapters/tanstack-start/server";

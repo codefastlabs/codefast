@@ -3,12 +3,12 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 
-import { ThemeScript } from "#/script/theme-script";
+import { AppearanceScript } from "#/script/theme-script";
 
-describe("ThemeScript", () => {
+describe("AppearanceScript", () => {
   describe("rendering", () => {
     test("should render a script tag", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -16,7 +16,7 @@ describe("ThemeScript", () => {
     });
 
     test("should render script with dangerouslySetInnerHTML", () => {
-      const { container } = render(<ThemeScript theme="light" />);
+      const { container } = render(<AppearanceScript colorScheme="light" />);
 
       const script = container.querySelector("script");
 
@@ -24,7 +24,7 @@ describe("ThemeScript", () => {
     });
 
     test("should apply nonce when provided", () => {
-      const { container } = render(<ThemeScript nonce="test-nonce" theme="dark" />);
+      const { container } = render(<AppearanceScript nonce="test-nonce" colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -32,7 +32,7 @@ describe("ThemeScript", () => {
     });
 
     test("should not set nonce when omitted", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -40,7 +40,7 @@ describe("ThemeScript", () => {
     });
 
     test("should suppress hydration warning when script content differs", async () => {
-      const html = renderToString(<ThemeScript theme="light" />);
+      const html = renderToString(<AppearanceScript colorScheme="light" />);
       const container = document.createElement("div");
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -49,7 +49,7 @@ describe("ThemeScript", () => {
       let root: ReturnType<typeof hydrateRoot> | undefined;
 
       await act(async () => {
-        root = hydrateRoot(container, <ThemeScript theme="dark" />);
+        root = hydrateRoot(container, <AppearanceScript colorScheme="dark" />);
         await Promise.resolve();
       });
 
@@ -64,32 +64,32 @@ describe("ThemeScript", () => {
   });
 
   describe("script content", () => {
-    test('should include theme value in script for "light"', () => {
-      const { container } = render(<ThemeScript theme="light" />);
+    test('should include color scheme value in script for "light"', () => {
+      const { container } = render(<AppearanceScript colorScheme="light" />);
 
       const script = container.querySelector("script");
 
       expect(script?.innerHTML).toContain('"light"');
     });
 
-    test('should include theme value in script for "dark"', () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+    test('should include color scheme value in script for "dark"', () => {
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
       expect(script?.innerHTML).toContain('"dark"');
     });
 
-    test('should include theme value in script for "system"', () => {
-      const { container } = render(<ThemeScript theme="system" />);
+    test('should include color scheme value in script for "automatic"', () => {
+      const { container } = render(<AppearanceScript colorScheme="automatic" />);
 
       const script = container.querySelector("script");
 
-      expect(script?.innerHTML).toContain('"system"');
+      expect(script?.innerHTML).toContain('"automatic"');
     });
 
-    test("should contain matchMedia check for system theme", () => {
-      const { container } = render(<ThemeScript theme="system" />);
+    test("should contain matchMedia check for automatic color scheme", () => {
+      const { container } = render(<AppearanceScript colorScheme="automatic" />);
 
       const script = container.querySelector("script");
 
@@ -98,7 +98,7 @@ describe("ThemeScript", () => {
     });
 
     test("should contain documentElement class manipulation", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -106,17 +106,17 @@ describe("ThemeScript", () => {
       expect(script?.innerHTML).toContain("classList");
     });
 
-    test("should remove prior theme classes before add (SSR system vs client OS)", () => {
-      const { container } = render(<ThemeScript theme="system" />);
+    test("should remove prior color scheme classes before add (SSR automatic vs client OS)", () => {
+      const { container } = render(<AppearanceScript colorScheme="automatic" />);
 
       const script = container.querySelector("script");
 
-      expect(script?.innerHTML).toContain('classList.remove("light","dark","system")');
+      expect(script?.innerHTML).toContain('classList.remove("light","dark","automatic")');
       expect(script?.innerHTML).toContain("classList.add(resolvedTheme)");
     });
 
     test("should contain colorScheme assignment", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -124,7 +124,7 @@ describe("ThemeScript", () => {
     });
 
     test("should be wrapped in IIFE", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -133,7 +133,7 @@ describe("ThemeScript", () => {
     });
 
     test("should include try-catch for error handling", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -144,42 +144,48 @@ describe("ThemeScript", () => {
 
   describe("storageKey prop", () => {
     test("includes storageKey in script when provided", () => {
-      const { container } = render(<ThemeScript storageKey="my-theme" theme="system" />);
+      const { container } = render(
+        <AppearanceScript storageKey="my-color-scheme" colorScheme="automatic" />,
+      );
 
       const script = container.querySelector("script");
 
-      expect(script?.innerHTML).toContain('"my-theme"');
+      expect(script?.innerHTML).toContain('"my-color-scheme"');
     });
 
     test("reads localStorage key in script content when storageKey is set", () => {
-      const { container } = render(<ThemeScript storageKey="app-theme" theme="light" />);
+      const { container } = render(
+        <AppearanceScript storageKey="app-color-scheme" colorScheme="light" />,
+      );
 
       const script = container.querySelector("script");
 
       expect(script?.innerHTML).toContain("localStorage.getItem");
-      expect(script?.innerHTML).toContain('"app-theme"');
+      expect(script?.innerHTML).toContain('"app-color-scheme"');
     });
 
     test("uses null for sk when storageKey is omitted (backward-compatible path)", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
-      // sk=null means localStorage branch is skipped; fbt (fallback theme) is used directly
+      // sk=null means localStorage branch is skipped; fbt (fallback color scheme) is used directly
       expect(script?.innerHTML).toContain("sk=null");
     });
 
-    test("uses theme prop as fallback (fbt) in script", () => {
-      const { container } = render(<ThemeScript storageKey="ui-theme" theme="light" />);
+    test("uses colorScheme prop as fallback (fbt) in script", () => {
+      const { container } = render(
+        <AppearanceScript storageKey="ui-color-scheme" colorScheme="light" />,
+      );
 
       const script = container.querySelector("script");
 
-      // fbt should be the serialised fallback theme
+      // fbt should be the serialised fallback color scheme
       expect(script?.innerHTML).toContain('fbt="light"');
     });
 
-    test("falls back to theme prop when storageKey is omitted", () => {
-      const { container } = render(<ThemeScript theme="dark" />);
+    test("falls back to colorScheme prop when storageKey is omitted", () => {
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
@@ -187,22 +193,22 @@ describe("ThemeScript", () => {
     });
   });
 
-  describe("theme-specific behavior", () => {
-    test('should handle "system" theme with dark mode resolution', () => {
-      const { container } = render(<ThemeScript theme="system" />);
+  describe("color-scheme-specific behavior", () => {
+    test('should handle "automatic" color scheme with dark mode resolution', () => {
+      const { container } = render(<AppearanceScript colorScheme="automatic" />);
 
       const script = container.querySelector("script");
 
-      // Script should check if system === theme and resolve accordingly
-      expect(script?.innerHTML).toContain('"system"===theme');
+      // Script should check if "automatic" === theme and resolve accordingly
+      expect(script?.innerHTML).toContain('"automatic"===theme');
     });
 
-    test("explicit themes should not check system preference", () => {
-      const { container: lightContainer } = render(<ThemeScript theme="light" />);
-      const { container: darkContainer } = render(<ThemeScript theme="dark" />);
+    test("explicit color schemes should not check system preference via automatic branch", () => {
+      const { container: lightContainer } = render(<AppearanceScript colorScheme="light" />);
+      const { container: darkContainer } = render(<AppearanceScript colorScheme="dark" />);
 
-      // Both should still contain the system check logic (same script template)
-      // but the fallback theme (fbt) is set to the explicit theme value
+      // Both should still contain the automatic check logic (same script template)
+      // but the fallback color scheme (fbt) is set to the explicit value
       expect(lightContainer.querySelector("script")?.innerHTML).toContain('fbt="light"');
       expect(darkContainer.querySelector("script")?.innerHTML).toContain('fbt="dark"');
     });
