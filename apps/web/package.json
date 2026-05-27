@@ -22,7 +22,7 @@
     "@tanstack/react-router-devtools": "catalog:",
     "@tanstack/react-router-ssr-query": "catalog:",
     "@tanstack/react-start": "catalog:",
-    "@tanstack/router-plugin": "^1.168.11",
+    "@tanstack/router-plugin": "catalog:",
     "lucide-react": "catalog:",
     "nitro": "catalog:",
     "react": "catalog:",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/typography": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
