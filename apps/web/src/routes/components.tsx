@@ -8,61 +8,131 @@ import type { CategoryId } from "#/data/components";
 
 // — Demo components (render as children) —
 import { AlertDemo } from "#/components/examples/display/alert-demo";
+import { AspectRatioDemo } from "#/components/examples/display/aspect-ratio-demo";
 import { AvatarDemo } from "#/components/examples/display/avatar-demo";
 import { BadgeDemo } from "#/components/examples/display/badge-demo";
+import { CarouselDemo } from "#/components/examples/display/carousel-demo";
+import { ChartDemo } from "#/components/examples/display/chart-demo";
+import { EmptyDemo } from "#/components/examples/display/empty-demo";
+import { ItemDemo } from "#/components/examples/display/item-demo";
 import { KbdDemo } from "#/components/examples/display/kbd-demo";
 import { SpinnerDemo } from "#/components/examples/display/spinner-demo";
+import { TableDemo } from "#/components/examples/display/table-demo";
 import { AlertDialogDemo } from "#/components/examples/feedback/alert-dialog-demo";
 import { ProgressDemo } from "#/components/examples/feedback/progress-demo";
+import { ProgressCircleDemo } from "#/components/examples/feedback/progress-circle-demo";
 import { SkeletonDemo } from "#/components/examples/feedback/skeleton-demo";
+import { SonnerDemo } from "#/components/examples/feedback/sonner-demo";
+import { ButtonDemo } from "#/components/examples/form/button-demo";
+import { ButtonGroupDemo } from "#/components/examples/form/button-group-demo";
+import { CalendarDemo } from "#/components/examples/form/calendar-demo";
 import { CheckboxDemo } from "#/components/examples/form/checkbox-demo";
+import { CheckboxCardsDemo } from "#/components/examples/form/checkbox-cards-demo";
+import { CheckboxGroupDemo } from "#/components/examples/form/checkbox-group-demo";
+import { FieldDemo } from "#/components/examples/form/field-demo";
+import { FormDemo } from "#/components/examples/form/form-demo";
 import { InputDemo } from "#/components/examples/form/input-demo";
+import { InputGroupDemo } from "#/components/examples/form/input-group-demo";
+import { InputNumberDemo } from "#/components/examples/form/input-number-demo";
+import { InputOTPDemo } from "#/components/examples/form/input-otp-demo";
+import { InputPasswordDemo } from "#/components/examples/form/input-password-demo";
+import { InputSearchDemo } from "#/components/examples/form/input-search-demo";
+import { LabelDemo } from "#/components/examples/form/label-demo";
+import { NativeSelectDemo } from "#/components/examples/form/native-select-demo";
+import { RadioDemo } from "#/components/examples/form/radio-demo";
+import { RadioCardsDemo } from "#/components/examples/form/radio-cards-demo";
 import { RadioGroupDemo } from "#/components/examples/form/radio-group-demo";
 import { SelectDemo } from "#/components/examples/form/select-demo";
 import { SliderDemo } from "#/components/examples/form/slider-demo";
 import { SwitchDemo } from "#/components/examples/form/switch-demo";
 import { TextareaDemo } from "#/components/examples/form/textarea-demo";
 import { ToggleDemo } from "#/components/examples/form/toggle-demo";
+import { ToggleGroupDemo } from "#/components/examples/form/toggle-group-demo";
 import { AccordionDemo } from "#/components/examples/layout/accordion-demo";
 import { CardDemo } from "#/components/examples/layout/card-demo";
+import { CollapsibleDemo } from "#/components/examples/layout/collapsible-demo";
+import { ResizableDemo } from "#/components/examples/layout/resizable-demo";
 import { ScrollAreaDemo } from "#/components/examples/layout/scroll-area-demo";
 import { SeparatorDemo } from "#/components/examples/layout/separator-demo";
 import { BreadcrumbDemo } from "#/components/examples/navigation/breadcrumb-demo";
+import { MenubarDemo } from "#/components/examples/navigation/menubar-demo";
+import { NavigationMenuDemo } from "#/components/examples/navigation/navigation-menu-demo";
 import { PaginationDemo } from "#/components/examples/navigation/pagination-demo";
+import { SidebarDemo } from "#/components/examples/navigation/sidebar-demo";
 import { TabsDemo } from "#/components/examples/navigation/tabs-demo";
+import { CommandDemo } from "#/components/examples/overlay/command-demo";
+import { ContextMenuDemo } from "#/components/examples/overlay/context-menu-demo";
 import { DialogDemo } from "#/components/examples/overlay/dialog-demo";
+import { DrawerDemo } from "#/components/examples/overlay/drawer-demo";
 import { DropdownMenuDemo } from "#/components/examples/overlay/dropdown-menu-demo";
+import { HoverCardDemo } from "#/components/examples/overlay/hover-card-demo";
 import { PopoverDemo } from "#/components/examples/overlay/popover-demo";
+import { SheetDemo } from "#/components/examples/overlay/sheet-demo";
 import { TooltipDemo } from "#/components/examples/overlay/tooltip-demo";
 
 // — Raw source strings (single barrel, ?raw resolved by Vite at build time) —
 import {
   alertDemoCode,
+  aspectRatioDemoCode,
   avatarDemoCode,
   badgeDemoCode,
+  carouselDemoCode,
+  chartDemoCode,
+  emptyDemoCode,
+  itemDemoCode,
   kbdDemoCode,
   spinnerDemoCode,
+  tableDemoCode,
   alertDialogDemoCode,
   progressDemoCode,
+  progressCircleDemoCode,
   skeletonDemoCode,
+  sonnerDemoCode,
+  buttonDemoCode,
+  buttonGroupDemoCode,
+  calendarDemoCode,
   checkboxDemoCode,
+  checkboxCardsDemoCode,
+  checkboxGroupDemoCode,
+  fieldDemoCode,
+  formDemoCode,
   inputDemoCode,
+  inputGroupDemoCode,
+  inputNumberDemoCode,
+  inputOtpDemoCode,
+  inputPasswordDemoCode,
+  inputSearchDemoCode,
+  labelDemoCode,
+  nativeSelectDemoCode,
+  radioDemoCode,
+  radioCardsDemoCode,
   radioGroupDemoCode,
   selectDemoCode,
   sliderDemoCode,
   switchDemoCode,
   textareaDemoCode,
   toggleDemoCode,
+  toggleGroupDemoCode,
   accordionDemoCode,
   cardDemoCode,
+  collapsibleDemoCode,
+  resizableDemoCode,
   scrollAreaDemoCode,
   separatorDemoCode,
   breadcrumbDemoCode,
+  menubarDemoCode,
+  navigationMenuDemoCode,
   paginationDemoCode,
+  sidebarDemoCode,
   tabsDemoCode,
+  commandDemoCode,
+  contextMenuDemoCode,
   dialogDemoCode,
+  drawerDemoCode,
   dropdownMenuDemoCode,
+  hoverCardDemoCode,
   popoverDemoCode,
+  sheetDemoCode,
   tooltipDemoCode,
 } from "#/components/examples/codes";
 
@@ -263,6 +333,63 @@ function ComponentsPage() {
         >
           <KbdDemo />
         </PreviewCard>
+
+        <PreviewCard
+          name="Aspect Ratio"
+          path="@codefast/ui/aspect-ratio"
+          description="Locks content to a specific width-to-height ratio. Useful for images, videos, and embeds."
+          code={aspectRatioDemoCode}
+        >
+          <AspectRatioDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Carousel"
+          path="@codefast/ui/carousel"
+          description="Embla-powered slide carousel with prev/next controls. Supports horizontal and vertical axes."
+          code={carouselDemoCode}
+        >
+          <CarouselDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Chart"
+          path="@codefast/ui/chart"
+          description="Recharts wrapper with consistent theming, tooltip, and legend. Supports all chart types."
+          wide
+          code={chartDemoCode}
+        >
+          <ChartDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Empty"
+          path="@codefast/ui/empty"
+          description="Empty-state layout with media, title, description, and action slots."
+          code={emptyDemoCode}
+        >
+          <EmptyDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Item"
+          path="@codefast/ui/item"
+          description="Row layout for lists. Composes media, content, title, description, and action slots."
+          wide
+          code={itemDemoCode}
+        >
+          <ItemDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Table"
+          path="@codefast/ui/table"
+          description="Semantic HTML table with styled header, body, footer, and caption slots."
+          wide
+          code={tableDemoCode}
+        >
+          <TableDemo />
+        </PreviewCard>
       </Section>
 
       {/* ════════════════════════════════════════════════════════════════ */}
@@ -276,12 +403,77 @@ function ComponentsPage() {
         count={CATEGORY_COUNTS.form}
       >
         <PreviewCard
+          name="Button"
+          path="@codefast/ui/button"
+          description="Six variants and four sizes. Supports icons, loading state, and asChild composition."
+          wide
+          code={buttonDemoCode}
+        >
+          <ButtonDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Button Group"
+          path="@codefast/ui/button-group"
+          description="Horizontal or vertical group that visually joins adjacent buttons into a single control."
+          code={buttonGroupDemoCode}
+        >
+          <ButtonGroupDemo />
+        </PreviewCard>
+
+        <PreviewCard
           name="Input"
           path="@codefast/ui/input"
           description="Text input with focus ring, disabled state, and file input styling."
           code={inputDemoCode}
         >
           <InputDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Input Group"
+          path="@codefast/ui/input-group"
+          description="Composes an input with leading/trailing addons, text labels, and icon buttons."
+          wide
+          code={inputGroupDemoCode}
+        >
+          <InputGroupDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Input Number"
+          path="@codefast/ui/input-number"
+          description="Numeric input with increment/decrement controls, min/max/step, and format options."
+          code={inputNumberDemoCode}
+        >
+          <InputNumberDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Input OTP"
+          path="@codefast/ui/input-otp"
+          description="One-time password input with slot groups and separator. Built on input-otp."
+          code={inputOtpDemoCode}
+        >
+          <InputOTPDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Input Password"
+          path="@codefast/ui/input-password"
+          description="Password field with a show/hide toggle. Extends Input Group with no extra markup."
+          code={inputPasswordDemoCode}
+        >
+          <InputPasswordDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Input Search"
+          path="@codefast/ui/input-search"
+          description="Search field with a leading icon and a one-click clear button. Controlled or uncontrolled."
+          code={inputSearchDemoCode}
+        >
+          <InputSearchDemo />
         </PreviewCard>
 
         <PreviewCard
@@ -303,6 +495,15 @@ function ComponentsPage() {
         </PreviewCard>
 
         <PreviewCard
+          name="Native Select"
+          path="@codefast/ui/native-select"
+          description="Styled HTML select element with option groups. Zero JS — best for mobile forms."
+          code={nativeSelectDemoCode}
+        >
+          <NativeSelectDemo />
+        </PreviewCard>
+
+        <PreviewCard
           name="Checkbox"
           path="@codefast/ui/checkbox"
           description="Binary control with indeterminate state. Controlled or uncontrolled via onCheckedChange."
@@ -312,12 +513,48 @@ function ComponentsPage() {
         </PreviewCard>
 
         <PreviewCard
+          name="Checkbox Group"
+          path="@codefast/ui/checkbox-group"
+          description="Multi-select group of checkboxes sharing a value array. Supports disabled items."
+          code={checkboxGroupDemoCode}
+        >
+          <CheckboxGroupDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Checkbox Cards"
+          path="@codefast/ui/checkbox-cards"
+          description="Card-style multi-select. Each card has a built-in checkbox with highlighted selected state."
+          code={checkboxCardsDemoCode}
+        >
+          <CheckboxCardsDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Radio"
+          path="@codefast/ui/radio"
+          description="Single native radio input. Use Radio Group for accessible keyboard-navigable groups."
+          code={radioDemoCode}
+        >
+          <RadioDemo />
+        </PreviewCard>
+
+        <PreviewCard
           name="Radio Group"
           path="@codefast/ui/radio-group"
           description="Single-selection group. Use value + onValueChange for controlled behaviour."
           code={radioGroupDemoCode}
         >
           <RadioGroupDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Radio Cards"
+          path="@codefast/ui/radio-cards"
+          description="Card-style single-select. Each card highlights when selected, ideal for plan pickers."
+          code={radioCardsDemoCode}
+        >
+          <RadioCardsDemo />
         </PreviewCard>
 
         <PreviewCard
@@ -345,6 +582,52 @@ function ComponentsPage() {
           code={toggleDemoCode}
         >
           <ToggleDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Toggle Group"
+          path="@codefast/ui/toggle-group"
+          description="Single or multiple selection group of toggle buttons. Ideal for toolbars and alignment pickers."
+          code={toggleGroupDemoCode}
+        >
+          <ToggleGroupDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Calendar"
+          path="@codefast/ui/calendar"
+          description="Full calendar built on react-day-picker. Supports single, multiple, and range selection."
+          code={calendarDemoCode}
+        >
+          <CalendarDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Label"
+          path="@codefast/ui/label"
+          description="Accessible form label that forwards htmlFor. Pairs with any form control."
+          code={labelDemoCode}
+        >
+          <LabelDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Field"
+          path="@codefast/ui/field"
+          description="Layout wrapper that composes label, description, error, and control in vertical or horizontal orientation."
+          wide
+          code={fieldDemoCode}
+        >
+          <FieldDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Form"
+          path="@codefast/ui/form"
+          description="React Hook Form integration with accessible label, description, and error message binding."
+          code={formDemoCode}
+        >
+          <FormDemo />
         </PreviewCard>
       </Section>
 
@@ -384,6 +667,36 @@ function ComponentsPage() {
           code={paginationDemoCode}
         >
           <PaginationDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Menubar"
+          path="@codefast/ui/menubar"
+          description="Horizontal menu bar with dropdowns, checkboxes, radio items, and keyboard navigation."
+          wide
+          code={menubarDemoCode}
+        >
+          <MenubarDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Navigation Menu"
+          path="@codefast/ui/navigation-menu"
+          description="Animated mega-menu with animated content panels. Built on Radix NavigationMenu."
+          wide
+          code={navigationMenuDemoCode}
+        >
+          <NavigationMenuDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Sidebar"
+          path="@codefast/ui/sidebar"
+          description="Collapsible app sidebar with header, footer, groups, menu items, and badge support."
+          wide
+          code={sidebarDemoCode}
+        >
+          <SidebarDemo />
         </PreviewCard>
       </Section>
 
@@ -432,6 +745,60 @@ function ComponentsPage() {
         >
           <DropdownMenuDemo />
         </PreviewCard>
+
+        <PreviewCard
+          name="Alert Dialog"
+          path="@codefast/ui/alert-dialog"
+          description="Blocking confirmation modal requiring an explicit decision. Backs the browser back button."
+          code={alertDialogDemoCode}
+        >
+          <AlertDialogDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Command"
+          path="@codefast/ui/command"
+          description="Command palette with fuzzy search, groups, keyboard shortcuts, and empty state."
+          code={commandDemoCode}
+        >
+          <CommandDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Context Menu"
+          path="@codefast/ui/context-menu"
+          description="Right-click menu with items, checkboxes, radio groups, submenus, and shortcuts."
+          code={contextMenuDemoCode}
+        >
+          <ContextMenuDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Drawer"
+          path="@codefast/ui/drawer"
+          description="Bottom sheet drawer built on Vaul. Supports drag-to-dismiss and scale background."
+          code={drawerDemoCode}
+        >
+          <DrawerDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Hover Card"
+          path="@codefast/ui/hover-card"
+          description="Rich preview card that appears on hover. Ideal for user profiles and link previews."
+          code={hoverCardDemoCode}
+        >
+          <HoverCardDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Sheet"
+          path="@codefast/ui/sheet"
+          description="Side-anchored panel (left, right, top, or bottom). Useful for settings and detail drawers."
+          code={sheetDemoCode}
+        >
+          <SheetDemo />
+        </PreviewCard>
       </Section>
 
       {/* ════════════════════════════════════════════════════════════════ */}
@@ -454,12 +821,12 @@ function ComponentsPage() {
         </PreviewCard>
 
         <PreviewCard
-          name="Alert Dialog"
-          path="@codefast/ui/alert-dialog"
-          description="Blocking confirmation modal requiring an explicit decision. Backs the browser back button."
-          code={alertDialogDemoCode}
+          name="Progress Circle"
+          path="@codefast/ui/progress-circle"
+          description="Circular progress indicator with optional value label and animation. Multiple sizes."
+          code={progressCircleDemoCode}
         >
-          <AlertDialogDemo />
+          <ProgressCircleDemo />
         </PreviewCard>
 
         <PreviewCard
@@ -470,6 +837,16 @@ function ComponentsPage() {
           code={skeletonDemoCode}
         >
           <SkeletonDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Sonner"
+          path="@codefast/ui/sonner"
+          description="Toast notifications via Sonner. Supports success, error, warning, and custom durations."
+          wide
+          code={sonnerDemoCode}
+        >
+          <SonnerDemo />
         </PreviewCard>
       </Section>
 
@@ -518,6 +895,25 @@ function ComponentsPage() {
           code={scrollAreaDemoCode}
         >
           <ScrollAreaDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Collapsible"
+          path="@codefast/ui/collapsible"
+          description="Togglable content section with animated expand/collapse. Controlled or uncontrolled."
+          code={collapsibleDemoCode}
+        >
+          <CollapsibleDemo />
+        </PreviewCard>
+
+        <PreviewCard
+          name="Resizable"
+          path="@codefast/ui/resizable"
+          description="Drag-to-resize panel groups. Supports horizontal, vertical, and nested layouts."
+          wide
+          code={resizableDemoCode}
+        >
+          <ResizableDemo />
         </PreviewCard>
       </Section>
     </main>
