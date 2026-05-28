@@ -1,5 +1,26 @@
 # @codefast/ui
 
+## 0.3.16-canary.3
+
+### Patch Changes
+
+- [`6f61b94`](https://github.com/codefastlabs/codefast/commit/6f61b9477d3a8af78084502aa7d8e39c8623b861) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): extract component variants into separate files
+
+- [`2a82188`](https://github.com/codefastlabs/codefast/commit/2a82188264c204b0b519b3324402ae962594d29b) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- [`9b94464`](https://github.com/codefastlabs/codefast/commit/9b94464be2247bd5ead32dc3d5c921ae3a52070c) Thanks [@thevuong](https://github.com/thevuong)! - Use minimum `>=` ranges in peerDependencies instead of `^` caret ranges.
+
+- [`0701beb`](https://github.com/codefastlabs/codefast/commit/0701beb99330b5ff60f2523c71e4d7b10bfb41b1) Thanks [@thevuong](https://github.com/thevuong)! - Migrate reduced-motion handling to Tailwind `motion-reduce` utilities across UI components.
+
+- [`bb82c44`](https://github.com/codefastlabs/codefast/commit/bb82c44ea5033de18a1d2403c0f3396f3aac0e39) Thanks [@thevuong](https://github.com/thevuong)! - Refine component motion with spring, snappy, and gentle easing tokens, shimmer skeleton loading, consistent theme token ordering, polished transitions on overlay and form controls, and subtler checkbox, radio, and switch press feedback.
+
+- [`4d859cd`](https://github.com/codefastlabs/codefast/commit/4d859cda4c87407710ccf0a99b89c2a2d3676bf9) Thanks [@thevuong](https://github.com/thevuong)! - Support system dark mode via prefers-color-scheme, soften dialog and sheet overlays with backdrop blur, and polish bottom sheet layout for mobile safe areas.
+
+- [`08bd9ad`](https://github.com/codefastlabs/codefast/commit/08bd9ad3900cba6af1ab30b25f9c7c8b39bb2063) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): simplify `utils.ts` imports and cleanup
+
+- Updated dependencies [[`2a82188`](https://github.com/codefastlabs/codefast/commit/2a82188264c204b0b519b3324402ae962594d29b)]:
+  - @codefast/tailwind-variants@0.3.16-canary.3
+
 ## 0.3.16-canary.2
 
 ### Patch Changes

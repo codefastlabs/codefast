@@ -132,6 +132,9 @@ function buildSupplementedEntry(
   return result;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export type SupplementResult = {
   supplementedSpecifiers: Array<string>;
 };
