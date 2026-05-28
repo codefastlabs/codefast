@@ -8,8 +8,8 @@ import {
   getColorSchemeServerFn,
   persistColorSchemeCookie,
 } from "@codefast/theme/start";
-import Footer from "#/components/footer";
-import Header from "#/components/header.tsx";
+import { Footer } from "#/components/footer";
+import { Header } from "#/components/header";
 import appCss from "#/styles.css?url";
 
 export const Route = createRootRoute({
