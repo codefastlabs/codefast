@@ -29,6 +29,7 @@
     "nitro": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "recharts": "catalog:",
     "tailwindcss": "catalog:",
     "tw-animate-css": "catalog:"
   },
