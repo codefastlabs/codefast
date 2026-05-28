@@ -2852,7 +2852,7 @@ export type { ScopeViolationDetails } from "#/errors";
 
 ### 11.2 `package.json`
 
-ESM-only. `engines.node >= 22.0.0`.
+ESM-only. `engines.node >= 24.0.0`.
 
 ```json
 {
@@ -2905,7 +2905,9 @@ ESM-only. `engines.node >= 22.0.0`.
     }
   },
   "files": ["dist"],
-  "engines": { "node": ">=22.0.0" }
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }
 ```
 
@@ -3210,7 +3212,7 @@ Section này đối chiếu toàn bộ public API của InversifyJS v8.0.0 (thá
 | tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | Không cần flag đặc biệt                           |
 | Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
 | Module format      | ESM-only                                                      | ESM-only                                          |
-| Node.js tối thiểu  | Node ≥ 20.19.0                                                | Node ≥ 22.0.0                                     |
+| Node.js tối thiểu  | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                     |
 
 #### Binding API
 
