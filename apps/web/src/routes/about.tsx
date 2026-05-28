@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@codefast/ui/button";
 import { Badge } from "@codefast/ui/badge";
+import { ALL_COMPONENTS } from "#/data/components";
 
 export const Route = createFileRoute("/about")({ component: GettingStarted });
 
@@ -100,36 +101,7 @@ function GettingStarted() {
           Sidebar — everything follows the same composable API.
         </p>
         <div className="mb-8 flex flex-wrap gap-2">
-          {[
-            "Accordion",
-            "Alert",
-            "Avatar",
-            "Badge",
-            "Button",
-            "Calendar",
-            "Card",
-            "Carousel",
-            "Checkbox",
-            "Command",
-            "Dialog",
-            "Drawer",
-            "Dropdown Menu",
-            "Form",
-            "Input",
-            "Pagination",
-            "Popover",
-            "Select",
-            "Separator",
-            "Sheet",
-            "Slider",
-            "Switch",
-            "Table",
-            "Tabs",
-            "Textarea",
-            "Toast",
-            "Toggle",
-            "Tooltip",
-          ].map((name) => (
+          {ALL_COMPONENTS.map(({ name }) => (
             <Badge key={name} variant="secondary" className="font-normal">
               {name}
             </Badge>

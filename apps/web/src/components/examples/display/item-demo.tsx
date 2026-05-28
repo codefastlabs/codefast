@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { Button } from "@codefast/ui/button";
 import {
   Item,
@@ -21,9 +23,9 @@ export function ItemDemo() {
   return (
     <ItemGroup className="w-full max-w-sm rounded-xl border">
       {ITEMS.map(({ id, title, description, Icon }, idx) => (
-        <>
-          {idx > 0 && <ItemSeparator key={`sep-${id}`} />}
-          <Item key={id}>
+        <Fragment key={id}>
+          {idx > 0 && <ItemSeparator />}
+          <Item>
             <ItemMedia>
               <Icon className="size-5 text-muted-foreground" />
             </ItemMedia>
@@ -37,7 +39,7 @@ export function ItemDemo() {
               </Button>
             </ItemActions>
           </Item>
-        </>
+        </Fragment>
       ))}
     </ItemGroup>
   );
