@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-export default function Footer() {
+export function Footer() {
   const year = new Date().getFullYear();
 
   return (

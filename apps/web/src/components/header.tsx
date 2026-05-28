@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import ThemeToggle from "./theme-toggle";
+import { ThemeToggle } from "#/components/theme-toggle";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { to: "/about", label: "Getting Started" },
 ] as const;
 
-export default function Header() {
+export function Header() {
   return (
     <header className="site-header-nav sticky top-0 z-50 border-b border-(--line)">
       <div className="page-wrap flex h-12 items-center gap-8 px-4">

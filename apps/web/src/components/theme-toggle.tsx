@@ -13,7 +13,7 @@ const LABEL: Record<ColorScheme, string> = {
   automatic: "Auto",
 };
 
-export default function ThemeToggle() {
+export function ThemeToggle() {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   function toggleColorScheme() {
