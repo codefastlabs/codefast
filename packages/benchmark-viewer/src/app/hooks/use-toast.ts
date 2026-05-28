@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export interface ToastHandle {
   toastMsg: string | null;
   showToast: (message: string) => void;
@@ -7,6 +10,9 @@ export interface ToastHandle {
 
 const TOAST_DURATION_MS = 3500;
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function useToast(): ToastHandle {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -1,5 +1,45 @@
 # @codefast/theme
 
+## 0.3.16-canary.3
+
+### Patch Changes
+
+- [`3fc56a8`](https://github.com/codefastlabs/codefast/commit/3fc56a84c4c39c6510ce509d43daeae32fe90638) Thanks [@thevuong](https://github.com/thevuong)! - Security, correctness, and performance improvements to `ThemeProvider` and `ThemeScript`.
+
+  **Security**
+
+  - Validate `BroadcastChannel` messages with `themeSchema.safeParse` before applying — prevents injection from browser extensions or other same-origin scripts
+  - Use `JSON.stringify` in `ThemeScript` inline script to safely serialise the theme value
+
+  **Correctness**
+
+  - `ThemeProvider` now re-syncs internal state when the `theme` prop changes after mount (e.g. router re-runs the root loader), making the server the authoritative source of truth
+  - Fixed `disableTransitionOnChange` timing: animation cleanup now fires after `applyTheme` commits to the DOM instead of prematurely in the async persist `finally` block
+  - Added last-write-wins guard (`intentRef`) so rapid `setTheme` calls only commit the most recent intent
+
+  **Performance**
+
+  - `setTheme` callback is now stable across theme commits (reads `committedThemeRef` instead of capturing `theme` in deps) — prevents unnecessary re-renders in consumers
+  - `BroadcastChannel` is reused from a shared ref instead of opening a new channel on every `setTheme` call
+  - Removed obsolete `-moz-`, `-o-`, `-ms-` vendor prefixes from the `disableAnimation` CSS injection
+
+  **Features**
+
+  - `ThemeScript` accepts a new `storageKey` prop: when set, the inline script reads `localStorage` before first paint for FOUC-free client-only apps
+  - Runtime Zod validation of the `theme` prop in `ThemeProvider` guards against invalid values bypassing TypeScript
+
+  **Docs / Tests**
+
+  - Fixed README: `THEME_STORAGE_KEY` import example now correctly points to `@codefast/theme/constants`
+  - Added integration tests for the TanStack Start adapter server functions
+  - New test coverage for all security and correctness fixes above
+
+- [`2a82188`](https://github.com/codefastlabs/codefast/commit/2a82188264c204b0b519b3324402ae962594d29b) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- [`9b94464`](https://github.com/codefastlabs/codefast/commit/9b94464be2247bd5ead32dc3d5c921ae3a52070c) Thanks [@thevuong](https://github.com/thevuong)! - Use minimum `>=` ranges in peerDependencies instead of `^` caret ranges.
+
+- [`bed2f30`](https://github.com/codefastlabs/codefast/commit/bed2f30df74128fe3b1a98dd9d03f6bb96099164) Thanks [@thevuong](https://github.com/thevuong)! - feat(web): refactor theme management to color scheme system
+
 ## 0.3.16-canary.2
 
 ### Patch Changes

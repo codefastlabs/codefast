@@ -8,6 +8,9 @@ interface HashSyncOptions {
   patchView: (patch: Partial<ViewState>) => void;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
   const initializedRef = useRef(false);
 

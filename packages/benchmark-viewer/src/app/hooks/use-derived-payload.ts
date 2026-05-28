@@ -21,6 +21,9 @@ interface DerivedPayloadOptions {
   patchView: (patch: Partial<ViewState>) => void;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export interface DerivedPayload {
   orderedLibraries: Array<EmbeddedLibraryMeta>;
   paletteMap: Record<string, PaletteEntry>;
@@ -40,6 +43,9 @@ export interface DerivedPayload {
   latestRun: EmbeddedRun | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function useDerivedPayload({
   payload,
   view,

@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-harness",
-  "version": "0.3.16-canary.2",
+  "version": "0.3.16-canary.3",
   "private": true,
   "description": "Shared tinybench harness utilities (subprocess protocol, fingerprinting, two-way reports) for Codefast benchmark packages",
   "license": "MIT",
