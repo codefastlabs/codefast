@@ -3,9 +3,9 @@ description: "Sets up Node.js, pnpm, and project dependencies with caching for e
 author: "codefastlabs"
 
 inputs:
-  node-version:
-    description: "Node.js version to use (align with root package.json engines)"
-    default: "lts/*"
+  node-version-file:
+    description: "File containing the Node.js version to use (e.g. .node-version)"
+    default: ".node-version"
     required: false
 
   package-manager-version:
@@ -57,7 +57,7 @@ runs:
       id: node-setup
       uses: actions/setup-node@v6
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version-file: ${{ inputs.node-version-file }}
         cache: "pnpm"
 
     - name: "Install Project Dependencies (pnpm)"
