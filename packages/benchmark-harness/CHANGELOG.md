@@ -1,5 +1,11 @@
 # @codefast/benchmark-harness
 
+## 0.3.16-canary.3
+
+### Patch Changes
+
+- [`2a82188`](https://github.com/codefastlabs/codefast/commit/2a82188264c204b0b519b3324402ae962594d29b) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
 ## 0.3.16-canary.2
 
 ### Patch Changes

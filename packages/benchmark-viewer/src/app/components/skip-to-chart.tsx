@@ -2,6 +2,8 @@ import { CHART_SKIP_TARGET_ID, handleSkipToChartClick } from "#/app/lib/skip-cha
 
 /**
  * Bypass link to the chart plot. Render only when the chart target is in the document.
+ *
+ * @since 0.3.16-canary.3
  */
 export function SkipToChartLink() {
   return (

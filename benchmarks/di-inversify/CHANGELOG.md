@@ -1,5 +1,16 @@
 # @codefast/benchmark-di-inversify
 
+## 0.3.16-canary.3
+
+### Patch Changes
+
+- [`2a82188`](https://github.com/codefastlabs/codefast/commit/2a82188264c204b0b519b3324402ae962594d29b) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- Updated dependencies [[`6149d30`](https://github.com/codefastlabs/codefast/commit/6149d30a3c20f1f4324b140525b6374a935aaabd), [`2a82188`](https://github.com/codefastlabs/codefast/commit/2a82188264c204b0b519b3324402ae962594d29b), [`bed2f30`](https://github.com/codefastlabs/codefast/commit/bed2f30df74128fe3b1a98dd9d03f6bb96099164)]:
+  - @codefast/benchmark-viewer@0.3.16-canary.3
+  - @codefast/benchmark-harness@0.3.16-canary.3
+  - @codefast/di@0.3.16-canary.3
+
 ## 0.3.16-canary.2
 
 ### Patch Changes

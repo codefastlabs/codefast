@@ -74,6 +74,9 @@ interface ChartControlPanelProps {
   onRunWindowChange: (window: ViewState["runWindow"]) => void;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function ChartControlPanel({
   isReloading,
   onReload,
