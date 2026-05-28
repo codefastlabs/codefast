@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap");
+@import "@fontsource-variable/inter";
 @import "tailwindcss";
 @import "@codefast/ui/css/neutral.css";
 @import "@codefast/ui/css/preset.css";
