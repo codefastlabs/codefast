@@ -4,9 +4,18 @@ import { MEDIA } from "#/constants";
 import { colorSchemes } from "#/types";
 import type { ColorScheme } from "#/types";
 
+/* JSON.stringify does not escape </script>, so we replace the three characters that
+ * can form a closing tag: < > /. Unicode escapes are valid JS and safe in HTML. */
+function toScriptSafe(value: unknown): string {
+  return JSON.stringify(value)
+    .replaceAll("<", "\\u003C")
+    .replaceAll(">", "\\u003E")
+    .replaceAll("/", "\\u002F");
+}
+
 /* Derived once from schema + constants — inline script uses these to stay in sync */
-const COLOR_SCHEME_REMOVE_ARGS = colorSchemes.map((s) => JSON.stringify(s)).join(",");
-const COLOR_SCHEME_VALID_CHECK = colorSchemes.map((s) => `s===${JSON.stringify(s)}`).join("||");
+const COLOR_SCHEME_REMOVE_ARGS = colorSchemes.map((s) => toScriptSafe(s)).join(",");
+const COLOR_SCHEME_VALID_CHECK = colorSchemes.map((s) => `s===${toScriptSafe(s)}`).join("||");
 
 /* -----------------------------------------------------------------------------
  * Props
@@ -74,12 +83,11 @@ export function AppearanceScript({
   storageKey,
   colorScheme,
 }: AppearanceScriptProps): JSX.Element {
-  // S2: Use JSON.stringify for safe JS string serialisation — guards against injection if
-  // TypeScript's type-narrowing is bypassed (e.g. a raw string from an unvalidated source).
+  // S2: toScriptSafe = JSON.stringify + escape <>/  so </script> cannot break out of the tag.
   // F1: When storageKey is provided, the script reads localStorage before first paint so
   // client-only apps (no SSR cookie) get the right color scheme without FOUC.
   // sk=null short-circuits to s=null so color scheme falls back to fbt — backward-compatible.
-  const appearanceScript = `(function(){try{var sk=${JSON.stringify(storageKey ?? null)},fbt=${JSON.stringify(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${JSON.stringify(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
+  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey ?? null)},fbt=${toScriptSafe(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
   return (

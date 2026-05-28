@@ -232,7 +232,7 @@ export function ChartPanel({
         label: `${lib.displayName} hz/op (median)`,
         data: hz,
         borderColor: paletteEntry.border,
-        backgroundColor: paletteEntry.band.replace(/[\d.]+\)$/, "0.08)"),
+        backgroundColor: `${paletteEntry.band.slice(0, paletteEntry.band.lastIndexOf(",") + 1)} 0.08)`,
         spanGaps: false,
         yAxisID: "y",
         tension: 0.12,
