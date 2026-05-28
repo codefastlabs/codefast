@@ -27,7 +27,8 @@
       "persistent": true
     },
     "preview": {
-      "cache": false
+      "cache": false,
+      "persistent": true
     },
     "test": {
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
