@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { FooterAppearanceToggle } from "#/components/footer-appearance-toggle";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -12,9 +13,10 @@ export function Footer() {
             <p className="mb-2 text-sm font-semibold text-(--sea-ink)">
               codefast<span className="text-(--lagoon)">/ui</span>
             </p>
-            <p className="text-sm leading-6 text-(--sea-ink-soft)">
+            <p className="mb-4 text-sm leading-6 text-(--sea-ink-soft)">
               Accessible, composable React components built on Radix UI and Tailwind CSS v4.
             </p>
+            <FooterAppearanceToggle />
           </div>
 
           {/* Links */}
@@ -73,7 +75,7 @@ export function Footer() {
 
         <div className="flex flex-col gap-1 border-t border-(--line) pt-6 text-xs text-(--sea-ink-soft) sm:flex-row sm:justify-between">
           <p>&copy; {year} Codefast Labs. Released under the MIT License.</p>
-          <p>Built with TanStack Start · Tailwind CSS v4 · React 19</p>
+          <p className="sm:text-right">Built with TanStack Start · Tailwind CSS v4 · React 19</p>
         </div>
       </div>
     </footer>
